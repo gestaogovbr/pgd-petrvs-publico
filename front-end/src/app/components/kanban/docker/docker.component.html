@@ -1,0 +1,84 @@
+<div [class]="'docker card mb-3 ' + (color || 'border-primary')" #docker [attr.style]="colorStyle" [class.docker-margin-left]="marginLeft" [class.docker-collapsed]="collapse && alone">
+    <div class="card-header d-flex align-items-center w-100 p-2" dndHandle>
+        <button class="btn btn-sm btn-outline-secondary me-2" type="button" (click)="onCollapseClick()">
+            <i [class]="'bi ' + (collapse ? 'bi bi-plus' : 'bi bi-dash')" data-bs-toggle="tooltip" data-bs-placement="top" [title]="collapse ? 'Expandir lista' : 'Contrair lista'"></i>
+        </button>
+        <div *ngIf="!editing" class="flex-fill">
+            <ng-container *ngIf="titleTemplate" [ngTemplateOutlet]="titleTemplate" [ngTemplateOutletContext]="{docker: this}"></ng-container>
+            <i *ngIf="icon?.length" [class]="icon"></i>
+            {{title}}
+            <span *ngFor="let label of labels" class="badge me-1" role="button" [style]="getLabelStyle(label)">
+                <i [class]="label.icon"></i>
+                {{label.value}}
+            </span>
+        </div>
+        <div *ngIf="!kanban?.editing && !collapse && !editing" class="btn-group" role="group" aria-label="Opções">
+            <button *ngIf="isEditable && !kanban?.editing" type="button" class="btn btn-sm btn-outline-primary" (click)="onEditClick()">
+                <i class="bi bi-gear" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar"></i>
+            </button>
+            <div *ngFor="let btn of menu" class="btn-group" role="group">
+                <button [attr.id]="buttonId(btn)" #itemsButton type="button" [class]="'btn btn-sm ' + (btn.color || 'btn-outline-primary')" [class.dropdown-toggle]="hasButtonItems(btn)" [attr.data-bs-toggle]="hasButtonItems(btn) ? 'dropdown' : undefined" aria-expanded="false" (click)="onButtonClick(btn)">
+                    <i *ngIf="btn.icon?.length" [class]="btn.icon" data-bs-toggle="tooltip" data-bs-placement="top" [title]="btn.hint"></i> {{btn.label || ""}}
+                </button>
+                <ul *ngIf="hasButtonItems(btn)" class="dropdown-menu dropdown-menu-end" [attr.aria-labelledby]="buttonId(btn)">
+                    <li *ngFor="let option of getButtonItems(itemsButton, btn)">
+                        <hr *ngIf="option.divider" class="dropdown-divider">
+                        <a *ngIf="!option.divider" class="dropdown-item" role="button" (click)="onButtonClick(option)"><i *ngIf="option.icon?.length" [class]="option.icon"></i> {{option.label || ""}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div *ngIf="editing" class="flex-fill">
+            <ng-container *ngIf="editTemplate" [ngTemplateOutlet]="editTemplate" [ngTemplateOutletContext]="{docker: this}"></ng-container>
+        </div>
+        <div *ngIf="editing" class="btn-group" role="group" aria-label="Opções">
+            <button type="button" class="btn btn-sm btn-outline-primary" (click)="onSaveClick()">
+                <i class="bi bi-check-circle"></i>
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-danger" (click)="onDeleteClick()">
+                <i class="bi bi-trash"></i>
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-success" (click)="onCancelClick()">
+                <i class="bi bi-dash-circle"></i>
+            </button>
+        </div>
+        <!--div class="btn-group" role="group" aria-label="Basic outlined example">
+            <button type="button" class="btn btn-sm btn-outline-primary"><i class="bi bi-plus-circle"></i></button>
+            <button type="button" class="btn btn-sm btn-outline-primary"><i class="bi bi-gear"></i></button>
+        </div/-->
+    </div>
+    <div *ngIf="!collapse" class="docker-fixed-size card-body p-0 px-1" [style.min-height.px]="emptyCardHeight" [dndDropzone]="['card']" [dndDisableIf]="disableDropIf" dndEffectAllowed="move" (dndDrop)="onDrop($event, cards)">
+        <ng-content></ng-content>
+        <div *ngIf="kanban?.loading" class="d-flex justify-content-center my-2">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden"></span>
+            </div>
+        </div>
+        <div *ngIf="!cards.length && !kanban?.loading && !kanban?.dragItem" class="card my-1">
+            <div class="card-body align-middle text-center" [style.height]="emptyCardHeight">
+                <i class="bi bi-slash-circle"></i> Vazio
+            </div>
+        </div>
+        <div dndPlaceholderRef class="card my-1">
+            <div *ngIf="!placeholderTemplate" class="card-body align-middle text-center" [style.height.px]="emptyCardHeight">...</div>
+            <ng-container *ngIf="placeholderTemplate" [ngTemplateOutlet]="placeholderTemplate" [ngTemplateOutletContext]="{}"></ng-container>
+        </div>
+        <card *ngFor="let card of cards" 
+            [attr.id]="card.id"
+            [kanban]="kanban"
+            [docker]="this"
+            [item]="card"
+            [template]="template"
+            [dndDraggable]="card" 
+            [dndDisableIf]="false"
+            dndEffectAllowed="move"
+            dndType="card"
+            (dndStart)="onDragStart($event, card)"
+            (dndCopied)="onDragged(card, cards, 'copy')"
+            (dndLinked)="onDragged(card, cards, 'link')"
+            (dndMoved)="onDragged(card, cards, 'move')"
+            (dndCanceled)="onDragged(card, cards, 'none')"
+            (dndEnd)="onDragEnd($event)">
+        </card>
+    </div>
+</div>

@@ -1,0 +1,45 @@
+.multiselect {
+    .multiselect-list {
+        overflow: auto;
+    }
+    .multiselect-icon {
+        float: left;
+        margin-right: 3px;
+    }
+    .multiselect-item {
+        cursor: default;
+        white-space: nowrap;
+    }
+    .multiselect-item-row {
+        display: block;
+        width: calc(100% - 8px);
+    }
+    .multiselect-text {
+        float: left;
+        width: calc(100% - 28px);
+        text-align: left;
+    }
+    .muiltiselect-text-icon {
+        width: calc(100% - 45px) !important;
+    }
+    .multiselect-delete-button {
+        cursor: pointer;
+        margin-top: 2px;
+    }    
+    .multiselect-container {
+        display: inline-table;
+        width: 100%;
+        .multiselect-container-buttons {
+            display: table-cell;
+            vertical-align: bottom;
+            width: 40px;
+        }
+        .multiselect-container-form {
+            display: flex;
+            width: auto;
+        }
+        .multiselect-container-form-button {
+            vertical-align: baseline !important; 
+        }   
+    }
+}

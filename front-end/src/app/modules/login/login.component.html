@@ -1,0 +1,42 @@
+<div *ngIf="error?.length" class="alert alert-danger mt-2" role="alert">
+    {{error}}
+</div>
+<div class="row">
+    <div *ngIf="!modalRoute" class="col-md-6 d-none d-md-block">
+        <img [src]="globals.getResourcePath('assets/images/' + globals.IMAGES.login)" class="card-img-top" alt="Petrvs">
+    </div>
+    <div [class]="modalRoute ? 'col-md-12' : 'col-md-6'">
+        <div class="row h-100 justify-content-center align-items-center">
+            <div class="card login-container">
+                <h5 class="card-title mt-2">Petrvs login</h5>
+                <div class="card-body">
+                    <p class="card-text">Faça login com seu e-mail institucional ou pelo DPRF-Segurança</p>
+                    <div class="row mt-2">
+                        <div *ngIf="!!googleApi.gapiAuth2" class="col-md-12 d-flex justify-content-center">
+                            <a *ngIf="!auth.logging" class="btn btn-lg btn-google btn-block btn-full text-uppercase btn-outline" (click)="signInGoogle()"><img [src]="globals.getResourcePath('assets/images/google-logo.png')"> E-mail Institucional</a> 
+                            <div *ngIf="auth.logging" class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden"></span></div>
+                        </div>
+                    </div>
+                    <div class="or-container">
+                        <div class="line-separator"></div>
+                        <div class="or-label">ou</div>
+                        <div class="line-separator"></div>
+                    </div>
+                    <div class="row" *ngIf="buttonDprfSeguranca; else dprfSeguranca">
+                        <div class="col-md-12"><a class="btn btn-lg btn-google btn-block btn-full text-uppercase btn-outline" (click)="showDprfSeguranca()"><img [src]="globals.getResourcePath('assets/images/prf.ico')" width="20" height="20"> DPRF-Segurança</a></div>
+                    </div>
+                    <ng-template #dprfSeguranca>
+                        <form [formGroup]="login">
+                            <div class="form-group form-primary"><input type="text" class="form-control" name="usuario" formControlName="usuario" placeholder="CPF"></div>
+                            <div class="form-group form-primary"><input type="password" class="form-control" name="senha" formControlName="senha" placeholder="Senha"></div>
+                            <div class="form-group form-primary"><input type="number" class="form-control" name="token" formControlName="token" placeholder="Token"></div>
+                            <div class="row">
+                                <div class="col-md-12"><button class="btn btn-primary btn-md btn-block btn-full waves-effect text-center mb-2" (click)="signInDprfSeguranca()">Logar com DPRF</button></div>
+                            </div>
+                        </form>
+                    </ng-template>
+                </div>
+            </div>            
+        </div>        
+    </div>
+</div>

@@ -1,0 +1,7 @@
+<ng-container *ngIf="column.template" [ngTemplateOutlet]="column.template" [ngTemplateOutletContext]="{row: row, grid: grid}"></ng-container>
+<ng-container *ngIf="!column.template" [class]="getClass()">
+    <i *ngIf="hasIcon()" [class]="getIcon()"></i>{{getColumnText()}}
+</ng-container>
+<span class="d-block text-center">
+    <i [class]="getExpandIcon()" role="button" (click)="onExpand($event)"></i>
+</span>

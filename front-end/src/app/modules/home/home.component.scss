@@ -1,0 +1,155 @@
+.card{
+    color: black;
+    width: 100%;
+}
+
+.card-header{
+    color: black;
+    width: auto;
+}
+
+.card-text{
+    color: black;
+    width: auto;
+}
+
+.card-title{
+    color: black;
+    text-align: center;
+    width: auto;
+}
+
+.card-body{
+    text-align: left;
+    width: auto;
+}
+
+.progress{
+    height: 20px;
+    width: auto;
+}
+
+.img-thumbnail{
+    border-top-left-radius: 0%;
+    border-top-right-radius: 50%;
+    border-bottom-right-radius: 50%;
+    border-bottom-left-radius: 50%;
+    width:auto;
+    max-width: 120px;
+    border-width:8px;
+    border-style: solid;
+    border-color:grayscale(60%);
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+
+}
+
+.img{
+    align-content: center;
+
+}
+
+
+.imagemdeFundo{
+    background-image:url('/resources/prf1.png');
+    background-size: 100%;
+    border-radius: 15px;
+    height: 260px;
+    padding-right: 10px;
+    margin-right: 5px;
+}
+
+.card-header{
+    text-align: center;
+    width: auto;
+
+}
+
+.card-header2{
+    text-align: center;
+    color:grey;
+}
+
+.headers2{
+    text-align: left;
+    font-weight: lighter;
+    font-size: small;
+
+
+}
+
+.h5-1{
+    text-align: center;
+}
+
+#icon-demandas-andamento{
+    color:blue;
+    text-align: center;
+    object-position: center;
+    width: auto;
+}
+
+#icon-demandas-atraso{
+    color:red;
+    text-align: center;
+    width: auto;
+}
+
+#icon-demandas-natraso{
+    color:gray;
+    text-align: center;
+    width: auto;
+}
+
+#icon-planos-execucao{
+    color: blue;
+    text-align: center;
+    width: auto;
+}
+
+#icon-produtividade-media{
+    color: blue;
+    text-align: center;
+    width: auto;
+}
+
+#qtde-demanda{
+    font-size: xx-large;
+    width: auto;
+    text-align: center;
+}
+
+#qtde-atraso{
+    font-size: xx-large;
+    width: auto;
+    text-align: center;
+}
+
+#barra{
+
+}
+
+#header1{
+    text-align: center;
+    color: black;
+
+}
+
+div[role="link"] {
+  color: blue;
+  text-decoration: underline;
+  //cursor: purple;
+}
+div[role="link"]:hover,
+div[role="link"]:active,
+div[role="link"]:focus {
+  color: purple;
+}
+
+div[role="link"]:focus {
+  background-color: palegoldenrod;
+  outline: 1px dotted;
+}

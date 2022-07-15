@@ -1,0 +1,18 @@
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+    [selectable]="selectable" (select)="onSelect($event)"
+    [hasAdd]="auth.hasPermissionTo('MOD_TIPO_PROC_INCL')"
+    [hasEdit]="auth.hasPermissionTo('MOD_TIPO_PROC_EDT')">
+    <toolbar *ngIf="!selectable"></toolbar>
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-text [size]="12" label="Nome do tipo do documento" controlName="nome"
+                [control]="filter!.controls.nome" placeholder="Nome do tipo do Documento"></input-text>
+        </div>
+    </filter>
+    <columns>
+        <column title="Código" field="codigo"></column>
+        <column title="Descrição" field="nome"></column>
+        <column *ngIf="!selectable" type="options" [onEdit]="edit" [options]="options"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

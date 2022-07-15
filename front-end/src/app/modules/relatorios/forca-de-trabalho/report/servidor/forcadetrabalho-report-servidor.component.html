@@ -1,0 +1,212 @@
+<toolbar [title]="isModal ? '' : title" [buttons]="buttons"></toolbar>
+
+<!-- RESOLVER O ERRO ExpressionChangedAfterItHasBeenCheckedError -->
+
+<div *ngFor="let x of rows" class="mt-5"> <!-- Informações sobre cada Plano (como só existe um PlanoRelatório mesmo...) -->
+  <div class="mt-5">
+    <table class="table table-striped table-bordered table-hover my-4">
+      <thead>
+        <tr>
+          <th colspan="3" class="text-center"><strong>CRITÉRIOS PARA O RELATÓRIO</strong></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Data e hora do Relatório</td>
+          <td>{{ this.util.getDateTimeFormatted(horaAtual) }}</td>
+          <td>Marco temporal para as informações/estatísticas constantes do presente relatório.</td>
+        </tr>
+        <tr>
+          <td>Servidor</td><td colspan="2">{{ (usuario?.nome || '').toUpperCase() }}</td>
+        </tr>
+        <tr>
+          <td>Plano</td><td colspan="2">{{ x.descricaoPlano }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Gráficos do Plano usando ng2-charts -->
+  <div class="my-4 text-center">
+    <div class="border border-primary bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
+      <h5>Composição do Plano - Geral</h5>
+        <app-bar-chart
+          [barChartLabels]="labelsX"
+          [barChartData]="x.dadosGraficoPlano"
+          [barChartOptions]="opcoesGraficoPlano">
+        </app-bar-chart>
+    </div>
+    <div class="border border-primary bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
+      <h5>Composição do Plano - Detalhado</h5>
+        <app-bar-chart
+          [barChartType]="tipoGrafico"
+          [barChartLabels]="labelsX"
+          [barChartData]="x.dadosGraficoHoras"
+          [barChartOptions]="opcoesGraficoHoras">
+        </app-bar-chart>
+    </div>
+  </div>
+
+  <!-- Informações sobre o Plano -->
+  <table class="table table-striped table-bordered table-hover my-4 align-middle">
+    <thead>
+      <tr>
+        <th colspan="5" class="text-center"><strong>INFORMAÇÕES SOBRE O PLANO</strong></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td colspan="2">Nome do Plano</td><td colspan="3">{{ x.descricaoPlano }}</td>
+      </tr>
+      <tr>
+        <td colspan="2">Unidade</td><td colspan="3">{{ x.plano.unidade?.sigla }}</td>
+      </tr>
+      <tr>
+        <td colspan="2">Status do Plano</td><td colspan="3">{{ x.statusPlano }}</td>
+      </tr>
+      <tr>
+        <td class="text-center">A</td>
+        <td>Horas úteis totais do Plano</td>
+        <td class="text-center">{{ x.extras.horasUteisTotais == 0 ? 0 : (this.util.decimalToTimerFormated(x.extras.horasUteisTotais, true)) }}</td>
+        <td class="text-center"></td>
+        <td>
+          <span>
+            <small class="micro-text fw-ligh">Horas úteis do Plano de Trabalho, ao longo de toda sua vigência, considerando-se a carga_horaria, os feriados e finais de semana. É a base para o cálculo de todos os percentuais.</small>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="text-center">B</td>
+        <td>Horas úteis decorridas do Plano</td>
+        <td class="text-center">{{ x.extras.horasUteisDecorridas == -1 ? '' : (x.extras.horasUteisDecorridas == -2 ? this.util.decimalToTimerFormated(x.extras.horasUteisTotais, true) : (x.extras.horasUteisDecorridas == 0 ? 0 : this.util.decimalToTimerFormated(x.extras.horasUteisDecorridas, true))) }}</td>
+        <td class="text-center">{{ x.extras.horasUteisDecorridas == -1 ? '0,0' : (x.extras.horasUteisDecorridas == -2 ? '100,0' : x.extras.percentualDecorridoPlano) }} %</td>
+        <td><span><small class="micro-text fw-ligh">{{ x.extras.horasUteisDecorridas == -1 ? 'A vigência do Plano ainda não iniciou.' : (x.extras.horasUteisDecorridas == -2 ? 'A vigência do Plano já encerrou.' : 'Horas úteis do Plano de Trabalho, do início de sua vigência até o instante atual, considerando-se a carga_horaria, os feriados e finais de semana.') }}</small></span></td>
+      </tr>
+      <tr>
+        <td class="text-center">C</td>
+        <td>Total de horas não-iniciadas</td>
+        <td class="text-center">{{ x.extras.horasDemandasNaoIniciadas == 0 ? 0 : this.util.decimalToTimerFormated(x.extras.horasDemandasNaoIniciadas, true) }}</td>
+        <td class="text-center">{{ x.extras.percentualHorasNaoIniciadas }} %</td>
+        <td>
+          <span>
+            <small class="micro-text fw-ligh">Total dos tempos pactuados de todas as demandas ainda não iniciadas.</small>
+            <br><small class="micro-text fw-ligh">O percentual representa a relação entre este total e as horas úteis totais do Plano: C(%) = C / A.</small>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="text-center">D</td>
+        <td>Total de horas iniciadas</td>
+        <td class="text-center">{{ x.extras.horasDemandasEmAndamento == 0 ? 0 : this.util.decimalToTimerFormated(x.extras.horasDemandasEmAndamento, true) }}</td>
+        <td class="text-center">{{ x.extras.percentualHorasEmAndamento }} %</td>
+        <td>
+          <span>
+            <small class="micro-text fw-ligh">Total dos tempos pactuados de todas as demandas já iniciadas, mas ainda não concluídas.</small>
+            <br><small class="micro-text fw-ligh">O percentual representa a relação entre este total e as horas úteis totais do Plano: D(%) = D / A.</small>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="text-center">E</td>
+        <td>Total de horas concluídas</td>
+        <td class="text-center">{{ x.extras.horasDemandasConcluidas == 0 ? 0 : this.util.decimalToTimerFormated(x.extras.horasDemandasConcluidas, true) }}</td>
+        <td class="text-center">{{ x.extras.percentualHorasConcluidas }} %</td>
+        <td>
+          <span>
+            <small class="micro-text fw-ligh">Total dos tempos pactuados de todas as demandas já concluídas, mas ainda não avaliadas.</small>
+            <br><small class="micro-text fw-ligh">O percentual representa a relação entre este total e as horas úteis totais do Plano: E(%) = E / A.</small>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="text-center">F</td>
+        <td>Total de horas avaliadas</td>
+        <td class="text-center">{{ x.extras.horasDemandasAvaliadas == 0 ? 0 : this.util.decimalToTimerFormated(x.extras.horasDemandasAvaliadas, true) }}</td>
+        <td class="text-center">{{ x.extras.percentualHorasAvaliadas }} %</td>
+        <td>
+          <span>
+            <small class="micro-text fw-ligh">Total dos tempos pactuados de todas as demandas avaliadas.</small>
+            <br><small class="micro-text fw-ligh">O percentual representa a relação entre este total e as horas úteis totais do Plano: F(%) = F / A.</small>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="text-center">G</td>
+        <td>Horas totais alocadas do Plano</td>
+        <td class="text-center">{{ x.extras.horasTotaisAlocadas == 0 ? 0 : (this.util.decimalToTimerFormated(x.extras.horasTotaisAlocadas, true)) }}</td>
+        <td class="text-center">{{ x.extras.percentualHorasTotaisAlocadas }} %</td>
+        <td>
+          <span>
+            <small class="micro-text fw-ligh">Total dos tempos pactuados de todas as demandas, independente de seus status: G = C + D + E + F.</small>
+            <br><small class="micro-text fw-ligh">O percentual representa a relação entre este total e as horas úteis totais do Plano: G(%) = G / A.</small>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="text-center">H</td>
+        <td>Nota média das avaliações</td>
+        <td class="text-center">{{ x.extras.demandasAvaliadas?.length > 0 ? x.extras.mediaAvaliacoes.toFixed(2) : '' }}</td>
+        <td class="text-center"></td>
+        <td>
+          <span *ngIf="x.extras.demandasAvaliadas?.length > 0"><small class="micro-text fw-ligh">Média das notas de todas as demandas avaliadas.</small></span>
+          <span *ngIf="x.extras.demandasAvaliadas?.length == 0"><small class="micro-text fw-ligh">Este Plano não possui demandas avaliadas.</small></span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Informações sobre as demandas avaliadas do plano -->
+  <div class="text-center my-4">
+    <span><strong>Análise individual das demandas avaliadas</strong></span>
+  </div>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">#ID/nº Processo</th>
+        <th scope="col">Assunto</th>
+        <th scope="col">Nota da Avaliação</th>
+        <!-- <th scope="col">Gráfico</th> -->
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngIf="!x.extras.demandasAvaliadas?.length">
+        <td style="padding:8px;" colspan="3">
+          <h5 style="text-align:center;">O servidor não possui demandas avaliadas, associadas a este Plano de Trabalho!</h5>
+        </td>
+      </tr>
+      <tr *ngFor="let da of x.extras.demandasAvaliadas">
+        <td>
+          <span class="text-wrap">
+            <small class="micro-text fw-ligh">#{{ da.numero }}</small>
+            <span class="badge bg-light text-dark">
+                <i [class]="'bi bi bi-x-lg'"></i>
+                {{ da.numero_processo?.length ? da.numero_processo : "Não processual" }}
+            </span>
+          </span>
+        </td>
+        <td>
+          <div>
+            <span class="badge bg-light text-dark text-wrap">{{ da.assunto }}</span>
+          </div>
+        </td>
+        <td class="text-center">
+          <div>
+            <span>{{ da.avaliacao.nota_atribuida.toFixed(2) }}</span>
+          </div>
+        </td>
+<!--         <td class="text-center">
+          <div class="border border-primary bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
+              <app-bar-chart
+                barChartType="horizontalBar"
+                [barChartLabels]="[]"
+                [barChartData]="da.avaliacao.nota_atribuida"
+                [barChartOptions]="opcoesGraficoAvaliacao">
+              </app-bar-chart>
+          </div>
+        </td> -->
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<toolbar [buttons]="buttons"></toolbar>

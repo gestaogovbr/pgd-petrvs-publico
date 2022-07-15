@@ -1,0 +1,40 @@
+<div *ngIf="efemerides?.resultado == 'DATA'" class="mt-2 alert alert-primary" role="alert">
+    <i class="bi bi-info-circle-fill"></i>
+    A data final é obtida através do cálculo ...
+</div>
+<div *ngIf="efemerides?.resultado == 'TEMPO'" class="mt-2 alert alert-primary" role="alert">
+    <i class="bi bi-info-circle-fill"></i>
+    As horas úteis são obtidas através do cálculo ...
+</div>
+<strong>Início:</strong> {{util.getDateTimeFormatted(efemerides?.inicio)}}<br> 
+<strong>Fim:</strong> {{util.getDateTimeFormatted(efemerides?.fim)}}<br>
+<strong>Dias corridos:</strong> {{efemerides?.dias_corridos}}<br>
+<strong>Horas úteis:</strong> {{util.decimalToTimerFormated(efemerides?.tempoUtil, true)}}<br>
+<strong>Forma de cálculo:</strong> {{forma}}<br>
+<strong>Carga horária:</strong> {{util.decimalToTimerFormated(efemerides?.cargaHoraria, true)}}<br>
+<strong>Expediente:</strong> {{util.decimalToTimerFormated(efemerides?.expediente, true)}}<br>
+<strong>Horas de afastamentos e/ou pausas:</strong> {{util.decimalToTimerFormated(efemerides?.horasAfastamentosPausas, true)}}<br>
+<div *ngIf="efemerides?.afastamentos?.length">
+    <strong>Afastamento(s) ({{efemerides?.afastamentos?.length}}):</strong><br>
+    <span *ngFor="let afastamento of efemerides!.afastamentos">
+        De {{util.getDateTimeFormatted(afastamento.inicio_afastamento)}} até {{util.getDateTimeFormatted(afastamento.fim_afastamento)}} - afastamento.observacoes<br>
+    </span>
+</div>
+<div *ngIf="efemerides?.pausas?.length">
+    <strong>Suspensão(ões) ({{efemerides?.pausas?.length}}):</strong><br>
+    <span *ngFor="let pausa of efemerides!.pausas">
+        De {{util.getDateTimeFormatted(pausa.data_inicio)}} - {{pausa.data_fim ? 'até ' + util.getDateTimeFormatted(pausa.data_fim) : 'em aberto'}}<br>
+    </span>
+</div>
+<div *ngIf="finsSemana.length">
+    <strong>Finais de semana ({{finsSemana.length}}):</strong><br>
+    <span *ngFor="let fimSemanda of finsSemana">
+        {{fimSemanda[0]}} - {{fimSemanda[1]}}<br>
+    </span>
+</div>
+<div *ngIf="feriados.length">
+    <strong>Feriado(s) ({{feriados.length}}):</strong><br>
+    <span *ngFor="let feriado of feriados">
+        {{feriado[0]}} - {{feriado[1]}}<br>
+    </span>
+</div>

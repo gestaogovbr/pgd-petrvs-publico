@@ -1,0 +1,32 @@
+/* CSS utilizado para sobrescrever propriedades afetadas no Bootstrap pelo css do Sei */
+
+/* Reseta as propriedades alteradas pelo Sei */
+app-root * {
+    font-family: var(--bs-body-font-family) !important;
+    font-weight: var(--bs-body-font-weight) !important;
+    font-size: var(--bs-body-font-size) !important;
+}
+
+app-root div {
+    margin: 0px;
+}
+
+app-root input,
+app-root button,
+app-root textarea,
+app-root select,
+app-root table,
+app-root label,
+app-root legend,
+app-root caption,
+app-root a {
+    font-size: var(--bs-body-font-size) !important;
+}
+
+app-root img {
+    cursor: auto;
+}    
+
+app-root hr {
+    height: 1px;
+}

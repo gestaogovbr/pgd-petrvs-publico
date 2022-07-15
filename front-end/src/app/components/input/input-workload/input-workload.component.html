@@ -1,0 +1,10 @@
+<input-container [labelPosition]="labelPosition" [controlName]="controlName" [control]="control" [loading]="false" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
+    <div class="input-group">
+        <input *ngIf="viewInit" type="number" class="form-control" [formControl]="workControl" [id]="controlName" [class.is-invalid]="isInvalid()" 
+            [readonly]="isDisabled" [attr.aria-describedby]="controlName+'_button'" (change)="onChange($event)">
+        <button class="btn btn-outline-secondary" [class.disabled]="isDisabled" type="button" [id]="controlName+'_button'" (click)="onButtonClick($event)">
+            <i [class]="iconWork"></i>
+            {{unitWork}}
+        </button>
+    </div>
+</input-container>

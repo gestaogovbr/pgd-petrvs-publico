@@ -1,0 +1,27 @@
+<div class="card border-secondary my-1">
+    <div class="card-body bg-light">
+        <div *ngIf="item!.title || hasMenu" class="d-flex w-100">
+            <div class="flex-fill">
+                <h5 class="card-title text-dark small">{{item!.title || ""}}</h5>
+            </div>
+            <div *ngIf="hasMenu" class="btn-group card-buttons" role="group" aria-label="Opções">
+                <div *ngFor="let btn of menu" class="btn-group" role="group">
+                    <button [attr.id]="buttonId(btn)" #itemsButton type="button" [class]="'btn btn-sm ' + (btn.color || 'btn-outline-primary')" [class.dropdown-toggle]="hasButtonItems(btn)" [attr.data-bs-toggle]="hasButtonItems(btn) ? 'dropdown' : undefined" aria-expanded="false" (click)="onButtonClick(btn)">
+                        <i *ngIf="btn.icon?.length" [class]="btn.icon"></i> {{btn.label || ""}}
+                    </button>
+                    <ul *ngIf="hasButtonItems(btn)" class="dropdown-menu dropdown-menu-end" [attr.aria-labelledby]="buttonId(btn)">
+                        <li *ngFor="let option of getButtonItems(itemsButton, btn)">
+                            <hr *ngIf="option.divider" class="dropdown-divider">
+                            <a *ngIf="!option.divider" class="dropdown-item" role="button" (click)="onButtonClick(option)"><i *ngIf="option.icon?.length" [class]="option.icon"></i> {{option.label || ""}}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="flex-fill">
+            <h6 *ngIf="item!.subTitle" class="card-subtitle mb-2 text-muted small ">{{item!.subTitle}}</h6>
+            <p *ngIf="item!.text" class="card-text small">{{item!.text}}</p>
+        </div>
+        <ng-container *ngIf="template" [ngTemplateOutlet]="template" [ngTemplateOutletContext]="{card: item, context: kanban?.context}"></ng-container>
+    </div>
+</div>

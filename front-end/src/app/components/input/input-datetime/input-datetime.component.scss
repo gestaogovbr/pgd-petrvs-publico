@@ -1,0 +1,17 @@
+.firefox-date {
+    flex: 5 !important;
+}
+
+.firefox-time {
+    flex: 2 !important;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    padding: 0px;
+    margin: 0px;
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    padding: 0px;
+    margin: 0px;
+}

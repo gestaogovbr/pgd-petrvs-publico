@@ -1,0 +1,71 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Usuario;
+use App\Models\Perfil;
+use Illuminate\Database\Seeder;
+use Carbon\Carbon;
+
+class UsuarioSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $perfis = Perfil::all();
+        //
+        $usuarios = [
+            [
+                'email' => 'edson.marian@prf.gov.br',
+                'nome' => 'Edson dos Santos Marian',
+                'cpf' => '67703011053',
+                'apelido' => 'Marian',
+                'perfil_id' => $perfis->where('nome', 'Administrador')->first()->id,
+                'data_inicio' => Carbon::now()
+            ],
+            [
+                'email' => 'genisson.albuquerque@prf.gov.br',
+                'nome' => 'Genisson',
+                'cpf' => '07408707425',
+                'apelido' => 'Genisson',
+                'perfil_id' => $perfis->where('nome', 'Administrador')->first()->id,
+                'data_inicio' => Carbon::now()
+            ],
+            [
+                'email' => 'ricardo.farias@prf.gov.br',
+                'nome' => 'Ricardo de Sousa',
+                'cpf' => '25941933304',
+                'apelido' => 'Ricardo',
+                'perfil_id' => $perfis->where('nome', 'Administrador')->first()->id,
+                'data_inicio' => Carbon::now()
+            ],
+            [
+                'email' => 'caroline.ribeiro@prf.gov.br',
+                'nome' => 'Caroline da Costa Freire Ribeiro',
+                'cpf' => '01492368164',
+                'apelido' => 'Caroline',
+                'perfil_id' => $perfis->where('nome', 'Administrador')->first()->id,
+                'data_inicio' => Carbon::now()
+            ]
+
+        ];
+
+        foreach($usuarios as $usuario)
+        {
+            $user = new Usuario();
+            $user->fill([
+                'email' => $usuario['email'],
+                'nome' => $usuario['nome'],
+                'cpf' => $usuario['cpf'],
+                'apelido' => $usuario['apelido'],
+                'data_inicio' => Carbon::now(),
+                'perfil_id' => $usuario['perfil_id']
+            ]);
+            $user->save();
+        }
+    }
+}

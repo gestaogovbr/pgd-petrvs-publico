@@ -1,0 +1,28 @@
+<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>
+<grid [dao]="dao" [add]="add" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join">
+    <toolbar></toolbar>
+     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
+        <div class="row">
+            <input-text [size]="12" label="Capacidade" controlName="descricao" [control]="filter!.controls.descricao"></input-text>
+        </div>
+    </filter> 
+    <columns>
+        <column title="Perfil" [template]="columnPerfil">
+            <ng-template let-row="row" #columnPerfil>
+                <span> {{row.perfil.nome}}</span>
+            </ng-template>
+        </column>
+        <column title="Código" [template]="columnCodCapacidade">
+            <ng-template let-row="row" #columnCodCapacidade>
+                <span> {{row.tipo_capacidade.codigo}}</span>
+            </ng-template>
+        </column>
+        <column title="Capacidade" [template]="columnTipoCapacidade">
+            <ng-template let-row="row" #columnTipoCapacidade>
+                <span> {{row.tipo_capacidade.descricao}}</span>
+            </ng-template>
+        </column>
+        <column type="options" [onEdit]="edit" [onDelete]="delete"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

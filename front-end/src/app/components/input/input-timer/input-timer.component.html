@@ -1,0 +1,37 @@
+<input-container [labelPosition]="labelPosition" [controlName]="controlName" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
+    <div class="dropdown d-grid">
+        <button class="btn btn-outline-secondary text-end" [class.dropdown-toggle]="!isDisabled" [class.disabled]="isDisabled" type="button" [attr.id]="'timer_dropdown_' + generatedId" data-bs-toggle="dropdown" aria-expanded="false">
+            {{getButtonText()}}
+        </button>
+        <div class="dropdown-menu timer-dropdown" [attr.aria-labelledby]="'timer_dropdown_' + generatedId">
+            <form class="px-4 py-3" [formGroup]="formDropdown">
+                <div *ngIf="!isOnlyHours" class="mb-3">
+                    <label [attr.for]="'group-'+controlName">
+                        Dias úteis
+                        <i class="bi bi-info-circle label-info" data-bs-toggle="tooltip" data-bs-placement="top" title="{{hoursPerDay}} horas diárias"></i>
+                    </label>
+                    <div class="input-group mb-3" [id]="'group-'+controlName">
+                        <input type="number" class="form-control" formControlName="days" step="1">
+                        <span class="input-group-text">{{getDaysInHours()}}</span>
+                    </div>
+                </div>
+                <div *ngIf="!isOnlyDays" class="mb-3">
+                    <label [attr.for]="'group-timer-'+controlName">Horas e Minutos</label>
+                    <div class="input-group col-6 mb-3" [id]="'group-timer-'+controlName">
+                        <input type="number" class="form-control" formControlName="hours" step="1">
+                        <span class="input-group-text">:</span>
+                        <input type="number" class="form-control" formControlName="minutes" step="1">
+                    </div>
+                </div>
+                <div *ngIf="!isOnlyHours && !isOnlyDays" class="mb-3">
+                    <label for="horas" class="form-label">Horas</label>
+                    <input type="range" class="form-range" min="0" [attr.max]="hoursPerDay" id="horas" formControlName="hours">
+                </div>
+                <div *ngIf="!isOnlyDays" class="mb-3">
+                    <label for="minutos" class="form-label">Minutos</label>
+                    <input type="range" class="form-range" min="0" max="59" id="minutos" formControlName="minutes">
+                </div>
+            </form>
+        </div>
+    </div>
+</input-container>

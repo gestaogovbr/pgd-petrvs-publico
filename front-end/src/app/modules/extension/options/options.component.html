@@ -1,0 +1,15 @@
+<editable-form [form]="form" title="Opções do Petrvs" (submit)="salvar()" (cancel)="cancelar()">
+    <div class="row">
+        <input-switch [size]="12" scale="small" labelPosition="right" label="Usar arquivos locais" controlName="useLocal"></input-switch>
+        <input-switch [size]="12" scale="small" labelPosition="right" label="Homologação" controlName="homologacao"></input-switch>
+    </div>
+    <separator title="Desenvolvedor" transparent>
+        <div class="row">
+            <input-switch [size]="12" scale="small" labelPosition="right" label="Modo do desenvolvedor" controlName="desenvolvimento"></input-switch>
+        </div>
+        <div *ngIf="form.controls.desenvolvimento.value" class="row">
+            <input-text [size]="6" label="URL da Aplicação (Deploy)" controlName="baseUrl"></input-text>
+            <input-text [size]="6" label="URL do Servidor (API)" controlName="servidorUrl"></input-text>
+        </div>
+    </separator>
+</editable-form>

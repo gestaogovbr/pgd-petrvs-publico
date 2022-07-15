@@ -1,0 +1,388 @@
+<!-- RESOLVER O ERRO ExpressionChangedAfterItHasBeenCheckedError -->
+
+<toolbar [title]="isModal ? '' : title" [buttons]="buttons"></toolbar>
+
+<div *ngFor="let x of rows" class="mt-5"> <!-- Informações sobre cada AreaRelatorio (como sempre será só uma área mesmo...) -->
+
+  <!-- Critérios para o Relatório -->
+  <div class="mt-5">
+    <table class="table table-striped table-bordered table-hover my-4">
+      <thead>
+        <tr>
+          <th colspan="3" class="text-center"><strong>CRITÉRIOS PARA O RELATÓRIO</strong></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Data e hora do Relatório</td>
+          <td>{{ this.util.getDateTimeFormatted(horaAtual) }}</td>
+          <td>Marco temporal para as informações/estatísticas constantes do presente relatório.</td>
+        </tr>
+        <tr>
+          <td>Unidade Principal</td><td colspan="2">{{ (x.dadosUnidade.nome + ' (' + x.dadosUnidade.sigla + ') ' || '').toUpperCase() }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Gráficos da Área usando ng2-charts -->
+  <div class="my-4 text-center">
+<!--     <div class="border border-primary bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
+      <h5>Utilização dos Planos da Área - Geral</h5>
+        <app-bar-chart
+          barChartType="pie"
+          [barChartLabels]="labelsX"
+          [barChartData]="x.graficoAreaGeral"
+          [barChartOptions]="opcoesGraficoPizza">
+        </app-bar-chart>
+    </div>
+    <div class="border border-primary bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
+      <h5>Utilização dos Planos da Área - Geral</h5>
+        <app-bar-chart
+          barChartType="doughnut"
+          [barChartLabels]="labelsX"
+          [barChartData]="x.graficoAreaGeral"
+          [barChartOptions]="opcoesGraficoPizza">
+        </app-bar-chart>
+    </div> -->
+<!--     <div class="border border-primary bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
+      <h5>Utilização dos Planos da Área - Detalhado</h5>
+        <app-bar-chart
+          barChartType="doughnut"
+          [barChartLabels]="labelsX"
+          [barChartData]="x.graficoAreaDetalhado"
+          [barChartOptions]="opcoesGraficoPizza">
+        </app-bar-chart>
+    </div> -->
+  </div>
+
+  <!-- Informações sobre a Área -->
+  <table class="table table-striped table-bordered table-hover my-4 align-middle">
+    <thead>
+      <tr>
+        <th colspan="5" class="text-center"><strong>INFORMAÇÕES SOBRE A ÁREA</strong></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td colspan="2">Descrição da Área</td><td colspan="3">{{ x.descricaoArea }}</td>
+      </tr>
+      <tr>
+        <td colspan="2">Contexto</td><td colspan="3">As métricas são referentes à Unidade Principal somadas a todas as suas áreas-filhas. Só estão sendo considerados
+os Planos de Trabalho associados ao PGPRF.</td>
+      </tr>
+      <tr>
+        <td class="text-center">A</td>
+        <td>Qde. de Planos PGPRF</td>
+        <td class="text-center">{{ x.dadosArea.qdePlanosPGPRF }}</td>
+        <td class="text-center">-</td>
+        <td>
+          <span>
+            <small class="micro-text fw-ligh">Quantidade de Planos de Trabalho de toda a Área.</small>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="text-center">B</td>
+        <td>Horas úteis totais</td>
+        <td class="text-center">{{ x.dadosArea.horasUteisTotais == 0 ? 0 : (this.util.decimalToTimerFormated(x.dadosArea.horasUteisTotais, true)) }}</td>
+        <td class="text-center">-</td>
+        <td>
+          <span>
+            <small class="micro-text fw-ligh">Soma das horas úteis totais de todos os Planos de Trabalho associados à Área. É a base para o cálculo de todos os percentuais.</small>
+          </span>
+        </td>
+      </tr>
+<!--       <tr>
+        <td class="text-center">C</td>
+        <td>Horas úteis decorridas</td>
+        <td class="text-center">{{ x.dadosArea.horasUteisDecorridas }}</td>
+        <td class="text-center">{{ x.dadosArea.percentualHorasUteisDecorridas}} %</td>
+        <td><span><small class="micro-text fw-ligh">{{ x.dadosArea.horasUteisDecorridas == -1 ? 'Nenhum dos Planos de Trabalho da área iniciou a vigência!' : (x.dadosArea.horasUteisDecorridas == -2 ? 'Todos os Planos de Trabalho da Área já encerraram suas vigências!' : 'Soma das horas úteis decorridas de todos os Planos de Trabalho associados à Área.') }}</small></span></td>
+      </tr> -->
+      <tr>
+        <td class="text-center">D</td>
+        <td>Total de horas não-iniciadas</td>
+        <td class="text-center">{{ x.dadosArea.horasDemandasNaoIniciadas == 0 ? 0 : this.util.decimalToTimerFormated(x.dadosArea.horasDemandasNaoIniciadas, true) }}</td>
+        <td class="text-center">{{ x.dadosArea.percentualHorasNaoIniciadas }} %</td>
+        <td>
+          <span>
+            <small class="micro-text fw-ligh">Soma dos tempos pactuados de todas as demandas ainda não iniciadas.</small>
+            <br><small class="micro-text fw-ligh">O percentual representa a relação entre esta soma e a soma das horas úteis totais da Área: D(%) = D / B.</small>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="text-center">E</td>
+        <td>Total de horas iniciadas</td>
+        <td class="text-center">{{ x.dadosArea.horasDemandasEmAndamento == 0 ? 0 : this.util.decimalToTimerFormated(x.dadosArea.horasDemandasEmAndamento, true) }}</td>
+        <td class="text-center">{{ x.dadosArea.percentualHorasEmAndamento }} %</td>
+        <td>
+          <span>
+            <small class="micro-text fw-ligh">Soma dos tempos pactuados de todas as demandas já iniciadas, mas ainda não concluídas.</small>
+            <br><small class="micro-text fw-ligh">O percentual representa a relação entre esta soma e a soma das horas úteis totais da Área: E(%) = E / B.</small>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="text-center">F</td>
+        <td>Total de horas concluídas</td>
+        <td class="text-center">{{ x.dadosArea.horasDemandasConcluidas == 0 ? 0 : this.util.decimalToTimerFormated(x.dadosArea.horasDemandasConcluidas, true) }}</td>
+        <td class="text-center">{{ x.dadosArea.percentualHorasConcluidas }} %</td>
+        <td>
+          <span>
+            <small class="micro-text fw-ligh">Soma dos tempos pactuados de todas as demandas já concluídas, mas ainda não avaliadas.</small>
+            <br><small class="micro-text fw-ligh">O percentual representa a relação entre esta soma e a soma das horas úteis totais da Área: F(%) = F / B.</small>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="text-center">G</td>
+        <td>Total de horas avaliadas</td>
+        <td class="text-center">{{ x.dadosArea.horasDemandasAvaliadas == 0 ? 0 : this.util.decimalToTimerFormated(x.dadosArea.horasDemandasAvaliadas, true) }}</td>
+        <td class="text-center">{{ x.dadosArea.percentualHorasAvaliadas }} %</td>
+        <td>
+          <span>
+            <small class="micro-text fw-ligh">Soma dos tempos pactuados de todas as demandas avaliadas.</small>
+            <br><small class="micro-text fw-ligh">O percentual representa a relação entre esta soma e a soma das horas úteis totais da Área: G(%) = G / B.</small>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="text-center">H</td>
+        <td>Horas totais alocadas</td>
+        <td class="text-center">{{ x.dadosArea.horasTotaisAlocadas == 0 ? 0 : (this.util.decimalToTimerFormated(x.dadosArea.horasTotaisAlocadas, true)) }}</td>
+        <td class="text-center">{{ x.dadosArea.percentualHorasTotaisAlocadas }} %</td>
+        <td>
+          <span>
+            <small class="micro-text fw-ligh">Soma dos tempos pactuados de todas as demandas, independente de seus status: H = D + E + F + G.</small>
+            <br><small class="micro-text fw-ligh">O percentual representa a relação entre esta soma e a soma das horas úteis totais da Área: H(%) = H / B.</small>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="text-center">I</td>
+        <td>Nota média das avaliações</td>
+        <td class="text-center">{{ x.dadosArea.qdeDemandasAvaliadas > 0 ? x.dadosArea.mediaAvaliacoes.toFixed(2) : '' }}</td>
+        <td class="text-center">-</td>
+        <td>
+          <span *ngIf="x.dadosArea.qdeDemandasAvaliadas > 0"><small class="micro-text fw-ligh">Média das notas de todas as demandas avaliadas.</small></span>
+          <span *ngIf="x.dadosArea.qdeDemandasAvaliadas == 0"><small class="micro-text fw-ligh">Esta Área não possui demandas avaliadas.</small></span>
+        </td>
+      </tr>
+<!--       <tr>
+        <td class="text-center">J</td>
+        <td>Nr. de Servidores PGPRF</td>
+        <td class="text-center">{{ x.dadosArea.nrServidoresPGPRF }}</td>
+        <td class="text-center">-</td>
+        <td>
+          <span>
+            <small class="micro-text fw-ligh">Quantidade de servidores vinculados a Planos de Trabalho PGPRF em toda a Área.</small>
+          </span>
+        </td>
+      </tr> -->
+    </tbody>
+  </table>
+
+    <!-- Informações sobre a Unidade Principal -->
+    <table class="table table-striped table-bordered table-hover my-4 align-middle">
+      <thead>
+        <tr>
+          <th colspan="5" class="text-center"><strong>INFORMAÇÕES SOBRE A UNIDADE PRINCIPAL</strong></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="2">Nome da Unidade</td><td colspan="3">{{ x.dadosUnidade.nome }}</td>
+        </tr>
+        <tr>
+          <td colspan="2">Contexto</td><td colspan="3">As métricas são referentes apenas à Unidade Principal. Só estão sendo considerados
+  os Planos de Trabalho associados ao PGPRF.</td>
+        </tr>
+        <tr>
+          <td class="text-center">A</td>
+          <td>Qde. de Planos PGPRF</td>
+          <td class="text-center">{{ x.dadosUnidade.qdePlanosPGPRF }}</td>
+          <td class="text-center">-</td>
+          <td>
+            <span>
+              <small class="micro-text fw-ligh">Quantidade de Planos de Trabalho da Unidade.</small>
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center">B</td>
+          <td>Horas úteis totais</td>
+          <td class="text-center">{{ x.dadosUnidade.horasUteisTotais == 0 ? 0 : (this.util.decimalToTimerFormated(x.dadosUnidade.horasUteisTotais, true)) }}</td>
+          <td class="text-center">-</td>
+          <td>
+            <span>
+              <small class="micro-text fw-ligh">Soma das horas úteis totais de todos os Planos de Trabalho da Unidade. É a base para o cálculo de todos os percentuais.</small>
+            </span>
+          </td>
+        </tr>
+<!--         <tr>
+          <td class="text-center">C</td>
+          <td>Horas úteis decorridas</td>
+          <td class="text-center">{{ x.dadosUnidade.horasUteisDecorridas }}</td>
+          <td class="text-center">{{ x.dadosUnidade.percentualHorasUteisDecorridas}} %</td>
+          <td><span><small class="micro-text fw-ligh">{{ x.dadosUnidade.horasUteisDecorridas == -1 ? 'Nenhum dos Planos de Trabalho da Unidade iniciou a vigência!' : (x.dadosUnidade.horasUteisDecorridas == -2 ? 'Todos os Planos de Trabalho da Unidade já encerraram suas vigências!' : 'Soma das horas úteis decorridas de todos os Planos de Trabalho associados à Unidade.') }}</small></span></td>
+        </tr> -->
+        <tr>
+          <td class="text-center">D</td>
+          <td>Total de horas não-iniciadas</td>
+          <td class="text-center">{{ x.dadosUnidade.horasDemandasNaoIniciadas == 0 ? 0 : this.util.decimalToTimerFormated(x.dadosUnidade.horasDemandasNaoIniciadas, true) }}</td>
+          <td class="text-center">{{ x.dadosUnidade.percentualHorasNaoIniciadas }} %</td>
+          <td>
+            <span>
+              <small class="micro-text fw-ligh">Soma dos tempos pactuados de todas as demandas ainda não iniciadas.</small>
+              <br><small class="micro-text fw-ligh">O percentual representa a relação entre esta soma e a soma das horas úteis totais da Unidade: D(%) = D / B.</small>
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center">E</td>
+          <td>Total de horas iniciadas</td>
+          <td class="text-center">{{ x.dadosUnidade.horasDemandasEmAndamento == 0 ? 0 : this.util.decimalToTimerFormated(x.dadosUnidade.horasDemandasEmAndamento, true) }}</td>
+          <td class="text-center">{{ x.dadosUnidade.percentualHorasEmAndamento }} %</td>
+          <td>
+            <span>
+              <small class="micro-text fw-ligh">Soma dos tempos pactuados de todas as demandas já iniciadas, mas ainda não concluídas.</small>
+              <br><small class="micro-text fw-ligh">O percentual representa a relação entre esta soma e a soma das horas úteis totais da Unidade: E(%) = E / B.</small>
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center">F</td>
+          <td>Total de horas concluídas</td>
+          <td class="text-center">{{ x.dadosUnidade.horasDemandasConcluidas == 0 ? 0 : this.util.decimalToTimerFormated(x.dadosUnidade.horasDemandasConcluidas, true) }}</td>
+          <td class="text-center">{{ x.dadosUnidade.percentualHorasConcluidas }} %</td>
+          <td>
+            <span>
+              <small class="micro-text fw-ligh">Soma dos tempos pactuados de todas as demandas já concluídas, mas ainda não avaliadas.</small>
+              <br><small class="micro-text fw-ligh">O percentual representa a relação entre esta soma e a soma das horas úteis totais da Unidade: F(%) = F / B.</small>
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center">G</td>
+          <td>Total de horas avaliadas</td>
+          <td class="text-center">{{ x.dadosUnidade.horasDemandasAvaliadas == 0 ? 0 : this.util.decimalToTimerFormated(x.dadosUnidade.horasDemandasAvaliadas, true) }}</td>
+          <td class="text-center">{{ x.dadosUnidade.percentualHorasAvaliadas }} %</td>
+          <td>
+            <span>
+              <small class="micro-text fw-ligh">Soma dos tempos pactuados de todas as demandas avaliadas.</small>
+              <br><small class="micro-text fw-ligh">O percentual representa a relação entre esta soma e a soma das horas úteis totais da Unidade: G(%) = G / B.</small>
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center">H</td>
+          <td>Horas totais alocadas</td>
+          <td class="text-center">{{ x.dadosUnidade.horasTotaisAlocadas == 0 ? 0 : (this.util.decimalToTimerFormated(x.dadosUnidade.horasTotaisAlocadas, true)) }}</td>
+          <td class="text-center">{{ x.dadosUnidade.percentualHorasTotaisAlocadas }} %</td>
+          <td>
+            <span>
+              <small class="micro-text fw-ligh">Soma dos tempos pactuados de todas as demandas, independente de seus status: H = D + E + F + G.</small>
+              <br><small class="micro-text fw-ligh">O percentual representa a relação entre esta soma e a soma das horas úteis totais da Unidade: H(%) = H / B.</small>
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center">I</td>
+          <td>Nota média das avaliações</td>
+          <td class="text-center">{{ x.dadosUnidade.qdeDemandasAvaliadas > 0 ? x.dadosUnidade.mediaAvaliacoes.toFixed(2) : '' }}</td>
+          <td class="text-center">-</td>
+          <td>
+            <span *ngIf="x.dadosUnidade.qdeDemandasAvaliadas > 0"><small class="micro-text fw-ligh">Média das notas de todas as demandas avaliadas.</small></span>
+            <span *ngIf="x.dadosUnidade.qdeDemandasAvaliadas == 0"><small class="micro-text fw-ligh">Esta Unidade não possui demandas avaliadas.</small></span>
+          </td>
+        </tr>
+<!--         <tr>
+          <td class="text-center">J</td>
+          <td>Nr. de Servidores PGPRF</td>
+          <td class="text-center">{{ x.dadosUnidade.nrServidoresPGPRF }}</td>
+          <td class="text-center">-</td>
+          <td>
+            <span>
+              <small class="micro-text fw-ligh">Quantidade de servidores vinculados a Planos de Trabalho PGPRF na Unidade Principal.</small>
+            </span>
+          </td>
+        </tr> -->
+      </tbody>
+    </table>
+
+<!-- Gráficos da Unidade Principal usando ng2-charts -->
+<div class="my-4 text-center">
+  <div class="border border-primary bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
+    <h5>Utilização dos Planos da Unidade - Geral</h5>
+      <app-bar-chart
+        barChartType = "bar"
+        [barChartLabels]="labelsX"
+        [barChartData]="x.graficoUnidadeGeral"
+        [barChartOptions]="opcoesGraficoBarrasNaoEmpilhado">
+      </app-bar-chart>
+  </div>
+  <div class="border border-primary bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
+    <h5>Utilização dos Planos da Unidade - Detalhado</h5>
+      <app-bar-chart
+        barChartType = "bar"
+        [barChartLabels]="labelsX"
+        [barChartData]="x.graficoUnidadeDetalhado"
+        [barChartOptions]="opcoesGraficoBarrasEmpilhado">
+      </app-bar-chart>
+  </div>
+</div>
+
+  <!-- Informações sobre as diversas Unidades que compõem a Área -->
+  <div class="text-center my-4">
+    <span><strong>Análise individual das Unidades que compõem a Área</strong></span>
+  </div>
+
+  <table class="table table-hover">
+    <thead>
+      <tr class="text-center">
+        <th scope="col">Nome da Unidade</th>
+        <th scope="col">Nr. de Servidores no PGPRF</th>
+        <th scope="col">Média das Avaliações da Unidade</th>
+        <!-- <th scope="col">Gráfico</th> -->
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngIf="x.dadosUnidades.length == 0 || (x.dadosUnidades.length == 1 && x.dadosUnidades[0].id == x.dadosUnidade.id)">
+        <td style="padding:8px;" colspan="3">
+          <h5 style="text-align:center;">Esta Área não possui Unidades-filhas ligadas ao PGPRF!</h5>
+        </td>
+      </tr>
+      <tr *ngFor="let u of x.dadosUnidades" [hidden]="x.dadosUnidade.id == u.id" class="text-center">
+        <td>
+          <div>
+            <span class="badge bg-light text-dark text-wrap">{{ u.sigla }}</span>
+          </div>
+        </td>
+        <td>
+          <div>
+            <span class="badge bg-light text-dark text-wrap">{{ u.nrServidoresPGPRF }}</span>
+          </div>
+        </td>
+        <td>
+          <div>
+            <span>{{ u.mediaAvaliacoes ? u.mediaAvaliacoes.toFixed(2) : 'Ainda não possui demandas avaliadas!' }}</span>
+          </div>
+        </td>
+<!--         <td class="text-center">
+          <div class="border border-primary bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
+              <app-bar-chart
+                barChartType="horizontalBar"
+                [barChartLabels]="[]"
+                [barChartData]="p.avaliacao.nota_atribuida"
+                [barChartOptions]="opcoesGraficoAvaliacao">
+              </app-bar-chart>
+          </div>
+        </td> -->
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<toolbar [buttons]="buttons"></toolbar>

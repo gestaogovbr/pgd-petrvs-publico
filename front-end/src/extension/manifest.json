@@ -1,0 +1,75 @@
+{
+    "manifest_version": 2,  
+    "name": "PETRVS",
+    "short_name": "PETRVS",
+    "description": "Plataforma de Gestão e Governança",
+    "version": "0.0.1",
+    "author": [
+        "Caroline Ribeiro",
+        "PRF Carlos",
+        "PRF Edson Marian",
+        "PRF Genisson Albuquerque",
+        "Pedro Soares",
+        "PRF Ricardo Farias"
+    ],
+    "permissions": [
+        "activeTab",
+        "storage",
+        "https://apis.google.com/*"
+    ],
+    "content_security_policy": "script-src 'self' https://apis.google.com 'unsafe-eval' 'sha256-5FXjuOqeM4bVWrugqdB4bJbAyEZkObaSwUbhNFxx4jQ='; object-src 'self'",
+    "icons": {
+        "16": "assets/icons/icon-16.png",
+        "48": "assets/icons/icon-48.png",
+        "128": "assets/icons/icon-128.png"
+    },
+    "background": {
+        "scripts": [
+            "background.js"
+        ]        
+    },    
+    "browser_action": {
+        "default_title": "PETRVS",
+        "default_popup": "pages/index.html#/extension/popup"
+    },
+    "options_page": "pages/index.html#/extension/options",
+    "options_ui": {
+      "page": "pages/index.html#/extension/options",
+      "open_in_tab": true
+    },  
+    "content_scripts": [
+        {
+            "matches": [
+                "https://sei.prf.gov.br/*",
+                "https://homologsei2.prf.gov.br/*",
+                "https://sei.economia.gov.br/*"
+            ],
+            "js": [
+                "lib/jquery.min.js",
+                "functions.js",
+                "bootstrap.js"
+            ],
+            "css": [
+                "styles.css"
+            ]
+        }
+    ],
+    "web_accessible_resources": [
+        "https://apis.google.com/js/platform.js",
+        "*.js",
+        "*.map",
+        "app.json",
+        "pages/*.js",
+        "pages/index.html",
+        "webfonts/*.ttf",
+        "webfonts/*.eot",
+        "webfonts/*.woff",
+        "webfonts/*.woff2",
+        "webfonts/*.svg",
+        "assets/js/bootstrap-angular.js",
+        "assets/images/*.png",
+        "assets/images/*.jpg",
+        "assets/images/*.gif",
+        "assets/images/*.ico"
+    ]
+}

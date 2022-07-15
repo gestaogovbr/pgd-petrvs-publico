@@ -1,0 +1,33 @@
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+  <tabs display right>
+    <tab key="PRINCIPAL" label="Principal">
+      <div class="row">
+        <input-text [size]="2" label="Sigla" controlName="sigla" [control]="form!.controls.sigla"></input-text>
+        <input-text [size]="10" label="Nome" controlName="nome" [control]="form!.controls.nome"></input-text>
+      </div>
+      <div class="row">
+        <input-search #gestor label="Gestor" [size]="6" [emptyValue]="null" controlName="gestor_id" [control]="form!.controls.gestor_id" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}" labelInfo="Responsável pela unidade"></input-search>
+        <input-search #gestorSubstituto label="Gestor Substituto" [size]="6" [emptyValue]="null" controlName="gestor_substituto_id" [control]="form!.controls.gestor_substituto_id" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}" labelInfo="Responsável substituto pela unidade"></input-search>
+      </div>
+      <div class="row">
+        <input-text numbers [size]="3" label="Carga Horária" controlName="carga_horaria_padrao" [control]="form!.controls.carga_horaria_padrao" labelInfo="Carga horária padrão utilizada ao criar plano de trabalho."></input-text>
+        <input-select [size]="3" label="Abrangência" controlName="abrangencia" [control]="form!.controls.abrangencia" [items]="lookup.ABRANGENCIA"></input-select>
+        <input-search *ngIf="form!.controls.abrangencia.value == 'MUNICIPAL'" #cidade [size]="6" label="Cidade" controlName="cidade_id" [control]="form!.controls.cidade_id" [dao]="cidadeDao"></input-search>
+        <input-select *ngIf="form!.controls.abrangencia.value == 'ESTADUAL'" [size]="6" label="UF" controlName="uf" [control]="form!.controls.uf" [items]="lookup.UF"></input-select>
+        <input-display *ngIf="form!.controls.abrangencia.value == 'NACIONAL'" [size]="6" label="Âmbito" value="Nacional"></input-display>
+      </div>
+    </tab>
+    <!--tab key="CONFIGURACOES" label="Configurações">
+      <div class="row">
+          <input-radio [size]="4"  label="Formulário de Demanda" controlName="layout_formulario_demanda" [control]="form!.controls.layout_formulario_demanda" [items]="lookup.TIPO_LAYOUT" labelInfo="Forma do layout do formulário de Demanda"></input-radio>
+          <input-radio [size]="3" label="Histórico do Processo" controlName="gravar_historico_processo" [control]="form!.controls.gravar_historico_processo" [items]="lookup.SIMNAO" labelInfo="Gravar andamento da demanda no processo"></input-radio>
+          <input-search #tipo_modalidade [size]="5" label="Modalidade" controlName="tipo_modalidade_id" [control]="form!.controls.tipo_modalidade_id" [dao]="tipoModalidadeDao" labelInfo="Tipo de modalidade padrão utilizada ao criar plano de trabalho." [selectRoute]="{route: ['cadastros', 'tipo-modalidade']}"></input-search>
+      </div>
+      <div class="row">
+          <input-multiselect [size]="12" label="Ocultar campos"  [items]="campos" [addItemControl]="campoSelect" labelInfo="Campos a serem ocultados no Formulário de Demanda.">
+              <input-select #campoSelect [size]="12" controlName="campos_ocultos_demanda" [control]="form!.controls.campos_ocultos_demanda" [items]="lookup.CAMPOS_OCULTOS_DEMANDA"></input-select>
+          </input-multiselect>
+      </div>
+    </tab/-->
+  </tabs>
+</editable-form>

@@ -1,0 +1,5 @@
+<div *ngIf="tabs?.isDisplay || isActive" class="my-2" [class.d-none]="!isActive">
+    <ng-container *ngIf="template" [ngTemplateOutlet]="template" [ngTemplateOutletContext]="{}"></ng-container>
+    <ng-content></ng-content>
+</div>
+

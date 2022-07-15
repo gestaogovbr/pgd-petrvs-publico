@@ -1,0 +1,29 @@
+<ul *ngIf="!isBottom" class="nav nav-tabs justify-content-end my-2">
+    <li *ngIf="title.length" class="nav-item flex-fill" [attr.role]="isCollapse ? 'button' : undefined" (click)="onExpandClick()">
+        <i *ngIf="icon?.length" [class]="icon"></i>
+        <span class="h6 ms-1" [class.font-weight-bold]="bold" [class.small]="isSmall">{{title}}</span>
+    </li>
+    <li *ngIf="button">
+        <i [class]="button.icon" role="button" data-bs-toggle="tooltip" data-bs-placement="top" title="{{button.hint || button.label || ''}}" (click)="onButtonClick()" ></i>
+        {{button.label || ""}}
+    </li>
+    <li *ngIf="isCollapse">
+        <i [class]="'bi ' + (collapsed ? 'bi-arrow-down-circle' : 'bi-arrow-up-circle')" role="button" (click)="onExpandClick()"></i>
+    </li>
+</ul>
+<div class="row" [class.separator-background]="!isTransparent" [class.d-none]="isCollapsed">
+    <ng-content></ng-content>
+</div>
+<ul *ngIf="isBottom" class="nav nav-tabs justify-content-end my-2">
+    <li *ngIf="title.length" class="nav-item flex-fill" [attr.role]="isCollapse ? 'button' : undefined" (click)="onExpandClick()">
+        <i *ngIf="icon?.length" [class]="icon"></i>
+        <span class="h6 ms-1" [class.font-weight-bold]="bold" [class.small]="isSmall">{{title}}</span>
+    </li>
+    <li *ngIf="button">
+        <i [class]="button.icon" role="button" data-bs-toggle="tooltip" data-bs-placement="top" title="{{button.hint || button.label || ''}}" (click)="onButtonClick()" ></i>
+        {{button.label || ""}}
+    </li>
+    <li *ngIf="isCollapse">
+        <i [class]="'bi ' + (collapsed ? 'bi-arrow-up-circle' : 'bi-arrow-down-circle')" role="button" (click)="onExpandClick()"></i>
+    </li>
+</ul>

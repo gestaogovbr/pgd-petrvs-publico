@@ -1,0 +1,160 @@
+import { NavigateService } from 'src/app/services/navigate.service';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ContentChildren } from '@angular/core';
+import { FormBuilder, FormGroup, FormGroupDirective } from '@angular/forms';
+import { GridComponent } from '../grid/grid.component';
+import { InputBase } from '../input/input-base';
+import { InputButtonComponent } from '../input/input-button/input-button.component';
+import { InputColorComponent } from '../input/input-color/input-color.component';
+import { InputContainerComponent } from '../input/input-container/input-container.component';
+import { InputDatetimeComponent } from '../input/input-datetime/input-datetime.component';
+import { InputDisplayComponent } from '../input/input-display/input-display.component';
+import { InputMultiselectComponent } from '../input/input-multiselect/input-multiselect.component';
+import { InputMultitoggleComponent } from '../input/input-multitoggle/input-multitoggle.component';
+import { InputRadioComponent } from '../input/input-radio/input-radio.component';
+import { InputRateComponent } from '../input/input-rate/input-rate.component';
+import { InputSearchComponent } from '../input/input-search/input-search.component';
+import { InputSelectComponent } from '../input/input-select/input-select.component';
+import { InputSwitchComponent } from '../input/input-switch/input-switch.component';
+import { InputTextComponent } from '../input/input-text/input-text.component';
+import { InputTextareaComponent } from '../input/input-textarea/input-textarea.component';
+import { InputTimerComponent } from '../input/input-timer/input-timer.component';
+import { ToolbarButton } from '../toolbar/toolbar.component';
+
+@Component({
+  selector: 'editable-form',
+  templateUrl: './editable-form.component.html',
+  styleUrls: ['./editable-form.component.scss'],
+  providers: [
+    {
+      provide: FormGroupDirective,
+      useFactory: (self: EditableFormComponent) => {
+        return self.formDirective!;
+      },
+      deps: [EditableFormComponent]
+    }
+  ]
+})
+export class EditableFormComponent implements OnInit {
+  @ViewChild(FormGroupDirective) formDirective?: FormGroupDirective;
+  @ContentChildren(GridComponent, { descendants: true }) grids!: QueryList<GridComponent>;
+  @ContentChildren(InputContainerComponent, { descendants: true }) inputContainers!: QueryList<InputContainerComponent>;
+  @ContentChildren(InputSwitchComponent, { descendants: true }) inputSwitchs!: QueryList<InputSwitchComponent>;
+  @ContentChildren(InputDisplayComponent, { descendants: true }) inputDisplays!: QueryList<InputDisplayComponent>;
+  @ContentChildren(InputSearchComponent, { descendants: true }) inputSearchs!: QueryList<InputSearchComponent>;
+  @ContentChildren(InputButtonComponent, { descendants: true }) inputButtons!: QueryList<InputButtonComponent>;
+  @ContentChildren(InputTextComponent, { descendants: true }) inputTexts!: QueryList<InputTextComponent>;
+  @ContentChildren(InputTextareaComponent, { descendants: true }) inputTextareas!: QueryList<InputTextareaComponent>;
+  @ContentChildren(InputDatetimeComponent, { descendants: true }) inputDatetimes!: QueryList<InputDatetimeComponent>;
+  @ContentChildren(InputRadioComponent, { descendants: true }) inputRadios!: QueryList<InputRadioComponent>;
+  @ContentChildren(InputSelectComponent, { descendants: true }) inputSelects!: QueryList<InputSelectComponent>;
+  @ContentChildren(InputColorComponent, { descendants: true }) inputColors!: QueryList<InputColorComponent>;
+  @ContentChildren(InputMultiselectComponent, { descendants: true }) inputMultiselects!: QueryList<InputMultiselectComponent>;
+  @ContentChildren(InputTimerComponent, { descendants: true }) inputTimers!: QueryList<InputTimerComponent>;
+  @ContentChildren(InputRateComponent, { descendants: true }) inputRates!: QueryList<InputRateComponent>;
+  @ContentChildren(InputMultitoggleComponent, { descendants: true }) inputMultitoggles!: QueryList<InputMultitoggleComponent>;
+  @Output() disable = new EventEmitter<Event>();
+  @Output() submit = new EventEmitter<EditableFormComponent>();
+  @Output() cancel = new EventEmitter<void>();
+  @Input() form?: FormGroup;
+  @Input() title: string = "";
+  @Input() buttons: ToolbarButton[] = [];
+  @Input() toolbarButtons: ToolbarButton[] = [];
+  @Input() noButtons?: string;
+  @Input() set disabled(value: boolean) {
+    this._disabled = value;
+    if(value) this.disableAll();
+  }
+  get disabled(): boolean {
+    return this._disabled;
+  }
+
+  /* Propriedades private e métodos get e set */
+  private _error?: string;
+  private _disabled: boolean = false;
+
+  /* Propriedades publicas */
+  public submitting: boolean = false;
+  public set error(error: string | undefined) {
+    this._error = error;
+    this.submitting = false;
+  }
+  public get error(): string | undefined {
+    return this._error;
+  }
+
+  constructor(
+    private fb: FormBuilder,
+    private go: NavigateService,
+    private cdRef: ChangeDetectorRef
+  ) { }
+
+  ngOnInit(): void {
+  }
+
+  public get hasSubmit(): boolean {
+    return !!this.submit.observers.length;
+  }
+
+  public get hasCancel(): boolean {
+    return !!this.cancel.observers.length;
+  }
+
+  ngAfterViewInit() {
+    if(this.disabled) this.disableAll();
+  }
+
+  public get components() {
+    console.log(this.grids);
+    return [
+      ...(this.grids?.toArray() || []),
+      ...(this.inputContainers?.toArray() || []),
+      ...(this.inputSwitchs?.toArray() || []),
+      ...(this.inputDisplays?.toArray() || []),
+      ...(this.inputSearchs?.toArray() || []),
+      ...(this.inputButtons?.toArray() || []),
+      ...(this.inputTexts?.toArray() || []),
+      ...(this.inputTextareas?.toArray() || []),
+      ...(this.inputDatetimes?.toArray() || []),
+      ...(this.inputRadios?.toArray() || []),
+      ...(this.inputSelects?.toArray() || []),
+      ...(this.inputColors?.toArray() || []),
+      ...(this.inputMultiselects?.toArray() || []),
+      ...(this.inputTimers?.toArray() || []),
+      ...(this.inputRates?.toArray() || []),
+      ...(this.inputMultitoggles?.toArray() || [])
+    ];
+  }
+
+  public disableAll() {
+    for (const component of this.components) {
+      component.disabled = "true";
+    }
+    if(this.disable) this.disable.emit(new Event("disabled"));
+  }
+
+  public onButtonClick(button: ToolbarButton) {
+    console.log("Clicou", button.route);
+    if(button.route) {
+      this.go.navigate(button.route, button.metadata);
+    } else if(button.onClick) {
+      button.onClick();
+    }
+  }
+
+  public onSubmit() {
+    if(this.form!.valid){
+      this.submitting = true;
+      this.submit.emit(this);
+    } else {
+      this.form!.markAllAsTouched();
+      Object.entries(this.form!.controls).forEach(([key, value]) => {
+        if(value.invalid) console.log("Validate => " + key, value.value, value.errors);
+      });
+    }
+  }
+
+  public onCancel() {
+    this.cancel.emit();
+  }
+}

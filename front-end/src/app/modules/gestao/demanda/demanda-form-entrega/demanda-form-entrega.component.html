@@ -1,0 +1,72 @@
+<editable-form [form]="form!" [disabled]="formDisabled" (submit)="onSaveData()" (cancel)="onCancel()">
+    <tabs display right [hidden]="isComentarios ? 'true' : undefined" [title]="!isModal ? title : ''">
+        <tab *ngIf="!isComentarios" key="ENTREGA" [label]="lex.noun('Tarefa')">
+            <div class="row">
+                <input-textarea label="Descrição" [size]="12" [rows]="2" controlName="descricao" [control]="form!.controls.descricao"></input-textarea>
+            </div>
+            <div class="row">
+                <input-search [label]="lex.noun('Tarefa')" #tarefa [size]="7" controlName="tarefa_id" [control]="form!.controls.tarefa_id" [dao]="tarefaDao" (select)="onTarefaSelect($event)" [where]="['or', ['unidade_id', '=', demanda?.unidade_id], ['entidade_id', '=', demanda?.unidade?.entidade_id]]" [selectRoute]="{route: ['cadastros', 'tarefa'], params: {filter: {unidade_id: demanda?.unidade_id}}}"></input-search>
+                <input-timer onlyHours label="Tempo estimado" [size]="3" controlName="tempo_estimado" [control]="form!.controls.tempo_estimado" labelInfo="Tempo estimado de execução"></input-timer>
+                <input-switch label="Concluído" [size]="2" controlName="concluido" [control]="form!.controls.concluido" labelInfo="Se foi concluída"></input-switch>
+            </div>
+            <separator title="Documento"></separator>
+            <div class="row">
+                <input-button label="Número Processo" [size]="4" #procEntregue controlName="numero_processo" [control]="form!.controls.numero_processo" [disabled]="!gb.isExtension || form!.controls.numero_documento.value?.length ? 'true' : undefined" (buttonClick)="onNumeroProcessoClick($event)" labelInfo="Número do processo, com a formatação de origem"></input-button>
+                <input-search label="Tipo Processo" [size]="8" #tipoProcesso controlName="tipo_processo_id" [control]="form!.controls.tipo_processo_id" disabled [dao]="tipoProcessoDao" [selectRoute]="{route: ['cadastros', 'tipo-processo']}"></input-search>
+            </div>
+            <div class="row">
+                <input-button label="Número doc. entregue" [size]="4" #docEntregue controlName="numero_documento" [control]="form!.controls.numero_documento" [disabled]="!gb.isExtension ? 'true' : undefined" (buttonClick)="onNumeroDocumentoClick($event)" labelInfo="Numero do documento de requisição, caso seja o Sei é o numero Sei"></input-button>
+                <input-search label="Tipo doc. entregue" [size]="8" #tipoDocumento controlName="tipo_documento_id" [control]="form!.controls.tipo_documento_id" disabled [dao]="tipoDocumentoDao" [selectRoute]="{route: ['cadastros', 'tipo-documento']}"></input-search>
+            </div>
+        </tab>
+        <tab key="COMENTARIOS" label="Comentarios">
+            <div clss="row">
+                <grid [control]="form!.controls.comentarios" #comentarios [hasEdit]="false" [hasDelete]="false" [add]="addComentario.bind(this)" [form]="formComentarios" [load]="loadComentario.bind(this)" [save]="saveComentario.bind(this)" editable>
+                    <columns>
+                        <column title="Comentários" [template]="mensagem" [editTemplate]="mensagemEdit">
+                            <ng-template let-row="row" #mensagem>
+                                <table class="comentario-table">
+                                    <tr>
+                                        <td *ngIf="comentarioLevel(row).length > 0" class="d-none d-md-table-cell" [style.width.px]="comentarioLevel(row).length * 20">&nbsp;</td>
+                                        <td class="comentario-user text-center">
+                                            <img [src]="row.usuario?.url_foto || './assets/images/profile.png'" class="rounded-circle profile-photo" onerror="this.src='./assets/images/profile.png'" width="25" height="25"><br>
+                                            <ng-container *ngFor="let dot of comentarioLevel(row)">
+                                                <span class="comentario-level">•</span><br>
+                                            </ng-container>
+                                        </td>
+                                        <td class="comentario-container">
+                                            <span class="comentario-user-indicator"></span>
+                                            <h6 class="comentario-message-title">
+                                                {{row.usuario?.nome || "Desconhecido"}}
+                                                <span>{{lookup.getValue(lookup.COMENTARIO_TIPO, row.tipo)}}</span>
+                                                <span>{{lookup.getValue(lookup.COMENTARIO_PRIVACIDADE, row.privacidade)}}</span>
+                                                <span>{{util.getDateTimeFormatted(row.data_hora)}}</span>
+                                            </h6>
+                                            <p class="fw-light">{{row.texto}}</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </ng-template>
+                            <ng-template #mensagemEdit>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <input-textarea [size]="12" [rows]="3" label="Mensagem" icon="bi bi-textarea-t" controlName="texto" [control]="formComentarios!.controls.texto"></input-textarea>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="row">
+                                            <input-select [size]="12" label="Tipo" icon="bi bi-braces" controlName="tipo" [control]="formComentarios!.controls.tipo" [items]="comentarioTipos"></input-select>
+                                        </div>
+                                        <div class="row">
+                                            <input-select [size]="12" label="privacidade" icon="bi bi-incognito" controlName="privacidade" [control]="formComentarios!.controls.privacidade" [items]="lookup.COMENTARIO_PRIVACIDADE"></input-select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </column>
+                        <column type="options" [dynamicOptions]="comentarioDynamicOptions.bind(this)"></column>
+                    </columns>
+                </grid>
+            </div>
+        </tab>
+    </tabs>
+</editable-form>

@@ -1,0 +1,45 @@
+<input-container [labelPosition]="labelPosition" [controlName]="controlName" [control]="control" [disabled]="disabled" [label]="label"
+[labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
+    <div *ngIf="isDisabled" class="input-group" [id]="controlId + '_search_container'">
+        <input type="text" class="form-control" [id]="controlId" [attr.placeholder]="placeholder" readonly>
+        <button class="btn btn-outline-secondary" type="button" disabled>
+            <i *ngIf="!searching && !loading" class="bi bi-check"></i>
+            <div *ngIf="searching || loading" class="spinner-border spinner-border-sm" role="status">
+                <span class="visually-hidden"></span>
+            </div>
+        </button>
+    </div>
+    <div *ngIf="!isDisabled" class="dropdown">
+        <div class="input-group" [id]="controlId + '_search_container'">
+            <div class="dropdown_hidden" [id]="controlId + '_search_dropdown'" data-bs-toggle="dropdown" aria-expanded="false"></div>
+            <ul class="dropdown-menu" [attr.aria-labelledby]="controlId + '_search_dropdown'" [style.width.px]="dropdownWidth">
+                <li *ngFor="let item of items">
+                    <a *ngIf="!isSeparator(item); else group" class="dropdown-item text-truncate" role="button" (click)="onItemClick(item)">{{item.text}}</a>
+                    <ng-template #group>
+                        <strong class="search-group-text">{{item.text}}</strong>
+                    </ng-template>
+                </li>
+            </ul>
+            <input type="text" class="form-control" autocomplete="off" [id]="controlId" aria-expanded="false" [attr.placeholder]="placeholder"
+            (keydown)="onKeyDown($event)" (keyup)="onKeyUp($event)">
+            <button *ngIf="isDetails" class="btn btn-outline-secondary" type="button" [disabled]="!searchObj ? true : undefined" (click)="onDetailsClick($event)">
+                <i class="bi bi-info-circle"></i>
+            </button>
+            <button *ngIf="addRoute" class="btn btn-outline-success" type="button" (click)="onAddClick($event)">
+                <i class="bi bi-plus-circle"></i>
+            </button>
+            <button class="btn btn-outline-secondary" type="button" (click)="onSelectClick($event)">
+                <i *ngIf="!searching && !loading" class="bi bi-search"></i>
+                <div *ngIf="searching || loading" class="spinner-border spinner-border-sm" role="status">
+                    <span class="visually-hidden"></span>
+                </div>
+            </button>
+            <!--span class="input-group-text" id="basic-addon2">
+                <i *ngIf="!searching && !loading" class="bi bi-search"></i>
+                <div *ngIf="searching || loading" class="spinner-border spinner-border-sm" role="status">
+                    <span class="visually-hidden"></span>
+                </div>
+            </span/-->
+        </div>
+    </div>
+</input-container>

@@ -1,0 +1,51 @@
+<!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+    [selectable]="selectable" (select)="onSelect($event)"
+    [hasAdd]="auth.hasPermissionTo('MOD_PTR_INCL')"
+    [hasEdit]="auth.hasPermissionTo('MOD_PTR_EDT')">
+    <toolbar *ngIf="!selectable"></toolbar>
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-text [size]="12" label="Usuário" controlName="usuario"
+                [control]="filter!.controls.usuario" placeholder="Usuário"></input-text>
+        </div>
+    </filter>
+    <columns>
+        <column title="Usuário" [template]="columnUsuario">
+            <ng-template let-row="row" #columnUsuario>
+                <span> {{row.usuario?.nome || ""}}</span>
+            </ng-template>
+        </column>
+        <column title="Programa" [template]="columnPrograma">
+            <ng-template let-row="row" #columnPrograma>
+                <span> {{row.programa?.nome || ""}}</span>
+            </ng-template>
+        </column>
+        <column title="Unidade" [template]="columnUnidade">
+            <ng-template let-row="row" #columnUnidade>
+                <span> {{row.unidade?.nome || ""}}</span>
+            </ng-template>
+        </column>
+        <column title="Modalidade" [template]="columnModalidade">
+            <ng-template let-row="row" #columnModalidade>
+                <span> {{row.tipo_modalidade?.nome || ""}}</span>
+            </ng-template>
+        </column>
+        <column title="Vigência" [template]="columnInicioVigencia">
+            <ng-template let-row="row" #columnInicioVigencia>
+                <span> {{dao!.getDateFormatted(row.data_inicio_vigencia)+" até "+dao!.getDateFormatted(row.data_fim_vigencia)}}</span>
+            </ng-template>
+        </column>
+        <column title="Termo de adesão" [template]="documento">
+            <ng-template let-row="row" #documento>
+                <span *ngIf="row.documento?.numero_processo?.length" class="badge bg-light text-dark" [attr.role]="row.documento?.numero_processo?.length ? 'button' : undefined" data-bs-toggle="tooltip" data-bs-placement="top" (click)="onProcessoClick(row)" [title]="allPages.getButtonTitle(row.documento?.numero_processo, row.documento?.numero_documento)">
+                    <i [class]="'bi ' + (row.documento?.numero_processo?.length ? 'bi bi-folder-symlink' : 'bi bi-x-lg')"></i>
+                    {{row.documento?.numero_processo?.length ? row.documento?.numero_processo : "Não atribuído"}}
+                    <small *ngIf="row.documento?.numero_documento?.length"><br>Sei nº {{row.documento?.numero_documento}}</small>
+                </span>
+            </ng-template>
+        </column>
+        <column *ngIf="!selectable" type="options" [onEdit]="edit" [options]="options"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

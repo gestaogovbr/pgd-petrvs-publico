@@ -1,0 +1,27 @@
+<input-container [labelPosition]="labelPosition"  [loading]="loading" [disabled]="disabled" [controlName]="controlName" [controlName]="controlName" [control]="control" [label]="isNoBox ? label : ''" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold" errorMessageIcon="bi-info-circle">
+    <div [class.card]="!isNoBox">
+        <h5 *ngIf="label?.length && !isNoBox" class="card-header">
+            <i *ngIf="icon.length" [class]="icon"></i>
+            {{label}}
+        </h5>
+        <div [class.card-body]="!isNoBox">
+            <div class="multiselect">
+                <div class="container-fluid border rounded multiselect-list px-1" [style.max-height.px]="maxListHeight > 0 ? maxListHeight : undefined">
+                    <button *ngFor="let item of items" type="button" class="btn btn-light m-1 multiselect-item" [class.multiselect-item-row]="multiselectStyle == 'rows'" [style.max-width.px]="multiselectStyle == 'inline' ? maxItemWidth : undefined" data-bs-toggle="tooltip" [attr.title]="item.value">
+                        <i *ngIf="item.icon" [class]="'multiselect-icon ' + item.icon"></i>
+                        <div class="text-truncate multiselect-text" [class.muiltiselect-text-icon]="item.icon" [style.color]="item.color">{{item.value}}</div>
+                        <span *ngIf="!isDisabled" class="badge bg-danger ms-1 multiselect-delete-button" role="button" (click)="onDelete(item)">X</span>
+                    </button>
+                </div>    
+                <div *ngIf="!isDisabled && !isNoForm" class="multiselect-container">
+                    <div class="multiselect-container-form row">
+                        <ng-content></ng-content>
+                    </div>
+                    <div class="multiselect-container-buttons">
+                        <button type="button" class="btn btn-success multiselect-container-form-button" (click)="onAddItemClick()"><i class=" bi bi-plus-circle"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</input-container>

@@ -1,0 +1,46 @@
+.dndDraggingSource {
+    display: none;
+}
+
+.swimlane-container {
+    @media only screen and (min-width: 576px) {
+        width: max-content;
+        padding: 0px;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+}
+
+.swimlane-container-min-content {
+    width: min-content;
+}
+
+.swimlane-container-max-content {
+    width: max-content !important;
+}
+
+::ng-deep .kanban-docker {
+    @media only screen and (min-width: 576px) {
+        display: block;
+        float: left;
+    }
+}
+
+::ng-deep .docker-margin-right {
+    @media only screen and (min-width: 576px) {
+        margin-right: 20px;
+
+    }
+}
+
+::ng-deep .kanban-docker-collapsed {
+    @media only screen and (min-width: 576px) {
+        width: 50px;
+    }
+}
+
+::ng-deep .docker-margin-left {
+    @media only screen and (min-width: 576px) {
+        margin-left: 20px;
+    }
+}

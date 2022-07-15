@@ -1,0 +1,68 @@
+<!--kanban>
+    <swimlane>
+        <docker icon="bi bi-hourglass-split" title="Não iniciado" color="border-warning" [cards]="naoIniciadas"></docker>
+    </swimlane>
+    <swimlane>
+        <docker icon="bi bi-pause-circle" title="Pausadas" color="border-danger" [cards]="pausadas"></docker>
+        <docker icon="bi bi-play-circle" title="Iniciadas" color="border-info" [cards]="iniciadas"></docker>
+    </swimlane>
+    <swimlane>
+        <docker icon="bi bi-check-circle" title="Concluídas" color="border-primary" [cards]="concluidas"></docker>
+    </swimlane>
+    <swimlane>
+        <docker icon="bi bi-star-half" title="Avaliadas" color="border-success" [cards]="avaliadas"></docker>
+    </swimlane>
+</kanban/-->
+
+<!--editable-form [form]="form">
+    <div class="row">
+        <input-color label="Cor" [size]="4" controlName="cor" [control]="form.controls.cor"></input-color>
+        <input-display label="Display" [size]="2" controlName="display" [control]="form.controls.display"></input-display>
+        <input-switch label="Switch" [size]="2" controlName="switch" [control]="form.controls.switch"></input-switch>
+        < !--input-container labelPosition="top" controlName="switch" [control]="form.controls.switch" [disabled]="false" label="Switch" [bold]="false">
+        </input-container/-- >
+        <input-search label="Search" [size]="4" controlName="search" [control]="form.controls.search" [dao]="usuarioDao" placeholder="Nome e outras coisas"></input-search>
+        <input-datetime label="Data e Hora" [size]="4" controlName="datetime" [control]="form.controls.datetime" (change)="dataChange($event)"></input-datetime>
+        <input-datetime date label="Data" [size]="4" controlName="datetimedate" [control]="form.controls.datetimedate"></input-datetime>
+        <input-datetime time label="Hora" [size]="4" controlName="datetimetime" [control]="form.controls.datetimetime"></input-datetime>
+    </div>
+    < !--div class="row">
+        <input-text [size]="6" label="Campo1" controlName="campo1"></input-text>
+        <input-rate [size]="6" label="Avaliação" controlName="rate"></input-rate>
+    </div!-- >
+    <div clss="row">
+        <input-select [size]="3" label="Ícone" controlName="icon" [control]="form!.controls.icon" [items]="lookup.ICONES"></input-select>
+        < !--input-multiselect controlName="multiselect" label="MultiSleect" [size]="12" [control]="form!.controls.multiselect" [addItemHandle]="addItemHandle.bind(this)"!-->
+            <!--input-text [size]="6" label="Título" controlName="label" [control]="form!.controls.label"></input-text!-->
+            <!--input-color [size]="3" label="Cor" controlName="color" [control]="form!.controls.color"></input-color!-->
+        <!--/input-multiselect/-- >
+    </div>
+    <separator></separator>
+    < !--div class="row">
+        <input-timer label="Tempo" [size]="3" controlName="horas" [control]="form.controls.horas"></input-timer>
+    </div>
+    <div clss="row">
+        <grid [items]="gridItems" [form]="form" editable>
+            <columns>
+                <column title="Campo1" [template]="column1" [editTemplate]="columnEdit1">
+                    <ng-template let-row="row" #column1>
+                        <span>{{row["campo1"]}}</span>
+                    </ng-template>
+                    <ng-template let-row="row" #columnEdit1>
+                        <input-text [size]="12" controlName="campo1" [control]="form.controls.campo1"></input-text>
+                    </ng-template>
+                </column>
+                <column type="date" title="Campo2" field="campo2"></column>
+                <column type="datetime" title="Campo3" field="campo3"></column>
+                <column type="text" title="Campo4" field="campo4"></column>
+                <column type="switch" title="Campo5" field="campo5"></column>
+                <column type="options"></column>
+            </columns>
+        </grid>        
+    </div/-- >
+</editable-form>
+<input type="date" class="form-control">
+
+< !--input-label type="multiselect" [items]="items" label="Selecione alguma coisa" [maxItemWidth]="200" multiselectStyle="rows" [maxListHeight]="150">
+    <input-label type="search" [size]="12" placeholder="matrícula ou nome . . ."></input-label>
+</input-label/-->

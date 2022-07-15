@@ -1,0 +1,183 @@
+<ng-template #calendarEfemerides>
+    <calendar-efemerides [efemerides]="efemerides"></calendar-efemerides>
+</ng-template>
+<grid [dao]="dao" [add]="add" [form]="formEdit" [hasEdit]="false" [hasDelete]="false" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" (loadList)="onGridLoad($event)" [selectable]="selectable" (select)="onSelect($event)">
+    <toolbar *ngIf="!fixedFilter && !selectable">
+        <input-switch [size]="4" labelPosition="left" label="Agrupar por Un." controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
+    </toolbar>
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && !queryParams?.filter && filterCollapsed">
+        <div class="row">
+            <input-switch [size]="1" label="Minhas" controlName="atribuidas_para_mim" [control]="filter!.controls.atribuidas_para_mim" (change)="onAtribuidasParaMimChange($event)"></input-switch>
+            <input-search [size]="5" label="Usuário" #usuario controlName="usuario_id" [control]="filter!.controls.usuario_id" [disabled]="filter!.controls.atribuidas_para_mim.value ? 'true' : undefined" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
+            <input-switch [size]="1" label="Atual" controlName="somente_unidade_atual" [control]="filter!.controls.somente_unidade_atual" (change)="onSomenteUnidadeAtualChange($event)" labelInfo="Somente as demandas da unidade selecionada"></input-switch>
+            <input-search [size]="4" label="Unidade" #unidade controlName="unidade_id" [control]="filter!.controls.unidade_id" [disabled]="filter!.controls.somente_unidade_atual.value ? 'true' : undefined" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+            <input-switch [size]="1" label="Sub." controlName="unidades_subordinadas" [control]="filter!.controls.unidades_subordinadas" labelInfo="Incluir as unidades subordinadas"></input-switch>      
+        </div>
+        <div class="row">
+            <input-text [size]="1" label="#ID" controlName="numero" maskFormat="999999" [control]="filter!.controls.numero" [labelInfo]="'Número ' + lex.noun('demanda', false, true)"></input-text>
+            <input-text [size]="3" label="Nº Processo (Sei)" maskFormat="00000.000000/0000-00" controlName="numero_processo" [control]="filter!.controls.numero_processo" [labelInfo]="'Pesquisa na Requisição, Conclusão e ' + lex.noun('Entrega', true)"></input-text>
+            <input-select [size]="3" label="Status" itemTodos="- Todos -" [valueTodos]="null" [disabled]="fixedFilter?.length && fixedFilter![0]![0] == 'status' ? 'true' : undefined" controlName="status" [control]="filter!.controls.status" [items]="lookup.DEMANDA_STATUS_COM_ARQUIVADAS"></input-select>
+            <input-multiselect noForm noBox [size]="4" label="Etiquetas" controlName="etiquetas" [control]="filter!.controls.etiquetas"></input-multiselect>
+            <input-switch [size]="1" label="Arq." controlName="arquivadas" [control]="filter!.controls.arquivadas" labelInfo="Listar também demandas arquivadas"></input-switch>      
+        </div>
+        <div class="row">
+            <input-search [size]="3" [label]="lex.noun('Atividade')" controlName="atividade_id" [control]="filter!.controls.atividade_id" [dao]="atividadeDao" [groupBy]="[{field: 'unidade.sigla', label: 'Unidade'}]" [where]="[['vinculadas', '=', true]]" [selectRoute]="{route: ['cadastros', 'atividade']}"></input-search>
+            <input-search [size]="3" label="Tipo do prcesso" controlName="tipo_processo_id" [control]="filter!.controls.tipo_processo_id" [dao]="tipoProcessoDao" [selectRoute]="{route: ['cadastros', 'tipo-processo']}"></input-search>
+            <input-select [size]="2" label="Data" itemTodos="- Todos -" [valueTodos]="null" controlName="data_filtro" [control]="filter!.controls.data_filtro" [items]="DATAS_FILTRO"></input-select>
+            <input-datetime [size]="2" noIcon [disabled]="filter!.controls.data_filtro.value == null ? 'true' : undefined" label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" labelInfo="Data início do período"></input-datetime>
+            <input-datetime [size]="2" noIcon [disabled]="filter!.controls.data_filtro.value == null ? 'true' : undefined" label="Fim" controlName="data_fim" [control]="filter!.controls.data_fim" labelInfo="Data fim do período"></input-datetime>
+        </div>
+    </filter>  
+    <columns>        
+        <column *ngIf="!selectable" type="expand" icon="bi bi-boxes" [align]="'center'" [hint]="lex.noun('Entrega', true)" [template]="columnEntregas" [expandTemplate]="columnExpandedEntregas">
+            <ng-template let-row="row" #columnEntregas>
+                <span *ngIf="row.entregas?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row.entregas?.length}}</span>
+            </ng-template>
+            <ng-template let-row="row" #columnExpandedEntregas>
+                <demanda-list-entrega persist [selectable]="selectable" [editable]="!row.metadados.concluido" [demanda]="row"></demanda-list-entrega>
+            </ng-template>
+        </column>
+        <column [titleTemplate]="titleIdNumeroStatus" [template]="columnNumero">
+            <ng-template let-header="header" #titleIdNumeroStatus>
+                <order by="numero" [header]="header">#ID</order>/nº Processo<br>
+                Status
+            </ng-template>
+            <ng-template let-row="row" #columnNumero>
+                <span class="text-nowrap">
+                    <small class="micro-text fw-ligh">#{{row.numero}}</small>
+                    <span class="badge bg-light text-dark" [attr.role]="row.numero_processo?.length ? 'button' : undefined" data-bs-toggle="tooltip" data-bs-placement="top" (click)="onProcessoClick(row)" [title]="allPages.getButtonTitle(row.numero_processo, row.numero_requisicao)">
+                        <i [class]="'bi ' + (row.numero_processo?.length ? 'bi bi-folder-symlink' : 'bi bi-x-lg')"></i>
+                        {{row.numero_processo?.length ? row.numero_processo : "Não processual"}}
+                        <small *ngIf="row.numero_requisicao?.length"><br>Sei nº {{row.numero_requisicao}}</small>
+                    </span>
+                </span>
+                <div class="one-per-line">
+                    <span *ngFor="let status of getStatus(row)" [class]="status.class" [attr.role]="status.filter ? 'button' : undefined" (click)="onStatusClick(status)">
+                        <i [class]="status.icon"></i>
+                        {{status.text}}
+                    </span>
+                </div>
+            </ng-template>
+        </column>
+        <column [titleTemplate]="titleUnResponsavelDemandante" [template]="columnPessoas">
+            <ng-template let-header="header" #titleUnResponsavelDemandante>
+                Un./<order by="usuario.nome" [header]="header">Responsável</order><br>
+                <order by="demandante.nome" [header]="header">Demandante</order>
+            </ng-template>
+            <ng-template let-row="row" #columnPessoas>
+                <div class="text-nowrap">
+                    <span class="badge bg-light text-dark">
+                        <i class="bi bi-briefcase"></i>
+                        {{row.unidade.sigla}}    
+                    </span>
+                    <span class="badge bg-light text-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Responsável: {{row.usuario?.nome || 'Não atribuido a nenhum usuário'}}">
+                        <i [class]="'bi ' + (row.usuario?.nome?.length ? 'bi-person-check' : 'bi-person-x')"></i>
+                        {{util.apelidoOuNome(row.usuario, true) || "(Não atribuído)"}}    
+                    </span>
+                </div>
+                <span class="badge bg-light text-dark fw-light" data-bs-toggle="tooltip" data-bs-placement="top" title="Demandante: {{row.demandante?.nome || 'Desconhecido'}}">
+                    <i class="bi bi-cursor"></i>
+                    {{util.apelidoOuNome(row.demandante, true) || "Desconhecido"}}
+                </span>
+            </ng-template>
+        </column>
+        <column [titleTemplate]="titleTempos" [template]="columnTempos">
+            <ng-template let-header="header" #titleTempos>
+                Tempos
+                <order by="data_distribuicao" [header]="header">Distribuição</order><br>
+                <order by="prazo_entrega" [header]="header">Prazo</order>
+                <order by="data_entrega" [header]="header">Entrega</order>
+            </ng-template>
+            <ng-template let-row="row" #columnTempos>
+                <div class="one-per-line">
+                    <span *ngFor="let tempo of temposDemanda(row)" [attr.role]="tempo.click ? 'button' : undefined" [class]="tempo.class" data-bs-toggle="tooltip" data-bs-placement="top" [attr.title]="tempo.title" (click)="onTempoClick(tempo)">
+                        <i [class]="tempo.icon"></i>
+                        {{tempo.text}}    
+                    </span>
+                </div>
+            </ng-template>
+        </column>
+        <column [title]="'Etiquetas\nChecklist'" [editTemplate]="selectable ? undefined : columnEtiquetasChecklistEdit" [template]="columnEtiquetasChecklist" [edit]="selectable ? undefined : onColumnEtiquetasChecklistEdit.bind(this)" [save]="selectable ? undefined : onColumnEtiquetasChecklistSave.bind(this)">
+            <ng-template let-row="row" #columnEtiquetasChecklist>
+                <span *ngFor="let etiqueta of row.etiquetas" class="badge me-1" role="button" [style]="getEtiquetaStyle(etiqueta)" (click)="onEtiquetaClick(etiqueta)">
+                    <i [class]="etiqueta.icon"></i>
+                    {{etiqueta.value}}    
+                </span>
+                <separator *ngIf="row.checklist?.length" small title="Checklist"></separator>
+                <table *ngIf="row.checklist?.length">
+                    <tr *ngFor="let check of row.checklist">
+                        <td><i *ngIf="check.checked" class="bi bi-check-circle"></i></td>
+                        <td class="micro-text fw-ligh">{{check.texto}}</td>
+                    </tr>
+                </table>
+            </ng-template>
+            <ng-template let-row="row" #columnEtiquetasChecklistEdit>
+                <input-multiselect controlName="etiquetas" [size]="12" [control]="formEdit.controls.etiquetas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
+                    <input-select [size]="12" #etiqueta controlName="etiqueta" nullable itemNull="- Selecione -" detailsButton detailsButtonIcon="bi bi-tools" (details)="onEtiquetaConfigClick()" [control]="formEdit.controls.etiqueta" [items]="etiquetas"></input-select>
+                </input-multiselect>
+                <separator *ngIf="row.checklist?.length" small title="Checklist"></separator>
+                <table *ngIf="row.checklist?.length">
+                    <tr *ngFor="let check of checklist; let i = index">
+                        <td>
+                            <input-switch [size]="12" scale="small" [source]="checklist" [path]="i + '.checked'"></input-switch>
+                        </td>
+                        <td class="micro-text fw-ligh">{{check.texto}}</td>
+                    </tr>
+                </table>
+            </ng-template>
+        </column>
+        <!--column title="Etiquetas" [editTemplate]="columnEtiquetasEdit" [template]="columnEtiquetas" [edit]="onColumnEtiquetasEdit.bind(this)" [save]="onColumnEtiquetasSave.bind(this)">
+            <ng-template let-row="row" #columnEtiquetas>
+                <span *ngFor="let etiqueta of row.etiquetas" class="badge me-1" [style]="getEtiquetaStyle(etiqueta)">
+                    <i [class]="etiqueta.icon"></i>
+                    {{etiqueta.value}}    
+                </span>
+            </ng-template>
+            <ng-template let-row="row" #columnEtiquetasEdit>
+                <input-multiselect controlName="etiquetas" [size]="12" [control]="formEdit.controls.etiquetas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
+                    <input-select [size]="12" #etiqueta controlName="etiqueta" [control]="formEdit.controls.etiqueta" [items]="etiquetas"></input-select>
+                </input-multiselect>
+            </ng-template>
+        </column>
+        <column title="Checklist" [editTemplate]="columnChecklistEdit" [template]="columnChecklist" [edit]="onColumnChecklistEdit.bind(this)" [save]="onColumnChecklistSave.bind(this)">
+            <ng-template let-row="row" #columnChecklist>
+                <table>
+                    <tr *ngFor="let check of row.checklist">
+                        <td><i *ngIf="check.checked" class="bi bi-check-circle"></i></td>
+                        <td class="micro-text fw-ligh">{{check.texto}}</td>
+                    </tr>
+                </table>
+            </ng-template>
+            <ng-template let-row="row" #columnChecklistEdit>
+                <table>
+                    <tr *ngFor="let check of checklist; let i = index">
+                        <td>
+                            <input-switch [size]="12" scale="small" [source]="checklist" [path]="i + '.checked'"></input-switch>
+                        </td>
+                        <td class="micro-text fw-ligh">{{check.texto}}</td>
+                    </tr>
+                </table>
+            </ng-template>
+        </column//-->
+        <column [title]="'Atividade\nAssunto'" [template]="columnTitulo">
+            <ng-template let-row="row" #columnTitulo>
+                <small *ngIf="row.atividade" class="demanda-atividade"><strong>{{row.atividade.nome || ""}}</strong><br></small>
+                <span class="micro-text fw-ligh demanda-assunto">{{row.assunto}}</span>
+                <separator title="Comentários" small [button]="!selectable ? addComentarioButton : undefined" (buttonClick)="addComentarioClick(row)"></separator>
+                <span *ngFor="let comentario of row.comentarios" #badge class="badge bg-light text-dark comentario-badge" role="button" (click)="comentarioClick(badge)" data-expanded="false" data-bs-toggle="tooltip" data-bs-placement="top" [title]="lookup.getValue(lookup.COMENTARIO_TIPO, comentario.tipo)">
+                    {{"• ".repeat(comentario.path?.includes("/") ? comentario.path.split("/").length-1 : 0)}}
+                    <i [class]="'me-1 ' + lookup.getIcon(lookup.COMENTARIO_TIPO, comentario.tipo)"></i>
+                    <span class="comentario-title">
+                        <strong>{{util.shortName(util.apelidoOuNome(comentario.usuario)!)}}</strong>
+                        • {{util.getDateTimeFormatted(comentario.data_hora)}}<br>
+                    </span>
+                    <span class="comentario-text">
+                        {{comentario.texto}}
+                    </span>
+                </span>
+            </ng-template>
+        </column>
+        <column *ngIf="!selectable" type="options" [onEdit]="edit" [onDelete]="delete" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

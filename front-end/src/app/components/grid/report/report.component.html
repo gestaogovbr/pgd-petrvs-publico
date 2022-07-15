@@ -1,0 +1,31 @@
+<ng-content></ng-content>
+<table class="export-excel-table" #tableExportExcel>
+    <thead>
+        <tr>
+            <td [attr.colspan]="reportColumns.length-1">
+                {{title}}
+            </td>
+            <td>
+                Data e Hora: {{dataTime}}
+            </td>
+        </tr>
+        <tr *ngFor="let head of headers">
+            <td [attr.colspan]="reportColumns.length">{{head}}</td>
+        </tr>
+        <tr>
+            <td [attr.colspan]="reportColumns.length">&nbsp;</td>
+        </tr>
+        <tr>
+            <th *ngFor="let column of reportColumns">
+                <column-header [column]="column" [grid]="grid"></column-header>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let row of list">
+            <td *ngFor="let column of reportColumns">
+                <column-row [column]="column" [row]="row" [grid]="grid"></column-row>
+            </td>
+        </tr>
+    </tbody>
+</table>

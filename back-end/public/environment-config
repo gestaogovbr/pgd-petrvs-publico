@@ -1,0 +1,4 @@
+/* 
+Arquivo criado para evitar erro de carregamento da url environment-config 
+quando acessado diretamente pelo servidor do Angular
+*/

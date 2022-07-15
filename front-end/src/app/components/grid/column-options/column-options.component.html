@@ -1,0 +1,35 @@
+<!-- Modo display -->
+<div *ngIf="!isRowEditing" class="btn-group" [class.invisible]="grid?.editing" role="group">
+    <button *ngIf="isUpDownButtons" type="button" class="btn btn-outline-secondary" (click)="onMoveClick(true)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mover registro para cima">
+        <i class="bi bi-arrow-up"></i>
+    </button>
+    <button *ngIf="isUpDownButtons" type="button" class="btn btn-outline-secondary" (click)="onMoveClick(false)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mover registro para baixo">
+        <i class="bi bi-arrow-down"></i>
+    </button>
+    <button *ngFor="let btn of allButtons" type="button" [class]="'btn ' + (btn.color || 'btn-outline-primary')" (click)="onButtonClick(btn)" data-bs-toggle="tooltip" data-bs-placement="top" title="{{btn.hint || btn.label || ''}}">
+        <i *ngIf="btn.icon?.length" [class]="btn.icon"></i>
+    </button>
+    <div *ngIf="allOptions.length" class="btn-group" role="group">
+        <button [id]="'btnToolbarOptions' + randomId" #optionButton type="button" class="btn btn-outline-secondary dropdown-toggle" (click)="onOptionsClick()" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-three-dots"></i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" [attr.aria-labelledby]="'btnToolbarOptions' + randomId">
+            <li *ngFor="let btn of optionsList">
+                <hr *ngIf="btn.divider" class="dropdown-divider">
+                <a *ngIf="!btn.divider" class="dropdown-item" role="button" (click)="onButtonClick(btn)">
+                    <i *ngIf="btn.icon?.length" [class]="btn.icon"></i>
+                    {{btn.label || ""}}
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+<!-- Modo editando -->
+<div *ngIf="grid?.editing && isRowEditing" class="btn-group" role="group">
+    <button type="button" class="btn btn-outline-primary" (click)="onSaveClick()">
+        <i class="bi bi-check-circle"></i>
+    </button>
+    <button type="button" class="btn btn-outline-danger" (click)="onCancelClick()">
+        <i class="bi bi-dash-circle"></i>
+    </button>
+</div>

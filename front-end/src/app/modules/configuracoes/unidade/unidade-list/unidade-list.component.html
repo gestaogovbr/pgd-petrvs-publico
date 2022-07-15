@@ -1,0 +1,35 @@
+<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>
+<grid [dao]="dao" [add]="add" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+    [selectable]="selectable" (select)="onSelect($event)"
+    [hasAdd]="auth.hasPermissionTo('MOD_UND_INCL')"
+    [hasEdit]="auth.hasPermissionTo('MOD_UND_EDT')">
+    <toolbar *ngIf="!selectable"></toolbar>
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-search #entidade [size]="4" label="Entidade" controlName="entidade_id" [control]="filter!.controls.entidade_id" [dao]="entidadeDao" [selectRoute]="{route: ['configuracoes', 'entidade']}"></input-search>
+            <input-text [size]="8" label="Nome" controlName="nome" [control]="filter!.controls.nome" placeholder="Nome ou sigla..."></input-text>
+            <!--input-search [size]="12" label="Unidade" controlName="unidade_id"
+                [control]="filter!.controls.unidade_id" placeholder="Unidade..." [dao]="dao"></input-search/-->
+        </div>
+    </filter>
+    <columns>
+        <column title="Sigla" field="sigla"></column>
+        <column title="Nome" [template]="columnNome" orderBy="nome">
+            <ng-template let-row="row" #columnNome>
+                <span class="d-block">{{row.nome}}</span>
+                <span *ngIf="row.unidade" class="badge bg-light text-dark">
+                    <i class="bi bi-arrow-return-right"></i>
+                    {{row.unidade.sigla}}    
+                </span>
+            </ng-template>
+        </column>
+        <column title="Código" field="codigo"></column>
+        <column title="Cidade" [template]="columnCidade">
+            <ng-template let-row="row" #columnCidade>
+                <span>{{row.cidade.nome+"/"+row.cidade.uf}}</span>
+            </ng-template>
+        </column>
+        <column *ngIf="!selectable" type="options" [onEdit]="edit" [options]="options"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

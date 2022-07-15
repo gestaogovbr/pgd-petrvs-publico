@@ -1,0 +1,94 @@
+[Instalação do MySQL]
+
+sudo yum update
+sudo wget https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm
+sudo rpm -Uvh mysql80-community-release-el7-3.noarch.rpm
+sudo yum install mysql-server
+sudo systemctl start mysqld
+[OPICIONAL] sudo systemctl status mysqld
+cd /var/log
+sudo chmod o+rwx mysql
+cd mysql
+sudo grep 'password' mysqld.log
+cd ..
+sudo chmod o-rwx mysql
+[OBS.: Verificar se a senha foi gerada em branco, caso não, utilizar a senha gerada]
+mysql -uroot -p
+[OBS.: Dar ENTER para passar a senha em branco, ou colocar a senha anotada]
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'SENHA';
+CREATE DATABASE prfpetrvs;
+CREATE USER 'prfpetrvs'@'localhost' IDENTIFIED BY 'SENHA';
+CREATE USER 'prfpetrvs'@'%' IDENTIFIED BY 'SENHA';
+GRANT ALL PRIVILEGES ON prfpetrvs.* TO 'prfpetrvs'@'localhost';
+GRANT ALL PRIVILEGES ON prfpetrvs.* TO 'prfpetrvs'@'%';
+CREATE USER 'bipetrvs'@'localhost' IDENTIFIED BY 'SENHA';
+CREATE USER 'bipetrvs'@'%' IDENTIFIED BY 'SENHA';
+GRANT SELECT, SHOW VIEW ON prfpetrvs.* TO 'bipetrvs'@'localhost';
+GRANT SELECT, SHOW VIEW ON prfpetrvs.* TO 'bipetrvs'@'%';
+exit
+
+[Instalação do Apache]
+
+sudo yum update httpd
+sudo yum install httpd
+sudo systemctl start httpd
+[OPICIONAL] sudo systemctl status httpd
+sudo setsebool -P httpd_can_network_connect 1
+
+setenforce 0
+
+[Instalação do PHP]
+
+sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-8.rpm
+[OPICIONAL] sudo dnf module list php
+sudo dnf module enable php:remi-8.0 -y
+sudo dnf install php php-cli php-common php-opcache php-gd php-curl php-mysql
+==> ficou assim "sudo dnf install --skip-broken php php-cli php-common php-opcache php-gd php-curl php-mysql"
+sudo yum install php-zip wget unzip
+
+[Instalação do Composer]
+
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+[## sem PRIVILEGIOS] php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+
+[Instalação do GIT]
+
+sudo yum install git
+sudo git config --global http.sslVerify "false"
+
+[Comando adicionais]
+cd /var/www
+sudo git clone https://github.com/Petrvs-App/back-end.git
+cd back-end
+sudo php /usr/local/bin/composer install
+cd /etc/httpd/conf
+sudo vi httpd.conf
+[configurar o arquivos com as linhas] {
+	DocumentRoot "/var/www/back-end/public"
+	Timeout 600
+	<Directory "/var/www/back-end/public">
+		...
+	 	AllowOverride All
+	    Order allow,deny
+	    allow from all	
+            RewriteEngine on
+            RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK)
+            RewriteRule .* – [F]
+}
+sudo systemctl restart httpd
+cd /var/www/back-end
+[copiar aquivo .env aqui]
+php artisan migrate
+php artisan db:seed
+sudo chown -R apache:apache storage
+sudo chmod -R g+w storage
+sudo semanage fcontext -a -t httpd_sys_rw_content_t /var/www/back-end/storage
+sudo restorecon -v /var/www/back-end/storage
+chcon -Rv --type=httpd_sys_rw_content_t /var/www/back-end/storage
+
+[Alterar configuração no php.ini]
+max_execution_time = 1800
+max_input_time = 1800
+

@@ -1,0 +1,10 @@
+<!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
+    <div class="row">
+        <input-text [size]="12" label="Título" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome"></input-text>
+    </div>
+    <div class="row">
+        <input-select [size]="6" label="Ícone" icon="fas fa-sign-out-alt" controlName="icone" [control]="form!.controls.icone" [items]="lookup.ICONES"></input-select>
+        <input-color [size]="6" label="Cor" icon="bi bi-palette" controlName="cor" [control]="form!.controls.cor"></input-color>
+    </div>
+</editable-form>

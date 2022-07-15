@@ -1,0 +1,27 @@
+<!-- Modo display -->
+<ng-container *ngIf="!isRowEditing && (!column.editing || !isEditing) && column.template" [ngTemplateOutlet]="column.template" [ngTemplateOutletContext]="{row: row, grid: grid}"></ng-container>
+<ng-container *ngIf="!isRowEditing && (!column.editing || !isEditing) && !column.template" [class]="getClass()">
+    <i *ngIf="hasIcon()" [class]="getIcon()"></i>{{getColumnText()}}
+</ng-container>
+<!-- Modo editando -->
+<ng-container *ngIf="(isRowEditing || (column.editing && isEditing)) && column.editTemplate" [ngTemplateOutlet]="column.editTemplate" [ngTemplateOutletContext]="{row: row, grid: grid}"></ng-container>
+<ng-container *ngIf="(isRowEditing || (column.editing && isEditing)) && !column.editTemplate">
+    <input-search *ngIf="isType('search')" [size]="12" [controlName]="column.field" [control]="control" [dao]="column.dao" (change)="onChange($event)"></input-search>
+    <input-display *ngIf="isType('display')" [size]="12" [controlName]="column.field" [control]="control"></input-display>
+    <input-text *ngIf="inType(['text', 'number'])" [numbers]="isType('number') ? '' : undefined" [size]="12" [controlName]="column.field" [stepValue]="column.stepValue" [control]="control"  (change)="onChange($event)"></input-text>
+    <input-datetime noIcon *ngIf="inType(['datetime', 'date', 'time'])" [date]="isType('date') ? '' : undefined" [time]="isType('time') ? '' : undefined" [size]="12" [controlName]="column.field" [control]="control"  (change)="onChange($event)"></input-datetime>
+    <input-radio *ngIf="isType('radio')" [size]="12" [controlName]="column.field" [control]="control" [items]="column.items"></input-radio>
+    <input-select *ngIf="isType('select')" [size]="12" [controlName]="column.field" [control]="control" [items]="column.items"></input-select>
+    <input-switch *ngIf="isType('switch')" [size]="12" [controlName]="column.field" [control]="control" (change)="onChange($event)"></input-switch>
+    <input-timer *ngIf="isType('timer')" [size]="12" [controlName]="column.field" [control]="control" [onlyHours]="column.onlyHours" [onlyDays]="column.onlyDays" (change)="onChange($event)"></input-timer>
+</ng-container>
+<div *ngIf="column.isColumnEditable" class="grid-column-editable-options" [class.grid-column-editing]="column.editing">
+    <i *ngIf="!column.editing; else columnEditing" role="button" class="bi bi-pencil-square" (click)="onEdit($event)"></i>
+    <ng-template #columnEditing>
+        <i *ngIf="isEditing" class="bi bi-check-square" role="button" (click)="onSave($event)"></i><br>
+        <i *ngIf="isEditing" class="bi bi-x-square" role="button" (click)="onCancel($event)"></i>
+    </ng-template>
+</div>
+<div *ngIf="column.isColumnEditable && isEditing && saving" class="text-center d-flex align-items-center justify-content-center grid-column-saving">
+    <div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden"></span></div>
+</div>

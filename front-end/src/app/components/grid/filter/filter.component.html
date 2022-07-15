@@ -1,0 +1,15 @@
+<div *ngIf="!isHidden" class="container" [class.d-none]="collapsed">
+    <form [formGroup]="form!" class="mt-2">
+        <ng-content></ng-content>
+    </form>
+    <div class="d-flex flex-row-reverse mt-2">
+        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+            <button type="button" class="btn btn-outline-success" (click)="onButtonFilterClick()">
+                <i class="bi bi-filter-circle"></i> Filtrar
+            </button>
+            <button type="button" class="btn btn-outline-danger" (click)="onButtonClearClick()">
+                <i class="bi bi-x-circle"></i> Limpar
+            </button>
+        </div>
+    </div>
+</div>

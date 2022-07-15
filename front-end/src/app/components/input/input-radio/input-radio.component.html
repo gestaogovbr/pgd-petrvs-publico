@@ -1,0 +1,8 @@
+<input-container [labelPosition]="labelPosition" [controlName]="controlName" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold" [isRadio]="true">
+    <div class="btn-group full-container-button-group" role="group">
+        <ng-container *ngFor="let item of items">
+            <input *ngIf="viewInit" type="radio" class="btn-check" [id]="controlName + item.key" [attr.name]="controlName" autocomplete="off" [attr.value]="item.key.toString()" (change)="onRadioChange($event)" [attr.checked]="isChecked(item)">
+            <label class="btn petrvs btn-outline-primary" [attr.for]="controlName + item.key" [class.label-input-invalid]="isInvalid()" [class.disabled]="isDisabled">{{item.value}}</label>
+        </ng-container>
+    </div>
+</input-container>

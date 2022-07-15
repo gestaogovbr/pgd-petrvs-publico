@@ -1,0 +1,10 @@
+<input-container [labelPosition]="labelPosition" [controlName]="controlName" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
+    <div class="input-group">
+        <select *ngIf="viewInit" class="form-control" [id]="controlName" [attr.disabled]="isDisabled ? true : undefined" [class.is-invalid]="isInvalid()" (change)="onChange($event)">
+            <option *ngFor="let item of lookup.CORES" value="{{item.key}}" [style.color]="item.color || '#000000'">{{item.value}}</option>
+            <option value="" [style.color]="value || '#000000'">Personalizado</option>
+        </select>
+        <input *ngIf="viewInit && control" class="colorpicker" type="color" [formControl]="formControl" (change)="onChange($event)">
+        <input *ngIf="viewInit && !control" class="colorpicker" type="color" [attr.value]="value" (change)="onChange($event)">
+    </div>
+</input-container>

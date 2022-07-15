@@ -1,0 +1,7 @@
+<editable-form [form]="form!" [title]="title" [buttons]="buttons">
+  <div class="row">
+    <input-search #unidade [size]="12" label="Área" icon="bi bi-diagram-3-fill" controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao"
+           [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+  </div>
+</editable-form>
+

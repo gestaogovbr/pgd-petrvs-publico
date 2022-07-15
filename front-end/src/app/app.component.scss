@@ -1,0 +1,13 @@
+.app-container {
+    text-decoration: none;
+    width: 100%;
+    height: 100%;
+}
+
+.profile-photo {
+    margin: -2px 2px -2px 2px;
+}
+
+:host ::ng-deep .export-excel-table {
+    display: none;
+}

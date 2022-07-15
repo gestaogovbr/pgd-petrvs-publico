@@ -1,0 +1,98 @@
+<!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
+<editable-form [form]="form!" [disabled]="formDisabled" [noButtons]="isTermos ? 'true' : undefined" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
+    <tabs #tabs display right [hidden]="isTermos ? 'true' : undefined" [title]="!isModal ? title : ''">
+        <tab *ngIf="!isTermos" key="DADOS" label="Dados">
+            <div class="row">
+                <input-search #programa [size]="6" label="Programa" icon="bi bi-layout-text-window-reverse" controlName="programa_id" [control]="form!.controls.programa_id" [dao]="programaDao" (select)="onProgramaSelect($event)" [selectRoute]="{route: ['cadastros', 'programa']}"></input-search>
+                <input-search #usuario [size]="6" label="Usuário" icon="bi bi-person" controlName="usuario_id" [control]="form!.controls.usuario_id" [dao]="usuarioDao" [join]="['afastamentos']" (select)="onUsuarioSelect($event)" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
+            </div>
+            <div class="row">
+                <input-datetime [size]="6" label="Início" icon="bi bi-calendar-date" controlName="data_inicio_vigencia" [control]="form!.controls.data_inicio_vigencia" (change)="onDataInicioChange($event)" labelInfo="Início da Vigência do Plano de Trabalho"></input-datetime>
+                <input-datetime [size]="6" label="Final" icon="bi bi-calendar-date" controlName="data_fim_vigencia" [control]="form!.controls.data_fim_vigencia" (change)="onDataFimChange($event)" labelInfo="Final da Vigência do Plano de Trabalho"></input-datetime>
+            </div>
+            <div class="row">
+                <input-search #unidade [size]="6" label="Unidade" icon="fab fa-unity" controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" (select)="onUnidadeSelect($event)" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+                <input-search #tipo_modalidade [size]="6" label="Modalidade" icon="bi bi-cast" controlName="tipo_modalidade_id" [control]="form!.controls.tipo_modalidade_id" [dao]="tipoModalidadeDao" (select)="onTipoModalidadeSelect($event)" [selectRoute]="{route: ['cadastros', 'tipo-modalidade']}"></input-search>
+            </div>
+            <div class="row">
+                <input-workload [size]="3" label="Carga Horária" icon="bi bi-hourglass-split" controlName="carga_horaria" [control]="form!.controls.carga_horaria" labelInfo="Carga horária DIÁRIA do usuário"></input-workload>
+                <input-timer onlyHours disabled [size]="3" label="Horas Totais" icon="bi bi-clock" controlName="tempo_total" [control]="form!.controls.tempo_total" labelInfo="Horas úteis de trabalho no período de vigência considerando a carga horária, feriados e fins de semana"></input-timer>
+                <input-timer onlyHours disabled [size]="3" label="Horas Parciais" icon="bi bi-clock" controlName="tempo_proporcional" [control]="form!.controls.tempo_proporcional" labelInfo="Total de horas menos os afastamentos."></input-timer>
+                <input-text numbers [size]="3" label="% Ganho produtividade" icon="bi bi-hourglass-split" controlName="ganho_produtividade" [control]="form!.controls.ganho_produtividade" labelInfo="Percentual de ganho de produtividade (Será descontado do tempo pactuado)"></input-text>
+            </div>
+            <separator *ngIf="horasTotais" title="Cálculos das horas totais" collapse>
+                <calendar-efemerides [efemerides]="horasTotais"></calendar-efemerides>
+            </separator>
+            <separator *ngIf="horasParciais" title="Cálculos das horas parciais" collapse>
+                <calendar-efemerides [efemerides]="horasParciais"></calendar-efemerides>
+            </separator>
+        </tab>
+        <tab *ngIf="!isTermos" key="ATIVIDADES" label="Atividades">
+            <top-alert type="warning" message="Caso a lista fique vazia, será considerado as atividades da unidade (e subordinadas)"></top-alert>
+            <div clss="row">
+                <grid #gridAtividades [control]="form!.controls.atividades" [form]="formAtividades" [add]="addAtividades.bind(this)" [load]="loadAtividades.bind(this)" [hasDelete]="true" [remove]="removeAtividades.bind(this)" [save]="saveAtividades.bind(this)" editable>
+                    <columns>
+                        <column title="Atividade" titleHint="Atividade autorizada para o plano de trabalho" [template]="columnAtividade" [editTemplate]="editAtividade">
+                            <ng-template let-row="row" #columnAtividade>
+                                <span> {{row.atividade?.nome || ""}}</span>
+                            </ng-template>
+                            <ng-template let-row="row" #editAtividade>
+                                <input-search #atividade [size]="12" controlName="atividade_id" [control]="formAtividades!.controls.atividade_id" [dao]="atividadeDao" [selectRoute]="{route: ['cadastros', 'atividade']}"></input-search>
+                            </ng-template>
+                        </column>
+                        <column type="options"></column>
+                    </columns>
+                </grid>
+            </div>
+        </tab>
+        <tab *ngIf="isTermos || !isNew" key="TERMO" label="Termo de adesão">
+            <top-alert *ngIf="!isTermos" type="warning" message="Para [INSERIR] ou [ASSINAR] termos escolha opção Termos de adesão na tela de listagem, ou utilize o Sei"></top-alert>
+            <div clss="row">
+                <grid [control]="form!.controls.documentos" #gridDocumentos [disabled]="undefined" #documentos [hasEdit]="false" [hasDelete]="false" [hasAdd]="isTermos" [add]="isTermos ? addDocumento.bind(this) : undefined" editable>
+                    <columns>
+                        <column title="Data" [template]="dataInicio">
+                            <ng-template let-row="row" #dataInicio>
+                                <span class="badge bg-light text-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Data da inclusão">
+                                    <i class="bi bi-calendar-plus"></i>
+                                    {{util.getDateTimeFormatted(row.data_inicio)}}
+                                </span>
+                                <span *ngIf="row.data_fim" class="badge bg-light text-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Data substituição">
+                                    <i class="bi bi-calendar-x"></i>
+                                    {{util.getDateTimeFormatted(row.data_fim)}}
+                                </span>
+                            </ng-template>
+                        </column>
+                        <column title="Documento Sei" [template]="documento">
+                            <ng-template let-row="row" #documento>
+                                <span *ngIf="row.numero_processo?.length" class="badge bg-light text-dark" [attr.role]="row.numero_processo?.length ? 'button' : undefined" data-bs-toggle="tooltip" data-bs-placement="top" (click)="onProcessoClick(row)" [title]="allPages.getButtonTitle(row.numero_processo, row.numero_documento)">
+                                    <i [class]="'bi ' + (row.numero_processo?.length ? 'bi bi-folder-symlink' : 'bi bi-x-lg')"></i>
+                                    {{row.numero_processo?.length ? row.numero_processo : "Não atribuído"}}
+                                    <small *ngIf="row.numero_documento?.length"><br>Sei nº {{row.numero_documento}}</small>
+                                </span>
+                            </ng-template>
+                        </column>
+                        <column title="Status" [template]="vigente">
+                            <ng-template let-row="row" #vigente>
+                                <span [class]="lookup.getColor(lookup.DOCUMENTO_STATUS, row.status)">
+                                    <i [class]="lookup.getIcon(lookup.DOCUMENTO_STATUS, row.status)"></i>
+                                    {{lookup.getValue(lookup.DOCUMENTO_STATUS, row.status)}}
+                                </span>
+                                <span *ngIf="isVigente(row)" class="badge rounded-pill bg-info text-dark">
+                                    <i class="bi bi-clipboard-check"></i>
+                                    Vigente
+                                </span>
+                                <div class="d-block">
+                                    <span *ngFor="let assinatura of row.assinaturas" class="badge rounded-pill bg-primary">
+                                        <i class="bi bi-pen"></i>
+                                        {{util.apelidoOuNome(assinatura.usuario)}}
+                                    </span>
+                                </div>
+                            </ng-template>
+                        </column>
+                        <column type="options" [dynamicButtons]="documentoDynamicButtons.bind(this)"></column>
+                    </columns>
+                </grid>
+            </div>
+        </tab>
+    </tabs>
+</editable-form>

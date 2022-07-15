@@ -1,0 +1,22 @@
+<div class="modal fade" [id]="id" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    [attr.aria-labelledby]="id + 'Label'" aria-hidden="true">
+    <div class="modal-dialog" [style.max-width.px]="modalWidth">
+        <div class="modal-content">
+            <div class="modal-header">
+                <i *ngIf="route" class="bi bi-box-arrow-up-right me-2" role="button" (click)="openNewBrowserTab()"></i>
+                <h5 class="modal-title" [id]="id + 'Label'">{{title}}</h5>
+                <button *ngIf="gb.isToolbar" type="button" class="btn-close btn-minimize" data-bs-dismiss="modal" aria-label="Minimize" (click)="minimize()"></button>
+                <button type="button" class="btn-close" [class.btn-no-left-margin]="gb.isExtension" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div *ngIf="html?.length" [innerHTML]="html"></div>
+                <ng-template #body></ng-template>
+                <ng-container *ngIf="template" [ngTemplateOutlet]="template" [ngTemplateOutletContext]="templateContext"></ng-container>
+                {{message}}
+            </div>
+            <div *ngIf="buttons.length" class="modal-footer">
+                <button *ngFor="let button of buttons" type="button" [class]="'btn ' + (button.color || 'btn-primary')" (click)="buttonClick(button)">{{button.label}}</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,18 @@
+<!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
+<grid [dao]="dao" [add]="add"  [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+    [hasAdd]="auth.hasPermissionTo('MOD_TIPO_CAP_INCL')"
+    [hasEdit]="auth.hasPermissionTo('MOD_TIPO_CAP_EDT')">
+    <toolbar></toolbar>
+    <filter [form]="filter"  [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
+        <div class="row">
+            <input-text [size]="12" label="Nome do tipo da capacidade" controlName="descricao"
+            [control]="filter!.controls.descricao" placeholder="Nome do tipo da Capacidade"></input-text>
+        </div>
+    </filter>
+    <columns>
+        <column title="Código" field="codigo"></column>
+        <column title="Descrição" field="descricao"></column>
+        <column type="options" [onEdit]="edit" [options]="options"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

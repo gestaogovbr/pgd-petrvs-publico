@@ -1,0 +1,34 @@
+.grid-group-text {
+    margin-left: -5px;
+}
+.grid-editable-options {
+    width: 100px;
+}
+.grid-no-hover, .grid-no-hover:hover {
+    background-color: var(--bs-white) !important;
+    box-shadow: inset 0 0 0 9999px var(--bs-white);
+    cursor: default;
+}
+.grid-column {
+    position: relative;
+}
+::ng-deep .grid-column:hover .grid-column-editable-options {
+    display: block;
+}
+::ng-deep .grid-column .grid-column-editing {
+    display: block !important;
+    top: calc(50% - 25px) !important;
+}
+.grid-column-editing-options {
+    padding-right: 25px !important;
+}
+.grid-list-container {
+    overflow-x: auto;
+}
+.grid-column-expanded {
+    border-bottom: 0px;
+    background-color: var(--bs-light) !important;
+}
+.grid-expanded-background {
+    background-color: var(--bs-light) !important;
+}

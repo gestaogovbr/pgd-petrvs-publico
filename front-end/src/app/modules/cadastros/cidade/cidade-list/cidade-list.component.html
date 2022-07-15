@@ -1,0 +1,21 @@
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+    [selectable]="selectable" (select)="onSelect($event)"
+    [hasAdd]="auth.hasPermissionTo('MOD_CID_INCL')"
+    [hasEdit]="auth.hasPermissionTo('MOD_CID_EDT')">
+    <toolbar *ngIf="!selectable"></toolbar>
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-text [size]="12" label="Cidade" controlName="nome"
+                [control]="filter!.controls.nome" placeholder="Nome da cidade..."></input-text>
+        </div>
+    </filter>
+    <columns>
+        <column title="Código IBGE" field="codigo_ibge"></column>
+        <column title="Nome" field="nome" orderBy="nome"></column>
+        <column title="UF" field="uf"></column>
+        <column title="Tipo" type="select" field="tipo" [items]="lookup.TIPO_CIDADE"></column>
+        <column title="Timezone" type="select" field="timezone" [items]="lookup.TIMEZONE"></column>
+        <column *ngIf="!selectable" type="options" [onEdit]="edit" [options]="options"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

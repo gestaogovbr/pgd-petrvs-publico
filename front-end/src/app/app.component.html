@@ -1,0 +1,182 @@
+<div class="petrvs">
+    <ng-template #dialogs></ng-template>
+    <nav *ngIf="auth.logged || globals.isExtension || isConfig" class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" role="button">  <!-- Logo Petrvs -->
+                <img [src]="globals.getResourcePath('assets/images/logo-24x24.png')" alt="" width="30" height="24" class="d-inline-block align-text-top">
+                PETRVS
+            </a>
+            <button *ngIf="!isConfig && !globals.isToolbar" class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                      data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div *ngIf="isMinimized" class="collapse navbar-collapse" id="navbarSupportedContent">
+                <div class="d-flex"></div>
+                <div class="btn-group" role="group" aria-label="Janelas">
+                    <div *ngFor="let popup of dialog.minimized" class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-secondary" (click)="onRestoreClick(popup)">
+                            <span class="d-inline-block text-truncate" style="max-width: 150px;">
+                                <i [class]="popup.icon || 'bi bi-window-stack'"></i>
+                                {{popup.title || "Minimizado"}}
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="!isConfig && !isMinimized" class="collapse navbar-collapse" id="navbarSupportedContent">
+                <div *ngIf="globals.isToolbar || !auth.logged" class="d-flex">
+                    <!-- spaccing para quando o menu não aparecer -->
+                </div>
+                <div *ngIf="globals.toolbarButtons?.length" class="btn-group" role="group" aria-label="Opções">
+                    <!--button *ngFor="let btn of globals.toolbarButtons" type="button" [class.disabled]="btn.running" [class]="'btn ' + (btn.color || 'btn-outline-primary')" (click)="onToolbarButtonClick(btn)" data-bs-toggle="tooltip" data-bs-placement="top" title="{{btn.hint || btn.label || ''}}">
+                        <i *ngIf="!btn.running && btn.icon?.length" [class]="btn.icon"></i>
+                        <div *ngIf="btn.running" width="25" class="spinner-border spinner-border-sm m-0" role="status">
+                            <span class="visually-hidden"></span>
+                        </div>
+                        {{btn.label || ""}}
+                    </button/-->
+                    <div *ngFor="let btn of globals.toolbarButtons" class="btn-group" role="group">
+                        <button type="button" [attr.id]="(btn.onClick ? '_' : '') + buttonId(btn)" [class.disabled]="isButtonRunning(btn)" [class]="'btn ' + (btn.color || 'btn-outline-primary')" [class.dropdown-toggle]="btn.items && !btn.onClick" [attr.data-bs-toggle]="btn.items && !btn.onClick ? 'dropdown' : undefined" aria-expanded="false" (click)="onToolbarButtonClick(btn)">
+                            <i *ngIf="btn.icon?.length" [class]="btn.icon" data-bs-toggle="tooltip" data-bs-placement="top" title="{{btn.hint || btn.label || ''}}"></i> {{btn.label || ""}}
+                        </button>
+                        <button *ngIf="btn.items?.length && btn.onClick" type="button" [attr.id]="buttonId(btn)" [class.disabled]="isButtonRunning(btn)" [class]="'btn dropdown-toggle dropdown-toggle-split ' + (btn.color || 'btn-outline-primary')" data-bs-toggle="dropdown" aria-expanded="false" data-bs-reference="parent">
+                            <span class="visually-hidden">Toggle Dropdown</span>
+                        </button>
+                        <ul *ngIf="btn.items" class="dropdown-menu" [class.dropdown-menu-end]="btn.onClick" [attr.aria-labelledby]="buttonId(btn)">
+                            <li *ngFor="let option of btn.items">
+                                <a class="dropdown-item" role="button" (click)="onToolbarButtonClick(option)"><i *ngIf="option.icon?.length" [class]="option.icon"></i> {{option.label || ""}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!--button class="btn btn-outline-success me-2" type="button">Main button</button/ -->
+                <ul *ngIf="!globals.isToolbar && auth.logged" class="navbar-nav me-auto mb-2 mb-lg-0"> <!-- Lista do Menu Principal -->
+                    <li class="nav-item">
+                        <a [class]="menuItemClass('nav-link', ['home'])" aria-current="page" role="button" (click)="go.navigate({route: ['home']})">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a [hidden]="!auth.hasPermissionTo('MENU_CAD_ACESSO') ? 'true' : undefined" [class]="menuItemClass('nav-link dropdown-toggle', ['cadastros'])" role="button" id="navbarDropdownCadastros" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Cadastros
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownCadastros">
+                          <li><a [hidden]="!auth.hasPermissionTo('MOD_ATV') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'atividade'])" role="button" (click)="go.navigate({route: ['cadastros', 'atividade']}, {root: true})"><i class="bi bi-activity"></i> {{lex.noun("Atividade", true)}}</a></li>
+                          <li><a [hidden]="!auth.hasPermissionTo('MOD_AFT') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'afastamento'])" role="button" (click)="go.navigate({route: ['cadastros', 'afastamento']}, {root: true})"><i class="bi bi-toggle-off"></i> {{lex.noun("Afastamento", true)}}</a></li>
+                          <li><a [hidden]="!auth.hasPermissionTo('MOD_CID') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'cidade'])" role="button" (click)="go.navigate({route: ['cadastros', 'cidade']}, {root: true})"><i class="bi bi-building"></i> Cidades</a></li>
+                          <li><a [hidden]="!auth.hasPermissionTo('MOD_FER') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'feriado'])" role="button" (click)="go.navigate({route: ['cadastros', 'feriado']}, {root: true})"><i class="bi bi-emoji-sunglasses"></i> Feriados</a></li>
+                          <li><a [hidden]="!auth.hasPermissionTo('MOD_PRGT') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'programa'])" role="button" (click)="go.navigate({route: ['cadastros', 'programa']}, {root: true})"><i class="bi bi-graph-up-arrow"></i> {{lex.noun("Programa de gestão", true)}}</a></li>
+                          <li><a [hidden]="!auth.hasPermissionTo('MOD_DMD') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'tarefa'])" role="button" (click)="go.navigate({route: ['cadastros', 'tarefa']}, {root: true})"><i class="bi bi-boxes"></i> {{lex.noun("Tarefa", true)}}</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a [hidden]="!auth.hasPermissionTo('MOD_TIPO_ATV') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'tipo-atividade'])" role="button" (click)="go.navigate({route: ['cadastros', 'tipo-atividade']}, {root: true})"><i class="bi bi-check-all"></i> Tipos de {{lex.noun("Atividade", true)}}</a></li>
+                            <li><a [hidden]="!auth.hasPermissionTo('MOD_TIPO_AVAL') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'tipo-avaliacao'])" role="button" (click)="go.navigate({route: ['cadastros', 'tipo-avaliacao']}, {root: true})"><i class="bi bi-question-square"></i> Tipos de {{lex.noun("Avaliação",true)}}</a></li>
+                            <li><a [hidden]="!auth.hasPermissionTo('MOD_TIPO_DOC') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'tipo-documento'])" role="button" (click)="go.navigate({route: ['cadastros', 'tipo-documento']}, {root: true})"><i class="bi bi-files"></i> Tipos de {{lex.noun("Documento", true)}}</a></li>
+                            <li><a [hidden]="!auth.hasPermissionTo('MOD_TIPO_JUST') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'tipo-justificativa'])" role="button" (click)="go.navigate({route: ['cadastros', 'tipo-justificativa']}, {root: true})"><i class="bi bi-window-stack"></i> Tipos de {{lex.noun("Justificativa", true)}}</a></li>
+                            <li><a [hidden]="!auth.hasPermissionTo('MOD_TIPO_MDL') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'tipo-modalidade'])" role="button" (click)="go.navigate({route: ['cadastros', 'tipo-modalidade']}, {root: true})"><i class="bi bi-bar-chart-steps"></i> Tipos de {{lex.noun("Modalidade", true)}}</a></li>
+                            <li><a [hidden]="!auth.hasPermissionTo('MOD_TIPO_MTV_AFT') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'tipo-motivo-afastamento'])" role="button" (click)="go.navigate({route: ['cadastros', 'tipo-motivo-afastamento']}, {root: true})"><i class="bi bi-list-ol"></i> Tipos de {{lex.noun("Motivo de afastamento", true)}}</a></li>
+                            <li><a [hidden]="!auth.hasPermissionTo('MOD_TIPO_PROC') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'tipo-processo'])" role="button" (click)="go.navigate({route: ['cadastros', 'tipo-processo']}, {root: true})"><i class="bi bi-folder-check"></i> Tipos de {{lex.noun("Processo", true)}}</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a [hidden]="!auth.hasPermissionTo('MENU_GESTAO_ACESSO') ? 'true' : undefined" [class]="menuItemClass('nav-link dropdown-toggle', ['gestao'])" role="button" id="navbarDropdownGestao"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Gestão
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownGestao">
+                            <li><a [class]="menuItemClass('dropdown-item', ['gestao', 'demanda'])" role="button" (click)="go.navigate({route: ['gestao', 'demanda']}, {root: true})"><i class="bi bi-activity"></i> {{lex.noun("Demanda",true)}}</a></li>
+                            <li><a [hidden]="!auth.hasPermissionTo('MOD_PTR') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['gestao', 'plano'])" role="button" (click)="go.navigate({route: ['gestao', 'plano']}, {root: true})"><i class="bi bi-list-check"></i> {{lex.noun("Plano de trabalho",true)}}</a></li>
+                            <li><a [class]="menuItemClass('dropdown-item', ['gestao', 'projeto'])" role="button"><i class="bi bi-diagram-2"></i> {{lex.noun("Projeto",true)}}</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                      <a [class]="menuItemClass('nav-link dropdown-toggle', ['relatorios'])" role="button" id="navbarDropdownRelatorios"
+                          data-bs-toggle="dropdown" aria-expanded="false">
+                          Relatórios
+                      </a>
+                      <ul class="dropdown-menu" aria-labelledby="navbarDropdownRelatorios">
+                        <li>
+                          <a [class]="menuItemClass('dropdown-item', ['relatorios', 'forca-de-trabalho', 'servidor'])" role="button" (click)="go.navigate({route: ['relatorios', 'forca-de-trabalho', 'servidor']}, {root: true})"><i class="bi bi-file-person"></i> Força de Trabalho - Servidor</a>
+                        </li>
+                        <li>
+                          <a [class]="menuItemClass('dropdown-item', ['relatorios', 'forca-de-trabalho', 'area'])" role="button" (click)="go.navigate({route: ['relatorios', 'forca-de-trabalho', 'area']}, {root: true})"><i class="bi bi-diagram-3-fill"></i> Força de Trabalho - Área</a>
+                        </li>
+<!--                           <li class="nav-item dropdown dropend">
+                            <a [class]="menuItemClass('nav-link dropdown-toggle', ['relatorios', 'produtividade'])" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Força de Trabalho
+                            </a>
+                            <ul class="dropdown-menu">
+                              <li>
+                                <a [class]="menuItemClass('dropdown-item', ['relatorios', 'produtividade'])" role="button" (click)="go.navigate({route: ['relatorios', 'produtividade']}, {root: true})"><i class="bi bi-graph-up-arrow"></i> Produtividade</a>
+                              </li>
+                            </ul>
+                          </li> -->
+                      </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a [hidden]="!auth.hasPermissionTo('MENU_CONFIG_ACESSO') ? 'true' : undefined" [class]="menuItemClass('nav-link dropdown-toggle', ['configuracoes'])" role="button" id="navbarDropdownConfiguracoes" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Configurações
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownConfiguracoes">
+                            <li><a [class]="menuItemClass('dropdown-item', ['configuracoes', 'preferencia'])" role="button" (click)="go.navigate({route: ['configuracoes', 'preferencia']}, {root: true, modal: true})"><i class="bi bi-gear"></i> Preferências</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a [hidden]="!auth.hasPermissionTo('MOD_CFG_ENTD') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['configuracoes', 'entidade'])" role="button" (click)="go.navigate({route: ['configuracoes', 'entidade']}, {root: true})"><i class="bi bi-bookmark-heart"></i> {{lex.noun("Entidade",true)}}</a></li>
+                            <li><a [hidden]="!auth.hasPermissionTo('MOD_CFG_UND') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['configuracoes', 'unidade'])" role="button" (click)="go.navigate({route: ['configuracoes', 'unidade']}, {root: true})"><i class="fa-unity fab"></i> {{lex.noun("Unidade",true)}}</a></li>
+                            <li><a [hidden]="!auth.hasPermissionTo('MOD_CFG_USER') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['configuracoes', 'usuario'])" role="button" (click)="go.navigate({route: ['configuracoes', 'usuario']}, {root: true})"><i class="bi bi-people"></i> {{lex.noun("Usuário",true)}}</a></li>
+                            <li><a [hidden]="!auth.hasPermissionTo('MOD_CFG_PERFS') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['configuracoes', 'perfil'])" role="button" (click)="go.navigate({route: ['configuracoes', 'perfil']}, {root: true})"><i class="bi bi-fingerprint"></i> Perfis</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a [class]="menuItemClass('dropdown-item', ['configuracoes', 'sobre'])" role="button">Sobre</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <button *ngIf="globals.SUPPORT_URL" type="button" class="btn btn-outline-warning ms-2 d-none d-md-block" (click)="go.openNewTab(globals.SUPPORT_URL)" data-bs-toggle="tooltip" data-bs-placement="top" title="Suporte Petrvs">
+                    <i class="bi bi-headset"></i>
+                </button>
+                <div *ngIf="auth.logging" width="25" class="spinner-border spinner-border-sm m-0 ms-2" role="status">
+                    <span class="visually-hidden"></span>
+                </div>
+                <form *ngIf="!auth.logging" class="d-flex m-0"> <!-- Identificação do Servidor -->
+                    <div *ngIf="auth.logged" class="input-group mx-3">
+                        <span class="input-group-text" id="basic-addon1"> <!-- Hora da Unidade -->
+                            <i *ngIf="auth.unidade" class="bi bi-clock me-2"></i>
+                            <div *ngIf="unidades?.length && !auth.unidade" class="spinner-border spinner-border-sm  me-2" role="status">
+                                <span class="visually-hidden"></span>
+                            </div>
+                            {{unidadeHora}}
+                        </span>
+                        <input *ngIf="unidades?.length == 0" type="text" class="form-control" value="- Sem unidade -" disabled>
+                        <select *ngIf="unidades?.length" class="form-select" (change)="selecionaUnidade($event)">
+                            <option *ngFor="let unidade of unidades" [attr.value]="unidade.id" [attr.selected]="unidade.id == auth.unidade?.id ? 'true' : undefined">{{unidade.sigla}}</option>
+                        </select>
+                        <button class="btn btn-outline-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{usuarioNome}}
+                            <img [src]="usuarioFoto" class="rounded-circle profile-photo" onerror="this.src='./assets/images/profile.png'" width="25" height="25">
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                          <li><a class="dropdown-item" role="button" (click)="go.navigate({route: ['configuracoes', 'usuario', auth.usuario!.id, 'edit']}, {root: true, modal: true})"><i class="bi bi-person-circle"></i> Perfil</a></li>
+                          <li><a class="dropdown-item" role="button" (click)="go.navigate({route: ['configuracoes', 'preferencia', 'usuario', auth.usuario!.id]}, {root: true, modal: true})"><i class="bi bi-gear"></i> Preferências</a></li>
+                          <li><hr class="dropdown-divider"></li>
+                          <li><a class="dropdown-item" role="button" (click)="logout()"><i class="bi bi-arrow-bar-right"></i> Sair</a></li>
+                        </ul>
+                    </div>
+                    <button type="button" *ngIf="globals.isToolbar && !auth.logged && globals.requireLogged" class="btn btn-outline-danger" role="button" (click)="toolbarLogin()">Login</button>
+                    <button *ngIf="globals.isExtension && auth.logged && !globals.isToolbar" class="btn btn-outline-secondary" type="button" (click)="onCollapseContainerClick()">
+                        <i [class]="'bi ' + (collapseContainer ? 'bi bi-plus' : 'bi bi-dash')" data-bs-toggle="tooltip" data-bs-placement="top" [title]="collapseContainer ? 'Expandir Petrvs' : 'Contrair Petrvs'"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <div *ngIf="error?.length" class="alert alert-danger mt-2" role="alert">
+        {{error}}
+    </div>
+    <div class="container app-container mt-2" [class.d-none]="globals.isToolbar || collapseContainer">
+        <router-outlet></router-outlet>
+    </div>
+</div>

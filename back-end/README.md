@@ -1,0 +1,9 @@
+- Antes de iniciar o desenvolvimento, dar obrigatoriamente um pull no back e front (para cada funcionalidade implementada, cada ticket um commit)
+- build no front da aplicação (transpilar o front-end para a pasta public do back-end)
+- commit no back e front (obrigatório para permitir o pull)
+- pull no back e front
+- resolver os conflitos no back e front, resolver os .maps com HEAD, e quando tiver conflito, perguntar a pessoa do arquivo que deu conflito
+- se for pra gerar uma nova versão precisa alterar o arquivo app.json na propriedade "version"
+- npm run build-prf
+- commmit no back-end e no front-end
+- push no back-end e no front-end

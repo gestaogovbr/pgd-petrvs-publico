@@ -1,0 +1,19 @@
+<editable-form [form]="form!" [disabled]="formDisabled" (submit)="onSaveData()" (cancel)="onCancel()">
+    <div class="row">
+        <input-datetime [size]="6" [label]="lex.noun('Data de distribuição')" controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" disabled labelInfo="Data de cadastro da demanda"></input-datetime>
+        <input-datetime [size]="6" [label]="lex.noun('Prazo de entrega')" controlName="prazo_entrega" [control]="form!.controls.prazo_entrega" disabled labelInfo="Data estipulada para entrega da demanda"></input-datetime>
+    </div>
+    <hr>
+    <div class="row">
+        <input-search label="Responsável" #usuario [size]="12" controlName="usuario_id" [control]="form!.controls.usuario_id" [dao]="usuarioDao" [join]="['planos.tipo_modalidade:id,nome']" [selectRoute]="{route: ['configuracoes', 'usuario']}" labelInfo="Responsável por executar a demanda" (select)="onUsuarioSelect($event)"></input-search>
+    </div>
+    <div class="row">
+        <input-select label="Plano de trabalho" [size]="8" controlName="plano_id" #plano [control]="form!.controls.plano_id" [items]="planos" (change)="onPlanoChange($event)" labelInfo="Plano de trabalho"></input-select>
+        <input-timer [onlyDays]="prazoEmDias" [onlyHours]="prazoEmHoras" [size]="4" label="Planejado" #planejado disabled controlName="tempo_planejado" [control]="form!.controls.tempo_planejado" labelInfo="Diferença entre data_distribuicao e prazo_entrega em horas (úteis ou corridas, configurada na unidade)"></input-timer>
+    </div>
+    <hr>
+    <div class="row">
+        <input-datetime [size]="6" label="Inicio" controlName="data_inicio" [control]="form!.controls.data_inicio" labelInfo="Data em que o usuário iniciou a atividade"></input-datetime>
+        <input-switch label="Suspender as demais" [size]="6" controlName="suspender" [control]="form!.controls.suspender" [disabled]="!iniciadas.length ? '' : undefined" [labelInfo]="labelInfoSuspender"></input-switch>
+    </div>
+</editable-form>

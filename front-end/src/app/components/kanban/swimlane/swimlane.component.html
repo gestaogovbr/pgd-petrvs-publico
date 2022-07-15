@@ -1,0 +1,23 @@
+<div *ngIf="!isPlaceholder" #swimlane [class]="'container-sm swimlane-container swimlane-container-min-content' + widthAsClass"
+    [style.min-width.px]="width ? undefined : minWidth"
+    [style.width.px]="widthAsNumber"
+    [dndDraggable]="key" 
+    [dndDisableIf]="!kanban?.dragSwimlanes"
+    dndEffectAllowed="move"
+    dndType="swimlane"
+    (dndStart)="onDragStart($event)"
+    (dndMoved)="onDragged(key, 'move')"
+    (dndCanceled)="onDragged(key, 'none')"
+    (dndEnd)="onDragEnd($event)">
+    <ng-content></ng-content>
+</div>
+<div *ngIf="isPlaceholder && swimlaneDragging" class="container-sm" [style.min-width.px]="width ? undefined : minWidth" [style.width.px]="width">
+    <docker [collapse]="swimlaneDragging.collapse" 
+        [template]="kanban?.template"
+        [title]="swimlaneDragging.title || ''" 
+        [colorStyle]="kanban?.dockerColorStyle ? kanban!.dockerColorStyle!(swimlaneDragging) : undefined" 
+        [labels]="swimlaneDragging.labels" 
+        [menu]="swimlaneDragging.menu || []" 
+        [cards]="swimlaneDragging.cards || []">
+    </docker>
+</div>

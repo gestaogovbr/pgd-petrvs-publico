@@ -1,0 +1,58 @@
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { IIndexable } from 'src/app/models/base.model';
+import { FullRoute, NavigateService, RouteMetadata } from 'src/app/services/navigate.service';
+import { UtilService } from 'src/app/services/util.service';
+
+export type ToolbarButton = {
+  divider?: boolean,
+  route?: FullRoute,
+  metadata?: RouteMetadata,
+  icon?: string,
+  color?: string,
+  label?: string,
+  hint?: string,
+  running?: boolean,
+  items?: ToolbarButton[],
+  onClick?: (...args: any[]) => any
+}
+
+@Component({
+  selector: 'toolbar',
+  templateUrl: './toolbar.component.html',
+  styleUrls: ['./toolbar.component.scss']
+})
+export class ToolbarComponent implements OnInit {
+  @Input() icon: string = "";
+  @Input() options?: ToolbarButton[];
+  @Input()
+  public get buttons(): ToolbarButton[] | undefined {
+    return this._buttons;
+  };
+  public set buttons(value: ToolbarButton[] | undefined) {
+    this._buttons = value;
+    this.cdRef.detectChanges();
+  }
+
+  private _buttons?: ToolbarButton[];
+
+  constructor(
+    public go: NavigateService,
+    public util: UtilService,
+    public cdRef: ChangeDetectorRef
+  ) { }
+
+  ngOnInit(): void {
+  }
+
+  public buttonId(button: ToolbarButton) {
+    return "button_" + this.util.md5((button.icon || "") + (button.hint || "") + (button.label || "")); 
+  }
+
+  public onButtonClick(button: ToolbarButton) {
+    if(button.route) {
+      this.go.navigate(button.route, button.metadata);
+    } else if(button.onClick) {
+      button.onClick();
+    }
+  }
+}

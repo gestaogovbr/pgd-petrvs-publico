@@ -1,0 +1,16 @@
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+    <div class="row">
+        <div class="row">
+            <input-text [size]="8" label="Nome" icon="bi bi-upc" controlName="nome" [control]="form!.controls.nome"></input-text>
+            <input-timer onlyHours label="Tempo estimado" [size]="2" controlName="tempo_estimado" [control]="form!.controls.tempo_estimado" labelInfo="Tempo estimado para execução"></input-timer>
+            <input-switch label="Documental?" [size]="2" controlName="documental" [control]="form!.controls.documental" labelInfo=""></input-switch>
+        </div>
+        <div class="row">
+            <input-search [size]="6" label="Entidade" icone="fas fa-university" controlName="entidade_id" [control]="form!.controls.entidade_id" [dao]="entidadeDao" [selectRoute]="{route: ['configuracoes', 'entidade']}"></input-search>
+            <input-search [size]="6" label="Unidade" icon="fab fa-unity" controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+        </div>
+        <div class="row">
+            <input-textarea [size]="12" [rows]="3" label="Comentário automático" icon="bi bi-textarea-t" controlName="comentario_predefinido" [control]="form!.controls.comentario_predefinido"></input-textarea>
+        </div>
+    </div>
+</editable-form>

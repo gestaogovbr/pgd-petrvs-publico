@@ -1,0 +1,19 @@
+<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>
+<grid [dao]="dao" [add]="add" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+    [hasAdd]="auth.hasPermissionTo('MOD_PERF_INCL')"
+    [hasEdit]="auth.hasPermissionTo('MOD_PERF_EDT')">
+    <toolbar></toolbar>
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
+        <div class="row">
+            <input-text [size]="12" label="Nome do Perfil" controlName="nome"
+                [control]="filter!.controls.nome" placeholder="Nome"></input-text>
+        </div>
+    </filter>
+    <columns>
+        <column title="Nome" field="nome"></column>
+        <column title="Descrição" field="descricao"></column>
+        <column title="Nível de acesso" field="nivel"></column>
+        <column type="options" [onEdit]="edit" [options]="options"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

@@ -1,0 +1,70 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Define variáveis do bootstrap */
+:root {
+    --bs-font-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --bs-body-font-family: var(--bs-font-sans-serif);
+    --bs-body-font-size: 1rem;
+    --bs-body-font-weight: 400;
+    --bs-body-line-height: 1.5;
+    --bs-body-color: #212529;
+    --bs-body-bg: #fff;
+}
+
+body {
+    margin: 0px;
+}
+
+.petrvs {
+
+    /* Reseta todas as propriedades anteriores */
+    all: initial;
+
+    /* Sobrescreve propriedades do Sei */
+    * {
+        font-family: var(--bs-body-font-family);
+        font-weight: var(--bs-body-font-weight);
+        color: inherit;
+    }
+    div {
+        margin: initial;
+    }
+    input, button, textarea, select, table, label, legend, caption, a {
+        font-size: var(--bs-body-font-size);
+    }
+    .d-flex {
+        margin: auto;
+    }
+
+    /* Classes globais */
+    .micro-text {
+        font-size: 0.8rem !important;
+    }
+    .one-per-line {
+        width: min-content;
+    }
+
+    /* Reaplica todas as propriedades do <body> do bootstrap */
+    margin: 0px;
+    font-family: var(--bs-body-font-family);
+    font-weight: var(--bs-body-font-weight);
+    font-size: var(--bs-body-font-size);
+    line-height: var(--bs-body-line-height);
+    color: var(--bs-body-color);
+    text-align: var(--bs-body-text-align);
+    background-color: var(--bs-body-bg);
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+
+    /* Carrega bootrap dentro da classe petrvs */
+    @import '~bootstrap/scss/bootstrap.scss';
+
+    /* Sobrecarrega classes com problema após compilação */
+}
+
+.full-container-button-group {
+    display: flex !important;
+    .btn {
+        flex: 1;
+    }
+}
