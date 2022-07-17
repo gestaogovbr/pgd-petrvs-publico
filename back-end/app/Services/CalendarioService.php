@@ -206,4 +206,147 @@ class CalendarioService
         //$this->timerToDecimal();
     }
 
+    /*
+        Função responsável por todos os cálculos de períodos no sistema.
+        Obs.: As variáveis que armazenam tempo/data são iniciadas com as respectivas letras:
+        - d: Data, do tipo Date do javascript
+        - h: Tempo em formato de horas, de forma numérica, por exempo 01h30 será igual a 1.5
+        - t: Tempo em formado de milesegundos (getTime() do javascript)
+        - u: Unidade de dia, é um formato semelhante ao timestemp, porem contado em dias
+
+        @param Date          inicio       Data e hora de inicio
+        @param Date|number   fimOuTempo   Se a intenção for calcular a dataFim então será passado o tempo,
+            caso passe uma dataFim será calculado o tempo. O tempo é calculado da seguinte form:
+            1) Se forma for DIAS, então será sempre um mútiplo de cargaHoraria (dias = fimOuTempo / cargaHoraria)
+            2) Se forma for HORAS, será as horas em forma decimal
+        @param number        cargaHoraria Carga horária que sserá considerada para os cálculos
+        @param Unidade       unidade      Unidade com as configurações necessárias
+        @param TipoContagem  tipo         Se será utilizado a forma de cálculo da distribuição ou da entrega (pego na unidade)
+        @param DemandaPausa? pausas       Lista das pausas, quando aplicável
+        @param Afastamento?  afastamentos Lista dos afastamento a partir da data Inicio para o usuario, quando aplicável
+        @return Efemerides Retorna todas as informações do cálculo com as horas ou a data fim calculados
+  */
+  //public calculaDataTempo(inicio: Date, fimOuTempo: Date | number, cargaHoraria: number, unidade: Unidade, tipo: TipoContagem, pausas?: DemandaPausa[], afastamentos?: Afastamento[]): Efemerides {
+    public function calculaDataTempo(DateTime $inicio, DateTime $fimOuTempo, Number $cargaHoraria, Unidade $unidade, TipoContagem $tipo, array $pausas = null, array $afastamentos = null) {
+        $formaDistribuicao = $unidade->distribuicao_forma_contagem_prazos;
+        $formaEntrega = $unidade->entrega_forma_contagem_prazos;
+        $forma = $tipo == "DISTRIBUICAO" ? $formaDistribuicao : $formaEntrega;
+        const useCorridos = forma == "DIAS_CORRIDOS" || forma == "HORAS_CORRIDAS";
+        const useDias = forma == "DIAS_CORRIDOS" || forma == "DIAS_UTEIS";
+        //const useTempo = typeof fimOuTempo == "number"; /* Se o parametro fimOuTempo é DataFim ou Horas/Dias */
+        const uDiasInicio = this.util.daystamp(inicio); /* Dia inicio (usado somente se !useTempo) */
+        /*   const uDiasFim = useTempo ? uDiasInicio : this.util.daystamp(fimOuTempo as Date); /* Dia fim (usado somente se !useTempo) */
+        /*   const hExpediente = this.expediente(unidade); /* em horas */
+        /* Calcula as horas de afastamento */
+        /*     const horasAfastamento = (start: number, end: number): TimeInterval[] => {
+      let periodos: TimeInterval[] = [];
+      for(let afastamento of (afastamentos || [])) { */
+        /* calcula a intersecção entre start e end e o inicio e fim do afastamento */
+        /*         const intervalo = this.util.intersection([{start, end}, {start: afastamento.inicio_afastamento.getTime(), end: afastamento.fim_afastamento.getTime()}]) as TimeInterval;
+        if(intervalo) { */
+          /* Caso tenha uma intersecção, adiciona o pedíodo para retorno e insere em result.afastamentos */
+        /*           periodos.push(intervalo);
+          if(!result.afastamentos.includes(afastamento)) result.afastamentos.push(afastamento);
+        }
+      }
+      return periodos;
+        } */
+        /* Calcula as horas pausadas */
+        /*     const horasPausas = (start: number, end: number): TimeInterval[] => {
+      let periodos: TimeInterval[] = [];
+      for(let pausa of (pausas || [])) {
+        const intervalo = this.util.intersection([{start, end}, {start: pausa.data_inicio.getTime(), end: pausa.data_fim?.getTime() || end}]) as TimeInterval;
+        if(intervalo) {
+          periodos.push(intervalo);
+          if(!result.pausas.includes(pausa)) result.pausas.push(pausa);
+        }
+      }
+      return periodos;
+        } */
+        /* Calcula a união entre afastamentos e pausas */
+        /*     const horasAfastamentoPausa = (start: number, end: number): TimeInterval[] => {
+      const hAfastamentos = horasAfastamento(start, end);
+      const hPausas = horasPausas(start, end);
+      return this.util.union([...hAfastamentos, ...hPausas]) as TimeInterval[];
+        }
+        let hTempo = useTempo ? fimOuTempo as number : 0; */ /* variável saldo de horas/dias (usado somente se useTempo) */
+        /*   let dDiaAtual = new Date(inicio.getTime()); /* Variável que irá percorrer todas as datas (do inicio ao fim ou a quantidade de horas) */
+        /*    let result: Efemerides = { /* Variável que irá retonar todas as informações calculadas */
+        /*     resultado: useTempo ? "DATA" : "TEMPO",
+      dias_corridos: 0,
+      inicio: inicio,
+      fim: !useTempo ? fimOuTempo as Date: new Date(inicio.getTime()),
+      tempoUtil: useTempo ? fimOuTempo as number : 0,
+      tipo: tipo,
+      formaDistribuicao: formaDistribuicao,
+      formaEntrega: formaEntrega,
+      horasAfastamentosPausas: 0,
+      unidade_id: unidade.id,
+      cargaHoraria: cargaHoraria || 24,
+      expediente: hExpediente,
+      afastamentos: [],
+      pausas: [],
+      finsSemana: {},
+      feriados: {}
+        }; */
+
+        /*   cargaHoraria = result.cargaHoraria; /* Garante que se a carga horária vier zerado, será considerado 24hrs */
+        /*    while(useTempo ? this.util.round(hTempo, 2) > 0 : this.util.daystamp(dDiaAtual) <= uDiasFim) {
+      const firstDay = this.util.daystamp(dDiaAtual) == uDiasInicio;
+      const lastDay = this.util.daystamp(dDiaAtual) == uDiasFim; */
+        /*     const strDiaAtual = moment(dDiaAtual).format("YYYY-MM-DD"); /* Usado somente para indexar os vetores com a data do feriado/fds */
+      /* Se for dias corridos ou horas corridas não é necessário calcular Feriados e nem Fins de Semana */
+        /*      const feriadoCadastrado = useCorridos ? undefined : this.isFeriadoCadastrado(dDiaAtual, unidade);
+      const feriadoReligioso = useCorridos ? undefined : this.isFeriadoReligioso(dDiaAtual);
+      const fimSemana = useCorridos ? undefined : this.isFinalSemana(dDiaAtual);
+      const diaUtil = !feriadoCadastrado && !feriadoReligioso && !fimSemana;
+      if(!useCorridos) { */
+        /*      if(feriadoCadastrado) result.feriados[strDiaAtual] = feriadoCadastrado; /* Se feriado cadastrado, adiciona ao resultado */
+        /*    if(feriadoReligioso) result.feriados[strDiaAtual] = feriadoReligioso; /* Se feriado religioso, adiciona ao resultado */
+      /*  if(fimSemana) result.finsSemana[strDiaAtual] = fimSemana; /* Se final de semana, adiciona ao resultado */
+        /*     }
+      /* Calculo em dias */
+        /*      if (useDias) {
+        const tInicioDia = this.util.setStrTime(dDiaAtual, unidade.horario_trabalho_inicio).getTime();
+        const tFimDia = this.util.setStrTime(dDiaAtual, unidade.horario_trabalho_fim).getTime(); */
+        //      const intersticio = horasAfastamentoPausa(tInicioDia, tFimDia); /* Calula perído de afastamento e/ou pausa no dia atual */
+        //    result.horasAfastamentosPausas += intersticio.length ? cargaHoraria : 0; /* Se tiver afastamento e/ou pausa no dia atual, considera o tempo do dia inteiro */
+        /* Se houver algum afastamento ou pausa durante o horário de expediente, o dia tambem não será contado */
+        //(lastDay || !firstDay) para considerar o proximo dia util
+        //        if (!intersticio.length && (useCorridos || diaUtil)) {
+        //        if(useTempo) { /* se for pra calcular a data fim, como é dia, será sempre a data na hora final do expediente, mas não importa, porque o que contará é somente o data sem hora */
+        //        hTempo -= cargaHoraria;
+      //      result.fim = new Date(tFimDia);
+        //  } else { /* se for pra calcular o tempoUtil (lembrando que a quantidade de dias é tempoUtil / cargaHoraria) */
+          //  result.tempoUtil += cargaHoraria;
+     //     }
+        //        }
+        //    } else { /* calcula em horas */
+        //     if(useCorridos || diaUtil) {
+        //         const hIntervalo = this.util.getStrTimeHours(unidade.horario_trabalho_intervalo || "00:00");
+        //       const hUteisDia = Math.min(cargaHoraria, hExpediente, useTempo ? hTempo : hExpediente); /* Horas úteis diárias, tempo útil máximo para um dia é o menor entre eles */
+     //     const dInicioDia = firstDay ? inicio : this.util.setStrTime(dDiaAtual, useCorridos ? "00:00" : unidade.horario_trabalho_inicio); /* Inicio do expediente */
+       //   const dFimDia = lastDay && !useTempo ? fimOuTempo as Date : this.util.minDate(this.util.addTimeHours(dInicioDia, hUteisDia + hIntervalo), this.util.setStrTime(dInicioDia, unidade.horario_trabalho_fim))!; /* fim do expediente */
+        //          const intersticio = horasAfastamentoPausa(dInicioDia.getTime(), dFimDia.getTime()); /* Calula perído de afastamento e/ou pausa no dia atual */
+        //        const hUteis = Math.min(hUteisDia, this.util.getHoursBetween(dInicioDia, dFimDia)); /* Horas úteis aproveitáveis para os cálculos (considerando o inicio e fim da atividade) */
+        //      const hAfastamentoPausa = Math.min(hUteis, this.util.getTimeHours(intersticio.reduce((a, v) => a + (v.end - v.start), 0))); /* Afastamento e/ou pausas no dia, em horas */
+      //    const hSaldo = hUteis - hAfastamentoPausa; /* Calcula quantas horas realmente podem ser aproveitadas (sem afastamentos ou pausas) */
+        //          result.horasAfastamentosPausas += hAfastamentoPausa;
+        //        if(hSaldo) {
+        //        if(useTempo) { /* calcula a data fim */
+      //        hTempo -= hSaldo;
+        //      result.fim = dFimDia;
+        //            } else { /* calcula o tempoUtil */
+        //            result.tempoUtil += hSaldo;
+        //        }
+      //    }
+        //        }
+        //    }
+        //  dDiaAtual.setDate(dDiaAtual.getDate() + 1);
+        //      result.dias_corridos++;
+        //  }
+        return result;
+    }
+
+
 }

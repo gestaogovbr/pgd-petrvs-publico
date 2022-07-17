@@ -6816,9 +6816,9 @@
 
 ;!function(t){var e={};function s(i){if(e[i])return e[i].exports;var o=e[i]={i:i,l:!1,exports:{}};return t[i].call(o.exports,o,o.exports,s),o.l=!0,o.exports}s.m=t,s.c=e,s.d=function(t,e,i){s.o(t,e)||Object.defineProperty(t,e,{enumerable:!0,get:i})},s.r=function(t){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},s.t=function(t,e){if(1&e&&(t=s(t)),8&e)return t;if(4&e&&"object"==typeof t&&t&&t.__esModule)return t;var i=Object.create(null);if(s.r(i),Object.defineProperty(i,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var o in t)s.d(i,o,function(e){return t[e]}.bind(null,o));return i},s.n=function(t){var e=t&&t.__esModule?function(){return t.default}:function(){return t};return s.d(e,"a",e),e},s.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},s.p="",s(s.s=0)}([function(t,e,s){"use strict";s.r(e),s.d(e,"AutoComplete",(function(){return a}));var i,o=(i=function(t,e){return(i=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,e){t.__proto__=e}||function(t,e){for(var s in e)e.hasOwnProperty(s)&&(t[s]=e[s])})(t,e)},function(t,e){function s(){this.constructor=t}i(t,e),t.prototype=null===e?Object.create(e):(s.prototype=e.prototype,new s)}),n=function(t){function e(e){return t.call(this,e)||this}return o(e,t),e.prototype.getDefaults=function(){return{url:"",method:"get",queryKey:"q",extraData:{},timeout:void 0,requestThrottling:500}},e.prototype.search=function(t,e){var s=this;null!=this.jqXHR&&this.jqXHR.abort();var i={};i[this._settings.queryKey]=t,$.extend(i,this._settings.extraData),this.requestTID&&window.clearTimeout(this.requestTID),this.requestTID=window.setTimeout((function(){s.jqXHR=$.ajax(s._settings.url,{method:s._settings.method,data:i,timeout:s._settings.timeout}),s.jqXHR.done((function(t){e(t)})),s.jqXHR.fail((function(t){var e;null===(e=s._settings)||void 0===e||e.fail(t)})),s.jqXHR.always((function(){s.jqXHR=null}))}),this._settings.requestThrottling)},e}(function(){function t(t){this._settings=$.extend(!0,{},this.getDefaults(),t)}return t.prototype.getDefaults=function(){return{}},t.prototype.getResults=function(t,e,s){return this.results},t.prototype.search=function(t,e){e(this.getResults())},t}()),r=function(){function t(t,e,s,i){this.initialized=!1,this.shown=!1,this.items=[],this.ddMouseover=!1,this._$el=t,this.formatItem=e,this.autoSelect=s,this.noResultsText=i}return t.prototype.init=function(){var t=this,e=$.extend({},this._$el.position(),{height:this._$el[0].offsetHeight});this._dd=$("<ul />"),this._dd.addClass("bootstrap-autocomplete dropdown-menu"),this._dd.insertAfter(this._$el),this._dd.css({top:e.top+this._$el.outerHeight(),left:e.left,width:this._$el.outerWidth()}),this._dd.on("click","li",(function(e){var s=$(e.currentTarget).data("item");t.itemSelectedLaunchEvent(s)})),this._dd.on("keyup",(function(e){if(t.shown){switch(e.which){case 27:t.hide(),t._$el.focus()}return!1}})),this._dd.on("mouseenter",(function(e){t.ddMouseover=!0})),this._dd.on("mouseleave",(function(e){t.ddMouseover=!1})),this._dd.on("mouseenter","li",(function(e){t.haveResults&&($(e.currentTarget).closest("ul").find("li.active").removeClass("active"),$(e.currentTarget).addClass("active"),t.mouseover=!0)})),this._dd.on("mouseleave","li",(function(e){t.mouseover=!1})),this.initialized=!0},t.prototype.checkInitialized=function(){this.initialized||this.init()},Object.defineProperty(t.prototype,"isMouseOver",{get:function(){return this.mouseover},enumerable:!1,configurable:!0}),Object.defineProperty(t.prototype,"isDdMouseOver",{get:function(){return this.ddMouseover},enumerable:!1,configurable:!0}),Object.defineProperty(t.prototype,"haveResults",{get:function(){return this.items.length>0},enumerable:!1,configurable:!0}),t.prototype.focusNextItem=function(t){if(this.haveResults){var e=this._dd.find("li.active"),s=t?e.prev():e.next();0===s.length&&(s=t?this._dd.find("li").last():this._dd.find("li").first()),e.removeClass("active"),s.addClass("active")}},t.prototype.focusPreviousItem=function(){this.focusNextItem(!0)},t.prototype.selectFocusItem=function(){this._dd.find("li.active").trigger("click")},Object.defineProperty(t.prototype,"isItemFocused",{get:function(){return!!(this.isShown()&&this._dd.find("li.active").length>0)},enumerable:!1,configurable:!0}),t.prototype.show=function(){this.shown||(this._dd.dropdown().show(),this.shown=!0)},t.prototype.isShown=function(){return this.shown},t.prototype.hide=function(){this.shown&&(this._dd.dropdown().hide(),this.shown=!1)},t.prototype.updateItems=function(t,e){this.items=t,this.searchText=e,this.refreshItemList()},t.prototype.showMatchedText=function(t,e){var s=t.toLowerCase().indexOf(e.toLowerCase());if(s>-1){var i=s+e.length;return t.slice(0,s)+"<b>"+t.slice(s,i)+"</b>"+t.slice(i)}return t},t.prototype.refreshItemList=function(){var t=this;this.checkInitialized(),this._dd.empty();var e=[];if(this.items.length>0)this.items.forEach((function(s){var i,o,n=t.formatItem(s);"string"==typeof n&&(n={text:n}),i=t.showMatchedText(n.text,t.searchText),o=void 0!==n.html?n.html:i;var r=n.disabled,l=$("<li >");l.append($("<a>").attr("href","#!").html(o)).data("item",s),r&&l.addClass("disabled"),e.push(l)}));else{var s=$("<li >");s.append($("<a>").attr("href","#!").html(this.noResultsText)).addClass("disabled"),e.push(s)}this._dd.append(e)},t.prototype.itemSelectedLaunchEvent=function(t){this._$el.trigger("autocomplete.select",t)},t}(),l=function(){function t(t,e,s,i){this.initialized=!1,this.shown=!1,this.items=[],this.ddMouseover=!1,this._$el=t,this.formatItem=e,this.autoSelect=s,this.noResultsText=i}return t.prototype.getElPos=function(){return $.extend({},this._$el.position(),{height:this._$el[0].offsetHeight})},t.prototype.init=function(){var t=this,e=this.getElPos();this._dd=$("<div />"),this._dd.addClass("bootstrap-autocomplete dropdown-menu"),this._dd.insertAfter(this._$el),this._dd.css({top:e.top+this._$el.outerHeight(),left:e.left,width:this._$el.outerWidth()}),this._dd.on("click",".dropdown-item",(function(e){var s=$(e.currentTarget).data("item");t.itemSelectedLaunchEvent(s),e.preventDefault()})),this._dd.on("keyup",(function(e){if(t.shown){switch(e.which){case 27:t.hide(),t._$el.focus()}return!1}})),this._dd.on("mouseenter",(function(e){t.ddMouseover=!0})),this._dd.on("mouseleave",(function(e){t.ddMouseover=!1})),this._dd.on("mouseenter",".dropdown-item",(function(e){t.haveResults&&($(e.currentTarget).closest("div").find(".dropdown-item.active").removeClass("active"),$(e.currentTarget).addClass("active"),t.mouseover=!0)})),this._dd.on("mouseleave",".dropdown-item",(function(e){t.mouseover=!1})),this.initialized=!0},t.prototype.checkInitialized=function(){this.initialized||this.init()},Object.defineProperty(t.prototype,"isMouseOver",{get:function(){return this.mouseover},enumerable:!1,configurable:!0}),Object.defineProperty(t.prototype,"isDdMouseOver",{get:function(){return this.ddMouseover},enumerable:!1,configurable:!0}),Object.defineProperty(t.prototype,"haveResults",{get:function(){return this.items.length>0},enumerable:!1,configurable:!0}),t.prototype.focusNextItem=function(t){if(this.haveResults){var e=this._dd.find(".dropdown-item.active"),s=t?e.prev():e.next();0===s.length&&(s=t?this._dd.find(".dropdown-item").last():this._dd.find(".dropdown-item").first()),e.removeClass("active"),s.addClass("active")}},t.prototype.focusPreviousItem=function(){this.focusNextItem(!0)},t.prototype.selectFocusItem=function(){this._dd.find(".dropdown-item.active").trigger("click")},Object.defineProperty(t.prototype,"isItemFocused",{get:function(){return!!(this._dd&&this.isShown()&&this._dd.find(".dropdown-item.active").length>0)},enumerable:!1,configurable:!0}),t.prototype.show=function(){if(!this.shown){this.getElPos();this._dd.addClass("show"),this.shown=!0,this._$el.trigger("autocomplete.dd.shown")}},t.prototype.isShown=function(){return this.shown},t.prototype.hide=function(){this.shown&&(this._dd.removeClass("show"),this.shown=!1,this._$el.trigger("autocomplete.dd.hidden"))},t.prototype.updateItems=function(t,e){this.items=t,this.searchText=e,this.refreshItemList()},t.prototype.showMatchedText=function(t,e){var s=t.toLowerCase().indexOf(e.toLowerCase());if(s>-1){var i=s+e.length;return t.slice(0,s)+"<b>"+t.slice(s,i)+"</b>"+t.slice(i)}return t},t.prototype.refreshItemList=function(){var t=this;this.checkInitialized(),this._dd.empty();var e=[];if(this.items.length>0)this.items.forEach((function(s){var i,o,n=t.formatItem(s);"string"==typeof n&&(n={text:n}),i=t.showMatchedText(n.text,t.searchText),o=void 0!==n.html?n.html:i;var r=n.disabled,l=$("<a >");l.addClass("dropdown-item").css({overflow:"hidden","text-overflow":"ellipsis"}).html(o).data("item",s),r&&l.addClass("disabled"),e.push(l)})),this._dd.append(e),this.show();else if(""===this.noResultsText)this.hide();else{var s=$("<a >");s.addClass("dropdown-item disabled").html(this.noResultsText),e.push(s),this._dd.append(e),this.show()}},t.prototype.itemSelectedLaunchEvent=function(t){this._$el.trigger("autocomplete.select",t)},t}(),a=function(){function t(t,e){this._selectedItem=null,this._defaultValue=null,this._defaultText=null,this._isSelectElement=!1,this._settings={resolver:"ajax",resolverSettings:{},minLength:3,valueKey:"value",formatResult:this.defaultFormatResult,autoSelect:!0,noResultsText:"No results",bootstrapVersion:"auto",preventEnter:!1,events:{typed:null,searchPre:null,search:null,searchPost:null,select:null,focus:null}},this._el=t,this._$el=$(this._el),this._$el.is("select")&&(this._isSelectElement=!0),this.manageInlineDataAttributes(),"object"==typeof e&&(this._settings=$.extend(!0,{},this.getSettings(),e)),this._isSelectElement&&this.convertSelectToText(),this.init()}return t.prototype.manageInlineDataAttributes=function(){var t=this.getSettings();this._$el.data("url")&&(t.resolverSettings.url=this._$el.data("url")),this._$el.data("default-value")&&(this._defaultValue=this._$el.data("default-value")),this._$el.data("default-text")&&(this._defaultText=this._$el.data("default-text")),void 0!==this._$el.data("noresults-text")&&(t.noResultsText=this._$el.data("noresults-text"))},t.prototype.getSettings=function(){return this._settings},t.prototype.getBootstrapVersion=function(){var t;"auto"===this._settings.bootstrapVersion?t=$.fn.button.Constructor.VERSION.split(".").map(parseInt):"4"===this._settings.bootstrapVersion?t=[4]:"3"===this._settings.bootstrapVersion?t=[3]:(console.error("INVALID value for 'bootstrapVersion' settings property: "+this._settings.bootstrapVersion+" defaulting to 4"),t=[4]);return t},t.prototype.convertSelectToText=function(){var e=$("<input>");e.attr("type","hidden"),e.attr("name",this._$el.attr("name")),this._defaultValue&&e.val(this._defaultValue),this._selectHiddenField=e,e.insertAfter(this._$el);var s=$("<input>");s.attr("type","search"),s.attr("name",this._$el.attr("name")+"_text"),s.attr("id",this._$el.attr("id")),s.attr("disabled",this._$el.attr("disabled")),s.attr("placeholder",this._$el.attr("placeholder")),s.attr("autocomplete","off"),s.addClass(this._$el.attr("class")),this._defaultText&&s.val(this._defaultText);var i=this._$el.attr("required");i&&s.attr("required",i),s.data(t.NAME,this),this._$el.replaceWith(s),this._$el=s,this._el=s.get(0)},t.prototype.init=function(){this.bindDefaultEventListeners(),"ajax"===this._settings.resolver&&(this.resolver=new n(this._settings.resolverSettings)),4===this.getBootstrapVersion()[0]?this._dd=new l(this._$el,this._settings.formatResult,this._settings.autoSelect,this._settings.noResultsText):this._dd=new r(this._$el,this._settings.formatResult,this._settings.autoSelect,this._settings.noResultsText)},t.prototype.bindDefaultEventListeners=function(){var t=this;this._$el.on("keydown",(function(e){switch(e.which){case 9:t._dd.isItemFocused?t._dd.selectFocusItem():t._selectedItem||""!==t._$el.val()&&t._$el.trigger("autocomplete.freevalue",t._$el.val()),t._dd.hide();break;case 13:t._dd.isItemFocused?t._dd.selectFocusItem():t._selectedItem||""!==t._$el.val()&&t._$el.trigger("autocomplete.freevalue",t._$el.val()),t._dd.hide(),t._settings.preventEnter&&e.preventDefault();break;case 40:t._dd.focusNextItem();break;case 38:t._dd.focusPreviousItem()}})),this._$el.on("keyup",(function(e){switch(e.which){case 16:case 17:case 18:case 39:case 37:case 36:case 35:break;case 13:case 27:t._dd.hide();break;case 40:case 38:break;default:t._selectedItem=null;var s=t._$el.val();t.handlerTyped(s)}})),this._$el.on("blur",(function(e){!t._dd.isMouseOver&&t._dd.isDdMouseOver&&t._dd.isShown()?(setTimeout((function(){t._$el.focus()})),t._$el.focus()):t._dd.isMouseOver||(t._isSelectElement?t._dd.isItemFocused?t._dd.selectFocusItem():null!==t._selectedItem&&""!==t._$el.val()?t._$el.trigger("autocomplete.select",t._selectedItem):""!==t._$el.val()&&null!==t._defaultValue?(t._$el.val(t._defaultText),t._selectHiddenField.val(t._defaultValue),t._selectedItem=null,t._$el.trigger("autocomplete.select",t._selectedItem)):(t._$el.val(""),t._selectHiddenField.val(""),t._selectedItem=null,t._$el.trigger("autocomplete.select",t._selectedItem)):null===t._selectedItem&&t._$el.trigger("autocomplete.freevalue",t._$el.val()),t._dd.hide())})),this._$el.on("autocomplete.select",(function(e,s){t._selectedItem=s,t.itemSelectedDefaultHandler(s)})),this._$el.on("paste",(function(e){setTimeout((function(){t._$el.trigger("keyup",e)}),0)}))},t.prototype.handlerTyped=function(t){(null===this._settings.events.typed||(t=this._settings.events.typed(t,this._$el)))&&(t.length>=this._settings.minLength?(this._searchText=t,this.handlerPreSearch()):this._dd.hide())},t.prototype.handlerPreSearch=function(){if(null!==this._settings.events.searchPre){var t=this._settings.events.searchPre(this._searchText,this._$el);if(!t)return;this._searchText=t}this.handlerDoSearch()},t.prototype.handlerDoSearch=function(){var t=this;null!==this._settings.events.search?this._settings.events.search(this._searchText,(function(e){t.postSearchCallback(e)}),this._$el):this.resolver&&this.resolver.search(this._searchText,(function(e){t.postSearchCallback(e)}))},t.prototype.postSearchCallback=function(t){this._settings.events.searchPost&&"boolean"==typeof(t=this._settings.events.searchPost(t,this._$el))&&!t||this.handlerStartShow(t)},t.prototype.handlerStartShow=function(t){this._dd.updateItems(t,this._searchText)},t.prototype.itemSelectedDefaultHandler=function(t){if(null!=t){var e=this._settings.formatResult(t);"string"==typeof e&&(e={text:e}),this._$el.val(e.text),this._isSelectElement&&this._selectHiddenField.val(e.value)}else this._$el.val(""),this._isSelectElement&&this._selectHiddenField.val("");this._selectedItem=t,this._dd.hide()},t.prototype.defaultFormatResult=function(t){return"string"==typeof t?{text:t}:t.text?t:{text:t.toString()}},t.prototype.manageAPI=function(t,e){"set"===t?this.itemSelectedDefaultHandler(e):"clear"===t?this.itemSelectedDefaultHandler(null):"show"===t?this._$el.trigger("keyup"):"updateResolver"===t&&(this.resolver=new n(e))},t.NAME="autoComplete",t}();!function(t,e,s){t.fn[a.NAME]=function(e,s){return this.each((function(){var i;(i=t(this).data(a.NAME))||(i=new a(this,e),t(this).data(a.NAME,i)),i.manageAPI(e,s)}))}}(jQuery,window,document)}]);
 ;/*!
- * Bootstrap-select v1.14.0-beta2 (https://developer.snapappointments.com/bootstrap-select)
+ * Bootstrap-select v1.14.0-beta3 (https://developer.snapappointments.com/bootstrap-select)
  *
- * Copyright 2012-2021 SnapAppointments, LLC
+ * Copyright 2012-2022 SnapAppointments, LLC
  * Licensed under MIT (https://github.com/snapappointments/bootstrap-select/blob/master/LICENSE)
  */
 
@@ -6889,7 +6889,7 @@
     strong: [],
     u: [],
     ul: []
-  }
+  };
 
   /**
    * A pattern that recognizes a commonly useful subset of URLs that are safe.
@@ -6908,28 +6908,28 @@
   var ParseableAttributes = ['title', 'placeholder']; // attributes to use as settings, can add others in the future
 
   function allowedAttribute (attr, allowedAttributeList) {
-    var attrName = attr.nodeName.toLowerCase()
+    var attrName = attr.nodeName.toLowerCase();
 
     if ($.inArray(attrName, allowedAttributeList) !== -1) {
       if ($.inArray(attrName, uriAttrs) !== -1) {
-        return Boolean(attr.nodeValue.match(SAFE_URL_PATTERN) || attr.nodeValue.match(DATA_URL_PATTERN))
+        return Boolean(attr.nodeValue.match(SAFE_URL_PATTERN) || attr.nodeValue.match(DATA_URL_PATTERN));
       }
 
-      return true
+      return true;
     }
 
     var regExp = $(allowedAttributeList).filter(function (index, value) {
-      return value instanceof RegExp
-    })
+      return value instanceof RegExp;
+    });
 
     // Check if a regular expression validates the attribute.
     for (var i = 0, l = regExp.length; i < l; i++) {
       if (attrName.match(regExp[i])) {
-        return true
+        return true;
       }
     }
 
-    return false
+    return false;
   }
 
   function sanitizeHtml (unsafeElements, whiteList, sanitizeFn) {
@@ -7012,7 +7012,7 @@
               contains: function (classes) {
                 return $elem.hasClass(classes);
               }
-            }
+            };
           };
 
       if (objCtr.defineProperty) {
@@ -7047,11 +7047,11 @@
 
     DOMTokenList.prototype.add = function () {
       Array.prototype.forEach.call(arguments, _add.bind(this));
-    }
+    };
 
     DOMTokenList.prototype.remove = function () {
       Array.prototype.forEach.call(arguments, _remove.bind(this));
-    }
+    };
   }
 
   testElement.classList.toggle('c3', false);
@@ -7071,6 +7071,13 @@
   }
 
   testElement = null;
+
+  // Polyfill for IE (remove in v2)
+  Object.values = typeof Object.values === 'function' ? Object.values : function (obj) {
+    return Object.keys(obj).map(function (key) {
+      return obj[key];
+    });
+  };
 
   // shallow array comparison
   function isEqual (array1, array2) {
@@ -7126,8 +7133,20 @@
     }());
   }
 
+  function toKebabCase (str) {
+    return str.replace(/[A-Z]+(?![a-z])|[A-Z]/g, function ($, ofs) {
+      return (ofs ? '-' : '') + $.toLowerCase();
+    });
+  }
+
   function getSelectedOptions () {
-    var selectedOptions = this.selectpicker.main.data.filter(function (item) {
+    var options = this.selectpicker.main.data;
+
+    if (this.options.source.data || this.options.source.search) {
+      options = Object.values(this.selectpicker.optionValuesDataMap);
+    }
+
+    var selectedOptions = options.filter(function (item) {
       if (item.selected) {
         if (this.options.hideDisabled && item.disabled) return false;
         return true;
@@ -7436,7 +7455,7 @@
     TAB: 9, // KeyboardEvent.which value for tab key
     ARROW_UP: 38, // KeyboardEvent.which value for up arrow key
     ARROW_DOWN: 40 // KeyboardEvent.which value for down arrow key
-  }
+  };
 
   // eslint-disable-next-line no-undef
   var Dropdown = window.Dropdown || bootstrap.Dropdown;
@@ -7483,12 +7502,12 @@
     POPOVERHEADER: 'popover-title',
     ICONBASE: 'glyphicon',
     TICKICON: 'glyphicon-ok'
-  }
+  };
 
   var Selector = {
     MENU: '.' + classNames.MENU,
     DATA_TOGGLE: 'data-toggle="dropdown"'
-  }
+  };
 
   var elementTemplates = {
     div: document.createElement('div'),
@@ -7500,7 +7519,7 @@
     whitespace: document.createTextNode('\u00A0'),
     fragment: document.createDocumentFragment(),
     option: document.createElement('option')
-  }
+  };
 
   elementTemplates.selectedOption = elementTemplates.option.cloneNode(false);
   elementTemplates.selectedOption.setAttribute('selected', true);
@@ -7623,7 +7642,7 @@
 
       return elementTemplates.fragment;
     }
-  }
+  };
 
   var getOptionData = {
     fromOption: function (option, type) {
@@ -7646,11 +7665,12 @@
           value = option.style.cssText;
           break;
 
-        case 'content':
-        case 'tokens':
-        case 'subtext':
-        case 'icon':
-          value = option.getAttribute('data-' + type);
+        case 'title':
+          value = option.title;
+          break;
+
+        default:
+          value = option.getAttribute('data-' + toKebabCase(type));
           break;
       }
 
@@ -7665,19 +7685,14 @@
           value = option.text || option.value || '';
           break;
 
-        case 'divider':
-        case 'style':
-        case 'content':
-        case 'tokens':
-        case 'subtext':
-        case 'icon':
+        default:
           value = option[type];
           break;
       }
 
       return value;
     }
-  }
+  };
 
   function showNoResults (searchMatch, searchValue) {
     if (!searchMatch.length) {
@@ -7706,11 +7721,18 @@
     this.options = options;
     this.selectpicker = {
       main: {
-        optionQueue: elementTemplates.fragment.cloneNode(false)
+        data: [],
+        optionQueue: elementTemplates.fragment.cloneNode(false),
+        hasMore: false
       },
-      search: {},
-      current: {}, // current changes if a search is in progress
+      search: {
+        data: [],
+        hasMore: false
+      },
+      current: {}, // current is either equal to main or search depending on if a search is in progress
       view: {},
+      // map of option values and their respective data (only used in conjunction with options.source)
+      optionValuesDataMap: {},
       isSearching: false,
       keydown: {
         keyHistory: '',
@@ -7747,7 +7769,7 @@
     this.init();
   };
 
-  Selectpicker.VERSION = '1.14.0-beta2';
+  Selectpicker.VERSION = '1.14.0-beta3';
 
   // part of this is duplicated in i18n/defaults-en_US.js. Make sure to update both.
   Selectpicker.DEFAULTS = {
@@ -7764,7 +7786,9 @@
     },
     selectAllText: 'Select All',
     deselectAllText: 'Deselect All',
-    source: {},
+    source: {
+      pageSize: 40
+    },
     chunkSize: 40,
     doneButton: false,
     doneButtonText: 'Close',
@@ -7797,7 +7821,7 @@
     },
     maxOptions: false,
     mobile: false,
-    selectOnTab: false,
+    selectOnTab: true,
     dropdownAlignRight: false,
     windowPadding: 0,
     virtualScroll: 600,
@@ -7848,15 +7872,6 @@
       this.$searchbox = this.$menu.find('input');
 
       element.classList.remove('bs-select-hidden');
-
-      this.fetchData(function () {
-        that.render(true);
-        that.buildList();
-
-        requestAnimationFrame(function () {
-          that.$element.trigger('loaded' + EVENT_KEY);
-        });
-      });
 
       this.fetchData(function () {
         that.render(true);
@@ -8103,10 +8118,7 @@
 
     createView: function (isSearching, setSize, refresh) {
       var that = this,
-          scrollTop = 0,
-          active = [],
-          selected,
-          prevActive;
+          scrollTop = 0;
 
       this.selectpicker.isSearching = isSearching;
       this.selectpicker.current = isSearching ? this.selectpicker.search : this.selectpicker.main;
@@ -8189,28 +8201,24 @@
 
         positionIsDifferent = prevPositions[0] !== that.selectpicker.view.position0 || prevPositions[1] !== that.selectpicker.view.position1;
 
-        if (that.activeIndex !== undefined) {
-          prevActive = (that.selectpicker.main.data[that.prevActiveIndex] || {}).element;
-          active = (that.selectpicker.main.data[that.activeIndex] || {}).element;
-          selected = (that.selectpicker.main.data[that.selectedIndex] || {}).element;
-
+        if (that.activeElement !== undefined) {
           if (init) {
-            if (that.activeIndex !== that.selectedIndex) {
-              that.defocusItem(active);
+            if (that.activeElement !== that.selectedElement) {
+              that.defocusItem(that.activeElement);
             }
-            that.activeIndex = undefined;
+            that.activeElement = undefined;
           }
 
-          if (that.activeIndex && that.activeIndex !== that.selectedIndex) {
-            that.defocusItem(selected);
+          if (that.activeElement !== that.selectedElement) {
+            that.defocusItem(that.selectedElement);
           }
         }
 
-        if (that.prevActiveIndex !== undefined && that.prevActiveIndex !== that.activeIndex && that.prevActiveIndex !== that.selectedIndex) {
-          that.defocusItem(prevActive);
+        if (that.prevActiveElement !== undefined && that.prevActiveElement !== that.activeElement && that.prevActiveElement !== that.selectedElement) {
+          that.defocusItem(that.prevActiveElement);
         }
 
-        if (init || positionIsDifferent) {
+        if (init || positionIsDifferent || that.selectpicker.current.hasMore) {
           previousElements = that.selectpicker.view.visibleElements ? that.selectpicker.view.visibleElements.slice() : [];
 
           if (isVirtual === false) {
@@ -8301,17 +8309,24 @@
             }
           }
 
-          if ((!isSearching && that.options.source.load || isSearching && that.options.source.search) && currentChunk === chunkCount - 1) {
-            that.fetchData(function () {
-              that.render();
-              that.buildList(size, isSearching);
-              that.setPositionData();
-              scroll(scrollTop);
-            }, isSearching ? 'search' : 'load', currentChunk + 1, isSearching ? that.selectpicker.search.previousValue : undefined);
+          if ((!isSearching && that.options.source.data || isSearching && that.options.source.search) && that.selectpicker.current.hasMore && currentChunk === chunkCount - 1) {
+            // Don't load the next chunk until scrolling has started
+            // This prevents unnecessary requests while the user is typing if pageSize is <= chunkSize
+            if (scrollTop > 0) {
+              // Chunks use 0-based indexing, but pages use 1-based. Add 1 to convert and add 1 again to get next page
+              var page = Math.floor((currentChunk * that.options.chunkSize) / that.options.source.pageSize) + 2;
+
+              that.fetchData(function () {
+                that.render();
+                that.buildList(size, isSearching);
+                that.setPositionData();
+                scroll(scrollTop);
+              }, isSearching ? 'search' : 'data', page, isSearching ? that.selectpicker.search.previousValue : undefined);
+            }
           }
         }
 
-        that.prevActiveIndex = that.activeIndex;
+        that.prevActiveElement = that.activeElement;
 
         if (!that.options.liveSearch) {
           that.$menuInner.trigger('focus');
@@ -8327,7 +8342,7 @@
 
           that.defocusItem(that.selectpicker.view.currentActive);
 
-          that.activeIndex = (that.selectpicker.current.data[index] || {}).index;
+          that.activeElement = (that.selectpicker.current.data[index] || {}).element;
 
           that.focusItem(newActive);
         }
@@ -8344,7 +8359,7 @@
 
     focusItem: function (li, liData, noStyle) {
       if (li) {
-        liData = liData || this.selectpicker.main.data[this.activeIndex];
+        liData = liData || this.selectpicker.current.data[this.selectpicker.current.elements.indexOf(this.activeElement)];
         var a = li.firstChild;
 
         if (a) {
@@ -8422,6 +8437,7 @@
     },
 
     fetchData: function (callback, type, page, searchValue) {
+      page = page || 1;
       type = type || 'data';
 
       var that = this,
@@ -8434,9 +8450,13 @@
         if (typeof data === 'function') {
           data.call(
             this,
-            function (data) {
+            function (data, more, totalItems) {
+              var current = that.selectpicker[type === 'search' ? 'search' : 'main'];
+              current.hasMore = more;
+              current.totalItems = totalItems;
               builtData = that.buildData(data, type);
               callback.call(that, builtData);
+              that.$element.trigger('fetched' + EVENT_KEY);
             },
             page,
             searchValue
@@ -8452,17 +8472,16 @@
     },
 
     buildData: function (data, type) {
+      var that = this;
       var dataGetter = data === false ? getOptionData.fromOption : getOptionData.fromDataSource;
 
-      var optionSelector = ':not([hidden]):not([data-hidden="true"])',
+      var optionSelector = ':not([hidden]):not([data-hidden="true"]):not([style*="display: none"])',
           mainData = [],
-          startLen = 0,
+          startLen = this.selectpicker.main.data ? this.selectpicker.main.data.length : 0,
           optID = 0,
           startIndex = this.setPlaceholder() && !data ? 1 : 0; // append the titleOption if necessary and skip the first option in the loop
 
-      if (type === 'load') {
-        startLen = this.selectpicker.main.data.length;
-      } else if (type === 'search') {
+      if (type === 'search') {
         startLen = this.selectpicker.search.data.length;
       }
 
@@ -8509,6 +8528,7 @@
           config.inlineStyle = inlineStyle;
 
           config.text = dataGetter(item, 'text');
+          config.title = dataGetter(item, 'title');
           config.content = dataGetter(item, 'content');
           config.tokens = dataGetter(item, 'tokens');
           config.subtext = dataGetter(item, 'subtext');
@@ -8523,6 +8543,14 @@
           config.option.liIndex = liIndex;
           config.selected = !!item.selected;
           config.disabled = config.disabled || !!item.disabled;
+
+          if (data !== false) {
+            if (that.selectpicker.optionValuesDataMap[config.value]) {
+              config = $.extend(that.selectpicker.optionValuesDataMap[config.value], config);
+            } else {
+              that.selectpicker.optionValuesDataMap[config.value] = config;
+            }
+          }
 
           mainData.push(config);
         }
@@ -8542,7 +8570,8 @@
               subtext: dataGetter(optgroup, 'subtext'),
               icon: dataGetter(optgroup, 'icon'),
               type: 'optgroup-label',
-              optgroupClass: ' ' + (optgroup.className || '')
+              optgroupClass: ' ' + (optgroup.className || ''),
+              optgroup: optgroup
             },
             headerIndex,
             lastIndex;
@@ -8584,7 +8613,7 @@
             children = item.children;
 
         if (children && children.length) {
-          addOptgroup.call(this, startIndex, selectOptions);
+          addOptgroup.call(this, i, selectOptions);
         } else {
           addOption.call(this, item, {});
         }
@@ -8592,10 +8621,9 @@
 
       switch (type) {
         case 'data': {
-          this.selectpicker.main.data = this.selectpicker.current.data = mainData;
-          break;
-        }
-        case 'load': {
+          if (!this.selectpicker.main.data) {
+            this.selectpicker.main.data = [];
+          }
           Array.prototype.push.apply(this.selectpicker.main.data, mainData);
           this.selectpicker.current.data = this.selectpicker.main.data;
           break;
@@ -8661,8 +8689,12 @@
             break;
         }
 
-        item.element = liElement;
-        mainElements.push(liElement);
+        if (!item.element) {
+          item.element = liElement;
+        } else {
+          item.element.innerHTML = liElement.innerHTML;
+        }
+        mainElements.push(item.element);
 
         // count the number of characters in the option - not perfect, but should work in most cases
         if (item.display) combinedLength += item.display.length;
@@ -8749,7 +8781,7 @@
       if (this.options.selectedTextFormat === 'static') {
         titleFragment = generateOption.text.call(this, { text: this.options.placeholder }, true);
       } else {
-        showCount = this.multiple && this.options.selectedTextFormat.indexOf('count') !== -1 && selectedCount > 1;
+        showCount = this.multiple && this.options.selectedTextFormat.indexOf('count') !== -1 && selectedCount > 0;
 
         // determine if the number of selected options will be shown (showCount === true)
         if (showCount) {
@@ -8796,7 +8828,7 @@
             }
           }
         } else {
-          var optionSelector = ':not([hidden]):not([data-hidden="true"]):not([data-divider="true"])';
+          var optionSelector = ':not([hidden]):not([data-hidden="true"]):not([data-divider="true"]):not([style*="display: none"])';
           if (this.options.hideDisabled) optionSelector += ':not(:disabled)';
 
           // If this is a multiselect, and selectedTextFormat is count, then show 1 of 2 selected, etc.
@@ -8920,7 +8952,7 @@
       if (this.selectpicker.current.data.length) {
         for (var i = 0; i < this.selectpicker.current.data.length; i++) {
           var data = this.selectpicker.current.data[i];
-          if (data.type === 'option') {
+          if (data.type === 'option' && $(data.element.firstChild).css('display') !== 'none') {
             li = data.element;
             break;
           }
@@ -9104,7 +9136,7 @@
 
       this.$menuInner.css({
         'max-height': menuInnerHeight + 'px',
-        'overflow-y': 'auto',
+        'overflow': 'hidden auto',
         'min-height': menuInnerMinHeight + 'px'
       });
 
@@ -9312,26 +9344,25 @@
     },
 
     /**
-     * @param {number} index - the index of the option that is being changed
+     * @param {Object} liData - the option object that is being changed
      * @param {boolean} selected - true if the option is being selected, false if being deselected
      */
     setSelected: function (liData, selected) {
       selected = selected === undefined ? liData.selected : selected;
 
-      var index = liData.index,
-          li = liData.element,
-          activeIndexIsSet = this.activeIndex !== undefined,
-          thisIsActive = this.activeIndex === index,
+      var li = liData.element,
+          activeElementIsSet = this.activeElement !== undefined,
+          thisIsActive = this.activeElement === li,
           prevActive,
           a,
           // if current option is already active
           // OR
           // if the current option is being selected, it's NOT multiple, and
-          // activeIndex is undefined:
+          // activeElement is undefined:
           //  - when the menu is first being opened, OR
           //  - after a search has been performed, OR
-          //  - when retainActive is false when selecting a new option (i.e. index of the newly selected option is not the same as the current activeIndex)
-          keepActive = thisIsActive || (selected && !this.multiple && !activeIndexIsSet);
+          //  - when retainActive is false when selecting a new option (i.e. index of the newly selected option is not the same as the current activeElement)
+          keepActive = thisIsActive || (selected && !this.multiple && !activeElementIsSet);
 
       if (!li) return;
 
@@ -9347,7 +9378,7 @@
       a = li.firstChild;
 
       if (selected) {
-        this.selectedIndex = index;
+        this.selectedElement = li;
       }
 
       li.classList.toggle('selected', selected);
@@ -9355,7 +9386,7 @@
       if (keepActive) {
         this.focusItem(li, liData);
         this.selectpicker.view.currentActive = li;
-        this.activeIndex = index;
+        this.activeElement = li;
       } else {
         this.defocusItem(li);
       }
@@ -9374,8 +9405,8 @@
         }
       }
 
-      if (!keepActive && !activeIndexIsSet && selected && this.prevActiveIndex !== undefined) {
-        prevActive = this.selectpicker.main.elements[this.prevActiveIndex];
+      if (!keepActive && !activeElementIsSet && selected && this.prevActiveElement !== undefined) {
+        prevActive = this.prevActiveElement;
 
         this.defocusItem(prevActive);
       }
@@ -9539,7 +9570,7 @@
             element = that.$element[0],
             position0 = that.isVirtual() ? that.selectpicker.view.position0 : 0,
             clickedData = that.selectpicker.current.data[$this.parent().index() + position0],
-            clickedIndex = clickedData.index,
+            clickedElement = clickedData.element,
             prevValue = getSelectValues.call(that),
             prevIndex = element.selectedIndex,
             prevOption = element.options[prevIndex],
@@ -9558,19 +9589,23 @@
           var option = clickedData.option,
               $option = $(option),
               state = option.selected,
-              $optgroup = $option.parent('optgroup'),
-              $optgroupOptions = $optgroup.find('option'),
-              maxOptions = that.options.maxOptions,
-              maxOptionsGrp = $optgroup.data('maxOptions') || false;
+              optgroupData = that.selectpicker.current.data.find(function (datum) {
+                return datum.optID === clickedData.optID && datum.type === 'optgroup-label';
+              }),
+              optgroup = optgroupData ? optgroupData.optgroup : undefined,
+              dataGetter = optgroup instanceof Element ? getOptionData.fromOption : getOptionData.fromDataSource,
+              optgroupOptions = optgroup && optgroup.children,
+              maxOptions = parseInt(that.options.maxOptions),
+              maxOptionsGrp = optgroup && parseInt(dataGetter(optgroup, 'maxOptions')) || false;
 
-          if (clickedIndex === that.activeIndex) retainActive = true;
+          if (clickedElement === that.activeElement) retainActive = true;
 
           if (!retainActive) {
-            that.prevActiveIndex = that.activeIndex;
-            that.activeIndex = undefined;
+            that.prevActiveElement = that.activeElement;
+            that.activeElement = undefined;
           }
 
-          if (!that.multiple) { // Deselect previous option if not multi select
+          if (!that.multiple || maxOptions === 1) { // Deselect previous option if not multi select
             if (prevData) that.setSelected(prevData, false);
             that.setSelected(clickedData, true);
           } else { // Toggle the clicked option if multi select.
@@ -9579,22 +9614,27 @@
 
             if (maxOptions !== false || maxOptionsGrp !== false) {
               var maxReached = maxOptions < getSelectedOptions.call(that).length,
-                  maxReachedGrp = maxOptionsGrp < $optgroup.find('option:selected').length;
+                  selectedGroupOptions = 0;
+
+              if (optgroup && optgroup.children) {
+                for (var i = 0; i < optgroup.children.length; i++) {
+                  if (optgroup.children[i].selected) selectedGroupOptions++;
+                }
+              }
+
+              var maxReachedGrp = maxOptionsGrp < selectedGroupOptions;
 
               if ((maxOptions && maxReached) || (maxOptionsGrp && maxReachedGrp)) {
-                if (maxOptions && maxOptions == 1) {
+                if (maxOptions && maxOptions === 1) {
                   element.selectedIndex = -1;
-                  option.selected = true;
                   that.setOptionStatus(true);
-                } else if (maxOptionsGrp && maxOptionsGrp == 1) {
-                  for (var i = 0; i < $optgroupOptions.length; i++) {
-                    var _option = $optgroupOptions[i];
-                    _option.selected = false;
-                    that.setSelected(_option.liIndex, false);
+                } else if (maxOptionsGrp && maxOptionsGrp === 1) {
+                  for (var i = 0; i < optgroupOptions.length; i++) {
+                    var _option = optgroupOptions[i];
+                    that.setSelected(that.selectpicker.current.data[_option.liIndex], false);
                   }
 
-                  option.selected = true;
-                  that.setSelected(clickedIndex, true);
+                  that.setSelected(clickedData, true);
                 } else {
                   var maxOptionsText = typeof that.options.maxOptionsText === 'string' ? [that.options.maxOptionsText, that.options.maxOptionsText] : that.options.maxOptionsText,
                       maxOptionsArr = typeof maxOptionsText === 'function' ? maxOptionsText(maxOptions, maxOptionsGrp) : maxOptionsText,
@@ -9607,8 +9647,6 @@
                     maxTxt = maxTxt.replace('{var}', maxOptionsArr[2][maxOptions > 1 ? 0 : 1]);
                     maxTxtGrp = maxTxtGrp.replace('{var}', maxOptionsArr[2][maxOptionsGrp > 1 ? 0 : 1]);
                   }
-
-                  option.selected = false;
 
                   that.$menu.append($notify);
 
@@ -9625,7 +9663,7 @@
                   }
 
                   setTimeout(function () {
-                    that.setSelected(clickedIndex, false);
+                    that.setSelected(clickedData, false);
                   }, 10);
 
                   $notify[0].classList.add('fadeOut');
@@ -9759,10 +9797,14 @@
         that.selectpicker.search.data = [];
 
         if (searchValue) {
+          that.selectpicker.search.previousValue = searchValue;
+
           if (that.options.source.search) {
             that.fetchData(function (builtData) {
               that.render();
               that.buildList(undefined, true);
+              that.noScroll = true;
+              that.$menuInner.scrollTop(0);
               that.createView(true);
               showNoResults.call(that, builtData, searchValue);
             }, 'search', 0, searchValue);
@@ -9811,7 +9853,7 @@
               }
             }
 
-            that.activeIndex = undefined;
+            that.activeElement = undefined;
             that.noScroll = true;
             that.$menuInner.scrollTop(0);
             that.selectpicker.search.elements = searchMatch;
@@ -9822,8 +9864,6 @@
           that.$menuInner.scrollTop(0);
           that.createView(false);
         }
-
-        that.selectpicker.search.previousValue =  searchValue;
       });
     },
 
@@ -9873,8 +9913,7 @@
             var liSelectedIndex = (element.options[element.selectedIndex] || {}).liIndex;
 
             if (typeof liSelectedIndex === 'number') {
-              this.setSelected(this.selectedIndex, false);
-              this.setSelected(liSelectedIndex, true);
+              this.setSelected(this.selectpicker.current.data[liSelectedIndex], true);
             }
           }
         }
@@ -10004,7 +10043,7 @@
       if (isArrowKey) { // if up or down
         if (!$items.length) return;
 
-        liActive = that.selectpicker.main.elements[that.activeIndex];
+        liActive = that.activeElement;
         index = liActive ? Array.prototype.indexOf.call(liActive.parentElement.children, liActive) : -1;
 
         if (index !== -1) {
@@ -10040,9 +10079,13 @@
             liActiveIndex = that.selectpicker.current.elements.length - 1;
           } else {
             activeLi = that.selectpicker.current.data[liActiveIndex];
-            offset = activeLi.position - activeLi.height;
 
-            updateScroll = offset < scrollTop;
+            // could be undefined if no results exist
+            if (activeLi) {
+              offset = activeLi.position - activeLi.height;
+
+              updateScroll = offset < scrollTop;
+            }
           }
         } else if (e.which === keyCodes.ARROW_DOWN || downOnTab) { // down
           // scroll to top and highlight first option
@@ -10052,15 +10095,19 @@
             liActiveIndex = that.selectpicker.view.firstHighlightIndex;
           } else {
             activeLi = that.selectpicker.current.data[liActiveIndex];
-            offset = activeLi.position - that.sizeInfo.menuInnerHeight;
 
-            updateScroll = offset > scrollTop;
+            // could be undefined if no results exist
+            if (activeLi) {
+              offset = activeLi.position - that.sizeInfo.menuInnerHeight;
+
+              updateScroll = offset > scrollTop;
+            }
           }
         }
 
         liActive = that.selectpicker.current.elements[liActiveIndex];
 
-        that.activeIndex = that.selectpicker.current.data[liActiveIndex].index;
+        that.activeElement = (that.selectpicker.current.data[liActiveIndex] || {}).element;
 
         that.focusItem(liActive);
 
@@ -10103,7 +10150,7 @@
           hasMatch = stringSearch(li, keyHistory, 'startsWith', true);
 
           if (hasMatch && that.selectpicker.view.canHighlight[i]) {
-            matches.push(li.index);
+            matches.push(li.element);
           }
         }
 
@@ -10114,7 +10161,7 @@
 
           // either only one key has been pressed or they are all the same key
           if (keyHistory.length === 1) {
-            matchIndex = matches.indexOf(that.activeIndex);
+            matchIndex = matches.indexOf(that.activeElement);
 
             if (matchIndex === -1 || matchIndex === matches.length - 1) {
               matchIndex = 0;
@@ -10138,7 +10185,7 @@
 
           liActive = that.selectpicker.main.elements[searchMatch];
 
-          that.activeIndex = matches[matchIndex];
+          that.activeElement = liActive;
 
           that.focusItem(liActive);
 
@@ -10235,7 +10282,7 @@
       this.$element
         .off(EVENT_KEY)
         .removeData('selectpicker')
-        .removeClass('bs-select-hidden selectpicker');
+        .removeClass('bs-select-hidden selectpicker mobile-device');
 
       $(window).off(EVENT_KEY + '.' + this.selectId);
     }
@@ -10300,7 +10347,7 @@
     }
 
     if (version.major > '4') {
-      Selector.DATA_TOGGLE = 'data-bs-toggle="dropdown"'
+      Selector.DATA_TOGGLE = 'data-bs-toggle="dropdown"';
     }
 
     var value;
@@ -10325,6 +10372,7 @@
 
           var config = $.extend({}, Selectpicker.DEFAULTS, $.fn.selectpicker.defaults || {}, getAttributesObject($this), dataAttributes, options); // this is correct order on initial render
           config.template = $.extend({}, Selectpicker.DEFAULTS.template, ($.fn.selectpicker.defaults ? $.fn.selectpicker.defaults.template : {}), dataAttributes.template, options.template);
+          config.source = $.extend({}, Selectpicker.DEFAULTS.source, ($.fn.selectpicker.defaults ? $.fn.selectpicker.defaults.source : {}), options.source);
           $this.data('selectpicker', (data = new Selectpicker(this, config)));
         } else if (options) {
           for (var i in options) {
@@ -10391,7 +10439,7 @@
     $('.selectpicker').each(function () {
       var $selectpicker = $(this);
       Plugin.call($selectpicker, $selectpicker.data());
-    })
+    });
   });
 })(jQuery);
 

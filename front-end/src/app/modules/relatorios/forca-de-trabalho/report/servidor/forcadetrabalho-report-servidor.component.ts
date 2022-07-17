@@ -24,8 +24,7 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
   public statusPlano: string = '';
   public horaAtual: Date = new Date();
 
-  public tipoGrafico: ChartType = 'bar';
-  public labelsX: Array<string> = [];
+  //public tipoGrafico: ChartType = 'bar';
   public opcoesGraficoPlano: ChartOptions = {
     scales: {
       xAxes: [{
@@ -55,15 +54,15 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
     scales: {
       xAxes: [{
           stacked: true,
-          ticks: {
+/*           ticks: {
             beginAtZero: true
-          }
+          } */
       }],
       yAxes: [{
           stacked: true,
-          ticks: {
+/*           ticks: {
             beginAtZero: true
-          }
+          } */
       }]
     },
     plugins: {
@@ -161,7 +160,7 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
       };
   }
 
-  public obterDadosGrafico(metadados: MetadadosPlano, tipo: 'GERAL' | 'DETALHADO') {
+  public obterDadosGrafico(metadados: MetadadosPlano, tipo: 'GERAL' | 'DETALHADO' | 'AVALIACAO') {
       let result: any = null;
       let dadosGeral: ChartDataSets[] = [
         {
@@ -179,55 +178,59 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
         {
           label: 'Demandas Não-iniciadas',
           data: [metadados.horasDemandasNaoIniciadas],
-          backgroundColor: '#0dcaf0'
+          backgroundColor: '#0dcaf0',
+          stack: 'Demandas'
         },
         {
           label: 'Demandas Iniciadas',
           data: [metadados.horasDemandasEmAndamento],
-          backgroundColor: '#ffc107'
+          backgroundColor: '#ffc107',
+          stack: 'Demandas'
         },
         {
           label: 'Demandas Concluídas',
           data: [metadados.horasDemandasConcluidas],
-          backgroundColor: '#af4201'
+          backgroundColor: '#af4201',
+          stack: 'Demandas'
         },
         {
           label: 'Demandas Avaliadas',
           data: [metadados.horasDemandasAvaliadas],
-          backgroundColor: '#af4af0'
+          backgroundColor: '#af4af0',
+          stack: 'Demandas'
         },
         {
           label: 'Disponível no Plano',
           data: [metadados.horasUteisTotais - metadados.horasDemandasNaoIniciadas - metadados.horasDemandasEmAndamento - metadados.horasDemandasConcluidas - metadados.horasDemandasAvaliadas],
-          backgroundColor: '#6c757d'
+          backgroundColor: '#6c757d',
+          stack: 'Demandas'
         }
       ];
       let dadosAvaliacao: ChartDataSets[] = [
         {
           label: '',
-          data: [10],
-          backgroundColor: '#F5F5F5'
+          data: [2],
+          backgroundColor: '#F5F5F5',
+          stack: 'Nota'
         },
         {
           label: '',
-          data: [metadados.horasUteisTotais],
-          backgroundColor: '#6c757d' // #EF5350 (vermelha) ou #283593 (azul)
+          data: [8],
+          backgroundColor: '#6c757d',
+          stack: 'Nota' // #EF5350 (vermelha) ou #283593 (azul)
         }
       ];
       switch (tipo) {
         case 'GERAL':
           result = dadosGeral;
-          this.tipoGrafico = 'bar';
           break;
 
         case 'DETALHADO':
           result = dadosDetalhado;
-          this.tipoGrafico = 'bar';
           break;
-/*         case 'AVALIACAO':
+        case 'AVALIACAO':
           result = dadosAvaliacao;
-          this.tipoGrafico = 'horizontalBar';
-          break; */
+          break;
       }
     return result;
   }

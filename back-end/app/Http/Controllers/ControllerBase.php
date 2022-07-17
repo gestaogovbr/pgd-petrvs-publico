@@ -47,7 +47,7 @@ abstract class ControllerBase extends Controller
             }, "lotacoes.unidade"])->first();
             if(isset($usuario->lotacoes[0]) && !empty($usuario->lotacoes[0]->unidade_id)) {
                 return $usuario->lotacoes[0]->unidade;
-            }            
+            }
         }
         return null;
     }
@@ -60,7 +60,7 @@ abstract class ControllerBase extends Controller
 
     /**
      * Search for a given text
-     * 
+     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
@@ -85,7 +85,7 @@ abstract class ControllerBase extends Controller
 
     /**
      * Search for a given key
-     * 
+     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
@@ -109,11 +109,11 @@ abstract class ControllerBase extends Controller
 
     /**
      * Get entity by id
-     * 
+     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    
+
     public function getById(Request $request)
     {
         try {
@@ -133,7 +133,7 @@ abstract class ControllerBase extends Controller
 
     /**
      * Query
-     * 
+     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
@@ -162,7 +162,7 @@ abstract class ControllerBase extends Controller
 
     /**
      * Download a file with signed url
-     * 
+     *
      * @param  \Illuminate\Http\Request  $request
      * @param  string $file
      * @return \Illuminate\Http\Response
@@ -176,7 +176,7 @@ abstract class ControllerBase extends Controller
     /**
      * Get public Url of file
      * - file: File path
-     * 
+     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
@@ -196,7 +196,7 @@ abstract class ControllerBase extends Controller
     /**
      * Delete a file
      * - file: File path
-     * 
+     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */

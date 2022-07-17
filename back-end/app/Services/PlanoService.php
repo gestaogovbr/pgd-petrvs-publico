@@ -101,6 +101,7 @@ class PlanoService extends ServiceBase
     public function metadadosPlano($plano_id) {
         $plano = Plano::where('id', $plano_id)->with(['demandas', 'demandas.avaliacao'])->first()->toArray();
         $result = [
+            "usuario_id" => $plano['usuario_id'],
             "concluido" => true,
             "horasUteisTotais" => $plano['tempo_total'],
             "demandasNaoIniciadas" => array_filter($plano['demandas'], fn($demanda) => $demanda['data_inicio'] == null),
@@ -177,5 +178,9 @@ class PlanoService extends ServiceBase
             if ($this->demandaService->isCumprida($demanda) && $this->demandaService->withinPeriodo($demanda, $inicioPeriodo, $fimPeriodo)) array_push($result, $demanda);
         }
         return $result;
+    }
+
+    public function isPlanoGestao($plano) {
+        return !$plano['programa']['normativa'] == null;
     }
 }

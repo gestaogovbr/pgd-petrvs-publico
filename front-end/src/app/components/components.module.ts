@@ -44,10 +44,12 @@ import { OrderComponent } from './grid/order/order.component';
 import { ChartsModule }  from 'ng2-charts';
 import { BarChartComponent } from './charts/bar/bar-chart.component';
 import { InputWorkloadComponent } from './input/input-workload/input-workload.component';
+import { PieChartComponent } from './charts/pie/pie-chart.component';
 
 @NgModule({
   declarations: [
     BarChartComponent,
+    PieChartComponent,
     GridComponent,
     ColumnComponent,
     ColumnHeaderComponent,
@@ -97,6 +99,7 @@ import { InputWorkloadComponent } from './input/input-workload/input-workload.co
   ],
   exports: [
     BarChartComponent,
+    PieChartComponent,
     GridComponent,
     ColumnsComponent,
     ColumnComponent,

@@ -65,33 +65,6 @@ TipoModalidadeDaoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵ
 
 /***/ }),
 
-/***/ "bsmI":
-/*!*********************************************!*\
-  !*** ./src/app/dao/programa-dao.service.ts ***!
-  \*********************************************/
-/*! exports provided: ProgramaDaoService */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProgramaDaoService", function() { return ProgramaDaoService; });
-/* harmony import */ var _dao_base_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./dao-base.service */ "WScx");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
-
-
-class ProgramaDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0__["DaoBaseService"] {
-    constructor(injector) {
-        super("Programa", injector);
-        this.injector = injector;
-        this.searchFields = ["nome"];
-    }
-}
-ProgramaDaoService.ɵfac = function ProgramaDaoService_Factory(t) { return new (t || ProgramaDaoService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
-ProgramaDaoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: ProgramaDaoService, factory: ProgramaDaoService.ɵfac, providedIn: 'root' });
-
-
-/***/ }),
-
 /***/ "nUpE":
 /*!*************************************************************************!*\
   !*** ./src/app/modules/gestao/plano/plano-list/plano-list.component.ts ***!

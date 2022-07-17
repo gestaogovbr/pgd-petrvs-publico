@@ -13,9 +13,9 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
     this.searchFields = ["codigo", "sigla", "nome"];
   }
 
-  public metadadosArea(unidade_id: String): Promise<AreaRelatorio> {
+  public metadadosArea(unidade_id: String, programa_id: String): Promise<AreaRelatorio> {
     return new Promise<AreaRelatorio>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/metadadosArea', {unidade_id}).subscribe(response => {
+      this.server.post('api/' + this.collection + '/metadadosArea', {unidade_id, programa_id}).subscribe(response => {
         resolve(response?.metadadosArea || []);
       }, error => reject(error));
     });

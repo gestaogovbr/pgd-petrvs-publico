@@ -1,10 +1,8 @@
 <div style="display: block;">
   <canvas baseChart
     [datasets]="barChartData"
-    [labels]="barChartLabels"
+    [chartType]="barChartType">
     [options]="barChartOptions"
     [plugins]="barChartPlugins"
-    [legend]="barChartLegend"
-    [chartType]="barChartType">
   </canvas>
 </div>
