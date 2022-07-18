@@ -67,7 +67,7 @@ export type MetadadosUnidade = {
   percentualHorasConcluidas: number,
   percentualHorasAvaliadas: number,
   percentualHorasTotaisAlocadas: number,
-  percentualHorasUteisTotaisDecorridas: number
+  percentualPlanoDecorrido: number
 };
 
 export type AreaRelatorio = {

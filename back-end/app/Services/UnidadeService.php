@@ -68,6 +68,7 @@ class UnidadeService extends ServiceBase
             'qdePlanosPrograma' => 0,
             'nrServidoresPrograma' => 0,
             'horasUteisTotais' => 0,
+            'horasUteisDecorridas' => 0,
             'qdeDemandasAvaliadas' => 0,
             'horasDemandasNaoIniciadas' => 0,
             'horasDemandasEmAndamento' => 0,
@@ -99,13 +100,13 @@ class UnidadeService extends ServiceBase
 
                 $dadosArea['qdePlanosPrograma'] += $temp['qdePlanosPrograma'];
                 $dadosArea['horasUteisTotais'] += $temp['horasUteisTotais'];
+                $dadosArea['horasUteisDecorridas'] += $temp['horasUteisDecorridas'];
                 $dadosArea['qdeDemandasAvaliadas'] += $temp['qdeDemandasAvaliadas'];
                 $dadosArea['horasDemandasNaoIniciadas'] += $temp['horasDemandasNaoIniciadas'];
                 $dadosArea['horasDemandasEmAndamento'] += $temp['horasDemandasEmAndamento'];
                 $dadosArea['horasDemandasConcluidas'] += $temp['horasDemandasConcluidas'];
                 $dadosArea['horasDemandasAvaliadas'] += $temp['horasDemandasAvaliadas'];
                 $dadosArea['horasTotaisAlocadas'] += $temp['horasTotaisAlocadas'];
-                //$idsServidoresPrograma = array_merge($idsServidoresPrograma, $temp['idsServidoresPrograma']);
             };
             $dadosArea['nrServidoresPrograma'] = count(array_unique($idsServidoresPrograma));
         }
@@ -126,6 +127,7 @@ class UnidadeService extends ServiceBase
         $dadosArea['percentualHorasConcluidas'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasDemandasConcluidas'] / $dadosArea['horasUteisTotais'];
         $dadosArea['percentualHorasAvaliadas'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasDemandasAvaliadas'] / $dadosArea['horasUteisTotais'];
         $dadosArea['percentualHorasTotaisAlocadas'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasTotaisAlocadas'] / $dadosArea['horasUteisTotais'];
+        $dadosArea['percentualPlanoDecorrido'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasUteisDecorridas'] / $dadosArea['horasUteisTotais'];
 
         $result = [
             'descricaoArea' => $unidadePrincipal->nome . ' - ' . $unidadePrincipal->sigla,
@@ -152,6 +154,7 @@ class UnidadeService extends ServiceBase
             "nrServidoresPrograma" => count(array_unique(array_map(fn($x) => $x["usuario_id"], $metadadosPlanos))),
             "idsServidoresPrograma" => array_unique(array_map(fn($x) => $x["usuario_id"], $metadadosPlanos)),
             "horasUteisTotais" => array_reduce(array_map(fn($m) => $m['horasUteisTotais'], $metadadosPlanos), function($acum, $item) {return $acum + $item;},0),
+            "horasUteisDecorridas" => array_reduce(array_map(fn($m) => $m['horasUteisDecorridas'], $metadadosPlanos), function($acum, $item) {return $acum + $item;},0),
             "qdeDemandasAvaliadas" => array_reduce(array_map(fn($m) => count($m['demandasAvaliadas']), $metadadosPlanos), function($acum, $item) {return $acum + $item;},0),
             "horasDemandasNaoIniciadas" => array_reduce(array_map(fn($m) => $m['horasDemandasNaoIniciadas'], $metadadosPlanos), function($acum, $item) {return $acum + $item;},0),
             "horasDemandasEmAndamento" => array_reduce(array_map(fn($m) => $m['horasDemandasEmAndamento'], $metadadosPlanos), function($acum, $item) {return $acum + $item;},0),
@@ -160,6 +163,13 @@ class UnidadeService extends ServiceBase
             "horasTotaisAlocadas" => array_reduce(array_map(fn($m) => $m['horasTotaisAlocadas'], $metadadosPlanos), function($acum, $item) {return $acum + $item;},0),
             "mediaAvaliacoes" => null
         ];
+        $result['percentualHorasNaoIniciadas'] = $result['horasUteisTotais'] == 0 ? 0 : $result['horasDemandasNaoIniciadas'] / $result['horasUteisTotais'];
+        $result['percentualHorasEmAndamento'] = $result['horasUteisTotais'] == 0 ? 0 : $result['horasDemandasEmAndamento'] / $result['horasUteisTotais'];
+        $result['percentualHorasConcluidas'] = $result['horasUteisTotais'] == 0 ? 0 : $result['horasDemandasConcluidas'] / $result['horasUteisTotais'];
+        $result['percentualHorasAvaliadas'] = $result['horasUteisTotais'] == 0 ? 0 : $result['horasDemandasAvaliadas'] / $result['horasUteisTotais'];
+        $result['percentualHorasTotaisAlocadas'] = $result['horasUteisTotais'] == 0 ? 0 : $result['horasTotaisAlocadas'] / $result['horasUteisTotais'];
+        $result['percentualPlanoDecorrido'] = $result['horasUteisTotais'] == 0 ? 0 : $result['horasUteisDecorridas'] / $result['horasUteisTotais'];
+
         /** Neste trecho calcula-se a média das avaliações de toda a Unidade, partindo-se da média das avaliações de cada Plano de Trabalho considerado.
          *  Se um dado Plano de Trabalho possui mediaAvaliacoes = null, é porque ele não possui nenhuma demanda ainda avaliada. Neste caso, a media das avaliações deste Plano
          *  de Trabalho (null) não será utilizada no cálculo da média da Unidade, caso contrário a média seria indevidamente afetada. A função array_map prepara o array com

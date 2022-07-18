@@ -177,6 +177,7 @@ export class CalendarService {
     const uDiasInicio = this.util.daystamp(inicio); /* Dia inicio (usado somente se !useTempo) */
     const uDiasFim = useTempo ? uDiasInicio : this.util.daystamp(fimOuTempo as Date); /* Dia fim (usado somente se !useTempo) */
     const hExpediente = this.expediente(unidade); /* em horas */
+
     /* Calcula as horas de afastamento */
     const horasAfastamento = (start: number, end: number): TimeInterval[] => {
       let periodos: TimeInterval[] = [];
@@ -191,6 +192,7 @@ export class CalendarService {
       }
       return periodos;
     }
+
     /* Calcula as horas pausadas */
     const horasPausas = (start: number, end: number): TimeInterval[] => {
       let periodos: TimeInterval[] = [];

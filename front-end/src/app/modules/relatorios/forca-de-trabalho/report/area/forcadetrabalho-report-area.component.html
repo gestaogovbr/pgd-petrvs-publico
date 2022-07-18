@@ -95,13 +95,18 @@ os Planos de Trabalho associados ao Programa escolhido, e dentro da vigência.</
           </span>
         </td>
       </tr>
-<!--       <tr *ngIf="x.dadosArea.qdePlanosPrograma > 0">
+      <tr *ngIf="x.dadosArea.qdePlanosPrograma > 0">
         <td class="text-center">C</td>
         <td>Horas úteis decorridas</td>
-        <td class="text-center">{{ x.dadosArea.horasUteisDecorridas }}</td>
-        <td class="text-center">{{ x.dadosArea.percentualHorasUteisDecorridas}} %</td>
-        <td><span><small class="micro-text fw-ligh">{{ x.dadosArea.horasUteisDecorridas == -1 ? 'Nenhum dos Planos de Trabalho da área iniciou a vigência!' : (x.dadosArea.horasUteisDecorridas == -2 ? 'Todos os Planos de Trabalho da Área já encerraram suas vigências!' : 'Soma das horas úteis decorridas de todos os Planos de Trabalho associados à Área.') }}</small></span></td>
-      </tr> -->
+        <td class="text-center">{{ x.dadosArea.horasUteisDecorridas == 0 ? 0 : this.util.decimalToTimerFormated(x.dadosArea.horasUteisDecorridas, true) }}</td>
+        <td class="text-center">{{ x.dadosArea.percentualPlanoDecorrido}} %</td>
+        <td>
+          <span>
+            <small class="micro-text fw-ligh">{{ x.dadosArea.horasUteisDecorridas == -1 ? 'Nenhum dos Planos de Trabalho da área iniciou a vigência!' : (x.dadosArea.horasUteisDecorridas == -2 ? 'Todos os Planos de Trabalho da Área já encerraram suas vigências!' : 'Soma das horas úteis decorridas de todos os Planos de Trabalho associados à Área.') }}</small>
+            <br><small class="micro-text fw-ligh">O percentual representa a relação entre esta soma e a soma das horas úteis totais da Área: C(%) = C / B.</small>
+          </span>
+        </td>
+      </tr>
       <tr *ngIf="x.dadosArea.qdePlanosPrograma > 0">
         <td class="text-center">D</td>
         <td>Total de horas não-iniciadas</td>
@@ -228,13 +233,18 @@ os Planos de Trabalho associados ao Programa escolhido, e dentro da vigência.</
             </span>
           </td>
         </tr>
-<!--         <tr *ngIf="x.dadosUnidade.qdePlanosPrograma > 0">
+        <tr *ngIf="x.dadosUnidade.qdePlanosPrograma > 0">
           <td class="text-center">C</td>
           <td>Horas úteis decorridas</td>
-          <td class="text-center">{{ x.dadosUnidade.horasUteisDecorridas }}</td>
-          <td class="text-center">{{ x.dadosUnidade.percentualHorasUteisDecorridas}} %</td>
-          <td><span><small class="micro-text fw-ligh">{{ x.dadosUnidade.horasUteisDecorridas == -1 ? 'Nenhum dos Planos de Trabalho da Unidade iniciou a vigência!' : (x.dadosUnidade.horasUteisDecorridas == -2 ? 'Todos os Planos de Trabalho da Unidade já encerraram suas vigências!' : 'Soma das horas úteis decorridas de todos os Planos de Trabalho associados à Unidade.') }}</small></span></td>
-        </tr> -->
+          <td class="text-center">{{ x.dadosUnidade.horasUteisDecorridas == 0 ? 0 : (this.util.decimalToTimerFormated(x.dadosUnidade.horasUteisDecorridas, true)) }}</td>
+          <td class="text-center">{{ x.dadosUnidade.percentualPlanoDecorrido}} %</td>
+          <td>
+            <span>
+              <small class="micro-text fw-ligh">{{ x.dadosUnidade.horasUteisDecorridas == -1 ? 'Nenhum dos Planos de Trabalho da Unidade iniciou a vigência!' : (x.dadosUnidade.horasUteisDecorridas == -2 ? 'Todos os Planos de Trabalho da Unidade já encerraram suas vigências!' : 'Soma das horas úteis decorridas de todos os Planos de Trabalho associados à Unidade.') }}</small>
+              <br><small class="micro-text fw-ligh">O percentual representa a relação entre esta soma e a soma das horas úteis totais da Unidade: C(%) = C / B.</small>
+            </span>
+          </td>
+        </tr>
         <tr *ngIf="x.dadosUnidade.qdePlanosPrograma > 0">
           <td class="text-center">D</td>
           <td>Total de horas não-iniciadas</td>

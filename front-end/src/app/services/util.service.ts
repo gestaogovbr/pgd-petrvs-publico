@@ -415,7 +415,7 @@ export class UtilService {
     const userTimezoneOffset = dateRef.getTimezoneOffset() * 60000;
     return Math.floor((dateRef.getTime() - userTimezoneOffset) / 1000);
   }
-
+/**  */
   public daystamp(dateRef: Date): number {
     const userTimezoneOffset = dateRef.getTimezoneOffset() * 60000;
     return Math.floor((dateRef.getTime() - userTimezoneOffset) / (1000 * 60 * 60 * 24));

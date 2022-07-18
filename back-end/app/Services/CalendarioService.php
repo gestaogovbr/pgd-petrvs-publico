@@ -231,12 +231,13 @@ class CalendarioService
         $formaDistribuicao = $unidade->distribuicao_forma_contagem_prazos;
         $formaEntrega = $unidade->entrega_forma_contagem_prazos;
         $forma = $tipo == "DISTRIBUICAO" ? $formaDistribuicao : $formaEntrega;
-        const useCorridos = forma == "DIAS_CORRIDOS" || forma == "HORAS_CORRIDAS";
-        const useDias = forma == "DIAS_CORRIDOS" || forma == "DIAS_UTEIS";
-        //const useTempo = typeof fimOuTempo == "number"; /* Se o parametro fimOuTempo é DataFim ou Horas/Dias */
-        const uDiasInicio = this.util.daystamp(inicio); /* Dia inicio (usado somente se !useTempo) */
-        /*   const uDiasFim = useTempo ? uDiasInicio : this.util.daystamp(fimOuTempo as Date); /* Dia fim (usado somente se !useTempo) */
+        $useCorridos = $forma == "DIAS_CORRIDOS" || $forma == "HORAS_CORRIDAS";
+        $useDias = $forma == "DIAS_CORRIDOS" || $forma == "DIAS_UTEIS";
+        $useTempo = get_class($fimOuTempo) == "number"; /* Se o parametro fimOuTempo é DataFim ou Horas/Dias */
+        $uDiasInicio = $this->util->daystamp(inicio); /* Dia inicio (usado somente se !useTempo) */
+        //$uDiasFim = $useTempo ? $uDiasInicio : $this->util->daystamp($fimOuTempo as Date); /* Dia fim (usado somente se !useTempo) */
         /*   const hExpediente = this.expediente(unidade); /* em horas */
+
         /* Calcula as horas de afastamento */
         /*     const horasAfastamento = (start: number, end: number): TimeInterval[] => {
       let periodos: TimeInterval[] = [];
@@ -346,6 +347,21 @@ class CalendarioService
         //      result.dias_corridos++;
         //  }
         return result;
+    }
+
+    /* Calcula as horas de afastamento - FUNÇÃO EM DESENVOLVIMENTO */
+    public function calculaHorasAfastamento(number $start, number $end, array $afastamentos){
+      $periodos = [];
+      foreach($afastamentos as $afastamento) {
+        /* calcula a intersecção entre start e end e o inicio e fim do afastamento */
+        //$intervalo = UtilService::intersection([{start, end}, {start: afastamento.inicio_afastamento.getTime(), end: afastamento.fim_afastamento.getTime()}]) as TimeInterval;
+        if($intervalo) {
+          /* Caso tenha uma intersecção, adiciona o período para retorno e insere em result.afastamentos */
+          array_push($periodos, $intervalo);
+          if(!result.afastamentos.includes(afastamento)) result.afastamentos.push(afastamento);
+        }
+      }
+      return $periodos;
     }
 
 

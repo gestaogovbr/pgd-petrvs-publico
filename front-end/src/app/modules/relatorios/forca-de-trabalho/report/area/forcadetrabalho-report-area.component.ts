@@ -140,7 +140,7 @@ export class ForcaDeTrabalhoReportAreaComponent extends PageReportBase<Usuario, 
   public async report(filter: any) {
     this.parametros = Object.assign({}, filter);
     let result = await this.unidadeDao.metadadosArea(this.parametros.unidade_id, this.parametros.programa_id);
-    
+
     let prov1 = [result];
     let prov2 = prov1[0];
     let prov3 = prov2.descricaoArea;
@@ -150,7 +150,14 @@ export class ForcaDeTrabalhoReportAreaComponent extends PageReportBase<Usuario, 
     result['dadosArea']['percentualHorasConcluidas'] = Math.round(result['dadosArea']['percentualHorasConcluidas'] * 10000)/100;
     result['dadosArea']['percentualHorasAvaliadas'] = Math.round(result['dadosArea']['percentualHorasAvaliadas'] * 10000)/100;
     result['dadosArea']['percentualHorasTotaisAlocadas'] = Math.round(result['dadosArea']['percentualHorasTotaisAlocadas'] * 10000)/100;
-    //result['dadosArea']['percentualHorasUteisTotaisDecorridas'] = Math.round(result['dadosArea']['percentualHorasUteisTotaisDecorridas'] * 10000)/100;
+    result['dadosArea']['percentualPlanoDecorrido'] = Math.round(result['dadosArea']['percentualPlanoDecorrido'] * 10000)/100;
+
+    result['dadosUnidade']['percentualHorasNaoIniciadas'] = Math.round(result['dadosUnidade']['percentualHorasNaoIniciadas'] * 10000)/100;
+    result['dadosUnidade']['percentualHorasEmAndamento'] = Math.round(result['dadosUnidade']['percentualHorasEmAndamento'] * 10000)/100;
+    result['dadosUnidade']['percentualHorasConcluidas'] = Math.round(result['dadosUnidade']['percentualHorasConcluidas'] * 10000)/100;
+    result['dadosUnidade']['percentualHorasAvaliadas'] = Math.round(result['dadosUnidade']['percentualHorasAvaliadas'] * 10000)/100;
+    result['dadosUnidade']['percentualHorasTotaisAlocadas'] = Math.round(result['dadosUnidade']['percentualHorasTotaisAlocadas'] * 10000)/100;
+    result['dadosUnidade']['percentualPlanoDecorrido'] = Math.round(result['dadosUnidade']['percentualPlanoDecorrido'] * 10000)/100;
 
     result['graficoAreaGeral'] = this.obterDadosGraficoPizza(result['dadosArea'], 'GERAL');
     result['graficoAreaDetalhado'] = this.obterDadosGraficoPizza(result['dadosArea'], 'DETALHADO');
