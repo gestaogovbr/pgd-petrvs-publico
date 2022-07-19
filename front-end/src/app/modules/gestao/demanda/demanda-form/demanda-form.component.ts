@@ -28,6 +28,7 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import { TipoProcessoDaoService } from 'src/app/dao/tipo-processo-dao.service';
 import { DemandaEntrega } from 'src/app/models/demanda-entrega.model';
 import { DemandaPausa } from 'src/app/models/demanda-pausa.model';
+import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
 
 export type Checklist = {id: string, texto: string, checked: boolean};
 
@@ -55,6 +56,7 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
   public formComentarios: FormGroup;
   public tipoDocumentoDao: TipoDocumentoDaoService;
   public tipoProcessoDao: TipoProcessoDaoService;
+  public planoDao: PlanoDaoService;
   public atividadeDao: AtividadeDaoService;
   public unidadeDao: UnidadeDaoService;
   public usuarioDao: UsuarioDaoService;
@@ -64,6 +66,8 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
   public checklist: LookupItem[] = [];
   public complexidades: LookupItem[] = [];
   public planos: LookupItem[] = [];
+  public planoJoin: string[] = ["documento:id,metadados"];
+  public planoSelecionado?: Plano | null = null;
   public comentarioTipos: LookupItem[];
 
   /* Variável utilizada para detectar as alterações feitas pelo usuário e recalcular os prazos */
@@ -83,6 +87,7 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
     this.atividadeDao = injector.get<AtividadeDaoService>(AtividadeDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
+    this.planoDao = injector.get<PlanoDaoService>(PlanoDaoService);
     this.calendar = injector.get<CalendarService>(CalendarService);
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.delta.prazo_entrega = horaInicial;
@@ -138,7 +143,7 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
       tipo: {default: "COMENTARIO"},
       privacidade: {default: "PUBLICO"}
     }, this.cdRef, this.validateComentario);
-    this.join = ["usuario.planos.tipo_modalidade:id,nome", "pausas", "atividade", "unidade", "comentarios.usuario", "entregas.tarefa", "entregas.comentarios.usuario"];
+    this.join = ["usuario.planos.tipo_modalidade:id,nome", "pausas", "atividade", "unidade", "comentarios.usuario", "entregas.tarefa", "entregas.comentarios.usuario", "plano.documento:id,metadados"];
   }
 
   public ngOnInit() {
@@ -226,6 +231,19 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
       const checklst = this.form.controls.checklist.value.find((x: DemandaChecklist) => !etiquetasKeys.includes(x.id) && x.checked) as DemandaChecklist;
       if(etiqueta) result = "Etiqueta " + etiqueta.value + "não pode ser utilizada!";
       if(checklst) result = "Checklist " + checklst.texto + "não pode ser utilizado!";
+      /* Validações pelo plano */
+      if(this.form.controls.plano_id.value?.length) {
+        /* Verifica se a atividade seleciona está na lista de atividades permitidas no plano de trabalho */
+        if(this.form.controls.atividade_id.value?.length && !this.auth.hasPermissionTo('MOD_DMD_ATV_FORA_PL_TRB')) {
+          const atividades_termo_adesao = this.planoSelecionado?.documento?.metadados?.atividades_termo_adesao;
+          const atividade = this.atividade!.searchObj as Atividade;
+          if(!this.planoSelecionado || this.planoSelecionado?.id != this.form.controls.plano_id.value) {
+            result = "Erro ao ler " + this.lex.noun("plano de trabalho") + ". Selecione-o novamente!";
+          } else if(atividades_termo_adesao && atividade && atividades_termo_adesao.indexOf(this.util.removeAcentos(atividade.nome.toLowerCase())) < 0){
+            result = this.lex.noun("Atividade") + " não consta na lista permitida pelo " + this.lex.noun("plano de trabalho") + " selecionado.";
+          }
+        }
+      }
     }
     return result;
   }
@@ -337,11 +355,16 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
     (async () => {
       if(this.entity) {
         const plano = (this.usuario?.searchObj as Usuario)?.planos?.find(x => x.id == this.form!.controls.plano_id.value);
-        if(plano && this.form!.controls.unidade_id.value != plano.unidade_id) {
-          const unidade = await this.unidadeDao.getById(plano.unidade_id);
-          if(unidade) {
-            await this.unidade?.loadSearch(unidade);
-            await this.auth.selecionaUnidade(unidade.id);
+        if(plano) {
+          if(this.planoSelecionado?.id != plano.id) {
+            this.planoSelecionado = await this.planoDao.getById(plano.id, this.planoJoin);
+          }
+          if(this.form!.controls.unidade_id.value != plano.unidade_id) {
+            const unidade = await this.unidadeDao.getById(plano.unidade_id);
+            if(unidade) {
+              await this.unidade?.loadSearch(unidade);
+              await this.auth.selecionaUnidade(unidade.id);
+            }
           }
         }
         this.calcularPrazo("PACTUADO");
@@ -480,10 +503,18 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
     this.cdRef.detectChanges();
   }
 
+  public getPlanos(usuario: Usuario, data_distribuicao: Date, plano_id: string | null): LookupItem[] {
+    return usuario.planos?.filter(x => x.id == plano_id || (!x.data_fim && this.util.between(data_distribuicao, {start: x.data_inicio_vigencia, end: x.data_fim_vigencia}))).map(x => Object.assign({
+      key: x.id, 
+      value: (x.tipo_modalidade?.nome || "") + " - " + this.usuarioDao.getDateFormatted(x.data_inicio_vigencia)+ " a " + this.usuarioDao.getDateFormatted(x.data_fim_vigencia), data: x
+    })) || [];
+  }
+
   public loadUsuario(usuario: Usuario | undefined) {
     if(usuario) {
       const plano_id = this.form.controls.plano_id.value;
-      this.planos = usuario?.planos?.map(x => Object.assign({key: x.id, value: (x.tipo_modalidade?.nome || "") + " - " + this.usuarioDao.getDateFormatted(x.data_inicio_vigencia)+ " a " + this.usuarioDao.getDateFormatted(x.data_fim_vigencia), data: x})) || [];
+      const data_distribuicao = this.form.controls.data_distribuicao.value || new Date();
+      this.planos = this.getPlanos(usuario, data_distribuicao, plano_id); //usuario?.planos?.map(x => Object.assign({key: x.id, value: (x.tipo_modalidade?.nome || "") + " - " + this.usuarioDao.getDateFormatted(x.data_inicio_vigencia)+ " a " + this.usuarioDao.getDateFormatted(x.data_fim_vigencia), data: x})) || [];
       this.cdRef.detectChanges();
       this.form.controls.plano_id.setValue(!plano_id?.length && this.planos.length > 0 ? this.planos[0].key : plano_id);
     } else {
@@ -604,6 +635,7 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
   public async loadData(entity: Demanda, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
     formValue = this.util.fillForm(formValue, entity);
+    this.planoSelecionado = entity.plano;
     this.assignDelta(formValue);
     await Promise.all([
       this.unidade?.loadSearch(entity.unidade || formValue.unidade_id, false),

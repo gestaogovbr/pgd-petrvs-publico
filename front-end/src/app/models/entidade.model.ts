@@ -12,6 +12,8 @@ export type Nomenclatura = {
     feminino: boolean
 }
 
+export type TipoCargaHoraria = "DIA" | "SEMANA" | "MES";
+
 export class EntidadeNotificacoes {
     enviar_email: boolean = true;
     enviar_whatsapp: boolean = true;
@@ -49,6 +51,7 @@ export class Entidade extends Base {
     public url_sei: string = ""; /* Url base do sei */
     public gestor_id: string | null = null; // Usuário gestor da unidade
     public gestor_substituto_id: string | null = null; // Usuário gestor substituto da unidade
+    public forma_contagem_carga_horaria: TipoCargaHoraria = "DIA"; // Forma de contagem padrão da carga horária
 
     constructor(){
         super();

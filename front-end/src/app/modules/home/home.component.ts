@@ -53,7 +53,7 @@ export class HomeComponent implements OnInit {
       this.idExclamacao();
     });
     if(this.gb.isExtension) {
-      this.allPages.visibilidadeMenuSei(!this.auth.usuario!.config.ocutar_menu_sei);
+      this.allPages.visibilidadeMenuSei(!this.auth.usuario!.config.ocultar_menu_sei);
     }
   }
 

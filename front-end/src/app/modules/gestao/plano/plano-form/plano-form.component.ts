@@ -305,6 +305,7 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
               modalResult = await this.documentoDao.save(Object.assign(new Documento(), {
                 especie: "TERMO_ADESAO",
                 conteudo: modalResult?.termo,
+                metadados: {atividades_termo_adesao: modalResult.atividades_termo_adesao},
                 plano_id: this.entity!.id,
                 status: "GERADO"
               }), ["assinaturas.usuario:id,nome,apelido"]);

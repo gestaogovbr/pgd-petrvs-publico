@@ -1,6 +1,7 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
+import { UnitWorkload } from 'src/app/components/input/input-workload/input-workload.component';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
 import { TipoModalidadeDaoService } from 'src/app/dao/tipo-modalidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
@@ -37,7 +38,9 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
       template_demanda_comentario: {default: ""},
       enviar_email: {default: true},
       enviar_whatsapp: {default: true},
-      nomenclatura: {default: []}
+      nomenclatura: {default: []},
+      carga_horaria_padrao: {default: 8},
+      forma_contagem_carga_horaria: {default: "DIA"}
     }, this.cdRef, this.validate);
     this.formNomenclatura = this.fh.FormBuilder({
       id: {default: ""},
@@ -61,6 +64,11 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
+
+    if(['carga_horaria_padrao'].indexOf(controlName) >= 0 && !control.value) {
+      result = "Valor não pode ser zero.";
+    }
+
     return result;
   }
 
@@ -72,6 +80,15 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
   public onPluralChange(row: any, form: FormGroup) {
     form.controls.plural.setValue(form.controls.plural.value.toLowerCase());
     this.cdRef.detectChanges();
+  }
+
+  public onFormaContagemCargaHorariaChange(unit: UnitWorkload) {
+    this.form!.controls.forma_contagem_carga_horaria.setValue(unit == "day" ? "DIA" : unit == "week" ? "SEMANA" : "MES");
+  }
+
+  public get formaContagemCargaHoraria(): UnitWorkload {
+    const forma = this.form?.controls.forma_contagem_carga_horaria?.value || "DIA";
+    return forma == "DIA" ? "day" : forma == "SEMANA" ? "week" : "mouth";
   }
 
   public async loadData(entity: Entidade, form: FormGroup) {
@@ -121,7 +138,9 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
         url_sei: entidade.url_sei,
         tipo_modalidade_id: entidade.tipo_modalidade_id,
         nomenclatura: entidade.nomenclatura,
-        notificacoes: notificacoes
+        notificacoes: notificacoes,
+        carga_horaria_padrao: entidade.carga_horaria_padrao,
+        forma_contagem_carga_horaria: entidade.forma_contagem_carga_horaria  
       }).then(saved => resolve(true)).catch(reject);
     });
   }

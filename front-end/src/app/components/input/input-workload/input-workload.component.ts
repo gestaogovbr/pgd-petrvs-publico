@@ -31,6 +31,7 @@ export class InputWorkloadComponent extends InputBase implements OnInit {
   @Input() source?: any;
   @Input() path?: string;
   @Input() maxLength?: number;
+  @Input() unitChange?: (newUnit: UnitWorkload) => void;
   @Input() set unit(value: UnitWorkload) {
     if(this._unit != value) {
       this._unit = value;
@@ -71,6 +72,7 @@ export class InputWorkloadComponent extends InputBase implements OnInit {
     const next: UnitWorkload = this.unit == "day" ? "week" : this.unit == "week" ? "mouth" : "day";
     console.log(this.unit, next);
     this.unit = next;
+    if(this.unitChange) this.unitChange(next);
   }
 
   public get iconWork(): string {

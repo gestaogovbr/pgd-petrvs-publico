@@ -391,6 +391,12 @@ export class LookupService {
     { key: 'observacaoteste', value: "Observação Teste" }
   ];
 
+  public TIPO_CARGA_HORARIA: LookupItem[] = [
+    { key: 'DIA', icon: "bi bi-calendar3-event", value: "Horas por dia" },
+    { key: 'DIA', icon: "bi bi-calendar3-week", value: "Horas por semana" },
+    { key: 'DIA', icon: "bi bi-calendar3", value: "Horas por mês" }
+  ];
+
   public getLookup(itens: LookupItem[], key: any) {
     return itens.find(x => x.key == key);
   }

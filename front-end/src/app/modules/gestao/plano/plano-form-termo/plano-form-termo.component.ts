@@ -129,6 +129,7 @@ export class PlanoFormTermoComponent extends PageFormBase<Plano, PlanoDaoService
       //if(this.processo) {
       resolve(new NavigateResult(Object.assign(this.form!.value, {
         termo: this.termo!.conteudo,
+        atividades_termo_adesao: this.termo!.atividades.map(x => this.util.removeAcentos(x.nome.toLowerCase())),
         codigo_tipo_documento: (this.tipoDocumento?.searchObj as TipoDocumento)?.codigo
       })));
       /*} else {

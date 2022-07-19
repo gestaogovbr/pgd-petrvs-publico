@@ -43,7 +43,8 @@ class Entidade extends ModelBase
         'nomenclatura',
         'gestor_id',
         'gestor_substituto_id',
-        'notificacoes'
+        'notificacoes',
+        'forma_contagem_carga_horaria'
     ];
 
     public $delete_cascade = ['feriados'];

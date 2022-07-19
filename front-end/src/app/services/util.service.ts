@@ -259,7 +259,7 @@ export class UtilService {
   }
 
   public shortName(name: string): string {
-    let temp = name.split(" ");
+    let temp = name.replace(/\s\s+/g, " ").split(" ");
     let result = "";
     for(let nibble of temp) {
       result += result.length < 5 ? " " + nibble[0].toUpperCase() + nibble.substring(1).toLowerCase() : "";

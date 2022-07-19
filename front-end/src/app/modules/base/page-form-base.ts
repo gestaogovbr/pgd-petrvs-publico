@@ -76,7 +76,14 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
 
   public async onSaveData() {
     const self = this;
-    const error = this.formValidation ? this.formValidation(this.form!) : undefined; 
+    let error: any = undefined;
+    if(this.formValidation) {
+      try {
+        error = this.formValidation(this.form!);
+      } catch (e: any) {
+        error = e; 
+      }
+    }
     //Object.keys(this.form!.controls).forEach(field => this.form!.get(field)?.updateValueAndValidity());
     if(this.form!.valid && !error){
       this.submitting = true;

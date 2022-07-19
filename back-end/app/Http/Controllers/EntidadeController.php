@@ -9,7 +9,7 @@ use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
 
 class EntidadeController extends ControllerBase {
-    public $updatable = ["nomenclatura", "url_sei", "notificacoes", "tipo_modalidade_id"];
+    public $updatable = ["nomenclatura", "url_sei", "notificacoes", "tipo_modalidade_id", "forma_contagem_carga_horaria", "carga_horaria_padrao"];
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {

@@ -39,7 +39,6 @@ export class EntidadeFormComponent extends PageFormBase<Entidade, EntidadeDaoSer
       nome: {default: ""},
       abrangencia: {default: ""},
       codigo_ibge: {default: ""},
-      carga_horaria_padrao: {default: ""},
       gravar_historico_processo: {default: ""},
       layout_formulario_demanda: {default: ""},
       campos_ocultos_demanda: {default: ""},
@@ -58,8 +57,6 @@ export class EntidadeFormComponent extends PageFormBase<Entidade, EntidadeDaoSer
 
     if(['nome', 'sigla'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    }  else if(['carga_horaria_padrao'].indexOf(controlName) >= 0 && !control.value) {
-    result = "Valor não pode ser zero.";
     }
     return result;
   }

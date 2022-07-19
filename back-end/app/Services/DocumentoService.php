@@ -14,7 +14,7 @@ class DocumentoService extends ServiceBase {
     public function proxyUpdate($data, $unidade) {
         if(!empty($data["status"]) && $data["status"] == "GERADO") {
             $documento = Documento::find($data['id']);
-            if(!empty($documento->plano_id) && $documento->status == "AGUARDANDO_SEI") {
+            if($documento->especie == "TERMO_ADESAO" && !empty($documento->plano_id) && $documento->status == "AGUARDANDO_SEI") {
                 $plano = Plano::find($documento->plano_id);
                 $plano->documento_id = $data['id'];
                 $plano->save();    

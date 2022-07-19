@@ -11,6 +11,7 @@
         </div>
     </filter>
     <columns>
+        <column title="#ID" field="numero"></column>
         <column title="Usuário" [template]="columnUsuario">
             <ng-template let-row="row" #columnUsuario>
                 <span> {{row.usuario?.nome || ""}}</span>

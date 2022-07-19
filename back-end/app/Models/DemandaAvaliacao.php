@@ -21,11 +21,11 @@ class DemandaAvaliacao extends ModelBase
         'tipo_avaliacao_id'
     ];
 
-    public $delete_cascade = ['avaliacoesJustificativas'];
+    public $delete_cascade = [];
 
     protected $table = 'demandas_avaliacoes';
     // Has
-    public function avaliacoesJustificativas() { return $this->hasMany(AvaliacaoJustificativa::class, 'avaliacao_id'); }
+    //public function avaliacoesJustificativas() { return $this->hasMany(AvaliacaoJustificativa::class, 'avaliacao_id'); }
     public function demandaAvaliacao() { return $this->hasOne(Demanda::class, 'avaliacao_id'); }    
     // Belongs
     public function usuario() { return $this->belongsTo(Usuario::class); }    

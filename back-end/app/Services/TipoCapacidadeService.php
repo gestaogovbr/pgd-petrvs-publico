@@ -70,6 +70,7 @@ class TipoCapacidadeService extends ServiceBase {
         ["591620ab-ba5e-11ec-a5bb-0050569c64a0", "MOD_DMD_ATV_RESP", "Permite associar responsável pela demanda"],
         ["592c0eb4-ba5e-11ec-a5bb-0050569c64a0", "MOD_DMD_ATV_TP_PCT", "Permite associar tempo pactuado na atividade"],
         ["5932b3ae-ba5e-11ec-a5bb-0050569c64a0", "MOD_DMD_ATV_TP_PLJ", "Permite associar tempo planejado na atividade"],
+        ["5932b3a8-ba5e-11ec-a5bb-0050569c64a0", "MOD_DMD_ATV_FORA_PL_TRB", "Permite associar atividade que não consta no plano de trabalho"],
         ["5982006a-ba5e-11ec-a5bb-0050569c64a0", "MOD_DMD_CONCL", "Permite concluir demandas iniciadas "],
         ["59895afc-ba5e-11ec-a5bb-0050569c64a0", "MOD_DMD_CONCL_ATV", "Permite concluir atividade"],
         ["598ff674-ba5e-11ec-a5bb-0050569c64a0", "MOD_DMD_CONCL_CMPLX", "Permite concluir complexidade"],
