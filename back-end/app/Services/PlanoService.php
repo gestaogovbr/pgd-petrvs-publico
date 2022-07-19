@@ -101,6 +101,7 @@ class PlanoService extends ServiceBase
     public function metadadosPlano($plano_id) {
         $plano = Plano::where('id', $plano_id)->with(['demandas', 'demandas.avaliacao'])->first()->toArray();
         $result = [
+            "usuario_id" => $plano['usuario_id'],
             "concluido" => true,
             "horasUteisTotais" => $plano['tempo_total'],
             "demandasNaoIniciadas" => array_filter($plano['demandas'], fn($demanda) => $demanda['data_inicio'] == null),
@@ -114,6 +115,15 @@ class PlanoService extends ServiceBase
             "horasDemandasConcluidas" => 0,
             "horasDemandasAvaliadas" => 0
         ];
+
+        /** TRECHO A SER EXCLUÍDO, APÓS A CONCLUSÃO DA FUNÇÃO 'CALCULA DATA TEMPO' */
+        $hi = new DateTime($plano['data_inicio_vigencia']);
+        $hf = new DateTime('now', $hi->getTimezone());
+        $horasDecorridas = $this->calendario->horasEntreDatas($hi, $hf);
+        $hf = new DateTime($plano['data_fim_vigencia'], $hi->getTimezone());
+        $horasTotais = $this->calendario->horasEntreDatas($hi, $hf);
+        $percentualAjuste = $result["horasUteisTotais"] / $horasTotais;
+        $result["horasUteisDecorridas"] = $horasDecorridas * $percentualAjuste;
 
         /*  Nesse trecho, o método define se o plano foi concluído ou não.
         O plano será considerado CONCLUÍDO quando todas as suas demandas forem CUMPRIDAS. Uma demanda é considerada cumprida quando
@@ -177,5 +187,9 @@ class PlanoService extends ServiceBase
             if ($this->demandaService->isCumprida($demanda) && $this->demandaService->withinPeriodo($demanda, $inicioPeriodo, $fimPeriodo)) array_push($result, $demanda);
         }
         return $result;
+    }
+
+    public function isPlanoGestao($plano) {
+        return !$plano['programa']['normativa'] == null;
     }
 }

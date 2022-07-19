@@ -49,7 +49,6 @@
         <div class="container border border-primary bg-light d-inline-block mx-4" style="position: relative; width:400px">
           <h5>Composição do Plano por Demandas</h5>
             <app-bar-chart
-              [barChartLabels]="labelsX"
               [barChartData]="x.dadosGraficoPlano"
               [barChartOptions]="opcoesGraficoPlano">
             </app-bar-chart>
@@ -58,7 +57,6 @@
           <h5>Distribuição dos Tempos no Plano</h5>
             <app-bar-chart
               [barChartType]="tipoGrafico"
-              [barChartLabels]="labelsX"
               [barChartData]="x.dadosGraficoHoras"
               [barChartOptions]="opcoesGraficoHoras">
             </app-bar-chart>

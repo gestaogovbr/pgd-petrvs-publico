@@ -8,13 +8,13 @@ import { Label } from 'ng2-charts';
   styleUrls: [ './bar-chart.component.scss' ],
 })
 export class BarChartComponent {
-  @Input() barChartLabels: Label[] = [];
   @Input() barChartOptions: ChartOptions = {};
   @Input() barChartData: ChartDataSets[] = [];
   @Input() barChartType: ChartType = 'bar';
+  @Input() barChartPlugins = [];
 
   public barChartLegend = true;
-  public barChartPlugins = [];
+  public barChartLabels = [];
 
   constructor() { }
 

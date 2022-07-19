@@ -42,8 +42,8 @@ class ServiceBase
     private $_services = [];
     public function __get($name) {
         $fullName = "App\\Services\\" . ucfirst(str_ends_with($name, "Service") ? $name : $name . "Service");
-        if(empty($this->_services[$name]) && !empty(app($fullName))) $this->_services[$name] = new $fullName();
-        return $this->_services[$name] ?? null;
+        if(empty($this->_services[$name]) && class_exists($fullName)) $this->_services[$name] = new $fullName();
+        return class_exists($fullName) ? $this->_services[$name] : null;
     }
 
     public function __construct($collection = null)

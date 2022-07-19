@@ -31,7 +31,7 @@
     <div class="border border-primary bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
       <h5>Composição do Plano - Geral</h5>
         <app-bar-chart
-          [barChartLabels]="labelsX"
+           barChartType="bar"
           [barChartData]="x.dadosGraficoPlano"
           [barChartOptions]="opcoesGraficoPlano">
         </app-bar-chart>
@@ -39,8 +39,7 @@
     <div class="border border-primary bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
       <h5>Composição do Plano - Detalhado</h5>
         <app-bar-chart
-          [barChartType]="tipoGrafico"
-          [barChartLabels]="labelsX"
+          barChartType="horizontalBar"
           [barChartData]="x.dadosGraficoHoras"
           [barChartOptions]="opcoesGraficoHoras">
         </app-bar-chart>
@@ -195,14 +194,11 @@
           </div>
         </td>
 <!--         <td class="text-center">
-          <div class="border border-primary bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
-              <app-bar-chart
-                barChartType="horizontalBar"
-                [barChartLabels]="[]"
-                [barChartData]="da.avaliacao.nota_atribuida"
-                [barChartOptions]="opcoesGraficoAvaliacao">
-              </app-bar-chart>
-          </div>
+          <app-bar-chart
+            barChartType="horizontalBar"
+            [barChartData]="x.dadosGraficoHoras"
+            [barChartOptions]="opcoesGraficoHoras">
+          </app-bar-chart>
         </td> -->
       </tr>
     </tbody>

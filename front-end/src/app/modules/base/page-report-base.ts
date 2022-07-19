@@ -67,11 +67,12 @@ export type MetadadosUnidade = {
   percentualHorasConcluidas: number,
   percentualHorasAvaliadas: number,
   percentualHorasTotaisAlocadas: number,
-  percentualHorasUteisTotaisDecorridas: number
+  percentualPlanoDecorrido: number
 };
 
 export type AreaRelatorio = {
   descricaoArea: string,
+  nomePrograma: string,
   dadosArea: MetadadosUnidade,
   dadosUnidade: MetadadosUnidade,
   unidades: [
@@ -155,6 +156,6 @@ export abstract class PageReportBase<M extends Base, D extends DaoBaseService<M>
 
   public abstract report(filter: any): Promise<any[] | undefined>;
 
-  public abstract obterDadosGrafico(metadados: Metadado | MetadadosPlano | MetadadosUnidade, tipo: 'GERAL' | 'DETALHADO'): ChartDataSets[];
+  //public abstract obterDadosGrafico(metadados: Metadado | MetadadosPlano | MetadadosUnidade, tipo: 'GERAL' | 'DETALHADO'): ChartDataSets[];
 
 }

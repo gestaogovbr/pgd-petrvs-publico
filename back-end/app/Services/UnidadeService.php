@@ -2,10 +2,11 @@
 
 namespace App\Services;
 
+use DateTime;
 use App\Models\Unidade;
+use App\Models\Programa;
 use App\Services\ServiceBase;
 use Illuminate\Support\Facades\DB;
-use DateTime;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\UseDataFim;
 
@@ -51,19 +52,23 @@ class UnidadeService extends ServiceBase
             }
         }
         if(!$usuario->hasPermissionTo("MOD_UND_TUDO")) {
-            $lotacoesWhere = $this->usuarioService->lotacoesWhere($subordinadas);
+            $lotacoesWhere = $this->usuarioService->lotacoesWhere($subordinadas, null, "unidades");
             array_push($where, new RawWhere("($lotacoesWhere)", []));
         }
         $data["where"] = $where;
         return $data;
     }
 
-    public function metadadosArea($unidade_id) {
+    public function metadadosArea($unidade_id, $programa_id) {
         $result = null;
+        $programa = Programa::find($programa_id);
         $dadosArea = [
-            'qdePlanosPGPRF' => 0,
-            'nrServidoresPGPRF' => 0,
+            'nomePrograma' => $programa['nome'],
+            'normativa' => $programa['normativa'],
+            'qdePlanosPrograma' => 0,
+            'nrServidoresPrograma' => 0,
             'horasUteisTotais' => 0,
+            'horasUteisDecorridas' => 0,
             'qdeDemandasAvaliadas' => 0,
             'horasDemandasNaoIniciadas' => 0,
             'horasDemandasEmAndamento' => 0,
@@ -72,28 +77,30 @@ class UnidadeService extends ServiceBase
             'horasTotaisAlocadas' => 0,
             'mediaAvaliacoes' => null
         ];
-        $dadosUnidades = [];        // array que armazenará os dados das Unidades-filhas da Área (id, nome, sigla e media de todas as avaliações) que possuírem ao menos 1 Plano de Trabalho do PGPRF
+        $idsServidoresPrograma = [];
+        $dadosUnidades = [];        // array que armazenará os dados das Unidades-filhas da Área (id, nome, sigla e media de todas as avaliações) que possuírem ao menos 1 Plano de Trabalho vinculado ao Programa escolhido
         $unidadePrincipal = Unidade::find($unidade_id);
         $unidades_ids = [$unidade_id];
-/*         $temp3 = $this->unidadesFilhas($unidade_id);
-        $temp4 = array_merge($unidades_ids, $temp3); */
         $unidades_ids = array_merge($unidades_ids, $this->unidadesFilhas($unidade_id));
         foreach ($unidades_ids as $id) {
-            $temp = $this->metadadosUnidade($id);
+            $temp = $this->metadadosUnidade($id, $programa_id);
             if ($id == $unidade_id) $aux = $temp;
 
-            if ($temp['qdePlanosPGPRF'] != 0) {
+            if ($temp['qdePlanosPrograma'] != 0) {
+
                 array_push($dadosUnidades, [
                     'id' => $temp['id'],
                     'nome' => $temp['nome'],
                     'sigla' => $temp['sigla'],
                     'mediaAvaliacoes' => $temp['mediaAvaliacoes'],
-                    'nrServidoresPGPRF' => $temp['nrServidoresPGPRF']
+                    'nrServidoresPrograma' => $temp['nrServidoresPrograma']
                 ]);
+                //array_push($idsServidoresPrograma, $temp['idsServidoresPrograma']);
+                $idsServidoresPrograma = array_merge($idsServidoresPrograma, $temp['idsServidoresPrograma']);
 
-                $dadosArea['qdePlanosPGPRF'] += $temp['qdePlanosPGPRF'];
-                $dadosArea['nrServidoresPGPRF'] += $temp['nrServidoresPGPRF'];
+                $dadosArea['qdePlanosPrograma'] += $temp['qdePlanosPrograma'];
                 $dadosArea['horasUteisTotais'] += $temp['horasUteisTotais'];
+                $dadosArea['horasUteisDecorridas'] += $temp['horasUteisDecorridas'];
                 $dadosArea['qdeDemandasAvaliadas'] += $temp['qdeDemandasAvaliadas'];
                 $dadosArea['horasDemandasNaoIniciadas'] += $temp['horasDemandasNaoIniciadas'];
                 $dadosArea['horasDemandasEmAndamento'] += $temp['horasDemandasEmAndamento'];
@@ -101,7 +108,7 @@ class UnidadeService extends ServiceBase
                 $dadosArea['horasDemandasAvaliadas'] += $temp['horasDemandasAvaliadas'];
                 $dadosArea['horasTotaisAlocadas'] += $temp['horasTotaisAlocadas'];
             };
-
+            $dadosArea['nrServidoresPrograma'] = count(array_unique($idsServidoresPrograma));
         }
         /** Neste trecho calcula-se a média das avaliações de toda a Área, partindo-se da média das avaliações de cada Unidade que a compõe.
          *  Se um dada Unidade possui mediaAvaliacoes = null, é porque ela não possui nenhuma demanda ainda avaliada. Neste caso, a media das avaliações desta Unidade
@@ -112,8 +119,6 @@ class UnidadeService extends ServiceBase
         if ((count(array_filter($dadosUnidades, fn($p) => $p['mediaAvaliacoes'] != null)) == 0)) {
             $dadosArea['mediaAvaliacoes'] = null;
         } else {
-/*             $temp3 = array_filter($dadosUnidades, fn($u) => $u['mediaAvaliacoes'] != null);
-            $temp4 = array_map(fn($u) => $u['mediaAvaliacoes'],array_filter($dadosUnidades, fn($u) => $u['mediaAvaliacoes'] != null)); */
             $dadosArea['mediaAvaliacoes'] = $this->utilService->avg(array_map(fn($u) => $u['mediaAvaliacoes'],array_filter($dadosUnidades, fn($u) => $u['mediaAvaliacoes'] != null)));
         }
 
@@ -122,6 +127,7 @@ class UnidadeService extends ServiceBase
         $dadosArea['percentualHorasConcluidas'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasDemandasConcluidas'] / $dadosArea['horasUteisTotais'];
         $dadosArea['percentualHorasAvaliadas'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasDemandasAvaliadas'] / $dadosArea['horasUteisTotais'];
         $dadosArea['percentualHorasTotaisAlocadas'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasTotaisAlocadas'] / $dadosArea['horasUteisTotais'];
+        $dadosArea['percentualPlanoDecorrido'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasUteisDecorridas'] / $dadosArea['horasUteisTotais'];
 
         $result = [
             'descricaoArea' => $unidadePrincipal->nome . ' - ' . $unidadePrincipal->sigla,
@@ -133,19 +139,22 @@ class UnidadeService extends ServiceBase
         return $result;
     }
 
-    public function metadadosUnidade($unidade_id) {
-        $unidade = Unidade::where('id', $unidade_id)->with(['planos', 'planos.demandas', 'planos.tipoModalidade'])->first();
+    /** Este método retorna os dados acerca dos Planos de Trabalho de uma Unidade, associados a um determinado Programa, que se encontrem dentro da vigência. */
+    public function metadadosUnidade($unidade_id, $programa_id) {
+        $unidade = Unidade::where('id', $unidade_id)->with(['planos', 'planos.demandas'])->first();
         $metadadosPlanos = [];
         foreach ($unidade['planos']->toArray() as $plano) {
-            if (str_starts_with($plano['tipo_modalidade']['nome'], 'PGPRF') && ($this->calendarioService->between(new DateTime(), $plano['data_inicio_vigencia'], $plano['data_fim_vigencia']))) array_push($metadadosPlanos, $this->planoService->metadadosPlano($plano['id']));
+            if (($plano['programa_id'] == $programa_id) && ($this->calendarioService->between(new DateTime(), $plano['data_inicio_vigencia'], $plano['data_fim_vigencia']))) array_push($metadadosPlanos, $this->planoService->metadadosPlano($plano['id']));
         }
         $result = [
             "id" => $unidade->id,
             "nome" => $unidade->nome,
             "sigla" => $unidade->sigla,
-            "qdePlanosPGPRF" => count($metadadosPlanos),
-            "nrServidoresPGPRF" => 0,       // Aguardar definição de como calcular
+            "qdePlanosPrograma" => count($metadadosPlanos),
+            "nrServidoresPrograma" => count(array_unique(array_map(fn($x) => $x["usuario_id"], $metadadosPlanos))),
+            "idsServidoresPrograma" => array_unique(array_map(fn($x) => $x["usuario_id"], $metadadosPlanos)),
             "horasUteisTotais" => array_reduce(array_map(fn($m) => $m['horasUteisTotais'], $metadadosPlanos), function($acum, $item) {return $acum + $item;},0),
+            "horasUteisDecorridas" => array_reduce(array_map(fn($m) => $m['horasUteisDecorridas'], $metadadosPlanos), function($acum, $item) {return $acum + $item;},0),
             "qdeDemandasAvaliadas" => array_reduce(array_map(fn($m) => count($m['demandasAvaliadas']), $metadadosPlanos), function($acum, $item) {return $acum + $item;},0),
             "horasDemandasNaoIniciadas" => array_reduce(array_map(fn($m) => $m['horasDemandasNaoIniciadas'], $metadadosPlanos), function($acum, $item) {return $acum + $item;},0),
             "horasDemandasEmAndamento" => array_reduce(array_map(fn($m) => $m['horasDemandasEmAndamento'], $metadadosPlanos), function($acum, $item) {return $acum + $item;},0),
@@ -154,6 +163,13 @@ class UnidadeService extends ServiceBase
             "horasTotaisAlocadas" => array_reduce(array_map(fn($m) => $m['horasTotaisAlocadas'], $metadadosPlanos), function($acum, $item) {return $acum + $item;},0),
             "mediaAvaliacoes" => null
         ];
+        $result['percentualHorasNaoIniciadas'] = $result['horasUteisTotais'] == 0 ? 0 : $result['horasDemandasNaoIniciadas'] / $result['horasUteisTotais'];
+        $result['percentualHorasEmAndamento'] = $result['horasUteisTotais'] == 0 ? 0 : $result['horasDemandasEmAndamento'] / $result['horasUteisTotais'];
+        $result['percentualHorasConcluidas'] = $result['horasUteisTotais'] == 0 ? 0 : $result['horasDemandasConcluidas'] / $result['horasUteisTotais'];
+        $result['percentualHorasAvaliadas'] = $result['horasUteisTotais'] == 0 ? 0 : $result['horasDemandasAvaliadas'] / $result['horasUteisTotais'];
+        $result['percentualHorasTotaisAlocadas'] = $result['horasUteisTotais'] == 0 ? 0 : $result['horasTotaisAlocadas'] / $result['horasUteisTotais'];
+        $result['percentualPlanoDecorrido'] = $result['horasUteisTotais'] == 0 ? 0 : $result['horasUteisDecorridas'] / $result['horasUteisTotais'];
+
         /** Neste trecho calcula-se a média das avaliações de toda a Unidade, partindo-se da média das avaliações de cada Plano de Trabalho considerado.
          *  Se um dado Plano de Trabalho possui mediaAvaliacoes = null, é porque ele não possui nenhuma demanda ainda avaliada. Neste caso, a media das avaliações deste Plano
          *  de Trabalho (null) não será utilizada no cálculo da média da Unidade, caso contrário a média seria indevidamente afetada. A função array_map prepara o array com

@@ -40,11 +40,12 @@ class UnidadeController extends ControllerBase {
     public function metadadosArea(Request $request) {
         try {
             $data = $request->validate([
-                'unidade_id' => ['required']
+                'unidade_id' => ['required'],
+                'programa_id' => ['required'],
             ]);
             return response()->json([
                 'success' => true,
-                'metadadosArea' => $this->service->metadadosArea($data["unidade_id"])
+                'metadadosArea' => $this->service->metadadosArea($data["unidade_id"], $data["programa_id"])
             ]);
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()]);
