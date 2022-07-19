@@ -48,6 +48,7 @@ class Entidade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.url_sei = ""; /* Url base do sei */
         this.gestor_id = null; // Usuário gestor da unidade
         this.gestor_substituto_id = null; // Usuário gestor substituto da unidade
+        this.forma_contagem_carga_horaria = "DIA"; // Forma de contagem padrão da carga horária
     }
 }
 

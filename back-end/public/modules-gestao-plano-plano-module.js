@@ -199,6 +199,7 @@ class PlanoFormTermoComponent extends src_app_modules_base_page_form_base__WEBPA
             //if(this.processo) {
             resolve(new src_app_services_navigate_service__WEBPACK_IMPORTED_MODULE_12__["NavigateResult"](Object.assign(this.form.value, {
                 termo: this.termo.conteudo,
+                atividades_termo_adesao: this.termo.atividades.map(x => this.util.removeAcentos(x.nome.toLowerCase())),
                 codigo_tipo_documento: (_b = (_a = this.tipoDocumento) === null || _a === void 0 ? void 0 : _a.searchObj) === null || _b === void 0 ? void 0 : _b.codigo
             })));
             /*} else {
@@ -1420,6 +1421,7 @@ class PlanoFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IM
                                     modalResult = yield this.documentoDao.save(Object.assign(new src_app_models_documento_model__WEBPACK_IMPORTED_MODULE_10__["Documento"](), {
                                         especie: "TERMO_ADESAO",
                                         conteudo: modalResult === null || modalResult === void 0 ? void 0 : modalResult.termo,
+                                        metadados: { atividades_termo_adesao: modalResult.atividades_termo_adesao },
                                         plano_id: this.entity.id,
                                         status: "GERADO"
                                     }), ["assinaturas.usuario:id,nome,apelido"]);
