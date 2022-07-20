@@ -1,7 +1,7 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
-import { UnitWorkload } from 'src/app/components/input/input-workload/input-workload.component';
+import { InputWorkloadComponent, UnitWorkload } from 'src/app/components/input/input-workload/input-workload.component';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
 import { TipoModalidadeDaoService } from 'src/app/dao/tipo-modalidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
@@ -15,6 +15,7 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 })
 export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoService> implements OnInit {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
+  @ViewChild('cargaHoraria', {static: false}) public cargaHoraria?: InputWorkloadComponent;
 
   public form: FormGroup;
   public formNomenclatura: FormGroup;

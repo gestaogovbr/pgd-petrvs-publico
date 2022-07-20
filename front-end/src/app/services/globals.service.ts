@@ -36,7 +36,7 @@ export class GlobalsService {
     return typeof IS_PETRVS_EXTENSION != "undefined" && !!IS_PETRVS_EXTENSION;
   };
 
-  public is(entidade: string) {
+  public is(entidade: string): boolean {
     return environment.entidade == entidade;
   }
 

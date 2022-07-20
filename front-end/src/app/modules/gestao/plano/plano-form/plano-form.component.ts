@@ -4,6 +4,7 @@ import { EditableFormComponent } from 'src/app/components/editable-form/editable
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { SelectItem } from 'src/app/components/input/input-base';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
+import { UnitWorkload } from 'src/app/components/input/input-workload/input-workload.component';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
@@ -56,7 +57,7 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
 
   constructor(public injector: Injector) {
     super(injector, Plano, PlanoDaoService);
-    this.join = ["unidade", "usuario", "programa", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "atividades.atividade"];
+    this.join = ["unidade.entidade", "usuario", "programa", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "atividades.atividade"];
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
@@ -160,6 +161,7 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
 
   public onUnidadeSelect(selected: SelectItem) {
     this.calculaTempos();
+    this.cdRef.detectChanges();
   }
 
   public calculaTempos() {
@@ -287,6 +289,12 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
         }).finally(() => this.loading = false);
       }
     });
+  }
+
+  public get formaContagemCargaHoraria(): UnitWorkload {
+    const forma = (this.unidade?.searchObj as Unidade)?.entidade?.forma_contagem_carga_horaria || this.auth.unidade?.entidade?.forma_contagem_carga_horaria || "DIA";
+    console.log("FORMA: ", (this.unidade?.searchObj as Unidade)?.entidade?.forma_contagem_carga_horaria, this.auth.unidade?.entidade?.forma_contagem_carga_horaria);
+    return forma == "DIA" ? "day" : forma == "SEMANA" ? "week" : "mouth";
   }
 
   public async addDocumento() {

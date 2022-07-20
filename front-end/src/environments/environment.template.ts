@@ -4,10 +4,10 @@
 
 export const environment = {
   production: false,
-  host: "localhost:8000",
+  host: "localhost",
   https: false,
   suporte: "https://docs.google.com/forms/d/e/1FAIpQLScWhTbN5NnHl8tLfjNjSkWL7o9v4eaGoy0d8gvQLB9R6dWPuw/viewform",
-  entidade: "PETRVS",
+  entidade: "PRF",
   images: {
     login: "logo-login.png"
   }
