@@ -9,6 +9,7 @@ https://gitlab.com/petrvs.app/Petrvs.git
 ## Procedimento para deploy:
 
 - Antes de iniciar o desenvolvimento, dar obrigatoriamente um pull (para cada funcionalidade implementada, cada ticket um commit)
+- Faz o desenvolvimento do ticket
 - build no front da aplicação (transpilar o front-end para a pasta public do back-end: npm run build)
 - commit (obrigatório para permitir o pull)
 - pull
