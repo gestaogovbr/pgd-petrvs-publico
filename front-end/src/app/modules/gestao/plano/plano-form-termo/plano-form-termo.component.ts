@@ -3,6 +3,7 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { SelectItem } from 'src/app/components/input/input-base';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
+import { UnitWorkload } from 'src/app/components/input/input-workload/input-workload.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { DocumentoDaoService } from 'src/app/dao/documento-dao-service';
 import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
@@ -78,7 +79,8 @@ export class PlanoFormTermoComponent extends PageFormBase<Plano, PlanoDaoService
       tipo_documento_id: {default: ""},
       numero_processo: {default: ""},
       vinculadas: {default: true},
-      tipo_modalidade_id: {default: ""}
+      tipo_modalidade_id: {default: ""},
+      forma_contagem_carga_horaria: {default: "DIA"}
     }, this.cdRef, this.validate);
   }
 
@@ -142,6 +144,11 @@ export class PlanoFormTermoComponent extends PageFormBase<Plano, PlanoDaoService
         this.documentoDao.save(documento).then(doc => resolve(undefined)).catch(reject);
       }*/
     });
+  }
+
+  public get formaContagemCargaHoraria(): UnitWorkload {
+    const forma = this.form?.controls.forma_contagem_carga_horaria?.value || "DIA";
+    return forma == "DIA" ? "day" : forma == "SEMANA" ? "week" : "mouth";
   }
 
   public titleEdit = (entity: Plano): string => {

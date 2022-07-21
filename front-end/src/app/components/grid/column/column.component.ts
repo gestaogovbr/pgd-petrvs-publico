@@ -42,6 +42,7 @@ export class ColumnComponent implements OnInit {
   @Input() upDownButtons?: string;
   @Input() stepValue?: any;
   @Input() align: ColumnAlign = "none";
+  @Input() minWidth?: number = undefined;
 
   constructor() { }
 

@@ -6,12 +6,12 @@
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="12" label="Usuário" controlName="usuario"
-                [control]="filter!.controls.usuario" placeholder="Usuário"></input-text>
+            <input-text [size]="6" label="Usuário" controlName="usuario" [control]="filter!.controls.usuario" placeholder="Usuário"></input-text>
+            <input-search [size]="6" label="Unidade" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
         </div>
     </filter>
     <columns>
-        <column title="#ID" field="numero"></column>
+        <column title="#ID" field="numero" orderBy="numero" [minWidth]="50"></column>
         <column title="Usuário" [template]="columnUsuario">
             <ng-template let-row="row" #columnUsuario>
                 <span> {{row.usuario?.nome || ""}}</span>
@@ -32,7 +32,7 @@
                 <span> {{row.tipo_modalidade?.nome || ""}}</span>
             </ng-template>
         </column>
-        <column title="Vigência" [template]="columnInicioVigencia">
+        <column title="Vigência" [template]="columnInicioVigencia" orderBy="data_inicio_vigencia">
             <ng-template let-row="row" #columnInicioVigencia>
                 <span> {{dao!.getDateFormatted(row.data_inicio_vigencia)+" até "+dao!.getDateFormatted(row.data_fim_vigencia)}}</span>
             </ng-template>

@@ -1,10 +1,10 @@
-<div *ngIf="column.title?.length || column.icon?.length" class="grid-header" [class.text-center]="isAlign('center')" data-bs-toggle="tooltip" data-bs-placement="top" [attr.title]="column.hint" [class.text-end]="isAlign('right')" [attr.role]="column.orderBy?.length ? 'button' : undefined" (click)="onOrderClick($event)">
+<div *ngIf="column.title?.length || column.icon?.length" class="grid-header" [style.min-width.px]="column.minWidth" [class.text-center]="isAlign('center')" data-bs-toggle="tooltip" data-bs-placement="top" [attr.title]="column.hint" [class.text-end]="isAlign('right')" [attr.role]="column.orderBy?.length ? 'button' : undefined" (click)="onOrderClick($event)">
     <i *ngIf="column.icon?.length" [class]="column.icon"></i>
     <i *ngIf="column.orderBy?.length" [class]="orderClass"></i>
     <span>{{column.title}}</span>
     <i *ngIf="column.titleHint?.length" class="bi bi-info-circle label-info text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="{{column.titleHint}}"></i>
 </div>
-<div *ngIf="column.titleTemplate">
+<div *ngIf="column.titleTemplate" [style.min-width.px]="column.minWidth">
     <i *ngIf="column.orderBy?.length" [class]="orderClass"></i>
     <ng-container [ngTemplateOutlet]="column.titleTemplate" [ngTemplateOutletContext]="{header: this}"></ng-container>
 </div>

@@ -796,6 +796,7 @@ class GridColumn {
         this.items = [];
         this.editing = false;
         this.align = "none";
+        this.minWidth = undefined;
     }
     isType(type) {
         return (this.type + ":").startsWith(type + ":");
@@ -3318,6 +3319,7 @@ function ColumnHeaderComponent_div_0_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵstyleProp"]("min-width", ctx_r0.column.minWidth, "px");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵclassProp"]("text-center", ctx_r0.isAlign("center"))("text-end", ctx_r0.isAlign("right"));
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵattribute"]("title", ctx_r0.column.hint)("role", (ctx_r0.column.orderBy == null ? null : ctx_r0.column.orderBy.length) ? "button" : undefined);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
@@ -3343,10 +3345,11 @@ function ColumnHeaderComponent_div_1_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵstyleProp"]("min-width", ctx_r1.column.minWidth, "px");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", ctx_r1.column.orderBy == null ? null : ctx_r1.column.orderBy.length);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngTemplateOutlet", ctx_r1.column.titleTemplate)("ngTemplateOutletContext", _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpureFunction1"](3, _c0, ctx_r1));
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngTemplateOutlet", ctx_r1.column.titleTemplate)("ngTemplateOutletContext", _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpureFunction1"](5, _c0, ctx_r1));
 } }
 function ColumnHeaderComponent_div_2_Template(rf, ctx) { if (rf & 1) {
     const _r10 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
@@ -3395,9 +3398,9 @@ class ColumnHeaderComponent {
     }
 }
 ColumnHeaderComponent.ɵfac = function ColumnHeaderComponent_Factory(t) { return new (t || ColumnHeaderComponent)(); };
-ColumnHeaderComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: ColumnHeaderComponent, selectors: [["column-header"]], inputs: { column: "column", grid: "grid" }, decls: 3, vars: 3, consts: [["class", "grid-header", "data-bs-toggle", "tooltip", "data-bs-placement", "top", 3, "text-center", "text-end", "click", 4, "ngIf"], [4, "ngIf"], ["class", "w-100 text-end", 4, "ngIf"], ["data-bs-toggle", "tooltip", "data-bs-placement", "top", 1, "grid-header", 3, "click"], [3, "class", 4, "ngIf"], ["class", "bi bi-info-circle label-info text-muted", "data-bs-toggle", "tooltip", "data-bs-placement", "top", 3, "title", 4, "ngIf"], ["data-bs-toggle", "tooltip", "data-bs-placement", "top", 1, "bi", "bi-info-circle", "label-info", "text-muted", 3, "title"], [3, "ngTemplateOutlet", "ngTemplateOutletContext"], [1, "w-100", "text-end"], ["type", "button", 1, "btn", "btn-outline-primary", 3, "disabled", "click"], [1, "bi", "bi-plus-circle"]], template: function ColumnHeaderComponent_Template(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](0, ColumnHeaderComponent_div_0_Template, 6, 10, "div", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](1, ColumnHeaderComponent_div_1_Template, 3, 5, "div", 1);
+ColumnHeaderComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: ColumnHeaderComponent, selectors: [["column-header"]], inputs: { column: "column", grid: "grid" }, decls: 3, vars: 3, consts: [["class", "grid-header", "data-bs-toggle", "tooltip", "data-bs-placement", "top", 3, "min-width", "text-center", "text-end", "click", 4, "ngIf"], [3, "min-width", 4, "ngIf"], ["class", "w-100 text-end", 4, "ngIf"], ["data-bs-toggle", "tooltip", "data-bs-placement", "top", 1, "grid-header", 3, "click"], [3, "class", 4, "ngIf"], ["class", "bi bi-info-circle label-info text-muted", "data-bs-toggle", "tooltip", "data-bs-placement", "top", 3, "title", 4, "ngIf"], ["data-bs-toggle", "tooltip", "data-bs-placement", "top", 1, "bi", "bi-info-circle", "label-info", "text-muted", 3, "title"], [3, "ngTemplateOutlet", "ngTemplateOutletContext"], [1, "w-100", "text-end"], ["type", "button", 1, "btn", "btn-outline-primary", 3, "disabled", "click"], [1, "bi", "bi-plus-circle"]], template: function ColumnHeaderComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](0, ColumnHeaderComponent_div_0_Template, 6, 12, "div", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](1, ColumnHeaderComponent_div_1_Template, 3, 7, "div", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](2, ColumnHeaderComponent_div_2_Template, 3, 1, "div", 2);
     } if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", (ctx.column.title == null ? null : ctx.column.title.length) || (ctx.column.icon == null ? null : ctx.column.icon.length));
@@ -21172,12 +21175,13 @@ class ColumnComponent {
         this.orderBy = "";
         this.editable = true;
         this.align = "none";
+        this.minWidth = undefined;
     }
     ngOnInit() {
     }
 }
 ColumnComponent.ɵfac = function ColumnComponent_Factory(t) { return new (t || ColumnComponent)(); };
-ColumnComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: ColumnComponent, selectors: [["column"]], inputs: { icon: "icon", hint: "hint", title: "title", titleHint: "titleHint", type: "type", field: "field", dao: "dao", orderBy: "orderBy", editable: "editable", template: "template", titleTemplate: "titleTemplate", editTemplate: "editTemplate", expandTemplate: "expandTemplate", items: "items", onlyHours: "onlyHours", onlyDays: "onlyDays", buttons: "buttons", dynamicButtons: "dynamicButtons", options: "options", save: "save", edit: "edit", dynamicOptions: "dynamicOptions", onEdit: "onEdit", onDelete: "onDelete", onChange: "onChange", upDownButtons: "upDownButtons", stepValue: "stepValue", align: "align" }, decls: 0, vars: 0, template: function ColumnComponent_Template(rf, ctx) { }, styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJjb2x1bW4uY29tcG9uZW50LnNjc3MifQ== */"] });
+ColumnComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: ColumnComponent, selectors: [["column"]], inputs: { icon: "icon", hint: "hint", title: "title", titleHint: "titleHint", type: "type", field: "field", dao: "dao", orderBy: "orderBy", editable: "editable", template: "template", titleTemplate: "titleTemplate", editTemplate: "editTemplate", expandTemplate: "expandTemplate", items: "items", onlyHours: "onlyHours", onlyDays: "onlyDays", buttons: "buttons", dynamicButtons: "dynamicButtons", options: "options", save: "save", edit: "edit", dynamicOptions: "dynamicOptions", onEdit: "onEdit", onDelete: "onDelete", onChange: "onChange", upDownButtons: "upDownButtons", stepValue: "stepValue", align: "align", minWidth: "minWidth" }, decls: 0, vars: 0, template: function ColumnComponent_Template(rf, ctx) { }, styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJjb2x1bW4uY29tcG9uZW50LnNjc3MifQ== */"] });
 
 
 /***/ }),

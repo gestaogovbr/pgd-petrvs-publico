@@ -104,6 +104,15 @@ export class PlanoTermoAdesaoComponent extends PageBase implements OnInit {
     return this.util.formatDecimal(this.plano?.ganho_produtividade || 0) + "%";
   }
 
+  public get cargaHorariaTitulo(): string {
+    return this.plano?.forma_contagem_carga_horaria == "MES" ? "Carga horária mensal:" : this.plano?.forma_contagem_carga_horaria == "SEMANA" ? "Carga horária semanal:" : "Carga horária diária:";
+  }
+
+  public get cargaHoraria(): number {
+    const factor = this.plano?.forma_contagem_carga_horaria == "MES" ? 20 : this.plano?.forma_contagem_carga_horaria == "SEMANA" ? 5 : 1;
+    return (this.plano?.carga_horaria || 0) * factor;
+  }
+
   ngOnInit(): void {
   }
 

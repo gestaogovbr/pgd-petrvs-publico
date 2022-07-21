@@ -38,6 +38,7 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
     this.code = "MOD_PTR";
     this.filter = this.fh.FormBuilder({
       usuario: {default: ""},
+      unidade_id: {default: null}
     });
     this.join = ["unidade.entidade", "usuario", "programa", "documento", "tipo_modalidade"];
     // Testa se o usuário possui permissão para exibir dados do plano de trabalho
@@ -65,6 +66,7 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
 
   public filterClear(filter: FormGroup) {
     filter.controls.nome.setValue("");
+    filter.controls.unidade_id.setValue(null);
     super.filterClear(filter);
   }
 
@@ -74,6 +76,9 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
 
     if(form.usuario?.length) {
       result.push(["usuario.nome", "like", "%" + form.usuario + "%"]);
+    }
+    if(form.unidade_id?.length) {
+      result.push(["unidade_id", "==", form.unidade_id]);
     }
 
     return result;

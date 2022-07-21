@@ -30,7 +30,8 @@ class Plano extends ModelBase
         'usuario_id',
         'unidade_id',
         'documento_id',
-        'tipo_modalidade_id'
+        'tipo_modalidade_id',
+        'forma_contagem_carga_horaria'
     ];
 
     protected $table = 'planos';

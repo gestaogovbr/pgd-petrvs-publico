@@ -44,8 +44,8 @@
             </tr>
             <tr>
                 <td style="padding:8px;">
-                    <p><b>Carga horária diária:</b></p>
-                    <p>{{plano?.carga_horaria}} horas</p>
+                    <p><b>{{cargaHorariaTitulo}}</b></p>
+                    <p>{{cargaHoraria}} horas</p>
                 </td>
                 <td style="padding:8px;" colspan="2">
                     <p><b>Tempo pactuado do plano:</b></p>
@@ -136,7 +136,7 @@
                     <p>{{plano?.usuario?.nome}} e a chefia imediata.</p>
                 </td>
             </tr>
-            <tr>
+            <tr *ngIf="plano?.tipo_modalidade?.comparecer_presencialmente">
                 <td style="padding:8px;" colspan="2">Prazo de antecedência mínima para as convocações à unidade, sempre que a presença física do participante for necessária e houver interesse da Administração Pública, desde que devidamente justificado pela chefia imediata.</td>
                 <td style="padding:8px;width:220px;">{{plano?.unidade?.planos_prazo_comparecimento + (plano?.unidade?.planos_tipo_prazo_comparecimento == "HORAS" ? " horas" : " dias")}}</td>
             </tr>

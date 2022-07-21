@@ -26,7 +26,8 @@ export class TipoModalidadeFormComponent extends PageFormBase<TipoModalidade, Ti
       ganho_produtividade: { default: 0 },
       calcula_tempo_despendido: { default: true },
       data_inicio: { default: "" },
-      data_fim: { default: "" }
+      data_fim: { default: "" },
+      comparecer_presencialmente: { default: true }
     }, this.cdRef, this.validate);
   }
 

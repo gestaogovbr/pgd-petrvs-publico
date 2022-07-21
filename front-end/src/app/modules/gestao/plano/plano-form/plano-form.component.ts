@@ -82,7 +82,8 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
       documento_id: {default: ""},
       documentos: {default: []},
       atividades: {default: []},
-      tipo_modalidade_id: {default: ""}
+      tipo_modalidade_id: {default: ""},
+      forma_contagem_carga_horaria: {default: "DIA"}
     }, this.cdRef, this.validate);
     this.formAtividades = this.fh.FormBuilder({
       atividade_id: {default: ""}
@@ -160,6 +161,7 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
   }
 
   public onUnidadeSelect(selected: SelectItem) {
+    this.form!.controls.forma_contagem_carga_horaria.setValue((selected.entity as Unidade)?.entidade?.forma_contagem_carga_horaria || "DIA");
     this.calculaTempos();
     this.cdRef.detectChanges();
   }
@@ -201,6 +203,7 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
       this.entity = new Plano();
       this.entity.unidade_id = this.auth.unidade!.id;
       this.entity.carga_horaria = this.auth.unidade?.entidade?.carga_horaria_padrao || 8;
+      this.entity.forma_contagem_carga_horaria = this.auth.unidade?.entidade?.forma_contagem_carga_horaria || "DIA";
     }
     this.loadData(this.entity, this.form!);
   }
@@ -292,9 +295,14 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
   }
 
   public get formaContagemCargaHoraria(): UnitWorkload {
-    const forma = (this.unidade?.searchObj as Unidade)?.entidade?.forma_contagem_carga_horaria || this.auth.unidade?.entidade?.forma_contagem_carga_horaria || "DIA";
-    console.log("FORMA: ", (this.unidade?.searchObj as Unidade)?.entidade?.forma_contagem_carga_horaria, this.auth.unidade?.entidade?.forma_contagem_carga_horaria);
+    //const forma = (this.unidade?.searchObj as Unidade)?.entidade?.forma_contagem_carga_horaria || this.auth.unidade?.entidade?.forma_contagem_carga_horaria || "DIA";
+    //console.log("FORMA: ", (this.unidade?.searchObj as Unidade)?.entidade?.forma_contagem_carga_horaria, this.auth.unidade?.entidade?.forma_contagem_carga_horaria);
+    const forma = this.form?.controls.forma_contagem_carga_horaria.value || "DIA";
     return forma == "DIA" ? "day" : forma == "SEMANA" ? "week" : "mouth";
+  }
+
+  public onFormaContagemCargaHorariaChange(unit: UnitWorkload) {
+    this.form!.controls.forma_contagem_carga_horaria.setValue(unit == "day" ? "DIA" : unit == "week" ? "SEMANA" : "MES");
   }
 
   public async addDocumento() {
