@@ -30,11 +30,11 @@ class DocumentoController extends ControllerBase
     public function assinar(Request $request) {
         try {
             $data = $request->validate([
-                'documento_id' => ['required']
+                'documentos_ids' => ['array']
             ]);
             return response()->json([
                 'success' => true,
-                'data' => $this->service->assinar($data["documento_id"])
+                'rows' => $this->service->assinar($data)
             ]); 
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()]);

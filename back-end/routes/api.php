@@ -50,6 +50,7 @@ function defaultRoutes($controllerClass, $capacidades = []) {
     Route::post('update-json', [$controllerClass, 'updateJson']);
     Route::post('destroy', [$controllerClass, 'destroy']);
     Route::post('get-by-id', [$controllerClass, 'getById']);
+    Route::post('get-all-ids', [$controllerClass, 'getAllIds']);
     Route::post('query', [$controllerClass, 'query']);
     Route::post('upload', [$controllerClass, 'upload']);
     Route::post('download-url', [$controllerClass, 'downloadUrl']);

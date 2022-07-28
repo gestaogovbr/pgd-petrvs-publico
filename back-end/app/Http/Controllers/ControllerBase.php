@@ -132,6 +132,33 @@ abstract class ControllerBase extends Controller
     }
 
     /**
+     * Get all ids of a query
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+
+    public function getAllIds(Request $request)
+    {
+        try {
+            $this->checkPermissions("GETALLIDS", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
+            $data = $request->validate([
+                'fields' => ['array'],
+                'with' => ['array'],
+                'where' => ['array']
+            ]);
+            $result = $this->service->getAllIds($data);
+            return response()->json([
+                'success' => true,
+                'rows' => $result["rows"],
+                'extra' => $result["extra"]
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
      * Query
      *
      * @param  \Illuminate\Http\Request  $request

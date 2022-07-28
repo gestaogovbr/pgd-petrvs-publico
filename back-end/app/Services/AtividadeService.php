@@ -67,15 +67,16 @@ class AtividadeService extends ServiceBase
         return $data;
     }
 
-    public function homologar($atividade_id) {
-        $atividade = Atividade::find($atividade_id);
-        if(isset($atividade)) {
+    public function homologar($data) {
+        $atividades = Atividade::whereIn("id", $data["atividades_ids"])->get();
+        $count = 0;
+        foreach ($atividades as $atividade) {
             $atividade->homologado = true;
-            $atividade->data_homologacao = $this->unidadeService->hora($atividade->unidade_id);
+            $atividade->data_homologacao = $data["data_homologacao"]; //$this->unidadeService->hora($atividade->unidade_id);
             $atividade->save();
+            $count++;
         }
-        $atividade->fresh();
-        return $atividade;
+        return $count;
     }
 
 }

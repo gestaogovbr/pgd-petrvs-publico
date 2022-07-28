@@ -57,7 +57,7 @@ export class QueryContext<T extends Base> {
   }
 
   public refresh() {
-    this.dao.refresh(this);
+    return this.dao.refresh(this);
   }
 
   public refreshId(id: string): Promise<T | null> {
@@ -99,5 +99,10 @@ export class QueryContext<T extends Base> {
       const options = this.options ? Object.keys(this.options).filter(key => key != "limit").reduce((res, key) => (res[key] = (this.options! as IIndexable)[key], res), {} as IIndexable) : undefined;
       this.dao.query(options, {resolve: resolve, reject: reject});
     });
+  }
+
+  public getAllIds(extraFields: string[] = []): Promise<{rows: any[], extra: any}> {
+    const options = this.options ? Object.keys(this.options).filter(key => key != "limit").reduce((res, key) => (res[key] = (this.options! as IIndexable)[key], res), {} as IIndexable) : undefined;
+    return this.dao.getAllIds(options, extraFields);
   }
 }

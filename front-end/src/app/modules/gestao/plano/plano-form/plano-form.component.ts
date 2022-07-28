@@ -279,13 +279,11 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
     this.dialog.confirm("Assinar", "Deseja realmente assinar o documento?").then(response => {
       if(response) {
         this.loading = true;
-        this.documentoDao.assinar(documento.id).then(response => {
-          if(response) {
+        this.documentoDao.assinar([documento.id]).then(response => {
+          if(response?.length) {
             let documentos = (this.form!.controls.documentos.value || []) as Documento[];
             let found = documentos.find(x => x.id == documento?.id);
-            if(found) {
-              found.assinaturas = response!.assinaturas;
-            }
+            if(found) found.assinaturas = response[0].assinaturas;
             this.form!.controls.documentos.setValue(documentos);
             this.gridDocumentos?.reset();
           }

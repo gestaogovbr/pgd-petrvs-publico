@@ -6,6 +6,8 @@ use App\Models\Documento;
 use App\Models\Plano;
 use App\Models\DocumentoAssinatura;
 use App\Services\ServiceBase;
+use App\Exceptions\ServerException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -38,20 +40,43 @@ class DocumentoService extends ServiceBase {
         return Documento::where("id_documento", $id_documento)->where("status", "AGUARDANDO_SEI")->first();
     }
 
-    public function assinar($documento_id) {
+    public function assinar($data) {
         $usuario = Auth::user();
-        $documento = Documento::with(['assinaturas' => function ($query) use ($usuario) {
+        $documentos = Documento::with(['assinaturas' => function ($query) use ($usuario) {
             $query->where('usuario_id', $usuario->id);
-        }])->find($documento_id);
-        if(isset($documento) && count($documento->assinaturas) == 0) {
-            $assinatura = new DocumentoAssinatura();
-            $assinatura->documento_id = $documento->id;
-            $assinatura->usuario_id = $usuario->id;
-            $assinatura->assinatura = hash('md5', $usuario->id . $documento->conteudo);
-            $assinatura->save();
-            $documento = Documento::with('assinaturas.usuario:id,nome,apelido')->find($documento_id);
+        }])->whereIn('id', $data["documentos_ids"])->get();
+        try {
+            DB::beginTransaction();
+            foreach($documentos as $documento) {
+                if($documento->especie == "TERMO_ADESAO") {
+                    $plano = Plano::find($documento->plano_id);
+                    $tipoModalidade = $plano->tipo_modalidade;
+                    $servidor = $plano->usuario;
+                    $unidade = $plano->unidade;
+                    $entidade = $unidade->entidade;
+                    $ids = [];
+                    if($tipoModalidade->exige_assinatura && isset($servidor)) $ids[] = $servidor->id;
+                    if($tipoModalidade->exige_assinatura_gestor_unidade && isset($unidade)) array_merge($ids, array_filter([$unidade->gestor_id, $unidade->gestor_substituto_id]));
+                    if($tipoModalidade->exige_assinatura_gestor_entidade && isset($entidade)) array_merge($ids, array_filter([$entidade->gestor_id, $entidade->gestor_substituto_id]));
+                    if(!in_array($usuario->id, $ids)) throw new ServerException("ValidateDocumento", "Usuário não tem prerrogativas para asssinar o documento #" . $documento->numero);
+                }
+                if(count($documento->assinaturas) == 0) {
+                    $assinatura = new DocumentoAssinatura();
+                    $assinatura->documento_id = $documento->id;
+                    $assinatura->usuario_id = $usuario->id;
+                    $assinatura->assinatura = hash('md5', $usuario->id . $documento->conteudo);
+                    $assinatura->save();
+                } else {
+                    /* Remove o documento que já foi assinado */
+                    $data["documentos_ids"] = array_diff($data["documentos_ids"], [$documento->id]);
+                }
+            }
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollback();
+            throw $e;
         }
-        return $documento;
+        return Documento::with('assinaturas.usuario:id,nome,apelido')->whereIn('id', $data["documentos_ids"])->all();
     }
 
 }

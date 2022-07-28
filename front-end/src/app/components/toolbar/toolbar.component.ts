@@ -13,6 +13,9 @@ export type ToolbarButton = {
   label?: string,
   hint?: string,
   running?: boolean,
+  toggle?: boolean,
+  badge?: string,
+  pressed?: boolean | ((button: ToolbarButton) => boolean),
   items?: ToolbarButton[],
   dynamicItems?: (...args: any[]) => ToolbarButton[] | undefined,
   dynamicVisible?: (...args: any[]) => boolean,
@@ -62,12 +65,18 @@ export class ToolbarComponent implements OnInit {
     return "button_" + this.util.md5((button.icon || "") + (button.hint || "") + (button.label || "")); 
   }
 
+  public buttonPressed(button: ToolbarButton): boolean {
+    return !!button.toggle && (!button.pressed || typeof button.pressed == "boolean" ? !!button.pressed : !!button.pressed(this));
+  }
+
   public onButtonClick(button: ToolbarButton) {
+    if(button.toggle && typeof button.pressed == "boolean") button.pressed = !button.pressed;
     if(button.route) {
       this.go.navigate(button.route, button.metadata);
     } else if(button.onClick) {
       button.onClick();
     }
+    this.cdRef.detectChanges();
   }
   
 }

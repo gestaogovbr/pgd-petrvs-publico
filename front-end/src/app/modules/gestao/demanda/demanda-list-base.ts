@@ -176,7 +176,7 @@ export abstract class DemandaListBase extends PageListBase<Demanda, DemandaDaoSe
   }
 
   public modalRefresh() {
-    return { modal: true, modalClose: (modalResult?: string) => (this.grid!.query || this.query!).refresh() };
+    return { modal: true, modalClose: (modalResult?: string) => this.refresh() };
   }
 
   public dynamicOptions(row: any): ToolbarButton[] {

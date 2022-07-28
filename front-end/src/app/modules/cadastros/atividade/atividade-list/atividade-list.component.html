@@ -1,7 +1,15 @@
-<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+<ng-template #homologacaoAtividades>
+    <editable-form noButtons [form]="formHomologacao!">
+        <top-alert type="warning" [message]="grid!.multiselectedCount + ' ' + lex.noun('atividade', true) + ' serão homologadas'"></top-alert>
+        <div class="row">
+            <input-datetime [size]="12" label="Data e hora" controlName="data_homologacao" [control]="formHomologacao!.controls.data_homologacao" labelInfo="Data e hora para registro da homologação"></input-datetime>
+        </div>
+    </editable-form>
+</ng-template>
+<grid multiselect [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
     [selectable]="selectable" (select)="onSelect($event)"
     [hasAdd]="auth.hasPermissionTo('MOD_ATV_INCL')"
-    [hasEdit]="false">
+    [hasEdit]="false" [multiselectMenu]="multiselectMenu">
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">

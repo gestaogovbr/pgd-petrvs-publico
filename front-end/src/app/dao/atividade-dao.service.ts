@@ -33,16 +33,10 @@ export class AtividadeDaoService extends DaoBaseService<Atividade> {
     });
   }
 
-  public homologar(atividade_id: string) {
-    return new Promise<Atividade | undefined>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/homologar', {atividade_id}).subscribe(response => {
-        resolve(response?.data ? this.getRow(response?.data) : undefined);
-      }, error => reject(error));
-    });
+  public homologar(atividadesIds: string[], dataHomologacao: Date) {
+    return this.server.post('api/' + this.collection + '/homologar', this.prepareToSave({
+      atividades_ids: atividadesIds,
+      data_homologacao: dataHomologacao
+    })).toPromise();
   }
-
 }
-
-
-
-

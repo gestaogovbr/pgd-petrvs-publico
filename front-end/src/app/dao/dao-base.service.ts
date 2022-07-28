@@ -208,6 +208,44 @@ export class DaoBaseService<T extends Base> {
     });
   }
 
+  public mergeExtra(rows: any[], extra?: any) {
+    if(extra?.merge) {
+      const relations = Object.keys(extra.merge);
+      for(let row of rows) {
+        for(let relation of relations) {
+          if(row.hasOwnProperty(relation + "_id") && extra.merge[relation].hasOwnProperty(row[relation + "_id"])) {
+            row[relation] = extra.merge[relation][row[relation + "_id"]];
+          }
+        }
+      }
+    }
+  }
+
+  public getAllIds(options: QueryOptions = {}, extraFields: string[]): Promise<{rows: any[], extra: any}> {
+    return new Promise<{rows: any[], extra: any}>((resolve, reject) => {
+      try {
+        let request = this.server.post('api/' + this.collection + '/get-all-ids', {
+          where: this.prepareWhere(options.where || []),
+          with: options.join || [],
+          fields: extraFields
+        }).subscribe(response => {
+          if(response?.error) {
+            reject(response?.error);
+          } else {
+            let result = {
+              rows: response?.rows || [],
+              extra: response?.extra
+            };
+            this.mergeExtra(result.rows, result.extra);
+            resolve(result);
+          }
+        }, error => reject(error));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
   public getRow(row: any): T {
     return this.iso8601ToDate(row as T);
   }
@@ -271,6 +309,7 @@ export class DaoBaseService<T extends Base> {
         context.enablePrior = context.page > 1;
         context.enableNext = !!context.options.limit && response.count > ((context.page-1) * context.options.limit) + response.rows.length;
         context.loading = false;
+        this.mergeExtra(context.rows, context.extra);
         context.subject.next(context.rows);
         if (context.events.resolve) context.events.resolve(context.rows);
         if (context.events.after) context.events.after();
@@ -298,7 +337,8 @@ export class DaoBaseService<T extends Base> {
   }
 
   public refresh(context: QueryContext<T>) {
-    this.contextQuery(context);
+    context.rows = [];
+    return this.contextQuery(context).asPromise();
   }
 
   public prepareToSave(data: any): any {

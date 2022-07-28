@@ -100,7 +100,7 @@ export class PlanoTermoAdesaoComponent extends PageBase implements OnInit {
     return this.util.decimalToTimerFormated(atividade.tempo_pactuado * fator_ganho_produtivade, true)
   }
 
-  public getGanhoProdutividade(atividade: Atividade): string {
+  public get ganhoProdutividade(): string {
     return this.util.formatDecimal(this.plano?.ganho_produtividade || 0) + "%";
   }
 

@@ -2,24 +2,26 @@
     <table>
         <tbody>
             <tr>
-                <td style="padding:8px;" colspan="3"><h3 style="text-align:center;">TERMO DE ADESÃO AO PLANO DE TRABALHO</h3></td>
+                <td style="padding:15px;" colspan="2">
+                    <h3 style="text-align:center;">PLANO DE TRABALHO</h3>
+                </td>
             </tr>
             <tr>
                 <td style="padding:8px;">
                     <p><b>Nome do participante:</b></p>
                     <p>{{plano?.usuario?.nome}}</p>
                 </td>
-                <td colspan="2">
-                    <p><b>Nome da unidade organizacional:</b></p>
+                <td>
+                    <p><b>Nome da unidade responsável:</b></p>
                     <p>{{plano?.unidade?.nome}}</p>
                 </td>
             </tr>
             <tr>
-                <td style="padding:8px;" rowspan="1">
+                <td style="padding:8px;">
                     <p><b>Matrícula Siape:</b></p>
                     <p>{{plano?.usuario?.matricula}}</p>
                 </td>
-                <td colspan="2" rowspan="3">
+                <td rowspan="2">
                     <p><b>Vinculação do participante:</b></p>
                     <p>{{lookup.getValue(lookup.USUARIO_VINCULACAO, plano?.usuario?.vinculacao)}}</p>
                     <!--ul class="todo-list">
@@ -41,15 +43,49 @@
                     <p><b>Regime de execução:</b></p>
                     <p>{{plano?.tipo_modalidade?.nome}}</p>
                 </td>
+                <td style="padding:8px;">
+                    <p><b>Ganho percentual de produtividade:</b></p>
+                    <p>{{ganhoProdutividade}} </p>
+                </td>
             </tr>
             <tr>
                 <td style="padding:8px;">
                     <p><b>{{cargaHorariaTitulo}}</b></p>
                     <p>{{cargaHoraria}} horas</p>
                 </td>
-                <td style="padding:8px;" colspan="2">
+                <td style="padding:8px;">
                     <p><b>Tempo pactuado do plano:</b></p>
                     <p>{{plano?.tempo_total}} horas</p>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:15px;" colspan="2">
+                    <h3 style="text-align:center;">
+                        <strong>
+                            <br/><br/>TERMO DE CIÊNCIA E RESPONSABILIDADE
+                        </strong>
+                    </h3>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:8px;" colspan="2">
+                    <p style="text-align:justify;">&nbsp;</p>
+                    <p style="text-align:justify;">Pelo presente termo de ciência e responsabilidade, em razão da solicitação de adesão ao Programa de Gestão por Resultados da {{auth.unidade?.entidade?.nome}},</p>
+                    <ul>
+                        <li style="text-align:justify;">DECLARO estar ciente que a aferição das entregas será realizadas mediante análise fundamentada da chefia responsável pelo plano de trabalho, em até quarenta dias, quanto ao atingimento ou não das metas estipuladas.</li>
+                        <li style="text-align:justify;">DECLARO estar ciente que a chefia responsável pelo plano de trabalho poderá redefinir as metas do participante por necessidade do serviço, na hipótese de surgimento de demanda prioritária cujas atividades não tenham sido previamente acordadas.</li>
+                        <li style="text-align:justify;">DECLARO que atendo às condições para participação no PGPRF;</li>
+                        <li style="text-align:justify;">DECLARO que estou ciente do dever como participante de manter, às suas expensas, a infraestrutura necessária para o exercício de suas atribuições, inclusive aquelas relacionadas à segurança da informação, quando executar o programa de gestão na modalidade teletrabalho;</li>
+                        <li style="text-align:justify;">DECLARO que estou ciente que minha participação no programa de gestão não constitui direito adquirido, podendo ser desligado nas condições estabelecidas nesta Instrução Normativa;</li>
+                        <li style="text-align:justify;">DECLARO que estou ciente quanto à vedação de pagamento das vantagens descritas nesta normativa;</li>
+                        <li style="text-align:justify;">DECLARO que estou ciente quanto à vedação de utilização de terceiros para a execução dos trabalhos acordados como parte das metas;</li>
+                        <li style="text-align:justify;">DECLARO que estou ciente quanto ao dever de observar as disposições constantes da Lei nº 13.709, de 14 e agosto de 2018;</li>
+                        <li style="text-align:justify;">DECLARO que estou ciente quanto ao dever de observar as disposições constantes da Lei Geral de Proteção de Dados Pessoas (LGPD), no que couber;</li>
+                        <li style="text-align:justify;">DECLARO que estou ciente quanto ao dever de observar as disposições constantes da Portaria nº 15.543/SEDGG/ME, de 2 de julho de 2020 (Manual de Conduta do Agente Público Civil do Poder Executivo Federal); e</li>
+                        <li style="text-align:justify;">DECLARO que estou ciente quanto ao dever de manter os dados pessoais, inclusive de contato para acionamento, atualizados em sistema indicado pela Diretoria de Gestão de Pessoas.</li>
+                        <li style="text-align:justify;">DECLARO estar ciente quanto ao dever de manter meus dados pessoais, inclusive de contato para acionamento, atualizados na base de dados indicada pela DGP.</li>
+                        <li style="text-align:justify;">DECLARO estar ciente que o prazo de antecedência mínima para o comparecimento presencial à unidade, sempre que a presença física do participante for necessária e houver interesse da Administração Pública, deverá seguir o disposto na INSTRUÇÃO NORMATIVA PRF Nº 88, DE 15 DE JUNHO DE 2022 (SEI nº 41976568).</li>
+                    </ul>
                 </td>
             </tr>
             <!--tr>
@@ -131,71 +167,35 @@
                 </td>
             </tr//-->
             <tr>
-                <td style="padding:8px;" colspan="3">
-                    <p><b>Nome dos responsáveis pelo lançamento das informações no sistema de acompanhamento:</b></p>
-                    <p>{{plano?.usuario?.nome}} e a chefia imediata.</p>
-                </td>
-            </tr>
-            <tr *ngIf="plano?.tipo_modalidade?.comparecer_presencialmente">
-                <td style="padding:8px;" colspan="2">Prazo de antecedência mínima para as convocações à unidade, sempre que a presença física do participante for necessária e houver interesse da Administração Pública, desde que devidamente justificado pela chefia imediata.</td>
-                <td style="padding:8px;width:220px;">{{plano?.unidade?.planos_prazo_comparecimento + (plano?.unidade?.planos_tipo_prazo_comparecimento == "HORAS" ? " horas" : " dias")}}</td>
-            </tr>
-            <tr>
-                <td style="padding:8px;" colspan="3">
-                    <p><b>Atividades a serem desenvolvidas com as respectivas metas a serem alcançadas, expressas em horas equivalentes:</b></p>
-                    <p></p>
+                <td style="padding:8px;" colspan="2">
+                    <h3 style="text-align:center;">ATIVIDADES</h3>
                     <table>
                         <thead>
                             <tr>
                                 <th>Descrição da atividade</th>
-                                <th>Faixa de Complexidade da Atividade</th>
+                                <!--th>Faixa de Complexidade da Atividade</th>
                                 <th>Parâmetros adotados para definição da faixa de complexidade</th>
                                 <th>Tempo de execução da atividade em regime presencial</th>
                                 <th>Tempo de execução da atividade em teletrabalho</th>
                                 <th>Ganho percentual de produtividade estabelecido, quando aplicável</th>
-                                <th>Entregas esperadas</th>
+                                <th>Entregas esperadas</th//-->
                             </tr>
                         </thead>
                         <tbody>
                             <tr *ngFor="let atividade of atividades">
                                 <td>{{atividade.nome}}</td>
-                                <td>{{getFaixaComplexidade(atividade)}}</td>
+                                <!--td>{{getFaixaComplexidade(atividade)}}</td>
                                 <td>{{getParametros(atividade.parametros_adotados)}}</td>
                                 <td>{{util.decimalToTimerFormated(atividade.tempo_pactuado, true)}}</td>
                                 <td>{{getTempoTeletrabalho(atividade)}}</td>
                                 <td>{{getGanhoProdutividade(atividade)}}</td>
-                                <td>{{getEntregas(atividade.entregas_esperadas)}}</td>
+                                <td>{{getEntregas(atividade.entregas_esperadas)}}</td//-->
                             </tr>
                         </tbody>
                     </table>
-                    <p></p>
-                    <p>A aferição das entregas será realizadas mediante análise fundamentada da chefia imediata, em até quarenta dias, quanto ao atingimento ou não das metas estipuladas.</p>
-                    <p>&nbsp;</p>
-                    <p>A chefia imediata poderá redefinir as metas do participante por necessidade do serviço, na hipótese de surgimento de demanda prioritária cujas atividades não tenham sido previamente acordadas.</p>
                 </td>
             </tr>
-            <tr>
-                <td style="padding:8px;" colspan="3"><h3 style="text-align:center;"><strong>TERMO DE CIÊNCIA E RESPONSABILIDADE</strong></h3></td>
-            </tr>
-            <tr>
-                <td style="padding:8px;" colspan="3">
-                    <p style="text-align:justify;">&nbsp;</p>
-                    <p style="text-align:justify;">Pelo presente termo de ciência e responsabilidade, em razão da solicitação de adesão ao Programa de Gestão por Resultados da {{auth.unidade?.entidade?.nome}},</p>
-                    <ul>
-                        <li style="text-align:justify;">DECLARO que atendo às condições para participação no PGPRF;</li>
-                        <li style="text-align:justify;">DECLARO que estou ciente do dever como participante de manter, às suas expensas, a infraestrutura necessária para o exercício de suas atribuições, inclusive aquelas relacionadas à segurança da informação, quando executar o programa de gestão na modalidade teletrabalho;</li>
-                        <li style="text-align:justify;">DECLARO que estou ciente que minha participação no programa de gestão não constitui direito adquirido, podendo ser desligado nas condições estabelecidas nesta Instrução Normativa;</li>
-                        <li style="text-align:justify;">DECLARO que estou ciente quanto à vedação de pagamento das vantagens descritas nesta normativa;</li>
-                        <li style="text-align:justify;">DECLARO que estou ciente quanto à vedação de utilização de terceiros para a execução dos trabalhos acordados como parte das metas;</li>
-                        <li style="text-align:justify;">DECLARO que estou ciente quanto ao dever de observar as disposições constantes da Lei nº 13.709, de 14 e agosto de 2018;</li>
-                        <li style="text-align:justify;">DECLARO que estou ciente quanto ao dever de observar as disposições constantes da Lei Geral de Proteção de Dados Pessoas (LGPD), no que couber;</li>
-                        <li style="text-align:justify;">DECLARO que estou ciente quanto ao dever de observar as disposições constantes da Portaria nº 15.543/SEDGG/ME, de 2 de julho de 2020 (Manual de Conduta do Agente Público Civil do Poder Executivo Federal); e</li>
-                        <li style="text-align:justify;">DECLARO que estou ciente quanto ao dever de manter os dados pessoais, inclusive de contato para acionamento, atualizados em sistema indicado pela Diretoria de Gestão de Pessoas.</li>
-                        <li style="text-align:justify;">DECLARO estar ciente quanto ao dever de manter meus dados pessoais, inclusive de contato para acionamento, atualizados na base de dados indicada pela DGP.</li>
-                    </ul>
-                </td>
-            </tr>
-            <tr>
+            <!--tr>
                 <td style="padding:8px;" colspan="3">
                     <p>&nbsp;</p>
                     <p>Com a assinatura deste termo, o participante:</p>
@@ -207,7 +207,7 @@
                     <p>&nbsp;</p>
                 </td>
             </tr>
-            <!--tr>
+            <tr>
                 <td style="padding:8px;">
                     <p><b>Telefone Celular:</b></p>
                     <div class="raw-html-embed">{{plano?.usuario?.telefone}}</div>
@@ -217,14 +217,14 @@
                     <div class="raw-html-embed">{{plano?.usuario?.telefone}}</div>
                 </td>
                 <td>&nbsp;</td>
-            </tr/-->
+            </tr>
             <tr>
                 <td style="padding:8px;" colspan="3">
                     <p>&nbsp;</p>
                     <p>DECLARO que os números de telefone listados neste formulário estão ativos e atualizados.</p>
                     <p>&nbsp;</p>
                 </td>
-            </tr>
+            </tr-->
         </tbody>
     </table>
 </div>

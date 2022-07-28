@@ -140,9 +140,20 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
       filterSnapshot: undefined,
       querySnapshot: undefined,
       modalClose: (modalResult) => {
-        if(modalResult) (this.grid!.query || this.query!).refresh();
+        if(modalResult) {
+          this.refresh();
+          this.dialog.topAlert("Registro incluído com sucesso!", 5000);
+        }
       }
     });
+  }
+
+  public refresh(id?: string) {
+    if(id) {
+      return (this.grid!.query || this.query!).refreshId(id!);
+    } else {
+      return (this.grid!.query || this.query!).refresh();
+    }
   }
 
   public consult = async (doc: M) => {
@@ -154,7 +165,10 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
       filterSnapshot: undefined,
       querySnapshot: undefined,
       modalClose: (modalResult) => {
-        if(modalResult) (this.grid!.query || this.query!).refreshId(doc.id);
+        if(modalResult) {
+          this.refresh(doc.id);
+          this.dialog.topAlert("Registro alterado com sucesso!", 5000);
+        }
       }
     });
   }
@@ -167,7 +181,8 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
         this.dao!.delete(doc).then(function () {
           (self.grid!.query || self.query!).removeId(doc.id);
           //self.grid!.query!.refresh();
-          self.dialog.alert("Sucesso", "Registro excluído com sucesso!");
+          //self.dialog.alert("Sucesso", "Registro excluído com sucesso!");
+          self.dialog.topAlert("Registro excluído com sucesso!");
         }).catch((error) => {
           self.dialog.alert("Erro", "Erro ao excluir: " + (error?.message ? error?.message : error));
         });

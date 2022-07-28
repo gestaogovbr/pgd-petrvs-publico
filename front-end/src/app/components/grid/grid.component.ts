@@ -70,6 +70,10 @@ export class GridComponent implements OnInit {
   @Input() controlName: string | null = null;
   @Input() control?: AbstractControl = undefined;
   @Input() minHeight: number = 300;
+  @Input() multiselect?: string;
+  @Input() multiselectAllFields: string[] = [];
+  @Input() dynamicMultiselectMenu?: (multiselected: IIndexable) => ToolbarButton[];
+  @Input() multiselectMenu?: ToolbarButton[];
   @Input() set title(value: string) {
     if(value != this._title) {
       this._title = value;
@@ -140,6 +144,8 @@ export class GridComponent implements OnInit {
   private _title: string = "";
   private _items?: IIndexable[];
   private _exporting: boolean = false;
+  //private _multiselectDynamicMenu: ToolbarButton[] = [];
+  private filterCollapsedOnMultiselect: boolean = false;
 
   /* Propriedades publicas */
   public self: GridComponent = this;
@@ -154,6 +160,9 @@ export class GridComponent implements OnInit {
   public editing?: Base | IIndexable;
   public editingColumn?: Base | IIndexable;
   public adding: boolean = false;
+  public multiselecting: boolean = false;
+  public multiselected: IIndexable = {};
+  public multiselectExtra: any = undefined;
   public rowsLimit?: number;
   public expandedIds: IIndexable = {};
   public set error(error: string | undefined) {
@@ -171,34 +180,60 @@ export class GridComponent implements OnInit {
   public get exporting(): boolean {
     return this._exporting;
   }
-  public BUTTON_FILTER = {
+  public BUTTON_FILTER: ToolbarButton = {
     icon: "bi bi-search",
     label: "Filtrar",
     onClick: () => this.filterRef?.toggle()
   };
-  public BUTTON_ADD = {
+  public BUTTON_ADD: ToolbarButton = {
     icon: "bi bi-plus-circle",
     color: "btn-outline-success",
     label: "Incluir",
     onClick: async () => await (this.add ? this.add() : this.go.navigate(this.addRoute!, this.addMetadata))
   };
-  public BUTTON_REPORT = {
+  public BUTTON_REPORT: ToolbarButton = {
     icon: "bi-file-earmark-spreadsheet",
     color: "btn-outline-info",
     label: "Exportar",
     onClick: () => this.report()
   };
-  public BUTTON_EDIT = {
+  public BUTTON_EDIT: ToolbarButton = {
     label: "Editar",
     icon: "bi bi-pencil-square",
     hint: "Editar",
     color: "btn-outline-info",
   };
-  public BUTTON_DELETE = {
+  public BUTTON_DELETE: ToolbarButton = {
     label: "Excluir",
     icon: "bi bi-trash",
     hint: "Excluir",
     color: "btn-outline-danger",
+  };
+  public BUTTON_MULTISELECT_SELECIONAR: string = "Selecionar";
+  public BUTTON_MULTISELECT_CANCELAR_SELECAO: string = "Cancelar seleção";
+  public BUTTON_MULTISELECT: ToolbarButton = {
+    label: "Selecionar",
+    icon: "bi bi-ui-checks-grid",
+    hint: "Excluir",
+    toggle: true,
+    pressed: false,
+    color: "btn-outline-danger",
+    onClick: this.onMultiselectClick.bind(this),
+    items: [
+      {
+        label: "Todos",
+        icon: "bi bi-grid-fill",
+        hint: "Selecionar",
+        color: "btn-outline-danger",
+        onClick: this.onSelectAllClick.bind(this)
+      }, {
+        label: "Nenhum",
+        icon: "bi bi-grid",
+        hint: "Selecionar",
+        color: "btn-outline-danger",
+        onClick: this.onUnselectAllClick.bind(this)
+      }
+    ]
   };
 
   constructor(public injector: Injector) {
@@ -237,6 +272,10 @@ export class GridComponent implements OnInit {
 
   public isSeparator(row: any): boolean {
     return (row instanceof GridGroupSeparator);
+  }
+
+  public get isMultiselect(): boolean {
+    return this.multiselect != undefined;
   }
 
   public get isEditable(): boolean {
@@ -297,6 +336,89 @@ export class GridComponent implements OnInit {
     }
   }
 
+  /*public get multiselectDynamicMenu(): ToolbarButton[] {
+    if(this.dynamicMultiselectMenu) {
+      const menu = this.dynamicMultiselectMenu(this.multiselected);
+      if(JSON.stringify(menu) != JSON.stringify(this._multiselectDynamicMenu)) this._multiselectDynamicMenu = menu;
+      return this._multiselectDynamicMenu;
+    } else {
+      return [];
+    }
+  }*/
+
+  public refreshMultiselectToolbar() {
+    this.toolbarRef!.buttons = this.multiselecting ? [this.BUTTON_MULTISELECT, ...(this.multiselectMenu || []), ...(this.dynamicMultiselectMenu ? this.dynamicMultiselectMenu(this.multiselected) : [])] : [...(this.initialButtons || []), ...this.toolbarButtons];
+  }
+
+  public enableMultiselect(enable: boolean) {
+    this.multiselecting = enable;
+    if(this.multiselecting) {
+      this.filterCollapsedOnMultiselect = !!this.filterRef?.collapsed;
+      if(this.filterRef) this.filterRef.collapsed = true;
+      this.BUTTON_MULTISELECT.label = this.BUTTON_MULTISELECT_CANCELAR_SELECAO;
+      this.refreshMultiselectToolbar();
+      this.BUTTON_MULTISELECT.badge = this.multiselectedCount ? this.multiselectedCount.toString() : undefined;
+    } else {
+      this.multiselected = {};
+      this.BUTTON_MULTISELECT.label = this.BUTTON_MULTISELECT_SELECIONAR;
+      if(this.filterRef) this.filterRef.collapsed = this.filterCollapsedOnMultiselect;
+      this.refreshMultiselectToolbar();
+      this.BUTTON_MULTISELECT.badge = undefined;  
+    }
+    this.cdRef.detectChanges();
+  }
+
+  public onMultiselectClick() {
+    this.enableMultiselect(!!this.BUTTON_MULTISELECT.pressed);
+  }
+
+  public get multiselectedCount(): number {
+    return Object.keys(this.multiselected).length;
+  }
+
+  public async onSelectAllClick() {
+    this.BUTTON_MULTISELECT.pressed = true;
+    if(!this.multiselecting) this.enableMultiselect(true);
+    this.dialog.showSppinerOverlay("Obtendo informações de todos os registros . . .");
+    try {
+      if(this.items && !this.query) {
+        this.multiselected = {};
+        this.items.forEach(x => this.multiselected[x.id] = x);
+      } else if(this.query){
+        const result = await this.query.getAllIds(this.multiselectAllFields);
+        this.multiselectExtra = result.extra;
+        for(let row of result.rows) this.multiselected[row.id] = row;
+      }
+    } finally {
+      this.dialog.closeSppinerOverlay();
+    }
+    this.BUTTON_MULTISELECT.badge = this.multiselectedCount ? this.multiselectedCount.toString() : undefined;
+    this.refreshMultiselectToolbar();
+    this.cdRef.detectChanges();
+  }
+
+  public onUnselectAllClick() {
+    this.multiselected = {};
+    this.BUTTON_MULTISELECT.badge = undefined;
+    this.refreshMultiselectToolbar();
+    this.cdRef.detectChanges();
+  }
+
+  public isMultiselectChecked(row: any) {
+    return this.multiselected.hasOwnProperty(row.id) ? "" : undefined;
+  }
+
+  public onMultiselectChange(event: any, row: IIndexable) {
+    if(event.currentTarget.checked) {
+      if(!this.multiselected.hasOwnProperty(row.id)) this.multiselected[row.id] = row;
+    } else {
+      if(this.multiselected.hasOwnProperty(row.id)) delete this.multiselected[row.id];
+    }
+    this.BUTTON_MULTISELECT.badge = this.multiselectedCount ? this.multiselectedCount.toString() : undefined;
+    this.refreshMultiselectToolbar();
+    this.cdRef.detectChanges();
+  }
+
   public loadFilter() {
     if(this.filterRef) {
       this.filterRef.grid = this;
@@ -313,7 +435,10 @@ export class GridComponent implements OnInit {
 
   public loadToolbar() {
     if(this.toolbarRef && !this.isDisabled) {
-      if(!this.initialButtons) this.initialButtons = this.util.clone(this.toolbarRef.buttons);
+      /* Grava os botoes informados diretamente no componente toolbar, pois a propriedade será sobrescrita */
+      if(!this.initialButtons) this.initialButtons = this.util.clone(this.toolbarRef.buttons || []);
+      /* Insere os botões necessários */
+      if(this.isMultiselect) this.toolbarButtons.push(this.BUTTON_MULTISELECT);
       if(this.hasAdd && (this.addRoute || this.add)) this.toolbarButtons.push(this.BUTTON_ADD);
       this.toolbarRef.buttons = [...(this.initialButtons || []), ...this.toolbarButtons];
       this.toolbarRef.icon = this.icon;

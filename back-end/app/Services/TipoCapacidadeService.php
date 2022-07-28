@@ -162,6 +162,7 @@ class TipoCapacidadeService extends ServiceBase {
         ["4239b275-f185-11ec-a5bb-0050569c64a0", "MOD_PTR_USERS_CONS", "Permite consultar planos de trabalho de usuários fora da lotação"],
         ["4248eae1-f185-11ec-a5bb-0050569c64a0", "MOD_PTR_USERS_EXCL", "Permite excluir planos de trabalho de usuários fora da lotação"],
         ["1aadc1b2-f185-11ec-a5bb-0050569c64a0", "MOD_PTR_USERS_INCL", "Permite incluir planos de trabalho de usuários fora da lotação"],
+        ["1aadc1b2-f185-11ec-a5bb-0050569c64a0", "MOD_PTR_INCL_SEM_LOT", "Permite incluir planos de trabalho para usuários não lotado na unidade do plano"],
         ["61347aa4-d628-11ec-a5bb-0050569c64a0", "MOD_TIPO_ATV", "Permite acessar item de menu cadastro->tipo de atividade"],
         ["a7a8bd66-e112-11ec-a5bb-0050569c64a0", "MOD_TIPO_ATV_CONS", "Permite consultar atividade"],
         ["a797073d-e112-11ec-a5bb-0050569c64a0", "MOD_TIPO_ATV_EDT", "Permite editar atividades"],

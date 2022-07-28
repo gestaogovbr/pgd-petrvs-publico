@@ -13,6 +13,7 @@ class Documento extends ModelBase
     protected $table = 'documentos';
 
     public $fillable = [
+        'numero',
         'especie',
         'conteudo',
         'assinatura',
@@ -32,6 +33,13 @@ class Documento extends ModelBase
     ];
 
     public $delete_cascade = ['assinaturas'];
+
+    protected static function booted()
+    {
+        static::creating(function ($documento) {
+            $documento->numero = DB::select("CALL sequence_documento_numero()")[0]->number;
+        });
+    }
 
     // Has
     public function assinaturas() { return $this->hasMany(DocumentoAssinatura::class); }    
