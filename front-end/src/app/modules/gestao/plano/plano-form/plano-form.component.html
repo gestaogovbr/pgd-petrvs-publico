@@ -15,13 +15,13 @@
                 <input-search #tipo_modalidade [size]="6" label="Modalidade" icon="bi bi-cast" controlName="tipo_modalidade_id" [control]="form!.controls.tipo_modalidade_id" [dao]="tipoModalidadeDao" (select)="onTipoModalidadeSelect($event)" [selectRoute]="{route: ['cadastros', 'tipo-modalidade']}"></input-search>
             </div>
             <div class="row">
-                <input-workload [size]="3" [unit]="formaContagemCargaHoraria" label="Carga Horária" icon="bi bi-hourglass-split" controlName="carga_horaria" [control]="form!.controls.carga_horaria" [unitChange]="onFormaContagemCargaHorariaChange.bind(this)" labelInfo="Carga horária do usuário"></input-workload>
+                <input-workload [size]="3" [unit]="formaContagemCargaHoraria" label="Carga Horária" icon="bi bi-hourglass-split" controlName="carga_horaria" [control]="form!.controls.carga_horaria" [unitChange]="onFormaContagemCargaHorariaChange.bind(this)" (change)="onCargaHorariaChenge($event)" labelInfo="Carga horária do usuário (Máx.: diária 24 horas; semana 24*5=240 horas; mensal 24*20=480 horas)"></input-workload>
                 <input-timer onlyHours disabled [size]="3" label="Horas Totais" icon="bi bi-clock" controlName="tempo_total" [control]="form!.controls.tempo_total" labelInfo="Horas úteis de trabalho no período de vigência considerando a carga horária, feriados e fins de semana"></input-timer>
                 <input-timer onlyHours disabled [size]="3" label="Horas Parciais" icon="bi bi-clock" controlName="tempo_proporcional" [control]="form!.controls.tempo_proporcional" labelInfo="Total de horas menos os afastamentos."></input-timer>
                 <input-text numbers [size]="3" label="% Ganho produtividade" icon="bi bi-hourglass-split" controlName="ganho_produtividade" [control]="form!.controls.ganho_produtividade" labelInfo="Percentual de ganho de produtividade (Será descontado do tempo pactuado)"></input-text>
             </div>
             <separator *ngIf="horasTotais" title="Cálculos das horas totais" collapse>
-                <calendar-efemerides [efemerides]="horasTotais"></calendar-efemerides>
+                <calendar-efemerides [efemerides]="horasTotais" [partial]="false"></calendar-efemerides>
             </separator>
             <separator *ngIf="horasParciais" title="Cálculos das horas parciais" collapse>
                 <calendar-efemerides [efemerides]="horasParciais"></calendar-efemerides>

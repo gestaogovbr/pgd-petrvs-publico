@@ -160,6 +160,10 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
     this.calculaTempos();
   }
 
+  public onCargaHorariaChenge(event: Event) {
+    this.calculaTempos();
+  }
+
   public onUnidadeSelect(selected: SelectItem) {
     this.form!.controls.forma_contagem_carga_horaria.setValue((selected.entity as Unidade)?.entidade?.forma_contagem_carga_horaria || "DIA");
     this.calculaTempos();
