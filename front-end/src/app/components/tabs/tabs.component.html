@@ -1,6 +1,6 @@
 <ul *ngIf="!isHidden" class="nav nav-tabs" [class.justify-content-end]="isRight">
     <li *ngIf="title.length && isRight" class="nav-item flex-fill" [class.tab-title-left]="">
-        <span class="h3">{{title}}</span>
+        <span [class]="class_span">{{title}}</span>
     </li>
     <li *ngFor="let tab of items" class="nav-item">
         <a class="nav-link" [class.active]="tab.key == active" (click)="onClick(tab)" role="button">

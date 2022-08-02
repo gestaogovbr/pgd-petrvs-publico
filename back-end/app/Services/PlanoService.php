@@ -17,6 +17,12 @@ class PlanoService extends ServiceBase
 {
     use UseDataFim;
 
+    /**
+     * planosAtivos: Este método retorna todos os Planos de Trabalho de um determinado usuário, que ainda se encontram dentro da vigência
+     *
+     * @param  mixed $usuario_id
+     * @return void
+     */
     public function planosAtivos($usuario_id) {
         return Plano::where("usuario_id", $usuario_id)->where("data_inicio_vigencia", "<=", now())->where("data_fim_vigencia", ">=", now())->get();
         // adicionar no gitlab para considerar o fuso horário

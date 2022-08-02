@@ -11,7 +11,8 @@ export class TabsComponent implements OnInit {
   @ContentChildren(TabComponent, { descendants: true }) tabsRef?: QueryList<TabComponent>;
   @Input() select?: (tab: LookupItem) => void;
   @Input() items: LookupItem[] = [];
-  @Input() title: string = "";  
+  @Input() title: string = "";
+  @Input() class_span: string = "h3";
   @Input() active: any = undefined;
   @Input() display?: string;
   @Input() hidden?: string;
@@ -20,7 +21,7 @@ export class TabsComponent implements OnInit {
     this._cdRef = value;
   }
   get cdRef(): ChangeDetectorRef {
-    this._cdRef = this._cdRef || this.injector.get<ChangeDetectorRef>(ChangeDetectorRef); 
+    this._cdRef = this._cdRef || this.injector.get<ChangeDetectorRef>(ChangeDetectorRef);
     return this._cdRef;
   }
 

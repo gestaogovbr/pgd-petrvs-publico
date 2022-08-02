@@ -11,14 +11,14 @@
             <input-search [size]="5" label="Usuário" #usuario controlName="usuario_id" [control]="filter!.controls.usuario_id" [disabled]="filter!.controls.atribuidas_para_mim.value ? 'true' : undefined" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
             <input-switch [size]="1" label="Atual" controlName="somente_unidade_atual" [control]="filter!.controls.somente_unidade_atual" (change)="onSomenteUnidadeAtualChange($event)" labelInfo="Somente as demandas da unidade selecionada"></input-switch>
             <input-search [size]="4" label="Unidade" #unidade controlName="unidade_id" [control]="filter!.controls.unidade_id" [disabled]="filter!.controls.somente_unidade_atual.value ? 'true' : undefined" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
-            <input-switch [size]="1" label="Sub." controlName="unidades_subordinadas" [control]="filter!.controls.unidades_subordinadas" labelInfo="Incluir as unidades subordinadas"></input-switch>      
+            <input-switch [size]="1" label="Sub." controlName="unidades_subordinadas" [control]="filter!.controls.unidades_subordinadas" labelInfo="Incluir as unidades subordinadas"></input-switch>
         </div>
         <div class="row">
             <input-text [size]="1" label="#ID" controlName="numero" maskFormat="999999" [control]="filter!.controls.numero" [labelInfo]="'Número ' + lex.noun('demanda', false, true)"></input-text>
             <input-text [size]="3" label="Nº Processo (Sei)" maskFormat="00000.000000/0000-00" controlName="numero_processo" [control]="filter!.controls.numero_processo" [labelInfo]="'Pesquisa na Requisição, Conclusão e ' + lex.noun('Entrega', true)"></input-text>
             <input-select [size]="3" label="Status" itemTodos="- Todos -" [valueTodos]="null" [disabled]="fixedFilter?.length && fixedFilter![0]![0] == 'status' ? 'true' : undefined" controlName="status" [control]="filter!.controls.status" [items]="lookup.DEMANDA_STATUS_COM_ARQUIVADAS"></input-select>
             <input-multiselect noForm noBox [size]="4" label="Etiquetas" controlName="etiquetas" [control]="filter!.controls.etiquetas"></input-multiselect>
-            <input-switch [size]="1" label="Arq." controlName="arquivadas" [control]="filter!.controls.arquivadas" labelInfo="Listar também demandas arquivadas"></input-switch>      
+            <input-switch [size]="1" label="Arq." controlName="arquivadas" [control]="filter!.controls.arquivadas" labelInfo="Listar também demandas arquivadas"></input-switch>
         </div>
         <div class="row">
             <input-search [size]="3" [label]="lex.noun('Atividade')" controlName="atividade_id" [control]="filter!.controls.atividade_id" [dao]="atividadeDao" [groupBy]="[{field: 'unidade.sigla', label: 'Unidade'}]" [where]="[['vinculadas', '=', true]]" [selectRoute]="{route: ['cadastros', 'atividade']}"></input-search>
@@ -27,8 +27,8 @@
             <input-datetime [size]="2" noIcon [disabled]="filter!.controls.data_filtro.value == null ? 'true' : undefined" label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" labelInfo="Data início do período"></input-datetime>
             <input-datetime [size]="2" noIcon [disabled]="filter!.controls.data_filtro.value == null ? 'true' : undefined" label="Fim" controlName="data_fim" [control]="filter!.controls.data_fim" labelInfo="Data fim do período"></input-datetime>
         </div>
-    </filter>  
-    <columns>        
+    </filter>
+    <columns>
         <column *ngIf="!selectable" type="expand" icon="bi bi-boxes" [align]="'center'" [hint]="lex.noun('Entrega', true)" [template]="columnEntregas" [expandTemplate]="columnExpandedEntregas">
             <ng-template let-row="row" #columnEntregas>
                 <span *ngIf="row.entregas?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row.entregas?.length}}</span>
@@ -68,11 +68,11 @@
                 <div class="text-nowrap">
                     <span class="badge bg-light text-dark">
                         <i class="bi bi-briefcase"></i>
-                        {{row.unidade.sigla}}    
+                        {{row.unidade.sigla}}
                     </span>
                     <span class="badge bg-light text-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Responsável: {{row.usuario?.nome || 'Não atribuido a nenhum usuário'}}">
                         <i [class]="'bi ' + (row.usuario?.nome?.length ? 'bi-person-check' : 'bi-person-x')"></i>
-                        {{util.apelidoOuNome(row.usuario, true) || "(Não atribuído)"}}    
+                        {{util.apelidoOuNome(row.usuario, true) || "(Não atribuído)"}}
                     </span>
                 </div>
                 <span class="badge bg-light text-dark fw-light" data-bs-toggle="tooltip" data-bs-placement="top" title="Demandante: {{row.demandante?.nome || 'Desconhecido'}}">
@@ -92,7 +92,7 @@
                 <div class="one-per-line">
                     <span *ngFor="let tempo of temposDemanda(row)" [attr.role]="tempo.click ? 'button' : undefined" [class]="tempo.class" data-bs-toggle="tooltip" data-bs-placement="top" [attr.title]="tempo.title" (click)="onTempoClick(tempo)">
                         <i [class]="tempo.icon"></i>
-                        {{tempo.text}}    
+                        {{tempo.text}}
                     </span>
                 </div>
             </ng-template>
@@ -101,7 +101,7 @@
             <ng-template let-row="row" #columnEtiquetasChecklist>
                 <span *ngFor="let etiqueta of row.etiquetas" class="badge me-1" role="button" [style]="getEtiquetaStyle(etiqueta)" (click)="onEtiquetaClick(etiqueta)">
                     <i [class]="etiqueta.icon"></i>
-                    {{etiqueta.value}}    
+                    {{etiqueta.value}}
                 </span>
                 <separator *ngIf="row.checklist?.length" small title="Checklist"></separator>
                 <table *ngIf="row.checklist?.length">
@@ -130,7 +130,7 @@
             <ng-template let-row="row" #columnEtiquetas>
                 <span *ngFor="let etiqueta of row.etiquetas" class="badge me-1" [style]="getEtiquetaStyle(etiqueta)">
                     <i [class]="etiqueta.icon"></i>
-                    {{etiqueta.value}}    
+                    {{etiqueta.value}}
                 </span>
             </ng-template>
             <ng-template let-row="row" #columnEtiquetasEdit>

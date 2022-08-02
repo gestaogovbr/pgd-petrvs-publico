@@ -24,7 +24,6 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
   public statusPlano: string = '';
   public horaAtual: Date = new Date();
 
-  //public tipoGrafico: ChartType = 'bar';
   public opcoesGraficoPlano: ChartOptions = {
     scales: {
       xAxes: [{

@@ -5,10 +5,68 @@
     <div class="col-md-10">
         <div class="row">
             <div class="col-md-12">
-                <h4>{{mensagemSaudacao()}}</h4>
+                <h4 class="text-center">{{mensagemSaudacao()}} !</h4>
             </div>
+            <table class="my-2">
+              <tr class="border-start-0 border-end-0 border-top-0 border-3">
+                <h4>Minhas {{lex.noun("Demandas",true)}}</h4>
+              </tr>
+            </table>
         </div>
-        <div class="row">
+
+        <div *ngIf="true" class="row mb-2">
+          <div class="col-md-3">
+            <div class="bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
+                <app-bar-chart
+                  barChartType = "horizontalBar"
+                  [barChartData]="dadosMinhasDemandas"
+                  [barChartOptions]="opcoesMinhasDemandas">
+                </app-bar-chart>
+            </div>
+          </div>
+          <div class="col-md-3 my-4 d-inline-block container">
+            <span class="h5-1">Médias das Avaliações: {{ dashboard.media_avaliacoes.toFixed(2) }}</span>
+            <h5 class="my-4" role="button" (click)="go.navigate({route: ['gestao', 'demanda']}, {root: true})">
+              <i class="bi bi-activity"></i> Ver Detalhes
+            </h5>
+          </div>
+        </div>
+
+        <tabs right class-span="h4" title="Programas" [select]="onSelectTab.bind(this)" [active]="activeTab">
+          <tab key="PGD" icon="bi bi-table" label="PGD" [template]="pgd">
+            <ng-template #pgd>
+              <!-- Gráfico das Áreas com Planos de Trabalho ativos -->
+              <div class="my-4 text-center">
+                <div class="bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
+                  <h5>PT ativos (por Área)</h5>
+                    <app-bar-chart
+                      barChartType = "horizontalBar"
+                      [barChartData]="dadosGraficoAreas"
+                      [barChartOptions]="opcoesGraficoAreas">
+                    </app-bar-chart>
+                </div>
+                <!-- Gráfico dos Servidores participantes -->
+                <div class="bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
+                  <h5>Servidores (por Área)</h5>
+                    <app-bar-chart
+                      barChartType = "horizontalBar"
+                      [barChartData]="dadosGraficoServidores"
+                      [barChartOptions]="opcoesGraficoServidores">
+                    </app-bar-chart>
+                </div>
+              </div>
+            </ng-template>
+          </tab>
+          <tab key="OUTROS" icon="bi bi-tags" label="OUTROS">
+              OUTROS
+          </tab>
+          <tab key="TOTAL" icon="bi bi-file-earmark-bar-graph" label="TOTAL">
+              TOTAL
+          </tab>
+        </tabs>
+
+
+        <div *ngIf="false" class="row">
             <div class="col-md-3">
                 <div class="card text-dark bg-light mb-3 card-header" role="button" (click)="go.navigate({route: ['gestao', 'demanda']}, {root: true})">Demandas a concluir
                     <div class="card border-left-primary shadow h-100 py-2">
@@ -44,7 +102,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="col-md-3">
                 <div class="card text-dark bg-light mb-3 card-header" role="button" (click)="go.navigate({route: ['gestao', 'demanda']}, {root: true})">{{lex.noun("Tarefa", true)}} a concluir
                     <div class="card border-left-primary shadow h-100 py-2">
@@ -59,14 +116,14 @@
                     </div>
                 </div>
             </div>
-
         </div>
+
     </div>
 </div>
-<div class="text-center">
+<!-- <div *ngIf="false" class="text-center">
   <h3 class="my-2" role="button" (click)="go.navigate({route: ['gestao', 'demanda']}, {root: true})">
     <i class="bi bi-activity"></i> Ir para {{lex.noun("Demandas",true)}}
   </h3>
-</div>
+</div> -->
 
 <!-- <demanda-list-grid *ngIf="auth.unidade" [fixedFilter]="demandaFilter"></demanda-list-grid> -->
