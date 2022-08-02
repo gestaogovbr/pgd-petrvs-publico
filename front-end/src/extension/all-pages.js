@@ -198,7 +198,7 @@ $(function () {
         return Promise.resolve(documento_content["ID" + idDocumento]);
     }*/
 
-    /* Ocutar menu lateral Sei 
+    /* ocultar menu lateral Sei 
     @param boolean visivel  Se o menu deve ficar visível
     @return void
     */

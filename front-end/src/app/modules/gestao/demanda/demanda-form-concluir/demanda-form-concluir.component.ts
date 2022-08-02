@@ -81,6 +81,14 @@ export class DemandaFormConcluirComponent extends PageFormBase<Demanda, DemandaD
     if(values.tempo_despendido <= 0) {
       return "Tempo despendido não pode ser zero";
     }
+    /* Validações pelo plano */
+    if(!this.auth.hasPermissionTo('MOD_DMD_ATV_FORA_PL_TRB')) {
+      const atividades_termo_adesao = this.entity?.plano?.documento?.metadados?.atividades_termo_adesao;
+      const atividade = this.atividade!.searchObj as Atividade;
+      if(atividades_termo_adesao && atividade && atividades_termo_adesao.indexOf(this.util.removeAcentos(atividade.nome.toLowerCase())) < 0){
+        return this.lex.noun("Atividade") + " não consta na lista permitida pelo " + this.lex.noun("plano de trabalho") + " selecionado.";
+      }
+    }
     return undefined;
   }
 

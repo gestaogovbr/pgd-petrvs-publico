@@ -106,4 +106,5 @@ class Atividade extends ModelBase
     {
         $this->attributes['complexidade'] = json_encode($value);
     }
+
 }

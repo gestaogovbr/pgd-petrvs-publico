@@ -21,6 +21,7 @@ class TipoModalidade extends ModelBase
         'exige_assinatura_gestor_unidade',
         'exige_assinatura_gestor_entidade',
         'calcula_tempo_despendido',
+        'comparecer_presencialmente',
         'data_inicio',
         //'data_fim',
         'ganho_produtividade',

@@ -10,6 +10,7 @@ import { UtilService } from '../../../services/util.service';
 })
 export class CalendarEfemeridesComponent implements OnInit {
   @Input() efemerides?: Efemerides;
+  @Input() partial: boolean = true;
 
   constructor(public util: UtilService) { }
 
@@ -25,6 +26,16 @@ export class CalendarEfemeridesComponent implements OnInit {
       case "HORAS_CORRIDAS": return "Horas corridas";
       default: return "Desconhecido";
     }
+  }
+
+  public get useDias(): boolean {
+    const forma = (this.efemerides?.tipo == "DISTRIBUICAO" ? this.efemerides?.formaDistribuicao : this.efemerides?.formaEntrega) || "HORAS_UTEIS";
+    return ["DIAS_UTEIS", "DIAS_CORRIDOS"].includes(forma);
+  }
+
+  public get useCorridos(): boolean {
+    const forma = (this.efemerides?.tipo == "DISTRIBUICAO" ? this.efemerides?.formaDistribuicao : this.efemerides?.formaEntrega) || "HORAS_UTEIS";
+    return ["DIAS_CORRIDOS", "HORAS_CORRIDAS"].includes(forma);
   }
 
   public get feriados(): [string, string][] {

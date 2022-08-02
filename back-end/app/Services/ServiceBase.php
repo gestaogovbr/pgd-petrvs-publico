@@ -408,6 +408,29 @@ class ServiceBase
     }
 
     /**
+     * Get all ids
+     *
+     * @param  Array $data
+     * @return Object
+     */
+    public function getAllIds($data)
+    {
+        $data['fields'] = array_merge(["id"], $data['fields'] ?? []);
+        $result = $this->query($data);
+        $result["extra"] = method_exists($this, 'proxyGetAllIdsExtra') ? $this->proxyGetAllIdsExtra($result, $data) : null;
+        /* Remove os campos do with que são desnecessários */
+        $allowed = array_merge(array_map(fn($value) => strtok($value, '.'), $data['fields']), ["id"]);
+        $result["rows"] = $result["rows"]->toArray();
+        //$with = array_map(fn($value) => strtok($value, '.'), $data['with'] ?? []);
+        //$deletes = array_diff($with, $allowed);
+        foreach($result["rows"] as &$row) {
+            $deletes = array_diff(array_keys($row), $allowed);
+            foreach($deletes as $delete) unset($row[$delete]);
+        }
+        return $result;
+    }
+
+    /**
      * Query
      *
      * @param  Array $data
@@ -417,7 +440,7 @@ class ServiceBase
     {
         $model = $this->getModel();
         $table = $model->getTable();
-        $data["select"] = [$table . "." . "*"];
+        $data["select"] = array_map(fn($field) => str_contains($field, ".") ? $field : $table . "." . $field, $data['fields'] ?? ["*"]);
         $query = $model::query();
         if(method_exists($this, 'proxyQuery')) $this->proxyQuery($query, $data);
         $data["with"] = isset($this->joinable) ? $this->getJoinable($data["with"] ?? []) : $data["with"];
@@ -427,22 +450,15 @@ class ServiceBase
                 $query->with(gettype($key) == "string" ? [$key => $with] : $with);
             }
         }
-        //LogError::newWarn("QUERY: apply where", $data['where']);
         $this->applyWhere($query, $data['where'], $data);
         $this->applyOrderBy($query, $data);
         $query->select($data["select"]);
         $count = $query->count();
-        //LogError::newWarn("QUERY: count", $count);
-        if($data['limit'] > 0) {
+        if(!empty($data['limit'])) {
             $query->skip(max($data['page']-1, 0) * $data['limit'])->take($data['limit']);
         }
         $rows = method_exists($this, 'proxyRows') ? $this->proxyRows($query->get()) : $query->get();
         $extra = method_exists($this, 'proxyExtra') ? $this->proxyExtra($rows, $data) : null;
-        //LogError::newWarn("QUERY: rows", [
-        //    'count' => $count,
-        //    'rows' => $rows,
-        //    'extra' => $extra
-        //]);
         return [
             'count' => $count,
             'rows' => $rows,

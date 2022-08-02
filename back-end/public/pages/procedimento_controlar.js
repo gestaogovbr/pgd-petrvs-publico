@@ -1,6 +1,6 @@
 
 /* procedimento_controlar */
 $(function () {
-    //console.log("Ocutar menu Sei");
+    //console.log("ocultar menu Sei");
     //infraMenuSistemaEsquema(false, 'Ocultar');
 });

@@ -112,13 +112,13 @@ export class AppComponent {
   }
 
   public onCollapseContainerClick() {
-    //this.auth.usuario!.config.ocutar_container_petrvs = !this.auth.usuario!.config.ocutar_container_petrvs;
-    this.auth.usuarioConfig = {ocutar_container_petrvs: !this.auth.usuario!.config.ocutar_container_petrvs};
+    //this.auth.usuario!.config.ocultar_container_petrvs = !this.auth.usuario!.config.ocultar_container_petrvs;
+    this.auth.usuarioConfig = {ocultar_container_petrvs: !this.auth.usuario!.config.ocultar_container_petrvs};
     this.cdRef.detectChanges();
   }
 
   public get collapseContainer(): boolean {
-    return this.globals.isExtension && this.auth.logged && !!this.auth.usuario?.config.ocutar_container_petrvs;
+    return this.globals.isExtension && this.auth.logged && !!this.auth.usuario?.config.ocultar_container_petrvs;
   }
 
   public onRestoreClick(popup: DialogComponent) {

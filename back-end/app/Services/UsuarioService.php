@@ -68,7 +68,8 @@ class UsuarioService extends ServiceBase
             $where[] = $prefix . "id = '" . $lotacao->unidade_id . "'";
             if($subordinadas) $where[] = $prefix . "path like '%" . $lotacao->unidade_id . "%'";
         }
-        return implode(" OR ", $where);
+        $result = implode(" OR ", $where);
+        return empty($result) ? "false" : "(" . $result . ")";
     }
 
     public function proxyQuery($query, &$data) {

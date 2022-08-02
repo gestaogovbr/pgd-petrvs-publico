@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
 use Carbon\Carbon;
 
-class UnidadeSeeder extends Seeder
+class BackupUnidadeSeeder extends Seeder
 {
     /**
      * Run the database seeds.

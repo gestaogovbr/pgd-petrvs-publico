@@ -18,6 +18,7 @@ export class Documento extends Base {
     public tipo_documento?: TipoDocumento;
     public tipo_processo?: TipoProcesso;
 
+    public numero: number = 0; /* Numero do documento (gerado pelo sistema) */
     public especie: DocumentoEspecie = "TERMO_ADESAO"; /* Especificação da espécie do documento (interno do sistema) */
     public conteudo: string | null = null; /* "Conteúdo do arquivo */
     public assinatura: any = null; /* Dados da assinatura, se nulo não está assinado */

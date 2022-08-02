@@ -51,10 +51,12 @@ export class LoginComponent implements OnInit, ModalPage {
         this.redirectTo = routerTo.route[0] == "login" ? routerTo : undefined;
       }
     });
-    this.auth.gapiLoad.asObservable().subscribe(gAuth => {
+    if(this.globals.is("PRF")) {
+      this.auth.gapiLoad.asObservable().subscribe(gAuth => {
+        this.autoSignGoogle();
+      });
       this.autoSignGoogle();
-    });
-    this.autoSignGoogle();
+    }
   }
 
   public closeModalIfSuccess = (result: boolean) => {
@@ -90,4 +92,14 @@ export class LoginComponent implements OnInit, ModalPage {
       this.error = "Verifique se está correto:" + (form.cpf.invalid ? " CPF;" : "") + (form.password.invalid ? " Senha;" : "") + (form.password.invalid ? " Token;" : "");
     }
   }
+
+  public signInMicrosoft() {
+    const form = this.login.controls;
+    if(this.login.valid) {
+      this.auth.authDprfSeguranca(form.usuario.value, form.senha.value, form.token.value, this.redirectTo).then(this.closeModalIfSuccess);
+    } else {
+      this.error = "Verifique se está correto:" + (form.cpf.invalid ? " CPF;" : "") + (form.password.invalid ? " Senha;" : "") + (form.password.invalid ? " Token;" : "");
+    }
+  }
+
 }

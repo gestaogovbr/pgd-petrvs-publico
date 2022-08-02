@@ -222,6 +222,7 @@ class ProcedimentoTrabalharComponent extends _listener_base__WEBPACK_IMPORTED_MO
                                             id_documento: documentoSei.id_documento,
                                             numero_processo: documentoSei.numero_processo,
                                             plano_id: selected.id,
+                                            metadados: { atividades_termo_adesao: modalResult.atividades_termo_adesao },
                                             tipo_documento_id: modalResult.tipo_documento_id,
                                             status: "AGUARDANDO_SEI"
                                         });

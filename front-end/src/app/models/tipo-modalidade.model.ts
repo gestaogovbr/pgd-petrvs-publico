@@ -6,6 +6,7 @@ export class TipoModalidade extends Base {
     public dispensa_avaliacao: number = 0; /* Dispensa a avaliação */
     public exige_assinatura: number = 1; /* Exigir assinatura */
     public calcula_tempo_despendido: number = 1; /* Calcula tempo despendido */
+    public comparecer_presencialmente: number = 1; /* Se será necessário comparecer presencialmente quando convocado */
     public exige_assinatura_gestor_unidade: number = 0; /* Exigir assinatura do gestor da unidade */
     public exige_assinatura_gestor_entidade: number = 0; /* Exigir assinatura do gestor da entidade */
     public ganho_produtividade: number = 0; /* Ganho de produtividade */

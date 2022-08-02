@@ -8,6 +8,7 @@ use App\Services\RawWhere;
 use App\Services\ServiceBase;
 use App\Services\DemandaService;
 use App\Services\CalendarioService;
+use App\Exceptions\ServerException;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Support\Facades\Auth;
@@ -29,11 +30,23 @@ class PlanoService extends ServiceBase
     }
 
     public function validateStore($data, $unidade) {
-        $usuario = Usuario::find($data["usuario_id"]);
-        if(!$this->usuarioService->hasLotacao($data["unidade_id"], $usuario, false)) {
-            if (!Auth::user()->hasPermissionTo('MOD_USER_TUDO')) {
-            throw new ServerException("ValidatePlanoStore", $unidade->sigla . " não é uma unidade (lotação) do usuário");
-            }
+        $unidade_id = $data["unidade_id"];
+        $usuario = Usuario::with(["lotacoes" => function ($query){
+            $query->whereNull("data_fim");
+        }])->find($data["usuario_id"]);
+        $criador = Usuario::with(["lotacoes" => function ($query){
+            $query->whereNull("data_fim");
+        }])->find(Auth::user()->id);
+        if(!$this->usuarioService->hasLotacao($unidade_id, $usuario, false) && !Auth::user()->hasPermissionTo('MOD_USER_TUDO')) {
+            throw new ServerException("ValidatePlano", $unidade->sigla . " não é uma unidade (lotação) do usuário");
+        }
+        $usuario_lotacoes_ids = $usuario->lotacoes->map(function ($item, $key) { return $item->unidade_id; })->all();
+        $criador_lotacoes_ids = $criador->lotacoes->map(function ($item, $key) { return $item->unidade_id; })->all();
+        if(!count(array_intersect($usuario_lotacoes_ids, $criador_lotacoes_ids)) && !Auth::user()->hasPermissionTo('MOD_PTR_USERS_INCL')) {
+            throw new ServerException("ValidatePlano", "Usuário do plano fora das lotações de quem está lançando o plano (MOD_PTR_USERS_INCL)");
+        }
+        if(!in_array($unidade_id, $usuario_lotacoes_ids) && !Auth::user()->hasPermissionTo('MOD_PTR_INCL_SEM_LOT')) {
+            throw new ServerException("ValidatePlano", "Usuário não lotado na unidade do plano (MOD_PTR_INCL_SEM_LOT)");
         }
     }
 
@@ -198,4 +211,23 @@ class PlanoService extends ServiceBase
     public function isPlanoGestao($plano) {
         return !$plano['programa']['normativa'] == null;
     }
+
+    public function proxyGetAllIdsExtra($result, $data) {
+        $tipoModalidades = [];
+        $usuarios = [];
+        $unidades = [];
+        foreach($result["rows"] as $plano) {
+            $tipoModalidades[$plano->tipo_modalidade_id] = $plano->tipoModalidade;
+            $usuarios[$plano->usuario_id] = $plano->usuario;
+            $unidades[$plano->unidade_id] = $plano->unidade;
+        }
+        return [
+            "merge" => [
+                "tipo_modalidade" => $tipoModalidades,
+                "usuario" => $usuarios,
+                "unidade" => $unidades
+            ]
+        ];
+    }
+
 }

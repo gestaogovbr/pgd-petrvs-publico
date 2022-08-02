@@ -7,6 +7,14 @@ use App\Services\ServiceBase;
 
 class CapacidadeService extends ServiceBase {
     public $capacidades = [
+        /* Perfis Ids:
+        Administrador   = 74051a4a-6e25-4aab-9abc-8872c6c1029a
+        Usuário Nível 5 = f219a1f5-bb60-11ec-a5bb-0050569c64a0
+        Usuário Nível 4 = f212872c-bb60-11ec-a5bb-0050569c64a0
+        Usuário Nível 3 = f20b8b2f-bb60-11ec-a5bb-0050569c64a0
+        Usuário Nível 2 = f2049673-bb60-11ec-a5bb-0050569c64a0
+        Usuário Nível 1 = 66399e46-c0a3-4db5-ba94-05ff517752f6
+        [id, data_inicio, ?, perfil_id, tipo_capacidade_id] */
         ["09898bf3-d779-11ec-a5bb-0050569c64a0","2022-05-19 10:38:59",NULL,"74051a4a-6e25-4aab-9abc-8872c6c1029a","6ac04dbf-d773-11ec-a5bb-0050569c64a0"],
         ["099301df-d779-11ec-a5bb-0050569c64a0","2022-05-19 10:38:59",NULL,"74051a4a-6e25-4aab-9abc-8872c6c1029a","6ac9734f-d773-11ec-a5bb-0050569c64a0"],
         ["099c147d-d779-11ec-a5bb-0050569c64a0","2022-05-19 10:38:59",NULL,"74051a4a-6e25-4aab-9abc-8872c6c1029a","6ad2a187-d773-11ec-a5bb-0050569c64a0"],
@@ -16,6 +24,7 @@ class CapacidadeService extends ServiceBase {
         ["09c0ce97-d779-11ec-a5bb-0050569c64a0","2022-05-19 10:38:59",NULL,"74051a4a-6e25-4aab-9abc-8872c6c1029a","f870468a-d773-11ec-a5bb-0050569c64a0"],
         ["09c9e4c5-d779-11ec-a5bb-0050569c64a0","2022-05-19 10:38:59",NULL,"74051a4a-6e25-4aab-9abc-8872c6c1029a","f87ac6fb-d773-11ec-a5bb-0050569c64a0"],
         ["09d38749-d779-11ec-a5bb-0050569c64a0","2022-05-19 10:38:59",NULL,"74051a4a-6e25-4aab-9abc-8872c6c1029a","f8842199-d773-11ec-a5bb-0050569c64a0"],
+        ["09d38750-d779-11ec-a5bb-0050569c64a0","2022-07-19 08:00:00",NULL,"74051a4a-6e25-4aab-9abc-8872c6c1029a","5932b3a8-ba5e-11ec-a5bb-0050569c64a0"],
         ["09dd2e8d-d779-11ec-a5bb-0050569c64a0","2022-05-19 10:38:59",NULL,"f219a1f5-bb60-11ec-a5bb-0050569c64a0","6ac04dbf-d773-11ec-a5bb-0050569c64a0"],
         ["09e6e074-d779-11ec-a5bb-0050569c64a0","2022-05-19 10:38:59",NULL,"f219a1f5-bb60-11ec-a5bb-0050569c64a0","6ac9734f-d773-11ec-a5bb-0050569c64a0"],
         ["09f03da8-d779-11ec-a5bb-0050569c64a0","2022-05-19 10:38:59",NULL,"f219a1f5-bb60-11ec-a5bb-0050569c64a0","6ad2a187-d773-11ec-a5bb-0050569c64a0"],

@@ -22,8 +22,8 @@ export class UsuarioNotificacoes {
 
 export class UsuarioConfig {
     etiquetas: LookupItem[] = [];
-    ocutar_menu_sei: boolean = true;
-    ocutar_container_petrvs: boolean = false;
+    ocultar_menu_sei: boolean = true;
+    ocultar_container_petrvs: boolean = false;
 }
 
 export class Usuario extends Base {

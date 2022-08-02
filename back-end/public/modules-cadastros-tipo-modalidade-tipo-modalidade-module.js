@@ -47,6 +47,7 @@ class TipoModalidade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.dispensa_avaliacao = 0; /* Dispensa a avaliação */
         this.exige_assinatura = 1; /* Exigir assinatura */
         this.calcula_tempo_despendido = 1; /* Calcula tempo despendido */
+        this.comparecer_presencialmente = 1; /* Se será necessário comparecer presencialmente quando convocado */
         this.exige_assinatura_gestor_unidade = 0; /* Exigir assinatura do gestor da unidade */
         this.exige_assinatura_gestor_entidade = 0; /* Exigir assinatura do gestor da entidade */
         this.ganho_produtividade = 0; /* Ganho de produtividade */
@@ -153,7 +154,8 @@ class TipoModalidadeFormComponent extends src_app_modules_base_page_form_base__W
             ganho_produtividade: { default: 0 },
             calcula_tempo_despendido: { default: true },
             data_inicio: { default: "" },
-            data_fim: { default: "" }
+            data_fim: { default: "" },
+            comparecer_presencialmente: { default: true }
         }, this.cdRef, this.validate);
     }
     loadData(entity, form) {
@@ -176,7 +178,7 @@ TipoModalidadeFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["
     } if (rf & 2) {
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵInheritDefinitionFeature"]], decls: 11, vars: 13, consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "T\u00EDtulo", "controlName", "nome", 3, "size", "control"], ["numbers", "", "label", "% Ganho produtividade", "icon", "bi bi-hourglass-split", "controlName", "ganho_produtividade", "labelInfo", "Percentual de ganho de produtividade (Ser\u00E1 descontado do tempo pactuado)", 3, "size", "control"], ["transparent", "", "title", "Configura\u00E7\u00F5es do plano"], ["scale", "small", "labelPosition", "right", "label", "Calcula tempo despendido", "controlName", "calcula_tempo_despendido", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "Atividades Homologadas", "controlName", "atividades_homologadas", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "Avalia\u00E7\u00E3o Dispens\u00E1vel", "controlName", "dispensa_avaliacao", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "Exige assinatura do usu\u00E1rio", "controlName", "exige_assinatura", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "Exige assinatura do gestor da unidade", "controlName", "exige_assinatura_gestor_unidade", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "Exige assinatura do gestor da entidade", "controlName", "exige_assinatura_gestor_entidade", 3, "size"]], template: function TipoModalidadeFormComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵInheritDefinitionFeature"]], decls: 12, vars: 14, consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "T\u00EDtulo", "controlName", "nome", 3, "size", "control"], ["numbers", "", "label", "% Ganho produtividade", "icon", "bi bi-hourglass-split", "controlName", "ganho_produtividade", "labelInfo", "Percentual de ganho de produtividade (Ser\u00E1 descontado do tempo pactuado)", 3, "size", "control"], ["transparent", "", "title", "Configura\u00E7\u00F5es do plano"], ["scale", "small", "labelPosition", "right", "label", "Calcula tempo despendido", "controlName", "calcula_tempo_despendido", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "Atividades Homologadas", "controlName", "atividades_homologadas", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "Avalia\u00E7\u00E3o Dispens\u00E1vel", "controlName", "dispensa_avaliacao", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "Exige assinatura do usu\u00E1rio", "controlName", "exige_assinatura", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "Exige assinatura do gestor da unidade", "controlName", "exige_assinatura_gestor_unidade", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "Exige assinatura do gestor da entidade", "controlName", "exige_assinatura_gestor_entidade", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "Exige comparecimento quando convocado (prazo configurado na Unidade)", "controlName", "comparecer_presencialmente", 3, "size"]], template: function TipoModalidadeFormComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "editable-form", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("submit", function TipoModalidadeFormComponent_Template_editable_form_submit_0_listener() { return ctx.onSaveData(); })("cancel", function TipoModalidadeFormComponent_Template_editable_form_cancel_0_listener() { return ctx.onCancel(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](1, "div", 1);
@@ -190,6 +192,7 @@ TipoModalidadeFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](8, "input-switch", 8);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](9, "input-switch", 9);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](10, "input-switch", 10);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](11, "input-switch", 11);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
     } if (rf & 2) {
@@ -199,6 +202,8 @@ TipoModalidadeFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 3)("control", ctx.form.controls.ganho_produtividade);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12);

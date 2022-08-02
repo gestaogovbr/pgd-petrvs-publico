@@ -6,10 +6,17 @@
     <ng-content></ng-content>
     <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
         <div *ngFor="let btn of buttons" class="btn-group" role="group">
-            <button type="button" [attr.id]="buttonId(btn)" [class]="'btn ' + (btn.color || 'btn-outline-primary')" [class.dropdown-toggle]="btn.items" [attr.data-bs-toggle]="btn.items ? 'dropdown' : undefined" aria-expanded="false" (click)="onButtonClick(btn)">
-                <i *ngIf="btn.icon?.length" [class]="btn.icon"></i> <span class="d-none d-md-inline-block ms-2">{{btn.label || ""}}</span>
+            <button type="button" [attr.id]="buttonId(btn)" [class]="'btn ' + (btn.color || 'btn-outline-primary')" [class.active]="buttonPressed(btn)"
+                [class.dropdown-toggle]="btn.items && !btn.toggle" [attr.data-bs-toggle]="btn.items && !btn.toggle ? 'dropdown' : undefined" aria-expanded="false" 
+                (click)="onButtonClick(btn)">
+                <i *ngIf="btn.icon?.length" [class]="btn.icon"></i>
+                <span class="d-none d-md-inline-block ms-2">{{btn.label || ""}}</span>
+                <span *ngIf="btn.badge?.length" class="badge bg-primary ms-2">{{btn.badge}}</span>
             </button>
-            <ul *ngIf="btn.items" class="dropdown-menu dropdown-menu-end" [attr.aria-labelledby]="buttonId(btn)">
+            <button *ngIf="btn.items && btn.toggle" [attr.id]="buttonId(btn) + '_dropdown'" type="button" [class]="'btn dropdown-toggle dropdown-toggle-split ' + (btn.color || 'btn-outline-primary')" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="visually-hidden">V</span>
+            </button>
+            <ul *ngIf="btn.items" class="dropdown-menu dropdown-menu-end" [attr.aria-labelledby]="buttonId(btn) + (btn.items && btn.toggle ? '_dropdown' : '')">
                 <li *ngFor="let option of btn.items">
                     <a class="dropdown-item" role="button" (click)="onButtonClick(option)"><i *ngIf="option.icon?.length" [class]="option.icon"></i> {{option.label || ""}}</a>
                 </li>
@@ -25,18 +32,3 @@
         </div>
     </div>
 </div>
-
-<!--ul class="nav nav-pills justify-content-end">
-    <li *ngFor="let btn of buttons" class="nav-item">
-        <a class="nav-link active" aria-current="page" role="button" (click)="onButtonClick(btn)"><i *ngIf="btn.icon?.length" [class]="btn.icon"></i> {{btn.label}}</a>
-    </li>
-    <li *ngIf="options" class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
-            aria-expanded="false">Opções</a>
-        <ul class="dropdown-menu">
-            <li *ngFor="let btn of options">
-                <a class="dropdown-item" role="button" (click)="onButtonClick(btn)"><i *ngIf="btn.icon?.length" [class]="btn.icon"></i> {{btn.label}}</a>
-            </li>
-        </ul>
-    </li>
-</ul//-->

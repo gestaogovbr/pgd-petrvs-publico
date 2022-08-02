@@ -14,7 +14,8 @@ class ServerException extends Exception
         "CapacidadeStore" => "Usuário não tem permissão para gravar nessa tabela",
         "ValidateAtividade" => "Erro ao validar atividade",
         "ValidateDemanda" => "Erro ao validar demanda",
-        "ValidatePlanoStore" => "Erro ao validar Plano"
+        "ValidatePlano" => "Erro ao validar Plano",
+        "ValidateDocumento" => "Erro ao validar Documento"
     ];
 
     function __construct($code, $extra = "") {

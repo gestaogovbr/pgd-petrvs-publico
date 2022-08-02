@@ -1,40 +1,85 @@
 <div *ngIf="efemerides?.resultado == 'DATA'" class="mt-2 alert alert-primary" role="alert">
     <i class="bi bi-info-circle-fill"></i>
-    A data final é obtida através do cálculo ...
+    A data final [F] é obtida através do cálculo:<br><br>
+    <ng-template *ngIf="useDias; else dataUseHoras">
+        [DU]=[HU]/[CH] <small>(Dias úteis necessários)</small><br>
+        <ng-template *ngIf="partial">
+            [DAP]=[HA]+[HP]-([HA]&#8745;[HP]) <small>(União da quantidade de dias que têm ao menos um Afastamento [HA] ou uma Pausa [HP])</small><br>
+        </ng-template>
+        [F]=[I]+[DU]{{partial ? "+[DAP]" : ""}}{{!useCorridos ? "+[FER]+[FDS]" : ""}}
+    </ng-template>
+    <ng-template #dataUseHoras>
+        [EX]=[HFE]-[HIE]-[TIN]<br>
+        [HD]=MIN([EX], [CH]) <small>(Horas por dia, será o menor valor entre: [EX] e [CH])</small><br>
+        [IE]=[HFE]-[HD] <small>(Início do expediente para o servidor, para encerrar o dia exatamente no [HFE])</small><br>
+        [SHI]=[I]-[IE] <small>(Saldo inicial, horas a partir do início do expediente [IE] até a data e hora inicial [I])</small><br>
+        <ng-template *ngIf="partial">
+            [HAP]=[HA]+[HP]-([HA]&#8745;[HP]) <small>(União das horas de afastamentos e/ou pausas)</small><br>
+        </ng-template>
+        [QDU]=([HU]{{partial ? "+[HAP]" : ""}}+[SHI])/[HD] <small>(Quantidade de dias úteis necessários, sendo arredondado sempre para cima, ex: 3.2 = 4)</small><br>
+        [SHF]=([HD]*[QDU])-([HU]{{partial ? "+[HAP]" : ""}}+[SHI]) <small>(Saldo final, diferença do [DF] que estamos buscando até o final do expediente [HFE], em horas)</small><br>
+        [DF]=[QDU]{{!useCorridos ? "+[FER]+[FDS]" : ""}}+[HFE]-[SHF] <small>(Data e horário final até o cumprimento das [HU])</small><br>
+    </ng-template>
 </div>
 <div *ngIf="efemerides?.resultado == 'TEMPO'" class="mt-2 alert alert-primary" role="alert">
     <i class="bi bi-info-circle-fill"></i>
-    As horas úteis são obtidas através do cálculo ...
+    As horas úteis são obtidas através do cálculo:<br><br>
+    <ng-template *ngIf="useDias; else tempoUseHoras">
+        [DC]=[F]-[I]
+        <ng-template *ngIf="partial">
+            [DAP]=[HA]+[HP]-([HA]&#8745;[HP]) <small>(União da quantidade de dias que têm ao menos um Afastamento [HA] ou uma Pausa [HP])</small><br>
+        </ng-template>
+        [DU]=[DC]{{!useCorridos ? "-[FER]-[FDS]" : ""}}{{partial ? "-[DAP]" : ""}} <small>(Dias úteis)</small><br>
+        [HU]=[CH]*[DU]
+    </ng-template>
+    <ng-template #tempoUseHoras>
+        [EX]=[HFE]-[HIE]-[TIN]<br>
+        [SHI]=[I]-[IE] <small>(Saldo inicial, horas a partir do início do expediente [IE] até a data e hora inicial [I])</small><br>
+        [SHF]=[HFE]-[F] <small>(Saldo final, horas a partir da data e hora final [F] até o fim do expediente [HFE])</small><br>
+        <ng-template *ngIf="partial">
+            [HAP]=[HA]+[HP]-([HA]&#8745;[HP]) <small>(União das horas de afastamentos e/ou pausas)</small><br>
+        </ng-template>
+        [DU]=[DC](-[FER]-[FDS])<br>
+        [HU]=[CH]*[DU](-[SHI]-[SHF]){{partial ? "-[HAP]" : ""}}
+    </ng-template>
 </div>
-<strong>Início:</strong> {{util.getDateTimeFormatted(efemerides?.inicio)}}<br> 
-<strong>Fim:</strong> {{util.getDateTimeFormatted(efemerides?.fim)}}<br>
-<strong>Dias corridos:</strong> {{efemerides?.dias_corridos}}<br>
-<strong>Horas úteis:</strong> {{util.decimalToTimerFormated(efemerides?.tempoUtil, true)}}<br>
-<strong>Forma de cálculo:</strong> {{forma}}<br>
-<strong>Carga horária:</strong> {{util.decimalToTimerFormated(efemerides?.cargaHoraria, true)}}<br>
-<strong>Expediente:</strong> {{util.decimalToTimerFormated(efemerides?.expediente, true)}}<br>
-<strong>Horas de afastamentos e/ou pausas:</strong> {{util.decimalToTimerFormated(efemerides?.horasAfastamentosPausas, true)}}<br>
-<div *ngIf="efemerides?.afastamentos?.length">
-    <strong>Afastamento(s) ({{efemerides?.afastamentos?.length}}):</strong><br>
+<ng-template *ngIf="useDias; else obsUseHoras">
+    <ng-template *ngIf="useCorridos">
+        * O cálculo para dias corridos não considera feriados nem fins de semana e levará em consideração o expediente da unidade
+    </ng-template>
+</ng-template>
+<ng-template #obsUseHoras>
+    <ng-template *ngIf="useCorridos">
+        * O cálculo para horas corridas NÃO considera o expediente da unidade, APENAS leva em consideração afastamentos [HA] e pausas [HP]
+    </ng-template>
+</ng-template>
+<br>
+<strong>[I] Início:</strong> {{util.getDateTimeFormatted(efemerides?.inicio)}}<br> 
+<strong>[F] Fim:</strong> {{util.getDateTimeFormatted(efemerides?.fim)}}<br>
+<strong>[DC] Dias corridos:</strong> {{efemerides?.dias_corridos}}<br>
+<strong>[HU] Horas úteis:</strong> {{util.decimalToTimerFormated(efemerides?.tempoUtil, true)}}<br>
+<strong>[FC] Forma de cálculo:</strong> {{forma}}<br>
+<strong>[CH] Carga horária:</strong> {{util.decimalToTimerFormated(efemerides?.cargaHoraria, true)}}<br>
+<strong>[HIE] Horário de início do expediente na unidade:</strong> {{efemerides?.horario_trabalho_inicio?.substring(0,5)}}<br>
+<strong>[HFE] Horário de fim do expediente na unidade:</strong> {{efemerides?.horario_trabalho_fim?.substring(0,5)}}<br>
+<strong>[TIN] Tempo de intervalor (ex.: horas de almoço) na unidade:</strong> {{efemerides?.horario_trabalho_intervalo?.substring(0,5)}}<br>
+<strong>[EX] Expediente:</strong> {{util.decimalToTimerFormated(efemerides?.expediente, true)}}<br>
+<ng-template *ngIf="partial">
+    <strong>[HAP] Horas de afastamentos e/ou pausas:</strong> {{util.decimalToTimerFormated(efemerides?.horasAfastamentosPausas, true)}}<br>
+    <strong>[HA] Afastamento(s) ({{efemerides?.afastamentos?.length}}):</strong><br>
     <span *ngFor="let afastamento of efemerides!.afastamentos">
         De {{util.getDateTimeFormatted(afastamento.inicio_afastamento)}} até {{util.getDateTimeFormatted(afastamento.fim_afastamento)}} - afastamento.observacoes<br>
     </span>
-</div>
-<div *ngIf="efemerides?.pausas?.length">
-    <strong>Suspensão(ões) ({{efemerides?.pausas?.length}}):</strong><br>
+    <strong>[HP] Pausa(s) ({{efemerides?.pausas?.length}}):</strong><br>
     <span *ngFor="let pausa of efemerides!.pausas">
         De {{util.getDateTimeFormatted(pausa.data_inicio)}} - {{pausa.data_fim ? 'até ' + util.getDateTimeFormatted(pausa.data_fim) : 'em aberto'}}<br>
     </span>
-</div>
-<div *ngIf="finsSemana.length">
-    <strong>Finais de semana ({{finsSemana.length}}):</strong><br>
-    <span *ngFor="let fimSemanda of finsSemana">
-        {{fimSemanda[0]}} - {{fimSemanda[1]}}<br>
-    </span>
-</div>
-<div *ngIf="feriados.length">
-    <strong>Feriado(s) ({{feriados.length}}):</strong><br>
-    <span *ngFor="let feriado of feriados">
-        {{feriado[0]}} - {{feriado[1]}}<br>
-    </span>
-</div>
+</ng-template>
+<strong>[FDS] Finais de semana ({{finsSemana.length}}):</strong><br>
+<span *ngFor="let fimSemanda of finsSemana">
+    {{fimSemanda[0]}} - {{fimSemanda[1]}}<br>
+</span>
+<strong>[FER] Feriado(s) ({{feriados.length}}):</strong><br>
+<span *ngFor="let feriado of feriados">
+    {{feriado[0]}} - {{feriado[1]}}<br>
+</span>

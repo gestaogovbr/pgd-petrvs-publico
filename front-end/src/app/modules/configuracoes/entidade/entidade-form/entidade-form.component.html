@@ -10,11 +10,10 @@
         <input-search #gestorSubstituto label="Gestor Substituto" [size]="6" [emptyValue]="null" controlName="gestor_substituto_id" [control]="form!.controls.gestor_substituto_id" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}" labelInfo="Responsável substituto pela unidade"></input-search>
       </div>
       <div class="row">
-        <input-text numbers [size]="3" label="Carga Horária" controlName="carga_horaria_padrao" [control]="form!.controls.carga_horaria_padrao" labelInfo="Carga horária padrão utilizada ao criar plano de trabalho."></input-text>
-        <input-select [size]="3" label="Abrangência" controlName="abrangencia" [control]="form!.controls.abrangencia" [items]="lookup.ABRANGENCIA"></input-select>
-        <input-search *ngIf="form!.controls.abrangencia.value == 'MUNICIPAL'" #cidade [size]="6" label="Cidade" controlName="cidade_id" [control]="form!.controls.cidade_id" [dao]="cidadeDao"></input-search>
-        <input-select *ngIf="form!.controls.abrangencia.value == 'ESTADUAL'" [size]="6" label="UF" controlName="uf" [control]="form!.controls.uf" [items]="lookup.UF"></input-select>
-        <input-display *ngIf="form!.controls.abrangencia.value == 'NACIONAL'" [size]="6" label="Âmbito" value="Nacional"></input-display>
+        <input-select [size]="4" label="Abrangência" controlName="abrangencia" [control]="form!.controls.abrangencia" [items]="lookup.ABRANGENCIA"></input-select>
+        <input-search *ngIf="form!.controls.abrangencia.value == 'MUNICIPAL'" #cidade [size]="8" label="Cidade" controlName="cidade_id" [control]="form!.controls.cidade_id" [dao]="cidadeDao"></input-search>
+        <input-select *ngIf="form!.controls.abrangencia.value == 'ESTADUAL'" [size]="8" label="UF" controlName="uf" [control]="form!.controls.uf" [items]="lookup.UF"></input-select>
+        <input-display *ngIf="form!.controls.abrangencia.value == 'NACIONAL'" [size]="8" label="Âmbito" value="Nacional"></input-display>
       </div>
     </tab>
     <!--tab key="CONFIGURACOES" label="Configurações">

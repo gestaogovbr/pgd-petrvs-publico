@@ -177,6 +177,7 @@
         {{error}}
     </div>
     <div class="container app-container mt-2" [class.d-none]="globals.isToolbar || collapseContainer">
+        <top-alert *ngFor="let topAlert of dialog.topAlerts" type="alert" [id]="topAlert.id" [close]="topAlert.close" [message]="topAlert.message" [closable]="topAlert.closable"></top-alert>
         <router-outlet></router-outlet>
     </div>
 </div>

@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { UtilService } from 'src/app/services/util.service';
 
 export type AlertType = "alert" | "success" | "warning" | "danger";
 
@@ -11,10 +12,14 @@ export class TopAlertComponent implements OnInit {
   @Input() message?: string;
   @Input() type: AlertType = "alert";  
   @Input() closable?: string;
+  @Input() id: string;
+  @Input() close?: (id: string) => void;
 
   public lastMessage?: string;
 
-  constructor() { }
+  constructor(public utils: UtilService) {
+    this.id = utils.md5();
+  }
 
   ngOnInit(): void {
   }
@@ -39,6 +44,7 @@ export class TopAlertComponent implements OnInit {
 
   public onCloseClick(event: Event) {
     this.lastMessage = this.message;
+    if(this.close) this.close(this.id);
   }
 
 }

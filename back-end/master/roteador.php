@@ -19,11 +19,19 @@ header('Content-type: application/json');
 $roteador = [
     'producao' => [
     	'sei.prf.gov.br' => [
-    		'host' => 'https://petrvs-dsv.prf.gov.br',
+    		'host' => 'https://petrvs.prf.gov.br',
     		'enabled' => true
     	],
     	'sei.antaq.gov.br' => [
     		'host' => 'https://petrvs.antaq.gov.br',
+    		'enabled' => true
+    	],
+    	'sei.economia.gov.br' => [
+    		'host' => 'https://www.rs.prf.gov.br/petrvs',
+    		'enabled' => true
+    	],
+    	'sei.mj.gov.br' => [
+    		'host' => 'https://petrvsdepen.espen.seg.br',
     		'enabled' => true
     	]
     ],
@@ -34,6 +42,14 @@ $roteador = [
     	],
     	'sei.antaq.gov.br' => [
     		'host' => 'https://petrvs.antaq.gov.br',
+    		'enabled' => true
+    	],
+    	'sei.economia.gov.br' => [
+    		'host' => 'https://www.rs.prf.gov.br/petrvs',
+    		'enabled' => true
+    	],
+    	'sei.mj.gov.br' => [
+    		'host' => 'https://petrvsdepen.espen.seg.br',
     		'enabled' => true
     	]
     ]

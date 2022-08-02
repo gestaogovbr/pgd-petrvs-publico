@@ -1,5 +1,5 @@
-import { Component, Injector, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { Component, Injector, TemplateRef, ViewChild } from '@angular/core';
+import { AbstractControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { Atividade } from 'src/app/models/atividade.model';
@@ -18,9 +18,12 @@ import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 })
 export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
+  @ViewChild('homologacaoAtividades', { static: false }) public homologacaoAtividades?: TemplateRef<any>;
 
   public tipoAtividadeDao: TipoAtividadeDaoService;
   public unidadeDao: UnidadeDaoService;
+  public formHomologacao: FormGroup;
+  public multiselectMenu: ToolbarButton[];
 
   constructor(public injector: Injector) {
     super(injector, Atividade, AtividadeDaoService);
@@ -38,8 +41,28 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
       homologado: {default: ""},
       tipo_atividade_id: {default: null}
     });
+    this.formHomologacao = this.fh.FormBuilder({
+      data_homologacao: {default: new Date()}
+    }, this.cdRef, this.validateHomologacao);
+    this.multiselectMenu = !this.auth.hasPermissionTo('MOD_ATV_EDT_OTR_OP_HOM') ? [] : [
+      {
+        icon: "bi bi-check",
+        label: "Homologar",
+        onClick: this.homologarAtividades.bind(this)
+      }
+    ];
     //this.orderBy = [['unidade.sigla', 'asc']];
     this.groupBy = [{field: "unidade.sigla", label: "Unidade"}];
+  }
+
+  public validateHomologacao = (control: AbstractControl, controlName: string) => {
+    let result = null;
+
+    if(['data_homologacao'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+      result = "Inválido";
+    }
+
+    return result;
   }
 
   public dynamicOptions(row: any): ToolbarButton[] {
@@ -72,11 +95,52 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
     this.dialog.confirm("Homologar", "Deseja realmente homologar essa atividade?").then(response => {
       if(response) {
         this.loading = true;
-        this.dao!.homologar(doc.id).then(response => {
+        this.dao!.homologar([doc.id], this.auth.hora).then(response => {
             this.grid!.query!.refreshId(doc.id);
         }).finally(() => this.loading = false);
       }
     });
+  }
+
+  public async homologarAtividades() {
+    if(!this.grid!.multiselectedCount) {
+      this.dialog.alert("Selecione", "Nenhuma atividade seleciona para homologação");
+    } else {
+      const HOMOLOGAR = "HOMOLOGAR";
+      const CANCELAR = "CANCELAR";
+      let result = await this.dialog.template({ title: "Homologar atividades", modalWidth: 300 }, this.homologacaoAtividades!, [
+        {
+          label: "Homologar",
+          color: "btn btn-outline-success",
+          value: HOMOLOGAR
+        }, {
+          label: "Cancelar",
+          color: "btn btn-outline-danger",
+          value: CANCELAR
+        }
+      ]);
+      if(result.button.value == HOMOLOGAR) {
+        if(this.formHomologacao!.valid){
+          this.submitting = true;
+          try {
+            let result = await this.dao?.homologar(Object.keys(this.grid!.multiselected), this.formHomologacao.controls.data_homologacao.value);
+            if(result.error) throw new Error(result.error);
+            this.dialog.alert("Sucesso", "Foram homologados " + result.data + " " + this.lex.noun("atividade", true));
+            this.grid!.enableMultiselect(false);
+            this.refresh();
+          } catch (error: any) {
+            this.error(error.message ? error.message : error);
+          } finally {
+            this.submitting = false;
+            result.dialog.close();
+          }
+        } else {
+          this.formHomologacao!.markAllAsTouched();
+        }  
+      } else {
+        result.dialog.close();
+      }
+    }
   }
 
   public ngOnInit() {

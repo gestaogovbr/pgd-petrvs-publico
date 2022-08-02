@@ -2,8 +2,9 @@
     <tabs display right>
         <tab key="GERAL" label="Geral">
             <div class="row">
-                <input-text [size]="6" label="Url do Sei" icon="bi bi-lin" controlName="url_sei" [control]="form!.controls.url_sei" labelInfo="Url base do sei, deve ser semelhante a: https://sei.minha-entidade.gov.br/"></input-text>
-                <input-search [size]="6" label="Modalidade" controlName="tipo_modalidade_id" [control]="form!.controls.tipo_modalidade_id" [dao]="tipoModalidadeDao" labelInfo="Tipo de modalidade padrão utilizada ao criar plano de trabalho." [selectRoute]="{route: ['cadastros', 'tipo-modalidade']}"></input-search>
+                <input-text [size]="4" label="Url do Sei" icon="bi bi-lin" controlName="url_sei" [control]="form!.controls.url_sei" labelInfo="Url base do sei, deve ser semelhante a: https://sei.minha-entidade.gov.br/"></input-text>
+                <input-search [size]="4" label="Modalidade" controlName="tipo_modalidade_id" [control]="form!.controls.tipo_modalidade_id" [dao]="tipoModalidadeDao" labelInfo="Tipo de modalidade padrão utilizada ao criar plano de trabalho." [selectRoute]="{route: ['cadastros', 'tipo-modalidade']}"></input-search>
+                <input-workload [size]="4" #cargaHoraria [unit]="formaContagemCargaHoraria" label="Carga Horária" icon="bi bi-hourglass-split" controlName="carga_horaria_padrao" [control]="form!.controls.carga_horaria_padrao" [unitChange]="onFormaContagemCargaHorariaChange.bind(this)" labelInfo="Carga horária e forma de contagem (horas por dia, semana ou mês) padrão utilizada ao criar plano de trabalho."></input-workload>
             </div>
         </tab>
         <tab key="NOTIFICACOES" label="Notificações">

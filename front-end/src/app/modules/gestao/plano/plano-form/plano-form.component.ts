@@ -4,6 +4,7 @@ import { EditableFormComponent } from 'src/app/components/editable-form/editable
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { SelectItem } from 'src/app/components/input/input-base';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
+import { UnitWorkload } from 'src/app/components/input/input-workload/input-workload.component';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
@@ -56,7 +57,7 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
 
   constructor(public injector: Injector) {
     super(injector, Plano, PlanoDaoService);
-    this.join = ["unidade", "usuario", "programa", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "atividades.atividade"];
+    this.join = ["unidade.entidade", "usuario", "programa", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "atividades.atividade"];
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
@@ -81,7 +82,8 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
       documento_id: {default: ""},
       documentos: {default: []},
       atividades: {default: []},
-      tipo_modalidade_id: {default: ""}
+      tipo_modalidade_id: {default: ""},
+      forma_contagem_carga_horaria: {default: "DIA"}
     }, this.cdRef, this.validate);
     this.formAtividades = this.fh.FormBuilder({
       atividade_id: {default: ""}
@@ -158,8 +160,14 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
     this.calculaTempos();
   }
 
-  public onUnidadeSelect(selected: SelectItem) {
+  public onCargaHorariaChenge(event: Event) {
     this.calculaTempos();
+  }
+
+  public onUnidadeSelect(selected: SelectItem) {
+    this.form!.controls.forma_contagem_carga_horaria.setValue((selected.entity as Unidade)?.entidade?.forma_contagem_carga_horaria || "DIA");
+    this.calculaTempos();
+    this.cdRef.detectChanges();
   }
 
   public calculaTempos() {
@@ -199,6 +207,7 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
       this.entity = new Plano();
       this.entity.unidade_id = this.auth.unidade!.id;
       this.entity.carga_horaria = this.auth.unidade?.entidade?.carga_horaria_padrao || 8;
+      this.entity.forma_contagem_carga_horaria = this.auth.unidade?.entidade?.forma_contagem_carga_horaria || "DIA";
     }
     this.loadData(this.entity, this.form!);
   }
@@ -274,19 +283,28 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
     this.dialog.confirm("Assinar", "Deseja realmente assinar o documento?").then(response => {
       if(response) {
         this.loading = true;
-        this.documentoDao.assinar(documento.id).then(response => {
-          if(response) {
+        this.documentoDao.assinar([documento.id]).then(response => {
+          if(response?.length) {
             let documentos = (this.form!.controls.documentos.value || []) as Documento[];
             let found = documentos.find(x => x.id == documento?.id);
-            if(found) {
-              found.assinaturas = response!.assinaturas;
-            }
+            if(found) found.assinaturas = response[0].assinaturas;
             this.form!.controls.documentos.setValue(documentos);
             this.gridDocumentos?.reset();
           }
         }).finally(() => this.loading = false);
       }
     });
+  }
+
+  public get formaContagemCargaHoraria(): UnitWorkload {
+    //const forma = (this.unidade?.searchObj as Unidade)?.entidade?.forma_contagem_carga_horaria || this.auth.unidade?.entidade?.forma_contagem_carga_horaria || "DIA";
+    //console.log("FORMA: ", (this.unidade?.searchObj as Unidade)?.entidade?.forma_contagem_carga_horaria, this.auth.unidade?.entidade?.forma_contagem_carga_horaria);
+    const forma = this.form?.controls.forma_contagem_carga_horaria.value || "DIA";
+    return forma == "DIA" ? "day" : forma == "SEMANA" ? "week" : "mouth";
+  }
+
+  public onFormaContagemCargaHorariaChange(unit: UnitWorkload) {
+    this.form!.controls.forma_contagem_carga_horaria.setValue(unit == "day" ? "DIA" : unit == "week" ? "SEMANA" : "MES");
   }
 
   public async addDocumento() {
@@ -305,6 +323,7 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
               modalResult = await this.documentoDao.save(Object.assign(new Documento(), {
                 especie: "TERMO_ADESAO",
                 conteudo: modalResult?.termo,
+                metadados: {atividades_termo_adesao: modalResult.atividades_termo_adesao},
                 plano_id: this.entity!.id,
                 status: "GERADO"
               }), ["assinaturas.usuario:id,nome,apelido"]);

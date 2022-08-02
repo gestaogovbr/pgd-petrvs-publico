@@ -2,6 +2,7 @@ import { ChangeDetectorRef, ComponentFactoryResolver, ComponentRef, Injectable, 
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { DialogButton, DialogComponent } from './dialog/dialog.component';
 import { SpinnerOverlayComponent } from './spinner-overlay/spinner-overlay.component';
+import { UtilService } from './util.service';
 
 export type DialogTemplateResult = {
   button: DialogButton,
@@ -11,6 +12,15 @@ export type DialogTemplateResult = {
 export type DialogConfig = {
   title?: string;
   modalWidth?: number;
+}
+
+export type DialogTopAlert = {
+  id: string,
+  message: string,
+  closable?: string,
+  timer?: number,
+  setTimer?: any,
+  close?: (id: string) => void
 }
 
 @Injectable({
@@ -23,10 +33,13 @@ export class DialogService {
   public spinnerRef?: ComponentRef<SpinnerOverlayComponent>;
   public dialogs: DialogComponent[] = [];
   public minimized: DialogComponent[] = [];
+  public topAlerts: DialogTopAlert[] = [];
   private sppinerTimeout: any;
-
+  
   private _factory?: ComponentFactoryResolver;
   public get factory(): ComponentFactoryResolver { this._factory = this._factory || this.injector.get<ComponentFactoryResolver>(ComponentFactoryResolver); return this._factory };
+  private _utils?: UtilService;
+  public get utils(): UtilService { this._utils = this._utils || this.injector.get<UtilService>(UtilService); return this._utils };
 
   constructor(public injector: Injector) { }
 
@@ -51,6 +64,26 @@ export class DialogService {
     popup.restore();
   }
 
+  public topAlert(message: string, timer?: number) {
+    const gid = this.utils.md5();
+    const close = (id: string) => {
+      const index = this.topAlerts.findIndex(x => x.id == id);
+      if(index >= 0) this.topAlerts.splice(index, 1);
+      this.cdRef?.detectChanges();
+    };
+    const timeout = () => {
+      close(gid);
+    };
+    this.topAlerts.push({
+      id: gid,
+      message: message,
+      closable: timer ? undefined : "true",
+      timer: timer,
+      setTimer: timer ? setTimeout(timeout.bind(this), timer) : undefined,
+      close: close.bind(this)
+    });
+  }
+  
   public alert(title: string, message: string): Promise<void> {
     const dialogView = this.createDialogView();
     const dialog = dialogView.instance;

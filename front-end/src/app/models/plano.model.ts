@@ -6,6 +6,7 @@ import { Programa } from './programa.model';
 import { Documento } from './documento.model';
 import { PlanoAtividade } from './plano-atividade.model';
 import { Demanda } from './demanda.model';
+import { TipoCargaHoraria } from './entidade.model';
 
 export type PlanoMetadados = {
   concluido: boolean
@@ -31,6 +32,7 @@ export class Plano extends Base {
     public unidade_id: string = "";
     public metadados: PlanoMetadados | undefined = undefined; /* Campo virtual contendo informações calculadas pelo servidor */
     public tipo_modalidade_id: string = "";
+    public forma_contagem_carga_horaria: TipoCargaHoraria = "DIA"; // Forma de contagem padrão da carga horária
     public documento_id: string | null = null;
     public atividades: PlanoAtividade[] = []; /* Entregas da demanda */
     public documentos: Documento[] = []; /* Termos de adesão */

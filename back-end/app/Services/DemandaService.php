@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Atividade;
 use App\Models\Entidade;
 use App\Models\Unidade;
 use App\Models\Usuario;
@@ -66,6 +67,13 @@ class DemandaService extends ServiceBase
             $plano = Plano::find($data["plano_id"]);
             if($plano->unidade_id != $data["unidade_id"]) {
                 throw new ServerException("ValidateDemanda", "Unidade do plano diverge da unidade da demanda");
+            }
+            if(!empty($data["atividade_id"])) {
+                $atividade = Atividade::find($data["atividade_id"]);
+                if(isset($plano->documento?->metadados?->atividades_termo_adesao) && !Auth::user()->hasPermissionTo('MOD_DMD_ATV_FORA_PL_TRB') &&
+                    !in_array(UtilService::removeAcentos(strtolower($atividade->nome)), $plano->documento?->metadados?->atividades_termo_adesao)) {
+                    throw new ServerException("ValidateDemanda", "Atividade não consta na lista permitida pelo plano de trabalho selecionado");
+                }
             }
         }
         if(!empty($data["usuario_id"])) {
@@ -386,12 +394,18 @@ class DemandaService extends ServiceBase
         unset($conclusao["arquivar"]);
         try {
             DB::beginTransaction();
-            $demanda = Demanda::with("plano.tipoModalidade")->where("id", $conclusao["id"])->first();
+            $demanda = Demanda::with(["plano.tipoModalidade"])->where("id", $conclusao["id"])->first();
             /*Testa permissão para iniciar demanda de outros usuarios*/
             if ($demanda->usuario_id != Auth::user()->id){
                 if (!Auth::user()->hasPermissionTo('MOD_DMD_USERS_CONCL')){
                     throw new ServerException("ValidateDemanda", "Não é permitido concluir demanda de outro usuário!");
                 }
+            }
+            /*Testa permissão para incluir atividades que estão fora do plano de trabalho*/
+            $plano = $demanda->plano;
+            if(isset($plano->documento?->metadados?->atividades_termo_adesao) && !Auth::user()->hasPermissionTo('MOD_DMD_ATV_FORA_PL_TRB') &&
+                !in_array(UtilService::removeAcentos(strtolower($demanda->atividade->nome)), $plano->documento?->metadados?->atividades_termo_adesao)) {
+                throw new ServerException("ValidateDemanda", "Atividade não consta na lista permitida pelo plano de trabalho selecionado");
             }
             $dispensaAvaliacao = !empty($demanda->plano->tipoModalidade) && $demanda->plano->tipoModalidade->dispensa_avaliacao;
             $conclusao["tempo_homologado"] = $dispensaAvaliacao ? $conclusao["tempo_pactuado"] : null;

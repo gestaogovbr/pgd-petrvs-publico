@@ -17,6 +17,7 @@ export type UnitWorkload = "day" | "week" | "mouth";
 })
 export class InputWorkloadComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';
+  @Output() change = new EventEmitter<Event>();
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
   @Input() disabled?: string;
@@ -31,9 +32,11 @@ export class InputWorkloadComponent extends InputBase implements OnInit {
   @Input() source?: any;
   @Input() path?: string;
   @Input() maxLength?: number;
+  @Input() unitChange?: (newUnit: UnitWorkload) => void;
   @Input() set unit(value: UnitWorkload) {
     if(this._unit != value) {
       this._unit = value;
+      this.maxValue = this.unit == "day" ? 24 : this.unit == "week" ? 120 : 480;
       this.valueToWork();
       this.cdRef.detectChanges();
     }
@@ -49,6 +52,7 @@ export class InputWorkloadComponent extends InputBase implements OnInit {
   }
 
   public workControl: FormControl = new FormControl();
+  public maxValue: number = 24;
   private _unit: UnitWorkload = "day";
 
   constructor(public injector: Injector) {
@@ -71,6 +75,7 @@ export class InputWorkloadComponent extends InputBase implements OnInit {
     const next: UnitWorkload = this.unit == "day" ? "week" : this.unit == "week" ? "mouth" : "day";
     console.log(this.unit, next);
     this.unit = next;
+    if(this.unitChange) this.unitChange(next);
   }
 
   public get iconWork(): string {
@@ -83,6 +88,7 @@ export class InputWorkloadComponent extends InputBase implements OnInit {
 
   public onChange(event: Event) {
     this.workToValue();
+    if(this.change) this.change.emit(event); 
   }
 
   public valueToWork() {
@@ -92,8 +98,8 @@ export class InputWorkloadComponent extends InputBase implements OnInit {
   }
 
   public workToValue() {
-    const factor = this.unit == "day" ? 1 : this.unit == "week" ? 1/5 : 1/20;
-    const value = this.workControl.value * factor;
+    const factor = this.unit == "day" ? 1 : this.unit == "week" ? 5 : 20;
+    const value = this.workControl.value / factor;
     if(this.control) {
       if(this.control.value != value) this.control.setValue(value);
     } else {

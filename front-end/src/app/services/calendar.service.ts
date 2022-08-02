@@ -30,6 +30,9 @@ export type Efemerides = {
   pausas: DemandaPausa[] /* Pausas */
   finsSemana: FeriadoList, /* Fins de semana no período */
   feriados: FeriadoList, /* Feriados cadastrados e religiosos no período */
+  horario_trabalho_inicio: string, /* Horário do inicio do expediente na unidade */
+  horario_trabalho_fim: string, /* Horário do fim do expediente na unidade */
+  horario_trabalho_intervalo: string, /* Tempo de intervalo na unidade */
 }
 
 @Injectable({
@@ -231,7 +234,10 @@ export class CalendarService {
       afastamentos: [],
       pausas: [],
       finsSemana: {},
-      feriados: {}
+      feriados: {},
+      horario_trabalho_inicio: unidade.horario_trabalho_inicio, /* Horário do inicio do expediente na unidade */
+      horario_trabalho_fim: unidade.horario_trabalho_fim, /* Horário do fim do expediente na unidade */
+      horario_trabalho_intervalo: unidade.horario_trabalho_intervalo, /* Tempo de intervalo na unidade */
     };
 
     cargaHoraria = result.cargaHoraria; /* Garante que se a carga horária vier zerado, será considerado 24hrs */
@@ -268,9 +274,9 @@ export class CalendarService {
       } else { /* calcula em horas */
         if(useCorridos || diaUtil) {
           const hIntervalo = this.util.getStrTimeHours(unidade.horario_trabalho_intervalo || "00:00");
-          const hUteisDia = Math.min(cargaHoraria, hExpediente, useTempo ? hTempo : hExpediente); /* Horas úteis diárias, tempo útil máximo para um dia é o menor entre eles */
+          const hUteisDia = useCorridos ? 24 : Math.min(cargaHoraria, hExpediente, useTempo ? hTempo : hExpediente); /* Horas úteis diárias, se for corrido é 24h, se não então será o menor entre eles */
           const dInicioDia = firstDay ? inicio : this.util.setStrTime(dDiaAtual, useCorridos ? "00:00" : unidade.horario_trabalho_inicio); /* Inicio do expediente */
-          const dFimDia = lastDay && !useTempo ? fimOuTempo as Date : this.util.minDate(this.util.addTimeHours(dInicioDia, hUteisDia + hIntervalo), this.util.setStrTime(dInicioDia, unidade.horario_trabalho_fim))!; /* fim do expediente */
+          const dFimDia = lastDay && !useTempo ? fimOuTempo as Date : this.util.minDate(this.util.addTimeHours(dInicioDia, hUteisDia + hIntervalo), this.util.setStrTime(dInicioDia, useCorridos ? "24:00" : unidade.horario_trabalho_fim))!; /* fim do expediente */
           const intersticio = horasAfastamentoPausa(dInicioDia.getTime(), dFimDia.getTime()); /* Calula perído de afastamento e/ou pausa no dia atual */
           const hUteis = Math.min(hUteisDia, this.util.getHoursBetween(dInicioDia, dFimDia)); /* Horas úteis aproveitáveis para os cálculos (considerando o inicio e fim da atividade) */
           const hAfastamentoPausa = Math.min(hUteis, this.util.getTimeHours(intersticio.reduce((a, v) => a + (v.end - v.start), 0))); /* Afastamento e/ou pausas no dia, em horas */

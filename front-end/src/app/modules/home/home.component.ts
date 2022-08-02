@@ -110,7 +110,7 @@ export class HomeComponent implements OnInit {
       if(dados) this.dashUnidades = dados;
     });
     if(this.gb.isExtension) {
-      this.allPages.visibilidadeMenuSei(!this.auth.usuario!.config.ocutar_menu_sei);
+      this.allPages.visibilidadeMenuSei(!this.auth.usuario!.config.ocultar_menu_sei);
     }
     this.construirGraficoMinhasDemandas();
     this.construirGraficosAreas(this.dashUnidades);

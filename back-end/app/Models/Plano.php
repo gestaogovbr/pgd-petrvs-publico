@@ -30,7 +30,8 @@ class Plano extends ModelBase
         'usuario_id',
         'unidade_id',
         'documento_id',
-        'tipo_modalidade_id'
+        'tipo_modalidade_id',
+        'forma_contagem_carga_horaria'
     ];
 
     protected $table = 'planos';
@@ -56,5 +57,4 @@ class Plano extends ModelBase
     public function unidade() { return $this->belongsTo(Unidade::class, 'unidade_id'); }
     public function tipoModalidade() { return $this->belongsTo(TipoModalidade::class, 'tipo_modalidade_id'); }
     public function documento() { return $this->belongsTo(Documento::class, 'documento_id'); }
-
 }
