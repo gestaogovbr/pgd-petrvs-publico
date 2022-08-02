@@ -25,7 +25,7 @@
             </div>
           </div>
           <div class="col-md-3 my-4 d-inline-block container">
-            <span class="h5-1">Médias das Avaliações: {{ dashboard.media_avaliacoes.toFixed(2) }}</span>
+            <span class="h5-1">Médias das Avaliações: {{ dashUsuario.media_avaliacoes.toFixed(2) }}</span>
             <h5 class="my-4" role="button" (click)="go.navigate({route: ['gestao', 'demanda']}, {root: true})">
               <i class="bi bi-activity"></i> Ver Detalhes
             </h5>
@@ -71,7 +71,7 @@
                 <div class="card text-dark bg-light mb-3 card-header" role="button" (click)="go.navigate({route: ['gestao', 'demanda']}, {root: true})">Demandas a concluir
                     <div class="card border-left-primary shadow h-100 py-2">
                         <div class="card-body">
-                            <h5 class="h5-1" id="qtde-demandas-totais-nao-concluidas">{{dashboard.demandas_totais_nao_concluidas}}</h5>
+                            <h5 class="h5-1" id="qtde-demandas-totais-nao-concluidas">{{dashUsuario.demandas_totais_nao_concluidas}}</h5>
                         </div>
                         <i class="fas fa-copy fa-2x" id="icon-demandas-andamento"></i>
                     </div>
@@ -81,7 +81,7 @@
                 <div class="card text-dark bg-light mb-3 card-header" role="button" (click)="go.navigate({route: ['gestao', 'demanda']}, {root: true})">Demandas em atraso
                     <div class="card border-left-primary shadow h-100 py-2">
                         <div class="card-body">
-                            <h5 class="h5-1" id="qtde-demandas-totais-atrasadas">{{dashboard.demandas_totais_atrasadas}}</h5>
+                            <h5 class="h5-1" id="qtde-demandas-totais-atrasadas">{{dashUsuario.demandas_totais_atrasadas}}</h5>
                         </div>
                         <i class="fas fa-exclamation-triangle fa-2x" [id]="idExclamacao()"></i>
                     </div>
@@ -96,7 +96,7 @@
                                   <h5 class="h5-1">{{dashboard.demandas_totais_concluidas}}</h5>
                                 </div>
                             </div> -->
-                            <h5 class="h5-1" id="qtde-demandas-totais-concluidas">{{dashboard.demandas_totais_concluidas}}</h5>
+                            <h5 class="h5-1" id="qtde-demandas-totais-concluidas">{{dashUsuario.demandas_totais_concluidas}}</h5>
                         </div>
                         <i class="fas fa-clipboard-check fa-2x" id="icon-planos-execucao"></i>
                     </div>
@@ -110,7 +110,7 @@
                                 <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" [style.width%]="dashboard.produtividade">
                                 <h5 class="h5-1">{{dashboard.produtividade}}%</h5></div>
                             </div> -->
-                            <h5 class="h5-1" id="qtde-tarefas-totais-nao-concluidas">{{dashboard.tarefas_totais_nao_concluidas}}</h5>
+                            <h5 class="h5-1" id="qtde-tarefas-totais-nao-concluidas">{{dashUsuario.tarefas_totais_nao_concluidas}}</h5>
                         </div>
                         <i class="fas fa-chart-bar fa-2x" id="icon-produtividade-media"></i>
                     </div>

@@ -120,25 +120,25 @@ export class HomeComponent implements OnInit {
     this.dadosMinhasDemandas = [
       {
         label: 'Demandas Não-iniciadas',
-        data: [this.dashboard.demandas_totais_nao_iniciadas],
+        data: [this.dashUsuario.demandas_totais_nao_iniciadas],
         backgroundColor: '#0dcaf0',
         stack: 'Demandas'
       },
       {
         label: 'Demandas Iniciadas',
-        data: [this.dashboard.demandas_totais_nao_concluidas],
+        data: [this.dashUsuario.demandas_totais_nao_concluidas],
         backgroundColor: '#ffc107',
         stack: 'Demandas'
       },
       {
         label: 'Demandas Concluídas',
-        data: [this.dashboard.demandas_totais_concluidas],
+        data: [this.dashUsuario.demandas_totais_concluidas],
         backgroundColor: '#af4201',
         stack: 'Demandas'
       },
       {
         label: 'Demandas Avaliadas',
-        data: [this.dashboard.demandas_totais_avaliadas],
+        data: [this.dashUsuario.demandas_totais_avaliadas],
         backgroundColor: '#af4af0',
         stack: 'Demandas'
       }
@@ -150,7 +150,7 @@ export class HomeComponent implements OnInit {
       this.dadosGraficoAreas.push(
         {
           label: dash.nome,
-          data: dash.qdePTAtivos,
+          data: [dash.qdePTAtivos],
         }
       );
     }
@@ -173,14 +173,14 @@ export class HomeComponent implements OnInit {
   }
 
   public execucaoPlanos(){
-      this.dashboard.produtividade;
+      this.dashUsuario.produtividade;
   }
 
   public produtividadeMedia(){
   }
 
   public idExclamacao(){
-    return this.dashboard.produtividade == 0 ? "icon-demandas-natraso" : "icon-demandas-atraso";
+    return this.dashUsuario.produtividade == 0 ? "icon-demandas-natraso" : "icon-demandas-atraso";
   }
 
   public totalAtividades(){
