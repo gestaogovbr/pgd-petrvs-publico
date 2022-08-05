@@ -496,17 +496,17 @@ class IntegracaoService
 
     }
 
-    public function salvaUsuarioLotacaoGapi($usuario, $lotacao, $tokenData, $auth){
+    public function salvaUsuarioLotacaoGapi(&$usuario, &$lotacao, $tokenData, $auth){
         $auth->fillUsuarioWithCredential($usuario, $tokenData);
         $this->salvarUsuarioLotacao($usuario, $lotacao);
     }
 
-    public function salvaUsuarioLotacaoDprf($usuario, $lotacao, $profile, $auth){
+    public function salvaUsuarioLotacaoDprf(&$usuario, &$lotacao, $profile, $auth){
         $auth->fillUsuarioWithProfile($usuario, $profile);
         $this->salvarUsuarioLotacao($usuario, $lotacao);
     }
 
-    public function salvarUsuarioLotacao($usuario, $lotacao){
+    public function salvarUsuarioLotacao(&$usuario, &$lotacao){
         if ($this->fillUsuarioWithSiape($usuario, $lotacao)) { //se quem está logado existe na tabela integracao_servidores
             $perfil_nivel_5 = Perfil::where('nivel', '5')->first()->id;
             $usuario->perfil_id = $perfil_nivel_5;

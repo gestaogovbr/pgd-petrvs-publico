@@ -1,0 +1,44 @@
+version: "3.9"
+services:
+
+  db:
+    image: mysql:8
+    container_name: db
+    ports:
+      - 3306:3306
+    volumes:
+      - ./mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: PsEeTnRhVaS
+      MYSQL_USER: petrvs
+      MYSQL_PASSWORD: PsEeTnRhVaS
+
+  php:
+    build: 
+      context: .
+      dockerfile: Dockerfile-php
+    container_name: php
+    working_dir: /var/www
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+    volumes:
+      - ../../back-end:/var/www
+
+  node:
+    build: 
+      context: .
+      dockerfile: Dockerfile-node
+    container_name: node
+    command: sh -c "sleep infinity"
+    working_dir: /usr/src/app
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "4200:4200"
+    depends_on:
+      - php
+    volumes:
+      - ../../front-end:/usr/src/app
+

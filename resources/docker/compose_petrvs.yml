@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  app:
+    image: 'i_petrvs_php8_apache:latest'
+    deploy:
+      resources:
+        limits:
+          memory: 2048M
+          cpus: "2"
+    ports:
+      - 30074:80
+    volumes:
+      - type: volume
+        source: vol_petrvs_app
+        target: /var/www/
+        volume:
+          nocopy: true
+#    networks:
+#      - app-network
+  db:
+    image: mysql:8
+    ports:
+      - 30075:3306
+    deploy:
+      resources:
+        limits:
+          memory: 2048M
+          cpus: "2"
+    volumes:
+      - type: volume
+        source: mysql
+        target: /var/lib/mysql
+        volume:
+          nocopy: true
+#    networks:
+#      - app-network
+    environment:
+      MYSQL_ROOT_PASSWORD: P3trvsPRF1928
+      MYSQL_DATABASE: prfpetrvs
+      MYSQL_USER: prfpetrvs
+      MYSQL_PASSWORD: APPP3trvsPRF1928
+  sftp:
+    image: atmoz/sftp
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+          cpus: "0.5"
+    ports:
+        - 30076:22
+    volumes:
+      - type: volume
+        source: vol_petrvs_app
+        target: /home/marian/scf/petrvs_app
+        volume:
+          nocopy: true
+    command: prfpetrvs:P3trvsPRF1928:33
+#    networks:
+#     - app-network
+#Docker Networks
+#networks:
+#  app-network:
+#    driver: bridge
+volumes:
+  vol_petrvs_app:
+    driver_opts:
+      type: "nfs"
+      o: "addr=10.9.253.10,nolock,soft,rw"
+      device: ":/geral/scf/html/scf/petrvs_app"
+  mysql:
+    driver_opts:
+      type: "nfs"
+      o: "addr=10.9.253.10,nolock,soft,rw"
+      device: ":/geral/scf/mysql/petrvs_db"
