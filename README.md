@@ -8,7 +8,7 @@ https://gitlab.com/petrvs.app/Petrvs.git
 
 ## Procedimento para instalação
 
-- Para instalar a versão de desenvolvimento utilizando o Docker, utilize as instruções contidas [aqui](resources/README.md)
+- Para instalar a versão de desenvolvimento utilizando o Docker, utilize as instruções contidas [AQUI](resources/README.md)
 - Para instalar a versão produção sem utilizar o Docker, consultar documentação aqui (PAGINA EM DESENVOLVIMENTO) 
 
 ## Procedimento para deploy:

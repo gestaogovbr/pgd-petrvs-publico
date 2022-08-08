@@ -1,0 +1,1 @@
+sed -i "/xdebug.mode=debug/c\xdebug.mode=off" /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && /etc/init.d/apache2 reload
