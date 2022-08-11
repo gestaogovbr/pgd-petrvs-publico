@@ -53,7 +53,8 @@ class PlanoService extends ServiceBase
         if(!in_array($plano->unidade_id, $usuario_lotacoes_ids)) {
             $this->lotacaoService->store([
                 'usuario_id' => $plano->usuario_id,
-                'unidade_id' => $plano->unidade_id
+                'unidade_id' => $plano->unidade_id,
+                'principal' => false
             ], $unidade);
         }
     }

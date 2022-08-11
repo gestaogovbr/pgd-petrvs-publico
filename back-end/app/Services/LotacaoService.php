@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Lotacao;
 use App\Services\ServiceBase;
 use App\Traits\UseDataFim;
+use App\Services\UtilService;
 
 class LotacaoService extends ServiceBase
 {
@@ -18,7 +19,7 @@ class LotacaoService extends ServiceBase
         } else {
             $principal = null;
             foreach ($lotacoes as $key => $lotacao) {
-                if($lotacao->id != $data["id"]){
+                if(UtilService::emptyEntry($data, "id") || $lotacao->id != $data["id"]){
                     if($data["principal"]) {
                         $lotacao->principal = 0;
                         $lotacao->save();
