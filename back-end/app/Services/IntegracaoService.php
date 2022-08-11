@@ -430,12 +430,13 @@ class IntegracaoService
                         "FROM usuarios u LEFT JOIN lotacoes l ON (l.usuario_id = u.id) LEFT JOIN unidades d ON (l.unidade_id = d.id) ".
                         "LEFT JOIN integracao_servidores s ON (u.cpf = s.cpf) ".
                         "WHERE d.codigo != s.codigo_servo_exercicio");//PODEM VIR TUPLAS ONDE O SERVIDOR AINDA NÃO TEM LOTAÇÃO MAS NÃO SERÃO AFETADAS PELO BLOCO FOREACH ABAIXO
-                    $sql2_update = "UPDATE lotacoes SET data_fim = :data_fim, principal = 0 WHERE id = :id_lotacao";
+                    $sql2_update = "UPDATE lotacoes SET data_fim = null, principal = 0 WHERE id = :id_lotacao";
                     // Todas são setadas como PRINCIPAL = 0 e DATA_FIM = hoje (se tiver nula)
                     if (!empty($lotacoes_nao_atuais)) {
                         foreach($lotacoes_nao_atuais as $lotacao) {
                             DB::update($sql2_update, [
-                                'data_fim'      => empty($lotacao->data_fim) ? Now() : $lotacao->data_fim,
+                                //data_fim recebe valor null de modo a manter as lotações anterioriores visíveis, mesmo não sendo a principal.
+                                //'data_fim'      => empty($lotacao->data_fim) ? Now() : $lotacao->data_fim,
                                 'id_lotacao'    => $lotacao->id_lotacao
                             ]);
                         };
