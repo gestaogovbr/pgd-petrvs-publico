@@ -113,11 +113,13 @@ __webpack_require__.r(__webpack_exports__);
 
 const _c0 = ["cidade"];
 const _c1 = ["entidade"];
+const _c2 = function () { return ["cadastros", "cidade"]; };
+const _c3 = function (a0) { return { route: a0 }; };
 function FeriadoFormComponent_input_search_10_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](0, "input-search", 13, 14);
 } if (rf & 2) {
     const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 6)("control", ctx_r0.form.controls.cidade_id)("dao", ctx_r0.cidadeDao);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 6)("control", ctx_r0.form.controls.cidade_id)("dao", ctx_r0.cidadeDao)("selectRoute", _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpureFunction1"](5, _c3, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpureFunction0"](4, _c2)));
 } }
 function FeriadoFormComponent_input_select_11_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](0, "input-select", 15);
@@ -130,8 +132,7 @@ function FeriadoFormComponent_input_display_12_Template(rf, ctx) { if (rf & 1) {
 } if (rf & 2) {
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 6);
 } }
-const _c2 = function () { return ["configuracoes", "entidade"]; };
-const _c3 = function (a0) { return { route: a0 }; };
+const _c4 = function () { return ["configuracoes", "entidade"]; };
 class FeriadoFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_5__["PageFormBase"] {
     constructor(injector) {
         super(injector, src_app_models_feriado_model__WEBPACK_IMPORTED_MODULE_4__["Feriado"], src_app_dao_feriado_dao_service__WEBPACK_IMPORTED_MODULE_2__["FeriadoDaoService"]);
@@ -226,7 +227,7 @@ FeriadoFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdef
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵloadQuery"]()) && (ctx.cidade = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵloadQuery"]()) && (ctx.entidade = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵInheritDefinitionFeature"]], decls: 15, vars: 30, consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Descri\u00E7\u00E3o", "icon", "far fa-edit", "controlName", "nome", 3, "size", "control"], ["label", "Abrang\u00EAncia", "controlName", "abrangencia", 3, "size", "control", "items"], ["label", "Recorrente", "icon", "fas fa-redo", "controlName", "recorrente", "labelInfo", "Se o feriado \u00E9 recorrente todos os anos... se n\u00E3o, informar o ano.", 3, "size", "control", "items"], ["label", "Dia", "icon", "bi bi-calendar-date", "controlName", "dia", 3, "size", "control", "items"], ["label", "M\u00EAs", "icon", "bi bi-calendar-date", "controlName", "mes", 3, "size", "control", "items"], ["numbers", "", "label", "Ano", "icon", "bi bi-calendar-date", "controlName", "ano", 3, "size", "control", "disabled"], ["label", "Cidade", "controlName", "cidade_id", 3, "size", "control", "dao", 4, "ngIf"], ["label", "UF", "controlName", "uf", 3, "size", "control", "items", 4, "ngIf"], ["label", "\u00C2mbito", "value", "Nacional", 3, "size", 4, "ngIf"], ["label", "Entidade", "icone", "fas fa-university", "controlName", "entidade_id", 3, "size", "control", "dao", "selectRoute"], ["entidade", ""], ["label", "Cidade", "controlName", "cidade_id", 3, "size", "control", "dao"], ["cidade", ""], ["label", "UF", "controlName", "uf", 3, "size", "control", "items"], ["label", "\u00C2mbito", "value", "Nacional", 3, "size"]], template: function FeriadoFormComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵInheritDefinitionFeature"]], decls: 15, vars: 30, consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Descri\u00E7\u00E3o", "icon", "far fa-edit", "controlName", "nome", 3, "size", "control"], ["label", "Abrang\u00EAncia", "controlName", "abrangencia", 3, "size", "control", "items"], ["label", "Recorrente", "icon", "fas fa-redo", "controlName", "recorrente", "labelInfo", "Se o feriado \u00E9 recorrente todos os anos... se n\u00E3o, informar o ano.", 3, "size", "control", "items"], ["label", "Dia", "icon", "bi bi-calendar-date", "controlName", "dia", 3, "size", "control", "items"], ["label", "M\u00EAs", "icon", "bi bi-calendar-date", "controlName", "mes", 3, "size", "control", "items"], ["numbers", "", "label", "Ano", "icon", "bi bi-calendar-date", "controlName", "ano", 3, "size", "control", "disabled"], ["label", "Cidade", "controlName", "cidade_id", 3, "size", "control", "dao", "selectRoute", 4, "ngIf"], ["label", "UF", "controlName", "uf", 3, "size", "control", "items", 4, "ngIf"], ["label", "\u00C2mbito", "value", "Nacional", 3, "size", 4, "ngIf"], ["label", "Entidade", "icone", "fas fa-university", "controlName", "entidade_id", 3, "size", "control", "dao", "selectRoute"], ["entidade", ""], ["label", "Cidade", "controlName", "cidade_id", 3, "size", "control", "dao", "selectRoute"], ["cidade", ""], ["label", "UF", "controlName", "uf", 3, "size", "control", "items"], ["label", "\u00C2mbito", "value", "Nacional", 3, "size"]], template: function FeriadoFormComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "editable-form", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("submit", function FeriadoFormComponent_Template_editable_form_submit_0_listener() { return ctx.onSaveData(); })("cancel", function FeriadoFormComponent_Template_editable_form_cancel_0_listener() { return ctx.onCancel(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](1, "div", 1);
@@ -240,7 +241,7 @@ FeriadoFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdef
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](8, "input-text", 7);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](9, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](10, FeriadoFormComponent_input_search_10_Template, 2, 3, "input-search", 8);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](10, FeriadoFormComponent_input_search_10_Template, 2, 7, "input-search", 8);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](11, FeriadoFormComponent_input_select_11_Template, 1, 3, "input-select", 9);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](12, FeriadoFormComponent_input_display_12_Template, 1, 1, "input-display", 10);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](13, "input-search", 11, 12);
@@ -267,7 +268,7 @@ FeriadoFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdef
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngIf", ctx.form.controls.abrangencia.value == "NACIONAL");
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.entidade_id)("dao", ctx.entidadeDao)("selectRoute", _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpureFunction1"](28, _c3, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpureFunction0"](27, _c2)));
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.entidade_id)("dao", ctx.entidadeDao)("selectRoute", _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpureFunction1"](28, _c3, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpureFunction0"](27, _c4)));
     } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__["EditableFormComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_8__["InputTextComponent"], _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_9__["InputSelectComponent"], _components_input_input_radio_input_radio_component__WEBPACK_IMPORTED_MODULE_10__["InputRadioComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_11__["NgIf"], _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_12__["InputSearchComponent"], _components_input_input_display_input_display_component__WEBPACK_IMPORTED_MODULE_13__["InputDisplayComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJmZXJpYWRvLWZvcm0uY29tcG9uZW50LnNjc3MifQ== */"] });
 
 
