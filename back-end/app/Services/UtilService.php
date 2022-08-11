@@ -8,6 +8,10 @@ use DateTime;
 class UtilService
 {
 
+    public static function emptyEntry($arrayRef, $arrayKey) {
+        return empty($arrayRef) || !is_array($arrayRef) || !array_key_exists($arrayKey, $arrayRef) || empty($arrayRef[$arrayKey]);
+    }
+
     public static function decimalToTimer($decimal) {
         $hours = floor($decimal);
         $min = round(($decimal - $hours) * 60);
@@ -26,6 +30,22 @@ class UtilService
         return gettype($date) == "integer" ? $date : ($date instanceof DateTime ? $date->getTimestamp() : (gettype($date) == "string" ? strtotime($date) : $date));
     }
 
+    public static function between($middle, $start, $end) {
+        if(empty($middle) || empty($start) || empty($end)) return false;
+        $check = UtilService::asTimestemp($middle);
+        return (UtilService::asTimestemp($start) <= $check) && ($check <= UtilService::asTimestemp($end));
+    }
+
+    public static function lessThanOrIqual($first, $secound) {
+        if(empty($fisrt) || empty($secound)) return false;
+        return UtilService::asTimestemp($first) <= UtilService::asTimestemp($secound);
+    }
+
+    public static function greaterThanOrIqual($first, $secound) {
+        if(empty($fisrt) || empty($secound)) return false;
+        return UtilService::asTimestemp($first) >= UtilService::asTimestemp($secound);
+    }
+    
     public static function minDate(...$dates) {
         return array_reduce($dates, function ($carry, $item) {
             return !empty($item) && (empty($carry) || UtilService::asTimestemp($carry) > UtilService::asTimestemp($item)) ? $item : $carry;

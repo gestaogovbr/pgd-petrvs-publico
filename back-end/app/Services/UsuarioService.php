@@ -11,6 +11,7 @@ use App\Services\ServiceBase;
 use App\Services\PlanoService;
 use App\Services\DemandaService;
 use App\Services\RawWhere;
+use App\Services\UtilService;
 use App\Traits\UseDataFim;
 use Illuminate\Support\Facades\Auth;
 
@@ -52,20 +53,22 @@ class UsuarioService extends ServiceBase
         return $data;*/
     }
 
-    public function hasLotacao($id, $usuario = null, $subordinadas = true) {
-        return Unidade::where("id", $id)->whereRaw($this->lotacoesWhere($subordinadas, $usuario))->count() > 0;
+    public function hasLotacao($id, $usuario = null, $subordinadas = true, $dataRef = null) {
+        return Unidade::where("id", $id)->whereRaw($this->lotacoesWhere($subordinadas, $usuario, "", false, $dataRef))->count() > 0;
         /*Usuario::where("id", $usuario->id)->whereHas('lotacoes', function (Builder $query) use ($id) {
             $query->where('id', $id);
         })->count() > 0;*/
     }
 
-    public function lotacoesWhere($subordinadas, $usuario = null, $prefix = "") {
+    public function lotacoesWhere($subordinadas, $usuario = null, $prefix = "", $deleted = false, $dataRef = null) {
         $where = [];
         $prefix = empty($prefix) ? "" : $prefix . ".";
         $usuario = $usuario ?? Auth::user();
         foreach($usuario->lotacoes as $lotacao) {
-            $where[] = $prefix . "id = '" . $lotacao->unidade_id . "'";
-            if($subordinadas) $where[] = $prefix . "path like '%" . $lotacao->unidade_id . "%'";
+            if(($deleted || empty($lotacao->data_fim)) && !UtilService::greaterThanOrIqual($dataRef, $lotacao->data_fim)) {
+                $where[] = $prefix . "id = '" . $lotacao->unidade_id . "'";
+                if($subordinadas) $where[] = $prefix . "path like '%" . $lotacao->unidade_id . "%'";
+            }
         }
         $result = implode(" OR ", $where);
         return empty($result) ? "false" : "(" . $result . ")";

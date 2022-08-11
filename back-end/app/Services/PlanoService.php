@@ -31,9 +31,9 @@ class PlanoService extends ServiceBase
         $criador = Usuario::with(["lotacoes" => function ($query){
             $query->whereNull("data_fim");
         }])->find(Auth::user()->id);
-        if(!$this->usuarioService->hasLotacao($unidade_id, $usuario, false) && !Auth::user()->hasPermissionTo('MOD_USER_TUDO')) {
+        /*if(!$this->usuarioService->hasLotacao($unidade_id, $usuario, false) && !Auth::user()->hasPermissionTo('MOD_USER_TUDO')) {
             throw new ServerException("ValidatePlano", $unidade->sigla . " não é uma unidade (lotação) do usuário");
-        }
+        }*/
         $usuario_lotacoes_ids = $usuario->lotacoes->map(function ($item, $key) { return $item->unidade_id; })->all();
         $criador_lotacoes_ids = $criador->lotacoes->map(function ($item, $key) { return $item->unidade_id; })->all();
         if(!count(array_intersect($usuario_lotacoes_ids, $criador_lotacoes_ids)) && !Auth::user()->hasPermissionTo('MOD_PTR_USERS_INCL')) {
@@ -41,6 +41,20 @@ class PlanoService extends ServiceBase
         }
         if(!in_array($unidade_id, $usuario_lotacoes_ids) && !Auth::user()->hasPermissionTo('MOD_PTR_INCL_SEM_LOT')) {
             throw new ServerException("ValidatePlano", "Usuário não lotado na unidade do plano (MOD_PTR_INCL_SEM_LOT)");
+        }
+    }
+
+    public function extraStore($plano, $unidade) {
+        /* Adiciona a Lotação automaticamente case o usuário não tenha */
+        $usuario = Usuario::with(["lotacoes" => function ($query){
+            $query->whereNull("data_fim");
+        }])->find($plano->usuario_id);
+        $usuario_lotacoes_ids = $usuario->lotacoes->map(function ($item, $key) { return $item->unidade_id; })->all();
+        if(!in_array($plano->unidade_id, $usuario_lotacoes_ids)) {
+            $this->lotacaoService->store([
+                'usuario_id' => $plano->usuario_id,
+                'unidade_id' => $plano->unidade_id
+            ], $unidade);
         }
     }
 
