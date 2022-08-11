@@ -27,9 +27,10 @@ export class InputTextComponent extends InputBase implements OnInit {
   @Input() labelInfo: string = "";
   @Input() bold: boolean = false;
   @Input() value: any = "";
-  @Input() size: number = 0;
+  @Input() size: number = 12;
   @Input() loading: boolean = false;
   @Input() numbers?: string;
+  @Input() password?: string;
   @Input() textCase: InputTextCase = "";
   @Input() minValue?: any;
   @Input() maxValue?: any;
@@ -57,6 +58,10 @@ export class InputTextComponent extends InputBase implements OnInit {
 
   public get isNumbers(): boolean {
     return this.numbers !== undefined;
+  }
+
+  public get isPassword(): boolean {
+    return this.password !== undefined;
   }
 
   ngOnInit(): void {

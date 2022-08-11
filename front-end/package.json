@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --host 0.0.0.0 --disable-host-check",
+    "start": "ng serve --host 0.0.0.0 --disable-host-check --poll=1000",
     "build": "ng build --configuration=production --output-path=../back-end/public && php ./postbuild.php",
     "build-dev": "ng build --output-path=../back-end/public && php ./postbuild.php",
     "test": "ng test",

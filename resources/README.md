@@ -48,6 +48,11 @@ php artisan db:seed
 
 - No vscode será necessário instalar a extensão PHP Debug (XDebug), bastando apenas acessar a area de extensões do vscode e pesquisar por PHP Debug. A configuração para realizar o debug já consta na pasta .vscode (dentro do repositório na pasta back-end). Ao clicar em "Run > Start debbuging", será executado o script para iniciar o XDebug no docker, e após a pausa será executado o script para desligar o x-debug. Lembrando que o vscode ao executar os scripts de habilitar ou desabilitar o xdebug solicita que o usuário precione qualquer tecla para fechar o pront shell que é aberto. 
 
+## Cadeia de certificados para o curl do PHP
+```
+https://curl.se/docs/caextract.html
+```
+
 ## Criando um docker temporário para executar comandos
 ```
 docker run --rm -it --entrypoint bash php:8.1-apache

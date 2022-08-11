@@ -6,6 +6,7 @@ use App\Models\ModelBase;
 use App\Models\Plano;
 use App\Models\Entidade;
 use App\Traits\AutoDataInicio;
+use Illuminate\Support\Facades\DB;
 
 class Documento extends ModelBase
 {

@@ -1,11 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, RequiredValidator, Validators } from '@angular/forms';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, RequiredValidator, Validators } from '@angular/forms';
 import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
+import { FormHelperService } from 'src/app/services/form-helper.service';
 import { GlobalsService } from 'src/app/services/globals.service';
 import { GoogleApiService } from 'src/app/services/google-api.service';
 import { FullRoute, NavigateService } from 'src/app/services/navigate.service';
+import { UtilService } from 'src/app/services/util.service';
 import { ModalPage } from '../base/modal-page';
 
 @Component({
@@ -30,16 +32,31 @@ export class LoginComponent implements OnInit, ModalPage {
     public globals: GlobalsService,
     public go: NavigateService,
     public router: Router,
+    public cdRef: ChangeDetectorRef,
     public route: ActivatedRoute,
     public auth: AuthService,
+    public util: UtilService,
+    public fh: FormHelperService,
     public formBuilder: FormBuilder,
     public googleApi: GoogleApiService
   ) {
-    this.login = this.formBuilder.group({
-      usuario: ["", Validators.required],
-      senha: ["", Validators.required],
-      token: ["", Validators.required]
-    });
+    this.login = this.fh.FormBuilder({
+      usuario: {default: ""},
+      senha: {default: ""},
+      token: {default: ""}
+    }, this.cdRef, this.validate);
+  }
+
+  public validate = (control: AbstractControl, controlName: string) => {
+    let result = null;
+
+    if(['senha', 'token'].indexOf(controlName) >= 0 && !control.value?.length) {
+      result = "Obrigatório";
+    } else if(controlName == "usuario" && !this.util.validarCPF(control.value)) {
+      result = "Inválido";
+    }
+
+    return result;
   }
 
   ngOnInit(): void {
@@ -86,8 +103,9 @@ export class LoginComponent implements OnInit, ModalPage {
 
   public signInDprfSeguranca() {
     const form = this.login.controls;
-    if(this.login.valid) {
-      this.auth.authDprfSeguranca(form.usuario.value, form.senha.value, form.token.value, this.redirectTo).then(this.closeModalIfSuccess);
+    this.login.markAllAsTouched();
+    if(this.login.valid){
+      this.auth.authDprfSeguranca(this.util.onlyNumbers(form.usuario.value), form.senha.value, this.util.onlyNumbers(form.token.value), this.redirectTo).then(this.closeModalIfSuccess);
     } else {
       this.error = "Verifique se está correto:" + (form.cpf.invalid ? " CPF;" : "") + (form.password.invalid ? " Senha;" : "") + (form.password.invalid ? " Token;" : "");
     }

@@ -264,6 +264,17 @@ class ServiceBase
         }
     }
 
+    private function getSelectable($fields) {
+
+
+
+        foreach($fields as $field) {
+            $slices = explode(".", $field);
+            $model = App($this->collection);
+            
+        }    
+    }
+
     /**
      * Search for a given text
      *

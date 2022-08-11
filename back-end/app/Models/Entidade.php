@@ -44,7 +44,8 @@ class Entidade extends ModelBase
         'gestor_id',
         'gestor_substituto_id',
         'notificacoes',
-        'forma_contagem_carga_horaria'
+        'forma_contagem_carga_horaria',
+        'data_inicio'
     ];
 
     public $delete_cascade = ['feriados'];
