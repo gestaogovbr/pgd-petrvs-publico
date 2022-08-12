@@ -8,6 +8,7 @@ use App\Services\RawWhere;
 use App\Services\ServiceBase;
 use App\Services\DemandaService;
 use App\Services\CalendarioService;
+use App\Services\UtilService;
 use App\Exceptions\ServerException;
 use DateTime;
 use DateTimeZone;
@@ -41,6 +42,13 @@ class PlanoService extends ServiceBase
         }
         if(!in_array($unidade_id, $usuario_lotacoes_ids) && !Auth::user()->hasPermissionTo('MOD_PTR_INCL_SEM_LOT')) {
             throw new ServerException("ValidatePlano", "Usuário não lotado na unidade do plano (MOD_PTR_INCL_SEM_LOT)");
+        }
+        $planos = Plano::where("usuario_id", $data["usuario_id"])->where("tipo_modalidade_id", $data["tipo_modalidade_id"])->whereNull("data_fim")->get();
+        foreach ($planos as $plano) {
+            if(UtilService::intersect($plano->data_inicio_vigencia, $plano->data_fim_vigencia, $data["data_inicio_vigencia"], $data["data_fim_vigencia"]) &&
+                UtilService::valueOrNull($data, "id") != $plano->id && !Auth::user()->hasPermissionTo('MOD_PTR_INTSC_DATA')) {
+                throw new ServerException("ValidatePlano", "O plano de trabalho #" . $plano->numero . " (" . UtilService::getDateTimeFormatted($plano->data_inicio_vigencia) . " à " . UtilService::getDateTimeFormatted($plano->data_fim_vigencia) . ") possui período conflitante para a mesma modalidade (MOD_PTR_INTSC_DATA)");
+            }         
         }
     }
 

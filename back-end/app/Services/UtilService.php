@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 use DateTime;
 
 class UtilService
@@ -10,6 +11,22 @@ class UtilService
 
     public static function emptyEntry($arrayRef, $arrayKey) {
         return empty($arrayRef) || !is_array($arrayRef) || !array_key_exists($arrayKey, $arrayRef) || empty($arrayRef[$arrayKey]);
+    }
+
+    public static function valueOrNull($arrayRef, $arrayKey) {
+        return empty($arrayRef) || !is_array($arrayRef) || !array_key_exists($arrayKey, $arrayRef) ? null : $arrayRef[$arrayKey];
+    }
+
+    public static function getDateFormatted($dataHora) {
+        return Carbon::instance($dataHora)->format("d/m/Y");
+    }
+    
+    public static function getTimeFormatted($dataHora) {
+        return Carbon::instance($dataHora)->format("H:i");
+    }
+       
+    public static function getDateTimeFormatted($dataHora, $separator = " ") {
+        return UtilService::getDateFormatted($dataHora) . $separator . UtilService::getTimeFormatted($dataHora);
     }
 
     public static function decimalToTimer($decimal) {
@@ -45,7 +62,12 @@ class UtilService
         if(empty($fisrt) || empty($secound)) return false;
         return UtilService::asTimestemp($first) >= UtilService::asTimestemp($secound);
     }
-    
+
+    public static function intersect($startA, $endA, $startB, $endB) {
+        if(empty($startA) || empty($endA) || empty($startB) || empty($endB)) return false;
+        return UtilService::asTimestemp($startA) <= UtilService::asTimestemp($endB) && UtilService::asTimestemp($endA) >= UtilService::asTimestemp($startB);
+    }
+
     public static function minDate(...$dates) {
         return array_reduce($dates, function ($carry, $item) {
             return !empty($item) && (empty($carry) || UtilService::asTimestemp($carry) > UtilService::asTimestemp($item)) ? $item : $carry;
