@@ -3,6 +3,8 @@
 echo "POST-BUILD:\n";
 /* Cria o angular.blade.php e edita o app.json para colocar os arquivos com hash do build angular */ 
 if(file_exists("../back-end/public/index.html")) {
+    /* Copia o arquivo index.html para a pasta pages (Para carregar o options da extensão) */ 
+    copy("../back-end/public/index.html", "../back-end/public/pages/index.html");
     /* Obtem lista de arquivos gerados no deploy */
     $index = file_get_contents("../back-end/public/index.html");
     $files = [];
@@ -15,10 +17,8 @@ if(file_exists("../back-end/public/index.html")) {
     } else {
         echo "Não foi possível encontrar lista de arquivos buildados do angular\n";
     }
-    /* Cria o template para carregar a aplicação no Laravel baseado no HTML da aplicação angula */
-    copy("../back-end/public/index.html", "../back-end/resources/views/angular.blade.php");
-    /* Move o arquivo index.html para a pasta pages para evitar que seja chamado pelo servidor web */ 
-    rename("../back-end/public/index.html", "../back-end/public/pages/index.html");
+    /* Move o template modificado para carregar a aplicação no Laravel baseado no HTML da aplicação angula e evitar que seja chamado pelo servidor web */
+    rename("../back-end/public/index.html", "../back-end/resources/views/angular.blade.php");
     echo "FIM\n";
 } else {
     echo "Arquivo index.html não encontrado\n";
