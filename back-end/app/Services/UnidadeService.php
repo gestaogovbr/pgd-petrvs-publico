@@ -190,4 +190,20 @@ class UnidadeService extends ServiceBase
         return array_map(fn($x) => $x->id,DB::table('unidades')->select('id')->where('path', 'like', $path)->orWhere('path', 'like', $path . '/%')->get()->toArray());
     }
 
+    public function dashboards($idsUnidades, $programa_id) {
+        if (count($idsUnidades) > 0) {
+            $result = [];
+            foreach ($idsUnidades as $unidade_id) {
+                $metadadosUnidade = $this->metadadosUnidade($unidade_id, $programa_id);
+                array_push($result, [
+                    'sigla' => $metadadosUnidade['sigla'],
+                    'qdePTAtivos' => $metadadosUnidade['qdePlanosPrograma'],
+                    'horasUteisTotaisPTAtivos' => $metadadosUnidade['horasUteisTotais'],
+                    'qdeServidores' => $metadadosUnidade['nrServidoresPrograma']
+                ]);
+            }
+        } else return LogError::newError('Nenhuma Unidade foi fornecida!');
+        return $result;
+    }
+
 }

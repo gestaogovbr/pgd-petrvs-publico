@@ -18,7 +18,6 @@ class LotacaoSeeder extends Seeder
      */
     public function run()
     {
-
        $carol_id = DB::table('usuarios')->where('cpf', '01492368164')->first()->id;
        $farias_id = DB::table('usuarios')->where('cpf', '25941933304')->first()->id;
        $marian_id = DB::table('usuarios')->where('cpf', '67703011053')->first()->id;

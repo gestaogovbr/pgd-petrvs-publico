@@ -4,6 +4,7 @@ return [
     'codigoUnidadeRaiz' => env('INTEGRACAO_CODIGO_UNIDADE_RAIZ', ""),
     'baseUrlunidades' => env('INTEGRACAO_BASE_URL_UNIDADES', ""),
     'baseUrlpessoas' => env('INTEGRACAO_BASE_URL_PESSOAS', ""),
+    'validaCertificado' => env('INTEGRACAO_VALIDA_CERTIFICADO', true),
     'token' => env('INTEGRACAO_TOKEN', ""),
     'auto_incluir' => env('INTEGRACAO_AUTO_INCLUIR', false),
     'generate' => [

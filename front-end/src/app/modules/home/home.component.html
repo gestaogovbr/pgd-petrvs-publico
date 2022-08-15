@@ -38,16 +38,16 @@
               <!-- Gráfico das Áreas com Planos de Trabalho ativos -->
               <div class="my-4 text-center">
                 <div class="bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
-                  <h5>PT ativos (por Área)</h5>
+                  <!-- <h5>PT ativos (por Área)</h5> -->
                     <app-bar-chart
                       barChartType = "horizontalBar"
-                      [barChartData]="dadosGraficoAreas"
+                      [barChartData]="dadosGraficoNrPlanos"
                       [barChartOptions]="opcoesGraficoAreas">
                     </app-bar-chart>
                 </div>
                 <!-- Gráfico dos Servidores participantes -->
                 <div class="bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
-                  <h5>Servidores (por Área)</h5>
+                  <!-- <h5>Servidores (por Área)</h5> -->
                     <app-bar-chart
                       barChartType = "horizontalBar"
                       [barChartData]="dadosGraficoServidores"

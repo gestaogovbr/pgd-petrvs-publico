@@ -1,14 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { UsuarioDaoService, UsuarioDashboard } from 'src/app/dao/usuario-dao.service';
-import { AtividadeDaoService,  AtividadeDashboard } from 'src/app/dao/atividade-dao.service';
+import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { LexicalService } from 'src/app/services/lexical.service';
 import { NavigateService } from 'src/app/services/navigate.service';
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
 import { GlobalsService } from 'src/app/services/globals.service';
-import { Chart, ChartDataSets, ChartOptions } from 'chart.js';
+import { ChartDataSets, ChartOptions } from 'chart.js';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { UnidadeDaoService, UnidadeDashboard } from 'src/app/dao/unidade-dao.service';
+import { Chart } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 @Component({
   selector: 'app-home',
@@ -19,7 +21,9 @@ export class HomeComponent implements OnInit {
 
   public activeTab: string = "PGD";
   public demandaFilter: any[];
-  public unidades: string[] = [];
+  public unidades: string[] = ['1230c458-9018-4d12-8929-0ea92f2506dd', '1230c458-9018-4d12-8929-0ea92f2506dd'];
+  public programa_id: string = '8eaaffa0-ba88-445e-85f1-0700ae2518bd';
+
   public dashUsuario: UsuarioDashboard = {
     total_demandas: 0,
     media_avaliacoes: 0,
@@ -32,19 +36,21 @@ export class HomeComponent implements OnInit {
     tarefas_totais_nao_concluidas: 0,
   };
   public dashUnidades: UnidadeDashboard[] = [];
-  public ativdashboard: AtividadeDashboard = {
-    total_atividades: 0,
-  };
 
+  // Variáveis associados aos objetos gráficos
   public dadosMinhasDemandas: ChartDataSets[] = [];
+  public dadosGraficoNrPlanos: ChartDataSets[] = [];
+  public dadosGraficoHorasPlanos: ChartDataSets[] = [];
+  public dadosGraficoServidores: ChartDataSets[] = [];
   public opcoesMinhasDemandas: ChartOptions = {
     legend: {
       display: true,
       position: 'top',
-      align: 'end'
+      align: 'start'
     },
     scales: {
       xAxes: [{
+        display: false,
         stacked: true,
         ticks: {
           beginAtZero: true
@@ -57,33 +63,23 @@ export class HomeComponent implements OnInit {
         }
       }]
     },
+    responsive: true,
     plugins: {
-    responsive: true
+      datalabels: {
+        display: 'auto',
+        align: 'start',
+        anchor: 'end',
+        color: 'white',
+        font: {
+          weight: 'bold'
+        },
+        clamp: true,
+        clip: false
+      }
     }
   };
-  public dadosGraficoAreas: ChartDataSets[] = [];
-  public opcoesGraficoAreas: ChartOptions = {
-    legend: {
-      display: true,
-      position: 'left'
-    },
-    scales: {
-      xAxes: [{
-          stacked: false,
-          ticks: {
-            beginAtZero: true
-          }
-      }],
-      yAxes: [{
-          stacked: false,
-      }]
-    },
-    plugins: {
-    },
-    responsive: true
-  };
-  public dadosGraficoServidores: ChartDataSets[] = [];
-  public opcoesGraficoServidores: ChartOptions = this.opcoesGraficoAreas;
+  public opcoesGraficoAreas: ChartOptions = {};
+  public opcoesGraficoServidores: ChartOptions = {};
 
   constructor(
     public auth: AuthService,
@@ -102,18 +98,25 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.usuarioDao.dashboard(this.auth.usuario!.id).then(dados => {
-      if (dados) this.dashUsuario = dados;
+    Chart.plugins.register(ChartDataLabels);
+    Chart.defaults.bar = {
+      categoryPercentage: 0.5
+    }
+    Promise.all([
+      this.usuarioDao.dashboard(this.auth.usuario!.id),
+      this.unidadeDao.dashboards(this.unidades, this.programa_id)
+    ]).then(results => {
+      const data = results[0];
+      const dashboards = results[1];
+      if (data) this.dashUsuario = data;
       this.idExclamacao();
-    });
-    this.unidadeDao.dashboards(this.unidades).then(dados => {
-      if(dados) this.dashUnidades = dados;
+      if(dashboards) this.dashUnidades = dashboards;
+      this.construirGraficoMinhasDemandas();
+      this.construirGraficosAreas(this.dashUnidades);
     });
     if(this.gb.isExtension) {
       this.allPages.visibilidadeMenuSei(!this.auth.usuario!.config.ocultar_menu_sei);
     }
-    this.construirGraficoMinhasDemandas();
-    this.construirGraficosAreas(this.dashUnidades);
   }
 
   public construirGraficoMinhasDemandas() {
@@ -146,14 +149,132 @@ export class HomeComponent implements OnInit {
   }
 
   public construirGraficosAreas(dashUnidades: UnidadeDashboard[]){
-    for(let dash of dashUnidades){
-      this.dadosGraficoAreas.push(
-        {
-          label: dash.nome,
-          data: [dash.qdePTAtivos],
+    let _labelsY: string[] = [];
+    let _dadosGraficoNrPlanos: number[] = [];
+    let _dadosGraficoHorasPlanos: number[] = [];
+    let _dadosGraficoServidores: number[] = [];
+    dashUnidades.forEach(element => {
+      _labelsY.push(element.sigla);
+      _dadosGraficoNrPlanos.push(element.qdePTAtivos);
+      _dadosGraficoHorasPlanos.push(element.horasUteisTotaisPTAtivos);
+      _dadosGraficoServidores.push(element.qdeServidores);
+    });
+    this.dadosGraficoNrPlanos = [
+      {
+        label: 'Nr. de PT ativos',
+        data: _dadosGraficoNrPlanos,
+        backgroundColor: '#0000CD',
+        borderColor: '#212121',
+        hoverBackgroundColor: '#212121',
+        hoverBorderColor: '#0000CD',
+        borderWidth: 2,
+        //barPercentage: 1,
+        //categoryPercentage: 1,
+        //barThickness: 30,
+        datalabels: {
+          display: 'auto',
+          align: 'start',
+          anchor: 'end',
+          color: 'white',
+          font: {
+            weight: 'bold'
+          },
+          clamp: true,
+          clip: false
         }
-      );
-    }
+      }
+    ];
+    this.dadosGraficoServidores = [
+      {
+        label: 'Nr. de Servidores',
+        data: _dadosGraficoServidores,
+/*         backgroundColor: '#0000CD',
+        borderColor: '#212121',
+        hoverBackgroundColor: '#212121',
+        hoverBorderColor: '#0000CD',
+        borderWidth: 2 */
+      }
+    ];
+    this.opcoesGraficoAreas = {
+      legend: {
+        display: true,
+        position: 'top',
+        labels: {
+          fontColor: 'black',
+          fontStyle: 'bold'
+        }
+      },
+      scales: {
+        xAxes: [{
+          display: false,
+          gridLines: {
+            //offsetGridLines: true
+          },
+          //stacked: false,
+          ticks: {
+            beginAtZero: true
+          }
+        }],
+        yAxes: [{
+            labels: _labelsY,
+            //stacked: false,
+            display: true,
+            //id: '',
+            type: 'category',
+            //position: '',
+            gridLines: {
+              display: true,
+              lineWidth: 1,
+
+            },
+            scaleLabel: {
+              //fontColor: 'black',
+              //fontStyle: 'bold'
+              //display: true,
+              //labelString: 'EIXO Y'
+            },
+            ticks: {
+              fontColor: 'black',
+              fontStyle: 'bold'
+              //beginAtZero: true,
+              //min: ''
+            }
+        }],
+        ticks: {
+        }
+      },
+      responsive: true
+    };
+    this.opcoesGraficoServidores = {
+      legend: {
+        display: true,
+        position: 'top'
+      },
+      scales: {
+        xAxes: [{
+            display: false,
+            stacked: false,
+            ticks: {
+              beginAtZero: true
+            }
+        }],
+        yAxes: [{
+            labels: _labelsY,
+            display: true,
+            type: 'category',
+            gridLines: {
+              display: true,
+            },
+            scaleLabel: {
+            },
+            ticks: {
+              beginAtZero: true,
+            }
+
+        }]
+      },
+      responsive: true
+    };
   }
 
   public mensagemSaudacao() {

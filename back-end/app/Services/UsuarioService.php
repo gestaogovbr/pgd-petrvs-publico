@@ -107,11 +107,7 @@ class UsuarioService extends ServiceBase
         $planos_ids = [];
         $result = [
             "total_demandas" => 0,
-/*             "total_atrasadas" => 0,
-            "total_iniciadas" => 0,
-            "total_concluidas" => 0, */
             "produtividade" => 0,
-           // "demandas_totais_nao_concluidas" => 0,
             "demandas_totais_atrasadas" => 0
         ];
         foreach($planosAtivos as $plano) {
@@ -120,24 +116,12 @@ class UsuarioService extends ServiceBase
         // A variável $demandas armazena todas as demandas de todos os planos ativos do usuário
         $demandas = Demanda::where("usuario_id", $usuario_id)->whereIn("plano_id", $planos_ids)->get();
         $demandasTotaisNaoIniciadas = Demanda::where("usuario_id", $usuario_id)->whereNull('data_inicio')->get();
-        //$demandasTotaisIniciadas = Demanda::where("usuario_id", $usuario_id)->whereNotNull('data_inicio')->whereNull('data_entrega')->get();
         $demandasTotaisNaoConcluidas = Demanda::where("usuario_id", $usuario_id)->whereNotNull('data_inicio')->whereNull('data_entrega')->get();
         $demandasTotaisConcluidas = Demanda::where("usuario_id", $usuario_id)->whereNotNull('data_entrega')->get();
         $demandasTotaisAvaliadas = Demanda::where("usuario_id", $usuario_id)->whereNotNull('avaliacao_id')->with(['avaliacao'])->get();
 
         $tarefasTotaisNaoConcluidas = DemandaEntrega::where("usuario_id", $usuario_id)->where('concluido', 0)->get();
 
-        /**
-         * Este laço percorre todas as demandas do usuário e vai incrementando os contadores
-         */
-/*         foreach($demandas as $demanda) {
-            $metadados = $demandaService->metadados($demanda);
-            //$result["total_demandas"]++;
-            $result["total_atrasadas"] += $metadados["atrasado"] ? 1 : 0;
-            $result["total_iniciadas"] += ($metadados["iniciado"] && !$metadados["concluido"]) ? 1 : 0;
-            $result["total_concluidas"] += ($metadados["concluido"] && !$metadados["avaliado"]) ? 1 : 0;
-            //$result["produtividade"] += $metadados["concluido"] ? $metadados["produtividade"] : 0;
-        } */
         $result["total_demandas"] = $demandas->count();
 
         foreach($demandasTotaisNaoConcluidas as $demanda) {
@@ -156,7 +140,6 @@ class UsuarioService extends ServiceBase
 
         $result["tarefas_totais_nao_concluidas"] = $tarefasTotaisNaoConcluidas->count();
 
-        //$result["produtividade"] = $result["total_concluidas"] > 0 ? $result["produtividade"] / $result["total_concluidas"] : 0;
         return $result;
     }
 

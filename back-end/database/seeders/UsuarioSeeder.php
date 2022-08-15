@@ -50,8 +50,7 @@ class UsuarioSeeder extends Seeder
                 'apelido' => 'Caroline',
                 'perfil_id' => $perfis->where('nome', 'Administrador')->first()->id,
                 'data_inicio' => Carbon::now()
-            ]
-
+            ],
         ];
 
         foreach($usuarios as $usuario)

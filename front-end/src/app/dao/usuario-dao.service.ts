@@ -30,13 +30,14 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
   public dashboard(usuario_id: string): Promise<UsuarioDashboard | null> {
     return new Promise<UsuarioDashboard | null>((resolve, reject) => {
       if(usuario_id?.length){
-        this.server.post('api/' + this.collection + '/dashboard', {usuario_id: usuario_id})
-        .subscribe(response => {
-          resolve(response.data as UsuarioDashboard);
+        this.server.post('api/' + this.collection + '/dashboard', {usuario_id}).subscribe(response => {
+          resolve(response.data);
         }, error => {
+          console.log("Erro ao buscar o dashboard do Usuário!", error);
           resolve(null);
         });
       } else {
+        console.log("ID de usuário em branco!");
         resolve(null);
       }
     });

@@ -33,7 +33,6 @@ export class ForcaDeTrabalhoFilterServidorComponent extends PageReportFilterBase
       usuario_id: {default: null},
     }, this.cdRef, this.validate);
     this.reportRoute = {route: ["relatorios", "forca-de-trabalho", "report-servidor"], params: {}};
-    this.testar();
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -64,14 +63,6 @@ export class ForcaDeTrabalhoFilterServidorComponent extends PageReportFilterBase
     } else { // caso contrário deixa o controle em branco para que o usuário selecione o valor desejado
       this.form.controls.plano_id.setValue(null);
     }
-  }
-
-  public testar() {
-    let teste1 = 0;
-    let resposta1 = this.util.getTimeHours(teste1);
-
-    let teste2 = 123232313343456;
-    let resposta2 = this.util.getTimeHours(teste2);
   }
 
 }
