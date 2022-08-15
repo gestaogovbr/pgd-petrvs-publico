@@ -8,6 +8,7 @@ use App\Services\RawWhere;
 use App\Services\ServiceBase;
 use App\Services\DemandaService;
 use App\Services\CalendarioService;
+use App\Services\UtilService;
 use App\Exceptions\ServerException;
 use DateTime;
 use DateTimeZone;
@@ -37,9 +38,9 @@ class PlanoService extends ServiceBase
         $criador = Usuario::with(["lotacoes" => function ($query){
             $query->whereNull("data_fim");
         }])->find(Auth::user()->id);
-        if(!$this->usuarioService->hasLotacao($unidade_id, $usuario, false) && !Auth::user()->hasPermissionTo('MOD_USER_TUDO')) {
+        /*if(!$this->usuarioService->hasLotacao($unidade_id, $usuario, false) && !Auth::user()->hasPermissionTo('MOD_USER_TUDO')) {
             throw new ServerException("ValidatePlano", $unidade->sigla . " não é uma unidade (lotação) do usuário");
-        }
+        }*/
         $usuario_lotacoes_ids = $usuario->lotacoes->map(function ($item, $key) { return $item->unidade_id; })->all();
         $criador_lotacoes_ids = $criador->lotacoes->map(function ($item, $key) { return $item->unidade_id; })->all();
         if(!count(array_intersect($usuario_lotacoes_ids, $criador_lotacoes_ids)) && !Auth::user()->hasPermissionTo('MOD_PTR_USERS_INCL')) {
@@ -47,6 +48,28 @@ class PlanoService extends ServiceBase
         }
         if(!in_array($unidade_id, $usuario_lotacoes_ids) && !Auth::user()->hasPermissionTo('MOD_PTR_INCL_SEM_LOT')) {
             throw new ServerException("ValidatePlano", "Usuário não lotado na unidade do plano (MOD_PTR_INCL_SEM_LOT)");
+        }
+        $planos = Plano::where("usuario_id", $data["usuario_id"])->where("tipo_modalidade_id", $data["tipo_modalidade_id"])->whereNull("data_fim")->get();
+        foreach ($planos as $plano) {
+            if(UtilService::intersect($plano->data_inicio_vigencia, $plano->data_fim_vigencia, $data["data_inicio_vigencia"], $data["data_fim_vigencia"]) &&
+                UtilService::valueOrNull($data, "id") != $plano->id && !Auth::user()->hasPermissionTo('MOD_PTR_INTSC_DATA')) {
+                throw new ServerException("ValidatePlano", "O plano de trabalho #" . $plano->numero . " (" . UtilService::getDateTimeFormatted($plano->data_inicio_vigencia) . " à " . UtilService::getDateTimeFormatted($plano->data_fim_vigencia) . ") possui período conflitante para a mesma modalidade (MOD_PTR_INTSC_DATA)");
+            }         
+        }
+    }
+
+    public function extraStore($plano, $unidade) {
+        /* Adiciona a Lotação automaticamente case o usuário não tenha */
+        $usuario = Usuario::with(["lotacoes" => function ($query){
+            $query->whereNull("data_fim");
+        }])->find($plano->usuario_id);
+        $usuario_lotacoes_ids = $usuario->lotacoes->map(function ($item, $key) { return $item->unidade_id; })->all();
+        if(!in_array($plano->unidade_id, $usuario_lotacoes_ids)) {
+            $this->lotacaoService->store([
+                'usuario_id' => $plano->usuario_id,
+                'unidade_id' => $plano->unidade_id,
+                'principal' => false
+            ], $unidade);
         }
     }
 

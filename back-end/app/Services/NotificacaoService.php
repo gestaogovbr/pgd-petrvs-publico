@@ -14,22 +14,6 @@ use Illuminate\Support\Facades\Mail as LaravelMail;
 
 class NotificacaoService 
 {
-
-
-    public function sendDemandaDistribuicao($demanda) {
-        try {
-            $entidade_notificacoes = $demanda->unidade->entidade->notificacoes; 
-            $unidade_notificacoes = $demanda->unidade->notificacoes;
-            if($entidade_notificacoes["notifica_demanda_distribuicao"] && $unidade_notificacoes["notifica_demanda_distribuicao"] && !empty($demanda->usuario_id)) {
-                $text = empty($unidade_notificacoes["template_demanda_distribuicao"]) ? $entidade_notificacoes["template_demanda_distribuicao"] : $unidade_notificacoes["template_demanda_distribuicao"];
-                $this->applyParams($text, ["demanda_numero" => $demanda->numero]);
-                $this->send($demanda->usuario, $demanda->unidade, $text, "notifica_demanda_distribuicao");
-            }
-        } catch (Throwable $e) {
-            LogError::newError("Erro ao enviar notificação de distribuição de demanda", $e, ["usuario_id" => $demanda->usuario_id, "unidade_id" => $demanda->unidade_id], false);
-        }
-    }
-
     public function findByPhone($data) {
         try {
             $com9 = strlen($data["telefone"]) == 11 ? $data["telefone"] : substr($data["telefone"], 0, 2) . "9" . substr($data["telefone"], 2);

@@ -7,6 +7,7 @@ import { TipoModalidadeDaoService } from 'src/app/dao/tipo-modalidade-dao.servic
 import { IIndexable } from 'src/app/models/base.model';
 import { Entidade, EntidadeNotificacoes } from 'src/app/models/entidade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
+import { NotificacaoService } from 'src/app/services/notificacao.service';
 
 @Component({
   selector: 'app-entidade-conf',
@@ -20,10 +21,12 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
   public form: FormGroup;
   public formNomenclatura: FormGroup;
   public tipoModalidadeDao: TipoModalidadeDaoService;
+  public notificacao: NotificacaoService;
 
   constructor(public injector: Injector) {
     super(injector, Entidade, EntidadeDaoService);
     this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
+    this.notificacao = injector.get<NotificacaoService>(NotificacaoService);
     this.form = this.fh.FormBuilder({
       url_sei: {default: ""},
       tipo_modalidade_id: {default: null},

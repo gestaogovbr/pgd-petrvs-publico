@@ -11,7 +11,7 @@
         <input-text numbers [size]="3" label="Ano" icon="bi bi-calendar-date" controlName="ano" [control]="form!.controls.ano" [disabled]="checkAnoDisabled()"></input-text>
     </div>
     <div class="row">
-        <input-search #cidade *ngIf="form!.controls.abrangencia.value == 'MUNICIPAL'" [size]="6" label="Cidade" controlName="cidade_id" [control]="form!.controls.cidade_id" [dao]="cidadeDao"></input-search>
+        <input-search #cidade *ngIf="form!.controls.abrangencia.value == 'MUNICIPAL'" [size]="6" label="Cidade" controlName="cidade_id" [control]="form!.controls.cidade_id" [dao]="cidadeDao" [selectRoute]="{route: ['cadastros', 'cidade']}"></input-search>
         <input-select *ngIf="form!.controls.abrangencia.value == 'ESTADUAL'" [size]="6" label="UF" controlName="uf" [control]="form!.controls.uf" [items]="lookup.UF"></input-select>
         <input-display *ngIf="form!.controls.abrangencia.value == 'NACIONAL'" [size]="6" label="Âmbito" value="Nacional"></input-display>
         <input-search #entidade [size]="6" label="Entidade" icone="fas fa-university" controlName="entidade_id" [control]="form!.controls.entidade_id" [dao]="entidadeDao" [selectRoute]="{route: ['configuracoes', 'entidade']}"></input-search>

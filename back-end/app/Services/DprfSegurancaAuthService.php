@@ -189,7 +189,7 @@ class DprfSegurancaAuthService
      * @param Usuario $usuario Usuário model
      * @param mixed $profile  Dados retornados do login
      */
-    public function fillUsuarioWithProfile($usuario, $profile) {
+    public function fillUsuarioWithProfile(&$usuario, $profile) {
         $usuario->password = Hash::make($profile["cpf"]);
         $usuario->email = str_contains($profile["email"], "@") ? $profile["email"] : $profile["email"] . "@prf.gov.br";
         $usuario->nome = $profile["nome"];

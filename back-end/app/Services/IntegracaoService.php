@@ -14,23 +14,21 @@ use Exception;
 
 class IntegracaoService
 {
-    //public $autoIncluir = false;
-    //public $unidadesInseridas = [];
-    //public $unidadesSelecionadas = [];
-    //public $token = "";
-    //public $codigoUnidadeRaiz = "";
-    //public $validaCertificado = "";
+    public $autoIncluir = false;
+    public $unidadesInseridas = [];
+    public $unidadesSelecionadas = [];
+    public $token = "";
+    public $codigoUnidadeRaiz = "";
     public $unidadeRaiz = null;
     public $useLocalFiles = false;
-    public $storeLocalFiles = true;
-    public $localUnidades = "C:\DevEnv\Projetos\Petrvs\unidades.xml";
-    public $localServidores = "C:\DevEnv\Projetos\Petrvs\servidores.xml";
+    public $storeLocalFiles = false;
+    public $localUnidades = "C:\DevEnv\Projetos\Petrvs-App\unidades.xml";
+    public $localServidores = "C:\DevEnv\Projetos\Petrvs-App\servidores.xml";
 
     function __construct($config = null) {
         $integracao_config = $config ?: config('integracao');
         $this->autoIncluir = $integracao_config['auto_incluir'];
         $this->codigoUnidadeRaiz = $integracao_config['codigoUnidadeRaiz'];
-        $this->validaCertificado = $integracao_config['validaCertificado'];
     }
 
     public function fillUsuarioWithSiape(&$usuario, &$lotacao) {
@@ -241,15 +239,9 @@ class IntegracaoService
                 if($this->useLocalFiles) {//Se for para usar os arquivos locais, a rotina lê os dados do arquivo salvo localmente
                     $xmlStream = file_get_contents($this->localUnidades);
                 } else {        //caso contrário, a rotina vai buscar no servidor do SIGEPE
-                    if ($this->validaCertificado) {
-                        $response = Http::withHeaders([
-                            'Authorization' => 'Bearer ' . $token
-                        ])->get($this->integracao_config["baseUrlunidades"]);
-                    }else{
-                        $response = Http::withoutVerifying()->withHeaders([
-                            'Authorization' => 'Bearer ' . $token
-                        ])->get($this->integracao_config["baseUrlunidades"]);
-                    }
+                    $response = Http::withHeaders([
+                        'Authorization' => 'Bearer ' . $token
+                    ])->get($this->integracao_config["baseUrlunidades"]);
                     $xmlStream = $response->body();
                     if($this->storeLocalFiles) {        // aqui decide se salva ou não em arquivo as informações trazidas do servidor do SIGEPE
                         if(file_exists($this->localUnidades)) unlink($this->localUnidades);
@@ -261,7 +253,7 @@ class IntegracaoService
                 $sql = "INSERT INTO integracao_unidades(id_servo, pai_servo, codigo_siape, pai_siape, codupag, nomeuorg, siglauorg, telefone, email, natureza, fronteira, fuso_horario, cod_uop, cod_unidade, tipo, tipo_desc, na_rodovia, logradouro, bairro, cep, ptn_ge_coordenada, municipio_siafi_siape, municipio_siscom, municipio_ibge, municipio_nome, municipio_uf, ativa, regimental, datamodificacao, und_nu_adicional, cnpjupag) " .
                        "VALUES (:id_servo, :pai_servo, :codigo_siape, :pai_siape, :codupag, :nomeuorg, :siglauorg, :telefone, :email, :natureza, :fronteira, :fuso_horario, :cod_uop, :cod_unidade, :tipo, :tipo_desc, :na_rodovia, :logradouro, :bairro, :cep, :ptn_ge_coordenada, :municipio_siafi_siape, :municipio_siscom, :municipio_ibge, :municipio_nome, :municipio_uf, :ativa, :regimental, :datamodificacao, :und_nu_adicional, :cnpjupag)";
 
-                /* Apaga a tabela integracao_unidades e a cria novamente com as unidades obtidas pelo webservice */
+                /* Apaga a tabela integracao_unidades e cria novamente com as unidades obtidas pelo webservice */
                 DB::transaction(function () use (&$uos, &$sql, &$self) {
                     /* Remove toda a lista da tabela temporária integracao_unidades */
                     DB::delete('DELETE FROM integracao_unidades');
@@ -350,15 +342,9 @@ class IntegracaoService
                 if($this->useLocalFiles) {
                     $xmlStream = file_get_contents($this->localServidores);
                 } else {
-                    if ($this->validaCertificado) {
-                        $response = Http::withHeaders([
-                            'Authorization' => 'Bearer ' . $token
-                        ])->get($this->integracao_config["baseUrlpessoas"]); //https://services.prf.gov.br/services/prf/siape/2.0.0/pessoas
-                    }else{
-                        $response = Http::withoutVerifying()->withHeaders([
-                            'Authorization' => 'Bearer ' . $token
-                        ])->get($this->integracao_config["baseUrlpessoas"]); //https://services.prf.gov.br/services/prf/siape/2.0.0/pessoas
-                    }
+                    $response = Http::withHeaders([
+                        'Authorization' => 'Bearer ' . $token
+                    ])->get($this->integracao_config["baseUrlpessoas"]);
                     $xmlStream = $response->body();
                     if($this->storeLocalFiles) {
                         if(file_exists($this->localServidores)) unlink($this->localServidores);
@@ -441,15 +427,16 @@ class IntegracaoService
                     // Seleciona todas as lotações que não correspondem à Unidade Atual do servidor
                     $lotacoes_nao_atuais = DB::select(
                         "SELECT u.id AS id_usuario, l.id AS id_lotacao, l.data_fim, s.codigo_servo_exercicio, d.sigla ".
-                        "FROM usuarios u LEFT JOIN lotacoes l ON (u.id = l.usuario_id) LEFT JOIN unidades d ON (l.unidade_id = d.id) ".
+                        "FROM usuarios u LEFT JOIN lotacoes l ON (l.usuario_id = u.id) LEFT JOIN unidades d ON (l.unidade_id = d.id) ".
                         "LEFT JOIN integracao_servidores s ON (u.cpf = s.cpf) ".
-                        "WHERE d.codigo != s.codigo_servo_exercicio");  //PODEM VIR TUPLAS ONDE O SERVIDOR AINDA NÃO TEM LOTAÇÃO MAS NÃO SERÃO AFETADAS PELO BLOCO FOREACH ABAIXO
-                    $sql2_update = "UPDATE lotacoes SET data_fim = :data_fim, principal = 0 WHERE id = :id_lotacao";
+                        "WHERE d.codigo != s.codigo_servo_exercicio");//PODEM VIR TUPLAS ONDE O SERVIDOR AINDA NÃO TEM LOTAÇÃO MAS NÃO SERÃO AFETADAS PELO BLOCO FOREACH ABAIXO
+                    $sql2_update = "UPDATE lotacoes SET data_fim = null, principal = 0 WHERE id = :id_lotacao";
                     // Todas são setadas como PRINCIPAL = 0 e DATA_FIM = hoje (se tiver nula)
                     if (!empty($lotacoes_nao_atuais)) {
                         foreach($lotacoes_nao_atuais as $lotacao) {
                             DB::update($sql2_update, [
-                                'data_fim'      => empty($lotacao->data_fim) ? Now() : $lotacao->data_fim,
+                                //data_fim recebe valor null de modo a manter as lotações anterioriores visíveis, mesmo não sendo a principal.
+                                //'data_fim'      => empty($lotacao->data_fim) ? Now() : $lotacao->data_fim,
                                 'id_lotacao'    => $lotacao->id_lotacao
                             ]);
                         };
@@ -510,17 +497,17 @@ class IntegracaoService
 
     }
 
-    public function salvaUsuarioLotacaoGapi($usuario, $lotacao, $tokenData, $auth){
+    public function salvaUsuarioLotacaoGapi(&$usuario, &$lotacao, $tokenData, $auth){
         $auth->fillUsuarioWithCredential($usuario, $tokenData);
         $this->salvarUsuarioLotacao($usuario, $lotacao);
     }
 
-    public function salvaUsuarioLotacaoDprf($usuario, $lotacao, $profile, $auth){
+    public function salvaUsuarioLotacaoDprf(&$usuario, &$lotacao, $profile, $auth){
         $auth->fillUsuarioWithProfile($usuario, $profile);
         $this->salvarUsuarioLotacao($usuario, $lotacao);
     }
 
-    public function salvarUsuarioLotacao($usuario, $lotacao){
+    public function salvarUsuarioLotacao(&$usuario, &$lotacao){
         if ($this->fillUsuarioWithSiape($usuario, $lotacao)) { //se quem está logado existe na tabela integracao_servidores
             $perfil_nivel_5 = Perfil::where('nivel', '5')->first()->id;
             $usuario->perfil_id = $perfil_nivel_5;

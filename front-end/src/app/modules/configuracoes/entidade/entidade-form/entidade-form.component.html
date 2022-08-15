@@ -11,7 +11,7 @@
       </div>
       <div class="row">
         <input-select [size]="4" label="Abrangência" controlName="abrangencia" [control]="form!.controls.abrangencia" [items]="lookup.ABRANGENCIA"></input-select>
-        <input-search *ngIf="form!.controls.abrangencia.value == 'MUNICIPAL'" #cidade [size]="8" label="Cidade" controlName="cidade_id" [control]="form!.controls.cidade_id" [dao]="cidadeDao"></input-search>
+        <input-search *ngIf="form!.controls.abrangencia.value == 'MUNICIPAL'" #cidade [size]="8" label="Cidade" controlName="cidade_id" [control]="form!.controls.cidade_id" [dao]="cidadeDao" [selectRoute]="{route: ['cadastros', 'cidade']}"></input-search>
         <input-select *ngIf="form!.controls.abrangencia.value == 'ESTADUAL'" [size]="8" label="UF" controlName="uf" [control]="form!.controls.uf" [items]="lookup.UF"></input-select>
         <input-display *ngIf="form!.controls.abrangencia.value == 'NACIONAL'" [size]="8" label="Âmbito" value="Nacional"></input-display>
       </div>

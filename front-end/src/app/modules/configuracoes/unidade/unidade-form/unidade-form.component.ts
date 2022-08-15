@@ -11,6 +11,7 @@ import { UnidadeOrigemAtividade } from 'src/app/models/unidade-origem-atividade.
 import { Unidade } from 'src/app/models/unidade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
+import { NotificacaoService } from 'src/app/services/notificacao.service';
 
 @Component({
   selector: 'app-unidade-form',
@@ -34,6 +35,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
   public cidadeDao: CidadeDaoService;
   public usuarioDao: UsuarioDaoService;
   public unidadeDao: UnidadeDaoService;
+  public notificacao: NotificacaoService;
 
   constructor(public injector: Injector) {
     super(injector, Unidade, UnidadeDaoService);
@@ -41,6 +43,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     this.cidadeDao = injector.get<CidadeDaoService>(CidadeDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
+    this.notificacao = injector.get<NotificacaoService>(NotificacaoService);
     this.form = this.fh.FormBuilder({
       codigo: {default: ""},
       sigla: {default: ""},

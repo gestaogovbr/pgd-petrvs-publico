@@ -399,6 +399,7 @@ class LoginController extends Controller
             if (isset($usuario)) { // && Hash::check($request->password, $user->password)
                 $request->session()->regenerate();
                 $request->session()->put("kind", "GAPI");
+                $usuario->save();
                 return response()->json([
                     'token' => $usuario->createToken($credentials['device_name'])->plainTextToken,
                     'usuario' => $this->registrarUsuario($request, $usuario, ['id_google' => $tokenData["sub"], 'url_foto' => $tokenData["picture"]]),
@@ -436,6 +437,7 @@ class LoginController extends Controller
             }
             if (isset($usuario)) {
                 $request->session()->put("kind", "DPRFSEGURANCA");
+                $usuario->save();
                 return response()->json([
                     'token' => $usuario->createToken($credentials['device_name'])->plainTextToken,
                     'usuario' => $this->registrarUsuario($request, $usuario),

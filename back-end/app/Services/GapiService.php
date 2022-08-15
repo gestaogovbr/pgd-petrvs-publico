@@ -45,7 +45,7 @@ class GapiService
      * @param Usuario $usuario Usuário model
      * @param mixed $credencial  Dados retornados do login
      */
-    public function fillUsuarioWithCredential($usuario, $credencial) {
+    public function fillUsuarioWithCredential(&$usuario, $credencial) {
         $usuario->password = null; //Hash::make($credencial["email"]);
         $usuario->email = $credencial["email"];
         $usuario->nome = $credencial["name"];
