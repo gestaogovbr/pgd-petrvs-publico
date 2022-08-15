@@ -9,12 +9,14 @@ use DateTime;
 class UtilService
 {
 
-    public static function emptyEntry($arrayRef, $arrayKey) {
-        return empty($arrayRef) || !is_array($arrayRef) || !array_key_exists($arrayKey, $arrayRef) || empty($arrayRef[$arrayKey]);
+    public static function emptyEntry($data, $key) {
+        $arrayRef = gettype($data) == "object" ? (method_exists($data, "toArray") ? $data->toArray() : (array) $data) : $data;
+        return empty($arrayRef) || !is_array($arrayRef) || !array_key_exists($key, $arrayRef) || empty($arrayRef[$key]);
     }
 
-    public static function valueOrNull($arrayRef, $arrayKey) {
-        return empty($arrayRef) || !is_array($arrayRef) || !array_key_exists($arrayKey, $arrayRef) ? null : $arrayRef[$arrayKey];
+    public static function valueOrNull($data, $key) {
+        $arrayRef = gettype($data) == "object" ? (method_exists($data, "toArray") ? $data->toArray() : (array) $data) : $data;
+        return empty($arrayRef) || !is_array($arrayRef) || !array_key_exists($key, $arrayRef) ? null : $arrayRef[$key];
     }
 
     public static function getDateFormatted($dataHora) {
