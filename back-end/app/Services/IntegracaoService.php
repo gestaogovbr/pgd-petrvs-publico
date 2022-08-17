@@ -29,6 +29,7 @@ class IntegracaoService
         $integracao_config = $config ?: config('integracao');
         $this->autoIncluir = $integracao_config['auto_incluir'];
         $this->codigoUnidadeRaiz = $integracao_config['codigoUnidadeRaiz'];
+        ini_set('max_execution_time', 1200); /* 20 minutos */
     }
 
     public function fillUsuarioWithSiape(&$usuario, &$lotacao) {
