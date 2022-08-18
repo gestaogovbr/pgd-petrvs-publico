@@ -2,7 +2,7 @@
     <div class="col-md-2">
         <img [src]="auth.usuario?.url_foto" class="img-thumbnail" onerror="this.src='./assets/images/profile.png'"><!-- width="25" height="25"-->
     </div>
-    <div class="col-md-10">
+    <div class="col-md-10 mb-4">
         <div class="row">
             <div class="col-md-12">
                 <h4 class="text-center">{{mensagemSaudacao()}} !</h4>
@@ -32,9 +32,54 @@
           </div>
         </div>
 
-        <tabs right class-span="h4" title="Programas" [select]="onSelectTab.bind(this)" [active]="activeTab">
+        <tabs hidden="true" right class-span="h4" title="Programas" [select]="onSelectTab.bind(this)" [active]="activeTab">
           <tab key="PGD" icon="bi bi-table" label="PGD" [template]="pgd">
             <ng-template #pgd>
+              <div class="col-md-8 mt-5">
+                <table class="table table-striped table-bordered table-hover my-4 align-middle">
+                  <thead>
+                    <tr>
+                      <th colspan="2" class="text-center"><strong>INFORMAÇÕES SOBRE O PROGRAMA</strong></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Nome do Programa</td><td>{{ 'Nome do Programa de Gestão' }}</td>
+                    </tr>
+                    <tr>
+                      <td>Normativa</td><td>{{ 'Instrução Normativa' }}</td>
+                    </tr>
+                    <tr>
+                      <td>Qde. de Unidades com PT Ativos</td><td>{{ 'Nr. de Planos de Trabalho Ativos' }}</td>
+                    </tr>
+                    <tr>
+                      <td>Nr. de Servidores</td><td>{{ 'Nr. de servidores' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+<!--               <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+                  <div class="row">
+                      <input-text [size]="6" label="Usuário" controlName="usuario" [control]="filter!.controls.usuario" placeholder="Usuário"></input-text>
+                      <input-search [size]="6" label="Unidade" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+                  </div>
+              </filter> -->
+
+<!--               <editable-form [form]="form!" [title]="title" [buttons]="buttons">
+                <div class="row">
+                    <input-search #usuario [size]="6" label="Usuário" icon="bi bi-person" controlName="usuario_id" [control]="form!.controls.usuario_id" [dao]="usuarioDao"
+                      (select)="onUsuarioSelect($event)" [join]="['planos.tipo_modalidade:id,nome','planos.unidade:id,nome,sigla']" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
+                    <input-select #unidade nullable label="Unidade" [size]="6" controlName="unidade_id" [control]="form!.controls.unidade_id" [items]="unidades" (change)="onUnidadeChange($event)" labelInfo="Unidades às quais o usuário possui Plano de Trabalho vinculado"></input-select>
+                </div>
+                <hr />
+                <div class="row">
+                  <input-radio #tipo_relatorio [size]="6" label="Tipo de Relatório" icon="bi bi-check2" controlName="tipo_relatorio" [control]="form!.controls.tipo_relatorio" [items]="lookup.TIPO_RELATORIO_PRODUTIVIDADE_INDIVIDUAL" labelInfo="Define se o relatório será gerado para um intervalo de tempo específico ou para um Plano de Trabalho em particular"></input-radio>
+                  <input-datetime [class.d-none]="tipo_relatorio.value == 'POR_PLANO' ? true : false" #inicio_periodo date [size]="3" label="Início" icon="bi bi-calendar-date" controlName="inicio_periodo" [control]="form!.controls.inicio_periodo"></input-datetime>
+                  <input-datetime [class.d-none]="tipo_relatorio.value == 'POR_PLANO' ? true : false" #fim_periodo date [size]="3" label="Fim" icon="bi bi-calendar-date" controlName="fim_periodo" [control]="form!.controls.fim_periodo"></input-datetime>
+                  <input-select [class.d-none]="tipo_relatorio.value == 'POR_PLANO' ? false : true" #plano nullable label="Plano de trabalho" [size]="6" controlName="plano_id" [control]="form!.controls.plano_id" [items]="planos" (change)="onPlanoChange($event)" labelInfo="Planos de trabalho"></input-select>
+                </div>
+              </editable-form> -->
+
               <!-- Gráfico das Áreas com Planos de Trabalho ativos -->
               <div class="my-4 text-center">
                 <div class="bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
@@ -57,12 +102,12 @@
               </div>
             </ng-template>
           </tab>
-          <tab key="OUTROS" icon="bi bi-tags" label="OUTROS">
+<!--           <tab key="OUTROS" icon="bi bi-tags" label="OUTROS">
               OUTROS
           </tab>
           <tab key="TOTAL" icon="bi bi-file-earmark-bar-graph" label="TOTAL">
               TOTAL
-          </tab>
+          </tab> -->
         </tabs>
 
 
@@ -120,10 +165,3 @@
 
     </div>
 </div>
-<!-- <div *ngIf="false" class="text-center">
-  <h3 class="my-2" role="button" (click)="go.navigate({route: ['gestao', 'demanda']}, {root: true})">
-    <i class="bi bi-activity"></i> Ir para {{lex.noun("Demandas",true)}}
-  </h3>
-</div> -->
-
-<!-- <demanda-list-grid *ngIf="auth.unidade" [fixedFilter]="demandaFilter"></demanda-list-grid> -->

@@ -332,19 +332,19 @@ os Planos de Trabalho associados ao Programa escolhido, e dentro da vigência.</
 <!-- Gráficos da Unidade Principal usando ng2-charts -->
 <div *ngIf="x.dadosUnidade.qdePlanosPrograma > 0" class="my-4 text-center">
   <div class="border border-primary bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
-    <h5>Planos da Unidade - Geral</h5>
+    <h5>Planos da Unidade - Horas</h5>
       <app-bar-chart
         barChartType = "bar"
         [barChartData]="x.graficoUnidadeGeral"
-        [barChartOptions]="opcoesGraficoBarrasGeral">
+        [barChartOptions]="opcoesGraficoBarrasHoras">
       </app-bar-chart>
   </div>
   <div class="border border-primary bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
-    <h5>Planos da Unidade - Detalhado</h5>
+    <h5>Planos da Unidade - Demandas</h5>
       <app-bar-chart
         barChartType = "horizontalBar"
         [barChartData]="x.graficoUnidadeDetalhado"
-        [barChartOptions]="opcoesGraficoBarrasDetalhado">
+        [barChartOptions]="opcoesGraficoBarrasDemandas">
       </app-bar-chart>
   </div>
 </div>

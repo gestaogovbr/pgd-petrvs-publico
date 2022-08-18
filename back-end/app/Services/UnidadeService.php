@@ -192,15 +192,22 @@ class UnidadeService extends ServiceBase
 
     public function dashboards($idsUnidades, $programa_id) {
         if (count($idsUnidades) > 0) {
+            $unidadesFilhas = [];
+            foreach ($idsUnidades as $unidade_id) {
+                $unidadesFilhas = array_merge($unidadesFilhas, $this->unidadesFilhas($unidade_id));
+            }
+            $idsUnidades = array_unique(array_merge($idsUnidades, $unidadesFilhas));
             $result = [];
             foreach ($idsUnidades as $unidade_id) {
                 $metadadosUnidade = $this->metadadosUnidade($unidade_id, $programa_id);
-                array_push($result, [
-                    'sigla' => $metadadosUnidade['sigla'],
-                    'qdePTAtivos' => $metadadosUnidade['qdePlanosPrograma'],
-                    'horasUteisTotaisPTAtivos' => $metadadosUnidade['horasUteisTotais'],
-                    'qdeServidores' => $metadadosUnidade['nrServidoresPrograma']
-                ]);
+                if ($metadadosUnidade['qdePlanosPrograma'] > 0) {
+                    array_push($result, [
+                        'sigla' => $metadadosUnidade['sigla'],
+                        'qdePTAtivos' => $metadadosUnidade['qdePlanosPrograma'],
+                        'horasUteisTotaisPTAtivos' => $metadadosUnidade['horasUteisTotais'],
+                        'qdeServidores' => $metadadosUnidade['nrServidoresPrograma']
+                    ]);
+                }
             }
         } else return LogError::newError('Nenhuma Unidade foi fornecida!');
         return $result;

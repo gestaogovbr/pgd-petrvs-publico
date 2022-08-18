@@ -27,6 +27,8 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
   public opcoesGraficoPlano: ChartOptions = {
     scales: {
       xAxes: [{
+        labels: ['Horas do Plano'],
+        display: true,
         ticks: {
           beginAtZero: true
         }
@@ -38,39 +40,43 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
       }]
     },
     plugins: {
-      legend: {
-        display: true,
-      },
-/*       datalabels: {
+      datalabels: {
+        display: false,
+        align: 'start',
         anchor: 'end',
-        align: 'end'
-      } */
+        color: 'black',
+        font: {
+          weight: 'bold'
+        },
+        clamp: true,
+        clip: false
+      }
     },
-    events: ['click'],
+    //events: ['click'],
     responsive: true
   };
-  public opcoesGraficoHoras: ChartOptions = {
+  public opcoesGraficoDemandas: ChartOptions = {
     scales: {
       xAxes: [{
-          stacked: true,
-/*           ticks: {
-            beginAtZero: true
-          } */
+        stacked: true
       }],
       yAxes: [{
-          stacked: true,
-/*           ticks: {
-            beginAtZero: true
-          } */
+        labels: ['Horas das Demandas'],
+        display: false,
+        stacked: true
       }]
     },
     plugins: {
-      legend: {
-        display: true,
-      },
       datalabels: {
+        display: false,
+        align: 'start',
         anchor: 'end',
-        align: 'end'
+        color: 'black',
+        font: {
+          weight: 'bold'
+        },
+        clamp: true,
+        clip: false
       }
     },
     responsive: true
@@ -133,13 +139,6 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
         $horasUteisDecorridas = this.calendar.calculaDataTempo($marco_inicial!, $marco_final, plano.carga_horaria, plano.unidade!, "ENTREGA", [], []).tempoUtil
       }
       let $horasTotaisAlocadas = $metadados.horasDemandasNaoIniciadas + $metadados.horasDemandasEmAndamento + $metadados.horasDemandasConcluidas + $metadados.horasDemandasAvaliadas;
-      //$metadados.percentualDecorridoPlano = $metadados.horasUteisTotais ? Math.round($metadados.horasUteisDecorridas / $metadados.horasUteisTotais * 10000)/100 : 0;
-      //$metadados.percentualHorasTotaisAlocadas = $metadados.horasUteisTotais ? Math.round($metadados.horasTotaisAlocadas / $metadados.horasUteisTotais * 10000)/100 : 0;
-/*       $metadados.percentualHorasNaoIniciadas = $metadados.horasUteisTotais ? Math.round($metadados.horasDemandasNaoIniciadas / $metadados.horasUteisTotais * 10000)/100 : 0;
-      $metadados.percentualHorasEmAndamento = $metadados.horasUteisTotais ? Math.round($metadados.horasDemandasEmAndamento / $metadados.horasUteisTotais * 10000)/100 : 0;
-      $metadados.percentualHorasConcluidas = $metadados.horasUteisTotais ? Math.round($metadados.horasDemandasConcluidas / $metadados.horasUteisTotais * 10000)/100 : 0;
-      $metadados.percentualHorasAvaliadas = $metadados.horasUteisTotais ? Math.round($metadados.horasDemandasAvaliadas / $metadados.horasUteisTotais * 10000)/100 : 0;
-      $metadados.mediaAvaliacoes = this.util.avg($metadados.demandasAvaliadas.map(d => d.avaliacao!.nota_atribuida)); */
       this.planoRelatorio = {
           'plano': plano!,
           'extras': $metadados,
@@ -155,13 +154,13 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
           'percentualHorasAvaliadas': $metadados.horasUteisTotais ? Math.round($metadados.horasDemandasAvaliadas / $metadados.horasUteisTotais * 10000)/100 : 0,
           'mediaAvaliacoes': this.util.avg($metadados.demandasAvaliadas.map(d => d.avaliacao!.nota_atribuida)),
           'dadosGraficoPlano': this.obterDadosGrafico($metadados, 'GERAL'),
-          'dadosGraficoHoras': this.obterDadosGrafico($metadados, 'DETALHADO')
+          'dadosGraficoDemandas': this.obterDadosGrafico($metadados, 'DETALHADO')
       };
   }
 
   public obterDadosGrafico(metadados: MetadadosPlano, tipo: 'GERAL' | 'DETALHADO' | 'AVALIACAO') {
       let result: any = null;
-      let dadosGeral: ChartDataSets[] = [
+      let dadosPlano: ChartDataSets[] = [
         {
           label: 'Horas Totais',
           data: [metadados.horasUteisTotais],
@@ -173,7 +172,7 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
           backgroundColor: '#FF7043'
         }
       ];
-      let dadosDetalhado: ChartDataSets[] = [
+      let dadosDemandas: ChartDataSets[] = [
         {
           label: 'Demandas Não-iniciadas',
           data: [metadados.horasDemandasNaoIniciadas],
@@ -221,11 +220,11 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
       ];
       switch (tipo) {
         case 'GERAL':
-          result = dadosGeral;
+          result = dadosPlano;
           break;
 
         case 'DETALHADO':
-          result = dadosDetalhado;
+          result = dadosDemandas;
           break;
         case 'AVALIACAO':
           result = dadosAvaliacao;
@@ -233,4 +232,5 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
       }
     return result;
   }
+
 }

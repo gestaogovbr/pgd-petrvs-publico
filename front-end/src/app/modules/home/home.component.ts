@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { UsuarioDaoService, UsuarioDashboard } from 'src/app/dao/usuario-dao.service';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
+import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 import { LexicalService } from 'src/app/services/lexical.service';
 import { NavigateService } from 'src/app/services/navigate.service';
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
@@ -11,6 +12,7 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { UnidadeDaoService, UnidadeDashboard } from 'src/app/dao/unidade-dao.service';
 import { Chart } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
@@ -21,7 +23,7 @@ export class HomeComponent implements OnInit {
 
   public activeTab: string = "PGD";
   public demandaFilter: any[];
-  public unidades: string[] = ['1230c458-9018-4d12-8929-0ea92f2506dd', '1230c458-9018-4d12-8929-0ea92f2506dd'];
+  public unidades: string[] | undefined;
   public programa_id: string = '8eaaffa0-ba88-445e-85f1-0700ae2518bd';
 
   public dashUsuario: UsuarioDashboard = {
@@ -57,6 +59,8 @@ export class HomeComponent implements OnInit {
         }
       }],
       yAxes: [{
+        labels: ['Minhas Demandas'],
+        display: false,
         stacked: true,
         ticks: {
           beginAtZero: true
@@ -99,12 +103,10 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     Chart.plugins.register(ChartDataLabels);
-    Chart.defaults.bar = {
-      categoryPercentage: 0.5
-    }
+    this.unidades = this.auth.unidades?.map(x => x.id);
     Promise.all([
       this.usuarioDao.dashboard(this.auth.usuario!.id),
-      this.unidadeDao.dashboards(this.unidades, this.programa_id)
+      this.unidadeDao.dashboards(this.unidades!, this.programa_id)
     ]).then(results => {
       const data = results[0];
       const dashboards = results[1];
