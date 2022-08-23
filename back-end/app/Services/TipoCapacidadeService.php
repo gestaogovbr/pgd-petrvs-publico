@@ -12,6 +12,8 @@ class TipoCapacidadeService extends ServiceBase {
         ["e089d591-ba9a-11ec-a5bb-0050569c64a0", "MENU_CONFIG_ACESSO", "Permite acessar o menu configurações"],
         ["e07877ef-ba9a-11ec-a5bb-0050569c64a0", "MENU_GESTAO_ACESSO", "Permite acessar o menu gestão"],
         ["e0814f12-ba9a-11ec-a5bb-0050569c64a0", "MENU_REL_ACESSO", "Permite acessar o menu relatórios"],
+        /* Dashboard */
+        ["dd6f49cb-ba9a-11ec-a5bb-0050569c64a0", "DASH_PRG", "Permite mostrar informações do Programa de Gestão"],
         /* Capacidades do módulo AFASTAMENTO*/
         ["1364489d-bc1b-11ec-a5bb-0050569c64a0", "MOD_AFT", "Permite acessar item menu afastamentos"],
         ["a937cc49-e112-11ec-a5bb-0050569c64a0", "MOD_AFT_CONS", "Permite consultar afastamento"],
@@ -163,7 +165,8 @@ class TipoCapacidadeService extends ServiceBase {
         ["4239b275-f185-11ec-a5bb-0050569c64a0", "MOD_PTR_USERS_CONS", "Permite consultar planos de trabalho de usuários fora da lotação"],
         ["4248eae1-f185-11ec-a5bb-0050569c64a0", "MOD_PTR_USERS_EXCL", "Permite excluir planos de trabalho de usuários fora da lotação"],
         ["1aadc1b2-f185-11ec-a5bb-0050569c64a0", "MOD_PTR_USERS_INCL", "Permite incluir planos de trabalho de usuários fora da lotação"],
-        ["1aadc1b2-f185-11ec-a5bb-0050569c64a0", "MOD_PTR_INCL_SEM_LOT", "Permite incluir planos de trabalho para usuários não lotado na unidade do plano"],
+        ["1aadc1b3-f185-11ec-a5bb-0050569c64a0", "MOD_PTR_INCL_SEM_LOT", "Permite incluir planos de trabalho para usuários não lotado na unidade do plano"],
+        ["1aadc1b4-f199-11ec-a5bb-0050569c64a0", "MOD_PTR_INTSC_DATA", "Permite incluir planos de trabalho para usuários que já possuem planos no período de mesma modalidade"],
         ["61347aa4-d628-11ec-a5bb-0050569c64a0", "MOD_TIPO_ATV", "Permite acessar item de menu cadastro->tipo de atividade"],
         ["a7a8bd66-e112-11ec-a5bb-0050569c64a0", "MOD_TIPO_ATV_CONS", "Permite consultar atividade"],
         ["a797073d-e112-11ec-a5bb-0050569c64a0", "MOD_TIPO_ATV_EDT", "Permite editar atividades"],

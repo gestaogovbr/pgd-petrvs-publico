@@ -141,7 +141,7 @@ class UnidadeService extends ServiceBase
 
     /** Este método retorna os dados acerca dos Planos de Trabalho de uma Unidade, associados a um determinado Programa, que se encontrem dentro da vigência. */
     public function metadadosUnidade($unidade_id, $programa_id) {
-        $unidade = Unidade::where('id', $unidade_id)->with(['planos', 'planos.demandas'])->first();
+        $unidade = Unidade::where('id', $unidade_id)->with(['planos', 'planos.demandas', 'planos.tipoModalidade'])->first();
         $metadadosPlanos = [];
         foreach ($unidade['planos']->toArray() as $plano) {
             if (($plano['programa_id'] == $programa_id) && ($this->calendarioService->between(new DateTime(), $plano['data_inicio_vigencia'], $plano['data_fim_vigencia']))) array_push($metadadosPlanos, $this->planoService->metadadosPlano($plano['id']));
@@ -153,6 +153,7 @@ class UnidadeService extends ServiceBase
             "qdePlanosPrograma" => count($metadadosPlanos),
             "nrServidoresPrograma" => count(array_unique(array_map(fn($x) => $x["usuario_id"], $metadadosPlanos))),
             "idsServidoresPrograma" => array_unique(array_map(fn($x) => $x["usuario_id"], $metadadosPlanos)),
+            "modalidadesPlanos" => array_map(fn($x) => $x["modalidade"], $metadadosPlanos),
             "horasUteisTotais" => array_reduce(array_map(fn($m) => $m['horasUteisTotais'], $metadadosPlanos), function($acum, $item) {return $acum + $item;},0),
             "horasUteisDecorridas" => array_reduce(array_map(fn($m) => $m['horasUteisDecorridas'], $metadadosPlanos), function($acum, $item) {return $acum + $item;},0),
             "qdeDemandasAvaliadas" => array_reduce(array_map(fn($m) => count($m['demandasAvaliadas']), $metadadosPlanos), function($acum, $item) {return $acum + $item;},0),
@@ -188,6 +189,31 @@ class UnidadeService extends ServiceBase
     public function unidadesFilhas($unidade_id) {
         $path = DB::table('unidades')->select('path')->where('id',$unidade_id)->first()->path . '/' . $unidade_id;
         return array_map(fn($x) => $x->id,DB::table('unidades')->select('id')->where('path', 'like', $path)->orWhere('path', 'like', $path . '/%')->get()->toArray());
+    }
+
+    public function dashboards($idsUnidades, $programa_id, $unidadesSubordinadas) {
+        if (count($idsUnidades) > 0) {
+            $unidadesFilhas = [];
+            if ($unidadesSubordinadas) foreach ($idsUnidades as $unidade_id) {
+                $unidadesFilhas = array_merge($unidadesFilhas, $this->unidadesFilhas($unidade_id));
+            }
+
+            $idsUnidades = array_unique(array_merge($idsUnidades, $unidadesFilhas));
+            $result = [];
+            foreach ($idsUnidades as $unidade_id) {
+                $metadadosUnidade = $this->metadadosUnidade($unidade_id, $programa_id);
+                if ($metadadosUnidade['qdePlanosPrograma'] > 0) {
+                    array_push($result, [
+                        'sigla' => $metadadosUnidade['sigla'],
+                        'qdePTAtivos' => $metadadosUnidade['qdePlanosPrograma'],
+                        'horasUteisTotaisPTAtivos' => $metadadosUnidade['horasUteisTotais'],
+                        'qdeServidores' => $metadadosUnidade['nrServidoresPrograma'],
+                        'modalidadesPlanos' => $metadadosUnidade['modalidadesPlanos']
+                    ]);
+                }
+            }
+        } else return LogError::newError('Nenhuma Unidade foi fornecida!');
+        return $result;
     }
 
 }

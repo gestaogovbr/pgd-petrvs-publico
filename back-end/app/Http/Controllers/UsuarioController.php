@@ -31,10 +31,11 @@ class UsuarioController extends ControllerBase
             $data = $request->validate([
                 'usuario_id' => ['required']
             ]);
-            return response()->json([
+            $result = response()->json([
                 'success' => true,
                 'data' => $this->service->dashboard($data['usuario_id'])
             ]);
+            return $result;
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()]);
         }

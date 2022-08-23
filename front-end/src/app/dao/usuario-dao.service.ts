@@ -1,20 +1,21 @@
 import { Injectable, Injector } from '@angular/core';
+import { ChartDataSets, ChartOptions } from 'chart.js';
 import { Plano } from '../models/plano.model';
 import { Usuario } from '../models/usuario.model';
 import { DaoBaseService } from './dao-base.service';
 
 export type UsuarioDashboard = {
-  total_demanda: number,
-  total_atrasadas: number,
-  total_iniciadas: number,
-  total_concluidas: number,
+  total_demandas: number,                           // total geral de demandas do usuário
+  media_avaliacoes: number,
   produtividade: number,
-  demandas_totais_concluidas: number,
-  demandas_totais_nao_concluidas: number,
-  demandas_totais_atrasadas: number,
-  tarefas_totais_nao_concluidas: number
+  //demandas_totais_iniciadas: number,                // é o mesmo que demandas não concluídas
+  demandas_totais_nao_iniciadas: number,            // total de demandas ainda nem iniciadas
+  demandas_totais_concluidas: number,               // total de demandas concluidas, mas ainda não avaliadas
+  demandas_totais_nao_concluidas: number,           // total de demandas iniciadas, mas ainda não concluidas
+  demandas_totais_atrasadas: number,                // total de demandas iniciadas, não concluídas e com prazo de entrega ultrapassado
+  demandas_totais_avaliadas: number,                // total de demandas com avaliação realizada
+  tarefas_totais_nao_concluidas: number,            // total de tarefas sem data de entrega informada
 };
-
 
 @Injectable({
   providedIn: 'root'
@@ -29,15 +30,14 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
   public dashboard(usuario_id: string): Promise<UsuarioDashboard | null> {
     return new Promise<UsuarioDashboard | null>((resolve, reject) => {
       if(usuario_id?.length){
-        this.server.post('api/' + this.collection + '/dashboard', {usuario_id: usuario_id})
-        .subscribe(response => {
-          resolve(response.data as UsuarioDashboard);
+        this.server.post('api/' + this.collection + '/dashboard', {usuario_id}).subscribe(response => {
+          resolve(response.data);
         }, error => {
-          //console.log("ERROR{dashboard}", error);
+          console.log("Erro ao buscar o dashboard do Usuário!", error);
           resolve(null);
         });
       } else {
-        //console.log("ID em branco");
+        console.log("ID de usuário em branco!");
         resolve(null);
       }
     });

@@ -71,7 +71,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
         this._items = value;
         this.cdRef.detectChanges();
         this.selectPicker?.selectpicker('refresh');
-        this.selectedValue = undefined; 
+        this.selectedValue = undefined;
         this.setValue(current);
         this.selectElm?.nativeElement.dispatchEvent(new Event('change'));
       } else {

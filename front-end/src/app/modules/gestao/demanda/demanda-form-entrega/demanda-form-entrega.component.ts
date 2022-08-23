@@ -42,7 +42,7 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
   public sei?: SeiKeys;
   public allPages: ListenerAllPagesService;
   public form: FormGroup;
-  public formComentarios: FormGroup; 
+  public formComentarios: FormGroup;
   public modalWidth: number = 800;
   public comentarioTipos: LookupItem[];
 
@@ -125,9 +125,9 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
               tipo_processo_id = tipo_processo[0].id;
             }
           }
-          this.form.controls.id_processo.setValue(dados.processo?.id_processo); 
-          this.form.controls.numero_processo.setValue(dados.processo?.numero_processo); 
-          this.form.controls.id_documento.setValue(0); 
+          this.form.controls.id_processo.setValue(dados.processo?.id_processo);
+          this.form.controls.numero_processo.setValue(dados.processo?.numero_processo);
+          this.form.controls.id_documento.setValue(0);
           this.form.controls.numero_documento.setValue("");
           this.form.controls.titulo_documento.setValue("");
           this.form.controls.tipo_documento_id.setValue(null);
@@ -166,9 +166,9 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
               tipo_documento_id = tipo_documento[0].id;
             }
           }
-          this.form.controls.id_processo.setValue(dados.processo?.id_processo); 
-          this.form.controls.numero_processo.setValue(dados.processo?.numero_processo); 
-          this.form.controls.id_documento.setValue(dados.documento?.id_documento); 
+          this.form.controls.id_processo.setValue(dados.processo?.id_processo);
+          this.form.controls.numero_processo.setValue(dados.processo?.numero_processo);
+          this.form.controls.id_documento.setValue(dados.documento?.id_documento);
           this.form.controls.numero_documento.setValue(dados.documento?.numero_documento);
           this.form.controls.titulo_documento.setValue(dados.documento?.titulo_documento);
           this.form.controls.tipo_documento_id.setValue(tipo_documento_id);
@@ -206,7 +206,7 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
     if(this.sei?.numero_documento) {
       this.onNumeroDocumentoClick(new Event('click'));
     } else if(this.sei?.numero_processo) {
-      this.onNumeroProcessoClick(new Event('click'));      
+      this.onNumeroProcessoClick(new Event('click'));
     }
   }
 
@@ -222,7 +222,7 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
     if(numeroDocumentoEntregue?.length) {
       this.docEntregue!.loading = true;
       try {
-        let dados = await this.allPages.getDadosDocumento(numeroDocumentoEntregue); 
+        let dados = await this.allPages.getDadosDocumento(numeroDocumentoEntregue);
         if(dados) {
           let tipo_documento_id = null;
           let tipo_processo_id = null;
@@ -234,9 +234,9 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
             const tipo_processo = await this.tipoProcessoDao.query({where: [["nome", "=", dados.processo?.tipo_processo]]}).asPromise();
             if(tipo_processo[0]) tipo_processo_id = tipo_processo[0].id;
           }
-          this.form.controls.id_processo.setValue(dados?.processo?.id_processo); 
+          this.form.controls.id_processo.setValue(dados?.processo?.id_processo);
           this.form.controls.numero_processo.setValue(dados?.processo?.numero_processo);
-          this.form.controls.id_documento.setValue(dados?.documento?.id_documento); 
+          this.form.controls.id_documento.setValue(dados?.documento?.id_documento);
           this.form.controls.tipo_processo_id.setValue(tipo_processo_id);
           this.form.controls.tipo_documento_id.setValue(tipo_documento_id);
           this.form.controls.numero_documento.setValue(dados?.documento?.numero_documento);
@@ -262,8 +262,8 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
 
   public comentarioDynamicOptions(row: any): ToolbarButton[] {
     return [{
-      label: "Comentar", 
-      icon: "bi bi-chat-left-quote", 
+      label: "Comentar",
+      icon: "bi bi-chat-left-quote",
       onClick: (comentario: Comentario) => {
         this.newComentario(comentario);
       }
@@ -289,7 +289,7 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
     comentario.usuario_id = this.auth.usuario!.id;
     comentario.comentario_id = pai?.id || null;
     comentario.usuario = this.auth.usuario;
-    comentario._status = "ADD"; 
+    comentario._status = "ADD";
     comentarios.push(comentario);
     this.form.controls.comentarios.setValue(this.orderComentarios(comentarios));
     this.comentarios!.adding = true;
@@ -309,7 +309,7 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
 
   public async saveComentario(form: FormGroup, item: any) {
     const entity = form.value;
-    Object.assign(this.comentarios?.editing, entity);
+    Object.assign(this.comentarios?.editing || {}, entity);
     return undefined;
   }
 

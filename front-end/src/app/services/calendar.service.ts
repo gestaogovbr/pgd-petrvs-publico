@@ -150,6 +150,8 @@ export class CalendarService {
     return this.util.round(this.calculaDataTempo(data_entrega, prazo_entrega, cargaHoraria, unidade, "ENTREGA").tempoUtil, 2);
   }
 
+
+  // ver com o Genisson: const, tipagem, timestamp
   /*
   Função responsável por todos os cálculos de períodos no sistema.
   Obs.: As variáveis que armazenam tempo/data são iniciadas com as respectivas letras:

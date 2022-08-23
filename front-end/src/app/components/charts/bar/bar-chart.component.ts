@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
-import { Label } from 'ng2-charts';
+import { Component, Input, ViewChild } from '@angular/core';
+import { ChartOptions, ChartType, ChartDataSets, ChartConfiguration, ChartData } from 'chart.js';
+import { BaseChartDirective, Label } from 'ng2-charts';
 
 @Component({
   selector: 'app-bar-chart',
@@ -8,16 +8,20 @@ import { Label } from 'ng2-charts';
   styleUrls: [ './bar-chart.component.scss' ],
 })
 export class BarChartComponent {
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
   @Input() barChartOptions: ChartOptions = {};
   @Input() barChartData: ChartDataSets[] = [];
   @Input() barChartType: ChartType = 'bar';
   @Input() barChartPlugins = [];
+  @Input() barChartLegend = true;
+  @Input() barChartLabels = [];
 
-  public barChartLegend = true;
-  public barChartLabels = [];
+  constructor() {}
 
-  constructor() { }
+  ngOnInit() {}
 
-  ngOnInit() {
+  ngDoCheck() {
+    //this.chart!.chart!.canvas!.parentNode!.parentElement!.style.height = '300px';
   }
+
 }

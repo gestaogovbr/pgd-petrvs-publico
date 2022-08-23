@@ -143,12 +143,6 @@ Route::middleware(['auth:sanctum'])->prefix('Lotacao')->group(function () { defa
 Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () { defaultRoutes(UnidadeController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Capacidade')->group(function () { defaultRoutes(CapacidadeController::class); });
 
-/* Modulos: Relatórios */
-/* Route::middleware(['auth:sanctum'])->prefix('Relatorio')->group(function () {
-    Route::post('metadados', [PlanoController::class, 'metadados']);
-    Route::post('metadados2', [PlanoController::class, 'metadados2']);
-    Route::post('planosPorPeriodo', [UsuarioController::class, 'planosPorPeriodo']);
-}); */
 Route::middleware('auth:sanctum')->post('/Unidade/metadadosArea', [UnidadeController::class, 'metadadosArea']);
 Route::middleware('auth:sanctum')->post('/Plano/metadadosPlano', [PlanoController::class, 'metadadosPlano']);
-
+Route::middleware('auth:sanctum')->post('/Unidade/dashboards', [UnidadeController::class, 'dashboards']);

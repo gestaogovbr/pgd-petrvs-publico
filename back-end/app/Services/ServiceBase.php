@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use App\Services\UtilService;
 use App\Exceptions\LogError;
 use Carbon\Carbon;
 use ReflectionObject;
@@ -590,7 +591,7 @@ class ServiceBase
     public function store($dataOrEntity, $unidade, $transaction = true)
     {
         $model = $this->getModel();
-        $entity = empty($dataOrEntity["id"]) ? null : $model::find($dataOrEntity["id"]);
+        $entity = UtilService::emptyEntry($dataOrEntity, "id") ? null : $model::find($dataOrEntity["id"]);
         $entity = isset($entity) ? $entity : new $model();
         try {
             if($transaction) DB::beginTransaction();
@@ -598,6 +599,7 @@ class ServiceBase
             $dataOrEntity = method_exists($entity, "proxyFill") ? $entity->proxyFill($dataOrEntity, $unidade) : $entity->fill($dataOrEntity);
             if(method_exists($this, "validateStore")) $this->validateStore($dataOrEntity, $unidade);
             $entity->save();
+            if(method_exists($this, "extraStore")) $this->extraStore($entity, $unidade);
             if($transaction) DB::commit();
         } catch (Throwable $e) {
             if($transaction) DB::rollback();
