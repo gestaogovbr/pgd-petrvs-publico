@@ -4,10 +4,11 @@ import { AreaRelatorio } from '../modules/base/page-report-base';
 import { DaoBaseService } from './dao-base.service';
 
 export type UnidadeDashboard = {
-  sigla: string,                                     // nome da Unidade
+  sigla: string,                                    // nome da Unidade
   qdePTAtivos: number,                              // quantidade de Planos de Trabalho ativos (vigentes)
   horasUteisTotaisPTAtivos: number,                 // total de horas úteis totais dos Planos de Trabalho ativos
-  qdeServidores: number                             // quantidade de servidores vinculados aos Planos de Trabalho da Unidade
+  qdeServidores: number,                            // quantidade de servidores vinculados aos Planos de Trabalho da Unidade
+  modalidadesPlanos: string[]
 };
 
 @Injectable({
@@ -28,10 +29,10 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
     });
   }
 
-  public dashboards(idsUnidades: string[], programa_id: String): Promise<UnidadeDashboard[] | null> {
+  public dashboards(idsUnidades: string[], programa_id: String, unidadesSubordinadas: boolean): Promise<UnidadeDashboard[] | null> {
     return new Promise<UnidadeDashboard[] | null>((resolve, reject) => {
       if(idsUnidades?.length && programa_id.length){
-        this.server.post('api/' + this.collection + '/dashboards', {idsUnidades, programa_id}).subscribe(response => {
+        this.server.post('api/' + this.collection + '/dashboards', {idsUnidades, programa_id, unidadesSubordinadas}).subscribe(response => {
           resolve(response?.dashboards as UnidadeDashboard[]);
         }, error => reject(error));
       } else {

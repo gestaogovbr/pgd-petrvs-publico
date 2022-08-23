@@ -8,6 +8,8 @@ import { PageBase } from './page-base';
 import { ChartData, ChartDataSets } from 'chart.js';
 import { Plano } from 'src/app/models/plano.model';
 import { Unidade } from 'src/app/models/unidade.model';
+import { Chart } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 export type Metadado = {
   descricaoPlano: string,
@@ -112,7 +114,7 @@ export type PlanoExtendido2 = {
   percentualHorasTotaisAlocadas: number,// razão entre as horas totais alocadas e as horas úteis totais do Plano
   mediaAvaliacoes: number,              // média aritmética das notas de todas as demandas avaliadas
   dadosGraficoPlano: any,
-  dadosGraficoHoras: any
+  dadosGraficoDemandas: any
 }
 
 @Injectable()
@@ -134,6 +136,7 @@ export abstract class PageReportBase<M extends Base, D extends DaoBaseService<M>
     super(injector);
     this.dao = injector.get<D>(dType);
     this.calendar = injector.get<CalendarService>(CalendarService);
+    Chart.plugins.register(ChartDataLabels);
   }
 
   ngAfterViewInit() {

@@ -16,7 +16,7 @@ import { GridComponent } from '../grid.component';
       useFactory: (self: FilterComponent) => {
         return self.formDirective!;
       },
-      deps: [FilterComponent] 
+      deps: [FilterComponent]
     }
   ]
 })
@@ -28,6 +28,7 @@ export class FilterComponent implements OnInit {
   @Input() clear?: (filter: FormGroup) => void;
   @Input() where?: (filter: FormGroup) => any[];
   @Input() collapseChange?: (filter: FormGroup) => void;
+  @Input() noButtons?: string;
   @Input() collapsed: boolean = true;
   @Input() grid?: GridComponent;
   @Input() query?: QueryContext<Base>;
@@ -41,6 +42,10 @@ export class FilterComponent implements OnInit {
 
   public get isHidden(): boolean {
     return this.hidden != undefined;
+  }
+
+  public get isNoButtons(): boolean {
+    return this.noButtons !== undefined;
   }
 
   public toggle() {

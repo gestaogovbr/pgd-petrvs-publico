@@ -54,7 +54,7 @@ class PlanoService extends ServiceBase
             if(UtilService::intersect($plano->data_inicio_vigencia, $plano->data_fim_vigencia, $data["data_inicio_vigencia"], $data["data_fim_vigencia"]) &&
                 UtilService::valueOrNull($data, "id") != $plano->id && !Auth::user()->hasPermissionTo('MOD_PTR_INTSC_DATA')) {
                 throw new ServerException("ValidatePlano", "O plano de trabalho #" . $plano->numero . " (" . UtilService::getDateTimeFormatted($plano->data_inicio_vigencia) . " à " . UtilService::getDateTimeFormatted($plano->data_fim_vigencia) . ") possui período conflitante para a mesma modalidade (MOD_PTR_INTSC_DATA)");
-            }         
+            }
         }
     }
 
@@ -141,7 +141,7 @@ class PlanoService extends ServiceBase
      *  introduzida nos Relatórios de Força de Trabalho.
     */
     public function metadadosPlano($plano_id) {
-        $plano = Plano::where('id', $plano_id)->with(['demandas', 'demandas.avaliacao'])->first()->toArray();
+        $plano = Plano::where('id', $plano_id)->with(['demandas', 'demandas.avaliacao', 'tipoModalidade'])->first()->toArray();
         $result = [
             "usuario_id" => $plano['usuario_id'],
             "concluido" => true,
@@ -155,7 +155,9 @@ class PlanoService extends ServiceBase
             "horasDemandasNaoIniciadas" => 0,
             "horasDemandasEmAndamento" => 0,
             "horasDemandasConcluidas" => 0,
-            "horasDemandasAvaliadas" => 0
+            "horasDemandasAvaliadas" => 0,
+            "percentualHorasNaoIniciadas" => 0,
+            "modalidade" => $plano['tipo_modalidade']['nome']
         ];
 
         /** TRECHO A SER EXCLUÍDO, APÓS A CONCLUSÃO DA FUNÇÃO 'CALCULA DATA TEMPO' */

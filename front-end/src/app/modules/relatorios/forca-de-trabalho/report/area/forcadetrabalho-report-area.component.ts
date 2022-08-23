@@ -1,8 +1,8 @@
 import { Component, Injector, ViewChild } from '@angular/core';
-import { AreaRelatorio, MetadadosUnidade, PageReportBase } from 'src/app/modules/base/page-report-base';
+import { MetadadosUnidade, PageReportBase } from 'src/app/modules/base/page-report-base';
 import { Usuario } from 'src/app/models/usuario.model';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
-import { ChartData, ChartDataSets, ChartOptions, ChartType } from 'chart.js';
+import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { BaseChartDirective } from 'ng2-charts';
 
@@ -18,7 +18,6 @@ export class ForcaDeTrabalhoReportAreaComponent extends PageReportBase<Usuario, 
   public unidadeDao: UnidadeDaoService;
   public parametros?: any;
   public row?: any;
-  public areaRelatorio?: AreaRelatorio;
   public horaAtual: Date = new Date();
 
   public tipoGrafico: ChartType = 'bar';
@@ -49,9 +48,11 @@ export class ForcaDeTrabalhoReportAreaComponent extends PageReportBase<Usuario, 
       datalabels: {}
     }
   };
-  public opcoesGraficoBarrasGeral: ChartOptions = {
+  public opcoesGraficoBarrasHoras: ChartOptions = {
     scales: {
       xAxes: [{
+        labels: ['Total de Horas da Unidade'],
+        display: false,
         //stacked: true,
         ticks: {
           beginAtZero: true
@@ -65,18 +66,22 @@ export class ForcaDeTrabalhoReportAreaComponent extends PageReportBase<Usuario, 
       }]
     },
     plugins: {
-      legend: {
-        display: true,
-      },
-/*       datalabels: {
+      datalabels: {
+        display: false,
+        align: 'start',
         anchor: 'end',
-        align: 'end'
-      } */
+        color: 'black',
+        font: {
+          weight: 'bold'
+        },
+        clamp: true,
+        clip: false
+      }
     },
     //events: ['click'],
     responsive: true
   };
-  public opcoesGraficoBarrasDetalhado: ChartOptions = {
+  public opcoesGraficoBarrasDemandas: ChartOptions = {
     scales: {
       xAxes: [{
         stacked: true,
@@ -85,6 +90,8 @@ export class ForcaDeTrabalhoReportAreaComponent extends PageReportBase<Usuario, 
         }
       }],
       yAxes: [{
+        labels: ['Total de Demandas da Unidade'],
+        display: false,
         stacked: true,
         ticks: {
           beginAtZero: true
@@ -92,13 +99,17 @@ export class ForcaDeTrabalhoReportAreaComponent extends PageReportBase<Usuario, 
       }]
     },
     plugins: {
-      legend: {
-        display: true,
-      },
-/*       datalabels: {
+      datalabels: {
+        display: false,
+        align: 'start',
         anchor: 'end',
-        align: 'end'
-      } */
+        color: 'black',
+        font: {
+          weight: 'bold'
+        },
+        clamp: true,
+        clip: false
+      }
     },
     //events: ['click'],
     responsive: true
@@ -140,10 +151,6 @@ export class ForcaDeTrabalhoReportAreaComponent extends PageReportBase<Usuario, 
   public async report(filter: any) {
     this.parametros = Object.assign({}, filter);
     let result = await this.unidadeDao.metadadosArea(this.parametros.unidade_id, this.parametros.programa_id);
-
-    let prov1 = [result];
-    let prov2 = prov1[0];
-    let prov3 = prov2.descricaoArea;
 
     result['dadosArea']['percentualHorasNaoIniciadas'] = Math.round(result['dadosArea']['percentualHorasNaoIniciadas'] * 10000)/100;
     result['dadosArea']['percentualHorasEmAndamento'] = Math.round(result['dadosArea']['percentualHorasEmAndamento'] * 10000)/100;

@@ -56,11 +56,12 @@ class UnidadeController extends ControllerBase {
         try {
             $data = $request->validate([
                 'idsUnidades' => ['required'],
-                'programa_id' => ['required']
+                'programa_id' => ['required'],
+                'unidadesSubordinadas' => ['required']
             ]);
             $result = response()->json([
                 'success' => true,
-                'dashboards' => $this->service->dashboards($data["idsUnidades"], $data["programa_id"])
+                'dashboards' => $this->service->dashboards($data["idsUnidades"], $data["programa_id"], $data["unidadesSubordinadas"])
             ]);
             return $result;
         } catch (Exception $e) {

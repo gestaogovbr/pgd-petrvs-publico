@@ -29,7 +29,7 @@
   <!-- Gráficos do Plano usando ng2-charts -->
   <div class="my-4 text-center">
     <div class="border border-primary bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
-      <h5>Composição do Plano - Geral</h5>
+      <h5>Horas do Plano</h5>
         <app-bar-chart
            barChartType="bar"
           [barChartData]="x.dadosGraficoPlano"
@@ -37,11 +37,11 @@
         </app-bar-chart>
     </div>
     <div class="border border-primary bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
-      <h5>Composição do Plano - Detalhado</h5>
+      <h5>Horas das Demandas</h5>
         <app-bar-chart
           barChartType="horizontalBar"
-          [barChartData]="x.dadosGraficoHoras"
-          [barChartOptions]="opcoesGraficoHoras">
+          [barChartData]="x.dadosGraficoDemandas"
+          [barChartOptions]="opcoesGraficoDemandas">
         </app-bar-chart>
     </div>
   </div>
@@ -78,14 +78,14 @@
         <td class="text-center">B</td>
         <td>Horas úteis decorridas do Plano</td>
         <td class="text-center">{{ x.extras.horasUteisDecorridas == -1 ? '' : (x.extras.horasUteisDecorridas == -2 ? this.util.decimalToTimerFormated(x.extras.horasUteisTotais, true) : (x.extras.horasUteisDecorridas == 0 ? 0 : this.util.decimalToTimerFormated(x.extras.horasUteisDecorridas, true))) }}</td>
-        <td class="text-center">{{ x.extras.horasUteisDecorridas == -1 ? '0,0' : (x.extras.horasUteisDecorridas == -2 ? '100,0' : x.extras.percentualDecorridoPlano) }} %</td>
+        <td class="text-center">{{ x.extras.horasUteisDecorridas == -1 ? '0,0' : (x.extras.horasUteisDecorridas == -2 ? '100,0' : x.percentualDecorridoPlano) }} %</td>
         <td><span><small class="micro-text fw-ligh">{{ x.extras.horasUteisDecorridas == -1 ? 'A vigência do Plano ainda não iniciou.' : (x.extras.horasUteisDecorridas == -2 ? 'A vigência do Plano já encerrou.' : 'Horas úteis do Plano de Trabalho, do início de sua vigência até o instante atual, considerando-se a carga_horaria, os feriados e finais de semana.') }}</small></span></td>
       </tr>
       <tr>
         <td class="text-center">C</td>
         <td>Total de horas não-iniciadas</td>
         <td class="text-center">{{ x.extras.horasDemandasNaoIniciadas == 0 ? 0 : this.util.decimalToTimerFormated(x.extras.horasDemandasNaoIniciadas, true) }}</td>
-        <td class="text-center">{{ x.extras.percentualHorasNaoIniciadas }} %</td>
+        <td class="text-center">{{ x.percentualHorasNaoIniciadas }} %</td>
         <td>
           <span>
             <small class="micro-text fw-ligh">Total dos tempos pactuados de todas as demandas ainda não iniciadas.</small>
@@ -97,7 +97,7 @@
         <td class="text-center">D</td>
         <td>Total de horas iniciadas</td>
         <td class="text-center">{{ x.extras.horasDemandasEmAndamento == 0 ? 0 : this.util.decimalToTimerFormated(x.extras.horasDemandasEmAndamento, true) }}</td>
-        <td class="text-center">{{ x.extras.percentualHorasEmAndamento }} %</td>
+        <td class="text-center">{{ x.percentualHorasEmAndamento }} %</td>
         <td>
           <span>
             <small class="micro-text fw-ligh">Total dos tempos pactuados de todas as demandas já iniciadas, mas ainda não concluídas.</small>
@@ -109,7 +109,7 @@
         <td class="text-center">E</td>
         <td>Total de horas concluídas</td>
         <td class="text-center">{{ x.extras.horasDemandasConcluidas == 0 ? 0 : this.util.decimalToTimerFormated(x.extras.horasDemandasConcluidas, true) }}</td>
-        <td class="text-center">{{ x.extras.percentualHorasConcluidas }} %</td>
+        <td class="text-center">{{ x.percentualHorasConcluidas }} %</td>
         <td>
           <span>
             <small class="micro-text fw-ligh">Total dos tempos pactuados de todas as demandas já concluídas, mas ainda não avaliadas.</small>
@@ -121,7 +121,7 @@
         <td class="text-center">F</td>
         <td>Total de horas avaliadas</td>
         <td class="text-center">{{ x.extras.horasDemandasAvaliadas == 0 ? 0 : this.util.decimalToTimerFormated(x.extras.horasDemandasAvaliadas, true) }}</td>
-        <td class="text-center">{{ x.extras.percentualHorasAvaliadas }} %</td>
+        <td class="text-center">{{ x.percentualHorasAvaliadas }} %</td>
         <td>
           <span>
             <small class="micro-text fw-ligh">Total dos tempos pactuados de todas as demandas avaliadas.</small>
@@ -133,7 +133,7 @@
         <td class="text-center">G</td>
         <td>Horas totais alocadas do Plano</td>
         <td class="text-center">{{ x.extras.horasTotaisAlocadas == 0 ? 0 : (this.util.decimalToTimerFormated(x.extras.horasTotaisAlocadas, true)) }}</td>
-        <td class="text-center">{{ x.extras.percentualHorasTotaisAlocadas }} %</td>
+        <td class="text-center">{{ x.percentualHorasTotaisAlocadas }} %</td>
         <td>
           <span>
             <small class="micro-text fw-ligh">Total dos tempos pactuados de todas as demandas, independente de seus status: G = C + D + E + F.</small>
@@ -144,7 +144,7 @@
       <tr>
         <td class="text-center">H</td>
         <td>Nota média das avaliações</td>
-        <td class="text-center">{{ x.extras.demandasAvaliadas?.length > 0 ? x.extras.mediaAvaliacoes.toFixed(2) : '' }}</td>
+        <td class="text-center">{{ x.extras.demandasAvaliadas?.length > 0 ? x.mediaAvaliacoes.toFixed(2) : '' }}</td>
         <td class="text-center"></td>
         <td>
           <span *ngIf="x.extras.demandasAvaliadas?.length > 0"><small class="micro-text fw-ligh">Média das notas de todas as demandas avaliadas.</small></span>

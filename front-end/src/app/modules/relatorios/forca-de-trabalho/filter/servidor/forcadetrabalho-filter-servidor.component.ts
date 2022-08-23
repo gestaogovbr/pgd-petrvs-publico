@@ -18,7 +18,7 @@ import { InputSearchComponent } from 'src/app/components/input/input-search/inpu
 export class ForcaDeTrabalhoFilterServidorComponent extends PageReportFilterBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('usuario') usuario?: InputSearchComponent;
-  @ViewChild('unidade') unidade?: InputSelectComponent;
+  //@ViewChild('unidade') unidade?: InputSelectComponent;
 
   public form: FormGroup;
   public usuarioDao: UsuarioDaoService;
