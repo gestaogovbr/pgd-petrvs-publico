@@ -12,6 +12,8 @@ class TipoCapacidadeService extends ServiceBase {
         ["e089d591-ba9a-11ec-a5bb-0050569c64a0", "MENU_CONFIG_ACESSO", "Permite acessar o menu configurações"],
         ["e07877ef-ba9a-11ec-a5bb-0050569c64a0", "MENU_GESTAO_ACESSO", "Permite acessar o menu gestão"],
         ["e0814f12-ba9a-11ec-a5bb-0050569c64a0", "MENU_REL_ACESSO", "Permite acessar o menu relatórios"],
+        /* Dashboard */
+        ["dd6f49cb-ba9a-11ec-a5bb-0050569c64a0", "DASH_PRG", "Permite mostrar informações do Programa de Gestão"],
         /* Capacidades do módulo AFASTAMENTO*/
         ["1364489d-bc1b-11ec-a5bb-0050569c64a0", "MOD_AFT", "Permite acessar item menu afastamentos"],
         ["a937cc49-e112-11ec-a5bb-0050569c64a0", "MOD_AFT_CONS", "Permite consultar afastamento"],

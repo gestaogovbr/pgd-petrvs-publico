@@ -141,7 +141,7 @@ class PlanoService extends ServiceBase
      *  introduzida nos Relatórios de Força de Trabalho.
     */
     public function metadadosPlano($plano_id) {
-        $plano = Plano::where('id', $plano_id)->with(['demandas', 'demandas.avaliacao'])->first()->toArray();
+        $plano = Plano::where('id', $plano_id)->with(['demandas', 'demandas.avaliacao', 'tipoModalidade'])->first()->toArray();
         $result = [
             "usuario_id" => $plano['usuario_id'],
             "concluido" => true,
@@ -156,7 +156,8 @@ class PlanoService extends ServiceBase
             "horasDemandasEmAndamento" => 0,
             "horasDemandasConcluidas" => 0,
             "horasDemandasAvaliadas" => 0,
-            "percentualHorasNaoIniciadas" => 0
+            "percentualHorasNaoIniciadas" => 0,
+            "modalidade" => $plano['tipo_modalidade']['nome']
         ];
 
         /** TRECHO A SER EXCLUÍDO, APÓS A CONCLUSÃO DA FUNÇÃO 'CALCULA DATA TEMPO' */
