@@ -88,7 +88,7 @@ Task.prototype.clone = function () {
 };
 
 Task.prototype.getAssigsProfile = function () {
-  var ret = "";
+  var ret = "Alguma coisa";
   for (var i = 0; i < this.assigs.length; i++) {
     var ass = this.assigs[i];
     var res = this.master.getResource(ass.resourceId);

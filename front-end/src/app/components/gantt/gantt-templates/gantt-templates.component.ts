@@ -91,7 +91,7 @@ export class GanttTemplatesComponent implements OnInit {
             <td class="gdfCell"><input type="text" name="duration" autocomplete="off" value="(#=obj.duration#)"></td>
             <td class="gdfCell"><input type="text" name="progress" class="validated" entrytype="PERCENTILE" autocomplete="off" value="(#=obj.progress?obj.progress:''#)" (#=obj.progressByWorklog?"readOnly":""#)></td>
             <td class="gdfCell requireCanSeeDep"><input type="text" name="depends" autocomplete="off" value="(#=obj.depends#)" (#=obj.hasExternalDep?"readonly":""#)></td>
-            <td class="gdfCell taskAssigs">(#=obj.getAssigsProfile()#)</td>
+            <td class="gdfCell taskAssigs">Teste: (#=obj.getAssigsProfile()#)</td>
         </tr>`,
     "TASKEMPTYROW":
         `<tr class="taskEditRow emptyRow">
