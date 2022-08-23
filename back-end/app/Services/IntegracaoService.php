@@ -14,22 +14,28 @@ use Exception;
 
 class IntegracaoService
 {
-    public $autoIncluir = false;
+    //public $autoIncluir = false;
     public $unidadesInseridas = [];
     public $unidadesSelecionadas = [];
     public $token = "";
-    public $codigoUnidadeRaiz = "";
     public $unidadeRaiz = null;
-    public $useLocalFiles = false;
-    public $storeLocalFiles = false;
-    public $localUnidades = "C:\DevEnv\Projetos\Petrvs-App\unidades.xml";
-    public $localServidores = "C:\DevEnv\Projetos\Petrvs-App\servidores.xml";
+    public $codigoUnidadeRaiz = "";     // eventual alteração deve ser feita no arquivo .env
+    public $validaCertificado = "";     // eventual alteração deve ser feita no arquivo .env
+    public $useLocalFiles = "";         // eventual alteração deve ser feita no arquivo .env
+    public $storeLocalFiles = "";       // eventual alteração deve ser feita no arquivo .env
+    public $localUnidades = "";         // eventual alteração deve ser feita no arquivo .env
+    public $localServidores = "";       // eventual alteração deve ser feita no arquivo .env
 
     function __construct($config = null) {
-        $integracao_config = $config ?: config('integracao');
-        $this->autoIncluir = $integracao_config['auto_incluir'];
-        $this->codigoUnidadeRaiz = $integracao_config['codigoUnidadeRaiz'];
         ini_set('max_execution_time', 1200); /* 20 minutos */
+        $integracao_config = $config ?: config('integracao');
+        //$this->autoIncluir = $integracao_config['auto_incluir'];
+        $this->codigoUnidadeRaiz = $integracao_config['codigoUnidadeRaiz'];
+        $this->validaCertificado = $integracao_config['validaCertificado'];
+        $this->useLocalFiles = $integracao_config['useLocalFiles'];
+        $this->storeLocalFiles = $integracao_config['storeLocalFiles'];
+        $this->localUnidades = $integracao_config['localUnidades'];
+        $this->localServidores = $integracao_config['localServidores'];
     }
 
     public function fillUsuarioWithSiape(&$usuario, &$lotacao) {
@@ -240,9 +246,15 @@ class IntegracaoService
                 if($this->useLocalFiles) {//Se for para usar os arquivos locais, a rotina lê os dados do arquivo salvo localmente
                     $xmlStream = file_get_contents($this->localUnidades);
                 } else {        //caso contrário, a rotina vai buscar no servidor do SIGEPE
-                    $response = Http::withHeaders([
-                        'Authorization' => 'Bearer ' . $token
-                    ])->get($this->integracao_config["baseUrlunidades"]);
+                    if ($this->validaCertificado) {
+                        $response = Http::withHeaders([
+                            'Authorization' => 'Bearer ' . $token
+                        ])->get($this->integracao_config["baseUrlunidades"]);
+                    } else {
+                        $response = Http::withoutVerifying()->withHeaders([
+                            'Authorization' => 'Bearer ' . $token
+                        ])->get($this->integracao_config["baseUrlunidades"]);
+                    }
                     $xmlStream = $response->body();
                     if($this->storeLocalFiles) {        // aqui decide se salva ou não em arquivo as informações trazidas do servidor do SIGEPE
                         if(file_exists($this->localUnidades)) unlink($this->localUnidades);
@@ -343,9 +355,15 @@ class IntegracaoService
                 if($this->useLocalFiles) {
                     $xmlStream = file_get_contents($this->localServidores);
                 } else {
-                    $response = Http::withHeaders([
-                        'Authorization' => 'Bearer ' . $token
-                    ])->get($this->integracao_config["baseUrlpessoas"]);
+                    if ($this->validaCertificado) {
+                        $response = Http::withHeaders([
+                            'Authorization' => 'Bearer ' . $token
+                        ])->get($this->integracao_config["baseUrlpessoas"]);
+                    } else {
+                        $response = Http::withoutVerifying()->withHeaders([
+                            'Authorization' => 'Bearer ' . $token
+                        ])->get($this->integracao_config["baseUrlpessoas"]);
+                    }
                     $xmlStream = $response->body();
                     if($this->storeLocalFiles) {
                         if(file_exists($this->localServidores)) unlink($this->localServidores);
@@ -431,13 +449,11 @@ class IntegracaoService
                         "FROM usuarios u LEFT JOIN lotacoes l ON (l.usuario_id = u.id) LEFT JOIN unidades d ON (l.unidade_id = d.id) ".
                         "LEFT JOIN integracao_servidores s ON (u.cpf = s.cpf) ".
                         "WHERE d.codigo != s.codigo_servo_exercicio");//PODEM VIR TUPLAS ONDE O SERVIDOR AINDA NÃO TEM LOTAÇÃO MAS NÃO SERÃO AFETADAS PELO BLOCO FOREACH ABAIXO
-                    $sql2_update = "UPDATE lotacoes SET data_fim = null, principal = 0 WHERE id = :id_lotacao";
-                    // Todas são setadas como PRINCIPAL = 0 e DATA_FIM = hoje (se tiver nula)
+                    $sql2_update = "UPDATE lotacoes SET principal = 0 WHERE id = :id_lotacao";
+                    // Todas são setadas como PRINCIPAL = 0
                     if (!empty($lotacoes_nao_atuais)) {
                         foreach($lotacoes_nao_atuais as $lotacao) {
                             DB::update($sql2_update, [
-                                //data_fim recebe valor null de modo a manter as lotações anterioriores visíveis, mesmo não sendo a principal.
-                                //'data_fim'      => empty($lotacao->data_fim) ? Now() : $lotacao->data_fim,
                                 'id_lotacao'    => $lotacao->id_lotacao
                             ]);
                         };

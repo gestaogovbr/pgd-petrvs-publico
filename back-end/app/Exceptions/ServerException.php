@@ -6,7 +6,7 @@ use Exception;
 
 class ServerException extends Exception
 {
-    private $excetions = [
+    private $exceptions = [
         "GapiService_Invalid_Token" => "Token de autenticação inválido",
         "DprfSegurancaAuthService_User_Not_Found" => "Usuário não encontrado",
         "DprfSegurancaAuthService_Invalid_User_Or_Password" => "Usuário ou senha inválidos",
@@ -19,6 +19,6 @@ class ServerException extends Exception
     ];
 
     function __construct($code, $extra = "") {
-        parent::__construct($this->excetions[$code] . (empty($extra) ? "" : " (" . $extra . ")"));
-    }    
+        parent::__construct($this->exceptions[$code] . (empty($extra) ? "" : " (" . $extra . ")"));
+    }
 }

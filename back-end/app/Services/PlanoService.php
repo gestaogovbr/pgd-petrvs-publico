@@ -19,6 +19,12 @@ class PlanoService extends ServiceBase
 {
     use UseDataFim;
 
+    /**
+     * planosAtivos: Este método retorna todos os Planos de Trabalho de um determinado usuário, que ainda se encontram dentro da vigência
+     *
+     * @param  mixed $usuario_id
+     * @return void
+     */
     public function planosAtivos($usuario_id) {
         return Plano::where("usuario_id", $usuario_id)->where("data_inicio_vigencia", "<=", now())->where("data_fim_vigencia", ">=", now())->get();
         // adicionar no gitlab para considerar o fuso horário
@@ -43,7 +49,7 @@ class PlanoService extends ServiceBase
         if(!in_array($unidade_id, $usuario_lotacoes_ids) && !Auth::user()->hasPermissionTo('MOD_PTR_INCL_SEM_LOT')) {
             throw new ServerException("ValidatePlano", "Usuário não lotado na unidade do plano (MOD_PTR_INCL_SEM_LOT)");
         }
-        $planos = Plano::where("usuario_id", $data["usuario_id"])->where("tipo_modalidade_id", $data["tipo_modalidade_id"])->whereNull("data_fim")->get();
+        $planos = Plano::where("usuario_id", $data["usuario_id"])->where("usuario_id", $data["unidade_id"])->where("tipo_modalidade_id", $data["tipo_modalidade_id"])->whereNull("data_fim")->get();
         foreach ($planos as $plano) {
             if(UtilService::intersect($plano->data_inicio_vigencia, $plano->data_fim_vigencia, $data["data_inicio_vigencia"], $data["data_fim_vigencia"]) &&
                 UtilService::valueOrNull($data, "id") != $plano->id && !Auth::user()->hasPermissionTo('MOD_PTR_INTSC_DATA')) {

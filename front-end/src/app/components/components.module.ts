@@ -45,6 +45,9 @@ import { ChartsModule }  from 'ng2-charts';
 import { BarChartComponent } from './charts/bar/bar-chart.component';
 import { InputWorkloadComponent } from './input/input-workload/input-workload.component';
 import { PieChartComponent } from './charts/pie/pie-chart.component';
+import { GanttComponent } from './gantt/gantt.component';
+import { GanttTemplatesComponent } from './gantt/gantt-templates/gantt-templates.component';
+import { CommentComponent } from './comment/comment.component';
 
 @NgModule({
   declarations: [
@@ -86,7 +89,10 @@ import { PieChartComponent } from './charts/pie/pie-chart.component';
     DockerComponent,
     CardComponent,
     OrderComponent,
-    InputWorkloadComponent
+    InputWorkloadComponent,
+    GanttComponent,
+    GanttTemplatesComponent,
+    CommentComponent
   ],
   imports: [
     CommonModule,
@@ -132,7 +138,9 @@ import { PieChartComponent } from './charts/pie/pie-chart.component';
     DockerComponent,
     CardComponent,
     OrderComponent,
-    InputWorkloadComponent
+    InputWorkloadComponent,
+    GanttComponent,
+    CommentComponent
   ]
 })
 export class ComponentsModule { }

@@ -434,7 +434,7 @@ export class UtilService {
 
   /* Caso dateTime seja numérico deverá representar um intervalo, e não o .getTime() de uma data */
   public getTimeHours(dateTime: Date | number): number {
-    const userTimezoneOffset = (new Date()).getTimezoneOffset() * 60000;
+    const userTimezoneOffset = (new Date()).getTimezoneOffset() * 60000; // recupera o fuso horário em milisegundos
     const dateRef = dateTime instanceof Date ? dateTime : new Date(dateTime == 0 ? "0" : dateTime + userTimezoneOffset);
     return dateRef.getHours() + (dateRef.getMinutes() / 60) + (dateRef.getSeconds() / (60*60));
   }

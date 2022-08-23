@@ -51,4 +51,20 @@ class UnidadeController extends ControllerBase {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
+
+    public function dashboards(Request $request) {
+        try {
+            $data = $request->validate([
+                'idsUnidades' => ['required'],
+                'programa_id' => ['required']
+            ]);
+            $result = response()->json([
+                'success' => true,
+                'dashboards' => $this->service->dashboards($data["idsUnidades"], $data["programa_id"])
+            ]);
+            return $result;
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
 }

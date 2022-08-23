@@ -9,6 +9,7 @@ use App\Models\Unidade;
 use App\Models\DemandaEntrega;
 use App\Services\ServiceBase;
 use App\Services\PlanoService;
+use App\Services\Util;
 use App\Services\DemandaService;
 use App\Services\RawWhere;
 use App\Services\UtilService;
@@ -27,9 +28,9 @@ class UsuarioService extends ServiceBase
         $unidade_id = null;
         $vinculadas = false;
         foreach($data["where"] as $condition) {
-            if(is_array($condition) && $condition[0] == "unidade_id") { 
+            if(is_array($condition) && $condition[0] == "unidade_id") {
                 $unidade_id = $condition[2];
-            } else if(is_array($condition) && $condition[0] == "subordinadas") { 
+            } else if(is_array($condition) && $condition[0] == "subordinadas") {
                 $vinculadas = $condition[2];
             } else {
                 array_push($where, $condition);
@@ -88,54 +89,60 @@ class UsuarioService extends ServiceBase
             }
         }
         if(!$usuario->hasPermissionTo("MOD_USER_TUDO")) {
-            $lotacoesWhere = $this->lotacoesWhere($subordinadas, null, "where_unidades"); 
+            $lotacoesWhere = $this->lotacoesWhere($subordinadas, null, "where_unidades");
             array_push($where, new RawWhere("EXISTS(SELECT where_lotacoes.id FROM lotacoes where_lotacoes LEFT JOIN unidades where_unidades ON (where_unidades.id = where_lotacoes.unidade_id) WHERE where_lotacoes.usuario_id = usuarios.id AND ($lotacoesWhere))", []));
         }
         $data["where"] = $where;
         return $data;
     }
 
-    public function dashboard($usuario_id) {
+
+    /**
+     * dashboard
+     *
+     * @param  mixed $usuario_id: ID do usuário do qual se deseja as informações para o dashboard
+     * @return array: array contendo todas as informações para o front-end
+     */
+    public function dashboard($usuario_id): array {
         $demandaService = new DemandaService();
         $planoService = new PlanoService();
         $planosAtivos = $planoService->planosAtivos($usuario_id);
         $planos_ids = [];
         $result = [
-            "total_demanda" => 0,
-            "total_atrasadas" => 0,
-            "total_iniciadas" => 0,
-            "total_concluidas" => 0,
+            "total_demandas" => 0,
             "produtividade" => 0,
-            "demandas_totais_nao_concluidas" => 0,
             "demandas_totais_atrasadas" => 0
         ];
         foreach($planosAtivos as $plano) {
             array_push($planos_ids, $plano->id);
         }
+        // A variável $demandas armazena todas as demandas de todos os planos ativos do usuário
         $demandas = Demanda::where("usuario_id", $usuario_id)->whereIn("plano_id", $planos_ids)->get();
-        $demandasTotaisNaoConcluidas = Demanda::where("usuario_id", $usuario_id)->whereNull('data_entrega')->get();
+        $demandasTotaisNaoIniciadas = Demanda::where("usuario_id", $usuario_id)->whereNull('data_inicio')->get();
+        $demandasTotaisNaoConcluidas = Demanda::where("usuario_id", $usuario_id)->whereNotNull('data_inicio')->whereNull('data_entrega')->get();
         $demandasTotaisConcluidas = Demanda::where("usuario_id", $usuario_id)->whereNotNull('data_entrega')->get();
+        $demandasTotaisAvaliadas = Demanda::where("usuario_id", $usuario_id)->whereNotNull('avaliacao_id')->with(['avaliacao'])->get();
+
         $tarefasTotaisNaoConcluidas = DemandaEntrega::where("usuario_id", $usuario_id)->where('concluido', 0)->get();
 
-        foreach($demandas as $demanda) {
-            $metadados = $demandaService->metadados($demanda);
-            $result["total_demanda"]++;
-            $result["total_atrasadas"] += $metadados["atrasado"] ? 1 : 0;
-            $result["total_iniciadas"] += $metadados["iniciado"] ? 1 : 0;
-            $result["total_concluidas"] += $metadados["concluido"] ? 1 : 0;
-            $result["produtividade"] += $metadados["concluido"] ? $metadados["produtividade"] : 0;
-        }
+        $result["total_demandas"] = $demandas->count();
 
         foreach($demandasTotaisNaoConcluidas as $demanda) {
             $metadados = $demandaService->metadados($demanda);
             $result["demandas_totais_atrasadas"] += $metadados["atrasado"] ? 1 : 0;
         }
 
+        $result["demandas_totais_nao_iniciadas"] = $demandasTotaisNaoIniciadas->count();
         $result["demandas_totais_nao_concluidas"] = $demandasTotaisNaoConcluidas->count();
         $result["demandas_totais_concluidas"] = $demandasTotaisConcluidas->count();
+        $result["demandas_totais_avaliadas"] = $demandasTotaisAvaliadas->count();
+        $result["media_avaliacoes"] = (count($demandasTotaisAvaliadas) == 0) ? null : $this->utilService->avg(array_map(function($d) {
+                return $d["avaliacao"]["nota_atribuida"];
+            }, $demandasTotaisAvaliadas->toArray()));
+
+
         $result["tarefas_totais_nao_concluidas"] = $tarefasTotaisNaoConcluidas->count();
 
-        $result["produtividade"] = $result["total_concluidas"] > 0 ? $result["produtividade"] / $result["total_concluidas"] : 0;
         return $result;
     }
 
