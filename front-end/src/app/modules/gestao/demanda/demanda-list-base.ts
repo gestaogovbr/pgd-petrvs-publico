@@ -213,11 +213,11 @@ export abstract class DemandaListBase extends PageListBase<Demanda, DemandaDaoSe
     } else if (!demanda.metadados?.iniciado) {
       if (isResponsavel || (demanda.usuario_id == null) || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) { /* Não iniciado */
         result.push(BOTAO_INICIAR);
-      } 
+      }
       if (isGestor || isDemandante || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT')) {
         result.push(BOTAO_ALTERAR);
       }
-      if (isGestor || isDemandante || this.auth.hasPermissionTo('MOD_DMD_USERS_EXCL')) {
+      if (isGestor || isDemandante || this.auth.hasPermissionTo('MOD_DMD_USERS_EXCL') || this.auth.hasPermissionTo('MOD_DMD_NI_EXCL')) {
         if (result.length) result.push({ divider: true });
         result.push(BOTAO_EXCLUIR);
       }
@@ -230,7 +230,7 @@ export abstract class DemandaListBase extends PageListBase<Demanda, DemandaDaoSe
         result.push(BOTAO_AVALIAR);
       }
       if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT_CONCL')) {
-        result.push(BOTAO_ALTERAR_CONCLUSAO); 
+        result.push(BOTAO_ALTERAR_CONCLUSAO);
       }
       if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CANC_CONCL') ) {
         if (result.length) result.push({ divider: true });
@@ -246,7 +246,7 @@ export abstract class DemandaListBase extends PageListBase<Demanda, DemandaDaoSe
         if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_PAUSA')) result.push(BOTAO_SUSPENDER);
         if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CANC_INICIAR')) result.push(BOTAO_CANCELAR_INICIO);
         if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) result.push(BOTAO_ALTERAR_INICIO);
-      } 
+      }
       if (isGestor || isDemandante || this.auth.hasPermissionTo('MOD_DMD_USERS_PPRZO')) {
         result.push(BOTAO_PRORROGAR_PRAZO);
       }
@@ -342,7 +342,7 @@ export abstract class DemandaListBase extends PageListBase<Demanda, DemandaDaoSe
     const demanda: Demanda = row as Demanda;
     const status = this.lookup.DEMANDA_STATUS.find(x => x.key == demanda.metadados?.status) || { key: "DESCONHECIDO", value: "Desconhecido", icon: "bi bi-question-circle", color: "badge rounded-pill bg-light text-dark" };
     let result: StatusDemanda[] = [{ key: status.key, text: status.value, icon: status.icon!, class: status.color!, filter: true }];
-    if (demanda.metadados?.atrasado) result.push({ key: "ATRAS ADO", text: "Atrasado", icon: "bi bi-alarm", class: "badge rounded-pill bg-danger", filter: false });
+    if (demanda.metadados?.atrasado) result.push({ key: "ATRASADO", text: "Atrasado", icon: "bi bi-alarm", class: "badge rounded-pill bg-danger", filter: false });
     if (demanda.metadados?.suspenso) result.push({ key: "SUSPENSO", text: "Suspenso", icon: "bi bi-pause-circle", class: "badge rounded-pill bg-danger", filter: false });
     if (demanda.metadados?.arquivado) result.push({ key: "ARQUIVADO", text: "Arquivado", icon: "bi bi-inboxes", class: "badge rounded-pill bg-danger", filter: false });
     if (demanda.metadados && JSON.stringify(demanda.metadados._status) != JSON.stringify(result)) demanda.metadados._status = result;

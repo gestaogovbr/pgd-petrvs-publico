@@ -118,6 +118,7 @@ class TipoCapacidadeService extends ServiceBase {
         ["0a743c8e-fbb6-11ec-a5bb-0050569c64a0", "MOD_DMD_USERS_AVAL", "Permite avaliar demanda de qualquer usuário, inclusive de outra lotação"],
         ["b006a737-f94d-11ec-a5bb-0050569c64a0", "MOD_DMD_USERS_ALT_AVAL", "Permite alterar avaliação de demanda de qualquer usuário, inclusive de outra lotação"],
         ["b0118ccd-f94d-11ec-a5bb-0050569c64a0", "MOD_DMD_USERS_EXCL", "Permite excluir demanda de qualquer usuário, inclusive de outra lotação"],
+        ["2da688ee-2221-11ed-a5bb-0050569c64a0", "MOD_DMD_USERS_ATRIB", "Permite qualquer usuário atribuir demanda para qualqer outro"],
         /* Capacidades do módulo ENTIDADE*/
         ["ea2610e6-e1d7-11ec-a5bb-0050569c64a0", "MOD_ENTD_CFG", "Permite configurar Entidade"],
         ["a8ef649e-e112-11ec-a5bb-0050569c64a0", "MOD_ENTD_CONS", "Permite consultar Entidade"],

@@ -272,8 +272,8 @@ class ServiceBase
         foreach($fields as $field) {
             $slices = explode(".", $field);
             $model = App($this->collection);
-            
-        }    
+
+        }
     }
 
     /**
