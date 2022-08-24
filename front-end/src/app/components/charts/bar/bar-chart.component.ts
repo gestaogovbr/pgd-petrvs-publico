@@ -15,6 +15,7 @@ export class BarChartComponent {
   @Input() barChartPlugins = [];
   @Input() barChartLegend = true;
   @Input() barChartLabels = [];
+  @Input() heightAreaChart: number = 150;
 
   constructor() {}
 
