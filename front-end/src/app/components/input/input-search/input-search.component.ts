@@ -51,6 +51,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
   @Input() detailsButton?: string;
   @Input() addRoute?: FullRoute;
   @Input() selectRoute?: FullRoute;
+  @Input() onlySelect?: string;
   @Input() form?: FormGroup;
   @Input() source?: any;
   @Input() path?: string;
@@ -193,6 +194,10 @@ export class InputSearchComponent extends InputBase implements OnInit {
 
   public isSeparator(row: any): boolean {
     return (row instanceof SearchGroupSeparator);
+  }
+
+  public get isOnlySelect(): boolean {
+    return this.onlySelect != undefined;
   }
 
   public group(items: (SelectItem | SearchGroupSeparator)[]) {

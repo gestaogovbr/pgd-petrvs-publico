@@ -7,7 +7,7 @@
             <div *ngIf="hasMenu" class="btn-group card-buttons" role="group" aria-label="Opções">
                 <div *ngFor="let btn of menu" class="btn-group" role="group">
                     <button [attr.id]="buttonId(btn)" #itemsButton type="button" [class]="'btn btn-sm ' + (btn.color || 'btn-outline-primary')" [class.dropdown-toggle]="hasButtonItems(btn)" [attr.data-bs-toggle]="hasButtonItems(btn) ? 'dropdown' : undefined" aria-expanded="false" (click)="onButtonClick(btn)">
-                        <i *ngIf="btn.icon?.length" [class]="btn.icon"></i> {{btn.label || ""}}
+                        <i *ngIf="btn.icon?.length" [class]="btn.icon" data-bs-toggle="tooltip" data-bs-placement="top" [attr.title]="btn.hint || btn.label || ''"></i>
                     </button>
                     <ul *ngIf="hasButtonItems(btn)" class="dropdown-menu dropdown-menu-end" [attr.aria-labelledby]="buttonId(btn)">
                         <li *ngFor="let option of getButtonItems(itemsButton, btn)">

@@ -79,8 +79,8 @@ class DemandaService extends ServiceBase
         if(!empty($data["usuario_id"])) {
             $usuario = Usuario::find($data["usuario_id"]);
             if(!$this->usuarioService->hasLotacao($data["unidade_id"], $usuario, false)) {
-                if (!Auth::user()->hasPermissionTo('MOD_DMD_EXT')){
-                    throw new ServerException("ValidateDemanda", $unidade->sigla . " não é uma unidade (lotação) para o responsável");
+                if (!Auth::user()->hasPermissionTo('MOD_DMD_EXT') && !Auth::user()->hasPermissionTo('MOD_DMD_USERS_ATRIB')){
+                    throw new ServerException("ValidateDemanda", $unidade->sigla . " não é uma unidade (lotação) para o responsável, ou você não tem permissão para incluir para qualquer usuário");
                 }
             }
         }

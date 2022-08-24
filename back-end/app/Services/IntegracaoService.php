@@ -27,6 +27,7 @@ class IntegracaoService
     public $localServidores = "";       // eventual alteração deve ser feita no arquivo .env
 
     function __construct($config = null) {
+        ini_set('max_execution_time', 1200); /* 20 minutos */
         $integracao_config = $config ?: config('integracao');
         //$this->autoIncluir = $integracao_config['auto_incluir'];
         $this->codigoUnidadeRaiz = $integracao_config['codigoUnidadeRaiz'];

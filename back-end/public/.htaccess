@@ -3,6 +3,10 @@
         Options -MultiViews -Indexes
     </IfModule>
 
+    <IfModule mod_php7.c>
+        php_value max_execution_time 1200
+    </IfModule>
+
     <FilesMatch "\.(jpg|gif|js|json|ico|css|png|jpeg|ttf|otf|eot|woff|woff2)$">
         Header unset Access-Control-Allow-Origin    
         Header add Access-Control-Allow-Origin "*"

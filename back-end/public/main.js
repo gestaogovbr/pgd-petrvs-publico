@@ -847,7 +847,7 @@ class GridColumn {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\DevEnv\Projetos\PETRVS\front-end\src\main.ts */"zUnb");
+module.exports = __webpack_require__(/*! C:\projetos\Petrvs\front-end\src\main.ts */"zUnb");
 
 
 /***/ }),
@@ -8008,7 +8008,7 @@ class DemandaListBase extends src_app_modules_base_page_list_base__WEBPACK_IMPOR
             if (isGestor || isDemandante || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT')) {
                 result.push(BOTAO_ALTERAR);
             }
-            if (isGestor || isDemandante || this.auth.hasPermissionTo('MOD_DMD_USERS_EXCL')) {
+            if (isGestor || isDemandante || this.auth.hasPermissionTo('MOD_DMD_USERS_EXCL') || this.auth.hasPermissionTo('MOD_DMD_NI_EXCL')) {
                 if (result.length)
                     result.push({ divider: true });
                 result.push(BOTAO_EXCLUIR);
@@ -8150,7 +8150,7 @@ class DemandaListBase extends src_app_modules_base_page_list_base__WEBPACK_IMPOR
         const status = this.lookup.DEMANDA_STATUS.find(x => { var _a; return x.key == ((_a = demanda.metadados) === null || _a === void 0 ? void 0 : _a.status); }) || { key: "DESCONHECIDO", value: "Desconhecido", icon: "bi bi-question-circle", color: "badge rounded-pill bg-light text-dark" };
         let result = [{ key: status.key, text: status.value, icon: status.icon, class: status.color, filter: true }];
         if ((_a = demanda.metadados) === null || _a === void 0 ? void 0 : _a.atrasado)
-            result.push({ key: "ATRAS ADO", text: "Atrasado", icon: "bi bi-alarm", class: "badge rounded-pill bg-danger", filter: false });
+            result.push({ key: "ATRASADO", text: "Atrasado", icon: "bi bi-alarm", class: "badge rounded-pill bg-danger", filter: false });
         if ((_b = demanda.metadados) === null || _b === void 0 ? void 0 : _b.suspenso)
             result.push({ key: "SUSPENSO", text: "Suspenso", icon: "bi bi-pause-circle", class: "badge rounded-pill bg-danger", filter: false });
         if ((_c = demanda.metadados) === null || _c === void 0 ? void 0 : _c.arquivado)
