@@ -115,6 +115,15 @@ export class UtilService {
     return retorno;
   }
 
+  public commonBegin(strA: string | string[], strB: string | string[]) {
+    let result: string[] = [];
+    let a = Array.isArray(strA) ? strA : strA.split("");
+    let b = Array.isArray(strB) ? strB : strB.split("");
+    const maxIndex: number = Math.min(a.length, b.length);
+    for(let i = 0; i < maxIndex && a[i] == b[i]; i++) result.push(a[i]);
+    return Array.isArray(strA) ? result : result.join();
+  }
+
   public validarCPF(numero: string){
     if (typeof numero !== 'string') return false;
     numero = numero.replace(/[^\d]+/g, '');

@@ -16,6 +16,7 @@ import { Plano } from 'src/app/models/plano.model';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { TipoProcessoDaoService } from 'src/app/dao/tipo-processo-dao.service';
 import { identifierModuleUrl } from '@angular/compiler';
+import { ComentarioService } from 'src/app/services/comentario.service';
 
 export type StatusDemanda = {
   key?: string,
@@ -42,6 +43,7 @@ export abstract class DemandaListBase extends PageListBase<Demanda, DemandaDaoSe
   public tipoProcessoDao: TipoProcessoDaoService;
   public allPages: ListenerAllPagesService;
   public calendar: CalendarService;
+  public comentario: ComentarioService;
   public extra: ExtraDemanda;
   public etiquetas: LookupItem[] = [];
   public checklist?: DemandaChecklist[];
@@ -65,21 +67,32 @@ export abstract class DemandaListBase extends PageListBase<Demanda, DemandaDaoSe
     this.tipoProcessoDao = injector.get<TipoProcessoDaoService>(TipoProcessoDaoService);
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.calendar = injector.get<CalendarService>(CalendarService);
+    this.comentario = injector.get<ComentarioService>(ComentarioService);
     this.join = ["atividade", "demandante", "pausas", "usuario", "unidade", "comentarios.usuario", "entregas.tarefa", "entregas.comentarios.usuario"];
     /* Inicializações */
     this.extra = { planos: {}, afastamentos: {} };
   }
 
-  public orderComentarios(comentarios?: Comentario[]) {
-    return comentarios?.sort((a: Comentario, b: Comentario) => {
-      return (a.path + "/" + a.id) < (b.path + "/" + b.id) || (a.path == b.path && a.data_hora.getTime() < b.data_hora.getTime()) ? -1 : 1;
+  /*public orderComentarios(comentarios?: Comentario[]) {
+    let ordered = comentarios?.sort((a: Comentario, b: Comentario) => {
+      if(a.path == b.path) { /* Situação 1: Paths iguais 
+        return a.data_hora.getTime() < b.data_hora.getTime() ? -1 : 1;
+      } else { /* Situação 2: Paths diferentes, deverá ser encontrado o menor nível comum entre eles para poder comparar 
+        let pathA = a.path.split("/");
+        let pathB = b.path.split("/");
+        let common = this.util.commonBegin(pathA, pathB);
+        let dataHoraA = (comentarios.find(x => x.id == (pathA[common.length] || a.id)) || a).data_hora.getTime();
+        let dataHoraB = (comentarios.find(x => x.id == (pathB[common.length] || b.id)) || b).data_hora.getTime();
+        return dataHoraA == dataHoraB ? 0 : (dataHoraA < dataHoraB ? -1 : 1);
+      }
     }) || [];
-  }
+    return ordered;
+  }*/
 
   public onGridLoad(rows?: any[]) {
     /* Ordena os comentários */
     rows?.forEach((demanda: Demanda) => {
-      demanda.comentarios = this.orderComentarios(demanda.comentarios);
+      demanda.comentarios = this.comentario.orderComentarios(demanda.comentarios);
     });
     /* Recebe informações extra da query para auxiliar em cálculos e melhorar performace da consulta */
     const extra = (this.grid?.query || this.query!).extra;

@@ -27,10 +27,10 @@
                             <ng-template let-row="row" #mensagem>
                                 <table class="comentario-table">
                                     <tr>
-                                        <td *ngIf="comentarioLevel(row).length > 0" class="d-none d-md-table-cell" [style.width.px]="comentarioLevel(row).length * 20">&nbsp;</td>
+                                        <td *ngIf="comentario.comentarioLevel(row).length > 0" class="d-none d-md-table-cell" [style.width.px]="comentario.comentarioLevel(row).length * 20">&nbsp;</td>
                                         <td class="comentario-user text-center">
                                             <img [src]="row.usuario?.url_foto || './assets/images/profile.png'" class="rounded-circle profile-photo" onerror="this.src='./assets/images/profile.png'" width="25" height="25"><br>
-                                            <ng-container *ngFor="let dot of comentarioLevel(row)">
+                                            <ng-container *ngFor="let dot of comentario.comentarioLevel(row)">
                                                 <span class="comentario-level">•</span><br>
                                             </ng-container>
                                         </td>

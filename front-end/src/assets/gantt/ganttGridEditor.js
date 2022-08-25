@@ -170,7 +170,7 @@ GridEditor.prototype.refreshTaskRow = function (task) {
   row.find("[name=endIsMilestone]").prop("checked", task.endIsMilestone);
   row.find("[name=end]").val(new Date(task.end).format()).prop("readonly",!canWrite || task.isParent() && task.master.shrinkParent).updateOldValue();
   row.find("[name=depends]").val(task.depends);
-  row.find(".taskAssigs").html(task.getAssigsString());
+  row.find(".taskAssigs").html(task.getAssigsResources());
 
   //manage collapsed
   if (task.collapsed)

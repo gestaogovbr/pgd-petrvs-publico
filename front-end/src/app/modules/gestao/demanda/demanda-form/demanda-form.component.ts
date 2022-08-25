@@ -29,6 +29,7 @@ import { TipoProcessoDaoService } from 'src/app/dao/tipo-processo-dao.service';
 import { DemandaEntrega } from 'src/app/models/demanda-entrega.model';
 import { DemandaPausa } from 'src/app/models/demanda-pausa.model';
 import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
+import { ComentarioService } from 'src/app/services/comentario.service';
 
 export type Checklist = {id: string, texto: string, checked: boolean};
 
@@ -61,6 +62,7 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
   public unidadeDao: UnidadeDaoService;
   public usuarioDao: UsuarioDaoService;
   public calendar: CalendarService;
+  public comentario: ComentarioService;
   public allPages: ListenerAllPagesService;
   public etiquetas: LookupItem[] = [];
   public checklist: LookupItem[] = [];
@@ -89,6 +91,7 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.planoDao = injector.get<PlanoDaoService>(PlanoDaoService);
     this.calendar = injector.get<CalendarService>(CalendarService);
+    this.comentario = injector.get<ComentarioService>(ComentarioService);
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.delta.prazo_entrega = horaInicial;
     this.comentarioTipos = this.lookup.COMENTARIO_TIPO.filter(x => ["COMENTARIO", "TECNICO"].includes(x.key));
@@ -553,7 +556,7 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
       comentario.usuario = this.auth.usuario;
       comentario._status = "ADD";
       comentarios.push(comentario);
-      this.form.controls.comentarios.setValue(this.orderComentarios(comentarios));
+      this.form.controls.comentarios.setValue(this.comentario.orderComentarios(comentarios));
       this.cdRef.detectChanges();
     }
   }
@@ -572,20 +575,24 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
     if(!this.form?.controls.usuario_id.value?.length) this.loadUsuario(undefined);
   }
 
-  public comentarioLevel(comentario: Comentario): string[] {
+  /*public comentarioLevel(comentario: Comentario): string[] {
     return (comentario.path || "").split("").filter(x => x == "/");
   }
 
-  public orderComentarios(comentarios: Comentario[]) {
-    return comentarios.sort((a: Comentario, b: Comentario) => {
-      return (a.path + "/" + a.id) < (b.path + "/" + b.id) || (a.path == b.path && a.data_hora.getTime() < b.data_hora.getTime()) ? -1 : 1;
-    });
-  }
-
-  public orderPausas(pausas: DemandaPausa[]) {
-    return pausas.sort((a: DemandaPausa, b: DemandaPausa) => {
-      return a.data_inicio < b.data_inicio ? -1 : 1;
-    });
+  public orderComentarios(comentarios?: Comentario[]) {
+    let ordered = comentarios?.sort((a: Comentario, b: Comentario) => {
+      if(a.path == b.path) { /* Situação 1: Paths iguais 
+        return a.data_hora.getTime() < b.data_hora.getTime() ? -1 : 1;
+      } else { /* Situação 2: Paths diferentes, deverá ser encontrado o menor nível comum entre eles para poder comparar 
+        let pathA = a.path.split("/");
+        let pathB = b.path.split("/");
+        let common = this.util.commonBegin(pathA, pathB);
+        let dataHoraA = (comentarios.find(x => x.id == (pathA[common.length] || a.id)) || a).data_hora.getTime();
+        let dataHoraB = (comentarios.find(x => x.id == (pathB[common.length] || b.id)) || b).data_hora.getTime();
+        return dataHoraA == dataHoraB ? 0 : (dataHoraA < dataHoraB ? -1 : 1);
+      }
+    }) || [];
+    return ordered;
   }
 
   public newComentario(pai?: Comentario) {
@@ -603,11 +610,17 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
     this.comentarios!.adding = true;
     this.comentarios!.edit(comentario);
     return comentario;
-  }
+  }*/
 
   public addComentario = async () => {
-    this.newComentario();
+    this.comentario.newComentario(this.form.controls.comentarios, this.comentarios!);
     return undefined;
+  }
+
+  public orderPausas(pausas: DemandaPausa[]) {
+    return pausas.sort((a: DemandaPausa, b: DemandaPausa) => {
+      return a.data_inicio < b.data_inicio ? -1 : 1;
+    });
   }
 
   public comentarioDynamicOptions(row: any): ToolbarButton[] {
@@ -615,7 +628,7 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
       label: "Comentar",
       icon: "bi bi-chat-left-quote",
       onClick: (comentario: Comentario) => {
-        this.newComentario(comentario);
+        this.comentario.newComentario(this.form.controls.comentarios, this.comentarios!, comentario);
       }
     }];
   }
@@ -648,7 +661,7 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
     if(entity.unidade_id != this.auth.unidade!.id) {
       await this.auth.selecionaUnidade(entity.unidade_id);
     }
-    entity.comentarios = this.orderComentarios(entity.comentarios || []);
+    entity.comentarios = this.comentario.orderComentarios(entity.comentarios || []);
     entity.pausas = this.orderPausas(entity.pausas || []);
     form.patchValue(formValue); /* Carrega os valores e dispara os eventos */
     this.loadEtiquetas();
