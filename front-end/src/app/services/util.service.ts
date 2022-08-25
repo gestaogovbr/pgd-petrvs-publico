@@ -71,6 +71,13 @@ export class UtilService {
     return summ / arrayLen;
   }
 
+  public max(array: number[]){
+    var result = array.reduce(function(a, b) {
+      return Math.max(a, b);
+    }, -Infinity);
+    return result;
+  }
+
   public trunc(num: number, decimal: number) {
     const factor = Math.pow(10, decimal);
     return Math.trunc((num + Number.EPSILON) * factor) / factor;

@@ -1,4 +1,4 @@
-import { Component, HostBinding, Injector, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, HostBinding, Injector, OnInit, ViewChild } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { UsuarioDaoService, UsuarioDashboard } from 'src/app/dao/usuario-dao.service';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
@@ -17,6 +17,8 @@ import { FormHelperService } from 'src/app/services/form-helper.service';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { Programa } from 'src/app/models/programa.model';
 import { InputSwitchComponent } from 'src/app/components/input/input-switch/input-switch.component';
+import { UtilService } from 'src/app/services/util.service';
+import { TipoAtividade } from './../../models/tipo-atividade.model';
 
 @Component({
   selector: 'app-home',
@@ -25,7 +27,7 @@ import { InputSwitchComponent } from 'src/app/components/input/input-switch/inpu
 })
 export class HomeComponent implements OnInit {
   @HostBinding('style.height.px') height: Number = 200;
-  @HostBinding('style.height.px') height_s: Number = 200;
+  @HostBinding('style.height.px') height_m: Number = 400;
   public activeTab: string = "PGD";
   public unidades: string[] | undefined;
   public programaSelecionado: Programa | null = null;
@@ -100,20 +102,24 @@ export class HomeComponent implements OnInit {
   };
   public dashUnidades: UnidadeDashboard[] | null = [];
   public labelsGraficoAreasServidores: string[] = [];
+  public heightAreaGrafico: number = 300;
 
   constructor(
     public auth: AuthService,
+    public utils: UtilService,
     public usuarioDao: UsuarioDaoService,
     public unidadeDao: UnidadeDaoService,
     public programaDao: ProgramaDaoService,
     public atividadeDao: AtividadeDaoService,
     public injector: Injector,
+    public cdRef: ChangeDetectorRef,
     public lex: LexicalService,
     public go: NavigateService,
     public gb: GlobalsService,
     public allPages: ListenerAllPagesService
   ) {
     this.fh = this.injector.get<FormHelperService>(FormHelperService);
+    this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
     this.filter = this.fh.FormBuilder({
       programa_id: {default: ""},
       unidadesSubordinadas: {default: false}
@@ -387,7 +393,7 @@ export class HomeComponent implements OnInit {
     _labelsY = modalidades.filter(function(element, posicion){
       return modalidades.indexOf(element) == posicion;
     });
-    this.height_s = 40 * _labelsY.length;
+    //this.height_m = 40 * _labelsY.length;
     _labelsY.forEach(x => {
       _dadosGraficoModalidades.push(modalidades.filter(function(element){return element == x}).length);
     });
@@ -418,53 +424,105 @@ export class HomeComponent implements OnInit {
         display: true,
         position: 'top',
         labels: {
-          fontColor: 'black',
+          fontColor: 'yelow',
           fontStyle: 'bold'
         }
       },
       scales: {
         xAxes: [{
-          //offset: false,
-          display: false,
-          gridLines: {
+          labels: _labelsY,
+          offset: true,                 // se true, dimensiona o eixo X para caber dentro da área do gráfico
+          type: 'category',
+          display: true,
+          stacked: false,
+          //id: '',
+          //position: '',
+          gridLines: {                  // esse grupo de configurações altera o comportamento das linhas de grade perpendiculares ao eixo X
+            display: true,
+            offsetGridLines: false,     // se false, centraliza a linha de grade na barra do gráfico
+            lineWidth: 1,               // largura das linhas de grade
+            tickMarkLength: 10,      // define o comprimento das marcações sobre o eixo X
+            //drawTicks: true           // se true, adiciona um espaçamento entre os labels e o eixo
             //borderDashOffset: 0.5,
             //borderDash: [5, 15]
-            //offsetGridLines: false
           },
-          stacked: false,
+          scaleLabel: {
+
+            //lineHeight: "3em",
+            //fontColor: 'black',
+            //fontStyle: 'bold'
+            //display: true,
+            //labelString: 'EIXO Y'
+          },
           ticks: {
-            beginAtZero: true
+            fontColor: 'black',
+            fontStyle: 'bold',
+            //beginAtZero: true         // não tem efeito se o tipo do eixo for 'category'
           }
         }],
         yAxes: [{
-            labels: _labelsY,
+            //labels: _labelsY,
+            offset: true,             // se true, dimensiona o eixo Y para caber dentro da área do gráfico
+            type: 'linear',
             display: true,
-            offset: true,             // se true, dimensiona o eixo para caber dentro da área do gráfico
-            type: 'category',
-            //stacked: false,
+            stacked: false,
             //id: '',
             //position: '',
-            gridLines: {
-              display: true,
+            gridLines: {              // esse grupo de configurações altera o comportamento das linhas de grade perpendiculares ao eixo Y
+              display: true,          // se false, não exibe as linhas de grade perpendiculares ao eixo Y
+              //color: 'blue',          // define a cor das linhas de grade
               offsetGridLines: false, // se false, centraliza a linha de grade na barra do gráfico
               lineWidth: 1,           // largura das linhas de grade
-              drawTicks: true         // se true, adiciona um espaçamento entre os labels e o eixo
+              tickMarkLength: 10,      // define o comprimento das marcações sobre o eixo Y
+              //borderDash: [25, 10],   // torna as linhas de grade tracejadas: ['comprimento do traço', 'distância entre os traços']
+              //drawTicks: true
+              //borderDashOffset: 5,
+              //zeroLineBorderDashOffset: 5,
+              //zeroLineBorderDash: [50, 50],
+              //zeroLineWidth: 20,
+              //zeroLineColor: 'blue',
+              //circular
+              //drawBorder
+              //drawOnChartArea
+              //z
             },
             scaleLabel: {
+
               //lineHeight: "3em",
               //fontColor: 'black',
               //fontStyle: 'bold'
               //display: true,
               //labelString: 'EIXO Y'
             },
-            ticks: {
-              fontColor: 'black',
-              fontStyle: 'bold'
-              //beginAtZero: true,
-              //min: ''
+            ticks: {                  // esse grupo de informações refere-se às etiquetas (números ou strings)
+              display: true,          // exibidas ao lado do eixo, correspondente às linhas de grade
+              //suggestedMax: this.utils.max(_dadosGraficoModalidades),
+              //suggestedMin          // valor sugerido como mínimo, para a escala do eixo Y
+              //fontColor: 'red',     // cor da fonte utilizada nos labels do eixo Y
+              //fontStyle: 'bold',    // estilo da fonte utilizada nos labels do eixo Y
+              beginAtZero: true,      // define se a escala do eixo Y iniciará ou não a partir do zero
+              stepSize: 0.5,
+              //precision: 0,           // se a propriedade 'stepSize' não estiver definida, aqui se define o nr. de casas decimais do passo da escala do eixo Y
+              //maxTicksLimit
+              //min: 0                // valor mínimo do eixo Y. Entre essa propriedade e a 'suggestedMin', prevalecerá a menor.
+              //max: 1                // valor máximo do eixo Y. Entre essa propriedade e a 'suggestedMax', prevalecerá a maior.
             }
         }],
         ticks: {
+          //padding: 5,
+/*           propriedade   Tipo            Default
+          callback	    function
+          display	      boolean	        true
+          fontColor	    Color	          '#666'
+          fontFamily	  string	        "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"
+          fontSize	    number	        12
+          fontStyle	    string	        'normal'
+          lineHeight	  number|string	  1.2
+          reverse	      boolean	        false
+          minor	        object	        {}
+          major	        object	        {}
+          padding	      number	        0
+          z	            number	        0 */
         }
       },
       responsive: true,

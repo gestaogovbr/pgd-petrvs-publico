@@ -26,7 +26,7 @@
             </div>
           </div>
           <div class="col-md-3 my-4 d-inline-block container">
-            <span class="h5-1">Médias das Avaliações: {{ dashUsuario.media_avaliacoes.toFixed(2) }}</span>
+            <span class="h5-1">Médias das Avaliações: {{ dashUsuario.media_avaliacoes ? dashUsuario.media_avaliacoes.toFixed(2) : '' }}</span>
             <h5 class="my-4" role="button" (click)="go.navigate({route: ['gestao', 'demanda']}, {root: true})">
               <i class="bi bi-activity"></i> Ver Detalhes
             </h5>
@@ -84,7 +84,7 @@
                     </app-bar-chart>
                 </div>
                 <!-- Gráfico dos Servidores participantes -->
-                <div class="mx-4 d-inline-block container" style="position: relative;  width: 400px; min-height: 200px;" [style.height.px]="height">
+                <div id="teste" class="mx-4 d-inline-block container" style="position: relative;  width: 400px; min-height: 200px;" [style.height.px]="height">
                   <!-- <h5>Servidores (por Área)</h5> -->
                     <app-bar-chart
                       barChartType = "horizontalBar"
@@ -96,11 +96,12 @@
 
               <!-- Gráfico dos Servidores por Modalidade de Plano -->
               <div class="my-4 text-center">
-                <div class="mx-4 d-inline-block container" style="position: relative;  width: 600px; min-height: 200px;" [style.height.px]="height_s">
+                <div class="mx-4 d-inline-block container" style="position: relative;  width: 600px; min-height: 400px;">
                     <app-bar-chart
-                      barChartType = "horizontalBar"
+                      barChartType = "bar"
                       [barChartData]="dadosGraficoModalidades"
-                      [barChartOptions]="opcoesGraficoModalidades">
+                      [barChartOptions]="opcoesGraficoModalidades"
+                      [heightAreaChart]="heightAreaGrafico">
                     </app-bar-chart>
                 </div>
               </div>
