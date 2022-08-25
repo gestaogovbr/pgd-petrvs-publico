@@ -26,7 +26,7 @@
             </div>
           </div>
           <div class="col-md-3 my-4 d-inline-block container">
-            <span class="h5-1">Médias das Avaliações: {{ dashUsuario.media_avaliacoes.toFixed(2) || '' }}</span>
+            <span class="h5-1">Médias das Avaliações: {{ dashUsuario.media_avaliacoes ? dashUsuario.media_avaliacoes.toFixed(2) : '' }}</span>
             <h5 class="my-4" role="button" (click)="go.navigate({route: ['gestao', 'demanda']}, {root: true})">
               <i class="bi bi-activity"></i> Ver Detalhes
             </h5>

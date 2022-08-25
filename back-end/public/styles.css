@@ -16,6 +16,7 @@ body {
 .petrvs {
   /* Reseta todas as propriedades anteriores */
   all: initial;
+  cursor: inherit;
   /* Sobrescreve propriedades do Sei */
   /* Classes globais */
   /* Reaplica todas as propriedades do <body> do bootstrap */

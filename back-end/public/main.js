@@ -847,7 +847,7 @@ class GridColumn {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\projetos\Petrvs\front-end\src\main.ts */"zUnb");
+module.exports = __webpack_require__(/*! C:\DevEnv\Projetos\PETRVS\front-end\src\main.ts */"zUnb");
 
 
 /***/ }),
@@ -1624,7 +1624,7 @@ HomeComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComp
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](4);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("barChartData", ctx.dadosMinhasDemandas)("barChartOptions", ctx.opcoesMinhasDemandas);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate1"]("M\u00E9dias das Avalia\u00E7\u00F5es: ", ctx.dashUsuario.media_avaliacoes.toFixed(2) || "", "");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate1"]("M\u00E9dias das Avalia\u00E7\u00F5es: ", ctx.dashUsuario.media_avaliacoes ? ctx.dashUsuario.media_avaliacoes.toFixed(2) : "", "");
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](4);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("hidden", !ctx.auth.hasPermissionTo("DASH_PRG") ? "true" : undefined)("select", ctx.onSelectTab.bind(ctx))("active", ctx.activeTab);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
@@ -3095,7 +3095,7 @@ function InputSearchComponent_div_2_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngForOf", ctx_r1.items);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("id", ctx_r1.controlId);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵattribute"]("placeholder", ctx_r1.placeholder);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵattribute"]("readonly", ctx_r1.isOnlySelect ? "true" : undefined)("placeholder", ctx_r1.placeholder);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", ctx_r1.isDetails);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
@@ -3270,6 +3270,9 @@ class InputSearchComponent extends _input_base__WEBPACK_IMPORTED_MODULE_5__["Inp
     isSeparator(row) {
         return (row instanceof SearchGroupSeparator);
     }
+    get isOnlySelect() {
+        return this.onlySelect != undefined;
+    }
     group(items) {
         if (this.groupBy && items.length) {
             let buffer = "";
@@ -3357,7 +3360,7 @@ class InputSearchComponent extends _input_base__WEBPACK_IMPORTED_MODULE_5__["Inp
 InputSearchComponent.ɵfac = function InputSearchComponent_Factory(t) { return new (t || InputSearchComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
 InputSearchComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: InputSearchComponent, selectors: [["input-search"]], hostVars: 2, hostBindings: function InputSearchComponent_HostBindings(rf, ctx) { if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵclassMap"](ctx.class);
-    } }, inputs: { labelPosition: "labelPosition", controlName: "controlName", disabled: "disabled", icon: "icon", label: "label", labelInfo: "labelInfo", bold: "bold", size: "size", loading: "loading", value: "value", emptyValue: "emptyValue", placeholder: "placeholder", fields: "fields", join: "join", groupBy: "groupBy", where: "where", dao: "dao", detailsButton: "detailsButton", addRoute: "addRoute", selectRoute: "selectRoute", form: "form", source: "source", path: "path", control: "control" }, outputs: { details: "details", select: "select", load: "load", change: "change" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵProvidersFeature"]([], [
+    } }, inputs: { labelPosition: "labelPosition", controlName: "controlName", disabled: "disabled", icon: "icon", label: "label", labelInfo: "labelInfo", bold: "bold", size: "size", loading: "loading", value: "value", emptyValue: "emptyValue", placeholder: "placeholder", fields: "fields", join: "join", groupBy: "groupBy", where: "where", dao: "dao", detailsButton: "detailsButton", addRoute: "addRoute", selectRoute: "selectRoute", onlySelect: "onlySelect", form: "form", source: "source", path: "path", control: "control" }, outputs: { details: "details", select: "select", load: "load", change: "change" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵProvidersFeature"]([], [
             {
                 provide: _angular_forms__WEBPACK_IMPORTED_MODULE_2__["ControlContainer"],
                 useExisting: _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormGroupDirective"]
@@ -3365,7 +3368,7 @@ InputSearchComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdef
         ]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]], decls: 3, vars: 10, consts: [[3, "labelPosition", "controlName", "control", "disabled", "label", "labelInfo", "icon", "bold"], ["class", "input-group", 3, "id", 4, "ngIf"], ["class", "dropdown", 4, "ngIf"], [1, "input-group", 3, "id"], ["type", "text", "readonly", "", 1, "form-control", 3, "id"], ["type", "button", "disabled", "", 1, "btn", "btn-outline-secondary"], ["class", "bi bi-check", 4, "ngIf"], ["class", "spinner-border spinner-border-sm", "role", "status", 4, "ngIf"], [1, "bi", "bi-check"], ["role", "status", 1, "spinner-border", "spinner-border-sm"], [1, "visually-hidden"], [1, "dropdown"], ["data-bs-toggle", "dropdown", "aria-expanded", "false", 1, "dropdown_hidden", 3, "id"], [1, "dropdown-menu"], [4, "ngFor", "ngForOf"], ["type", "text", "autocomplete", "off", "aria-expanded", "false", 1, "form-control", 3, "id", "keydown", "keyup"], ["class", "btn btn-outline-secondary", "type", "button", 3, "disabled", "click", 4, "ngIf"], ["class", "btn btn-outline-success", "type", "button", 3, "click", 4, "ngIf"], ["type", "button", 1, "btn", "btn-outline-secondary", 3, "click"], ["class", "bi bi-search", 4, "ngIf"], ["class", "dropdown-item text-truncate", "role", "button", 3, "click", 4, "ngIf", "ngIfElse"], ["group", ""], ["role", "button", 1, "dropdown-item", "text-truncate", 3, "click"], [1, "search-group-text"], ["type", "button", 1, "btn", "btn-outline-secondary", 3, "disabled", "click"], [1, "bi", "bi-info-circle"], ["type", "button", 1, "btn", "btn-outline-success", 3, "click"], [1, "bi", "bi-plus-circle"], [1, "bi", "bi-search"]], template: function InputSearchComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "input-container", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](1, InputSearchComponent_div_1_Template, 5, 5, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](2, InputSearchComponent_div_2_Template, 11, 12, "div", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](2, InputSearchComponent_div_2_Template, 11, 13, "div", 2);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     } if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("labelPosition", ctx.labelPosition)("controlName", ctx.controlName)("control", ctx.control)("disabled", ctx.disabled)("label", ctx.label)("labelInfo", ctx.labelInfo)("icon", ctx.icon)("bold", ctx.bold);
@@ -8277,6 +8280,255 @@ GlobalsService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineIn
 
 /***/ }),
 
+/***/ "MVwS":
+/*!*******************************************************************************!*\
+  !*** ./src/app/components/gantt/gantt-templates/gantt-templates.component.ts ***!
+  \*******************************************************************************/
+/*! exports provided: GanttTemplatesComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GanttTemplatesComponent", function() { return GanttTemplatesComponent; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/common */ "ofXK");
+/* harmony import */ var _comment_comment_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../comment/comment.component */ "fGHt");
+
+
+
+function GanttTemplatesComponent_div_1_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](1, "comment", 3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const key_r1 = ctx.$implicit;
+    const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵattribute"]("type", key_r1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("contents", ctx_r0.templates[key_r1]);
+} }
+class GanttTemplatesComponent {
+    constructor() {
+        this.startComment = "";
+        this.endComment = "";
+        this.templates = {
+            "GANTBUTTONS": `<div class="ganttButtonBar noprint">
+            <div class="buttons">
+                <button onclick="$('#workSpace').trigger('undo.gantt');return false;" class="button textual icon requireCanWrite" title="undo"><span class="teamworkIcon">&#39;</span></button>
+                <button onclick="$('#workSpace').trigger('redo.gantt');return false;" class="button textual icon requireCanWrite" title="redo"><span class="teamworkIcon">&middot;</span></button>
+                <span class="ganttButtonSeparator requireCanWrite requireCanAdd"></span>
+                <button onclick="$('#workSpace').trigger('addAboveCurrentTask.gantt');return false;" class="button textual icon requireCanWrite requireCanAdd" title="insert above"><span class="teamworkIcon">l</span></button>
+                <button onclick="$('#workSpace').trigger('addBelowCurrentTask.gantt');return false;" class="button textual icon requireCanWrite requireCanAdd" title="insert below"><span class="teamworkIcon">X</span></button>
+                <span class="ganttButtonSeparator requireCanWrite requireCanInOutdent"></span>
+                <button onclick="$('#workSpace').trigger('outdentCurrentTask.gantt');return false;" class="button textual icon requireCanWrite requireCanInOutdent" title="un-indent task"><span class="teamworkIcon">.</span></button>
+                <button onclick="$('#workSpace').trigger('indentCurrentTask.gantt');return false;" class="button textual icon requireCanWrite requireCanInOutdent" title="indent task"><span class="teamworkIcon">:</span></button>
+                <span class="ganttButtonSeparator requireCanWrite requireCanMoveUpDown"></span>
+                <button onclick="$('#workSpace').trigger('moveUpCurrentTask.gantt');return false;" class="button textual icon requireCanWrite requireCanMoveUpDown" title="move up"><span class="teamworkIcon">k</span></button>
+                <button onclick="$('#workSpace').trigger('moveDownCurrentTask.gantt');return false;" class="button textual icon requireCanWrite requireCanMoveUpDown" title="move down"><span class="teamworkIcon">j</span></button>
+                <span class="ganttButtonSeparator requireCanWrite requireCanDelete"></span>
+                <button onclick="$('#workSpace').trigger('deleteFocused.gantt');return false;" class="button textual icon delete requireCanWrite" title="Elimina"><span class="teamworkIcon">&cent;</span></button>
+                <span class="ganttButtonSeparator" style="display:none;"></span>
+                <button onclick="$('#workSpace').trigger('expandAll.gantt');return false;" class="button textual icon " title="EXPAND_ALL"><span class="teamworkIcon">6</span></button>
+                <button onclick="$('#workSpace').trigger('collapseAll.gantt'); return false;" class="button textual icon " title="COLLAPSE_ALL"><span class="teamworkIcon">5</span></button>
+                <span class="ganttButtonSeparator"></span>
+                <button onclick="$('#workSpace').trigger('zoomMinus.gantt'); return false;" class="button textual icon " title="zoom out"><span class="teamworkIcon">)</span></button>
+                <button onclick="$('#workSpace').trigger('zoomPlus.gantt');return false;" class="button textual icon " title="zoom in"><span class="teamworkIcon">(</span></button>
+                <span class="ganttButtonSeparator"></span>
+                <button onclick="$('#workSpace').trigger('print.gantt');return false;" class="button textual icon " title="Print"><span class="teamworkIcon">p</span></button>
+                <span class="ganttButtonSeparator"></span>
+                <button onclick="ge.gantt.showCriticalPath=!ge.gantt.showCriticalPath; ge.redraw();return false;" class="button textual icon requireCanSeeCriticalPath" title="CRITICAL_PATH"><span class="teamworkIcon">&pound;</span></button>
+                <span class="ganttButtonSeparator requireCanSeeCriticalPath"></span>
+                <button onclick="ge.splitter.resize(.1);return false;" class="button textual icon"><span class="teamworkIcon">F</span></button>
+                <button onclick="ge.splitter.resize(50);return false;" class="button textual icon"><span class="teamworkIcon">O</span></button>
+                <button onclick="ge.splitter.resize(100);return false;" class="button textual icon"><span class="teamworkIcon">R</span></button>
+                <span class="ganttButtonSeparator"></span>
+                <button onclick="$('#workSpace').trigger('fullScreen.gantt');return false;" class="button textual icon" style="display:none;" title="FULLSCREEN" id="fullscrbtn"><span class="teamworkIcon">@</span></button>
+                <button onclick="ge.element.toggleClass('colorByStatus' );return false;" class="button textual icon" style="display:none;"><span class="teamworkIcon">&sect;</span></button>
+                <button onclick="editResources();" class="button textual requireWrite" title="edit resources" style="display:none;"><span class="teamworkIcon">M</span></button>
+                <button onclick="saveGanttOnServer();" class="button first big requireWrite" style="display:none;" title="Save">Save</button>
+                <button onclick='newProject();' class='button requireWrite newproject' style="display:none;"><em>clear project</em></button>
+                <button class="button login" title="login/enroll" onclick="loginEnroll($(this));" style="display:none;">login/enroll</button>
+                <button class="button opt collab" title="Start with Twproject" onclick="collaborate($(this));" style="display:none;"><em>collaborate</em></button>
+                <a href="https://gantt.twproject.com/" target="_blank" style="position:absolute;right:0px;"><img src="assets/gantt/res/twGanttLogo.png" alt="Twproject" align="absmiddle" style="max-width: 100px; margin-top: 5px; padding-right: 15px"></a>
+            </div>
+        </div>`,
+            "TASKSEDITHEAD": `<table class="gdfTable" cellspacing="0" cellpadding="0">
+            <thead>
+                <tr style="height:40px">
+                    <th class="gdfColHeader" style="width:35px; border-right: none; display: none;"></th>
+                    <th class="gdfColHeader" style="width:25px; display: none;"></th>
+                    <th class="gdfColHeader gdfResizable" style="width:100px; display: none;">code/short name</th>
+                    <th class="gdfColHeader gdfResizable" style="width:300px;">name</th>
+                    <th class="gdfColHeader" align="center" style="width:17px; display: none;" title="Start date is a milestone."><span class="teamworkIcon" style="font-size: 8px;">^</span></th>
+                    <th class="gdfColHeader gdfResizable" style="width:80px;">start</th>
+                    <th class="gdfColHeader" align="center" style="width:17px; display: none;" title="End date is a milestone."><span class="teamworkIcon" style="font-size: 8px;">^</span></th>
+                    <th class="gdfColHeader gdfResizable" style="width:80px;">End</th>
+                    <th class="gdfColHeader gdfResizable" style="width:50px;">dur.</th>
+                    <th class="gdfColHeader gdfResizable" style="width:20px;">%</th>
+                    <th class="gdfColHeader gdfResizable requireCanSeeDep" style="width:50px;">depe.</th>
+                    <th class="gdfColHeader gdfResizable" style="width:1000px; text-align: left; padding-left: 10px;">assignees</th>
+                </tr>
+            </thead>
+        </table>`,
+            "TASKROW": `<tr id="tid_(#=obj.id#)" taskId="(#=obj.id#)" class="taskEditRow (#=obj.isParent()?'isParent':''#) (#=obj.collapsed?'collapsed':''#)" level="(#=level#)">
+            <th class="gdfCell edit" align="right" style="cursor:pointer; display: none;"><span class="taskRowIndex">(#=obj.getRow()+1#)</span> <span class="teamworkIcon" style="font-size:12px;">e</span></th>
+            <td class="gdfCell noClip" align="center" style="display: none;">
+                <div class="taskStatus cvcColorSquare" status="(#=obj.status#)"></div>
+            </td>
+            <td class="gdfCell" style="display: none;"><input type="text" name="code" value="(#=obj.code?obj.code:''#)" placeholder="code/short name"></td>
+            <td class="gdfCell indentCell" style="padding-left:(#=obj.level*10+18#)px;">
+                <div class="exp-controller" align="center"></div>
+                <input type="text" name="name" value="(#=obj.name#)" placeholder="name">
+            </td>
+            <td class="gdfCell" align="center" style="display: none;"><input type="checkbox" name="startIsMilestone"></td>
+            <td class="gdfCell"><input type="text" name="start" value="" class="date"></td>
+            <td class="gdfCell" align="center" style="display: none;"><input type="checkbox" name="endIsMilestone"></td>
+            <td class="gdfCell"><input type="text" name="end" value="" class="date"></td>
+            <td class="gdfCell"><input type="text" name="duration" autocomplete="off" value="(#=obj.duration#)"></td>
+            <td class="gdfCell"><input type="text" name="progress" class="validated" entrytype="PERCENTILE" autocomplete="off" value="(#=obj.progress?obj.progress:''#)" (#=obj.progressByWorklog?"readOnly":""#)></td>
+            <td class="gdfCell requireCanSeeDep"><input type="text" name="depends" autocomplete="off" value="(#=obj.depends#)" (#=obj.hasExternalDep?"readonly":""#)></td>
+            <td class="gdfCell taskAssigs">Teste: (#=obj.getAssigsProfile()#)</td>
+        </tr>`,
+            "TASKEMPTYROW": `<tr class="taskEditRow emptyRow">
+            <th class="gdfCell" style="display: none;" align="right"></th>
+            <td class="gdfCell noClip" style="display: none;" align="center"></td>
+            <td class="gdfCell" style="display: none;"></td>
+            <td class="gdfCell"></td>
+            <td class="gdfCell" style="display: none;"></td>
+            <td class="gdfCell"></td>
+            <td class="gdfCell" style="display: none;"></td>
+            <td class="gdfCell"></td>
+            <td class="gdfCell"></td>
+            <td class="gdfCell"></td>
+            <td class="gdfCell requireCanSeeDep"></td>
+            <td class="gdfCell"></td>
+        </tr>`,
+            "TASKBAR": `<div class="taskBox taskBoxDiv" taskId="(#=obj.id#)">
+            <div class="layout (#=obj.hasExternalDep?'extDep':''#)">
+                <div class="taskStatus" status="(#=obj.status#)"></div>
+                <div class="taskProgress" style="width:(#=obj.progress>100?100:obj.progress#)%; background-color:(#=obj.progress>100?'red':'rgb(153,255,51);'#);"></div>
+                <div class="milestone (#=obj.startIsMilestone?'active':''#)"></div>
+                <div class="taskLabel"></div>
+                <div class="milestone end (#=obj.endIsMilestone?'active':''#)"></div>
+            </div>
+        </div>`,
+            "CHANGE_STATUS": `<div class="taskStatusBox">
+            <div class="taskStatus cvcColorSquare" status="STATUS_ACTIVE" title="Active"></div>
+            <div class="taskStatus cvcColorSquare" status="STATUS_DONE" title="Completed"></div>
+            <div class="taskStatus cvcColorSquare" status="STATUS_FAILED" title="Failed"></div>
+            <div class="taskStatus cvcColorSquare" status="STATUS_SUSPENDED" title="Suspended"></div>
+            <div class="taskStatus cvcColorSquare" status="STATUS_WAITING" title="Waiting" style="display: none;"></div>
+            <div class="taskStatus cvcColorSquare" status="STATUS_UNDEFINED" title="Undefined"></div>
+        </div>`,
+            "TASK_EDITOR": `<div class="ganttTaskEditor">
+            <h2 class="taskData">Task editor</h2>
+            <table cellspacing="1" cellpadding="5" width="100%" class="taskData tableGantt" border="0">
+                <tr>
+                    <td width="200" style="height: 80px" valign="top">
+                        <label for="code">code/short name</label><br>
+                        <input type="text" name="code" id="code" value="" size=15 class="formElements" autocomplete='off' maxlength=255 style='width:100%' oldvalue="1">
+                    </td>
+                    <td colspan="3" valign="top"><label for="name" class="required">name</label><br><input type="text" name="name" id="name" class="formElements" autocomplete='off' maxlength=255 style='width:100%' value="" required="true" oldvalue="1"></td>
+                </tr>
+                <tr class="dateRow">
+                    <td nowrap="">
+                        <div style="position:relative">
+                            <label for="start">start</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <input type="checkbox" id="startIsMilestone" name="startIsMilestone" value="yes"> &nbsp;<label for="startIsMilestone">is milestone</label>&nbsp;
+                            <br><input type="text" name="start" id="start" size="8" class="formElements dateField validated date" autocomplete="off" maxlength="255" value="" oldvalue="1" entrytype="DATE">
+                            <span title="calendar" id="starts_inputDate" class="teamworkIcon openCalendar" onclick="$(this).dateField({inputField:$(this).prevAll(':input:first'),isSearchField:false});">m</span>
+                        </div>
+                    </td>
+                    <td nowrap="">
+                        <label for="end">End</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="checkbox" id="endIsMilestone" name="endIsMilestone" value="yes"> &nbsp;<label for="endIsMilestone">is milestone</label>&nbsp;
+                        <br><input type="text" name="end" id="end" size="8" class="formElements dateField validated date" autocomplete="off" maxlength="255" value="" oldvalue="1" entrytype="DATE">
+                        <span title="calendar" id="ends_inputDate" class="teamworkIcon openCalendar" onclick="$(this).dateField({inputField:$(this).prevAll(':input:first'),isSearchField:false});">m</span>
+                    </td>
+                    <td nowrap="">
+                        <label for="duration" class=" ">Days</label><br>
+                        <input type="text" name="duration" id="duration" size="4" class="formElements validated durationdays" title="Duration is in working days." autocomplete="off" maxlength="255" value="" oldvalue="1" entrytype="DURATIONDAYS">&nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <label for="status" class=" ">status</label><br>
+                        <select id="status" name="status" class="taskStatus" status="(#=obj.status#)" onchange="$(this).attr('STATUS',$(this).val());">
+                            <option value="STATUS_ACTIVE" class="taskStatus" status="STATUS_ACTIVE">active</option>
+                            <option value="STATUS_WAITING" class="taskStatus" status="STATUS_WAITING">suspended</option>
+                            <option value="STATUS_SUSPENDED" class="taskStatus" status="STATUS_SUSPENDED">suspended</option>
+                            <option value="STATUS_DONE" class="taskStatus" status="STATUS_DONE">completed</option>
+                            <option value="STATUS_FAILED" class="taskStatus" status="STATUS_FAILED">failed</option>
+                            <option value="STATUS_UNDEFINED" class="taskStatus" status="STATUS_UNDEFINED">undefined</option>
+                        </select>
+                    </td>
+                    <td valign="top" nowrap>
+                        <label>progress</label><br>
+                        <input type="text" name="progress" id="progress" size="7" class="formElements validated percentile" autocomplete="off" maxlength="255" value="" oldvalue="1" entrytype="PERCENTILE">
+                    </td>
+                </tr>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <label for="description">Description</label><br>
+                        <textarea rows="3" cols="30" id="description" name="description" class="formElements" style="width:100%"></textarea>
+                    </td>
+                </tr>
+            </table>
+            <h2>Assignments</h2>
+            <table cellspacing="1" cellpadding="0" width="100%" id="assigsTable">
+                <tr>
+                    <th style="width:100px;">name</th>
+                    <th style="width:70px;">Role</th>
+                    <th style="width:30px;">est.wklg.</th>
+                    <th style="width:30px;" id="addAssig"><span class="teamworkIcon" style="cursor: pointer">+</span></th>
+                </tr>
+            </table>
+            <div style="text-align: right; padding-top: 20px">
+                <span id="saveButton" class="button first" onClick="$(this).trigger('saveFullEditor.gantt');">Save</span>
+            </div>
+        </div>`,
+            "ASSIGNMENT_ROW": `<tr taskId="(#=obj.task.id#)" assId="(#=obj.assig.id#)" class="assigEditRow">
+            <td><select name="resourceId" class="formElements" (#=obj.assig.id.indexOf("tmp_")==0?"":"disabled"#)></select></td>
+            <td><select type="select" name="roleId" class="formElements"></select></td>
+            <td><input type="text" name="effort" value="(#=getMillisInHoursMinutes(obj.assig.effort)#)" size="5" class="formElements"></td>
+            <td align="center"><span class="teamworkIcon delAssig del" style="cursor: pointer">d</span></td>
+        </tr>`,
+            "RESOURCE_EDITOR": `<div class="resourceEditor" style="padding: 5px;">
+            <h2>Project team</h2>
+            <table cellspacing="1" cellpadding="0" width="100%" id="resourcesTable">
+                <tr>
+                    <th style="width:100px;">name</th>
+                    <th style="width:30px;" id="addResource"><span class="teamworkIcon" style="cursor: pointer">+</span></th>
+                </tr>
+            </table>
+            <div style="text-align: right; padding-top: 20px"><button id="resSaveButton" class="button big">Save</button></div>
+        </div>`,
+            "RESOURCE_ROW": `<tr resId="(#=obj.id#)" class="resRow">
+            <td><input type="text" name="name" value="(#=obj.name#)" style="width:100%;" class="formElements"></td>
+            <td align="center"><span class="teamworkIcon delRes del" style="cursor: pointer">d</span></td>
+        </tr>`
+        };
+    }
+    ngOnInit() {
+    }
+    get keys() {
+        return Object.keys(this.templates);
+    }
+}
+GanttTemplatesComponent.ɵfac = function GanttTemplatesComponent_Factory(t) { return new (t || GanttTemplatesComponent)(); };
+GanttTemplatesComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: GanttTemplatesComponent, selectors: [["gantt-templates"]], decls: 2, vars: 1, consts: [["id", "gantEditorTemplates", 2, "display", "none"], ["class", "__template__", 4, "ngFor", "ngForOf"], [1, "__template__"], [3, "contents"]], template: function GanttTemplatesComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, GanttTemplatesComponent_div_1_Template, 2, 2, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+    } if (rf & 2) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngForOf", ctx.keys);
+    } }, directives: [_angular_common__WEBPACK_IMPORTED_MODULE_1__["NgForOf"], _comment_comment_component__WEBPACK_IMPORTED_MODULE_2__["CommentComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJnYW50dC10ZW1wbGF0ZXMuY29tcG9uZW50LnNjc3MifQ== */"] });
+
+
+/***/ }),
+
 /***/ "MWcP":
 /*!******************************************************************!*\
   !*** ./src/app/components/kanban/swimlane/swimlane.component.ts ***!
@@ -10196,6 +10448,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_services_form_helper_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/services/form-helper.service */ "mp9f");
 /* harmony import */ var src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/dao/usuario-dao.service */ "w5Sy");
 /* harmony import */ var src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/services/lookup.service */ "/MTl");
+/* harmony import */ var _components_gantt_gantt_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../components/gantt/gantt.component */ "ovw9");
+
 
 
 
@@ -10299,7 +10553,97 @@ class TesteComponent {
     }
 }
 TesteComponent.ɵfac = function TesteComponent_Factory(t) { return new (t || TesteComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](src_app_services_form_helper_service__WEBPACK_IMPORTED_MODULE_3__["FormHelperService"]), _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_4__["UsuarioDaoService"]), _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_5__["LookupService"]), _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_0__["UtilService"])); };
-TesteComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineComponent"]({ type: TesteComponent, selectors: [["app-teste"]], decls: 0, vars: 0, template: function TesteComponent_Template(rf, ctx) { }, styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJ0ZXN0ZS5jb21wb25lbnQuc2NzcyJ9 */"] });
+TesteComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineComponent"]({ type: TesteComponent, selectors: [["app-teste"]], decls: 1, vars: 0, template: function TesteComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](0, "gantt");
+    } }, directives: [_components_gantt_gantt_component__WEBPACK_IMPORTED_MODULE_6__["GanttComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJ0ZXN0ZS5jb21wb25lbnQuc2NzcyJ9 */"] });
+
+
+/***/ }),
+
+/***/ "Q3HM":
+/*!***********************************************!*\
+  !*** ./src/app/services/bootstrap.service.ts ***!
+  \***********************************************/
+/*! exports provided: BootstrapService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BootstrapService", function() { return BootstrapService; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "fXoL");
+
+class BootstrapService {
+    constructor() {
+        //@ts-ignore
+        jQuery.cachedScript = function (url, options) {
+            options = $.extend(options || {}, {
+                dataType: "script",
+                cache: true,
+                url: url
+            });
+            return jQuery.ajax(options);
+        };
+    }
+    loadJsAsPromise(file) {
+        return new Promise((resolve, reject) => {
+            if ($('script[src="' + file + '"]').length) {
+                resolve("Already loaded");
+            }
+            else {
+                var script = document.createElement('script');
+                script.src = file;
+                script.charset = "utf-8";
+                script.async = false;
+                script.defer = false;
+                script.onload = function (event) {
+                    resolve("Success");
+                };
+                script.onerror = function (event) {
+                    reject("Erro ao carregar o arquivo " + file);
+                };
+                document.head.appendChild(script);
+                /* /@ts-ignore
+                $.cachedScript(file).done((script, textStatus) => {
+                  resolve(textStatus);
+                }).fail(() => {
+                  reject({error: "Erro ao tentar carregar arquivo " + file});
+                });*/
+            }
+        });
+    }
+    loadCssAsPromise(file, mediaPrint) {
+        return new Promise((resolve, reject) => {
+            if ($('link[href="' + file + '"]').length) {
+                resolve("already loaded");
+            }
+            else {
+                let attrs = {
+                    type: 'text/css',
+                    rel: 'stylesheet',
+                    href: file
+                };
+                if (mediaPrint)
+                    attrs.media = "print";
+                $('<link>').appendTo('head').attr(attrs);
+                resolve("Success");
+            }
+        });
+    }
+    load(list, cssPrint) {
+        return new Promise((resolve, reject) => {
+            let all = list.map(x => /.*\.js$/.test(x) ? this.loadJsAsPromise(x) : this.loadCssAsPromise(x));
+            if (cssPrint)
+                all.push(...cssPrint.map(x => this.loadCssAsPromise(x, true)));
+            Promise.all(all).then(promises => {
+                $(() => {
+                    resolve();
+                });
+            }).catch(reject);
+        });
+    }
+}
+BootstrapService.ɵfac = function BootstrapService_Factory(t) { return new (t || BootstrapService)(); };
+BootstrapService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: BootstrapService, factory: BootstrapService.ɵfac, providedIn: 'root' });
 
 
 /***/ }),
@@ -17741,6 +18085,63 @@ PaginationComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefi
 
 /***/ }),
 
+/***/ "fGHt":
+/*!*********************************************************!*\
+  !*** ./src/app/components/comment/comment.component.ts ***!
+  \*********************************************************/
+/*! exports provided: CommentComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CommentComponent", function() { return CommentComponent; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "fXoL");
+
+const _c0 = ["*"];
+class CommentComponent {
+    constructor(elementRef) {
+        this.elementRef = elementRef;
+        this.contentsValue = "";
+        this.commentCreated = false;
+        this.viewInitialized = false;
+    }
+    get contents() {
+        return this.contentsValue;
+    }
+    set contents(value) {
+        this.contentsValue = value;
+        if (this.viewInitialized)
+            setTimeout(() => this.createComment());
+    }
+    ngOnInit() {
+        const htmlElement = this.elementRef.nativeElement;
+        if (!this.contentsValue)
+            this.contentsValue = htmlElement.innerHTML || "";
+        //setTimeout(() => this.createComment(), 0);
+    }
+    ngAfterViewInit() {
+        this.viewInitialized = true;
+        this.createComment();
+    }
+    createComment() {
+        var _a, _b;
+        const htmlElement = this.elementRef.nativeElement;
+        if (this.commentCreated) {
+            (_a = htmlElement.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(htmlElement.previousSibling);
+        }
+        (_b = htmlElement.parentNode) === null || _b === void 0 ? void 0 : _b.insertBefore(document.createComment(this.contentsValue), htmlElement);
+        this.commentCreated = true;
+    }
+}
+CommentComponent.ɵfac = function CommentComponent_Factory(t) { return new (t || CommentComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["ElementRef"])); };
+CommentComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: CommentComponent, selectors: [["comment"]], inputs: { contents: "contents" }, ngContentSelectors: _c0, decls: 1, vars: 0, template: function CommentComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵprojectionDef"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵprojection"](0);
+    } }, styles: ["[_nghost-%COMP%] {\n  position: absolute;\n  visibility: hidden;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uXFwuLlxcLi5cXC4uXFxjb21tZW50LmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksa0JBQUE7RUFDQSxrQkFBQTtBQUNKIiwiZmlsZSI6ImNvbW1lbnQuY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyI6aG9zdCB7XHJcbiAgICBwb3NpdGlvbjogYWJzb2x1dGU7XHJcbiAgICB2aXNpYmlsaXR5OiBoaWRkZW47XHJcbn0iXX0= */"] });
+
+
+/***/ }),
+
 /***/ "g1/Y":
 /*!*******************************************!*\
   !*** ./src/app/services/excel.service.ts ***!
@@ -17946,7 +18347,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _charts_bar_bar_chart_component__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./charts/bar/bar-chart.component */ "+uzo");
 /* harmony import */ var _input_input_workload_input_workload_component__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./input/input-workload/input-workload.component */ "sRLT");
 /* harmony import */ var _charts_pie_pie_chart_component__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./charts/pie/pie-chart.component */ "BXEX");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _gantt_gantt_component__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./gantt/gantt.component */ "ovw9");
+/* harmony import */ var _gantt_gantt_templates_gantt_templates_component__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./gantt/gantt-templates/gantt-templates.component */ "MVwS");
+/* harmony import */ var _comment_comment_component__WEBPACK_IMPORTED_MODULE_48__ = __webpack_require__(/*! ./comment/comment.component */ "fGHt");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_49__ = __webpack_require__(/*! @angular/core */ "fXoL");
+
+
+
 
 
 
@@ -18002,8 +18409,8 @@ __webpack_require__.r(__webpack_exports__);
 class ComponentsModule {
 }
 ComponentsModule.ɵfac = function ComponentsModule_Factory(t) { return new (t || ComponentsModule)(); };
-ComponentsModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_46__["ɵɵdefineNgModule"]({ type: ComponentsModule });
-ComponentsModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_46__["ɵɵdefineInjector"]({ imports: [[
+ComponentsModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_49__["ɵɵdefineNgModule"]({ type: ComponentsModule });
+ComponentsModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_49__["ɵɵdefineInjector"]({ imports: [[
             _angular_common__WEBPACK_IMPORTED_MODULE_0__["CommonModule"],
             ng2_charts__WEBPACK_IMPORTED_MODULE_42__["ChartsModule"],
             ngx_infinite_scroll__WEBPACK_IMPORTED_MODULE_32__["InfiniteScrollModule"],
@@ -18012,7 +18419,7 @@ ComponentsModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_46__["ɵɵdefine
             angular_double_scrollbars__WEBPACK_IMPORTED_MODULE_40__["AngularDoubleScrollbarsModule"],
             ngx_mask__WEBPACK_IMPORTED_MODULE_2__["NgxMaskModule"].forRoot()
         ]] });
-(function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_46__["ɵɵsetNgModuleScope"](ComponentsModule, { declarations: [_charts_bar_bar_chart_component__WEBPACK_IMPORTED_MODULE_43__["BarChartComponent"],
+(function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_49__["ɵɵsetNgModuleScope"](ComponentsModule, { declarations: [_charts_bar_bar_chart_component__WEBPACK_IMPORTED_MODULE_43__["BarChartComponent"],
         _charts_pie_pie_chart_component__WEBPACK_IMPORTED_MODULE_45__["PieChartComponent"],
         _grid_grid_component__WEBPACK_IMPORTED_MODULE_3__["GridComponent"],
         _grid_column_column_component__WEBPACK_IMPORTED_MODULE_4__["ColumnComponent"],
@@ -18050,7 +18457,10 @@ ComponentsModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_46__["ɵɵdefine
         _kanban_docker_docker_component__WEBPACK_IMPORTED_MODULE_37__["DockerComponent"],
         _kanban_card_card_component__WEBPACK_IMPORTED_MODULE_38__["CardComponent"],
         _grid_order_order_component__WEBPACK_IMPORTED_MODULE_41__["OrderComponent"],
-        _input_input_workload_input_workload_component__WEBPACK_IMPORTED_MODULE_44__["InputWorkloadComponent"]], imports: [_angular_common__WEBPACK_IMPORTED_MODULE_0__["CommonModule"],
+        _input_input_workload_input_workload_component__WEBPACK_IMPORTED_MODULE_44__["InputWorkloadComponent"],
+        _gantt_gantt_component__WEBPACK_IMPORTED_MODULE_46__["GanttComponent"],
+        _gantt_gantt_templates_gantt_templates_component__WEBPACK_IMPORTED_MODULE_47__["GanttTemplatesComponent"],
+        _comment_comment_component__WEBPACK_IMPORTED_MODULE_48__["CommentComponent"]], imports: [_angular_common__WEBPACK_IMPORTED_MODULE_0__["CommonModule"],
         ng2_charts__WEBPACK_IMPORTED_MODULE_42__["ChartsModule"],
         ngx_infinite_scroll__WEBPACK_IMPORTED_MODULE_32__["InfiniteScrollModule"],
         _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ReactiveFormsModule"],
@@ -18089,16 +18499,18 @@ ComponentsModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_46__["ɵɵdefine
         _kanban_docker_docker_component__WEBPACK_IMPORTED_MODULE_37__["DockerComponent"],
         _kanban_card_card_component__WEBPACK_IMPORTED_MODULE_38__["CardComponent"],
         _grid_order_order_component__WEBPACK_IMPORTED_MODULE_41__["OrderComponent"],
-        _input_input_workload_input_workload_component__WEBPACK_IMPORTED_MODULE_44__["InputWorkloadComponent"]] }); })();
-_angular_core__WEBPACK_IMPORTED_MODULE_46__["ɵɵsetComponentScope"](_grid_grid_component__WEBPACK_IMPORTED_MODULE_3__["GridComponent"], [_angular_common__WEBPACK_IMPORTED_MODULE_0__["NgIf"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ɵangular_packages_forms_forms_ba"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgControlStatusGroup"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormGroupDirective"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgForOf"], _grid_column_header_column_header_component__WEBPACK_IMPORTED_MODULE_5__["ColumnHeaderComponent"],
+        _input_input_workload_input_workload_component__WEBPACK_IMPORTED_MODULE_44__["InputWorkloadComponent"],
+        _gantt_gantt_component__WEBPACK_IMPORTED_MODULE_46__["GanttComponent"],
+        _comment_comment_component__WEBPACK_IMPORTED_MODULE_48__["CommentComponent"]] }); })();
+_angular_core__WEBPACK_IMPORTED_MODULE_49__["ɵɵsetComponentScope"](_grid_grid_component__WEBPACK_IMPORTED_MODULE_3__["GridComponent"], [_angular_common__WEBPACK_IMPORTED_MODULE_0__["NgIf"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ɵangular_packages_forms_forms_ba"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgControlStatusGroup"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormGroupDirective"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgForOf"], _grid_column_header_column_header_component__WEBPACK_IMPORTED_MODULE_5__["ColumnHeaderComponent"],
     _grid_column_row_column_row_component__WEBPACK_IMPORTED_MODULE_6__["ColumnRowComponent"],
     _grid_column_expand_column_expand_component__WEBPACK_IMPORTED_MODULE_34__["ColumnExpandComponent"],
     _grid_column_options_column_options_component__WEBPACK_IMPORTED_MODULE_7__["ColumnOptionsComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgTemplateOutlet"]], []);
-_angular_core__WEBPACK_IMPORTED_MODULE_46__["ɵɵsetComponentScope"](_grid_report_report_component__WEBPACK_IMPORTED_MODULE_33__["ReportComponent"], [_angular_common__WEBPACK_IMPORTED_MODULE_0__["NgForOf"], _grid_column_header_column_header_component__WEBPACK_IMPORTED_MODULE_5__["ColumnHeaderComponent"],
+_angular_core__WEBPACK_IMPORTED_MODULE_49__["ɵɵsetComponentScope"](_grid_report_report_component__WEBPACK_IMPORTED_MODULE_33__["ReportComponent"], [_angular_common__WEBPACK_IMPORTED_MODULE_0__["NgForOf"], _grid_column_header_column_header_component__WEBPACK_IMPORTED_MODULE_5__["ColumnHeaderComponent"],
     _grid_column_row_column_row_component__WEBPACK_IMPORTED_MODULE_6__["ColumnRowComponent"]], []);
-_angular_core__WEBPACK_IMPORTED_MODULE_46__["ɵɵsetComponentScope"](_kanban_kanban_component__WEBPACK_IMPORTED_MODULE_35__["KanbanComponent"], [angular_double_scrollbars__WEBPACK_IMPORTED_MODULE_40__["AngularDoubleScrollbarsComponent"], ngx_drag_drop__WEBPACK_IMPORTED_MODULE_39__["DndDropzoneDirective"], _kanban_swimlane_swimlane_component__WEBPACK_IMPORTED_MODULE_36__["SwimlaneComponent"], ngx_drag_drop__WEBPACK_IMPORTED_MODULE_39__["DndPlaceholderRefDirective"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgForOf"], _kanban_docker_docker_component__WEBPACK_IMPORTED_MODULE_37__["DockerComponent"]], []);
-_angular_core__WEBPACK_IMPORTED_MODULE_46__["ɵɵsetComponentScope"](_kanban_swimlane_swimlane_component__WEBPACK_IMPORTED_MODULE_36__["SwimlaneComponent"], [_angular_common__WEBPACK_IMPORTED_MODULE_0__["NgIf"], ngx_drag_drop__WEBPACK_IMPORTED_MODULE_39__["DndDraggableDirective"], _kanban_docker_docker_component__WEBPACK_IMPORTED_MODULE_37__["DockerComponent"]], []);
-_angular_core__WEBPACK_IMPORTED_MODULE_46__["ɵɵsetComponentScope"](_kanban_docker_docker_component__WEBPACK_IMPORTED_MODULE_37__["DockerComponent"], [ngx_drag_drop__WEBPACK_IMPORTED_MODULE_39__["DndHandleDirective"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgIf"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgTemplateOutlet"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgForOf"], ngx_drag_drop__WEBPACK_IMPORTED_MODULE_39__["DndDropzoneDirective"], ngx_drag_drop__WEBPACK_IMPORTED_MODULE_39__["DndPlaceholderRefDirective"], _kanban_card_card_component__WEBPACK_IMPORTED_MODULE_38__["CardComponent"], ngx_drag_drop__WEBPACK_IMPORTED_MODULE_39__["DndDraggableDirective"]], []);
+_angular_core__WEBPACK_IMPORTED_MODULE_49__["ɵɵsetComponentScope"](_kanban_kanban_component__WEBPACK_IMPORTED_MODULE_35__["KanbanComponent"], [angular_double_scrollbars__WEBPACK_IMPORTED_MODULE_40__["AngularDoubleScrollbarsComponent"], ngx_drag_drop__WEBPACK_IMPORTED_MODULE_39__["DndDropzoneDirective"], _kanban_swimlane_swimlane_component__WEBPACK_IMPORTED_MODULE_36__["SwimlaneComponent"], ngx_drag_drop__WEBPACK_IMPORTED_MODULE_39__["DndPlaceholderRefDirective"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgForOf"], _kanban_docker_docker_component__WEBPACK_IMPORTED_MODULE_37__["DockerComponent"]], []);
+_angular_core__WEBPACK_IMPORTED_MODULE_49__["ɵɵsetComponentScope"](_kanban_swimlane_swimlane_component__WEBPACK_IMPORTED_MODULE_36__["SwimlaneComponent"], [_angular_common__WEBPACK_IMPORTED_MODULE_0__["NgIf"], ngx_drag_drop__WEBPACK_IMPORTED_MODULE_39__["DndDraggableDirective"], _kanban_docker_docker_component__WEBPACK_IMPORTED_MODULE_37__["DockerComponent"]], []);
+_angular_core__WEBPACK_IMPORTED_MODULE_49__["ɵɵsetComponentScope"](_kanban_docker_docker_component__WEBPACK_IMPORTED_MODULE_37__["DockerComponent"], [ngx_drag_drop__WEBPACK_IMPORTED_MODULE_39__["DndHandleDirective"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgIf"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgTemplateOutlet"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgForOf"], ngx_drag_drop__WEBPACK_IMPORTED_MODULE_39__["DndDropzoneDirective"], ngx_drag_drop__WEBPACK_IMPORTED_MODULE_39__["DndPlaceholderRefDirective"], _kanban_card_card_component__WEBPACK_IMPORTED_MODULE_38__["CardComponent"], ngx_drag_drop__WEBPACK_IMPORTED_MODULE_39__["DndDraggableDirective"]], []);
 
 
 /***/ }),
@@ -21725,25 +22137,26 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function CardComponent_div_2_div_4_div_1_i_3_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "i");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "i", 17);
 } if (rf & 2) {
     const btn_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]().$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassMap"](btn_r6.icon);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵattribute"]("title", btn_r6.hint || btn_r6.label || "");
 } }
-function CardComponent_div_2_div_4_div_1_ul_5_li_1_hr_1_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "hr", 21);
+function CardComponent_div_2_div_4_div_1_ul_4_li_1_hr_1_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "hr", 22);
 } }
-function CardComponent_div_2_div_4_div_1_ul_5_li_1_a_2_i_1_Template(rf, ctx) { if (rf & 1) {
+function CardComponent_div_2_div_4_div_1_ul_4_li_1_a_2_i_1_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "i");
 } if (rf & 2) {
     const option_r12 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2).$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassMap"](option_r12.icon);
 } }
-function CardComponent_div_2_div_4_div_1_ul_5_li_1_a_2_Template(rf, ctx) { if (rf & 1) {
+function CardComponent_div_2_div_4_div_1_ul_4_li_1_a_2_Template(rf, ctx) { if (rf & 1) {
     const _r19 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "a", 22);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function CardComponent_div_2_div_4_div_1_ul_5_li_1_a_2_Template_a_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r19); const option_r12 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]().$implicit; const ctx_r17 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](5); return ctx_r17.onButtonClick(option_r12); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, CardComponent_div_2_div_4_div_1_ul_5_li_1_a_2_i_1_Template, 1, 2, "i", 15);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "a", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function CardComponent_div_2_div_4_div_1_ul_4_li_1_a_2_Template_a_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r19); const option_r12 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]().$implicit; const ctx_r17 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](5); return ctx_r17.onButtonClick(option_r12); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, CardComponent_div_2_div_4_div_1_ul_4_li_1_a_2_i_1_Template, 1, 2, "i", 24);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
@@ -21753,10 +22166,10 @@ function CardComponent_div_2_div_4_div_1_ul_5_li_1_a_2_Template(rf, ctx) { if (r
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", option_r12.label || "", "");
 } }
-function CardComponent_div_2_div_4_div_1_ul_5_li_1_Template(rf, ctx) { if (rf & 1) {
+function CardComponent_div_2_div_4_div_1_ul_4_li_1_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "li");
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, CardComponent_div_2_div_4_div_1_ul_5_li_1_hr_1_Template, 1, 0, "hr", 19);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](2, CardComponent_div_2_div_4_div_1_ul_5_li_1_a_2_Template, 3, 2, "a", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, CardComponent_div_2_div_4_div_1_ul_4_li_1_hr_1_Template, 1, 0, "hr", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](2, CardComponent_div_2_div_4_div_1_ul_4_li_1_a_2_Template, 3, 2, "a", 21);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const option_r12 = ctx.$implicit;
@@ -21765,9 +22178,9 @@ function CardComponent_div_2_div_4_div_1_ul_5_li_1_Template(rf, ctx) { if (rf & 
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", !option_r12.divider);
 } }
-function CardComponent_div_2_div_4_div_1_ul_5_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "ul", 17);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, CardComponent_div_2_div_4_div_1_ul_5_li_1_Template, 3, 2, "li", 18);
+function CardComponent_div_2_div_4_div_1_ul_4_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "ul", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, CardComponent_div_2_div_4_div_1_ul_4_li_1_Template, 3, 2, "li", 19);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const btn_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]().$implicit;
@@ -21782,10 +22195,9 @@ function CardComponent_div_2_div_4_div_1_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 12);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "button", 13, 14);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function CardComponent_div_2_div_4_div_1_Template_button_click_1_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r23); const btn_r6 = ctx.$implicit; const ctx_r22 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](3); return ctx_r22.onButtonClick(btn_r6); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](3, CardComponent_div_2_div_4_div_1_i_3_Template, 1, 2, "i", 15);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](3, CardComponent_div_2_div_4_div_1_i_3_Template, 1, 3, "i", 15);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](5, CardComponent_div_2_div_4_div_1_ul_5_Template, 2, 2, "ul", 16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](4, CardComponent_div_2_div_4_div_1_ul_4_Template, 2, 2, "ul", 16);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const btn_r6 = ctx.$implicit;
@@ -21797,13 +22209,11 @@ function CardComponent_div_2_div_4_div_1_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", btn_r6.icon == null ? null : btn_r6.icon.length);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", btn_r6.label || "", " ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx_r5.hasButtonItems(btn_r6));
 } }
 function CardComponent_div_2_div_4_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 10);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, CardComponent_div_2_div_4_div_1_Template, 6, 9, "div", 11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, CardComponent_div_2_div_4_div_1_Template, 5, 8, "div", 11);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2);
@@ -21827,7 +22237,7 @@ function CardComponent_div_2_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx_r0.hasMenu);
 } }
 function CardComponent_h6_4_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "h6", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "h6", 25);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
@@ -21836,7 +22246,7 @@ function CardComponent_h6_4_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](ctx_r1.item.subTitle);
 } }
 function CardComponent_p_5_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "p", 24);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "p", 26);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
@@ -21846,7 +22256,7 @@ function CardComponent_p_5_Template(rf, ctx) { if (rf & 1) {
 } }
 const _c0 = function (a0, a1) { return { card: a0, context: a1 }; };
 function CardComponent_ng_container_6_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainer"](0, 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainer"](0, 27);
 } if (rf & 2) {
     const ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngTemplateOutlet", ctx_r3.template)("ngTemplateOutletContext", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction2"](2, _c0, ctx_r3.item, ctx_r3.kanban == null ? null : ctx_r3.kanban.context));
@@ -21911,7 +22321,7 @@ class CardComponent {
 CardComponent.ɵfac = function CardComponent_Factory(t) { return new (t || CardComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_1__["UtilService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](src_app_services_navigate_service__WEBPACK_IMPORTED_MODULE_2__["NavigateService"])); };
 CardComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: CardComponent, selectors: [["card"]], hostVars: 2, hostBindings: function CardComponent_HostBindings(rf, ctx) { if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassMap"](ctx.class);
-    } }, inputs: { item: "item", docker: "docker", kanban: "kanban", template: "template", placeholderTemplate: "placeholderTemplate" }, decls: 7, vars: 4, consts: [[1, "card", "border-secondary", "my-1"], [1, "card-body", "bg-light"], ["class", "d-flex w-100", 4, "ngIf"], [1, "flex-fill"], ["class", "card-subtitle mb-2 text-muted small ", 4, "ngIf"], ["class", "card-text small", 4, "ngIf"], [3, "ngTemplateOutlet", "ngTemplateOutletContext", 4, "ngIf"], [1, "d-flex", "w-100"], [1, "card-title", "text-dark", "small"], ["class", "btn-group card-buttons", "role", "group", "aria-label", "Op\u00E7\u00F5es", 4, "ngIf"], ["role", "group", "aria-label", "Op\u00E7\u00F5es", 1, "btn-group", "card-buttons"], ["class", "btn-group", "role", "group", 4, "ngFor", "ngForOf"], ["role", "group", 1, "btn-group"], ["type", "button", "aria-expanded", "false", 3, "click"], ["itemsButton", ""], [3, "class", 4, "ngIf"], ["class", "dropdown-menu dropdown-menu-end", 4, "ngIf"], [1, "dropdown-menu", "dropdown-menu-end"], [4, "ngFor", "ngForOf"], ["class", "dropdown-divider", 4, "ngIf"], ["class", "dropdown-item", "role", "button", 3, "click", 4, "ngIf"], [1, "dropdown-divider"], ["role", "button", 1, "dropdown-item", 3, "click"], [1, "card-subtitle", "mb-2", "text-muted", "small"], [1, "card-text", "small"], [3, "ngTemplateOutlet", "ngTemplateOutletContext"]], template: function CardComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, inputs: { item: "item", docker: "docker", kanban: "kanban", template: "template", placeholderTemplate: "placeholderTemplate" }, decls: 7, vars: 4, consts: [[1, "card", "border-secondary", "my-1"], [1, "card-body", "bg-light"], ["class", "d-flex w-100", 4, "ngIf"], [1, "flex-fill"], ["class", "card-subtitle mb-2 text-muted small ", 4, "ngIf"], ["class", "card-text small", 4, "ngIf"], [3, "ngTemplateOutlet", "ngTemplateOutletContext", 4, "ngIf"], [1, "d-flex", "w-100"], [1, "card-title", "text-dark", "small"], ["class", "btn-group card-buttons", "role", "group", "aria-label", "Op\u00E7\u00F5es", 4, "ngIf"], ["role", "group", "aria-label", "Op\u00E7\u00F5es", 1, "btn-group", "card-buttons"], ["class", "btn-group", "role", "group", 4, "ngFor", "ngForOf"], ["role", "group", 1, "btn-group"], ["type", "button", "aria-expanded", "false", 3, "click"], ["itemsButton", ""], ["data-bs-toggle", "tooltip", "data-bs-placement", "top", 3, "class", 4, "ngIf"], ["class", "dropdown-menu dropdown-menu-end", 4, "ngIf"], ["data-bs-toggle", "tooltip", "data-bs-placement", "top"], [1, "dropdown-menu", "dropdown-menu-end"], [4, "ngFor", "ngForOf"], ["class", "dropdown-divider", 4, "ngIf"], ["class", "dropdown-item", "role", "button", 3, "click", 4, "ngIf"], [1, "dropdown-divider"], ["role", "button", 1, "dropdown-item", 3, "click"], [3, "class", 4, "ngIf"], [1, "card-subtitle", "mb-2", "text-muted", "small"], [1, "card-text", "small"], [3, "ngTemplateOutlet", "ngTemplateOutletContext"]], template: function CardComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "div", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](2, CardComponent_div_2_Template, 5, 2, "div", 2);
@@ -22291,6 +22701,201 @@ InputMultiselectComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵ
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", !ctx.isDisabled && !ctx.isNoForm);
     } }, directives: [_input_container_input_container_component__WEBPACK_IMPORTED_MODULE_6__["InputContainerComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_7__["NgIf"], _angular_common__WEBPACK_IMPORTED_MODULE_7__["NgForOf"]], styles: [".multiselect[_ngcontent-%COMP%]   .multiselect-list[_ngcontent-%COMP%] {\n  overflow: auto;\n}\n.multiselect[_ngcontent-%COMP%]   .multiselect-icon[_ngcontent-%COMP%] {\n  float: left;\n  margin-right: 3px;\n}\n.multiselect[_ngcontent-%COMP%]   .multiselect-item[_ngcontent-%COMP%] {\n  cursor: default;\n  white-space: nowrap;\n}\n.multiselect[_ngcontent-%COMP%]   .multiselect-item-row[_ngcontent-%COMP%] {\n  display: block;\n  width: calc(100% - 8px);\n}\n.multiselect[_ngcontent-%COMP%]   .multiselect-text[_ngcontent-%COMP%] {\n  float: left;\n  width: calc(100% - 28px);\n  text-align: left;\n}\n.multiselect[_ngcontent-%COMP%]   .muiltiselect-text-icon[_ngcontent-%COMP%] {\n  width: calc(100% - 45px) !important;\n}\n.multiselect[_ngcontent-%COMP%]   .multiselect-delete-button[_ngcontent-%COMP%] {\n  cursor: pointer;\n  margin-top: 2px;\n}\n.multiselect[_ngcontent-%COMP%]   .multiselect-container[_ngcontent-%COMP%] {\n  display: inline-table;\n  width: 100%;\n}\n.multiselect[_ngcontent-%COMP%]   .multiselect-container[_ngcontent-%COMP%]   .multiselect-container-buttons[_ngcontent-%COMP%] {\n  display: table-cell;\n  vertical-align: bottom;\n  width: 40px;\n}\n.multiselect[_ngcontent-%COMP%]   .multiselect-container[_ngcontent-%COMP%]   .multiselect-container-form[_ngcontent-%COMP%] {\n  display: flex;\n  width: auto;\n}\n.multiselect[_ngcontent-%COMP%]   .multiselect-container[_ngcontent-%COMP%]   .multiselect-container-form-button[_ngcontent-%COMP%] {\n  vertical-align: baseline !important;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uXFwuLlxcLi5cXC4uXFwuLlxcaW5wdXQtbXVsdGlzZWxlY3QuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQ0k7RUFDSSxjQUFBO0FBQVI7QUFFSTtFQUNJLFdBQUE7RUFDQSxpQkFBQTtBQUFSO0FBRUk7RUFDSSxlQUFBO0VBQ0EsbUJBQUE7QUFBUjtBQUVJO0VBQ0ksY0FBQTtFQUNBLHVCQUFBO0FBQVI7QUFFSTtFQUNJLFdBQUE7RUFDQSx3QkFBQTtFQUNBLGdCQUFBO0FBQVI7QUFFSTtFQUNJLG1DQUFBO0FBQVI7QUFFSTtFQUNJLGVBQUE7RUFDQSxlQUFBO0FBQVI7QUFFSTtFQUNJLHFCQUFBO0VBQ0EsV0FBQTtBQUFSO0FBQ1E7RUFDSSxtQkFBQTtFQUNBLHNCQUFBO0VBQ0EsV0FBQTtBQUNaO0FBQ1E7RUFDSSxhQUFBO0VBQ0EsV0FBQTtBQUNaO0FBQ1E7RUFDSSxtQ0FBQTtBQUNaIiwiZmlsZSI6ImlucHV0LW11bHRpc2VsZWN0LmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLm11bHRpc2VsZWN0IHtcclxuICAgIC5tdWx0aXNlbGVjdC1saXN0IHtcclxuICAgICAgICBvdmVyZmxvdzogYXV0bztcclxuICAgIH1cclxuICAgIC5tdWx0aXNlbGVjdC1pY29uIHtcclxuICAgICAgICBmbG9hdDogbGVmdDtcclxuICAgICAgICBtYXJnaW4tcmlnaHQ6IDNweDtcclxuICAgIH1cclxuICAgIC5tdWx0aXNlbGVjdC1pdGVtIHtcclxuICAgICAgICBjdXJzb3I6IGRlZmF1bHQ7XHJcbiAgICAgICAgd2hpdGUtc3BhY2U6IG5vd3JhcDtcclxuICAgIH1cclxuICAgIC5tdWx0aXNlbGVjdC1pdGVtLXJvdyB7XHJcbiAgICAgICAgZGlzcGxheTogYmxvY2s7XHJcbiAgICAgICAgd2lkdGg6IGNhbGMoMTAwJSAtIDhweCk7XHJcbiAgICB9XHJcbiAgICAubXVsdGlzZWxlY3QtdGV4dCB7XHJcbiAgICAgICAgZmxvYXQ6IGxlZnQ7XHJcbiAgICAgICAgd2lkdGg6IGNhbGMoMTAwJSAtIDI4cHgpO1xyXG4gICAgICAgIHRleHQtYWxpZ246IGxlZnQ7XHJcbiAgICB9XHJcbiAgICAubXVpbHRpc2VsZWN0LXRleHQtaWNvbiB7XHJcbiAgICAgICAgd2lkdGg6IGNhbGMoMTAwJSAtIDQ1cHgpICFpbXBvcnRhbnQ7XHJcbiAgICB9XHJcbiAgICAubXVsdGlzZWxlY3QtZGVsZXRlLWJ1dHRvbiB7XHJcbiAgICAgICAgY3Vyc29yOiBwb2ludGVyO1xyXG4gICAgICAgIG1hcmdpbi10b3A6IDJweDtcclxuICAgIH0gICAgXHJcbiAgICAubXVsdGlzZWxlY3QtY29udGFpbmVyIHtcclxuICAgICAgICBkaXNwbGF5OiBpbmxpbmUtdGFibGU7XHJcbiAgICAgICAgd2lkdGg6IDEwMCU7XHJcbiAgICAgICAgLm11bHRpc2VsZWN0LWNvbnRhaW5lci1idXR0b25zIHtcclxuICAgICAgICAgICAgZGlzcGxheTogdGFibGUtY2VsbDtcclxuICAgICAgICAgICAgdmVydGljYWwtYWxpZ246IGJvdHRvbTtcclxuICAgICAgICAgICAgd2lkdGg6IDQwcHg7XHJcbiAgICAgICAgfVxyXG4gICAgICAgIC5tdWx0aXNlbGVjdC1jb250YWluZXItZm9ybSB7XHJcbiAgICAgICAgICAgIGRpc3BsYXk6IGZsZXg7XHJcbiAgICAgICAgICAgIHdpZHRoOiBhdXRvO1xyXG4gICAgICAgIH1cclxuICAgICAgICAubXVsdGlzZWxlY3QtY29udGFpbmVyLWZvcm0tYnV0dG9uIHtcclxuICAgICAgICAgICAgdmVydGljYWwtYWxpZ246IGJhc2VsaW5lICFpbXBvcnRhbnQ7IFxyXG4gICAgICAgIH0gICBcclxuICAgIH1cclxufSJdfQ== */"] });
+
+
+/***/ }),
+
+/***/ "ovw9":
+/*!*****************************************************!*\
+  !*** ./src/app/components/gantt/gantt.component.ts ***!
+  \*****************************************************/
+/*! exports provided: GanttComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GanttComponent", function() { return GanttComponent; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var src_app_services_bootstrap_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/services/bootstrap.service */ "Q3HM");
+/* harmony import */ var _gantt_templates_gantt_templates_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./gantt-templates/gantt-templates.component */ "MVwS");
+
+
+
+class GanttComponent {
+    constructor(bootstrap) {
+        this.bootstrap = bootstrap;
+        this.loading = false;
+        this.ge = undefined;
+    }
+    ngOnInit() {
+        const baseGanttUrl = "assets/gantt/";
+        let files = [
+            "platform.css",
+            "libs/jquery/dateField/jquery.dateField.css",
+            "gantt.css",
+            "libs/jquery/jquery.livequery.1.1.1.min.js",
+            "libs/jquery/jquery.timers.js",
+            "libs/utilities.js",
+            "libs/forms.js",
+            "libs/date.js",
+            "libs/dialogs.js",
+            "libs/layout.js",
+            "libs/i18nJs.js",
+            "libs/jquery/dateField/jquery.dateField.js",
+            "libs/jquery/JST/jquery.JST.js",
+            "libs/jquery/valueSlider/jquery.mb.slider.js",
+            "libs/jquery/svg/jquery.svg.min.js",
+            "libs/jquery/svg/jquery.svgdom.1.8.js",
+            "ganttUtilities.js",
+            "ganttTask.js",
+            "ganttDrawerSVG.js",
+            "ganttZoom.js",
+            "ganttGridEditor.js",
+            "ganttMaster.js"
+        ];
+        let print = [
+            "ganttPrint.css",
+            "libs/jquery/valueSlider/mb.slider.css"
+        ];
+        // "http://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"
+        // "http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"
+        this.loading = true;
+        this.bootstrap.load(files.map(x => baseGanttUrl + x), print.map(x => baseGanttUrl + x)).then(() => {
+            let canWrite = true; //this is the default for test purposes
+            // here starts gantt initialization
+            //@ts-ignore
+            this.ge = new GanttMaster();
+            this.ge.resourceUrl = "assets/gantt/res/";
+            this.ge.set100OnClose = true;
+            this.ge.shrinkParent = true;
+            this.ge.permissions = {
+                canWriteOnParent: false,
+                canWrite: false,
+                canAdd: false,
+                canDelete: false,
+                canInOutdent: false,
+                canMoveUpDown: false,
+                canSeePopEdit: false,
+                canSeeFullEdit: false,
+                canSeeDep: false,
+                canSeeCriticalPath: false,
+                canAddIssue: false,
+                cannotCloseTaskIfIssueOpen: false
+            };
+            this.ge.init($("#workSpace"));
+            this.loadI18n(); //overwrite with localized ones
+            //in order to force compute the best-fitting zoom level
+            delete this.ge.gantt.zoom;
+            let project = this.getDemoProject();
+            if (!project.canWrite)
+                $(".ganttButtonBar button.requireWrite").attr("disabled", "true");
+            this.ge.loadProject(project);
+            this.ge.checkpoint(); //empty the undo stack
+            //initializeHistoryManagement(ge.tasks[0].id);
+            //@ts-ignore
+            $.JST.loadDecorator("RESOURCE_ROW", function (resTr, res) {
+                //@ts-ignore
+                resTr.find(".delRes").click(function () { $(this).closest("tr").remove(); });
+            });
+            //@ts-ignore
+            $.JST.loadDecorator("ASSIGNMENT_ROW", function (assigTr, taskAssig) {
+                var resEl = assigTr.find("[name=resourceId]");
+                var opt = $("<option>");
+                resEl.append(opt);
+                for (var i = 0; i < taskAssig.task.master.resources.length; i++) {
+                    var res = taskAssig.task.master.resources[i];
+                    opt = $("<option>");
+                    opt.val(res.id).html(res.name);
+                    if (taskAssig.assig.resourceId == res.id)
+                        opt.attr("selected", "true");
+                    resEl.append(opt);
+                }
+                var roleEl = assigTr.find("[name=roleId]");
+                for (var i = 0; i < taskAssig.task.master.roles.length; i++) {
+                    var role = taskAssig.task.master.roles[i];
+                    var optr = $("<option>");
+                    optr.val(role.id).html(role.name);
+                    if (taskAssig.assig.roleId == role.id)
+                        optr.attr("selected", "true");
+                    roleEl.append(optr);
+                }
+                if (taskAssig.task.master.permissions.canWrite && taskAssig.task.canWrite) {
+                    assigTr.find(".delAssig").click(function () {
+                        //@ts-ignore
+                        var tr = $(this).closest("[assId]").fadeOut(200, function () { $(this).remove(); });
+                    });
+                }
+            });
+        });
+    }
+    getDemoProject() {
+        const ret = { "tasks": [
+                { "id": -1, "name": "Gantt editor", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 0, "status": "STATUS_ACTIVE", "depends": "", "canWrite": true, "start": 1396994400000, "duration": 20, "end": 1399586399999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [{ id: "tmp_1", resourceId: "tmp_1", roleId: "", effort: "" }], "hasChild": true },
+                { "id": -2, "name": "coding", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 1, "status": "STATUS_ACTIVE", "depends": "", "canWrite": true, "start": 1396994400000, "duration": 10, "end": 1398203999999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": true },
+                { "id": -3, "name": "gantt part", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_ACTIVE", "depends": "", "canWrite": true, "start": 1396994400000, "duration": 2, "end": 1397167199999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false },
+                { "id": -4, "name": "editor part", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "depends": "3", "canWrite": true, "start": 1397167200000, "duration": 4, "end": 1397685599999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false },
+                { "id": -5, "name": "testing", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 1, "status": "STATUS_SUSPENDED", "depends": "2:5", "canWrite": true, "start": 1398981600000, "duration": 5, "end": 1399586399999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": true },
+                { "id": -6, "name": "test on safari", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "depends": "", "canWrite": true, "start": 1398981600000, "duration": 2, "end": 1399327199999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false },
+                { "id": -7, "name": "test on ie", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "depends": "6", "canWrite": true, "start": 1399327200000, "duration": 3, "end": 1399586399999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false },
+                { "id": -8, "name": "test on chrome", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "depends": "6", "canWrite": true, "start": 1399327200000, "duration": 2, "end": 1399499999999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false }
+            ], "selectedRow": 2, "deletedTaskIds": [],
+            "resources": [
+                { "id": "tmp_1", "name": "Resource 1", picture: "./assets/images/profile.png" },
+                { "id": "tmp_2", "name": "Resource 2", picture: "./assets/images/profile.png" },
+                { "id": "tmp_3", "name": "Resource 3", picture: "./assets/images/profile.png" },
+                { "id": "tmp_4", "name": "Resource 4", picture: "./assets/images/profile.png" }
+            ],
+            "roles": [
+                { "id": "tmp_1", "name": "Project Manager" },
+                { "id": "tmp_2", "name": "Worker" },
+                { "id": "tmp_3", "name": "Stakeholder" },
+                { "id": "tmp_4", "name": "Customer" }
+            ], "canWrite": true, "canDelete": true, "canWriteOnParent": true, canAdd: true };
+        let offset = new Date().getTime() - ret.tasks[0].start;
+        for (let i = 0; i < ret.tasks.length; i++) {
+            ret.tasks[i].start = ret.tasks[i].start + offset;
+        }
+        return ret;
+    }
+    loadI18n() {
+        //@ts-ignore
+        GanttMaster.messages = {
+            "CANNOT_WRITE": "No permission to change the following task:",
+            "CHANGE_OUT_OF_SCOPE": "Project update not possible as you lack rights for updating a parent project.",
+            "START_IS_MILESTONE": "Start date is a milestone.",
+            "END_IS_MILESTONE": "End date is a milestone.",
+            "TASK_HAS_CONSTRAINTS": "Task has constraints.",
+            "GANTT_ERROR_DEPENDS_ON_OPEN_TASK": "Error: there is a dependency on an open task.",
+            "GANTT_ERROR_DESCENDANT_OF_CLOSED_TASK": "Error: due to a descendant of a closed task.",
+            "TASK_HAS_EXTERNAL_DEPS": "This task has external dependencies.",
+            "GANNT_ERROR_LOADING_DATA_TASK_REMOVED": "GANNT_ERROR_LOADING_DATA_TASK_REMOVED",
+            "CIRCULAR_REFERENCE": "Circular reference.",
+            "CANNOT_DEPENDS_ON_ANCESTORS": "Cannot depend on ancestors.",
+            "INVALID_DATE_FORMAT": "The data inserted are invalid for the field format.",
+            "GANTT_ERROR_LOADING_DATA_TASK_REMOVED": "An error has occurred while loading the data. A task has been trashed.",
+            "CANNOT_CLOSE_TASK_IF_OPEN_ISSUE": "Cannot close a task with open issues",
+            "TASK_MOVE_INCONSISTENT_LEVEL": "You cannot exchange tasks of different depth.",
+            "CANNOT_MOVE_TASK": "CANNOT_MOVE_TASK",
+            "PLEASE_SAVE_PROJECT": "PLEASE_SAVE_PROJECT",
+            "GANTT_SEMESTER": "Semester",
+            "GANTT_SEMESTER_SHORT": "s.",
+            "GANTT_QUARTER": "Quarter",
+            "GANTT_QUARTER_SHORT": "q.",
+            "GANTT_WEEK": "Week",
+            "GANTT_WEEK_SHORT": "w."
+        };
+    }
+    clearGantt() {
+        this.ge.reset();
+    }
+}
+GanttComponent.ɵfac = function GanttComponent_Factory(t) { return new (t || GanttComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](src_app_services_bootstrap_service__WEBPACK_IMPORTED_MODULE_1__["BootstrapService"])); };
+GanttComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: GanttComponent, selectors: [["gantt"]], decls: 3, vars: 0, consts: [[1, "gantt"], ["id", "workSpace", 2, "padding", "0px", "overflow-y", "auto", "overflow-x", "hidden", "border", "1px solid #e5e5e5", "position", "relative", "margin", "0 5px"]], template: function GanttComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](1, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](2, "gantt-templates");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+    } }, directives: [_gantt_templates_gantt_templates_component__WEBPACK_IMPORTED_MODULE_2__["GanttTemplatesComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJnYW50dC5jb21wb25lbnQuc2NzcyJ9 */"] });
 
 
 /***/ }),
