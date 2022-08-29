@@ -38,6 +38,7 @@ class IntegracaoService
         $this->localServidores = $integracao_config['localServidores'];
     }
 
+    /** Preenche os campos de uma lotação para o novo Usuário, se sua lotação já vier definida pelo SIAPE */
     public function fillUsuarioWithSiape(&$usuario, &$lotacao) {
         $result = false;
         $query = DB::select("SELECT s.*, u.id AS unidade_servidor, c.uf AS unidade_uf FROM integracao_servidores s ".
@@ -50,7 +51,7 @@ class IntegracaoService
             $usuario->telefone = $servidor->telefone;
             $usuario->matricula = $servidor->matriculasiape;
             $usuario->apelido = $servidor->nomeguerra;
-            if(!empty($servidor->unidade_servidor)) { //cria uma lotação para o novo servidor apenas se a unidade dele já estiver cadastrada
+            if(!empty($servidor->unidade_servidor)) {               //cria uma lotação para o novo servidor apenas se ela já estiver definida no SIAPE
                 $lotacao->data_inicio = new \DateTime();
                 $lotacao->unidade_id = $servidor->unidade_servidor;
                 $lotacao->principal = 1;
@@ -453,9 +454,7 @@ class IntegracaoService
                     // Todas são setadas como PRINCIPAL = 0
                     if (!empty($lotacoes_nao_atuais)) {
                         foreach($lotacoes_nao_atuais as $lotacao) {
-                            DB::update($sql2_update, [
-                                'id_lotacao'    => $lotacao->id_lotacao
-                            ]);
+                            DB::update($sql2_update, ['id_lotacao' => $lotacao->id_lotacao]);
                         };
                     }
 
@@ -524,6 +523,9 @@ class IntegracaoService
         $this->salvarUsuarioLotacao($usuario, $lotacao);
     }
 
+    /** Cria uma lotação para o Usuário, se seus dados já existirem na tabela integracao_servidores,
+     * e se ela já constar na tabela Unidades. Salva o novo usuário, independentemente da lotação
+     */
     public function salvarUsuarioLotacao(&$usuario, &$lotacao){
         if ($this->fillUsuarioWithSiape($usuario, $lotacao)) { //se quem está logado existe na tabela integracao_servidores
             $perfil_nivel_5 = Perfil::where('nivel', '5')->first()->id;
