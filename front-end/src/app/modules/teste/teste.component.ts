@@ -8,6 +8,7 @@ import { LookupItem, LookupService } from 'src/app/services/lookup.service';
 import { UtilService } from 'src/app/services/util.service';
 import * as moment from 'moment';
 import { CardItem } from 'src/app/components/kanban/docker/docker.component';
+import { GanttResource, GanttTask } from 'src/app/components/gantt/gantt-models';
 
 @Component({
   selector: 'app-teste',
@@ -35,6 +36,9 @@ export class TesteComponent implements OnInit {
   public avaliadas: CardItem[] = [
     {id: "a1", title: "avaliada 1", subTitle: "avaliado 1", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens"}
   ];
+
+  public tasks: GanttTask[] = []; 
+  public resources: GanttResource[] = [];
 
   constructor(
     public fh: FormHelperService, 
@@ -70,6 +74,55 @@ export class TesteComponent implements OnInit {
       icon: {default: null},
       color: {default: null}*/
     });
+    this.tasks = [{
+      id: "a80b71cf-e112-11ec-a5bb-0050569c64a0",
+      name: "Projeto de teste 1",
+      description: "Projeto de testes",
+      progress: 50,
+      start: this.incDate(-2),
+      end: this.incDate(5),
+      duration: 7,
+      hasChild: true,
+      tasks: [
+        {
+          id: "a80b71cf-e112-11ec-a5bb-0050569c64a1",
+          name: "Projeto de teste 1",
+          description: "Projeto de testes",
+          progress: 50,
+          start: this.incDate(-1),
+          end: this.incDate(1),
+          duration: 2,
+        },
+        {
+          id: "a80b71cf-e112-11ec-a5bb-0050569c64a1",
+          name: "Projeto de teste 1",
+          description: "Projeto de testes",
+          progress: 50,
+          start: this.incDate(-1),
+          end: this.incDate(1),
+          duration: 2,
+        }        
+      ],
+      assignments: [
+        {resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a1"}, 
+        {resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a2"}
+      ]
+    }];
+    this.resources = [{
+      id: "a80b71ff-e112-11ec-a5bb-0050569c64a1",
+      name: "Genisson",
+      picture: "./assets/images/profile.png"
+    },{
+      id: "a80b71ff-e112-11ec-a5bb-0050569c64a2",
+      name: "Carlos",
+      picture: "./assets/images/profile.png"
+    }];
+  }
+
+  public incDate(inc: number, date?: Date) {
+    date = date || new Date();
+    date.setDate(date.getDate() + inc);
+    return date;
   }
 
   public gridItems = [

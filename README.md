@@ -20,6 +20,7 @@ https://gitlab.com/petrvs.app/Petrvs.git
 - pull
 - resolver os conflitos no back e front, resolver os .maps com HEAD, e quando tiver conflito, perguntar a pessoa do arquivo que deu conflito
 - se for pra gerar uma nova versão precisa alterar o arquivo app.json na propriedade "version"
+- npm install --force
 - npm run build
 - commmit
 - push

@@ -20,6 +20,7 @@ import { NavigateResult } from 'src/app/services/navigate.service';
 import { SelectItem } from 'src/app/components/input/input-base';
 import { Tarefa } from 'src/app/models/tarefa.model';
 import { SeiKeys } from 'src/app/listeners/procedimento-trabalhar/procedimento-trabalhar.component';
+import { ComentarioService } from 'src/app/services/comentario.service';
 
 @Component({
   selector: 'app-demanda-form-entrega',
@@ -41,6 +42,7 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
   public demanda?: Demanda;
   public sei?: SeiKeys;
   public allPages: ListenerAllPagesService;
+  public comentario: ComentarioService;
   public form: FormGroup;
   public formComentarios: FormGroup;
   public modalWidth: number = 800;
@@ -52,6 +54,7 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
     this.tipoDocumentoDao = injector.get<TipoDocumentoDaoService>(TipoDocumentoDaoService);
     this.tipoProcessoDao = injector.get<TipoProcessoDaoService>(TipoProcessoDaoService);
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
+    this.comentario = injector.get<ComentarioService>(ComentarioService);
     this.comentarioTipos = this.lookup.COMENTARIO_TIPO.filter(x => ["COMENTARIO", "TECNICO"].includes(x.key));
     this.title = this.lex.noun("Entrega");
     this.form = this.fh.FormBuilder({
@@ -265,19 +268,29 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
       label: "Comentar",
       icon: "bi bi-chat-left-quote",
       onClick: (comentario: Comentario) => {
-        this.newComentario(comentario);
+        this.comentario.newComentario(this.form.controls.comentarios, this.comentarios!, comentario);
       }
     }];
   }
 
-  public comentarioLevel(comentario: Comentario): string[] {
+  /*public comentarioLevel(comentario: Comentario): string[] {
     return (comentario.path || "").split("").filter(x => x == "/");
   }
 
-  public orderComentarios(comentarios: Comentario[]) {
-    return comentarios.sort((a: Comentario, b: Comentario) => {
-      return (a.path + "/" + a.id) < (b.path + "/" + b.id) || (a.path == b.path && a.data_hora.getTime() < b.data_hora.getTime()) ? -1 : 1;
-    });
+  public orderComentarios(comentarios?: Comentario[]) {
+    let ordered = comentarios?.sort((a: Comentario, b: Comentario) => {
+      if(a.path == b.path) { /* Situação 1: Paths iguais 
+        return a.data_hora.getTime() < b.data_hora.getTime() ? -1 : 1;
+      } else { /* Situação 2: Paths diferentes, deverá ser encontrado o menor nível comum entre eles para poder comparar 
+        let pathA = a.path.split("/");
+        let pathB = b.path.split("/");
+        let common = this.util.commonBegin(pathA, pathB);
+        let dataHoraA = (comentarios.find(x => x.id == (pathA[common.length] || a.id)) || a).data_hora.getTime();
+        let dataHoraB = (comentarios.find(x => x.id == (pathB[common.length] || b.id)) || b).data_hora.getTime();
+        return dataHoraA == dataHoraB ? 0 : (dataHoraA < dataHoraB ? -1 : 1);
+      }
+    }) || [];
+    return ordered;
   }
 
   public newComentario(pai?: Comentario) {
@@ -295,10 +308,10 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
     this.comentarios!.adding = true;
     this.comentarios!.edit(comentario);
     return comentario;
-  }
+  }*/
 
   public addComentario = async () => {
-    this.newComentario();
+    this.comentario.newComentario(this.form.controls.comentarios, this.comentarios!);
     return undefined;
   }
 

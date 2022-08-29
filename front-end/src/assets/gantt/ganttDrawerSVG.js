@@ -429,8 +429,11 @@ Ganttalendar.prototype.drawTask = function (task) {
       }
     }
 
-		if (task.isParent())
+		if (task.isParent()) {
       svg.rect(taskSvg, 0, 0, "100%", 3, {fill:"#000"});
+      svg.polygon(taskSvg, [[0, 0], [0, 10], [10, 0]], {fill:"#000"});
+      svg.polygon(taskSvg, [[dimensions.width-10, 0], [dimensions.width, 10], [dimensions.width, 0]], {fill:"#000"});
+    }
 
     if (task.startIsMilestone) {
       svg.image(taskSvg, -9, dimensions.height/2-9, 18, 18, self.master.resourceUrl +"milestone.png")

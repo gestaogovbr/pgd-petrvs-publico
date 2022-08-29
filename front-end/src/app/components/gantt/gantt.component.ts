@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { BootstrapService } from 'src/app/services/bootstrap.service';
+import { UtilService } from 'src/app/services/util.service';
+import { GanttResource, GanttTask } from './gantt-models';
 
 @Component({
   selector: 'gantt',
@@ -7,11 +9,16 @@ import { BootstrapService } from 'src/app/services/bootstrap.service';
   styleUrls: ['./gantt.component.scss']
 })
 export class GanttComponent implements OnInit {
+  @Input() tasks: GanttTask[] = [];
+  @Input() resources: GanttResource[] = [];
 
   public loading: boolean = false;
   public ge: any = undefined;
+  public id: string;
 
-  constructor(public bootstrap: BootstrapService) {}
+  constructor(public bootstrap: BootstrapService, public util: UtilService) {
+    this.id = util.md5();
+  }
 
   ngOnInit(): void {
     const baseGanttUrl = "assets/gantt/";
@@ -57,10 +64,10 @@ export class GanttComponent implements OnInit {
       this.ge.permissions = {
         canWriteOnParent: false,
         canWrite: false,
-        canAdd: false,
-        canDelete: false,
+        canAdd: true,
+        canDelete: true,
         canInOutdent: false,
-        canMoveUpDown: false,
+        canMoveUpDown: true,
         canSeePopEdit: false,
         canSeeFullEdit: false,
         canSeeDep: false,
@@ -68,17 +75,15 @@ export class GanttComponent implements OnInit {
         canAddIssue: false,
         cannotCloseTaskIfIssueOpen: false
       };
-      this.ge.init($("#workSpace"));
+      this.ge.init($("#workSpace" + this.id));
       this.loadI18n(); //overwrite with localized ones
       //in order to force compute the best-fitting zoom level
       delete this.ge.gantt.zoom;
-    
-      let project = this.getDemoProject();
-      if (!project.canWrite) $(".ganttButtonBar button.requireWrite").attr("disabled","true");
-      this.ge.loadProject(project);
-      this.ge.checkpoint(); //empty the undo stack
+
+      this.reload();
       //initializeHistoryManagement(ge.tasks[0].id);
 
+      /* Native resource editors
       //@ts-ignore
       $.JST.loadDecorator("RESOURCE_ROW", function(resTr, res) {
         //@ts-ignore
@@ -112,8 +117,77 @@ export class GanttComponent implements OnInit {
             var tr = $(this).closest("[assId]").fadeOut(200, function(){$(this).remove()});
           });
         }
-      });
+      });*/
     });
+  }
+
+  public reload() {
+    //let project = this.getDemoProject();
+    let project: any = this.getProject();
+    if (!project.canWrite) $(".ganttButtonBar button.requireWrite").attr("disabled","true");
+    this.ge.loadProject(project);
+    this.ge.checkpoint(); //empty the undo stack
+  }
+
+  public getRecursiveTasks(tasks: GanttTask[], level: number, project: any) {
+    for(let task of tasks) {
+      let assigs: any[] = [];
+      for(let assig of (task.assignments || [])) {
+        if(assig.resource_id && project.resources.find((x: any) => x.id == assig.resource_id)) {
+          assigs.push({ id: assig.id, resourceId: assig.resource_id, roleId: "", effort: "" });
+        } else if(assig.resource) {
+          if(!project.resources.find((x: any) => x.id == assig.resource!.id)) {
+            project.resources.push({ id: assig.resource!.id, name: assig.resource!.name, picture: assig.resource!.picture });
+          }
+          assigs.push({ id: assig.id, resourceId: assig.resource!.id, roleId: "", effort: "" });
+        }
+      }
+      project.tasks.push({
+        id: task.id,
+        name: task.name,
+        progress: task.progress || 0,
+        progressByWorklog: false,
+        relevance: 0,
+        type: "",
+        typeId: "",
+        description: task.description,
+        code: "",
+        level: level,
+        status: task.status || "STATUS_ACTIVE",
+        depends: "",
+        canWrite: true,
+        start: task.start.getTime(),
+        duration: task.duration || 0,
+        end: task.end.getTime(),
+        startIsMilestone: !!task.startIsMilestone,
+        endIsMilestone: !!task.endIsMilestone,
+        collapsed: false,
+        assigs: assigs,
+        hasChild: !!task.hasChild
+      });
+      if(task.hasChild) this.getRecursiveTasks(task.tasks || [], level+1, project);
+    }
+  }
+
+  public getProject() {
+    let project: any = {
+      tasks: [],
+      selectedRow: 2,
+      deletedTaskIds: [],
+      resources: [],
+      roles: [], 
+      canWrite: true,
+      canDelete: false,
+      canWriteOnParent: true,
+      canAdd: false 
+    };
+    // Load resources list
+    project.resources = this.resources.map(resource => {
+      return { id: resource.id, name: resource.name, picture: resource.picture };
+    });
+    // Load tasks and resources
+    this.getRecursiveTasks(this.tasks, 0, project);
+    return project;
   }
 
   public getDemoProject() {
@@ -149,29 +223,29 @@ export class GanttComponent implements OnInit {
   public loadI18n() {
     //@ts-ignore
     GanttMaster.messages = {
-      "CANNOT_WRITE":"No permission to change the following task:",
-      "CHANGE_OUT_OF_SCOPE":"Project update not possible as you lack rights for updating a parent project.",
-      "START_IS_MILESTONE":"Start date is a milestone.",
-      "END_IS_MILESTONE":"End date is a milestone.",
-      "TASK_HAS_CONSTRAINTS":"Task has constraints.",
-      "GANTT_ERROR_DEPENDS_ON_OPEN_TASK":"Error: there is a dependency on an open task.",
-      "GANTT_ERROR_DESCENDANT_OF_CLOSED_TASK":"Error: due to a descendant of a closed task.",
-      "TASK_HAS_EXTERNAL_DEPS":"This task has external dependencies.",
+      "CANNOT_WRITE":"Sem premissões para alterar a seguinte tarefa:",
+      "CHANGE_OUT_OF_SCOPE":"Atualização do projeto não é possível devido não possuir permissões para atualizar o projeto pai.",
+      "START_IS_MILESTONE":"Data início é um marco (milestone).",
+      "END_IS_MILESTONE":"Data fim é um marco (milestone).",
+      "TASK_HAS_CONSTRAINTS":"Tarefa tem restrições.",
+      "GANTT_ERROR_DEPENDS_ON_OPEN_TASK":"Erro: há uma dependência em uma tarefa aberta.",
+      "GANTT_ERROR_DESCENDANT_OF_CLOSED_TASK":"Erro: devido a um descendente de uma tarefa fechada.",
+      "TASK_HAS_EXTERNAL_DEPS":"Esta tarefa tem dependências externas.",
       "GANNT_ERROR_LOADING_DATA_TASK_REMOVED":"GANNT_ERROR_LOADING_DATA_TASK_REMOVED",
-      "CIRCULAR_REFERENCE":"Circular reference.",
-      "CANNOT_DEPENDS_ON_ANCESTORS":"Cannot depend on ancestors.",
-      "INVALID_DATE_FORMAT":"The data inserted are invalid for the field format.",
-      "GANTT_ERROR_LOADING_DATA_TASK_REMOVED":"An error has occurred while loading the data. A task has been trashed.",
-      "CANNOT_CLOSE_TASK_IF_OPEN_ISSUE":"Cannot close a task with open issues",
-      "TASK_MOVE_INCONSISTENT_LEVEL":"You cannot exchange tasks of different depth.",
+      "CIRCULAR_REFERENCE":"Referência circular.",
+      "CANNOT_DEPENDS_ON_ANCESTORS":"Não pode depender de ancestrais.",
+      "INVALID_DATE_FORMAT":"O dado inserido é inválido para o formato do campo.",
+      "GANTT_ERROR_LOADING_DATA_TASK_REMOVED":"Um erro ocorreu enquanto carregava os dados. A tarefa foi descartada.",
+      "CANNOT_CLOSE_TASK_IF_OPEN_ISSUE":"Não é possível fechar uma tarefa que tenham questões pendentes",
+      "TASK_MOVE_INCONSISTENT_LEVEL":"Você não pode intercambiar tarefas de diferentes profundidades.",
       "CANNOT_MOVE_TASK":"CANNOT_MOVE_TASK",
       "PLEASE_SAVE_PROJECT":"PLEASE_SAVE_PROJECT",
-      "GANTT_SEMESTER":"Semester",
-      "GANTT_SEMESTER_SHORT":"s.",
-      "GANTT_QUARTER":"Quarter",
-      "GANTT_QUARTER_SHORT":"q.",
-      "GANTT_WEEK":"Week",
-      "GANTT_WEEK_SHORT":"w."
+      "GANTT_SEMESTER":"Semestre",
+      "GANTT_SEMESTER_SHORT":"6m.",
+      "GANTT_QUARTER":"Trimestre",
+      "GANTT_QUARTER_SHORT":"3m.",
+      "GANTT_WEEK":"Semana",
+      "GANTT_WEEK_SHORT":"s."
     };
   }
 
