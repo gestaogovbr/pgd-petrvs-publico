@@ -31,6 +31,7 @@ export class DemandaListComponent extends PageBase implements OnInit {
   public totalServidores: number = 0;
   public totalUnidades: number | undefined = 0;
   public unidades: string[] | undefined;
+  public cdRef: ChangeDetectorRef;
 
   // variáveis associadas ao filtro
   @ViewChild('programa', { static: false }) public programa?: InputSearchComponent;
@@ -51,14 +52,13 @@ export class DemandaListComponent extends PageBase implements OnInit {
   public heightAreaGrafico: number = 300;
 
   constructor(
+    public injector: Injector,
     public auth: AuthService,
     public utils: UtilService,
-    public cdRef: ChangeDetectorRef,
     public usuarioDao: UsuarioDaoService,
     public unidadeDao: UnidadeDaoService,
     public programaDao: ProgramaDaoService,
     public atividadeDao: AtividadeDaoService,
-    public injector: Injector,
     public allPages: ListenerAllPagesService
     ) {
     super(injector);
@@ -85,30 +85,33 @@ export class DemandaListComponent extends PageBase implements OnInit {
     super.ngOnInit();
     this.activeTab = this.usuarioConfig.active_tab || "TABELA";
     Chart.plugins.register(ChartDataLabels);
-    this.unidades = this.auth.unidades?.map(x => x.id);
     if(this.gb.isExtension) {
       this.allPages.visibilidadeMenuSei(!this.auth.usuario!.config.ocultar_menu_sei);
     }
   }
 
   public async onChange(event: Event) {
-    Promise.all([
-      this.programaDao.getById(this.filter!.controls.programa_id.value),
-      this.unidadeDao.dashboards(this.unidades!, this.filter!.controls.programa_id.value, this.filter!.controls.unidadesSubordinadas.value)
-    ]).then(results => {
-      this.programaSelecionado = results[0];
-      this.dashUnidades = results[1];
-      this.cdRef.detectChanges;
-      if (this.dashUnidades) {
-        this.construirGraficoAreas(this.dashUnidades);
-        this.construirGraficoServidores(this.dashUnidades);
-        this.construirGraficoModalidades(this.dashUnidades);
-      }
-    });
+    if (this.activeTab == 'DASHBOARD') {
+      this.unidades = this.auth.unidades?.map(x => x.id);
+      Promise.all([
+        this.programaDao.getById(this.filter!.controls.programa_id.value),
+        this.unidadeDao.dashboards(this.unidades!, this.filter!.controls.programa_id.value, this.filter!.controls.unidadesSubordinadas.value)
+      ]).then(results => {
+        this.programaSelecionado = results[0];
+        this.dashUnidades = results[1];
+        this.cdRef.detectChanges;
+        if (this.dashUnidades) {
+          this.construirGraficoAreas(this.dashUnidades);
+          this.construirGraficoServidores(this.dashUnidades);
+          this.construirGraficoModalidades(this.dashUnidades);
+        }
+      });
+    }
   }
 
   public async onSelectTab(tab: LookupItem) {
     this.activeTab = tab.key;
+    this.saveUsuarioConfig({active_tab: this.activeTab});
     if (tab.key == "DASHBOARD") {
       this.programaDao.query({where: [
         ["normativa", "!=", null],

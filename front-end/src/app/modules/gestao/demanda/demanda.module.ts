@@ -11,7 +11,6 @@ import { DemandaFormConcluirComponent } from './demanda-form-concluir/demanda-fo
 import { DemandaFormAvaliarComponent } from './demanda-form-avaliar/demanda-form-avaliar.component';
 import { DemandaFormPausarComponent } from './demanda-form-pausar/demanda-form-pausar.component';
 import { DemandaFormProrrogarComponent } from './demanda-form-prorrogar/demanda-form-prorrogar.component';
-import { AppModule } from 'src/app/app.module';
 import { UteisModule } from '../../uteis/uteis.module';
 import { DemandaFormEntregaComponent } from './demanda-form-entrega/demanda-form-entrega.component';
 import { DemandaListEntregaComponent } from './demanda-list-entrega/demanda-list-entrega.component';

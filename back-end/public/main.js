@@ -3695,16 +3695,15 @@ function DemandaListComponent_div_15_Template(rf, ctx) { if (rf & 1) {
 const _c2 = function () { return ["cadastros", "programa"]; };
 const _c3 = function (a0) { return { route: a0 }; };
 class DemandaListComponent extends src_app_modules_base_page_base__WEBPACK_IMPORTED_MODULE_4__["PageBase"] {
-    constructor(auth, utils, cdRef, usuarioDao, unidadeDao, programaDao, atividadeDao, injector, allPages) {
+    constructor(injector, auth, utils, usuarioDao, unidadeDao, programaDao, atividadeDao, allPages) {
         super(injector);
+        this.injector = injector;
         this.auth = auth;
         this.utils = utils;
-        this.cdRef = cdRef;
         this.usuarioDao = usuarioDao;
         this.unidadeDao = unidadeDao;
         this.programaDao = programaDao;
         this.atividadeDao = atividadeDao;
-        this.injector = injector;
         this.allPages = allPages;
         this.height = 200;
         this.height_m = 400;
@@ -3742,35 +3741,38 @@ class DemandaListComponent extends src_app_modules_base_page_base__WEBPACK_IMPOR
         }, this.cdRef, this.validate);
     }
     ngOnInit() {
-        var _a;
         super.ngOnInit();
         this.activeTab = this.usuarioConfig.active_tab || "TABELA";
         chart_js__WEBPACK_IMPORTED_MODULE_2__["Chart"].plugins.register(chartjs_plugin_datalabels__WEBPACK_IMPORTED_MODULE_3___default.a);
-        this.unidades = (_a = this.auth.unidades) === null || _a === void 0 ? void 0 : _a.map(x => x.id);
         if (this.gb.isExtension) {
             this.allPages.visibilidadeMenuSei(!this.auth.usuario.config.ocultar_menu_sei);
         }
     }
     onChange(event) {
+        var _a;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            Promise.all([
-                this.programaDao.getById(this.filter.controls.programa_id.value),
-                this.unidadeDao.dashboards(this.unidades, this.filter.controls.programa_id.value, this.filter.controls.unidadesSubordinadas.value)
-            ]).then(results => {
-                this.programaSelecionado = results[0];
-                this.dashUnidades = results[1];
-                this.cdRef.detectChanges;
-                if (this.dashUnidades) {
-                    this.construirGraficoAreas(this.dashUnidades);
-                    this.construirGraficoServidores(this.dashUnidades);
-                    this.construirGraficoModalidades(this.dashUnidades);
-                }
-            });
+            if (this.activeTab == 'DASHBOARD') {
+                this.unidades = (_a = this.auth.unidades) === null || _a === void 0 ? void 0 : _a.map(x => x.id);
+                Promise.all([
+                    this.programaDao.getById(this.filter.controls.programa_id.value),
+                    this.unidadeDao.dashboards(this.unidades, this.filter.controls.programa_id.value, this.filter.controls.unidadesSubordinadas.value)
+                ]).then(results => {
+                    this.programaSelecionado = results[0];
+                    this.dashUnidades = results[1];
+                    this.cdRef.detectChanges;
+                    if (this.dashUnidades) {
+                        this.construirGraficoAreas(this.dashUnidades);
+                        this.construirGraficoServidores(this.dashUnidades);
+                        this.construirGraficoModalidades(this.dashUnidades);
+                    }
+                });
+            }
         });
     }
     onSelectTab(tab) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             this.activeTab = tab.key;
+            this.saveUsuarioConfig({ active_tab: this.activeTab });
             if (tab.key == "DASHBOARD") {
                 this.programaDao.query({ where: [
                         ["normativa", "!=", null],
@@ -4081,7 +4083,7 @@ class DemandaListComponent extends src_app_modules_base_page_base__WEBPACK_IMPOR
         };
     }
 }
-DemandaListComponent.ɵfac = function DemandaListComponent_Factory(t) { return new (t || DemandaListComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_6__["AuthService"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_7__["UtilService"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["ChangeDetectorRef"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_8__["UsuarioDaoService"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_9__["UnidadeDaoService"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](src_app_dao_programa_dao_service__WEBPACK_IMPORTED_MODULE_10__["ProgramaDaoService"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](src_app_dao_atividade_dao_service__WEBPACK_IMPORTED_MODULE_11__["AtividadeDaoService"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](src_app_listeners_listener_all_pages_service__WEBPACK_IMPORTED_MODULE_12__["ListenerAllPagesService"])); };
+DemandaListComponent.ɵfac = function DemandaListComponent_Factory(t) { return new (t || DemandaListComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_6__["AuthService"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_7__["UtilService"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_8__["UsuarioDaoService"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_9__["UnidadeDaoService"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](src_app_dao_programa_dao_service__WEBPACK_IMPORTED_MODULE_10__["ProgramaDaoService"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](src_app_dao_atividade_dao_service__WEBPACK_IMPORTED_MODULE_11__["AtividadeDaoService"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](src_app_listeners_listener_all_pages_service__WEBPACK_IMPORTED_MODULE_12__["ListenerAllPagesService"])); };
 DemandaListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: DemandaListComponent, selectors: [["app-demanda-list"]], viewQuery: function DemandaListComponent_Query(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵviewQuery"](_c0, 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵviewQuery"](_c1, 1);
@@ -6193,7 +6195,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
 /* harmony import */ var _util_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./util.service */ "2Rin");
 /* harmony import */ var _auth_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./auth.service */ "lGQG");
-/* harmony import */ var _dao_dao_base_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../dao/dao-base.service */ "WScx");
+/* harmony import */ var _dao_demanda_dao_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../dao/demanda-dao.service */ "pFvM");
 
 
 
@@ -6241,7 +6243,7 @@ class ComentarioService {
         return comentario;
     }
 }
-ComentarioService.ɵfac = function ComentarioService_Factory(t) { return new (t || ComentarioService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_util_service__WEBPACK_IMPORTED_MODULE_2__["UtilService"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_auth_service__WEBPACK_IMPORTED_MODULE_3__["AuthService"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_dao_dao_base_service__WEBPACK_IMPORTED_MODULE_4__["DaoBaseService"])); };
+ComentarioService.ɵfac = function ComentarioService_Factory(t) { return new (t || ComentarioService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_util_service__WEBPACK_IMPORTED_MODULE_2__["UtilService"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_auth_service__WEBPACK_IMPORTED_MODULE_3__["AuthService"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_dao_demanda_dao_service__WEBPACK_IMPORTED_MODULE_4__["DemandaDaoService"])); };
 ComentarioService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: ComentarioService, factory: ComentarioService.ɵfac, providedIn: 'root' });
 
 
