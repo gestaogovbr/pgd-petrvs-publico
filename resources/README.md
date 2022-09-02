@@ -15,7 +15,7 @@ Resources (assets, configs, helpers)
 1) .\php_sh.bat
 2) composer install
 ```
-- Será necessário criar o arquivo .end na pasta /PASTA_DO_PETRVS/back-end (utilize o arquivo .env.template para facilitar). Para utilizar o serviço do mysql criado pelo docker, utilize a seguinte configuração no .env (existe tambem um usuário petrvs com mesma senha do root, e por questões de simplificação o database para logs será o mesmo que está sendo utilizado para os dados. No ambiente de produção deverá ser utilizado um database para cada finalidade):
+- Será necessário criar o arquivo .env na pasta /PASTA_DO_PETRVS/back-end (utilize o arquivo .env.template para facilitar). Para utilizar o serviço do mysql criado pelo docker, utilize a seguinte configuração no .env (existe tambem um usuário petrvs com mesma senha do root, e por questões de simplificação o database para logs será o mesmo que está sendo utilizado para os dados. No ambiente de produção deverá ser utilizado um database para cada finalidade):
 ```
 DB_CONNECTION=mysql
 DB_HOST=db
