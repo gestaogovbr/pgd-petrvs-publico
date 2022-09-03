@@ -14,7 +14,7 @@ import { UtilService } from './util.service';
 export class ComentarioService {
 
   constructor(
-    public util: UtilService, 
+    public util: UtilService,
     public auth: AuthService,
     public dao: DemandaDaoService
   ) { }

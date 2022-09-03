@@ -61,14 +61,14 @@ export class InputSearchComponent extends InputBase implements OnInit {
   get control(): AbstractControl | undefined {
     return this.getControl();
   }
-  
+
   private DEBOUNCE_TIMER = 1000;
   private queryText: string = "";
   private timer: any = undefined;
   private dropdown?: bootstrap.Dropdown;
   public dropdownWidth: number = 200;
   public items: (SelectItem | SearchGroupSeparator)[] = [];
-  public selectedItem?: SelectItem = undefined;  
+  public selectedItem?: SelectItem = undefined;
   public selectedValue?: string = undefined;
   public searching: boolean = false;
   public searchObj: any = undefined;
@@ -205,12 +205,12 @@ export class InputSearchComponent extends InputBase implements OnInit {
       let buffer = "";
       items = items.filter(x => !(x instanceof SearchGroupSeparator));
       for(let i = 0; i < items.length; i++) {
-        let group = this.groupBy.map((x, j) => Object.assign({}, x, { value: (items[i] as SelectItem).order![j] })); 
+        let group = this.groupBy.map((x, j) => Object.assign({}, x, { value: (items[i] as SelectItem).order![j] }));
         if(buffer != JSON.stringify(group)) {
           buffer = JSON.stringify(group);
           items.splice(i, 0, new SearchGroupSeparator(group));
         }
-      } 
+      }
     }
     return items;
   }

@@ -87,16 +87,15 @@ Task.prototype.clone = function () {
   return ret;
 };
 
-Task.prototype.getAssigsProfile = function () {
-  var ret = "Alguma coisa";
+Task.prototype.getAssigsResources = function () {
+  var ret = "";
   for (var i = 0; i < this.assigs.length; i++) {
     var ass = this.assigs[i];
     var res = this.master.getResource(ass.resourceId);
     if (res) {
-      ret = ret + "<img onerror=\"this.src='./assets/images/profile.png'\" width='25' height='25' class='rounded-circle profile-photo' src='" + res.picture + "' data-bs-toggle='tooltip' data-bs-placement='top' title='" + res.name + "'></img>";
+      ret = ret + "<img onerror=\"this.src='./assets/images/profile.png'\" width='20' height='20' class='rounded-circle profile-photo' src='" + res.picture + "' data-bs-toggle='tooltip' data-bs-placement='top' title='" + res.name + "'></img>";
     }
   }
-  console.log("Profile", ret);
   return ret;
 }
 

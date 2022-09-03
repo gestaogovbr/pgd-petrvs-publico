@@ -33,93 +33,93 @@ function dateToRelative(localTime){
   var yea=31557600000;
 
   if (diff<-yea*2)
-    ret ="in ## years".replace("##",(-diff/yea).toFixed(0));
+    ret ="em ## ano(s)".replace("##",(-diff/yea).toFixed(0));
 
   else if (diff<-mon*9)
-    ret ="in ## months".replace("##",(-diff/mon).toFixed(0));
+    ret ="em ## mes(es)".replace("##",(-diff/mon).toFixed(0));
 
   else if (diff<-wee*5)
-    ret ="in ## weeks".replace("##",(-diff/wee).toFixed(0));
+    ret ="em ## semana(s)".replace("##",(-diff/wee).toFixed(0));
 
   else if (diff<-day*2)
-    ret ="in ## days".replace("##",(-diff/day).toFixed(0));
+    ret ="em ## dia(s)".replace("##",(-diff/day).toFixed(0));
 
   else if (diff<-hour)
-    ret ="in ## hours".replace("##",(-diff/hour).toFixed(0));
+    ret ="em ## hora(s)".replace("##",(-diff/hour).toFixed(0));
 
   else if (diff<-min*35)
-    ret ="in about one hour";
+    ret ="em aproximadamente uma hora";
 
   else if (diff<-min*25)
-    ret ="in about half hour";
+    ret ="em aproximadamente meia hora";
 
   else if (diff<-min*10)
-    ret ="in some minutes";
+    ret ="em alguns minutos";
 
   else if (diff<-min*2)
-    ret ="in few minutes";
+    ret ="em poucos minutos";
 
   else if (diff<=min)
-    ret ="just now";
+    ret ="agora";
 
   else if (diff<=min*5)
-    ret ="few minutes ago";
+    ret ="poucos minutos atrás";
 
   else if (diff<=min*15)
-    ret ="some minutes ago";
+    ret ="alguns minutos atrás";
 
   else if (diff<=min*35)
-    ret ="about half hour ago";
+    ret ="aproximadamente meia hora atrás";
 
   else if (diff<=min*75)
-    ret ="about an hour ago";
+    ret ="aproximadamente uma hora atrás";
 
   else if (diff<=hour*5)
-    ret ="few hours ago";
+    ret ="poucas horas atrás";
 
   else if (diff<=hour*24)
-    ret ="## hours ago".replace("##",(diff/hour).toFixed(0));
+    ret ="## hora(s) atrás".replace("##",(diff/hour).toFixed(0));
 
   else if (diff<=day*7)
-    ret ="## days ago".replace("##",(diff/day).toFixed(0));
+    ret ="## dia(s) atrás".replace("##",(diff/day).toFixed(0));
 
   else if (diff<=wee*5)
-    ret ="## weeks ago".replace("##",(diff/wee).toFixed(0));
+    ret ="## semana(s) atrás".replace("##",(diff/wee).toFixed(0));
 
   else if (diff<=mon*12)
-    ret ="## months ago".replace("##",(diff/mon).toFixed(0));
+    ret ="## mes(es) atrás".replace("##",(diff/mon).toFixed(0));
 
   else
-    ret ="## years ago".replace("##",(diff/yea).toFixed(0));
+    ret ="## ano(s) atrás".replace("##",(diff/yea).toFixed(0));
 
   return ret;
 }
 
 //override date format i18n
 
-Date.monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+Date.monthNames = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 // Month abbreviations. Change this for local month names
-Date.monthAbbreviations = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+Date.monthAbbreviations = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 // Full day names. Change this for local month names
-Date.dayNames =["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+Date.dayNames =['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
 // Day abbreviations. Change this for local month names
-Date.dayAbbreviations = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+Date.dayAbbreviations = ['Dom','Seg','Ter','Qua','Qui','Sex','Sab'];
 // Used for parsing ambiguous dates like 1/2/2000 - default to preferring 'American' format meaning Jan 2.
 // Set to false to prefer 'European' format meaning Feb 1
 Date.preferAmericanFormat = false;
 
 Date.firstDayOfWeek =0;
-Date.defaultFormat = "M/d/yyyy";
+Date.defaultFormat = "d/M/yyyy";
 Date.masks = {
-  fullDate:       "EEEE, MMMM d, yyyy",
-  shortTime:      "h:mm a"
+  fullDate:       "EEEE, d MMMM, yyyy",
+  shortTime:      "hh:mm"
 };
-Date.today="Today";
+Date.today="Hoje";
 
-Number.decimalSeparator = ".";
-Number.groupingSeparator = ",";
+Number.decimalSeparator = ",";
+Number.groupingSeparator = ".";
 Number.minusSign = "-";
-Number.currencyFormat = "###,##0.00";
+Number.currencyFormat = "###.##0,00";
 
 
 
@@ -148,46 +148,46 @@ function isHoliday(date) {
 
 
 var i18n = {
-  YES:                 "Yes",
-  NO:                  "No",
-  FLD_CONFIRM_DELETE:  "confirm the deletion?",
-  INVALID_DATA:        "The data inserted are invalid for the field format.",
-  ERROR_ON_FIELD:      "Error on field",
-  OUT_OF_BOUDARIES:      "Out of field admitted values:",
-  CLOSE_ALL_CONTAINERS:"close all?",
-  DO_YOU_CONFIRM:      "Do you confirm?",
-  ERR_FIELD_MAX_SIZE_EXCEEDED:      "Field max size exceeded",
-  WEEK_SHORT:      "W.",
+  YES:                 "Sim",
+  NO:                  "Não",
+  FLD_CONFIRM_DELETE:  "Deseja realmente excluir?",
+  INVALID_DATA:        "A data inserida é inválida para o formato do campo.",
+  ERROR_ON_FIELD:      "Erro no campo",
+  OUT_OF_BOUDARIES:      "Valor fora dos limites do campo:",
+  CLOSE_ALL_CONTAINERS:"Fechar todos?",
+  DO_YOU_CONFIRM:      "Você confirma?",
+  ERR_FIELD_MAX_SIZE_EXCEEDED:      "Tamanho máximo do campo excedido",
+  WEEK_SHORT:      "S.",
 
-  FILE_TYPE_NOT_ALLOWED:"File type not allowed.",
-  FILE_UPLOAD_COMPLETED:"File upload completed.",
-  UPLOAD_MAX_SIZE_EXCEEDED:"Max file size exceeded",
-  ERROR_UPLOADING:"Error uploading",
-  UPLOAD_ABORTED:"Upload aborted",
-  DROP_HERE:"Drop files here",
+  FILE_TYPE_NOT_ALLOWED:"Tipo de arquivo não permitido.",
+  FILE_UPLOAD_COMPLETED:"Upload de arquivo completo.",
+  UPLOAD_MAX_SIZE_EXCEEDED:"Tamanho máximo de arquivo excedido",
+  ERROR_UPLOADING:"Erro no upload",
+  UPLOAD_ABORTED:"Upload cancelado",
+  DROP_HERE:"Jogue os arquivos aqui",
 
-  FORM_IS_CHANGED:     "You have some unsaved data on the page!",
+  FORM_IS_CHANGED:     "Você tem dados sem salvar!",
 
   PIN_THIS_MENU: "PIN_THIS_MENU",
   UNPIN_THIS_MENU: "UNPIN_THIS_MENU",
   OPEN_THIS_MENU: "OPEN_THIS_MENU",
   CLOSE_THIS_MENU: "CLOSE_THIS_MENU",
-  PROCEED: "Proceed?",
+  PROCEED: "Proceguir?",
 
-  PREV: "Previous",
-  NEXT: "Next",
-  HINT_SKIP: "Got it, close this hint.",
+  PREV: "Anterior",
+  NEXT: "Próximo",
+  HINT_SKIP: "Entendi, feche essa dica.",
 
-  WANT_TO_SAVE_FILTER: "save this filter",
-  NEW_FILTER_NAME: "name of the new filter",
-  SAVE: "Save",
-  DELETE: "Delete",
-  HINT_SKIP: "Got it, close this hint.",
+  WANT_TO_SAVE_FILTER: "salver este filtro",
+  NEW_FILTER_NAME: "nome do novo filtro",
+  SAVE: "Salvar",
+  DELETE: "Excluir",
+  HINT_SKIP: "Entendi, feche essa dica.",
 
-  COMBO_NO_VALUES: "no values available...?",
+  COMBO_NO_VALUES: "Sem valores disponíveis...?",
 
-  FILTER_UPDATED:"Filter updated.",
-  FILTER_SAVED:"Filter correctly saved."
+  FILTER_UPDATED:"Filtro atualizado.",
+  FILTER_SAVED:"Filtro atual salvo."
 
 };
 

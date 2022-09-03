@@ -16,8 +16,8 @@
 
         <!-- Gráfico das Minhas Demandas -->
         <div class="row mb-2">
-          <div class="col-md-3">
-            <div class="bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
+          <div class="row ms-0 d-inline-block container" style="width: 450px;">
+            <div class="bg-light mx-1 d-inline-block container" style="width: 400px;">
                 <app-bar-chart
                   barChartType = "horizontalBar"
                   [barChartData]="dadosMinhasDemandas"
@@ -25,95 +25,14 @@
                 </app-bar-chart>
             </div>
           </div>
-          <div class="col-md-3 my-4 d-inline-block container">
-            <span class="h5-1">Médias das Avaliações: {{ dashUsuario.media_avaliacoes ? dashUsuario.media_avaliacoes.toFixed(2) : '' }}</span>
+          <div class="row ms-0 d-inline-block container" style="width: 450px;">
+            <span class="h5-1">Qde. total de Demandas: {{ dashUsuario.total_demandas }}</span><br>
+            <span class="h5-1">Médias das Avaliações: {{ dashUsuario.media_avaliacoes ? dashUsuario.media_avaliacoes.toFixed(2) : '   (Nenhuma demanda avaliada!)' }}</span>
             <h5 class="my-4" role="button" (click)="go.navigate({route: ['gestao', 'demanda']}, {root: true})">
               <i class="bi bi-activity"></i> Ver Detalhes
             </h5>
           </div>
         </div>
-
-        <tabs [hidden]="!auth.hasPermissionTo('DASH_PRG') ? 'true' : undefined" right class-span="h4" title="Programas" [select]="onSelectTab.bind(this)" [active]="activeTab">
-          <tab key="PGD" icon="bi bi-table" label="PGD">
-              <filter [form]="filter" noButtons [where]="filterWhere" [collapsed]="false">
-                  <div class="row justify-content-md-center">
-                      <input-search #programa [size]="9" label="Programa" controlName="programa_id" [control]="filter!.controls.programa_id" [dao]="programaDao" (change)="onChange($event)" [selectRoute]="{route: ['cadastros', 'programa']}"></input-search>
-                      <input-switch [size]="1" label="Sub." controlName="unidades_subordinadas" [control]="filter!.controls.unidades_subordinadas" (change)="onChange($event)" labelInfo="Incluir as unidades subordinadas"></input-switch>
-                  </div>
-              </filter>
-
-              <!-- Tabela de Informações sobre o Programa -->
-              <div class="row justify-content-md-center">
-                <div class="col-md-8">
-                  <table class="table table-striped table-bordered table-hover my-4 align-middle">
-                    <thead>
-                      <tr>
-                        <th colspan="2" class="text-center"><strong>INFORMAÇÕES SOBRE O PROGRAMA</strong></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Nome do Programa</td><td>{{ programaSelecionado?.nome || "" }}</td>
-                      </tr>
-                      <tr>
-                        <td>Normativa</td><td>{{ programaSelecionado?.normativa || "" }}</td>
-                      </tr>
-                      <tr>
-                        <td>Qde. de Unidades com PT Ativos</td><td>{{ (totalUnidades || 0) + (totalUnidades == 1 ? ' Unidade' : ' Unidades') }}</td>
-                      </tr>
-                      <tr>
-                        <td>Qde. de PT Ativos</td><td>{{ totalPlanosAtivos + (totalPlanosAtivos == 1 ? ' Plano de Trabalho' : ' Planos de Trabalho') }}</td>
-                      </tr>
-                      <tr>
-                        <td>Nr. de Servidores</td><td>{{ totalServidores + (totalServidores == 1 ? ' Servidor' : ' Servidores') + ' (sem repetições)' }}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-              </div>
-
-              <!-- Gráfico das Áreas com Planos de Trabalho ativos -->
-              <div class="my-4 text-center">
-                <div class="mx-4 d-inline-block container" style="position: relative; width: 400px; min-height: 200px;" [style.height.px]="height">
-                  <!-- <h5>PT ativos (por Área)</h5> -->
-                    <app-bar-chart
-                      barChartType = "horizontalBar"
-                      [barChartData]="dadosGraficoNrPlanos"
-                      [barChartOptions]="opcoesGraficoNrPlanos">
-                    </app-bar-chart>
-                </div>
-                <!-- Gráfico dos Servidores participantes -->
-                <div id="teste" class="mx-4 d-inline-block container" style="position: relative;  width: 400px; min-height: 200px;" [style.height.px]="height">
-                  <!-- <h5>Servidores (por Área)</h5> -->
-                    <app-bar-chart
-                      barChartType = "horizontalBar"
-                      [barChartData]="dadosGraficoServidores"
-                      [barChartOptions]="opcoesGraficoServidores">
-                    </app-bar-chart>
-                </div>
-              </div>
-
-              <!-- Gráfico dos Servidores por Modalidade de Plano -->
-              <div class="my-4 text-center">
-                <div class="mx-4 d-inline-block container" style="position: relative;  width: 600px; min-height: 400px;">
-                    <app-bar-chart
-                      barChartType = "bar"
-                      [barChartData]="dadosGraficoModalidades"
-                      [barChartOptions]="opcoesGraficoModalidades"
-                      [heightAreaChart]="heightAreaGrafico">
-                    </app-bar-chart>
-                </div>
-              </div>
-          </tab>
-<!--           <tab key="OUTROS" icon="bi bi-tags" label="OUTROS">
-              OUTROS
-          </tab>
-          <tab key="TOTAL" icon="bi bi-file-earmark-bar-graph" label="TOTAL">
-              TOTAL
-          </tab> -->
-        </tabs>
-
 
         <div *ngIf="false" class="row">
             <div class="col-md-3">
