@@ -29,6 +29,7 @@ use App\Http\Controllers\AfastamentoController;
 use App\Http\Controllers\DemandaController;
 use App\Http\Controllers\CalendarioController;
 use App\Http\Controllers\TarefaController;
+use App\Http\Controllers\MaterialServicoController;
 use App\Http\Controllers\DemandaEntregaController;
 
 /*
@@ -84,28 +85,29 @@ Route::middleware('auth:sanctum')->prefix('Calendario')->group(function () {
 Route::get('/teste', function (Request $request) { return ["OK"]; });
 
 /* Modulos: Cadastros */
+Route::middleware(['auth:sanctum'])->prefix('Afastamento')->group(function () { defaultRoutes(AfastamentoController::class); });
+Route::middleware(['auth:sanctum'])->prefix('Atividade')->group(function () {
+    defaultRoutes(AtividadeController::class);
+    Route::post('atividade-dashboard', [AtividadeController::class, 'atividadeDashboard']);
+    Route::post('homologar', [AtividadeController::class, 'homologar']);
+});
+Route::middleware(['auth:sanctum'])->prefix('Cidade')->group(function () { defaultRoutes(CidadeController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Documento')->group(function () {
     defaultRoutes(DocumentoController::class);
     Route::post('pendente-sei', [DocumentoController::class, 'pendenteSei']);
     Route::post('assinar', [DocumentoController::class, 'assinar']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Feriado')->group(function () { defaultRoutes(FeriadoController::class); });
+Route::middleware(['auth:sanctum'])->prefix('MaterialServico')->group(function () { defaultRoutes(MaterialServicoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Programa')->group(function () { defaultRoutes(ProgramaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Plano')->group(function () { defaultRoutes(PlanoController::class); });
-Route::middleware(['auth:sanctum'])->prefix('Atividade')->group(function () {
-    defaultRoutes(AtividadeController::class);
-    Route::post('atividade-dashboard', [AtividadeController::class, 'atividadeDashboard']);
-    Route::post('homologar', [AtividadeController::class, 'homologar']);
-});
+Route::middleware(['auth:sanctum'])->prefix('Tarefa')->group(function () { defaultRoutes(TarefaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('TipoJustificativa')->group(function () { defaultRoutes(TipoJustificativaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('TipoAtividade')->group(function () { defaultRoutes(TipoAtividadeController::class); });
 Route::middleware(['auth:sanctum'])->prefix('TipoAvaliacao')->group(function () { defaultRoutes(TipoAvaliacaoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('TipoModalidade')->group(function () { defaultRoutes(TipoModalidadeController::class); });
 Route::middleware(['auth:sanctum'])->prefix('TipoMotivoAfastamento')->group(function () { defaultRoutes(TipoMotivoAfastamentoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('TipoCapacidade')->group(function () { defaultRoutes(TipoCapacidadeController::class); });
-Route::middleware(['auth:sanctum'])->prefix('Afastamento')->group(function () { defaultRoutes(AfastamentoController::class); });
-Route::middleware(['auth:sanctum'])->prefix('Cidade')->group(function () { defaultRoutes(CidadeController::class); });
-Route::middleware(['auth:sanctum'])->prefix('Tarefa')->group(function () { defaultRoutes(TarefaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('TipoDocumento')->group(function () {
     defaultRoutes(TipoDocumentoController::class);
     Route::post('atualizar', [TipoDocumentoController::class, 'atualizar']);

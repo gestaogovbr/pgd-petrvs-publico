@@ -1,0 +1,71 @@
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+    [selectable]="selectable" (select)="onSelect($event)"
+    [hasAdd]="auth.hasPermissionTo('MOD_MATSRV_INCL')"
+    [hasEdit]="auth.hasPermissionTo('MOD_MATSRV_EDT')">
+    <toolbar *ngIf="!selectable"></toolbar>
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-select [size]="4" label="Tipo" itemTodos="- Todos -" [valueTodos]="null" controlName="tipo" [control]="filter!.controls.tipo" [items]="lookup.MATERIAL_SERVICO_TIPO"></input-select>
+            <input-text [size]="4" label="Código" controlName="codigo" [control]="filter!.controls.codigo"></input-text>
+            <input-text [size]="4" label="Referência" controlName="codigo" [control]="filter!.controls.codigo"></input-text>
+        </div>
+        <div class="row">
+            <input-text [size]="12" label="Descrição" controlName="descricao" [control]="filter!.controls.descricao"></input-text>
+        </div>
+    </filter>
+    <columns>
+        <column title="Tipo" [template]="columnTipo">
+            <ng-template let-row="row" #columnTipo>
+                <badge color="light" [icon]="lookup.getIcon(lookup.MATERIAL_SERVICO_TIPO, row.tipo)" [label]="lookup.getValue(lookup.MATERIAL_SERVICO_TIPO, row.tipo)"></badge>
+            </ng-template>
+        </column>
+        <column title="Tipo" [template]="columnCodigoReferencia">
+            <ng-template let-row="row" #columnCodigoReferencia>
+                <badge *ngIf="row.codigo?.length" color="light" icon="bi bi-upc-scan" [label]="row.codigo" hint="Código"></badge>
+                <badge *ngIf="row.referencia?.length" color="light" icon="bi bi-qr-code" [label]="row.referencia" hint="Referência"></badge>
+            </ng-template>
+        </column>
+        <column title="Descrição" [template]="columnDescricao">
+            <ng-template let-row="row" #columnDescricao>
+                <strong>{{row.descricao}}</strong>
+            </ng-template>
+        </column>
+        <column title="Unidades" [template]="columnUnidade">
+            <ng-template let-row="row" #columnUnidade>
+                <strong>{{lookup.getValue(lookup.MATERIAL_SERVICO_UNIDADE, row.unidade)}}</strong>
+            </ng-template>
+        </column>
+        <column *ngIf="!selectable" type="options" [onEdit]="edit" [options]="options"></column>
+    </columns>
+
+<!--
+      Nome                Descricao   
+#ID   Envolvidos          Finalidade               Datas                Status
+----------------------------------------------------------------------------------------------
+9999  Projeto de pipoca   Fazer pipoca sem sal     [I xx/xx/xxx hh:ss]  (S) Iniciado   [...]
+      (U) (M) [Z DTIC]    Pipoca                   [F xx/xx/xxx hh:ss]          +------     |
+--------------------------------------------------------------------------------| Recusrsos |
+                                                                                | Regras    | 
+                                                                                | Alocações |
+                                                                                +-----------+
+
+    public nome: string = "";  /* Nome do projeto */
+    public descricao: string = "";  /* Descrição do projeto */
+    public finalidade: string = "";  /* Descrição do projeto */
+    public status: ProjetoStatus = 'PLANEJADO';  /* Status do projeto */
+    public data_inicio: Date = new Date();  /* Data de criação */
+    public data_fim: Date | null = null;  /* Data final do registro */
+    public inicio: Date = new Date();  /* Inicio do projeto */
+    public termino: Date = new Date();  /* Fim do projeto */
+    public calcula_custos: boolean = true; /* Se o projeto calcula custos */
+    public tempo_corrido: boolean = false; /* Se o tempo é corrido ou usa a configuração de fins de semana, feriados e horário do expediente (quando usar horas) */
+    public usar_horas: boolean = true; /* Se usa horas nas datas */
+    public calcula_termino: boolean = true; /* Se o termino é calculado automaticamente pelas tarefas */
+    public duracao: number = 0.00; /* Duração do projeto */
+    public progresso: number = 0.00; /* Percentual de progresso do projeto */
+    public usuario_id: string | null = null;
+    public tipo_projeto_id: string = "";
+-->
+
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

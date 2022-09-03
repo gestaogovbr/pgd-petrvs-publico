@@ -397,6 +397,25 @@ export class LookupService {
     { key: 'DIA', icon: "bi bi-calendar3", value: "Horas por mês" }
   ];
 
+  public MATERIAL_SERVICO_TIPO: LookupItem[] = [
+    { key: 'MATERIAL', icon: "bi bi-box-seam", value: "Material" },
+    { key: 'SERVICO', icon: "bi bi-tools", value: "Serviço" }
+  ];
+
+  public MATERIAL_SERVICO_UNIDADE: LookupItem[] = [
+    { key: "UNIDADE", value: "Unidade" },
+    { key: "CAIXA", value: "Caixa" },
+    { key: "METRO", value: "Metro" },
+    { key: "KILO", value: "Quilo" },
+    { key: "LITRO", value: "Litro" },
+    { key: "DUZIA", value: "Dúzia" },
+    { key: "FARDO", value: "Fardo" },
+    { key: "HORAS", value: "Horas" },
+    { key: "DIAS", value: "Dias" },
+    { key: "PACOTE", value: "Pacote" },
+    { key: "FRASCO", value: "Frasco" }
+  ];
+
   public getLookup(itens: LookupItem[], key: any) {
     return itens.find(x => x.key == key);
   }

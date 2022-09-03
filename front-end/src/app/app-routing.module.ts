@@ -25,6 +25,7 @@ const routes: Routes = [
   { path: 'gestao/plano', loadChildren: () => import('./modules/gestao/plano/plano.module').then(m => m.PlanoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/feriado', loadChildren: () => import('./modules/cadastros/feriado/feriado.module').then(m => m.FeriadoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/tarefa', loadChildren: () => import('./modules/cadastros/tarefa/tarefa.module').then(m => m.TarefaModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/material-servico', loadChildren: () => import('./modules/cadastros/material-servico/material-servico.module').then(m => m.MaterialServicoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/tipo-documento', loadChildren: () => import('./modules/cadastros/tipo-documento/tipo-documento.module').then(m => m.TipoDocumentoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/tipo-processo', loadChildren: () => import('./modules/cadastros/tipo-processo/tipo-processo.module').then(m => m.TipoProcessoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/tipo-justificativa', loadChildren: () => import('./modules/cadastros/tipo-justificativa/tipo-justificativa.module').then(m => m.TipoJustificativaModule), canActivate: [AuthGuard] },

@@ -22,7 +22,7 @@ class UnidadeService extends ServiceBase
         return ServiceBase::toIso8601($dateTime);
     }
 
-    public function proxyStore($data, $unidade) {
+    public function proxyStore($data, $unidade, $action) {
         $unidade = Unidade::find($data["id"]);
         $pai = Unidade::find($data["unidade_id"]);
         $data["path"] = empty($pai) ? null : $pai->path . "/" . $pai->id;

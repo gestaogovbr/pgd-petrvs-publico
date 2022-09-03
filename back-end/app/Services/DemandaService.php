@@ -58,7 +58,7 @@ class DemandaService extends ServiceBase
             }
         }
     }
-    public function validateStore($data, $unidade) {
+    public function validateStore($data, $unidade, $action) {
         $unidade = Unidade::find($data["unidade_id"]);
         if(!$this->usuarioService->hasLotacao($data["unidade_id"])) {
             throw new ServerException("ValidateDemanda", $unidade->sigla . " não é uma unidade do usuário logado nem subordinada a ele.");
@@ -86,7 +86,7 @@ class DemandaService extends ServiceBase
         }
     }
 
-    public function proxyStore($data, $unidade) {
+    public function proxyStore($data, $unidade, $action) {
         if(empty($data["id"])) {
             $usuario = Auth::user();
             $data["demandante_id"] = $usuario->id;
@@ -324,7 +324,7 @@ class DemandaService extends ServiceBase
     }
 
     public function afterStore($entity, $action) {
-        if($action == ServiceBase::ACTION_INSERTED) {
+        if($action == ServiceBase::ACTION_INSERT) {
             $this->notificacoesService->sendDemandaDistribuicao($entity);
         } else {
             $this->notificacoesService->sendDemandaModificacao($entity);
@@ -343,7 +343,7 @@ class DemandaService extends ServiceBase
         try {
             DB::beginTransaction();
             $demanda = Demanda::find($data["id"]);
-            $this->validateStore(["unidade_id" => $demanda->unidade_id, "plano_id" => $data["plano_id"], "usuario_id" => $data["usuario_id"]], $unidade);
+            $this->validateStore(["unidade_id" => $demanda->unidade_id, "plano_id" => $data["plano_id"], "usuario_id" => $data["usuario_id"]], $unidade, ServiceBase::ACTION_UPDATE);
             /*if(CalendarioService::getTimestemp($data["data_inicio"]) < CalendarioService::getTimestemp($demanda->data_distribuicao)) {
                 throw new ServerException("ValidateDemanda", "Data de início menor que a data de distribuição.");
             }*/

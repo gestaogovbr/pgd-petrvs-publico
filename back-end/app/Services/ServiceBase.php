@@ -34,8 +34,8 @@ class ServiceBase
     const OPERATORS = ["=", "==", "like", "in", "<", ">", "<>", "!=", ">=", "<="];
     const ISO8601_VALIDATE = '/^[0-9]{4}-((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01])|(0[469]|11)-(0[1-9]|[12][0-9]|30)|(02)-(0[1-9]|[12][0-9]))((T|\s)(0[0-9]|1[0-9]|2[0-3]):(0[0-9]|[1-5][0-9])(:(0[0-9]|[1-5][0-9])(\.[0-9]{3})?)?)?Z?$/';
     const ISO8601_FORMAT = "Y-m-d\TH:i:s";
-    const ACTION_INSERTED = "INSERTED";
-    const ACTION_UPDATED = "UPDATED";
+    const ACTION_INSERT = "INSERT";
+    const ACTION_UPDATE = "UPDATE";
 
     public string $collection = "";
 
@@ -592,20 +592,21 @@ class ServiceBase
     {
         $model = $this->getModel();
         $entity = UtilService::emptyEntry($dataOrEntity, "id") ? null : $model::find($dataOrEntity["id"]);
+        $action = empty($entity) ? ServiceBase::ACTION_INSERT : ServiceBase::ACTION_UPDATE;
         $entity = isset($entity) ? $entity : new $model();
         try {
             if($transaction) DB::beginTransaction();
-            $dataOrEntity = method_exists($this, "proxyStore") ? $this->proxyStore($dataOrEntity, $unidade) : $dataOrEntity;
-            $dataOrEntity = method_exists($entity, "proxyFill") ? $entity->proxyFill($dataOrEntity, $unidade) : $entity->fill($dataOrEntity);
-            if(method_exists($this, "validateStore")) $this->validateStore($dataOrEntity, $unidade);
+            $dataOrEntity = method_exists($this, "proxyStore") ? $this->proxyStore($dataOrEntity, $unidade, $action) : $dataOrEntity;
+            $dataOrEntity = method_exists($entity, "proxyFill") ? $entity->proxyFill($dataOrEntity, $unidade, $action) : $entity->fill($dataOrEntity);
+            if(method_exists($this, "validateStore")) $this->validateStore($dataOrEntity, $unidade, $action);
             $entity->save();
-            if(method_exists($this, "extraStore")) $this->extraStore($entity, $unidade);
+            if(method_exists($this, "extraStore")) $this->extraStore($entity, $unidade, $action);
             if($transaction) DB::commit();
         } catch (Throwable $e) {
             if($transaction) DB::rollback();
             throw $e;
         }
-        $action = $entity->wasRecentlyCreated ? ServiceBase::ACTION_INSERTED : ServiceBase::ACTION_UPDATED;
+        $action = $entity->wasRecentlyCreated ? ServiceBase::ACTION_INSERT : ServiceBase::ACTION_UPDATE;
         $entity->fresh();
         if(method_exists($this, "afterStore")) $this->afterStore($entity, $action);
         return $entity;
@@ -626,7 +627,7 @@ class ServiceBase
             try {
                 if($transaction) DB::beginTransaction();
                 $data = method_exists($this, "proxyUpdate") ? $this->proxyUpdate($data, $unidade) : $data;
-                $data = method_exists($entity, "proxyFill") ? $entity->proxyFill($data, $unidade) : $data;
+                $data = method_exists($entity, "proxyFill") ? $entity->proxyFill($data, $unidade, ServiceBase::ACTION_UPDATE) : $data;
                 $keys = $entity->toArray();
                 $fillable = array_merge($entity->fillable_relations ?? [], $entity->fillable_changes ?? []);
                 $relations = [];

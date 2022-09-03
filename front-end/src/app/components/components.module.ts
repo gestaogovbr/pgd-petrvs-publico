@@ -48,6 +48,7 @@ import { PieChartComponent } from './charts/pie/pie-chart.component';
 import { GanttComponent } from './gantt/gantt.component';
 import { GanttTemplatesComponent } from './gantt/gantt-templates/gantt-templates.component';
 import { CommentComponent } from './comment/comment.component';
+import { BadgeComponent } from './badge/badge.component';
 
 @NgModule({
   declarations: [
@@ -92,7 +93,8 @@ import { CommentComponent } from './comment/comment.component';
     InputWorkloadComponent,
     GanttComponent,
     GanttTemplatesComponent,
-    CommentComponent
+    CommentComponent,
+    BadgeComponent
   ],
   imports: [
     CommonModule,
@@ -140,7 +142,8 @@ import { CommentComponent } from './comment/comment.component';
     OrderComponent,
     InputWorkloadComponent,
     GanttComponent,
-    CommentComponent
+    CommentComponent,
+    BadgeComponent
   ]
 })
 export class ComponentsModule { }

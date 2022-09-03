@@ -30,7 +30,7 @@ class PlanoService extends ServiceBase
         // adicionar no gitlab para considerar o fuso horário
     }
 
-    public function validateStore($data, $unidade) {
+    public function validateStore($data, $unidade, $action) {
         $unidade_id = $data["unidade_id"];
         $usuario = Usuario::with(["lotacoes" => function ($query){
             $query->whereNull("data_fim");
@@ -58,7 +58,7 @@ class PlanoService extends ServiceBase
         }
     }
 
-    public function extraStore($plano, $unidade) {
+    public function extraStore($plano, $unidade, $action) {
         /* Adiciona a Lotação automaticamente case o usuário não tenha */
         $usuario = Usuario::with(["lotacoes" => function ($query){
             $query->whereNull("data_fim");

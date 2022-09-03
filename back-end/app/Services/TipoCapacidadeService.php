@@ -62,6 +62,12 @@ class TipoCapacidadeService extends ServiceBase {
         ["584b43d1-ba5e-11ec-a5bb-0050569c64a0", "MOD_CID_EDT", "Permite editar cidades"],
         ["5843e477-ba5e-11ec-a5bb-0050569c64a0", "MOD_CID_EXCL", "Permite excluir cidades"],
         ["13781ad4-bc1b-11ec-a5bb-0050569c64a0", "MOD_CID_INCL", "Permite incluir cidades"],
+        /* Capacidades do módulo MATERIAIS E SERVICOS*/
+        ["137174c1-bc1b-11ed-a5bb-0050569c64a0", "MOD_MATSRV", "Permite acessar item menu materiais e serviços"],
+        ["a9447b27-e112-11ed-a5bb-0050569c64a0", "MOD_MATSRV_CONS", "Permite consultar materiais e serviços"],
+        ["584b43d1-ba5e-11ed-a5bb-0050569c64a0", "MOD_MATSRV_EDT", "Permite editar materiais e serviços"],
+        ["5843e477-ba5e-11ed-a5bb-0050569c64a0", "MOD_MATSRV_EXCL", "Permite excluir materiais e serviços"],
+        ["13781ad4-bc1b-11ed-a5bb-0050569c64a0", "MOD_MATSRV_INCL", "Permite incluir materiais e serviços"],
         /* Capacidades do módulo DEMANDA*/
         ["1394761c-bc1b-11ec-a5bb-0050569c64a0", "MOD_DMD", "Permite acessar item menu demandas"],
         ["5908ba8f-ba5e-11ec-a5bb-0050569c64a0", "MOD_DMD_ATV", "Permite associar atividade com demanda"],

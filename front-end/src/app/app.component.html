@@ -54,86 +54,24 @@
                     <li class="nav-item">
                         <a [class]="menuItemClass('nav-link', ['home'])" aria-current="page" role="button" (click)="go.navigate({route: ['home']})">Home</a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a [hidden]="!auth.hasPermissionTo('MENU_CAD_ACESSO') ? 'true' : undefined" [class]="menuItemClass('nav-link dropdown-toggle', ['cadastros'])" role="button" id="navbarDropdownCadastros" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Cadastros
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownCadastros">
-                          <li><a [hidden]="!auth.hasPermissionTo('MOD_ATV') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'atividade'])" role="button" (click)="go.navigate({route: ['cadastros', 'atividade']}, {root: true})"><i class="bi bi-activity"></i> {{lex.noun("Atividade", true)}}</a></li>
-                          <li><a [hidden]="!auth.hasPermissionTo('MOD_AFT') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'afastamento'])" role="button" (click)="go.navigate({route: ['cadastros', 'afastamento']}, {root: true})"><i class="bi bi-toggle-off"></i> {{lex.noun("Afastamento", true)}}</a></li>
-                          <li><a [hidden]="!auth.hasPermissionTo('MOD_CID') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'cidade'])" role="button" (click)="go.navigate({route: ['cadastros', 'cidade']}, {root: true})"><i class="bi bi-building"></i> Cidades</a></li>
-                          <li><a [hidden]="!auth.hasPermissionTo('MOD_FER') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'feriado'])" role="button" (click)="go.navigate({route: ['cadastros', 'feriado']}, {root: true})"><i class="bi bi-emoji-sunglasses"></i> Feriados</a></li>
-                          <li><a [hidden]="!auth.hasPermissionTo('MOD_PRGT') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'programa'])" role="button" (click)="go.navigate({route: ['cadastros', 'programa']}, {root: true})"><i class="bi bi-graph-up-arrow"></i> {{lex.noun("Programa de gestão", true)}}</a></li>
-                          <li><a [hidden]="!auth.hasPermissionTo('MOD_DMD') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'tarefa'])" role="button" (click)="go.navigate({route: ['cadastros', 'tarefa']}, {root: true})"><i class="bi bi-boxes"></i> {{lex.noun("Tarefa", true)}}</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a [hidden]="!auth.hasPermissionTo('MOD_TIPO_ATV') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'tipo-atividade'])" role="button" (click)="go.navigate({route: ['cadastros', 'tipo-atividade']}, {root: true})"><i class="bi bi-check-all"></i> Tipos de {{lex.noun("Atividade", true)}}</a></li>
-                            <li><a [hidden]="!auth.hasPermissionTo('MOD_TIPO_AVAL') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'tipo-avaliacao'])" role="button" (click)="go.navigate({route: ['cadastros', 'tipo-avaliacao']}, {root: true})"><i class="bi bi-question-square"></i> Tipos de {{lex.noun("Avaliação",true)}}</a></li>
-                            <li><a [hidden]="!auth.hasPermissionTo('MOD_TIPO_DOC') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'tipo-documento'])" role="button" (click)="go.navigate({route: ['cadastros', 'tipo-documento']}, {root: true})"><i class="bi bi-files"></i> Tipos de {{lex.noun("Documento", true)}}</a></li>
-                            <li><a [hidden]="!auth.hasPermissionTo('MOD_TIPO_JUST') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'tipo-justificativa'])" role="button" (click)="go.navigate({route: ['cadastros', 'tipo-justificativa']}, {root: true})"><i class="bi bi-window-stack"></i> Tipos de {{lex.noun("Justificativa", true)}}</a></li>
-                            <li><a [hidden]="!auth.hasPermissionTo('MOD_TIPO_MDL') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'tipo-modalidade'])" role="button" (click)="go.navigate({route: ['cadastros', 'tipo-modalidade']}, {root: true})"><i class="bi bi-bar-chart-steps"></i> Tipos de {{lex.noun("Modalidade", true)}}</a></li>
-                            <li><a [hidden]="!auth.hasPermissionTo('MOD_TIPO_MTV_AFT') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'tipo-motivo-afastamento'])" role="button" (click)="go.navigate({route: ['cadastros', 'tipo-motivo-afastamento']}, {root: true})"><i class="bi bi-list-ol"></i> Tipos de {{lex.noun("Motivo de afastamento", true)}}</a></li>
-                            <li><a [hidden]="!auth.hasPermissionTo('MOD_TIPO_PROC') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['cadastros', 'tipo-processo'])" role="button" (click)="go.navigate({route: ['cadastros', 'tipo-processo']}, {root: true})"><i class="bi bi-folder-check"></i> Tipos de {{lex.noun("Processo", true)}}</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a [hidden]="!auth.hasPermissionTo('MENU_GESTAO_ACESSO') ? 'true' : undefined" [class]="menuItemClass('nav-link dropdown-toggle', ['gestao'])" role="button" id="navbarDropdownGestao"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Gestão
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownGestao">
-                            <li><a [class]="menuItemClass('dropdown-item', ['gestao', 'demanda'])" role="button" (click)="go.navigate({route: ['gestao', 'demanda']}, {root: true})"><i class="bi bi-activity"></i> {{lex.noun("Demanda",true)}}</a></li>
-                            <li><a [hidden]="!auth.hasPermissionTo('MOD_PTR') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['gestao', 'plano'])" role="button" (click)="go.navigate({route: ['gestao', 'plano']}, {root: true})"><i class="bi bi-list-check"></i> {{lex.noun("Plano de trabalho",true)}}</a></li>
-                            <li><a [class]="menuItemClass('dropdown-item', ['gestao', 'projeto'])" role="button"><i class="bi bi-diagram-2"></i> {{lex.noun("Projeto",true)}}</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                      <a [class]="menuItemClass('nav-link dropdown-toggle', ['relatorios'])" role="button" id="navbarDropdownRelatorios"
-                          data-bs-toggle="dropdown" aria-expanded="false">
-                          Relatórios
-                      </a>
-                      <ul class="dropdown-menu" aria-labelledby="navbarDropdownRelatorios">
-                        <li>
-                          <a [class]="menuItemClass('dropdown-item', ['relatorios', 'forca-de-trabalho', 'servidor'])" role="button" (click)="go.navigate({route: ['relatorios', 'forca-de-trabalho', 'servidor']}, {root: true})"><i class="bi bi-file-person"></i> Força de Trabalho - Servidor</a>
-                        </li>
-                        <li>
-                          <a [class]="menuItemClass('dropdown-item', ['relatorios', 'forca-de-trabalho', 'area'])" role="button" (click)="go.navigate({route: ['relatorios', 'forca-de-trabalho', 'area']}, {root: true})"><i class="bi bi-diagram-3-fill"></i> Força de Trabalho - Área</a>
-                        </li>
-<!--                           <li class="nav-item dropdown dropend">
-                            <a [class]="menuItemClass('nav-link dropdown-toggle', ['relatorios', 'produtividade'])" role="button"
+                    <ng-container *ngFor="let item of menuToolbar">
+                        <li *ngIf="!item.permition?.length || auth.hasPermissionTo(item.permition)" class="nav-item dropdown">
+                            <a [class]="menuItemClass('nav-link dropdown-toggle', item.route)" role="button" [attr.id]="item.id" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
-                                Força de Trabalho
+                                {{item.name}}
                             </a>
-                            <ul class="dropdown-menu">
-                              <li>
-                                <a [class]="menuItemClass('dropdown-item', ['relatorios', 'produtividade'])" role="button" (click)="go.navigate({route: ['relatorios', 'produtividade']}, {root: true})"><i class="bi bi-graph-up-arrow"></i> Produtividade</a>
-                              </li>
+                            <ul class="dropdown-menu" [attr.aria-labelledby]="item.id">
+                                <li *ngFor="let menu of getMenuItems(item.menu)">
+                                    <a *ngIf="menu != '-'; else divider" [class]="menuItemClass('dropdown-item', menu.route)" role="button" (click)="go.navigate({route: menu.route}, {root: true})">
+                                        <i [class]="menu.icon"></i> {{menu.name}}
+                                    </a>
+                                    <ng-template #divider>
+                                        <hr class="dropdown-divider">
+                                    </ng-template>
+                                </li>
                             </ul>
-                          </li> -->
-                      </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a [hidden]="!auth.hasPermissionTo('MENU_CONFIG_ACESSO') ? 'true' : undefined" [class]="menuItemClass('nav-link dropdown-toggle', ['configuracoes'])" role="button" id="navbarDropdownConfiguracoes" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Configurações
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownConfiguracoes">
-                            <li><a [class]="menuItemClass('dropdown-item', ['configuracoes', 'preferencia'])" role="button" (click)="go.navigate({route: ['configuracoes', 'preferencia']}, {root: true, modal: true})"><i class="bi bi-gear"></i> Preferências</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a [hidden]="!auth.hasPermissionTo('MOD_CFG_ENTD') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['configuracoes', 'entidade'])" role="button" (click)="go.navigate({route: ['configuracoes', 'entidade']}, {root: true})"><i class="bi bi-bookmark-heart"></i> {{lex.noun("Entidade",true)}}</a></li>
-                            <li><a [hidden]="!auth.hasPermissionTo('MOD_CFG_UND') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['configuracoes', 'unidade'])" role="button" (click)="go.navigate({route: ['configuracoes', 'unidade']}, {root: true})"><i class="fa-unity fab"></i> {{lex.noun("Unidade",true)}}</a></li>
-                            <li><a [hidden]="!auth.hasPermissionTo('MOD_CFG_USER') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['configuracoes', 'usuario'])" role="button" (click)="go.navigate({route: ['configuracoes', 'usuario']}, {root: true})"><i class="bi bi-people"></i> {{lex.noun("Usuário",true)}}</a></li>
-                            <li><a [hidden]="!auth.hasPermissionTo('MOD_CFG_PERFS') ? 'true' : undefined" [class]="menuItemClass('dropdown-item', ['configuracoes', 'perfil'])" role="button" (click)="go.navigate({route: ['configuracoes', 'perfil']}, {root: true})"><i class="bi bi-fingerprint"></i> Perfis</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a [class]="menuItemClass('dropdown-item', ['configuracoes', 'sobre'])" role="button">Sobre</a></li>
-                        </ul>
-                    </li>
+                        </li>
+                    </ng-container>
                 </ul>
                 <button *ngIf="globals.SUPPORT_URL" type="button" class="btn btn-outline-warning ms-2 d-none d-md-block" (click)="go.openNewTab(globals.SUPPORT_URL)" data-bs-toggle="tooltip" data-bs-placement="top" title="Suporte Petrvs">
                     <i class="bi bi-headset"></i>
