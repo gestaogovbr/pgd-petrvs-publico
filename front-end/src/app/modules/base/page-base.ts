@@ -42,7 +42,7 @@ export abstract class PageBase implements OnInit, ModalPage {
     if(!value) {
       this.dialog.closeSppinerOverlay();
     } else if(!this._submitting) {
-      this.dialog.showSppinerOverlay("Salvando dados do formulário");
+      this.dialog.showSppinerOverlay(this.mensagemSalvando);
     }
     this._submitting = value;
   }

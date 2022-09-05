@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, ComponentFactoryResolver, ComponentRef, EventEmitter, Injector, Input, OnInit, Output, TemplateRef, Type, ViewChild, ViewContainerRef } from '@angular/core';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { Subject } from 'rxjs';
-import { DialogService } from '../dialog.service';
+import { DialogService, DialogTemplateResult } from '../dialog.service';
 import { GlobalsService } from '../globals.service';
 import { NavigateService } from '../navigate.service';
 
@@ -44,6 +44,7 @@ export class DialogComponent implements OnInit {
   public icon?: string;
   public minimized: boolean = false;
   public templateContext: any;
+  public templateResult?: Promise<DialogTemplateResult>;
 
   private _factory?: ComponentFactoryResolver;
   public get factory(): ComponentFactoryResolver { this._factory = this._factory || this.injector.get<ComponentFactoryResolver>(ComponentFactoryResolver); return this._factory }

@@ -118,7 +118,7 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
           color: "btn btn-outline-danger",
           value: CANCELAR
         }
-      ]);
+      ]).asPromise();
       if(result.button.value == HOMOLOGAR) {
         if(this.formHomologacao!.valid){
           this.submitting = true;
