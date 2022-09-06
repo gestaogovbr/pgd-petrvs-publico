@@ -17,4 +17,6 @@ export const environment = {
   images: {
     login: LOGO
   }
+  ativar_login_google: true,
+  ativar_login_azure: false,
 };
