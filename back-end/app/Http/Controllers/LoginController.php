@@ -16,6 +16,7 @@ use App\Services\ServiceBase;
 use App\Services\CalendarioService;
 use Illuminate\Validation\ValidationException;
 use DateTime;
+use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
 {
@@ -469,4 +470,36 @@ class LoginController extends Controller
             "valid" => Auth::check()
         ]);
     }
+
+    public function signInAzureRedirect(Request $request) {
+        return Socialite::driver('azure')->redirect();
+    }
+
+    public function signInAzureCallback(Request $request) {
+        /*
+        pegar o token que vio e validar - dados do usuario (o email), vc vai logar o cara:
+        1-o usuario existe ai vc loga o caro e devolve um redirect pra pagina inicial
+        2-o usuario nao existe: redirect so que passando o paramoetro "error"
+        */
+
+        $user = Socialite::driver('azure')->user();
+        $token = $user->token;
+        $email = $user->email;
+
+        $email = explode("#", $email);
+        $email = $email[0];
+        $email = str_replace("_","@", $email);
+
+        $usuario = $this->registrarUsuario($request, Usuario::where('email', $email)->first());
+
+        if (($usuario)) {
+            Auth::loginUsingId($usuario->id);
+            $request->session()->regenerate();
+            $request->session()->put("kind", "AZURE");
+            return redirect()->intended('/#/home');
+        }
+
+        return LogError::newError('As credenciais fornecidas são inválidas. Email: '.$email);
+    }
+
 }

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PetrvsController;
 use App\Http\Controllers\AngularController;
+use Laravel\Socialite\Facades\Socialite;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +29,10 @@ Route::post('/web/login-gapi-token', [LoginController::class, $actions['login-ga
 Route::post('/web/login-institucional', [LoginController::class, $actions['login-institucional']]);
 Route::post('/web/login-session', [LoginController::class, 'authenticateSession']);
 Route::get('/web/logout', [LoginController::class, 'logout']);
+
+/* Rotas Login Azure*/
+Route::get('/web/login-azure-redirect', [LoginController::class, 'signInAzureRedirect']);
+Route::get('/web/login-azure-callback', [LoginController::class, 'signInAzureCallback']);
 
 /* Rotas diversas */
 Route::get('environment-config', [PetrvsController::class, 'environmentConfig']);
