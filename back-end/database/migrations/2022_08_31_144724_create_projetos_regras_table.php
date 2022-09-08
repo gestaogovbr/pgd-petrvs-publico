@@ -22,6 +22,8 @@ class CreateProjetosRegrasTable extends Migration
             $table->string('nome', 256)->comment("Nome da regra");
             $table->dateTime('data_inicio')->comment("Data inicio da vigência");
             $table->dateTime('data_fim')->nullable()->comment("Data final da vigência");
+            // Chaves estrangeiras:
+            $table->foreignUuid('projeto_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
         });
     }
 

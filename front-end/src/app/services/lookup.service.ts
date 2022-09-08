@@ -416,6 +416,14 @@ export class LookupService {
     { key: "FRASCO", value: "Frasco" }
   ];
 
+  public PROJETO_STATUS: LookupItem[] = [
+    { key: "PLANEJADO", value: "Planejado", icon: "bi bi-bar-chart-steps", color: "bg-primary" },
+    { key: "INICIADO", value: "Iniciado", icon: "bi bi-collection-play", color: "bg-success" },
+    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-calendar2-check", color: "bg-dark" },
+    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-pause-btn", color: "bg-warning text-dark" },
+    { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "bg-danger" }
+  ];
+
   public getLookup(itens: LookupItem[], key: any) {
     return itens.find(x => x.key == key);
   }

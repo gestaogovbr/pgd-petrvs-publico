@@ -166,6 +166,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
   public onKeyDown(event: any) {
     if(["Enter", "ArrowDown", "ArrowUp"].indexOf(event.key) >= 0) {
       if(event.key == "Enter") {
+        this.onEnterKeyDown(event);
         console.log("Enter");
       } else if(event.key == "Esc") {
         console.log("Esc");

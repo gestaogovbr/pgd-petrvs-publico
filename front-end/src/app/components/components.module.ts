@@ -49,6 +49,9 @@ import { GanttComponent } from './gantt/gantt.component';
 import { GanttTemplatesComponent } from './gantt/gantt-templates/gantt-templates.component';
 import { CommentComponent } from './comment/comment.component';
 import { BadgeComponent } from './badge/badge.component';
+import { ProfilePictureComponent } from './profile-picture/profile-picture.component';
+import { ProgressComponent } from './progress/progress.component';
+import { InputNumberComponent } from './input/input-number/input-number.component';
 
 @NgModule({
   declarations: [
@@ -94,7 +97,10 @@ import { BadgeComponent } from './badge/badge.component';
     GanttComponent,
     GanttTemplatesComponent,
     CommentComponent,
-    BadgeComponent
+    BadgeComponent,
+    ProfilePictureComponent,
+    ProgressComponent,
+    InputNumberComponent
   ],
   imports: [
     CommonModule,
@@ -102,6 +108,7 @@ import { BadgeComponent } from './badge/badge.component';
     InfiniteScrollModule,
     ReactiveFormsModule,
     DndModule,
+    //CurrencyMaskModule,
     AngularDoubleScrollbarsModule,
     NgxMaskModule.forRoot()
   ],
@@ -143,7 +150,10 @@ import { BadgeComponent } from './badge/badge.component';
     InputWorkloadComponent,
     GanttComponent,
     CommentComponent,
-    BadgeComponent
+    BadgeComponent,
+    ProfilePictureComponent,
+    ProgressComponent,
+    InputNumberComponent
   ]
 })
 export class ComponentsModule { }

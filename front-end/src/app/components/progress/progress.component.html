@@ -1,0 +1,6 @@
+<div class="progress" [style.height.px]="height" [style.min-width.px]="minWidth">
+    <div [class]="progressClass" role="progressbar" [style.width.%]="percentage" 
+        [attr.aria-valuenow]="value" [attr.aria-valuemin]="min" [attr.aria-valuemax]="max">
+        <ng-container *ngIf="!isNoPercentage">{{percentage}}%</ng-container>
+    </div>
+</div>

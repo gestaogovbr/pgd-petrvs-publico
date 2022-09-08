@@ -1,6 +1,6 @@
 <!--comment contents="Teste de <b> comentario </b> teste"></comment/-->
 
-<gantt [project]="project"></gantt>
+<!--gantt [project]="project"></gantt/-->
 
 <!--kanban>
     <swimlane>
@@ -17,6 +17,16 @@
         <docker icon="bi bi-star-half" title="Avaliadas" color="border-success" [cards]="avaliadas"></docker>
     </swimlane>
 </kanban/-->
+
+<editable-form [form]="form">
+    <div class="row">
+        <input-number currency [size]="4" label="Valor qualquer" controlName="valor"></input-number>
+        <div class="col-md-4">
+            <progress [value]="35"></progress>
+        </div>
+    </div>
+</editable-form>
+
 
 <!--editable-form [form]="form">
     <div class="row">

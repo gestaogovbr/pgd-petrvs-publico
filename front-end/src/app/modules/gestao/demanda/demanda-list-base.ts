@@ -127,8 +127,6 @@ export abstract class DemandaListBase extends PageListBase<Demanda, DemandaDaoSe
     }
   }
 
-  public abstract modalRefreshId(demanda: Demanda): RouteMetadata;
-
   public onDespendidoClick(row: Demanda) {
     if (row.metadados && !row.metadados.concluido) {
       const cargaHoraria = this.extra?.planos[row.plano_id!]?.carga_horaria || 0;
@@ -186,10 +184,6 @@ export abstract class DemandaListBase extends PageListBase<Demanda, DemandaDaoSe
         }).catch(error => this.dialog.alert("Erro", "Erro ao cancelar inicio: " + error?.message ? error?.message : error));
       }
     });
-  }
-
-  public modalRefresh() {
-    return { modal: true, modalClose: (modalResult?: string) => this.refresh() };
   }
 
   public dynamicOptions(row: any): ToolbarButton[] {

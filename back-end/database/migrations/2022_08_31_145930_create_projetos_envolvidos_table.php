@@ -22,6 +22,7 @@ class CreateProjetosEnvolvidosTable extends Migration
             // Chaves estrangeiras:
             $table->foreignUuid('projeto_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
             $table->foreignUuid('recurso_id')->constrained("projetos_recursos")->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('regra_id')->constrained("projetos_regras")->onDelete('restrict')->onUpdate('cascade');
         });
     }
 

@@ -51,6 +51,28 @@ export abstract class InputBase {
         }
     }
 
+    public onEnterKeyDown(e: Event) {
+        e.preventDefault();
+        let current = e.srcElement;
+        const elements = document.querySelectorAll('input,select,button,textarea');
+        for (var i = 0; i < elements.length; i++) {
+            if (elements[i] == current) {
+                const next = elements[i + 1] as any;
+                if (next) {
+                    if(next.focus) {
+                        next.focus();
+                        break;
+                    } else {
+                        current = next;
+                    }
+                }
+            }
+        }
+        console.log("Enter");
+        //@ ts-ignore
+        //e.srcElement?.nextElementSibling?.focus();
+    }
+   
     public get generatedId(): string {
         this._generatedId = this._generatedId || "ID_" + this.util.md5();
         return this._generatedId;

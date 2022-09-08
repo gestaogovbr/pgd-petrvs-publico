@@ -31,6 +31,7 @@ use App\Http\Controllers\CalendarioController;
 use App\Http\Controllers\TarefaController;
 use App\Http\Controllers\MaterialServicoController;
 use App\Http\Controllers\DemandaEntregaController;
+use App\Http\Controllers\ProjetoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -100,7 +101,6 @@ Route::middleware(['auth:sanctum'])->prefix('Documento')->group(function () {
 Route::middleware(['auth:sanctum'])->prefix('Feriado')->group(function () { defaultRoutes(FeriadoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('MaterialServico')->group(function () { defaultRoutes(MaterialServicoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Programa')->group(function () { defaultRoutes(ProgramaController::class); });
-Route::middleware(['auth:sanctum'])->prefix('Plano')->group(function () { defaultRoutes(PlanoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Tarefa')->group(function () { defaultRoutes(TarefaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('TipoJustificativa')->group(function () { defaultRoutes(TipoJustificativaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('TipoAtividade')->group(function () { defaultRoutes(TipoAtividadeController::class); });
@@ -134,6 +134,8 @@ Route::middleware(['auth:sanctum'])->prefix('Demanda')->group(function () {
     Route::post('arquivar', [DemandaController::class, 'arquivar']);
 });
 Route::middleware(['auth:sanctum'])->prefix('DemandaEntrega')->group(function () { defaultRoutes(DemandaEntregaController::class); });
+Route::middleware(['auth:sanctum'])->prefix('Plano')->group(function () { defaultRoutes(PlanoController::class); });
+Route::middleware(['auth:sanctum'])->prefix('Projeto')->group(function () { defaultRoutes(ProjetoController::class); });
 /* Modulos: Configurações */
 Route::middleware(['auth:sanctum'])->prefix('Usuario')->group(function () {
     defaultRoutes(UsuarioController::class);

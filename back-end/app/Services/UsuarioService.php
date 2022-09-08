@@ -15,6 +15,7 @@ use App\Services\RawWhere;
 use App\Services\UtilService;
 use App\Traits\UseDataFim;
 use Illuminate\Support\Facades\Auth;
+use Iterator;
 
 class UsuarioService extends ServiceBase
 {
@@ -104,9 +105,7 @@ class UsuarioService extends ServiceBase
      * @return array: array contendo todas as informações para o front-end
      */
     public function dashboard($usuario_id): array {
-        $demandaService = new DemandaService();
-        $planoService = new PlanoService();
-        $planosAtivos = $planoService->planosAtivos($usuario_id);
+        $planosAtivos = $this->PlanoService->planosAtivos($usuario_id);
         $planos_ids = [];
         $result = [
             "total_demandas" => 0,
@@ -128,7 +127,7 @@ class UsuarioService extends ServiceBase
         $result["total_demandas"] = $demandas->count();
 
         foreach($demandasTotaisNaoConcluidas as $demanda) {
-            $metadados = $demandaService->metadados($demanda);
+            $metadados = $this->DemandaService->metadados($demanda);
             $result["demandas_totais_atrasadas"] += $metadados["atrasado"] ? 1 : 0;
         }
 
@@ -157,6 +156,13 @@ class UsuarioService extends ServiceBase
             }
         }
         return $result;
+    }
+
+    public function validateStore($entity, $unidade, $action) {
+        if($action == ServiceBase::ACTION_INSERT) {
+            $alreadyHas = Usuario::where("email", $entity->email)->orWhere("cpf", $entity->cpf)->orWhere("matricula", $entity->cpf)->first();
+            if(!empty($alreadyHas)) throw new \Exception("Já existe um usuário com mesmo e-mail/CPF/Matrícula no sistema");
+        }
     }
 
 }

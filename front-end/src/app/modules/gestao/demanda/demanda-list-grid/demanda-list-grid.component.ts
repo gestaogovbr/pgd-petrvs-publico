@@ -78,10 +78,6 @@ export class DemandaListGridComponent extends DemandaListBase {
     }
   }
 
-  public modalRefreshId(demanda: Demanda): RouteMetadata {
-    return { modal: true, modalClose: (modalResult?: string) => (this.grid?.query || this.query!).refreshId(demanda.id) };
-  }
-
   public onAgruparChange(event: Event) {
     const agrupar = this.filter!.controls.agrupar.value;
     if((agrupar && !this.groupBy?.length) || (!agrupar && this.groupBy?.length)) {

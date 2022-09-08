@@ -3,7 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { DaoBaseService, QueryOrderBy } from 'src/app/dao/dao-base.service';
 import { Base, IIndexable } from 'src/app/models/base.model';
 import { PageBase } from './page-base';
-import { FullRoute, NavigateService } from 'src/app/services/navigate.service';
+import { FullRoute, NavigateService, RouteMetadata } from 'src/app/services/navigate.service';
 import { GridComponent, GroupBy } from 'src/app/components/grid/grid.component';
 import { QueryContext } from 'src/app/dao/query-context';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
@@ -90,6 +90,14 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
         reject("Rota de seleção indefinida");
       }
     });
+  }
+
+  public modalRefreshId(entity: Base): RouteMetadata {
+    return { modal: true, modalClose: (modalResult?: string) => (this.grid?.query || this.query!).refreshId(entity.id) };
+  }
+
+  public modalRefresh() {
+    return { modal: true, modalClose: (modalResult?: string) => this.refresh() };
   }
 
   public get queryOptions() {

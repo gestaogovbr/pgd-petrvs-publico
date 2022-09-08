@@ -1,12 +1,17 @@
 import { Base } from './base.model';
 import { Usuario } from './usuario.model';
 import { TipoProjeto } from './tipo-projeto.model';
+import { ProjetoEnvolvido } from './projeto-envolvido.model';
+import { ProjetoRegra } from './projeto-regra.model';
 
 export type ProjetoStatus = 'PLANEJADO' | 'INICIADO' | 'CONCLUIDO' | 'SUSPENSO' | 'CANCELADO';
 
 export class Projeto extends Base {
     public tipo_projeto?: TipoProjeto;
     public usuario?: Usuario;
+    public envolvidos?: ProjetoEnvolvido[];
+    public regras?: ProjetoRegra[];
+    //public alocacoes?: ProjetoAlocacao[];
 
     public numero: number = 0;  /* Número do projeto */
     public nome: string = "";  /* Nome do projeto */

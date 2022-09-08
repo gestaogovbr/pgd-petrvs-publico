@@ -1,42 +1,55 @@
 <grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
     [selectable]="selectable" (select)="onSelect($event)"
-    [hasAdd]="auth.hasPermissionTo('MOD_MATSRV_INCL')"
-    [hasEdit]="auth.hasPermissionTo('MOD_MATSRV_EDT')">
+    [hasAdd]="auth.hasPermissionTo('MOD_PROJ_INCL')"
+    [hasEdit]="auth.hasPermissionTo('MOD_PROJ_EDT')">
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-select [size]="4" label="Tipo" itemTodos="- Todos -" [valueTodos]="null" controlName="tipo" [control]="filter!.controls.tipo" [items]="lookup.MATERIAL_SERVICO_TIPO"></input-select>
-            <input-text [size]="4" label="Código" controlName="codigo" [control]="filter!.controls.codigo"></input-text>
-            <input-text [size]="4" label="Referência" controlName="codigo" [control]="filter!.controls.codigo"></input-text>
-        </div>
-        <div class="row">
-            <input-text [size]="12" label="Descrição" controlName="descricao" [control]="filter!.controls.descricao"></input-text>
+            <input-text [size]="4" label="Nome" controlName="nome" [control]="filter!.controls.nome"></input-text>
+            <input-search [size]="4" [label]="lex.noun('Usuario')" controlName="usuario_id" [control]="filter!.controls.usuario_id" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
+            <input-search [size]="4" [label]="lex.noun('Unidade')" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
         </div>
     </filter>
     <columns>
-        <column title="Tipo" [template]="columnTipo">
-            <ng-template let-row="row" #columnTipo>
-                <badge color="light" [icon]="lookup.getIcon(lookup.MATERIAL_SERVICO_TIPO, row.tipo)" [label]="lookup.getValue(lookup.MATERIAL_SERVICO_TIPO, row.tipo)"></badge>
+        <column title="#ID" [template]="columnNumero">
+            <ng-template let-row="row" #columnNumero>
+                <strong>{{row.numero}}</strong>
             </ng-template>
         </column>
-        <column title="Tipo" [template]="columnCodigoReferencia">
-            <ng-template let-row="row" #columnCodigoReferencia>
-                <badge *ngIf="row.codigo?.length" color="light" icon="bi bi-upc-scan" [label]="row.codigo" hint="Código"></badge>
-                <badge *ngIf="row.referencia?.length" color="light" icon="bi bi-qr-code" [label]="row.referencia" hint="Referência"></badge>
+        <column [title]="'Nome\nEnvolvido'" [template]="columnNomeEnvolvidos">
+            <ng-template let-row="row" #columnNomeEnvolvidos>
+                <strong class="d-block">{{row.nome}}</strong>
+                <profile-picture *ngFor="let envolvido of getEnvolvidos(row)" [url]="envolvido.url" [hint]="envolvido.hint"></profile-picture>
             </ng-template>
         </column>
         <column title="Descrição" [template]="columnDescricao">
             <ng-template let-row="row" #columnDescricao>
-                <strong>{{row.descricao}}</strong>
+                <strong class="d-block">{{row.descricao}}</strong>
+                <small>{{row.finalidade}}</small>
             </ng-template>
         </column>
-        <column title="Unidades" [template]="columnUnidade">
-            <ng-template let-row="row" #columnUnidade>
-                <strong>{{lookup.getValue(lookup.MATERIAL_SERVICO_UNIDADE, row.unidade)}}</strong>
+        <column title="Datas" [template]="columnDatas">
+            <ng-template let-row="row" #columnDatas>
+                <span class="text-wrap">
+                    <badge color="light" icon="bi bi-box-arrow-right" [label]="util.getDateTimeFormatted(row.inicio)" hint="Data de início"></badge>
+                    <badge color="light" icon="bi bi-box-arrow-in-right" [label]="util.getDateTimeFormatted(row.termino)" hint="Data de término"></badge>
+                </span>
             </ng-template>
         </column>
-        <column *ngIf="!selectable" type="options" [onEdit]="edit" [options]="options"></column>
+        <column title="Progresso" [template]="columnProgresso">
+            <ng-template let-row="row" #columnProgresso>
+                <progress [value]="row.progresso"></progress>
+            </ng-template>
+        </column>
+        <column title="Status" [template]="columnStatus">
+            <ng-template let-row="row" #columnStatus>
+                <badge [class]="lookup.getColor(lookup.PROJETO_STATUS, row.status)" [icon]="lookup.getIcon(lookup.PROJETO_STATUS, row.status)" [label]="lookup.getValue(lookup.PROJETO_STATUS, row.status)"></badge>
+            </ng-template>
+        </column>
+        <column *ngIf="!selectable" type="options" [onEdit]="edit" [onDelete]="delete" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
     </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>
 
 <!--
       Nome                Descricao   
@@ -49,23 +62,28 @@
                                                                                              | Alocações |
                                                                                              +-----------+
 
-    public nome: string = "";  /* Nome do projeto */
-    public descricao: string = "";  /* Descrição do projeto */
-    public finalidade: string = "";  /* Descrição do projeto */
-    public status: ProjetoStatus = 'PLANEJADO';  /* Status do projeto */
-    public data_inicio: Date = new Date();  /* Data de criação */
-    public data_fim: Date | null = null;  /* Data final do registro */
-    public inicio: Date = new Date();  /* Inicio do projeto */
-    public termino: Date = new Date();  /* Fim do projeto */
-    public calcula_custos: boolean = true; /* Se o projeto calcula custos */
-    public tempo_corrido: boolean = false; /* Se o tempo é corrido ou usa a configuração de fins de semana, feriados e horário do expediente (quando usar horas) */
-    public usar_horas: boolean = true; /* Se usa horas nas datas */
-    public calcula_termino: boolean = true; /* Se o termino é calculado automaticamente pelas tarefas */
-    public duracao: number = 0.00; /* Duração do projeto */
-    public progresso: number = 0.00; /* Percentual de progresso do projeto */
-    public usuario_id: string | null = null;
-    public tipo_projeto_id: string = "";
+
+[ Form do projeto ]
+
+                                         | Principal | Envolvidos | Recursos | Alocacoes | Comentários |
+
+Nome:
+Finalidade:
+Final calculado automaticamente:
+
+
+[ Planejamento - Gantt ]
+Grid 
+Tarefa Inicio Fim Progresso | Gant
+
+
 -->
 
-    <pagination [rows]="rowsLimit"></pagination>
-</grid>
+
+
+
+
+
+
+
+

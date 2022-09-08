@@ -57,6 +57,7 @@ export class TesteComponent implements OnInit {
       rate: {default: 2},
       horas: {default: 150.5},
       label: {default: ""},
+      valor: {default: 15.5},
       icon: {default: null},
       color: {default: null},
       multiselect: {default: []}

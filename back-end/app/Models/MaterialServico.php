@@ -17,7 +17,7 @@ class MaterialServico extends ModelBase
         'codigo',
         'referencia',
         'descricao',
-        'unidade'
+        'unidade_medida'
         //'data_inicio',
         //'data_fim'
     ];

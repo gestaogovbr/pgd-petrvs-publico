@@ -21,7 +21,7 @@ class CreateProjetosRecursosTable extends Migration
             // Campos:
             $table->string('nome', 256)->comment("Nome do recurso");
             $table->enum('tipo', ['HUMANO', 'MATERIAL', 'SERVICO', 'CUSTO', 'DEPARTAMENTO'])->comment("Tipo do recurso");
-            $table->enum('unidade', ['UNIDADE', 'CAIXA', 'METRO', 'KILO', 'LITRO', 'DUZIA', 'FARDO', 'HORAS', 'DIAS', 'PACOTE', 'FRASCO'])->comment("Unidade do recurso");
+            $table->enum('unidade_medida', ['UNIDADE', 'CAIXA', 'METRO', 'KILO', 'LITRO', 'DUZIA', 'FARDO', 'HORAS', 'DIAS', 'PACOTE', 'FRASCO'])->comment("Unidade do recurso");
             $table->decimal('valor', 15, 2)->comment("Valor");
             $table->dateTime('data_inicio')->comment("Data de criação");
             $table->dateTime('data_fim')->nullable()->comment("Data final do registro");

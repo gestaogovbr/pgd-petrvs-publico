@@ -4,6 +4,7 @@ use Google\Service\Sheets\ManualRule;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class CreateProjetosTable extends Migration
 {
@@ -41,10 +42,20 @@ class CreateProjetosTable extends Migration
             $table->tinyInteger('soma_custos_filhos')->default(1)->comment("Se possui custos filhos");
             $table->float('duracao')->comment("Duração do projeto");
             $table->decimal('progresso', 5, 2)->default(0)->comment("Percentual de progresso do projeto");
+            $table->unique(['numero']);
             // Chaves estrangeiras:
             $table->foreignUuid('usuario_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade');
             $table->foreignUuid('tipo_projeto_id')->constrained("tipos_projetos")->onDelete('restrict')->onUpdate('cascade');
         });
+        Schema::table('sequence', function (Blueprint $table) {
+            $table->integer('projeto_numero')->default(1)->comment("Sequência numerica do Projeto");
+        });
+        DB::unprepared('
+            CREATE PROCEDURE sequence_projeto_numero() BEGIN
+                UPDATE sequence SET projeto_numero = GREATEST(IFNULL((SELECT MAX(numero) FROM projetos), 1), projeto_numero + 1);
+                SELECT projeto_numero AS number FROM sequence;
+            END
+        ');
     }
 
     /**
@@ -54,6 +65,10 @@ class CreateProjetosTable extends Migration
      */
     public function down()
     {
+        DB::unprepared('DROP PROCEDURE sequence_projeto_numero');
+        Schema::table('sequence', function (Blueprint $table) {
+            $table->dropColumn('projeto_numero');
+        });
         Schema::dropIfExists('projetos');
     }
 }

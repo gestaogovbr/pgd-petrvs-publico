@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\ProjetoTarefa;
+use App\Models\ProjetoEnvolvido;
+use App\Models\ProjetoRegra;
 use App\Models\TipoProjeto;
 use App\Traits\AutoDataInicio;
 
@@ -11,7 +13,14 @@ class Projeto extends ModelBase
 {
     use AutoDataInicio;
 
-    protected $table = 'demandas_entregas';
+    protected static function booted()
+    {
+        static::creating(function ($projeto) {
+            $projeto->numero = DB::select("CALL sequence_projeto_numero()")[0]->number;
+        });
+    }
+
+    protected $table = 'projetos';
 
     public $fillable = [
         //'numero',
@@ -49,6 +58,8 @@ class Projeto extends ModelBase
 
     // Has
     public function tarefas() { return $this->hasMany(ProjetoTarefa::class); }    
+    public function regras() { return $this->hasMany(ProjetoRegra::class); }    
+    public function envolvidos() { return $this->hasMany(ProjetoEnvolvido::class); }    
     // Belongs
     public function tipoProjeto() { return $this->belongsTo(TipoProjeto::class); }    
     public function usuario() { return $this->belongsTo(Usuario::class); }    

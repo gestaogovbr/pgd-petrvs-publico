@@ -12,7 +12,6 @@ export type Translate = {
 @Injectable({
   providedIn: 'root'
 })
-
 export class LexicalService {
 
   public defaults: Translate = {
