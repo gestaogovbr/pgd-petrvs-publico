@@ -207,11 +207,8 @@ class LoginController extends Controller
      */
     public function authenticatePrfGapiToken(Request $request, GapiService $auth, IntegracaoService $integracao)
     {
-        LogError::newWarn("Validando");
         $credentials = $request->validate(['token' => ['required']]);
-        LogError::newWarn("Iniciou");
         $tokenData = $auth->verifyToken($credentials['token']);
-        LogError::newWarn("Validou token", $tokenData);
         if(!isset($tokenData['error'])) {
             $usuario = Usuario::where('email', $tokenData['email'])->first();
             if(!isset($usuario) && $integracao->autoIncluir) {
