@@ -82,11 +82,11 @@ export class GlobalsService {
     return this.isExtension ? this.urlBuffer[key] : resource;
   }
 
-  public isGoogleLogin(): boolean {
+  public get hasGoogleLogin(): boolean {
     return environment.ativar_login_google == true;
   }
 
-  public isAzureLogin(): boolean {
+  public get hasAzureLogin(): boolean {
     return environment.ativar_login_azure == true;
   }
 }

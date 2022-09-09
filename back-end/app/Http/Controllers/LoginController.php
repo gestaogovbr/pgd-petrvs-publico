@@ -471,6 +471,10 @@ class LoginController extends Controller
         ]);
     }
 
+    public function loginAzurePopup(){
+        return redirect('<azure></azure>')->with('popup', 'open');
+    }
+
     public function signInAzureRedirect(Request $request) {
         return Socialite::driver('azure')->redirect();
     }
@@ -481,25 +485,25 @@ class LoginController extends Controller
         1-o usuario existe ai vc loga o caro e devolve um redirect pra pagina inicial
         2-o usuario nao existe: redirect so que passando o paramoetro "error"
         */
-
         $user = Socialite::driver('azure')->user();
-        $token = $user->token;
-        $email = $user->email;
-
-        $email = explode("#", $email);
-        $email = $email[0];
-        $email = str_replace("_","@", $email);
-
-        $usuario = $this->registrarUsuario($request, Usuario::where('email', $email)->first());
-
-        if (($usuario)) {
-            Auth::loginUsingId($usuario->id);
-            $request->session()->regenerate();
-            $request->session()->put("kind", "AZURE");
-            return redirect()->intended('/#/home');
+        if(!empty($user)) {
+            $token = $user->token;
+            $email = $user->email;
+            $email = explode("#", $email);
+            $email = $email[0];
+            $email = str_replace("_", "@", $email);
+            $usuario = $this->registrarUsuario($request, Usuario::where('email', $email)->first());
+            if (($usuario)) {
+                Auth::loginUsingId($usuario->id);
+                $request->session()->regenerate();
+                $request->session()->put("kind", "AZURE");
+                return redirect()->intended('http://localhost:4200/#/login-retorno'); view("azure");
+            } else {
+                return LogError::newError('As credenciais fornecidas são inválidas. Email: '.$email);
+            }
+        } else {
+            return Socialite::driver('azure')->redirect();
         }
-
-        return LogError::newError('As credenciais fornecidas são inválidas. Email: '.$email);
     }
 
 }
