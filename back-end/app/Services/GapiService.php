@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Exceptions\ServerException;
 use Firebase\JWT\JWT;
 use Google\Client;
-use Illuminate\Support\Facades\Storage;
 
 class GapiService
 {
@@ -38,13 +37,6 @@ class GapiService
             $return['error'] = $e->getMessage();
         }
         return $return;
-    }
-
-    public function downloadImgProfile($url_picture, $path_user) {
-        $url = "http://www.google.co.in/intl/en_com/images/srpr/logo1w.png";
-        $contents = file_get_contents($url);
-        $name = substr($url, strrpos($url, '/') + 1);
-        Storage::put($name, $contents);
     }
 
     /**

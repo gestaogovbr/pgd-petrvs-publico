@@ -1,7 +1,7 @@
 <grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
     [selectable]="selectable" (select)="onSelect($event)"
     [hasAdd]="auth.hasPermissionTo('MOD_PROJ_INCL')"
-    [hasEdit]="auth.hasPermissionTo('MOD_PROJ_EDT')">
+    [hasEdit]="false">
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
@@ -17,9 +17,9 @@
             </ng-template>
         </column>
         <column [title]="'Nome\nEnvolvido'" [template]="columnNomeEnvolvidos">
-            <ng-template let-row="row" #columnNomeEnvolvidos>
+            <ng-template let-row="row" let-metadata="metadata" #columnNomeEnvolvidos>
                 <strong class="d-block">{{row.nome}}</strong>
-                <profile-picture *ngFor="let envolvido of getEnvolvidos(row)" [url]="envolvido.url" [hint]="envolvido.hint"></profile-picture>
+                <profile-picture *ngFor="let envolvido of getEnvolvidos(row, metadata)" [url]="envolvido.url" [hint]="envolvido.hint"></profile-picture>
             </ng-template>
         </column>
         <column title="Descrição" [template]="columnDescricao">
@@ -30,15 +30,13 @@
         </column>
         <column title="Datas" [template]="columnDatas">
             <ng-template let-row="row" #columnDatas>
-                <span class="text-wrap">
-                    <badge color="light" icon="bi bi-box-arrow-right" [label]="util.getDateTimeFormatted(row.inicio)" hint="Data de início"></badge>
-                    <badge color="light" icon="bi bi-box-arrow-in-right" [label]="util.getDateTimeFormatted(row.termino)" hint="Data de término"></badge>
-                </span>
+                <badge color="light" icon="bi bi-box-arrow-right" [label]="util.getDateTimeFormatted(row.inicio)" hint="Data de início"></badge><br>
+                <badge color="light" icon="bi bi-box-arrow-in-right" [label]="util.getDateTimeFormatted(row.termino)" hint="Data de término"></badge>
             </ng-template>
         </column>
         <column title="Progresso" [template]="columnProgresso">
             <ng-template let-row="row" #columnProgresso>
-                <progress [value]="row.progresso"></progress>
+                <progress-bar [value]="row.progresso" color="success"></progress-bar>
             </ng-template>
         </column>
         <column title="Status" [template]="columnStatus">
@@ -65,7 +63,7 @@
 
 [ Form do projeto ]
 
-                                         | Principal | Envolvidos | Recursos | Alocacoes | Comentários |
+                                         | Principal | Recursos | Envolvidos | Alocacoes | Comentários |
 
 Nome:
 Finalidade:

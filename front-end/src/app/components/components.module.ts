@@ -50,7 +50,7 @@ import { GanttTemplatesComponent } from './gantt/gantt-templates/gantt-templates
 import { CommentComponent } from './comment/comment.component';
 import { BadgeComponent } from './badge/badge.component';
 import { ProfilePictureComponent } from './profile-picture/profile-picture.component';
-import { ProgressComponent } from './progress/progress.component';
+import { ProgressBarComponent } from './progress-bar/progress-bar.component';
 import { InputNumberComponent } from './input/input-number/input-number.component';
 
 @NgModule({
@@ -99,7 +99,7 @@ import { InputNumberComponent } from './input/input-number/input-number.componen
     CommentComponent,
     BadgeComponent,
     ProfilePictureComponent,
-    ProgressComponent,
+    ProgressBarComponent,
     InputNumberComponent
   ],
   imports: [
@@ -152,7 +152,7 @@ import { InputNumberComponent } from './input/input-number/input-number.componen
     CommentComponent,
     BadgeComponent,
     ProfilePictureComponent,
-    ProgressComponent,
+    ProgressBarComponent,
     InputNumberComponent
   ]
 })

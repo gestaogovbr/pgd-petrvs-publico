@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\Usuario;
 use App\Models\Demanda;
+use App\Models\Projeto;
+use App\Models\ProjetoTarefa;
 
 class Comentario extends ModelBase
 {
@@ -19,7 +21,9 @@ class Comentario extends ModelBase
         'usuario_id',
         'comentario_id',
         'demanda_id',
-        'entrega_id'
+        'entrega_id',
+        'projeto_id',
+        'projeto_tarefa_id'
     ];
 
     protected $table = 'comentarios';
@@ -33,4 +37,6 @@ class Comentario extends ModelBase
     public function comentario() { return $this->belongsTo(Comentario::class, 'comentario_id'); } 
     public function demanda() { return $this->belongsTo(Demanda::class, 'demanda_id'); } 
     public function entrega() { return $this->belongsTo(Entrega::class, 'entrega_id'); } 
+    public function projeto() { return $this->belongsTo(Projeto::class, 'projeto_id'); } 
+    public function projetoTarefa() { return $this->belongsTo(ProjetoTarefa::class, 'projeto_tarefa_id'); } 
 }

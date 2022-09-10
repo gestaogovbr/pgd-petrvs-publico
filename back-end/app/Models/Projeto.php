@@ -56,6 +56,8 @@ class Projeto extends ModelBase
 
     public $delete_cascade = ['tarefas'];
 
+    protected $casts = ["progresso" => "decimal:2"];
+
     // Has
     public function tarefas() { return $this->hasMany(ProjetoTarefa::class); }    
     public function regras() { return $this->hasMany(ProjetoRegra::class); }    

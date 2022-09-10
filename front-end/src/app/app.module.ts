@@ -15,6 +15,7 @@ import { TesteComponent } from './modules/teste/teste.component';
 import { DemandaModule } from './modules/gestao/demanda/demanda.module';
 import { RelatorioModule } from './modules/relatorios/relatorio.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ComentariosComponent } from './modules/utils/comentarios/comentarios.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     ConfigComponent,
     DialogComponent,
     SpinnerOverlayComponent,
-    TesteComponent
+    TesteComponent,
+    ComentariosComponent
   ],
   imports: [
     BrowserModule,

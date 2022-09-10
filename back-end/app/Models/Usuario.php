@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use App\Traits\AutoUuid;
 use App\Models\Afastamento;
@@ -18,6 +19,7 @@ use App\Models\Perfil;
 use App\Traits\MergeRelations;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasPermissions;
+use App\Services\UsuarioService;
 
 class UsuarioConfig {}
 
@@ -61,9 +63,13 @@ class Usuario extends Authenticatable
         'data_inicio',
         //'data_fim',
         'id_google',
-        'url_foto',
+        //'url_foto',
         'vinculacao',
         'perfil_id'
+        //'foto_perfil',
+        //'foto_google',
+        //'foto_microsoft',
+        //'foto_firebase'
     ];
 
     public $fillable_changes = [
@@ -102,6 +108,10 @@ class Usuario extends Authenticatable
     // Belongs
     public function perfil() { return $this->belongsTo(Perfil::class, 'perfil_id'); }
     // Mutattors e Casts
+    public function getUrlFotoAttribute($value) {
+        $usuarioService = new UsuarioService();
+        return empty($this->foto_perfil) ? "/assets/images/profile.png" : $usuarioService->downloadUrl($this->foto_perfil);
+    }
     public function getConfigAttribute($value)
     {
         $config = new UsuarioConfig();

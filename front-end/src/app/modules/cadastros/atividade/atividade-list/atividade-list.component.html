@@ -13,9 +13,9 @@
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-search [size]="6" label="Unidade" [disabled]="selectable ? 'true' : undefined" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+            <input-search [size]="6" label="Unidade" [disabled]="disableUnidade ? 'true' : undefined" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
             <input-switch [size]="1" label="Vinculadas" controlName="vinculadas" [control]="filter!.controls.vinculadas"></input-switch>
-            <input-search [size]="5" label="Tipo de atividade" [disabled]="selectable ? 'true' : undefined" controlName="tipo_atividade_id" [control]="filter!.controls.tipo_atividade_id" [dao]="tipoAtividadeDao" [selectRoute]="{route: ['cadastros', 'tipo-atividade']}"></input-search>
+            <input-search [size]="5" label="Tipo de atividade" controlName="tipo_atividade_id" [control]="filter!.controls.tipo_atividade_id" [dao]="tipoAtividadeDao" [selectRoute]="{route: ['cadastros', 'tipo-atividade']}"></input-search>
         </div>
         <div class="row">
             <input-text [size]="8" label="Nome" controlName="nome" [control]="filter!.controls.nome"></input-text>
