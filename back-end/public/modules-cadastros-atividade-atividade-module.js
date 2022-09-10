@@ -430,7 +430,7 @@ class AtividadeListComponent extends src_app_modules_base_page_list_base__WEBPAC
                         color: "btn btn-outline-danger",
                         value: CANCELAR
                     }
-                ]);
+                ]).asPromise();
                 if (result.button.value == HOMOLOGAR) {
                     if (this.formHomologacao.valid) {
                         this.submitting = true;
