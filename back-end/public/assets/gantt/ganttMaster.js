@@ -299,16 +299,16 @@ GanttMaster.prototype.createTask = function (id, name, code, level, start, durat
 };
 
 
-GanttMaster.prototype.getOrCreateResource = function (id, name, picture) {
+GanttMaster.prototype.getOrCreateResource = function (id, name, picture, type, unityCost, unity) {
   var res= this.getResource(id);
   if (!res && id && name) {
-    res = this.createResource(id, name, picture);
+    res = this.createResource(id, name, picture, type, unityCost, unity);
   }
   return res
 };
 
-GanttMaster.prototype.createResource = function (id, name, picture) {
-  var res = new Resource(id, name, picture);
+GanttMaster.prototype.createResource = function (id, name, picture, type, unityCost, unity) {
+  var res = new Resource(id, name, picture, type, unityCost, unity);
   this.resources.push(res);
   return res;
 };
@@ -472,7 +472,7 @@ GanttMaster.prototype.loadProject = function (project) {
     task.start += this.serverClientTimeOffset;
     task.end += this.serverClientTimeOffset;
     //set initial collapsed status
-    task.collapsed=collTasks.indexOf(task.id)>=0;
+    task.collapsed=collTasks.indexOf(task.id)>=0 || !!task.collapsed;
   }
 
 
@@ -785,7 +785,9 @@ GanttMaster.prototype.markUnChangedTasksAndAssignments=function(newProject){
                 newAssig.unchanged=
                   newAssig.resourceId==oldAssig.resourceId &&
                   newAssig.roleId==oldAssig.roleId &&
-                  newAssig.effort==oldAssig.effort;
+                  newAssig.effort==oldAssig.effort &&
+                  newAssig.description==oldAssig.description &&
+                  newAssig.quantity==oldAssig.quantity;
               }
             }
           }

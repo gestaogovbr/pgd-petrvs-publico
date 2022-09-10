@@ -218,6 +218,10 @@ class UsuarioListComponent extends src_app_modules_base_page_list_base__WEBPACK_
         }
     }
     filterClear(filter) {
+        var _a, _b, _c;
+        (_a = this.filter) === null || _a === void 0 ? void 0 : _a.controls.usuario.setValue("");
+        (_b = this.filter) === null || _b === void 0 ? void 0 : _b.controls.unidade_id.setValue("");
+        (_c = this.filter) === null || _c === void 0 ? void 0 : _c.controls.perfil_id.setValue(null);
         super.filterClear(filter);
     }
 }
