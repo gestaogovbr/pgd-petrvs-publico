@@ -43,6 +43,7 @@ export class InputTextComponent extends InputBase implements OnInit {
   @Input() placeholder?: string;
   @Input() maxLength?: number;
   @Input() maskFormat: string = "";
+  @Input() right?: string;
   @Input() maskDropSpecialCharacters: boolean = false; 
   @Input() maskSpecialCharacters: string[] = ["-", "/", "(", ")", ".", ":", " ", "+", ",", "@", "[", "]", '"', "'"];
   @Input() set control(value: AbstractControl | undefined) {
@@ -58,6 +59,10 @@ export class InputTextComponent extends InputBase implements OnInit {
 
   public get isNumbers(): boolean {
     return this.numbers !== undefined;
+  }
+
+  public get isRight(): boolean {
+    return this.right !== undefined;
   }
 
   public get isPassword(): boolean {
