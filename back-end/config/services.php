@@ -34,5 +34,5 @@ return [
         'client_secret' => env('AZURE_CLIENT_SECRET'),
         'redirect' => "/web/login-azure-callback",
         'tenant' => env('AZURE_TENANT_ID')
-      ]
+    ]
 ];

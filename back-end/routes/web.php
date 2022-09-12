@@ -31,7 +31,7 @@ Route::post('/web/login-session', [LoginController::class, 'authenticateSession'
 Route::get('/web/logout', [LoginController::class, 'logout']);
 
 /* Rotas Login Azure*/
-Route::view('web/login-azure-popup', 'azure');
+Route::view('/web/login-azure-popup', 'azure');
 Route::get('/web/login-azure-redirect', [LoginController::class, 'signInAzureRedirect']);
 Route::get('/web/login-azure-callback', [LoginController::class, 'signInAzureCallback']);
 

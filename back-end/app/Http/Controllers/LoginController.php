@@ -480,11 +480,6 @@ class LoginController extends Controller
     }
 
     public function signInAzureCallback(Request $request) {
-        /*
-        pegar o token que vio e validar - dados do usuario (o email), vc vai logar o cara:
-        1-o usuario existe ai vc loga o caro e devolve um redirect pra pagina inicial
-        2-o usuario nao existe: redirect so que passando o paramoetro "error"
-        */
         $user = Socialite::driver('azure')->user();
         if(!empty($user)) {
             $token = $user->token;
