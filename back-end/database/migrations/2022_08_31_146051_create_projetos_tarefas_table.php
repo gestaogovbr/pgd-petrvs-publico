@@ -46,8 +46,8 @@ class CreateProjetosTarefasTable extends Migration
             $table->tinyInteger('soma_custos_filhos')->default(1)->comment("Se possui custos filhos (somente se tem_filhos)");
             // Chaves estrangeiras:
             $table->foreignUuid('projeto_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('tarefa_pai_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('terefa_projeto_id')->nullable()->constrained("projetos")->onDelete('restrict')->onUpdate('cascade'); /* Projeto que será incorporado como uma tarefa */
+            $table->foreignUuid('tarefa_pai_id')->constrained('projetos_tarefas')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('tarefa_projeto_id')->nullable()->constrained("projetos")->onDelete('restrict')->onUpdate('cascade'); /* Projeto que será incorporado como uma tarefa */
             $table->foreignUuid('demanda_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade');
             $table->foreignUuid('usuario_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade');
         });
