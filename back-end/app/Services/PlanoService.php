@@ -30,6 +30,32 @@ class PlanoService extends ServiceBase
         // adicionar no gitlab para considerar o fuso horário
     }
 
+    public function proxyQuery($query, &$data) {
+        $where = [];
+        foreach($data["where"] as $condition) {
+            if(is_array($condition) && $condition[0] == "data_filtro") {
+                $dataInicio = $this->getFilterValue($data["where"], "data_inicio");
+                $dataFim = $this->getFilterValue($data["where"], "data_fim");
+                switch($condition[2]) {
+                    case "VIGENTE":
+                        /*1) Data de inicio de vigencia estiver dentro do pediodo que veio
+                        2) Data de data de vigencia estiver dentro do pediodo que veio
+                        3) Data de inicio for menor do que a que vio e data fim for mario do que a que vio */
+                        break;
+                    case "NAOVIGENTE": ;
+                        break;
+                    case "INICIAM": ;
+                        break;
+                    case "FINALIZAM": ;
+                        break;
+                }
+            } else if(!(is_array($condition) && in_array($condition[0], ["data_inicio", "data_fim"]))) {
+                array_push($where, $condition);
+            }
+        }
+        $data["where"] = $where;
+    }
+
     public function validateStore($data, $unidade, $action) {
         $unidade_id = $data["unidade_id"];
         $usuario = Usuario::with(["lotacoes" => function ($query){
