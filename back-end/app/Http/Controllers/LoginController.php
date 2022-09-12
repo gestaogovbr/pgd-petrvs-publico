@@ -14,6 +14,8 @@ use App\Exceptions\LogError;
 use App\Services\UnidadeService;
 use App\Services\ServiceBase;
 use App\Services\CalendarioService;
+use App\Services\UsuarioService;
+use Database\Seeders\UsuarioSeeder;
 use Illuminate\Validation\ValidationException;
 use DateTime;
 
@@ -162,6 +164,8 @@ class LoginController extends Controller
         if(!isset($tokenData['error'])) {
             $usuario = $this->registrarUsuario($request, Usuario::where('email', $tokenData['email'])->first());
             if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
+                $usuarioService = new UsuarioService();
+                $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_FIREBASE, $usuario, $tokenData["picture"]);
                 $request->session()->regenerate();
                 $request->session()->put("kind", "FIREBASE");
                 return response()->json([
@@ -187,6 +191,8 @@ class LoginController extends Controller
         if(!isset($tokenData['error'])) {
             $usuario = $this->registrarUsuario($request, Usuario::where('email', $tokenData['email'])->first());
             if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
+                $usuarioService = new UsuarioService();
+                $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
                 $request->session()->regenerate();
                 $request->session()->put("kind", "GAPI");
                 return response()->json([
@@ -219,11 +225,13 @@ class LoginController extends Controller
                 $this->service->salvaUsuarioLotacaoGapi($usuario, $lotacao, $tokenData, $auth);
             }
             if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
+                $usuarioService = new UsuarioService();
+                $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
                 $request->session()->regenerate();
                 $request->session()->put("kind", "GAPI");
                 return response()->json([
                     'success' => true,
-                    "usuario" => $this->registrarUsuario($request, $usuario, ['id_google' => $tokenData["sub"], 'url_foto' => $tokenData["picture"]]),
+                    "usuario" => $this->registrarUsuario($request, $usuario, ['id_google' => $tokenData["sub"]]), //, 'url_foto' => $tokenData["picture"]
                     "horario_servidor" => CalendarioService::horarioServidor()
                 ]);
             }
@@ -329,6 +337,8 @@ class LoginController extends Controller
         if(!isset($tokenData['error'])) {
             $usuario = Usuario::where('email', $tokenData['email'])->first();
             if (isset($usuario)) { // && Hash::check($request->password, $user->password)
+                $usuarioService = new UsuarioService();
+                $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_FIREBASE, $usuario, $tokenData["picture"]);
                 $request->session()->put("kind", "FIREBASE");
                 return response()->json([
                     'token' => $usuario->createToken($credentials['device_name'])->plainTextToken,
@@ -356,6 +366,8 @@ class LoginController extends Controller
         if(!isset($tokenData['error'])) {
             $usuario = Usuario::where('email', $tokenData['email'])->first();
             if (isset($usuario)) { // && Hash::check($request->password, $user->password)
+                $usuarioService = new UsuarioService();
+                $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
                 $request->session()->regenerate();
                 $request->session()->put("kind", "GAPI");
                 return response()->json([
@@ -394,12 +406,14 @@ class LoginController extends Controller
                 $this->service->salvaUsuarioLotacaoGapi($usuario, $lotacao, $tokenData, $auth);
             }
             if (isset($usuario)) { // && Hash::check($request->password, $user->password)
+                $usuarioService = new UsuarioService();
+                $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
                 $request->session()->regenerate();
                 $request->session()->put("kind", "GAPI");
                 $usuario->save();
                 return response()->json([
                     'token' => $usuario->createToken($credentials['device_name'])->plainTextToken,
-                    'usuario' => $this->registrarUsuario($request, $usuario, ['id_google' => $tokenData["sub"], 'url_foto' => $tokenData["picture"]]),
+                    'usuario' => $this->registrarUsuario($request, $usuario, ['id_google' => $tokenData["sub"]]), //, 'url_foto' => $tokenData["picture"]
                     "horario_servidor" => CalendarioService::horarioServidor()
                 ]);
             }

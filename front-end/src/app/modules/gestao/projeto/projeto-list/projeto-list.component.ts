@@ -65,7 +65,7 @@ export class ProjetoListComponent extends PageListBase<Projeto, ProjetoDaoServic
     return result;
   }
 
-  public getEnvolvidos(projeto: Projeto): EnvolvidoListItem[] {
+  public getEnvolvidos(projeto: Projeto, metadata: any): EnvolvidoListItem[] {
     let result: EnvolvidoListItem[] = [];
     
     for(let envolvido of projeto.envolvidos || []) {
@@ -80,6 +80,11 @@ export class ProjetoListComponent extends PageListBase<Projeto, ProjetoDaoServic
           hint: "Usuario: " + envolvido.recurso.unidade.nome + (envolvido.regra ? "\n(" + envolvido.regra.nome + ")" : "")
         });
       }
+    }
+    if(metadata) {
+      const igual = JSON.stringify(result) == JSON.stringify(metadata.envolvidos);
+      metadata.envolvidos = igual ? metadata.envolvidos : result;
+      result = metadata.envolvidos;
     }
     return result;
   }

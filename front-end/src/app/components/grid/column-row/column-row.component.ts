@@ -22,6 +22,7 @@ export class ColumnRowComponent implements OnInit {
   @Input() row: any = undefined;
   @Input() grid?: GridComponent;
 
+  public metadata: any = {};
   public saving: boolean = false;
 
   constructor(

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PetrvsController;
 use App\Http\Controllers\AngularController;
+use App\Http\Controllers\DownloadController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,4 +32,4 @@ Route::get('/web/logout', [LoginController::class, 'logout']);
 
 /* Rotas diversas */
 Route::get('environment-config', [PetrvsController::class, 'environmentConfig']);
-Route::middleware(['signed'])->get('/download/{file}', [ControllerBase::class, 'download'])->name('download')->where('file', '.*');
+Route::middleware(['signed'])->get('/download/{file}', [DownloadController::class, 'download'])->name('download')->where('file', '.*');

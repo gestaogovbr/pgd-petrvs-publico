@@ -1,1 +1,1 @@
-<img [src]="url" class="rounded-circle profile-photo" [attr.onerror]="onerror" [attr.width]="size" [attr.height]="size" data-bs-toggle="tooltip" data-bs-placement="top" [attr.title]="hint" (click)="onClick($event)">
+<img [src]="url" class="rounded-circle profile-photo" (error)="onError($event)" [attr.width]="size" [attr.height]="size" data-bs-toggle="tooltip" data-bs-placement="top" [attr.title]="hint" (click)="onClick($event)">

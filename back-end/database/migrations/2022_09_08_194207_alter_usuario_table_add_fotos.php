@@ -17,6 +17,7 @@ class AlterUsuarioTableAddFotos extends Migration
             $table->text('foto_perfil')->nullable()->comment("Foto padrão do perfil");
             $table->text('foto_google')->nullable()->comment("Foto do G-Suit (Google)");
             $table->text('foto_microsoft')->nullable()->comment("Foto do Azure (Microsoft)");
+            $table->text('foto_firebase')->nullable()->comment("Foto do Firebase (Google, Facebook, Instagram, Twiter, etc...)");
         });
     }
 
@@ -31,6 +32,7 @@ class AlterUsuarioTableAddFotos extends Migration
             $table->dropColumn('foto_perfil');
             $table->dropColumn('foto_google');
             $table->dropColumn('foto_microsoft');
+            $table->dropColumn('foto_firebase');
         });
     }
 }

@@ -1,10 +1,10 @@
 <!-- Modo display -->
-<ng-container *ngIf="!isRowEditing && (!column.editing || !isEditing) && column.template" [ngTemplateOutlet]="column.template" [ngTemplateOutletContext]="{row: row, grid: grid}"></ng-container>
+<ng-container *ngIf="!isRowEditing && (!column.editing || !isEditing) && column.template" [ngTemplateOutlet]="column.template" [ngTemplateOutletContext]="{row: row, grid: grid, metadata: metadata}"></ng-container>
 <ng-container *ngIf="!isRowEditing && (!column.editing || !isEditing) && !column.template" [class]="getClass()">
     <i *ngIf="hasIcon()" [class]="getIcon()"></i>{{getColumnText()}}
 </ng-container>
 <!-- Modo editando -->
-<ng-container *ngIf="(isRowEditing || (column.editing && isEditing)) && column.editTemplate" [ngTemplateOutlet]="column.editTemplate" [ngTemplateOutletContext]="{row: row, grid: grid}"></ng-container>
+<ng-container *ngIf="(isRowEditing || (column.editing && isEditing)) && column.editTemplate" [ngTemplateOutlet]="column.editTemplate" [ngTemplateOutletContext]="{row: row, grid: grid, metadata: metadata}"></ng-container>
 <ng-container *ngIf="(isRowEditing || (column.editing && isEditing)) && !column.editTemplate">
     <input-search *ngIf="isType('search')" [size]="12" [controlName]="column.field" [control]="control" [dao]="column.dao" (change)="onChange($event)"></input-search>
     <input-display *ngIf="isType('display')" [size]="12" [controlName]="column.field" [control]="control"></input-display>

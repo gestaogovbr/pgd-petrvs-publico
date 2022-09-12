@@ -14,12 +14,18 @@ use App\Services\DemandaService;
 use App\Services\RawWhere;
 use App\Services\UtilService;
 use App\Traits\UseDataFim;
+use Database\Seeders\UsuarioSeeder;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Iterator;
 
 class UsuarioService extends ServiceBase
 {
     use UseDataFim;
+
+    const LOGIN_GOOGLE = "GOOGLE";
+    const LOGIN_MICROSOFT = "AZURE";
+    const LOGIN_FIREBASE = "FIREBASE";
 
     public function proxySearch($query, &$data, &$text) {
         $data["where"][] = ["subordinadas", "==", true];
@@ -53,6 +59,38 @@ class UsuarioService extends ServiceBase
         array_push($where, ["unidade_id", "in", $unidades_ids]);
         $data["where"] = $where;
         return $data;*/
+    }
+
+    public function atualizarFotoPerfil($tipo, &$usuario, $url) {
+        $mudou = ($tipo == UsuarioService::LOGIN_GOOGLE ? $usuario->foto_google != $url : 
+                 ($tipo == UsuarioService::LOGIN_MICROSOFT ? $usuario->foto_microsoft != $url : 
+                 ($tipo == UsuarioService::LOGIN_FIREBASE ? $usuario->foto_firebase != $url : false)));
+        if(!empty($url) && !empty($usuario) && $mudou) {
+            $downloaded = $this->downloadImgProfile($url, "usuarios/" . $usuario->id);
+            if(!empty($downloaded)) {
+                $usuario->foto_perfil = $downloaded;
+                switch($tipo) {
+                    case UsuarioService::LOGIN_GOOGLE: $usuario->foto_google = $url; break;
+                    case UsuarioService::LOGIN_MICROSOFT: $usuario->foto_microsoft = $url; break;
+                    case UsuarioService::LOGIN_FIREBASE: $usuario->foto_firebase = $url; break;
+                }                
+                $usuario->save();
+            }
+        }
+    }
+
+    public function downloadImgProfile($url, $path) {
+        if(!Storage::exists($path)) {
+            Storage::makeDirectory($path, 0755, true);
+        }
+        $contents = file_get_contents($url);
+        $name = $path . "/profile_" . md5($contents) . ".jpg";
+        if(!Storage::exists($name)) {
+            Storage::put($name, $contents);
+            return $name;
+        } else {
+            return "";
+        }
     }
 
     public function hasLotacao($id, $usuario = null, $subordinadas = true, $dataRef = null) {

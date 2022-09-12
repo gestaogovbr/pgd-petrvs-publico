@@ -17,8 +17,9 @@ export class ProfilePictureComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public get onerror(): string {
-    return "this.src='" + this.urlError + "'";
+  public onError(event: ErrorEvent) {
+    (event.target as any).src = this.urlError
+    //return "this.src='" +  + "'";
   }
 
   public onClick(event: Event) {

@@ -23,6 +23,7 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
   public tipoAtividadeDao: TipoAtividadeDaoService;
   public unidadeDao: UnidadeDaoService;
   public formHomologacao: FormGroup;
+  public disableUnidade: boolean = false;
   public multiselectMenu: ToolbarButton[];
 
   constructor(public injector: Injector) {
@@ -145,6 +146,7 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
 
   public ngOnInit() {
     super.ngOnInit();
+    this.disableUnidade = this.selectable && this.filter?.controls.unidade_id?.value?.lenght;
     this.filter?.controls.vinculadas.setValue(this.selectable);
   }
 
