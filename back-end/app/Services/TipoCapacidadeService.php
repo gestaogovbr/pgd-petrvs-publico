@@ -68,6 +68,14 @@ class TipoCapacidadeService extends ServiceBase {
         ["584b43d1-ba5e-11ed-a5bb-0050569c64a0", "MOD_MATSRV_EDT", "Permite editar materiais e serviços"],
         ["5843e477-ba5e-11ed-a5bb-0050569c64a0", "MOD_MATSRV_EXCL", "Permite excluir materiais e serviços"],
         ["13781ad4-bc1b-11ed-a5bb-0050569c64a0", "MOD_MATSRV_INCL", "Permite incluir materiais e serviços"],
+        /* Capacidades do módulo PROJETO RECURSO*/
+        ["584b43d1-cd5e-11ed-a5bb-0050569c64a0", "MOD_PROJ_REC_EDT", "Permite editar projeto recurso"],
+        ["5843e477-cd5e-11ed-a5bb-0050569c64a0", "MOD_PROJ_REC_EXCL", "Permite excluir projeto recurso"],
+        ["13781ad4-cd1b-11ed-a5bb-0050569c64a0", "MOD_PROJ_REC_INCL", "Permite incluir projeto recurso"],
+        /* Capacidades do módulo PROJETO REGRA*/
+        ["584b43d1-ef5e-11ed-a5bb-0050569c64a0", "MOD_PROJ_REG_EDT", "Permite editar projeto regra"],
+        ["5843e477-ef5e-11ed-a5bb-0050569c64a0", "MOD_PROJ_REG_EXCL", "Permite excluir projeto regra"],
+        ["13781ad4-ef1b-11ed-a5bb-0050569c64a0", "MOD_PROJ_REG_INCL", "Permite incluir projeto regra"],
         /* Capacidades do módulo DEMANDA*/
         ["1394761c-bc1b-11ec-a5bb-0050569c64a0", "MOD_DMD", "Permite acessar item menu demandas"],
         ["5908ba8f-ba5e-11ec-a5bb-0050569c64a0", "MOD_DMD_ATV", "Permite associar atividade com demanda"],
