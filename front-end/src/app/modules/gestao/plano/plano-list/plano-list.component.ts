@@ -19,7 +19,7 @@ import { FullRoute } from 'src/app/services/navigate.service';
 @Component({
   selector: 'app-plano-list',
   templateUrl: './plano-list.component.html',
-  styleUrls: ['./plano-list.component.scss']
+  styleUrls: ['./plano-list.component.scss'] 
 })
 export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
@@ -60,6 +60,7 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
       data_fim: {default: new Date()}
     }, this.cdRef, this.filterValidate);
     this.join = ["unidade.entidade", "usuario", "programa", "documento", "tipo_modalidade"];
+    this.groupBy = [{field: "unidade.sigla", label: "Unidade"}];
     // Testa se o usuário possui permissão para exibir dados do plano de trabalho
     if (this.auth.hasPermissionTo("MOD_PTR_CONS")) {
       this.options.push({
@@ -95,7 +96,7 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
   }
 
   public filterClear(filter: FormGroup) {
-    filter.controls.nome.setValue("");
+    filter.controls.usuario.setValue("");
     filter.controls.unidade_id.setValue(null);
     filter.controls.tipo_modalidade_id.setValue(null);
     filter.controls.data_filtro.setValue(null);

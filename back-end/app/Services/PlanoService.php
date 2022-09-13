@@ -38,15 +38,19 @@ class PlanoService extends ServiceBase
                 $dataFim = $this->getFilterValue($data["where"], "data_fim");
                 switch($condition[2]) {
                     case "VIGENTE":
-                        /*1) Data de inicio de vigencia estiver dentro do pediodo que veio
-                        2) Data de data de vigencia estiver dentro do pediodo que veio
-                        3) Data de inicio for menor do que a que vio e data fim for mario do que a que vio */
+                        $where[] = ["data_inicio_vigencia", "<=", $dataFim];
+                        $where[] = ["data_fim_vigencia", ">=", $dataInicio];
                         break;
                     case "NAOVIGENTE": ;
+                        $where[] = ["OR", ["data_inicio_vigencia", ">", $dataFim], ["data_fim_vigencia", "<", $dataInicio]];
                         break;
                     case "INICIAM": ;
+                        $where[] = ["data_inicio_vigencia", ">=", $dataInicio];
+                        $where[] = ["data_inicio_vigencia", "<=", $dataFim];
                         break;
                     case "FINALIZAM": ;
+                        $where[] = ["data_fim_vigencia", ">=", $dataInicio];
+                        $where[] = ["data_fim_vigencia", "<=", $dataFim];
                         break;
                 }
             } else if(!(is_array($condition) && in_array($condition[0], ["data_inicio", "data_fim"]))) {

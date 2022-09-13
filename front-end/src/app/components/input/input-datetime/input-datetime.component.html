@@ -2,8 +2,8 @@
     <div class="input-group">
         <span *ngIf="!isNoIcon" class="input-group-text" [id]="controlName + '_icon'"><i class="bi bi-calendar3"></i></span>
         <input *ngIf="!isTime" [type]="isDate || isFirefox ? 'date' : 'datetime-local'" #dateInput class="form-control" [class.firefox-date]="isFirefox"
-            [id]="controlName" [class.is-invalid]="isInvalid()" [readonly]="isDisabled" (change)="onChangeDateTime($event)" [attr.aria-describedby]="controlName + '_icon'">
+            [id]="controlName" [class.is-invalid]="isInvalid()" [disabled]="isDisabled" (change)="onChangeDateTime($event)" [attr.aria-describedby]="controlName + '_icon'">
         <input *ngIf="hasTimeInput" type="time" #timeInput class="form-control firefox-time" 
-            [id]="controlName + '_time'" [class.is-invalid]="isInvalid()" [readonly]="isDisabled" (change)="onChangeDateTime($event)">
+            [id]="controlName + '_time'" [class.is-invalid]="isInvalid()" [disabled]="isDisabled" (change)="onChangeDateTime($event)">
     </div>
 </input-container>

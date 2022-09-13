@@ -4,8 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0 --disable-host-check --poll=1000",
-    "build": "ng build --configuration=production --output-path=../back-end/public && php ./postbuild.php",
-    "build-dev": "ng build --output-path=../back-end/public && php ./postbuild.php",
+    "build": "ng build --configuration=production --output-path=../back-end/public && node ./postbuild.js",
+    "build-dev": "ng build --output-path=../back-end/public && node ./postbuild.js",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
