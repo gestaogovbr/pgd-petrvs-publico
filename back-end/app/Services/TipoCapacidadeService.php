@@ -62,20 +62,6 @@ class TipoCapacidadeService extends ServiceBase {
         ["584b43d1-ba5e-11ec-a5bb-0050569c64a0", "MOD_CID_EDT", "Permite editar cidades"],
         ["5843e477-ba5e-11ec-a5bb-0050569c64a0", "MOD_CID_EXCL", "Permite excluir cidades"],
         ["13781ad4-bc1b-11ec-a5bb-0050569c64a0", "MOD_CID_INCL", "Permite incluir cidades"],
-        /* Capacidades do módulo MATERIAIS E SERVICOS*/
-        ["137174c1-bc1b-11ed-a5bb-0050569c64a0", "MOD_MATSRV", "Permite acessar item menu materiais e serviços"],
-        ["a9447b27-e112-11ed-a5bb-0050569c64a0", "MOD_MATSRV_CONS", "Permite consultar materiais e serviços"],
-        ["584b43d1-ba5e-11ed-a5bb-0050569c64a0", "MOD_MATSRV_EDT", "Permite editar materiais e serviços"],
-        ["5843e477-ba5e-11ed-a5bb-0050569c64a0", "MOD_MATSRV_EXCL", "Permite excluir materiais e serviços"],
-        ["13781ad4-bc1b-11ed-a5bb-0050569c64a0", "MOD_MATSRV_INCL", "Permite incluir materiais e serviços"],
-        /* Capacidades do módulo PROJETO RECURSO*/
-        ["584b43d1-cd5e-11ed-a5bb-0050569c64a0", "MOD_PROJ_REC_EDT", "Permite editar projeto recurso"],
-        ["5843e477-cd5e-11ed-a5bb-0050569c64a0", "MOD_PROJ_REC_EXCL", "Permite excluir projeto recurso"],
-        ["13781ad4-cd1b-11ed-a5bb-0050569c64a0", "MOD_PROJ_REC_INCL", "Permite incluir projeto recurso"],
-        /* Capacidades do módulo PROJETO REGRA*/
-        ["584b43d1-ef5e-11ed-a5bb-0050569c64a0", "MOD_PROJ_REG_EDT", "Permite editar projeto regra"],
-        ["5843e477-ef5e-11ed-a5bb-0050569c64a0", "MOD_PROJ_REG_EXCL", "Permite excluir projeto regra"],
-        ["13781ad4-ef1b-11ed-a5bb-0050569c64a0", "MOD_PROJ_REG_INCL", "Permite incluir projeto regra"],
         /* Capacidades do módulo DEMANDA*/
         ["1394761c-bc1b-11ec-a5bb-0050569c64a0", "MOD_DMD", "Permite acessar item menu demandas"],
         ["5908ba8f-ba5e-11ec-a5bb-0050569c64a0", "MOD_DMD_ATV", "Permite associar atividade com demanda"],
@@ -139,6 +125,10 @@ class TipoCapacidadeService extends ServiceBase {
         ["a8dd768b-e112-11ec-a5bb-0050569c64a0", "MOD_ENTD_EDT", "Permite editar entidade"],
         ["a8e681cb-e112-11ec-a5bb-0050569c64a0", "MOD_ENTD_EXCL", "Permite excluir Entidade"],
         ["a8d2be35-e112-11ec-a5bb-0050569c64a0", "MOD_ENTD_INCL", "Permite incluir Entidade"],
+        /* Capacidades do módulo ERRORS*/
+        ["5a5254fe-d27c-11ec-a5bb-0050569c64a0", "MOD_ERRORS_CONS", "Permite consultar logs"],
+        ["5a5a5e9c-d27c-11ec-a5bb-0050569c64a0", "MOD_ERRORS_EDT", "Permite alterar logs"],
+        ["5a62d79e-d27c-11ec-a5bb-0050569c64a0", "MOD_ERRORS_EXCL", "Permite excluir logs"],
         /* Capacidades do módulo FERIADO*/
         ["137ead0d-bc1b-11ec-a5bb-0050569c64a0", "MOD_FER", "Permite acessar item menu feriados"],
         ["a94d1649-e112-11ec-a5bb-0050569c64a0", "MOD_FER_CONS", "Permite consultar feriado"],
@@ -153,6 +143,20 @@ class TipoCapacidadeService extends ServiceBase {
         ["59347c2e-e1d0-11ec-a5bb-0050569c64a0", "MOD_LOT_EXCL", "Permite excluir lotação"],
         ["591fbe4f-e1d0-11ec-a5bb-0050569c64a0", "MOD_LOT_INCL", "Permite incluir lotação"],
         ["a91bb1b0-e112-11ec-a5bb-0050569c64a0", "MOD_PERF_CONS", "Permite consultar perfil"],
+        /* Capacidades do módulo MATERIAIS E SERVICOS*/
+        ["137174c1-bc1b-11ed-a5bb-0050569c64a0", "MOD_MATSRV", "Permite acessar item menu materiais e serviços"],
+        ["a9447b27-e112-11ed-a5bb-0050569c64a0", "MOD_MATSRV_CONS", "Permite consultar materiais e serviços"],
+        ["584b43d1-ba5e-11ed-a5bb-0050569c64a0", "MOD_MATSRV_EDT", "Permite editar materiais e serviços"],
+        ["5843e477-ba5e-11ed-a5bb-0050569c64a0", "MOD_MATSRV_EXCL", "Permite excluir materiais e serviços"],
+        ["13781ad4-bc1b-11ed-a5bb-0050569c64a0", "MOD_MATSRV_INCL", "Permite incluir materiais e serviços"],
+        /* Capacidades do módulo PROJETO RECURSO*/
+        ["584b43d1-cd5e-11ed-a5bb-0050569c64a0", "MOD_PROJ_REC_EDT", "Permite editar projeto recurso"],
+        ["5843e477-cd5e-11ed-a5bb-0050569c64a0", "MOD_PROJ_REC_EXCL", "Permite excluir projeto recurso"],
+        ["13781ad4-cd1b-11ed-a5bb-0050569c64a0", "MOD_PROJ_REC_INCL", "Permite incluir projeto recurso"],
+        /* Capacidades do módulo PROJETO REGRA*/
+        ["584b43d1-ef5e-11ed-a5bb-0050569c64a0", "MOD_PROJ_REG_EDT", "Permite editar projeto regra"],
+        ["5843e477-ef5e-11ed-a5bb-0050569c64a0", "MOD_PROJ_REG_EXCL", "Permite excluir projeto regra"],
+        ["13781ad4-ef1b-11ed-a5bb-0050569c64a0", "MOD_PROJ_REG_INCL", "Permite incluir projeto regra"],
         /* Capacidades do módulo PERFIL*/
         ["a909d7f4-e112-11ec-a5bb-0050569c64a0", "MOD_PERF_EDT", "Permite editar perfil"],
         ["a91299bb-e112-11ec-a5bb-0050569c64a0", "MOD_PERF_EXCL", "Permite excluir perfil"],
