@@ -30,7 +30,6 @@ import { InputMultitoggleComponent } from './input/input-multitoggle/input-multi
 import { TabsComponent } from './tabs/tabs.component';
 import { TabComponent } from './tabs/tab/tab.component';
 import { SeparatorComponent } from './separator/separator.component';
-import { TopAlertComponent } from './top-alert/top-alert.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { ReportComponent } from './grid/report/report.component';
 import { ColumnExpandComponent } from './grid/column-expand/column-expand.component';
@@ -52,6 +51,7 @@ import { BadgeComponent } from './badge/badge.component';
 import { ProfilePictureComponent } from './profile-picture/profile-picture.component';
 import { ProgressBarComponent } from './progress-bar/progress-bar.component';
 import { InputNumberComponent } from './input/input-number/input-number.component';
+import { TopAlertComponent } from './top-alert/top-alert.component';
 
 @NgModule({
   declarations: [
