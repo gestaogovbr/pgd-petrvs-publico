@@ -97,6 +97,11 @@ class ServiceBase
         return empty($this->collection) ? null : App($this->collection);
     }
 
+    public function getFilterValue($where, $field) {
+        $entry = array_values(array_filter($where, function($value) use ($field) { return $value[0] == $field; }));
+        return !empty($entry) ? $entry[0][2] : null;
+    }
+
     public function convertOperator($operator) {
         return $operator == "==" ? "=" : $operator;
     }

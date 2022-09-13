@@ -14,7 +14,8 @@ import { ComentariosComponent } from './comentarios/comentarios.component';
     CommonModule
   ],
   exports: [
-    CalendarEfemeridesComponent
+    CalendarEfemeridesComponent,
+    ComentariosComponent
   ]
 })
 export class UteisModule { }
