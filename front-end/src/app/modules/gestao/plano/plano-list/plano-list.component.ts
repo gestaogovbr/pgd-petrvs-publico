@@ -1,5 +1,6 @@
+import { LookupItem } from './../../../../services/lookup.service';
 import { Component, Injector, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { AbstractControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { DocumentoDaoService } from 'src/app/dao/documento-dao-service';
@@ -31,6 +32,12 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
   public allPages: ListenerAllPagesService;
   public tipoModalidadeDao: TipoModalidadeDaoService;
   public multiselectAllFields: string[] = ["tipo_modalidade_id", "usuario_id", "unidade_id", "documento_id"];
+  public DATAS_FILTRO: LookupItem[] = [
+    {key: "VIGENTE", value: "Vigente"},
+    {key: "NAOVIGENTE", value: "Não vigente"},
+    {key: "INICIAM", value: "Iniciam"},
+    {key: "FINALIZAM", value: "Finalizam"}
+  ];
 
   constructor(public injector: Injector) {
     super(injector, Plano, PlanoDaoService);
@@ -44,9 +51,14 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
     this.title = this.lex.noun("Plano de trabalho",true);
     this.code = "MOD_PTR";
     this.filter = this.fh.FormBuilder({
+      agrupar: {default: true},
       usuario: {default: ""},
-      unidade_id: {default: null}
-    });
+      unidade_id: {default: null},
+      tipo_modalidade_id: {default: null},
+      data_filtro: {default: null},
+      data_inicio: {default: new Date()},
+      data_fim: {default: new Date()}
+    }, this.cdRef, this.filterValidate);
     this.join = ["unidade.entidade", "usuario", "programa", "documento", "tipo_modalidade"];
     // Testa se o usuário possui permissão para exibir dados do plano de trabalho
     if (this.auth.hasPermissionTo("MOD_PTR_CONS")) {
@@ -71,16 +83,38 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
     });
   }
 
+  public filterValidate = (control: AbstractControl, controlName: string) => {
+    let result = null;
+
+    if(controlName == "data_inicio" && control.value > this.filter?.controls.data_fim.value) {
+      result = "Maior que fim";
+    } else if(controlName == "data_fim" && control.value < this.filter?.controls.data_inicio.value) {
+      result = "Menor que início";
+    }
+    return result;
+  }
+
   public filterClear(filter: FormGroup) {
     filter.controls.nome.setValue("");
     filter.controls.unidade_id.setValue(null);
+    filter.controls.tipo_modalidade_id.setValue(null);
+    filter.controls.data_filtro.setValue(null);
+    filter.controls.data_inicio.setValue(new Date());
+    filter.controls.data_fim.setValue(new Date());
     super.filterClear(filter);
   }
 
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
-
+    if(form.tipo_modalidade_id?.length) {
+      result.push(["tipo_modalidade_id", "==", form.tipo_modalidade_id]);
+    }
+    if(form.data_filtro) {
+      result.push(["data_filtro", "==", form.data_filtro]);
+      result.push(["data_inicio", "==", form.data_inicio]);
+      result.push(["data_fim", "==", form.data_fim]);
+    }
     if(form.usuario?.length) {
       result.push(["usuario.nome", "like", "%" + form.usuario + "%"]);
     }
@@ -89,6 +123,14 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
     }
 
     return result;
+  }
+
+  public onAgruparChange(event: Event) {
+    const agrupar = this.filter!.controls.agrupar.value;
+    if((agrupar && !this.groupBy?.length) || (!agrupar && this.groupBy?.length)) {
+      this.groupBy = agrupar ? [{field: "unidade.sigla", label: "Unidade"}] : [];
+      this.grid!.reloadFilter();
+    }
   }
 
   public onProcessoClick(row: any) {
@@ -114,7 +156,7 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
     let assinar = !!Object.keys(multiselected).length;
     let menu = [];
     Object.entries(multiselected).forEach(([key, value]) => {
-      if(!this.needSign(value)) assinar = false; 
+      if(!this.needSign(value)) assinar = false;
     });
     if(assinar) menu.push({label: "Assinar", icon: "bi bi-pen", onClick: this.assinar.bind(this) });
     return menu;

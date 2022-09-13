@@ -2,7 +2,7 @@ import { Component, Injector, OnInit } from '@angular/core';
 import { PageFrameBase } from '../../base/page-frame-base';
 
 @Component({
-  selector: 'app-comentarios',
+  selector: 'comentarios',
   templateUrl: './comentarios.component.html',
   styleUrls: ['./comentarios.component.scss']
 })
