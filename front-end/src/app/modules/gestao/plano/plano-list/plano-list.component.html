@@ -71,8 +71,12 @@
     <report>
       <column title="Numero" [template]="reportNumero"><ng-template let-row="row" #reportNumero>{{row.numero}}</ng-template></column>
       <column title="Matricula usuário" [template]="reportMatricula"><ng-template let-row="row" #reportMatricula>{{row.usuario?.matricula || ""}}</ng-template></column>
+      <column title="Programa" [template]="reportPrograma"><ng-template let-row="row" #reportPrograma>{{row.programa?.nome || ""}}</ng-template></column>
+      <column title="Unidade" [template]="reportUnidade"><ng-template let-row="row" #reportUnidade>{{row.unidade?.nome || ""}}</ng-template></column>
+      <column title="Modalidade" [template]="reportModalidade"><ng-template let-row="row" #reportModalidade>{{row.tipo_modalidade?.nome || ""}}</ng-template></column>
       <column title="Início vigência" [template]="reportInicioVigencia"><ng-template let-row="row" #reportInicioVigencia>{{util.getDateTimeFormatted(row.data_inicio_vigencia)}}</ng-template></column>
-      <!-- Adicionar os outros campos aqui -->
+      <column title="Fim vigência" [template]="reportFimVigencia"><ng-template let-row="row" #reportFimVigencia>{{util.getDateTimeFormatted(row.data_fim_vigencia)}}</ng-template></column>
+      <column title="Termo de Adesão" [template]="reportTermoAdesao"><ng-template let-row="row" #reportTermoAdesao>{{row.documento?.numero_processo?.length ? row.documento?.numero_processo : "Não atribuído"}}</ng-template></column>
     </report>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

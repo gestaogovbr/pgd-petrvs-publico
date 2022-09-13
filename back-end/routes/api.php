@@ -80,6 +80,10 @@ Route::middleware('auth:sanctum')->prefix('Calendario')->group(function () {
     Route::post('feriados', [CalendarioController::class, 'feriados']);
     Route::post('feriados-cadastrados', [CalendarioController::class, 'feriadosCadastrados']);
 });
+Route::middleware('auth:sanctum')->prefix('Error')->group(function () {
+    Route::post('traffic', [ErrorController::class, 'traffics']);
+    Route::post('error', [ErrorController::class, 'errors']);
+});
 
 /* Testes */
 //Route::middleware(['auth:sanctum', 'can:ADMINISTRADOR'])->get('/teste', function (Request $request) { return ["OK"]; });
