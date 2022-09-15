@@ -10,7 +10,5 @@ export class ProjetoRegra extends Base {
 
     public projeto_id: string = "";
 
-    constructor(){
-        super();
-    }
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

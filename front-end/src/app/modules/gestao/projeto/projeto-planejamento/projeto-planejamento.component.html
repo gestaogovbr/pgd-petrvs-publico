@@ -1,1 +1,13 @@
-<p>projeto-planejamento works!</p>
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+    <tabs #planejamentoTabs display right>
+        <tab key="GANTT" label="Principal">
+            <gantt [project]="project" [height]="ganttHeight"></gantt>
+        </tab>
+        <tab key="CALENDARIO" label="Calendário"></tab>
+        <tab key="KANBAN" label="Quadro">
+        </tab>
+    </tabs>
+    <div *ngIf="planejamentoTabs.active == 'CALENDARIO'" class="d-block text-center" style="min-height: 400px; max-width: 1000px; margin: auto;">
+        <full-calendar *ngIf="afterLoadData" [options]="calendarOptions"></full-calendar>
+    </div>
+</editable-form>

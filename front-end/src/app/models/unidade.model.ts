@@ -56,7 +56,5 @@ export class Unidade extends Base {
     public gestor_substituto_id: string | null = null; // Usuário gestor substituto da unidade
     public cidade_id: string = ""; // Cidade;
 
-    constructor(){
-        super();
-    }
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

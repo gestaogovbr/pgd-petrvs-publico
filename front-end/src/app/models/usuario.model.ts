@@ -51,7 +51,5 @@ export class Usuario extends Base {
     public url_foto: string | null = null; /* URL da foto do usuário (temporário) */
     public vinculacao: UsuarioVinculacao = "SERVIDOR_EFETIVO";
 
-    constructor(){
-        super();
-    }
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

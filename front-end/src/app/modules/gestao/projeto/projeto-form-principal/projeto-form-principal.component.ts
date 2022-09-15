@@ -1,4 +1,5 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { AbstractControl } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 
@@ -12,6 +13,13 @@ export class ProjetoFormPrincipalComponent extends PageFrameBase {
 
   constructor(public injector: Injector) {
     super(injector);
+    this.form = this.fh.FormBuilder({
+    }, this.cdRef, this.validate);
+  }
+
+  public validate = (control: AbstractControl, controlName: string) => {
+    let result = null;
+    return result;
   }
 
 }

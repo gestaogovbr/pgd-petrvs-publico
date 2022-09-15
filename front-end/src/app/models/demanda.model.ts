@@ -85,8 +85,6 @@ export class Demanda extends Base {
     public tipo_documento_requisicao_id: string | null = null;
     public tipo_documento_entrega_id: string | null = null;
     public tipo_processo_id: string | null = null;
-    
-    constructor(){
-        super();
-    }
+
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { BootstrapService } from 'src/app/services/bootstrap.service';
 import { UtilService } from 'src/app/services/util.service';
-import { GanttAssignment, GanttProject, GanttResource, GanttTask } from './gantt-models';
+import { GanttAssignment, GanttProject, GanttResource, GanttRole, GanttTask } from './gantt-models';
 
 @Component({
   selector: 'gantt',
@@ -9,11 +9,23 @@ import { GanttAssignment, GanttProject, GanttResource, GanttTask } from './gantt
   styleUrls: ['./gantt.component.scss']
 })
 export class GanttComponent implements OnInit {
-  @Input() project: GanttProject = new GanttProject();
+  @Input() height: number = 500;
+  @Input() set project(value: GanttProject) {
+    if(this._project != value) {
+      this._project = value;
+      if(this.initialized) this.reload();
+    }
+  }
+  get project(): GanttProject {
+    return this._project;
+  }
 
   public loading: boolean = false;
   public ge: any = undefined;
   public id: string;
+
+  private _project: GanttProject = new GanttProject();
+  private initialized: boolean = false;
 
   constructor(public bootstrap: BootstrapService, public util: UtilService) {
     this.id = util.md5();
@@ -57,6 +69,7 @@ export class GanttComponent implements OnInit {
       // here starts gantt initialization
       //@ts-ignore
       this.ge = new GanttMaster();
+      this.ge.ganttHeight = this.height;
       this.ge.resourceUrl = "assets/gantt/res/";
       this.ge.set100OnClose = true;
       this.ge.shrinkParent = true;
@@ -80,6 +93,7 @@ export class GanttComponent implements OnInit {
       delete this.ge.gantt.zoom;
 
       this.reload();
+      this.initialized = true;
       //initializeHistoryManagement(ge.tasks[0].id);
 
       /* Native resource editors
@@ -185,11 +199,11 @@ export class GanttComponent implements OnInit {
     };
     // Load roles list
     project.roles = this.project.roles.map(role => {
-      return { id: role.id, name: role.name };
+      return { id: role.id, name: role.name, extra: role.extra };
     });
     // Load resources list
     project.resources = this.project.resources.map(resource => {
-      return { id: resource.id, name: resource.name, picture: resource.picture };
+      return { id: resource.id, name: resource.name, picture: resource.picture, extra: resource.extra };
     });
     // Load tasks, deps and assignments
     this.getRecursiveGanttTasks(this.project.tasks, 0, project);
@@ -238,11 +252,11 @@ export class GanttComponent implements OnInit {
     let gantt = this.ge.saveGantt();
     // Store roles list
     project.roles = gantt.roles.map((role: any) => {
-      return { id: role.id, name: role.name };
+      return new GanttRole({ id: role.id, name: role.name, extra: role.extra });
     });
     // Store resources list
     project.resources = this.project.resources.map(resource => {
-      return { id: resource.id, name: resource.name, picture: resource.picture, type: resource.type, unityCost: resource.unityCost, unity: resource.unity };
+      return new GanttResource({ id: resource.id, name: resource.name, picture: resource.picture, type: resource.type, unityCost: resource.unityCost, unity: resource.unity, extra: resource.extra });
     });
     // Store tasks, deps and assignments
     this.getRecursiveProjectTasks(gantt.tasks, 0, 0, project);

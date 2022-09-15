@@ -11,7 +11,7 @@ import { ProjetoFormRecursosComponent } from './projeto-form-recursos/projeto-fo
 import { ProjetoFormEnvolvidosComponent } from './projeto-form-envolvidos/projeto-form-envolvidos.component';
 import { ProjetoFormAlocacoesComponent } from './projeto-form-alocacoes/projeto-form-alocacoes.component';
 import { UteisModule } from '../../uteis/uteis.module';
-
+import { FullCalendarModule } from '@fullcalendar/angular';
 
 @NgModule({
   declarations: [
@@ -27,6 +27,7 @@ import { UteisModule } from '../../uteis/uteis.module';
     CommonModule,
     ComponentsModule,
     UteisModule,
+    FullCalendarModule,
     ProjetoRoutingModule
   ]
 })

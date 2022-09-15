@@ -6,9 +6,8 @@ export class TipoAtividade extends Base {
     public cor: string ="";      //Código da cor em hex
     public data_inicio: Date = new Date(); /* Data de início */
     public data_fim: Date | null = null; /* Data do fim */
-    constructor(){
-        super();
-    }
+
+    public constructor(data?: any) { super(); this.initialization(data); }
 }
 
 

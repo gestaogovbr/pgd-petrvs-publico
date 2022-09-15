@@ -9,8 +9,6 @@ export class Perfil extends Base {
     public descricao: string = ""; /* Descrição sobre o perfil */
     public data_inicio: Date = new Date(); /* Data de início */
     public data_fim: Date | null = null; /* Data fim */
-        
-    constructor(){
-        super();
-    }
+
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

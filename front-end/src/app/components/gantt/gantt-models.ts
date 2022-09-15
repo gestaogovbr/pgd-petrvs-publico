@@ -1,17 +1,22 @@
 export type GanttTaskStatus = "STATUS_ACTIVE" | "STATUS_DONE" | "STATUS_FAILED" | "STATUS_SUSPENDED" | "STATUS_WAITING" | "STATUS_UNDEFINED";
 
-export type GanttResourceUnity = "UNITY" | "AMAUNT" | "CURRENCY" | "TIME";
+export type GanttResourceUnity = "UNITY"  | "BOX"  | "METER" | "KILO" | "LITER" | "DOZEN" | "CURRENCY" | "HOUR" | "DAY" | "PACKAGE";
 
 export type GanttResourceType = "MATERIAL" | "SERVICE" | "HUMAN" | "COST" | "DEPARTMENT";
+
+/*export abstract class GanttBase {
+    public constructor(data?: any) { if(data) Object.assign(this, data); }
+    public initialization(data?: any) {
+        if(data) Object.assign(this, data);
+    }
+}*/
 
 export class GanttProject {
     public tasks: GanttTask[] = [];
     public resources: GanttResource[] = [];
     public roles: GanttRole[] = [];
 
-    public constructor(data?: any) {
-        if(data) Object.assign(this, data);
-    }
+    public constructor(data?: any) { if(data) Object.assign(this, data); }
 }
 
 export class GanttAssignment {
@@ -21,10 +26,8 @@ export class GanttAssignment {
     public role_id?: string = undefined;
     public description: string = "";
     public quantity: number = 1;
-
-    public constructor(data?: any) {
-        if(data) Object.assign(this, data);
-    }
+    
+    public constructor(data?: any) { if(data) Object.assign(this, data); }
 }
 
 export class GanttTask {
@@ -45,26 +48,26 @@ export class GanttTask {
     public dependencies_ids?: string[] = [];
     public assignments?: GanttAssignment[] = [];
     public collapsed?: boolean = false;
-
-    public constructor(data?: any) {
-        if(data) Object.assign(this, data);
-    }
+    
+    public constructor(data?: any) { if(data) Object.assign(this, data); }
 }
 
 export class GanttResource {
     public id: string = "";
     public name: string = "";
+    public extra: any = undefined;
     public picture: string = ""; 
     public type: GanttResourceType = "MATERIAL";
     public unityCost: number = 0.00;
     public unity: GanttResourceUnity = "UNITY";
-
-    public constructor(data?: any) {
-        if(data) Object.assign(this, data);
-    }
+    
+    public constructor(data?: any) { if(data) Object.assign(this, data); }
 }
 
 export class GanttRole {
     public id: string = "";
     public name: string = "";
+    public extra: any = undefined;
+    
+    public constructor(data?: any) { if(data) Object.assign(this, data); }
 }

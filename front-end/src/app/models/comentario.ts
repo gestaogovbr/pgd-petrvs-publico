@@ -17,7 +17,5 @@ export class Comentario extends Base {
     public comentario_id: string | null = null; /* ID do comentário pai, quando existir */
     public demanda_id: string | null = null; /* ID da demanda que gerou o comentário */
 
-    constructor(){
-        super();
-    }
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

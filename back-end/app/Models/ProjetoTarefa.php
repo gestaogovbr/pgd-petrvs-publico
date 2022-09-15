@@ -6,13 +6,14 @@ use App\Models\ModelBase;
 use App\Models\Projeto;
 use App\Models\Usuario;
 use App\Models\Demanda;
+use App\Models\ProjetoAlocacao;
 use App\Traits\AutoDataInicio;
 
 class ProjetoTarefa extends ModelBase
 {
     use AutoDataInicio;
 
-    protected $table = 'demandas_entregas';
+    protected $table = 'projetos_tarefas';
 
     public $fillable = [
         'indice',
@@ -56,7 +57,7 @@ class ProjetoTarefa extends ModelBase
     public $delete_cascade = [];
 
     // Has
-    //public function () { return $this->hasMany(::class); }    
+    public function alocacoes() { return $this->hasMany(ProjetoAlocacao::class, "tarefa_id"); }    
     // Belongs
     public function projeto() { return $this->belongsTo(Projeto::class); }    
     public function demanda() { return $this->belongsTo(Demanda::class); }    

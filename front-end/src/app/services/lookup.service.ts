@@ -409,11 +409,10 @@ export class LookupService {
     { key: "KILO", value: "Quilo" },
     { key: "LITRO", value: "Litro" },
     { key: "DUZIA", value: "Dúzia" },
-    { key: "FARDO", value: "Fardo" },
+    { key: "MONETARIO", value: "Monetário" },
     { key: "HORAS", value: "Horas" },
     { key: "DIAS", value: "Dias" },
-    { key: "PACOTE", value: "Pacote" },
-    { key: "FRASCO", value: "Frasco" }
+    { key: "PACOTE", value: "Pacote" }
   ];
 
   public PROJETO_STATUS: LookupItem[] = [

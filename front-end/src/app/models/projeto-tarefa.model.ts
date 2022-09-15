@@ -2,6 +2,7 @@ import { Base } from './base.model';
 import { Usuario } from './usuario.model';
 import { Projeto } from './projeto.model';
 import { Demanda } from './demanda.model';
+import { ProjetoAlocacao } from './projeto-alocacao.model';
 
 export type ProjetoTarefaStatus = "PLANEJADO" | "INICIADO" | "CONCLUIDO" | "FALHO" | "SUSPENSO" | "CANCELADO" | "AGUARDANDO";
 
@@ -11,6 +12,7 @@ export class ProjetoTarefa extends Base {
     public terefa_projeto?: Projeto;
     public demanda?: Demanda;
     public usuario?: Usuario;
+    public alocacoes?: ProjetoAlocacao[];
 
     public indice: number = 0; /* Indice da sequencia da tarefa */
     public path: string = ""; /* Path dos nós pais */
@@ -44,8 +46,5 @@ export class ProjetoTarefa extends Base {
     public demanda_id: string = "";
     public usuario_id: string | null = null;
 
-    constructor(){
-        super();
-    }
-
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

@@ -13,7 +13,5 @@ export class Tarefa extends Base {
     public unidade_id: string | null = null; /* Unidade vinculada a tarefa */
     public entidade_id: string | null = null; /* Entidade vinculada a tarefa */
 
-    constructor(){
-        super();
-    }
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

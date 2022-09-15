@@ -37,7 +37,5 @@ export class Documento extends Base {
     public status: DocumentoStatus = "GERADO";
     public assinaturas: DocumentoAssinatura[] = [];
 
-    constructor(){
-        super();
-    }
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

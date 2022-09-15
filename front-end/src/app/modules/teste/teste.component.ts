@@ -9,6 +9,7 @@ import { UtilService } from 'src/app/services/util.service';
 import * as moment from 'moment';
 import { CardItem } from 'src/app/components/kanban/docker/docker.component';
 import { GanttAssignment, GanttProject, GanttResource, GanttTask } from 'src/app/components/gantt/gantt-models';
+import { CalendarOptions } from '@fullcalendar/angular';
 
 @Component({
   selector: 'app-teste',
@@ -36,6 +37,14 @@ export class TesteComponent implements OnInit {
   public avaliadas: CardItem[] = [
     {id: "a1", title: "avaliada 1", subTitle: "avaliado 1", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens"}
   ];
+
+  public calendarOptions: CalendarOptions = {
+    initialView: 'dayGridMonth',
+    events: [
+      { title: 'event 1', start: moment().add(-1, 'days').toDate(), end: moment().add(1, 'days').toDate() },
+      { title: 'event 2', start: moment().add(1, 'days').toDate(), end: moment().add(5, 'days').toDate() }
+    ]
+  };
 
   public project: GanttProject; 
   public resources: GanttResource[] = [];
@@ -76,7 +85,7 @@ export class TesteComponent implements OnInit {
       color: {default: null}*/
     });
     this.project = new GanttProject();
-    this.project.tasks =[{
+    this.project.tasks =[new GanttTask({
       id: "a80b71cf-e112-11ec-a5bb-0050569c64a0",
       name: "Projeto 1",
       description: "Projeto de testes 1",
@@ -86,7 +95,7 @@ export class TesteComponent implements OnInit {
       duration: 7,
       hasChild: true,
       tasks: [
-        {
+        new GanttTask({
           id: "a80b71cf-e112-11ec-a5bb-0050569c64a1",
           name: "Tarefa de teste 1",
           description: "Tarefa de testes 1",
@@ -95,8 +104,8 @@ export class TesteComponent implements OnInit {
           end: this.incDate(1),
           duration: 2,
           assignments: [new GanttAssignment({resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a1"})]
-        },
-        {
+        }),
+        new GanttTask({
           id: "a80b71cf-e112-11ec-a5bb-0050569c64a2",
           name: "Tarefa de teste 2",
           description: "Tarefa de testes 2",
@@ -105,14 +114,14 @@ export class TesteComponent implements OnInit {
           end: this.incDate(3),
           duration: 2,
           assignments: [new GanttAssignment({resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a2"})]
-        }        
+        })
       ],
       assignments: [
         new GanttAssignment({resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a1"}), 
         new GanttAssignment({resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a2"})
       ]
-    },
-    {
+    }),
+    new GanttTask({
       id: "a80b71cf-e112-11ec-a5bb-0050579c64a0",
       name: "Projeto 2",
       description: "Projeto de testes 2",
@@ -136,7 +145,7 @@ export class TesteComponent implements OnInit {
       assignments: [
         new GanttAssignment({resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a1"}), 
       ]
-    }];
+    })];
     this.project.resources = [
       new GanttResource({
         id: "a80b71ff-e112-11ec-a5bb-0050569c64a1",

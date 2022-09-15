@@ -27,6 +27,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
   public orderBy?: QueryOrderBy[];
   public groupBy?: GroupBy[];
   public join: string[] = [];
+  public addRoute?: string[];
   public addParams?: any;
   public options: ToolbarButton[] = [];
   public rowsLimit = QueryContext.DEFAULT_LIMIT;
@@ -144,7 +145,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
   }
 
   public add = async () => {
-    this.go.navigate({route: [...this.go.currentOrDefault.route, "new"], params: this.addParams}, {
+    this.go.navigate({route: this.addRoute || [...this.go.currentOrDefault.route, "new"], params: this.addParams}, {
       filterSnapshot: undefined,
       querySnapshot: undefined,
       modalClose: (modalResult) => {

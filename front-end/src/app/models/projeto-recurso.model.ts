@@ -25,8 +25,5 @@ export class ProjetoRecurso extends Base {
     public unidade_id: string | null = null;
     public material_servico_id: string | null = null;
 
-    constructor(){
-        super();
-    }
-
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

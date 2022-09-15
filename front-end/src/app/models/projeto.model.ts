@@ -3,6 +3,9 @@ import { Usuario } from './usuario.model';
 import { TipoProjeto } from './tipo-projeto.model';
 import { ProjetoEnvolvido } from './projeto-envolvido.model';
 import { ProjetoRegra } from './projeto-regra.model';
+import { ProjetoRecurso } from './projeto-recurso.model';
+import { ProjetoAlocacao } from './projeto-alocacao.model';
+import { ProjetoTarefa } from './projeto-tarefa.model';
 
 export type ProjetoStatus = 'PLANEJADO' | 'INICIADO' | 'CONCLUIDO' | 'SUSPENSO' | 'CANCELADO';
 
@@ -11,7 +14,9 @@ export class Projeto extends Base {
     public usuario?: Usuario;
     public envolvidos?: ProjetoEnvolvido[];
     public regras?: ProjetoRegra[];
-    //public alocacoes?: ProjetoAlocacao[];
+    public recursos?: ProjetoRecurso[];
+    public alocacoes?: ProjetoAlocacao[];
+    public tarefas?: ProjetoTarefa[];
 
     public numero: number = 0;  /* Número do projeto */
     public nome: string = "";  /* Nome do projeto */
@@ -22,6 +27,7 @@ export class Projeto extends Base {
     public data_fim: Date | null = null;  /* Data final do registro */
     public inicio: Date = new Date();  /* Inicio do projeto */
     public termino: Date = new Date();  /* Fim do projeto */
+    public custo: number = 0;  /* Custo do projeto */
     public calcula_custos: boolean = true; /* Se o projeto calcula custos */
     public tempo_corrido: boolean = false; /* Se o tempo é corrido ou usa a configuração de fins de semana, feriados e horário do expediente (quando usar horas) */
     public usar_horas: boolean = true; /* Se usa horas nas datas */
@@ -37,7 +43,5 @@ export class Projeto extends Base {
     public usuario_id: string | null = null;
     public tipo_projeto_id: string = "";
 
-    constructor(){
-        super();
-    }
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

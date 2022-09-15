@@ -11,10 +11,8 @@ export class TipoAvaliacao extends Base {
     public tipos_avaliacoes_justificativas: TipoAvaliacaoJustificativa[] = [];
     public data_inicio: Date = new Date(); /* Data de início */
     public data_fim: Date | null = null; /* Data do fim */
-        
-    constructor(){
-        super();
-    }
+
+    public constructor(data?: any) { super(); this.initialization(data); }
 }
 
 

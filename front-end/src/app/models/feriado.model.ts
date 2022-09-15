@@ -19,7 +19,5 @@ export class Feriado extends Base {
     public cidade_id: string | null = null;
     public uf: string | null = null; /* UF para abrangencia estadual */
 
-    constructor(){
-        super();
-    }
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

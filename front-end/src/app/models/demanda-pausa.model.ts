@@ -6,7 +6,5 @@ export class DemandaPausa extends Base {
 
     public demanda_id: string = ""; /* ID da Demanda */
 
-    constructor(){
-        super();
-    }
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

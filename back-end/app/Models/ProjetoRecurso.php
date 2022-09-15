@@ -16,6 +16,12 @@ class ProjetoRecurso extends ModelBase
     protected $table = 'projetos_recursos';
 
     public $fillable = [
+        'nome', 
+        'tipo', 
+        'unidade_medida', 
+        'valor', 
+        'data_inicio', 
+        'data_fim',         
         'projeto_id',
         'usuario_id',
         'unidade_id',

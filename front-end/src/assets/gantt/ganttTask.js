@@ -1231,20 +1231,22 @@ function Assignment(id, resourceId, roleId, effort, description, quantity) {
 
 
 //<%------------------------------------------------------------------------  RESOURCE ---------------------------------------------------------------%>
-function Resource(id, name, picture, type, unityCost, unity) {
+function Resource(id, name, picture, type, unityCost, unity, extra) {
   this.id = id;
   this.name = name;
   this.picture = picture;
   this.type = type;
   this.unityCost = unityCost;
   this.unity = unity;
+  this.extra = extra;
 }
 
 
 //<%------------------------------------------------------------------------  ROLE ---------------------------------------------------------------%>
-function Role(id, name) {
+function Role(id, name, extra) {
   this.id = id;
   this.name = name;
+  this.extra = extra;
 }
 
 

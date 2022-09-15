@@ -39,7 +39,5 @@ export class Atividade extends Base {
     public unidade_id: string = "";
     public tipo_atividade_id: string | null = null;
 
-    constructor(){
-        super();
-    }
+    public constructor(data?: any) { super(); this.initialization(data); }
 }
