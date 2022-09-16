@@ -16,6 +16,7 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
   public formValidation?: (form?: FormGroup) => string | undefined | null;
 
   /* Configurações */
+  public join: string[] = [];
   constructor(public injector: Injector) {
     super(injector);
   }
@@ -35,7 +36,7 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
   public load(form: FormGroup) {}
 
   public store(form: FormGroup) {}
-  
+
   /*
   public abstract loadData(form: FormGroup): Promise<void> | void;
 
@@ -69,7 +70,7 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
       try {
         error = this.formValidation(this.form!);
       } catch (e: any) {
-        error = e; 
+        error = e;
       }
     }
     //Object.keys(this.form!.controls).forEach(field => this.form!.get(field)?.updateValueAndValidity());
