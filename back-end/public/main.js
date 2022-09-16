@@ -82,7 +82,7 @@ class PageListBase extends _page_base__WEBPACK_IMPORTED_MODULE_1__["PageBase"] {
         this.rowsLimit = src_app_dao_query_context__WEBPACK_IMPORTED_MODULE_3__["QueryContext"].DEFAULT_LIMIT;
         this.selectable = false;
         this.add = () => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            this.go.navigate({ route: [...this.go.currentOrDefault.route, "new"], params: this.addParams }, {
+            this.go.navigate({ route: this.addRoute || [...this.go.currentOrDefault.route, "new"], params: this.addParams }, {
                 filterSnapshot: undefined,
                 querySnapshot: undefined,
                 modalClose: (modalResult) => {
@@ -629,11 +629,10 @@ class LookupService {
             { key: "KILO", value: "Quilo" },
             { key: "LITRO", value: "Litro" },
             { key: "DUZIA", value: "Dúzia" },
-            { key: "FARDO", value: "Fardo" },
+            { key: "MONETARIO", value: "Monetário" },
             { key: "HORAS", value: "Horas" },
             { key: "DIAS", value: "Dias" },
-            { key: "PACOTE", value: "Pacote" },
-            { key: "FRASCO", value: "Frasco" }
+            { key: "PACOTE", value: "Pacote" }
         ];
         this.PROJETO_STATUS = [
             { key: "PLANEJADO", value: "Planejado", icon: "bi bi-bar-chart-steps", color: "bg-primary" },
@@ -641,6 +640,15 @@ class LookupService {
             { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-calendar2-check", color: "bg-dark" },
             { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-pause-btn", color: "bg-warning text-dark" },
             { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "bg-danger" }
+        ];
+        this.PROJETO_TAREFA_STATUS = [
+            { key: "PLANEJADO", value: "Planejado", icon: "bi bi-bar-chart-steps", color: "primary" },
+            { key: "INICIADO", value: "Iniciado", icon: "bi bi-collection-play", color: "success" },
+            { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-calendar2-check", color: "dark" },
+            { key: "FALHO", value: "Falho", icon: "bi bi-question-octagon", color: "danger" },
+            { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-pause-btn", color: "warning" },
+            { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "danger" },
+            { key: "AGUARDANDO", value: "Aguardando", icon: "bi bi-pause-fill", color: "light" }
         ];
     }
     getLookup(itens, key) {
@@ -1236,7 +1244,7 @@ class UsuarioConfig {
     }
 }
 class Usuario extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.nome = ""; /* Nome do Usuário */
         this.email = ""; /* Email do Usuário */
@@ -1253,6 +1261,7 @@ class Usuario extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.id_google = null; /* ID do usuário google */
         this.url_foto = null; /* URL da foto do usuário (temporário) */
         this.vinculacao = "SERVIDOR_EFETIVO";
+        this.initialization(data);
     }
 }
 
@@ -8564,9 +8573,9 @@ class GanttTemplatesComponent {
                     <span class="ganttButtonSeparator"></span>
                     <button onclick="ge.gantt.showCriticalPath=!ge.gantt.showCriticalPath; ge.redraw();return false;" class="button textual icon requireCanSeeCriticalPath" title="CRITICAL_PATH"><span class="teamworkIcon">&pound;</span></button>
                     <span class="ganttButtonSeparator requireCanSeeCriticalPath"></span>
-                    <button onclick="ge.splitter.resize(.1);return false;" class="button textual icon"><span class="teamworkIcon">F</span></button>
-                    <button onclick="ge.splitter.resize(50);return false;" class="button textual icon"><span class="teamworkIcon">O</span></button>
-                    <button onclick="ge.splitter.resize(100);return false;" class="button textual icon"><span class="teamworkIcon">R</span></button>
+                    <button onclick="$('#` + workSpace + `').trigger('splitter.gantt', [.1]);return false;" class="button textual icon"><span class="teamworkIcon">F</span></button>
+                    <button onclick="$('#` + workSpace + `').trigger('splitter.gantt', [50]);return false;" class="button textual icon"><span class="teamworkIcon">O</span></button>
+                    <button onclick="$('#` + workSpace + `').trigger('splitter.gantt', [100]);return false;" class="button textual icon"><span class="teamworkIcon">R</span></button>
                     <span class="ganttButtonSeparator"></span>
                     <button onclick="$('#` + workSpace + `').trigger('fullScreen.gantt');return false;" class="button textual icon" style="display:none;" title="FULLSCREEN" id="fullscrbtn"><span class="teamworkIcon">@</span></button>
                     <button onclick="ge.element.toggleClass('colorByStatus' );return false;" class="button textual icon" style="display:none;"><span class="teamworkIcon">&sect;</span></button>
@@ -10734,6 +10743,13 @@ class TesteComponent {
         this.avaliadas = [
             { id: "a1", title: "avaliada 1", subTitle: "avaliado 1", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens" }
         ];
+        this.calendarOptions = {
+            initialView: 'dayGridMonth',
+            events: [
+                { title: 'event 1', start: moment__WEBPACK_IMPORTED_MODULE_1__().add(-1, 'days').toDate(), end: moment__WEBPACK_IMPORTED_MODULE_1__().add(1, 'days').toDate() },
+                { title: 'event 2', start: moment__WEBPACK_IMPORTED_MODULE_1__().add(1, 'days').toDate(), end: moment__WEBPACK_IMPORTED_MODULE_1__().add(5, 'days').toDate() }
+            ]
+        };
         this.resources = [];
         this.gridItems = [
             { id: this.util.md5(), campo1: "campo1-1", campo2: new Date(), campo3: new Date(), campo4: "campo4-1", campo5: false },
@@ -10772,7 +10788,7 @@ class TesteComponent {
             color: {default: null}*/
         });
         this.project = new src_app_components_gantt_gantt_models__WEBPACK_IMPORTED_MODULE_2__["GanttProject"]();
-        this.project.tasks = [{
+        this.project.tasks = [new src_app_components_gantt_gantt_models__WEBPACK_IMPORTED_MODULE_2__["GanttTask"]({
                 id: "a80b71cf-e112-11ec-a5bb-0050569c64a0",
                 name: "Projeto 1",
                 description: "Projeto de testes 1",
@@ -10782,7 +10798,7 @@ class TesteComponent {
                 duration: 7,
                 hasChild: true,
                 tasks: [
-                    {
+                    new src_app_components_gantt_gantt_models__WEBPACK_IMPORTED_MODULE_2__["GanttTask"]({
                         id: "a80b71cf-e112-11ec-a5bb-0050569c64a1",
                         name: "Tarefa de teste 1",
                         description: "Tarefa de testes 1",
@@ -10791,8 +10807,8 @@ class TesteComponent {
                         end: this.incDate(1),
                         duration: 2,
                         assignments: [new src_app_components_gantt_gantt_models__WEBPACK_IMPORTED_MODULE_2__["GanttAssignment"]({ resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a1" })]
-                    },
-                    {
+                    }),
+                    new src_app_components_gantt_gantt_models__WEBPACK_IMPORTED_MODULE_2__["GanttTask"]({
                         id: "a80b71cf-e112-11ec-a5bb-0050569c64a2",
                         name: "Tarefa de teste 2",
                         description: "Tarefa de testes 2",
@@ -10801,14 +10817,14 @@ class TesteComponent {
                         end: this.incDate(3),
                         duration: 2,
                         assignments: [new src_app_components_gantt_gantt_models__WEBPACK_IMPORTED_MODULE_2__["GanttAssignment"]({ resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a2" })]
-                    }
+                    })
                 ],
                 assignments: [
                     new src_app_components_gantt_gantt_models__WEBPACK_IMPORTED_MODULE_2__["GanttAssignment"]({ resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a1" }),
                     new src_app_components_gantt_gantt_models__WEBPACK_IMPORTED_MODULE_2__["GanttAssignment"]({ resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a2" })
                 ]
-            },
-            {
+            }),
+            new src_app_components_gantt_gantt_models__WEBPACK_IMPORTED_MODULE_2__["GanttTask"]({
                 id: "a80b71cf-e112-11ec-a5bb-0050579c64a0",
                 name: "Projeto 2",
                 description: "Projeto de testes 2",
@@ -10832,7 +10848,7 @@ class TesteComponent {
                 assignments: [
                     new src_app_components_gantt_gantt_models__WEBPACK_IMPORTED_MODULE_2__["GanttAssignment"]({ resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a1" }),
                 ]
-            }];
+            })];
         this.project.resources = [
             new src_app_components_gantt_gantt_models__WEBPACK_IMPORTED_MODULE_2__["GanttResource"]({
                 id: "a80b71ff-e112-11ec-a5bb-0050569c64a1",
@@ -11025,7 +11041,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
 class Demanda extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.numero = 0; /* Numero da demanda */
         this.id_requisicao = null; /* ID da requisição do sistema integrado, caso seja o Sei será o ID_Documento */
@@ -11069,6 +11085,7 @@ class Demanda extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.tipo_documento_requisicao_id = null;
         this.tipo_documento_entrega_id = null;
         this.tipo_processo_id = null;
+        this.initialization(data);
     }
 }
 
@@ -16773,10 +16790,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_gestao_demanda_demanda_module__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./modules/gestao/demanda/demanda.module */ "17YW");
 /* harmony import */ var _modules_relatorios_relatorio_module__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./modules/relatorios/relatorio.module */ "weWA");
 /* harmony import */ var _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @angular/platform-browser/animations */ "R1ws");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! @angular/common */ "ofXK");
-/* harmony import */ var _components_top_alert_top_alert_component__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./components/top-alert/top-alert.component */ "UJzD");
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! @angular/router */ "tyNb");
+/* harmony import */ var _fullcalendar_angular__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @fullcalendar/angular */ "IvIE");
+/* harmony import */ var _fullcalendar_daygrid__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! @fullcalendar/daygrid */ "PN1e");
+/* harmony import */ var _fullcalendar_interaction__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! @fullcalendar/interaction */ "ogxq");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! @angular/common */ "ofXK");
+/* harmony import */ var _components_top_alert_top_alert_component__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./components/top-alert/top-alert.component */ "UJzD");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! @angular/router */ "tyNb");
 
 
 
@@ -16793,16 +16813,23 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+ // must go before plugins
+ // a plugin!
+ // a plugin!
 
 
 
 
 
+_fullcalendar_angular__WEBPACK_IMPORTED_MODULE_16__["FullCalendarModule"].registerPlugins([
+    _fullcalendar_daygrid__WEBPACK_IMPORTED_MODULE_17__["default"],
+    _fullcalendar_interaction__WEBPACK_IMPORTED_MODULE_18__["default"]
+]);
 class AppModule {
 }
 AppModule.ɵfac = function AppModule_Factory(t) { return new (t || AppModule)(); };
-AppModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdefineNgModule"]({ type: AppModule, bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"]] });
-AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdefineInjector"]({ providers: [], imports: [[
+AppModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵdefineNgModule"]({ type: AppModule, bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"]] });
+AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵdefineInjector"]({ providers: [], imports: [[
             _angular_platform_browser__WEBPACK_IMPORTED_MODULE_3__["BrowserModule"],
             _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_15__["BrowserAnimationsModule"],
             _angular_common_http__WEBPACK_IMPORTED_MODULE_0__["HttpClientModule"],
@@ -16811,9 +16838,10 @@ AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdefineInjecto
             _app_routing_module__WEBPACK_IMPORTED_MODULE_4__["AppRoutingModule"],
             _modules_gestao_demanda_demanda_module__WEBPACK_IMPORTED_MODULE_13__["DemandaModule"],
             ng2_charts__WEBPACK_IMPORTED_MODULE_2__["ChartsModule"],
+            _fullcalendar_angular__WEBPACK_IMPORTED_MODULE_16__["FullCalendarModule"],
             _modules_relatorios_relatorio_module__WEBPACK_IMPORTED_MODULE_14__["RelatorioModule"]
         ]] });
-(function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵsetNgModuleScope"](AppModule, { declarations: [_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"],
+(function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵsetNgModuleScope"](AppModule, { declarations: [_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"],
         _modules_home_home_component__WEBPACK_IMPORTED_MODULE_6__["HomeComponent"],
         _modules_login_login_component__WEBPACK_IMPORTED_MODULE_7__["LoginComponent"],
         _modules_config_config_component__WEBPACK_IMPORTED_MODULE_8__["ConfigComponent"],
@@ -16827,8 +16855,9 @@ AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdefineInjecto
         _app_routing_module__WEBPACK_IMPORTED_MODULE_4__["AppRoutingModule"],
         _modules_gestao_demanda_demanda_module__WEBPACK_IMPORTED_MODULE_13__["DemandaModule"],
         ng2_charts__WEBPACK_IMPORTED_MODULE_2__["ChartsModule"],
+        _fullcalendar_angular__WEBPACK_IMPORTED_MODULE_16__["FullCalendarModule"],
         _modules_relatorios_relatorio_module__WEBPACK_IMPORTED_MODULE_14__["RelatorioModule"]] }); })();
-_angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵsetComponentScope"](_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"], [_angular_common__WEBPACK_IMPORTED_MODULE_17__["NgIf"], _angular_common__WEBPACK_IMPORTED_MODULE_17__["NgForOf"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ɵangular_packages_forms_forms_ba"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgControlStatusGroup"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgSelectOption"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ɵangular_packages_forms_forms_z"], _components_top_alert_top_alert_component__WEBPACK_IMPORTED_MODULE_18__["TopAlertComponent"], _angular_router__WEBPACK_IMPORTED_MODULE_19__["RouterOutlet"]], []);
+_angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵsetComponentScope"](_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"], [_angular_common__WEBPACK_IMPORTED_MODULE_20__["NgIf"], _angular_common__WEBPACK_IMPORTED_MODULE_20__["NgForOf"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ɵangular_packages_forms_forms_ba"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgControlStatusGroup"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgSelectOption"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ɵangular_packages_forms_forms_z"], _components_top_alert_top_alert_component__WEBPACK_IMPORTED_MODULE_21__["TopAlertComponent"], _angular_router__WEBPACK_IMPORTED_MODULE_22__["RouterOutlet"]], []);
 
 
 /***/ }),
@@ -18130,6 +18159,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GanttTask", function() { return GanttTask; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GanttResource", function() { return GanttResource; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GanttRole", function() { return GanttRole; });
+/*export abstract class GanttBase {
+    public constructor(data?: any) { if(data) Object.assign(this, data); }
+    public initialization(data?: any) {
+        if(data) Object.assign(this, data);
+    }
+}*/
 class GanttProject {
     constructor(data) {
         this.tasks = [];
@@ -18178,6 +18213,7 @@ class GanttResource {
     constructor(data) {
         this.id = "";
         this.name = "";
+        this.extra = undefined;
         this.picture = "";
         this.type = "MATERIAL";
         this.unityCost = 0.00;
@@ -18187,9 +18223,12 @@ class GanttResource {
     }
 }
 class GanttRole {
-    constructor() {
+    constructor(data) {
         this.id = "";
         this.name = "";
+        this.extra = undefined;
+        if (data)
+            Object.assign(this, data);
     }
 }
 
@@ -22214,7 +22253,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
 class Comentario extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.texto = ""; /* Texto do comentário */
         this.path = ""; /* Path dos ids dos comentários; */
@@ -22224,6 +22263,7 @@ class Comentario extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.usuario_id = ""; /* ID do usuário que fez o comentário */
         this.comentario_id = null; /* ID do comentário pai, quando existir */
         this.demanda_id = null; /* ID da demanda que gerou o comentário */
+        this.initialization(data);
     }
 }
 
@@ -22763,18 +22803,19 @@ function CardComponent_p_5_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](ctx_r2.item.text);
 } }
-const _c0 = function (a0, a1) { return { card: a0, context: a1 }; };
+const _c0 = function (a0, a1, a2) { return { card: a0, context: a1, metadata: a2 }; };
 function CardComponent_ng_container_6_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainer"](0, 27);
 } if (rf & 2) {
     const ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngTemplateOutlet", ctx_r3.template)("ngTemplateOutletContext", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction2"](2, _c0, ctx_r3.item, ctx_r3.kanban == null ? null : ctx_r3.kanban.context));
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngTemplateOutlet", ctx_r3.template)("ngTemplateOutletContext", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction3"](2, _c0, ctx_r3.item, ctx_r3.kanban == null ? null : ctx_r3.kanban.context, ctx_r3.metadata));
 } }
 class CardComponent {
     constructor(util, go) {
         this.util = util;
         this.go = go;
         this.class = 'draggable-card';
+        this.metadata = {};
     }
     set template(value) {
         if (this._template != value) {
@@ -22838,7 +22879,7 @@ CardComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComp
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](4, CardComponent_h6_4_Template, 2, 1, "h6", 4);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](5, CardComponent_p_5_Template, 2, 1, "p", 5);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](6, CardComponent_ng_container_6_Template, 1, 5, "ng-container", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](6, CardComponent_ng_container_6_Template, 1, 6, "ng-container", 6);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     } if (rf & 2) {
@@ -23238,10 +23279,22 @@ class GanttComponent {
     constructor(bootstrap, util) {
         this.bootstrap = bootstrap;
         this.util = util;
-        this.project = new _gantt_models__WEBPACK_IMPORTED_MODULE_0__["GanttProject"]();
+        this.height = 500;
         this.loading = false;
         this.ge = undefined;
+        this._project = new _gantt_models__WEBPACK_IMPORTED_MODULE_0__["GanttProject"]();
+        this.initialized = false;
         this.id = util.md5();
+    }
+    set project(value) {
+        if (this._project != value) {
+            this._project = value;
+            if (this.initialized)
+                this.reload();
+        }
+    }
+    get project() {
+        return this._project;
     }
     ngOnInit() {
         const baseGanttUrl = "assets/gantt/";
@@ -23281,6 +23334,7 @@ class GanttComponent {
             // here starts gantt initialization
             //@ts-ignore
             this.ge = new GanttMaster();
+            this.ge.ganttHeight = this.height;
             this.ge.resourceUrl = "assets/gantt/res/";
             this.ge.set100OnClose = true;
             this.ge.shrinkParent = true;
@@ -23303,6 +23357,7 @@ class GanttComponent {
             //in order to force compute the best-fitting zoom level
             delete this.ge.gantt.zoom;
             this.reload();
+            this.initialized = true;
             //initializeHistoryManagement(ge.tasks[0].id);
             /* Native resource editors
             //@ts-ignore
@@ -23406,11 +23461,11 @@ class GanttComponent {
         };
         // Load roles list
         project.roles = this.project.roles.map(role => {
-            return { id: role.id, name: role.name };
+            return { id: role.id, name: role.name, extra: role.extra };
         });
         // Load resources list
         project.resources = this.project.resources.map(resource => {
-            return { id: resource.id, name: resource.name, picture: resource.picture };
+            return { id: resource.id, name: resource.name, picture: resource.picture, extra: resource.extra };
         });
         // Load tasks, deps and assignments
         this.getRecursiveGanttTasks(this.project.tasks, 0, project);
@@ -23459,11 +23514,11 @@ class GanttComponent {
         let gantt = this.ge.saveGantt();
         // Store roles list
         project.roles = gantt.roles.map((role) => {
-            return { id: role.id, name: role.name };
+            return new _gantt_models__WEBPACK_IMPORTED_MODULE_0__["GanttRole"]({ id: role.id, name: role.name, extra: role.extra });
         });
         // Store resources list
         project.resources = this.project.resources.map(resource => {
-            return { id: resource.id, name: resource.name, picture: resource.picture, type: resource.type, unityCost: resource.unityCost, unity: resource.unity };
+            return new _gantt_models__WEBPACK_IMPORTED_MODULE_0__["GanttResource"]({ id: resource.id, name: resource.name, picture: resource.picture, type: resource.type, unityCost: resource.unityCost, unity: resource.unity, extra: resource.extra });
         });
         // Store tasks, deps and assignments
         this.getRecursiveProjectTasks(gantt.tasks, 0, 0, project);
@@ -23531,7 +23586,7 @@ class GanttComponent {
     }
 }
 GanttComponent.ɵfac = function GanttComponent_Factory(t) { return new (t || GanttComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](src_app_services_bootstrap_service__WEBPACK_IMPORTED_MODULE_2__["BootstrapService"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_3__["UtilService"])); };
-GanttComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: GanttComponent, selectors: [["gantt"]], inputs: { project: "project" }, decls: 3, vars: 2, consts: [[1, "gantt"], [2, "padding", "0px", "overflow-y", "auto", "overflow-x", "hidden", "border", "1px solid #e5e5e5", "position", "relative", "margin", "0 5px"], [3, "id"]], template: function GanttComponent_Template(rf, ctx) { if (rf & 1) {
+GanttComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: GanttComponent, selectors: [["gantt"]], inputs: { height: "height", project: "project" }, decls: 3, vars: 2, consts: [[1, "gantt"], [2, "padding", "0px", "overflow-y", "auto", "overflow-x", "hidden", "border", "1px solid #e5e5e5", "position", "relative", "margin", "0 5px"], [3, "id"]], template: function GanttComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](1, "div", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](2, "gantt-templates", 2);
@@ -24002,7 +24057,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
 class DemandaEntrega extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.descricao = null; /* Descrição da tarefa */
         this.data_hora = new Date(); /* Data hora do lançamento da tarefa */
@@ -24019,6 +24074,7 @@ class DemandaEntrega extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.tipo_documento_id = null; /* Tipo de documento */
         this.tipo_processo_id = null; /* Tipo de processo */
         this.comentarios = []; /* Comentarios da tarefa */
+        this.initialization(data);
     }
 }
 
@@ -24275,6 +24331,10 @@ class Base {
         this.created_at = new Date();
         this.updated_at = new Date();
     }
+    initialization(data) {
+        if (data)
+            Object.assign(this, data);
+    }
 }
 
 
@@ -24429,11 +24489,12 @@ __webpack_require__.r(__webpack_exports__);
 
 //@Component({ template: '' })
 class PageFrameBase extends _page_base__WEBPACK_IMPORTED_MODULE_0__["PageBase"] {
-    /* Configurações */
     constructor(injector) {
         super(injector);
         this.injector = injector;
         this.action = "";
+        /* Configurações */
+        this.join = [];
         this.error = (error) => {
             if (this.editableForm)
                 this.editableForm.error = error;
@@ -25616,7 +25677,7 @@ class UnidadeNotificacoes {
     }
 }
 class Unidade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.codigo = ""; //Código da unidade
         this.sigla = ""; //Sigla da unidade
@@ -25642,6 +25703,7 @@ class Unidade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.gestor_id = null; // Usuário gestor da unidade
         this.gestor_substituto_id = null; // Usuário gestor substituto da unidade
         this.cidade_id = ""; // Cidade;
+        this.initialization(data);
     }
 }
 

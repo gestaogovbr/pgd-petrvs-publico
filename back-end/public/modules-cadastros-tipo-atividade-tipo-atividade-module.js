@@ -200,13 +200,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
 class TipoAtividade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.nome = ""; //Descrição do tipo/categoria da atividade
         this.icone = ""; //Classe do icone
         this.cor = ""; //Código da cor em hex
         this.data_inicio = new Date(); /* Data de início */
         this.data_fim = null; /* Data do fim */
+        this.initialization(data);
     }
 }
 

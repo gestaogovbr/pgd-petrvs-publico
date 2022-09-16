@@ -779,10 +779,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
 class UnidadeOrigemAtividade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.unidade_id = ""; /* ID da unidade pai */
         this.unidade_origem_atividade_id = ""; /* ID da unidade que será utilizada como origem de atividades  */
+        this.initialization(data);
     }
 }
 

@@ -16,7 +16,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class Atividade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.observacoes = null; /* Observação sobre o afastamento */
         this.inicio_afastamento = new Date(); /* Inicio do afastamento  */
@@ -46,6 +46,7 @@ class Atividade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.data_fim = null; //Data final da vigência
         this.unidade_id = "";
         this.tipo_atividade_id = null;
+        this.initialization(data);
     }
 }
 

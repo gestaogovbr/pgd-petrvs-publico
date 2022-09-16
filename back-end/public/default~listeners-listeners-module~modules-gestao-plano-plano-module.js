@@ -13,7 +13,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
 class Plano extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.carga_horaria = 0; //Carga horária diária do usuário
         this.tempo_total = 0; //Horas úteis de trabalho no período de data_inicio_vigencia à data_fim_vigencia considerando carga_horaria, feriados, fins de semana
@@ -33,6 +33,7 @@ class Plano extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.atividades = []; /* Entregas da demanda */
         this.documentos = []; /* Termos de adesão */
         this.demandas = []; /* Demandas vinculadas ao Plano */
+        this.initialization(data);
     }
 }
 
@@ -671,7 +672,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
 class Documento extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.numero = 0; /* Numero do documento (gerado pelo sistema) */
         this.especie = "TERMO_ADESAO"; /* Especificação da espécie do documento (interno do sistema) */
@@ -691,6 +692,7 @@ class Documento extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.data_fim = null; /* Data do fim */
         this.status = "GERADO";
         this.assinaturas = [];
+        this.initialization(data);
     }
 }
 Documento.STATUS_GERADO = "GERADO";

@@ -330,13 +330,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
 class Cidade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.codigo_ibge = ""; //Código IBGE
         this.nome = ""; //Nome da cidade;
         this.tipo = "MUNICIPIO"; //Tipo: MUNICIPIO, DISTRITO, CAPITAL");
         this.uf = "AC"; //Unidade da federação
         this.timezone = 0; //Timezone da cidade
+        this.initialization(data);
     }
 }
 

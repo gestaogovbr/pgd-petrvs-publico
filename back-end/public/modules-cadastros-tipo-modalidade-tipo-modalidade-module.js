@@ -40,7 +40,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
 class TipoModalidade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.nome = ""; /* Nome da modalidade */
         this.atividades_homologadas = 1; /* Permitir apenas atividades homologadas */
@@ -53,6 +53,7 @@ class TipoModalidade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.ganho_produtividade = 0; /* Ganho de produtividade */
         this.data_inicio = new Date(); /* Data de início */
         this.data_fim = null; /* Data do fim */
+        this.initialization(data);
     }
 }
 

@@ -443,13 +443,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
 class Afastamento extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.observacoes = null; /* Observação sobre o afastamento */
         this.inicio_afastamento = new Date(); /* Inicio do afastamento  */
         this.fim_afastamento = new Date(); /* Fim do afastamento */
         this.usuario_id = ""; /*  */
         this.tipo_motivo_afastamento_id = ""; /*  */
+        this.initialization(data);
     }
 }
 

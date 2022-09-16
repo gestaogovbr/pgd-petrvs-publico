@@ -191,7 +191,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
 class Programa extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.nome = ""; /* Nome do programa */
         this.normativa = ""; /* Normativa que regula o programa */
@@ -201,6 +201,7 @@ class Programa extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.data_fim_vigencia = new Date(); /* Data de fim vigencia */
         this.data_inicio = new Date(); /* Data de início */
         this.data_fim = null; /* Data do fim */
+        this.initialization(data);
     }
 }
 
