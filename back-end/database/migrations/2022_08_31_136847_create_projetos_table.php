@@ -44,6 +44,7 @@ class CreateProjetosTable extends Migration
             $table->float('duracao')->comment("Duração do projeto");
             $table->decimal('progresso', 5, 2)->default(0)->comment("Percentual de progresso do projeto");
             $table->unique(['numero']);
+            $table->json('kanban_dockers')->nullable()->comment("Configuração das Labels das swimlanes do quadro Kanban");
             // Chaves estrangeiras:
             $table->foreignUuid('usuario_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade');
             $table->foreignUuid('tipo_projeto_id')->constrained("tipos_projetos")->onDelete('restrict')->onUpdate('cascade');

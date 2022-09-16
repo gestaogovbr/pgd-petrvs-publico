@@ -71,7 +71,7 @@ export class ProjetoListComponent extends PageListBase<Projeto, ProjetoDaoServic
     for(let envolvido of projeto.envolvidos || []) {
       if(envolvido.recurso?.usuario) {
         result.push({
-          url: envolvido.recurso.usuario.url_foto || "./assets/images/profile.png",
+          url: envolvido.recurso.usuario.url_foto || "./assets/images/projetos/usuario.png",
           hint: "Usuario: " + envolvido.recurso.usuario.nome + (envolvido.regra ? "\n(" + envolvido.regra.nome + ")" : "")
         });
       } else if (envolvido.recurso?.unidade) {

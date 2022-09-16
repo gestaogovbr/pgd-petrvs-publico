@@ -1,50 +1,48 @@
 <editable-form noButtons [form]="form!" [disabled]="formDisabled">
   <div class="row">
-    <input-number [size]="2" label="Número" controlName="numero" [control]="form!.controls.numero"></input-number>
-    <input-text [size]="6" label="Nome" controlName="nome" [control]="form!.controls.nome" labelInfo="Nome do projeto"></input-text>
-    <input-select [size]="4" label="Status do projeto" icon="bi bi-arrow-up-right-circle" controlName="status" [control]="form!.controls.status" [items]="lookup.PROJETO_STATUS"></input-select>
+    <input-number [size]="2" label="Número" controlName="numero"></input-number>
+    <input-text [size]="6" label="Nome" controlName="nome" labelInfo="Nome do projeto"></input-text>
+    <input-select [size]="4" label="Status do projeto" icon="bi bi-arrow-up-right-circle" controlName="status" [items]="lookup.PROJETO_STATUS"></input-select>
   </div>
   <div class="row">
-    <input-textarea [size]="12" [rows]="2" label="Descrição" controlName="descricao" [control]="form!.controls.descricao"></input-textarea>
+    <input-textarea [size]="12" [rows]="2" label="Descrição" controlName="descricao"></input-textarea>
   </div>
   <div class="row">
-    <input-textarea [size]="12" [rows]="2" label="Finalidade" controlName="finalidade" [control]="form!.controls.finalidade"></input-textarea>
+    <input-textarea [size]="12" [rows]="2" label="Finalidade" controlName="finalidade"></input-textarea>
   </div>
   <separator title="Cronograma e progresso"></separator>
   <div class="row">
-    <input-switch label="Marco inicial" icon="bi bi-check2" [size]="2" controlName="marco_inicio" [control]="form!.controls.marco_inicio" labelInfo="Marco início"></input-switch>
-    <input-datetime date [size]="4" label="Início" icon="bi bi-calendar-date" controlName="inicio_projeto" [control]="form!.controls.inicio_projeto"></input-datetime>
-    <input-switch label="Marco de términio" icon="bi bi-check2" [size]="3" controlName="marco_termino" [control]="form!.controls.marco_termino" labelInfo="Marco início"></input-switch>
-    <input-datetime date [size]="3" label="Término" icon="bi bi-calendar-date" controlName="termino_projeto" [control]="form!.controls.termino_projeto"></input-datetime>
+    <input-switch label="Marco inicial" icon="bi bi-check2" [size]="2" controlName="marco_inicio" labelInfo="Marco início"></input-switch>
+    <input-datetime date [size]="4" label="Início" icon="bi bi-calendar-date" controlName="inicio_projeto"></input-datetime>
+    <input-switch label="Marco de términio" icon="bi bi-check2" [size]="3" controlName="marco_termino" labelInfo="Marco início"></input-switch>
+    <input-datetime date [size]="3" label="Término" icon="bi bi-calendar-date" controlName="termino_projeto"></input-datetime>
   </div>
   <div class="row">
-    <input-number number [size]="6" label="Duração" sufix="d/h" controlName="duracao" [control]="form!.controls.duracao"></input-number>
-    <input-text number label="Progresso" sufix="%" [size]="6" icon="bi bi-clock" controlName="progresso" [control]="form!.controls.progresso" labelInfo="Progresso do projeto (% Concluído)"></input-text>
+    <input-number number [size]="6" label="Duração" sufix="d/h" controlName="duracao"></input-number>
+    <input-text number label="Progresso" sufix="%" [size]="6" icon="bi bi-clock" controlName="progresso" labelInfo="Progresso do projeto (% Concluído)"></input-text>
   </div>
   <separator title="Cconfigurações"></separator>
   <div class="row">
-    <input-switch label="Tempo corrido:" icon="bi bi-check2" [size]="6" controlName="tempo_corrido" [control]="form!.controls.tempo_corrido" labelInfo="Tempo corrido"></input-switch>
-    <input-switch label="Usa horas:" icon="bi bi-check2" [size]="6" controlName="usa_horas" [control]="form!.controls.usa_horas" labelInfo="Usa horas"></input-switch>
+    <input-switch label="Tempo corrido:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="tempo_corrido" labelInfo="Tempo corrido"></input-switch>
+    <input-switch label="Usa horas:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="usa_horas" labelInfo="Usa horas"></input-switch>
   </div>
   <div class="row">
-    <input-switch label="Intervalo automático:" icon="bi bi-check2" [size]="6" controlName="intervalo_automatico" [control]="form!.controls.marco_inicio" labelInfo="Intervalo automático"></input-switch>
-    <input-switch label="Progresso automático:" icon="bi bi-check2" [size]="6" controlName="progresso_automatico" [control]="form!.controls.progresso_automatico" labelInfo="Progresso automático"></input-switch>
+    <input-switch label="Intervalo automático:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="intervalo_automatico" labelInfo="Intervalo automático"></input-switch>
+    <input-switch label="Progresso automático:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="progresso_automatico" labelInfo="Progresso automático"></input-switch>
   </div>
   <div class="row">
-    <input-switch label="Agrupador:" icon="bi bi-check2" [size]="6" controlName="agrupador" [control]="form!.controls.agrupador" labelInfo="Agrupador"></input-switch>
-    <input-switch label="Usa custo:" icon="bi bi-check2" [size]="6" controlName="usa_custo" [control]="form!.controls.usa_custo" labelInfo="Usa custo"></input-switch>
+    <input-switch label="Agrupador:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="agrupador" labelInfo="Agrupador"></input-switch>
+    <input-switch label="Usa custo:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="usa_custo" labelInfo="Usa custo"></input-switch>
   </div>
   <div class="row">
-    <input-switch label="Aloca recursos no projeto:" icon="bi bi-check2" [size]="6" controlName="aloca_recursos_projeto" [control]="form!.controls.aloca_recursos_projeto" labelInfo="Aloca recursos no projeto"></input-switch>
-    <input-switch label="Soma alocações automático:" icon="bi bi-check2" [size]="6" controlName="soma_alocacoes_automatico" [control]="form!.controls.soma_alocacoes_automatico" labelInfo="Soma alocações automático"></input-switch>
+    <input-switch label="Aloca recursos no projeto:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="aloca_recursos_projeto" labelInfo="Aloca recursos no projeto"></input-switch>
+    <input-switch label="Soma alocações automático:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="soma_alocacoes_automatico" labelInfo="Soma alocações automático"></input-switch>
   </div>
   <div class="row">
-    <input-switch label="Possui custos no projeto:" icon="bi bi-check2" [size]="6" controlName="possui_custos_projeto" [control]="form!.controls.possui_custos_projeto" labelInfo="Possui custos no projeto"></input-switch>
-    <input-switch label="Soma custos automático:" icon="bi bi-check2" [size]="6" controlName="soma_custos_automatico" [control]="form!.controls.soma_custos_automatico" labelInfo="Soma custos automático"></input-switch>
+    <input-switch label="Possui custos no projeto:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="possui_custos_projeto" labelInfo="Possui custos no projeto"></input-switch>
+    <input-switch label="Soma custos automático:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="soma_custos_automatico" labelInfo="Soma custos automático"></input-switch>
   </div>
 </editable-form>
-
-
 
 <!--
 

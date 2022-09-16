@@ -3,6 +3,7 @@ import { Usuario } from './usuario.model';
 import { Projeto } from './projeto.model';
 import { Demanda } from './demanda.model';
 import { ProjetoAlocacao } from './projeto-alocacao.model';
+import { LookupItem } from '../services/lookup.service';
 
 export type ProjetoTarefaStatus = "PLANEJADO" | "INICIADO" | "CONCLUIDO" | "FALHO" | "SUSPENSO" | "CANCELADO" | "AGUARDANDO";
 
@@ -39,6 +40,7 @@ export class ProjetoTarefa extends Base {
     public soma_recusos_alocados_filhos: boolean = true; /* Mostra o somatório dos recursos filhos (somente se tem_filhos) */
     public custos_proprios: boolean = true; /* Se possui custos próprios (somente se tem_filhos) */
     public soma_custos_filhos: boolean = true; /* Se possui custos filhos (somente se tem_filhos) */
+    public etiquetas: LookupItem[] = []; /* Etiquetas */
 
     public projeto_id: string = "";
     public tarefa_pai_id: string | null = null;

@@ -44,6 +44,7 @@ class CreateProjetosTarefasTable extends Migration
             $table->tinyInteger('soma_recusos_alocados_filhos')->default(1)->comment("Mostra o somatório dos recursos filhos (somente se tem_filhos)");
             $table->tinyInteger('custos_proprios')->default(1)->comment("Se possui custos próprios (somente se tem_filhos), se não tem filhos sempre será true");
             $table->tinyInteger('soma_custos_filhos')->default(1)->comment("Se possui custos filhos (somente se tem_filhos)");
+            $table->json('etiquetas')->nullable()->comment("Etiquetas");
             // Chaves estrangeiras:
             $table->foreignUuid('projeto_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
             $table->foreignUuid('tarefa_pai_id')->nullable()->constrained('projetos_tarefas')->onDelete('restrict')->onUpdate('cascade');

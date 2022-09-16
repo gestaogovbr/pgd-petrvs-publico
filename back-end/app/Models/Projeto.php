@@ -49,6 +49,7 @@ class Projeto extends ModelBase
         'progresso',
         'usuario_id',
         'tipo_projeto_id',
+        'kanban_dockers'
     ];
 
     /*public $fillable_changes = [
@@ -70,4 +71,13 @@ class Projeto extends ModelBase
     // Belongs
     public function tipoProjeto() { return $this->belongsTo(TipoProjeto::class); }    
     public function usuario() { return $this->belongsTo(Usuario::class); }    
+    // Mutattors e Casts
+    public function getKanbanDockersAttribute($value)
+    {
+        return json_decode($value);
+    }   
+    public function setKanbanDockersAttribute($value)
+    {
+        $this->attributes['kanban_dockers'] = json_encode($value);
+    }
 }

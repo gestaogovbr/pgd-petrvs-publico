@@ -22,6 +22,6 @@
             <h6 *ngIf="item!.subTitle" class="card-subtitle mb-2 text-muted small ">{{item!.subTitle}}</h6>
             <p *ngIf="item!.text" class="card-text small">{{item!.text}}</p>
         </div>
-        <ng-container *ngIf="template" [ngTemplateOutlet]="template" [ngTemplateOutletContext]="{card: item, context: kanban?.context}"></ng-container>
+        <ng-container *ngIf="template" [ngTemplateOutlet]="template" [ngTemplateOutletContext]="{card: item, context: kanban?.context, metadata: metadata}"></ng-container>
     </div>
 </div>

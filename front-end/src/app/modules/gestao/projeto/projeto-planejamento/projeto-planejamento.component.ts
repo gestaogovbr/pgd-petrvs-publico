@@ -15,6 +15,12 @@ import { Projeto, ProjetoStatus } from 'src/app/models/projeto.model';
 import { Tarefa } from 'src/app/models/tarefa.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import * as moment from 'moment';
+import { LookupItem } from 'src/app/services/lookup.service';
+import { KanbanComponent, KanbanDocker } from 'src/app/components/kanban/kanban.component';
+import { CardItem, DockerComponent } from 'src/app/components/kanban/docker/docker.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { DndDropEvent, DropEffect } from 'ngx-drag-drop';
+import { BadgeColor } from 'src/app/components/badge/badge.component';
 
 export type TarefaTotaisFilhos = {
   custo: number;
@@ -24,6 +30,11 @@ export type TarefaTotaisFilhos = {
   termino: Date | null
 };
 
+export type RecursoListItem = {
+  url: string;
+  hint: string;
+};
+
 @Component({
   selector: 'app-projeto-planejamento',
   templateUrl: './projeto-planejamento.component.html',
@@ -31,11 +42,40 @@ export type TarefaTotaisFilhos = {
 })
 export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
+  @ViewChild("planejamentoKanban", {static: false}) planejamentoKanban?: KanbanComponent;
 
+  public TITLE_OUTRAS = "Outras";
+  
   public project: GanttProject; 
   public ganttHeight: number;
   public afterLoadData: boolean = false;
-
+  public filter: FormGroup;
+  public formEdit: FormGroup;
+  public cardsVersion: number = 0;
+  public dragDrop: any = {};
+  public labels: KanbanDocker[] = [];
+  public etiquetas: LookupItem[] = [];
+  public etiquetasEdit: LookupItem[] = [];
+  public outrasButtons: ToolbarButton[] = [
+    {
+      icon: "bi bi-plus-circle",
+      color: "btn-outline-success",
+      hint: "Incluir nova lista a direita",
+      onClick: this.incluirLista.bind(this)
+    }
+  ];
+  public etiquetasButtons: ToolbarButton[] = [
+    {
+      icon: "bi bi-plus-circle",
+      color: "btn-outline-success",
+      hint: "Incluir nova lista a direita",
+      onClick: this.incluirLista.bind(this)
+    }
+  ];
+  public addComentarioButton: ToolbarButton = {
+    icon: "bi bi-plus-circle",
+    hint: "Incluir comentário"
+  }
   public calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
     events: []
@@ -48,6 +88,12 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
     console.log(this.ganttHeight, screen.availWidth, screen.availHeight);
     this.project = new GanttProject();
     this.form = this.fh.FormBuilder({}, this.cdRef, this.validate);
+    this.filter = this.fh.FormBuilder({
+      resumido: {default: false}
+    }, this.cdRef, this.validate);
+    this.formEdit = this.fh.FormBuilder({
+      etiqueta: {default: null}
+    });
     this.join = ["tarefas.alocacoes", "tipoProjeto", "usuario", "envolvidos", "regras", "recursos.usuario", "recursos.unidade", "recursos.materialServico", "alocacoes"];
   }
 
@@ -61,17 +107,240 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
     this.action = "edit";
   }
 
+  public isOutras(x: KanbanDocker): boolean {
+    return x.title == this.TITLE_OUTRAS && !x.labels.length;
+  } 
+
+  public incluirLista(docker: DockerComponent) {
+    this.labels.splice(docker.key + 1, 0, {
+      labels: [],
+      menu: this.etiquetasButtons,
+      cards: [],
+      editing: true,
+      collapse: false
+    });
+    this.planejamentoKanban?.refreshDoubleScrollbar();
+    this.cdRef.detectChanges();
+  }
+
+  public loadKanbanDockers(projeto: Projeto) {
+    const dockers: KanbanDocker[] = (projeto.kanban_dockers || []) as KanbanDocker[];
+    if(!dockers.find(this.isOutras.bind(this))) dockers.splice(0, 0, {title: this.TITLE_OUTRAS, labels: [], collapse: false});
+    this.labels = dockers.reduce((a, v) => {
+      if(!a.find((x: any) => (x.title?.length && x.title == v.title) || (x.labels?.length && v.labels?.length && x.labels[0].key == v.labels[0].key))) {
+        a.push({
+          labels: this.isOutras(v) ? [] : v.labels,
+          title: v.title,
+          menu: this.isOutras(v) ? this.outrasButtons : this.etiquetasButtons,
+          cards: [],
+          editing: false,
+          collapse: v.collapse
+        });
+      }
+      return a;
+    }, [] as KanbanDocker[]); 
+  }
+
+  public loadKanbanCards(projeto: Projeto) {
+    const outrasIndex = this.labels.findIndex(this.isOutras.bind(this));
+    this.cardsVersion++;
+    projeto.tarefas?.filter(row => !row.agrupador).forEach(row => {
+      let tarefa: ProjetoTarefa = row as ProjetoTarefa;
+      let docker: KanbanDocker | undefined = undefined;
+      tarefa.etiquetas = tarefa.etiquetas || [];
+      for(let i = 0; i < tarefa.etiquetas.length; i++) {
+        for(let j = 1; j < this.labels.length && !docker; j++) {
+          if(this.labels[j].labels[0].key == tarefa.etiquetas[i].key) docker = this.labels[j];
+        }
+        if(!this.etiquetas.some(x => x.key == tarefa.etiquetas[i].key)) this.etiquetas.push(tarefa.etiquetas[i]);
+      }
+      this.putCard(docker?.cards || this.labels[outrasIndex]?.cards || [], tarefa);
+    });
+    for(let cards of this.labels.map(x => x.cards || [])) {
+      for(let i = 0; i < cards.length; cards[i].version != this.cardsVersion ? cards.splice(i, 1) : i++);
+    }
+  }
+
+  public putCard(list: CardItem[], tarefa: ProjetoTarefa) {
+    const index = list.findIndex(x => x.id == tarefa.id);
+    const card = {
+      id: tarefa.id,
+      title: tarefa.nome || "DESCONHECIDO",
+      subTitle: tarefa.descricao || "",
+      data: tarefa,
+      version: this.cardsVersion,
+      menu: undefined,
+      dynamicMenu: this.dynamicCardMenu.bind(this)
+    };
+    if(index >= 0) {
+      list[index] = Object.assign(list[index], card);
+    } else {
+      list.push(card);
+    }
+  }
+
+  public dynamicCardMenu(card: CardItem): ToolbarButton[] | undefined {
+    const menu: ToolbarButton[] | undefined = []; //this.dynamicButtons(card.data);
+    menu.push({
+      icon: "bi bi-three-dots",
+      hint: "Opções",
+      dynamicItems: this.cardDynamicOptions.bind(this)
+    });
+    if(!card.menu || card.menu.map(x => x.hint).join() != menu.map(x => x.hint).join()) card.menu = menu;
+    return card.menu;
+  }
+
+  public cardDynamicOptions(card: CardItem): ToolbarButton[] | undefined {
+    /*const olders = card.menu?.find(x => x.hint == "Opções");
+    if(olders) {
+      const options = this.dynamicOptions.bind(this)(card.data);
+      if(!olders.items || olders?.items.map(x => x.label).join() != options.map(x => x.label).join()) olders.items = options;
+    }
+    return olders?.items;*/
+    return [];
+  }
+
+  public saveEtiquetasProjeto() {
+    /* Implementar */
+  }
+
+  public updateEtiquetasTarefa(dragDrop: any) {
+    const sourceLabel = this.labels.find(x => x.cards == dragDrop.source.list)?.labels[0];
+    const destinationLabel = this.labels.find(x => x.cards == dragDrop.destination.list)?.labels[0];
+    const tarefa = dragDrop.destination.tarefa as ProjetoTarefa;
+    if(sourceLabel && destinationLabel && sourceLabel.key == destinationLabel.key) return;
+    if(sourceLabel) tarefa.etiquetas.splice(tarefa.etiquetas.findIndex(x => x.key == sourceLabel.key), 1);
+    if(destinationLabel) tarefa.etiquetas.unshift(destinationLabel);
+    //this.loading = true;
+    //this.dao!.update(demanda.id, {etiquetas: demanda.etiquetas}).then(demanda => this.modalRefreshId(demanda).modalClose!.bind(this)(demanda.id)).finally(() => this.loading = false);
+  }
+
+  public onSwimlaneDrop(event: DndDropEvent, fromIndex: number) {
+    const element = this.labels[fromIndex];
+    const toIndex = fromIndex < event.index! ? event.index!-1 : event.index!;
+    this.labels.splice(fromIndex, 1);
+    this.labels.splice(toIndex, 0, element);
+    this.saveEtiquetasProjeto();
+  }
+
+  public onDragged(item: any, list: any[], effect: DropEffect) {
+    if(["copy", "move"].includes(effect)) {
+      const index = list.indexOf(item);
+      this.dragDrop.source = {list, index};
+      this.updateEtiquetasTarefa(this.dragDrop);
+    }
+  }
+
+  public onDrop(event: DndDropEvent, list?: any[]) {
+    if(list && ["copy", "move"].includes(event.dropEffect)) {
+      const demanda = event.data.data;
+      const card = event.data;
+      let index = typeof event.index === "undefined" ? list.length : event.index;
+      this.dragDrop = {destination: {list, index, card, demanda}};
+    }
+  }
+
+  public onDockerCollapse(docker: DockerComponent, collapse: boolean) {
+    this.labels[docker.key].collapse = collapse;
+    this.saveEtiquetasProjeto();
+    this.planejamentoKanban?.refreshDoubleScrollbar();
+  }
+
+  public async saveEtiquetas(docker: DockerComponent) {
+    const key = this.formEdit.controls.etiqueta.value;
+    if(key?.length) {
+      const label = this.labels[docker.key!];
+      const etiqueta = this.etiquetasEdit.find(x => x.key == key);
+      if(etiqueta) label.labels = [etiqueta];
+      //if(this.query) this.onQueryLoad(this.query!.rows);
+      this.loadKanbanCards(this.entity as Projeto);
+      this.saveEtiquetasProjeto();
+      return true;
+    }
+    return false;
+  }
+
+  public async deleteEtiquetas(docker: DockerComponent) {
+    this.labels.splice(docker.key!, 1);
+    this.planejamentoKanban?.refreshDoubleScrollbar();
+    this.loadKanbanCards(this.entity as Projeto);
+    this.saveEtiquetasProjeto();
+  }
+
+  public async cancelEtiquetas(docker: DockerComponent) {
+    const label = this.labels[docker.key!];
+    if(!label.labels?.length) {
+      this.labels.splice(docker.key!, 1);
+      this.planejamentoKanban?.refreshDoubleScrollbar();
+    }
+  }
+
+  public getLabelStyle(label: KanbanDocker) {
+    const bgColor = label.labels.length == 1 ? label.labels[0].color || "#000000" : "#000000";
+    //const txtColor = this.util.contrastColor(bgColor);
+    return `border-color: ${bgColor} !important;`;
+  }
+
+  public async editEtiquetas(docker: DockerComponent) {
+    const label = this.labels[docker.key!];
+    const allUsed = this.labels.reduce((a: string[], v: KanbanDocker, i: number) => {
+      if(v.labels.length && i != docker.key) a.push(v.labels[0].key);
+      return a;
+    }, []);
+    this.etiquetasEdit = this.etiquetas.filter(x => !allUsed.includes(x.key));
+    this.formEdit.controls.etiqueta.setValue(label.labels.length ? label.labels[0].key : null);
+  }
+
+  public loadEtiquetas() {
+    //this.etiquetas = this.util.merge(row.atividade?.etiquetas_predefinidas, row.unidade?.etiquetas, (a, b) => a.key == b.key); 
+    this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key); 
+  }
+
   public async loadData(entity: Projeto, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
     this.project = this.toGantt(entity);
     this.afterLoadData = true;
     this.calendarOptions.events = this.toCalendar(entity);
+    this.loadEtiquetas();
+    this.loadKanbanDockers(entity);
+    this.loadKanbanCards(entity);
     this.cdRef.detectChanges();
   }
 
+  public getStatusColor(status: LookupItem): BadgeColor {
+    return status.color as BadgeColor;
+  }
+
+  public getRecursos(tarefa: ProjetoTarefa, metadata: any): RecursoListItem[] {
+    let result: RecursoListItem[] = [];
+    for(let alocacao of tarefa.alocacoes || []) {
+      const regra = alocacao.regra ? "\n(" + alocacao.regra.nome + ")" : "";
+      const nome = alocacao.recurso?.nome?.length ? alocacao.recurso.nome + "\n" : "";
+      switch(alocacao.recurso?.tipo) {
+        case 'HUMANO': result.push({ url: alocacao.recurso.usuario?.url_foto || "./assets/images/projetos/usuario.png", hint: nome + "Usuario: " + (alocacao.recurso.usuario?.nome || "(DESCONHECIDO)") + regra }); break;
+        case 'MATERIAL': result.push({ url: "./assets/images/projetos/material.png", hint: nome + "Material: " + (alocacao.recurso.material_servico?.descricao || "(DESCONHECIDO)") + regra }); break;
+        case 'SERVICO': result.push({ url: "./assets/images/projetos/servico.png", hint: nome + "Servico: " + (alocacao.recurso.material_servico?.descricao || "(DESCONHECIDO)") + regra }); break;
+        case 'CUSTO': result.push({ url: "./assets/images/projetos/custo.png", hint: nome + "Valor: " + this.util.formatDecimal(alocacao.recurso.valor) + regra }); break;
+        case 'DEPARTAMENTO': result.push({ url: "./assets/images/projetos/unidade.png", hint: nome + "Unidade: " + (alocacao.recurso.unidade?.nome || "(DESCONHECIDO)") + regra }); break;
+      }
+    }
+    if(metadata) {
+      const igual = JSON.stringify(result) == JSON.stringify(metadata.alocacoes);
+      metadata.alocacoes = igual ? metadata.alocacoes : result;
+      result = metadata.alocacoes;
+    }
+    return result;
+  }
+
+  public getStatus(tarefa: ProjetoTarefa, metadata: any): LookupItem[] {
+    let result: LookupItem[] = [];
+    result.push(this.lookup.PROJETO_TAREFA_STATUS.find(x => x.key == tarefa.status) || { key: "DESCONHECIDO", value: "Desconhecido", icon: "bi bi-question-octagon", color: "danger" });
+    return result;
+  }
+
   public async initializeData(form: FormGroup) {
-    /* Nunca acontecerá pois sempre vai para a tela de planejamento editando (Já existindo registro no banco). O formulário do projeto é que é responsável por inserir um novo projeto */
+    /* Nunca acontecerá pois sempre vai para a tela de planejamento editando (Já existindo registro no banco). O formulário do projeto é que é responsável por inserir um novo projeto 
     const usuario = this.auth.usuario!;
     let projeto = new Projeto();
     let recurso = new ProjetoRecurso({
@@ -94,7 +363,7 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
     projeto.regras = [regra];
     projeto.envolvidos = [envolvido];
     projeto.alocacoes = [];
-    await this.loadData(projeto, this.form!);
+    await this.loadData(projeto, this.form!);*/
   }
 
   public saveData(form: IIndexable): Promise<Projeto> {

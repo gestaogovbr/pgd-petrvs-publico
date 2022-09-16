@@ -6,6 +6,7 @@ import { ProjetoRegra } from './projeto-regra.model';
 import { ProjetoRecurso } from './projeto-recurso.model';
 import { ProjetoAlocacao } from './projeto-alocacao.model';
 import { ProjetoTarefa } from './projeto-tarefa.model';
+import { KanbanDocker } from '../components/kanban/kanban.component';
 
 export type ProjetoStatus = 'PLANEJADO' | 'INICIADO' | 'CONCLUIDO' | 'SUSPENSO' | 'CANCELADO';
 
@@ -42,6 +43,7 @@ export class Projeto extends Base {
     public progresso: number = 0.00; /* Percentual de progresso do projeto */
     public usuario_id: string | null = null;
     public tipo_projeto_id: string = "";
+    public kanban_dockers: KanbanDocker[] = [];
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }
