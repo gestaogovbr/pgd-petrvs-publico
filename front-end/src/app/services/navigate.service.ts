@@ -30,7 +30,7 @@ export type RouteMetadata = {
 
 export class NavigateResult {
   public modalResult: any;
-  
+
   constructor(result: any) {
     this.modalResult = result;
   }
@@ -90,7 +90,7 @@ export class NavigateService {
   public navigate(destination: FullRoute, metadata?: RouteMetadata) {
     destination.params = Object.assign(destination.params || {}, { idroute: Md5.hashStr(this.currentOrDefault.route.join("") + destination.route.join("")) });
     destination.params.modal = metadata?.modal || destination.params.modal;
-    if(metadata?.modalWidth) destination.params.modalWidth = metadata?.modalWidth; 
+    if(metadata?.modalWidth) destination.params.modalWidth = metadata?.modalWidth;
     this.encodeParam(destination.params);
     let route = Object.assign(metadata || {} as RouteMetadata, {
       id: destination.params.idroute,
@@ -204,6 +204,10 @@ export class NavigateService {
 
   public openNewTab(url: string) {
     window.open(url,'_blank')?.focus();
+  }
+
+  public openPopup(url: string, width: number = 500, height: number = 600) {
+    window.open(url, 'targetWindow', "toolbar=no, location=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=" + width + ", height=" + height)?.focus();
   }
 
   public refresh() {

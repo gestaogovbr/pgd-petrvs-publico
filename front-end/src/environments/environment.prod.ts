@@ -16,5 +16,7 @@ export const environment = {
   entidade: ENTIDADE,
   images: {
     login: LOGO
-  }
+  },
+  login_gsuit: true,
+  login_azure: false,
 };

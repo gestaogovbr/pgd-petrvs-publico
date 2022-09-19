@@ -11,6 +11,8 @@ export const environment = {
   images: {
     login: "logo-login.png"
   }
+  login_gsuit: true,
+  login_azure: false,
 };
 
 /*

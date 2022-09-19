@@ -15,10 +15,10 @@ import { TesteComponent } from './modules/teste/teste.component';
 import { DemandaModule } from './modules/gestao/demanda/demanda.module';
 import { RelatorioModule } from './modules/relatorios/relatorio.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { LoginRetornoComponent } from './modules/login/login-retorno/login-retorno.component';
 import { FullCalendarModule } from '@fullcalendar/angular'; // must go before plugins
 import dayGridPlugin from '@fullcalendar/daygrid'; // a plugin!
 import interactionPlugin from '@fullcalendar/interaction'; // a plugin!
-
 FullCalendarModule.registerPlugins([ // register FullCalendar plugins
   dayGridPlugin,
   interactionPlugin
@@ -32,7 +32,8 @@ FullCalendarModule.registerPlugins([ // register FullCalendar plugins
     ConfigComponent,
     DialogComponent,
     SpinnerOverlayComponent,
-    TesteComponent
+    TesteComponent,
+    LoginRetornoComponent
   ],
   imports: [
     BrowserModule,
