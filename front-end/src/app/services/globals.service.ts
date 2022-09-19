@@ -83,10 +83,10 @@ export class GlobalsService {
   }
 
   public get hasGoogleLogin(): boolean {
-    return environment.ativar_login_google == true;
+    return environment.login_gsuit == true;
   }
 
   public get hasAzureLogin(): boolean {
-    return environment.ativar_login_azure == true;
+    return environment.login_azure == true;
   }
 }

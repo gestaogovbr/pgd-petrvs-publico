@@ -18,5 +18,12 @@ return [
             'login-gapi-token' => env('PETRVS_API_LOGIN_GAPI_TOKEN', ''),
             'login-institucional' => env('PETRVS_API_LOGIN_INSTITUCIONAL', '')
         ]
+    ],
+    'login' => [
+        "user-password" => env('PETRVS_LOGIN_USER_PASSWORD', false),
+        "gsuit" => env('PETRVS_LOGIN_GSUIT', true),
+        "azure" => env('PETRVS_LOGIN_AZURE', true),
+        "institucional" => env('PETRVS_LOGIN_INSTITUCIONAL', false),
+        "firebase" => env('PETRVS_LOGIN_FIREBASE', false)
     ]
 ];
