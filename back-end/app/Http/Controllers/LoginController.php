@@ -487,7 +487,9 @@ class LoginController extends Controller
     }
 
     public function signInAzureRedirect(Request $request) {
-        return Socialite::driver('azure')->redirect();
+        return Socialite::driver('azure')
+        ->scopes(['openid', 'email', 'profile'])
+        ->redirect();
     }
 
     public function signInAzureCallback(Request $request) {
