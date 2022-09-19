@@ -26,8 +26,8 @@ export class Projeto extends Base {
     public status: ProjetoStatus = 'PLANEJADO';  /* Status do projeto */
     public data_inicio: Date = new Date();  /* Data de criação */
     public data_fim: Date | null = null;  /* Data final do registro */
-    public inicio: Date = new Date();  /* Inicio do projeto */
-    public termino: Date = new Date();  /* Fim do projeto */
+    public inicio?: Date = new Date();  /* Inicio do projeto */
+    public termino?: Date = new Date();  /* Fim do projeto */
     public custo: number = 0;  /* Custo do projeto */
     public calcula_custos: boolean = true; /* Se o projeto calcula custos */
     public tempo_corrido: boolean = false; /* Se o tempo é corrido ou usa a configuração de fins de semana, feriados e horário do expediente (quando usar horas) */

@@ -248,9 +248,9 @@ export class AuthService {
       if(gapiConfig.client_id?.length) {
         this.googleApi.load().then(googleAuth => {
           if(this.kind == "GAPI" || googleAuth.isSignedIn.get()) {
-            this.googleApi.logOut();
+            this.googleApi.logOut().then(clearLogin);
           }
-        }).finally(clearLogin);
+        });
       } else {
         clearLogin();
       }

@@ -83,10 +83,23 @@ export class GlobalsService {
   }
 
   public get hasGoogleLogin(): boolean {
-    return environment.login_gsuit == true;
+    return environment.login.gsuit == true;
   }
 
   public get hasAzureLogin(): boolean {
-    return environment.login_azure == true;
+    return environment.login.azure == true;
   }
+
+  public get hasUserPasswordLogin(): boolean {
+    return environment.login.user_password == true;
+  }
+
+  public get hasFirebaseLogin(): boolean {
+    return environment.login.firebase == true;
+  }
+
+  public get hasInstitucionalLogin(): boolean {
+    return environment.login.institucional == true;
+  }
+
 }

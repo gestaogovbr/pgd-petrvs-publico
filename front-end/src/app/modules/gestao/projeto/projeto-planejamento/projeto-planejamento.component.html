@@ -48,30 +48,41 @@
 </ng-template>
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
     <tabs #planejamentoTabs display right>
-        <tab key="GANTT" label="Principal">
-            <gantt [project]="project" [height]="ganttHeight"></gantt>
-        </tab>
+        <tab key="GANTT" label="Principal"></tab>
         <tab key="CALENDARIO" label="Calendário"></tab>
+        <tab key="BURNDOWN" label="Burndown"></tab>
         <tab key="KANBAN" label="Quadro"></tab>
     </tabs>
-    <kanban *ngIf="planejamentoTabs.active == 'KANBAN'" #planejamentoKanban 
-        [dockers]="labels" 
-        [template]="ticket" 
-        [placeholderTemplate]="placeholder" 
-        [loading]="loading" 
-        [swimlaneDrop]="onSwimlaneDrop.bind(this)"
-        [dockerDragged]="onDragged.bind(this)" 
-        [dockerDrop]="onDrop.bind(this)" 
-        [dockerEditTemplate]="editDocker" 
-        [dockerToggle]="onDockerCollapse.bind(this)" 
-        [dockerEdit]="editEtiquetas.bind(this)" 
-        [dockerSave]="saveEtiquetas.bind(this)" 
-        [dockerDelete]="deleteEtiquetas.bind(this)" 
-        [dockerCancel]="cancelEtiquetas.bind(this)" 
-        [dockerColorStyle]="getLabelStyle" 
-        useCardData>
-    </kanban>
+    <!-- Tab Gantt -->
+    <div [class.d-none]="planejamentoTabs.active != 'GANTT'">
+        <gantt [project]="project" [height]="ganttHeight"></gantt>
+    </div>
+    <!-- Tab Calendário -->
     <div *ngIf="planejamentoTabs.active == 'CALENDARIO'" class="d-block text-center" style="min-height: 400px; max-width: 1000px; margin: auto;">
         <full-calendar *ngIf="afterLoadData" [options]="calendarOptions"></full-calendar>
+    </div>
+    <!-- Tab Burndown -->
+    <div *ngIf="planejamentoTabs.active == 'BURNDOWN'">
+        ....
+    </div>
+    <!-- Tab Kanban -->
+    <div *ngIf="planejamentoTabs.active == 'KANBAN'">
+        <kanban #planejamentoKanban 
+            [dockers]="labels" 
+            [template]="ticket" 
+            [placeholderTemplate]="placeholder" 
+            [loading]="loading" 
+            [swimlaneDrop]="onSwimlaneDrop.bind(this)"
+            [dockerDragged]="onDragged.bind(this)" 
+            [dockerDrop]="onDrop.bind(this)" 
+            [dockerEditTemplate]="editDocker" 
+            [dockerToggle]="onDockerCollapse.bind(this)" 
+            [dockerEdit]="editEtiquetas.bind(this)" 
+            [dockerSave]="saveEtiquetas.bind(this)" 
+            [dockerDelete]="deleteEtiquetas.bind(this)" 
+            [dockerCancel]="cancelEtiquetas.bind(this)" 
+            [dockerColorStyle]="getLabelStyle" 
+            useCardData>
+        </kanban>
     </div>
 </editable-form>

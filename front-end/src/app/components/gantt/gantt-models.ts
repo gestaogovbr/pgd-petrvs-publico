@@ -11,10 +11,16 @@ export type GanttResourceType = "MATERIAL" | "SERVICE" | "HUMAN" | "COST" | "DEP
     }
 }*/
 
+export class GanttConfig {
+    public hasTime: boolean = false;
+    public hasCost: boolean = false;
+}
+
 export class GanttProject {
     public tasks: GanttTask[] = [];
     public resources: GanttResource[] = [];
     public roles: GanttRole[] = [];
+    public config: GanttConfig = new GanttConfig();
 
     public constructor(data?: any) { if(data) Object.assign(this, data); }
 }
@@ -43,6 +49,7 @@ export class GanttTask {
     public startIsMilestone?: boolean = false;
     public endIsMilestone?: boolean = false;  
     public hasChild?: boolean = false;
+    public isGroup?: boolean = false;
     public tasks?: GanttTask[] = [];
     public status?: GanttTaskStatus = "STATUS_ACTIVE";
     public dependencies_ids?: string[] = [];

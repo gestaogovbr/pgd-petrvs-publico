@@ -37,7 +37,7 @@
                     </ng-template>
                 </div>
                 <ng-template #naoPRF>
-                  <div *ngIf="(globals.hasGoogleLogin)" class="card-body">
+                  <div *ngIf="globals.hasGoogleLogin" class="card-body">
                     <p class="card-text">Faça login com seu e-mail institucional</p>
                     <div class="row mt-2">
                         <div *ngIf="!!googleApi.gapiAuth2" class="col-md-12 d-flex justify-content-center">
@@ -46,7 +46,7 @@
                         </div>
                     </div>
                   </div>
-                  <div *ngIf="(globals.hasAzureLogin && globals.hasGoogleLogin)" class="or-container">
+                  <div *ngIf="globals.hasAzureLogin && globals.hasGoogleLogin" class="or-container">
                       <div class="line-separator"></div>
                       <div class="or-label">ou</div>
                       <div class="line-separator"></div>

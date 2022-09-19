@@ -12,6 +12,9 @@ import { ProjetoFormEnvolvidosComponent } from './projeto-form-envolvidos/projet
 import { ProjetoFormAlocacoesComponent } from './projeto-form-alocacoes/projeto-form-alocacoes.component';
 import { UteisModule } from '../../uteis/uteis.module';
 import { FullCalendarModule } from '@fullcalendar/angular';
+import { ProjetoTarefaFormComponent } from './projeto-tarefa-form/projeto-tarefa-form.component';
+import { ProjetoTarefaFormPrincipalComponent } from './projeto-tarefa-form-principal/projeto-tarefa-form-principal.component';
+import { ProjetoFormRegrasComponent } from './projeto-form-regras/projeto-form-regras.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +24,10 @@ import { FullCalendarModule } from '@fullcalendar/angular';
     ProjetoFormPrincipalComponent,
     ProjetoFormRecursosComponent,
     ProjetoFormEnvolvidosComponent,
-    ProjetoFormAlocacoesComponent
+    ProjetoFormAlocacoesComponent,
+    ProjetoTarefaFormComponent,
+    ProjetoTarefaFormPrincipalComponent,
+    ProjetoFormRegrasComponent
   ],
   imports: [
     CommonModule,

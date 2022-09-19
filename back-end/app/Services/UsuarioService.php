@@ -198,7 +198,7 @@ class UsuarioService extends ServiceBase
 
     public function validateStore($entity, $unidade, $action) {
         if($action == ServiceBase::ACTION_INSERT) {
-            $alreadyHas = Usuario::where("email", $entity->email)->orWhere("cpf", $entity->cpf)->orWhere("matricula", $entity->cpf)->first();
+            $alreadyHas = Usuario::where("email", $entity->email)->orWhere("cpf", $entity->cpf)->orWhere("matricula", $entity->matricula)->first();
             if(!empty($alreadyHas)) throw new \Exception("Já existe um usuário com mesmo e-mail/CPF/Matrícula no sistema");
         }
     }

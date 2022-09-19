@@ -8,11 +8,15 @@ export const environment = {
   https: false,
   suporte: "https://docs.google.com/forms/d/e/1FAIpQLScWhTbN5NnHl8tLfjNjSkWL7o9v4eaGoy0d8gvQLB9R6dWPuw/viewform",
   entidade: "PRF",
-  images: {
-    login: "logo-login.png"
+  images: { login: "logo-login.png" },
+  versao: "1.0.0",
+  login: {
+    gsuit: true,
+    azure: true,
+    institucional: false,
+    firebase: false,
+    user_password: false
   }
-  login_gsuit: true,
-  login_azure: false,
 };
 
 /*

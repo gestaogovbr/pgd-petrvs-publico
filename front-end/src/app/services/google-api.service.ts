@@ -18,8 +18,10 @@ export class GoogleApiService {
     });
   }
 
-  public logOut() {
-    return this.gapiAuth2!.signOut();
+  public logOut(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      this.gapiAuth2!.signOut().then(resolve).catch(reject);
+    }); 
   }
 
   public load(): Promise<gapi.auth2.GoogleAuth> {

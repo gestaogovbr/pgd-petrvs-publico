@@ -4,6 +4,7 @@
         "https://apis.google.com/js/platform.js"
     ],
     "preloadFiles": [
+        "environment-config",
         "functions.js",
         "app-proxy.js"
     ],
