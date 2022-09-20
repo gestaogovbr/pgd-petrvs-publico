@@ -19,7 +19,7 @@ class CreateTrafficTable extends Migration
             $table->dateTime('date_time')->useCurrent()->comment('Data e hora do registro');
             $table->text('url')->comment('Url solicitada na requisição');
             $table->json('request')->comment('Dados da requisição');
-            $table->json('response')->comment('Dados da requisição');
+            $table->json('response')->comment('Dados da resposta');
         });
     }
 

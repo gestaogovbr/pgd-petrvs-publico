@@ -12,8 +12,12 @@ use App\Http\Controllers\EntidadeController;
 use App\Http\Controllers\LotacaoController;
 use App\Http\Controllers\UnidadeController;
 use App\Http\Controllers\CidadeController;
+use App\Http\Controllers\ChangeController;
+use App\Http\Controllers\ErrorController;
+use App\Http\Controllers\TrafficController;
 use App\Http\Controllers\ProgramaController;
 use App\Http\Controllers\PlanoController;
+use App\Http\Controllers\PetrvsController;
 use App\Http\Controllers\DocumentoController;
 use App\Http\Controllers\TipoDocumentoController;
 use App\Http\Controllers\TipoProcessoController;
@@ -80,9 +84,17 @@ Route::middleware('auth:sanctum')->prefix('Calendario')->group(function () {
     Route::post('feriados', [CalendarioController::class, 'feriados']);
     Route::post('feriados-cadastrados', [CalendarioController::class, 'feriadosCadastrados']);
 });
+Route::middleware('auth:sanctum')->post('/Petrvs/showTables', [PetrvsController::class, 'showTables']);
+
+/* Logs */
+Route::middleware('auth:sanctum')->prefix('Change')->group(function () {
+    defaultRoutes(ChangeController::class);
+});
 Route::middleware('auth:sanctum')->prefix('Error')->group(function () {
-    Route::post('traffic', [ErrorController::class, 'traffics']);
-    Route::post('error', [ErrorController::class, 'errors']);
+    defaultRoutes(ErrorController::class);
+});
+Route::middleware('auth:sanctum')->prefix('Traffic')->group(function () {
+    defaultRoutes(TrafficController::class);
 });
 
 /* Testes */
@@ -138,7 +150,10 @@ Route::middleware(['auth:sanctum'])->prefix('Demanda')->group(function () {
     Route::post('arquivar', [DemandaController::class, 'arquivar']);
 });
 Route::middleware(['auth:sanctum'])->prefix('DemandaEntrega')->group(function () { defaultRoutes(DemandaEntregaController::class); });
-Route::middleware(['auth:sanctum'])->prefix('Plano')->group(function () { defaultRoutes(PlanoController::class); });
+Route::middleware(['auth:sanctum'])->prefix('Plano')->group(function () {
+    defaultRoutes(PlanoController::class);
+    Route::post('metadadosPlano', [PlanoController::class, 'metadadosPlano']);
+});
 Route::middleware(['auth:sanctum'])->prefix('Projeto')->group(function () { defaultRoutes(ProjetoController::class); });
 /* Modulos: Configurações */
 Route::middleware(['auth:sanctum'])->prefix('Usuario')->group(function () {
@@ -148,9 +163,13 @@ Route::middleware(['auth:sanctum'])->prefix('Usuario')->group(function () {
 Route::middleware(['auth:sanctum'])->prefix('Perfil')->group(function () { defaultRoutes(PerfilController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Entidade')->group(function () { defaultRoutes(EntidadeController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Lotacao')->group(function () { defaultRoutes(LotacaoController::class); });
-Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () { defaultRoutes(UnidadeController::class); });
+Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
+    defaultRoutes(UnidadeController::class);
+    Route::post('metadadosArea', [UnidadeController::class, 'metadadosArea']);
+    Route::post('dashboards', [UnidadeController::class, 'dashboards']);
+});
 Route::middleware(['auth:sanctum'])->prefix('Capacidade')->group(function () { defaultRoutes(CapacidadeController::class); });
 
-Route::middleware('auth:sanctum')->post('/Unidade/metadadosArea', [UnidadeController::class, 'metadadosArea']);
-Route::middleware('auth:sanctum')->post('/Plano/metadadosPlano', [PlanoController::class, 'metadadosPlano']);
-Route::middleware('auth:sanctum')->post('/Unidade/dashboards', [UnidadeController::class, 'dashboards']);
+//Route::middleware('auth:sanctum')->post('/Unidade/metadadosArea', [UnidadeController::class, 'metadadosArea']);
+//Route::middleware('auth:sanctum')->post('/Plano/metadadosPlano', [PlanoController::class, 'metadadosPlano']);
+//Route::middleware('auth:sanctum')->post('/Unidade/dashboards', [UnidadeController::class, 'dashboards']);

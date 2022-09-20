@@ -87,6 +87,7 @@ export class AppComponent {
       { name: "Gestão", permition: "MENU_GESTAO_ACESSO", route: ['gestao'], id: "navbarDropdownGestao", menu: "gestao" },
       { name: "Relatorios", permition: "", route: ['relatorios'], id: "navbarDropdownRelatorios", menu: "relatorios" },
       { name: "Configurações", permition: "MENU_CONFIG_ACESSO", route: ['configuracoes'], id: "navbarDropdownConfiguracoes", menu: "configuracoes" },
+      { name: "Logs", permition: "MENU_LOGS_ACESSO", route: ['logs'], id: "navbarDropdownLogs", menu: "logs" },
     ];
     this.menuSchema = {
       cadastros: [
@@ -122,7 +123,12 @@ export class AppComponent {
         { name: "Perfis", permition: 'MOD_CFG_PERFS', route: ['configuracoes', 'perfil'], icon: "bi bi-fingerprint" },
         "-",
         { name: "Sobre", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
-      ]
+      ],
+      logs: [
+        { name: "Changes", permition: 'MOD_LOGS_CONS', route: ['logs', 'change'], icon: "bi bi-pencil-square" },
+        { name: "Errors", permition: 'MOD_LOGS_CONS', route: ['logs', 'error'], icon: "bi bi-bug" },
+        { name: "Traffics", permition: 'MOD_LOGS_CONS', route: ['logs', 'traffic'], icon: "bi bi-stoplights" }
+      ],
     }
   }
 
@@ -131,7 +137,7 @@ export class AppComponent {
   }
 
   public get menu(): IIndexable {
-    let todos = [...this.menuSchema?.cadastros, ...this.menuSchema?.gestao, ...this.menuSchema?.relatorios, ...this.menuSchema?.configuracoes];
+    let todos = [...this.menuSchema?.cadastros, ...this.menuSchema?.gestao, ...this.menuSchema?.relatorios, ...this.menuSchema?.configuracoes, ...this.menuSchema?.logs];
     let permitions = todos.map(m => !m.permition?.length || !this.auth.hasPermissionTo(m.permition) ? "" : m.permition);
     let menuDetectChanges = JSON.stringify(permitions);
     let itensMenu = (itens: any[]): any[] => itens.filter(x => !x.permition?.length || permitions.includes(x.permition));
@@ -142,7 +148,8 @@ export class AppComponent {
         cadastros: itensMenu(this.menuSchema.cadastros),
         gestao: itensMenu(this.menuSchema.gestao),
         relatorios: itensMenu(this.menuSchema.relatorios),
-        configuracoes: itensMenu(this.menuSchema.configuracoes)
+        configuracoes: itensMenu(this.menuSchema.configuracoes),
+        logs: itensMenu(this.menuSchema.logs)
       };
     }
     return this._menu;
@@ -167,7 +174,7 @@ export class AppComponent {
   }
 
   public buttonId(button: ToolbarButton) {
-    return "button_" + this.utils.md5((button.icon || "") + (button.hint || "") + (button.label || "")); 
+    return "button_" + this.utils.md5((button.icon || "") + (button.hint || "") + (button.label || ""));
   }
 
   public get unidades(): any[] {

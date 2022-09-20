@@ -6005,6 +6005,76 @@ TipoDocumentoDaoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵ�
 
 /***/ }),
 
+/***/ "FBpw":
+/*!**************************************************************************!*\
+  !*** ./src/app/modules/logs/change/change-form/change-form.component.ts ***!
+  \**************************************************************************/
+/*! exports provided: ChangeFormComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChangeFormComponent", function() { return ChangeFormComponent; });
+/* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/components/editable-form/editable-form.component */ "RKEd");
+/* harmony import */ var src_app_dao_change_dao_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/dao/change-dao.service */ "d7SH");
+/* harmony import */ var src_app_models_change_model__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/models/change.model */ "SyA8");
+/* harmony import */ var src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/modules/base/page-form-base */ "793T");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ "fXoL");
+
+
+
+
+
+
+class ChangeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_3__["PageFormBase"] {
+    constructor(injector) {
+        super(injector, src_app_models_change_model__WEBPACK_IMPORTED_MODULE_2__["Change"], src_app_dao_change_dao_service__WEBPACK_IMPORTED_MODULE_1__["ChangeDaoService"]);
+        this.injector = injector;
+        this.titleEdit = (entity) => {
+            return "Editando Registro de Log";
+        };
+        this.form = this.fh.FormBuilder({
+            usuario: { default: "" },
+            data_hora: { default: null },
+            tabela: { default: "" },
+            tipo: { default: "" }
+        }, this.cdRef);
+    }
+    loadData(entity, form) {
+        let formValue = Object.assign({}, form.value);
+        form.patchValue(this.util.fillForm(formValue, entity));
+    }
+    initializeData(form) {
+        form.patchValue(new src_app_models_change_model__WEBPACK_IMPORTED_MODULE_2__["Change"]());
+    }
+    saveData(form) {
+        return new Promise((resolve, reject) => {
+            const change = this.util.fill(new src_app_models_change_model__WEBPACK_IMPORTED_MODULE_2__["Change"](), this.entity);
+            resolve(this.util.fillForm(change, this.form.value));
+        });
+    }
+}
+ChangeFormComponent.ɵfac = function ChangeFormComponent_Factory(t) { return new (t || ChangeFormComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_4__["Injector"])); };
+ChangeFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineComponent"]({ type: ChangeFormComponent, selectors: [["app-change-form"]], viewQuery: function ChangeFormComponent_Query(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_0__["EditableFormComponent"], 1);
+    } if (rf & 2) {
+        let _t;
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵInheritDefinitionFeature"]], decls: 4, vars: 3, consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"]], template: function ChangeFormComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "editable-form", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("submit", function ChangeFormComponent_Template_editable_form_submit_0_listener() { return ctx.onSaveData(); })("cancel", function ChangeFormComponent_Template_editable_form_cancel_0_listener() { return ctx.onCancel(); });
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](1, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](2, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](3, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    } if (rf & 2) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
+    } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_0__["EditableFormComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJjaGFuZ2UtZm9ybS5jb21wb25lbnQuc2NzcyJ9 */"] });
+
+
+/***/ }),
+
 /***/ "FVj5":
 /*!*************************************************************!*\
   !*** ./src/app/components/separator/separator.component.ts ***!
@@ -14938,6 +15008,7 @@ class AppComponent {
             { name: "Gestão", permition: "MENU_GESTAO_ACESSO", route: ['gestao'], id: "navbarDropdownGestao", menu: "gestao" },
             { name: "Relatorios", permition: "", route: ['relatorios'], id: "navbarDropdownRelatorios", menu: "relatorios" },
             { name: "Configurações", permition: "MENU_CONFIG_ACESSO", route: ['configuracoes'], id: "navbarDropdownConfiguracoes", menu: "configuracoes" },
+            { name: "Logs", permition: "MENU_LOGS_ACESSO", route: ['logs'], id: "navbarDropdownLogs", menu: "logs" },
         ];
         this.menuSchema = {
             cadastros: [
@@ -14973,15 +15044,20 @@ class AppComponent {
                 { name: "Perfis", permition: 'MOD_CFG_PERFS', route: ['configuracoes', 'perfil'], icon: "bi bi-fingerprint" },
                 "-",
                 { name: "Sobre", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
-            ]
+            ],
+            logs: [
+                { name: "Changes", permition: 'MOD_LOGS_CONS', route: ['logs', 'change'], icon: "bi bi-pencil-square" },
+                { name: "Errors", permition: 'MOD_LOGS_CONS', route: ['logs', 'error'], icon: "bi bi-bug" },
+                { name: "Traffics", permition: 'MOD_LOGS_CONS', route: ['logs', 'traffic'], icon: "bi bi-stoplights" }
+            ],
         };
     }
     getMenuItems(nome) {
         return this.menu[nome];
     }
     get menu() {
-        var _a, _b, _c, _d;
-        let todos = [...(_a = this.menuSchema) === null || _a === void 0 ? void 0 : _a.cadastros, ...(_b = this.menuSchema) === null || _b === void 0 ? void 0 : _b.gestao, ...(_c = this.menuSchema) === null || _c === void 0 ? void 0 : _c.relatorios, ...(_d = this.menuSchema) === null || _d === void 0 ? void 0 : _d.configuracoes];
+        var _a, _b, _c, _d, _e;
+        let todos = [...(_a = this.menuSchema) === null || _a === void 0 ? void 0 : _a.cadastros, ...(_b = this.menuSchema) === null || _b === void 0 ? void 0 : _b.gestao, ...(_c = this.menuSchema) === null || _c === void 0 ? void 0 : _c.relatorios, ...(_d = this.menuSchema) === null || _d === void 0 ? void 0 : _d.configuracoes, ...(_e = this.menuSchema) === null || _e === void 0 ? void 0 : _e.logs];
         let permitions = todos.map(m => { var _a; return !((_a = m.permition) === null || _a === void 0 ? void 0 : _a.length) || !this.auth.hasPermissionTo(m.permition) ? "" : m.permition; });
         let menuDetectChanges = JSON.stringify(permitions);
         let itensMenu = (itens) => itens.filter(x => { var _a; return !((_a = x.permition) === null || _a === void 0 ? void 0 : _a.length) || permitions.includes(x.permition); });
@@ -14991,7 +15067,8 @@ class AppComponent {
                 cadastros: itensMenu(this.menuSchema.cadastros),
                 gestao: itensMenu(this.menuSchema.gestao),
                 relatorios: itensMenu(this.menuSchema.relatorios),
-                configuracoes: itensMenu(this.menuSchema.configuracoes)
+                configuracoes: itensMenu(this.menuSchema.configuracoes),
+                logs: itensMenu(this.menuSchema.logs)
             };
         }
         return this._menu;
@@ -15092,6 +15169,75 @@ AppComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineCompo
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngForOf", ctx.dialog.topAlerts);
     } }, styles: [".app-container[_ngcontent-%COMP%] {\n  text-decoration: none;\n  width: 100%;\n  height: 100%;\n}\n\n.profile-photo[_ngcontent-%COMP%] {\n  margin: -2px 2px -2px 2px;\n}\n\n[_nghost-%COMP%]     .export-excel-table {\n  display: none;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uXFwuLlxcYXBwLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0kscUJBQUE7RUFDQSxXQUFBO0VBQ0EsWUFBQTtBQUNKOztBQUVBO0VBQ0kseUJBQUE7QUFDSjs7QUFFQTtFQUNJLGFBQUE7QUFDSiIsImZpbGUiOiJhcHAuY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyIuYXBwLWNvbnRhaW5lciB7XHJcbiAgICB0ZXh0LWRlY29yYXRpb246IG5vbmU7XHJcbiAgICB3aWR0aDogMTAwJTtcclxuICAgIGhlaWdodDogMTAwJTtcclxufVxyXG5cclxuLnByb2ZpbGUtcGhvdG8ge1xyXG4gICAgbWFyZ2luOiAtMnB4IDJweCAtMnB4IDJweDtcclxufVxyXG5cclxuOmhvc3QgOjpuZy1kZWVwIC5leHBvcnQtZXhjZWwtdGFibGUge1xyXG4gICAgZGlzcGxheTogbm9uZTtcclxufSJdfQ== */"] });
+
+
+/***/ }),
+
+/***/ "SyA8":
+/*!****************************************!*\
+  !*** ./src/app/models/change.model.ts ***!
+  \****************************************/
+/*! exports provided: Change */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Change", function() { return Change; });
+/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
+
+class Change extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
+    constructor() {
+        super();
+        this.date_time = ""; //Data e Hora em que o registro foi criado
+        this.table_name = ""; //Nome da tabela
+        this.row_id = ""; //ID do registro alterado
+        this.type = ""; //Tipo de Operação realizada no registro ["ADD", "EDIT", "DELETE"]
+        this.delta = []; //Alterações realizadas
+    }
+}
+
+
+/***/ }),
+
+/***/ "Tn3w":
+/*!******************************************************!*\
+  !*** ./src/app/modules/logs/change/change.module.ts ***!
+  \******************************************************/
+/*! exports provided: ChangeModule */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChangeModule", function() { return ChangeModule; });
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/common */ "ofXK");
+/* harmony import */ var _change_routing_module__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./change-routing.module */ "iZP0");
+/* harmony import */ var src_app_components_components_module__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/components/components.module */ "j1ZV");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/forms */ "3Pt+");
+/* harmony import */ var _change_list_change_list_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./change-list/change-list.component */ "hCzk");
+/* harmony import */ var _change_form_change_form_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./change-form/change-form.component */ "FBpw");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ "fXoL");
+
+
+
+
+
+
+
+class ChangeModule {
+}
+ChangeModule.ɵfac = function ChangeModule_Factory(t) { return new (t || ChangeModule)(); };
+ChangeModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineNgModule"]({ type: ChangeModule });
+ChangeModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineInjector"]({ imports: [[
+            _angular_common__WEBPACK_IMPORTED_MODULE_0__["CommonModule"],
+            src_app_components_components_module__WEBPACK_IMPORTED_MODULE_2__["ComponentsModule"],
+            _angular_forms__WEBPACK_IMPORTED_MODULE_3__["ReactiveFormsModule"],
+            _change_routing_module__WEBPACK_IMPORTED_MODULE_1__["ChangeRoutingModule"]
+        ]] });
+(function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵsetNgModuleScope"](ChangeModule, { declarations: [_change_list_change_list_component__WEBPACK_IMPORTED_MODULE_4__["ChangeListComponent"],
+        _change_form_change_form_component__WEBPACK_IMPORTED_MODULE_5__["ChangeFormComponent"]], imports: [_angular_common__WEBPACK_IMPORTED_MODULE_0__["CommonModule"],
+        src_app_components_components_module__WEBPACK_IMPORTED_MODULE_2__["ComponentsModule"],
+        _angular_forms__WEBPACK_IMPORTED_MODULE_3__["ReactiveFormsModule"],
+        _change_routing_module__WEBPACK_IMPORTED_MODULE_1__["ChangeRoutingModule"]] }); })();
 
 
 /***/ }),
@@ -16768,10 +16914,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_gestao_demanda_demanda_module__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./modules/gestao/demanda/demanda.module */ "17YW");
 /* harmony import */ var _modules_relatorios_relatorio_module__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./modules/relatorios/relatorio.module */ "weWA");
 /* harmony import */ var _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @angular/platform-browser/animations */ "R1ws");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! @angular/common */ "ofXK");
-/* harmony import */ var _components_top_alert_top_alert_component__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./components/top-alert/top-alert.component */ "UJzD");
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! @angular/router */ "tyNb");
+/* harmony import */ var _modules_logs_change_change_module__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./modules/logs/change/change.module */ "Tn3w");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! @angular/common */ "ofXK");
+/* harmony import */ var _components_top_alert_top_alert_component__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./components/top-alert/top-alert.component */ "UJzD");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! @angular/router */ "tyNb");
+
 
 
 
@@ -16796,8 +16944,8 @@ __webpack_require__.r(__webpack_exports__);
 class AppModule {
 }
 AppModule.ɵfac = function AppModule_Factory(t) { return new (t || AppModule)(); };
-AppModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdefineNgModule"]({ type: AppModule, bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"]] });
-AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdefineInjector"]({ providers: [], imports: [[
+AppModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdefineNgModule"]({ type: AppModule, bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"]] });
+AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdefineInjector"]({ providers: [], imports: [[
             _angular_platform_browser__WEBPACK_IMPORTED_MODULE_3__["BrowserModule"],
             _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_15__["BrowserAnimationsModule"],
             _angular_common_http__WEBPACK_IMPORTED_MODULE_0__["HttpClientModule"],
@@ -16806,9 +16954,10 @@ AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdefineInjecto
             _app_routing_module__WEBPACK_IMPORTED_MODULE_4__["AppRoutingModule"],
             _modules_gestao_demanda_demanda_module__WEBPACK_IMPORTED_MODULE_13__["DemandaModule"],
             ng2_charts__WEBPACK_IMPORTED_MODULE_2__["ChartsModule"],
-            _modules_relatorios_relatorio_module__WEBPACK_IMPORTED_MODULE_14__["RelatorioModule"]
+            _modules_relatorios_relatorio_module__WEBPACK_IMPORTED_MODULE_14__["RelatorioModule"],
+            _modules_logs_change_change_module__WEBPACK_IMPORTED_MODULE_16__["ChangeModule"]
         ]] });
-(function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵsetNgModuleScope"](AppModule, { declarations: [_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"],
+(function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵsetNgModuleScope"](AppModule, { declarations: [_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"],
         _modules_home_home_component__WEBPACK_IMPORTED_MODULE_6__["HomeComponent"],
         _modules_login_login_component__WEBPACK_IMPORTED_MODULE_7__["LoginComponent"],
         _modules_config_config_component__WEBPACK_IMPORTED_MODULE_8__["ConfigComponent"],
@@ -16822,8 +16971,9 @@ AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdefineInjecto
         _app_routing_module__WEBPACK_IMPORTED_MODULE_4__["AppRoutingModule"],
         _modules_gestao_demanda_demanda_module__WEBPACK_IMPORTED_MODULE_13__["DemandaModule"],
         ng2_charts__WEBPACK_IMPORTED_MODULE_2__["ChartsModule"],
-        _modules_relatorios_relatorio_module__WEBPACK_IMPORTED_MODULE_14__["RelatorioModule"]] }); })();
-_angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵsetComponentScope"](_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"], [_angular_common__WEBPACK_IMPORTED_MODULE_17__["NgIf"], _angular_common__WEBPACK_IMPORTED_MODULE_17__["NgForOf"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ɵangular_packages_forms_forms_ba"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgControlStatusGroup"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgSelectOption"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ɵangular_packages_forms_forms_z"], _components_top_alert_top_alert_component__WEBPACK_IMPORTED_MODULE_18__["TopAlertComponent"], _angular_router__WEBPACK_IMPORTED_MODULE_19__["RouterOutlet"]], []);
+        _modules_relatorios_relatorio_module__WEBPACK_IMPORTED_MODULE_14__["RelatorioModule"],
+        _modules_logs_change_change_module__WEBPACK_IMPORTED_MODULE_16__["ChangeModule"]] }); })();
+_angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵsetComponentScope"](_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"], [_angular_common__WEBPACK_IMPORTED_MODULE_18__["NgIf"], _angular_common__WEBPACK_IMPORTED_MODULE_18__["NgForOf"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ɵangular_packages_forms_forms_ba"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgControlStatusGroup"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgSelectOption"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ɵangular_packages_forms_forms_z"], _components_top_alert_top_alert_component__WEBPACK_IMPORTED_MODULE_19__["TopAlertComponent"], _angular_router__WEBPACK_IMPORTED_MODULE_20__["RouterOutlet"]], []);
 
 
 /***/ }),
@@ -18074,6 +18224,43 @@ InputBase.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjecta
 
 /***/ }),
 
+/***/ "d7SH":
+/*!*******************************************!*\
+  !*** ./src/app/dao/change-dao.service.ts ***!
+  \*******************************************/
+/*! exports provided: ChangeDaoService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChangeDaoService", function() { return ChangeDaoService; });
+/* harmony import */ var _dao_base_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./dao-base.service */ "WScx");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
+
+
+class ChangeDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0__["DaoBaseService"] {
+    constructor(injector) {
+        super("Change", injector);
+        this.injector = injector;
+        this.searchFields = ["usuario", "data_hora", "tabela", "tipo"];
+    }
+    showTables() {
+        return new Promise((resolve, reject) => {
+            this.server.post('api/Petrvs/showTables', []).subscribe(response => {
+                resolve(response.data);
+            }, error => {
+                console.log("Erro ao buscar a lista das tabelas do banco de dados!", error);
+                resolve(null);
+            });
+        });
+    }
+}
+ChangeDaoService.ɵfac = function ChangeDaoService_Factory(t) { return new (t || ChangeDaoService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
+ChangeDaoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: ChangeDaoService, factory: ChangeDaoService.ɵfac, providedIn: 'root' });
+
+
+/***/ }),
+
 /***/ "d7UH":
 /*!**************************************************************!*\
   !*** ./src/app/components/grid/columns/columns.component.ts ***!
@@ -18452,6 +18639,161 @@ UteisModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineInject
 
 /***/ }),
 
+/***/ "hCzk":
+/*!**************************************************************************!*\
+  !*** ./src/app/modules/logs/change/change-list/change-list.component.ts ***!
+  \**************************************************************************/
+/*! exports provided: ChangeListComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChangeListComponent", function() { return ChangeListComponent; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/components/grid/grid.component */ "m4bG");
+/* harmony import */ var src_app_dao_change_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/change-dao.service */ "d7SH");
+/* harmony import */ var src_app_listeners_listener_all_pages_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/listeners/listener-all-pages.service */ "haq/");
+/* harmony import */ var src_app_models_change_model__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/models/change.model */ "SyA8");
+/* harmony import */ var src_app_modules_base_page_list_base__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/modules/base/page-list-base */ "+vn/");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common */ "ofXK");
+/* harmony import */ var _components_grid_filter_filter_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../components/grid/filter/filter.component */ "kHdc");
+/* harmony import */ var _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/grid/columns/columns.component */ "d7UH");
+/* harmony import */ var _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../../components/grid/column/column.component */ "pFmK");
+/* harmony import */ var _components_grid_pagination_pagination_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../../components/grid/pagination/pagination.component */ "f3Td");
+/* harmony import */ var _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../../../components/toolbar/toolbar.component */ "np0s");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function ChangeListComponent_toolbar_1_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](0, "toolbar");
+} }
+function ChangeListComponent_column_10_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](0, "column", 10);
+} if (rf & 2) {
+    const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("onEdit", ctx_r1.edit)("options", ctx_r1.options);
+} }
+class ChangeListComponent extends src_app_modules_base_page_list_base__WEBPACK_IMPORTED_MODULE_5__["PageListBase"] {
+    //public entity: LogEntity;
+    constructor(injector, dao) {
+        super(injector, src_app_models_change_model__WEBPACK_IMPORTED_MODULE_4__["Change"], src_app_dao_change_dao_service__WEBPACK_IMPORTED_MODULE_2__["ChangeDaoService"]);
+        this.injector = injector;
+        this.toolbarButtons = [];
+        this.tabelas = [];
+        this.entities = [];
+        this.filterWhere = (filter) => {
+            var _a, _b;
+            let result = [];
+            let form = filter.value;
+            if ((_a = form.usuario) === null || _a === void 0 ? void 0 : _a.length) {
+                result.push(["user_id", "like", "%" + form.usuario + "%"]);
+            }
+            else if ((_b = form.tabela) === null || _b === void 0 ? void 0 : _b.length) {
+                result.push(["tabela", "like", "%" + form.tabela + "%"]);
+            } //else if(form.status) {
+            /*       result.push(["status", "==", form.status]);
+                } else if(form.inicio?.length) {
+                  result.push(["termino", ">=", form.inicio]);
+                } else if(form.termino?.length) {
+                  result.push(["inicio", "=<", form.termino]);
+                } else if(form.tabela?.length) {
+                  result.push(["tabela", "like", "%" + form.tabela + "%"]);
+                } */
+            return result;
+        };
+        /* Inicializações */
+        this.allPages = injector.get(src_app_listeners_listener_all_pages_service__WEBPACK_IMPORTED_MODULE_3__["ListenerAllPagesService"]);
+        //this.title = "Logs de registros - tipo CHANGE";
+        this.filter = this.fh.FormBuilder({
+            usuario: { default: "" },
+            data_hora: { default: null },
+            tabela: { default: "" },
+            tipo: { default: "" },
+            row_id: { default: null }
+        });
+        /*     this.entities = [
+              {table: 'usuarios', dao: injector.get<UsuarioDaoService>(UsuarioDaoService), label: "Usuário", selectRoute: {route: ['configuracoes', 'usuario']}},
+            ] */
+        //this.entity = {table: '', dao: injector.get<DaoBaseService<Base>>(DaoBaseService<Base>), label: "Selecione uma tabela válida...", selectRoute: {route: []}};
+        //se a tabela selecionada tiver uma entity(Model) associada,
+        // Testa se o usuário possui permissão para exibir dados dos logs
+        if (this.auth.hasPermissionTo("MOD_LOGS_CONS")) {
+            this.options.push({
+                icon: "bi bi-info-circle",
+                label: "Informações",
+                onClick: this.consult.bind(this)
+            });
+        }
+        // Testa se o usuário possui permissão para excluir o registro de log
+        if (this.auth.hasPermissionTo("MOD_LOGS_EXCL")) {
+            this.options.push({
+                icon: "bi bi-trash",
+                label: "Excluir",
+                onClick: this.delete.bind(this)
+            });
+        }
+    }
+    ngOnInit() {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            this.tabelas = yield this.dao.showTables();
+        });
+    }
+    filterClear(filter) {
+        filter.controls.nome.setValue("");
+        super.filterClear(filter);
+    }
+}
+ChangeListComponent.ɵfac = function ChangeListComponent_Factory(t) { return new (t || ChangeListComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_6__["Injector"]), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdirectiveInject"](src_app_dao_change_dao_service__WEBPACK_IMPORTED_MODULE_2__["ChangeDaoService"])); };
+ChangeListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineComponent"]({ type: ChangeListComponent, selectors: [["app-change-list"]], viewQuery: function ChangeListComponent_Query(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵviewQuery"](src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__["GridComponent"], 1);
+    } if (rf & 2) {
+        let _t;
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵloadQuery"]()) && (ctx.grid = _t.first);
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]], decls: 12, vars: 16, consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["title", "Usu\u00E1rio", "field", "user_id"], ["title", "Cria\u00E7\u00E3o", "field", "date_time"], ["title", "Tabela", "field", "table_name"], ["title", "Tipo de Opera\u00E7\u00E3o", "field", "type"], ["type", "options", 3, "onEdit", "options", 4, "ngIf"], [3, "rows"], ["type", "options", 3, "onEdit", "options"]], template: function ChangeListComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "grid", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("select", function ChangeListComponent_Template_grid_select_0_listener($event) { return ctx.onSelect($event); });
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](1, ChangeListComponent_toolbar_1_Template, 1, 0, "toolbar", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](2, "filter", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](3, "div", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](4, "div", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](5, "columns");
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](6, "column", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](7, "column", 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](8, "column", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](9, "column", 7);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](10, ChangeListComponent_column_10_Template, 1, 2, "column", 8);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](11, "pagination", 9);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+    } if (rf & 2) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("selectable", ctx.selectable);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngIf", !ctx.selectable);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](8);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngIf", !ctx.selectable);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("rows", ctx.rowsLimit);
+    } }, directives: [src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__["GridComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_7__["NgIf"], _components_grid_filter_filter_component__WEBPACK_IMPORTED_MODULE_8__["FilterComponent"], _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_9__["ColumnsComponent"], _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_10__["ColumnComponent"], _components_grid_pagination_pagination_component__WEBPACK_IMPORTED_MODULE_11__["PaginationComponent"], _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_12__["ToolbarComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJjaGFuZ2UtbGlzdC5jb21wb25lbnQuc2NzcyJ9 */"] });
+
+
+/***/ }),
+
 /***/ "haq/":
 /*!*********************************************************!*\
   !*** ./src/app/listeners/listener-all-pages.service.ts ***!
@@ -18540,6 +18882,44 @@ class AtividadeDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0__
 }
 AtividadeDaoService.ɵfac = function AtividadeDaoService_Factory(t) { return new (t || AtividadeDaoService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
 AtividadeDaoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: AtividadeDaoService, factory: AtividadeDaoService.ɵfac, providedIn: 'root' });
+
+
+/***/ }),
+
+/***/ "iZP0":
+/*!**************************************************************!*\
+  !*** ./src/app/modules/logs/change/change-routing.module.ts ***!
+  \**************************************************************/
+/*! exports provided: ChangeRoutingModule */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChangeRoutingModule", function() { return ChangeRoutingModule; });
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/router */ "tyNb");
+/* harmony import */ var src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/guards/auth.guard */ "UTcu");
+/* harmony import */ var src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/resolvies/config.resolver */ "toza");
+/* harmony import */ var _change_form_change_form_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./change-form/change-form.component */ "FBpw");
+/* harmony import */ var _change_list_change_list_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./change-list/change-list.component */ "hCzk");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/core */ "fXoL");
+
+
+
+
+
+
+
+const routes = [
+    { path: '', component: _change_list_change_list_component__WEBPACK_IMPORTED_MODULE_4__["ChangeListComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Log - Alterações de Registro" } },
+    { path: ':id/edit', component: _change_form_change_form_component__WEBPACK_IMPORTED_MODULE_3__["ChangeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
+    { path: ':id/consult', component: _change_form_change_form_component__WEBPACK_IMPORTED_MODULE_3__["ChangeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } }
+];
+class ChangeRoutingModule {
+}
+ChangeRoutingModule.ɵfac = function ChangeRoutingModule_Factory(t) { return new (t || ChangeRoutingModule)(); };
+ChangeRoutingModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineNgModule"]({ type: ChangeRoutingModule });
+ChangeRoutingModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineInjector"]({ imports: [[_angular_router__WEBPACK_IMPORTED_MODULE_0__["RouterModule"].forChild(routes)], _angular_router__WEBPACK_IMPORTED_MODULE_0__["RouterModule"]] });
+(function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵsetNgModuleScope"](ChangeRoutingModule, { imports: [_angular_router__WEBPACK_IMPORTED_MODULE_0__["RouterModule"]], exports: [_angular_router__WEBPACK_IMPORTED_MODULE_0__["RouterModule"]] }); })();
 
 
 /***/ }),
@@ -25264,7 +25644,10 @@ const routes = [
     { path: 'extension', loadChildren: () => __webpack_require__.e(/*! import() | modules-extension-extension-module */ "modules-extension-extension-module").then(__webpack_require__.bind(null, /*! ./modules/extension/extension.module */ "hrbr")).then(m => m.ExtensionModule) },
     /* { path: 'relatorios/produtividade', loadChildren: () => import('./modules/relatorios/relatorio.module').then(m => m.RelatorioModule), canActivate: [AuthGuard] }, */
     { path: 'relatorios', loadChildren: () => Promise.resolve(/*! import() */).then(__webpack_require__.bind(null, /*! ./modules/relatorios/relatorio.module */ "weWA")).then(m => m.RelatorioModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
-    { path: '', redirectTo: 'login', pathMatch: 'full' }
+    { path: 'logs/change', loadChildren: () => Promise.resolve(/*! import() */).then(__webpack_require__.bind(null, /*! ./modules/logs/change/change.module */ "Tn3w")).then(m => m.ChangeModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
+    /* { path: 'logs/error', loadChildren: () => import('./modules/logs/error/error.module').then(m => m.ErrorModule), canActivate: [AuthGuard] },
+    { path: 'logs/traffic', loadChildren: () => import('./modules/logs/traffic/traffic.module').then(m => m.TrafficModule), canActivate: [AuthGuard] },
+    */ { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];
 class AppRoutingModule {
 }

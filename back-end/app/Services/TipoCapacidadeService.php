@@ -12,6 +12,7 @@ class TipoCapacidadeService extends ServiceBase {
         ["e089d591-ba9a-11ec-a5bb-0050569c64a0", "MENU_CONFIG_ACESSO", "Permite acessar o menu configurações"],
         ["e07877ef-ba9a-11ec-a5bb-0050569c64a0", "MENU_GESTAO_ACESSO", "Permite acessar o menu gestão"],
         ["e0814f12-ba9a-11ec-a5bb-0050569c64a0", "MENU_REL_ACESSO", "Permite acessar o menu relatórios"],
+        ["e0914e12-ba9a-11ec-a5bb-0050569c64a0", "MENU_LOGS_ACESSO", "Permite acessar o menu logs"],
         /* Dashboard */
         ["dd6f49cb-ba9a-11ec-a5bb-0050569c64a0", "DASH_PRG", "Permite mostrar informações do Programa de Gestão"],
         /* Capacidades do módulo AFASTAMENTO*/
@@ -125,10 +126,6 @@ class TipoCapacidadeService extends ServiceBase {
         ["a8dd768b-e112-11ec-a5bb-0050569c64a0", "MOD_ENTD_EDT", "Permite editar entidade"],
         ["a8e681cb-e112-11ec-a5bb-0050569c64a0", "MOD_ENTD_EXCL", "Permite excluir Entidade"],
         ["a8d2be35-e112-11ec-a5bb-0050569c64a0", "MOD_ENTD_INCL", "Permite incluir Entidade"],
-        /* Capacidades do módulo ERRORS*/
-        ["5a5254fe-d27c-11ec-a5bb-0050569c64a0", "MOD_ERRORS_CONS", "Permite consultar logs"],
-        ["5a5a5e9c-d27c-11ec-a5bb-0050569c64a0", "MOD_ERRORS_EDT", "Permite alterar logs"],
-        ["5a62d79e-d27c-11ec-a5bb-0050569c64a0", "MOD_ERRORS_EXCL", "Permite excluir logs"],
         /* Capacidades do módulo FERIADO*/
         ["137ead0d-bc1b-11ec-a5bb-0050569c64a0", "MOD_FER", "Permite acessar item menu feriados"],
         ["a94d1649-e112-11ec-a5bb-0050569c64a0", "MOD_FER_CONS", "Permite consultar feriado"],
@@ -137,6 +134,10 @@ class TipoCapacidadeService extends ServiceBase {
         ["58602a42-ba5e-11ec-a5bb-0050569c64a0", "MOD_FER_ENT_INCL", "Permite incluir entidades em feriado"],
         ["a925169b-e112-11ec-a5bb-0050569c64a0", "MOD_FER_EXCL", "Permite excluir feriado"],
         ["58524ff3-ba5e-11ec-a5bb-0050569c64a0", "MOD_FER_INCL", "Permite incluir feriados"],
+        /* Capacidades do módulo LOGS*/
+        ["5a5254fe-d27c-11ec-a5bb-0050569c64a0", "MOD_LOGS_CONS", "Permite consultar logs"],
+        ["5a5a5e9c-d27c-11ec-a5bb-0050569c64a0", "MOD_LOGS_EDT", "Permite alterar logs"],
+        ["5a62d79e-d27c-11ec-a5bb-0050569c64a0", "MOD_LOGS_EXCL", "Permite excluir logs"],
         /* Capacidades do módulo LOTAÇÃO*/
         ["593ebdb2-e1d0-11ec-a5bb-0050569c64a0", "MOD_LOT_CONS", "Permite consultar lotação"],
         ["592a7d9f-e1d0-11ec-a5bb-0050569c64a0", "MOD_LOT_EDT", "Permite editar lotação"],
