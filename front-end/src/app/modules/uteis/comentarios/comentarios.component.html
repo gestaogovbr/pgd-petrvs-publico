@@ -1,5 +1,5 @@
 <editable-form [form]="form!" [noButtons]="!entity_id ? 'true' : undefined" (submit)="onSaveData()" (cancel)="onCancel()">
-    <grid [control]="form!.controls.comentarios" #comentarios [hasEdit]="false" [hasDelete]="false" [add]="addComentario.bind(this)" [form]="formComentarios" [load]="loadComentario.bind(this)" [save]="saveComentario.bind(this)" editable>
+    <grid [control]="gridControl" #comentarios [hasEdit]="false" [hasDelete]="false" [add]="addComentario.bind(this)" [form]="formComentarios" [load]="loadComentario.bind(this)" [save]="saveComentario.bind(this)" editable>
         <columns>
             <column title="Comentários" [template]="mensagem" [editTemplate]="mensagemEdit">
                 <ng-template let-row="row" #mensagem>

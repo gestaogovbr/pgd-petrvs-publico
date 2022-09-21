@@ -1,5 +1,5 @@
 import { Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormGroup } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { DaoBaseService } from 'src/app/dao/dao-base.service';
@@ -18,8 +18,25 @@ import { PageFrameBase } from '../../base/page-frame-base';
 })
 export class ComentariosComponent extends PageFrameBase {
   @ViewChild('comentarios', { static: false }) public comentarios?: GridComponent;
-  @Input() control?: AbstractControl = undefined;
-  @Input() entity?: HasComentarios = undefined;
+  @Input() set control(value: AbstractControl | undefined) {
+    if(this._control != value) {
+      this._control = value;
+      if(value && this.comentario) value.setValue(this.comentario.orderComentarios(value.value || []));
+    }
+  }
+  get control(): AbstractControl | undefined {
+    return this._control;
+  }
+  @Input() set entity(value: HasComentarios | undefined) {
+    if(this._entity != value) {
+      this._entity = value;
+      if(value && this.comentario) value.comentarios = this.comentario.orderComentarios(value.comentarios || []);
+      this.fakeControl.setValue(value?.comentarios);
+    }
+  }
+  get entity(): HasComentarios | undefined {
+    return this._entity;
+  }
   @Input() set origem(value: ComentarioOrigem) {
     if(this._origem != value) {
       this._origem = value;
@@ -40,6 +57,9 @@ export class ComentariosComponent extends PageFrameBase {
   public comentarioTipos: LookupItem[] = [];
 
   private _origem: ComentarioOrigem = undefined;
+  private _entity: HasComentarios | undefined = undefined;
+  private _control: AbstractControl | undefined = undefined;
+  private fakeControl: FormControl = new FormControl();
 
   constructor(public injector: Injector) {
     super(injector);
@@ -95,8 +115,12 @@ export class ComentariosComponent extends PageFrameBase {
     return this.control || this.entity?.comentarios || [];
   }
 
+  public get gridControl(): AbstractControl {
+    return this.control || this.fakeControl;
+  }
+
   public addComentario = async () => {
-    this.comentario.newComentario(this.constrolOrItems, this.comentarios!);
+    this.comentario.newComentario(this.gridControl, this.comentarios!);
     return undefined;
   }
 
@@ -105,7 +129,7 @@ export class ComentariosComponent extends PageFrameBase {
       label: "Comentar",
       icon: "bi bi-chat-left-quote",
       onClick: (comentario: Comentario) => {
-        this.comentario.newComentario(this.constrolOrItems, this.comentarios!, comentario);
+        this.comentario.newComentario(this.gridControl, this.comentarios!, comentario);
       }
     }];
   }
@@ -130,7 +154,7 @@ export class ComentariosComponent extends PageFrameBase {
     this.submitting = true;
     try {
       this.confirm();
-      await this.dao?.update(this.entity!.id, { comentarios: this.entity!.comentarios });
+      await this.dao?.update(this.entity!.id, { comentarios: this.gridControl.value });
       if(this.modalRoute?.queryParams?.idroute?.length) this.go.setModalResult(this.modalRoute?.queryParams?.idroute, true);
     } catch (erro) {
       this.error("Erro ao carregar dados: " + erro);

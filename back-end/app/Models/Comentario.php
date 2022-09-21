@@ -21,7 +21,7 @@ class Comentario extends ModelBase
         'usuario_id',
         'comentario_id',
         'demanda_id',
-        'entrega_id',
+        'demanda_entrega_id',
         'projeto_id',
         'projeto_tarefa_id'
     ];
@@ -36,7 +36,7 @@ class Comentario extends ModelBase
     public function usuario() { return $this->belongsTo(Usuario::class, 'usuario_id'); }    
     public function comentario() { return $this->belongsTo(Comentario::class, 'comentario_id'); } 
     public function demanda() { return $this->belongsTo(Demanda::class, 'demanda_id'); } 
-    public function entrega() { return $this->belongsTo(Entrega::class, 'entrega_id'); } 
+    public function demandaEntrega() { return $this->belongsTo(DemandaEntrega::class, 'demanda_entrega_id'); } 
     public function projeto() { return $this->belongsTo(Projeto::class, 'projeto_id'); } 
     public function projetoTarefa() { return $this->belongsTo(ProjetoTarefa::class, 'projeto_tarefa_id'); } 
 }

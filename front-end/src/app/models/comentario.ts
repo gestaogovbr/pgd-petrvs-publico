@@ -22,7 +22,7 @@ export class Comentario extends Base {
     public usuario_id: string = ""; /* ID do usuário que fez o comentário */
     public comentario_id: string | null = null; /* ID do comentário pai, quando existir */
     public demanda_id: string | null = null; /* ID da demanda que gerou o comentário */
-    public entrega_id: string | null = null; /* ID da entrega que gerou o comentário */
+    public demanda_entrega_id: string | null = null; /* ID da entrega que gerou o comentário */
     public projeto_id: string | null = null; /* ID do projeto que gerou o comentário */
     public projeto_tarefa_id: string | null = null; /* ID da tarefa que gerou o comentário */
 
