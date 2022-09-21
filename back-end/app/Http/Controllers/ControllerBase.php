@@ -196,7 +196,7 @@ abstract class ControllerBase extends Controller
      */
     public function download(Request $request, string $file)
     {
-        $this->checkPermissions("DOWNLOAD", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
+        //$this->checkPermissions("DOWNLOAD", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
         return response()->file($this->service->download($file));
     }
 
