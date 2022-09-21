@@ -15481,7 +15481,7 @@ class AppComponent {
     }
     get usuarioFoto() {
         var _a;
-        return ((_a = this.auth.usuario) === null || _a === void 0 ? void 0 : _a.url_foto) || this.globals.servidorURL + "/assets/images/profile.png";
+        return ((_a = this.auth.usuario) === null || _a === void 0 ? void 0 : _a.url_foto) || "assets/images/profile.png";
     }
     onCollapseContainerClick() {
         //this.auth.usuario!.config.ocultar_container_petrvs = !this.auth.usuario!.config.ocultar_container_petrvs;
@@ -26342,8 +26342,8 @@ class ProfilePictureComponent {
     }
     ngOnInit() {
     }
-    get class() {
-        return this.isThumbnail ? 'img-thumbnail' : 'rounded-circle profile-photo';
+    get profileClass() {
+        return (this.isThumbnail ? 'img-thumbnail ' : 'rounded-circle profile-photo ') + (this.class || "");
     }
     get isThumbnail() {
         return this.thumbnail != undefined;
@@ -26361,12 +26361,12 @@ class ProfilePictureComponent {
     }
 }
 ProfilePictureComponent.ɵfac = function ProfilePictureComponent_Factory(t) { return new (t || ProfilePictureComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](src_app_services_globals_service__WEBPACK_IMPORTED_MODULE_1__["GlobalsService"])); };
-ProfilePictureComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: ProfilePictureComponent, selectors: [["profile-picture"]], inputs: { url: "url", urlError: "urlError", size: "size", hint: "hint", thumbnail: "thumbnail", click: "click" }, decls: 1, vars: 6, consts: [["data-bs-toggle", "tooltip", "data-bs-placement", "top", 3, "src", "error", "click"]], template: function ProfilePictureComponent_Template(rf, ctx) { if (rf & 1) {
+ProfilePictureComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: ProfilePictureComponent, selectors: [["profile-picture"]], inputs: { url: "url", urlError: "urlError", size: "size", hint: "hint", thumbnail: "thumbnail", class: "class", click: "click" }, decls: 1, vars: 6, consts: [["data-bs-toggle", "tooltip", "data-bs-placement", "top", 3, "src", "error", "click"]], template: function ProfilePictureComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "img", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("error", function ProfilePictureComponent_Template_img_error_0_listener($event) { return ctx.onError($event); })("click", function ProfilePictureComponent_Template_img_click_0_listener($event) { return ctx.onClick($event); });
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     } if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassMap"](ctx.class);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassMap"](ctx.profileClass);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("src", ctx.resourceUrl, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵsanitizeUrl"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵattribute"]("width", ctx.size)("height", ctx.size)("title", ctx.hint);
     } }, styles: [".profile-photo[_ngcontent-%COMP%] {\n  margin: -2px 2px -2px 2px;\n}\n\n.img-thumbnail[_ngcontent-%COMP%] {\n  border-top-left-radius: 0%;\n  border-top-right-radius: 50%;\n  border-bottom-right-radius: 50%;\n  border-bottom-left-radius: 50%;\n  width: auto;\n  max-width: 120px;\n  border-width: 8px;\n  border-style: solid;\n  border-color: grayscale(60%);\n  display: block;\n  margin-left: auto;\n  margin-right: auto;\n  margin-top: auto;\n  margin-bottom: auto;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uL3Byb2ZpbGUtcGljdHVyZS5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNJLHlCQUFBO0FBQ0o7O0FBRUE7RUFDSSwwQkFBQTtFQUNBLDRCQUFBO0VBQ0EsK0JBQUE7RUFDQSw4QkFBQTtFQUNBLFdBQUE7RUFDQSxnQkFBQTtFQUNBLGlCQUFBO0VBQ0EsbUJBQUE7RUFDQSw0QkFBQTtFQUNBLGNBQUE7RUFDQSxpQkFBQTtFQUNBLGtCQUFBO0VBQ0EsZ0JBQUE7RUFDQSxtQkFBQTtBQUNKIiwiZmlsZSI6InByb2ZpbGUtcGljdHVyZS5jb21wb25lbnQuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbIi5wcm9maWxlLXBob3RvIHtcclxuICAgIG1hcmdpbjogLTJweCAycHggLTJweCAycHg7XHJcbn1cclxuXHJcbi5pbWctdGh1bWJuYWlsIHtcclxuICAgIGJvcmRlci10b3AtbGVmdC1yYWRpdXM6IDAlO1xyXG4gICAgYm9yZGVyLXRvcC1yaWdodC1yYWRpdXM6IDUwJTtcclxuICAgIGJvcmRlci1ib3R0b20tcmlnaHQtcmFkaXVzOiA1MCU7XHJcbiAgICBib3JkZXItYm90dG9tLWxlZnQtcmFkaXVzOiA1MCU7XHJcbiAgICB3aWR0aDphdXRvO1xyXG4gICAgbWF4LXdpZHRoOiAxMjBweDtcclxuICAgIGJvcmRlci13aWR0aDo4cHg7XHJcbiAgICBib3JkZXItc3R5bGU6IHNvbGlkO1xyXG4gICAgYm9yZGVyLWNvbG9yOmdyYXlzY2FsZSg2MCUpO1xyXG4gICAgZGlzcGxheTogYmxvY2s7XHJcbiAgICBtYXJnaW4tbGVmdDogYXV0bztcclxuICAgIG1hcmdpbi1yaWdodDogYXV0bztcclxuICAgIG1hcmdpbi10b3A6IGF1dG87XHJcbiAgICBtYXJnaW4tYm90dG9tOiBhdXRvO1xyXG59Il19 */"] });

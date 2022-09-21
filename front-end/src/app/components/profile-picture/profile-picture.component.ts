@@ -12,7 +12,7 @@ export class ProfilePictureComponent implements OnInit {
   @Input() size: number = 25;
   @Input() hint?: string;
   @Input() thumbnail?: string;
-  //@Input() class?: string;
+  @Input() class?: string;
   @Input() click?: () => void;
 
   constructor(public gb: GlobalsService) {
@@ -23,8 +23,8 @@ export class ProfilePictureComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public get class(): string {
-    return this.isThumbnail ? 'img-thumbnail' : 'rounded-circle profile-photo';
+  public get profileClass(): string {
+    return (this.isThumbnail ? 'img-thumbnail ' : 'rounded-circle profile-photo ') + (this.class || "");
   }
 
   public get isThumbnail(): boolean {
