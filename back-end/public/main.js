@@ -3644,8 +3644,24 @@ CalendarEfemeridesComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "environment", function() { return environment; });
+var _a;
+const webBrowser = (chrome || browser);
+const defaultExtensionOptionsConfig = {
+    api_url: ((_a = webBrowser === null || webBrowser === void 0 ? void 0 : webBrowser.runtime) === null || _a === void 0 ? void 0 : _a.getURL) ? webBrowser.runtime.getURL("") : "",
+    suporte_url: "https://suporte.prf.gov.br",
+    entidade: "PRF",
+    logo_url: "logo-login-prf.png",
+    versao: "1.0.0",
+    login: {
+        gsuit: true,
+        azure: true,
+        institucional: false,
+        firebase: false,
+        user_password: false
+    }
+};
 //@ts-ignore
-const global = typeof GLOBAL_PETRVS_CONFIG != "undefined" ? GLOBAL_PETRVS_CONFIG : undefined;
+const global = typeof GLOBAL_PETRVS_CONFIG != "undefined" ? GLOBAL_PETRVS_CONFIG : defaultExtensionOptionsConfig;
 //@ts-ignore
 const URL = typeof EXTENSION_SERVIDOR_URL != "undefined" ? EXTENSION_SERVIDOR_URL : typeof EXTENSION_BASE_URL != "undefined" ? EXTENSION_BASE_URL : global.api_url;
 const HOST = URL.replace(/^https?:\/\//, "").replace(/\/$/, "");
