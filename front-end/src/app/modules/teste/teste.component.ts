@@ -150,13 +150,13 @@ export class TesteComponent implements OnInit {
       new GanttResource({
         id: "a80b71ff-e112-11ec-a5bb-0050569c64a1",
         name: "Genisson",
-        picture: "./assets/images/profile.png",
+        picture: "assets/images/profile.png",
         type: "HUMAN"
       }),
       new GanttResource({
         id: "a80b71ff-e112-11ec-a5bb-0050569c64a2",
         name: "Carlos",
-        picture: "./assets/images/profile.png",
+        picture: "assets/images/profile.png",
         type: "HUMAN"
       })
     ];

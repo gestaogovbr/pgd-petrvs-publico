@@ -94,7 +94,8 @@
                         </select>
                         <button class="btn btn-outline-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             {{usuarioNome}}
-                            <img [src]="usuarioFoto" class="rounded-circle profile-photo" onerror="this.src='./assets/images/profile.png'" width="25" height="25">
+                            <profile-picture [url]="usuarioFoto" [hint]="auth.usuario?.nome || 'Usuário desconhecido'"></profile-picture>
+                            <!--img [src]="" class="rounded-circle profile-photo" onerror="this.src='./assets/images/profile.png'" width="25" height="25"//-->
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
                           <li><a class="dropdown-item" role="button" (click)="go.navigate({route: ['configuracoes', 'usuario', auth.usuario!.id, 'edit']}, {root: true, modal: true})"><i class="bi bi-person-circle"></i> Perfil</a></li>

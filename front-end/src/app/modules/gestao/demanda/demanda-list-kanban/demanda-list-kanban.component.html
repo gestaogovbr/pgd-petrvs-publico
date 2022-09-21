@@ -39,7 +39,8 @@
             </span>
         </div>
         <div *ngIf="card.data.usuario">
-            <img [src]="card.data.usuario.url_foto" class="rounded-circle profile-photo" onerror="this.src='./assets/images/profile.png'" width="25" height="25" data-bs-toggle="tooltip" data-bs-placement="top" title="Responsável: {{card.data.usuario?.nome || 'Não atribuido a nenhum usuário'}}">
+            <profile-picture [url]="card.data.usuario.url_foto" [hint]="'Responsável: ' + (card.data.usuario?.nome || 'Não atribuido a nenhum usuário')"></profile-picture>
+            <!--img [src]="card.data.usuario.url_foto" class="rounded-circle profile-photo" onerror="this.src='./assets/images/profile.png'" width="25" height="25" data-bs-toggle="tooltip" data-bs-placement="top" title="Responsável: {{card.data.usuario?.nome || 'Não atribuido a nenhum usuário'}}"//-->
         </div>
     </div>
     <ng-container *ngIf="!filter?.controls?.resumido?.value">

@@ -39,9 +39,9 @@ export class ComentarioService {
     return ordered;
   }
 
-  public newComentario(control: AbstractControl, grid: GridComponent, pai?: Comentario) {
+  public newComentario(controlOrItems: AbstractControl | Comentario[], grid: GridComponent, pai?: Comentario) {
     const comentario = new Comentario();
-    const comentarios = control.value || [];
+    const comentarios = Array.isArray(controlOrItems) ? controlOrItems : controlOrItems.value || [];
     comentario.id = this.dao!.generateUuid();
     comentario.path = pai ? pai.path + "/" + pai.id : "";
     comentario.data_hora = this.auth.hora;
@@ -50,7 +50,7 @@ export class ComentarioService {
     comentario.usuario = this.auth.usuario;
     comentario._status = "ADD";
     comentarios.push(comentario);
-    control.setValue(this.orderComentarios(comentarios));
+    if(!Array.isArray(controlOrItems)) controlOrItems.setValue(this.orderComentarios(comentarios));
     grid.adding = true;
     grid.edit(comentario);
     return comentario;

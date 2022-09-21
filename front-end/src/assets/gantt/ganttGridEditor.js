@@ -655,7 +655,7 @@ GridEditor.prototype.openFullEditor = function (task, editOnlyAssig) {
         var effort = millisFromString(trAss.find("[name=effort]").val(),true);
 
         //check if the selected resource exists in ganttMaster.resources
-        var res= self.master.getOrCreateResource(resId,resName,"./assets/images/profile.png");
+        var res= self.master.getOrCreateResource(resId, resName, "assets/images/profile.png");
 
         //if resource is not found nor created
         if (!res)

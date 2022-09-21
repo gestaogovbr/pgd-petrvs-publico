@@ -18,6 +18,7 @@ use Database\Seeders\UsuarioSeeder;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Iterator;
+use Exception;
 
 class UsuarioService extends ServiceBase
 {
@@ -83,10 +84,12 @@ class UsuarioService extends ServiceBase
         if(!Storage::exists($path)) {
             Storage::makeDirectory($path, 0755, true);
         }
-        $contents = file_get_contents($url);
-        $name = $path . "/profile_" . md5($contents) . ".jpg";
-        if(!Storage::exists($name)) {
-            Storage::put($name, $contents);
+        try {
+            $contents = file_get_contents($url);
+        } catch(Exception $e) {}
+        if(!empty($contents)) {
+            $name = $path . "/profile_" . md5($contents) . ".jpg";
+            if(!Storage::exists($name)) Storage::put($name, $contents);
             return $name;
         } else {
             return "";
@@ -198,7 +201,7 @@ class UsuarioService extends ServiceBase
 
     public function validateStore($entity, $unidade, $action) {
         if($action == ServiceBase::ACTION_INSERT) {
-            $alreadyHas = Usuario::where("email", $entity->email)->orWhere("cpf", $entity->cpf)->orWhere("matricula", $entity->matricula)->first();
+            $alreadyHas = Usuario::where("id", "!=", $entity->id)->where("email", $entity->email)->orWhere("cpf", $entity->cpf)->orWhere("matricula", $entity->matricula)->first();
             if(!empty($alreadyHas)) throw new \Exception("Já existe um usuário com mesmo e-mail/CPF/Matrícula no sistema");
         }
     }

@@ -7,10 +7,11 @@ import { ProjetoRecurso } from './projeto-recurso.model';
 import { ProjetoAlocacao } from './projeto-alocacao.model';
 import { ProjetoTarefa } from './projeto-tarefa.model';
 import { KanbanDocker } from '../components/kanban/kanban.component';
+import { Comentario, HasComentarios } from './comentario';
 
 export type ProjetoStatus = 'PLANEJADO' | 'INICIADO' | 'CONCLUIDO' | 'SUSPENSO' | 'CANCELADO';
 
-export class Projeto extends Base {
+export class Projeto extends Base implements HasComentarios {
     public tipo_projeto?: TipoProjeto;
     public usuario?: Usuario;
     public envolvidos?: ProjetoEnvolvido[];
@@ -44,6 +45,7 @@ export class Projeto extends Base {
     public usuario_id: string | null = null;
     public tipo_projeto_id: string = "";
     public kanban_dockers: KanbanDocker[] = [];
+    public comentarios: Comentario[] = []; /* Comentarios do projeto */
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

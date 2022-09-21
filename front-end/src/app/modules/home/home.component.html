@@ -1,6 +1,7 @@
 <div class="row">
     <div class="col-md-2">
-        <img [src]="auth.usuario?.url_foto" class="img-thumbnail" onerror="this.src='./assets/images/profile.png'"><!-- width="25" height="25"-->
+        <profile-picture thumbnail [url]="auth.usuario?.url_foto" [size]="120"></profile-picture>
+        <!--img [src]="auth.usuario?.url_foto" class="img-thumbnail" onerror="this.src='./assets/images/profile.png'"//--><!-- width="25" height="25"-->
     </div>
     <div class="col-md-10 mb-4">
         <div class="row">
