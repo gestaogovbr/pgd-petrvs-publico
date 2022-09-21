@@ -601,9 +601,9 @@ class ServiceBase
         $entity = isset($entity) ? $entity : new $model();
         try {
             if($transaction) DB::beginTransaction();
+            if(method_exists($this, "validateStore")) $this->validateStore($dataOrEntity, $unidade, $action);
             $dataOrEntity = method_exists($this, "proxyStore") ? $this->proxyStore($dataOrEntity, $unidade, $action) : $dataOrEntity;
             $dataOrEntity = method_exists($entity, "proxyFill") ? $entity->proxyFill($dataOrEntity, $unidade, $action) : $entity->fill($dataOrEntity);
-            if(method_exists($this, "validateStore")) $this->validateStore($dataOrEntity, $unidade, $action);
             $entity->save();
             if(method_exists($this, "extraStore")) $this->extraStore($entity, $unidade, $action);
             if($transaction) DB::commit();
