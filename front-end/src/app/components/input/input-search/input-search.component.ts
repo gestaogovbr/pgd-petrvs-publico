@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostBinding, Injector, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostBinding, Injector, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, ControlContainer, FormGroup, FormGroupDirective } from '@angular/forms';
 import { DaoBaseService } from 'src/app/dao/dao-base.service';
 import { Base, IIndexable } from 'src/app/models/base.model';
@@ -27,6 +27,7 @@ export class SearchGroupSeparator {
 })
 export class InputSearchComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';
+  @ViewChild('inputElement') inputElement?: ElementRef;
   @Output() details = new EventEmitter<SelectItem>();
   @Output() select = new EventEmitter<SelectItem>();
   @Output() load = new EventEmitter<SelectItem | undefined>();

@@ -30,6 +30,7 @@ import { DemandaEntrega } from 'src/app/models/demanda-entrega.model';
 import { DemandaPausa } from 'src/app/models/demanda-pausa.model';
 import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
 import { ComentarioService } from 'src/app/services/comentario.service';
+import { ComentariosComponent } from 'src/app/modules/uteis/comentarios/comentarios.component';
 
 export type Checklist = {id: string, texto: string, checked: boolean};
 
@@ -48,13 +49,13 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
   @ViewChild('planejado', { static: false }) public planejado?: InputTimerComponent;
   @ViewChild('procRequisicao', { static: false }) public procRequisicao?: InputButtonComponent;
   @ViewChild('docRequisicao', { static: false }) public docRequisicao?: InputButtonComponent;
-  @ViewChild('comentarios', { static: false }) public comentarios?: GridComponent;
+  @ViewChild('comentarios', { static: false }) public comentarios?: ComentariosComponent;
   @ViewChild('tipoProcesso', { static: false }) public tipoProcesso?: InputSearchComponent;
   @ViewChild('tipoDocumento', { static: false }) public tipoDocumento?: InputSearchComponent;
 
   public form: FormGroup;
   public formChecklist: FormGroup;
-  public formComentarios: FormGroup;
+  //public formComentarios: FormGroup;
   public tipoDocumentoDao: TipoDocumentoDaoService;
   public tipoProcessoDao: TipoProcessoDaoService;
   public planoDao: PlanoDaoService;
@@ -70,7 +71,7 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
   public planos: LookupItem[] = [];
   public planoJoin: string[] = ["documento:id,metadados"];
   public planoSelecionado?: Plano | null = null;
-  public comentarioTipos: LookupItem[];
+  //public comentarioTipos: LookupItem[];
 
   /* Variável utilizada para detectar as alterações feitas pelo usuário e recalcular os prazos */
   public delta: IIndexable = {
@@ -94,7 +95,7 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
     this.comentario = injector.get<ComentarioService>(ComentarioService);
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.delta.prazo_entrega = horaInicial;
-    this.comentarioTipos = this.lookup.COMENTARIO_TIPO.filter(x => ["COMENTARIO", "TECNICO"].includes(x.key));
+    //this.comentarioTipos = this.lookup.COMENTARIO_TIPO.filter(x => ["COMENTARIO", "TECNICO"].includes(x.key));
     this.form = this.fh.FormBuilder({
       numero: {default: 0},
       id_processo: {default: 0},
@@ -141,11 +142,11 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
       texto: {default: ""},
       checked: {default: false}
     }, this.cdRef, this.validateChecklist);
-    this.formComentarios = this.fh.FormBuilder({
+    /*this.formComentarios = this.fh.FormBuilder({
       texto: {default: ""},
       tipo: {default: "COMENTARIO"},
       privacidade: {default: "PUBLICO"}
-    }, this.cdRef, this.validateComentario);
+    }, this.cdRef, this.validateComentario);*/
     this.join = ["usuario.planos.tipo_modalidade:id,nome", "pausas", "atividade", "unidade", "comentarios.usuario", "entregas.tarefa", "entregas.comentarios.usuario", "plano.documento:id,metadados"];
   }
 
@@ -155,9 +156,9 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
     this.action = ["comentar", "clonar"].includes(segment) ? segment : this.action;
   }
 
-  public get isComentarios(): boolean {
+  /*public get isComentarios(): boolean {
     return this.action == "comentar";
-  }
+  }*/
 
   public get isClonar(): boolean {
     return this.action == "clonar";
@@ -186,68 +187,65 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
     return result;
   }
 
-  public validateComentario = (control: AbstractControl, controlName: string) => {
+  /*public validateComentario = (control: AbstractControl, controlName: string) => {
     let result = null;
     if(controlName == "texto" && !control.value?.length) {
       result = "Não pode ser em branco";
     }
     return result;
-  }
+  }*/
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
 
-    if(!this.isComentarios) {
-      if(["unidade_id", "assunto"].includes(controlName) && !control?.value?.length) {
-        result = "Obrigatório";
-      /*} else if(controlName == "tempo_planejado") {
-        this.form?.controls.data_distribuicao.updateValueAndValidity();*/
-      } else if(controlName == "atividade_id" && !control?.value?.length && !this.auth.hasPermissionTo("MOD_DMD_ATV_VAZIO")) {
-        result = "Obrigatório";
-      } else if(["data_distribuicao", "prazo_entrega"].includes(controlName)) {
-        if (!this.util.isDataValid(control.value)) {
-          result = "Data inválida";
-        } else if(controlName == "data_distribuicao" && control.value.getTime() > this.form?.controls.prazo_entrega.value.getTime()) {
-          result = "Maior que entrega";
-        } else if(controlName == "prazo_entrega" && control.value.getTime() < this.form?.controls.data_distribuicao.value.getTime()) {
-          //this.form?.controls.data_distribuicao.updateValueAndValidity();
-          result = "Menor que distribuição";
-        }
-      } else if(controlName == "plano_id" && !control.value?.length && this.form?.controls?.usuario_id.value?.length) {
-        result = "Obrigatório";
-      } else if(controlName == "fator_complexidade" && !control.value && this.form?.controls?.atividade_id.value?.length) {
-        result = "Obrigatório";
+    //if(!this.isComentarios) {
+    if(["unidade_id", "assunto"].includes(controlName) && !control?.value?.length) {
+      result = "Obrigatório";
+    } else if(controlName == "atividade_id" && !control?.value?.length && !this.auth.hasPermissionTo("MOD_DMD_ATV_VAZIO")) {
+      result = "Obrigatório";
+    } else if(["data_distribuicao", "prazo_entrega"].includes(controlName)) {
+      if (!this.util.isDataValid(control.value)) {
+        result = "Data inválida";
+      } else if(controlName == "data_distribuicao" && control.value.getTime() > this.form?.controls.prazo_entrega.value.getTime()) {
+        result = "Maior que entrega";
+      } else if(controlName == "prazo_entrega" && control.value.getTime() < this.form?.controls.data_distribuicao.value.getTime()) {
+        result = "Menor que distribuição";
       }
+    } else if(controlName == "plano_id" && !control.value?.length && this.form?.controls?.usuario_id.value?.length) {
+      result = "Obrigatório";
+    } else if(controlName == "fator_complexidade" && !control.value && this.form?.controls?.atividade_id.value?.length) {
+      result = "Obrigatório";
     }
+    //}
 
     return result;
   }
 
   public formValidation = (form?: FormGroup) => {
     let result = undefined;
-    if(!this.isComentarios) {
-      this.loadEtiquetas();
-      this.loadChecklist();
-      const etiquetasKeys = this.etiquetas.map(x => x.key);
-      const checklistKeys = this.checklist.map(x => x.key);
-      const etiqueta = this.form.controls.etiquetas.value.find((x: LookupItem) => !etiquetasKeys.includes(x.key)) as LookupItem;
-      const checklst = this.form.controls.checklist.value.find((x: DemandaChecklist) => !etiquetasKeys.includes(x.id) && x.checked) as DemandaChecklist;
-      if(etiqueta) result = "Etiqueta " + etiqueta.value + "não pode ser utilizada!";
-      if(checklst) result = "Checklist " + checklst.texto + "não pode ser utilizado!";
-      /* Validações pelo plano */
-      if(this.form.controls.plano_id.value?.length) {
-        /* Verifica se a atividade seleciona está na lista de atividades permitidas no plano de trabalho */
-        if(this.form.controls.atividade_id.value?.length && !this.auth.hasPermissionTo('MOD_DMD_ATV_FORA_PL_TRB')) {
-          const atividades_termo_adesao = this.planoSelecionado?.documento?.metadados?.atividades_termo_adesao;
-          const atividade = this.atividade!.searchObj as Atividade;
-          if(!this.planoSelecionado || this.planoSelecionado?.id != this.form.controls.plano_id.value) {
-            result = "Erro ao ler " + this.lex.noun("plano de trabalho") + ". Selecione-o novamente!";
-          } else if(atividades_termo_adesao && atividade && atividades_termo_adesao.indexOf(this.util.removeAcentos(atividade.nome.toLowerCase())) < 0){
-            result = this.lex.noun("Atividade") + " não consta na lista permitida pelo " + this.lex.noun("plano de trabalho") + " selecionado.";
-          }
+    //if(!this.isComentarios) {
+    this.loadEtiquetas();
+    this.loadChecklist();
+    const etiquetasKeys = this.etiquetas.map(x => x.key);
+    const checklistKeys = this.checklist.map(x => x.key);
+    const etiqueta = this.form.controls.etiquetas.value.find((x: LookupItem) => !etiquetasKeys.includes(x.key)) as LookupItem;
+    const checklst = this.form.controls.checklist.value.find((x: DemandaChecklist) => !etiquetasKeys.includes(x.id) && x.checked) as DemandaChecklist;
+    if(etiqueta) result = "Etiqueta " + etiqueta.value + "não pode ser utilizada!";
+    if(checklst) result = "Checklist " + checklst.texto + "não pode ser utilizado!";
+    /* Validações pelo plano */
+    if(this.form.controls.plano_id.value?.length) {
+      /* Verifica se a atividade seleciona está na lista de atividades permitidas no plano de trabalho */
+      if(this.form.controls.atividade_id.value?.length && !this.auth.hasPermissionTo('MOD_DMD_ATV_FORA_PL_TRB')) {
+        const atividades_termo_adesao = this.planoSelecionado?.documento?.metadados?.atividades_termo_adesao;
+        const atividade = this.atividade!.searchObj as Atividade;
+        if(!this.planoSelecionado || this.planoSelecionado?.id != this.form.controls.plano_id.value) {
+          result = "Erro ao ler " + this.lex.noun("plano de trabalho") + ". Selecione-o novamente!";
+        } else if(atividades_termo_adesao && atividade && atividades_termo_adesao.indexOf(this.util.removeAcentos(atividade.nome.toLowerCase())) < 0){
+          result = this.lex.noun("Atividade") + " não consta na lista permitida pelo " + this.lex.noun("plano de trabalho") + " selecionado.";
         }
       }
     }
+    //}
     return result;
   }
 
@@ -575,47 +573,10 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
     if(!this.form?.controls.usuario_id.value?.length) this.loadUsuario(undefined);
   }
 
-  /*public comentarioLevel(comentario: Comentario): string[] {
-    return (comentario.path || "").split("").filter(x => x == "/");
-  }
-
-  public orderComentarios(comentarios?: Comentario[]) {
-    let ordered = comentarios?.sort((a: Comentario, b: Comentario) => {
-      if(a.path == b.path) { /* Situação 1: Paths iguais 
-        return a.data_hora.getTime() < b.data_hora.getTime() ? -1 : 1;
-      } else { /* Situação 2: Paths diferentes, deverá ser encontrado o menor nível comum entre eles para poder comparar 
-        let pathA = a.path.split("/");
-        let pathB = b.path.split("/");
-        let common = this.util.commonBegin(pathA, pathB);
-        let dataHoraA = (comentarios.find(x => x.id == (pathA[common.length] || a.id)) || a).data_hora.getTime();
-        let dataHoraB = (comentarios.find(x => x.id == (pathB[common.length] || b.id)) || b).data_hora.getTime();
-        return dataHoraA == dataHoraB ? 0 : (dataHoraA < dataHoraB ? -1 : 1);
-      }
-    }) || [];
-    return ordered;
-  }
-
-  public newComentario(pai?: Comentario) {
-    const comentario = new Comentario();
-    const comentarios = this.form.controls.comentarios.value || [];
-    comentario.id = this.dao!.generateUuid();
-    comentario.path = pai ? pai.path + "/" + pai.id : "";
-    comentario.data_hora = this.auth.hora;
-    comentario.usuario_id = this.auth.usuario!.id;
-    comentario.comentario_id = pai?.id || null;
-    comentario.usuario = this.auth.usuario;
-    comentario._status = "ADD";
-    comentarios.push(comentario);
-    this.form.controls.comentarios.setValue(this.orderComentarios(comentarios));
-    this.comentarios!.adding = true;
-    this.comentarios!.edit(comentario);
-    return comentario;
-  }*/
-
-  public addComentario = async () => {
+  /*public addComentario = async () => {
     this.comentario.newComentario(this.form.controls.comentarios, this.comentarios!);
     return undefined;
-  }
+  }*/
 
   public orderPausas(pausas: DemandaPausa[]) {
     return pausas.sort((a: DemandaPausa, b: DemandaPausa) => {
@@ -623,7 +584,7 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
     });
   }
 
-  public comentarioDynamicOptions(row: any): ToolbarButton[] {
+  /*public comentarioDynamicOptions(row: any): ToolbarButton[] {
     return [{
       label: "Comentar",
       icon: "bi bi-chat-left-quote",
@@ -631,19 +592,19 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
         this.comentario.newComentario(this.form.controls.comentarios, this.comentarios!, comentario);
       }
     }];
-  }
+  }*/
 
-  public async saveComentario(form: FormGroup, item: any) {
+  /*public async saveComentario(form: FormGroup, item: any) {
     const entity = form.value;
     Object.assign(this.comentarios!.editing!, entity);
     return undefined;
-  }
+  }*/
 
-  public async loadComentario(form: FormGroup, row: any) {
+  /*public async loadComentario(form: FormGroup, row: any) {
     this.formComentarios.controls.texto.setValue(row.texto);
     this.formComentarios.controls.tipo.setValue(row.tipo);
     this.formComentarios.controls.privacidade.setValue(row.privacidade);
-  }
+  }*/
 
   public async loadData(entity: Demanda, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
@@ -675,9 +636,10 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
   }
 
   public async initializeData(form: FormGroup) {
-    if(this.isComentarios) {
+    /*if(this.isComentarios) {
       this.entity = (await this.dao!.getDemanda(this.urlParams!.get("id")!))!;
-    } else if (this.isClonar) {
+    } else */ 
+    if (this.isClonar) {
       const source = (await this.dao!.getDemanda(this.urlParams!.get("id")!))!;
       this.entity = new Demanda();
       Object.assign(this.entity, {
@@ -740,11 +702,11 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
       demanda = this.util.fillForm(demanda, this.form!.value);
       demanda.comentarios = demanda.comentarios.filter((x: Comentario) => ["ADD", "DELETE"].includes(x._status || "") && x.texto?.length);
       demanda.entregas = demanda.entregas.filter((x: DemandaEntrega) => ["ADD", "EDIT", "DELETE"].includes(x._status || ""));
-      if(this.isComentarios) {
+      /*if(this.isComentarios) {
         this.dao?.update(this.entity!.id, { comentarios: demanda.comentarios }).then(row => resolve(true)).catch(error => resolve(false));
-      } else {
+      } else {*/
         resolve(demanda);
-      }
+      //}
     });
   }
 }

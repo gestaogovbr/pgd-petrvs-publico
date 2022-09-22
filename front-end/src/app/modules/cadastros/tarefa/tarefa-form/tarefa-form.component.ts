@@ -23,6 +23,7 @@ export class TarefaFormComponent extends PageFormBase<Tarefa, TarefaDaoService> 
     super(injector, Tarefa, TarefaDaoService);
     this.entidadeDao = injector.get<EntidadeDaoService>(EntidadeDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    this.modalWidth = 1100;
     this.form = this.fh.FormBuilder({
       nome: {default: ""},
       tempo_estimado: {default: 0},

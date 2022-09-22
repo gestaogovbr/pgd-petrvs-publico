@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostBinding, HostListener, Injector, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostBinding, HostListener, Injector, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, ControlContainer, FormControl, FormGroup, FormGroupDirective } from '@angular/forms';
 import { InputBase, LabelPosition } from '../input-base';
 
@@ -15,6 +15,7 @@ import { InputBase, LabelPosition } from '../input-base';
 })
 export class InputNumberComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';
+  @ViewChild('inputElement') inputElement?: ElementRef;
   @Output() change = new EventEmitter<Event>();
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;

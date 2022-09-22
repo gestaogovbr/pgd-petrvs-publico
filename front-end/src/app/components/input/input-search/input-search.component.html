@@ -20,7 +20,7 @@
                     </ng-template>
                 </li>
             </ul>
-            <input type="text" class="form-control" autocomplete="off" [id]="controlId" aria-expanded="false" [attr.readonly]="isOnlySelect ? 'true' : undefined"
+            <input type="text" #inputElement class="form-control" autocomplete="off" [id]="controlId" aria-expanded="false" [attr.readonly]="isOnlySelect ? 'true' : undefined"
                 [attr.placeholder]="placeholder" (keydown)="onKeyDown($event)" (keyup)="onKeyUp($event)">
             <button *ngIf="isDetails" class="btn btn-outline-secondary" type="button" [disabled]="!searchObj ? true : undefined" (click)="onDetailsClick($event)">
                 <i class="bi bi-info-circle"></i>

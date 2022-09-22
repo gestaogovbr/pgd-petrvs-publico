@@ -8,7 +8,6 @@
                             <td *ngIf="comentario.comentarioLevel(row).length > 0" class="d-none d-md-table-cell" [style.width.px]="comentario.comentarioLevel(row).length * 20">&nbsp;</td>
                             <td class="comentario-user text-center">
                                 <profile-picture [url]="row.usuario?.url_foto" [hint]="row.usuario?.nome || 'Desconhecido'"></profile-picture><br>
-                                <!--img [src]="row.usuario?.url_foto || './assets/images/profile.png'" class="rounded-circle profile-photo" onerror="this.src='./assets/images/profile.png'" width="25" height="25"//-->
                                 <ng-container *ngFor="let dot of comentario.comentarioLevel(row)">
                                     <span class="comentario-level">•</span><br>
                                 </ng-container>
@@ -26,10 +25,16 @@
                         </tr>
                     </table>
                 </ng-template>
-                <ng-template #mensagemEdit>
+                <ng-template let-row="row" #mensagemEdit>
                     <div class="row">
-                        <div class="col-md-8">
-                            <input-textarea [size]="12" [rows]="3" label="Mensagem" icon="bi bi-textarea-t" controlName="texto" [control]="formComentarios!.controls.texto"></input-textarea>
+                        <div class="col-md-1 comentario-user text-center">
+                            <profile-picture [url]="row.usuario?.url_foto" [hint]="row.usuario?.nome || 'Desconhecido'"></profile-picture><br>
+                            <ng-container *ngFor="let dot of comentario.comentarioLevel(row)">
+                                <span class="comentario-level">•</span><br>
+                            </ng-container>
+                        </div>
+                        <div class="col-md-7">
+                            <input-textarea #texto [size]="12" [rows]="3" label="Mensagem" icon="bi bi-textarea-t" controlName="texto" [control]="formComentarios!.controls.texto"></input-textarea>
                         </div>
                         <div class="col-md-4">
                             <div class="row">
@@ -42,7 +47,7 @@
                     </div>
                 </ng-template>
             </column>
-            <column type="options" [dynamicOptions]="comentarioDynamicOptions.bind(this)"></column>
+            <column type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
         </columns>
     </grid>
 </editable-form>

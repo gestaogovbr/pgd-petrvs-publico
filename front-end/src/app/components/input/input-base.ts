@@ -22,6 +22,7 @@ export abstract class InputBase {
     public util: UtilService;
     public viewInit: boolean = false;
     public formDirective?: FormGroupDirective;
+    public inputElement?: ElementRef;
     /* Abstract properties */
     public abstract controlName: string | null;
     public abstract control?: AbstractControl; 
@@ -49,6 +50,10 @@ export abstract class InputBase {
         } else {
             this._value = value;
         }
+    }
+
+    public focus() {
+        this.inputElement?.nativeElement.focus();
     }
 
     public onEnterKeyDown(e: Event) {
