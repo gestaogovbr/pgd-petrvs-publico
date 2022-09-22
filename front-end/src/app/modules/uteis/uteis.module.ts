@@ -19,7 +19,8 @@ import { UteisRoutingModule } from './uteis-routing.module';
   ],
   exports: [
     CalendarEfemeridesComponent,
-    ComentariosComponent
+    ComentariosComponent,
+    ComentariosWidgetComponent
   ]
 })
 export class UteisModule { }

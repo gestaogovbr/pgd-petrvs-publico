@@ -1,6 +1,7 @@
 import { Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
+import { InputTextareaComponent } from 'src/app/components/input/input-textarea/input-textarea.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { DaoBaseService } from 'src/app/dao/dao-base.service';
 import { DemandaDaoService } from 'src/app/dao/demanda-dao.service';
@@ -17,6 +18,8 @@ import { PageFrameBase } from '../../base/page-frame-base';
   styleUrls: ['./comentarios.component.scss']
 })
 export class ComentariosComponent extends PageFrameBase {
+  @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
+  @ViewChild('texto', { static: false }) public texto?: InputTextareaComponent;
   @ViewChild('comentarios', { static: false }) public comentarios?: GridComponent;
   @Input() set control(value: AbstractControl | undefined) {
     if(this._control != value) {
@@ -65,6 +68,7 @@ export class ComentariosComponent extends PageFrameBase {
     super(injector);
     this.comentario = injector.get<ComentarioService>(ComentarioService);
     this.form = this.fh.FormBuilder({});
+    this.join = ["comentarios.usuario"];
     this.formComentarios = this.fh.FormBuilder({
       texto: {default: ""},
       tipo: {default: "COMENTARIO"},
@@ -92,8 +96,11 @@ export class ComentariosComponent extends PageFrameBase {
             case 'ENTREGA': this.dao = this.injector.get<DemandaEntregaDaoService>(DemandaEntregaDaoService); break;
             case 'PROJETO': this.dao = this.injector.get<DemandaEntregaDaoService>(DemandaEntregaDaoService); break;
           }
-          this.entity = await this.dao?.getById(this.entity_id!) as HasComentarios | undefined;
+          this.entity = await this.dao?.getById(this.entity_id!, this.join) as HasComentarios | undefined;
+          const comentario = this.comentario_id?.length ? (this.gridControl.value || []).find((x: Comentario) => x.id == this.comentario_id) : undefined;
+          this.comentario.newComentario(this.gridControl, this.comentarios!, comentario);
           this.cdRef.detectChanges();
+          this.texto!.focus();
         } catch (erro) {
           this.error("Erro ao carregar dados: " + erro);
         } finally {
@@ -119,19 +126,20 @@ export class ComentariosComponent extends PageFrameBase {
     return this.control || this.fakeControl;
   }
 
+  public dynamicButtons(row: any): ToolbarButton[] {
+    let result: ToolbarButton[] = [];
+    let comentario: Comentario = row as Comentario;
+
+    if(comentario.usuario_id == this.auth.usuario?.id) {
+      result.push({ icon: "bi bi-pencil-square", hint: "Editar", color: "btn-outline-info", onClick: (comentario: Comentario) => { this.grid!.edit(comentario); }});
+    }
+    result.push({ hint: "Responder", color: "btn-outline-success", icon: "bi bi-reply", onClick: (comentario: Comentario) => { this.comentario.newComentario(this.gridControl, this.comentarios!, comentario); }});
+    return result;
+  }
+
   public addComentario = async () => {
     this.comentario.newComentario(this.gridControl, this.comentarios!);
     return undefined;
-  }
-
-  public comentarioDynamicOptions(row: any): ToolbarButton[] {
-    return [{
-      label: "Comentar",
-      icon: "bi bi-chat-left-quote",
-      onClick: (comentario: Comentario) => {
-        this.comentario.newComentario(this.gridControl, this.comentarios!, comentario);
-      }
-    }];
   }
 
   public async saveComentario(form: FormGroup, item: any) {
@@ -154,8 +162,9 @@ export class ComentariosComponent extends PageFrameBase {
     this.submitting = true;
     try {
       this.confirm();
-      await this.dao?.update(this.entity!.id, { comentarios: this.gridControl.value });
-      if(this.modalRoute?.queryParams?.idroute?.length) this.go.setModalResult(this.modalRoute?.queryParams?.idroute, true);
+      const modalResult = await this.dao?.update(this.entity!.id, { comentarios: this.gridControl.value }, this.join);
+      if(this.modalRoute?.queryParams?.idroute?.length) this.go.setModalResult(this.modalRoute?.queryParams?.idroute, modalResult);
+      this.go.back(undefined, this.backRoute);
     } catch (erro) {
       this.error("Erro ao carregar dados: " + erro);
     } finally {

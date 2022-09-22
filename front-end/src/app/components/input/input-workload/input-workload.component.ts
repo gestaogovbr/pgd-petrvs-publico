@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostBinding, Injector, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostBinding, Injector, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, ControlContainer, FormControl, FormGroup, FormGroupDirective } from '@angular/forms';
 import { InputBase, LabelPosition } from '../input-base';
 
@@ -17,6 +17,7 @@ export type UnitWorkload = "day" | "week" | "mouth";
 })
 export class InputWorkloadComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';
+  @ViewChild('inputElement') inputElement?: ElementRef;
   @Output() change = new EventEmitter<Event>();
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;

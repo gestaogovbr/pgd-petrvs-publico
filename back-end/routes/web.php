@@ -35,6 +35,7 @@ Route::get('/web/logout', [LoginController::class, 'logout']);
 Route::view('/web/login-azure-popup', 'azure');
 Route::get('/web/login-azure-redirect', [LoginController::class, 'signInAzureRedirect']);
 Route::get('/web/login-azure-callback', [LoginController::class, 'signInAzureCallback']);
+Route::get('/web/login-azure-simulate-callback', [LoginController::class, 'simulateAzureCallback']);
 
 /* Rotas diversas */
 Route::get('environment-config', [PetrvsController::class, 'environmentConfig']);

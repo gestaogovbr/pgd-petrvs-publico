@@ -17,6 +17,7 @@ import { UtilService } from 'src/app/services/util.service';
 })
 export class InputDatetimeComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';
+  @ViewChild('inputElement') inputElement?: ElementRef;
   @ViewChild('dateInput') dateInput?: ElementRef;
   @ViewChild('timeInput') timeInput?: ElementRef;
   @Output() buttonClick = new EventEmitter<Event>();

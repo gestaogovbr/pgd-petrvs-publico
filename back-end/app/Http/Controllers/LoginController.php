@@ -492,6 +492,10 @@ class LoginController extends Controller
         ->redirect();
     }
 
+    public function simulateAzureCallback(Request $request) {
+        return view("azure");
+    }
+
     public function signInAzureCallback(Request $request) {
         $user = Socialite::driver('azure')->user();
         if(!empty($user)) {
@@ -505,7 +509,7 @@ class LoginController extends Controller
                 Auth::loginUsingId($usuario->id);
                 $request->session()->regenerate();
                 $request->session()->put("kind", "AZURE");
-                return redirect()->intended('http://localhost:4200/#/login-retorno'); view("azure");
+                return view("azure"); //redirect()->intended('http://localhost:4200/#/login-retorno');
             } else {
                 return LogError::newError('As credenciais fornecidas são inválidas. Email: '.$email);
             }

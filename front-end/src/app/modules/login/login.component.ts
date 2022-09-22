@@ -77,13 +77,7 @@ export class LoginComponent implements OnInit, ModalPage {
       });
       this.autoSignGoogle();
     }
-    this.bc = new BroadcastChannel('petrvs_login_popup');
-    this.bc.onmessage = (event) => {
-      this.dialog.closeSppinerOverlay();
-      this.auth.authSession().then(success => {
-        if(success) this.auth.success!(this.auth.usuario!, {route: ["home"]});
-      });
-    };
+    this.auth.registerPopupLoginResultListener();
   }
 
   public closeModalIfSuccess = (result: boolean) => {
@@ -131,8 +125,7 @@ export class LoginComponent implements OnInit, ModalPage {
   }
 
   public signInAzure() {
-    this.dialog.showSppinerOverlay("Logando...", 300000);
-    this.go.openPopup(this.globals.servidorURL + "/web/login-azure-redirect");
+    this.auth.authAzure();
   }
 
 }
