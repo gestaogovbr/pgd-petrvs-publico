@@ -25,7 +25,7 @@ class CreateApiSiapeUorgsTable extends Migration
             $table->string('siglauorg', 50)->nullable();
             $table->string('telefone', 50)->nullable();
             $table->string('email', 100)->nullable();
-            $table->string('natureza', 50)->nullable();
+            $table->text('natureza', 50)->nullable();
             $table->string('fronteira', 50)->nullable();
             $table->string('fuso_horario', 50)->nullable();
             $table->string('cod_uop', 50)->nullable();
