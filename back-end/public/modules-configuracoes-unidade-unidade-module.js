@@ -569,7 +569,7 @@ function UnidadeListComponent_ng_template_15_Template(rf, ctx) { if (rf & 1) {
 } if (rf & 2) {
     const row_r11 = ctx.row;
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate"](row_r11.cidade.nome + "/" + row_r11.cidade.uf);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate"](((row_r11.cidade == null ? null : row_r11.cidade.nome) || "") + "/" + ((row_r11.cidade == null ? null : row_r11.cidade.uf) || ""));
 } }
 function UnidadeListComponent_column_17_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](0, "column", 21);
