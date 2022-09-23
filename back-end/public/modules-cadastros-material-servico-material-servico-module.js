@@ -335,7 +335,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
 class MaterialServico extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.tipo = "MATERIAL"; /* Tipo */
         this.codigo = null; /* Código */
@@ -344,6 +344,7 @@ class MaterialServico extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.unidade_medida = "UNIDADE"; /* Unidade */
         this.data_inicio = new Date(); /* Data de início */
         this.data_fim = null; /* Data do fim */
+        this.initialization(data);
     }
 }
 

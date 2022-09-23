@@ -5,8 +5,10 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\ProjetoTarefa;
 use App\Models\ProjetoEnvolvido;
+use App\Models\ProjetoAlocacao;
 use App\Models\ProjetoRegra;
 use App\Models\TipoProjeto;
+use App\Models\ProjetoRecurso;
 use App\Traits\AutoDataInicio;
 
 class Projeto extends ModelBase
@@ -32,6 +34,7 @@ class Projeto extends ModelBase
         //'data_fim',
         'inicio',
         'termino',
+        'custo',
         'calcula_custos',
         'tempo_corrido',
         'usar_horas',
@@ -46,6 +49,7 @@ class Projeto extends ModelBase
         'progresso',
         'usuario_id',
         'tipo_projeto_id',
+        'kanban_dockers'
     ];
 
     /*public $fillable_changes = [
@@ -62,7 +66,18 @@ class Projeto extends ModelBase
     public function tarefas() { return $this->hasMany(ProjetoTarefa::class); }    
     public function regras() { return $this->hasMany(ProjetoRegra::class); }    
     public function envolvidos() { return $this->hasMany(ProjetoEnvolvido::class); }    
+    public function alocacoes() { return $this->hasMany(ProjetoAlocacao::class); }    
+    public function recursos() { return $this->hasMany(ProjetoRecurso::class); }    
     // Belongs
     public function tipoProjeto() { return $this->belongsTo(TipoProjeto::class); }    
     public function usuario() { return $this->belongsTo(Usuario::class); }    
+    // Mutattors e Casts
+    public function getKanbanDockersAttribute($value)
+    {
+        return json_decode($value);
+    }   
+    public function setKanbanDockersAttribute($value)
+    {
+        $this->attributes['kanban_dockers'] = json_encode($value);
+    }
 }

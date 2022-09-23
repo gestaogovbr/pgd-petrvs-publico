@@ -31,7 +31,5 @@ export class DemandaEntrega extends Base {
     public tipo_processo_id: string | null = null; /* Tipo de processo */
     public comentarios: Comentario[] = []; /* Comentarios da tarefa */
 
-    constructor(){
-        super();
-    }
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

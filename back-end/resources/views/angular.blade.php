@@ -9,14 +9,19 @@
   <link href="assets/css/bootstrap-load-fonts.css" rel="stylesheet" type="text/css"> 
   <link href="assets/css/fontawesome-load-fonts.css" rel="stylesheet" type="text/css"> 
   <script>
-    const GLOBAL_ENTIDADE = "{{ $entidade }}"; 
-    const GLOBAL_SERVER = "{{ $host }}"; 
-    const GLOBAL_SUPORTE = "{{ $suporte }}"; 
-    const GLOBAL_LOGO = "{{ $logo }}"; 
-    const GLOBAL_SERVER_VERSION = "{{ $version }}"; 
-    const GLOBAL_SERVER_HOST = GLOBAL_SERVER.replace(/^https?:\/\//, "").replace(/\/$/, "");
-    const GLOBAL_SERVER_HTTPS = GLOBAL_SERVER.startsWith("https");
+    /* 
+    JavaScript contendo variáveis de ambiente para a aplicação de front-end. 
+    Caso não seja possível carregar a configuração, então será carregada pelo environment-config
+    */
+    var GLOBAL_PETRVS_CONFIG_STR = "{{ $config }}";
+    var GLOBAL_PETRVS_CONFIG = undefined;
+    try {
+      GLOBAL_PETRVS_CONFIG = JSON.parse(GLOBAL_PETRVS_CONFIG_STR);
+    } catch (e) {
+      console.log("A configuração será carregada pelo environment-config");
+    }     
   </script>
+  <script src="environment-config"></script>
   <script src="https://apis.google.com/js/platform.js"></script>
   <script src="assets/js/bootstrap-angular.js"></script>
 <link rel="stylesheet" href="styles.css"></head>

@@ -9,7 +9,5 @@ export class PlanoAtividade extends Base {
     public plano_id: string = "";
     public atividade_id: string = "";
 
-    constructor(){
-        super();
-    }
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

@@ -51,6 +51,14 @@ class UsuarioSeeder extends Seeder
                 'perfil_id' => $perfis->where('nome', 'Administrador')->first()->id,
                 'data_inicio' => Carbon::now()
             ],
+            [
+                'email' => 'edson.franca@mj.gov.br',
+                'nome' => 'Edson Dario Silva de França',
+                'cpf' => '01380127416',
+                'apelido' => 'Edson',
+                'perfil_id' => $perfis->where('nome', 'Administrador')->first()->id,
+                'data_inicio' => Carbon::now()
+            ],
         ];
 
         foreach($usuarios as $usuario)

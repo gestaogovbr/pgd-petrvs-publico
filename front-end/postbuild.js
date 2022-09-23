@@ -6,7 +6,6 @@ if(fs.existsSync("../back-end/public/index.html")) {
     fs.copyFileSync("../back-end/public/index.html", "../back-end/public/pages/index.html");
     /* Obtem lista de arquivos gerados no deploy */
     $index = fs.readFileSync("../back-end/public/index.html", {encoding: "utf8"});
-    console.log($index);
     $files = [];
     $changed = $index.replace('<base href="/">', '<base href="{{ $host }}">');
     fs.writeFileSync("../back-end/public/index.html", $changed);

@@ -176,7 +176,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
 class Tarefa extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.nome = ""; /* Nome da tarefa */
         this.tempo_estimado = 0; /* Tempo estimado para a execução da tarefa (Horas decimais) */
@@ -184,6 +184,7 @@ class Tarefa extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.comentario_predefinido = null; /* Comentário predefinida para a tarefa */
         this.unidade_id = null; /* Unidade vinculada a tarefa */
         this.entidade_id = null; /* Entidade vinculada a tarefa */
+        this.initialization(data);
     }
 }
 

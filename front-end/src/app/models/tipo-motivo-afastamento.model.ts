@@ -9,8 +9,6 @@ export class TipoMotivoAfastamento extends Base {
     public integracao: number = 0; /* Se o tipo de motivo de afastamento é integrado a outro sistema */
     //public data_inicio: Date = new Date(0); /* Data de início */
     //public data_fim: Date = new Date(0); /* Data fim */
-        
-    constructor(){
-        super();
-    }
+
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

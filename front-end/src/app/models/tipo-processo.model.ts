@@ -7,7 +7,5 @@ export class TipoProcesso extends Base {
     public etiquetas: LookupItem[] = []; /* Etiquetas */
     public checklist: LookupItem[] = []; /* Checklist */
 
-    constructor(){
-        super();
-    }
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

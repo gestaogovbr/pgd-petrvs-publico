@@ -30,7 +30,7 @@ class EntidadeNotificacoes {
     }
 }
 class Entidade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.sigla = ""; // Sigla da entidade
         this.nome = ""; // Nome da entidade
@@ -49,6 +49,7 @@ class Entidade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.gestor_id = null; // Usuário gestor da unidade
         this.gestor_substituto_id = null; // Usuário gestor substituto da unidade
         this.forma_contagem_carga_horaria = "DIA"; // Forma de contagem padrão da carga horária
+        this.initialization(data);
     }
 }
 
@@ -95,11 +96,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
 class TipoJustificativa extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.nome = ""; /* Descrição do tipo da justificativa */
         this.data_inicio = new Date(); /* Data de início */
         this.data_fim = null; /* Data do fim */
+        this.initialization(data);
     }
 }
 

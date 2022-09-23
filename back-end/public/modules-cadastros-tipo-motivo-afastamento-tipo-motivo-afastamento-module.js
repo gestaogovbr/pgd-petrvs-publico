@@ -394,7 +394,7 @@ __webpack_require__.r(__webpack_exports__);
 class TipoMotivoAfastamento extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
     //public data_inicio: Date = new Date(0); /* Data de início */
     //public data_fim: Date = new Date(0); /* Data fim */
-    constructor() {
+    constructor(data) {
         super();
         this.codigo = null; /* Código do afastamento */
         this.nome = ""; /* Nome do motivo de afastamento */
@@ -402,6 +402,7 @@ class TipoMotivoAfastamento extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Ba
         this.cor = ""; /* Código da cor em formato hex // style="color: #AABBCC00" */
         this.horas = 0; /* Se o afastamento é medido em horas */
         this.integracao = 0; /* Se o tipo de motivo de afastamento é integrado a outro sistema */
+        this.initialization(data);
     }
 }
 

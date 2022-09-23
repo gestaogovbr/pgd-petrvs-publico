@@ -3,4 +3,5 @@ Arquivo JavaScript contendo variáveis de ambiente para a aplicação de front-e
 Deverá ser carregado como o primeiro script da página!
 */
 
-var PETRVS_ENTIDADE = "{{ $entidade }}";
+var GLOBAL_PETRVS_CONFIG_STR = `{!! $config !!}`;
+var GLOBAL_PETRVS_CONFIG = JSON.parse(GLOBAL_PETRVS_CONFIG_STR);

@@ -10,5 +10,7 @@ export abstract class Base implements IIndexable {
     public updated_at: Date = new Date();
     public _status?: EntityStatus; /* Usado somente pelos componentes da UX */ 
 
-    constructor(){}
+    public initialization(data?: any) {
+        if(data) Object.assign(this, data);
+    }
 }

@@ -12,8 +12,6 @@ export class TipoModalidade extends Base {
     public ganho_produtividade: number = 0; /* Ganho de produtividade */
     public data_inicio: Date = new Date(); /* Data de início */
     public data_fim: Date | null = null; /* Data do fim */
-        
-    constructor(){
-        super();
-    }
+
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

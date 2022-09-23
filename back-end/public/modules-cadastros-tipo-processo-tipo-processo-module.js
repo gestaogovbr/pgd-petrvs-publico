@@ -204,12 +204,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
 class TipoProcesso extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.nome = ""; /* Descrição do tipo de processo */
         this.codigo = ""; /* Codigo do tipo de processo */
         this.etiquetas = []; /* Etiquetas */
         this.checklist = []; /* Checklist */
+        this.initialization(data);
     }
 }
 

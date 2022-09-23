@@ -38,15 +38,16 @@ class CreateProjetosTarefasTable extends Migration
             $table->tinyInteger('soma_progresso_filhos')->default(1)->comment("Se o progresso é calculado pela média do progresso dos filhos ou lançado manual (somente se tem_filhos)");
             $table->enum('status', ["PLANEJADO", "INICIADO", "CONCLUIDO", "FALHO", "SUSPENSO", "CANCELADO", "AGUARDANDO"])->comment("Status");
             $table->tinyInteger('contraido')->default(0)->comment("Se esta contraído");
-            $table->decimal('custo', 15, 2)->comment("Custo: Será a soma dos recursos, sou a soma dos filhos caso temFilhos e sintetico");
+            $table->decimal('custo', 15, 2)->comment("Custo: Será a soma dos recursos, ou a soma dos filhos caso tem_filhos e soma_custos_filhos");
             $table->tinyInteger('calcula_intervalo')->default(1)->comment("Se calcula o inicio e termino automaticamente pelos filhos (somente se tem_filhos)");
             $table->tinyInteger('aloca_proprios_recursos')->default(1)->comment("Se possui recursos próprios (somente se tem_filhos)");
             $table->tinyInteger('soma_recusos_alocados_filhos')->default(1)->comment("Mostra o somatório dos recursos filhos (somente se tem_filhos)");
-            $table->tinyInteger('custos_proprios')->default(1)->comment("Se possui custos próprios (somente se tem_filhos)");
+            $table->tinyInteger('custos_proprios')->default(1)->comment("Se possui custos próprios (somente se tem_filhos), se não tem filhos sempre será true");
             $table->tinyInteger('soma_custos_filhos')->default(1)->comment("Se possui custos filhos (somente se tem_filhos)");
+            $table->json('etiquetas')->nullable()->comment("Etiquetas");
             // Chaves estrangeiras:
             $table->foreignUuid('projeto_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('tarefa_pai_id')->constrained('projetos_tarefas')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('tarefa_pai_id')->nullable()->constrained('projetos_tarefas')->onDelete('restrict')->onUpdate('cascade');
             $table->foreignUuid('tarefa_projeto_id')->nullable()->constrained("projetos")->onDelete('restrict')->onUpdate('cascade'); /* Projeto que será incorporado como uma tarefa */
             $table->foreignUuid('demanda_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade');
             $table->foreignUuid('usuario_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade');

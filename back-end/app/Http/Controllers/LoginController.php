@@ -18,6 +18,7 @@ use App\Services\UsuarioService;
 use Database\Seeders\UsuarioSeeder;
 use Illuminate\Validation\ValidationException;
 use DateTime;
+use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
 {
@@ -480,4 +481,37 @@ class LoginController extends Controller
             "valid" => Auth::check()
         ]);
     }
+
+    public function loginAzurePopup(){
+        return redirect('<azure></azure>')->with('popup', 'open');
+    }
+
+    public function signInAzureRedirect(Request $request) {
+        return Socialite::driver('azure')
+        ->scopes(['openid', 'email', 'profile'])
+        ->redirect();
+    }
+
+    public function signInAzureCallback(Request $request) {
+        $user = Socialite::driver('azure')->user();
+        if(!empty($user)) {
+            $token = $user->token;
+            $email = $user->email;
+            $email = explode("#", $email);
+            $email = $email[0];
+            $email = str_replace("_", "@", $email);
+            $usuario = $this->registrarUsuario($request, Usuario::where('email', $email)->first());
+            if (($usuario)) {
+                Auth::loginUsingId($usuario->id);
+                $request->session()->regenerate();
+                $request->session()->put("kind", "AZURE");
+                return redirect()->intended('http://localhost:4200/#/login-retorno'); view("azure");
+            } else {
+                return LogError::newError('As credenciais fornecidas são inválidas. Email: '.$email);
+            }
+        } else {
+            return Socialite::driver('azure')->redirect();
+        }
+    }
+
 }

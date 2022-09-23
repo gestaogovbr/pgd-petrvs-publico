@@ -47,7 +47,7 @@ export class GlobalsService {
 
   public get servidorURL(): string {
     //@ts-ignore
-    return this.isExtension && EXTENSION_SERVIDOR_URL?.length ? EXTENSION_SERVIDOR_URL : (environment.https ? 'https://' : 'http://') + environment.host; 
+    return this.isExtension && EXTENSION_SERVIDOR_URL?.length ? EXTENSION_SERVIDOR_URL : (environment.https ? 'https://' : 'http://') + environment.host;
   }
 
   public get isToolbar(): boolean {
@@ -81,4 +81,25 @@ export class GlobalsService {
     if(this.isExtension && !this.urlBuffer[key]) this.urlBuffer[key] = this.sanitizer.bypassSecurityTrustResourceUrl(this.baseURL + resource);
     return this.isExtension ? this.urlBuffer[key] : resource;
   }
+
+  public get hasGoogleLogin(): boolean {
+    return environment.login.gsuit == true;
+  }
+
+  public get hasAzureLogin(): boolean {
+    return environment.login.azure == true;
+  }
+
+  public get hasUserPasswordLogin(): boolean {
+    return environment.login.user_password == true;
+  }
+
+  public get hasFirebaseLogin(): boolean {
+    return environment.login.firebase == true;
+  }
+
+  public get hasInstitucionalLogin(): boolean {
+    return environment.login.institucional == true;
+  }
+
 }

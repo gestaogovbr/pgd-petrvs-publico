@@ -53,12 +53,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
 class Capacidade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.perfil_id = null; /* ID do Perfil */
         this.tipo_capacidade_id = ""; /* ID do Tipo_capacidade  */
         this.data_inicio = new Date(); /* Data de início */
         this.data_fim = null; /* Data do fim */
+        this.initialization(data);
     }
 }
 
@@ -514,13 +515,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
 class Perfil extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.nivel = 0; /* Nível de permissões */
         this.nome = ""; /* Nome do perfil */
         this.descricao = ""; /* Descrição sobre o perfil */
         this.data_inicio = new Date(); /* Data de início */
         this.data_fim = null; /* Data fim */
+        this.initialization(data);
     }
 }
 

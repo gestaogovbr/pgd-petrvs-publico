@@ -6,13 +6,14 @@ use App\Models\ModelBase;
 use App\Models\Projeto;
 use App\Models\Usuario;
 use App\Models\Demanda;
+use App\Models\ProjetoAlocacao;
 use App\Traits\AutoDataInicio;
 
 class ProjetoTarefa extends ModelBase
 {
     use AutoDataInicio;
 
-    protected $table = 'demandas_entregas';
+    protected $table = 'projetos_tarefas';
 
     public $fillable = [
         'indice',
@@ -40,6 +41,7 @@ class ProjetoTarefa extends ModelBase
         'soma_recusos_alocados_filhos',
         'custos_proprios',
         'soma_custos_filhos',
+        'etiquetas',
         'projeto_id',
         'tarefa_pai_id',
         'terefa_projeto_id',
@@ -56,9 +58,18 @@ class ProjetoTarefa extends ModelBase
     public $delete_cascade = [];
 
     // Has
-    //public function () { return $this->hasMany(::class); }    
+    public function alocacoes() { return $this->hasMany(ProjetoAlocacao::class, "tarefa_id"); }    
     // Belongs
     public function projeto() { return $this->belongsTo(Projeto::class); }    
     public function demanda() { return $this->belongsTo(Demanda::class); }    
     public function usuario() { return $this->belongsTo(Usuario::class); }    
+    // Mutattors e Casts
+    public function getEtiquetasAttribute($value)
+    {
+        return json_decode($value);
+    }   
+    public function setEtiquetasAttribute($value)
+    {
+        $this->attributes['etiquetas'] = json_encode($value);
+    }
 }

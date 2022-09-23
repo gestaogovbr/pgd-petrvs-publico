@@ -22,8 +22,8 @@ class CreateProjetosAlocacoesTable extends Migration
             $table->string('descricao', 256)->comment("Descrição");
             $table->float('quantidade')->comment("Quantidade do recurso");
             // Chaves estrangeiras:
-            $table->foreignUuid('projeto_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('tarefa_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('projeto_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('tarefa_id')->nullable()->constrained("projetos_tarefas")->onDelete('restrict')->onUpdate('cascade'); /* Somente será preenchido se não for alocação direto para o proejto ao invés de ser para uma tarefa */
             $table->foreignUuid('recurso_id')->constrained("projetos_recursos")->onDelete('restrict')->onUpdate('cascade');
             $table->foreignUuid('regra_id')->nullable()->constrained("projetos_regras")->onDelete('restrict')->onUpdate('cascade');
         });

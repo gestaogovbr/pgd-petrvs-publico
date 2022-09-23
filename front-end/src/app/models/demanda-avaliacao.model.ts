@@ -18,7 +18,5 @@ export class DemandaAvaliacao extends Base {
     public usuario_id: string = ""; /* ID do Usuario */
     public tipo_avaliacao_id: string = ""; /* ID do Usuario */
 
-    constructor(){
-        super();
-    }
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

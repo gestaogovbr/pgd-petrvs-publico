@@ -9,6 +9,7 @@ import { GoogleApiService } from 'src/app/services/google-api.service';
 import { FullRoute, NavigateService } from 'src/app/services/navigate.service';
 import { UtilService } from 'src/app/services/util.service';
 import { ModalPage } from '../base/modal-page';
+import { DialogService } from 'src/app/services/dialog.service';
 
 @Component({
   selector: 'app-login',
@@ -21,6 +22,7 @@ export class LoginComponent implements OnInit, ModalPage {
   public error: string = "";
   public login: FormGroup;
   public redirectTo?: FullRoute;
+  public bc?: BroadcastChannel;
 
   /* ModalPage interface */
   public modalRoute?: ActivatedRouteSnapshot;
@@ -38,7 +40,8 @@ export class LoginComponent implements OnInit, ModalPage {
     public util: UtilService,
     public fh: FormHelperService,
     public formBuilder: FormBuilder,
-    public googleApi: GoogleApiService
+    public googleApi: GoogleApiService,
+    public dialog: DialogService
   ) {
     this.login = this.fh.FormBuilder({
       usuario: {default: ""},
@@ -74,6 +77,13 @@ export class LoginComponent implements OnInit, ModalPage {
       });
       this.autoSignGoogle();
     }
+    this.bc = new BroadcastChannel('petrvs_login_popup');
+    this.bc.onmessage = (event) => {
+      this.dialog.closeSppinerOverlay();
+      this.auth.authSession().then(success => {
+        if(success) this.auth.success!(this.auth.usuario!, {route: ["home"]});
+      });
+    };
   }
 
   public closeModalIfSuccess = (result: boolean) => {
@@ -118,6 +128,11 @@ export class LoginComponent implements OnInit, ModalPage {
     } else {
       this.error = "Verifique se está correto:" + (form.cpf.invalid ? " CPF;" : "") + (form.password.invalid ? " Senha;" : "") + (form.password.invalid ? " Token;" : "");
     }
+  }
+
+  public signInAzure() {
+    this.dialog.showSppinerOverlay("Logando...", 300000);
+    this.go.openPopup(this.globals.servidorURL + "/web/login-azure-redirect");
   }
 
 }

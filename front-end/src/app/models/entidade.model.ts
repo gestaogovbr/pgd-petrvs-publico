@@ -53,7 +53,5 @@ export class Entidade extends Base {
     public gestor_substituto_id: string | null = null; // Usuário gestor substituto da unidade
     public forma_contagem_carga_horaria: TipoCargaHoraria = "DIA"; // Forma de contagem padrão da carga horária
 
-    constructor(){
-        super();
-    }
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

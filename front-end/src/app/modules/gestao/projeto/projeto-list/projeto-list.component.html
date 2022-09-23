@@ -34,6 +34,12 @@
                 <badge color="light" icon="bi bi-box-arrow-in-right" [label]="util.getDateTimeFormatted(row.termino)" hint="Data de término"></badge>
             </ng-template>
         </column>
+        <column title="Custo" [template]="columnCusto">
+            <ng-template let-row="row" #columnCusto>
+                <badge *ngIf="!row.calcula_custos" color="warning" icon="bi bi-dash-square" label="Não calcula" hint="Projeto configurado para não calcular custos"></badge><br>
+                <badge *ngIf="row.calcula_custos" color="light" icon="bi bi-cash-coin" [label]="util.formatDecimal(row.custo)" hint="Data de término"></badge>
+            </ng-template>
+        </column>
         <column title="Progresso" [template]="columnProgresso">
             <ng-template let-row="row" #columnProgresso>
                 <progress-bar [value]="row.progresso" color="success"></progress-bar>

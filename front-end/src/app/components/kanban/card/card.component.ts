@@ -33,6 +33,8 @@ export class CardComponent implements OnInit {
     return this._placeholderTemplate || this.kanban?.placeholderTemplate;
   }
 
+  public metadata: any = {};
+
   private _template?: TemplateRef<unknown>;
   private _placeholderTemplate?: TemplateRef<unknown>;
 

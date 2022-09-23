@@ -12,8 +12,5 @@ export class ProjetoEnvolvido extends Base {
     public recurso_id: string = "";
     public regra_id: string | null = null;
 
-    constructor(){
-        super();
-    }
-
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

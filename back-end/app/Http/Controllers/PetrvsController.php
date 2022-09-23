@@ -10,7 +10,17 @@ use App\Services\PetrvsService;
 class PetrvsController extends Controller
 {
     public function environmentConfig(Request $request) {
-        return response()->view('environment-config', ['entidade' => config('petrvs')['entidade']])
+        $app_config = config("app");
+        $pretrvs_config = config("petrvs");
+        $config = json_encode([
+            "api_url" => $app_config["url"],
+            "entidade" => $pretrvs_config["entidade"],
+            "suporte_url" => $pretrvs_config["suporte"], 
+            "logo_url" => $pretrvs_config["logo"], 
+            "versao" => $app_config["version"],
+            "login" => $pretrvs_config["login"]
+        ]);
+        return response()->view('environment-config', ["config" => $config])
             ->header('Content-Type', 'application/javascript');
     }
 

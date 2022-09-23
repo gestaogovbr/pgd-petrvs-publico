@@ -9,7 +9,5 @@ export class Capacidade extends Base {
     public data_inicio: Date = new Date(); /* Data de início */
     public data_fim: Date | null = null; /* Data do fim */
 
-    constructor(){
-        super();
-    }
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

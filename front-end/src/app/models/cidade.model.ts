@@ -7,7 +7,5 @@ export class Cidade extends Base {
     public uf: string = "AC"; //Unidade da federação
     public timezone: number = 0; //Timezone da cidade
 
-    constructor(){
-        super();
-    }
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

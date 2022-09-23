@@ -24,7 +24,6 @@ export class InputButtonComponent extends InputBase implements OnInit {
   @Input() label: string = "";
   @Input() labelInfo: string = "";
   @Input() bold: boolean = false;
-  @Input() value: any = "";
   @Input() size: number = 0;
   @Input() loading: boolean = false;
   @Input() numbers?: string; 
@@ -34,6 +33,12 @@ export class InputButtonComponent extends InputBase implements OnInit {
   @Input() source?: any;
   @Input() path?: string;
   @Input() maxLength?: number;
+  @Input() set value(value: any) {
+    this.formControl.setValue(value);
+  }
+  get value(): any {
+    return this.formControl.value;
+  } 
   @Input() set control(value: AbstractControl | undefined) {
     this._control = value;
   }

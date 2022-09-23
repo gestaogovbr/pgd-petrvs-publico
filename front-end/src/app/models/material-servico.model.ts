@@ -1,7 +1,7 @@
 import { Base } from './base.model';
 
 export type MaterialServicoTipo = "MATERIAL" | "SERVICO";
-export type MaterialServicoUnidade = "UNIDADE" | "CAIXA" | "METRO" | "KILO" | "LITRO" | "DUZIA" | "FARDO" | "HORAS" | "DIAS" | "PACOTE" | "FRASCO";
+export type MaterialServicoUnidade = "UNIDADE" | "CAIXA" | "METRO" | "KILO" | "LITRO" | "DUZIA" | "MONETARIO" | "HORAS" | "DIAS" | "PACOTE";
 
 export class MaterialServico extends Base {
 
@@ -13,8 +13,5 @@ export class MaterialServico extends Base {
     public data_inicio: Date = new Date(); /* Data de início */
     public data_fim: Date | null = null; /* Data do fim */
 
-    constructor(){
-        super();
-    }
-
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

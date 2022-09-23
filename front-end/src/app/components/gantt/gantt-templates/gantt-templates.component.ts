@@ -8,12 +8,33 @@ import { IIndexable } from 'src/app/models/base.model';
 })
 export class GanttTemplatesComponent implements OnInit {
     @Input() id: string = "";
+    @Input() set hasTime(value: boolean) {
+        if(this._hasTime != value) {
+            this._hasTime = value;
+            this.buildTemplates();
+        }
+    }
+    get hasTime(): boolean {
+        return this._hasTime;
+    }
+    @Input() set hasCost(value: boolean) {
+        if(this._hasCost != value) {
+            this._hasCost = value;
+            this.buildTemplates();
+        }
+    }
+    get hasCost(): boolean {
+        return this._hasCost;
+    }
 
     constructor() { }
 
     public startComment = "";
     public endComment = "";
     public templates: IIndexable = {};
+
+    public _hasTime: boolean = false;
+    public _hasCost: boolean = false;
 
     ngOnInit(): void {
         this.buildTemplates();
@@ -48,9 +69,9 @@ export class GanttTemplatesComponent implements OnInit {
                     <span class="ganttButtonSeparator"></span>
                     <button onclick="ge.gantt.showCriticalPath=!ge.gantt.showCriticalPath; ge.redraw();return false;" class="button textual icon requireCanSeeCriticalPath" title="CRITICAL_PATH"><span class="teamworkIcon">&pound;</span></button>
                     <span class="ganttButtonSeparator requireCanSeeCriticalPath"></span>
-                    <button onclick="ge.splitter.resize(.1);return false;" class="button textual icon"><span class="teamworkIcon">F</span></button>
-                    <button onclick="ge.splitter.resize(50);return false;" class="button textual icon"><span class="teamworkIcon">O</span></button>
-                    <button onclick="ge.splitter.resize(100);return false;" class="button textual icon"><span class="teamworkIcon">R</span></button>
+                    <button onclick="$('#` + workSpace + `').trigger('splitter.gantt', [.1]);return false;" class="button textual icon"><span class="teamworkIcon">F</span></button>
+                    <button onclick="$('#` + workSpace + `').trigger('splitter.gantt', [50]);return false;" class="button textual icon"><span class="teamworkIcon">O</span></button>
+                    <button onclick="$('#` + workSpace + `').trigger('splitter.gantt', [100]);return false;" class="button textual icon"><span class="teamworkIcon">R</span></button>
                     <span class="ganttButtonSeparator"></span>
                     <button onclick="$('#` + workSpace + `').trigger('fullScreen.gantt');return false;" class="button textual icon" style="display:none;" title="FULLSCREEN" id="fullscrbtn"><span class="teamworkIcon">@</span></button>
                     <button onclick="ge.element.toggleClass('colorByStatus' );return false;" class="button textual icon" style="display:none;"><span class="teamworkIcon">&sect;</span></button>
@@ -70,9 +91,10 @@ export class GanttTemplatesComponent implements OnInit {
                         <th class="gdfColHeader" style="width:25px; display: none;"></th>
                         <th class="gdfColHeader gdfResizable" style="width:100px; display: none;">code/short name</th>
                         <th class="gdfColHeader gdfResizable" style="width:300px;">Nome</th>
-                        <th class="gdfColHeader" align="center" style="width:17px; display: none;" title="Start date is a milestone."><span class="teamworkIcon" style="font-size: 8px;">^</span></th>
+                        ` + this.tableCostTemplate("HEAD") + `
+                        <th class="gdfColHeader" align="center" style="width:17px; display: none;" title="Inicio é um marco."><span class="teamworkIcon" style="font-size: 8px;">^</span></th>
                         <th class="gdfColHeader gdfResizable" style="width:80px;">Início</th>
-                        <th class="gdfColHeader" align="center" style="width:17px; display: none;" title="End date is a milestone."><span class="teamworkIcon" style="font-size: 8px;">^</span></th>
+                        <th class="gdfColHeader" align="center" style="width:17px; display: none;" title="Termino é um marco."><span class="teamworkIcon" style="font-size: 8px;">^</span></th>
                         <th class="gdfColHeader gdfResizable" style="width:80px;">Fim</th>
                         <th class="gdfColHeader gdfResizable" style="width:50px;">Dur.</th>
                         <th class="gdfColHeader gdfResizable" style="width:20px;">%</th>
@@ -84,14 +106,10 @@ export class GanttTemplatesComponent implements OnInit {
         this.templates["TASKROW"] =
             `<tr id="tid_(#=obj.id#)" taskId="(#=obj.id#)" class="taskEditRow (#=obj.isParent()?'isParent':''#) (#=obj.collapsed?'collapsed':''#)" level="(#=level#)">
                 <th class="gdfCell edit" align="right" style="cursor:pointer;"><span class="taskRowIndex">(#=obj.getRow()+1#)</span> <span class="teamworkIcon" style="font-size:12px;">e</span></th>
-                <td class="gdfCell noClip" align="center" style="display: none;">
-                    <div class="taskStatus cvcColorSquare" status="(#=obj.status#)"></div>
-                </td>
+                <td class="gdfCell noClip" align="center" style="display: none;"><div class="taskStatus cvcColorSquare" status="(#=obj.status#)"></div></td>
                 <td class="gdfCell" style="display: none;"><input type="text" name="code" value="(#=obj.code?obj.code:''#)" placeholder="code/short name"></td>
-                <td class="gdfCell indentCell" style="padding-left:(#=obj.level*10+18#)px;">
-                    <div class="exp-controller" align="center"></div>
-                    <input type="text" name="name" value="(#=obj.name#)" placeholder="name">
-                </td>
+                <td class="gdfCell indentCell" style="padding-left:(#=obj.level*10+18#)px;"><div class="exp-controller" align="center"></div><input type="text" name="name" value="(#=obj.name#)" placeholder="name"></td>
+                ` + this.tableCostTemplate("ROW") + `
                 <td class="gdfCell" align="center" style="display: none;"><input type="checkbox" name="startIsMilestone"></td>
                 <td class="gdfCell"><input type="text" name="start" value="" class="date"></td>
                 <td class="gdfCell" align="center" style="display: none;"><input type="checkbox" name="endIsMilestone"></td>
@@ -107,6 +125,7 @@ export class GanttTemplatesComponent implements OnInit {
                 <td class="gdfCell noClip" style="display: none;" align="center"></td>
                 <td class="gdfCell" style="display: none;"></td>
                 <td class="gdfCell"></td>
+                ` + this.tableCostTemplate("EMPTY") + `
                 <td class="gdfCell" style="display: none;"></td>
                 <td class="gdfCell"></td>
                 <td class="gdfCell" style="display: none;"></td>
@@ -227,6 +246,14 @@ export class GanttTemplatesComponent implements OnInit {
                 <td><input type="text" name="name" value="(#=obj.name#)" style="width:100%;" class="formElements"></td>
                 <td align="center"><span class="teamworkIcon delRes del" style="cursor: pointer">d</span></td>
             </tr>`;
+    }
+
+    public tableCostTemplate(type: string): string {
+        return !this.hasCost ? "" : (type == "HEAD" ? 
+            `<th class="gdfColHeader gdfResizable" style="width:300px;">Custo</th>` : (type == "ROW" ? 
+            `<td class="gdfCell" style="display: none;"><input type="text" name="cost" value="(#=obj.cust?obj.cust:''#)" placeholder="Custo"></td>` :
+            `<td class="gdfCell"></td>`
+        ));
     }
 
     public get keys(): string[] {
