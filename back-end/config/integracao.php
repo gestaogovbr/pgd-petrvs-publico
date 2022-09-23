@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'tipo' => env('INTEGRACAO_TIPO', "WSO2"),
     'codigoUnidadeRaiz' => env('INTEGRACAO_CODIGO_UNIDADE_RAIZ', ""),
     'baseUrlunidades' => env('INTEGRACAO_BASE_URL_UNIDADES', ""),
     'baseUrlpessoas' => env('INTEGRACAO_BASE_URL_PESSOAS', ""),
@@ -16,5 +17,17 @@ return [
         'authorization' => env('INTEGRACAO_GENERATE_TOKEN_AUTHORIZATION', ""),
         'user' => env('INTEGRACAO_GENERATE_TOKEN_USER', ""),
         'password' => env('INTEGRACAO_GENERATE_TOKEN_PASSWORD', "")
+    ],
+    'siape' => [
+        'upag' => env('INTEGRACAO_SIAPE_UPAG', ""),
+        'url' => env('INTEGRACAO_SIAPE_URL', ""),
+        'siglaSistema' => env('INTEGRACAO_SIAPE_SIGLASISTEMA', ""),
+        'nomeSistema' => env('INTEGRACAO_SIAPE_NOMESISTEMA', ""),
+        'senha' => env('INTEGRACAO_SIAPE_SENHA', ""),
+        'cpf' => env('INTEGRACAO_SIAPE_CPF', ""),
+        'codOrgao' => env('INTEGRACAO_SIAPE_CODORGAO', ""),
+        'codUorg' => env('INTEGRACAO_SIAPE_CODUORG', ""),
+        'parmExistPag' => env('INTEGRACAO_SIAPE_PARMEXISTPAG', ""),
+        'parmTipoVinculo' => env('INTEGRACAO_SIAPE_PARMTIPOVINCULO', "")
     ]
 ];
