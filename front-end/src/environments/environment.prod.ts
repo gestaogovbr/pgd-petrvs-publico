@@ -1,5 +1,20 @@
+const webBrowser = (chrome || browser);
+const defaultExtensionOptionsConfig = { /* Configuração utilizada para acessas as configurações da extensão */
+  api_url: webBrowser?.runtime?.getURL ? webBrowser.runtime.getURL("") : "",
+  suporte_url: "https://suporte.prf.gov.br",
+  entidade: "PRF",
+  logo_url: "logo-login-prf.png",
+  versao: "1.0.0",
+  login: {
+    gsuit: true,
+    azure: true,
+    institucional: false,
+    firebase: false,
+    user_password: false
+  }
+};
 //@ts-ignore
-const global: any = typeof GLOBAL_PETRVS_CONFIG != "undefined" ? GLOBAL_PETRVS_CONFIG : undefined;
+const global: any = typeof GLOBAL_PETRVS_CONFIG != "undefined" ? GLOBAL_PETRVS_CONFIG : defaultExtensionOptionsConfig;
 //@ts-ignore
 const URL = typeof EXTENSION_SERVIDOR_URL != "undefined" ? EXTENSION_SERVIDOR_URL : typeof EXTENSION_BASE_URL != "undefined" ? EXTENSION_BASE_URL : global.api_url;
 const HOST =  URL.replace(/^https?:\/\//, "").replace(/\/$/, "");

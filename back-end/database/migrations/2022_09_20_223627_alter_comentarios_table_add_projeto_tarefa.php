@@ -13,7 +13,7 @@ class AlterComentariosTableAddProjetoTarefa extends Migration
      */
     public function up()
     {
-        Schema::table('usuarios', function (Blueprint $table) {
+        Schema::table('comentarios', function (Blueprint $table) {
             $table->foreignUuid('projeto_id')->nullable()->constrained("projetos")->onDelete('restrict')->onUpdate('cascade')->comment("Projeto");
             $table->foreignUuid('projeto_tarefa_id')->nullable()->constrained("projetos_tarefas")->onDelete('restrict')->onUpdate('cascade')->comment("Tarefa do projeto");
         });
@@ -26,7 +26,7 @@ class AlterComentariosTableAddProjetoTarefa extends Migration
      */
     public function down()
     {
-        Schema::table('usuarios', function (Blueprint $table) {
+        Schema::table('comentarios', function (Blueprint $table) {
             $table->dropColumn('projeto_id');
             $table->dropColumn('projeto_tarefa_id');
         });

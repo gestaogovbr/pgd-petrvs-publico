@@ -1,1 +1,53 @@
-<p>comentarios works!</p>
+<editable-form [form]="form!" [noButtons]="!entity_id ? 'true' : undefined" (submit)="onSaveData()" (cancel)="onCancel()">
+    <grid [control]="gridControl" #comentarios [hasEdit]="false" [hasDelete]="false" [add]="addComentario.bind(this)" [form]="formComentarios" [load]="loadComentario.bind(this)" [save]="saveComentario.bind(this)" editable>
+        <columns>
+            <column title="Comentários" [template]="mensagem" [editTemplate]="mensagemEdit">
+                <ng-template let-row="row" #mensagem>
+                    <table class="comentario-table">
+                        <tr>
+                            <td *ngIf="comentario.comentarioLevel(row).length > 0" class="d-none d-md-table-cell" [style.width.px]="comentario.comentarioLevel(row).length * 20">&nbsp;</td>
+                            <td class="comentario-user text-center">
+                                <profile-picture [url]="row.usuario?.url_foto" [hint]="row.usuario?.nome || 'Desconhecido'"></profile-picture><br>
+                                <ng-container *ngFor="let dot of comentario.comentarioLevel(row)">
+                                    <span class="comentario-level">•</span><br>
+                                </ng-container>
+                            </td>
+                            <td class="comentario-container">
+                                <span class="comentario-user-indicator"></span>
+                                <h6 class="comentario-message-title">
+                                    {{row.usuario?.nome || "Desconhecido"}}
+                                    <span>{{lookup.getValue(lookup.COMENTARIO_TIPO, row.tipo)}}</span>
+                                    <span>{{lookup.getValue(lookup.COMENTARIO_PRIVACIDADE, row.privacidade)}}</span>
+                                    <span>{{util.getDateTimeFormatted(row.data_hora)}}</span>
+                                </h6>
+                                <p class="fw-light">{{row.texto}}</p>
+                            </td>
+                        </tr>
+                    </table>
+                </ng-template>
+                <ng-template let-row="row" #mensagemEdit>
+                    <div class="row">
+                        <div class="col-md-1 comentario-user text-center">
+                            <profile-picture [url]="row.usuario?.url_foto" [hint]="row.usuario?.nome || 'Desconhecido'"></profile-picture><br>
+                            <ng-container *ngFor="let dot of comentario.comentarioLevel(row)">
+                                <span class="comentario-level">•</span><br>
+                            </ng-container>
+                        </div>
+                        <div class="col-md-7">
+                            <input-textarea #texto [size]="12" [rows]="3" label="Mensagem" icon="bi bi-textarea-t" controlName="texto" [control]="formComentarios!.controls.texto"></input-textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="row">
+                                <input-select [size]="12" label="Tipo" icon="bi bi-braces" controlName="tipo" [control]="formComentarios!.controls.tipo" [items]="comentarioTipos"></input-select>
+                            </div>
+                            <div class="row">
+                                <input-select [size]="12" label="privacidade" icon="bi bi-incognito" controlName="privacidade" [control]="formComentarios!.controls.privacidade" [items]="lookup.COMENTARIO_PRIVACIDADE"></input-select>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </column>
+            <column type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+        </columns>
+    </grid>
+</editable-form>

@@ -1,6 +1,6 @@
 <editable-form [form]="form!" [disabled]="formDisabled" (submit)="onSaveData()" (cancel)="onCancel()">
-    <tabs display right [hidden]="isComentarios ? 'true' : undefined" [title]="tituloDemanda">
-        <tab *ngIf="!isComentarios" key="ATIVIDADE" label="Atividade">
+    <tabs display right [title]="tituloDemanda">
+        <tab key="ATIVIDADE" label="Atividade">
             <separator *ngIf="isDemandaProcessual || gb.isExtension" transparent bottom>
                 <div class="row">
                     <input-button label="Número Processo" [size]="4" #procRequisicao controlName="numero_processo" [control]="form!.controls.numero_processo" [disabled]="!gb.isExtension || form!.controls.numero_requisicao.value?.length ? 'true' : undefined" (buttonClick)="onProcessoRequisicaoClick($event)" labelInfo="Número do processo, com a formatação de origem"></input-button>
@@ -30,7 +30,7 @@
                 <input-timer [onlyDays]="prazoEmDias" [onlyHours]="prazoEmHoras" [size]="3" [label]="lex.noun('Tempo planejado')" #planejado controlName="tempo_planejado" [control]="form!.controls.tempo_planejado" (change)="onTempoPlanejadoChange($event)" labelInfo="Diferença entre data_distribuicao e prazo_entrega em horas (úteis ou corridas, configurada na unidade)"></input-timer>
             </div>
         </tab>
-        <tab *ngIf="!isComentarios" key="ENTREGAS" [label]="lex.noun('Entrega', true)">
+        <tab key="ENTREGAS" [label]="lex.noun('Entrega', true)">
             <demanda-list-entrega [control]="form!.controls.entregas" [demanda]="entity" [disabled]="formDisabled"></demanda-list-entrega>
             <!--grid [control]="form!.controls.entregas" [add]="addEntrega.bind(this)" [hasDelete]="true" editable>
                 <columns>
@@ -70,7 +70,7 @@
                 </columns>
             </grid//-->
         </tab>
-        <tab *ngIf="!isComentarios" key="CARACTERIZACAO" label="Caracterização">
+        <tab key="CARACTERIZACAO" label="Caracterização">
             <div class="row">
                 <input-multiselect label="Etiquetas" controlName="etiquetas" [size]="8" [control]="form!.controls.etiquetas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
                     <input-select [size]="12" #etiqueta controlName="etiqueta" [control]="form!.controls.etiqueta" [items]="etiquetas"></input-select>
@@ -88,7 +88,8 @@
         </tab>
         <tab key="COMENTARIOS" label="Comentários">
             <div clss="row">
-                <grid [control]="form!.controls.comentarios" #comentarios [hasEdit]="false" [hasDelete]="false" [add]="addComentario.bind(this)" [form]="formComentarios" [load]="loadComentario.bind(this)" [save]="saveComentario.bind(this)" editable>
+                <comentarios #comentarios origem="DEMANDA" [control]="form!.controls.comentarios"></comentarios>
+                <!--grid [control]="form!.controls.comentarios" #comentarios [hasEdit]="false" [hasDelete]="false" [add]="addComentario.bind(this)" [form]="formComentarios" [load]="loadComentario.bind(this)" [save]="saveComentario.bind(this)" editable>
                     <columns>
                         <column title="Comentários" [template]="mensagem" [editTemplate]="mensagemEdit">
                             <ng-template let-row="row" #mensagem>
@@ -96,7 +97,7 @@
                                     <tr>
                                         <td *ngIf="comentario.comentarioLevel(row).length > 0" class="d-none d-md-table-cell" [style.width.px]="comentario.comentarioLevel(row).length * 20">&nbsp;</td>
                                         <td class="comentario-user text-center">
-                                            <img [src]="row.usuario?.url_foto || './assets/images/profile.png'" class="rounded-circle profile-photo" onerror="this.src='./assets/images/profile.png'" width="25" height="25"><br>
+                                            <profile-picture [url]="row.usuario?.url_foto" [hint]="row.usuario?.nome || 'Desconhecido'"></profile-picture><br>
                                             <ng-container *ngFor="let dot of comentario.comentarioLevel(row)">
                                                 <span class="comentario-level">•</span><br>
                                             </ng-container>
@@ -132,10 +133,10 @@
                         </column>
                         <column type="options" [dynamicOptions]="comentarioDynamicOptions.bind(this)"></column>
                     </columns>
-                </grid>
+                </grid//-->
             </div>
         </tab>
-        <tab *ngIf="!isComentarios" key="COMPLEMENTARES" label="Complementares">
+        <tab key="COMPLEMENTARES" label="Complementares">
             <div class="row">
                 <input-text numbers label="ID processo" [size]="3" controlName="id_processo" [control]="form!.controls.id_processo" disabled labelInfo="ID do processo, caso seja Sei será o ID do procedimento"></input-text>
                 <input-text numbers label="ID requisição" [size]="3" controlName="id_requisicao" [control]="form!.controls.id_requisicao" disabled labelInfo="ID da requisição do sistema integrado, caso seja o Sei será o ID_Documento"></input-text>
@@ -163,7 +164,7 @@
                 </div>
             </div>
         </tab>
-        <tab *ngIf="!isComentarios && !!form.controls.data_entrega.value" key="CONCLUSAO" label="Conclusão">
+        <tab *ngIf="!!form.controls.data_entrega.value" key="CONCLUSAO" label="Conclusão">
             <div class="row">
                 <input-datetime noIcon [size]="4" label="Inicio" controlName="data_inicio" [control]="form!.controls.data_inicio" disabled labelInfo="Data em que o usuário iniciou a atividade"></input-datetime>
                 <input-datetime noIcon [size]="4" label="Entrega" controlName="data_entrega" [control]="form!.controls.data_entrega" disabled labelInfo="Data estipulada para entrega da demanda"></input-datetime>

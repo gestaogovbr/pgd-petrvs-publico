@@ -186,7 +186,7 @@ export class AppComponent {
   }
 
   public get usuarioFoto(): string {
-    return this.auth.usuario?.url_foto || "./assets/images/profile.png";
+    return this.auth.usuario?.url_foto || "assets/images/profile.png";
   }
 
   public onCollapseContainerClick() {

@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { BootstrapService } from 'src/app/services/bootstrap.service';
+import { GlobalsService } from 'src/app/services/globals.service';
 import { UtilService } from 'src/app/services/util.service';
 import { GanttAssignment, GanttProject, GanttResource, GanttRole, GanttTask } from './gantt-models';
 
@@ -27,7 +28,7 @@ export class GanttComponent implements OnInit {
   private _project: GanttProject = new GanttProject();
   private initialized: boolean = false;
 
-  constructor(public bootstrap: BootstrapService, public util: UtilService) {
+  constructor(public bootstrap: BootstrapService, public util: UtilService, public gb: GlobalsService) {
     this.id = util.md5();
   }
 
@@ -275,10 +276,10 @@ export class GanttComponent implements OnInit {
       {"id": -8, "name": "test on chrome", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "depends": "6", "canWrite": true, "start": 1399327200000, "duration": 2, "end": 1399499999999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false}
     ], "selectedRow": 2, "deletedTaskIds": [],
     "resources": [
-      {"id": "tmp_1", "name": "Resource 1", picture: "./assets/images/profile.png"},
-      {"id": "tmp_2", "name": "Resource 2", picture: "./assets/images/profile.png"},
-      {"id": "tmp_3", "name": "Resource 3", picture: "./assets/images/profile.png"},
-      {"id": "tmp_4", "name": "Resource 4", picture: "./assets/images/profile.png"}
+      {"id": "tmp_1", "name": "Resource 1", picture: this.gb.servidorURL + "/assets/images/profile.png"},
+      {"id": "tmp_2", "name": "Resource 2", picture: this.gb.servidorURL + "/assets/images/profile.png"},
+      {"id": "tmp_3", "name": "Resource 3", picture: this.gb.servidorURL + "/assets/images/profile.png"},
+      {"id": "tmp_4", "name": "Resource 4", picture: this.gb.servidorURL + "/assets/images/profile.png"}
     ],
     "roles":       [
       {"id": "tmp_1", "name": "Project Manager"},

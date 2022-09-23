@@ -318,11 +318,11 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
       const regra = alocacao.regra ? "\n(" + alocacao.regra.nome + ")" : "";
       const nome = alocacao.recurso?.nome?.length ? alocacao.recurso.nome + "\n" : "";
       switch(alocacao.recurso?.tipo) {
-        case 'HUMANO': result.push({ url: alocacao.recurso.usuario?.url_foto || "./assets/images/projetos/usuario.png", hint: nome + "Usuario: " + (alocacao.recurso.usuario?.nome || "(DESCONHECIDO)") + regra }); break;
-        case 'MATERIAL': result.push({ url: "./assets/images/projetos/material.png", hint: nome + "Material: " + (alocacao.recurso.material_servico?.descricao || "(DESCONHECIDO)") + regra }); break;
-        case 'SERVICO': result.push({ url: "./assets/images/projetos/servico.png", hint: nome + "Servico: " + (alocacao.recurso.material_servico?.descricao || "(DESCONHECIDO)") + regra }); break;
-        case 'CUSTO': result.push({ url: "./assets/images/projetos/custo.png", hint: nome + "Valor: " + this.util.formatDecimal(alocacao.recurso.valor) + regra }); break;
-        case 'DEPARTAMENTO': result.push({ url: "./assets/images/projetos/unidade.png", hint: nome + "Unidade: " + (alocacao.recurso.unidade?.nome || "(DESCONHECIDO)") + regra }); break;
+        case 'HUMANO': result.push({ url: alocacao.recurso.usuario?.url_foto || "assets/images/projetos/usuario.png", hint: nome + "Usuario: " + (alocacao.recurso.usuario?.nome || "(DESCONHECIDO)") + regra }); break;
+        case 'MATERIAL': result.push({ url: "assets/images/projetos/material.png", hint: nome + "Material: " + (alocacao.recurso.material_servico?.descricao || "(DESCONHECIDO)") + regra }); break;
+        case 'SERVICO': result.push({ url: "assets/images/projetos/servico.png", hint: nome + "Servico: " + (alocacao.recurso.material_servico?.descricao || "(DESCONHECIDO)") + regra }); break;
+        case 'CUSTO': result.push({ url: "assets/images/projetos/custo.png", hint: nome + "Valor: " + this.util.formatDecimal(alocacao.recurso.valor) + regra }); break;
+        case 'DEPARTAMENTO': result.push({ url: "assets/images/projetos/unidade.png", hint: nome + "Unidade: " + (alocacao.recurso.unidade?.nome || "(DESCONHECIDO)") + regra }); break;
       }
     }
     if(metadata) {
@@ -453,10 +453,10 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
         return castTypes.hasOwnProperty(tipo) ? castTypes[tipo] : "MATERIAL";
       };
       const toGanttPicture = (recurso: ProjetoRecurso): string => {
-        return (recurso.tipo == "HUMANO" ? recurso.usuario?.url_foto || "/assets/images/projetos/usuario.png" :
-               (recurso.tipo == "CUSTO" ? "/assets/images/projetos/custo.png" :
-               (recurso.tipo == "DEPARTAMENTO" ? "/assets/images/projetos/unidade.png" :
-               (recurso.tipo == "SERVICO" ? "/assets/images/projetos/servico.png" : "/assets/images/projetos/material.png"))));
+        return (recurso.tipo == "HUMANO" ? recurso.usuario?.url_foto || "assets/images/projetos/usuario.png" :
+               (recurso.tipo == "CUSTO" ? "assets/images/projetos/custo.png" :
+               (recurso.tipo == "DEPARTAMENTO" ? "assets/images/projetos/unidade.png" :
+               (recurso.tipo == "SERVICO" ? "assets/images/projetos/servico.png" : "assets/images/projetos/material.png"))));
       };
       const toGanttUnity = (unidade: MaterialServicoUnidade): GanttResourceUnity => {
         const castUnity: IIndexable = {

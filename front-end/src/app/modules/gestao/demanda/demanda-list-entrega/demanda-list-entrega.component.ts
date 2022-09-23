@@ -181,22 +181,6 @@ export class DemandaListEntregaComponent extends PageBase {
     this.go.navigate({route: ['gestao', 'demanda', 'entrega', row.id, 'comentar']}, {modal: true, metadata: {entrega: row, demanda: this.demanda}, modalClose: this.addComentarioResult.bind(this)});
   }
 
-  public addComentarioResult(modalResult: DemandaEntrega) {
-    if(modalResult) {
-      this.dao!.getById(modalResult.id, this.join).then(entrega => {
-        if (entrega) {
-          const entregas = this.control.value || [];
-          const index = entregas.findIndex((x: DemandaEntrega) => x.id = entrega.id);
-          if(index >= 0) {
-            entregas[index] = entrega;
-            this.control.setValue(entregas);
-            this.cdRef.detectChanges();
-          }
-        }
-      });
-    }
-  }
-
   public onProcessoClick(row: any) {
     this.allPages.openDocumentoSei(row.id_processo, row.id_documento);
   }
@@ -214,6 +198,22 @@ export class DemandaListEntregaComponent extends PageBase {
       return !!saved;
     } catch (error) {
       return false;
+    }
+  }
+
+  public addComentarioResult(modalResult: DemandaEntrega) {
+    if(modalResult) {
+      this.dao!.getById(modalResult.id, this.join).then(entrega => {
+        if (entrega) {
+          const entregas = this.control.value || [];
+          const index = entregas.findIndex((x: DemandaEntrega) => x.id = entrega.id);
+          if(index >= 0) {
+            entregas[index] = entrega;
+            this.control.setValue(entregas);
+            this.cdRef.detectChanges();
+          }
+        }
+      });
     }
   }
 

@@ -590,19 +590,19 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
             const nome = ((_b = (_a = alocacao.recurso) === null || _a === void 0 ? void 0 : _a.nome) === null || _b === void 0 ? void 0 : _b.length) ? alocacao.recurso.nome + "\n" : "";
             switch ((_c = alocacao.recurso) === null || _c === void 0 ? void 0 : _c.tipo) {
                 case 'HUMANO':
-                    result.push({ url: ((_d = alocacao.recurso.usuario) === null || _d === void 0 ? void 0 : _d.url_foto) || "./assets/images/projetos/usuario.png", hint: nome + "Usuario: " + (((_e = alocacao.recurso.usuario) === null || _e === void 0 ? void 0 : _e.nome) || "(DESCONHECIDO)") + regra });
+                    result.push({ url: ((_d = alocacao.recurso.usuario) === null || _d === void 0 ? void 0 : _d.url_foto) || "assets/images/projetos/usuario.png", hint: nome + "Usuario: " + (((_e = alocacao.recurso.usuario) === null || _e === void 0 ? void 0 : _e.nome) || "(DESCONHECIDO)") + regra });
                     break;
                 case 'MATERIAL':
-                    result.push({ url: "./assets/images/projetos/material.png", hint: nome + "Material: " + (((_f = alocacao.recurso.material_servico) === null || _f === void 0 ? void 0 : _f.descricao) || "(DESCONHECIDO)") + regra });
+                    result.push({ url: "assets/images/projetos/material.png", hint: nome + "Material: " + (((_f = alocacao.recurso.material_servico) === null || _f === void 0 ? void 0 : _f.descricao) || "(DESCONHECIDO)") + regra });
                     break;
                 case 'SERVICO':
-                    result.push({ url: "./assets/images/projetos/servico.png", hint: nome + "Servico: " + (((_g = alocacao.recurso.material_servico) === null || _g === void 0 ? void 0 : _g.descricao) || "(DESCONHECIDO)") + regra });
+                    result.push({ url: "assets/images/projetos/servico.png", hint: nome + "Servico: " + (((_g = alocacao.recurso.material_servico) === null || _g === void 0 ? void 0 : _g.descricao) || "(DESCONHECIDO)") + regra });
                     break;
                 case 'CUSTO':
-                    result.push({ url: "./assets/images/projetos/custo.png", hint: nome + "Valor: " + this.util.formatDecimal(alocacao.recurso.valor) + regra });
+                    result.push({ url: "assets/images/projetos/custo.png", hint: nome + "Valor: " + this.util.formatDecimal(alocacao.recurso.valor) + regra });
                     break;
                 case 'DEPARTAMENTO':
-                    result.push({ url: "./assets/images/projetos/unidade.png", hint: nome + "Unidade: " + (((_h = alocacao.recurso.unidade) === null || _h === void 0 ? void 0 : _h.nome) || "(DESCONHECIDO)") + regra });
+                    result.push({ url: "assets/images/projetos/unidade.png", hint: nome + "Unidade: " + (((_h = alocacao.recurso.unidade) === null || _h === void 0 ? void 0 : _h.nome) || "(DESCONHECIDO)") + regra });
                     break;
             }
         }
@@ -733,10 +733,10 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
             };
             const toGanttPicture = (recurso) => {
                 var _a;
-                return (recurso.tipo == "HUMANO" ? ((_a = recurso.usuario) === null || _a === void 0 ? void 0 : _a.url_foto) || "/assets/images/projetos/usuario.png" :
-                    (recurso.tipo == "CUSTO" ? "/assets/images/projetos/custo.png" :
-                        (recurso.tipo == "DEPARTAMENTO" ? "/assets/images/projetos/unidade.png" :
-                            (recurso.tipo == "SERVICO" ? "/assets/images/projetos/servico.png" : "/assets/images/projetos/material.png"))));
+                return (recurso.tipo == "HUMANO" ? ((_a = recurso.usuario) === null || _a === void 0 ? void 0 : _a.url_foto) || "assets/images/projetos/usuario.png" :
+                    (recurso.tipo == "CUSTO" ? "assets/images/projetos/custo.png" :
+                        (recurso.tipo == "DEPARTAMENTO" ? "assets/images/projetos/unidade.png" :
+                            (recurso.tipo == "SERVICO" ? "assets/images/projetos/servico.png" : "assets/images/projetos/material.png"))));
             };
             const toGanttUnity = (unidade) => {
                 const castUnity = {
@@ -12026,6 +12026,7 @@ class Projeto extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.usuario_id = null;
         this.tipo_projeto_id = "";
         this.kanban_dockers = [];
+        this.comentarios = []; /* Comentarios do projeto */
         this.initialization(data);
     }
 }
@@ -12425,13 +12426,13 @@ class ProjetoListComponent extends src_app_modules_base_page_list_base__WEBPACK_
         for (let envolvido of projeto.envolvidos || []) {
             if ((_a = envolvido.recurso) === null || _a === void 0 ? void 0 : _a.usuario) {
                 result.push({
-                    url: envolvido.recurso.usuario.url_foto || "./assets/images/projetos/usuario.png",
+                    url: envolvido.recurso.usuario.url_foto || "assets/images/projetos/usuario.png",
                     hint: "Usuario: " + envolvido.recurso.usuario.nome + (envolvido.regra ? "\n(" + envolvido.regra.nome + ")" : "")
                 });
             }
             else if ((_b = envolvido.recurso) === null || _b === void 0 ? void 0 : _b.unidade) {
                 result.push({
-                    url: "./assets/images/projetos/unidade.png",
+                    url: "assets/images/projetos/unidade.png",
                     hint: "Usuario: " + envolvido.recurso.unidade.nome + (envolvido.regra ? "\n(" + envolvido.regra.nome + ")" : "")
                 });
             }
@@ -13465,6 +13466,7 @@ class ProjetoTarefa extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.custos_proprios = true; /* Se possui custos próprios (somente se tem_filhos) */
         this.soma_custos_filhos = true; /* Se possui custos filhos (somente se tem_filhos) */
         this.etiquetas = []; /* Etiquetas */
+        this.comentarios = []; /* Comentarios do projeto */
         this.projeto_id = "";
         this.tarefa_pai_id = null;
         this.terefa_projeto_id = null; /* Projeto que será incorporado como uma tarefa */
