@@ -1,0 +1,24 @@
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+    [selectable]="selectable" (select)="onSelect($event)">
+    <toolbar *ngIf="!selectable"></toolbar>
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+<!--             <input-search [size]="6" label="Usuário" icon="bi bi-person" controlName="usuario" [control]="filter!.controls.usuario" [dao]="dao"
+                [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
+            <input-select [size]="6" label="Tabela" icon="fas fa-sign-out-alt" controlName="tabela" [control]="filter!.controls.tabela" [items]="tabelas"></input-select>
+            <input-select label="Tabela" [size]="6" controlName="tabela" [control]="filter!.controls.tabela" [dao]="dao"></input-select> -->
+        </div>
+        <div class="row">
+<!--           <input-search [disabled]="!entity.table?.length ? 'true' : undefined" [size]="6" [label]="entity.label" controlName="row_id" [dao]="entity.dao" [selectRoute]="entity.selectRoute"></input-search>
+          <input-text [size]="6" label="ID" controlName="row_id"></input-text> -->
+        </div>
+    </filter>
+    <columns>
+        <column title="Usuário" field="user_id"></column>
+        <column title="Criação" field="date_time"></column>
+        <column title="Tabela" field="table_name"></column>
+        <column title="Tipo de Operação" field="type"></column>
+        <column *ngIf="!selectable" type="options" [onEdit]="edit" [options]="options"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

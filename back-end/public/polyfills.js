@@ -7,7 +7,7 @@
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /usr/src/app/src/polyfills.ts */"hN/g");
+module.exports = __webpack_require__(/*! C:\DevEnv\Projetos\PETRVS\front-end\src\polyfills.ts */"hN/g");
 
 
 /***/ }),
@@ -95,7 +95,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 
 /**
- * @license Angular v14.2.0-next.0
+ * @license Angular v14.1.0-next.0
  * (c) 2010-2022 Google LLC. https://angular.io/
  * License: MIT
  */
@@ -847,7 +847,7 @@ const wrapFn = function (event) {
     const listener = target[eventNameSymbol];
     let result;
     if (isBrowser && target === internalWindow && event.type === 'error') {
-        // window.onerror have different signature
+        // window.onerror have different signiture
         // https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/onerror#window.onerror
         // and onerror callback will prevent default when callback return true
         const errorEvent = event;
@@ -1990,7 +1990,7 @@ function patchEventTarget(_global, api, apis, patchOptions) {
                 const passive = passiveSupported && !!passiveEvents && passiveEvents.indexOf(eventName) !== -1;
                 const options = buildEventListenerOptions(arguments[2], passive);
                 if (unpatchedEvents) {
-                    // check unpatched list
+                    // check upatched list
                     for (let i = 0; i < unpatchedEvents.length; i++) {
                         if (eventName === unpatchedEvents[i]) {
                             if (passive) {

@@ -92,19 +92,19 @@ class Usuario extends Authenticatable
      * @var array
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'email_verified_at' => 'datetime'
     ];
 
     public $delete_cascade = ['favoritos', 'lotacoes'];
 
     // Has
-    public function afastamentos() { return $this->hasMany(Afastamento::class); }        
-    public function avaliacoes() { return $this->hasMany(DemandaAvaliacao::class); }        
-    public function demandas() { return $this->hasMany(Demanda::class); }        
-    public function favoritos() { return $this->hasMany(Favorito::class); }    
-    public function lotacoes() { return $this->hasMany(Lotacao::class); }    
-    public function planos() { return $this->hasMany(Plano::class); }        
-    public function usuariosHashes() { return $this->hasMany(UsuarioHahs::class); }        
+    public function afastamentos() { return $this->hasMany(Afastamento::class); }
+    public function avaliacoes() { return $this->hasMany(DemandaAvaliacao::class); }
+    public function demandas() { return $this->hasMany(Demanda::class); }
+    public function favoritos() { return $this->hasMany(Favorito::class); }
+    public function lotacoes() { return $this->hasMany(Lotacao::class); }
+    public function planos() { return $this->hasMany(Plano::class); }
+    public function usuariosHashes() { return $this->hasMany(UsuarioHahs::class); }
     // Belongs
     public function perfil() { return $this->belongsTo(Perfil::class, 'perfil_id'); }
     // Mutattors e Casts
@@ -116,7 +116,7 @@ class Usuario extends Authenticatable
     {
         $config = new UsuarioConfig();
         return array_merge_recursive((array) $config, (array) json_decode(empty($value) ? "[]" : $value));
-    }   
+    }
     public function setConfigAttribute($value)
     {
         $this->attributes['config'] = json_encode($value);
@@ -125,7 +125,7 @@ class Usuario extends Authenticatable
     {
         $notificacoes = new UsuarioNotificacoes();
         return array_replace_recursive((array) $notificacoes, (array) json_decode(empty($value) ? "[]" : $value));
-    }   
+    }
     public function setNotificacoesAttribute($value)
     {
         $this->attributes['notificacoes'] = json_encode($value);
