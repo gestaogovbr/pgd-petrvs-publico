@@ -23,7 +23,7 @@ class CreateErrorsTable extends Migration
             $table->enum('type', ['ERROR', 'WARNING', 'FRONT-WARNING', 'FRONT-ERROR'])->default('ERROR')->comment("Tipo da ocorrência");
         });
         Schema::dropIfExists('erros');
-    }
+    }// CRIAR INDICE DE DATE_TIME
 
     /**
      * Reverse the migrations.

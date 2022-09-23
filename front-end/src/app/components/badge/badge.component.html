@@ -1,0 +1,4 @@
+<span [class]="class" [attr.role]="click ? 'button' : undefined" data-bs-toggle="tooltip" data-bs-placement="top" (click)="onBadgeClick($event)" [title]="hint">
+    <i *ngIf="icon?.length" [class]="icon"></i>
+    {{label || ""}}
+</span>

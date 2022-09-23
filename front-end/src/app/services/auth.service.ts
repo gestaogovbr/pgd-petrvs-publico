@@ -5,7 +5,7 @@ import { Usuario, UsuarioConfig } from '../models/usuario.model';
 import { DialogService } from './dialog.service';
 import { GlobalsService } from './globals.service';
 import { GoogleApiService } from './google-api.service';
-import { FullRoute } from './navigate.service';
+import { FullRoute, NavigateService } from './navigate.service';
 import { ServerService } from './server.service';
 import { gapiConfig } from 'src/environments/gapi.config';
 import * as moment from 'moment';
@@ -62,6 +62,8 @@ export class AuthService {
   public get gb(): GlobalsService { this._gb = this._gb || this.injector.get<GlobalsService>(GlobalsService); return this._gb };
   private _util?: UtilService;
   public get util(): UtilService { this._util = this._util || this.injector.get<UtilService>(UtilService); return this._util }
+  private _go?: NavigateService;
+  public get go(): NavigateService { this._go = this._go || this.injector.get<NavigateService>(NavigateService); return this._go }
   private _googleApi?: GoogleApiService;
   public get googleApi(): GoogleApiService { this._googleApi = this._googleApi || this.injector.get<GoogleApiService>(GoogleApiService); return this._googleApi };
   private _dialogs?: DialogService;
@@ -89,6 +91,26 @@ export class AuthService {
       dataHora.setTime(dataHora.getTime() + utc + delta);
     }
     return dataHora;
+  }
+
+  public registerPopupLoginResultListener() {
+    /*
+    this.bc = new BroadcastChannel('petrvs_login_popup');
+    this.bc.onmessage = (event) => {
+      this.dialog.closeSppinerOverlay();
+      this.auth.authSession().then(success => {
+        if(success) this.auth.success!(this.auth.usuario!, {route: ["home"]});
+      });
+    };*/
+    window.addEventListener("message", (event) => {
+      //const fromUrl = event?.origin || "";
+      if(event?.data == "COMPLETAR_LOGIN") { //fromUrl.includes("login-azure-callback")
+        this.dialogs.closeSppinerOverlay();
+        this.authSession().then(success => {
+          if(success) this.success!(this.usuario!, {route: ["home"]});
+        });
+      }
+    }, false);
   }
 
   public set usuarioConfig(value: IIndexable) {
@@ -150,6 +172,12 @@ export class AuthService {
       }
     }
     return false;
+  }
+
+  public authAzure() {
+    this.dialogs.showSppinerOverlay("Logando...", 300000);
+    this.go.openPopup(this.gb.servidorURL + "/web/login-azure-redirect");
+    //this.go.openPopup(this.gb.servidorURL + "/web/login-azure-simulate-callback");
   }
 
   public authUserPassword(user: string, password: string, redirectTo?: FullRoute) {
@@ -248,9 +276,9 @@ export class AuthService {
       if(gapiConfig.client_id?.length) {
         this.googleApi.load().then(googleAuth => {
           if(this.kind == "GAPI" || googleAuth.isSignedIn.get()) {
-            this.googleApi.logOut();
+            this.googleApi.logOut().then(clearLogin);
           }
-        }).finally(clearLogin);
+        });
       } else {
         clearLogin();
       }

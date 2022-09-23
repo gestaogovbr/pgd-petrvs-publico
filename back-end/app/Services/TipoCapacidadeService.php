@@ -12,6 +12,7 @@ class TipoCapacidadeService extends ServiceBase {
         ["e089d591-ba9a-11ec-a5bb-0050569c64a0", "MENU_CONFIG_ACESSO", "Permite acessar o menu configurações"],
         ["e07877ef-ba9a-11ec-a5bb-0050569c64a0", "MENU_GESTAO_ACESSO", "Permite acessar o menu gestão"],
         ["e0814f12-ba9a-11ec-a5bb-0050569c64a0", "MENU_REL_ACESSO", "Permite acessar o menu relatórios"],
+        ["e0914e12-ba9a-11ec-a5bb-0050569c64a0", "MENU_LOGS_ACESSO", "Permite acessar o menu logs"],
         /* Dashboard */
         ["dd6f49cb-ba9a-11ec-a5bb-0050569c64a0", "DASH_PRG", "Permite mostrar informações do Programa de Gestão"],
         /* Capacidades do módulo AFASTAMENTO*/
@@ -133,12 +134,30 @@ class TipoCapacidadeService extends ServiceBase {
         ["58602a42-ba5e-11ec-a5bb-0050569c64a0", "MOD_FER_ENT_INCL", "Permite incluir entidades em feriado"],
         ["a925169b-e112-11ec-a5bb-0050569c64a0", "MOD_FER_EXCL", "Permite excluir feriado"],
         ["58524ff3-ba5e-11ec-a5bb-0050569c64a0", "MOD_FER_INCL", "Permite incluir feriados"],
+        /* Capacidades do módulo LOGS*/
+        ["5a5254fe-d27c-11ec-a5bb-0050569c64a0", "MOD_LOGS_CONS", "Permite consultar logs"],
+        ["5a5a5e9c-d27c-11ec-a5bb-0050569c64a0", "MOD_LOGS_EDT", "Permite alterar logs"],
+        ["5a62d79e-d27c-11ec-a5bb-0050569c64a0", "MOD_LOGS_EXCL", "Permite excluir logs"],
         /* Capacidades do módulo LOTAÇÃO*/
         ["593ebdb2-e1d0-11ec-a5bb-0050569c64a0", "MOD_LOT_CONS", "Permite consultar lotação"],
         ["592a7d9f-e1d0-11ec-a5bb-0050569c64a0", "MOD_LOT_EDT", "Permite editar lotação"],
         ["59347c2e-e1d0-11ec-a5bb-0050569c64a0", "MOD_LOT_EXCL", "Permite excluir lotação"],
         ["591fbe4f-e1d0-11ec-a5bb-0050569c64a0", "MOD_LOT_INCL", "Permite incluir lotação"],
         ["a91bb1b0-e112-11ec-a5bb-0050569c64a0", "MOD_PERF_CONS", "Permite consultar perfil"],
+        /* Capacidades do módulo MATERIAIS E SERVICOS*/
+        ["137174c1-bc1b-11ed-a5bb-0050569c64a0", "MOD_MATSRV", "Permite acessar item menu materiais e serviços"],
+        ["a9447b27-e112-11ed-a5bb-0050569c64a0", "MOD_MATSRV_CONS", "Permite consultar materiais e serviços"],
+        ["584b43d1-ba5e-11ed-a5bb-0050569c64a0", "MOD_MATSRV_EDT", "Permite editar materiais e serviços"],
+        ["5843e477-ba5e-11ed-a5bb-0050569c64a0", "MOD_MATSRV_EXCL", "Permite excluir materiais e serviços"],
+        ["13781ad4-bc1b-11ed-a5bb-0050569c64a0", "MOD_MATSRV_INCL", "Permite incluir materiais e serviços"],
+        /* Capacidades do módulo PROJETO RECURSO*/
+        ["584b43d1-cd5e-11ed-a5bb-0050569c64a0", "MOD_PROJ_REC_EDT", "Permite editar projeto recurso"],
+        ["5843e477-cd5e-11ed-a5bb-0050569c64a0", "MOD_PROJ_REC_EXCL", "Permite excluir projeto recurso"],
+        ["13781ad4-cd1b-11ed-a5bb-0050569c64a0", "MOD_PROJ_REC_INCL", "Permite incluir projeto recurso"],
+        /* Capacidades do módulo PROJETO REGRA*/
+        ["584b43d1-ef5e-11ed-a5bb-0050569c64a0", "MOD_PROJ_REG_EDT", "Permite editar projeto regra"],
+        ["5843e477-ef5e-11ed-a5bb-0050569c64a0", "MOD_PROJ_REG_EXCL", "Permite excluir projeto regra"],
+        ["13781ad4-ef1b-11ed-a5bb-0050569c64a0", "MOD_PROJ_REG_INCL", "Permite incluir projeto regra"],
         /* Capacidades do módulo PERFIL*/
         ["a909d7f4-e112-11ec-a5bb-0050569c64a0", "MOD_PERF_EDT", "Permite editar perfil"],
         ["a91299bb-e112-11ec-a5bb-0050569c64a0", "MOD_PERF_EXCL", "Permite excluir perfil"],

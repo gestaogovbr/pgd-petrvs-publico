@@ -12,7 +12,5 @@ export class Afastamento extends Base {
     public usuario_id: string = "" /*  */
     public tipo_motivo_afastamento_id: string = ""; /*  */
 
-    constructor(){
-        super();
-    }
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

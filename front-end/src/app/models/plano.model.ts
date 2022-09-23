@@ -38,7 +38,5 @@ export class Plano extends Base {
     public documentos: Documento[] = []; /* Termos de adesão */
     public demandas: Demanda[] = []; /* Demandas vinculadas ao Plano */
 
-    constructor(){
-        super();
-    }
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

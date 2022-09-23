@@ -14,7 +14,8 @@
     <columns>
         <column icon="bi-person" [align]="'center'" [template]="columnFoto">
             <ng-template let-row="row" #columnFoto>
-                <img [src]="row.url_foto" onerror="this.src='/assets/images/profile.png'" width="40" height="40" class="rounded-circle">
+                <profile-picture [url]="row.url_foto" [size]="40" [hint]="row.nome"></profile-picture>
+                <!--img [src]="row.url_foto" onerror="this.src='/assets/images/profile.png'" width="40" height="40" class="rounded-circle"/-->
             </ng-template>
         </column>
         <column title="CPF" field="cpf"></column>

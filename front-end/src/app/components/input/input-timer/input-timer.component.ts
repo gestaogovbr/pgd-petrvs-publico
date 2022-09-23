@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostBinding, Injector, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostBinding, Injector, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, ControlContainer, FormBuilder, FormControl, FormGroup, FormGroupDirective } from '@angular/forms';
 import { FormHelperService } from 'src/app/services/form-helper.service';
 import { UtilService } from 'src/app/services/util.service';
@@ -17,6 +17,7 @@ import { InputBase, LabelPosition } from '../input-base';
 })
 export class InputTimerComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';
+  @ViewChild('inputElement') inputElement?: ElementRef;
   @Output() change = new EventEmitter<Event>();
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;

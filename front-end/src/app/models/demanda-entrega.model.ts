@@ -1,5 +1,5 @@
 import { Base } from './base.model';
-import { Comentario } from './comentario';
+import { Comentario, HasComentarios } from './comentario';
 import { Demanda } from './demanda.model';
 import { Entidade } from './entidade.model';
 import { Tarefa } from './tarefa.model';
@@ -8,7 +8,7 @@ import { TipoProcesso } from './tipo-processo.model';
 import { Unidade } from './unidade.model';
 import { Usuario } from './usuario.model';
 
-export class DemandaEntrega extends Base {
+export class DemandaEntrega extends Base implements HasComentarios {
     public demanda?: Demanda;
     public usuario?: Usuario;
     public tarefa?: Tarefa;
@@ -31,7 +31,5 @@ export class DemandaEntrega extends Base {
     public tipo_processo_id: string | null = null; /* Tipo de processo */
     public comentarios: Comentario[] = []; /* Comentarios da tarefa */
 
-    constructor(){
-        super();
-    }
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

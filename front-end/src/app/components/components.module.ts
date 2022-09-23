@@ -30,7 +30,6 @@ import { InputMultitoggleComponent } from './input/input-multitoggle/input-multi
 import { TabsComponent } from './tabs/tabs.component';
 import { TabComponent } from './tabs/tab/tab.component';
 import { SeparatorComponent } from './separator/separator.component';
-import { TopAlertComponent } from './top-alert/top-alert.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { ReportComponent } from './grid/report/report.component';
 import { ColumnExpandComponent } from './grid/column-expand/column-expand.component';
@@ -48,6 +47,11 @@ import { PieChartComponent } from './charts/pie/pie-chart.component';
 import { GanttComponent } from './gantt/gantt.component';
 import { GanttTemplatesComponent } from './gantt/gantt-templates/gantt-templates.component';
 import { CommentComponent } from './comment/comment.component';
+import { BadgeComponent } from './badge/badge.component';
+import { ProfilePictureComponent } from './profile-picture/profile-picture.component';
+import { ProgressBarComponent } from './progress-bar/progress-bar.component';
+import { InputNumberComponent } from './input/input-number/input-number.component';
+import { TopAlertComponent } from './top-alert/top-alert.component';
 
 @NgModule({
   declarations: [
@@ -92,7 +96,11 @@ import { CommentComponent } from './comment/comment.component';
     InputWorkloadComponent,
     GanttComponent,
     GanttTemplatesComponent,
-    CommentComponent
+    CommentComponent,
+    BadgeComponent,
+    ProfilePictureComponent,
+    ProgressBarComponent,
+    InputNumberComponent
   ],
   imports: [
     CommonModule,
@@ -100,6 +108,7 @@ import { CommentComponent } from './comment/comment.component';
     InfiniteScrollModule,
     ReactiveFormsModule,
     DndModule,
+    //CurrencyMaskModule,
     AngularDoubleScrollbarsModule,
     NgxMaskModule.forRoot()
   ],
@@ -140,7 +149,11 @@ import { CommentComponent } from './comment/comment.component';
     OrderComponent,
     InputWorkloadComponent,
     GanttComponent,
-    CommentComponent
+    CommentComponent,
+    BadgeComponent,
+    ProfilePictureComponent,
+    ProgressBarComponent,
+    InputNumberComponent
   ]
 })
 export class ComponentsModule { }

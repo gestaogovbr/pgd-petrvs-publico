@@ -30,7 +30,7 @@ class EntidadeNotificacoes {
     }
 }
 class Entidade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.sigla = ""; // Sigla da entidade
         this.nome = ""; // Nome da entidade
@@ -39,7 +39,7 @@ class Entidade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.carga_horaria_padrao = 8; //default(8) //Carga horária utilizada ao criar plano de trabalho
         this.gravar_historico_processo = 0; //default(0) //Se grava andamento da demanda dentro do processo vinculado (Caso seja o Sei, será em Consultar Andamento)
         this.layout_formulario_demanda = "COMPLETO"; //["COMPLETO", "SIMPLIFICADO"]) default("COMPLETO") //Layout para a tela do formulário de demandas (cadastro simplificado ou completo)
-        this.campos_ocultos_demanda = []; //Campos que se deseja ocultar do formulário de daemanda, com seu respectivo valor padrão, em caso de null será utilizado o valor default do banco"
+        this.campos_ocultos_demanda = []; //Campos que se deseja ocultar do formulário de demanda, com seu respectivo valor padrão, em caso de null será utilizado o valor default do banco"
         this.tipo_modalidade_id = null; //Tipo de modalidade utilizada ao criar plano de trabalho
         this.cidade_id = null;
         this.uf = null; /* UF para abrangencia estadual */
@@ -49,6 +49,7 @@ class Entidade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.gestor_id = null; // Usuário gestor da unidade
         this.gestor_substituto_id = null; // Usuário gestor substituto da unidade
         this.forma_contagem_carga_horaria = "DIA"; // Forma de contagem padrão da carga horária
+        this.initialization(data);
     }
 }
 
@@ -95,11 +96,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
 class TipoJustificativa extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.nome = ""; /* Descrição do tipo da justificativa */
         this.data_inicio = new Date(); /* Data de início */
         this.data_fim = null; /* Data do fim */
+        this.initialization(data);
     }
 }
 

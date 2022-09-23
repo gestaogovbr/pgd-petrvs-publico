@@ -3,7 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { DaoBaseService, QueryOrderBy } from 'src/app/dao/dao-base.service';
 import { Base, IIndexable } from 'src/app/models/base.model';
 import { PageBase } from './page-base';
-import { FullRoute, NavigateService } from 'src/app/services/navigate.service';
+import { FullRoute, NavigateService, RouteMetadata } from 'src/app/services/navigate.service';
 import { GridComponent, GroupBy } from 'src/app/components/grid/grid.component';
 import { QueryContext } from 'src/app/dao/query-context';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
@@ -27,6 +27,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
   public orderBy?: QueryOrderBy[];
   public groupBy?: GroupBy[];
   public join: string[] = [];
+  public addRoute?: string[];
   public addParams?: any;
   public options: ToolbarButton[] = [];
   public rowsLimit = QueryContext.DEFAULT_LIMIT;
@@ -92,6 +93,14 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
     });
   }
 
+  public modalRefreshId(entity: Base): RouteMetadata {
+    return { modal: true, modalClose: (modalResult?: string) => (this.grid?.query || this.query!).refreshId(entity.id) };
+  }
+
+  public modalRefresh() {
+    return { modal: true, modalClose: (modalResult?: string) => this.refresh() };
+  }
+
   public get queryOptions() {
     return {
       where: this.filterWhere && this.filter ? this.filterWhere(this.filter) : [],
@@ -136,7 +145,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
   }
 
   public add = async () => {
-    this.go.navigate({route: [...this.go.currentOrDefault.route, "new"], params: this.addParams}, {
+    this.go.navigate({route: this.addRoute || [...this.go.currentOrDefault.route, "new"], params: this.addParams}, {
       filterSnapshot: undefined,
       querySnapshot: undefined,
       modalClose: (modalResult) => {

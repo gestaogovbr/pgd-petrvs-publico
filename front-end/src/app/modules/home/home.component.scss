@@ -29,29 +29,10 @@
     width: auto;
 }
 
-.img-thumbnail{
-    border-top-left-radius: 0%;
-    border-top-right-radius: 50%;
-    border-bottom-right-radius: 50%;
-    border-bottom-left-radius: 50%;
-    width:auto;
-    max-width: 120px;
-    border-width:8px;
-    border-style: solid;
-    border-color:grayscale(60%);
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: auto;
-    margin-bottom: auto;
-
-}
-
 .img{
     align-content: center;
 
 }
-
 
 .imagemdeFundo{
     background-image:url('/resources/prf1.png');

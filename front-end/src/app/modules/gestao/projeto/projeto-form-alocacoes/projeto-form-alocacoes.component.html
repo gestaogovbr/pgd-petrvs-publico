@@ -1,0 +1,35 @@
+<!--grid [items]="items" [form]="form" editable>
+    <columns>
+        <column title="Campo1" [template]="column1" [editTemplate]="columnEdit1">
+            <ng-template let-row="row" #column1>
+                <span>{{row["campo1"]}}</span>
+            </ng-template>
+            <ng-template let-row="row" #columnEdit1>
+                <input-text [size]="12" controlName="campo1" [control]="form.controls.campo1"></input-text>
+            </ng-template>
+        </column>
+        <column type="text" title="Campo4" field="campo4"></column>
+        <column type="options"></column>
+    </columns>
+</grid //-->        
+
+
+<!--
+
+    public descricao: string = ""; /* Descrição */
+    public quantidade: number = 1; /* Quantidade */
+    public projeto_id: string | null = null;
+    public tarefa_id: string | null = null;
+    public recurso_id: string = "";
+    public regra_id: string | null = null;
+
+
+Recurso                                         Regra          Descrição                            Quantidade       [ + ]
+----------------------------------------------+---------------+----------------------------------+--------------+---------
+(i) Nome                                        xxxxxxxxxxxxx  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX      151515,15   [Ed] [Ex] 
+[(i) Tipo do recurso] [(U) Metro] [($) 121,11]
+
+
+[Select                                  [v]] [Select   [v]] [text                            ]   [    15151,00]  [Ed] [Ex] 
+
+-->

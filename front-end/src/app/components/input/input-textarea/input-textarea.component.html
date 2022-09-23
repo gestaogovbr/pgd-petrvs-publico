@@ -1,5 +1,5 @@
 <input-container [labelPosition]="labelPosition" [controlName]="controlName" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
-    <textarea *ngIf="viewInit" class="form-control" [rows]="rows" [attr.placeholder]="placeholder?.length ? placeholder : undefined"
-        [class.text-uppercase]="textCase == 'upper'" [class.text-lowercase]="textCase == 'lower'" (change)="onChange($event)"
+    <textarea *ngIf="viewInit" #inputElement class="form-control" [rows]="rows" [attr.placeholder]="placeholder?.length ? placeholder : undefined"
+        [class.text-uppercase]="textCase == 'upper'" [class.text-lowercase]="textCase == 'lower'" (change)="onChange($event)" (keydown.enter)="onEnterKeyDown($event)"
         [formControl]="formControl" [id]="controlName" [class.is-invalid]="isInvalid()" [readonly]="isDisabled" [attr.value]="control ? undefined : value"></textarea>
 </input-container>

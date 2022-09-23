@@ -52,7 +52,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
 class Feriado extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.nome = ""; //Descrição do feriado;
         this.dia = 1; //Dia do mês (1~31) ou dia da semana (1-7)");
@@ -66,6 +66,7 @@ class Feriado extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.entidade_id = null;
         this.cidade_id = null;
         this.uf = null; /* UF para abrangencia estadual */
+        this.initialization(data);
     }
 }
 

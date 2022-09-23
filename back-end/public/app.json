@@ -1,9 +1,10 @@
 {
-    "version": "1.0.15",
+    "version": "1.0.18",
     "externalLibs": [
         "https://apis.google.com/js/platform.js"
     ],
     "preloadFiles": [
+        "environment-config",
         "functions.js",
         "app-proxy.js"
     ],

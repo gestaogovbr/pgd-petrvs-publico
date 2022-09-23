@@ -11,7 +11,7 @@ class LotacaoService extends ServiceBase
 {
     use UseDataFim;
 
-    public function proxyStore($data, $unidade)
+    public function proxyStore($data, $unidade, $action)
     {
         $lotacoes = Lotacao::where('usuario_id', $data["usuario_id"])->whereNull("data_fim")->get();
         if(count($lotacoes) == 0) {

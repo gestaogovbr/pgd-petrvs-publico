@@ -7,7 +7,5 @@ export class TipoAvaliacaoJustificativa extends Base {
     public tipo_avaliacao_id: string = "";
     public tipo_justificativa_id: string = "";
 
-    constructor(){
-        super();
-    }
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

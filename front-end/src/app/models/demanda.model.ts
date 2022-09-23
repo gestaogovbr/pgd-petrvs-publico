@@ -2,7 +2,7 @@ import { StatusDemanda } from '../modules/gestao/demanda/demanda-list-base';
 import { LookupItem } from '../services/lookup.service';
 import { Atividade } from './atividade.model';
 import { Base } from './base.model';
-import { Comentario } from './comentario';
+import { Comentario, HasComentarios } from './comentario';
 import { DemandaAvaliacao } from './demanda-avaliacao.model';
 import { DemandaEntrega } from './demanda-entrega.model';
 import { DemandaPausa } from './demanda-pausa.model';
@@ -34,7 +34,7 @@ export type DemandaChecklist = {
     checked: boolean
 }
 
-export class Demanda extends Base {
+export class Demanda extends Base implements HasComentarios {
     public atividade?: Atividade;
     public unidade?: Unidade;
     public usuario?: Usuario;
@@ -85,8 +85,6 @@ export class Demanda extends Base {
     public tipo_documento_requisicao_id: string | null = null;
     public tipo_documento_entrega_id: string | null = null;
     public tipo_processo_id: string | null = null;
-    
-    constructor(){
-        super();
-    }
+
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

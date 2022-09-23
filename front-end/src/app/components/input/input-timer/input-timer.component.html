@@ -1,6 +1,6 @@
 <input-container [labelPosition]="labelPosition" [controlName]="controlName" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
     <div class="dropdown d-grid">
-        <button class="btn btn-outline-secondary text-end" [class.dropdown-toggle]="!isDisabled" [class.disabled]="isDisabled" type="button" [attr.id]="'timer_dropdown_' + generatedId" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="btn btn-outline-secondary text-end" #inputElement [class.dropdown-toggle]="!isDisabled" [class.disabled]="isDisabled" type="button" [attr.id]="'timer_dropdown_' + generatedId" data-bs-toggle="dropdown" aria-expanded="false">
             {{getButtonText()}}
         </button>
         <div class="dropdown-menu timer-dropdown" [attr.aria-labelledby]="'timer_dropdown_' + generatedId">

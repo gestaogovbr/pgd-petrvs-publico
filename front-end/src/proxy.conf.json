@@ -1,0 +1,6 @@
+{
+    "/environment-config": {
+      "target": "http://php/environment-config",
+      "secure": false
+    }
+}

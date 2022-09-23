@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use App\Traits\AutoUuid;
 use App\Models\Afastamento;
@@ -18,6 +19,7 @@ use App\Models\Perfil;
 use App\Traits\MergeRelations;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasPermissions;
+use App\Services\UsuarioService;
 
 class UsuarioConfig {}
 
@@ -61,9 +63,13 @@ class Usuario extends Authenticatable
         'data_inicio',
         //'data_fim',
         'id_google',
-        'url_foto',
+        //'url_foto',
         'vinculacao',
         'perfil_id'
+        //'foto_perfil',
+        //'foto_google',
+        //'foto_microsoft',
+        //'foto_firebase'
     ];
 
     public $fillable_changes = [
@@ -86,27 +92,31 @@ class Usuario extends Authenticatable
      * @var array
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'email_verified_at' => 'datetime'
     ];
 
     public $delete_cascade = ['favoritos', 'lotacoes'];
 
     // Has
-    public function afastamentos() { return $this->hasMany(Afastamento::class); }        
-    public function avaliacoes() { return $this->hasMany(DemandaAvaliacao::class); }        
-    public function demandas() { return $this->hasMany(Demanda::class); }        
-    public function favoritos() { return $this->hasMany(Favorito::class); }    
-    public function lotacoes() { return $this->hasMany(Lotacao::class); }    
-    public function planos() { return $this->hasMany(Plano::class); }        
-    public function usuariosHashes() { return $this->hasMany(UsuarioHahs::class); }        
+    public function afastamentos() { return $this->hasMany(Afastamento::class); }
+    public function avaliacoes() { return $this->hasMany(DemandaAvaliacao::class); }
+    public function demandas() { return $this->hasMany(Demanda::class); }
+    public function favoritos() { return $this->hasMany(Favorito::class); }
+    public function lotacoes() { return $this->hasMany(Lotacao::class); }
+    public function planos() { return $this->hasMany(Plano::class); }
+    public function usuariosHashes() { return $this->hasMany(UsuarioHahs::class); }
     // Belongs
     public function perfil() { return $this->belongsTo(Perfil::class, 'perfil_id'); }
     // Mutattors e Casts
+    public function getUrlFotoAttribute($value) {
+        $usuarioService = new UsuarioService();
+        return empty($this->foto_perfil) ? "/assets/images/profile.png" : $usuarioService->downloadUrl($this->foto_perfil);
+    }
     public function getConfigAttribute($value)
     {
         $config = new UsuarioConfig();
         return array_merge_recursive((array) $config, (array) json_decode(empty($value) ? "[]" : $value));
-    }   
+    }
     public function setConfigAttribute($value)
     {
         $this->attributes['config'] = json_encode($value);
@@ -115,7 +125,7 @@ class Usuario extends Authenticatable
     {
         $notificacoes = new UsuarioNotificacoes();
         return array_replace_recursive((array) $notificacoes, (array) json_decode(empty($value) ? "[]" : $value));
-    }   
+    }
     public function setNotificacoesAttribute($value)
     {
         $this->attributes['notificacoes'] = json_encode($value);

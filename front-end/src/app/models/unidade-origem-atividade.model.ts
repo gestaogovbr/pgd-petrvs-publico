@@ -7,7 +7,5 @@ export class UnidadeOrigemAtividade extends Base {
     public unidade_id: string = ""; /* ID da unidade pai */
     public unidade_origem_atividade_id: string = ""; /* ID da unidade que será utilizada como origem de atividades  */
 
-    constructor(){
-        super();
-    }
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

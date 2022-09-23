@@ -397,6 +397,42 @@ export class LookupService {
     { key: 'DIA', icon: "bi bi-calendar3", value: "Horas por mês" }
   ];
 
+  public MATERIAL_SERVICO_TIPO: LookupItem[] = [
+    { key: 'MATERIAL', icon: "bi bi-box-seam", value: "Material" },
+    { key: 'SERVICO', icon: "bi bi-tools", value: "Serviço" }
+  ];
+
+  public MATERIAL_SERVICO_UNIDADE: LookupItem[] = [
+    { key: "UNIDADE", value: "Unidade" },
+    { key: "CAIXA", value: "Caixa" },
+    { key: "METRO", value: "Metro" },
+    { key: "KILO", value: "Quilo" },
+    { key: "LITRO", value: "Litro" },
+    { key: "DUZIA", value: "Dúzia" },
+    { key: "MONETARIO", value: "Monetário" },
+    { key: "HORAS", value: "Horas" },
+    { key: "DIAS", value: "Dias" },
+    { key: "PACOTE", value: "Pacote" }
+  ];
+
+  public PROJETO_STATUS: LookupItem[] = [
+    { key: "PLANEJADO", value: "Planejado", icon: "bi bi-bar-chart-steps", color: "bg-primary" },
+    { key: "INICIADO", value: "Iniciado", icon: "bi bi-collection-play", color: "bg-success" },
+    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-calendar2-check", color: "bg-dark" },
+    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-pause-btn", color: "bg-warning text-dark" },
+    { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "bg-danger" }
+  ];
+
+  public PROJETO_TAREFA_STATUS: LookupItem[] = [
+    { key: "PLANEJADO", value: "Planejado", icon: "bi bi-bar-chart-steps", color: "primary" },
+    { key: "INICIADO", value: "Iniciado", icon: "bi bi-collection-play", color: "success" },
+    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-calendar2-check", color: "dark" },
+    { key: "FALHO", value: "Falho", icon: "bi bi-question-octagon", color: "danger" },
+    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-pause-btn", color: "warning" },
+    { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "danger" },
+    { key: "AGUARDANDO", value: "Aguardando", icon: "bi bi-pause-fill", color: "light" }
+  ];
+
   public getLookup(itens: LookupItem[], key: any) {
     return itens.find(x => x.key == key);
   }

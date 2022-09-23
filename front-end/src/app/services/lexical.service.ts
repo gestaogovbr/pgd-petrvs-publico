@@ -12,7 +12,6 @@ export type Translate = {
 @Injectable({
   providedIn: 'root'
 })
-
 export class LexicalService {
 
   public defaults: Translate = {
@@ -20,25 +19,26 @@ export class LexicalService {
     "atividade": {single: "atividade", plural: "atividades", female: true},
     "avaliação": {single: "avaliação", plural: "avaliações", female: true},
     "capacidade": {single: "capacidade", plural: "capacidades", female: true},
+    "data de distribuição": {single: "data de distribuição", plural: "datas de distribuição", female: false},
     "demanda": {single: "demanda", plural: "demandas", female: true},
     "documento": {single: "documento", plural: "documentos", female: false},
     "entidade": {single: "entidade", plural: "entidades", female: true},
+    "entrega": {single: "Entrega", plural: "Entregas", female: true},
     "justificativa": {single: "justificativa", plural: "justificativas", female: true},
+    "material e serviço": {single: "material e serviço", plural: "materiais e serviços", female: false},
     "modalidade": {single: "modalidade", plural: "modalidades", female: true},
     "motivo de afastamento": {single: "motivo de afastamento", plural: "motivos de afastamento", female: false},
     "plano de trabalho": {single: "plano de trabalho", plural: "planos de trabalho", female: false},
-    "tarefa": {single: "Tarefa", plural: "Tarefas", female: true},
-    "entrega": {single: "Entrega", plural: "Entregas", female: true},
+    "prazo de entrega": {single: "prazo de entrega", plural: "prazos de entrega", female: false},
     "processo": {single: "processo", plural: "processos", female: false},
     "programa de gestão": {single: "programa de gestão", plural: "programas de gestão", female: false},
     "projeto": {single: "projeto", plural: "projetos", female: false},
     "requisição": {single: "requisição", plural: "requisições", female: true},
+    "tarefa": {single: "Tarefa", plural: "Tarefas", female: true},
+    "tempo pactuado": {single: "tempo pactuado", plural: "tempos pactuados", female: false},
+    "tempo planejado": {single: "tempo planejado", plural: "tempos planejados", female: false},
     "unidade": {single: "unidade", plural: "unidades", female: true},
     "usuário": {single: "usuário", plural: "usuários", female: false},
-    "data de distribuição": {single: "data de distribuição", plural: "datas de distribuição", female: false},
-    "tempo pactuado": {single: "tempo pactuado", plural: "tempos pactuados", female: false},
-    "prazo de entrega": {single: "prazo de entrega", plural: "prazos de entrega", female: false},
-    "tempo planejado": {single: "tempo planejado", plural: "tempos planejados", female: false}
   };
 
   public vocabulary: Translate = {};

@@ -14,8 +14,11 @@ use App\Exceptions\LogError;
 use App\Services\UnidadeService;
 use App\Services\ServiceBase;
 use App\Services\CalendarioService;
+use App\Services\UsuarioService;
+use Database\Seeders\UsuarioSeeder;
 use Illuminate\Validation\ValidationException;
 use DateTime;
+use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
 {
@@ -162,6 +165,8 @@ class LoginController extends Controller
         if(!isset($tokenData['error'])) {
             $usuario = $this->registrarUsuario($request, Usuario::where('email', $tokenData['email'])->first());
             if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
+                $usuarioService = new UsuarioService();
+                $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_FIREBASE, $usuario, $tokenData["picture"]);
                 $request->session()->regenerate();
                 $request->session()->put("kind", "FIREBASE");
                 return response()->json([
@@ -187,6 +192,8 @@ class LoginController extends Controller
         if(!isset($tokenData['error'])) {
             $usuario = $this->registrarUsuario($request, Usuario::where('email', $tokenData['email'])->first());
             if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
+                $usuarioService = new UsuarioService();
+                $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
                 $request->session()->regenerate();
                 $request->session()->put("kind", "GAPI");
                 return response()->json([
@@ -207,11 +214,8 @@ class LoginController extends Controller
      */
     public function authenticatePrfGapiToken(Request $request, GapiService $auth, IntegracaoService $integracao)
     {
-        LogError::newWarn("Validando");
         $credentials = $request->validate(['token' => ['required']]);
-        LogError::newWarn("Iniciou");
         $tokenData = $auth->verifyToken($credentials['token']);
-        LogError::newWarn("Validou token", $tokenData);
         if(!isset($tokenData['error'])) {
             $usuario = Usuario::where('email', $tokenData['email'])->first();
             if(!isset($usuario) && $integracao->autoIncluir) {
@@ -222,11 +226,13 @@ class LoginController extends Controller
                 $this->service->salvaUsuarioLotacaoGapi($usuario, $lotacao, $tokenData, $auth);
             }
             if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
+                $usuarioService = new UsuarioService();
+                $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
                 $request->session()->regenerate();
                 $request->session()->put("kind", "GAPI");
                 return response()->json([
                     'success' => true,
-                    "usuario" => $this->registrarUsuario($request, $usuario, ['id_google' => $tokenData["sub"], 'url_foto' => $tokenData["picture"]]),
+                    "usuario" => $this->registrarUsuario($request, $usuario, ['id_google' => $tokenData["sub"]]), //, 'url_foto' => $tokenData["picture"]
                     "horario_servidor" => CalendarioService::horarioServidor()
                 ]);
             }
@@ -332,6 +338,8 @@ class LoginController extends Controller
         if(!isset($tokenData['error'])) {
             $usuario = Usuario::where('email', $tokenData['email'])->first();
             if (isset($usuario)) { // && Hash::check($request->password, $user->password)
+                $usuarioService = new UsuarioService();
+                $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_FIREBASE, $usuario, $tokenData["picture"]);
                 $request->session()->put("kind", "FIREBASE");
                 return response()->json([
                     'token' => $usuario->createToken($credentials['device_name'])->plainTextToken,
@@ -359,6 +367,8 @@ class LoginController extends Controller
         if(!isset($tokenData['error'])) {
             $usuario = Usuario::where('email', $tokenData['email'])->first();
             if (isset($usuario)) { // && Hash::check($request->password, $user->password)
+                $usuarioService = new UsuarioService();
+                $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
                 $request->session()->regenerate();
                 $request->session()->put("kind", "GAPI");
                 return response()->json([
@@ -397,12 +407,14 @@ class LoginController extends Controller
                 $this->service->salvaUsuarioLotacaoGapi($usuario, $lotacao, $tokenData, $auth);
             }
             if (isset($usuario)) { // && Hash::check($request->password, $user->password)
+                $usuarioService = new UsuarioService();
+                $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
                 $request->session()->regenerate();
                 $request->session()->put("kind", "GAPI");
                 $usuario->save();
                 return response()->json([
                     'token' => $usuario->createToken($credentials['device_name'])->plainTextToken,
-                    'usuario' => $this->registrarUsuario($request, $usuario, ['id_google' => $tokenData["sub"], 'url_foto' => $tokenData["picture"]]),
+                    'usuario' => $this->registrarUsuario($request, $usuario, ['id_google' => $tokenData["sub"]]), //, 'url_foto' => $tokenData["picture"]
                     "horario_servidor" => CalendarioService::horarioServidor()
                 ]);
             }
@@ -469,4 +481,41 @@ class LoginController extends Controller
             "valid" => Auth::check()
         ]);
     }
+
+    public function loginAzurePopup(){
+        return redirect('<azure></azure>')->with('popup', 'open');
+    }
+
+    public function signInAzureRedirect(Request $request) {
+        return Socialite::driver('azure')
+        ->scopes(['openid', 'email', 'profile'])
+        ->redirect();
+    }
+
+    public function simulateAzureCallback(Request $request) {
+        return view("azure");
+    }
+
+    public function signInAzureCallback(Request $request) {
+        $user = Socialite::driver('azure')->user();
+        if(!empty($user)) {
+            $token = $user->token;
+            $email = $user->email;
+            $email = explode("#", $email);
+            $email = $email[0];
+            $email = str_replace("_", "@", $email);
+            $usuario = $this->registrarUsuario($request, Usuario::where('email', $email)->first());
+            if (($usuario)) {
+                Auth::loginUsingId($usuario->id);
+                $request->session()->regenerate();
+                $request->session()->put("kind", "AZURE");
+                return view("azure"); //redirect()->intended('http://localhost:4200/#/login-retorno');
+            } else {
+                return LogError::newError('As credenciais fornecidas são inválidas. Email: '.$email);
+            }
+        } else {
+            return Socialite::driver('azure')->redirect();
+        }
+    }
+
 }

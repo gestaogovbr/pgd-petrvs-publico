@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { BootstrapService } from 'src/app/services/bootstrap.service';
+import { GlobalsService } from 'src/app/services/globals.service';
 import { UtilService } from 'src/app/services/util.service';
-import { GanttResource, GanttTask } from './gantt-models';
+import { GanttAssignment, GanttProject, GanttResource, GanttRole, GanttTask } from './gantt-models';
 
 @Component({
   selector: 'gantt',
@@ -9,14 +10,25 @@ import { GanttResource, GanttTask } from './gantt-models';
   styleUrls: ['./gantt.component.scss']
 })
 export class GanttComponent implements OnInit {
-  @Input() tasks: GanttTask[] = [];
-  @Input() resources: GanttResource[] = [];
+  @Input() height: number = 500;
+  @Input() set project(value: GanttProject) {
+    if(this._project != value) {
+      this._project = value;
+      if(this.initialized) this.reload();
+    }
+  }
+  get project(): GanttProject {
+    return this._project;
+  }
 
   public loading: boolean = false;
   public ge: any = undefined;
   public id: string;
 
-  constructor(public bootstrap: BootstrapService, public util: UtilService) {
+  private _project: GanttProject = new GanttProject();
+  private initialized: boolean = false;
+
+  constructor(public bootstrap: BootstrapService, public util: UtilService, public gb: GlobalsService) {
     this.id = util.md5();
   }
 
@@ -58,6 +70,7 @@ export class GanttComponent implements OnInit {
       // here starts gantt initialization
       //@ts-ignore
       this.ge = new GanttMaster();
+      this.ge.ganttHeight = this.height;
       this.ge.resourceUrl = "assets/gantt/res/";
       this.ge.set100OnClose = true;
       this.ge.shrinkParent = true;
@@ -81,6 +94,7 @@ export class GanttComponent implements OnInit {
       delete this.ge.gantt.zoom;
 
       this.reload();
+      this.initialized = true;
       //initializeHistoryManagement(ge.tasks[0].id);
 
       /* Native resource editors
@@ -123,25 +137,27 @@ export class GanttComponent implements OnInit {
 
   public reload() {
     //let project = this.getDemoProject();
-    let project: any = this.getProject();
+    let project: any = this.loadProject();
     if (!project.canWrite) $(".ganttButtonBar button.requireWrite").attr("disabled","true");
     this.ge.loadProject(project);
     this.ge.checkpoint(); //empty the undo stack
   }
 
-  public getRecursiveTasks(tasks: GanttTask[], level: number, project: any) {
+  public getRecursiveGanttTasks(tasks: GanttTask[], level: number, project: any) {
     for(let task of tasks) {
-      let assigs: any[] = [];
-      for(let assig of (task.assignments || [])) {
+      const assigs = (task.assignments || []).filter(assig => project.resources.find((x: any) => x.id == assig.resource_id)).map(assig => {
+        return { id: assig.id, resourceId: assig.resource_id, roleId: assig.role_id, effort: "", description: assig.description, quantity: assig.quantity }
+      });
+      /*for(let assig of ) {
         if(assig.resource_id && project.resources.find((x: any) => x.id == assig.resource_id)) {
-          assigs.push({ id: assig.id, resourceId: assig.resource_id, roleId: "", effort: "" });
+          assigs.push();
         } else if(assig.resource) {
           if(!project.resources.find((x: any) => x.id == assig.resource!.id)) {
             project.resources.push({ id: assig.resource!.id, name: assig.resource!.name, picture: assig.resource!.picture });
           }
           assigs.push({ id: assig.id, resourceId: assig.resource!.id, roleId: "", effort: "" });
         }
-      }
+      }*/
       project.tasks.push({
         id: task.id,
         name: task.name,
@@ -161,32 +177,90 @@ export class GanttComponent implements OnInit {
         end: task.end.getTime(),
         startIsMilestone: !!task.startIsMilestone,
         endIsMilestone: !!task.endIsMilestone,
-        collapsed: false,
+        collapsed: !!task.collapsed,
         assigs: assigs,
-        hasChild: !!task.hasChild
+        hasChild: !!task.hasChild,
+        dependencies_ids: task.dependencies_ids || []
       });
-      if(task.hasChild) this.getRecursiveTasks(task.tasks || [], level+1, project);
+      if(task.hasChild) this.getRecursiveGanttTasks(task.tasks || [], level+1, project);
     }
   }
 
-  public getProject() {
-    let project: any = {
-      tasks: [],
+  public loadProject() {
+    let project = {
+      tasks: new Array<any>(),
       selectedRow: 2,
-      deletedTaskIds: [],
-      resources: [],
-      roles: [], 
+      deletedTaskIds: new Array<string>(),
+      resources: new Array<any>(),
+      roles: new Array<any>(), 
       canWrite: true,
       canDelete: false,
       canWriteOnParent: true,
       canAdd: false 
     };
-    // Load resources list
-    project.resources = this.resources.map(resource => {
-      return { id: resource.id, name: resource.name, picture: resource.picture };
+    // Load roles list
+    project.roles = this.project.roles.map(role => {
+      return { id: role.id, name: role.name, extra: role.extra };
     });
-    // Load tasks and resources
-    this.getRecursiveTasks(this.tasks, 0, project);
+    // Load resources list
+    project.resources = this.project.resources.map(resource => {
+      return { id: resource.id, name: resource.name, picture: resource.picture, extra: resource.extra };
+    });
+    // Load tasks, deps and assignments
+    this.getRecursiveGanttTasks(this.project.tasks, 0, project);
+    for(let task of project.tasks) task.depends = task.dependencies_ids.map((dep: string) => project.tasks.findIndex(x => x.id == dep) + 1).filter((x: any) => x).join(":");
+    return project;
+  }
+
+  public getRecursiveProjectTasks(tasks: any[], index: number, level: number, parent: GanttProject | GanttTask) {
+    let before = parent;
+    for(; index < tasks.length && tasks[index].level >= level; index++) {
+      if(tasks[index].level > level) {
+        index = this.getRecursiveProjectTasks(tasks, index, tasks[index].level, before) - 1;
+      } else {
+        const task = tasks[index];
+        const assigs = (task.assigs || []).map((assig: any) => {
+          return Object.assign(new GanttAssignment(), { id: assig.id, resource_id: assig.resourceId, role_id: assig.roleId, description: assig.description, quantity: assig.quantity });
+        });
+        const deps = (task.depends || "").split(":").filter((x: string) => x.length).map((index: any) => tasks[index-1].id);
+        parent.tasks!.push(Object.assign(new GanttTask(), {
+          id: task.id,
+          index: index,
+          name: task.name,
+          description: task.description,
+          extra: undefined,
+          progress: task.progress,
+          start: new Date(task.start),
+          end: new Date(task.end),
+          duration: task.duration,
+          startIsMilestone: task.startIsMilestone,
+          endIsMilestone: task.endIsMilestone,
+          hasChild: task.hasChild,
+          tasks: [],
+          status: task.status,
+          dependencies_ids: deps,
+          assignments: assigs,
+          collapsed: task.collapsed,
+        }));
+      }
+      before = tasks[index];
+    }
+    return index;
+  }
+
+  public storeProject() {
+    let project = new GanttProject();
+    let gantt = this.ge.saveGantt();
+    // Store roles list
+    project.roles = gantt.roles.map((role: any) => {
+      return new GanttRole({ id: role.id, name: role.name, extra: role.extra });
+    });
+    // Store resources list
+    project.resources = this.project.resources.map(resource => {
+      return new GanttResource({ id: resource.id, name: resource.name, picture: resource.picture, type: resource.type, unityCost: resource.unityCost, unity: resource.unity, extra: resource.extra });
+    });
+    // Store tasks, deps and assignments
+    this.getRecursiveProjectTasks(gantt.tasks, 0, 0, project);
     return project;
   }
 
@@ -202,10 +276,10 @@ export class GanttComponent implements OnInit {
       {"id": -8, "name": "test on chrome", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "depends": "6", "canWrite": true, "start": 1399327200000, "duration": 2, "end": 1399499999999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false}
     ], "selectedRow": 2, "deletedTaskIds": [],
     "resources": [
-      {"id": "tmp_1", "name": "Resource 1", picture: "./assets/images/profile.png"},
-      {"id": "tmp_2", "name": "Resource 2", picture: "./assets/images/profile.png"},
-      {"id": "tmp_3", "name": "Resource 3", picture: "./assets/images/profile.png"},
-      {"id": "tmp_4", "name": "Resource 4", picture: "./assets/images/profile.png"}
+      {"id": "tmp_1", "name": "Resource 1", picture: this.gb.servidorURL + "/assets/images/profile.png"},
+      {"id": "tmp_2", "name": "Resource 2", picture: this.gb.servidorURL + "/assets/images/profile.png"},
+      {"id": "tmp_3", "name": "Resource 3", picture: this.gb.servidorURL + "/assets/images/profile.png"},
+      {"id": "tmp_4", "name": "Resource 4", picture: this.gb.servidorURL + "/assets/images/profile.png"}
     ],
     "roles":       [
       {"id": "tmp_1", "name": "Project Manager"},

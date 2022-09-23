@@ -27,7 +27,7 @@ class DocumentoService extends ServiceBase {
 
     public function afterStore($entity, $action) {
         $documento = $entity;
-        if($documento->especie == "TERMO_ADESAO" && $action == ServiceBase::ACTION_INSERTED) {
+        if($documento->especie == "TERMO_ADESAO" && $action == ServiceBase::ACTION_INSERT) {
             if(!empty($documento->plano_id) && $documento->status == "GERADO") {
                 $plano = Plano::find($documento->plano_id);
                 $plano->documento_id = $entity->id;

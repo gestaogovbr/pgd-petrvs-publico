@@ -26,7 +26,7 @@
         <column title="Código" field="codigo"></column>
         <column title="Cidade" [template]="columnCidade">
             <ng-template let-row="row" #columnCidade>
-                <span>{{row.cidade.nome+"/"+row.cidade.uf}}</span>
+                <span>{{(row.cidade?.nome || "") + "/" + (row.cidade?.uf || "")}}</span>
             </ng-template>
         </column>
         <column *ngIf="!selectable" type="options" [onEdit]="edit" [options]="options"></column>

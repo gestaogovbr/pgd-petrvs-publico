@@ -19,7 +19,7 @@ import { InputBase, LabelPosition, SelectItem } from '../input-base';
 })
 export class InputSelectComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';
-  @ViewChild('selectElm', {static: false}) selectElm?: ElementRef;
+  @ViewChild('inputElement', {static: false}) inputElement?: ElementRef;
   @Output() change = new EventEmitter<Event>();
   @Output() details = new EventEmitter<SelectItem>();
   @Input() labelPosition: LabelPosition = "top";
@@ -73,7 +73,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
         this.selectPicker?.selectpicker('refresh');
         this.selectedValue = undefined;
         this.setValue(current);
-        this.selectElm?.nativeElement.dispatchEvent(new Event('change'));
+        this.inputElement?.nativeElement.dispatchEvent(new Event('change'));
       } else {
         this._items = value;
       }

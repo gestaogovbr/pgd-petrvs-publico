@@ -23,6 +23,11 @@ export type DialogTopAlert = {
   close?: (id: string) => void
 }
 
+export class DialogResult {
+  constructor(public dialog: DialogComponent, public result: Promise<DialogTemplateResult>) {}
+  public asPromise() { return this.result }
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -132,7 +137,7 @@ export class DialogService {
     });
   }
 
-  public template(config: DialogConfig, template: TemplateRef<any>, buttons: DialogButton[], templateContext?: any): Promise<DialogTemplateResult> {
+  public template(config: DialogConfig, template: TemplateRef<any>, buttons: DialogButton[], templateContext?: any): DialogResult {
     const dialogView = this.createDialogView();
     const dialog = dialogView.instance;
     dialog.title = config.title || "";
@@ -142,14 +147,14 @@ export class DialogService {
     dialog.buttons = buttons;
     dialog.cdRef.detectChanges();
     this.cdRef?.detectChanges();
-    return new Promise<DialogTemplateResult>((resolve, reject) => {
+    return new DialogResult(dialog, new Promise<DialogTemplateResult>((resolve, reject) => {
       dialog.onButtonClick.subscribe(button => {
         resolve({button, dialog});
       });
-    });
+    }));
   }
 
-  public html(config: DialogConfig, html: string, buttons: DialogButton[] = []): Promise<DialogTemplateResult> {
+  public html(config: DialogConfig, html: string, buttons: DialogButton[] = []): DialogResult {
     const dialogView = this.createDialogView();
     const dialog = dialogView.instance;
     dialog.title = config.title || "";
@@ -158,11 +163,11 @@ export class DialogService {
     dialog.buttons = buttons;
     dialog.cdRef.detectChanges();
     this.cdRef?.detectChanges();
-    return new Promise<DialogTemplateResult>((resolve, reject) => {
+    return new DialogResult(dialog, new Promise<DialogTemplateResult>((resolve, reject) => {
       dialog.onButtonClick.subscribe(button => {
         resolve({button, dialog});
       });
-    });
+    }));
   }
 
   public modal(route: ActivatedRouteSnapshot){

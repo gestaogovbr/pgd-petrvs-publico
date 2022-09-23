@@ -1,4 +1,4 @@
-import { Component, HostBinding, Injector, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, HostBinding, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, ControlContainer, FormGroup, FormGroupDirective } from '@angular/forms';
 import { InputBase, LabelPosition } from '../input-base';
 
@@ -15,6 +15,7 @@ import { InputBase, LabelPosition } from '../input-base';
 })
 export class InputDisplayComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';
+  @ViewChild('inputElement') inputElement?: ElementRef;
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
   @Input() disabled?: string;

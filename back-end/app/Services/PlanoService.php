@@ -30,7 +30,37 @@ class PlanoService extends ServiceBase
         // adicionar no gitlab para considerar o fuso horário
     }
 
-    public function validateStore($data, $unidade) {
+    public function proxyQuery($query, &$data) {
+        $where = [];
+        foreach($data["where"] as $condition) {
+            if(is_array($condition) && $condition[0] == "data_filtro") {
+                $dataInicio = $this->getFilterValue($data["where"], "data_inicio");
+                $dataFim = $this->getFilterValue($data["where"], "data_fim");
+                switch($condition[2]) {
+                    case "VIGENTE":
+                        $where[] = ["data_inicio_vigencia", "<=", $dataFim];
+                        $where[] = ["data_fim_vigencia", ">=", $dataInicio];
+                        break;
+                    case "NAOVIGENTE": ;
+                        $where[] = ["OR", ["data_inicio_vigencia", ">", $dataFim], ["data_fim_vigencia", "<", $dataInicio]];
+                        break;
+                    case "INICIAM": ;
+                        $where[] = ["data_inicio_vigencia", ">=", $dataInicio];
+                        $where[] = ["data_inicio_vigencia", "<=", $dataFim];
+                        break;
+                    case "FINALIZAM": ;
+                        $where[] = ["data_fim_vigencia", ">=", $dataInicio];
+                        $where[] = ["data_fim_vigencia", "<=", $dataFim];
+                        break;
+                }
+            } else if(!(is_array($condition) && in_array($condition[0], ["data_inicio", "data_fim"]))) {
+                array_push($where, $condition);
+            }
+        }
+        $data["where"] = $where;
+    }
+
+    public function validateStore($data, $unidade, $action) {
         $unidade_id = $data["unidade_id"];
         $usuario = Usuario::with(["lotacoes" => function ($query){
             $query->whereNull("data_fim");
@@ -58,7 +88,7 @@ class PlanoService extends ServiceBase
         }
     }
 
-    public function extraStore($plano, $unidade) {
+    public function extraStore($plano, $unidade, $action) {
         /* Adiciona a Lotação automaticamente case o usuário não tenha */
         $usuario = Usuario::with(["lotacoes" => function ($query){
             $query->whereNull("data_fim");

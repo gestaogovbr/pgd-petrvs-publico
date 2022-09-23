@@ -1,0 +1,93 @@
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+    [selectable]="selectable" (select)="onSelect($event)"
+    [hasAdd]="auth.hasPermissionTo('MOD_PROJ_INCL')"
+    [hasEdit]="false">
+    <toolbar *ngIf="!selectable"></toolbar>
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-text [size]="4" label="Nome" controlName="nome" [control]="filter!.controls.nome"></input-text>
+            <input-search [size]="4" [label]="lex.noun('Usuario')" controlName="usuario_id" [control]="filter!.controls.usuario_id" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
+            <input-search [size]="4" [label]="lex.noun('Unidade')" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+        </div>
+    </filter>
+    <columns>
+        <column title="#ID" [template]="columnNumero">
+            <ng-template let-row="row" #columnNumero>
+                <strong>{{row.numero}}</strong>
+            </ng-template>
+        </column>
+        <column [title]="'Nome\nEnvolvido'" [template]="columnNomeEnvolvidos">
+            <ng-template let-row="row" let-metadata="metadata" #columnNomeEnvolvidos>
+                <strong class="d-block">{{row.nome}}</strong>
+                <profile-picture *ngFor="let envolvido of getEnvolvidos(row, metadata)" [url]="envolvido.url" [hint]="envolvido.hint"></profile-picture>
+            </ng-template>
+        </column>
+        <column title="Descrição" [template]="columnDescricao">
+            <ng-template let-row="row" #columnDescricao>
+                <strong class="d-block">{{row.descricao}}</strong>
+                <small>{{row.finalidade}}</small>
+            </ng-template>
+        </column>
+        <column title="Datas" [template]="columnDatas">
+            <ng-template let-row="row" #columnDatas>
+                <badge color="light" icon="bi bi-box-arrow-right" [label]="util.getDateTimeFormatted(row.inicio)" hint="Data de início"></badge><br>
+                <badge color="light" icon="bi bi-box-arrow-in-right" [label]="util.getDateTimeFormatted(row.termino)" hint="Data de término"></badge>
+            </ng-template>
+        </column>
+        <column title="Custo" [template]="columnCusto">
+            <ng-template let-row="row" #columnCusto>
+                <badge *ngIf="!row.calcula_custos" color="warning" icon="bi bi-dash-square" label="Não calcula" hint="Projeto configurado para não calcular custos"></badge><br>
+                <badge *ngIf="row.calcula_custos" color="light" icon="bi bi-cash-coin" [label]="util.formatDecimal(row.custo)" hint="Data de término"></badge>
+            </ng-template>
+        </column>
+        <column title="Progresso" [template]="columnProgresso">
+            <ng-template let-row="row" #columnProgresso>
+                <progress-bar [value]="row.progresso" color="success"></progress-bar>
+            </ng-template>
+        </column>
+        <column title="Status" [template]="columnStatus">
+            <ng-template let-row="row" #columnStatus>
+                <badge [class]="lookup.getColor(lookup.PROJETO_STATUS, row.status)" [icon]="lookup.getIcon(lookup.PROJETO_STATUS, row.status)" [label]="lookup.getValue(lookup.PROJETO_STATUS, row.status)"></badge>
+            </ng-template>
+        </column>
+        <column *ngIf="!selectable" type="options" [onEdit]="edit" [onDelete]="delete" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>
+
+<!--
+      Nome                Descricao   
+#ID   Envolvidos          Finalidade               Datas                 Progresso    Status
+-----------------------------------------------------------------------------------------------------------
+9999  Projeto de pipoca   Fazer pipoca sem sal     [I xx/xx/xxx hh:ss]  [##| 20%  ]   (S) Iniciado   [...]
+      (U) (M) [Z DTIC]    Pipoca                   [F xx/xx/xxx hh:ss]                       +------     |
+---------------------------------------------------------------------------------------------| Recusrsos |
+                                                                                             | Regras    | 
+                                                                                             | Alocações |
+                                                                                             +-----------+
+
+
+[ Form do projeto ]
+
+                                         | Principal | Recursos | Envolvidos | Alocacoes | Comentários |
+
+Nome:
+Finalidade:
+Final calculado automaticamente:
+
+
+[ Planejamento - Gantt ]
+Grid 
+Tarefa Inicio Fim Progresso | Gant
+
+
+-->
+
+
+
+
+
+
+
+
+

@@ -14,11 +14,19 @@ use App\Services\DemandaService;
 use App\Services\RawWhere;
 use App\Services\UtilService;
 use App\Traits\UseDataFim;
+use Database\Seeders\UsuarioSeeder;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Iterator;
+use Exception;
 
 class UsuarioService extends ServiceBase
 {
     use UseDataFim;
+
+    const LOGIN_GOOGLE = "GOOGLE";
+    const LOGIN_MICROSOFT = "AZURE";
+    const LOGIN_FIREBASE = "FIREBASE";
 
     public function proxySearch($query, &$data, &$text) {
         $data["where"][] = ["subordinadas", "==", true];
@@ -52,6 +60,40 @@ class UsuarioService extends ServiceBase
         array_push($where, ["unidade_id", "in", $unidades_ids]);
         $data["where"] = $where;
         return $data;*/
+    }
+
+    public function atualizarFotoPerfil($tipo, &$usuario, $url) {
+        $mudou = ($tipo == UsuarioService::LOGIN_GOOGLE ? $usuario->foto_google != $url : 
+                 ($tipo == UsuarioService::LOGIN_MICROSOFT ? $usuario->foto_microsoft != $url : 
+                 ($tipo == UsuarioService::LOGIN_FIREBASE ? $usuario->foto_firebase != $url : false)));
+        if(!empty($url) && !empty($usuario) && $mudou) {
+            $downloaded = $this->downloadImgProfile($url, "usuarios/" . $usuario->id);
+            if(!empty($downloaded)) {
+                $usuario->foto_perfil = $downloaded;
+                switch($tipo) {
+                    case UsuarioService::LOGIN_GOOGLE: $usuario->foto_google = $url; break;
+                    case UsuarioService::LOGIN_MICROSOFT: $usuario->foto_microsoft = $url; break;
+                    case UsuarioService::LOGIN_FIREBASE: $usuario->foto_firebase = $url; break;
+                }                
+                $usuario->save();
+            }
+        }
+    }
+
+    public function downloadImgProfile($url, $path) {
+        if(!Storage::exists($path)) {
+            Storage::makeDirectory($path, 0755, true);
+        }
+        try {
+            $contents = file_get_contents($url);
+        } catch(Exception $e) {}
+        if(!empty($contents)) {
+            $name = $path . "/profile_" . md5($contents) . ".jpg";
+            if(!Storage::exists($name)) Storage::put($name, $contents);
+            return $name;
+        } else {
+            return "";
+        }
     }
 
     public function hasLotacao($id, $usuario = null, $subordinadas = true, $dataRef = null) {
@@ -104,9 +146,7 @@ class UsuarioService extends ServiceBase
      * @return array: array contendo todas as informações para o front-end
      */
     public function dashboard($usuario_id): array {
-        $demandaService = new DemandaService();
-        $planoService = new PlanoService();
-        $planosAtivos = $planoService->planosAtivos($usuario_id);
+        $planosAtivos = $this->PlanoService->planosAtivos($usuario_id);
         $planos_ids = [];
         $result = [
             "total_demandas" => 0,
@@ -128,7 +168,7 @@ class UsuarioService extends ServiceBase
         $result["total_demandas"] = $demandas->count();
 
         foreach($demandasTotaisNaoConcluidas as $demanda) {
-            $metadados = $demandaService->metadados($demanda);
+            $metadados = $this->DemandaService->metadados($demanda);
             $result["demandas_totais_atrasadas"] += $metadados["atrasado"] ? 1 : 0;
         }
 
@@ -157,6 +197,13 @@ class UsuarioService extends ServiceBase
             }
         }
         return $result;
+    }
+
+    public function validateStore($data, $unidade, $action) {
+        if($action == ServiceBase::ACTION_INSERT) {
+            $alreadyHas = Usuario::where("id", "!=", $data["id"])->where("email", $data["email"])->orWhere("cpf", $data["cpf"])->orWhere("matricula", $data["matricula"])->first();
+            if(!empty($alreadyHas)) throw new \Exception("Já existe um usuário com mesmo e-mail/CPF/Matrícula no sistema");
+        }
     }
 
 }

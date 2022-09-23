@@ -61,6 +61,9 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
   }
 
   public filterClear(filter: FormGroup) {
+    this.filter?.controls.usuario.setValue("");
+    this.filter?.controls.unidade_id.setValue("");
+    this.filter?.controls.perfil_id.setValue(null);
     super.filterClear(filter);
   }
 

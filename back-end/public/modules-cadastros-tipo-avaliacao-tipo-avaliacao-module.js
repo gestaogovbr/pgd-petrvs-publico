@@ -413,7 +413,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
 class TipoAvaliacao extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.nota_atribuida = 0; /* Nota atribuida de 0 a 10 */
         this.nome = ""; /* Descrição da nota atribuida */
@@ -424,6 +424,7 @@ class TipoAvaliacao extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.tipos_avaliacoes_justificativas = [];
         this.data_inicio = new Date(); /* Data de início */
         this.data_fim = null; /* Data do fim */
+        this.initialization(data);
     }
 }
 
@@ -443,10 +444,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
 class TipoAvaliacaoJustificativa extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.tipo_avaliacao_id = "";
         this.tipo_justificativa_id = "";
+        this.initialization(data);
     }
 }
 

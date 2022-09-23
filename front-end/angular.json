@@ -102,13 +102,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "10mb",
-                  "maximumError": "10mb"
+                  "maximumWarning": "50mb",
+                  "maximumError": "50mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "10kb",
-                  "maximumError": "10kb"
+                  "maximumWarning": "50kb",
+                  "maximumError": "50kb"
                 }
               ]
             }
@@ -117,7 +117,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "petrvs:build"
+            "browserTarget": "petrvs:build",
+            "proxyConfig": "src/proxy.conf.json"
           },
           "configurations": {
             "production": {

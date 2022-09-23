@@ -127,8 +127,6 @@ export abstract class DemandaListBase extends PageListBase<Demanda, DemandaDaoSe
     }
   }
 
-  public abstract modalRefreshId(demanda: Demanda): RouteMetadata;
-
   public onDespendidoClick(row: Demanda) {
     if (row.metadados && !row.metadados.concluido) {
       const cargaHoraria = this.extra?.planos[row.plano_id!]?.carga_horaria || 0;
@@ -188,10 +186,6 @@ export abstract class DemandaListBase extends PageListBase<Demanda, DemandaDaoSe
     });
   }
 
-  public modalRefresh() {
-    return { modal: true, modalClose: (modalResult?: string) => this.refresh() };
-  }
-
   public dynamicOptions(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let demanda: Demanda = row as Demanda;
@@ -199,7 +193,7 @@ export abstract class DemandaListBase extends PageListBase<Demanda, DemandaDaoSe
     const isDemandante = this.auth.usuario?.id == demanda.demandante_id;
     const isResponsavel = this.auth.usuario?.id == demanda.usuario_id;
     const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: (demanda: Demanda) => this.go.navigate({ route: ['gestao', 'demanda', demanda.id, 'consult'] }, { modal: true }) };
-    const BOTAO_COMENTARIOS = { label: "Comentários", icon: "bi bi-chat-left-quote", onClick: (demanda: Demanda) => this.go.navigate({ route: ['gestao', 'demanda', demanda.id, 'comentar'] }, this.modalRefreshId(demanda)) };
+    const BOTAO_COMENTARIOS = { label: "Comentários", icon: "bi bi-chat-left-quote", onClick: (demanda: Demanda) => this.go.navigate({ route: ['uteis', 'comentarios', 'DEMANDA', demanda.id, 'new'] }, this.modalRefreshId(demanda)) };
     const BOTAO_CLONAR = { label: "Clonar", icon: "bi bi-stickies", onClick: (demanda: Demanda) => this.go.navigate({ route: ['gestao', 'demanda', demanda.id, 'clonar'] }, this.modalRefresh()) };
     const BOTAO_ALTERAR = { label: "Alterar demanda", icon: "bi bi-pencil-square", onClick: (demanda: Demanda) => this.go.navigate({ route: ['gestao', 'demanda', demanda.id, 'edit'] }, this.modalRefreshId(demanda)) };
     const BOTAO_EXCLUIR = { label: "Excluir demanda", icon: "bi bi-trash", onClick: this.delete.bind(this) };

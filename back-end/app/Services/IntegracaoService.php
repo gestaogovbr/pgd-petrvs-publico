@@ -275,7 +275,7 @@ class IntegracaoService
                     foreach($uos as $uo) {
                         if(!empty($self->valueOrDefault($uo["id_servo"]))) {
                             DB::insert($sql, [
-                                 ':id_servo' => $self->valueOrDefault($uo["id_servo"]),
+                                ':id_servo' => $self->valueOrDefault($uo["id_servo"]),
                                 ':pai_servo' => $self->valueOrDefault($uo["pai_servo"]),
                                 ':codigo_siape' => $self->valueOrDefault($uo["codigo_siape"]),
                                 ':pai_siape' => $self->valueOrDefault($uo["pai_siape"]),
@@ -511,6 +511,38 @@ class IntegracaoService
             return $result;
         }
 
+        $this->atualizarChefias();
+
+    }
+
+    public function atualizarChefias() {
+        $sql_1 = "SELECT matriculasiape, funcoes FROM integracao_servidores WHERE vinculo_ativo = 'true'";
+        $servidores = DB::select($sql_1);
+        $chefes = array_filter($servidores, fn($s) => $s->funcoes != "[]");
+        $chefias = [];
+        foreach($chefes as $chefe){
+            $funcoes = json_decode($chefe->funcoes);
+            if(is_array($funcoes->funcao)) {
+                $chefias = array_merge($chefias, array_map(fn($f) => ['matricula' => $chefe->matriculasiape, 'codigo_siape' => $f->uorg_funcao, 'tipo_funcao' => $f->tipo_funcao], $funcoes->funcao));
+            } else {
+                array_push($chefias, ['matricula' => $chefe->matriculasiape, 'codigo_siape' => $funcoes->funcao->uorg_funcao, 'tipo_funcao' => $funcoes->funcao->tipo_funcao]);
+            }
+        }
+        foreach($chefias as $chefia) {
+            //Descobrir o ID do Usuário
+            $sql_2 = "SELECT id from USUARIOS where matricula = :matricula";
+            $idUsuario = DB::select($sql_2, [':matricula' => $chefia['matricula']]);
+            //Descobrir o ID da Unidade
+            $sql_3 = "SELECT u.id FROM integracao_unidades iu join unidades u on iu.id_servo = u.codigo WHERE iu.codigo_siape = :codigo_siape";
+            $idUnidade = DB::select($sql_3, [':codigo_siape' => $chefia['codigo_siape']]);
+
+            if($chefia['tipo_funcao'] = '1'){
+                $sql_4 = "UPDATE unidades SET gestor_id = :id_usuario WHERE id = :id_unidade";
+            } else if($chefe['tipo_funcao'] = '2'){
+                $sql_4 = "UPDATE unidades SET gestor_substituto_id = :id_usuario WHERE id = :id_unidade";
+            }
+            if ($idUsuario) DB::update($sql_4, [':id_usuario'=> $idUsuario, ':id_unidade' => $idUnidade]);
+        }
     }
 
     public function salvaUsuarioLotacaoGapi(&$usuario, &$lotacao, $tokenData, $auth){

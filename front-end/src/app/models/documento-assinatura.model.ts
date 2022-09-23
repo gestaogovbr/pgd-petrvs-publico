@@ -11,7 +11,5 @@ export class DocumentoAssinatura extends Base {
     public documento_id: string = ""; /* Documento */
     public usuario_id: string = ""; /* Usuario */
 
-    constructor(){
-        super();
-    }
+    public constructor(data?: any) { super(); this.initialization(data); }
 }

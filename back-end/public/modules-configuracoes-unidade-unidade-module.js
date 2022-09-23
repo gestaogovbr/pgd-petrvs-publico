@@ -569,7 +569,7 @@ function UnidadeListComponent_ng_template_15_Template(rf, ctx) { if (rf & 1) {
 } if (rf & 2) {
     const row_r11 = ctx.row;
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate"](row_r11.cidade.nome + "/" + row_r11.cidade.uf);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate"](((row_r11.cidade == null ? null : row_r11.cidade.nome) || "") + "/" + ((row_r11.cidade == null ? null : row_r11.cidade.uf) || ""));
 } }
 function UnidadeListComponent_column_17_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](0, "column", 21);
@@ -779,10 +779,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
 class UnidadeOrigemAtividade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor() {
+    constructor(data) {
         super();
         this.unidade_id = ""; /* ID da unidade pai */
         this.unidade_origem_atividade_id = ""; /* ID da unidade que será utilizada como origem de atividades  */
+        this.initialization(data);
     }
 }
 

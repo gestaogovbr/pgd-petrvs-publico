@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostBinding, Injector, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostBinding, HostListener, Injector, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, ControlContainer, FormControl, FormGroup, FormGroupDirective } from '@angular/forms';
 import { InputBase, LabelPosition } from '../input-base';
 
@@ -18,6 +18,7 @@ export type InputTextCase = "upper" | "lower" | "";
 })
 export class InputTextComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';
+  @ViewChild('inputElement') inputElement?: ElementRef;
   @Output() change = new EventEmitter<Event>();
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
@@ -43,6 +44,7 @@ export class InputTextComponent extends InputBase implements OnInit {
   @Input() placeholder?: string;
   @Input() maxLength?: number;
   @Input() maskFormat: string = "";
+  @Input() right?: string;
   @Input() maskDropSpecialCharacters: boolean = false; 
   @Input() maskSpecialCharacters: string[] = ["-", "/", "(", ")", ".", ":", " ", "+", ",", "@", "[", "]", '"', "'"];
   @Input() set control(value: AbstractControl | undefined) {
@@ -58,6 +60,10 @@ export class InputTextComponent extends InputBase implements OnInit {
 
   public get isNumbers(): boolean {
     return this.numbers !== undefined;
+  }
+
+  public get isRight(): boolean {
+    return this.right !== undefined;
   }
 
   public get isPassword(): boolean {

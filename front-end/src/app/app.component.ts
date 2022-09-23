@@ -3,6 +3,7 @@ import { SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToolbarButton } from './components/toolbar/toolbar.component';
 import { ListenerAllPagesService } from './listeners/listener-all-pages.service';
+import { IIndexable } from './models/base.model';
 import { Usuario } from './models/usuario.model';
 import { AuthService } from './services/auth.service';
 import { DialogService } from './services/dialog.service';
@@ -36,6 +37,11 @@ export class AppComponent {
   public go: NavigateService;
   public allPages: ListenerAllPagesService;
   public utils: UtilService;
+  public menuSchema: any;
+  public menuToolbar: any[];
+
+  private _menu: any;
+  private _menuDetectChanges: any;
 
   constructor(public injector: Injector) {
     /* Injector */
@@ -75,6 +81,78 @@ export class AppComponent {
     }, 1000);
     this.lex.cdRef = this.cdRef;
     this.auth.loadGapi();
+    /* Definição do menu do sistema */
+    this.menuToolbar = [
+      { name: "Cadastros", permition: "MENU_CAD_ACESSO", route: ['cadastros'], id: "navbarDropdownCadastros", menu: "cadastros" },
+      { name: "Gestão", permition: "MENU_GESTAO_ACESSO", route: ['gestao'], id: "navbarDropdownGestao", menu: "gestao" },
+      { name: "Relatorios", permition: "", route: ['relatorios'], id: "navbarDropdownRelatorios", menu: "relatorios" },
+      { name: "Configurações", permition: "MENU_CONFIG_ACESSO", route: ['configuracoes'], id: "navbarDropdownConfiguracoes", menu: "configuracoes" },
+      { name: "Logs", permition: "MENU_LOGS_ACESSO", route: ['logs'], id: "navbarDropdownLogs", menu: "logs" },
+    ];
+    this.menuSchema = {
+      cadastros: [
+        { name: this.lex.noun("Atividade", true), permition: 'MOD_ATV', route: ['cadastros', 'atividade'], icon: "bi bi-activity" },
+        { name: this.lex.noun("Afastamento", true), permition: 'MOD_AFT', route: ['cadastros', 'afastamento'], icon: "bi bi-toggle-off" },
+        { name: "Cidades", permition: 'MOD_CID', route: ['cadastros', 'cidade'], icon: "bi bi-building" },
+        { name: "Feriados", permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: "bi bi-emoji-sunglasses" },
+        { name: this.lex.noun("Material e serviço", true), permition: '', route: ['cadastros', 'material-servico'], icon: "bi bi-box-seam" },
+        { name: this.lex.noun("Programa de gestão", true), permition: 'MOD_PRGT', route: ['cadastros', 'programa'], icon: "bi bi-graph-up-arrow" },
+        { name: this.lex.noun("Tarefa", true), permition: 'MOD_DMD', route: ['cadastros', 'tarefa'], icon: "bi bi-boxes" },
+        "-",
+        { name: "Tipos de " + this.lex.noun("Atividade", true), permition: 'MOD_TIPO_ATV', route: ['cadastros', 'tipo-atividade'], icon: "bi bi-check-all" },
+        { name: "Tipos de " + this.lex.noun("Avaliação", true), permition: 'MOD_TIPO_AVAL', route: ['cadastros', 'tipo-avaliacao'], icon: "bi bi-question-square" },
+        { name: "Tipos de " + this.lex.noun("Documento", true), permition: 'MOD_TIPO_DOC', route: ['cadastros', 'tipo-documento'], icon: "bi bi-files" },
+        { name: "Tipos de " + this.lex.noun("Justificativa", true), permition: 'MOD_TIPO_JUST', route: ['cadastros', 'tipo-justificativa'], icon: "bi bi-window-stack" },
+        { name: "Tipos de " + this.lex.noun("Modalidade", true), permition: 'MOD_TIPO_MDL', route: ['cadastros', 'tipo-modalidade'], icon: "bi bi-bar-chart-steps" },
+        { name: "Tipos de " + this.lex.noun("Motivo de afastamento", true), permition: 'MOD_TIPO_MTV_AFT', route: ['cadastros', 'tipo-motivo-afastamento'], icon: "bi bi-list-ol" },
+        { name: "Tipos de " + this.lex.noun("Processo", true), permition: 'MOD_TIPO_PROC', route: ['cadastros', 'tipo-processo'], icon: "bi bi-folder-check" }
+      ],
+      gestao: [
+        { name: this.lex.noun("Demanda", true), permition: '', route: ['gestao', 'demanda'], icon: "bi bi-activity" },
+        { name: this.lex.noun("Plano de trabalho", true), permition: 'MOD_PTR', route: ['gestao', 'plano'], icon: "bi bi-list-check" },
+        { name: this.lex.noun("Projetos", true), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: "bi bi-diagram-2" }
+      ],
+      relatorios: [
+        { name: "Força de Trabalho - Servidor", permition: '', route: ['relatorios', 'forca-de-trabalho', 'servidor'], icon: "bi bi-file-person" },
+        { name: "Força de Trabalho - Área", permition: '', route: ['relatorios', 'forca-de-trabalho', 'area'], icon: "bi bi-diagram-3-fill" }
+      ],
+      configuracoes: [
+        { name: this.lex.noun("Entidade",true), permition: 'MOD_CFG_ENTD', route: ['configuracoes', 'entidade'], icon: "bi bi-bookmark-heart" },
+        { name: this.lex.noun("Unidade",true), permition: 'MOD_CFG_UND', route: ['configuracoes', 'unidade'], icon: "fa-unity fab" },
+        { name: this.lex.noun("Usuário",true), permition: 'MOD_CFG_USER', route: ['configuracoes', 'usuario'], icon: "bi bi-people" },
+        { name: "Perfis", permition: 'MOD_CFG_PERFS', route: ['configuracoes', 'perfil'], icon: "bi bi-fingerprint" },
+        "-",
+        { name: "Sobre", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
+      ],
+      logs: [
+        { name: "Changes", permition: 'MOD_LOGS_CONS', route: ['logs', 'change'], icon: "bi bi-pencil-square" },
+        { name: "Errors", permition: 'MOD_LOGS_CONS', route: ['logs', 'error'], icon: "bi bi-bug" },
+        { name: "Traffics", permition: 'MOD_LOGS_CONS', route: ['logs', 'traffic'], icon: "bi bi-stoplights" }
+      ],
+    }
+  }
+
+  public getMenuItems(nome: string) {
+    return this.menu[nome];
+  }
+
+  public get menu(): IIndexable {
+    let todos = [...this.menuSchema?.cadastros, ...this.menuSchema?.gestao, ...this.menuSchema?.relatorios, ...this.menuSchema?.configuracoes, ...this.menuSchema?.logs];
+    let permitions = todos.map(m => !m.permition?.length || !this.auth.hasPermissionTo(m.permition) ? "" : m.permition);
+    let menuDetectChanges = JSON.stringify(permitions);
+    let itensMenu = (itens: any[]): any[] => itens.filter(x => !x.permition?.length || permitions.includes(x.permition));
+
+    if(this._menuDetectChanges != menuDetectChanges) {
+      this._menuDetectChanges = menuDetectChanges;
+      this._menu = {
+        cadastros: itensMenu(this.menuSchema.cadastros),
+        gestao: itensMenu(this.menuSchema.gestao),
+        relatorios: itensMenu(this.menuSchema.relatorios),
+        configuracoes: itensMenu(this.menuSchema.configuracoes),
+        logs: itensMenu(this.menuSchema.logs)
+      };
+    }
+    return this._menu;
   }
 
   public ngAfterViewInit() {
@@ -96,7 +174,7 @@ export class AppComponent {
   }
 
   public buttonId(button: ToolbarButton) {
-    return "button_" + this.utils.md5((button.icon || "") + (button.hint || "") + (button.label || "")); 
+    return "button_" + this.utils.md5((button.icon || "") + (button.hint || "") + (button.label || ""));
   }
 
   public get unidades(): any[] {
@@ -108,7 +186,7 @@ export class AppComponent {
   }
 
   public get usuarioFoto(): string {
-    return this.auth.usuario?.url_foto || "./assets/images/profile.png";
+    return this.auth.usuario?.url_foto || "assets/images/profile.png";
   }
 
   public onCollapseContainerClick() {

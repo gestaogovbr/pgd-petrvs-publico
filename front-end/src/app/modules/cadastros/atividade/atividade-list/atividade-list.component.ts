@@ -23,6 +23,7 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
   public tipoAtividadeDao: TipoAtividadeDaoService;
   public unidadeDao: UnidadeDaoService;
   public formHomologacao: FormGroup;
+  public disableUnidade: boolean = false;
   public multiselectMenu: ToolbarButton[];
 
   constructor(public injector: Injector) {
@@ -118,7 +119,7 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
           color: "btn btn-outline-danger",
           value: CANCELAR
         }
-      ]);
+      ]).asPromise();
       if(result.button.value == HOMOLOGAR) {
         if(this.formHomologacao!.valid){
           this.submitting = true;
@@ -145,6 +146,7 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
 
   public ngOnInit() {
     super.ngOnInit();
+    this.disableUnidade = this.selectable && this.filter?.controls.unidade_id?.value?.lenght;
     this.filter?.controls.vinculadas.setValue(this.selectable);
   }
 

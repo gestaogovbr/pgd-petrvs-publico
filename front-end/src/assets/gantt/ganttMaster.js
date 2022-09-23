@@ -84,6 +84,9 @@ function GanttMaster() {
   this.__redoStack = [];
   this.__inUndoRedo = false; // a control flag to avoid Undo/Redo stacks reset when needed
 
+  /* Petrvs */
+  this.ganttHeight = undefined; /* Altura padrão, caso não esteja definido será utilizado o tamanho da janela */
+
   Date.workingPeriodResolution=1; //by default 1 day
 
   var self = this;
@@ -151,13 +154,10 @@ GanttMaster.prototype.init = function (workSpace) {
     self.fullScreen();
   }).bind("print.gantt", function () {
     self.print();
-
-
   }).bind("zoomPlus.gantt", function () {
     self.gantt.zoomGantt(true);
   }).bind("zoomMinus.gantt", function () {
     self.gantt.zoomGantt(false);
-
   }).bind("openFullEditor.gantt", function () {
     self.editor.openFullEditor(self.currentTask,false);
   }).bind("openAssignmentEditor.gantt", function () {
@@ -166,13 +166,14 @@ GanttMaster.prototype.init = function (workSpace) {
     self.addIssue();
   }).bind("openExternalEditor.gantt", function () {
     self.openExternalEditor();
-
   }).bind("undo.gantt", function () {
     self.undo();
   }).bind("redo.gantt", function () {
     self.redo();
   }).bind("resize.gantt", function () {
     self.resize();
+  }).bind("splitter.gantt", function (event, value) {
+    self.splitter.resize(value);
   });
 
 
@@ -259,7 +260,7 @@ GanttMaster.prototype.init = function (workSpace) {
 
   //resize
   $(window).resize(function () {
-    place.css({width: "100%", height: $(window).height() - place.position().top});
+    place.css({width: "100%", height: self.ganttHeight || ($(window).height() - place.position().top)});
     place.trigger("resize.gantt");
   }).oneTime(2, "resize", function () {$(window).trigger("resize")});
 
@@ -299,16 +300,16 @@ GanttMaster.prototype.createTask = function (id, name, code, level, start, durat
 };
 
 
-GanttMaster.prototype.getOrCreateResource = function (id, name, picture) {
+GanttMaster.prototype.getOrCreateResource = function (id, name, picture, type, unityCost, unity, extra) {
   var res= this.getResource(id);
   if (!res && id && name) {
-    res = this.createResource(id, name, picture);
+    res = this.createResource(id, name, picture, type, unityCost, unity, extra);
   }
   return res
 };
 
-GanttMaster.prototype.createResource = function (id, name, picture) {
-  var res = new Resource(id, name, picture);
+GanttMaster.prototype.createResource = function (id, name, picture, type, unityCost, unity, extra) {
+  var res = new Resource(id, name, picture, type, unityCost, unity, extra);
   this.resources.push(res);
   return res;
 };
@@ -472,7 +473,7 @@ GanttMaster.prototype.loadProject = function (project) {
     task.start += this.serverClientTimeOffset;
     task.end += this.serverClientTimeOffset;
     //set initial collapsed status
-    task.collapsed=collTasks.indexOf(task.id)>=0;
+    task.collapsed=collTasks.indexOf(task.id)>=0 || !!task.collapsed;
   }
 
 
@@ -785,7 +786,9 @@ GanttMaster.prototype.markUnChangedTasksAndAssignments=function(newProject){
                 newAssig.unchanged=
                   newAssig.resourceId==oldAssig.resourceId &&
                   newAssig.roleId==oldAssig.roleId &&
-                  newAssig.effort==oldAssig.effort;
+                  newAssig.effort==oldAssig.effort &&
+                  newAssig.description==oldAssig.description &&
+                  newAssig.quantity==oldAssig.quantity;
               }
             }
           }
