@@ -62,7 +62,6 @@ class IntegracaoSiapeService extends ServiceBase {
         try {
             if(!empty($uorgsWsdl)){
                 foreach($uorgsWsdl as $value){
-                    print($value['codigo']." - ".$value['nome']."\n");
                     $uorgWsdl = $this->siape->dadosUorg(
                         $this->siapeSiglaSistema,
                         $this->siapeNomeSistema,
