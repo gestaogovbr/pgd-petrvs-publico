@@ -99,7 +99,7 @@ class IntegracaoSiapeService extends ServiceBase {
                         'municipio_ibge' => $this->UtilService->valueOrNull($uorgWsdl, "codMunicipio") ?: "",
                         'municipio_nome' => $this->UtilService->valueOrNull($uorgWsdl, "nomeMunicipio") ?: "",
                         'municipio_uf' => $this->UtilService->valueOrNull($uorgWsdl, "siglaUfMunicipio") ?: "",
-                        'ativa' => true, /* Todas as uorgs listadas são ativas no webservice siape. */
+                        'ativa' => 'true', /* Todas as uorgs listadas são ativas no webservice siape. */
                         'regimental' => $this->UtilService->valueOrNull($uorgWsdl, "indicadorUorgRegimenta") ?: "",
                         'datamodificacao' => $this->UtilService->valueOrNull($value, "dataUltimaTransacao") ?: "",
                         'und_nu_adicional' => $this->UtilService->valueOrNull($uorgWsdl, "und_nu_adicional") ?: "",
