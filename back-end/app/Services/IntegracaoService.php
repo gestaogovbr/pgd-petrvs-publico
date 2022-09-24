@@ -351,7 +351,7 @@ class IntegracaoService extends ServiceBase {
             try {
                 $servidores = [];
                 if($this->integracao_config["tipo"] == "SIAPE") {
-                    $uos = $this->IntegracaoSiapeService->retornarPessoas()["Pessoa"];
+                    $servidores = $this->IntegracaoSiapeService->retornarPessoas()["Pessoas"];
                 } else {
                     if($this->useLocalFiles) {
                         $xmlStream = file_get_contents($this->localServidores);
