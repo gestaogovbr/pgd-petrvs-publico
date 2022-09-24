@@ -193,7 +193,7 @@ class IntegracaoSiapeService extends ServiceBase {
                         $funcao = [ 'funcao' => ['tipo_funcao' => $dadosFuncionais['codAtivFun'], 'uorg_funcao' => $dadosFuncionais['codUorgExercicio']]];
                     }
 
-                    $Pessoa = [ "Pessoa" => [
+                    $Pessoa = [
                         'cpf_ativo' => true,
                         'data_modificacao' => $pessoa['dataUltimaTransacao'],
                         'cpf' => $pessoa['cpf'],
@@ -204,18 +204,21 @@ class IntegracaoSiapeService extends ServiceBase {
                         'uf' => $this->UtilService->valueOrDefault($dadosPessoais['ufNascimento']),
                         'datanascimento' => $this->UtilService->valueOrDefault($dadosPessoais['dataNascimento']),
                         'telefone' =>  '',/* Web Service Siape não fornece (23/09/2022) informação */
-                        'vinculo_ativo' => true, /* CPF sempre será ativo no Web Service Siape (parmExistPag=a, parmTipoVinculo=a)*/
-                        'matriculasiape' => $this->UtilService->valueOrDefault($dadosFuncionais['matriculaSiape']),
-                        'tipo' => $this->UtilService->valueOrDefault($dadosFuncionais['codCargo']),
-                        'coduorgexercicio' => $this->UtilService->valueOrDefault($dadosFuncionais['codUorgExercicio']),
-                        'coduorglotacao' => $this->UtilService->valueOrDefault($dadosFuncionais['codUorgLotacao']),
-                        'codigo_servo_exercicio' => $this->UtilService->valueOrDefault($dadosFuncionais['codUorgExercicio']),
-                        'nomeguerra' => '', /* Web Service Siape não fornece (23/09/2022) informação */
-                        'codsitfuncional' => $this->UtilService->valueOrDefault($dadosFuncionais['codSitFuncional']),
-                        'codupag' => $this->UtilService->valueOrDefault($dadosFuncionais['codUpag']),
-                        'dataexercicionoorgao' => $this->UtilService->valueOrDefault($dadosFuncionais['dataOcorrIngressoOrgao']),
-                        'funcoes' => $funcao ?: ""
-                    ]];
+                        'matriculas' => [ 'dados' => [
+                            'vinculo_ativo' => true, /* CPF sempre será ativo no Web Service Siape (parmExistPag=a, parmTipoVinculo=a)*/
+                            'matriculasiape' => $this->UtilService->valueOrDefault($dadosFuncionais['matriculaSiape']),
+                            'tipo' => $this->UtilService->valueOrDefault($dadosFuncionais['codCargo']),
+                            'coduorgexercicio' => $this->UtilService->valueOrDefault($dadosFuncionais['codUorgExercicio']),
+                            'coduorglotacao' => $this->UtilService->valueOrDefault($dadosFuncionais['codUorgLotacao']),
+                            'codigo_servo_exercicio' => $this->UtilService->valueOrDefault($dadosFuncionais['codUorgExercicio']),
+                            'nomeguerra' => '', /* Web Service Siape não fornece (23/09/2022) informação */
+                            'codsitfuncional' => $this->UtilService->valueOrDefault($dadosFuncionais['codSitFuncional']),
+                            'codupag' => $this->UtilService->valueOrDefault($dadosFuncionais['codUpag']),
+                            'dataexercicionoorgao' => $this->UtilService->valueOrDefault($dadosFuncionais['dataOcorrIngressoOrgao']),
+                            'funcoes' => $funcao ?: ""
+                            ]
+                        ]
+                    ];
                     array_push($PessoasPetrvs['Pessoas'], $Pessoa);
                 }
             }
