@@ -78,7 +78,7 @@ class EntidadeSeeder extends Seeder
         //cria a entidade MJSP/DEPEN
         $ent4 = new Entidade();
         $ent4->fill([
-            'id' => '821cbe85-6382-4eb0-b4ca-704957de6b07'
+            'id' => '821cbe85-6382-4eb0-b4ca-704957de6b07',
             'sigla' => 'MJSP/DEPEN',
             'nome' => 'Departamento Penitenciário Nacional',
             'abrangencia' => 'NACIONAL',
