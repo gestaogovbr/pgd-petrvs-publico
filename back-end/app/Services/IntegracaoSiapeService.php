@@ -4,7 +4,9 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
 use App\Services\ServiceBase;
+use App\Models\Cidade;
 use App\Exceptions\LogError;
+use DateTime;
 use SoapClient;
 use Exception;
 
@@ -24,14 +26,14 @@ class IntegracaoSiapeService extends ServiceBase {
 
     function __construct($config = null) {
         $config = $config ?: config("integracao")["siape"];
-        $this->siapeUpag = $config['upag'];
+        $this->siapeUpag = strval(intval($config['upag']));
         $this->siapeUrl = $config['url'];
         $this->siapeSiglaSistema = $config['siglaSistema'];
         $this->siapeNomeSistema = $config['nomeSistema'];
         $this->siapeSenha = $config['senha'];
         $this->siapeCpf = $config['cpf'];
-        $this->siapeCodOrgao = $config['codOrgao'];
-        $this->siapeCodUorg = $config['codUorg'];
+        $this->siapeCodOrgao = strval(intval($config['codOrgao']));
+        $this->siapeCodUorg = strval(intval($config['codUorg']));
         $this->siapeParmExistPag = $config['parmExistPag'];
         $this->siapeParmTipoVinculo = $config['parmTipoVinculo'];
         /* Instancia o Soap (API Siape) */
@@ -41,6 +43,7 @@ class IntegracaoSiapeService extends ServiceBase {
     public function retornarUorgs($codUorg = 1){
         $uorgsWsdl = "";
         $uorgsPetrvs = [ "uorg" => []];
+        $data = new Datetime();
 
         try {
             if(!empty($this->siape)){
@@ -72,6 +75,20 @@ class IntegracaoSiapeService extends ServiceBase {
 
                     $uorgWsdl = $this->UtilService->object2array($uorgWsdl);
                     if($this->UtilService->valueOrNull($uorgWsdl, "codUorgPagadora") == $this->siapeUpag){
+
+                        /* Identifica informações sobre município e demais variáveis */
+                        if(!empty($this->UtilService->valueOrNull($uorgWsdl, "nomeMunicipio"))){
+                            $consulta_sql = "SELECT * FROM cidades WHERE nome LIKE '".$uorgWsdl['nomeMunicipio']."'";
+                            $consulta_sql = DB::select($consulta_sql);
+                            if(!empty($consulta_sql)) {
+                                $consulta_sql = $this->UtilService->object2array($consulta_sql)[0];
+                                $uorgWsdl['codMunicipio'] = $consulta_sql['codigo_ibge'];
+                                $uorgWsdl['fuso_horario'] = $consulta_sql['timezone'];
+                                }
+                            }
+                        
+                        $value['dataUltimaTransacao'] = $data->createFromFormat('dmY', $value['dataUltimaTransacao'])->format('Y-m-d 00:00:00');
+
                         $inserir_uorg = [
                             'id_servo' => strval(intval($this->UtilService->valueOrNull($uorgWsdl, "codUorg"))) ?: "",
                             'pai_servo' => strval(intval($this->UtilService->valueOrNull($uorgWsdl, "codUorgPai"))) ?: "",
