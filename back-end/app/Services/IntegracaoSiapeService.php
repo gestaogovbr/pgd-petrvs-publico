@@ -40,7 +40,7 @@ class IntegracaoSiapeService extends ServiceBase {
         $this->siape = new SoapClient($this->siapeUrl);
     }
 
-    public function retornarUorgs($codUorg = 1){
+    public function retornarUorgs($uorgInicial = 1){
         $uorgsWsdl = "";
         $uorgsPetrvs = [ "uorg" => []];
         $date = new Datetime();
@@ -53,7 +53,7 @@ class IntegracaoSiapeService extends ServiceBase {
                     $this->siapeSenha,
                     $this->siapeCpf,
                     $this->siapeCodOrgao,
-                    $codUorg); /* Obs.: Web Service Siape listará as uorgs a partir desse número. */
+                    $uorgInicial); /* Obs.: Web Service Siape listará as uorgs a partir desse número. */
 
                 $uorgsWsdl = $this->UtilService->object2array($uorgsWsdl);
                 $uorgsWsdl = $uorgsWsdl['Uorg'];
