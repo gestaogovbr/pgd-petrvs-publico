@@ -65,67 +65,70 @@ class IntegracaoSiapeService extends ServiceBase {
         try {
             if(!empty($uorgsWsdl)){
                 foreach($uorgsWsdl as $value){
-                    $uorgWsdl = $this->siape->dadosUorg(
-                        $this->siapeSiglaSistema,
-                        $this->siapeNomeSistema,
-                        $this->siapeSenha,
-                        $this->siapeCpf,
-                        $this->siapeCodOrgao,
-                        $value['codigo']);
-
-                    $uorgWsdl = $this->UtilService->object2array($uorgWsdl);
-                    if($this->UtilService->valueOrNull($uorgWsdl, "codUorgPagadora") == $this->siapeUpag){
-
-                        /* Identifica informações sobre município e demais variáveis */
-                        if(!empty($this->UtilService->valueOrNull($uorgWsdl, "nomeMunicipio"))){
-                            $consulta_sql = "SELECT * FROM cidades WHERE nome LIKE '".$uorgWsdl['nomeMunicipio']."'";
-                            $consulta_sql = DB::select($consulta_sql);
-                            if(!empty($consulta_sql)) {
-                                $consulta_sql = $this->UtilService->object2array($consulta_sql)[0];
-                                $uorgWsdl['codMunicipio'] = $consulta_sql['codigo_ibge'];
-                                $uorgWsdl['fuso_horario'] = $consulta_sql['timezone'];
+                    if(!empty($value['codigo'])){
+                        $uorgWsdl = $this->siape->dadosUorg(
+                            $this->siapeSiglaSistema,
+                            $this->siapeNomeSistema,
+                            $this->siapeSenha,
+                            $this->siapeCpf,
+                            $this->siapeCodOrgao,
+                            $value['codigo']);
+    
+                        $uorgWsdl = $this->UtilService->object2array($uorgWsdl);
+                        if($this->UtilService->valueOrNull($uorgWsdl, "codUorgPagadora") == $this->siapeUpag){
+                            /* Identifica informações sobre município e demais variáveis */
+                            if(!empty($this->UtilService->valueOrNull($uorgWsdl, "nomeMunicipio"))){
+                                $consulta_sql = "SELECT * FROM cidades WHERE nome LIKE '".$uorgWsdl['nomeMunicipio']."'";
+                                $consulta_sql = DB::select($consulta_sql);
+                                if(!empty($consulta_sql)) {
+                                    $consulta_sql = $this->UtilService->object2array($consulta_sql)[0];
+                                    $uorgWsdl['codMunicipio'] = $consulta_sql['codigo_ibge'];
+                                    $uorgWsdl['fuso_horario'] = $consulta_sql['timezone'];
+                                    }
                                 }
-                            }
-                        
-                        $value['dataUltimaTransacao'] = $data->createFromFormat('dmY', $value['dataUltimaTransacao'])->format('Y-m-d 00:00:00');
-
-                        $inserir_uorg = [
-                            'id_servo' => strval(intval($this->UtilService->valueOrNull($uorgWsdl, "codUorg"))) ?: "",
-                            'pai_servo' => strval(intval($this->UtilService->valueOrNull($uorgWsdl, "codUorgPai"))) ?: "",
-                            'codigo_siape' => strval(intval($this->UtilService->valueOrNull($uorgWsdl, "codUorg"))) ?: "",
-                            'pai_siape' => strval(intval($this->UtilService->valueOrNull($uorgWsdl, "codUorgPai"))) ?: "",
-                            'codupag' => strval(intval($this->UtilService->valueOrNull($uorgWsdl, "codUorgPagadora"))) ?: "",
-                            'nomeuorg' => $this->UtilService->valueOrNull($uorgWsdl, "nomeExtendido") ?: "",
-                            'siglauorg' => $this->UtilService->valueOrNull($uorgWsdl, "siglaUorg") ?: "",
-                            'telefone' => $this->UtilService->valueOrNull($uorgWsdl, "telefone") ?: "",
-                            'email' => $this->UtilService->valueOrNull($uorgWsdl, "email") ?: "",
-                            'natureza' => '', /* #$this->valueOrDefault2("nomeAreaAtuaUorg", $uorgWsdl), (Entender campo natureza) */
-                            'fronteira' => $this->UtilService->valueOrNull($uorgWsdl, "fronteira") ?: "", /* Fronteira não consta no Web Service SIAPE */
-                            'fuso_horario' => $this->UtilService->valueOrNull($uorgWsdl, "fuso_horario") ?: "",
-                            'cod_uop' => $this->UtilService->valueOrNull($uorgWsdl, "cod_uop") ?: "",
-                            'cod_unidade' => $this->UtilService->valueOrNull($uorgWsdl, "cod_unidade") ?: "",
-                            'tipo' => $this->UtilService->valueOrNull($uorgWsdl, "tipo") ?: "",
-                            'tipo_desc' => $this->UtilService->valueOrNull($uorgWsdl, "tipo_desc") ?: "",
-                            'na_rodovia' => $this->UtilService->valueOrNull($uorgWsdl, "na_rodovia") ?: "",
-                            'logradouro' => $this->UtilService->valueOrNull($uorgWsdl, "logradouro") ?: "",
-                            'bairro' => $this->UtilService->valueOrNull($uorgWsdl, "bairro") ?: "",
-                            'cep' => $this->UtilService->valueOrNull($uorgWsdl, "cep") ?: "",
-                            'ptn_ge_coordenada' => $this->UtilService->valueOrNull($uorgWsdl, "ptn_ge_coordenada") ?: "",
-                            'municipio_siafi_siape' => $this->UtilService->valueOrNull($uorgWsdl, "codMunicipio") ?: "",
-                            'municipio_siscom' => $this->UtilService->valueOrNull($uorgWsdl, "codMunicipio") ?: "",
-                            'municipio_ibge' => $this->UtilService->valueOrNull($uorgWsdl, "codMunicipio") ?: "",
-                            'municipio_nome' => $this->UtilService->valueOrNull($uorgWsdl, "nomeMunicipio") ?: "",
-                            'municipio_uf' => $this->UtilService->valueOrNull($uorgWsdl, "siglaUfMunicipio") ?: "",
-                            'ativa' => 'true', /* Todas as uorgs listadas são ativas no webservice siape. */
-                            'regimental' => $this->UtilService->valueOrNull($uorgWsdl, "indicadorUorgRegimenta") ?: "",
-                            'datamodificacao' => $this->UtilService->valueOrNull($value, "dataUltimaTransacao") ?: "",
-                            'und_nu_adicional' => $this->UtilService->valueOrNull($uorgWsdl, "und_nu_adicional") ?: "",
-                            'cnpjupag' => $this->UtilService->valueOrNull($uorgWsdl, "cnpjUpag") ?: ""
-                        ];
-                        array_push($uorgsPetrvs['uorg'], $inserir_uorg);
-                    } else{
-                        LogError::newWarn("Web Service Siape: Uorg não pertence a(s) unidade(s) pagadora: ", $this->UtilService->valueOrNull($uorgWsdl, "codUorg"));
-                    }
+                            
+                            $value['dataUltimaTransacao'] = $data->createFromFormat('dmY', $value['dataUltimaTransacao'])->format('Y-m-d 00:00:00');
+    
+                            $inserir_uorg = [
+                                'id_servo' => strval(intval($this->UtilService->valueOrNull($uorgWsdl, "codUorg"))) ?: "",
+                                'pai_servo' => strval(intval($this->UtilService->valueOrNull($uorgWsdl, "codUorgPai"))) ?: "",
+                                'codigo_siape' => strval(intval($this->UtilService->valueOrNull($uorgWsdl, "codUorg"))) ?: "",
+                                'pai_siape' => strval(intval($this->UtilService->valueOrNull($uorgWsdl, "codUorgPai"))) ?: "",
+                                'codupag' => strval(intval($this->UtilService->valueOrNull($uorgWsdl, "codUorgPagadora"))) ?: "",
+                                'nomeuorg' => $this->UtilService->valueOrNull($uorgWsdl, "nomeExtendido") ?: "",
+                                'siglauorg' => $this->UtilService->valueOrNull($uorgWsdl, "siglaUorg") ?: "",
+                                'telefone' => $this->UtilService->valueOrNull($uorgWsdl, "telefone") ?: "",
+                                'email' => $this->UtilService->valueOrNull($uorgWsdl, "email") ?: "",
+                                'natureza' => '', /* #$this->valueOrDefault2("nomeAreaAtuaUorg", $uorgWsdl), (Entender campo natureza) */
+                                'fronteira' => $this->UtilService->valueOrNull($uorgWsdl, "fronteira") ?: "", /* Fronteira não consta no Web Service SIAPE */
+                                'fuso_horario' => $this->UtilService->valueOrNull($uorgWsdl, "fuso_horario") ?: "",
+                                'cod_uop' => $this->UtilService->valueOrNull($uorgWsdl, "cod_uop") ?: "",
+                                'cod_unidade' => $this->UtilService->valueOrNull($uorgWsdl, "cod_unidade") ?: "",
+                                'tipo' => $this->UtilService->valueOrNull($uorgWsdl, "tipo") ?: "",
+                                'tipo_desc' => $this->UtilService->valueOrNull($uorgWsdl, "tipo_desc") ?: "",
+                                'na_rodovia' => $this->UtilService->valueOrNull($uorgWsdl, "na_rodovia") ?: "",
+                                'logradouro' => $this->UtilService->valueOrNull($uorgWsdl, "logradouro") ?: "",
+                                'bairro' => $this->UtilService->valueOrNull($uorgWsdl, "bairro") ?: "",
+                                'cep' => $this->UtilService->valueOrNull($uorgWsdl, "cep") ?: "",
+                                'ptn_ge_coordenada' => $this->UtilService->valueOrNull($uorgWsdl, "ptn_ge_coordenada") ?: "",
+                                'municipio_siafi_siape' => $this->UtilService->valueOrNull($uorgWsdl, "codMunicipio") ?: "",
+                                'municipio_siscom' => $this->UtilService->valueOrNull($uorgWsdl, "codMunicipio") ?: "",
+                                'municipio_ibge' => $this->UtilService->valueOrNull($uorgWsdl, "codMunicipio") ?: "",
+                                'municipio_nome' => $this->UtilService->valueOrNull($uorgWsdl, "nomeMunicipio") ?: "",
+                                'municipio_uf' => $this->UtilService->valueOrNull($uorgWsdl, "siglaUfMunicipio") ?: "",
+                                'ativa' => 'true', /* Todas as uorgs listadas são ativas no webservice siape. */
+                                'regimental' => $this->UtilService->valueOrNull($uorgWsdl, "indicadorUorgRegimenta") ?: "",
+                                'datamodificacao' => $this->UtilService->valueOrNull($value, "dataUltimaTransacao") ?: "",
+                                'und_nu_adicional' => $this->UtilService->valueOrNull($uorgWsdl, "und_nu_adicional") ?: "",
+                                'cnpjupag' => $this->UtilService->valueOrNull($uorgWsdl, "cnpjUpag") ?: ""
+                            ];
+                            array_push($uorgsPetrvs['uorg'], $inserir_uorg);
+                        } else{
+                              LogError::newWarn("Web Service Siape: Uorg não pertence a(s) unidade(s) pagadora: ", $this->UtilService->valueOrNull($uorgWsdl, "codUorg"));
+                        }
+                      } else {
+                            LogError::newWarn("Web Service Siape: Ausência de código uorg.");
+                      } 
                 }
             }
         return $uorgsPetrvs;
@@ -176,22 +179,27 @@ class IntegracaoSiapeService extends ServiceBase {
             if(!empty($this->siape) and !empty($cpfsPorUorgsWsdl)){
                 foreach($cpfsPorUorgsWsdl as $pessoa){
                     /* Busca dados pessoais */
-                    try {
-                        $dadosPessoais = $this->siape->consultaDadosPessoais(
-                            $this->siapeSiglaSistema,
-                            $this->siapeNomeSistema,
-                            $this->siapeSenha,
-                            $pessoa['cpf'], /* Obs.: Web Service Siape listará as uorgs a partir desse número. */
-                            $this->siapeCodOrgao,
-                            $this->siapeParmExistPag,
-                            $this->siapeParmTipoVinculo
-                        );
-                    } catch (Exception $e) {
+                    if(!empty($pessoa['cpf'])){
+                      try {
+                          $dadosPessoais = $this->siape->consultaDadosPessoais(
+                              $this->siapeSiglaSistema,
+                              $this->siapeNomeSistema,
+                              $this->siapeSenha,
+                              $pessoa['cpf'], /* Obs.: Web Service Siape listará as uorgs a partir desse número. */
+                              $this->siapeCodOrgao,
+                              $this->siapeParmExistPag,
+                              $this->siapeParmTipoVinculo
+                          );
+                      } catch (Exception $e) {
                         /*
-                        LogError::newWarn("Web Service Siape: erro de conexão ou incosistência (".$pessoa['cpf'].")", $e->getMessage());
                         Pula interação se resposta for uma string (sem dados para consulta): possivelmente
                         sem dados considerando parmExistPag=a, parmTipoVinculo=a
                         */
+                          LogError::newWarn("Web Service Siape: erro de conexão ou incosistência no cpf.", $e->getMessage());
+                          continue;
+                      }
+                    } else {
+                        LogError::newWarn("Web Service Siape: erro de conexão ou incosistência no cpf.");
                         continue;
                     }
                     $dadosPessoais = $this->UtilService->object2array($dadosPessoais);
