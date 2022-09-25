@@ -43,7 +43,7 @@ class IntegracaoSiapeService extends ServiceBase {
     public function retornarUorgs($codUorg = 1){
         $uorgsWsdl = "";
         $uorgsPetrvs = [ "uorg" => []];
-        $data = new Datetime();
+        $date = new Datetime();
 
         try {
             if(!empty($this->siape)){
@@ -87,7 +87,7 @@ class IntegracaoSiapeService extends ServiceBase {
                                     }
                                 }
                             
-                            $value['dataUltimaTransacao'] = $data->createFromFormat('dmY', $value['dataUltimaTransacao'])->format('Y-m-d 00:00:00');
+                            $value['dataUltimaTransacao'] = $date->createFromFormat('dmY', $value['dataUltimaTransacao'])->format('Y-m-d 00:00:00');
     
                             $inserir_uorg = [
                                 'id_servo' => strval(intval($this->UtilService->valueOrNull($uorgWsdl, "codUorg"))) ?: "",
@@ -141,6 +141,7 @@ class IntegracaoSiapeService extends ServiceBase {
     public function retornarPessoas(){
         $cpfsPorUorgsWsdl = [];
         $PessoasPetrvs = [ 'Pessoas' => []];
+        $date = new Datetime();
 
         $uorgs = DB::select("SELECT codigo_siape from integracao_unidades WHERE codupag=".$this->siapeUpag."");
         $uorgs = $this->UtilService->object2array($uorgs);
@@ -221,6 +222,22 @@ class IntegracaoSiapeService extends ServiceBase {
                         $funcao = [ 'funcao' => ['tipo_funcao' => $dadosFuncionais['codAtivFun'], 'uorg_funcao' => $dadosFuncionais['codUorgExercicio']]];
                     }
 
+                    if(!empty($pessoa['dataUltimaTransacao'])){
+                        $pessoa['dataUltimaTransacao'] = $date->createFromFormat('dmY', $pessoa['dataUltimaTransacao'])->format('Y-m-d 00:00:00');
+                    }
+
+                    if(!empty($dadosPessoais['dataNascimento'])){
+                      $dadosPessoais['dataNascimento'] = $date->createFromFormat('dmY', $dadosPessoais['dataNascimento'])->format('Y-m-d 00:00:00');
+                    }
+                  
+                    if(!empty($dadosFuncionais['dataOcorrIngressoOrgao'])){
+                      $dadosFuncionais['dataOcorrIngressoOrgao'] = $date->createFromFormat('dmY', $dadosFuncionais['dataOcorrIngressoOrgao'])->format('Y-m-d 00:00:00');
+                    }
+
+                    if(!empty($dadosFuncionais['codUorgExercicio'])){
+                      $dadosFuncionais['codUorgExercicio'] = strval(intval($dadosFuncionais['codUorgExercicio']));
+                    }
+                    
                     $Pessoa = [
                         'cpf_ativo' => true,
                         'data_modificacao' => $pessoa['dataUltimaTransacao'],
