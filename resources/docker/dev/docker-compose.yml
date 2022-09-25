@@ -7,7 +7,7 @@ services:
     ports:
       - 3306:3306
     volumes:
-      - ./mysql:/var/lib/mysql
+      - ../mysql:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: PsEeTnRhVaS
       MYSQL_USER: petrvs
@@ -24,7 +24,7 @@ services:
     depends_on:
       - db
     volumes:
-      - ../../back-end:/var/www
+      - ../../../back-end:/var/www
 
   node:
     build: 
@@ -40,6 +40,6 @@ services:
     depends_on:
       - php
     volumes:
-      - ../../front-end:/usr/src/app
-      - ../../back-end:/usr/src/back-end
+      - ../../../front-end:/usr/src/app
+      - ../../../back-end:/usr/src/back-end
 
