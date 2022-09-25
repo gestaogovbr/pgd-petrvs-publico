@@ -42,7 +42,7 @@ export class Entidade extends Base {
     public carga_horaria_padrao: number = 8; //default(8) //Carga horária utilizada ao criar plano de trabalho
     public gravar_historico_processo: number = 0; //default(0) //Se grava andamento da demanda dentro do processo vinculado (Caso seja o Sei, será em Consultar Andamento)
     public layout_formulario_demanda: string = "COMPLETO"; //["COMPLETO", "SIMPLIFICADO"]) default("COMPLETO") //Layout para a tela do formulário de demandas (cadastro simplificado ou completo)
-    public campos_ocultos_demanda: LookupItem[] = []; //Campos que se deseja ocultar do formulário de daemanda, com seu respectivo valor padrão, em caso de null será utilizado o valor default do banco"
+    public campos_ocultos_demanda: LookupItem[] = []; //Campos que se deseja ocultar do formulário de demanda, com seu respectivo valor padrão, em caso de null será utilizado o valor default do banco"
     public tipo_modalidade_id: string | null = null; //Tipo de modalidade utilizada ao criar plano de trabalho
     public cidade_id: string | null = null;
     public uf: string | null = null; /* UF para abrangencia estadual */

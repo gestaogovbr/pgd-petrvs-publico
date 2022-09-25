@@ -15,14 +15,7 @@ import { TesteComponent } from './modules/teste/teste.component';
 import { DemandaModule } from './modules/gestao/demanda/demanda.module';
 import { RelatorioModule } from './modules/relatorios/relatorio.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { LoginRetornoComponent } from './modules/login/login-retorno/login-retorno.component';
-import { FullCalendarModule } from '@fullcalendar/angular'; // must go before plugins
-import dayGridPlugin from '@fullcalendar/daygrid'; // a plugin!
-import interactionPlugin from '@fullcalendar/interaction'; // a plugin!
-FullCalendarModule.registerPlugins([ // register FullCalendar plugins
-  dayGridPlugin,
-  interactionPlugin
-]);
+import { ChangeModule } from './modules/logs/change/change.module';
 
 @NgModule({
   declarations: [
@@ -32,8 +25,7 @@ FullCalendarModule.registerPlugins([ // register FullCalendar plugins
     ConfigComponent,
     DialogComponent,
     SpinnerOverlayComponent,
-    TesteComponent,
-    LoginRetornoComponent
+    TesteComponent
   ],
   imports: [
     BrowserModule,
@@ -44,8 +36,8 @@ FullCalendarModule.registerPlugins([ // register FullCalendar plugins
     AppRoutingModule,
     DemandaModule,
     ChartsModule,
-    FullCalendarModule,
-    RelatorioModule
+    RelatorioModule,
+    ChangeModule
   ],
   providers: [],
   bootstrap: [AppComponent]

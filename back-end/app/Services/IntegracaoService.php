@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use App\Exceptions\LogError;
+use App\Services\ServiceBase;
 use App\Models\Unidade;
 use App\Models\Perfil;
 use App\Models\UnidadeOrigemAtividade;
@@ -12,8 +13,7 @@ use Ramsey\Uuid\Uuid;
 use Carbon\Carbon;
 use Exception;
 
-class IntegracaoService
-{
+class IntegracaoService extends ServiceBase {
     //public $autoIncluir = false;
     public $unidadesInseridas = [];
     public $unidadesSelecionadas = [];
@@ -202,14 +202,6 @@ class IntegracaoService
         }
     }
 
-    public function object2array($object) {
-        return @json_decode(@json_encode($object),1);
-    }
-
-    public function valueOrDefault($value) {
-        return empty($value) || gettype($value) == "array" ? "" : $value;
-    }
-
     public function getToken($config) {
         if(empty($this->token)) {
             $this->token = $config["token"];
@@ -243,27 +235,32 @@ class IntegracaoService
 
         if(!empty($inputs["unidades"]) && $inputs["unidades"] != "false" && !empty($entidade)) {
             try {
-
-                if($this->useLocalFiles) {//Se for para usar os arquivos locais, a rotina lê os dados do arquivo salvo localmente
-                    $xmlStream = file_get_contents($this->localUnidades);
-                } else {        //caso contrário, a rotina vai buscar no servidor do SIGEPE
-                    if ($this->validaCertificado) {
-                        $response = Http::withHeaders([
-                            'Authorization' => 'Bearer ' . $token
-                        ])->get($this->integracao_config["baseUrlunidades"]);
-                    } else {
-                        $response = Http::withoutVerifying()->withHeaders([
-                            'Authorization' => 'Bearer ' . $token
-                        ])->get($this->integracao_config["baseUrlunidades"]);
+                $uos = [];
+                if($this->integracao_config["tipo"] == "SIAPE") {
+                    $uos = $this->IntegracaoSiapeService->retornarUorgs()["uorg"];
+                } else {
+                    if($this->useLocalFiles) {//Se for para usar os arquivos locais, a rotina lê os dados do arquivo salvo localmente
+                        $xmlStream = file_get_contents($this->localUnidades);
+                    } else {        //caso contrário, a rotina vai buscar no servidor do SIGEPE
+                        if ($this->validaCertificado) {
+                            $response = Http::withHeaders([
+                                'Authorization' => 'Bearer ' . $token
+                            ])->get($this->integracao_config["baseUrlunidades"]);
+                        } else {
+                            $response = Http::withoutVerifying()->withHeaders([
+                                'Authorization' => 'Bearer ' . $token
+                            ])->get($this->integracao_config["baseUrlunidades"]);
+                        }
+                        $xmlStream = $response->body();
+                        if($this->storeLocalFiles) {        // aqui decide se salva ou não em arquivo as informações trazidas do servidor do SIGEPE
+                            if(file_exists($this->localUnidades)) unlink($this->localUnidades);
+                            file_put_contents($this->localUnidades, $xmlStream);
+                        }
                     }
-                    $xmlStream = $response->body();
-                    if($this->storeLocalFiles) {        // aqui decide se salva ou não em arquivo as informações trazidas do servidor do SIGEPE
-                        if(file_exists($this->localUnidades)) unlink($this->localUnidades);
-                        file_put_contents($this->localUnidades, $xmlStream);
-                    }
+                    $xml = simplexml_load_string($xmlStream);
+                    $uos = $this->UtilService->object2array($xml)["uorg"];
                 }
-                $xml = simplexml_load_string($xmlStream);
-                $uos = $this->object2array($xml)["uorg"];
+
                 $sql = "INSERT INTO integracao_unidades(id_servo, pai_servo, codigo_siape, pai_siape, codupag, nomeuorg, siglauorg, telefone, email, natureza, fronteira, fuso_horario, cod_uop, cod_unidade, tipo, tipo_desc, na_rodovia, logradouro, bairro, cep, ptn_ge_coordenada, municipio_siafi_siape, municipio_siscom, municipio_ibge, municipio_nome, municipio_uf, ativa, regimental, datamodificacao, und_nu_adicional, cnpjupag) " .
                        "VALUES (:id_servo, :pai_servo, :codigo_siape, :pai_siape, :codupag, :nomeuorg, :siglauorg, :telefone, :email, :natureza, :fronteira, :fuso_horario, :cod_uop, :cod_unidade, :tipo, :tipo_desc, :na_rodovia, :logradouro, :bairro, :cep, :ptn_ge_coordenada, :municipio_siafi_siape, :municipio_siscom, :municipio_ibge, :municipio_nome, :municipio_uf, :ativa, :regimental, :datamodificacao, :und_nu_adicional, :cnpjupag)";
 
@@ -273,39 +270,39 @@ class IntegracaoService
                     DB::delete('DELETE FROM integracao_unidades');
                     /* Itera as UOs */
                     foreach($uos as $uo) {
-                        if(!empty($self->valueOrDefault($uo["id_servo"]))) {
+                        if(!empty($self->UtilService->valueOrDefault($uo["id_servo"]))) {
                             DB::insert($sql, [
-                                 ':id_servo' => $self->valueOrDefault($uo["id_servo"]),
-                                ':pai_servo' => $self->valueOrDefault($uo["pai_servo"]),
-                                ':codigo_siape' => $self->valueOrDefault($uo["codigo_siape"]),
-                                ':pai_siape' => $self->valueOrDefault($uo["pai_siape"]),
-                                ':codupag' => $self->valueOrDefault($uo["codupag"]),
-                                ':nomeuorg' => $self->valueOrDefault($uo["nomeuorg"]),
-                                ':siglauorg' => $self->valueOrDefault($uo["siglauorg"]),
-                                ':telefone' => $self->valueOrDefault($uo["telefone"]),
-                                ':email' => $self->valueOrDefault($uo["email"]),
-                                ':natureza' => $self->valueOrDefault($uo["natureza"]),
-                                ':fronteira' => $self->valueOrDefault($uo["fronteira"]),
-                                ':fuso_horario' => $self->valueOrDefault($uo["fuso_horario"]),
-                                ':cod_uop' => $self->valueOrDefault($uo["cod_uop"]),
-                                ':cod_unidade' => $self->valueOrDefault($uo["cod_unidade"]),
-                                ':tipo' => $self->valueOrDefault($uo["tipo"]),
-                                ':tipo_desc' => $self->valueOrDefault($uo["tipo_desc"]),
-                                ':na_rodovia' => $self->valueOrDefault($uo["na_rodovia"]),
-                                ':logradouro' => $self->valueOrDefault($uo["logradouro"]),
-                                ':bairro' => $self->valueOrDefault($uo["bairro"]),
-                                ':cep' => $self->valueOrDefault($uo["cep"]),
-                                ':ptn_ge_coordenada' => $self->valueOrDefault($uo["ptn_ge_coordenada"]),
-                                ':municipio_siafi_siape' => $self->valueOrDefault($uo["municipio_siafi_siape"]),
-                                ':municipio_siscom' => $self->valueOrDefault($uo["municipio_siscom"]),
-                                ':municipio_ibge' => $self->valueOrDefault($uo["municipio_ibge"]),
-                                ':municipio_nome' => $self->valueOrDefault($uo["municipio_nome"]),
-                                ':municipio_uf' => $self->valueOrDefault($uo["municipio_uf"]),
-                                ':ativa' => $self->valueOrDefault($uo["ativa"]),
-                                ':regimental' => $self->valueOrDefault($uo["regimental"]),
-                                ':datamodificacao' => $self->valueOrDefault($uo["datamodificacao"]),
-                                ':und_nu_adicional' => $self->valueOrDefault($uo["und_nu_adicional"]),
-                                ':cnpjupag' => $self->valueOrDefault($uo["cnpjupag"])
+                                ':id_servo' => $self->UtilService->valueOrDefault($uo["id_servo"]),
+                                ':pai_servo' => $self->UtilService->valueOrDefault($uo["pai_servo"]),
+                                ':codigo_siape' => $self->UtilService->valueOrDefault($uo["codigo_siape"]),
+                                ':pai_siape' => $self->UtilService->valueOrDefault($uo["pai_siape"]),
+                                ':codupag' => $self->UtilService->valueOrDefault($uo["codupag"]),
+                                ':nomeuorg' => $self->UtilService->valueOrDefault($uo["nomeuorg"]),
+                                ':siglauorg' => $self->UtilService->valueOrDefault($uo["siglauorg"]),
+                                ':telefone' => $self->UtilService->valueOrDefault($uo["telefone"]),
+                                ':email' => $self->UtilService->valueOrDefault($uo["email"]),
+                                ':natureza' => $self->UtilService->valueOrDefault($uo["natureza"]),
+                                ':fronteira' => $self->UtilService->valueOrDefault($uo["fronteira"]),
+                                ':fuso_horario' => $self->UtilService->valueOrDefault($uo["fuso_horario"]),
+                                ':cod_uop' => $self->UtilService->valueOrDefault($uo["cod_uop"]),
+                                ':cod_unidade' => $self->UtilService->valueOrDefault($uo["cod_unidade"]),
+                                ':tipo' => $self->UtilService->valueOrDefault($uo["tipo"]),
+                                ':tipo_desc' => $self->UtilService->valueOrDefault($uo["tipo_desc"]),
+                                ':na_rodovia' => $self->UtilService->valueOrDefault($uo["na_rodovia"]),
+                                ':logradouro' => $self->UtilService->valueOrDefault($uo["logradouro"]),
+                                ':bairro' => $self->UtilService->valueOrDefault($uo["bairro"]),
+                                ':cep' => $self->UtilService->valueOrDefault($uo["cep"]),
+                                ':ptn_ge_coordenada' => $self->UtilService->valueOrDefault($uo["ptn_ge_coordenada"]),
+                                ':municipio_siafi_siape' => $self->UtilService->valueOrDefault($uo["municipio_siafi_siape"]),
+                                ':municipio_siscom' => $self->UtilService->valueOrDefault($uo["municipio_siscom"]),
+                                ':municipio_ibge' => $self->UtilService->valueOrDefault($uo["municipio_ibge"]),
+                                ':municipio_nome' => $self->UtilService->valueOrDefault($uo["municipio_nome"]),
+                                ':municipio_uf' => $self->UtilService->valueOrDefault($uo["municipio_uf"]),
+                                ':ativa' => $self->UtilService->valueOrDefault($uo["ativa"]),
+                                ':regimental' => $self->UtilService->valueOrDefault($uo["regimental"]),
+                                ':datamodificacao' => $self->UtilService->valueOrDefault($uo["datamodificacao"]),
+                                ':und_nu_adicional' => $self->UtilService->valueOrDefault($uo["und_nu_adicional"]),
+                                ':cnpjupag' => $self->UtilService->valueOrDefault($uo["cnpjupag"])
                             ]);
                         }
                     }
@@ -352,27 +349,32 @@ class IntegracaoService
 
         if(!empty($inputs["servidores"]) && $inputs["servidores"] != "false" && !empty($entidade)) {
             try {
-
-                if($this->useLocalFiles) {
-                    $xmlStream = file_get_contents($this->localServidores);
+                $servidores = [];
+                if($this->integracao_config["tipo"] == "SIAPE") {
+                    $servidores = $this->IntegracaoSiapeService->retornarPessoas()["Pessoas"];
                 } else {
-                    if ($this->validaCertificado) {
-                        $response = Http::withHeaders([
-                            'Authorization' => 'Bearer ' . $token
-                        ])->get($this->integracao_config["baseUrlpessoas"]);
+                    if($this->useLocalFiles) {
+                        $xmlStream = file_get_contents($this->localServidores);
                     } else {
-                        $response = Http::withoutVerifying()->withHeaders([
-                            'Authorization' => 'Bearer ' . $token
-                        ])->get($this->integracao_config["baseUrlpessoas"]);
+                        if ($this->validaCertificado) {
+                            $response = Http::withHeaders([
+                                'Authorization' => 'Bearer ' . $token
+                            ])->get($this->integracao_config["baseUrlpessoas"]);
+                        } else {
+                            $response = Http::withoutVerifying()->withHeaders([
+                                'Authorization' => 'Bearer ' . $token
+                            ])->get($this->integracao_config["baseUrlpessoas"]);
+                        }
+                        $xmlStream = $response->body();
+                        if($this->storeLocalFiles) {
+                            if(file_exists($this->localServidores)) unlink($this->localServidores);
+                            file_put_contents($this->localServidores, $xmlStream);
+                        }
                     }
-                    $xmlStream = $response->body();
-                    if($this->storeLocalFiles) {
-                        if(file_exists($this->localServidores)) unlink($this->localServidores);
-                        file_put_contents($this->localServidores, $xmlStream);
-                    }
+                    $xml = simplexml_load_string($xmlStream);
+                    $servidores = $this->UtilService->object2array($xml)["Pessoa"];
                 }
-                $xml = simplexml_load_string($xmlStream);
-                $servidores = $this->object2array($xml)["Pessoa"];
+
                 $sql = "INSERT INTO integracao_servidores(cpf_ativo, data_modificacao, cpf, nome, emailfuncional, sexo, municipio, uf, datanascimento, telefone, vinculo_ativo, matriculasiape, tipo, coduorgexercicio, coduorglotacao, codigo_servo_exercicio, nomeguerra, codsitfuncional, codupag, dataexercicionoorgao, funcoes) " .
                        "VALUES (:cpf_ativo, :data_modificacao, :cpf, :nome, :emailfuncional, :sexo, :municipio, :uf, :datanascimento, :telefone, :vinculo_ativo, :matriculasiape, :tipo, :coduorgexercicio, :coduorglotacao, :codigo_servo_exercicio, :nomeguerra, :codsitfuncional, :codupag, :dataexercicionoorgao, :funcoes)";
 
@@ -391,30 +393,30 @@ class IntegracaoService
                                     $ativo = $matricula;
                                 }
                             }
-                            $email = $self->valueOrDefault($servidor['emailfuncional']);
+                            $email = $self->UtilService->valueOrDefault($servidor['emailfuncional']);
                             if($ativo && !empty($email)) {
                                 $email = str_contains($email, "@") ? $email : $email . "@prf.gov.br";
                                 DB::insert($sql, [
-                                    ':cpf_ativo' => $self->valueOrDefault($servidor['cpf_ativo']),
-                                    ':data_modificacao' => $self->valueOrDefault($servidor['data_modificacao']),
-                                    ':cpf' => $self->valueOrDefault($servidor['cpf']),
-                                    ':nome' => $self->valueOrDefault($servidor['nome']),
+                                    ':cpf_ativo' => $self->UtilService->valueOrDefault($servidor['cpf_ativo']),
+                                    ':data_modificacao' => $self->UtilService->valueOrDefault($servidor['data_modificacao']),
+                                    ':cpf' => $self->UtilService->valueOrDefault($servidor['cpf']),
+                                    ':nome' => $self->UtilService->valueOrDefault($servidor['nome']),
                                     ':emailfuncional' => $email,
-                                    ':sexo' => $self->valueOrDefault($servidor['sexo']),
-                                    ':municipio' => $self->valueOrDefault($servidor['municipio']),
-                                    ':uf' => $self->valueOrDefault($servidor['uf']),
-                                    ':datanascimento' => $self->valueOrDefault($servidor['datanascimento']),
-                                    ':telefone' => $self->valueOrDefault($servidor['telefone']),
-                                    ':vinculo_ativo' => $self->valueOrDefault($ativo['vinculo_ativo']),
-                                    ':matriculasiape' => $self->valueOrDefault($ativo['matriculasiape']),
-                                    ':tipo' => $self->valueOrDefault($ativo['tipo']),
-                                    ':coduorgexercicio' => $self->valueOrDefault($ativo['coduorgexercicio']),
-                                    ':coduorglotacao' => $self->valueOrDefault($ativo['coduorglotacao']),
-                                    ':codigo_servo_exercicio' => $self->valueOrDefault($ativo['codigo_servo_exercicio']),
-                                    ':nomeguerra' => $self->valueOrDefault($ativo['nomeguerra']),
-                                    ':codsitfuncional' => $self->valueOrDefault($ativo['codsitfuncional']),
-                                    ':codupag' => $self->valueOrDefault($ativo['codupag']),
-                                    ':dataexercicionoorgao' => $self->valueOrDefault($ativo['dataexercicionoorgao']),
+                                    ':sexo' => $self->UtilService->valueOrDefault($servidor['sexo']),
+                                    ':municipio' => $self->UtilService->valueOrDefault($servidor['municipio']),
+                                    ':uf' => $self->UtilService->valueOrDefault($servidor['uf']),
+                                    ':datanascimento' => $self->UtilService->valueOrDefault($servidor['datanascimento']),
+                                    ':telefone' => $self->UtilService->valueOrDefault($servidor['telefone']),
+                                    ':vinculo_ativo' => $self->UtilService->valueOrDefault($ativo['vinculo_ativo']),
+                                    ':matriculasiape' => $self->UtilService->valueOrDefault($ativo['matriculasiape']),
+                                    ':tipo' => $self->UtilService->valueOrDefault($ativo['tipo']),
+                                    ':coduorgexercicio' => $self->UtilService->valueOrDefault($ativo['coduorgexercicio']),
+                                    ':coduorglotacao' => $self->UtilService->valueOrDefault($ativo['coduorglotacao']),
+                                    ':codigo_servo_exercicio' => $self->UtilService->valueOrDefault($ativo['codigo_servo_exercicio']),
+                                    ':nomeguerra' => $self->UtilService->valueOrDefault($ativo['nomeguerra']),
+                                    ':codsitfuncional' => $self->UtilService->valueOrDefault($ativo['codsitfuncional']),
+                                    ':codupag' => $self->UtilService->valueOrDefault($ativo['codupag']),
+                                    ':dataexercicionoorgao' => $self->UtilService->valueOrDefault($ativo['dataexercicionoorgao']),
                                     ':funcoes' => json_encode($ativo['funcoes'])
                                 ]);
                             }
@@ -511,6 +513,38 @@ class IntegracaoService
             return $result;
         }
 
+        $this->atualizarChefias();
+
+    }
+
+    public function atualizarChefias() {
+        $sql_1 = "SELECT matriculasiape, funcoes FROM integracao_servidores WHERE vinculo_ativo = 'true'";
+        $servidores = DB::select($sql_1);
+        $chefes = array_filter($servidores, fn($s) => $s->funcoes != "[]");
+        $chefias = [];
+        foreach($chefes as $chefe){
+            $funcoes = json_decode($chefe->funcoes);
+            if(is_array($funcoes->funcao)) {
+                $chefias = array_merge($chefias, array_map(fn($f) => ['matricula' => $chefe->matriculasiape, 'codigo_siape' => $f->uorg_funcao, 'tipo_funcao' => $f->tipo_funcao], $funcoes->funcao));
+            } else {
+                array_push($chefias, ['matricula' => $chefe->matriculasiape, 'codigo_siape' => $funcoes->funcao->uorg_funcao, 'tipo_funcao' => $funcoes->funcao->tipo_funcao]);
+            }
+        }
+        foreach($chefias as $chefia) {
+            //Descobrir o ID do Usuário
+            $sql_2 = "SELECT id from USUARIOS where matricula = :matricula";
+            $idUsuario = DB::select($sql_2, [':matricula' => $chefia['matricula']]);
+            //Descobrir o ID da Unidade
+            $sql_3 = "SELECT u.id FROM integracao_unidades iu join unidades u on iu.id_servo = u.codigo WHERE iu.codigo_siape = :codigo_siape";
+            $idUnidade = DB::select($sql_3, [':codigo_siape' => $chefia['codigo_siape']]);
+
+            if($chefia['tipo_funcao'] = '1'){
+                $sql_4 = "UPDATE unidades SET gestor_id = :id_usuario WHERE id = :id_unidade";
+            } else if($chefe['tipo_funcao'] = '2'){
+                $sql_4 = "UPDATE unidades SET gestor_substituto_id = :id_usuario WHERE id = :id_unidade";
+            }
+            if ($idUsuario) DB::update($sql_4, [':id_usuario'=> $idUsuario, ':id_unidade' => $idUnidade]);
+        }
     }
 
     public function salvaUsuarioLotacaoGapi(&$usuario, &$lotacao, $tokenData, $auth){
