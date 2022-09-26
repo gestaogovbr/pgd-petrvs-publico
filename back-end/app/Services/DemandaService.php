@@ -40,7 +40,7 @@ class DemandaService extends ServiceBase
         "pausas",
         "usuario:id,nome,matricula,apelido,email,url_foto",
         "unidade:id,nome,sigla,codigo,path,atividades_arquivamento_automatico,atividades_avaliacao_automatico,autoedicao_subordinadas,checklist,etiquetas,distribuicao_forma_contagem_prazos,cidade_id,entidade_id,gestor_id,gestor_substituto_id,entrega_forma_contagem_prazos,horario_trabalho_fim,horario_trabalho_inicio,horario_trabalho_intervalo,planos_prazo_comparecimento,planos_tipo_prazo_comparecimento",
-        "comentarios.usuario:id,nome,apelido",
+        "comentarios.usuario:id,nome,apelido,email,url_foto",
         "entregas.tarefa",
         "entregas.comentarios.usuario:id,nome,apelido,email,url_foto",
         "plano.tipo_modalidade",

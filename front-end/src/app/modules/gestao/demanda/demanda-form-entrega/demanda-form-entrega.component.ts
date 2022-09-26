@@ -21,6 +21,7 @@ import { SelectItem } from 'src/app/components/input/input-base';
 import { Tarefa } from 'src/app/models/tarefa.model';
 import { SeiKeys } from 'src/app/listeners/procedimento-trabalhar/procedimento-trabalhar.component';
 import { ComentarioService } from 'src/app/services/comentario.service';
+import { ComentariosComponent } from 'src/app/modules/uteis/comentarios/comentarios.component';
 
 @Component({
   selector: 'app-demanda-form-entrega',
@@ -29,7 +30,7 @@ import { ComentarioService } from 'src/app/services/comentario.service';
 })
 export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, DemandaEntregaDaoService> implements OnInit {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  @ViewChild('comentarios', { static: false }) public comentarios?: GridComponent;
+  @ViewChild('comentarios', { static: false }) public comentarios?: ComentariosComponent;
   @ViewChild('tarefa', { static: false }) public tarefa?: InputSearchComponent;
   @ViewChild('procEntregue', { static: false }) public procEntregue?: InputButtonComponent;
   @ViewChild('docEntregue', { static: false }) public docEntregue?: InputButtonComponent;
@@ -44,9 +45,9 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
   public allPages: ListenerAllPagesService;
   public comentario: ComentarioService;
   public form: FormGroup;
-  public formComentarios: FormGroup;
+  //public formComentarios: FormGroup;
   public modalWidth: number = 800;
-  public comentarioTipos: LookupItem[];
+  //public comentarioTipos: LookupItem[];
 
   constructor(public injector: Injector) {
     super(injector, DemandaEntrega, DemandaEntregaDaoService);
@@ -55,7 +56,7 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
     this.tipoProcessoDao = injector.get<TipoProcessoDaoService>(TipoProcessoDaoService);
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.comentario = injector.get<ComentarioService>(ComentarioService);
-    this.comentarioTipos = this.lookup.COMENTARIO_TIPO.filter(x => ["COMENTARIO", "TECNICO"].includes(x.key));
+    //this.comentarioTipos = this.lookup.COMENTARIO_TIPO.filter(x => ["COMENTARIO", "TECNICO"].includes(x.key));
     this.title = this.lex.noun("Entrega");
     this.form = this.fh.FormBuilder({
       descricao: {default: ""},
@@ -71,11 +72,11 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
       tipo_processo_id: {default: null},
       comentarios: {default: []}
     }, this.cdRef, this.validate);
-    this.formComentarios = this.fh.FormBuilder({
+    /*this.formComentarios = this.fh.FormBuilder({
       texto: {default: ""},
       tipo: {default: "COMENTARIO"},
       privacidade: {default: "PUBLICO"}
-    }, this.cdRef, this.validateComentario);
+    }, this.cdRef, this.validateComentario);*/
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -92,14 +93,14 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
 
   public formValidation = (form?: FormGroup) => {
     const values = form!.value;
-    if(!this.isComentarios) {
-      if(values.tarefa_id?.length && !this.tarefa?.searchObj) {
-        return "Aguarde o carregamento " + this.lex.noun("tarefa", false, true) + ". Caso demore, selecione novamente!";
-      }
-      if(values.concluido && (this.tarefa?.searchObj as Tarefa)?.documental && !values.id_documento) {
-        return this.gb.isExtension ? "Obrigatório selecionar um arquivo para a tarefa selecionada!" : "Utilize o sistema como extensão para concluir!";
-      }
+    //if(!this.isComentarios) {
+    if(values.tarefa_id?.length && !this.tarefa?.searchObj) {
+      return "Aguarde o carregamento " + this.lex.noun("tarefa", false, true) + ". Caso demore, selecione novamente!";
     }
+    if(values.concluido && (this.tarefa?.searchObj as Tarefa)?.documental && !values.id_documento) {
+      return this.gb.isExtension ? "Obrigatório selecionar um arquivo para a tarefa selecionada!" : "Utilize o sistema como extensão para concluir!";
+    }
+    //}
     return undefined;
   }
 
@@ -109,9 +110,9 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
     this.action = segment == "comentar" ? segment : this.action;
   }
 
-  public get isComentarios(): boolean {
+  /*public get isComentarios(): boolean {
     return this.action == "comentar";
-  }
+  }*/
 
   public async onNumeroProcessoClick(event: Event) {
     const numeroProcesso = this.form?.controls.numero_processo?.value;
@@ -187,13 +188,13 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
     }
   }
 
-  public validateComentario = (control: AbstractControl, controlName: string) => {
+  /*public validateComentario = (control: AbstractControl, controlName: string) => {
     let result = null;
     if(controlName == "texto" && !control.value?.length) {
       result = "Não pode ser em branco";
     }
     return result;
-  }
+  }*/
 
   public async loadData(entity: DemandaEntrega, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
@@ -205,6 +206,7 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
       formValue.id_documento = this.sei.id_documento || 0;
       formValue.numero_documento = this.sei.numero_documento || "";
     }
+    formValue.comentarios = this.comentario.orderComentarios(formValue.comentarios || []);
     form.patchValue(formValue);
     if(this.sei?.numero_documento) {
       this.onNumeroDocumentoClick(new Event('click'));
@@ -256,14 +258,17 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
   }*/
 
   public async saveData(form: IIndexable) {
+    this.comentarios?.confirm();
     this.util.fillForm(this.entity, this.form!.value);
     this.entity!.tarefa = this.tarefa?.searchObj;
-    this.entity!.comentarios = this.entity!.comentarios.filter((x: Comentario) => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.texto?.length);
-    if(this.isComentarios) await this.dao?.update(this.entity!.id, { comentarios: this.entity!.comentarios });
+    
+    //this.entity!.comentarios = this.entity!.comentarios.filter((x: Comentario) => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.texto?.length);
+    //if(this.isComentarios) await this.dao?.update(this.entity!.id, { comentarios: this.entity!.comentarios });
+    
     return new NavigateResult(this.entity);
   }
 
-  public comentarioDynamicOptions(row: any): ToolbarButton[] {
+  /*public comentarioDynamicOptions(row: any): ToolbarButton[] {
     return [{
       label: "Comentar",
       icon: "bi bi-chat-left-quote",
@@ -271,7 +276,7 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
         this.comentario.newComentario(this.form.controls.comentarios, this.comentarios!, comentario);
       }
     }];
-  }
+  }*/
 
   /*public comentarioLevel(comentario: Comentario): string[] {
     return (comentario.path || "").split("").filter(x => x == "/");
@@ -310,17 +315,17 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
     return comentario;
   }*/
 
-  public addComentario = async () => {
+  /*public addComentario = async () => {
     this.comentario.newComentario(this.form.controls.comentarios, this.comentarios!);
     return undefined;
-  }
+  }*/
 
   public onTarefaSelect(item: SelectItem) {
     const tarefa: Tarefa | undefined = item.entity as Tarefa;
     this.form!.controls.tempo_estimado.setValue(tarefa?.tempo_estimado || 0);
   }
 
-  public async saveComentario(form: FormGroup, item: any) {
+  /*public async saveComentario(form: FormGroup, item: any) {
     const entity = form.value;
     Object.assign(this.comentarios?.editing || {}, entity);
     return undefined;
@@ -330,6 +335,6 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
     this.formComentarios.controls.texto.setValue(row.texto);
     this.formComentarios.controls.tipo.setValue(row.tipo);
     this.formComentarios.controls.privacidade.setValue(row.privacidade);
-  }
+  }*/
 
 }

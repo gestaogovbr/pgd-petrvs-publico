@@ -5,7 +5,7 @@ import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { DaoBaseService } from 'src/app/dao/dao-base.service';
 import { QueryContext } from 'src/app/dao/query-context';
 import { Base } from 'src/app/models/base.model';
-import { ComentarioOrigem, HasComentarios } from 'src/app/models/comentario';
+import { Comentario, ComentarioOrigem, HasComentarios } from 'src/app/models/comentario';
 import { ComentarioService } from 'src/app/services/comentario.service';
 import { FormHelperService } from 'src/app/services/form-helper.service';
 import { LookupService } from 'src/app/services/lookup.service';
@@ -20,6 +20,7 @@ import { UtilService } from 'src/app/services/util.service';
 export class ComentariosWidgetComponent implements OnInit {
   @Input() selectable: boolean = false;
   //@Input() dao?: DaoBaseService<Base>;
+  @Input() noPersist?: string = undefined;
   @Input() origem: ComentarioOrigem = undefined;
   @Input() save?: (modalResult: any) => void;
   @Input() grid?: GridComponent;
@@ -62,6 +63,10 @@ export class ComentariosWidgetComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  public get isNoPersist(): boolean {
+    return this.noPersist != undefined;
+  }
+
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
     return result;
@@ -72,12 +77,14 @@ export class ComentariosWidgetComponent implements OnInit {
     element.setAttribute("data-expanded", value == "true" ? "false" : "true");
   }
 
-  public addComentarioClick(event: Event, row: any, comentario_id?: string) {
+  public addComentarioClick(event: Event, entity: HasComentarios, comentario_id?: string) {
     event?.stopPropagation();
-    this.go.navigate({ route: ['uteis', 'comentarios', this.origem, row.id, 'new'], params: {comentario_id} }, { modal: true, modalClose: modalResult => { if (modalResult) {
-      if(this.save) this.save(modalResult);
-      this.grid?.query?.refreshId(row.id);
-    }}});
+    this.go.navigate({ route: ['uteis', 'comentarios', this.origem, this.isNoPersist ? 'NOPERSIST' : entity.id , 'new'], params: {comentario_id} }, { modal: true, metadata: {entity}, modalClose: modalResult => { 
+      if (modalResult) {
+        if(this.save) this.save(modalResult);
+        if(!this.isNoPersist) this.grid?.query?.refreshId(entity.id);
+      }
+    }});
   }
 
 }

@@ -85,7 +85,18 @@ function GanttMaster() {
   this.__inUndoRedo = false; // a control flag to avoid Undo/Redo stacks reset when needed
 
   /* Petrvs */
+  this.__hasTime = false;
   this.ganttHeight = undefined; /* Altura padrão, caso não esteja definido será utilizado o tamanho da janela */
+  this.inputDateTimeFormat = "yyyy-MM-dd";
+  this.inputTimeFormat = "hh:mm";
+  this.hasCost = false; /* Se faz gestão de custos */
+  Object.defineProperties(this, { hasTime: { /* Se as datas têm o formato de data e hora */
+    get: function() { return this.__hasTime; },
+    set: function(value) { 
+      this.__hasTime = value;
+      this.inputDateTimeFormat = value ? "yyyy-MM-ddThh:mm" : "yyyy-MM-dd"; 
+    }
+  }});
 
   Date.workingPeriodResolution=1; //by default 1 day
 

@@ -1,5 +1,7 @@
 import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA, Input } from '@angular/core';
 import { IIndexable } from 'src/app/models/base.model';
+import { GlobalsService } from 'src/app/services/globals.service';
+import { GanttComponent } from '../gantt.component';
 
 @Component({
     selector: 'gantt-templates',
@@ -8,6 +10,7 @@ import { IIndexable } from 'src/app/models/base.model';
 })
 export class GanttTemplatesComponent implements OnInit {
     @Input() id: string = "";
+    @Input() gantt?: GanttComponent;
     @Input() set hasTime(value: boolean) {
         if(this._hasTime != value) {
             this._hasTime = value;
@@ -27,7 +30,7 @@ export class GanttTemplatesComponent implements OnInit {
         return this._hasCost;
     }
 
-    constructor() { }
+    constructor(public gb: GlobalsService) { }
 
     public startComment = "";
     public endComment = "";
@@ -93,9 +96,9 @@ export class GanttTemplatesComponent implements OnInit {
                         <th class="gdfColHeader gdfResizable" style="width:300px;">Nome</th>
                         ` + this.tableCostTemplate("HEAD") + `
                         <th class="gdfColHeader" align="center" style="width:17px; display: none;" title="Inicio é um marco."><span class="teamworkIcon" style="font-size: 8px;">^</span></th>
-                        <th class="gdfColHeader gdfResizable" style="width:80px;">Início</th>
+                        ` + this.tableDateTimeTemplate("HEAD", "Início") + `
                         <th class="gdfColHeader" align="center" style="width:17px; display: none;" title="Termino é um marco."><span class="teamworkIcon" style="font-size: 8px;">^</span></th>
-                        <th class="gdfColHeader gdfResizable" style="width:80px;">Fim</th>
+                        ` + this.tableDateTimeTemplate("HEAD", "Fim") + `
                         <th class="gdfColHeader gdfResizable" style="width:50px;">Dur.</th>
                         <th class="gdfColHeader gdfResizable" style="width:20px;">%</th>
                         <th class="gdfColHeader gdfResizable requireCanSeeDep" style="width:50px;">Dependência</th>
@@ -111,9 +114,9 @@ export class GanttTemplatesComponent implements OnInit {
                 <td class="gdfCell indentCell" style="padding-left:(#=obj.level*10+18#)px;"><div class="exp-controller" align="center"></div><input type="text" name="name" value="(#=obj.name#)" placeholder="name"></td>
                 ` + this.tableCostTemplate("ROW") + `
                 <td class="gdfCell" align="center" style="display: none;"><input type="checkbox" name="startIsMilestone"></td>
-                <td class="gdfCell"><input type="text" name="start" value="" class="date"></td>
+                ` + this.tableDateTimeTemplate("ROW", "start") + `
                 <td class="gdfCell" align="center" style="display: none;"><input type="checkbox" name="endIsMilestone"></td>
-                <td class="gdfCell"><input type="text" name="end" value="" class="date"></td>
+                ` + this.tableDateTimeTemplate("ROW", "end") + `
                 <td class="gdfCell"><input type="text" name="duration" autocomplete="off" value="(#=obj.duration#)"></td>
                 <td class="gdfCell"><input type="text" name="progress" class="validated" entrytype="PERCENTILE" autocomplete="off" value="(#=obj.progress?obj.progress:''#)" (#=obj.progressByWorklog?"readOnly":""#)></td>
                 <td class="gdfCell requireCanSeeDep"><input type="text" name="depends" autocomplete="off" value="(#=obj.depends#)" (#=obj.hasExternalDep?"readonly":""#)></td>
@@ -127,9 +130,9 @@ export class GanttTemplatesComponent implements OnInit {
                 <td class="gdfCell"></td>
                 ` + this.tableCostTemplate("EMPTY") + `
                 <td class="gdfCell" style="display: none;"></td>
-                <td class="gdfCell"></td>
+                ` + this.tableDateTimeTemplate("EMPTY") + `
                 <td class="gdfCell" style="display: none;"></td>
-                <td class="gdfCell"></td>
+                ` + this.tableDateTimeTemplate("EMPTY") + `
                 <td class="gdfCell"></td>
                 <td class="gdfCell"></td>
                 <td class="gdfCell requireCanSeeDep"></td>
@@ -254,6 +257,29 @@ export class GanttTemplatesComponent implements OnInit {
             `<td class="gdfCell" style="display: none;"><input type="text" name="cost" value="(#=obj.cust?obj.cust:''#)" placeholder="Custo"></td>` :
             `<td class="gdfCell"></td>`
         ));
+    }
+
+    public tableDateTimeTemplate(type: string, name: string = "") {
+        let result = "";
+        const width = !this.gantt?.project?.config.hasTime ? 100 : this.gb.isFirefox ? 150 : 130;
+        switch(type) {
+            case "HEAD": result = `<th class="gdfColHeader gdfResizable" style="width:` + width + `px;">` + name + `</th>`; break;
+            case "EMPTY": result = `<td class="gdfCell"></td>`; break;
+            case "ROW":
+                result = `<td class="gdfCell">`;
+                if(this.gantt?.project?.config.hasTime) {
+                    if(this.gb.isFirefox) {
+                        result += `<input type="date" name="` + name + `" value="" class="date"><input type="time" name="` + name + `_time" value="" class="time">`;
+                    } else {
+                        result += `<input type="datetime-local" name="` + name + `" value="" class="date">`;
+                    }
+                } else {
+                    result += `<input type="date" name="` + name + `" value="" class="date">`;
+                }
+                result += `</td>`;
+                break;
+        }
+        return result;
     }
 
     public get keys(): string[] {

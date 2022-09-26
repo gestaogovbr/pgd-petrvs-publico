@@ -83,6 +83,10 @@ export class GlobalsService {
     return this.isExtension ? this.urlBuffer[key] : resource;
   }
 
+  public get isFirefox(): boolean {
+    return navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+  }
+
   public get hasGoogleLogin(): boolean {
     return environment.login.gsuit == true;
   }

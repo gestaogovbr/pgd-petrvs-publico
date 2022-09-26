@@ -139,6 +139,9 @@ export class GanttComponent implements OnInit {
     //let project = this.getDemoProject();
     let project: any = this.loadProject();
     if (!project.canWrite) $(".ganttButtonBar button.requireWrite").attr("disabled","true");
+    /* configurações personalizadas criadas posteriormente */
+    this.ge.useTime = this.project.config.hasTime;
+    this.ge.hasCost = this.project.config.hasCost;
     this.ge.loadProject(project);
     this.ge.checkpoint(); //empty the undo stack
   }

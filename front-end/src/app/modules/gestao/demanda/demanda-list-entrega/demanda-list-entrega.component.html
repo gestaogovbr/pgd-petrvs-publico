@@ -26,7 +26,7 @@
         </column>
         <column title="Informações adicionais" [template]="tarefaComentarios">
             <ng-template let-row="row" #tarefaComentarios>
-                <comentarios-widget [entity]="row" [selectable]="selectable" origem="ENTREGA" [grid]="grid" [save]="addComentarioResult.bind(this)"></comentarios-widget>
+                <comentarios-widget [entity]="row" [noPersist]="isPersist ? undefined : 'true'" [selectable]="selectable" origem="ENTREGA" [grid]="grid" [save]="addComentarioResult.bind(this)"></comentarios-widget>
                 <!--separator title="Comentários" small [button]="!selectable ? addComentarioButton : undefined" (buttonClick)="addComentarioClick(row)"></separator>
                 <span *ngFor="let comentario of row.comentarios" #badge class="badge bg-light text-dark comentario-badge" role="button" (click)="comentarioClick(badge)" data-expanded="false" data-bs-toggle="tooltip" data-bs-placement="top" [title]="lookup.getValue(lookup.COMENTARIO_TIPO, comentario.tipo)">
                     {{"• ".repeat(comentario.path?.includes("/") ? comentario.path.split("/").length-1 : 0)}}
