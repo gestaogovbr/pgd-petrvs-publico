@@ -261,21 +261,13 @@ export class GanttTemplatesComponent implements OnInit {
 
     public tableDateTimeTemplate(type: string, name: string = "") {
         let result = "";
-        const width = !this.gantt?.project?.config.hasTime ? 100 : this.gb.isFirefox ? 150 : 130;
         switch(type) {
-            case "HEAD": result = `<th class="gdfColHeader gdfResizable" style="width:` + width + `px;">` + name + `</th>`; break;
+            case "HEAD": result = `<th class="gdfColHeader gdfResizable" style="width:` + (!this.gantt?.project?.config.hasTime ? 100 : 150) + `px;">` + name + `</th>`; break;
             case "EMPTY": result = `<td class="gdfCell"></td>`; break;
             case "ROW":
                 result = `<td class="gdfCell">`;
-                if(this.gantt?.project?.config.hasTime) {
-                    if(this.gb.isFirefox) {
-                        result += `<input type="date" name="` + name + `" value="" class="date"><input type="time" name="` + name + `_time" value="" class="time">`;
-                    } else {
-                        result += `<input type="datetime-local" name="` + name + `" value="" class="date">`;
-                    }
-                } else {
-                    result += `<input type="date" name="` + name + `" value="" class="date">`;
-                }
+                result += `<input type="date" name="` + name + `" value="" class="date">`;
+                result += this.gantt?.project?.config.hasTime ? `<input type="time" name="` + name + `_time" value="" class="time">` : "";
                 result += `</td>`;
                 break;
         }

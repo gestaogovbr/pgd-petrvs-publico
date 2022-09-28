@@ -25,15 +25,19 @@
  * A method to instantiate valid task models from
  * raw data.
  */
-function TaskFactory() {
+function TaskFactory(ganttComponet) {
+
+  /* Petrvs */
+  this.ganttComponet = ganttComponet;
 
   /**
    * Build a new Task
    */
   this.build = function (id, name, code, level, start, duration, collapsed) {
     // Set at beginning of day
-    var adjusted_start = computeStart(start);
-    var calculated_end = computeEndByDuration(adjusted_start, duration);
+    /* Petrvs */
+    var adjusted_start = this.ganttComponet ? this.ganttComponet.calcPeriod(start).start.getTime() : computeStart(start);
+    var calculated_end = this.ganttComponet ? this.ganttComponet.calcPeriod(adjusted_start, undefined, duration).end.getTime() : computeEndByDuration(adjusted_start, duration);
     return new Task(id, name, code, level, adjusted_start, calculated_end, duration, collapsed);
   };
 

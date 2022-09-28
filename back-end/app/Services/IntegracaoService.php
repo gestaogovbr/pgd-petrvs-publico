@@ -14,7 +14,7 @@ use Carbon\Carbon;
 use Exception;
 
 class IntegracaoService extends ServiceBase {
-    //public $autoIncluir = false;
+    public $autoIncluir = false;
     public $unidadesInseridas = [];
     public $unidadesSelecionadas = [];
     public $token = "";
@@ -29,7 +29,7 @@ class IntegracaoService extends ServiceBase {
     function __construct($config = null) {
         ini_set('max_execution_time', 1200); /* 20 minutos */
         $integracao_config = $config ?: config('integracao');
-        //$this->autoIncluir = $integracao_config['auto_incluir'];
+        $this->autoIncluir = $integracao_config['auto_incluir'];
         $this->codigoUnidadeRaiz = $integracao_config['codigoUnidadeRaiz'];
         $this->validaCertificado = $integracao_config['validaCertificado'];
         $this->useLocalFiles = $integracao_config['useLocalFiles'];

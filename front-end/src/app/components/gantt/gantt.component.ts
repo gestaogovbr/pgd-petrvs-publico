@@ -1,8 +1,15 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { BootstrapService } from 'src/app/services/bootstrap.service';
 import { GlobalsService } from 'src/app/services/globals.service';
 import { UtilService } from 'src/app/services/util.service';
 import { GanttAssignment, GanttProject, GanttResource, GanttRole, GanttTask } from './gantt-models';
+import * as moment from 'moment';
+
+export type GanttPeriod = {
+  start: Date,
+  end: Date,
+  duration: number
+};
 
 @Component({
   selector: 'gantt',
@@ -11,6 +18,13 @@ import { GanttAssignment, GanttProject, GanttResource, GanttRole, GanttTask } fr
 })
 export class GanttComponent implements OnInit {
   @Input() height: number = 500;
+  /* Situações que devem ser previstas:
+  - Apenas start: quando se deseja saber qual primeira data inicial útil a partir da data start informada
+  - Apenas end: quando se deseja saber qual o ultimo dia útil igual ou inferior a data end informada
+  - start e duration: calcula-se a data end
+  - end e duration: calcula-se a data start
+  - start e end: calcula-se a duration */
+  @Input() period: (start?: Date, end?: Date, duration?: number) => GanttPeriod;
   @Input() set project(value: GanttProject) {
     if(this._project != value) {
       this._project = value;
@@ -24,12 +38,44 @@ export class GanttComponent implements OnInit {
   public loading: boolean = false;
   public ge: any = undefined;
   public id: string;
+  public set error(value: string) {
+    if(this._error != value) {
+      this._error = value;
+      this.cdRef.detectChanges();
+    }
+  }
 
+  private _error: string = "";
   private _project: GanttProject = new GanttProject();
   private initialized: boolean = false;
 
-  constructor(public bootstrap: BootstrapService, public util: UtilService, public gb: GlobalsService) {
+  constructor(
+    public bootstrap: BootstrapService, 
+    public util: UtilService, 
+    public gb: GlobalsService,
+    public cdRef: ChangeDetectorRef
+  ) {
     this.id = util.md5();
+    this.period = this.defaultPeriod;
+  }
+
+  private defaultPeriod = (start?: Date, end?: Date, duration?: number): GanttPeriod => {
+    return {
+      start: start || moment(end).add((duration || 0) * (-1), this.project!.config.hasTime ? 'hours' : 'days').toDate(),
+      end: end || moment(start).add((duration || 0), this.project!.config.hasTime ? 'hours' : 'days').toDate(),
+      duration: duration || start && end ? moment(start).diff(moment(end), this.project!.config.hasTime ? 'hours' : 'days') : 0
+    };
+  }
+
+  public calcPeriod(start?: Date | number, end?: Date | number, duration?: number): GanttPeriod {
+    const startDate: Date | undefined = typeof start == "undefined" || start instanceof Date ? start : new Date(start);
+    const endDate: Date | undefined = typeof end == "undefined" || end instanceof Date ? end : new Date(end);
+    const result = this.period(startDate, endDate, duration);
+    if(!this.project.config.hasTime) {
+      result.start.setHours(0, 0, 0, 0);
+      result.end.setHours(23, 59, 59, 999);
+    }
+    return result;
   }
 
   ngOnInit(): void {
@@ -69,7 +115,7 @@ export class GanttComponent implements OnInit {
       let canWrite = true; //this is the default for test purposes
       // here starts gantt initialization
       //@ts-ignore
-      this.ge = new GanttMaster();
+      this.ge = new GanttMaster(this);
       this.ge.ganttHeight = this.height;
       this.ge.resourceUrl = "assets/gantt/res/";
       this.ge.set100OnClose = true;

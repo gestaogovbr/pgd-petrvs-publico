@@ -9323,27 +9323,17 @@ class GanttTemplatesComponent {
     tableDateTimeTemplate(type, name = "") {
         var _a, _b, _c, _d;
         let result = "";
-        const width = !((_b = (_a = this.gantt) === null || _a === void 0 ? void 0 : _a.project) === null || _b === void 0 ? void 0 : _b.config.hasTime) ? 100 : this.gb.isFirefox ? 150 : 130;
         switch (type) {
             case "HEAD":
-                result = `<th class="gdfColHeader gdfResizable" style="width:` + width + `px;">` + name + `</th>`;
+                result = `<th class="gdfColHeader gdfResizable" style="width:` + (!((_b = (_a = this.gantt) === null || _a === void 0 ? void 0 : _a.project) === null || _b === void 0 ? void 0 : _b.config.hasTime) ? 100 : 150) + `px;">` + name + `</th>`;
                 break;
             case "EMPTY":
                 result = `<td class="gdfCell"></td>`;
                 break;
             case "ROW":
                 result = `<td class="gdfCell">`;
-                if ((_d = (_c = this.gantt) === null || _c === void 0 ? void 0 : _c.project) === null || _d === void 0 ? void 0 : _d.config.hasTime) {
-                    if (this.gb.isFirefox) {
-                        result += `<input type="date" name="` + name + `" value="" class="date"><input type="time" name="` + name + `_time" value="" class="time">`;
-                    }
-                    else {
-                        result += `<input type="datetime-local" name="` + name + `" value="" class="date">`;
-                    }
-                }
-                else {
-                    result += `<input type="date" name="` + name + `" value="" class="date">`;
-                }
+                result += `<input type="date" name="` + name + `" value="" class="date">`;
+                result += ((_d = (_c = this.gantt) === null || _c === void 0 ? void 0 : _c.project) === null || _d === void 0 ? void 0 : _d.config.hasTime) ? `<input type="time" name="` + name + `_time" value="" class="time">` : "";
                 result += `</td>`;
                 break;
         }
@@ -24070,26 +24060,39 @@ InputMultiselectComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵ
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GanttComponent", function() { return GanttComponent; });
 /* harmony import */ var _gantt_models__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./gantt-models */ "dWNe");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var src_app_services_bootstrap_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/services/bootstrap.service */ "Q3HM");
-/* harmony import */ var src_app_services_util_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/services/util.service */ "2Rin");
-/* harmony import */ var src_app_services_globals_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/services/globals.service */ "LiVn");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! moment */ "wd/R");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var src_app_services_bootstrap_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/services/bootstrap.service */ "Q3HM");
+/* harmony import */ var src_app_services_util_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/services/util.service */ "2Rin");
+/* harmony import */ var src_app_services_globals_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/services/globals.service */ "LiVn");
+
 
 
 
 
 
 class GanttComponent {
-    constructor(bootstrap, util, gb) {
+    constructor(bootstrap, util, gb, cdRef) {
         this.bootstrap = bootstrap;
         this.util = util;
         this.gb = gb;
+        this.cdRef = cdRef;
         this.height = 500;
         this.loading = false;
         this.ge = undefined;
+        this._error = "";
         this._project = new _gantt_models__WEBPACK_IMPORTED_MODULE_0__["GanttProject"]();
         this.initialized = false;
+        this.defaultPeriod = (start, end, duration) => {
+            return {
+                start: start || moment__WEBPACK_IMPORTED_MODULE_1__(end).add((duration || 0) * (-1), this.project.config.hasTime ? 'hours' : 'days').toDate(),
+                end: end || moment__WEBPACK_IMPORTED_MODULE_1__(start).add((duration || 0), this.project.config.hasTime ? 'hours' : 'days').toDate(),
+                duration: duration || start && end ? moment__WEBPACK_IMPORTED_MODULE_1__(start).diff(moment__WEBPACK_IMPORTED_MODULE_1__(end), this.project.config.hasTime ? 'hours' : 'days') : 0
+            };
+        };
         this.id = util.md5();
+        this.period = this.defaultPeriod;
     }
     set project(value) {
         if (this._project != value) {
@@ -24100,6 +24103,22 @@ class GanttComponent {
     }
     get project() {
         return this._project;
+    }
+    set error(value) {
+        if (this._error != value) {
+            this._error = value;
+            this.cdRef.detectChanges();
+        }
+    }
+    calcPeriod(start, end, duration) {
+        const startDate = typeof start == "undefined" || start instanceof Date ? start : new Date(start);
+        const endDate = typeof end == "undefined" || end instanceof Date ? end : new Date(end);
+        const result = this.period(startDate, endDate, duration);
+        if (!this.project.config.hasTime) {
+            result.start.setHours(0, 0, 0, 0);
+            result.end.setHours(23, 59, 59, 999);
+        }
+        return result;
     }
     ngOnInit() {
         const baseGanttUrl = "assets/gantt/";
@@ -24138,7 +24157,7 @@ class GanttComponent {
             let canWrite = true; //this is the default for test purposes
             // here starts gantt initialization
             //@ts-ignore
-            this.ge = new GanttMaster();
+            this.ge = new GanttMaster(this);
             this.ge.ganttHeight = this.height;
             this.ge.resourceUrl = "assets/gantt/res/";
             this.ge.set100OnClose = true;
@@ -24393,17 +24412,17 @@ class GanttComponent {
         this.ge.reset();
     }
 }
-GanttComponent.ɵfac = function GanttComponent_Factory(t) { return new (t || GanttComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](src_app_services_bootstrap_service__WEBPACK_IMPORTED_MODULE_2__["BootstrapService"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_3__["UtilService"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](src_app_services_globals_service__WEBPACK_IMPORTED_MODULE_4__["GlobalsService"])); };
-GanttComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: GanttComponent, selectors: [["gantt"]], inputs: { height: "height", project: "project" }, decls: 3, vars: 3, consts: [[1, "gantt"], [2, "padding", "0px", "overflow-y", "auto", "overflow-x", "hidden", "border", "1px solid #e5e5e5", "position", "relative", "margin", "0 5px"], [3, "id", "gantt"]], template: function GanttComponent_Template(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](1, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](2, "gantt-templates", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+GanttComponent.ɵfac = function GanttComponent_Factory(t) { return new (t || GanttComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](src_app_services_bootstrap_service__WEBPACK_IMPORTED_MODULE_3__["BootstrapService"]), _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_4__["UtilService"]), _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](src_app_services_globals_service__WEBPACK_IMPORTED_MODULE_5__["GlobalsService"]), _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_2__["ChangeDetectorRef"])); };
+GanttComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineComponent"]({ type: GanttComponent, selectors: [["gantt"]], inputs: { height: "height", period: "period", project: "project" }, decls: 3, vars: 3, consts: [[1, "gantt"], [2, "padding", "0px", "overflow-y", "auto", "overflow-x", "hidden", "border", "1px solid #e5e5e5", "position", "relative", "margin", "0 5px"], [3, "id", "gantt"]], template: function GanttComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](0, "div", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](1, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](2, "gantt-templates", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
     } if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵattribute"]("id", "workSpace" + ctx.id);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("id", ctx.id)("gantt", ctx);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵattribute"]("id", "workSpace" + ctx.id);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("id", ctx.id)("gantt", ctx);
     } }, styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJnYW50dC5jb21wb25lbnQuc2NzcyJ9 */"] });
 
 

@@ -20,7 +20,7 @@
  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-function GanttMaster() {
+function GanttMaster(ganttComponet) {
   this.tasks = [];
   this.deletedTaskIds = [];
   this.links = [];
@@ -84,21 +84,15 @@ function GanttMaster() {
   this.__redoStack = [];
   this.__inUndoRedo = false; // a control flag to avoid Undo/Redo stacks reset when needed
 
+  Date.workingPeriodResolution=1; //by default 1 day
+
   /* Petrvs */
-  this.__hasTime = false;
+  this.ganttComponet = ganttComponet;
   this.ganttHeight = undefined; /* Altura padrão, caso não esteja definido será utilizado o tamanho da janela */
-  this.inputDateTimeFormat = "yyyy-MM-dd";
+  this.inputDateFormat = "yyyy-MM-dd";
   this.inputTimeFormat = "hh:mm";
   this.hasCost = false; /* Se faz gestão de custos */
-  Object.defineProperties(this, { hasTime: { /* Se as datas têm o formato de data e hora */
-    get: function() { return this.__hasTime; },
-    set: function(value) { 
-      this.__hasTime = value;
-      this.inputDateTimeFormat = value ? "yyyy-MM-ddThh:mm" : "yyyy-MM-dd"; 
-    }
-  }});
-
-  Date.workingPeriodResolution=1; //by default 1 day
+  this.hasTime = false; /* Se as datas têm o formato de data e hora */
 
   var self = this;
 }
@@ -306,7 +300,7 @@ GanttMaster.messages = {
 
 
 GanttMaster.prototype.createTask = function (id, name, code, level, start, duration) {
-  var factory = new TaskFactory();
+  var factory = new TaskFactory(this.ganttComponet);
   return factory.build(id, name, code, level, start, duration);
 };
 
@@ -510,7 +504,7 @@ GanttMaster.prototype.loadProject = function (project) {
 GanttMaster.prototype.loadTasks = function (tasks, selectedRow) {
   //console.debug("GanttMaster.prototype.loadTasks")
   //var prof=new Profiler("ganttMaster.loadTasks");
-  var factory = new TaskFactory();
+  var factory = new TaskFactory(this.ganttComponet);
 
   //reset
   this.reset();
@@ -1032,7 +1026,7 @@ GanttMaster.prototype.indentCurrentTask = function () {
 GanttMaster.prototype.addBelowCurrentTask = function () {
   var self = this;
   //console.debug("addBelowCurrentTask",self.currentTask)
-  var factory = new TaskFactory();
+  var factory = new TaskFactory(this.ganttComponet);
   var ch;
   var row = 0;
   if (self.currentTask && self.currentTask.name) {
@@ -1072,7 +1066,7 @@ GanttMaster.prototype.addAboveCurrentTask = function () {
   if ((self.currentTask.getParent() && !self.currentTask.getParent().canAdd) )
     return;
 
-  var factory = new TaskFactory();
+  var factory = new TaskFactory(this.ganttComponet);
 
   var ch;
   var row = 0;
@@ -1332,8 +1326,12 @@ GanttMaster.prototype.endTransaction = function () {
       var err = this.__currentTransaction.errors[i];
       msg = msg + err.msg + "\n\n";
     }
-    alert(msg);
-
+    /* Petrvs */
+    if(this.ganttComponet) {
+      this.ganttComponet.error = msg;
+    } else {
+      alert(msg);
+    }
 
     //try to restore changed tasks
     var oldTasks = JSON.parse(this.__currentTransaction.snapshot);

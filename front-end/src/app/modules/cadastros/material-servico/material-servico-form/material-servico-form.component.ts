@@ -23,7 +23,7 @@ export class MaterialServicoFormComponent extends PageFormBase<MaterialServico, 
       'codigo': {default: null},
       'referencia': {default: null},
       'descricao': {default: ""},
-      'unidade': {default: "UNIDADE"}
+      'unidade_medida': {default: "UNIDADE"}
     }, this.cdRef, this.validate);
   }
 

@@ -37,7 +37,7 @@ function GridEditor(master) {
 
 GridEditor.prototype.fillEmptyLines = function () {
   //console.debug("fillEmptyLines")
-  var factory = new TaskFactory();
+  var factory = new TaskFactory(this.master.ganttComponent);
   var master = this.master;
 
   //console.debug("GridEditor.fillEmptyLines");
@@ -166,10 +166,10 @@ GridEditor.prototype.refreshTaskRow = function (task) {
   row.find("[name=duration]").val(durationToString(task.duration)).prop("readonly",!canWrite || task.isParent() && task.master.shrinkParent);
   row.find("[name=progress]").val(task.progress).prop("readonly",!canWrite || task.progressByWorklog==true);
   row.find("[name=startIsMilestone]").prop("checked", task.startIsMilestone);
-  row.find("[name=start]").val(new Date(task.start).format(this.master.inputDateTimeFormat)).updateOldValue().prop("readonly",!canWrite || task.depends || !(task.canWrite  || this.master.permissions.canWrite) ); // called on dates only because for other field is called on focus event
+  row.find("[name=start]").val(new Date(task.start).format(this.master.inputDateFormat)).updateOldValue().prop("readonly",!canWrite || task.depends || !(task.canWrite  || this.master.permissions.canWrite) ); // called on dates only because for other field is called on focus event
   row.find("[name=start_time]").val(new Date(task.start).format(this.master.inputTimeFormat)).updateOldValue().prop("readonly",!canWrite || task.depends || !(task.canWrite  || this.master.permissions.canWrite) ); // called on dates only because for other field is called on focus event
   row.find("[name=endIsMilestone]").prop("checked", task.endIsMilestone);
-  row.find("[name=end]").val(new Date(task.end).format(this.master.inputDateTimeFormat)).prop("readonly",!canWrite || task.isParent() && task.master.shrinkParent).updateOldValue();
+  row.find("[name=end]").val(new Date(task.end).format(this.master.inputDateFormat)).prop("readonly",!canWrite || task.isParent() && task.master.shrinkParent).updateOldValue();
   row.find("[name=end_time]").val(new Date(task.end).format(this.master.inputTimeFormat)).prop("readonly",!canWrite || task.isParent() && task.master.shrinkParent).updateOldValue();
   row.find("[name=depends]").val(task.depends);
   row.find(".taskAssigs").html(task.getAssigsResources());
@@ -275,6 +275,12 @@ GridEditor.prototype.bindRowExpandEvents = function (task, taskRow) {
 
 GridEditor.prototype.bindRowInputEvents = function (task, taskRow) {
   var self = this;
+  
+
+
+
+
+
   
   //bind dateField on dates
   /*taskRow.find(".date").each(function () {
