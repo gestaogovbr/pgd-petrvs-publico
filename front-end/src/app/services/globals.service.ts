@@ -42,7 +42,7 @@ export class GlobalsService {
 
   public get baseURL(): string {
     //@ts-ignore
-    const path = (this.isExtension ? EXTENSION_BASE_URL : this.servidorURL()) as string;
+    const path = (this.isExtension ? EXTENSION_BASE_URL : this.servidorURL) as string;
     return path.endsWith("/") ? path : path + "/";
   }
 

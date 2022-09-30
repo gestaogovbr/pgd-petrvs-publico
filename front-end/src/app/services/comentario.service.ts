@@ -26,6 +26,8 @@ export class ComentarioService {
   public orderComentarios(comentarios?: Comentario[]) {
     /* O algoritimo irá falhar se existir algum filho com data_hora anterior a de seu pai, mas isso não deve acontecer nunca */
     let ordered = comentarios?.sort((a: Comentario, b: Comentario) => {
+      a.path = a.path || ""; /* Garante que o campo não esteja null */
+      b.path = b.path || ""; /* Garante que o campo não esteja null */
       if(a.path == b.path) { /* Situação 1: Paths iguais */
         return a.data_hora.getTime() < b.data_hora.getTime() ? -1 : 1;
       } else { /* Situação 2: Paths diferentes, deverá ser encontrado o menor nível comum entre eles para poder comparar */

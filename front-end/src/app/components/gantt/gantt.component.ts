@@ -24,7 +24,7 @@ export class GanttComponent implements OnInit {
   - start e duration: calcula-se a data end
   - end e duration: calcula-se a data start
   - start e end: calcula-se a duration */
-  @Input() period: (start?: Date, end?: Date, duration?: number) => GanttPeriod;
+  @Input() period: (task: any, start?: Date, end?: Date, duration?: number) => GanttPeriod;
   @Input() set project(value: GanttProject) {
     if(this._project != value) {
       this._project = value;
@@ -59,7 +59,7 @@ export class GanttComponent implements OnInit {
     this.period = this.defaultPeriod;
   }
 
-  private defaultPeriod = (start?: Date, end?: Date, duration?: number): GanttPeriod => {
+  private defaultPeriod = (task: any, start?: Date, end?: Date, duration?: number): GanttPeriod => {
     return {
       start: start || moment(end).add((duration || 0) * (-1), this.project!.config.hasTime ? 'hours' : 'days').toDate(),
       end: end || moment(start).add((duration || 0), this.project!.config.hasTime ? 'hours' : 'days').toDate(),
@@ -67,10 +67,10 @@ export class GanttComponent implements OnInit {
     };
   }
 
-  public calcPeriod(start?: Date | number, end?: Date | number, duration?: number): GanttPeriod {
+  public calcPeriod(task: any, start?: Date | number, end?: Date | number, duration?: number): GanttPeriod {
     const startDate: Date | undefined = typeof start == "undefined" || start instanceof Date ? start : new Date(start);
     const endDate: Date | undefined = typeof end == "undefined" || end instanceof Date ? end : new Date(end);
-    const result = this.period(startDate, endDate, duration);
+    const result = this.period(task, startDate, endDate, duration);
     if(!this.project.config.hasTime) {
       result.start.setHours(0, 0, 0, 0);
       result.end.setHours(23, 59, 59, 999);
@@ -311,36 +311,6 @@ export class GanttComponent implements OnInit {
     // Store tasks, deps and assignments
     this.getRecursiveProjectTasks(gantt.tasks, 0, 0, project);
     return project;
-  }
-
-  public getDemoProject() {
-    const ret = {"tasks": [
-      {"id": -1, "name": "Gantt editor", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 0, "status": "STATUS_ACTIVE", "depends": "", "canWrite": true, "start": 1396994400000, "duration": 20, "end": 1399586399999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [{id: "tmp_1", resourceId: "tmp_1", roleId: "", effort: ""}], "hasChild": true},
-      {"id": -2, "name": "coding", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 1, "status": "STATUS_ACTIVE", "depends": "", "canWrite": true, "start": 1396994400000, "duration": 10, "end": 1398203999999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": true},
-      {"id": -3, "name": "gantt part", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_ACTIVE", "depends": "", "canWrite": true, "start": 1396994400000, "duration": 2, "end": 1397167199999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false},
-      {"id": -4, "name": "editor part", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "depends": "3", "canWrite": true, "start": 1397167200000, "duration": 4, "end": 1397685599999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false},
-      {"id": -5, "name": "testing", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 1, "status": "STATUS_SUSPENDED", "depends": "2:5", "canWrite": true, "start": 1398981600000, "duration": 5, "end": 1399586399999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": true},
-      {"id": -6, "name": "test on safari", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "depends": "", "canWrite": true, "start": 1398981600000, "duration": 2, "end": 1399327199999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false},
-      {"id": -7, "name": "test on ie", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "depends": "6", "canWrite": true, "start": 1399327200000, "duration": 3, "end": 1399586399999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false},
-      {"id": -8, "name": "test on chrome", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "depends": "6", "canWrite": true, "start": 1399327200000, "duration": 2, "end": 1399499999999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false}
-    ], "selectedRow": 2, "deletedTaskIds": [],
-    "resources": [
-      {"id": "tmp_1", "name": "Resource 1", picture: this.gb.servidorURL + "/assets/images/profile.png"},
-      {"id": "tmp_2", "name": "Resource 2", picture: this.gb.servidorURL + "/assets/images/profile.png"},
-      {"id": "tmp_3", "name": "Resource 3", picture: this.gb.servidorURL + "/assets/images/profile.png"},
-      {"id": "tmp_4", "name": "Resource 4", picture: this.gb.servidorURL + "/assets/images/profile.png"}
-    ],
-    "roles":       [
-      {"id": "tmp_1", "name": "Project Manager"},
-      {"id": "tmp_2", "name": "Worker"},
-      {"id": "tmp_3", "name": "Stakeholder"},
-      {"id": "tmp_4", "name": "Customer"}
-    ], "canWrite":    true, "canDelete":true, "canWriteOnParent": true, canAdd:true};
-    let offset=new Date().getTime()-ret.tasks[0].start;
-    for (let i = 0; i < ret.tasks.length; i++) {
-      ret.tasks[i].start = ret.tasks[i].start + offset;
-    }
-    return ret;
   }
 
   public loadI18n() {

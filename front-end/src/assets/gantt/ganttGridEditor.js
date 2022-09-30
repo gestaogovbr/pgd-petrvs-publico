@@ -276,7 +276,29 @@ GridEditor.prototype.bindRowExpandEvents = function (task, taskRow) {
 GridEditor.prototype.bindRowInputEvents = function (task, taskRow) {
   var self = this;
   
-
+  /* Petrvs */
+  /* Campos data */
+  taskRow.find(".date").focus(function () {
+    $(this).updateOldValue();
+  }).blur(function (event) {
+    var inp = $(this);
+    if (inp.isValueChanged()) {
+      if (!moment(inp.val()).isValid()) {
+        alert(GanttMaster.messages["INVALID_DATE_FORMAT"]);
+        inp.val(inp.getOldValue());
+      } else {
+        var row = inp.closest("tr");
+        var taskId = row.attr("taskId");
+        var task = self.master.getTask(taskId);
+        var leavingField = inp.prop("name");
+        var dates = resynchDates(task, inp, row.find("[name=start]"), row.find("[name=start_time]"), row.find("[name=startIsMilestone]"), row.find("[name=duration]"), row.find("[name=end]"), row.find("[name=end_time]"), row.find("[name=endIsMilestone]"));
+        self.master.beginTransaction();
+        self.master.changeTaskDates(task, dates.start, dates.end);
+        self.master.endTransaction();
+        inp.updateOldValue(); //in order to avoid multiple call if nothing changed
+      }
+    }
+  });
 
 
 
@@ -322,30 +344,6 @@ GridEditor.prototype.bindRowInputEvents = function (task, taskRow) {
     });
   });*/
 
-  //Data/hora
-  taskRow.find(".date").focus(function () {
-    $(this).updateOldValue();
-  }).blur(function (event) {
-    var inp = $(this);
-    if (inp.isValueChanged()) {
-      if (!Date.isValid(inp.val(), "yyyy-MM-ddThh:mm") && Date.isValid(inp.val(), "yyyy-MM-dd")) {
-        alert(GanttMaster.messages["INVALID_DATE_FORMAT"]);
-        inp.val(inp.getOldValue());
-      } else {
-        var row = inp.closest("tr");
-        var taskId = row.attr("taskId");
-        var task = self.master.getTask(taskId);
-
-        var leavingField = inp.prop("name");
-        //var dates = resynchDates(inp, row.find("[name=start]"), row.find("[name=startIsMilestone]"), row.find("[name=duration]"), row.find("[name=end]"), row.find("[name=endIsMilestone]"));
-        self.master.beginTransaction();
-        self.master.changeTaskDates(task, dates.start, dates.end);
-        self.master.endTransaction();
-        inp.updateOldValue(); //in order to avoid multiple call if nothing changed
-      }
-    }
-  });
-
   //milestones checkbox
   taskRow.find(":checkbox").click(function () {
     var el = $(this);
@@ -361,7 +359,7 @@ GridEditor.prototype.bindRowInputEvents = function (task, taskRow) {
       self.master.beginTransaction();
       //milestones
       task[field] = el.prop("checked");
-      resynchDates(el, row.find("[name=start]"), row.find("[name=startIsMilestone]"), row.find("[name=duration]"), row.find("[name=end]"), row.find("[name=endIsMilestone]"));
+      resynchDates(task, el, row.find("[name=start]"), row.find("[name=start_time]"), row.find("[name=startIsMilestone]"), row.find("[name=duration]"), row.find("[name=end]"), row.find("[name=end_time]"), row.find("[name=endIsMilestone]"));
       self.master.endTransaction();
     }
 
@@ -426,7 +424,7 @@ GridEditor.prototype.bindRowInputEvents = function (task, taskRow) {
         }
 
       } else if (field == "duration") {
-        var dates = resynchDates(el, row.find("[name=start]"), row.find("[name=startIsMilestone]"), row.find("[name=duration]"), row.find("[name=end]"), row.find("[name=endIsMilestone]"));
+        var dates = resynchDates(task, el, row.find("[name=start]"), row.find("[name=start_time]"), row.find("[name=startIsMilestone]"), row.find("[name=duration]"), row.find("[name=end]"), row.find("[name=end_time]"), row.find("[name=endIsMilestone]"));
         self.master.changeTaskDates(task, dates.start, dates.end);
 
       } else if (field == "name" && el.val() == "") { // remove unfilled task
@@ -634,8 +632,9 @@ GridEditor.prototype.openFullEditor = function (task, editOnlyAssig) {
       }
     }).blur(function () {
       var inp = $(this);
+      var task = self.master.getTask(taskId); // get task again because in case of rollback old task is lost
       if (inp.validateField()) {
-        resynchDates(inp, taskEditor.find("[name=start]"), taskEditor.find("[name=startIsMilestone]"), taskEditor.find("[name=duration]"), taskEditor.find("[name=end]"), taskEditor.find("[name=endIsMilestone]"));
+        resynchDates(task, inp, taskEditor.find("[name=start]"), taskEditor.find("[name=start_time]"), taskEditor.find("[name=startIsMilestone]"), taskEditor.find("[name=duration]"), taskEditor.find("[name=end]"), taskEditor.find("[name=end_time]"), taskEditor.find("[name=endIsMilestone]"));
         //workload computation
         if (typeof(workloadDatesChanged)=="function")
           workloadDatesChanged();
@@ -644,7 +643,8 @@ GridEditor.prototype.openFullEditor = function (task, editOnlyAssig) {
 
     taskEditor.find("#startIsMilestone,#endIsMilestone").click(function () {
       var inp = $(this);
-      resynchDates(inp, taskEditor.find("[name=start]"), taskEditor.find("[name=startIsMilestone]"), taskEditor.find("[name=duration]"), taskEditor.find("[name=end]"), taskEditor.find("[name=endIsMilestone]"));
+      var task = self.master.getTask(taskId); // get task again because in case of rollback old task is lost
+      resynchDates(task, inp, taskEditor.find("[name=start]"), taskEditor.find("[name=start_time]"), taskEditor.find("[name=startIsMilestone]"), taskEditor.find("[name=duration]"), taskEditor.find("[name=end]"), taskEditor.find("[name=end_time]"), taskEditor.find("[name=endIsMilestone]"));
     });
 
     //bind add assignment

@@ -926,7 +926,7 @@ GanttMaster.prototype.updateLinks = function (task) {
       if (pos>0){
         supStr=depString.substr(0,pos);
         var lagStr=depString.substr(pos+1);
-        lag=Math.ceil((stringToDuration(lagStr)) / Date.workingPeriodResolution) * Date.workingPeriodResolution;
+        lag=Math.ceil((stringToDuration(task, lagStr)) / Date.workingPeriodResolution) * Date.workingPeriodResolution;
       }
 
       var sup = this.tasks[parseInt(supStr)-1];

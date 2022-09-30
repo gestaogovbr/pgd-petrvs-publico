@@ -506,6 +506,7 @@ class ServiceBase
             throw new Exception("Arquivo não encontrado");
         }
         $url = URL::temporarySignedRoute('download', now()->addMinutes(30), ['file' => $file]);
+        $url = substr($url, strpos($url, "download/")); /* Convert to relative path from absolute */
         return $url;
     }
 
