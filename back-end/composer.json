@@ -17,7 +17,8 @@
         "laravel/tinker": "^2.5",
         "phpseclib/phpseclib": "~2.0",
         "ricorocks-digital-agency/soap": "^1.6",
-        "socialiteproviders/microsoft-azure": "^5.1"
+        "socialiteproviders/microsoft-azure": "^5.1",
+        "spatie/array-to-xml": "^3.1"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

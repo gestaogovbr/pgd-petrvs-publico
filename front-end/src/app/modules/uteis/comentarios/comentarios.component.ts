@@ -81,13 +81,14 @@ export class ComentariosComponent extends PageFrameBase {
     if(this.urlParams?.has("origem")) {
       this.origem = this.urlParams!.get("origem") as ComentarioOrigem;
       this.entity_id = this.urlParams!.get("id") as string;
-      this.comentario_id = this.queryParams?.comentario_id
+      this.comentario_id = this.queryParams?.comentario_id;
+      if(this.isNoPersist) this.entity = this.metadata?.entity;
     }
   }
 
   ngAfterViewInit() {
     super.ngAfterViewInit();
-    if(this.entity_id?.length) { /* Janela autocontida */
+    if(this.entity_id?.length && !this.isNoPersist) { /* Janela autocontida */
       (async () => {
         this.loading = true;
         try {
@@ -116,6 +117,10 @@ export class ComentariosComponent extends PageFrameBase {
       result = "Não pode ser em branco";
     }
     return result;
+  }
+
+  public get isNoPersist(): boolean {
+    return this.entity_id == "NOPERSIST";
   }
 
   public get constrolOrItems(): AbstractControl | Comentario[] {
@@ -162,7 +167,7 @@ export class ComentariosComponent extends PageFrameBase {
     this.submitting = true;
     try {
       this.confirm();
-      const modalResult = await this.dao?.update(this.entity!.id, { comentarios: this.gridControl.value }, this.join);
+      const modalResult = this.isNoPersist ? this.entity : await this.dao?.update(this.entity!.id, { comentarios: this.gridControl.value }, this.join);
       if(this.modalRoute?.queryParams?.idroute?.length) this.go.setModalResult(this.modalRoute?.queryParams?.idroute, modalResult);
       this.go.back(undefined, this.backRoute);
     } catch (erro) {

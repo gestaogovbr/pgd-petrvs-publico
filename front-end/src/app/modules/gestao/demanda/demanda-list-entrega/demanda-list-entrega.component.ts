@@ -4,6 +4,7 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { DemandaEntregaDaoService } from 'src/app/dao/demanda-entrega-dao.service';
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
+import { Comentario } from 'src/app/models/comentario';
 import { DemandaEntrega } from 'src/app/models/demanda-entrega.model';
 import { Demanda } from 'src/app/models/demanda.model';
 import { PageBase } from 'src/app/modules/base/page-base';
@@ -172,14 +173,14 @@ export class DemandaListEntregaComponent extends PageBase {
     }
   }
 
-  public comentarioClick(element: HTMLSpanElement) {
+  /*public comentarioClick(element: HTMLSpanElement) {
     const value = element.getAttribute("data-expanded");
     element.setAttribute("data-expanded", value == "true" ? "false" : "true");
-  }
+  }*/
 
-  public addComentarioClick(row: any) {
+  /*public addComentarioClick(row: any) {
     this.go.navigate({route: ['gestao', 'demanda', 'entrega', row.id, 'comentar']}, {modal: true, metadata: {entrega: row, demanda: this.demanda}, modalClose: this.addComentarioResult.bind(this)});
-  }
+  }*/
 
   public onProcessoClick(row: any) {
     this.allPages.openDocumentoSei(row.id_processo, row.id_documento);
@@ -203,17 +204,22 @@ export class DemandaListEntregaComponent extends PageBase {
 
   public addComentarioResult(modalResult: DemandaEntrega) {
     if(modalResult) {
-      this.dao!.getById(modalResult.id, this.join).then(entrega => {
-        if (entrega) {
-          const entregas = this.control.value || [];
-          const index = entregas.findIndex((x: DemandaEntrega) => x.id = entrega.id);
-          if(index >= 0) {
-            entregas[index] = entrega;
-            this.control.setValue(entregas);
-            this.cdRef.detectChanges();
+      if(this.isPersist) {
+        this.dao!.getById(modalResult.id, this.join).then(entrega => {
+          if (entrega) {
+            const entregas = this.control.value || [];
+            const index = entregas.findIndex((x: DemandaEntrega) => x.id = entrega.id);
+            if(index >= 0) {
+              entregas[index] = entrega;
+              this.control.setValue(entregas);
+              this.cdRef.detectChanges();
+            }
           }
-        }
-      });
+        });
+      } else {
+        const changed = modalResult.comentarios.filter((x: Comentario) => ["ADD", "EDIT", "DELETE"].includes(x._status || "")).length > 0;
+        modalResult._status = changed && !["ADD", "EDIT", "DELETE"].includes(modalResult._status || "") ? "EDIT" : modalResult._status;
+      }
     }
   }
 

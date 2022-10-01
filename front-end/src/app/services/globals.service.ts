@@ -42,7 +42,7 @@ export class GlobalsService {
 
   public get baseURL(): string {
     //@ts-ignore
-    const path = (this.isExtension ? EXTENSION_BASE_URL : this.servidorURL()) as string;
+    const path = (this.isExtension ? EXTENSION_BASE_URL : this.servidorURL) as string;
     return path.endsWith("/") ? path : path + "/";
   }
 
@@ -81,6 +81,10 @@ export class GlobalsService {
     const key = "URL_" + encodeURI(resource);
     if(this.isExtension && !this.urlBuffer[key]) this.urlBuffer[key] = this.sanitizer.bypassSecurityTrustResourceUrl(this.baseURL + resource);
     return this.isExtension ? this.urlBuffer[key] : resource;
+  }
+
+  public get isFirefox(): boolean {
+    return navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
   }
 
   public get hasGoogleLogin(): boolean {

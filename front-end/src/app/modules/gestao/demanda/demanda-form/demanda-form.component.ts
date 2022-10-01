@@ -700,8 +700,11 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
       let demanda = this.util.fill(new Demanda(), this.entity!);
       this.comentarios?.confirm();
       demanda = this.util.fillForm(demanda, this.form!.value);
-      demanda.comentarios = demanda.comentarios.filter((x: Comentario) => ["ADD", "DELETE"].includes(x._status || "") && x.texto?.length);
-      demanda.entregas = demanda.entregas.filter((x: DemandaEntrega) => ["ADD", "EDIT", "DELETE"].includes(x._status || ""));
+      demanda.comentarios = demanda.comentarios.filter((x: Comentario) => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.texto?.length);
+      demanda.entregas = demanda.entregas.filter((entrega: DemandaEntrega) => {
+        entrega.comentarios = entrega.comentarios.filter((x: Comentario) => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.texto?.length);
+        return ["ADD", "EDIT", "DELETE"].includes(entrega._status || "");
+      });
       /*if(this.isComentarios) {
         this.dao?.update(this.entity!.id, { comentarios: demanda.comentarios }).then(row => resolve(true)).catch(error => resolve(false));
       } else {*/

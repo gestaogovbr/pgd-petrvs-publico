@@ -1,6 +1,6 @@
 <editable-form [form]="form!" [disabled]="formDisabled" (submit)="onSaveData()" (cancel)="onCancel()">
-    <tabs display right [hidden]="isComentarios ? 'true' : undefined" [title]="!isModal ? title : ''">
-        <tab *ngIf="!isComentarios" key="ENTREGA" [label]="lex.noun('Tarefa')">
+    <tabs display right [title]="!isModal ? title : ''">
+        <tab key="ENTREGA" [label]="lex.noun('Tarefa')">
             <div class="row">
                 <input-textarea label="Descrição" [size]="12" [rows]="2" controlName="descricao" [control]="form!.controls.descricao"></input-textarea>
             </div>
@@ -21,7 +21,8 @@
         </tab>
         <tab key="COMENTARIOS" label="Comentarios">
             <div clss="row">
-                <grid [control]="form!.controls.comentarios" #comentarios [hasEdit]="false" [hasDelete]="false" [add]="addComentario.bind(this)" [form]="formComentarios" [load]="loadComentario.bind(this)" [save]="saveComentario.bind(this)" editable>
+                <comentarios #comentarios origem="ENTREGA" [control]="form!.controls.comentarios"></comentarios>
+                <!--grid [control]="form!.controls.comentarios" #comentarios [hasEdit]="false" [hasDelete]="false" [add]="addComentario.bind(this)" [form]="formComentarios" [load]="loadComentario.bind(this)" [save]="saveComentario.bind(this)" editable>
                     <columns>
                         <column title="Comentários" [template]="mensagem" [editTemplate]="mensagemEdit">
                             <ng-template let-row="row" #mensagem>
@@ -30,7 +31,6 @@
                                         <td *ngIf="comentario.comentarioLevel(row).length > 0" class="d-none d-md-table-cell" [style.width.px]="comentario.comentarioLevel(row).length * 20">&nbsp;</td>
                                         <td class="comentario-user text-center">
                                             <profile-picture [url]="row.usuario?.url_foto" [hint]="row.usuario?.nome || 'Desconhecido'"></profile-picture><br>
-                                            <!--img [src]="row.usuario?.url_foto || './assets/images/profile.png'" class="rounded-circle profile-photo" onerror="this.src='./assets/images/profile.png'" width="25" height="25"//-->
                                             <ng-container *ngFor="let dot of comentario.comentarioLevel(row)">
                                                 <span class="comentario-level">•</span><br>
                                             </ng-container>
@@ -66,7 +66,7 @@
                         </column>
                         <column type="options" [dynamicOptions]="comentarioDynamicOptions.bind(this)"></column>
                     </columns>
-                </grid>
+                </grid//-->
             </div>
         </tab>
     </tabs>

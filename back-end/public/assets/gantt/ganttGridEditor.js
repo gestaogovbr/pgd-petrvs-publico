@@ -37,7 +37,7 @@ function GridEditor(master) {
 
 GridEditor.prototype.fillEmptyLines = function () {
   //console.debug("fillEmptyLines")
-  var factory = new TaskFactory();
+  var factory = new TaskFactory(this.master.ganttComponent);
   var master = this.master;
 
   //console.debug("GridEditor.fillEmptyLines");
@@ -166,9 +166,11 @@ GridEditor.prototype.refreshTaskRow = function (task) {
   row.find("[name=duration]").val(durationToString(task.duration)).prop("readonly",!canWrite || task.isParent() && task.master.shrinkParent);
   row.find("[name=progress]").val(task.progress).prop("readonly",!canWrite || task.progressByWorklog==true);
   row.find("[name=startIsMilestone]").prop("checked", task.startIsMilestone);
-  row.find("[name=start]").val(new Date(task.start).format()).updateOldValue().prop("readonly",!canWrite || task.depends || !(task.canWrite  || this.master.permissions.canWrite) ); // called on dates only because for other field is called on focus event
+  row.find("[name=start]").val(new Date(task.start).format(this.master.inputDateFormat)).updateOldValue().prop("readonly",!canWrite || task.depends || !(task.canWrite  || this.master.permissions.canWrite) ); // called on dates only because for other field is called on focus event
+  row.find("[name=start_time]").val(new Date(task.start).format(this.master.inputTimeFormat)).updateOldValue().prop("readonly",!canWrite || task.depends || !(task.canWrite  || this.master.permissions.canWrite) ); // called on dates only because for other field is called on focus event
   row.find("[name=endIsMilestone]").prop("checked", task.endIsMilestone);
-  row.find("[name=end]").val(new Date(task.end).format()).prop("readonly",!canWrite || task.isParent() && task.master.shrinkParent).updateOldValue();
+  row.find("[name=end]").val(new Date(task.end).format(this.master.inputDateFormat)).prop("readonly",!canWrite || task.isParent() && task.master.shrinkParent).updateOldValue();
+  row.find("[name=end_time]").val(new Date(task.end).format(this.master.inputTimeFormat)).prop("readonly",!canWrite || task.isParent() && task.master.shrinkParent).updateOldValue();
   row.find("[name=depends]").val(task.depends);
   row.find(".taskAssigs").html(task.getAssigsResources());
 
@@ -273,9 +275,15 @@ GridEditor.prototype.bindRowExpandEvents = function (task, taskRow) {
 
 GridEditor.prototype.bindRowInputEvents = function (task, taskRow) {
   var self = this;
+  
 
+
+
+
+
+  
   //bind dateField on dates
-  taskRow.find(".date").each(function () {
+  /*taskRow.find(".date").each(function () {
     var el = $(this);
     el.click(function () {
       var inp = $(this);
@@ -312,8 +320,31 @@ GridEditor.prototype.bindRowInputEvents = function (task, taskRow) {
         }
       }
     });
-  });
+  });*/
 
+  //Data/hora
+  taskRow.find(".date").focus(function () {
+    $(this).updateOldValue();
+  }).blur(function (event) {
+    var inp = $(this);
+    if (inp.isValueChanged()) {
+      if (!Date.isValid(inp.val(), "yyyy-MM-ddThh:mm") && Date.isValid(inp.val(), "yyyy-MM-dd")) {
+        alert(GanttMaster.messages["INVALID_DATE_FORMAT"]);
+        inp.val(inp.getOldValue());
+      } else {
+        var row = inp.closest("tr");
+        var taskId = row.attr("taskId");
+        var task = self.master.getTask(taskId);
+
+        var leavingField = inp.prop("name");
+        //var dates = resynchDates(inp, row.find("[name=start]"), row.find("[name=startIsMilestone]"), row.find("[name=duration]"), row.find("[name=end]"), row.find("[name=endIsMilestone]"));
+        self.master.beginTransaction();
+        self.master.changeTaskDates(task, dates.start, dates.end);
+        self.master.endTransaction();
+        inp.updateOldValue(); //in order to avoid multiple call if nothing changed
+      }
+    }
+  });
 
   //milestones checkbox
   taskRow.find(":checkbox").click(function () {
@@ -338,7 +369,8 @@ GridEditor.prototype.bindRowInputEvents = function (task, taskRow) {
 
 
   //binding on blur for task update (date exluded as click on calendar blur and then focus, so will always return false, its called refreshing the task row)
-  taskRow.find("input:text:not(.date)").focus(function () {
+  //taskRow.find("input:text:not(.date)").focus(function () {
+  taskRow.find("input:text").focus(function () {
     $(this).updateOldValue();
 
   }).blur(function (event) {

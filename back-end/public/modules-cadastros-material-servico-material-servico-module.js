@@ -268,7 +268,7 @@ class MaterialServicoFormComponent extends src_app_modules_base_page_form_base__
             'codigo': { default: null },
             'referencia': { default: null },
             'descricao': { default: "" },
-            'unidade': { default: "UNIDADE" }
+            'unidade_medida': { default: "UNIDADE" }
         }, this.cdRef, this.validate);
     }
     loadData(entity, form) {
@@ -292,7 +292,7 @@ MaterialServicoFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__[
     } if (rf & 2) {
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵInheritDefinitionFeature"]], decls: 8, vars: 10, consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Tipo", "icon", "bi bi-intersect", "controlName", "tipo", 3, "size", "items"], ["label", "C\u00F3digo", "icon", "bi bi-upc-scan", "controlName", "codigo", 3, "size"], ["label", "Refer\u00EAncia", "icon", "bi bi-qr-code", "controlName", "referencia", 3, "size"], ["label", "Descricao", "icon", "bi bi-textarea-t", "controlName", "descricao", 3, "size"], ["label", "Unidade", "icon", "bi bi-rulers", "controlName", "unidade", 3, "size", "items"]], template: function MaterialServicoFormComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵInheritDefinitionFeature"]], decls: 8, vars: 10, consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Tipo", "icon", "bi bi-intersect", "controlName", "tipo", 3, "size", "items"], ["label", "C\u00F3digo", "icon", "bi bi-upc-scan", "controlName", "codigo", 3, "size"], ["label", "Refer\u00EAncia", "icon", "bi bi-qr-code", "controlName", "referencia", 3, "size"], ["label", "Descricao", "icon", "bi bi-textarea-t", "controlName", "descricao", 3, "size"], ["label", "Unidade", "icon", "bi bi-rulers", "controlName", "unidade_medida", 3, "size", "items"]], template: function MaterialServicoFormComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "editable-form", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("submit", function MaterialServicoFormComponent_Template_editable_form_submit_0_listener() { return ctx.onSaveData(); })("cancel", function MaterialServicoFormComponent_Template_editable_form_cancel_0_listener() { return ctx.onCancel(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](1, "div", 1);

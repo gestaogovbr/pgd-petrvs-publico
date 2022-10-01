@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Atividade;
 use App\Services\ServiceBase;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class PetrvsService extends ServiceBase
 {

@@ -22,11 +22,19 @@ class UtilService
     public static function getDateFormatted($dataHora) {
         return Carbon::parse($dataHora)->format("d/m/Y");
     }
-    
+
+    public function valueOrDefault($value, $default = "") {
+        return empty($value) || gettype($value) == "array" ? $default : $value;
+    }
+
+    public function object2array($object) {
+        return @json_decode(@json_encode($object),1);
+    }
+
     public static function getTimeFormatted($dataHora) {
         return Carbon::parse($dataHora)->format("H:i");
     }
-       
+
     public static function getDateTimeFormatted($dataHora, $separator = " ") {
         return UtilService::getDateFormatted($dataHora) . $separator . UtilService::getTimeFormatted($dataHora);
     }

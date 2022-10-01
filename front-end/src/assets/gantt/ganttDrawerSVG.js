@@ -303,7 +303,7 @@ Ganttalendar.prototype.drawTask = function (task) {
           var en = Math.round(((parseFloat(taskbox.attr("x")) + parseFloat(taskbox.attr("width"))) / self.fx) + self.startMillis);
 						var d = getDurationInUnits(computeStartDate(st), computeEndDate(en));
           var text = taskBox.data("textDur");
-          text.attr("x", parseInt(taskbox.attr("x")) + parseInt(taskbox.attr("width")) + 8).html(durationToString(d));
+          text.attr("x", parseInt(taskbox.attr("x")) + parseInt(taskbox.attr("width")) + 8).html(durationToString(task, d));
 
           $("[from=" + task.id + "],[to=" + task.id + "]").trigger("update");
         },
