@@ -146,9 +146,9 @@ class IntegracaoSiapeService extends ServiceBase {
         $uorgs = DB::select("SELECT codigo_siape from integracao_unidades WHERE codupag=".$this->siapeUpag."");
         $uorgs = $this->UtilService->object2array($uorgs);
 
-        try {
-            if(!empty($this->siape) and !empty($uorgs)){
-                foreach($uorgs as $codUorg){
+        if(!empty($this->siape) and !empty($uorgs)){
+            foreach($uorgs as $codUorg){
+                try{
                     $cpfsPorUorgWsdl = $this->siape->listaServidores(
                         $this->siapeSiglaSistema,
                         $this->siapeNomeSistema,
@@ -161,14 +161,12 @@ class IntegracaoSiapeService extends ServiceBase {
                         foreach ($cpfsPorUorgWsdl["Servidor"] as $cpf){
                             array_push($cpfsPorUorgsWsdl, $cpf);
                         }
-                    } else {
-                        /* Uorg sem servidor ativo */
-                        LogError::newWarn("Web Service Siape: não existe servidores ativos na UORG (".$codUorg['codigo_siape'].").");
                     }
+                } catch(Exception $e){
+                      LogError::newWarn("Web Service Siape: não existe servidores ativos na UORG ".$codUorg['codigo_siape'].".", $e->getMessage());
+                      continue;
                 }
             }
-        } catch (Exception $e) {
-            LogError::newWarn("Web Service Siape: erro de conexão.", $e->getMessage());
         }
 
         /*
@@ -196,7 +194,7 @@ class IntegracaoSiapeService extends ServiceBase {
                         Pula interação se resposta for uma string (sem dados para consulta): possivelmente
                         sem dados considerando parmExistPag=a, parmTipoVinculo=a
                         */
-                          LogError::newWarn("Web Service Siape: erro de conexão ou incosistência no cpf.", $e->getMessage());
+                          LogError::newWarn("Web Service Siape: Erro de conexão ou problemas com CPF ".pessoa['cpf']." durante consulta à dados pessoais.", $e->getMessage());
                           continue;
                       }
                     } else {
