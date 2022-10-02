@@ -124,7 +124,7 @@ class IntegracaoSiapeService extends ServiceBase {
                             ];
                             array_push($uorgsPetrvs['uorg'], $inserir_uorg);
                         } else{
-                              LogError::newWarn("Web Service Siape: Uorg não pertence a(s) unidade(s) pagadora: ", $this->UtilService->valueOrNull($uorgWsdl, "codUorg"));
+                              LogError::newWarn("Web Service Siape: Uorg ".$this->UtilService->valueOrNull($uorgWsdl, "codUorg")." não pertence a(s) unidade(s) pagadora(s).", $this->siapeUpag);
                         }
                       } else {
                             LogError::newWarn("Web Service Siape: Ausência de código uorg.");
@@ -194,7 +194,7 @@ class IntegracaoSiapeService extends ServiceBase {
                         Pula interação se resposta for uma string (sem dados para consulta): possivelmente
                         sem dados considerando parmExistPag=a, parmTipoVinculo=a
                         */
-                          LogError::newWarn("Web Service Siape: Erro de conexão ou problemas com CPF ".pessoa['cpf']." durante consulta à dados pessoais.", $e->getMessage());
+                          LogError::newWarn("Web Service Siape: Erro de conexão ou problemas com CPF ".$pessoa['cpf']." durante consulta aos dados pessoais.", $e->getMessage());
                           continue;
                       }
                     } else {
