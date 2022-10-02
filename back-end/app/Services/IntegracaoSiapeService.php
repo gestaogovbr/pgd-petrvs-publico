@@ -157,13 +157,18 @@ class IntegracaoSiapeService extends ServiceBase {
                         $this->siapeCodOrgao,
                         $codUorg['codigo_siape']); /* Obs.: Web Service Siape listará os cpfs de todos os servidores ativos nessa uorg */
                     $cpfsPorUorgWsdl = $this->UtilService->object2array($cpfsPorUorgWsdl);
-                    if(array_key_exists("Servidor", $cpfsPorUorgWsdl)){
-                        foreach ($cpfsPorUorgWsdl["Servidor"] as $cpf){
+                    if(array_key_exists('Servidor', $cpfsPorUorgWsdl)){
+                        if(array_key_exists('cpf', $cpfsPorUorgWsdl['Servidor'])){
+                            $cpf = ['cpf' => $cpfsPorUorgWsdl['Servidor']['cpf'], 'dataUltimaTransacao' => $cpfsPorUorgWsdl['Servidor']['dataUltimaTransacao']];
                             array_push($cpfsPorUorgsWsdl, $cpf);
+                        } else{
+                            foreach ($cpfsPorUorgWsdl['Servidor'] as $cpf){
+                                array_push($cpfsPorUorgsWsdl, $cpf);
+                            }
                         }
                     }
                 } catch(Exception $e){
-                      LogError::newWarn("Web Service Siape: não existe servidores ativos na UORG ".$codUorg['codigo_siape'].".", $e->getMessage());
+                      LogError::newWarn('Web Service Siape: não existe servidores ativos na UORG '.$codUorg['codigo_siape'].'.', $e->getMessage());
                       continue;
                 }
             }
