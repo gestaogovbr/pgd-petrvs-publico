@@ -10,11 +10,12 @@ use App\Models\ProjetoRegra;
 use App\Models\TipoProjeto;
 use App\Models\ProjetoRecurso;
 use App\Traits\AutoDataInicio;
+use App\Traits\HasDataFim;
 use Illuminate\Support\Facades\DB;
 
 class Projeto extends ModelBase
 {
-    use AutoDataInicio;
+    use AutoDataInicio, HasDataFim;
 
     protected static function booted()
     {

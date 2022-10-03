@@ -8,10 +8,11 @@ use App\Models\Demanda;
 use App\Models\Usuario;
 use App\Models\TipoAvaliacao;
 use App\Traits\AutoDataInicio;
+use App\Traits\HasDataFim;
 
 class DemandaAvaliacao extends ModelBase
 {
-    use AutoDataInicio;
+    use AutoDataInicio, HasDataFim;
 
     public $fillable = [
         'nota_atribuida',

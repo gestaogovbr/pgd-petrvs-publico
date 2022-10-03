@@ -8,10 +8,11 @@ use App\Models\Usuario;
 use App\Models\Unidade;
 use App\Models\MaterialServico;
 use App\Traits\AutoDataInicio;
+use App\Traits\HasDataFim;
 
 class ProjetoRecurso extends ModelBase
 {
-    use AutoDataInicio;
+    use AutoDataInicio, HasDataFim;
 
     protected $table = 'projetos_recursos';
 

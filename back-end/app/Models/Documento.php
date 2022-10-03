@@ -7,10 +7,11 @@ use App\Models\Plano;
 use App\Models\Entidade;
 use App\Traits\AutoDataInicio;
 use Illuminate\Support\Facades\DB;
+use App\Traits\HasDataFim;
 
 class Documento extends ModelBase
 {
-    use AutoDataInicio;
+    use AutoDataInicio, HasDataFim;
     protected $table = 'documentos';
 
     public $fillable = [

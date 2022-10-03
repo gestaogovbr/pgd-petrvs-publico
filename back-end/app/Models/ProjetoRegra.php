@@ -5,10 +5,11 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\Projeto;
 use App\Traits\AutoDataInicio;
+use App\Traits\HasDataFim;
 
 class ProjetoRegra extends ModelBase
 {
-    use AutoDataInicio;
+    use AutoDataInicio, HasDataFim;
 
     protected $table = 'projetos_regras';
 

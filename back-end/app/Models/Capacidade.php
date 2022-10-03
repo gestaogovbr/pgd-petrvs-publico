@@ -6,10 +6,11 @@ use App\Models\ModelBase;
 use App\Traits\AutoDataInicio;
 use App\Models\Perfil;
 use App\Models\TipoCapacidade;
+use App\Traits\HasDataFim;
 
 class Capacidade extends ModelBase
 {
-    use AutoDataInicio;
+    use AutoDataInicio, HasDataFim;
     protected $with = [];
 
     public $fillable = [

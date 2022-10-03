@@ -8,10 +8,11 @@ use App\Models\Usuario;
 use App\Models\Demanda;
 use App\Models\ProjetoAlocacao;
 use App\Traits\AutoDataInicio;
+use App\Traits\HasDataFim;
 
 class ProjetoTarefa extends ModelBase
 {
-    use AutoDataInicio;
+    use AutoDataInicio, HasDataFim;
 
     protected $table = 'projetos_tarefas';
 

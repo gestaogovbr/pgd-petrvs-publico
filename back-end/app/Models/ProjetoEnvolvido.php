@@ -7,10 +7,11 @@ use App\Models\Projeto;
 use App\Models\ProjetoRecurso;
 use App\Models\ProjetoRegra;
 use App\Traits\AutoDataInicio;
+use App\Traits\HasDataFim;
 
 class ProjetoEnvolvido extends ModelBase
 {
-    use AutoDataInicio;
+    use AutoDataInicio, HasDataFim;
 
     protected $table = 'projetos_envolvidos';
 

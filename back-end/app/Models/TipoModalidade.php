@@ -7,10 +7,11 @@ use App\Models\Plano;
 use App\Models\Documento;
 use App\Models\TipoModalidadeConfig;
 use App\Traits\AutoDataInicio;
+use App\Traits\HasDataFim;
 
 class TipoModalidade extends ModelBase
 {
-    use AutoDataInicio;
+    use AutoDataInicio, HasDataFim;
     
     public $fillable = [
         'nome',

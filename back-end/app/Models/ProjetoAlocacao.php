@@ -9,10 +9,11 @@ use App\Models\ProjetoRecurso;
 use App\Models\ProjetoRegra;
 use App\Models\MaterialServico;
 use App\Traits\AutoDataInicio;
+use App\Traits\HasDataFim;
 
 class ProjetoAlocacao extends ModelBase
 {
-    use AutoDataInicio;
+    use AutoDataInicio, HasDataFim;
 
     protected $table = 'projetos_alocacoes';
 

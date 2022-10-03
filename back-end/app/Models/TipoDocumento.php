@@ -5,10 +5,11 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\Demanda;
 use App\Traits\AutoDataInicio;
+use App\Traits\HasDataFim;
 
 class TipoDocumento extends ModelBase
 {
-    use AutoDataInicio;
+    use AutoDataInicio, HasDataFim;
     
     public $fillable = [
         'codigo',

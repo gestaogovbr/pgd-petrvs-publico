@@ -20,6 +20,7 @@ use App\Traits\MergeRelations;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasPermissions;
 use App\Services\UsuarioService;
+use Exception;
 
 class UsuarioConfig {}
 
@@ -110,7 +111,13 @@ class Usuario extends Authenticatable
     // Mutattors e Casts
     public function getUrlFotoAttribute($value) {
         $usuarioService = new UsuarioService();
-        return empty($this->foto_perfil) ? "/assets/images/profile.png" : $usuarioService->downloadUrl($this->foto_perfil);
+        $url = "/assets/images/profile.png";
+        try {
+            $url = empty($this->foto_perfil) ? "/assets/images/profile.png" : $usuarioService->downloadUrl($this->foto_perfil);
+        } catch (Exception $e) {
+            $url = "/assets/images/profile.png";
+        }
+        return $url;
     }
     public function getConfigAttribute($value)
     {
