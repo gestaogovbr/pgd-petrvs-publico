@@ -29,10 +29,11 @@ export class TopAlertComponent implements OnInit {
   }
 
   public get alertClass(): string {
-    return "mt-2 alert alert-" + 
+    return "mt-2 alert alert-" +
       (this.type == "alert" ? "primary" : 
       this.type == "success" ? "success" : 
-      this.type == "warning" ? "warning" : "danger");
+      this.type == "warning" ? "warning" : "danger") + 
+      (this.isClosable ? " alert-dismissible fade show" : "");
   }
 
   public get iconClass(): string {

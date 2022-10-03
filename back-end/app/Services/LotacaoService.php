@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Lotacao;
+use App\Models\Usuario;
 use App\Services\ServiceBase;
 use App\Traits\UseDataFim;
 use App\Services\UtilService;
@@ -36,6 +37,16 @@ class LotacaoService extends ServiceBase
         return $data;
     }
 
+    public function removerLotacoesUsuario(&$usuario) {
+        if(!empty($usuario)) {
+            foreach($usuario->lotacoes as $lotacao) { /* Garante que as lotações antigas sejam apagadas */
+                if(empty($lotacao->data_fim)) $this->destroy($lotacao->id, false);
+            }
+            $usuario->fresh();
+        }
+    }
+    
 }
 
 
+ 

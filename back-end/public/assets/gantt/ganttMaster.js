@@ -926,7 +926,7 @@ GanttMaster.prototype.updateLinks = function (task) {
       if (pos>0){
         supStr=depString.substr(0,pos);
         var lagStr=depString.substr(pos+1);
-        lag=Math.ceil((stringToDuration(lagStr)) / Date.workingPeriodResolution) * Date.workingPeriodResolution;
+        lag=Math.ceil((task.stringToDuration(lagStr)) / Date.workingPeriodResolution) * Date.workingPeriodResolution;
       }
 
       var sup = this.tasks[parseInt(supStr)-1];
@@ -950,7 +950,7 @@ GanttMaster.prototype.updateLinks = function (task) {
 
         } else {
           this.links.push(new Link(sup, task, lag));
-          newDepsString = newDepsString + (newDepsString.length > 0 ? "," : "") + supStr+(lag==0?"":":"+durationToString(lag));
+          newDepsString = newDepsString + (newDepsString.length > 0 ? "," : "") + supStr+(lag==0?"":":"+task.durationToString(lag));
         }
 
         if (todoOk)

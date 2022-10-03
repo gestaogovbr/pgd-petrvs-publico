@@ -472,55 +472,31 @@ function recomputeDuration(start, end) {
   return getDurationInUnits(new Date(start),new Date(end));
 }
 
-function resynchDates(leavingField, startField, startMilesField, durationField, endField, endMilesField) {
-  //console.debug("resynchDates",leavingField.prop("name"), "start. "+startField.val(),"durationField: "+ durationField.val(), "endField: "+endField.val());
-
+function resynchDates(task, leavingField, startField, startTimeField, startMilesField, durationField, endField, endTimeField, endMilesField) {
   function resynchDatesSetFields(command) {
-    //console.debug("resynchDatesSetFields",command);
-    var duration = stringToDuration(durationField.val());
-    var start = computeStart(Date.parseString(startField.val()).getTime());
-
-    var end = endField.val();
-    if (end.length > 0) {
-      end = Date.parseString(end);
-      end.setHours(23, 59, 59, 999); //this is necessary because compute end get the closest end, and parseString returns 00:00
-      end = computeEnd(end.getTime());
+    var duration = task.stringToDuration(durationField.val());
+    var start = task.isValidDateTime(startField.val(), startTimeField.val()) ? task.computeStart(task.parseDateTime(startField.val(), startTimeField.val()).getTime()) : undefined;
+    var end = task.isValidDateTime(endField.val(), endTimeField.val()) ? computeEnd(task.parseDateTime(endField.val(), endTimeField.val()).getTime()) : undefined;
+    switch (command) {
+      case "CHANGE_END": end = task.computeEndByDuration(start, duration); break;
+      case "CHANGE_START": start = task.computeStartByDuration(end, duration); break;
+      case "CHANGE_DURATION": duration = task.computeDuration(start, end); break;
     }
-
-    var date = new Date();
-    if ("CHANGE_END" == command) {
-      date.setTime(start);
-      var workingUnits = duration-1; // if we do not decremet a task lasting two days starting on 10 will end on 12 (at 00:00) instead of on (at 23:59)
-      incrementDateByUnits(date,workingUnits);
-      date.setHours(23, 59, 59, 999); //this is necessary because compute end get the closest end, and parseString returns 00:00
-      end = computeEnd(date.getTime()); // not strictly necessary
-    } else if ("CHANGE_START" == command) {
-      date.setTime(end);
-      var workingUnits = duration - 1; // if we do not decremet a task lasting two days starting on 10 will end on 12 (at 00:00) instead of on (at 23:59)
-      incrementDateByUnits(date,-workingUnits);
-      date.setHours(0, 0, 0, 0); //this is necessary because decreasing end we are at 23:50
-      start = computeStart(date.getTime()); //not strictly necessary
-    } else if ("CHANGE_DURATION" == command) {
-      duration = getDurationInUnits(new Date(start),new Date(end)) + 1; 
-    }
-
     startField.val(new Date(start).format());
     endField.val(new Date(end).format());
-    durationField.val(durationToString(duration));
-
+    durationField.val(task.durationToString(duration));
     return {start: start, end: end, duration: duration};
   }
 
+  /* Petrvs */
   var leavingFieldName = leavingField.prop("name");
-  var durIsFilled = durationField.val().length > 0;
-  var startIsFilled = startField.val().length > 0;
-  var endIsFilled = endField.val().length > 0;
+  var durIsFilled = task.isValidDuration(durationField.val());
+  var startIsFilled = task.isValidDateTime(startField.val(), startTimeField.val());
+  var endIsFilled = task.isValidDateTime(endField.val(), endTimeField.val());
   var startIsMilesAndFilled = startIsFilled && (startMilesField.prop("checked") || startField.is("[readOnly]"));
   var endIsMilesAndFilled = endIsFilled && (endMilesField.prop("checked") || endField.is("[readOnly]"));
 
-  if (durIsFilled) {
-    durationField.val(durationToString(stringToDuration(durationField.val())));
-  }
+  if (durIsFilled) durationField.val(task.durationToString(task.stringToDuration(durationField.val())));
 
   if (leavingFieldName.indexOf("Milestone") > 0) {
     if (startIsMilesAndFilled && endIsMilesAndFilled) {
@@ -532,8 +508,7 @@ function resynchDates(leavingField, startField, startMilesField, durationField, 
   }
 
   //need at least two values to resynch the third
-  if ((durIsFilled ? 1 : 0) + (startIsFilled ? 1 : 0) + (endIsFilled ? 1 : 0) < 2)
-    return;
+  if ((durIsFilled ? 1 : 0) + (startIsFilled ? 1 : 0) + (endIsFilled ? 1 : 0) < 2) return;
 
   var ret;
   if (leavingFieldName == 'start' && startIsFilled) {
@@ -542,7 +517,6 @@ function resynchDates(leavingField, startField, startMilesField, durationField, 
     } else if (durIsFilled) {
       ret = resynchDatesSetFields("CHANGE_END");
     }
-
   } else if (leavingFieldName == 'duration' && durIsFilled && !(endIsMilesAndFilled && startIsMilesAndFilled)) {
     if (endIsMilesAndFilled && !startIsMilesAndFilled) {
       ret = resynchDatesSetFields("CHANGE_START");
@@ -550,7 +524,6 @@ function resynchDates(leavingField, startField, startMilesField, durationField, 
       //document.title=('go and change end!!');
       ret = resynchDatesSetFields("CHANGE_END");
     }
-
   } else if (leavingFieldName == 'end' && endIsFilled) {
     ret = resynchDatesSetFields("CHANGE_DURATION");
   }
@@ -581,17 +554,22 @@ if (!Array.prototype.filter) {
   };
 }
 
-function durationToString(d) {
-  return d;
-}
-
-function stringToDuration(durStr) {
-  var duration = NaN;
-  duration = daysFromString(durStr, true) || 1;
-  return duration;
-}
-
 function goToPage(url) {
   if (!canILeave()) return;
   window.location.href = url;
 }
+
+/* Petrvs */
+function hoursFromString(durStr) {
+  if(durStr.indexOf("h") > 0) {
+    var hours = parseInt(durStr.substr(0, durStr.indexOf(":")));
+    var minutes = Math.floor(parseInt(durStr.substr(durStr.indexOf(":") + 1)) * 60 / 100) / 100;
+    return hours + minutes;
+  } else {
+    return undefined;
+  }
+}
+function zeroFill(number, size) {
+  return pad(number + "", size, "0");
+}
+

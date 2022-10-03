@@ -49,10 +49,10 @@ export class GridComponent implements OnInit {
   @ContentChild(PaginationComponent) paginationRef?: PaginationComponent;
   @ViewChild(FormGroupDirective) formDirective?: FormGroupDirective;
   @Output() select = new EventEmitter<Base | IIndexable | null>();
-  @Output() loadList = new EventEmitter<Base[]>();
   @Input() dao?: DaoBaseService<Base>;
   @Input() icon: string = "";
   @Input() selectable: boolean = false;
+  @Input() loadList?: (rows?: Base[]) => Promise<void> | void;
   @Input() add?: () => Promise<IIndexable | undefined | void>;
   @Input() load?: (form: FormGroup, row: any) => Promise<void>;
   @Input() remove?: (row: any) => Promise<boolean | undefined | void>;
@@ -116,8 +116,8 @@ export class GridComponent implements OnInit {
   }
   @Input() set list(value: Observable<any[]> | undefined) {
     this._list = value;
-    if(value) value.subscribe(rows => {
-      if(this.loadList) this.loadList.emit(rows);
+    if(value) value.subscribe(async rows => {
+      if(this.loadList) await this.loadList(rows);
       this.items = rows;
       this.selected = undefined;
       this.cdRef.detectChanges();

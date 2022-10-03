@@ -1,7 +1,7 @@
 <div *ngIf="message != lastMessage" [class]="alertClass" role="alert">
     <i [class]="iconClass"></i>
     {{message}}
-    <button *ngIf="isClosable" type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="onCloseClick($event)">
-        <span aria-hidden="true">&times;</span>
+    <button *ngIf="isClosable" type="button" class="btn-close" data-dismiss="alert" aria-label="Close" (click)="onCloseClick($event)">
+        <!--span aria-hidden="true">&times;</span/-->
     </button>
 </div>

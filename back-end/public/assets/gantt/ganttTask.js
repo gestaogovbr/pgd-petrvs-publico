@@ -36,9 +36,11 @@ function TaskFactory(ganttComponet) {
   this.build = function (id, name, code, level, start, duration, collapsed) {
     // Set at beginning of day
     /* Petrvs */
-    var adjusted_start = this.ganttComponet ? this.ganttComponet.calcPeriod(start).start.getTime() : computeStart(start);
-    var calculated_end = this.ganttComponet ? this.ganttComponet.calcPeriod(adjusted_start, undefined, duration).end.getTime() : computeEndByDuration(adjusted_start, duration);
-    return new Task(id, name, code, level, adjusted_start, calculated_end, duration, collapsed);
+    var task = new Task(id, name, code, level, adjusted_start, calculated_end, duration, collapsed);
+    task.ganttComponet = this.ganttComponet;
+    task.start = task.computeStart(start);
+    task.end = task.computeEndByDuration(adjusted_start, duration);
+    return task;
   };
 
 }
@@ -77,8 +79,65 @@ function Task(id, name, code, level, start, end, duration, collapsed) {
   this.ganttElement; //gantt html element
   this.master;
 
-
   this.assigs = [];
+
+  /* Petrvs */
+  this.ganttComponet;
+}
+
+/* Petrvs */
+Task.prototype.computeStart = function (start) { /* start: timestemp, return timestemp */
+  return this.ganttComponet ? this.ganttComponet.calcPeriod(this, start).start.getTime() : computeStart(start);
+}
+Task.prototype.computeEndByDuration = function (start, duration) { /* start: timestemp, duration: number, return timestemp */
+  return this.ganttComponet ? this.ganttComponet.calcPeriod(this, start, undefined, duration).end.getTime() : computeEndByDuration(start, duration);
+}
+Task.prototype.computeStartByDuration = function (end, duration) { /* end: timestemp, duration: number, return timestemp */
+  return this.ganttComponet ? this.ganttComponet.calcPeriod(this, undefined, end, duration).start.getTime() : incrementDateByUnits(new Date(end), duration).getTime();
+}
+Task.prototype.computeEnd = function (end) { /* end: timestemp, return timestemp */
+  return this.ganttComponet ? this.ganttComponet.calcPeriod(this, undefined, end).end.getTime() : computeEnd(end);
+}
+Task.prototype.computeDuration = function (start, end) { /* start: timestemp, end: timestemp, return timestemp */
+  return this.ganttComponet ? this.ganttComponet.calcPeriod(this, start, end).duration.getTime() : recomputeDuration(start, end);
+}
+Task.prototype.incrementDateByDuration = function (date, duration) { /* data: Date, duration: number, result Date */
+  date.setTime(duration > 0 ? this.computeEndByDuration(date.getTime(), duration) : this.computeStartByDuration(date.getTime(), Math.abs(duration)));
+  return date;
+}
+Task.prototype.durationToString = function (d) { /* d: number, return string */
+  if(((this.ganttComponet || {}).project || {}).config.hasTime) {
+    var hours = d.toFixed(0);
+    var minutes = Math.floor((d - hours) * 100) * 100 / 60;
+    return zeroFill(hours, 2) + "h" + zeroFill(minutes, 2); 
+  } else {
+    return d;
+  }
+}
+Task.prototype.stringToDuration = function (durStr) {
+  var duration = NaN;
+  if(((this.ganttComponet || {}).project || {}).config.hasTime) {
+    duration = hoursFromString(durStr) || 1;
+  } else {
+    duration = daysFromString(durStr, true) || 1;
+  }
+  return duration;
+}
+Task.prototype.isValidDuration = function (durStr) {
+  return typeof this.stringToDuration(durStr) == "number";
+}
+Task.prototype.isValidDateTime = function (date, time) {
+  return !!this.parseDateTime(date, time);
+}
+Task.prototype.parseDateTime = function (date, time) {
+  var result = moment(date + ((time || "").length ? " " + time : ""));
+  return result.isValid() ? result.toDate() : undefined;
+}
+Task.prototype.formatDate = function (date) {
+  return moment(date).format("DD/MM/YYYY");
+}
+Task.prototype.formatTime = function (time) {
+  return moment(time).format("HH:mm");
 }
 
 Task.prototype.clone = function () {
@@ -141,12 +200,10 @@ Task.prototype.setPeriod = function (start, end) {
     duration: this.duration
   };
 
-
-  //compute legal start/end //todo mossa qui R&S 30/3/2016 perchè altrimenti il calcolo della durata, che è stato modificato sommando giorni, sbaglia
-  start = computeStart(start);
-  end=computeEnd(end);
-
-  var newDuration = recomputeDuration(start, end);
+  /* Petrvs */
+  start = this.computeStart(start);
+  end = this.computeEnd(end);
+  var newDuration = this.computeDuration(start, end);
 
   //if are equals do nothing and return true
   if ( start == originalPeriod.start && end == originalPeriod.end && newDuration == originalPeriod.duration) {
@@ -194,7 +251,8 @@ Task.prototype.setPeriod = function (start, end) {
     somethingChanged = true;
   }
 
-  this.duration = recomputeDuration(this.start, this.end);
+  /* Petrvs */
+  this.duration = this.computeDuration(this.start, this.end);
 
   //profilerSetPer.stop();
 
@@ -242,7 +300,8 @@ Task.prototype.setPeriod = function (start, end) {
     } else {
       this.start = Math.min(bs, this.start);
     }
-    this.duration = recomputeDuration(this.start, this.end);
+    /* Petrvs */
+    this.duration = this.computeDuration(this.start, this.end);
     if (this.master.shrinkParent ) {
       todoOk = updateTree(this);
     }
@@ -285,7 +344,7 @@ Task.prototype.moveTo = function (start, ignoreMilestones, propagateToInferiors)
   var wantedStartMillis = start;
 
   //set a legal start
-  start = computeStart(start);
+  start = this.computeStart(start);
 
   //if depends, start is set to max end + lag of superior
   start = this.computeStartBySuperiors(start);
@@ -322,9 +381,9 @@ Task.prototype.moveTo = function (start, ignoreMilestones, propagateToInferiors)
     var children = this.getChildren();
     for (var i = 0; i < children.length; i++) {
       var ch = children[i];
-      var chStart=incrementDateByUnits(new Date(ch.start),panDeltaInWM);
+      var chStart = this.incrementDateByDuration(new Date(ch.start),panDeltaInWM);
       ch.moveTo(chStart,false,false);
-      }
+    }
 
     if (!updateTree(this)) {
       return false;
@@ -396,7 +455,7 @@ Task.prototype.computeStartBySuperiors = function (proposedStart) {
     supEnd=0;
     for (var i = 0; i < sups.length; i++) {
       var link = sups[i];
-      supEnd = Math.max(supEnd, incrementDateByUnits(new Date(link.from.end), link.lag));
+      supEnd = Math.max(supEnd, this.incrementDateByDuration(new Date(link.from.end), link.lag));
     }
     supEnd+=1;
   }

@@ -5863,10 +5863,10 @@ DemandaListGridComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵ�
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵloadQuery"]()) && (ctx.unidade = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵloadQuery"]()) && (ctx.usuario = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵloadQuery"]()) && (ctx.etiqueta = _t.first);
-    } }, inputs: { snapshot: "snapshot", fixedFilter: "fixedFilter" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵInheritDefinitionFeature"]], decls: 52, vars: 102, consts: [["calendarEfemerides", ""], [3, "dao", "add", "form", "hasEdit", "hasDelete", "orderBy", "groupBy", "join", "selectable", "loadList", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Minhas", "controlName", "atribuidas_para_mim", 3, "size", "control", "change"], ["label", "Usu\u00E1rio", "controlName", "usuario_id", 3, "size", "control", "disabled", "dao", "selectRoute"], ["usuario", ""], ["label", "Atual", "controlName", "somente_unidade_atual", "labelInfo", "Somente as demandas da unidade selecionada", 3, "size", "control", "change"], ["label", "Unidade", "controlName", "unidade_id", 3, "size", "control", "disabled", "dao", "selectRoute"], ["unidade", ""], ["label", "Sub.", "controlName", "unidades_subordinadas", "labelInfo", "Incluir as unidades subordinadas", 3, "size", "control"], ["label", "#ID", "controlName", "numero", "maskFormat", "999999", 3, "size", "control", "labelInfo"], ["label", "N\u00BA Processo (Sei)", "maskFormat", "00000.000000/0000-00", "controlName", "numero_processo", 3, "size", "control", "labelInfo"], ["label", "Status", "itemTodos", "- Todos -", "controlName", "status", 3, "size", "valueTodos", "disabled", "control", "items"], ["noForm", "", "noBox", "", "label", "Etiquetas", "controlName", "etiquetas", 3, "size", "control"], ["label", "Arq.", "controlName", "arquivadas", "labelInfo", "Listar tamb\u00E9m demandas arquivadas", 3, "size", "control"], ["controlName", "atividade_id", 3, "size", "label", "control", "dao", "groupBy", "where", "selectRoute"], ["label", "Tipo de processo", "controlName", "tipo_processo_id", 3, "size", "control", "dao", "selectRoute"], ["label", "Data", "itemTodos", "- Todos -", "controlName", "data_filtro", 3, "size", "valueTodos", "control", "items"], ["noIcon", "", "label", "In\u00EDcio", "controlName", "data_inicio", "labelInfo", "Data in\u00EDcio do per\u00EDodo", 3, "size", "disabled", "control"], ["noIcon", "", "label", "Fim", "controlName", "data_fim", "labelInfo", "Data fim do per\u00EDodo", 3, "size", "disabled", "control"], ["type", "expand", "icon", "bi bi-boxes", 3, "align", "hint", "template", "expandTemplate", 4, "ngIf"], [3, "titleTemplate", "template"], ["titleIdNumeroStatus", ""], ["columnNumero", ""], ["titleUnResponsavelDemandante", ""], ["columnPessoas", ""], ["titleTempos", ""], ["columnTempos", ""], [3, "title", "editTemplate", "template", "edit", "save"], ["columnEtiquetasChecklist", ""], ["columnEtiquetasChecklistEdit", ""], [3, "title", "template"], ["columnTitulo", ""], ["type", "options", 3, "onEdit", "onDelete", "dynamicOptions", "dynamicButtons", 4, "ngIf"], [3, "rows"], [3, "efemerides"], ["labelPosition", "left", "label", "Agrupar por Un.", "controlName", "agrupar", 3, "size", "control", "change"], ["type", "expand", "icon", "bi bi-boxes", 3, "align", "hint", "template", "expandTemplate"], ["columnEntregas", ""], ["columnExpandedEntregas", ""], ["class", "badge rounded-pill bg-light text-dark", 4, "ngIf"], [1, "badge", "rounded-pill", "bg-light", "text-dark"], [1, "bi", "bi-boxes"], ["persist", "", 3, "selectable", "editable", "demanda"], ["by", "numero", 3, "header"], [1, "text-nowrap"], [1, "micro-text", "fw-ligh"], ["data-bs-toggle", "tooltip", "data-bs-placement", "top", 1, "badge", "bg-light", "text-dark", 3, "title", "click"], [1, "one-per-line"], [3, "class", "click", 4, "ngFor", "ngForOf"], [3, "click"], ["by", "usuario.nome", 3, "header"], ["by", "demandante.nome", 3, "header"], [1, "badge", "bg-light", "text-dark"], [1, "bi", "bi-briefcase"], ["data-bs-toggle", "tooltip", "data-bs-placement", "top", 1, "badge", "bg-light", "text-dark", 3, "title"], ["data-bs-toggle", "tooltip", "data-bs-placement", "top", 1, "badge", "bg-light", "text-dark", "fw-light", 3, "title"], [1, "bi", "bi-cursor"], ["by", "data_distribuicao", 3, "header"], ["by", "prazo_entrega", 3, "header"], ["by", "data_entrega", 3, "header"], ["data-bs-toggle", "tooltip", "data-bs-placement", "top", 3, "class", "click", 4, "ngFor", "ngForOf"], ["data-bs-toggle", "tooltip", "data-bs-placement", "top", 3, "click"], ["class", "badge me-1", "role", "button", 3, "style", "click", 4, "ngFor", "ngForOf"], ["small", "", "title", "Checklist", 4, "ngIf"], ["role", "button", 1, "badge", "me-1", 3, "click"], ["small", "", "title", "Checklist"], [4, "ngFor", "ngForOf"], ["class", "bi bi-check-circle", 4, "ngIf"], [1, "bi", "bi-check-circle"], ["controlName", "etiquetas", 3, "size", "control", "addItemHandle"], ["controlName", "etiqueta", "nullable", "", "itemNull", "- Selecione -", "detailsButton", "", "detailsButtonIcon", "bi bi-tools", 3, "size", "control", "items", "details"], ["etiqueta", ""], ["scale", "small", 3, "size", "source", "path"], ["class", "demanda-atividade", 4, "ngIf"], [1, "micro-text", "fw-ligh", "demanda-assunto"], ["origem", "DEMANDA", 3, "entity", "selectable", "grid"], [1, "demanda-atividade"], ["type", "options", 3, "onEdit", "onDelete", "dynamicOptions", "dynamicButtons"]], template: function DemandaListGridComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, inputs: { snapshot: "snapshot", fixedFilter: "fixedFilter" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵInheritDefinitionFeature"]], decls: 52, vars: 103, consts: [["calendarEfemerides", ""], [3, "dao", "add", "form", "hasEdit", "hasDelete", "orderBy", "groupBy", "join", "loadList", "selectable", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Minhas", "controlName", "atribuidas_para_mim", 3, "size", "control", "change"], ["label", "Usu\u00E1rio", "controlName", "usuario_id", 3, "size", "control", "disabled", "dao", "selectRoute"], ["usuario", ""], ["label", "Atual", "controlName", "somente_unidade_atual", "labelInfo", "Somente as demandas da unidade selecionada", 3, "size", "control", "change"], ["label", "Unidade", "controlName", "unidade_id", 3, "size", "control", "disabled", "dao", "selectRoute"], ["unidade", ""], ["label", "Sub.", "controlName", "unidades_subordinadas", "labelInfo", "Incluir as unidades subordinadas", 3, "size", "control"], ["label", "#ID", "controlName", "numero", "maskFormat", "999999", 3, "size", "control", "labelInfo"], ["label", "N\u00BA Processo (Sei)", "maskFormat", "00000.000000/0000-00", "controlName", "numero_processo", 3, "size", "control", "labelInfo"], ["label", "Status", "itemTodos", "- Todos -", "controlName", "status", 3, "size", "valueTodos", "disabled", "control", "items"], ["noForm", "", "noBox", "", "label", "Etiquetas", "controlName", "etiquetas", 3, "size", "control"], ["label", "Arq.", "controlName", "arquivadas", "labelInfo", "Listar tamb\u00E9m demandas arquivadas", 3, "size", "control"], ["controlName", "atividade_id", 3, "size", "label", "control", "dao", "groupBy", "where", "selectRoute"], ["label", "Tipo de processo", "controlName", "tipo_processo_id", 3, "size", "control", "dao", "selectRoute"], ["label", "Data", "itemTodos", "- Todos -", "controlName", "data_filtro", 3, "size", "valueTodos", "control", "items"], ["noIcon", "", "label", "In\u00EDcio", "controlName", "data_inicio", "labelInfo", "Data in\u00EDcio do per\u00EDodo", 3, "size", "disabled", "control"], ["noIcon", "", "label", "Fim", "controlName", "data_fim", "labelInfo", "Data fim do per\u00EDodo", 3, "size", "disabled", "control"], ["type", "expand", "icon", "bi bi-boxes", 3, "align", "hint", "template", "expandTemplate", 4, "ngIf"], [3, "titleTemplate", "template"], ["titleIdNumeroStatus", ""], ["columnNumero", ""], ["titleUnResponsavelDemandante", ""], ["columnPessoas", ""], ["titleTempos", ""], ["columnTempos", ""], [3, "title", "editTemplate", "template", "edit", "save"], ["columnEtiquetasChecklist", ""], ["columnEtiquetasChecklistEdit", ""], [3, "title", "template"], ["columnTitulo", ""], ["type", "options", 3, "onEdit", "onDelete", "dynamicOptions", "dynamicButtons", 4, "ngIf"], [3, "rows"], [3, "efemerides"], ["labelPosition", "left", "label", "Agrupar por Un.", "controlName", "agrupar", 3, "size", "control", "change"], ["type", "expand", "icon", "bi bi-boxes", 3, "align", "hint", "template", "expandTemplate"], ["columnEntregas", ""], ["columnExpandedEntregas", ""], ["class", "badge rounded-pill bg-light text-dark", 4, "ngIf"], [1, "badge", "rounded-pill", "bg-light", "text-dark"], [1, "bi", "bi-boxes"], ["persist", "", 3, "selectable", "editable", "demanda"], ["by", "numero", 3, "header"], [1, "text-nowrap"], [1, "micro-text", "fw-ligh"], ["data-bs-toggle", "tooltip", "data-bs-placement", "top", 1, "badge", "bg-light", "text-dark", 3, "title", "click"], [1, "one-per-line"], [3, "class", "click", 4, "ngFor", "ngForOf"], [3, "click"], ["by", "usuario.nome", 3, "header"], ["by", "demandante.nome", 3, "header"], [1, "badge", "bg-light", "text-dark"], [1, "bi", "bi-briefcase"], ["data-bs-toggle", "tooltip", "data-bs-placement", "top", 1, "badge", "bg-light", "text-dark", 3, "title"], ["data-bs-toggle", "tooltip", "data-bs-placement", "top", 1, "badge", "bg-light", "text-dark", "fw-light", 3, "title"], [1, "bi", "bi-cursor"], ["by", "data_distribuicao", 3, "header"], ["by", "prazo_entrega", 3, "header"], ["by", "data_entrega", 3, "header"], ["data-bs-toggle", "tooltip", "data-bs-placement", "top", 3, "class", "click", 4, "ngFor", "ngForOf"], ["data-bs-toggle", "tooltip", "data-bs-placement", "top", 3, "click"], ["class", "badge me-1", "role", "button", 3, "style", "click", 4, "ngFor", "ngForOf"], ["small", "", "title", "Checklist", 4, "ngIf"], ["role", "button", 1, "badge", "me-1", 3, "click"], ["small", "", "title", "Checklist"], [4, "ngFor", "ngForOf"], ["class", "bi bi-check-circle", 4, "ngIf"], [1, "bi", "bi-check-circle"], ["controlName", "etiquetas", 3, "size", "control", "addItemHandle"], ["controlName", "etiqueta", "nullable", "", "itemNull", "- Selecione -", "detailsButton", "", "detailsButtonIcon", "bi bi-tools", 3, "size", "control", "items", "details"], ["etiqueta", ""], ["scale", "small", 3, "size", "source", "path"], ["class", "demanda-atividade", 4, "ngIf"], [1, "micro-text", "fw-ligh", "demanda-assunto"], ["origem", "DEMANDA", 3, "entity", "selectable", "grid"], [1, "demanda-atividade"], ["type", "options", 3, "onEdit", "onDelete", "dynamicOptions", "dynamicButtons"]], template: function DemandaListGridComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtemplate"](0, DemandaListGridComponent_ng_template_0_Template, 1, 1, "ng-template", null, 0, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](2, "grid", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵlistener"]("loadList", function DemandaListGridComponent_Template_grid_loadList_2_listener($event) { return ctx.onGridLoad($event); })("select", function DemandaListGridComponent_Template_grid_select_2_listener($event) { return ctx.onSelect($event); });
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵlistener"]("select", function DemandaListGridComponent_Template_grid_select_2_listener($event) { return ctx.onSelect($event); });
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtemplate"](3, DemandaListGridComponent_toolbar_3_Template, 2, 2, "toolbar", 2);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](4, "filter", 3);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](5, "div", 4);
@@ -5931,7 +5931,7 @@ DemandaListGridComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵ�
         const _r20 = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵreference"](46);
         const _r22 = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵreference"](49);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("form", ctx.formEdit)("hasEdit", false)("hasDelete", false)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("selectable", ctx.selectable);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("form", ctx.formEdit)("hasEdit", false)("hasDelete", false)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("loadList", ctx.onGridLoad.bind(ctx))("selectable", ctx.selectable);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("ngIf", !ctx.fixedFilter && !ctx.selectable);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
@@ -5939,11 +5939,11 @@ DemandaListGridComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵ�
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 1)("control", ctx.filter.controls.atribuidas_para_mim);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 5)("control", ctx.filter.controls.usuario_id)("disabled", ctx.filter.controls.atribuidas_para_mim.value ? "true" : undefined)("dao", ctx.usuarioDao)("selectRoute", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](85, _c5, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](84, _c4)));
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 5)("control", ctx.filter.controls.usuario_id)("disabled", ctx.filter.controls.atribuidas_para_mim.value ? "true" : undefined)("dao", ctx.usuarioDao)("selectRoute", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](86, _c5, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](85, _c4)));
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 1)("control", ctx.filter.controls.somente_unidade_atual);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 4)("control", ctx.filter.controls.unidade_id)("disabled", ctx.filter.controls.somente_unidade_atual.value ? "true" : undefined)("dao", ctx.unidadeDao)("selectRoute", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](88, _c5, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](87, _c6)));
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 4)("control", ctx.filter.controls.unidade_id)("disabled", ctx.filter.controls.somente_unidade_atual.value ? "true" : undefined)("dao", ctx.unidadeDao)("selectRoute", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](89, _c5, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](88, _c6)));
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 1)("control", ctx.filter.controls.unidades_subordinadas);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
@@ -5957,9 +5957,9 @@ DemandaListGridComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵ�
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 1)("control", ctx.filter.controls.arquivadas);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 3)("label", ctx.lex.noun("Atividade"))("control", ctx.filter.controls.atividade_id)("dao", ctx.atividadeDao)("groupBy", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](91, _c8, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](90, _c7)))("where", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](94, _c8, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](93, _c9)))("selectRoute", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](97, _c5, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](96, _c10)));
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 3)("label", ctx.lex.noun("Atividade"))("control", ctx.filter.controls.atividade_id)("dao", ctx.atividadeDao)("groupBy", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](92, _c8, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](91, _c7)))("where", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](95, _c8, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](94, _c9)))("selectRoute", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](98, _c5, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](97, _c10)));
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.tipo_processo_id)("dao", ctx.tipoProcessoDao)("selectRoute", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](100, _c5, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](99, _c11)));
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.tipo_processo_id)("dao", ctx.tipoProcessoDao)("selectRoute", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](101, _c5, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](100, _c11)));
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 2)("valueTodos", null)("control", ctx.filter.controls.data_filtro)("items", ctx.DATAS_FILTRO);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
@@ -6475,6 +6475,8 @@ class ComentarioService {
     orderComentarios(comentarios) {
         /* O algoritimo irá falhar se existir algum filho com data_hora anterior a de seu pai, mas isso não deve acontecer nunca */
         let ordered = (comentarios === null || comentarios === void 0 ? void 0 : comentarios.sort((a, b) => {
+            a.path = a.path || ""; /* Garante que o campo não esteja null */
+            b.path = b.path || ""; /* Garante que o campo não esteja null */
             if (a.path == b.path) { /* Situação 1: Paths iguais */
                 return a.data_hora.getTime() < b.data_hora.getTime() ? -1 : 1;
             }
@@ -8990,7 +8992,7 @@ class GlobalsService {
     }
     get baseURL() {
         //@ts-ignore
-        const path = (this.isExtension ? EXTENSION_BASE_URL : this.servidorURL());
+        const path = (this.isExtension ? EXTENSION_BASE_URL : this.servidorURL);
         return path.endsWith("/") ? path : path + "/";
     }
     get servidorURL() {
@@ -9221,75 +9223,7 @@ class GanttTemplatesComponent {
                 <div class="taskStatus cvcColorSquare" status="STATUS_WAITING" title="Waiting" style="display: none;"></div>
                 <div class="taskStatus cvcColorSquare" status="STATUS_UNDEFINED" title="Undefined"></div>
             </div>`;
-        this.templates["TASK_EDITOR"] =
-            `<div class="ganttTaskEditor">
-                <h2 class="taskData">Task editor</h2>
-                <table cellspacing="1" cellpadding="5" width="100%" class="taskData tableGantt" border="0">
-                    <tr>
-                        <td width="200" style="height: 80px" valign="top">
-                            <label for="code">code/short name</label><br>
-                            <input type="text" name="code" id="code" value="" size=15 class="formElements" autocomplete='off' maxlength=255 style='width:100%' oldvalue="1">
-                        </td>
-                        <td colspan="3" valign="top"><label for="name" class="required">name</label><br><input type="text" name="name" id="name" class="formElements" autocomplete='off' maxlength=255 style='width:100%' value="" required="true" oldvalue="1"></td>
-                    </tr>
-                    <tr class="dateRow">
-                        <td nowrap="">
-                            <div style="position:relative">
-                                <label for="start">start</label>&nbsp;&nbsp;&nbsp;&nbsp;
-                                <input type="checkbox" id="startIsMilestone" name="startIsMilestone" value="yes"> &nbsp;<label for="startIsMilestone">is milestone</label>&nbsp;
-                                <br><input type="text" name="start" id="start" size="8" class="formElements dateField validated date" autocomplete="off" maxlength="255" value="" oldvalue="1" entrytype="DATE">
-                                <span title="calendar" id="starts_inputDate" class="teamworkIcon openCalendar" onclick="$(this).dateField({inputField:$(this).prevAll(':input:first'),isSearchField:false});">m</span>
-                            </div>
-                        </td>
-                        <td nowrap="">
-                            <label for="end">End</label>&nbsp;&nbsp;&nbsp;&nbsp;
-                            <input type="checkbox" id="endIsMilestone" name="endIsMilestone" value="yes"> &nbsp;<label for="endIsMilestone">is milestone</label>&nbsp;
-                            <br><input type="text" name="end" id="end" size="8" class="formElements dateField validated date" autocomplete="off" maxlength="255" value="" oldvalue="1" entrytype="DATE">
-                            <span title="calendar" id="ends_inputDate" class="teamworkIcon openCalendar" onclick="$(this).dateField({inputField:$(this).prevAll(':input:first'),isSearchField:false});">m</span>
-                        </td>
-                        <td nowrap="">
-                            <label for="duration" class=" ">Days</label><br>
-                            <input type="text" name="duration" id="duration" size="4" class="formElements validated durationdays" title="Duration is in working days." autocomplete="off" maxlength="255" value="" oldvalue="1" entrytype="DURATIONDAYS">&nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <label for="status" class=" ">status</label><br>
-                            <select id="status" name="status" class="taskStatus" status="(#=obj.status#)" onchange="$(this).attr('STATUS',$(this).val());">
-                                <option value="STATUS_ACTIVE" class="taskStatus" status="STATUS_ACTIVE">active</option>
-                                <option value="STATUS_WAITING" class="taskStatus" status="STATUS_WAITING">suspended</option>
-                                <option value="STATUS_SUSPENDED" class="taskStatus" status="STATUS_SUSPENDED">suspended</option>
-                                <option value="STATUS_DONE" class="taskStatus" status="STATUS_DONE">completed</option>
-                                <option value="STATUS_FAILED" class="taskStatus" status="STATUS_FAILED">failed</option>
-                                <option value="STATUS_UNDEFINED" class="taskStatus" status="STATUS_UNDEFINED">undefined</option>
-                            </select>
-                        </td>
-                        <td valign="top" nowrap>
-                            <label>progress</label><br>
-                            <input type="text" name="progress" id="progress" size="7" class="formElements validated percentile" autocomplete="off" maxlength="255" value="" oldvalue="1" entrytype="PERCENTILE">
-                        </td>
-                    </tr>
-                    </tr>
-                    <tr>
-                        <td colspan="4">
-                            <label for="description">Description</label><br>
-                            <textarea rows="3" cols="30" id="description" name="description" class="formElements" style="width:100%"></textarea>
-                        </td>
-                    </tr>
-                </table>
-                <h2>Assignments</h2>
-                <table cellspacing="1" cellpadding="0" width="100%" id="assigsTable">
-                    <tr>
-                        <th style="width:100px;">name</th>
-                        <th style="width:70px;">Role</th>
-                        <th style="width:30px;">est.wklg.</th>
-                        <th style="width:30px;" id="addAssig"><span class="teamworkIcon" style="cursor: pointer">+</span></th>
-                    </tr>
-                </table>
-                <div style="text-align: right; padding-top: 20px">
-                    <span id="saveButton" class="button first" onClick="$(this).trigger('saveFullEditor.gantt');">Save</span>
-                </div>
-            </div>`;
+        this.templates["TASK_EDITOR"] = ``;
         this.templates["ASSIGNMENT_ROW"] =
             `<tr taskId="(#=obj.task.id#)" assId="(#=obj.assig.id#)" class="assigEditRow">
                 <td><select name="resourceId" class="formElements" (#=obj.assig.id.indexOf("tmp_")==0?"":"disabled"#)></select></td>
@@ -15642,16 +15576,13 @@ function TopAlertComponent_div_0_button_3_Template(rf, ctx) { if (rf & 1) {
     const _r3 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "button", 3);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function TopAlertComponent_div_0_button_3_Template_button_click_0_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r3); const ctx_r2 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2); return ctx_r2.onCloseClick($event); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, "\u00D7");
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } }
 function TopAlertComponent_div_0_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](1, "i");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](3, TopAlertComponent_div_0_button_3_Template, 3, 0, "button", 2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](3, TopAlertComponent_div_0_button_3_Template, 1, 0, "button", 2);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
@@ -15678,7 +15609,8 @@ class TopAlertComponent {
         return "mt-2 alert alert-" +
             (this.type == "alert" ? "primary" :
                 this.type == "success" ? "success" :
-                    this.type == "warning" ? "warning" : "danger");
+                    this.type == "warning" ? "warning" : "danger") +
+            (this.isClosable ? " alert-dismissible fade show" : "");
     }
     get iconClass() {
         return "bi bi-" +
@@ -15693,7 +15625,7 @@ class TopAlertComponent {
     }
 }
 TopAlertComponent.ɵfac = function TopAlertComponent_Factory(t) { return new (t || TopAlertComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_1__["UtilService"])); };
-TopAlertComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: TopAlertComponent, selectors: [["top-alert"]], inputs: { message: "message", type: "type", closable: "closable", id: "id", close: "close" }, decls: 1, vars: 1, consts: [["role", "alert", 3, "class", 4, "ngIf"], ["role", "alert"], ["type", "button", "class", "close", "data-dismiss", "alert", "aria-label", "Close", 3, "click", 4, "ngIf"], ["type", "button", "data-dismiss", "alert", "aria-label", "Close", 1, "close", 3, "click"], ["aria-hidden", "true"]], template: function TopAlertComponent_Template(rf, ctx) { if (rf & 1) {
+TopAlertComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: TopAlertComponent, selectors: [["top-alert"]], inputs: { message: "message", type: "type", closable: "closable", id: "id", close: "close" }, decls: 1, vars: 1, consts: [["role", "alert", 3, "class", 4, "ngIf"], ["role", "alert"], ["type", "button", "class", "btn-close", "data-dismiss", "alert", "aria-label", "Close", 3, "click", 4, "ngIf"], ["type", "button", "data-dismiss", "alert", "aria-label", "Close", 1, "btn-close", 3, "click"]], template: function TopAlertComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](0, TopAlertComponent_div_0_Template, 4, 6, "div", 0);
     } if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.message != ctx.lastMessage);
@@ -21945,7 +21877,6 @@ class GridComponent {
     constructor(injector) {
         this.injector = injector;
         this.select = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["EventEmitter"]();
-        this.loadList = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["EventEmitter"]();
         this.icon = "";
         this.selectable = false;
         this.join = [];
@@ -22076,13 +22007,13 @@ class GridComponent {
     set list(value) {
         this._list = value;
         if (value)
-            value.subscribe(rows => {
+            value.subscribe((rows) => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
                 if (this.loadList)
-                    this.loadList.emit(rows);
+                    yield this.loadList(rows);
                 this.items = rows;
                 this.selected = undefined;
                 this.cdRef.detectChanges();
-            }, error => this.error = error.message || error.toString());
+            }), error => this.error = error.message || error.toString());
     }
     get list() {
         return this._list;
@@ -22477,7 +22408,7 @@ GridComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComp
     } if (rf & 2) {
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵloadQuery"]()) && (ctx.formDirective = _t.first);
-    } }, inputs: { dao: "dao", icon: "icon", selectable: "selectable", add: "add", load: "load", remove: "remove", save: "save", addRoute: "addRoute", addMetadata: "addMetadata", orderBy: "orderBy", groupBy: "groupBy", join: "join", form: "form", editable: "editable", hasEdit: "hasEdit", hasDelete: "hasDelete", hasReport: "hasReport", controlName: "controlName", control: "control", minHeight: "minHeight", multiselect: "multiselect", multiselectAllFields: "multiselectAllFields", dynamicMultiselectMenu: "dynamicMultiselectMenu", multiselectMenu: "multiselectMenu", title: "title", hasAdd: "hasAdd", disabled: "disabled", query: "query", list: "list", items: "items" }, outputs: { select: "select", loadList: "loadList" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵProvidersFeature"]([
+    } }, inputs: { dao: "dao", icon: "icon", selectable: "selectable", loadList: "loadList", add: "add", load: "load", remove: "remove", save: "save", addRoute: "addRoute", addMetadata: "addMetadata", orderBy: "orderBy", groupBy: "groupBy", join: "join", form: "form", editable: "editable", hasEdit: "hasEdit", hasDelete: "hasDelete", hasReport: "hasReport", controlName: "controlName", control: "control", minHeight: "minHeight", multiselect: "multiselect", multiselectAllFields: "multiselectAllFields", dynamicMultiselectMenu: "dynamicMultiselectMenu", multiselectMenu: "multiselectMenu", title: "title", hasAdd: "hasAdd", disabled: "disabled", query: "query", list: "list", items: "items" }, outputs: { select: "select" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵProvidersFeature"]([
             {
                 provide: _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormGroupDirective"],
                 useFactory: (self) => {
@@ -24084,7 +24015,7 @@ class GanttComponent {
         this._error = "";
         this._project = new _gantt_models__WEBPACK_IMPORTED_MODULE_0__["GanttProject"]();
         this.initialized = false;
-        this.defaultPeriod = (start, end, duration) => {
+        this.defaultPeriod = (task, start, end, duration) => {
             return {
                 start: start || moment__WEBPACK_IMPORTED_MODULE_1__(end).add((duration || 0) * (-1), this.project.config.hasTime ? 'hours' : 'days').toDate(),
                 end: end || moment__WEBPACK_IMPORTED_MODULE_1__(start).add((duration || 0), this.project.config.hasTime ? 'hours' : 'days').toDate(),
@@ -24110,10 +24041,10 @@ class GanttComponent {
             this.cdRef.detectChanges();
         }
     }
-    calcPeriod(start, end, duration) {
+    calcPeriod(task, start, end, duration) {
         const startDate = typeof start == "undefined" || start instanceof Date ? start : new Date(start);
         const endDate = typeof end == "undefined" || end instanceof Date ? end : new Date(end);
-        const result = this.period(startDate, endDate, duration);
+        const result = this.period(task, startDate, endDate, duration);
         if (!this.project.config.hasTime) {
             result.start.setHours(0, 0, 0, 0);
             result.end.setHours(23, 59, 59, 999);
@@ -24350,35 +24281,6 @@ class GanttComponent {
         // Store tasks, deps and assignments
         this.getRecursiveProjectTasks(gantt.tasks, 0, 0, project);
         return project;
-    }
-    getDemoProject() {
-        const ret = { "tasks": [
-                { "id": -1, "name": "Gantt editor", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 0, "status": "STATUS_ACTIVE", "depends": "", "canWrite": true, "start": 1396994400000, "duration": 20, "end": 1399586399999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [{ id: "tmp_1", resourceId: "tmp_1", roleId: "", effort: "" }], "hasChild": true },
-                { "id": -2, "name": "coding", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 1, "status": "STATUS_ACTIVE", "depends": "", "canWrite": true, "start": 1396994400000, "duration": 10, "end": 1398203999999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": true },
-                { "id": -3, "name": "gantt part", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_ACTIVE", "depends": "", "canWrite": true, "start": 1396994400000, "duration": 2, "end": 1397167199999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false },
-                { "id": -4, "name": "editor part", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "depends": "3", "canWrite": true, "start": 1397167200000, "duration": 4, "end": 1397685599999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false },
-                { "id": -5, "name": "testing", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 1, "status": "STATUS_SUSPENDED", "depends": "2:5", "canWrite": true, "start": 1398981600000, "duration": 5, "end": 1399586399999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": true },
-                { "id": -6, "name": "test on safari", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "depends": "", "canWrite": true, "start": 1398981600000, "duration": 2, "end": 1399327199999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false },
-                { "id": -7, "name": "test on ie", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "depends": "6", "canWrite": true, "start": 1399327200000, "duration": 3, "end": 1399586399999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false },
-                { "id": -8, "name": "test on chrome", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "depends": "6", "canWrite": true, "start": 1399327200000, "duration": 2, "end": 1399499999999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false }
-            ], "selectedRow": 2, "deletedTaskIds": [],
-            "resources": [
-                { "id": "tmp_1", "name": "Resource 1", picture: this.gb.servidorURL + "/assets/images/profile.png" },
-                { "id": "tmp_2", "name": "Resource 2", picture: this.gb.servidorURL + "/assets/images/profile.png" },
-                { "id": "tmp_3", "name": "Resource 3", picture: this.gb.servidorURL + "/assets/images/profile.png" },
-                { "id": "tmp_4", "name": "Resource 4", picture: this.gb.servidorURL + "/assets/images/profile.png" }
-            ],
-            "roles": [
-                { "id": "tmp_1", "name": "Project Manager" },
-                { "id": "tmp_2", "name": "Worker" },
-                { "id": "tmp_3", "name": "Stakeholder" },
-                { "id": "tmp_4", "name": "Customer" }
-            ], "canWrite": true, "canDelete": true, "canWriteOnParent": true, canAdd: true };
-        let offset = new Date().getTime() - ret.tasks[0].start;
-        for (let i = 0; i < ret.tasks.length; i++) {
-            ret.tasks[i].start = ret.tasks[i].start + offset;
-        }
-        return ret;
     }
     loadI18n() {
         //@ts-ignore
