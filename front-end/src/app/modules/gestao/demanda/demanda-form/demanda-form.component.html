@@ -32,43 +32,6 @@
         </tab>
         <tab key="ENTREGAS" [label]="lex.noun('Entrega', true)">
             <demanda-list-entrega [control]="form!.controls.entregas" [demanda]="entity" [disabled]="formDisabled"></demanda-list-entrega>
-            <!--grid [control]="form!.controls.entregas" [add]="addEntrega.bind(this)" [hasDelete]="true" editable>
-                <columns>
-                    <column [title]="'Tarefa\nDescrição'" [template]="tarefaDescricao">
-                        <ng-template let-row="row" #tarefaDescricao>
-                            <strong *ngIf="row.tarefa?.nome.length" class="d-block">{{row.tarefa?.nome || ""}}</strong>
-                            {{row.descricao}}
-                        </ng-template>
-                    </column>
-                    <column type="timer" title="Tempo estimado" onlyHours field="tempo_estimado"></column>
-                    <column title="Documento" [template]="documento">
-                        <ng-template let-row="row" #documento>
-                            <span class="badge bg-light text-dark" [attr.role]="row.numero_processo?.length ? 'button' : undefined" data-bs-toggle="tooltip" data-bs-placement="top" (click)="onProcessoClick(row)" [title]="row.numero_processo?.length ? 'Sei nº ' + row.numero_documento : 'Sem processo vinculado'">
-                                <i [class]="'bi ' + (row.numero_processo?.length ? 'bi bi-folder-symlink' : 'bi bi-x-lg')"></i>
-                                {{row.numero_processo?.length ? row.numero_processo : "Não atribuído"}}
-                                <small *ngIf="row.numero_processo?.length"><br>Sei nº {{row.numero_documento}}</small>
-                            </span>
-                        </ng-template>
-                    </column>
-                    <column title="Concluído" type="select" field="concluido" [items]="lookup.SIMNAO"></column>
-                    <column title="Comentários" [template]="tarefaComentarios">
-                        <ng-template let-row="row" #tarefaComentarios>
-                            <span *ngFor="let comentario of row.comentarios" #badge class="badge bg-light text-dark comentario-badge" role="button" (click)="comentarioClick(badge)" data-expanded="false" data-bs-toggle="tooltip" data-bs-placement="top" [title]="lookup.getValue(lookup.COMENTARIO_TIPO, comentario.tipo)">
-                                {{"• ".repeat(comentario.path?.includes("/") ? comentario.path.split("/").length-1 : 0)}}
-                                <i [class]="'me-1 ' + lookup.getIcon(lookup.COMENTARIO_TIPO, comentario.tipo)"></i>
-                                <span class="comentario-title">
-                                    <strong>{{util.shortName(util.apelidoOuNome(comentario.usuario)!)}}</strong>
-                                    • {{util.getDateTimeFormatted(comentario.data_hora)}}<br>
-                                </span>
-                                <span class="comentario-text">
-                                    {{comentario.texto}}
-                                </span>
-                            </span>
-                        </ng-template>
-                    </column>
-                    <column type="options" [onEdit]="editEntrega.bind(this)" [onDelete]="deleteEntrega.bind(this)"></column>
-                </columns>
-            </grid//-->
         </tab>
         <tab key="CARACTERIZACAO" label="Caracterização">
             <div class="row">
