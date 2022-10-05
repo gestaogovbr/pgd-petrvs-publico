@@ -21,6 +21,7 @@ import { CardItem, DockerComponent } from 'src/app/components/kanban/docker/dock
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { DndDropEvent, DropEffect } from 'ngx-drag-drop';
 import { BadgeColor } from 'src/app/components/badge/badge.component';
+import { ProjetoService } from '../projeto.service';
 
 export type TarefaTotaisFilhos = {
   custo: number;
@@ -47,6 +48,7 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
   public TITLE_OUTRAS = "Outras";
   
   public project: GanttProject; 
+  public projetoService: ProjetoService;
   public ganttHeight: number;
   public afterLoadData: boolean = false;
   public filter: FormGroup;
@@ -83,6 +85,7 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
 
   constructor(public injector: Injector) {
     super(injector, Projeto, ProjetoDaoService);
+    this.projetoService = injector.get<ProjetoService>(ProjetoService);
     this.modalWidth = screen.availWidth - Math.round(screen.availWidth * 0.1); /* Variar de acordo com a resolução do usuário */
     this.ganttHeight = screen.availHeight - 350 - Math.round(screen.availHeight * 0.1); /* Variar de acordo com a resolução do usuário */
     console.log(this.ganttHeight, screen.availWidth, screen.availHeight);
@@ -299,13 +302,18 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
   public async loadData(entity: Projeto, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
+    this.entity = entity;
     this.project = this.toGantt(entity);
     this.afterLoadData = true;
-    this.calendarOptions.events = this.toCalendar(entity);
+    this.calendarOptions.events = this.toCalendar(entity.tarefas || []);
     this.loadEtiquetas();
     this.loadKanbanDockers(entity);
     this.loadKanbanCards(entity);
     this.cdRef.detectChanges();
+  }
+
+  public onCalendarioFilterChange(tarefas: ProjetoTarefa[]) {
+    this.calendarOptions.events = this.toCalendar(tarefas);
   }
 
   public getStatusColor(status: LookupItem): BadgeColor {
@@ -373,9 +381,9 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
     });
   }
 
-  public toCalendar(projeto: Projeto): EventInput[] {
+  public toCalendar(tarefas: ProjetoTarefa[]): EventInput[] {
     let result: EventInput[] = [];
-    (projeto.tarefas || []).forEach(tarefa => {
+    (tarefas || []).forEach(tarefa => {
       if(!tarefa.agrupador) {
         result.push({
           start: tarefa.inicio,
@@ -453,10 +461,7 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
         return castTypes.hasOwnProperty(tipo) ? castTypes[tipo] : "MATERIAL";
       };
       const toGanttPicture = (recurso: ProjetoRecurso): string => {
-        return (recurso.tipo == "HUMANO" ? recurso.usuario?.url_foto || "assets/images/projetos/usuario.png" :
-               (recurso.tipo == "CUSTO" ? "assets/images/projetos/custo.png" :
-               (recurso.tipo == "DEPARTAMENTO" ? "assets/images/projetos/unidade.png" :
-               (recurso.tipo == "SERVICO" ? "assets/images/projetos/servico.png" : "assets/images/projetos/material.png"))));
+        return this.projetoService.getRecursoPicture(recurso);
       };
       const toGanttUnity = (unidade: MaterialServicoUnidade): GanttResourceUnity => {
         const castUnity: IIndexable = {

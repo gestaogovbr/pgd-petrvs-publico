@@ -9259,7 +9259,7 @@ class GanttTemplatesComponent {
         let result = "";
         switch (type) {
             case "HEAD":
-                result = `<th class="gdfColHeader gdfResizable" style="width:` + (!((_b = (_a = this.gantt) === null || _a === void 0 ? void 0 : _a.project) === null || _b === void 0 ? void 0 : _b.config.hasTime) ? 100 : 150) + `px;">` + name + `</th>`;
+                result = `<th class="gdfColHeader gdfResizable" style="width:` + (!((_b = (_a = this.gantt) === null || _a === void 0 ? void 0 : _a.project) === null || _b === void 0 ? void 0 : _b.config.hasTime) ? 120 : 180) + `px;">` + name + `</th>`;
                 break;
             case "EMPTY":
                 result = `<td class="gdfCell"></td>`;
@@ -22135,7 +22135,8 @@ class GridComponent {
       }
     }*/
     refreshMultiselectToolbar() {
-        this.toolbarRef.buttons = this.multiselecting ? [this.BUTTON_MULTISELECT, ...(this.multiselectMenu || []), ...(this.dynamicMultiselectMenu ? this.dynamicMultiselectMenu(this.multiselected) : [])] : [...(this.initialButtons || []), ...this.toolbarButtons];
+        if (this.toolbarRef)
+            this.toolbarRef.buttons = this.multiselecting ? [this.BUTTON_MULTISELECT, ...(this.multiselectMenu || []), ...(this.dynamicMultiselectMenu ? this.dynamicMultiselectMenu(this.multiselected) : [])] : [...(this.initialButtons || []), ...this.toolbarButtons];
     }
     enableMultiselect(enable) {
         var _a;
@@ -22188,6 +22189,8 @@ class GridComponent {
             this.BUTTON_MULTISELECT.badge = this.multiselectedCount ? this.multiselectedCount.toString() : undefined;
             this.refreshMultiselectToolbar();
             this.cdRef.detectChanges();
+            if (this.multiselectChange)
+                this.multiselectChange(this.multiselected);
         });
     }
     onUnselectAllClick() {
@@ -22195,6 +22198,8 @@ class GridComponent {
         this.BUTTON_MULTISELECT.badge = undefined;
         this.refreshMultiselectToolbar();
         this.cdRef.detectChanges();
+        if (this.multiselectChange)
+            this.multiselectChange(this.multiselected);
     }
     isMultiselectChecked(row) {
         return this.multiselected.hasOwnProperty(row.id) ? "" : undefined;
@@ -22208,6 +22213,14 @@ class GridComponent {
             if (this.multiselected.hasOwnProperty(row.id))
                 delete this.multiselected[row.id];
         }
+        this.BUTTON_MULTISELECT.badge = this.multiselectedCount ? this.multiselectedCount.toString() : undefined;
+        this.refreshMultiselectToolbar();
+        this.cdRef.detectChanges();
+        if (this.multiselectChange)
+            this.multiselectChange(this.multiselected);
+    }
+    setMultiselectSelectedItems(items) {
+        items.forEach(row => this.multiselected[row.id] = row);
         this.BUTTON_MULTISELECT.badge = this.multiselectedCount ? this.multiselectedCount.toString() : undefined;
         this.refreshMultiselectToolbar();
         this.cdRef.detectChanges();
@@ -22408,7 +22421,7 @@ GridComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComp
     } if (rf & 2) {
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵloadQuery"]()) && (ctx.formDirective = _t.first);
-    } }, inputs: { dao: "dao", icon: "icon", selectable: "selectable", loadList: "loadList", add: "add", load: "load", remove: "remove", save: "save", addRoute: "addRoute", addMetadata: "addMetadata", orderBy: "orderBy", groupBy: "groupBy", join: "join", form: "form", editable: "editable", hasEdit: "hasEdit", hasDelete: "hasDelete", hasReport: "hasReport", controlName: "controlName", control: "control", minHeight: "minHeight", multiselect: "multiselect", multiselectAllFields: "multiselectAllFields", dynamicMultiselectMenu: "dynamicMultiselectMenu", multiselectMenu: "multiselectMenu", title: "title", hasAdd: "hasAdd", disabled: "disabled", query: "query", list: "list", items: "items" }, outputs: { select: "select" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵProvidersFeature"]([
+    } }, inputs: { dao: "dao", icon: "icon", selectable: "selectable", loadList: "loadList", multiselectChange: "multiselectChange", add: "add", load: "load", remove: "remove", save: "save", addRoute: "addRoute", addMetadata: "addMetadata", orderBy: "orderBy", groupBy: "groupBy", join: "join", form: "form", editable: "editable", hasEdit: "hasEdit", hasDelete: "hasDelete", hasReport: "hasReport", controlName: "controlName", control: "control", minHeight: "minHeight", multiselect: "multiselect", multiselectAllFields: "multiselectAllFields", dynamicMultiselectMenu: "dynamicMultiselectMenu", multiselectMenu: "multiselectMenu", title: "title", hasAdd: "hasAdd", disabled: "disabled", query: "query", list: "list", items: "items" }, outputs: { select: "select" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵProvidersFeature"]([
             {
                 provide: _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormGroupDirective"],
                 useFactory: (self) => {

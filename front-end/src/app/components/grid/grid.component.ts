@@ -53,6 +53,7 @@ export class GridComponent implements OnInit {
   @Input() icon: string = "";
   @Input() selectable: boolean = false;
   @Input() loadList?: (rows?: Base[]) => Promise<void> | void;
+  @Input() multiselectChange?: (multiselected: IIndexable) => void;
   @Input() add?: () => Promise<IIndexable | undefined | void>;
   @Input() load?: (form: FormGroup, row: any) => Promise<void>;
   @Input() remove?: (row: any) => Promise<boolean | undefined | void>;
@@ -347,7 +348,7 @@ export class GridComponent implements OnInit {
   }*/
 
   public refreshMultiselectToolbar() {
-    this.toolbarRef!.buttons = this.multiselecting ? [this.BUTTON_MULTISELECT, ...(this.multiselectMenu || []), ...(this.dynamicMultiselectMenu ? this.dynamicMultiselectMenu(this.multiselected) : [])] : [...(this.initialButtons || []), ...this.toolbarButtons];
+    if(this.toolbarRef) this.toolbarRef.buttons = this.multiselecting ? [this.BUTTON_MULTISELECT, ...(this.multiselectMenu || []), ...(this.dynamicMultiselectMenu ? this.dynamicMultiselectMenu(this.multiselected) : [])] : [...(this.initialButtons || []), ...this.toolbarButtons];
   }
 
   public enableMultiselect(enable: boolean) {
@@ -395,6 +396,7 @@ export class GridComponent implements OnInit {
     this.BUTTON_MULTISELECT.badge = this.multiselectedCount ? this.multiselectedCount.toString() : undefined;
     this.refreshMultiselectToolbar();
     this.cdRef.detectChanges();
+    if(this.multiselectChange) this.multiselectChange(this.multiselected);
   }
 
   public onUnselectAllClick() {
@@ -402,6 +404,7 @@ export class GridComponent implements OnInit {
     this.BUTTON_MULTISELECT.badge = undefined;
     this.refreshMultiselectToolbar();
     this.cdRef.detectChanges();
+    if(this.multiselectChange) this.multiselectChange(this.multiselected);
   }
 
   public isMultiselectChecked(row: any) {
@@ -414,6 +417,14 @@ export class GridComponent implements OnInit {
     } else {
       if(this.multiselected.hasOwnProperty(row.id)) delete this.multiselected[row.id];
     }
+    this.BUTTON_MULTISELECT.badge = this.multiselectedCount ? this.multiselectedCount.toString() : undefined;
+    this.refreshMultiselectToolbar();
+    this.cdRef.detectChanges();
+    if(this.multiselectChange) this.multiselectChange(this.multiselected);
+  }
+
+  public setMultiselectSelectedItems(items: IIndexable[]) {
+    items.forEach(row => this.multiselected[row.id] = row);
     this.BUTTON_MULTISELECT.badge = this.multiselectedCount ? this.multiselectedCount.toString() : undefined;
     this.refreshMultiselectToolbar();
     this.cdRef.detectChanges();

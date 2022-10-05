@@ -379,13 +379,13 @@ class AtividadeListComponent extends src_app_modules_base_page_list_base__WEBPAC
         var _a;
         let result = [];
         let atividade = row;
-        result.push({ label: "Informações", icon: "bi bi-info-circle", onClick: (atividade) => this.go.navigate({ route: ['cadastros', 'atividade', atividade.id, 'consult'] }, { modal: true }) });
-        // Testa se o usuário possui permissão para homologar a atividade
-        if (this.auth.hasPermissionTo('MOD_ATV_EDT_OTR_OP_HOM'))
-            result.push(Object.assign({}, (_a = this.grid) === null || _a === void 0 ? void 0 : _a.BUTTON_EDIT, { onClick: this.edit.bind(this) }));
+        //result.push({label: "Informações", icon: "bi bi-info-circle", onClick: (atividade: Atividade) => this.go.navigate({route: ['cadastros', 'atividade', atividade.id, 'consult']}, {modal: true})});  
         // Testa se o usuário possui permissão para exibir dados de atividade
         if (this.auth.hasPermissionTo("MOD_ATV_CONS"))
             result.push({ icon: "bi bi-info-circle", label: "Informações", onClick: this.consult.bind(this) });
+        // Testa se o usuário possui permissão para homologar a atividade
+        if (this.auth.hasPermissionTo('MOD_ATV_EDT_OTR_OP_HOM'))
+            result.push(Object.assign({}, (_a = this.grid) === null || _a === void 0 ? void 0 : _a.BUTTON_EDIT, { onClick: this.edit.bind(this) }));
         // Testa se o usuário possui permissão para excluir a atividade
         if (this.auth.hasPermissionTo("MOD_ATV_EXCL"))
             result.push({ icon: "bi bi-trash", label: "Excluir", onClick: this.delete.bind(this) });

@@ -194,7 +194,7 @@ export class GanttTemplatesComponent implements OnInit {
     public tableDateTimeTemplate(type: string, name: string = "") {
         let result = "";
         switch(type) {
-            case "HEAD": result = `<th class="gdfColHeader gdfResizable" style="width:` + (!this.gantt?.project?.config.hasTime ? 100 : 150) + `px;">` + name + `</th>`; break;
+            case "HEAD": result = `<th class="gdfColHeader gdfResizable" style="width:` + (!this.gantt?.project?.config.hasTime ? 120 : 180) + `px;">` + name + `</th>`; break;
             case "EMPTY": result = `<td class="gdfCell"></td>`; break;
             case "ROW":
                 result = `<td class="gdfCell">`;
