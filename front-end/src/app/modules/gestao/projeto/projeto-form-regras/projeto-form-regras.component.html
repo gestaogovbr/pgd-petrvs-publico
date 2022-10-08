@@ -1,6 +1,30 @@
-<p>projeto-form-regras works!</p>
-
-<!-- 
+<editable-form noButtons [form]="form!" [disabled]="formDisabled">
+  <div class="row">
+    <input-text [size]="6" label="Nome da regra" controlName="nome_regra" labelInfo="Nome da regra"></input-text>
+    <input-select [size]="6" label="Tipo de recurso" icon="bi bi-arrow-up-right-circle" controlName="tipo_recurso" [items]="lookup.PROJETO_TIPO_RECURSOS"></input-select>
+  </div>
+  <div class="row">
+    <grid [hasDelete]="true">
+      <columns>
+          <column [title]="lex.noun('Nome') + ' da Regra'" [template]="tarefaDescricao">
+              <ng-template let-row="row" #tarefaDescricao>
+                  <strong *ngIf="row.tarefa?.nome.length" class="d-block">{{row.tarefa?.nome || ""}}</strong>
+                  {{row.descricao}}
+              </ng-template>
+          </column>
+          <column title="Tipo de recurso" [align]="'center'" [template]="concluido" [editTemplate]="editConcluido" >
+              <ng-template let-row="row" #concluido>
+                  <div class="text-center"><i *ngIf="row.concluido" class="bi bi-check-circle"></i></div>
+              </ng-template>
+              <ng-template let-row="row" #editConcluido>
+                  <input-switch [size]="12" controlName="concluido"></input-switch>
+              </ng-template>
+          </column>
+      </columns>
+    </grid>
+  </div>
+</editable-form>
+<!--
 
 Nome                                                   Tipo recurso     [ + ]
 ------------------------------------------------------+-------------+---------

@@ -3,7 +3,7 @@ import { AbstractControl } from '@angular/forms';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 
 @Component({
-  selector: 'app-projeto-tarefa-form',
+  selector: 'projeto-tarefa-form',
   templateUrl: './projeto-tarefa-form.component.html',
   styleUrls: ['./projeto-tarefa-form.component.scss']
 })

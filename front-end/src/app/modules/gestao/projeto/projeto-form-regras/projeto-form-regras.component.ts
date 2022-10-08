@@ -5,7 +5,7 @@ import { Projeto } from 'src/app/models/projeto.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 
 @Component({
-  selector: 'app-projeto-form-regras',
+  selector: 'projeto-form-regras',
   templateUrl: './projeto-form-regras.component.html',
   styleUrls: ['./projeto-form-regras.component.scss']
 })
@@ -15,6 +15,8 @@ export class ProjetoFormRegrasComponent extends PageFrameBase {
   constructor(public injector: Injector) {
     super(injector);
     this.form = this.fh.FormBuilder({
+      nome_regra: {default: ""},
+      tipo_recurso: {default: "HUMANO"}
     }, this.cdRef, this.validate);
   }
 

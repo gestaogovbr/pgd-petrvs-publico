@@ -21,7 +21,7 @@ export class ProjetoFormPrincipalComponent extends PageFrameBase {
     this.form = this.fh.FormBuilder({
       numero: {default: ""},
       nome: {default: ""},
-      status: {default: ""},
+      status: {default: "PLANEJADO"},
       descricao: {default: ""},
       finalidade: {default: ""},
       marco_inicio: {default: ""},
