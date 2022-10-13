@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { DaoBaseService } from 'src/app/dao/dao-base.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
@@ -20,7 +20,7 @@ export class TesteComponent implements OnInit {
   public form: FormGroup;
   public items: LookupItem[] = [];
   public disabled: boolean = true;
-
+  
   public naoIniciadas: CardItem[] = [
     {id: "ni1", title: "Não iniciada 1", subTitle: "Texto não iniciado 1", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens"},
     {id: "ni2", title: "Não iniciada 2", subTitle: "Texto não iniciado 2", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens"},
@@ -53,7 +53,8 @@ export class TesteComponent implements OnInit {
     public fh: FormHelperService, 
     public usuarioDao: UsuarioDaoService, 
     public lookup: LookupService,
-    public util: UtilService
+    public util: UtilService,
+    @Inject('ID_GENERATOR_BASE') public ID_GENERATOR_BASE: any
   ) {
     this.form = fh.FormBuilder({
       id: {default: ""},

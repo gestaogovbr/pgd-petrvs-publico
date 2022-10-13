@@ -6,7 +6,8 @@ import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { DaoBaseService } from 'src/app/dao/dao-base.service';
 import { DemandaDaoService } from 'src/app/dao/demanda-dao.service';
 import { DemandaEntregaDaoService } from 'src/app/dao/demanda-entrega-dao.service';
-import { Base } from 'src/app/models/base.model';
+import { ProjetoDaoService } from 'src/app/dao/projeto-dao.service';
+import { Base, IIndexable } from 'src/app/models/base.model';
 import { Comentario, ComentarioOrigem, HasComentarios } from 'src/app/models/comentario';
 import { ComentarioService } from 'src/app/services/comentario.service';
 import { LookupItem } from 'src/app/services/lookup.service';
@@ -51,8 +52,6 @@ export class ComentariosComponent extends PageFrameBase {
     return this._origem;
   }
 
-  public dao?: DaoBaseService<Base>;
-  public entity_id?: string; /* Se estiver preenchido, então veio por uma rota e é uma janela autocontida, com salvar e cancelar */
   public comentario_id?: string;
   public comentario: ComentarioService;
   public form: FormGroup;
@@ -60,9 +59,6 @@ export class ComentariosComponent extends PageFrameBase {
   public comentarioTipos: LookupItem[] = [];
 
   private _origem: ComentarioOrigem = undefined;
-  private _entity: HasComentarios | undefined = undefined;
-  private _control: AbstractControl | undefined = undefined;
-  private fakeControl: FormControl = new FormControl();
 
   constructor(public injector: Injector) {
     super(injector);
@@ -80,15 +76,18 @@ export class ComentariosComponent extends PageFrameBase {
     super.ngOnInit();
     if(this.urlParams?.has("origem")) {
       this.origem = this.urlParams!.get("origem") as ComentarioOrigem;
-      this.entity_id = this.urlParams!.get("id") as string;
       this.comentario_id = this.queryParams?.comentario_id;
-      if(this.isNoPersist) this.entity = this.metadata?.entity;
+    }
+    switch(this.origem) {
+      case 'DEMANDA': this.dao = this.injector.get<DemandaDaoService>(DemandaDaoService); break;
+      case 'ENTREGA': this.dao = this.injector.get<DemandaEntregaDaoService>(DemandaEntregaDaoService); break;
+      case 'PROJETO': this.dao = this.injector.get<ProjetoDaoService>(ProjetoDaoService); break;
     }
   }
 
-  ngAfterViewInit() {
+  /*ngAfterViewInit() {
     super.ngAfterViewInit();
-    if(this.entity_id?.length && !this.isNoPersist) { /* Janela autocontida */
+    if(this.entity_id?.length && !this.isNoPersist) { /* Janela autocontida * /
       (async () => {
         this.loading = true;
         try {
@@ -109,7 +108,7 @@ export class ComentariosComponent extends PageFrameBase {
         }
       })();
     }
-  }
+  }*/
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
@@ -125,10 +124,6 @@ export class ComentariosComponent extends PageFrameBase {
 
   public get constrolOrItems(): AbstractControl | Comentario[] {
     return this.control || this.entity?.comentarios || [];
-  }
-
-  public get gridControl(): AbstractControl {
-    return this.control || this.fakeControl;
   }
 
   public dynamicButtons(row: any): ToolbarButton[] {
@@ -163,7 +158,19 @@ export class ComentariosComponent extends PageFrameBase {
     this.comentarios?.confirm();
   }
 
-  public async onSaveData() {
+  public loadData(entity: IIndexable, form: FormGroup): Promise<void> | void {
+    const comentario = this.comentario_id?.length ? (this.gridControl.value || []).find((x: Comentario) => x.id == this.comentario_id) : undefined;
+    this.comentario.newComentario(this.gridControl, this.comentarios!, comentario);
+    this.cdRef.detectChanges();
+    this.texto!.focus();
+  }
+
+  public async saveData() {
+    this.confirm();
+    return { comentarios: this.gridControl.value };
+  }
+
+  /*public async onSaveData() {
     this.submitting = true;
     try {
       this.confirm();
@@ -180,5 +187,5 @@ export class ComentariosComponent extends PageFrameBase {
   public onCancel() {
     this.go.back(undefined, this.backRoute);
   }
-
+*/
 }

@@ -5,7 +5,13 @@ import { ProjetoDaoService } from 'src/app/dao/projeto-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Projeto } from 'src/app/models/projeto.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
+import { ComentariosComponent } from 'src/app/modules/uteis/comentarios/comentarios.component';
 import { LookupItem } from 'src/app/services/lookup.service';
+import { ProjetoFormAlocacoesComponent } from '../projeto-form-alocacoes/projeto-form-alocacoes.component';
+import { ProjetoFormEnvolvidosComponent } from '../projeto-form-envolvidos/projeto-form-envolvidos.component';
+import { ProjetoFormPrincipalComponent } from '../projeto-form-principal/projeto-form-principal.component';
+import { ProjetoFormRecursosComponent } from '../projeto-form-recursos/projeto-form-recursos.component';
+import { ProjetoFormRegrasComponent } from '../projeto-form-regras/projeto-form-regras.component';
 
 @Component({
   selector: 'app-projeto-form',
@@ -14,6 +20,12 @@ import { LookupItem } from 'src/app/services/lookup.service';
 })
 export class ProjetoFormComponent extends PageFormBase<Projeto, ProjetoDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
+  @ViewChild('principal', { static: false }) public principal?: ProjetoFormPrincipalComponent;
+  @ViewChild('recursos', { static: false }) public recursos?: ProjetoFormRecursosComponent;
+  @ViewChild('envolvidos', { static: false }) public envolvidos?: ProjetoFormEnvolvidosComponent;
+  @ViewChild('alocacoes', { static: false }) public alocacoes?: ProjetoFormAlocacoesComponent;
+  @ViewChild('regras', { static: false }) public regras?: ProjetoFormRegrasComponent;
+  @ViewChild('comentarios', { static: false }) public comentarios?: ComentariosComponent;
 
   constructor(public injector: Injector) {
     super(injector, Projeto, ProjetoDaoService);
@@ -42,12 +54,16 @@ export class ProjetoFormComponent extends PageFormBase<Projeto, ProjetoDaoServic
     this.loadData(this.entity, form);    
   }
 
-  public saveData(form: IIndexable): Promise<Projeto> {
-    return new Promise<Projeto>((resolve, reject) => {
-      let projeto = this.util.fill(new Projeto(), this.entity!);
-      projeto = this.util.fillForm(projeto, this.form!.value);
-      resolve(projeto);
-    });
+  public async saveData(form: IIndexable): Promise<Projeto> {
+    Promise.all([
+      this.principal!.saveData(),
+      this.recursos!.saveData(),
+      this.envolvidos!.saveData(),
+      this.alocacoes!.saveData(),
+      this.regras!.saveData(),
+      this.comentarios!.saveData()
+    ]);
+    return this.entity! as Projeto;
   }
 
   public titleEdit = (entity: Projeto): string => {

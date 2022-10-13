@@ -28,7 +28,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-use Exception;
+use Throwable;
 
 class DemandaService extends ServiceBase
 {

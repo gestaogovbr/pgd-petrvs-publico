@@ -1,9 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Injector, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormGroup, FormGroupDirective } from '@angular/forms';
 import { QueryContext } from 'src/app/dao/query-context';
 import { QueryOptions } from 'src/app/dao/query-options';
 import { Base } from 'src/app/models/base.model';
 import { IFormGroupHelper } from 'src/app/services/form-helper.service';
+import { ComponentBase } from '../../component-base';
 import { GridComponent } from '../grid.component';
 
 @Component({
@@ -20,7 +21,7 @@ import { GridComponent } from '../grid.component';
     }
   ]
 })
-export class FilterComponent implements OnInit {
+export class FilterComponent extends ComponentBase implements OnInit {
   @ViewChild(FormGroupDirective) formDirective?: FormGroupDirective;
   @Output() filterClear = new EventEmitter<void>();
   @Input() form?: FormGroup;
@@ -35,9 +36,15 @@ export class FilterComponent implements OnInit {
   @Input() queryOptions?: QueryOptions;
   @Input() hidden?: string;
 
-  constructor() { }
+  constructor(injector: Injector) {
+    super(injector);
+  }
 
   ngOnInit(): void {
+  }
+
+  public getId(relativeId?: string): string {
+    return this.grid?.getId(relativeId) || this.generatedId(relativeId);
   }
 
   public get isHidden(): boolean {

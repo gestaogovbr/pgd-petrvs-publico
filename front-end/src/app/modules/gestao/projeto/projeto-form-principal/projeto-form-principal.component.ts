@@ -1,9 +1,10 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { Projeto } from 'src/app/models/projeto.model';
 import { ProjetoDaoService } from 'src/app/dao/projeto-dao.service';
+import { IIndexable } from 'src/app/models/base.model';
 @Component({
   selector: 'projeto-form-principal',
   templateUrl: './projeto-form-principal.component.html',
@@ -11,22 +12,19 @@ import { ProjetoDaoService } from 'src/app/dao/projeto-dao.service';
 })
 export class ProjetoFormPrincipalComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-
-  public form: FormGroup;
-  public projetoDao!: ProjetoDaoService;
+  @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
+  @Input() set entity(value: Projeto | undefined) { super.entity = value; } get entity(): Projeto | undefined { return super.entity; }
 
   constructor(public injector: Injector) {
     super(injector);
-    this.projetoDao = injector.get<ProjetoDaoService>(ProjetoDaoService);
+    this.dao = injector.get<ProjetoDaoService>(ProjetoDaoService);
     this.form = this.fh.FormBuilder({
       numero: {default: ""},
       nome: {default: ""},
       status: {default: "PLANEJADO"},
       descricao: {default: ""},
       finalidade: {default: ""},
-      marco_inicio: {default: ""},
       inicio_projeto: {default: new Date()},
-      marco_termino: {default: ""},
       termino_projeto: {default: new Date()},
       duracao: {default: ""},
       progresso: {default: 0},
@@ -47,6 +45,22 @@ export class ProjetoFormPrincipalComponent extends PageFrameBase {
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
     return result;
+  }
+  
+  public loadData(entity: IIndexable, form?: FormGroup) {
+    let formValue = Object.assign({}, this.form!.value);
+    this.form!.patchValue(this.util.fillForm(formValue, entity));
+  }
+
+  public initializeData(form?: FormGroup) {
+    this.entity = new Projeto();
+    this.loadData(this.entity, this.form);
+  }
+
+  public async saveData(form?: IIndexable) {
+    return new Promise<Projeto>((resolve, reject) => {
+      resolve(this.util.fillForm(this.entity, this.form!.value));
+    });
   }
 
 }

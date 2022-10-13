@@ -22,6 +22,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
   @ViewChild('inputElement', {static: false}) inputElement?: ElementRef;
   @Output() change = new EventEmitter<Event>();
   @Output() details = new EventEmitter<SelectItem>();
+  @Input() hostClass: string = ""; 
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
   @Input() disabled?: string;
@@ -108,7 +109,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
     super.ngAfterViewInit();
     $(() => {
       //@ts-ignore
-      this.selectPicker =  $('#' + this.controlName);
+      this.selectPicker =  $('#' + this.generatedId(this.controlName));
       this.selectPicker.selectpicker({
         noneSelectedText: " - ",
         noneResultsText: "Nenhum resultado {0}",

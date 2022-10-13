@@ -1,4 +1,4 @@
-import { Component, Injector, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Inject, Injector, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';

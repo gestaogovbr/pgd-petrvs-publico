@@ -1,7 +1,8 @@
-import { Component, ElementRef, HostBinding, Input, OnInit, TemplateRef } from '@angular/core';
+import { Component, ElementRef, HostBinding, Injector, Input, OnInit, TemplateRef } from '@angular/core';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { NavigateService } from 'src/app/services/navigate.service';
 import { UtilService } from 'src/app/services/util.service';
+import { ComponentBase } from '../../component-base';
 import { ToolbarButton } from '../../toolbar/toolbar.component';
 import { CardItem, DockerComponent } from '../docker/docker.component';
 import { KanbanComponent } from '../kanban.component';
@@ -11,7 +12,7 @@ import { KanbanComponent } from '../kanban.component';
   templateUrl: './card.component.html',
   styleUrls: ['./card.component.scss']
 })
-export class CardComponent implements OnInit {
+export class CardComponent extends ComponentBase implements OnInit {
   @HostBinding('class') class = 'draggable-card';
   @Input() item?: CardItem;
   @Input() docker?: DockerComponent;
@@ -34,20 +35,17 @@ export class CardComponent implements OnInit {
   }
 
   public metadata: any = {};
+  public go: NavigateService
 
   private _template?: TemplateRef<unknown>;
   private _placeholderTemplate?: TemplateRef<unknown>;
 
-  constructor(
-    public util: UtilService,
-    public go: NavigateService
-  ) { }
-
-  ngOnInit(): void {
+  constructor(public injector: Injector) {
+    super(injector);
+    this.go = injector.get<NavigateService>(NavigateService);
   }
 
-  public buttonId(button: ToolbarButton) {
-    return "button_" + this.util.md5((button.icon || "") + (button.hint || "") + (button.label || "")); 
+  ngOnInit(): void {
   }
 
   public hasButtonItems(button: ToolbarButton) {

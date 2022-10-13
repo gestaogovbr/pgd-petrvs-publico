@@ -1,22 +1,22 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
     <tabs display right>
         <tab key="PRINCIPAL" label="Principal">
-            <projeto-form-principal></projeto-form-principal>
+            <projeto-form-principal #principal [entity]="entity"></projeto-form-principal>
         </tab>
         <tab key="RECURSOS" label="Recursos">
-            <projeto-form-recursos></projeto-form-recursos>
+            <projeto-form-recursos #recursos [entity]="entity"></projeto-form-recursos>
         </tab>
         <tab key="ENVOLVIDOS" label="Envolvidos">
-            <projeto-form-envolvidos></projeto-form-envolvidos>
+            <projeto-form-envolvidos #envolvidos [entity]="entity"></projeto-form-envolvidos>
         </tab>
         <tab key="ALOCACOES" label="Alocações">
-            <projeto-form-alocacoes></projeto-form-alocacoes>
+            <projeto-form-alocacoes #alocacoes [entity]="entity"></projeto-form-alocacoes>
         </tab>
         <tab key="REGRAS" label="Regras">
-            <projeto-form-regras></projeto-form-regras>
+            <projeto-form-regras #regras [entity]="entity"></projeto-form-regras>
         </tab>
         <tab key="COMENTARIOS" label="Comentários">
-            <comentarios></comentarios>
+            <comentarios #comentarios origem="PROJETO" [entity]="entity"></comentarios>
         </tab>
     </tabs>
 </editable-form>

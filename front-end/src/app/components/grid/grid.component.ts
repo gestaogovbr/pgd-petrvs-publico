@@ -9,6 +9,7 @@ import { DialogService } from 'src/app/services/dialog.service';
 import { IFormGroupHelper } from 'src/app/services/form-helper.service';
 import { FullRoute, NavigateService, RouteMetadata } from 'src/app/services/navigate.service';
 import { UtilService } from 'src/app/services/util.service';
+import { ComponentBase } from '../component-base';
 import { ToolbarButton, ToolbarComponent } from '../toolbar/toolbar.component';
 import { ColumnComponent } from './column/column.component';
 import { ColumnsComponent } from './columns/columns.component';
@@ -40,7 +41,7 @@ export class GridGroupSeparator {
     }
   ]
 })
-export class GridComponent implements OnInit {
+export class GridComponent extends ComponentBase implements OnInit {
   //@ContentChildren(ColumnComponent, { descendants: true }) columnsRef?: QueryList<ColumnComponent>;
   @ContentChild(ColumnsComponent) columnsRef?: ColumnsComponent;
   @ContentChild(ReportComponent) reportRef?: ReportComponent;
@@ -153,9 +154,7 @@ export class GridComponent implements OnInit {
   public columns: GridColumn[] = [];
   public toolbarButtons: ToolbarButton[] = [];
   public initialButtons?: ToolbarButton[];
-  public cdRef: ChangeDetectorRef;
   public go: NavigateService;
-  public util: UtilService;
   public dialog: DialogService;
   public selected?: Base | IIndexable;
   public editing?: Base | IIndexable;
@@ -238,14 +237,17 @@ export class GridComponent implements OnInit {
   };
 
   constructor(public injector: Injector) {
-    this.cdRef = this.injector.get<ChangeDetectorRef>(ChangeDetectorRef);
+    super(injector);
     this.go = this.injector.get<NavigateService>(NavigateService);
-    this.util = this.injector.get<UtilService>(UtilService);
     this.dialog = this.injector.get<DialogService>(DialogService);
     this.dao = new DaoBaseService<Base>("", injector);
   }
 
   ngOnInit(): void {
+  }
+
+  public getId(relativeId?: string) {
+    return this.generatedId('_grid_' + this.controlName + this.title + relativeId);
   }
 
   ngAfterContentInit(): void {

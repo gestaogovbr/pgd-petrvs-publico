@@ -1,6 +1,6 @@
-<editable-form noButtons [form]="form!" [disabled]="formDisabled">
+<editable-form [form]="form!" [noButtons]="!entity_id ? 'true' : undefined" [disabled]="formDisabled" (submit)="onSaveData()" (cancel)="onCancel()">
   <div class="row">
-    <input-number [size]="2" label="Número" controlName="numero"></input-number>
+    <input-number [size]="2" disabled label="Número" controlName="numero"></input-number>
     <input-text [size]="6" label="Nome" controlName="nome" labelInfo="Nome do projeto"></input-text>
     <input-select [size]="4" label="Status do projeto" icon="bi bi-arrow-up-right-circle" controlName="status" [items]="lookup.PROJETO_STATUS"></input-select>
   </div>
@@ -12,16 +12,12 @@
   </div>
   <separator title="Cronograma e progresso"></separator>
   <div class="row">
-    <input-switch label="Marco inicial" icon="bi bi-check2" [size]="2" controlName="marco_inicio" labelInfo="Marco início"></input-switch>
     <input-datetime date [size]="4" label="Início" icon="bi bi-calendar-date" controlName="inicio_projeto"></input-datetime>
-    <input-switch label="Marco de términio" icon="bi bi-check2" [size]="3" controlName="marco_termino" labelInfo="Marco início"></input-switch>
-    <input-datetime date [size]="3" label="Término" icon="bi bi-calendar-date" controlName="termino_projeto"></input-datetime>
+    <input-datetime date [size]="4" label="Término" icon="bi bi-calendar-date" controlName="termino_projeto"></input-datetime>
+    <input-number number [size]="2" label="Duração" sufix="d/h" controlName="duracao"></input-number>
+    <input-text number [size]="2" label="Progresso" sufix="%" icon="bi bi-clock" controlName="progresso" labelInfo="Progresso do projeto (% Concluído)"></input-text>
   </div>
-  <div class="row">
-    <input-number number [size]="6" label="Duração" sufix="d/h" controlName="duracao"></input-number>
-    <input-text number label="Progresso" sufix="%" [size]="6" icon="bi bi-clock" controlName="progresso" labelInfo="Progresso do projeto (% Concluído)"></input-text>
-  </div>
-  <separator title="Cconfigurações"></separator>
+  <separator title="Configurações"></separator>
   <div class="row">
     <input-switch label="Tempo corrido:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="tempo_corrido" labelInfo="Tempo corrido"></input-switch>
     <input-switch label="Usa horas:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="usa_horas" labelInfo="Usa horas"></input-switch>
@@ -54,13 +50,14 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 Finalidade
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 -- Cronograma e progresso ----------------------------------------------------
-Marco   Inicio              Marco   Termino            Duração      Progresso
-([]  )  xx/xx/xxxxx xx:xx   (  [])  xx/xx/xxxx xx:xx   [ xxxxx]    [xxx,xx %]
+Inicio              Termino            Duração      Progresso
+xx/xx/xxxxx xx:xx   xx/xx/xxxx xx:xx   [ xxxxx]    [xxx,xx %]
 -- Configurações -------------------------------------------------------------
-                Tempo corrido: ([]  )                    Usa horas: ([]  )
-         Intervalo automático: ([]  )         Progresso automático: ([]  )
-                    Agrupador: ([]  )                    Usa custo: ([]  )
-    Aloca recursos no projeto: ([]  )    Soma alocações automático: ([]  )
-     Possui custos no projeto: ([]  )       Soma custos automático: ([]  )
+               + Tempo corrido: ([]  )                   + Usa horas: ([]  )
+        + Intervalo automático: ([]  )        + Progresso automático: ([]  )
+                   + Agrupador: ([]  )                   + Usa custo: ([]  )
+   + Aloca recursos no projeto: ([]  )   + Soma alocações automático: ([]  )
+    + Possui custos no projeto: ([]  )      + Soma custos automático: ([]  )
 
 -->
+

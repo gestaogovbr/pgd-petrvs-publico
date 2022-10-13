@@ -13,8 +13,8 @@
                 <th *ngIf="multiselecting" class="grid-multiselect-header">
                     <i class="bi bi-card-checklist"></i>
                 </th>
-                <th *ngFor="let column of columns" [class.grid-editable-options]="isEditableGridOptions(column)" scope="col">
-                    <column-header [column]="column" [grid]="self"></column-header>
+                <th *ngFor="let column of columns; let idx = index" [class.grid-editable-options]="isEditableGridOptions(column)" scope="col">
+                    <column-header [column]="column" [index]="idx" [grid]="self"></column-header>
                 </th>
             </tr>
         </thead>
@@ -28,10 +28,10 @@
                         <strong class="grid-group-text">{{row.text}}</strong>
                     </td>
                     <ng-template #fields>
-                        <td *ngFor="let column of columns" class="grid-column" [class.text-center]="column.align == 'center'" [class.text-end]="column.align == 'right'" [class.grid-column-expanded]="column.isType('expand') && !!expandedIds[row.id]" [class.grid-column-editing-options]="column.editing" [class.text-end]="column.isType('options')" >
-                            <column-row *ngIf="!column.inType(['options', 'expand'])" [column]="column" [row]="row" [grid]="self"></column-row>
-                            <column-expand *ngIf="column.isType('expand')" [column]="column" [row]="row" [grid]="self"></column-expand>
-                            <column-options *ngIf="column.isType('options') && !multiselecting" [column]="column" [row]="row" [grid]="self" [options]="column.options" [buttons]="column.buttons || []" [dynamicOptions]="column.dynamicOptions" [dynamicButtons]="column.dynamicButtons" [upDownButtons]="column.upDownButtons"></column-options>
+                        <td *ngFor="let column of columns; let idx = index" class="grid-column" [class.text-center]="column.align == 'center'" [class.text-end]="column.align == 'right'" [class.grid-column-expanded]="column.isType('expand') && !!expandedIds[row.id]" [class.grid-column-editing-options]="column.editing" [class.text-end]="column.isType('options')" >
+                            <column-row *ngIf="!column.inType(['options', 'expand'])" [index]="idx" [column]="column" [row]="row" [grid]="self"></column-row>
+                            <column-expand *ngIf="column.isType('expand')" [index]="idx" [column]="column" [row]="row" [grid]="self"></column-expand>
+                            <column-options *ngIf="column.isType('options') && !multiselecting" [index]="idx" [column]="column" [row]="row" [grid]="self" [options]="column.options" [buttons]="column.buttons || []" [dynamicOptions]="column.dynamicOptions" [dynamicButtons]="column.dynamicButtons" [upDownButtons]="column.upDownButtons"></column-options>
                         </td>
                     </ng-template>
                 </tr>
