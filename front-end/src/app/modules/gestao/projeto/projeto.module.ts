@@ -8,7 +8,6 @@ import { ProjetoFormComponent } from './projeto-form/projeto-form.component';
 import { ProjetoPlanejamentoComponent } from './projeto-planejamento/projeto-planejamento.component';
 import { ProjetoFormPrincipalComponent } from './projeto-form-principal/projeto-form-principal.component';
 import { ProjetoFormRecursosComponent } from './projeto-form-recursos/projeto-form-recursos.component';
-import { ProjetoFormEnvolvidosComponent } from './projeto-form-envolvidos/projeto-form-envolvidos.component';
 import { ProjetoFormAlocacoesComponent } from './projeto-form-alocacoes/projeto-form-alocacoes.component';
 import { UteisModule } from '../../uteis/uteis.module';
 import { FullCalendarModule } from '@fullcalendar/angular';
@@ -31,7 +30,6 @@ FullCalendarModule.registerPlugins([ // register FullCalendar plugins
     ProjetoPlanejamentoComponent,
     ProjetoFormPrincipalComponent,
     ProjetoFormRecursosComponent,
-    ProjetoFormEnvolvidosComponent,
     ProjetoFormAlocacoesComponent,
     ProjetoTarefaFormComponent,
     ProjetoTarefaFormPrincipalComponent,

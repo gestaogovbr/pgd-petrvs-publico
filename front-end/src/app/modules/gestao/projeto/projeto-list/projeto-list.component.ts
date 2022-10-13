@@ -31,7 +31,7 @@ export class ProjetoListComponent extends PageListBase<Projeto, ProjetoDaoServic
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.title = this.lex.noun("Projeto", true);
     this.code = "MOD_PROJ";
-    this.join = ["envolvidos.recurso.usuario", "envolvidos.recurso.unidade", "envolvidos.regra"];
+    this.join = ["alocacoes.recurso.usuario", "alocacoes.recurso.unidade", "alocacoes.regras.regra"];
     this.filter = this.fh.FormBuilder({
       nome: {default: ""},
       status: {default: null},
@@ -65,19 +65,19 @@ export class ProjetoListComponent extends PageListBase<Projeto, ProjetoDaoServic
     return result;
   }
 
-  public getEnvolvidos(projeto: Projeto, metadata: any): EnvolvidoListItem[] {
+  public getEnvolvidos(projeto: Projeto, metadata: any): EnvolvidoListItem[] { // TODO: Receber os dados de envolvidos nos metadados
     let result: EnvolvidoListItem[] = [];
     
-    for(let envolvido of projeto.envolvidos || []) {
+    for(let envolvido of projeto.alocacoes?.filter(x => x.envolvido) || []) {
       if(envolvido.recurso?.usuario) {
         result.push({
           url: envolvido.recurso.usuario.url_foto || "assets/images/projetos/usuario.png",
-          hint: "Usuario: " + envolvido.recurso.usuario.nome + (envolvido.regra ? "\n(" + envolvido.regra.nome + ")" : "")
+          hint: "Usuario: " + envolvido.recurso.usuario.nome  // + (envolvido.regra ? "\n(" + envolvido.regra.nome + ")" : "") TODO: Colocar regras
         });
       } else if (envolvido.recurso?.unidade) {
         result.push({
           url: "assets/images/projetos/unidade.png",
-          hint: "Usuario: " + envolvido.recurso.unidade.nome + (envolvido.regra ? "\n(" + envolvido.regra.nome + ")" : "")
+          hint: "Usuario: " + envolvido.recurso.unidade.nome // + (envolvido.regra ? "\n(" + envolvido.regra.nome + ")" : "") TODO: Colocar regras
         });
       }
     }
@@ -92,7 +92,7 @@ export class ProjetoListComponent extends PageListBase<Projeto, ProjetoDaoServic
   public dynamicOptions(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let projeto: Projeto = row as Projeto;
-    const isEnvolvido = !!(projeto.envolvidos || []).find(x => x.recurso!.usuario!.id == this.auth.usuario?.id);
+    const isEnvolvido = !!(projeto.alocacoes || []).find(x => x.envolvido && x.recurso!.usuario!.id == this.auth.usuario?.id);
     const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: (projeto: Projeto) => this.go.navigate({ route: ['gestao', 'projeto', projeto.id, 'consult'] }, { modal: true }) };
     const BOTAO_COMENTARIOS = { label: "Comentários", icon: "bi bi-chat-left-quote", onClick: (projeto: Projeto) => this.go.navigate({ route: ['gestao', 'projeto', projeto.id, 'comentar'] }, this.modalRefreshId(projeto)) };
     const BOTAO_CLONAR = { label: "Clonar", icon: "bi bi-stickies", onClick: (projeto: Projeto) => this.go.navigate({ route: ['gestao', 'demanda', projeto.id, 'clonar'] }, this.modalRefresh()) };
@@ -122,7 +122,7 @@ export class ProjetoListComponent extends PageListBase<Projeto, ProjetoDaoServic
   public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let projeto: Projeto = row as Projeto;
-    const isEnvolvido = !!(projeto.envolvidos || []).find(x => x.recurso!.usuario!.id == this.auth.usuario?.id);
+    const isEnvolvido = !!(projeto.alocacoes || []).find(x => x.envolvido && x.recurso!.usuario!.id == this.auth.usuario?.id);
     const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: (projeto: Projeto) => this.go.navigate({ route: ['gestao', 'projeto', projeto.id, 'consult'] }, { modal: true }) };
     const BOTAO_PLANEJAR = { label: "Planejamento", icon: "bi bi-bar-chart-steps", onClick: (projeto: Projeto) => this.go.navigate({ route: ['gestao', 'projeto', projeto.id, 'planejamento'] }, this.modalRefreshId(projeto)) };
 

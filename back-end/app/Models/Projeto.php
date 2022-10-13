@@ -67,7 +67,6 @@ class Projeto extends ModelBase
     // Has
     public function tarefas() { return $this->hasMany(ProjetoTarefa::class); }    
     public function regras() { return $this->hasMany(ProjetoRegra::class); }    
-    public function envolvidos() { return $this->hasMany(ProjetoEnvolvido::class); }    
     public function alocacoes() { return $this->hasMany(ProjetoAlocacao::class); }    
     public function recursos() { return $this->hasMany(ProjetoRecurso::class); }    
     // Belongs

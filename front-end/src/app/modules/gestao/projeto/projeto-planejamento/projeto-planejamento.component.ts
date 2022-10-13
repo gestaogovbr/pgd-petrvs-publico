@@ -7,7 +7,6 @@ import { ProjetoDaoService } from 'src/app/dao/projeto-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { MaterialServicoUnidade } from 'src/app/models/material-servico.model';
 import { ProjetoAlocacao } from 'src/app/models/projeto-alocacao.model';
-import { ProjetoEnvolvido } from 'src/app/models/projeto-envolvido.model';
 import { ProjetoRecurso, ProjetoRecursoTipo } from 'src/app/models/projeto-recurso.model';
 import { ProjetoRegra } from 'src/app/models/projeto-regra.model';
 import { ProjetoTarefa, ProjetoTarefaStatus } from 'src/app/models/projeto-tarefa.model';
@@ -323,7 +322,7 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
   public getRecursos(tarefa: ProjetoTarefa, metadata: any): RecursoListItem[] {
     let result: RecursoListItem[] = [];
     for(let alocacao of tarefa.alocacoes || []) {
-      const regra = alocacao.regra ? "\n(" + alocacao.regra.nome + ")" : "";
+      const regra = ""; //alocacao.regra ? "\n(" + alocacao.regra.nome + ")" : ""; /* TODO: Obter lista de regras */
       const nome = alocacao.recurso?.nome?.length ? alocacao.recurso.nome + "\n" : "";
       switch(alocacao.recurso?.tipo) {
         case 'HUMANO': result.push({ url: alocacao.recurso.usuario?.url_foto || "assets/images/projetos/usuario.png", hint: nome + "Usuario: " + (alocacao.recurso.usuario?.nome || "(DESCONHECIDO)") + regra }); break;
@@ -411,10 +410,10 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
       };
       return castStatus.hasOwnProperty(status) ? castStatus[status] : "STATUS_ACTIVE";
     }  
-    const toGanttAssignments = (alocacoes: (ProjetoAlocacao | ProjetoEnvolvido)[]): GanttAssignment[] => {
-      const toAssignmentDescription = (alocacao: ProjetoAlocacao | ProjetoEnvolvido): string => {
-        let result = (alocacao as any).descricao as string || "";
-        if(!result.length) {
+    const toGanttAssignments = (alocacoes: ProjetoAlocacao[]): GanttAssignment[] => {
+      const toAssignmentDescription = (alocacao: ProjetoAlocacao): string => {
+        let result = alocacao.descricao;
+        if(!result?.length) {
           const recurso = (projeto.recursos || []).find(x => x.id == alocacao.recurso_id);
           result = recurso?.usuario?.nome || recurso?.unidade?.nome || "";
         }
@@ -423,7 +422,7 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
       return (alocacoes || []).map(alocacao => new GanttAssignment({
         id: alocacao.id,
         resource_id: alocacao.recurso_id,
-        role_id: alocacao.regra_id,
+        //role_id: alocacao.regra_id, /* TODO: Alterar para aceitar mais de uma rule */
         description: toAssignmentDescription(alocacao),
         quantity: (alocacao as any).quantidade || 1
       }));
@@ -515,7 +514,7 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
         tasks: toTreeGanttTasks(tarefas.filter(x => !x.tarefa_pai_id).sort((a, b) => a.indice > b.indice ? 1 : (a.indice < b.indice ? -1 : 0))),
         status: toGanttStatus(projeto.status),
         dependencies_ids: [], /* Implementar depois */
-        assignments: toGanttAssignments([...(projeto.envolvidos || []), ...(projeto.alocacoes || [])]), /* Envolvidos + Alocações */
+        assignments: toGanttAssignments(projeto.alocacoes || []), /* Alocações */
         collapsed: false
       })],
       resources: (projeto.recursos || []).map(x => toGanttResource(x)),
@@ -574,7 +573,7 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
         material_servico_id: (resource.extra as ProjetoRecurso).material_servico_id
       }));
     };
-    const fromGanttStakeholders = (assigns: GanttAssignment[]): ProjetoEnvolvido[] => {
+    /*const fromGanttStakeholders = (assigns: GanttAssignment[]): ProjetoEnvolvido[] => {
       let result: ProjetoEnvolvido[] = [];
       for(let assign of assigns || []) {
         const envolvido = (origem.envolvidos || []).find(x => x.id == assign.id);
@@ -587,7 +586,7 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
         }
       }
       return result;
-    }
+    }*/
     const fromGanttTasks = (projeto: Projeto, pai: Projeto | ProjetoTarefa, tasks: GanttTask[], path: string): TarefaTotaisFilhos => {
       let result: TarefaTotaisFilhos = {
         custo: 0,
@@ -602,7 +601,7 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
           descricao: assign.description,
           quantidade: assign.quantity,
           recurso_id: assign.resource_id,
-          regra_id: assign.role_id,
+          //regra_id: assign.role_id, /* TODO: Trazer de uma lista de regras */
           projeto_id: origem.projeto_id,
           tarefa_id: origem.tarefa_id
         });
@@ -700,7 +699,7 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
       tipo_projeto_id: origem.tipo_projeto_id,
       regras: fromGanttRules(project.roles),
       recursos: fromGanttResources(project.resources),
-      envolvidos: fromGanttStakeholders(root.assignments || []),
+      //envolvidos: fromGanttStakeholders(root.assignments || []),
       alocacoes: [],
       tarefas: []
     });

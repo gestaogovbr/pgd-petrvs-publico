@@ -9,6 +9,7 @@ class ProjetoService extends ServiceBase {
     use UseDataFim;
 
     public function validateStore($data, $unidade, $action) {
+
     }
 
     public function proxyStore(&$data, $unidade, $action) {
@@ -16,6 +17,15 @@ class ProjetoService extends ServiceBase {
     }
 
     public function recalcular(&$projeto) {
+        // Reindexar os indices 
+        // Recalcular recursos
+        // recacular valores
+        // recalcular os prazos
+
+
+        
+
+
     }
 }
 

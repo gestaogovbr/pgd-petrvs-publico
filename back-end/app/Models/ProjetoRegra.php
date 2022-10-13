@@ -15,6 +15,8 @@ class ProjetoRegra extends ModelBase
 
     public $fillable = [
         'nome',
+        'recurso_tipo',
+        'finalidade',
         //'data_inicio',
         //'data_fim',
         'projeto_id'

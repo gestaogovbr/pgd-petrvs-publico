@@ -8,7 +8,6 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { ComentariosComponent } from 'src/app/modules/uteis/comentarios/comentarios.component';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { ProjetoFormAlocacoesComponent } from '../projeto-form-alocacoes/projeto-form-alocacoes.component';
-import { ProjetoFormEnvolvidosComponent } from '../projeto-form-envolvidos/projeto-form-envolvidos.component';
 import { ProjetoFormPrincipalComponent } from '../projeto-form-principal/projeto-form-principal.component';
 import { ProjetoFormRecursosComponent } from '../projeto-form-recursos/projeto-form-recursos.component';
 import { ProjetoFormRegrasComponent } from '../projeto-form-regras/projeto-form-regras.component';
@@ -22,7 +21,6 @@ export class ProjetoFormComponent extends PageFormBase<Projeto, ProjetoDaoServic
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('principal', { static: false }) public principal?: ProjetoFormPrincipalComponent;
   @ViewChild('recursos', { static: false }) public recursos?: ProjetoFormRecursosComponent;
-  @ViewChild('envolvidos', { static: false }) public envolvidos?: ProjetoFormEnvolvidosComponent;
   @ViewChild('alocacoes', { static: false }) public alocacoes?: ProjetoFormAlocacoesComponent;
   @ViewChild('regras', { static: false }) public regras?: ProjetoFormRegrasComponent;
   @ViewChild('comentarios', { static: false }) public comentarios?: ComentariosComponent;
@@ -58,7 +56,6 @@ export class ProjetoFormComponent extends PageFormBase<Projeto, ProjetoDaoServic
     Promise.all([
       this.principal!.saveData(),
       this.recursos!.saveData(),
-      this.envolvidos!.saveData(),
       this.alocacoes!.saveData(),
       this.regras!.saveData(),
       this.comentarios!.saveData()

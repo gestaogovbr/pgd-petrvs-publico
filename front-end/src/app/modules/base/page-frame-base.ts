@@ -32,7 +32,7 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
       this.loadData(value, this.form!);
     }
   }
-  get entity(): any {
+  public get entity(): any {
     return this._entity;
   }
 
