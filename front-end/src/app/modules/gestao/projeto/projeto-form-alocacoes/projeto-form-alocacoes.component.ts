@@ -20,6 +20,10 @@ export class ProjetoFormAlocacoesComponent extends PageFrameBase {
   constructor(public injector: Injector) {
     super(injector);
     this.form = this.fh.FormBuilder({
+      nome_recurso: {default: ""},
+      regra: {default: ""},
+      decricao_recurso: {default: ""},
+      qtd_recurso: {default: 0}
     }, this.cdRef, this.validate);
   }
 
