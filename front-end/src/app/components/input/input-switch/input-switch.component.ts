@@ -17,6 +17,7 @@ export class InputSwitchComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';
   @ViewChild('checkbox') checkbox?: ElementRef;
   @Output() change = new EventEmitter<Event>();
+  @Input() hostClass: string = ""; 
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
   @Input() disabled?: string;

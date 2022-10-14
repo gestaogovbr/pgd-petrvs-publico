@@ -1,4 +1,4 @@
-import { Component, Injector, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Inject, Injector, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
@@ -70,11 +70,11 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
     let result: ToolbarButton[] = [];
     let atividade: Atividade = row as Atividade;
     
-    result.push({label: "Informações", icon: "bi bi-info-circle", onClick: (atividade: Atividade) => this.go.navigate({route: ['cadastros', 'atividade', atividade.id, 'consult']}, {modal: true})});  
-    // Testa se o usuário possui permissão para homologar a atividade
-    if(this.auth.hasPermissionTo('MOD_ATV_EDT_OTR_OP_HOM')) result.push(Object.assign({}, this.grid?.BUTTON_EDIT, {onClick: this.edit.bind(this)}));
+    //result.push({label: "Informações", icon: "bi bi-info-circle", onClick: (atividade: Atividade) => this.go.navigate({route: ['cadastros', 'atividade', atividade.id, 'consult']}, {modal: true})});  
     // Testa se o usuário possui permissão para exibir dados de atividade
     if (this.auth.hasPermissionTo("MOD_ATV_CONS")) result.push({icon: "bi bi-info-circle", label: "Informações", onClick: this.consult.bind(this)});
+    // Testa se o usuário possui permissão para homologar a atividade
+    if(this.auth.hasPermissionTo('MOD_ATV_EDT_OTR_OP_HOM')) result.push(Object.assign({}, this.grid?.BUTTON_EDIT, {onClick: this.edit.bind(this)}));
     // Testa se o usuário possui permissão para excluir a atividade
     if (this.auth.hasPermissionTo("MOD_ATV_EXCL")) result.push({icon: "bi bi-trash", label: "Excluir", onClick: this.delete.bind(this)});
     return result;

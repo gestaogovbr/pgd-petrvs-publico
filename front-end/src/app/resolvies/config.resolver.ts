@@ -35,7 +35,8 @@ export class ConfigResolver implements Resolve<boolean> {
       }
       this.go.config(route.queryParams?.idroute, {
         title: route.data.title,
-        modal: modal
+        modal: modal,
+        path: route.pathFromRoot.map(o => o.routeConfig?.path || "").join('/')
       });
     }
     return result;

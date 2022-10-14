@@ -12,10 +12,11 @@ use App\Models\Covid;
 use App\Models\Afastamento;
 use App\Models\Unidade;
 use App\Traits\AutoDataInicio;
+use App\Traits\HasDataFim;
 
 class Lotacao extends ModelBase
 {
-    use AutoDataInicio;
+    use AutoDataInicio, HasDataFim;
 
     public $fillable = [
         'principal',

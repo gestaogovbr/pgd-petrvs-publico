@@ -18,7 +18,16 @@ export let appInjector: Injector;
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  providers: [
+    {
+      provide: 'ID_GENERATOR_BASE',
+      useFactory: (self: AppComponent, go: NavigateService, util: UtilService) => {
+        return util.onlyAlphanumeric(go.getRouteUrl());
+      },
+      deps: [AppComponent, NavigateService, UtilService]
+    }
+  ]
 })
 export class AppComponent {
   @ViewChild('dialogs', { read: ViewContainerRef }) dialogs?: ViewContainerRef;

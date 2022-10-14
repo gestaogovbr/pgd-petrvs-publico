@@ -1,5 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Injector, Input, OnInit } from '@angular/core';
 import { UtilService } from 'src/app/services/util.service';
+import { ComponentBase } from '../component-base';
 
 export type AlertType = "alert" | "success" | "warning" | "danger";
 
@@ -8,7 +9,7 @@ export type AlertType = "alert" | "success" | "warning" | "danger";
   templateUrl: './top-alert.component.html',
   styleUrls: ['./top-alert.component.scss']
 })
-export class TopAlertComponent implements OnInit {
+export class TopAlertComponent extends ComponentBase implements OnInit {
   @Input() message?: string;
   @Input() type: AlertType = "alert";  
   @Input() closable?: string;
@@ -17,8 +18,9 @@ export class TopAlertComponent implements OnInit {
 
   public lastMessage?: string;
 
-  constructor(public utils: UtilService) {
-    this.id = utils.md5();
+  constructor(public injector: Injector) {
+    super(injector);
+    this.id = this.util.md5();
   }
 
   ngOnInit(): void {

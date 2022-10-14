@@ -12,6 +12,7 @@ import { GridComponent } from '../grid.component';
 export class ColumnHeaderComponent implements OnInit {
   @Input() column: GridColumn = new GridColumn();
   @Input() grid?: GridComponent = undefined;
+  @Input() index: number = 0; 
 
   constructor() { }
 

@@ -18,6 +18,7 @@ export class InputButtonComponent extends InputBase implements OnInit {
   @ViewChild('inputElement') inputElement?: ElementRef;
   @Output() buttonClick = new EventEmitter<Event>();
   @Output() change = new EventEmitter<Event>();
+  @Input() hostClass: string = ""; 
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
   @Input() disabled?: string;

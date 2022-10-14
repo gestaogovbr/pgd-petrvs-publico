@@ -11,8 +11,43 @@
         <column type="text" title="Campo4" field="campo4"></column>
         <column type="options"></column>
     </columns>
-</grid //-->        
+</grid noButtons [form]="form!" [disabled]="formDisabled"//-->
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title">
+  <div class="row">
+    <input-text [size]="2" label="Recurso" controlName="nome_recurso"></input-text>
+    <input-text [size]="4" label="Regra" controlName="regra" labelInfo="Regra associada ao recurso"></input-text>
+    <input-text [size]="4" label="Descrição" controlName="decricao_recurso" labelInfo="Descrição associada ao recurso"></input-text>
+    <input-number number [size]="2" label="Quantidade" controlName="qtd_recurso" labelInfo="Quantidade associada ao recurso"></input-number>
+  </div>
+  <div class="row">
+    <input-text [size]="2" label="Recurso" controlName="nome_recurso"></input-text>
+    <input-text [size]="4" label="Regra" controlName="regra" labelInfo="Regra associada ao recurso"></input-text>
+    <input-text [size]="4" label="Descrição" controlName="decricao_recurso" labelInfo="Descrição associada ao recurso"></input-text>
+    <input-number number [size]="2" label="Quantidade" controlName="qtd_recurso" labelInfo="Quantidade associada ao recurso"></input-number>
+  </div>
 
+  <separator title="Cronograma e progresso"></separator>
+  <div class="row">
+    <grid [hasDelete]="true">
+      <columns>
+          <column [title]="lex.noun('Nome') + ' da Regra'" [template]="tarefaDescricao">
+              <ng-template let-row="row" #tarefaDescricao>
+                  <strong *ngIf="row.tarefa?.nome.length" class="d-block">{{row.tarefa?.nome || ""}}</strong>
+                  {{row.descricao}}
+              </ng-template>
+          </column>
+          <column title="Tipo de recurso" [align]="'center'" [template]="concluido" [editTemplate]="editConcluido" >
+              <ng-template let-row="row" #concluido>
+                  <div class="text-center"><i *ngIf="row.concluido" class="bi bi-check-circle"></i></div>
+              </ng-template>
+              <ng-template let-row="row" #editConcluido>
+                  <input-switch [size]="12" controlName="concluido"></input-switch>
+              </ng-template>
+          </column>
+      </columns>
+    </grid>
+  </div>
+</editable-form>
 
 <!--
 
@@ -26,10 +61,10 @@
 
 Recurso                                         Regra          Descrição                            Quantidade       [ + ]
 ----------------------------------------------+---------------+----------------------------------+--------------+---------
-(i) Nome                                        xxxxxxxxxxxxx  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX      151515,15   [Ed] [Ex] 
+(i) Nome                                        xxxxxxxxxxxxx  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX      151515,15   [Ed] [Ex]
 [(i) Tipo do recurso] [(U) Metro] [($) 121,11]
 
 
-[Select                                  [v]] [Select   [v]] [text                            ]   [    15151,00]  [Ed] [Ex] 
+[Select                                  [v]] [Select   [v]] [text                            ]   [    15151,00]  [Ed] [Ex]
 
 -->

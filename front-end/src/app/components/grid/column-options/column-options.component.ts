@@ -11,6 +11,7 @@ import { GridComponent } from '../grid.component';
 })
 export class ColumnOptionsComponent implements OnInit {
   @ViewChild('optionButton', {static: false}) optionButton?: ElementRef;
+  @Input() index: number = 0;
   @Input() column: GridColumn = new GridColumn();
   @Input() row: any = undefined;
   @Input() grid?: GridComponent;

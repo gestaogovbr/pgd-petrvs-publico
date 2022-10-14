@@ -5,10 +5,12 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\Atividade;
 use App\Traits\AutoDataInicio;
+use App\Traits\HasDataFim;
 
 class TipoAtividade extends ModelBase
 {
-    use AutoDataInicio;
+    use AutoDataInicio, HasDataFim;
+    
     protected $table = 'tipos_atividades';
 
     public $fillable = [

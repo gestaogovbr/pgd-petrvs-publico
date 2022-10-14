@@ -10,11 +10,12 @@ use App\Models\Documento;
 use App\Models\TipoModalidade;
 use App\Models\PlanoAtividade;
 use App\Traits\AutoDataInicio;
+use App\Traits\HasDataFim;
 use Illuminate\Support\Facades\DB;
 
 class Plano extends ModelBase
 {
-    use AutoDataInicio;
+    use AutoDataInicio, HasDataFim;
 
     public $fillable = [
         'numero',

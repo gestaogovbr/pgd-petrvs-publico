@@ -6,11 +6,12 @@ use App\Models\ModelBase;
 use App\Models\Unidade;
 use App\Models\Documento;
 use App\Traits\AutoDataInicio;
+use App\Traits\HasDataFim;
 
 class Programa extends ModelBase
 {
 
-    use AutoDataInicio;
+    use AutoDataInicio, HasDataFim;
     protected $table = 'programas';
 
     public $fillable = [

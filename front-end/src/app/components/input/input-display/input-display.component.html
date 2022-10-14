@@ -1,3 +1,3 @@
 <input-container [labelPosition]="labelPosition" [controlName]="controlName" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
-    <input type="text" #inputElement class="form-control" [readonly]="true" [attr.value]="control ? control.value : value">
+    <input type="text" [id]="generatedId(controlName)" #inputElement class="form-control" [readonly]="true" [attr.value]="control ? control.value : value">
 </input-container>

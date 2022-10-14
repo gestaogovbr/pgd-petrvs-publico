@@ -6,6 +6,7 @@ use App\Models\Documento;
 use App\Services\DocumentoService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
+use Exception;
 
 class DocumentoController extends ControllerBase 
 {

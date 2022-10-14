@@ -22,6 +22,7 @@ export class InputDatetimeComponent extends InputBase implements OnInit {
   @ViewChild('timeInput') timeInput?: ElementRef;
   @Output() buttonClick = new EventEmitter<Event>();
   @Output() change = new EventEmitter<Event>();
+  @Input() hostClass: string = ""; 
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
   @Input() disabled?: string;
@@ -31,9 +32,13 @@ export class InputDatetimeComponent extends InputBase implements OnInit {
   @Input() bold: boolean = false;
   @Input() size: number = 0;
   @Input() loading: boolean = false;
+  @Input() prefix?: string;
+  @Input() sufix?: string;
   @Input() date?: string;
   @Input() time?: string;
+  @Input() time24hours?: string;
   @Input() noIcon?: string;
+  @Input() noIndicator?: string;
   @Input() form?: FormGroup;
   @Input() source?: any;
   @Input() path?: string;
@@ -60,10 +65,18 @@ export class InputDatetimeComponent extends InputBase implements OnInit {
     return this.time !== undefined;
   }
 
+  public get isTime24hours(): boolean {
+    return this.time24hours !== undefined;
+  }
+  
   public get isNoIcon(): boolean {
     return this.noIcon !== undefined;
   }
 
+  public get isNoIndicator(): boolean {
+    return this.noIndicator !== undefined;
+  }
+  
   ngOnInit(): void {
     super.ngOnInit();
   }
