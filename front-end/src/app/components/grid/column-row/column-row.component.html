@@ -18,8 +18,8 @@
 <div *ngIf="column.isColumnEditable" class="grid-column-editable-options" [class.grid-column-editing]="column.editing">
     <i *ngIf="!column.editing; else columnEditing" role="button" class="bi bi-pencil-square" (click)="onEdit($event)"></i>
     <ng-template #columnEditing>
-        <i *ngIf="isEditing" class="bi bi-check-square" role="button" (click)="onSave($event)"></i><br>
-        <i *ngIf="isEditing" class="bi bi-x-square" role="button" (click)="onCancel($event)"></i>
+        <i *ngIf="isEditing" [id]="grid?.getId('_' + index + '_' + row.id) + '_save'" class="bi bi-check-square" role="button" (click)="onSave($event)"></i><br>
+        <i *ngIf="isEditing" [id]="grid?.getId('_' + index + '_' + row.id) + '_cancel'" class="bi bi-x-square" role="button" (click)="onCancel($event)"></i>
     </ng-template>
 </div>
 <div *ngIf="column.isColumnEditable && isEditing && saving" class="text-center d-flex align-items-center justify-content-center grid-column-saving">

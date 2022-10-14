@@ -1,8 +1,8 @@
 <input-container [labelPosition]="['right', 'left'].includes(labelPosition) ? 'none' : labelPosition" [controlName]="controlName" [control]="control" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
     <div [class]="containerClass">
-        <label *ngIf="labelPosition == 'left'" class="form-check-label" [class.me-3]="scale == 'small'" [class.me-5]="scale == 'medium'" for="{{generatedId}}">{{label}}</label>
-        <input *ngIf="viewInit" [class]="'form-check-input ' + scaleClass" type="checkbox" #checkbox [id]="generatedId" (change)="onChange($event)" [attr.disabled]="!isDisabled ? undefined : true">
-        <label *ngIf="labelPosition == 'right'" class="form-check-label ms-2" for="{{generatedId}}">{{label}}</label>
+        <label *ngIf="labelPosition == 'left'" class="form-check-label" [class.me-3]="scale == 'small'" [class.me-5]="scale == 'medium'" for="{{generatedId(controlName)}}">{{label}}</label>
+        <input *ngIf="viewInit" [class]="'form-check-input ' + scaleClass" type="checkbox" #checkbox [id]="generatedId(controlName)" (change)="onChange($event)" [attr.disabled]="!isDisabled ? undefined : true">
+        <label *ngIf="labelPosition == 'right'" class="form-check-label ms-2" for="{{generatedId(controlName)}}">{{label}}</label>
     </div>
 </input-container>
 

@@ -8,10 +8,11 @@ use App\Models\Demanda;
 use App\Models\Unidade;
 use App\Models\TipoAtividade;
 use App\Models\TipoProcesso;
+use App\Traits\HasDataFim;
 
 class Atividade extends ModelBase
 {
-    use AutoDataInicio;
+    use AutoDataInicio, HasDataFim;
     
     protected $with = [];
     

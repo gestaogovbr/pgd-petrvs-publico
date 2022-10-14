@@ -6,10 +6,11 @@ use App\Models\ModelBase;
 use App\Models\DemandaAvaliacao;
 use App\Models\TipoAvaliacaoJustificativa;
 use App\Traits\AutoDataInicio;
+use App\Traits\HasDataFim;
 
 class TipoAvaliacao extends ModelBase
 {
-    use AutoDataInicio;
+    use AutoDataInicio, HasDataFim;
     protected $table = 'tipos_avaliacoes';
 
     public $fillable_relations = [

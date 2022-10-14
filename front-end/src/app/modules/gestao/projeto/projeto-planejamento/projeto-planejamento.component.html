@@ -48,22 +48,33 @@
 </ng-template>
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
     <tabs #planejamentoTabs display right>
-        <tab key="GANTT" label="Principal"></tab>
-        <tab key="CALENDARIO" label="Calendário"></tab>
-        <tab key="BURNDOWN" label="Burndown"></tab>
-        <tab key="KANBAN" label="Quadro"></tab>
+        <tab key="GANTT" label="Principal" icon="bi bi-bar-chart-steps"></tab>
+        <tab key="CALENDARIO" label="Calendário" icon="bi bi-calendar-week"></tab>
+        <tab key="BURNDOWN" label="Burndown" icon="bi bi-graph-down"></tab>
+        <tab key="KANBAN" label="Quadro" icon="bi bi-card-heading"></tab>
     </tabs>
     <!-- Tab Gantt -->
     <div [class.d-none]="planejamentoTabs.active != 'GANTT'">
         <gantt [project]="project" [height]="ganttHeight"></gantt>
     </div>
     <!-- Tab Calendário -->
-    <div *ngIf="planejamentoTabs.active == 'CALENDARIO'" class="d-block text-center" style="min-height: 400px; max-width: 1000px; margin: auto;">
-        <full-calendar *ngIf="afterLoadData" [options]="calendarOptions"></full-calendar>
+    <!--div *ngIf="planejamentoTabs.active == 'CALENDARIO'" class="d-block text-center" style="min-height: 400px; max-width: 1000px; margin: auto;"/-->
+    <div *ngIf="planejamentoTabs.active == 'CALENDARIO'" class="row" style="min-height: 400px;">
+        <div class="col-md-6">
+            <projeto-tarefa-filter [projeto]="entity" [change]="onCalendarioFilterChange.bind(this)"></projeto-tarefa-filter>
+        </div>
+        <div class="col-md-6">
+            <full-calendar *ngIf="afterLoadData" [options]="calendarOptions"></full-calendar>
+        </div>
     </div>
     <!-- Tab Burndown -->
-    <div *ngIf="planejamentoTabs.active == 'BURNDOWN'">
-        ....
+    <div *ngIf="planejamentoTabs.active == 'BURNDOWN'" class="row">
+        <div class="col-md-6">
+            <projeto-tarefa-filter [projeto]="entity" [change]="onCalendarioFilterChange.bind(this)"></projeto-tarefa-filter>
+        </div>
+        <div class="col-md-6">
+            <img [src]="gb.getResourcePath('assets/images/burndown-example.png')" style="width: 100%">
+        </div>        
     </div>
     <!-- Tab Kanban -->
     <div *ngIf="planejamentoTabs.active == 'KANBAN'">

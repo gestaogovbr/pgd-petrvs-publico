@@ -1,1 +1,1 @@
-docker exec -it php /bin/sh
+docker exec -it php /bin/bash

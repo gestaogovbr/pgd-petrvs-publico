@@ -36,6 +36,7 @@ use App\Http\Controllers\TarefaController;
 use App\Http\Controllers\MaterialServicoController;
 use App\Http\Controllers\DemandaEntregaController;
 use App\Http\Controllers\ProjetoController;
+use App\Http\Controllers\RotinaDiariaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,6 +65,9 @@ function defaultRoutes($controllerClass, $capacidades = []) {
 }
 
 $actions = config('petrvs')['actions']['api'];
+
+/* Rotinas diárias */
+Route::get('/rotinas-diarias', [RotinaDiariaController::class, 'run']);
 
 /* Login */
 Route::post('/login-user-password', [LoginController::class, $actions['login-user-password']]);

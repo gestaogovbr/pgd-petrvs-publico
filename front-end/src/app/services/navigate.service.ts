@@ -19,6 +19,7 @@ export type RouteMetadata = {
   source?: FullRoute, /* Rota de prioridade intermediaria, origem alimentado automaticamente pelo Navigate Service */
   default?: FullRoute, /* Roda de menor prioridade, caso não tenha nenhuma rota acima, voltará para a rota especificada aqui */
   destination?: FullRoute, /* Destino da rota (Rota atual) */
+  path?: string, /* Path como definido nas rotas (Ex.: /cadastros/afastamento/:id/edit) */
   modalResult?: any, /* Utilizado caso quei passar algum valor para o modalClose */
   filterSnapshot?: any, /* Snapshot dos form de filter */
   querySnapshot?: any, /* Snapshot da query do grid */
@@ -109,6 +110,14 @@ export class NavigateService {
     return this.routes.find(x => x.id == idroute)?.metadata;
   }
 
+  public getRouteUrl(): string {
+    return this.router.url.split('?')[0];
+  }
+
+  public getStackRouteUrl(): string {
+    return this.routes.map(x => x.path || x.destination?.route.join("/") || "").join(";");
+  }
+
   public clearRoutes() {
     this.routes = [];
     this.dialogs.closeAll();
@@ -155,6 +164,7 @@ export class NavigateService {
     if(route) {
       if(config.title) route.title = config.title;
       if(config.modal) route.modal = config.modal;
+      if(config.path) route.path = config.path;
     }
   }
 

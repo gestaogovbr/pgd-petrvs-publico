@@ -1,21 +1,21 @@
 <toolbar *ngIf="title.length || toolbarButtons.length" [title]="title" [buttons]="toolbarButtons"></toolbar>
-<div *ngIf="error?.length" class="alert alert-danger mt-2" role="alert">
+<div *ngIf="error?.length" [id]="generatedId(title) + '_error'" class="alert alert-danger mt-2" role="alert">
     {{error}}
 </div>
-<form class="mx-2 mt-2" [formGroup]="form!">
+<form class="mx-2 mt-2" [id]="generatedId(title) + '_form'" [formGroup]="form!">
     <ng-content></ng-content>
 </form>
 <div *ngIf="!isNoButtons" class="d-flex flex-row-reverse mt-3">
     <div class="btn-group float-right" role="group" aria-label="Opções">
-        <button *ngFor="let btn of buttons" type="button" [class]="'btn ' + (btn.color || 'btn-outline-primary')" (click)="onButtonClick(btn)">
+        <button *ngFor="let btn of buttons" [id]="generatedId(title + btn.label + btn.icon) + '_button'" type="button" [class]="'btn ' + (btn.color || 'btn-outline-primary')" (click)="onButtonClick(btn)">
           <i *ngIf="btn.icon?.length" [class]="btn.icon"></i> {{btn.label || ""}}
         </button>
-        <button *ngIf="hasSubmit && !disabled" type="button" [disabled]="submitting" class="btn btn-outline-success" (click)="onSubmit()">
+        <button *ngIf="hasSubmit && !disabled" [id]="generatedId(title) + '_submit'" type="button" [disabled]="submitting" class="btn btn-outline-success" (click)="onSubmit()">
             <span *ngIf="submitting" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             <i *ngIf="!submitting" [class]="form!.valid && !forceInvalid ? 'bi-check-circle' : 'bi-exclamation-circle'"></i>
             Gravar
         </button>
-        <button *ngIf="hasCancel" type="button" class="btn btn-outline-danger" (click)="onCancel()">
+        <button *ngIf="hasCancel" type="button" [id]="generatedId(title) + '_cancel'" class="btn btn-outline-danger" (click)="onCancel()">
             <i class="bi bi-dash-circle"></i>
             {{disabled ? 'Fechar' : 'Cancelar'}}
         </button>

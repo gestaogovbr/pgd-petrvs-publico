@@ -9,6 +9,7 @@ import { DialogService } from 'src/app/services/dialog.service';
 import { IFormGroupHelper } from 'src/app/services/form-helper.service';
 import { FullRoute, NavigateService, RouteMetadata } from 'src/app/services/navigate.service';
 import { UtilService } from 'src/app/services/util.service';
+import { ComponentBase } from '../component-base';
 import { ToolbarButton, ToolbarComponent } from '../toolbar/toolbar.component';
 import { ColumnComponent } from './column/column.component';
 import { ColumnsComponent } from './columns/columns.component';
@@ -40,7 +41,7 @@ export class GridGroupSeparator {
     }
   ]
 })
-export class GridComponent implements OnInit {
+export class GridComponent extends ComponentBase implements OnInit {
   //@ContentChildren(ColumnComponent, { descendants: true }) columnsRef?: QueryList<ColumnComponent>;
   @ContentChild(ColumnsComponent) columnsRef?: ColumnsComponent;
   @ContentChild(ReportComponent) reportRef?: ReportComponent;
@@ -53,6 +54,7 @@ export class GridComponent implements OnInit {
   @Input() icon: string = "";
   @Input() selectable: boolean = false;
   @Input() loadList?: (rows?: Base[]) => Promise<void> | void;
+  @Input() multiselectChange?: (multiselected: IIndexable) => void;
   @Input() add?: () => Promise<IIndexable | undefined | void>;
   @Input() load?: (form: FormGroup, row: any) => Promise<void>;
   @Input() remove?: (row: any) => Promise<boolean | undefined | void>;
@@ -152,9 +154,7 @@ export class GridComponent implements OnInit {
   public columns: GridColumn[] = [];
   public toolbarButtons: ToolbarButton[] = [];
   public initialButtons?: ToolbarButton[];
-  public cdRef: ChangeDetectorRef;
   public go: NavigateService;
-  public util: UtilService;
   public dialog: DialogService;
   public selected?: Base | IIndexable;
   public editing?: Base | IIndexable;
@@ -237,14 +237,17 @@ export class GridComponent implements OnInit {
   };
 
   constructor(public injector: Injector) {
-    this.cdRef = this.injector.get<ChangeDetectorRef>(ChangeDetectorRef);
+    super(injector);
     this.go = this.injector.get<NavigateService>(NavigateService);
-    this.util = this.injector.get<UtilService>(UtilService);
     this.dialog = this.injector.get<DialogService>(DialogService);
     this.dao = new DaoBaseService<Base>("", injector);
   }
 
   ngOnInit(): void {
+  }
+
+  public getId(relativeId?: string) {
+    return this.generatedId('_grid_' + this.controlName + this.title + relativeId);
   }
 
   ngAfterContentInit(): void {
@@ -347,7 +350,7 @@ export class GridComponent implements OnInit {
   }*/
 
   public refreshMultiselectToolbar() {
-    this.toolbarRef!.buttons = this.multiselecting ? [this.BUTTON_MULTISELECT, ...(this.multiselectMenu || []), ...(this.dynamicMultiselectMenu ? this.dynamicMultiselectMenu(this.multiselected) : [])] : [...(this.initialButtons || []), ...this.toolbarButtons];
+    if(this.toolbarRef) this.toolbarRef.buttons = this.multiselecting ? [this.BUTTON_MULTISELECT, ...(this.multiselectMenu || []), ...(this.dynamicMultiselectMenu ? this.dynamicMultiselectMenu(this.multiselected) : [])] : [...(this.initialButtons || []), ...this.toolbarButtons];
   }
 
   public enableMultiselect(enable: boolean) {
@@ -395,6 +398,7 @@ export class GridComponent implements OnInit {
     this.BUTTON_MULTISELECT.badge = this.multiselectedCount ? this.multiselectedCount.toString() : undefined;
     this.refreshMultiselectToolbar();
     this.cdRef.detectChanges();
+    if(this.multiselectChange) this.multiselectChange(this.multiselected);
   }
 
   public onUnselectAllClick() {
@@ -402,6 +406,7 @@ export class GridComponent implements OnInit {
     this.BUTTON_MULTISELECT.badge = undefined;
     this.refreshMultiselectToolbar();
     this.cdRef.detectChanges();
+    if(this.multiselectChange) this.multiselectChange(this.multiselected);
   }
 
   public isMultiselectChecked(row: any) {
@@ -414,6 +419,14 @@ export class GridComponent implements OnInit {
     } else {
       if(this.multiselected.hasOwnProperty(row.id)) delete this.multiselected[row.id];
     }
+    this.BUTTON_MULTISELECT.badge = this.multiselectedCount ? this.multiselectedCount.toString() : undefined;
+    this.refreshMultiselectToolbar();
+    this.cdRef.detectChanges();
+    if(this.multiselectChange) this.multiselectChange(this.multiselected);
+  }
+
+  public setMultiselectSelectedItems(items: IIndexable[]) {
+    items.forEach(row => this.multiselected[row.id] = row);
     this.BUTTON_MULTISELECT.badge = this.multiselectedCount ? this.multiselectedCount.toString() : undefined;
     this.refreshMultiselectToolbar();
     this.cdRef.detectChanges();

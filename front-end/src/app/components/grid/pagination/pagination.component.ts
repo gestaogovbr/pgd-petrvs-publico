@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, Injector, Input, OnInit } from '@angular/core';
 import { QueryContext } from 'src/app/dao/query-context';
 import { Base } from 'src/app/models/base.model';
+import { ComponentBase } from '../../component-base';
 
 export type PaginationType = "pages" | "infinity";
 
@@ -9,7 +10,7 @@ export type PaginationType = "pages" | "infinity";
   templateUrl: './pagination.component.html',
   styleUrls: ['./pagination.component.scss']
 })
-export class PaginationComponent implements OnInit {
+export class PaginationComponent extends ComponentBase implements OnInit {
   @Input() set query(value: QueryContext<Base> | undefined) {
     this._query = value;
     if(this.query) this.query.cumulate = (this.type == "infinity");
@@ -25,13 +26,12 @@ export class PaginationComponent implements OnInit {
   get type(): PaginationType {
     return this._type;
   }
-  public cdRef: ChangeDetectorRef;
 
   private _query?: QueryContext<Base>;
   private _type: PaginationType = "infinity";
 
   constructor(public injector: Injector) { 
-    this.cdRef = this.injector.get<ChangeDetectorRef>(ChangeDetectorRef);
+    super(injector);
   }
 
   ngOnInit(): void {

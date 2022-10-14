@@ -6,10 +6,11 @@ use App\Models\ModelBase;
 use App\Models\Usuario;
 use App\Models\Capacidade;
 use App\Traits\AutoDataInicio;
+use App\Traits\HasDataFim;
 
 class Perfil extends ModelBase
 {
-    use AutoDataInicio;
+    use AutoDataInicio, HasDataFim;
 
     public $fillable = [
         'id',

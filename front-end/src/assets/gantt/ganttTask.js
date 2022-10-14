@@ -36,10 +36,10 @@ function TaskFactory(ganttComponet) {
   this.build = function (id, name, code, level, start, duration, collapsed) {
     // Set at beginning of day
     /* Petrvs */
-    var task = new Task(id, name, code, level, adjusted_start, calculated_end, duration, collapsed);
+    var task = new Task(id, name, code, level, start, start, duration, collapsed);
     task.ganttComponet = this.ganttComponet;
     task.start = task.computeStart(start);
-    task.end = task.computeEndByDuration(adjusted_start, duration);
+    task.end = task.computeEndByDuration(task.start, duration);
     return task;
   };
 
@@ -99,7 +99,7 @@ Task.prototype.computeEnd = function (end) { /* end: timestemp, return timestemp
   return this.ganttComponet ? this.ganttComponet.calcPeriod(this, undefined, end).end.getTime() : computeEnd(end);
 }
 Task.prototype.computeDuration = function (start, end) { /* start: timestemp, end: timestemp, return timestemp */
-  return this.ganttComponet ? this.ganttComponet.calcPeriod(this, start, end).duration.getTime() : recomputeDuration(start, end);
+  return this.ganttComponet ? this.ganttComponet.calcPeriod(this, start, end).duration : recomputeDuration(start, end);
 }
 Task.prototype.incrementDateByDuration = function (date, duration) { /* data: Date, duration: number, result Date */
   date.setTime(duration > 0 ? this.computeEndByDuration(date.getTime(), duration) : this.computeStartByDuration(date.getTime(), Math.abs(duration)));

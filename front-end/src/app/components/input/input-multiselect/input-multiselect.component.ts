@@ -18,6 +18,7 @@ import { InputSelectComponent } from '../input-select/input-select.component';
 })
 export class InputMultiselectComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group my-2';
+  @Input() hostClass: string = ""; 
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
   @Input() disabled?: string;

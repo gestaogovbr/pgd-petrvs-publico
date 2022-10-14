@@ -15,3 +15,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     padding: 0px;
     margin: 0px;
 }
+
+.no-indicator::-webkit-calendar-picker-indicator {
+    display: none;
+}

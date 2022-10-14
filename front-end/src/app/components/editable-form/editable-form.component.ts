@@ -1,9 +1,8 @@
 import { NavigateService } from 'src/app/services/navigate.service';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ContentChildren } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ContentChildren, Injector } from '@angular/core';
 import { FormBuilder, FormGroup, FormGroupDirective } from '@angular/forms';
 import { GridComponent } from '../grid/grid.component';
-import { InputBase } from '../input/input-base';
 import { InputButtonComponent } from '../input/input-button/input-button.component';
 import { InputColorComponent } from '../input/input-color/input-color.component';
 import { InputContainerComponent } from '../input/input-container/input-container.component';
@@ -19,6 +18,7 @@ import { InputSwitchComponent } from '../input/input-switch/input-switch.compone
 import { InputTextComponent } from '../input/input-text/input-text.component';
 import { InputTextareaComponent } from '../input/input-textarea/input-textarea.component';
 import { InputTimerComponent } from '../input/input-timer/input-timer.component';
+import { ComponentBase } from '../component-base';
 
 @Component({
   selector: 'editable-form',
@@ -36,7 +36,7 @@ import { InputTimerComponent } from '../input/input-timer/input-timer.component'
     }
   ]
 })
-export class EditableFormComponent implements OnInit {
+export class EditableFormComponent extends ComponentBase implements OnInit {
   @ViewChild(FormGroupDirective) formDirective?: FormGroupDirective;
   @ContentChildren(GridComponent, { descendants: true }) grids!: QueryList<GridComponent>;
   @ContentChildren(InputContainerComponent, { descendants: true }) inputContainers!: QueryList<InputContainerComponent>;
@@ -76,6 +76,8 @@ export class EditableFormComponent implements OnInit {
   private _disabled: boolean = false;
 
   /* Propriedades publicas */
+  public fb: FormBuilder;
+  public go: NavigateService;
   public submitting: boolean = false;
   public set error(error: string | undefined) {
     this._error = error;
@@ -89,11 +91,11 @@ export class EditableFormComponent implements OnInit {
     return this.noButtons !== undefined;
   }
 
-  constructor(
-    private fb: FormBuilder,
-    private go: NavigateService,
-    private cdRef: ChangeDetectorRef
-  ) { }
+  constructor(injector: Injector) {
+    super(injector);
+    this.fb = injector.get<FormBuilder>(FormBuilder);
+    this.go = injector.get<NavigateService>(NavigateService);
+  }
 
   ngOnInit(): void {
   }

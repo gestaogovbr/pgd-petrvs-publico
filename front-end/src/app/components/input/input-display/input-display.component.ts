@@ -16,6 +16,7 @@ import { InputBase, LabelPosition } from '../input-base';
 export class InputDisplayComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';
   @ViewChild('inputElement') inputElement?: ElementRef;
+  @Input() hostClass: string = ""; 
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
   @Input() disabled?: string;

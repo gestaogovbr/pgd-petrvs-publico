@@ -17,6 +17,7 @@ export class InputTextareaComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';
   @ViewChild('inputElement') inputElement?: ElementRef;
   @Output() change = new EventEmitter<Event>();
+  @Input() hostClass: string = ""; 
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
   @Input() disabled?: string;

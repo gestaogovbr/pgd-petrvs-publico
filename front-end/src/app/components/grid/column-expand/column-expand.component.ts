@@ -1,8 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Injector, Input, OnInit } from '@angular/core';
 import { AbstractControl, ControlContainer, FormGroupDirective } from '@angular/forms';
 import { IIndexable } from 'src/app/models/base.model';
 import { LookupService } from 'src/app/services/lookup.service';
 import { UtilService } from 'src/app/services/util.service';
+import { ComponentBase } from '../../component-base';
 import { ColumnType, GridColumn } from '../grid-column';
 import { GridComponent } from '../grid.component';
 
@@ -17,11 +18,13 @@ import { GridComponent } from '../grid.component';
     }
   ]  
 })
-export class ColumnExpandComponent implements OnInit {
+export class ColumnExpandComponent extends ComponentBase implements OnInit {
   @Input() column: GridColumn = new GridColumn();
   @Input() row: any = undefined;
   @Input() grid?: GridComponent;
+  @Input() index: number = 0;
 
+  public lookup: LookupService;
   public saving: boolean = false;
   public set expanded(value: boolean) {
     if(this._expanded != value) {
@@ -35,10 +38,10 @@ export class ColumnExpandComponent implements OnInit {
 
   private _expanded: boolean = false;
 
-  constructor(
-    public lookup: LookupService,
-    public util: UtilService
-  ) { }
+  constructor(injector: Injector) {
+    super(injector);
+    this.lookup = injector.get<LookupService>(LookupService);
+  }
 
   ngOnInit(): void {
   }
