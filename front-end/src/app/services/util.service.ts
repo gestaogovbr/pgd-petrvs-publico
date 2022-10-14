@@ -1,4 +1,4 @@
-import { Injectable, Injector } from '@angular/core';
+import { Inject, Injectable, Injector, Renderer2, RendererFactory2 } from '@angular/core';
 import { IIndexable } from '../models/base.model';
 import { Md5 } from 'ts-md5/dist/md5';
 import { LookupItem } from './lookup.service';
@@ -6,6 +6,7 @@ import { Usuario } from '../models/usuario.model';
 import * as moment from 'moment';
 import { DaoBaseService } from '../dao/dao-base.service';
 import { MaskApplierService } from 'ngx-mask';
+import { DOCUMENT } from '@angular/common';
 
 export type Interval = {start: Date | number, end: Date | number};
 export type DateInterval = {start: Date, end: Date};
@@ -20,10 +21,12 @@ export class UtilService {
   public static readonly TIME_VALIDATE = /^([01][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/;
 
   public maskService: MaskApplierService;
+  private renderer: Renderer2;
 
-  constructor(public injector: Injector) {
+  constructor(public injector: Injector, @Inject(DOCUMENT) private document: Document, rendererFactory: RendererFactory2) {
     this.maskService = injector.get<MaskApplierService>(MaskApplierService);
     this.maskService.thousandSeparator = ".";
+    this.renderer = rendererFactory.createRenderer(null, null);
   }
 
   public copyToClipboard(text: string){
@@ -494,5 +497,14 @@ export class UtilService {
 
   public maxDate(...dates: (Date | undefined | null)[]): Date | undefined | null {
     return dates.reduce(function (a, b) { return !a || !b ? a || b : (a.getTime() > b.getTime() ? a : b); });
+  }
+
+
+  public loadScript(src: string): any {
+    const script = this.renderer.createElement('script');
+    script.type = 'text/javascript';
+    script.src = src;
+    this.renderer.appendChild(this.document.body, script);
+    return script;
   }
 }

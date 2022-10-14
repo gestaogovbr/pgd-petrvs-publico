@@ -34,7 +34,6 @@ export class AuthService {
   public capacidades: string[] = [];
   public apiToken?: string;
   public unidade?: Unidade;
-  public gapiLoad: Subject<gapi.auth2.GoogleAuth> = new Subject<gapi.auth2.GoogleAuth>();
   public unidades?: Unidade[];
 
   private _logging: boolean = false;
@@ -75,7 +74,7 @@ export class AuthService {
   private _usuarioDaoService?: UsuarioDaoService;
   public get usuarioDaoService(): UsuarioDaoService { this._usuarioDaoService = this._usuarioDaoService || this.injector.get<UsuarioDaoService>(UsuarioDaoService); return this._usuarioDaoService };
 
-  public googleAuth?: gapi.auth2.GoogleAuth;
+
 
   constructor(public injector: Injector) { }
 
@@ -195,8 +194,8 @@ export class AuthService {
     }, redirectTo);
   }
 
-  public authGapi(tokenId: string, redirectTo?: FullRoute) {
-    this.googleApi.tokenId = tokenId;
+  public authGoogle(tokenId: string, redirectTo?: FullRoute) {
+    //this.googleApi.tokenId = tokenId;
     return this.logIn("GAPI", "login-gapi-token", {
       token: tokenId
     }, redirectTo);
@@ -205,9 +204,10 @@ export class AuthService {
   public authSession(): Promise<boolean> {
     this.apiToken = localStorage.getItem("petrvs_api_token") || undefined;
     return this.logIn("SESSION", "login-session", {}).then(result => {
-      if(!result && this.googleAuth && this.googleAuth.isSignedIn.get()) {
-        return this.authGapi(this.googleAuth.currentUser.get().getAuthResponse().id_token);
-      }
+      
+      // if(!result && this.googleAuth && this.googleAuth.isSignedIn.get()) {
+      //   return this.authGapi(this.googleAuth.currentUser.get().getAuthResponse().id_token);
+      // }
       return result;
     });
   }
@@ -218,19 +218,9 @@ export class AuthService {
     return routerTo;
   }
 
-  public loadGapi() {
-    if(gapiConfig.client_id?.length && !this.googleAuth) {
-      console.warn("[ATENÇÃO]: Lembre-se que a biblioteca GAPI não funciona corretamete com o depurador aberto.");
-      this.googleApi.load().then(googleAuth => {
-        this.googleAuth = googleAuth;
-        this.gapiLoad.next(googleAuth);
-      }).catch(error => {
-        if (this.fail) this.fail(error.message ? error.message : error);
-      }).finally(() => {
-        if (this.gb.refresh) this.gb.refresh();
-      });
-    }
-  }
+  // public loadGapi() {
+  //   this.googleApi.initialize(false).then()
+  // }
 
   private logIn(kind: AuthKind, route: string, params: any, redirectTo?: FullRoute): Promise<boolean> {
     let deviceName = this.gb.isExtension ? "EXTENSION" : "BROWSER";
@@ -274,9 +264,9 @@ export class AuthService {
       }
       /* Garante logout do GAPI */
       if(gapiConfig.client_id?.length) {
-        this.googleApi.load().then(googleAuth => {
-          if(this.kind == "GAPI" || googleAuth.isSignedIn.get()) {
-            this.googleApi.logOut().then(clearLogin);
+        this.googleApi.initialize().then(googleAuth => {
+          if(this.kind == "GAPI") {
+            this.googleApi.signOut().then(clearLogin);
           }
         });
       } else {
