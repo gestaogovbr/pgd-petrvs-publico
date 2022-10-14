@@ -7,6 +7,7 @@ import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { Projeto } from 'src/app/models/projeto.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
+import { ProjetoService } from '../projeto.service';
 
 export type EnvolvidoListItem = {
   url: string;
@@ -23,12 +24,14 @@ export class ProjetoListComponent extends PageListBase<Projeto, ProjetoDaoServic
   
   public usuarioDao: UsuarioDaoService;
   public unidadeDao: UnidadeDaoService;
+  public projetoService: ProjetoService;
 
   constructor(public injector: Injector) {
     super(injector, Projeto, ProjetoDaoService);
     /* Inicializações */
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    this.projetoService = injector.get<ProjetoService>(ProjetoService);
     this.title = this.lex.noun("Projeto", true);
     this.code = "MOD_PROJ";
     this.join = ["alocacoes.recurso.usuario", "alocacoes.recurso.unidade", "alocacoes.regras.regra"];
@@ -65,19 +68,19 @@ export class ProjetoListComponent extends PageListBase<Projeto, ProjetoDaoServic
     return result;
   }
 
-  public getEnvolvidos(projeto: Projeto, metadata: any): EnvolvidoListItem[] { // TODO: Receber os dados de envolvidos nos metadados
+  public getEnvolvidos(projeto: Projeto, metadata: any): EnvolvidoListItem[] {
     let result: EnvolvidoListItem[] = [];
     
     for(let envolvido of projeto.alocacoes?.filter(x => x.envolvido) || []) {
       if(envolvido.recurso?.usuario) {
         result.push({
           url: envolvido.recurso.usuario.url_foto || "assets/images/projetos/usuario.png",
-          hint: "Usuario: " + envolvido.recurso.usuario.nome  // + (envolvido.regra ? "\n(" + envolvido.regra.nome + ")" : "") TODO: Colocar regras
+          hint: "Usuario: " + envolvido.recurso.usuario.nome + this.projetoService.getNomesRegras(envolvido, "\n(", ")")
         });
       } else if (envolvido.recurso?.unidade) {
         result.push({
           url: "assets/images/projetos/unidade.png",
-          hint: "Usuario: " + envolvido.recurso.unidade.nome // + (envolvido.regra ? "\n(" + envolvido.regra.nome + ")" : "") TODO: Colocar regras
+          hint: "Usuario: " + envolvido.recurso.unidade.nome + this.projetoService.getNomesRegras(envolvido, "\n(", ")")
         });
       }
     }

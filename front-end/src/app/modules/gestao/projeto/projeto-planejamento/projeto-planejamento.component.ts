@@ -322,7 +322,7 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
   public getRecursos(tarefa: ProjetoTarefa, metadata: any): RecursoListItem[] {
     let result: RecursoListItem[] = [];
     for(let alocacao of tarefa.alocacoes || []) {
-      const regra = ""; //alocacao.regra ? "\n(" + alocacao.regra.nome + ")" : ""; /* TODO: Obter lista de regras */
+      const regra = this.projetoService.getNomesRegras(alocacao, "\n(", ")");
       const nome = alocacao.recurso?.nome?.length ? alocacao.recurso.nome + "\n" : "";
       switch(alocacao.recurso?.tipo) {
         case 'HUMANO': result.push({ url: alocacao.recurso.usuario?.url_foto || "assets/images/projetos/usuario.png", hint: nome + "Usuario: " + (alocacao.recurso.usuario?.nome || "(DESCONHECIDO)") + regra }); break;
@@ -422,7 +422,7 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
       return (alocacoes || []).map(alocacao => new GanttAssignment({
         id: alocacao.id,
         resource_id: alocacao.recurso_id,
-        //role_id: alocacao.regra_id, /* TODO: Alterar para aceitar mais de uma rule */
+        roles_ids: alocacao.regras?.map(x => x.regra_id) || [],
         description: toAssignmentDescription(alocacao),
         quantity: (alocacao as any).quantidade || 1
       }));
