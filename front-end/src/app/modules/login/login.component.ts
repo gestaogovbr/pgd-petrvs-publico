@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormHelperService } from 'src/app/services/form-helper.service';
 import { GlobalsService } from 'src/app/services/globals.service';
-import { GoogleApiService } from 'src/app/services/google-api.service';
+import { GoogleApiService, SocialUser } from 'src/app/services/google-api.service';
 import { FullRoute, NavigateService } from 'src/app/services/navigate.service';
 import { UtilService } from 'src/app/services/util.service';
 import { ModalPage } from '../base/modal-page';
@@ -81,7 +81,7 @@ export class LoginComponent implements OnInit, ModalPage {
     (async ()=> {
       // Inicializa Google Auth e cria o botão na tela
       if(this.globals.hasGoogleLogin) {
-        let res = await this.googleApi.initialize(false);//.then((res: any) => {
+        let res = await this.googleApi.initialize(true);//.then((res: any) => {
         res.renderButton(document.getElementById('gbtn') as HTMLElement, {
           size: 'large',
           width: 320,
@@ -90,14 +90,15 @@ export class LoginComponent implements OnInit, ModalPage {
       }
       let result = false;
       if(!this.noSession) result = await this.auth.authSession();
+
       /* verifica tambem se algum dos login (Google, Microsoft, etc), estão com sessão ativas */
       if(!result) {
         if(this.globals.hasGoogleLogin) {
-          var token = "";
+          var socialUser;
           try {
-            token = await this.googleApi.getAccessToken();
+            socialUser = await this.googleApi.getLoginStatus();            
           } catch (error) {}
-          if(token?.length) this.auth.authGoogle(token);
+          if(socialUser?.idToken) this.auth.authGoogle(socialUser?.idToken);
         }
         if(this.globals.hasAzureLogin) {
           // TODO: Implementa login automático

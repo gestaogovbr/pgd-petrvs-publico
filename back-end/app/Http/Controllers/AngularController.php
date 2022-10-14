@@ -23,7 +23,7 @@ class AngularController extends Controller
                 "azure" => $petrvs_config["login"]["azure"],
                 "institucional" => $petrvs_config["login"]["institucional"],
                 "firebase" => $petrvs_config["login"]["firebase"],
-                "user_password" => $petrvs_config["login"]["user_password"]
+                "user_password" => $petrvs_config["login"]["user-password"]
             ]
         ]);
         return view('angular', ["host" => $app_config["url"], "config" => $config]);
