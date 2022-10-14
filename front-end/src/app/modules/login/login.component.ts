@@ -29,6 +29,7 @@ export class LoginComponent implements OnInit, ModalPage {
   public modalRoute?: ActivatedRouteSnapshot;
   public modalInterface: boolean = true;
   public modalWidth: number = 400;
+  public noSession: boolean = false;
   public titleSubscriber: Subject<string> = new Subject<string>();
 
   constructor(
@@ -72,20 +73,37 @@ export class LoginComponent implements OnInit, ModalPage {
         let routerTo = JSON.parse(params["redirectTo"]);
         this.redirectTo = routerTo.route[0] == "login" ? routerTo : undefined;
       }
+      this.noSession = !!params["noSession"];
     });
-
-
-    // Inicializa Google Auth e cria o botão na tela
-    if(this.globals.hasGoogleLogin) {
-      this.googleApi.initialize(false).then((res: any) => {
+    /* Registra listner para logins com popup que necessitam de retorno */
+    this.auth.registerPopupLoginResultListener();
+    /* Verifica se o usuário não já está logado (login-session), e caso não esteja verifica tambem se algum dos login (Google, Microsoft, etc), estão com sessão ativas e tenta logar com essa sessão */
+    (async ()=> {
+      // Inicializa Google Auth e cria o botão na tela
+      if(this.globals.hasGoogleLogin) {
+        let res = await this.googleApi.initialize(false);//.then((res: any) => {
         res.renderButton(document.getElementById('gbtn') as HTMLElement, {
           size: 'large',
           width: 320,
         });
-      })
-    }
-
-    this.auth.registerPopupLoginResultListener();
+        //})
+      }
+      let result = false;
+      if(!this.noSession) result = await this.auth.authSession();
+      /* verifica tambem se algum dos login (Google, Microsoft, etc), estão com sessão ativas */
+      if(!result) {
+        if(this.globals.hasGoogleLogin) {
+          var token = "";
+          try {
+            token = await this.googleApi.getAccessToken();
+          } catch (error) {}
+          if(token?.length) this.auth.authGoogle(token);
+        }
+        if(this.globals.hasAzureLogin) {
+          // TODO: Implementa login automático
+        }
+      }
+    })();
   }
 
   public closeModalIfSuccess = (result: boolean) => {

@@ -7,7 +7,6 @@ import { GlobalsService } from './globals.service';
 import { GoogleApiService } from './google-api.service';
 import { FullRoute, NavigateService } from './navigate.service';
 import { ServerService } from './server.service';
-import { gapiConfig } from 'src/environments/gapi.config';
 import * as moment from 'moment';
 import { ActivatedRoute } from '@angular/router';
 import { CalendarService } from './calendar.service';
@@ -17,7 +16,7 @@ import { UtilService } from './util.service';
 import { UsuarioDaoService } from '../dao/usuario-dao.service';
 import { IIndexable } from '../models/base.model';
 
-export type AuthKind = "USERPASSWORD" | "GAPI" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION";
+export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION";
 export type Permission = string | (string | string[])[];
 
 @Injectable({
@@ -196,20 +195,14 @@ export class AuthService {
 
   public authGoogle(tokenId: string, redirectTo?: FullRoute) {
     //this.googleApi.tokenId = tokenId;
-    return this.logIn("GAPI", "login-gapi-token", {
+    return this.logIn("GOOGLE", "login-google-token", {
       token: tokenId
     }, redirectTo);
   }
 
   public authSession(): Promise<boolean> {
     this.apiToken = localStorage.getItem("petrvs_api_token") || undefined;
-    return this.logIn("SESSION", "login-session", {}).then(result => {
-      
-      // if(!result && this.googleAuth && this.googleAuth.isSignedIn.get()) {
-      //   return this.authGapi(this.googleAuth.currentUser.get().getAuthResponse().id_token);
-      // }
-      return result;
-    });
+    return this.logIn("SESSION", "login-session", {});
   }
 
   public get routerTo(): any {
@@ -262,10 +255,10 @@ export class AuthService {
         if(this.leave) this.leave();
         if(this.gb.refresh) this.gb.refresh();
       }
-      /* Garante logout do GAPI */
-      if(gapiConfig.client_id?.length) {
+      /* Garante logout do Google */
+      if(this.gb.hasGoogleLogin && this.gb.loginGoogleClientId?.length) {
         this.googleApi.initialize().then(googleAuth => {
-          if(this.kind == "GAPI") {
+          if(this.kind == "GOOGLE") {
             this.googleApi.signOut().then(clearLogin);
           }
         });

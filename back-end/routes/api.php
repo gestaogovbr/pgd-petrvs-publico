@@ -72,7 +72,7 @@ Route::get('/rotinas-diarias', [RotinaDiariaController::class, 'run']);
 /* Login */
 Route::post('/login-user-password', [LoginController::class, $actions['login-user-password']]);
 Route::post('/login-firebase-token', [LoginController::class, $actions['login-firebase-token']]);
-Route::post('/login-gapi-token', [LoginController::class, $actions['login-gapi-token']]);
+Route::post('/login-google-token', [LoginController::class, $actions['login-google-token']]);
 Route::post('/login-institucional', [LoginController::class, $actions['login-institucional']]);
 Route::get('/logout', [LoginController::class, 'logout']);
 Route::middleware(['auth:sanctum'])->post('/horario', [LoginController::class, 'horarioUnidade']);

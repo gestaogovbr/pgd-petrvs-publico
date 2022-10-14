@@ -26,7 +26,7 @@ Route::any('/{any}', [AngularController::class, 'index'])->where('any', '^(?!api
 /* Rotas do login/logout */
 Route::post('/web/login-user-password', [LoginController::class, $actions['login-user-password']]);
 Route::post('/web/login-firebase-token', [LoginController::class, $actions['login-firebase-token']]);
-Route::post('/web/login-gapi-token', [LoginController::class, $actions['login-gapi-token']]);
+Route::post('/web/login-google-token', [LoginController::class, $actions['login-google-token']]);
 Route::post('/web/login-institucional', [LoginController::class, $actions['login-institucional']]);
 Route::post('/web/login-session', [LoginController::class, 'authenticateSession']);
 Route::get('/web/logout', [LoginController::class, 'logout']);

@@ -6,12 +6,12 @@ use App\Exceptions\ServerException;
 use Firebase\JWT\JWT;
 use Google\Client;
 
-class GapiService
+class GoogleService
 {
     private $client_id;
 
     function __construct($config = null) {
-        $gapi_config = $config ?: config('gapi');
+        $gapi_config = $config ?: config('google');
         $this->client_id = $gapi_config['client_id'];
     }
 

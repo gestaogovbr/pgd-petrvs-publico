@@ -1,9 +1,9 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { gapiConfig } from 'src/environments/gapi.config';
 import { UtilService } from './util.service';
 import { BehaviorSubject } from 'rxjs';
 import { skip, take } from 'rxjs/operators';
 import { AuthService } from './auth.service';
+import { GlobalsService } from './globals.service';
 declare var google: any;
 
 @Injectable({
@@ -20,7 +20,8 @@ export class GoogleApiService {
   
   constructor(
     private utilService: UtilService,
-    private auth: AuthService
+    private auth: AuthService,
+    private gb: GlobalsService
   ) {
     this._socialUser.pipe(skip(1)).subscribe(this.changeUser);
 
@@ -30,27 +31,22 @@ export class GoogleApiService {
   
   initialize(autoLogin?: boolean): Promise<any> {
     return new Promise((resolve, reject) => {
-      try 
-      {
+      try {
         const script = this.utilService.loadScript('https://accounts.google.com/gsi/client')
-
         script.onload = () => {
             google.accounts.id.initialize({
-              client_id: gapiConfig.client_id,
+              client_id: this.gb.loginGoogleClientId,
               ux_mode: 'popup',
               cancel_on_tap_outside: true,
               callback: ({ credential }: any) => {
                 this.auth.authGoogle(credential).then(res => {
                   const socialUser = this.createSocialUser(credential);
                   this._socialUser.next(socialUser);
-                })
-                
-                
+                });
               }
             });
             resolve(google.accounts.id);
         }
-
       } catch (err) {
         reject(err);
       }
@@ -99,7 +95,6 @@ export class GoogleApiService {
     );
   }
 
-
   private decodeJwt(idToken: string): Record<string, string | undefined> {
     const base64Url = idToken.split(".")[1];
     const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
@@ -116,16 +111,13 @@ export class GoogleApiService {
 
 }
 
-
 export class SocialUser {
   provider!: string;
   authToken!: string;
   id: string | undefined;
   email: string | undefined;
   name: string | undefined;
-
   idToken!: string; // Reference https://developers.google.com/identity/sign-in/web/backend-auth
   authorizationCode!: string; // Reference https://developers.google.com/identity/sign-in/web/reference#googleauthgrantofflineaccessoptions
-
   response: any;
 }

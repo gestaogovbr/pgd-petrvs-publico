@@ -3,9 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use App\Services\GapiService;
+use App\Services\GoogleService;
 
-class GapiServiceProvider extends ServiceProvider
+class GoogleServiceProvider extends ServiceProvider
 {
     /**
      * Register services.
@@ -14,8 +14,8 @@ class GapiServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(GapiService::class, function ($app) {
-            return new GapiService(config('gapi'));
+        $this->app->singleton(GoogleService::class, function ($app) {
+            return new GoogleService(config('google'));
         });
     }
 

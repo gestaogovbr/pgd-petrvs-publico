@@ -147,7 +147,7 @@ export class HomeComponent implements OnInit {
   public tokenGAPI() {
     this.auth.googleApi.getAccessToken().then(res => {
       const sei = res || ''
-    })
+    });
   }
 
   public execucaoPlanos(){

@@ -1,3 +1,4 @@
+//@ts-ignore
 const webBrowser = (chrome || browser);
 const defaultExtensionOptionsConfig = { /* Configuração utilizada para acessas as configurações da extensão */
   api_url: webBrowser?.runtime?.getURL ? webBrowser.runtime.getURL("") : "",
@@ -6,6 +7,7 @@ const defaultExtensionOptionsConfig = { /* Configuração utilizada para acessas
   logo_url: "logo-login-prf.png",
   versao: "1.0.0",
   login: {
+    google_client_id: "",
     gsuit: true,
     azure: true,
     institucional: false,
@@ -29,6 +31,7 @@ export const environment = {
   images: { login: global?.logo_url || "logo-login-prf.png" },
   versao: global?.versao || "1.0.0",
   login: global?.login || {
+    google_client_id: global?.google_client_id || "",
     gsuit: true,
     azure: true,
     institucional: false,

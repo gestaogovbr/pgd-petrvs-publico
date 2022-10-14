@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Services\FirebaseAuthService;
-use App\Services\GapiService;
+use App\Services\GoogleService;
 use App\Services\DprfSegurancaAuthService;
 use App\Services\IntegracaoService;
 use App\Models\Usuario;
@@ -185,7 +185,7 @@ class LoginController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function authenticateGapiToken(Request $request, GapiService $auth)
+    public function authenticateGoogleToken(Request $request, GoogleService $auth)
     {
         $credentials = $request->validate(['token' => ['required']]);
         $tokenData = $auth->verifyToken($credentials['token']);
@@ -195,7 +195,7 @@ class LoginController extends Controller
                 $usuarioService = new UsuarioService();
                 $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
                 $request->session()->regenerate();
-                $request->session()->put("kind", "GAPI");
+                $request->session()->put("kind", "GOOGLE");
                 return response()->json([
                     'success' => true,
                     "usuario" => $usuario,
@@ -212,7 +212,7 @@ class LoginController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function authenticatePrfGapiToken(Request $request, GapiService $auth, IntegracaoService $integracao)
+    public function authenticatePrfGoogleToken(Request $request, GoogleService $auth, IntegracaoService $integracao)
     {
         $credentials = $request->validate(['token' => ['required']]);
         $tokenData = $auth->verifyToken($credentials['token']);
@@ -223,13 +223,13 @@ class LoginController extends Controller
                 $usuario = new Usuario();
                 $lotacao = new Lotacao();
                 $this->service = new IntegracaoService();
-                $this->service->salvaUsuarioLotacaoGapi($usuario, $lotacao, $tokenData, $auth);
+                $this->service->salvaUsuarioLotacaoGoogle($usuario, $lotacao, $tokenData, $auth);
             }
             if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
                 $usuarioService = new UsuarioService();
                 $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
                 $request->session()->regenerate();
-                $request->session()->put("kind", "GAPI");
+                $request->session()->put("kind", "GOOGLE");
                 return response()->json([
                     'success' => true,
                     "usuario" => $this->registrarUsuario($request, $usuario, ['id_google' => $tokenData["sub"]]), //, 'url_foto' => $tokenData["picture"]
@@ -357,7 +357,7 @@ class LoginController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function authenticateApiGapiToken(Request $request, GapiService $auth)
+    public function authenticateApiGoogleToken(Request $request, GoogleService $auth)
     {
         $credentials = $request->validate([
             'token' => ['required'],
@@ -370,7 +370,7 @@ class LoginController extends Controller
                 $usuarioService = new UsuarioService();
                 $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
                 $request->session()->regenerate();
-                $request->session()->put("kind", "GAPI");
+                $request->session()->put("kind", "GOOGLE");
                 return response()->json([
                     'token' => $usuario->createToken($credentials['device_name'])->plainTextToken,
                     'usuario' => $this->registrarUsuario($request, $usuario),
@@ -387,7 +387,7 @@ class LoginController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function authenticateApiPrfGapiToken(Request $request, GapiService $auth, IntegracaoService $integracao)
+    public function authenticateApiPrfGoogleToken(Request $request, GoogleService $auth, IntegracaoService $integracao)
     {
         LogError::newWarn("Validando");
         $credentials = $request->validate([
@@ -404,13 +404,13 @@ class LoginController extends Controller
                 $usuario = new Usuario();
                 $lotacao = new Lotacao();
                 $this->service = new IntegracaoService();
-                $this->service->salvaUsuarioLotacaoGapi($usuario, $lotacao, $tokenData, $auth);
+                $this->service->salvaUsuarioLotacaoGoogle($usuario, $lotacao, $tokenData, $auth);
             }
             if (isset($usuario)) { // && Hash::check($request->password, $user->password)
                 $usuarioService = new UsuarioService();
                 $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
                 $request->session()->regenerate();
-                $request->session()->put("kind", "GAPI");
+                $request->session()->put("kind", "GOOGLE");
                 $usuario->save();
                 return response()->json([
                     'token' => $usuario->createToken($credentials['device_name'])->plainTextToken,
