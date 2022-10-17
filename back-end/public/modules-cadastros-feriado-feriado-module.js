@@ -390,33 +390,6 @@ FeriadoListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdef
 
 /***/ }),
 
-/***/ "dpTK":
-/*!********************************************!*\
-  !*** ./src/app/dao/feriado-dao.service.ts ***!
-  \********************************************/
-/*! exports provided: FeriadoDaoService */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FeriadoDaoService", function() { return FeriadoDaoService; });
-/* harmony import */ var _dao_base_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./dao-base.service */ "WScx");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
-
-
-class FeriadoDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0__["DaoBaseService"] {
-    constructor(injector) {
-        super("Feriado", injector);
-        this.injector = injector;
-        this.searchFields = ["nome"];
-    }
-}
-FeriadoDaoService.ɵfac = function FeriadoDaoService_Factory(t) { return new (t || FeriadoDaoService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
-FeriadoDaoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: FeriadoDaoService, factory: FeriadoDaoService.ɵfac, providedIn: 'root' });
-
-
-/***/ }),
-
 /***/ "mLmR":
 /*!*************************************************************!*\
   !*** ./src/app/modules/cadastros/feriado/feriado.module.ts ***!
