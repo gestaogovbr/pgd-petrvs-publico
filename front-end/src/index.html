@@ -13,7 +13,7 @@
     JavaScript contendo variáveis de ambiente para a aplicação de front-end. 
     Caso não seja possível carregar a configuração, então será carregada pelo environment-config
     */
-    var GLOBAL_PETRVS_CONFIG_STR = "{{ $config }}";
+    var GLOBAL_PETRVS_CONFIG_STR = `{!! $config !!}`;
     var GLOBAL_PETRVS_CONFIG = undefined;
     try {
       GLOBAL_PETRVS_CONFIG = JSON.parse(GLOBAL_PETRVS_CONFIG_STR);
