@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Traits\AutoDataInicio;
+use App\Traits\HasDataFim;
 use App\Models\ModelBase;
 use App\Models\Afastamento;
 
 class TipoMotivoAfastamento extends ModelBase
 {
-    use AutoDataInicio;
+    use AutoDataInicio, HasDataFim;
     
     public $fillable = [
         'codigo',

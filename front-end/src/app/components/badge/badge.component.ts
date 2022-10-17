@@ -1,5 +1,6 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Injector, Input, OnInit } from '@angular/core';
 import { IIndexable } from 'src/app/models/base.model';
+import { ComponentBase } from '../component-base';
 
 export type BadgeColor = "primary" | "secondary" | "success" | "danger" | "warning" | "info" | "light" | "dark";
 
@@ -8,7 +9,7 @@ export type BadgeColor = "primary" | "secondary" | "success" | "danger" | "warni
   templateUrl: './badge.component.html',
   styleUrls: ['./badge.component.scss']
 })
-export class BadgeComponent implements OnInit {
+export class BadgeComponent extends ComponentBase implements OnInit {
   @Input() click?: (data: any) => void;
   @Input() date?: any = undefined;
   @Input() hint?: string = undefined;
@@ -38,7 +39,9 @@ export class BadgeComponent implements OnInit {
     dark: "bg-dark "
   }
 
-  constructor(public cdRef: ChangeDetectorRef) { }
+  constructor(public injector: Injector) {
+    super(injector);
+  }
 
   ngOnInit(): void {
   }

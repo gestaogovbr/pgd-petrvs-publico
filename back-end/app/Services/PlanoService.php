@@ -34,8 +34,8 @@ class PlanoService extends ServiceBase
         $where = [];
         foreach($data["where"] as $condition) {
             if(is_array($condition) && $condition[0] == "data_filtro") {
-                $dataInicio = $this->getFilterValue($data["where"], "data_inicio");
-                $dataFim = $this->getFilterValue($data["where"], "data_fim");
+                $dataInicio = $this->getFilterValue($data["where"], "data_filtro_inicio");
+                $dataFim = $this->getFilterValue($data["where"], "data_filtro_fim");
                 switch($condition[2]) {
                     case "VIGENTE":
                         $where[] = ["data_inicio_vigencia", "<=", $dataFim];
@@ -53,7 +53,7 @@ class PlanoService extends ServiceBase
                         $where[] = ["data_fim_vigencia", "<=", $dataFim];
                         break;
                 }
-            } else if(!(is_array($condition) && in_array($condition[0], ["data_inicio", "data_fim"]))) {
+            } else if(!(is_array($condition) && in_array($condition[0], ["data_filtro_inicio", "data_filtro_fim"]))) {
                 array_push($where, $condition);
             }
         }

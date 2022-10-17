@@ -5,12 +5,14 @@ import { ComentariosComponent } from './comentarios/comentarios.component';
 import { ComponentsModule } from 'src/app/components/components.module';
 import { ComentariosWidgetComponent } from './comentarios-widget/comentarios-widget.component';
 import { UteisRoutingModule } from './uteis-routing.module';
+import { CalendarExpedienteComponent } from './calendar-expediente/calendar-expediente.component';
 
 @NgModule({
   declarations: [
     CalendarEfemeridesComponent,
     ComentariosComponent,
-    ComentariosWidgetComponent
+    ComentariosWidgetComponent,
+    CalendarExpedienteComponent
   ],
   imports: [
     CommonModule,
@@ -20,7 +22,8 @@ import { UteisRoutingModule } from './uteis-routing.module';
   exports: [
     CalendarEfemeridesComponent,
     ComentariosComponent,
-    ComentariosWidgetComponent
+    ComentariosWidgetComponent,
+    CalendarExpedienteComponent
   ]
 })
 export class UteisModule { }

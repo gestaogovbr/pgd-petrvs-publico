@@ -6,11 +6,11 @@ use App\Models\ModelBase;
 use App\Models\Entidade;
 use App\Models\Cidade;
 use App\Traits\AutoDataInicio;
-
+use App\Traits\HasDataFim;
 
 class Feriado extends ModelBase
 {
-    use AutoDataInicio;
+    use AutoDataInicio, HasDataFim;
 
     public $fillable = [
         'nome',

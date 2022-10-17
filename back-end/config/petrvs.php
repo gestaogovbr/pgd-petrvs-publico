@@ -5,6 +5,9 @@ return [
     'suporte' => env('PETRVS_SUPORTE', ''),
     'logo' => env('PETRVS_LOGO', ''),
     'timezone' => env('PETRVS_SERVIDOR_TIMEZONE', -3),
+    'rotinas-diarias' => [
+        'token' => env('PETRVS_ROTINAS_DIARIAS_TOKEN', '')
+    ],
     'actions' => [
         'web' => [
             'login-user-password' => env('PETRVS_ACTION_LOGIN_USER_PASSWORD', ''),

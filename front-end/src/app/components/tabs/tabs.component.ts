@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, ContentChildren, EventEmitter, Injector, Input, OnInit, Output, QueryList } from '@angular/core';
 import { LookupItem } from 'src/app/services/lookup.service';
+import { ComponentBase } from '../component-base';
 import { TabComponent } from './tab/tab.component';
 
 @Component({
@@ -7,7 +8,7 @@ import { TabComponent } from './tab/tab.component';
   templateUrl: './tabs.component.html',
   styleUrls: ['./tabs.component.scss']
 })
-export class TabsComponent implements OnInit {
+export class TabsComponent extends ComponentBase implements OnInit {
   @ContentChildren(TabComponent, { descendants: true }) tabsRef?: QueryList<TabComponent>;
   @Input() select?: (tab: LookupItem) => void;
   @Input() items: LookupItem[] = [];
@@ -17,17 +18,12 @@ export class TabsComponent implements OnInit {
   @Input() display?: string;
   @Input() hidden?: string;
   @Input() right?: string;
-  @Input() set cdRef(value: ChangeDetectorRef) {
-    this._cdRef = value;
-  }
-  get cdRef(): ChangeDetectorRef {
-    this._cdRef = this._cdRef || this.injector.get<ChangeDetectorRef>(ChangeDetectorRef);
-    return this._cdRef;
-  }
+  @Input() cdRef: ChangeDetectorRef;
 
-  private _cdRef?: ChangeDetectorRef;
-
-  constructor(public injector: Injector) { }
+  constructor(public injector: Injector) {
+    super(injector);
+    this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
+  }
 
   public get isDisplay(): boolean {
     return this.display != undefined;

@@ -37,7 +37,7 @@
         <column title="Custo" [template]="columnCusto">
             <ng-template let-row="row" #columnCusto>
                 <badge *ngIf="!row.calcula_custos" color="warning" icon="bi bi-dash-square" label="Não calcula" hint="Projeto configurado para não calcular custos"></badge><br>
-                <badge *ngIf="row.calcula_custos" color="light" icon="bi bi-cash-coin" [label]="util.formatDecimal(row.custo)" hint="Data de término"></badge>
+                <badge *ngIf="row.calcula_custos" color="light" icon="bi bi-cash-coin" [label]="util.formatDecimal(row.custo)" hint="Projeto configurado para calcular custos"></badge>
             </ng-template>
         </column>
         <column title="Progresso" [template]="columnProgresso">
@@ -56,13 +56,13 @@
 </grid>
 
 <!--
-      Nome                Descricao   
+      Nome                Descricao
 #ID   Envolvidos          Finalidade               Datas                 Progresso    Status
 -----------------------------------------------------------------------------------------------------------
 9999  Projeto de pipoca   Fazer pipoca sem sal     [I xx/xx/xxx hh:ss]  [##| 20%  ]   (S) Iniciado   [...]
       (U) (M) [Z DTIC]    Pipoca                   [F xx/xx/xxx hh:ss]                       +------     |
 ---------------------------------------------------------------------------------------------| Recusrsos |
-                                                                                             | Regras    | 
+                                                                                             | Regras    |
                                                                                              | Alocações |
                                                                                              +-----------+
 
@@ -77,7 +77,7 @@ Final calculado automaticamente:
 
 
 [ Planejamento - Gantt ]
-Grid 
+Grid
 Tarefa Inicio Fim Progresso | Gant
 
 

@@ -1,4 +1,4 @@
-<span [class]="orderClass" role="button" data-bs-toggle="tooltip" data-bs-placement="top" [attr.title]="hint" (click)="onOrderClick($event)">
+<span [class]="orderClass" [id]="generatedId(title)" role="button" data-bs-toggle="tooltip" data-bs-placement="top" [attr.title]="hint" (click)="onOrderClick($event)">
     <i [class]="orderIcon"></i>
     {{title}}
     <ng-content></ng-content>

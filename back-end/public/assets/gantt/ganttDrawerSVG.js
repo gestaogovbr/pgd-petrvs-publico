@@ -299,11 +299,14 @@ Ganttalendar.prototype.drawTask = function (task) {
         resize:     function (e) {
           //find and update links from, to
           var taskbox = $(this);
+          /* Petrvs */
+          var task = self.master.getTask(taskbox.attr("taskid"));
           var st = Math.round((parseFloat(taskbox.attr("x")) / self.fx) + self.startMillis);
           var en = Math.round(((parseFloat(taskbox.attr("x")) + parseFloat(taskbox.attr("width"))) / self.fx) + self.startMillis);
-						var d = getDurationInUnits(computeStartDate(st), computeEndDate(en));
+          /* Petrvs */
+  				var d =  task.computeDuration(task.computeStart(st), task.computeEnd(en));
           var text = taskBox.data("textDur");
-          text.attr("x", parseInt(taskbox.attr("x")) + parseInt(taskbox.attr("width")) + 8).html(durationToString(task, d));
+          text.attr("x", parseInt(taskbox.attr("x")) + parseInt(taskbox.attr("width")) + 8).html(task.durationToString(d));
 
           $("[from=" + task.id + "],[to=" + task.id + "]").trigger("update");
         },

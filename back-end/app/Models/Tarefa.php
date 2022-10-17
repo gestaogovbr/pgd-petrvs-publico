@@ -8,7 +8,6 @@ use App\Models\Entidade;
 
 class Tarefa extends ModelBase
 {
-
     protected $table = 'tarefas';
 
     public $fillable = [

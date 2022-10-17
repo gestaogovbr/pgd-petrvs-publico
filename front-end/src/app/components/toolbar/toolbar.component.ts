@@ -1,7 +1,8 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Injector, Input, OnInit } from '@angular/core';
 import { IIndexable } from 'src/app/models/base.model';
 import { FullRoute, NavigateService, RouteMetadata } from 'src/app/services/navigate.service';
 import { UtilService } from 'src/app/services/util.service';
+import { ComponentBase } from '../component-base';
 
 export type ToolbarButton = {
   id?: string,
@@ -27,7 +28,7 @@ export type ToolbarButton = {
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss']
 })
-export class ToolbarComponent implements OnInit {
+export class ToolbarComponent extends ComponentBase implements OnInit {
   @Input() icon: string = "";
   @Input() options?: ToolbarButton[];
   @Input() 
@@ -49,20 +50,16 @@ export class ToolbarComponent implements OnInit {
     this.cdRef.detectChanges();
   }
 
+  public go: NavigateService;
   private _buttons?: ToolbarButton[];
   private _title: string = "";
 
-  constructor(
-    public go: NavigateService,
-    public util: UtilService,
-    public cdRef: ChangeDetectorRef
-  ) { }
-
-  ngOnInit(): void {
+  constructor(public injector: Injector) {
+    super(injector)
+    this.go = injector.get<NavigateService>(NavigateService);
   }
 
-  public buttonId(button: ToolbarButton) {
-    return "button_" + this.util.md5((button.icon || "") + (button.hint || "") + (button.label || "")); 
+  ngOnInit(): void {
   }
 
   public buttonPressed(button: ToolbarButton): boolean {

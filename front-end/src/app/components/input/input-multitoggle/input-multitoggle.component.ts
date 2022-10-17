@@ -18,6 +18,7 @@ import { InputSelectComponent } from '../input-select/input-select.component';
 })
 export class InputMultitoggleComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';
+  @Input() hostClass: string = ""; 
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
   @Input() disabled?: string;

@@ -56,8 +56,8 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
       unidade_id: {default: null},
       tipo_modalidade_id: {default: null},
       data_filtro: {default: null},
-      data_inicio: {default: new Date()},
-      data_fim: {default: new Date()}
+      data_filtro_inicio: {default: new Date()},
+      data_filtro_fim: {default: new Date()}
     }, this.cdRef, this.filterValidate);
     this.join = ["unidade.entidade", "usuario", "programa", "documento", "tipo_modalidade"];
     this.groupBy = [{field: "unidade.sigla", label: "Unidade"}];
@@ -87,9 +87,9 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
   public filterValidate = (control: AbstractControl, controlName: string) => {
     let result = null;
 
-    if(controlName == "data_inicio" && control.value > this.filter?.controls.data_fim.value) {
+    if(controlName == "data_filtro_inicio" && control.value > this.filter?.controls.data_filtro_fim.value) {
       result = "Maior que fim";
-    } else if(controlName == "data_fim" && control.value < this.filter?.controls.data_inicio.value) {
+    } else if(controlName == "data_filtro_fim" && control.value < this.filter?.controls.data_filtro_inicio.value) {
       result = "Menor que início";
     }
     return result;
@@ -100,8 +100,8 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
     filter.controls.unidade_id.setValue(null);
     filter.controls.tipo_modalidade_id.setValue(null);
     filter.controls.data_filtro.setValue(null);
-    filter.controls.data_inicio.setValue(new Date());
-    filter.controls.data_fim.setValue(new Date());
+    filter.controls.data_filtro_inicio.setValue(new Date());
+    filter.controls.data_filtro_fim.setValue(new Date());
     super.filterClear(filter);
   }
 
@@ -113,8 +113,8 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
     }
     if(form.data_filtro) {
       result.push(["data_filtro", "==", form.data_filtro]);
-      result.push(["data_inicio", "==", form.data_inicio]);
-      result.push(["data_fim", "==", form.data_fim]);
+      result.push(["data_filtro_inicio", "==", form.data_filtro_inicio]);
+      result.push(["data_filtro_fim", "==", form.data_filtro_fim]);
     }
     if(form.usuario?.length) {
       result.push(["usuario.nome", "like", "%" + form.usuario + "%"]);

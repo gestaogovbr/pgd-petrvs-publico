@@ -11,15 +11,19 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProjetoTarefaFormPrincipalComponent", function() { return ProjetoTarefaFormPrincipalComponent; });
 /* harmony import */ var src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/modules/base/page-frame-base */ "rvJe");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var _components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ "RKEd");
-/* harmony import */ var _components_input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../components/input/input-number/input-number.component */ "imFN");
-/* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ "lYxd");
-/* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../components/input/input-select/input-select.component */ "txHH");
-/* harmony import */ var _components_input_input_textarea_input_textarea_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../components/input/input-textarea/input-textarea.component */ "S/J2");
-/* harmony import */ var _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../components/separator/separator.component */ "FVj5");
-/* harmony import */ var _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../components/input/input-switch/input-switch.component */ "puzm");
-/* harmony import */ var _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/input/input-datetime/input-datetime.component */ "NRF3");
+/* harmony import */ var src_app_dao_projeto_tarefa_dao_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/dao/projeto-tarefa-dao.service */ "omxD");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ "RKEd");
+/* harmony import */ var _components_input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../components/input/input-number/input-number.component */ "imFN");
+/* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ "lYxd");
+/* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../components/input/input-select/input-select.component */ "txHH");
+/* harmony import */ var _components_input_input_textarea_input_textarea_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../components/input/input-textarea/input-textarea.component */ "S/J2");
+/* harmony import */ var _components_input_input_button_input_button_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../components/input/input-button/input-button.component */ "L+jc");
+/* harmony import */ var _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/separator/separator.component */ "FVj5");
+/* harmony import */ var _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../../components/input/input-switch/input-switch.component */ "puzm");
+/* harmony import */ var _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../../components/input/input-datetime/input-datetime.component */ "NRF3");
+
+
 
 
 
@@ -38,101 +42,123 @@ class ProjetoTarefaFormPrincipalComponent extends src_app_modules_base_page_fram
             let result = null;
             return result;
         };
-        this.form = this.fh.FormBuilder({}, this.cdRef, this.validate);
+        this.projetoTarefaDao = injector.get(src_app_dao_projeto_tarefa_dao_service__WEBPACK_IMPORTED_MODULE_1__["ProjetoTarefaDaoService"]);
+        this.form = this.fh.FormBuilder({
+            indice: { default: "" },
+            nome: { default: "" },
+            status_tarefa: { default: "PLANEJADO" },
+            descricao: { default: "" },
+            numero_processo: { default: "" },
+            numero_documento: { default: "" },
+            marco_inicio: { default: "" },
+            inicio_tarefa: { default: new Date() },
+            marco_termino: { default: "" },
+            termino_tarefa: { default: new Date() },
+            duracao: { default: "" },
+            progresso: { default: 0 },
+            custo_tarefa: { default: 0.00 },
+            possui_custos_proprios: { default: true },
+            soma_recursos_alocados_filhos: { default: true },
+            soma_progresso_filhos: { default: true },
+            tem_filhos: { default: true },
+            agrupador: { default: false },
+            contraido: { default: false },
+            aloca_recursos_proprios: { default: true },
+            calcula_intervalo: { default: true },
+        }, this.cdRef, this.validate);
+        this.join = ["projeto_recurso", "projeto_tarefa", "projeto_alocacao", "projeto_regra", "projeto_envolvido"];
     }
 }
-ProjetoTarefaFormPrincipalComponent.ɵfac = function ProjetoTarefaFormPrincipalComponent_Factory(t) { return new (t || ProjetoTarefaFormPrincipalComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
-ProjetoTarefaFormPrincipalComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: ProjetoTarefaFormPrincipalComponent, selectors: [["app-projeto-tarefa-form-principal"]], features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]], decls: 34, vars: 26, consts: [["noButtons", "", 3, "form", "disabled"], [1, "row"], ["label", "N\u00FAmero", "controlName", "numero", 3, "size"], ["label", "Nome", "controlName", "nome", "labelInfo", "Nome do projeto", 3, "size"], ["label", "Status do projeto", "icon", "bi bi-arrow-up-right-circle", "controlName", "status", 3, "size", "items"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", 3, "size", "rows"], ["label", "Finalidade", "controlName", "finalidade", 3, "size", "rows"], ["title", "Cronograma e progresso"], ["label", "Marco inicial", "icon", "bi bi-check2", "controlName", "marco_inicio", "labelInfo", "Marco in\u00EDcio", 3, "size"], ["date", "", "label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "inicio_projeto", 3, "size"], ["label", "Marco de t\u00E9rminio", "icon", "bi bi-check2", "controlName", "marco_termino", "labelInfo", "Marco in\u00EDcio", 3, "size"], ["date", "", "label", "T\u00E9rmino", "icon", "bi bi-calendar-date", "controlName", "termino_projeto", 3, "size"], ["number", "", "label", "Dura\u00E7\u00E3o", "sufix", "d/h", "controlName", "duracao", 3, "size"], ["number", "", "label", "Progresso", "sufix", "%", "icon", "bi bi-clock", "controlName", "progresso", "labelInfo", "Progresso do projeto (% Conclu\u00EDdo)", 3, "size"], ["title", "Cconfigura\u00E7\u00F5es"], ["label", "Tempo corrido:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "tempo_corrido", "labelInfo", "Tempo corrido", 3, "size"], ["label", "Usa horas:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "usa_horas", "labelInfo", "Usa horas", 3, "size"], ["label", "Intervalo autom\u00E1tico:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "intervalo_automatico", "labelInfo", "Intervalo autom\u00E1tico", 3, "size"], ["label", "Progresso autom\u00E1tico:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "progresso_automatico", "labelInfo", "Progresso autom\u00E1tico", 3, "size"], ["label", "Agrupador:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "agrupador", "labelInfo", "Agrupador", 3, "size"], ["label", "Usa custo:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "usa_custo", "labelInfo", "Usa custo", 3, "size"], ["label", "Aloca recursos no projeto:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "aloca_recursos_projeto", "labelInfo", "Aloca recursos no projeto", 3, "size"], ["label", "Soma aloca\u00E7\u00F5es autom\u00E1tico:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "soma_alocacoes_automatico", "labelInfo", "Soma aloca\u00E7\u00F5es autom\u00E1tico", 3, "size"], ["label", "Possui custos no projeto:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "possui_custos_projeto", "labelInfo", "Possui custos no projeto", 3, "size"], ["label", "Soma custos autom\u00E1tico:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "soma_custos_automatico", "labelInfo", "Soma custos autom\u00E1tico", 3, "size"]], template: function ProjetoTarefaFormPrincipalComponent_Template(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "editable-form", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](1, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](2, "input-number", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](3, "input-text", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](4, "input-select", 4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](5, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](6, "input-textarea", 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](7, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](8, "input-textarea", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](9, "separator", 7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](10, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](11, "input-switch", 8);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](12, "input-datetime", 9);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](13, "input-switch", 10);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](14, "input-datetime", 11);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](15, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](16, "input-number", 12);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](17, "input-text", 13);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](18, "separator", 14);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](19, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](20, "input-switch", 15);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](21, "input-switch", 16);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](22, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](23, "input-switch", 17);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](24, "input-switch", 18);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](25, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](26, "input-switch", 19);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](27, "input-switch", 20);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](28, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](29, "input-switch", 21);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](30, "input-switch", 22);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](31, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](32, "input-switch", 23);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](33, "input-switch", 24);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+ProjetoTarefaFormPrincipalComponent.ɵfac = function ProjetoTarefaFormPrincipalComponent_Factory(t) { return new (t || ProjetoTarefaFormPrincipalComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_2__["Injector"])); };
+ProjetoTarefaFormPrincipalComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineComponent"]({ type: ProjetoTarefaFormPrincipalComponent, selectors: [["projeto-tarefa-form-principal"]], features: [_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵInheritDefinitionFeature"]], decls: 35, vars: 29, consts: [["noButtons", "", 3, "form", "disabled"], [1, "row"], ["label", "\u00CDndice", "disabled", "", "controlName", "indice", 3, "size"], ["label", "Nome", "controlName", "nome", "labelInfo", "Nome da tarefa", 3, "size"], ["label", "Status da tarefa", "icon", "bi bi-arrow-up-right-circle", "controlName", "status_tarefa", 3, "size", "items"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", 3, "size", "rows"], ["label", "N\u00FAmero Processo SEI", "controlName", "numero_processo", "labelInfo", "N\u00FAmero do processo, com a formata\u00E7\u00E3o de origem", 3, "size", "control", "disabled"], ["procRequisicao", ""], ["label", "N\u00FAmero Documento SEI", "controlName", "numero_documento", "labelInfo", "Numero do documento de requisi\u00E7\u00E3o, caso seja o Sei \u00E9 o numero Sei", 3, "size", "control", "disabled"], ["docRequisicao", ""], ["title", "Cronograma e progresso"], ["label", "Marco inicial", "icon", "bi bi-check2", "controlName", "marco_inicio", "labelInfo", "Marco in\u00EDcio", 3, "size"], ["date", "", "label", "In\u00EDcio da tarefa", "icon", "bi bi-calendar-date", "controlName", "inicio_tarefa", 3, "size"], ["label", "Marco final", "icon", "bi bi-check2", "controlName", "marco_termino", "labelInfo", "Marco t\u00E9rmino", 3, "size"], ["date", "", "label", "T\u00E9rmino da tarefa", "icon", "bi bi-calendar-date", "controlName", "termino_tarefa", 3, "size"], ["number", "", "label", "Dura\u00E7\u00E3o", "sufix", "d/h", "controlName", "duracao", 3, "size"], ["number", "", "label", "Progresso", "sufix", "%", "icon", "bi bi-clock", "controlName", "progresso", "labelInfo", "Progresso do projeto (% Conclu\u00EDdo)", 3, "size"], ["number", "", "label", "Custo da tarefa", "prefix", "R$", "icon", "bi bi-clock", "controlName", "custo_tarefa", "labelInfo", "Custo associado \u00E0 tarefa", 3, "size"], ["title", "Cconfigura\u00E7\u00F5es"], ["label", "Possui custos pr\u00F3prios:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "ten_filhos", "labelInfo", "Define se a tarefa tem custos pr[oprios associados", 3, "size"], ["label", "Aloca recursos no projeto:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "aloca_recursos_proprios", "labelInfo", "Aloca recursos pr\u00F3prios da tarefa", 3, "size"], ["label", "Possui tarefas filhas:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "possui_custos_proprios", "labelInfo", "Define se a tarefa tem custos pr[oprios associados", 3, "size"], ["label", "Calcula intervalo da tarefa:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "calcula_intervalo", "labelInfo", "Calculo intervalo de execu\u00E7\u00E3o da tarefa", 3, "size"], ["label", "Contra\u00EDda:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "contraido", "labelInfo", "Define se a tarefa tem custos pr[oprios associados", 3, "size"], ["label", "Agrupadora:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "agrupador", "labelInfo", "A tarefa tem fun\u00E7\u00E3o agrupadora", 3, "size"], ["label", "Soma progresso das filhas:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "soma_progresso_filhos", "labelInfo", "Calcula o progresso das tarefas filhas", 3, "size"], ["label", "Soma recursos tarefas filhas", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "soma_recursos_alocados_filhos", "labelInfo", "Soma recursos das tarefas filhas", 3, "size"]], template: function ProjetoTarefaFormPrincipalComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](0, "editable-form", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](1, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](2, "input-number", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](3, "input-text", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](4, "input-select", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](5, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](6, "input-textarea", 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](7, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](8, "input-button", 6, 7);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](10, "input-button", 8, 9);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](12, "separator", 10);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](13, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](14, "input-switch", 11);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](15, "input-datetime", 12);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](16, "input-switch", 13);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](17, "input-datetime", 14);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](18, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](19, "input-number", 15);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](20, "input-text", 16);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](21, "input-text", 17);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](22, "separator", 18);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](23, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](24, "input-switch", 19);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](25, "input-switch", 20);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](26, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](27, "input-switch", 21);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](28, "input-switch", 22);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](29, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](30, "input-switch", 23);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](31, "input-switch", 24);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](32, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](33, "input-switch", 25);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](34, "input-switch", 26);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
     } if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 4)("items", ctx.lookup.PROJETO_STATUS);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 12)("rows", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 12)("rows", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 6);
-    } }, directives: [_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_2__["EditableFormComponent"], _components_input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_3__["InputNumberComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_4__["InputTextComponent"], _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_5__["InputSelectComponent"], _components_input_input_textarea_input_textarea_component__WEBPACK_IMPORTED_MODULE_6__["InputTextareaComponent"], _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_7__["SeparatorComponent"], _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_8__["InputSwitchComponent"], _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_9__["InputDatetimeComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwcm9qZXRvLXRhcmVmYS1mb3JtLXByaW5jaXBhbC5jb21wb25lbnQuc2NzcyJ9 */"] });
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 4)("items", ctx.lookup.PROJETO_TAREFA_STATUS);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 12)("rows", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.numero_processo)("disabled", !ctx.gb.isExtension || (ctx.form.controls.numero_requisicao.value == null ? null : ctx.form.controls.numero_requisicao.value.length) ? "true" : undefined);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.numero_requisicao)("disabled", !ctx.gb.isExtension ? "true" : undefined);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 6);
+    } }, directives: [_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_3__["EditableFormComponent"], _components_input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_4__["InputNumberComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_5__["InputTextComponent"], _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_6__["InputSelectComponent"], _components_input_input_textarea_input_textarea_component__WEBPACK_IMPORTED_MODULE_7__["InputTextareaComponent"], _components_input_input_button_input_button_component__WEBPACK_IMPORTED_MODULE_8__["InputButtonComponent"], _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_9__["SeparatorComponent"], _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_10__["InputSwitchComponent"], _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_11__["InputDatetimeComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwcm9qZXRvLXRhcmVmYS1mb3JtLXByaW5jaXBhbC5jb21wb25lbnQuc2NzcyJ9 */"] });
 
 
 /***/ }),
@@ -152,12 +178,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_components_gantt_gantt_models__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/components/gantt/gantt-models */ "dWNe");
 /* harmony import */ var src_app_dao_projeto_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/projeto-dao.service */ "B2HH");
 /* harmony import */ var src_app_models_projeto_alocacao_model__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/models/projeto-alocacao.model */ "0e40");
-/* harmony import */ var src_app_models_projeto_envolvido_model__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/models/projeto-envolvido.model */ "oJZU");
-/* harmony import */ var src_app_models_projeto_recurso_model__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/models/projeto-recurso.model */ "t/HG");
-/* harmony import */ var src_app_models_projeto_regra_model__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! src/app/models/projeto-regra.model */ "I/IY");
-/* harmony import */ var src_app_models_projeto_tarefa_model__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! src/app/models/projeto-tarefa.model */ "k9Um");
-/* harmony import */ var src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! src/app/models/projeto.model */ "LZl6");
-/* harmony import */ var src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! src/app/modules/base/page-form-base */ "793T");
+/* harmony import */ var src_app_models_projeto_recurso_model__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/models/projeto-recurso.model */ "t/HG");
+/* harmony import */ var src_app_models_projeto_regra_model__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/models/projeto-regra.model */ "I/IY");
+/* harmony import */ var src_app_models_projeto_tarefa_model__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! src/app/models/projeto-tarefa.model */ "k9Um");
+/* harmony import */ var src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! src/app/models/projeto.model */ "LZl6");
+/* harmony import */ var src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! src/app/modules/base/page-form-base */ "793T");
+/* harmony import */ var _projeto_service__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../projeto.service */ "6/Ne");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/core */ "fXoL");
 /* harmony import */ var _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../../../components/tabs/tabs.component */ "EkNo");
 /* harmony import */ var _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../../../components/tabs/tab/tab.component */ "suJ1");
@@ -167,8 +193,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_profile_picture_profile_picture_component__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../../../components/profile-picture/profile-picture.component */ "xp1S");
 /* harmony import */ var _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../../../components/badge/badge.component */ "jKVP");
 /* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../../../../components/input/input-select/input-select.component */ "txHH");
-/* harmony import */ var _fullcalendar_angular__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! @fullcalendar/angular */ "IvIE");
-/* harmony import */ var _components_kanban_kanban_component__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ../../../../components/kanban/kanban.component */ "rD7j");
+/* harmony import */ var _projeto_tarefa_filter_projeto_tarefa_filter_component__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../projeto-tarefa-filter/projeto-tarefa-filter.component */ "qyTw");
+/* harmony import */ var _fullcalendar_angular__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! @fullcalendar/angular */ "IvIE");
+/* harmony import */ var _components_kanban_kanban_component__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ../../../../components/kanban/kanban.component */ "rD7j");
+
 
 
 
@@ -194,15 +222,15 @@ __webpack_require__.r(__webpack_exports__);
 
 const _c0 = ["planejamentoKanban"];
 function ProjetoPlanejamentoComponent_ng_template_0_div_0_profile_picture_2_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "profile-picture", 17);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "profile-picture", 18);
 } if (rf & 2) {
     const recurso_r15 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("url", recurso_r15.url)("hint", recurso_r15.hint);
 } }
 function ProjetoPlanejamentoComponent_ng_template_0_div_0_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "div", 14);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](1, "separator", 15);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](2, ProjetoPlanejamentoComponent_ng_template_0_div_0_profile_picture_2_Template, 1, 2, "profile-picture", 16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "div", 15);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](1, "separator", 16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](2, ProjetoPlanejamentoComponent_ng_template_0_div_0_profile_picture_2_Template, 1, 2, "profile-picture", 17);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r16 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
@@ -213,7 +241,7 @@ function ProjetoPlanejamentoComponent_ng_template_0_div_0_Template(rf, ctx) { if
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngForOf", ctx_r12.getRecursos(card_r10.data, metadata_r11));
 } }
 function ProjetoPlanejamentoComponent_ng_template_0_ng_container_1_badge_2_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "badge", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "badge", 22);
 } if (rf & 2) {
     const status_r18 = ctx.$implicit;
     const ctx_r17 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"](3);
@@ -221,10 +249,10 @@ function ProjetoPlanejamentoComponent_ng_template_0_ng_container_1_badge_2_Templ
 } }
 function ProjetoPlanejamentoComponent_ng_template_0_ng_container_1_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementContainerStart"](0);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](1, "div", 18);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](2, ProjetoPlanejamentoComponent_ng_template_0_ng_container_1_badge_2_Template, 1, 3, "badge", 19);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](1, "div", 19);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](2, ProjetoPlanejamentoComponent_ng_template_0_ng_container_1_badge_2_Template, 1, 3, "badge", 20);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](3, "separator", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](3, "separator", 21);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementContainerEnd"]();
 } if (rf & 2) {
     const ctx_r19 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
@@ -237,8 +265,8 @@ function ProjetoPlanejamentoComponent_ng_template_0_ng_container_1_Template(rf, 
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("button", ctx_r13.addComentarioButton);
 } }
 function ProjetoPlanejamentoComponent_ng_template_0_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](0, ProjetoPlanejamentoComponent_ng_template_0_div_0_Template, 3, 1, "div", 13);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](1, ProjetoPlanejamentoComponent_ng_template_0_ng_container_1_Template, 4, 2, "ng-container", 12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](0, ProjetoPlanejamentoComponent_ng_template_0_div_0_Template, 3, 1, "div", 14);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](1, ProjetoPlanejamentoComponent_ng_template_0_ng_container_1_Template, 4, 2, "ng-container", 13);
 } if (rf & 2) {
     const card_r10 = ctx.card;
     const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
@@ -247,60 +275,78 @@ function ProjetoPlanejamentoComponent_ng_template_0_Template(rf, ctx) { if (rf &
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", !(ctx_r1.filter == null ? null : ctx_r1.filter.controls == null ? null : ctx_r1.filter.controls.resumido == null ? null : ctx_r1.filter.controls.resumido.value));
 } }
 function ProjetoPlanejamentoComponent_ng_template_2_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "input-select", 22);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "input-select", 23);
 } if (rf & 2) {
     const ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 12)("control", ctx_r3.formEdit.controls.etiqueta)("items", ctx_r3.etiquetasEdit);
 } }
 function ProjetoPlanejamentoComponent_ng_template_4_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "div", 23);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](1, "div", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](2, "div", 25);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](3, "h5", 26);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](4, "span", 27);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "div", 24);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](1, "div", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](2, "div", 26);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](3, "h5", 27);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](4, "span", 28);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](5, "div", 28);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](6, "button", 29);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](7, "i", 30);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](5, "div", 29);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](6, "button", 30);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](7, "i", 31);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](8, "h6", 31);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](9, "span", 32);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](8, "h6", 32);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](9, "span", 33);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](10, "p", 33);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](11, "span", 34);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](12, "span", 35);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](13, "span", 35);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](14, "span", 27);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](15, "span", 32);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](10, "p", 34);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](11, "span", 35);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](12, "span", 36);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](13, "span", 36);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](14, "span", 28);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](15, "span", 33);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
 } }
-function ProjetoPlanejamentoComponent_div_15_full_calendar_1_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "full-calendar", 38);
+function ProjetoPlanejamentoComponent_div_15_full_calendar_4_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "full-calendar", 41);
 } if (rf & 2) {
     const ctx_r20 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("options", ctx_r20.calendarOptions);
 } }
 function ProjetoPlanejamentoComponent_div_15_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "div", 36);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](1, ProjetoPlanejamentoComponent_div_15_full_calendar_1_Template, 1, 1, "full-calendar", 37);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "div", 37);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](1, "div", 38);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](2, "projeto-tarefa-filter", 39);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](3, "div", 38);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](4, ProjetoPlanejamentoComponent_div_15_full_calendar_4_Template, 1, 1, "full-calendar", 40);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("projeto", ctx_r7.entity)("change", ctx_r7.onCalendarioFilterChange.bind(ctx_r7));
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", ctx_r7.afterLoadData);
 } }
 function ProjetoPlanejamentoComponent_div_16_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "div");
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](1, " .... ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "div", 42);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](1, "div", 38);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](2, "projeto-tarefa-filter", 39);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](3, "div", 38);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](4, "img", 43);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const ctx_r8 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("projeto", ctx_r8.entity)("change", ctx_r8.onCalendarioFilterChange.bind(ctx_r8));
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("src", ctx_r8.gb.getResourcePath("assets/images/burndown-example.png"), _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵsanitizeUrl"]);
 } }
 function ProjetoPlanejamentoComponent_div_17_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "div");
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](1, "kanban", 39, 40);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](1, "kanban", 44, 45);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r9 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
@@ -310,9 +356,9 @@ function ProjetoPlanejamentoComponent_div_17_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("dockers", ctx_r9.labels)("template", _r0)("placeholderTemplate", _r4)("loading", ctx_r9.loading)("swimlaneDrop", ctx_r9.onSwimlaneDrop.bind(ctx_r9))("dockerDragged", ctx_r9.onDragged.bind(ctx_r9))("dockerDrop", ctx_r9.onDrop.bind(ctx_r9))("dockerEditTemplate", _r2)("dockerToggle", ctx_r9.onDockerCollapse.bind(ctx_r9))("dockerEdit", ctx_r9.editEtiquetas.bind(ctx_r9))("dockerSave", ctx_r9.saveEtiquetas.bind(ctx_r9))("dockerDelete", ctx_r9.deleteEtiquetas.bind(ctx_r9))("dockerCancel", ctx_r9.cancelEtiquetas.bind(ctx_r9))("dockerColorStyle", ctx_r9.getLabelStyle);
 } }
-class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_10__["PageFormBase"] {
+class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_9__["PageFormBase"] {
     constructor(injector) {
-        super(injector, src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_9__["Projeto"], src_app_dao_projeto_dao_service__WEBPACK_IMPORTED_MODULE_3__["ProjetoDaoService"]);
+        super(injector, src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_8__["Projeto"], src_app_dao_projeto_dao_service__WEBPACK_IMPORTED_MODULE_3__["ProjetoDaoService"]);
         this.injector = injector;
         this.TITLE_OUTRAS = "Outras";
         this.afterLoadData = false;
@@ -352,6 +398,7 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
         this.titleEdit = (entity) => {
             return "Editando: " + ((entity === null || entity === void 0 ? void 0 : entity.nome) || "");
         };
+        this.projetoService = injector.get(_projeto_service__WEBPACK_IMPORTED_MODULE_10__["ProjetoService"]);
         this.modalWidth = screen.availWidth - Math.round(screen.availWidth * 0.1); /* Variar de acordo com a resolução do usuário */
         this.ganttHeight = screen.availHeight - 350 - Math.round(screen.availHeight * 0.1); /* Variar de acordo com a resolução do usuário */
         console.log(this.ganttHeight, screen.availWidth, screen.availHeight);
@@ -570,14 +617,18 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             let formValue = Object.assign({}, form.value);
             form.patchValue(this.util.fillForm(formValue, entity));
+            this.entity = entity;
             this.project = this.toGantt(entity);
             this.afterLoadData = true;
-            this.calendarOptions.events = this.toCalendar(entity);
+            this.calendarOptions.events = this.toCalendar(entity.tarefas || []);
             this.loadEtiquetas();
             this.loadKanbanDockers(entity);
             this.loadKanbanCards(entity);
             this.cdRef.detectChanges();
         });
+    }
+    onCalendarioFilterChange(tarefas) {
+        this.calendarOptions.events = this.toCalendar(tarefas);
     }
     getStatusColor(status) {
         return status.color;
@@ -586,7 +637,7 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
         var _a, _b, _c, _d, _e, _f, _g, _h;
         let result = [];
         for (let alocacao of tarefa.alocacoes || []) {
-            const regra = alocacao.regra ? "\n(" + alocacao.regra.nome + ")" : "";
+            const regra = ""; //alocacao.regra ? "\n(" + alocacao.regra.nome + ")" : ""; /* TODO: Obter lista de regras */
             const nome = ((_b = (_a = alocacao.recurso) === null || _a === void 0 ? void 0 : _a.nome) === null || _b === void 0 ? void 0 : _b.length) ? alocacao.recurso.nome + "\n" : "";
             switch ((_c = alocacao.recurso) === null || _c === void 0 ? void 0 : _c.tipo) {
                 case 'HUMANO':
@@ -648,13 +699,13 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
     }
     saveData(form) {
         return new Promise((resolve, reject) => {
-            const projeto = this.util.fill(new src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_9__["Projeto"](), this.entity);
+            const projeto = this.util.fill(new src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_8__["Projeto"](), this.entity);
             resolve(this.util.fillForm(projeto, this.form.value));
         });
     }
-    toCalendar(projeto) {
+    toCalendar(tarefas) {
         let result = [];
-        (projeto.tarefas || []).forEach(tarefa => {
+        (tarefas || []).forEach(tarefa => {
             if (!tarefa.agrupador) {
                 result.push({
                     start: tarefa.inicio,
@@ -684,8 +735,8 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
         const toGanttAssignments = (alocacoes) => {
             const toAssignmentDescription = (alocacao) => {
                 var _a, _b;
-                let result = alocacao.descricao || "";
-                if (!result.length) {
+                let result = alocacao.descricao;
+                if (!(result === null || result === void 0 ? void 0 : result.length)) {
                     const recurso = (projeto.recursos || []).find(x => x.id == alocacao.recurso_id);
                     result = ((_a = recurso === null || recurso === void 0 ? void 0 : recurso.usuario) === null || _a === void 0 ? void 0 : _a.nome) || ((_b = recurso === null || recurso === void 0 ? void 0 : recurso.unidade) === null || _b === void 0 ? void 0 : _b.nome) || "";
                 }
@@ -694,7 +745,7 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
             return (alocacoes || []).map(alocacao => new src_app_components_gantt_gantt_models__WEBPACK_IMPORTED_MODULE_2__["GanttAssignment"]({
                 id: alocacao.id,
                 resource_id: alocacao.recurso_id,
-                role_id: alocacao.regra_id,
+                //role_id: alocacao.regra_id, /* TODO: Alterar para aceitar mais de uma rule */
                 description: toAssignmentDescription(alocacao),
                 quantity: alocacao.quantidade || 1
             }));
@@ -732,11 +783,7 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
                 return castTypes.hasOwnProperty(tipo) ? castTypes[tipo] : "MATERIAL";
             };
             const toGanttPicture = (recurso) => {
-                var _a;
-                return (recurso.tipo == "HUMANO" ? ((_a = recurso.usuario) === null || _a === void 0 ? void 0 : _a.url_foto) || "assets/images/projetos/usuario.png" :
-                    (recurso.tipo == "CUSTO" ? "assets/images/projetos/custo.png" :
-                        (recurso.tipo == "DEPARTAMENTO" ? "assets/images/projetos/unidade.png" :
-                            (recurso.tipo == "SERVICO" ? "assets/images/projetos/servico.png" : "assets/images/projetos/material.png"))));
+                return this.projetoService.getRecursoPicture(recurso);
             };
             const toGanttUnity = (unidade) => {
                 const castUnity = {
@@ -790,7 +837,7 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
                     tasks: toTreeGanttTasks(tarefas.filter(x => !x.tarefa_pai_id).sort((a, b) => a.indice > b.indice ? 1 : (a.indice < b.indice ? -1 : 0))),
                     status: toGanttStatus(projeto.status),
                     dependencies_ids: [],
-                    assignments: toGanttAssignments([...(projeto.envolvidos || []), ...(projeto.alocacoes || [])]),
+                    assignments: toGanttAssignments(projeto.alocacoes || []),
                     collapsed: false
                 })],
             resources: (projeto.recursos || []).map(x => toGanttResource(x)),
@@ -803,7 +850,7 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
         let origem = root.extra;
         let index = 1;
         const fromGanttRules = (roles) => {
-            return roles.map(role => new src_app_models_projeto_regra_model__WEBPACK_IMPORTED_MODULE_7__["ProjetoRegra"]({
+            return roles.map(role => new src_app_models_projeto_regra_model__WEBPACK_IMPORTED_MODULE_6__["ProjetoRegra"]({
                 id: role.id,
                 nome: role.name,
                 projeto_id: projeto.id
@@ -835,7 +882,7 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
                 };
                 return castUnity.hasOwnProperty(unity) ? castUnity[unity] : "UNITY";
             };
-            return resources.map(resource => new src_app_models_projeto_recurso_model__WEBPACK_IMPORTED_MODULE_6__["ProjetoRecurso"]({
+            return resources.map(resource => new src_app_models_projeto_recurso_model__WEBPACK_IMPORTED_MODULE_5__["ProjetoRecurso"]({
                 nome: resource.name,
                 tipo: fromGanttResourceType(resource.type),
                 unidade_medida: fromGanttUnity(resource.unity),
@@ -846,20 +893,20 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
                 material_servico_id: resource.extra.material_servico_id
             }));
         };
-        const fromGanttStakeholders = (assigns) => {
-            let result = [];
-            for (let assign of assigns || []) {
-                const envolvido = (origem.envolvidos || []).find(x => x.id == assign.id);
-                if (envolvido) {
-                    result.push(new src_app_models_projeto_envolvido_model__WEBPACK_IMPORTED_MODULE_5__["ProjetoEnvolvido"]({
-                        projeto_id: projeto.id,
-                        recurso_id: assign.resource_id,
-                        regra_id: assign.role_id
-                    }));
-                }
+        /*const fromGanttStakeholders = (assigns: GanttAssignment[]): ProjetoEnvolvido[] => {
+          let result: ProjetoEnvolvido[] = [];
+          for(let assign of assigns || []) {
+            const envolvido = (origem.envolvidos || []).find(x => x.id == assign.id);
+            if(envolvido) {
+              result.push(new ProjetoEnvolvido({
+                projeto_id: projeto.id,
+                recurso_id: assign.resource_id,
+                regra_id: assign.role_id
+              }));
             }
-            return result;
-        };
+          }
+          return result;
+        }*/
         const fromGanttTasks = (projeto, pai, tasks, path) => {
             var _a;
             let result = {
@@ -875,14 +922,14 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
                     descricao: assign.description,
                     quantidade: assign.quantity,
                     recurso_id: assign.resource_id,
-                    regra_id: assign.role_id,
+                    //regra_id: assign.role_id, /* TODO: Trazer de uma lista de regras */
                     projeto_id: origem.projeto_id,
                     tarefa_id: origem.tarefa_id
                 });
             };
             for (let task of root.tasks || []) {
                 let origem = task.extra;
-                let tarefa = new src_app_models_projeto_tarefa_model__WEBPACK_IMPORTED_MODULE_8__["ProjetoTarefa"]({
+                let tarefa = new src_app_models_projeto_tarefa_model__WEBPACK_IMPORTED_MODULE_7__["ProjetoTarefa"]({
                     id: task.id,
                     indice: index++,
                     path: path,
@@ -954,7 +1001,7 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
                 result.progresso = result.progresso / (((_a = root.tasks) === null || _a === void 0 ? void 0 : _a.length) || 1);
             return result;
         };
-        let projeto = new src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_9__["Projeto"]({
+        let projeto = new src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_8__["Projeto"]({
             numero: origem.numero,
             nome: root.name,
             descricao: root.description,
@@ -978,7 +1025,7 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
             tipo_projeto_id: origem.tipo_projeto_id,
             regras: fromGanttRules(project.roles),
             recursos: fromGanttResources(project.resources),
-            envolvidos: fromGanttStakeholders(root.assignments || []),
+            //envolvidos: fromGanttStakeholders(root.assignments || []),
             alocacoes: [],
             tarefas: []
         });
@@ -995,7 +1042,7 @@ ProjetoPlanejamentoComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_11__
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵloadQuery"]()) && (ctx.planejamentoKanban = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵInheritDefinitionFeature"]], decls: 18, vars: 10, consts: [["ticket", ""], ["editDocker", ""], ["placeholder", ""], [3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["planejamentoTabs", ""], ["key", "GANTT", "label", "Principal"], ["key", "CALENDARIO", "label", "Calend\u00E1rio"], ["key", "BURNDOWN", "label", "Burndown"], ["key", "KANBAN", "label", "Quadro"], [3, "project", "height"], ["class", "d-block text-center", "style", "min-height: 400px; max-width: 1000px; margin: auto;", 4, "ngIf"], [4, "ngIf"], ["class", "d-block", 4, "ngIf"], [1, "d-block"], ["title", "Recursos alocados", "small", ""], [3, "url", "hint", 4, "ngFor", "ngForOf"], [3, "url", "hint"], [1, "card-status-container"], [3, "color", "icon", "label", 4, "ngFor", "ngForOf"], ["title", "Coment\u00E1rios", "small", "", 3, "button"], [3, "color", "icon", "label"], ["controlName", "etiqueta", 3, "size", "control", "items"], [1, "card-body"], [1, "d-flex", "w-100"], [1, "flex-fill"], [1, "card-title", "placeholder-glow"], [1, "placeholder", "col-6"], ["role", "group", "aria-label", "Basic outlined example", 1, "btn-group"], ["type", "button", 1, "btn", "btn-sm", "btn-outline-secondary", "disabled", "placeholder"], [1, "bi", "bi-question"], [1, "card-subtitle", "mb-2", "text-muted", "placeholder-glow"], [1, "placeholder", "col-8"], [1, "card-text", "placeholder-glow"], [1, "placeholder", "col-7"], [1, "placeholder", "col-4"], [1, "d-block", "text-center", 2, "min-height", "400px", "max-width", "1000px", "margin", "auto"], [3, "options", 4, "ngIf"], [3, "options"], ["useCardData", "", 3, "dockers", "template", "placeholderTemplate", "loading", "swimlaneDrop", "dockerDragged", "dockerDrop", "dockerEditTemplate", "dockerToggle", "dockerEdit", "dockerSave", "dockerDelete", "dockerCancel", "dockerColorStyle"], ["planejamentoKanban", ""]], template: function ProjetoPlanejamentoComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵInheritDefinitionFeature"]], decls: 18, vars: 10, consts: [["ticket", ""], ["editDocker", ""], ["placeholder", ""], [3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["planejamentoTabs", ""], ["key", "GANTT", "label", "Principal", "icon", "bi bi-bar-chart-steps"], ["key", "CALENDARIO", "label", "Calend\u00E1rio", "icon", "bi bi-calendar-week"], ["key", "BURNDOWN", "label", "Burndown", "icon", "bi bi-graph-down"], ["key", "KANBAN", "label", "Quadro", "icon", "bi bi-card-heading"], [3, "project", "height"], ["class", "row", "style", "min-height: 400px;", 4, "ngIf"], ["class", "row", 4, "ngIf"], [4, "ngIf"], ["class", "d-block", 4, "ngIf"], [1, "d-block"], ["title", "Recursos alocados", "small", ""], [3, "url", "hint", 4, "ngFor", "ngForOf"], [3, "url", "hint"], [1, "card-status-container"], [3, "color", "icon", "label", 4, "ngFor", "ngForOf"], ["title", "Coment\u00E1rios", "small", "", 3, "button"], [3, "color", "icon", "label"], ["controlName", "etiqueta", 3, "size", "control", "items"], [1, "card-body"], [1, "d-flex", "w-100"], [1, "flex-fill"], [1, "card-title", "placeholder-glow"], [1, "placeholder", "col-6"], ["role", "group", "aria-label", "Basic outlined example", 1, "btn-group"], ["type", "button", 1, "btn", "btn-sm", "btn-outline-secondary", "disabled", "placeholder"], [1, "bi", "bi-question"], [1, "card-subtitle", "mb-2", "text-muted", "placeholder-glow"], [1, "placeholder", "col-8"], [1, "card-text", "placeholder-glow"], [1, "placeholder", "col-7"], [1, "placeholder", "col-4"], [1, "row", 2, "min-height", "400px"], [1, "col-md-6"], [3, "projeto", "change"], [3, "options", 4, "ngIf"], [3, "options"], [1, "row"], [2, "width", "100%", 3, "src"], ["useCardData", "", 3, "dockers", "template", "placeholderTemplate", "loading", "swimlaneDrop", "dockerDragged", "dockerDrop", "dockerEditTemplate", "dockerToggle", "dockerEdit", "dockerSave", "dockerDelete", "dockerCancel", "dockerColorStyle"], ["planejamentoKanban", ""]], template: function ProjetoPlanejamentoComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](0, ProjetoPlanejamentoComponent_ng_template_0_Template, 2, 2, "ng-template", null, 0, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](2, ProjetoPlanejamentoComponent_ng_template_2_Template, 1, 3, "ng-template", null, 1, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](4, ProjetoPlanejamentoComponent_ng_template_4_Template, 16, 0, "ng-template", null, 2, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
@@ -1010,9 +1057,9 @@ ProjetoPlanejamentoComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_11__
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](13, "div");
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](14, "gantt", 10);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](15, ProjetoPlanejamentoComponent_div_15_Template, 2, 1, "div", 11);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](16, ProjetoPlanejamentoComponent_div_16_Template, 2, 0, "div", 12);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](17, ProjetoPlanejamentoComponent_div_17_Template, 3, 14, "div", 12);
+        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](15, ProjetoPlanejamentoComponent_div_15_Template, 5, 3, "div", 11);
+        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](16, ProjetoPlanejamentoComponent_div_16_Template, 5, 3, "div", 12);
+        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](17, ProjetoPlanejamentoComponent_div_17_Template, 3, 14, "div", 13);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
     } if (rf & 2) {
         const _r6 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵreference"](8);
@@ -1028,7 +1075,7 @@ ProjetoPlanejamentoComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_11__
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", _r6.active == "BURNDOWN");
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", _r6.active == "KANBAN");
-    } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__["EditableFormComponent"], _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_12__["TabsComponent"], _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_13__["TabComponent"], _components_gantt_gantt_component__WEBPACK_IMPORTED_MODULE_14__["GanttComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_15__["NgIf"], _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_16__["SeparatorComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_15__["NgForOf"], _components_profile_picture_profile_picture_component__WEBPACK_IMPORTED_MODULE_17__["ProfilePictureComponent"], _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_18__["BadgeComponent"], _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_19__["InputSelectComponent"], _fullcalendar_angular__WEBPACK_IMPORTED_MODULE_20__["FullCalendarComponent"], _components_kanban_kanban_component__WEBPACK_IMPORTED_MODULE_21__["KanbanComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwcm9qZXRvLXBsYW5lamFtZW50by5jb21wb25lbnQuc2NzcyJ9 */"] });
+    } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__["EditableFormComponent"], _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_12__["TabsComponent"], _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_13__["TabComponent"], _components_gantt_gantt_component__WEBPACK_IMPORTED_MODULE_14__["GanttComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_15__["NgIf"], _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_16__["SeparatorComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_15__["NgForOf"], _components_profile_picture_profile_picture_component__WEBPACK_IMPORTED_MODULE_17__["ProfilePictureComponent"], _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_18__["BadgeComponent"], _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_19__["InputSelectComponent"], _projeto_tarefa_filter_projeto_tarefa_filter_component__WEBPACK_IMPORTED_MODULE_20__["ProjetoTarefaFilterComponent"], _fullcalendar_angular__WEBPACK_IMPORTED_MODULE_21__["FullCalendarComponent"], _components_kanban_kanban_component__WEBPACK_IMPORTED_MODULE_22__["KanbanComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwcm9qZXRvLXBsYW5lamFtZW50by5jb21wb25lbnQuc2NzcyJ9 */"] });
 
 
 /***/ }),
@@ -1046,14 +1093,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
 class ProjetoAlocacao extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
+    //public regra_id: string | null = null;
     constructor(data) {
         super();
         this.descricao = ""; /* Descrição */
         this.quantidade = 1; /* Quantidade */
+        this.envolvido = false; /* Se o recurso do tipo HUMANO ou DEPARTAMENTAL for um stakeholder */
         this.projeto_id = null;
         this.tarefa_id = null;
         this.recurso_id = "";
-        this.regra_id = null;
         this.initialization(data);
     }
 }
@@ -11057,11 +11105,69 @@ var unmountComponentAtNode = FullCalendarVDom.unmountComponentAtNode;
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProjetoFormAlocacoesComponent", function() { return ProjetoFormAlocacoesComponent; });
-/* harmony import */ var src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/modules/base/page-frame-base */ "rvJe");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/components/editable-form/editable-form.component */ "RKEd");
+/* harmony import */ var src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/models/projeto.model */ "LZl6");
+/* harmony import */ var src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/modules/base/page-frame-base */ "rvJe");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ "lYxd");
+/* harmony import */ var _components_input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../components/input/input-number/input-number.component */ "imFN");
+/* harmony import */ var _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../components/separator/separator.component */ "FVj5");
+/* harmony import */ var _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../components/grid/grid.component */ "m4bG");
+/* harmony import */ var _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/grid/columns/columns.component */ "d7UH");
+/* harmony import */ var _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../../components/grid/column/column.component */ "pFmK");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/common */ "ofXK");
+/* harmony import */ var _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../../../components/input/input-switch/input-switch.component */ "puzm");
 
 
-class ProjetoFormAlocacoesComponent extends src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_0__["PageFrameBase"] {
+
+
+
+
+
+
+
+
+
+
+
+
+function ProjetoFormAlocacoesComponent_ng_template_16_strong_0_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "strong", 14);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const row_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"]().row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"]((row_r6.tarefa == null ? null : row_r6.tarefa.nome) || "");
+} }
+function ProjetoFormAlocacoesComponent_ng_template_16_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](0, ProjetoFormAlocacoesComponent_ng_template_16_strong_0_Template, 2, 1, "strong", 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+} if (rf & 2) {
+    const row_r6 = ctx.row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", row_r6.tarefa == null ? null : row_r6.tarefa.nome.length);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", row_r6.descricao, " ");
+} }
+function ProjetoFormAlocacoesComponent_ng_template_19_i_1_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "i", 17);
+} }
+function ProjetoFormAlocacoesComponent_ng_template_19_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "div", 15);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](1, ProjetoFormAlocacoesComponent_ng_template_19_i_1_Template, 1, 0, "i", 16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const row_r9 = ctx.row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", row_r9.concluido);
+} }
+function ProjetoFormAlocacoesComponent_ng_template_21_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "input-switch", 18);
+} if (rf & 2) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12);
+} }
+class ProjetoFormAlocacoesComponent extends src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_3__["PageFrameBase"] {
     constructor(injector) {
         super(injector);
         this.injector = injector;
@@ -11069,15 +11175,131 @@ class ProjetoFormAlocacoesComponent extends src_app_modules_base_page_frame_base
             let result = null;
             return result;
         };
-        this.form = this.fh.FormBuilder({}, this.cdRef, this.validate);
+        this.form = this.fh.FormBuilder({
+            nome_recurso: { default: "" },
+            regra: { default: "" },
+            decricao_recurso: { default: "" },
+            qtd_recurso: { default: 0 }
+        }, this.cdRef, this.validate);
     }
+    set control(value) { super.control = value; }
+    get control() { return super.control; }
+    set entity(value) { super.entity = value; }
+    get entity() { return super.entity; }
     get items() {
-        var _a, _b;
-        return ((_a = this.projeto) === null || _a === void 0 ? void 0 : _a.alocacoes) || ((_b = this.tarefa) === null || _b === void 0 ? void 0 : _b.alocacoes) || [];
+        if (!this.gridControl.value)
+            this.gridControl.setValue(new src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_2__["Projeto"]());
+        if (!this.gridControl.value.alocacoes)
+            this.gridControl.value.alocacoes = [];
+        return this.gridControl.value.alocacoes;
+    }
+    loadData(entity, form) {
+        super.loadData(entity, form);
+    }
+    initializeData(form) {
+        this.entity = new src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_2__["Projeto"]();
+        this.loadData(this.entity, this.form);
+    }
+    saveData(form) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                resolve(this.entity);
+            });
+        });
     }
 }
-ProjetoFormAlocacoesComponent.ɵfac = function ProjetoFormAlocacoesComponent_Factory(t) { return new (t || ProjetoFormAlocacoesComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
-ProjetoFormAlocacoesComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: ProjetoFormAlocacoesComponent, selectors: [["projeto-form-alocacoes"]], inputs: { projeto: "projeto", tarefa: "tarefa" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]], decls: 0, vars: 0, template: function ProjetoFormAlocacoesComponent_Template(rf, ctx) { }, styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwcm9qZXRvLWZvcm0tYWxvY2Fjb2VzLmNvbXBvbmVudC5zY3NzIn0= */"] });
+ProjetoFormAlocacoesComponent.ɵfac = function ProjetoFormAlocacoesComponent_Factory(t) { return new (t || ProjetoFormAlocacoesComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_4__["Injector"])); };
+ProjetoFormAlocacoesComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineComponent"]({ type: ProjetoFormAlocacoesComponent, selectors: [["projeto-form-alocacoes"]], viewQuery: function ProjetoFormAlocacoesComponent_Query(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__["EditableFormComponent"], 1);
+    } if (rf & 2) {
+        let _t;
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
+    } }, inputs: { control: "control", entity: "entity" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵInheritDefinitionFeature"]], decls: 23, vars: 17, consts: [[3, "form", "disabled", "title"], [1, "row"], ["label", "Recurso", "controlName", "nome_recurso", 3, "size"], ["label", "Regra", "controlName", "regra", "labelInfo", "Regra associada ao recurso", 3, "size"], ["label", "Descri\u00E7\u00E3o", "controlName", "decricao_recurso", "labelInfo", "Descri\u00E7\u00E3o associada ao recurso", 3, "size"], ["number", "", "label", "Quantidade", "controlName", "qtd_recurso", "labelInfo", "Quantidade associada ao recurso", 3, "size"], ["title", "Cronograma e progresso"], [3, "hasDelete"], [3, "title", "template"], ["tarefaDescricao", ""], ["title", "Tipo de recurso", 3, "align", "template", "editTemplate"], ["concluido", ""], ["editConcluido", ""], ["class", "d-block", 4, "ngIf"], [1, "d-block"], [1, "text-center"], ["class", "bi bi-check-circle", 4, "ngIf"], [1, "bi", "bi-check-circle"], ["controlName", "concluido", 3, "size"]], template: function ProjetoFormAlocacoesComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "editable-form", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](1, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](2, "input-text", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](3, "input-text", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](4, "input-text", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](5, "input-number", 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](6, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](7, "input-text", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](8, "input-text", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](9, "input-text", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](10, "input-number", 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](11, "separator", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](12, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](13, "grid", 7);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](14, "columns");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](15, "column", 8);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](16, ProjetoFormAlocacoesComponent_ng_template_16_Template, 2, 2, "ng-template", null, 9, _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](18, "column", 10);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](19, ProjetoFormAlocacoesComponent_ng_template_19_Template, 2, 1, "ng-template", null, 11, _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](21, ProjetoFormAlocacoesComponent_ng_template_21_Template, 1, 1, "ng-template", null, 12, _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    } if (rf & 2) {
+        const _r0 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵreference"](17);
+        const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵreference"](20);
+        const _r4 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵreference"](22);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("hasDelete", true);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("title", ctx.lex.noun("Nome") + " da Regra")("template", _r0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("align", "center")("template", _r2)("editTemplate", _r4);
+    } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__["EditableFormComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_5__["InputTextComponent"], _components_input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_6__["InputNumberComponent"], _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_7__["SeparatorComponent"], _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_8__["GridComponent"], _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_9__["ColumnsComponent"], _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_10__["ColumnComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_11__["NgIf"], _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_12__["InputSwitchComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwcm9qZXRvLWZvcm0tYWxvY2Fjb2VzLmNvbXBvbmVudC5zY3NzIn0= */"] });
+
+
+/***/ }),
+
+/***/ "6/Ne":
+/*!***********************************************************!*\
+  !*** ./src/app/modules/gestao/projeto/projeto.service.ts ***!
+  \***********************************************************/
+/*! exports provided: ProjetoService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProjetoService", function() { return ProjetoService; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "fXoL");
+
+class ProjetoService {
+    constructor() { }
+    getRecursoPicture(recurso) {
+        var _a;
+        return (!recurso ? "assets/images/projetos/material.png" :
+            (recurso.tipo == "HUMANO" ? ((_a = recurso.usuario) === null || _a === void 0 ? void 0 : _a.url_foto) || "assets/images/projetos/usuario.png" :
+                (recurso.tipo == "CUSTO" ? "assets/images/projetos/custo.png" :
+                    (recurso.tipo == "DEPARTAMENTO" ? "assets/images/projetos/unidade.png" :
+                        (recurso.tipo == "SERVICO" ? "assets/images/projetos/servico.png" : "assets/images/projetos/material.png")))));
+    }
+}
+ProjetoService.ɵfac = function ProjetoService_Factory(t) { return new (t || ProjetoService)(); };
+ProjetoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: ProjetoService, factory: ProjetoService.ɵfac, providedIn: 'root' });
 
 
 /***/ }),
@@ -11097,7 +11319,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ "RKEd");
 /* harmony import */ var _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../components/tabs/tabs.component */ "EkNo");
 /* harmony import */ var _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../components/tabs/tab/tab.component */ "suJ1");
-/* harmony import */ var _projeto_form_principal_projeto_form_principal_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../projeto-form-principal/projeto-form-principal.component */ "OkXU");
+/* harmony import */ var _projeto_tarefa_form_principal_projeto_tarefa_form_principal_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../projeto-tarefa-form-principal/projeto-tarefa-form-principal.component */ "+qyV");
 /* harmony import */ var _projeto_form_alocacoes_projeto_form_alocacoes_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../projeto-form-alocacoes/projeto-form-alocacoes.component */ "3yBa");
 /* harmony import */ var _uteis_comentarios_comentarios_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../uteis/comentarios/comentarios.component */ "KuoT");
 
@@ -11120,11 +11342,11 @@ class ProjetoTarefaFormComponent extends src_app_modules_base_page_frame_base__W
     }
 }
 ProjetoTarefaFormComponent.ɵfac = function ProjetoTarefaFormComponent_Factory(t) { return new (t || ProjetoTarefaFormComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
-ProjetoTarefaFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: ProjetoTarefaFormComponent, selectors: [["app-projeto-tarefa-form"]], features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]], decls: 8, vars: 3, consts: [[3, "form", "disabled", "title"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], ["key", "ALOCACOES", "label", "Aloca\u00E7\u00F5es"], ["key", "COMENTARIOS", "label", "Coment\u00E1rios"]], template: function ProjetoTarefaFormComponent_Template(rf, ctx) { if (rf & 1) {
+ProjetoTarefaFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: ProjetoTarefaFormComponent, selectors: [["projeto-tarefa-form"]], features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]], decls: 8, vars: 3, consts: [[3, "form", "disabled", "title"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], ["key", "ALOCACOES", "label", "Aloca\u00E7\u00F5es"], ["key", "COMENTARIOS", "label", "Coment\u00E1rios"]], template: function ProjetoTarefaFormComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "editable-form", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](1, "tabs", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](2, "tab", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](3, "projeto-form-principal");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](3, "projeto-tarefa-form-principal");
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](4, "tab", 3);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](5, "projeto-form-alocacoes");
@@ -11136,7 +11358,7 @@ ProjetoTarefaFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["�
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     } if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
-    } }, directives: [_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_2__["EditableFormComponent"], _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_3__["TabsComponent"], _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_4__["TabComponent"], _projeto_form_principal_projeto_form_principal_component__WEBPACK_IMPORTED_MODULE_5__["ProjetoFormPrincipalComponent"], _projeto_form_alocacoes_projeto_form_alocacoes_component__WEBPACK_IMPORTED_MODULE_6__["ProjetoFormAlocacoesComponent"], _uteis_comentarios_comentarios_component__WEBPACK_IMPORTED_MODULE_7__["ComentariosComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwcm9qZXRvLXRhcmVmYS1mb3JtLmNvbXBvbmVudC5zY3NzIn0= */"] });
+    } }, directives: [_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_2__["EditableFormComponent"], _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_3__["TabsComponent"], _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_4__["TabComponent"], _projeto_tarefa_form_principal_projeto_tarefa_form_principal_component__WEBPACK_IMPORTED_MODULE_5__["ProjetoTarefaFormPrincipalComponent"], _projeto_form_alocacoes_projeto_form_alocacoes_component__WEBPACK_IMPORTED_MODULE_6__["ProjetoFormAlocacoesComponent"], _uteis_comentarios_comentarios_component__WEBPACK_IMPORTED_MODULE_7__["ComentariosComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwcm9qZXRvLXRhcmVmYS1mb3JtLmNvbXBvbmVudC5zY3NzIn0= */"] });
 
 
 /***/ }),
@@ -12045,17 +12267,19 @@ var r,u,i,o,f=0,c=[],e=[],a=preact__WEBPACK_IMPORTED_MODULE_0__["options"].__b,v
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProjetoFormPrincipalComponent", function() { return ProjetoFormPrincipalComponent; });
-/* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/components/editable-form/editable-form.component */ "RKEd");
-/* harmony import */ var src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/modules/base/page-frame-base */ "rvJe");
-/* harmony import */ var src_app_dao_projeto_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/projeto-dao.service */ "B2HH");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var _components_input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../components/input/input-number/input-number.component */ "imFN");
-/* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ "lYxd");
-/* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../components/input/input-select/input-select.component */ "txHH");
-/* harmony import */ var _components_input_input_textarea_input_textarea_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../components/input/input-textarea/input-textarea.component */ "S/J2");
-/* harmony import */ var _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../components/separator/separator.component */ "FVj5");
-/* harmony import */ var _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/input/input-switch/input-switch.component */ "puzm");
-/* harmony import */ var _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../../components/input/input-datetime/input-datetime.component */ "NRF3");
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/components/editable-form/editable-form.component */ "RKEd");
+/* harmony import */ var src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/modules/base/page-frame-base */ "rvJe");
+/* harmony import */ var src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/models/projeto.model */ "LZl6");
+/* harmony import */ var src_app_dao_projeto_dao_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/dao/projeto-dao.service */ "B2HH");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _components_input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../components/input/input-number/input-number.component */ "imFN");
+/* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ "lYxd");
+/* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../components/input/input-select/input-select.component */ "txHH");
+/* harmony import */ var _components_input_input_textarea_input_textarea_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/input/input-textarea/input-textarea.component */ "S/J2");
+/* harmony import */ var _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../../components/separator/separator.component */ "FVj5");
+/* harmony import */ var _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../../components/input/input-datetime/input-datetime.component */ "NRF3");
+/* harmony import */ var _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../../../components/input/input-switch/input-switch.component */ "puzm");
 
 
 
@@ -12068,7 +12292,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class ProjetoFormPrincipalComponent extends src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_1__["PageFrameBase"] {
+
+
+class ProjetoFormPrincipalComponent extends src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_2__["PageFrameBase"] {
     constructor(injector) {
         super(injector);
         this.injector = injector;
@@ -12076,16 +12302,14 @@ class ProjetoFormPrincipalComponent extends src_app_modules_base_page_frame_base
             let result = null;
             return result;
         };
-        this.projetoDao = injector.get(src_app_dao_projeto_dao_service__WEBPACK_IMPORTED_MODULE_2__["ProjetoDaoService"]);
+        this.dao = injector.get(src_app_dao_projeto_dao_service__WEBPACK_IMPORTED_MODULE_4__["ProjetoDaoService"]);
         this.form = this.fh.FormBuilder({
             numero: { default: "" },
             nome: { default: "" },
-            status: { default: "" },
+            status: { default: "PLANEJADO" },
             descricao: { default: "" },
             finalidade: { default: "" },
-            marco_inicio: { default: "" },
             inicio_projeto: { default: new Date() },
-            marco_termino: { default: "" },
             termino_projeto: { default: new Date() },
             duracao: { default: "" },
             progresso: { default: 0 },
@@ -12102,104 +12326,1083 @@ class ProjetoFormPrincipalComponent extends src_app_modules_base_page_frame_base
         }, this.cdRef, this.validate);
         this.join = ["projeto_recurso", "projeto_tarefa", "projeto_alocacao", "projeto_regra", "projeto_envolvido"];
     }
+    set control(value) { super.control = value; }
+    get control() { return super.control; }
+    set entity(value) { super.entity = value; }
+    get entity() { return super.entity; }
+    loadData(entity, form) {
+        let formValue = Object.assign({}, this.form.value);
+        this.form.patchValue(this.util.fillForm(formValue, entity));
+    }
+    initializeData(form) {
+        this.entity = new src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_3__["Projeto"]();
+        this.loadData(this.entity, this.form);
+    }
+    saveData(form) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                resolve(this.util.fillForm(this.entity, this.form.value));
+            });
+        });
+    }
 }
-ProjetoFormPrincipalComponent.ɵfac = function ProjetoFormPrincipalComponent_Factory(t) { return new (t || ProjetoFormPrincipalComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_3__["Injector"])); };
-ProjetoFormPrincipalComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineComponent"]({ type: ProjetoFormPrincipalComponent, selectors: [["projeto-form-principal"]], viewQuery: function ProjetoFormPrincipalComponent_Query(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_0__["EditableFormComponent"], 1);
+ProjetoFormPrincipalComponent.ɵfac = function ProjetoFormPrincipalComponent_Factory(t) { return new (t || ProjetoFormPrincipalComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_5__["Injector"])); };
+ProjetoFormPrincipalComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineComponent"]({ type: ProjetoFormPrincipalComponent, selectors: [["projeto-form-principal"]], viewQuery: function ProjetoFormPrincipalComponent_Query(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__["EditableFormComponent"], 1);
     } if (rf & 2) {
         let _t;
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵInheritDefinitionFeature"]], decls: 34, vars: 26, consts: [["noButtons", "", 3, "form", "disabled"], [1, "row"], ["label", "N\u00FAmero", "controlName", "numero", 3, "size"], ["label", "Nome", "controlName", "nome", "labelInfo", "Nome do projeto", 3, "size"], ["label", "Status do projeto", "icon", "bi bi-arrow-up-right-circle", "controlName", "status", 3, "size", "items"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", 3, "size", "rows"], ["label", "Finalidade", "controlName", "finalidade", 3, "size", "rows"], ["title", "Cronograma e progresso"], ["label", "Marco inicial", "icon", "bi bi-check2", "controlName", "marco_inicio", "labelInfo", "Marco in\u00EDcio", 3, "size"], ["date", "", "label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "inicio_projeto", 3, "size"], ["label", "Marco de t\u00E9rminio", "icon", "bi bi-check2", "controlName", "marco_termino", "labelInfo", "Marco in\u00EDcio", 3, "size"], ["date", "", "label", "T\u00E9rmino", "icon", "bi bi-calendar-date", "controlName", "termino_projeto", 3, "size"], ["number", "", "label", "Dura\u00E7\u00E3o", "sufix", "d/h", "controlName", "duracao", 3, "size"], ["number", "", "label", "Progresso", "sufix", "%", "icon", "bi bi-clock", "controlName", "progresso", "labelInfo", "Progresso do projeto (% Conclu\u00EDdo)", 3, "size"], ["title", "Cconfigura\u00E7\u00F5es"], ["label", "Tempo corrido:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "tempo_corrido", "labelInfo", "Tempo corrido", 3, "size"], ["label", "Usa horas:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "usa_horas", "labelInfo", "Usa horas", 3, "size"], ["label", "Intervalo autom\u00E1tico:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "intervalo_automatico", "labelInfo", "Intervalo autom\u00E1tico", 3, "size"], ["label", "Progresso autom\u00E1tico:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "progresso_automatico", "labelInfo", "Progresso autom\u00E1tico", 3, "size"], ["label", "Agrupador:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "agrupador", "labelInfo", "Agrupador", 3, "size"], ["label", "Usa custo:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "usa_custo", "labelInfo", "Usa custo", 3, "size"], ["label", "Aloca recursos no projeto:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "aloca_recursos_projeto", "labelInfo", "Aloca recursos no projeto", 3, "size"], ["label", "Soma aloca\u00E7\u00F5es autom\u00E1tico:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "soma_alocacoes_automatico", "labelInfo", "Soma aloca\u00E7\u00F5es autom\u00E1tico", 3, "size"], ["label", "Possui custos no projeto:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "possui_custos_projeto", "labelInfo", "Possui custos no projeto", 3, "size"], ["label", "Soma custos autom\u00E1tico:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "soma_custos_automatico", "labelInfo", "Soma custos autom\u00E1tico", 3, "size"]], template: function ProjetoFormPrincipalComponent_Template(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "editable-form", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](1, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](2, "input-number", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](3, "input-text", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](4, "input-select", 4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](5, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](6, "input-textarea", 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](7, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](8, "input-textarea", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](9, "separator", 7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](10, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](11, "input-switch", 8);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](12, "input-datetime", 9);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](13, "input-switch", 10);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](14, "input-datetime", 11);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](15, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](16, "input-number", 12);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](17, "input-text", 13);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](18, "separator", 14);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](19, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](20, "input-switch", 15);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](21, "input-switch", 16);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](22, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](23, "input-switch", 17);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](24, "input-switch", 18);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](25, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](26, "input-switch", 19);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](27, "input-switch", 20);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](28, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](29, "input-switch", 21);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](30, "input-switch", 22);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](31, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](32, "input-switch", 23);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](33, "input-switch", 24);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
+    } }, inputs: { control: "control", entity: "entity" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵInheritDefinitionFeature"]], decls: 31, vars: 25, consts: [[3, "form", "noButtons", "disabled", "submit", "cancel"], [1, "row"], ["disabled", "", "label", "N\u00FAmero", "controlName", "numero", 3, "size"], ["label", "Nome", "controlName", "nome", "labelInfo", "Nome do projeto", 3, "size"], ["label", "Status do projeto", "icon", "bi bi-arrow-up-right-circle", "controlName", "status", 3, "size", "items"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", 3, "size", "rows"], ["label", "Finalidade", "controlName", "finalidade", 3, "size", "rows"], ["title", "Cronograma e progresso"], ["date", "", "label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "inicio_projeto", 3, "size"], ["date", "", "label", "T\u00E9rmino", "icon", "bi bi-calendar-date", "controlName", "termino_projeto", 3, "size"], ["number", "", "label", "Dura\u00E7\u00E3o", "sufix", "d/h", "controlName", "duracao", 3, "size"], ["number", "", "label", "Progresso", "sufix", "%", "icon", "bi bi-clock", "controlName", "progresso", "labelInfo", "Progresso do projeto (% Conclu\u00EDdo)", 3, "size"], ["title", "Configura\u00E7\u00F5es"], ["label", "Tempo corrido:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "tempo_corrido", "labelInfo", "Tempo corrido", 3, "size"], ["label", "Usa horas:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "usa_horas", "labelInfo", "Usa horas", 3, "size"], ["label", "Intervalo autom\u00E1tico:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "intervalo_automatico", "labelInfo", "Intervalo autom\u00E1tico", 3, "size"], ["label", "Progresso autom\u00E1tico:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "progresso_automatico", "labelInfo", "Progresso autom\u00E1tico", 3, "size"], ["label", "Agrupador:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "agrupador", "labelInfo", "Agrupador", 3, "size"], ["label", "Usa custo:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "usa_custo", "labelInfo", "Usa custo", 3, "size"], ["label", "Aloca recursos no projeto:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "aloca_recursos_projeto", "labelInfo", "Aloca recursos no projeto", 3, "size"], ["label", "Soma aloca\u00E7\u00F5es autom\u00E1tico:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "soma_alocacoes_automatico", "labelInfo", "Soma aloca\u00E7\u00F5es autom\u00E1tico", 3, "size"], ["label", "Possui custos no projeto:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "possui_custos_projeto", "labelInfo", "Possui custos no projeto", 3, "size"], ["label", "Soma custos autom\u00E1tico:", "scale", "small", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "soma_custos_automatico", "labelInfo", "Soma custos autom\u00E1tico", 3, "size"]], template: function ProjetoFormPrincipalComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "editable-form", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵlistener"]("submit", function ProjetoFormPrincipalComponent_Template_editable_form_submit_0_listener() { return ctx.onSaveData(); })("cancel", function ProjetoFormPrincipalComponent_Template_editable_form_cancel_0_listener() { return ctx.onCancel(); });
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](1, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](2, "input-number", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](3, "input-text", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](4, "input-select", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](5, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](6, "input-textarea", 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](7, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](8, "input-textarea", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](9, "separator", 7);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](10, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](11, "input-datetime", 8);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](12, "input-datetime", 9);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](13, "input-number", 10);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](14, "input-text", 11);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](15, "separator", 12);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](16, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](17, "input-switch", 13);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](18, "input-switch", 14);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](19, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](20, "input-switch", 15);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](21, "input-switch", 16);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](22, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](23, "input-switch", 17);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](24, "input-switch", 18);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](25, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](26, "input-switch", 19);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](27, "input-switch", 20);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](28, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](29, "input-switch", 21);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](30, "input-switch", 22);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     } if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 4)("items", ctx.lookup.PROJETO_STATUS);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 12)("rows", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 12)("rows", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 6);
-    } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_0__["EditableFormComponent"], _components_input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_4__["InputNumberComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_5__["InputTextComponent"], _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_6__["InputSelectComponent"], _components_input_input_textarea_input_textarea_component__WEBPACK_IMPORTED_MODULE_7__["InputTextareaComponent"], _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_8__["SeparatorComponent"], _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_9__["InputSwitchComponent"], _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_10__["InputDatetimeComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwcm9qZXRvLWZvcm0tcHJpbmNpcGFsLmNvbXBvbmVudC5zY3NzIn0= */"] });
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("form", ctx.form)("noButtons", !ctx.entity_id ? "true" : undefined)("disabled", ctx.formDisabled);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 4)("items", ctx.lookup.PROJETO_STATUS);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 12)("rows", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 12)("rows", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 6);
+    } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__["EditableFormComponent"], _components_input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_6__["InputNumberComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_7__["InputTextComponent"], _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_8__["InputSelectComponent"], _components_input_input_textarea_input_textarea_component__WEBPACK_IMPORTED_MODULE_9__["InputTextareaComponent"], _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_10__["SeparatorComponent"], _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_11__["InputDatetimeComponent"], _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_12__["InputSwitchComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwcm9qZXRvLWZvcm0tcHJpbmNpcGFsLmNvbXBvbmVudC5zY3NzIn0= */"] });
+
+
+/***/ }),
+
+/***/ "PN1e":
+/*!****************************************************!*\
+  !*** ./node_modules/@fullcalendar/daygrid/main.js ***!
+  \****************************************************/
+/*! exports provided: default, DayGridView, DayTable, DayTableSlicer, Table, TableView, buildDayTableModel */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DayGridView", function() { return DayTableView; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DayTable", function() { return DayTable; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DayTableSlicer", function() { return DayTableSlicer; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Table", function() { return Table; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TableView", function() { return TableView; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "buildDayTableModel", function() { return buildDayTableModel; });
+/* harmony import */ var _main_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./main.css */ "pDWP");
+/* harmony import */ var _fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @fullcalendar/common */ "1hAE");
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! tslib */ "mrSG");
+/*!
+FullCalendar v5.11.3
+Docs & License: https://fullcalendar.io/
+(c) 2022 Adam Shaw
+*/
+
+
+
+
+
+/* An abstract class for the daygrid views, as well as month view. Renders one or more rows of day cells.
+----------------------------------------------------------------------------------------------------------------------*/
+// It is a manager for a Table subcomponent, which does most of the heavy lifting.
+// It is responsible for managing width/height.
+var TableView = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__extends"])(TableView, _super);
+    function TableView() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.headerElRef = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createRef"])();
+        return _this;
+    }
+    TableView.prototype.renderSimpleLayout = function (headerRowContent, bodyContent) {
+        var _a = this, props = _a.props, context = _a.context;
+        var sections = [];
+        var stickyHeaderDates = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["getStickyHeaderDates"])(context.options);
+        if (headerRowContent) {
+            sections.push({
+                type: 'header',
+                key: 'header',
+                isSticky: stickyHeaderDates,
+                chunk: {
+                    elRef: this.headerElRef,
+                    tableClassName: 'fc-col-header',
+                    rowContent: headerRowContent,
+                },
+            });
+        }
+        sections.push({
+            type: 'body',
+            key: 'body',
+            liquid: true,
+            chunk: { content: bodyContent },
+        });
+        return (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["ViewRoot"], { viewSpec: context.viewSpec }, function (rootElRef, classNames) { return (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", { ref: rootElRef, className: ['fc-daygrid'].concat(classNames).join(' ') },
+            Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["SimpleScrollGrid"], { liquid: !props.isHeightAuto && !props.forPrint, collapsibleWidth: props.forPrint, cols: [] /* TODO: make optional? */, sections: sections }))); }));
+    };
+    TableView.prototype.renderHScrollLayout = function (headerRowContent, bodyContent, colCnt, dayMinWidth) {
+        var ScrollGrid = this.context.pluginHooks.scrollGridImpl;
+        if (!ScrollGrid) {
+            throw new Error('No ScrollGrid implementation');
+        }
+        var _a = this, props = _a.props, context = _a.context;
+        var stickyHeaderDates = !props.forPrint && Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["getStickyHeaderDates"])(context.options);
+        var stickyFooterScrollbar = !props.forPrint && Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["getStickyFooterScrollbar"])(context.options);
+        var sections = [];
+        if (headerRowContent) {
+            sections.push({
+                type: 'header',
+                key: 'header',
+                isSticky: stickyHeaderDates,
+                chunks: [{
+                        key: 'main',
+                        elRef: this.headerElRef,
+                        tableClassName: 'fc-col-header',
+                        rowContent: headerRowContent,
+                    }],
+            });
+        }
+        sections.push({
+            type: 'body',
+            key: 'body',
+            liquid: true,
+            chunks: [{
+                    key: 'main',
+                    content: bodyContent,
+                }],
+        });
+        if (stickyFooterScrollbar) {
+            sections.push({
+                type: 'footer',
+                key: 'footer',
+                isSticky: true,
+                chunks: [{
+                        key: 'main',
+                        content: _fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["renderScrollShim"],
+                    }],
+            });
+        }
+        return (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["ViewRoot"], { viewSpec: context.viewSpec }, function (rootElRef, classNames) { return (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", { ref: rootElRef, className: ['fc-daygrid'].concat(classNames).join(' ') },
+            Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(ScrollGrid, { liquid: !props.isHeightAuto && !props.forPrint, collapsibleWidth: props.forPrint, colGroups: [{ cols: [{ span: colCnt, minWidth: dayMinWidth }] }], sections: sections }))); }));
+    };
+    return TableView;
+}(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["DateComponent"]));
+
+function splitSegsByRow(segs, rowCnt) {
+    var byRow = [];
+    for (var i = 0; i < rowCnt; i += 1) {
+        byRow[i] = [];
+    }
+    for (var _i = 0, segs_1 = segs; _i < segs_1.length; _i++) {
+        var seg = segs_1[_i];
+        byRow[seg.row].push(seg);
+    }
+    return byRow;
+}
+function splitSegsByFirstCol(segs, colCnt) {
+    var byCol = [];
+    for (var i = 0; i < colCnt; i += 1) {
+        byCol[i] = [];
+    }
+    for (var _i = 0, segs_2 = segs; _i < segs_2.length; _i++) {
+        var seg = segs_2[_i];
+        byCol[seg.firstCol].push(seg);
+    }
+    return byCol;
+}
+function splitInteractionByRow(ui, rowCnt) {
+    var byRow = [];
+    if (!ui) {
+        for (var i = 0; i < rowCnt; i += 1) {
+            byRow[i] = null;
+        }
+    }
+    else {
+        for (var i = 0; i < rowCnt; i += 1) {
+            byRow[i] = {
+                affectedInstances: ui.affectedInstances,
+                isEvent: ui.isEvent,
+                segs: [],
+            };
+        }
+        for (var _i = 0, _a = ui.segs; _i < _a.length; _i++) {
+            var seg = _a[_i];
+            byRow[seg.row].segs.push(seg);
+        }
+    }
+    return byRow;
+}
+
+var TableCellTop = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__extends"])(TableCellTop, _super);
+    function TableCellTop() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    TableCellTop.prototype.render = function () {
+        var props = this.props;
+        var navLinkAttrs = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["buildNavLinkAttrs"])(this.context, props.date);
+        return (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["DayCellContent"], { date: props.date, dateProfile: props.dateProfile, todayRange: props.todayRange, showDayNumber: props.showDayNumber, extraHookProps: props.extraHookProps, defaultContent: renderTopInner }, function (innerElRef, innerContent) { return ((innerContent || props.forceDayTop) && (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", { className: "fc-daygrid-day-top", ref: innerElRef },
+            Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__assign"])({ id: props.dayNumberId, className: "fc-daygrid-day-number" }, navLinkAttrs), innerContent || Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, "\u00A0"))))); }));
+    };
+    return TableCellTop;
+}(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["BaseComponent"]));
+function renderTopInner(props) {
+    return props.dayNumberText;
+}
+
+var DEFAULT_TABLE_EVENT_TIME_FORMAT = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createFormatter"])({
+    hour: 'numeric',
+    minute: '2-digit',
+    omitZeroMinute: true,
+    meridiem: 'narrow',
+});
+function hasListItemDisplay(seg) {
+    var display = seg.eventRange.ui.display;
+    return display === 'list-item' || (display === 'auto' &&
+        !seg.eventRange.def.allDay &&
+        seg.firstCol === seg.lastCol && // can't be multi-day
+        seg.isStart && // "
+        seg.isEnd // "
+    );
+}
+
+var TableBlockEvent = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__extends"])(TableBlockEvent, _super);
+    function TableBlockEvent() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    TableBlockEvent.prototype.render = function () {
+        var props = this.props;
+        return (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["StandardEvent"], Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__assign"])({}, props, { extraClassNames: ['fc-daygrid-event', 'fc-daygrid-block-event', 'fc-h-event'], defaultTimeFormat: DEFAULT_TABLE_EVENT_TIME_FORMAT, defaultDisplayEventEnd: props.defaultDisplayEventEnd, disableResizing: !props.seg.eventRange.def.allDay })));
+    };
+    return TableBlockEvent;
+}(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["BaseComponent"]));
+
+var TableListItemEvent = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__extends"])(TableListItemEvent, _super);
+    function TableListItemEvent() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    TableListItemEvent.prototype.render = function () {
+        var _a = this, props = _a.props, context = _a.context;
+        var timeFormat = context.options.eventTimeFormat || DEFAULT_TABLE_EVENT_TIME_FORMAT;
+        var timeText = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["buildSegTimeText"])(props.seg, timeFormat, context, true, props.defaultDisplayEventEnd);
+        return (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["EventRoot"], { seg: props.seg, timeText: timeText, defaultContent: renderInnerContent, isDragging: props.isDragging, isResizing: false, isDateSelecting: false, isSelected: props.isSelected, isPast: props.isPast, isFuture: props.isFuture, isToday: props.isToday }, function (rootElRef, classNames, innerElRef, innerContent) { return ( // we don't use styles!
+        Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__assign"])({ className: ['fc-daygrid-event', 'fc-daygrid-dot-event'].concat(classNames).join(' '), ref: rootElRef }, Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["getSegAnchorAttrs"])(props.seg, context)), innerContent)); }));
+    };
+    return TableListItemEvent;
+}(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["BaseComponent"]));
+function renderInnerContent(innerProps) {
+    return (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null,
+        Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", { className: "fc-daygrid-event-dot", style: { borderColor: innerProps.borderColor || innerProps.backgroundColor } }),
+        innerProps.timeText && (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", { className: "fc-event-time" }, innerProps.timeText)),
+        Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", { className: "fc-event-title" }, innerProps.event.title || Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, "\u00A0"))));
+}
+
+var TableCellMoreLink = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__extends"])(TableCellMoreLink, _super);
+    function TableCellMoreLink() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.compileSegs = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["memoize"])(compileSegs);
+        return _this;
+    }
+    TableCellMoreLink.prototype.render = function () {
+        var props = this.props;
+        var _a = this.compileSegs(props.singlePlacements), allSegs = _a.allSegs, invisibleSegs = _a.invisibleSegs;
+        return (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["MoreLinkRoot"], { dateProfile: props.dateProfile, todayRange: props.todayRange, allDayDate: props.allDayDate, moreCnt: props.moreCnt, allSegs: allSegs, hiddenSegs: invisibleSegs, alignmentElRef: props.alignmentElRef, alignGridTop: props.alignGridTop, extraDateSpan: props.extraDateSpan, popoverContent: function () {
+                var isForcedInvisible = (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
+                    (props.eventResize ? props.eventResize.affectedInstances : null) ||
+                    {};
+                return (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, allSegs.map(function (seg) {
+                    var instanceId = seg.eventRange.instance.instanceId;
+                    return (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", { className: "fc-daygrid-event-harness", key: instanceId, style: {
+                            visibility: isForcedInvisible[instanceId] ? 'hidden' : '',
+                        } }, hasListItemDisplay(seg) ? (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(TableListItemEvent, Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__assign"])({ seg: seg, isDragging: false, isSelected: instanceId === props.eventSelection, defaultDisplayEventEnd: false }, Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["getSegMeta"])(seg, props.todayRange)))) : (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(TableBlockEvent, Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__assign"])({ seg: seg, isDragging: false, isResizing: false, isDateSelecting: false, isSelected: instanceId === props.eventSelection, defaultDisplayEventEnd: false }, Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["getSegMeta"])(seg, props.todayRange))))));
+                })));
+            } }, function (rootElRef, classNames, innerElRef, innerContent, handleClick, title, isExpanded, popoverId) { return (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__assign"])({ ref: rootElRef, className: ['fc-daygrid-more-link'].concat(classNames).join(' '), title: title, "aria-expanded": isExpanded, "aria-controls": popoverId }, Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createAriaClickAttrs"])(handleClick)), innerContent)); }));
+    };
+    return TableCellMoreLink;
+}(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["BaseComponent"]));
+function compileSegs(singlePlacements) {
+    var allSegs = [];
+    var invisibleSegs = [];
+    for (var _i = 0, singlePlacements_1 = singlePlacements; _i < singlePlacements_1.length; _i++) {
+        var placement = singlePlacements_1[_i];
+        allSegs.push(placement.seg);
+        if (!placement.isVisible) {
+            invisibleSegs.push(placement.seg);
+        }
+    }
+    return { allSegs: allSegs, invisibleSegs: invisibleSegs };
+}
+
+var DEFAULT_WEEK_NUM_FORMAT = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createFormatter"])({ week: 'narrow' });
+var TableCell = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__extends"])(TableCell, _super);
+    function TableCell() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.rootElRef = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createRef"])();
+        _this.state = {
+            dayNumberId: Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["getUniqueDomId"])(),
+        };
+        _this.handleRootEl = function (el) {
+            Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["setRef"])(_this.rootElRef, el);
+            Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["setRef"])(_this.props.elRef, el);
+        };
+        return _this;
+    }
+    TableCell.prototype.render = function () {
+        var _a = this, context = _a.context, props = _a.props, state = _a.state, rootElRef = _a.rootElRef;
+        var date = props.date, dateProfile = props.dateProfile;
+        var navLinkAttrs = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["buildNavLinkAttrs"])(context, date, 'week');
+        return (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["DayCellRoot"], { date: date, dateProfile: dateProfile, todayRange: props.todayRange, showDayNumber: props.showDayNumber, extraHookProps: props.extraHookProps, elRef: this.handleRootEl }, function (dayElRef, dayClassNames, rootDataAttrs, isDisabled) { return (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])("td", Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__assign"])({ ref: dayElRef, role: "gridcell", className: ['fc-daygrid-day'].concat(dayClassNames, props.extraClassNames || []).join(' ') }, rootDataAttrs, props.extraDataAttrs, (props.showDayNumber ? { 'aria-labelledby': state.dayNumberId } : {})),
+            Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", { className: "fc-daygrid-day-frame fc-scrollgrid-sync-inner", ref: props.innerElRef /* different from hook system! RENAME */ },
+                props.showWeekNumber && (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["WeekNumberRoot"], { date: date, defaultFormat: DEFAULT_WEEK_NUM_FORMAT }, function (weekElRef, weekClassNames, innerElRef, innerContent) { return (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__assign"])({ ref: weekElRef, className: ['fc-daygrid-week-number'].concat(weekClassNames).join(' ') }, navLinkAttrs), innerContent)); })),
+                !isDisabled && (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(TableCellTop, { date: date, dateProfile: dateProfile, showDayNumber: props.showDayNumber, dayNumberId: state.dayNumberId, forceDayTop: props.forceDayTop, todayRange: props.todayRange, extraHookProps: props.extraHookProps })),
+                Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", { className: "fc-daygrid-day-events", ref: props.fgContentElRef },
+                    props.fgContent,
+                    Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", { className: "fc-daygrid-day-bottom", style: { marginTop: props.moreMarginTop } },
+                        Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(TableCellMoreLink, { allDayDate: date, singlePlacements: props.singlePlacements, moreCnt: props.moreCnt, alignmentElRef: rootElRef, alignGridTop: !props.showDayNumber, extraDateSpan: props.extraDateSpan, dateProfile: props.dateProfile, eventSelection: props.eventSelection, eventDrag: props.eventDrag, eventResize: props.eventResize, todayRange: props.todayRange }))),
+                Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", { className: "fc-daygrid-day-bg" }, props.bgContent)))); }));
+    };
+    return TableCell;
+}(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["DateComponent"]));
+
+function computeFgSegPlacement(segs, // assumed already sorted
+dayMaxEvents, dayMaxEventRows, strictOrder, eventInstanceHeights, maxContentHeight, cells) {
+    var hierarchy = new DayGridSegHierarchy();
+    hierarchy.allowReslicing = true;
+    hierarchy.strictOrder = strictOrder;
+    if (dayMaxEvents === true || dayMaxEventRows === true) {
+        hierarchy.maxCoord = maxContentHeight;
+        hierarchy.hiddenConsumes = true;
+    }
+    else if (typeof dayMaxEvents === 'number') {
+        hierarchy.maxStackCnt = dayMaxEvents;
+    }
+    else if (typeof dayMaxEventRows === 'number') {
+        hierarchy.maxStackCnt = dayMaxEventRows;
+        hierarchy.hiddenConsumes = true;
+    }
+    // create segInputs only for segs with known heights
+    var segInputs = [];
+    var unknownHeightSegs = [];
+    for (var i = 0; i < segs.length; i += 1) {
+        var seg = segs[i];
+        var instanceId = seg.eventRange.instance.instanceId;
+        var eventHeight = eventInstanceHeights[instanceId];
+        if (eventHeight != null) {
+            segInputs.push({
+                index: i,
+                thickness: eventHeight,
+                span: {
+                    start: seg.firstCol,
+                    end: seg.lastCol + 1,
+                },
+            });
+        }
+        else {
+            unknownHeightSegs.push(seg);
+        }
+    }
+    var hiddenEntries = hierarchy.addSegs(segInputs);
+    var segRects = hierarchy.toRects();
+    var _a = placeRects(segRects, segs, cells), singleColPlacements = _a.singleColPlacements, multiColPlacements = _a.multiColPlacements, leftoverMargins = _a.leftoverMargins;
+    var moreCnts = [];
+    var moreMarginTops = [];
+    // add segs with unknown heights
+    for (var _i = 0, unknownHeightSegs_1 = unknownHeightSegs; _i < unknownHeightSegs_1.length; _i++) {
+        var seg = unknownHeightSegs_1[_i];
+        multiColPlacements[seg.firstCol].push({
+            seg: seg,
+            isVisible: false,
+            isAbsolute: true,
+            absoluteTop: 0,
+            marginTop: 0,
+        });
+        for (var col = seg.firstCol; col <= seg.lastCol; col += 1) {
+            singleColPlacements[col].push({
+                seg: resliceSeg(seg, col, col + 1, cells),
+                isVisible: false,
+                isAbsolute: false,
+                absoluteTop: 0,
+                marginTop: 0,
+            });
+        }
+    }
+    // add the hidden entries
+    for (var col = 0; col < cells.length; col += 1) {
+        moreCnts.push(0);
+    }
+    for (var _b = 0, hiddenEntries_1 = hiddenEntries; _b < hiddenEntries_1.length; _b++) {
+        var hiddenEntry = hiddenEntries_1[_b];
+        var seg = segs[hiddenEntry.index];
+        var hiddenSpan = hiddenEntry.span;
+        multiColPlacements[hiddenSpan.start].push({
+            seg: resliceSeg(seg, hiddenSpan.start, hiddenSpan.end, cells),
+            isVisible: false,
+            isAbsolute: true,
+            absoluteTop: 0,
+            marginTop: 0,
+        });
+        for (var col = hiddenSpan.start; col < hiddenSpan.end; col += 1) {
+            moreCnts[col] += 1;
+            singleColPlacements[col].push({
+                seg: resliceSeg(seg, col, col + 1, cells),
+                isVisible: false,
+                isAbsolute: false,
+                absoluteTop: 0,
+                marginTop: 0,
+            });
+        }
+    }
+    // deal with leftover margins
+    for (var col = 0; col < cells.length; col += 1) {
+        moreMarginTops.push(leftoverMargins[col]);
+    }
+    return { singleColPlacements: singleColPlacements, multiColPlacements: multiColPlacements, moreCnts: moreCnts, moreMarginTops: moreMarginTops };
+}
+// rects ordered by top coord, then left
+function placeRects(allRects, segs, cells) {
+    var rectsByEachCol = groupRectsByEachCol(allRects, cells.length);
+    var singleColPlacements = [];
+    var multiColPlacements = [];
+    var leftoverMargins = [];
+    for (var col = 0; col < cells.length; col += 1) {
+        var rects = rectsByEachCol[col];
+        // compute all static segs in singlePlacements
+        var singlePlacements = [];
+        var currentHeight = 0;
+        var currentMarginTop = 0;
+        for (var _i = 0, rects_1 = rects; _i < rects_1.length; _i++) {
+            var rect = rects_1[_i];
+            var seg = segs[rect.index];
+            singlePlacements.push({
+                seg: resliceSeg(seg, col, col + 1, cells),
+                isVisible: true,
+                isAbsolute: false,
+                absoluteTop: rect.levelCoord,
+                marginTop: rect.levelCoord - currentHeight,
+            });
+            currentHeight = rect.levelCoord + rect.thickness;
+        }
+        // compute mixed static/absolute segs in multiPlacements
+        var multiPlacements = [];
+        currentHeight = 0;
+        currentMarginTop = 0;
+        for (var _a = 0, rects_2 = rects; _a < rects_2.length; _a++) {
+            var rect = rects_2[_a];
+            var seg = segs[rect.index];
+            var isAbsolute = rect.span.end - rect.span.start > 1; // multi-column?
+            var isFirstCol = rect.span.start === col;
+            currentMarginTop += rect.levelCoord - currentHeight; // amount of space since bottom of previous seg
+            currentHeight = rect.levelCoord + rect.thickness; // height will now be bottom of current seg
+            if (isAbsolute) {
+                currentMarginTop += rect.thickness;
+                if (isFirstCol) {
+                    multiPlacements.push({
+                        seg: resliceSeg(seg, rect.span.start, rect.span.end, cells),
+                        isVisible: true,
+                        isAbsolute: true,
+                        absoluteTop: rect.levelCoord,
+                        marginTop: 0,
+                    });
+                }
+            }
+            else if (isFirstCol) {
+                multiPlacements.push({
+                    seg: resliceSeg(seg, rect.span.start, rect.span.end, cells),
+                    isVisible: true,
+                    isAbsolute: false,
+                    absoluteTop: rect.levelCoord,
+                    marginTop: currentMarginTop, // claim the margin
+                });
+                currentMarginTop = 0;
+            }
+        }
+        singleColPlacements.push(singlePlacements);
+        multiColPlacements.push(multiPlacements);
+        leftoverMargins.push(currentMarginTop);
+    }
+    return { singleColPlacements: singleColPlacements, multiColPlacements: multiColPlacements, leftoverMargins: leftoverMargins };
+}
+function groupRectsByEachCol(rects, colCnt) {
+    var rectsByEachCol = [];
+    for (var col = 0; col < colCnt; col += 1) {
+        rectsByEachCol.push([]);
+    }
+    for (var _i = 0, rects_3 = rects; _i < rects_3.length; _i++) {
+        var rect = rects_3[_i];
+        for (var col = rect.span.start; col < rect.span.end; col += 1) {
+            rectsByEachCol[col].push(rect);
+        }
+    }
+    return rectsByEachCol;
+}
+function resliceSeg(seg, spanStart, spanEnd, cells) {
+    if (seg.firstCol === spanStart && seg.lastCol === spanEnd - 1) {
+        return seg;
+    }
+    var eventRange = seg.eventRange;
+    var origRange = eventRange.range;
+    var slicedRange = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["intersectRanges"])(origRange, {
+        start: cells[spanStart].date,
+        end: Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["addDays"])(cells[spanEnd - 1].date, 1),
+    });
+    return Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__assign"])(Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__assign"])({}, seg), { firstCol: spanStart, lastCol: spanEnd - 1, eventRange: {
+            def: eventRange.def,
+            ui: Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__assign"])(Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__assign"])({}, eventRange.ui), { durationEditable: false }),
+            instance: eventRange.instance,
+            range: slicedRange,
+        }, isStart: seg.isStart && slicedRange.start.valueOf() === origRange.start.valueOf(), isEnd: seg.isEnd && slicedRange.end.valueOf() === origRange.end.valueOf() });
+}
+var DayGridSegHierarchy = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__extends"])(DayGridSegHierarchy, _super);
+    function DayGridSegHierarchy() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        // config
+        _this.hiddenConsumes = false;
+        // allows us to keep hidden entries in the hierarchy so they take up space
+        _this.forceHidden = {};
+        return _this;
+    }
+    DayGridSegHierarchy.prototype.addSegs = function (segInputs) {
+        var _this = this;
+        var hiddenSegs = _super.prototype.addSegs.call(this, segInputs);
+        var entriesByLevel = this.entriesByLevel;
+        var excludeHidden = function (entry) { return !_this.forceHidden[Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["buildEntryKey"])(entry)]; };
+        // remove the forced-hidden segs
+        for (var level = 0; level < entriesByLevel.length; level += 1) {
+            entriesByLevel[level] = entriesByLevel[level].filter(excludeHidden);
+        }
+        return hiddenSegs;
+    };
+    DayGridSegHierarchy.prototype.handleInvalidInsertion = function (insertion, entry, hiddenEntries) {
+        var _a = this, entriesByLevel = _a.entriesByLevel, forceHidden = _a.forceHidden;
+        var touchingEntry = insertion.touchingEntry, touchingLevel = insertion.touchingLevel, touchingLateral = insertion.touchingLateral;
+        if (this.hiddenConsumes && touchingEntry) {
+            var touchingEntryId = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["buildEntryKey"])(touchingEntry);
+            // if not already hidden
+            if (!forceHidden[touchingEntryId]) {
+                if (this.allowReslicing) {
+                    var placeholderEntry = Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__assign"])(Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__assign"])({}, touchingEntry), { span: Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["intersectSpans"])(touchingEntry.span, entry.span) });
+                    var placeholderEntryId = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["buildEntryKey"])(placeholderEntry);
+                    forceHidden[placeholderEntryId] = true;
+                    entriesByLevel[touchingLevel][touchingLateral] = placeholderEntry; // replace touchingEntry with our placeholder
+                    this.splitEntry(touchingEntry, entry, hiddenEntries); // split up the touchingEntry, reinsert it
+                }
+                else {
+                    forceHidden[touchingEntryId] = true;
+                    hiddenEntries.push(touchingEntry);
+                }
+            }
+        }
+        return _super.prototype.handleInvalidInsertion.call(this, insertion, entry, hiddenEntries);
+    };
+    return DayGridSegHierarchy;
+}(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["SegHierarchy"]));
+
+var TableRow = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__extends"])(TableRow, _super);
+    function TableRow() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.cellElRefs = new _fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["RefMap"](); // the <td>
+        _this.frameElRefs = new _fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["RefMap"](); // the fc-daygrid-day-frame
+        _this.fgElRefs = new _fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["RefMap"](); // the fc-daygrid-day-events
+        _this.segHarnessRefs = new _fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["RefMap"](); // indexed by "instanceId:firstCol"
+        _this.rootElRef = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createRef"])();
+        _this.state = {
+            framePositions: null,
+            maxContentHeight: null,
+            eventInstanceHeights: {},
+        };
+        return _this;
+    }
+    TableRow.prototype.render = function () {
+        var _this = this;
+        var _a = this, props = _a.props, state = _a.state, context = _a.context;
+        var options = context.options;
+        var colCnt = props.cells.length;
+        var businessHoursByCol = splitSegsByFirstCol(props.businessHourSegs, colCnt);
+        var bgEventSegsByCol = splitSegsByFirstCol(props.bgEventSegs, colCnt);
+        var highlightSegsByCol = splitSegsByFirstCol(this.getHighlightSegs(), colCnt);
+        var mirrorSegsByCol = splitSegsByFirstCol(this.getMirrorSegs(), colCnt);
+        var _b = computeFgSegPlacement(Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["sortEventSegs"])(props.fgEventSegs, options.eventOrder), props.dayMaxEvents, props.dayMaxEventRows, options.eventOrderStrict, state.eventInstanceHeights, state.maxContentHeight, props.cells), singleColPlacements = _b.singleColPlacements, multiColPlacements = _b.multiColPlacements, moreCnts = _b.moreCnts, moreMarginTops = _b.moreMarginTops;
+        var isForcedInvisible = // TODO: messy way to compute this
+         (props.eventDrag && props.eventDrag.affectedInstances) ||
+            (props.eventResize && props.eventResize.affectedInstances) ||
+            {};
+        return (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])("tr", { ref: this.rootElRef, role: "row" },
+            props.renderIntro && props.renderIntro(),
+            props.cells.map(function (cell, col) {
+                var normalFgNodes = _this.renderFgSegs(col, props.forPrint ? singleColPlacements[col] : multiColPlacements[col], props.todayRange, isForcedInvisible);
+                var mirrorFgNodes = _this.renderFgSegs(col, buildMirrorPlacements(mirrorSegsByCol[col], multiColPlacements), props.todayRange, {}, Boolean(props.eventDrag), Boolean(props.eventResize), false);
+                return (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(TableCell, { key: cell.key, elRef: _this.cellElRefs.createRef(cell.key), innerElRef: _this.frameElRefs.createRef(cell.key) /* FF <td> problem, but okay to use for left/right. TODO: rename prop */, dateProfile: props.dateProfile, date: cell.date, showDayNumber: props.showDayNumbers, showWeekNumber: props.showWeekNumbers && col === 0, forceDayTop: props.showWeekNumbers /* even displaying weeknum for row, not necessarily day */, todayRange: props.todayRange, eventSelection: props.eventSelection, eventDrag: props.eventDrag, eventResize: props.eventResize, extraHookProps: cell.extraHookProps, extraDataAttrs: cell.extraDataAttrs, extraClassNames: cell.extraClassNames, extraDateSpan: cell.extraDateSpan, moreCnt: moreCnts[col], moreMarginTop: moreMarginTops[col], singlePlacements: singleColPlacements[col], fgContentElRef: _this.fgElRefs.createRef(cell.key), fgContent: ( // Fragment scopes the keys
+                    Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null,
+                        Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, normalFgNodes),
+                        Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, mirrorFgNodes))), bgContent: ( // Fragment scopes the keys
+                    Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null,
+                        _this.renderFillSegs(highlightSegsByCol[col], 'highlight'),
+                        _this.renderFillSegs(businessHoursByCol[col], 'non-business'),
+                        _this.renderFillSegs(bgEventSegsByCol[col], 'bg-event'))) }));
+            })));
+    };
+    TableRow.prototype.componentDidMount = function () {
+        this.updateSizing(true);
+    };
+    TableRow.prototype.componentDidUpdate = function (prevProps, prevState) {
+        var currentProps = this.props;
+        this.updateSizing(!Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["isPropsEqual"])(prevProps, currentProps));
+    };
+    TableRow.prototype.getHighlightSegs = function () {
+        var props = this.props;
+        if (props.eventDrag && props.eventDrag.segs.length) { // messy check
+            return props.eventDrag.segs;
+        }
+        if (props.eventResize && props.eventResize.segs.length) { // messy check
+            return props.eventResize.segs;
+        }
+        return props.dateSelectionSegs;
+    };
+    TableRow.prototype.getMirrorSegs = function () {
+        var props = this.props;
+        if (props.eventResize && props.eventResize.segs.length) { // messy check
+            return props.eventResize.segs;
+        }
+        return [];
+    };
+    TableRow.prototype.renderFgSegs = function (col, segPlacements, todayRange, isForcedInvisible, isDragging, isResizing, isDateSelecting) {
+        var context = this.context;
+        var eventSelection = this.props.eventSelection;
+        var framePositions = this.state.framePositions;
+        var defaultDisplayEventEnd = this.props.cells.length === 1; // colCnt === 1
+        var isMirror = isDragging || isResizing || isDateSelecting;
+        var nodes = [];
+        if (framePositions) {
+            for (var _i = 0, segPlacements_1 = segPlacements; _i < segPlacements_1.length; _i++) {
+                var placement = segPlacements_1[_i];
+                var seg = placement.seg;
+                var instanceId = seg.eventRange.instance.instanceId;
+                var key = instanceId + ':' + col;
+                var isVisible = placement.isVisible && !isForcedInvisible[instanceId];
+                var isAbsolute = placement.isAbsolute;
+                var left = '';
+                var right = '';
+                if (isAbsolute) {
+                    if (context.isRtl) {
+                        right = 0;
+                        left = framePositions.lefts[seg.lastCol] - framePositions.lefts[seg.firstCol];
+                    }
+                    else {
+                        left = 0;
+                        right = framePositions.rights[seg.firstCol] - framePositions.rights[seg.lastCol];
+                    }
+                }
+                /*
+                known bug: events that are force to be list-item but span multiple days still take up space in later columns
+                todo: in print view, for multi-day events, don't display title within non-start/end segs
+                */
+                nodes.push(Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", { className: 'fc-daygrid-event-harness' + (isAbsolute ? ' fc-daygrid-event-harness-abs' : ''), key: key, ref: isMirror ? null : this.segHarnessRefs.createRef(key), style: {
+                        visibility: isVisible ? '' : 'hidden',
+                        marginTop: isAbsolute ? '' : placement.marginTop,
+                        top: isAbsolute ? placement.absoluteTop : '',
+                        left: left,
+                        right: right,
+                    } }, hasListItemDisplay(seg) ? (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(TableListItemEvent, Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__assign"])({ seg: seg, isDragging: isDragging, isSelected: instanceId === eventSelection, defaultDisplayEventEnd: defaultDisplayEventEnd }, Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["getSegMeta"])(seg, todayRange)))) : (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(TableBlockEvent, Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__assign"])({ seg: seg, isDragging: isDragging, isResizing: isResizing, isDateSelecting: isDateSelecting, isSelected: instanceId === eventSelection, defaultDisplayEventEnd: defaultDisplayEventEnd }, Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["getSegMeta"])(seg, todayRange))))));
+            }
+        }
+        return nodes;
+    };
+    TableRow.prototype.renderFillSegs = function (segs, fillType) {
+        var isRtl = this.context.isRtl;
+        var todayRange = this.props.todayRange;
+        var framePositions = this.state.framePositions;
+        var nodes = [];
+        if (framePositions) {
+            for (var _i = 0, segs_1 = segs; _i < segs_1.length; _i++) {
+                var seg = segs_1[_i];
+                var leftRightCss = isRtl ? {
+                    right: 0,
+                    left: framePositions.lefts[seg.lastCol] - framePositions.lefts[seg.firstCol],
+                } : {
+                    left: 0,
+                    right: framePositions.rights[seg.firstCol] - framePositions.rights[seg.lastCol],
+                };
+                nodes.push(Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", { key: Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["buildEventRangeKey"])(seg.eventRange), className: "fc-daygrid-bg-harness", style: leftRightCss }, fillType === 'bg-event' ?
+                    Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["BgEvent"], Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__assign"])({ seg: seg }, Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["getSegMeta"])(seg, todayRange))) :
+                    Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["renderFill"])(fillType)));
+            }
+        }
+        return _fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"].apply(void 0, Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__spreadArray"])([_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["Fragment"], {}], nodes));
+    };
+    TableRow.prototype.updateSizing = function (isExternalSizingChange) {
+        var _a = this, props = _a.props, frameElRefs = _a.frameElRefs;
+        if (!props.forPrint &&
+            props.clientWidth !== null // positioning ready?
+        ) {
+            if (isExternalSizingChange) {
+                var frameEls = props.cells.map(function (cell) { return frameElRefs.currentMap[cell.key]; });
+                if (frameEls.length) {
+                    var originEl = this.rootElRef.current;
+                    this.setState({
+                        framePositions: new _fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["PositionCache"](originEl, frameEls, true, // isHorizontal
+                        false),
+                    });
+                }
+            }
+            var oldInstanceHeights = this.state.eventInstanceHeights;
+            var newInstanceHeights = this.queryEventInstanceHeights();
+            var limitByContentHeight = props.dayMaxEvents === true || props.dayMaxEventRows === true;
+            this.safeSetState({
+                // HACK to prevent oscillations of events being shown/hidden from max-event-rows
+                // Essentially, once you compute an element's height, never null-out.
+                // TODO: always display all events, as visibility:hidden?
+                eventInstanceHeights: Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__assign"])(Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__assign"])({}, oldInstanceHeights), newInstanceHeights),
+                maxContentHeight: limitByContentHeight ? this.computeMaxContentHeight() : null,
+            });
+        }
+    };
+    TableRow.prototype.queryEventInstanceHeights = function () {
+        var segElMap = this.segHarnessRefs.currentMap;
+        var eventInstanceHeights = {};
+        // get the max height amongst instance segs
+        for (var key in segElMap) {
+            var height = Math.round(segElMap[key].getBoundingClientRect().height);
+            var instanceId = key.split(':')[0]; // deconstruct how renderFgSegs makes the key
+            eventInstanceHeights[instanceId] = Math.max(eventInstanceHeights[instanceId] || 0, height);
+        }
+        return eventInstanceHeights;
+    };
+    TableRow.prototype.computeMaxContentHeight = function () {
+        var firstKey = this.props.cells[0].key;
+        var cellEl = this.cellElRefs.currentMap[firstKey];
+        var fcContainerEl = this.fgElRefs.currentMap[firstKey];
+        return cellEl.getBoundingClientRect().bottom - fcContainerEl.getBoundingClientRect().top;
+    };
+    TableRow.prototype.getCellEls = function () {
+        var elMap = this.cellElRefs.currentMap;
+        return this.props.cells.map(function (cell) { return elMap[cell.key]; });
+    };
+    return TableRow;
+}(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["DateComponent"]));
+TableRow.addStateEquality({
+    eventInstanceHeights: _fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["isPropsEqual"],
+});
+function buildMirrorPlacements(mirrorSegs, colPlacements) {
+    if (!mirrorSegs.length) {
+        return [];
+    }
+    var topsByInstanceId = buildAbsoluteTopHash(colPlacements); // TODO: cache this at first render?
+    return mirrorSegs.map(function (seg) { return ({
+        seg: seg,
+        isVisible: true,
+        isAbsolute: true,
+        absoluteTop: topsByInstanceId[seg.eventRange.instance.instanceId],
+        marginTop: 0,
+    }); });
+}
+function buildAbsoluteTopHash(colPlacements) {
+    var topsByInstanceId = {};
+    for (var _i = 0, colPlacements_1 = colPlacements; _i < colPlacements_1.length; _i++) {
+        var placements = colPlacements_1[_i];
+        for (var _a = 0, placements_1 = placements; _a < placements_1.length; _a++) {
+            var placement = placements_1[_a];
+            topsByInstanceId[placement.seg.eventRange.instance.instanceId] = placement.absoluteTop;
+        }
+    }
+    return topsByInstanceId;
+}
+
+var Table = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__extends"])(Table, _super);
+    function Table() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.splitBusinessHourSegs = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["memoize"])(splitSegsByRow);
+        _this.splitBgEventSegs = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["memoize"])(splitSegsByRow);
+        _this.splitFgEventSegs = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["memoize"])(splitSegsByRow);
+        _this.splitDateSelectionSegs = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["memoize"])(splitSegsByRow);
+        _this.splitEventDrag = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["memoize"])(splitInteractionByRow);
+        _this.splitEventResize = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["memoize"])(splitInteractionByRow);
+        _this.rowRefs = new _fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["RefMap"]();
+        _this.handleRootEl = function (rootEl) {
+            _this.rootEl = rootEl;
+            if (rootEl) {
+                _this.context.registerInteractiveComponent(_this, {
+                    el: rootEl,
+                    isHitComboAllowed: _this.props.isHitComboAllowed,
+                });
+            }
+            else {
+                _this.context.unregisterInteractiveComponent(_this);
+            }
+        };
+        return _this;
+    }
+    Table.prototype.render = function () {
+        var _this = this;
+        var props = this.props;
+        var dateProfile = props.dateProfile, dayMaxEventRows = props.dayMaxEventRows, dayMaxEvents = props.dayMaxEvents, expandRows = props.expandRows;
+        var rowCnt = props.cells.length;
+        var businessHourSegsByRow = this.splitBusinessHourSegs(props.businessHourSegs, rowCnt);
+        var bgEventSegsByRow = this.splitBgEventSegs(props.bgEventSegs, rowCnt);
+        var fgEventSegsByRow = this.splitFgEventSegs(props.fgEventSegs, rowCnt);
+        var dateSelectionSegsByRow = this.splitDateSelectionSegs(props.dateSelectionSegs, rowCnt);
+        var eventDragByRow = this.splitEventDrag(props.eventDrag, rowCnt);
+        var eventResizeByRow = this.splitEventResize(props.eventResize, rowCnt);
+        var limitViaBalanced = dayMaxEvents === true || dayMaxEventRows === true;
+        // if rows can't expand to fill fixed height, can't do balanced-height event limit
+        // TODO: best place to normalize these options?
+        if (limitViaBalanced && !expandRows) {
+            limitViaBalanced = false;
+            dayMaxEventRows = null;
+            dayMaxEvents = null;
+        }
+        var classNames = [
+            'fc-daygrid-body',
+            limitViaBalanced ? 'fc-daygrid-body-balanced' : 'fc-daygrid-body-unbalanced',
+            expandRows ? '' : 'fc-daygrid-body-natural', // will height of one row depend on the others?
+        ];
+        return (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", { className: classNames.join(' '), ref: this.handleRootEl, style: {
+                // these props are important to give this wrapper correct dimensions for interactions
+                // TODO: if we set it here, can we avoid giving to inner tables?
+                width: props.clientWidth,
+                minWidth: props.tableMinWidth,
+            } },
+            Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["NowTimer"], { unit: "day" }, function (nowDate, todayRange) { return (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null,
+                Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])("table", { role: "presentation", className: "fc-scrollgrid-sync-table", style: {
+                        width: props.clientWidth,
+                        minWidth: props.tableMinWidth,
+                        height: expandRows ? props.clientHeight : '',
+                    } },
+                    props.colGroupNode,
+                    Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])("tbody", { role: "presentation" }, props.cells.map(function (cells, row) { return (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(TableRow, { ref: _this.rowRefs.createRef(row), key: cells.length
+                            ? cells[0].date.toISOString() /* best? or put key on cell? or use diff formatter? */
+                            : row // in case there are no cells (like when resource view is loading)
+                        , showDayNumbers: rowCnt > 1, showWeekNumbers: props.showWeekNumbers, todayRange: todayRange, dateProfile: dateProfile, cells: cells, renderIntro: props.renderRowIntro, businessHourSegs: businessHourSegsByRow[row], eventSelection: props.eventSelection, bgEventSegs: bgEventSegsByRow[row].filter(isSegAllDay) /* hack */, fgEventSegs: fgEventSegsByRow[row], dateSelectionSegs: dateSelectionSegsByRow[row], eventDrag: eventDragByRow[row], eventResize: eventResizeByRow[row], dayMaxEvents: dayMaxEvents, dayMaxEventRows: dayMaxEventRows, clientWidth: props.clientWidth, clientHeight: props.clientHeight, forPrint: props.forPrint })); }))))); })));
+    };
+    // Hit System
+    // ----------------------------------------------------------------------------------------------------
+    Table.prototype.prepareHits = function () {
+        this.rowPositions = new _fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["PositionCache"](this.rootEl, this.rowRefs.collect().map(function (rowObj) { return rowObj.getCellEls()[0]; }), // first cell el in each row. TODO: not optimal
+        false, true);
+        this.colPositions = new _fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["PositionCache"](this.rootEl, this.rowRefs.currentMap[0].getCellEls(), // cell els in first row
+        true, // horizontal
+        false);
+    };
+    Table.prototype.queryHit = function (positionLeft, positionTop) {
+        var _a = this, colPositions = _a.colPositions, rowPositions = _a.rowPositions;
+        var col = colPositions.leftToIndex(positionLeft);
+        var row = rowPositions.topToIndex(positionTop);
+        if (row != null && col != null) {
+            var cell = this.props.cells[row][col];
+            return {
+                dateProfile: this.props.dateProfile,
+                dateSpan: Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__assign"])({ range: this.getCellRange(row, col), allDay: true }, cell.extraDateSpan),
+                dayEl: this.getCellEl(row, col),
+                rect: {
+                    left: colPositions.lefts[col],
+                    right: colPositions.rights[col],
+                    top: rowPositions.tops[row],
+                    bottom: rowPositions.bottoms[row],
+                },
+                layer: 0,
+            };
+        }
+        return null;
+    };
+    Table.prototype.getCellEl = function (row, col) {
+        return this.rowRefs.currentMap[row].getCellEls()[col]; // TODO: not optimal
+    };
+    Table.prototype.getCellRange = function (row, col) {
+        var start = this.props.cells[row][col].date;
+        var end = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["addDays"])(start, 1);
+        return { start: start, end: end };
+    };
+    return Table;
+}(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["DateComponent"]));
+function isSegAllDay(seg) {
+    return seg.eventRange.def.allDay;
+}
+
+var DayTableSlicer = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__extends"])(DayTableSlicer, _super);
+    function DayTableSlicer() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.forceDayIfListItem = true;
+        return _this;
+    }
+    DayTableSlicer.prototype.sliceRange = function (dateRange, dayTableModel) {
+        return dayTableModel.sliceRange(dateRange);
+    };
+    return DayTableSlicer;
+}(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["Slicer"]));
+
+var DayTable = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__extends"])(DayTable, _super);
+    function DayTable() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.slicer = new DayTableSlicer();
+        _this.tableRef = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createRef"])();
+        return _this;
+    }
+    DayTable.prototype.render = function () {
+        var _a = this, props = _a.props, context = _a.context;
+        return (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(Table, Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__assign"])({ ref: this.tableRef }, this.slicer.sliceProps(props, props.dateProfile, props.nextDayThreshold, context, props.dayTableModel), { dateProfile: props.dateProfile, cells: props.dayTableModel.cells, colGroupNode: props.colGroupNode, tableMinWidth: props.tableMinWidth, renderRowIntro: props.renderRowIntro, dayMaxEvents: props.dayMaxEvents, dayMaxEventRows: props.dayMaxEventRows, showWeekNumbers: props.showWeekNumbers, expandRows: props.expandRows, headerAlignElRef: props.headerAlignElRef, clientWidth: props.clientWidth, clientHeight: props.clientHeight, forPrint: props.forPrint })));
+    };
+    return DayTable;
+}(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["DateComponent"]));
+
+var DayTableView = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__extends"])(DayTableView, _super);
+    function DayTableView() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.buildDayTableModel = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["memoize"])(buildDayTableModel);
+        _this.headerRef = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createRef"])();
+        _this.tableRef = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createRef"])();
+        return _this;
+    }
+    DayTableView.prototype.render = function () {
+        var _this = this;
+        var _a = this.context, options = _a.options, dateProfileGenerator = _a.dateProfileGenerator;
+        var props = this.props;
+        var dayTableModel = this.buildDayTableModel(props.dateProfile, dateProfileGenerator);
+        var headerContent = options.dayHeaders && (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["DayHeader"], { ref: this.headerRef, dateProfile: props.dateProfile, dates: dayTableModel.headerDates, datesRepDistinctDays: dayTableModel.rowCnt === 1 }));
+        var bodyContent = function (contentArg) { return (Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createElement"])(DayTable, { ref: _this.tableRef, dateProfile: props.dateProfile, dayTableModel: dayTableModel, businessHours: props.businessHours, dateSelection: props.dateSelection, eventStore: props.eventStore, eventUiBases: props.eventUiBases, eventSelection: props.eventSelection, eventDrag: props.eventDrag, eventResize: props.eventResize, nextDayThreshold: options.nextDayThreshold, colGroupNode: contentArg.tableColGroupNode, tableMinWidth: contentArg.tableMinWidth, dayMaxEvents: options.dayMaxEvents, dayMaxEventRows: options.dayMaxEventRows, showWeekNumbers: options.weekNumbers, expandRows: !props.isHeightAuto, headerAlignElRef: _this.headerElRef, clientWidth: contentArg.clientWidth, clientHeight: contentArg.clientHeight, forPrint: props.forPrint })); };
+        return options.dayMinWidth
+            ? this.renderHScrollLayout(headerContent, bodyContent, dayTableModel.colCnt, options.dayMinWidth)
+            : this.renderSimpleLayout(headerContent, bodyContent);
+    };
+    return DayTableView;
+}(TableView));
+function buildDayTableModel(dateProfile, dateProfileGenerator) {
+    var daySeries = new _fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["DaySeriesModel"](dateProfile.renderRange, dateProfileGenerator);
+    return new _fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["DayTableModel"](daySeries, /year|month|week/.test(dateProfile.currentRangeUnit));
+}
+
+var TableDateProfileGenerator = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_2__["__extends"])(TableDateProfileGenerator, _super);
+    function TableDateProfileGenerator() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    // Computes the date range that will be rendered.
+    TableDateProfileGenerator.prototype.buildRenderRange = function (currentRange, currentRangeUnit, isRangeAllDay) {
+        var dateEnv = this.props.dateEnv;
+        var renderRange = _super.prototype.buildRenderRange.call(this, currentRange, currentRangeUnit, isRangeAllDay);
+        var start = renderRange.start;
+        var end = renderRange.end;
+        var endOfWeek;
+        // year and month views should be aligned with weeks. this is already done for week
+        if (/^(year|month)$/.test(currentRangeUnit)) {
+            start = dateEnv.startOfWeek(start);
+            // make end-of-week if not already
+            endOfWeek = dateEnv.startOfWeek(end);
+            if (endOfWeek.valueOf() !== end.valueOf()) {
+                end = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["addWeeks"])(endOfWeek, 1);
+            }
+        }
+        // ensure 6 weeks
+        if (this.props.monthMode &&
+            this.props.fixedWeekCount) {
+            var rowCnt = Math.ceil(// could be partial weeks due to hiddenDays
+            Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["diffWeeks"])(start, end));
+            end = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["addWeeks"])(end, 6 - rowCnt);
+        }
+        return { start: start, end: end };
+    };
+    return TableDateProfileGenerator;
+}(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["DateProfileGenerator"]));
+
+var main = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_1__["createPlugin"])({
+    initialView: 'dayGridMonth',
+    views: {
+        dayGrid: {
+            component: DayTableView,
+            dateProfileGeneratorClass: TableDateProfileGenerator,
+        },
+        dayGridDay: {
+            type: 'dayGrid',
+            duration: { days: 1 },
+        },
+        dayGridWeek: {
+            type: 'dayGrid',
+            duration: { weeks: 1 },
+        },
+        dayGridMonth: {
+            type: 'dayGrid',
+            duration: { months: 1 },
+            monthMode: true,
+            fixedWeekCount: true,
+        },
+    },
+});
+
+/* harmony default export */ __webpack_exports__["default"] = (main);
+
+//# sourceMappingURL=main.js.map
 
 
 /***/ }),
@@ -12378,7 +13581,7 @@ class ProjetoListComponent extends src_app_modules_base_page_list_base__WEBPACK_
         this.unidadeDao = injector.get(src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_2__["UnidadeDaoService"]);
         this.title = this.lex.noun("Projeto", true);
         this.code = "MOD_PROJ";
-        this.join = ["envolvidos.recurso.usuario", "envolvidos.recurso.unidade", "envolvidos.regra"];
+        this.join = ["alocacoes.recurso.usuario", "alocacoes.recurso.unidade", "alocacoes.regras.regra"];
         this.filter = this.fh.FormBuilder({
             nome: { default: "" },
             status: { default: null },
@@ -12394,19 +13597,19 @@ class ProjetoListComponent extends src_app_modules_base_page_list_base__WEBPACK_
         super.filterClear(filter);
     }
     getEnvolvidos(projeto, metadata) {
-        var _a, _b;
+        var _a, _b, _c;
         let result = [];
-        for (let envolvido of projeto.envolvidos || []) {
-            if ((_a = envolvido.recurso) === null || _a === void 0 ? void 0 : _a.usuario) {
+        for (let envolvido of ((_a = projeto.alocacoes) === null || _a === void 0 ? void 0 : _a.filter(x => x.envolvido)) || []) {
+            if ((_b = envolvido.recurso) === null || _b === void 0 ? void 0 : _b.usuario) {
                 result.push({
                     url: envolvido.recurso.usuario.url_foto || "assets/images/projetos/usuario.png",
-                    hint: "Usuario: " + envolvido.recurso.usuario.nome + (envolvido.regra ? "\n(" + envolvido.regra.nome + ")" : "")
+                    hint: "Usuario: " + envolvido.recurso.usuario.nome // + (envolvido.regra ? "\n(" + envolvido.regra.nome + ")" : "") TODO: Colocar regras
                 });
             }
-            else if ((_b = envolvido.recurso) === null || _b === void 0 ? void 0 : _b.unidade) {
+            else if ((_c = envolvido.recurso) === null || _c === void 0 ? void 0 : _c.unidade) {
                 result.push({
                     url: "assets/images/projetos/unidade.png",
-                    hint: "Usuario: " + envolvido.recurso.unidade.nome + (envolvido.regra ? "\n(" + envolvido.regra.nome + ")" : "")
+                    hint: "Usuario: " + envolvido.recurso.unidade.nome // + (envolvido.regra ? "\n(" + envolvido.regra.nome + ")" : "") TODO: Colocar regras
                 });
             }
         }
@@ -12420,7 +13623,7 @@ class ProjetoListComponent extends src_app_modules_base_page_list_base__WEBPACK_
     dynamicOptions(row) {
         let result = [];
         let projeto = row;
-        const isEnvolvido = !!(projeto.envolvidos || []).find(x => { var _a; return x.recurso.usuario.id == ((_a = this.auth.usuario) === null || _a === void 0 ? void 0 : _a.id); });
+        const isEnvolvido = !!(projeto.alocacoes || []).find(x => { var _a; return x.envolvido && x.recurso.usuario.id == ((_a = this.auth.usuario) === null || _a === void 0 ? void 0 : _a.id); });
         const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: (projeto) => this.go.navigate({ route: ['gestao', 'projeto', projeto.id, 'consult'] }, { modal: true }) };
         const BOTAO_COMENTARIOS = { label: "Comentários", icon: "bi bi-chat-left-quote", onClick: (projeto) => this.go.navigate({ route: ['gestao', 'projeto', projeto.id, 'comentar'] }, this.modalRefreshId(projeto)) };
         const BOTAO_CLONAR = { label: "Clonar", icon: "bi bi-stickies", onClick: (projeto) => this.go.navigate({ route: ['gestao', 'demanda', projeto.id, 'clonar'] }, this.modalRefresh()) };
@@ -12448,7 +13651,7 @@ class ProjetoListComponent extends src_app_modules_base_page_list_base__WEBPACK_
     dynamicButtons(row) {
         let result = [];
         let projeto = row;
-        const isEnvolvido = !!(projeto.envolvidos || []).find(x => { var _a; return x.recurso.usuario.id == ((_a = this.auth.usuario) === null || _a === void 0 ? void 0 : _a.id); });
+        const isEnvolvido = !!(projeto.alocacoes || []).find(x => { var _a; return x.envolvido && x.recurso.usuario.id == ((_a = this.auth.usuario) === null || _a === void 0 ? void 0 : _a.id); });
         const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: (projeto) => this.go.navigate({ route: ['gestao', 'projeto', projeto.id, 'consult'] }, { modal: true }) };
         const BOTAO_PLANEJAR = { label: "Planejamento", icon: "bi bi-bar-chart-steps", onClick: (projeto) => this.go.navigate({ route: ['gestao', 'projeto', projeto.id, 'planejamento'] }, this.modalRefreshId(projeto)) };
         if (isEnvolvido) {
@@ -12466,7 +13669,7 @@ ProjetoListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdef
     } if (rf & 2) {
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵloadQuery"]()) && (ctx.grid = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]], decls: 31, vars: 44, consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome", "controlName", "nome", 3, "size", "control"], ["controlName", "usuario_id", 3, "size", "label", "control", "dao", "selectRoute"], ["controlName", "unidade_id", 3, "size", "label", "control", "dao", "selectRoute"], ["title", "#ID", 3, "template"], ["columnNumero", ""], [3, "title", "template"], ["columnNomeEnvolvidos", ""], ["title", "Descri\u00E7\u00E3o", 3, "template"], ["columnDescricao", ""], ["title", "Datas", 3, "template"], ["columnDatas", ""], ["title", "Custo", 3, "template"], ["columnCusto", ""], ["title", "Progresso", 3, "template"], ["columnProgresso", ""], ["title", "Status", 3, "template"], ["columnStatus", ""], ["type", "options", 3, "onEdit", "onDelete", "dynamicOptions", "dynamicButtons", 4, "ngIf"], [3, "rows"], [1, "d-block"], [3, "url", "hint", 4, "ngFor", "ngForOf"], [3, "url", "hint"], ["color", "light", "icon", "bi bi-box-arrow-right", "hint", "Data de in\u00EDcio", 3, "label"], ["color", "light", "icon", "bi bi-box-arrow-in-right", "hint", "Data de t\u00E9rmino", 3, "label"], ["color", "warning", "icon", "bi bi-dash-square", "label", "N\u00E3o calcula", "hint", "Projeto configurado para n\u00E3o calcular custos", 4, "ngIf"], ["color", "light", "icon", "bi bi-cash-coin", "hint", "Data de t\u00E9rmino", 3, "label", 4, "ngIf"], ["color", "warning", "icon", "bi bi-dash-square", "label", "N\u00E3o calcula", "hint", "Projeto configurado para n\u00E3o calcular custos"], ["color", "light", "icon", "bi bi-cash-coin", "hint", "Data de t\u00E9rmino", 3, "label"], ["color", "success", 3, "value"], [3, "icon", "label"], ["type", "options", 3, "onEdit", "onDelete", "dynamicOptions", "dynamicButtons"]], template: function ProjetoListComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]], decls: 31, vars: 44, consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome", "controlName", "nome", 3, "size", "control"], ["controlName", "usuario_id", 3, "size", "label", "control", "dao", "selectRoute"], ["controlName", "unidade_id", 3, "size", "label", "control", "dao", "selectRoute"], ["title", "#ID", 3, "template"], ["columnNumero", ""], [3, "title", "template"], ["columnNomeEnvolvidos", ""], ["title", "Descri\u00E7\u00E3o", 3, "template"], ["columnDescricao", ""], ["title", "Datas", 3, "template"], ["columnDatas", ""], ["title", "Custo", 3, "template"], ["columnCusto", ""], ["title", "Progresso", 3, "template"], ["columnProgresso", ""], ["title", "Status", 3, "template"], ["columnStatus", ""], ["type", "options", 3, "onEdit", "onDelete", "dynamicOptions", "dynamicButtons", 4, "ngIf"], [3, "rows"], [1, "d-block"], [3, "url", "hint", 4, "ngFor", "ngForOf"], [3, "url", "hint"], ["color", "light", "icon", "bi bi-box-arrow-right", "hint", "Data de in\u00EDcio", 3, "label"], ["color", "light", "icon", "bi bi-box-arrow-in-right", "hint", "Data de t\u00E9rmino", 3, "label"], ["color", "warning", "icon", "bi bi-dash-square", "label", "N\u00E3o calcula", "hint", "Projeto configurado para n\u00E3o calcular custos", 4, "ngIf"], ["color", "light", "icon", "bi bi-cash-coin", "hint", "Projeto configurado para calcular custos", 3, "label", 4, "ngIf"], ["color", "warning", "icon", "bi bi-dash-square", "label", "N\u00E3o calcula", "hint", "Projeto configurado para n\u00E3o calcular custos"], ["color", "light", "icon", "bi bi-cash-coin", "hint", "Projeto configurado para calcular custos", 3, "label"], ["color", "success", 3, "value"], [3, "icon", "label"], ["type", "options", 3, "onEdit", "onDelete", "dynamicOptions", "dynamicButtons"]], template: function ProjetoListComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "grid", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("select", function ProjetoListComponent_Template_grid_select_0_listener($event) { return ctx.onSelect($event); });
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](1, ProjetoListComponent_toolbar_1_Template, 1, 0, "toolbar", 1);
@@ -13246,18 +14449,19 @@ var Calendar = /** @class */ (function (_super) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProjetoFormComponent", function() { return ProjetoFormComponent; });
-/* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/components/editable-form/editable-form.component */ "RKEd");
-/* harmony import */ var src_app_dao_projeto_dao_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/dao/projeto-dao.service */ "B2HH");
-/* harmony import */ var src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/models/projeto.model */ "LZl6");
-/* harmony import */ var src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/modules/base/page-form-base */ "793T");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../components/tabs/tabs.component */ "EkNo");
-/* harmony import */ var _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../components/tabs/tab/tab.component */ "suJ1");
-/* harmony import */ var _projeto_form_principal_projeto_form_principal_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../projeto-form-principal/projeto-form-principal.component */ "OkXU");
-/* harmony import */ var _projeto_form_recursos_projeto_form_recursos_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../projeto-form-recursos/projeto-form-recursos.component */ "sGS7");
-/* harmony import */ var _projeto_form_envolvidos_projeto_form_envolvidos_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../projeto-form-envolvidos/projeto-form-envolvidos.component */ "pkbW");
-/* harmony import */ var _projeto_form_alocacoes_projeto_form_alocacoes_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../projeto-form-alocacoes/projeto-form-alocacoes.component */ "3yBa");
-/* harmony import */ var _uteis_comentarios_comentarios_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../uteis/comentarios/comentarios.component */ "KuoT");
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/components/editable-form/editable-form.component */ "RKEd");
+/* harmony import */ var src_app_dao_projeto_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/projeto-dao.service */ "B2HH");
+/* harmony import */ var src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/models/projeto.model */ "LZl6");
+/* harmony import */ var src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/modules/base/page-form-base */ "793T");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../components/tabs/tabs.component */ "EkNo");
+/* harmony import */ var _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../components/tabs/tab/tab.component */ "suJ1");
+/* harmony import */ var _projeto_form_principal_projeto_form_principal_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../projeto-form-principal/projeto-form-principal.component */ "OkXU");
+/* harmony import */ var _projeto_form_alocacoes_projeto_form_alocacoes_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../projeto-form-alocacoes/projeto-form-alocacoes.component */ "3yBa");
+/* harmony import */ var _projeto_form_recursos_projeto_form_recursos_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../projeto-form-recursos/projeto-form-recursos.component */ "sGS7");
+/* harmony import */ var _projeto_form_regras_projeto_form_regras_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../projeto-form-regras/projeto-form-regras.component */ "mf6K");
+/* harmony import */ var _uteis_comentarios_comentarios_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../../uteis/comentarios/comentarios.component */ "KuoT");
 
 
 
@@ -13271,9 +14475,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class ProjetoFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_3__["PageFormBase"] {
+
+const _c0 = ["principal"];
+const _c1 = ["recursos"];
+const _c2 = ["alocacoes"];
+const _c3 = ["regras"];
+const _c4 = ["comentarios"];
+class ProjetoFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_4__["PageFormBase"] {
     constructor(injector) {
-        super(injector, src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_2__["Projeto"], src_app_dao_projeto_dao_service__WEBPACK_IMPORTED_MODULE_1__["ProjetoDaoService"]);
+        super(injector, src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_3__["Projeto"], src_app_dao_projeto_dao_service__WEBPACK_IMPORTED_MODULE_2__["ProjetoDaoService"]);
         this.injector = injector;
         this.validate = (control, controlName) => {
             var _a;
@@ -13294,48 +14504,72 @@ class ProjetoFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
         form.patchValue(this.util.fillForm(formValue, entity));
     }
     initializeData(form) {
-        this.entity = new src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_2__["Projeto"]();
+        this.entity = new src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_3__["Projeto"]();
         this.loadData(this.entity, form);
     }
     saveData(form) {
-        return new Promise((resolve, reject) => {
-            let projeto = this.util.fill(new src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_2__["Projeto"](), this.entity);
-            projeto = this.util.fillForm(projeto, this.form.value);
-            resolve(projeto);
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            Promise.all([
+                this.principal.saveData(),
+                this.recursos.saveData(),
+                this.alocacoes.saveData(),
+                this.regras.saveData(),
+                this.comentarios.saveData()
+            ]);
+            return this.entity;
         });
     }
 }
-ProjetoFormComponent.ɵfac = function ProjetoFormComponent_Factory(t) { return new (t || ProjetoFormComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_4__["Injector"])); };
-ProjetoFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineComponent"]({ type: ProjetoFormComponent, selectors: [["app-projeto-form"]], viewQuery: function ProjetoFormComponent_Query(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_0__["EditableFormComponent"], 1);
+ProjetoFormComponent.ɵfac = function ProjetoFormComponent_Factory(t) { return new (t || ProjetoFormComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_5__["Injector"])); };
+ProjetoFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineComponent"]({ type: ProjetoFormComponent, selectors: [["app-projeto-form"]], viewQuery: function ProjetoFormComponent_Query(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__["EditableFormComponent"], 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵviewQuery"](_c0, 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵviewQuery"](_c1, 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵviewQuery"](_c2, 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵviewQuery"](_c3, 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵviewQuery"](_c4, 1);
     } if (rf & 2) {
         let _t;
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵInheritDefinitionFeature"]], decls: 13, vars: 3, consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], ["key", "RECURSOS", "label", "Recursos"], ["key", "ENVOLVIDOS", "label", "Envolvidos"], ["key", "ALOCACOES", "label", "Aloca\u00E7\u00F5es"], ["key", "REGRAS", "label", "Regras"], ["key", "COMENTARIOS", "label", "Coment\u00E1rios"]], template: function ProjetoFormComponent_Template(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "editable-form", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("submit", function ProjetoFormComponent_Template_editable_form_submit_0_listener() { return ctx.onSaveData(); })("cancel", function ProjetoFormComponent_Template_editable_form_cancel_0_listener() { return ctx.onCancel(); });
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](1, "tabs", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](2, "tab", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](3, "projeto-form-principal");
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](4, "tab", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](5, "projeto-form-recursos");
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](6, "tab", 4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](7, "projeto-form-envolvidos");
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](8, "tab", 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](9, "projeto-form-alocacoes");
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](10, "tab", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](11, "tab", 7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](12, "comentarios");
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵloadQuery"]()) && (ctx.principal = _t.first);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵloadQuery"]()) && (ctx.recursos = _t.first);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵloadQuery"]()) && (ctx.alocacoes = _t.first);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵloadQuery"]()) && (ctx.regras = _t.first);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵloadQuery"]()) && (ctx.comentarios = _t.first);
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵInheritDefinitionFeature"]], decls: 17, vars: 8, consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [3, "entity"], ["principal", ""], ["key", "ALOCACOES", "label", "Aloca\u00E7\u00F5es"], ["alocacoes", ""], ["key", "RECURSOS", "label", "Recursos"], ["recursos", ""], ["key", "REGRAS", "label", "Regras"], ["regras", ""], ["key", "COMENTARIOS", "label", "Coment\u00E1rios"], ["origem", "PROJETO", 3, "entity"], ["comentarios", ""]], template: function ProjetoFormComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "editable-form", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵlistener"]("submit", function ProjetoFormComponent_Template_editable_form_submit_0_listener() { return ctx.onSaveData(); })("cancel", function ProjetoFormComponent_Template_editable_form_cancel_0_listener() { return ctx.onCancel(); });
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](1, "tabs", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](2, "tab", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](3, "projeto-form-principal", 3, 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](5, "tab", 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](6, "projeto-form-alocacoes", 3, 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](8, "tab", 7);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](9, "projeto-form-recursos", 3, 8);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](11, "tab", 9);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](12, "projeto-form-regras", 3, 10);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](14, "tab", 11);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](15, "comentarios", 12, 13);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     } if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
-    } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_0__["EditableFormComponent"], _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_5__["TabsComponent"], _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_6__["TabComponent"], _projeto_form_principal_projeto_form_principal_component__WEBPACK_IMPORTED_MODULE_7__["ProjetoFormPrincipalComponent"], _projeto_form_recursos_projeto_form_recursos_component__WEBPACK_IMPORTED_MODULE_8__["ProjetoFormRecursosComponent"], _projeto_form_envolvidos_projeto_form_envolvidos_component__WEBPACK_IMPORTED_MODULE_9__["ProjetoFormEnvolvidosComponent"], _projeto_form_alocacoes_projeto_form_alocacoes_component__WEBPACK_IMPORTED_MODULE_10__["ProjetoFormAlocacoesComponent"], _uteis_comentarios_comentarios_component__WEBPACK_IMPORTED_MODULE_11__["ComentariosComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwcm9qZXRvLWZvcm0uY29tcG9uZW50LnNjc3MifQ== */"] });
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("entity", ctx.entity);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("entity", ctx.entity);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("entity", ctx.entity);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("entity", ctx.entity);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("entity", ctx.entity);
+    } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__["EditableFormComponent"], _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_6__["TabsComponent"], _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_7__["TabComponent"], _projeto_form_principal_projeto_form_principal_component__WEBPACK_IMPORTED_MODULE_8__["ProjetoFormPrincipalComponent"], _projeto_form_alocacoes_projeto_form_alocacoes_component__WEBPACK_IMPORTED_MODULE_9__["ProjetoFormAlocacoesComponent"], _projeto_form_recursos_projeto_form_recursos_component__WEBPACK_IMPORTED_MODULE_10__["ProjetoFormRecursosComponent"], _projeto_form_regras_projeto_form_regras_component__WEBPACK_IMPORTED_MODULE_11__["ProjetoFormRegrasComponent"], _uteis_comentarios_comentarios_component__WEBPACK_IMPORTED_MODULE_12__["ComentariosComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwcm9qZXRvLWZvcm0uY29tcG9uZW50LnNjc3MifQ== */"] });
 
 
 /***/ }),
@@ -13470,14 +14704,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _projeto_planejamento_projeto_planejamento_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./projeto-planejamento/projeto-planejamento.component */ "/eKj");
 /* harmony import */ var _projeto_form_principal_projeto_form_principal_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./projeto-form-principal/projeto-form-principal.component */ "OkXU");
 /* harmony import */ var _projeto_form_recursos_projeto_form_recursos_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./projeto-form-recursos/projeto-form-recursos.component */ "sGS7");
-/* harmony import */ var _projeto_form_envolvidos_projeto_form_envolvidos_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./projeto-form-envolvidos/projeto-form-envolvidos.component */ "pkbW");
-/* harmony import */ var _projeto_form_alocacoes_projeto_form_alocacoes_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./projeto-form-alocacoes/projeto-form-alocacoes.component */ "3yBa");
-/* harmony import */ var _uteis_uteis_module__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../uteis/uteis.module */ "hA/d");
-/* harmony import */ var _fullcalendar_angular__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @fullcalendar/angular */ "IvIE");
-/* harmony import */ var _projeto_tarefa_form_projeto_tarefa_form_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./projeto-tarefa-form/projeto-tarefa-form.component */ "8YSR");
-/* harmony import */ var _projeto_tarefa_form_principal_projeto_tarefa_form_principal_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./projeto-tarefa-form-principal/projeto-tarefa-form-principal.component */ "+qyV");
-/* harmony import */ var _projeto_form_regras_projeto_form_regras_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./projeto-form-regras/projeto-form-regras.component */ "mf6K");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _projeto_form_alocacoes_projeto_form_alocacoes_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./projeto-form-alocacoes/projeto-form-alocacoes.component */ "3yBa");
+/* harmony import */ var _uteis_uteis_module__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../uteis/uteis.module */ "hA/d");
+/* harmony import */ var _fullcalendar_angular__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @fullcalendar/angular */ "IvIE");
+/* harmony import */ var _fullcalendar_daygrid__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @fullcalendar/daygrid */ "PN1e");
+/* harmony import */ var _fullcalendar_interaction__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @fullcalendar/interaction */ "ogxq");
+/* harmony import */ var _projeto_tarefa_form_projeto_tarefa_form_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./projeto-tarefa-form/projeto-tarefa-form.component */ "8YSR");
+/* harmony import */ var _projeto_tarefa_form_principal_projeto_tarefa_form_principal_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./projeto-tarefa-form-principal/projeto-tarefa-form-principal.component */ "+qyV");
+/* harmony import */ var _projeto_form_regras_projeto_form_regras_component__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./projeto-form-regras/projeto-form-regras.component */ "mf6K");
+/* harmony import */ var _projeto_tarefa_filter_projeto_tarefa_filter_component__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./projeto-tarefa-filter/projeto-tarefa-filter.component */ "qyTw");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! @angular/core */ "fXoL");
 
 
 
@@ -13489,35 +14725,41 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+ // a plugin!
+ // a plugin!
 
 
 
 
 
+_fullcalendar_angular__WEBPACK_IMPORTED_MODULE_10__["FullCalendarModule"].registerPlugins([
+    _fullcalendar_daygrid__WEBPACK_IMPORTED_MODULE_11__["default"],
+    _fullcalendar_interaction__WEBPACK_IMPORTED_MODULE_12__["default"]
+]);
 class ProjetoModule {
 }
 ProjetoModule.ɵfac = function ProjetoModule_Factory(t) { return new (t || ProjetoModule)(); };
-ProjetoModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵdefineNgModule"]({ type: ProjetoModule });
-ProjetoModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵdefineInjector"]({ imports: [[
+ProjetoModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdefineNgModule"]({ type: ProjetoModule });
+ProjetoModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdefineInjector"]({ imports: [[
             _angular_common__WEBPACK_IMPORTED_MODULE_0__["CommonModule"],
             src_app_components_components_module__WEBPACK_IMPORTED_MODULE_3__["ComponentsModule"],
-            _uteis_uteis_module__WEBPACK_IMPORTED_MODULE_10__["UteisModule"],
-            _fullcalendar_angular__WEBPACK_IMPORTED_MODULE_11__["FullCalendarModule"],
+            _uteis_uteis_module__WEBPACK_IMPORTED_MODULE_9__["UteisModule"],
+            _fullcalendar_angular__WEBPACK_IMPORTED_MODULE_10__["FullCalendarModule"],
             _projeto_routing_module__WEBPACK_IMPORTED_MODULE_1__["ProjetoRoutingModule"]
         ]] });
-(function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵsetNgModuleScope"](ProjetoModule, { declarations: [_projeto_list_projeto_list_component__WEBPACK_IMPORTED_MODULE_2__["ProjetoListComponent"],
+(function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵsetNgModuleScope"](ProjetoModule, { declarations: [_projeto_list_projeto_list_component__WEBPACK_IMPORTED_MODULE_2__["ProjetoListComponent"],
         _projeto_form_projeto_form_component__WEBPACK_IMPORTED_MODULE_4__["ProjetoFormComponent"],
         _projeto_planejamento_projeto_planejamento_component__WEBPACK_IMPORTED_MODULE_5__["ProjetoPlanejamentoComponent"],
         _projeto_form_principal_projeto_form_principal_component__WEBPACK_IMPORTED_MODULE_6__["ProjetoFormPrincipalComponent"],
         _projeto_form_recursos_projeto_form_recursos_component__WEBPACK_IMPORTED_MODULE_7__["ProjetoFormRecursosComponent"],
-        _projeto_form_envolvidos_projeto_form_envolvidos_component__WEBPACK_IMPORTED_MODULE_8__["ProjetoFormEnvolvidosComponent"],
-        _projeto_form_alocacoes_projeto_form_alocacoes_component__WEBPACK_IMPORTED_MODULE_9__["ProjetoFormAlocacoesComponent"],
-        _projeto_tarefa_form_projeto_tarefa_form_component__WEBPACK_IMPORTED_MODULE_12__["ProjetoTarefaFormComponent"],
-        _projeto_tarefa_form_principal_projeto_tarefa_form_principal_component__WEBPACK_IMPORTED_MODULE_13__["ProjetoTarefaFormPrincipalComponent"],
-        _projeto_form_regras_projeto_form_regras_component__WEBPACK_IMPORTED_MODULE_14__["ProjetoFormRegrasComponent"]], imports: [_angular_common__WEBPACK_IMPORTED_MODULE_0__["CommonModule"],
+        _projeto_form_alocacoes_projeto_form_alocacoes_component__WEBPACK_IMPORTED_MODULE_8__["ProjetoFormAlocacoesComponent"],
+        _projeto_tarefa_form_projeto_tarefa_form_component__WEBPACK_IMPORTED_MODULE_13__["ProjetoTarefaFormComponent"],
+        _projeto_tarefa_form_principal_projeto_tarefa_form_principal_component__WEBPACK_IMPORTED_MODULE_14__["ProjetoTarefaFormPrincipalComponent"],
+        _projeto_form_regras_projeto_form_regras_component__WEBPACK_IMPORTED_MODULE_15__["ProjetoFormRegrasComponent"],
+        _projeto_tarefa_filter_projeto_tarefa_filter_component__WEBPACK_IMPORTED_MODULE_16__["ProjetoTarefaFilterComponent"]], imports: [_angular_common__WEBPACK_IMPORTED_MODULE_0__["CommonModule"],
         src_app_components_components_module__WEBPACK_IMPORTED_MODULE_3__["ComponentsModule"],
-        _uteis_uteis_module__WEBPACK_IMPORTED_MODULE_10__["UteisModule"],
-        _fullcalendar_angular__WEBPACK_IMPORTED_MODULE_11__["FullCalendarModule"],
+        _uteis_uteis_module__WEBPACK_IMPORTED_MODULE_9__["UteisModule"],
+        _fullcalendar_angular__WEBPACK_IMPORTED_MODULE_10__["FullCalendarModule"],
         _projeto_routing_module__WEBPACK_IMPORTED_MODULE_1__["ProjetoRoutingModule"]] }); })();
 
 
@@ -13533,11 +14775,67 @@ ProjetoModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵdefineInj
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProjetoFormRegrasComponent", function() { return ProjetoFormRegrasComponent; });
-/* harmony import */ var src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/modules/base/page-frame-base */ "rvJe");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/components/editable-form/editable-form.component */ "RKEd");
+/* harmony import */ var src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/models/projeto.model */ "LZl6");
+/* harmony import */ var src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/modules/base/page-frame-base */ "rvJe");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ "lYxd");
+/* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../components/input/input-select/input-select.component */ "txHH");
+/* harmony import */ var _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../components/grid/grid.component */ "m4bG");
+/* harmony import */ var _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../components/grid/columns/columns.component */ "d7UH");
+/* harmony import */ var _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/grid/column/column.component */ "pFmK");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/common */ "ofXK");
+/* harmony import */ var _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../../components/input/input-switch/input-switch.component */ "puzm");
 
 
-class ProjetoFormRegrasComponent extends src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_0__["PageFrameBase"] {
+
+
+
+
+
+
+
+
+
+
+
+function ProjetoFormRegrasComponent_ng_template_8_strong_0_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "strong", 11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const row_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"]().row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"]((row_r6.tarefa == null ? null : row_r6.tarefa.nome) || "");
+} }
+function ProjetoFormRegrasComponent_ng_template_8_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](0, ProjetoFormRegrasComponent_ng_template_8_strong_0_Template, 2, 1, "strong", 10);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+} if (rf & 2) {
+    const row_r6 = ctx.row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", row_r6.tarefa == null ? null : row_r6.tarefa.nome.length);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", row_r6.descricao, " ");
+} }
+function ProjetoFormRegrasComponent_ng_template_11_i_1_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "i", 14);
+} }
+function ProjetoFormRegrasComponent_ng_template_11_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "div", 12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](1, ProjetoFormRegrasComponent_ng_template_11_i_1_Template, 1, 0, "i", 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const row_r9 = ctx.row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", row_r9.concluido);
+} }
+function ProjetoFormRegrasComponent_ng_template_13_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "input-switch", 15);
+} if (rf & 2) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12);
+} }
+class ProjetoFormRegrasComponent extends src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_3__["PageFrameBase"] {
     constructor(injector) {
         super(injector);
         this.injector = injector;
@@ -13545,80 +14843,2505 @@ class ProjetoFormRegrasComponent extends src_app_modules_base_page_frame_base__W
             let result = null;
             return result;
         };
-        this.form = this.fh.FormBuilder({}, this.cdRef, this.validate);
+        this.form = this.fh.FormBuilder({
+            nome_regra: { default: "" },
+            tipo_recurso: { default: "HUMANO" }
+        }, this.cdRef, this.validate);
     }
+    set control(value) { super.control = value; }
+    get control() { return super.control; }
+    set entity(value) { super.entity = value; }
+    get entity() { return super.entity; }
     get items() {
-        var _a;
-        return ((_a = this.projeto) === null || _a === void 0 ? void 0 : _a.regras) || [];
+        if (!this.gridControl.value)
+            this.gridControl.setValue(new src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_2__["Projeto"]());
+        if (!this.gridControl.value.regras)
+            this.gridControl.value.regras = [];
+        return this.gridControl.value.regras;
+    }
+    loadData(entity, form) {
+        super.loadData(entity, form);
+    }
+    initializeData(form) {
+        this.entity = new src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_2__["Projeto"]();
+        this.loadData(this.entity, this.form);
+    }
+    saveData(form) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                resolve(this.entity);
+            });
+        });
     }
 }
-ProjetoFormRegrasComponent.ɵfac = function ProjetoFormRegrasComponent_Factory(t) { return new (t || ProjetoFormRegrasComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
-ProjetoFormRegrasComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: ProjetoFormRegrasComponent, selectors: [["app-projeto-form-regras"]], inputs: { projeto: "projeto" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]], decls: 2, vars: 0, template: function ProjetoFormRegrasComponent_Template(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "p");
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](1, "projeto-form-regras works!");
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-    } }, styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwcm9qZXRvLWZvcm0tcmVncmFzLmNvbXBvbmVudC5zY3NzIn0= */"] });
+ProjetoFormRegrasComponent.ɵfac = function ProjetoFormRegrasComponent_Factory(t) { return new (t || ProjetoFormRegrasComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_4__["Injector"])); };
+ProjetoFormRegrasComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineComponent"]({ type: ProjetoFormRegrasComponent, selectors: [["projeto-form-regras"]], viewQuery: function ProjetoFormRegrasComponent_Query(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__["EditableFormComponent"], 1);
+    } if (rf & 2) {
+        let _t;
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
+    } }, inputs: { control: "control", entity: "entity" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵInheritDefinitionFeature"]], decls: 15, vars: 11, consts: [["noButtons", "", 3, "form", "disabled"], [1, "row"], ["label", "Nome da regra", "controlName", "nome_regra", "labelInfo", "Nome da regra", 3, "size"], ["label", "Tipo de recurso", "icon", "bi bi-arrow-up-right-circle", "controlName", "tipo_recurso", 3, "size", "items"], [3, "hasDelete"], [3, "title", "template"], ["tarefaDescricao", ""], ["title", "Tipo de recurso", 3, "align", "template", "editTemplate"], ["concluido", ""], ["editConcluido", ""], ["class", "d-block", 4, "ngIf"], [1, "d-block"], [1, "text-center"], ["class", "bi bi-check-circle", 4, "ngIf"], [1, "bi", "bi-check-circle"], ["controlName", "concluido", 3, "size"]], template: function ProjetoFormRegrasComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "editable-form", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](1, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](2, "input-text", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](3, "input-select", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](4, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](5, "grid", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](6, "columns");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](7, "column", 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](8, ProjetoFormRegrasComponent_ng_template_8_Template, 2, 2, "ng-template", null, 6, _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](10, "column", 7);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](11, ProjetoFormRegrasComponent_ng_template_11_Template, 2, 1, "ng-template", null, 8, _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](13, ProjetoFormRegrasComponent_ng_template_13_Template, 1, 1, "ng-template", null, 9, _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    } if (rf & 2) {
+        const _r0 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵreference"](9);
+        const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵreference"](12);
+        const _r4 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵreference"](14);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 6)("items", ctx.lookup.PROJETO_TIPO_RECURSOS);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("hasDelete", true);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("title", ctx.lex.noun("Nome") + " da Regra")("template", _r0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("align", "center")("template", _r2)("editTemplate", _r4);
+    } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__["EditableFormComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_5__["InputTextComponent"], _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_6__["InputSelectComponent"], _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_7__["GridComponent"], _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_8__["ColumnsComponent"], _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_9__["ColumnComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_10__["NgIf"], _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_11__["InputSwitchComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwcm9qZXRvLWZvcm0tcmVncmFzLmNvbXBvbmVudC5zY3NzIn0= */"] });
 
 
 /***/ }),
 
-/***/ "oJZU":
+/***/ "ogxq":
+/*!********************************************************!*\
+  !*** ./node_modules/@fullcalendar/interaction/main.js ***!
+  \********************************************************/
+/*! exports provided: default, Draggable, FeaturefulElementDragging, PointerDragging, ThirdPartyDraggable */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Draggable", function() { return ExternalDraggable; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FeaturefulElementDragging", function() { return FeaturefulElementDragging; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PointerDragging", function() { return PointerDragging; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ThirdPartyDraggable", function() { return ThirdPartyDraggable; });
+/* harmony import */ var _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @fullcalendar/common */ "1hAE");
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tslib */ "mrSG");
+/*!
+FullCalendar v5.11.3
+Docs & License: https://fullcalendar.io/
+(c) 2022 Adam Shaw
+*/
+
+
+
+_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["config"].touchMouseIgnoreWait = 500;
+var ignoreMouseDepth = 0;
+var listenerCnt = 0;
+var isWindowTouchMoveCancelled = false;
+/*
+Uses a "pointer" abstraction, which monitors UI events for both mouse and touch.
+Tracks when the pointer "drags" on a certain element, meaning down+move+up.
+
+Also, tracks if there was touch-scrolling.
+Also, can prevent touch-scrolling from happening.
+Also, can fire pointermove events when scrolling happens underneath, even when no real pointer movement.
+
+emits:
+- pointerdown
+- pointermove
+- pointerup
+*/
+var PointerDragging = /** @class */ (function () {
+    function PointerDragging(containerEl) {
+        var _this = this;
+        this.subjectEl = null;
+        // options that can be directly assigned by caller
+        this.selector = ''; // will cause subjectEl in all emitted events to be this element
+        this.handleSelector = '';
+        this.shouldIgnoreMove = false;
+        this.shouldWatchScroll = true; // for simulating pointermove on scroll
+        // internal states
+        this.isDragging = false;
+        this.isTouchDragging = false;
+        this.wasTouchScroll = false;
+        // Mouse
+        // ----------------------------------------------------------------------------------------------------
+        this.handleMouseDown = function (ev) {
+            if (!_this.shouldIgnoreMouse() &&
+                isPrimaryMouseButton(ev) &&
+                _this.tryStart(ev)) {
+                var pev = _this.createEventFromMouse(ev, true);
+                _this.emitter.trigger('pointerdown', pev);
+                _this.initScrollWatch(pev);
+                if (!_this.shouldIgnoreMove) {
+                    document.addEventListener('mousemove', _this.handleMouseMove);
+                }
+                document.addEventListener('mouseup', _this.handleMouseUp);
+            }
+        };
+        this.handleMouseMove = function (ev) {
+            var pev = _this.createEventFromMouse(ev);
+            _this.recordCoords(pev);
+            _this.emitter.trigger('pointermove', pev);
+        };
+        this.handleMouseUp = function (ev) {
+            document.removeEventListener('mousemove', _this.handleMouseMove);
+            document.removeEventListener('mouseup', _this.handleMouseUp);
+            _this.emitter.trigger('pointerup', _this.createEventFromMouse(ev));
+            _this.cleanup(); // call last so that pointerup has access to props
+        };
+        // Touch
+        // ----------------------------------------------------------------------------------------------------
+        this.handleTouchStart = function (ev) {
+            if (_this.tryStart(ev)) {
+                _this.isTouchDragging = true;
+                var pev = _this.createEventFromTouch(ev, true);
+                _this.emitter.trigger('pointerdown', pev);
+                _this.initScrollWatch(pev);
+                // unlike mouse, need to attach to target, not document
+                // https://stackoverflow.com/a/45760014
+                var targetEl = ev.target;
+                if (!_this.shouldIgnoreMove) {
+                    targetEl.addEventListener('touchmove', _this.handleTouchMove);
+                }
+                targetEl.addEventListener('touchend', _this.handleTouchEnd);
+                targetEl.addEventListener('touchcancel', _this.handleTouchEnd); // treat it as a touch end
+                // attach a handler to get called when ANY scroll action happens on the page.
+                // this was impossible to do with normal on/off because 'scroll' doesn't bubble.
+                // http://stackoverflow.com/a/32954565/96342
+                window.addEventListener('scroll', _this.handleTouchScroll, true);
+            }
+        };
+        this.handleTouchMove = function (ev) {
+            var pev = _this.createEventFromTouch(ev);
+            _this.recordCoords(pev);
+            _this.emitter.trigger('pointermove', pev);
+        };
+        this.handleTouchEnd = function (ev) {
+            if (_this.isDragging) { // done to guard against touchend followed by touchcancel
+                var targetEl = ev.target;
+                targetEl.removeEventListener('touchmove', _this.handleTouchMove);
+                targetEl.removeEventListener('touchend', _this.handleTouchEnd);
+                targetEl.removeEventListener('touchcancel', _this.handleTouchEnd);
+                window.removeEventListener('scroll', _this.handleTouchScroll, true); // useCaptured=true
+                _this.emitter.trigger('pointerup', _this.createEventFromTouch(ev));
+                _this.cleanup(); // call last so that pointerup has access to props
+                _this.isTouchDragging = false;
+                startIgnoringMouse();
+            }
+        };
+        this.handleTouchScroll = function () {
+            _this.wasTouchScroll = true;
+        };
+        this.handleScroll = function (ev) {
+            if (!_this.shouldIgnoreMove) {
+                var pageX = (window.pageXOffset - _this.prevScrollX) + _this.prevPageX;
+                var pageY = (window.pageYOffset - _this.prevScrollY) + _this.prevPageY;
+                _this.emitter.trigger('pointermove', {
+                    origEvent: ev,
+                    isTouch: _this.isTouchDragging,
+                    subjectEl: _this.subjectEl,
+                    pageX: pageX,
+                    pageY: pageY,
+                    deltaX: pageX - _this.origPageX,
+                    deltaY: pageY - _this.origPageY,
+                });
+            }
+        };
+        this.containerEl = containerEl;
+        this.emitter = new _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["Emitter"]();
+        containerEl.addEventListener('mousedown', this.handleMouseDown);
+        containerEl.addEventListener('touchstart', this.handleTouchStart, { passive: true });
+        listenerCreated();
+    }
+    PointerDragging.prototype.destroy = function () {
+        this.containerEl.removeEventListener('mousedown', this.handleMouseDown);
+        this.containerEl.removeEventListener('touchstart', this.handleTouchStart, { passive: true });
+        listenerDestroyed();
+    };
+    PointerDragging.prototype.tryStart = function (ev) {
+        var subjectEl = this.querySubjectEl(ev);
+        var downEl = ev.target;
+        if (subjectEl &&
+            (!this.handleSelector || Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["elementClosest"])(downEl, this.handleSelector))) {
+            this.subjectEl = subjectEl;
+            this.isDragging = true; // do this first so cancelTouchScroll will work
+            this.wasTouchScroll = false;
+            return true;
+        }
+        return false;
+    };
+    PointerDragging.prototype.cleanup = function () {
+        isWindowTouchMoveCancelled = false;
+        this.isDragging = false;
+        this.subjectEl = null;
+        // keep wasTouchScroll around for later access
+        this.destroyScrollWatch();
+    };
+    PointerDragging.prototype.querySubjectEl = function (ev) {
+        if (this.selector) {
+            return Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["elementClosest"])(ev.target, this.selector);
+        }
+        return this.containerEl;
+    };
+    PointerDragging.prototype.shouldIgnoreMouse = function () {
+        return ignoreMouseDepth || this.isTouchDragging;
+    };
+    // can be called by user of this class, to cancel touch-based scrolling for the current drag
+    PointerDragging.prototype.cancelTouchScroll = function () {
+        if (this.isDragging) {
+            isWindowTouchMoveCancelled = true;
+        }
+    };
+    // Scrolling that simulates pointermoves
+    // ----------------------------------------------------------------------------------------------------
+    PointerDragging.prototype.initScrollWatch = function (ev) {
+        if (this.shouldWatchScroll) {
+            this.recordCoords(ev);
+            window.addEventListener('scroll', this.handleScroll, true); // useCapture=true
+        }
+    };
+    PointerDragging.prototype.recordCoords = function (ev) {
+        if (this.shouldWatchScroll) {
+            this.prevPageX = ev.pageX;
+            this.prevPageY = ev.pageY;
+            this.prevScrollX = window.pageXOffset;
+            this.prevScrollY = window.pageYOffset;
+        }
+    };
+    PointerDragging.prototype.destroyScrollWatch = function () {
+        if (this.shouldWatchScroll) {
+            window.removeEventListener('scroll', this.handleScroll, true); // useCaptured=true
+        }
+    };
+    // Event Normalization
+    // ----------------------------------------------------------------------------------------------------
+    PointerDragging.prototype.createEventFromMouse = function (ev, isFirst) {
+        var deltaX = 0;
+        var deltaY = 0;
+        // TODO: repeat code
+        if (isFirst) {
+            this.origPageX = ev.pageX;
+            this.origPageY = ev.pageY;
+        }
+        else {
+            deltaX = ev.pageX - this.origPageX;
+            deltaY = ev.pageY - this.origPageY;
+        }
+        return {
+            origEvent: ev,
+            isTouch: false,
+            subjectEl: this.subjectEl,
+            pageX: ev.pageX,
+            pageY: ev.pageY,
+            deltaX: deltaX,
+            deltaY: deltaY,
+        };
+    };
+    PointerDragging.prototype.createEventFromTouch = function (ev, isFirst) {
+        var touches = ev.touches;
+        var pageX;
+        var pageY;
+        var deltaX = 0;
+        var deltaY = 0;
+        // if touch coords available, prefer,
+        // because FF would give bad ev.pageX ev.pageY
+        if (touches && touches.length) {
+            pageX = touches[0].pageX;
+            pageY = touches[0].pageY;
+        }
+        else {
+            pageX = ev.pageX;
+            pageY = ev.pageY;
+        }
+        // TODO: repeat code
+        if (isFirst) {
+            this.origPageX = pageX;
+            this.origPageY = pageY;
+        }
+        else {
+            deltaX = pageX - this.origPageX;
+            deltaY = pageY - this.origPageY;
+        }
+        return {
+            origEvent: ev,
+            isTouch: true,
+            subjectEl: this.subjectEl,
+            pageX: pageX,
+            pageY: pageY,
+            deltaX: deltaX,
+            deltaY: deltaY,
+        };
+    };
+    return PointerDragging;
+}());
+// Returns a boolean whether this was a left mouse click and no ctrl key (which means right click on Mac)
+function isPrimaryMouseButton(ev) {
+    return ev.button === 0 && !ev.ctrlKey;
+}
+// Ignoring fake mouse events generated by touch
+// ----------------------------------------------------------------------------------------------------
+function startIgnoringMouse() {
+    ignoreMouseDepth += 1;
+    setTimeout(function () {
+        ignoreMouseDepth -= 1;
+    }, _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["config"].touchMouseIgnoreWait);
+}
+// We want to attach touchmove as early as possible for Safari
+// ----------------------------------------------------------------------------------------------------
+function listenerCreated() {
+    listenerCnt += 1;
+    if (listenerCnt === 1) {
+        window.addEventListener('touchmove', onWindowTouchMove, { passive: false });
+    }
+}
+function listenerDestroyed() {
+    listenerCnt -= 1;
+    if (!listenerCnt) {
+        window.removeEventListener('touchmove', onWindowTouchMove, { passive: false });
+    }
+}
+function onWindowTouchMove(ev) {
+    if (isWindowTouchMoveCancelled) {
+        ev.preventDefault();
+    }
+}
+
+/*
+An effect in which an element follows the movement of a pointer across the screen.
+The moving element is a clone of some other element.
+Must call start + handleMove + stop.
+*/
+var ElementMirror = /** @class */ (function () {
+    function ElementMirror() {
+        this.isVisible = false; // must be explicitly enabled
+        this.sourceEl = null;
+        this.mirrorEl = null;
+        this.sourceElRect = null; // screen coords relative to viewport
+        // options that can be set directly by caller
+        this.parentNode = document.body; // HIGHLY SUGGESTED to set this to sidestep ShadowDOM issues
+        this.zIndex = 9999;
+        this.revertDuration = 0;
+    }
+    ElementMirror.prototype.start = function (sourceEl, pageX, pageY) {
+        this.sourceEl = sourceEl;
+        this.sourceElRect = this.sourceEl.getBoundingClientRect();
+        this.origScreenX = pageX - window.pageXOffset;
+        this.origScreenY = pageY - window.pageYOffset;
+        this.deltaX = 0;
+        this.deltaY = 0;
+        this.updateElPosition();
+    };
+    ElementMirror.prototype.handleMove = function (pageX, pageY) {
+        this.deltaX = (pageX - window.pageXOffset) - this.origScreenX;
+        this.deltaY = (pageY - window.pageYOffset) - this.origScreenY;
+        this.updateElPosition();
+    };
+    // can be called before start
+    ElementMirror.prototype.setIsVisible = function (bool) {
+        if (bool) {
+            if (!this.isVisible) {
+                if (this.mirrorEl) {
+                    this.mirrorEl.style.display = '';
+                }
+                this.isVisible = bool; // needs to happen before updateElPosition
+                this.updateElPosition(); // because was not updating the position while invisible
+            }
+        }
+        else if (this.isVisible) {
+            if (this.mirrorEl) {
+                this.mirrorEl.style.display = 'none';
+            }
+            this.isVisible = bool;
+        }
+    };
+    // always async
+    ElementMirror.prototype.stop = function (needsRevertAnimation, callback) {
+        var _this = this;
+        var done = function () {
+            _this.cleanup();
+            callback();
+        };
+        if (needsRevertAnimation &&
+            this.mirrorEl &&
+            this.isVisible &&
+            this.revertDuration && // if 0, transition won't work
+            (this.deltaX || this.deltaY) // if same coords, transition won't work
+        ) {
+            this.doRevertAnimation(done, this.revertDuration);
+        }
+        else {
+            setTimeout(done, 0);
+        }
+    };
+    ElementMirror.prototype.doRevertAnimation = function (callback, revertDuration) {
+        var mirrorEl = this.mirrorEl;
+        var finalSourceElRect = this.sourceEl.getBoundingClientRect(); // because autoscrolling might have happened
+        mirrorEl.style.transition =
+            'top ' + revertDuration + 'ms,' +
+                'left ' + revertDuration + 'ms';
+        Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["applyStyle"])(mirrorEl, {
+            left: finalSourceElRect.left,
+            top: finalSourceElRect.top,
+        });
+        Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["whenTransitionDone"])(mirrorEl, function () {
+            mirrorEl.style.transition = '';
+            callback();
+        });
+    };
+    ElementMirror.prototype.cleanup = function () {
+        if (this.mirrorEl) {
+            Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["removeElement"])(this.mirrorEl);
+            this.mirrorEl = null;
+        }
+        this.sourceEl = null;
+    };
+    ElementMirror.prototype.updateElPosition = function () {
+        if (this.sourceEl && this.isVisible) {
+            Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["applyStyle"])(this.getMirrorEl(), {
+                left: this.sourceElRect.left + this.deltaX,
+                top: this.sourceElRect.top + this.deltaY,
+            });
+        }
+    };
+    ElementMirror.prototype.getMirrorEl = function () {
+        var sourceElRect = this.sourceElRect;
+        var mirrorEl = this.mirrorEl;
+        if (!mirrorEl) {
+            mirrorEl = this.mirrorEl = this.sourceEl.cloneNode(true); // cloneChildren=true
+            // we don't want long taps or any mouse interaction causing selection/menus.
+            // would use preventSelection(), but that prevents selectstart, causing problems.
+            mirrorEl.classList.add('fc-unselectable');
+            mirrorEl.classList.add('fc-event-dragging');
+            Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["applyStyle"])(mirrorEl, {
+                position: 'fixed',
+                zIndex: this.zIndex,
+                visibility: '',
+                boxSizing: 'border-box',
+                width: sourceElRect.right - sourceElRect.left,
+                height: sourceElRect.bottom - sourceElRect.top,
+                right: 'auto',
+                bottom: 'auto',
+                margin: 0,
+            });
+            this.parentNode.appendChild(mirrorEl);
+        }
+        return mirrorEl;
+    };
+    return ElementMirror;
+}());
+
+/*
+Is a cache for a given element's scroll information (all the info that ScrollController stores)
+in addition the "client rectangle" of the element.. the area within the scrollbars.
+
+The cache can be in one of two modes:
+- doesListening:false - ignores when the container is scrolled by someone else
+- doesListening:true - watch for scrolling and update the cache
+*/
+var ScrollGeomCache = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__extends"])(ScrollGeomCache, _super);
+    function ScrollGeomCache(scrollController, doesListening) {
+        var _this = _super.call(this) || this;
+        _this.handleScroll = function () {
+            _this.scrollTop = _this.scrollController.getScrollTop();
+            _this.scrollLeft = _this.scrollController.getScrollLeft();
+            _this.handleScrollChange();
+        };
+        _this.scrollController = scrollController;
+        _this.doesListening = doesListening;
+        _this.scrollTop = _this.origScrollTop = scrollController.getScrollTop();
+        _this.scrollLeft = _this.origScrollLeft = scrollController.getScrollLeft();
+        _this.scrollWidth = scrollController.getScrollWidth();
+        _this.scrollHeight = scrollController.getScrollHeight();
+        _this.clientWidth = scrollController.getClientWidth();
+        _this.clientHeight = scrollController.getClientHeight();
+        _this.clientRect = _this.computeClientRect(); // do last in case it needs cached values
+        if (_this.doesListening) {
+            _this.getEventTarget().addEventListener('scroll', _this.handleScroll);
+        }
+        return _this;
+    }
+    ScrollGeomCache.prototype.destroy = function () {
+        if (this.doesListening) {
+            this.getEventTarget().removeEventListener('scroll', this.handleScroll);
+        }
+    };
+    ScrollGeomCache.prototype.getScrollTop = function () {
+        return this.scrollTop;
+    };
+    ScrollGeomCache.prototype.getScrollLeft = function () {
+        return this.scrollLeft;
+    };
+    ScrollGeomCache.prototype.setScrollTop = function (top) {
+        this.scrollController.setScrollTop(top);
+        if (!this.doesListening) {
+            // we are not relying on the element to normalize out-of-bounds scroll values
+            // so we need to sanitize ourselves
+            this.scrollTop = Math.max(Math.min(top, this.getMaxScrollTop()), 0);
+            this.handleScrollChange();
+        }
+    };
+    ScrollGeomCache.prototype.setScrollLeft = function (top) {
+        this.scrollController.setScrollLeft(top);
+        if (!this.doesListening) {
+            // we are not relying on the element to normalize out-of-bounds scroll values
+            // so we need to sanitize ourselves
+            this.scrollLeft = Math.max(Math.min(top, this.getMaxScrollLeft()), 0);
+            this.handleScrollChange();
+        }
+    };
+    ScrollGeomCache.prototype.getClientWidth = function () {
+        return this.clientWidth;
+    };
+    ScrollGeomCache.prototype.getClientHeight = function () {
+        return this.clientHeight;
+    };
+    ScrollGeomCache.prototype.getScrollWidth = function () {
+        return this.scrollWidth;
+    };
+    ScrollGeomCache.prototype.getScrollHeight = function () {
+        return this.scrollHeight;
+    };
+    ScrollGeomCache.prototype.handleScrollChange = function () {
+    };
+    return ScrollGeomCache;
+}(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["ScrollController"]));
+
+var ElementScrollGeomCache = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__extends"])(ElementScrollGeomCache, _super);
+    function ElementScrollGeomCache(el, doesListening) {
+        return _super.call(this, new _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["ElementScrollController"](el), doesListening) || this;
+    }
+    ElementScrollGeomCache.prototype.getEventTarget = function () {
+        return this.scrollController.el;
+    };
+    ElementScrollGeomCache.prototype.computeClientRect = function () {
+        return Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["computeInnerRect"])(this.scrollController.el);
+    };
+    return ElementScrollGeomCache;
+}(ScrollGeomCache));
+
+var WindowScrollGeomCache = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__extends"])(WindowScrollGeomCache, _super);
+    function WindowScrollGeomCache(doesListening) {
+        return _super.call(this, new _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["WindowScrollController"](), doesListening) || this;
+    }
+    WindowScrollGeomCache.prototype.getEventTarget = function () {
+        return window;
+    };
+    WindowScrollGeomCache.prototype.computeClientRect = function () {
+        return {
+            left: this.scrollLeft,
+            right: this.scrollLeft + this.clientWidth,
+            top: this.scrollTop,
+            bottom: this.scrollTop + this.clientHeight,
+        };
+    };
+    // the window is the only scroll object that changes it's rectangle relative
+    // to the document's topleft as it scrolls
+    WindowScrollGeomCache.prototype.handleScrollChange = function () {
+        this.clientRect = this.computeClientRect();
+    };
+    return WindowScrollGeomCache;
+}(ScrollGeomCache));
+
+// If available we are using native "performance" API instead of "Date"
+// Read more about it on MDN:
+// https://developer.mozilla.org/en-US/docs/Web/API/Performance
+var getTime = typeof performance === 'function' ? performance.now : Date.now;
+/*
+For a pointer interaction, automatically scrolls certain scroll containers when the pointer
+approaches the edge.
+
+The caller must call start + handleMove + stop.
+*/
+var AutoScroller = /** @class */ (function () {
+    function AutoScroller() {
+        var _this = this;
+        // options that can be set by caller
+        this.isEnabled = true;
+        this.scrollQuery = [window, '.fc-scroller'];
+        this.edgeThreshold = 50; // pixels
+        this.maxVelocity = 300; // pixels per second
+        // internal state
+        this.pointerScreenX = null;
+        this.pointerScreenY = null;
+        this.isAnimating = false;
+        this.scrollCaches = null;
+        // protect against the initial pointerdown being too close to an edge and starting the scroll
+        this.everMovedUp = false;
+        this.everMovedDown = false;
+        this.everMovedLeft = false;
+        this.everMovedRight = false;
+        this.animate = function () {
+            if (_this.isAnimating) { // wasn't cancelled between animation calls
+                var edge = _this.computeBestEdge(_this.pointerScreenX + window.pageXOffset, _this.pointerScreenY + window.pageYOffset);
+                if (edge) {
+                    var now = getTime();
+                    _this.handleSide(edge, (now - _this.msSinceRequest) / 1000);
+                    _this.requestAnimation(now);
+                }
+                else {
+                    _this.isAnimating = false; // will stop animation
+                }
+            }
+        };
+    }
+    AutoScroller.prototype.start = function (pageX, pageY, scrollStartEl) {
+        if (this.isEnabled) {
+            this.scrollCaches = this.buildCaches(scrollStartEl);
+            this.pointerScreenX = null;
+            this.pointerScreenY = null;
+            this.everMovedUp = false;
+            this.everMovedDown = false;
+            this.everMovedLeft = false;
+            this.everMovedRight = false;
+            this.handleMove(pageX, pageY);
+        }
+    };
+    AutoScroller.prototype.handleMove = function (pageX, pageY) {
+        if (this.isEnabled) {
+            var pointerScreenX = pageX - window.pageXOffset;
+            var pointerScreenY = pageY - window.pageYOffset;
+            var yDelta = this.pointerScreenY === null ? 0 : pointerScreenY - this.pointerScreenY;
+            var xDelta = this.pointerScreenX === null ? 0 : pointerScreenX - this.pointerScreenX;
+            if (yDelta < 0) {
+                this.everMovedUp = true;
+            }
+            else if (yDelta > 0) {
+                this.everMovedDown = true;
+            }
+            if (xDelta < 0) {
+                this.everMovedLeft = true;
+            }
+            else if (xDelta > 0) {
+                this.everMovedRight = true;
+            }
+            this.pointerScreenX = pointerScreenX;
+            this.pointerScreenY = pointerScreenY;
+            if (!this.isAnimating) {
+                this.isAnimating = true;
+                this.requestAnimation(getTime());
+            }
+        }
+    };
+    AutoScroller.prototype.stop = function () {
+        if (this.isEnabled) {
+            this.isAnimating = false; // will stop animation
+            for (var _i = 0, _a = this.scrollCaches; _i < _a.length; _i++) {
+                var scrollCache = _a[_i];
+                scrollCache.destroy();
+            }
+            this.scrollCaches = null;
+        }
+    };
+    AutoScroller.prototype.requestAnimation = function (now) {
+        this.msSinceRequest = now;
+        requestAnimationFrame(this.animate);
+    };
+    AutoScroller.prototype.handleSide = function (edge, seconds) {
+        var scrollCache = edge.scrollCache;
+        var edgeThreshold = this.edgeThreshold;
+        var invDistance = edgeThreshold - edge.distance;
+        var velocity = // the closer to the edge, the faster we scroll
+         ((invDistance * invDistance) / (edgeThreshold * edgeThreshold)) * // quadratic
+            this.maxVelocity * seconds;
+        var sign = 1;
+        switch (edge.name) {
+            case 'left':
+                sign = -1;
+            // falls through
+            case 'right':
+                scrollCache.setScrollLeft(scrollCache.getScrollLeft() + velocity * sign);
+                break;
+            case 'top':
+                sign = -1;
+            // falls through
+            case 'bottom':
+                scrollCache.setScrollTop(scrollCache.getScrollTop() + velocity * sign);
+                break;
+        }
+    };
+    // left/top are relative to document topleft
+    AutoScroller.prototype.computeBestEdge = function (left, top) {
+        var edgeThreshold = this.edgeThreshold;
+        var bestSide = null;
+        var scrollCaches = this.scrollCaches || [];
+        for (var _i = 0, scrollCaches_1 = scrollCaches; _i < scrollCaches_1.length; _i++) {
+            var scrollCache = scrollCaches_1[_i];
+            var rect = scrollCache.clientRect;
+            var leftDist = left - rect.left;
+            var rightDist = rect.right - left;
+            var topDist = top - rect.top;
+            var bottomDist = rect.bottom - top;
+            // completely within the rect?
+            if (leftDist >= 0 && rightDist >= 0 && topDist >= 0 && bottomDist >= 0) {
+                if (topDist <= edgeThreshold && this.everMovedUp && scrollCache.canScrollUp() &&
+                    (!bestSide || bestSide.distance > topDist)) {
+                    bestSide = { scrollCache: scrollCache, name: 'top', distance: topDist };
+                }
+                if (bottomDist <= edgeThreshold && this.everMovedDown && scrollCache.canScrollDown() &&
+                    (!bestSide || bestSide.distance > bottomDist)) {
+                    bestSide = { scrollCache: scrollCache, name: 'bottom', distance: bottomDist };
+                }
+                if (leftDist <= edgeThreshold && this.everMovedLeft && scrollCache.canScrollLeft() &&
+                    (!bestSide || bestSide.distance > leftDist)) {
+                    bestSide = { scrollCache: scrollCache, name: 'left', distance: leftDist };
+                }
+                if (rightDist <= edgeThreshold && this.everMovedRight && scrollCache.canScrollRight() &&
+                    (!bestSide || bestSide.distance > rightDist)) {
+                    bestSide = { scrollCache: scrollCache, name: 'right', distance: rightDist };
+                }
+            }
+        }
+        return bestSide;
+    };
+    AutoScroller.prototype.buildCaches = function (scrollStartEl) {
+        return this.queryScrollEls(scrollStartEl).map(function (el) {
+            if (el === window) {
+                return new WindowScrollGeomCache(false); // false = don't listen to user-generated scrolls
+            }
+            return new ElementScrollGeomCache(el, false); // false = don't listen to user-generated scrolls
+        });
+    };
+    AutoScroller.prototype.queryScrollEls = function (scrollStartEl) {
+        var els = [];
+        for (var _i = 0, _a = this.scrollQuery; _i < _a.length; _i++) {
+            var query = _a[_i];
+            if (typeof query === 'object') {
+                els.push(query);
+            }
+            else {
+                els.push.apply(els, Array.prototype.slice.call(Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["getElRoot"])(scrollStartEl).querySelectorAll(query)));
+            }
+        }
+        return els;
+    };
+    return AutoScroller;
+}());
+
+/*
+Monitors dragging on an element. Has a number of high-level features:
+- minimum distance required before dragging
+- minimum wait time ("delay") before dragging
+- a mirror element that follows the pointer
+*/
+var FeaturefulElementDragging = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__extends"])(FeaturefulElementDragging, _super);
+    function FeaturefulElementDragging(containerEl, selector) {
+        var _this = _super.call(this, containerEl) || this;
+        _this.containerEl = containerEl;
+        // options that can be directly set by caller
+        // the caller can also set the PointerDragging's options as well
+        _this.delay = null;
+        _this.minDistance = 0;
+        _this.touchScrollAllowed = true; // prevents drag from starting and blocks scrolling during drag
+        _this.mirrorNeedsRevert = false;
+        _this.isInteracting = false; // is the user validly moving the pointer? lasts until pointerup
+        _this.isDragging = false; // is it INTENTFULLY dragging? lasts until after revert animation
+        _this.isDelayEnded = false;
+        _this.isDistanceSurpassed = false;
+        _this.delayTimeoutId = null;
+        _this.onPointerDown = function (ev) {
+            if (!_this.isDragging) { // so new drag doesn't happen while revert animation is going
+                _this.isInteracting = true;
+                _this.isDelayEnded = false;
+                _this.isDistanceSurpassed = false;
+                Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["preventSelection"])(document.body);
+                Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["preventContextMenu"])(document.body);
+                // prevent links from being visited if there's an eventual drag.
+                // also prevents selection in older browsers (maybe?).
+                // not necessary for touch, besides, browser would complain about passiveness.
+                if (!ev.isTouch) {
+                    ev.origEvent.preventDefault();
+                }
+                _this.emitter.trigger('pointerdown', ev);
+                if (_this.isInteracting && // not destroyed via pointerdown handler
+                    !_this.pointer.shouldIgnoreMove) {
+                    // actions related to initiating dragstart+dragmove+dragend...
+                    _this.mirror.setIsVisible(false); // reset. caller must set-visible
+                    _this.mirror.start(ev.subjectEl, ev.pageX, ev.pageY); // must happen on first pointer down
+                    _this.startDelay(ev);
+                    if (!_this.minDistance) {
+                        _this.handleDistanceSurpassed(ev);
+                    }
+                }
+            }
+        };
+        _this.onPointerMove = function (ev) {
+            if (_this.isInteracting) {
+                _this.emitter.trigger('pointermove', ev);
+                if (!_this.isDistanceSurpassed) {
+                    var minDistance = _this.minDistance;
+                    var distanceSq = void 0; // current distance from the origin, squared
+                    var deltaX = ev.deltaX, deltaY = ev.deltaY;
+                    distanceSq = deltaX * deltaX + deltaY * deltaY;
+                    if (distanceSq >= minDistance * minDistance) { // use pythagorean theorem
+                        _this.handleDistanceSurpassed(ev);
+                    }
+                }
+                if (_this.isDragging) {
+                    // a real pointer move? (not one simulated by scrolling)
+                    if (ev.origEvent.type !== 'scroll') {
+                        _this.mirror.handleMove(ev.pageX, ev.pageY);
+                        _this.autoScroller.handleMove(ev.pageX, ev.pageY);
+                    }
+                    _this.emitter.trigger('dragmove', ev);
+                }
+            }
+        };
+        _this.onPointerUp = function (ev) {
+            if (_this.isInteracting) {
+                _this.isInteracting = false;
+                Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["allowSelection"])(document.body);
+                Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["allowContextMenu"])(document.body);
+                _this.emitter.trigger('pointerup', ev); // can potentially set mirrorNeedsRevert
+                if (_this.isDragging) {
+                    _this.autoScroller.stop();
+                    _this.tryStopDrag(ev); // which will stop the mirror
+                }
+                if (_this.delayTimeoutId) {
+                    clearTimeout(_this.delayTimeoutId);
+                    _this.delayTimeoutId = null;
+                }
+            }
+        };
+        var pointer = _this.pointer = new PointerDragging(containerEl);
+        pointer.emitter.on('pointerdown', _this.onPointerDown);
+        pointer.emitter.on('pointermove', _this.onPointerMove);
+        pointer.emitter.on('pointerup', _this.onPointerUp);
+        if (selector) {
+            pointer.selector = selector;
+        }
+        _this.mirror = new ElementMirror();
+        _this.autoScroller = new AutoScroller();
+        return _this;
+    }
+    FeaturefulElementDragging.prototype.destroy = function () {
+        this.pointer.destroy();
+        // HACK: simulate a pointer-up to end the current drag
+        // TODO: fire 'dragend' directly and stop interaction. discourage use of pointerup event (b/c might not fire)
+        this.onPointerUp({});
+    };
+    FeaturefulElementDragging.prototype.startDelay = function (ev) {
+        var _this = this;
+        if (typeof this.delay === 'number') {
+            this.delayTimeoutId = setTimeout(function () {
+                _this.delayTimeoutId = null;
+                _this.handleDelayEnd(ev);
+            }, this.delay); // not assignable to number!
+        }
+        else {
+            this.handleDelayEnd(ev);
+        }
+    };
+    FeaturefulElementDragging.prototype.handleDelayEnd = function (ev) {
+        this.isDelayEnded = true;
+        this.tryStartDrag(ev);
+    };
+    FeaturefulElementDragging.prototype.handleDistanceSurpassed = function (ev) {
+        this.isDistanceSurpassed = true;
+        this.tryStartDrag(ev);
+    };
+    FeaturefulElementDragging.prototype.tryStartDrag = function (ev) {
+        if (this.isDelayEnded && this.isDistanceSurpassed) {
+            if (!this.pointer.wasTouchScroll || this.touchScrollAllowed) {
+                this.isDragging = true;
+                this.mirrorNeedsRevert = false;
+                this.autoScroller.start(ev.pageX, ev.pageY, this.containerEl);
+                this.emitter.trigger('dragstart', ev);
+                if (this.touchScrollAllowed === false) {
+                    this.pointer.cancelTouchScroll();
+                }
+            }
+        }
+    };
+    FeaturefulElementDragging.prototype.tryStopDrag = function (ev) {
+        // .stop() is ALWAYS asynchronous, which we NEED because we want all pointerup events
+        // that come from the document to fire beforehand. much more convenient this way.
+        this.mirror.stop(this.mirrorNeedsRevert, this.stopDrag.bind(this, ev));
+    };
+    FeaturefulElementDragging.prototype.stopDrag = function (ev) {
+        this.isDragging = false;
+        this.emitter.trigger('dragend', ev);
+    };
+    // fill in the implementations...
+    FeaturefulElementDragging.prototype.setIgnoreMove = function (bool) {
+        this.pointer.shouldIgnoreMove = bool;
+    };
+    FeaturefulElementDragging.prototype.setMirrorIsVisible = function (bool) {
+        this.mirror.setIsVisible(bool);
+    };
+    FeaturefulElementDragging.prototype.setMirrorNeedsRevert = function (bool) {
+        this.mirrorNeedsRevert = bool;
+    };
+    FeaturefulElementDragging.prototype.setAutoScrollEnabled = function (bool) {
+        this.autoScroller.isEnabled = bool;
+    };
+    return FeaturefulElementDragging;
+}(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["ElementDragging"]));
+
+/*
+When this class is instantiated, it records the offset of an element (relative to the document topleft),
+and continues to monitor scrolling, updating the cached coordinates if it needs to.
+Does not access the DOM after instantiation, so highly performant.
+
+Also keeps track of all scrolling/overflow:hidden containers that are parents of the given element
+and an determine if a given point is inside the combined clipping rectangle.
+*/
+var OffsetTracker = /** @class */ (function () {
+    function OffsetTracker(el) {
+        this.origRect = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["computeRect"])(el);
+        // will work fine for divs that have overflow:hidden
+        this.scrollCaches = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["getClippingParents"])(el).map(function (scrollEl) { return new ElementScrollGeomCache(scrollEl, true); });
+    }
+    OffsetTracker.prototype.destroy = function () {
+        for (var _i = 0, _a = this.scrollCaches; _i < _a.length; _i++) {
+            var scrollCache = _a[_i];
+            scrollCache.destroy();
+        }
+    };
+    OffsetTracker.prototype.computeLeft = function () {
+        var left = this.origRect.left;
+        for (var _i = 0, _a = this.scrollCaches; _i < _a.length; _i++) {
+            var scrollCache = _a[_i];
+            left += scrollCache.origScrollLeft - scrollCache.getScrollLeft();
+        }
+        return left;
+    };
+    OffsetTracker.prototype.computeTop = function () {
+        var top = this.origRect.top;
+        for (var _i = 0, _a = this.scrollCaches; _i < _a.length; _i++) {
+            var scrollCache = _a[_i];
+            top += scrollCache.origScrollTop - scrollCache.getScrollTop();
+        }
+        return top;
+    };
+    OffsetTracker.prototype.isWithinClipping = function (pageX, pageY) {
+        var point = { left: pageX, top: pageY };
+        for (var _i = 0, _a = this.scrollCaches; _i < _a.length; _i++) {
+            var scrollCache = _a[_i];
+            if (!isIgnoredClipping(scrollCache.getEventTarget()) &&
+                !Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["pointInsideRect"])(point, scrollCache.clientRect)) {
+                return false;
+            }
+        }
+        return true;
+    };
+    return OffsetTracker;
+}());
+// certain clipping containers should never constrain interactions, like <html> and <body>
+// https://github.com/fullcalendar/fullcalendar/issues/3615
+function isIgnoredClipping(node) {
+    var tagName = node.tagName;
+    return tagName === 'HTML' || tagName === 'BODY';
+}
+
+/*
+Tracks movement over multiple droppable areas (aka "hits")
+that exist in one or more DateComponents.
+Relies on an existing draggable.
+
+emits:
+- pointerdown
+- dragstart
+- hitchange - fires initially, even if not over a hit
+- pointerup
+- (hitchange - again, to null, if ended over a hit)
+- dragend
+*/
+var HitDragging = /** @class */ (function () {
+    function HitDragging(dragging, droppableStore) {
+        var _this = this;
+        // options that can be set by caller
+        this.useSubjectCenter = false;
+        this.requireInitial = true; // if doesn't start out on a hit, won't emit any events
+        this.initialHit = null;
+        this.movingHit = null;
+        this.finalHit = null; // won't ever be populated if shouldIgnoreMove
+        this.handlePointerDown = function (ev) {
+            var dragging = _this.dragging;
+            _this.initialHit = null;
+            _this.movingHit = null;
+            _this.finalHit = null;
+            _this.prepareHits();
+            _this.processFirstCoord(ev);
+            if (_this.initialHit || !_this.requireInitial) {
+                dragging.setIgnoreMove(false);
+                // TODO: fire this before computing processFirstCoord, so listeners can cancel. this gets fired by almost every handler :(
+                _this.emitter.trigger('pointerdown', ev);
+            }
+            else {
+                dragging.setIgnoreMove(true);
+            }
+        };
+        this.handleDragStart = function (ev) {
+            _this.emitter.trigger('dragstart', ev);
+            _this.handleMove(ev, true); // force = fire even if initially null
+        };
+        this.handleDragMove = function (ev) {
+            _this.emitter.trigger('dragmove', ev);
+            _this.handleMove(ev);
+        };
+        this.handlePointerUp = function (ev) {
+            _this.releaseHits();
+            _this.emitter.trigger('pointerup', ev);
+        };
+        this.handleDragEnd = function (ev) {
+            if (_this.movingHit) {
+                _this.emitter.trigger('hitupdate', null, true, ev);
+            }
+            _this.finalHit = _this.movingHit;
+            _this.movingHit = null;
+            _this.emitter.trigger('dragend', ev);
+        };
+        this.droppableStore = droppableStore;
+        dragging.emitter.on('pointerdown', this.handlePointerDown);
+        dragging.emitter.on('dragstart', this.handleDragStart);
+        dragging.emitter.on('dragmove', this.handleDragMove);
+        dragging.emitter.on('pointerup', this.handlePointerUp);
+        dragging.emitter.on('dragend', this.handleDragEnd);
+        this.dragging = dragging;
+        this.emitter = new _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["Emitter"]();
+    }
+    // sets initialHit
+    // sets coordAdjust
+    HitDragging.prototype.processFirstCoord = function (ev) {
+        var origPoint = { left: ev.pageX, top: ev.pageY };
+        var adjustedPoint = origPoint;
+        var subjectEl = ev.subjectEl;
+        var subjectRect;
+        if (subjectEl instanceof HTMLElement) { // i.e. not a Document/ShadowRoot
+            subjectRect = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["computeRect"])(subjectEl);
+            adjustedPoint = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["constrainPoint"])(adjustedPoint, subjectRect);
+        }
+        var initialHit = this.initialHit = this.queryHitForOffset(adjustedPoint.left, adjustedPoint.top);
+        if (initialHit) {
+            if (this.useSubjectCenter && subjectRect) {
+                var slicedSubjectRect = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["intersectRects"])(subjectRect, initialHit.rect);
+                if (slicedSubjectRect) {
+                    adjustedPoint = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["getRectCenter"])(slicedSubjectRect);
+                }
+            }
+            this.coordAdjust = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["diffPoints"])(adjustedPoint, origPoint);
+        }
+        else {
+            this.coordAdjust = { left: 0, top: 0 };
+        }
+    };
+    HitDragging.prototype.handleMove = function (ev, forceHandle) {
+        var hit = this.queryHitForOffset(ev.pageX + this.coordAdjust.left, ev.pageY + this.coordAdjust.top);
+        if (forceHandle || !isHitsEqual(this.movingHit, hit)) {
+            this.movingHit = hit;
+            this.emitter.trigger('hitupdate', hit, false, ev);
+        }
+    };
+    HitDragging.prototype.prepareHits = function () {
+        this.offsetTrackers = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["mapHash"])(this.droppableStore, function (interactionSettings) {
+            interactionSettings.component.prepareHits();
+            return new OffsetTracker(interactionSettings.el);
+        });
+    };
+    HitDragging.prototype.releaseHits = function () {
+        var offsetTrackers = this.offsetTrackers;
+        for (var id in offsetTrackers) {
+            offsetTrackers[id].destroy();
+        }
+        this.offsetTrackers = {};
+    };
+    HitDragging.prototype.queryHitForOffset = function (offsetLeft, offsetTop) {
+        var _a = this, droppableStore = _a.droppableStore, offsetTrackers = _a.offsetTrackers;
+        var bestHit = null;
+        for (var id in droppableStore) {
+            var component = droppableStore[id].component;
+            var offsetTracker = offsetTrackers[id];
+            if (offsetTracker && // wasn't destroyed mid-drag
+                offsetTracker.isWithinClipping(offsetLeft, offsetTop)) {
+                var originLeft = offsetTracker.computeLeft();
+                var originTop = offsetTracker.computeTop();
+                var positionLeft = offsetLeft - originLeft;
+                var positionTop = offsetTop - originTop;
+                var origRect = offsetTracker.origRect;
+                var width = origRect.right - origRect.left;
+                var height = origRect.bottom - origRect.top;
+                if (
+                // must be within the element's bounds
+                positionLeft >= 0 && positionLeft < width &&
+                    positionTop >= 0 && positionTop < height) {
+                    var hit = component.queryHit(positionLeft, positionTop, width, height);
+                    if (hit && (
+                    // make sure the hit is within activeRange, meaning it's not a dead cell
+                    Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["rangeContainsRange"])(hit.dateProfile.activeRange, hit.dateSpan.range)) &&
+                        (!bestHit || hit.layer > bestHit.layer)) {
+                        hit.componentId = id;
+                        hit.context = component.context;
+                        // TODO: better way to re-orient rectangle
+                        hit.rect.left += originLeft;
+                        hit.rect.right += originLeft;
+                        hit.rect.top += originTop;
+                        hit.rect.bottom += originTop;
+                        bestHit = hit;
+                    }
+                }
+            }
+        }
+        return bestHit;
+    };
+    return HitDragging;
+}());
+function isHitsEqual(hit0, hit1) {
+    if (!hit0 && !hit1) {
+        return true;
+    }
+    if (Boolean(hit0) !== Boolean(hit1)) {
+        return false;
+    }
+    return Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["isDateSpansEqual"])(hit0.dateSpan, hit1.dateSpan);
+}
+
+function buildDatePointApiWithContext(dateSpan, context) {
+    var props = {};
+    for (var _i = 0, _a = context.pluginHooks.datePointTransforms; _i < _a.length; _i++) {
+        var transform = _a[_i];
+        Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__assign"])(props, transform(dateSpan, context));
+    }
+    Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__assign"])(props, buildDatePointApi(dateSpan, context.dateEnv));
+    return props;
+}
+function buildDatePointApi(span, dateEnv) {
+    return {
+        date: dateEnv.toDate(span.range.start),
+        dateStr: dateEnv.formatIso(span.range.start, { omitTime: span.allDay }),
+        allDay: span.allDay,
+    };
+}
+
+/*
+Monitors when the user clicks on a specific date/time of a component.
+A pointerdown+pointerup on the same "hit" constitutes a click.
+*/
+var DateClicking = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__extends"])(DateClicking, _super);
+    function DateClicking(settings) {
+        var _this = _super.call(this, settings) || this;
+        _this.handlePointerDown = function (pev) {
+            var dragging = _this.dragging;
+            var downEl = pev.origEvent.target;
+            // do this in pointerdown (not dragend) because DOM might be mutated by the time dragend is fired
+            dragging.setIgnoreMove(!_this.component.isValidDateDownEl(downEl));
+        };
+        // won't even fire if moving was ignored
+        _this.handleDragEnd = function (ev) {
+            var component = _this.component;
+            var pointer = _this.dragging.pointer;
+            if (!pointer.wasTouchScroll) {
+                var _a = _this.hitDragging, initialHit = _a.initialHit, finalHit = _a.finalHit;
+                if (initialHit && finalHit && isHitsEqual(initialHit, finalHit)) {
+                    var context = component.context;
+                    var arg = Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__assign"])(Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__assign"])({}, buildDatePointApiWithContext(initialHit.dateSpan, context)), { dayEl: initialHit.dayEl, jsEvent: ev.origEvent, view: context.viewApi || context.calendarApi.view });
+                    context.emitter.trigger('dateClick', arg);
+                }
+            }
+        };
+        // we DO want to watch pointer moves because otherwise finalHit won't get populated
+        _this.dragging = new FeaturefulElementDragging(settings.el);
+        _this.dragging.autoScroller.isEnabled = false;
+        var hitDragging = _this.hitDragging = new HitDragging(_this.dragging, Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["interactionSettingsToStore"])(settings));
+        hitDragging.emitter.on('pointerdown', _this.handlePointerDown);
+        hitDragging.emitter.on('dragend', _this.handleDragEnd);
+        return _this;
+    }
+    DateClicking.prototype.destroy = function () {
+        this.dragging.destroy();
+    };
+    return DateClicking;
+}(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["Interaction"]));
+
+/*
+Tracks when the user selects a portion of time of a component,
+constituted by a drag over date cells, with a possible delay at the beginning of the drag.
+*/
+var DateSelecting = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__extends"])(DateSelecting, _super);
+    function DateSelecting(settings) {
+        var _this = _super.call(this, settings) || this;
+        _this.dragSelection = null;
+        _this.handlePointerDown = function (ev) {
+            var _a = _this, component = _a.component, dragging = _a.dragging;
+            var options = component.context.options;
+            var canSelect = options.selectable &&
+                component.isValidDateDownEl(ev.origEvent.target);
+            // don't bother to watch expensive moves if component won't do selection
+            dragging.setIgnoreMove(!canSelect);
+            // if touch, require user to hold down
+            dragging.delay = ev.isTouch ? getComponentTouchDelay$1(component) : null;
+        };
+        _this.handleDragStart = function (ev) {
+            _this.component.context.calendarApi.unselect(ev); // unselect previous selections
+        };
+        _this.handleHitUpdate = function (hit, isFinal) {
+            var context = _this.component.context;
+            var dragSelection = null;
+            var isInvalid = false;
+            if (hit) {
+                var initialHit = _this.hitDragging.initialHit;
+                var disallowed = hit.componentId === initialHit.componentId
+                    && _this.isHitComboAllowed
+                    && !_this.isHitComboAllowed(initialHit, hit);
+                if (!disallowed) {
+                    dragSelection = joinHitsIntoSelection(initialHit, hit, context.pluginHooks.dateSelectionTransformers);
+                }
+                if (!dragSelection || !Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["isDateSelectionValid"])(dragSelection, hit.dateProfile, context)) {
+                    isInvalid = true;
+                    dragSelection = null;
+                }
+            }
+            if (dragSelection) {
+                context.dispatch({ type: 'SELECT_DATES', selection: dragSelection });
+            }
+            else if (!isFinal) { // only unselect if moved away while dragging
+                context.dispatch({ type: 'UNSELECT_DATES' });
+            }
+            if (!isInvalid) {
+                Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["enableCursor"])();
+            }
+            else {
+                Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["disableCursor"])();
+            }
+            if (!isFinal) {
+                _this.dragSelection = dragSelection; // only clear if moved away from all hits while dragging
+            }
+        };
+        _this.handlePointerUp = function (pev) {
+            if (_this.dragSelection) {
+                // selection is already rendered, so just need to report selection
+                Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["triggerDateSelect"])(_this.dragSelection, pev, _this.component.context);
+                _this.dragSelection = null;
+            }
+        };
+        var component = settings.component;
+        var options = component.context.options;
+        var dragging = _this.dragging = new FeaturefulElementDragging(settings.el);
+        dragging.touchScrollAllowed = false;
+        dragging.minDistance = options.selectMinDistance || 0;
+        dragging.autoScroller.isEnabled = options.dragScroll;
+        var hitDragging = _this.hitDragging = new HitDragging(_this.dragging, Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["interactionSettingsToStore"])(settings));
+        hitDragging.emitter.on('pointerdown', _this.handlePointerDown);
+        hitDragging.emitter.on('dragstart', _this.handleDragStart);
+        hitDragging.emitter.on('hitupdate', _this.handleHitUpdate);
+        hitDragging.emitter.on('pointerup', _this.handlePointerUp);
+        return _this;
+    }
+    DateSelecting.prototype.destroy = function () {
+        this.dragging.destroy();
+    };
+    return DateSelecting;
+}(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["Interaction"]));
+function getComponentTouchDelay$1(component) {
+    var options = component.context.options;
+    var delay = options.selectLongPressDelay;
+    if (delay == null) {
+        delay = options.longPressDelay;
+    }
+    return delay;
+}
+function joinHitsIntoSelection(hit0, hit1, dateSelectionTransformers) {
+    var dateSpan0 = hit0.dateSpan;
+    var dateSpan1 = hit1.dateSpan;
+    var ms = [
+        dateSpan0.range.start,
+        dateSpan0.range.end,
+        dateSpan1.range.start,
+        dateSpan1.range.end,
+    ];
+    ms.sort(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["compareNumbers"]);
+    var props = {};
+    for (var _i = 0, dateSelectionTransformers_1 = dateSelectionTransformers; _i < dateSelectionTransformers_1.length; _i++) {
+        var transformer = dateSelectionTransformers_1[_i];
+        var res = transformer(hit0, hit1);
+        if (res === false) {
+            return null;
+        }
+        if (res) {
+            Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__assign"])(props, res);
+        }
+    }
+    props.range = { start: ms[0], end: ms[3] };
+    props.allDay = dateSpan0.allDay;
+    return props;
+}
+
+var EventDragging = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__extends"])(EventDragging, _super);
+    function EventDragging(settings) {
+        var _this = _super.call(this, settings) || this;
+        // internal state
+        _this.subjectEl = null;
+        _this.subjectSeg = null; // the seg being selected/dragged
+        _this.isDragging = false;
+        _this.eventRange = null;
+        _this.relevantEvents = null; // the events being dragged
+        _this.receivingContext = null;
+        _this.validMutation = null;
+        _this.mutatedRelevantEvents = null;
+        _this.handlePointerDown = function (ev) {
+            var origTarget = ev.origEvent.target;
+            var _a = _this, component = _a.component, dragging = _a.dragging;
+            var mirror = dragging.mirror;
+            var options = component.context.options;
+            var initialContext = component.context;
+            _this.subjectEl = ev.subjectEl;
+            var subjectSeg = _this.subjectSeg = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["getElSeg"])(ev.subjectEl);
+            var eventRange = _this.eventRange = subjectSeg.eventRange;
+            var eventInstanceId = eventRange.instance.instanceId;
+            _this.relevantEvents = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["getRelevantEvents"])(initialContext.getCurrentData().eventStore, eventInstanceId);
+            dragging.minDistance = ev.isTouch ? 0 : options.eventDragMinDistance;
+            dragging.delay =
+                // only do a touch delay if touch and this event hasn't been selected yet
+                (ev.isTouch && eventInstanceId !== component.props.eventSelection) ?
+                    getComponentTouchDelay(component) :
+                    null;
+            if (options.fixedMirrorParent) {
+                mirror.parentNode = options.fixedMirrorParent;
+            }
+            else {
+                mirror.parentNode = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["elementClosest"])(origTarget, '.fc');
+            }
+            mirror.revertDuration = options.dragRevertDuration;
+            var isValid = component.isValidSegDownEl(origTarget) &&
+                !Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["elementClosest"])(origTarget, '.fc-event-resizer'); // NOT on a resizer
+            dragging.setIgnoreMove(!isValid);
+            // disable dragging for elements that are resizable (ie, selectable)
+            // but are not draggable
+            _this.isDragging = isValid &&
+                ev.subjectEl.classList.contains('fc-event-draggable');
+        };
+        _this.handleDragStart = function (ev) {
+            var initialContext = _this.component.context;
+            var eventRange = _this.eventRange;
+            var eventInstanceId = eventRange.instance.instanceId;
+            if (ev.isTouch) {
+                // need to select a different event?
+                if (eventInstanceId !== _this.component.props.eventSelection) {
+                    initialContext.dispatch({ type: 'SELECT_EVENT', eventInstanceId: eventInstanceId });
+                }
+            }
+            else {
+                // if now using mouse, but was previous touch interaction, clear selected event
+                initialContext.dispatch({ type: 'UNSELECT_EVENT' });
+            }
+            if (_this.isDragging) {
+                initialContext.calendarApi.unselect(ev); // unselect *date* selection
+                initialContext.emitter.trigger('eventDragStart', {
+                    el: _this.subjectEl,
+                    event: new _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["EventApi"](initialContext, eventRange.def, eventRange.instance),
+                    jsEvent: ev.origEvent,
+                    view: initialContext.viewApi,
+                });
+            }
+        };
+        _this.handleHitUpdate = function (hit, isFinal) {
+            if (!_this.isDragging) {
+                return;
+            }
+            var relevantEvents = _this.relevantEvents;
+            var initialHit = _this.hitDragging.initialHit;
+            var initialContext = _this.component.context;
+            // states based on new hit
+            var receivingContext = null;
+            var mutation = null;
+            var mutatedRelevantEvents = null;
+            var isInvalid = false;
+            var interaction = {
+                affectedEvents: relevantEvents,
+                mutatedEvents: Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["createEmptyEventStore"])(),
+                isEvent: true,
+            };
+            if (hit) {
+                receivingContext = hit.context;
+                var receivingOptions = receivingContext.options;
+                if (initialContext === receivingContext ||
+                    (receivingOptions.editable && receivingOptions.droppable)) {
+                    mutation = computeEventMutation(initialHit, hit, receivingContext.getCurrentData().pluginHooks.eventDragMutationMassagers);
+                    if (mutation) {
+                        mutatedRelevantEvents = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["applyMutationToEventStore"])(relevantEvents, receivingContext.getCurrentData().eventUiBases, mutation, receivingContext);
+                        interaction.mutatedEvents = mutatedRelevantEvents;
+                        if (!Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["isInteractionValid"])(interaction, hit.dateProfile, receivingContext)) {
+                            isInvalid = true;
+                            mutation = null;
+                            mutatedRelevantEvents = null;
+                            interaction.mutatedEvents = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["createEmptyEventStore"])();
+                        }
+                    }
+                }
+                else {
+                    receivingContext = null;
+                }
+            }
+            _this.displayDrag(receivingContext, interaction);
+            if (!isInvalid) {
+                Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["enableCursor"])();
+            }
+            else {
+                Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["disableCursor"])();
+            }
+            if (!isFinal) {
+                if (initialContext === receivingContext && // TODO: write test for this
+                    isHitsEqual(initialHit, hit)) {
+                    mutation = null;
+                }
+                _this.dragging.setMirrorNeedsRevert(!mutation);
+                // render the mirror if no already-rendered mirror
+                // TODO: wish we could somehow wait for dispatch to guarantee render
+                _this.dragging.setMirrorIsVisible(!hit || !Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["getElRoot"])(_this.subjectEl).querySelector('.fc-event-mirror'));
+                // assign states based on new hit
+                _this.receivingContext = receivingContext;
+                _this.validMutation = mutation;
+                _this.mutatedRelevantEvents = mutatedRelevantEvents;
+            }
+        };
+        _this.handlePointerUp = function () {
+            if (!_this.isDragging) {
+                _this.cleanup(); // because handleDragEnd won't fire
+            }
+        };
+        _this.handleDragEnd = function (ev) {
+            if (_this.isDragging) {
+                var initialContext_1 = _this.component.context;
+                var initialView = initialContext_1.viewApi;
+                var _a = _this, receivingContext_1 = _a.receivingContext, validMutation = _a.validMutation;
+                var eventDef = _this.eventRange.def;
+                var eventInstance = _this.eventRange.instance;
+                var eventApi = new _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["EventApi"](initialContext_1, eventDef, eventInstance);
+                var relevantEvents_1 = _this.relevantEvents;
+                var mutatedRelevantEvents_1 = _this.mutatedRelevantEvents;
+                var finalHit = _this.hitDragging.finalHit;
+                _this.clearDrag(); // must happen after revert animation
+                initialContext_1.emitter.trigger('eventDragStop', {
+                    el: _this.subjectEl,
+                    event: eventApi,
+                    jsEvent: ev.origEvent,
+                    view: initialView,
+                });
+                if (validMutation) {
+                    // dropped within same calendar
+                    if (receivingContext_1 === initialContext_1) {
+                        var updatedEventApi = new _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["EventApi"](initialContext_1, mutatedRelevantEvents_1.defs[eventDef.defId], eventInstance ? mutatedRelevantEvents_1.instances[eventInstance.instanceId] : null);
+                        initialContext_1.dispatch({
+                            type: 'MERGE_EVENTS',
+                            eventStore: mutatedRelevantEvents_1,
+                        });
+                        var eventChangeArg = {
+                            oldEvent: eventApi,
+                            event: updatedEventApi,
+                            relatedEvents: Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["buildEventApis"])(mutatedRelevantEvents_1, initialContext_1, eventInstance),
+                            revert: function () {
+                                initialContext_1.dispatch({
+                                    type: 'MERGE_EVENTS',
+                                    eventStore: relevantEvents_1, // the pre-change data
+                                });
+                            },
+                        };
+                        var transformed = {};
+                        for (var _i = 0, _b = initialContext_1.getCurrentData().pluginHooks.eventDropTransformers; _i < _b.length; _i++) {
+                            var transformer = _b[_i];
+                            Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__assign"])(transformed, transformer(validMutation, initialContext_1));
+                        }
+                        initialContext_1.emitter.trigger('eventDrop', Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__assign"])(Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__assign"])(Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__assign"])({}, eventChangeArg), transformed), { el: ev.subjectEl, delta: validMutation.datesDelta, jsEvent: ev.origEvent, view: initialView }));
+                        initialContext_1.emitter.trigger('eventChange', eventChangeArg);
+                        // dropped in different calendar
+                    }
+                    else if (receivingContext_1) {
+                        var eventRemoveArg = {
+                            event: eventApi,
+                            relatedEvents: Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["buildEventApis"])(relevantEvents_1, initialContext_1, eventInstance),
+                            revert: function () {
+                                initialContext_1.dispatch({
+                                    type: 'MERGE_EVENTS',
+                                    eventStore: relevantEvents_1,
+                                });
+                            },
+                        };
+                        initialContext_1.emitter.trigger('eventLeave', Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__assign"])(Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__assign"])({}, eventRemoveArg), { draggedEl: ev.subjectEl, view: initialView }));
+                        initialContext_1.dispatch({
+                            type: 'REMOVE_EVENTS',
+                            eventStore: relevantEvents_1,
+                        });
+                        initialContext_1.emitter.trigger('eventRemove', eventRemoveArg);
+                        var addedEventDef = mutatedRelevantEvents_1.defs[eventDef.defId];
+                        var addedEventInstance = mutatedRelevantEvents_1.instances[eventInstance.instanceId];
+                        var addedEventApi = new _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["EventApi"](receivingContext_1, addedEventDef, addedEventInstance);
+                        receivingContext_1.dispatch({
+                            type: 'MERGE_EVENTS',
+                            eventStore: mutatedRelevantEvents_1,
+                        });
+                        var eventAddArg = {
+                            event: addedEventApi,
+                            relatedEvents: Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["buildEventApis"])(mutatedRelevantEvents_1, receivingContext_1, addedEventInstance),
+                            revert: function () {
+                                receivingContext_1.dispatch({
+                                    type: 'REMOVE_EVENTS',
+                                    eventStore: mutatedRelevantEvents_1,
+                                });
+                            },
+                        };
+                        receivingContext_1.emitter.trigger('eventAdd', eventAddArg);
+                        if (ev.isTouch) {
+                            receivingContext_1.dispatch({
+                                type: 'SELECT_EVENT',
+                                eventInstanceId: eventInstance.instanceId,
+                            });
+                        }
+                        receivingContext_1.emitter.trigger('drop', Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__assign"])(Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__assign"])({}, buildDatePointApiWithContext(finalHit.dateSpan, receivingContext_1)), { draggedEl: ev.subjectEl, jsEvent: ev.origEvent, view: finalHit.context.viewApi }));
+                        receivingContext_1.emitter.trigger('eventReceive', Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__assign"])(Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__assign"])({}, eventAddArg), { draggedEl: ev.subjectEl, view: finalHit.context.viewApi }));
+                    }
+                }
+                else {
+                    initialContext_1.emitter.trigger('_noEventDrop');
+                }
+            }
+            _this.cleanup();
+        };
+        var component = _this.component;
+        var options = component.context.options;
+        var dragging = _this.dragging = new FeaturefulElementDragging(settings.el);
+        dragging.pointer.selector = EventDragging.SELECTOR;
+        dragging.touchScrollAllowed = false;
+        dragging.autoScroller.isEnabled = options.dragScroll;
+        var hitDragging = _this.hitDragging = new HitDragging(_this.dragging, _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["interactionSettingsStore"]);
+        hitDragging.useSubjectCenter = settings.useEventCenter;
+        hitDragging.emitter.on('pointerdown', _this.handlePointerDown);
+        hitDragging.emitter.on('dragstart', _this.handleDragStart);
+        hitDragging.emitter.on('hitupdate', _this.handleHitUpdate);
+        hitDragging.emitter.on('pointerup', _this.handlePointerUp);
+        hitDragging.emitter.on('dragend', _this.handleDragEnd);
+        return _this;
+    }
+    EventDragging.prototype.destroy = function () {
+        this.dragging.destroy();
+    };
+    // render a drag state on the next receivingCalendar
+    EventDragging.prototype.displayDrag = function (nextContext, state) {
+        var initialContext = this.component.context;
+        var prevContext = this.receivingContext;
+        // does the previous calendar need to be cleared?
+        if (prevContext && prevContext !== nextContext) {
+            // does the initial calendar need to be cleared?
+            // if so, don't clear all the way. we still need to to hide the affectedEvents
+            if (prevContext === initialContext) {
+                prevContext.dispatch({
+                    type: 'SET_EVENT_DRAG',
+                    state: {
+                        affectedEvents: state.affectedEvents,
+                        mutatedEvents: Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["createEmptyEventStore"])(),
+                        isEvent: true,
+                    },
+                });
+                // completely clear the old calendar if it wasn't the initial
+            }
+            else {
+                prevContext.dispatch({ type: 'UNSET_EVENT_DRAG' });
+            }
+        }
+        if (nextContext) {
+            nextContext.dispatch({ type: 'SET_EVENT_DRAG', state: state });
+        }
+    };
+    EventDragging.prototype.clearDrag = function () {
+        var initialCalendar = this.component.context;
+        var receivingContext = this.receivingContext;
+        if (receivingContext) {
+            receivingContext.dispatch({ type: 'UNSET_EVENT_DRAG' });
+        }
+        // the initial calendar might have an dummy drag state from displayDrag
+        if (initialCalendar !== receivingContext) {
+            initialCalendar.dispatch({ type: 'UNSET_EVENT_DRAG' });
+        }
+    };
+    EventDragging.prototype.cleanup = function () {
+        this.subjectSeg = null;
+        this.isDragging = false;
+        this.eventRange = null;
+        this.relevantEvents = null;
+        this.receivingContext = null;
+        this.validMutation = null;
+        this.mutatedRelevantEvents = null;
+    };
+    // TODO: test this in IE11
+    // QUESTION: why do we need it on the resizable???
+    EventDragging.SELECTOR = '.fc-event-draggable, .fc-event-resizable';
+    return EventDragging;
+}(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["Interaction"]));
+function computeEventMutation(hit0, hit1, massagers) {
+    var dateSpan0 = hit0.dateSpan;
+    var dateSpan1 = hit1.dateSpan;
+    var date0 = dateSpan0.range.start;
+    var date1 = dateSpan1.range.start;
+    var standardProps = {};
+    if (dateSpan0.allDay !== dateSpan1.allDay) {
+        standardProps.allDay = dateSpan1.allDay;
+        standardProps.hasEnd = hit1.context.options.allDayMaintainDuration;
+        if (dateSpan1.allDay) {
+            // means date1 is already start-of-day,
+            // but date0 needs to be converted
+            date0 = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["startOfDay"])(date0);
+        }
+    }
+    var delta = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["diffDates"])(date0, date1, hit0.context.dateEnv, hit0.componentId === hit1.componentId ?
+        hit0.largeUnit :
+        null);
+    if (delta.milliseconds) { // has hours/minutes/seconds
+        standardProps.allDay = false;
+    }
+    var mutation = {
+        datesDelta: delta,
+        standardProps: standardProps,
+    };
+    for (var _i = 0, massagers_1 = massagers; _i < massagers_1.length; _i++) {
+        var massager = massagers_1[_i];
+        massager(mutation, hit0, hit1);
+    }
+    return mutation;
+}
+function getComponentTouchDelay(component) {
+    var options = component.context.options;
+    var delay = options.eventLongPressDelay;
+    if (delay == null) {
+        delay = options.longPressDelay;
+    }
+    return delay;
+}
+
+var EventResizing = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__extends"])(EventResizing, _super);
+    function EventResizing(settings) {
+        var _this = _super.call(this, settings) || this;
+        // internal state
+        _this.draggingSegEl = null;
+        _this.draggingSeg = null; // TODO: rename to resizingSeg? subjectSeg?
+        _this.eventRange = null;
+        _this.relevantEvents = null;
+        _this.validMutation = null;
+        _this.mutatedRelevantEvents = null;
+        _this.handlePointerDown = function (ev) {
+            var component = _this.component;
+            var segEl = _this.querySegEl(ev);
+            var seg = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["getElSeg"])(segEl);
+            var eventRange = _this.eventRange = seg.eventRange;
+            _this.dragging.minDistance = component.context.options.eventDragMinDistance;
+            // if touch, need to be working with a selected event
+            _this.dragging.setIgnoreMove(!_this.component.isValidSegDownEl(ev.origEvent.target) ||
+                (ev.isTouch && _this.component.props.eventSelection !== eventRange.instance.instanceId));
+        };
+        _this.handleDragStart = function (ev) {
+            var context = _this.component.context;
+            var eventRange = _this.eventRange;
+            _this.relevantEvents = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["getRelevantEvents"])(context.getCurrentData().eventStore, _this.eventRange.instance.instanceId);
+            var segEl = _this.querySegEl(ev);
+            _this.draggingSegEl = segEl;
+            _this.draggingSeg = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["getElSeg"])(segEl);
+            context.calendarApi.unselect();
+            context.emitter.trigger('eventResizeStart', {
+                el: segEl,
+                event: new _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["EventApi"](context, eventRange.def, eventRange.instance),
+                jsEvent: ev.origEvent,
+                view: context.viewApi,
+            });
+        };
+        _this.handleHitUpdate = function (hit, isFinal, ev) {
+            var context = _this.component.context;
+            var relevantEvents = _this.relevantEvents;
+            var initialHit = _this.hitDragging.initialHit;
+            var eventInstance = _this.eventRange.instance;
+            var mutation = null;
+            var mutatedRelevantEvents = null;
+            var isInvalid = false;
+            var interaction = {
+                affectedEvents: relevantEvents,
+                mutatedEvents: Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["createEmptyEventStore"])(),
+                isEvent: true,
+            };
+            if (hit) {
+                var disallowed = hit.componentId === initialHit.componentId
+                    && _this.isHitComboAllowed
+                    && !_this.isHitComboAllowed(initialHit, hit);
+                if (!disallowed) {
+                    mutation = computeMutation(initialHit, hit, ev.subjectEl.classList.contains('fc-event-resizer-start'), eventInstance.range);
+                }
+            }
+            if (mutation) {
+                mutatedRelevantEvents = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["applyMutationToEventStore"])(relevantEvents, context.getCurrentData().eventUiBases, mutation, context);
+                interaction.mutatedEvents = mutatedRelevantEvents;
+                if (!Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["isInteractionValid"])(interaction, hit.dateProfile, context)) {
+                    isInvalid = true;
+                    mutation = null;
+                    mutatedRelevantEvents = null;
+                    interaction.mutatedEvents = null;
+                }
+            }
+            if (mutatedRelevantEvents) {
+                context.dispatch({
+                    type: 'SET_EVENT_RESIZE',
+                    state: interaction,
+                });
+            }
+            else {
+                context.dispatch({ type: 'UNSET_EVENT_RESIZE' });
+            }
+            if (!isInvalid) {
+                Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["enableCursor"])();
+            }
+            else {
+                Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["disableCursor"])();
+            }
+            if (!isFinal) {
+                if (mutation && isHitsEqual(initialHit, hit)) {
+                    mutation = null;
+                }
+                _this.validMutation = mutation;
+                _this.mutatedRelevantEvents = mutatedRelevantEvents;
+            }
+        };
+        _this.handleDragEnd = function (ev) {
+            var context = _this.component.context;
+            var eventDef = _this.eventRange.def;
+            var eventInstance = _this.eventRange.instance;
+            var eventApi = new _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["EventApi"](context, eventDef, eventInstance);
+            var relevantEvents = _this.relevantEvents;
+            var mutatedRelevantEvents = _this.mutatedRelevantEvents;
+            context.emitter.trigger('eventResizeStop', {
+                el: _this.draggingSegEl,
+                event: eventApi,
+                jsEvent: ev.origEvent,
+                view: context.viewApi,
+            });
+            if (_this.validMutation) {
+                var updatedEventApi = new _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["EventApi"](context, mutatedRelevantEvents.defs[eventDef.defId], eventInstance ? mutatedRelevantEvents.instances[eventInstance.instanceId] : null);
+                context.dispatch({
+                    type: 'MERGE_EVENTS',
+                    eventStore: mutatedRelevantEvents,
+                });
+                var eventChangeArg = {
+                    oldEvent: eventApi,
+                    event: updatedEventApi,
+                    relatedEvents: Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["buildEventApis"])(mutatedRelevantEvents, context, eventInstance),
+                    revert: function () {
+                        context.dispatch({
+                            type: 'MERGE_EVENTS',
+                            eventStore: relevantEvents, // the pre-change events
+                        });
+                    },
+                };
+                context.emitter.trigger('eventResize', Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__assign"])(Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__assign"])({}, eventChangeArg), { el: _this.draggingSegEl, startDelta: _this.validMutation.startDelta || Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["createDuration"])(0), endDelta: _this.validMutation.endDelta || Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["createDuration"])(0), jsEvent: ev.origEvent, view: context.viewApi }));
+                context.emitter.trigger('eventChange', eventChangeArg);
+            }
+            else {
+                context.emitter.trigger('_noEventResize');
+            }
+            // reset all internal state
+            _this.draggingSeg = null;
+            _this.relevantEvents = null;
+            _this.validMutation = null;
+            // okay to keep eventInstance around. useful to set it in handlePointerDown
+        };
+        var component = settings.component;
+        var dragging = _this.dragging = new FeaturefulElementDragging(settings.el);
+        dragging.pointer.selector = '.fc-event-resizer';
+        dragging.touchScrollAllowed = false;
+        dragging.autoScroller.isEnabled = component.context.options.dragScroll;
+        var hitDragging = _this.hitDragging = new HitDragging(_this.dragging, Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["interactionSettingsToStore"])(settings));
+        hitDragging.emitter.on('pointerdown', _this.handlePointerDown);
+        hitDragging.emitter.on('dragstart', _this.handleDragStart);
+        hitDragging.emitter.on('hitupdate', _this.handleHitUpdate);
+        hitDragging.emitter.on('dragend', _this.handleDragEnd);
+        return _this;
+    }
+    EventResizing.prototype.destroy = function () {
+        this.dragging.destroy();
+    };
+    EventResizing.prototype.querySegEl = function (ev) {
+        return Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["elementClosest"])(ev.subjectEl, '.fc-event');
+    };
+    return EventResizing;
+}(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["Interaction"]));
+function computeMutation(hit0, hit1, isFromStart, instanceRange) {
+    var dateEnv = hit0.context.dateEnv;
+    var date0 = hit0.dateSpan.range.start;
+    var date1 = hit1.dateSpan.range.start;
+    var delta = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["diffDates"])(date0, date1, dateEnv, hit0.largeUnit);
+    if (isFromStart) {
+        if (dateEnv.add(instanceRange.start, delta) < instanceRange.end) {
+            return { startDelta: delta };
+        }
+    }
+    else if (dateEnv.add(instanceRange.end, delta) > instanceRange.start) {
+        return { endDelta: delta };
+    }
+    return null;
+}
+
+var UnselectAuto = /** @class */ (function () {
+    function UnselectAuto(context) {
+        var _this = this;
+        this.context = context;
+        this.isRecentPointerDateSelect = false; // wish we could use a selector to detect date selection, but uses hit system
+        this.matchesCancel = false;
+        this.matchesEvent = false;
+        this.onSelect = function (selectInfo) {
+            if (selectInfo.jsEvent) {
+                _this.isRecentPointerDateSelect = true;
+            }
+        };
+        this.onDocumentPointerDown = function (pev) {
+            var unselectCancel = _this.context.options.unselectCancel;
+            var downEl = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["getEventTargetViaRoot"])(pev.origEvent);
+            _this.matchesCancel = !!Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["elementClosest"])(downEl, unselectCancel);
+            _this.matchesEvent = !!Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["elementClosest"])(downEl, EventDragging.SELECTOR); // interaction started on an event?
+        };
+        this.onDocumentPointerUp = function (pev) {
+            var context = _this.context;
+            var documentPointer = _this.documentPointer;
+            var calendarState = context.getCurrentData();
+            // touch-scrolling should never unfocus any type of selection
+            if (!documentPointer.wasTouchScroll) {
+                if (calendarState.dateSelection && // an existing date selection?
+                    !_this.isRecentPointerDateSelect // a new pointer-initiated date selection since last onDocumentPointerUp?
+                ) {
+                    var unselectAuto = context.options.unselectAuto;
+                    if (unselectAuto && (!unselectAuto || !_this.matchesCancel)) {
+                        context.calendarApi.unselect(pev);
+                    }
+                }
+                if (calendarState.eventSelection && // an existing event selected?
+                    !_this.matchesEvent // interaction DIDN'T start on an event
+                ) {
+                    context.dispatch({ type: 'UNSELECT_EVENT' });
+                }
+            }
+            _this.isRecentPointerDateSelect = false;
+        };
+        var documentPointer = this.documentPointer = new PointerDragging(document);
+        documentPointer.shouldIgnoreMove = true;
+        documentPointer.shouldWatchScroll = false;
+        documentPointer.emitter.on('pointerdown', this.onDocumentPointerDown);
+        documentPointer.emitter.on('pointerup', this.onDocumentPointerUp);
+        /*
+        TODO: better way to know about whether there was a selection with the pointer
+        */
+        context.emitter.on('select', this.onSelect);
+    }
+    UnselectAuto.prototype.destroy = function () {
+        this.context.emitter.off('select', this.onSelect);
+        this.documentPointer.destroy();
+    };
+    return UnselectAuto;
+}());
+
+var OPTION_REFINERS = {
+    fixedMirrorParent: _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["identity"],
+};
+var LISTENER_REFINERS = {
+    dateClick: _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["identity"],
+    eventDragStart: _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["identity"],
+    eventDragStop: _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["identity"],
+    eventDrop: _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["identity"],
+    eventResizeStart: _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["identity"],
+    eventResizeStop: _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["identity"],
+    eventResize: _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["identity"],
+    drop: _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["identity"],
+    eventReceive: _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["identity"],
+    eventLeave: _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["identity"],
+};
+
+/*
+Given an already instantiated draggable object for one-or-more elements,
+Interprets any dragging as an attempt to drag an events that lives outside
+of a calendar onto a calendar.
+*/
+var ExternalElementDragging = /** @class */ (function () {
+    function ExternalElementDragging(dragging, suppliedDragMeta) {
+        var _this = this;
+        this.receivingContext = null;
+        this.droppableEvent = null; // will exist for all drags, even if create:false
+        this.suppliedDragMeta = null;
+        this.dragMeta = null;
+        this.handleDragStart = function (ev) {
+            _this.dragMeta = _this.buildDragMeta(ev.subjectEl);
+        };
+        this.handleHitUpdate = function (hit, isFinal, ev) {
+            var dragging = _this.hitDragging.dragging;
+            var receivingContext = null;
+            var droppableEvent = null;
+            var isInvalid = false;
+            var interaction = {
+                affectedEvents: Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["createEmptyEventStore"])(),
+                mutatedEvents: Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["createEmptyEventStore"])(),
+                isEvent: _this.dragMeta.create,
+            };
+            if (hit) {
+                receivingContext = hit.context;
+                if (_this.canDropElOnCalendar(ev.subjectEl, receivingContext)) {
+                    droppableEvent = computeEventForDateSpan(hit.dateSpan, _this.dragMeta, receivingContext);
+                    interaction.mutatedEvents = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["eventTupleToStore"])(droppableEvent);
+                    isInvalid = !Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["isInteractionValid"])(interaction, hit.dateProfile, receivingContext);
+                    if (isInvalid) {
+                        interaction.mutatedEvents = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["createEmptyEventStore"])();
+                        droppableEvent = null;
+                    }
+                }
+            }
+            _this.displayDrag(receivingContext, interaction);
+            // show mirror if no already-rendered mirror element OR if we are shutting down the mirror (?)
+            // TODO: wish we could somehow wait for dispatch to guarantee render
+            dragging.setMirrorIsVisible(isFinal || !droppableEvent || !document.querySelector('.fc-event-mirror'));
+            if (!isInvalid) {
+                Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["enableCursor"])();
+            }
+            else {
+                Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["disableCursor"])();
+            }
+            if (!isFinal) {
+                dragging.setMirrorNeedsRevert(!droppableEvent);
+                _this.receivingContext = receivingContext;
+                _this.droppableEvent = droppableEvent;
+            }
+        };
+        this.handleDragEnd = function (pev) {
+            var _a = _this, receivingContext = _a.receivingContext, droppableEvent = _a.droppableEvent;
+            _this.clearDrag();
+            if (receivingContext && droppableEvent) {
+                var finalHit = _this.hitDragging.finalHit;
+                var finalView = finalHit.context.viewApi;
+                var dragMeta = _this.dragMeta;
+                receivingContext.emitter.trigger('drop', Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__assign"])(Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__assign"])({}, buildDatePointApiWithContext(finalHit.dateSpan, receivingContext)), { draggedEl: pev.subjectEl, jsEvent: pev.origEvent, view: finalView }));
+                if (dragMeta.create) {
+                    var addingEvents_1 = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["eventTupleToStore"])(droppableEvent);
+                    receivingContext.dispatch({
+                        type: 'MERGE_EVENTS',
+                        eventStore: addingEvents_1,
+                    });
+                    if (pev.isTouch) {
+                        receivingContext.dispatch({
+                            type: 'SELECT_EVENT',
+                            eventInstanceId: droppableEvent.instance.instanceId,
+                        });
+                    }
+                    // signal that an external event landed
+                    receivingContext.emitter.trigger('eventReceive', {
+                        event: new _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["EventApi"](receivingContext, droppableEvent.def, droppableEvent.instance),
+                        relatedEvents: [],
+                        revert: function () {
+                            receivingContext.dispatch({
+                                type: 'REMOVE_EVENTS',
+                                eventStore: addingEvents_1,
+                            });
+                        },
+                        draggedEl: pev.subjectEl,
+                        view: finalView,
+                    });
+                }
+            }
+            _this.receivingContext = null;
+            _this.droppableEvent = null;
+        };
+        var hitDragging = this.hitDragging = new HitDragging(dragging, _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["interactionSettingsStore"]);
+        hitDragging.requireInitial = false; // will start outside of a component
+        hitDragging.emitter.on('dragstart', this.handleDragStart);
+        hitDragging.emitter.on('hitupdate', this.handleHitUpdate);
+        hitDragging.emitter.on('dragend', this.handleDragEnd);
+        this.suppliedDragMeta = suppliedDragMeta;
+    }
+    ExternalElementDragging.prototype.buildDragMeta = function (subjectEl) {
+        if (typeof this.suppliedDragMeta === 'object') {
+            return Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["parseDragMeta"])(this.suppliedDragMeta);
+        }
+        if (typeof this.suppliedDragMeta === 'function') {
+            return Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["parseDragMeta"])(this.suppliedDragMeta(subjectEl));
+        }
+        return getDragMetaFromEl(subjectEl);
+    };
+    ExternalElementDragging.prototype.displayDrag = function (nextContext, state) {
+        var prevContext = this.receivingContext;
+        if (prevContext && prevContext !== nextContext) {
+            prevContext.dispatch({ type: 'UNSET_EVENT_DRAG' });
+        }
+        if (nextContext) {
+            nextContext.dispatch({ type: 'SET_EVENT_DRAG', state: state });
+        }
+    };
+    ExternalElementDragging.prototype.clearDrag = function () {
+        if (this.receivingContext) {
+            this.receivingContext.dispatch({ type: 'UNSET_EVENT_DRAG' });
+        }
+    };
+    ExternalElementDragging.prototype.canDropElOnCalendar = function (el, receivingContext) {
+        var dropAccept = receivingContext.options.dropAccept;
+        if (typeof dropAccept === 'function') {
+            return dropAccept.call(receivingContext.calendarApi, el);
+        }
+        if (typeof dropAccept === 'string' && dropAccept) {
+            return Boolean(Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["elementMatches"])(el, dropAccept));
+        }
+        return true;
+    };
+    return ExternalElementDragging;
+}());
+// Utils for computing event store from the DragMeta
+// ----------------------------------------------------------------------------------------------------
+function computeEventForDateSpan(dateSpan, dragMeta, context) {
+    var defProps = Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__assign"])({}, dragMeta.leftoverProps);
+    for (var _i = 0, _a = context.pluginHooks.externalDefTransforms; _i < _a.length; _i++) {
+        var transform = _a[_i];
+        Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__assign"])(defProps, transform(dateSpan, dragMeta));
+    }
+    var _b = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["refineEventDef"])(defProps, context), refined = _b.refined, extra = _b.extra;
+    var def = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["parseEventDef"])(refined, extra, dragMeta.sourceId, dateSpan.allDay, context.options.forceEventDuration || Boolean(dragMeta.duration), // hasEnd
+    context);
+    var start = dateSpan.range.start;
+    // only rely on time info if drop zone is all-day,
+    // otherwise, we already know the time
+    if (dateSpan.allDay && dragMeta.startTime) {
+        start = context.dateEnv.add(start, dragMeta.startTime);
+    }
+    var end = dragMeta.duration ?
+        context.dateEnv.add(start, dragMeta.duration) :
+        Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["getDefaultEventEnd"])(dateSpan.allDay, start, context);
+    var instance = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["createEventInstance"])(def.defId, { start: start, end: end });
+    return { def: def, instance: instance };
+}
+// Utils for extracting data from element
+// ----------------------------------------------------------------------------------------------------
+function getDragMetaFromEl(el) {
+    var str = getEmbeddedElData(el, 'event');
+    var obj = str ?
+        JSON.parse(str) :
+        { create: false }; // if no embedded data, assume no event creation
+    return Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["parseDragMeta"])(obj);
+}
+_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["config"].dataAttrPrefix = '';
+function getEmbeddedElData(el, name) {
+    var prefix = _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["config"].dataAttrPrefix;
+    var prefixedName = (prefix ? prefix + '-' : '') + name;
+    return el.getAttribute('data-' + prefixedName) || '';
+}
+
+/*
+Makes an element (that is *external* to any calendar) draggable.
+Can pass in data that determines how an event will be created when dropped onto a calendar.
+Leverages FullCalendar's internal drag-n-drop functionality WITHOUT a third-party drag system.
+*/
+var ExternalDraggable = /** @class */ (function () {
+    function ExternalDraggable(el, settings) {
+        var _this = this;
+        if (settings === void 0) { settings = {}; }
+        this.handlePointerDown = function (ev) {
+            var dragging = _this.dragging;
+            var _a = _this.settings, minDistance = _a.minDistance, longPressDelay = _a.longPressDelay;
+            dragging.minDistance =
+                minDistance != null ?
+                    minDistance :
+                    (ev.isTouch ? 0 : _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["BASE_OPTION_DEFAULTS"].eventDragMinDistance);
+            dragging.delay =
+                ev.isTouch ? // TODO: eventually read eventLongPressDelay instead vvv
+                    (longPressDelay != null ? longPressDelay : _fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["BASE_OPTION_DEFAULTS"].longPressDelay) :
+                    0;
+        };
+        this.handleDragStart = function (ev) {
+            if (ev.isTouch &&
+                _this.dragging.delay &&
+                ev.subjectEl.classList.contains('fc-event')) {
+                _this.dragging.mirror.getMirrorEl().classList.add('fc-event-selected');
+            }
+        };
+        this.settings = settings;
+        var dragging = this.dragging = new FeaturefulElementDragging(el);
+        dragging.touchScrollAllowed = false;
+        if (settings.itemSelector != null) {
+            dragging.pointer.selector = settings.itemSelector;
+        }
+        if (settings.appendTo != null) {
+            dragging.mirror.parentNode = settings.appendTo; // TODO: write tests
+        }
+        dragging.emitter.on('pointerdown', this.handlePointerDown);
+        dragging.emitter.on('dragstart', this.handleDragStart);
+        new ExternalElementDragging(dragging, settings.eventData); // eslint-disable-line no-new
+    }
+    ExternalDraggable.prototype.destroy = function () {
+        this.dragging.destroy();
+    };
+    return ExternalDraggable;
+}());
+
+/*
+Detects when a *THIRD-PARTY* drag-n-drop system interacts with elements.
+The third-party system is responsible for drawing the visuals effects of the drag.
+This class simply monitors for pointer movements and fires events.
+It also has the ability to hide the moving element (the "mirror") during the drag.
+*/
+var InferredElementDragging = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__extends"])(InferredElementDragging, _super);
+    function InferredElementDragging(containerEl) {
+        var _this = _super.call(this, containerEl) || this;
+        _this.shouldIgnoreMove = false;
+        _this.mirrorSelector = '';
+        _this.currentMirrorEl = null;
+        _this.handlePointerDown = function (ev) {
+            _this.emitter.trigger('pointerdown', ev);
+            if (!_this.shouldIgnoreMove) {
+                // fire dragstart right away. does not support delay or min-distance
+                _this.emitter.trigger('dragstart', ev);
+            }
+        };
+        _this.handlePointerMove = function (ev) {
+            if (!_this.shouldIgnoreMove) {
+                _this.emitter.trigger('dragmove', ev);
+            }
+        };
+        _this.handlePointerUp = function (ev) {
+            _this.emitter.trigger('pointerup', ev);
+            if (!_this.shouldIgnoreMove) {
+                // fire dragend right away. does not support a revert animation
+                _this.emitter.trigger('dragend', ev);
+            }
+        };
+        var pointer = _this.pointer = new PointerDragging(containerEl);
+        pointer.emitter.on('pointerdown', _this.handlePointerDown);
+        pointer.emitter.on('pointermove', _this.handlePointerMove);
+        pointer.emitter.on('pointerup', _this.handlePointerUp);
+        return _this;
+    }
+    InferredElementDragging.prototype.destroy = function () {
+        this.pointer.destroy();
+    };
+    InferredElementDragging.prototype.setIgnoreMove = function (bool) {
+        this.shouldIgnoreMove = bool;
+    };
+    InferredElementDragging.prototype.setMirrorIsVisible = function (bool) {
+        if (bool) {
+            // restore a previously hidden element.
+            // use the reference in case the selector class has already been removed.
+            if (this.currentMirrorEl) {
+                this.currentMirrorEl.style.visibility = '';
+                this.currentMirrorEl = null;
+            }
+        }
+        else {
+            var mirrorEl = this.mirrorSelector
+                // TODO: somehow query FullCalendars WITHIN shadow-roots
+                ? document.querySelector(this.mirrorSelector)
+                : null;
+            if (mirrorEl) {
+                this.currentMirrorEl = mirrorEl;
+                mirrorEl.style.visibility = 'hidden';
+            }
+        }
+    };
+    return InferredElementDragging;
+}(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["ElementDragging"]));
+
+/*
+Bridges third-party drag-n-drop systems with FullCalendar.
+Must be instantiated and destroyed by caller.
+*/
+var ThirdPartyDraggable = /** @class */ (function () {
+    function ThirdPartyDraggable(containerOrSettings, settings) {
+        var containerEl = document;
+        if (
+        // wish we could just test instanceof EventTarget, but doesn't work in IE11
+        containerOrSettings === document ||
+            containerOrSettings instanceof Element) {
+            containerEl = containerOrSettings;
+            settings = settings || {};
+        }
+        else {
+            settings = (containerOrSettings || {});
+        }
+        var dragging = this.dragging = new InferredElementDragging(containerEl);
+        if (typeof settings.itemSelector === 'string') {
+            dragging.pointer.selector = settings.itemSelector;
+        }
+        else if (containerEl === document) {
+            dragging.pointer.selector = '[data-event]';
+        }
+        if (typeof settings.mirrorSelector === 'string') {
+            dragging.mirrorSelector = settings.mirrorSelector;
+        }
+        new ExternalElementDragging(dragging, settings.eventData); // eslint-disable-line no-new
+    }
+    ThirdPartyDraggable.prototype.destroy = function () {
+        this.dragging.destroy();
+    };
+    return ThirdPartyDraggable;
+}());
+
+var main = Object(_fullcalendar_common__WEBPACK_IMPORTED_MODULE_0__["createPlugin"])({
+    componentInteractions: [DateClicking, DateSelecting, EventDragging, EventResizing],
+    calendarInteractions: [UnselectAuto],
+    elementDraggingImpl: FeaturefulElementDragging,
+    optionRefiners: OPTION_REFINERS,
+    listenerRefiners: LISTENER_REFINERS,
+});
+
+/* harmony default export */ __webpack_exports__["default"] = (main);
+
+//# sourceMappingURL=main.js.map
+
+
+/***/ }),
+
+/***/ "omxD":
 /*!***************************************************!*\
-  !*** ./src/app/models/projeto-envolvido.model.ts ***!
+  !*** ./src/app/dao/projeto-tarefa-dao.service.ts ***!
   \***************************************************/
-/*! exports provided: ProjetoEnvolvido */
+/*! exports provided: ProjetoTarefaDaoService */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProjetoEnvolvido", function() { return ProjetoEnvolvido; });
-/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
-
-class ProjetoEnvolvido extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor(data) {
-        super();
-        this.projeto_id = "";
-        this.recurso_id = "";
-        this.regra_id = null;
-        this.initialization(data);
-    }
-}
-
-
-/***/ }),
-
-/***/ "pkbW":
-/*!*****************************************************************************************************!*\
-  !*** ./src/app/modules/gestao/projeto/projeto-form-envolvidos/projeto-form-envolvidos.component.ts ***!
-  \*****************************************************************************************************/
-/*! exports provided: ProjetoFormEnvolvidosComponent */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProjetoFormEnvolvidosComponent", function() { return ProjetoFormEnvolvidosComponent; });
-/* harmony import */ var src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/modules/base/page-frame-base */ "rvJe");
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProjetoTarefaDaoService", function() { return ProjetoTarefaDaoService; });
+/* harmony import */ var _dao_base_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./dao-base.service */ "WScx");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
 
 
-class ProjetoFormEnvolvidosComponent extends src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_0__["PageFrameBase"] {
+class ProjetoTarefaDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0__["DaoBaseService"] {
+    constructor(injector) {
+        super("ProjetoTarefa", injector);
+        this.injector = injector;
+        this.searchFields = ["nome"];
+    }
+}
+ProjetoTarefaDaoService.ɵfac = function ProjetoTarefaDaoService_Factory(t) { return new (t || ProjetoTarefaDaoService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
+ProjetoTarefaDaoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: ProjetoTarefaDaoService, factory: ProjetoTarefaDaoService.ɵfac, providedIn: 'root' });
+
+
+/***/ }),
+
+/***/ "pDWP":
+/*!*****************************************************!*\
+  !*** ./node_modules/@fullcalendar/daygrid/main.css ***!
+  \*****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ("\n:root {\n  --fc-daygrid-event-dot-width: 8px;\n}\n/* help things clear margins of inner content */\n.fc-daygrid-day-frame,\n.fc-daygrid-day-events,\n.fc-daygrid-event-harness { /* for event top/bottom margins */\n}\n.fc-daygrid-day-frame:before, .fc-daygrid-day-events:before, .fc-daygrid-event-harness:before {\n  content: \"\";\n  clear: both;\n  display: table; }\n.fc-daygrid-day-frame:after, .fc-daygrid-day-events:after, .fc-daygrid-event-harness:after {\n  content: \"\";\n  clear: both;\n  display: table; }\n.fc .fc-daygrid-body { /* a <div> that wraps the table */\n    position: relative;\n    z-index: 1; /* container inner z-index's because <tr>s can't do it */\n  }\n.fc .fc-daygrid-day.fc-day-today {\n      background-color: rgba(255, 220, 40, 0.15);\n      background-color: var(--fc-today-bg-color, rgba(255, 220, 40, 0.15));\n    }\n.fc .fc-daygrid-day-frame {\n    position: relative;\n    min-height: 100%; /* seems to work better than `height` because sets height after rows/cells naturally do it */\n  }\n.fc {\n\n  /* cell top */\n\n}\n.fc .fc-daygrid-day-top {\n    display: flex;\n    flex-direction: row-reverse;\n  }\n.fc .fc-day-other .fc-daygrid-day-top {\n    opacity: 0.3;\n  }\n.fc {\n\n  /* day number (within cell top) */\n\n}\n.fc .fc-daygrid-day-number {\n    position: relative;\n    z-index: 4;\n    padding: 4px;\n  }\n.fc {\n\n  /* event container */\n\n}\n.fc .fc-daygrid-day-events {\n    margin-top: 1px; /* needs to be margin, not padding, so that available cell height can be computed */\n  }\n.fc {\n\n  /* positioning for balanced vs natural */\n\n}\n.fc .fc-daygrid-body-balanced .fc-daygrid-day-events {\n      position: absolute;\n      left: 0;\n      right: 0;\n    }\n.fc .fc-daygrid-body-unbalanced .fc-daygrid-day-events {\n      position: relative; /* for containing abs positioned event harnesses */\n      min-height: 2em; /* in addition to being a min-height during natural height, equalizes the heights a little bit */\n    }\n.fc .fc-daygrid-body-natural { /* can coexist with -unbalanced */\n  }\n.fc .fc-daygrid-body-natural .fc-daygrid-day-events {\n      margin-bottom: 1em;\n    }\n.fc {\n\n  /* event harness */\n\n}\n.fc .fc-daygrid-event-harness {\n    position: relative;\n  }\n.fc .fc-daygrid-event-harness-abs {\n    position: absolute;\n    top: 0; /* fallback coords for when cannot yet be computed */\n    left: 0; /* */\n    right: 0; /* */\n  }\n.fc .fc-daygrid-bg-harness {\n    position: absolute;\n    top: 0;\n    bottom: 0;\n  }\n.fc {\n\n  /* bg content */\n\n}\n.fc .fc-daygrid-day-bg .fc-non-business { z-index: 1 }\n.fc .fc-daygrid-day-bg .fc-bg-event { z-index: 2 }\n.fc .fc-daygrid-day-bg .fc-highlight { z-index: 3 }\n.fc {\n\n  /* events */\n\n}\n.fc .fc-daygrid-event {\n    z-index: 6;\n    margin-top: 1px;\n  }\n.fc .fc-daygrid-event.fc-event-mirror {\n    z-index: 7;\n  }\n.fc {\n\n  /* cell bottom (within day-events) */\n\n}\n.fc .fc-daygrid-day-bottom {\n    font-size: .85em;\n    padding: 2px 3px 0\n  }\n.fc .fc-daygrid-day-bottom:before {\n  content: \"\";\n  clear: both;\n  display: table; }\n.fc .fc-daygrid-more-link {\n    position: relative;\n    z-index: 4;\n    cursor: pointer;\n  }\n.fc {\n\n  /* week number (within frame) */\n\n}\n.fc .fc-daygrid-week-number {\n    position: absolute;\n    z-index: 5;\n    top: 0;\n    padding: 2px;\n    min-width: 1.5em;\n    text-align: center;\n    background-color: rgba(208, 208, 208, 0.3);\n    background-color: var(--fc-neutral-bg-color, rgba(208, 208, 208, 0.3));\n    color: #808080;\n    color: var(--fc-neutral-text-color, #808080);\n  }\n.fc {\n\n  /* popover */\n\n}\n.fc .fc-more-popover .fc-popover-body {\n    min-width: 220px;\n    padding: 10px;\n  }\n.fc-direction-ltr .fc-daygrid-event.fc-event-start,\n.fc-direction-rtl .fc-daygrid-event.fc-event-end {\n  margin-left: 2px;\n}\n.fc-direction-ltr .fc-daygrid-event.fc-event-end,\n.fc-direction-rtl .fc-daygrid-event.fc-event-start {\n  margin-right: 2px;\n}\n.fc-direction-ltr .fc-daygrid-week-number {\n    left: 0;\n    border-radius: 0 0 3px 0;\n  }\n.fc-direction-rtl .fc-daygrid-week-number {\n    right: 0;\n    border-radius: 0 0 0 3px;\n  }\n.fc-liquid-hack .fc-daygrid-day-frame {\n    position: static; /* will cause inner absolute stuff to expand to <td> */\n  }\n.fc-daygrid-event { /* make root-level, because will be dragged-and-dropped outside of a component root */\n  position: relative; /* for z-indexes assigned later */\n  white-space: nowrap;\n  border-radius: 3px; /* dot event needs this to when selected */\n  font-size: .85em;\n  font-size: var(--fc-small-font-size, .85em);\n}\n/* --- the rectangle (\"block\") style of event --- */\n.fc-daygrid-block-event .fc-event-time {\n    font-weight: bold;\n  }\n.fc-daygrid-block-event .fc-event-time,\n  .fc-daygrid-block-event .fc-event-title {\n    padding: 1px;\n  }\n/* --- the dot style of event --- */\n.fc-daygrid-dot-event {\n  display: flex;\n  align-items: center;\n  padding: 2px 0\n\n}\n.fc-daygrid-dot-event .fc-event-title {\n    flex-grow: 1;\n    flex-shrink: 1;\n    min-width: 0; /* important for allowing to shrink all the way */\n    overflow: hidden;\n    font-weight: bold;\n  }\n.fc-daygrid-dot-event:hover,\n  .fc-daygrid-dot-event.fc-event-mirror {\n    background: rgba(0, 0, 0, 0.1);\n  }\n.fc-daygrid-dot-event.fc-event-selected:before {\n    /* expand hit area */\n    top: -10px;\n    bottom: -10px;\n  }\n.fc-daygrid-event-dot { /* the actual dot */\n  margin: 0 4px;\n  box-sizing: content-box;\n  width: 0;\n  height: 0;\n  border: 4px solid #3788d8;\n  border: calc(var(--fc-daygrid-event-dot-width, 8px) / 2) solid var(--fc-event-border-color, #3788d8);\n  border-radius: 4px;\n  border-radius: calc(var(--fc-daygrid-event-dot-width, 8px) / 2);\n}\n/* --- spacing between time and title --- */\n.fc-direction-ltr .fc-daygrid-event .fc-event-time {\n    margin-right: 3px;\n  }\n.fc-direction-rtl .fc-daygrid-event .fc-event-time {\n    margin-left: 3px;\n  }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1haW4uY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFDQTtFQUNFLGlDQUFpQztBQUNuQztBQUNBLCtDQUErQztBQUMvQzs7NEJBRTRCLGlDQUFpQztBQUM3RDtBQUNBO0VBQ0UsV0FBVztFQUNYLFdBQVc7RUFDWCxjQUFjLEVBQUU7QUFDbEI7RUFDRSxXQUFXO0VBQ1gsV0FBVztFQUNYLGNBQWMsRUFBRTtBQUNsQix1QkFBdUIsaUNBQWlDO0lBQ3BELGtCQUFrQjtJQUNsQixVQUFVLEVBQUUsd0RBQXdEO0VBQ3RFO0FBQ0Y7TUFDTSwwQ0FBMEM7TUFDMUMsb0VBQW9FO0lBQ3RFO0FBQ0o7SUFDSSxrQkFBa0I7SUFDbEIsZ0JBQWdCLEVBQUUsNEZBQTRGO0VBQ2hIO0FBQ0Y7O0VBRUUsYUFBYTs7QUFFZjtBQUNBO0lBQ0ksYUFBYTtJQUNiLDJCQUEyQjtFQUM3QjtBQUNGO0lBQ0ksWUFBWTtFQUNkO0FBQ0Y7O0VBRUUsaUNBQWlDOztBQUVuQztBQUNBO0lBQ0ksa0JBQWtCO0lBQ2xCLFVBQVU7SUFDVixZQUFZO0VBQ2Q7QUFDRjs7RUFFRSxvQkFBb0I7O0FBRXRCO0FBQ0E7SUFDSSxlQUFlLEVBQUUsbUZBQW1GO0VBQ3RHO0FBQ0Y7O0VBRUUsd0NBQXdDOztBQUUxQztBQUNBO01BQ00sa0JBQWtCO01BQ2xCLE9BQU87TUFDUCxRQUFRO0lBQ1Y7QUFDSjtNQUNNLGtCQUFrQixFQUFFLGtEQUFrRDtNQUN0RSxlQUFlLEVBQUUsZ0dBQWdHO0lBQ25IO0FBQ0osK0JBQStCLGlDQUFpQztFQUM5RDtBQUNGO01BQ00sa0JBQWtCO0lBQ3BCO0FBQ0o7O0VBRUUsa0JBQWtCOztBQUVwQjtBQUNBO0lBQ0ksa0JBQWtCO0VBQ3BCO0FBQ0Y7SUFDSSxrQkFBa0I7SUFDbEIsTUFBTSxFQUFFLG9EQUFvRDtJQUM1RCxPQUFPLEVBQUUsSUFBSTtJQUNiLFFBQVEsRUFBRSxJQUFJO0VBQ2hCO0FBQ0Y7SUFDSSxrQkFBa0I7SUFDbEIsTUFBTTtJQUNOLFNBQVM7RUFDWDtBQUNGOztFQUVFLGVBQWU7O0FBRWpCO0FBQ0EsMENBQTBDLFdBQVc7QUFDckQsc0NBQXNDLFdBQVc7QUFDakQsdUNBQXVDLFdBQVc7QUFDbEQ7O0VBRUUsV0FBVzs7QUFFYjtBQUNBO0lBQ0ksVUFBVTtJQUNWLGVBQWU7RUFDakI7QUFDRjtJQUNJLFVBQVU7RUFDWjtBQUNGOztFQUVFLG9DQUFvQzs7QUFFdEM7QUFDQTtJQUNJLGdCQUFnQjtJQUNoQjtFQUNGO0FBQ0Y7RUFDRSxXQUFXO0VBQ1gsV0FBVztFQUNYLGNBQWMsRUFBRTtBQUNsQjtJQUNJLGtCQUFrQjtJQUNsQixVQUFVO0lBQ1YsZUFBZTtFQUNqQjtBQUNGOztFQUVFLCtCQUErQjs7QUFFakM7QUFDQTtJQUNJLGtCQUFrQjtJQUNsQixVQUFVO0lBQ1YsTUFBTTtJQUNOLFlBQVk7SUFDWixnQkFBZ0I7SUFDaEIsa0JBQWtCO0lBQ2xCLDBDQUEwQztJQUMxQyxzRUFBc0U7SUFDdEUsY0FBYztJQUNkLDRDQUE0QztFQUM5QztBQUNGOztFQUVFLFlBQVk7O0FBRWQ7QUFDQTtJQUNJLGdCQUFnQjtJQUNoQixhQUFhO0VBQ2Y7QUFDRjs7RUFFRSxnQkFBZ0I7QUFDbEI7QUFDQTs7RUFFRSxpQkFBaUI7QUFDbkI7QUFDQTtJQUNJLE9BQU87SUFDUCx3QkFBd0I7RUFDMUI7QUFDRjtJQUNJLFFBQVE7SUFDUix3QkFBd0I7RUFDMUI7QUFDRjtJQUNJLGdCQUFnQixFQUFFLHNEQUFzRDtFQUMxRTtBQUNGLG9CQUFvQixxRkFBcUY7RUFDdkcsa0JBQWtCLEVBQUUsaUNBQWlDO0VBQ3JELG1CQUFtQjtFQUNuQixrQkFBa0IsRUFBRSwwQ0FBMEM7RUFDOUQsZ0JBQWdCO0VBQ2hCLDJDQUEyQztBQUM3QztBQUNBLG1EQUFtRDtBQUNuRDtJQUNJLGlCQUFpQjtFQUNuQjtBQUNGOztJQUVJLFlBQVk7RUFDZDtBQUNGLG1DQUFtQztBQUNuQztFQUNFLGFBQWE7RUFDYixtQkFBbUI7RUFDbkI7O0FBRUY7QUFDQTtJQUNJLFlBQVk7SUFDWixjQUFjO0lBQ2QsWUFBWSxFQUFFLGlEQUFpRDtJQUMvRCxnQkFBZ0I7SUFDaEIsaUJBQWlCO0VBQ25CO0FBQ0Y7O0lBRUksOEJBQThCO0VBQ2hDO0FBQ0Y7SUFDSSxvQkFBb0I7SUFDcEIsVUFBVTtJQUNWLGFBQWE7RUFDZjtBQUNGLHdCQUF3QixtQkFBbUI7RUFDekMsYUFBYTtFQUNiLHVCQUF1QjtFQUN2QixRQUFRO0VBQ1IsU0FBUztFQUNULHlCQUF5QjtFQUN6QixvR0FBb0c7RUFDcEcsa0JBQWtCO0VBQ2xCLCtEQUErRDtBQUNqRTtBQUNBLDJDQUEyQztBQUMzQztJQUNJLGlCQUFpQjtFQUNuQjtBQUNGO0lBQ0ksZ0JBQWdCO0VBQ2xCIiwiZmlsZSI6Im1haW4uY3NzIiwic291cmNlc0NvbnRlbnQiOlsiXG46cm9vdCB7XG4gIC0tZmMtZGF5Z3JpZC1ldmVudC1kb3Qtd2lkdGg6IDhweDtcbn1cbi8qIGhlbHAgdGhpbmdzIGNsZWFyIG1hcmdpbnMgb2YgaW5uZXIgY29udGVudCAqL1xuLmZjLWRheWdyaWQtZGF5LWZyYW1lLFxuLmZjLWRheWdyaWQtZGF5LWV2ZW50cyxcbi5mYy1kYXlncmlkLWV2ZW50LWhhcm5lc3MgeyAvKiBmb3IgZXZlbnQgdG9wL2JvdHRvbSBtYXJnaW5zICovXG59XG4uZmMtZGF5Z3JpZC1kYXktZnJhbWU6YmVmb3JlLCAuZmMtZGF5Z3JpZC1kYXktZXZlbnRzOmJlZm9yZSwgLmZjLWRheWdyaWQtZXZlbnQtaGFybmVzczpiZWZvcmUge1xuICBjb250ZW50OiBcIlwiO1xuICBjbGVhcjogYm90aDtcbiAgZGlzcGxheTogdGFibGU7IH1cbi5mYy1kYXlncmlkLWRheS1mcmFtZTphZnRlciwgLmZjLWRheWdyaWQtZGF5LWV2ZW50czphZnRlciwgLmZjLWRheWdyaWQtZXZlbnQtaGFybmVzczphZnRlciB7XG4gIGNvbnRlbnQ6IFwiXCI7XG4gIGNsZWFyOiBib3RoO1xuICBkaXNwbGF5OiB0YWJsZTsgfVxuLmZjIC5mYy1kYXlncmlkLWJvZHkgeyAvKiBhIDxkaXY+IHRoYXQgd3JhcHMgdGhlIHRhYmxlICovXG4gICAgcG9zaXRpb246IHJlbGF0aXZlO1xuICAgIHotaW5kZXg6IDE7IC8qIGNvbnRhaW5lciBpbm5lciB6LWluZGV4J3MgYmVjYXVzZSA8dHI+cyBjYW4ndCBkbyBpdCAqL1xuICB9XG4uZmMgLmZjLWRheWdyaWQtZGF5LmZjLWRheS10b2RheSB7XG4gICAgICBiYWNrZ3JvdW5kLWNvbG9yOiByZ2JhKDI1NSwgMjIwLCA0MCwgMC4xNSk7XG4gICAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1mYy10b2RheS1iZy1jb2xvciwgcmdiYSgyNTUsIDIyMCwgNDAsIDAuMTUpKTtcbiAgICB9XG4uZmMgLmZjLWRheWdyaWQtZGF5LWZyYW1lIHtcbiAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgbWluLWhlaWdodDogMTAwJTsgLyogc2VlbXMgdG8gd29yayBiZXR0ZXIgdGhhbiBgaGVpZ2h0YCBiZWNhdXNlIHNldHMgaGVpZ2h0IGFmdGVyIHJvd3MvY2VsbHMgbmF0dXJhbGx5IGRvIGl0ICovXG4gIH1cbi5mYyB7XG5cbiAgLyogY2VsbCB0b3AgKi9cblxufVxuLmZjIC5mYy1kYXlncmlkLWRheS10b3Age1xuICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgZmxleC1kaXJlY3Rpb246IHJvdy1yZXZlcnNlO1xuICB9XG4uZmMgLmZjLWRheS1vdGhlciAuZmMtZGF5Z3JpZC1kYXktdG9wIHtcbiAgICBvcGFjaXR5OiAwLjM7XG4gIH1cbi5mYyB7XG5cbiAgLyogZGF5IG51bWJlciAod2l0aGluIGNlbGwgdG9wKSAqL1xuXG59XG4uZmMgLmZjLWRheWdyaWQtZGF5LW51bWJlciB7XG4gICAgcG9zaXRpb246IHJlbGF0aXZlO1xuICAgIHotaW5kZXg6IDQ7XG4gICAgcGFkZGluZzogNHB4O1xuICB9XG4uZmMge1xuXG4gIC8qIGV2ZW50IGNvbnRhaW5lciAqL1xuXG59XG4uZmMgLmZjLWRheWdyaWQtZGF5LWV2ZW50cyB7XG4gICAgbWFyZ2luLXRvcDogMXB4OyAvKiBuZWVkcyB0byBiZSBtYXJnaW4sIG5vdCBwYWRkaW5nLCBzbyB0aGF0IGF2YWlsYWJsZSBjZWxsIGhlaWdodCBjYW4gYmUgY29tcHV0ZWQgKi9cbiAgfVxuLmZjIHtcblxuICAvKiBwb3NpdGlvbmluZyBmb3IgYmFsYW5jZWQgdnMgbmF0dXJhbCAqL1xuXG59XG4uZmMgLmZjLWRheWdyaWQtYm9keS1iYWxhbmNlZCAuZmMtZGF5Z3JpZC1kYXktZXZlbnRzIHtcbiAgICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgICAgIGxlZnQ6IDA7XG4gICAgICByaWdodDogMDtcbiAgICB9XG4uZmMgLmZjLWRheWdyaWQtYm9keS11bmJhbGFuY2VkIC5mYy1kYXlncmlkLWRheS1ldmVudHMge1xuICAgICAgcG9zaXRpb246IHJlbGF0aXZlOyAvKiBmb3IgY29udGFpbmluZyBhYnMgcG9zaXRpb25lZCBldmVudCBoYXJuZXNzZXMgKi9cbiAgICAgIG1pbi1oZWlnaHQ6IDJlbTsgLyogaW4gYWRkaXRpb24gdG8gYmVpbmcgYSBtaW4taGVpZ2h0IGR1cmluZyBuYXR1cmFsIGhlaWdodCwgZXF1YWxpemVzIHRoZSBoZWlnaHRzIGEgbGl0dGxlIGJpdCAqL1xuICAgIH1cbi5mYyAuZmMtZGF5Z3JpZC1ib2R5LW5hdHVyYWwgeyAvKiBjYW4gY29leGlzdCB3aXRoIC11bmJhbGFuY2VkICovXG4gIH1cbi5mYyAuZmMtZGF5Z3JpZC1ib2R5LW5hdHVyYWwgLmZjLWRheWdyaWQtZGF5LWV2ZW50cyB7XG4gICAgICBtYXJnaW4tYm90dG9tOiAxZW07XG4gICAgfVxuLmZjIHtcblxuICAvKiBldmVudCBoYXJuZXNzICovXG5cbn1cbi5mYyAuZmMtZGF5Z3JpZC1ldmVudC1oYXJuZXNzIHtcbiAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gIH1cbi5mYyAuZmMtZGF5Z3JpZC1ldmVudC1oYXJuZXNzLWFicyB7XG4gICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgIHRvcDogMDsgLyogZmFsbGJhY2sgY29vcmRzIGZvciB3aGVuIGNhbm5vdCB5ZXQgYmUgY29tcHV0ZWQgKi9cbiAgICBsZWZ0OiAwOyAvKiAqL1xuICAgIHJpZ2h0OiAwOyAvKiAqL1xuICB9XG4uZmMgLmZjLWRheWdyaWQtYmctaGFybmVzcyB7XG4gICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgIHRvcDogMDtcbiAgICBib3R0b206IDA7XG4gIH1cbi5mYyB7XG5cbiAgLyogYmcgY29udGVudCAqL1xuXG59XG4uZmMgLmZjLWRheWdyaWQtZGF5LWJnIC5mYy1ub24tYnVzaW5lc3MgeyB6LWluZGV4OiAxIH1cbi5mYyAuZmMtZGF5Z3JpZC1kYXktYmcgLmZjLWJnLWV2ZW50IHsgei1pbmRleDogMiB9XG4uZmMgLmZjLWRheWdyaWQtZGF5LWJnIC5mYy1oaWdobGlnaHQgeyB6LWluZGV4OiAzIH1cbi5mYyB7XG5cbiAgLyogZXZlbnRzICovXG5cbn1cbi5mYyAuZmMtZGF5Z3JpZC1ldmVudCB7XG4gICAgei1pbmRleDogNjtcbiAgICBtYXJnaW4tdG9wOiAxcHg7XG4gIH1cbi5mYyAuZmMtZGF5Z3JpZC1ldmVudC5mYy1ldmVudC1taXJyb3Ige1xuICAgIHotaW5kZXg6IDc7XG4gIH1cbi5mYyB7XG5cbiAgLyogY2VsbCBib3R0b20gKHdpdGhpbiBkYXktZXZlbnRzKSAqL1xuXG59XG4uZmMgLmZjLWRheWdyaWQtZGF5LWJvdHRvbSB7XG4gICAgZm9udC1zaXplOiAuODVlbTtcbiAgICBwYWRkaW5nOiAycHggM3B4IDBcbiAgfVxuLmZjIC5mYy1kYXlncmlkLWRheS1ib3R0b206YmVmb3JlIHtcbiAgY29udGVudDogXCJcIjtcbiAgY2xlYXI6IGJvdGg7XG4gIGRpc3BsYXk6IHRhYmxlOyB9XG4uZmMgLmZjLWRheWdyaWQtbW9yZS1saW5rIHtcbiAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgei1pbmRleDogNDtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gIH1cbi5mYyB7XG5cbiAgLyogd2VlayBudW1iZXIgKHdpdGhpbiBmcmFtZSkgKi9cblxufVxuLmZjIC5mYy1kYXlncmlkLXdlZWstbnVtYmVyIHtcbiAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgei1pbmRleDogNTtcbiAgICB0b3A6IDA7XG4gICAgcGFkZGluZzogMnB4O1xuICAgIG1pbi13aWR0aDogMS41ZW07XG4gICAgdGV4dC1hbGlnbjogY2VudGVyO1xuICAgIGJhY2tncm91bmQtY29sb3I6IHJnYmEoMjA4LCAyMDgsIDIwOCwgMC4zKTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1mYy1uZXV0cmFsLWJnLWNvbG9yLCByZ2JhKDIwOCwgMjA4LCAyMDgsIDAuMykpO1xuICAgIGNvbG9yOiAjODA4MDgwO1xuICAgIGNvbG9yOiB2YXIoLS1mYy1uZXV0cmFsLXRleHQtY29sb3IsICM4MDgwODApO1xuICB9XG4uZmMge1xuXG4gIC8qIHBvcG92ZXIgKi9cblxufVxuLmZjIC5mYy1tb3JlLXBvcG92ZXIgLmZjLXBvcG92ZXItYm9keSB7XG4gICAgbWluLXdpZHRoOiAyMjBweDtcbiAgICBwYWRkaW5nOiAxMHB4O1xuICB9XG4uZmMtZGlyZWN0aW9uLWx0ciAuZmMtZGF5Z3JpZC1ldmVudC5mYy1ldmVudC1zdGFydCxcbi5mYy1kaXJlY3Rpb24tcnRsIC5mYy1kYXlncmlkLWV2ZW50LmZjLWV2ZW50LWVuZCB7XG4gIG1hcmdpbi1sZWZ0OiAycHg7XG59XG4uZmMtZGlyZWN0aW9uLWx0ciAuZmMtZGF5Z3JpZC1ldmVudC5mYy1ldmVudC1lbmQsXG4uZmMtZGlyZWN0aW9uLXJ0bCAuZmMtZGF5Z3JpZC1ldmVudC5mYy1ldmVudC1zdGFydCB7XG4gIG1hcmdpbi1yaWdodDogMnB4O1xufVxuLmZjLWRpcmVjdGlvbi1sdHIgLmZjLWRheWdyaWQtd2Vlay1udW1iZXIge1xuICAgIGxlZnQ6IDA7XG4gICAgYm9yZGVyLXJhZGl1czogMCAwIDNweCAwO1xuICB9XG4uZmMtZGlyZWN0aW9uLXJ0bCAuZmMtZGF5Z3JpZC13ZWVrLW51bWJlciB7XG4gICAgcmlnaHQ6IDA7XG4gICAgYm9yZGVyLXJhZGl1czogMCAwIDAgM3B4O1xuICB9XG4uZmMtbGlxdWlkLWhhY2sgLmZjLWRheWdyaWQtZGF5LWZyYW1lIHtcbiAgICBwb3NpdGlvbjogc3RhdGljOyAvKiB3aWxsIGNhdXNlIGlubmVyIGFic29sdXRlIHN0dWZmIHRvIGV4cGFuZCB0byA8dGQ+ICovXG4gIH1cbi5mYy1kYXlncmlkLWV2ZW50IHsgLyogbWFrZSByb290LWxldmVsLCBiZWNhdXNlIHdpbGwgYmUgZHJhZ2dlZC1hbmQtZHJvcHBlZCBvdXRzaWRlIG9mIGEgY29tcG9uZW50IHJvb3QgKi9cbiAgcG9zaXRpb246IHJlbGF0aXZlOyAvKiBmb3Igei1pbmRleGVzIGFzc2lnbmVkIGxhdGVyICovXG4gIHdoaXRlLXNwYWNlOiBub3dyYXA7XG4gIGJvcmRlci1yYWRpdXM6IDNweDsgLyogZG90IGV2ZW50IG5lZWRzIHRoaXMgdG8gd2hlbiBzZWxlY3RlZCAqL1xuICBmb250LXNpemU6IC44NWVtO1xuICBmb250LXNpemU6IHZhcigtLWZjLXNtYWxsLWZvbnQtc2l6ZSwgLjg1ZW0pO1xufVxuLyogLS0tIHRoZSByZWN0YW5nbGUgKFwiYmxvY2tcIikgc3R5bGUgb2YgZXZlbnQgLS0tICovXG4uZmMtZGF5Z3JpZC1ibG9jay1ldmVudCAuZmMtZXZlbnQtdGltZSB7XG4gICAgZm9udC13ZWlnaHQ6IGJvbGQ7XG4gIH1cbi5mYy1kYXlncmlkLWJsb2NrLWV2ZW50IC5mYy1ldmVudC10aW1lLFxuICAuZmMtZGF5Z3JpZC1ibG9jay1ldmVudCAuZmMtZXZlbnQtdGl0bGUge1xuICAgIHBhZGRpbmc6IDFweDtcbiAgfVxuLyogLS0tIHRoZSBkb3Qgc3R5bGUgb2YgZXZlbnQgLS0tICovXG4uZmMtZGF5Z3JpZC1kb3QtZXZlbnQge1xuICBkaXNwbGF5OiBmbGV4O1xuICBhbGlnbi1pdGVtczogY2VudGVyO1xuICBwYWRkaW5nOiAycHggMFxuXG59XG4uZmMtZGF5Z3JpZC1kb3QtZXZlbnQgLmZjLWV2ZW50LXRpdGxlIHtcbiAgICBmbGV4LWdyb3c6IDE7XG4gICAgZmxleC1zaHJpbms6IDE7XG4gICAgbWluLXdpZHRoOiAwOyAvKiBpbXBvcnRhbnQgZm9yIGFsbG93aW5nIHRvIHNocmluayBhbGwgdGhlIHdheSAqL1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG4gICAgZm9udC13ZWlnaHQ6IGJvbGQ7XG4gIH1cbi5mYy1kYXlncmlkLWRvdC1ldmVudDpob3ZlcixcbiAgLmZjLWRheWdyaWQtZG90LWV2ZW50LmZjLWV2ZW50LW1pcnJvciB7XG4gICAgYmFja2dyb3VuZDogcmdiYSgwLCAwLCAwLCAwLjEpO1xuICB9XG4uZmMtZGF5Z3JpZC1kb3QtZXZlbnQuZmMtZXZlbnQtc2VsZWN0ZWQ6YmVmb3JlIHtcbiAgICAvKiBleHBhbmQgaGl0IGFyZWEgKi9cbiAgICB0b3A6IC0xMHB4O1xuICAgIGJvdHRvbTogLTEwcHg7XG4gIH1cbi5mYy1kYXlncmlkLWV2ZW50LWRvdCB7IC8qIHRoZSBhY3R1YWwgZG90ICovXG4gIG1hcmdpbjogMCA0cHg7XG4gIGJveC1zaXppbmc6IGNvbnRlbnQtYm94O1xuICB3aWR0aDogMDtcbiAgaGVpZ2h0OiAwO1xuICBib3JkZXI6IDRweCBzb2xpZCAjMzc4OGQ4O1xuICBib3JkZXI6IGNhbGModmFyKC0tZmMtZGF5Z3JpZC1ldmVudC1kb3Qtd2lkdGgsIDhweCkgLyAyKSBzb2xpZCB2YXIoLS1mYy1ldmVudC1ib3JkZXItY29sb3IsICMzNzg4ZDgpO1xuICBib3JkZXItcmFkaXVzOiA0cHg7XG4gIGJvcmRlci1yYWRpdXM6IGNhbGModmFyKC0tZmMtZGF5Z3JpZC1ldmVudC1kb3Qtd2lkdGgsIDhweCkgLyAyKTtcbn1cbi8qIC0tLSBzcGFjaW5nIGJldHdlZW4gdGltZSBhbmQgdGl0bGUgLS0tICovXG4uZmMtZGlyZWN0aW9uLWx0ciAuZmMtZGF5Z3JpZC1ldmVudCAuZmMtZXZlbnQtdGltZSB7XG4gICAgbWFyZ2luLXJpZ2h0OiAzcHg7XG4gIH1cbi5mYy1kaXJlY3Rpb24tcnRsIC5mYy1kYXlncmlkLWV2ZW50IC5mYy1ldmVudC10aW1lIHtcbiAgICBtYXJnaW4tbGVmdDogM3B4O1xuICB9XG4iXX0= */");
+
+/***/ }),
+
+/***/ "qyTw":
+/*!*************************************************************************************************!*\
+  !*** ./src/app/modules/gestao/projeto/projeto-tarefa-filter/projeto-tarefa-filter.component.ts ***!
+  \*************************************************************************************************/
+/*! exports provided: ProjetoTarefaFilterComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProjetoTarefaFilterComponent", function() { return ProjetoTarefaFilterComponent; });
+/* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/components/grid/grid.component */ "m4bG");
+/* harmony import */ var src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/dao/unidade-dao.service */ "Ufbc");
+/* harmony import */ var src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/usuario-dao.service */ "w5Sy");
+/* harmony import */ var src_app_models_projeto_tarefa_model__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/models/projeto-tarefa.model */ "k9Um");
+/* harmony import */ var src_app_modules_base_page_base__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/modules/base/page-base */ "Z2oO");
+/* harmony import */ var _projeto_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../projeto.service */ "6/Ne");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ "RKEd");
+/* harmony import */ var _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../components/input/input-search/input-search.component */ "8OLq");
+/* harmony import */ var _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/input/input-datetime/input-datetime.component */ "NRF3");
+/* harmony import */ var _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../../components/grid/columns/columns.component */ "d7UH");
+/* harmony import */ var _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../../components/grid/column/column.component */ "pFmK");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/common */ "ofXK");
+/* harmony import */ var _components_profile_picture_profile_picture_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../../../components/profile-picture/profile-picture.component */ "xp1S");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function ProjetoTarefaFilterComponent_ng_template_12_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "div");
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](1, "strong");
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](3, "br");
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](4, "small");
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const row_r6 = ctx.row;
+    const ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵstyleProp"]("margin-left", 10 * ctx_r3.getLevel(row_r6), "px");
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate"](row_r6.nome);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate"](row_r6.descricao);
+} }
+function ProjetoTarefaFilterComponent_ng_template_15_profile_picture_0_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](0, "profile-picture", 14);
+} if (rf & 2) {
+    const alocacao_r9 = ctx.$implicit;
+    const ctx_r8 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("url", ctx_r8.projetoService.getRecursoPicture(alocacao_r9.recurso))("hint", alocacao_r9.descricao);
+} }
+function ProjetoTarefaFilterComponent_ng_template_15_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](0, ProjetoTarefaFilterComponent_ng_template_15_profile_picture_0_Template, 1, 2, "profile-picture", 13);
+} if (rf & 2) {
+    const row_r7 = ctx.row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngForOf", row_r7.alocacoes);
+} }
+const _c0 = function () { return ["configuracoes", "usuario"]; };
+const _c1 = function (a0) { return { route: a0 }; };
+const _c2 = function () { return ["configuracoes", "unidade"]; };
+class ProjetoTarefaFilterComponent extends src_app_modules_base_page_base__WEBPACK_IMPORTED_MODULE_4__["PageBase"] {
     constructor(injector) {
         super(injector);
         this.injector = injector;
-        this.validate = (control, controlName) => {
-            let result = null;
-            return result;
-        };
-        this.form = this.fh.FormBuilder({}, this.cdRef, this.validate);
+        this.formDisabled = false;
+        this.tarefas = [];
+        this.buttons = [
+            {
+                icon: "bi bi-check-all",
+                color: "btn btn-outline-success",
+                label: "Selecionar",
+                onClick: (...args) => {
+                    var _a;
+                    (_a = this.grid) === null || _a === void 0 ? void 0 : _a.setMultiselectSelectedItems(this.tarefas.filter(tarefa => {
+                        var _a, _b, _c, _d, _e, _f;
+                        return (((_b = (_a = this.form.controls.usuario_id) === null || _a === void 0 ? void 0 : _a.value) === null || _b === void 0 ? void 0 : _b.length) && ((_c = tarefa.alocacoes) === null || _c === void 0 ? void 0 : _c.find(x => { var _a, _b; return ((_a = x.recurso) === null || _a === void 0 ? void 0 : _a.usuario_id) == ((_b = this.form.controls.usuario_id) === null || _b === void 0 ? void 0 : _b.value); }))) ||
+                            (((_e = (_d = this.form.controls.unidade_id) === null || _d === void 0 ? void 0 : _d.value) === null || _e === void 0 ? void 0 : _e.length) && ((_f = tarefa.alocacoes) === null || _f === void 0 ? void 0 : _f.find(x => { var _a, _b; return ((_a = x.recurso) === null || _a === void 0 ? void 0 : _a.unidade_id) == ((_b = this.form.controls.unidade_id) === null || _b === void 0 ? void 0 : _b.value); })));
+                    }
+                    //(this.util.isDataValid(this.form.controls.inicio?.value) && tarefa.inicio.getTime() )
+                    ));
+                }
+            },
+            {
+                label: "Todos",
+                icon: "bi bi-grid-fill",
+                hint: "Selecionar",
+                color: "btn-outline-danger",
+                onClick: (...args) => { var _a; return (_a = this.grid) === null || _a === void 0 ? void 0 : _a.onSelectAllClick(); }
+            }, {
+                label: "Nenhum",
+                icon: "bi bi-grid",
+                hint: "Selecionar",
+                color: "btn-outline-danger",
+                onClick: (...args) => { var _a; return (_a = this.grid) === null || _a === void 0 ? void 0 : _a.onUnselectAllClick(); }
+            }
+        ];
+        this.projetoService = injector.get(_projeto_service__WEBPACK_IMPORTED_MODULE_5__["ProjetoService"]);
+        this.usuarioDao = injector.get(src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_2__["UsuarioDaoService"]);
+        this.unidadeDao = injector.get(src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_1__["UnidadeDaoService"]);
+        this.form = this.fh.FormBuilder({
+            usuario_id: { default: null },
+            unidade_id: { default: null },
+            inicio: { default: null },
+            fim: { default: null }
+        });
+    }
+    set projeto(value) {
+        if (this._projeto != value) {
+            this._projeto = value;
+            this.loadTarefas();
+        }
+    }
+    get projeto() {
+        return this._projeto;
+    }
+    ngAfterViewInit() {
+        var _a;
+        super.ngAfterViewInit();
+        (_a = this.grid) === null || _a === void 0 ? void 0 : _a.enableMultiselect(true);
+    }
+    getLevel(tarefa) {
+        return (tarefa.path || "").split("/").length;
+    }
+    loadTarefas() {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        (_a = this.grid) === null || _a === void 0 ? void 0 : _a.onUnselectAllClick();
+        this.tarefas = [new src_app_models_projeto_tarefa_model__WEBPACK_IMPORTED_MODULE_3__["ProjetoTarefa"]({
+                id: (_b = this._projeto) === null || _b === void 0 ? void 0 : _b.id,
+                index: 0,
+                nome: ((_c = this._projeto) === null || _c === void 0 ? void 0 : _c.nome) || "PROJETO",
+                descricao: ((_d = this.projeto) === null || _d === void 0 ? void 0 : _d.descricao) || "",
+                inicio: ((_e = this._projeto) === null || _e === void 0 ? void 0 : _e.inicio) || new Date(),
+                termino: ((_f = this._projeto) === null || _f === void 0 ? void 0 : _f.termino) || new Date()
+            })];
+        this.tarefas.push(...(((_h = (_g = this._projeto) === null || _g === void 0 ? void 0 : _g.tarefas) === null || _h === void 0 ? void 0 : _h.sort((a, b) => a.indice < b.indice ? -1 : 1)) || []));
+        this.cdRef.detectChanges();
+        (_j = this.grid) === null || _j === void 0 ? void 0 : _j.onSelectAllClick();
+    }
+    onMultiselectChange(multiselected) {
+        if (this.change)
+            this.change(Object.values(multiselected));
     }
 }
-ProjetoFormEnvolvidosComponent.ɵfac = function ProjetoFormEnvolvidosComponent_Factory(t) { return new (t || ProjetoFormEnvolvidosComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
-ProjetoFormEnvolvidosComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: ProjetoFormEnvolvidosComponent, selectors: [["projeto-form-envolvidos"]], features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]], decls: 3, vars: 0, template: function ProjetoFormEnvolvidosComponent_Template(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "p");
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](1, "projeto-form-envolvidos works!");
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](2, " public projeto_id: string = \"\";\npublic recurso_id: string = \"\";\npublic regra_id: string | null = null;");
-    } }, styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwcm9qZXRvLWZvcm0tZW52b2x2aWRvcy5jb21wb25lbnQuc2NzcyJ9 */"] });
+ProjetoTarefaFilterComponent.ɵfac = function ProjetoTarefaFilterComponent_Factory(t) { return new (t || ProjetoTarefaFilterComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_6__["Injector"])); };
+ProjetoTarefaFilterComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineComponent"]({ type: ProjetoTarefaFilterComponent, selectors: [["projeto-tarefa-filter"]], viewQuery: function ProjetoTarefaFilterComponent_Query(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵviewQuery"](src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__["GridComponent"], 1);
+    } if (rf & 2) {
+        let _t;
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵloadQuery"]()) && (ctx.grid = _t.first);
+    } }, inputs: { formDisabled: "formDisabled", change: "change", projeto: "projeto" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]], decls: 17, vars: 21, consts: [[3, "form", "buttons", "disabled"], [1, "row"], ["label", "Usu\u00E1rio", "icon", "bi bi-person", "controlName", "usuario_id", 3, "size", "dao", "selectRoute"], ["usuario", ""], ["label", "Unidade", "icon", "fab fa-unity", "controlName", "unidade_id", 3, "size", "dao", "selectRoute"], ["unidade", ""], ["date", "", "label", "In\u00EDcio", "controlName", "inicio", "labelInfo", "Data de in\u00EDcio da tarefa", 3, "size"], ["date", "", "label", "Fim", "controlName", "fim", "labelInfo", "Data fim da tarefa", 3, "size"], ["multiselect", "", 3, "items", "multiselectChange"], ["title", "Tarefa", 3, "template"], ["columnTarefa", ""], ["title", "Recursos", 3, "template"], ["columnRecursos", ""], [3, "url", "hint", 4, "ngFor", "ngForOf"], [3, "url", "hint"]], template: function ProjetoTarefaFilterComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "editable-form", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](1, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](2, "input-search", 2, 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](4, "input-search", 4, 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](6, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](7, "input-datetime", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](8, "input-datetime", 7);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](9, "grid", 8);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](10, "columns");
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](11, "column", 9);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](12, ProjetoTarefaFilterComponent_ng_template_12_Template, 6, 4, "ng-template", null, 10, _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](14, "column", 11);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](15, ProjetoTarefaFilterComponent_ng_template_15_Template, 1, 1, "ng-template", null, 12, _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+    } if (rf & 2) {
+        const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵreference"](13);
+        const _r4 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵreference"](16);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("form", ctx.form)("buttons", ctx.buttons)("disabled", ctx.formDisabled);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 6)("dao", ctx.usuarioDao)("selectRoute", _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵpureFunction1"](16, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵpureFunction0"](15, _c0)));
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 6)("dao", ctx.unidadeDao)("selectRoute", _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵpureFunction1"](19, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵpureFunction0"](18, _c2)));
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("items", ctx.tarefas)("multiselectChange", ctx.onMultiselectChange.bind(ctx));
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("template", _r2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("template", _r4);
+    } }, directives: [_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_7__["EditableFormComponent"], _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_8__["InputSearchComponent"], _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_9__["InputDatetimeComponent"], src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__["GridComponent"], _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_10__["ColumnsComponent"], _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_11__["ColumnComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_12__["NgForOf"], _components_profile_picture_profile_picture_component__WEBPACK_IMPORTED_MODULE_13__["ProfilePictureComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwcm9qZXRvLXRhcmVmYS1maWx0ZXIuY29tcG9uZW50LnNjc3MifQ== */"] });
 
 
 /***/ }),
@@ -13633,11 +17356,105 @@ ProjetoFormEnvolvidosComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1_
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProjetoFormRecursosComponent", function() { return ProjetoFormRecursosComponent; });
-/* harmony import */ var src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/modules/base/page-frame-base */ "rvJe");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/components/editable-form/editable-form.component */ "RKEd");
+/* harmony import */ var src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/models/projeto.model */ "LZl6");
+/* harmony import */ var src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/modules/base/page-frame-base */ "rvJe");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ "lYxd");
+/* harmony import */ var _components_input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../components/input/input-number/input-number.component */ "imFN");
+/* harmony import */ var _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../components/separator/separator.component */ "FVj5");
+/* harmony import */ var _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../components/grid/grid.component */ "m4bG");
+/* harmony import */ var _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/grid/columns/columns.component */ "d7UH");
+/* harmony import */ var _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../../components/grid/column/column.component */ "pFmK");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/common */ "ofXK");
+/* harmony import */ var _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../../../components/input/input-switch/input-switch.component */ "puzm");
 
 
-class ProjetoFormRecursosComponent extends src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_0__["PageFrameBase"] {
+
+
+
+
+
+
+
+
+
+
+
+
+function ProjetoFormRecursosComponent_ng_template_11_strong_0_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "strong", 16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const row_r10 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"]().row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"]((row_r10.tarefa == null ? null : row_r10.tarefa.nome) || "");
+} }
+function ProjetoFormRecursosComponent_ng_template_11_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](0, ProjetoFormRecursosComponent_ng_template_11_strong_0_Template, 2, 1, "strong", 15);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+} if (rf & 2) {
+    const row_r10 = ctx.row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", row_r10.tarefa == null ? null : row_r10.tarefa.nome.length);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", row_r10.descricao, " ");
+} }
+function ProjetoFormRecursosComponent_ng_template_14_i_1_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "i", 19);
+} }
+function ProjetoFormRecursosComponent_ng_template_14_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "div", 17);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](1, ProjetoFormRecursosComponent_ng_template_14_i_1_Template, 1, 0, "i", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const row_r13 = ctx.row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", row_r13.concluido);
+} }
+function ProjetoFormRecursosComponent_ng_template_16_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "input-switch", 20);
+} if (rf & 2) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12);
+} }
+function ProjetoFormRecursosComponent_ng_template_19_strong_0_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "strong", 16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const row_r16 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"]().row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"]((row_r16.tarefa == null ? null : row_r16.tarefa.nome) || "");
+} }
+function ProjetoFormRecursosComponent_ng_template_19_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](0, ProjetoFormRecursosComponent_ng_template_19_strong_0_Template, 2, 1, "strong", 15);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+} if (rf & 2) {
+    const row_r16 = ctx.row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", row_r16.tarefa == null ? null : row_r16.tarefa.nome.length);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", row_r16.descricao, " ");
+} }
+function ProjetoFormRecursosComponent_ng_template_22_strong_0_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "strong", 16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const row_r19 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"]().row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"]((row_r19.tarefa == null ? null : row_r19.tarefa.nome) || "");
+} }
+function ProjetoFormRecursosComponent_ng_template_22_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](0, ProjetoFormRecursosComponent_ng_template_22_strong_0_Template, 2, 1, "strong", 15);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+} if (rf & 2) {
+    const row_r19 = ctx.row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", row_r19.tarefa == null ? null : row_r19.tarefa.nome.length);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", row_r19.descricao, " ");
+} }
+class ProjetoFormRecursosComponent extends src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_3__["PageFrameBase"] {
     constructor(injector) {
         super(injector);
         this.injector = injector;
@@ -13645,15 +17462,98 @@ class ProjetoFormRecursosComponent extends src_app_modules_base_page_frame_base_
             let result = null;
             return result;
         };
-        this.form = this.fh.FormBuilder({}, this.cdRef, this.validate);
+        this.form = this.fh.FormBuilder({
+            tipo_recurso: { default: "" },
+            nome_recurso: { default: "" },
+            und_recurso: { default: "" },
+            vlr_recurso: { default: 0.00 }
+        }, this.cdRef, this.validate);
+    }
+    set control(value) { super.control = value; }
+    get control() { return super.control; }
+    set entity(value) { super.entity = value; }
+    get entity() { return super.entity; }
+    get items() {
+        if (!this.gridControl.value)
+            this.gridControl.setValue(new src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_2__["Projeto"]());
+        if (!this.gridControl.value.recursos)
+            this.gridControl.value.recursos = [];
+        return this.gridControl.value.recursos;
+    }
+    loadData(entity, form) {
+        super.loadData(entity, form);
+    }
+    initializeData(form) {
+        this.entity = new src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_2__["Projeto"]();
+        this.loadData(this.entity, this.form);
+    }
+    saveData(form) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                resolve(this.entity);
+            });
+        });
     }
 }
-ProjetoFormRecursosComponent.ɵfac = function ProjetoFormRecursosComponent_Factory(t) { return new (t || ProjetoFormRecursosComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
-ProjetoFormRecursosComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: ProjetoFormRecursosComponent, selectors: [["projeto-form-recursos"]], features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]], decls: 2, vars: 0, template: function ProjetoFormRecursosComponent_Template(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "p");
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](1, "projeto-form-recursos works!");
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-    } }, styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwcm9qZXRvLWZvcm0tcmVjdXJzb3MuY29tcG9uZW50LnNjc3MifQ== */"] });
+ProjetoFormRecursosComponent.ɵfac = function ProjetoFormRecursosComponent_Factory(t) { return new (t || ProjetoFormRecursosComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_4__["Injector"])); };
+ProjetoFormRecursosComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineComponent"]({ type: ProjetoFormRecursosComponent, selectors: [["projeto-form-recursos"]], viewQuery: function ProjetoFormRecursosComponent_Query(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__["EditableFormComponent"], 1);
+    } if (rf & 2) {
+        let _t;
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
+    } }, inputs: { control: "control", entity: "entity" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵInheritDefinitionFeature"]], decls: 24, vars: 15, consts: [[3, "form", "disabled", "title"], [1, "row"], ["label", "Tipo de recurso", "controlName", "tipo_recurso", 3, "size"], ["label", "Nome", "controlName", "nome_recurso", "labelInfo", "Nome do recurso", 3, "size"], ["label", "Unidade", "controlName", "und_recurso", "labelInfo", "Unidade de apresenta\u00E7\u00E3o do recurso", 3, "size"], ["number", "", "label", "Valor", "controlName", "vlr_recurso", "labelInfo", "Valor do recurso", 3, "size"], ["title", "Lista de recuros"], [3, "hasDelete"], [3, "title", "template"], ["tarefaDescricao", ""], ["title", "Nome do recurso", 3, "align", "template", "editTemplate"], ["concluido", ""], ["editConcluido", ""], ["title", "Unidade", 3, "template"], ["title", "Valor", 3, "template"], ["class", "d-block", 4, "ngIf"], [1, "d-block"], [1, "text-center"], ["class", "bi bi-check-circle", 4, "ngIf"], [1, "bi", "bi-check-circle"], ["controlName", "concluido", 3, "size"]], template: function ProjetoFormRecursosComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "editable-form", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](1, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](2, "input-text", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](3, "input-text", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](4, "input-text", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](5, "input-number", 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](6, "separator", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](7, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](8, "grid", 7);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](9, "columns");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](10, "column", 8);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](11, ProjetoFormRecursosComponent_ng_template_11_Template, 2, 2, "ng-template", null, 9, _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](13, "column", 10);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](14, ProjetoFormRecursosComponent_ng_template_14_Template, 2, 1, "ng-template", null, 11, _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](16, ProjetoFormRecursosComponent_ng_template_16_Template, 1, 1, "ng-template", null, 12, _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](18, "column", 13);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](19, ProjetoFormRecursosComponent_ng_template_19_Template, 2, 2, "ng-template", null, 9, _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](21, "column", 14);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](22, ProjetoFormRecursosComponent_ng_template_22_Template, 2, 2, "ng-template", null, 9, _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    } if (rf & 2) {
+        const _r0 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵreference"](12);
+        const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵreference"](15);
+        const _r4 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵreference"](17);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("hasDelete", true);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("title", ctx.lex.noun("Tipo") + " do Recurso")("template", _r0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("align", "center")("template", _r2)("editTemplate", _r4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("template", _r0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("template", _r0);
+    } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__["EditableFormComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_5__["InputTextComponent"], _components_input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_6__["InputNumberComponent"], _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_7__["SeparatorComponent"], _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_8__["GridComponent"], _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_9__["ColumnsComponent"], _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_10__["ColumnComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_11__["NgIf"], _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_12__["InputSwitchComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwcm9qZXRvLWZvcm0tcmVjdXJzb3MuY29tcG9uZW50LnNjc3MifQ== */"] });
 
 
 /***/ }),

@@ -1,6 +1,6 @@
 <input-container [labelPosition]="labelPosition" [controlName]="controlName" [control]="control" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
     <div class="input-group">
-        <select #inputElement class="selectpicker form-control select-config" [id]="controlName" [attr.data-live-search]="isLiveSearch ? 'true' : undefined"  [attr.disabled]="isDisabled ? true : undefined" [class.is-invalid]="isInvalid()" (change)="onChange($event)">
+        <select #inputElement class="selectpicker form-control select-config" [id]="generatedId(controlName)" [attr.data-live-search]="isLiveSearch ? 'true' : undefined"  [attr.disabled]="isDisabled ? true : undefined" [class.is-invalid]="isInvalid()" (change)="onChange($event)">
             <option *ngIf="loading; else isntLoading" data-icon="bi bi-clock-history" selected>{{CARREGANDO}}</option>
             <ng-template #isntLoading>
                 <option *ngIf="isNullable" value="null">{{itemNull}}</option>
@@ -9,10 +9,11 @@
             </ng-template>
             <!-- [attr.selected]="itemSelected(item)" -->
         </select>
-        <button *ngIf="addRoute && dao" class="btn btn-outline-success" type="button" (click)="onAddClick($event)">
+        <!-- <button *ngIf="addRoute && dao" class="btn btn-outline-success" type="button" (click)="onAddClick($event)"> -->
+        <button *ngIf="addRoute && dao" [id]="generatedId(controlName) + '_route_button'" class="btn btn-outline-success" type="button" (click)="onAddClick($event)">
             <i class="bi bi-plus-circle"></i>
         </button>
-        <button *ngIf="isDetails" class="btn btn-outline-secondary" type="button" [disabled]="!selectedValue ? true : undefined" (click)="onDetailsClick($event)">
+        <button *ngIf="isDetails" [id]="generatedId(controlName) + '_details_button'" class="btn btn-outline-secondary" type="button" [disabled]="!selectedValue ? true : undefined" (click)="onDetailsClick($event)">
             <i [class]="detailsButtonIcon || 'bi-info-circle'"></i>
         </button>
     </div>

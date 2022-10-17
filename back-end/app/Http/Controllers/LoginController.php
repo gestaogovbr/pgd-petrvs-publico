@@ -163,7 +163,7 @@ class LoginController extends Controller
         $credentials = $request->validate(['token' => ['required']]);
         $tokenData = $auth->verifyFirebaseToken($credentials['token']);
         if(!isset($tokenData['error'])) {
-            $usuario = $this->registrarUsuario($request, Usuario::where('email', $tokenData['email'])->first());
+            $usuario = $this->registrarUsuario($request, Usuario::where('email', $tokenData['email'])->where("data_fim", null)->first());
             if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
                 $usuarioService = new UsuarioService();
                 $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_FIREBASE, $usuario, $tokenData["picture"]);
@@ -190,7 +190,7 @@ class LoginController extends Controller
         $credentials = $request->validate(['token' => ['required']]);
         $tokenData = $auth->verifyToken($credentials['token']);
         if(!isset($tokenData['error'])) {
-            $usuario = $this->registrarUsuario($request, Usuario::where('email', $tokenData['email'])->first());
+            $usuario = $this->registrarUsuario($request, Usuario::where('email', $tokenData['email'])->where("data_fim", null)->first());
             if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
                 $usuarioService = new UsuarioService();
                 $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
@@ -217,7 +217,7 @@ class LoginController extends Controller
         $credentials = $request->validate(['token' => ['required']]);
         $tokenData = $auth->verifyToken($credentials['token']);
         if(!isset($tokenData['error'])) {
-            $usuario = Usuario::where('email', $tokenData['email'])->first();
+            $usuario = Usuario::where('email', $tokenData['email'])->where("data_fim", null)->first();
             if(!isset($usuario) && $integracao->autoIncluir) {
                 LogError::newWarn("Fill");
                 $usuario = new Usuario();
@@ -257,7 +257,7 @@ class LoginController extends Controller
         $profile = $auth->loginToken($credentials['cpf'], $credentials['senha'], $credentials['token']);
         if(!isset($profile['error'])) {
             $email = str_contains($profile['email'], "@") ? $profile['email'] : $profile["email"] . "@prf.gov.br";
-            $usuario = Usuario::where('email', $email)->first();
+            $usuario = Usuario::where('email', $email)->where("data_fim", null)->first();
             if(!isset($usuario) && $auth->autoIncluir) {
                 $usuario = new Usuario();
                 $lotacao = new Lotacao();
@@ -309,7 +309,7 @@ class LoginController extends Controller
             'password' => ['required'],
             'device_name' => ['required'],
         ]);
-        $usuario = Usuario::where('email', $credentials['email'])->first();
+        $usuario = Usuario::where('email', $credentials['email'])->where("data_fim", null)->first();
         if (isset($usuario)) {
             $request->session()->put("kind", "USERPASSWORD");
             $user = Auth::user();
@@ -336,7 +336,7 @@ class LoginController extends Controller
         ]);
         $tokenData = $auth->verifyFirebaseToken($credentials['token']);
         if(!isset($tokenData['error'])) {
-            $usuario = Usuario::where('email', $tokenData['email'])->first();
+            $usuario = Usuario::where('email', $tokenData['email'])->where("data_fim", null)->first();
             if (isset($usuario)) { // && Hash::check($request->password, $user->password)
                 $usuarioService = new UsuarioService();
                 $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_FIREBASE, $usuario, $tokenData["picture"]);
@@ -365,7 +365,7 @@ class LoginController extends Controller
         ]);
         $tokenData = $auth->verifyToken($credentials['token']);
         if(!isset($tokenData['error'])) {
-            $usuario = Usuario::where('email', $tokenData['email'])->first();
+            $usuario = Usuario::where('email', $tokenData['email'])->where("data_fim", null)->first();
             if (isset($usuario)) { // && Hash::check($request->password, $user->password)
                 $usuarioService = new UsuarioService();
                 $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
@@ -398,7 +398,7 @@ class LoginController extends Controller
         $tokenData = $auth->verifyToken($credentials['token']);
         LogError::newWarn("Decodificou", $tokenData);
         if(!isset($tokenData['error'])) {
-            $usuario = Usuario::where('email', $tokenData['email'])->first();
+            $usuario = Usuario::where('email', $tokenData['email'])->where("data_fim", null)->first();
             if(!isset($usuario) && $integracao->autoIncluir) {
                 LogError::newWarn("Fill");
                 $usuario = new Usuario();
@@ -440,7 +440,7 @@ class LoginController extends Controller
         $profile = $auth->loginToken($credentials['cpf'], $credentials['senha'], $credentials['token']);
         if(!isset($profile['error'])) {
             $email = str_contains($profile["email"], "@") ? $profile["email"] : $profile["email"] . "@prf.gov.br";
-            $usuario = Usuario::where('email', $email)->first();
+            $usuario = Usuario::where('email', $email)->where("data_fim", null)->first();
             if(!isset($usuario) && $auth->autoIncluir) {
                 $usuario = new Usuario();
                 $lotacao = new Lotacao();
@@ -504,7 +504,7 @@ class LoginController extends Controller
             $email = explode("#", $email);
             $email = $email[0];
             $email = str_replace("_", "@", $email);
-            $usuario = $this->registrarUsuario($request, Usuario::where('email', $email)->first());
+            $usuario = $this->registrarUsuario($request, Usuario::where('email', $email)->where("data_fim", null)->first());
             if (($usuario)) {
                 Auth::loginUsingId($usuario->id);
                 $request->session()->regenerate();

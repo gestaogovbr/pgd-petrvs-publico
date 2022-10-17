@@ -32,6 +32,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
   @Output() select = new EventEmitter<SelectItem>();
   @Output() load = new EventEmitter<SelectItem | undefined>();
   @Output() change = new EventEmitter<Event>();
+  @Input() hostClass: string = ""; 
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
   @Input() disabled?: string;
@@ -75,24 +76,18 @@ export class InputSearchComponent extends InputBase implements OnInit {
   public searchObj: any = undefined;
   public go: NavigateService;
   public util: UtilService;
-  public uuid: string;
 
   constructor(public injector: Injector) {
     super(injector);
     this.util = this.injector.get<UtilService>(UtilService);
     this.go = injector.get<NavigateService>(NavigateService);
-    this.uuid = this.util.md5();
-  }
-
-  public get controlId(): string {
-    return this.controlName + this.uuid;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
     if(!this.isDisabled){
       $(() => {
-        const elm = document.getElementById(this.controlId + '_search_dropdown');
+        const elm = document.getElementById(this.generatedId(this.controlName) + '_search_dropdown');
         // @ts-ignore
         if(elm) this.dropdown = new bootstrap.Dropdown(elm);
       });
@@ -120,7 +115,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
       if(this.change && emitEvent) this.change.emit(new Event("change"));
     }
     if(selected) {
-      $("#"+ this.controlId).val(selected.text);
+      $("#"+ this.generatedId(this.controlName)).val(selected.text);
       this.selectedValue = selected.value;
       this.control?.setValue(this.selectedValue, {emitEvent: false});
       this.searchObj = undefined;
@@ -194,6 +189,12 @@ export class InputSearchComponent extends InputBase implements OnInit {
     }
   }
 
+  public getItemId(item: SelectItem | SearchGroupSeparator): string {
+    return this.generatedId(this.controlName) + (item.hasOwnProperty('value') ? 
+      '_item_' + (item as IIndexable)['value'] :
+      '_sep_' + this.util.onlyAlphanumeric((item as IIndexable)['groups'].text));
+  }
+  
   public isSeparator(row: any): boolean {
     return (row instanceof SearchGroupSeparator);
   }
@@ -223,7 +224,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
     this.dao?.searchText(text, this.fields, this.where, this.groupBy?.map(x => [x.field, "asc"])).then(result => {
       if(this.queryText == text){
         this.items = this.group(result);
-        this.dropdownWidth = $("#"+ this.controlId).first().outerWidth() || 200;
+        this.dropdownWidth = $("#"+ this.generatedId(this.controlName)).first().outerWidth() || 200;
         this.cdRef.detectChanges();
         if(this.items.length) {
           this.dropdown?.show();

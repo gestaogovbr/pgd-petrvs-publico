@@ -10,11 +10,12 @@ use App\Models\ProjetoRegra;
 use App\Models\TipoProjeto;
 use App\Models\ProjetoRecurso;
 use App\Traits\AutoDataInicio;
+use App\Traits\HasDataFim;
 use Illuminate\Support\Facades\DB;
 
 class Projeto extends ModelBase
 {
-    use AutoDataInicio;
+    use AutoDataInicio, HasDataFim;
 
     protected static function booted()
     {
@@ -66,7 +67,6 @@ class Projeto extends ModelBase
     // Has
     public function tarefas() { return $this->hasMany(ProjetoTarefa::class); }    
     public function regras() { return $this->hasMany(ProjetoRegra::class); }    
-    public function envolvidos() { return $this->hasMany(ProjetoEnvolvido::class); }    
     public function alocacoes() { return $this->hasMany(ProjetoAlocacao::class); }    
     public function recursos() { return $this->hasMany(ProjetoRecurso::class); }    
     // Belongs

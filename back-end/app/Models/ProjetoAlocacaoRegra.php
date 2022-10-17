@@ -3,20 +3,19 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
-use App\Models\Projeto;
-use App\Models\ProjetoRecurso;
+use App\Models\ProjetoAlocacao;
 use App\Models\ProjetoRegra;
 use App\Traits\AutoDataInicio;
+use App\Traits\HasDataFim;
 
-class ProjetoEnvolvido extends ModelBase
+class ProjetoAlocacaoRegra extends ModelBase
 {
-    use AutoDataInicio;
+    use AutoDataInicio, HasDataFim;
 
-    protected $table = 'projetos_envolvidos';
+    protected $table = 'projetos_alocacoes_regras';
 
     public $fillable = [
-        'projeto_id',
-        'recurso_id',
+        'projeto_alocacao_id',
         'regra_id'
     ];
 
@@ -31,7 +30,6 @@ class ProjetoEnvolvido extends ModelBase
     // Has
     //public function () { return $this->hasMany(::class); }    
     // Belongs
-    public function projeto() { return $this->belongsTo(Projeto::class); }    
-    public function recurso() { return $this->belongsTo(ProjetoRecurso::class); }    
+    public function projetoAlocacao() { return $this->belongsTo(ProjetoAlocacao::class); }    
     public function regra() { return $this->belongsTo(ProjetoRegra::class); }    
 }

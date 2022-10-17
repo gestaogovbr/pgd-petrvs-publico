@@ -1,7 +1,6 @@
 import { Base } from './base.model';
 import { Usuario } from './usuario.model';
 import { TipoProjeto } from './tipo-projeto.model';
-import { ProjetoEnvolvido } from './projeto-envolvido.model';
 import { ProjetoRegra } from './projeto-regra.model';
 import { ProjetoRecurso } from './projeto-recurso.model';
 import { ProjetoAlocacao } from './projeto-alocacao.model';
@@ -14,7 +13,6 @@ export type ProjetoStatus = 'PLANEJADO' | 'INICIADO' | 'CONCLUIDO' | 'SUSPENSO' 
 export class Projeto extends Base implements HasComentarios {
     public tipo_projeto?: TipoProjeto;
     public usuario?: Usuario;
-    public envolvidos?: ProjetoEnvolvido[];
     public regras?: ProjetoRegra[];
     public recursos?: ProjetoRecurso[];
     public alocacoes?: ProjetoAlocacao[];

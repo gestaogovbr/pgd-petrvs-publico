@@ -438,7 +438,13 @@ export class LookupService {
     { key: "EDIT", value: "EDIT" },
     { key: "DELETE", value: "DELETE" },
   ];
-  
+  public PROJETO_TIPO_RECURSOS: LookupItem[] = [
+    { key: "HUMANO", value: "Humano", icon: "bi bi-bar-chart-steps", color: "bg-primary" },
+    { key: "DEPARTAMENTO", value: "Departamento", icon: "bi bi-collection-play", color: "bg-success" },
+    { key: "MATERIAL", value: "Material", icon: "bi bi-calendar2-check", color: "bg-dark" },
+    { key: "SERVIÇO", value: "Serviço", icon: "bi bi-pause-btn", color: "bg-warning text-dark" },
+    { key: "CUSTO", value: "Cancelado", icon: "bi bi-x-square", color: "bg-danger" }
+  ];
   public getLookup(itens: LookupItem[], key: any) {
     return itens.find(x => x.key == key);
   }

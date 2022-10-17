@@ -12,6 +12,7 @@ use App\Models\Entidade;
 use App\Models\UnidadeOrigemAtividade;
 use App\Models\Cidade;
 use App\Traits\AutoDataInicio;
+use App\Traits\HasDataFim;
 
 class UnidadeNotificacoes {
     public $enviar_email = true;
@@ -30,7 +31,7 @@ class UnidadeNotificacoes {
 
 class Unidade extends ModelBase
 {
-    use AutoDataInicio;
+    use AutoDataInicio, HasDataFim;
 
     protected $with = ['cidade'];
 

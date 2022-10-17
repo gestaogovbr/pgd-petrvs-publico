@@ -11,6 +11,7 @@ use App\Services\ServiceBase;
 use App\Services\PlanoService;
 use App\Services\Util;
 use App\Services\DemandaService;
+use App\Services\LotacaoService;
 use App\Services\RawWhere;
 use App\Services\UtilService;
 use App\Traits\UseDataFim;
@@ -206,8 +207,18 @@ class UsuarioService extends ServiceBase
      */
     public function validateStore($data, $unidade, $action) {
         if($action == ServiceBase::ACTION_INSERT) {
-            $alreadyHas = Usuario::where("id", "!=", $data["id"])->where("email", $data["email"])->orWhere("cpf", $data["cpf"])->orWhere("matricula", $data["matricula"])->first();
-            if(!empty($alreadyHas)) throw new \Exception("Já existe um usuário com mesmo e-mail/CPF/Matrícula no sistema");
+            if(empty($data["email"])) throw new \Exception("O campo de e-mail é obrigatório");
+            if(empty($data["cpf"])) throw new \Exception("O campo de CPF é obrigatório");
+            $alreadyHas = Usuario::where("id", "!=", $data["id"])->where("email", $data["email"])->orWhere("cpf", $data["cpf"])->first();
+            if(!empty($alreadyHas)) {
+                if(!empty($alreadyHas->data_fim)) { /* Caso o usuário exista, mas esteja excluído, reabilita o usuário */
+                    $this->LotacaoService->removerLotacoesUsuario($alreadyHas);
+                    $alreadyHas->data_fim = null;
+                    return $alreadyHas;
+                } else {
+                    throw new \Exception("Já existe um usuário com mesmo e-mail ou CPF no sistema");
+                }
+            }
             if(($data["perfil_id"] == $this->developer_id) && (!$this->IsLoggedUserADeveloper())) throw new \Exception("Tentativa de inserir um usuário com o perfil de Desenvolvedor");
         }
     }

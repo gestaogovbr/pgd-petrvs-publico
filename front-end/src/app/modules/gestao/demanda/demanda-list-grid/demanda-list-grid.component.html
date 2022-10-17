@@ -1,7 +1,7 @@
 <ng-template #calendarEfemerides>
     <calendar-efemerides [efemerides]="efemerides"></calendar-efemerides>
 </ng-template>
-<grid [dao]="dao" [add]="add" [form]="formEdit" [hasEdit]="false" [hasDelete]="false" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" (loadList)="onGridLoad($event)" [selectable]="selectable" (select)="onSelect($event)">
+<grid [dao]="dao" [add]="add" [form]="formEdit" [hasEdit]="false" [hasDelete]="false" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [loadList]="onGridLoad.bind(this)" [selectable]="selectable" (select)="onSelect($event)">
     <toolbar *ngIf="!fixedFilter && !selectable">
         <input-switch [size]="4" labelPosition="left" label="Agrupar por Un." controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
     </toolbar>

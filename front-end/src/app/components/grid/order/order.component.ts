@@ -1,5 +1,6 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Injector, Input, OnInit } from '@angular/core';
 import { QueryOrderBy } from 'src/app/dao/dao-base.service';
+import { ComponentBase } from '../../component-base';
 import { ColumnHeaderComponent } from '../column-header/column-header.component';
 
 @Component({
@@ -7,13 +8,15 @@ import { ColumnHeaderComponent } from '../column-header/column-header.component'
   templateUrl: './order.component.html',
   styleUrls: ['./order.component.scss']
 })
-export class OrderComponent implements OnInit {
+export class OrderComponent extends ComponentBase implements OnInit {
   @Input() header?: ColumnHeaderComponent;
   @Input() title: string = "";
   @Input() by: string = "";
   @Input() hint?: string;
 
-  constructor(public cdRef: ChangeDetectorRef) { }
+  constructor(injector: Injector) {
+    super(injector);
+  }
 
   ngOnInit(): void {
   }

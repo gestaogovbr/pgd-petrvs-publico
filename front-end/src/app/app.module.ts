@@ -16,6 +16,7 @@ import { DemandaModule } from './modules/gestao/demanda/demanda.module';
 import { RelatorioModule } from './modules/relatorios/relatorio.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LogsModule } from './modules/logs/logs.module';
+import { UteisModule } from './modules/uteis/uteis.module';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { LogsModule } from './modules/logs/logs.module';
     DemandaModule,
     ChartsModule,
     RelatorioModule,
+    UteisModule,
     LogsModule
   ],
   providers: [],

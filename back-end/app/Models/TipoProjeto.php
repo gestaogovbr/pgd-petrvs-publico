@@ -4,11 +4,12 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Traits\AutoDataInicio;
+use App\Traits\HasDataFim;
 use App\Models\Projeto;
 
 class TipoProjeto extends ModelBase
 {
-    use AutoDataInicio;
+    use AutoDataInicio, HasDataFim;
 
     protected $table = 'tipos_projetos';
 
