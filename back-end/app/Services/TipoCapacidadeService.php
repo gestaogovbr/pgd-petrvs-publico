@@ -120,6 +120,10 @@ class TipoCapacidadeService extends ServiceBase {
         ["b006a737-f94d-11ec-a5bb-0050569c64a0", "MOD_DMD_USERS_ALT_AVAL", "Permite alterar avaliação de demanda de qualquer usuário, inclusive de outra lotação"],
         ["b0118ccd-f94d-11ec-a5bb-0050569c64a0", "MOD_DMD_USERS_EXCL", "Permite excluir demanda de qualquer usuário, inclusive de outra lotação"],
         ["2da688ee-2221-11ed-a5bb-0050569c64a0", "MOD_DMD_USERS_ATRIB", "Permite qualquer usuário atribuir demanda para qualqer outro"],
+        ["b856b5f9-4bca-11ed-a5bb-0050569c64a0", "MOD_DMD_TRF_INCL", "Permite incluir tarefas dentro de demandas"],
+        ["d5b0b20b-4bcc-11ed-a5bb-0050569c64a0", "MOD_DMD_TRF_EDT", "Permite editar tarefas dentro de demandas"],
+        ["ef26230f-4bcc-11ed-a5bb-0050569c64a0", "MOD_DMD_TRF_EXCL", "Permite exluir tarefas dentro de demandas"],
+        ["0c27addd-4bcd-11ed-a5bb-0050569c64a0", "MOD_DMD_TRF_CONS", "Permite consultar tarefas dentro de demandas"],
         /* Capacidades do módulo ENTIDADE*/
         ["ea2610e6-e1d7-11ec-a5bb-0050569c64a0", "MOD_ENTD_CFG", "Permite configurar Entidade"],
         ["a8ef649e-e112-11ec-a5bb-0050569c64a0", "MOD_ENTD_CONS", "Permite consultar Entidade"],
