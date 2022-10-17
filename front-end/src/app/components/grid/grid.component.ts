@@ -182,7 +182,7 @@ export class GridComponent implements OnInit {
   }
   public BUTTON_FILTER: ToolbarButton = {
     icon: "bi bi-search",
-    label: "Filtrar",
+    label: "Filtros",
     onClick: () => this.filterRef?.toggle()
   };
   public BUTTON_ADD: ToolbarButton = {

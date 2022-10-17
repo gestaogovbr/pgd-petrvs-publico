@@ -9,6 +9,34 @@ import { QueryContext } from 'src/app/dao/query-context';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { appInjector } from 'src/app/app.component';
 import { QueryOptions } from 'src/app/dao/query-options';
+import { AfastamentoDaoService } from 'src/app/dao/afastamento-dao.service';
+import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
+import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
+import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
+import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
+import { ProjetoDaoService } from 'src/app/dao/projeto-dao.service';
+import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
+import { DemandaDaoService } from 'src/app/dao/demanda-dao.service';
+import { TarefaDaoService } from 'src/app/dao/tarefa-dao.service';
+import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
+import { FeriadoDaoService } from 'src/app/dao/feriado-dao.service';
+import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
+import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
+import { MaterialServicoDaoService } from 'src/app/dao/material-servico-dao.service';
+import { TipoAtividadeDaoService } from 'src/app/dao/tipo-atividade-dao.service';
+import { TipoAvaliacaoDaoService } from 'src/app/dao/tipo-avaliacao-dao.service';
+import { TipoDocumentoDaoService } from 'src/app/dao/tipo-documento-dao.service';
+import { TipoJustificativaDaoService } from 'src/app/dao/tipo-justificativa-dao.service';
+import { TipoModalidadeDaoService } from 'src/app/dao/tipo-modalidade-dao.service';
+import { TipoMotivoAfastamentoDaoService } from 'src/app/dao/tipo-motivo-afastamento-dao.service';
+import { TipoProcessoDaoService } from 'src/app/dao/tipo-processo-dao.service';
+
+export type LogEntity = {
+  table: string,
+  dao: DaoBaseService<Base>,
+  label: string,
+  selectRoute: FullRoute
+}
 
 //@Component({ template: '' })
 @Injectable()
@@ -35,22 +63,35 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
   public static selectRoute?: FullRoute;
   public storeFilter?: (filter?: FormGroup) => any;
   public loadFilterParams?: (params: any, filter?: FormGroup) => void;
+  public entities: LogEntity[] = [];
+  public entity?: LogEntity;
 
   constructor(public injector: Injector, mType: Type<M>, dType: Type<D>) {
     super(injector);
     this.dao = injector.get<D>(dType);
-    /*this.options = [
-      {
-        label: "Informações",
-        icon: "bi bi-info-circle",
-        onClick: this.consult.bind(this)
-      },
-      {
-        label: "Excluir",
-        icon: "bi bi-trash",
-        onClick: this.delete.bind(this)
-      }
-    ];*/
+    this.entities = [
+      {table: 'afastamentos', dao: injector.get<AfastamentoDaoService>(AfastamentoDaoService), label: "Afastamento", selectRoute: {route: ['cadastros', 'afastamento']}},
+      {table: 'atividades', dao: injector.get<AtividadeDaoService>(AtividadeDaoService), label: "Atividade", selectRoute: {route: ['cadastros', 'atividade']}},
+      {table: 'cidades', dao: injector.get<CidadeDaoService>(CidadeDaoService), label: "Cidade", selectRoute: {route: ['cadastros', 'cidade']}},
+      {table: 'demandas', dao: injector.get<DemandaDaoService>(DemandaDaoService), label: "Demanda", selectRoute: {route: ['gestao', 'demanda']}},
+      {table: 'entidades', dao: injector.get<EntidadeDaoService>(EntidadeDaoService), label: "Entidade", selectRoute: {route: ['configuracoes', 'entidade']}},
+      {table: 'feriados', dao: injector.get<FeriadoDaoService>(FeriadoDaoService), label: "Feriado", selectRoute: {route: ['cadastros', 'feriado']}},
+      {table: 'materiais_servicos', dao: injector.get<MaterialServicoDaoService>(MaterialServicoDaoService), label: "Material/Serviço", selectRoute: {route: ['cadastros', 'material-servico']}},
+      {table: 'perfis', dao: injector.get<PerfilDaoService>(PerfilDaoService), label: "Perfil", selectRoute: {route: ['configuracoes', 'perfil']}},
+      {table: 'planos', dao: injector.get<PlanoDaoService>(PlanoDaoService), label: "Plano", selectRoute: {route: ['gestao', 'plano']}},
+      {table: 'programas', dao: injector.get<ProgramaDaoService>(ProgramaDaoService), label: "Programa", selectRoute: {route: ['cadastros', 'programa']}},
+      {table: 'projetos', dao: injector.get<ProjetoDaoService>(ProjetoDaoService), label: "Projeto", selectRoute: {route: ['gestao', 'projeto']}},
+      {table: 'tarefas', dao: injector.get<TarefaDaoService>(TarefaDaoService), label: "Tarefa", selectRoute: {route: ['cadastros', 'tarefa']}},
+      {table: 'tipos-atividades', dao: injector.get<TipoAtividadeDaoService>(TipoAtividadeDaoService), label: "Tipo de Atividade", selectRoute: {route: ['cadastros', 'tipo-atividade']}},
+      {table: 'tipos-avaliacoes', dao: injector.get<TipoAvaliacaoDaoService>(TipoAvaliacaoDaoService), label: "Tipo de Avaliação", selectRoute: {route: ['cadastros', 'tipo-avaliacao']}},
+      {table: 'tipos-documentos', dao: injector.get<TipoDocumentoDaoService>(TipoDocumentoDaoService), label: "Tipo de Documento", selectRoute: {route: ['cadastros', 'tipo-documento']}},
+      {table: 'tipos-justificativas', dao: injector.get<TipoJustificativaDaoService>(TipoJustificativaDaoService), label: "Tipo de Justificativa", selectRoute: {route: ['cadastros', 'tipo-justificativa']}},
+      {table: 'tipos-modalidades', dao: injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService), label: "Tipo de Modalidade", selectRoute: {route: ['cadastros', 'tipo-modalidade']}},
+      {table: 'tipos-motivos-afastamentos', dao: injector.get<TipoMotivoAfastamentoDaoService>(TipoMotivoAfastamentoDaoService), label: "Tipo de Motivo de Afastamento", selectRoute: {route: ['cadastros', 'tipo-motivo-afastamento']}},
+      {table: 'tipos-processos', dao: injector.get<TipoProcessoDaoService>(TipoProcessoDaoService), label: "Tipo de Processo", selectRoute: {route: ['cadastros', 'tipo-processo']}},
+      {table: 'unidades', dao: injector.get<UnidadeDaoService>(UnidadeDaoService), label: "Unidade", selectRoute: {route: ['configuracoes', 'unidade']}},
+      {table: 'usuarios', dao: injector.get<UsuarioDaoService>(UsuarioDaoService), label: "Usuário", selectRoute: {route: ['configuracoes', 'usuario']}},
+    ];
   }
 
   public saveUsuarioConfig(config?: any) {

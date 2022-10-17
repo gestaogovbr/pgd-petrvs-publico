@@ -1,24 +1,14 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { SelectItem } from 'src/app/components/input/input-base';
+import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { ChangeDaoService } from 'src/app/dao/change-dao.service';
-import { DaoBaseService } from 'src/app/dao/dao-base.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
-import { Base } from 'src/app/models/base.model';
 import { Change } from 'src/app/models/change.model';
-import { Usuario } from 'src/app/models/usuario.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
-import { FullRoute } from 'src/app/services/navigate.service';
-
-export type LogEntity = {
-  table: string,
-  dao: DaoBaseService<Base>,
-  label: string,
-  selectRoute: FullRoute
-}
+import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
   selector: 'app-change-list',
@@ -27,36 +17,30 @@ export type LogEntity = {
 })
 export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
+  @ViewChild('selectTabelas', { static: false }) public selectTabelas?: InputSelectComponent;
 
   public toolbarButtons: ToolbarButton[] = [];
   public allPages: ListenerAllPagesService;
-  public tabelas: string[] | null = [];
-  public entities: LogEntity[] = [];
-  //public entity: LogEntity;
+  public usuarioDao: UsuarioDaoService;
+  public tabelas: LookupItem[] = [];
 
   constructor(public injector: Injector, dao: ChangeDaoService) {
     super(injector, Change, ChangeDaoService);
+    this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
+    this.join = ["usuario"];
     /* Inicializações */
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
-    //this.title = "Logs de registros - tipo CHANGE";
+    this.title = "Log das alterações";
     this.filter = this.fh.FormBuilder({
-      usuario: {default: ""},
-      data_hora: {default: null},
+      responsavel_id: {default: ""},
+      data_inicio: {default: ""},
+      data_fim: {default: ""},
       tabela: {default: ""},
       tipo: {default: ""},
-      row_id: {default: null}
+      row_id: {default: ""}
     });
-
-/*     this.entities = [
-      {table: 'usuarios', dao: injector.get<UsuarioDaoService>(UsuarioDaoService), label: "Usuário", selectRoute: {route: ['configuracoes', 'usuario']}},
-    ] */
-
-    //this.entity = {table: '', dao: injector.get<DaoBaseService<Base>>(DaoBaseService<Base>), label: "Selecione uma tabela válida...", selectRoute: {route: []}};
-
-    //se a tabela selecionada tiver uma entity(Model) associada,
-
     // Testa se o usuário possui permissão para exibir dados dos logs
-    if (this.auth.hasPermissionTo("MOD_LOGS_CONS")) {
+    if (this.auth.hasPermissionTo("DEV_MOD_LOGS")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",
@@ -64,7 +48,7 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
       });
     }
     // Testa se o usuário possui permissão para excluir o registro de log
-    if (this.auth.hasPermissionTo("MOD_LOGS_EXCL")) {
+    if (this.auth.hasPermissionTo("DEV_MOD_LOGS")) {
       this.options.push({
         icon: "bi bi-trash",
         label: "Excluir",
@@ -73,12 +57,31 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     }
   }
 
-  async ngOnInit(){
-    this.tabelas = await this.dao!.showTables();
+  ngAfterViewInit() {
+    super.ngAfterViewInit();
+    this.selectTabelas!.loading = true;
+    this.dao?.showTables().then(tabelas => {
+      this.tabelas = tabelas || [];
+      this.cdRef.detectChanges();
+    }).finally(() => this.selectTabelas!.loading = false);
+  }
+
+  ngAfterViewChecked(){
+    this.cdRef.detectChanges();
+  }
+
+  public onTabelaChange(event: Event) {
+    this.entity = this.entities.find(x => x.table == this.filter?.controls.tabela.value);
+    this.cdRef.detectChanges();
   }
 
   public filterClear(filter: FormGroup) {
-    filter.controls.nome.setValue("");
+    filter.controls.responsavel_id.setValue("");
+    filter.controls.data_inicio.setValue("");
+    filter.controls.data_fim.setValue("");
+    filter.controls.tabela.setValue("");
+    filter.controls.tipo.setValue("");
+    filter.controls.row_id.setValue("");
     super.filterClear(filter);
   }
 
@@ -86,20 +89,24 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     let result: any[] = [];
     let form: any = filter.value;
 
-    if (form.usuario?.length) {
-      result.push(["user_id", "like", "%" + form.usuario + "%"]);
-    } else if(form.tabela?.length) {
-      result.push(["tabela", "like", "%" + form.tabela + "%"]);
-    } //else if(form.status) {
-/*       result.push(["status", "==", form.status]);
-    } else if(form.inicio?.length) {
-      result.push(["termino", ">=", form.inicio]);
-    } else if(form.termino?.length) {
-      result.push(["inicio", "=<", form.termino]);
-    } else if(form.tabela?.length) {
-      result.push(["tabela", "like", "%" + form.tabela + "%"]);
-    } */
-
+    if(form.responsavel_id?.length){
+      result.push(["user_id", "like", "%" + form.responsavel_id + "%"]);
+    };
+    if(form.data_inicio){
+      result.push(["date_time", ">=", form.data_inicio]);
+    };
+    if(form.data_fim){
+      result.push(["date_time", "<=", form.data_fim]);
+    };
+    if(form.tabela){
+      result.push(["table_name", "==", form.tabela]);
+    };
+    if(form.row_id){
+      result.push(["row_id", "==", form.row_id]);
+    };
+    if(form.tipo?.length){
+      result.push(["type", "==", form.tipo]);
+    };
     return result;
   }
 }

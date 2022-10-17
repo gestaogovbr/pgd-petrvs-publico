@@ -107,4 +107,8 @@ class UtilService
         return preg_replace($comAcentos, $semAcentos, $source);
     }
 
+    public static function inicialMaiuscula($termo){
+        return strtoupper($termo[0]).substr($termo,1);
+    }
+
 }

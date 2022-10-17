@@ -472,12 +472,12 @@ function recomputeDuration(start, end) {
   return getDurationInUnits(new Date(start),new Date(end));
 }
 
-function resynchDates(leavingField, startField, startMilesField, durationField, endField, endMilesField) {
+function resynchDates(task, leavingField, startField, startTimeField, startMilesField, durationField, endField, endTimeField, endMilesField) {
   //console.debug("resynchDates",leavingField.prop("name"), "start. "+startField.val(),"durationField: "+ durationField.val(), "endField: "+endField.val());
 
   function resynchDatesSetFields(command) {
     //console.debug("resynchDatesSetFields",command);
-    var duration = stringToDuration(durationField.val());
+    var duration = stringToDuration(task, durationField.val());
     var start = computeStart(Date.parseString(startField.val()).getTime());
 
     var end = endField.val();
@@ -511,15 +511,18 @@ function resynchDates(leavingField, startField, startMilesField, durationField, 
     return {start: start, end: end, duration: duration};
   }
 
+  /* Petrvs */
+  var start = startField.val() + (startTimeField && startTimeField.size() ? "T" + (startTimeField.val() || "00:00:00.000") : "");
+  var end = endField.val() + (endTimeField && endTimeField.size() ? "T" + (endTimeField.val() || "23:59:59.999") : "");
   var leavingFieldName = leavingField.prop("name");
   var durIsFilled = durationField.val().length > 0;
-  var startIsFilled = startField.val().length > 0;
-  var endIsFilled = endField.val().length > 0;
+  var startIsFilled = start.length > 0;
+  var endIsFilled = end.length > 0;
   var startIsMilesAndFilled = startIsFilled && (startMilesField.prop("checked") || startField.is("[readOnly]"));
   var endIsMilesAndFilled = endIsFilled && (endMilesField.prop("checked") || endField.is("[readOnly]"));
 
   if (durIsFilled) {
-    durationField.val(durationToString(stringToDuration(durationField.val())));
+    durationField.val(durationToString(task, stringToDuration(task, durationField.val())));
   }
 
   if (leavingFieldName.indexOf("Milestone") > 0) {
@@ -581,14 +584,41 @@ if (!Array.prototype.filter) {
   };
 }
 
-function durationToString(d) {
-  return d;
+function durationToString(task, d) {
+  /* Petrvs */
+  if(((task.ganttComponet || {}).project || {}).config.hasTime) {
+    var hours = d.toFixed(0);
+    var minutes = Math.floor((d - hours) * 100) * 100 / 60;
+    return zeroFill(hours, 2) + "h" + zeroFill(minutes, 2); 
+  } else {
+    return d;
+  }
 }
 
-function stringToDuration(durStr) {
+function zeroFill(number, size) {
+  return pad(number + "", size, "0");
+}
+
+function stringToDuration(task, durStr) {
   var duration = NaN;
-  duration = daysFromString(durStr, true) || 1;
+  /* Petrvs */
+  if(((task.ganttComponet || {}).project || {}).config.hasTime) {
+    duration = hoursFromString(durStr) || 1;
+  } else {
+    duration = daysFromString(durStr, true) || 1;
+  }
   return duration;
+}
+
+/* Petrvs */
+function hoursFromString(durStr) {
+  if(durStr.indexOf("h") > 0) {
+    var hours = parseInt(durStr.substr(0, durStr.indexOf(":")));
+    var minutes = Math.floor(parseInt(durStr.substr(durStr.indexOf(":") + 1)) * 60 / 100) / 100;
+    return hours + minutes;
+  } else {
+    return undefined;
+  }
 }
 
 function goToPage(url) {

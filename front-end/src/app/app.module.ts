@@ -15,7 +15,7 @@ import { TesteComponent } from './modules/teste/teste.component';
 import { DemandaModule } from './modules/gestao/demanda/demanda.module';
 import { RelatorioModule } from './modules/relatorios/relatorio.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ChangeModule } from './modules/logs/change/change.module';
+import { LogsModule } from './modules/logs/logs.module';
 
 @NgModule({
   declarations: [
@@ -37,7 +37,7 @@ import { ChangeModule } from './modules/logs/change/change.module';
     DemandaModule,
     ChartsModule,
     RelatorioModule,
-    ChangeModule
+    LogsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

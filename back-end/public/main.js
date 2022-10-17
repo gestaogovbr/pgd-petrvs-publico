@@ -650,6 +650,11 @@ class LookupService {
             { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "danger" },
             { key: "AGUARDANDO", value: "Aguardando", icon: "bi bi-pause-fill", color: "light" }
         ];
+        this.TIPO_LOG_CHANGE = [
+            { key: "ADD", value: "ADD" },
+            { key: "EDIT", value: "EDIT" },
+            { key: "DELETE", value: "DELETE" },
+        ];
     }
     getLookup(itens, key) {
         return itens.find(x => x.key == key);
@@ -6475,6 +6480,8 @@ class ComentarioService {
     orderComentarios(comentarios) {
         /* O algoritimo irá falhar se existir algum filho com data_hora anterior a de seu pai, mas isso não deve acontecer nunca */
         let ordered = (comentarios === null || comentarios === void 0 ? void 0 : comentarios.sort((a, b) => {
+            a.path = a.path || ""; /* Garante que o campo não esteja null */
+            b.path = b.path || ""; /* Garante que o campo não esteja null */
             if (a.path == b.path) { /* Situação 1: Paths iguais */
                 return a.data_hora.getTime() < b.data_hora.getTime() ? -1 : 1;
             }
@@ -8990,7 +8997,7 @@ class GlobalsService {
     }
     get baseURL() {
         //@ts-ignore
-        const path = (this.isExtension ? EXTENSION_BASE_URL : this.servidorURL());
+        const path = (this.isExtension ? EXTENSION_BASE_URL : this.servidorURL);
         return path.endsWith("/") ? path : path + "/";
     }
     get servidorURL() {
@@ -15386,9 +15393,9 @@ class AppComponent {
         this.menuToolbar = [
             { name: "Cadastros", permition: "MENU_CAD_ACESSO", route: ['cadastros'], id: "navbarDropdownCadastros", menu: "cadastros" },
             { name: "Gestão", permition: "MENU_GESTAO_ACESSO", route: ['gestao'], id: "navbarDropdownGestao", menu: "gestao" },
-            { name: "Relatorios", permition: "", route: ['relatorios'], id: "navbarDropdownRelatorios", menu: "relatorios" },
+            { name: "Relatórios", permition: "", route: ['relatorios'], id: "navbarDropdownRelatorios", menu: "relatorios" },
             { name: "Configurações", permition: "MENU_CONFIG_ACESSO", route: ['configuracoes'], id: "navbarDropdownConfiguracoes", menu: "configuracoes" },
-            { name: "Logs", permition: "MENU_LOGS_ACESSO", route: ['logs'], id: "navbarDropdownLogs", menu: "logs" },
+            { name: "Logs", permition: "DEV_MENU_LOGS_ACESSO", route: ['logs'], id: "navbarDropdownLogs", menu: "logs" },
         ];
         this.menuSchema = {
             cadastros: [
@@ -15426,9 +15433,9 @@ class AppComponent {
                 { name: "Sobre", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
             ],
             logs: [
-                { name: "Changes", permition: 'MOD_LOGS_CONS', route: ['logs', 'change'], icon: "bi bi-pencil-square" },
-                { name: "Errors", permition: 'MOD_LOGS_CONS', route: ['logs', 'error'], icon: "bi bi-bug" },
-                { name: "Traffics", permition: 'MOD_LOGS_CONS', route: ['logs', 'traffic'], icon: "bi bi-stoplights" }
+                { name: "Alterações", permition: 'DEV_MOD_LOGS', route: ['logs', 'change'], icon: "bi bi-pencil-square" },
+                { name: "Erros", permition: 'DEV_MOD_LOGS', route: ['logs', 'error'], icon: "bi bi-bug" },
+                { name: "Tráfego", permition: 'DEV_MOD_LOGS', route: ['logs', 'traffic'], icon: "bi bi-stoplights" }
             ],
         };
     }
@@ -18754,17 +18761,7 @@ class ChangeDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0__["D
     constructor(injector) {
         super("Change", injector);
         this.injector = injector;
-        this.searchFields = ["usuario", "data_hora", "tabela", "tipo"];
-    }
-    showTables() {
-        return new Promise((resolve, reject) => {
-            this.server.post('api/Petrvs/showTables', []).subscribe(response => {
-                resolve(response.data);
-            }, error => {
-                console.log("Erro ao buscar a lista das tabelas do banco de dados!", error);
-                resolve(null);
-            });
-        });
+        this.searchFields = ["type", "date_time", "user_id", "row_id", "table_name"];
     }
 }
 ChangeDaoService.ɵfac = function ChangeDaoService_Factory(t) { return new (t || ChangeDaoService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
@@ -19192,19 +19189,25 @@ UteisModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineInject
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChangeListComponent", function() { return ChangeListComponent; });
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
-/* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/components/grid/grid.component */ "m4bG");
-/* harmony import */ var src_app_dao_change_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/change-dao.service */ "d7SH");
+/* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/components/grid/grid.component */ "m4bG");
+/* harmony import */ var src_app_dao_change_dao_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/dao/change-dao.service */ "d7SH");
+/* harmony import */ var src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/usuario-dao.service */ "w5Sy");
 /* harmony import */ var src_app_listeners_listener_all_pages_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/listeners/listener-all-pages.service */ "haq/");
 /* harmony import */ var src_app_models_change_model__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/models/change.model */ "SyA8");
 /* harmony import */ var src_app_modules_base_page_list_base__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/modules/base/page-list-base */ "+vn/");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ "fXoL");
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common */ "ofXK");
 /* harmony import */ var _components_grid_filter_filter_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../components/grid/filter/filter.component */ "kHdc");
-/* harmony import */ var _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/grid/columns/columns.component */ "d7UH");
-/* harmony import */ var _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../../components/grid/column/column.component */ "pFmK");
-/* harmony import */ var _components_grid_pagination_pagination_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../../components/grid/pagination/pagination.component */ "f3Td");
-/* harmony import */ var _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../../../components/toolbar/toolbar.component */ "np0s");
+/* harmony import */ var _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/input/input-search/input-search.component */ "8OLq");
+/* harmony import */ var _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../../components/input/input-datetime/input-datetime.component */ "NRF3");
+/* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../../components/input/input-select/input-select.component */ "txHH");
+/* harmony import */ var _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../../../components/grid/columns/columns.component */ "d7UH");
+/* harmony import */ var _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../../../components/grid/column/column.component */ "pFmK");
+/* harmony import */ var _components_grid_pagination_pagination_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../../../components/grid/pagination/pagination.component */ "f3Td");
+/* harmony import */ var _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../../components/toolbar/toolbar.component */ "np0s");
+
+
+
 
 
 
@@ -19223,57 +19226,100 @@ __webpack_require__.r(__webpack_exports__);
 function ChangeListComponent_toolbar_1_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](0, "toolbar");
 } }
-function ChangeListComponent_column_10_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](0, "column", 10);
+function ChangeListComponent_ng_template_13_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "span");
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("onEdit", ctx_r1.edit)("options", ctx_r1.options);
+    const row_r7 = ctx.row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate1"](" ", row_r7.usuario.apelido, "");
 } }
+function ChangeListComponent_ng_template_16_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "span");
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const row_r8 = ctx.row;
+    const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate"](ctx_r5.util.getDateTimeFormatted(row_r8.date_time));
+} }
+function ChangeListComponent_column_20_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](0, "column", 17);
+} if (rf & 2) {
+    const ctx_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("onEdit", ctx_r6.edit)("options", ctx_r6.options);
+} }
+const _c0 = function () { return ["configuracoes", "usuario"]; };
+const _c1 = function (a0) { return { route: a0 }; };
 class ChangeListComponent extends src_app_modules_base_page_list_base__WEBPACK_IMPORTED_MODULE_5__["PageListBase"] {
+    //public tabelas: LookupItem[] = [];
+    //public entities: LogEntity[] = [];
     //public entity: LogEntity;
     constructor(injector, dao) {
-        super(injector, src_app_models_change_model__WEBPACK_IMPORTED_MODULE_4__["Change"], src_app_dao_change_dao_service__WEBPACK_IMPORTED_MODULE_2__["ChangeDaoService"]);
+        super(injector, src_app_models_change_model__WEBPACK_IMPORTED_MODULE_4__["Change"], src_app_dao_change_dao_service__WEBPACK_IMPORTED_MODULE_1__["ChangeDaoService"]);
         this.injector = injector;
         this.toolbarButtons = [];
-        this.tabelas = [];
-        this.entities = [];
         this.filterWhere = (filter) => {
             var _a, _b;
             let result = [];
             let form = filter.value;
-            if ((_a = form.usuario) === null || _a === void 0 ? void 0 : _a.length) {
-                result.push(["user_id", "like", "%" + form.usuario + "%"]);
+            if ((_a = form.usuario_id) === null || _a === void 0 ? void 0 : _a.length) {
+                result.push(["user_id", "like", "%" + form.usuario_id + "%"]);
             }
-            else if ((_b = form.tabela) === null || _b === void 0 ? void 0 : _b.length) {
-                result.push(["tabela", "like", "%" + form.tabela + "%"]);
-            } //else if(form.status) {
-            /*       result.push(["status", "==", form.status]);
+            ;
+            if ((_b = form.tipo) === null || _b === void 0 ? void 0 : _b.length) {
+                result.push(["type", "==", form.tipo]);
+            }
+            ;
+            if (form.data_inicio) {
+                result.push(["date_time", ">=", form.data_inicio]);
+            }
+            ;
+            if (form.data_fim) {
+                result.push(["date_time", "<=", form.data_fim]);
+            }
+            ;
+            /*     } else if(form.tabela?.length) {
+                  result.push(["table_name", "like", "%" + form.tabela + "%"]);
                 } else if(form.inicio?.length) {
                   result.push(["termino", ">=", form.inicio]);
                 } else if(form.termino?.length) {
                   result.push(["inicio", "=<", form.termino]);
-                } else if(form.tabela?.length) {
-                  result.push(["tabela", "like", "%" + form.tabela + "%"]);
                 } */
             return result;
         };
+        this.usuarioDao = injector.get(src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_2__["UsuarioDaoService"]);
+        this.join = ["usuario"];
         /* Inicializações */
         this.allPages = injector.get(src_app_listeners_listener_all_pages_service__WEBPACK_IMPORTED_MODULE_3__["ListenerAllPagesService"]);
-        //this.title = "Logs de registros - tipo CHANGE";
+        //this.title = "Registros - tipo CHANGE";
         this.filter = this.fh.FormBuilder({
-            usuario: { default: "" },
-            data_hora: { default: null },
+            usuario_id: { default: "" },
+            data_inicio: { default: "" },
+            data_fim: { default: "" },
             tabela: { default: "" },
-            tipo: { default: "" },
-            row_id: { default: null }
+            tipo: { default: "" }
         });
         /*     this.entities = [
               {table: 'usuarios', dao: injector.get<UsuarioDaoService>(UsuarioDaoService), label: "Usuário", selectRoute: {route: ['configuracoes', 'usuario']}},
-            ] */
-        //this.entity = {table: '', dao: injector.get<DaoBaseService<Base>>(DaoBaseService<Base>), label: "Selecione uma tabela válida...", selectRoute: {route: []}};
+            ];
+            this.entity = {
+              table: 'usuarios',
+              dao: injector.get<UsuarioDaoService>(UsuarioDaoService),
+              label: "Usuário",
+              selectRoute: {route: ['configuracoes', 'usuario']}
+            }; */
+        /*     this.entity = {
+              table: '',
+              dao: injector.get<DaoBaseService<Base>>(DaoBaseService<Base>),
+              label: "Selecione uma tabela válida...",
+              selectRoute: {route: []}
+            }; */
         //se a tabela selecionada tiver uma entity(Model) associada,
         // Testa se o usuário possui permissão para exibir dados dos logs
-        if (this.auth.hasPermissionTo("MOD_LOGS_CONS")) {
+        if (this.auth.hasPermissionTo("DEV_MOD_LOGS")) {
             this.options.push({
                 icon: "bi bi-info-circle",
                 label: "Informações",
@@ -19281,7 +19327,7 @@ class ChangeListComponent extends src_app_modules_base_page_list_base__WEBPACK_I
             });
         }
         // Testa se o usuário possui permissão para excluir o registro de log
-        if (this.auth.hasPermissionTo("MOD_LOGS_EXCL")) {
+        if (this.auth.hasPermissionTo("DEV_MOD_LOGS")) {
             this.options.push({
                 icon: "bi bi-trash",
                 label: "Excluir",
@@ -19289,50 +19335,74 @@ class ChangeListComponent extends src_app_modules_base_page_list_base__WEBPACK_I
             });
         }
     }
-    ngOnInit() {
-        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            this.tabelas = yield this.dao.showTables();
-        });
-    }
     filterClear(filter) {
-        filter.controls.nome.setValue("");
+        filter.controls.usuario_id.setValue("");
+        filter.controls.data_inicio.setValue("");
+        filter.controls.data_fim.setValue("");
+        filter.controls.tabela.setValue("");
+        filter.controls.tipo.setValue("");
         super.filterClear(filter);
     }
 }
-ChangeListComponent.ɵfac = function ChangeListComponent_Factory(t) { return new (t || ChangeListComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_6__["Injector"]), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdirectiveInject"](src_app_dao_change_dao_service__WEBPACK_IMPORTED_MODULE_2__["ChangeDaoService"])); };
+ChangeListComponent.ɵfac = function ChangeListComponent_Factory(t) { return new (t || ChangeListComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_6__["Injector"]), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdirectiveInject"](src_app_dao_change_dao_service__WEBPACK_IMPORTED_MODULE_1__["ChangeDaoService"])); };
 ChangeListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineComponent"]({ type: ChangeListComponent, selectors: [["app-change-list"]], viewQuery: function ChangeListComponent_Query(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵviewQuery"](src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__["GridComponent"], 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵviewQuery"](src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__["GridComponent"], 1);
     } if (rf & 2) {
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵloadQuery"]()) && (ctx.grid = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]], decls: 12, vars: 16, consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["title", "Usu\u00E1rio", "field", "user_id"], ["title", "Cria\u00E7\u00E3o", "field", "date_time"], ["title", "Tabela", "field", "table_name"], ["title", "Tipo de Opera\u00E7\u00E3o", "field", "type"], ["type", "options", 3, "onEdit", "options", 4, "ngIf"], [3, "rows"], ["type", "options", 3, "onEdit", "options"]], template: function ChangeListComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]], decls: 22, vars: 31, consts: [[3, "dao", "title", "orderBy", "groupBy", "join", "selectable", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Usu\u00E1rio", "controlName", "usuario_id", 3, "size", "control", "dao", "selectRoute"], ["usuario", ""], ["datetime", "", "label", "In\u00EDcio", "controlName", "data_inicio", "labelInfo", "In\u00EDcio dos registros", 3, "size", "control"], ["datetime", "", "label", "Fim", "controlName", "data_fim", "labelInfo", "Fim dos registros", 3, "size", "control"], ["label", "Tipo", "icon", "bi bi-arrow-up-right-circle", "controlName", "tipo", 3, "size", "control", "items"], ["title", "Usu\u00E1rio", 3, "template"], ["columnUsuario", ""], ["title", "Cria\u00E7\u00E3o", "field", "date_time", 3, "template"], ["columnDataCriacao", ""], ["title", "Tabela", "field", "table_name"], ["title", "Tipo de Opera\u00E7\u00E3o", "field", "type"], ["type", "options", 3, "onEdit", "options", 4, "ngIf"], [3, "rows"], ["type", "options", 3, "onEdit", "options"]], template: function ChangeListComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "grid", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("select", function ChangeListComponent_Template_grid_select_0_listener($event) { return ctx.onSelect($event); });
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](1, ChangeListComponent_toolbar_1_Template, 1, 0, "toolbar", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](2, "filter", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](3, "div", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](4, "div", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](3, "div", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](4, "input-search", 4, 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](6, "input-datetime", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](7, "input-datetime", 7);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](5, "columns");
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](6, "column", 4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](7, "column", 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](8, "column", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](9, "column", 7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](10, ChangeListComponent_column_10_Template, 1, 2, "column", 8);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](8, "div", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](9, "input-select", 8);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](11, "pagination", 9);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](10, "div", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](11, "columns");
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](12, "column", 9);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](13, ChangeListComponent_ng_template_13_Template, 2, 1, "ng-template", null, 10, _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](15, "column", 11);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](16, ChangeListComponent_ng_template_16_Template, 2, 1, "ng-template", null, 12, _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](18, "column", 13);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](19, "column", 14);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](20, ChangeListComponent_column_20_Template, 1, 2, "column", 15);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](21, "pagination", 16);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
     } if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("selectable", ctx.selectable);
+        const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵreference"](14);
+        const _r4 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵreference"](17);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("dao", ctx.dao)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("selectable", ctx.selectable);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngIf", !ctx.selectable);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](8);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 6)("control", ctx.filter.controls.usuario_id)("dao", ctx.usuarioDao)("selectRoute", _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵpureFunction1"](29, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵpureFunction0"](28, _c0)));
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.data_inicio);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.data_fim);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 2)("control", ctx.filter.controls.tipo)("items", ctx.lookup.TIPO_LOG_CHANGE);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("template", _r2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("template", _r4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](5);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngIf", !ctx.selectable);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("rows", ctx.rowsLimit);
-    } }, directives: [src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__["GridComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_7__["NgIf"], _components_grid_filter_filter_component__WEBPACK_IMPORTED_MODULE_8__["FilterComponent"], _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_9__["ColumnsComponent"], _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_10__["ColumnComponent"], _components_grid_pagination_pagination_component__WEBPACK_IMPORTED_MODULE_11__["PaginationComponent"], _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_12__["ToolbarComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJjaGFuZ2UtbGlzdC5jb21wb25lbnQuc2NzcyJ9 */"] });
+    } }, directives: [src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__["GridComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_7__["NgIf"], _components_grid_filter_filter_component__WEBPACK_IMPORTED_MODULE_8__["FilterComponent"], _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_9__["InputSearchComponent"], _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_10__["InputDatetimeComponent"], _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_11__["InputSelectComponent"], _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_12__["ColumnsComponent"], _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_13__["ColumnComponent"], _components_grid_pagination_pagination_component__WEBPACK_IMPORTED_MODULE_14__["PaginationComponent"], _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_15__["ToolbarComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJjaGFuZ2UtbGlzdC5jb21wb25lbnQuc2NzcyJ9 */"] });
 
 
 /***/ }),
@@ -21973,7 +22043,7 @@ class GridComponent {
         this.expandedIds = {};
         this.BUTTON_FILTER = {
             icon: "bi bi-search",
-            label: "Filtrar",
+            label: "Filtros",
             onClick: () => { var _a; return (_a = this.filterRef) === null || _a === void 0 ? void 0 : _a.toggle(); }
         };
         this.BUTTON_ADD = {
@@ -24084,7 +24154,7 @@ class GanttComponent {
         this._error = "";
         this._project = new _gantt_models__WEBPACK_IMPORTED_MODULE_0__["GanttProject"]();
         this.initialized = false;
-        this.defaultPeriod = (start, end, duration) => {
+        this.defaultPeriod = (task, start, end, duration) => {
             return {
                 start: start || moment__WEBPACK_IMPORTED_MODULE_1__(end).add((duration || 0) * (-1), this.project.config.hasTime ? 'hours' : 'days').toDate(),
                 end: end || moment__WEBPACK_IMPORTED_MODULE_1__(start).add((duration || 0), this.project.config.hasTime ? 'hours' : 'days').toDate(),
@@ -24110,10 +24180,10 @@ class GanttComponent {
             this.cdRef.detectChanges();
         }
     }
-    calcPeriod(start, end, duration) {
+    calcPeriod(task, start, end, duration) {
         const startDate = typeof start == "undefined" || start instanceof Date ? start : new Date(start);
         const endDate = typeof end == "undefined" || end instanceof Date ? end : new Date(end);
-        const result = this.period(startDate, endDate, duration);
+        const result = this.period(task, startDate, endDate, duration);
         if (!this.project.config.hasTime) {
             result.start.setHours(0, 0, 0, 0);
             result.end.setHours(23, 59, 59, 999);
@@ -24350,35 +24420,6 @@ class GanttComponent {
         // Store tasks, deps and assignments
         this.getRecursiveProjectTasks(gantt.tasks, 0, 0, project);
         return project;
-    }
-    getDemoProject() {
-        const ret = { "tasks": [
-                { "id": -1, "name": "Gantt editor", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 0, "status": "STATUS_ACTIVE", "depends": "", "canWrite": true, "start": 1396994400000, "duration": 20, "end": 1399586399999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [{ id: "tmp_1", resourceId: "tmp_1", roleId: "", effort: "" }], "hasChild": true },
-                { "id": -2, "name": "coding", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 1, "status": "STATUS_ACTIVE", "depends": "", "canWrite": true, "start": 1396994400000, "duration": 10, "end": 1398203999999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": true },
-                { "id": -3, "name": "gantt part", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_ACTIVE", "depends": "", "canWrite": true, "start": 1396994400000, "duration": 2, "end": 1397167199999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false },
-                { "id": -4, "name": "editor part", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "depends": "3", "canWrite": true, "start": 1397167200000, "duration": 4, "end": 1397685599999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false },
-                { "id": -5, "name": "testing", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 1, "status": "STATUS_SUSPENDED", "depends": "2:5", "canWrite": true, "start": 1398981600000, "duration": 5, "end": 1399586399999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": true },
-                { "id": -6, "name": "test on safari", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "depends": "", "canWrite": true, "start": 1398981600000, "duration": 2, "end": 1399327199999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false },
-                { "id": -7, "name": "test on ie", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "depends": "6", "canWrite": true, "start": 1399327200000, "duration": 3, "end": 1399586399999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false },
-                { "id": -8, "name": "test on chrome", "progress": 0, "progressByWorklog": false, "relevance": 0, "type": "", "typeId": "", "description": "", "code": "", "level": 2, "status": "STATUS_SUSPENDED", "depends": "6", "canWrite": true, "start": 1399327200000, "duration": 2, "end": 1399499999999, "startIsMilestone": false, "endIsMilestone": false, "collapsed": false, "assigs": [], "hasChild": false }
-            ], "selectedRow": 2, "deletedTaskIds": [],
-            "resources": [
-                { "id": "tmp_1", "name": "Resource 1", picture: this.gb.servidorURL + "/assets/images/profile.png" },
-                { "id": "tmp_2", "name": "Resource 2", picture: this.gb.servidorURL + "/assets/images/profile.png" },
-                { "id": "tmp_3", "name": "Resource 3", picture: this.gb.servidorURL + "/assets/images/profile.png" },
-                { "id": "tmp_4", "name": "Resource 4", picture: this.gb.servidorURL + "/assets/images/profile.png" }
-            ],
-            "roles": [
-                { "id": "tmp_1", "name": "Project Manager" },
-                { "id": "tmp_2", "name": "Worker" },
-                { "id": "tmp_3", "name": "Stakeholder" },
-                { "id": "tmp_4", "name": "Customer" }
-            ], "canWrite": true, "canDelete": true, "canWriteOnParent": true, canAdd: true };
-        let offset = new Date().getTime() - ret.tasks[0].start;
-        for (let i = 0; i < ret.tasks.length; i++) {
-            ret.tasks[i].start = ret.tasks[i].start + offset;
-        }
-        return ret;
     }
     loadI18n() {
         //@ts-ignore

@@ -9,6 +9,7 @@ class CapacidadeService extends ServiceBase {
     public $capacidades = [
         /* Perfis Ids:
         Administrador   = 74051a4a-6e25-4aab-9abc-8872c6c1029a
+        Desenvolvedor   = 77001b4b-6e25-4aab-9abc-8872c6c1029a
         Usuário Nível 5 = f219a1f5-bb60-11ec-a5bb-0050569c64a0
         Usuário Nível 4 = f212872c-bb60-11ec-a5bb-0050569c64a0
         Usuário Nível 3 = f20b8b2f-bb60-11ec-a5bb-0050569c64a0

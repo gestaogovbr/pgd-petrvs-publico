@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Usuario;
 
 class Change extends Model
 {
@@ -25,4 +26,7 @@ class Change extends Model
     protected $casts = [
         'data_hora' => 'datetime',
     ];
+
+    // Belongs
+    public function usuario() { return $this->belongsTo(Usuario::class, 'user_id'); }
 }

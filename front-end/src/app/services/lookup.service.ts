@@ -433,6 +433,12 @@ export class LookupService {
     { key: "AGUARDANDO", value: "Aguardando", icon: "bi bi-pause-fill", color: "light" }
   ];
 
+  public TIPO_LOG_CHANGE: LookupItem[] = [
+    { key: "ADD", value: "ADD" },
+    { key: "EDIT", value: "EDIT" },
+    { key: "DELETE", value: "DELETE" },
+  ];
+  
   public getLookup(itens: LookupItem[], key: any) {
     return itens.find(x => x.key == key);
   }

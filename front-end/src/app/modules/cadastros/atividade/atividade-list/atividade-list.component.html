@@ -58,7 +58,7 @@
         <column title="Data Homologação" [template]="reportDataHomologacao"><ng-template let-row="row" #reportDataHomologacao>{{util.getDateTimeFormatted(row.data_homologacao)}}</ng-template></column>
         <column title="Tipo Atividade" [template]="reportTipoAtividade"><ng-template let-row="row" #reportTipoAtividade>{{row.tipo_atividade?.nome}}</ng-template></column>
         <column title="Unidade" [template]="reportUnidade"><ng-template let-row="row" #reportUnidade>{{row.unidade ? row.unidade.sigla + " - " + row.unidade.nome : ""}}</ng-template></column>
-        <column title="Parêmetros adotados" [template]="reportParametrosAdotados"><ng-template let-row="row" #reportParametrosAdotados>{{getReportParametrosAdotados(row)}}</ng-template></column>
+        <column title="Parâmetros adotados" [template]="reportParametrosAdotados"><ng-template let-row="row" #reportParametrosAdotados>{{getReportParametrosAdotados(row)}}</ng-template></column>
         <column title="Entregas esperadas" [template]="reportEntregasEsperadas"><ng-template let-row="row" #reportEntregasEsperadas>{{getReportEntregasEsperadas(row)}}</ng-template></column>
     </report>
     <pagination [rows]="rowsLimit"></pagination>

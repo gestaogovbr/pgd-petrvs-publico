@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Perfil;
+use App\Models\Usuario;
 use App\Services\PerfilService;
 
 class PerfilSeeder extends Seeder
@@ -16,8 +17,9 @@ class PerfilSeeder extends Seeder
     public function run()
     {
         $perfilService = new PerfilService();
-        // carrega o arquivo perfis.csv para a tabela perfis no banco de dados
+        // carrega os vetores perfis e developers, existentes em PerfilService
         $dadosPerfis = $perfilService->perfis;
+        $developers = $perfilService->developers;
         foreach($dadosPerfis as $linha)
         {
             $registro = $linha;
@@ -29,6 +31,11 @@ class PerfilSeeder extends Seeder
                 'descricao' => $registro[3]
             ]);
             $perfil->save();
+
+            if($registro[2] == 'Desenvolvedor'){
+                // atribui o perfil de DESENVOLVEDOR a todos os Devs
+                Usuario::whereIn('cpf', array_map(fn($d) => $d[0], $developers))->update(['perfil_id' => $registro[0]]);
+            }
         }
     }
 }

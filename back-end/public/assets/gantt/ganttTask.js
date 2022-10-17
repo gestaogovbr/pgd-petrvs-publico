@@ -36,9 +36,11 @@ function TaskFactory(ganttComponet) {
   this.build = function (id, name, code, level, start, duration, collapsed) {
     // Set at beginning of day
     /* Petrvs */
-    var adjusted_start = this.ganttComponet ? this.ganttComponet.calcPeriod(start).start.getTime() : computeStart(start);
-    var calculated_end = this.ganttComponet ? this.ganttComponet.calcPeriod(adjusted_start, undefined, duration).end.getTime() : computeEndByDuration(adjusted_start, duration);
-    return new Task(id, name, code, level, adjusted_start, calculated_end, duration, collapsed);
+    var adjusted_start = this.ganttComponet ? this.ganttComponet.calcPeriod(undefined, start).start.getTime() : computeStart(start);
+    var calculated_end = this.ganttComponet ? this.ganttComponet.calcPeriod(undefined, adjusted_start, undefined, duration).end.getTime() : computeEndByDuration(adjusted_start, duration);
+    var task = new Task(id, name, code, level, adjusted_start, calculated_end, duration, collapsed);
+    task.ganttComponet = this.ganttComponet;
+    return task;
   };
 
 }
@@ -77,8 +79,10 @@ function Task(id, name, code, level, start, end, duration, collapsed) {
   this.ganttElement; //gantt html element
   this.master;
 
-
   this.assigs = [];
+
+  /* Petrvs */
+  this.ganttComponet;
 }
 
 Task.prototype.clone = function () {
@@ -141,12 +145,10 @@ Task.prototype.setPeriod = function (start, end) {
     duration: this.duration
   };
 
-
-  //compute legal start/end //todo mossa qui R&S 30/3/2016 perchè altrimenti il calcolo della durata, che è stato modificato sommando giorni, sbaglia
-  start = computeStart(start);
-  end=computeEnd(end);
-
-  var newDuration = recomputeDuration(start, end);
+  /* Petrvs */
+  start = this.ganttComponet ? this.ganttComponet.calcPeriod(this, start).start.getTime() : computeStart(start);
+  end = this.ganttComponet ? this.ganttComponet.calcPeriod(this, undefined, end).end.getTime() : computeEnd(end);
+  var newDuration = this.ganttComponet ? this.ganttComponet.calcPeriod(this, start, end).duration.getTime() : recomputeDuration(start, end);
 
   //if are equals do nothing and return true
   if ( start == originalPeriod.start && end == originalPeriod.end && newDuration == originalPeriod.duration) {
@@ -194,7 +196,8 @@ Task.prototype.setPeriod = function (start, end) {
     somethingChanged = true;
   }
 
-  this.duration = recomputeDuration(this.start, this.end);
+  /* Petrvs */
+  this.duration = this.ganttComponet ? this.ganttComponet.calcPeriod(this, this.start, this.end).duration.getTime() : recomputeDuration(this.start, this.end);
 
   //profilerSetPer.stop();
 
@@ -242,7 +245,8 @@ Task.prototype.setPeriod = function (start, end) {
     } else {
       this.start = Math.min(bs, this.start);
     }
-    this.duration = recomputeDuration(this.start, this.end);
+    /* Petrvs */
+    this.duration = this.ganttComponet ? this.ganttComponet.calcPeriod(this, this.start, this.end).duration.getTime() : recomputeDuration(this.start, this.end);
     if (this.master.shrinkParent ) {
       todoOk = updateTree(this);
     }

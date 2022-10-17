@@ -31,7 +31,6 @@ export class InputSelectComponent extends InputBase implements OnInit {
   @Input() labelInfo: string = "";
   @Input() bold: boolean = false;
   @Input() size: number = 0;
-  @Input() loading: boolean = false;
   @Input() fields: string[] = [];
   @Input() dao?: DaoBaseService<Base> = undefined;
   @Input() itemNull: string = " - ";
@@ -85,10 +84,24 @@ export class InputSelectComponent extends InputBase implements OnInit {
   get control(): AbstractControl | undefined {
     return this.getControl();
   }
+  @Input() set loading(value: boolean) {
+    if(this._loading != value) {
+      this._loading = value;
+      this.cdRef.detectChanges();
+      this.selectPicker?.selectpicker('refresh');
+    }
+  }
+  get loading(): boolean {
+    return this._loading;
+  }
+
+
+
 
   public CARREGANDO: string = "Carregando . . .";
 
   private _items: LookupItem[] = [];
+  private _loading: boolean = false;
   private _where: any[] | undefined = undefined;
   public selectedValue?: string;
   public selectedItem?: LookupItem;
