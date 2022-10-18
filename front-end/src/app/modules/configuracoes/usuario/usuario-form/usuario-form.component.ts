@@ -45,7 +45,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     this.join = ["lotacoes.unidade"];
   }
 
-  public validate = (control: AbstractControl, controlName: string) => {
+  public validate = (control: AbstractControl, controlName: string) => {   
     let result = null;
     if(['cpf', 'matricula', 'email', 'nome', 'apelido', 'perfil_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
@@ -56,6 +56,13 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
   public formValidation = (form?: FormGroup) => {
     if(!form?.controls.lotacoes.value?.length) {
       return "Obrigatório ao menos uma lotação";
+    } else {
+      const erros_lotacao = []
+      form?.controls.lotacoes.value?.forEach((lotacao: Lotacao) => {
+        if(lotacao.unidade_id == '') erros_lotacao.push({ lotacao: lotacao, erro: 'Falta unidade_id'})
+      });
+      if (erros_lotacao.length) return "Salve a lotação antes de salvar o usuário"
+
     }
     return undefined;
   } 
@@ -77,7 +84,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     form.patchValue(new Usuario());
   }
 
-  public saveData(form: IIndexable): Promise<Usuario> {
+  public saveData(form: IIndexable): Promise<Usuario> {      
     return new Promise<Usuario>((resolve, reject) => {
       const usuario = this.util.fill(new Usuario(), this.entity!);
       resolve(this.util.fillForm(usuario, this.form!.value));
