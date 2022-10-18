@@ -94,9 +94,9 @@ export class AppComponent {
     this.menuToolbar = [
       { name: "Cadastros", permition: "MENU_CAD_ACESSO", route: ['cadastros'], id: "navbarDropdownCadastros", menu: "cadastros" },
       { name: "Gestão", permition: "MENU_GESTAO_ACESSO", route: ['gestao'], id: "navbarDropdownGestao", menu: "gestao" },
-      { name: "Relatorios", permition: "", route: ['relatorios'], id: "navbarDropdownRelatorios", menu: "relatorios" },
+      { name: "Relatórios", permition: "", route: ['relatorios'], id: "navbarDropdownRelatorios", menu: "relatorios" },
       { name: "Configurações", permition: "MENU_CONFIG_ACESSO", route: ['configuracoes'], id: "navbarDropdownConfiguracoes", menu: "configuracoes" },
-      { name: "Logs", permition: "MENU_LOGS_ACESSO", route: ['logs'], id: "navbarDropdownLogs", menu: "logs" },
+      { name: "Logs", permition: "DEV_MENU_LOGS_ACESSO", route: ['logs'], id: "navbarDropdownLogs", menu: "logs" },
     ];
     this.menuSchema = {
       cadastros: [
@@ -134,9 +134,9 @@ export class AppComponent {
         { name: "Sobre", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
       ],
       logs: [
-        { name: "Changes", permition: 'MOD_LOGS_CONS', route: ['logs', 'change'], icon: "bi bi-pencil-square" },
-        { name: "Errors", permition: 'MOD_LOGS_CONS', route: ['logs', 'error'], icon: "bi bi-bug" },
-        { name: "Traffics", permition: 'MOD_LOGS_CONS', route: ['logs', 'traffic'], icon: "bi bi-stoplights" }
+        { name: "Alterações", permition: 'DEV_MOD_LOGS', route: ['logs', 'change'], icon: "bi bi-pencil-square" },
+        { name: "Erros", permition: 'DEV_MOD_LOGS', route: ['logs', 'error'], icon: "bi bi-bug" },
+        { name: "Tráfego", permition: 'DEV_MOD_LOGS', route: ['logs', 'traffic'], icon: "bi bi-stoplights" }
       ],
     }
   }

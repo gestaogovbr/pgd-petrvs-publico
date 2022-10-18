@@ -390,33 +390,6 @@ MaterialServicoModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵde
 
 /***/ }),
 
-/***/ "YD8X":
-/*!*****************************************************!*\
-  !*** ./src/app/dao/material-servico-dao.service.ts ***!
-  \*****************************************************/
-/*! exports provided: MaterialServicoDaoService */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MaterialServicoDaoService", function() { return MaterialServicoDaoService; });
-/* harmony import */ var _dao_base_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./dao-base.service */ "WScx");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
-
-
-class MaterialServicoDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0__["DaoBaseService"] {
-    constructor(injector) {
-        super("MaterialServico", injector);
-        this.injector = injector;
-        this.searchFields = ["codigo", "referencia", "descricao"];
-    }
-}
-MaterialServicoDaoService.ɵfac = function MaterialServicoDaoService_Factory(t) { return new (t || MaterialServicoDaoService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
-MaterialServicoDaoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: MaterialServicoDaoService, factory: MaterialServicoDaoService.ɵfac, providedIn: 'root' });
-
-
-/***/ }),
-
 /***/ "iPh3":
 /*!***************************************************************************************!*\
   !*** ./src/app/modules/cadastros/material-servico/material-servico-routing.module.ts ***!

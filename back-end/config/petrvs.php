@@ -28,5 +28,8 @@ return [
         "azure" => env('PETRVS_LOGIN_AZURE', true),
         "institucional" => env('PETRVS_LOGIN_INSTITUCIONAL', false),
         "firebase" => env('PETRVS_LOGIN_FIREBASE', false)
+    ],
+    'ids_fixos' => [
+        'developer_id' => env('PETRVS_PERFIS_DEV', '77001b4b-6e25-4aab-9abc-8872c6c1029a'),
     ]
 ];

@@ -1,5 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { Change } from '../models/change.model';
+import { LookupItem } from '../services/lookup.service';
 import { DaoBaseService } from './dao-base.service';
 
 @Injectable({
@@ -9,16 +10,16 @@ export class ChangeDaoService extends DaoBaseService<Change> {
 
   constructor(protected injector: Injector) {
     super("Change", injector);
-    this.searchFields = ["usuario", "data_hora", "tabela", "tipo"];
+    this.searchFields = ["type", "date_time", "user_id", "row_id", "table_name"];
   }
 
-  public showTables(): Promise<string[] | null> {
-    return new Promise<string[] | null>((resolve, reject) => {
+  public showTables(): Promise<LookupItem[]> {
+    return new Promise<LookupItem[]>((resolve, reject) => {
       this.server.post('api/Petrvs/showTables', []).subscribe(response => {
-        resolve(response.data);
+        resolve(response.tabelas);
       }, error => {
         console.log("Erro ao buscar a lista das tabelas do banco de dados!", error);
-        resolve(null);
+        resolve([]);
       });
     });
   }

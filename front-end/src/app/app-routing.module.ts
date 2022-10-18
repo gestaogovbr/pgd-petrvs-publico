@@ -39,12 +39,9 @@ const routes: Routes = [
   { path: 'configuracoes/usuario', loadChildren: () => import('./modules/configuracoes/usuario/usuario.module').then(m => m.UsuarioModule), canActivate: [AuthGuard] },
   { path: 'listeners', loadChildren: () => import('./listeners/listeners.module').then(m => m.ListenersModule), canActivate: [AuthGuard] },
   { path: 'extension', loadChildren: () => import('./modules/extension/extension.module').then(m => m.ExtensionModule) },
-  /* { path: 'relatorios/produtividade', loadChildren: () => import('./modules/relatorios/relatorio.module').then(m => m.RelatorioModule), canActivate: [AuthGuard] }, */
   { path: 'relatorios', loadChildren: () => import('./modules/relatorios/relatorio.module').then(m => m.RelatorioModule), canActivate: [AuthGuard] },
-  { path: 'logs/change', loadChildren: () => import('./modules/logs/change/change.module').then(m => m.ChangeModule), canActivate: [AuthGuard] },
-  /* { path: 'logs/error', loadChildren: () => import('./modules/logs/error/error.module').then(m => m.ErrorModule), canActivate: [AuthGuard] },
-  { path: 'logs/traffic', loadChildren: () => import('./modules/logs/traffic/traffic.module').then(m => m.TrafficModule), canActivate: [AuthGuard] },
-  */  { path: '', redirectTo: 'login', pathMatch: 'full' }
+  { path: 'logs', loadChildren: () => import('./modules/logs/logs.module').then(m => m.LogsModule), canActivate: [AuthGuard] },
+  { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];
 
 @NgModule({
