@@ -19,18 +19,12 @@
     <input-text [size]="4" label="Descrição" controlName="decricao_recurso" labelInfo="Descrição associada ao recurso"></input-text>
     <input-number number [size]="2" label="Quantidade" controlName="qtd_recurso" labelInfo="Quantidade associada ao recurso"></input-number>
   </div>
-  <div class="row">
-    <input-text [size]="2" label="Recurso" controlName="nome_recurso"></input-text>
-    <input-text [size]="4" label="Regra" controlName="regra" labelInfo="Regra associada ao recurso"></input-text>
-    <input-text [size]="4" label="Descrição" controlName="decricao_recurso" labelInfo="Descrição associada ao recurso"></input-text>
-    <input-number number [size]="2" label="Quantidade" controlName="qtd_recurso" labelInfo="Quantidade associada ao recurso"></input-number>
-  </div>
 
   <separator title="Cronograma e progresso"></separator>
   <div class="row">
     <grid [hasDelete]="true">
       <columns>
-          <column [title]="lex.noun('Nome') + ' da Regra'" [template]="tarefaDescricao">
+          <column [title]="lex.noun('Nome') + ' do Recurso'" [template]="tarefaDescricao">
               <ng-template let-row="row" #tarefaDescricao>
                   <strong *ngIf="row.tarefa?.nome.length" class="d-block">{{row.tarefa?.nome || ""}}</strong>
                   {{row.descricao}}

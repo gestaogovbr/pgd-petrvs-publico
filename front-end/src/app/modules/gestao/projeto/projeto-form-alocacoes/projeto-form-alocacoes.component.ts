@@ -6,6 +6,8 @@ import { ProjetoAlocacao } from 'src/app/models/projeto-alocacao.model';
 import { ProjetoTarefa } from 'src/app/models/projeto-tarefa.model';
 import { Projeto } from 'src/app/models/projeto.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
+import { ProjetoRecursoDaoService } from 'src/app/dao/projeto-recurso-dao.service';
+import { ProjetoRegraDaoService } from 'src/app/dao/projeto-regra-dao.service';
 
 @Component({
   selector: 'projeto-form-alocacoes',
@@ -17,8 +19,12 @@ export class ProjetoFormAlocacoesComponent extends PageFrameBase {
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: Projeto | undefined) { super.entity = value; } get entity(): Projeto | undefined { return super.entity; }
 
+  public recursoDao: ProjetoRecursoDaoService;
+  public regraDao: ProjetoRegraDaoService;
   constructor(public injector: Injector) {
     super(injector);
+    this.recursoDao = injector.get<ProjetoRecursoDaoService>(ProjetoRecursoDaoService);
+    this.regraDao = injector.get<ProjetoRegraDaoService>(ProjetoRegraDaoService);
     this.form = this.fh.FormBuilder({
       nome_recurso: {default: ""},
       regra: {default: ""},
