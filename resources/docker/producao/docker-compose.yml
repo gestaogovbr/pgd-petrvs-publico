@@ -1,0 +1,29 @@
+version: "3.9"
+services:
+
+  db:
+    image: mysql:8
+    container_name: db
+    ports:
+      - 3308:3308
+    volumes:
+      - ../mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: PsEeTnRhVaS
+      MYSQL_USER: petrvs
+      MYSQL_PASSWORD: PsEeTnRhVaS
+      MYSQL_TCP_PORT: 3308
+
+  php:
+    build: 
+      context: .
+      dockerfile: Dockerfile-php
+    container_name: php
+    working_dir: /var/www
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - db
+    volumes:
+      - ../../../back-end:/var/www
