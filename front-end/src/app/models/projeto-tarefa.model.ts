@@ -1,6 +1,6 @@
 import { Base } from './base.model';
 import { Usuario } from './usuario.model';
-import { Projeto } from './projeto.model';
+import { HasAlocacoes, HasTarefas, Projeto } from './projeto.model';
 import { Demanda } from './demanda.model';
 import { ProjetoAlocacao } from './projeto-alocacao.model';
 import { LookupItem } from '../services/lookup.service';
@@ -8,7 +8,7 @@ import { Comentario, HasComentarios } from './comentario';
 
 export type ProjetoTarefaStatus = "PLANEJADO" | "INICIADO" | "CONCLUIDO" | "FALHO" | "SUSPENSO" | "CANCELADO" | "AGUARDANDO";
 
-export class ProjetoTarefa extends Base implements HasComentarios {
+export class ProjetoTarefa extends Base implements HasComentarios, HasAlocacoes, HasTarefas {
     public projeto?: Projeto;
     public tarefa_pai?: ProjetoTarefa;
     public terefa_projeto?: Projeto;

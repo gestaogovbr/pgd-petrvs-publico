@@ -4,6 +4,7 @@ import { GlobalsService } from 'src/app/services/globals.service';
 import { UtilService } from 'src/app/services/util.service';
 import { GanttAssignment, GanttProject, GanttResource, GanttRole, GanttTask } from './gantt-models';
 import * as moment from 'moment';
+import * as $ from 'jquery';
 
 export type GanttPeriod = {
   start: Date,
@@ -43,6 +44,9 @@ export class GanttComponent implements OnInit {
       this._error = value;
       this.cdRef.detectChanges();
     }
+  }
+  public get dirty(): boolean {
+    return !!this.project.dirty;
   }
 
   private _error: string = "";
@@ -183,16 +187,16 @@ export class GanttComponent implements OnInit {
 
   public reload() {
     //let project = this.getDemoProject();
-    let project: any = this.loadProject();
-    if (!project.canWrite) $(".ganttButtonBar button.requireWrite").attr("disabled","true");
+    //let project: any = this.loadProject();
+    if (!this.project.canWrite) $(".ganttButtonBar button.requireWrite").attr("disabled","true");
     /* configurações personalizadas criadas posteriormente */
     this.ge.useTime = this.project.config.hasTime;
     this.ge.hasCost = this.project.config.hasCost;
-    this.ge.loadProject(project);
+    this.ge.loadProject(this.project);
     this.ge.checkpoint(); //empty the undo stack
   }
 
-  public getRecursiveGanttTasks(tasks: GanttTask[], level: number, project: any) {
+  /*public getRecursiveGanttTasks(tasks: GanttTask[], level: number, project: any) {
     for(let task of tasks) {
       const assigs = (task.assignments || []).filter(assig => project.resources.find((x: any) => x.id == assig.resource_id)).map(assig => {
         return { id: assig.id, resourceId: assig.resource_id, roleId: assig.role_id, effort: "", description: assig.description, quantity: assig.quantity }
@@ -206,7 +210,7 @@ export class GanttComponent implements OnInit {
           }
           assigs.push({ id: assig.id, resourceId: assig.resource!.id, roleId: "", effort: "" });
         }
-      }*/
+      }*
       project.tasks.push({
         id: task.id,
         name: task.name,
@@ -233,8 +237,9 @@ export class GanttComponent implements OnInit {
       });
       if(task.hasChild) this.getRecursiveGanttTasks(task.tasks || [], level+1, project);
     }
-  }
+  }*/
 
+  /* Função não será mais necessário pois o gantt já irá trabalhar com o objeto GanttProject *
   public loadProject() {
     let project = {
       tasks: new Array<any>(),
@@ -259,9 +264,9 @@ export class GanttComponent implements OnInit {
     this.getRecursiveGanttTasks(this.project.tasks, 0, project);
     for(let task of project.tasks) task.depends = task.dependencies_ids.map((dep: string) => project.tasks.findIndex(x => x.id == dep) + 1).filter((x: any) => x).join(":");
     return project;
-  }
+  }*/
 
-  public getRecursiveProjectTasks(tasks: any[], index: number, level: number, parent: GanttProject | GanttTask) {
+  /*public getRecursiveProjectTasks(tasks: any[], index: number, level: number, parent: GanttProject | GanttTask) {
     let before = parent;
     for(; index < tasks.length && tasks[index].level >= level; index++) {
       if(tasks[index].level > level) {
@@ -295,9 +300,9 @@ export class GanttComponent implements OnInit {
       before = tasks[index];
     }
     return index;
-  }
+  }*/
 
-  public storeProject() {
+  /*public storeProject() {
     let project = new GanttProject();
     let gantt = this.ge.saveGantt();
     // Store roles list
@@ -311,7 +316,7 @@ export class GanttComponent implements OnInit {
     // Store tasks, deps and assignments
     this.getRecursiveProjectTasks(gantt.tasks, 0, 0, project);
     return project;
-  }
+  }*/
 
   public loadI18n() {
     //@ts-ignore

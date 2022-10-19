@@ -11,6 +11,11 @@ import { DOCUMENT } from '@angular/common';
 export type Interval = {start: Date | number, end: Date | number};
 export type DateInterval = {start: Date, end: Date};
 export type TimeInterval = {start: number, end: number};
+export type MergeArrayAction = "ADD" | "EDIT" | "DELETE";
+export type MergeArrayCompare = ((dst: any, source: any) => boolean) | string;
+export type MergeArrayInsertOrHandler = (actionOrSrc: MergeArrayAction | any, dst?: any, src?: any) => any;
+export type MergeArrayUpdate = (dst: any, src: any) => void;
+export type MergeArrayRemove = (dst: any) => boolean;
 
 @Injectable({
   providedIn: 'root'
@@ -193,6 +198,42 @@ export class UtilService {
       Object.entries(source || {}).forEach(([key, value]) => {
         if(!keys.includes(key)) destination[key] = value;
       });
+    }
+    return destination;
+  }
+
+  public getParameters(func: any) {
+    return typeof func == "function" ? new RegExp('(?:'+func.name+'\\s*|^)\\s*\\((.*?)\\)').exec(func.toString().replace(/\n/g, ''))![1].replace(/\/\*.*?\*\//g, '').replace(/ /g, '') : [];
+  }
+
+  public mergeArrayOfObject(destination: IIndexable[], source: IIndexable[], compare: MergeArrayCompare, removeDst: boolean = true, insertOrHandler?: MergeArrayInsertOrHandler, update?: MergeArrayUpdate, remove?: MergeArrayRemove) {
+    const isHandler = insertOrHandler && this.getParameters(insertOrHandler).length > 1;
+    for(let src of source) {
+      let dst = destination.find(x => typeof compare == "string" ? x[compare] == src[compare] : compare(x, src));
+      if(dst) { /* Update*/
+        if(update) {
+          update(dst, src) 
+        } else if(isHandler) {
+          insertOrHandler!("EDIT", dst, src);
+        } else {
+          Object.assign(dst, src);          
+        }
+      } else { /* Insert */
+        let add = insertOrHandler ? (isHandler ? insertOrHandler("ADD", undefined, src) : insertOrHandler(src)) : src;
+        if(add) destination.push(add);
+      }
+    }
+    if(removeDst) {
+      for(let i = 0; i < destination.length; i++){ 
+        let dst = destination[i];
+        if(!source.find(x => typeof compare == "string" ? x[compare] == dst[compare] : compare(dst, x))) {
+          let splice = remove ? remove(dst) : isHandler ? insertOrHandler!("DELETE", dst) : true;
+          if(splice) {
+            destination.splice(i, 1);
+            i--; 
+          }
+        }
+      }
     }
     return destination;
   }

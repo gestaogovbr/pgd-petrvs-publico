@@ -40,7 +40,7 @@ class CreateProjetosTable extends Migration
             $table->tinyInteger('aloca_proprios_recursos')->default(1)->comment("Se possui recursos próprios");
             $table->tinyInteger('soma_recusos_alocados_filhos')->default(1)->comment("Mostra o somatório dos recursos filhos");
             $table->tinyInteger('custos_proprios')->default(1)->comment("Se possui custos próprios");
-            $table->tinyInteger('soma_custos_filhos')->default(1)->comment("Se possui custos filhos");
+            $table->tinyInteger('soma_custos_filhos')->default(1)->comment("Mostra o somatório dos custos filhos");
             $table->float('duracao')->comment("Duração do projeto");
             $table->decimal('progresso', 5, 2)->default(0)->comment("Percentual de progresso do projeto");
             $table->unique(['numero']);

@@ -72,9 +72,7 @@ export class GoogleApiService {
     return new Promise((resolve, reject) => {
       if (!this._tokenClient) {
         if (this._socialUser.value) {
-          reject(
-            'No token client was instantiated, you should specify some scopes.'
-          );
+          reject('No token client was instantiated, you should specify some scopes.');
         } else {
           reject('You should be logged-in first.');
         }

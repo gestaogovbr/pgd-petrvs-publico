@@ -1275,21 +1275,23 @@ Task.prototype.canStatusBeChangedTo=function(newStatus) {
 
 
 //<%------------------------------------------------------------------------  LINKS OBJECT ---------------------------------------------------------------%>
-function Link(taskFrom, taskTo, lagInWorkingDays) {
+function Link(taskFrom, taskTo, lagInWorkingDays, extra) {
   this.from = taskFrom;
   this.to = taskTo;
   this.lag = lagInWorkingDays;
+  this.extra = extra;
 }
 
 
 //<%------------------------------------------------------------------------  ASSIGNMENT ---------------------------------------------------------------%>
-function Assignment(id, resourceId, roleId, effort, description, quantity) {
+function Assignment(id, resourceId, roleId, effort, description, quantity, extra) {
   this.id = id;
   this.resourceId = resourceId;
   this.roleId = roleId;
   this.effort = effort;
   this.description = description;
   this.quantity = quantity;
+  this.extra = extra;
 }
 
 

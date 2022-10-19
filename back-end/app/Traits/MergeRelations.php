@@ -42,8 +42,9 @@ trait MergeRelations
     }
 
     public function relationsAttributes(array $attributes) {
-        return array_filter($attributes, function($key) {
-            return in_array($key, fillableRelations());
+        $self = $this;
+        return array_filter($attributes, function($key) use ($self) {
+            return in_array($key, $self->fillableRelations());
         }, ARRAY_FILTER_USE_KEY);
     }
 
