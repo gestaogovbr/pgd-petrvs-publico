@@ -9,7 +9,7 @@
                 </div>
                 <div class="form-group col-md-9">
                     <div class="row">
-                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_CPF') ? 'true' : undefined" [size]="4" label="CPF" controlName="cpf" [control]="form!.controls.cpf"></input-text>
+                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_CPF') ? 'true' : undefined" [size]="4" label="CPF" controlName="cpf" [control]="form!.controls.cpf" [maskFormat]="'000.000.000-00'"></input-text>
                         <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAT') ? 'true' : undefined" [size]="3" label="Matrícula" controlName="matricula" [control]="form!.controls.matricula"></input-text>
                         <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAIL') ? 'true' : undefined" [size]="5" label="E-mail" controlName="email" [control]="form!.controls.email" textCase="lower"></input-text>
                     </div>
@@ -23,7 +23,7 @@
                     <div class="row">
                         <input-select [size]="4" label="UF" controlName="uf" [control]="form!.controls.uf" [items]="lookup.UF"></input-select>
                         <input-radio [size]="4" label="Sexo" controlName="sexo" [control]="form!.controls.sexo" [items]="lookup.SEXO"></input-radio>
-                        <input-text [size]="4" label="Telefone" controlName="telefone" [control]="form!.controls.telefone"></input-text>
+                        <input-text [size]="4" label="Telefone" controlName="telefone" [control]="form!.controls.telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'"></input-text>
                     </div>
                 </div>
             </div>

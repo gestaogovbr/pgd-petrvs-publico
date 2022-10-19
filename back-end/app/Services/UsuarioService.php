@@ -29,6 +29,12 @@ class UsuarioService extends ServiceBase
     const LOGIN_MICROSOFT = "AZURE";
     const LOGIN_FIREBASE = "FIREBASE";
 
+    public function proxyStore(&$data, $unidade, $action) {
+        $data['cpf'] = $this->UtilService->onlyNumbers($data['cpf']);
+        $data['telefone'] = $this->UtilService->onlyNumbers($data['telefone']);
+        return $data;
+    }
+
     public function proxySearch($query, &$data, &$text) {
         $data["where"][] = ["subordinadas", "==", true];
         return $this->proxyQuery($query, $data);

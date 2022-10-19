@@ -32,16 +32,30 @@ export class GoogleApiService {
   initialize(autoLogin?: boolean): Promise<any> {
     return new Promise((resolve, reject) => {
       try {
+        let socialUser = GoogleApiService.retrieveSocialUser()
+        if (socialUser != null) {
+          this._socialUser.next(socialUser)
+
+          // refresh the token 10s before it expires
+          let idToken = JSON.parse(atob(socialUser.idToken.split(".")[1]))
+          let currentUnixTimestamp = Math.floor(Date.now() / 1000)
+          setTimeout(() => {
+            this.refreshToken()
+          }, (idToken["exp"] - currentUnixTimestamp - 10) * 1000)
+        }
+
         const script = this.utilService.loadScript('https://accounts.google.com/gsi/client')
         script.onload = () => {
             google.accounts.id.initialize({
               client_id: this.gb.loginGoogleClientId,
               ux_mode: 'popup',
+              autoLogin: autoLogin,
               cancel_on_tap_outside: true,
               callback: ({ credential }: any) => {
                 this.auth.authGoogle(credential).then(res => {
                   const socialUser = this.createSocialUser(credential);
                   this._socialUser.next(socialUser);
+                  GoogleApiService.persistSocialUser(socialUser)
                 });
               }
             });
@@ -56,6 +70,35 @@ export class GoogleApiService {
   async signOut(): Promise<void> {
     google.accounts.id.disableAutoSelect();
     this._socialUser.next(null);
+    GoogleApiService.clearSocialUser();
+  }
+
+  refreshToken(): Promise<SocialUser | null> {
+    return new Promise((resolve, reject) => {
+      google.accounts.id.revoke(this._socialUser?.value?.id, (response: any) => {
+        if (response.error) reject(response.error);
+        else resolve(this._socialUser.value);
+      });
+    });
+  }
+
+  getLoginStatus(): Promise<SocialUser> {
+    return new Promise((resolve, reject) => {
+      // retrieve social user from local storage, if stored
+      let storedUser = GoogleApiService.retrieveSocialUser()
+      
+      if (storedUser !== null) {
+        this._socialUser.next(storedUser)
+      }
+
+      if (this._socialUser.value) {
+        resolve(this._socialUser.value);
+      } else {
+        reject(
+          `No user is currently logged in with Google`
+        );
+      }
+    });
   }
 
   private createSocialUser(idToken: string) {
@@ -85,6 +128,23 @@ export class GoogleApiService {
     });
   }
 
+  revokeAccessToken(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (!this._tokenClient) {
+        reject(
+          'No token client was instantiated, you should specify some scopes.'
+        );
+      } else if (!this._accessToken.value) {
+        reject('No access token to revoke');
+      } else {
+        google.accounts.oauth2.revoke(this._accessToken.value, () => {
+          this._accessToken.next(null);
+          resolve();
+        });
+      }
+    });
+  }
+
   signIn(): Promise<SocialUser> {
     return Promise.reject(
       'You should not call this method directly for Google, use "<asl-google-signin-button>" wrapper ' +
@@ -105,6 +165,24 @@ export class GoogleApiService {
         .join("")
     );
     return JSON.parse(jsonPayload);
+  }
+
+
+  private static persistSocialUser(socialUser: SocialUser): void {
+    localStorage.setItem('google_socialUser', JSON.stringify(socialUser))
+  }
+
+  private static retrieveSocialUser(): any {
+    let socialUserJson = localStorage.getItem('google_socialUser')
+    if (socialUserJson === null) {
+      return null
+    }
+    
+    return JSON.parse(socialUserJson);
+  }
+
+  private static clearSocialUser(): void {
+    localStorage.removeItem('google_socialUser');
   }
 
 }
