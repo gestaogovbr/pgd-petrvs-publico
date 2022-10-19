@@ -2,15 +2,19 @@
 
 namespace App\Services;
 
-use App\Models\Atividade;
 use App\Services\ServiceBase;
+use App\Services\UtilService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class PetrvsService extends ServiceBase
 {
     public function showTables() {
-        $tabelas = array_map(fn($t) => $t->Tables_in_petrvs, DB::select('SHOW TABLES'));
+        $util = new UtilService();
+        $tabelas = array_map(fn($t) => [
+            'key' => $t->Tables_in_petrvs, 
+            'value' => $util->inicialMaiuscula($t->Tables_in_petrvs)
+        ] , DB::select('SHOW TABLES'));
         return $tabelas;
     }
 

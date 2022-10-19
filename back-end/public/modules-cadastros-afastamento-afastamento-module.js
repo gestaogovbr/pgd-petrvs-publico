@@ -498,33 +498,6 @@ AfastamentoModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefine
         _afastamento_routing_module__WEBPACK_IMPORTED_MODULE_1__["AfastamentoRoutingModule"]] }); })();
 
 
-/***/ }),
-
-/***/ "qHfw":
-/*!************************************************!*\
-  !*** ./src/app/dao/afastamento-dao.service.ts ***!
-  \************************************************/
-/*! exports provided: AfastamentoDaoService */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AfastamentoDaoService", function() { return AfastamentoDaoService; });
-/* harmony import */ var _dao_base_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./dao-base.service */ "WScx");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
-
-
-class AfastamentoDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0__["DaoBaseService"] {
-    constructor(injector) {
-        super("Afastamento", injector);
-        this.injector = injector;
-        this.searchFields = ["usuario_id", "tipo_motivo_afastamento_id"];
-    }
-}
-AfastamentoDaoService.ɵfac = function AfastamentoDaoService_Factory(t) { return new (t || AfastamentoDaoService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
-AfastamentoDaoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: AfastamentoDaoService, factory: AfastamentoDaoService.ɵfac, providedIn: 'root' });
-
-
 /***/ })
 
 }]);

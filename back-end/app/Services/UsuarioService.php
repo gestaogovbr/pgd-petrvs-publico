@@ -39,7 +39,7 @@ class UsuarioService extends ServiceBase
         $data["where"][] = ["subordinadas", "==", true];
         return $this->proxyQuery($query, $data);
 
-/*        $where = [];
+        /*        $where = [];
         $unidade_id = null;
         $vinculadas = false;
         foreach($data["where"] as $condition) {
@@ -70,8 +70,8 @@ class UsuarioService extends ServiceBase
     }
 
     public function atualizarFotoPerfil($tipo, &$usuario, $url) {
-        $mudou = ($tipo == UsuarioService::LOGIN_GOOGLE ? $usuario->foto_google != $url : 
-                 ($tipo == UsuarioService::LOGIN_MICROSOFT ? $usuario->foto_microsoft != $url : 
+        $mudou = ($tipo == UsuarioService::LOGIN_GOOGLE ? $usuario->foto_google != $url :
+                 ($tipo == UsuarioService::LOGIN_MICROSOFT ? $usuario->foto_microsoft != $url :
                  ($tipo == UsuarioService::LOGIN_FIREBASE ? $usuario->foto_firebase != $url : false)));
         if(!empty($url) && !empty($usuario) && $mudou) {
             $downloaded = $this->downloadImgProfile($url, "usuarios/" . $usuario->id);
@@ -81,7 +81,7 @@ class UsuarioService extends ServiceBase
                     case UsuarioService::LOGIN_GOOGLE: $usuario->foto_google = $url; break;
                     case UsuarioService::LOGIN_MICROSOFT: $usuario->foto_microsoft = $url; break;
                     case UsuarioService::LOGIN_FIREBASE: $usuario->foto_firebase = $url; break;
-                }                
+                }
                 $usuario->save();
             }
         }
@@ -206,6 +206,11 @@ class UsuarioService extends ServiceBase
         return $result;
     }
 
+    /**
+     * Este método impede que um usuário seja inserido com e-mail/CPF/Matrícula já existentes no Banco de Dados, bem como
+     * impede também a inserção de um usuário com o perfil de Desenvolvedor. Usuários com esse perfil só podem ser inseridos
+     * através do próprio código da aplicação.
+     */
     public function validateStore($data, $unidade, $action) {
         if($action == ServiceBase::ACTION_INSERT) {
             if(empty($data["email"])) throw new \Exception("O campo de e-mail é obrigatório");
@@ -220,7 +225,16 @@ class UsuarioService extends ServiceBase
                     throw new \Exception("Já existe um usuário com mesmo e-mail ou CPF no sistema");
                 }
             }
+            if(($data["perfil_id"] == $this->developer_id) && (!$this->IsLoggedUserADeveloper())) throw new \Exception("Tentativa de inserir um usuário com o perfil de Desenvolvedor");
         }
+    }
+
+    /**
+     * Este método impede que um usuário, com perfil diferente de Desenvolvedor, tenha seu perfil alterado para este último.
+     */
+    public function proxyUpdate($data, $unidade){
+        $perfilAtual = $this->getById($data["id"])["perfil_id"];
+        if((($perfilAtual == $this->developer_id) || ($data["perfil_id"] != $this->developer_id)) && (!$this->IsLoggedUserADeveloper())) throw new \Exception("Tentativa de alterar o perfil de/para um Desenvolvedor");
     }
 
 }

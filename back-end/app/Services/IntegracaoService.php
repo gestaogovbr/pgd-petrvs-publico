@@ -510,42 +510,100 @@ class IntegracaoService extends ServiceBase {
                 LogError::newError("Erro ao importar servidores", $e);
                 $result["servidores"] = $e->getMessage();
             }
+
+            try {
+                DB::beginTransaction();
+                // seleciona a matricula e as funções de todos os servidores ativos trazidos do SIAPE
+                $sql_1 = "SELECT matriculasiape, funcoes FROM integracao_servidores WHERE vinculo_ativo = 'true'";
+                $servidores = DB::select($sql_1);
+                // filtra apenas aqueles que são gestores ou gestores substitutos
+                $chefes = array_filter($servidores, fn($s) => $s->funcoes != "[]");
+                $chefias = [];
+                // percorre todos os gestores, montando um array com os dados da chefia (matricula do chefe, código da unidade, tipo de função)
+                foreach($chefes as $chefe){
+                    $funcoes = json_decode($chefe->funcoes);
+                    if(is_array($funcoes->funcao)) {
+                        // nesse caso o servidor é gestor de mais de uma unidade
+                        $chefias = array_merge($chefias, array_map(fn($f) => ['matricula' => $chefe->matriculasiape, 'codigo_siape' => $f->uorg_funcao, 'tipo_funcao' => $f->tipo_funcao], $funcoes->funcao));
+                    } else {
+                        // nesse caso o servidor é gestor de apenas uma unidade
+                        array_push($chefias, ['matricula' => $chefe->matriculasiape, 'codigo_siape' => $funcoes->funcao->uorg_funcao, 'tipo_funcao' => $funcoes->funcao->tipo_funcao]);
+                    }
+                }
+                // torna nulos os campos gestor_id e gestor_substituto_id das unidades, para refazê-los com o atual array de chefias
+                DB::update("UPDATE unidades SET gestor_id = null, gestor_substituto_id = null");
+                // percorre o array das chefias, inserindo na tabela de unidades os IDs dos respectivos gestores e gestores substitutos
+                foreach($chefias as $chefia) {
+                    // descobre o ID do Usuário. Será null se não for localizado servidor com a matricula informada
+                    $sql_2 = "SELECT id from USUARIOS where matricula = :matricula";
+                    $idUsuario = DB::select($sql_2, [':matricula' => $chefia['matricula']]);
+                    if ($idUsuario){
+                        // descobre o ID da Unidade
+                        $sql_3 = "SELECT u.id FROM integracao_unidades iu join unidades u on iu.id_servo = u.codigo WHERE iu.codigo_siape = :codigo_siape";
+                        $idUnidade = DB::select($sql_3, [':codigo_siape' => $chefia['codigo_siape']]);
+                        // monta a consulta de acordo com o tipo de função
+                        if($chefia['tipo_funcao'] = '1'){
+                            $sql_4 = "UPDATE unidades SET gestor_id = :id_usuario WHERE id = :id_unidade";
+                        } else if($chefe['tipo_funcao'] = '2'){
+                            $sql_4 = "UPDATE unidades SET gestor_substituto_id = :id_usuario WHERE id = :id_unidade";
+                        }
+                        // insere o ID do usuário na Unidade como gestor ou gestor substituto
+                        DB::update($sql_4, [':id_usuario'=> $idUsuario[0]->id, ':id_unidade' => $idUnidade[0]->id]);
+                    }
+                }
+                DB::commit();
+                $result["chefias"] = 'sucesso';
+            } catch (Exception $e) {
+                DB::rollback();
+                LogError::newError("Erro ao atualizar as chefias (titulares/substitutos)", $e);
+                $result["chefias"] = $e->getMessage();
+            }
             return $result;
         }
-
-        $this->atualizarChefias();
-
     }
 
-    public function atualizarChefias() {
-        $sql_1 = "SELECT matriculasiape, funcoes FROM integracao_servidores WHERE vinculo_ativo = 'true'";
-        $servidores = DB::select($sql_1);
-        $chefes = array_filter($servidores, fn($s) => $s->funcoes != "[]");
-        $chefias = [];
-        foreach($chefes as $chefe){
-            $funcoes = json_decode($chefe->funcoes);
-            if(is_array($funcoes->funcao)) {
-                $chefias = array_merge($chefias, array_map(fn($f) => ['matricula' => $chefe->matriculasiape, 'codigo_siape' => $f->uorg_funcao, 'tipo_funcao' => $f->tipo_funcao], $funcoes->funcao));
-            } else {
-                array_push($chefias, ['matricula' => $chefe->matriculasiape, 'codigo_siape' => $funcoes->funcao->uorg_funcao, 'tipo_funcao' => $funcoes->funcao->tipo_funcao]);
-            }
+/*     public function atualizarChefias() {
+        try {
+            // seleciona a matricula e as funções de todos os servidores ativos trazidos do SIAPE
+                $sql_1 = "SELECT matriculasiape, funcoes FROM integracao_servidores WHERE vinculo_ativo = 'true'";
+                $servidores = DB::select($sql_1);
+            // filtra apenas aqueles que são gestores ou gestores substitutos
+                $chefes = array_filter($servidores, fn($s) => $s->funcoes != "[]");
+                $chefias = [];
+            // percorre todos os gestores, montando um array com os dados da chefia (matricula do chefe, código da unidade, tipo de função)
+                foreach($chefes as $chefe){
+                    $funcoes = json_decode($chefe->funcoes);
+                    if(is_array($funcoes->funcao)) {
+                        // nesse caso o servidor é gestor de mais de uma unidade
+                        $chefias = array_merge($chefias, array_map(fn($f) => ['matricula' => $chefe->matriculasiape, 'codigo_siape' => $f->uorg_funcao, 'tipo_funcao' => $f->tipo_funcao], $funcoes->funcao));
+                    } else {
+                        // nesse caso o servidor é gestor de apenas uma unidade
+                        array_push($chefias, ['matricula' => $chefe->matriculasiape, 'codigo_siape' => $funcoes->funcao->uorg_funcao, 'tipo_funcao' => $funcoes->funcao->tipo_funcao]);
+                    }
+                }
+            // torna nulos os campos gestor_id e gestor_substituto_id das unidades, para refazê-los com o atual array de chefias
+                DB::update("UPDATE unidades SET gestor_id = null, gestor_substituto_id = null");
+            // percorre o array das chefias, inserindo na tabela de unidades os IDs dos respectivos gestores e gestores substitutos
+                foreach($chefias as $chefia) {
+                    // descobre o ID do Usuário. Será null se não for localizado servidor com a matricula informada
+                    $sql_2 = "SELECT id from USUARIOS where matricula = :matricula";
+                    $idUsuario = DB::select($sql_2, [':matricula' => $chefia['matricula']]);
+                    // descobre o ID da Unidade
+                    $sql_3 = "SELECT u.id FROM integracao_unidades iu join unidades u on iu.id_servo = u.codigo WHERE iu.codigo_siape = :codigo_siape";
+                    $idUnidade = DB::select($sql_3, [':codigo_siape' => $chefia['codigo_siape']]);
+                    // monta a consulta de acordo com o tipo de função
+                    if($chefia['tipo_funcao'] = '1'){
+                        $sql_4 = "UPDATE unidades SET gestor_id = :id_usuario WHERE id = :id_unidade";
+                    } else if($chefe['tipo_funcao'] = '2'){
+                        $sql_4 = "UPDATE unidades SET gestor_substituto_id = :id_usuario WHERE id = :id_unidade";
+                    }
+                    // se o usuário existir na tabela de servidores, insere seu ID na Unidade como gestor ou gestor substituto
+                    if ($idUsuario) DB::update($sql_4, [':id_usuario'=> $idUsuario, ':id_unidade' => $idUnidade]);
+                }
+        } catch (Exception $e) {
+            throw $e;
         }
-        foreach($chefias as $chefia) {
-            //Descobrir o ID do Usuário
-            $sql_2 = "SELECT id from USUARIOS where matricula = :matricula";
-            $idUsuario = DB::select($sql_2, [':matricula' => $chefia['matricula']]);
-            //Descobrir o ID da Unidade
-            $sql_3 = "SELECT u.id FROM integracao_unidades iu join unidades u on iu.id_servo = u.codigo WHERE iu.codigo_siape = :codigo_siape";
-            $idUnidade = DB::select($sql_3, [':codigo_siape' => $chefia['codigo_siape']]);
-
-            if($chefia['tipo_funcao'] = '1'){
-                $sql_4 = "UPDATE unidades SET gestor_id = :id_usuario WHERE id = :id_unidade";
-            } else if($chefe['tipo_funcao'] = '2'){
-                $sql_4 = "UPDATE unidades SET gestor_substituto_id = :id_usuario WHERE id = :id_unidade";
-            }
-            if ($idUsuario) DB::update($sql_4, [':id_usuario'=> $idUsuario, ':id_unidade' => $idUnidade]);
-        }
-    }
+    } */
 
     public function salvaUsuarioLotacaoGoogle(&$usuario, &$lotacao, $tokenData, $auth){
         $auth->fillUsuarioWithCredential($usuario, $tokenData);

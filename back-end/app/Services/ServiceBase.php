@@ -9,6 +9,7 @@ use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use App\Services\UtilService;
+use Illuminate\Support\Facades\Auth;
 use App\Exceptions\LogError;
 use Carbon\Carbon;
 use ReflectionObject;
@@ -38,6 +39,7 @@ class ServiceBase
     const ACTION_UPDATE = "UPDATE";
 
     public string $collection = "";
+    public string $developer_id = "";
 
     /* instancia automaticamente os serviços */
     private $_services = [];
@@ -49,6 +51,7 @@ class ServiceBase
 
     public function __construct($collection = null)
     {
+        $this->developer_id = ((config('petrvs') ?: [])['ids_fixos'] ?: [])['developer_id'] ?: "77001b4b-6e25-4aab-9abc-8872c6c1029a";
         $this->collection = $collection ?? $this->collection;
         if(empty($this->collection)) {
             $this->collection = str_replace("Service", "", str_replace("App\\Services", "App\\Models", get_class($this)));
@@ -279,7 +282,7 @@ class ServiceBase
 
     /**
      * Search for a given text
-     *
+     * 
      * @param  Array $data
      * @return Array
      */
@@ -708,4 +711,11 @@ class ServiceBase
             throw new Exception("Id não encontrado");
         }
     }
+
+    /**
+     * Retorna se o usuário logado possui o perfil de Desenvolvedor
+     */
+    public function IsLoggedUserADeveloper(){
+        return Auth::user()->perfil_id == $this->developer_id;
+     }
 }

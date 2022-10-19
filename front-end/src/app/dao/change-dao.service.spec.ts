@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ChangeDaoService } from './cidade-dao.service';
+import { ChangeDaoService } from './change-dao.service';
 
 describe('ChangeDaoService', () => {
   let service: ChangeDaoService;

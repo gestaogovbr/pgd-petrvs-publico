@@ -9,10 +9,10 @@ class ChangeController extends ControllerBase {
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
             case 'UPDATE':
-                if (!$usuario->hasPermissionTo('MOD_LOGS_EDT')) throw new ServerException("CapacidadeStore", "Edição não executada");
+                if (!$usuario->hasPermissionTo('MOD_DEV_LOGS')) throw new ServerException("CapacidadeStore", "Edição não executada");
                 break;
             case 'DESTROY':
-                if (!$usuario->hasPermissionTo('MOD_LOGS_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não executada");
+                if (!$usuario->hasPermissionTo('MOD_DEV_LOGS')) throw new ServerException("CapacidadeStore", "Exclusão não executada");
                 break;
         }
     }

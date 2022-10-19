@@ -88,7 +88,6 @@ Route::middleware('auth:sanctum')->prefix('Calendario')->group(function () {
     Route::post('feriados', [CalendarioController::class, 'feriados']);
     Route::post('feriados-cadastrados', [CalendarioController::class, 'feriadosCadastrados']);
 });
-Route::middleware('auth:sanctum')->post('/Petrvs/showTables', [PetrvsController::class, 'showTables']);
 
 /* Logs */
 Route::middleware('auth:sanctum')->prefix('Change')->group(function () {
@@ -100,6 +99,7 @@ Route::middleware('auth:sanctum')->prefix('Error')->group(function () {
 Route::middleware('auth:sanctum')->prefix('Traffic')->group(function () {
     defaultRoutes(TrafficController::class);
 });
+Route::middleware('auth:sanctum')->post('/Petrvs/showTables', [PetrvsController::class, 'showTables']);
 
 /* Testes */
 //Route::middleware(['auth:sanctum', 'can:ADMINISTRADOR'])->get('/teste', function (Request $request) { return ["OK"]; });
@@ -136,6 +136,7 @@ Route::middleware(['auth:sanctum'])->prefix('TipoProcesso')->group(function () {
     defaultRoutes(TipoProcessoController::class);
     Route::post('atualizar', [TipoProcessoController::class, 'atualizar']);
 });
+
 /* Modulos: Gestão */
 Route::middleware(['auth:sanctum'])->prefix('Demanda')->group(function () {
     defaultRoutes(DemandaController::class);
@@ -159,6 +160,7 @@ Route::middleware(['auth:sanctum'])->prefix('Plano')->group(function () {
     Route::post('metadadosPlano', [PlanoController::class, 'metadadosPlano']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Projeto')->group(function () { defaultRoutes(ProjetoController::class); });
+
 /* Modulos: Configurações */
 Route::middleware(['auth:sanctum'])->prefix('Usuario')->group(function () {
     defaultRoutes(UsuarioController::class);

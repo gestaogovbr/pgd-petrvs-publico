@@ -4,16 +4,18 @@ namespace App\Services;
 
 use App\Models\TipoCapacidade;
 use App\Services\ServiceBase;
+use Illuminate\Support\Facades\Auth;
 
 class TipoCapacidadeService extends ServiceBase {
+
     public $tiposCapacidades = [
         /* Capacidades do menu principal*/
         ["e06f49cb-ba9a-11ec-a5bb-0050569c64a0", "MENU_CAD_ACESSO", "Permite acessar o menu cadastro"],
         ["e089d591-ba9a-11ec-a5bb-0050569c64a0", "MENU_CONFIG_ACESSO", "Permite acessar o menu configurações"],
         ["e07877ef-ba9a-11ec-a5bb-0050569c64a0", "MENU_GESTAO_ACESSO", "Permite acessar o menu gestão"],
         ["e0814f12-ba9a-11ec-a5bb-0050569c64a0", "MENU_REL_ACESSO", "Permite acessar o menu relatórios"],
-        ["e0914e12-ba9a-11ec-a5bb-0050569c64a0", "MENU_LOGS_ACESSO", "Permite acessar o menu logs"],
-        /* Dashboard */
+        ["e0914e12-ba9a-11ec-a5bb-0050569c64a0", "DEV_MENU_LOGS_ACESSO", "Permite acessar o menu logs"],
+        /* Capacidades do DASHBOARD */
         ["dd6f49cb-ba9a-11ec-a5bb-0050569c64a0", "DASH_PRG", "Permite mostrar informações do Programa de Gestão"],
         /* Capacidades do módulo AFASTAMENTO*/
         ["1364489d-bc1b-11ec-a5bb-0050569c64a0", "MOD_AFT", "Permite acessar item menu afastamentos"],
@@ -120,6 +122,10 @@ class TipoCapacidadeService extends ServiceBase {
         ["b006a737-f94d-11ec-a5bb-0050569c64a0", "MOD_DMD_USERS_ALT_AVAL", "Permite alterar avaliação de demanda de qualquer usuário, inclusive de outra lotação"],
         ["b0118ccd-f94d-11ec-a5bb-0050569c64a0", "MOD_DMD_USERS_EXCL", "Permite excluir demanda de qualquer usuário, inclusive de outra lotação"],
         ["2da688ee-2221-11ed-a5bb-0050569c64a0", "MOD_DMD_USERS_ATRIB", "Permite qualquer usuário atribuir demanda para qualqer outro"],
+        ["b856b5f9-4bca-11ed-a5bb-0050569c64a0", "MOD_DMD_TRF_INCL", "Permite incluir tarefas dentro de demandas"],
+        ["d5b0b20b-4bcc-11ed-a5bb-0050569c64a0", "MOD_DMD_TRF_EDT", "Permite editar tarefas dentro de demandas"],
+        ["ef26230f-4bcc-11ed-a5bb-0050569c64a0", "MOD_DMD_TRF_EXCL", "Permite exluir tarefas dentro de demandas"],
+        ["0c27addd-4bcd-11ed-a5bb-0050569c64a0", "MOD_DMD_TRF_CONS", "Permite consultar tarefas dentro de demandas"],
         /* Capacidades do módulo ENTIDADE*/
         ["ea2610e6-e1d7-11ec-a5bb-0050569c64a0", "MOD_ENTD_CFG", "Permite configurar Entidade"],
         ["a8ef649e-e112-11ec-a5bb-0050569c64a0", "MOD_ENTD_CONS", "Permite consultar Entidade"],
@@ -135,9 +141,7 @@ class TipoCapacidadeService extends ServiceBase {
         ["a925169b-e112-11ec-a5bb-0050569c64a0", "MOD_FER_EXCL", "Permite excluir feriado"],
         ["58524ff3-ba5e-11ec-a5bb-0050569c64a0", "MOD_FER_INCL", "Permite incluir feriados"],
         /* Capacidades do módulo LOGS*/
-        ["5a5254fe-d27c-11ec-a5bb-0050569c64a0", "MOD_LOGS_CONS", "Permite consultar logs"],
-        ["5a5a5e9c-d27c-11ec-a5bb-0050569c64a0", "MOD_LOGS_EDT", "Permite alterar logs"],
-        ["5a62d79e-d27c-11ec-a5bb-0050569c64a0", "MOD_LOGS_EXCL", "Permite excluir logs"],
+        ["5a5254fe-d27c-11ec-a5bb-0050569c64a0", "DEV_MOD_LOGS", "Permite manter registros de logs"],
         /* Capacidades do módulo LOTAÇÃO*/
         ["593ebdb2-e1d0-11ec-a5bb-0050569c64a0", "MOD_LOT_CONS", "Permite consultar lotação"],
         ["592a7d9f-e1d0-11ec-a5bb-0050569c64a0", "MOD_LOT_EDT", "Permite editar lotação"],
@@ -245,4 +249,28 @@ class TipoCapacidadeService extends ServiceBase {
         ["5a498c43-d21a-11ec-a5bb-0050569c64a0", "MOD_USER_INCL", "Permite incluir usuário"],
         ["e453253c-e27e-11ec-a5bb-0050569c64a0", "MOD_USER_TUDO", "Permite consultar qualquer usuário independente de lotação"]
     ];
+
+    private function differentDev(&$data) {
+        if(Auth::user()->perfil_id <> config('petrvs')['ids_fixos']['developer_id']){
+            if(isset($data['where']) && count($data['where']) > 0) {
+                if(gettype($data['where'][0]) == "string") {
+                    $data['where'] = [["codigo", "not like", "DEV_%"], $data['where']];
+                } else {
+                    $data['where'][] = ["codigo", "not like", "DEV_%"];
+                }
+            } else {
+                $data['where'] = [["codigo", "not like", "DEV_%"]];
+            }
+        }
+    }
+
+    public function searchText($data) {
+        $this->differentDev($data);
+        return parent::searchText($data);
+    }
+
+    public function query($data) {
+        $this->differentDev($data);
+        return parent::query($data);
+    }
 }

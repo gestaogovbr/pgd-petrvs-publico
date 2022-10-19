@@ -26,11 +26,11 @@ class PerfilController extends ControllerBase
         }
     }
 
-    /*public function searchText(Request $request)
+    public function searchText(Request $request)
     {
         $request->request->add(['where' => [RawWhere::raw("(data_fim is null or data_fim > NOW())"
                                                         . " and nivel >= " . Auth::user()->Perfil->nivel)]]);
         $request->request->add(['orderBy' => ["nivel"]]);
         return parent::searchText($request);
-    }*/
+    }
 }
