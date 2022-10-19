@@ -11,12 +11,13 @@
                 <h5 class="card-title mt-2">Petrvs login</h5>
                 <div *ngIf="globals.is('PRF'); else naoPRF" class="card-body">
                     <p class="card-text">Faça login com seu e-mail institucional ou pelo DPRF-Segurança</p>
-                    <div class="row mt-2">
+                    <div id="gbtn"></div>
+                    <!-- <div class="row mt-2">
                         <div *ngIf="!!googleApi.gapiAuth2" class="col-md-12 d-flex justify-content-center">
                             <a *ngIf="!auth.logging" class="btn btn-lg btn-google btn-block btn-full text-uppercase btn-outline" (click)="signInGoogle()"><img [src]="globals.getResourcePath('assets/images/google-logo.png')"> E-mail Institucional</a>
                             <div *ngIf="auth.logging" class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden"></span></div>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="or-container">
                         <div class="line-separator"></div>
                         <div class="or-label">ou</div>
@@ -40,10 +41,11 @@
                   <div *ngIf="globals.hasGoogleLogin" class="card-body">
                     <p class="card-text">Faça login com seu e-mail institucional</p>
                     <div class="row mt-2">
-                        <div *ngIf="!!googleApi.gapiAuth2" class="col-md-12 d-flex justify-content-center">
+                        <div id="gbtn"></div>
+                        <!-- <div *ngIf="!!googleApi.gapiAuth2" class="col-md-12 d-flex justify-content-center">
                             <a *ngIf="!auth.logging" class="btn btn-lg btn-google btn-block btn-full text-uppercase btn-outline" (click)="signInGoogle()"><img [src]="globals.getResourcePath('assets/images/google-logo.png')"> E-mail Institucional</a>
                             <div *ngIf="auth.logging" class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden"></span></div>
-                        </div>
+                        </div> -->
                     </div>
                   </div>
                   <div *ngIf="globals.hasAzureLogin && globals.hasGoogleLogin" class="or-container">

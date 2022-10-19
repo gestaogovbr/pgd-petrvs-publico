@@ -1,15 +1,16 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, RequiredValidator, Validators } from '@angular/forms';
 import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormHelperService } from 'src/app/services/form-helper.service';
 import { GlobalsService } from 'src/app/services/globals.service';
-import { GoogleApiService } from 'src/app/services/google-api.service';
+import { GoogleApiService, SocialUser } from 'src/app/services/google-api.service';
 import { FullRoute, NavigateService } from 'src/app/services/navigate.service';
 import { UtilService } from 'src/app/services/util.service';
 import { ModalPage } from '../base/modal-page';
 import { DialogService } from 'src/app/services/dialog.service';
+
 
 @Component({
   selector: 'app-login',
@@ -28,6 +29,7 @@ export class LoginComponent implements OnInit, ModalPage {
   public modalRoute?: ActivatedRouteSnapshot;
   public modalInterface: boolean = true;
   public modalWidth: number = 400;
+  public noSession: boolean = false;
   public titleSubscriber: Subject<string> = new Subject<string>();
 
   constructor(
@@ -41,7 +43,8 @@ export class LoginComponent implements OnInit, ModalPage {
     public fh: FormHelperService,
     public formBuilder: FormBuilder,
     public googleApi: GoogleApiService,
-    public dialog: DialogService
+    public dialog: DialogService,
+    private ngZone: NgZone
   ) {
     this.login = this.fh.FormBuilder({
       usuario: {default: ""},
@@ -70,14 +73,38 @@ export class LoginComponent implements OnInit, ModalPage {
         let routerTo = JSON.parse(params["redirectTo"]);
         this.redirectTo = routerTo.route[0] == "login" ? routerTo : undefined;
       }
+      this.noSession = !!params["noSession"];
     });
-    if(this.globals.is("PRF")) {
-      this.auth.gapiLoad.asObservable().subscribe(gAuth => {
-        this.autoSignGoogle();
-      });
-      this.autoSignGoogle();
-    }
+    /* Registra listner para logins com popup que necessitam de retorno */
     this.auth.registerPopupLoginResultListener();
+    /* Verifica se o usuário não já está logado (login-session), e caso não esteja verifica tambem se algum dos login (Google, Microsoft, etc), estão com sessão ativas e tenta logar com essa sessão */
+    (async ()=> {
+      // Inicializa Google Auth e cria o botão na tela
+      if(this.globals.hasGoogleLogin) {
+        let res = await this.googleApi.initialize(true);//.then((res: any) => {
+        res.renderButton(document.getElementById('gbtn') as HTMLElement, {
+          size: 'large',
+          width: 320,
+        });
+        //})
+      }
+      let result = false;
+      if(!this.noSession) result = await this.auth.authSession();
+
+      /* verifica tambem se algum dos login (Google, Microsoft, etc), estão com sessão ativas */
+      if(!result) {
+        if(this.globals.hasGoogleLogin) {
+          var socialUser;
+          try {
+            socialUser = await this.googleApi.getLoginStatus();            
+          } catch (error) {}
+          if(socialUser?.idToken) this.auth.authGoogle(socialUser?.idToken);
+        }
+        if(this.globals.hasAzureLogin) {
+          // TODO: Implementa login automático
+        }
+      }
+    })();
   }
 
   public closeModalIfSuccess = (result: boolean) => {
@@ -86,20 +113,20 @@ export class LoginComponent implements OnInit, ModalPage {
     }
   };
 
-  public autoSignGoogle() {
-    /* Faz login automaticamente caso esteja logado com o Google */
-    if(!this.auth.logging && !this.auth.logged && this.auth.googleAuth?.isSignedIn.get()) {
-      this.auth.authGapi(this.auth.googleAuth.currentUser.get().getAuthResponse().id_token, this.redirectTo);
-    }
-  }
+  // public autoSignGoogle() {
+  //   /* Faz login automaticamente caso esteja logado com o Google */
+  //   if(!this.auth.logging && !this.auth.logged && this.auth.googleAuth?.isSignedIn.get()) {
+  //     this.auth.authGapi(this.auth.googleAuth.currentUser.get().getAuthResponse().id_token, this.redirectTo);
+  //   }
+  // }
 
-  public signInGoogle() {
-    this.googleApi.signIn().then(user => {
-      this.auth.authGapi(user.getAuthResponse().id_token, this.redirectTo).then(this.closeModalIfSuccess);
-    }).catch(reason => {
-      console.log(reason);
-    });
-  }
+  // public signInGoogle() {
+  //  this.googleApi.signIn().then(user => {
+  //    this.auth.authGapi(user.getAuthResponse().id_token, this.redirectTo).then(this.closeModalIfSuccess);
+  //  }).catch(reason => {
+  //    console.log(reason);
+  //  });
+  // }
 
   public showDprfSeguranca() {
     this.buttonDprfSeguranca = !this.buttonDprfSeguranca;

@@ -87,6 +87,10 @@ export class GlobalsService {
     return navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
   }
 
+  public get loginGoogleClientId(): string {
+    return environment.login.google_client_id || "";
+  }
+
   public get hasGoogleLogin(): boolean {
     return environment.login.gsuit == true;
   }

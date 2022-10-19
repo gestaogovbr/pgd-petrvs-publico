@@ -10,7 +10,7 @@ import { ProjetoAlocacao } from 'src/app/models/projeto-alocacao.model';
 import { ProjetoRecurso, ProjetoRecursoTipo } from 'src/app/models/projeto-recurso.model';
 import { ProjetoRegra } from 'src/app/models/projeto-regra.model';
 import { ProjetoTarefa, ProjetoTarefaStatus } from 'src/app/models/projeto-tarefa.model';
-import { Projeto, ProjetoStatus } from 'src/app/models/projeto.model';
+import { HasAlocacoes, HasTarefas, Projeto, ProjetoStatus } from 'src/app/models/projeto.model';
 import { Tarefa } from 'src/app/models/tarefa.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import * as moment from 'moment';
@@ -322,7 +322,7 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
   public getRecursos(tarefa: ProjetoTarefa, metadata: any): RecursoListItem[] {
     let result: RecursoListItem[] = [];
     for(let alocacao of tarefa.alocacoes || []) {
-      const regra = ""; //alocacao.regra ? "\n(" + alocacao.regra.nome + ")" : ""; /* TODO: Obter lista de regras */
+      const regra = this.projetoService.getNomesRegras(alocacao, "\n(", ")");
       const nome = alocacao.recurso?.nome?.length ? alocacao.recurso.nome + "\n" : "";
       switch(alocacao.recurso?.tipo) {
         case 'HUMANO': result.push({ url: alocacao.recurso.usuario?.url_foto || "assets/images/projetos/usuario.png", hint: nome + "Usuario: " + (alocacao.recurso.usuario?.nome || "(DESCONHECIDO)") + regra }); break;
@@ -421,8 +421,9 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
       }
       return (alocacoes || []).map(alocacao => new GanttAssignment({
         id: alocacao.id,
+        extra: alocacao,
         resource_id: alocacao.recurso_id,
-        //role_id: alocacao.regra_id, /* TODO: Alterar para aceitar mais de uma rule */
+        roles_ids: alocacao.regras?.map(x => x.regra_id) || [],
         description: toAssignmentDescription(alocacao),
         quantity: (alocacao as any).quantidade || 1
       }));
@@ -498,9 +499,10 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
       return children.map(child => toGanttTask(child));
     }
     let gantt = new GanttProject({
-      tasks: [new GanttTask({
+      root: [new GanttTask({
         id: projeto.id,
         index: 0,
+        level: 0,
         name: projeto.nome,
         description: projeto.descricao,
         extra: projeto,
@@ -520,21 +522,23 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
       resources: (projeto.recursos || []).map(x => toGanttResource(x)),
       roles: (projeto.regras || []).map(x => toGanttRole(x))
     });
-
+    /* Converte de arvore para lista de tasks */
+    gantt.tasks = this.fromTaskTree(gantt.root, 0);
     return gantt;
   }
 
-  public fromGantt(project: GanttProject): Projeto {
+  public fromGantt(project: GanttProject, update: boolean = true): Projeto {
     let root = this.project.tasks[0];
     let origem = root.extra as Projeto;
     let index = 1;
 
     const fromGanttRules = (roles: GanttRole[]): ProjetoRegra[] => {
-      return roles.map(role => new ProjetoRegra({
-        id: role.id,
-        nome: role.name,
+      let result = update ? origem.regras || [] : [];
+      return this.util.mergeArrayOfObject(result, roles, "id", true, (src) => new ProjetoRegra({
+        id: src.id,
+        nome: src.name,
         projeto_id: projeto.id
-      }));
+      }), (dst, src) => dst.nome = src.name) as ProjetoRegra[];
     };
     const fromGanttResources = (resources: GanttResource[]): ProjetoRecurso[] => {
       const fromGanttResourceType = (resourceType: GanttResourceType): ProjetoRecursoTipo => {
@@ -562,32 +566,64 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
         };
         return castUnity.hasOwnProperty(unity) ? castUnity[unity] : "UNITY";
       };
-      return resources.map(resource => new ProjetoRecurso({
-        nome: resource.name,
-        tipo: fromGanttResourceType(resource.type),
-        unidade_medida: fromGanttUnity(resource.unity),
-        valor: resource.unityCost,
+      let result = update ? origem.recursos || [] : [];
+      return this.util.mergeArrayOfObject(result, resources, "id", true, (src) => new ProjetoRecurso({
+        nome: src.name,
+        tipo: fromGanttResourceType(src.type),
+        unidade_medida: fromGanttUnity(src.unity),
+        valor: src.unityCost,
         projeto_id: projeto.id,
-        usuario_id: (resource.extra as ProjetoRecurso).usuario_id,
-        unidade_id: (resource.extra as ProjetoRecurso).unidade_id,
-        material_servico_id: (resource.extra as ProjetoRecurso).material_servico_id
-      }));
+        usuario_id: (src.extra as ProjetoRecurso).usuario_id,
+        unidade_id: (src.extra as ProjetoRecurso).unidade_id,
+        material_servico_id: (src.extra as ProjetoRecurso).material_servico_id
+      }), (dst, src) => Object.assign(dst, {
+        nome: src.name,
+        tipo: fromGanttResourceType(src.type),
+        unidade_medida: fromGanttUnity(src.unity),
+        valor: src.unityCost,
+      })) as ProjetoRecurso[];
     };
-    /*const fromGanttStakeholders = (assigns: GanttAssignment[]): ProjetoEnvolvido[] => {
-      let result: ProjetoEnvolvido[] = [];
-      for(let assign of assigns || []) {
-        const envolvido = (origem.envolvidos || []).find(x => x.id == assign.id);
-        if(envolvido) {
-          result.push(new ProjetoEnvolvido({
-            projeto_id: projeto.id,
-            recurso_id: assign.resource_id,
-            regra_id: assign.role_id
-          }));
-        }
+    const fromGanttAssignment = (origem: HasAlocacoes, assignments: GanttAssignment[]): ProjetoAlocacao[] => {
+      if(origem.aloca_proprios_recursos || origem.custos_proprios) {
+        return this.util.mergeArrayOfObject(origem.alocacoes!, assignments, "id", true, (src) => {
+          const recurso = (projeto.recursos || []).find(x => x.id == src.recurso_id);
+          if(src.extra && recurso) {
+            const isProjeto = origem.id == projeto.id;
+            if(origem.custos_proprios) origem.custo += src.quantity * (recurso.valor || 0);
+            return new ProjetoAlocacao({
+              id: src.id,
+              descricao: src.description,
+              quantidade: src.quantity,
+              recurso_id: src.resource_id,
+              //regra_id: assign.role_id, /* TODO: Trazer de uma lista de regras */
+              projeto_id: isProjeto ? origem.id : null,
+              tarefa_id: !isProjeto ? origem.id : null
+            });
+          }
+          return undefined;
+        }, (dst, src) => {
+          const recurso = (projeto.recursos || []).find(x => x.id == src.recurso_id);
+          if(src.extra && recurso) {
+            if(origem.custos_proprios) origem.custo += src.quantity * (recurso.valor || 0);
+            Object.assign(dst, {
+              descricao: src.description,
+              quantidade: src.quantity,
+              recurso_id: src.resource_id
+            });
+          }
+        }) as ProjetoAlocacao[];
       }
-      return result;
-    }*/
-    const fromGanttTasks = (projeto: Projeto, pai: Projeto | ProjetoTarefa, tasks: GanttTask[], path: string): TarefaTotaisFilhos => {
+      return [];
+    };
+    const updateTotals = (origem: HasAlocacoes & HasTarefas, totais: TarefaTotaisFilhos) => {
+      if(origem.soma_progresso_filhos) origem.progresso = totais.progresso;
+      if(origem.calcula_intervalo) {
+        origem.inicio = totais.inicio || origem.inicio;
+        origem.termino = totais.termino || origem.termino;
+        origem.duracao = totais.duracao || origem.duracao;
+      }
+    }
+    const fromGanttTasks = (pai: HasAlocacoes & HasTarefas, tasks: GanttTask[], path: string): TarefaTotaisFilhos => {
       let result: TarefaTotaisFilhos = {
         custo: 0,
         progresso: 0,
@@ -595,117 +631,131 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
         inicio: null,
         termino: null
       };
-      const fromGanttAssignment = (tarefa: ProjetoTarefa, origem: ProjetoAlocacao, assign: GanttAssignment): ProjetoAlocacao => {
-        return new ProjetoAlocacao({
-          id: assign.id,
-          descricao: assign.description,
-          quantidade: assign.quantity,
-          recurso_id: assign.resource_id,
-          //regra_id: assign.role_id, /* TODO: Trazer de uma lista de regras */
-          projeto_id: origem.projeto_id,
-          tarefa_id: origem.tarefa_id
-        });
-      };
-      for(let task of root.tasks || []) {
-        let origem = task.extra as ProjetoTarefa;
-        let tarefa = new ProjetoTarefa({
-          id: task.id,
-          indice: index++,
-          path: path,
-          nome: task.name,
-          descricao: task.description,
-          id_processo: origem.id_processo,
-          numero_processo: origem.numero_processo,
-          id_documento: origem.id_documento,
-          numero_documento: origem.numero_documento,
-          inicio: task.start,
-          termino: task.end,
-          duracao: task.duration,
-          progresso: task.progress,
-          inicio_marco: task.startIsMilestone,
-          termino_marco: task.endIsMilestone,
-          tem_filhos: task.hasChild,
-          agrupador: origem.agrupador, /* Implementar o isGroup */
-          soma_progresso_filhos: origem.soma_progresso_filhos,
-          status: origem.status,
-          contraido: task.collapsed,
-          custo: 0, //origem.custo,
-          calcula_intervalo: task.hasChild && origem.calcula_intervalo,
-          aloca_proprios_recursos: !task.hasChild || origem.aloca_proprios_recursos,
-          soma_recusos_alocados_filhos: task.hasChild && origem.soma_recusos_alocados_filhos,
-          custos_proprios: !task.hasChild || origem.custos_proprios,
-          soma_custos_filhos: task.hasChild && origem.soma_custos_filhos
-        });
-        /* custos e alocacoes */
-        if(tarefa.aloca_proprios_recursos || tarefa.custos_proprios) {
-          for(let assign of task.assignments || []) {
-            const alocacao = (origem.alocacoes || []).find(x => x.id == assign.id);
-            if(alocacao) {
-              if(tarefa.aloca_proprios_recursos) fromGanttAssignment(tarefa, alocacao, assign);
-              if(tarefa.custos_proprios) {
-                const recurso = (projeto.recursos || []).find(x => x.id == alocacao.recurso_id);
-                tarefa.custo += alocacao.quantidade * (recurso?.valor || 0);
-              } 
-            } 
-          }
+      /* Adiciona caso não exista, ou atualiza caso já exista (A exclusão de tarefas que não existem mais será feita utilizando tasksIds) */
+      this.util.mergeArrayOfObject(projeto.tarefas!, tasks, "id", false, (action, dst, src) => {
+        let origem = src.extra as ProjetoTarefa;
+        let tarefa: ProjetoTarefa = dst;
+        if(action == "ADD") {
+          tarefa = new ProjetoTarefa({
+            id: src.id,
+            indice: index++,
+            path: path,
+            nome: src.name,
+            descricao: src.description,
+            id_processo: origem.id_processo,
+            numero_processo: origem.numero_processo,
+            id_documento: origem.id_documento,
+            numero_documento: origem.numero_documento,
+            inicio: src.start,
+            termino: src.end,
+            duracao: src.duration,
+            progresso: src.progress,
+            inicio_marco: src.startIsMilestone,
+            termino_marco: src.endIsMilestone,
+            tem_filhos: src.hasChild,
+            agrupador: origem.agrupador, /* Implementar o isGroup */
+            soma_progresso_filhos: origem.soma_progresso_filhos,
+            status: origem.status,
+            contraido: src.collapsed,
+            custo: 0, //origem.custo,
+            calcula_intervalo: src.hasChild && origem.calcula_intervalo,
+            aloca_proprios_recursos: !src.hasChild || origem.aloca_proprios_recursos,
+            soma_recusos_alocados_filhos: src.hasChild && origem.soma_recusos_alocados_filhos,
+            custos_proprios: !src.hasChild || origem.custos_proprios,
+            soma_custos_filhos: src.hasChild && origem.soma_custos_filhos
+          });
+        } else if(action == "EDIT") {
+          Object.assign(tarefa, {
+            indice: index++,
+            path: path,
+            nome: src.name,
+            descricao: src.description,
+            inicio: src.start,
+            termino: src.end,
+            duracao: src.duration,
+            progresso: src.progress,
+            inicio_marco: src.startIsMilestone,
+            termino_marco: src.endIsMilestone,
+            tem_filhos: src.hasChild,
+            contraido: src.collapsed,
+            custo: 0, //origem.custo,
+            calcula_intervalo: src.hasChild && origem.calcula_intervalo,
+            aloca_proprios_recursos: !src.hasChild || origem.aloca_proprios_recursos,
+            soma_recusos_alocados_filhos: src.hasChild && origem.soma_recusos_alocados_filhos,
+            custos_proprios: !src.hasChild || origem.custos_proprios,
+            soma_custos_filhos: src.hasChild && origem.soma_custos_filhos
+          });
         }
+        /* Adiciona o ID */
+        tasksIds.push(tarefa.id);
+        /* custos e alocacoes */
+        fromGanttAssignment(tarefa, src.assignments);
         /* Totais dos filhos (calculado recursivamente) e insere os filhos como tarefas (se tiver filhos) */
-        if(task.hasChild) {
-          let totaisFilhos = fromGanttTasks(projeto, tarefa, task.tasks || [], path + "/" + task.id);
+        if(src.hasChild) {
+          let totaisFilhos = fromGanttTasks(tarefa, src.tasks || [], path + "/" + src.id);
           /* Atualiza valores pelo total dos filhos */
-          if(tarefa.soma_progresso_filhos) tarefa.progresso = totaisFilhos.progresso;
-          if(tarefa.calcula_intervalo) {
-            tarefa.inicio = totaisFilhos.inicio || tarefa.inicio;
-            tarefa.termino = totaisFilhos.termino || tarefa.termino;
-            tarefa.duracao = totaisFilhos.duracao || tarefa.duracao;
-          }
+          updateTotals(tarefa, totaisFilhos);
         }
         /* Calculos feitos para serem retornados, que são utilizados logo aqui acima */
-        if(pai.soma_progresso_filhos) result.progresso += task.progress || 0;
+        if(pai.soma_progresso_filhos) result.progresso += src.progress || 0;
         if(pai.calcula_intervalo) {
-          result.inicio = !result.inicio || task.start.getTime() < result.inicio.getTime() ? task.start : result.inicio;
-          result.termino = !result.termino || task.end.getTime() > result.termino.getTime() ? task.end : result.termino;
+          result.inicio = !result.inicio || src.start.getTime() < result.inicio.getTime() ? src.start : result.inicio;
+          result.termino = !result.termino || src.end.getTime() > result.termino.getTime() ? src.end : result.termino;
         }
         //if(pai.soma_recusos_alocados_filhos)  /* Não precisa fazer nada, vai ser concatenado somente para exibição no toGantt */
         if(pai.soma_custos_filhos) result.custo += tarefa.custo;
         /* Adiciona a tarefa ao projeto */
-        projeto.tarefas!.push(tarefa);
-      }
+        //projeto.tarefas!.push(tarefa); /* Não precisa adicionar, o mergeArrayOfObject já adiciona automaticamente */
+        return tarefa;
+      });
       /* progresso */
-      if(pai.soma_progresso_filhos) result.progresso = result.progresso / (root.tasks?.length || 1);
+      if(pai.soma_progresso_filhos) result.progresso = result.progresso / (tasks.length || 1);
       return result;
     }
-    let projeto = new Projeto({
-      numero: origem.numero,
+    /* Ids das tarefas, será utilizado ao fim para excluir as tarefas que foram excluídas */
+    let tasksIds: string[] = [];
+    /* Atualiza o objeto existente (origem) ou cria um novo objeto Projeto baseado no origem */
+    let projeto = update ? origem : new Projeto(origem);
+    Object.assign(projeto, {
       nome: root.name,
       descricao: root.description,
-      finalidade: origem.finalidade,
-      status: origem.status,  
       inicio: root.start,
       termino: root.end,
-      calcula_custos: origem.calcula_custos,
-      tempo_corrido: origem.tempo_corrido,
-      usar_horas: origem.usar_horas,
-      calcula_intervalo: origem.calcula_intervalo,
-      agrupador: origem.agrupador,
-      soma_progresso_filhos: origem.soma_progresso_filhos,
-      aloca_proprios_recursos: origem.aloca_proprios_recursos,
-      soma_recusos_alocados_filhos: origem.soma_recusos_alocados_filhos,
-      custos_proprios: origem.custos_proprios,
-      soma_custos_filhos: origem.soma_custos_filhos,
       duracao: root.duration,
       progresso: root.progress,
-      usuario_id: origem.usuario_id,
-      tipo_projeto_id: origem.tipo_projeto_id,
       regras: fromGanttRules(project.roles),
       recursos: fromGanttResources(project.resources),
-      //envolvidos: fromGanttStakeholders(root.assignments || []),
       alocacoes: [],
       tarefas: []
     });
+    /* Refas a arvore root baseado nas tasks, para facilitar os calculos e totalizações */
+    project.root = this.toTaskTree(project.tasks);
     /* Carrega as tarefas e alocações recursivamente */
-    fromGanttTasks(projeto, projeto, project.tasks || [], "");
+    let totais = fromGanttTasks(projeto, project.root || [], "");
+    /* Atualiza valores pelo total dos filhos */
+    updateTotals(projeto, totais);
     return projeto;
+  }
+
+  public fromTaskTree(tasks: GanttTask[], level: number): GanttTask[] {
+    let result: GanttTask[] = [];
+    tasks.forEach(task => result.push(Object.assign(task, { level }), ...this.fromTaskTree(task.tasks || [], level + 1)));
+    return result;
+  }
+
+  public toTaskTree(tasks: GanttTask[]): GanttTask[] {
+    let levels: GanttTask[] = [tasks[0]]; /* Adiciona a raiz (que é o projeto) como sendo nível 0 */
+    let last: number = 0;
+    for(let task of tasks) {
+      task.tasks = []; /* Limpa a lista de tasks */
+      if(task.level) { /* Ignora o level 0, que o próprio projeto */
+        task.level = Math.min(task.level, last + 1); /* Garante que os níveis crescem em uma unidade somente */
+        levels[task.level-1].tasks?.push(task); /* Adiciona a task no pai */
+        levels[task.level] = task;
+      }
+      last = task.level;
+    }
+    return [levels[0]];
   }
 
   public titleEdit = (entity: Projeto): string => {

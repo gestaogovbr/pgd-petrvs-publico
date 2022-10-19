@@ -605,7 +605,7 @@ class IntegracaoService extends ServiceBase {
         }
     } */
 
-    public function salvaUsuarioLotacaoGapi(&$usuario, &$lotacao, $tokenData, $auth){
+    public function salvaUsuarioLotacaoGoogle(&$usuario, &$lotacao, $tokenData, $auth){
         $auth->fillUsuarioWithCredential($usuario, $tokenData);
         $this->salvarUsuarioLotacao($usuario, $lotacao);
     }

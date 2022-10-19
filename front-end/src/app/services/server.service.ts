@@ -24,7 +24,7 @@ export class ServerService {
 
   public errorHandle(err: any, caught: Observable<Object>): ObservableInput<any> {
     const httpError = err instanceof HttpErrorResponse;
-    if(httpError && err.status == 419) {
+    if(httpError && [419, 401].includes(err.status)) {
       this.auth.logOut();
     }
     return throwError(err);

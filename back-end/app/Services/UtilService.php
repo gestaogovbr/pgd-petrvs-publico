@@ -107,6 +107,10 @@ class UtilService
         return preg_replace($comAcentos, $semAcentos, $source);
     }
 
+    public static function onlyNumbers($string) {
+        return preg_replace('/\D/', '', $string);
+    }
+    
     public static function inicialMaiuscula($termo){
         return strtoupper($termo[0]).substr($termo,1);
     }

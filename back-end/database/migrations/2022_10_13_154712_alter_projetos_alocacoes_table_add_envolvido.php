@@ -13,7 +13,7 @@ class AlterProjetosAlocacoesTableAddEnvolvido extends Migration
      */
     public function up()
     {
-        Schema::create('projetos_alocacoes', function (Blueprint $table) {
+        Schema::table('projetos_alocacoes', function (Blueprint $table) {
             $table->tinyInteger('envolvido')->comment("Se a alocação HUMANO ou DEPARTAMENTAL representa um stakeholder");
             $table->dropForeign(['regra_id']);
             $table->dropColumn('regra_id');
@@ -27,7 +27,7 @@ class AlterProjetosAlocacoesTableAddEnvolvido extends Migration
      */
     public function down()
     {
-        Schema::create('projetos_alocacoes', function (Blueprint $table) {
+        Schema::table('projetos_alocacoes', function (Blueprint $table) {
             $table->foreignUuid('regra_id')->nullable()->constrained("projetos_regras")->onDelete('restrict')->onUpdate('cascade');            
             $table->dropColumn('envolvido');
         });

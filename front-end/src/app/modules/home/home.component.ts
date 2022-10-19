@@ -145,7 +145,9 @@ export class HomeComponent implements OnInit {
   }
 
   public tokenGAPI() {
-    const sei = this.auth.googleApi.tokenId || "";
+    this.auth.googleApi.getAccessToken().then(res => {
+      const sei = res || ''
+    });
   }
 
   public execucaoPlanos(){

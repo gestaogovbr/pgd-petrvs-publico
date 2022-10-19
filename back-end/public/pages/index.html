@@ -22,8 +22,9 @@
     }     
   </script>
   <script src="environment-config"></script>
-  <script src="https://apis.google.com/js/platform.js"></script>
   <script src="assets/js/bootstrap-angular.js"></script>
+
+
 <link rel="stylesheet" href="styles.css"></head>
 <body>
   <app-root></app-root>

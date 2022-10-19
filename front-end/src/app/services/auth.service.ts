@@ -7,7 +7,6 @@ import { GlobalsService } from './globals.service';
 import { GoogleApiService } from './google-api.service';
 import { FullRoute, NavigateService } from './navigate.service';
 import { ServerService } from './server.service';
-import { gapiConfig } from 'src/environments/gapi.config';
 import * as moment from 'moment';
 import { ActivatedRoute } from '@angular/router';
 import { CalendarService } from './calendar.service';
@@ -17,7 +16,7 @@ import { UtilService } from './util.service';
 import { UsuarioDaoService } from '../dao/usuario-dao.service';
 import { IIndexable } from '../models/base.model';
 
-export type AuthKind = "USERPASSWORD" | "GAPI" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION";
+export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION";
 export type Permission = string | (string | string[])[];
 
 @Injectable({
@@ -34,7 +33,6 @@ export class AuthService {
   public capacidades: string[] = [];
   public apiToken?: string;
   public unidade?: Unidade;
-  public gapiLoad: Subject<gapi.auth2.GoogleAuth> = new Subject<gapi.auth2.GoogleAuth>();
   public unidades?: Unidade[];
 
   private _logging: boolean = false;
@@ -75,7 +73,7 @@ export class AuthService {
   private _usuarioDaoService?: UsuarioDaoService;
   public get usuarioDaoService(): UsuarioDaoService { this._usuarioDaoService = this._usuarioDaoService || this.injector.get<UsuarioDaoService>(UsuarioDaoService); return this._usuarioDaoService };
 
-  public googleAuth?: gapi.auth2.GoogleAuth;
+
 
   constructor(public injector: Injector) { }
 
@@ -195,21 +193,16 @@ export class AuthService {
     }, redirectTo);
   }
 
-  public authGapi(tokenId: string, redirectTo?: FullRoute) {
-    this.googleApi.tokenId = tokenId;
-    return this.logIn("GAPI", "login-gapi-token", {
+  public authGoogle(tokenId: string, redirectTo?: FullRoute) {
+    //this.googleApi.tokenId = tokenId;
+    return this.logIn("GOOGLE", "login-google-token", {
       token: tokenId
     }, redirectTo);
   }
 
   public authSession(): Promise<boolean> {
     this.apiToken = localStorage.getItem("petrvs_api_token") || undefined;
-    return this.logIn("SESSION", "login-session", {}).then(result => {
-      if(!result && this.googleAuth && this.googleAuth.isSignedIn.get()) {
-        return this.authGapi(this.googleAuth.currentUser.get().getAuthResponse().id_token);
-      }
-      return result;
-    });
+    return this.logIn("SESSION", "login-session", {});
   }
 
   public get routerTo(): any {
@@ -218,19 +211,9 @@ export class AuthService {
     return routerTo;
   }
 
-  public loadGapi() {
-    if(gapiConfig.client_id?.length && !this.googleAuth) {
-      console.warn("[ATENÇÃO]: Lembre-se que a biblioteca GAPI não funciona corretamete com o depurador aberto.");
-      this.googleApi.load().then(googleAuth => {
-        this.googleAuth = googleAuth;
-        this.gapiLoad.next(googleAuth);
-      }).catch(error => {
-        if (this.fail) this.fail(error.message ? error.message : error);
-      }).finally(() => {
-        if (this.gb.refresh) this.gb.refresh();
-      });
-    }
-  }
+  // public loadGapi() {
+  //   this.googleApi.initialize(false).then()
+  // }
 
   private logIn(kind: AuthKind, route: string, params: any, redirectTo?: FullRoute): Promise<boolean> {
     let deviceName = this.gb.isExtension ? "EXTENSION" : "BROWSER";
@@ -272,11 +255,11 @@ export class AuthService {
         if(this.leave) this.leave();
         if(this.gb.refresh) this.gb.refresh();
       }
-      /* Garante logout do GAPI */
-      if(gapiConfig.client_id?.length) {
-        this.googleApi.load().then(googleAuth => {
-          if(this.kind == "GAPI" || googleAuth.isSignedIn.get()) {
-            this.googleApi.logOut().then(clearLogin);
+      /* Garante logout do Google */
+      if(this.gb.hasGoogleLogin && this.gb.loginGoogleClientId?.length) {
+        this.googleApi.initialize().then(googleAuth => {
+          if(this.kind == "GOOGLE") {
+            this.googleApi.signOut().then(clearLogin);
           }
         });
       } else {

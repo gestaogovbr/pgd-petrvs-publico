@@ -89,7 +89,7 @@ export class AppComponent {
       }
     }, 1000);
     this.lex.cdRef = this.cdRef;
-    this.auth.loadGapi();
+    //this.auth.loadGapi();
     /* Definição do menu do sistema */
     this.menuToolbar = [
       { name: "Cadastros", permition: "MENU_CAD_ACESSO", route: ['cadastros'], id: "navbarDropdownCadastros", menu: "cadastros" },

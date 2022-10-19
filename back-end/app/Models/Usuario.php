@@ -66,11 +66,12 @@ class Usuario extends Authenticatable
         'id_google',
         //'url_foto',
         'vinculacao',
-        'perfil_id'
+        'perfil_id',
         //'foto_perfil',
         //'foto_google',
         //'foto_microsoft',
-        //'foto_firebase'
+        //'foto_firebase',
+        'uf'
     ];
 
     public $fillable_changes = [
