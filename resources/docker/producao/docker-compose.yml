@@ -8,13 +8,14 @@ services:
       - ../mysql:/var/lib/mysql
     environment:
       MYSQL_USER: petrvs
-      MYSQL_PASSWORD_FILE: /run/secrets/db_password
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+      MYSQL_PASSWORD: PsEeTnRhVaS
+      MYSQL_ROOT_PASSWORD: PsEeTnRhVaS
       MYSQL_TCP_PORT: 3308
-      SERVICE_NAME: mysql
-    secrets:
-    - db_password
-    - db_root_password
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 2048M
 
   php:
     build: 
@@ -29,9 +30,11 @@ services:
       - db
     volumes:
       - ../../../back-end:/var/www
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 2048M
 
-secrets:
-  db_password:
-    file: ./configuracoes/db/db_password.txt
-  db_root_password:
-    file: ./configuracoes/db/db_root_password.txt
+# Sobre resources
+# https://docs.docker.com/config/containers/resource_constraints/
