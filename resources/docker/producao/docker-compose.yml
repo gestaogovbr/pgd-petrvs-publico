@@ -7,10 +7,14 @@ services:
     volumes:
       - ../mysql:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: PsEeTnRhVaS
       MYSQL_USER: petrvs
-      MYSQL_PASSWORD: PsEeTnRhVaS
+      MYSQL_PASSWORD_FILE: /run/secrets/db_password
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
       MYSQL_TCP_PORT: 3308
+      SERVICE_NAME: mysql
+    secrets:
+    - db_password
+    - db_root_password
 
   php:
     build: 
@@ -25,3 +29,9 @@ services:
       - db
     volumes:
       - ../../../back-end:/var/www
+
+secrets:
+  db_password:
+    file: ./configuracoes/db/db_password.txt
+  db_root_password:
+    file: ./configuracoes/db/db_root_password.txt
