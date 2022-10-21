@@ -9,11 +9,12 @@ RUN apt-get install -y zlib1g-dev
 RUN apt-get install -y libzip-dev 
 RUN apt-get install -y unzip
 RUN apt-get install -y curl
-run apt-get install -y libcurl4-openssl-dev
+RUN apt-get install -y libcurl4-openssl-dev
 RUN apt-get install -y openssl
 RUN apt-get install -y libssl-dev
 RUN apt-get install -y libxml2-dev
 RUN apt-get install -y sudo
+RUN apt-get install -y chrony
 RUN docker-php-ext-install zip
 RUN docker-php-ext-install pdo_mysql
 RUN docker-php-ext-install mysqli
@@ -37,6 +38,7 @@ COPY ./configuracoes/apache2/000-default.conf /etc/apache2/sites-available/000-d
 COPY ./configuracoes/apache2/default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
 COPY ./configuracoes/certificados/certificate.crt /etc/apache2/ssl/certificate.crt
 COPY ./configuracoes/certificados/private.key /etc/apache2/ssl/private.key
+COPY ./configuracoes/chrony/chrony.conf /etc/chrony/chrony.conf
 # Instalar o composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 RUN php composer-setup.php --install-dir=/usr/local/bin --filename=composer
@@ -47,6 +49,7 @@ RUN a2enmod rewrite
 RUN a2enmod headers
 RUN a2ensite default-ssl
 # Rodar script com configurações do modo produção
+RUN service chrony restart
 COPY ./configuracoes/scripts/setup_production.sh /root/setup_production.sh
 RUN chmod a+x /root/setup_production.sh
 RUN /root/setup_production.sh

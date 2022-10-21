@@ -2,7 +2,10 @@ version: "3.9"
 services:
 
   db:
-    image: mysql:8
+    image: mysql:8-debian
+    build:
+      context: .
+      dockerfile: Dockerfile-db
     container_name: db
     volumes:
       - ../mysql:/var/lib/mysql
