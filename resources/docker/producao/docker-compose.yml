@@ -1,12 +1,12 @@
 version: "3.9"
 services:
 
-  db:
+  petrvs_db_producao:
     image: mysql:8-debian
     build:
       context: .
       dockerfile: Dockerfile-db
-    container_name: db
+    container_name: petrvs_db_producao
     volumes:
       - ../mysql:/var/lib/mysql
     environment:
@@ -20,17 +20,17 @@ services:
           cpus: '0.5'
           memory: 2048M
 
-  php:
+  petrvs_php_producao:
     build: 
       context: .
       dockerfile: Dockerfile-php
-    container_name: php
+    container_name: petrvs_php_producao
     working_dir: /var/www
     ports:
       - "80:80"
       - "443:443"
     depends_on:
-      - db
+      - petrvs_db_producao
     volumes:
       - ../../../back-end:/var/www
     deploy:
