@@ -28,7 +28,7 @@ class AlterProjetosRegrasTableAddRecursoTipoFinalidade extends Migration
     {
         Schema::table('projetos_regras', function (Blueprint $table) {
             $table->dropColumn('recurso_tipo');
-            $table->dropColumn('finalidades');
+            $table->dropColumn('finalidade');
         });
     }
 }
