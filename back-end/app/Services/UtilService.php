@@ -110,9 +110,14 @@ class UtilService
     public static function onlyNumbers($string) {
         return preg_replace('/\D/', '', $string);
     }
-    
+
     public static function inicialMaiuscula($termo){
         return strtoupper($termo[0]).substr($termo,1);
+    }
+
+    public static function uuid($text = "") {
+        $hash = empty($text) ? substr(bin2hex(random_bytes(20)), 0, 32) : md5($text);
+        return substr($hash, 0, 8) . "-" . substr($hash, 8, 4) . "-" . substr($hash, 12, 4) . "-" . substr($hash, 16, 4) . "-" . substr($hash, 20, 12);
     }
 
 }

@@ -11,7 +11,7 @@ use App\Models\Perfil;
 use App\Models\UnidadeOrigemAtividade;
 use Ramsey\Uuid\Uuid;
 use Carbon\Carbon;
-use Exception;
+use Throwable;
 
 class IntegracaoService extends ServiceBase {
     public $autoIncluir = false;
@@ -139,7 +139,7 @@ class IntegracaoService extends ServiceBase {
                 $this->unidadesInseridas[$unidade->id_servo] = ["unidade_id" => $values[':id'], "path" => $values[':path']];
                 try {
                     DB::insert($sql, $values);
-                } catch (Exception $e) {
+                } catch (Throwable $e) {
                     LogError::newWarn("Erro ao inserir Unidade", $values);
                 }
 
@@ -341,7 +341,7 @@ class IntegracaoService extends ServiceBase {
                 });
                 $result["unidades"] = 'sucesso';
                 /* Unidades que foram removidas em integracao_unidades vão permanecer no sistema por questões de integridade */
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 LogError::newError("Erro ao importar unidades", $e);
                 $result["unidades"] = $e->getMessage();
             }
@@ -506,7 +506,7 @@ class IntegracaoService extends ServiceBase {
 
                 });
                 $result["servidores"] = 'sucesso';
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 LogError::newError("Erro ao importar servidores", $e);
                 $result["servidores"] = $e->getMessage();
             }
@@ -553,7 +553,7 @@ class IntegracaoService extends ServiceBase {
                 }
                 DB::commit();
                 $result["chefias"] = 'sucesso';
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 DB::rollback();
                 LogError::newError("Erro ao atualizar as chefias (titulares/substitutos)", $e);
                 $result["chefias"] = $e->getMessage();
@@ -600,13 +600,18 @@ class IntegracaoService extends ServiceBase {
                     // se o usuário existir na tabela de servidores, insere seu ID na Unidade como gestor ou gestor substituto
                     if ($idUsuario) DB::update($sql_4, [':id_usuario'=> $idUsuario, ':id_unidade' => $idUnidade]);
                 }
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             throw $e;
         }
     } */
 
     public function salvaUsuarioLotacaoGoogle(&$usuario, &$lotacao, $tokenData, $auth){
         $auth->fillUsuarioWithCredential($usuario, $tokenData);
+        $this->salvarUsuarioLotacao($usuario, $lotacao);
+    }
+
+    public function salvaUsuarioLotacaoApi(&$usuario, &$lotacao, $tokenData, $api){
+        $api->fillUsuarioWithCredential($usuario, $tokenData);
         $this->salvarUsuarioLotacao($usuario, $lotacao);
     }
 

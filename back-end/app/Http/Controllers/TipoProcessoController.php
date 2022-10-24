@@ -7,6 +7,7 @@ use App\Services\TipoProcessoService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
+use Throwable;
 
 class TipoProcessoController extends ControllerBase
 {
@@ -33,7 +34,7 @@ class TipoProcessoController extends ControllerBase
             return response()->json([
                 'success' => $this->service->atualizar($data["lista"], $unidade)
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }

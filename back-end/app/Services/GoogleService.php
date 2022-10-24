@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Exceptions\ServerException;
 use Firebase\JWT\JWT;
 use Google\Client;
+use Throwable;
 
 class GoogleService
 {
@@ -31,9 +32,9 @@ class GoogleService
             if($payload){
                 $return = $payload;
             } else {
-                throw new ServerException("GapiService_Invalid_Token");
+                throw new ServerException("Google_Service_Invalid_Token");
             }
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $return['error'] = $e->getMessage();
         }
         return $return;

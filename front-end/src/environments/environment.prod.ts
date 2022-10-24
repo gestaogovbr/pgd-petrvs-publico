@@ -16,9 +16,12 @@ const defaultExtensionOptionsConfig = { /* Configuração utilizada para acessas
   }
 };
 //@ts-ignore
-const global: any = typeof GLOBAL_PETRVS_CONFIG != "undefined" ? GLOBAL_PETRVS_CONFIG : defaultExtensionOptionsConfig;
+const global: any = typeof PETRVS_GLOBAL_CONFIG != "undefined" ? PETRVS_GLOBAL_CONFIG : defaultExtensionOptionsConfig;
 //@ts-ignore
-const URL = typeof EXTENSION_SERVIDOR_URL != "undefined" ? EXTENSION_SERVIDOR_URL : typeof EXTENSION_BASE_URL != "undefined" ? EXTENSION_BASE_URL : global.api_url;
+const baseUrl = typeof EXTENSION_BASE_URL != "undefined" ? EXTENSION_BASE_URL : typeof PETRVS_BASE_URL != "undefined" ? PETRVS_BASE_URL : undefined;
+//@ts-ignore
+const servidorUrl = typeof EXTENSION_SERVIDOR_URL !== "undefined" ? EXTENSION_SERVIDOR_URL : typeof PETRVS_SERVIDOR_URL != "undefined" ? PETRVS_SERVIDOR_URL : undefined;
+const URL = servidorUrl || baseUrl || global.api_url;
 const HOST =  URL.replace(/^https?:\/\//, "").replace(/\/$/, "");
 const HTTPS = URL.startsWith("https");
 

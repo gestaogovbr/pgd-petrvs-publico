@@ -87,7 +87,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     Chart.plugins.register(ChartDataLabels);
-    if(this.gb.isExtension) {
+    if(this.gb.isEmbedded) {
       this.allPages.visibilidadeMenuSei(!this.auth.usuario!.config.ocultar_menu_sei);
     }
   }

@@ -7,6 +7,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\View;
 use App\Services\PetrvsService;
 use App\Http\Controllers\ControllerBase;
+use Throwable;
 
 class PetrvsController extends ControllerBase
 {
@@ -41,7 +42,7 @@ class PetrvsController extends ControllerBase
                 'success' => true,
                 'tabelas' => $this->service->showTables()
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }

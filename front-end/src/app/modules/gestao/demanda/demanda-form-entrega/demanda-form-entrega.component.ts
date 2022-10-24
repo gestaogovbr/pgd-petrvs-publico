@@ -98,7 +98,7 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
       return "Aguarde o carregamento " + this.lex.noun("tarefa", false, true) + ". Caso demore, selecione novamente!";
     }
     if(values.concluido && (this.tarefa?.searchObj as Tarefa)?.documental && !values.id_documento) {
-      return this.gb.isExtension ? "Obrigatório selecionar um arquivo para a tarefa selecionada!" : "Utilize o sistema como extensão para concluir!";
+      return this.gb.isEmbedded ? "Obrigatório selecionar um arquivo para a tarefa selecionada!" : "Utilize o sistema como extensão para concluir!";
     }
     //}
     return undefined;

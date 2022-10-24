@@ -1,7 +1,6 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
     <tabs display right>
         <tab key="PRINCIPAL" label="Principal">
-
             <div class="row">
                 <div class="form-group col-md-3 text-center">
                     <profile-picture [url]="form!.controls.url_foto?.value" class="mt-5" [size]="150"></profile-picture>

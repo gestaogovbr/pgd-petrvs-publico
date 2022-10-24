@@ -31,9 +31,18 @@ export class GlobalsService {
     local: new Date()
   };
 
+  public get isEmbedded(): boolean {
+    return this.isExtension || this.isSuperModule;
+  }
+
   public get isExtension(): boolean {
     //@ts-ignore
-    return typeof IS_PETRVS_EXTENSION != "undefined" && !!IS_PETRVS_EXTENSION;
+    return (typeof IS_PETRVS_EXTENSION != "undefined" && !!IS_PETRVS_EXTENSION) || (typeof PETRVS_IS_EXTENSION != "undefined" && !!PETRVS_IS_EXTENSION);
+  };
+
+  public get isSuperModule(): boolean {
+    //@ts-ignore
+    return typeof PETRVS_IS_SUPER_MODULE != "undefined" && !!PETRVS_IS_SUPER_MODULE;
   };
 
   public is(entidade: string): boolean {
@@ -42,34 +51,39 @@ export class GlobalsService {
 
   public get baseURL(): string {
     //@ts-ignore
-    const path = (this.isExtension ? EXTENSION_BASE_URL : this.servidorURL) as string;
+    const baseUrl =  typeof MD_MULTIAGENCIA_PETRVS_URL != "undefined" ? MD_MULTIAGENCIA_PETRVS_URL : typeof EXTENSION_BASE_URL != "undefined" ? EXTENSION_BASE_URL : typeof PETRVS_BASE_URL != "undefined" ? PETRVS_BASE_URL : undefined;
+    const path = (this.isEmbedded ? baseUrl : this.servidorURL) as string;
     return path.endsWith("/") ? path : path + "/";
   }
 
   public get servidorURL(): string {
     //@ts-ignore
-    return this.isExtension && EXTENSION_SERVIDOR_URL?.length ? EXTENSION_SERVIDOR_URL : (environment.https ? 'https://' : 'http://') + environment.host;
+    const url = typeof PETRVS_SERVIDOR_URL != "undefined" ? PETRVS_SERVIDOR_URL : typeof EXTENSION_SERVIDOR_URL != "undefined" ? EXTENSION_SERVIDOR_URL : "";
+    return this.isExtension && url.length ? url : (environment.https ? 'https://' : 'http://') + environment.host;
   }
 
   public get isToolbar(): boolean {
     //@ts-ignore
-    return this.isExtension ? PETRVS_EXTENSION_TOOLBAR : false;
+    const toolbar = typeof PETRVS_EXTENSION_TOOLBAR != "undefined" ? PETRVS_EXTENSION_TOOLBAR : typeof PETRVS_TOOLBAR != "undefined" ? PETRVS_TOOLBAR : false;
+    return this.isEmbedded ? toolbar : false;
   }
 
   public get initialRoute(): string[] {
     //@ts-ignore
-    const strRoute = this.isExtension && PETRVS_EXTENSION_ROUTE ? PETRVS_EXTENSION_ROUTE : "/home";
+    const route = typeof PETRVS_EXTENSION_ROUTE != "undefined" ? PETRVS_EXTENSION_ROUTE : typeof PETRVS_ROUTE != "undefined" ? PETRVS_ROUTE : "/home";
+    const strRoute = this.isEmbedded ? route : "/home";
     return strRoute.substring(strRoute.startsWith("/") ? 1 : 0).split("/");
   }
 
   public get requireLogged(): boolean {
     //@ts-ignore
-    return this.isExtension ? PETRVS_EXTENSION_LOGGED : true;
+    const logged = typeof PETRVS_EXTENSION_LOGGED != "undefined" ? PETRVS_EXTENSION_LOGGED : typeof PETRVS_LOGGED != "undefined" ? PETRVS_LOGGED : true;
+    return this.isEmbedded ? logged : true;
   }
 
   public get useModals(): boolean {
     return true;
-    //return this.isExtension;
+    //return this.isEmbedded;
   }
 
   private _sanitizer?: DomSanitizer;
@@ -79,8 +93,8 @@ export class GlobalsService {
 
   public getResourcePath(resource: string) {
     const key = "URL_" + encodeURI(resource);
-    if(this.isExtension && !this.urlBuffer[key]) this.urlBuffer[key] = this.sanitizer.bypassSecurityTrustResourceUrl(this.baseURL + resource);
-    return this.isExtension ? this.urlBuffer[key] : resource;
+    if(this.isEmbedded && !this.urlBuffer[key]) this.urlBuffer[key] = this.sanitizer.bypassSecurityTrustResourceUrl(this.baseURL + resource);
+    return this.isEmbedded ? this.urlBuffer[key] : resource;
   }
 
   public get isFirefox(): boolean {

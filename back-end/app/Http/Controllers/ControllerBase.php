@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Usuario;
 use App\Exceptions\LogError;
-use Exception;
+use Throwable;
 
 abstract class ControllerBase extends Controller
 {
@@ -78,7 +78,7 @@ abstract class ControllerBase extends Controller
                 'success' => true,
                 'values' => $this->service->searchText($data)
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -102,7 +102,7 @@ abstract class ControllerBase extends Controller
                 'success' => true,
                 'value' => $this->service->searchKey($data)
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -126,7 +126,7 @@ abstract class ControllerBase extends Controller
                 'success' => true,
                 'data' => $this->service->getById($data)
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -153,7 +153,7 @@ abstract class ControllerBase extends Controller
                 'rows' => $result["rows"],
                 'extra' => $result["extra"]
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -182,7 +182,7 @@ abstract class ControllerBase extends Controller
                 'rows' => $result['rows'],
                 'extra' => $result['extra']
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return LogError::newError("QUERY: exception", $e); //response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -215,7 +215,7 @@ abstract class ControllerBase extends Controller
                 'file' => ['required'],
             ]);
             return response()->json(['success' => true, 'url' => $this->service->downloadUrl($data["file"])]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -235,7 +235,7 @@ abstract class ControllerBase extends Controller
                 'file' => ['required'],
             ]);
             return response()->json(['success' => $this->service->deleteFile($data["file"])]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -258,7 +258,7 @@ abstract class ControllerBase extends Controller
                 'name' => ['required']
             ]);
             return response()->json(['success' => true, 'path' => $this->service->upload($data["path"], $data["name"], $request->has('file') ? $request->file('file') : null)]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -282,7 +282,7 @@ abstract class ControllerBase extends Controller
                 'file' => ['required'],
             ]);
             return response()->json(['success' => true, 'path' => $this->service->uploadBase64($data["path"], $data["name"], $data["file"])]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -311,7 +311,7 @@ abstract class ControllerBase extends Controller
                 'success' => true,
                 'rows' => [$result] //[$this->service->store($request->all(), $unidade)]
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -348,7 +348,7 @@ abstract class ControllerBase extends Controller
                 'success' => true,
                 'rows' => [$result] //$this->service->update($request->all(), $unidade)
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -382,7 +382,7 @@ abstract class ControllerBase extends Controller
                 'success' => true,
                 'rows' => [$result] //$this->service->update($request->all(), $unidade)
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -401,7 +401,7 @@ abstract class ControllerBase extends Controller
                 'id' => ['required']
             ]);
             return response()->json(['success' => $this->service->destroy($data["id"])]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }

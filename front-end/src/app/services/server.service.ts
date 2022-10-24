@@ -37,7 +37,7 @@ export class ServerService {
     };
     let xPetrvs: any = {};
     /* Opções de autenticação do usuário */ 
-    if(this.gb.isExtension && this.auth.apiToken?.length) {
+    if(this.gb.isEmbedded && this.auth.apiToken?.length) {
       options.headers["Authorization"] = "Bearer " + this.auth.apiToken;
     } else {
       let token = this.tokenExtractor.getToken() as string;

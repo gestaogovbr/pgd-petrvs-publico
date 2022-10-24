@@ -90,7 +90,6 @@ export class LoginComponent implements OnInit, ModalPage {
       }
       let result = false;
       if(!this.noSession) result = await this.auth.authSession();
-
       /* verifica tambem se algum dos login (Google, Microsoft, etc), estão com sessão ativas */
       if(!result) {
         if(this.globals.hasGoogleLogin) {

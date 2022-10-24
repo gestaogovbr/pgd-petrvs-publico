@@ -5,6 +5,7 @@ return [
     'suporte' => env('PETRVS_SUPORTE', ''),
     'logo' => env('PETRVS_LOGO', ''),
     'timezone' => env('PETRVS_SERVIDOR_TIMEZONE', -3),
+    'api-max-expiration-time-token' => env('PETRVS_API_MAX_EXPIRATION_TIME_TOKEN', 60000),
     'rotinas-diarias' => [
         'token' => env('PETRVS_ROTINAS_DIARIAS_TOKEN', '')
     ],
@@ -19,7 +20,8 @@ return [
             'login-user-password' => env('PETRVS_API_LOGIN_USER_PASSWORD', ''),
             'login-firebase-token' => env('PETRVS_API_LOGIN_FIREBASE_TOKEN', ''),
             'login-google-token' => env('PETRVS_API_LOGIN_GOOGLE_TOKEN', env('PETRVS_API_LOGIN_GAPI_TOKEN', '')),
-            'login-institucional' => env('PETRVS_API_LOGIN_INSTITUCIONAL', '')
+            'login-institucional' => env('PETRVS_API_LOGIN_INSTITUCIONAL', ''),
+            'generate-session-token' => env('PETRVS_API_SESSION_TOKEN', ''),
         ]
     ],
     'login' => [

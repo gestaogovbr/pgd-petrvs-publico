@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
+use Throwable;
 
 class AtividadeController extends ControllerBase
 {
@@ -34,7 +35,7 @@ class AtividadeController extends ControllerBase
                 'success' => true,
                 'data' => $this->service->atividadeDashboard($data['unidade_id'])
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -51,11 +52,9 @@ class AtividadeController extends ControllerBase
                 'success' => true,
                 'data' => $this->service->homologar($data)
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
-
-
 
 }

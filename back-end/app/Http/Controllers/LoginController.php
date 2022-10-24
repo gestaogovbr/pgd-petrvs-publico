@@ -8,9 +8,11 @@ use App\Services\FirebaseAuthService;
 use App\Services\GoogleService;
 use App\Services\DprfSegurancaAuthService;
 use App\Services\IntegracaoService;
+use App\Services\ApiService;
 use App\Models\Usuario;
 use App\Models\Lotacao;
 use App\Exceptions\LogError;
+use App\Models\Entidade;
 use App\Services\UnidadeService;
 use App\Services\ServiceBase;
 use App\Services\CalendarioService;
@@ -219,7 +221,6 @@ class LoginController extends Controller
         if(!isset($tokenData['error'])) {
             $usuario = Usuario::where('email', $tokenData['email'])->where("data_fim", null)->first();
             if(!isset($usuario) && $integracao->autoIncluir) {
-                LogError::newWarn("Fill");
                 $usuario = new Usuario();
                 $lotacao = new Lotacao();
                 $this->service = new IntegracaoService();
@@ -389,18 +390,14 @@ class LoginController extends Controller
      */
     public function authenticateApiPrfGoogleToken(Request $request, GoogleService $auth, IntegracaoService $integracao)
     {
-        LogError::newWarn("Validando");
         $credentials = $request->validate([
             'token' => ['required'],
             'device_name' => ['required'],
         ]);
-        LogError::newWarn("Iniciou");
         $tokenData = $auth->verifyToken($credentials['token']);
-        LogError::newWarn("Decodificou", $tokenData);
         if(!isset($tokenData['error'])) {
             $usuario = Usuario::where('email', $tokenData['email'])->where("data_fim", null)->first();
             if(!isset($usuario) && $integracao->autoIncluir) {
-                LogError::newWarn("Fill");
                 $usuario = new Usuario();
                 $lotacao = new Lotacao();
                 $this->service = new IntegracaoService();
@@ -420,6 +417,46 @@ class LoginController extends Controller
             }
         }
         return LogError::newError('As credenciais fornecidas são inválidas.');
+    }
+
+    /**
+     * Handle an authentication attempt.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function generateApiPrfSessionToken(Request $request, ApiService $api, IntegracaoService $integracao)
+    {
+        $credentials = $request->validate([
+            'token' => ['required'],
+            'entidade' => ['required']
+        ]);
+        $entidade = Entidade::where("sigla", $credentials["entidade"])->first();
+        if(empty($entidade) || empty($entidade->api_private_key)) return LogError::newError('Entidade inválidas.');
+        $tokenData = $api->verifyToken($credentials['token'], $entidade->api_private_key, $entidade->sigla);
+        if(!isset($tokenData['error'])) {
+            $usuario = !empty($tokenData['email']) ? Usuario::where('email', $tokenData['email'])->where("data_fim", null)->first() :
+                Usuario::where('cpf', $tokenData['cpf'])->where("data_fim", null)->first();
+            if(!isset($usuario) && $integracao->autoIncluir) {
+                $usuario = new Usuario();
+                $lotacao = new Lotacao();
+                $this->service = new IntegracaoService();
+                $this->service->salvaUsuarioLotacaoApi($usuario, $lotacao, $tokenData, $api);
+            }
+            if (isset($usuario)) { // && Hash::check($request->password, $user->password)
+                $request->session()->regenerate();
+                $request->session()->put("kind", "SUPER");
+                $usuario->save();
+                return response()->json([
+                    'token' => $usuario->createToken("SUPER_" . $tokenData["id_super"])->plainTextToken,
+                    'usuario' => $this->registrarUsuario($request, $usuario, !empty($tokenData["id_super"]) ? ['id_super' => $tokenData["id_super"]] : []), //, 'url_foto' => $tokenData["picture"]
+                    "horario_servidor" => CalendarioService::horarioServidor()
+                ]);
+            } else {
+                return LogError::newError('USER_NOT_FOUND');
+            }
+        }
+        return LogError::newError('As credenciais fornecidas são inválidas.' . $tokenData['error']);
     }
 
     /**

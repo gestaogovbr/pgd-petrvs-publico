@@ -7,6 +7,7 @@ use App\Services\EntidadeService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
+use Throwable;
 
 class EntidadeController extends ControllerBase {
     public $updatable = ["nomenclatura", "url_sei", "notificacoes", "tipo_modalidade_id", "forma_contagem_carga_horaria", "carga_horaria_padrao"];
@@ -24,4 +25,18 @@ class EntidadeController extends ControllerBase {
                 break;
         }
     }
+
+    public function generateApiKey(Request $request) {
+        try {
+            $data = $request->validate([
+                'entidade_id' => ['required']
+            ]);
+            return response()->json([
+                'api_public_key' => $this->service->generateApiKey($data['entidade_id'])
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
 }

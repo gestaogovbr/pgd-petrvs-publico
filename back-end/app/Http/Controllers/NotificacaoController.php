@@ -9,6 +9,7 @@ use App\Models\NotificacaoWhatsapp;
 use App\Exceptions\LogError;
 use App\Services\RawWhere;
 use DateTime;
+use Throwable;
 
 class NotificacaoController extends Controller
 {
@@ -55,8 +56,8 @@ class NotificacaoController extends Controller
                 'usuario' => $result['usuario'],
                 'session' => $result['session']
             ]);
-        } catch (Exception $e) {
-            return LogError::newError("findSession: " . $e.getMessage(), $e);
+        } catch (Throwable $e) {
+            return LogError::newError("findSession: " . $e->getMessage(), $e);
         }
     }
 

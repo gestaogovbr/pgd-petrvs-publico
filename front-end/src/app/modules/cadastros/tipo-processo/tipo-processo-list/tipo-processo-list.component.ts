@@ -27,7 +27,7 @@ export class TipoProcessoListComponent extends PageListBase<TipoProcesso, TipoPr
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}
     });
-    if(this.gb.isExtension) {
+    if(this.gb.isEmbedded) {
       this.toolbarButtons.push({
         icon: "bi bi-arrow-repeat",
         color: "btn-outline-primary",

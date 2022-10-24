@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Services\IntegracaoService;
+use Throwable;
 
 class IntegracaoController extends Controller
 {
@@ -17,7 +18,7 @@ class IntegracaoController extends Controller
                 'entidade' => ['required']
             ]);
             return response()->json(['resultado' => $this->service->sincronizar($data)]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }

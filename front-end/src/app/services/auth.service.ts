@@ -16,14 +16,13 @@ import { UtilService } from './util.service';
 import { UsuarioDaoService } from '../dao/usuario-dao.service';
 import { IIndexable } from '../models/base.model';
 
-export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION";
+export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION" | "SUPER";
 export type Permission = string | (string | string[])[];
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-
   public success?: (usuario: Usuario, redirectTo?: FullRoute) => void;
   public fail?: (error: string) => void;
   public leave?: () => void;
@@ -31,10 +30,10 @@ export class AuthService {
   public logged: boolean = false;
   public usuario?: Usuario;
   public capacidades: string[] = [];
-  public apiToken?: string;
   public unidade?: Unidade;
   public unidades?: Unidade[];
 
+  private _apiToken: string | undefined = undefined;
   private _logging: boolean = false;
   public get logging(): boolean {
     return this._logging;
@@ -42,7 +41,7 @@ export class AuthService {
   public set logging(value: boolean) {
     if(value != this._logging) {
       this._logging = value;
-      if(!this.gb.isExtension) {
+      if(!this.gb.isEmbedded) {
         if(value) {
           this.dialogs.showSppinerOverlay("Logando . . .", 60000);
         } else {
@@ -50,6 +49,13 @@ export class AuthService {
         }
       }
     }
+  }
+  public set apiToken(value: string | undefined) {
+    this._apiToken = value;
+  }
+  public get apiToken(): string | undefined {
+    //@ts-ignore
+    return typeof MD_MULTIAGENCIA_PETRVS_SESSION_TOKEN != "undefined" ? MD_MULTIAGENCIA_PETRVS_SESSION_TOKEN : this._apiToken;
   }
 
   private _server?: ServerService;
@@ -72,8 +78,6 @@ export class AuthService {
   public get calendar(): CalendarService { this._calendar = this._calendar || this.injector.get<CalendarService>(CalendarService); return this._calendar };
   private _usuarioDaoService?: UsuarioDaoService;
   public get usuarioDaoService(): UsuarioDaoService { this._usuarioDaoService = this._usuarioDaoService || this.injector.get<UsuarioDaoService>(UsuarioDaoService); return this._usuarioDaoService };
-
-
 
   constructor(public injector: Injector) { }
 
@@ -201,7 +205,7 @@ export class AuthService {
   }
 
   public authSession(): Promise<boolean> {
-    this.apiToken = localStorage.getItem("petrvs_api_token") || undefined;
+    this._apiToken = localStorage.getItem("petrvs_api_token") || undefined;
     return this.logIn("SESSION", "login-session", {});
   }
 
@@ -216,9 +220,9 @@ export class AuthService {
   // }
 
   private logIn(kind: AuthKind, route: string, params: any, redirectTo?: FullRoute): Promise<boolean> {
-    let deviceName = this.gb.isExtension ? "EXTENSION" : "BROWSER";
+    let deviceName = this.gb.isExtension ? "EXTENSION" : this.gb.isSuperModule ? "SUPER" : "BROWSER";
     let login = (): Promise<boolean> => {
-      return this.server.post((this.gb.isExtension ? "api/" : "web/") + route, { ...params, device_name: deviceName }).toPromise().then(response => {
+      return this.server.post((this.gb.isEmbedded ? "api/" : "web/") + route, { ...params, device_name: deviceName }).toPromise().then(response => {
         if (response?.error)
           throw new Error(response?.error);
         this.kind = response?.kind || kind;
@@ -239,7 +243,7 @@ export class AuthService {
       });
     };
     this.logging = true;
-    if(this.gb.isExtension) {
+    if(this.gb.isEmbedded) {
       return login();
     } else {
       return this.server.get('sanctum/csrf-cookie').toPromise().then(login);
@@ -248,7 +252,7 @@ export class AuthService {
 
   public logOut() {
     this.logging = true;
-    this.server.get((this.gb.isExtension ? "api/" : "web/") + "logout").toPromise().then(response => {
+    this.server.get((this.gb.isEmbedded ? "api/" : "web/") + "logout").toPromise().then(response => {
       const clearLogin = () => {
         localStorage.removeItem("petrvs_api_token");
         this.registerUser(undefined);

@@ -8,8 +8,8 @@
     <input-textarea [size]="12" [rows]="2" label="Descrição" controlName="descricao"></input-textarea>
   </div>
   <div class="row">
-    <input-button label="Número Processo SEI" [size]="6" #procRequisicao controlName="numero_processo" [control]="form!.controls.numero_processo" [disabled]="!gb.isExtension || form!.controls.numero_requisicao.value?.length ? 'true' : undefined" labelInfo="Número do processo, com a formatação de origem"></input-button>
-    <input-button label="Número Documento SEI" [size]="6" #docRequisicao controlName="numero_documento" [control]="form!.controls.numero_requisicao" [disabled]="!gb.isExtension ? 'true' : undefined" labelInfo="Numero do documento de requisição, caso seja o Sei é o numero Sei"></input-button>
+    <input-button label="Número Processo SEI" [size]="6" #procRequisicao controlName="numero_processo" [control]="form!.controls.numero_processo" [disabled]="!gb.isEmbedded || form!.controls.numero_requisicao.value?.length ? 'true' : undefined" labelInfo="Número do processo, com a formatação de origem"></input-button>
+    <input-button label="Número Documento SEI" [size]="6" #docRequisicao controlName="numero_documento" [control]="form!.controls.numero_requisicao" [disabled]="!gb.isEmbedded ? 'true' : undefined" labelInfo="Numero do documento de requisição, caso seja o Sei é o numero Sei"></input-button>
   </div>
   <separator title="Cronograma e progresso"></separator>
   <div class="row">

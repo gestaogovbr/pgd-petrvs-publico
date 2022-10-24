@@ -6,12 +6,12 @@
     {
       "label": "enable:xdebug",
       "type": "shell",
-      "command": "docker exec -t php sh /usr/local/etc/php/conf.d/xdebug-enable.sh"
+      "command": "docker exec -t petrvs_php sh /usr/local/etc/php/conf.d/xdebug-enable.sh"
     },
     {
       "label": "disable:xdebug",
       "type": "shell",
-      "command": "docker exec -t php sh /usr/local/etc/php/conf.d/xdebug-disable.sh"
+      "command": "docker exec -t petrvs_php sh /usr/local/etc/php/conf.d/xdebug-disable.sh"
     }
   ]
 }

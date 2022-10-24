@@ -405,12 +405,24 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
             if (['cpf', 'matricula', 'email', 'nome', 'apelido', 'perfil_id'].indexOf(controlName) >= 0 && !((_a = control.value) === null || _a === void 0 ? void 0 : _a.length)) {
                 result = "Obrigatório";
             }
+            else if (controlName == "cpf" && !this.util.validarCPF(control.value)) {
+                result = "Inválido";
+            }
             return result;
         };
         this.formValidation = (form) => {
-            var _a;
+            var _a, _b;
             if (!((_a = form === null || form === void 0 ? void 0 : form.controls.lotacoes.value) === null || _a === void 0 ? void 0 : _a.length)) {
                 return "Obrigatório ao menos uma lotação";
+            }
+            else {
+                const erros_lotacao = [];
+                (_b = form === null || form === void 0 ? void 0 : form.controls.lotacoes.value) === null || _b === void 0 ? void 0 : _b.forEach((lotacao) => {
+                    if (lotacao.unidade_id == '')
+                        erros_lotacao.push({ lotacao: lotacao, erro: 'Falta unidade_id' });
+                });
+                if (erros_lotacao.length)
+                    return "Salve a lotação antes de salvar o usuário";
             }
             return undefined;
         };
@@ -506,7 +518,7 @@ UsuarioFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵdef
     } if (rf & 2) {
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵInheritDefinitionFeature"]], decls: 30, vars: 39, consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], [1, "form-group", "col-md-3", "text-center"], [1, "mt-5", 3, "url", "size"], [1, "form-group", "col-md-9"], ["label", "CPF", "controlName", "cpf", 3, "disabled", "size", "control"], ["label", "Matr\u00EDcula", "controlName", "matricula", 3, "disabled", "size", "control"], ["label", "E-mail", "controlName", "email", "textCase", "lower", 3, "disabled", "size", "control"], ["label", "Nome", "controlName", "nome", 3, "size", "control"], ["label", "Apelido", "controlName", "apelido", 3, "size", "control"], ["label", "Perfil", "controlName", "perfil_id", 3, "disabled", "size", "control", "dao"], ["label", "UF", "controlName", "uf", 3, "size", "control", "items"], ["label", "Sexo", "controlName", "sexo", 3, "size", "control", "items"], ["label", "Telefone", "controlName", "telefone", 3, "size", "control"], ["key", "LOTACOES", "label", "Lota\u00E7\u00F5es"], ["editable", "", 3, "control", "form", "add", "load", "hasDelete", "remove", "save"], ["title", "Unidade", 3, "template", "editTemplate"], ["columnUnidade", ""], ["editUnidade", ""], ["type", "switch", "title", "Principal", "field", "principal"], ["type", "options"], ["class", "bi bi-bookmark-star", 4, "ngIf"], [1, "bi", "bi-bookmark-star"], ["controlName", "unidade_id", 3, "size", "control", "dao", "selectRoute"], ["unidade", ""]], template: function UsuarioFormComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵInheritDefinitionFeature"]], decls: 30, vars: 41, consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], [1, "form-group", "col-md-3", "text-center"], [1, "mt-5", 3, "url", "size"], [1, "form-group", "col-md-9"], ["label", "CPF", "controlName", "cpf", 3, "disabled", "size", "control", "maskFormat"], ["label", "Matr\u00EDcula", "controlName", "matricula", 3, "disabled", "size", "control"], ["label", "E-mail", "controlName", "email", "textCase", "lower", 3, "disabled", "size", "control"], ["label", "Nome", "controlName", "nome", 3, "size", "control"], ["label", "Apelido", "controlName", "apelido", 3, "size", "control"], ["label", "Perfil", "controlName", "perfil_id", 3, "disabled", "size", "control", "dao"], ["label", "UF", "controlName", "uf", 3, "size", "control", "items"], ["label", "Sexo", "controlName", "sexo", 3, "size", "control", "items"], ["label", "Telefone", "controlName", "telefone", 3, "size", "control", "maskFormat"], ["key", "LOTACOES", "label", "Lota\u00E7\u00F5es"], ["editable", "", 3, "control", "form", "add", "load", "hasDelete", "remove", "save"], ["title", "Unidade", 3, "template", "editTemplate"], ["columnUnidade", ""], ["editUnidade", ""], ["type", "switch", "title", "Principal", "field", "principal"], ["type", "options"], ["class", "bi bi-bookmark-star", 4, "ngIf"], [1, "bi", "bi-bookmark-star"], ["controlName", "unidade_id", 3, "size", "control", "dao", "selectRoute"], ["unidade", ""]], template: function UsuarioFormComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](0, "editable-form", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵlistener"]("submit", function UsuarioFormComponent_Template_editable_form_submit_0_listener() { return ctx.onSaveData(); })("cancel", function UsuarioFormComponent_Template_editable_form_cancel_0_listener() { return ctx.onCancel(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](1, "tabs", 1);
@@ -557,7 +569,7 @@ UsuarioFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵdef
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](5);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("url", ctx.form.controls.url_foto == null ? null : ctx.form.controls.url_foto.value)("size", 150);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("disabled", !ctx.auth.hasPermissionTo("MOD_CFG_USER_CPF") ? "true" : undefined)("size", 4)("control", ctx.form.controls.cpf);
+        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("disabled", !ctx.auth.hasPermissionTo("MOD_CFG_USER_CPF") ? "true" : undefined)("size", 4)("control", ctx.form.controls.cpf)("maskFormat", "000.000.000-00");
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("disabled", !ctx.auth.hasPermissionTo("MOD_CFG_USER_MAT") ? "true" : undefined)("size", 3)("control", ctx.form.controls.matricula);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](1);
@@ -573,7 +585,7 @@ UsuarioFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵdef
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.sexo)("items", ctx.lookup.SEXO);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.telefone);
+        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.telefone)("maskFormat", "(00) 0000-0000||(00) 0 0000-0000");
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("control", ctx.form.controls.lotacoes)("form", ctx.formLotacoes)("add", ctx.addLotacao.bind(ctx))("load", ctx.loadLotacao.bind(ctx))("hasDelete", true)("remove", ctx.removeLotacao.bind(ctx))("save", ctx.saveLotacao.bind(ctx));
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](2);

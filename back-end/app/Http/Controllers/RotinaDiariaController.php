@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Exceptions\LogError;
 use App\Services\RotinaDiariaService;
-use Exception;
+use Throwable;
 
 abstract class ControllerBase extends Controller
 {
@@ -26,7 +26,7 @@ abstract class ControllerBase extends Controller
             if(empty($config["token"])) throw new Exception("Token das rotinas diárias não configurado no arquivo de variáveis de ambiente");
             if($config["token"] != $data["token"]) throw new Exception("Token das rotinas diárias inválido");
             return response()->json($this->service->run());
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
