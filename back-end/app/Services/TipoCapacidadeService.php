@@ -126,6 +126,7 @@ class TipoCapacidadeService extends ServiceBase {
         ["d5b0b20b-4bcc-11ed-a5bb-0050569c64a0", "MOD_DMD_TRF_EDT", "Permite editar tarefas dentro de demandas"],
         ["ef26230f-4bcc-11ed-a5bb-0050569c64a0", "MOD_DMD_TRF_EXCL", "Permite exluir tarefas dentro de demandas"],
         ["0c27addd-4bcd-11ed-a5bb-0050569c64a0", "MOD_DMD_TRF_CONS", "Permite consultar tarefas dentro de demandas"],
+        ["b0990593-516b-11ed-a5bb-0050569c64a0", "MOD_DMD_CLONAR", "Permite clonar demandas"],
         /* Capacidades do módulo ENTIDADE*/
         ["ea2610e6-e1d7-11ec-a5bb-0050569c64a0", "MOD_ENTD_CFG", "Permite configurar Entidade"],
         ["a8ef649e-e112-11ec-a5bb-0050569c64a0", "MOD_ENTD_CONS", "Permite consultar Entidade"],
