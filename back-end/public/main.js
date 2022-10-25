@@ -19909,7 +19909,6 @@ class ChangeListComponent extends src_app_modules_base_page_list_base__WEBPACK_I
             return result;
         };
         this.usuarioDao = injector.get(src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_2__["UsuarioDaoService"]);
-        this.join = ["usuario"];
         /* Inicializações */
         this.allPages = injector.get(src_app_listeners_listener_all_pages_service__WEBPACK_IMPORTED_MODULE_3__["ListenerAllPagesService"]);
         this.title = "Log das alterações";
