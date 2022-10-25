@@ -18,7 +18,9 @@
         "vendor.js",
         "main.js"
     ],
-    "cssFiles": [],
+    "cssFiles": [
+        "styles.css"
+    ],
     "match": [
         {
             "regex": ".*/sip/.*",
@@ -30,6 +32,10 @@
         },
         {
             "regex": ".*/sei/publicacoes/.*",
+            "load": false
+        },
+        {
+            "regex": ".*controlador\\.php\\?acao\\=arvore_visualizar.*",
             "load": false
         },
         {

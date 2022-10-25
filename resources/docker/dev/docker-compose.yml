@@ -1,36 +1,38 @@
 version: "3.9"
 services:
 
-  db:
+  petrvs_db:
     image: mysql:8
-    container_name: db
+    container_name: petrvs_db
     ports:
-      - 3306:3306
+      - 3308:3308
     volumes:
       - ../mysql:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: PsEeTnRhVaS
       MYSQL_USER: petrvs
       MYSQL_PASSWORD: PsEeTnRhVaS
+      MYSQL_TCP_PORT: 3308
 
-  php:
+
+  petrvs_php:
     build: 
       context: .
       dockerfile: Dockerfile-php
-    container_name: php
+    container_name: petrvs_php
     working_dir: /var/www
     ports:
       - "80:80"
     depends_on:
-      - db
+      - petrvs_db
     volumes:
       - ../../../back-end:/var/www
 
-  node:
+  petrvs_node:
     build: 
       context: .
       dockerfile: Dockerfile-node
-    container_name: node
+    container_name: petrvs_node
     command: sh -c "sleep infinity"
     working_dir: /usr/src/app
     environment:
@@ -38,7 +40,7 @@ services:
     ports:
       - "4200:4200"
     depends_on:
-      - php
+      - petrvs_php
     volumes:
       - ../../../front-end:/usr/src/app
       - ../../../back-end:/usr/src/back-end

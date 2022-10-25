@@ -125,9 +125,9 @@ ProjetoTarefaFormPrincipalComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODU
         _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 12)("rows", 2);
         _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.numero_processo)("disabled", !ctx.gb.isExtension || (ctx.form.controls.numero_requisicao.value == null ? null : ctx.form.controls.numero_requisicao.value.length) ? "true" : undefined);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.numero_processo)("disabled", !ctx.gb.isEmbedded || (ctx.form.controls.numero_requisicao.value == null ? null : ctx.form.controls.numero_requisicao.value.length) ? "true" : undefined);
         _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.numero_requisicao)("disabled", !ctx.gb.isExtension ? "true" : undefined);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.numero_requisicao)("disabled", !ctx.gb.isEmbedded ? "true" : undefined);
         _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](4);
         _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("size", 2);
         _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](1);
@@ -637,7 +637,7 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
         var _a, _b, _c, _d, _e, _f, _g, _h;
         let result = [];
         for (let alocacao of tarefa.alocacoes || []) {
-            const regra = ""; //alocacao.regra ? "\n(" + alocacao.regra.nome + ")" : ""; /* TODO: Obter lista de regras */
+            const regra = this.projetoService.getNomesRegras(alocacao, "\n(", ")");
             const nome = ((_b = (_a = alocacao.recurso) === null || _a === void 0 ? void 0 : _a.nome) === null || _b === void 0 ? void 0 : _b.length) ? alocacao.recurso.nome + "\n" : "";
             switch ((_c = alocacao.recurso) === null || _c === void 0 ? void 0 : _c.tipo) {
                 case 'HUMANO':
@@ -742,13 +742,17 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
                 }
                 return result;
             };
-            return (alocacoes || []).map(alocacao => new src_app_components_gantt_gantt_models__WEBPACK_IMPORTED_MODULE_2__["GanttAssignment"]({
-                id: alocacao.id,
-                resource_id: alocacao.recurso_id,
-                //role_id: alocacao.regra_id, /* TODO: Alterar para aceitar mais de uma rule */
-                description: toAssignmentDescription(alocacao),
-                quantity: alocacao.quantidade || 1
-            }));
+            return (alocacoes || []).map(alocacao => {
+                var _a;
+                return new src_app_components_gantt_gantt_models__WEBPACK_IMPORTED_MODULE_2__["GanttAssignment"]({
+                    id: alocacao.id,
+                    extra: alocacao,
+                    resource_id: alocacao.recurso_id,
+                    roles_ids: ((_a = alocacao.regras) === null || _a === void 0 ? void 0 : _a.map(x => x.regra_id)) || [],
+                    description: toAssignmentDescription(alocacao),
+                    quantity: alocacao.quantidade || 1
+                });
+            });
         };
         const toGanttTask = (tarefa) => {
             return new src_app_components_gantt_gantt_models__WEBPACK_IMPORTED_MODULE_2__["GanttTask"]({
@@ -821,9 +825,10 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
             return children.map(child => toGanttTask(child));
         };
         let gantt = new src_app_components_gantt_gantt_models__WEBPACK_IMPORTED_MODULE_2__["GanttProject"]({
-            tasks: [new src_app_components_gantt_gantt_models__WEBPACK_IMPORTED_MODULE_2__["GanttTask"]({
+            root: [new src_app_components_gantt_gantt_models__WEBPACK_IMPORTED_MODULE_2__["GanttTask"]({
                     id: projeto.id,
                     index: 0,
+                    level: 0,
                     name: projeto.nome,
                     description: projeto.descricao,
                     extra: projeto,
@@ -843,18 +848,21 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
             resources: (projeto.recursos || []).map(x => toGanttResource(x)),
             roles: (projeto.regras || []).map(x => toGanttRole(x))
         });
+        /* Converte de arvore para lista de tasks */
+        gantt.tasks = this.fromTaskTree(gantt.root, 0);
         return gantt;
     }
-    fromGantt(project) {
+    fromGantt(project, update = true) {
         let root = this.project.tasks[0];
         let origem = root.extra;
         let index = 1;
         const fromGanttRules = (roles) => {
-            return roles.map(role => new src_app_models_projeto_regra_model__WEBPACK_IMPORTED_MODULE_6__["ProjetoRegra"]({
-                id: role.id,
-                nome: role.name,
+            let result = update ? origem.regras || [] : [];
+            return this.util.mergeArrayOfObject(result, roles, "id", true, (src) => new src_app_models_projeto_regra_model__WEBPACK_IMPORTED_MODULE_6__["ProjetoRegra"]({
+                id: src.id,
+                nome: src.name,
                 projeto_id: projeto.id
-            }));
+            }), (dst, src) => dst.nome = src.name);
         };
         const fromGanttResources = (resources) => {
             const fromGanttResourceType = (resourceType) => {
@@ -882,33 +890,67 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
                 };
                 return castUnity.hasOwnProperty(unity) ? castUnity[unity] : "UNITY";
             };
-            return resources.map(resource => new src_app_models_projeto_recurso_model__WEBPACK_IMPORTED_MODULE_5__["ProjetoRecurso"]({
-                nome: resource.name,
-                tipo: fromGanttResourceType(resource.type),
-                unidade_medida: fromGanttUnity(resource.unity),
-                valor: resource.unityCost,
+            let result = update ? origem.recursos || [] : [];
+            return this.util.mergeArrayOfObject(result, resources, "id", true, (src) => new src_app_models_projeto_recurso_model__WEBPACK_IMPORTED_MODULE_5__["ProjetoRecurso"]({
+                nome: src.name,
+                tipo: fromGanttResourceType(src.type),
+                unidade_medida: fromGanttUnity(src.unity),
+                valor: src.unityCost,
                 projeto_id: projeto.id,
-                usuario_id: resource.extra.usuario_id,
-                unidade_id: resource.extra.unidade_id,
-                material_servico_id: resource.extra.material_servico_id
+                usuario_id: src.extra.usuario_id,
+                unidade_id: src.extra.unidade_id,
+                material_servico_id: src.extra.material_servico_id
+            }), (dst, src) => Object.assign(dst, {
+                nome: src.name,
+                tipo: fromGanttResourceType(src.type),
+                unidade_medida: fromGanttUnity(src.unity),
+                valor: src.unityCost,
             }));
         };
-        /*const fromGanttStakeholders = (assigns: GanttAssignment[]): ProjetoEnvolvido[] => {
-          let result: ProjetoEnvolvido[] = [];
-          for(let assign of assigns || []) {
-            const envolvido = (origem.envolvidos || []).find(x => x.id == assign.id);
-            if(envolvido) {
-              result.push(new ProjetoEnvolvido({
-                projeto_id: projeto.id,
-                recurso_id: assign.resource_id,
-                regra_id: assign.role_id
-              }));
+        const fromGanttAssignment = (origem, assignments) => {
+            if (origem.aloca_proprios_recursos || origem.custos_proprios) {
+                return this.util.mergeArrayOfObject(origem.alocacoes, assignments, "id", true, (src) => {
+                    const recurso = (projeto.recursos || []).find(x => x.id == src.recurso_id);
+                    if (src.extra && recurso) {
+                        const isProjeto = origem.id == projeto.id;
+                        if (origem.custos_proprios)
+                            origem.custo += src.quantity * (recurso.valor || 0);
+                        return new src_app_models_projeto_alocacao_model__WEBPACK_IMPORTED_MODULE_4__["ProjetoAlocacao"]({
+                            id: src.id,
+                            descricao: src.description,
+                            quantidade: src.quantity,
+                            recurso_id: src.resource_id,
+                            //regra_id: assign.role_id, /* TODO: Trazer de uma lista de regras */
+                            projeto_id: isProjeto ? origem.id : null,
+                            tarefa_id: !isProjeto ? origem.id : null
+                        });
+                    }
+                    return undefined;
+                }, (dst, src) => {
+                    const recurso = (projeto.recursos || []).find(x => x.id == src.recurso_id);
+                    if (src.extra && recurso) {
+                        if (origem.custos_proprios)
+                            origem.custo += src.quantity * (recurso.valor || 0);
+                        Object.assign(dst, {
+                            descricao: src.description,
+                            quantidade: src.quantity,
+                            recurso_id: src.resource_id
+                        });
+                    }
+                });
             }
-          }
-          return result;
-        }*/
-        const fromGanttTasks = (projeto, pai, tasks, path) => {
-            var _a;
+            return [];
+        };
+        const updateTotals = (origem, totais) => {
+            if (origem.soma_progresso_filhos)
+                origem.progresso = totais.progresso;
+            if (origem.calcula_intervalo) {
+                origem.inicio = totais.inicio || origem.inicio;
+                origem.termino = totais.termino || origem.termino;
+                origem.duracao = totais.duracao || origem.duracao;
+            }
+        };
+        const fromGanttTasks = (pai, tasks, path) => {
             let result = {
                 custo: 0,
                 progresso: 0,
@@ -916,122 +958,134 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
                 inicio: null,
                 termino: null
             };
-            const fromGanttAssignment = (tarefa, origem, assign) => {
-                return new src_app_models_projeto_alocacao_model__WEBPACK_IMPORTED_MODULE_4__["ProjetoAlocacao"]({
-                    id: assign.id,
-                    descricao: assign.description,
-                    quantidade: assign.quantity,
-                    recurso_id: assign.resource_id,
-                    //regra_id: assign.role_id, /* TODO: Trazer de uma lista de regras */
-                    projeto_id: origem.projeto_id,
-                    tarefa_id: origem.tarefa_id
-                });
-            };
-            for (let task of root.tasks || []) {
-                let origem = task.extra;
-                let tarefa = new src_app_models_projeto_tarefa_model__WEBPACK_IMPORTED_MODULE_7__["ProjetoTarefa"]({
-                    id: task.id,
-                    indice: index++,
-                    path: path,
-                    nome: task.name,
-                    descricao: task.description,
-                    id_processo: origem.id_processo,
-                    numero_processo: origem.numero_processo,
-                    id_documento: origem.id_documento,
-                    numero_documento: origem.numero_documento,
-                    inicio: task.start,
-                    termino: task.end,
-                    duracao: task.duration,
-                    progresso: task.progress,
-                    inicio_marco: task.startIsMilestone,
-                    termino_marco: task.endIsMilestone,
-                    tem_filhos: task.hasChild,
-                    agrupador: origem.agrupador,
-                    soma_progresso_filhos: origem.soma_progresso_filhos,
-                    status: origem.status,
-                    contraido: task.collapsed,
-                    custo: 0,
-                    calcula_intervalo: task.hasChild && origem.calcula_intervalo,
-                    aloca_proprios_recursos: !task.hasChild || origem.aloca_proprios_recursos,
-                    soma_recusos_alocados_filhos: task.hasChild && origem.soma_recusos_alocados_filhos,
-                    custos_proprios: !task.hasChild || origem.custos_proprios,
-                    soma_custos_filhos: task.hasChild && origem.soma_custos_filhos
-                });
-                /* custos e alocacoes */
-                if (tarefa.aloca_proprios_recursos || tarefa.custos_proprios) {
-                    for (let assign of task.assignments || []) {
-                        const alocacao = (origem.alocacoes || []).find(x => x.id == assign.id);
-                        if (alocacao) {
-                            if (tarefa.aloca_proprios_recursos)
-                                fromGanttAssignment(tarefa, alocacao, assign);
-                            if (tarefa.custos_proprios) {
-                                const recurso = (projeto.recursos || []).find(x => x.id == alocacao.recurso_id);
-                                tarefa.custo += alocacao.quantidade * ((recurso === null || recurso === void 0 ? void 0 : recurso.valor) || 0);
-                            }
-                        }
-                    }
+            /* Adiciona caso não exista, ou atualiza caso já exista (A exclusão de tarefas que não existem mais será feita utilizando tasksIds) */
+            this.util.mergeArrayOfObject(projeto.tarefas, tasks, "id", false, (action, dst, src) => {
+                let origem = src.extra;
+                let tarefa = dst;
+                if (action == "ADD") {
+                    tarefa = new src_app_models_projeto_tarefa_model__WEBPACK_IMPORTED_MODULE_7__["ProjetoTarefa"]({
+                        id: src.id,
+                        indice: index++,
+                        path: path,
+                        nome: src.name,
+                        descricao: src.description,
+                        id_processo: origem.id_processo,
+                        numero_processo: origem.numero_processo,
+                        id_documento: origem.id_documento,
+                        numero_documento: origem.numero_documento,
+                        inicio: src.start,
+                        termino: src.end,
+                        duracao: src.duration,
+                        progresso: src.progress,
+                        inicio_marco: src.startIsMilestone,
+                        termino_marco: src.endIsMilestone,
+                        tem_filhos: src.hasChild,
+                        agrupador: origem.agrupador,
+                        soma_progresso_filhos: origem.soma_progresso_filhos,
+                        status: origem.status,
+                        contraido: src.collapsed,
+                        custo: 0,
+                        calcula_intervalo: src.hasChild && origem.calcula_intervalo,
+                        aloca_proprios_recursos: !src.hasChild || origem.aloca_proprios_recursos,
+                        soma_recusos_alocados_filhos: src.hasChild && origem.soma_recusos_alocados_filhos,
+                        custos_proprios: !src.hasChild || origem.custos_proprios,
+                        soma_custos_filhos: src.hasChild && origem.soma_custos_filhos
+                    });
                 }
+                else if (action == "EDIT") {
+                    Object.assign(tarefa, {
+                        indice: index++,
+                        path: path,
+                        nome: src.name,
+                        descricao: src.description,
+                        inicio: src.start,
+                        termino: src.end,
+                        duracao: src.duration,
+                        progresso: src.progress,
+                        inicio_marco: src.startIsMilestone,
+                        termino_marco: src.endIsMilestone,
+                        tem_filhos: src.hasChild,
+                        contraido: src.collapsed,
+                        custo: 0,
+                        calcula_intervalo: src.hasChild && origem.calcula_intervalo,
+                        aloca_proprios_recursos: !src.hasChild || origem.aloca_proprios_recursos,
+                        soma_recusos_alocados_filhos: src.hasChild && origem.soma_recusos_alocados_filhos,
+                        custos_proprios: !src.hasChild || origem.custos_proprios,
+                        soma_custos_filhos: src.hasChild && origem.soma_custos_filhos
+                    });
+                }
+                /* Adiciona o ID */
+                tasksIds.push(tarefa.id);
+                /* custos e alocacoes */
+                fromGanttAssignment(tarefa, src.assignments);
                 /* Totais dos filhos (calculado recursivamente) e insere os filhos como tarefas (se tiver filhos) */
-                if (task.hasChild) {
-                    let totaisFilhos = fromGanttTasks(projeto, tarefa, task.tasks || [], path + "/" + task.id);
+                if (src.hasChild) {
+                    let totaisFilhos = fromGanttTasks(tarefa, src.tasks || [], path + "/" + src.id);
                     /* Atualiza valores pelo total dos filhos */
-                    if (tarefa.soma_progresso_filhos)
-                        tarefa.progresso = totaisFilhos.progresso;
-                    if (tarefa.calcula_intervalo) {
-                        tarefa.inicio = totaisFilhos.inicio || tarefa.inicio;
-                        tarefa.termino = totaisFilhos.termino || tarefa.termino;
-                        tarefa.duracao = totaisFilhos.duracao || tarefa.duracao;
-                    }
+                    updateTotals(tarefa, totaisFilhos);
                 }
                 /* Calculos feitos para serem retornados, que são utilizados logo aqui acima */
                 if (pai.soma_progresso_filhos)
-                    result.progresso += task.progress || 0;
+                    result.progresso += src.progress || 0;
                 if (pai.calcula_intervalo) {
-                    result.inicio = !result.inicio || task.start.getTime() < result.inicio.getTime() ? task.start : result.inicio;
-                    result.termino = !result.termino || task.end.getTime() > result.termino.getTime() ? task.end : result.termino;
+                    result.inicio = !result.inicio || src.start.getTime() < result.inicio.getTime() ? src.start : result.inicio;
+                    result.termino = !result.termino || src.end.getTime() > result.termino.getTime() ? src.end : result.termino;
                 }
                 //if(pai.soma_recusos_alocados_filhos)  /* Não precisa fazer nada, vai ser concatenado somente para exibição no toGantt */
                 if (pai.soma_custos_filhos)
                     result.custo += tarefa.custo;
                 /* Adiciona a tarefa ao projeto */
-                projeto.tarefas.push(tarefa);
-            }
+                //projeto.tarefas!.push(tarefa); /* Não precisa adicionar, o mergeArrayOfObject já adiciona automaticamente */
+                return tarefa;
+            });
             /* progresso */
             if (pai.soma_progresso_filhos)
-                result.progresso = result.progresso / (((_a = root.tasks) === null || _a === void 0 ? void 0 : _a.length) || 1);
+                result.progresso = result.progresso / (tasks.length || 1);
             return result;
         };
-        let projeto = new src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_8__["Projeto"]({
-            numero: origem.numero,
+        /* Ids das tarefas, será utilizado ao fim para excluir as tarefas que foram excluídas */
+        let tasksIds = [];
+        /* Atualiza o objeto existente (origem) ou cria um novo objeto Projeto baseado no origem */
+        let projeto = update ? origem : new src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_8__["Projeto"](origem);
+        Object.assign(projeto, {
             nome: root.name,
             descricao: root.description,
-            finalidade: origem.finalidade,
-            status: origem.status,
             inicio: root.start,
             termino: root.end,
-            calcula_custos: origem.calcula_custos,
-            tempo_corrido: origem.tempo_corrido,
-            usar_horas: origem.usar_horas,
-            calcula_intervalo: origem.calcula_intervalo,
-            agrupador: origem.agrupador,
-            soma_progresso_filhos: origem.soma_progresso_filhos,
-            aloca_proprios_recursos: origem.aloca_proprios_recursos,
-            soma_recusos_alocados_filhos: origem.soma_recusos_alocados_filhos,
-            custos_proprios: origem.custos_proprios,
-            soma_custos_filhos: origem.soma_custos_filhos,
             duracao: root.duration,
             progresso: root.progress,
-            usuario_id: origem.usuario_id,
-            tipo_projeto_id: origem.tipo_projeto_id,
             regras: fromGanttRules(project.roles),
             recursos: fromGanttResources(project.resources),
-            //envolvidos: fromGanttStakeholders(root.assignments || []),
             alocacoes: [],
             tarefas: []
         });
+        /* Refas a arvore root baseado nas tasks, para facilitar os calculos e totalizações */
+        project.root = this.toTaskTree(project.tasks);
         /* Carrega as tarefas e alocações recursivamente */
-        fromGanttTasks(projeto, projeto, project.tasks || [], "");
+        let totais = fromGanttTasks(projeto, project.root || [], "");
+        /* Atualiza valores pelo total dos filhos */
+        updateTotals(projeto, totais);
         return projeto;
+    }
+    fromTaskTree(tasks, level) {
+        let result = [];
+        tasks.forEach(task => result.push(Object.assign(task, { level }), ...this.fromTaskTree(task.tasks || [], level + 1)));
+        return result;
+    }
+    toTaskTree(tasks) {
+        var _a;
+        let levels = [tasks[0]]; /* Adiciona a raiz (que é o projeto) como sendo nível 0 */
+        let last = 0;
+        for (let task of tasks) {
+            task.tasks = []; /* Limpa a lista de tasks */
+            if (task.level) { /* Ignora o level 0, que o próprio projeto */
+                task.level = Math.min(task.level, last + 1); /* Garante que os níveis crescem em uma unidade somente */
+                (_a = levels[task.level - 1].tasks) === null || _a === void 0 ? void 0 : _a.push(task); /* Adiciona a task no pai */
+                levels[task.level] = task;
+            }
+            last = task.level;
+        }
+        return [levels[0]];
     }
 }
 ProjetoPlanejamentoComponent.ɵfac = function ProjetoPlanejamentoComponent_Factory(t) { return new (t || ProjetoPlanejamentoComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_11__["Injector"])); };
@@ -11289,6 +11343,11 @@ class ProjetoService {
                     (recurso.tipo == "DEPARTAMENTO" ? "assets/images/projetos/unidade.png" :
                         (recurso.tipo == "SERVICO" ? "assets/images/projetos/servico.png" : "assets/images/projetos/material.png")))));
     }
+    getNomesRegras(envolvido, prefix, sufix) {
+        var _a;
+        let result = ((_a = envolvido.regras) === null || _a === void 0 ? void 0 : _a.map(x => { var _a; return (_a = x.regra) === null || _a === void 0 ? void 0 : _a.nome; }).filter(x => x).join(", ")) || "";
+        return result.length ? (prefix || "") + result + (sufix || "") : result;
+    }
 }
 ProjetoService.ɵfac = function ProjetoService_Factory(t) { return new (t || ProjetoService)(); };
 ProjetoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: ProjetoService, factory: ProjetoService.ɵfac, providedIn: 'root' });
@@ -13469,18 +13528,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/usuario-dao.service */ "w5Sy");
 /* harmony import */ var src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/models/projeto.model */ "LZl6");
 /* harmony import */ var src_app_modules_base_page_list_base__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/modules/base/page-list-base */ "+vn/");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common */ "ofXK");
-/* harmony import */ var _components_grid_filter_filter_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../components/grid/filter/filter.component */ "kHdc");
-/* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ "lYxd");
-/* harmony import */ var _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../../components/input/input-search/input-search.component */ "8OLq");
-/* harmony import */ var _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../../components/grid/columns/columns.component */ "d7UH");
-/* harmony import */ var _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../../../components/grid/column/column.component */ "pFmK");
-/* harmony import */ var _components_grid_pagination_pagination_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../../../components/grid/pagination/pagination.component */ "f3Td");
-/* harmony import */ var _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../../../components/toolbar/toolbar.component */ "np0s");
-/* harmony import */ var _components_profile_picture_profile_picture_component__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../../components/profile-picture/profile-picture.component */ "xp1S");
-/* harmony import */ var _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../../../components/badge/badge.component */ "jKVP");
-/* harmony import */ var _components_progress_bar_progress_bar_component__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../../../components/progress-bar/progress-bar.component */ "uSqO");
+/* harmony import */ var _projeto_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../projeto.service */ "6/Ne");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/common */ "ofXK");
+/* harmony import */ var _components_grid_filter_filter_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/grid/filter/filter.component */ "kHdc");
+/* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ "lYxd");
+/* harmony import */ var _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../../components/input/input-search/input-search.component */ "8OLq");
+/* harmony import */ var _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../../../components/grid/columns/columns.component */ "d7UH");
+/* harmony import */ var _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../../../components/grid/column/column.component */ "pFmK");
+/* harmony import */ var _components_grid_pagination_pagination_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../../../components/grid/pagination/pagination.component */ "f3Td");
+/* harmony import */ var _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../../components/toolbar/toolbar.component */ "np0s");
+/* harmony import */ var _components_profile_picture_profile_picture_component__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../../../components/profile-picture/profile-picture.component */ "xp1S");
+/* harmony import */ var _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../../../components/badge/badge.component */ "jKVP");
+/* harmony import */ var _components_progress_bar_progress_bar_component__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../../../components/progress-bar/progress-bar.component */ "uSqO");
+
 
 
 
@@ -13501,101 +13562,101 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function ProjetoListComponent_toolbar_1_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](0, "toolbar");
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](0, "toolbar");
 } }
 function ProjetoListComponent_ng_template_9_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "strong");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "strong");
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const row_r16 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate"](row_r16.numero);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](row_r16.numero);
 } }
 function ProjetoListComponent_ng_template_12_profile_picture_2_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](0, "profile-picture", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](0, "profile-picture", 25);
 } if (rf & 2) {
     const envolvido_r20 = ctx.$implicit;
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("url", envolvido_r20.url)("hint", envolvido_r20.hint);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("url", envolvido_r20.url)("hint", envolvido_r20.hint);
 } }
 function ProjetoListComponent_ng_template_12_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "strong", 23);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](2, ProjetoListComponent_ng_template_12_profile_picture_2_Template, 1, 2, "profile-picture", 24);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "strong", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](2, ProjetoListComponent_ng_template_12_profile_picture_2_Template, 1, 2, "profile-picture", 24);
 } if (rf & 2) {
     const row_r17 = ctx.row;
     const metadata_r18 = ctx.metadata;
-    const ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate"](row_r17.nome);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngForOf", ctx_r4.getEnvolvidos(row_r17, metadata_r18));
+    const ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](row_r17.nome);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngForOf", ctx_r4.getEnvolvidos(row_r17, metadata_r18));
 } }
 function ProjetoListComponent_ng_template_15_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "strong", 23);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](2, "small");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "strong", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](2, "small");
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const row_r21 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate"](row_r21.descricao);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate"](row_r21.finalidade);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](row_r21.descricao);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](row_r21.finalidade);
 } }
 function ProjetoListComponent_ng_template_18_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](0, "badge", 26);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](1, "br");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](2, "badge", 27);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](0, "badge", 26);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](1, "br");
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](2, "badge", 27);
 } if (rf & 2) {
     const row_r22 = ctx.row;
-    const ctx_r8 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("label", ctx_r8.util.getDateTimeFormatted(row_r22.inicio));
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("label", ctx_r8.util.getDateTimeFormatted(row_r22.termino));
+    const ctx_r8 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("label", ctx_r8.util.getDateTimeFormatted(row_r22.inicio));
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("label", ctx_r8.util.getDateTimeFormatted(row_r22.termino));
 } }
 function ProjetoListComponent_ng_template_21_badge_0_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](0, "badge", 30);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](0, "badge", 30);
 } }
 function ProjetoListComponent_ng_template_21_badge_2_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](0, "badge", 31);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](0, "badge", 31);
 } if (rf & 2) {
-    const row_r23 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"]().row;
-    const ctx_r25 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("label", ctx_r25.util.formatDecimal(row_r23.custo));
+    const row_r23 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]().row;
+    const ctx_r25 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("label", ctx_r25.util.formatDecimal(row_r23.custo));
 } }
 function ProjetoListComponent_ng_template_21_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](0, ProjetoListComponent_ng_template_21_badge_0_Template, 1, 0, "badge", 28);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](1, "br");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](2, ProjetoListComponent_ng_template_21_badge_2_Template, 1, 1, "badge", 29);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](0, ProjetoListComponent_ng_template_21_badge_0_Template, 1, 0, "badge", 28);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](1, "br");
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](2, ProjetoListComponent_ng_template_21_badge_2_Template, 1, 1, "badge", 29);
 } if (rf & 2) {
     const row_r23 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngIf", !row_r23.calcula_custos);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngIf", row_r23.calcula_custos);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngIf", !row_r23.calcula_custos);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngIf", row_r23.calcula_custos);
 } }
 function ProjetoListComponent_ng_template_24_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](0, "progress-bar", 32);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](0, "progress-bar", 32);
 } if (rf & 2) {
     const row_r27 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("value", row_r27.progresso);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("value", row_r27.progresso);
 } }
 function ProjetoListComponent_ng_template_27_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](0, "badge", 33);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](0, "badge", 33);
 } if (rf & 2) {
     const row_r28 = ctx.row;
-    const ctx_r14 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵclassMap"](ctx_r14.lookup.getColor(ctx_r14.lookup.PROJETO_STATUS, row_r28.status));
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("icon", ctx_r14.lookup.getIcon(ctx_r14.lookup.PROJETO_STATUS, row_r28.status))("label", ctx_r14.lookup.getValue(ctx_r14.lookup.PROJETO_STATUS, row_r28.status));
+    const ctx_r14 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵclassMap"](ctx_r14.lookup.getColor(ctx_r14.lookup.PROJETO_STATUS, row_r28.status));
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("icon", ctx_r14.lookup.getIcon(ctx_r14.lookup.PROJETO_STATUS, row_r28.status))("label", ctx_r14.lookup.getValue(ctx_r14.lookup.PROJETO_STATUS, row_r28.status));
 } }
 function ProjetoListComponent_column_29_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](0, "column", 34);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](0, "column", 34);
 } if (rf & 2) {
-    const ctx_r15 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("onEdit", ctx_r15.edit)("onDelete", ctx_r15.delete)("dynamicOptions", ctx_r15.dynamicOptions.bind(ctx_r15))("dynamicButtons", ctx_r15.dynamicButtons.bind(ctx_r15));
+    const ctx_r15 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("onEdit", ctx_r15.edit)("onDelete", ctx_r15.delete)("dynamicOptions", ctx_r15.dynamicOptions.bind(ctx_r15))("dynamicButtons", ctx_r15.dynamicButtons.bind(ctx_r15));
 } }
 const _c0 = function () { return ["configuracoes", "usuario"]; };
 const _c1 = function (a0) { return { route: a0 }; };
@@ -13625,6 +13686,7 @@ class ProjetoListComponent extends src_app_modules_base_page_list_base__WEBPACK_
         /* Inicializações */
         this.usuarioDao = injector.get(src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_3__["UsuarioDaoService"]);
         this.unidadeDao = injector.get(src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_2__["UnidadeDaoService"]);
+        this.projetoService = injector.get(_projeto_service__WEBPACK_IMPORTED_MODULE_6__["ProjetoService"]);
         this.title = this.lex.noun("Projeto", true);
         this.code = "MOD_PROJ";
         this.join = ["alocacoes.recurso.usuario", "alocacoes.recurso.unidade", "alocacoes.regras.regra"];
@@ -13649,13 +13711,13 @@ class ProjetoListComponent extends src_app_modules_base_page_list_base__WEBPACK_
             if ((_b = envolvido.recurso) === null || _b === void 0 ? void 0 : _b.usuario) {
                 result.push({
                     url: envolvido.recurso.usuario.url_foto || "assets/images/projetos/usuario.png",
-                    hint: "Usuario: " + envolvido.recurso.usuario.nome // + (envolvido.regra ? "\n(" + envolvido.regra.nome + ")" : "") TODO: Colocar regras
+                    hint: "Usuario: " + envolvido.recurso.usuario.nome + this.projetoService.getNomesRegras(envolvido, "\n(", ")")
                 });
             }
             else if ((_c = envolvido.recurso) === null || _c === void 0 ? void 0 : _c.unidade) {
                 result.push({
                     url: "assets/images/projetos/unidade.png",
-                    hint: "Usuario: " + envolvido.recurso.unidade.nome // + (envolvido.regra ? "\n(" + envolvido.regra.nome + ")" : "") TODO: Colocar regras
+                    hint: "Usuario: " + envolvido.recurso.unidade.nome + this.projetoService.getNomesRegras(envolvido, "\n(", ")")
                 });
             }
         }
@@ -13709,87 +13771,87 @@ class ProjetoListComponent extends src_app_modules_base_page_list_base__WEBPACK_
         return result;
     }
 }
-ProjetoListComponent.ɵfac = function ProjetoListComponent_Factory(t) { return new (t || ProjetoListComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_6__["Injector"])); };
-ProjetoListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineComponent"]({ type: ProjetoListComponent, selectors: [["app-projeto-list"]], viewQuery: function ProjetoListComponent_Query(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵviewQuery"](src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__["GridComponent"], 1);
+ProjetoListComponent.ɵfac = function ProjetoListComponent_Factory(t) { return new (t || ProjetoListComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_7__["Injector"])); };
+ProjetoListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdefineComponent"]({ type: ProjetoListComponent, selectors: [["app-projeto-list"]], viewQuery: function ProjetoListComponent_Query(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵviewQuery"](src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__["GridComponent"], 1);
     } if (rf & 2) {
         let _t;
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵloadQuery"]()) && (ctx.grid = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]], decls: 31, vars: 44, consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome", "controlName", "nome", 3, "size", "control"], ["controlName", "usuario_id", 3, "size", "label", "control", "dao", "selectRoute"], ["controlName", "unidade_id", 3, "size", "label", "control", "dao", "selectRoute"], ["title", "#ID", 3, "template"], ["columnNumero", ""], [3, "title", "template"], ["columnNomeEnvolvidos", ""], ["title", "Descri\u00E7\u00E3o", 3, "template"], ["columnDescricao", ""], ["title", "Datas", 3, "template"], ["columnDatas", ""], ["title", "Custo", 3, "template"], ["columnCusto", ""], ["title", "Progresso", 3, "template"], ["columnProgresso", ""], ["title", "Status", 3, "template"], ["columnStatus", ""], ["type", "options", 3, "onEdit", "onDelete", "dynamicOptions", "dynamicButtons", 4, "ngIf"], [3, "rows"], [1, "d-block"], [3, "url", "hint", 4, "ngFor", "ngForOf"], [3, "url", "hint"], ["color", "light", "icon", "bi bi-box-arrow-right", "hint", "Data de in\u00EDcio", 3, "label"], ["color", "light", "icon", "bi bi-box-arrow-in-right", "hint", "Data de t\u00E9rmino", 3, "label"], ["color", "warning", "icon", "bi bi-dash-square", "label", "N\u00E3o calcula", "hint", "Projeto configurado para n\u00E3o calcular custos", 4, "ngIf"], ["color", "light", "icon", "bi bi-cash-coin", "hint", "Projeto configurado para calcular custos", 3, "label", 4, "ngIf"], ["color", "warning", "icon", "bi bi-dash-square", "label", "N\u00E3o calcula", "hint", "Projeto configurado para n\u00E3o calcular custos"], ["color", "light", "icon", "bi bi-cash-coin", "hint", "Projeto configurado para calcular custos", 3, "label"], ["color", "success", 3, "value"], [3, "icon", "label"], ["type", "options", 3, "onEdit", "onDelete", "dynamicOptions", "dynamicButtons"]], template: function ProjetoListComponent_Template(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "grid", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("select", function ProjetoListComponent_Template_grid_select_0_listener($event) { return ctx.onSelect($event); });
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](1, ProjetoListComponent_toolbar_1_Template, 1, 0, "toolbar", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](2, "filter", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](3, "div", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](4, "input-text", 4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](5, "input-search", 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](6, "input-search", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](7, "columns");
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](8, "column", 7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](9, ProjetoListComponent_ng_template_9_Template, 2, 1, "ng-template", null, 8, _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplateRefExtractor"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](11, "column", 9);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](12, ProjetoListComponent_ng_template_12_Template, 3, 2, "ng-template", null, 10, _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplateRefExtractor"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](14, "column", 11);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](15, ProjetoListComponent_ng_template_15_Template, 4, 2, "ng-template", null, 12, _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplateRefExtractor"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](17, "column", 13);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](18, ProjetoListComponent_ng_template_18_Template, 3, 2, "ng-template", null, 14, _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplateRefExtractor"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](20, "column", 15);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](21, ProjetoListComponent_ng_template_21_Template, 3, 2, "ng-template", null, 16, _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplateRefExtractor"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](23, "column", 17);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](24, ProjetoListComponent_ng_template_24_Template, 1, 1, "ng-template", null, 18, _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplateRefExtractor"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](26, "column", 19);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](27, ProjetoListComponent_ng_template_27_Template, 1, 4, "ng-template", null, 20, _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplateRefExtractor"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](29, ProjetoListComponent_column_29_Template, 1, 4, "column", 21);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](30, "pagination", 22);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵloadQuery"]()) && (ctx.grid = _t.first);
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵInheritDefinitionFeature"]], decls: 31, vars: 44, consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome", "controlName", "nome", 3, "size", "control"], ["controlName", "usuario_id", 3, "size", "label", "control", "dao", "selectRoute"], ["controlName", "unidade_id", 3, "size", "label", "control", "dao", "selectRoute"], ["title", "#ID", 3, "template"], ["columnNumero", ""], [3, "title", "template"], ["columnNomeEnvolvidos", ""], ["title", "Descri\u00E7\u00E3o", 3, "template"], ["columnDescricao", ""], ["title", "Datas", 3, "template"], ["columnDatas", ""], ["title", "Custo", 3, "template"], ["columnCusto", ""], ["title", "Progresso", 3, "template"], ["columnProgresso", ""], ["title", "Status", 3, "template"], ["columnStatus", ""], ["type", "options", 3, "onEdit", "onDelete", "dynamicOptions", "dynamicButtons", 4, "ngIf"], [3, "rows"], [1, "d-block"], [3, "url", "hint", 4, "ngFor", "ngForOf"], [3, "url", "hint"], ["color", "light", "icon", "bi bi-box-arrow-right", "hint", "Data de in\u00EDcio", 3, "label"], ["color", "light", "icon", "bi bi-box-arrow-in-right", "hint", "Data de t\u00E9rmino", 3, "label"], ["color", "warning", "icon", "bi bi-dash-square", "label", "N\u00E3o calcula", "hint", "Projeto configurado para n\u00E3o calcular custos", 4, "ngIf"], ["color", "light", "icon", "bi bi-cash-coin", "hint", "Projeto configurado para calcular custos", 3, "label", 4, "ngIf"], ["color", "warning", "icon", "bi bi-dash-square", "label", "N\u00E3o calcula", "hint", "Projeto configurado para n\u00E3o calcular custos"], ["color", "light", "icon", "bi bi-cash-coin", "hint", "Projeto configurado para calcular custos", 3, "label"], ["color", "success", 3, "value"], [3, "icon", "label"], ["type", "options", 3, "onEdit", "onDelete", "dynamicOptions", "dynamicButtons"]], template: function ProjetoListComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "grid", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("select", function ProjetoListComponent_Template_grid_select_0_listener($event) { return ctx.onSelect($event); });
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](1, ProjetoListComponent_toolbar_1_Template, 1, 0, "toolbar", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](2, "filter", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](3, "div", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](4, "input-text", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](5, "input-search", 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](6, "input-search", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](7, "columns");
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](8, "column", 7);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](9, ProjetoListComponent_ng_template_9_Template, 2, 1, "ng-template", null, 8, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](11, "column", 9);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](12, ProjetoListComponent_ng_template_12_Template, 3, 2, "ng-template", null, 10, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](14, "column", 11);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](15, ProjetoListComponent_ng_template_15_Template, 4, 2, "ng-template", null, 12, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](17, "column", 13);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](18, ProjetoListComponent_ng_template_18_Template, 3, 2, "ng-template", null, 14, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](20, "column", 15);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](21, ProjetoListComponent_ng_template_21_Template, 3, 2, "ng-template", null, 16, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](23, "column", 17);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](24, ProjetoListComponent_ng_template_24_Template, 1, 1, "ng-template", null, 18, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](26, "column", 19);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](27, ProjetoListComponent_ng_template_27_Template, 1, 4, "ng-template", null, 20, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](29, ProjetoListComponent_column_29_Template, 1, 4, "column", 21);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](30, "pagination", 22);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
     } if (rf & 2) {
-        const _r1 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵreference"](10);
-        const _r3 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵreference"](13);
-        const _r5 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵreference"](16);
-        const _r7 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵreference"](19);
-        const _r9 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵreference"](22);
-        const _r11 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵreference"](25);
-        const _r13 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵreference"](28);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("selectable", ctx.selectable)("hasAdd", ctx.auth.hasPermissionTo("MOD_PROJ_INCL"))("hasEdit", false);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngIf", !ctx.selectable);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 4)("control", ctx.filter.controls.nome);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 4)("label", ctx.lex.noun("Usuario"))("control", ctx.filter.controls.usuario_id)("dao", ctx.usuarioDao)("selectRoute", _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵpureFunction1"](39, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵpureFunction0"](38, _c0)));
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 4)("label", ctx.lex.noun("Unidade"))("control", ctx.filter.controls.unidade_id)("dao", ctx.unidadeDao)("selectRoute", _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵpureFunction1"](42, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵpureFunction0"](41, _c2)));
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("template", _r1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("title", "Nome\nEnvolvido")("template", _r3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("template", _r5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("template", _r7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("template", _r9);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("template", _r11);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("template", _r13);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngIf", !ctx.selectable);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("rows", ctx.rowsLimit);
-    } }, directives: [src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__["GridComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_7__["NgIf"], _components_grid_filter_filter_component__WEBPACK_IMPORTED_MODULE_8__["FilterComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_9__["InputTextComponent"], _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_10__["InputSearchComponent"], _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_11__["ColumnsComponent"], _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_12__["ColumnComponent"], _components_grid_pagination_pagination_component__WEBPACK_IMPORTED_MODULE_13__["PaginationComponent"], _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_14__["ToolbarComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_7__["NgForOf"], _components_profile_picture_profile_picture_component__WEBPACK_IMPORTED_MODULE_15__["ProfilePictureComponent"], _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_16__["BadgeComponent"], _components_progress_bar_progress_bar_component__WEBPACK_IMPORTED_MODULE_17__["ProgressBarComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwcm9qZXRvLWxpc3QuY29tcG9uZW50LnNjc3MifQ== */"] });
+        const _r1 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵreference"](10);
+        const _r3 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵreference"](13);
+        const _r5 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵreference"](16);
+        const _r7 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵreference"](19);
+        const _r9 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵreference"](22);
+        const _r11 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵreference"](25);
+        const _r13 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵreference"](28);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("selectable", ctx.selectable)("hasAdd", ctx.auth.hasPermissionTo("MOD_PROJ_INCL"))("hasEdit", false);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngIf", !ctx.selectable);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 4)("control", ctx.filter.controls.nome);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 4)("label", ctx.lex.noun("Usuario"))("control", ctx.filter.controls.usuario_id)("dao", ctx.usuarioDao)("selectRoute", _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpureFunction1"](39, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpureFunction0"](38, _c0)));
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 4)("label", ctx.lex.noun("Unidade"))("control", ctx.filter.controls.unidade_id)("dao", ctx.unidadeDao)("selectRoute", _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpureFunction1"](42, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpureFunction0"](41, _c2)));
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("template", _r1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("title", "Nome\nEnvolvido")("template", _r3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("template", _r5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("template", _r7);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("template", _r9);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("template", _r11);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("template", _r13);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngIf", !ctx.selectable);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("rows", ctx.rowsLimit);
+    } }, directives: [src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__["GridComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_8__["NgIf"], _components_grid_filter_filter_component__WEBPACK_IMPORTED_MODULE_9__["FilterComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_10__["InputTextComponent"], _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_11__["InputSearchComponent"], _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_12__["ColumnsComponent"], _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_13__["ColumnComponent"], _components_grid_pagination_pagination_component__WEBPACK_IMPORTED_MODULE_14__["PaginationComponent"], _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_15__["ToolbarComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_8__["NgForOf"], _components_profile_picture_profile_picture_component__WEBPACK_IMPORTED_MODULE_16__["ProfilePictureComponent"], _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_17__["BadgeComponent"], _components_progress_bar_progress_bar_component__WEBPACK_IMPORTED_MODULE_18__["ProgressBarComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwcm9qZXRvLWxpc3QuY29tcG9uZW50LnNjc3MifQ== */"] });
 
 
 /***/ }),

@@ -7,6 +7,7 @@ use App\Services\PlanoService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
+use Throwable;
 
 class PlanoController extends ControllerBase {
 
@@ -35,7 +36,7 @@ class PlanoController extends ControllerBase {
                 'success' => true,
                 'metadados' => $this->service->metadados($data["plano"], $data['inicioPeriodo'], $data['fimPeriodo'])
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -49,7 +50,7 @@ class PlanoController extends ControllerBase {
                 'success' => true,
                 'metadadosPlano' => $this->service->metadadosPlano($data["plano_id"])
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }

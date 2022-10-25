@@ -19,6 +19,7 @@ class EntidadeSeeder extends Seeder
     {
         $brasilia = Cidade::where('codigo_ibge', '5300108')->sole();
         $juiz_fora = Cidade::where('codigo_ibge', '3136702')->sole();
+        $cuiaba = Cidade::where('codigo_ibge', '5103403')->sole();
 
         //cria a entidade PRF
         $ent1 = new Entidade();
@@ -96,5 +97,27 @@ class EntidadeSeeder extends Seeder
         ]);
         $tipo4->save();
         $tipo4->entidades()->save($ent4);
+
+
+        //cria a entidade UFMT
+        $ent5 = new Entidade();
+        $ent5->fill([
+            'sigla' => 'UFMT',
+            'nome' => 'Universidade Federal do Mato Grosso',
+            'abrangencia' => 'NACIONAL',
+            'layout_formulario_demanda' => 'COMPLETO',
+            'campos_ocultos_demanda' => [],
+            'nomenclatura' => [],
+            'cidade_id' => $cuiaba->id
+        ]);
+
+        $tipo5 = new TipoModalidade();
+        $tipo5->fill([
+            'nome' => 'Modalidade 2',
+            'config' => null,
+            'data_inicio' => Carbon::now()
+        ]);
+        $tipo5->save();
+        $tipo5->entidades()->save($ent5);
     }
 }

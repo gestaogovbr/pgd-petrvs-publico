@@ -1201,7 +1201,7 @@ class PlanoFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IM
             programa_id: { default: "" },
             usuario_id: { default: "" },
             unidade_id: { default: "" },
-            documento_id: { default: "" },
+            documento_id: { default: null },
             documentos: { default: [] },
             atividades: { default: [] },
             tipo_modalidade_id: { default: "" },

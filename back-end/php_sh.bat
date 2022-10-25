@@ -1,1 +1,1 @@
-docker exec -it php /bin/bash
+docker exec -it petrvs_php /bin/bash

@@ -4,6 +4,10 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/* 
+ATENÇÃO: Tabela removida pela migration 2022_10_13_154133_drop_projetos_envolvidos. Será utilizado a tabela de projetos_alocacoes para esse propósito
+*/
+
 class CreateProjetosEnvolvidosTable extends Migration
 {
     /**

@@ -1,13 +1,13 @@
 <editable-form [form]="form!" [disabled]="formDisabled" (submit)="onSaveData()" (cancel)="onCancel()">
     <tabs display right [title]="tituloDemanda">
         <tab key="ATIVIDADE" label="Atividade">
-            <separator *ngIf="isDemandaProcessual || gb.isExtension" transparent bottom>
+            <separator *ngIf="isDemandaProcessual || gb.isEmbedded" transparent bottom>
                 <div class="row">
-                    <input-button label="Número Processo" [size]="4" #procRequisicao controlName="numero_processo" [control]="form!.controls.numero_processo" [disabled]="!gb.isExtension || form!.controls.numero_requisicao.value?.length ? 'true' : undefined" (buttonClick)="onProcessoRequisicaoClick($event)" labelInfo="Número do processo, com a formatação de origem"></input-button>
+                    <input-button label="Número Processo" [size]="4" #procRequisicao controlName="numero_processo" [control]="form!.controls.numero_processo" [disabled]="!gb.isEmbedded || form!.controls.numero_requisicao.value?.length ? 'true' : undefined" (buttonClick)="onProcessoRequisicaoClick($event)" labelInfo="Número do processo, com a formatação de origem"></input-button>
                     <input-search label="Tipo Processo" [size]="8" #tipoProcesso controlName="tipo_processo_id" [control]="form!.controls.tipo_processo_id" disabled [dao]="tipoProcessoDao" [selectRoute]="{route: ['cadastros', 'tipo-processo']}"></input-search>
                 </div>
                 <div class="row">
-                    <input-button label="Número doc. requisição" [size]="4" #docRequisicao controlName="numero_requisicao" [control]="form!.controls.numero_requisicao" [disabled]="!gb.isExtension ? 'true' : undefined" (buttonClick)="onNumeroRequisicaoClick($event)" labelInfo="Numero do documento de requisição, caso seja o Sei é o numero Sei"></input-button>
+                    <input-button label="Número doc. requisição" [size]="4" #docRequisicao controlName="numero_requisicao" [control]="form!.controls.numero_requisicao" [disabled]="!gb.isEmbedded ? 'true' : undefined" (buttonClick)="onNumeroRequisicaoClick($event)" labelInfo="Numero do documento de requisição, caso seja o Sei é o numero Sei"></input-button>
                     <input-search label="Tipo doc. requisição" [size]="8" #tipoDocumento controlName="tipo_documento_requisicao_id" [control]="form!.controls.tipo_documento_requisicao_id" disabled [dao]="tipoDocumentoDao" [selectRoute]="{route: ['cadastros', 'tipo-documento']}"></input-search>
                 </div>
             </separator>

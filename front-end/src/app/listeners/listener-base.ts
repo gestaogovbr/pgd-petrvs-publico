@@ -44,7 +44,7 @@ export abstract class ListenerBase implements OnInit {
     }    
 
     ngOnInit() {
-        if(this.gb.isExtension){
+        if(this.gb.isEmbedded){
             /* Listener */
             document.addEventListener(this.eventName + ":angular", async (event: any) => {
                 const detail: Details = event.detail || {type: "unknow"};

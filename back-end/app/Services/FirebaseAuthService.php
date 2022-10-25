@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Throwable;
+
 class FirebaseAuthService
 {
     private $keys_file; 
@@ -55,7 +57,7 @@ class FirebaseAuthService
                         $return['error'] = 'Invalid token';
                     }
                 }
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $return['error'] = $e->getMessage();
             }
         }

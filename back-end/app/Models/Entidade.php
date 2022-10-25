@@ -50,6 +50,11 @@ class Entidade extends ModelBase
 
     public $delete_cascade = ['feriados'];
 
+    protected $hidden = [
+        'api_public_key',
+        'api_private_key'
+    ];
+
     protected static function booted()
     {
         static::creating(function ($entidade) {

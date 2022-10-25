@@ -59,6 +59,14 @@ class UsuarioSeeder extends Seeder
                 'perfil_id' => $perfis->where('nome', 'Administrador')->first()->id,
                 'data_inicio' => Carbon::now()
             ],
+            [
+                'email' => 'geisimar.rech87@gmail.com',
+                'nome' => 'Geisimar Rech',
+                'cpf' => '01798651106',
+                'apelido' => 'Geisimar',
+                'perfil_id' => $perfis->where('nome', 'Administrador')->first()->id,
+                'data_inicio' => Carbon::now()
+            ]
         ];
 
         foreach($usuarios as $usuario)

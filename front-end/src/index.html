@@ -13,16 +13,15 @@
     JavaScript contendo variáveis de ambiente para a aplicação de front-end. 
     Caso não seja possível carregar a configuração, então será carregada pelo environment-config
     */
-    var GLOBAL_PETRVS_CONFIG_STR = "{{ $config }}";
-    var GLOBAL_PETRVS_CONFIG = undefined;
+    var PETRVS_GLOBAL_CONFIG_STR = `{!! $config !!}`;
+    var PETRVS_GLOBAL_CONFIG = undefined;
     try {
-      GLOBAL_PETRVS_CONFIG = JSON.parse(GLOBAL_PETRVS_CONFIG_STR);
+      PETRVS_GLOBAL_CONFIG = JSON.parse(PETRVS_GLOBAL_CONFIG_STR);
     } catch (e) {
       console.log("A configuração será carregada pelo environment-config");
     }     
   </script>
   <script src="environment-config"></script>
-  <script src="https://apis.google.com/js/platform.js"></script>
   <script src="assets/js/bootstrap-angular.js"></script>
 </head>
 <body>

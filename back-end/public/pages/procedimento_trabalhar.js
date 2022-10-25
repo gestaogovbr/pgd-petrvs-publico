@@ -12,7 +12,8 @@ $(function () {
             const iframeVisualizacaoInit = async () => {
                 //console.log("EVENT: LOAD iframe");
                 var buttons = [];
-                loadFontLibraries(EXTENSION_BASE_URL, true, $iframe.contents().find("head"));
+                const baseUrl = typeof EXTENSION_BASE_URL !== "undefined" ? EXTENSION_BASE_URL : typeof PETRVS_BASE_URL != "undefined" ? PETRVS_BASE_URL : "";
+                loadFontLibraries(baseUrl, true, $iframe.contents().find("head"));
                 /* Se for um documento */
                 if(isDocumento()) buttons.push("demandas", "incluir", "concluir", "entrega", "concluir_entrega");
                 /* Se for processo */
@@ -153,7 +154,7 @@ function isProcesso() {
 function isGerarDocumento() {
     try {
         const aDocumment = $("#ifrVisualizacao").contents()[0];
-        return $("#frmDocumentoEscolherTipo", aDocumment).length && $("#imgExibirSeries", aDocumment)[0].src.includes("menos.gif");
+        return $("#frmDocumentoEscolherTipo", aDocumment).length && $("#imgExibirSeries", aDocumment)[0].src.includes("menos.");
     } catch (error) {
         return false;        
     }

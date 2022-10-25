@@ -1,4 +1,4 @@
-import { Injectable, Injector } from '@angular/core';
+import { Inject, Injectable, Injector, Renderer2, RendererFactory2 } from '@angular/core';
 import { IIndexable } from '../models/base.model';
 import { Md5 } from 'ts-md5/dist/md5';
 import { LookupItem } from './lookup.service';
@@ -6,10 +6,16 @@ import { Usuario } from '../models/usuario.model';
 import * as moment from 'moment';
 import { DaoBaseService } from '../dao/dao-base.service';
 import { MaskApplierService } from 'ngx-mask';
+import { DOCUMENT } from '@angular/common';
 
 export type Interval = {start: Date | number, end: Date | number};
 export type DateInterval = {start: Date, end: Date};
 export type TimeInterval = {start: number, end: number};
+export type MergeArrayAction = "ADD" | "EDIT" | "DELETE";
+export type MergeArrayCompare = ((dst: any, source: any) => boolean) | string;
+export type MergeArrayInsertOrHandler = (actionOrSrc: MergeArrayAction | any, dst?: any, src?: any) => any;
+export type MergeArrayUpdate = (dst: any, src: any) => void;
+export type MergeArrayRemove = (dst: any) => boolean;
 
 @Injectable({
   providedIn: 'root'
@@ -20,10 +26,12 @@ export class UtilService {
   public static readonly TIME_VALIDATE = /^(([01][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?)|(24:00(:00)?)$/;
 
   public maskService: MaskApplierService;
+  private renderer: Renderer2;
 
-  constructor(public injector: Injector) {
+  constructor(public injector: Injector, @Inject(DOCUMENT) private document: Document, rendererFactory: RendererFactory2) {
     this.maskService = injector.get<MaskApplierService>(MaskApplierService);
     this.maskService.thousandSeparator = ".";
+    this.renderer = rendererFactory.createRenderer(null, null);
   }
 
   public copyToClipboard(text: string){
@@ -190,6 +198,42 @@ export class UtilService {
       Object.entries(source || {}).forEach(([key, value]) => {
         if(!keys.includes(key)) destination[key] = value;
       });
+    }
+    return destination;
+  }
+
+  public getParameters(func: any) {
+    return typeof func == "function" ? new RegExp('(?:'+func.name+'\\s*|^)\\s*\\((.*?)\\)').exec(func.toString().replace(/\n/g, ''))![1].replace(/\/\*.*?\*\//g, '').replace(/ /g, '') : [];
+  }
+
+  public mergeArrayOfObject(destination: IIndexable[], source: IIndexable[], compare: MergeArrayCompare, removeDst: boolean = true, insertOrHandler?: MergeArrayInsertOrHandler, update?: MergeArrayUpdate, remove?: MergeArrayRemove) {
+    const isHandler = insertOrHandler && this.getParameters(insertOrHandler).length > 1;
+    for(let src of source) {
+      let dst = destination.find(x => typeof compare == "string" ? x[compare] == src[compare] : compare(x, src));
+      if(dst) { /* Update*/
+        if(update) {
+          update(dst, src) 
+        } else if(isHandler) {
+          insertOrHandler!("EDIT", dst, src);
+        } else {
+          Object.assign(dst, src);          
+        }
+      } else { /* Insert */
+        let add = insertOrHandler ? (isHandler ? insertOrHandler("ADD", undefined, src) : insertOrHandler(src)) : src;
+        if(add) destination.push(add);
+      }
+    }
+    if(removeDst) {
+      for(let i = 0; i < destination.length; i++){ 
+        let dst = destination[i];
+        if(!source.find(x => typeof compare == "string" ? x[compare] == dst[compare] : compare(dst, x))) {
+          let splice = remove ? remove(dst) : isHandler ? insertOrHandler!("DELETE", dst) : true;
+          if(splice) {
+            destination.splice(i, 1);
+            i--; 
+          }
+        }
+      }
     }
     return destination;
   }
@@ -498,5 +542,14 @@ export class UtilService {
 
   public maxDate(...dates: (Date | undefined | null)[]): Date | undefined | null {
     return dates.reduce(function (a, b) { return !a || !b ? a || b : (a.getTime() > b.getTime() ? a : b); });
+  }
+
+
+  public loadScript(src: string): any {
+    const script = this.renderer.createElement('script');
+    script.type = 'text/javascript';
+    script.src = src;
+    this.renderer.appendChild(this.document.body, script);
+    return script;
   }
 }

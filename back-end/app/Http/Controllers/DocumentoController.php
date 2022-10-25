@@ -6,7 +6,7 @@ use App\Models\Documento;
 use App\Services\DocumentoService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
-use Exception;
+use Throwable;
 
 class DocumentoController extends ControllerBase 
 {
@@ -23,7 +23,7 @@ class DocumentoController extends ControllerBase
                 'success' => true,
                 'data' => $this->service->pendenteSei($data["id_documento"])
             ]); 
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -37,7 +37,7 @@ class DocumentoController extends ControllerBase
                 'success' => true,
                 'rows' => $this->service->assinar($data)
             ]); 
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }

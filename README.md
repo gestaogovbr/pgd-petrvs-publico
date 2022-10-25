@@ -24,3 +24,12 @@ https://gitlab.com/petrvs.app/Petrvs.git
 - npm run build
 - commmit
 - push
+
+## Extensões recomendadas para o VS Code
+
+- Dev Containers (Microsoft)
+- Numbered Bookmarks (Alessandro Fragnani)
+- PHP Debug (Xdebug)
+- PHP Intelephense (Ben Mewburn)
+- PHP Sniffer & Beautifier (Samuel Hilson)
+- stack-tabs (Kyle Paulsen)

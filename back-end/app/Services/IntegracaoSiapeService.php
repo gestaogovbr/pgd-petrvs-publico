@@ -8,7 +8,7 @@ use App\Models\Cidade;
 use App\Exceptions\LogError;
 use DateTime;
 use SoapClient;
-use Exception;
+use Throwable;
 
 class IntegracaoSiapeService extends ServiceBase {
 
@@ -58,7 +58,7 @@ class IntegracaoSiapeService extends ServiceBase {
                 $uorgsWsdl = $this->UtilService->object2array($uorgsWsdl);
                 $uorgsWsdl = $uorgsWsdl['Uorg'];
             }
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             LogError::newWarn("Web Service Siape: erro de conexão.", $e->getMessage());
         }
 
@@ -133,7 +133,7 @@ class IntegracaoSiapeService extends ServiceBase {
             }
         return $uorgsPetrvs;
         }
-        catch (Exception $e) {
+        catch (Throwable $e) {
             LogError::newWarn("Web Service Siape: não foi possível recuperar dados de determinada uorg.", $e->getMessage());
         }
     }
@@ -167,7 +167,7 @@ class IntegracaoSiapeService extends ServiceBase {
                             }
                         }
                     }
-                } catch(Exception $e){
+                } catch (Throwable $e){
                       LogError::newWarn('Web Service Siape: não existe servidores ativos na UORG '.$codUorg['codigo_siape'].'.', $e->getMessage());
                       continue;
                 }
@@ -194,7 +194,7 @@ class IntegracaoSiapeService extends ServiceBase {
                               $this->siapeParmExistPag,
                               $this->siapeParmTipoVinculo
                           );
-                      } catch (Exception $e) {
+                      } catch (Throwable $e) {
                         /*
                         Pula interação se resposta for uma string (sem dados para consulta): possivelmente
                         sem dados considerando parmExistPag=a, parmTipoVinculo=a
@@ -270,7 +270,7 @@ class IntegracaoSiapeService extends ServiceBase {
                     array_push($PessoasPetrvs['Pessoas'], $Pessoa);
                 }
             }
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             LogError::newWarn("Web Service Siape: erro/falha de conexão ou ausência de cpf(s).", $e->getMessage());
         }
         /* Aqui temos todas os dados após processamento de consulta ao Web Service Siape */

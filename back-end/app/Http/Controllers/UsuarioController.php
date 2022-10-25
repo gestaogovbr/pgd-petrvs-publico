@@ -7,6 +7,7 @@ use App\Services\UsuarioService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
+use Throwable;
 
 class UsuarioController extends ControllerBase
 {
@@ -36,7 +37,7 @@ class UsuarioController extends ControllerBase
                 'data' => $this->service->dashboard($data['usuario_id'])
             ]);
             return $result;
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -52,7 +53,7 @@ class UsuarioController extends ControllerBase
                 'success' => true,
                 'data' => $this->service->planosPorPeriodo($data['usuario_id'], $data['inicioPeriodo'], $data['fimPeriodo'])
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }

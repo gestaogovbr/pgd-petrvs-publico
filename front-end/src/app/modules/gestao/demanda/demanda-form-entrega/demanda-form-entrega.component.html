@@ -11,11 +11,11 @@
             </div>
             <separator title="Documento"></separator>
             <div class="row">
-                <input-button label="Número Processo" [size]="4" #procEntregue controlName="numero_processo" [control]="form!.controls.numero_processo" [disabled]="!gb.isExtension || form!.controls.numero_documento.value?.length ? 'true' : undefined" (buttonClick)="onNumeroProcessoClick($event)" labelInfo="Número do processo, com a formatação de origem"></input-button>
+                <input-button label="Número Processo" [size]="4" #procEntregue controlName="numero_processo" [control]="form!.controls.numero_processo" [disabled]="!gb.isEmbedded || form!.controls.numero_documento.value?.length ? 'true' : undefined" (buttonClick)="onNumeroProcessoClick($event)" labelInfo="Número do processo, com a formatação de origem"></input-button>
                 <input-search label="Tipo Processo" [size]="8" #tipoProcesso controlName="tipo_processo_id" [control]="form!.controls.tipo_processo_id" disabled [dao]="tipoProcessoDao" [selectRoute]="{route: ['cadastros', 'tipo-processo']}"></input-search>
             </div>
             <div class="row">
-                <input-button label="Número doc. entregue" [size]="4" #docEntregue controlName="numero_documento" [control]="form!.controls.numero_documento" [disabled]="!gb.isExtension ? 'true' : undefined" (buttonClick)="onNumeroDocumentoClick($event)" labelInfo="Numero do documento de requisição, caso seja o Sei é o numero Sei"></input-button>
+                <input-button label="Número doc. entregue" [size]="4" #docEntregue controlName="numero_documento" [control]="form!.controls.numero_documento" [disabled]="!gb.isEmbedded ? 'true' : undefined" (buttonClick)="onNumeroDocumentoClick($event)" labelInfo="Numero do documento de requisição, caso seja o Sei é o numero Sei"></input-button>
                 <input-search label="Tipo doc. entregue" [size]="8" #tipoDocumento controlName="tipo_documento_id" [control]="form!.controls.tipo_documento_id" disabled [dao]="tipoDocumentoDao" [selectRoute]="{route: ['cadastros', 'tipo-documento']}"></input-search>
             </div>
         </tab>

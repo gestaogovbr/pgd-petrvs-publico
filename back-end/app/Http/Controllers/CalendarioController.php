@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\CalendarioService;
+use Throwable;
 
 class CalendarioController extends ControllerBase
 {
@@ -18,7 +19,7 @@ class CalendarioController extends ControllerBase
                 'success' => true,
                 'feriados' => $this->service->feriadosCadastrados($data["unidade_id"])
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -35,7 +36,7 @@ class CalendarioController extends ControllerBase
                 'success' => true,
                 'feriados' => $this->service->feriados($data["inicio"], $data["fim"], $data["unidade_id"])
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }

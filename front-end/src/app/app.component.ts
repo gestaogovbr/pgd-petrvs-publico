@@ -78,7 +78,7 @@ export class AppComponent {
     this.globals.refresh = () => {
       this.cdRef.detectChanges();
     };
-    if(this.globals.isExtension && this.globals.initialRoute?.length) {
+    if(this.globals.isEmbedded && this.globals.initialRoute?.length) {
       this.go.navigate({route: this.globals.initialRoute});
     }
     setInterval(() => {
@@ -89,7 +89,7 @@ export class AppComponent {
       }
     }, 1000);
     this.lex.cdRef = this.cdRef;
-    this.auth.loadGapi();
+    //this.auth.loadGapi();
     /* Definição do menu do sistema */
     this.menuToolbar = [
       { name: "Cadastros", permition: "MENU_CAD_ACESSO", route: ['cadastros'], id: "navbarDropdownCadastros", menu: "cadastros" },
@@ -205,7 +205,7 @@ export class AppComponent {
   }
 
   public get collapseContainer(): boolean {
-    return this.globals.isExtension && this.auth.logged && !!this.auth.usuario?.config.ocultar_container_petrvs;
+    return this.globals.isEmbedded && this.auth.logged && !!this.auth.usuario?.config.ocultar_container_petrvs;
   }
 
   public onRestoreClick(popup: DialogComponent) {

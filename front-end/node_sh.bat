@@ -1,1 +1,1 @@
-docker exec -it node /bin/sh
+docker exec -it petrvs_node /bin/sh

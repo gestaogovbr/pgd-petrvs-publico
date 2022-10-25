@@ -4,7 +4,7 @@ $(function () {
     const proxy = new AppProxy(methods, "procedimento_escolher_tipo");
 
     proxy.onInit(async () => {
-        if($('#imgExibirTiposProcedimento')[0].src.includes("menos.gif")) {
+        if($('#imgExibirTiposProcedimento')[0].src.includes("menos.")) {
             proxy.executeAfterInit("loadToolbarButtons", []);
         }
     });

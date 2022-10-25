@@ -72,8 +72,9 @@ Route::get('/rotinas-diarias', [RotinaDiariaController::class, 'run']);
 /* Login */
 Route::post('/login-user-password', [LoginController::class, $actions['login-user-password']]);
 Route::post('/login-firebase-token', [LoginController::class, $actions['login-firebase-token']]);
-Route::post('/login-gapi-token', [LoginController::class, $actions['login-gapi-token']]);
+Route::post('/login-google-token', [LoginController::class, $actions['login-google-token']]);
 Route::post('/login-institucional', [LoginController::class, $actions['login-institucional']]);
+Route::post('/generate-session-token', [LoginController::class, $actions['generate-session-token']]);
 Route::get('/logout', [LoginController::class, 'logout']);
 Route::middleware(['auth:sanctum'])->post('/horario', [LoginController::class, 'horarioUnidade']);
 Route::middleware(['auth:sanctum'])->post('/seleciona-unidade', [LoginController::class, 'selecionaUnidade']);
@@ -167,7 +168,10 @@ Route::middleware(['auth:sanctum'])->prefix('Usuario')->group(function () {
     Route::post('dashboard', [UsuarioController::class, 'dashboard']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Perfil')->group(function () { defaultRoutes(PerfilController::class); });
-Route::middleware(['auth:sanctum'])->prefix('Entidade')->group(function () { defaultRoutes(EntidadeController::class); });
+Route::middleware(['auth:sanctum'])->prefix('Entidade')->group(function () {
+    defaultRoutes(EntidadeController::class);
+    Route::post('generate-api-key', [EntidadeController::class, 'generateApiKey']);
+});
 Route::middleware(['auth:sanctum'])->prefix('Lotacao')->group(function () { defaultRoutes(LotacaoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
     defaultRoutes(UnidadeController::class);

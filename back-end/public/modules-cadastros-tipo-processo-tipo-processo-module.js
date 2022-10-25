@@ -69,7 +69,7 @@ class TipoProcessoListComponent extends src_app_modules_base_page_list_base__WEB
         this.filter = this.fh.FormBuilder({
             nome: { default: "" }
         });
-        if (this.gb.isExtension) {
+        if (this.gb.isEmbedded) {
             this.toolbarButtons.push({
                 icon: "bi bi-arrow-repeat",
                 color: "btn-outline-primary",

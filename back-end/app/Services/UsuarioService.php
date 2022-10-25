@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Iterator;
 use Exception;
+use Throwable;
 
 class UsuarioService extends ServiceBase
 {
@@ -28,6 +29,12 @@ class UsuarioService extends ServiceBase
     const LOGIN_GOOGLE = "GOOGLE";
     const LOGIN_MICROSOFT = "AZURE";
     const LOGIN_FIREBASE = "FIREBASE";
+
+    public function proxyStore(&$data, $unidade, $action) {
+        $data['cpf'] = $this->UtilService->onlyNumbers($data['cpf']);
+        $data['telefone'] = $this->UtilService->onlyNumbers($data['telefone']);
+        return $data;
+    }
 
     public function proxySearch($query, &$data, &$text) {
         $data["where"][] = ["subordinadas", "==", true];
@@ -87,7 +94,7 @@ class UsuarioService extends ServiceBase
         }
         try {
             $contents = file_get_contents($url);
-        } catch(Exception $e) {}
+        } catch(Throwable $e) {}
         if(!empty($contents)) {
             $name = $path . "/profile_" . md5($contents) . ".jpg";
             if(!Storage::exists($name)) Storage::put($name, $contents);
@@ -207,8 +214,8 @@ class UsuarioService extends ServiceBase
      */
     public function validateStore($data, $unidade, $action) {
         if($action == ServiceBase::ACTION_INSERT) {
-            if(empty($data["email"])) throw new \Exception("O campo de e-mail é obrigatório");
-            if(empty($data["cpf"])) throw new \Exception("O campo de CPF é obrigatório");
+            if(empty($data["email"])) throw new Exception("O campo de e-mail é obrigatório");
+            if(empty($data["cpf"])) throw new Exception("O campo de CPF é obrigatório");
             $alreadyHas = Usuario::where("id", "!=", $data["id"])->where("email", $data["email"])->orWhere("cpf", $data["cpf"])->first();
             if(!empty($alreadyHas)) {
                 if(!empty($alreadyHas->data_fim)) { /* Caso o usuário exista, mas esteja excluído, reabilita o usuário */
@@ -216,10 +223,10 @@ class UsuarioService extends ServiceBase
                     $alreadyHas->data_fim = null;
                     return $alreadyHas;
                 } else {
-                    throw new \Exception("Já existe um usuário com mesmo e-mail ou CPF no sistema");
+                    throw new Exception("Já existe um usuário com mesmo e-mail ou CPF no sistema");
                 }
             }
-            if(($data["perfil_id"] == $this->developer_id) && (!$this->IsLoggedUserADeveloper())) throw new \Exception("Tentativa de inserir um usuário com o perfil de Desenvolvedor");
+            if(($data["perfil_id"] == $this->developer_id) && (!$this->IsLoggedUserADeveloper())) throw new Exception("Tentativa de inserir um usuário com o perfil de Desenvolvedor");
         }
     }
 
@@ -228,7 +235,7 @@ class UsuarioService extends ServiceBase
      */
     public function proxyUpdate($data, $unidade){
         $perfilAtual = $this->getById($data["id"])["perfil_id"];
-        if((($perfilAtual == $this->developer_id) || ($data["perfil_id"] != $this->developer_id)) && (!$this->IsLoggedUserADeveloper())) throw new \Exception("Tentativa de alterar o perfil de/para um Desenvolvedor");
+        if((($perfilAtual == $this->developer_id) || ($data["perfil_id"] != $this->developer_id)) && (!$this->IsLoggedUserADeveloper())) throw new Exception("Tentativa de alterar o perfil de/para um Desenvolvedor");
     }
 
 }

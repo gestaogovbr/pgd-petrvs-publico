@@ -1,0 +1,43 @@
+version: "3.9"
+services:
+
+  petrvs_db_producao:
+    image: mysql:8-debian
+    build:
+      context: .
+      dockerfile: Dockerfile-db
+    container_name: petrvs_db_producao
+    volumes:
+      - ../mysql:/var/lib/mysql
+    environment:
+      MYSQL_USER: petrvs
+      MYSQL_PASSWORD: PsEeTnRhVaS
+      MYSQL_ROOT_PASSWORD: PsEeTnRhVaS
+      MYSQL_TCP_PORT: 3308
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 2048M
+
+  petrvs_php_producao:
+    build: 
+      context: .
+      dockerfile: Dockerfile-php
+    container_name: petrvs_php_producao
+    working_dir: /var/www
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - petrvs_db_producao
+    volumes:
+      - ../../../back-end:/var/www
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 2048M
+
+# Sobre resources
+# https://docs.docker.com/config/containers/resource_constraints/

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use phpseclib\Crypt\RSA;
 use App\Exceptions\ServerException;
 use Exception;
+use Throwable;
 
 class DprfSegurancaAuthService
 {
@@ -41,7 +42,7 @@ class DprfSegurancaAuthService
             } else {
                 throw new ServerException("DprfSegurancaAuthService_User_Not_Found");
             }
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return ['error' => $e->getMessage()];
         }
     }
@@ -69,7 +70,7 @@ class DprfSegurancaAuthService
             } else {
                 throw new ServerException("DprfSegurancaAuthService_Invalid_User_Or_Password");
             }
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return ['error' => $e->getMessage()];
         }
     }
@@ -134,7 +135,7 @@ class DprfSegurancaAuthService
             } else {
                 throw new Exception("Credenciais inválidas");
             }
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return ['error' => $e->getMessage()];
         }
     }

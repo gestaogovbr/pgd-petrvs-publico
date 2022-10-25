@@ -10,7 +10,28 @@ import { Comentario, HasComentarios } from './comentario';
 
 export type ProjetoStatus = 'PLANEJADO' | 'INICIADO' | 'CONCLUIDO' | 'SUSPENSO' | 'CANCELADO';
 
-export class Projeto extends Base implements HasComentarios {
+export interface HasAlocacoes {
+    id: string; /* Id do Projeto ou da Tarefa */
+    aloca_proprios_recursos: boolean; /* Se possui recursos próprios */
+    soma_recusos_alocados_filhos: boolean; /* Mostra o somatório dos recursos filhos */
+    custos_proprios: boolean; /* Se possui custos próprios */
+    soma_custos_filhos: boolean; /* Se possui custos filhos */
+    custo: number;  /* Custo do projeto */
+    alocacoes?: ProjetoAlocacao[]; /* Alocacoes */
+}
+
+export interface HasTarefas {
+    tarefas?: ProjetoTarefa[]; /* Tarefas */
+    calcula_intervalo: boolean; /* Se o termino é calculado automaticamente pelas tarefas */
+    soma_progresso_filhos: boolean; /* Se o progresso é calculado pela média do progresso dos filhos ou lançado manual (somente se tem_filhos) */
+    agrupador: boolean; /* Se é apenas um registro para agrupar tarefas filhas (somente se tem_filhos e não possui progresso) */
+    inicio?: Date;  /* Inicio do projeto */
+    termino?: Date;  /* Fim do projeto */
+    duracao: number; /* Duração do projeto */
+    progresso: number; /* Percentual de progresso do projeto */
+}
+
+export class Projeto extends Base implements HasComentarios, HasAlocacoes, HasTarefas {
     public tipo_projeto?: TipoProjeto;
     public usuario?: Usuario;
     public regras?: ProjetoRegra[];

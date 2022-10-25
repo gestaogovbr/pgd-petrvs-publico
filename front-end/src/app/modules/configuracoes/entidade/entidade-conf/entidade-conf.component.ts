@@ -44,7 +44,8 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
       enviar_whatsapp: {default: true},
       nomenclatura: {default: []},
       carga_horaria_padrao: {default: 8},
-      forma_contagem_carga_horaria: {default: "DIA"}
+      forma_contagem_carga_horaria: {default: "DIA"},
+      api_public_key: {default: ""}
     }, this.cdRef, this.validate);
     this.formNomenclatura = this.fh.FormBuilder({
       id: {default: ""},
@@ -74,6 +75,14 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
     }
 
     return result;
+  }
+  
+  public onApiKeyClick(event: Event) {
+    this.dao?.generateApiKey(this.entity!.id).then(api_public_key => {
+      this.form.controls.api_public_key.setValue(api_public_key);
+    }).catch(error => {
+      this.error(error.message ? error.message : error);
+    })
   }
 
   public onSingularChange(row: any, form: FormGroup) {

@@ -87,7 +87,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     Chart.plugins.register(ChartDataLabels);
-    if(this.gb.isExtension) {
+    if(this.gb.isEmbedded) {
       this.allPages.visibilidadeMenuSei(!this.auth.usuario!.config.ocultar_menu_sei);
     }
   }
@@ -145,7 +145,9 @@ export class HomeComponent implements OnInit {
   }
 
   public tokenGAPI() {
-    const sei = this.auth.googleApi.tokenId || "";
+    this.auth.googleApi.getAccessToken().then(res => {
+      const sei = res || ''
+    });
   }
 
   public execucaoPlanos(){

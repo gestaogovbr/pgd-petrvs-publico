@@ -46,7 +46,7 @@ export class AuthGuard implements CanActivate {
                   route: route.url.map(x => x.path),
                   params: qParams
                 };
-                redirectUrl.queryParams = { redirectTo: JSON.stringify(redirectTo) };
+                redirectUrl.queryParams = { redirectTo: JSON.stringify(redirectTo), noSession: true };
                 resolve(redirectUrl);
               } else {
                 /* Caso seja toolbar, ficará o botão de login disponível caso globals.requireLogged */

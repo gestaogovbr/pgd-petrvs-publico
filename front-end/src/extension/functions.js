@@ -36,12 +36,13 @@ function addSeiToolbarButton(button) {
 }
 
 /*
-Converte path relativo em absoluto considerando o EXTENSION_BASE_URL 
+Converte path relativo em absoluto considerando o PETRVS_BASE_URL 
 @param string url  Path relativo
 @return string
 */
 function absoluteUrl(url) {
-    return EXTENSION_BASE_URL + url.substring(url.startsWith("/") ? 1 : 0);
+    const baseUrl = typeof EXTENSION_BASE_URL !== "undefined" ? EXTENSION_BASE_URL : typeof PETRVS_BASE_URL != "undefined" ? PETRVS_BASE_URL : "";
+    return baseUrl + url.substring(url.startsWith("/") ? 1 : 0);
 }
 
 /*

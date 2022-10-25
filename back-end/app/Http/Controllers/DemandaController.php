@@ -8,6 +8,7 @@ use App\Services\CalendarioService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
+use Throwable;
 
 class DemandaController extends ControllerBase
 {
@@ -45,7 +46,7 @@ class DemandaController extends ControllerBase
                 'success' => true,
                 'date' => $calendario->prazo($data["inicio_data"], $data["horas"], $data["carga_horaria"], $data["unidade_id"])
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -59,7 +60,7 @@ class DemandaController extends ControllerBase
                 'success' => true,
                 'iniciadas' => $this->service->iniciadas($data["usuario_id"])
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -73,7 +74,7 @@ class DemandaController extends ControllerBase
                 'success' => true,
                 'avaliadas' => $this->service->avaliadas($data["usuario_id"])
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -95,7 +96,7 @@ class DemandaController extends ControllerBase
             return response()->json([
                 'success' => $this->service->iniciar($data, $unidade)
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -109,7 +110,7 @@ class DemandaController extends ControllerBase
             return response()->json([
                 'success' => $this->service->cancelarInicio($data, $unidade)
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -137,7 +138,7 @@ class DemandaController extends ControllerBase
             return response()->json([
                 'success' => $this->service->concluir($data, $unidade)
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -151,7 +152,7 @@ class DemandaController extends ControllerBase
             return response()->json([
                 'success' => $this->service->cancelarConclusao($data, $unidade)
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -174,7 +175,7 @@ class DemandaController extends ControllerBase
             return response()->json([
                 'success' => $this->service->avaliar($data, $unidade)
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -188,7 +189,7 @@ class DemandaController extends ControllerBase
             return response()->json([
                 'success' => $this->service->cancelarAvaliacao($data, $unidade)
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -203,7 +204,7 @@ class DemandaController extends ControllerBase
             return response()->json([
                 'success' => $this->service->pausar($data, $unidade)
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -218,7 +219,7 @@ class DemandaController extends ControllerBase
             return response()->json([
                 'success' => $this->service->reiniciar($data, $unidade)
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -233,7 +234,7 @@ class DemandaController extends ControllerBase
             return response()->json([
                 'success' => $this->service->prorrogar($data, $unidade)
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -248,7 +249,7 @@ class DemandaController extends ControllerBase
             return response()->json([
                 'success' => $this->service->arquivar($data, $unidade)
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }

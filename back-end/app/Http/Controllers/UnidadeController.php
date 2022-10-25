@@ -7,6 +7,7 @@ use App\Services\UnidadeService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
+use Throwable;
 
 class UnidadeController extends ControllerBase {
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
@@ -32,7 +33,7 @@ class UnidadeController extends ControllerBase {
                 'success' => true,
                 'metadadosUnidade' => $this->service->metadadosUnidade($data["plano_id"])
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -47,7 +48,7 @@ class UnidadeController extends ControllerBase {
                 'success' => true,
                 'metadadosArea' => $this->service->metadadosArea($data["unidade_id"], $data["programa_id"])
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
@@ -64,7 +65,7 @@ class UnidadeController extends ControllerBase {
                 'dashboards' => $this->service->dashboards($data["idsUnidades"], $data["programa_id"], $data["unidadesSubordinadas"])
             ]);
             return $result;
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
     }

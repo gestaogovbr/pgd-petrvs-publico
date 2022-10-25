@@ -10,7 +10,11 @@ if (environment.production) {
 
 document.addEventListener('bootstrapAppModule', () => {
   //@ts-ignore
-  if(typeof IS_PETRVS_EXTENSION != "undefined" && typeof EXTENSION_BASE_URL != "undefined") __webpack_public_path__ = EXTENSION_BASE_URL;
+  const isEmbedded = typeof PETRVS_IS_SUPER_MODULE != "undefined" ? !!PETRVS_IS_SUPER_MODULE : typeof IS_PETRVS_EXTENSION !== "undefined" ? !!IS_PETRVS_EXTENSION : typeof PETRVS_IS_EXTENSION != "undefined" ? !!PETRVS_IS_EXTENSION : false;
+  //@ts-ignore
+  const baseUrl = typeof EXTENSION_BASE_URL !== "undefined" ? EXTENSION_BASE_URL : typeof PETRVS_BASE_URL != "undefined" ? PETRVS_BASE_URL : undefined;
+  //@ts-ignore
+  if(isEmbedded && baseUrl) __webpack_public_path__ = baseUrl;
   platformBrowserDynamic().bootstrapModule(AppModule)
     .catch(err => console.error(err));
 });

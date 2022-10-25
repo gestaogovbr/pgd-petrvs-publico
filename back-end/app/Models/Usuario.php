@@ -20,7 +20,7 @@ use App\Traits\MergeRelations;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasPermissions;
 use App\Services\UsuarioService;
-use Exception;
+use Throwable;
 
 class UsuarioConfig {}
 
@@ -66,11 +66,12 @@ class Usuario extends Authenticatable
         'id_google',
         //'url_foto',
         'vinculacao',
-        'perfil_id'
+        'perfil_id',
         //'foto_perfil',
         //'foto_google',
         //'foto_microsoft',
-        //'foto_firebase'
+        //'foto_firebase',
+        'uf'
     ];
 
     public $fillable_changes = [
@@ -114,7 +115,7 @@ class Usuario extends Authenticatable
         $url = "/assets/images/profile.png";
         try {
             $url = empty($this->foto_perfil) ? "/assets/images/profile.png" : $usuarioService->downloadUrl($this->foto_perfil);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $url = "/assets/images/profile.png";
         }
         return $url;

@@ -85,7 +85,7 @@ export class DemandaListComponent extends PageBase implements OnInit {
     super.ngOnInit();
     this.activeTab = this.usuarioConfig.active_tab || "TABELA";
     Chart.plugins.register(ChartDataLabels);
-    if(this.gb.isExtension) {
+    if(this.gb.isEmbedded) {
       this.allPages.visibilidadeMenuSei(!this.auth.usuario!.config.ocultar_menu_sei);
     }
   }

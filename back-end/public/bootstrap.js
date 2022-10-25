@@ -111,17 +111,17 @@ function bootstrap() {
         //const servidorUrl = typeof config.servidorUrl != "undefined" ? config.servidorUrl : config.baseUrl;
         const environment = 
             "<script type='text/javascript'>\n" +
-                "var IS_PETRVS_EXTENSION = true;\n" +
-                "var PETRVS_EXTENSION_TOOLBAR = " + stringify(!!matched.toolbar) + ";\n" +
-                "var PETRVS_EXTENSION_ROUTE = " + stringify(matched.route) + ";\n" +
-                "var PETRVS_EXTENSION_VERSION = " + stringify(config.versao) + ";\n" +
-                "var PETRVS_EXTENSION_LOGGED = " + stringify(!!matched.logged) + ";\n" +
-                "var EXTENSION_BASE_URL = " + stringify(config.baseUrl) + ";\n" +
-                "var EXTENSION_SERVIDOR_URL = " + stringify(config.servidorUrl) + ";\n" +
+                "var PETRVS_IS_EXTENSION = true;\n" +
+                "var PETRVS_TOOLBAR = " + stringify(!!matched.toolbar) + ";\n" +
+                "var PETRVS_ROUTE = " + stringify(matched.route) + ";\n" +
+                "var PETRVS_VERSION = " + stringify(config.versao) + ";\n" +
+                "var PETRVS_LOGGED = " + stringify(!!matched.logged) + ";\n" +
+                "var PETRVS_BASE_URL = " + stringify(config.baseUrl) + ";\n" +
+                "var PETRVS_SERVIDOR_URL = " + stringify(config.servidorUrl) + ";\n" +
                 //"var GLOBAL_SERVER = " + stringify(config.servidorUrl) + ";\n" +
                 //"var GLOBAL_SERVER_HOST = GLOBAL_SERVER.replace(/^https?:\\/\\//, \"\").replace(\/\\/$/, \"\");\n" +
                 //"var GLOBAL_SERVER_HTTPS = GLOBAL_SERVER.startsWith(\"https\");\n" +
-                "__webpack_public_path__ = EXTENSION_BASE_URL;\n" +
+                "__webpack_public_path__ = PETRVS_BASE_URL;\n" +
             "</script>";
         $(environment).appendTo('head');
         /* Carrega arquivos de fontes do bootstrap e font-awesome */

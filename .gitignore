@@ -2,4 +2,7 @@
 /back-end/.vscode/launch.json
 /back-end/.vscode/tasks.json
 /back-end/*.bak
+
+/resources/mysql/*
+
 back-end/database/seeders/LogSeeder.php

@@ -1,6 +1,6 @@
 {
     "/environment-config": {
-      "target": "http://php/environment-config",
+      "target": "http://petrvs_php/environment-config",
       "secure": false
     }
 }
