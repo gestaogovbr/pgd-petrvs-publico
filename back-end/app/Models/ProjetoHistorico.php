@@ -8,7 +8,7 @@ use App\Models\Usuario;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasDataFim;
 
-class ProjetoAlocacao extends ModelBase
+class ProjetoHistorico extends ModelBase
 {
     use AutoDataInicio, HasDataFim;
 

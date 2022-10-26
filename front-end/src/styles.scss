@@ -30,11 +30,18 @@ body {
     div {
         margin: initial;
     }
-    input, button, textarea, select, table, label, legend, caption, a {
+    input, button, textarea, select, table, label, span, legend, caption, a {
         font-size: var(--bs-body-font-size);
     }
     .d-flex {
         margin: auto;
+    }
+    .input-group > .form-control:not(:last-child) {
+      margin: 0px;
+    }
+    .form-group label {
+        margin-bottom: 0rem;
+        font: inherit;
     }
 
     /* Classes globais */
@@ -61,6 +68,9 @@ body {
     @import '~bootstrap/scss/bootstrap.scss';
 
     /* Sobrecarrega classes com problema após compilação */
+    label .badge {
+        font-size: var(--bs-badge-font-size);
+    }
 }
 
 .full-container-button-group {

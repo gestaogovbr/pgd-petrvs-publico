@@ -4,7 +4,7 @@
 :root {
   --bs-font-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --bs-body-font-family: var(--bs-font-sans-serif);
-  --bs-body-font-size: 1rem;
+  --bs-body-font-size: 12px;
   --bs-body-font-weight: 400;
   --bs-body-line-height: 1.5;
   --bs-body-color: #212529;
@@ -75,11 +75,18 @@ body {
 .petrvs div {
   margin: initial;
 }
-.petrvs input, .petrvs button, .petrvs textarea, .petrvs select, .petrvs table, .petrvs label, .petrvs legend, .petrvs caption, .petrvs a {
+.petrvs input, .petrvs button, .petrvs textarea, .petrvs select, .petrvs table, .petrvs label, .petrvs span, .petrvs legend, .petrvs caption, .petrvs a {
   font-size: var(--bs-body-font-size);
 }
 .petrvs .d-flex {
   margin: auto;
+}
+.petrvs .input-group > .form-control:not(:last-child) {
+  margin: 0px;
+}
+.petrvs .form-group label {
+  margin-bottom: 0rem;
+  font: inherit;
 }
 .petrvs .micro-text {
   font-size: 0.8rem !important;

@@ -92,6 +92,76 @@ class ServiceBase
         });
     }
 
+    public function getValue($objArray, $key) {
+        return gettype($objArray) == "array" ? $objArray[$key] : $objArray->$key;
+    }
+
+    public function setValue($objArray, $key, $value) {
+        if(gettype($objArray) == "array") {
+            $objArray[$key] = $value;
+        } else {
+            $objArray->$key = $value;
+        }
+    }
+
+    public function arrayDelta(&$from, &$to) {
+        $result = [];
+        $ids = [];
+        foreach($to as $current) {
+            $ids[] = $current->id;
+            $src = array_filter($from, fn($v) => $this->getValue($v, "id") == $this->getValue($current, "id"));
+            if(count($src) == 1) {
+                $delta = $this->delta($src[0], $current);
+                if(!empty($delta)) $result[] = $delta;
+            } else {
+                $delta = clone $current;
+                $this->setValue($delta, "_status", "ADD");
+                $result[] = $delta;
+            }
+        }
+        foreach($from as $current) {
+            if(!in_array($this->getValue($current, "id"), $ids)) $result[] = gettype($current) == "array" ? (object) [ "id" => $current->id, "_status" => "DEL" ] : [ "id" => $current->id, "_status" => "DEL" ];
+        }
+        return empty($result) ? null : $result;
+    }
+
+    public function delta(&$from, &$to) {
+        $isArray = gettype($to) == "array";
+        $before = (array) $from;
+        $now = (array) $to;
+        $result = [];
+        if(gettype($from) != gettype($to)) throw new Exception("ObjectDelta: Tipos diferentes");
+        if(!isset($from)) {
+            $result = clone $now;
+            $result["_status"] = "ADD";
+        } else {
+            foreach($now as $key => $value) {
+                if(gettype($value) == "array") {
+                    $delta = isset($before[$key]) ? $this->arrayDelta($before[$key], $value) : $value;
+                    if(!empty($delta)) {
+                        $result[$key] = $delta;
+                        $result["_status"] = "EDIT";
+                    }
+                } else if(gettype($value) == "object"){
+                    $delta = (array) isset($before[$key]) ? $this->delta($before[$key], $value) : clone $value;
+                    if(!empty($delta)) {
+                        $delta["_status"] = "EDIT";
+                        $result[$key] = $delta;
+                        $result["_status"] = "EDIT";
+                    }
+                } else if(!isset($before[$key]) || gettype($before[$key]) != gettype($value) || strval($before[$key]) != strval($value)) {
+                    $result[$key] = $value;
+                    $result["_status"] = "EDIT";
+                }
+            }
+        }
+        return empty($result) ? null : ($isArray ? $result : (object) $result);
+    }
+
+    public function applyDelta(&$from, &$delta) {
+        // TODO: Fazer a função que aplica o $delta no objeto $from
+    }
+
     public static function toIso8601($fromData){
         return Carbon::instance($fromData)->format(ServiceBase::ISO8601_FORMAT);
     }
@@ -145,8 +215,8 @@ class ServiceBase
                 $field = DB::raw($source . "." . $field);
             }
             if(!$or || $first) {
-                if(!isset($value) && in_array($operator, ["=", "==", "!="])) {
-                    if($operator == "!=") {
+                if(!isset($value) && in_array($operator, ["=", "==", "!=", "<>"])) {
+                    if(in_array($operator, ["!=", "<>"])) {
                         $query->whereNotNull($field);
                     } else {
                         $query->whereNull($field);
@@ -155,8 +225,8 @@ class ServiceBase
                     $query->where($field, $this->convertOperator($operator), $value);
                 }
             } else {
-                if($value == null && in_array($operator, ["=", "==", "!="])) {
-                    if($operator == "!=") {
+                if($value == null && in_array($operator, ["=", "==", "!=", "<>"])) {
+                    if(in_array($operator, ["!=", "<>"])) {
                         $query->orWhereNotNull($field);
                     } else {
                         $query->orWhereNull($field);

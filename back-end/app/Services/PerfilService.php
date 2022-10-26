@@ -36,12 +36,12 @@ class PerfilService extends ServiceBase {
         if(!$this->IsLoggedUserADeveloper()){
             if(isset($data['where']) && count($data['where']) > 0) {
                 if(gettype($data['where'][0]) == "string") {
-                    $data['where'] = [["nome", "<>", "Desenvolvedor"], $data['where']];
+                    $data['where'] = [["nome", "!=", "Desenvolvedor"], $data['where']];
                 } else {
-                    $data['where'][] = ["nome", "<>", "Desenvolvedor"];
+                    $data['where'][] = ["nome", "!=", "Desenvolvedor"];
                 }
             } else {
-                $data['where'] = [["nome", "<>", "Desenvolvedor"]];
+                $data['where'] = [["nome", "!=", "Desenvolvedor"]];
             }
         }
     }
