@@ -513,7 +513,7 @@ export class GridComponent extends ComponentBase implements OnInit {
 
   public onDeleteItem(row: any) {
     (async () => {
-      const remove = this.hasItems || (this.remove && !!(await this.remove(row)));
+      const remove = this.remove ? !!(await this.remove(row)) : this.hasItems;
       const index = remove ? this.items.findIndex(x => x["id"] == row["id"]) : -1;
       if(index >= 0) this.items.splice(index, 1);
       this.cdRef.detectChanges();
