@@ -5,3 +5,4 @@
 
 /resources/mysql/*
 
+back-end/database/seeders/LogSeeder.php

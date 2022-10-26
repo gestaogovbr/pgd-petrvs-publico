@@ -27,6 +27,4 @@ class Change extends Model
         'data_hora' => 'datetime',
     ];
 
-    // Belongs
-    public function usuario() { return $this->belongsTo(Usuario::class, 'user_id'); }
 }

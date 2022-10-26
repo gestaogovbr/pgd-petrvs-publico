@@ -27,7 +27,6 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
   constructor(public injector: Injector, dao: ChangeDaoService) {
     super(injector, Change, ChangeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
-    this.join = ["usuario"];
     /* Inicializações */
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.title = "Log das alterações";
