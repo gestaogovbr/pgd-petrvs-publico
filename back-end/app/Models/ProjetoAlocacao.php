@@ -6,6 +6,7 @@ use App\Models\ModelBase;
 use App\Models\Projeto;
 use App\Models\ProjetoTarefa;
 use App\Models\ProjetoRecurso;
+use App\Models\ProjetoAlocacaoRegra;
 use App\Models\ProjetoRegra;
 use App\Models\MaterialServico;
 use App\Traits\AutoDataInicio;
@@ -17,13 +18,14 @@ class ProjetoAlocacao extends ModelBase
 
     protected $table = 'projetos_alocacoes';
 
-    public $fillable = [
-        'descricao', 
-        'quantidade',
-        'envolvido',
-        'projeto_id',
-        'tarefa_id',
-        'recurso_id'
+    protected $with = [];
+
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'descricao', /* varchar(256); NOT NULL; */// Descrição
+        'quantidade', /* double(8,2); NOT NULL; */// Quantidade do recurso
+        'projeto_id', /* char(36); NOT NULL; */
+        'tarefa_id', /* char(36); */
+        'recurso_id', /* char(36); NOT NULL; */
     ];
 
     /*public $fillable_changes = [
@@ -35,7 +37,7 @@ class ProjetoAlocacao extends ModelBase
     public $delete_cascade = [];
 
     // Has
-    public function regras() { return $this->hasMany(ProjetoAlocacoRegra::class); }    
+    public function regras() { return $this->hasMany(ProjetoAlocacaoRegra::class); }    
     // Belongs
     public function projeto() { return $this->belongsTo(Projeto::class); }    
     public function tarefa() { return $this->belongsTo(ProjetoTarefa::class); }    

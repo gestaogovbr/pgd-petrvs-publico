@@ -14,9 +14,11 @@ class ProjetoAlocacaoRegra extends ModelBase
 
     protected $table = 'projetos_alocacoes_regras';
 
-    public $fillable = [
-        'projeto_alocacao_id',
-        'regra_id'
+    protected $with = [];
+
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'projeto_alocacao_id', /* char(36); NOT NULL; */
+        'regra_id', /* char(36); NOT NULL; */
     ];
 
     /*public $fillable_changes = [

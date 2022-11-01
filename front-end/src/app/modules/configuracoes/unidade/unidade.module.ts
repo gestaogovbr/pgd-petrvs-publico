@@ -6,12 +6,14 @@ import { UnidadeFormComponent } from './unidade-form/unidade-form.component';
 import { UnidadeListComponent } from './unidade-list/unidade-list.component';
 import { ComponentsModule } from 'src/app/components/components.module';
 import { ReactiveFormsModule } from '@angular/forms';
+import { UnidadeMergeComponent } from './unidade-merge/unidade-merge.component';
 
 
 @NgModule({
   declarations: [
     UnidadeFormComponent,
-    UnidadeListComponent
+    UnidadeListComponent,
+    UnidadeMergeComponent
   ],
   imports: [
     CommonModule,

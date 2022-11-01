@@ -17,41 +17,36 @@ class Projeto extends ModelBase
 {
     use AutoDataInicio, HasDataFim;
 
-    protected static function booted()
-    {
-        static::creating(function ($projeto) {
-            $projeto->numero = DB::select("CALL sequence_projeto_numero()")[0]->number;
-        });
-    }
-
     protected $table = 'projetos';
 
-    public $fillable = [
-        //'numero',
-        'nome',
-        'descricao',
-        'finalidade',
-        'status',
-        //'data_inicio',
-        //'data_fim',
-        'inicio',
-        'termino',
-        'custo',
-        'calcula_custos',
-        'tempo_corrido',
-        'usar_horas',
-        'calcula_intervalo',
-        'agrupador',
-        'soma_progresso_filhos',
-        'aloca_proprios_recursos',
-        'soma_recusos_alocados_filhos',
-        'custos_proprios',
-        'soma_custos_filhos',
-        'duracao',
-        'progresso',
-        'usuario_id',
-        'tipo_projeto_id',
-        'kanban_dockers'
+    protected $with = [];
+
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'nome', /* varchar(256); NOT NULL; */// Nome do projeto
+        'descricao', /* varchar(256); NOT NULL; */// Descrição do projeto
+        'finalidade', /* varchar(256); NOT NULL; */// Descrição do projeto
+        'status', /* enum('PLANEJADO','INICIADO','CONCLUIDO','SUSPENSO','CANCELADO'); NOT NULL; */// Status do projeto
+        'inicio', /* datetime; NOT NULL; */// Inicio do projeto
+        'termino', /* datetime; NOT NULL; */// Fim do projeto
+        'custo', /* decimal(15,2); NOT NULL; */
+        'calcula_custos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se o projeto calcula custos
+        'tempo_corrido', /* tinyint; NOT NULL; */// Se o tempo é corrido ou usa a configuração de fins de semana, feriados e horário do expediente (quando usar horas)
+        'usar_horas', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se usa horas nas datas
+        'calcula_intervalo', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se calcula o inicio e termino automaticamente pelos filhos
+        'agrupador', /* tinyint; NOT NULL; */// Se é apenas um registro para agrupar tarefas filhas (somente se tem_filhos e não possui progresso)
+        'soma_progresso_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se o progresso é calculado pela média do progresso dos filhos ou lançado manual (somente se tem_filhos)
+        'aloca_proprios_recursos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui recursos próprios
+        'soma_recusos_alocados_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Mostra o somatório dos recursos filhos
+        'custos_proprios', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui custos próprios
+        'soma_custos_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui custos filhos
+        'duracao', /* double(8,2); NOT NULL; */// Duração do projeto
+        'progresso', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */// Percentual de progresso do projeto
+        'usuario_id', /* char(36); */
+        'tipo_projeto_id', /* char(36); NOT NULL; */
+        'kanban_dockers', /* json; */
+        //'numero', /* int; NOT NULL; */// Número do projeto (Gerado pelo sistema)
+        //'data_inicio', /* datetime; NOT NULL; */// Data de criação
+        //'data_fim', /* datetime; */// Data final do registro
     ];
 
     /*public $fillable_changes = [
@@ -63,6 +58,13 @@ class Projeto extends ModelBase
     public $delete_cascade = ['tarefas'];
 
     protected $casts = ["progresso" => "decimal:2"];
+
+    protected static function booted()
+    {
+        static::creating(function ($projeto) {
+            $projeto->numero = DB::select("CALL sequence_projeto_numero()")[0]->number;
+        });
+    }
 
     // Has
     public function tarefas() { return $this->hasMany(ProjetoTarefa::class); }    

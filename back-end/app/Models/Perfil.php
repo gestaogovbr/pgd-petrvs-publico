@@ -12,11 +12,17 @@ class Perfil extends ModelBase
 {
     use AutoDataInicio, HasDataFim;
 
-    public $fillable = [
-        'id',
-        'nivel',
-        'nome',
-        'descricao'
+    protected $table = 'perfis';
+
+    protected $with = [];
+
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'id', /* char(36); NOT NULL; */
+        'nivel', /* int; NOT NULL; */// Evita que usuários de nível inferior atribuam perfis de nível superior
+        'nome', /* varchar(256); NOT NULL; */// Nome do perfil
+        'descricao', /* text; NOT NULL; */// Descrição do perfil
+        //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
+        //'data_fim', /* datetime; */// Data final da vigência
     ];
 
     public $fillable_changes = [
@@ -25,7 +31,6 @@ class Perfil extends ModelBase
 
     public $delete_cascade = ['capacidades'];
 
-    protected $table = 'perfis';
     // Has
     public function usuarios() { return $this->hasMany(Usuario::class, 'perfil_id'); }
     public function capacidades() { return $this->hasMany(Capacidade::class, 'perfil_id'); }

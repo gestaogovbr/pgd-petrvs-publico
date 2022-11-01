@@ -131,7 +131,7 @@ class IntegracaoSiapeService extends ServiceBase {
                       } 
                 }
             }
-        return $uorgsPetrvs;
+            return $uorgsPetrvs;
         }
         catch (Throwable $e) {
             LogError::newWarn("Web Service Siape: não foi possível recuperar dados de determinada uorg.", $e->getMessage());

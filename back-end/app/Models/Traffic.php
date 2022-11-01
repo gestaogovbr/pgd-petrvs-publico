@@ -11,15 +11,19 @@ class Traffic extends Model
 
     protected $connection = 'log';
 
-    public $timestamps = false;
+    protected $table = "traffic";
 
-    protected $fillable = [
+    protected $with = [];
+
+    public $fillable = [
         'user_id',
         'date_time',
         'url',
         'request',
         'response'
     ];
+
+    public $timestamps = false;
 
     protected $casts = [
         'data_hora' => 'datetime',

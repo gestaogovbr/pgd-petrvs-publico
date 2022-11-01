@@ -18,16 +18,18 @@ class Lotacao extends ModelBase
 {
     use AutoDataInicio, HasDataFim;
 
-    public $fillable = [
-        'principal',
-        'usuario_id',
-        'data_inicio',
-        //'data_fim',
-        'unidade_id'
-    ];
-    
-
     protected $table = 'lotacoes';
+
+    protected $with = [];
+
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'principal', /* tinyint; NOT NULL; */// Se é a lotação principal do usuário
+        'usuario_id', /* char(36); NOT NULL; */
+        'data_inicio', /* datetime; NOT NULL; */
+        'unidade_id', /* char(36); NOT NULL; */
+        //'data_fim', /* datetime; */
+    ];    
+
     // Has
     // public function usuarios() { return $this->hasMany(Usuario::class); }
     public function patrulhas() { return $this->hasMany(Patrulha::class); }

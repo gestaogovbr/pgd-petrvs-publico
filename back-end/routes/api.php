@@ -42,11 +42,9 @@ use App\Http\Controllers\RotinaDiariaController;
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
+| Rotas utilizadas por todo o sistema.
+| ATENÇÃO: As rotas têm o nome do controller em CamelCase e o as actions
+| com nome-composto separados por -
 */
 
 function defaultRoutes($controllerClass, $capacidades = []) {
@@ -175,7 +173,9 @@ Route::middleware(['auth:sanctum'])->prefix('Entidade')->group(function () {
 Route::middleware(['auth:sanctum'])->prefix('Lotacao')->group(function () { defaultRoutes(LotacaoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
     defaultRoutes(UnidadeController::class);
-    Route::post('metadadosArea', [UnidadeController::class, 'metadadosArea']);
+    Route::post('metadados-area', [UnidadeController::class, 'metadadosArea']);
+    Route::post('mesma-sigla', [UnidadeController::class, 'mesmaSigla']);
+    Route::post('unificar', [UnidadeController::class, 'unificar']);
     Route::post('dashboards', [UnidadeController::class, 'dashboards']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Capacidade')->group(function () { defaultRoutes(CapacidadeController::class); });

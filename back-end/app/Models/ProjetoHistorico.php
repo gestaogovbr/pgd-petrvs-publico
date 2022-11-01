@@ -14,13 +14,15 @@ class ProjetoHistorico extends ModelBase
 
     protected $table = 'projetos_historicos';
 
-    public $fillable = [
-        'data_hora', 
-        'linha_base',
-        'completo',
-        'delta',
-        'projeto_id',
-        'usuario_id'
+    protected $with = [];
+
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'data_hora', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data e hora da modificação
+        'linha_base', /* tinyint; NOT NULL; */// Se é baseline
+        'completo', /* tinyint; NOT NULL; */// Se o delta corresponde ao objeto completo
+        'delta', /* json; NOT NULL; */// Delta do objeto (ou objeto completo)
+        'projeto_id', /* char(36); NOT NULL; */
+        'usuario_id', /* char(36); NOT NULL; */
     ];
 
     /*public $fillable_changes = [

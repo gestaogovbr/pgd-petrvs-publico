@@ -10,20 +10,22 @@ use App\Traits\HasDataFim;
 
 class Programa extends ModelBase
 {
-
     use AutoDataInicio, HasDataFim;
+
     protected $table = 'programas';
 
-    public $fillable = [
-        'nome',
-        'normativa',
-        'config',
-        'data_inicio_vigencia',
-        'data_fim_vigencia',
-        'data_inicio',
-        //'data_fim',
-        'documento_id',
-        'unidade_id'
+    protected $with = [];
+
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'nome', /* varchar(255); NOT NULL; */// Nome do programa de gestão
+        'normativa', /* varchar(255); NOT NULL; */// Normativa que regula o programa de gestão
+        'config', /* json; */
+        'data_inicio_vigencia', /* datetime; NOT NULL; */// Inicio do programa
+        'data_fim_vigencia', /* datetime; NOT NULL; */// Fim do programa
+        'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
+        'documento_id', /* char(36); */
+        'unidade_id', /* char(36); NOT NULL; */
+        //'data_fim', /* datetime; */// Data fim da vigência
     ];
 
     public $delete_cascade = ['documento'];

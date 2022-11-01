@@ -8,14 +8,16 @@ use App\Models\Unidade;
 class TipoProcesso extends ModelBase
 {
     
-    public $fillable = [
-        'nome',
-        'codigo',
-        'etiquetas',
-        'checklist'
-    ];
-
     protected $table = 'tipos_processos';
+
+    protected $with = [];
+
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'nome', /* text; NOT NULL; */// Nome do Tipo de Processo
+        'codigo', /* varchar(50); */// Código do tipo de Processo
+        'etiquetas', /* json; NOT NULL; */// Nome das etiquetas predefinidas
+        'checklist', /* json; NOT NULL; */// Nome dos checklist predefinidas
+    ];
 
     protected static function booted()
     {

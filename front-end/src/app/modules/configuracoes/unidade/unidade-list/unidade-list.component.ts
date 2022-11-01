@@ -1,6 +1,7 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
@@ -17,6 +18,7 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
 
   public cidadeDao: CidadeDaoService;
   public entidadeDao: EntidadeDaoService;
+  public buttons: ToolbarButton[] = [];
 
   constructor(public injector: Injector) {
     super(injector, Unidade, UnidadeDaoService);
@@ -29,6 +31,7 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
     this.code = "MOD_CFG_UND";
     this.filter = this.fh.FormBuilder({
       entidade_id: {default: null},
+      inativos: {default: false},
       nome: {default: ""}
     });
     this.groupBy = [{field: "entidade.sigla", label: "Entidade"}];
@@ -48,6 +51,15 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
         onClick: this.delete.bind(this)
       });
     }
+    // Testa se o usuário possui permissão unificar unidade
+    if (this.auth.hasPermissionTo("MOD_UND_UNIR")) {
+      this.buttons.push({
+        icon: "bi bi-arrows-collapse",
+        color: "btn-outline-danger",
+        label: "Unificar",
+        onClick: (unidade: Unidade) => this.go.navigate({ route: ['configuracoes', 'unidade', 'merge'] }, this.modalRefresh())
+      });
+    }
   }
 
   public filterClear(filter: FormGroup) {
@@ -57,7 +69,9 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
   public filterWhere = (filter: FormGroup) => {
     let form: any = filter.value;
     let result: any[] = [];
-
+   
+    /* Se for selectable trás somente os inativos ou os não inativos, se não for então trás juntamente os inativos se form.inativos */
+    result.push(this.selectable ? ["inativo", form.inativos ? "!=" : "==", null] : ["inativos", "==", form.inativos]);
     if(form.entidade_id?.length) {
       result.push(["entidade_id", "==", form.entidade_id]);
     }

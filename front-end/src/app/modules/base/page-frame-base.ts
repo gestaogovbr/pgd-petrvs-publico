@@ -118,7 +118,7 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
           entity instanceof NavigateResult ? entity.modalResult :
           await this.dao?.update(this.entity!.id, entity, this.join);
         if(this.modalRoute?.queryParams?.idroute?.length) this.go.setModalResult(this.modalRoute?.queryParams?.idroute, modalResult);
-        this.go.back(undefined, this.backRoute);
+        this.close();
       }
     } catch (erro) {
       this.error("Erro ao carregar dados: " + erro);
@@ -128,7 +128,7 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
   }
 
   public onCancel() {
-    this.go.back(undefined, this.backRoute);
+    this.close();
   }
 
   /*

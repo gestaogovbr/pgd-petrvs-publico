@@ -9,7 +9,10 @@ use App\Models\TipoModalidade;
 
 class TipoModalidadeConfig extends ModelBase
 {
-   
+    protected $table = 'tipos_modalidades_config';
+
+    protected $with = [];
+
     public $fillable = [
         'fator_produtividade',
         'unidade_id',
@@ -17,7 +20,6 @@ class TipoModalidadeConfig extends ModelBase
         'tipo_modalidade_id'        
     ];
     
-    protected $table = 'tipos_modalidades_config';
     // Belongs
     public function unidade() { return $this->belongsTo(Unidade::class, 'unidade_id'); }   
     public function atividade() { return $this->belongsTo(Atividade::class, 'atividade_id'); }   

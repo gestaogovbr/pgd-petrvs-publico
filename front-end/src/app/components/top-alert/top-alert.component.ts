@@ -39,7 +39,7 @@ export class TopAlertComponent extends ComponentBase implements OnInit {
   }
 
   public get iconClass(): string {
-    return "bi bi-" +  
+    return "me-2 bi bi-" +  
       (this.type == "alert" ? "info-circle-fill" : 
       this.type == "success" ? "check-circle-fill" : 
       this.type == "warning" ? "exclamation-circle-fill" : "exclamation-triangle-fill");
