@@ -89,8 +89,10 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
 
   public saveData(form: IIndexable): Promise<Usuario> {      
     return new Promise<Usuario>((resolve, reject) => {
-      const usuario = this.util.fill(new Usuario(), this.entity!);
-      resolve(this.util.fillForm(usuario, this.form!.value));
+      let usuario = this.util.fill(new Usuario(), this.entity!);
+      usuario = this.util.fillForm(usuario, this.form!.value);
+      usuario.lotacoes = usuario.lotacoes.filter((x: Lotacao) => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.unidade_id?.length);
+      resolve(usuario);
     });
   }
 

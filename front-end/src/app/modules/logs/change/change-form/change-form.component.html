@@ -1,13 +1,17 @@
-<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+<editable-form [form]="form!" [disabled]="true" [title]="isModal ? '' : title" (cancel)="onCancel()">
   <div class="row">
       <div class="row">
-<!--           <input-text [size]="3" label="Código IBGE" icon="bi bi-upc" controlName="codigo_ibge" [control]="form!.controls.codigo_ibge"></input-text>
-          <input-text [size]="9" label="Nome" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome"></input-text> -->
+          <input-text [size]="8" label="Responsável pelo registro" icon="bi bi-upc" controlName="responsavel" [control]="form!.controls.responsavel"></input-text>
+          <!-- <input-text [size]="4" label="ID do usuário" icon="bi bi-upc" controlName="user_id" [control]="form!.controls.user_id"></input-text> -->
+          <input-datetime [size]="4" datetime label="Data do registro" controlName="date_time" [control]="form!.controls.date_time"></input-datetime>
       </div>
       <div class="row">
-<!--           <input-select [size]="4" label="Tipo" icon="bi bi-arrow-up-right-circle" controlName="tipo" [control]="form!.controls.tipo" [items]="lookup.TIPO_CIDADE"></input-select>
-          <input-select [size]="4" label="UF" icon="bi bi-flag" controlName="uf" [control]="form!.controls.uf" [items]="lookup.UF"></input-select>
-          <input-select [size]="4" label="Timezone" icon="bi bi-alarm" controlName="timezone" [control]="form!.controls.timezone" [items]="lookup.TIMEZONE"></input-select> -->
+          <input-text [size]="4" label="Tabela" icon="bi bi-textarea-t" controlName="table_name" [control]="form!.controls.table_name"></input-text>
+          <input-text [size]="5" [label]="objeto ? objeto.label : 'ID do registro alterado'" icon="bi bi-upc" controlName="row_id" [control]="form!.controls.row_id"></input-text>
+          <input-text [size]="3" label="Tipo de alteração" icon="bi bi-upc" controlName="type" [control]="form!.controls.type"></input-text>
+      </div>
+      <div class="row">
+        <input-textarea [size]="12" [rows]="5" label="Alterações realizadas" icon="bi bi-textarea-t" controlName="delta" [control]="form!.controls.delta"></input-textarea>
       </div>
   </div>
 </editable-form>

@@ -6,6 +6,7 @@ import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { ChangeDaoService } from 'src/app/dao/change-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
+import { Base, IIndexable } from 'src/app/models/base.model';
 import { Change } from 'src/app/models/change.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { LookupItem } from 'src/app/services/lookup.service';
@@ -38,22 +39,6 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
       tipo: {default: ""},
       row_id: {default: ""}
     });
-    // Testa se o usuário possui permissão para exibir dados dos logs
-    if (this.auth.hasPermissionTo("DEV_MOD_LOGS")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir o registro de log
-    if (this.auth.hasPermissionTo("DEV_MOD_LOGS")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
   }
 
   ngAfterViewInit() {
@@ -67,6 +52,20 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
 
   ngAfterViewChecked(){
     this.cdRef.detectChanges();
+  }
+
+  public onRowClick(row: Base | IIndexable | null){
+    if(row){
+      let change = row as Change;
+      this.entity = this.entities.find(x => x.table == change!.table_name.toLowerCase());
+      this.go.navigate({route: ['logs', 'change', change!.id, 'consult']}, {
+        metadata: {entity: this.entity, entity_id: change!.row_id},
+        modal: true, 
+        modalClose: (modalResult?: string) => {
+          if(modalResult?.length) this.go.navigate({route: ['logs', 'change']});
+        }
+      });
+    }
   }
 
   public onTabelaChange(event: Event) {

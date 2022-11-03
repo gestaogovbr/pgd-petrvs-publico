@@ -93,7 +93,7 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
           const modalResult = typeof entity == "boolean" ? this.entity?.id : entity instanceof NavigateResult ? entity.modalResult : (await this.dao!.save(entity as M)).id;
           if(self.modalRoute?.queryParams?.idroute?.length) self.go.setModalResult(self.modalRoute?.queryParams?.idroute, modalResult);
           //self.dialog.alert("Sucesso", this.mensagemSalvarSucesso).then(() => self.go.back());
-          self.go.back(undefined, this.backRoute);
+          self.close();
         }
       } catch (error: any) {
         self.error(error.message ? error.message : error);
@@ -112,7 +112,7 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
   }
 
   public onCancel() {
-    this.go.back(undefined, this.backRoute);
+    this.close();
   }
 
   public getControlByName(controlName: string): AbstractControl {

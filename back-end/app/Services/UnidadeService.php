@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Exceptions\LogError;
+use App\Models\ModelBase;
 use DateTime;
 use App\Models\Unidade;
 use App\Models\Programa;
@@ -9,6 +11,7 @@ use App\Services\ServiceBase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\UseDataFim;
+use Throwable;
 
 class UnidadeService extends ServiceBase
 {
@@ -37,6 +40,7 @@ class UnidadeService extends ServiceBase
 
     public function proxySearch($query, &$data, &$text) {
         $data["where"][] = ["subordinadas", "==", true];
+        $data["where"][] = ["inativo", "==", null];
         return $this->proxyQuery($query, $data);
     }
 
@@ -44,12 +48,18 @@ class UnidadeService extends ServiceBase
         $usuario = Auth::user();
         $where = [];
         $subordinadas = true;
+        $inativos = true;
         foreach($data["where"] as $condition) {
             if(is_array($condition) && $condition[0] == "subordinadas") {
                 $subordinadas = $condition[2];
+            } else if(is_array($condition) && $condition[0] == "inativos") {
+                $inativos = $condition[2];
             } else {
                 array_push($where, $condition);
             }
+        }
+        if(!$inativos) {
+            array_push($where, ["inativo", "==", null]);
         }
         if(!$usuario->hasPermissionTo("MOD_UND_TUDO")) {
             $lotacoesWhere = $this->usuarioService->lotacoesWhere($subordinadas, null, "unidades");
@@ -57,6 +67,44 @@ class UnidadeService extends ServiceBase
         }
         $data["where"] = $where;
         return $data;
+    }
+
+    public function mesmaSigla($entidadeId) {
+        $repetidos = DB::table('unidades')->select(DB::raw('count(*) as qtd, sigla'))
+            ->where('entidade_id', $entidadeId)
+            ->whereNull('data_fim')
+            ->groupBy('sigla')
+            ->having('qtd', '>', 1)
+            ->get()->toArray();
+        $siglas = array_map(fn($row) => $row->sigla, $repetidos);
+        return Unidade::where("entidade_id", $entidadeId)->whereIn("sigla", $siglas)->get();
+    }
+
+    public function unificar($correspondencias, $exclui) {
+        DB::beginTransaction();
+        try {
+            $constraints = $this->foreigns("unidades");
+            foreach($correspondencias as $dePara) {
+                $de = $dePara["unidade_origem_id"];
+                $para = $dePara["unidade_destino_id"];
+                foreach($constraints as $contraint) {
+                    $changes = DB::select("SELECT id, {$contraint->COLUMN_NAME} FROM {$contraint->TABLE_NAME} WHERE {$contraint->COLUMN_NAME} = :de", [":de" => $de]);
+                    DB::update("UPDATE {$contraint->TABLE_NAME} SET {$contraint->COLUMN_NAME} = :para WHERE {$contraint->COLUMN_NAME} = :de", [":de" => $de, ":para" => $para]);
+                    /* Registra o log das mudanças */
+                    foreach($changes as $change) {
+                        $delta = [];
+                        $delta[$contraint->COLUMN_NAME] = $de;
+                        ModelBase::customLogChange($contraint->TABLE_NAME, $change->id, "EDIT", $delta);
+                    }
+                }
+                if($exclui) $this->destroy($de, false);
+            }
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollback();
+            throw $e;
+        }
+        return true;
     }
 
     public function metadadosArea($unidade_id, $programa_id) {

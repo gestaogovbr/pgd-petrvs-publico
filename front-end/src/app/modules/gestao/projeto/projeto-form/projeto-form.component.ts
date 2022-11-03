@@ -66,5 +66,10 @@ export class ProjetoFormComponent extends PageFormBase<Projeto, ProjetoDaoServic
   public titleEdit = (entity: Projeto): string => {
     return "Editando " + (entity?.nome || "");
   }
+
+  public get titleProjeto(): string {
+    return this.entity?.numero ? "#" + this.entity?.numero : "";
+  }
+
 }
 

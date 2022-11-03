@@ -18,6 +18,7 @@ class ServerException extends Exception
         "ValidateAtividade" => "Erro ao validar atividade",
         "ValidateDemanda" => "Erro ao validar demanda",
         "ValidatePlano" => "Erro ao validar Plano",
+        "ValidateUnidade" => "Erro ao validar Unidade",
         "ValidateDocumento" => "Erro ao validar Documento"
     ];
 

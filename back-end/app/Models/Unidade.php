@@ -33,39 +33,41 @@ class Unidade extends ModelBase
 {
     use AutoDataInicio, HasDataFim;
 
+    protected $table = 'unidades';
+
     protected $with = ['cidade'];
+
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'codigo', /* varchar(12); NOT NULL; */// Código da unidade
+        'sigla', /* varchar(100); NOT NULL; */// Sigla da unidade
+        'nome', /* varchar(256); NOT NULL; */// Nome da unidade
+        'path', /* text; */// Path dos nós pais separados por /, ou null caso sejam nós raiz
+        'atividades_arquivamento_automatico', /* tinyint; NOT NULL; */// Se arquiva automaticamente após avaliação
+        'atividades_avaliacao_automatico', /* tinyint; NOT NULL; */// Se avalia automaticamente ao final do prazo para avaliação com nota 10 (pela IN65/2020-ME é 45 dias após a entrega)
+        'planos_prazo_comparecimento', /* int; NOT NULL; DEFAULT: '1'; */// Prazo de antecedência para comunicar o usuário de seu comparecimento na unidade
+        'planos_tipo_prazo_comparecimento', /* set('HORAS','DIAS'); NOT NULL; DEFAULT: 'DIAS'; */// Unidade de medida para contagem do planos_prazo_comparecimento
+        'horario_trabalho_inicio', /* time; NOT NULL; DEFAULT: '00:00:00'; */// Referência do início da jornada de trabalho diária da unidade para fins de distribuição de demanda (contar a partir deste horário)
+        'horario_trabalho_fim', /* time; NOT NULL; DEFAULT: '24:00:00'; */// Referência do fim da jornada de trabalho diária da unidade para fins de distribuição de demanda (até este horário, caso seja superior será contado do dia seguinte)
+        'horario_trabalho_intervalo', /* time; NOT NULL; DEFAULT: '00:00:00'; */// Intervalo realizado dentro da jornada de trabalho (Ex.: horário de almoço). Para fins de computo de jornada de trabalho na ausência do plano de trabalho.
+        'distribuicao_forma_contagem_prazos', /* set('HORAS_CORRIDAS','DIAS_CORRIDOS','HORAS_UTEIS','DIAS_UTEIS'); NOT NULL; DEFAULT: 'DIAS_UTEIS'; */// Forma da contagem de prazo
+        'entrega_forma_contagem_prazos', /* set('HORAS_CORRIDAS','HORAS_UTEIS'); NOT NULL; DEFAULT: 'HORAS_UTEIS'; */// Forma da contagem de horas para entrega
+        'autoedicao_subordinadas', /* tinyint; NOT NULL; DEFAULT: '1'; */// Permitir a autoedição de informações gerais pelas unidades subordinadas (nome, sigla, codigo_pai)
+        'etiquetas', /* json; */// Configuração das etiquetas que serão utilizadas nas demandas (contém nome, icone e cor)
+        'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
+        'notificacoes', /* json; */// Configurações das notificações (Se envia email, whatsapp, tipos, templates)
+        'unidade_id', /* char(36); */
+        'gestor_id', /* char(36); */
+        'gestor_substituto_id', /* char(36); */
+        'entidade_id', /* char(36); NOT NULL; */
+        'cidade_id', /* char(36); */
+        //'checklist', /* json; */// Nome dos checklist predefinidas
+        //'data_fim', /* datetime; */// Data final da vigência
+        //'inativo', /* datetime; */// Se a unidade está inativa
+    ];
 
     public $fillable_relations = [
         "unidades_origem_atividades"
     ];
-
-    public $fillable = [
-        'codigo',
-        'sigla',
-        'nome',
-        'path',
-        'atividades_arquivamento_automatico',
-        'atividades_avaliacao_automatico',
-        'planos_prazo_comparecimento',
-        'planos_tipo_prazo_comparecimento',
-        'horario_trabalho_inicio',
-        'horario_trabalho_fim',
-        'horario_trabalho_intervalo',
-        'distribuicao_forma_contagem_prazos',
-        'entrega_forma_contagem_prazos',
-        'autoedicao_subordinadas',
-        'etiquetas',
-        'data_inicio' ,
-        //'data_fim' ,
-        'notificacoes',
-        'unidade_id',
-        'gestor_id',
-        'gestor_substituto_id',
-        'entidade_id',
-        'cidade_id'
-    ];
-
-    protected $table = 'unidades';
 
     public $delete_cascade = ['unidadesOrigemAtividades', 'unidadesDestinoAtividades'];
 

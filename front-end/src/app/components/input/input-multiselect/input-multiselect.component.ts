@@ -101,6 +101,7 @@ export class InputMultiselectComponent extends InputBase implements OnInit {
       }
     }
     if(newItem) {
+      if(!this._items) this._items = [];
       this.items.push(newItem);
       this.items = this.items;
       this.cdRef.detectChanges();

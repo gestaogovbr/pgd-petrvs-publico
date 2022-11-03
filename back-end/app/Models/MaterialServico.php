@@ -13,14 +13,16 @@ class MaterialServico extends ModelBase
 
     protected $table = 'materiais_servicos';
 
-    public $fillable = [
-        'tipo',
-        'codigo',
-        'referencia',
-        'descricao',
-        'unidade_medida'
-        //'data_inicio',
-        //'data_fim'
+    protected $with = [];
+
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'tipo', /* enum('MATERIAL','SERVICO'); NOT NULL; DEFAULT: 'MATERIAL'; */// Tipo
+        'codigo', /* varchar(100); */// Código
+        'referencia', /* varchar(100); */// Referência
+        'descricao', /* varchar(256); NOT NULL; */// Descrição
+        'unidade_medida', /* enum('UNIDADE','CAIXA','METRO','KILO','LITRO','DUZIA','MONETARIO','HORAS','DIAS','PACOTE'); NOT NULL; */// Unidade
+        //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
+        //'data_fim', /* datetime; */// Data final da vigência
     ];
 
     /*public $fillable_changes = [

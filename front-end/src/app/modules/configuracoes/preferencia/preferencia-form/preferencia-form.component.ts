@@ -76,6 +76,6 @@ export class PreferenciaFormComponent extends PageBase implements OnInit {
   }
 
   public onCancel() {
-    this.go.back(undefined, this.backRoute);
+    this.close();
   }
 }

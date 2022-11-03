@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="notranslate">
 <head>
   <meta charset="utf-8">
   <title>Petrvs</title>

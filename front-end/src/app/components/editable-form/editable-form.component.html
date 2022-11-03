@@ -1,7 +1,5 @@
 <toolbar *ngIf="title.length || toolbarButtons.length" [title]="title" [buttons]="toolbarButtons"></toolbar>
-<div *ngIf="error?.length" [id]="generatedId(title) + '_error'" class="alert alert-danger mt-2" role="alert">
-    {{error}}
-</div>
+<div *ngIf="error?.length" [id]="generatedId(title) + '_error'" class="alert alert-danger mt-2 break-spaces" role="alert">{{error}}</div>
 <form class="mx-2 mt-2" [id]="generatedId(title) + '_form'" [formGroup]="form!">
     <ng-content></ng-content>
 </form>
@@ -13,11 +11,11 @@
         <button *ngIf="hasSubmit && !disabled" [id]="generatedId(title) + '_submit'" type="button" [disabled]="submitting" class="btn btn-outline-success" (click)="onSubmit()">
             <span *ngIf="submitting" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             <i *ngIf="!submitting" [class]="form!.valid && !forceInvalid ? 'bi-check-circle' : 'bi-exclamation-circle'"></i>
-            Gravar
+            {{confirmLabel?.length ? confirmLabel : 'Gravar'}}
         </button>
         <button *ngIf="hasCancel" type="button" [id]="generatedId(title) + '_cancel'" class="btn btn-outline-danger" (click)="onCancel()">
             <i class="bi bi-dash-circle"></i>
-            {{disabled ? 'Fechar' : 'Cancelar'}}
+            {{cancelLabel?.length ? cancelLabel : disabled ? 'Fechar' : 'Cancelar'}}
         </button>
     </div>
 </div>

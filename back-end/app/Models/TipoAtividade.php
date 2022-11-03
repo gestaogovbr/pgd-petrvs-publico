@@ -13,12 +13,14 @@ class TipoAtividade extends ModelBase
     
     protected $table = 'tipos_atividades';
 
-    public $fillable = [
-        'nome',
-        'icone',
-        'cor',
-        'data_inicio',
-        //'data_fim'
+    protected $with = [];
+
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'nome', /* varchar(256); NOT NULL; */// Descrição do tipo/categoria da atividade
+        'icone', /* varchar(100); NOT NULL; */// Classe do icone
+        'cor', /* varchar(100); NOT NULL; */// Código da cor em hex
+        'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
+        //'data_fim', /* datetime; */// Data final da vigência
     ];
     
     // Has

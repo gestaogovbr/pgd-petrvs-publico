@@ -154,7 +154,7 @@ export abstract class PageReportBase<M extends Base, D extends DaoBaseService<M>
   }
 
   public onCancel() {
-    this.go.back(undefined, this.backRoute);
+    this.close();
   }
 
   public abstract report(filter: any): Promise<any[] | undefined>;

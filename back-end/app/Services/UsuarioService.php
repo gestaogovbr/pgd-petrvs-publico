@@ -226,7 +226,7 @@ class UsuarioService extends ServiceBase
                     throw new Exception("Já existe um usuário com mesmo e-mail ou CPF no sistema");
                 }
             }
-            if(($data["perfil_id"] == $this->developer_id) && (!$this->IsLoggedUserADeveloper())) throw new Exception("Tentativa de inserir um usuário com o perfil de Desenvolvedor");
+            if(($data["perfil_id"] == $this->developerId) && (!$this->isLoggedUserADeveloper())) throw new Exception("Tentativa de inserir um usuário com o perfil de Desenvolvedor");
         }
     }
 
@@ -235,7 +235,7 @@ class UsuarioService extends ServiceBase
      */
     public function proxyUpdate($data, $unidade){
         $perfilAtual = $this->getById($data["id"])["perfil_id"];
-        if((($perfilAtual == $this->developer_id) || ($data["perfil_id"] != $this->developer_id)) && (!$this->IsLoggedUserADeveloper())) throw new Exception("Tentativa de alterar o perfil de/para um Desenvolvedor");
+        if((($perfilAtual == $this->developerId) || ($data["perfil_id"] != $this->developerId)) && (!$this->isLoggedUserADeveloper())) throw new Exception("Tentativa de alterar o perfil de/para um Desenvolvedor");
     }
 
 }

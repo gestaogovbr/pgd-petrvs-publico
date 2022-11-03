@@ -39,7 +39,7 @@ class ServiceBase
     const ACTION_UPDATE = "UPDATE";
 
     public string $collection = "";
-    public string $developer_id = "";
+    public string $developerId = "";
 
     /* instancia automaticamente os serviços */
     private $_services = [];
@@ -51,7 +51,7 @@ class ServiceBase
 
     public function __construct($collection = null)
     {
-        $this->developer_id = ((config('petrvs') ?: [])['ids_fixos'] ?: [])['developer_id'] ?: "77001b4b-6e25-4aab-9abc-8872c6c1029a";
+        $this->developerId = ((config('petrvs') ?: [])['ids-fixos'] ?: [])['developer-id'] ?: $this->UtilService->uuid("Desenvolvedor");
         $this->collection = $collection ?? $this->collection;
         if(empty($this->collection)) {
             $this->collection = str_replace("Service", "", str_replace("App\\Services", "App\\Models", get_class($this)));
@@ -90,6 +90,90 @@ class ServiceBase
                 return $values;
             });
         });
+    }
+
+    /**
+     * Get all foreign constraint of a table 
+     * 
+     * @param  string $table
+     * @return Array
+     */
+    public function foreigns($table) {
+        $sql = "SELECT TABLE_NAME, COLUMN_NAME, CONSTRAINT_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME ".
+            "FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE ".
+            "WHERE REFERENCED_TABLE_SCHEMA = :database AND REFERENCED_TABLE_NAME = :table";
+        $constraints = DB::select($sql, [':database' => env('DB_DATABASE'), ':table' => $table]);
+        return $constraints;
+    }
+
+    public function getValue($objArray, $key) {
+        return gettype($objArray) == "array" ? $objArray[$key] : $objArray->$key;
+    }
+
+    public function setValue($objArray, $key, $value) {
+        if(gettype($objArray) == "array") {
+            $objArray[$key] = $value;
+        } else {
+            $objArray->$key = $value;
+        }
+    }
+
+    public function arrayDelta(&$from, &$to) {
+        $result = [];
+        $ids = [];
+        foreach($to as $current) {
+            $ids[] = $current->id;
+            $src = array_filter($from, fn($v) => $this->getValue($v, "id") == $this->getValue($current, "id"));
+            if(count($src) == 1) {
+                $delta = $this->delta($src[0], $current);
+                if(!empty($delta)) $result[] = $delta;
+            } else {
+                $delta = clone $current;
+                $this->setValue($delta, "_status", "ADD");
+                $result[] = $delta;
+            }
+        }
+        foreach($from as $current) {
+            if(!in_array($this->getValue($current, "id"), $ids)) $result[] = gettype($current) == "array" ? (object) [ "id" => $current->id, "_status" => "DEL" ] : [ "id" => $current->id, "_status" => "DEL" ];
+        }
+        return empty($result) ? null : $result;
+    }
+
+    public function delta(&$from, &$to) {
+        $isArray = gettype($to) == "array";
+        $before = (array) $from;
+        $now = (array) $to;
+        $result = [];
+        if(gettype($from) != gettype($to)) throw new Exception("ObjectDelta: Tipos diferentes");
+        if(!isset($from)) {
+            $result = clone $now;
+            $result["_status"] = "ADD";
+        } else {
+            foreach($now as $key => $value) {
+                if(gettype($value) == "array") {
+                    $delta = isset($before[$key]) ? $this->arrayDelta($before[$key], $value) : $value;
+                    if(!empty($delta)) {
+                        $result[$key] = $delta;
+                        $result["_status"] = "EDIT";
+                    }
+                } else if(gettype($value) == "object"){
+                    $delta = (array) isset($before[$key]) ? $this->delta($before[$key], $value) : clone $value;
+                    if(!empty($delta)) {
+                        $delta["_status"] = "EDIT";
+                        $result[$key] = $delta;
+                        $result["_status"] = "EDIT";
+                    }
+                } else if(!isset($before[$key]) || gettype($before[$key]) != gettype($value) || strval($before[$key]) != strval($value)) {
+                    $result[$key] = $value;
+                    $result["_status"] = "EDIT";
+                }
+            }
+        }
+        return empty($result) ? null : ($isArray ? $result : (object) $result);
+    }
+
+    public function applyDelta(&$from, &$delta) {
+        // TODO: Fazer a função que aplica o $delta no objeto $from
     }
 
     public static function toIso8601($fromData){
@@ -145,8 +229,8 @@ class ServiceBase
                 $field = DB::raw($source . "." . $field);
             }
             if(!$or || $first) {
-                if(!isset($value) && in_array($operator, ["=", "==", "!="])) {
-                    if($operator == "!=") {
+                if(!isset($value) && in_array($operator, ["=", "==", "!=", "<>"])) {
+                    if(in_array($operator, ["!=", "<>"])) {
                         $query->whereNotNull($field);
                     } else {
                         $query->whereNull($field);
@@ -155,8 +239,8 @@ class ServiceBase
                     $query->where($field, $this->convertOperator($operator), $value);
                 }
             } else {
-                if($value == null && in_array($operator, ["=", "==", "!="])) {
-                    if($operator == "!=") {
+                if($value == null && in_array($operator, ["=", "==", "!=", "<>"])) {
+                    if(in_array($operator, ["!=", "<>"])) {
                         $query->orWhereNotNull($field);
                     } else {
                         $query->orWhereNull($field);
@@ -415,7 +499,8 @@ class ServiceBase
             }
         }
         $query->where('id', $data['id']);
-        $rows = $query->get();
+        $rows = method_exists($this, 'proxyRows') ? $this->proxyRows($query->get()) : $query->get();
+/*         if(method_exists($this, 'proxyById')) $rows = $this->proxyById($rows); */
         if(count($rows) == 1) {
             return $rows[0];
         } else {
@@ -715,7 +800,7 @@ class ServiceBase
     /**
      * Retorna se o usuário logado possui o perfil de Desenvolvedor
      */
-    public function IsLoggedUserADeveloper(){
-        return Auth::user()->perfil_id == $this->developer_id;
+    public function isLoggedUserADeveloper(){
+        return Auth::user()->perfil_id == $this->developerId;
      }
 }

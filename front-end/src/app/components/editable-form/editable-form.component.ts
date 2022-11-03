@@ -61,6 +61,8 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
   @Input() title: string = "";
   @Input() buttons: ToolbarButton[] = [];
   @Input() toolbarButtons: ToolbarButton[] = [];
+  @Input() confirmLabel?: string;
+  @Input() cancelLabel?: string;
   @Input() noButtons?: string;
   @Input() forceInvalid: boolean = false;
   @Input() set disabled(value: boolean) {

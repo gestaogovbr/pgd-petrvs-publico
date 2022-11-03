@@ -8,15 +8,15 @@ use App\Models\TipoJustificativa;
 
 class TipoAvaliacaoJustificativa extends ModelBase
 {
+    protected $table = 'tipos_avaliacoes_justificativas';
 
     protected $with = ["tipoJustificativa"];
 
-    public $fillable = [
-        'tipo_avaliacao_id',
-        'tipo_justificativa_id'
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'tipo_avaliacao_id', /* char(36); NOT NULL; */
+        'tipo_justificativa_id', /* char(36); NOT NULL; */
     ];
 
-    protected $table = 'tipos_avaliacoes_justificativas';
     // Belongs
     public function tipoAvaliacao() { return $this->belongsTo(TipoAvaliacao::class, 'tipo_avaliacao_id'); }    
     public function tipoJustificativa() { return $this->belongsTo(TipoJustificativa::class, 'tipo_justificativa_id'); }    

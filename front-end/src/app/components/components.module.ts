@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { NgxMaskModule } from 'ngx-mask';
+import { NgxMaskModule, IConfig } from 'ngx-mask';
 import { GridComponent } from './grid/grid.component';
 import { ColumnComponent } from './grid/column/column.component';
 import { ColumnHeaderComponent } from './grid/column-header/column-header.component';
@@ -52,6 +52,10 @@ import { ProfilePictureComponent } from './profile-picture/profile-picture.compo
 import { ProgressBarComponent } from './progress-bar/progress-bar.component';
 import { InputNumberComponent } from './input/input-number/input-number.component';
 import { TopAlertComponent } from './top-alert/top-alert.component';
+
+const maskConfig: Partial<IConfig> = {
+  validation: false,
+};
 
 @NgModule({
   declarations: [
@@ -110,7 +114,7 @@ import { TopAlertComponent } from './top-alert/top-alert.component';
     DndModule,
     //CurrencyMaskModule,
     AngularDoubleScrollbarsModule,
-    NgxMaskModule.forRoot()
+    NgxMaskModule.forRoot(maskConfig)
   ],
   exports: [
     BarChartComponent,

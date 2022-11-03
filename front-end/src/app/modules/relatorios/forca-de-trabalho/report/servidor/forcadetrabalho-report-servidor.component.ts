@@ -145,7 +145,7 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
           'descricaoPlano': (plano!.tipo_modalidade!.nome || "") + " - " + this.dao!.getDateFormatted(plano!.data_inicio_vigencia) + " a " + this.dao!.getDateFormatted(plano!.data_fim_vigencia) + " (" + plano!.unidade!.sigla + ")",
           'statusPlano': $metadados.concluido ? (plano.demandas.length ? 'CONCLUÍDO - estatísticas CONCLUSIVAS' : 'VAZIO - nenhuma demanda foi cadastrada neste Plano') : 'EM ANDAMENTO - estatísticas sujeitas a alterações',
           'horasUteisDecorridas': $horasUteisDecorridas,
-          'percentualDecorridoPlano': $metadados.horasUteisTotais ? Math.round($horasUteisDecorridas / $metadados.horasUteisTotais * 10000)/100 : 0,
+          'percentualDecorridoPlano': ($horasUteisDecorridas == -1 || $horasUteisDecorridas == -2) ? $horasUteisDecorridas : ($metadados.horasUteisTotais ? Math.round($horasUteisDecorridas / $metadados.horasUteisTotais * 10000)/100 : 0),
           'horasTotaisAlocadas': $horasTotaisAlocadas,
           'percentualHorasTotaisAlocadas': $metadados.horasUteisTotais ? Math.round($horasTotaisAlocadas / $metadados.horasUteisTotais * 10000)/100 : 0,
           'percentualHorasNaoIniciadas': $metadados.horasUteisTotais ? Math.round($metadados.horasDemandasNaoIniciadas / $metadados.horasUteisTotais * 10000)/100 : 0,

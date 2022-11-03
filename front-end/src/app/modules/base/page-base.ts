@@ -139,4 +139,8 @@ export abstract class PageBase implements OnInit, ModalPage {
   public getBackRoute(): FullRoute {
     return this.backRoute ? this.backRoute : this.breadcrumbs.length ? this.breadcrumbs[this.breadcrumbs.length-1] : {route: []};
   }
+
+  public close() {
+    this.go.back(undefined, this.backRoute);
+  }
 }

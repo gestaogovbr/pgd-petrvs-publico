@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Unidade;
 use App\Services\UnidadeService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
@@ -47,6 +48,34 @@ class UnidadeController extends ControllerBase {
             return response()->json([
                 'success' => true,
                 'metadadosArea' => $this->service->metadadosArea($data["unidade_id"], $data["programa_id"])
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function mesmaSigla(Request $request) {
+        try {
+            if (!Auth::user()->hasPermissionTo('MOD_UND_UNIR')) throw new ServerException("ValidateUnidade", "Usuário precisa ter capacidade MOD_UND_UNIR");
+            //$data = $request->validate([]);
+            return response()->json([
+                'success' => true,
+                'rows' => $this->service->mesmaSigla($this->getUnidade($request)->entidade_id)
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function unificar(Request $request) {
+        try {
+            if (!Auth::user()->hasPermissionTo('MOD_UND_UNIR')) throw new ServerException("ValidateUnidade", "Usuário precisa ter capacidade MOD_UND_UNIR");
+            $data = $request->validate([
+                'correspondencias' => ['array'],
+                'exclui' => ['required']
+            ]);
+            return response()->json([
+                'success' => $this->service->unificar($data["correspondencias"], $data["exclui"])
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);

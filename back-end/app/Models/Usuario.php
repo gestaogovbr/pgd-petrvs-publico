@@ -38,45 +38,47 @@ class Usuario extends Authenticatable
 {
     use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, AutoDataInicio;
 
-    protected $keyType = 'string';
+    protected $table = "usuarios";
 
     protected $with = ['perfil'];
 
-    public $incrementing = false;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    public $fillable = [
-        'password',
-        'nome',
-        'email',
-        'email_verified_at',
-        'cpf',
-        'matricula',
-        'apelido',
-        'telefone',
-        'sexo',
-        'config',
-        'notificacoes',
-        'data_inicio',
-        //'data_fim',
-        'id_google',
-        //'url_foto',
-        'vinculacao',
-        'perfil_id',
-        //'foto_perfil',
-        //'foto_google',
-        //'foto_microsoft',
-        //'foto_firebase',
-        'uf'
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'nome', /* varchar(256); NOT NULL; */// Nome do usuário
+        'email', /* varchar(100); NOT NULL; */// Email do usuário
+        'email_verified_at', /* timestamp; */
+        'cpf', /* varchar(14); NOT NULL; */// CPF do usuário
+        'matricula', /* varchar(10); */// Matrícula funcional do usuário
+        'apelido', /* varchar(100); NOT NULL; */// Apelido/Nome de guerra/Nome social
+        'telefone', /* varchar(50); */// Telefone do usuário
+        'sexo', /* enum('MASCULINO','FEMININO'); */
+        'config', /* json; */
+        'notificacoes', /* json; */// Configurações das notificações (Se envia email, whatsapp, tipos, templates)
+        'data_inicio', /* datetime; NOT NULL; */
+        'id_google', /* varchar(50); */// Id associado com o usuário do login do google
+        'vinculacao', /* enum('SERVIDOR_EFETIVO','SERVIDOR_COMISSIONADO','EMPREGADO','CONTRATADO_TEMPORARIO'); NOT NULL; DEFAULT: 'SERVIDOR_EFETIVO'; */// Vinculo do usuário com a administração
+        'perfil_id', /* char(36); */
+        'uf', /* char(2); */// UF do usuário
+        //'remember_token', /* varchar(100); */
+        //'password', /* varchar(255); */
+        //'data_fim', /* datetime; */
+        //'url_foto', /* varchar(255); */// Url da foto do usuário (temporário)
+        //'metadados', /* json; */// Metadados
+        //'foto_perfil', /* text; */// Foto padrão do perfil
+        //'foto_google', /* text; */// Foto do G-Suit (Google)
+        //'foto_microsoft', /* text; */// Foto do Azure (Microsoft)
+        //'foto_firebase', /* text; */// Foto do Firebase (Google, Facebook, Instagram, Twiter, etc...)
+        //'projeto_id', /* char(36); */
+        //'projeto_tarefa_id', /* char(36); */
+        //'id_super', /* text; */// Id do usuário no SUPER
     ];
 
     public $fillable_changes = [
         'lotacoes'
     ];
+
+    protected $keyType = 'string';
+
+    public $incrementing = false;
 
     /**
      * The attributes that should be hidden for arrays.

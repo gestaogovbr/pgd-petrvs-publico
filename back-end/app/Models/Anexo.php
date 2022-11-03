@@ -8,19 +8,19 @@ use App\Models\Comentario;
 
 class Anexo extends ModelBase
 {
-    protected $with = [];
-    
-    public $fillable = [
-        'nome',
-        'descricao',
-        'data_hora',
-        'path',
-        'base64',
-        'usuario_id',
-        'comentario_id'
-    ];
-
     protected $table = 'anexos';
+
+    protected $with = [];
+
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'nome', /* varchar(256); NOT NULL; */// Nome do arquivo com extensão
+        'descricao', /* varchar(256); NOT NULL; */// Descrição do anexo
+        'data_hora', /* datetime; NOT NULL; */// Data e horário que foi feito o comentário
+        'path', /* varchar(256); */// Path relativo do arquivo
+        'base64', /* text; */// Arquivo em formato base64
+        'usuario_id', /* char(36); */
+        'comentario_id', /* char(36); */
+    ];
    
     // Belongs
     public function usuario() { return $this->belongsTo(Usuario::class, 'usuario_id'); }    

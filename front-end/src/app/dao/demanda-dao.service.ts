@@ -53,7 +53,11 @@ export class DemandaDaoService extends DaoBaseService<Demanda> {
   public iniciar(demanda: any): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/iniciar', this.prepareToSave(demanda)).subscribe(response => {
-        resolve(!!response?.success);
+        if(response.error){
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }        
       }, error => reject(error));
     });
   }
@@ -61,7 +65,11 @@ export class DemandaDaoService extends DaoBaseService<Demanda> {
   public concluir(demanda: any): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/concluir', this.prepareToSave(demanda)).subscribe(response => {
-        resolve(!!response?.success);
+        if(response.error){
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }        
       }, error => reject(error));
     });
   }
@@ -69,7 +77,11 @@ export class DemandaDaoService extends DaoBaseService<Demanda> {
   public avaliar(avaliacao: any): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/avaliar', this.prepareToSave(avaliacao)).subscribe(response => {
-        resolve(!!response?.success);
+        if(response.error){
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }        
       }, error => reject(error));
     });
   }
@@ -77,7 +89,11 @@ export class DemandaDaoService extends DaoBaseService<Demanda> {
   public pausar(pausa: any): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/pausar', this.prepareToSave(pausa)).subscribe(response => {
-        resolve(!!response?.success);
+        if(response.error){
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }        
       }, error => reject(error));
     });
   }
@@ -85,7 +101,11 @@ export class DemandaDaoService extends DaoBaseService<Demanda> {
   public reiniciar(pausa: any): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/reiniciar', this.prepareToSave(pausa)).subscribe(response => {
-        resolve(!!response?.success);
+        if(response.error){
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }        
       }, error => reject(error));
     });
   }
@@ -93,7 +113,11 @@ export class DemandaDaoService extends DaoBaseService<Demanda> {
   public cancelarInicio(demanda_id: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/cancelar-inicio', {id: demanda_id}).subscribe(response => {
-        resolve(!!response?.success);
+        if(response.error){
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }        
       }, error => reject(error));
     });
   }
@@ -101,7 +125,11 @@ export class DemandaDaoService extends DaoBaseService<Demanda> {
   public cancelarConclusao(demanda_id: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/cancelar-conclusao', {id: demanda_id}).subscribe(response => {
-        resolve(!!response?.success);
+        if(response.error){
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }        
       }, error => reject(error));
     });
   }
@@ -109,7 +137,11 @@ export class DemandaDaoService extends DaoBaseService<Demanda> {
   public cancelarAvaliacao(demanda_id: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/cancelar-avaliacao', {id: demanda_id}).subscribe(response => {
-        resolve(!!response?.success);
+        if(response.error){
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }        
       }, error => reject(error));
     });
   }
@@ -117,7 +149,11 @@ export class DemandaDaoService extends DaoBaseService<Demanda> {
   public prorrogar(prorrogar: any): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/prorrogar', this.prepareToSave(prorrogar)).subscribe(response => {
-        resolve(!!response?.success);
+        if(response.error){
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }        
       }, error => reject(error));
     });
   }
@@ -125,7 +161,11 @@ export class DemandaDaoService extends DaoBaseService<Demanda> {
   public arquivar(demanda_id: string, arquivar: boolean): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/arquivar', {id: demanda_id, arquivar: arquivar}).subscribe(response => {
-        resolve(!!response?.success);
+        if(response.error){
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }        
       }, error => reject(error));
     });
   }

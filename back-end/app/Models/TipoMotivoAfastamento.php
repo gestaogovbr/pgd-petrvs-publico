@@ -10,19 +10,22 @@ use App\Models\Afastamento;
 class TipoMotivoAfastamento extends ModelBase
 {
     use AutoDataInicio, HasDataFim;
-    
-    public $fillable = [
-        'codigo',
-        'nome',
-        'icone',
-        'cor',
-        'horas',
-        'integracao',
-        'data_inicio',
-        //'data_fim'
-    ];
 
     protected $table = 'tipos_motivos_afastamentos';
+
+    protected $with = [];
+
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'codigo', /* varchar(50); */// Código do afastamento
+        'nome', /* varchar(256); NOT NULL; */// Nome do motivo de afastamento
+        'icone', /* varchar(100); NOT NULL; */// Class do icone relacionado ao afastamento
+        'cor', /* varchar(100); NOT NULL; */// Código da cor em formato hex
+        'horas', /* tinyint; NOT NULL; */// Se o afastamento é medido em horas
+        'integracao', /* tinyint; NOT NULL; */// Se o tipo de motivo de afastamento é integrado a outro sistema
+        'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
+        //'data_fim', /* datetime; */// Data final da vigência
+    ];
+
     // Has
     public function afastamentos() { return $this->hasMany(Afastamento::class, 'tipo_motivo_afastamento_id'); }    
 }

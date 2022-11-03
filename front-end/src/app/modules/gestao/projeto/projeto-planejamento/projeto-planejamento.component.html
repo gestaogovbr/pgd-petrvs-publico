@@ -8,17 +8,6 @@
             <badge *ngFor="let status of getStatus(card.data, metadata)" [color]="getStatusColor(status)" [icon]="status.icon" [label]="status.value"></badge>
         </div>
         <separator title="Comentários" small [button]="addComentarioButton"></separator>
-        <!--span *ngFor="let comentario of card.data.comentarios" #badge class="badge bg-light text-dark comentario-badge" role="button" (click)="comentarioClick(badge)" data-expanded="false" data-bs-toggle="tooltip" data-bs-placement="top" [title]="lookup.getValue(lookup.COMENTARIO_TIPO, comentario.tipo)">
-            {{"• ".repeat(comentario.path?.includes("/") ? comentario.path.split("/").length-1 : 0)}}
-            <i [class]="'me-1 ' + lookup.getIcon(lookup.COMENTARIO_TIPO, comentario.tipo)"></i>
-            <span class="comentario-title">
-                <strong>{{util.shortName(util.apelidoOuNome(comentario.usuario)!)}}</strong>
-                • {{util.getDateTimeFormatted(comentario.data_hora)}}<br>
-            </span>
-            <span class="comentario-text">
-                {{comentario.texto}}
-            </span>
-        </span/-->
     </ng-container>
 </ng-template>
 <ng-template #editDocker>

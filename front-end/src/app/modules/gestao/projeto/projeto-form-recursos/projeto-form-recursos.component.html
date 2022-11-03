@@ -8,7 +8,7 @@
 
   <separator title="Lista de recuros"></separator>
   <div class="row">
-    <grid [hasDelete]="true">
+    <grid [items]="items" [hasDelete]="true">
       <columns>
           <column [title]="lex.noun('Tipo') + ' do Recurso'" [template]="tarefaDescricao">
               <ng-template let-row="row" #tarefaDescricao>

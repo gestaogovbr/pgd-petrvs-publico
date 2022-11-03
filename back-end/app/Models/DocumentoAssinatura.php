@@ -9,11 +9,13 @@ class DocumentoAssinatura extends ModelBase
 {
     protected $table = 'documentos_assinaturas';
 
-    public $fillable = [
-        'data_hora',
-        'assinatura',
-        'documento_id',
-        'usuario_id'
+    protected $with = [];
+
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'data_hora', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data hora do início da sessão
+        'assinatura', /* text; NOT NULL; */// Hash da assinatura
+        'documento_id', /* char(36); NOT NULL; */
+        'usuario_id', /* char(36); NOT NULL; */
     ];
 
     // Has
