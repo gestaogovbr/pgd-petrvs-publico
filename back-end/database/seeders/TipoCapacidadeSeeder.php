@@ -17,7 +17,7 @@ class TipoCapacidadeSeeder extends Seeder
      */
     public function run()
     {
-        TipoCapacidade::whereIn('codigo',['MOD_LOGS_CONS','MOD_LOGS_EDT','MOD_LOGS_EXCL'])->delete(); //apaga capacidades inseridas indevidamente
+        //TipoCapacidade::whereIn('codigo',['MOD_LOGS_CONS','MOD_LOGS_EDT','MOD_LOGS_EXCL'])->delete(); //apaga capacidades inseridas indevidamente
         $tiposCapacidadesService = new TipoCapacidadeService();
         // carrega os tipos de capacidades do vetor declarado no serviço TipoCapacidadeService
          $dadosTiposCapacidades = $tiposCapacidadesService->tiposCapacidades;
