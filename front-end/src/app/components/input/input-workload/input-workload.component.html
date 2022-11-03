@@ -1,7 +1,7 @@
 <input-container [labelPosition]="labelPosition" [controlName]="controlName" [control]="control" [loading]="false" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
     <div class="input-group">
         <input *ngIf="viewInit" #inputElement type="number" class="form-control" [formControl]="workControl" [id]="generatedId(controlName)" [class.is-invalid]="isInvalid()" 
-            [readonly]="isDisabled" [attr.aria-describedby]="controlName+'_button'" (change)="onChange($event)" min="0" [attr.max]="maxValue">
+            [readonly]="isDisabled" [attr.aria-describedby]="controlName+'_button'" (change)="onChange($event)" min="0" [attr.max]="isDaysOrHours ? undefined : maxValue">
         <button class="btn btn-outline-secondary" [class.disabled]="isDisabled" type="button" [id]="generatedId(controlName) + '_button'" (click)="onButtonClick($event)">
             <i [class]="iconWork"></i>
             {{unitWork}}

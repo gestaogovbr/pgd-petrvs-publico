@@ -7,6 +7,7 @@ import { ProjetoAlocacao } from './projeto-alocacao.model';
 import { ProjetoTarefa } from './projeto-tarefa.model';
 import { KanbanDocker } from '../components/kanban/kanban.component';
 import { Comentario, HasComentarios } from './comentario';
+import { Expediente } from './expediente.model';
 
 export type ProjetoStatus = 'PLANEJADO' | 'INICIADO' | 'CONCLUIDO' | 'SUSPENSO' | 'CANCELADO';
 
@@ -61,8 +62,9 @@ export class Projeto extends Base implements HasComentarios, HasAlocacoes, HasTa
     public soma_custos_filhos: boolean = true; /* Se possui custos filhos */
     public duracao: number = 0.00; /* Duração do projeto */
     public progresso: number = 0.00; /* Percentual de progresso do projeto */
+    public expediente: Expediente | null = null; /* Configuração do expediente */
     public usuario_id: string | null = null;
-    public tipo_projeto_id: string = "";
+    public tipo_projeto_id: string | null = null;
     public kanban_dockers: KanbanDocker[] = [];
     public comentarios: Comentario[] = []; /* Comentarios do projeto */
 

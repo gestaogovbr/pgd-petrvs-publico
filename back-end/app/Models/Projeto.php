@@ -42,11 +42,12 @@ class Projeto extends ModelBase
         'duracao', /* double(8,2); NOT NULL; */// Duração do projeto
         'progresso', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */// Percentual de progresso do projeto
         'usuario_id', /* char(36); */
-        'tipo_projeto_id', /* char(36); NOT NULL; */
+        'tipo_projeto_id', /* char(36); */
         'kanban_dockers', /* json; */
         //'numero', /* int; NOT NULL; */// Número do projeto (Gerado pelo sistema)
         //'data_inicio', /* datetime; NOT NULL; */// Data de criação
         //'data_fim', /* datetime; */// Data final do registro
+        //'expediente', /* json; */// Configuração de expediente
     ];
 
     /*public $fillable_changes = [

@@ -5,6 +5,7 @@ import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { Projeto } from 'src/app/models/projeto.model';
 import { ProjetoDaoService } from 'src/app/dao/projeto-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
+import { UnitWorkload } from 'src/app/components/input/input-workload/input-workload.component';
 @Component({
   selector: 'projeto-form-principal',
   templateUrl: './projeto-form-principal.component.html',
@@ -30,20 +31,28 @@ export class ProjetoFormPrincipalComponent extends PageFrameBase {
       progresso: {default: 0},
       tempo_corrido: {default: true},
       usa_horas: {default: false},
-      intervalo_automatico: {default: true},
+      intervalo_automatico: {default: false},
       progresso_automatico: {default: true},
       agrupador: {default: false},
       usa_custo: {default: true},
       aloca_recursos_projeto: {default: true},
       soma_alocacoes_automatico: {default: true},
       possui_custos_projeto: {default: true},
-      soma_custos_automatico: {default: true}
+      soma_custos_automatico: {default: true},
+      fase_id: {default: ""}
     }, this.cdRef, this.validate);
     this.join = ["projeto_recurso", "projeto_tarefa", "projeto_alocacao","projeto_regra","projeto_envolvido"];
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
+
+    if((controlName == "nome" && !control.value?.length) || 
+      (controlName == "fator_complexidade" && !(control.value > 0)) ||
+      (controlName == "data_entrega" && !this.util.isDataValid(control.value))) {
+      result = "Obrigatório";
+    }
+    
     return result;
   }
   
@@ -61,6 +70,23 @@ export class ProjetoFormPrincipalComponent extends PageFrameBase {
     return new Promise<Projeto>((resolve, reject) => {
       resolve(this.util.fillForm(this.entity, this.form!.value));
     });
+  }
+
+  public get unitDuracao(): "hour" | "day" {
+    return this.form?.controls.usa_horas.value ? "hour" : "day";
+  }
+
+  public onUnitDuracaoChange(unit: UnitWorkload) {
+    this.form?.controls.usa_horas.setValue(unit == "hour");
+    this.cdRef.detectChanges();
+  }
+
+  public onIntervaloAutomaticoChange(event: Event) {
+    this.cdRef.detectChanges();
+  }
+
+  public get intervaloAutomatico(): string | undefined {
+    return this.form?.controls.intervalo_automatico.value ? "true" : undefined;
   }
 
 }

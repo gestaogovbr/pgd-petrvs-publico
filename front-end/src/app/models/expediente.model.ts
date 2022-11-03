@@ -1,5 +1,6 @@
 export type Turno = {
     data?: Date;
+    sem?: boolean;
     inicio: string;
     fim: string;
 }

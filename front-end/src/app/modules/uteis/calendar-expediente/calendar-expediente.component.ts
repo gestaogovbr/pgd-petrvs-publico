@@ -53,6 +53,7 @@ export class CalendarExpedienteComponent implements OnInit {
       especial_inicio: {default: ""},
       especial_fim: {default: ""},
       especial_data: {default: null},
+      especial_sem: {default: false}
     });
   }
 
@@ -100,6 +101,7 @@ export class CalendarExpedienteComponent implements OnInit {
     const inicio = this.form.controls[dia + "_inicio"].value;
     const fim = this.form.controls[dia + "_fim"].value;
     const data = this.form.controls.especial_data.value;
+    const sem = this.form.controls.especial_sem.value;
     const key = this.util.textHash((dia == "especial" ? this.util.getDateFormatted(data) : "") + dia + inicio + fim);
     if(this.util.isTimeValid(inicio) && this.util.isTimeValid(fim) && (dia != "especial" || data) && this.util.validateLookupItem(this.form.controls[dia].value, key)) {
       result = {
@@ -109,12 +111,16 @@ export class CalendarExpedienteComponent implements OnInit {
           dia: dia,
           inicio: inicio,
           fim: fim,
-          data: data
+          data: data,
+          sem: sem
         }  
       };
       this.form.controls[dia + "_inicio"].setValue("");
       this.form.controls[dia + "_fim"].setValue("");
-      if(dia == "especial") this.form.controls[dia + "_data"].setValue(null);
+      if(dia == "especial") {
+        this.form.controls[dia + "_data"].setValue(null);
+        this.form.controls[dia + "_sem"].setValue(false);
+      }
     }
     return result;
   };
