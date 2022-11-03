@@ -12,26 +12,29 @@ use App\Traits\HasDataFim;
 class Documento extends ModelBase
 {
     use AutoDataInicio, HasDataFim;
+
     protected $table = 'documentos';
 
-    public $fillable = [
-        'numero',
-        'especie',
-        'conteudo',
-        'assinatura',
-        'metadados',
-        'entidade_id',
-        'plano_id',
-        'id_processo',
-        'numero_processo',
-        'id_documento',
-        'data_inicio',
-        //'data_fim',
-        'numero_documento',
-        'titulo_documento',
-        'tipo_documento_id',
-        'tipo_processo_id',
-        'status'
+    protected $with = [];
+
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'numero', /* int; NOT NULL; */// Número do documento (Gerado pelo sistema)
+        'especie', /* enum('TERMO_ADESAO','SEI'); NOT NULL; */// Especificação da espécie do documento (interno do sistema)
+        'conteudo', /* longtext; */// Conteúdo do arquivo
+        'assinatura', /* json; */// Dados da assinatura, se nulo não está assinado
+        'metadados', /* json; */// Metadados
+        'entidade_id', /* char(36); */
+        'plano_id', /* char(36); */
+        'id_processo', /* int; */// ID do processo de entrega, caso seja Sei será o ID do procedimento
+        'numero_processo', /* varchar(50); */// Número do processo de entrega, com a formatação de origem
+        'id_documento', /* int; */// ID da entrega, caso seja o Sei será o ID_Documento
+        'data_inicio', /* datetime; NOT NULL; */// Data inicio do documento
+        'numero_documento', /* varchar(11); */// Numero do documento de entrega, caso seja o Sei é o numero Sei
+        'titulo_documento', /* text; */// Numeração do tipo de documento no sistema integrado
+        'tipo_documento_id', /* char(36); */
+        'tipo_processo_id', /* char(36); */
+        'status', /* enum('GERADO','AGUARDANDO_SEI'); NOT NULL; DEFAULT: 'GERADO'; */// Status do documento: GERADO (documento gerado); AGUARDANDO_SEI (Aguardando abrir o documento no sei para colar o conteúdo dentro)
+        //'data_fim', /* datetime; */// Data fim
     ];
 
     public $delete_cascade = ['assinaturas'];

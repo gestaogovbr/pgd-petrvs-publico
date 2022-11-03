@@ -48,6 +48,7 @@ export class Unidade extends Base {
     public etiquetas: LookupItem[] = []; //Configuração das etiquetas que serão utilizadas nas demandas (comtém nome, icone e cor)
     public data_inicio: Date = new Date(); //Data inicio da vigência
     public data_fim: Date | null = null; //Data final da vigência
+    public inativo: Date | null = null; //Se a unidade está inativa
     public unidades_origem_atividades: UnidadeOrigemAtividade[] = [];
 
     public unidade_id: string | null = null; //Unidade superior (nó pai hierárquico)

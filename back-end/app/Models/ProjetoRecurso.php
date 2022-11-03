@@ -16,17 +16,19 @@ class ProjetoRecurso extends ModelBase
 
     protected $table = 'projetos_recursos';
 
-    public $fillable = [
-        'nome', 
-        'tipo', 
-        'unidade_medida', 
-        'valor', 
-        'data_inicio', 
-        'data_fim',         
-        'projeto_id',
-        'usuario_id',
-        'unidade_id',
-        'material_servico_id'
+    protected $with = [];
+
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'nome', /* varchar(256); NOT NULL; */// Nome do recurso
+        'tipo', /* enum('HUMANO','MATERIAL','SERVICO','CUSTO','DEPARTAMENTO'); NOT NULL; */// Tipo do recurso
+        'unidade_medida', /* enum('UNIDADE','CAIXA','METRO','KILO','LITRO','DUZIA','MONETARIO','HORAS','DIAS','PACOTE'); NOT NULL; */// Unidade do recurso
+        'valor', /* decimal(15,2); NOT NULL; */// Valor
+        'data_inicio', /* datetime; NOT NULL; */// Data de criação
+        'data_fim', /* datetime; */// Data final do registro
+        'projeto_id', /* char(36); NOT NULL; */
+        'usuario_id', /* char(36); */
+        'unidade_id', /* char(36); */
+        'material_servico_id', /* char(36); */
     ];
 
     /*public $fillable_changes = [

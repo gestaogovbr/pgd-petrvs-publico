@@ -8,13 +8,16 @@ use App\Traits\AutoDataInicio;
 
 class DemandaPausa extends ModelBase
 {
-    public $fillable = [
-        'data_inicio',
-        'data_fim',
-        'demanda_id'
+    protected $table = 'demandas_pausas';
+
+    protected $with = [];
+
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'data_inicio', /* datetime; NOT NULL; */// Data inicio da pausa
+        'data_fim', /* datetime; */// Data de retorno
+        'demanda_id', /* char(36); NOT NULL; */
     ];
     
-    protected $table = 'demandas_pausas';
     // Belongs
     public function demanda() { return $this->belongsTo(Demanda::class); }    
 }

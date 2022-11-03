@@ -83,7 +83,10 @@ export class InputDatetimeComponent extends InputBase implements OnInit {
 
   public updateInputs() {
     if(this.dateInput) this.dateInput.nativeElement.value = this.getDateValue();
-    if(this.hasTimeInput) this.timeInput!.nativeElement.value = this.getTimeValue();
+    if(this.hasTimeInput) {
+      this.timeInput!.nativeElement.value = this.getTimeValue();
+      this.timeInput!.nativeElement.dispatchEvent(new Event("input"));
+    }
     this.cdRef.detectChanges();
   }
 

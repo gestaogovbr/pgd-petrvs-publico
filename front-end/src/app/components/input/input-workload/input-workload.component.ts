@@ -2,7 +2,7 @@ import { Component, ElementRef, EventEmitter, HostBinding, Injector, Input, OnIn
 import { AbstractControl, ControlContainer, FormControl, FormGroup, FormGroupDirective } from '@angular/forms';
 import { InputBase, LabelPosition } from '../input-base';
 
-export type UnitWorkload = "day" | "week" | "mouth";
+export type UnitWorkload = "hour" | "day" | "week" | "mouth";
 
 @Component({
   selector: 'input-workload',
@@ -33,6 +33,7 @@ export class InputWorkloadComponent extends InputBase implements OnInit {
   @Input() form?: FormGroup;
   @Input() source?: any;
   @Input() path?: string;
+  @Input() daysOrHours?: string;
   @Input() maxLength?: number;
   @Input() unitChange?: (newUnit: UnitWorkload) => void;
   @Input() set unit(value: UnitWorkload) {
@@ -61,10 +62,6 @@ export class InputWorkloadComponent extends InputBase implements OnInit {
     super(injector);
   }
 
-  ngOnInit(): void {
-    super.ngOnInit();
-  }
-
   ngAfterViewInit() {
     super.ngAfterViewInit();
     if(this.control) {
@@ -74,18 +71,22 @@ export class InputWorkloadComponent extends InputBase implements OnInit {
   }
 
   public onButtonClick(event: Event) {
-    const next: UnitWorkload = this.unit == "day" ? "week" : this.unit == "week" ? "mouth" : "day";
+    const next: UnitWorkload = this.isDaysOrHours ? (this.unit == "day" ? "hour" : "day") : (this.unit == "day" ? "week" : this.unit == "week" ? "mouth" : "day");
     console.log(this.unit, next);
     this.unit = next;
     if(this.unitChange) this.unitChange(next);
   }
 
+  public get isDaysOrHours(): boolean {
+    return this.daysOrHours != undefined;
+  }
+
   public get iconWork(): string {
-    return this.unit == "day" ? "bi bi-calendar3-event" : this.unit == "week" ? "bi bi-calendar3-week" : "bi bi-calendar3";
+    return this.unit == "hour" ? "bi bi-clock" : this.unit == "day" ? "bi bi-calendar3-event" : this.unit == "week" ? "bi bi-calendar3-week" : "bi bi-calendar3";
   }
 
   public get unitWork(): string {
-    return this.unit == "day" ? "h/dia" : this.unit == "week" ? "h/semana" : "h/mês";
+    return this.unit == "hour" ? "horas" : this.unit == "day" ? (this.isDaysOrHours ? "dias" : "h/dia") : this.unit == "week" ? "h/semana" : "h/mês";
   }
 
   public onChange(event: Event) {
@@ -94,13 +95,13 @@ export class InputWorkloadComponent extends InputBase implements OnInit {
   }
 
   public valueToWork() {
-    const factor = this.unit == "day" ? 1 : this.unit == "week" ? 5 : 20;
+    const factor = ["hour", "day"].includes(this.unit) ? 1 : this.unit == "week" ? 5 : 20;
     const value = this.control ? this.control.value * factor : this.value * factor;
     if(this.workControl.value != value) this.workControl.setValue(value);
   }
 
   public workToValue() {
-    const factor = this.unit == "day" ? 1 : this.unit == "week" ? 5 : 20;
+    const factor = ["hour", "day"].includes(this.unit) ? 1 : this.unit == "week" ? 5 : 20;
     const value = this.workControl.value / factor;
     if(this.control) {
       if(this.control.value != value) this.control.setValue(value);

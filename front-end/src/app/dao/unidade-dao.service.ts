@@ -23,7 +23,7 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
 
   public metadadosArea(unidade_id: String, programa_id: String): Promise<AreaRelatorio> {
     return new Promise<AreaRelatorio>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/metadadosArea', {unidade_id, programa_id}).subscribe(response => {
+      this.server.post('api/' + this.collection + '/metadados-area', {unidade_id, programa_id}).subscribe(response => {
         resolve(response?.metadadosArea || []);
       }, error => reject(error));
     });
@@ -38,6 +38,23 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
       } else {
         resolve(null);
       }
+    });
+  }
+
+  /* Retorna todas as unidades que têm a mesma sigla da entidade atual */
+  public mesmaSigla() {
+    return new Promise<Unidade[]>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/mesma-sigla', {}).subscribe(response => {
+        resolve(response?.rows || []);
+      }, error => reject(error));
+    });
+  }
+
+  public unificar(correspondencias: {unidade_origem_id: string, unidade_destino_id: string}[], exclui: boolean) {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/unificar', {correspondencias, exclui}).subscribe(response => {
+        resolve(!!response?.success);
+      }, error => reject(error));
     });
   }
 }

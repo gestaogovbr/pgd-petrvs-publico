@@ -260,10 +260,8 @@ class IntegracaoService extends ServiceBase {
                     $xml = simplexml_load_string($xmlStream);
                     $uos = $this->UtilService->object2array($xml)["uorg"];
                 }
-
                 $sql = "INSERT INTO integracao_unidades(id_servo, pai_servo, codigo_siape, pai_siape, codupag, nomeuorg, siglauorg, telefone, email, natureza, fronteira, fuso_horario, cod_uop, cod_unidade, tipo, tipo_desc, na_rodovia, logradouro, bairro, cep, ptn_ge_coordenada, municipio_siafi_siape, municipio_siscom, municipio_ibge, municipio_nome, municipio_uf, ativa, regimental, datamodificacao, und_nu_adicional, cnpjupag) " .
                        "VALUES (:id_servo, :pai_servo, :codigo_siape, :pai_siape, :codupag, :nomeuorg, :siglauorg, :telefone, :email, :natureza, :fronteira, :fuso_horario, :cod_uop, :cod_unidade, :tipo, :tipo_desc, :na_rodovia, :logradouro, :bairro, :cep, :ptn_ge_coordenada, :municipio_siafi_siape, :municipio_siscom, :municipio_ibge, :municipio_nome, :municipio_uf, :ativa, :regimental, :datamodificacao, :und_nu_adicional, :cnpjupag)";
-
                 /* Apaga a tabela integracao_unidades e cria novamente com as unidades obtidas pelo webservice */
                 DB::transaction(function () use (&$uos, &$sql, &$self) {
                     /* Remove toda a lista da tabela temporária integracao_unidades */
@@ -307,7 +305,6 @@ class IntegracaoService extends ServiceBase {
                         }
                     }
                 });
-
                 /* Insere as unidades faltantes ou atualiza dados e seus respectivos pais */
                 // OBS.: Não vejo a diferença de usar :entidade_id para restringir as Unidades.
                 // OBS.: Essa rotina de integração vai rodar nos diversos servidores onde estarão instaladas a aplicação... então ela tem que atualizar
@@ -320,24 +317,20 @@ class IntegracaoService extends ServiceBase {
                     "LEFT JOIN unidades pl ON (pl.id = l.unidade_id) ".
                     "LEFT JOIN unidades p ON (u.pai_servo = p.codigo) ".  // && p.entidade_id = :entidade_id_p) ".
                     "LEFT JOIN cidades c ON (u.municipio_ibge = c.codigo_ibge) ".
-                    "WHERE (l.id is null OR u.nomeuorg != l.nome OR u.siglauorg != l.sigla OR u.pai_servo != pl.codigo) ".
-                    "AND u.email like '%@prf.gov.br' AND u.ativa = 'true'";      // Por enquanto estou usando o e-mail até discutir com o Inspetor Genisson
-
+                    "WHERE (l.id is null OR u.nomeuorg != l.nome OR u.siglauorg != l.sigla OR u.pai_servo != pl.codigo) AND u.ativa = 'true'";
                 // OBS.: Pode haver casos em que só foi alterado o pai da Unidade (OR u.pai_servo != pl.codigo)
                 // OBS.: Existem Unidades repetidas na tabela INTEGRACAO UNIDADES, umas ativas e outras não, com ID_SERVO distintos
                 $this->unidadesSelecionadas = DB::select($consulta_sql);  //, [':entidade_id_l' => $entidade, ':entidade_id_p' => $entidade]);
-
                 //OBS.: não seria interessante incluir o e-mail na tabela UNIDADES?
-
                 DB::transaction(function () use (&$self, $entidade) {
-
                     // identifica a Unidade Raiz para cadastro de Atividades.
                     $this->unidadeRaiz = Unidade::where('codigo', $this->codigoUnidadeRaiz)->first();
-
                     foreach($self->unidadesSelecionadas as $unidade) {
                         $self->deepReplaceUnidades($unidade, $entidade);
                     }
-
+                    /* Seta inativo nas unidades que não existem em integracao_unidades e garante que não esteja inativo as que existem em integracao_unidades */
+                    DB::update("UPDATE unidades AS u SET inativo = NOW() WHERE NOT EXISTS (SELECT id FROM integracao_unidades i WHERE i.id_servo = u.codigo)");
+                    DB::update("UPDATE unidades AS u SET inativo = NULL WHERE inativo IS NOT NULL AND EXISTS (SELECT id FROM integracao_unidades i WHERE i.id_servo = u.codigo);");
                 });
                 $result["unidades"] = 'sucesso';
                 /* Unidades que foram removidas em integracao_unidades vão permanecer no sistema por questões de integridade */

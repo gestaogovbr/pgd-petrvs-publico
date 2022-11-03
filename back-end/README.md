@@ -1,3 +1,5 @@
+### Recomendações
+
 - Antes de iniciar o desenvolvimento, dar obrigatoriamente um pull no back e front (para cada funcionalidade implementada, cada ticket um commit)
 - build no front da aplicação (transpilar o front-end para a pasta public do back-end)
 - commit no back e front (obrigatório para permitir o pull)
@@ -7,3 +9,9 @@
 - npm run build-prf
 - commmit no back-end e no front-end
 - push no back-end e no front-end
+
+### Dicionário de dados
+- Campos de bando de dados com nome composto sempre usar "_" (não pode haver letras maísculas)
+- Propriedades de classes são sempre camelcase (exceto se for referente a campo de banco)
+- Funções são sempre camelcase
+- Propriedades do config (larevel) sempre são separados por "-"

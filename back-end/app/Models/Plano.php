@@ -17,25 +17,27 @@ class Plano extends ModelBase
 {
     use AutoDataInicio, HasDataFim;
 
-    public $fillable = [
-        'numero',
-        'carga_horaria',
-        'tempo_total',
-        'tempo_proporcional',
-        'data_inicio_vigencia',
-        'data_fim_vigencia',
-        'data_inicio',
-        //'data_fim',
-        'ganho_produtividade',
-        'programa_id',
-        'usuario_id',
-        'unidade_id',
-        'documento_id',
-        'tipo_modalidade_id',
-        'forma_contagem_carga_horaria'
-    ];
-
     protected $table = 'planos';
+
+    protected $with = [];
+
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'numero', /* int; NOT NULL; */// Número do plano (Gerado pelo sistema)
+        'carga_horaria', /* double; */// Carga horária diária do usuário
+        'tempo_total', /* double; */// Horas úteis de trabalho no período de data_inicio_vigencia à data_fim_vigencia considerando carga_horaria, feriados, fins de semana
+        'tempo_proporcional', /* double; */// tempo_total menos os afastamentos
+        'data_inicio_vigencia', /* datetime; NOT NULL; */// Inicio do plano
+        'data_fim_vigencia', /* datetime; NOT NULL; */// Fim do plano
+        'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
+        'ganho_produtividade', /* int; NOT NULL; */// Ganho de produtividade
+        'programa_id', /* char(36); NOT NULL; */
+        'usuario_id', /* char(36); NOT NULL; */
+        'unidade_id', /* char(36); NOT NULL; */
+        'documento_id', /* char(36); */
+        'tipo_modalidade_id', /* char(36); NOT NULL; */
+        'forma_contagem_carga_horaria', /* enum('DIA','SEMANA','MES'); NOT NULL; DEFAULT: 'DIA'; */// Forma de contagem padrão da carga horária
+        //'data_fim', /* datetime; */// Data fim da vigência
+    ];
 
     public $fillable_changes = ['atividades'];
 

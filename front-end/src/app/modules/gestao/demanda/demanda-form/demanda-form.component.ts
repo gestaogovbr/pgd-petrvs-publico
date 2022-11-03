@@ -164,7 +164,7 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
     return this.action == "clonar";
   }
 
-  public get tituloDemanda(): string {
+  public get titleDemanda(): string {
     return this.form?.controls.numero?.value ? "#" + this.form?.controls.numero?.value : "";
   }
 
@@ -206,9 +206,9 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
     } else if(["data_distribuicao", "prazo_entrega"].includes(controlName)) {
       if (!this.util.isDataValid(control.value)) {
         result = "Data inválida";
-      } else if(controlName == "data_distribuicao" && control.value.getTime() > this.form?.controls.prazo_entrega.value.getTime()) {
+      } else if(controlName == "data_distribuicao" && control.value && control.value.getTime() > this.form?.controls.prazo_entrega.value.getTime()) {
         result = "Maior que entrega";
-      } else if(controlName == "prazo_entrega" && control.value.getTime() < this.form?.controls.data_distribuicao.value.getTime()) {
+      } else if(controlName == "prazo_entrega" && control.value && control.value.getTime() < this.form?.controls.data_distribuicao.value.getTime()) {
         result = "Menor que distribuição";
       }
     } else if(controlName == "plano_id" && !control.value?.length && this.form?.controls?.usuario_id.value?.length) {

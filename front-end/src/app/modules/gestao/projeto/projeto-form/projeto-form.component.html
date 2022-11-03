@@ -1,7 +1,10 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
-    <tabs display right>
+    <tabs display right [title]="titleProjeto">
         <tab key="PRINCIPAL" label="Principal">
             <projeto-form-principal #principal [entity]="entity"></projeto-form-principal>
+        </tab>
+        <tab key="FASES" label="Fases">
+            <projeto-form-fases #fases [entity]="entity"></projeto-form-fases>
         </tab>
         <tab key="ALOCACOES" label="Alocações">
             <projeto-form-alocacoes #alocacoes [entity]="entity"></projeto-form-alocacoes>

@@ -11,9 +11,11 @@ class Error extends Model
 
     protected $connection = 'log';
 
-    public $timestamps = false;
+    protected $table = 'errors';
 
-    protected $fillable = [
+    protected $with = [];
+
+    public $fillable = [
         'date_time',
         'user',
         'message',
@@ -21,6 +23,8 @@ class Error extends Model
         'trace',
         'type'
     ];
+
+    public $timestamps = false;
 
     protected $casts = [
         'data_hora' => 'datetime',

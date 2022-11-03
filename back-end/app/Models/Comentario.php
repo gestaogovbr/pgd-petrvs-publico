@@ -10,24 +10,24 @@ use App\Models\ProjetoTarefa;
 
 class Comentario extends ModelBase
 {
-    protected $with = [];
-    
-    public $fillable = [
-        'texto',
-        'path',
-        'data_hora',
-        'tipo',
-        'privacidade',
-        'usuario_id',
-        'comentario_id',
-        'demanda_id',
-        'demanda_entrega_id',
-        'projeto_id',
-        'projeto_tarefa_id'
-    ];
-
     protected $table = 'comentarios';
    
+    protected $with = [];
+
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'texto', /* text; NOT NULL; */// Texto do comentário
+        'path', /* text; */// Path dos ids dos comentários
+        'data_hora', /* datetime; NOT NULL; */// Data e horário que foi feito o comentário
+        'tipo', /* enum('COMENTARIO','TECNICO','GERENCIAL','AVALIACAO','TAREFA','ATIVIDADE'); NOT NULL; DEFAULT: 'COMENTARIO'; */// Tipo do comentário
+        'privacidade', /* enum('PUBLICO','PRIVADO'); NOT NULL; DEFAULT: 'PUBLICO'; */// Nível de acesso ao comentário
+        'usuario_id', /* char(36); NOT NULL; */
+        'comentario_id', /* char(36); */
+        'demanda_id', /* char(36); */
+        'demanda_entrega_id', /* char(36); */
+        'projeto_id', /* char(36); */
+        'projeto_tarefa_id', /* char(36); */
+    ];
+
     public $delete_cascade = ['comentarios'];
 
     // Has

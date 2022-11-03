@@ -13,18 +13,14 @@ class TipoProjeto extends ModelBase
 
     protected $table = 'tipos_projetos';
 
-    /*public $fillable_changes = [
-    ];
+    protected $with = [];
 
-    public $fillable_relations = [
-    ];*/
-
-    public $fillable = [
-        'nome',
-        'icone',
-        'cor',
-        //'data_inicio',
-        //'data_fim'
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'nome', /* varchar(256); NOT NULL; */// Descrição do tipo da projeto
+        'icone', /* varchar(100); NOT NULL; */// Classe do icone
+        'cor', /* varchar(100); NOT NULL; */// Código da cor em hex
+        //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
+        //'data_fim', /* datetime; */// Data final da vigência
     ];
 
     //public $delete_cascade = [];

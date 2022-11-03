@@ -8,19 +8,18 @@ use App\Models\TipoMotivoAfastamento;
 
 class Afastamento extends ModelBase
 {
-
-    protected $with = [];
-    
-    public $fillable = [
-        'observacoes',
-        'inicio_afastamento',
-        'fim_afastamento',
-        'usuario_id',
-        'tipo_motivo_afastamento_id'
-    ];
-
     protected $table = 'afastamentos';
    
+    protected $with = [];
+
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'observacoes', /* text; */// Observação sobre o afastamento
+        'inicio_afastamento', /* datetime; NOT NULL; */// Inicio do afastamento
+        'fim_afastamento', /* datetime; NOT NULL; */// Fim do afastamento
+        'usuario_id', /* char(36); NOT NULL; */
+        'tipo_motivo_afastamento_id', /* char(36); */
+    ];
+
     // Belongs
     public function usuario() { return $this->belongsTo(Usuario::class, 'usuario_id'); }    
     public function tipoMotivoAfastamento() { return $this->belongsTo(TipoMotivoAfastamento::class, 'tipo_motivo_afastamento_id'); }    

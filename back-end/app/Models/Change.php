@@ -12,9 +12,11 @@ class Change extends Model
 
     protected $connection = 'log';
 
-    public $timestamps = false;
+    protected $table = 'changes';
 
-    protected $fillable = [
+    protected $with = [];
+
+    public $fillable = [
         'user_id',
         'date_time',
         'table_name',
@@ -22,6 +24,8 @@ class Change extends Model
         'type',
         'delta'
     ];
+
+    public $timestamps = false;
 
     protected $casts = [
         'data_hora' => 'datetime',

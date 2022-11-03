@@ -249,7 +249,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
     const routeId = this.modalRoute?.queryParams?.idroute;
     if(selected && routeId?.length) {
       this.go.setModalResult(routeId, selected);
-      this.go.back(undefined, this.backRoute);
+      this.close();
     }
   }
 }

@@ -1,43 +1,46 @@
 <editable-form [form]="form!" [noButtons]="!entity_id ? 'true' : undefined" [disabled]="formDisabled" (submit)="onSaveData()" (cancel)="onCancel()">
     <div class="row">
-        <input-number [size]="2" disabled label="Número" controlName="numero"></input-number>
         <input-text [size]="6" label="Nome" controlName="nome" labelInfo="Nome do projeto"></input-text>
-        <input-select [size]="4" label="Status do projeto" icon="bi bi-arrow-up-right-circle" controlName="status" [items]="lookup.PROJETO_STATUS"></input-select>
+        <input-select [size]="3" label="Fase" icon="bi bi-puzzle" controlName="fase_id" [items]="[]"></input-select>
+        <input-select [size]="3" label="Status" icon="bi bi-arrow-up-right-circle" controlName="status" [items]="lookup.PROJETO_STATUS"></input-select>
     </div>
     <div class="row">
-        <input-textarea [size]="12" [rows]="2" label="Descrição" controlName="descricao"></input-textarea>
-    </div>
-    <div class="row">
-        <input-textarea [size]="12" [rows]="2" label="Finalidade" controlName="finalidade"></input-textarea>
+        <input-textarea [size]="6" [rows]="2" label="Descrição" controlName="descricao"></input-textarea>
+        <input-textarea [size]="6" [rows]="2" label="Finalidade" controlName="finalidade"></input-textarea>
     </div>
     <separator title="Cronograma e progresso"></separator>
     <div class="row">
-        <input-datetime date [size]="4" label="Início" icon="bi bi-calendar-date" controlName="inicio_projeto"></input-datetime>
-        <input-datetime date [size]="4" label="Término" icon="bi bi-calendar-date" controlName="termino_projeto"></input-datetime>
-        <input-number number [size]="2" label="Duração" sufix="d/h" controlName="duracao"></input-number>
+        <input-switch label="Auto" [size]="1" controlName="intervalo_automatico" (change)="onIntervaloAutomaticoChange($event)" labelInfo="Se o período do projeto será calculado automaticamente pelas tarefas"></input-switch>
+        <input-datetime date [size]="3" label="Início" [disabled]="intervaloAutomatico" icon="bi bi-calendar-date" controlName="inicio_projeto"></input-datetime>
+        <input-datetime date [size]="3" label="Término" [disabled]="" icon="bi bi-calendar-date" controlName="termino_projeto"></input-datetime>
+        <input-workload daysOrHours [size]="3" [unit]="unitDuracao" [disabled]="" label="Duração" controlName="duracao" [control]="form!.controls.carga_horaria" [unitChange]="onUnitDuracaoChange.bind(this)" labelInfo="Se o projeto será calculado em horas ou dias"></input-workload>
         <input-text number [size]="2" label="Progresso" sufix="%" icon="bi bi-clock" controlName="progresso" labelInfo="Progresso do projeto (% Concluído)"></input-text>
     </div>
-    <separator title="Configurações"></separator>
-    <div class="row">
-        <input-switch label="Tempo corrido:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="tempo_corrido" labelInfo="Tempo corrido"></input-switch>
-        <input-switch label="Usa horas:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="usa_horas" labelInfo="Usa horas"></input-switch>
-    </div>
-    <div class="row">
-        <input-switch label="Intervalo automático:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="intervalo_automatico" labelInfo="Intervalo automático"></input-switch>
-        <input-switch label="Progresso automático:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="progresso_automatico" labelInfo="Progresso automático"></input-switch>
-    </div>
-    <div class="row">
-        <input-switch label="Agrupador:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="agrupador" labelInfo="Agrupador"></input-switch>
-        <input-switch label="Usa custo:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="usa_custo" labelInfo="Usa custo"></input-switch>
-    </div>
-    <div class="row">
-        <input-switch label="Aloca recursos no projeto:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="aloca_recursos_projeto" labelInfo="Aloca recursos no projeto"></input-switch>
-        <input-switch label="Soma alocações automático:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="soma_alocacoes_automatico" labelInfo="Soma alocações automático"></input-switch>
-    </div>
-    <div class="row">
-        <input-switch label="Possui custos no projeto:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="possui_custos_projeto" labelInfo="Possui custos no projeto"></input-switch>
-        <input-switch label="Soma custos automático:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="soma_custos_automatico" labelInfo="Soma custos automático"></input-switch>
-    </div>
+    <separator title="Configurações" collapse [collapsed]="true">
+        <div class="row">
+            <input-switch label="Tempo corrido:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="tempo_corrido" labelInfo="Tempo corrido"></input-switch>
+            <input-switch label="Usa horas:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="usa_horas" labelInfo="Usa horas"></input-switch>
+        </div>
+        <div class="row">
+            <input-switch label="Intervalo automático:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="intervalo_automatico" labelInfo="Intervalo automático"></input-switch>
+            <input-switch label="Progresso automático:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="progresso_automatico" labelInfo="Progresso automático"></input-switch>
+        </div>
+        <div class="row">
+            <input-switch label="Agrupador:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="agrupador" labelInfo="Agrupador"></input-switch>
+            <input-switch label="Usa custo:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="usa_custo" labelInfo="Usa custo"></input-switch>
+        </div>
+        <div class="row">
+            <input-switch label="Aloca recursos no projeto:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="aloca_recursos_projeto" labelInfo="Aloca recursos no projeto"></input-switch>
+            <input-switch label="Soma alocações automático:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="soma_alocacoes_automatico" labelInfo="Soma alocações automático"></input-switch>
+        </div>
+        <div class="row">
+            <input-switch label="Possui custos no projeto:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="possui_custos_projeto" labelInfo="Possui custos no projeto"></input-switch>
+            <input-switch label="Soma custos automático:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="soma_custos_automatico" labelInfo="Soma custos automático"></input-switch>
+        </div>
+    </separator>
+    <separator *ngIf="!form?.controls?.tempo_corrido?.value" title="Expediente" collapse [collapsed]="true">
+        <calendar-expediente></calendar-expediente>
+    </separator>
 </editable-form>
 
 <!--

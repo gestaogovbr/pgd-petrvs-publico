@@ -39,7 +39,7 @@ class ServiceBase
     const ACTION_UPDATE = "UPDATE";
 
     public string $collection = "";
-    public string $developer_id = "";
+    public string $developerId = "";
 
     /* instancia automaticamente os serviços */
     private $_services = [];
@@ -51,7 +51,7 @@ class ServiceBase
 
     public function __construct($collection = null)
     {
-        $this->developer_id = ((config('petrvs') ?: [])['ids_fixos'] ?: [])['developer_id'] ?: "77001b4b-6e25-4aab-9abc-8872c6c1029a";
+        $this->developerId = ((config('petrvs') ?: [])['ids-fixos'] ?: [])['developer-id'] ?: $this->UtilService->uuid("Desenvolvedor");
         $this->collection = $collection ?? $this->collection;
         if(empty($this->collection)) {
             $this->collection = str_replace("Service", "", str_replace("App\\Services", "App\\Models", get_class($this)));
@@ -90,6 +90,20 @@ class ServiceBase
                 return $values;
             });
         });
+    }
+
+    /**
+     * Get all foreign constraint of a table 
+     * 
+     * @param  string $table
+     * @return Array
+     */
+    public function foreigns($table) {
+        $sql = "SELECT TABLE_NAME, COLUMN_NAME, CONSTRAINT_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME ".
+            "FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE ".
+            "WHERE REFERENCED_TABLE_SCHEMA = :database AND REFERENCED_TABLE_NAME = :table";
+        $constraints = DB::select($sql, [':database' => env('DB_DATABASE'), ':table' => $table]);
+        return $constraints;
     }
 
     public function getValue($objArray, $key) {
@@ -786,7 +800,7 @@ class ServiceBase
     /**
      * Retorna se o usuário logado possui o perfil de Desenvolvedor
      */
-    public function IsLoggedUserADeveloper(){
-        return Auth::user()->perfil_id == $this->developer_id;
+    public function isLoggedUserADeveloper(){
+        return Auth::user()->perfil_id == $this->developerId;
      }
 }
