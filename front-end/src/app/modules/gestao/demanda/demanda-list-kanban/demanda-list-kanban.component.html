@@ -45,16 +45,21 @@
     </div>
     <ng-container *ngIf="!filter?.controls?.resumido?.value">
         <div class="card-status-container">
-            <span *ngIf="card.data.numero_processo?.length" class="badge bg-light text-dark" role="button" data-bs-toggle="tooltip" data-bs-placement="top" (click)="onProcessoClick(card.data)" [title]="allPages.getButtonTitle(card.data.numero_processo, card.data.numero_requisicao)">
+            <badge *ngIf="card.data.numero_processo?.length" [label]="card.data.numero_processo" color="light" icon="bi-folder-symlink" [data]="card.data" [click]="onProcessoClick.bind(this)" [hint]="allPages.getButtonTitle(card.data.numero_processo, card.data.numero_requisicao)">
+                <small *ngIf="card.data.numero_requisicao?.length"><br>Sei nº {{card.data.numero_requisicao}}</small>
+            </badge>
+            <!--span *ngIf="card.data.numero_processo?.length" class="badge bg-light text-dark" role="button" data-bs-toggle="tooltip" data-bs-placement="top" (click)="onProcessoClick(card.data)" [title]="allPages.getButtonTitle(card.data.numero_processo, card.data.numero_requisicao)">
                 <i class="bi bi bi-folder-symlink"></i> {{card.data.numero_processo}}
                 <small *ngIf="card.data.numero_requisicao?.length"><br>Sei nº {{card.data.numero_requisicao}}</small>
-            </span>
-            <span *ngFor="let status of getStatus(card.data)" [class]="status.class + ' ms-1'" [attr.role]="status.filter ? 'button' : undefined" (click)="onStatusClick(status)">
+            </span//-->
+            <badge *ngFor="let status of getStatus(card.data)" [class]="status.class + ' ms-1'" [label]="status.text" color="none" [icon]="status.icon" [data]="status" [click]="status.filter ? onStatusClick.bind(this) : undefined"></badge>
+            <!--span *ngFor="let status of getStatus(card.data)" [class]="status.class + ' ms-1'" [attr.role]="status.filter ? 'button' : undefined" (click)="onStatusClick(status)">
                 <i [class]="status.icon"></i> {{status.text}}
-            </span>
-            <span *ngFor="let etiqueta of card.data.etiquetas" class="badge ms-1" role="button" [style]="getEtiquetaStyle(etiqueta)" (click)="onEtiquetaClick(etiqueta)">
+            </span//-->
+            <badge *ngFor="let etiqueta of card.data.etiquetas" class="ms-1" [color]="etiqueta.color" [label]="etiqueta.value" color="none" [icon]="etiqueta.icon" [data]="etiqueta" [click]="onEtiquetaClick.bind(this)"></badge>
+            <!--span *ngFor="let etiqueta of card.data.etiquetas" class="badge ms-1" role="button" [style]="getEtiquetaStyle(etiqueta)" (click)="onEtiquetaClick(etiqueta)">
                 <i [class]="etiqueta.icon"></i> {{etiqueta.value}}    
-            </span>
+            </span//-->
         </div>
         <separator *ngIf="card.data.checklist?.length" small title="Checklist"></separator>
         <table *ngIf="card.data.checklist?.length">

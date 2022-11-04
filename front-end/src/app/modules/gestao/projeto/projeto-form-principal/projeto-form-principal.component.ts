@@ -6,6 +6,7 @@ import { Projeto } from 'src/app/models/projeto.model';
 import { ProjetoDaoService } from 'src/app/dao/projeto-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { UnitWorkload } from 'src/app/components/input/input-workload/input-workload.component';
+import { LookupItem } from 'src/app/services/lookup.service';
 @Component({
   selector: 'projeto-form-principal',
   templateUrl: './projeto-form-principal.component.html',
@@ -15,6 +16,8 @@ export class ProjetoFormPrincipalComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: Projeto | undefined) { super.entity = value; } get entity(): Projeto | undefined { return super.entity; }
+
+  private _fases: LookupItem[] = [];
 
   constructor(public injector: Injector) {
     super(injector);
@@ -70,6 +73,12 @@ export class ProjetoFormPrincipalComponent extends PageFrameBase {
     return new Promise<Projeto>((resolve, reject) => {
       resolve(this.util.fillForm(this.entity, this.form!.value));
     });
+  }
+
+  public get fases(): LookupItem[] {
+    let fases = (this.entity?.fases || []).map(x => Object.assign({}, {key: x.id, value: x.nome, color: x.cor}));
+    if(JSON.stringify(fases) != JSON.stringify(this._fases)) this._fases = fases;
+    return this._fases;
   }
 
   public get unitDuracao(): "hour" | "day" {

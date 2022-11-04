@@ -40,7 +40,7 @@ export class Projeto extends Base implements HasComentarios, HasAlocacoes, HasTa
     public recursos?: ProjetoRecurso[];
     public alocacoes?: ProjetoAlocacao[];
     public tarefas?: ProjetoTarefa[];
-    public fase?: ProjetoFase[];
+    public fase?: ProjetoFase;
 
     public numero: number = 0;  /* Número do projeto */
     public nome: string = "";  /* Nome do projeto */
@@ -70,6 +70,7 @@ export class Projeto extends Base implements HasComentarios, HasAlocacoes, HasTa
     public fase_id: string | null = null;
     public kanban_dockers: KanbanDocker[] = [];
     public comentarios: Comentario[] = []; /* Comentarios do projeto */
+    public fases: ProjetoFase[] = [];
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

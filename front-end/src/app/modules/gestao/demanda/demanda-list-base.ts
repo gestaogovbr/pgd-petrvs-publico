@@ -356,11 +356,11 @@ export abstract class DemandaListBase extends PageListBase<Demanda, DemandaDaoSe
     return demanda.metadados?._status || result;
   }
 
-  public getEtiquetaStyle(etiqueta: any) {
+  /*public getEtiquetaStyle(etiqueta: any) {
     const bgColor = etiqueta.color || "#000000";
     const txtColor = this.util.contrastColor(bgColor);
     return `background-color: ${bgColor}; color: ${txtColor};`;
-  }
+  }*/
 
   public onProcessoClick(row: any) {
     this.allPages.openDocumentoSei(row.id_processo, row.id_requisicao);
