@@ -8,6 +8,7 @@ import { ProjetoTarefa } from './projeto-tarefa.model';
 import { KanbanDocker } from '../components/kanban/kanban.component';
 import { Comentario, HasComentarios } from './comentario';
 import { Expediente } from './expediente.model';
+import { ProjetoFase } from './projeto-fase.model';
 
 export type ProjetoStatus = 'PLANEJADO' | 'INICIADO' | 'CONCLUIDO' | 'SUSPENSO' | 'CANCELADO';
 
@@ -39,6 +40,7 @@ export class Projeto extends Base implements HasComentarios, HasAlocacoes, HasTa
     public recursos?: ProjetoRecurso[];
     public alocacoes?: ProjetoAlocacao[];
     public tarefas?: ProjetoTarefa[];
+    public fase?: ProjetoFase;
 
     public numero: number = 0;  /* Número do projeto */
     public nome: string = "";  /* Nome do projeto */
@@ -65,8 +67,10 @@ export class Projeto extends Base implements HasComentarios, HasAlocacoes, HasTa
     public expediente: Expediente | null = null; /* Configuração do expediente */
     public usuario_id: string | null = null;
     public tipo_projeto_id: string | null = null;
+    public fase_id: string | null = null;
     public kanban_dockers: KanbanDocker[] = [];
     public comentarios: Comentario[] = []; /* Comentarios do projeto */
+    public fases: ProjetoFase[] = [];
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

@@ -99,10 +99,11 @@
         </column>
         <column [title]="'Etiquetas\nChecklist'" [editTemplate]="selectable ? undefined : columnEtiquetasChecklistEdit" [template]="columnEtiquetasChecklist" [edit]="selectable ? undefined : onColumnEtiquetasChecklistEdit.bind(this)" [save]="selectable ? undefined : onColumnEtiquetasChecklistSave.bind(this)">
             <ng-template let-row="row" #columnEtiquetasChecklist>
-                <span *ngFor="let etiqueta of row.etiquetas" class="badge me-1" role="button" [style]="getEtiquetaStyle(etiqueta)" (click)="onEtiquetaClick(etiqueta)">
+                <badge *ngFor="let etiqueta of row.etiquetas" [color]="etiqueta.color" [icon]="etiqueta.icon" [label]="etiqueta.value" [data]="etiqueta" [click]="onEtiquetaClick.bind(this)"></badge>
+                <!--span *ngFor="let etiqueta of row.etiquetas" class="badge me-1" role="button" [style]="getEtiquetaStyle(etiqueta)" (click)="onEtiquetaClick(etiqueta)">
                     <i [class]="etiqueta.icon"></i>
                     {{etiqueta.value}}
-                </span>
+                </span//-->               
                 <separator *ngIf="row.checklist?.length" small title="Checklist"></separator>
                 <table *ngIf="row.checklist?.length">
                     <tr *ngFor="let check of row.checklist">

@@ -17,7 +17,7 @@ export class GoogleApiService {
   private readonly _accessToken = new BehaviorSubject<string | null>(null);
   private readonly _receivedAccessToken = new EventEmitter<any>();
   private _tokenClient: google.accounts.oauth2.TokenClient | undefined;
-  
+
   constructor(
     private utilService: UtilService,
     private auth: AuthService,
@@ -27,39 +27,37 @@ export class GoogleApiService {
 
     // emit receivedAccessToken but skip initial value from behaviorSubject
     this._accessToken.pipe(skip(1)).subscribe(this._receivedAccessToken);
-   }
-  
+  }
+
   initialize(autoLogin?: boolean): Promise<any> {
     return new Promise((resolve, reject) => {
       try {
-        let socialUser = GoogleApiService.retrieveSocialUser()
-        if (socialUser != null) {
-          this._socialUser.next(socialUser)
-
-          // refresh the token 10s before it expires
-          let idToken = JSON.parse(atob(socialUser.idToken.split(".")[1]))
-          let currentUnixTimestamp = Math.floor(Date.now() / 1000)
-          setTimeout(() => {
-            this.refreshToken()
-          }, (idToken["exp"] - currentUnixTimestamp - 10) * 1000)
-        }
-
         const script = this.utilService.loadScript('https://accounts.google.com/gsi/client')
         script.onload = () => {
-            google.accounts.id.initialize({
-              client_id: this.gb.loginGoogleClientId,
-              ux_mode: 'popup',
-              autoLogin: autoLogin,
-              cancel_on_tap_outside: true,
-              callback: ({ credential }: any) => {
-                this.auth.authGoogle(credential).then(res => {
-                  const socialUser = this.createSocialUser(credential);
-                  this._socialUser.next(socialUser);
-                  GoogleApiService.persistSocialUser(socialUser)
-                });
-              }
-            });
-            resolve(google.accounts.id);
+          let socialUser = GoogleApiService.retrieveSocialUser()
+          if (socialUser != null) {
+            this._socialUser.next(socialUser);
+            // refresh the token 10s before it expires
+            let idToken = JSON.parse(atob(socialUser.idToken.split(".")[1]))
+            let currentUnixTimestamp = Math.floor(Date.now() / 1000)
+            setTimeout(() => {
+              this.refreshToken()
+            }, (idToken["exp"] - currentUnixTimestamp - 10) * 1000)
+          }
+          google.accounts.id.initialize({
+            client_id: this.gb.loginGoogleClientId,
+            ux_mode: 'popup',
+            autoLogin: autoLogin,
+            cancel_on_tap_outside: true,
+            callback: ({ credential }: any) => {
+              this.auth.authGoogle(credential).then(res => {
+                const socialUser = this.createSocialUser(credential);
+                this._socialUser.next(socialUser);
+                GoogleApiService.persistSocialUser(socialUser)
+              });
+            }
+          });
+          resolve(google.accounts.id);
         }
       } catch (err) {
         reject(err);
@@ -86,7 +84,7 @@ export class GoogleApiService {
     return new Promise((resolve, reject) => {
       // retrieve social user from local storage, if stored
       let storedUser = GoogleApiService.retrieveSocialUser()
-      
+
       if (storedUser !== null) {
         this._socialUser.next(storedUser)
       }
@@ -148,8 +146,8 @@ export class GoogleApiService {
   signIn(): Promise<SocialUser> {
     return Promise.reject(
       'You should not call this method directly for Google, use "<asl-google-signin-button>" wrapper ' +
-        'or generate the button yourself with "google.accounts.id.renderButton()" ' +
-        '(https://developers.google.com/identity/gsi/web/guides/display-button#javascript)'
+      'or generate the button yourself with "google.accounts.id.renderButton()" ' +
+      '(https://developers.google.com/identity/gsi/web/guides/display-button#javascript)'
     );
   }
 
@@ -177,7 +175,7 @@ export class GoogleApiService {
     if (socialUserJson === null) {
       return null
     }
-    
+
     return JSON.parse(socialUserJson);
   }
 

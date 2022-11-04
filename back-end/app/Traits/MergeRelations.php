@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Ramsey\Uuid\Uuid;
 use RuntimeException;
 use ReflectionObject;
 
@@ -142,6 +143,7 @@ trait MergeRelations
             $save = true;
             if (!$related instanceof Model) {
                 $relatedId = array_key_exists($relatedKeyName, $related) ? $related[$relatedKeyName] : "";
+                $relatedId = empty($relatedId) ? (string) Uuid::uuid4() : $relatedId; /* Garante que se o ID veio vazio, será gera um */
                 if(isset($related["_status"]) && $related["_status"] == "DELETE") {
                     array_push($deleteKeys, $relatedId);
                     $save = false;

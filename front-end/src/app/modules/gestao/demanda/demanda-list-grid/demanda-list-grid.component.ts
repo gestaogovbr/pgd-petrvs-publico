@@ -23,7 +23,7 @@ export class DemandaListGridComponent extends DemandaListBase {
   @Input() snapshot?: ActivatedRouteSnapshot;
   @Input() fixedFilter?: any[];
 
-  public static selectRoute?: FullRoute = {route: ["gestao", "demanda", "grid"]};
+  public static selectRoute?: FullRoute = { route: ["gestao", "demanda", "grid"] };
   public formEdit: FormGroup;
 
   constructor(public injector: Injector) {
@@ -33,28 +33,28 @@ export class DemandaListGridComponent extends DemandaListBase {
     this.code = "MOD_DMD";
     this.modalWidth = 1100;
     this.filter = this.fh.FormBuilder({
-      agrupar: {default: true},
-      atribuidas_para_mim: {default: false},
-      usuario_id: {default: null},
-      numero: {default: ""},
-      somente_unidade_atual: {default: false},
-      unidades_subordinadas: {default: false},
-      unidade_id: {default: null},
-      numero_processo: {default: ""},
-      status: {default: null},
-      etiquetas: {default: []},
-      arquivadas: {default: false},
-      atividade_id: {default: null},
-      tipo_processo_id: {default: null},
-      data_filtro: {default: null},
-      data_inicio: {default: null},
-      data_fim: {default: null}
+      agrupar: { default: true },
+      atribuidas_para_mim: { default: false },
+      usuario_id: { default: null },
+      numero: { default: "" },
+      somente_unidade_atual: { default: false },
+      unidades_subordinadas: { default: false },
+      unidade_id: { default: null },
+      numero_processo: { default: "" },
+      status: { default: null },
+      etiquetas: { default: [] },
+      arquivadas: { default: false },
+      atividade_id: { default: null },
+      tipo_processo_id: { default: null },
+      data_filtro: { default: null },
+      data_inicio: { default: null },
+      data_fim: { default: null }
     });
     this.formEdit = this.fh.FormBuilder({
-      etiquetas: {default: []},
-      etiqueta: {default: null}
+      etiquetas: { default: [] },
+      etiqueta: { default: null }
     });
-    this.groupBy = [{field: "unidade.sigla", label: "Unidade"}];
+    this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }];
   }
 
   public storeFilter = (filter?: FormGroup) => {
@@ -70,9 +70,9 @@ export class DemandaListGridComponent extends DemandaListBase {
 
   ngAfterViewInit() {
     super.ngAfterViewInit();
-    if(this.fixedFilter) {
+    if (this.fixedFilter) {
       const status = this.fixedFilter.find(x => x[0] == "status");
-      if(status) {
+      if (status) {
         this.filter?.controls.status.setValue(status[2]);
       }
     }
@@ -80,8 +80,8 @@ export class DemandaListGridComponent extends DemandaListBase {
 
   public onAgruparChange(event: Event) {
     const agrupar = this.filter!.controls.agrupar.value;
-    if((agrupar && !this.groupBy?.length) || (!agrupar && this.groupBy?.length)) {
-      this.groupBy = agrupar ? [{field: "unidade.sigla", label: "Unidade"}] : [];
+    if ((agrupar && !this.groupBy?.length) || (!agrupar && this.groupBy?.length)) {
+      this.groupBy = agrupar ? [{ field: "unidade.sigla", label: "Unidade" }] : [];
       this.grid!.reloadFilter();
     }
   }
@@ -103,8 +103,8 @@ export class DemandaListGridComponent extends DemandaListBase {
   public async onColumnEtiquetasChecklistEdit(row: any) {
     this.formEdit.controls.etiquetas.setValue(row.etiquetas);
     this.formEdit.controls.etiqueta.setValue(null);
-    this.etiquetas = this.util.merge(row.atividade?.etiquetas_predefinidas, row.unidade?.etiquetas, (a, b) => a.key == b.key); 
-    this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key); 
+    this.etiquetas = this.util.merge(row.atividade?.etiquetas_predefinidas, row.unidade?.etiquetas, (a, b) => a.key == b.key);
+    this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);
     this.checklist = this.util.clone(row.checklist);
   }
 
@@ -124,55 +124,55 @@ export class DemandaListGridComponent extends DemandaListBase {
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = this.fixedFilter || [];
     let form: any = filter.value;
- 
+
     /* Verifica se estiver marcado Atual e a Unidade for diferente da Lotacao da barra superior */
-    if(form.somente_unidade_atual && form.unidade_id != this.auth.unidade?.id) {
+    if (form.somente_unidade_atual && form.unidade_id != this.auth.unidade?.id) {
       filter.controls.unidade_id.setValue(this.auth.unidade?.id);
       form.unidade_id = this.auth.unidade?.id;
     }
     /* Verifica se Minhas está selecionado e o usuário está diferente do logado (vazio) */
-    if(form.atribuidas_para_mim && form.usuario_id != this.auth.usuario?.id) {
+    if (form.atribuidas_para_mim && form.usuario_id != this.auth.usuario?.id) {
       filter.controls.usuario_id.setValue(this.auth.usuario?.id);
       form.usuario_id = this.auth.usuario?.id;
     }
     /* Filtros */
-    if(form.usuario_id?.length) {
+    if (form.usuario_id?.length) {
       result.push(["usuario_id", "==", form.usuario_id]);
-    } 
-    if(form.unidade_id?.length) {
+    }
+    if (form.unidade_id?.length) {
       result.push(["unidade_id", "==", form.unidade_id]);
     }
-    if(form.unidades_subordinadas) {
+    if (form.unidades_subordinadas) {
       result.push(["unidades_subordinadas", "==", true]);
     }
-    if(form.etiquetas?.length) {
+    if (form.etiquetas?.length) {
       result.push(["etiquetas", "in", form.etiquetas.map((x: LookupItem) => x.value)]);
     }
-    if(form.numero_processo?.length) {
+    if (form.numero_processo?.length) {
       result.push(["numero_processo", "==", form.numero_processo]);
     }
-    if(form.numero?.length) {
+    if (form.numero?.length) {
       result.push(["numero", "==", form.numero]);
     }
-    if(form.status?.length && !result.find(x => x[0] == "status")) {
+    if (form.status?.length && !result.find(x => x[0] == "status")) {
       result.push(["status", "==", form.status]);
-      if(form.status == "ARQUIVADO") this.filter!.controls.arquivadas.setValue(true);
+      if (form.status == "ARQUIVADO") this.filter!.controls.arquivadas.setValue(true);
     }
-    if(!this.filter!.controls.arquivadas.value) {
+    if (!this.filter!.controls.arquivadas.value) {
       result.push(["data_arquivamento", "==", null]);
     }
-    if(form.atividade_id?.length) {
+    if (form.atividade_id?.length) {
       result.push(["atividade_id", "==", form.atividade_id]);
     }
-    if(form.tipo_processo_id?.length) {
+    if (form.tipo_processo_id?.length) {
       result.push(["tipo_processo_id", "==", form.tipo_processo_id]);
     }
-    if(form.data_filtro?.length) {
+    if (form.data_filtro?.length) {
       const field = form.data_filtro == "DISTRIBUICAO" ? "data_distribuicao" : form.data_filtro == "PRAZO" ? "prazo_entrega" : "data_entrega";
-      if(form.data_inicio) {
+      if (form.data_inicio) {
         result.push([field, ">=", form.data_inicio]);
       }
-      if(form.data_fim) {
+      if (form.data_fim) {
         result.push([field, "<=", form.data_fim]);
       }
     }
@@ -192,17 +192,17 @@ export class DemandaListGridComponent extends DemandaListBase {
     this.filter!.controls.data_filtro.setValue(null);
     this.filter!.controls.data_inicio.setValue(null);
     this.filter!.controls.data_fim.setValue(null);
-    if(!this.fixedFilter?.length || !this.fixedFilter.find(x => x[0] == "status")) this.filter!.controls.status.setValue(null);
+    if (!this.fixedFilter?.length || !this.fixedFilter.find(x => x[0] == "status")) this.filter!.controls.status.setValue(null);
     this.filter!.controls.etiquetas.setValue([]);
     super.filterClear(filter);
   }
 
   public addItemHandleEtiquetas(): LookupItem | undefined {
     let result = undefined;
-    if(this.etiqueta && this.etiqueta.selectedItem) {
+    if (this.etiqueta && this.etiqueta.selectedItem) {
       const item = this.etiqueta.selectedItem;
       const key = item.key?.length ? item.key : this.util.textHash(item.value);
-      if(this.util.validateLookupItem(this.formEdit.controls.etiquetas.value, key)) {
+      if (this.util.validateLookupItem(this.formEdit.controls.etiquetas.value, key)) {
         result = {
           key: key,
           value: item.value,

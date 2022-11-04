@@ -2,7 +2,7 @@ import { Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { IIndexable } from 'src/app/models/base.model';
-import { ProjetoRegra } from 'src/app/models/projeto-regra.model';
+import { ProjetoFase } from 'src/app/models/projeto-fase.model';
 import { Projeto } from 'src/app/models/projeto.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 
@@ -16,7 +16,7 @@ export class ProjetoFormFasesComponent extends PageFrameBase {
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: Projeto | undefined) { super.entity = value; } get entity(): Projeto | undefined { return super.entity; }
 
-  public get items(): ProjetoRegra[] {
+  public get items(): ProjetoFase[] {
     if(!this.gridControl.value) this.gridControl.setValue(new Projeto());
     if(!this.gridControl.value.fases) this.gridControl.value.fases = [];
     return this.gridControl.value.fases;
@@ -25,8 +25,11 @@ export class ProjetoFormFasesComponent extends PageFrameBase {
   constructor(public injector: Injector) {
     super(injector);
     this.form = this.fh.FormBuilder({
-      nome_regra: {default: ""},
-      tipo_recurso: {default: "HUMANO"}
+      Nome: {default: ""},
+      descricao: {default: ""},
+      cor: {default: ""},
+      inicio: {default: null},
+      termino: {default: null}
     }, this.cdRef, this.validate);
   }
 
