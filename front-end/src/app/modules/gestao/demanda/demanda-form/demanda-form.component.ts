@@ -670,10 +670,12 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
         tipo_processo_id: source.tipo_processo_id,
         entregas: (source.entregas || []).map((entrega: DemandaEntrega) => {
           const novo = new DemandaEntrega();
+          novo.id = this.dao!.generateUuid();
           novo.descricao = entrega.descricao;
           novo.tempo_estimado = entrega.tempo_estimado;
           novo.usuario_id = entrega.usuario_id;
           novo.tarefa_id = entrega.tarefa_id;
+          novo.tarefa = entrega.tarefa;
           novo.comentarios = [];
           novo._status = "ADD";
           return novo;

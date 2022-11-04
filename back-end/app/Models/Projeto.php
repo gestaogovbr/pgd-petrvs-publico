@@ -9,6 +9,7 @@ use App\Models\ProjetoAlocacao;
 use App\Models\ProjetoRegra;
 use App\Models\TipoProjeto;
 use App\Models\ProjetoRecurso;
+use App\Models\ProjetoFase;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasDataFim;
 use Illuminate\Support\Facades\DB;
@@ -44,6 +45,7 @@ class Projeto extends ModelBase
         'usuario_id', /* char(36); */
         'tipo_projeto_id', /* char(36); */
         'kanban_dockers', /* json; */
+        'fase_id', /* char(36); */
         //'numero', /* int; NOT NULL; */// Número do projeto (Gerado pelo sistema)
         //'data_inicio', /* datetime; NOT NULL; */// Data de criação
         //'data_fim', /* datetime; */// Data final do registro
@@ -73,6 +75,7 @@ class Projeto extends ModelBase
     public function alocacoes() { return $this->hasMany(ProjetoAlocacao::class); }    
     public function recursos() { return $this->hasMany(ProjetoRecurso::class); }    
     // Belongs
+    public function fase() { return $this->belongsTo(ProjetoFase::class); }    
     public function tipoProjeto() { return $this->belongsTo(TipoProjeto::class); }    
     public function usuario() { return $this->belongsTo(Usuario::class); }    
     // Mutattors e Casts
