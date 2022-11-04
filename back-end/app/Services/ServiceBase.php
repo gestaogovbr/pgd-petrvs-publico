@@ -499,7 +499,8 @@ class ServiceBase
             }
         }
         $query->where('id', $data['id']);
-        $rows = $query->get();
+        $rows = method_exists($this, 'proxyRows') ? $this->proxyRows($query->get()) : $query->get();
+/*         if(method_exists($this, 'proxyById')) $rows = $this->proxyById($rows); */
         if(count($rows) == 1) {
             return $rows[0];
         } else {

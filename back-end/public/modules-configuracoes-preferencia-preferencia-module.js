@@ -247,7 +247,7 @@ class PreferenciaFormComponent extends src_app_modules_base_page_base__WEBPACK_I
         });
     }
     onCancel() {
-        this.go.back(undefined, this.backRoute);
+        this.close();
     }
 }
 PreferenciaFormComponent.ɵfac = function PreferenciaFormComponent_Factory(t) { return new (t || PreferenciaFormComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_5__["Injector"])); };

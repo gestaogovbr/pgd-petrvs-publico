@@ -18,7 +18,7 @@ class TipoCapacidadeSeeder extends Seeder
      */
     public function run()
     {
-        TipoCapacidade::whereIn('codigo', ['MOD_LOGS_CONS', 'MOD_LOGS_EDT', 'MOD_LOGS_EXCL'])->delete(); //apaga capacidades inseridas indevidamente
+        //TipoCapacidade::whereIn('codigo',['MOD_LOGS_CONS','MOD_LOGS_EDT','MOD_LOGS_EXCL'])->delete(); //apaga capacidades inseridas indevidamente
         $tiposCapacidadesService = new TipoCapacidadeService();
         $utilService = new UtilService();
         $developerId = ((config('petrvs') ?: [])['ids-fixos'] ?: [])['developer-id'] ?: $utilService->uuid("Desenvolvedor");

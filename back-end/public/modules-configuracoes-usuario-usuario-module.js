@@ -467,8 +467,10 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
     }
     saveData(form) {
         return new Promise((resolve, reject) => {
-            const usuario = this.util.fill(new src_app_models_usuario_model__WEBPACK_IMPORTED_MODULE_6__["Usuario"](), this.entity);
-            resolve(this.util.fillForm(usuario, this.form.value));
+            let usuario = this.util.fill(new src_app_models_usuario_model__WEBPACK_IMPORTED_MODULE_6__["Usuario"](), this.entity);
+            usuario = this.util.fillForm(usuario, this.form.value);
+            usuario.lotacoes = usuario.lotacoes.filter((x) => { var _a; return ["ADD", "EDIT", "DELETE"].includes(x._status || "") && ((_a = x.unidade_id) === null || _a === void 0 ? void 0 : _a.length); });
+            resolve(usuario);
         });
     }
     addLotacao() {
