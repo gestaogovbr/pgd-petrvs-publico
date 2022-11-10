@@ -16,15 +16,13 @@ export type DialogButton = {
   selector: 'app-dialog',
   templateUrl: './dialog.component.html',
   styleUrls: ['./dialog.component.scss'],
-  providers: [
-    {
-      provide: 'ID_GENERATOR_BASE',
-      useFactory: (self: DialogComponent, go: NavigateService, util: UtilService) => {
-        return util.onlyAlphanumeric(go.getStackRouteUrl());
-      },
-      deps: [DialogComponent, NavigateService, UtilService]
-    }
-  ]
+  providers: [{
+    provide: 'ID_GENERATOR_BASE',
+    useFactory: (self: DialogComponent, go: NavigateService, util: UtilService) => {
+      return util.onlyAlphanumeric(go.getStackRouteUrl());
+    },
+    deps: [DialogComponent, NavigateService, UtilService]
+  }]
 })
 export class DialogComponent implements OnInit {
   @ViewChild('body', { read: ViewContainerRef }) body?: ViewContainerRef;

@@ -1,61 +1,59 @@
-<!--h3 *ngIf="title.length" class="my-2">
-    <i *ngIf="icon.length" [class]="icon"></i>
-    {{title}}
-</h3//-->
-<div *ngIf="error?.length" class="alert alert-danger mt-2" role="alert">
-    {{error}}
-</div>
-<ng-content></ng-content>
-<form [formGroup]="form!" class="grid-list-container" [style.min-height.px]="minHeight">
-    <table class="table" [class.table-hover]="selectable">
-        <thead>
-            <tr>
-                <th *ngIf="multiselecting" class="grid-multiselect-header">
-                    <i class="bi bi-card-checklist"></i>
-                </th>
-                <th *ngFor="let column of columns; let idx = index" [class.grid-editable-options]="isEditableGridOptions(column)" scope="col">
-                    <column-header [column]="column" [index]="idx" [grid]="self"></column-header>
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <ng-container *ngFor="let row of items">
-                <tr [class.d-none]="row._status == 'DELETE'" [class.grid-no-hover]="isSeparator(row)" [class.table-active]="!isSeparator(row) && (row || [])['id'] == (selected || [])['id']" (click)="onRowClick($event, row)" [attr.role]="selectable ? 'button' : undefined">
-                    <td *ngIf="multiselecting && !isSeparator(row)" class="grid-multiselect-column">
-                        <input class="form-check-input" type="checkbox" name="gird_multiselect_ids[]" [attr.checked]="isMultiselectChecked(row)" (change)="onMultiselectChange($event, row)">
-                    </td>                    
-                    <td *ngIf="isSeparator(row); else fields" class="grid-no-hover" [attr.colspan]="columns.length">
-                        <strong class="grid-group-text">{{row.text}}</strong>
-                    </td>
-                    <ng-template #fields>
-                        <td *ngFor="let column of columns; let idx = index" class="grid-column" [class.text-center]="column.align == 'center'" [class.text-end]="column.align == 'right'" [class.grid-column-expanded]="column.isType('expand') && !!expandedIds[row.id]" [class.grid-column-editing-options]="column.editing" [class.text-end]="column.isType('options')" >
-                            <column-row *ngIf="!column.inType(['options', 'expand'])" [index]="idx" [column]="column" [row]="row" [grid]="self"></column-row>
-                            <column-expand *ngIf="column.isType('expand')" [index]="idx" [column]="column" [row]="row" [grid]="self"></column-expand>
-                            <column-options *ngIf="column.isType('options') && !multiselecting" [index]="idx" [column]="column" [row]="row" [grid]="self" [options]="column.options" [buttons]="column.buttons || []" [dynamicOptions]="column.dynamicOptions" [dynamicButtons]="column.dynamicButtons" [upDownButtons]="column.upDownButtons"></column-options>
+<div [class.grid-invisible]="!visible">
+    <div *ngIf="error?.length" class="alert alert-danger mt-2" role="alert">
+        {{error}}
+    </div>
+    <ng-content></ng-content>
+    <form [formGroup]="form!" class="grid-list-container" [style.min-height.px]="minHeight">
+        <table class="table" [class.table-hover]="selectable">
+            <thead>
+                <tr>
+                    <th *ngIf="multiselecting" class="grid-multiselect-header">
+                        <i class="bi bi-card-checklist"></i>
+                    </th>
+                    <th *ngFor="let column of columns; let idx = index" [class.grid-editable-options]="isEditableGridOptions(column)" scope="col">
+                        <column-header [column]="column" [index]="idx" [grid]="self"></column-header>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngFor="let row of items">
+                    <tr [class.d-none]="row._status == 'DELETE'" [class.grid-no-hover]="isSeparator(row)" [class.table-active]="!isSeparator(row) && (row || [])['id'] == (selected || [])['id']" (click)="onRowClick($event, row)" [attr.role]="selectable ? 'button' : undefined">
+                        <td *ngIf="multiselecting && !isSeparator(row)" class="grid-multiselect-column">
+                            <input *ngIf="!canSelect || canSelect(row)" class="form-check-input" type="checkbox" name="gird_multiselect_ids[]" [attr.checked]="isMultiselectChecked(row)" (change)="onMultiselectChange($event, row)">
+                        </td>                    
+                        <td *ngIf="isSeparator(row); else fields" class="grid-no-hover" [attr.colspan]="columns.length">
+                            <strong class="grid-group-text">{{row.text}}</strong>
                         </td>
-                    </ng-template>
-                </tr>
-                <tr *ngIf="!!expandedIds[row.id]">
-                    <td class="grid-expanded-background">&nbsp;</td>
-                    <td [attr.colspan]="columns.length-1" class="grid-expanded-background">
-                        <ng-container *ngIf="expandedColumn?.expandTemplate" [ngTemplateOutlet]="expandedColumn!.expandTemplate!" [ngTemplateOutletContext]="{row: row, grid: this}"></ng-container>
+                        <ng-template #fields>
+                            <td *ngFor="let column of columns; let idx = index" class="grid-column" [class.text-center]="column.align == 'center'" [class.text-end]="column.align == 'right'" [class.grid-column-expanded]="column.isType('expand') && !!expandedIds[row.id]" [class.grid-column-editing-options]="column.editing" [class.text-end]="column.isType('options')" >
+                                <column-row *ngIf="!column.inType(['options', 'expand'])" [index]="idx" [column]="column" [row]="row" [grid]="self"></column-row>
+                                <column-expand *ngIf="column.isType('expand')" [index]="idx" [column]="column" [row]="row" [grid]="self"></column-expand>
+                                <column-options *ngIf="column.isType('options') && !multiselecting" [index]="idx" [column]="column" [row]="row" [grid]="self" [options]="column.options" [buttons]="column.buttons || []" [dynamicOptions]="column.dynamicOptions" [dynamicButtons]="column.dynamicButtons" [upDownButtons]="column.upDownButtons"></column-options>
+                            </td>
+                        </ng-template>
+                    </tr>
+                    <tr *ngIf="!!expandedIds[row.id]">
+                        <td class="grid-expanded-background">&nbsp;</td>
+                        <td [attr.colspan]="columns.length-1" class="grid-expanded-background">
+                            <ng-container *ngIf="expandedColumn?.expandTemplate" [ngTemplateOutlet]="expandedColumn!.expandTemplate!" [ngTemplateOutletContext]="{row: row, grid: this}"></ng-container>
+                        </td>
+                    </tr>
+                </ng-container>
+                <tr *ngIf="query?.loading">
+                    <td [attr.colspan]="columns.length" class="grid-no-hover">
+                        <div class="d-flex justify-content-center my-2">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden"></span>
+                            </div>
+                        </div>
                     </td>
                 </tr>
-            </ng-container>
-            <tr *ngIf="query?.loading">
-                <td [attr.colspan]="columns.length" class="grid-no-hover">
-                    <div class="d-flex justify-content-center my-2">
-                        <div class="spinner-border" role="status">
-                            <span class="visually-hidden"></span>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</form>
-<div *ngIf="hasError()" class="invalid-feedback" [class.d-block]="isInvalid()">
-    <i class="bi bi-info-circle"></i>
-    {{errorMessage()}}
+            </tbody>
+        </table>
+    </form>
+    <div *ngIf="hasError()" class="invalid-feedback" [class.d-block]="isInvalid()">
+        <i class="bi bi-info-circle"></i>
+        {{errorMessage()}}
+    </div>
+    <ng-content select="pagination"></ng-content>
 </div>
-<ng-content select="pagination"></ng-content>

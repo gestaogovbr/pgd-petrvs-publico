@@ -73,7 +73,9 @@ export class GridComponent extends ComponentBase implements OnInit {
   @Input() control?: AbstractControl = undefined;
   @Input() minHeight: number = 300;
   @Input() multiselect?: string;
+  @Input() multiselectEnabled?: string;
   @Input() multiselectAllFields: string[] = [];
+  @Input() canSelect?: (row: IIndexable) => boolean;
   @Input() dynamicMultiselectMenu?: (multiselected: IIndexable) => ToolbarButton[];
   @Input() multiselectMenu?: ToolbarButton[];
   @Input() set title(value: string) {
@@ -136,6 +138,13 @@ export class GridComponent extends ComponentBase implements OnInit {
   get items(): IIndexable[] {
     return this.control?.value || this._items || [];
   }
+  @Input() set visible(value: boolean) {
+    this._visible = value;
+    this.cdRef.detectChanges();
+  }
+  get visible(): boolean {
+    return this._visible;
+  }
 
   /* Propriedades private e métodos get e set */
   private _query?: QueryContext<Base>;
@@ -145,6 +154,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   private _hasAdd: boolean = true;
   private _title: string = "";
   private _items?: IIndexable[];
+  private _visible: boolean = true;
   private _exporting: boolean = false;
   //private _multiselectDynamicMenu: ToolbarButton[] = [];
   private filterCollapsedOnMultiselect: boolean = false;
@@ -257,6 +267,8 @@ export class GridComponent extends ComponentBase implements OnInit {
     this.loadReport();
     this.loadToolbar();
     this.loadPagination();
+    /* Habilita muiltiselect caso multiselectEnabled esteja presente */
+    if(this.isMultiselectEnabled) this.enableMultiselect(true);
   }
 
   public reset() {
@@ -279,6 +291,10 @@ export class GridComponent extends ComponentBase implements OnInit {
 
   public get isMultiselect(): boolean {
     return this.multiselect != undefined;
+  }
+
+  public get isMultiselectEnabled(): boolean {
+    return this.multiselectEnabled != undefined;
   }
 
   public get isEditable(): boolean {
@@ -350,7 +366,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   }*/
 
   public refreshMultiselectToolbar() {
-    if(this.toolbarRef) this.toolbarRef.buttons = this.multiselecting ? [this.BUTTON_MULTISELECT, ...(this.multiselectMenu || []), ...(this.dynamicMultiselectMenu ? this.dynamicMultiselectMenu(this.multiselected) : [])] : [...(this.initialButtons || []), ...this.toolbarButtons];
+    if(this.toolbarRef) this.toolbarRef!.buttons = this.multiselecting ? [this.BUTTON_MULTISELECT, ...(this.multiselectMenu || []), ...(this.dynamicMultiselectMenu ? this.dynamicMultiselectMenu(this.multiselected) : [])] : [...(this.initialButtons || []), ...this.toolbarButtons];
   }
 
   public enableMultiselect(enable: boolean) {
@@ -402,6 +418,10 @@ export class GridComponent extends ComponentBase implements OnInit {
   }
 
   public onUnselectAllClick() {
+    this.clearMultiselect();
+  }
+
+  public clearMultiselect() {
     this.multiselected = {};
     this.BUTTON_MULTISELECT.badge = undefined;
     this.refreshMultiselectToolbar();
@@ -413,7 +433,12 @@ export class GridComponent extends ComponentBase implements OnInit {
     return this.multiselected.hasOwnProperty(row.id) ? "" : undefined;
   }
 
+  public get multiselectedList(): IIndexable[] {
+    return Object.values(this.multiselected) || [];    
+  }
+
   public onMultiselectChange(event: any, row: IIndexable) {
+    const checked = event.currentTarget.checked;
     if(event.currentTarget.checked) {
       if(!this.multiselected.hasOwnProperty(row.id)) this.multiselected[row.id] = row;
     } else {
