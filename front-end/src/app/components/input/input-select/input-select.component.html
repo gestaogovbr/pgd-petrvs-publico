@@ -9,7 +9,6 @@
             </ng-template>
             <!-- [attr.selected]="itemSelected(item)" -->
         </select>
-        <!-- <button *ngIf="addRoute && dao" class="btn btn-outline-success" type="button" (click)="onAddClick($event)"> -->
         <button *ngIf="addRoute && dao" [id]="generatedId(controlName) + '_route_button'" class="btn btn-outline-success" type="button" (click)="onAddClick($event)">
             <i class="bi bi-plus-circle"></i>
         </button>

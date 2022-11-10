@@ -28,6 +28,7 @@ export class ProjetoFormComponent extends PageFormBase<Projeto, ProjetoDaoServic
   constructor(public injector: Injector) {
     super(injector, Projeto, ProjetoDaoService);
     this.join = [];
+    this.modalWidth = 1200;
     this.form = this.fh.FormBuilder({
     }, this.cdRef, this.validate);
   }

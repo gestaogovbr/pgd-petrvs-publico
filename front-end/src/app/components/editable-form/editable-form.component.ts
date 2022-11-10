@@ -142,6 +142,10 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
     if(this.disable) this.disable.emit(new Event("disabled"));
   }
 
+  public revalidate() {
+    Object.values(this.form?.controls || {}).forEach(x => x.updateValueAndValidity({emitEvent: false}));
+  }
+
   public onButtonClick(button: ToolbarButton) {
     if(button.route) {
       this.go.navigate(button.route, button.metadata);
