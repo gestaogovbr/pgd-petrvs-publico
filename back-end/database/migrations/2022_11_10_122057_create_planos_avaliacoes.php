@@ -23,7 +23,6 @@ class CreatePlanosAvaliacoes extends Migration
             $table->dateTime('data_fim')->nullable()->comment("Data fim da vigência");
             $table->integer('nota_atribuida')->comment("Nota da avaliação 0 - 10");
             $table->json('justificativas')->comment("Justificativas da avaliação");
-            //$table->text('comentarios')->nullable()->comment("Comentário referente a nota");
             // Chaves estrangeiras:
             $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
             $table->foreignUuid('plano_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade');
