@@ -14661,6 +14661,7 @@ class ProjetoFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
             return "Editando " + ((entity === null || entity === void 0 ? void 0 : entity.nome) || "");
         };
         this.join = [];
+        this.modalWidth = 1200;
         this.form = this.fh.FormBuilder({}, this.cdRef, this.validate);
     }
     loadData(entity, form) {
@@ -14843,15 +14844,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function ProjetoFormFasesComponent_ng_template_5_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "badge", 15);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "badge", 16);
 } if (rf & 2) {
     const row_r16 = ctx.row;
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("color", row_r16.cor)("label", row_r16.nome);
 } }
 function ProjetoFormFasesComponent_ng_template_7_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "div", 1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](1, "input-text", 16);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](2, "input-color", 17);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](1, "input-text", 17);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](2, "input-color", 18);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"]();
@@ -14861,7 +14862,7 @@ function ProjetoFormFasesComponent_ng_template_7_Template(rf, ctx) { if (rf & 1)
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 4)("control", ctx_r3.form.controls.cor);
 } }
 function ProjetoFormFasesComponent_ng_template_10_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "small", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "small", 19);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
 } if (rf & 2) {
@@ -14870,13 +14871,13 @@ function ProjetoFormFasesComponent_ng_template_10_Template(rf, ctx) { if (rf & 1
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"](row_r18.descricao || "");
 } }
 function ProjetoFormFasesComponent_ng_template_12_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "input-text", 19);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "input-text", 20);
 } if (rf & 2) {
     const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("control", ctx_r7.form.controls.descricao);
 } }
 function ProjetoFormFasesComponent_ng_template_15_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "strong", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "strong", 19);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
 } if (rf & 2) {
@@ -14886,13 +14887,13 @@ function ProjetoFormFasesComponent_ng_template_15_Template(rf, ctx) { if (rf & 1
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"](ctx_r9.util.getDateFormatted(row_r20.inicio));
 } }
 function ProjetoFormFasesComponent_ng_template_17_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "input-datetime", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "input-datetime", 21);
 } if (rf & 2) {
     const ctx_r11 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("control", ctx_r11.form.controls.inicio);
 } }
 function ProjetoFormFasesComponent_ng_template_20_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "strong", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "strong", 19);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
 } if (rf & 2) {
@@ -14902,7 +14903,7 @@ function ProjetoFormFasesComponent_ng_template_20_Template(rf, ctx) { if (rf & 1
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"](ctx_r13.util.getDateFormatted(row_r22.termino));
 } }
 function ProjetoFormFasesComponent_ng_template_22_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "input-datetime", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "input-datetime", 22);
 } if (rf & 2) {
     const ctx_r15 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("control", ctx_r15.form.controls.termino);
@@ -14912,7 +14913,14 @@ class ProjetoFormFasesComponent extends src_app_modules_base_page_frame_base__WE
         super(injector);
         this.injector = injector;
         this.validate = (control, controlName) => {
+            var _a, _b;
             let result = null;
+            if (["nome", "cor"].includes(controlName) && !((_a = control.value) === null || _a === void 0 ? void 0 : _a.length)) {
+                return "Obrigatorio";
+            }
+            else if (controlName == "termino" && this.util.isDataValid(control.value) && this.util.isDataValid((_b = this.form) === null || _b === void 0 ? void 0 : _b.controls.inicio.value) && (this.form.controls.inicio.value.getTime() > control.value.getTime())) {
+                return "Início mario que o termino";
+            }
             return result;
         };
         this.form = this.fh.FormBuilder({
@@ -14948,6 +14956,48 @@ class ProjetoFormFasesComponent extends src_app_modules_base_page_frame_base__WE
             });
         });
     }
+    addFase() {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            return {
+                id: this.dao.generateUuid(),
+                inicio: null,
+                termino: null,
+                cor: "",
+                nome: "",
+                descricao: "",
+                _status: "ADD"
+            };
+        });
+    }
+    loadFase(form, row) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            form.controls.nome.setValue(row.nome);
+            form.controls.descricao.setValue(row.descricao);
+            form.controls.cor.setValue(row.cor);
+            form.controls.inicio.setValue(row.inicio);
+            form.controls.termino.setValue(row.termino);
+        });
+    }
+    removeFase(row) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            return true;
+        });
+    }
+    saveFase(form, row) {
+        var _a;
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            let result = undefined;
+            if ((_a = this.form) === null || _a === void 0 ? void 0 : _a.valid) {
+                row.nome = form.controls.nome.value;
+                row.descricao = form.controls.descricao.value;
+                row.cor = form.controls.cor.value;
+                row.inicio = form.controls.inicio.value;
+                row.inicio = form.controls.termino.value;
+                result = row;
+            }
+            return result;
+        });
+    }
 }
 ProjetoFormFasesComponent.ɵfac = function ProjetoFormFasesComponent_Factory(t) { return new (t || ProjetoFormFasesComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_4__["Injector"])); };
 ProjetoFormFasesComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineComponent"]({ type: ProjetoFormFasesComponent, selectors: [["projeto-form-fases"]], viewQuery: function ProjetoFormFasesComponent_Query(rf, ctx) { if (rf & 1) {
@@ -14955,7 +15005,7 @@ ProjetoFormFasesComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵ
     } if (rf & 2) {
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-    } }, inputs: { control: "control", entity: "entity" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵInheritDefinitionFeature"]], decls: 24, vars: 11, consts: [["noButtons", "", 3, "form", "disabled"], [1, "row"], [3, "hasDelete"], ["title", "Nome", 3, "template", "editTemplate"], ["faseNome", ""], ["editFaseNome", ""], ["title", "Descri\u00E7\u00E3o", 3, "template", "editTemplate"], ["faseDescricao", ""], ["editFaseDescricao", ""], ["title", "In\u00EDcio", 3, "template", "editTemplate"], ["faseInicio", ""], ["editFaseInicio", ""], ["title", "Termino", 3, "template", "editTemplate"], ["faseTermino", ""], ["editFaseTermino", ""], [3, "color", "label"], ["controlName", "nome", 3, "size", "control"], ["controlName", "cor", 3, "size", "control"], [1, "d-block"], ["controlName", "descricao", 3, "size", "control"], ["date", "", "controlName", "inicio", 3, "size", "control"], ["date", "", "controlName", "termino", 3, "size", "control"]], template: function ProjetoFormFasesComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, inputs: { control: "control", entity: "entity" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵInheritDefinitionFeature"]], decls: 25, vars: 17, consts: [["noButtons", "", 3, "form", "disabled"], [1, "row"], ["editable", "", 3, "items", "form", "hasDelete", "add", "load", "remove", "save"], ["title", "Nome", 3, "template", "editTemplate"], ["faseNome", ""], ["editFaseNome", ""], ["title", "Descri\u00E7\u00E3o", 3, "template", "editTemplate"], ["faseDescricao", ""], ["editFaseDescricao", ""], ["title", "In\u00EDcio", 3, "template", "editTemplate"], ["faseInicio", ""], ["editFaseInicio", ""], ["title", "Termino", 3, "template", "editTemplate"], ["faseTermino", ""], ["editFaseTermino", ""], ["type", "options"], [3, "color", "label"], ["controlName", "nome", 3, "size", "control"], ["controlName", "cor", 3, "size", "control"], [1, "d-block"], ["controlName", "descricao", 3, "size", "control"], ["date", "", "controlName", "inicio", 3, "size", "control"], ["date", "", "controlName", "termino", 3, "size", "control"]], template: function ProjetoFormFasesComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "editable-form", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](1, "div", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](2, "grid", 2);
@@ -14976,6 +15026,7 @@ ProjetoFormFasesComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵ
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](20, ProjetoFormFasesComponent_ng_template_20_Template, 2, 1, "ng-template", null, 13, _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](22, ProjetoFormFasesComponent_ng_template_22_Template, 1, 2, "ng-template", null, 14, _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](24, "column", 15);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
@@ -14984,16 +15035,17 @@ ProjetoFormFasesComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵ
         const _r0 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵreference"](6);
         const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵreference"](8);
         const _r4 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵreference"](11);
+        const _r6 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵreference"](13);
         const _r8 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵreference"](16);
         const _r10 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵreference"](18);
         const _r12 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵreference"](21);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("hasDelete", true);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("items", ctx.items)("form", ctx.form)("hasDelete", true)("add", ctx.addFase.bind(ctx))("load", ctx.loadFase.bind(ctx))("remove", ctx.removeFase.bind(ctx))("save", ctx.saveFase.bind(ctx));
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("template", _r0)("editTemplate", _r2);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("template", _r4)("editTemplate", _r4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("template", _r4)("editTemplate", _r6);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](5);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("template", _r8)("editTemplate", _r10);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](5);

@@ -25,8 +25,12 @@ class CreatePlanosAvaliacoes extends Migration
             $table->json('justificativas')->comment("Justificativas da avaliação");
             // Chaves estrangeiras:
             $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('plano_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('tipo_avaliacao_id')->nullable()->constrained('tipos_avaliacoes')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('plano_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('tipo_avaliacao_id')->constrained('tipos_avaliacoes')->onDelete('restrict')->onUpdate('cascade');
+
+            // Os campos plano_id e tipo_avaliacao_id foram definidos como NOT NULL, apesar
+            // de os campos respectivos na migration 'create_demandas_avaliacoes' estarem como NULLABLE.
+            // Não percebemos a necessidade desses campos poderem ser nulos.
         });
     }
 
