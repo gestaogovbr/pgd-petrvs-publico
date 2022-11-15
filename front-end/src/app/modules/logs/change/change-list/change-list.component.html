@@ -1,6 +1,5 @@
-<grid [dao]="dao" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
-    [selectable]="true" (select)="onRowClick($event)">
-    <toolbar *ngIf="!selectable"></toolbar>
+<grid [dao]="dao" [hasEdit]="false" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join">
+    <toolbar></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-search [size]="6" label="Responsável pelo registro" controlName="responsavel_id" [control]="filter!.controls.responsavel_id" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
@@ -8,9 +7,10 @@
             <input-datetime [size]="3" datetime label="Fim" controlName="data_fim" [control]="filter!.controls.data_fim" labelInfo="Fim dos registros"></input-datetime>
         </div>
         <div class="row">
-            <input-select #selectTabelas label="Tabela" [size]="5" controlName="tabela" [control]="filter!.controls.tabela" [items]="tabelas" (change)="onTabelaChange($event)" itemTodos="Todas as tabelas" valueTodos=""></input-select>
-            <input-search *ngIf="entity" [size]="5" [label]="entity.label" controlName="row_id" [control]="filter!.controls.row_id" [dao]="entity.dao" [selectRoute]="entity.selectRoute"></input-search>
-            <input-text *ngIf="!entity" [size]="5" label="ID" controlName="row_id" [control]="filter!.controls.row_id"></input-text>
+            <input-select #selectTabelas label="Tabela" [size]="2" controlName="tabela" [control]="filter!.controls.tabela" [items]="tabelas" (change)="onTabelaChange($event)" itemTodos="Todas as tabelas" valueTodos=""></input-select>
+            <input-radio *ngIf="entity" [size]="4" label="Opção para filtro" controlName="opcao_filtro" [control]="filter!.controls.opcao_filtro" [items]="opcoes_filtro"></input-radio>
+            <input-search *ngIf="entity && filter!.controls.opcao_filtro.value == 1" [size]="4" [label]="entity.label" controlName="row_id" [control]="filter!.controls.row_id" [dao]="entity.dao" [selectRoute]="entity.selectRoute"></input-search>
+            <input-text *ngIf="filter!.controls.opcao_filtro.value == 0" [size]="4" label="ID do registro" controlName="row_id" [control]="filter!.controls.row_id"></input-text>
             <input-select [size]="2" label="Tipo" icon="bi bi-arrow-up-right-circle" controlName="tipo" [control]="filter!.controls.tipo" [items]="lookup.TIPO_LOG_CHANGE" itemTodos="Todos" valueTodos=""></input-select>
         </div>
         <div class="row">            
@@ -30,6 +30,7 @@
         <column title="Tabela" field="table_name"></column>
         <column title="ID" field="row_id"></column>
         <column title="Tipo de Operação" field="type"></column>
+        <column *ngIf="!selectable" type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

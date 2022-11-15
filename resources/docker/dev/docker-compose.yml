@@ -16,7 +16,7 @@ services:
 
 
   petrvs_php:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile-php
     container_name: petrvs_php
@@ -29,7 +29,7 @@ services:
       - ../../../back-end:/var/www
 
   petrvs_node:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile-node
     container_name: petrvs_node
@@ -44,4 +44,3 @@ services:
     volumes:
       - ../../../front-end:/usr/src/app
       - ../../../back-end:/usr/src/back-end
-

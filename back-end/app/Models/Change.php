@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\ModelBase;
 use App\Models\Usuario;
 
-class Change extends Model
+class Change extends ModelBase
 {
     use HasFactory;
 
