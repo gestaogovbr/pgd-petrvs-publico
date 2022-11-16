@@ -24,7 +24,7 @@ class UsuarioSeeder extends Seeder
                 'nome' => 'Edson dos Santos Marian',
                 'cpf' => '67703011053',
                 'apelido' => 'Marian',
-                'perfil_id' => $perfis->where('nome', 'Administrador')->first()->id,
+                'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
                 'data_inicio' => Carbon::now()
             ],
             [
@@ -32,7 +32,7 @@ class UsuarioSeeder extends Seeder
                 'nome' => 'Genisson',
                 'cpf' => '07408707425',
                 'apelido' => 'Genisson',
-                'perfil_id' => $perfis->where('nome', 'Administrador')->first()->id,
+                'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
                 'data_inicio' => Carbon::now()
             ],
             [
@@ -40,7 +40,7 @@ class UsuarioSeeder extends Seeder
                 'nome' => 'Ricardo de Sousa',
                 'cpf' => '25941933304',
                 'apelido' => 'Ricardo',
-                'perfil_id' => $perfis->where('nome', 'Administrador')->first()->id,
+                'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
                 'data_inicio' => Carbon::now()
             ],
             [
@@ -56,7 +56,7 @@ class UsuarioSeeder extends Seeder
                 'nome' => 'Edson Dario Silva de França',
                 'cpf' => '01380127416',
                 'apelido' => 'Edson',
-                'perfil_id' => $perfis->where('nome', 'Administrador')->first()->id,
+                'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
                 'data_inicio' => Carbon::now()
             ],
             [
@@ -64,14 +64,14 @@ class UsuarioSeeder extends Seeder
                 'nome' => 'Geisimar Rech',
                 'cpf' => '01798651106',
                 'apelido' => 'Geisimar',
-                'perfil_id' => $perfis->where('nome', 'Administrador')->first()->id,
+                'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
                 'data_inicio' => Carbon::now()
             ]
         ];
 
         foreach($usuarios as $usuario)
         {
-            $user = new Usuario();
+            $user = Usuario::where('cpf', $usuario['cpf'])->first() ?? new Usuario();
             $user->fill([
                 'email' => $usuario['email'],
                 'nome' => $usuario['nome'],

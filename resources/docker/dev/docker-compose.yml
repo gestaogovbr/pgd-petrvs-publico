@@ -19,6 +19,8 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile-php
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     container_name: petrvs_php
     working_dir: /var/www
     ports:
