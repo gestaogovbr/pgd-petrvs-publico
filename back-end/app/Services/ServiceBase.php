@@ -785,7 +785,7 @@ class ServiceBase
         if(isset($entity)) {
             try {
                 if($transaction) DB::beginTransaction();
-                if(method_exists($this, "proxyDestroy") ? $this->proxyDestroy($entity) : true) $entity->deleteCascade();
+                if(method_exists($this, "proxyDestroy") ? $this->proxyDestroy($entity) : true) { if(method_exists($entity, 'deleteCascade')) $entity->deleteCascade(); }
                 if($transaction) DB::commit();
                 return true;
             } catch (Throwable $e) {

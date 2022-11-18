@@ -3,10 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\ModelBase;
-use App\Models\Usuario;
+use Illuminate\Database\Eloquent\Model;
 
-class Change extends ModelBase
+class Change extends Model
 {
     use HasFactory;
 
@@ -28,7 +27,7 @@ class Change extends ModelBase
     public $timestamps = false;
 
     protected $casts = [
-        'data_hora' => 'datetime',
+        'date_time' => 'datetime',
     ];
 
 }

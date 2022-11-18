@@ -233,7 +233,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
           (self.grid!.query || self.query!).removeId(doc.id);
           //self.grid!.query!.refresh();
           //self.dialog.alert("Sucesso", "Registro excluído com sucesso!");
-          self.dialog.topAlert("Registro excluído com sucesso!");
+          self.dialog.topAlert("Registro excluído com sucesso!", 5000);
         }).catch((error) => {
           self.dialog.alert("Erro", "Erro ao excluir: " + (error?.message ? error?.message : error));
         });

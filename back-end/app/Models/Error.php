@@ -27,6 +27,6 @@ class Error extends Model
     public $timestamps = false;
 
     protected $casts = [
-        'data_hora' => 'datetime',
+        'date_time' => 'datetime',
     ];
 }

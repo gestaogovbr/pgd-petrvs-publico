@@ -24,7 +24,8 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
   public allPages: ListenerAllPagesService;
   public usuarioDao: UsuarioDaoService;
   public tabelas: LookupItem[] = [];
-  public opcoes_filtro: LookupItem[] = [{'key': 0, 'value': 'ID do registro'},{'key': 1, 'value': ''}];
+  public opcoes_filtro: LookupItem[] = [
+    {'key': 0, 'value': 'ID do registro'},{'key': 1, 'value': ''}];
 
   constructor(public injector: Injector, dao: ChangeDaoService) {
     super(injector, Change, ChangeDaoService);
@@ -41,6 +42,7 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
       row_id: {default: ""},
       opcao_filtro: {default: 0}
     });
+    this.orderBy = [['id', 'desc']];
   }
 
   ngAfterViewInit() {
@@ -56,7 +58,7 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     this.cdRef.detectChanges();
   }
 
-  public onRowClick (row: Base | IIndexable | null) {
+  public onRowClick(row: Change) {
     if(row){
       let change = row as Change;
       this.entity = this.entities.find(x => x.table == change!.table_name.toLowerCase());
@@ -116,7 +118,7 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
 
   public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
-    //result.push({icon: "bi bi-info-circle", label: "Informações", onClick: this.onRowClick(row)});
+    result.push({icon: "bi bi-info-circle", label: "Informações", onClick: this.onRowClick.bind(this)});
     result.push({icon: "bi bi-trash", color: "btn-outline-danger", label: "Excluir", onClick: this.delete.bind(this)});
     return result;
   }
