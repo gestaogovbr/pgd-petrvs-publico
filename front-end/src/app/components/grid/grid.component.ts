@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ContentChild, ContentChildren, EventEmitter, HostBinding, Injector, Input, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { ChangeDetectorRef, Component, ContentChild, ContentChildren, EventEmitter, HostBinding, Injector, Input, OnInit, Output, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
 import { AbstractControl, FormGroup, FormGroupDirective } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 import { DaoBaseService, QueryOrderBy } from 'src/app/dao/dao-base.service';
@@ -21,9 +21,10 @@ import { ReportComponent } from './report/report.component';
 export type GroupBy = {field: string, label: string, value?: any};
 
 export class GridGroupSeparator {
-  constructor(public groups: GroupBy[]) {}
+  constructor(public group: GroupBy[]) {}
+  public metadata: any = undefined;
   public get text(): string {
-    return this.groups.map(x => x.value).join(" - ");
+    return this.group.map(x => x.value).join(" - ");
   }
 }
 
@@ -78,6 +79,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   @Input() canSelect?: (row: IIndexable) => boolean;
   @Input() dynamicMultiselectMenu?: (multiselected: IIndexable) => ToolbarButton[];
   @Input() multiselectMenu?: ToolbarButton[];
+  @Input() groupTemplate?: TemplateRef<unknown>;
   @Input() set title(value: string) {
     if(value != this._title) {
       this._title = value;
@@ -331,12 +333,12 @@ export class GridComponent extends ComponentBase implements OnInit {
   public group(items: IIndexable[]) {
     if(this.groupBy && items?.length) {
       let buffer = "";
-      items = items.filter(x => !(x instanceof GridGroupSeparator));
+      items = items.filter(x => !(x instanceof GridGroupSeparator)).map(x => Object.assign(x, {_group: this.groupBy!.map(g => Object.assign({}, g, { value: this.util.getNested(x, g.field) }))}));
+      if(!this.query) items.sort((a: IIndexable, b: IIndexable) => JSON.stringify(a._group) > JSON.stringify(b._group) ? 1 : JSON.stringify(a._group) < JSON.stringify(b._group) ? -1 : 0);
       for(let i = 0; i < items.length; i++) {
-        let group = this.groupBy.map(x => Object.assign({}, x, { value: this.util.getNested(items[i], x.field) }));
-        if(buffer != JSON.stringify(group)) {
-          buffer = JSON.stringify(group);
-          items.splice(i, 0, new GridGroupSeparator(group));
+        if(buffer != JSON.stringify(items[i]._group)) {
+          buffer = JSON.stringify(items[i]._group);
+          items.splice(i, 0, new GridGroupSeparator(items[i]._group));
         }
       }
     }

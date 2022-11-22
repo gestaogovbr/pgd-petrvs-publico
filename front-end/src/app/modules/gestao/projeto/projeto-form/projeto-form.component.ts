@@ -3,7 +3,13 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { ProjetoDaoService } from 'src/app/dao/projeto-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
+import { ProjetoAlocacaoRegra } from 'src/app/models/projeto-alocacao-regra.model';
+import { ProjetoAlocacao } from 'src/app/models/projeto-alocacao.model';
+import { ProjetoRecurso } from 'src/app/models/projeto-recurso.model';
+import { ProjetoRegra } from 'src/app/models/projeto-regra.model';
 import { Projeto } from 'src/app/models/projeto.model';
+import { Unidade } from 'src/app/models/unidade.model';
+import { Usuario } from 'src/app/models/usuario.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { ComentariosComponent } from 'src/app/modules/uteis/comentarios/comentarios.component';
 import { LookupItem } from 'src/app/services/lookup.service';
@@ -49,7 +55,81 @@ export class ProjetoFormComponent extends PageFormBase<Projeto, ProjetoDaoServic
   }
 
   public initializeData(form: FormGroup): void {
-    this.entity = new Projeto();
+    const regra_escritorio_id = this.dao!.generateUuid();
+    const regra_gerente_id = this.dao!.generateUuid();
+    const regra_equipe_id = this.dao!.generateUuid();
+    const recurso_gerente_id = this.dao!.generateUuid();
+    const recurso_escritorio_id = this.dao!.generateUuid();
+    const alocacao_gerente_id = this.dao!.generateUuid();
+    const alocacao_escritorio_id = this.dao!.generateUuid();
+    const alocacao_regra_escritorio_id = this.dao!.generateUuid();
+    const alocacao_regra_gerente_id = this.dao!.generateUuid();
+    let projeto = new Projeto();
+    /* Usuario e Unidade */
+    let usuario = new Usuario({
+      id: this.auth.usuario!.id,
+      nome: this.auth.usuario!.nome,
+      email: this.auth.usuario!.email,
+      url_foto: this.auth.usuario!.url_foto
+    });
+    let unidade = new Unidade({
+      id: this.auth.unidade!.id,
+      codigo: this.auth.unidade!.codigo,
+      sigla: this.auth.unidade!.sigla,
+      nome: this.auth.unidade!.nome
+    });
+    /* Carrega Regras, Recursos e Alocações padrões */
+    projeto.regras = [new ProjetoRegra({
+      id: regra_escritorio_id,
+      nome: "Escritório",
+      tipo_recurso: "DEPARTAMENTO"
+    }), new ProjetoRegra({
+      id: regra_gerente_id,
+      nome: "Gerente",
+      tipo_recurso: "HUMANO"
+    }), new ProjetoRegra({
+      id: regra_equipe_id,
+      nome: "Equipe",
+      tipo_recurso: "HUMANO"
+    })];
+    projeto.recursos = [new ProjetoRecurso({
+      id: recurso_gerente_id,
+      nome: usuario.nome,
+      tipo: "HUMANO",
+      usuario_id: usuario.id,
+      usuario: usuario
+    }), new ProjetoRecurso({
+      id: recurso_escritorio_id,
+      nome: unidade.nome,
+      tipo: "DEPARTAMENTO",
+      unidade_id: unidade.id,
+      unidade: unidade
+    })];
+    projeto.alocacoes = [new ProjetoAlocacao({
+      id: alocacao_gerente_id,
+      envolvido: true,
+      regras: [new ProjetoAlocacaoRegra({
+        id: alocacao_regra_gerente_id,
+        regra_id: regra_gerente_id,
+        regra: projeto.regras.find(x => x.id == regra_gerente_id),
+        projeto_alocacao_id: alocacao_gerente_id
+      })],
+      recurso_id: recurso_gerente_id,
+      recurso: projeto.recursos.find(x => x.id == recurso_gerente_id)
+    }), new ProjetoAlocacao({
+      id: alocacao_escritorio_id,
+      envolvido: true,
+      regras: [new ProjetoAlocacaoRegra({
+        id: alocacao_regra_escritorio_id,
+        regra_id: regra_escritorio_id,
+        regra: projeto.regras.find(x => x.id == regra_escritorio_id),
+        projeto_alocacao_id: alocacao_escritorio_id
+      })],
+      recurso_id: recurso_escritorio_id,
+      recurso: projeto.recursos.find(x => x.id == recurso_escritorio_id)
+    })];
+    /* Carrega projeto */
+    this.entity = projeto;
     this.loadData(this.entity, form);    
   }
 

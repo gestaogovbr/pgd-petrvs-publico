@@ -26,6 +26,7 @@ class Programa extends ModelBase
         'documento_id', /* char(36); */
         'unidade_id', /* char(36); NOT NULL; */
         //'data_fim', /* datetime; */// Data fim da vigência
+        //'periodo_avaliacao', /* enum('SEMANAL','QUINZENAL','MENSAL','BIMESTRAL','TRIMESTRAL','SEMESTRAL'); NOT NULL; DEFAULT: 'MENSAL'; */// Período para avaliação do plano
     ];
 
     public $delete_cascade = ['documento'];

@@ -42,7 +42,7 @@ class AtividadeController extends ControllerBase
 
     public function homologar(Request $request) {
         try {
-            $usuario = Auth::user();
+            $usuario = parent::loggedUser();
             if (!$usuario->hasPermissionTo('MOD_ATV_EDT_OTR_OP_HOM')) throw new ServerException("ValidateAtividade", "Usuário não tem permissão para alterar a homologação");
             $data = $request->validate([
                 'atividades_ids' => ['array'],

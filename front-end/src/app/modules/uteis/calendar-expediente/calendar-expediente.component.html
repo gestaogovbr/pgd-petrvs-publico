@@ -1,3 +1,56 @@
+<!--div class="d-flex">
+    <div class="flex-fill">
+        <separator title="Domingo"></separator>
+        <div class="row mx-1">
+            <input-datetime noIcon noIndicator time time24hours hostClass="p-0" [size]="6" [control]="form.controls.domingo_inicio"></input-datetime>
+            <input-datetime noIcon noIndicator time time24hours hostClass="p-0" [size]="6" [control]="form.controls.domingo_fim"></input-datetime>
+        </div>
+    </div>
+    <div class="flex-fill">
+        <separator title="Segunda-feira"></separator>
+        <div class="row mx-1">
+            <input-datetime noIcon noIndicator time time24hours hostClass="p-0" [size]="6" [control]="form.controls.segunda_inicio"></input-datetime>
+            <input-datetime noIcon noIndicator time time24hours hostClass="p-0" [size]="6" [control]="form.controls.segunda_fim"></input-datetime>
+        </div>
+    </div>
+    <div class="flex-fill">
+        <separator title="Terça-feira"></separator>
+        <div class="row mx-1">
+            <input-datetime noIcon noIndicator time time24hours hostClass="p-0" [size]="6" [control]="form.controls.terca_inicio"></input-datetime>
+            <input-datetime noIcon noIndicator time time24hours hostClass="p-0" [size]="6" [control]="form.controls.terca_fim"></input-datetime>
+        </div>
+    </div>
+    <div class="flex-fill">
+        <separator title="Quarta-feira"></separator>
+        <div class="row mx-1">
+            <input-datetime noIcon noIndicator time time24hours hostClass="p-0" [size]="6" [control]="form.controls.quarta_inicio"></input-datetime>
+            <input-datetime noIcon noIndicator time time24hours hostClass="p-0" [size]="6" [control]="form.controls.quarta_fim"></input-datetime>
+        </div>
+    </div>
+    <div class="flex-fill">
+        <separator title="Quinta-feira"></separator>
+        <div class="row mx-1">
+            <input-datetime noIcon noIndicator time time24hours hostClass="p-0" [size]="6" [control]="form.controls.quinta_inicio"></input-datetime>
+            <input-datetime noIcon noIndicator time time24hours hostClass="p-0" [size]="6" [control]="form.controls.quinta_fim"></input-datetime>
+        </div>
+    </div>
+    <div class="flex-fill">
+        <separator title="Sexta-feira"></separator>
+        <div class="row mx-1">
+            <input-datetime noIcon noIndicator time time24hours hostClass="p-0" [size]="6" [control]="form.controls.sexta_inicio"></input-datetime>
+            <input-datetime noIcon noIndicator time time24hours hostClass="p-0" [size]="6" [control]="form.controls.sexta_fim"></input-datetime>
+        </div>
+    </div>
+    <div class="flex-fill">
+        <separator title="Sábado"></separator>
+        <div class="row mx-1">
+            <input-datetime noIcon noIndicator time time24hours hostClass="p-0" [size]="6" [control]="form.controls.sabado_inicio"></input-datetime>
+            <input-datetime noIcon noIndicator time time24hours hostClass="p-0" [size]="6" [control]="form.controls.sabado_fim"></input-datetime>
+        </div>
+    </div>
+</div//-->
+
+
 <div class="row">
     <input-multiselect label="Domingo" hostClass="p-0" controlName="domingo" [size]="3" [addItemHandle]="addItemHandleDomingo.bind(this)">
         <input-datetime noIcon noIndicator time time24hours [size]="6" label="Início" hostClass="pe-0" controlName="domingo_inicio" [control]="form.controls.domingo_inicio"></input-datetime>

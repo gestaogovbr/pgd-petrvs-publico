@@ -24,7 +24,6 @@ export class InputRadioComponent extends InputBase implements OnInit {
   @Input() label: string = "";
   @Input() labelInfo: string = "";
   @Input() bold: boolean = false;
-  @Input() size: number = 0;
   @Input() loading: boolean = false;
   @Input() items: LookupItem[] = [];
   @Input() form?: FormGroup;
@@ -47,6 +46,12 @@ export class InputRadioComponent extends InputBase implements OnInit {
   }
   get control(): AbstractControl | undefined {
     return this.getControl();
+  }
+  @Input() set size(value: number) {
+    this.setSize(value); 
+  }
+  get size(): number {
+    return this.getSize(); 
   }
 
   protected _value: any = "";

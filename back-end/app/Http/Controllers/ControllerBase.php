@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Usuario;
 use App\Exceptions\LogError;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Throwable;
 
 abstract class ControllerBase extends Controller
@@ -24,11 +25,20 @@ abstract class ControllerBase extends Controller
                 if(!empty(app($chield))) {
                     $this->service = new $chield();
                 }
-            } catch (Illuminate\Contracts\Container\BindingResolutionException $e) {}
+            } catch (BindingResolutionException $e) {}
         }
     }
 
     abstract protected function checkPermissions($action, $request, $service, $unidade, $usuario);
+
+    /**
+     * Retorna o usuário logado
+     *
+     * @return App\Models\Usuario | null
+     */
+    public static function loggedUser(): ?Usuario {
+        return Auth::user();
+    }
 
     public function getPetrvsHeader(Request $request) {
         $header = $request->header('X-PETRVS');
@@ -42,7 +52,7 @@ abstract class ControllerBase extends Controller
         $headers = $this->getPetrvsHeader($request);
         $unidade_id = !empty($headers) && !empty($headers["unidade_id"]) ? $headers["unidade_id"] : $request->session()->get("unidade");
         if(!empty($unidade_id)) {
-            $usuario = Usuario::where("id", Auth::user()->id)->with(["lotacoes" => function ($query) use ($unidade_id) {
+            $usuario = Usuario::where("id", self::loggedUser()->id)->with(["lotacoes" => function ($query) use ($unidade_id) {
                 $query->whereNull("data_fim")->where("unidade_id", $unidade_id);
             }, "lotacoes.unidade"])->first();
             if(isset($usuario->lotacoes[0]) && !empty($usuario->lotacoes[0]->unidade_id)) {
@@ -53,7 +63,7 @@ abstract class ControllerBase extends Controller
     }
 
     public function getUsuario(Request $request) {
-        return Usuario::where("id", Auth::user()->id)->with(["lotacoes" => function ($query) {
+        return Usuario::where("id", self::loggedUser()->id)->with(["lotacoes" => function ($query) {
             $query->whereNull("data_fim");
         }, "lotacoes.unidade"])->first();
     }

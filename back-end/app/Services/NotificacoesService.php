@@ -23,14 +23,14 @@ class NotificacoesService
             if($config["email"]["enviar"] && $usuario->notificacoes["enviar_email"] && $unidade->notificacoes["enviar_email"] && $entidade->notificacoes["enviar_email"] && !empty($usuario->email)) {
                 try {
                     LaravelMail::to($usuario->email)->send(new NotificacaoMail($mensagem, $config["email"]["signature"]));
-                } catch (Throwable $e) {
+                } catch (\Throwable $e) {
                     LogError::newError("Erro ao enviar e-mail de notificação", $e, ["usuario_id" => $usuario->id, "unidade_id" => $unidade->id, "email" => $usuario->email, "mensagem" => $mensagem], false);
                 }
             }
             if($config["whatsapp"]["enviar"] && $usuario->notificacoes["enviar_whatsapp"] && $unidade->notificacoes["enviar_whatsapp"] && $entidade->notificacoes["enviar_whatsapp"] && !empty($usuario->telefone)) {
                 try {
                     WhatsappService::sendMessage($usuario->telefone, $mensagem);
-                } catch (Throwable $e) {
+                } catch (\Throwable $e) {
                     LogError::newError("Erro ao enviar mensagem Whatsapp de notificação", $e, ["usuario_id" => $usuario->id, "unidade_id" => $unidade->id, "telefone" => $usuario->telefone, "mensagem" => $mensagem], false);
                 }
             }
@@ -51,7 +51,7 @@ class NotificacoesService
                 $this->applyParams($text, ["demanda_numero" => $demanda->numero]);
                 $this->send($demanda->usuario, $demanda->unidade, $text, "notifica_demanda_distribuicao");
             }
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             LogError::newError("Erro ao enviar notificação de distribuição de demanda", $e, ["usuario_id" => $demanda->usuario_id, "unidade_id" => $demanda->unidade_id], false);
         }
     }
@@ -65,7 +65,7 @@ class NotificacoesService
                 $this->applyParams($text, ["demanda_numero" => $demanda->numero, "demanda_responsavel" => $demanda->usuario->nome]);
                 $this->send($demanda->demandante, $demanda->unidade, $text, "notifica_demanda_conclusao");
             }
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             LogError::newError("Erro ao enviar notificação de conclusão da demanda", $e, ["usuario_id" => $demanda->usuario_id, "unidade_id" => $demanda->unidade_id], false);
         }
     }
@@ -79,7 +79,7 @@ class NotificacoesService
                 $this->applyParams($text, ["demanda_numero" => $demanda->numero]);
                 $this->send($demanda->usuario, $demanda->unidade, $text, "notifica_demanda_conclusao");
             }
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             LogError::newError("Erro ao enviar notificação de avaliação de demanda", $e, ["usuario_id" => $demanda->usuario_id, "unidade_id" => $demanda->unidade_id], false);
         }
     }
@@ -94,7 +94,7 @@ class NotificacoesService
                 $this->send($demanda->demandante, $demanda->unidade, $text, "notifica_demanda_modificacao");
                 $this->send($demanda->usuario, $demanda->unidade, $text, "notifica_demanda_modificacao");
             }
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             LogError::newError("Erro ao enviar notificação de modificação da demanda", $e, ["usuario_id" => $demanda->usuario_id, "unidade_id" => $demanda->unidade_id], false);
         }
     }
@@ -109,7 +109,7 @@ class NotificacoesService
                 $this->send($demanda->demandante, $demanda->unidade, $text, "notifica_demanda_comentario");
                 $this->send($demanda->usuario, $demanda->unidade, $text, "notifica_demanda_comentario");
             }
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             LogError::newError("Erro ao enviar notificação de comentario na demanda", $e, ["usuario_id" => $demanda->usuario_id, "unidade_id" => $demanda->unidade_id], false);
         }
     }

@@ -11,6 +11,7 @@ use App\Services\ServiceBase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\UseDataFim;
+use Exception;
 use Throwable;
 
 class UnidadeService extends ServiceBase
@@ -45,7 +46,7 @@ class UnidadeService extends ServiceBase
     }
 
     public function proxyQuery($query, &$data) {
-        $usuario = Auth::user();
+        $usuario = parent::loggedUser();
         $where = [];
         $subordinadas = true;
         $inativos = true;
@@ -99,6 +100,21 @@ class UnidadeService extends ServiceBase
                 }
                 if($exclui) $this->destroy($de, false);
             }
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollback();
+            throw $e;
+        }
+        return true;
+    }
+
+    public function inativo($id, $inativo) {
+        DB::beginTransaction();
+        try {
+            $unidade = Unidade::find($id);
+            if(empty($unidade)) throw new Exception("Unidade não encontrada");
+            $unidade->inativo = $inativo ? date("Y-m-d H:i:s") : null;
+            $unidade->save();
             DB::commit();
         } catch (Throwable $e) {
             DB::rollback();

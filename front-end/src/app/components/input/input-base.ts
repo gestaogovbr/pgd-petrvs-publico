@@ -34,6 +34,7 @@ export abstract class InputBase extends ComponentBase {
     /* Protected get e set */
     protected _control?: AbstractControl;
     protected _fakeControl: FormControl = new FormControl();
+    protected _size: number = 12;
     protected _value: any;
 
     public getValue(): any {
@@ -46,6 +47,17 @@ export abstract class InputBase extends ComponentBase {
             this.util.setNested(this.source, this.path, value);
         } else {
             this._value = value;
+        }
+    }
+
+    public getSize(): number {
+        return this._size;
+    }
+
+    public setSize(size: number) {
+        if(size != this._size) {
+            this._size = size;
+            this.class = this.class.replace(/col\-md\-[0-9]+/g, "col-md-" + size);
         }
     }
 

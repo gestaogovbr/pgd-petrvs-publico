@@ -26,7 +26,6 @@ export class InputNumberComponent extends InputBase implements OnInit {
   @Input() labelInfo: string = "";
   @Input() bold: boolean = false;
   @Input() value: any = "";
-  @Input() size: number = 12;
   @Input() loading: boolean = false;
   @Input() minValue?: any;
   @Input() maxValue?: any;
@@ -61,6 +60,12 @@ export class InputNumberComponent extends InputBase implements OnInit {
       //this.maskOptions.precision = value;
       this.maskFormat = value ? "0*.00" : ""; //"separator." + value : "";
     }
+  }
+  @Input() set size(value: number) {
+    this.setSize(value); 
+  }
+  get size(): number {
+    return this.getSize(); 
   }
 
   public maskFormat: string = "";

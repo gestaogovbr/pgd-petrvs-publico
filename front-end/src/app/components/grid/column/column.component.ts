@@ -43,6 +43,8 @@ export class ColumnComponent implements OnInit {
   @Input() stepValue?: any;
   @Input() align: ColumnAlign = "none";
   @Input() minWidth?: number = undefined;
+  @Input() maxWidth?: number = undefined;
+  @Input() width?: number = undefined;
 
   constructor() { }
 

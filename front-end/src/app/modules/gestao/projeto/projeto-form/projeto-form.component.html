@@ -1,19 +1,19 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
     <tabs display right [title]="titleProjeto">
         <tab key="PRINCIPAL" label="Principal">
-            <projeto-form-principal #principal [entity]="entity"></projeto-form-principal>
+            <projeto-form-principal #principal [entity]="entity" [cdRef]="cdRef"></projeto-form-principal>
         </tab>
         <tab key="FASES" label="Fases">
-            <projeto-form-fases #fases [entity]="entity"></projeto-form-fases>
+            <projeto-form-fases #fases [entity]="entity" [cdRef]="cdRef"></projeto-form-fases>
         </tab>
         <tab key="ALOCACOES" label="Alocações">
-            <projeto-form-alocacoes #alocacoes [entity]="entity"></projeto-form-alocacoes>
+            <projeto-form-alocacoes #alocacoes [entity]="entity" [cdRef]="cdRef"></projeto-form-alocacoes>
         </tab>
         <tab key="RECURSOS" label="Recursos">
-            <projeto-form-recursos #recursos [entity]="entity"></projeto-form-recursos>
+            <projeto-form-recursos #recursos [entity]="entity" [cdRef]="cdRef"></projeto-form-recursos>
         </tab>
         <tab key="REGRAS" label="Regras">
-            <projeto-form-regras #regras [entity]="entity"></projeto-form-regras>
+            <projeto-form-regras #regras [entity]="entity" [cdRef]="cdRef"></projeto-form-regras>
         </tab>
         <tab key="COMENTARIOS" label="Comentários">
             <comentarios #comentarios origem="PROJETO" [entity]="entity"></comentarios>

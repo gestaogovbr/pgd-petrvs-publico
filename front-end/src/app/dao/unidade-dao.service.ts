@@ -57,4 +57,13 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
       }, error => reject(error));
     });
   }
+
+  public inativo(id: string, inativo: boolean) {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/inativo', {id, inativo}).subscribe(response => {
+        resolve(!!response?.success);
+      }, error => reject(error));
+    });
+  }
+
 }

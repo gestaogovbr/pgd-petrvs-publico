@@ -19,6 +19,7 @@ use App\Services\CalendarioService;
 use App\Services\UsuarioService;
 use Database\Seeders\UsuarioSeeder;
 use Illuminate\Validation\ValidationException;
+use SocialiteProviders\Azure\Provider;
 use DateTime;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -40,6 +41,15 @@ class LoginController extends Controller
             }
         }
         return $usuario;
+    }
+
+    /**
+     * Retorna o usuário logado
+     *
+     * @return App\Models\Usuario | null
+     */
+    public static function loggedUser(): ?Usuario {
+        return Auth::user();
     }
 
     /**
@@ -103,7 +113,7 @@ class LoginController extends Controller
      */
     public function logout(Request $request, FirebaseAuthService $auth)
     {
-        $usuario = Auth::user();
+        $usuario = self::loggedUser();
         if(!empty($usuario) && !empty($usuario->currentAccessToken())) $usuario->currentAccessToken()->delete();
         Auth::logout();
         $request->session()->invalidate();
@@ -122,7 +132,7 @@ class LoginController extends Controller
             return response()->json([
                 "success" => true,
                 "kind" => $request->session()->get("kind"),
-                "usuario" => $this->registrarUsuario($request, Auth::user()),
+                "usuario" => $this->registrarUsuario($request, self::loggedUser()),
                 "horario_servidor" => CalendarioService::horarioServidor()
             ]);
         }
@@ -147,7 +157,7 @@ class LoginController extends Controller
             $request->session()->put("kind", "USERPASSWORD");
             return response()->json([
                 'success' => true,
-                "usuario" => $this->registrarUsuario($request, Auth::user()),
+                "usuario" => $this->registrarUsuario($request, self::loggedUser()),
                 "horario_servidor" => CalendarioService::horarioServidor()
             ]);
         }
@@ -286,7 +296,7 @@ class LoginController extends Controller
      */
     public function authenticateApiSession(Request $request) {
         if(Auth::check()) {
-            $user = Auth::user();
+            $user = self::loggedUser();
             return response()->json([
                 "token" => $user->currentAccessToken()->plainTextToken ?? $request->bearerToken(), // ?? $user->createToken($credentials['device_name'])->plainTextToken,
                 "kind" => $request->session()->get("kind"),
@@ -313,7 +323,7 @@ class LoginController extends Controller
         $usuario = Usuario::where('email', $credentials['email'])->where("data_fim", null)->first();
         if (isset($usuario)) {
             $request->session()->put("kind", "USERPASSWORD");
-            $user = Auth::user();
+            $user = self::loggedUser();
             return response()->json([
                 'token' => $user->createToken($credentials['device_name'])->plainTextToken,
                 'usuario' => $this->registrarUsuario($request, $usuario),
@@ -523,10 +533,13 @@ class LoginController extends Controller
         return redirect('<azure></azure>')->with('popup', 'open');
     }
 
+    public function azureProvider(): Provider {
+        return Socialite::driver('azure');
+    }
+
     public function signInAzureRedirect(Request $request) {
-        return Socialite::driver('azure')
-        ->scopes(['openid', 'email', 'profile'])
-        ->redirect();
+
+        return $this->azureProvider()->scopes(['openid', 'email', 'profile'])->redirect();
     }
 
     public function simulateAzureCallback(Request $request) {
@@ -534,7 +547,7 @@ class LoginController extends Controller
     }
 
     public function signInAzureCallback(Request $request) {
-        $user = Socialite::driver('azure')->user();
+        $user = $this->azureProvider()->user();
         if(!empty($user)) {
             $token = $user->token;
             $email = $user->email;
@@ -551,7 +564,7 @@ class LoginController extends Controller
                 return LogError::newError('As credenciais fornecidas são inválidas. Email: '.$email);
             }
         } else {
-            return Socialite::driver('azure')->redirect();
+            return $this->azureProvider()->redirect();
         }
     }
 

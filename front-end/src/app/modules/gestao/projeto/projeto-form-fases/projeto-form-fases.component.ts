@@ -1,4 +1,4 @@
-import { Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { IIndexable } from 'src/app/models/base.model';
@@ -13,6 +13,7 @@ import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 })
 export class ProjetoFormFasesComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
+  @Input() cdRef: ChangeDetectorRef;
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: Projeto | undefined) { super.entity = value; } get entity(): Projeto | undefined { return super.entity; }
 
@@ -24,8 +25,9 @@ export class ProjetoFormFasesComponent extends PageFrameBase {
 
   constructor(public injector: Injector) {
     super(injector);
+    this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
     this.form = this.fh.FormBuilder({
-      Nome: {default: ""},
+      nome: {default: ""},
       descricao: {default: ""},
       cor: {default: ""},
       inicio: {default: null},
@@ -35,13 +37,6 @@ export class ProjetoFormFasesComponent extends PageFrameBase {
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-
-    if(["nome", "cor"].includes(controlName) && !control.value?.length) {
-      return "Obrigatorio";
-    } else if(controlName == "termino" && this.util.isDataValid(control.value) && this.util.isDataValid(this.form?.controls.inicio.value) && (this.form!.controls.inicio.value.getTime() > control.value.getTime())) {
-      return "Início mario que o termino";
-    }
-
     return result;
   }
 
@@ -60,15 +55,18 @@ export class ProjetoFormFasesComponent extends PageFrameBase {
     });
   }
 
+  public get randomColor(): string {
+    return this.lookup.CORES[this.items.length % this.lookup.CORES.length].color;
+  }
+
   public async addFase() {
     return {
-      id: this.dao!.generateUuid(),
-      inicio: null,
-      termino: null,
-      cor: "",
+      id: "NEW",
       nome: "",
       descricao: "",
-      _status: "ADD"
+      cor: this.randomColor,
+      inicio: null,
+      termino: null
     } as IIndexable;
   }
 
@@ -78,6 +76,7 @@ export class ProjetoFormFasesComponent extends PageFrameBase {
     form.controls.cor.setValue(row.cor);
     form.controls.inicio.setValue(row.inicio);
     form.controls.termino.setValue(row.termino);
+    this.cdRef.detectChanges();
   }
 
   public async removeFase(row: any) {
@@ -86,13 +85,16 @@ export class ProjetoFormFasesComponent extends PageFrameBase {
 
   public async saveFase(form: FormGroup, row: any) {
     let result = undefined;
-    if(this.form?.valid) {
+    this.form!.markAllAsTouched();
+    if(this.form!.valid) {
+      row.id = row.id == "NEW" ? this.util.md5() : row.id;
       row.nome = form.controls.nome.value;
       row.descricao = form.controls.descricao.value;
       row.cor = form.controls.cor.value;
       row.inicio = form.controls.inicio.value;
-      row.inicio = form.controls.termino.value;
+      row.termino = form.controls.termino.value;
       result = row;
+      this.cdRef.detectChanges();
     }
     return result;
   }

@@ -42,7 +42,7 @@ class DocumentoService extends ServiceBase {
     }
 
     public function assinar($data) {
-        $usuario = Auth::user();
+        $usuario = parent::loggedUser();
         $documentos = Documento::with(['assinaturas' => function ($query) use ($usuario) {
             $query->where('usuario_id', $usuario->id);
         }])->whereIn('id', $data["documentos_ids"])->get();
