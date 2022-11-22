@@ -40,4 +40,5 @@ RUN pecl install xdebug-3.1.5 && docker-php-ext-enable xdebug
 RUN echo "xdebug.mode=off" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
     echo "xdebug.start_with_request=yes" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
     echo "xdebug.client_host=host.docker.internal" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
+    echo "xdebug.discover_client_host=0" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
     echo "xdebug.client_port=9004" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null

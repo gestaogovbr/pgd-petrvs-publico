@@ -28,7 +28,6 @@ export class InputWorkloadComponent extends InputBase implements OnInit {
   @Input() labelInfo: string = "";
   @Input() bold: boolean = false;
   @Input() value: any = 0;
-  @Input() size: number = 0;
   @Input() loading: boolean = false;
   @Input() form?: FormGroup;
   @Input() source?: any;
@@ -52,6 +51,12 @@ export class InputWorkloadComponent extends InputBase implements OnInit {
   }
   get control(): AbstractControl | undefined {
     return this.getControl();
+  }
+  @Input() set size(value: number) {
+    this.setSize(value); 
+  }
+  get size(): number {
+    return this.getSize(); 
   }
 
   public workControl: FormControl = new FormControl();

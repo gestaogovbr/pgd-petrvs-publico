@@ -29,7 +29,6 @@ export class InputTextComponent extends InputBase implements OnInit {
   @Input() labelInfo: string = "";
   @Input() bold: boolean = false;
   @Input() value: any = "";
-  @Input() size: number = 12;
   @Input() loading: boolean = false;
   @Input() numbers?: string;
   @Input() password?: string;
@@ -53,6 +52,12 @@ export class InputTextComponent extends InputBase implements OnInit {
   }
   get control(): AbstractControl | undefined {
     return this.getControl();
+  }
+  @Input() set size(value: number) {
+    this.setSize(value); 
+  }
+  get size(): number {
+    return this.getSize(); 
   }
 
   constructor(public injector: Injector) {

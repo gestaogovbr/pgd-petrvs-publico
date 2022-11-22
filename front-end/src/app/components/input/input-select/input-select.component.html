@@ -5,6 +5,7 @@
             <ng-template #isntLoading>
                 <option *ngIf="isNullable" value="null">{{itemNull}}</option>
                 <option *ngIf="itemTodos.length" value="{{getStringValue(valueTodos)}}">{{itemTodos}}</option>
+                <option *ngIf="unknown" value="{{selectedItem?.key || ''}}">{{selectedItem?.value || ' - Desconhecido - '}}</option>
                 <option *ngFor="let item of items" value="{{getStringValue(item.key)}}" class="input-select-dynamic-item" [attr.data-icon]="isNoIcon ? undefined : item.icon" [style.color]="isNoColor ? undefined : (item.color || '#000000')">{{item.value}}</option>
             </ng-template>
             <!-- [attr.selected]="itemSelected(item)" -->

@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use App\Services\UtilService;
 use Illuminate\Support\Facades\Auth;
 use App\Exceptions\LogError;
+use App\Models\Usuario;
 use Carbon\Carbon;
 use ReflectionObject;
 use Throwable;
@@ -30,7 +31,26 @@ class RawWhere {
     }
 }
 
-class ServiceBase
+class DynamicMethods {
+    public function __call($name, $arguments) {}
+}
+
+/**
+ * @method proxySearch($query, $data, $text)
+ * @method proxyRows($rows)
+ * @method proxyGetAllIdsExtra($result, $data)
+ * @method proxyQuery($query, $data)
+ * @method proxyExtra($rows, $data)
+ * @method validateStore($dataOrEntity, $unidade, $action)
+ * @method proxyStore($dataOrEntity, $unidade, $action)
+ * @method extraStore($entity, $unidade, $action)
+ * @method afterStore($entity, $action)
+ * @method proxyUpdate($data, $unidade)
+ * @method afterUpdate($entity, $data)
+ * @method proxyUpdateJson($data, $unidade)
+ * @method proxyDestroy($entity)
+ */
+class ServiceBase extends DynamicMethods
 {
     const OPERATORS = ["=", "==", "like", "in", "<", ">", "<>", "!=", ">=", "<="];
     const ISO8601_VALIDATE = '/^[0-9]{4}-((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01])|(0[469]|11)-(0[1-9]|[12][0-9]|30)|(02)-(0[1-9]|[12][0-9]))((T|\s)(0[0-9]|1[0-9]|2[0-3]):(0[0-9]|[1-5][0-9])(:(0[0-9]|[1-5][0-9])(\.[0-9]{3})?)?)?Z?$/';
@@ -802,5 +822,14 @@ class ServiceBase
      */
     public function isLoggedUserADeveloper(){
         return Auth::user()->perfil_id == $this->developerId;
-     }
+    }
+
+    /**
+     * Retorna o usuário logado
+     *
+     * @return App\Models\Usuario | null
+     */
+    public static function loggedUser(): ?Usuario {
+        return Auth::user();
+    }
 }

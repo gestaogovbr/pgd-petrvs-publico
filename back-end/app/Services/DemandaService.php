@@ -52,8 +52,9 @@ class DemandaService extends ServiceBase
 
     public function validateIniciar($data) {
         /*Testa permissão para iniciar demanda de outros usuarios */
-        if ($data["usuario_id"] != Auth::user()->id){
-            if (!Auth::user()->hasPermissionTo('MOD_DMD_USERS_INICIAR')){
+        $usuario = parent::loggedUser();
+        if ($data["usuario_id"] != $usuario->id){
+            if (!$usuario->hasPermissionTo('MOD_DMD_USERS_INICIAR')){
                 throw new ServerException("ValidateDemanda", "Não é permitido iniciar demanda de outro usuário!");
             }
         }
@@ -70,7 +71,7 @@ class DemandaService extends ServiceBase
             }
             if(!empty($data["atividade_id"])) {
                 $atividade = Atividade::find($data["atividade_id"]);
-                if(isset($plano->documento?->metadados?->atividades_termo_adesao) && !Auth::user()->hasPermissionTo('MOD_DMD_ATV_FORA_PL_TRB') &&
+                if(isset($plano->documento?->metadados?->atividades_termo_adesao) && !parent::loggedUser()->hasPermissionTo('MOD_DMD_ATV_FORA_PL_TRB') &&
                     !in_array(UtilService::removeAcentos(strtolower($atividade->nome)), $plano->documento?->metadados?->atividades_termo_adesao)) {
                     throw new ServerException("ValidateDemanda", "Atividade não consta na lista permitida pelo plano de trabalho selecionado");
                 }
@@ -79,7 +80,7 @@ class DemandaService extends ServiceBase
         if(!empty($data["usuario_id"])) {
             $usuario = Usuario::find($data["usuario_id"]);
             if(!$this->usuarioService->hasLotacao($data["unidade_id"], $usuario, false)) {
-                if (!Auth::user()->hasPermissionTo('MOD_DMD_EXT') && !Auth::user()->hasPermissionTo('MOD_DMD_USERS_ATRIB')){
+                if (!parent::loggedUser()->hasPermissionTo('MOD_DMD_EXT') && !parent::loggedUser()->hasPermissionTo('MOD_DMD_USERS_ATRIB')){
                     throw new ServerException("ValidateDemanda", $unidade->sigla . " não é uma unidade (lotação) para o responsável, ou você não tem permissão para incluir para qualquer usuário");
                 }
             }
@@ -88,7 +89,7 @@ class DemandaService extends ServiceBase
 
     public function proxyStore($data, $unidade, $action) {
         if(empty($data["id"])) {
-            $usuario = Auth::user();
+            $usuario = parent::loggedUser();
             $data["demandante_id"] = $usuario->id;
         }
         //$this->validateStore($data, $unidade);
@@ -101,7 +102,7 @@ class DemandaService extends ServiceBase
         $with = [];
         $unidade_id = null;
         $subordinadas = false;
-        $usuario = Auth::user();
+        $usuario = parent::loggedUser();
         foreach($data["where"] as $condition) {
             if(is_array($condition) && $condition[0] == "unidade_id") {
                 $unidade_id = $condition[2];
@@ -396,14 +397,14 @@ class DemandaService extends ServiceBase
             DB::beginTransaction();
             $demanda = Demanda::with(["plano.tipoModalidade"])->where("id", $conclusao["id"])->first();
             /*Testa permissão para iniciar demanda de outros usuarios*/
-            if ($demanda->usuario_id != Auth::user()->id){
-                if (!Auth::user()->hasPermissionTo('MOD_DMD_USERS_CONCL')){
+            if ($demanda->usuario_id != parent::loggedUser()->id){
+                if (!parent::loggedUser()->hasPermissionTo('MOD_DMD_USERS_CONCL')){
                     throw new ServerException("ValidateDemanda", "Não é permitido concluir demanda de outro usuário!");
                 }
             }
             /*Testa permissão para incluir atividades que estão fora do plano de trabalho*/
             $plano = $demanda->plano;
-            if(isset($plano->documento?->metadados?->atividades_termo_adesao) && !Auth::user()->hasPermissionTo('MOD_DMD_ATV_FORA_PL_TRB') &&
+            if(isset($plano->documento?->metadados?->atividades_termo_adesao) && !parent::loggedUser()->hasPermissionTo('MOD_DMD_ATV_FORA_PL_TRB') &&
                 !in_array(UtilService::removeAcentos(strtolower($demanda->atividade->nome)), $plano->documento?->metadados?->atividades_termo_adesao)) {
                 throw new ServerException("ValidateDemanda", "Atividade não consta na lista permitida pelo plano de trabalho selecionado");
             }
@@ -423,7 +424,7 @@ class DemandaService extends ServiceBase
                     "data_hora" => $unidadeService->hora($unidade->id),
                     "tipo" => "TECNICO",
                     "privacidade" => "PUBLICO",
-                    "usuario_id" => Auth::user()->id,
+                    "usuario_id" => parent::loggedUser()->id,
                     "demanda_id" => $conclusao["id"]
                 ], $unidade, false);
             }
@@ -474,7 +475,7 @@ class DemandaService extends ServiceBase
         try {
             /*Testa permissão para avaliar demanda de outros usuarios,
             prevista para o Gestor ou Gestor substituto da Unidade da Demanda*/
-            if (($demanda->unidade->gestor_id != Auth::user()->id) && ($demanda->unidade->gestor_substituto_id != Auth::user()->id)) {
+            if (($demanda->unidade->gestor_id != parent::loggedUser()->id) && ($demanda->unidade->gestor_substituto_id != parent::loggedUser()->id)) {
                 throw new ServerException("ValidateDemanda", "Não é permitido avaliar demanda da qual usuário logado não é Gestor!");
             }
             DB::beginTransaction();
@@ -482,7 +483,7 @@ class DemandaService extends ServiceBase
             DemandaAvaliacao::where("demanda_id", $avaliacao["demanda_id"])->
                 whereNull("data_fim")->update(["data_fim" => Carbon::now()]);
             $demandaAvaliacao = $demandaAvaliacaoService->store([
-                "usuario_id" => Auth::user()->id,
+                "usuario_id" => parent::loggedUser()->id,
                 "demanda_id" => $avaliacao["demanda_id"],
                 "justificativas" => $avaliacao["justificativas"],
                 "tipo_avaliacao_id" => $avaliacao["tipo_avaliacao_id"],
@@ -511,7 +512,7 @@ class DemandaService extends ServiceBase
                     "data_hora" => $unidadeService->hora($unidade->id),
                     "tipo" => "AVALIACAO",
                     "privacidade" => "PUBLICO",
-                    "usuario_id" => Auth::user()->id,
+                    "usuario_id" => parent::loggedUser()->id,
                     "demanda_id" => $avaliacao["demanda_id"]
                 ], $unidade, false);
             }

@@ -56,7 +56,7 @@ class UnidadeController extends ControllerBase {
 
     public function mesmaSigla(Request $request) {
         try {
-            if (!Auth::user()->hasPermissionTo('MOD_UND_UNIR')) throw new ServerException("ValidateUnidade", "Usuário precisa ter capacidade MOD_UND_UNIR");
+            if (!parent::loggedUser()->hasPermissionTo('MOD_UND_UNIR')) throw new ServerException("ValidateUnidade", "Usuário precisa ter capacidade MOD_UND_UNIR");
             //$data = $request->validate([]);
             return response()->json([
                 'success' => true,
@@ -69,13 +69,28 @@ class UnidadeController extends ControllerBase {
 
     public function unificar(Request $request) {
         try {
-            if (!Auth::user()->hasPermissionTo('MOD_UND_UNIR')) throw new ServerException("ValidateUnidade", "Usuário precisa ter capacidade MOD_UND_UNIR");
+            if (!parent::loggedUser()->hasPermissionTo('MOD_UND_UNIR')) throw new ServerException("ValidateUnidade", "Usuário precisa ter capacidade MOD_UND_UNIR");
             $data = $request->validate([
                 'correspondencias' => ['array'],
                 'exclui' => ['required']
             ]);
             return response()->json([
                 'success' => $this->service->unificar($data["correspondencias"], $data["exclui"])
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function inativo(Request $request) {
+        try {
+            if (!parent::loggedUser()->hasPermissionTo('MOD_UND_INATV')) throw new ServerException("ValidateUnidade", "Usuário precisa ter capacidade MOD_UND_INATV");
+            $data = $request->validate([
+                'id' => ['required'],
+                'inativo' => ['required']
+            ]);
+            return response()->json([
+                'success' => $this->service->inativo($data["id"], $data["inativo"])
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);

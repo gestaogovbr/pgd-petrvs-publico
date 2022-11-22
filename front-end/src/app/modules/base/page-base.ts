@@ -23,6 +23,7 @@ export abstract class PageBase implements OnInit, ModalPage {
   public modalRoute?: ActivatedRouteSnapshot;
   public modalInterface: boolean = true;
   public metadata?: any;
+  public JSON = JSON;
   public code: string = "";
   public titleSubscriber: Subject<string> = new Subject<string>();
   private _loading: boolean = false;

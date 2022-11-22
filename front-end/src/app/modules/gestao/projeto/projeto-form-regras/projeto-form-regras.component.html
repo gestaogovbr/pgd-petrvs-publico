@@ -1,28 +1,30 @@
 <editable-form noButtons [form]="form!" [disabled]="formDisabled">
-  <div class="row">
-    <input-text [size]="6" label="Nome da regra" controlName="nome_regra" labelInfo="Nome da regra"></input-text>
-    <input-select [size]="6" label="Tipo de recurso" icon="bi bi-arrow-up-right-circle" controlName="tipo_recurso" [items]="lookup.PROJETO_TIPO_RECURSOS"></input-select>
-  </div>
-  <div class="row">
-    <grid [hasDelete]="true">
-      <columns>
-          <column [title]="lex.noun('Nome') + ' da Regra'" [template]="tarefaDescricao">
-              <ng-template let-row="row" #tarefaDescricao>
-                  <strong *ngIf="row.tarefa?.nome.length" class="d-block">{{row.tarefa?.nome || ""}}</strong>
-                  {{row.descricao}}
-              </ng-template>
-          </column>
-          <column title="Tipo de recurso" [align]="'center'" [template]="concluido" [editTemplate]="editConcluido" >
-              <ng-template let-row="row" #concluido>
-                  <div class="text-center"><i *ngIf="row.concluido" class="bi bi-check-circle"></i></div>
-              </ng-template>
-              <ng-template let-row="row" #editConcluido>
-                  <input-switch [size]="12" controlName="concluido"></input-switch>
-              </ng-template>
-          </column>
-      </columns>
-    </grid>
-  </div>
+    <div class="row">
+        <grid [items]="items" [form]="form!" [groupTemplate]="groupRecurso" [groupBy]="groupBy" [add]="addRegra.bind(this)" [load]="loadRegra.bind(this)" [remove]="removeRegra.bind(this)" [save]="saveRegra.bind(this)" editable>
+            <ng-template let-group="group" #groupRecurso>
+                <strong *ngIf="group?.length"><i [class]="lookup.getIcon(lookup.PROJETO_TIPO_RECURSOS, group[0].value)"></i> {{lookup.getValue(lookup.PROJETO_TIPO_RECURSOS, group[0].value)}}</strong>
+            </ng-template>
+            <columns>
+                <column title="Nome" [template]="regraNome" [editTemplate]="editRegraNome">
+                    <ng-template let-row="row" #regraNome>
+                        <small>{{row.nome}}</small>
+                    </ng-template>
+                    <ng-template let-row="row" #editRegraNome>
+                        <input-text [size]="12" controlName="nome" [control]="form!.controls.nome"></input-text>
+                    </ng-template>
+                </column>
+                <column title="Tipo do recurso" [width]="250" [template]="regraRecursoTipo" [editTemplate]="editRegraRecursoTipo">
+                    <ng-template let-row="row" #regraRecursoTipo>
+                        <badge [icon]="lookup.getIcon(lookup.PROJETO_TIPO_RECURSOS, row.tipo_recurso)" [label]="lookup.getValue(lookup.PROJETO_TIPO_RECURSOS, row.tipo_recurso)" [color]="lookup.getColor(lookup.PROJETO_TIPO_RECURSOS, row.tipo_recurso)"></badge>
+                    </ng-template>
+                    <ng-template let-row="row" #editRegraRecursoTipo>
+                        <input-select [size]="12" controlName="tipo_recurso" [control]="form!.controls.tipo_recurso" [items]="lookup.PROJETO_TIPO_RECURSOS"></input-select>
+                    </ng-template>
+                </column>
+                <column type="options"></column>
+            </columns>
+        </grid>
+    </div>
 </editable-form>
 <!--
 

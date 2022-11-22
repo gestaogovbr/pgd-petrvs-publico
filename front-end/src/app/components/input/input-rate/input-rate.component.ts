@@ -25,7 +25,6 @@ export class InputRateComponent extends InputBase implements OnInit {
   @Input() labelInfo: string = "";
   @Input() bold: boolean = false;
   @Input() value: number = 0;
-  @Input() size: number = 0;
   @Input() loading: boolean = false;
   @Input() starMargin: number = 2;
   @Input() starSize: number = 4;
@@ -50,6 +49,12 @@ export class InputRateComponent extends InputBase implements OnInit {
   }
   get max(): number {
     return this._max;
+  }
+  @Input() set size(value: number) {
+    this.setSize(value); 
+  }
+  get size(): number {
+    return this.getSize(); 
   }
 
   public startClass(index: number): string {

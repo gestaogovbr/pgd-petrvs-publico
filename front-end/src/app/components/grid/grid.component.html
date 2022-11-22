@@ -13,7 +13,7 @@
                 <th *ngIf="multiselecting" class="grid-multiselect-header">
                     <i class="bi bi-card-checklist"></i>
                 </th>
-                <th *ngFor="let column of columns; let idx = index" [class.grid-editable-options]="isEditableGridOptions(column)" scope="col">
+                <th *ngFor="let column of columns; let idx = index" [class.grid-editable-options]="isEditableGridOptions(column)" [style.width.px]="column.width" [style.min-width.px]="column.minWidth" [style.max-width.px]="column.maxWidth" scope="col">
                     <column-header [column]="column" [index]="idx" [grid]="self"></column-header>
                 </th>
             </tr>
@@ -25,10 +25,11 @@
                         <input class="form-check-input" type="checkbox" name="gird_multiselect_ids[]" [attr.checked]="isMultiselectChecked(row)" (change)="onMultiselectChange($event, row)">
                     </td>                    
                     <td *ngIf="isSeparator(row); else fields" class="grid-no-hover" [attr.colspan]="columns.length">
-                        <strong class="grid-group-text">{{row.text}}</strong>
+                        <ng-container *ngIf="groupTemplate" [ngTemplateOutlet]="groupTemplate" [ngTemplateOutletContext]="{group: row.group, grid: this, metadata: row.metadata}"></ng-container>
+                        <strong *ngIf="!groupTemplate" class="grid-group-text">{{row.text}}</strong>
                     </td>
                     <ng-template #fields>
-                        <td *ngFor="let column of columns; let idx = index" class="grid-column" [class.text-center]="column.align == 'center'" [class.text-end]="column.align == 'right'" [class.grid-column-expanded]="column.isType('expand') && !!expandedIds[row.id]" [class.grid-column-editing-options]="column.editing" [class.text-end]="column.isType('options')" >
+                        <td *ngFor="let column of columns; let idx = index" class="grid-column" [class.text-center]="column.align == 'center'" [class.text-end]="column.align == 'right'" [style.width.px]="column.width" [style.min-width.px]="column.minWidth" [style.max-width.px]="column.maxWidth" [class.grid-column-expanded]="column.isType('expand') && !!expandedIds[row.id]" [class.grid-column-editing-options]="column.editing" [class.text-end]="column.isType('options')">
                             <column-row *ngIf="!column.inType(['options', 'expand'])" [index]="idx" [column]="column" [row]="row" [grid]="self"></column-row>
                             <column-expand *ngIf="column.isType('expand')" [index]="idx" [column]="column" [row]="row" [grid]="self"></column-expand>
                             <column-options *ngIf="column.isType('options') && !multiselecting" [index]="idx" [column]="column" [row]="row" [grid]="self" [options]="column.options" [buttons]="column.buttons || []" [dynamicOptions]="column.dynamicOptions" [dynamicButtons]="column.dynamicButtons" [upDownButtons]="column.upDownButtons"></column-options>

@@ -27,7 +27,6 @@ export class InputMultiselectComponent extends InputBase implements OnInit {
   @Input() labelInfo: string = "";
   @Input() bold: boolean = false;
   @Input() value: any = "";
-  @Input() size: number = 0;
   @Input() noForm?: string;
   @Input() noBox?: string;
   @Input() loading: boolean = false;
@@ -53,6 +52,12 @@ export class InputMultiselectComponent extends InputBase implements OnInit {
   }
   get control(): AbstractControl | undefined {
     return this.getControl();
+  }
+  @Input() set size(value: number) {
+    this.setSize(value); 
+  }
+  get size(): number {
+    return this.getSize(); 
   }
 
   // Propriedades privadas e motodos get e set

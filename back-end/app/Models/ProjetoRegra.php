@@ -18,6 +18,7 @@ class ProjetoRegra extends ModelBase
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'nome', /* varchar(256); NOT NULL; */// Nome da regra
         'projeto_id', /* char(36); NOT NULL; */
+        'tipo_recurso', /* enum('HUMANO','MATERIAL','SERVICO','CUSTO','DEPARTAMENTO'); NOT NULL; DEFAULT: 'MATERIAL'; */// Tipo do recurso que se aplica a regra
         //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
         //'data_fim', /* datetime; */// Data final da vigência
     ];

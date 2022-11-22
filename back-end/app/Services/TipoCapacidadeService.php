@@ -251,6 +251,7 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_UND_INCL", "Permite incluir Unidades"],
         ["MOD_UND_UNIR", "Permite Unificar Unidades"],
         ["MOD_UND_TUDO", "Permite consultar qualquer unidade independente de subordinação"],
+        ["MOD_UND_INATV", "Permite inativar uma unidade"],
         /* Capacidades do módulo USUÁRIO*/
         ["MOD_USER_CONS", "Permite consultar dados de usuário"],
         ["MOD_USER_EDT", "Permite alterar dados de usuário"],

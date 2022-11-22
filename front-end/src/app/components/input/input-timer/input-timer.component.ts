@@ -30,7 +30,6 @@ export class InputTimerComponent extends InputBase implements OnInit {
   @Input() value: any;
   @Input() onlyHours?: string; 
   @Input() onlyDays?: string; 
-  @Input() size: number = 0;
   @Input() loading: boolean = false;
   @Input() form?: FormGroup;
   @Input() source?: any;
@@ -48,6 +47,12 @@ export class InputTimerComponent extends InputBase implements OnInit {
   };
   get hoursPerDay(): number {
     return this._hoursPerDay;
+  }
+  @Input() set size(value: number) {
+    this.setSize(value); 
+  }
+  get size(): number {
+    return this.getSize(); 
   }
 
   public util: UtilService;

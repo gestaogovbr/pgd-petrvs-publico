@@ -1,4 +1,4 @@
-import { Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
@@ -7,6 +7,7 @@ import { ProjetoDaoService } from 'src/app/dao/projeto-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { UnitWorkload } from 'src/app/components/input/input-workload/input-workload.component';
 import { LookupItem } from 'src/app/services/lookup.service';
+import { ProjetoService } from '../projeto.service';
 @Component({
   selector: 'projeto-form-principal',
   templateUrl: './projeto-form-principal.component.html',
@@ -16,12 +17,17 @@ export class ProjetoFormPrincipalComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: Projeto | undefined) { super.entity = value; } get entity(): Projeto | undefined { return super.entity; }
+  @Input() cdRef: ChangeDetectorRef;
+
+  public projetoService: ProjetoService;
 
   private _fases: LookupItem[] = [];
-
+  
   constructor(public injector: Injector) {
     super(injector);
     this.dao = injector.get<ProjetoDaoService>(ProjetoDaoService);
+    this.projetoService = injector.get<ProjetoService>(ProjetoService);
+    this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
     this.form = this.fh.FormBuilder({
       numero: {default: ""},
       nome: {default: ""},
@@ -76,7 +82,7 @@ export class ProjetoFormPrincipalComponent extends PageFrameBase {
   }
 
   public get fases(): LookupItem[] {
-    let fases = (this.entity?.fases || []).map(x => Object.assign({}, {key: x.id, value: x.nome, color: x.cor}));
+    let fases = (this.entity?.fases || []).filter(x => x.id != "NEW").map(x => Object.assign({}, {key: x.id, value: x.nome, color: x.cor}));
     if(JSON.stringify(fases) != JSON.stringify(this._fases)) this._fases = fases;
     return this._fases;
   }
@@ -87,10 +93,17 @@ export class ProjetoFormPrincipalComponent extends PageFrameBase {
 
   public onUnitDuracaoChange(unit: UnitWorkload) {
     this.form?.controls.usa_horas.setValue(unit == "hour");
-    this.cdRef.detectChanges();
+    this.recalcular();
   }
 
   public onIntervaloAutomaticoChange(event: Event) {
+    this.recalcular();
+  }
+
+  public recalcular() {
+    this.saveData();
+    this.projetoService.recalcular(this.entity!);
+    this.loadData(this.entity!);
     this.cdRef.detectChanges();
   }
 

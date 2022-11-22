@@ -30,7 +30,6 @@ export class InputDatetimeComponent extends InputBase implements OnInit {
   @Input() label: string = "";
   @Input() labelInfo: string = "";
   @Input() bold: boolean = false;
-  @Input() size: number = 0;
   @Input() loading: boolean = false;
   @Input() prefix?: string;
   @Input() sufix?: string;
@@ -48,6 +47,12 @@ export class InputDatetimeComponent extends InputBase implements OnInit {
   }
   get control(): AbstractControl | undefined {
     return this.getControl();
+  }
+  @Input() set size(value: number) {
+    this.setSize(value); 
+  }
+  get size(): number {
+    return this.getSize(); 
   }
 
   public util: UtilService;

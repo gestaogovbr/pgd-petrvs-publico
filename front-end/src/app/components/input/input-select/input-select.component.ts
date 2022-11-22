@@ -31,7 +31,6 @@ export class InputSelectComponent extends InputBase implements OnInit {
   @Input() label: string = "";
   @Input() labelInfo: string = "";
   @Input() bold: boolean = false;
-  @Input() size: number = 0;
   @Input() fields: string[] = [];
   @Input() dao?: DaoBaseService<Base> = undefined;
   @Input() itemNull: string = " - ";
@@ -95,9 +94,12 @@ export class InputSelectComponent extends InputBase implements OnInit {
   get loading(): boolean {
     return this._loading;
   }
-
-
-
+  @Input() set size(value: number) {
+    this.setSize(value); 
+  }
+  get size(): number {
+    return this.getSize(); 
+  }
 
   public CARREGANDO: string = "Carregando . . .";
 
@@ -194,9 +196,10 @@ export class InputSelectComponent extends InputBase implements OnInit {
       if(value != null && !this.selectedItem && (!this.itemTodos.length || value != this.valueTodos)) {
         this.selectedItem = {
           key: value,
-          value: "- Desconhecido -"
+          value: "- Desconhecido -",
+          code: "UNKNOWN"
         };
-        this.items.push(this.selectedItem);
+        //this.items.push(this.selectedItem);
         this.cdRef.detectChanges();
       }
       this.control?.setValue(value, {emitEvent: false});
@@ -204,6 +207,10 @@ export class InputSelectComponent extends InputBase implements OnInit {
       this.selectPicker?.selectpicker('val', stringValue);
       if(this.change) this.change.emit(new Event("change"));
     }
+  }
+
+  public get unknown(): boolean {
+    return this.selectedItem?.code == "UNKNOWN";
   }
 
   public onDetailsClick(event: Event){
