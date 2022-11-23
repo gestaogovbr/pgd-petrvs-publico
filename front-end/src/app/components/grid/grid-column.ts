@@ -39,6 +39,8 @@ export class GridColumn {
   public upDownButtons?: string;
   public align: ColumnAlign = "none";
   public minWidth?: number = undefined;
+  public maxWidth?: number = undefined;
+  public width?: number = undefined;
 
   public isType(type: ColumnType) {
     return (this.type + ":").startsWith(type + ":");

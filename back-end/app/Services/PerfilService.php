@@ -28,7 +28,7 @@ class PerfilService extends ServiceBase {
     ];
 
     public function proxySearch($query, &$data, &$text) {
-        $data["where"][] = RawWhere::raw("(data_fim is null or data_fim > NOW()) and nivel >= " . Auth::user()->Perfil->nivel);
+        $data["where"][] = RawWhere::raw("(data_fim is null or data_fim > NOW()) and nivel >= " . parent::loggedUser()->Perfil->nivel);
         $data["orderBy"][] = ["nivel", "asc"];
     }
 

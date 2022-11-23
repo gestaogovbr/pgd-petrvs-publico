@@ -528,7 +528,7 @@ class IntegracaoService extends ServiceBase {
                 // percorre o array das chefias, inserindo na tabela de unidades os IDs dos respectivos gestores e gestores substitutos
                 foreach($chefias as $chefia) {
                     // descobre o ID do Usuário. Será null se não for localizado servidor com a matricula informada
-                    $sql_2 = "SELECT id from USUARIOS where matricula = :matricula";
+                    $sql_2 = "SELECT id from usuarios where matricula = :matricula";
                     $idUsuario = DB::select($sql_2, [':matricula' => $chefia['matricula']]);
                     if ($idUsuario){
                         // descobre o ID da Unidade

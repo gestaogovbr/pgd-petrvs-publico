@@ -14,7 +14,7 @@ export type FullRoute = {
 export type RouteMetadata = {
   id?: string, /* ID unico da rota */
   title?: string, /* Título da rota */
-  modalClose?: (modalResult: any) => void, /* Callback para o método back() caso seja modal (ao fechar a janela) */
+  modalClose?: (modalResult: any) => Promise<any> | void, /* Callback para o método back() caso seja modal (ao fechar a janela) */
   back?: FullRoute, /* Rota de maior prioridade, será utilizado caso esteja definido, mesmo que esteja no modal */
   source?: FullRoute, /* Rota de prioridade intermediaria, origem alimentado automaticamente pelo Navigate Service */
   default?: FullRoute, /* Roda de menor prioridade, caso não tenha nenhuma rota acima, voltará para a rota especificada aqui */

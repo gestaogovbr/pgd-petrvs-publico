@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use App\Models\Error;
 use Exception;
-use Response;
 
 class LogError extends Exception
 {
@@ -24,7 +23,7 @@ class LogError extends Exception
             $erro->save();
         }
         if($throwWith == 200) {
-            return Response::json(['error' => $message]);
+            return response()->json(['error' => $message]);
         } else if($throwWith != false) {
             return ValidationException::withMessages([
                 'error' => $message

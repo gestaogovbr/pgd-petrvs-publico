@@ -24,12 +24,12 @@ export class InputRadioComponent extends InputBase implements OnInit {
   @Input() label: string = "";
   @Input() labelInfo: string = "";
   @Input() bold: boolean = false;
-  @Input() size: number = 0;
   @Input() loading: boolean = false;
   @Input() items: LookupItem[] = [];
   @Input() form?: FormGroup;
   @Input() source?: any;
   @Input() path?: string;
+  @Input() change?: (value: any) => void;
   @Input() set value(value: any) {
     if(value != this._value) {
       this._value = value;
@@ -47,6 +47,12 @@ export class InputRadioComponent extends InputBase implements OnInit {
   get control(): AbstractControl | undefined {
     return this.getControl();
   }
+  @Input() set size(value: number) {
+    this.setSize(value); 
+  }
+  get size(): number {
+    return this.getSize(); 
+  }
 
   protected _value: any = "";
 
@@ -61,7 +67,8 @@ export class InputRadioComponent extends InputBase implements OnInit {
   public onRadioChange(event: Event) {
     const target = event.target as HTMLInputElement;
     const selected = this.items.find(x => x.key.toString() == target.value);
-    this.control?.setValue(selected?.key);  
+    this.control?.setValue(selected?.key);
+    if(this.change) this.change(selected?.key);
   }
 
   public isChecked(item: LookupItem): string | undefined {

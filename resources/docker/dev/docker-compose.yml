@@ -16,9 +16,11 @@ services:
 
 
   petrvs_php:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile-php
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     container_name: petrvs_php
     working_dir: /var/www
     ports:
@@ -29,7 +31,7 @@ services:
       - ../../../back-end:/var/www
 
   petrvs_node:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile-node
     container_name: petrvs_node
@@ -44,4 +46,3 @@ services:
     volumes:
       - ../../../front-end:/usr/src/app
       - ../../../back-end:/usr/src/back-end
-

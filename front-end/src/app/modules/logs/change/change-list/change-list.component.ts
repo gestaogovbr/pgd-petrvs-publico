@@ -24,6 +24,8 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
   public allPages: ListenerAllPagesService;
   public usuarioDao: UsuarioDaoService;
   public tabelas: LookupItem[] = [];
+  public opcoes_filtro: LookupItem[] = [
+    {'key': 0, 'value': 'ID do registro'},{'key': 1, 'value': ''}];
 
   constructor(public injector: Injector, dao: ChangeDaoService) {
     super(injector, Change, ChangeDaoService);
@@ -37,8 +39,10 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
       data_fim: {default: ""},
       tabela: {default: ""},
       tipo: {default: ""},
-      row_id: {default: ""}
+      row_id: {default: ""},
+      opcao_filtro: {default: 0}
     });
+    this.orderBy = [['id', 'desc']];
   }
 
   ngAfterViewInit() {
@@ -54,7 +58,7 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     this.cdRef.detectChanges();
   }
 
-  public onRowClick(row: Base | IIndexable | null){
+  public onRowClick(row: Change) {
     if(row){
       let change = row as Change;
       this.entity = this.entities.find(x => x.table == change!.table_name.toLowerCase());
@@ -69,7 +73,10 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
   }
 
   public onTabelaChange(event: Event) {
+    this.filter!.controls.row_id.setValue("");
+    this.filter!.controls.opcao_filtro.setValue(0);
     this.entity = this.entities.find(x => x.table == this.filter?.controls.tabela.value);
+    if(this.entity) this.opcoes_filtro[1].value = this.entity!.label + ': ' + this.entity!.campo;
     this.cdRef.detectChanges();
   }
 
@@ -80,6 +87,7 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     filter.controls.tabela.setValue("");
     filter.controls.tipo.setValue("");
     filter.controls.row_id.setValue("");
+    filter.controls.opcao_filtro.setValue("ID do registro");
     super.filterClear(filter);
   }
 
@@ -107,4 +115,12 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     };
     return result;
   }
+
+  public dynamicButtons(row: any): ToolbarButton[] {
+    let result: ToolbarButton[] = [];
+    result.push({icon: "bi bi-info-circle", label: "Informações", onClick: this.onRowClick.bind(this)});
+    result.push({icon: "bi bi-trash", color: "btn-outline-danger", label: "Excluir", onClick: this.delete.bind(this)});
+    return result;
+  }
+
 }

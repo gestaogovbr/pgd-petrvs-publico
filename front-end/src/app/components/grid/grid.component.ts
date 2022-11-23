@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ContentChild, ContentChildren, EventEmitter, HostBinding, Injector, Input, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { ChangeDetectorRef, Component, ContentChild, ContentChildren, EventEmitter, HostBinding, Injector, Input, OnInit, Output, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
 import { AbstractControl, FormGroup, FormGroupDirective } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 import { DaoBaseService, QueryOrderBy } from 'src/app/dao/dao-base.service';
@@ -21,9 +21,10 @@ import { ReportComponent } from './report/report.component';
 export type GroupBy = {field: string, label: string, value?: any};
 
 export class GridGroupSeparator {
-  constructor(public groups: GroupBy[]) {}
+  constructor(public group: GroupBy[]) {}
+  public metadata: any = undefined;
   public get text(): string {
-    return this.groups.map(x => x.value).join(" - ");
+    return this.group.map(x => x.value).join(" - ");
   }
 }
 
@@ -73,9 +74,12 @@ export class GridComponent extends ComponentBase implements OnInit {
   @Input() control?: AbstractControl = undefined;
   @Input() minHeight: number = 300;
   @Input() multiselect?: string;
+  @Input() multiselectEnabled?: string;
   @Input() multiselectAllFields: string[] = [];
+  @Input() canSelect?: (row: IIndexable) => boolean;
   @Input() dynamicMultiselectMenu?: (multiselected: IIndexable) => ToolbarButton[];
   @Input() multiselectMenu?: ToolbarButton[];
+  @Input() groupTemplate?: TemplateRef<unknown>;
   @Input() set title(value: string) {
     if(value != this._title) {
       this._title = value;
@@ -136,6 +140,13 @@ export class GridComponent extends ComponentBase implements OnInit {
   get items(): IIndexable[] {
     return this.control?.value || this._items || [];
   }
+  @Input() set visible(value: boolean) {
+    this._visible = value;
+    this.cdRef.detectChanges();
+  }
+  get visible(): boolean {
+    return this._visible;
+  }
 
   /* Propriedades private e métodos get e set */
   private _query?: QueryContext<Base>;
@@ -145,6 +156,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   private _hasAdd: boolean = true;
   private _title: string = "";
   private _items?: IIndexable[];
+  private _visible: boolean = true;
   private _exporting: boolean = false;
   //private _multiselectDynamicMenu: ToolbarButton[] = [];
   private filterCollapsedOnMultiselect: boolean = false;
@@ -257,6 +269,8 @@ export class GridComponent extends ComponentBase implements OnInit {
     this.loadReport();
     this.loadToolbar();
     this.loadPagination();
+    /* Habilita muiltiselect caso multiselectEnabled esteja presente */
+    if(this.isMultiselectEnabled) this.enableMultiselect(true);
   }
 
   public reset() {
@@ -279,6 +293,10 @@ export class GridComponent extends ComponentBase implements OnInit {
 
   public get isMultiselect(): boolean {
     return this.multiselect != undefined;
+  }
+
+  public get isMultiselectEnabled(): boolean {
+    return this.multiselectEnabled != undefined;
   }
 
   public get isEditable(): boolean {
@@ -315,12 +333,12 @@ export class GridComponent extends ComponentBase implements OnInit {
   public group(items: IIndexable[]) {
     if(this.groupBy && items?.length) {
       let buffer = "";
-      items = items.filter(x => !(x instanceof GridGroupSeparator));
+      items = items.filter(x => !(x instanceof GridGroupSeparator)).map(x => Object.assign(x, {_group: this.groupBy!.map(g => Object.assign({}, g, { value: this.util.getNested(x, g.field) }))}));
+      if(!this.query) items.sort((a: IIndexable, b: IIndexable) => JSON.stringify(a._group) > JSON.stringify(b._group) ? 1 : JSON.stringify(a._group) < JSON.stringify(b._group) ? -1 : 0);
       for(let i = 0; i < items.length; i++) {
-        let group = this.groupBy.map(x => Object.assign({}, x, { value: this.util.getNested(items[i], x.field) }));
-        if(buffer != JSON.stringify(group)) {
-          buffer = JSON.stringify(group);
-          items.splice(i, 0, new GridGroupSeparator(group));
+        if(buffer != JSON.stringify(items[i]._group)) {
+          buffer = JSON.stringify(items[i]._group);
+          items.splice(i, 0, new GridGroupSeparator(items[i]._group));
         }
       }
     }
@@ -350,7 +368,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   }*/
 
   public refreshMultiselectToolbar() {
-    if(this.toolbarRef) this.toolbarRef.buttons = this.multiselecting ? [this.BUTTON_MULTISELECT, ...(this.multiselectMenu || []), ...(this.dynamicMultiselectMenu ? this.dynamicMultiselectMenu(this.multiselected) : [])] : [...(this.initialButtons || []), ...this.toolbarButtons];
+    if(this.toolbarRef) this.toolbarRef!.buttons = this.multiselecting ? [this.BUTTON_MULTISELECT, ...(this.multiselectMenu || []), ...(this.dynamicMultiselectMenu ? this.dynamicMultiselectMenu(this.multiselected) : [])] : [...(this.initialButtons || []), ...this.toolbarButtons];
   }
 
   public enableMultiselect(enable: boolean) {
@@ -402,6 +420,10 @@ export class GridComponent extends ComponentBase implements OnInit {
   }
 
   public onUnselectAllClick() {
+    this.clearMultiselect();
+  }
+
+  public clearMultiselect() {
     this.multiselected = {};
     this.BUTTON_MULTISELECT.badge = undefined;
     this.refreshMultiselectToolbar();
@@ -413,7 +435,12 @@ export class GridComponent extends ComponentBase implements OnInit {
     return this.multiselected.hasOwnProperty(row.id) ? "" : undefined;
   }
 
+  public get multiselectedList(): IIndexable[] {
+    return Object.values(this.multiselected) || [];    
+  }
+
   public onMultiselectChange(event: any, row: IIndexable) {
+    const checked = event.currentTarget.checked;
     if(event.currentTarget.checked) {
       if(!this.multiselected.hasOwnProperty(row.id)) this.multiselected[row.id] = row;
     } else {

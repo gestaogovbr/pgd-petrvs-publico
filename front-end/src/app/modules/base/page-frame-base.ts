@@ -1,10 +1,11 @@
 import { OnInit, Injector, Injectable, Type } from '@angular/core';
 import { FormGroup, AbstractControl, FormControl } from '@angular/forms';
-import { DaoBaseService } from 'src/app/dao/dao-base.service';
+import { DaoBaseService, QueryOrderBy } from 'src/app/dao/dao-base.service';
 import { Base, IIndexable } from 'src/app/models/base.model';
 import { PageBase } from './page-base';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { NavigateResult } from 'src/app/services/navigate.service';
+import { GroupBy } from 'src/app/components/grid/grid.component';
 
 //@Component({ template: '' })
 @Injectable()
@@ -42,6 +43,8 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
 
   /* Configurações */
   public join: string[] = [];
+  public orderBy?: QueryOrderBy[];
+  public groupBy?: GroupBy[];
   constructor(public injector: Injector) {
     super(injector);
   }

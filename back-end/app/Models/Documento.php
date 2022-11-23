@@ -35,6 +35,7 @@ class Documento extends ModelBase
         'tipo_processo_id', /* char(36); */
         'status', /* enum('GERADO','AGUARDANDO_SEI'); NOT NULL; DEFAULT: 'GERADO'; */// Status do documento: GERADO (documento gerado); AGUARDANDO_SEI (Aguardando abrir o documento no sei para colar o conteúdo dentro)
         //'data_fim', /* datetime; */// Data fim
+        //'programa_adesao_id', /* char(36); */
     ];
 
     public $delete_cascade = ['assinaturas'];
