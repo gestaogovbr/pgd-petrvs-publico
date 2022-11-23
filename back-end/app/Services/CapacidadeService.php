@@ -6,8 +6,8 @@ use App\Models\Capacidade;
 use App\Services\ServiceBase;
 
 class CapacidadeService extends ServiceBase {
-    public $capacidades = [
-        /* Perfis Ids:
+    /*
+        Perfis Ids:
         Administrador   = UtilService->uuid("Administrador")
         Desenvolvedor   = UtilService->uuid("Desenvolvedor")
         Usuário Nível 5 = UtilService->uuid("Usuário Nível 5")
@@ -15,8 +15,11 @@ class CapacidadeService extends ServiceBase {
         Usuário Nível 3 = UtilService->uuid("Usuário Nível 3")
         Usuário Nível 2 = UtilService->uuid("Usuário Nível 2")
         Usuário Nível 1 = UtilService->uuid("Usuário Nível 1")
-        [id, data_inicio, ?, perfil_id, tipo_capacidade_id] */
-        //[this.util.uuid("Desenvolvedor"+"MOD_CFG_USER_APELIDO"), this.util.uuid("Desenvolvedor"), this.util.uuid("MOD_CFG_USER_APELIDO")],
+        [id, data_inicio, ?, perfil_id, tipo_capacidade_id]
+        [this.util.uuid("Desenvolvedor"."MOD_CFG_USER_APELIDO"), this.util.uuid("Desenvolvedor"), this.util.uuid("MOD_CFG_USER_APELIDO")]
+    */
+
+    public $antigasCapacidades = [
         ["09898bf3-d779-11ec-a5bb-0050569c64a0","2022-05-19 10:38:59","74051a4a-6e25-4aab-9abc-8872c6c1029a","6ac04dbf-d773-11ec-a5bb-0050569c64a0"],
         ["099301df-d779-11ec-a5bb-0050569c64a0","2022-05-19 10:38:59","74051a4a-6e25-4aab-9abc-8872c6c1029a","6ac9734f-d773-11ec-a5bb-0050569c64a0"],
         ["099c147d-d779-11ec-a5bb-0050569c64a0","2022-05-19 10:38:59","74051a4a-6e25-4aab-9abc-8872c6c1029a","6ad2a187-d773-11ec-a5bb-0050569c64a0"],
@@ -660,4 +663,256 @@ class CapacidadeService extends ServiceBase {
         ["563ca9e4-fbb6-11ec-a5bb-0050569c64a0","2022-06-21 15:32:56","f212872c-bb60-11ec-a5bb-0050569c64a0","0a743c8e-fbb6-11ec-a5bb-0050569c64a0"],
         ["5647a0e1-fbb6-11ec-a5bb-0050569c64a0","2022-06-21 15:32:56","f20b8b2f-bb60-11ec-a5bb-0050569c64a0","0a743c8e-fbb6-11ec-a5bb-0050569c64a0"]
     ];
+
+    public $capacidades = [
+        ["MENU_CAD_ACESSO", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MENU_CONFIG_ACESSO", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MENU_GESTAO_ACESSO", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MENU_REL_ACESSO", 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["DEV_MENU_LOGS_ACESSO", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+
+        ["DASH_PRG", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_AFT", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_AFT_CONS", 'Administrador', 'Desenvolvedor'],
+        ["MOD_AFT_EDT", 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_AFT_EXCL", 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_AFT_INCL", 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_ATV", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_ATV_CONS", 'Administrador', 'Desenvolvedor'],
+        ["MOD_ATV_EDT", 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_ATV_EDT_OTR_OP_DT_HOM", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_ATV_EDT_OTR_OP_HOM", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_ATV_EDT_OTR_OP_PROD", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_ATV_EDT_PCPL", 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_ATV_EDT_PRE_DEF", 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_ATV_EDT_TP_MIN", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_ATV_EDT_UND", 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_ATV_EDT_VAR_P", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_ATV_EXCL", 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_ATV_INCL", 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_ATV_INCL_OTR_OP_DHOM", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_ATV_INCL_OTR_OP_HOM", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_ATV_INCL_OTR_OP_PROD", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_ATV_INCL_PRE_DEF", 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_ATV_INCL_TP_MIN", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_ATV_INCL_UND", 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_ATV_INCL_VAR_P", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_ATV_PCPL", 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_CFG_ENTD", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_CFG_PERFS", 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_CFG_PREF", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_CFG_UND", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_CFG_USER", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_CFG_USER_APELIDO", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_CFG_USER_CPF", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_CFG_USER_MAIL", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_CFG_USER_MAT", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_CFG_USER_NOME", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_CFG_USER_PERFIL", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_CFG_USER_TEL", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_CFG_USER_UF", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_CID", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_CID_CONS", 'Administrador', 'Desenvolvedor'],
+        ["MOD_CID_EDT", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_CID_EXCL", 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_CID_INCL", 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_DMD", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_ATV", 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_ATV_CMPLX", 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_ATV_DT_DST", 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_ATV_PL_TRB", 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_ATV_PZ_ENTG", 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_ATV_RESP", 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_ATV_TP_PCT", 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_ATV_TP_PLJ", 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_ATV_FORA_PL_TRB", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_CONCL", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_CONCL_ATV", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_CONCL_CMPLX", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_CONCL_DSC_TEC", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_CONS", 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_EDT", 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_EXCL", 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_EXT", 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_I_AVAL", 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_I_CANC", 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_I_COMT", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_I_CONCL", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_I_EDT_INIC", 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_I_INFO", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_I_PPRZO", 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_I_SUSP", 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_INCL", 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_INCL_COMPL", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_INCL_COMT", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_INCL_CRTZ", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_INCL_VNCL", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_INICIAR", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_INICIO", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_MDL_INICIAR", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_NI_COMT", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_NI_EXCL", 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_NI_INFO", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_NI_INIC", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_NI_CONCL", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_RESP_INICIAR", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_SUSP_DMAIS", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_ATV_VAZIO", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_USERS_CANC_CONCL", 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_USERS_CANC_INICIAR", 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_USERS_ALT", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_USERS_CONCL", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_USERS_INICIAR", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_USERS_PAUSA", 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_USERS_ALT_CONCL", 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_USERS_COMT", 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_USERS_PPRZO", 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_USERS_AVAL", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_USERS_ALT_AVAL", 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_USERS_EXCL", 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_USERS_ATRIB", 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_TRF_INCL", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_TRF_EDT", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_TRF_EXCL", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_TRF_CONS", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_DMD_CLONAR", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_ENTD_CFG", 'Administrador', 'Desenvolvedor'],
+        ["MOD_ENTD_CONS", 'Administrador', 'Desenvolvedor'],
+        ["MOD_ENTD_EDT", 'Administrador', 'Desenvolvedor'],
+        ["MOD_ENTD_EXCL", 'Administrador', 'Desenvolvedor'],
+        ["MOD_ENTD_INCL", 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_FER", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_FER_CONS", 'Administrador', 'Desenvolvedor'],
+        ["MOD_FER_EDT", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_FER_ENT_EDT", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_FER_ENT_INCL", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_FER_EXCL", 'Administrador', 'Desenvolvedor'],
+        ["MOD_FER_INCL", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+
+        ["DEV_MOD_LOGS", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_LOT_CONS", 'Administrador', 'Desenvolvedor'],
+        ["MOD_LOT_EDT", 'Administrador', 'Desenvolvedor'],
+        ["MOD_LOT_EXCL", 'Administrador', 'Desenvolvedor'],
+        ["MOD_LOT_INCL", 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_MATSRV", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_MATSRV_CONS", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_MATSRV_EDT", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_MATSRV_EXCL", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_MATSRV_INCL", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_PROJ_REC_EDT", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_PROJ_REC_EXCL", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_PROJ_REC_INCL", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_PROJ_REG_EDT", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_PROJ_REG_EXCL", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_PROJ_REG_INCL", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_PERF_EDT", 'Administrador', 'Desenvolvedor'],
+        ["MOD_PERF_EXCL", 'Administrador', 'Desenvolvedor'],
+        ["MOD_PERF_INCL", 'Administrador', 'Desenvolvedor'],
+        ["MOD_PERF_CONS", 'Administrador', 'Desenvolvedor'],
+        
+        ["MOD_PRGT", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_PRGT_CONS", 'Administrador', 'Desenvolvedor'],
+        ["MOD_PRGT_EDT", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_PRGT_EXCL", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_PRGT_INCL", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_PROC_INCL", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_PROJ", 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_PROJ_CONS", 'Administrador', 'Desenvolvedor'],
+        ["MOD_PROJ_EDT", 'Administrador', 'Desenvolvedor'],
+        ["MOD_PROJ_EXCL", 'Administrador', 'Desenvolvedor'],
+        ["MOD_PROJ_INCL", 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_PTR", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_PTR_CONS", 'Administrador', 'Desenvolvedor'],
+        ["MOD_PTR_EDT", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_PTR_EXCL", 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_PTR_INCL", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_PTR_USERS_CONS", 'Administrador', 'Desenvolvedor'],
+        ["MOD_PTR_USERS_EXCL", 'Administrador', 'Desenvolvedor'],
+        ["MOD_PTR_USERS_INCL", 'Administrador', 'Desenvolvedor'],
+        ["MOD_PTR_INCL_SEM_LOT", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_PTR_INTSC_DATA", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_TIPO_ATV", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_ATV_CONS", 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_ATV_EDT", 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_ATV_EXCL", 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_ATV_INCL", 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_TIPO_AVAL", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_AVAL_CONS", 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_AVAL_EDT", 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_AVAL_EXCL", 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_AVAL_INCL", 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_TIPO_CAP", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_CAP_CONS", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_CAP_EDT", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_CAP_EXCL", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_CAP_INCL", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_TIPO_DOC", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_DOC_CONS", 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_DOC_EDT", 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_DOC_EXCL", 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_DOC_INCL", 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_TIPO_JUST", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_JUST_CONS", 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_JUST_EDT", 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_JUST_EXCL", 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_JUST_INCL", 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_TIPO_MDL", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_MDL_CONS", 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_MDL_EDT", 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_MDL_EXCL", 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_MDL_INCL", 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_TIPO_MTV_AFT", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_MTV_AFT_CONS", 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_MTV_AFT_EDT", 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_MTV_AFT_EXCL", 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_MTV_AFT_INCL", 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_TIPO_PROC", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_PROC_CONS", 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_PROC_EDT", 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_PROC_EXCL", 'Administrador', 'Desenvolvedor'],
+        ["MOD_TIPO_PROC_INCL", 'Administrador', 'Desenvolvedor'],
+        ["MOD_TPMAF_INCL", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_TRF", 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_TRF_CONS", 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_TRF_EDT", 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_TRF_EXCL", 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_TRF_INCL", 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_UND_CONS", 'Administrador', 'Desenvolvedor'],
+        ["MOD_UND_EDT", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_UND_EXCL", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_UND_INCL", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_UND_UNIR", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_UND_TUDO", 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_USER_CONS", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_USER_EDT", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_USER_EXCL", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_USER_INCL", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_USER_TUDO", 'Administrador', 'Desenvolvedor'],
+    ];
+
 }

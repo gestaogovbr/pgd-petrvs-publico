@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Usuario;
 
 class Change extends Model
 {
@@ -28,7 +27,7 @@ class Change extends Model
     public $timestamps = false;
 
     protected $casts = [
-        'data_hora' => 'datetime',
+        'date_time' => 'datetime',
     ];
 
 }
