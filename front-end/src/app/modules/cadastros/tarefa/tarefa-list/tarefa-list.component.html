@@ -10,17 +10,17 @@
     </filter>
     <columns>
         <column title="Nome" field="nome" orderBy="nome"></column>
-        <column title="Tempo estimado" field="tempo_estimado"></column>
+        <column title="Tempo estimado (h)" field="tempo_estimado"></column>
         <column title="Documental?" type="select" field="documental" [items]="lookup.SIMNAO"></column>
         <column title="Entidade/Unidade" [template]="columnEntidadeUnidade">
             <ng-template let-row="row" #columnEntidadeUnidade>
-                <span *ngIf="row.unidade" class="badge bg-light text-dark">
-                    <i class="bi bi-briefcase"></i>
-                    {{row.unidade.sigla}}
-                </span>
                 <span *ngIf="row.entidade" class="badge bg-light text-dark">
                     <i class="fas fa-university"></i>
                     {{row.entidade.sigla}}
+                </span>
+                <span *ngIf="row.unidade" class="badge bg-light text-dark">
+                    <i class="bi bi-briefcase"></i>
+                    {{row.unidade.sigla}}
                 </span>
             </ng-template>
         </column>

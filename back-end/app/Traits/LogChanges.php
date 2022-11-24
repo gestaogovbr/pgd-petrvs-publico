@@ -5,6 +5,7 @@ namespace App\Traits;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Change;
+use DateTime;
 
 trait LogChanges
 {
@@ -14,8 +15,13 @@ trait LogChanges
         static::saved(function (Model $model) {
             if ($model->wasRecentlyCreated) {
                 static::logChange($model, 'ADD');
+            } elseif ($model->getChanges()) {
+                if($model->attributes['updated_at'] == $model->attributes['data_fim']){
+                    static::logChange($model, 'DELETE');
+                }else{
+                    static::logChange($model, 'EDIT');
+                }
             } else {
-                if (!$model->getChanges()) return;
                 static::logChange($model, 'EDIT');
             }
         });
@@ -30,11 +36,12 @@ trait LogChanges
         $config = config("log");
         if($config["log_changes"]) {
             Change::create([
+                'date_time' => new DateTime(),
                 'user_id' => Auth::check() ? Auth::user()->id : null,
                 'table_name' => $model->getTable(),
                 'row_id' => $model->attributesToArray()["id"],
                 'type' => $action,
-                'delta' => json_encode($action == 'EDIT' ? $model->getOriginal() : ($action == 'DELETE' ? $model->getOriginal() : $model->getAttributes()))
+                'delta' => json_encode($action == 'ADD' ? $model->getAttributes() : ($action == 'EDIT' ? ['Valores anteriores' => $model->getOriginal(), 'Valores atuais' => $model->getAttributes()] : $model->getOriginal()))
             ]);
         }
     }

@@ -8,22 +8,18 @@
 back-end/database/seeders/LogSeeder.php
 resources/docker/dev/docker-compose.yml
 Dump Tabela Atividades.sql
-back-end/database/seeders/ZUnidadePrfSeeder.php
 back-end/database/seeders/ZUnidadeOrigemAtividadeSeeder.php
 back-end/database/seeders/ZBackupUnidadeSeeder.php
-back-end/database/seeders/UnidadePrfSeeder.php
-back-end/database/seeders/UnidadePrfSeeder.php
 back-end/database/seeders/ZDemandaEntregaSeeder.php
 back-end/database/seeders/ZExcluirUsuarioSeeder.php
 back-end/database/seeders/ZLocalSeeder.php
 back-end/database/seeders/ZLotacaoSeeder.php
 back-end/database/seeders/ZReinserirUsuarioSeeder.php
-back-end/database/seeders/UnidadePrfSeeder.php
 back-end/database/seeders/LotacaoSeeder.php
 back-end/database/seeders/UnidadeOrigemAtividadeSeeder.php
 back-end/database/seeders/ReinserirUsuarioSeeder.php
-back-end/database/seeders/LotacaoSeeder.php
 back-end/database/seeders/LocalSeeder.php
 back-end/database/seeders/ExcluirUsuarioSeeder.php
 back-end/database/seeders/DemandaEntregaSeeder.php
 back-end/database/seeders/BackupUnidadeSeeder.php
+back-end/database/seeders/ZLogsSeeder.php

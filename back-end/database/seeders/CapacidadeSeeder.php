@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Capacidade;
 use App\Services\CapacidadeService;
 use App\Services\UtilService;
+use DateTime;
 
 class CapacidadeSeeder extends Seeder
 {
@@ -17,19 +18,21 @@ class CapacidadeSeeder extends Seeder
     public function run()
     {
         $capacidadesService = new CapacidadeService();
-        $utilService = new UtilService();
+        $util = new UtilService();
         $dadosCapacidades = $capacidadesService->capacidades;
-        foreach ($dadosCapacidades as $linha) {
-            $registro = $linha;
-            $capacidade = Capacidade::where('id', $registro[0])->first() ?? new Capacidade();
-            $capacidade->fill([
-                'id' => $registro[0],
-                'data_inicio' => $registro[1],
-                'perfil_id' => $registro[3],
-                'tipo_capacidade_id' => $registro[4]
-            ]);
-            $capacidade->data_fim = $registro[2];
-            $capacidade->save();
+        foreach ($dadosCapacidades as $registro) {
+            for ($i = 1; $i < count($registro); $i++) {
+                $id = $util::uuid($registro[$i].$registro[0]);
+                $capacidade = Capacidade::where('id', $id)->first() ?? new Capacidade();
+                $capacidade->fill([
+                    'id' => $id,
+                    'data_inicio' => new DateTime('2022/1/1'),
+                    'data_fim' => null,
+                    'perfil_id' => $util->uuid($registro[$i]),
+                    'tipo_capacidade_id' => $util->uuid($registro[0])
+                ]);
+                $capacidade->save();
+            }
         }
     }
 }
