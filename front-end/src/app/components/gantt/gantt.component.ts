@@ -192,6 +192,7 @@ export class GanttComponent implements OnInit {
     /* configurações personalizadas criadas posteriormente */
     this.ge.useTime = this.project.config.hasTime;
     this.ge.hasCost = this.project.config.hasCost;
+    this.project.selectedRow = Math.max(Math.min(this.project.selectedRow, this.project.tasks.length - 1), 0);
     this.ge.loadProject(this.project);
     this.ge.checkpoint(); //empty the undo stack
   }

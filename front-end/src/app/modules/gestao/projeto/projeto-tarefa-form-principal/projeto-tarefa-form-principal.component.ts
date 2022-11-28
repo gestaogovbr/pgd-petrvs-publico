@@ -1,7 +1,11 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { ProjetoTarefaDaoService } from 'src/app/dao/projeto-tarefa-dao.service';
+import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
+import { ProjetoTarefa } from 'src/app/models/projeto-tarefa.model';
+import { DemandaDaoService } from 'src/app/dao/demanda-dao.service';
+import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
   selector: 'projeto-tarefa-form-principal',
@@ -9,14 +13,35 @@ import { ProjetoTarefaDaoService } from 'src/app/dao/projeto-tarefa-dao.service'
   styleUrls: ['./projeto-tarefa-form-principal.component.scss']
 })
 export class ProjetoTarefaFormPrincipalComponent extends PageFrameBase {
+  @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
+  @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
+  @Input() set entity(value: ProjetoTarefa | undefined) { super.entity = value; } get entity(): ProjetoTarefa | undefined { return super.entity; }
+  @Input() cdRef: ChangeDetectorRef;
 
   public form: FormGroup;
-  public projetoTarefaDao!: ProjetoTarefaDaoService;
+  public demandaDao!: DemandaDaoService;
+  public tipos: LookupItem[] = [{
+    key: "TAREFA",
+    value: "Tarefa"
+  }, {
+    key: "DEMANDA",
+    value: "Demanda"
+  }, {
+    key: "DOCUMENTO",
+    value: "Doc. SUPER/SEI"
+  }, {
+    key: "PROJETO",
+    value: "Projeto"
+  }];
 
   constructor(public injector: Injector) {
     super(injector);
-    this.projetoTarefaDao = injector.get<ProjetoTarefaDaoService>(ProjetoTarefaDaoService);
+    this.dao = injector.get<ProjetoTarefaDaoService>(ProjetoTarefaDaoService);
+    this.demandaDao = injector.get<DemandaDaoService>(DemandaDaoService);
+    this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
+
     this.form = this.fh.FormBuilder({
+      tipo: {default: "TAREFA"},
       indice: {default: ""},
       nome: {default: ""},
       status_tarefa: {default: "PLANEJADO"},
@@ -39,11 +64,22 @@ export class ProjetoTarefaFormPrincipalComponent extends PageFrameBase {
       aloca_recursos_proprios: {default: true},
       calcula_intervalo: {default: true},
     }, this.cdRef, this.validate);
-    this.join = ["projeto_recurso", "projeto_tarefa", "projeto_alocacao","projeto_regra","projeto_envolvido"];
+    this.join = ["alocacoes", "demanda"];
   }
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
+
+    if((controlName == "nome" && !control.value?.length) || 
+      (controlName == "fator_complexidade" && !(control.value > 0)) ||
+      (controlName == "data_entrega" && !this.util.isDataValid(control.value))) {
+      result = "Obrigatório";
+    }
+
     return result;
+  }
+
+  public get unitDuracao(): "hour" | "day" {
+    return this.form?.controls.usa_horas.value ? "hour" : "day";
   }
 
 }

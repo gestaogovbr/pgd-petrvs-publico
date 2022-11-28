@@ -15,9 +15,11 @@ class ProjetoFase extends ModelBase
         'inicio', /* datetime; */// Inicio (opcional)
         'termino', /* datetime; */// Termino (opcional)
         'cor', /* varchar(100); NOT NULL; */// Código da cor em formato hex
-        'Nome', /* varchar(100); NOT NULL; */// Nome
+        'nome', /* varchar(100); NOT NULL; */// Nome
         'descricao', /* varchar(256); NOT NULL; */// Descrição
         'projeto_id', /* char(36); NOT NULL; */
+        //'data_inicio', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data inicio da vigência
+        //'data_fim', /* datetime; */// Data fim da vigência
     ];
 
     /*public $fillable_changes = [

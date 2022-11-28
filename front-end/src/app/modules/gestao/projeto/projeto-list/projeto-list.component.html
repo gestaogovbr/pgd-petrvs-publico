@@ -16,7 +16,7 @@
                 <strong>{{row.numero}}</strong>
             </ng-template>
         </column>
-        <column [title]="'Nome\nEnvolvido'" [template]="columnNomeEnvolvidos">
+        <column [title]="'Nome\nEnvolvidos'" titleHint="Somente os recursos humanos/departamentais que possuem perfil para acessar o projeto serão listados aqui" [template]="columnNomeEnvolvidos">
             <ng-template let-row="row" let-metadata="metadata" #columnNomeEnvolvidos>
                 <strong class="d-block">{{row.nome}}</strong>
                 <profile-picture *ngFor="let envolvido of getEnvolvidos(row, metadata)" [url]="envolvido.url" [hint]="envolvido.hint"></profile-picture>
@@ -36,7 +36,7 @@
         </column>
         <column title="Custo" [template]="columnCusto">
             <ng-template let-row="row" #columnCusto>
-                <badge *ngIf="!row.calcula_custos" color="warning" icon="bi bi-dash-square" label="Não calcula" hint="Projeto configurado para não calcular custos"></badge><br>
+                <badge *ngIf="!row.calcula_custos" color="warning" icon="bi bi-dash-square" label="Não calcula" hint="Projeto configurado para não calcular custos"></badge>
                 <badge *ngIf="row.calcula_custos" color="light" icon="bi bi-cash-coin" [label]="util.formatDecimal(row.custo)" hint="Projeto configurado para calcular custos"></badge>
             </ng-template>
         </column>
@@ -47,7 +47,10 @@
         </column>
         <column title="Status" [template]="columnStatus">
             <ng-template let-row="row" #columnStatus>
-                <badge [class]="lookup.getColor(lookup.PROJETO_STATUS, row.status)" [icon]="lookup.getIcon(lookup.PROJETO_STATUS, row.status)" [label]="lookup.getValue(lookup.PROJETO_STATUS, row.status)"></badge>
+                <span class="text-wrap">
+                    <badge [class]="lookup.getColor(lookup.PROJETO_STATUS, row.status)" [icon]="lookup.getIcon(lookup.PROJETO_STATUS, row.status)" [label]="lookup.getValue(lookup.PROJETO_STATUS, row.status)"></badge>
+                    <badge *ngIf="row.fase" [color]="row.fase.cor" [label]="row.fase.nome"></badge>
+                </span>
             </ng-template>
         </column>
         <column *ngIf="!selectable" type="options" [onEdit]="edit" [onDelete]="delete" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>

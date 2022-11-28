@@ -294,4 +294,8 @@ export class AuthService {
     }
   }
 
+  public hasLotacao(unidadeId: string) {
+    return this.usuario!.lotacoes.find(x => x.unidade_id == unidadeId);
+  }
+
 }

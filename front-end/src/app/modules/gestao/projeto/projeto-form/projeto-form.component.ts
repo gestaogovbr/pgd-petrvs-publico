@@ -82,15 +82,18 @@ export class ProjetoFormComponent extends PageFormBase<Projeto, ProjetoDaoServic
     projeto.regras = [new ProjetoRegra({
       id: regra_escritorio_id,
       nome: "Escritório",
-      tipo_recurso: "DEPARTAMENTO"
+      tipo_recurso: "DEPARTAMENTO",
+      perfis: ["ESCRITORIO", "ACESSAR"]
     }), new ProjetoRegra({
       id: regra_gerente_id,
       nome: "Gerente",
-      tipo_recurso: "HUMANO"
+      tipo_recurso: "HUMANO",
+      perfis: ["GERENTE", "ACESSAR"]
     }), new ProjetoRegra({
       id: regra_equipe_id,
       nome: "Equipe",
-      tipo_recurso: "HUMANO"
+      tipo_recurso: "HUMANO",
+      perfis: ["ACESSAR"]
     })];
     projeto.recursos = [new ProjetoRecurso({
       id: recurso_gerente_id,
@@ -107,7 +110,6 @@ export class ProjetoFormComponent extends PageFormBase<Projeto, ProjetoDaoServic
     })];
     projeto.alocacoes = [new ProjetoAlocacao({
       id: alocacao_gerente_id,
-      envolvido: true,
       regras: [new ProjetoAlocacaoRegra({
         id: alocacao_regra_gerente_id,
         regra_id: regra_gerente_id,
@@ -118,7 +120,6 @@ export class ProjetoFormComponent extends PageFormBase<Projeto, ProjetoDaoServic
       recurso: projeto.recursos.find(x => x.id == recurso_gerente_id)
     }), new ProjetoAlocacao({
       id: alocacao_escritorio_id,
-      envolvido: true,
       regras: [new ProjetoAlocacaoRegra({
         id: alocacao_regra_escritorio_id,
         regra_id: regra_escritorio_id,
@@ -134,7 +135,7 @@ export class ProjetoFormComponent extends PageFormBase<Projeto, ProjetoDaoServic
   }
 
   public async saveData(form: IIndexable): Promise<Projeto> {
-    Promise.all([
+    await Promise.all([
       this.principal!.saveData(),
       this.recursos!.saveData(),
       this.alocacoes!.saveData(),
@@ -142,6 +143,10 @@ export class ProjetoFormComponent extends PageFormBase<Projeto, ProjetoDaoServic
       this.comentarios!.saveData()
     ]);
     return this.entity! as Projeto;
+  }
+
+  public onTabsSelect() {
+    this.saveData(this.form!);
   }
 
   public titleEdit = (entity: Projeto): string => {

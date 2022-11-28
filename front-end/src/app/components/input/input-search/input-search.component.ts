@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, HostBinding, Injector, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostBinding, Injector, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, ControlContainer, FormGroup, FormGroupDirective } from '@angular/forms';
 import { Dropdown } from 'bootstrap';
 import { DaoBaseService } from 'src/app/dao/dao-base.service';
@@ -57,6 +57,8 @@ export class InputSearchComponent extends InputBase implements OnInit {
   @Input() form?: FormGroup;
   @Input() source?: any;
   @Input() path?: string;
+  @Input() displayOnlySelected?: string;
+  @Input() displayTemplate?: TemplateRef<unknown>;
   @Input() set control(value: AbstractControl | undefined) {
     this._control = value;
   }
@@ -207,6 +209,10 @@ export class InputSearchComponent extends InputBase implements OnInit {
 
   public get isOnlySelect(): boolean {
     return this.onlySelect != undefined;
+  }
+
+  public isDisplayOnlySelected(): boolean {
+    return this.displayOnlySelected != undefined;
   }
 
   public group(items: (SelectItem | SearchGroupSeparator)[]) {

@@ -34,7 +34,7 @@ export class ProjetoListComponent extends PageListBase<Projeto, ProjetoDaoServic
     this.projetoService = injector.get<ProjetoService>(ProjetoService);
     this.title = this.lex.noun("Projeto", true);
     this.code = "MOD_PROJ";
-    this.join = ["alocacoes.recurso.usuario", "alocacoes.recurso.unidade", "alocacoes.regras.regra"];
+    this.join = ["alocacoes.recurso.usuario:id,nome,apelido", "alocacoes.recurso.unidade:id,nome", "alocacoes.regras.regra", "fase"];
     this.filter = this.fh.FormBuilder({
       nome: {default: ""},
       status: {default: null},
@@ -71,7 +71,7 @@ export class ProjetoListComponent extends PageListBase<Projeto, ProjetoDaoServic
   public getEnvolvidos(projeto: Projeto, metadata: any): EnvolvidoListItem[] {
     let result: EnvolvidoListItem[] = [];
     
-    for(let envolvido of projeto.alocacoes?.filter(x => x.envolvido) || []) {
+    for(let envolvido of projeto.alocacoes?.filter(x => this.projetoService.isEnvolvido(x, projeto)) || []) {
       if(envolvido.recurso?.usuario) {
         result.push({
           url: envolvido.recurso.usuario.url_foto || "assets/images/projetos/usuario.png",
@@ -95,7 +95,7 @@ export class ProjetoListComponent extends PageListBase<Projeto, ProjetoDaoServic
   public dynamicOptions(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let projeto: Projeto = row as Projeto;
-    const isEnvolvido = !!(projeto.alocacoes || []).find(x => x.envolvido && x.recurso!.usuario!.id == this.auth.usuario?.id);
+    const isEnvolvido = this.projetoService.canAcessar(projeto);
     const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: (projeto: Projeto) => this.go.navigate({ route: ['gestao', 'projeto', projeto.id, 'consult'] }, { modal: true }) };
     const BOTAO_COMENTARIOS = { label: "Comentários", icon: "bi bi-chat-left-quote", onClick: (projeto: Projeto) => this.go.navigate({ route: ['gestao', 'projeto', projeto.id, 'comentar'] }, this.modalRefreshId(projeto)) };
     const BOTAO_CLONAR = { label: "Clonar", icon: "bi bi-stickies", onClick: (projeto: Projeto) => this.go.navigate({ route: ['gestao', 'demanda', projeto.id, 'clonar'] }, this.modalRefresh()) };
@@ -125,7 +125,7 @@ export class ProjetoListComponent extends PageListBase<Projeto, ProjetoDaoServic
   public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let projeto: Projeto = row as Projeto;
-    const isEnvolvido = !!(projeto.alocacoes || []).find(x => x.envolvido && x.recurso!.usuario!.id == this.auth.usuario?.id);
+    const isEnvolvido = this.projetoService.canAcessar(projeto);
     const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: (projeto: Projeto) => this.go.navigate({ route: ['gestao', 'projeto', projeto.id, 'consult'] }, { modal: true }) };
     const BOTAO_PLANEJAR = { label: "Planejamento", icon: "bi bi-bar-chart-steps", onClick: (projeto: Projeto) => this.go.navigate({ route: ['gestao', 'projeto', projeto.id, 'planejamento'] }, this.modalRefreshId(projeto)) };
 

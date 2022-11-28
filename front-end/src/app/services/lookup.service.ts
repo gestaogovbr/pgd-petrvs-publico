@@ -445,6 +445,11 @@ export class LookupService {
     { key: "SERVIÇO", value: "Serviço", icon: "bi bi-tools", color: "warning" },
     { key: "CUSTO", value: "Custo", icon: "bi bi-currency-exchange", color: "danger" }
   ];
+  public PROJETO_PERFIS: LookupItem[] = [
+    { key: "ESCRITORIO", value: "Escritório", data: ["DEPARTAMENTO"]},
+    { key: "GERENTE", value: "Escritório", data: ["HUMANO"]},
+    { key: "ACESSAR", value: "Acessar o projeto", data: ["HUMANO", "DEPARTAMENTO"]}
+  ];
 
   public getLookup(itens: LookupItem[], key: any) {
     return itens.find(x => x.key == key);

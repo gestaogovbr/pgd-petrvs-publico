@@ -2,7 +2,7 @@
     <i *ngIf="column.icon?.length" [class]="column.icon"></i>
     <i *ngIf="column.orderBy?.length" [class]="orderClass"></i>
     <span>{{column.title}}</span>
-    <i *ngIf="column.titleHint?.length" class="bi bi-info-circle label-info text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="{{column.titleHint}}"></i>
+    <i *ngIf="column.titleHint?.length" class="bi bi-info-circle label-info text-muted ms-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{column.titleHint}}"></i>
 </div>
 <div *ngIf="column.titleTemplate" [id]="grid?.getId(index.toString()) + '_template'">
     <i *ngIf="column.orderBy?.length" [class]="orderClass"></i>

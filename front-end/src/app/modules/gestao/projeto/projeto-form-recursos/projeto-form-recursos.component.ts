@@ -4,6 +4,7 @@ import { EditableFormComponent } from 'src/app/components/editable-form/editable
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { MaterialServicoDaoService } from 'src/app/dao/material-servico-dao.service';
+import { ProjetoDaoService } from 'src/app/dao/projeto-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
@@ -41,6 +42,7 @@ export class ProjetoFormRecursosComponent extends PageFrameBase {
   constructor(public injector: Injector) {
     super(injector);
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
+    this.dao = injector.get<ProjetoDaoService>(ProjetoDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.materialServicoDao = injector.get<MaterialServicoDaoService>(MaterialServicoDaoService);
@@ -124,7 +126,7 @@ export class ProjetoFormRecursosComponent extends PageFrameBase {
     let result = undefined;
     this.form!.markAllAsTouched();
     if(this.form!.valid) {
-      row.id = row.id == "NEW" ? this.util.md5() : row.id;
+      row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
       row.nome = form.controls.nome.value;
       row.tipo = form.controls.tipo.value;
       row.unidade_medida = form.controls.unidade_medida.value;

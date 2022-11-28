@@ -13,7 +13,6 @@ export class ProjetoAlocacao extends Base {
 
     public descricao: string = ""; /* Descrição */
     public quantidade: number = 1; /* Quantidade */
-    public envolvido: boolean = false; /* Se o recurso do tipo HUMANO ou DEPARTAMENTAL for um stakeholder */
     public projeto_id: string | null = null;
     public tarefa_id: string | null = null;
     public recurso_id: string = "";
