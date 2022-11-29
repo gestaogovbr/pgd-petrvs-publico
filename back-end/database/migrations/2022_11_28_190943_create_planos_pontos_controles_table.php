@@ -30,7 +30,8 @@ class CreatePlanosPontosControlesTable extends Migration
             // Chaves estrangeiras:
             $table->foreignUuid('plano_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
             $table->foreignUuid('avaliador_id')->nullable()->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('tipo_avaliacao_id')->nullable()->constrained('tipos_avaliacoes')->onDelete('restrict')->onUpdate('cascade');
+            $table->uuid('tipo_avaliacao_id')->nullable();
+            $table->foreign('tipo_avaliacao_id', 'fk_planos_p_contr_tipo_aval_id')->nullable()->references('id')->on('tipos_avaliacoes')->onDelete('restrict')->onUpdate('cascade');
         });
     }
 
@@ -41,6 +42,8 @@ class CreatePlanosPontosControlesTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('planos_pontos_controles');
+        Schema::enableForeignKeyConstraints();
     }
 }

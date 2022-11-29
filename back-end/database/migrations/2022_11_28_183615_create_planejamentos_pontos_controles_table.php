@@ -28,10 +28,14 @@ class CreatePlanejamentosPontosControlesTable extends Migration
             $table->json('justificativas')->nullable()->comment("Justificativas da avaliação");
             $table->text('comentarios')->nullable()->comment("Comentário referente a nota");
             // Chaves estrangeiras:
-            $table->foreignUuid('planejamento_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('gestor_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('avaliador_id')->nullable()->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('tipo_avaliacao_id')->nullable()->constrained('tipos_avaliacoes')->onDelete('restrict')->onUpdate('cascade');
+            $table->uuid('planejamento_id');
+            $table->foreign('planejamento_id', 'fk_planej_p_contr_planej_id')->references('id')->on('planejamentos')->onDelete('restrict')->onUpdate('cascade');
+            $table->uuid('gestor_id')->nullable();
+            $table->foreign('gestor_id', 'fk_planej_p_contr_gestor_id')->nullable()->references('id')->on('usuarios')->onDelete('restrict')->onUpdate('cascade');
+            $table->uuid('avaliador_id')->nullable();
+            $table->foreign('avaliador_id', 'fk_planej_p_contr_avaliador_id')->nullable()->references('id')->on('usuarios')->onDelete('restrict')->onUpdate('cascade');
+            $table->uuid('tipo_avaliacao_id')->nullable();
+            $table->foreign('tipo_avaliacao_id', 'fk_planej_p_contr_tipo_avaliacao_id')->nullable()->references('id')->on('tipos_avaliacoes')->onDelete('restrict')->onUpdate('cascade');
         });
     }
 
@@ -42,6 +46,8 @@ class CreatePlanejamentosPontosControlesTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('planejamentos_pontos_controles');
+        Schema::enableForeignKeyConstraints();
     }
 }
