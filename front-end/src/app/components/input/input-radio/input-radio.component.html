@@ -2,7 +2,10 @@
     <div class="btn-group full-container-button-group" role="group">
         <ng-container *ngFor="let item of items">
             <input *ngIf="viewInit" type="radio" class="btn-check" [id]="generatedId(controlName) + '_' + item.key" [attr.name]="controlName" autocomplete="off" [attr.value]="item.key.toString()" (change)="onRadioChange($event)" [attr.checked]="isChecked(item)">
-            <label class="btn petrvs btn-outline-primary" [attr.for]="generatedId(controlName) + '_' + item.key" [class.label-input-invalid]="isInvalid()" [class.disabled]="isDisabled">{{item.value}}</label>
+            <label class="btn petrvs btn-outline-primary" [attr.for]="generatedId(controlName) + '_' + item.key" [class.label-input-invalid]="isInvalid()" [class.disabled]="isDisabled">
+                <i *ngIf="item.icon?.length" [class]="item.icon"></i>
+                {{item.value}}
+            </label>
         </ng-container>
     </div>
 </input-container>

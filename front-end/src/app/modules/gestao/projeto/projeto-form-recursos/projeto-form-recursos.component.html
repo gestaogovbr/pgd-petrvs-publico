@@ -1,6 +1,6 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title">
     <div class="row">
-        <grid [items]="items" [form]="form!" [groupTemplate]="groupRecurso" [groupBy]="groupBy" [add]="addRecurso.bind(this)" [load]="loadRecurso.bind(this)" [remove]="removeRecurso.bind(this)" [save]="saveRecurso.bind(this)" editable>
+        <grid [items]="items" [form]="form!" [hasDelete]="true" [groupTemplate]="groupRecurso" [groupBy]="groupBy" [add]="addRecurso.bind(this)" [load]="loadRecurso.bind(this)" [remove]="removeRecurso.bind(this)" [save]="saveRecurso.bind(this)" editable>
             <ng-template let-group="group" #groupRecurso>
                 <strong *ngIf="group?.length"><i [class]="lookup.getIcon(lookup.PROJETO_TIPO_RECURSOS, group[0].value)"></i> {{lookup.getValue(lookup.PROJETO_TIPO_RECURSOS, group[0].value)}}</strong>
             </ng-template>

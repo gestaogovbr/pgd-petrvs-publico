@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
+import { ProjetoDaoService } from 'src/app/dao/projeto-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { ProjetoFase } from 'src/app/models/projeto-fase.model';
 import { Projeto } from 'src/app/models/projeto.model';
@@ -26,6 +27,7 @@ export class ProjetoFormFasesComponent extends PageFrameBase {
   constructor(public injector: Injector) {
     super(injector);
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
+    this.dao = injector.get<ProjetoDaoService>(ProjetoDaoService);
     this.form = this.fh.FormBuilder({
       nome: {default: ""},
       descricao: {default: ""},
@@ -87,7 +89,7 @@ export class ProjetoFormFasesComponent extends PageFrameBase {
     let result = undefined;
     this.form!.markAllAsTouched();
     if(this.form!.valid) {
-      row.id = row.id == "NEW" ? this.util.md5() : row.id;
+      row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
       row.nome = form.controls.nome.value;
       row.descricao = form.controls.descricao.value;
       row.cor = form.controls.cor.value;

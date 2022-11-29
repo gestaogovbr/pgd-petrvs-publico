@@ -77,15 +77,16 @@ trait MergeRelations
 
     public function fillRelations(array $relations)
     {
-        foreach ($relations as $relationName => $attributes) {
-            $relation = $this->{Str::camel($relationName)}();
-
-            $relationType = (new ReflectionObject($relation))->getShortName();
-            $method = "fill{$relationType}Relation";
-            if (!method_exists($this, $method)) {
-                throw new RuntimeException("Unknown or unfillable relation type {$relationType} ({$relationName})");
+        foreach ($this->fillableRelations() as $relationName) {
+            if(array_key_exists($relationName, $relations)) {
+                $relation = $this->{Str::camel($relationName)}();
+                $relationType = (new ReflectionObject($relation))->getShortName();
+                $method = "fill{$relationType}Relation";
+                if (!method_exists($this, $method)) {
+                    throw new RuntimeException("Unknown or unfillable relation type {$relationType} ({$relationName})");
+                }
+                $this->{$method}($relation, $relations[$relationName], $relationName);
             }
-            $this->{$method}($relation, $attributes, $relationName);
         }
     }
 
@@ -158,12 +159,18 @@ trait MergeRelations
                 array_push($keepKeys, $related->getKey());
             }
         }
-        if(!$isChange && !empty($parentKey)) {
-            $relatedModel->where($foreignKeyName, $parentKey)->whereNotIn($relatedModel->getKeyName(), $keepKeys)->delete();
+        $toDelete = empty($parentKey) ? [] : ($isChange ? $relatedModel->whereIn($relatedModel->getKeyName(), $deleteKeys)->get() : $relatedModel->where($foreignKeyName, $parentKey)->whereNotIn($relatedModel->getKeyName(), $keepKeys)->get());
+        foreach($toDelete as $entity) if(method_exists($entity, 'deleteCascade')) $entity->deleteCascade(); else $entity->delete();
+        /*if(!$isChange && !empty($parentKey)) {
+            //$relatedModel->where($foreignKeyName, $parentKey)->whereNotIn($relatedModel->getKeyName(), $keepKeys)->delete();
+            $entities = $relatedModel->where($foreignKeyName, $parentKey)->whereNotIn($relatedModel->getKeyName(), $keepKeys)->get();
+            foreach($entities as $entity) if(method_exists($entity, 'deleteCascade')) $entity->deleteCascade(); else $entity->delete();
         }
         if($isChange && !empty($deleteKeys)) {
-            $relatedModel->whereIn($relatedModel->getKeyName(), $deleteKeys)->delete();
-        }
+            //$relatedModel->whereIn($relatedModel->getKeyName(), $deleteKeys)->delete();
+            $entities = $relatedModel->whereIn($relatedModel->getKeyName(), $deleteKeys)->get();
+            foreach($entities as $entity) if(method_exists($entity, 'deleteCascade')) $entity->deleteCascade(); else $entity->delete();
+        }*/
     }
 
 

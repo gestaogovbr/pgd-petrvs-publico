@@ -4,5 +4,5 @@ namespace App\Traits;
 
 trait HasDataFim
 {
-    public $HasDataFim = true;
+    public $has_data_fim = true;
 }

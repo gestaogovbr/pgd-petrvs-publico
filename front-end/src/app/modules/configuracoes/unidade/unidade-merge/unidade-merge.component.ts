@@ -68,7 +68,7 @@ export class UnidadeMergeComponent extends PageFrameBase {
         let destino = destinos.find(x => x.sigla == origem.sigla);
         if(destino) {
           this.items.push({
-            id: this.util.md5(),
+            id: this.dao!.generateUuid(),
             unidade_origem_id: origem.id,
             unidade_destino_id: destino.id,
             unidade_origem: origem,
@@ -89,7 +89,7 @@ export class UnidadeMergeComponent extends PageFrameBase {
 
   public async addMerge() {
     return {
-      id: this.util.md5(),
+      id: this.dao!.generateUuid(),
       unidade_origem_id: "",
       unidade_destino_id: "",
       unidade_origem: undefined,

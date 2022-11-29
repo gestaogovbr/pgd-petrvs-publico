@@ -19,7 +19,8 @@ class ProjetoRegra extends ModelBase
         'nome', /* varchar(256); NOT NULL; */// Nome da regra
         'projeto_id', /* char(36); NOT NULL; */
         'tipo_recurso', /* enum('HUMANO','MATERIAL','SERVICO','CUSTO','DEPARTAMENTO'); NOT NULL; DEFAULT: 'MATERIAL'; */// Tipo do recurso que se aplica a regra
-        //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
+        'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
+        'perfis', /* json; */// Perfis de capacidade aplicáveis a quem possuir a regra
         //'data_fim', /* datetime; */// Data final da vigência
     ];
 
@@ -35,4 +36,13 @@ class ProjetoRegra extends ModelBase
     //public function () { return $this->hasMany(::class); }    
     // Belongs
     public function projeto() { return $this->belongsTo(Projeto::class); }    
+    // Mutattors e Casts
+    public function getPerfisAttribute($value)
+    {
+        return json_decode($value);
+    }   
+    public function setPerfisAttribute($value)
+    {
+        $this->attributes['perfis'] = json_encode($value);
+    }
 }

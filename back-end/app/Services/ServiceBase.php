@@ -159,16 +159,16 @@ class ServiceBase extends DynamicMethods
         return empty($result) ? null : $result;
     }
 
-    public function delta(&$from, &$to) {
+    public function delta($from, $to) {
         $isArray = gettype($to) == "array";
         $before = (array) $from;
         $now = (array) $to;
         $result = [];
-        if(gettype($from) != gettype($to)) throw new Exception("ObjectDelta: Tipos diferentes");
         if(!isset($from)) {
-            $result = clone $now;
+            $result = (array) (clone (object) $now);
             $result["_status"] = "ADD";
         } else {
+            if(gettype($from) != gettype($to)) throw new Exception("ObjectDelta: Tipos diferentes");           
             foreach($now as $key => $value) {
                 if(gettype($value) == "array") {
                     $delta = isset($before[$key]) ? $this->arrayDelta($before[$key], $value) : $value;

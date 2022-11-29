@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\ProjetoTarefa;
-use App\Models\ProjetoEnvolvido;
 use App\Models\ProjetoAlocacao;
 use App\Models\ProjetoRegra;
 use App\Models\TipoProjeto;
@@ -52,13 +51,11 @@ class Projeto extends ModelBase
         //'expediente', /* json; */// Configuração de expediente
     ];
 
-    /*public $fillable_changes = [
-    ];
+    public $fillable_changes = ["fases", "regras", "recursos", "alocacoes", "tarefas"];
 
-    public $fillable_relations = [
-    ];*/
+    public $fillable_relations = [];
 
-    public $delete_cascade = ['tarefas'];
+    public $delete_cascade = ["tarefas", "fases", "regras", "alocacoes", "recursos", "historicos"];
 
     protected $casts = ["progresso" => "decimal:2"];
 
@@ -70,10 +67,12 @@ class Projeto extends ModelBase
     }
 
     // Has
+    public function fases() { return $this->hasMany(ProjetoFase::class); }    
     public function tarefas() { return $this->hasMany(ProjetoTarefa::class); }    
     public function regras() { return $this->hasMany(ProjetoRegra::class); }    
     public function alocacoes() { return $this->hasMany(ProjetoAlocacao::class); }    
     public function recursos() { return $this->hasMany(ProjetoRecurso::class); }    
+    public function historicos() { return $this->hasMany(ProjetoHistorico::class); }
     // Belongs
     public function fase() { return $this->belongsTo(ProjetoFase::class); }    
     public function tipoProjeto() { return $this->belongsTo(TipoProjeto::class); }    
