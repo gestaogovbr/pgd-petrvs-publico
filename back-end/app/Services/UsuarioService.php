@@ -56,7 +56,7 @@ class UsuarioService extends ServiceBase
         if(!empty($unidade_id)) {
             array_push($unidades_ids, $unidade_id);
         } else {
-            $usuario = Auth::user();
+            $usuario = parent::loggedUser();
             foreach($usuario->lotacoes as $lotacao) {
                 array_push($unidades_ids, $lotacao->unidade_id);
             }
@@ -114,7 +114,7 @@ class UsuarioService extends ServiceBase
     public function lotacoesWhere($subordinadas, $usuario = null, $prefix = "", $deleted = false, $dataRef = null) {
         $where = [];
         $prefix = empty($prefix) ? "" : $prefix . ".";
-        $usuario = $usuario ?? Auth::user();
+        $usuario = $usuario ?? parent::loggedUser();
         foreach($usuario->lotacoes as $lotacao) {
             if(($deleted || empty($lotacao->data_fim)) && !UtilService::greaterThanOrIqual($dataRef, $lotacao->data_fim)) {
                 $where[] = $prefix . "id = '" . $lotacao->unidade_id . "'";
@@ -126,7 +126,7 @@ class UsuarioService extends ServiceBase
     }
 
     public function proxyQuery($query, &$data) {
-        $usuario = Auth::user();
+        $usuario = parent::loggedUser();
         $where = [];
         $subordinadas = true;
         foreach($data["where"] as $condition) {

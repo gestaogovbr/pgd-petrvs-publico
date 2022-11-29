@@ -16,8 +16,7 @@ const routes: Routes = [
   { path: ':id/clonar', component: ProjetoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Clonar", modal: true } },
   { path: ':id/recurso', component: ProjetoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Recurso", modal: true } },
   { path: ':id/regra', component: ProjetoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Regra", modal: true } },
-  { path: ':id/alocacao', component: ProjetoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Alocação", modal: true } },
-  { path: ':id/envolvido', component: ProjetoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Envolvido", modal: true } }
+  { path: ':id/alocacao', component: ProjetoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Alocação", modal: true } }
 ];
 
 @NgModule({

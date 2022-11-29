@@ -12,7 +12,7 @@
     <div class="row">
         <input-switch label="Auto" [size]="1" controlName="intervalo_automatico" (change)="onIntervaloAutomaticoChange($event)" labelInfo="Se o período do projeto será calculado automaticamente pelas tarefas"></input-switch>
         <input-datetime date [size]="3" label="Início" [disabled]="intervaloAutomatico" icon="bi bi-calendar-date" controlName="inicio_projeto"></input-datetime>
-        <input-datetime date [size]="3" label="Término" [disabled]="" icon="bi bi-calendar-date" controlName="termino_projeto"></input-datetime>
+        <input-datetime date [size]="3" label="Término" [disabled]="intervaloAutomatico" icon="bi bi-calendar-date" controlName="termino_projeto"></input-datetime>
         <input-workload daysOrHours [size]="3" [unit]="unitDuracao" [disabled]="" label="Duração" controlName="duracao" [control]="form!.controls.carga_horaria" [unitChange]="onUnitDuracaoChange.bind(this)" labelInfo="Se o projeto será calculado em horas ou dias"></input-workload>
         <input-text number [size]="2" label="Progresso" sufix="%" icon="bi bi-clock" controlName="progresso" labelInfo="Progresso do projeto (% Concluído)"></input-text>
     </div>

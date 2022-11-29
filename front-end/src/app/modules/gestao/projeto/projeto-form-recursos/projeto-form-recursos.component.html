@@ -1,44 +1,53 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title">
-  <div class="row">
-    <input-text [size]="2" label="Tipo de recurso" controlName="tipo_recurso"></input-text>
-    <input-text [size]="4" label="Nome" controlName="nome_recurso" labelInfo="Nome do recurso"></input-text>
-    <input-text [size]="4" label="Unidade" controlName="und_recurso" labelInfo="Unidade de apresentação do recurso"></input-text>
-    <input-number number [size]="2" label="Valor" controlName="vlr_recurso" labelInfo="Valor do recurso"></input-number>
-  </div>
-
-  <separator title="Lista de recuros"></separator>
-  <div class="row">
-    <grid [items]="items" [hasDelete]="true">
-      <columns>
-          <column [title]="lex.noun('Tipo') + ' do Recurso'" [template]="tarefaDescricao">
-              <ng-template let-row="row" #tarefaDescricao>
-                  <strong *ngIf="row.tarefa?.nome.length" class="d-block">{{row.tarefa?.nome || ""}}</strong>
-                  {{row.descricao}}
-              </ng-template>
-          </column>
-          <column title="Nome do recurso" [align]="'center'" [template]="concluido" [editTemplate]="editConcluido" >
-              <ng-template let-row="row" #concluido>
-                  <div class="text-center"><i *ngIf="row.concluido" class="bi bi-check-circle"></i></div>
-              </ng-template>
-              <ng-template let-row="row" #editConcluido>
-                  <input-switch [size]="12" controlName="concluido"></input-switch>
-              </ng-template>
-          </column>
-          <column title="Unidade" [template]="tarefaDescricao">
-            <ng-template let-row="row" #tarefaDescricao>
-                <strong *ngIf="row.tarefa?.nome.length" class="d-block">{{row.tarefa?.nome || ""}}</strong>
-                {{row.descricao}}
+    <div class="row">
+        <grid [items]="items" [form]="form!" [hasDelete]="true" [groupTemplate]="groupRecurso" [groupBy]="groupBy" [add]="addRecurso.bind(this)" [load]="loadRecurso.bind(this)" [remove]="removeRecurso.bind(this)" [save]="saveRecurso.bind(this)" editable>
+            <ng-template let-group="group" #groupRecurso>
+                <strong *ngIf="group?.length"><i [class]="lookup.getIcon(lookup.PROJETO_TIPO_RECURSOS, group[0].value)"></i> {{lookup.getValue(lookup.PROJETO_TIPO_RECURSOS, group[0].value)}}</strong>
             </ng-template>
-        </column>
-        <column title="Valor" [template]="tarefaDescricao">
-          <ng-template let-row="row" #tarefaDescricao>
-              <strong *ngIf="row.tarefa?.nome.length" class="d-block">{{row.tarefa?.nome || ""}}</strong>
-              {{row.descricao}}
-          </ng-template>
-      </column>
-      </columns>
-    </grid>
-  </div>
+            <columns>
+                <column title="Tipo" [template]="recursoTipo" [editTemplate]="editRecursoTipo">
+                    <ng-template let-row="row" #recursoTipo>
+                        <badge [icon]="lookup.getIcon(lookup.PROJETO_TIPO_RECURSOS, row.tipo)" [label]="lookup.getValue(lookup.PROJETO_TIPO_RECURSOS, row.tipo)" [color]="lookup.getColor(lookup.PROJETO_TIPO_RECURSOS, row.tipo)"></badge>
+                    </ng-template>
+                    <ng-template let-row="row" #editRecursoTipo>
+                        <input-select [size]="12" #tipoRecurso controlName="tipo" [control]="form!.controls.tipo" [items]="lookup.PROJETO_TIPO_RECURSOS" (change)="onTipoRecursoChange()"></input-select>
+                    </ng-template>
+                </column>
+                <column title="Recurso" [template]="recursoNomeUsuarioUnidade" [editTemplate]="editRecursoNomeUsuarioUnidade">
+                    <ng-template let-row="row" #recursoNomeUsuarioUnidade>
+                        <profile-picture [url]="projetoService.getRecursoPicture(row.recurso)" [hint]="row.descricao"></profile-picture>
+                        <small>{{row.material_servico?.descricao || row.usuario?.nome || row.unidade?.nome || row.nome}}</small>
+                        <small *ngIf="row.material_servico"><br>{{row.nome}}</small>
+                    </ng-template>
+                    <ng-template let-row="row" #editRecursoNomeUsuarioUnidade>
+                        <div class="row">
+                            <input-search *ngIf="isHumanoDepartamento(tipoRecurso?.value, ['HUMANO'])" hostClass="p-0" [size]="12" #usuario controlName="usuario_id" [control]="form!.controls.usuario_id" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
+                            <input-search *ngIf="isHumanoDepartamento(tipoRecurso?.value, ['DEPARTAMENTO'])" hostClass="p-0" [size]="12" #unidade controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+                            <input-search *ngIf="isMaterialServico(tipoRecurso?.value)" hostClass="p-0" [size]="6" #materialServico controlName="material_servico_id" [control]="form!.controls.material_servico_id" [dao]="materialServicoDao" [where]="[['tipo', '==', tipoRecurso?.value]]" [selectRoute]="{route: ['cadastros', 'material-servico']}"></input-search>
+                            <input-text *ngIf="!isHumanoDepartamento(tipoRecurso?.value)" hostClass="p-0" prefix="Descrição" [size]="isMaterialServico(tipoRecurso?.value) ? 6 : 12" controlName="nome" [control]="form!.controls.nome"></input-text>
+                        </div>
+                    </ng-template>
+                </column>
+                <column title="Un. medida" [width]="130" [template]="recursoUnidade" [editTemplate]="editRecursoUnidade">
+                    <ng-template let-row="row" #recursoUnidade>
+                        <badge icon="bi bi-rulers" [label]="lookup.getValue(lookup.MATERIAL_SERVICO_UNIDADE, row.unidade_medida)" color="warning"></badge>
+                    </ng-template>
+                    <ng-template let-row="row" #editRecursoUnidade>
+                        <input-select [size]="12" controlName="unidade_medida" [control]="form!.controls.unidade_medida" [items]="lookup.MATERIAL_SERVICO_UNIDADE"></input-select>
+                    </ng-template>
+                </column>
+                <column title="Valor R$" [align]="'right'" [width]="100" [template]="recursoValor" [editTemplate]="editRecursoValor">
+                    <ng-template let-row="row" #recursoValor>
+                        <div class="text-end">{{util.formatDecimal(row.valor)}}</div>
+                    </ng-template>
+                    <ng-template let-row="row" #editRecursoValor>
+                        <input-number [size]="12" [decimals]="2" controlName="valor" [control]="form!.controls.valor"></input-number>
+                    </ng-template>
+                </column>
+                <column type="options"></column>
+            </columns>
+        </grid>
+    </div>
 </editable-form>
 
 <!--
@@ -54,4 +63,3 @@ Tipo         Nome                   UN               Valor      [ + ]
 [Select [v]] [Search/text     [P]]  [Select [v]] [  111,00]
 
 -->
-

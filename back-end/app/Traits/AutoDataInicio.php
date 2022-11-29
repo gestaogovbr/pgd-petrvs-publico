@@ -4,6 +4,9 @@ namespace App\Traits;
 
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * 
+ */
 trait AutoDataInicio
 {
     public static function bootAutoDataInicio()

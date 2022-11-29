@@ -19,6 +19,8 @@ class ProjetoAlocacaoRegra extends ModelBase
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'projeto_alocacao_id', /* char(36); NOT NULL; */
         'regra_id', /* char(36); NOT NULL; */
+        'data_inicio', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data inicio da vigência
+        //'data_fim', /* datetime; */// Data fim da vigência
     ];
 
     /*public $fillable_changes = [

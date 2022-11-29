@@ -50,15 +50,15 @@ class ProjetoTarefa extends ModelBase
         'demanda_id', /* char(36); */
         'usuario_id', /* char(36); */
         //'tarefa_projeto_id', /* char(36); */
+        //'data_inicio', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data inicio da vigência
+        //'data_fim', /* datetime; */// Data fim da vigência
     ];
 
-    /*public $fillable_changes = [
-    ];
+    public $fillable_changes = ["alocacoes"];
 
-    public $fillable_relations = [
-    ];*/
+    public $fillable_relations = [];
 
-    public $delete_cascade = [];
+    public $delete_cascade = ["alocacoes"];
 
     // Has
     public function alocacoes() { return $this->hasMany(ProjetoAlocacao::class, "tarefa_id"); }    

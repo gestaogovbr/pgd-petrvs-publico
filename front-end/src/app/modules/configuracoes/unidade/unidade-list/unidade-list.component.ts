@@ -35,22 +35,6 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
       nome: {default: ""}
     });
     this.groupBy = [{field: "entidade.sigla", label: "Entidade"}];
-    // Testa se o usuário possui permissão para exibir dados da unidade
-    if (this.auth.hasPermissionTo("MOD_UND_CONS")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir unidade
-    if (this.auth.hasPermissionTo("MOD_UND_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
     // Testa se o usuário possui permissão unificar unidade
     if (this.auth.hasPermissionTo("MOD_UND_UNIR")) {
       this.buttons.push({
@@ -59,6 +43,30 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
         label: "Unificar",
         onClick: (unidade: Unidade) => this.go.navigate({ route: ['configuracoes', 'unidade', 'merge'] }, this.modalRefresh())
       });
+    }
+  }
+
+  public dynamicOptions(row: any): ToolbarButton[] {
+    let result: ToolbarButton[] = [];
+    let unidade: Unidade = row as Unidade;
+    // Testa se o usuário possui permissão para exibir dados da unidade
+    if (this.auth.hasPermissionTo("MOD_UND_CONS")) result.push({icon: "bi bi-info-circle", label: "Informações", onClick: this.consult.bind(this)});
+    // Testa se o usuário possui permissão de inativar a unidade
+    if (this.auth.hasPermissionTo("MOD_UND_INATV")) result.push({icon: unidade.inativo ? "bi bi-check-circle" : "bi bi-x-circle", label: unidade.inativo ? 'Reativar' : 'Inativar', onClick: async (unidade: Unidade) => await this.inativo(unidade, !unidade.inativo)});
+    // Testa se o usuário possui permissão para excluir unidade
+    if (this.auth.hasPermissionTo("MOD_UND_EXCL")) result.push({icon: "bi bi-trash", label: "Excluir", onClick: this.delete.bind(this)});
+    return result;
+  }
+
+  public async inativo(unidade: Unidade, inativo: boolean) {
+    if(await this.dialog.confirm(inativo ? "Inativar" : "Reativar", inativo ? "Deseja realmente inativar a unidade?" : "Deseja reativar a unidade?")) {
+      try {
+        this.submitting = true;
+        await this.dao!.inativo(unidade.id, inativo);
+        await this.modalRefreshId(unidade).modalClose!(undefined);
+      } finally {
+        this.submitting = false;
+      }
     }
   }
 

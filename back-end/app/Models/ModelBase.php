@@ -37,10 +37,10 @@ class ModelBase extends Model
                     $relatedModel = $relation->getRelated();
                     $children = $relatedModel::where($relation->getForeignKeyName(), $this->id)->get();
                     foreach ($children as $chield) {
-                        $chield->deleteCascade();
+                        if(method_exists($chield, 'deleteCascade')) $chield->deleteCascade();
                     }
                 }
-                /*BelongsTo 
+                /*BelongsTo
                 HasOne
                 HasMany
                 $relation = $this->{Str::camel($relationName)}();
@@ -52,6 +52,11 @@ class ModelBase extends Model
         
             }            
         }
-        $this->delete();
+        if(property_exists($this, 'has_data_fim')) {
+            $this->data_fim = date("Y-m-d H:i:s");
+            $this->save();
+        } else {
+            $this->delete();
+        }
     }
 }

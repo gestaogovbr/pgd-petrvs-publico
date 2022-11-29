@@ -35,7 +35,11 @@ trait UseDataFim
         $model = $this->getModel();
         $entity = $model::find($id);
         if(isset($entity)) {
-            try {
+            if(!property_exists($entity, 'has_data_fim')) {
+                throw new Exception("Entidade " . get_class($entity) . " não possui trait HasDataFim");
+            }
+            return parent::destroy($id, $transaction);
+            /*try {
                 if($transaction) DB::beginTransaction();
                 $entity->data_fim = date("Y-m-d H:i:s");
                 $entity->save();
@@ -44,7 +48,7 @@ trait UseDataFim
             } catch (Throwable $e) {
                 if($transaction) DB::rollback();
                 throw $e;
-            }
+            }*/
         } else {
             throw new Exception("Id não encontrado");
         }

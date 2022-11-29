@@ -84,8 +84,8 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
 
     if(["descricao"].includes(controlName) && !control.value?.length) {
       result = "Obrigatório";
-    } else if(controlName == "tarefa_id" && !control.value?.length) { //&& this.form?.controls.concluido.value
-      result = "Obrigatório para concluir";
+    /*} else if(controlName == "tarefa_id" && !control.value?.length) { //&& this.form?.controls.concluido.value
+      result = "Obrigatório para concluir";*/
     }
 
     return result;

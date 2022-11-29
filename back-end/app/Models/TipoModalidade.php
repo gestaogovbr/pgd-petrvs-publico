@@ -31,6 +31,7 @@ class TipoModalidade extends ModelBase
         'ganho_produtividade', /* int; NOT NULL; */// Ganho de produtividade
         'documento_id', /* char(36); */
         //'data_fim', /* datetime; */// Data fim da vigência
+        //'avaliacao_plano', /* tinyint; NOT NULL; */// Se a avaliação vai ser realizada pelo plano ao invés das demandas individuais
     ];
  
     public $delete_cascade = ['documento'];

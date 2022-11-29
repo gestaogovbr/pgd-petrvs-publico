@@ -19,8 +19,8 @@ import { KanbanComponent, KanbanDocker } from 'src/app/components/kanban/kanban.
 import { CardItem, DockerComponent } from 'src/app/components/kanban/docker/docker.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { DndDropEvent, DropEffect } from 'ngx-drag-drop';
-import { BadgeColor } from 'src/app/components/badge/badge.component';
 import { ProjetoService } from '../projeto.service';
+import { ComponentColor } from 'src/app/components/component-base';
 
 export type TarefaTotaisFilhos = {
   custo: number;
@@ -96,7 +96,7 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
     this.formEdit = this.fh.FormBuilder({
       etiqueta: {default: null}
     });
-    this.join = ["tarefas.alocacoes", "tipoProjeto", "usuario", "envolvidos", "regras", "recursos.usuario", "recursos.unidade", "recursos.materialServico", "alocacoes"];
+    this.join = ["tarefas.alocacoes", "tipoProjeto", "usuario", "regras", "recursos.usuario", "recursos.unidade", "recursos.materialServico", "alocacoes"];
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -315,8 +315,8 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
     this.calendarOptions.events = this.toCalendar(tarefas);
   }
 
-  public getStatusColor(status: LookupItem): BadgeColor {
-    return status.color as BadgeColor;
+  public getStatusColor(status: LookupItem): ComponentColor {
+    return status.color as ComponentColor;
   }
 
   public getRecursos(tarefa: ProjetoTarefa, metadata: any): RecursoListItem[] {

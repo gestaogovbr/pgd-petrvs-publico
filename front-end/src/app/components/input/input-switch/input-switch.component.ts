@@ -25,7 +25,6 @@ export class InputSwitchComponent extends InputBase implements OnInit {
   @Input() label: string = "";
   @Input() labelInfo: string = "";
   @Input() bold: boolean = false;
-  @Input() size: number = 0;
   @Input() loading: boolean = false;
   @Input() form?: FormGroup;
   @Input() source?: any;
@@ -44,6 +43,12 @@ export class InputSwitchComponent extends InputBase implements OnInit {
   }
   get control(): AbstractControl | undefined {
     return this.getControl();
+  }
+  @Input() set size(value: number) {
+    this.setSize(value); 
+  }
+  get size(): number {
+    return this.getSize(); 
   }
 
   constructor(public injector: Injector) {

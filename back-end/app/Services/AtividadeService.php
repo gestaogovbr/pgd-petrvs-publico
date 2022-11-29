@@ -53,7 +53,7 @@ class AtividadeService extends ServiceBase
         if(!empty($unidade_id)) {
             array_push($unidades_ids, $unidade_id);
         } else {
-            $usuario = Auth::user();
+            $usuario = parent::loggedUser();
             foreach($usuario->lotacoes as $lotacao) {
                 array_push($unidades_ids, $lotacao->unidade_id);
             }

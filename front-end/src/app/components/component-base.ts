@@ -1,6 +1,9 @@
 import { ChangeDetectorRef, ElementRef, Injectable, Injector } from "@angular/core";
+import { IIndexable } from "../models/base.model";
 import { UtilService } from "../services/util.service";
 import { ToolbarButton } from "./toolbar/toolbar.component";
+
+export type ComponentColor = "primary" | "secondary" | "success" | "danger" | "warning" | "info" | "light" | "dark" | "none" | string;
 
 @Injectable()
 export abstract class ComponentBase {
@@ -10,9 +13,37 @@ export abstract class ComponentBase {
     public util: UtilService;
     public selfElement: ElementRef;
     public ID_GENERATOR_BASE: string;
-    /* Protected get e set */
+    /* Protected e get|set */
     protected _generatedId?: string;
-  
+    protected _bgColors: IIndexable = {
+        primary: {class: "bg-primary ", hex: "#0d6efd"},
+        secondary: {class: "bg-secondary ", hex: "#6c757d"},
+        success: {class: "bg-success ", hex: "#198754"},
+        danger: {class: "bg-danger ", hex: "#dc3545"},
+        warning: {class: "bg-warning text-dark ", hex: "#212529"},
+        info: {class: "bg-info text-dark ", hex: "#212529"},
+        light: {class: "bg-light text-dark ", hex: "#f8f9fa"},
+        dark: {class: "bg-dark ", hex: "#212529"},
+        none: {class: "", hex: ""}
+    }
+    
+    public getStyleBgColor(color: ComponentColor | undefined): string | undefined {
+        if(!Object.keys(this._bgColors).includes(color || "")) {
+          const bgColor = color || "#000000";
+          const txtColor = this.util.contrastColor(bgColor);
+          return `background-color: ${bgColor}; color: ${txtColor};`;
+        }
+        return undefined;
+    }
+
+    public getClassBgColor(color: ComponentColor | undefined) {
+        return Object.keys(this._bgColors).includes(color || "") ? this._bgColors[color!].class : "";
+    }
+
+    public getHexColor(color: ComponentColor | undefined) {
+        return Object.keys(this._bgColors).includes(color || "") ? this._bgColors[color!].hex : color;
+    }
+
     public generatedId(relativeId?: string | null): string {
         if(!this._generatedId) {
             this._generatedId = "ID_" + this.ID_GENERATOR_BASE + "_" + this.util.onlyAlphanumeric(relativeId?.length ? relativeId : this.util.md5());
