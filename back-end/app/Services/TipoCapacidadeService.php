@@ -132,6 +132,12 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_ENTD_EDT", "Permite editar entidade"],
         ["MOD_ENTD_EXCL", "Permite excluir Entidade"],
         ["MOD_ENTD_INCL", "Permite incluir Entidade"],
+        /* Capacidades do módulo ENTREGAS*/
+        ["MOD_ENTRG", "Permite acessar o item menu Entregas"],
+        ["MOD_ENTRG_CONS", "Permite consultar Entregas"],
+        ["MOD_ENTRG_INCL", "Permite incluir Entregas"],
+        ["MOD_ENTRG_EDT", "Permite editar Entregas"],
+        ["MOD_ENTRG_EXCL", "Permite excluir Entregas"],
         /* Capacidades do módulo FERIADO*/
         ["MOD_FER", "Permite acessar item menu feriados"],
         ["MOD_FER_CONS", "Permite consultar feriado"],

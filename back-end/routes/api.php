@@ -13,6 +13,7 @@ use App\Http\Controllers\LotacaoController;
 use App\Http\Controllers\UnidadeController;
 use App\Http\Controllers\CidadeController;
 use App\Http\Controllers\ChangeController;
+use App\Http\Controllers\EntregaController;
 use App\Http\Controllers\ErrorController;
 use App\Http\Controllers\TrafficController;
 use App\Http\Controllers\ProgramaController;
@@ -87,7 +88,6 @@ Route::middleware('auth:sanctum')->prefix('Calendario')->group(function () {
     Route::post('feriados', [CalendarioController::class, 'feriados']);
     Route::post('feriados-cadastrados', [CalendarioController::class, 'feriadosCadastrados']);
 });
-
 /* Logs */
 Route::middleware('auth:sanctum')->prefix('Change')->group(function () {
     defaultRoutes(ChangeController::class);
@@ -117,6 +117,7 @@ Route::middleware(['auth:sanctum'])->prefix('Documento')->group(function () {
     Route::post('pendente-sei', [DocumentoController::class, 'pendenteSei']);
     Route::post('assinar', [DocumentoController::class, 'assinar']);
 });
+Route::middleware(['auth:sanctum'])->prefix('Entrega')->group(function () { defaultRoutes(EntregaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Feriado')->group(function () { defaultRoutes(FeriadoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('MaterialServico')->group(function () { defaultRoutes(MaterialServicoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Programa')->group(function () { defaultRoutes(ProgramaController::class); });
