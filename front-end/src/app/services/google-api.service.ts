@@ -30,25 +30,38 @@ export class GoogleApiService {
   }
 
   initialize(autoLogin?: boolean): Promise<any> {
+    console.log('asdsad', this.gb.loginGoogleClientId);
     return new Promise((resolve, reject) => {
       try {
         const script = this.utilService.loadScript('https://accounts.google.com/gsi/client')
         script.onload = () => {
           let socialUser = GoogleApiService.retrieveSocialUser()
           if (socialUser != null) {
-            this._socialUser.next(socialUser);
+            
             // refresh the token 10s before it expires
             let idToken = JSON.parse(atob(socialUser.idToken.split(".")[1]))
             let currentUnixTimestamp = Math.floor(Date.now() / 1000)
+
+            if(idToken["exp"] < currentUnixTimestamp){
+              this._socialUser.next(null);
+              GoogleApiService.clearSocialUser();
+            } else {
+              this._socialUser.next(socialUser);
+            }
+            
             setTimeout(() => {
               this.refreshToken()
             }, (idToken["exp"] - currentUnixTimestamp - 10) * 1000)
           }
+
+          
+          
           google.accounts.id.initialize({
             client_id: this.gb.loginGoogleClientId,
             ux_mode: 'popup',
             autoLogin: autoLogin,
             cancel_on_tap_outside: true,
+            oneTapEnabled: true,
             callback: ({ credential }: any) => {
               this.auth.authGoogle(credential).then(res => {
                 const socialUser = this.createSocialUser(credential);

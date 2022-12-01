@@ -16,7 +16,8 @@ trait LogChanges
             if ($model->wasRecentlyCreated) {
                 static::logChange($model, 'ADD');
             } elseif ($model->getChanges()) {
-                if($model->attributes['updated_at'] == $model->attributes['data_fim']){
+                //if($model->attributes['updated_at'] == $model->attributes['data_fim']){
+                if(!empty($model->attributes['data_fim'])){
                     static::logChange($model, 'DELETE');
                 }else{
                     static::logChange($model, 'EDIT');
