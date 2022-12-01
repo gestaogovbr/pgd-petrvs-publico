@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
             TipoAvaliacaoSeeder::class,
             TipoJustificativaSeeder::class,
             TipoAvaliacaoJustificativaSeeder::class,
-            UnidadePrfSeeder::class
+            UnidadePrfSeeder::class,
 
             /*Após a execução das Seeds acima, executar a rotina de integração com o comando
             http://localhost[:porta]/api/integracao?servidores=true&unidades=true&entidade=52d78c7d-e0c1-422b-b094-2ca5958d5ac1

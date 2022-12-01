@@ -22,8 +22,13 @@ class CreatePlanejamentosEntregasObjetivosTable extends Migration
             $table->dateTime('data_inicio')->comment("Data inicio da vigência");
             $table->dateTime('data_fim')->nullable()->comment("Data fim da vigência");
             // Chaves estrangeiras:
-            $table->foreignUuid('planejamento_entrega_id')->constrained("planejamentos_entregas")->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('planejamento_objetivo_id')->constrained("planejamentos_objetivos")->onDelete('restrict')->onUpdate('cascade');
+
+            //$table->foreign('country_id')->references('id')->on('countries')->onDelete('cascade');
+
+            $table->uuid('planejamento_entrega_id');
+            $table->foreign('planejamento_entrega_id', 'fk_planej_entr_obj_planej_entr_id')->references('id')->on('planejamentos_entregas')->onDelete('restrict')->onUpdate('cascade');
+            $table->uuid('planejamento_objetivo_id');
+            $table->foreign('planejamento_objetivo_id', 'fk_planej_entr_obj_planej_obj_id')->references('id')->on('planejamentos_objetivos')->onDelete('restrict')->onUpdate('cascade');
         });
     }
 
@@ -34,6 +39,8 @@ class CreatePlanejamentosEntregasObjetivosTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('planejamentos_entregas_objetivos');
+        Schema::enableForeignKeyConstraints();
     }
 }

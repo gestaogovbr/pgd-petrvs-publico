@@ -24,8 +24,14 @@ class CreatePlanejamentosPontosControlesEntregasTable extends Migration
             $table->json("meta")->comment("Meta para a entrega");
             $table->json("realizado")->nullable()->comment("Valor realizado");
             // Chaves estrangeiras:
-            $table->foreignUuid('planejamento_ponto_controle_id')->constrained("planejamentos_pontos_controles")->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('planejamento_entrega_id')->constrained("planejamentos_entregas")->onDelete('restrict')->onUpdate('cascade');
+            /**
+             * fk_planej_p_contr_entr_planej_p_contr_id : restrição entre as tabelas Planejamento_pontos_controle_entregas e Planejamento_pontos_controle
+             * fk_planej_p_contr_entr_planej_entr_id : restrição entre as tabelas Planejamento_pontos_controle_entregas e Planejamento_entregas
+             */
+            $table->uuid('planejamento_ponto_controle_id');
+            $table->foreign('planejamento_ponto_controle_id', 'fk_planej_p_contr_entr_planej_p_contr_id')->references('id')->on('planejamentos_pontos_controles')->onDelete('restrict')->onUpdate('cascade');
+            $table->uuid('planejamento_entrega_id');
+            $table->foreign('planejamento_entrega_id', 'fk_planej_p_contr_entr_planej_entr_id')->references('id')->on('planejamentos_entregas')->onDelete('restrict')->onUpdate('cascade');
         });
     }
 
@@ -36,6 +42,9 @@ class CreatePlanejamentosPontosControlesEntregasTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('planejamentos_pontos_controles_entregas');
+        Schema::enableForeignKeyConstraints();
+        
     }
 }
