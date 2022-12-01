@@ -4,7 +4,6 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import { EntregaDaoService } from 'src/app/dao/entrega-dao.service';
 import { Entrega } from 'src/app/models/entrega.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
-import { DaoBaseService } from 'src/app/dao/dao-base.service';
 
 @Component({
   selector: 'app-entrega-list',
@@ -14,12 +13,10 @@ import { DaoBaseService } from 'src/app/dao/dao-base.service';
 export class EntregaListComponent extends PageListBase<Entrega, EntregaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
-
   constructor(public injector: Injector) {
     super(injector, Entrega, EntregaDaoService);
     /* Inicializações */
     this.title = 'Entregas';
-
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}
      });

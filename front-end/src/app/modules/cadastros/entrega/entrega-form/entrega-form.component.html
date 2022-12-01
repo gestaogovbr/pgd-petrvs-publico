@@ -1,13 +1,35 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
     <div class="row">
         <div class="row">
-            <input-text [size]="3" label="Código IBGE" icon="bi bi-upc" controlName="codigo_ibge" [control]="form!.controls.codigo_ibge"></input-text>
             <input-text [size]="9" label="Nome" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome"></input-text>
+            <input-select [size]="3" label="Tipo de indicador" icon="bi bi-arrow-up-right-circle" controlName="tipo_indicador" [control]="form!.controls.tipo_indicador" [items]="lookup.TIPO_INDICADOR" (select)="onSelect()"></input-select>
         </div>
+        <separator title="Qualitativos"></separator>
         <div class="row">
-            <input-select [size]="4" label="Tipo" icon="bi bi-arrow-up-right-circle" controlName="tipo" [control]="form!.controls.tipo" [items]="lookup.TIPO_CIDADE"></input-select>
-            <input-select [size]="4" label="UF" icon="bi bi-flag" controlName="uf" [control]="form!.controls.uf" [items]="lookup.UF"></input-select>
-            <input-select [size]="4" label="Timezone" icon="bi bi-alarm" controlName="timezone" [control]="form!.controls.timezone" [items]="lookup.TIMEZONE"></input-select>
+            <div class="form-group col-12">
+                <input-text #itemQualitativo [size]="4" label="Qualitativo" controlName="itemQualitativo" [control]="form!.controls.itemQualitativo"></input-text>
+                <div class="form-group col-2">
+                    <label for="itensQualitativos" class="radio control-label">&nbsp;</label>
+                    <div class="btn-group full-container-button-group" id="itensQualitativos" role="group" aria-label="opcoesEquipe">
+                        <button type="button" class="btn btn-success d-flex justify-content-center" (click)="incluirQualitativo()" [disabled]="!itemQualitativo">
+                            <i class="bi-plus-circle"></i>
+                            <span class="d-none d-md-inline-block">&nbsp;INCLUIR</span>
+                        </button>
+                    </div>
+                </div>
+                <div *ngFor="let item of equipeList" class="row">
+                    <input-display  class="col-10" [value]="membro.usuario?.matricula + ' - ' + membro.usuario?.nome"></input-display>
+                    <div class="form-group col-2">
+                        <div class="btn-group full-container-button-group" role="group" aria-label="opcoesEquipe">
+                            <button type="button" class="btn btn-danger d-flex justify-content-center" (click)="excluirMembro(membro)">
+                                <i class="bi-trash"></i>
+                                <span class="d-none d-md-inline-block">&nbsp;EXCLUIR</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+    
+            </div>
         </div>
     </div>
 </editable-form>
