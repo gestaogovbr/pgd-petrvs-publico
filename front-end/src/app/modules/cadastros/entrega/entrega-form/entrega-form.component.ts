@@ -14,39 +14,39 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 })
 export class EntregaFormComponent extends PageFormBase<Entrega, EntregaDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  //@ViewChild('itemQualitativo', { static: false }) public itemQualitativo?: InputTextComponent;
+  @ViewChild('itemQualitativo', { static: false }) public itemQualitativo?: InputTextComponent;
+
+  public listaQualitativos: string[] = [];
 
   constructor(public injector: Injector) {
     super(injector, Entrega, EntregaDaoService);
     this.form = this.fh.FormBuilder({
       nome: {default: ""},
       tipo_indicador: {default: ""},
-      itemQualitativo: {default: ""},
-      qualitativo: {default: []}
+      qualitativo: {default: ""},
+      lista_qualitativos: {default: []}
     }, this.cdRef, this.validate);
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-
-/*     if(['codigo_ibge', 'nome', 'uf'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if(['nome','tipo_indicador'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    }  else if(['timezone'].indexOf(controlName) >= 0 && !control.value) {
-      result = "Valor não pode ser zero.";
-    } */
+    }
     return result;
   }
 
-  public loadData(entity: Entrega, form: FormGroup): void {
+  public loadData(entity: Entrega, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
+    this.loadListaQualitativos();
   }
 
-  public initializeData(form: FormGroup): void {
+  public initializeData(form: FormGroup) {
     form.patchValue(new Entrega());
   }
 
-  public saveData(form: IIndexable): Promise<Entrega> {
+  public async saveData(form: IIndexable): Promise<Entrega> {
     return new Promise<Entrega>((resolve, reject) => {
       const entrega = this.util.fill(new Entrega(), this.entity!);
       resolve(this.util.fillForm(entrega, this.form!.value));
@@ -61,24 +61,27 @@ export class EntregaFormComponent extends PageFormBase<Entrega, EntregaDaoServic
     return "Editando "+ (entity?.nome || "");
   }
 
-  public incluirQualitativo() {
-    let listaQualitativos: string[] = this.form!.controls.qualitativo.value;
-    let item = this.form?.controls.itemQualitativo!.value;
-    if(!listaQualitativos.find(x => x == item)){
-      listaQualitativos.push(item);//melhorar, limpando as strings e camelcase
-      this.form!.controls.qualitativo.setValue(listaQualitativos);
-      this.form!.controls.itemQualitativo!.setValue('');
-      //this.loadEquipe();
+  public incluirQualitativo(qualitativo: string) {
+    let listaQualitativos: string[] = this.form!.controls.lista_qualitativos.value;
+    //let item = this.form?.controls.itemQualitativo!.value;
+    if(!listaQualitativos.find(x => x == qualitativo)){
+      listaQualitativos.push(qualitativo);//melhorar, limpando as strings e camelcase
+      this.form!.controls.lista_qualitativos.setValue(listaQualitativos);
+      this.form?.controls.qualitativo.setValue('');
+      this.loadListaQualitativos();
     }
   }
 
-  public excluirQualitativo() {
-    let listaQualitativos: string[] = this.form!.controls.qualitativo.value;
-    let item = this.form!.controls.itemQualitativo!.value;
-    if(listaQualitativos.find(x => x == item)){
-      this.form!.controls.qualitativo.setValue(listaQualitativos.filter(x => x != item));
-      //this.loadEquipe();
+  public excluirQualitativo(qualitativo: string) {
+    let listaQualitativos: string[] = this.form!.controls.lista_qualitativos.value;
+    if(listaQualitativos.find(x => x == qualitativo)){
+      this.form!.controls.lista_qualitativos.setValue(listaQualitativos.filter(x => x != qualitativo));
+      this.loadListaQualitativos();
     }
+  }
+
+  public loadListaQualitativos() {
+    this.listaQualitativos = this.form!.controls.lista_qualitativos.value || [];
   }
 }
 

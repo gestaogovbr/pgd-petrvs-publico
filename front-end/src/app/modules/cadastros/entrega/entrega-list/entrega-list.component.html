@@ -12,7 +12,7 @@
     <columns>
         <column title="Nome" field="nome" orderBy="nome"></column>
         <column title="Tipo do indicador" type="select" field="tipo_indicador" [items]="lookup.TIPO_INDICADOR"></column>
-        <column title="Qualitativo" field="qualitativo"></column>
+        <column title="Qualitativos" field="lista_qualitativos"></column>
         <column *ngIf="!selectable" type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>

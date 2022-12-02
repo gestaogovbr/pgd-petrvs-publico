@@ -18,10 +18,10 @@ class Entrega extends ModelBase
     public $fillable = [ 
         'nome',
         'tipo_indicador',
-        'qualitativo',
+        'lista_qualitativos',
     ];
 
     protected $casts = [
-        'qualitativo' => AsArrayObject::class,
+        'lista_qualitativos' => AsArrayObject::class,
     ];
 }

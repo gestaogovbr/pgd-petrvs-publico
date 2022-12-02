@@ -378,6 +378,12 @@ class LookupService {
             { key: "MASCULINO", value: "Masculino" },
             { key: "FEMININO", value: "Feminino" }
         ];
+        this.TIPO_INDICADOR = [
+            { key: "QUANTIDADE", value: "Quantidade" },
+            { key: "VALOR", value: "Valor" },
+            { key: "PORCENTAGEM", value: "Porcentagem" },
+            { key: "QUALITATIVO", value: "Qualitativo" }
+        ];
         this.TIPO_LAYOUT = [
             { key: 'COMPLETO', value: "Completo" },
             { key: 'SIMPLIFICADO', value: "Simplificado" }
@@ -10799,8 +10805,8 @@ class DemandaFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
             this.loadChecklist();
             const etiquetasKeys = this.etiquetas.map(x => x.key);
             const checklistKeys = this.checklist.map(x => x.key);
-            const etiqueta = this.form.controls.etiquetas.value.find((x) => !etiquetasKeys.includes(x.key));
-            const checklst = this.form.controls.checklist.value.find((x) => !etiquetasKeys.includes(x.id) && x.checked);
+            const etiqueta = (this.form.controls.etiquetas.value || []).find((x) => !etiquetasKeys.includes(x.key));
+            const checklst = (this.form.controls.checklist.value || []).find((x) => !etiquetasKeys.includes(x.id) && x.checked);
             if (etiqueta)
                 result = "Etiqueta " + etiqueta.value + "não pode ser utilizada!";
             if (checklst)
@@ -11149,7 +11155,7 @@ class DemandaFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
                 texto: a.value,
                 checked: false
             };
-        }), this.form.controls.checklist.value.filter((b) => b.checked), (a, b) => {
+        }), (this.form.controls.checklist.value || []).filter((b) => b.checked), (a, b) => {
             if (a.id == b.id) {
                 a.checked = b.checked;
                 return true;
@@ -15962,8 +15968,9 @@ class AppComponent {
             cadastros: [
                 { name: this.lex.noun("Atividade", true), permition: 'MOD_ATV', route: ['cadastros', 'atividade'], icon: "bi bi-activity" },
                 { name: this.lex.noun("Afastamento", true), permition: 'MOD_AFT', route: ['cadastros', 'afastamento'], icon: "bi bi-toggle-off" },
-                { name: "Cidades", permition: 'MOD_CID', route: ['cadastros', 'cidade'], icon: "bi bi-building" },
-                { name: "Feriados", permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: "bi bi-emoji-sunglasses" },
+                { name: this.lex.noun("Cidades", true), permition: 'MOD_CID', route: ['cadastros', 'cidade'], icon: "bi bi-building" },
+                { name: this.lex.noun("Entregas", true), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: "bi bi-list-check" },
+                { name: this.lex.noun("Feriados", true), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: "bi bi-emoji-sunglasses" },
                 { name: this.lex.noun("Material e serviço", true), permition: '', route: ['cadastros', 'material-servico'], icon: "bi bi-box-seam" },
                 { name: this.lex.noun("Programa de gestão", true), permition: 'MOD_PRGT', route: ['cadastros', 'programa'], icon: "bi bi-graph-up-arrow" },
                 { name: this.lex.noun("Tarefa", true), permition: 'MOD_DMD', route: ['cadastros', 'tarefa'], icon: "bi bi-boxes" },
