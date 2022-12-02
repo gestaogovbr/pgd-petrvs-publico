@@ -18,12 +18,14 @@ class PlanoAvaliacao extends ModelBase
 
     protected $with = [];
 
-    public $fillable = [        /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'nota_atribuida',       /* int; NOT NULL; */// Nota da avaliação 0 - 10
-        'justificativas',       /* json; NOT NULL; */// Justificativas da avaliação
-        'usuario_id',           /* char(36); NOT NULL; */
-        'plano_id',             /* char(36); NOT NULL; */
-        'tipo_avaliacao_id',    /* char(36); NOT NULL; */
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'nota_atribuida', /* int; NOT NULL; */// Nota da avaliação 0 - 10
+        'justificativas', /* json; NOT NULL; */// Justificativas da avaliação
+        'usuario_id', /* char(36); NOT NULL; */
+        'plano_id', /* char(36); */
+        'tipo_avaliacao_id', /* char(36); */
+        //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
+        //'data_fim', /* datetime; */// Data fim da vigência
     ];
  
     public $delete_cascade = [];

@@ -24,7 +24,6 @@ class Documento extends ModelBase
         'assinatura', /* json; */// Dados da assinatura, se nulo não está assinado
         'metadados', /* json; */// Metadados
         'entidade_id', /* char(36); */
-        'plano_id', /* char(36); */
         'id_processo', /* int; */// ID do processo de entrega, caso seja Sei será o ID do procedimento
         'numero_processo', /* varchar(50); */// Número do processo de entrega, com a formatação de origem
         'id_documento', /* int; */// ID da entrega, caso seja o Sei será o ID_Documento
@@ -33,6 +32,7 @@ class Documento extends ModelBase
         'titulo_documento', /* text; */// Numeração do tipo de documento no sistema integrado
         'tipo_documento_id', /* char(36); */
         'tipo_processo_id', /* char(36); */
+        'plano_id', /* char(36); */
         'status', /* enum('GERADO','AGUARDANDO_SEI'); NOT NULL; DEFAULT: 'GERADO'; */// Status do documento: GERADO (documento gerado); AGUARDANDO_SEI (Aguardando abrir o documento no sei para colar o conteúdo dentro)
         //'data_fim', /* datetime; */// Data fim
         //'programa_adesao_id', /* char(36); */

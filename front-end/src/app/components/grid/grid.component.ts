@@ -553,7 +553,7 @@ export class GridComponent extends ComponentBase implements OnInit {
       let newItem = this.add ? await this.add() : this.form.value;
       if(newItem) {
         if(!(newItem["id"] || "").length && this.hasItems) {
-          newItem["id"] = this.util.md5();
+          newItem["id"] = this.dao ? this.dao.generateUuid() : this.util.md5();
         }
         this.items.push(newItem);
         this.adding = true;

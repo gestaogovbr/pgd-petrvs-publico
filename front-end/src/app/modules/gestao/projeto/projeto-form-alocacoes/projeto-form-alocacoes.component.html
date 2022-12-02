@@ -1,7 +1,6 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title">
-    <top-alert message="O projeto estará acessível somente para os recursos alocados (humano/departamental) marcados como [Envolvido]"></top-alert>
     <div class="row">
-        <grid [items]="items" [form]="form!" [groupTemplate]="groupRecurso" [groupBy]="groupBy" [add]="addAlocacao.bind(this)" [load]="loadAlocacao.bind(this)" [remove]="removeAlocacao.bind(this)" [save]="saveAlocacao.bind(this)" editable>
+        <grid [items]="items" [form]="form!" [hasEdit]="false" [groupTemplate]="groupRecurso" [groupBy]="groupBy" [add]="addAlocacao.bind(this)" [load]="loadAlocacao.bind(this)" [remove]="removeAlocacao.bind(this)" [save]="saveAlocacao.bind(this)" editable>
             <ng-template let-group="group" #groupRecurso>
                 <strong *ngIf="group?.length"><i [class]="lookup.getIcon(lookup.PROJETO_TIPO_RECURSOS, group[0].value)"></i> {{lookup.getValue(lookup.PROJETO_TIPO_RECURSOS, group[0].value)}}</strong>
             </ng-template>
@@ -28,12 +27,12 @@
                         </input-multiselect>
                     </ng-template>
                 </column>
-                <column title="Envolvido" [template]="alocacaoEnvolvido" [editTemplate]="editAlocacaoEnvolvido">
-                    <ng-template let-row="row" #alocacaoEnvolvido>
-                        <i *ngIf="row.envolvido" class="bi bi-check-circle text-success"></i>
+                <column title="Acessível" titleHint="O projeto estará visível somente para quem possuir uma regra que permita acessar o projeto." [template]="alocacaoAcessivel" [editTemplate]="editAlocacaoAcessivel">
+                    <ng-template let-row="row" #alocacaoAcessivel>
+                        <i *ngIf="isAcessivel(row)" class="bi bi-check-circle text-success"></i>
                     </ng-template>
-                    <ng-template let-row="row" #editAlocacaoEnvolvido>
-                        <input-switch *ngIf="isHumanoDepartamento" [size]="12" controlName="envolvido" [control]="form!.controls.envolvido"></input-switch>
+                    <ng-template let-row="row" #editAlocacaoAcessivel>
+                        <!-- Permitir editar a regra aqui -->
                     </ng-template>
                 </column>
                 <column title="Descrição" [template]="alocacaoDescricao" [editTemplate]="editAlocacaoDescricao">
@@ -52,7 +51,7 @@
                         <input-number number [size]="12" controlName="quantidade" [control]="form!.controls.quantidade"></input-number>
                     </ng-template>
                 </column>
-                <column type="options"></column>
+                <column type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
             </columns>
         </grid>
     </div>

@@ -14,6 +14,7 @@ class FunctionGetuuid extends Migration
      */
     public function up()
     {
+        /* Função não adicionada devido a necessidade de ter privilégios adicionais no bando de dados
         DB::statement(<<<EOD
             CREATE FUNCTION GETUUID(origem text) RETURNS text DETERMINISTIC
             BEGIN
@@ -23,7 +24,7 @@ class FunctionGetuuid extends Migration
                 SELECT CONCAT(SUBSTR(md5origem, 1, 8), "-", SUBSTR(md5origem, 9, 4), "-", SUBSTR(md5origem, 13, 4), "-", SUBSTR(md5origem, 17, 4), "-", SUBSTR(md5origem, 21)) INTO result;
                 RETURN result;
             END
-        EOD);
+        EOD);*/
     }
 
     /**
@@ -33,6 +34,6 @@ class FunctionGetuuid extends Migration
      */
     public function down()
     {
-        DB::statement("DROP FUNCTION IF EXISTS GETUUID");
+        /* DB::statement("DROP FUNCTION IF EXISTS GETUUID"); */
     }
 }

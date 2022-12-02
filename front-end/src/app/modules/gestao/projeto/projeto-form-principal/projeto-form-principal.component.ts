@@ -8,6 +8,7 @@ import { IIndexable } from 'src/app/models/base.model';
 import { UnitWorkload } from 'src/app/components/input/input-workload/input-workload.component';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { ProjetoService } from '../projeto.service';
+
 @Component({
   selector: 'projeto-form-principal',
   templateUrl: './projeto-form-principal.component.html',
@@ -50,7 +51,7 @@ export class ProjetoFormPrincipalComponent extends PageFrameBase {
       soma_custos_automatico: {default: true},
       fase_id: {default: ""}
     }, this.cdRef, this.validate);
-    this.join = ["projeto_recurso", "projeto_tarefa", "projeto_alocacao","projeto_regra","projeto_envolvido"];
+    this.join = ["recursos", "tarefas", "alocacoes", "regras", "fase"];
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -77,12 +78,12 @@ export class ProjetoFormPrincipalComponent extends PageFrameBase {
 
   public async saveData(form?: IIndexable) {
     return new Promise<Projeto>((resolve, reject) => {
-      resolve(this.util.fillForm(this.entity, this.form!.value));
+      resolve(this.util.fill(this.entity, this.form!.value));
     });
   }
 
   public get fases(): LookupItem[] {
-    let fases = (this.entity?.fases || []).filter(x => x.id != "NEW").map(x => Object.assign({}, {key: x.id, value: x.nome, color: x.cor}));
+    let fases = (this.entity?.fases || []).filter(x => x.id != "NEW").map(x => Object.assign({}, {key: x.id, value: x.nome}));
     if(JSON.stringify(fases) != JSON.stringify(this._fases)) this._fases = fases;
     return this._fases;
   }

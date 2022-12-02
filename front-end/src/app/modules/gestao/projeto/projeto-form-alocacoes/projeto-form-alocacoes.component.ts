@@ -14,6 +14,9 @@ import { ProjetoRegra } from 'src/app/models/projeto-regra.model';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { ProjetoService } from '../projeto.service';
 import { ProjetoAlocacaoRegra } from 'src/app/models/projeto-alocacao-regra.model';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { GridComponent } from 'src/app/components/grid/grid.component';
+import { ProjetoDaoService } from 'src/app/dao/projeto-dao.service';
 
 @Component({
   selector: 'projeto-form-alocacoes',
@@ -22,6 +25,7 @@ import { ProjetoAlocacaoRegra } from 'src/app/models/projeto-alocacao-regra.mode
 })
 export class ProjetoFormAlocacoesComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
+  @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @ViewChild("recurso", { static: false }) public recurso?: InputSelectComponent;
   @ViewChild("regra", { static: false }) public regra?: InputSelectComponent;
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
@@ -36,6 +40,7 @@ export class ProjetoFormAlocacoesComponent extends PageFrameBase {
 
   constructor(public injector: Injector) {
     super(injector);
+    this.dao = injector.get<ProjetoDaoService>(ProjetoDaoService);
     this.recursoDao = injector.get<ProjetoRecursoDaoService>(ProjetoRecursoDaoService);
     this.regraDao = injector.get<ProjetoRegraDaoService>(ProjetoRegraDaoService);
     this.projetoService = injector.get<ProjetoService>(ProjetoService);
@@ -43,7 +48,6 @@ export class ProjetoFormAlocacoesComponent extends PageFrameBase {
     this.form = this.fh.FormBuilder({
       id: {default: ""},
       descricao: {default: ""},
-      envolvido: {default: false},
       quantidade: {default: 1},
       recurso_id: {default: ""},
       regras: {default: []}
@@ -105,7 +109,6 @@ export class ProjetoFormAlocacoesComponent extends PageFrameBase {
       id: "NEW",
       descricao: "",
       quantidade: 1,
-      envolvido: false,
       recurso_id: "",
       regra_id: null
     } as IIndexable;
@@ -115,7 +118,6 @@ export class ProjetoFormAlocacoesComponent extends PageFrameBase {
     this.loadRecursos(row);
     form.controls.descricao.setValue(row.descricao);
     form.controls.quantidade.setValue(row.quantidade);
-    form.controls.envolvido.setValue(!!row.envolvido);
     form.controls.recurso_id.setValue(row.recurso_id);
     form.controls.regras.setValue((row.regras || []).map((regra: ProjetoAlocacaoRegra) => Object.assign({}, {
       key: regra.regra!.id,
@@ -135,10 +137,9 @@ export class ProjetoFormAlocacoesComponent extends PageFrameBase {
     let result = undefined;
     this.form!.markAllAsTouched();
     if(this.form!.valid) {
-      row.id = row.id == "NEW" ? this.util.md5() : row.id;
+      row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
       row.descricao = form.controls.descricao.value;
       row.quantidade = form.controls.quantidade.value;
-      row.envolvido = this.isHumanoDepartamento && form.controls.envolvido.value;
       row.recurso_id = form.controls.recurso_id.value;
       row.recurso = this.recurso?.selectedItem?.data;
       row.regras = (form.controls.regras.value || []).map((x: LookupItem) => x.data);
@@ -170,6 +171,20 @@ export class ProjetoFormAlocacoesComponent extends PageFrameBase {
         })
       };
       this.formRegra.controls.regra_id.setValue(null);
+    }
+    return result;
+  }
+
+  public isAcessivel(row: ProjetoAlocacao) {
+    return this.projetoService.isEnvolvido(row, this.entity!);
+  }
+
+  public dynamicButtons(row: any): ToolbarButton[] {
+    let result: ToolbarButton[] = [];
+    let alocacao: ProjetoAlocacao = row as ProjetoAlocacao;
+    if (!alocacao.tarefa_id?.length) {
+      result.push(Object.assign(this.grid!.BUTTON_EDIT, { onClick: this.grid!.onEditItem.bind(this.grid) }));
+      result.push(Object.assign(this.grid!.BUTTON_DELETE, { onClick: this.grid!.onDeleteItem.bind(this.grid) }));
     }
     return result;
   }

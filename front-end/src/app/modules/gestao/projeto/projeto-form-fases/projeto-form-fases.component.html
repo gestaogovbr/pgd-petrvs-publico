@@ -29,7 +29,7 @@
                         <input-datetime date [size]="12" controlName="inicio" [control]="form!.controls.inicio"></input-datetime>
                     </ng-template>
                 </column>
-                <column title="Termino" [template]="faseTermino" [editTemplate]="faseTermino">
+                <column title="Termino" [template]="faseTermino" [editTemplate]="editFaseTermino">
                     <ng-template let-row="row" #faseTermino>
                         <strong class="d-block">{{util.getDateFormatted(row.termino)}}</strong>
                     </ng-template>

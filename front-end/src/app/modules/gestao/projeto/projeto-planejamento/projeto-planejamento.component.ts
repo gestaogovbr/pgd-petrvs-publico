@@ -96,7 +96,7 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
     this.formEdit = this.fh.FormBuilder({
       etiqueta: {default: null}
     });
-    this.join = ["tarefas.alocacoes", "tipoProjeto", "usuario", "envolvidos", "regras", "recursos.usuario", "recursos.unidade", "recursos.materialServico", "alocacoes"];
+    this.join = ["tarefas.alocacoes", "tipoProjeto", "usuario", "regras", "recursos.usuario", "recursos.unidade", "recursos.materialServico", "alocacoes"];
   }
 
   public validate = (control: AbstractControl, controlName: string) => {

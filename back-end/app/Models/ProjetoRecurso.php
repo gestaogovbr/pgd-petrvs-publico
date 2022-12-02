@@ -24,11 +24,11 @@ class ProjetoRecurso extends ModelBase
         'unidade_medida', /* enum('UNIDADE','CAIXA','METRO','KILO','LITRO','DUZIA','MONETARIO','HORAS','DIAS','PACOTE'); NOT NULL; */// Unidade do recurso
         'valor', /* decimal(15,2); NOT NULL; */// Valor
         'data_inicio', /* datetime; NOT NULL; */// Data de criação
-        'data_fim', /* datetime; */// Data final do registro
         'projeto_id', /* char(36); NOT NULL; */
         'usuario_id', /* char(36); */
         'unidade_id', /* char(36); */
         'material_servico_id', /* char(36); */
+        //'data_fim', /* datetime; */// Data final do registro
     ];
 
     /*public $fillable_changes = [
