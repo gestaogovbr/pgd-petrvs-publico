@@ -36,6 +36,14 @@ export class EntregaFormComponent extends PageFormBase<Entrega, EntregaDaoServic
     return result;
   }
 
+  public formValidation = (form?: FormGroup) =>{
+    let result = null;
+    if(this.form?.controls.tipo_indicador.value == 'QUALITATIVO' && !this.listaQualitativos.length){
+      result = "Quando o tipo da entrega for Qualitativo, é necessária a inclusão de ao menos um item de qualitativo!";
+    }
+    return result;
+  }
+
   public loadData(entity: Entrega, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
@@ -62,10 +70,11 @@ export class EntregaFormComponent extends PageFormBase<Entrega, EntregaDaoServic
   }
 
   public incluirQualitativo(qualitativo: string) {
+    let item = qualitativo.trim();
     let listaQualitativos: string[] = this.form!.controls.lista_qualitativos.value;
-    //let item = this.form?.controls.itemQualitativo!.value;
-    if(!listaQualitativos.find(x => x == qualitativo)){
-      listaQualitativos.push(qualitativo);//melhorar, limpando as strings e camelcase
+    if(!listaQualitativos.find(x => x == item) && item.length){
+      this.clearErros();
+      listaQualitativos.push(item);
       this.form!.controls.lista_qualitativos.setValue(listaQualitativos);
       this.form?.controls.qualitativo.setValue('');
       this.loadListaQualitativos();
