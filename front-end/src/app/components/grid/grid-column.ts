@@ -41,6 +41,7 @@ export class GridColumn {
   public minWidth?: number = undefined;
   public maxWidth?: number = undefined;
   public width?: number = undefined;
+  public cellClass?: string;
 
   public isType(type: ColumnType) {
     return (this.type + ":").startsWith(type + ":");

@@ -24,6 +24,14 @@ export class ProjetoService {
     return result.length ? (prefix || "") + result + (sufix || "") : result; 
   }
 
+  public isHumanoDepartamento(tipo: string | undefined, tipos: string[] = ['HUMANO', 'DEPARTAMENTO']): boolean {
+    return tipos.includes(tipo || '');
+  }
+
+  public isMaterialServico(tipo: string | undefined, tipos: string[] = ['MATERIAL', 'SERVICO']): boolean {
+    return tipos.includes(tipo || '');
+  }
+
   /* Os envolvidos são considerados os recursos humano e departamental que possuem acesso ao projeto */
   public isEnvolvido(alocacao: ProjetoAlocacao, projeto: Projeto): boolean {
     return !!alocacao.regras?.find(x => (x.regra || projeto.regras?.find(y => y.id == x.regra_id))?.perfis?.includes("ACESSAR"));

@@ -15,8 +15,7 @@ body {
     margin: 0px;
 }
 
-.petrvs {
-
+.petrvs {    
     /* Reseta todas as propriedades anteriores */
     all: initial;
     cursor: inherit;
@@ -78,4 +77,9 @@ body {
     .btn {
         flex: 1;
     }
+}
+
+.multilines-badges {
+    width: min-content;
+    display: block;
 }

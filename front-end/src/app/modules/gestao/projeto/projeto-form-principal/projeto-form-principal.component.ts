@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ContentChild, ContentChildren, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
@@ -8,6 +8,8 @@ import { IIndexable } from 'src/app/models/base.model';
 import { UnitWorkload } from 'src/app/components/input/input-workload/input-workload.component';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { ProjetoService } from '../projeto.service';
+import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
+import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 
 @Component({
   selector: 'projeto-form-principal',
@@ -16,17 +18,20 @@ import { ProjetoService } from '../projeto.service';
 })
 export class ProjetoFormPrincipalComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
+  @ViewChild("escritorio", { static: false }) public escritorio?: InputSearchComponent;
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: Projeto | undefined) { super.entity = value; } get entity(): Projeto | undefined { return super.entity; }
   @Input() cdRef: ChangeDetectorRef;
 
   public projetoService: ProjetoService;
+  public unidadeDao: UnidadeDaoService;
 
   private _fases: LookupItem[] = [];
   
   constructor(public injector: Injector) {
     super(injector);
     this.dao = injector.get<ProjetoDaoService>(ProjetoDaoService);
+    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.projetoService = injector.get<ProjetoService>(ProjetoService);
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
     this.form = this.fh.FormBuilder({
@@ -39,7 +44,7 @@ export class ProjetoFormPrincipalComponent extends PageFrameBase {
       termino_projeto: {default: new Date()},
       duracao: {default: ""},
       progresso: {default: 0},
-      tempo_corrido: {default: true},
+      tempo_corrido: {default: false},
       usa_horas: {default: false},
       intervalo_automatico: {default: false},
       progresso_automatico: {default: true},
@@ -49,7 +54,9 @@ export class ProjetoFormPrincipalComponent extends PageFrameBase {
       soma_alocacoes_automatico: {default: true},
       possui_custos_projeto: {default: true},
       soma_custos_automatico: {default: true},
-      fase_id: {default: ""}
+      fase_id: {default: ""},
+      usar_escritorio: {default: true},
+      escritorio_id: {default: ""}
     }, this.cdRef, this.validate);
     this.join = ["recursos", "tarefas", "alocacoes", "regras", "fase"];
   }
@@ -66,8 +73,13 @@ export class ProjetoFormPrincipalComponent extends PageFrameBase {
     return result;
   }
   
-  public loadData(entity: IIndexable, form?: FormGroup) {
+  public async loadData(entity: IIndexable, form?: FormGroup) {
     let formValue = Object.assign({}, this.form!.value);
+    let escritorio = (entity as Projeto).alocacoes?.find(x => !!x.regras?.find(y => y.regra?.perfis?.includes("ESCRITORIO")));
+    await Promise.all([
+      this.escritorio!.loadSearch(escritorio?.recurso?.unidade || escritorio?.recurso?.unidade_id)
+    ]);
+    form?.controls.usar_escritorio.setValue(!!escritorio);
     this.form!.patchValue(this.util.fillForm(formValue, entity));
   }
 
@@ -77,9 +89,7 @@ export class ProjetoFormPrincipalComponent extends PageFrameBase {
   }
 
   public async saveData(form?: IIndexable) {
-    return new Promise<Projeto>((resolve, reject) => {
-      resolve(this.util.fill(this.entity, this.form!.value));
-    });
+    return this.util.fill(this.entity, this.form!.value);
   }
 
   public get fases(): LookupItem[] {

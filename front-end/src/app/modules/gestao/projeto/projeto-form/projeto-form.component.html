@@ -1,5 +1,5 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
-    <tabs display right [title]="titleProjeto" (select)="onTabsSelect()">
+    <tabs display right [title]="titleProjeto" [select]="onTabsSelect.bind(this)">
         <tab key="PRINCIPAL" label="Principal">
             <projeto-form-principal #principal [entity]="entity" [cdRef]="cdRef"></projeto-form-principal>
         </tab>

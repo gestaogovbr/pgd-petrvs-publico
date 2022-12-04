@@ -64,6 +64,7 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
   @Input() confirmLabel?: string;
   @Input() cancelLabel?: string;
   @Input() noButtons?: string;
+  @Input() noMargin?: string;
   @Input() forceInvalid: boolean = false;
   @Input() set disabled(value: boolean) {
     this._disabled = value;
@@ -91,6 +92,10 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
 
   public get isNoButtons(): boolean {
     return this.noButtons !== undefined;
+  }
+
+  public get isNoMargin(): boolean {
+    return this.noMargin !== undefined;
   }
 
   constructor(injector: Injector) {

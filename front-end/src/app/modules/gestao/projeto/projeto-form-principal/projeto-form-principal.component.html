@@ -16,7 +16,7 @@
         <input-workload daysOrHours [size]="3" [unit]="unitDuracao" [disabled]="" label="Duração" controlName="duracao" [control]="form!.controls.carga_horaria" [unitChange]="onUnitDuracaoChange.bind(this)" labelInfo="Se o projeto será calculado em horas ou dias"></input-workload>
         <input-text number [size]="2" label="Progresso" sufix="%" icon="bi bi-clock" controlName="progresso" labelInfo="Progresso do projeto (% Concluído)"></input-text>
     </div>
-    <separator title="Configurações" collapse [collapsed]="true">
+    <separator title="Configurações" collapse transparent [collapsed]="true">
         <div class="row">
             <input-switch label="Tempo corrido:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="tempo_corrido" labelInfo="Tempo corrido"></input-switch>
             <input-switch label="Usa horas:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="usa_horas" labelInfo="Usa horas"></input-switch>
@@ -38,7 +38,11 @@
             <input-switch label="Soma custos automático:" scale="small" labelPosition="right" icon="bi bi-check2" [size]="6" controlName="soma_custos_automatico" labelInfo="Soma custos automático"></input-switch>
         </div>
     </separator>
-    <separator *ngIf="!form?.controls?.tempo_corrido?.value" title="Expediente" collapse [collapsed]="true">
+    <separator *ngIf="!form?.controls?.tempo_corrido?.value" title="Expediente" collapse transparent [collapsed]="true">
+        <div class="row">
+            <input-switch label="Usar do escritório:" labelPosition="right" icon="bi bi-check2" [size]="3" controlName="usar_escritorio" labelInfo="Aloca recursos no projeto"></input-switch>
+            <input-search [size]="9" #escritorio hostClass="p-0" disabled controlName="escritorio_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+        </div>
         <calendar-expediente></calendar-expediente>
     </separator>
 </editable-form>

@@ -31,6 +31,10 @@ export class InputSwitchComponent extends InputBase implements OnInit {
   @Input() path?: string;
   @Input() valueOn?: string;
   @Input() valueOff?: string;
+  @Input() button?: string;
+  @Input() buttonIcon?: string;
+  @Input() buttonColor?: string;
+  @Input() buttonCaption?: string;
   @Input() scale: InputScale = "medium";
   @Input() set value(value: any) {
     this.setValue(value);
@@ -76,6 +80,10 @@ export class InputSwitchComponent extends InputBase implements OnInit {
       this.value = this.control.value;
     }
     this.updateValue(this.value);
+  }
+
+  public get isButton(): boolean {
+    return this.button != undefined;
   }
 
   public onChange(event: Event) {

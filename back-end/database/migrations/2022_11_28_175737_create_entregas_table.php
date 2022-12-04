@@ -23,7 +23,7 @@ class CreateEntregasTable extends Migration
             $table->dateTime('data_fim')->nullable()->comment("Data fim da vigência");
             $table->string('nome', 256)->comment("Nome");
             $table->enum('tipo_indicador', ["QUANTIDADE", "VALOR", "PORCENTAGEM", "QUALITATIVO"])->comment("Tipo do indicador");
-            $table->json('qualitativo')->nullable()->comment("Tipo do indicador");
+            $table->json('qualitativo')->nullable()->comment("Valores do qualitativo");
         });
     }
 

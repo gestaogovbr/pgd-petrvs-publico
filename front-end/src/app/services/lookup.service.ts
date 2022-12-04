@@ -446,9 +446,9 @@ export class LookupService {
     { key: "CUSTO", value: "Custo", icon: "bi bi-currency-exchange", color: "danger" }
   ];
   public PROJETO_PERFIS: LookupItem[] = [
-    { key: "ESCRITORIO", value: "Escritório", data: ["DEPARTAMENTO"]},
-    { key: "GERENTE", value: "Escritório", data: ["HUMANO"]},
-    { key: "ACESSAR", value: "Acessar o projeto", data: ["HUMANO", "DEPARTAMENTO"]}
+    { key: "ESCRITORIO", value: "Escritório", icon: "bi bi-house-gear", data: ["DEPARTAMENTO"]},
+    { key: "GERENTE", value: "Gerente", icon: "bi bi-person-gear", data: ["HUMANO"]},
+    { key: "ACESSAR", value: "Acessar o projeto", icon: "bi bi-unlock", data: ["HUMANO", "DEPARTAMENTO"]}
   ];
 
   public getLookup(itens: LookupItem[], key: any) {
