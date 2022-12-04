@@ -19,10 +19,10 @@ class CreatePlanejamentosTable extends Migration
             $table->primary('id');
             $table->timestamps();
             // Campos:
-            $table->dateTime('data_inicio')->comment("Data inicio da vigência");
-            $table->dateTime('data_fim')->nullable()->comment("Data fim da vigência");
-            $table->dateTime('inicio')->comment("Data inicio");
-            $table->dateTime('fim')->nullable()->comment("Data fim");
+            $table->dateTime('data_inicio')->comment("Data inicio da vigência do registro");
+            $table->dateTime('data_fim')->nullable()->comment("Data fim da vigência do registro");
+            $table->dateTime('inicio')->comment("Data inicio do planejamento");
+            $table->dateTime('fim')->nullable()->comment("Data fim do planejamento");
             $table->string('nome', 256)->comment("Nome do plano estratégico/entregas");
             // Chaves estrangeiras:
             $table->foreignUuid('unidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
