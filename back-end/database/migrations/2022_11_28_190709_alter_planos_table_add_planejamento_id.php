@@ -14,7 +14,7 @@ class AlterPlanosTableAddPlanejamentoId extends Migration
     public function up()
     {
         Schema::table('planos', function (Blueprint $table) {
-            $table->foreignUuid('planejamento_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('planejamento_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade');
         });
     }
 
