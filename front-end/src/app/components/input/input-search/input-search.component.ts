@@ -231,10 +231,12 @@ export class InputSearchComponent extends InputBase implements OnInit {
   }
 
   public search(text: string) {
+    console.log("Pesquisar", text);
     this.searching = true;
-    this.clear();
+    if(this.control) this.control!.setValue(this.emptyValue, {emitEvent: false});
+    this.clear(false, true, false);
     this.dao?.searchText(text, this.fields, this.where, this.groupBy?.map(x => [x.field, "asc"])).then(result => {
-      if(this.queryText == text){
+      if(this.queryText == text) {
         this.items = this.group(result);
         this.dropdownWidth = $("#"+ this.generatedId(this.controlName)).first().outerWidth() || 200;
         this.cdRef.detectChanges();
@@ -253,15 +255,16 @@ export class InputSearchComponent extends InputBase implements OnInit {
     return this.detailsButton !== undefined;
   }
 
-  public onDetailsClick(event: Event){
+  public onDetailsClick(event: Event) {
     if(this.details && this.selectedItem && this.searchObj) this.details.emit({...this.selectedItem, entity: this.searchObj});
   }
 
-  public clear(clearControl: boolean = true, emitEvent: boolean = true) {
+  public clear(clearControl: boolean = true, emitEvent: boolean = true, clearText = true) {
     this.items = [];
     this.selectedItem = undefined;
     this.selectedValue = undefined;
     this.searchObj = undefined;
+    if(clearText) this.queryText = this.inputElement!.nativeElement.value = "";
     if(clearControl && !this.isDisabled && this.control) this.control.setValue(this.emptyValue);
     if(this.change && emitEvent) this.change.emit(new Event("change"));
     this.cdRef.detectChanges();
