@@ -52,8 +52,7 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
     filter.controls.nome.setValue("");
     filter.controls.inicio.setValue(null);
     filter.controls.fim.setValue(null);
-    this.filter!.controls.unidade_id.setValue(null);
-    this.cdRef.detectChanges();
+    filter.controls.unidade_id.setValue(null);
     super.filterClear(filter);
   }
 
