@@ -7,6 +7,7 @@ import * as moment from 'moment';
 import { DaoBaseService } from '../dao/dao-base.service';
 import { MaskApplierService } from 'ngx-mask';
 import { DOCUMENT } from '@angular/common';
+import { AbstractControl, FormControl } from '@angular/forms';
 
 export type Interval = {start: Date | number, end: Date | number};
 export type DateInterval = {start: Date, end: Date};
@@ -545,12 +546,17 @@ export class UtilService {
     return dates.reduce(function (a, b) { return !a || !b ? a || b : (a.getTime() > b.getTime() ? a : b); });
   }
 
-
   public loadScript(src: string): any {
     const script = this.renderer.createElement('script');
     script.type = 'text/javascript';
     script.src = src;
     this.renderer.appendChild(this.document.body, script);
     return script;
+  }
+
+  public clearControl(control: FormControl | AbstractControl, value: any = null) {
+    control.setValue(value);
+    control.setErrors(null);
+    control.markAsUntouched();
   }
 }

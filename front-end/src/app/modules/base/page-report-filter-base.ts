@@ -1,6 +1,6 @@
 import { ToolbarButton } from './../../components/toolbar/toolbar.component';
 import { OnInit, Injector, Injectable, Type } from '@angular/core';
-import { FormGroup, AbstractControl } from '@angular/forms';
+import { FormGroup, AbstractControl, FormControl } from '@angular/forms';
 import { Base, IIndexable } from 'src/app/models/base.model';
 import { PageBase } from './page-base';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
@@ -78,8 +78,8 @@ export abstract class PageReportFilterBase extends PageBase implements OnInit {
     }
   }
 
-  public getControlByName(controlName: string): AbstractControl {
-    return this.form!.controls[controlName];
+  public getControlByName(controlName: string): FormControl {
+    return this.form!.controls[controlName] as FormControl;
   }
 
   public error = (error: string) => {

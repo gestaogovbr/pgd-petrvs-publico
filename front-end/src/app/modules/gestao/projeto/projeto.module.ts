@@ -18,6 +18,7 @@ import { ProjetoTarefaFormPrincipalComponent } from './projeto-tarefa-form-princ
 import { ProjetoFormRegrasComponent } from './projeto-form-regras/projeto-form-regras.component';
 import { ProjetoTarefaFilterComponent } from './projeto-tarefa-filter/projeto-tarefa-filter.component';
 import { ProjetoFormFasesComponent } from './projeto-form-fases/projeto-form-fases.component';
+import { ProjetoRecursoWidgetComponent } from './projeto-recurso-widget/projeto-recurso-widget.component';
 
 FullCalendarModule.registerPlugins([ // register FullCalendar plugins
   dayGridPlugin,
@@ -36,7 +37,8 @@ FullCalendarModule.registerPlugins([ // register FullCalendar plugins
     ProjetoTarefaFormPrincipalComponent,
     ProjetoFormRegrasComponent,
     ProjetoTarefaFilterComponent,
-    ProjetoFormFasesComponent
+    ProjetoFormFasesComponent,
+    ProjetoRecursoWidgetComponent
   ],
   imports: [
     CommonModule,

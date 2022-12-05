@@ -133,7 +133,8 @@ export class GridComponent extends ComponentBase implements OnInit {
     return this._list;
   }
   @Input() set items(value: IIndexable[]) {
-    this._items = this.group(value);
+    this._items = value;
+    this.group(value);
     this.control?.setValue(value);
     this.cdRef.detectChanges();
   }
@@ -176,6 +177,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   public multiselected: IIndexable = {};
   public multiselectExtra: any = undefined;
   public rowsLimit?: number;
+  public groupIds: IIndexable = { _qtdRows: -1 };
   public expandedIds: IIndexable = {};
   public set error(error: string | undefined) {
     this._error = error;
@@ -288,7 +290,12 @@ export class GridComponent extends ComponentBase implements OnInit {
   }
 
   public isSeparator(row: any): boolean {
-    return (row instanceof GridGroupSeparator);
+    return row instanceof GridGroupSeparator;
+  }
+
+  public getGroupSeparator(row: any): GridGroupSeparator | undefined {
+    if(!!this.groupBy && this.groupIds._qtdRows != this.items?.length) this.group(this.items);
+    return row instanceof GridGroupSeparator ? row : this.groupIds[row.id];
   }
 
   public get isMultiselect(): boolean {
@@ -333,21 +340,23 @@ export class GridComponent extends ComponentBase implements OnInit {
   public group(items: IIndexable[]) {
     if(this.groupBy && items?.length) {
       let buffer = "";
+      this.groupIds = { _qtdRows: items.length };
       items = items.filter(x => !(x instanceof GridGroupSeparator)).map(x => Object.assign(x, {_group: this.groupBy!.map(g => Object.assign({}, g, { value: this.util.getNested(x, g.field) }))}));
       if(!this.query) items.sort((a: IIndexable, b: IIndexable) => JSON.stringify(a._group) > JSON.stringify(b._group) ? 1 : JSON.stringify(a._group) < JSON.stringify(b._group) ? -1 : 0);
       for(let i = 0; i < items.length; i++) {
         if(buffer != JSON.stringify(items[i]._group)) {
           buffer = JSON.stringify(items[i]._group);
-          items.splice(i, 0, new GridGroupSeparator(items[i]._group));
+          this.groupIds[items[i].id] = new GridGroupSeparator(items[i]._group);
+          //items.splice(i, 0, new GridGroupSeparator(items[i]._group));
         }
       }
     }
-    return items;
+    //return items;
   }
 
-  public ungroup(items: IIndexable[]) {
+  /*public ungroup(items: IIndexable[]) {
     return items.filter(x => !(x instanceof GridGroupSeparator));
-  }
+  }*/
 
   public report() {
     if(this.reportRef) {
@@ -543,6 +552,7 @@ export class GridComponent extends ComponentBase implements OnInit {
       const remove = this.remove ? !!(await this.remove(row)) : this.hasItems;
       const index = remove ? this.items.findIndex(x => x["id"] == row["id"]) : -1;
       if(index >= 0) this.items.splice(index, 1);
+      this.group(this.items);
       this.cdRef.detectChanges();
     })();
   }
@@ -572,7 +582,9 @@ export class GridComponent extends ComponentBase implements OnInit {
           this.editing = this.items[index];
         }
       }
-      this.control?.setValue(this.ungroup(this.items));
+      //this.control?.setValue(this.ungroup(this.items));
+      this.group(this.items);
+      this.control?.setValue(this.items);
       this.cdRef.detectChanges();
       await this.endEdit();
     } else {
@@ -588,7 +600,7 @@ export class GridComponent extends ComponentBase implements OnInit {
 
   public onCancelItem() {
     (async () => {
-      if(this.adding) this.items.splice(this.items.findIndex(x => !(x["id"] || "").length || x["id"] == (this.editing || [])["id"]), 1);
+      if(this.adding) this.items.splice(this.items.findIndex(x => !(x instanceof GridGroupSeparator) && x["id"] == (this.editing || [])["id"]), 1);
       await this.endEdit();
     })();
   }

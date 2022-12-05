@@ -131,6 +131,7 @@ export class ProjetoFormComponent extends PageFormBase<Projeto, ProjetoDaoServic
     })];
     /* Carrega projeto */
     this.entity = projeto;
+    this.cdRef.detectChanges();
     this.loadData(this.entity, form);    
   }
 

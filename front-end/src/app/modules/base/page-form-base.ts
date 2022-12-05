@@ -1,5 +1,5 @@
 import { OnInit, Injector, Injectable, Type } from '@angular/core';
-import { FormGroup, AbstractControl } from '@angular/forms';
+import { FormGroup, AbstractControl, FormControl } from '@angular/forms';
 import { DaoBaseService } from 'src/app/dao/dao-base.service';
 import { Base, IIndexable } from 'src/app/models/base.model';
 import { PageBase } from './page-base';
@@ -115,8 +115,8 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
     this.close();
   }
 
-  public getControlByName(controlName: string): AbstractControl {
-    return this.form!.controls[controlName];
+  public getControlByName(controlName: string): FormControl {
+    return this.form!.controls[controlName] as FormControl;
   }
 
   public error = (error: string) => {

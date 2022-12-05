@@ -126,8 +126,8 @@ GanttMaster.prototype.init = function (workSpace) {
   self.splitter.secondBoxMinWidth = 20;
 
   //prepend buttons
-  var ganttButtons = $.JST.createFromTemplate({}, "GANTBUTTONS");
-  place.before(ganttButtons);
+  //var ganttButtons = $.JST.createFromTemplate({}, "GANTBUTTONS");
+  //place.before(ganttButtons);
   this.checkButtonPermissions();
 
 

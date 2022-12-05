@@ -9,7 +9,7 @@ import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { ProjetoRecursoDaoService } from 'src/app/dao/projeto-recurso-dao.service';
 import { ProjetoRegraDaoService } from 'src/app/dao/projeto-regra-dao.service';
 import { LookupItem } from 'src/app/services/lookup.service';
-import { ProjetoRecurso } from 'src/app/models/projeto-recurso.model';
+import { ProjetoRecurso, ProjetoRecursoTipo } from 'src/app/models/projeto-recurso.model';
 import { ProjetoRegra } from 'src/app/models/projeto-regra.model';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { ProjetoService } from '../projeto.service';
@@ -17,6 +17,7 @@ import { ProjetoAlocacaoRegra } from 'src/app/models/projeto-alocacao-regra.mode
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { ProjetoDaoService } from 'src/app/dao/projeto-dao.service';
+import { ProjetoRecursoWidgetComponent } from '../projeto-recurso-widget/projeto-recurso-widget.component';
 
 @Component({
   selector: 'projeto-form-alocacoes',
@@ -26,8 +27,8 @@ import { ProjetoDaoService } from 'src/app/dao/projeto-dao.service';
 export class ProjetoFormAlocacoesComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
-  @ViewChild("recurso", { static: false }) public recurso?: InputSelectComponent;
   @ViewChild("regra", { static: false }) public regra?: InputSelectComponent;
+  @ViewChild("recursoWidget", { static: false }) public recursoWidget?: ProjetoRecursoWidgetComponent;
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: Projeto | undefined) { super.entity = value; } get entity(): Projeto | undefined { return super.entity; }
   @Input() cdRef: ChangeDetectorRef;
@@ -37,6 +38,7 @@ export class ProjetoFormAlocacoesComponent extends PageFrameBase {
   public projetoService: ProjetoService;
   public formRegra: FormGroup;
   public recursos: LookupItem[] = [];
+  public tipoRecurso: ProjetoRecursoTipo | undefined = undefined;
 
   constructor(public injector: Injector) {
     super(injector);
@@ -50,6 +52,7 @@ export class ProjetoFormAlocacoesComponent extends PageFrameBase {
       descricao: {default: ""},
       quantidade: {default: 1},
       recurso_id: {default: ""},
+      novo_recurso: {default: false},
       regras: {default: []}
     }, this.cdRef, this.validate);
     this.formRegra = this.fh.FormBuilder({
@@ -72,7 +75,7 @@ export class ProjetoFormAlocacoesComponent extends PageFrameBase {
 
   private _regras: LookupItem[] = [];
   public get regras(): LookupItem[] {
-    const items = (this.entity!.regras || []).filter(x => x.id != "NEW");
+    const items = (this.entity!.regras || []).filter(x => x.id != "NEW" && x.tipo_recurso == this.tipoRecurso);
     if(this._regras.map(x => x.key + x.value).join(";") != items.map(x => x.id + x.nome).join(";")) {
       this._regras = items.map(x => Object.assign({}, {key: x.id, value: x.nome, data: x}));
     }
@@ -99,9 +102,8 @@ export class ProjetoFormAlocacoesComponent extends PageFrameBase {
   }
 
   public async saveData(form?: IIndexable) {
-    return new Promise<Projeto>((resolve, reject) => {
-      resolve(this.entity!);
-    });
+    await this.grid?.confirm();
+    return this.entity!;
   }
 
   public async addAlocacao() {
@@ -116,6 +118,7 @@ export class ProjetoFormAlocacoesComponent extends PageFrameBase {
 
   public async loadAlocacao(form: FormGroup, row: any) {
     this.loadRecursos(row);
+    this.tipoRecurso = row.recurso?.tipo;
     form.controls.descricao.setValue(row.descricao);
     form.controls.quantidade.setValue(row.quantidade);
     form.controls.recurso_id.setValue(row.recurso_id);
@@ -126,6 +129,7 @@ export class ProjetoFormAlocacoesComponent extends PageFrameBase {
       icon: this.lookup.getIcon(this.lookup.PROJETO_TIPO_RECURSOS, regra.regra!.tipo_recurso),
       data: regra
     })));
+    form.controls.novo_recurso.setValue(false);
     this.cdRef.detectChanges();
   }
 
@@ -135,22 +139,23 @@ export class ProjetoFormAlocacoesComponent extends PageFrameBase {
 
   public async saveAlocacao(form: FormGroup, row: any) {
     let result = undefined;
+    let recurso = this.recursoWidget?.recurso;
     this.form!.markAllAsTouched();
-    if(this.form!.valid) {
+    if(recurso && this.form!.valid) {
+      if(recurso.id == "NEW") { /* Insere novo recurso */
+        recurso.id = this.dao!.generateUuid();
+        this.entity!.recursos!.push(recurso);
+      }
       row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
       row.descricao = form.controls.descricao.value;
       row.quantidade = form.controls.quantidade.value;
-      row.recurso_id = form.controls.recurso_id.value;
-      row.recurso = this.recurso?.selectedItem?.data;
+      row.recurso_id = recurso.id;
+      row.recurso = recurso;
       row.regras = (form.controls.regras.value || []).map((x: LookupItem) => x.data);
       result = row;
       this.cdRef.detectChanges();
     }
     return result;
-  }
-
-  public get isHumanoDepartamento(): boolean {
-    return ["HUMANO", "DEPARTAMENTO"].includes(this.recurso?.selectedItem?.data?.tipo);
   }
 
   public addItemHandleRegras(): LookupItem | undefined {
@@ -170,7 +175,7 @@ export class ProjetoFormAlocacoesComponent extends PageFrameBase {
           regra: regra
         })
       };
-      this.formRegra.controls.regra_id.setValue(null);
+      this.util.clearControl(this.formRegra.controls.regra_id);
     }
     return result;
   }
@@ -189,9 +194,11 @@ export class ProjetoFormAlocacoesComponent extends PageFrameBase {
     return result;
   }
 
-  public onRecursoChange() {
-    const recurso = this.recurso?.selectedItem?.data as ProjetoRecurso;
-    this.form!.controls.regras.setValue(this.form!.controls.regras.value.filter((x: LookupItem) => x.data?.regra?.tipo_recurso == recurso?.tipo));
+  public onRecursoChange(tipo: ProjetoRecursoTipo | undefined) {
+    //const recurso = this.recurso?.selectedItem?.data as ProjetoRecurso;
+    this.tipoRecurso = tipo;
+    if(this.projetoService.isHumanoDepartamento(tipo)) this.form!.controls.quantidade.setValue(1);
+    this.form!.controls.regras.setValue(this.form!.controls.regras.value.filter((x: LookupItem) => x.data?.regra?.tipo_recurso == tipo));
     this.cdRef.detectChanges();
   }
 

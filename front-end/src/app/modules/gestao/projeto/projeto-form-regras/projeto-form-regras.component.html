@@ -18,13 +18,13 @@
                         <badge [icon]="lookup.getIcon(lookup.PROJETO_TIPO_RECURSOS, row.tipo_recurso)" [label]="lookup.getValue(lookup.PROJETO_TIPO_RECURSOS, row.tipo_recurso)" [color]="lookup.getColor(lookup.PROJETO_TIPO_RECURSOS, row.tipo_recurso)"></badge>
                     </ng-template>
                     <ng-template let-row="row" #editRegraRecursoTipo>
-                        <input-select [size]="12" controlName="tipo_recurso" [control]="form!.controls.tipo_recurso" [items]="lookup.PROJETO_TIPO_RECURSOS" (change)="onTipoRecursoChange()"></input-select>
+                        <input-select [size]="12" [disabled]="row.id != 'NEW' ? 'true' : undefined" controlName="tipo_recurso" [control]="form!.controls.tipo_recurso" [items]="lookup.PROJETO_TIPO_RECURSOS" (change)="onTipoRecursoChange()"></input-select>
                     </ng-template>
                 </column>
                 <column title="Perfis" [template]="regraPerfis" [editTemplate]="editRegraPerfis">
                     <ng-template let-row="row" #regraPerfis>
                         <span class="text-wrap multilines-badges">
-                            <badge *ngFor="let perfil of row.perfis" [label]="lookup.getValue(lookup.PROJETO_PERFIS, perfil)"></badge>
+                            <badge *ngFor="let perfil of row.perfis" [icon]="lookup.getIcon(lookup.PROJETO_PERFIS, perfil)" [label]="lookup.getValue(lookup.PROJETO_PERFIS, perfil)"></badge>
                         </span>
                     </ng-template>
                     <ng-template let-row="row" #editRegraPerfis>

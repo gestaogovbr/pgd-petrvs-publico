@@ -19,7 +19,7 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
   public entity_id?: string; /* Se estiver preenchido, então veio por uma rota e é uma janela autocontida, com salvar e cancelar */
   /* Dever ser sobrescritos utilizando o @Input() */
   public set control(value: AbstractControl | undefined) {
-    if(this._control != value) {
+    if (this._control != value) {
       this._control = value;
     }
   }
@@ -27,7 +27,7 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
     return this._control;
   }
   public set entity(value: any) {
-    if(this._entity != value) {
+    if (this._entity != value) {
       this._entity = value;
       this.fakeControl.setValue(value);
       this.loadData(value, this.form!);
@@ -51,9 +51,9 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
 
   ngOnInit() {
     super.ngOnInit();
-    if(this.urlParams?.has("id")) {
+    if (this.urlParams?.has("id")) {
       this.entity_id = this.urlParams!.get("id") as string;
-      if(this.isNoPersist) this.entity = this.metadata?.entity;
+      if (this.isNoPersist) this.entity = this.metadata?.entity;
     }
   }
 
@@ -92,11 +92,11 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
   }
 
   private onInitializeData() {
-    if(this.entity_id?.length && !this.isNoPersist) { /* Janela autocontida */
+    if (this.entity_id?.length && !this.isNoPersist) { /* Janela autocontida */
       (async () => {
         this.loading = true;
         try {
-          if(this.entity_id == "new") {
+          if (this.entity_id == "new") {
             await this.initializeData(this.form);
           } else {
             this.entity = await this.dao?.getById(this.entity_id!, this.join);
@@ -115,12 +115,12 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
     this.submitting = true;
     try {
       let entity = await this.saveData(this.form!.value);
-      if(entity){
-        const modalResult = this.isNoPersist ? this.entity : 
-          typeof entity == "boolean" ? entity : 
-          entity instanceof NavigateResult ? entity.modalResult :
-          await this.dao?.update(this.entity!.id, entity, this.join);
-        if(this.modalRoute?.queryParams?.idroute?.length) this.go.setModalResult(this.modalRoute?.queryParams?.idroute, modalResult);
+      if (entity) {
+        const modalResult = this.isNoPersist ? this.entity :
+          typeof entity == "boolean" ? entity :
+            entity instanceof NavigateResult ? entity.modalResult :
+              await this.dao?.update(this.entity!.id, entity, this.join);
+        if (this.modalRoute?.queryParams?.idroute?.length) this.go.setModalResult(this.modalRoute?.queryParams?.idroute, modalResult);
         this.close();
       }
     } catch (erro) {
@@ -201,15 +201,15 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
     this.go.back(undefined, this.backRoute);
   } */
 
-  public getControlByName(controlName: string): AbstractControl {
-    return this.form!.controls[controlName];
+  public getControlByName(controlName: string): FormControl {
+    return this.form!.controls[controlName] as FormControl;
   }
 
   public error = (error: string) => {
-    if(this.editableForm) this.editableForm.error = error;
+    if (this.editableForm) this.editableForm.error = error;
   }
 
   public clearErros = () => {
-    if(this.editableForm) this.editableForm.error = "";
+    if (this.editableForm) this.editableForm.error = "";
   }
 }

@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
+import { GridComponent } from 'src/app/components/grid/grid.component';
 import { ProjetoDaoService } from 'src/app/dao/projeto-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { ProjetoFase } from 'src/app/models/projeto-fase.model';
@@ -14,6 +15,7 @@ import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 })
 export class ProjetoFormRegrasComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
+  @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @Input() cdRef: ChangeDetectorRef;
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: Projeto | undefined) { super.entity = value; } get entity(): Projeto | undefined { return super.entity; }
@@ -53,9 +55,8 @@ export class ProjetoFormRegrasComponent extends PageFrameBase {
   }
 
   public async saveData(form?: IIndexable) {
-    return new Promise<Projeto>((resolve, reject) => {
-      resolve(this.entity!);
-    });
+    await this.grid?.confirm();
+    return this.entity!;
   }
 
   public onTipoRecursoChange() {

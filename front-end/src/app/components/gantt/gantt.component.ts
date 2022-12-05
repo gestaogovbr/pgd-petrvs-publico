@@ -5,6 +5,7 @@ import { UtilService } from 'src/app/services/util.service';
 import { GanttAssignment, GanttProject, GanttResource, GanttRole, GanttTask } from './gantt-models';
 import * as moment from 'moment';
 import * as $ from 'jquery';
+import { ToolbarButton } from '../toolbar/toolbar.component';
 
 export type GanttPeriod = {
   start: Date,
@@ -37,6 +38,8 @@ export class GanttComponent implements OnInit {
   }
 
   public loading: boolean = false;
+  public _ganttButtons: ToolbarButton[] = [];
+  public _taskButtons: ToolbarButton[] = [];
   public ge: any = undefined;
   public id: string;
   public set error(value: string) {
@@ -318,6 +321,55 @@ export class GanttComponent implements OnInit {
     this.getRecursiveProjectTasks(gantt.tasks, 0, 0, project);
     return project;
   }*/
+
+  public get ganttButtons(): ToolbarButton[] {
+    let buttons: ToolbarButton[] = [
+      { onClick: this.triggerClick('undo.gantt'), class: "requireCanWrite", hint: "undo", icon: "teamworkIcon", iconChar: "&#39;" }, 
+      { onClick: this.triggerClick('redo.gantt'), class: "requireCanWrite", hint: "redo", icon: "teamworkIcon", iconChar: "&middot;" }, 
+      { divider: true, class: "requireCanWrite requireCanAdd"},
+      { onClick: this.triggerClick('addAboveCurrentTask.gantt'), class: "requireCanWrite requireCanAdd", hint: "insert above", icon: "teamworkIcon", iconChar: "l" }, 
+      { onClick: this.triggerClick('addBelowCurrentTask.gantt'), class: "requireCanWrite requireCanAdd", hint: "insert below", icon: "teamworkIcon", iconChar: "X" }, 
+      { divider: true, class: "requireCanWrite requireCanInOutdent"},
+      { onClick: this.triggerClick('outdentCurrentTask.gantt'), class: "requireCanWrite requireCanInOutdent", hint: "un-indent task", icon: "teamworkIcon", iconChar: "." }, 
+      { onClick: this.triggerClick('indentCurrentTask.gantt'), class: "requireCanWrite requireCanInOutdent", hint: "indent task", icon: "teamworkIcon", iconChar: ":" }, 
+      { divider: true, class: "requireCanWrite requireCanMoveUpDown"},
+      { onClick: this.triggerClick('moveUpCurrentTask.gantt'), class: "requireCanWrite requireCanMoveUpDown", hint: "move up", icon: "teamworkIcon", iconChar: "k" }, 
+      { onClick: this.triggerClick('moveDownCurrentTask.gantt'), class: "requireCanWrite requireCanMoveUpDown", hint: "move down", icon: "teamworkIcon", iconChar: "j" }, 
+      { divider: true, class: "requireCanWrite requireCanDelete"},
+      { onClick: this.triggerClick('deleteFocused.gantt'), class: "delete requireCanWrite", hint: "Elimina", icon: "teamworkIcon", iconChar: "&cent;" }, 
+      { divider: true },
+      { onClick: this.triggerClick('expandAll.gantt'), class: "", hint: "Expandir todos", icon: "teamworkIcon", iconChar: "6" }, 
+      { onClick: this.triggerClick('collapseAll.gantt'), class: "", hint: "Contrair todos", icon: "teamworkIcon", iconChar: "5" }, 
+      { divider: true },
+      { onClick: this.triggerClick('zoomMinus.gantt'), class: "", hint: "Almentar zoom", icon: "teamworkIcon", iconChar: ")" }, 
+      { onClick: this.triggerClick('zoomPlus.gantt'), class: "", hint: "Diminuir zoom", icon: "teamworkIcon", iconChar: "(" }, 
+      { divider: true },
+      { onClick: this.triggerClick('print.gantt'), class: "", hint: "Imprimir", icon: "teamworkIcon", iconChar: "p" }, 
+      { divider: true },
+      { onClick: this.showCriticalPath.bind(this), class: "requireCanSeeCriticalPath", hint: "CRITICAL_PATH", icon: "teamworkIcon", iconChar: "&pound;" },
+      { divider: true },
+      { onClick: this.triggerClick('splitter.gantt', [.1]), class: "", hint: "Only grid", icon: "teamworkIcon", iconChar: "F" },
+      { onClick: this.triggerClick('splitter.gantt', [50]), class: "", hint: "Both", icon: "teamworkIcon", iconChar: "O" },
+      { onClick: this.triggerClick('splitter.gantt', [100]), class: "", hint: "Only gantt", icon: "teamworkIcon", iconChar: "R" },
+      /*{ onClick: this.triggerClick('fullScreen.gantt'), class: "", hint: "FULLSCREEN", icon: "teamworkIcon", iconChar: "@" },
+      <button onclick="ge.element.toggleClass('colorByStatus' );return false;" class="button textual icon" style="display:none;"><span class="teamworkIcon">&sect;</span></button>
+      <button onclick="editResources();" class="button textual requireWrite" title="edit resources" style="display:none;"><span class="teamworkIcon">M</span></button>
+      <button onclick="saveGanttOnServer();" class="button first big requireWrite" style="display:none;" title="Save">Save</button>
+      <button onclick='newProject();' class='button requireWrite newproject' style="display:none;"><em>clear project</em></button>
+      */
+    ];
+    if(JSON.stringify(this._ganttButtons) != JSON.stringify(buttons)) this._ganttButtons = buttons;
+    return this._ganttButtons;
+  }
+
+  public triggerClick(event: string, parameters: any = undefined) {
+    return (() => $('#workSpace' + this.id).trigger(event, parameters)).bind(this);
+  }
+
+  public showCriticalPath() {
+    this.ge.gantt.showCriticalPath = !this.ge.gantt.showCriticalPath; 
+    this.ge.redraw();
+  }
 
   public loadI18n() {
     //@ts-ignore

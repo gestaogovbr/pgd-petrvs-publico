@@ -1,0 +1,16 @@
+<input-select *ngIf="novoRecurso.collapsed" [size]="12" itemTodos="- Selecione -" valueTodos="" #selectRecurso controlName="recurso_id" (change)="onRecursoChange()" [control]="form!.controls.recurso_id" [items]="recursos"></input-select>
+<separator #novoRecurso [title]="novoRecurso.collapsed ? 'Clique aqui para adicionar novo recurso' : 'Clique aqui para selecionar recurso existente'" collapse transparent>
+    <editable-form noMargin [form]="form" noButtons>
+        <div class="row m-0 p-0">
+            <input-select [size]="4" #tipoRecurso controlName="tipo" hostClass="p-1" [control]="form!.controls.tipo" [items]="lookup.PROJETO_TIPO_RECURSOS" (change)="onRecursoChange()"></input-select>
+            <input-select [size]="4" controlName="unidade_medida" hostClass="p-1" [control]="form!.controls.unidade_medida" [items]="lookup.MATERIAL_SERVICO_UNIDADE"></input-select>
+            <input-number [size]="4" [decimals]="2" controlName="valor" prefix="R$" hostClass="p-1" [control]="form!.controls.valor"></input-number>
+        </div>
+        <div class="row m-0 p-0">
+            <input-search *ngIf="projetoService.isHumanoDepartamento(tipoRecurso?.value, ['HUMANO'])" hostClass="p-1" [size]="12" #usuario controlName="usuario_id" [control]="form!.controls.usuario_id" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
+            <input-search *ngIf="projetoService.isHumanoDepartamento(tipoRecurso?.value, ['DEPARTAMENTO'])" hostClass="p-1" [size]="12" #unidade controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+            <input-search *ngIf="projetoService.isMaterialServico(tipoRecurso?.value)" hostClass="p-1" [size]="6" #materialServico controlName="material_servico_id" [control]="form!.controls.material_servico_id" [dao]="materialServicoDao" [where]="[['tipo', '==', tipoRecurso?.value]]" [selectRoute]="{route: ['cadastros', 'material-servico']}"></input-search>
+            <input-text *ngIf="!projetoService.isHumanoDepartamento(tipoRecurso?.value)" hostClass="p-1" prefix="Descrição" [size]="projetoService.isMaterialServico(tipoRecurso?.value) ? 6 : 12" controlName="nome" [control]="form!.controls.nome"></input-text>
+        </div>
+    </editable-form>
+</separator>

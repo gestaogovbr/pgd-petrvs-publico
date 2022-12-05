@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
+import { GridComponent } from 'src/app/components/grid/grid.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { MaterialServicoDaoService } from 'src/app/dao/material-servico-dao.service';
@@ -20,6 +21,7 @@ import { ProjetoService } from '../projeto.service';
 })
 export class ProjetoFormRecursosComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
+  @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @ViewChild("usuario", { static: false }) public usuario?: InputSearchComponent;
   @ViewChild("unidade", { static: false }) public unidade?: InputSearchComponent;
   @ViewChild("materialServico", { static: false }) public materialServico?: InputSearchComponent;
@@ -77,9 +79,8 @@ export class ProjetoFormRecursosComponent extends PageFrameBase {
   }
 
   public async saveData(form?: IIndexable) {
-    return new Promise<Projeto>((resolve, reject) => {
-      resolve(this.entity!);
-    });
+    await this.grid?.confirm();
+    return this.entity!;
   }
 
   public onTipoRecursoChange() {
