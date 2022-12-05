@@ -4,6 +4,9 @@ Resources (assets, configs, helpers)
 ## Instalação via Docker (Ubuntu 20.04 - WSL):
 
 ### 1 - Instalação Docker (serviço)
+
+# OBS: Antes de iniciar a instalação, certifique-se de que o DNS está configurado. Caso não esteja, edite o arquivo /etc/resolv.conf e adicione o DNS
+
 ~~~shell
 sudo apt update
 sudo apt install apt-transport-https ca-certificates curl software-properties-common
