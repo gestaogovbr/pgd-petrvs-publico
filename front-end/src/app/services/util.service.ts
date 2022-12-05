@@ -214,11 +214,11 @@ export class UtilService {
       let dst = destination.find(x => typeof compare == "string" ? x[compare] == src[compare] : compare(x, src));
       if(dst) { /* Update*/
         if(update) {
-          update(dst, src) 
+          update(dst, src)
         } else if(isHandler) {
           insertOrHandler!("EDIT", dst, src);
         } else {
-          Object.assign(dst, src);          
+          Object.assign(dst, src);
         }
       } else { /* Insert */
         let add = insertOrHandler ? (isHandler ? insertOrHandler("ADD", undefined, src) : insertOrHandler(src)) : src;
@@ -226,13 +226,13 @@ export class UtilService {
       }
     }
     if(removeDst) {
-      for(let i = 0; i < destination.length; i++){ 
+      for(let i = 0; i < destination.length; i++){
         let dst = destination[i];
         if(!source.find(x => typeof compare == "string" ? x[compare] == dst[compare] : compare(dst, x))) {
           let splice = remove ? remove(dst) : isHandler ? insertOrHandler!("DELETE", dst) : true;
           if(splice) {
             destination.splice(i, 1);
-            i--; 
+            i--;
           }
         }
       }

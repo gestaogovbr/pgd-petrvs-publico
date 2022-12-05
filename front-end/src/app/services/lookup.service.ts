@@ -36,6 +36,12 @@ export class LookupService {
     { key: "MASCULINO", value: "Masculino" },
     { key: "FEMININO", value: "Feminino" }
   ];
+  public TIPO_INDICADOR: LookupItem[] = [
+    { key: "QUANTIDADE", value: "Quantidade" },
+    { key: "VALOR", value: "Valor" },
+    { key: "PORCENTAGEM", value: "Porcentagem" },
+    { key: "QUALITATIVO", value: "Qualitativo" }
+  ];
 
   public TIPO_LAYOUT: LookupItem[] = [
     { key: 'COMPLETO', value: "Completo" },

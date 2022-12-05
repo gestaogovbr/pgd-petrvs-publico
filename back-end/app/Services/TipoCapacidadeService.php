@@ -126,12 +126,24 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_DMD_TRF_EXCL", "Permite exluir tarefas dentro de demandas"],
         ["MOD_DMD_TRF_CONS", "Permite consultar tarefas dentro de demandas"],
         ["MOD_DMD_CLONAR", "Permite clonar demandas"],
+        /* Capacidades do módulo EIXOS TEMÁTICOS */
+        ["MOD_EXTM", "Permite acessar o item menu Eixos temáticos"],
+        ["MOD_EXTM_CONS", "Permite consultar Eixos temáticos"],
+        ["MOD_EXTM_INCL", "Permite incluir Eixos temáticos"],
+        ["MOD_EXTM_EDT", "Permite editar Eixos temáticos"],
+        ["MOD_EXTM_EXCL", "Permite excluir Eixos temáticos"],
         /* Capacidades do módulo ENTIDADE*/
         ["MOD_ENTD_CFG", "Permite configurar Entidade"],
         ["MOD_ENTD_CONS", "Permite consultar Entidade"],
         ["MOD_ENTD_EDT", "Permite editar entidade"],
         ["MOD_ENTD_EXCL", "Permite excluir Entidade"],
         ["MOD_ENTD_INCL", "Permite incluir Entidade"],
+        /* Capacidades do módulo ENTREGAS*/
+        ["MOD_ENTRG", "Permite acessar o item menu Entregas"],
+        ["MOD_ENTRG_CONS", "Permite consultar Entregas"],
+        ["MOD_ENTRG_INCL", "Permite incluir Entregas"],
+        ["MOD_ENTRG_EDT", "Permite editar Entregas"],
+        ["MOD_ENTRG_EXCL", "Permite excluir Entregas"],
         /* Capacidades do módulo FERIADO*/
         ["MOD_FER", "Permite acessar item menu feriados"],
         ["MOD_FER_CONS", "Permite consultar feriado"],
