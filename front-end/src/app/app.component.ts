@@ -101,7 +101,7 @@ export class AppComponent {
         { name: this.lex.noun("Atividade", true), permition: 'MOD_ATV', route: ['cadastros', 'atividade'], icon: "bi bi-activity" },
         { name: this.lex.noun("Afastamento", true), permition: 'MOD_AFT', route: ['cadastros', 'afastamento'], icon: "bi bi-toggle-off" },
         { name: this.lex.noun("Cidades", true), permition: 'MOD_CID', route: ['cadastros', 'cidade'], icon: "bi bi-building" },
-        { name: this.lex.noun("Eixos temáticos", true), permition: 'MOD_EXTM', route: ['cadastros', 'eixo-tematico'], icon: "bi bi-list-check" },
+        { name: this.lex.noun("Eixos temáticos", true), permition: 'MOD_EXTM', route: ['cadastros', 'eixo-tematico'], icon: "bi bi-gear" },
         { name: this.lex.noun("Entregas", true), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: "bi bi-list-check" },
         { name: this.lex.noun("Feriados", true), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: "bi bi-emoji-sunglasses" },
         { name: this.lex.noun("Material e serviço", true), permition: '', route: ['cadastros', 'material-servico'], icon: "bi bi-box-seam" },
@@ -118,6 +118,7 @@ export class AppComponent {
       ],
       gestao: [
         { name: this.lex.noun("Demanda", true), permition: '', route: ['gestao', 'demanda'], icon: "bi bi-activity" },
+        { name: this.lex.noun("Planos de Gestão/Entregas", true), permition: 'MOD_PGENTR', route: ['gestao', 'planejamento'], icon: "bi bi-files" },
         { name: this.lex.noun("Plano de trabalho", true), permition: 'MOD_PTR', route: ['gestao', 'plano'], icon: "bi bi-list-check" },
         { name: this.lex.noun("Projetos", true), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: "bi bi-diagram-2" }
       ],
