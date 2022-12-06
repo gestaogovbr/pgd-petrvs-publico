@@ -45,7 +45,7 @@ export class GanttTemplatesComponent implements OnInit {
 
     public buildTemplates() {
         const workSpace = "workSpace" + this.id;
-        this.templates["GANTBUTTONS"] =
+        /*this.templates["GANTBUTTONS"] =
             `<div class="ganttButtonBar noprint">
                 <div class="buttons">
                     <button onclick="$('#` + workSpace + `').trigger('undo.gantt');return false;" class="button textual icon requireCanWrite" title="undo"><span class="teamworkIcon">&#39;</span></button>
@@ -85,7 +85,7 @@ export class GanttTemplatesComponent implements OnInit {
                     <button class="button opt collab" title="Start with Twproject" onclick="collaborate($(this));" style="display:none;"><em>collaborate</em></button>
                     <a href="https://gantt.twproject.com/" target="_blank" style="position:absolute;right:0px;"><img src="assets/gantt/res/twGanttLogo.png" alt="Twproject" align="absmiddle" style="max-width: 100px; margin-top: 5px; padding-right: 15px"></a>
                 </div>
-            </div>`;
+            </div>`;*/
         this.templates["TASKSEDITHEAD"] = 
             `<table class="gdfTable" cellspacing="0" cellpadding="0">
                 <thead>
