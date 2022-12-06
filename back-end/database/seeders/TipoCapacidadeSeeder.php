@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\TipoCapacidade;
 use App\Models\Capacidade;
+use App\Models\Perfil;
 use Ramsey\Uuid\Uuid;
 use App\Services\TipoCapacidadeService;
 use App\Services\UtilService;
@@ -21,7 +22,23 @@ class TipoCapacidadeSeeder extends Seeder
         //TipoCapacidade::whereIn('codigo',['MOD_LOGS_CONS','MOD_LOGS_EDT','MOD_LOGS_EXCL'])->delete(); //apaga capacidades inseridas indevidamente
         $tiposCapacidadesService = new TipoCapacidadeService();
         $utilService = new UtilService();
-        $developerId = ((config('petrvs') ?: [])['ids-fixos'] ?: [])['developer-id'] ?: $utilService->uuid("Desenvolvedor");
+
+        //garantir que existe o Perfil Desenvolvedor
+        $perfil = Perfil::where([['nome', 'Desenvolvedor']])->first();
+        if(!$perfil){
+            $perfil = new Perfil();
+            $perfil->fill([
+                'id' => $utilService->uuid("Desenvolvedor"),   
+                'nivel' => 0,         
+                'nome' => 'Desenvolvedor',
+                'descricao' => 'Perfil de Desenvolvedor - Todas as permissões',
+            ]);
+            $perfil->save();
+        };
+
+        $developerId = $perfil->id;
+
+        //$developerId = ((config('petrvs') ?: [])['ids-fixos'] ?: [])['developer-id'] ?: $utilService->uuid("Desenvolvedor");
         // carrega os tipos de capacidades do vetor declarado no serviço TipoCapacidadeService
         $dadosTiposCapacidades = array_map(fn ($capacidade) => array_merge([$utilService->uuid($capacidade[0])], $capacidade), $tiposCapacidadesService->tiposCapacidades);
         foreach ($dadosTiposCapacidades as $linha) {

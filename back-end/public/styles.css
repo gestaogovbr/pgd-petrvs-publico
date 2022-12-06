@@ -10118,6 +10118,10 @@ a > .petrvs code {
 .full-container-button-group .btn {
   flex: 1;
 }
+.multilines-badges {
+  width: min-content;
+  display: block;
+}
 @charset "UTF-8";
 /*!
  * Bootstrap  v5.2.2 (https://getbootstrap.com/)

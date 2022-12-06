@@ -907,7 +907,7 @@ class UnidadeMergeComponent extends src_app_modules_base_page_frame_base__WEBPAC
                 let destino = destinos.find(x => x.sigla == origem.sigla);
                 if (destino) {
                     this.items.push({
-                        id: this.util.md5(),
+                        id: this.dao.generateUuid(),
                         unidade_origem_id: origem.id,
                         unidade_destino_id: destino.id,
                         unidade_origem: origem,
@@ -930,7 +930,7 @@ class UnidadeMergeComponent extends src_app_modules_base_page_frame_base__WEBPAC
     addMerge() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             return {
-                id: this.util.md5(),
+                id: this.dao.generateUuid(),
                 unidade_origem_id: "",
                 unidade_destino_id: "",
                 unidade_origem: undefined,
