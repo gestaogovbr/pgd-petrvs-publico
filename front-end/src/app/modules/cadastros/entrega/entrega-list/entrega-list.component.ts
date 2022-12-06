@@ -53,5 +53,13 @@ export class EntregaListComponent extends PageListBase<Entrega, EntregaDaoServic
 
     return result;
   }
+
+  public getQualitativos(row: Entrega): string {
+    let result: string[] = [];
+    row.lista_qualitativos.forEach(element => {
+      result.push(element.value);
+    });
+    return result.join(', ') || '';
+  }
 }
 

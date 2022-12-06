@@ -4,38 +4,43 @@
             <input-text [size]="12" label="Nome da entrega" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome"></input-text>
         </div>
         <div class="row">
-            <input-select [size]="6" label="Tipo de indicador" icon="bi bi-arrow-up-right-circle" controlName="tipo_indicador" [control]="form!.controls.tipo_indicador" [items]="lookup.TIPO_INDICADOR" (select)="onSelect()"></input-select>
-            <div *ngIf="form?.controls!.tipo_indicador.value == 'QUALITATIVO' || null" class="row col-6">
-                <div class="row">
-                    <div class="row mb-3">
-                        <div class="col-10">
-                            <input-text #itemQualitativo label="Item de qualitativo" controlName="qualitativo" [control]="form!.controls.qualitativo"></input-text>
-                        </div>
-                        <div class="col-2">
-                            <label for="itensQualitativos" class="radio control-label">&nbsp;</label>
-                            <div class="btn-group full-container-button-group col-2" id="itensQualitativos" role="group" aria-label="itensQualitativos">
-                                <button type="button" class="btn btn-success d-flex justify-content-center" (click)="incluirQualitativo(itemQualitativo.formControl.value)" [disabled]="!itemQualitativo.formControl.value">
-                                    <i class="bi-plus-circle"></i>
-                                    <span class="d-none d-md-inline-block">&nbsp;INCLUIR</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div *ngFor="let item of listaQualitativos" class="row">
-                        <div class="col-10">
-                            <input-display [value]="item"></input-display>
-                        </div>
-                        <div class="form-group col-2 mb-1">
-                            <div class="btn-group full-container-button-group" role="group" aria-label="itensQualitativos">
-                                <button type="button" class="btn btn-danger d-flex justify-content-center" (click)="excluirQualitativo(item)">
-                                    <i class="bi-trash"></i>
-                                    <span class="d-none d-md-inline-block">&nbsp;EXCLUIR</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                 </div>
-            </div>
+            <input-select [size]="6" label="Tipo de indicador" icon="bi bi-arrow-up-right-circle" controlName="tipo_indicador" [control]="form!.controls.tipo_indicador" [items]="lookup.TIPO_INDICADOR"></input-select>
+        </div>
+        <div *ngIf="form?.controls!.tipo_indicador.value == 'QUALITATIVO' || null" class="row">
+            <div class="row">
+                <input-multiselect #qualitativos [disabled]="formDisabled ? 'disabled' : undefined" label="Lista de Qualitativos" controlName="lista_qualitativos" [size]="8" [control]="form!.controls.lista_qualitativos" [addItemHandle]="addItemQualitativo.bind(this)">
+                    <input-text [size]="5" label="Texto" icon="bi bi-textarea-t" controlName="qualitativo_texto" [control]="form!.controls.qualitativo_texto"></input-text>
+                    <input-select [size]="3" label="Ícone" icon="fas fa-sign-out-alt" controlName="qualitativo_icone" liveSearch [control]="form!.controls.qualitativo_icone" [items]="lookup.ICONES"></input-select>
+                    <input-color [size]="4" label="Cor" icon="bi bi-palette" controlName="qualitativo_cor" [control]="form!.controls.qualitativo_cor"></input-color>
+                </input-multiselect>
+             </div>
         </div>
     </div>
 </editable-form>
+<!-- <div class="row mb-3">
+    <div class="col-10">
+        <input-text #itemQualitativo label="Item de qualitativo" controlName="qualitativo" [control]="form!.controls.qualitativo"></input-text>
+    </div>
+    <div class="col-2">
+        <label for="itensQualitativos" class="radio control-label">&nbsp;</label>
+        <div class="btn-group full-container-button-group col-2" id="itensQualitativos" role="group" aria-label="itensQualitativos">
+            <button type="button" class="btn btn-success d-flex justify-content-center" (click)="incluirQualitativo(itemQualitativo.formControl.value)" [disabled]="!itemQualitativo.formControl.value">
+                <i class="bi-plus-circle"></i>
+                <span class="d-none d-md-inline-block">&nbsp;INCLUIR</span>
+            </button>
+        </div>
+    </div>
+</div>
+<div *ngFor="let item of listaQualitativos" class="row">
+    <div class="col-10">
+        <input-display [value]="item"></input-display>
+    </div>
+    <div class="form-group col-2 mb-1">
+        <div class="btn-group full-container-button-group" role="group" aria-label="itensQualitativos">
+            <button type="button" class="btn btn-danger d-flex justify-content-center" (click)="excluirQualitativo(item)">
+                <i class="bi-trash"></i>
+                <span class="d-none d-md-inline-block">&nbsp;EXCLUIR</span>
+            </button>
+        </div>
+    </div>
+</div> -->
