@@ -42,6 +42,7 @@ export class GanttComponent implements OnInit {
   public _taskButtons: ToolbarButton[] = [];
   public ge: any = undefined;
   public id: string;
+  public selected?: GanttTask;
   public set error(value: string) {
     if(this._error != value) {
       this._error = value;
@@ -382,13 +383,13 @@ export class GanttComponent implements OnInit {
       "GANTT_ERROR_DEPENDS_ON_OPEN_TASK":"Erro: há uma dependência em uma tarefa aberta.",
       "GANTT_ERROR_DESCENDANT_OF_CLOSED_TASK":"Erro: devido a um descendente de uma tarefa fechada.",
       "TASK_HAS_EXTERNAL_DEPS":"Esta tarefa tem dependências externas.",
-      "GANNT_ERROR_LOADING_DATA_TASK_REMOVED":"GANNT_ERROR_LOADING_DATA_TASK_REMOVED",
+      //"GANNT_ERROR_LOADING_DATA_TASK_REMOVED":"GANNT_ERROR_LOADING_DATA_TASK_REMOVED",
       "CIRCULAR_REFERENCE":"Referência circular.",
       "CANNOT_DEPENDS_ON_ANCESTORS":"Não pode depender de ancestrais.",
       "INVALID_DATE_FORMAT":"O dado inserido é inválido para o formato do campo.",
       "GANTT_ERROR_LOADING_DATA_TASK_REMOVED":"Um erro ocorreu enquanto carregava os dados. A tarefa foi descartada.",
       "CANNOT_CLOSE_TASK_IF_OPEN_ISSUE":"Não é possível fechar uma tarefa que tenham questões pendentes",
-      "TASK_MOVE_INCONSISTENT_LEVEL":"Você não pode intercambiar tarefas de diferentes profundidades.",
+      //"TASK_MOVE_INCONSISTENT_LEVEL":"Você não pode intercambiar tarefas de diferentes profundidades.",
       "CANNOT_MOVE_TASK":"CANNOT_MOVE_TASK",
       "PLEASE_SAVE_PROJECT":"PLEASE_SAVE_PROJECT",
       "GANTT_SEMESTER":"Semestre",

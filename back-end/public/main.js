@@ -378,6 +378,12 @@ class LookupService {
             { key: "MASCULINO", value: "Masculino" },
             { key: "FEMININO", value: "Feminino" }
         ];
+        this.TIPO_INDICADOR = [
+            { key: "QUANTIDADE", value: "Quantidade" },
+            { key: "VALOR", value: "Valor" },
+            { key: "PORCENTAGEM", value: "Porcentagem" },
+            { key: "QUALITATIVO", value: "Qualitativo" }
+        ];
         this.TIPO_LAYOUT = [
             { key: 'COMPLETO', value: "Completo" },
             { key: 'SIMPLIFICADO', value: "Simplificado" }
@@ -3305,7 +3311,7 @@ class InputSearchComponent extends _input_base__WEBPACK_IMPORTED_MODULE_5__["Inp
         this.selectedItem = undefined;
         this.selectedValue = undefined;
         this.searchObj = undefined;
-        if (clearText)
+        if (clearText && this.inputElement)
             this.queryText = this.inputElement.nativeElement.value = "";
         if (clearControl && !this.isDisabled && this.control)
             this.control.setValue(this.emptyValue);
@@ -9502,7 +9508,7 @@ class GanttTemplatesComponent {
     }
     buildTemplates() {
         const workSpace = "workSpace" + this.id;
-        this.templates["GANTBUTTONS"] =
+        /*this.templates["GANTBUTTONS"] =
             `<div class="ganttButtonBar noprint">
                 <div class="buttons">
                     <button onclick="$('#` + workSpace + `').trigger('undo.gantt');return false;" class="button textual icon requireCanWrite" title="undo"><span class="teamworkIcon">&#39;</span></button>
@@ -9542,7 +9548,7 @@ class GanttTemplatesComponent {
                     <button class="button opt collab" title="Start with Twproject" onclick="collaborate($(this));" style="display:none;"><em>collaborate</em></button>
                     <a href="https://gantt.twproject.com/" target="_blank" style="position:absolute;right:0px;"><img src="assets/gantt/res/twGanttLogo.png" alt="Twproject" align="absmiddle" style="max-width: 100px; margin-top: 5px; padding-right: 15px"></a>
                 </div>
-            </div>`;
+            </div>`;*/
         this.templates["TASKSEDITHEAD"] =
             `<table class="gdfTable" cellspacing="0" cellpadding="0">
                 <thead>
@@ -10809,8 +10815,8 @@ class DemandaFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
             this.loadChecklist();
             const etiquetasKeys = this.etiquetas.map(x => x.key);
             const checklistKeys = this.checklist.map(x => x.key);
-            const etiqueta = this.form.controls.etiquetas.value.find((x) => !etiquetasKeys.includes(x.key));
-            const checklst = this.form.controls.checklist.value.find((x) => !etiquetasKeys.includes(x.id) && x.checked);
+            const etiqueta = (this.form.controls.etiquetas.value || []).find((x) => !etiquetasKeys.includes(x.key));
+            const checklst = (this.form.controls.checklist.value || []).find((x) => !etiquetasKeys.includes(x.id) && x.checked);
             if (etiqueta)
                 result = "Etiqueta " + etiqueta.value + "não pode ser utilizada!";
             if (checklst)
@@ -11159,7 +11165,7 @@ class DemandaFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
                 texto: a.value,
                 checked: false
             };
-        }), this.form.controls.checklist.value.filter((b) => b.checked), (a, b) => {
+        }), (this.form.controls.checklist.value || []).filter((b) => b.checked), (a, b) => {
             if (a.id == b.id) {
                 a.checked = b.checked;
                 return true;
@@ -11715,11 +11721,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! moment */ "wd/R");
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var src_app_components_gantt_gantt_models__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/components/gantt/gantt-models */ "dWNe");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var src_app_services_form_helper_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/services/form-helper.service */ "mp9f");
-/* harmony import */ var src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/dao/usuario-dao.service */ "w5Sy");
-/* harmony import */ var src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/services/lookup.service */ "/MTl");
-/* harmony import */ var _uteis_calendar_expediente_calendar_expediente_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../uteis/calendar-expediente/calendar-expediente.component */ "ODvL");
+/* harmony import */ var _ckeditor_ckeditor5_build_classic__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @ckeditor/ckeditor5-build-classic */ "+z1p");
+/* harmony import */ var _ckeditor_ckeditor5_build_classic__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_ckeditor_ckeditor5_build_classic__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var src_app_services_form_helper_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/services/form-helper.service */ "mp9f");
+/* harmony import */ var src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/dao/usuario-dao.service */ "w5Sy");
+/* harmony import */ var src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! src/app/services/lookup.service */ "/MTl");
+/* harmony import */ var _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @ckeditor/ckeditor5-angular */ "zioG");
+
 
 
 
@@ -11738,6 +11747,7 @@ class TesteComponent {
         this.ID_GENERATOR_BASE = ID_GENERATOR_BASE;
         this.items = [];
         this.disabled = true;
+        this.Editor = _ckeditor_ckeditor5_build_classic__WEBPACK_IMPORTED_MODULE_3__;
         this.naoIniciadas = [
             { id: "ni1", title: "Não iniciada 1", subTitle: "Texto não iniciado 1", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens" },
             { id: "ni2", title: "Não iniciada 2", subTitle: "Texto não iniciado 2", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens" },
@@ -11915,16 +11925,12 @@ class TesteComponent {
         };
     }
 }
-TesteComponent.ɵfac = function TesteComponent_Factory(t) { return new (t || TesteComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](src_app_services_form_helper_service__WEBPACK_IMPORTED_MODULE_4__["FormHelperService"]), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_5__["UsuarioDaoService"]), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_6__["LookupService"]), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_0__["UtilService"]), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"]('ID_GENERATOR_BASE')); };
-TesteComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineComponent"]({ type: TesteComponent, selectors: [["app-teste"]], decls: 3, vars: 1, consts: [[1, "d-block"]], template: function TesteComponent_Template(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "div", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](2, "calendar-expediente");
+TesteComponent.ɵfac = function TesteComponent_Factory(t) { return new (t || TesteComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdirectiveInject"](src_app_services_form_helper_service__WEBPACK_IMPORTED_MODULE_5__["FormHelperService"]), _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdirectiveInject"](src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_6__["UsuarioDaoService"]), _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdirectiveInject"](src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_7__["LookupService"]), _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdirectiveInject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_0__["UtilService"]), _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdirectiveInject"]('ID_GENERATOR_BASE')); };
+TesteComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineComponent"]({ type: TesteComponent, selectors: [["app-teste"]], decls: 1, vars: 1, consts: [["data", "<p>Hello, world!</p>", 3, "editor"]], template: function TesteComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "ckeditor", 0);
     } if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtextInterpolate1"](" ", ctx.ID_GENERATOR_BASE, "\n");
-    } }, directives: [_uteis_calendar_expediente_calendar_expediente_component__WEBPACK_IMPORTED_MODULE_7__["CalendarExpedienteComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJ0ZXN0ZS5jb21wb25lbnQuc2NzcyJ9 */"] });
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("editor", ctx.Editor);
+    } }, directives: [_ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_8__["CKEditorComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJ0ZXN0ZS5jb21wb25lbnQuc2NzcyJ9 */"] });
 
 
 /***/ }),
@@ -15976,8 +15982,10 @@ class AppComponent {
             cadastros: [
                 { name: this.lex.noun("Atividade", true), permition: 'MOD_ATV', route: ['cadastros', 'atividade'], icon: "bi bi-activity" },
                 { name: this.lex.noun("Afastamento", true), permition: 'MOD_AFT', route: ['cadastros', 'afastamento'], icon: "bi bi-toggle-off" },
-                { name: "Cidades", permition: 'MOD_CID', route: ['cadastros', 'cidade'], icon: "bi bi-building" },
-                { name: "Feriados", permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: "bi bi-emoji-sunglasses" },
+                { name: this.lex.noun("Cidades", true), permition: 'MOD_CID', route: ['cadastros', 'cidade'], icon: "bi bi-building" },
+                { name: this.lex.noun("Eixos temáticos", true), permition: 'MOD_EXTM', route: ['cadastros', 'eixo-tematico'], icon: "bi bi-gear" },
+                { name: this.lex.noun("Entregas", true), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: "bi bi-list-check" },
+                { name: this.lex.noun("Feriados", true), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: "bi bi-emoji-sunglasses" },
                 { name: this.lex.noun("Material e serviço", true), permition: '', route: ['cadastros', 'material-servico'], icon: "bi bi-box-seam" },
                 { name: this.lex.noun("Programa de gestão", true), permition: 'MOD_PRGT', route: ['cadastros', 'programa'], icon: "bi bi-graph-up-arrow" },
                 { name: this.lex.noun("Tarefa", true), permition: 'MOD_DMD', route: ['cadastros', 'tarefa'], icon: "bi bi-boxes" },
@@ -15992,6 +16000,7 @@ class AppComponent {
             ],
             gestao: [
                 { name: this.lex.noun("Demanda", true), permition: '', route: ['gestao', 'demanda'], icon: "bi bi-activity" },
+                { name: this.lex.noun("Planos de Gestão/Entregas", true), permition: 'MOD_PGENTR', route: ['gestao', 'planejamento'], icon: "bi bi-files" },
                 { name: this.lex.noun("Plano de trabalho", true), permition: 'MOD_PTR', route: ['gestao', 'plano'], icon: "bi bi-list-check" },
                 { name: this.lex.noun("Projetos", true), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: "bi bi-diagram-2" }
             ],
@@ -18032,11 +18041,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @angular/platform-browser/animations */ "R1ws");
 /* harmony import */ var _modules_logs_logs_module__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./modules/logs/logs.module */ "+b2/");
 /* harmony import */ var _modules_uteis_uteis_module__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./modules/uteis/uteis.module */ "hA/d");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! @angular/common */ "ofXK");
-/* harmony import */ var _components_profile_picture_profile_picture_component__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./components/profile-picture/profile-picture.component */ "xp1S");
-/* harmony import */ var _components_top_alert_top_alert_component__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./components/top-alert/top-alert.component */ "UJzD");
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! @angular/router */ "tyNb");
+/* harmony import */ var _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! @ckeditor/ckeditor5-angular */ "zioG");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! @angular/common */ "ofXK");
+/* harmony import */ var _components_profile_picture_profile_picture_component__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./components/profile-picture/profile-picture.component */ "xp1S");
+/* harmony import */ var _components_top_alert_top_alert_component__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./components/top-alert/top-alert.component */ "UJzD");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! @angular/router */ "tyNb");
+
 
 
 
@@ -18064,8 +18075,8 @@ __webpack_require__.r(__webpack_exports__);
 class AppModule {
 }
 AppModule.ɵfac = function AppModule_Factory(t) { return new (t || AppModule)(); };
-AppModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdefineNgModule"]({ type: AppModule, bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"]] });
-AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdefineInjector"]({ providers: [], imports: [[
+AppModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵdefineNgModule"]({ type: AppModule, bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"]] });
+AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵdefineInjector"]({ providers: [], imports: [[
             _angular_platform_browser__WEBPACK_IMPORTED_MODULE_3__["BrowserModule"],
             _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_15__["BrowserAnimationsModule"],
             _angular_common_http__WEBPACK_IMPORTED_MODULE_0__["HttpClientModule"],
@@ -18076,9 +18087,10 @@ AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdefineInjecto
             ng2_charts__WEBPACK_IMPORTED_MODULE_2__["ChartsModule"],
             _modules_relatorios_relatorio_module__WEBPACK_IMPORTED_MODULE_14__["RelatorioModule"],
             _modules_uteis_uteis_module__WEBPACK_IMPORTED_MODULE_17__["UteisModule"],
-            _modules_logs_logs_module__WEBPACK_IMPORTED_MODULE_16__["LogsModule"]
+            _modules_logs_logs_module__WEBPACK_IMPORTED_MODULE_16__["LogsModule"],
+            _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_18__["CKEditorModule"]
         ]] });
-(function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵsetNgModuleScope"](AppModule, { declarations: [_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"],
+(function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵsetNgModuleScope"](AppModule, { declarations: [_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"],
         _modules_home_home_component__WEBPACK_IMPORTED_MODULE_6__["HomeComponent"],
         _modules_login_login_component__WEBPACK_IMPORTED_MODULE_7__["LoginComponent"],
         _modules_config_config_component__WEBPACK_IMPORTED_MODULE_8__["ConfigComponent"],
@@ -18094,8 +18106,9 @@ AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdefineInjecto
         ng2_charts__WEBPACK_IMPORTED_MODULE_2__["ChartsModule"],
         _modules_relatorios_relatorio_module__WEBPACK_IMPORTED_MODULE_14__["RelatorioModule"],
         _modules_uteis_uteis_module__WEBPACK_IMPORTED_MODULE_17__["UteisModule"],
-        _modules_logs_logs_module__WEBPACK_IMPORTED_MODULE_16__["LogsModule"]] }); })();
-_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵsetComponentScope"](_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"], [_angular_common__WEBPACK_IMPORTED_MODULE_19__["NgIf"], _angular_common__WEBPACK_IMPORTED_MODULE_19__["NgForOf"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ɵangular_packages_forms_forms_ba"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgControlStatusGroup"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgSelectOption"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ɵangular_packages_forms_forms_z"], _components_profile_picture_profile_picture_component__WEBPACK_IMPORTED_MODULE_20__["ProfilePictureComponent"], _components_top_alert_top_alert_component__WEBPACK_IMPORTED_MODULE_21__["TopAlertComponent"], _angular_router__WEBPACK_IMPORTED_MODULE_22__["RouterOutlet"]], []);
+        _modules_logs_logs_module__WEBPACK_IMPORTED_MODULE_16__["LogsModule"],
+        _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_18__["CKEditorModule"]] }); })();
+_angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵsetComponentScope"](_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"], [_angular_common__WEBPACK_IMPORTED_MODULE_20__["NgIf"], _angular_common__WEBPACK_IMPORTED_MODULE_20__["NgForOf"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ɵangular_packages_forms_forms_ba"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgControlStatusGroup"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgSelectOption"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ɵangular_packages_forms_forms_z"], _components_profile_picture_profile_picture_component__WEBPACK_IMPORTED_MODULE_21__["ProfilePictureComponent"], _components_top_alert_top_alert_component__WEBPACK_IMPORTED_MODULE_22__["TopAlertComponent"], _angular_router__WEBPACK_IMPORTED_MODULE_23__["RouterOutlet"]], []);
 
 
 /***/ }),
@@ -25609,13 +25622,13 @@ class GanttComponent {
             "GANTT_ERROR_DEPENDS_ON_OPEN_TASK": "Erro: há uma dependência em uma tarefa aberta.",
             "GANTT_ERROR_DESCENDANT_OF_CLOSED_TASK": "Erro: devido a um descendente de uma tarefa fechada.",
             "TASK_HAS_EXTERNAL_DEPS": "Esta tarefa tem dependências externas.",
-            "GANNT_ERROR_LOADING_DATA_TASK_REMOVED": "GANNT_ERROR_LOADING_DATA_TASK_REMOVED",
+            //"GANNT_ERROR_LOADING_DATA_TASK_REMOVED":"GANNT_ERROR_LOADING_DATA_TASK_REMOVED",
             "CIRCULAR_REFERENCE": "Referência circular.",
             "CANNOT_DEPENDS_ON_ANCESTORS": "Não pode depender de ancestrais.",
             "INVALID_DATE_FORMAT": "O dado inserido é inválido para o formato do campo.",
             "GANTT_ERROR_LOADING_DATA_TASK_REMOVED": "Um erro ocorreu enquanto carregava os dados. A tarefa foi descartada.",
             "CANNOT_CLOSE_TASK_IF_OPEN_ISSUE": "Não é possível fechar uma tarefa que tenham questões pendentes",
-            "TASK_MOVE_INCONSISTENT_LEVEL": "Você não pode intercambiar tarefas de diferentes profundidades.",
+            //"TASK_MOVE_INCONSISTENT_LEVEL":"Você não pode intercambiar tarefas de diferentes profundidades.",
             "CANNOT_MOVE_TASK": "CANNOT_MOVE_TASK",
             "PLEASE_SAVE_PROJECT": "PLEASE_SAVE_PROJECT",
             "GANTT_SEMESTER": "Semestre",
@@ -27738,6 +27751,8 @@ const routes = [
     { path: 'cadastros/afastamento', loadChildren: () => __webpack_require__.e(/*! import() | modules-cadastros-afastamento-afastamento-module */ "modules-cadastros-afastamento-afastamento-module").then(__webpack_require__.bind(null, /*! ./modules/cadastros/afastamento/afastamento.module */ "jaz9")).then(m => m.AfastamentoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'cadastros/atividade', loadChildren: () => __webpack_require__.e(/*! import() | modules-cadastros-atividade-atividade-module */ "modules-cadastros-atividade-atividade-module").then(__webpack_require__.bind(null, /*! ./modules/cadastros/atividade/atividade.module */ "LxS3")).then(m => m.AtividadeModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'cadastros/cidade', loadChildren: () => __webpack_require__.e(/*! import() | modules-cadastros-cidade-cidade-module */ "modules-cadastros-cidade-cidade-module").then(__webpack_require__.bind(null, /*! ./modules/cadastros/cidade/cidade.module */ "5p2+")).then(m => m.CidadeModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
+    { path: 'cadastros/entrega', loadChildren: () => __webpack_require__.e(/*! import() | modules-cadastros-entrega-entrega-module */ "modules-cadastros-entrega-entrega-module").then(__webpack_require__.bind(null, /*! ./modules/cadastros/entrega/entrega.module */ "9Nu7")).then(m => m.EntregaModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
+    { path: 'cadastros/eixo-tematico', loadChildren: () => __webpack_require__.e(/*! import() | modules-cadastros-eixo-tematico-eixo-tematico-module */ "modules-cadastros-eixo-tematico-eixo-tematico-module").then(__webpack_require__.bind(null, /*! ./modules/cadastros/eixo-tematico/eixo-tematico.module */ "OaI/")).then(m => m.EixoTematicoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'cadastros/feriado', loadChildren: () => __webpack_require__.e(/*! import() | modules-cadastros-feriado-feriado-module */ "modules-cadastros-feriado-feriado-module").then(__webpack_require__.bind(null, /*! ./modules/cadastros/feriado/feriado.module */ "mLmR")).then(m => m.FeriadoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'cadastros/material-servico', loadChildren: () => __webpack_require__.e(/*! import() | modules-cadastros-material-servico-material-servico-module */ "modules-cadastros-material-servico-material-servico-module").then(__webpack_require__.bind(null, /*! ./modules/cadastros/material-servico/material-servico.module */ "XbjS")).then(m => m.MaterialServicoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'cadastros/programa', loadChildren: () => __webpack_require__.e(/*! import() | modules-cadastros-programa-programa-module */ "modules-cadastros-programa-programa-module").then(__webpack_require__.bind(null, /*! ./modules/cadastros/programa/programa.module */ "xJEp")).then(m => m.ProgramaModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
@@ -27751,6 +27766,7 @@ const routes = [
     { path: 'cadastros/tipo-processo', loadChildren: () => __webpack_require__.e(/*! import() | modules-cadastros-tipo-processo-tipo-processo-module */ "modules-cadastros-tipo-processo-tipo-processo-module").then(__webpack_require__.bind(null, /*! ./modules/cadastros/tipo-processo/tipo-processo.module */ "Qhf4")).then(m => m.TipoProcessoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'gestao/demanda', loadChildren: () => Promise.resolve(/*! import() */).then(__webpack_require__.bind(null, /*! ./modules/gestao/demanda/demanda.module */ "17YW")).then(m => m.DemandaModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'gestao/plano', loadChildren: () => Promise.all(/*! import() | modules-gestao-plano-plano-module */[__webpack_require__.e("default~listeners-listeners-module~modules-gestao-plano-plano-module"), __webpack_require__.e("modules-gestao-plano-plano-module")]).then(__webpack_require__.bind(null, /*! ./modules/gestao/plano/plano.module */ "ALD5")).then(m => m.PlanoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
+    { path: 'gestao/planejamento', loadChildren: () => __webpack_require__.e(/*! import() | modules-gestao-plano-gestao-entregas-planejamento-module */ "modules-gestao-plano-gestao-entregas-planejamento-module").then(__webpack_require__.bind(null, /*! ./modules/gestao/plano-gestao-entregas/planejamento.module */ "zgql")).then(m => m.PlanejamentoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'gestao/projeto', loadChildren: () => __webpack_require__.e(/*! import() | modules-gestao-projeto-projeto-module */ "modules-gestao-projeto-projeto-module").then(__webpack_require__.bind(null, /*! ./modules/gestao/projeto/projeto.module */ "mH8K")).then(m => m.ProjetoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'configuracoes/preferencia', loadChildren: () => Promise.all(/*! import() | modules-configuracoes-preferencia-preferencia-module */[__webpack_require__.e("common"), __webpack_require__.e("modules-configuracoes-preferencia-preferencia-module")]).then(__webpack_require__.bind(null, /*! ./modules/configuracoes/preferencia/preferencia.module */ "GDlR")).then(m => m.PreferenciaModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'configuracoes/entidade', loadChildren: () => Promise.all(/*! import() | modules-configuracoes-entidade-entidade-module */[__webpack_require__.e("common"), __webpack_require__.e("modules-configuracoes-entidade-entidade-module")]).then(__webpack_require__.bind(null, /*! ./modules/configuracoes/entidade/entidade.module */ "sPLe")).then(m => m.EntidadeModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
