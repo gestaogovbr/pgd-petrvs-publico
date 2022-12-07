@@ -668,7 +668,7 @@ class CapacidadeService extends ServiceBase {
         ["MENU_CAD_ACESSO", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
         ["MENU_CONFIG_ACESSO", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
         ["MENU_GESTAO_ACESSO", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
-        ["MENU_REL_ACESSO", 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MENU_REL_ACESSO", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
         ["DEV_MENU_LOGS_ACESSO", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
 
         ["DASH_PRG", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
