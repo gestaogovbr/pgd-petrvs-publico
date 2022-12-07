@@ -10,6 +10,7 @@ import * as moment from 'moment';
 import { CardItem } from 'src/app/components/kanban/docker/docker.component';
 import { GanttAssignment, GanttProject, GanttResource, GanttTask } from 'src/app/components/gantt/gantt-models';
 import { CalendarOptions } from '@fullcalendar/angular';
+import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 @Component({
   selector: 'app-teste',
@@ -20,6 +21,7 @@ export class TesteComponent implements OnInit {
   public form: FormGroup;
   public items: LookupItem[] = [];
   public disabled: boolean = true;
+  public Editor = ClassicEditor;
   
   public naoIniciadas: CardItem[] = [
     {id: "ni1", title: "Não iniciada 1", subTitle: "Texto não iniciado 1", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens"},
