@@ -6,7 +6,7 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { ToolbarButton } from '../../toolbar/toolbar.component';
 import { ColumnType } from '../grid-column';
 
-export type ColumnAlign = "none" | "center" | "left" | "right"; 
+export type ColumnAlign = "none" | "center" | "left" | "right";
 
 @Component({
   selector: 'column',

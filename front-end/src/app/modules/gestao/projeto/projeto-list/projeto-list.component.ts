@@ -108,7 +108,7 @@ export class ProjetoListComponent extends PageListBase<Projeto, ProjetoDaoServic
     const BOTAO_ENVOLVIDOS = { label: "Envolvidos", id: "NAOINICIADO", icon: "bi bi-backspace", onClick: (projeto: Projeto) => this.go.navigate({ route: ['gestao', 'projeto', projeto.id, 'envolvido'] }, this.modalRefreshId(projeto)) };
 
     result.push(BOTAO_INFORMACOES);
-    if (isEnvolvido) {
+    if (true || isEnvolvido) {
       result.push(BOTAO_PLANEJAR);
       result.push(BOTAO_COMENTARIOS);
       result.push(BOTAO_CLONAR);
@@ -129,7 +129,7 @@ export class ProjetoListComponent extends PageListBase<Projeto, ProjetoDaoServic
     const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: (projeto: Projeto) => this.go.navigate({ route: ['gestao', 'projeto', projeto.id, 'consult'] }, { modal: true }) };
     const BOTAO_PLANEJAR = { label: "Planejamento", icon: "bi bi-bar-chart-steps", onClick: (projeto: Projeto) => this.go.navigate({ route: ['gestao', 'projeto', projeto.id, 'planejamento'] }, this.modalRefreshId(projeto)) };
 
-    if (isEnvolvido) {
+    if (true || isEnvolvido) {
       result.push(BOTAO_PLANEJAR);
     } else {
       result.push(BOTAO_INFORMACOES);

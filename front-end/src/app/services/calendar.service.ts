@@ -104,7 +104,7 @@ export class CalendarService {
     let feriados: FeriadoList | undefined = this.feriadosCadastrados[unidade.id];
     if (feriados) {
       const isoData = moment(data).format("YYYY-MM-DD");
-      return feriados[isoData] || feriados[isoData.substring(-6)];
+      return feriados[isoData] || feriados["0000" + isoData.substr(-6)];
     } else {
       throw new Error("Lista de feriados da unidade não carregado no sistema.");
     }

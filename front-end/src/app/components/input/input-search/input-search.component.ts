@@ -33,7 +33,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
   @Output() select = new EventEmitter<SelectItem>();
   @Output() load = new EventEmitter<SelectItem | undefined>();
   @Output() change = new EventEmitter<Event>();
-  @Input() hostClass: string = ""; 
+  @Input() hostClass: string = "";
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
   @Input() disabled?: string;
@@ -66,10 +66,10 @@ export class InputSearchComponent extends InputBase implements OnInit {
     return this.getControl();
   }
   @Input() set size(value: number) {
-    this.setSize(value); 
+    this.setSize(value);
   }
   get size(): number {
-    return this.getSize(); 
+    return this.getSize();
   }
 
   private DEBOUNCE_TIMER = 1000;
@@ -198,11 +198,11 @@ export class InputSearchComponent extends InputBase implements OnInit {
   }
 
   public getItemId(item: SelectItem | SearchGroupSeparator): string {
-    return this.generatedId(this.controlName) + (item.hasOwnProperty('value') ? 
+    return this.generatedId(this.controlName) + (item.hasOwnProperty('value') ?
       '_item_' + (item as IIndexable)['value'] :
       '_sep_' + this.util.onlyAlphanumeric((item as IIndexable)['groups'].text));
   }
-  
+
   public isSeparator(row: any): boolean {
     return (row instanceof SearchGroupSeparator);
   }
@@ -264,7 +264,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
     this.selectedItem = undefined;
     this.selectedValue = undefined;
     this.searchObj = undefined;
-    if(clearText) this.queryText = this.inputElement!.nativeElement.value = "";
+    if(clearText && this.inputElement) this.queryText = this.inputElement!.nativeElement.value = "";
     if(clearControl && !this.isDisabled && this.control) this.control.setValue(this.emptyValue);
     if(this.change && emitEvent) this.change.emit(new Event("change"));
     this.cdRef.detectChanges();

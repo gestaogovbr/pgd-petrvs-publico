@@ -2,7 +2,7 @@
     <div [attr.id]="'workSpace' + id" style="padding:0px; overflow-y:auto; overflow-x:hidden;border:1px solid #e5e5e5;position:relative;margin:0 5px;">
         <div class="ganttButtonBar noprint">
             <div class="buttons">
-                <ng-container *ngFor="let button of ganttButtons">
+                <ng-container *ngFor="let button of buttons">
                     <button *ngIf="!button.divider" (click)="button.onClick" [class]="'button textual icon ' + button.class" [title]="button.hint">
                         <span *ngIf="button.iconChar" [class]="button.icon">{{button.iconChar}}</span>
                         <i *ngIf="!button.iconChar" [class]="button.icon"></i>

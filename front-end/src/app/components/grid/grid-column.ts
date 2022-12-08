@@ -23,8 +23,8 @@ export class GridColumn {
   public editTemplate?: TemplateRef<unknown>;
   public expandTemplate?: TemplateRef<unknown>;
   public items: LookupItem[] = [];
-  public onlyHours?: string; 
-  public onlyDays?: string; 
+  public onlyHours?: string;
+  public onlyDays?: string;
   public buttons?: ToolbarButton[];
   public save?: (row: any) => Promise<boolean>;
   public edit?: (row: any) => Promise<void>;

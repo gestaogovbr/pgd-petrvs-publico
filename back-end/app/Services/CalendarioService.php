@@ -35,8 +35,8 @@ class CalendarioService
         $result = [];
         foreach($feriados as $feriado) {
             $data = ($feriado->recorrent ? "" : str_pad($feriado->ano, 4, "0", STR_PAD_LEFT)) . "-" .
-                str_pad($feriado->dia, 2, "0", STR_PAD_LEFT) . "-" .
-                str_pad($feriado->mes, 2, "0", STR_PAD_LEFT);
+            str_pad($feriado->mes, 2, "0", STR_PAD_LEFT) . "-" .
+            str_pad($feriado->dia, 2, "0", STR_PAD_LEFT);
             $result[$data] = $feriado->nome;
         }
         return $result;

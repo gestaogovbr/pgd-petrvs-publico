@@ -228,8 +228,8 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
     this.loadChecklist();
     const etiquetasKeys = this.etiquetas.map(x => x.key);
     const checklistKeys = this.checklist.map(x => x.key);
-    const etiqueta = this.form.controls.etiquetas.value.find((x: LookupItem) => !etiquetasKeys.includes(x.key)) as LookupItem;
-    const checklst = this.form.controls.checklist.value.find((x: DemandaChecklist) => !etiquetasKeys.includes(x.id) && x.checked) as DemandaChecklist;
+    const etiqueta = (this.form.controls.etiquetas.value || []).find((x: LookupItem) => !etiquetasKeys.includes(x.key)) as LookupItem;
+    const checklst = (this.form.controls.checklist.value || []).find((x: DemandaChecklist) => !etiquetasKeys.includes(x.id) && x.checked) as DemandaChecklist;
     if(etiqueta) result = "Etiqueta " + etiqueta.value + "não pode ser utilizada!";
     if(checklst) result = "Checklist " + checklst.texto + "não pode ser utilizado!";
     /* Validações pelo plano */
@@ -470,7 +470,7 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
         texto: a.value,
         checked: false
       } as DemandaChecklist;
-    }), this.form.controls.checklist.value.filter((b: DemandaChecklist) => b.checked), (a: DemandaChecklist, b: DemandaChecklist) => {
+    }), (this.form.controls.checklist.value || []).filter((b: DemandaChecklist) => b.checked), (a: DemandaChecklist, b: DemandaChecklist) => {
       if(a.id == b.id) {
         a.checked = b.checked;
         return true;

@@ -38,10 +38,9 @@ export class GanttComponent implements OnInit {
   }
 
   public loading: boolean = false;
-  public _ganttButtons: ToolbarButton[] = [];
-  public _taskButtons: ToolbarButton[] = [];
   public ge: any = undefined;
   public id: string;
+  public selected?: GanttTask;
   public set error(value: string) {
     if(this._error != value) {
       this._error = value;
@@ -54,11 +53,12 @@ export class GanttComponent implements OnInit {
 
   private _error: string = "";
   private _project: GanttProject = new GanttProject();
+  private _buttons: ToolbarButton[] = [];
   private initialized: boolean = false;
 
   constructor(
-    public bootstrap: BootstrapService, 
-    public util: UtilService, 
+    public bootstrap: BootstrapService,
+    public util: UtilService,
     public gb: GlobalsService,
     public cdRef: ChangeDetectorRef
   ) {
@@ -128,16 +128,16 @@ export class GanttComponent implements OnInit {
       this.ge.set100OnClose = true;
       this.ge.shrinkParent = true;
       this.ge.permissions = {
-        canWriteOnParent: false,
-        canWrite: false,
+        canWriteOnParent: true,
+        canWrite: true,
         canAdd: true,
         canDelete: true,
-        canInOutdent: false,
+        canInOutdent: true,
         canMoveUpDown: true,
         canSeePopEdit: false,
         canSeeFullEdit: false,
         canSeeDep: false,
-        canSeeCriticalPath: false,
+        canSeeCriticalPath: true,
         canAddIssue: false,
         cannotCloseTaskIfIssueOpen: false
       };
@@ -250,11 +250,11 @@ export class GanttComponent implements OnInit {
       selectedRow: 2,
       deletedTaskIds: new Array<string>(),
       resources: new Array<any>(),
-      roles: new Array<any>(), 
+      roles: new Array<any>(),
       canWrite: true,
       canDelete: false,
       canWriteOnParent: true,
-      canAdd: false 
+      canAdd: false
     };
     // Load roles list
     project.roles = this.project.roles.map(role => {
@@ -322,44 +322,47 @@ export class GanttComponent implements OnInit {
     return project;
   }*/
 
-  public get ganttButtons(): ToolbarButton[] {
-    let buttons: ToolbarButton[] = [
-      { onClick: this.triggerClick('undo.gantt'), class: "requireCanWrite", hint: "undo", icon: "teamworkIcon", iconChar: "&#39;" }, 
-      { onClick: this.triggerClick('redo.gantt'), class: "requireCanWrite", hint: "redo", icon: "teamworkIcon", iconChar: "&middot;" }, 
-      { divider: true, class: "requireCanWrite requireCanAdd"},
-      { onClick: this.triggerClick('addAboveCurrentTask.gantt'), class: "requireCanWrite requireCanAdd", hint: "insert above", icon: "teamworkIcon", iconChar: "l" }, 
-      { onClick: this.triggerClick('addBelowCurrentTask.gantt'), class: "requireCanWrite requireCanAdd", hint: "insert below", icon: "teamworkIcon", iconChar: "X" }, 
-      { divider: true, class: "requireCanWrite requireCanInOutdent"},
-      { onClick: this.triggerClick('outdentCurrentTask.gantt'), class: "requireCanWrite requireCanInOutdent", hint: "un-indent task", icon: "teamworkIcon", iconChar: "." }, 
-      { onClick: this.triggerClick('indentCurrentTask.gantt'), class: "requireCanWrite requireCanInOutdent", hint: "indent task", icon: "teamworkIcon", iconChar: ":" }, 
-      { divider: true, class: "requireCanWrite requireCanMoveUpDown"},
-      { onClick: this.triggerClick('moveUpCurrentTask.gantt'), class: "requireCanWrite requireCanMoveUpDown", hint: "move up", icon: "teamworkIcon", iconChar: "k" }, 
-      { onClick: this.triggerClick('moveDownCurrentTask.gantt'), class: "requireCanWrite requireCanMoveUpDown", hint: "move down", icon: "teamworkIcon", iconChar: "j" }, 
-      { divider: true, class: "requireCanWrite requireCanDelete"},
-      { onClick: this.triggerClick('deleteFocused.gantt'), class: "delete requireCanWrite", hint: "Elimina", icon: "teamworkIcon", iconChar: "&cent;" }, 
+  public get buttons(): ToolbarButton[] {
+    let ganttButtons: ToolbarButton[] = [
+      { onClick: this.triggerClick('undo.gantt'), class: "requireCanWrite", hint: "undo", icon: "teamworkIcon", iconChar: "&#39;" },
+      { onClick: this.triggerClick('redo.gantt'), class: "requireCanWrite", hint: "redo", icon: "teamworkIcon", iconChar: "&middot;" },
       { divider: true },
-      { onClick: this.triggerClick('expandAll.gantt'), class: "", hint: "Expandir todos", icon: "teamworkIcon", iconChar: "6" }, 
-      { onClick: this.triggerClick('collapseAll.gantt'), class: "", hint: "Contrair todos", icon: "teamworkIcon", iconChar: "5" }, 
+      { onClick: this.triggerClick('expandAll.gantt'), class: "", hint: "Expandir todos", icon: "teamworkIcon", iconChar: "6" },
+      { onClick: this.triggerClick('collapseAll.gantt'), class: "", hint: "Contrair todos", icon: "teamworkIcon", iconChar: "5" },
       { divider: true },
-      { onClick: this.triggerClick('zoomMinus.gantt'), class: "", hint: "Almentar zoom", icon: "teamworkIcon", iconChar: ")" }, 
-      { onClick: this.triggerClick('zoomPlus.gantt'), class: "", hint: "Diminuir zoom", icon: "teamworkIcon", iconChar: "(" }, 
+      { onClick: this.triggerClick('zoomMinus.gantt'), class: "", hint: "Almentar zoom", icon: "teamworkIcon", iconChar: ")" },
+      { onClick: this.triggerClick('zoomPlus.gantt'), class: "", hint: "Diminuir zoom", icon: "teamworkIcon", iconChar: "(" },
       { divider: true },
-      { onClick: this.triggerClick('print.gantt'), class: "", hint: "Imprimir", icon: "teamworkIcon", iconChar: "p" }, 
-      { divider: true },
+      { onClick: this.triggerClick('print.gantt'), class: "", hint: "Imprimir", icon: "teamworkIcon", iconChar: "p" },
+      { divider: true, class: "requireCanSeeCriticalPath" },
       { onClick: this.showCriticalPath.bind(this), class: "requireCanSeeCriticalPath", hint: "CRITICAL_PATH", icon: "teamworkIcon", iconChar: "&pound;" },
       { divider: true },
       { onClick: this.triggerClick('splitter.gantt', [.1]), class: "", hint: "Only grid", icon: "teamworkIcon", iconChar: "F" },
       { onClick: this.triggerClick('splitter.gantt', [50]), class: "", hint: "Both", icon: "teamworkIcon", iconChar: "O" },
       { onClick: this.triggerClick('splitter.gantt', [100]), class: "", hint: "Only gantt", icon: "teamworkIcon", iconChar: "R" },
-      /*{ onClick: this.triggerClick('fullScreen.gantt'), class: "", hint: "FULLSCREEN", icon: "teamworkIcon", iconChar: "@" },
-      <button onclick="ge.element.toggleClass('colorByStatus' );return false;" class="button textual icon" style="display:none;"><span class="teamworkIcon">&sect;</span></button>
+      { onClick: this.triggerClick('fullScreen.gantt'), class: "", hint: "FULLSCREEN", icon: "teamworkIcon", iconChar: "@" },
+      /*<button onclick="ge.element.toggleClass('colorByStatus' );return false;" class="button textual icon" style="display:none;"><span class="teamworkIcon">&sect;</span></button>
       <button onclick="editResources();" class="button textual requireWrite" title="edit resources" style="display:none;"><span class="teamworkIcon">M</span></button>
       <button onclick="saveGanttOnServer();" class="button first big requireWrite" style="display:none;" title="Save">Save</button>
       <button onclick='newProject();' class='button requireWrite newproject' style="display:none;"><em>clear project</em></button>
       */
     ];
-    if(JSON.stringify(this._ganttButtons) != JSON.stringify(buttons)) this._ganttButtons = buttons;
-    return this._ganttButtons;
+    let taskButtons: ToolbarButton[] = !this.selected ? [] : [
+      { divider: true, class: "requireCanWrite requireCanAdd"},
+      { onClick: this.triggerClick('addAboveCurrentTask.gantt'), class: "requireCanWrite requireCanAdd", hint: "insert above", icon: "teamworkIcon", iconChar: "l" },
+      { onClick: this.triggerClick('addBelowCurrentTask.gantt'), class: "requireCanWrite requireCanAdd", hint: "insert below", icon: "teamworkIcon", iconChar: "X" },
+      { divider: true, class: "requireCanWrite requireCanInOutdent"},
+      { onClick: this.triggerClick('outdentCurrentTask.gantt'), class: "requireCanWrite requireCanInOutdent", hint: "un-indent task", icon: "teamworkIcon", iconChar: "." },
+      { onClick: this.triggerClick('indentCurrentTask.gantt'), class: "requireCanWrite requireCanInOutdent", hint: "indent task", icon: "teamworkIcon", iconChar: ":" },
+      { divider: true, class: "requireCanWrite requireCanMoveUpDown"},
+      { onClick: this.triggerClick('moveUpCurrentTask.gantt'), class: "requireCanWrite requireCanMoveUpDown", hint: "move up", icon: "teamworkIcon", iconChar: "k" },
+      { onClick: this.triggerClick('moveDownCurrentTask.gantt'), class: "requireCanWrite requireCanMoveUpDown", hint: "move down", icon: "teamworkIcon", iconChar: "j" },
+      { divider: true, class: "requireCanWrite requireCanDelete"},
+      { onClick: this.triggerClick('deleteFocused.gantt'), class: "delete requireCanWrite", hint: "Elimina", icon: "teamworkIcon", iconChar: "&cent;" },
+    ];
+    let buttons = [...ganttButtons, ...taskButtons];
+    if(JSON.stringify(this._buttons) != JSON.stringify(buttons)) this._buttons = buttons;
+    return this._buttons;
   }
 
   public triggerClick(event: string, parameters: any = undefined) {
@@ -367,7 +370,7 @@ export class GanttComponent implements OnInit {
   }
 
   public showCriticalPath() {
-    this.ge.gantt.showCriticalPath = !this.ge.gantt.showCriticalPath; 
+    this.ge.gantt.showCriticalPath = !this.ge.gantt.showCriticalPath;
     this.ge.redraw();
   }
 
@@ -382,13 +385,13 @@ export class GanttComponent implements OnInit {
       "GANTT_ERROR_DEPENDS_ON_OPEN_TASK":"Erro: há uma dependência em uma tarefa aberta.",
       "GANTT_ERROR_DESCENDANT_OF_CLOSED_TASK":"Erro: devido a um descendente de uma tarefa fechada.",
       "TASK_HAS_EXTERNAL_DEPS":"Esta tarefa tem dependências externas.",
-      "GANNT_ERROR_LOADING_DATA_TASK_REMOVED":"GANNT_ERROR_LOADING_DATA_TASK_REMOVED",
+      //"GANNT_ERROR_LOADING_DATA_TASK_REMOVED":"GANNT_ERROR_LOADING_DATA_TASK_REMOVED",
       "CIRCULAR_REFERENCE":"Referência circular.",
       "CANNOT_DEPENDS_ON_ANCESTORS":"Não pode depender de ancestrais.",
       "INVALID_DATE_FORMAT":"O dado inserido é inválido para o formato do campo.",
       "GANTT_ERROR_LOADING_DATA_TASK_REMOVED":"Um erro ocorreu enquanto carregava os dados. A tarefa foi descartada.",
       "CANNOT_CLOSE_TASK_IF_OPEN_ISSUE":"Não é possível fechar uma tarefa que tenham questões pendentes",
-      "TASK_MOVE_INCONSISTENT_LEVEL":"Você não pode intercambiar tarefas de diferentes profundidades.",
+      //"TASK_MOVE_INCONSISTENT_LEVEL":"Você não pode intercambiar tarefas de diferentes profundidades.",
       "CANNOT_MOVE_TASK":"CANNOT_MOVE_TASK",
       "PLEASE_SAVE_PROJECT":"PLEASE_SAVE_PROJECT",
       "GANTT_SEMESTER":"Semestre",
@@ -402,6 +405,6 @@ export class GanttComponent implements OnInit {
 
   public clearGantt() {
     this.ge.reset();
-  }  
+  }
 
 }
