@@ -14224,7 +14224,7 @@ class ProjetoListComponent extends src_app_modules_base_page_list_base__WEBPACK_
         const BOTAO_ALOCACOES = { label: "Alocações", icon: "bi bi-cart-check", onClick: (projeto) => this.go.navigate({ route: ['gestao', 'projeto', projeto.id, 'alocacao'] }, this.modalRefreshId(projeto)) };
         const BOTAO_ENVOLVIDOS = { label: "Envolvidos", id: "NAOINICIADO", icon: "bi bi-backspace", onClick: (projeto) => this.go.navigate({ route: ['gestao', 'projeto', projeto.id, 'envolvido'] }, this.modalRefreshId(projeto)) };
         result.push(BOTAO_INFORMACOES);
-        if (isEnvolvido) {
+        if (true) {
             result.push(BOTAO_PLANEJAR);
             result.push(BOTAO_COMENTARIOS);
             result.push(BOTAO_CLONAR);
@@ -14243,12 +14243,10 @@ class ProjetoListComponent extends src_app_modules_base_page_list_base__WEBPACK_
         const isEnvolvido = this.projetoService.canAcessar(projeto);
         const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: (projeto) => this.go.navigate({ route: ['gestao', 'projeto', projeto.id, 'consult'] }, { modal: true }) };
         const BOTAO_PLANEJAR = { label: "Planejamento", icon: "bi bi-bar-chart-steps", onClick: (projeto) => this.go.navigate({ route: ['gestao', 'projeto', projeto.id, 'planejamento'] }, this.modalRefreshId(projeto)) };
-        if (isEnvolvido) {
+        if (true) {
             result.push(BOTAO_PLANEJAR);
         }
-        else {
-            result.push(BOTAO_INFORMACOES);
-        }
+        else {}
         return result;
     }
 }
