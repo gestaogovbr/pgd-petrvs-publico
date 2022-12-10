@@ -12,22 +12,7 @@
     <columns>
         <column title="Nome" field="nome" orderBy="nome"></column>
         <column title="Tipo do indicador" type="select" field="tipo_indicador" [items]="lookup.TIPO_INDICADOR"></column>
-        <column title="Qualitativos" [template]="columnQualitativos">
-            <ng-template let-row="row" #columnQualitativos>
-                <div *ngFor="let qualitativo of row.lista_qualitativos">
-                    <div [style.color]="qualitativo.color">
-                        <i *ngIf="qualitativo.icon" [class]="'multiselect-icon ' + qualitativo.icon"></i>
-                        {{ qualitativo.value }}
-                    </div>     
-                </div>
-               <!--  {{getQualitativos(row)}} -->
-            </ng-template>
-        </column>
-<!--         <column title="Qualitativos" [template]="columnQualitativos">
-            <ng-template let-row="row" #columnQualitativos>
-                {{ row.lista_qualitativos?.join(', ') || '' }}
-            </ng-template>
-        </column> -->
+        <column title="Qualitativos" field="lista_qualitativos"></column>
         <column *ngIf="!selectable" type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
