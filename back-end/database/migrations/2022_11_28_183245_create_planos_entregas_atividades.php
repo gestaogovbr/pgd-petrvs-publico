@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateEntregasTable extends Migration
+class CreatePlanosEntregasAtividades extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateEntregasTable extends Migration
      */
     public function up()
     {
-        Schema::create('entregas', function (Blueprint $table) {
+        Schema::create('planos_entregas_atividades', function (Blueprint $table) {
             // Configurações:
             $table->uuid('id');
             $table->primary('id');
@@ -21,9 +21,10 @@ class CreateEntregasTable extends Migration
             // Campos:
             $table->dateTime('data_inicio')->comment("Data inicio da vigência");
             $table->dateTime('data_fim')->nullable()->comment("Data fim da vigência");
-            $table->string('nome', 256)->comment("Nome");
-            $table->enum('tipo_indicador', ["QUANTIDADE", "VALOR", "PORCENTAGEM", "QUALITATIVO"])->comment("Tipo do indicador");
-            $table->json('lista_qualitativos')->nullable()->comment("valores do qualitativo");
+            // Chaves estrangeiras:
+            $table->foreignUuid('atividade_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
+            /*$table->uuid('planejamento_entrega_id');
+            $table->foreign('planejamento_entrega_id', 'fk_planej_entr_obj_planej_entr_id')->references('id')->on('planejamentos_entregas')->onDelete('restrict')->onUpdate('cascade');*/
         });
     }
 
@@ -34,6 +35,6 @@ class CreateEntregasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('entregas');
+        Schema::dropIfExists('planos_entregas_atividades');
     }
 }

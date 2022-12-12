@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePlanejamentosPontosControlesTable extends Migration
+class CreatePlanosEntregasPontosControlesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreatePlanejamentosPontosControlesTable extends Migration
      */
     public function up()
     {
-        Schema::create('planejamentos_pontos_controles', function (Blueprint $table) {
+        Schema::create('planos_entregas_pontos_controles', function (Blueprint $table) {
             // Configurações:
             $table->uuid('id');
             $table->primary('id');
@@ -28,8 +28,8 @@ class CreatePlanejamentosPontosControlesTable extends Migration
             $table->json('justificativas')->nullable()->comment("Justificativas da avaliação");
             $table->text('comentarios')->nullable()->comment("Comentário referente a nota");
             // Chaves estrangeiras:
-            $table->uuid('planejamento_id');
-            $table->foreign('planejamento_id', 'fk_planej_p_contr_planej_id')->references('id')->on('planejamentos')->onDelete('restrict')->onUpdate('cascade');
+            $table->uuid('plano_entrega_id');
+            $table->foreign('plano_entrega_id', 'fk_plano_entr_p_contr_planej_id')->references('id')->on('planos_entregas')->onDelete('restrict')->onUpdate('cascade');
             $table->uuid('gestor_id')->nullable();
             $table->foreign('gestor_id', 'fk_planej_p_contr_gestor_id')->nullable()->references('id')->on('usuarios')->onDelete('restrict')->onUpdate('cascade');
             $table->uuid('avaliador_id')->nullable();
@@ -47,7 +47,7 @@ class CreatePlanejamentosPontosControlesTable extends Migration
     public function down()
     {
         Schema::disableForeignKeyConstraints();
-        Schema::dropIfExists('planejamentos_pontos_controles');
+        Schema::dropIfExists('planos_entregas_pontos_controles');
         Schema::enableForeignKeyConstraints();
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePlanejamentosEntregasTable extends Migration
+class CreatePlanosEntregasEntregasTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreatePlanejamentosEntregasTable extends Migration
      */
     public function up()
     {
-        Schema::create('planejamentos_entregas', function (Blueprint $table) {
+        Schema::create('planos_entregas_entregas', function (Blueprint $table) {
             // Configurações:
             $table->uuid('id');
             $table->primary('id');
@@ -24,10 +24,12 @@ class CreatePlanejamentosEntregasTable extends Migration
             $table->dateTime('inicio')->comment("Data inicio");
             $table->dateTime('fim')->nullable()->comment("Data fim");
             $table->string("descricao", 256)->comment("Descrição da entrega");
+            $table->text("cliente")->comment("Cliente da entrega");
+            $table->tinyInteger('homologado')->comment("Se a entrega foi homologada");
             $table->json("meta")->comment("Meta para a entrega");
             $table->json("realizado")->nullable()->comment("Valor realizado");
             // Chaves estrangeiras:
-            $table->foreignUuid('planejamento_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('plano_entrega_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
             $table->foreignUuid('entrega_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
             $table->foreignUuid('entrega_pai_id')->nullable()->constrained("planejamentos_entregas")->onDelete('restrict')->onUpdate('cascade');
         });
@@ -40,6 +42,6 @@ class CreatePlanejamentosEntregasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('planejamentos_entregas');
+        Schema::dropIfExists('planos_entregas_entregas');
     }
 }

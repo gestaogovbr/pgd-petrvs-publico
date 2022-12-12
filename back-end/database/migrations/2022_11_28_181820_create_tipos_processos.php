@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateEntregasTable extends Migration
+class CreateTiposProcessos extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateEntregasTable extends Migration
      */
     public function up()
     {
-        Schema::create('entregas', function (Blueprint $table) {
+        Schema::create('tipos_processos', function (Blueprint $table) {
             // Configurações:
             $table->uuid('id');
             $table->primary('id');
@@ -22,8 +22,6 @@ class CreateEntregasTable extends Migration
             $table->dateTime('data_inicio')->comment("Data inicio da vigência");
             $table->dateTime('data_fim')->nullable()->comment("Data fim da vigência");
             $table->string('nome', 256)->comment("Nome");
-            $table->enum('tipo_indicador', ["QUANTIDADE", "VALOR", "PORCENTAGEM", "QUALITATIVO"])->comment("Tipo do indicador");
-            $table->json('lista_qualitativos')->nullable()->comment("valores do qualitativo");
         });
     }
 
@@ -34,6 +32,6 @@ class CreateEntregasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('entregas');
+        Schema::dropIfExists('tipos_processos');
     }
 }

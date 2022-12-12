@@ -14,7 +14,7 @@ class AlterPlanosTableAddPlanejamentoId extends Migration
     public function up()
     {
         Schema::table('planos', function (Blueprint $table) {
-            $table->foreignUuid('planejamento_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('plano_entrega_id')->nullable()->constrained("planos_entregas")->onDelete('restrict')->onUpdate('cascade');
         });
     }
 
@@ -26,8 +26,8 @@ class AlterPlanosTableAddPlanejamentoId extends Migration
     public function down()
     {
         Schema::table('planos', function (Blueprint $table) {
-            $table->dropForeign(['planejamento_id']);
-            $table->dropColumn('planejamento_id');
+            $table->dropForeign(['plano_entrega_id']);
+            $table->dropColumn('plano_entrega_id');
         });
     }
 }

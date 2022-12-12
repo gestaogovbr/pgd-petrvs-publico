@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePlanejamentosTable extends Migration
+class CreateCadeiasValores extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreatePlanejamentosTable extends Migration
      */
     public function up()
     {
-        Schema::create('planejamentos', function (Blueprint $table) {
+        Schema::create('cadeias_valores', function (Blueprint $table) {
             // Configurações:
             $table->uuid('id');
             $table->primary('id');
@@ -21,9 +21,9 @@ class CreatePlanejamentosTable extends Migration
             // Campos:
             $table->dateTime('data_inicio')->comment("Data inicio da vigência do registro");
             $table->dateTime('data_fim')->nullable()->comment("Data fim da vigência do registro");
-            $table->dateTime('inicio')->comment("Data inicio do planejamento");
-            $table->dateTime('fim')->nullable()->comment("Data fim do planejamento");
-            $table->string('nome', 256)->comment("Nome do plano estratégico/entregas");
+            $table->dateTime('inicio')->comment("Data inicio da cadeia de valor");
+            $table->dateTime('fim')->nullable()->comment("Data fim da cadeia de valor");
+            $table->string('nome', 256)->comment("Nome");
             // Chaves estrangeiras:
             $table->foreignUuid('entidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
             $table->foreignUuid('unidade_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade');
@@ -37,6 +37,6 @@ class CreatePlanejamentosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('planejamentos');
+        Schema::dropIfExists('cadeias_valores');
     }
 }
