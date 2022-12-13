@@ -28,14 +28,20 @@ class CreatePlanosEntregasPontosControlesTable extends Migration
             $table->json('justificativas')->nullable()->comment("Justificativas da avaliação");
             $table->text('comentarios')->nullable()->comment("Comentário referente a nota");
             // Chaves estrangeiras:
+            /**
+             *  A chave estrangeira 'fk_plano_entr_p_contr_plan_entr_id' é a relação entre as tabelas 'planos_entregas_pontos_controles' e 'planos_entregas';
+             *  A chave estrangeira 'fk_plano_entr_p_contr_gestor_id' é a relação entre as tabelas 'planos_entregas_pontos_controles' e 'usuarios';
+             *  A chave estrangeira 'fk_plano_entr_p_contr_avaliador_id' é a relação entre as tabelas 'planos_entregas_pontos_controles' e 'usuarios';
+             *  A chave estrangeira 'fk_plano_entr_p_contr_tipo_avaliacao_id' é a relação entre as tabelas 'planos_entregas_pontos_controles' e 'tipos_avaliacoes';
+             */
             $table->uuid('plano_entrega_id');
-            $table->foreign('plano_entrega_id', 'fk_plano_entr_p_contr_planej_id')->references('id')->on('planos_entregas')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreign('plano_entrega_id', 'fk_plano_entr_p_contr_plan_entr_id')->references('id')->on('planos_entregas')->onDelete('restrict')->onUpdate('cascade');
             $table->uuid('gestor_id')->nullable();
-            $table->foreign('gestor_id', 'fk_planej_p_contr_gestor_id')->nullable()->references('id')->on('usuarios')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreign('gestor_id', 'fk_plano_entr_p_contr_gestor_id')->nullable()->references('id')->on('usuarios')->onDelete('restrict')->onUpdate('cascade');
             $table->uuid('avaliador_id')->nullable();
-            $table->foreign('avaliador_id', 'fk_planej_p_contr_avaliador_id')->nullable()->references('id')->on('usuarios')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreign('avaliador_id', 'fk_plano_entr_p_contr_avaliador_id')->nullable()->references('id')->on('usuarios')->onDelete('restrict')->onUpdate('cascade');
             $table->uuid('tipo_avaliacao_id')->nullable();
-            $table->foreign('tipo_avaliacao_id', 'fk_planej_p_contr_tipo_avaliacao_id')->nullable()->references('id')->on('tipos_avaliacoes')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreign('tipo_avaliacao_id', 'fk_plano_entr_p_contr_tipo_avaliacao_id')->nullable()->references('id')->on('tipos_avaliacoes')->onDelete('restrict')->onUpdate('cascade');
         });
     }
 

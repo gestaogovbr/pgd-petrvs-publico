@@ -27,7 +27,7 @@ class CreatePlanosEntregas extends Migration
             // Chaves estrangeiras:
             $table->foreignUuid('planejamento_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade');
             $table->foreignUuid('cadeia_valor_id')->nullable()->constrained("cadeias_valores")->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('unidade_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('unidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
         });
     }
 
