@@ -146,6 +146,45 @@ class UsuarioService extends ServiceBase
         return $data;
     }
 
+    public function dashboard($data_inicial, $data_final, $usuario_id) {
+        $result = [];
+        $planosAtivos = $this->PlanoService->planosAtivosPorData($data_inicial, $data_final, $usuario_id);
+        $planos_ids = $planosAtivos->map(function($plano){return $plano->id;});
+
+  
+        $total_consolidadas = Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->avaliadas()->get()->sum(function($demanda){
+            return $demanda['tempo_pactuado'];
+        });
+
+        $media_avaliacao = Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->avaliadas()->with(['avaliacao'])->get()->avg(function($demanda){
+            return $demanda["avaliacao"]["nota_atribuida"];
+        });
+        
+
+        foreach ($planosAtivos as $plano) {
+            $horas_alocadas = $plano->demandas->sum('tempo_pactuado');
+            $result['planos'][] = [
+                'data_inicio_vigencia' => $plano['data_inicio_vigencia'],
+                'data_fim_vigencia' => $plano['data_fim_vigencia'],
+                'total_horas' => $plano['tempo_total'],
+                'horas_alocadas' => $horas_alocadas,
+                'horas_consolidadas' => $total_consolidadas,
+                'progresso' => $total_consolidadas > 0 ? round((float)(($total_consolidadas / $plano['tempo_total']) * 100), 2) : 0
+            ];           
+        }
+        $result['demandas'] = [
+            'avaliadas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->avaliadas()->get()->count(),
+            'nao_iniciadas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->naoIniciadas()->get()->count(),
+            'concluidas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->concluidas()->get()->count(),
+            'nao_concluidas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->naoConcluidas()->get()->count(),
+            'atrasadas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->atrasadas()->get()->count(),
+            'media_avaliacoes' => $media_avaliacao,
+            'total_demandas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->get()->count()
+        ];
+        $result['horas_afastamentos'] = 0;
+
+        return $result;
+    }
 
     /**
      * dashboard
@@ -153,7 +192,7 @@ class UsuarioService extends ServiceBase
      * @param  mixed $usuario_id: ID do usuário do qual se deseja as informações para o dashboard
      * @return array: array contendo todas as informações para o front-end
      */
-    public function dashboard($usuario_id): array {
+    public function old_dashboard($usuario_id): array {
         $planosAtivos = $this->PlanoService->planosAtivos($usuario_id);
         $planos_ids = [];
         $result = [

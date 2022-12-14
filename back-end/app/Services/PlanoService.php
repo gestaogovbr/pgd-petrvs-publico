@@ -30,6 +30,12 @@ class PlanoService extends ServiceBase
         // adicionar no gitlab para considerar o fuso horário
     }
 
+    public function planosAtivosPorData($data_inicial, $data_final, $usuario_id){
+        return Plano::where("usuario_id", $usuario_id)
+                    ->where("data_inicio_vigencia", "<=", $data_final)
+                    ->where("data_fim_vigencia", ">=", $data_inicial)->get();
+    }
+
     public function proxyQuery($query, &$data) {
         $where = [];
         foreach($data["where"] as $condition) {
