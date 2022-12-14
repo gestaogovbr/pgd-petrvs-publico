@@ -102,6 +102,14 @@ export class DialogComponent implements OnInit {
       element!.addEventListener('hidden.bs.modal', (event) => {
         if(!this.minimized) this.hide();
       });
+      element!.addEventListener('shown.bs.modal', (event) => {
+        const modal = this.modalBodyRef?.instance as any;
+        if(modal) {
+          modal.shown = true;
+          if(modal.onShow) modal?.onShow();
+          this.cdRef.detectChanges();
+        } 
+      });
     }
     return this.modal;
   }

@@ -10216,6 +10216,16 @@ class DialogComponent {
                 if (!this.minimized)
                     this.hide();
             });
+            element.addEventListener('shown.bs.modal', (event) => {
+                var _a;
+                const modal = (_a = this.modalBodyRef) === null || _a === void 0 ? void 0 : _a.instance;
+                if (modal) {
+                    modal.shown = true;
+                    if (modal.onShow)
+                        modal === null || modal === void 0 ? void 0 : modal.onShow();
+                    this.cdRef.detectChanges();
+                }
+            });
         }
         return this.modal;
     }
@@ -17900,6 +17910,7 @@ class PageBase {
         this.injector = injector;
         this.action = "";
         this.modalInterface = true;
+        this.shown = false;
         this.JSON = JSON;
         this.code = "";
         this.titleSubscriber = new rxjs__WEBPACK_IMPORTED_MODULE_10__["Subject"]();
@@ -17981,6 +17992,12 @@ class PageBase {
         var _a, _b, _c, _d, _e;
         if (!((_a = this.title) === null || _a === void 0 ? void 0 : _a.length) && ((_d = (_c = (_b = this.snapshot) === null || _b === void 0 ? void 0 : _b.data) === null || _c === void 0 ? void 0 : _c.title) === null || _d === void 0 ? void 0 : _d.length))
             this.title = (_e = this.snapshot.data) === null || _e === void 0 ? void 0 : _e.title;
+        if (!this.modalRoute) {
+            this.shown = true;
+            if (this.onShow)
+                this.onShow();
+        }
+        ;
         this.cdRef.detectChanges();
     }
     saveUsuarioConfig(config) {
@@ -25306,6 +25323,41 @@ class GanttComponent {
         this.gb = gb;
         this.cdRef = cdRef;
         this.height = 500;
+        this.ganttButtons = [];
+        this.taskButtons = [];
+        this.defaultGanttButtons = [
+            { onClick: this.triggerClick('undo.gantt'), class: "requireCanWrite", hint: "undo", icon: "teamworkIcon", iconChar: "'" },
+            { onClick: this.triggerClick('redo.gantt'), class: "requireCanWrite", hint: "redo", icon: "teamworkIcon", iconChar: "·" },
+            { divider: true },
+            { onClick: this.triggerClick('expandAll.gantt'), class: "", hint: "Expandir todos", icon: "teamworkIcon", iconChar: "6" },
+            { onClick: this.triggerClick('collapseAll.gantt'), class: "", hint: "Contrair todos", icon: "teamworkIcon", iconChar: "5" },
+            { divider: true },
+            { onClick: this.triggerClick('zoomMinus.gantt'), class: "", hint: "Almentar zoom", icon: "teamworkIcon", iconChar: ")" },
+            { onClick: this.triggerClick('zoomPlus.gantt'), class: "", hint: "Diminuir zoom", icon: "teamworkIcon", iconChar: "(" },
+            { divider: true },
+            { onClick: this.triggerClick('print.gantt'), class: "", hint: "Imprimir", icon: "teamworkIcon", iconChar: "p" },
+            { divider: true, class: "requireCanSeeCriticalPath" },
+            { onClick: this.showCriticalPath.bind(this), class: "requireCanSeeCriticalPath", hint: "CRITICAL_PATH", icon: "teamworkIcon", iconChar: "£" },
+            { divider: true },
+            { onClick: this.triggerClick('splitter.gantt', [.1]), class: "", hint: "Only grid", icon: "teamworkIcon", iconChar: "F" },
+            { onClick: this.triggerClick('splitter.gantt', [50]), class: "", hint: "Both", icon: "teamworkIcon", iconChar: "O" },
+            { onClick: this.triggerClick('splitter.gantt', [100]), class: "", hint: "Only gantt", icon: "teamworkIcon", iconChar: "R" },
+            { onClick: this.triggerClick('fullScreen.gantt'), class: "", hint: "FULLSCREEN", icon: "teamworkIcon", iconChar: "@" },
+            { onClick: (() => this.ge.element.toggleClass('colorByStatus')).bind(this), class: "", hint: "Cores pelo status", icon: "teamworkIcon", iconChar: "§" }
+        ];
+        this.defaultTaskButtons = [
+            { divider: true, class: "requireCanWrite requireCanAdd" },
+            { onClick: this.triggerClick('addAboveCurrentTask.gantt'), class: "requireCanWrite requireCanAdd", hint: "insert above", icon: "teamworkIcon", iconChar: "l" },
+            { onClick: this.triggerClick('addBelowCurrentTask.gantt'), class: "requireCanWrite requireCanAdd", hint: "insert below", icon: "teamworkIcon", iconChar: "X" },
+            { divider: true, class: "requireCanWrite requireCanInOutdent" },
+            { onClick: this.triggerClick('outdentCurrentTask.gantt'), class: "requireCanWrite requireCanInOutdent", hint: "un-indent task", icon: "teamworkIcon", iconChar: "." },
+            { onClick: this.triggerClick('indentCurrentTask.gantt'), class: "requireCanWrite requireCanInOutdent", hint: "indent task", icon: "teamworkIcon", iconChar: ":" },
+            { divider: true, class: "requireCanWrite requireCanMoveUpDown" },
+            { onClick: this.triggerClick('moveUpCurrentTask.gantt'), class: "requireCanWrite requireCanMoveUpDown", hint: "move up", icon: "teamworkIcon", iconChar: "k" },
+            { onClick: this.triggerClick('moveDownCurrentTask.gantt'), class: "requireCanWrite requireCanMoveUpDown", hint: "move down", icon: "teamworkIcon", iconChar: "j" },
+            { divider: true, class: "requireCanWrite requireCanDelete" },
+            { onClick: this.triggerClick('deleteFocused.gantt'), class: "delete requireCanWrite", hint: "Elimina", icon: "teamworkIcon", iconChar: "d" },
+        ];
         this.loading = false;
         this.ge = undefined;
         this._error = "";
@@ -25451,6 +25503,9 @@ class GanttComponent {
             });*/
         });
     }
+    getChar(char) {
+        return String.fromCharCode(char);
+    }
     reload() {
         //let project = this.getDemoProject();
         //let project: any = this.loadProject();
@@ -25582,39 +25637,12 @@ class GanttComponent {
       return project;
     }*/
     get buttons() {
-        let ganttButtons = [
-            { onClick: this.triggerClick('undo.gantt'), class: "requireCanWrite", hint: "undo", icon: "teamworkIcon", iconChar: "&#39;" },
-            { onClick: this.triggerClick('redo.gantt'), class: "requireCanWrite", hint: "redo", icon: "teamworkIcon", iconChar: "&middot;" },
-            { divider: true },
-            { onClick: this.triggerClick('expandAll.gantt'), class: "", hint: "Expandir todos", icon: "teamworkIcon", iconChar: "6" },
-            { onClick: this.triggerClick('collapseAll.gantt'), class: "", hint: "Contrair todos", icon: "teamworkIcon", iconChar: "5" },
-            { divider: true },
-            { onClick: this.triggerClick('zoomMinus.gantt'), class: "", hint: "Almentar zoom", icon: "teamworkIcon", iconChar: ")" },
-            { onClick: this.triggerClick('zoomPlus.gantt'), class: "", hint: "Diminuir zoom", icon: "teamworkIcon", iconChar: "(" },
-            { divider: true },
-            { onClick: this.triggerClick('print.gantt'), class: "", hint: "Imprimir", icon: "teamworkIcon", iconChar: "p" },
-            { divider: true, class: "requireCanSeeCriticalPath" },
-            { onClick: this.showCriticalPath.bind(this), class: "requireCanSeeCriticalPath", hint: "CRITICAL_PATH", icon: "teamworkIcon", iconChar: "&pound;" },
-            { divider: true },
-            { onClick: this.triggerClick('splitter.gantt', [.1]), class: "", hint: "Only grid", icon: "teamworkIcon", iconChar: "F" },
-            { onClick: this.triggerClick('splitter.gantt', [50]), class: "", hint: "Both", icon: "teamworkIcon", iconChar: "O" },
-            { onClick: this.triggerClick('splitter.gantt', [100]), class: "", hint: "Only gantt", icon: "teamworkIcon", iconChar: "R" },
-            { onClick: this.triggerClick('fullScreen.gantt'), class: "", hint: "FULLSCREEN", icon: "teamworkIcon", iconChar: "@" },
+        let buttons = [
+            ...this.defaultGanttButtons.filter(x => !x.hidden),
+            ...this.ganttButtons.filter(x => !x.hidden),
+            ...this.defaultTaskButtons.filter(x => !x.hidden),
+            ...this.taskButtons.filter(x => !!this.selected && !x.hidden)
         ];
-        let taskButtons = !this.selected ? [] : [
-            { divider: true, class: "requireCanWrite requireCanAdd" },
-            { onClick: this.triggerClick('addAboveCurrentTask.gantt'), class: "requireCanWrite requireCanAdd", hint: "insert above", icon: "teamworkIcon", iconChar: "l" },
-            { onClick: this.triggerClick('addBelowCurrentTask.gantt'), class: "requireCanWrite requireCanAdd", hint: "insert below", icon: "teamworkIcon", iconChar: "X" },
-            { divider: true, class: "requireCanWrite requireCanInOutdent" },
-            { onClick: this.triggerClick('outdentCurrentTask.gantt'), class: "requireCanWrite requireCanInOutdent", hint: "un-indent task", icon: "teamworkIcon", iconChar: "." },
-            { onClick: this.triggerClick('indentCurrentTask.gantt'), class: "requireCanWrite requireCanInOutdent", hint: "indent task", icon: "teamworkIcon", iconChar: ":" },
-            { divider: true, class: "requireCanWrite requireCanMoveUpDown" },
-            { onClick: this.triggerClick('moveUpCurrentTask.gantt'), class: "requireCanWrite requireCanMoveUpDown", hint: "move up", icon: "teamworkIcon", iconChar: "k" },
-            { onClick: this.triggerClick('moveDownCurrentTask.gantt'), class: "requireCanWrite requireCanMoveUpDown", hint: "move down", icon: "teamworkIcon", iconChar: "j" },
-            { divider: true, class: "requireCanWrite requireCanDelete" },
-            { onClick: this.triggerClick('deleteFocused.gantt'), class: "delete requireCanWrite", hint: "Elimina", icon: "teamworkIcon", iconChar: "&cent;" },
-        ];
-        let buttons = [...ganttButtons, ...taskButtons];
         if (JSON.stringify(this._buttons) != JSON.stringify(buttons))
             this._buttons = buttons;
         return this._buttons;
@@ -25659,7 +25687,7 @@ class GanttComponent {
     }
 }
 GanttComponent.ɵfac = function GanttComponent_Factory(t) { return new (t || GanttComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](src_app_services_bootstrap_service__WEBPACK_IMPORTED_MODULE_4__["BootstrapService"]), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_5__["UtilService"]), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](src_app_services_globals_service__WEBPACK_IMPORTED_MODULE_6__["GlobalsService"]), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_3__["ChangeDetectorRef"])); };
-GanttComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineComponent"]({ type: GanttComponent, selectors: [["gantt"]], inputs: { height: "height", period: "period", project: "project" }, decls: 8, vars: 4, consts: [[1, "gantt"], [2, "padding", "0px", "overflow-y", "auto", "overflow-x", "hidden", "border", "1px solid #e5e5e5", "position", "relative", "margin", "0 5px"], [1, "ganttButtonBar", "noprint"], [1, "buttons"], [4, "ngFor", "ngForOf"], ["href", "https://gantt.twproject.com/", "target", "_blank", 2, "position", "absolute", "right", "0px"], ["src", "assets/gantt/res/twGanttLogo.png", "alt", "Twproject", "align", "absmiddle", 2, "max-width", "100px", "margin-top", "5px", "padding-right", "15px"], [3, "id", "gantt"], [3, "class", "title", "click", 4, "ngIf"], [3, "class", 4, "ngIf"], [3, "title", "click"]], template: function GanttComponent_Template(rf, ctx) { if (rf & 1) {
+GanttComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineComponent"]({ type: GanttComponent, selectors: [["gantt"]], inputs: { height: "height", period: "period", ganttButtons: "ganttButtons", taskButtons: "taskButtons", project: "project" }, decls: 8, vars: 4, consts: [[1, "gantt"], [2, "padding", "0px", "overflow-y", "auto", "overflow-x", "hidden", "border", "1px solid #e5e5e5", "position", "relative", "margin", "0 5px"], [1, "ganttButtonBar", "noprint"], [1, "buttons"], [4, "ngFor", "ngForOf"], ["href", "https://gantt.twproject.com/", "target", "_blank", 2, "position", "absolute", "right", "0px"], ["src", "assets/gantt/res/twGanttLogo.png", "alt", "Twproject", "align", "absmiddle", 2, "max-width", "100px", "margin-top", "5px", "padding-right", "15px"], [3, "id", "gantt"], [3, "class", "title", "click", 4, "ngIf"], [3, "class", 4, "ngIf"], [3, "title", "click"]], template: function GanttComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "div", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](1, "div", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](2, "div", 2);

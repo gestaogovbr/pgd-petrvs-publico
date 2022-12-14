@@ -116,7 +116,7 @@ GanttMaster.prototype.init = function (workSpace) {
 
   //create editor
   this.editor = new GridEditor(this);
-  place.append(this.editor.gridified);
+  //place.append(this.editor.gridified); Não entendi o porque adicionar aqui?
 
   //create gantt
   this.gantt = new Ganttalendar(new Date().getTime() - 3600000 * 24 * 2, new Date().getTime() + 3600000 * 24 * 5, this, place.width() * .6);

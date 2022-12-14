@@ -20,6 +20,7 @@ export type ToolbarButton = {
   badge?: string,
   pressed?: boolean | ((button: ToolbarButton) => boolean),
   items?: ToolbarButton[],
+  hidden?: boolean,
   dynamicItems?: (...args: any[]) => ToolbarButton[] | undefined,
   dynamicVisible?: (...args: any[]) => boolean,
   onClick?: (...args: any[]) => any
