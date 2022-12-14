@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTiposProcessos extends Migration
+class CreateTiposProcessosCadeias extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateTiposProcessos extends Migration
      */
     public function up()
     {
-        Schema::create('tipos_processos', function (Blueprint $table) {
+        Schema::create('tipos_processos_cadeias', function (Blueprint $table) {
             // Configurações:
             $table->uuid('id');
             $table->primary('id');
@@ -32,6 +32,6 @@ class CreateTiposProcessos extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tipos_processos');
+        Schema::dropIfExists('tipos_processos_cadeias');
     }
 }

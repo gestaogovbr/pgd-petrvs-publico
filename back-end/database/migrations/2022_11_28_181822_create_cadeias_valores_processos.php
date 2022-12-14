@@ -26,7 +26,7 @@ class CreateCadeiasValoresProcessos extends Migration
             $table->string('nome', 256)->comment("Nome");
             // Chaves estrangeiras:
             $table->foreignUuid('cadeia_valor_id')->constrained("cadeias_valores")->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('tipo_processo_id')->constrained("tipos_processos")->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('tipo_processo_id')->constrained("tipos_processos_cadeias")->onDelete('restrict')->onUpdate('cascade');
             $table->foreignUuid('processo_pai_id')->nullable()->constrained("cadeias_valores_processos")->onDelete('restrict')->onUpdate('cascade');
         });
     }

@@ -25,13 +25,13 @@ class CreatePlanosPontosControlesEntregasTable extends Migration
             $table->json("realizado")->nullable()->comment("Valor realizado");
             // Chaves estrangeiras:
             /**
-             *  fk_planos_p_contr_entr_plano_p_contr_id : restrição entre as tabelas planos_pontos_controles_entregas e planos_pontos_controle
-             *  fk_planos_p_contr_entr_planej_entr_id : restrição entre as tabelas planos_pontos_controles_entregas e planejamentos_entregas
+             *  fk_planos_p_contr_entr_plano_p_contr_id : restrição entre as tabelas 'planos_pontos_controles_entregas' e 'planos_pontos_controles';
+             *  fk_planos_p_contr_entr_plano_entr_entr_id : restrição entre as tabelas 'planos_pontos_controles_entregas' e 'planos_entregas_entregas';
              */
             $table->uuid('plano_ponto_controle_id');
             $table->foreign('plano_ponto_controle_id', 'fk_planos_p_contr_entr_plano_p_contr_id')->references('id')->on('planos_pontos_controles')->onDelete('restrict')->onUpdate('cascade');
             $table->uuid('plano_entrega_entrega_id');
-            $table->foreign('plano_entrega_entrega_id', 'fk_planos_entr_p_contr_entr_planej_entr_id')->references('id')->on('planos_entregas_entregas')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreign('plano_entrega_entrega_id', 'fk_planos_p_contr_entr_plano_entr_entr_id')->references('id')->on('planos_entregas_entregas')->onDelete('restrict')->onUpdate('cascade');
         });
     }
 
