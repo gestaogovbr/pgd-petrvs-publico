@@ -52,37 +52,37 @@
 
 
 <div class="row">
-    <input-multiselect label="Domingo" hostClass="p-0" controlName="domingo" [size]="3" [addItemHandle]="addItemHandleDomingo.bind(this)">
+    <input-multiselect label="Domingo" hostClass="p-0" [control]="form.controls.domingo" [size]="3" [addItemHandle]="addItemHandleDomingo.bind(this)">
         <input-datetime noIcon noIndicator time time24hours [size]="6" label="Início" hostClass="pe-0" controlName="domingo_inicio" [control]="form.controls.domingo_inicio"></input-datetime>
         <input-datetime noIcon noIndicator time time24hours [size]="6" label="Fim" hostClass="ps-0" controlName="domingo_fim" [control]="form.controls.domingo_fim"></input-datetime>
     </input-multiselect>
-    <input-multiselect label="Segunda" hostClass="p-0" controlName="segunda" [size]="3" [addItemHandle]="addItemHandleSegunda.bind(this)">
+    <input-multiselect label="Segunda" hostClass="p-0" [control]="form.controls.segunda" [size]="3" [addItemHandle]="addItemHandleSegunda.bind(this)">
         <input-datetime noIcon noIndicator time time24hours [size]="6" label="Início" hostClass="pe-0" controlName="segunda_inicio" [control]="form.controls.segunda_inicio"></input-datetime>
         <input-datetime noIcon noIndicator time time24hours [size]="6" label="Fim" hostClass="ps-0" controlName="segunda_fim" [control]="form.controls.segunda_fim"></input-datetime>
     </input-multiselect>
-    <input-multiselect label="Terça" hostClass="p-0" controlName="terca" [size]="3" [addItemHandle]="addItemHandleTerca.bind(this)">
+    <input-multiselect label="Terça" hostClass="p-0" [control]="form.controls.terca" [size]="3" [addItemHandle]="addItemHandleTerca.bind(this)">
         <input-datetime noIcon noIndicator time time24hours [size]="6" label="Início" hostClass="pe-0" controlName="terca_inicio" [control]="form.controls.terca_inicio"></input-datetime>
         <input-datetime noIcon noIndicator time time24hours [size]="6" label="Fim" hostClass="ps-0" controlName="terca_fim" [control]="form.controls.terca_fim"></input-datetime>
     </input-multiselect>
-    <input-multiselect label="Quarta" hostClass="p-0" controlName="quarta" [size]="3" [addItemHandle]="addItemHandleQuarta.bind(this)">
+    <input-multiselect label="Quarta" hostClass="p-0" [control]="form.controls.quarta" [size]="3" [addItemHandle]="addItemHandleQuarta.bind(this)">
         <input-datetime noIcon noIndicator time time24hours [size]="6" label="Início" hostClass="pe-0" controlName="quarta_inicio" [control]="form.controls.quarta_inicio"></input-datetime>
         <input-datetime noIcon noIndicator time time24hours [size]="6" label="Fim" hostClass="ps-0" controlName="quarta_fim" [control]="form.controls.quarta_fim"></input-datetime>
     </input-multiselect>
 </div>
 <div class="row">
-    <input-multiselect label="Quinta" hostClass="p-0" controlName="quinta" [size]="3" [addItemHandle]="addItemHandleQuinta.bind(this)">
+    <input-multiselect label="Quinta" hostClass="p-0" [control]="form.controls.quinta" [size]="3" [addItemHandle]="addItemHandleQuinta.bind(this)">
         <input-datetime noIcon noIndicator time time24hours [size]="6" label="Início" hostClass="pe-0" controlName="quinta_inicio" [control]="form.controls.quinta_inicio"></input-datetime>
         <input-datetime noIcon noIndicator time time24hours [size]="6" label="Fim" hostClass="ps-0" controlName="quinta_fim" [control]="form.controls.quinta_fim"></input-datetime>
     </input-multiselect>
-    <input-multiselect label="Sexta" hostClass="p-0" controlName="sexta" [size]="3" [addItemHandle]="addItemHandleSexta.bind(this)">
+    <input-multiselect label="Sexta" hostClass="p-0" [control]="form.controls.sexta" [size]="3" [addItemHandle]="addItemHandleSexta.bind(this)">
         <input-datetime noIcon noIndicator time time24hours [size]="6" label="Início" hostClass="pe-0" controlName="sexta_inicio" [control]="form.controls.sexta_inicio"></input-datetime>
         <input-datetime noIcon noIndicator time time24hours [size]="6" label="Fim" hostClass="ps-0" controlName="sexta_fim" [control]="form.controls.sexta_fim"></input-datetime>
     </input-multiselect>
-    <input-multiselect label="Sabado" hostClass="p-0" controlName="sabado" [size]="3" [addItemHandle]="addItemHandleSabado.bind(this)">
+    <input-multiselect label="Sabado" hostClass="p-0" [control]="form.controls.sabado" [size]="3" [addItemHandle]="addItemHandleSabado.bind(this)">
         <input-datetime noIcon noIndicator time time24hours [size]="6" label="Início" hostClass="pe-0" controlName="sabado_inicio" [control]="form.controls.sabado_inicio"></input-datetime>
         <input-datetime noIcon noIndicator time time24hours [size]="6" label="Fim" hostClass="ps-0" controlName="sabado_fim" [control]="form.controls.sabado_fim"></input-datetime>
     </input-multiselect>
-    <input-multiselect label="Especial" hostClass="p-0" controlName="especial" [size]="3" [addItemHandle]="addItemHandleEspecial.bind(this)">
+    <input-multiselect label="Especial" hostClass="p-0" [control]="form.controls.especial" [size]="3" [addItemHandle]="addItemHandleEspecial.bind(this)">
         <input-datetime noIcon date [size]="8" label="Dia" controlName="especial_data" [control]="form.controls.especial_data"></input-datetime>
         <input-switch label="Sem" [size]="4" controlName="especial_sem" [control]="form.controls.especial_sem" labelInfo="Sem expediente. Se o horário irá representar um período que náo haverá expediente."></input-switch>
         <input-datetime noIcon noIndicator time time24hours [size]="6" label="Início" hostClass="pe-0" controlName="especial_inicio" [control]="form.controls.especial_inicio"></input-datetime>
