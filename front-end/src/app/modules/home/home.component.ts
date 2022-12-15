@@ -79,9 +79,7 @@ export class HomeComponent implements OnInit {
   }
 
   async ngAfterViewInit() {
-    this.filtrarDemandas()
-    //this.idExclamacao();
-    //this.construirGraficoMinhasDemandas();
+    this.filtrarDemandas();
   }
 
   async filtrarDemandas() {
@@ -91,39 +89,6 @@ export class HomeComponent implements OnInit {
     const dadosUsuario = await this.usuarioDao.dashboard(this.data_inicial, this.data_final, this.auth.usuario!.id)
     if (dadosUsuario) this.dashUsuario = dadosUsuario;
   }
-
-  // public construirGraficoMinhasDemandas() {
-  //   this.dadosMinhasDemandas = [
-  //     {
-  //       label: 'Demandas Não-iniciadas',
-  //       data: [this.dashUsuario.demandas_totais_nao_iniciadas],
-  //       backgroundColor: '#0dcaf0',
-  //       stack: 'Demandas',
-  //       barThickness: 30
-  //     },
-  //     {
-  //       label: 'Demandas Iniciadas',
-  //       data: [this.dashUsuario.demandas_totais_nao_concluidas],
-  //       backgroundColor: '#ffc107',
-  //       stack: 'Demandas',
-  //       barThickness: 30
-  //     },
-  //     {
-  //       label: 'Demandas Concluídas',
-  //       data: [this.dashUsuario.demandas_totais_concluidas],
-  //       backgroundColor: '#af4201',
-  //       stack: 'Demandas',
-  //       barThickness: 30
-  //     },
-  //     {
-  //       label: 'Demandas Avaliadas',
-  //       data: [this.dashUsuario.demandas_totais_avaliadas],
-  //       backgroundColor: '#af4af0',
-  //       stack: 'Demandas',
-  //       barThickness: 30
-  //     }
-  //   ];
-  // }
 
   public mensagemSaudacao() {
     const hora = parseInt(this.auth.unidadeHora.replace(":", ""));

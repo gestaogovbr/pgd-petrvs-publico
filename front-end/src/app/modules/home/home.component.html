@@ -1,6 +1,9 @@
 <div class="container">
+    <div class="saudacao">
+        <h2 class="text-black-50">{{mensagemSaudacao()}}</h2>
+    </div>
     <div class="search">
-        <form [formGroup]="formSearch" class="row">
+        <form [formGroup]="formSearch" class="row d-flex align-items-center">
             <div class="col">Filtrar período</div>
             <div class="col-auto d-flex justify-content-end align-items-center">
                 <input-datetime date [size]="3" controlName="data_inicial" class="flex-fill"
@@ -118,6 +121,13 @@
             <div class="card-body flex-column d-flex align-items-center justify-content-center">
                 <h3>{{dashUsuario.demandas.media_avaliacoes}}</h3>
                 <p>Avaliação média</p>
+            </div>
+        </div>
+
+        <div class="card border-0 m-2">
+            <div class="card-body flex-column d-flex align-items-center justify-content-center">
+                <h3>{{dashUsuario.horas_afastamentos}}</h3>
+                <p>Horas de afastamento</p>
             </div>
         </div>
 
