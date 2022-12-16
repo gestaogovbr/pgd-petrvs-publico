@@ -6,6 +6,7 @@ use App\Models\Usuario;
 use App\Models\Demanda;
 use App\Models\Plano;
 use App\Models\Unidade;
+use App\Models\TipoAvaliacao;
 use App\Models\DemandaEntrega;
 use App\Services\ServiceBase;
 use App\Services\PlanoService;
@@ -150,10 +151,10 @@ class UsuarioService extends ServiceBase
         $result = [];
         $planosAtivos = $this->PlanoService->planosAtivosPorData($data_inicial, $data_final, $usuario_id);
         $planos_ids = $planosAtivos->map(function($plano){return $plano->id;});
-
+        $notas_validas = TipoAvaliacao::where('aceita_entrega', true)->get()->pluck('nota_atribuida');
   
-        $total_consolidadas = Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->avaliadas()->get()->sum(function($demanda){
-            return $demanda['tempo_pactuado'];
+        $total_consolidadas = Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->avaliadas()->with(['avaliacao'])->get()->sum(function($demanda) use ($notas_validas){
+            return in_array($demanda["avaliacao"]["nota_atribuida"], $notas_validas->all()) ? $demanda['tempo_pactuado'] : 0;
         });
 
         $media_avaliacao = Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->avaliadas()->with(['avaliacao'])->get()->avg(function($demanda){
