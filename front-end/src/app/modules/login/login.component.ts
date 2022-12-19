@@ -47,18 +47,18 @@ export class LoginComponent implements OnInit, ModalPage {
     private ngZone: NgZone
   ) {
     this.login = this.fh.FormBuilder({
-      usuario: {default: ""},
-      senha: {default: ""},
-      token: {default: ""}
+      usuario: { default: "" },
+      senha: { default: "" },
+      token: { default: "" }
     }, this.cdRef, this.validate);
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
 
-    if(['senha', 'token'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if (['senha', 'token'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    } else if(controlName == "usuario" && !this.util.validarCPF(control.value)) {
+    } else if (controlName == "usuario" && !this.util.validarCPF(control.value)) {
       result = "Inválido";
     }
 
@@ -69,7 +69,7 @@ export class LoginComponent implements OnInit, ModalPage {
     this.titleSubscriber.next("Login Petrvs");
     this.route.queryParams.subscribe(params => {
       this.error = params['error'] ? params['error'] : "";
-      if(params["redirectTo"]) {
+      if (params["redirectTo"]) {
         let routerTo = JSON.parse(params["redirectTo"]);
         this.redirectTo = routerTo.route[0] == "login" ? routerTo : undefined;
       }
@@ -78,9 +78,9 @@ export class LoginComponent implements OnInit, ModalPage {
     /* Registra listner para logins com popup que necessitam de retorno */
     this.auth.registerPopupLoginResultListener();
     /* Verifica se o usuário não já está logado (login-session), e caso não esteja verifica tambem se algum dos login (Google, Microsoft, etc), estão com sessão ativas e tenta logar com essa sessão */
-    (async ()=> {
+    (async () => {
       // Inicializa Google Auth e cria o botão na tela
-      if(this.globals.hasGoogleLogin) {
+      if (this.globals.hasGoogleLogin) {
         let res = await this.googleApi.initialize(true);//.then((res: any) => {
         res.renderButton(document.getElementById('gbtn') as HTMLElement, {
           size: 'large',
@@ -89,25 +89,27 @@ export class LoginComponent implements OnInit, ModalPage {
         //})
       }
       let result = false;
-      if(!this.noSession) result = await this.auth.authSession();
+      if (!this.noSession) result = await this.auth.authSession();
       /* verifica tambem se algum dos login (Google, Microsoft, etc), estão com sessão ativas */
-      if(!result) {
-        if(this.globals.hasGoogleLogin) {
+      if (!result) {
+        if (this.globals.hasGoogleLogin) {
           var socialUser;
           try {
-            socialUser = await this.googleApi.getLoginStatus();            
-          } catch (error) {}
-          if(socialUser?.idToken) this.auth.authGoogle(socialUser?.idToken);
+            socialUser = await this.googleApi.getLoginStatus();
+          } catch (error) { }
+          if (socialUser?.idToken) this.auth.authGoogle(socialUser?.idToken);
         }
-        if(this.globals.hasAzureLogin) {
+        if (this.globals.hasAzureLogin) {
           // TODO: Implementa login automático
         }
+      } else if (this.auth.success) {
+        this.auth.success(this.auth.usuario!, this.redirectTo);
       }
     })();
   }
 
   public closeModalIfSuccess = (result: boolean) => {
-    if(result && this.modalRoute) {
+    if (result && this.modalRoute) {
       this.go.clearRoutes();
     }
   };
@@ -134,7 +136,7 @@ export class LoginComponent implements OnInit, ModalPage {
   public signInDprfSeguranca() {
     const form = this.login.controls;
     this.login.markAllAsTouched();
-    if(this.login.valid){
+    if (this.login.valid) {
       this.auth.authDprfSeguranca(this.util.onlyNumbers(form.usuario.value), form.senha.value, this.util.onlyNumbers(form.token.value), this.redirectTo).then(this.closeModalIfSuccess);
     } else {
       this.error = "Verifique se está correto:" + (form.cpf.invalid ? " CPF;" : "") + (form.password.invalid ? " Senha;" : "") + (form.password.invalid ? " Token;" : "");
@@ -143,7 +145,7 @@ export class LoginComponent implements OnInit, ModalPage {
 
   public signInMicrosoft() {
     const form = this.login.controls;
-    if(this.login.valid) {
+    if (this.login.valid) {
       this.auth.authDprfSeguranca(form.usuario.value, form.senha.value, form.token.value, this.redirectTo).then(this.closeModalIfSuccess);
     } else {
       this.error = "Verifique se está correto:" + (form.cpf.invalid ? " CPF;" : "") + (form.password.invalid ? " Senha;" : "") + (form.password.invalid ? " Token;" : "");
