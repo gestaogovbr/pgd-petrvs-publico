@@ -15,6 +15,8 @@ use App\Models\Plano;
 use App\Models\Comentario;
 use App\Models\DemandaEntrega;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
 
 class Demanda extends ModelBase
 {
@@ -107,5 +109,35 @@ class Demanda extends ModelBase
     public function setChecklistAttribute($value)
     {
         $this->attributes['checklist'] = json_encode($value);
+    }
+
+    // Escopos
+
+    public function scopeDoUsuario($query, $usuario_id){
+        return $query->where("usuario_id", $usuario_id);
+    }
+
+    public function scopeDosPlanos($query, $planos_ids){
+        return $query->whereIn("plano_id", $planos_ids);
+    }
+
+    public function scopeAvaliadas($query){
+        return $query->whereNotNull("avaliacao_id");
+    }
+
+    public function scopeNaoIniciadas($query){
+        return $query->whereNull('data_inicio');
+    }
+
+    public function scopeConcluidas($query){
+        return $query->whereNotNull('data_entrega');
+    }
+
+    public function scopeNaoConcluidas($query){
+        return $query->whereNotNull('data_inicio')->whereNull('data_entrega');
+    }
+
+    public function scopeAtrasadas($query){
+        return $query->whereNotNull('data_inicio')->whereNull('data_entrega')->whereDate('prazo_entrega', '<', Carbon::today());
     }
 }
