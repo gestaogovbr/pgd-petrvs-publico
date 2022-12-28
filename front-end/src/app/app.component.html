@@ -62,7 +62,7 @@
                             </a>
                             <ul class="dropdown-menu" [attr.aria-labelledby]="item.id">
                                 <li *ngFor="let menu of getMenuItems(item.menu)">
-                                    <a *ngIf="menu != '-'; else divider" [class]="menuItemClass('dropdown-item', menu.route)" role="button" (click)="go.navigate({route: menu.route}, {root: true})">
+                                    <a *ngIf="menu != '-'; else divider" [class]="menuItemClass('dropdown-item', menu.route)" role="button" (click)="go.navigate({route: menu.route}, menu.metadata || {root: true})">
                                         <i [class]="menu.icon"></i> {{menu.name}}
                                     </a>
                                     <ng-template #divider>

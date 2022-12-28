@@ -1,6 +1,7 @@
 import { LookupItem } from '../services/lookup.service';
 import { Base } from './base.model';
 import { Cidade } from './cidade.model';
+import { Expediente } from './expediente.model';
 import { TipoModalidade } from './tipo-modalidade.model';
 import { Usuario } from './usuario.model';
 
@@ -52,6 +53,7 @@ export class Entidade extends Base {
     public gestor_id: string | null = null; // Usuário gestor da unidade
     public gestor_substituto_id: string | null = null; // Usuário gestor substituto da unidade
     public forma_contagem_carga_horaria: TipoCargaHoraria = "DIA"; // Forma de contagem padrão da carga horária
+    public expediente: Expediente = new Expediente(); // Expediente (Não nulo)
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

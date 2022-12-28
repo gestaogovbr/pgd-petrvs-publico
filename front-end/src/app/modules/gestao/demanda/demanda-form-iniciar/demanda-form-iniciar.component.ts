@@ -116,7 +116,7 @@ export class DemandaFormIniciarComponent extends PageFormBase<Demanda, DemandaDa
             await this.auth.selecionaUnidade(unidade.id);
           }
         }*/
-        const cargaHoraria = plano?.carga_horaria || this.calendar.expediente(this.entity!.unidade);
+        const cargaHoraria = plano?.carga_horaria || this.calendar.expedienteMedio(this.entity!.unidade);
         const tempo_planejado = this.calendar.horasUteis(this.form.controls.data_distribuicao.value, this.form.controls.prazo_entrega.value, cargaHoraria, this.entity!.unidade!, "DISTRIBUICAO");
         const fator = this.form.controls.fator_complexidade.value || 1;
         const fator_ganho_produtivade = 1 - ((plano?.ganho_produtividade || 0) / 100);

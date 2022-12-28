@@ -29,13 +29,14 @@
                 <input-select [size]="2" label="Comparecer" controlName="planos_tipo_prazo_comparecimento" [control]="form!.controls.planos_tipo_prazo_comparecimento" [items]="lookup.DIA_OU_HORA" labelInfo="Formato de Prazo de Comparecimento a Unidade"></input-select>
                 <input-text numbers [size]="2" label="Prazo" controlName="planos_prazo_comparecimento" [control]="form!.controls.planos_prazo_comparecimento" labelInfo="Prazo de Comparecimento a Unidade"></input-text>
             </div>
-            <separator title="Expediente"></separator>
-            <div class="row">
-                <input-switch [size]="2" label="24hs" controlName="expediente24" [control]="form!.controls.expediente24" (change)="onExpediente24Change($event)" labelInfo="Se o expediente é de 24hs ou é um perído, se for período será informado início e fim"></input-switch>
-                <input-datetime time [size]="4" label="Início" [disabled]="is24hrs" controlName="horario_trabalho_inicio" [control]="form!.controls.horario_trabalho_inicio" labelInfo="Horário do início da Jornada de Trabalho"></input-datetime>
-                <input-datetime time [size]="4" label="Final" [disabled]="is24hrs" controlName="horario_trabalho_fim" [control]="form!.controls.horario_trabalho_fim" labelInfo="Horário do Final da Jornada de Trabalho"></input-datetime>
-                <input-datetime time noIcon [size]="2" label="Dur. Intervalo" controlName="horario_trabalho_intervalo" [control]="form!.controls.horario_trabalho_intervalo" labelInfo="Duração do intervalo realizado dentro da jornada de trabalho (quantidade de horas, ex.: horário de almoço de duas horas será 02:00). Para fins de computo de jornada de trabalho na ausência do plano de trabalho."></input-datetime>
-            </div>
+            <!--separator title="Expediente">
+                <div class="row">
+                    <input-switch [size]="2" label="24hs" controlName="expediente24" [control]="form!.controls.expediente24" (change)="onExpediente24Change($event)" labelInfo="Se o expediente é de 24hs ou é um perído, se for período será informado início e fim"></input-switch>
+                    <input-datetime time [size]="4" label="Início" [disabled]="is24hrs" controlName="horario_trabalho_inicio" [control]="form!.controls.horario_trabalho_inicio" labelInfo="Horário do início da Jornada de Trabalho"></input-datetime>
+                    <input-datetime time [size]="4" label="Final" [disabled]="is24hrs" controlName="horario_trabalho_fim" [control]="form!.controls.horario_trabalho_fim" labelInfo="Horário do Final da Jornada de Trabalho"></input-datetime>
+                    <input-datetime time noIcon [size]="2" label="Dur. Intervalo" controlName="horario_trabalho_intervalo" [control]="form!.controls.horario_trabalho_intervalo" labelInfo="Duração do intervalo realizado dentro da jornada de trabalho (quantidade de horas, ex.: horário de almoço de duas horas será 02:00). Para fins de computo de jornada de trabalho na ausência do plano de trabalho."></input-datetime>
+                </div>
+            </separator//-->
             <separator></separator>
             <div clss="row">
                 <input-multiselect label="Etiquetas" multiselectStyle="inline" [maxItemWidth]="250" controlName="etiquetas" [size]="12" [control]="form!.controls.etiquetas" [addItemHandle]="addItemHandle.bind(this)">
@@ -44,6 +45,12 @@
                     <input-color [size]="3" label="Cor" controlName="etiqueta_cor" [control]="form!.controls.etiqueta_cor"></input-color>
                 </input-multiselect>
             </div>
+        </tab>
+        <tab key="EXPEDIENTE" label="Expediente">
+            <div class="row">
+                <input-switch #usarExpedienteEntidade label="Usar o calendário da entidade" labelPosition="right" icon="bi bi-check2" [size]="12" (change)="onUsarExpedienteEntidadeChange()" controlName="usar_expediente_entidade" labelInfo="Se utiliza o expediente configurado na entidade ao invés de especificar na unidade"></input-switch>
+            </div>
+            <calendar-expediente #expediente [disabled]="form!.controls.usar_expediente_entidade.value ? 'true' : undefined" [expedienteDisabled]="entity?.entidade?.expediente" [control]="form!.controls.expediente"></calendar-expediente>
         </tab>
         <tab key="ATIVIDADES" label="Atividades">
             <grid [control]="form!.controls.unidades_origem_atividades" [form]="formUnidadesOrigemAtividades" [add]="addUnidadesOrigemAtividades.bind(this)" [load]="loadUnidadesOrigemAtividades.bind(this)" [remove]="removeUnidadesOrigemAtividades.bind(this)" [save]="saveUnidadesOrigemAtividades.bind(this)" editable>

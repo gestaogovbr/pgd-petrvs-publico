@@ -7,6 +7,7 @@ import { UnidadeListComponent } from './unidade-list/unidade-list.component';
 import { ComponentsModule } from 'src/app/components/components.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UnidadeMergeComponent } from './unidade-merge/unidade-merge.component';
+import { UteisModule } from '../../uteis/uteis.module';
 
 
 @NgModule({
@@ -18,6 +19,7 @@ import { UnidadeMergeComponent } from './unidade-merge/unidade-merge.component';
   imports: [
     CommonModule,
     ComponentsModule,
+    UteisModule,
     ReactiveFormsModule,
     UnidadeRoutingModule
   ]

@@ -178,8 +178,8 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
     const usuario = this.usuario?.searchObj as Usuario;
     if(usuario && unidade && this.util.isDataValid(inicio) && this.util.isDataValid(fim)) {
       this.calendar.loadFeriadosCadastrados(unidade.id).then((feriados) => {
-        this.horasTotais = this.calendar.calculaDataTempo(inicio, fim, carga, unidade, "ENTREGA", [], []);
-        this.horasParciais = this.calendar.calculaDataTempo(inicio, fim, carga, unidade, "ENTREGA", [], usuario.afastamentos);
+        this.horasTotais = this.calendar.calculaDataTempoUnidade(inicio, fim, carga, unidade, "ENTREGA", [], []);
+        this.horasParciais = this.calendar.calculaDataTempoUnidade(inicio, fim, carga, unidade, "ENTREGA", [], usuario.afastamentos);
         this.form?.controls.tempo_total.setValue(this.horasTotais.tempoUtil);
         this.form?.controls.tempo_proporcional.setValue(this.horasParciais.tempoUtil);
       });
