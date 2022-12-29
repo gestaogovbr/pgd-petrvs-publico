@@ -10,6 +10,12 @@ import * as moment from 'moment';
 import { CardItem } from 'src/app/components/kanban/docker/docker.component';
 import { GanttAssignment, GanttProject, GanttResource, GanttTask } from 'src/app/components/gantt/gantt-models';
 import { CalendarOptions } from '@fullcalendar/angular';
+import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { Expediente } from 'src/app/models/expediente.model';
+import { Feriado } from 'src/app/models/feriado.model';
+import { Afastamento } from 'src/app/models/afastamento.model';
+import { CalendarService, Efemerides } from 'src/app/services/calendar.service';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 
 @Component({
   selector: 'app-teste',
@@ -20,7 +26,9 @@ export class TesteComponent implements OnInit {
   public form: FormGroup;
   public items: LookupItem[] = [];
   public disabled: boolean = true;
-  
+  public Editor = ClassicEditor;
+  public expediente = new Expediente({"domingo":[],"segunda":[{"inicio":"08:00","fim":"12:00","data":null,"sem":false},{"inicio":"14:00","fim":"18:00","data":null,"sem":false}],"terca":[{"inicio":"08:00","fim":"12:00","data":null,"sem":false},{"inicio":"14:00","fim":"18:00","data":null,"sem":false}],"quarta":[{"inicio":"08:00","fim":"12:00","data":null,"sem":false},{"inicio":"14:00","fim":"18:00","data":null,"sem":false}],"quinta":[{"inicio":"08:00","fim":"12:00","data":null,"sem":false},{"inicio":"14:00","fim":"18:00","data":null,"sem":false}],"sexta":[{"inicio":"08:00","fim":"12:00","data":null,"sem":false},{"inicio":"14:00","fim":"18:00","data":null,"sem":false}],"sabado":[],"especial":[]});
+
   public naoIniciadas: CardItem[] = [
     {id: "ni1", title: "Não iniciada 1", subTitle: "Texto não iniciado 1", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens"},
     {id: "ni2", title: "Não iniciada 2", subTitle: "Texto não iniciado 2", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens"},
@@ -46,7 +54,25 @@ export class TesteComponent implements OnInit {
     ]
   };
 
+  public buttons: ToolbarButton[] = [
+    {
+      label: "Calcular data fim",
+      onClick: () => {
+        let form = this.form.value;
+        this.efemerides = this.calendar.calculaDataTempo(form.inicio, form.tempo, form.forma, form.carga_horaria, this.expediente, form.feriados.map((x: LookupItem) => x.data), [], form.afastamentos.map((x: LookupItem) => x.data));
+      }
+    },
+    {
+      label: "Calcular tempo",
+      onClick: () => {
+        let form = this.form.value;
+        this.efemerides = this.calendar.calculaDataTempo(form.inicio, form.fim, form.forma, form.carga_horaria, this.expediente, form.feriados.map((x: LookupItem) => x.data), [], form.afastamentos.map((x: LookupItem) => x.data));
+      }
+    }
+  ];
+
   public project: GanttProject; 
+  public efemerides?: Efemerides;
   public resources: GanttResource[] = [];
 
   constructor(
@@ -54,6 +80,7 @@ export class TesteComponent implements OnInit {
     public usuarioDao: UsuarioDaoService, 
     public lookup: LookupService,
     public util: UtilService,
+    public calendar: CalendarService,
     @Inject('ID_GENERATOR_BASE') public ID_GENERATOR_BASE: any
   ) {
     this.form = fh.FormBuilder({
@@ -64,6 +91,20 @@ export class TesteComponent implements OnInit {
       campo4: {default: ""},
       campo5: {default: true},
       datetime: {default: new Date()},
+      forma: {default: ""},
+      tempo: {default: 0},
+      feriados: {default: []},
+      afastamentos: {default: []},
+      inicio: {default: new Date()},
+      fim: {default: new Date()},
+      carga_horaria: {default: 24},
+      dia: {default: 0},
+      mes: {default: 0},
+      ano: {default: 0},
+      inicio_afastamento: {default: new Date()},
+      fim_afastamento: {default: new Date()},
+      observacao: {default: ""},
+      nome: {default: ""},
       rate: {default: 2},
       horas: {default: 150.5},
       label: {default: ""},
@@ -169,6 +210,10 @@ export class TesteComponent implements OnInit {
     return date;
   }
 
+  public isHoras(): boolean {
+    return ["HORAS_CORRIDOS", "HORAS_UTEIS"].includes(this.form!.controls.forma.value);
+  }
+
   public gridItems = [
     { id: this.util.md5(), campo1: "campo1-1", campo2: new Date(), campo3: new Date(), campo4: "campo4-1", campo5: false},
     { id: this.util.md5(), campo1: "campo1-2", campo2: new Date(), campo3: new Date(), campo4: "campo4-2", campo5: false},
@@ -198,6 +243,39 @@ export class TesteComponent implements OnInit {
       value: self.form.controls.label.value,
       color: self.form.controls.color.value,
       icon: self.form.controls.icon.value
+    };
+  };
+
+  public addFeriadoHandle(): LookupItem | undefined {
+    let form = this.form.value;
+    let feriado = new Feriado({
+      id: this.util.md5(),
+      nome: form.nome, //Descrição do feriado;
+      dia: form.dia, //Dia do mês (1~31) ou dia da semana (1-7)");
+      mes: form.mes, //Mês
+      ano: form.ano || null, // Ano do feriado caso seja data não recorrente");
+      recorrente: form.ano ? 0 : 1, // Se é uma data única ou repete todos os anos");
+      abrangencia: "NACIONAL"
+    });
+    return {
+      key: feriado.id,
+      value: feriado.dia + "/" + feriado.mes + "/" + feriado.ano + " - " + feriado.nome,
+      data: feriado
+    };
+  };
+
+  public addAfastamentoHandle(): LookupItem | undefined {
+    let form = this.form.value;
+    let afastamento = new Afastamento({
+      id: this.util.md5(),
+      observacoes: form.observacao,
+      inicio_afastamento: form.inicio_afastamento,
+      fim_afastamento: form.fim_afastamento
+    });
+    return {
+      key: afastamento.id,
+      value: this.util.getDateTimeFormatted(afastamento.inicio_afastamento) + " até " + this.util.getDateTimeFormatted(afastamento.fim_afastamento) + " - " + afastamento.observacoes,
+      data: afastamento
     };
   };
 

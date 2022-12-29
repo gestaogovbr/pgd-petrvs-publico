@@ -30,32 +30,33 @@ export class GoogleApiService {
   }
 
   initialize(autoLogin?: boolean): Promise<any> {
-    console.log('asdsad', this.gb.loginGoogleClientId);
     return new Promise((resolve, reject) => {
       try {
         const script = this.utilService.loadScript('https://accounts.google.com/gsi/client')
         script.onload = () => {
           let socialUser = GoogleApiService.retrieveSocialUser()
+
           if (socialUser != null) {
-            
+
             // refresh the token 10s before it expires
             let idToken = JSON.parse(atob(socialUser.idToken.split(".")[1]))
             let currentUnixTimestamp = Math.floor(Date.now() / 1000)
 
-            if(idToken["exp"] < currentUnixTimestamp){
+            if (idToken["exp"] < currentUnixTimestamp) {
               this._socialUser.next(null);
               GoogleApiService.clearSocialUser();
             } else {
               this._socialUser.next(socialUser);
             }
-            
+
             setTimeout(() => {
               this.refreshToken()
-            }, (idToken["exp"] - currentUnixTimestamp - 10) * 1000)
+            }, 3000)
+            //(idToken["exp"] - currentUnixTimestamp - 10) * 1000
           }
 
-          
-          
+
+
           google.accounts.id.initialize({
             client_id: this.gb.loginGoogleClientId,
             ux_mode: 'popup',
@@ -86,10 +87,18 @@ export class GoogleApiService {
 
   refreshToken(): Promise<SocialUser | null> {
     return new Promise((resolve, reject) => {
-      google.accounts.id.revoke(this._socialUser?.value?.id, (response: any) => {
-        if (response.error) reject(response.error);
-        else resolve(this._socialUser.value);
-      });
+      const storedUser = GoogleApiService.retrieveSocialUser();
+      if (storedUser !== null) {
+        this._socialUser.next(storedUser)
+      }
+      if (this._socialUser) {
+        google.accounts.id.revoke(this._socialUser?.value?.id, (response: any) => {
+          if (response?.error) reject(response.error);
+          else resolve(this._socialUser.value);
+        });
+      } else {
+        reject()
+      }
     });
   }
 

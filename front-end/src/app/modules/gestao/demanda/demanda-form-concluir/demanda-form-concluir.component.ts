@@ -117,7 +117,7 @@ export class DemandaFormConcluirComponent extends PageFormBase<Demanda, DemandaD
     const unidade = this.entity!.unidade!;
     const pausas = this.entity!.pausas || [];
     const afastamentos = this.entity!.usuario?.afastamentos || [];
-    this.efemerides = this.util.isDataValid(entrega) ? this.calendar.calculaDataTempo(inicio, entrega, cargaHoraria, unidade, "ENTREGA", pausas, afastamentos) : undefined;
+    this.efemerides = this.util.isDataValid(entrega) ? this.calendar.calculaDataTempoUnidade(inicio, entrega, cargaHoraria, unidade, "ENTREGA", pausas, afastamentos) : undefined;
     if(this.efemerides) {
       this.form.controls.tempo_despendido.setValue(this.efemerides.tempoUtil);
       this.cdRef.detectChanges(); 

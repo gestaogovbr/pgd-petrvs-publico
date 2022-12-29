@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterPlanosTableAddPlanejamentoId extends Migration
+class AlterPlanosTableAddPlanoEntregaId extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class AlterPlanosTableAddPlanejamentoId extends Migration
     public function up()
     {
         Schema::table('planos', function (Blueprint $table) {
-            $table->foreignUuid('planejamento_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('plano_entrega_id')->nullable()->constrained("planos_entregas")->onDelete('restrict')->onUpdate('cascade');
         });
     }
 
@@ -26,8 +26,8 @@ class AlterPlanosTableAddPlanejamentoId extends Migration
     public function down()
     {
         Schema::table('planos', function (Blueprint $table) {
-            $table->dropForeign(['planejamento_id']);
-            $table->dropColumn('planejamento_id');
+            $table->dropForeign(['plano_entrega_id']);
+            $table->dropColumn('plano_entrega_id');
         });
     }
 }

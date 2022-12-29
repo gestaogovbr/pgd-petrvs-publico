@@ -540,8 +540,8 @@ export class UtilService {
     };
   }
 
-  public getHoursBetween(dateStart: Date, dateEnd: Date): number {
-    const timestamp = Math.floor((dateEnd.getTime() - dateStart.getTime()) / 1000);
+  public getHoursBetween(start: Date | number, end: Date | number): number {
+    const timestamp = Math.floor(((end instanceof Date ? end.getTime() : end) - (start instanceof Date ? start.getTime() : start)) / 1000);
     const timer = this.secondsToTimer(timestamp);
     return timer.hours + (timer.minutes / 60) + (timer.secounds / (60*60));
   }

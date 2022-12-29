@@ -6,6 +6,7 @@ import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
 import { TipoModalidadeDaoService } from 'src/app/dao/tipo-modalidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Entidade, EntidadeNotificacoes } from 'src/app/models/entidade.model';
+import { Expediente } from 'src/app/models/expediente.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { NotificacaoService } from 'src/app/services/notificacao.service';
 
@@ -27,6 +28,7 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
     super(injector, Entidade, EntidadeDaoService);
     this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
     this.notificacao = injector.get<NotificacaoService>(NotificacaoService);
+    this.modalWidth = 1200;
     this.form = this.fh.FormBuilder({
       url_sei: {default: ""},
       tipo_modalidade_id: {default: null},
@@ -43,6 +45,7 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
       enviar_email: {default: true},
       enviar_whatsapp: {default: true},
       nomenclatura: {default: []},
+      expediente: {default: new Expediente()},
       carga_horaria_padrao: {default: 8},
       forma_contagem_carga_horaria: {default: "DIA"},
       api_public_key: {default: ""}
@@ -152,6 +155,7 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
         tipo_modalidade_id: entidade.tipo_modalidade_id,
         nomenclatura: entidade.nomenclatura,
         notificacoes: notificacoes,
+        expediente: entidade.expediente,
         carga_horaria_padrao: entidade.carga_horaria_padrao,
         forma_contagem_carga_horaria: entidade.forma_contagem_carga_horaria  
       }).then(saved => resolve(true)).catch(reject);

@@ -42,6 +42,7 @@
         {
             "matches": [
                 "https://sei.prf.gov.br/*",
+                "https://sei.saude.gov.br/*",
                 "https://homologsei2.prf.gov.br/*",
                 "https://sei.economia.gov.br/*",
                 "https://sei.mj.gov.br/*"

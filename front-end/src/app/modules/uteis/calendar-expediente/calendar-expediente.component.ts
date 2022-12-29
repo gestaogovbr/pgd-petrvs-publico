@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { Expediente } from 'src/app/models/expediente.model';
+import { AbstractControl, FormGroup } from '@angular/forms';
+import { Expediente, Turno } from 'src/app/models/expediente.model';
 import { FormHelperService } from 'src/app/services/form-helper.service';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { UtilService } from 'src/app/services/util.service';
@@ -11,16 +11,41 @@ import { UtilService } from 'src/app/services/util.service';
   styleUrls: ['./calendar-expediente.component.scss']
 })
 export class CalendarExpedienteComponent implements OnInit {
-  @Input() set expediente(value: Expediente | undefined) {
-    if(this._expediente != value) {
-      this._expediente = value;
+  @Input() expedienteDisabled?: Expediente;
+  @Input() set disabled(value: string | undefined) {
+    if(this._disabled != value) {
+      this._disabled = value;
+      this.loadExpediente();
     }
   }
-  get expediente(): Expediente | undefined {
+  get disabled(): string | undefined {
+    return this._disabled;
+  }
+  @Input() set control(value: AbstractControl | undefined) {
+    if(this._control != value) {
+      this._control != value;
+      this.expediente = this.control?.value;
+      value?.valueChanges.subscribe(async newValue => {
+        this.expediente = newValue;
+      });
+    }
+  } 
+  get control(): AbstractControl | undefined {
+    return this._control;
+  }
+  @Input() set expediente(value: Expediente | undefined | null) {
+    if(this._expediente != value) {
+      this._expediente = value;
+      this.loadExpediente();
+    }
+  }
+  get expediente(): Expediente | undefined | null {
     return this._expediente;
   }
 
-  private _expediente?: Expediente;
+  private _expediente?: Expediente | null;
+  private _disabled?: string;
+  private _control?: AbstractControl;
   public form: FormGroup;
 
   constructor(
@@ -60,6 +85,48 @@ export class CalendarExpedienteComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  public get isDisabled(): boolean {
+    return this._disabled != undefined;
+  }
+
+  public loadExpediente() {
+    let expediente = (this.isDisabled ? this.expedienteDisabled : this._expediente) || new Expediente();
+    const getLookupItems = (turnos: Turno[], dia: string): LookupItem[] => turnos.map(x => Object.assign({}, {
+      key: this.util.textHash((dia == "especial" ? this.util.getDateFormatted(x.data) : "") + dia + x.inicio + x.fim),
+      value: (dia == "especial" ? this.util.getDateFormatted(x.data) + " - " : "") + x.inicio + " até " + x.fim,
+      data: {
+        inicio: x.inicio,
+        fim: x.fim,
+        data: x.data,
+        sem: x.sem
+      }
+    }));
+    if(!this.isDisabled) this._expediente = expediente;
+    this.form.controls.domingo.setValue(getLookupItems(expediente.domingo, "domingo"));
+    this.form.controls.segunda.setValue(getLookupItems(expediente.segunda, "segunda"));
+    this.form.controls.terca.setValue(getLookupItems(expediente.terca, "terca"));
+    this.form.controls.quarta.setValue(getLookupItems(expediente.quarta, "quarta"));
+    this.form.controls.quinta.setValue(getLookupItems(expediente.quinta, "quinta"));
+    this.form.controls.sexta.setValue(getLookupItems(expediente.sexta, "sexta"));
+    this.form.controls.sabado.setValue(getLookupItems(expediente.sabado, "sabado"));
+    this.form.controls.especial.setValue(getLookupItems(expediente.especial, "especial"));
+  }
+
+  public saveExpediente() {
+    if(!this.isDisabled) {
+      this._expediente = this._expediente || new Expediente();
+      this._expediente.domingo = this.form.controls.domingo.value.map((x: LookupItem) => x.data); 
+      this._expediente.segunda = this.form.controls.segunda.value.map((x: LookupItem) => x.data); 
+      this._expediente.terca = this.form.controls.terca.value.map((x: LookupItem) => x.data); 
+      this._expediente.quarta = this.form.controls.quarta.value.map((x: LookupItem) => x.data); 
+      this._expediente.quinta = this.form.controls.quinta.value.map((x: LookupItem) => x.data); 
+      this._expediente.sexta = this.form.controls.sexta.value.map((x: LookupItem) => x.data); 
+      this._expediente.sabado = this.form.controls.sabado.value.map((x: LookupItem) => x.data); 
+      this._expediente.especial = this.form.controls.especial.value.map((x: LookupItem) => x.data); 
+      if(this.control) this.control.setValue(this._expediente);
+    }
+  }
+
   public isEmpty(): boolean {
     return false;
   }
@@ -96,6 +163,10 @@ export class CalendarExpedienteComponent implements OnInit {
     return this.addItemHandle("especial");
   }
 
+  public onChange() {
+    this.saveExpediente();
+  }
+
   public addItemHandle(dia: string): LookupItem | undefined {
     let result = undefined;
     const inicio = this.form.controls[dia + "_inicio"].value;
@@ -108,7 +179,6 @@ export class CalendarExpedienteComponent implements OnInit {
         key: key,
         value: (dia == "especial" ? this.util.getDateFormatted(data) + " - " : "") + inicio + " até " + fim,
         data: {
-          dia: dia,
           inicio: inicio,
           fim: fim,
           data: data,

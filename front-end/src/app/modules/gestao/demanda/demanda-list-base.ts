@@ -131,7 +131,7 @@ export abstract class DemandaListBase extends PageListBase<Demanda, DemandaDaoSe
     if (row.metadados && !row.metadados.concluido) {
       const cargaHoraria = this.extra?.planos[row.plano_id!]?.carga_horaria || 0;
       const afastamentos = this.extra?.afastamentos[row.usuario_id!] || [];
-      this.efemerides = this.calendar.calculaDataTempo(row.data_inicio!, this.auth.hora, cargaHoraria, row.unidade!, "ENTREGA", row.pausas, afastamentos);
+      this.efemerides = this.calendar.calculaDataTempoUnidade(row.data_inicio!, this.auth.hora, cargaHoraria, row.unidade!, "ENTREGA", row.pausas, afastamentos);
       this.dialog.template({ title: "Cálculos do tempo despendido" }, this.calendarEfemerides!, []);
     }
   }

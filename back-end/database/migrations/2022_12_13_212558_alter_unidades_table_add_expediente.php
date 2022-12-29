@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterEntregasTableRenameQualitativo extends Migration
+class AlterUnidadesTableAddExpediente extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,9 @@ class AlterEntregasTableRenameQualitativo extends Migration
      */
     public function up()
     {
-        DB::statement("ALTER TABLE `entregas` RENAME COLUMN `qualitativo` to `lista_qualitativos`");
+        Schema::table('unidades', function (Blueprint $table) {
+            $table->json('expediente')->nullable()->comment("Configuração de expediente");
+        });
     }
 
     /**
@@ -23,6 +25,8 @@ class AlterEntregasTableRenameQualitativo extends Migration
      */
     public function down()
     {
-        DB::statement("ALTER TABLE `entregas` RENAME COLUMN `lista_qualitativos` to `qualitativo`");
+        Schema::table('unidades', function (Blueprint $table) {
+            $table->dropColumn('expediente');
+        });
     }
 }

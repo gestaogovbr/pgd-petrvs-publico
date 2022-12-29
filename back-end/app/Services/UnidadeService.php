@@ -41,7 +41,7 @@ class UnidadeService extends ServiceBase
 
     public function proxySearch($query, &$data, &$text) {
         $data["where"][] = ["subordinadas", "==", true];
-        $data["where"][] = ["inativo", "==", null];
+        //$data["where"][] = ["inativo", "==", null];
         return $this->proxyQuery($query, $data);
     }
 
@@ -49,11 +49,11 @@ class UnidadeService extends ServiceBase
         $usuario = parent::loggedUser();
         $where = [];
         $subordinadas = true;
-        $inativos = true;
+        $inativos = !empty(array_filter($data["where"], fn($w) => $w[0] == "inativo"));
         foreach($data["where"] as $condition) {
             if(is_array($condition) && $condition[0] == "subordinadas") {
                 $subordinadas = $condition[2];
-            } else if(is_array($condition) && $condition[0] == "inativos") {
+            } else if(is_array($condition) && $condition[0] == "inativos" && !$inativos) {
                 $inativos = $condition[2];
             } else {
                 array_push($where, $condition);

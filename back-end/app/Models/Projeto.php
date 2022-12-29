@@ -86,4 +86,12 @@ class Projeto extends ModelBase
     {
         $this->attributes['kanban_dockers'] = json_encode($value);
     }
+    public function getExpedienteAttribute($value)
+    {
+        return json_decode($value);
+    }   
+    public function setExpedienteAttribute($value)
+    {
+        $this->attributes['expediente'] = json_encode($value);
+    }
 }

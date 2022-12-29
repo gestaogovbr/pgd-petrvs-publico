@@ -1,5 +1,5 @@
 //@ts-ignore
-const webBrowser = typeof chrome != "undefined" ? chrome : browser;
+const webBrowser = typeof chrome != "undefined" ? chrome : typeof browser != "undefined" ? browser : undefined;
 const defaultExtensionOptionsConfig = { /* Configuração utilizada para acessas as configurações da extensão */
   api_url: webBrowser?.runtime?.getURL ? webBrowser.runtime.getURL("") : "",
   suporte_url: "https://suporte.prf.gov.br",

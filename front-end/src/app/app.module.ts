@@ -18,6 +18,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LogsModule } from './modules/logs/logs.module';
 import { UteisModule } from './modules/uteis/uteis.module';
 import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { TesteFormComponent } from './modules/teste/teste-form/teste-form.compon
     ChartsModule,
     RelatorioModule,
     UteisModule,
-    LogsModule
+    LogsModule,
+    CKEditorModule
   ],
   providers: [],
   bootstrap: [AppComponent]

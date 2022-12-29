@@ -9,16 +9,37 @@ import { Efemerides, TipoContagem } from '../services/calendar.service';
 import { DaoBaseService } from './dao-base.service';
 
 export type UsuarioDashboard = {
-  total_demandas: number,                           // total geral de demandas do usuário
-  media_avaliacoes: number,
-  produtividade: number,
-  //demandas_totais_iniciadas: number,                // é o mesmo que demandas não concluídas
-  demandas_totais_nao_iniciadas: number,            // total de demandas ainda nem iniciadas
-  demandas_totais_concluidas: number,               // total de demandas concluidas, mas ainda não avaliadas
-  demandas_totais_nao_concluidas: number,           // total de demandas iniciadas, mas ainda não concluidas
-  demandas_totais_atrasadas: number,                // total de demandas iniciadas, não concluídas e com prazo de entrega ultrapassado
-  demandas_totais_avaliadas: number,                // total de demandas com avaliação realizada
-  tarefas_totais_nao_concluidas: number,            // total de tarefas sem data de entrega informada
+  planos: [
+    {
+      data_inicio_vigencia: Date,
+      data_fim_vigencia: Date,
+      horas_alocadas: number,
+      horas_consolidadas: number,
+      progresso: number,
+      total_horas: number
+    }
+  ],
+  demandas: {
+    atrasadas: number,
+    avaliadas: number,
+    concluidas: number,
+    media_avaliacoes: number,
+    nao_concluidas: number,
+    nao_iniciadas: number,
+    total_demandas: number,
+  },
+  horas_afastamentos: number
+
+  // total_demandas: number,                           // total geral de demandas do usuário
+  // media_avaliacoes: number,
+  // produtividade: number,
+  // //demandas_totais_iniciadas: number,                // é o mesmo que demandas não concluídas
+  // demandas_totais_nao_iniciadas: number,            // total de demandas ainda nem iniciadas
+  // demandas_totais_concluidas: number,               // total de demandas concluidas, mas ainda não avaliadas
+  // demandas_totais_nao_concluidas: number,           // total de demandas iniciadas, mas ainda não concluidas
+  // demandas_totais_atrasadas: number,                // total de demandas iniciadas, não concluídas e com prazo de entrega ultrapassado
+  // demandas_totais_avaliadas: number,                // total de demandas com avaliação realizada
+  // tarefas_totais_nao_concluidas: number,            // total de tarefas sem data de entrega informada
 };
 
 @Injectable({
@@ -31,10 +52,10 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
     this.searchFields = ["matricula", "nome"];
   }
 
-  public dashboard(usuario_id: string): Promise<UsuarioDashboard | null> {
+  public dashboard(data_inicial: Date, data_final: Date, usuario_id: string): Promise<UsuarioDashboard | null> {
     return new Promise<UsuarioDashboard | null>((resolve, reject) => {
-      if(usuario_id?.length){
-        this.server.post('api/' + this.collection + '/dashboard', {usuario_id}).subscribe(response => {
+      if (usuario_id?.length) {
+        this.server.post('api/' + this.collection + '/dashboard', { data_inicial, data_final, usuario_id }).subscribe(response => {
           resolve(response.data);
         }, error => {
           console.log("Erro ao buscar o dashboard do Usuário!", error);
@@ -49,8 +70,8 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
 
   public planosPorPeriodo(usuario_id: string, inicioPeriodo: string | null, fimPeriodo: string | null): Promise<Plano[] | null> {
     return new Promise<Plano[] | null>((resolve, reject) => {
-      if(usuario_id?.length){
-          this.server.post('api/Relatorio/planosPorPeriodo', {usuario_id: usuario_id, inicioPeriodo: inicioPeriodo != null ? this.util.getTimeFormattedUSA(inicioPeriodo) : null, fimPeriodo: fimPeriodo != null ? this.util.getTimeFormattedUSA(fimPeriodo) : null})
+      if (usuario_id?.length) {
+        this.server.post('api/Relatorio/planosPorPeriodo', { usuario_id: usuario_id, inicioPeriodo: inicioPeriodo != null ? this.util.getTimeFormattedUSA(inicioPeriodo) : null, fimPeriodo: fimPeriodo != null ? this.util.getTimeFormattedUSA(fimPeriodo) : null })
           .subscribe(response => {
             resolve(response.data as Plano[]);
           }, error => {
