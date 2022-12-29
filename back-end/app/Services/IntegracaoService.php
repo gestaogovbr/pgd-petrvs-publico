@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Request;
 use App\Exceptions\LogError;
 use App\Services\ServiceBase;
 use App\Models\Unidade;
@@ -240,21 +241,15 @@ class IntegracaoService extends ServiceBase {
                     $uos = $this->IntegracaoSiapeService->retornarUorgs()["uorg"];
                 } else {
                     if($this->useLocalFiles) {//Se for para usar os arquivos locais, a rotina lê os dados do arquivo salvo localmente
-                        $xmlStream = file_get_contents($this->localUnidades);
+                        //$xmlStream = file_get_contents($this->localUnidades);
+                        $xmlStream = file_get_contents(base_path('../' . $this->localUnidades));
                     } else {        //caso contrário, a rotina vai buscar no servidor do SIGEPE
-                        if ($this->validaCertificado) {
-                            $response = Http::withHeaders([
-                                'Authorization' => 'Bearer ' . $token
-                            ])->get($this->integracao_config["baseUrlunidades"]);
-                        } else {
-                            $response = Http::withoutVerifying()->withHeaders([
-                                'Authorization' => 'Bearer ' . $token
-                            ])->get($this->integracao_config["baseUrlunidades"]);
-                        }
+                        $url = $this->integracao_config["baseUrlunidades"];
+                        $response = $this->consultarApiSigepe($token, $url);
                         $xmlStream = $response->body();
                         if($this->storeLocalFiles) {        // aqui decide se salva ou não em arquivo as informações trazidas do servidor do SIGEPE
-                            if(file_exists($this->localUnidades)) unlink($this->localUnidades);
-                            file_put_contents($this->localUnidades, $xmlStream);
+                            if(file_exists(base_path('../' . $this->localUnidades))) unlink(base_path('../' . $this->localUnidades));
+                            file_put_contents(base_path('../' . $this->localUnidades), $xmlStream);
                         }
                     }
                     $xml = simplexml_load_string($xmlStream);
@@ -347,21 +342,15 @@ class IntegracaoService extends ServiceBase {
                     $servidores = $this->IntegracaoSiapeService->retornarPessoas()["Pessoas"];
                 } else {
                     if($this->useLocalFiles) {
-                        $xmlStream = file_get_contents($this->localServidores);
+                        //$xmlStream = file_get_contents($this->localServidores);
+                        $xmlStream = file_get_contents(base_path('../' . $this->localServidores));
                     } else {
-                        if ($this->validaCertificado) {
-                            $response = Http::withHeaders([
-                                'Authorization' => 'Bearer ' . $token
-                            ])->get($this->integracao_config["baseUrlpessoas"]);
-                        } else {
-                            $response = Http::withoutVerifying()->withHeaders([
-                                'Authorization' => 'Bearer ' . $token
-                            ])->get($this->integracao_config["baseUrlpessoas"]);
-                        }
+                        $url = $this->integracao_config["baseUrlpessoas"];
+                        $response = $this->consultarApiSigepe($token, $url);
                         $xmlStream = $response->body();
                         if($this->storeLocalFiles) {
-                            if(file_exists($this->localServidores)) unlink($this->localServidores);
-                            file_put_contents($this->localServidores, $xmlStream);
+                            if(file_exists(base_path('../' . $this->localServidores))) unlink(base_path('../' . $this->localServidores));
+                            file_put_contents(base_path('../' . $this->localServidores), $xmlStream);
                         }
                     }
                     $xml = simplexml_load_string($xmlStream);
@@ -510,7 +499,7 @@ class IntegracaoService extends ServiceBase {
                 $sql_1 = "SELECT matriculasiape, funcoes FROM integracao_servidores WHERE vinculo_ativo = 'true'";
                 $servidores = DB::select($sql_1);
                 // filtra apenas aqueles que são gestores ou gestores substitutos
-                $chefes = array_filter($servidores, fn($s) => $s->funcoes != "[]");
+                $chefes = array_filter($servidores, fn($s) => $s->funcoes != "[]");//juntar no sql
                 $chefias = [];
                 // percorre todos os gestores, montando um array com os dados da chefia (matricula do chefe, código da unidade, tipo de função)
                 foreach($chefes as $chefe){
@@ -555,49 +544,6 @@ class IntegracaoService extends ServiceBase {
         }
     }
 
-/*     public function atualizarChefias() {
-        try {
-            // seleciona a matricula e as funções de todos os servidores ativos trazidos do SIAPE
-                $sql_1 = "SELECT matriculasiape, funcoes FROM integracao_servidores WHERE vinculo_ativo = 'true'";
-                $servidores = DB::select($sql_1);
-            // filtra apenas aqueles que são gestores ou gestores substitutos
-                $chefes = array_filter($servidores, fn($s) => $s->funcoes != "[]");
-                $chefias = [];
-            // percorre todos os gestores, montando um array com os dados da chefia (matricula do chefe, código da unidade, tipo de função)
-                foreach($chefes as $chefe){
-                    $funcoes = json_decode($chefe->funcoes);
-                    if(is_array($funcoes->funcao)) {
-                        // nesse caso o servidor é gestor de mais de uma unidade
-                        $chefias = array_merge($chefias, array_map(fn($f) => ['matricula' => $chefe->matriculasiape, 'codigo_siape' => $f->uorg_funcao, 'tipo_funcao' => $f->tipo_funcao], $funcoes->funcao));
-                    } else {
-                        // nesse caso o servidor é gestor de apenas uma unidade
-                        array_push($chefias, ['matricula' => $chefe->matriculasiape, 'codigo_siape' => $funcoes->funcao->uorg_funcao, 'tipo_funcao' => $funcoes->funcao->tipo_funcao]);
-                    }
-                }
-            // torna nulos os campos gestor_id e gestor_substituto_id das unidades, para refazê-los com o atual array de chefias
-                DB::update("UPDATE unidades SET gestor_id = null, gestor_substituto_id = null");
-            // percorre o array das chefias, inserindo na tabela de unidades os IDs dos respectivos gestores e gestores substitutos
-                foreach($chefias as $chefia) {
-                    // descobre o ID do Usuário. Será null se não for localizado servidor com a matricula informada
-                    $sql_2 = "SELECT id from USUARIOS where matricula = :matricula";
-                    $idUsuario = DB::select($sql_2, [':matricula' => $chefia['matricula']]);
-                    // descobre o ID da Unidade
-                    $sql_3 = "SELECT u.id FROM integracao_unidades iu join unidades u on iu.id_servo = u.codigo WHERE iu.codigo_siape = :codigo_siape";
-                    $idUnidade = DB::select($sql_3, [':codigo_siape' => $chefia['codigo_siape']]);
-                    // monta a consulta de acordo com o tipo de função
-                    if($chefia['tipo_funcao'] = '1'){
-                        $sql_4 = "UPDATE unidades SET gestor_id = :id_usuario WHERE id = :id_unidade";
-                    } else if($chefe['tipo_funcao'] = '2'){
-                        $sql_4 = "UPDATE unidades SET gestor_substituto_id = :id_usuario WHERE id = :id_unidade";
-                    }
-                    // se o usuário existir na tabela de servidores, insere seu ID na Unidade como gestor ou gestor substituto
-                    if ($idUsuario) DB::update($sql_4, [':id_usuario'=> $idUsuario, ':id_unidade' => $idUnidade]);
-                }
-        } catch (Throwable $e) {
-            throw $e;
-        }
-    } */
-
     public function salvaUsuarioLotacaoGoogle(&$usuario, &$lotacao, $tokenData, $auth){
         $auth->fillUsuarioWithCredential($usuario, $tokenData);
         $this->salvarUsuarioLotacao($usuario, $lotacao);
@@ -630,4 +576,36 @@ class IntegracaoService extends ServiceBase {
             $usuario = null; // se quem está logando não existe na tabela integracao_servidores
         }
     }
+
+    public function consultarApiSigepe($token, $url){
+        try {
+            $response = Http::withToken($token)->withOptions([
+                'allow_redirects' => false,
+                'verify' => $this->validaCertificado
+            ])->get($url);
+            if($response->failed()) $response->throw();
+            if($response->status() >= 300 && $response->status() < 400) $this->consultarApiSigepe($token, $response->header('Location'));
+        } catch (Throwable $e) {
+            return $e;
+        }
+        return $response;
+    }
 }
+
+
+
+
+/*             if ($this->validaCertificado) {
+                return Http::withoutRedirecting()->withHeaders([
+                    'Authorization' => 'Bearer ' . $token
+                ])->get($url);
+            } else {
+                return Http::withoutVerifying()->withHeaders([
+                    'Authorization' => 'Bearer ' . $token
+                ])->get($url);
+            } */
+/**
+ * "cURL error 6: Could not resolve host: siape-mi.homologacao.prf 
+ * (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) 
+ * for https://siape-mi.homologacao.prf/services/SiapePRF_DS.HTTPEndpoint/uorgs"
+ */

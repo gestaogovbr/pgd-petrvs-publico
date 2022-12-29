@@ -105,6 +105,7 @@ Route::middleware('auth:sanctum')->post('/Petrvs/showTables', [PetrvsController:
 /* Testes */
 //Route::middleware(['auth:sanctum', 'can:ADMINISTRADOR'])->get('/teste', function (Request $request) { return ["OK"]; });
 Route::get('/teste', function (Request $request) { return ["OK"]; });
+Route::middleware('auth:sanctum')->post('/Teste/calculaDataTempo', [UsuarioController::class, 'calculaDataTempo']);
 
 /* Modulos: Cadastros */
 Route::middleware(['auth:sanctum'])->prefix('Afastamento')->group(function () { defaultRoutes(AfastamentoController::class); });

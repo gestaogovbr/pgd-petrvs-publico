@@ -101,13 +101,16 @@ export class CalendarService {
   }
 
   public isFeriadoCadastrado(data: Date, unidade: Unidade): string | undefined {
-    let feriados: FeriadoList | undefined = this.feriadosCadastrados[unidade.id];
-    if (feriados) {
-      const isoData = moment(data).format("YYYY-MM-DD");
-      return feriados[isoData] || feriados[isoData.substring(-6)];
-    } else {
-      throw new Error("Lista de feriados da unidade não carregado no sistema.");
-    }
+    this.loadFeriadosCadastrados(unidade.id!).then(resolve => {
+      let feriados: FeriadoList | undefined = this.feriadosCadastrados[unidade.id];
+      if(feriados) {
+        const isoData = moment(data).format("YYYY-MM-DD");
+        return feriados[isoData] || feriados[isoData.substring(-6)];
+      }else {
+        throw new Error("Lista de feriados da unidade não carregado no sistema.");
+      }
+    });
+    return undefined;
   }
 
   public isFeriadoReligioso(data: Date): string | undefined {
@@ -151,14 +154,13 @@ export class CalendarService {
   }
 
 
-  // ver com o Genisson: const, tipagem, timestamp
   /*
   Função responsável por todos os cálculos de períodos no sistema.
   Obs.: As variáveis que armazenam tempo/data são iniciadas com as respectivas letras:
   - d: Data, do tipo Date do javascript
   - h: Tempo em formato de horas, de forma numérica, por exempo 01h30 será igual a 1.5
   - t: Tempo em formado de milesegundos (getTime() do javascript)
-  - u: Unidade de dia, é um formato semelhante ao timestemp, porem contado em dias
+  - u: Unidade de dia, é um formato semelhante ao timestamp, porem contado em dias
 
   @param Date          inicio       Data e hora de inicio
   @param Date|number   fimOuTempo   Se a intenção for calcular a dataFim então será passado o tempo,

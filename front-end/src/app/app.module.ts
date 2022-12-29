@@ -17,6 +17,7 @@ import { RelatorioModule } from './modules/relatorios/relatorio.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LogsModule } from './modules/logs/logs.module';
 import { UteisModule } from './modules/uteis/uteis.module';
+import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { UteisModule } from './modules/uteis/uteis.module';
     ConfigComponent,
     DialogComponent,
     SpinnerOverlayComponent,
-    TesteComponent
+    TesteComponent,
+    TesteFormComponent
   ],
   imports: [
     BrowserModule,

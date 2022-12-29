@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Usuario;
 use App\Services\UsuarioService;
+use App\Services\CalendarioService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
@@ -32,11 +33,10 @@ class UsuarioController extends ControllerBase
             $data = $request->validate([
                 'usuario_id' => ['required']
             ]);
-            $result = response()->json([
+            return response()->json([
                 'success' => true,
                 'data' => $this->service->dashboard($data['usuario_id'])
             ]);
-            return $result;
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
@@ -58,4 +58,25 @@ class UsuarioController extends ControllerBase
         }
     }
 
-}
+    public function calculaDataTempo(Request $request){
+        try {
+            $data = $request->validate([
+                'inicio' => ['required'],
+                'fimOuTempo' => ['required'],
+                'cargaHoraria' => ['required'],
+                'unidade_id' => ['required'],
+                'tipo' => ['required'],
+                'pausas' => [],
+                'afastamentos' => []
+            ]);
+            return response()->json([
+                'success' => true,
+                'data' => CalendarioService::preparaParametros($data)
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+} 
+

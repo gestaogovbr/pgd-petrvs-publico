@@ -137,7 +137,8 @@ export class AppComponent {
       logs: [
         { name: "Alterações", permition: 'DEV_MOD_LOGS', route: ['logs', 'change'], icon: "bi bi-pencil-square" },
         { name: "Erros", permition: 'DEV_MOD_LOGS', route: ['logs', 'error'], icon: "bi bi-bug" },
-        { name: "Tráfego", permition: 'DEV_MOD_LOGS', route: ['logs', 'traffic'], icon: "bi bi-stoplights" }
+        { name: "Tráfego", permition: 'DEV_MOD_LOGS', route: ['logs', 'traffic'], icon: "bi bi-stoplights" },
+        { name: "Teste Calcula Tempo", permition: 'DEV_MOD_LOGS', route: ['teste', 'calcula-tempo'], icon: "bi bi-stoplights" }
       ],
     }
   }

@@ -434,6 +434,33 @@ export class UtilService {
     return isDate ? result.map(x => this.asDateInterval(x)) : result;
   }
 
+  public newUnion(intervals: Interval[]) : Interval[] {
+    if(intervals.length < 2){
+        return intervals;
+    } else {
+        const isDate = (intervals[0])?.start instanceof Date;
+        let intervalos: TimeInterval[] = intervals.map(x => this.asTimeInterval(x));
+        let result: TimeInterval[] = [];
+        result.push(intervalos[0]);
+        intervalos.shift();
+        for(let i = 0; i < result.length; i++) {
+            for(let j = 0; j < intervalos.length; j++) {
+                if(result[i].end >= intervalos[j].start && result[i].start <= intervalos[j].end) {
+                    result[i] = {start: Math.min(result[i].start, intervalos[j].start),
+                                 end: Math.max(result[i].end, intervalos[j].end)};
+                    intervalos.splice(j, 1);
+                    j = -1;
+                } 
+            }
+            if(intervalos.length) {
+              result.push(intervalos[0]);
+              intervalos.shift();
+            }
+        }
+        return isDate ? result.map(x => this.asDateInterval(x)) : result;
+    }
+  }
+
   public merge(aItems: any[] | undefined, bItems: any[] | undefined, role: (a: any, b: any) => boolean): any[] {
     let result = [...(aItems || [])];
     (bItems || []).forEach(b => {

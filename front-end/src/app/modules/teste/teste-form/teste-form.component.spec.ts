@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import 'jasmine';
-import { AfastamentoListComponent } from './afastamento-list.component';
 
-describe('AfastamentoListComponent', () => {
-  let component: AfastamentoListComponent;
-  let fixture: ComponentFixture<AfastamentoListComponent>;
+import { TesteFormComponent } from './teste-form.component';
+
+describe('testeFormComponent', () => {
+  let component: TesteFormComponent;
+  let fixture: ComponentFixture<TesteFormComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AfastamentoListComponent ]
+      declarations: [ TesteFormComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AfastamentoListComponent);
+    fixture = TestBed.createComponent(TesteFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

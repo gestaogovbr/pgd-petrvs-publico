@@ -5,11 +5,13 @@ import { ConfigComponent } from './modules/config/config.component';
 import { HomeComponent } from './modules/home/home.component';
 import { LoginRetornoComponent } from './modules/login/login-retorno/login-retorno.component';
 import { LoginComponent } from './modules/login/login.component';
+import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
 import { TesteComponent } from './modules/teste/teste.component';
 import { ConfigResolver } from './resolvies/config.resolver';
 
 const routes: Routes = [
   { path: 'teste', component: TesteComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Teste" } },
+  { path: 'teste/calcula-tempo', component: TesteFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Teste - CalculaTempo" } },
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard], data: { title: "Home" } },
   { path: 'login', component: LoginComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Login Petrvs", login: true } },
   { path: 'login-retorno', component: LoginRetornoComponent, data: { title: "Retorno de login", login: true } },
