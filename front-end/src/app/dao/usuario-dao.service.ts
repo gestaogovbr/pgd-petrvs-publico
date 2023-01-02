@@ -1,6 +1,7 @@
 import { Injectable, Injector } from '@angular/core';
 import { ChartDataSets, ChartOptions } from 'chart.js';
 import { Plano } from '../models/plano.model';
+import { Unidade } from '../models/unidade.model';
 import { Usuario } from '../models/usuario.model';
 import { DaoBaseService } from './dao-base.service';
 
@@ -25,18 +26,26 @@ export type UsuarioDashboard = {
     total_demandas: number,
   },
   horas_afastamentos: number
-
-  // total_demandas: number,                           // total geral de demandas do usuário
-  // media_avaliacoes: number,
-  // produtividade: number,
-  // //demandas_totais_iniciadas: number,                // é o mesmo que demandas não concluídas
-  // demandas_totais_nao_iniciadas: number,            // total de demandas ainda nem iniciadas
-  // demandas_totais_concluidas: number,               // total de demandas concluidas, mas ainda não avaliadas
-  // demandas_totais_nao_concluidas: number,           // total de demandas iniciadas, mas ainda não concluidas
-  // demandas_totais_atrasadas: number,                // total de demandas iniciadas, não concluídas e com prazo de entrega ultrapassado
-  // demandas_totais_avaliadas: number,                // total de demandas com avaliação realizada
-  // tarefas_totais_nao_concluidas: number,            // total de tarefas sem data de entrega informada
 };
+
+export type GestorDashboard = {
+  usuarios: [
+    {
+      nome: string,
+      foto: string,
+      planos: [
+        {
+          data_inicio_vigencia: Date,
+          data_fim_vigencia: Date,
+          horas_alocadas: number,
+          horas_consolidadas: number,
+          progresso: number,
+          total_horas: number
+        }
+      ]
+    }
+  ]
+}
 
 @Injectable({
   providedIn: 'root'
@@ -59,6 +68,22 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
         });
       } else {
         console.log("ID de usuário em branco!");
+        resolve(null);
+      }
+    });
+  }
+
+  public dashboard_gestor(data_inicial: Date, data_final: Date, unidades: string[]): Promise<GestorDashboard | null> {
+    return new Promise<GestorDashboard | null>((resolve, reject) => {
+      if (unidades.length) {
+        this.server.post('api/' + this.collection + '/dashboard_gestor', { data_inicial, data_final, unidades }).subscribe(response => {
+          resolve(response.data);
+        }, error => {
+          console.log("Erro ao buscar o dashboard do Usuário!", error);
+          resolve(null);
+        });
+      } else {
+        console.log("Unidades em branco!");
         resolve(null);
       }
     });
