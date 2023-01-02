@@ -310,7 +310,7 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
       } else if(this.deltaChanged()) {
         const unidade = this.unidade?.searchObj as Unidade;
         const fator = this.form.controls.fator_complexidade.value || 1;
-        const cargaHoraria = plano?.carga_horaria || this.calendar.expediente(unidade);
+        const cargaHoraria = plano?.carga_horaria || this.calendar.expedienteMedio(unidade);
         this.assignDelta(null);
         if(source == "COMPLEXIDADE") {
           if(atividade) this.setControlPreventChange("tempo_planejado", atividade.dias_planejado * cargaHoraria * fator || 0);

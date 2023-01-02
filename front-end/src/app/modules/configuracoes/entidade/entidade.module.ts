@@ -7,6 +7,7 @@ import { EntidadeListComponent } from './entidade-list/entidade-list.component';
 import { ComponentsModule } from 'src/app/components/components.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { EntidadeConfComponent } from './entidade-conf/entidade-conf.component';
+import { UteisModule } from '../../uteis/uteis.module';
 
 
 @NgModule({
@@ -19,6 +20,7 @@ import { EntidadeConfComponent } from './entidade-conf/entidade-conf.component';
     CommonModule,
     ComponentsModule,
     ReactiveFormsModule,
+    UteisModule,
     EntidadeRoutingModule
   ]
 })

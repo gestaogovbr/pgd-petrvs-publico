@@ -334,13 +334,13 @@ export class LookupService {
   ];
 
   public DIA_SEMANA: LookupItem[] = [
-    { key: 1, value: "Domingo" },
-    { key: 2, value: "Segunda-feira" },
-    { key: 3, value: "Terça-feira" },
-    { key: 4, value: "Quarta-feira" },
-    { key: 5, value: "Quinta-feira" },
-    { key: 6, value: "Sexta-feira" },
-    { key: 7, value: "Sábado" }
+    { key: 0, code: "domingo", value: "Domingo" },
+    { key: 1, code: "segunda", value: "Segunda-feira" },
+    { key: 2, code: "terca", value: "Terça-feira" },
+    { key: 3, code: "quarta", value: "Quarta-feira" },
+    { key: 4, code: "quinta", value: "Quinta-feira" },
+    { key: 5, code: "sexta", value: "Sexta-feira" },
+    { key: 6, code: "sabado", value: "Sábado" }
   ];
 
   public DIA_MES: LookupItem[] = [

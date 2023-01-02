@@ -43,8 +43,9 @@
             <input-switch label="Usar do escritório:" labelPosition="right" icon="bi bi-check2" [size]="3" controlName="usar_escritorio" labelInfo="Aloca recursos no projeto"></input-switch>
             <input-search [size]="9" #escritorio hostClass="p-0" disabled controlName="escritorio_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
         </div>
-        <calendar-expediente></calendar-expediente>
+        <calendar-expediente #expediente></calendar-expediente>
     </separator>
+    <div>{{JSON.stringify(expediente?.expediente)}}</div>
 </editable-form>
 
 <!--
