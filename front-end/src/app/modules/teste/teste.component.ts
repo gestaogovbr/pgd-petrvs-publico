@@ -45,7 +45,6 @@ export class TesteComponent implements OnInit {
   public avaliadas: CardItem[] = [
     {id: "a1", title: "avaliada 1", subTitle: "avaliado 1", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens"}
   ];
-
   public calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
     events: [
@@ -53,7 +52,6 @@ export class TesteComponent implements OnInit {
       { title: 'event 2', start: moment().add(1, 'days').toDate(), end: moment().add(5, 'days').toDate() }
     ]
   };
-
   public buttons: ToolbarButton[] = [
     {
       label: "Calcular data fim",

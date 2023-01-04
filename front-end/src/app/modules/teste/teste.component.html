@@ -7,8 +7,10 @@
 <div class="row">
     <input-select [size]="2" label="Forma" controlName="forma" [control]="form!.controls.forma" [items]="lookup.DIA_HORA_CORRIDOS_OU_UTEIS"></input-select>
     <input-number number label="Carga" [size]="1" [control]="form!.controls.carga_horaria"></input-number>
-    <input-datetime [date]="isHoras() ? undefined : 'true'" [size]="3" label="Início" controlName="inicio" [control]="form!.controls.inicio"></input-datetime>
-    <input-datetime [date]="isHoras() ? undefined : 'true'" [size]="3" label="Fim" controlName="fim" [control]="form!.controls.fim"></input-datetime>
+    <input-datetime datetime [size]="3" label="Início" controlName="inicio" [control]="form!.controls.inicio"></input-datetime>
+    <!-- <input-datetime [date]="isHoras() ? undefined : 'true'" [size]="3" label="Início" controlName="inicio" [control]="form!.controls.inicio"></input-datetime> -->
+    <input-datetime datetime [size]="3" label="Fim" controlName="fim" [control]="form!.controls.fim"></input-datetime>
+    <!-- <input-datetime [date]="isHoras() ? undefined : 'true'" [size]="3" label="Fim" controlName="fim" [control]="form!.controls.fim"></input-datetime> -->
     <input-timer onlyHours label="Tempo" [size]="3" icon="bi bi-clock" controlName="tempo" [control]="form!.controls.tempo"></input-timer>
 </div>
 <div class="row">

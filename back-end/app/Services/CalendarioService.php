@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Unidade;
 use App\Models\Feriado;
 use App\Services\ServiceBase;
+use Illuminate\Support\Facades\Auth;
 use DateTime;
 use \Moment\Moment;
 
@@ -12,6 +13,37 @@ class Interval
 {
  public $start;
  public $end;
+}
+
+class Turno
+{
+
+}
+
+class Expediente 
+{
+    public $domingo;
+    public $segunda = [];
+    public $terca = [];
+    public $quarta = [];
+    public $quinta = [];
+    public $sexta = [];
+    public $sabado = [];
+    public $especial = [];
+
+    function __construct($value = null) {
+        if($value) {
+            $valor = (array) $value;
+            if($valor['domingo']) $this->domingo = $valor['domingo']; 
+            if($valor['segunda']) $this->segunda = $valor['segunda']; 
+            if($valor['terca']) $this->terca = $valor['terca']; 
+            if($valor['quarta']) $this->quarta = $valor['quarta']; 
+            if($valor['quinta']) $this->quinta = $valor['quinta']; 
+            if($valor['sexta']) $this->sexta = $valor['sexta']; 
+            if($valor['sabado']) $this->sabado = $valor['sabado']; 
+            if($valor['especial']) $this->especial = $valor['especial']; 
+        }
+    }
 }
 
 class Efemerides
@@ -276,8 +308,31 @@ class CalendarioService
         return static::calculaDataTempo($inicio, $fimOuTempo, $cargaHoraria, $unidade, $tipo, $pausas, $afastamentos);
     }
 
+    public function calculaDataTempoUnidade(DateTime $inicio, $fimOuTempo, int $cargaHoraria, Unidade $unidade, string $tipo, array $pausas = null, array $afastamentos = null) {
+        $feriados = $this->feriadosCadastrados($unidade->id) || [];
+        $forma = $tipo == 'DISTRIBUICAO' ? $unidade->distribuicao_forma_contagem_prazos : $unidade->entrega_forma_contagem_prazos;
+        $expediente = $this->nestedExpediente($unidade);
+        return $this->calculaDataTempo($inicio, $fimOuTempo, $forma, $cargaHoraria, $expediente, $feriados, $pausas, $afastamentos);
+    }
+
+    public function nestedExpediente(Unidade $unidade): Expediente {
+        $expediente = $unidade->expediente || $unidade->entidade?->expediente;
+        $expediente = $expediente || ($unidade->entidade_id == Auth::user()->unidade?->entidade_id ? Auth::user()->unidade->entidade->expediente : new Expediente());
+        return $expediente;
+    }
+
+/*     public calculaDataTempo(inicio: Date, fimOuTempo: Date | number, forma: FormaContagem, cargaHoraria?: number, expediente?: Expediente, feriados?: FeriadoList, pausas?: DemandaPausa[], afastamentos?: Afastamento[]): Efemerides {
+        const useCorridos = forma == "DIAS_CORRIDOS" || forma == "HORAS_CORRIDAS";
+        const useDias = forma == "DIAS_CORRIDOS" || forma == "DIAS_UTEIS";
+        const useTempo = typeof fimOuTempo == "number"; 
+        const uDiasInicio = this.util.daystamp(inicio); 
+        const uDiasFim = useTempo ? uDiasInicio : this.util.daystamp(fimOuTempo as Date); /* Dia fim (usado somente se !useTempo) 
+        /* Verifica quando o expediente é obrigatório, e quando não for então expediente será undefined  
+        if (!expediente && !useCorridos) throw new Error("Expediente não informado");
+        expediente = useCorridos ? undefined : expediente; */
+
     /** CONSTRUINDO A NOVA FUNÇÃO EM PHP */
-    public static function calculaDataTempo(DateTime $inicio, $fimOuTempo, int $cargaHoraria, Unidade $unidade, string $tipo, array $pausas = null, array $afastamentos = null): Efemerides {
+    public static function calculaDataTempo(DateTime $inicio, $fimOuTempo, string $forma, int $cargaHoraria = null, $expediente, array $feriados, array $pausas = null, array $afastamentos = null): Efemerides {
         $formaDistribuicao = $unidade->distribuicao_forma_contagem_prazos;
         $formaEntrega = $unidade->entrega_forma_contagem_prazos;
         $forma = $tipo == "DISTRIBUICAO" ? $formaDistribuicao : $formaEntrega;

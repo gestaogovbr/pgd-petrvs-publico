@@ -28,9 +28,10 @@ export type Efemerides = {
   cargaHoraria: number, /* Cargo horária para os cálculos (Será utilizado inclusive para o cálculo em dias) */
   expediente: Expediente, /* Expediente da unidade/entidade */
   afastamentos: Afastamento[], /* Afastamentos válidos no período */
-  pausas: DemandaPausa[] /* Pausas */
+  pausas: DemandaPausa[], /* Pausas */
   diaNaoUtil: FeriadoList, /* Dias sem expediente (ex.: Fins de semana) */
-  feriados: FeriadoList /* Feriados cadastrados e religiosos no período */
+  feriados: FeriadoList, /* Feriados cadastrados e religiosos no período */
+  diasDetalhes: ExpedienteDia[]
 }
 
 export type ExpedienteDia = {
@@ -286,7 +287,8 @@ export class CalendarService {
             const tInicio = this.util.setStrTime(dDiaAtual, turno.inicio).getTime();
             const tFim = this.util.setStrTime(dDiaAtual, turno.fim).getTime();
             if (tLimiteInicio < tFim && tInicio < tLimiteFim) {
-              if (tFimTurno && tFimTurno < tInicio) dia.intervalo.push({ start: tInicio, end: tFim });
+//***              if (tFimTurno && tFimTurno < tInicio) dia.intervalo.push({ start: tInicio, end: tFim });    // LINHA ERRADA
+              if (tFimTurno && tFimTurno < tInicio) dia.intervalo.push({ start: tFimTurno, end: tInicio }); // LINHA CORRETA
               dia.tInicio = Math.max(tLimiteInicio, Math.min(dia.tInicio, tInicio));
               dia.tFim = Math.min(tLimiteFim, Math.max(dia.tFim, tFim));
               tFimTurno = tFimTurno ? Math.max(tFimTurno, tFim) : tFim;
@@ -295,7 +297,7 @@ export class CalendarService {
           dia.hExpediente = this.util.getHoursBetween(dia.tInicio, dia.tFim);
           /* Adiciona os expedientes especiais SEM expediente e faz a união com os intervalos já existentes do expediente */
           especial.filter(x => !!x.sem).forEach(x => dia.intervalo.push({ start: this.util.setStrTime(dDiaAtual, x.inicio).getTime(), end: this.util.setStrTime(dDiaAtual, x.fim).getTime() }));
-          dia.intervalo = this.util.union(dia.intervalo);
+          dia.intervalo = this.util.newUnion(dia.intervalo);
           /* Filtra e ajusta os intervalos para caberem entre inicio e fim */
           dia.intervalo = dia.intervalo.filter(x => x.start <= dia.tFim && x.end >= dia.tInicio).map(x => Object.assign(x, { start: Math.max(x.start as number, dia.tInicio), end: Math.min(x.end as number, dia.tFim) }));
           /* Calcula as horas dos intervalos (os intervalos já estão unificados e ajustados para dentro do expediente) 
@@ -323,7 +325,8 @@ export class CalendarService {
       afastamentos: [],
       pausas: [],
       feriados: {},
-      diaNaoUtil: {}
+      diaNaoUtil: {},
+      diasDetalhes: []
     };
     cargaHoraria = result.cargaHoraria; /* Garante que se a carga horária vier zerado, será considerado 24hrs */
     while (useTempo ? this.util.round(hTempo, 2) > 0 : this.util.daystamp(dDiaAtual) <= uDiasFim) {
@@ -344,7 +347,7 @@ export class CalendarService {
         if (feriadoReligioso) result.feriados[strDiaAtual] = feriadoReligioso; /* Se feriado religioso, adiciona ao resultado */
       }
       /* Calcula se é dia útil ou não */
-      const naoUteis = useCorridos ? [] : this.util.union([...afastamentos, ...pausas, ...diaAtual.intervalo]) as TimeInterval[];
+      const naoUteis = useCorridos ? [] : this.util.newUnion([...afastamentos, ...pausas, ...diaAtual.intervalo]) as TimeInterval[];
       const hNaoUteis = naoUteis.reduce((a, v) => a + this.util.getHoursBetween(v.start, v.end), 0);
       const diaUtil = useCorridos || (!feriadoCadastrado && !feriadoReligioso && diaAtual.hExpediente > hNaoUteis);
       //result.horasNaoUteis += hNaoUteis;
@@ -362,8 +365,9 @@ export class CalendarService {
           result.horasNaoUteis += cargaHoraria; /* Se o dia não for útil considera o tempo do dia inteiro */
         }
       } else { /* calcula em horas */
-        if (diaUtil) {
-          let hSaldo = Math.min(diaAtual.hExpediente - hNaoUteis, cargaHoraria, useTempo ? hTempo : 24);
+        if (diaUtil) {             
+//***          let hSaldo = Math.min(diaAtual.hExpediente - hNaoUteis, cargaHoraria, useTempo ? hTempo : 24);
+          let hSaldo = Math.min(diaAtual.hExpediente - hNaoUteis, useCorridos ? 24 : cargaHoraria, useTempo ? hTempo : 24);
           if (hSaldo) {
             if (useTempo) { /* calcula a data fim */
               hTempo -= hSaldo;
@@ -384,6 +388,11 @@ export class CalendarService {
           result.horasNaoUteis += Math.min(diaAtual.hExpediente, cargaHoraria);
         }
       }
+      if(diaUtil) {
+        result.diasDetalhes.push(diaAtual);
+        result.diasDetalhes[result.diasDetalhes.length-1].intervalo = naoUteis;
+        //result.diasDetalhes.slice(-1)[0].intervalo = naoUteis;
+      }
       dDiaAtual.setDate(dDiaAtual.getDate() + 1);
       result.dias_corridos++;
     }
@@ -391,3 +400,46 @@ export class CalendarService {
   }
 
 }
+/*
+DIAS_CORRIDOS:
+   * CargaHoraria = 24
+   Calc. Horas: 
+      QtdDias = (DataFim - DataIni) (+1)
+      horas = CargaHoraria * QtdDias
+   Calc. DataFIm:
+      QtdDias = Ceil(QtdHoras / CargaHoraria) (+1);
+      DataFim = DataInicio + QtdDias
+
+DIAS_UTEIS:
+   * CargaHoraria = 24
+   Calc. Horas: 
+      QtdDiasUteis = SOMA(DiaUtil = TemExpedienteNoDia && NaoTemAfastamento && NaoTemPausa)
+      horas = CargaHoraria * QtdDiasUteis
+   Calc. Data: 
+      QtdDias = Ceil(QtdHoras / CargaHoraria) (+1);
+      diaAtual = DataInicio;
+      while(QtdDias > 0) 
+         if(TemExpedienteNoDia && NaoTemAfastamento && NaoTemPausa) QtdDias--;
+         diaAtual+1;
+      DataTim = diaAtual; 
+
+HORAS_CORRIDAS:
+    Calc. Horas:
+        Horas = DataFim - DataInicio;
+    Calc. DataFim:
+        DataFim = DataInicio + QtdHoras;
+        Obs.: o cálculo está considerando carga horária, quando deveria ser sempre 24h.
+
+HORAS_UTEIS:
+    Calc Horas: 
+        while(dataInicio ate DateFIm)
+          horas += Min((Expediente) - (Afastamento) - (PausasDia), CargaHoraria)
+    Calc DataFim
+        SaldoQtdHoras = qtdHoras;
+        Dia = DataInicio
+        while(SaldoQtdHoras)
+          hrsDia = Min((Expediente) - (Afastamento) - (PausasDia), CargaHoraria, SaldoQtdHoras);
+          SaldoQtdHoras -= hrsDia
+          Dia++
+        DataFim = Dia + (Expediente.Fim - hrsDia);
+*/

@@ -1,10 +1,11 @@
+import { fn } from '@angular/compiler/src/output/output_ast';
 import { Component, Input, OnInit } from '@angular/core';
 import { DaoBaseService } from 'src/app/dao/dao-base.service';
 import { Turno } from 'src/app/models/expediente.model';
 import { LookupService } from 'src/app/services/lookup.service';
 import { isNoSubstitutionTemplateLiteral } from 'typescript';
 import { Efemerides } from '../../../services/calendar.service';
-import { UtilService } from '../../../services/util.service';
+import { Interval, UtilService } from '../../../services/util.service';
 
 @Component({
   selector: 'calendar-efemerides',
@@ -51,6 +52,14 @@ export class CalendarEfemeridesComponent implements OnInit {
 
   public get diasNaoUteis(): [string, string][] {
     return Object.entries(this.efemerides?.diaNaoUtil || {}).map(x => [this.isoToFormatted(x[0]), x[1]]);
+  }
+
+  public data(timestamp: number): Date {
+    return new Date(timestamp);
+  }
+
+  public totalHoras(intervalos: Interval[]): number {
+    return intervalos.reduce((a, v) => a + this.util.getHoursBetween(v.start, v.end), 0);
   }
 
 }

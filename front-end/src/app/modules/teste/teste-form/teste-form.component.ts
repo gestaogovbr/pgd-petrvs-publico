@@ -2,6 +2,7 @@ import { Component, Injector } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { AfastamentoDaoService } from 'src/app/dao/afastamento-dao.service';
 import { TipoMotivoAfastamentoDaoService } from 'src/app/dao/tipo-motivo-afastamento-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
@@ -25,10 +26,11 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
 
   public editableForm?: EditableFormComponent | undefined;
   public calendar: CalendarService;
-  public efemeridesFrontEnd: Efemerides | undefined;
-  public efemeridesBackEnd: Efemerides | undefined;
+  public efemeridesFrontEnd?: Efemerides;
+  public efemeridesBackEnd?: Efemerides;
 
   public usuarioDao: UsuarioDaoService;
+  public usuario?: Usuario;
   public unidadeDao: UnidadeDaoService;
   public demandas_usuario: LookupItem[] = [];
   public tipoMotivoAfastamentoDao: TipoMotivoAfastamentoDaoService;
@@ -36,12 +38,12 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
   public disabled_datetime: boolean = false;
   public disabled_pausas: boolean = false;
   public disabled_afastamentos: boolean = false;
-  public opcoes_fimoutempo: LookupItem[] = [
-    {'key': 0, 'value': 'DateTime'},{'key': 1, 'value': 'Timestamp'}];
+  public opcoes_calculo: LookupItem[] = [
+    {'key': 0, 'value': 'Data-fim'},{'key': 1, 'value': 'Tempo'}];
   public erros: string = '';
   public toolbarButtons: ToolbarButton[] = [
     {
-      label: "Enviar",
+      label: "Comparar calculaDataTempo",
       icon: "bi bi-backspace",
       onClick: () => {
         let error: any = undefined;
@@ -54,9 +56,6 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
         }
         if(this.form!.valid && !error){
           try {
-/*             new Promise<Efemerides>((resolve, reject) => {
-              //
-            }); */
             this.compararFuncoes();
           } catch (error: any) {
             this.erros = error;
@@ -119,31 +118,31 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
         //Retorno esperado da função UNION:    15/01/22---15/02/22     01/03/22---15/04/22     01/05/22---01/06/22   15/06/22---01/07/22
 
         let result: Interval[];
-        result = this.util.union(intervals_i);
+        result = this.util.newUnion(intervals_i);
         console.log('Resultado Esperado: 15/01/22---15/02/22     15/03/22---15/04/22       01/05/22---15/05/22');
         console.log('Resultado Obtido: ', result);
 
-        result = this.util.union(intervals_ii);
+        result = this.util.newUnion(intervals_ii);
         console.log('Resultado Esperado: 15/01/22---01/04/22     01/05/22---15/05/22');
         console.log('Resultado Obtido: ', result);
 
-        result = this.util.union(intervals_iii);
+        result = this.util.newUnion(intervals_iii);
         console.log('Resultado Esperado: 15/01/22---15/05/22');
         console.log('Resultado Obtido: ', result);
 
-        result = this.util.union(intervals_iv);
+        result = this.util.newUnion(intervals_iv);
         console.log('Resultado Esperado: 15/01/22---01/03/22     15/03/22---15/05/22');
         console.log('Resultado Obtido: ', result);
 
-        result = this.util.union(intervals_v);
+        result = this.util.newUnion(intervals_v);
         console.log('Resultado Esperado: 15/01/22---15/05/22');
         console.log('Resultado Obtido: ', result);
 
-        result = this.util.union(intervals_vi);
+        result = this.util.newUnion(intervals_vi);
         console.log('Resultado Esperado: 15/01/22---15/05/22');
         console.log('Resultado Obtido: ', result);
 
-        result = this.util.union(intervals_vii);
+        result = this.util.newUnion(intervals_vii);
         console.log('Resultado Esperado: 15/01/22---15/02/22     01/03/22---15/04/22     01/05/22---01/06/22   15/06/22---01/07/22');
         console.log('Resultado Obtido: ', result);
       }
@@ -158,9 +157,9 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
     this.tipoMotivoAfastamentoDao = injector.get<TipoMotivoAfastamentoDaoService>(TipoMotivoAfastamentoDaoService);
     this.form = this.fh.FormBuilder({
       inicio: {default: new Date()},
-      tipo_fimoutempo: {default: 0},
-      datetime_fimoutempo: {default: new Date()},
-      timestamp_fimoutempo: {default: new Date().getTime()}, 
+      tipo_calculo: {default: 0},
+      datafim_fimoutempo: {default: new Date()},
+      tempo_fimoutempo: {default: 0}, 
       carga_horaria: {default: ""},
       unidade_id: {default: ""},
       tipo: {default: "DISTRIBUICAO"},
@@ -172,15 +171,11 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
       incluir_pausas: { default: false },
       incluir_afastamentos: { default: false }
     }, this.cdRef, this.validate);
-    this.join = ['demandas'];
+    this.join = ['demandas', 'afastamentos'];
   }
 
   public loadData(entity: Usuario, form: FormGroup): void | Promise<void> {
     throw new Error('Method not implemented.');
-  }
-
-  ngAfterViewChecked(){
-    this.cdRef.detectChanges();
   }
 
   public initializeData(form: FormGroup): void | Promise<void> {
@@ -206,20 +201,16 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
   }
 
   public formValidation = (form?: FormGroup) => {
-    if(!this.util.isDataValid(this.form.controls.datetime_fimoutempo.value) && this.form!.controls.tipo_fimoutempo.value == 0) {
-      return "O campo Início - DateTime precisa ser válido!";
+    if(!this.util.isDataValid(this.form.controls.datafim_fimoutempo.value) && this.form!.controls.tipo_calculo.value == 1) {
+      return "Para calcular o tempo, o campo DATA-FIM precisa ser válido!";
     };
-    if(!this.form.controls.timestamp_fimoutempo.value && this.form!.controls.tipo_fimoutempo.value == 1) {
-      return "O campo Início - Timestamp não pode ser nulo!";
+    if(!this.form.controls.tempo_fimoutempo.value && this.form!.controls.tipo_calculo.value == 0) {
+      return "Para calcular a data-fim, o campo TEMPO não pode ser nulo!";
     };
     if((this.form.controls.incluir_afastamentos.value || this.form.controls.incluir_pausas.value) && !this.form.controls.usuario_id.value?.length){
       return "É necessário escolher um Usuário!"
     };
     return undefined;
-  }
-
-  public onDatetimeChange(evento: Event){
-    this.form!.controls.timestamp_fimoutempo.setValue(this.form!.controls.datetime_fimoutempo.value.getTime());
   }
 
   public onPausasChange(evento: Event){
@@ -230,13 +221,14 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
     this.disabled_afastamentos = !this.form.controls.incluir_afastamentos.value;
   }
 
-  public onFimOuTempoChange(evento: Event){
-    this.disabled_datetime = this.form.controls.tipo_fimoutempo.value == 0;
+  public onTipoCalculoChange(evento: Event){
+    this.disabled_datetime = this.form.controls.tipo_calculo.value == 0;
   }
 
   public async onUsuarioSelect(){
     const entity = undefined;
     this.dao!.getById(this.form.controls.usuario_id.value, this.join).then(usuario => {
+      this.usuario = usuario!;
       usuario?.demandas?.forEach(demanda => {
         this.demandas_usuario.push({
           key: demanda.id,
@@ -248,19 +240,18 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
   }
 
   public async compararFuncoes() {
+    let calculo: number = this.form.controls.tipo_calculo.value;
     let inicio: Date = this.form.controls.inicio.value;
     let inicio_dao = inicio.toUTCString();
-    //let fimOuTempo: Date | number = this.disabled_datetime ? this.form.controls.timestamp_fimoutempo.value : this.form.controls.datetime_fimoutempo.value;
-    let fimOuTempo = this.form.controls.timestamp_fimoutempo.value;
-    let fim: Date = this.form.controls.datetime_fimoutempo.value;
-    let tempo: number = this.form.controls.timestamp_fimoutempo.value;
+    let fim: Date = this.form.controls.datafim_fimoutempo.value;
+    let tempo: number = this.form.controls.tempo_fimoutempo.value;
     let cargaHoraria: number = this.form.controls.carga_horaria.value;
     let unidade: Unidade | null = await this.unidadeDao.getById(this.form.controls.unidade_id.value);
     let tipo: TipoContagem = this.form.controls.tipo.value;
     let pausas: DemandaPausa[] | null = [];
-    let afastamentos: Afastamento[] | null = [];
-    this.efemeridesFrontEnd = this.calendar.calculaDataTempo(inicio, fimOuTempo, cargaHoraria, unidade!, tipo, pausas, afastamentos);
-    this.dao!.calculaDataTempo(inicio_dao, fimOuTempo.constructor.name == 'Date' ? fim.toUTCString() : tempo, cargaHoraria, unidade!.id, tipo, pausas, afastamentos).then(response => {
+    let afastamentos: Afastamento[] | undefined = this.form.controls.incluir_afastamentos.value ? this.usuario?.afastamentos : [];
+    this.efemeridesFrontEnd = this.calendar.calculaDataTempoUnidade(inicio, calculo ? fim : tempo, cargaHoraria, unidade!, tipo, pausas, afastamentos);
+    this.dao!.calculaDataTempo(inicio_dao, calculo ? tempo : fim.toUTCString(), cargaHoraria, unidade!.id, tipo, pausas, afastamentos).then(response => {
       this.efemeridesBackEnd = response;
     });
   }
