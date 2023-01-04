@@ -85,9 +85,9 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
     });
   }
 
-  public calculaDataTempo(inicio: string, fimOuTempo: string | number, cargaHoraria: number, unidade_id: string, tipo: TipoContagem, pausas?: DemandaPausa[], afastamentos?: Afastamento[]): Promise<Efemerides | undefined>{
+  public calculaDataTempoUnidade(inicio: string, fimOuTempo: string | number, cargaHoraria: number, unidade_id: string, tipo: TipoContagem, pausas?: DemandaPausa[], afastamentos?: Afastamento[]): Promise<Efemerides | undefined>{
     return new Promise<Efemerides | undefined>((resolve,reject) => {
-      this.server.post('api/Teste/calculaDataTempo', {inicio: inicio, fimOuTempo: fimOuTempo, cargaHoraria: cargaHoraria, unidade_id: unidade_id, tipo: tipo, pausas: pausas, afastamentos: afastamentos})
+      this.server.post('api/Teste/calculaDataTempoUnidade', {inicio: inicio, fimOuTempo: fimOuTempo, cargaHoraria: cargaHoraria, unidade_id: unidade_id, tipo: tipo, pausas: pausas, afastamentos: afastamentos})
       .subscribe(response => {                        
         resolve(response.data as Efemerides);
       }, error => {

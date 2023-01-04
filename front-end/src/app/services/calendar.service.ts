@@ -287,8 +287,7 @@ export class CalendarService {
             const tInicio = this.util.setStrTime(dDiaAtual, turno.inicio).getTime();
             const tFim = this.util.setStrTime(dDiaAtual, turno.fim).getTime();
             if (tLimiteInicio < tFim && tInicio < tLimiteFim) {
-//***              if (tFimTurno && tFimTurno < tInicio) dia.intervalo.push({ start: tInicio, end: tFim });    // LINHA ERRADA
-              if (tFimTurno && tFimTurno < tInicio) dia.intervalo.push({ start: tFimTurno, end: tInicio }); // LINHA CORRETA
+              if (tFimTurno && tFimTurno < tInicio) dia.intervalo.push({ start: tFimTurno, end: tInicio });
               dia.tInicio = Math.max(tLimiteInicio, Math.min(dia.tInicio, tInicio));
               dia.tFim = Math.min(tLimiteFim, Math.max(dia.tFim, tFim));
               tFimTurno = tFimTurno ? Math.max(tFimTurno, tFim) : tFim;
@@ -297,7 +296,7 @@ export class CalendarService {
           dia.hExpediente = this.util.getHoursBetween(dia.tInicio, dia.tFim);
           /* Adiciona os expedientes especiais SEM expediente e faz a união com os intervalos já existentes do expediente */
           especial.filter(x => !!x.sem).forEach(x => dia.intervalo.push({ start: this.util.setStrTime(dDiaAtual, x.inicio).getTime(), end: this.util.setStrTime(dDiaAtual, x.fim).getTime() }));
-          dia.intervalo = this.util.newUnion(dia.intervalo);
+          dia.intervalo = this.util.union(dia.intervalo);
           /* Filtra e ajusta os intervalos para caberem entre inicio e fim */
           dia.intervalo = dia.intervalo.filter(x => x.start <= dia.tFim && x.end >= dia.tInicio).map(x => Object.assign(x, { start: Math.max(x.start as number, dia.tInicio), end: Math.min(x.end as number, dia.tFim) }));
           /* Calcula as horas dos intervalos (os intervalos já estão unificados e ajustados para dentro do expediente) 
@@ -328,7 +327,7 @@ export class CalendarService {
       diaNaoUtil: {},
       diasDetalhes: []
     };
-    cargaHoraria = result.cargaHoraria; /* Garante que se a carga horária vier zerado, será considerado 24hrs */
+    cargaHoraria = forma == "HORAS_CORRIDAS" ? 24 : result.cargaHoraria; /* Garante que se a carga horária vier zerado, será considerado 24hrs */
     while (useTempo ? this.util.round(hTempo, 2) > 0 : this.util.daystamp(dDiaAtual) <= uDiasFim) {
       const firstDay = this.util.daystamp(dDiaAtual) == uDiasInicio;
       const lastDay = this.util.daystamp(dDiaAtual) == uDiasFim;
@@ -347,7 +346,7 @@ export class CalendarService {
         if (feriadoReligioso) result.feriados[strDiaAtual] = feriadoReligioso; /* Se feriado religioso, adiciona ao resultado */
       }
       /* Calcula se é dia útil ou não */
-      const naoUteis = useCorridos ? [] : this.util.newUnion([...afastamentos, ...pausas, ...diaAtual.intervalo]) as TimeInterval[];
+      const naoUteis = useCorridos ? [] : this.util.union([...afastamentos, ...pausas, ...diaAtual.intervalo]) as TimeInterval[];
       const hNaoUteis = naoUteis.reduce((a, v) => a + this.util.getHoursBetween(v.start, v.end), 0);
       const diaUtil = useCorridos || (!feriadoCadastrado && !feriadoReligioso && diaAtual.hExpediente > hNaoUteis);
       //result.horasNaoUteis += hNaoUteis;
@@ -366,8 +365,7 @@ export class CalendarService {
         }
       } else { /* calcula em horas */
         if (diaUtil) {             
-//***          let hSaldo = Math.min(diaAtual.hExpediente - hNaoUteis, cargaHoraria, useTempo ? hTempo : 24);
-          let hSaldo = Math.min(diaAtual.hExpediente - hNaoUteis, useCorridos ? 24 : cargaHoraria, useTempo ? hTempo : 24);
+          let hSaldo = Math.min(diaAtual.hExpediente - hNaoUteis, cargaHoraria, useTempo ? hTempo : 24);
           if (hSaldo) {
             if (useTempo) { /* calcula a data fim */
               hTempo -= hSaldo;
@@ -391,7 +389,6 @@ export class CalendarService {
       if(diaUtil) {
         result.diasDetalhes.push(diaAtual);
         result.diasDetalhes[result.diasDetalhes.length-1].intervalo = naoUteis;
-        //result.diasDetalhes.slice(-1)[0].intervalo = naoUteis;
       }
       dDiaAtual.setDate(dDiaAtual.getDate() + 1);
       result.dias_corridos++;

@@ -60,7 +60,7 @@ class UsuarioController extends ControllerBase
         }
     }
 
-    public function calculaDataTempo(Request $request){
+    public function calculaDataTempoUnidade(Request $request){
         try {
             $data = $request->validate([
                 'inicio' => ['required'],

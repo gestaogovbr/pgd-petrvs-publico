@@ -86,9 +86,10 @@
 <span *ngFor="let feriado of feriados">
     {{feriado[0]}} - {{feriado[1]}}<br>
 </span>
-<separator [title]="'Detalhes dia-a-dia (' + efemerides?.diasDetalhes?.length + '):'" collapse transparent>
+<separator [bold]="true" [title]="'Detalhes dia-a-dia (' + efemerides?.diasDetalhes?.length + '):'" collapse transparent>
     <span *ngFor="let dia of efemerides?.diasDetalhes">
-        {{dia.diaSemana}} - Início: {{util.getDateTimeFormatted(data(dia.tInicio))}} - Fim: {{util.getDateTimeFormatted(data(dia.tFim))}} - Total: {{dia.hExpediente}}h<br>
-        Intervalos: Qde({{dia.intervalo.length}}) - Total de horas({{totalHoras(dia.intervalo)}}h)<br><br>
+        <b>{{dia.diaSemana}}</b> - Início: {{util.getDateTimeFormatted(data(dia.tInicio))}} - Fim: {{util.getDateTimeFormatted(data(dia.tFim))}} - Total: {{dia.hExpediente}}h<br>
+        Intervalos: Qde({{dia.intervalo.length}}) - Total de horas({{totalHoras(dia.intervalo)}}h)<br>
+        Qde. horas contabilizadas: {{dia.hExpediente-totalHoras(dia.intervalo)}}<br><br>
     </span>
 </separator>

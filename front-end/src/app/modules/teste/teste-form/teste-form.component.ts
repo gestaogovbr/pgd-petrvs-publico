@@ -118,31 +118,31 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
         //Retorno esperado da função UNION:    15/01/22---15/02/22     01/03/22---15/04/22     01/05/22---01/06/22   15/06/22---01/07/22
 
         let result: Interval[];
-        result = this.util.newUnion(intervals_i);
+        result = this.util.union(intervals_i);
         console.log('Resultado Esperado: 15/01/22---15/02/22     15/03/22---15/04/22       01/05/22---15/05/22');
         console.log('Resultado Obtido: ', result);
 
-        result = this.util.newUnion(intervals_ii);
+        result = this.util.union(intervals_ii);
         console.log('Resultado Esperado: 15/01/22---01/04/22     01/05/22---15/05/22');
         console.log('Resultado Obtido: ', result);
 
-        result = this.util.newUnion(intervals_iii);
+        result = this.util.union(intervals_iii);
         console.log('Resultado Esperado: 15/01/22---15/05/22');
         console.log('Resultado Obtido: ', result);
 
-        result = this.util.newUnion(intervals_iv);
+        result = this.util.union(intervals_iv);
         console.log('Resultado Esperado: 15/01/22---01/03/22     15/03/22---15/05/22');
         console.log('Resultado Obtido: ', result);
 
-        result = this.util.newUnion(intervals_v);
+        result = this.util.union(intervals_v);
         console.log('Resultado Esperado: 15/01/22---15/05/22');
         console.log('Resultado Obtido: ', result);
 
-        result = this.util.newUnion(intervals_vi);
+        result = this.util.union(intervals_vi);
         console.log('Resultado Esperado: 15/01/22---15/05/22');
         console.log('Resultado Obtido: ', result);
 
-        result = this.util.newUnion(intervals_vii);
+        result = this.util.union(intervals_vii);
         console.log('Resultado Esperado: 15/01/22---15/02/22     01/03/22---15/04/22     01/05/22---01/06/22   15/06/22---01/07/22');
         console.log('Resultado Obtido: ', result);
       }
@@ -246,12 +246,12 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
     let fim: Date = this.form.controls.datafim_fimoutempo.value;
     let tempo: number = this.form.controls.tempo_fimoutempo.value;
     let cargaHoraria: number = this.form.controls.carga_horaria.value;
-    let unidade: Unidade | null = await this.unidadeDao.getById(this.form.controls.unidade_id.value);
+    let unidade: Unidade | null = await this.unidadeDao.getById(this.form.controls.unidade_id.value, ['entidade']);
     let tipo: TipoContagem = this.form.controls.tipo.value;
     let pausas: DemandaPausa[] | null = [];
     let afastamentos: Afastamento[] | undefined = this.form.controls.incluir_afastamentos.value ? this.usuario?.afastamentos : [];
     this.efemeridesFrontEnd = this.calendar.calculaDataTempoUnidade(inicio, calculo ? fim : tempo, cargaHoraria, unidade!, tipo, pausas, afastamentos);
-    this.dao!.calculaDataTempo(inicio_dao, calculo ? tempo : fim.toUTCString(), cargaHoraria, unidade!.id, tipo, pausas, afastamentos).then(response => {
+    this.dao!.calculaDataTempoUnidade(inicio_dao, calculo ? fim.toUTCString() : tempo, cargaHoraria, unidade!.id, tipo, pausas, afastamentos).then(response => {
       this.efemeridesBackEnd = response;
     });
   }

@@ -17,7 +17,10 @@ class Interval
 
 class Turno
 {
-
+    public string $inicio;
+    public string $fim;
+    public string $data;
+    public string $sem;
 }
 
 class Expediente 
@@ -32,7 +35,7 @@ class Expediente
     public $especial = [];
 
     function __construct($value = null) {
-        if($value) {
+/*         if($value) {
             $valor = (array) $value;
             if($valor['domingo']) $this->domingo = $valor['domingo']; 
             if($valor['segunda']) $this->segunda = $valor['segunda']; 
@@ -42,7 +45,9 @@ class Expediente
             if($valor['sexta']) $this->sexta = $valor['sexta']; 
             if($valor['sabado']) $this->sabado = $valor['sabado']; 
             if($valor['especial']) $this->especial = $valor['especial']; 
-        }
+        } */
+        $value = (array) $value;
+        if($value) foreach(array_keys($value) as $key) if($value[$key]) $this->$key = $value[$key];
     }
 }
 
@@ -66,7 +71,12 @@ class Efemerides
     public $feriados;                               
     public $horario_trabalho_inicio;                
     public $horario_trabalho_fim;                   
-    public $horario_trabalho_intervalo;             
+    public $horario_trabalho_intervalo; 
+    
+    function __construct($value = null) {
+        $value = (array) $value;
+        if($value) foreach(array_keys($value) as $key) if($value[$key]) $this->$key = $value[$key];
+    }
 }
 
 class CalendarioService
@@ -299,25 +309,25 @@ class CalendarioService
 
     public static function preparaParametros(array $data): Efemerides {
         $inicio = UtilService::asDateTime($data['inicio']);
-        $fimOuTempo = UtilService::onlyNumbers($data['fimOuTempo']) == $data['fimOuTempo'] ? intval($data['fimOuTempo']) : UtilService::asDateTime($data['fimOuTempo']) ;
+        $fimOuTempo = in_array(gettype($data['fimOuTempo']),["integer","double"]) ? $data['fimOuTempo'] : UtilService::asDateTime($data['fimOuTempo']) ;
         $cargaHoraria = intval($data['cargaHoraria']);
         $unidade = Unidade::find($data['unidade_id']);
         $tipo = $data['tipo'];
         $pausas = $data['pausas'];
         $afastamentos = $data['afastamentos'];
-        return static::calculaDataTempo($inicio, $fimOuTempo, $cargaHoraria, $unidade, $tipo, $pausas, $afastamentos);
+        return static::calculaDataTempoUnidade($inicio, $fimOuTempo, $cargaHoraria, $unidade, $tipo, $pausas, $afastamentos);
     }
 
-    public function calculaDataTempoUnidade(DateTime $inicio, $fimOuTempo, int $cargaHoraria, Unidade $unidade, string $tipo, array $pausas = null, array $afastamentos = null) {
-        $feriados = $this->feriadosCadastrados($unidade->id) || [];
+    public static function calculaDataTempoUnidade(DateTime $inicio, $fimOuTempo, int $cargaHoraria, Unidade $unidade, string $tipo, array $pausas = null, array $afastamentos = null) {
+        $feriados = static::feriadosCadastrados($unidade->id) || [];
         $forma = $tipo == 'DISTRIBUICAO' ? $unidade->distribuicao_forma_contagem_prazos : $unidade->entrega_forma_contagem_prazos;
-        $expediente = $this->nestedExpediente($unidade);
-        return $this->calculaDataTempo($inicio, $fimOuTempo, $forma, $cargaHoraria, $expediente, $feriados, $pausas, $afastamentos);
+        $expediente = static::nestedExpediente($unidade);
+        return static::calculaDataTempo($inicio, $fimOuTempo, $forma, $cargaHoraria, $expediente, $feriados, $pausas, $afastamentos);
     }
 
-    public function nestedExpediente(Unidade $unidade): Expediente {
-        $expediente = $unidade->expediente || $unidade->entidade?->expediente;
-        $expediente = $expediente || ($unidade->entidade_id == Auth::user()->unidade?->entidade_id ? Auth::user()->unidade->entidade->expediente : new Expediente());
+    public static function nestedExpediente(Unidade $unidade): Expediente {
+        $expediente = $unidade->expediente ? $unidade->expediente : $unidade->entidade->expediente;
+        $expediente = $expediente ? $expediente : ($unidade->entidade_id == Auth::user()->unidade->entidade_id ? Auth::user()->unidade->entidade->expediente : new Expediente());
         return $expediente;
     }
 
@@ -333,9 +343,6 @@ class CalendarioService
 
     /** CONSTRUINDO A NOVA FUNÇÃO EM PHP */
     public static function calculaDataTempo(DateTime $inicio, $fimOuTempo, string $forma, int $cargaHoraria = null, $expediente, array $feriados, array $pausas = null, array $afastamentos = null): Efemerides {
-        $formaDistribuicao = $unidade->distribuicao_forma_contagem_prazos;
-        $formaEntrega = $unidade->entrega_forma_contagem_prazos;
-        $forma = $tipo == "DISTRIBUICAO" ? $formaDistribuicao : $formaEntrega;
         $useCorridos = $forma == "DIAS_CORRIDOS" || $forma == "HORAS_CORRIDAS";
         $useDias = $forma == "DIAS_CORRIDOS" || $forma == "DIAS_UTEIS";
         $useTempo = $fimOuTempo instanceof number; /* Se o parametro fimOuTempo é DataFim ou Horas/Dias */
@@ -345,26 +352,24 @@ class CalendarioService
 
         $hTempo = $useTempo ? UtilService::asTimestamp($fimOuTempo) : 0; /* variável saldo de horas/dias (usado somente se useTempo) */
         $dDiaAtual = UtilService::asDateTime($inicio->getTimestamp()); /* Variável que irá percorrer todas as datas (do inicio ao fim ou a quantidade de horas) */
-        $inicializaEfemerides = function () use($useTempo, $fimOuTempo, $inicio, $tipo, $formaDistribuicao, $formaEntrega, $unidade, $cargaHoraria, $hExpediente): Efemerides {
-            $e = new Efemerides();
-            $e->resultado = $useTempo ? "DATA" : "TEMPO";
-            $e->inicio = UtilService::asDateTime($inicio->getTimestamp());
-            $e->fim = !$useTempo ? UtilService::asDateTime($fimOuTempo->getTimestamp()) : UtilService::asDateTime($inicio->getTimestamp());
-            $e->tempoUtil = $useTempo ? UtilService::asTimestamp($fimOuTempo) : 0;
-            $e->tipo = $tipo;       // "DISTRIBUICAO" | "ENTREGA"
-            $e->formaDistribuicao = $formaDistribuicao;
-            $e->formaEntrega = $formaEntrega;
-            $e->unidade_id = $unidade->id;
-            $e->cargaHoraria = $cargaHoraria || 24;
-            $e->expediente = $hExpediente;
-            $e->finsSemana = new \stdClass();
-            $e->feriados = new \stdClass();
-            $e->horario_trabalho_inicio = $unidade->horario_trabalho_inicio;
-            $e->horario_trabalho_fim = $unidade->horario_trabalho_fim;
-            $e->horario_trabalho_intervalo = $unidade->horario_trabalho_intervalo;
-            return $e;
-        };
-        $result = $inicializaEfemerides();
+        //$inicializaEfemerides = function () use($useTempo, $fimOuTempo, $inicio, $tipo, $formaDistribuicao, $formaEntrega, $unidade, $cargaHoraria, $hExpediente): Efemerides {
+        $result = new Efemerides([
+            'resultado' => $useTempo ? "DATA" : "TEMPO",
+            'inicio' => UtilService::asDateTime($inicio->getTimestamp()),
+            'fim' => !$useTempo ? UtilService::asDateTime($fimOuTempo->getTimestamp()) : UtilService::asDateTime($inicio->getTimestamp()),
+            'tempoUtil' => $useTempo ? UtilService::asTimestamp($fimOuTempo) : 0,
+            'tipo' => $tipo,       // "DISTRIBUICAO" | "ENTREGA,
+            'formaDistribuicao' => $formaDistribuicao,
+            'formaEntrega' => $formaEntrega,
+            'unidade_id' => $unidade->id,
+            'cargaHoraria' => $cargaHoraria || 24,
+            'expediente' => $hExpediente,
+            'finsSemana' => new \stdClass(),
+            'feriados' => new \stdClass(),
+            'horario_trabalho_inicio' => $unidade->horario_trabalho_inicio,
+            'horario_trabalho_fim' => $unidade->horario_trabalho_fim,
+            'horario_trabalho_intervalo' => $unidade->horario_trabalho_intervalo,    
+        ]);
        
         /* Calcula as horas de afastamento */
         $horasAfastamentos = function (int $start, int $end) use ($result, $afastamentos): array {
@@ -404,7 +409,7 @@ class CalendarioService
             return UtilService::asTimeInterval(UtilService::intersectionsList([...$hAfastamentos, ...$hPausas]));
         };
 
-        $cargaHoraria = $result->cargaHoraria; /* Garante que se a carga horária vier zerado, será considerado 24hrs */
+        $cargaHoraria = $forma == "HORAS_CORRIDAS" ? 24 : $result->cargaHoraria; /* Garante que se a carga horária vier zerado, será considerado 24hrs */
         while($useTempo ? UtilService::round($hTempo, 2) > 0 : UtilService::daystamp($dDiaAtual) <= $uDiasFim) {
             $firstDay = UtilService::daystamp($dDiaAtual) == $uDiasInicio;
             $lastDay = UtilService::daystamp($dDiaAtual) == $uDiasFim;

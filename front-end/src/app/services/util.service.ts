@@ -417,24 +417,6 @@ export class UtilService {
   }
 
   public union(intervals: Interval[]) : Interval[] {
-    const isDate = (intervals[0])?.start instanceof Date;
-    let result = intervals.map(x => this.asTimeInterval(x));
-    for(let i = 0; i < result.length; i++) {
-      for(let j = 0; j < result.length; j++) {
-        if(i != j && result[i].end >= result[j].start && result[i].start <= result[j].end) {
-          result[i] = {
-            start: Math.max(result[i].start, result[j].start),
-            end: Math.min(result[i].end, result[j].end)
-          };
-          result.splice(j, 1);
-          j--;
-        }
-      }
-    }
-    return isDate ? result.map(x => this.asDateInterval(x)) : result;
-  }
-
-  public newUnion(intervals: Interval[]) : Interval[] {
     if(intervals.length < 2){
         return intervals;
     } else {
