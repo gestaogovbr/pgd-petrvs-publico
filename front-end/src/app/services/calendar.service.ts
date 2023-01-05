@@ -184,7 +184,7 @@ export class CalendarService {
   }
 
   public horasAtraso(prazo_entrega: Date, unidade: Unidade) {
-    return this.util.round(this.calculaDataTempo(prazo_entrega, this.auth.hora, unidade.entrega_forma_contagem_prazos, 24).tempoUtil, 2);
+    return this.util.round(this.calculaDataTempo(prazo_entrega, this.auth.hora, "HORAS_CORRIDAS", 24).tempoUtil, 2);
   }
 
   public horasAdiantado(data_entrega: Date, prazo_entrega: Date, cargaHoraria: number, unidade: Unidade) {
