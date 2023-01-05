@@ -204,11 +204,12 @@ class UtilService
      * daystamp
      *
      * @param  mixed $dateRef: parâmetro obrigatório. Representa uma data.
-     * @return: retorna um número que representa a conversão da data recebida em quantidade de dias
+     * @return: retorna um número que representa a conversão da data recebida em quantidade de dias,
+     *          extraindo a diferença de fusos horários. Sem essa extração, poderia ocorrer o seguinte:
+     *          a data 01/01/2023 20:00 (GMT-03:00) -> dia 01/01/2023, mas a data 01/01/2023 23:00 (GMT-03:00) -> dia 02/01/2023
      */
     public static function daystamp(DateTime $dateRef) {
-        //$userTimezoneOffset = $dateRef->getTimezoneOffset() * 60000;
-        return intval((floor(($dateRef->getTimestamp()) / CalendarioService::DIA_EM_SEGUNDOS)));
+        return intval(floor(($dateRef->getTimestamp() + $dateRef->getOffset()) / CalendarioService::DIA_EM_SEGUNDOS));
     }
 
     /**

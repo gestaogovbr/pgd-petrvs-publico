@@ -242,8 +242,9 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
   public async compararFuncoes() {
     let calculo: number = this.form.controls.tipo_calculo.value;
     let inicio: Date = this.form.controls.inicio.value;
-    let inicio_dao = inicio.toUTCString();
+    let inicio_dao = inicio.toString().substring(0,33);
     let fim: Date = this.form.controls.datafim_fimoutempo.value;
+    let fim_dao = fim.toString().substring(0,33);
     let tempo: number = this.form.controls.tempo_fimoutempo.value;
     let cargaHoraria: number = this.form.controls.carga_horaria.value;
     let unidade: Unidade | null = await this.unidadeDao.getById(this.form.controls.unidade_id.value, ['entidade']);
@@ -251,7 +252,7 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
     let pausas: DemandaPausa[] | null = [];
     let afastamentos: Afastamento[] | undefined = this.form.controls.incluir_afastamentos.value ? this.usuario?.afastamentos : [];
     this.efemeridesFrontEnd = this.calendar.calculaDataTempoUnidade(inicio, calculo ? fim : tempo, cargaHoraria, unidade!, tipo, pausas, afastamentos);
-    this.dao!.calculaDataTempoUnidade(inicio_dao, calculo ? fim.toUTCString() : tempo, cargaHoraria, unidade!.id, tipo, pausas, afastamentos).then(response => {
+    this.dao!.calculaDataTempoUnidade(inicio_dao, calculo ? fim_dao : tempo, cargaHoraria, unidade!.id, tipo, pausas, afastamentos).then(response => {
       this.efemeridesBackEnd = response;
     });
   }

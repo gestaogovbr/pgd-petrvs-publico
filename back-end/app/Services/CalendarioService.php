@@ -7,6 +7,7 @@ use App\Models\Feriado;
 use App\Services\ServiceBase;
 use Illuminate\Support\Facades\Auth;
 use DateTime;
+use Exception;
 use \Moment\Moment;
 
 class Interval
@@ -35,17 +36,6 @@ class Expediente
     public $especial = [];
 
     function __construct($value = null) {
-/*         if($value) {
-            $valor = (array) $value;
-            if($valor['domingo']) $this->domingo = $valor['domingo']; 
-            if($valor['segunda']) $this->segunda = $valor['segunda']; 
-            if($valor['terca']) $this->terca = $valor['terca']; 
-            if($valor['quarta']) $this->quarta = $valor['quarta']; 
-            if($valor['quinta']) $this->quinta = $valor['quinta']; 
-            if($valor['sexta']) $this->sexta = $valor['sexta']; 
-            if($valor['sabado']) $this->sabado = $valor['sabado']; 
-            if($valor['especial']) $this->especial = $valor['especial']; 
-        } */
         $value = (array) $value;
         if($value) foreach(array_keys($value) as $key) if($value[$key]) $this->$key = $value[$key];
     }
@@ -310,7 +300,7 @@ class CalendarioService
     public static function preparaParametros(array $data): Efemerides {
         $inicio = UtilService::asDateTime($data['inicio']);
         $fimOuTempo = in_array(gettype($data['fimOuTempo']),["integer","double"]) ? $data['fimOuTempo'] : UtilService::asDateTime($data['fimOuTempo']) ;
-        $cargaHoraria = intval($data['cargaHoraria']);
+        $cargaHoraria = doubleval($data['cargaHoraria']);
         $unidade = Unidade::find($data['unidade_id']);
         $tipo = $data['tipo'];
         $pausas = $data['pausas'];
@@ -319,36 +309,30 @@ class CalendarioService
     }
 
     public static function calculaDataTempoUnidade(DateTime $inicio, $fimOuTempo, int $cargaHoraria, Unidade $unidade, string $tipo, array $pausas = null, array $afastamentos = null) {
-        $feriados = static::feriadosCadastrados($unidade->id) || [];
+        $feriados = static::feriadosCadastrados($unidade->id) ?? [];
         $forma = $tipo == 'DISTRIBUICAO' ? $unidade->distribuicao_forma_contagem_prazos : $unidade->entrega_forma_contagem_prazos;
         $expediente = static::nestedExpediente($unidade);
         return static::calculaDataTempo($inicio, $fimOuTempo, $forma, $cargaHoraria, $expediente, $feriados, $pausas, $afastamentos);
     }
 
     public static function nestedExpediente(Unidade $unidade): Expediente {
-        $expediente = $unidade->expediente ? $unidade->expediente : $unidade->entidade->expediente;
-        $expediente = $expediente ? $expediente : ($unidade->entidade_id == Auth::user()->unidade->entidade_id ? Auth::user()->unidade->entidade->expediente : new Expediente());
+        $expediente = $unidade->expediente ? new Expediente($unidade->expediente) : new Expediente($unidade->entidade->expediente);
+        $expediente = $expediente ? $expediente : ($unidade->entidade_id == Auth::user()->unidade->entidade_id ? new Expediente(Auth::user()->unidade->entidade->expediente) : new Expediente());
         return $expediente;
     }
 
-/*     public calculaDataTempo(inicio: Date, fimOuTempo: Date | number, forma: FormaContagem, cargaHoraria?: number, expediente?: Expediente, feriados?: FeriadoList, pausas?: DemandaPausa[], afastamentos?: Afastamento[]): Efemerides {
-        const useCorridos = forma == "DIAS_CORRIDOS" || forma == "HORAS_CORRIDAS";
-        const useDias = forma == "DIAS_CORRIDOS" || forma == "DIAS_UTEIS";
-        const useTempo = typeof fimOuTempo == "number"; 
-        const uDiasInicio = this.util.daystamp(inicio); 
-        const uDiasFim = useTempo ? uDiasInicio : this.util.daystamp(fimOuTempo as Date); /* Dia fim (usado somente se !useTempo) 
-        /* Verifica quando o expediente é obrigatório, e quando não for então expediente será undefined  
-        if (!expediente && !useCorridos) throw new Error("Expediente não informado");
-        expediente = useCorridos ? undefined : expediente; */
-
     /** CONSTRUINDO A NOVA FUNÇÃO EM PHP */
-    public static function calculaDataTempo(DateTime $inicio, $fimOuTempo, string $forma, int $cargaHoraria = null, $expediente, array $feriados, array $pausas = null, array $afastamentos = null): Efemerides {
+    public static function calculaDataTempo(DateTime $inicio, $fimOuTempo, string $forma, int $cargaHoraria = null, Expediente $expediente, array $feriados, array $pausas = null, array $afastamentos = null): Efemerides {
         $useCorridos = $forma == "DIAS_CORRIDOS" || $forma == "HORAS_CORRIDAS";
         $useDias = $forma == "DIAS_CORRIDOS" || $forma == "DIAS_UTEIS";
-        $useTempo = $fimOuTempo instanceof number; /* Se o parametro fimOuTempo é DataFim ou Horas/Dias */
+        $useTempo = in_array(gettype($fimOuTempo),["integer","double"]); /* Se o parametro fimOuTempo for a DataFim, é porque deve-se usá-la para calcular o Tempo (nr. de horas); Caso ele seja um tempo (nr. de horas), é porque deve-se usá-lo para calcular a DataFim */
         $uDiasInicio = UtilService::daystamp($inicio); /* Dia inicio (usado somente se !useTempo) */
         $uDiasFim = $useTempo ? $uDiasInicio : UtilService::daystamp(UtilService::asDateTime($fimOuTempo)); /* Dia fim (usado somente se !useTempo) */
-        $hExpediente = static::expediente($unidade); /* em horas */
+
+        /* Verifica se existe $expediente quando ele é obrigatório, e cria uma exceção se ela não foi informado. Quando não for obrigatório, $expediente será nulo  */
+        if (!$expediente && !$useCorridos) throw new Exception('Expediente não informado');
+        $expediente = $useCorridos ? null : $expediente;
+
 
         $hTempo = $useTempo ? UtilService::asTimestamp($fimOuTempo) : 0; /* variável saldo de horas/dias (usado somente se useTempo) */
         $dDiaAtual = UtilService::asDateTime($inicio->getTimestamp()); /* Variável que irá percorrer todas as datas (do inicio ao fim ou a quantidade de horas) */
