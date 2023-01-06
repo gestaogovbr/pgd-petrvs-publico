@@ -1259,8 +1259,8 @@ class PlanoFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IM
         if (usuario && unidade && this.util.isDataValid(inicio) && this.util.isDataValid(fim)) {
             this.calendar.loadFeriadosCadastrados(unidade.id).then((feriados) => {
                 var _a, _b;
-                this.horasTotais = this.calendar.calculaDataTempo(inicio, fim, carga, unidade, "ENTREGA", [], []);
-                this.horasParciais = this.calendar.calculaDataTempo(inicio, fim, carga, unidade, "ENTREGA", [], usuario.afastamentos);
+                this.horasTotais = this.calendar.calculaDataTempoUnidade(inicio, fim, carga, unidade, "ENTREGA", [], []);
+                this.horasParciais = this.calendar.calculaDataTempoUnidade(inicio, fim, carga, unidade, "ENTREGA", [], usuario.afastamentos);
                 (_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.tempo_total.setValue(this.horasTotais.tempoUtil);
                 (_b = this.form) === null || _b === void 0 ? void 0 : _b.controls.tempo_proporcional.setValue(this.horasParciais.tempoUtil);
             });
