@@ -331,7 +331,7 @@ class IntegracaoService extends ServiceBase {
                 /* Unidades que foram removidas em integracao_unidades vão permanecer no sistema por questões de integridade */
             } catch (Throwable $e) {
                 LogError::newError("Erro ao importar unidades", $e);
-                $result["unidades"] = $e->getMessage();
+                $result["unidades"] = $e;
             }
         }
 
@@ -490,7 +490,7 @@ class IntegracaoService extends ServiceBase {
                 $result["servidores"] = 'sucesso';
             } catch (Throwable $e) {
                 LogError::newError("Erro ao importar servidores", $e);
-                $result["servidores"] = $e->getMessage();
+                $result["servidores"] = $e;
             }
         }
 
