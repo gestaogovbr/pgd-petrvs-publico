@@ -203,6 +203,7 @@ class UsuarioService extends ServiceBase
         // $lotacoes = Lotacao::whereIn("unidade_id", $unidade_ids)->with(['usuario'])->get();
 
         $usuarios = Usuario::select('usuarios.*')
+                    ->distinct()
                     ->join('lotacoes', 'lotacoes.usuario_id', '=', 'usuarios.id')
                     ->whereIn('lotacoes.unidade_id', $unidade_ids)->get();
 
