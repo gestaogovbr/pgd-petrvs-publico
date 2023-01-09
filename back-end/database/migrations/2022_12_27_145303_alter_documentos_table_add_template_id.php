@@ -33,8 +33,8 @@ class AlterDocumentosTableAddTemplateId extends Migration
         Schema::table('documentos', function (Blueprint $table) {
             $table->dropForeign(['template_id']);
             $table->dropColumn('template_id');
-            $table->dropForeign(['programa_adesao_id']);
-            $table->dropColumn('programa_adesao_id');
+            //$table->dropForeign(['programa_adesao_id']);
+            //$table->dropColumn('programa_adesao_id');
             $table->dropColumn('data_source');
             $table->dropColumn('template');
         });
