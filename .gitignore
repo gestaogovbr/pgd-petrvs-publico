@@ -27,3 +27,5 @@ back-end/database/seeders/UnidadeOrigemAtividadeSeeder.php
 back-end/database/seeders/ZUnidadeOrigemAtividadeSeeder.php
 back-end/public/info.php
 diversos/*
+back-end/servidores.xml
+back-end/unidades.xml

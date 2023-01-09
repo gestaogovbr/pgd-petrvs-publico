@@ -355,11 +355,14 @@ class DemandaService extends ServiceBase
                 $dataHora = $unidadeService->hora($unidade->id);
                 $iniciadas = $this->iniciadas($data["usuario_id"]);
                 foreach ($iniciadas as $demanda_id) {
-                    $pausa = new DemandaPausa([
-                        "data_inicio" => $dataHora,
-                        "demanda_id" => $demanda_id
-                    ]);
-                    $pausa->save();
+                    // Pausar todas, exceto a demanda que está iniciando
+                    if ($data["id"] != $demanda_id) {
+                        $pausa = new DemandaPausa([
+                            "data_inicio" => $dataHora,
+                            "demanda_id" => $demanda_id
+                        ]);
+                        $pausa->save();
+                    }
                 }
             }
             DB::commit();

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Exceptions\LogError;
 use App\Models\ModelBase;
 use DateTime;
+use DateTimeZone;
 use App\Models\Unidade;
 use App\Models\Programa;
 use App\Services\ServiceBase;
@@ -21,8 +22,10 @@ class UnidadeService extends ServiceBase
     public function hora($idOrUnidade) {
         $unidade = gettype($idOrUnidade) == "string" ? Unidade::find($idOrUnidade) : $idOrUnidade;
         $timeZone = $unidade->cidade->timezone;
-        $dateTime = new DateTime();
-        $dateTime->setTimestamp($dateTime->getTimestamp() + (60 * 60 * (config('petrvs')["timezone"] - $timeZone)));
+        $timezone_abbr = timezone_name_from_abbr("", -3600*abs($timeZone), 0);
+        $dateTime = new DateTime('now', new DateTimeZone($timezone_abbr));
+        
+        $dateTime->setTimestamp($dateTime->getTimestamp());
         return ServiceBase::toIso8601($dateTime);
     }
 

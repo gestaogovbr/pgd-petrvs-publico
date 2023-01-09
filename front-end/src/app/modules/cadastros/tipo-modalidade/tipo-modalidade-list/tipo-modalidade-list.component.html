@@ -22,6 +22,11 @@
                 <span>{{ row.dispensa_avaliacao ? 'Sim' : 'Não'}}</span>
             </ng-template>
         </column>
+        <column title="Exige Adesão" [template]="columnExige_assinatura">
+            <ng-template let-row="row" #columnExige_assinatura>
+                <span>{{ row.exige_adesao ? 'Sim' : 'Não'}}</span>
+            </ng-template>
+        </column>
         <column title="Exige Assinatura" [template]="columnExige_assinatura">
             <ng-template let-row="row" #columnExige_assinatura>
                 <span>{{ row.exige_assinatura ? 'Sim' : 'Não'}}</span>

@@ -46,3 +46,23 @@
         background: #ff4000;
     }
 }
+
+.dashGestor {
+    .usuario {
+        border-bottom: 1px solid #dcdcdc;
+        padding: 10px 0;
+
+        h3 {
+            font-size: 1rem;
+            margin: 0 20px;
+        }
+
+        .w-30 {
+            width: 30%;
+        }
+
+        &:last-child {
+            border: none;
+        }
+    }
+}
