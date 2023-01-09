@@ -17,6 +17,7 @@ import { RelatorioModule } from './modules/relatorios/relatorio.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LogsModule } from './modules/logs/logs.module';
 import { UteisModule } from './modules/uteis/uteis.module';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { UteisModule } from './modules/uteis/uteis.module';
     ChartsModule,
     RelatorioModule,
     UteisModule,
-    LogsModule
+    LogsModule,
+    CKEditorModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -22,6 +22,8 @@ export abstract class PageBase implements OnInit, ModalPage {
   public snapshot?: ActivatedRouteSnapshot;
   public modalRoute?: ActivatedRouteSnapshot;
   public modalInterface: boolean = true;
+  public shown: boolean = false;
+  public onShow?: () => void;
   public metadata?: any;
   public JSON = JSON;
   public code: string = "";
@@ -113,6 +115,10 @@ export abstract class PageBase implements OnInit, ModalPage {
 
   ngAfterViewInit() {
     if(!this.title?.length && this.snapshot?.data?.title?.length) this.title = this.snapshot.data?.title;
+    if(!this.modalRoute) {
+      this.shown = true;
+      if(this.onShow) this.onShow();
+    };
     this.cdRef.detectChanges();
   }
 

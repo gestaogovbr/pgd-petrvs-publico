@@ -32,7 +32,7 @@
                 <columns>
                     <column title="Unidade" [template]="columnUnidade" [editTemplate]="editUnidade">
                         <ng-template let-row="row" #columnUnidade>
-                            <strong>{{row.unidade.sigla}}</strong><br>
+                            <strong>{{row.unidade.sigla}}</strong><span> (IdServo: {{row.unidade.codigo}})</span><br>
                             <span><i *ngIf="row.principal" class="bi bi-bookmark-star"></i> {{row.unidade.nome}} </span>
                         </ng-template>
                         <ng-template let-row="row" #editUnidade>

@@ -39,40 +39,6 @@ FeriadoRoutingModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdef
 
 /***/ }),
 
-/***/ "E3RK":
-/*!*****************************************!*\
-  !*** ./src/app/models/feriado.model.ts ***!
-  \*****************************************/
-/*! exports provided: Feriado */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Feriado", function() { return Feriado; });
-/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
-
-class Feriado extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor(data) {
-        super();
-        this.nome = ""; //Descrição do feriado;
-        this.dia = 1; //Dia do mês (1~31) ou dia da semana (1-7)");
-        this.mes = 1; //Mês
-        this.ano = null; // Ano do feriado caso seja data não recorrente");
-        this.recorrente = 1; // Se é uma data única ou repete todos os anos");
-        this.abrangencia = "NACIONAL"; // "NACIONAL", "ESTADUAL", "MUNICIPAL" Abrangência do feriado");
-        this.codigo_ibge = null; // Código da UF ou do município (IBGE)")
-        this.data_inicio = new Date(); /* Data de início */
-        this.data_fim = null; /* Data do fim */
-        this.entidade_id = null;
-        this.cidade_id = null;
-        this.uf = null; /* UF para abrangencia estadual */
-        this.initialization(data);
-    }
-}
-
-
-/***/ }),
-
 /***/ "KSYb":
 /*!**********************************************************************************!*\
   !*** ./src/app/modules/cadastros/feriado/feriado-form/feriado-form.component.ts ***!

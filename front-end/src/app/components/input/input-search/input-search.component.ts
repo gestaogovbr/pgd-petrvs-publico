@@ -264,7 +264,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
     this.selectedItem = undefined;
     this.selectedValue = undefined;
     this.searchObj = undefined;
-    if(clearText) this.queryText = this.inputElement!.nativeElement.value = "";
+    if(clearText && this.inputElement) this.queryText = this.inputElement!.nativeElement.value = "";
     if(clearControl && !this.isDisabled && this.control) this.control.setValue(this.emptyValue);
     if(this.change && emitEvent) this.change.emit(new Event("change"));
     this.cdRef.detectChanges();

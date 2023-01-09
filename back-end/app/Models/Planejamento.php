@@ -15,11 +15,14 @@ class Planejamento extends ModelBase
 
     protected $with = [];
 
-    public $fillable = [
-        'inicio',
-        'fim',
-        'nome',
-        'unidade_id',
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'inicio', /* datetime; NOT NULL; */// Data inicio do planejamento
+        'fim', /* datetime; */// Data fim do planejamento
+        'nome', /* varchar(256); NOT NULL; */// Nome do planejamento estratégico
+        'unidade_id', /* char(36); */
+        //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência do registro
+        //'data_fim', /* datetime; */// Data fim da vigência do registro
+        //'entidade_id', /* char(36); NOT NULL; */
     ];
 
     // Belongs

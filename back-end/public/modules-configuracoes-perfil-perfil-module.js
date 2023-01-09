@@ -192,7 +192,7 @@ function PerfilFormComponent_tab_9_Template(rf, ctx) { if (rf & 1) {
     const _r6 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵreference"](11);
     const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("control", ctx_r1.form.controls.capacidades);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("control", ctx_r1.form.controls.capacidades)("scrollable", true);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("template", _r2);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](3);
@@ -288,7 +288,7 @@ PerfilFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdefi
     } if (rf & 2) {
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵInheritDefinitionFeature"]], decls: 10, vars: 10, consts: [["class", "my-2", 4, "ngIf"], [3, "form", "disabled", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], ["label", "Nome", "controlName", "nome", 3, "size", "control"], ["numbers", "", "label", "N\u00EDvel", "controlName", "nivel", 3, "size", "control"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", 3, "size", "control"], ["key", "CAPACIDADES", "label", "Capacidades", 4, "ngIf"], [1, "my-2"], ["key", "CAPACIDADES", "label", "Capacidades"], [3, "control"], ["title", "C\u00F3digo", 3, "template"], ["columnCodCapacidade", ""], ["title", "Capacidade", 3, "template"], ["columnTipoCapacidade", ""], ["title", "Permitir", 3, "template"], ["columnSelecionado", ""], [3, "size", "source", "path"]], template: function PerfilFormComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵInheritDefinitionFeature"]], decls: 10, vars: 10, consts: [["class", "my-2", 4, "ngIf"], [3, "form", "disabled", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], ["label", "Nome", "controlName", "nome", 3, "size", "control"], ["numbers", "", "label", "N\u00EDvel", "controlName", "nivel", 3, "size", "control"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", 3, "size", "control"], ["key", "CAPACIDADES", "label", "Capacidades", 4, "ngIf"], [1, "my-2"], ["key", "CAPACIDADES", "label", "Capacidades"], [3, "control", "scrollable"], ["title", "C\u00F3digo", 3, "template"], ["columnCodCapacidade", ""], ["title", "Capacidade", 3, "template"], ["columnTipoCapacidade", ""], ["title", "Permitir", 3, "template"], ["columnSelecionado", ""], [3, "size", "source", "path"]], template: function PerfilFormComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](0, PerfilFormComponent_h3_0_Template, 2, 1, "h3", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](1, "editable-form", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("submit", function PerfilFormComponent_Template_editable_form_submit_1_listener() { return ctx.onSaveData(); })("cancel", function PerfilFormComponent_Template_editable_form_cancel_1_listener() { return ctx.onCancel(); });
@@ -302,7 +302,7 @@ PerfilFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdefi
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](8, "input-text", 7);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](9, PerfilFormComponent_tab_9_Template, 12, 4, "tab", 8);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](9, PerfilFormComponent_tab_9_Template, 12, 5, "tab", 8);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
     } if (rf & 2) {

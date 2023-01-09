@@ -30,11 +30,30 @@ class UsuarioController extends ControllerBase
     public function dashboard(Request $request) {
         try {
             $data = $request->validate([
-                'usuario_id' => ['required']
+                'data_inicial' => ['required'],
+                'data_final' => ['required'],
+                'usuario_id' => ['required'],
             ]);
             $result = response()->json([
                 'success' => true,
-                'data' => $this->service->dashboard($data['usuario_id'])
+                'data' => $this->service->dashboard($data['data_inicial'], $data['data_final'], $data['usuario_id'])
+            ]);
+            return $result;
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function dashboard_gestor(Request $request) {
+        try {
+            $data = $request->validate([
+                'data_inicial' => ['required'],
+                'data_final' => ['required'],
+                'unidades' => ['required'],
+            ]);
+            $result = response()->json([
+                'success' => true,
+                'data' => $this->service->dashboard_gestor($data['data_inicial'], $data['data_final'], $data['unidades'])
             ]);
             return $result;
         } catch (Throwable $e) {

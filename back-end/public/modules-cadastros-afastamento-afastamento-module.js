@@ -430,33 +430,6 @@ AfastamentoListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵ�
 
 /***/ }),
 
-/***/ "cLR3":
-/*!*********************************************!*\
-  !*** ./src/app/models/afastamento.model.ts ***!
-  \*********************************************/
-/*! exports provided: Afastamento */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Afastamento", function() { return Afastamento; });
-/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
-
-class Afastamento extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor(data) {
-        super();
-        this.observacoes = null; /* Observação sobre o afastamento */
-        this.inicio_afastamento = new Date(); /* Inicio do afastamento  */
-        this.fim_afastamento = new Date(); /* Fim do afastamento */
-        this.usuario_id = ""; /*  */
-        this.tipo_motivo_afastamento_id = ""; /*  */
-        this.initialization(data);
-    }
-}
-
-
-/***/ }),
-
 /***/ "jaz9":
 /*!*********************************************************************!*\
   !*** ./src/app/modules/cadastros/afastamento/afastamento.module.ts ***!

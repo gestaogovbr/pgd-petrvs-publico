@@ -10,6 +10,9 @@
                 <input-button [size]="6" label="Chave de API" icon="bi bi-lin" placeholder="Visível somente no momento em que foi gerado" iconButton="bi bi-arrow-clockwise" controlName="api_public_key" [control]="form!.controls.api_public_key" (buttonClick)="onApiKeyClick($event)" labelInfo="Chave publica para comunicação por API, o valor é visível somente no momento em que for gerado."></input-button>
             </div>
         </tab>
+        <tab key="EXPEDIENTE" label="Expediente">
+            <calendar-expediente #expediente [control]="form!.controls.expediente"></calendar-expediente>
+        </tab>
         <tab key="NOTIFICACOES" label="Notificações">
             <div class="row">
                 <div class="col-md-6">

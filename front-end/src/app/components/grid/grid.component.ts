@@ -70,6 +70,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   @Input() hasEdit: boolean = true;
   @Input() hasDelete: boolean = false;
   @Input() hasReport: boolean = true;
+  @Input() scrollable: boolean = false;
   @Input() controlName: string | null = null;
   @Input() control?: AbstractControl = undefined;
   @Input() minHeight: number = 300;

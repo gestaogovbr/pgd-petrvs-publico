@@ -94,7 +94,7 @@ export class AppComponent {
       { name: "Gestão", permition: "MENU_GESTAO_ACESSO", route: ['gestao'], id: "navbarDropdownGestao", menu: "gestao" },
       { name: "Relatórios", permition: "", route: ['relatorios'], id: "navbarDropdownRelatorios", menu: "relatorios" },
       { name: "Configurações", permition: "MENU_CONFIG_ACESSO", route: ['configuracoes'], id: "navbarDropdownConfiguracoes", menu: "configuracoes" },
-      { name: "Logs", permition: "DEV_MENU_LOGS_ACESSO", route: ['logs'], id: "navbarDropdownLogs", menu: "logs" },
+      { name: "Desenvolvedor", permition: "DEV_MENU_LOGS_ACESSO", route: ['logs'], id: "navbarDropdownLogs", menu: "logs" },
     ];
     this.menuSchema = {
       cadastros: [
@@ -105,8 +105,8 @@ export class AppComponent {
         { name: this.lex.noun("Entregas", true), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: "bi bi-list-check" },
         { name: this.lex.noun("Feriados", true), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: "bi bi-emoji-sunglasses" },
         { name: this.lex.noun("Material e serviço", true), permition: '', route: ['cadastros', 'material-servico'], icon: "bi bi-box-seam" },
-        { name: this.lex.noun("Programa de gestão", true), permition: 'MOD_PRGT', route: ['cadastros', 'programa'], icon: "bi bi-graph-up-arrow" },
         { name: this.lex.noun("Tarefa", true), permition: 'MOD_DMD', route: ['cadastros', 'tarefa'], icon: "bi bi-boxes" },
+        { name: this.lex.noun("Templates", true), permition: 'MOD_DMD', route: ['cadastros', 'template'], icon: "bi bi-archive" },
         "-",
         { name: "Tipos de " + this.lex.noun("Atividade", true), permition: 'MOD_TIPO_ATV', route: ['cadastros', 'tipo-atividade'], icon: "bi bi-check-all" },
         { name: "Tipos de " + this.lex.noun("Avaliação", true), permition: 'MOD_TIPO_AVAL', route: ['cadastros', 'tipo-avaliacao'], icon: "bi bi-question-square" },
@@ -117,8 +117,10 @@ export class AppComponent {
         { name: "Tipos de " + this.lex.noun("Processo", true), permition: 'MOD_TIPO_PROC', route: ['cadastros', 'tipo-processo'], icon: "bi bi-folder-check" }
       ],
       gestao: [
+        { name: this.lex.noun("Adesão", true), permition: 'MOD_ADES', route: ['gestao', 'adesao'], icon: "bi bi-check-all" },
         { name: this.lex.noun("Demanda", true), permition: '', route: ['gestao', 'demanda'], icon: "bi bi-activity" },
         { name: this.lex.noun("Planos de Gestão/Entregas", true), permition: 'MOD_PGENTR', route: ['gestao', 'planejamento'], icon: "bi bi-files" },
+        { name: this.lex.noun("Programa de gestão", true), permition: 'MOD_PRGT', route: ['cadastros', 'programa'], icon: "bi bi-graph-up-arrow" },
         { name: this.lex.noun("Plano de trabalho", true), permition: 'MOD_PTR', route: ['gestao', 'plano'], icon: "bi bi-list-check" },
         { name: this.lex.noun("Projetos", true), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: "bi bi-diagram-2" }
       ],
@@ -127,6 +129,8 @@ export class AppComponent {
         { name: "Força de Trabalho - Área", permition: '', route: ['relatorios', 'forca-de-trabalho', 'area'], icon: "bi bi-diagram-3-fill" }
       ],
       configuracoes: [
+        { name: "Preferências", permition: '', route: ['configuracoes', 'preferencia'], metadata: {root: true, modal: true}, icon: "bi bi-gear" },
+        "-",
         { name: this.lex.noun("Entidade",true), permition: 'MOD_CFG_ENTD', route: ['configuracoes', 'entidade'], icon: "bi bi-bookmark-heart" },
         { name: this.lex.noun("Unidade",true), permition: 'MOD_CFG_UND', route: ['configuracoes', 'unidade'], icon: "fa-unity fab" },
         { name: this.lex.noun("Usuário",true), permition: 'MOD_CFG_USER', route: ['configuracoes', 'usuario'], icon: "bi bi-people" },
@@ -137,7 +141,8 @@ export class AppComponent {
       logs: [
         { name: "Alterações", permition: 'DEV_MOD_LOGS', route: ['logs', 'change'], icon: "bi bi-pencil-square" },
         { name: "Erros", permition: 'DEV_MOD_LOGS', route: ['logs', 'error'], icon: "bi bi-bug" },
-        { name: "Tráfego", permition: 'DEV_MOD_LOGS', route: ['logs', 'traffic'], icon: "bi bi-stoplights" }
+        { name: "Tráfego", permition: 'DEV_MOD_LOGS', route: ['logs', 'traffic'], icon: "bi bi-stoplights" },
+        { name: "Teste", permition: '', route: ['teste'], icon: "bi bi-check-all" }
       ],
     }
   }

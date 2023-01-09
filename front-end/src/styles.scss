@@ -13,9 +13,10 @@
 
 body {
     margin: 0px;
+    background: #f1f5f7;
 }
 
-.petrvs {    
+.petrvs {
     /* Reseta todas as propriedades anteriores */
     all: initial;
     cursor: inherit;
@@ -26,18 +27,32 @@ body {
         font-weight: var(--bs-body-font-weight);
         color: inherit;
     }
+
     div {
         margin: initial;
     }
-    input, button, textarea, select, table, label, span, legend, caption, a {
+
+    input,
+    button,
+    textarea,
+    select,
+    table,
+    label,
+    span,
+    legend,
+    caption,
+    a {
         font-size: var(--bs-body-font-size);
     }
+
     .d-flex {
         margin: auto;
     }
-    .input-group > .form-control:not(:last-child) {
-      margin: 0px;
+
+    .input-group>.form-control:not(:last-child) {
+        margin: 0px;
     }
+
     .form-group label {
         margin-bottom: 0rem;
         font: inherit;
@@ -47,6 +62,7 @@ body {
     .micro-text {
         font-size: 0.8rem !important;
     }
+
     .one-per-line {
         width: min-content;
     }
@@ -70,10 +86,16 @@ body {
     label .badge {
         font-size: var(--bs-badge-font-size);
     }
+
+    .navbar {
+        box-shadow: 0px 2px 3px #ddd;
+        margin-bottom: 30px;
+    }
 }
 
 .full-container-button-group {
     display: flex !important;
+
     .btn {
         flex: 1;
     }

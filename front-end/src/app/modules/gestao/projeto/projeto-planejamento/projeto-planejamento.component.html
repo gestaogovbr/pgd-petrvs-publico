@@ -44,7 +44,7 @@
     </tabs>
     <!-- Tab Gantt -->
     <div [class.d-none]="planejamentoTabs.active != 'GANTT'">
-        <gantt [project]="project" [height]="ganttHeight"></gantt>
+        <gantt *ngIf="shown" [project]="project" [height]="ganttHeight"></gantt>
     </div>
     <!-- Tab Calendário -->
     <!--div *ngIf="planejamentoTabs.active == 'CALENDARIO'" class="d-block text-center" style="min-height: 400px; max-width: 1000px; margin: auto;"/-->

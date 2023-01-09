@@ -6,6 +6,7 @@ use App\Models\Unidade;
 use App\Models\Feriado;
 use App\Services\ServiceBase;
 use DateTime;
+use DateTimeZone;
 
 class TimeInterval
 {
@@ -35,8 +36,8 @@ class CalendarioService
         $result = [];
         foreach($feriados as $feriado) {
             $data = ($feriado->recorrent ? "" : str_pad($feriado->ano, 4, "0", STR_PAD_LEFT)) . "-" .
-                str_pad($feriado->dia, 2, "0", STR_PAD_LEFT) . "-" .
-                str_pad($feriado->mes, 2, "0", STR_PAD_LEFT);
+            str_pad($feriado->mes, 2, "0", STR_PAD_LEFT) . "-" .
+            str_pad($feriado->dia, 2, "0", STR_PAD_LEFT);
             $result[$data] = $feriado->nome;
         }
         return $result;
@@ -73,8 +74,9 @@ class CalendarioService
     }
 
     public static function horarioServidor() {
-        $dateTime = new DateTime();
-        $dateTime->setTimestamp($dateTime->getTimestamp() + (60 * 60 * (config('petrvs')["timezone"]+3)));
+        $timezone_abbr = timezone_name_from_abbr("", -3600*abs(config('petrvs')["timezone"]), 0);
+        $dateTime = new DateTime('now', new DateTimeZone($timezone_abbr));
+        $dateTime->setTimestamp($dateTime->getTimestamp());
         return ServiceBase::toIso8601($dateTime);
     }
 

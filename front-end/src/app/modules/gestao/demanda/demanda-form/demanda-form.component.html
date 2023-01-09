@@ -26,7 +26,7 @@
             <div class="row">
                 <input-datetime noIcon [size]="3" [label]="lex.noun('Data de distribuição')" controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" (change)="onDataDistribuicaoChange($event)" labelInfo="Data de cadastro da demanda"></input-datetime>
                 <input-timer [label]="lex.noun('Tempo pactuado')" onlyHours [size]="3" controlName="tempo_pactuado" disabled [control]="form!.controls.tempo_pactuado" labelInfo="Tempo calculado a partir da atividade e utilizando o fator_complexidade"></input-timer>
-                <input-datetime noIcon [date]="prazoEmDias" [size]="3" [label]="lex.noun('Prazo de entrega')" controlName="prazo_entrega" [control]="form!.controls.prazo_entrega" (change)="onPrazoEntregaChange($event)" labelInfo="Data estipulada para entrega da demanda"></input-datetime>
+                <input-datetime noIcon  [size]="3" [label]="lex.noun('Prazo de entrega')" controlName="prazo_entrega" [control]="form!.controls.prazo_entrega" (change)="onPrazoEntregaChange($event)" labelInfo="Data estipulada para entrega da demanda"></input-datetime>
                 <input-timer [onlyDays]="prazoEmDias" [onlyHours]="prazoEmHoras" [size]="3" [label]="lex.noun('Tempo planejado')" #planejado controlName="tempo_planejado" [control]="form!.controls.tempo_planejado" (change)="onTempoPlanejadoChange($event)" labelInfo="Diferença entre data_distribuicao e prazo_entrega em horas (úteis ou corridas, configurada na unidade)"></input-timer>
             </div>
         </tab>

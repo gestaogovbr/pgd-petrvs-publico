@@ -14,6 +14,7 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { ComentariosComponent } from 'src/app/modules/uteis/comentarios/comentarios.component';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { ProjetoFormAlocacoesComponent } from '../projeto-form-alocacoes/projeto-form-alocacoes.component';
+import { ProjetoFormFasesComponent } from '../projeto-form-fases/projeto-form-fases.component';
 import { ProjetoFormPrincipalComponent } from '../projeto-form-principal/projeto-form-principal.component';
 import { ProjetoFormRecursosComponent } from '../projeto-form-recursos/projeto-form-recursos.component';
 import { ProjetoFormRegrasComponent } from '../projeto-form-regras/projeto-form-regras.component';
@@ -26,6 +27,7 @@ import { ProjetoFormRegrasComponent } from '../projeto-form-regras/projeto-form-
 export class ProjetoFormComponent extends PageFormBase<Projeto, ProjetoDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('principal', { static: false }) public principal?: ProjetoFormPrincipalComponent;
+  @ViewChild('fases', { static: false }) public fases?: ProjetoFormFasesComponent;
   @ViewChild('recursos', { static: false }) public recursos?: ProjetoFormRecursosComponent;
   @ViewChild('alocacoes', { static: false }) public alocacoes?: ProjetoFormAlocacoesComponent;
   @ViewChild('regras', { static: false }) public regras?: ProjetoFormRegrasComponent;
@@ -138,6 +140,7 @@ export class ProjetoFormComponent extends PageFormBase<Projeto, ProjetoDaoServic
   public async saveData(form: IIndexable): Promise<Projeto> {
     await Promise.all([
       this.principal!.saveData(),
+      this.fases!.saveData(),
       this.recursos!.saveData(),
       this.alocacoes!.saveData(),
       this.regras!.saveData(),
@@ -147,6 +150,7 @@ export class ProjetoFormComponent extends PageFormBase<Projeto, ProjetoDaoServic
   }
 
   public onTabsSelect() {
+    console.log("Chamou");
     this.saveData(this.form!);
   }
 

@@ -39,10 +39,10 @@ export class AuthService {
     return this._logging;
   };
   public set logging(value: boolean) {
-    if(value != this._logging) {
+    if (value != this._logging) {
       this._logging = value;
-      if(!this.gb.isEmbedded) {
-        if(value) {
+      if (!this.gb.isEmbedded) {
+        if (value) {
           this.dialogs.showSppinerOverlay("Logando . . .", 60000);
         } else {
           this.dialogs.closeSppinerOverlay();
@@ -87,9 +87,9 @@ export class AuthService {
 
   public get hora(): Date {
     let dataHora = new Date();
-    if(this.unidade?.cidade){
+    if (this.unidade?.cidade) {
       const delta = this.gb.horarioDelta.servidor.getTime() - this.gb.horarioDelta.local.getTime();
-      const utc = (this.unidade.cidade.timezone + 3) * 60 * 60 * 1000;
+      const utc = (this.unidade.cidade.timezone + Math.abs(this.unidade.cidade.timezone)) * 60 * 60 * 1000;
       dataHora.setTime(dataHora.getTime() + utc + delta);
     }
     return dataHora;
@@ -106,10 +106,10 @@ export class AuthService {
     };*/
     window.addEventListener("message", (event) => {
       //const fromUrl = event?.origin || "";
-      if(event?.data == "COMPLETAR_LOGIN") { //fromUrl.includes("login-azure-callback")
+      if (event?.data == "COMPLETAR_LOGIN") { //fromUrl.includes("login-azure-callback")
         this.dialogs.closeSppinerOverlay();
         this.authSession().then(success => {
-          if(success) this.success!(this.usuario!, {route: ["home"]});
+          if (success) this.success!(this.usuario!, { route: ["home"] });
         });
       }
     }, false);
@@ -120,12 +120,12 @@ export class AuthService {
   }
 
   public updateUsuarioConfig(usuarioId: string, value: IIndexable) {
-    if(this.usuario?.id == usuarioId) this.usuario!.config = this.util.assign(this.usuario!.config, value);
+    if (this.usuario?.id == usuarioId) this.usuario!.config = this.util.assign(this.usuario!.config, value);
     return this.usuarioDaoService.updateJson(usuarioId, 'config', value);
   }
 
   public updateUsuarioNotificacoes(usuarioId: string, value: IIndexable) {
-    if(this.usuario?.id == usuarioId) this.usuario!.notificacoes = this.util.assign(this.usuario!.notificacoes, value);
+    if (this.usuario?.id == usuarioId) this.usuario!.notificacoes = this.util.assign(this.usuario!.notificacoes, value);
     return this.usuarioDaoService.updateJson(usuarioId, 'notificacoes', value);
   }
 
@@ -135,7 +135,7 @@ export class AuthService {
   }
 
   public registerUser(user: any, token?: string) {
-    if(user) {
+    if (user) {
       this.usuario = Object.assign(new Usuario(), user) as Usuario;
       //this.usuario.config = Object.assign(new UsuarioConfig(), this.usuario.config || {});
       this.capacidades = this.usuario?.perfil?.capacidades?.map(x => x.tipo_capacidade?.codigo || "") || [];
@@ -143,11 +143,11 @@ export class AuthService {
       this.logged = true;
       this.unidades = this.usuario?.lotacoes?.map(x => x.unidade!) || [];
       this.unidade = this.usuario?.lotacoes?.find(x => x.principal)?.unidade;
-      if(this.unidade) {
+      if (this.unidade) {
         this.calendar.loadFeriadosCadastrados(this.unidade.id);
-        if(this.unidade.entidade) this.lex.loadVocabulary(this.unidade.entidade.nomenclatura || []);
+        if (this.unidade.entidade) this.lex.loadVocabulary(this.unidade.entidade.nomenclatura || []);
       }
-      if(token?.length) localStorage.setItem("petrvs_api_token", token);
+      if (token?.length) localStorage.setItem("petrvs_api_token", token);
     } else {
       this.usuario = undefined;
       this.kind = undefined;
@@ -167,8 +167,8 @@ export class AuthService {
   */
   public hasPermissionTo(permission: Permission) {
     const permissions = typeof permission == "string" ? [permission] : permission;
-    for(let permission of permissions) {
-      if((typeof permission == "string" && this.capacidades.includes(permission)) ||
+    for (let permission of permissions) {
+      if ((typeof permission == "string" && this.capacidades.includes(permission)) ||
         (Array.isArray(permission) && permission.reduce((a: boolean, v: string) => a && this.capacidades.includes(v), true))) {
         return true;
       }
@@ -210,8 +210,8 @@ export class AuthService {
   }
 
   public get routerTo(): any {
-    let routerTo = this.route.snapshot?.queryParams?.redirectTo ? JSON.parse(this.route.snapshot?.queryParams?.redirectTo) : {route: this.gb.initialRoute};
-    if(routerTo.route[0] == "login") routerTo = {route: this.gb.initialRoute};
+    let routerTo = this.route.snapshot?.queryParams?.redirectTo ? JSON.parse(this.route.snapshot?.queryParams?.redirectTo) : { route: this.gb.initialRoute };
+    if (routerTo.route[0] == "login") routerTo = { route: this.gb.initialRoute };
     return routerTo;
   }
 
@@ -243,7 +243,7 @@ export class AuthService {
       });
     };
     this.logging = true;
-    if(this.gb.isEmbedded) {
+    if (this.gb.isEmbedded) {
       return login();
     } else {
       return this.server.get('sanctum/csrf-cookie').toPromise().then(login);
@@ -256,13 +256,13 @@ export class AuthService {
       const clearLogin = () => {
         localStorage.removeItem("petrvs_api_token");
         this.registerUser(undefined);
-        if(this.leave) this.leave();
-        if(this.gb.refresh) this.gb.refresh();
+        if (this.leave) this.leave();
+        if (this.gb.refresh) this.gb.refresh();
       }
       /* Garante logout do Google */
-      if(this.gb.hasGoogleLogin && this.gb.loginGoogleClientId?.length) {
+      if (this.gb.hasGoogleLogin && this.gb.loginGoogleClientId?.length) {
         this.googleApi.initialize().then(googleAuth => {
-          if(this.kind == "GOOGLE") {
+          if (this.kind == "GOOGLE") {
             this.googleApi.signOut().then(clearLogin);
           }
         });
@@ -273,15 +273,15 @@ export class AuthService {
   }
 
   public selecionaUnidade(id: string, cdRef?: ChangeDetectorRef) {
-    if(this.unidades?.find(x => x.id == id)) {
+    if (this.unidades?.find(x => x.id == id)) {
       this.unidade = undefined;
       cdRef?.detectChanges();
-      return this.server.post("api/seleciona-unidade", {unidade_id: id}).toPromise().then(response => {
-        if(response?.unidade) {
+      return this.server.post("api/seleciona-unidade", { unidade_id: id }).toPromise().then(response => {
+        if (response?.unidade) {
           this.unidade = Object.assign(new Unidade(), response?.unidade) as Unidade;
           //if(!this.unidades?.find(x => x.id == this.unidade!.id)) this.unidades?.push(this.unidade);
           this.calendar.loadFeriadosCadastrados(this.unidade.id);
-          if(this.unidade.entidade) this.lex.loadVocabulary(this.unidade.entidade.nomenclatura || []);
+          if (this.unidade.entidade) this.lex.loadVocabulary(this.unidade.entidade.nomenclatura || []);
         }
         cdRef?.detectChanges();
         return this.unidade;

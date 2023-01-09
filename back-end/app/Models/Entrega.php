@@ -15,10 +15,12 @@ class Entrega extends ModelBase
 
     protected $with = [];
 
-    public $fillable = [ 
-        'nome',
-        'tipo_indicador',
-        'lista_qualitativos',
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'nome', /* varchar(256); NOT NULL; */// Nome
+        'tipo_indicador', /* enum('QUANTIDADE','VALOR','PORCENTAGEM','QUALITATIVO'); NOT NULL; */// Tipo do indicador
+        'lista_qualitativos', /* json; */// valores do qualitativo
+        //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
+        //'data_fim', /* datetime; */// Data fim da vigência
     ];
 
     protected $casts = [

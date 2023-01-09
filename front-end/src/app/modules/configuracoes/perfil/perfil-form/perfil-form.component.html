@@ -11,7 +11,7 @@
             </div>
         </tab>
         <tab key="CAPACIDADES" *ngIf="auth.hasPermissionTo('MOD_TIPO_CAP_CONS')" label="Capacidades">
-            <grid [control]="form!.controls.capacidades">
+            <grid [control]="form!.controls.capacidades" [scrollable]="true">
                 <columns>
                     <column title="Código" [template]="columnCodCapacidade">
                         <ng-template let-row="row" #columnCodCapacidade>

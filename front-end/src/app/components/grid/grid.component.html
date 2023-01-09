@@ -4,7 +4,7 @@
     </div>
     <ng-content></ng-content>
     <form [formGroup]="form!" class="grid-list-container" [style.min-height.px]="minHeight">
-        <table class="table" [class.table-hover]="selectable">
+        <table class="table" [class.table-hover]="selectable"  [class.scrollable]="scrollable">
             <thead>
                 <tr>
                     <th *ngIf="multiselecting" class="grid-multiselect-header">
@@ -59,6 +59,7 @@
                         </div>
                     </td>
                 </tr>
+                <ng-content *ngIf="paginationRef?.type == 'infinity'" select="pagination"></ng-content>
             </tbody>
         </table>
     </form>
@@ -66,5 +67,5 @@
         <i class="bi bi-info-circle"></i>
         {{errorMessage()}}
     </div>
-    <ng-content select="pagination"></ng-content>
+    <ng-content *ngIf="paginationRef?.type == 'pages'" select="pagination"></ng-content>
 </div>
