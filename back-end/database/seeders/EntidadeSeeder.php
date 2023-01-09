@@ -119,5 +119,26 @@ class EntidadeSeeder extends Seeder
         ]);
         $tipo5->save();
         $tipo5->entidades()->save($ent5);
+
+        //cria a entidade ME
+        $ent6 = new Entidade();
+        $ent6->fill([
+            'sigla' => 'ME',
+            'nome' => 'Ministério da Economia',
+            'abrangencia' => 'NACIONAL',
+            'layout_formulario_demanda' => 'COMPLETO',
+            'campos_ocultos_demanda' => [],
+            'nomenclatura' => [],
+            'cidade_id' => $brasilia->id
+        ]);
+
+        $tipo6 = new TipoModalidade();
+        $tipo6->fill([
+            'nome' => 'Modalidade 2',
+            'config' => null,
+            'data_inicio' => Carbon::now()
+        ]);
+        $tipo6->save();
+        $tipo6->entidades()->save($ent6);
     }
 }
