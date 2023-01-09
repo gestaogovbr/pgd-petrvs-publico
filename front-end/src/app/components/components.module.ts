@@ -52,6 +52,8 @@ import { ProfilePictureComponent } from './profile-picture/profile-picture.compo
 import { ProgressBarComponent } from './progress-bar/progress-bar.component';
 import { InputNumberComponent } from './input/input-number/input-number.component';
 import { TopAlertComponent } from './top-alert/top-alert.component';
+import { InputEditorComponent } from './input/input-editor/input-editor.component';
+import {CKEditorModule} from "@ckeditor/ckeditor5-angular";
 
 const maskConfig: Partial<IConfig> = {
   validation: false,
@@ -104,7 +106,8 @@ const maskConfig: Partial<IConfig> = {
     BadgeComponent,
     ProfilePictureComponent,
     ProgressBarComponent,
-    InputNumberComponent
+    InputNumberComponent,
+    InputEditorComponent
   ],
   imports: [
     CommonModule,
@@ -114,7 +117,8 @@ const maskConfig: Partial<IConfig> = {
     DndModule,
     //CurrencyMaskModule,
     AngularDoubleScrollbarsModule,
-    NgxMaskModule.forRoot(maskConfig)
+    NgxMaskModule.forRoot(maskConfig),
+    CKEditorModule
   ],
   exports: [
     BarChartComponent,
@@ -157,7 +161,8 @@ const maskConfig: Partial<IConfig> = {
     BadgeComponent,
     ProfilePictureComponent,
     ProgressBarComponent,
-    InputNumberComponent
+    InputNumberComponent,
+    InputEditorComponent
   ]
 })
 export class ComponentsModule { }

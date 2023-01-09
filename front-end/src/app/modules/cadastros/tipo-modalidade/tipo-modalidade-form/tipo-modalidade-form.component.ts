@@ -20,6 +20,7 @@ export class TipoModalidadeFormComponent extends PageFormBase<TipoModalidade, Ti
       nome: { default: "" },
       atividades_homologadas: { default: "" },
       dispensa_avaliacao: { default: "" },
+      exige_adesao: { default: true },
       exige_assinatura: { default: true },
       exige_assinatura_gestor_unidade: { default: false },
       exige_assinatura_gestor_entidade: { default: false },
