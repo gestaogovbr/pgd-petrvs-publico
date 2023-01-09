@@ -80,7 +80,7 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
         this.server.post('api/' + this.collection + '/dashboard_gestor', { data_inicial, data_final, unidades }).subscribe(response => {
           resolve(response.data);
         }, error => {
-          console.log("Erro ao buscar o dashboard do Usuário!", error);
+          console.log("Erro ao buscar o dashboard do Gestor!", error);
           resolve(null);
         });
       } else {
@@ -106,5 +106,4 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
       }
     });
   }
-
 }
