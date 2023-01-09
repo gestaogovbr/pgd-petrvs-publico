@@ -66,6 +66,14 @@ class UsuarioSeeder extends Seeder
                 'apelido' => 'Geisimar',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
                 'data_inicio' => Carbon::now()
+            ],
+            [
+                'email' => 'pablorgds@gmail.com',
+                'nome' => 'Pablo Roberto',
+                'cpf' => '05178506138',
+                'apelido' => 'Pablorgds',
+                'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+                'data_inicio' => Carbon::now()
             ]
         ];
 

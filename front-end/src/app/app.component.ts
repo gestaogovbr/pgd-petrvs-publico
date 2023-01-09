@@ -105,8 +105,8 @@ export class AppComponent {
         { name: this.lex.noun("Entregas", true), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: "bi bi-list-check" },
         { name: this.lex.noun("Feriados", true), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: "bi bi-emoji-sunglasses" },
         { name: this.lex.noun("Material e serviço", true), permition: '', route: ['cadastros', 'material-servico'], icon: "bi bi-box-seam" },
-        { name: this.lex.noun("Programa de gestão", true), permition: 'MOD_PRGT', route: ['cadastros', 'programa'], icon: "bi bi-graph-up-arrow" },
         { name: this.lex.noun("Tarefa", true), permition: 'MOD_DMD', route: ['cadastros', 'tarefa'], icon: "bi bi-boxes" },
+        { name: this.lex.noun("Templates", true), permition: 'MOD_DMD', route: ['cadastros', 'template'], icon: "bi bi-archive" },
         "-",
         { name: "Tipos de " + this.lex.noun("Atividade", true), permition: 'MOD_TIPO_ATV', route: ['cadastros', 'tipo-atividade'], icon: "bi bi-check-all" },
         { name: "Tipos de " + this.lex.noun("Avaliação", true), permition: 'MOD_TIPO_AVAL', route: ['cadastros', 'tipo-avaliacao'], icon: "bi bi-question-square" },
@@ -117,8 +117,10 @@ export class AppComponent {
         { name: "Tipos de " + this.lex.noun("Processo", true), permition: 'MOD_TIPO_PROC', route: ['cadastros', 'tipo-processo'], icon: "bi bi-folder-check" }
       ],
       gestao: [
+        { name: this.lex.noun("Adesão", true), permition: 'MOD_ADES', route: ['gestao', 'adesao'], icon: "bi bi-check-all" },
         { name: this.lex.noun("Demanda", true), permition: '', route: ['gestao', 'demanda'], icon: "bi bi-activity" },
         { name: this.lex.noun("Planos de Gestão/Entregas", true), permition: 'MOD_PGENTR', route: ['gestao', 'planejamento'], icon: "bi bi-files" },
+        { name: this.lex.noun("Programa de gestão", true), permition: 'MOD_PRGT', route: ['cadastros', 'programa'], icon: "bi bi-graph-up-arrow" },
         { name: this.lex.noun("Plano de trabalho", true), permition: 'MOD_PTR', route: ['gestao', 'plano'], icon: "bi bi-list-check" },
         { name: this.lex.noun("Projetos", true), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: "bi bi-diagram-2" }
       ],
