@@ -39,6 +39,8 @@ export class LexicalService {
     "tempo planejado": {single: "tempo planejado", plural: "tempos planejados", female: false},
     "unidade": {single: "unidade", plural: "unidades", female: true},
     "usuário": {single: "usuário", plural: "usuários", female: false},
+    "template": {single: "template", plural: "templates", female: false},
+    "adesao": {single: "Adesão", plural: "Adesões", female: false},
   };
 
   public vocabulary: Translate = {};

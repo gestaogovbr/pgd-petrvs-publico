@@ -48,6 +48,10 @@ export class LookupService {
     { key: 'SIMPLIFICADO', value: "Simplificado" }
   ];
 
+  public TEMPLATE_TIPO: LookupItem[] = [
+    { key: 'TCR', value: "Termo de Ciência e Responsabilidade" }
+  ];
+
   public COMENTARIO_PRIVACIDADE: LookupItem[] = [
     { key: 'PUBLICO', value: "Público" },
     { key: 'PRIVADO', value: "Privado" }
