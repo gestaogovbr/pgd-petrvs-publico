@@ -127,7 +127,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_dao_tipo_modalidade_dao_service__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! src/app/dao/tipo-modalidade-dao.service */ "8B/q");
 /* harmony import */ var src_app_dao_tipo_motivo_afastamento_dao_service__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! src/app/dao/tipo-motivo-afastamento-dao.service */ "gFTY");
 /* harmony import */ var src_app_dao_tipo_processo_dao_service__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! src/app/dao/tipo-processo-dao.service */ "VW5Q");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var src_app_dao_template_dao_service__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! src/app/dao/template-dao.service */ "1DpL");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! @angular/core */ "fXoL");
+
 
 
 
@@ -225,6 +227,7 @@ class PageListBase extends _page_base__WEBPACK_IMPORTED_MODULE_1__["PageBase"] {
             { table: 'programas', campo: 'nome', dao: injector.get(src_app_dao_programa_dao_service__WEBPACK_IMPORTED_MODULE_13__["ProgramaDaoService"]), label: "Programa", selectRoute: { route: ['cadastros', 'programa'] } },
             { table: 'projetos', campo: 'nome', dao: injector.get(src_app_dao_projeto_dao_service__WEBPACK_IMPORTED_MODULE_10__["ProjetoDaoService"]), label: "Projeto", selectRoute: { route: ['gestao', 'projeto'] } },
             { table: 'tarefas', campo: 'nome', dao: injector.get(src_app_dao_tarefa_dao_service__WEBPACK_IMPORTED_MODULE_12__["TarefaDaoService"]), label: "Tarefa", selectRoute: { route: ['cadastros', 'tarefa'] } },
+            { table: 'templates', campo: 'titulo', dao: injector.get(src_app_dao_template_dao_service__WEBPACK_IMPORTED_MODULE_25__["TemplateDaoService"]), label: "Template", selectRoute: { route: ['cadastros', 'template'] } },
             { table: 'tipos-atividades', campo: 'nome', dao: injector.get(src_app_dao_tipo_atividade_dao_service__WEBPACK_IMPORTED_MODULE_18__["TipoAtividadeDaoService"]), label: "Tipo de Atividade", selectRoute: { route: ['cadastros', 'tipo-atividade'] } },
             { table: 'tipos-avaliacoes', campo: 'nome', dao: injector.get(src_app_dao_tipo_avaliacao_dao_service__WEBPACK_IMPORTED_MODULE_19__["TipoAvaliacaoDaoService"]), label: "Tipo de Avaliação", selectRoute: { route: ['cadastros', 'tipo-avaliacao'] } },
             { table: 'tipos-documentos', campo: 'nome', dao: injector.get(src_app_dao_tipo_documento_dao_service__WEBPACK_IMPORTED_MODULE_20__["TipoDocumentoDaoService"]), label: "Tipo de Documento", selectRoute: { route: ['cadastros', 'tipo-documento'] } },
@@ -340,8 +343,8 @@ class PageListBase extends _page_base__WEBPACK_IMPORTED_MODULE_1__["PageBase"] {
         }
     }
 }
-PageListBase.ɵfac = function PageListBase_Factory(t) { return new (t || PageListBase)(_angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_25__["Injector"]), _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_25__["Type"]), _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_25__["Type"])); };
-PageListBase.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵdefineInjectable"]({ token: PageListBase, factory: PageListBase.ɵfac });
+PageListBase.ɵfac = function PageListBase_Factory(t) { return new (t || PageListBase)(_angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_26__["Injector"]), _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_26__["Type"]), _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_26__["Type"])); };
+PageListBase.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵdefineInjectable"]({ token: PageListBase, factory: PageListBase.ɵfac });
 
 
 /***/ }),
@@ -387,6 +390,9 @@ class LookupService {
         this.TIPO_LAYOUT = [
             { key: 'COMPLETO', value: "Completo" },
             { key: 'SIMPLIFICADO', value: "Simplificado" }
+        ];
+        this.TEMPLATE_TIPO = [
+            { key: 'TCR', value: "Termo de Ciência e Responsabilidade" }
         ];
         this.COMENTARIO_PRIVACIDADE = [
             { key: 'PUBLICO', value: "Público" },
@@ -1644,6 +1650,33 @@ _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵsetComponentScope"](_demanda_li
     _demanda_list_kanban_demanda_list_kanban_component__WEBPACK_IMPORTED_MODULE_14__["DemandaListKanbanComponent"], _components_grid_filter_filter_component__WEBPACK_IMPORTED_MODULE_18__["FilterComponent"], _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_19__["InputSearchComponent"], _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_20__["InputSwitchComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgIf"], _components_charts_bar_bar_chart_component__WEBPACK_IMPORTED_MODULE_21__["BarChartComponent"]], []);
 _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵsetComponentScope"](_demanda_list_grid_demanda_list_grid_component__WEBPACK_IMPORTED_MODULE_5__["DemandaListGridComponent"], [_uteis_calendar_efemerides_calendar_efemerides_component__WEBPACK_IMPORTED_MODULE_22__["CalendarEfemeridesComponent"], _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_23__["GridComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgIf"], _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_24__["ToolbarComponent"], _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_20__["InputSwitchComponent"], _components_grid_filter_filter_component__WEBPACK_IMPORTED_MODULE_18__["FilterComponent"], _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_19__["InputSearchComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_25__["InputTextComponent"], _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_26__["InputSelectComponent"], _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_27__["InputMultiselectComponent"], _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_28__["InputDatetimeComponent"], _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_29__["ColumnsComponent"], _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_30__["ColumnComponent"], _demanda_list_entrega_demanda_list_entrega_component__WEBPACK_IMPORTED_MODULE_13__["DemandaListEntregaComponent"], _components_grid_order_order_component__WEBPACK_IMPORTED_MODULE_31__["OrderComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgForOf"], _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_32__["BadgeComponent"], _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_33__["SeparatorComponent"], _uteis_comentarios_widget_comentarios_widget_component__WEBPACK_IMPORTED_MODULE_34__["ComentariosWidgetComponent"], _components_grid_pagination_pagination_component__WEBPACK_IMPORTED_MODULE_35__["PaginationComponent"]], []);
 _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵsetComponentScope"](_demanda_list_kanban_demanda_list_kanban_component__WEBPACK_IMPORTED_MODULE_14__["DemandaListKanbanComponent"], [_components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_24__["ToolbarComponent"], _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_20__["InputSwitchComponent"], _components_grid_filter_filter_component__WEBPACK_IMPORTED_MODULE_18__["FilterComponent"], _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_19__["InputSearchComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_25__["InputTextComponent"], _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_26__["InputSelectComponent"], _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_27__["InputMultiselectComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgIf"], _components_profile_picture_profile_picture_component__WEBPACK_IMPORTED_MODULE_36__["ProfilePictureComponent"], _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_32__["BadgeComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgForOf"], _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_33__["SeparatorComponent"], _components_kanban_kanban_component__WEBPACK_IMPORTED_MODULE_37__["KanbanComponent"], _components_kanban_swimlane_swimlane_component__WEBPACK_IMPORTED_MODULE_38__["SwimlaneComponent"], _components_kanban_docker_docker_component__WEBPACK_IMPORTED_MODULE_39__["DockerComponent"]], []);
+
+
+/***/ }),
+
+/***/ "1DpL":
+/*!*********************************************!*\
+  !*** ./src/app/dao/template-dao.service.ts ***!
+  \*********************************************/
+/*! exports provided: TemplateDaoService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TemplateDaoService", function() { return TemplateDaoService; });
+/* harmony import */ var _dao_base_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./dao-base.service */ "WScx");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
+
+
+class TemplateDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0__["DaoBaseService"] {
+    constructor(injector) {
+        super("Template", injector);
+        this.injector = injector;
+        this.searchFields = ["titulo"];
+    }
+}
+TemplateDaoService.ɵfac = function TemplateDaoService_Factory(t) { return new (t || TemplateDaoService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
+TemplateDaoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: TemplateDaoService, factory: TemplateDaoService.ɵfac, providedIn: 'root' });
 
 
 /***/ }),
@@ -3097,6 +3130,89 @@ class PageFormBase extends _page_base__WEBPACK_IMPORTED_MODULE_1__["PageBase"] {
 }
 PageFormBase.ɵfac = function PageFormBase_Factory(t) { return new (t || PageFormBase)(_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_3__["Injector"]), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_3__["Type"]), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_3__["Type"])); };
 PageFormBase.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineInjectable"]({ token: PageFormBase, factory: PageFormBase.ɵfac });
+
+
+/***/ }),
+
+/***/ "7B2Z":
+/*!*************************************************************************!*\
+  !*** ./src/app/components/input/input-editor/input-editor.component.ts ***!
+  \*************************************************************************/
+/*! exports provided: InputEditorComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InputEditorComponent", function() { return InputEditorComponent; });
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/forms */ "3Pt+");
+/* harmony import */ var _input_base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../input-base */ "d1P8");
+/* harmony import */ var _ckeditor_ckeditor5_build_classic__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @ckeditor/ckeditor5-build-classic */ "+z1p");
+/* harmony import */ var _ckeditor_ckeditor5_build_classic__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_ckeditor_ckeditor5_build_classic__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _input_container_input_container_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../input-container/input-container.component */ "RlNX");
+/* harmony import */ var _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @ckeditor/ckeditor5-angular */ "zioG");
+
+
+
+
+
+
+const _c0 = ["inputElement"];
+class InputEditorComponent extends _input_base__WEBPACK_IMPORTED_MODULE_1__["InputBase"] {
+    constructor(injector) {
+        super(injector);
+        this.injector = injector;
+        this.class = 'form-group';
+        this.hostClass = "";
+        this.labelPosition = "top";
+        this.controlName = null;
+        this.icon = "";
+        this.label = "";
+        this.labelInfo = "";
+        this.bold = false;
+        this.value = "";
+        this.loading = false;
+        this.Editor = _ckeditor_ckeditor5_build_classic__WEBPACK_IMPORTED_MODULE_2__;
+        this.data = "Mensagem inicia";
+    }
+    set control(value) {
+        this._control = value;
+    }
+    get control() {
+        return this.getControl();
+    }
+    set size(value) {
+        this.setSize(value);
+    }
+    get size() {
+        return this.getSize();
+    }
+    ngOnInit() {
+        super.ngOnInit();
+    }
+}
+InputEditorComponent.ɵfac = function InputEditorComponent_Factory(t) { return new (t || InputEditorComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_3__["Injector"])); };
+InputEditorComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineComponent"]({ type: InputEditorComponent, selectors: [["input-editor"]], viewQuery: function InputEditorComponent_Query(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵviewQuery"](_c0, 1);
+    } if (rf & 2) {
+        let _t;
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵloadQuery"]()) && (ctx.inputElement = _t.first);
+    } }, hostVars: 2, hostBindings: function InputEditorComponent_HostBindings(rf, ctx) { if (rf & 2) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵclassMap"](ctx.class);
+    } }, inputs: { hostClass: "hostClass", labelPosition: "labelPosition", controlName: "controlName", disabled: "disabled", icon: "icon", label: "label", labelInfo: "labelInfo", bold: "bold", value: "value", loading: "loading", form: "form", source: "source", path: "path", control: "control", size: "size" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵProvidersFeature"]([], [
+            {
+                provide: _angular_forms__WEBPACK_IMPORTED_MODULE_0__["ControlContainer"],
+                useExisting: _angular_forms__WEBPACK_IMPORTED_MODULE_0__["FormGroupDirective"]
+            }
+        ]), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵInheritDefinitionFeature"]], decls: 2, vars: 11, consts: [[3, "labelPosition", "controlName", "control", "loading", "disabled", "label", "labelInfo", "icon", "bold"], [3, "editor", "data"]], template: function InputEditorComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "input-container", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](1, "ckeditor", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
+    } if (rf & 2) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("labelPosition", ctx.labelPosition)("controlName", ctx.controlName)("control", ctx.control)("loading", ctx.loading)("disabled", ctx.disabled)("label", ctx.label)("labelInfo", ctx.labelInfo)("icon", ctx.icon)("bold", ctx.bold);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("editor", ctx.Editor)("data", ctx.data);
+    } }, directives: [_input_container_input_container_component__WEBPACK_IMPORTED_MODULE_4__["InputContainerComponent"], _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_5__["CKEditorComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJpbnB1dC1lZGl0b3IuY29tcG9uZW50LnNjc3MifQ== */"] });
 
 
 /***/ }),
@@ -15913,6 +16029,8 @@ class LexicalService {
             "tempo planejado": { single: "tempo planejado", plural: "tempos planejados", female: false },
             "unidade": { single: "unidade", plural: "unidades", female: true },
             "usuário": { single: "usuário", plural: "usuários", female: false },
+            "template": { single: "template", plural: "templates", female: false },
+            "adesao": { single: "Adesão", plural: "Adesões", female: false },
         };
         this.vocabulary = {};
         this.vocabulary = this.defaults;
@@ -16461,8 +16579,8 @@ class AppComponent {
                 { name: this.lex.noun("Entregas", true), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: "bi bi-list-check" },
                 { name: this.lex.noun("Feriados", true), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: "bi bi-emoji-sunglasses" },
                 { name: this.lex.noun("Material e serviço", true), permition: '', route: ['cadastros', 'material-servico'], icon: "bi bi-box-seam" },
-                { name: this.lex.noun("Programa de gestão", true), permition: 'MOD_PRGT', route: ['cadastros', 'programa'], icon: "bi bi-graph-up-arrow" },
                 { name: this.lex.noun("Tarefa", true), permition: 'MOD_DMD', route: ['cadastros', 'tarefa'], icon: "bi bi-boxes" },
+                { name: this.lex.noun("Templates", true), permition: 'MOD_DMD', route: ['cadastros', 'template'], icon: "bi bi-archive" },
                 "-",
                 { name: "Tipos de " + this.lex.noun("Atividade", true), permition: 'MOD_TIPO_ATV', route: ['cadastros', 'tipo-atividade'], icon: "bi bi-check-all" },
                 { name: "Tipos de " + this.lex.noun("Avaliação", true), permition: 'MOD_TIPO_AVAL', route: ['cadastros', 'tipo-avaliacao'], icon: "bi bi-question-square" },
@@ -16473,8 +16591,10 @@ class AppComponent {
                 { name: "Tipos de " + this.lex.noun("Processo", true), permition: 'MOD_TIPO_PROC', route: ['cadastros', 'tipo-processo'], icon: "bi bi-folder-check" }
             ],
             gestao: [
+                { name: this.lex.noun("Adesão", true), permition: 'MOD_ADES', route: ['gestao', 'adesao'], icon: "bi bi-check-all" },
                 { name: this.lex.noun("Demanda", true), permition: '', route: ['gestao', 'demanda'], icon: "bi bi-activity" },
                 { name: this.lex.noun("Planos de Gestão/Entregas", true), permition: 'MOD_PGENTR', route: ['gestao', 'planejamento'], icon: "bi bi-files" },
+                { name: this.lex.noun("Programa de gestão", true), permition: 'MOD_PRGT', route: ['cadastros', 'programa'], icon: "bi bi-graph-up-arrow" },
                 { name: this.lex.noun("Plano de trabalho", true), permition: 'MOD_PTR', route: ['gestao', 'plano'], icon: "bi bi-list-check" },
                 { name: this.lex.noun("Projetos", true), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: "bi bi-diagram-2" }
             ],
@@ -21089,7 +21209,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _progress_bar_progress_bar_component__WEBPACK_IMPORTED_MODULE_50__ = __webpack_require__(/*! ./progress-bar/progress-bar.component */ "uSqO");
 /* harmony import */ var _input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_51__ = __webpack_require__(/*! ./input/input-number/input-number.component */ "imFN");
 /* harmony import */ var _top_alert_top_alert_component__WEBPACK_IMPORTED_MODULE_52__ = __webpack_require__(/*! ./top-alert/top-alert.component */ "UJzD");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_53__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _input_input_editor_input_editor_component__WEBPACK_IMPORTED_MODULE_53__ = __webpack_require__(/*! ./input/input-editor/input-editor.component */ "7B2Z");
+/* harmony import */ var _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_54__ = __webpack_require__(/*! @ckeditor/ckeditor5-angular */ "zioG");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_55__ = __webpack_require__(/*! @angular/core */ "fXoL");
+
+
 
 
 
@@ -21155,8 +21279,8 @@ const maskConfig = {
 class ComponentsModule {
 }
 ComponentsModule.ɵfac = function ComponentsModule_Factory(t) { return new (t || ComponentsModule)(); };
-ComponentsModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_53__["ɵɵdefineNgModule"]({ type: ComponentsModule });
-ComponentsModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_53__["ɵɵdefineInjector"]({ imports: [[
+ComponentsModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_55__["ɵɵdefineNgModule"]({ type: ComponentsModule });
+ComponentsModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_55__["ɵɵdefineInjector"]({ imports: [[
             _angular_common__WEBPACK_IMPORTED_MODULE_0__["CommonModule"],
             ng2_charts__WEBPACK_IMPORTED_MODULE_41__["ChartsModule"],
             ngx_infinite_scroll__WEBPACK_IMPORTED_MODULE_31__["InfiniteScrollModule"],
@@ -21164,9 +21288,10 @@ ComponentsModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_53__["ɵɵdefine
             ngx_drag_drop__WEBPACK_IMPORTED_MODULE_38__["DndModule"],
             //CurrencyMaskModule,
             angular_double_scrollbars__WEBPACK_IMPORTED_MODULE_39__["AngularDoubleScrollbarsModule"],
-            ngx_mask__WEBPACK_IMPORTED_MODULE_2__["NgxMaskModule"].forRoot(maskConfig)
+            ngx_mask__WEBPACK_IMPORTED_MODULE_2__["NgxMaskModule"].forRoot(maskConfig),
+            _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_54__["CKEditorModule"]
         ]] });
-(function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_53__["ɵɵsetNgModuleScope"](ComponentsModule, { declarations: [_charts_bar_bar_chart_component__WEBPACK_IMPORTED_MODULE_42__["BarChartComponent"],
+(function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_55__["ɵɵsetNgModuleScope"](ComponentsModule, { declarations: [_charts_bar_bar_chart_component__WEBPACK_IMPORTED_MODULE_42__["BarChartComponent"],
         _charts_pie_pie_chart_component__WEBPACK_IMPORTED_MODULE_44__["PieChartComponent"],
         _grid_grid_component__WEBPACK_IMPORTED_MODULE_3__["GridComponent"],
         _grid_column_column_component__WEBPACK_IMPORTED_MODULE_4__["ColumnComponent"],
@@ -21211,13 +21336,14 @@ ComponentsModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_53__["ɵɵdefine
         _badge_badge_component__WEBPACK_IMPORTED_MODULE_48__["BadgeComponent"],
         _profile_picture_profile_picture_component__WEBPACK_IMPORTED_MODULE_49__["ProfilePictureComponent"],
         _progress_bar_progress_bar_component__WEBPACK_IMPORTED_MODULE_50__["ProgressBarComponent"],
-        _input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_51__["InputNumberComponent"]], imports: [_angular_common__WEBPACK_IMPORTED_MODULE_0__["CommonModule"],
+        _input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_51__["InputNumberComponent"],
+        _input_input_editor_input_editor_component__WEBPACK_IMPORTED_MODULE_53__["InputEditorComponent"]], imports: [_angular_common__WEBPACK_IMPORTED_MODULE_0__["CommonModule"],
         ng2_charts__WEBPACK_IMPORTED_MODULE_41__["ChartsModule"],
         ngx_infinite_scroll__WEBPACK_IMPORTED_MODULE_31__["InfiniteScrollModule"],
         _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ReactiveFormsModule"],
         ngx_drag_drop__WEBPACK_IMPORTED_MODULE_38__["DndModule"],
         //CurrencyMaskModule,
-        angular_double_scrollbars__WEBPACK_IMPORTED_MODULE_39__["AngularDoubleScrollbarsModule"], ngx_mask__WEBPACK_IMPORTED_MODULE_2__["NgxMaskModule"]], exports: [_charts_bar_bar_chart_component__WEBPACK_IMPORTED_MODULE_42__["BarChartComponent"],
+        angular_double_scrollbars__WEBPACK_IMPORTED_MODULE_39__["AngularDoubleScrollbarsModule"], ngx_mask__WEBPACK_IMPORTED_MODULE_2__["NgxMaskModule"], _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_54__["CKEditorModule"]], exports: [_charts_bar_bar_chart_component__WEBPACK_IMPORTED_MODULE_42__["BarChartComponent"],
         _charts_pie_pie_chart_component__WEBPACK_IMPORTED_MODULE_44__["PieChartComponent"],
         _grid_grid_component__WEBPACK_IMPORTED_MODULE_3__["GridComponent"],
         _grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_10__["ColumnsComponent"],
@@ -21257,19 +21383,20 @@ ComponentsModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_53__["ɵɵdefine
         _badge_badge_component__WEBPACK_IMPORTED_MODULE_48__["BadgeComponent"],
         _profile_picture_profile_picture_component__WEBPACK_IMPORTED_MODULE_49__["ProfilePictureComponent"],
         _progress_bar_progress_bar_component__WEBPACK_IMPORTED_MODULE_50__["ProgressBarComponent"],
-        _input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_51__["InputNumberComponent"]] }); })();
-_angular_core__WEBPACK_IMPORTED_MODULE_53__["ɵɵsetComponentScope"](_grid_grid_component__WEBPACK_IMPORTED_MODULE_3__["GridComponent"], [_angular_common__WEBPACK_IMPORTED_MODULE_0__["NgIf"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ɵangular_packages_forms_forms_ba"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgControlStatusGroup"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormGroupDirective"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgForOf"], _grid_column_header_column_header_component__WEBPACK_IMPORTED_MODULE_5__["ColumnHeaderComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgTemplateOutlet"], _grid_column_row_column_row_component__WEBPACK_IMPORTED_MODULE_6__["ColumnRowComponent"],
+        _input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_51__["InputNumberComponent"],
+        _input_input_editor_input_editor_component__WEBPACK_IMPORTED_MODULE_53__["InputEditorComponent"]] }); })();
+_angular_core__WEBPACK_IMPORTED_MODULE_55__["ɵɵsetComponentScope"](_grid_grid_component__WEBPACK_IMPORTED_MODULE_3__["GridComponent"], [_angular_common__WEBPACK_IMPORTED_MODULE_0__["NgIf"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ɵangular_packages_forms_forms_ba"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgControlStatusGroup"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormGroupDirective"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgForOf"], _grid_column_header_column_header_component__WEBPACK_IMPORTED_MODULE_5__["ColumnHeaderComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgTemplateOutlet"], _grid_column_row_column_row_component__WEBPACK_IMPORTED_MODULE_6__["ColumnRowComponent"],
     _grid_column_expand_column_expand_component__WEBPACK_IMPORTED_MODULE_33__["ColumnExpandComponent"],
     _grid_column_options_column_options_component__WEBPACK_IMPORTED_MODULE_7__["ColumnOptionsComponent"]], []);
-_angular_core__WEBPACK_IMPORTED_MODULE_53__["ɵɵsetComponentScope"](_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_14__["InputSwitchComponent"], [_input_input_container_input_container_component__WEBPACK_IMPORTED_MODULE_13__["InputContainerComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgIf"]], []);
-_angular_core__WEBPACK_IMPORTED_MODULE_53__["ɵɵsetComponentScope"](_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_16__["InputSearchComponent"], [_input_input_container_input_container_component__WEBPACK_IMPORTED_MODULE_13__["InputContainerComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgIf"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgForOf"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgTemplateOutlet"]], []);
-_angular_core__WEBPACK_IMPORTED_MODULE_53__["ɵɵsetComponentScope"](_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_22__["InputSelectComponent"], [_input_input_container_input_container_component__WEBPACK_IMPORTED_MODULE_13__["InputContainerComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgIf"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgSelectOption"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ɵangular_packages_forms_forms_z"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgForOf"]], []);
-_angular_core__WEBPACK_IMPORTED_MODULE_53__["ɵɵsetComponentScope"](_grid_report_report_component__WEBPACK_IMPORTED_MODULE_32__["ReportComponent"], [_angular_common__WEBPACK_IMPORTED_MODULE_0__["NgForOf"], _grid_column_header_column_header_component__WEBPACK_IMPORTED_MODULE_5__["ColumnHeaderComponent"],
+_angular_core__WEBPACK_IMPORTED_MODULE_55__["ɵɵsetComponentScope"](_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_14__["InputSwitchComponent"], [_input_input_container_input_container_component__WEBPACK_IMPORTED_MODULE_13__["InputContainerComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgIf"]], []);
+_angular_core__WEBPACK_IMPORTED_MODULE_55__["ɵɵsetComponentScope"](_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_16__["InputSearchComponent"], [_input_input_container_input_container_component__WEBPACK_IMPORTED_MODULE_13__["InputContainerComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgIf"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgForOf"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgTemplateOutlet"]], []);
+_angular_core__WEBPACK_IMPORTED_MODULE_55__["ɵɵsetComponentScope"](_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_22__["InputSelectComponent"], [_input_input_container_input_container_component__WEBPACK_IMPORTED_MODULE_13__["InputContainerComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgIf"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgSelectOption"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ɵangular_packages_forms_forms_z"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgForOf"]], []);
+_angular_core__WEBPACK_IMPORTED_MODULE_55__["ɵɵsetComponentScope"](_grid_report_report_component__WEBPACK_IMPORTED_MODULE_32__["ReportComponent"], [_angular_common__WEBPACK_IMPORTED_MODULE_0__["NgForOf"], _grid_column_header_column_header_component__WEBPACK_IMPORTED_MODULE_5__["ColumnHeaderComponent"],
     _grid_column_row_column_row_component__WEBPACK_IMPORTED_MODULE_6__["ColumnRowComponent"]], []);
-_angular_core__WEBPACK_IMPORTED_MODULE_53__["ɵɵsetComponentScope"](_kanban_kanban_component__WEBPACK_IMPORTED_MODULE_34__["KanbanComponent"], [angular_double_scrollbars__WEBPACK_IMPORTED_MODULE_39__["AngularDoubleScrollbarsComponent"], ngx_drag_drop__WEBPACK_IMPORTED_MODULE_38__["DndDropzoneDirective"], _kanban_swimlane_swimlane_component__WEBPACK_IMPORTED_MODULE_35__["SwimlaneComponent"], ngx_drag_drop__WEBPACK_IMPORTED_MODULE_38__["DndPlaceholderRefDirective"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgForOf"], _kanban_docker_docker_component__WEBPACK_IMPORTED_MODULE_36__["DockerComponent"]], []);
-_angular_core__WEBPACK_IMPORTED_MODULE_53__["ɵɵsetComponentScope"](_kanban_swimlane_swimlane_component__WEBPACK_IMPORTED_MODULE_35__["SwimlaneComponent"], [_angular_common__WEBPACK_IMPORTED_MODULE_0__["NgIf"], ngx_drag_drop__WEBPACK_IMPORTED_MODULE_38__["DndDraggableDirective"], _kanban_docker_docker_component__WEBPACK_IMPORTED_MODULE_36__["DockerComponent"]], []);
-_angular_core__WEBPACK_IMPORTED_MODULE_53__["ɵɵsetComponentScope"](_kanban_docker_docker_component__WEBPACK_IMPORTED_MODULE_36__["DockerComponent"], [ngx_drag_drop__WEBPACK_IMPORTED_MODULE_38__["DndHandleDirective"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgIf"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgTemplateOutlet"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgForOf"], ngx_drag_drop__WEBPACK_IMPORTED_MODULE_38__["DndDropzoneDirective"], ngx_drag_drop__WEBPACK_IMPORTED_MODULE_38__["DndPlaceholderRefDirective"], _kanban_card_card_component__WEBPACK_IMPORTED_MODULE_37__["CardComponent"], ngx_drag_drop__WEBPACK_IMPORTED_MODULE_38__["DndDraggableDirective"]], []);
-_angular_core__WEBPACK_IMPORTED_MODULE_53__["ɵɵsetComponentScope"](_gantt_gantt_component__WEBPACK_IMPORTED_MODULE_45__["GanttComponent"], [_angular_common__WEBPACK_IMPORTED_MODULE_0__["NgForOf"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgIf"], _gantt_gantt_templates_gantt_templates_component__WEBPACK_IMPORTED_MODULE_46__["GanttTemplatesComponent"]], []);
+_angular_core__WEBPACK_IMPORTED_MODULE_55__["ɵɵsetComponentScope"](_kanban_kanban_component__WEBPACK_IMPORTED_MODULE_34__["KanbanComponent"], [angular_double_scrollbars__WEBPACK_IMPORTED_MODULE_39__["AngularDoubleScrollbarsComponent"], ngx_drag_drop__WEBPACK_IMPORTED_MODULE_38__["DndDropzoneDirective"], _kanban_swimlane_swimlane_component__WEBPACK_IMPORTED_MODULE_35__["SwimlaneComponent"], ngx_drag_drop__WEBPACK_IMPORTED_MODULE_38__["DndPlaceholderRefDirective"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgForOf"], _kanban_docker_docker_component__WEBPACK_IMPORTED_MODULE_36__["DockerComponent"]], []);
+_angular_core__WEBPACK_IMPORTED_MODULE_55__["ɵɵsetComponentScope"](_kanban_swimlane_swimlane_component__WEBPACK_IMPORTED_MODULE_35__["SwimlaneComponent"], [_angular_common__WEBPACK_IMPORTED_MODULE_0__["NgIf"], ngx_drag_drop__WEBPACK_IMPORTED_MODULE_38__["DndDraggableDirective"], _kanban_docker_docker_component__WEBPACK_IMPORTED_MODULE_36__["DockerComponent"]], []);
+_angular_core__WEBPACK_IMPORTED_MODULE_55__["ɵɵsetComponentScope"](_kanban_docker_docker_component__WEBPACK_IMPORTED_MODULE_36__["DockerComponent"], [ngx_drag_drop__WEBPACK_IMPORTED_MODULE_38__["DndHandleDirective"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgIf"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgTemplateOutlet"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgForOf"], ngx_drag_drop__WEBPACK_IMPORTED_MODULE_38__["DndDropzoneDirective"], ngx_drag_drop__WEBPACK_IMPORTED_MODULE_38__["DndPlaceholderRefDirective"], _kanban_card_card_component__WEBPACK_IMPORTED_MODULE_37__["CardComponent"], ngx_drag_drop__WEBPACK_IMPORTED_MODULE_38__["DndDraggableDirective"]], []);
+_angular_core__WEBPACK_IMPORTED_MODULE_55__["ɵɵsetComponentScope"](_gantt_gantt_component__WEBPACK_IMPORTED_MODULE_45__["GanttComponent"], [_angular_common__WEBPACK_IMPORTED_MODULE_0__["NgForOf"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgIf"], _gantt_gantt_templates_gantt_templates_component__WEBPACK_IMPORTED_MODULE_46__["GanttTemplatesComponent"]], []);
 
 
 /***/ }),
@@ -28346,7 +28473,9 @@ const routes = [
     { path: 'cadastros/tipo-modalidade', loadChildren: () => __webpack_require__.e(/*! import() | modules-cadastros-tipo-modalidade-tipo-modalidade-module */ "modules-cadastros-tipo-modalidade-tipo-modalidade-module").then(__webpack_require__.bind(null, /*! ./modules/cadastros/tipo-modalidade/tipo-modalidade.module */ "kYq8")).then(m => m.TipoModalidadeModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'cadastros/tipo-motivo-afastamento', loadChildren: () => __webpack_require__.e(/*! import() | modules-cadastros-tipo-motivo-afastamento-tipo-motivo-afastamento-module */ "modules-cadastros-tipo-motivo-afastamento-tipo-motivo-afastamento-module").then(__webpack_require__.bind(null, /*! ./modules/cadastros/tipo-motivo-afastamento/tipo-motivo-afastamento.module */ "39s+")).then(m => m.TipoMotivoAfastamentoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'cadastros/tipo-processo', loadChildren: () => __webpack_require__.e(/*! import() | modules-cadastros-tipo-processo-tipo-processo-module */ "modules-cadastros-tipo-processo-tipo-processo-module").then(__webpack_require__.bind(null, /*! ./modules/cadastros/tipo-processo/tipo-processo.module */ "Qhf4")).then(m => m.TipoProcessoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
+    { path: 'cadastros/template', loadChildren: () => __webpack_require__.e(/*! import() | modules-cadastros-template-template-module */ "modules-cadastros-template-template-module").then(__webpack_require__.bind(null, /*! ./modules/cadastros/template/template.module */ "63Lr")).then(m => m.TemplateModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'gestao/demanda', loadChildren: () => Promise.resolve(/*! import() */).then(__webpack_require__.bind(null, /*! ./modules/gestao/demanda/demanda.module */ "17YW")).then(m => m.DemandaModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
+    { path: 'gestao/adesao', loadChildren: () => __webpack_require__.e(/*! import() | modules-gestao-adesao-adesao-module */ "modules-gestao-adesao-adesao-module").then(__webpack_require__.bind(null, /*! ./modules/gestao/adesao/adesao.module */ "U+ZE")).then(m => m.AdesaoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'gestao/plano', loadChildren: () => Promise.all(/*! import() | modules-gestao-plano-plano-module */[__webpack_require__.e("default~listeners-listeners-module~modules-gestao-plano-plano-module"), __webpack_require__.e("modules-gestao-plano-plano-module")]).then(__webpack_require__.bind(null, /*! ./modules/gestao/plano/plano.module */ "ALD5")).then(m => m.PlanoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'gestao/planejamento', loadChildren: () => __webpack_require__.e(/*! import() | modules-gestao-plano-gestao-entregas-planejamento-module */ "modules-gestao-plano-gestao-entregas-planejamento-module").then(__webpack_require__.bind(null, /*! ./modules/gestao/plano-gestao-entregas/planejamento.module */ "zgql")).then(m => m.PlanejamentoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'gestao/projeto', loadChildren: () => __webpack_require__.e(/*! import() | modules-gestao-projeto-projeto-module */ "modules-gestao-projeto-projeto-module").then(__webpack_require__.bind(null, /*! ./modules/gestao/projeto/projeto.module */ "mH8K")).then(m => m.ProjetoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
@@ -28413,7 +28542,7 @@ class UsuarioDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0__["
                 this.server.post('api/' + this.collection + '/dashboard_gestor', { data_inicial, data_final, unidades }).subscribe(response => {
                     resolve(response.data);
                 }, error => {
-                    console.log("Erro ao buscar o dashboard do Usuário!", error);
+                    console.log("Erro ao buscar o dashboard do Gestor!", error);
                     resolve(null);
                 });
             }
