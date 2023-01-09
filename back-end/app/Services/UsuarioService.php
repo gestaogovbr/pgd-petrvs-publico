@@ -154,9 +154,7 @@ class UsuarioService extends ServiceBase
         $planos_ids = $planosAtivos->map(function($plano){return $plano->id;});
         $notas_validas = TipoAvaliacao::where('aceita_entrega', true)->get()->pluck('nota_atribuida');
   
-        $total_consolidadas = Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->avaliadas()->with(['avaliacao'])->get()->sum(function($demanda) use ($notas_validas){
-            return in_array($demanda["avaliacao"]["nota_atribuida"], $notas_validas->all()) ? $demanda['tempo_pactuado'] : 0;
-        });
+       
 
         $media_avaliacao = Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->avaliadas()->with(['avaliacao'])->get()->avg(function($demanda){
             return $demanda["avaliacao"]["nota_atribuida"];
@@ -164,6 +162,10 @@ class UsuarioService extends ServiceBase
         
 
         foreach ($planosAtivos as $plano) {
+            $total_consolidadas = Demanda::doUsuario($usuario_id)->dosPlanos([$plano->id])->avaliadas()->with(['avaliacao'])->get()->sum(function($demanda) use ($notas_validas){
+                return in_array($demanda["avaliacao"]["nota_atribuida"], $notas_validas->all()) ? $demanda['tempo_pactuado'] : 0;
+            });
+
             $horas_alocadas = $plano->demandas->sum('tempo_pactuado');
             $result['planos'][] = [
                 'data_inicio_vigencia' => $plano['data_inicio_vigencia'],
