@@ -36,24 +36,24 @@ export class GoogleApiService {
         script.onload = () => {
           let socialUser = GoogleApiService.retrieveSocialUser()
 
-          if (socialUser != null) {
+          // if (socialUser != null) {
 
-            // refresh the token 10s before it expires
-            let idToken = JSON.parse(atob(socialUser.idToken.split(".")[1]))
-            let currentUnixTimestamp = Math.floor(Date.now() / 1000)
+          //   // refresh the token 10s before it expires
+          //   let idToken = JSON.parse(atob(socialUser.idToken.split(".")[1]))
+          //   let currentUnixTimestamp = Math.floor(Date.now() / 1000)
 
-            if (idToken["exp"] < currentUnixTimestamp) {
-              this._socialUser.next(null);
-              GoogleApiService.clearSocialUser();
-            } else {
-              this._socialUser.next(socialUser);
-            }
+          //   if (idToken["exp"] < currentUnixTimestamp) {
+          //     this._socialUser.next(null);
+          //     GoogleApiService.clearSocialUser();
+          //   } else {
+          //     this._socialUser.next(socialUser);
+          //   }
 
-            setTimeout(() => {
-              this.refreshToken()
-            }, 3000)
-            //(idToken["exp"] - currentUnixTimestamp - 10) * 1000
-          }
+          //   setTimeout(() => {
+          //     this.refreshToken()
+          //   }, 3000)
+          //   //(idToken["exp"] - currentUnixTimestamp - 10) * 1000
+          // }
 
 
 
@@ -91,13 +91,13 @@ export class GoogleApiService {
       if (storedUser !== null) {
         this._socialUser.next(storedUser)
       }
-      if (this._socialUser) {
+      if (this._socialUser?.value) {
         google.accounts.id.revoke(this._socialUser?.value?.id, (response: any) => {
           if (response?.error) reject(response.error);
           else resolve(this._socialUser.value);
         });
       } else {
-        reject()
+        reject('Nenhum usuário')
       }
     });
   }

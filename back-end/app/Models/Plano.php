@@ -37,6 +37,7 @@ class Plano extends ModelBase
         'tipo_modalidade_id', /* char(36); NOT NULL; */
         'forma_contagem_carga_horaria', /* enum('DIA','SEMANA','MES'); NOT NULL; DEFAULT: 'DIA'; */// Forma de contagem padrão da carga horária
         //'data_fim', /* datetime; */// Data fim da vigência
+        //'plano_entrega_id', /* char(36); */
     ];
 
     public $fillable_changes = ['atividades'];

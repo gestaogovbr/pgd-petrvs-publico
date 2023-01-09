@@ -10,7 +10,15 @@ use App\Exceptions\ServerException;
 use Throwable;
 
 class EntidadeController extends ControllerBase {
-    public $updatable = ["nomenclatura", "url_sei", "notificacoes", "tipo_modalidade_id", "forma_contagem_carga_horaria", "carga_horaria_padrao"];
+    public $updatable = [
+        "nomenclatura", 
+        "url_sei", 
+        "notificacoes", 
+        "tipo_modalidade_id", 
+        "forma_contagem_carga_horaria", 
+        "carga_horaria_padrao",
+        "expediente"
+    ];
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {

@@ -12,6 +12,7 @@
 }
 body {
   margin: 0px;
+  background: #f1f5f7;
 }
 .petrvs {
   /* Reseta todas as propriedades anteriores */
@@ -75,7 +76,16 @@ body {
 .petrvs div {
   margin: initial;
 }
-.petrvs input, .petrvs button, .petrvs textarea, .petrvs select, .petrvs table, .petrvs label, .petrvs span, .petrvs legend, .petrvs caption, .petrvs a {
+.petrvs input,
+.petrvs button,
+.petrvs textarea,
+.petrvs select,
+.petrvs table,
+.petrvs label,
+.petrvs span,
+.petrvs legend,
+.petrvs caption,
+.petrvs a {
   font-size: var(--bs-body-font-size);
 }
 .petrvs .d-flex {
@@ -10111,6 +10121,10 @@ a > .petrvs code {
 }
 .petrvs label .badge {
   font-size: var(--bs-badge-font-size);
+}
+.petrvs .navbar {
+  box-shadow: 0px 2px 3px #ddd;
+  margin-bottom: 30px;
 }
 .full-container-button-group {
   display: flex !important;

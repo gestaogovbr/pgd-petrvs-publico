@@ -44,6 +44,23 @@ class UsuarioController extends ControllerBase
         }
     }
 
+    public function dashboard_gestor(Request $request) {
+        try {
+            $data = $request->validate([
+                'data_inicial' => ['required'],
+                'data_final' => ['required'],
+                'unidades' => ['required'],
+            ]);
+            $result = response()->json([
+                'success' => true,
+                'data' => $this->service->dashboard_gestor($data['data_inicial'], $data['data_final'], $data['unidades'])
+            ]);
+            return $result;
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
     public function planosPorPeriodo(Request $request) {
         try {
             $data = $request->validate([

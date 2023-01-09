@@ -7,6 +7,7 @@ import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
+import { Expediente } from 'src/app/models/expediente.model';
 import { UnidadeOrigemAtividade } from 'src/app/models/unidade-origem-atividade.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
@@ -44,6 +45,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.notificacao = injector.get<NotificacaoService>(NotificacaoService);
+    this.modalWidth = 1200;
     this.form = this.fh.FormBuilder({
       codigo: {default: ""},
       sigla: {default: ""},
@@ -85,7 +87,9 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       template_demanda_modificacao: {default: ""},
       template_demanda_comentario: {default: ""},
       enviar_email: {default: true},
-      enviar_whatsapp: {default: true}
+      enviar_whatsapp: {default: true},
+      expediente: {default: null},
+      usar_expediente_entidade: {default: true}
     }, this.cdRef, this.validate);
     this.formUnidadesOrigemAtividades = this.fh.FormBuilder({
       unidade_origem_atividade_id: {default: ""}
@@ -120,6 +124,10 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       this.form.controls.horario_trabalho_inicio.setValue("00:00");
       this.form.controls.horario_trabalho_fim.setValue("24:00");
     }
+  }
+
+  public onUsarExpedienteEntidadeChange() {
+    this.form.controls.expediente.setValue(this.form.controls.usar_expediente_entidade.value ? null : this.form.controls.expediente.value || new Expediente());
   }
 
   public addItemHandle(): LookupItem | undefined {

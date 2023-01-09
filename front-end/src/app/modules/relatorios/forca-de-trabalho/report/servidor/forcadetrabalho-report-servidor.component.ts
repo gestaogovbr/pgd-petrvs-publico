@@ -136,7 +136,7 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
       } else if ($marco_final == plano.data_fim_vigencia) {
         $horasUteisDecorridas = -2;
       } else {
-        $horasUteisDecorridas = this.calendar.calculaDataTempo($marco_inicial!, $marco_final, plano.carga_horaria, plano.unidade!, "ENTREGA", [], []).tempoUtil
+        $horasUteisDecorridas = this.calendar.calculaDataTempoUnidade($marco_inicial!, $marco_final, plano.carga_horaria, plano.unidade!, "ENTREGA", [], []).tempoUtil
       }
       let $horasTotaisAlocadas = $metadados.horasDemandasNaoIniciadas + $metadados.horasDemandasEmAndamento + $metadados.horasDemandasConcluidas + $metadados.horasDemandasAvaliadas;
       this.planoRelatorio = {

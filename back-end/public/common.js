@@ -12,6 +12,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EntidadeNotificacoes", function() { return EntidadeNotificacoes; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Entidade", function() { return Entidade; });
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
+/* harmony import */ var _expediente_model__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./expediente.model */ "e8A4");
+
 
 class EntidadeNotificacoes {
     constructor() {
@@ -49,6 +51,7 @@ class Entidade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.gestor_id = null; // Usuário gestor da unidade
         this.gestor_substituto_id = null; // Usuário gestor substituto da unidade
         this.forma_contagem_carga_horaria = "DIA"; // Forma de contagem padrão da carga horária
+        this.expediente = new _expediente_model__WEBPACK_IMPORTED_MODULE_1__["Expediente"](); // Expediente (Não nulo)
         this.initialization(data);
     }
 }

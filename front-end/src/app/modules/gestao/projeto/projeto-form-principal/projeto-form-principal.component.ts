@@ -10,6 +10,7 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { ProjetoService } from '../projeto.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
+import { CalendarExpedienteComponent } from 'src/app/modules/uteis/calendar-expediente/calendar-expediente.component';
 
 @Component({
   selector: 'projeto-form-principal',
@@ -19,6 +20,7 @@ import { InputSearchComponent } from 'src/app/components/input/input-search/inpu
 export class ProjetoFormPrincipalComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild("escritorio", { static: false }) public escritorio?: InputSearchComponent;
+  @ViewChild("expediente", { static: false }) public expediente?: CalendarExpedienteComponent;
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: Projeto | undefined) { super.entity = value; } get entity(): Projeto | undefined { return super.entity; }
   @Input() cdRef: ChangeDetectorRef;

@@ -190,6 +190,7 @@ Route::middleware(['auth:sanctum'])->prefix('Projeto')->group(function () { defa
 Route::middleware(['auth:sanctum'])->prefix('Usuario')->group(function () {
     defaultRoutes(UsuarioController::class);
     Route::post('dashboard', [UsuarioController::class, 'dashboard']);
+    Route::post('dashboard_gestor', [UsuarioController::class, 'dashboard_gestor']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Perfil')->group(function () { defaultRoutes(PerfilController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Entidade')->group(function () {

@@ -32,6 +32,8 @@ export class InputMultiselectComponent extends InputBase implements OnInit {
   @Input() loading: boolean = false;
   @Input() maxItemWidth: number = 150;
   @Input() maxListHeight: number = 0;
+  @Input() change?: () => undefined | void;
+  @Input() deleteItemHandle?: (item: LookupItem) => boolean | undefined | void;
   @Input() addItemHandle?: () => LookupItem | undefined;
   @Input() addItemAsyncHandle?: () => Promise<LookupItem | undefined>;
   @Input() addItemControl?: InputBase;
@@ -74,8 +76,11 @@ export class InputMultiselectComponent extends InputBase implements OnInit {
   }
 
   public onDelete(item: LookupItem) {
-    this.items.splice(this.items.findIndex(x => x.key == item.key), 1);
-    this.cdRef.detectChanges();
+    if(!this.deleteItemHandle || this.deleteItemHandle(item) !== false) {
+      this.items.splice(this.items.findIndex(x => x.key == item.key), 1);
+      this.cdRef.detectChanges();
+      if(this.change) this.change();
+    }
   }
 
   public get isNoForm(): boolean {
@@ -110,6 +115,7 @@ export class InputMultiselectComponent extends InputBase implements OnInit {
       this.items.push(newItem);
       this.items = this.items;
       this.cdRef.detectChanges();
+      if(this.change) this.change();
     }
   }  
 }
