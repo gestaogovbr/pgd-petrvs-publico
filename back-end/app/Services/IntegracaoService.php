@@ -550,7 +550,7 @@ class IntegracaoService extends ServiceBase {
             try {
                 DB::beginTransaction();
                 // seleciona o Id do usuário, a data da modificação e as funções de todos os servidores ativos trazidos do SIAPE, e que já existem na tabela Usuários
-                $sql_1 = "SELECT u.id, s.data_modificacao, s.funcoes FROM integracao_servidores s INNER JOIN usuarios u " . 
+                $sql_1 = "SELECT u.id, s.funcoes FROM integracao_servidores s INNER JOIN usuarios u " . 
                          "ON s.cpf = u.cpf WHERE s.vinculo_ativo = 'true' and u.cpf is not null";
                 $servidores = DB::select($sql_1);
                 // filtra apenas aqueles que são gestores ou gestores substitutos
@@ -561,10 +561,10 @@ class IntegracaoService extends ServiceBase {
                     $funcoes = json_decode($chefe->funcoes);
                     if(is_array($funcoes->funcao)) {
                         // nesse caso o servidor é gestor de mais de uma unidade
-                        $chefias = array_merge($chefias, array_map(fn($f) => ['id_usuario' => $chefe->id, 'codigo_siape' => $f->uorg_funcao, 'tipo_funcao' => $f->tipo_funcao, 'dataModificacao' => $chefe->data_modificacao], $funcoes->funcao));
+                        $chefias = array_merge($chefias, array_map(fn($f) => ['id_usuario' => $chefe->id, 'codigo_siape' => $f->uorg_funcao, 'tipo_funcao' => $f->tipo_funcao], $funcoes->funcao));
                     } else {
                         // nesse caso o servidor é gestor de apenas uma unidade
-                        array_push($chefias, ['id_usuario' => $chefe->id, 'codigo_siape' => $funcoes->funcao->uorg_funcao, 'tipo_funcao' => $funcoes->funcao->tipo_funcao, 'dataModificacao' => $chefe->data_modificacao]);
+                        array_push($chefias, ['id_usuario' => $chefe->id, 'codigo_siape' => $funcoes->funcao->uorg_funcao, 'tipo_funcao' => $funcoes->funcao->tipo_funcao]);
                     }
                 }
                 // torna nulos os campos gestor_id e gestor_substituto_id das unidades, para refazê-los com o atual array de chefias
@@ -573,34 +573,24 @@ class IntegracaoService extends ServiceBase {
                 // percorre o array das chefias, inserindo na tabela de unidades os IDs dos respectivos gestores e gestores substitutos
                 foreach($chefias as $chefia) {
                     // descobre o ID da Unidade
-                    $sql_3 = "SELECT u.id, u.gestor_id, u.gestor_substituto_id, u.updated_at FROM integracao_unidades iu join unidades u on iu.id_servo = u.codigo WHERE iu.codigo_siape = :codigo_siape";
+                    $sql_3 = "SELECT u.id, u.gestor_id, u.gestor_substituto_id FROM integracao_unidades iu join unidades u on iu.id_servo = u.codigo WHERE iu.codigo_siape = :codigo_siape";
                     $unidade = DB::select($sql_3, [':codigo_siape' => $chefia['codigo_siape']]);
-                    //Comparar a data da última alteração no petrvs com a data da alteração no siape
-                    $ultimaAlteracaoSiape = new DateTime($chefia['dataModificacao']);
-                    $ultimaAlteracaoPetrvs = new DateTime(((array)$unidade[0])['updated_at']);
-                    /**
-                     * A alteração do gestor/substituto só será efetivada se a data da última alteração no SIAPE for maior que a data da última alteração
-                     * no Petrvs. ATENÇÃO: pode gerar uma inconsistência no caso de a Unidade ser alterada no Petrvs em qualquer campo que não seja o de
-                     * Gestor, entre duas execuções sucessivas da rotina Integração, onde tenha havido alteração do Gestor da Unidade no SIAPE 
-                     */
-                    if($ultimaAlteracaoSiape->getTimestamp() > $ultimaAlteracaoPetrvs->getTimestamp()){
-                        // monta a consulta de acordo com o tipo de função
-                        if($chefia['tipo_funcao'] == '1'){
-                            $sql_4 = "UPDATE unidades SET gestor_id = :id_usuario WHERE id = :id_unidade";
-                        } else if($chefia['tipo_funcao'] == '2'){
-                            $sql_4 = "UPDATE unidades SET gestor_substituto_id = :id_usuario WHERE id = :id_unidade";
-                        } else {
-                            throw new Exception("Falha no array de funções do servidor");
-                        }
-                        // insere o ID do usuário na Unidade como gestor ou gestor substituto
-                        DB::update($sql_4, [':id_usuario'=> $chefia['id_usuario'], ':id_unidade' => $unidade[0]->id]);
-                        $this->atualizaLogs('unidades', $unidade[0]->id, 'EDIT', [
-                                    'Rotina' => 'Integração', 
-                                    'Observação' => 'Atualização do ' . $chefia['tipo_funcao'] == '1' ? 'Gestor' : 'Gestor substituto' . ' da Unidade',
-                                    'Valores anteriores' => ['gestor_id' => $unidade[0]->gestor_id, 'gestor_substituto_id' => $unidade[0]->gestor_substituto_id], 
-                                    'Valores atuais' => ['gestor_id' => $chefia['tipo_funcao'] == '1' ? $chefia['id_usuario'] : null, 'gestor_substituto_id' => $chefia['tipo_funcao'] == '2' ? $chefia['id_usuario'] : null]
-                                ]);
+                    // monta a consulta de acordo com o tipo de função
+                    if($chefia['tipo_funcao'] == '1'){
+                        $sql_4 = "UPDATE unidades SET gestor_id = :id_usuario WHERE id = :id_unidade";
+                    } else if($chefia['tipo_funcao'] == '2'){
+                        $sql_4 = "UPDATE unidades SET gestor_substituto_id = :id_usuario WHERE id = :id_unidade";
+                    } else {
+                        throw new Exception("Falha no array de funções do servidor");
                     }
+                    // insere o ID do usuário na Unidade como gestor ou gestor substituto
+                    DB::update($sql_4, [':id_usuario'=> $chefia['id_usuario'], ':id_unidade' => $unidade[0]->id]);
+                    $this->atualizaLogs('unidades', $unidade[0]->id, 'EDIT', [
+                                'Rotina' => 'Integração', 
+                                'Observação' => 'Atualização do ' . $chefia['tipo_funcao'] == '1' ? 'Gestor' : 'Gestor substituto' . ' da Unidade',
+                                'Valores anteriores' => ['gestor_id' => $unidade[0]->gestor_id, 'gestor_substituto_id' => $unidade[0]->gestor_substituto_id], 
+                                'Valores atuais' => ['gestor_id' => $chefia['tipo_funcao'] == '1' ? $chefia['id_usuario'] : null, 'gestor_substituto_id' => $chefia['tipo_funcao'] == '2' ? $chefia['id_usuario'] : null]
+                            ]);
                 }
                 DB::commit();
                 $result["chefias"] = 'Sucesso: ' . count($chefes) . ' gestores atualizados, ' . count($chefias) . ' chefias atualizadas!';
