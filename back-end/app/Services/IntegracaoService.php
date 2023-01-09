@@ -269,13 +269,13 @@ class IntegracaoService extends ServiceBase {
                     $xml = simplexml_load_string($xmlStream);
                     $uos = $this->UtilService->object2array($xml)["uorg"];
                 }
-                /* Apaga a tabela integracao_unidades e cria novamente com as unidades obtidas pelo webservice */
+                /* Apaga a tabela integracao_unidades e cria novamente com as unidades ATIVAS obtidas pelo webservice */
                 DB::transaction(function () use (&$uos, &$self, &$sql_log_changes) {
                     /* Remove toda a lista da tabela temporária integracao_unidades */
                     DB::delete('DELETE FROM integracao_unidades');
                     /* Itera as UOs */
                     foreach($uos as $uo) {
-                        if(!empty($self->UtilService->valueOrDefault($uo["id_servo"]))) {
+                        if(!empty($self->UtilService->valueOrDefault($uo["id_servo"])) && $self->UtilService->valueOrDefault($uo["ativa"]) == 'true') {
                             DB::table('integracao_unidades')->insert([
                                 'id_servo' => $self->UtilService->valueOrDefault($uo["id_servo"]),
                                 'pai_servo' => $self->UtilService->valueOrDefault($uo["pai_servo"]),
@@ -311,7 +311,7 @@ class IntegracaoService extends ServiceBase {
                             ]);
                         }
                     }
-                    $this->atualizaLogs('integracao_unidades', 'todos os registros', 'ADD', []);
+                    $this->atualizaLogs('integracao_unidades', 'todos os registros', 'ADD', ['Observação' => 'Total de unidades importadas do SIAPE: ' . DB::table('integracao_unidades')->get()->count() . ' (apenas ativas)']);
                 });
                 /* Insere as unidades faltantes ou atualiza dados e seus respectivos pais */
                 // OBS.: Não vejo a diferença de usar :entidade_id para restringir as Unidades.
@@ -338,7 +338,6 @@ class IntegracaoService extends ServiceBase {
                     }
                     /* Seta inativo nas unidades que não existem em integracao_unidades e garante que não esteja inativo as que existem em integracao_unidades */
                     DB::update("UPDATE unidades AS u SET inativo = NOW() WHERE NOT EXISTS (SELECT id FROM integracao_unidades i WHERE i.id_servo = u.codigo)"); 
-                    //DB::update("UPDATE unidades AS u SET inativo = NOW() WHERE EXISTS (SELECT id FROM integracao_unidades i WHERE i.id_servo = u.codigo and i.ativa = 'false' and u.inativo is null)");
                     DB::update("UPDATE unidades AS u SET inativo = NULL WHERE inativo IS NOT NULL AND EXISTS (SELECT id FROM integracao_unidades i WHERE i.id_servo = u.codigo);");
                 });
                 $result["unidades"] = 'Sucesso: ' . count($this->unidadesSelecionadas) . ' unidades atualizadas!';
@@ -420,7 +419,7 @@ class IntegracaoService extends ServiceBase {
                         }
                     }
                 });
-                $this->atualizaLogs('integracao_servidores', 'todos os registros', 'ADD', []);
+                $this->atualizaLogs('integracao_servidores', 'todos os registros', 'ADD', ['Observação' => 'Total de servidores importados do SIAPE: ' . DB::table('integracao_servidores')->get()->count() . ' (apenas ativos)']);
 
                 DB::transaction(function () use (&$atualizacoes) {
 
@@ -532,7 +531,7 @@ class IntegracaoService extends ServiceBase {
                                 ]);
                                 $this->atualizaLogs('lotacoes', $id, 'ADD', ['Rotina' => 'Integração', 'Observação' => 'Criação da lotação do servidor ' . $lotacao->id_usuario . ' e a unidade ' . $lotacao->id_unidade_atual]);
                             }else{
-                                // DECIDIR O QUE FAZER NO CASO DE UM SERVIDOR NÃO TER UMA LOTAÇÃO PRINCIPAL PORQUE SUA UNIDADE NÃO ESTÁ CADASTRADA
+                                throw new Exception("Erro ao cadastrar a lotação: Unidade não localizada!"); // SERVIDOR NÃO TEM UMA LOTAÇÃO PRINCIPAL PORQUE SUA UNIDADE NÃO ESTÁ CADASTRADA
                             }
                         };
                     };
@@ -550,8 +549,8 @@ class IntegracaoService extends ServiceBase {
         if(($result['unidades'] == '' || substr($result['unidades'], 0, 7) == 'Sucesso') && ($result['servidores'] == '' || substr($result['servidores'], 0, 7) == 'Sucesso')){
             try {
                 DB::beginTransaction();
-                // seleciona o Id do usuário e as funções de todos os servidores ativos trazidos do SIAPE, e que já existem na tabela Usuários
-                $sql_1 = "SELECT u.id, s.funcoes FROM integracao_servidores s INNER JOIN usuarios u " . 
+                // seleciona o Id do usuário, a data da modificação e as funções de todos os servidores ativos trazidos do SIAPE, e que já existem na tabela Usuários
+                $sql_1 = "SELECT u.id, s.data_modificacao, s.funcoes FROM integracao_servidores s INNER JOIN usuarios u " . 
                          "ON s.cpf = u.cpf WHERE s.vinculo_ativo = 'true' and u.cpf is not null";
                 $servidores = DB::select($sql_1);
                 // filtra apenas aqueles que são gestores ou gestores substitutos
@@ -562,36 +561,46 @@ class IntegracaoService extends ServiceBase {
                     $funcoes = json_decode($chefe->funcoes);
                     if(is_array($funcoes->funcao)) {
                         // nesse caso o servidor é gestor de mais de uma unidade
-                        $chefias = array_merge($chefias, array_map(fn($f) => ['id_usuario' => $chefe->id, 'codigo_siape' => $f->uorg_funcao, 'tipo_funcao' => $f->tipo_funcao], $funcoes->funcao));
+                        $chefias = array_merge($chefias, array_map(fn($f) => ['id_usuario' => $chefe->id, 'codigo_siape' => $f->uorg_funcao, 'tipo_funcao' => $f->tipo_funcao, 'dataModificacao' => $chefe->data_modificacao], $funcoes->funcao));
                     } else {
                         // nesse caso o servidor é gestor de apenas uma unidade
-                        array_push($chefias, ['id_usuario' => $chefe->id, 'codigo_siape' => $funcoes->funcao->uorg_funcao, 'tipo_funcao' => $funcoes->funcao->tipo_funcao]);
+                        array_push($chefias, ['id_usuario' => $chefe->id, 'codigo_siape' => $funcoes->funcao->uorg_funcao, 'tipo_funcao' => $funcoes->funcao->tipo_funcao, 'dataModificacao' => $chefe->data_modificacao]);
                     }
                 }
                 // torna nulos os campos gestor_id e gestor_substituto_id das unidades, para refazê-los com o atual array de chefias
                 DB::update("UPDATE unidades SET gestor_id = null, gestor_substituto_id = null");
-                $this->atualizaLogs('unidades', 'todos os registros', 'EDIT', ['Rotina' => 'Integração', 'Observação' => 'Apagando todos os gestores antes de atualizá-los com a consulta ao SIGEPE']);
+                $this->atualizaLogs('unidades', 'todos os registros', 'EDIT', ['Rotina' => 'Integração', 'Observação' => 'Apagando todos os gestores antes de atualizá-los com a consulta ao SIAPE']);
                 // percorre o array das chefias, inserindo na tabela de unidades os IDs dos respectivos gestores e gestores substitutos
                 foreach($chefias as $chefia) {
                     // descobre o ID da Unidade
-                    $sql_3 = "SELECT u.id, u.gestor_id, u.gestor_substituto_id FROM integracao_unidades iu join unidades u on iu.id_servo = u.codigo WHERE iu.codigo_siape = :codigo_siape";
+                    $sql_3 = "SELECT u.id, u.gestor_id, u.gestor_substituto_id, u.updated_at FROM integracao_unidades iu join unidades u on iu.id_servo = u.codigo WHERE iu.codigo_siape = :codigo_siape";
                     $unidade = DB::select($sql_3, [':codigo_siape' => $chefia['codigo_siape']]);
-                    // monta a consulta de acordo com o tipo de função
-                    if($chefia['tipo_funcao'] == '1'){
-                        $sql_4 = "UPDATE unidades SET gestor_id = :id_usuario WHERE id = :id_unidade";
-                    } else if($chefia['tipo_funcao'] == '2'){
-                        $sql_4 = "UPDATE unidades SET gestor_substituto_id = :id_usuario WHERE id = :id_unidade";
-                    } else {
-                        throw new Exception("Falha no array de funções do servidor");
+                    //Comparar a data da última alteração no petrvs com a data da alteração no siape
+                    $ultimaAlteracaoSiape = new DateTime($chefia['dataModificacao']);
+                    $ultimaAlteracaoPetrvs = new DateTime(((array)$unidade[0])['updated_at']);
+                    /**
+                     * A alteração do gestor/substituto só será efetivada se a data da última alteração no SIAPE for maior que a data da última alteração
+                     * no Petrvs. ATENÇÃO: pode gerar uma inconsistência no caso de a Unidade ser alterada no Petrvs em qualquer campo que não seja o de
+                     * Gestor, entre duas execuções sucessivas da rotina Integração, onde tenha havido alteração do Gestor da Unidade no SIAPE 
+                     */
+                    if($ultimaAlteracaoSiape->getTimestamp() > $ultimaAlteracaoPetrvs->getTimestamp()){
+                        // monta a consulta de acordo com o tipo de função
+                        if($chefia['tipo_funcao'] == '1'){
+                            $sql_4 = "UPDATE unidades SET gestor_id = :id_usuario WHERE id = :id_unidade";
+                        } else if($chefia['tipo_funcao'] == '2'){
+                            $sql_4 = "UPDATE unidades SET gestor_substituto_id = :id_usuario WHERE id = :id_unidade";
+                        } else {
+                            throw new Exception("Falha no array de funções do servidor");
+                        }
+                        // insere o ID do usuário na Unidade como gestor ou gestor substituto
+                        DB::update($sql_4, [':id_usuario'=> $chefia['id_usuario'], ':id_unidade' => $unidade[0]->id]);
+                        $this->atualizaLogs('unidades', $unidade[0]->id, 'EDIT', [
+                                    'Rotina' => 'Integração', 
+                                    'Observação' => 'Atualização do ' . $chefia['tipo_funcao'] == '1' ? 'Gestor' : 'Gestor substituto' . ' da Unidade',
+                                    'Valores anteriores' => ['gestor_id' => $unidade[0]->gestor_id, 'gestor_substituto_id' => $unidade[0]->gestor_substituto_id], 
+                                    'Valores atuais' => ['gestor_id' => $chefia['tipo_funcao'] == '1' ? $chefia['id_usuario'] : null, 'gestor_substituto_id' => $chefia['tipo_funcao'] == '2' ? $chefia['id_usuario'] : null]
+                                ]);
                     }
-                    // insere o ID do usuário na Unidade como gestor ou gestor substituto
-                    DB::update($sql_4, [':id_usuario'=> $chefia['id_usuario'], ':id_unidade' => $unidade[0]->id]);
-                    $this->atualizaLogs('unidades', $unidade[0]->id, 'EDIT', [
-                                'Rotina' => 'Integração', 
-                                'Observação' => 'Atualização do ' . $chefia['tipo_funcao'] == '1' ? 'Gestor' : 'Gestor substituto' . ' da Unidade',
-                                'Valores anteriores' => ['gestor_id' => $unidade[0]->gestor_id, 'gestor_substituto_id' => $unidade[0]->gestor_substituto_id], 
-                                'Valores atuais' => ['gestor_id' => $chefia['tipo_funcao'] == '1' ? $chefia['id_usuario'] : null, 'gestor_substituto_id' => $chefia['tipo_funcao'] == '2' ? $chefia['id_usuario'] : null]
-                            ]);
                 }
                 DB::commit();
                 $result["chefias"] = 'Sucesso: ' . count($chefes) . ' gestores atualizados, ' . count($chefias) . ' chefias atualizadas!';
@@ -640,23 +649,13 @@ class IntegracaoService extends ServiceBase {
     }
 
     public function consultarApiSigepe($token, $url){
-        /*         $response = Http::withToken($token)->withOptions([
+            $response = Http::withToken($token)->withOptions([
             'allow_redirects' => false,
             'verify' => $this->validaCertificado
             ])->get($url);
             if($response->failed()) $response->throw();
-            if($response->status() >= 300 && $response->status() < 400) $this->consultarApiSigepe($token, $response->header('Location'));
-            return $response; */
-        if ($this->validaCertificado) {
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $token
-            ])->get($url);
-        } else {
-            $response = Http::withoutVerifying()->withHeaders([
-                'Authorization' => 'Bearer ' . $token
-            ])->post($url);
-        }
-        return $response;
+            if($response->status() >= 300 && $response->status() < 400) $response = $this->consultarApiSigepe($token, $response->header('Location'));
+            return $response;
     }
 
     public function atualizaLogs(string $table_name, string $row_id, string $type, array $delta)
