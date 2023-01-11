@@ -330,10 +330,51 @@ class CalendarioService
         $uDiasInicio = UtilService::daystamp($inicio); /* Dia inicio (usado somente se !useTempo) */
         $uDiasFim = $useTempo ? $uDiasInicio : UtilService::daystamp(UtilService::asDateTime($fimOuTempo)); /* Dia fim (usado somente se !useTempo) */
 
-        /* Verifica se existe $expediente quando ele é obrigatório, e cria uma exceção se ela não foi informado. Quando não for obrigatório, $expediente será nulo  */
+        /* Verifica se existe $expediente quando ele é obrigatório, e cria uma exceção se ele não foi informado. Quando não for obrigatório, $expediente será nulo  */
         if (!$expediente && !$useCorridos) throw new Exception('Expediente não informado');
         $expediente = $useCorridos ? null : $expediente;
 
+        /* Calcula as horas de afastamento */
+        $result = new stdClass();
+        $horasAfastamentos = function (int $start, int $end) use ($result, $afastamentos): array {
+            $periodos = [];
+            foreach(($afastamentos ?? []) as $afastamento) {
+                /* calcula a intersecção entre start e end e o inicio e fim do afastamento */
+                $intervalo = UtilService::intersection([['start' => $start, 'end' => $end], ['start' => $afastamento->inicio_afastamento->getTimestamp(), 'end' => $afastamento->fim_afastamento->getTimestamp()]]);
+                if($intervalo) {
+                    /* Caso tenha uma intersecção, adiciona o período para retorno e insere em $result->afastamentos */
+                    array_push($periodos, $intervalo);
+                    if(!array_search($afastamento, $result->afastamentos)) {array_push($result->afastamentos, $afastamento);}
+                }
+            };
+            return $periodos;
+        };
+/* const horasPausas = (start: number, end: number): TimeInterval[] => {
+    let periodos: TimeInterval[] = [];
+    for (let pausa of (pausas || [])) {
+        const intervalo = this.util.intersection([{ start, end }, { start: pausa.data_inicio.getTime(), end: pausa.data_fim?.getTime() || end }]) as TimeInterval;
+        if (intervalo) {
+        periodos.push(intervalo);
+        if (!result.pausas.includes(pausa)) result.pausas.push(pausa);
+        }
+    }
+    return periodos;
+    } */
+        /* Calcula as horas pausadas */
+        $horasPausas = function (int $start, int $end) use ($result, $pausas): array {
+            $periodos = [];
+            foreach(($pausas ?? []) as $pausa) {
+                $interval = UtilService::asTimeInterval(UtilService::intersection([
+                        [$start, $end], 
+                        [$start => $pausa['data_inicio']->getTimestamp(), $end => $pausa['data_fim'] ? $pausa['data_fim']->getTimestamp() : $end]
+                    ]));
+                if($interval) {
+                    array_push($periodos, $interval);
+                    if(!array_search($pausa, $result->pausas)) {array_push($result->pausas, $pausa);}
+                }
+            };
+            return $periodos;
+        };
 
         $hTempo = $useTempo ? UtilService::asTimestamp($fimOuTempo) : 0; /* variável saldo de horas/dias (usado somente se useTempo) */
         $dDiaAtual = UtilService::asDateTime($inicio->getTimestamp()); /* Variável que irá percorrer todas as datas (do inicio ao fim ou a quantidade de horas) */
@@ -355,37 +396,8 @@ class CalendarioService
             'horario_trabalho_fim' => $unidade->horario_trabalho_fim,
             'horario_trabalho_intervalo' => $unidade->horario_trabalho_intervalo,    
         ]);
-       
-        /* Calcula as horas de afastamento */
-        $horasAfastamentos = function (int $start, int $end) use ($result, $afastamentos): array {
-            $periodos = [];
-            foreach($afastamentos as $afastamento) {
-                /* calcula a intersecção entre start e end e o inicio e fim do afastamento */
-                $intervalo = UtilService::intersection([['start' => $start, 'end' => $end], ['start' => $afastamento->inicio_afastamento->getTimestamp(), 'end' => $afastamento->fim_afastamento->getTimestamp()]]);
-                if($intervalo) {
-                    /* Caso tenha uma intersecção, adiciona o período para retorno e insere em $result->afastamentos */
-                    array_push($periodos, $intervalo);
-                    if(!array_search($afastamento, $result->afastamentos)) {array_push($result->afastamentos, $afastamento);}
-                }
-            };
-            return $periodos;
-        };
 
-        /* Calcula as horas pausadas */
-        $horasPausas = function (int $start, int $end) use ($pausas): array {
-            $periodos = [];
-            foreach($pausas as $pausa) {
-                $interval = UtilService::asTimeInterval(UtilService::intersection([
-                        [$start, $end], 
-                        [$start => $pausa['data_inicio']->getTimestamp(), $end => $pausa['data_fim'] ? $pausa['data_fim']->getTimestamp() : $end]
-                    ]));
-                if($interval) {
-                    array_push($periodos, $interval);
-                    if(!array_search($pausa, $result->pausas)) {array_push($result->pausas, $pausa);}
-                }
-            };
-            return $periodos;
-        };
+
 
         /* Calcula a união entre afastamentos e pausas */
         $horasAfastamentoPausa = function (int $start, int $end) use ($horasAfastamentos, $horasPausas): array {

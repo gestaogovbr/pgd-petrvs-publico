@@ -4,11 +4,9 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Http\Request;
 use App\Exceptions\LogError;
 use App\Services\ServiceBase;
 use App\Models\Unidade;
-use App\Models\Entidade;
 use App\Models\Perfil;
 use App\Models\UnidadeOrigemAtividade;
 use Ramsey\Uuid\Uuid;
@@ -21,6 +19,11 @@ class IntegracaoService extends ServiceBase {
     public $autoIncluir = false;
     public $unidadesInseridas = [];
     public $unidadesSelecionadas = [];
+    public $unidadesAlteradas = [];
+    public $filhasAlteradas = 0;
+    public $paisAlterados = [];
+    public $ativadas = 0;
+    public $inativadas = 0;
     public $token = "";
     public $integracao_config = "";
     public $unidadeRaiz = null;
@@ -45,7 +48,7 @@ class IntegracaoService extends ServiceBase {
 
     /** Preenche os campos de uma lotação para o novo Usuário, se sua lotação já vier definida pelo SIAPE */
     public function fillUsuarioWithSiape(&$usuario, &$lotacao) {
-        $result = false;
+        $resultado = false;
         $query = DB::select("SELECT s.*, u.id AS unidade_servidor, c.uf AS unidade_uf FROM integracao_servidores s ".
             "LEFT JOIN unidades u ON (u.codigo = s.codigo_servo_exercicio) ".
             "LEFT JOIN cidades c ON (c.id = u.cidade_id) ".
@@ -61,12 +64,12 @@ class IntegracaoService extends ServiceBase {
                 $lotacao->unidade_id = $servidor->unidade_servidor;
                 $lotacao->principal = 1;
             }
-            $result = true;
+            $resultado = true;
         }
-        return $result;
+        return $resultado;
     }
 
-    public function buscaOuInserePai($unidade, $entidade) {
+    public function buscaOuInserePai($unidade, $entidade_id) {
         if (empty($unidade->pai_servo)) {
             return ["unidade_id" => null, "path" => ""];
         } else if (!empty($unidade->unidade_pai_id)) {
@@ -74,7 +77,7 @@ class IntegracaoService extends ServiceBase {
         } else if (!empty($this->unidadesInseridas[$unidade->pai_servo])) {
             return $this->unidadesInseridas[$unidade->pai_servo];
         } else if ($pai = current(array_filter($this->unidadesSelecionadas, fn($element) => $element->id_servo == $unidade->pai_servo))) {
-            return $this->deepReplaceUnidades($pai, $entidade);
+            return $this->deepReplaceUnidades($pai, $entidade_id);
         }
     }
 
@@ -97,19 +100,18 @@ class IntegracaoService extends ServiceBase {
         if (empty($existeVinculo)) $this->insereVinculoRaiz($unidade_id);
     }
 
-    public function deepReplaceUnidades($unidade, $entidade) {
+    public function deepReplaceUnidades($unidade, $entidade_id) {
         // prepara os principais atributos da Unidade
         $values = [
             ':codigo' => $unidade->id_servo,
             ':nome' => $unidade->nomeuorg,
             ':sigla' => $unidade->siglauorg,
-            ':cidade_id' => $unidade->cidade_id,
-            ':entidade_id' => $entidade
+            ':cidade_id' => $unidade->cidade_id
         ];
 
         if(empty($unidade->id)) { /* Só entra aqui se a Unidade ainda não existir. Nesse caso, insere a Unidade */
             if(empty($this->unidadesInseridas[$unidade->id_servo])) {       /* Insere somente se já não tiver sido inserido */
-                $dados_path_pai = $this->buscaOuInserePai($unidade, $entidade);
+                $dados_path_pai = $this->buscaOuInserePai($unidade, $entidade_id);
                 $values[':id'] = Uuid::uuid4();
                 $values[':path'] = !empty($dados_path_pai["unidade_id"]) ? $dados_path_pai["path"] . "/" . $dados_path_pai["unidade_id"] : "";
                 $this->unidadesInseridas[$unidade->id_servo] = ["unidade_id" => $values[':id'], "path" => $values[':path']];
@@ -121,7 +123,7 @@ class IntegracaoService extends ServiceBase {
                         'nome' => $values[':nome'],
                         'sigla' => $values[':sigla'],
                         'cidade_id' => $values[':cidade_id'],
-                        'entidade_id' => $values[':entidade_id'],
+                        'entidade_id' => $entidade_id,
                         'unidade_id' => !empty($dados_path_pai) ? $dados_path_pai["unidade_id"] : null,
                         'notificacoes' => '{}',
                         'etiquetas' => '[]',
@@ -137,7 +139,7 @@ class IntegracaoService extends ServiceBase {
                         'data_fim' => null,
                         'checklist' => '[]'
                     ]);
-                    $this->atualizaLogs('unidades', $id, 'ADD', ['Rotina' => 'Integração', 'Observação' => 'Unidade nova inserida informada pelo SIAPE: ' . $values[':nome']]);
+                    $this->atualizaLogs('unidades', $id, 'ADD', ['Rotina' => 'Integração', 'Observação' => 'Unidade nova inserida informada pelo SIAPE: ' . $values[':nome'], 'Valores inseridos' => DB::table('unidades')->where('id', $id)->first()]);
                 } catch (Throwable $e) {
                     LogError::newWarn("Erro ao inserir Unidade", $values);
                 }
@@ -148,73 +150,65 @@ class IntegracaoService extends ServiceBase {
             }
         }
         else if($unidade->pai_servo != $unidade->codigoPai) { /* Só entra aqui se a Unidade já existir e houve mudança no Pai. Nesse caso, muda o pai da unidade e atualiza Nome e Sigla */
-            $valores_originais = json_decode(json_encode($unidade), true);
-            // prepara apenas os atributos que precisam ser atualizados
-            $pathAntigo = $unidade->path;
-            $dados_path_pai = $this->buscaOuInserePai($unidade, $entidade);
-
             $values[':id'] = $unidade->id;
+            // prepara apenas os atributos que precisam ser atualizados
+            $dados_path_pai = $this->buscaOuInserePai($unidade, $entidade_id);
             $values[':path'] = !empty($dados_path_pai["unidade_id"]) ? $dados_path_pai["path"] . "/" . $dados_path_pai["unidade_id"] : "";
             $values[':unidade_id'] = $dados_path_pai["unidade_id"];
 
             $sql = "UPDATE unidades SET path = :path, unidade_id = :unidade_id, codigo = :codigo, ".
-                "nome = :nome, sigla = :sigla, cidade_id = :cidade_id, entidade_id = :entidade_id ".
-                "WHERE id = :id";
-            DB::update($sql, $values);                  // OBS.: QUAL A NECESSIDADE DE SE ATUALIZAR CODIGO, CIDADE, ENTIDADE
+                "nome = :nome, sigla = :sigla, cidade_id = :cidade_id WHERE id = :id";
+            DB::update($sql, $values);                  
             $this->atualizaLogs('unidades', $values[':id'], 'EDIT', [
                 'Rotina' => 'Integração', 
-                'Observação' => 'A Unidade sofreu alteração na linha hierárquica.',
-                'Valores anteriores' => $valores_originais, 
+                'Observação' => 'A Unidade sofreu alterações na hierarquia e possivelmente em outros campos (ver: nome/codigo/sigla/path/cidade_id/unidade_id)!',
+                'Valores anteriores' => ['path' => $unidade->path_antigo, 'unidade_id' => $unidade->id_pai_antigo, 'codigo' => $unidade->codigo_antigo, 'nome' => $unidade->nome_antigo, 'sigla' => $unidade->sigla_antiga, 'cidade_id' => $unidade->cidade_antiga], 
                 'Valores atuais' => $values
             ]);
+            array_push($this->paisAlterados, $unidade);
 
             // Se necessário, insere o vínculo com a Unidade Raiz das Atividades
             $this->verificaVinculoRaiz($values[':id']);
 
-            $this->unidadesInseridas[$unidade->id_servo] = ["unidade_id" => $values[':id'], "path" => $values[':path']];
-
             /* Atualiza os paths dos filhos */
-            $antes = $pathAntigo."/".$unidade->id;
-            $depois = $values[':path'] . "/" . $unidade->id;
-            $like = $antes."%";
+            $antes = $unidade->path_antigo."/".$unidade->id;
+            if(DB::select("select count(*) from unidades where path = '" . $antes . "'") > 0) {
+                $depois = $values[':path'] . "/" . $unidade->id;
+                $like = $antes."%";
 
-            DB::update('UPDATE unidades SET path = REPLACE(path, :antes, :depois) WHERE path LIKE :like', [
-                ':antes' => $antes,
-                ':depois' => $depois,
-                ':like' => $like
-            ]);
-            $this->atualizaLogs('unidades', 'IDs das Unidades-filhas', 'EDIT', [
-                'Rotina' => 'Integração', 
-                'Observação' => 'Os paths de todas as unidades-filhas foram alterados, devido à alteração na unidade-pai da Unidade - ' . $values[':nome'],
-                'Path anterior' => $antes, 
-                'Path atual' => $depois
-            ]);
+                $n = DB::update('UPDATE unidades SET path = REPLACE(path, :antes, :depois) WHERE path LIKE :like', [
+                    ':antes' => $antes,
+                    ':depois' => $depois,
+                    ':like' => $like
+                ]);
+                $this->atualizaLogs('unidades', 'IDs das Unidades-filhas', 'EDIT', [
+                    'Rotina' => 'Integração', 
+                    'Observação' => 'Os paths de todas as unidades-filhas foram alterados, devido à alteração na unidade-pai da Unidade - ' . $values[':nome'],
+                    'Path anterior das unidades filhas' => $antes, 
+                    'Path atual das unidades filhas' => $depois
+                ]);
+                $this->filhasAlteradas += $n;
+            }
 
             return ["unidade_id" => $values[':id'], "path" => $values[':path']];
         }
         else { /* Só entra aqui se a Unidade já existir e não tiver mudado o Pai. Nesse caso, atualiza apenas os outros dados (Nome, Sigla) */
-            $valores_originais = json_decode(json_encode($unidade), true);
             $values[':id'] = $unidade->id;
-            $values[':path'] = $unidade->path;
 
-            $params[':id'] = $values[':id'];
-            $params[':nome'] = $unidade->nomeuorg;
-            $params[':sigla'] = $unidade->siglauorg;
-
-            $sql = "UPDATE unidades SET nome = :nome, sigla = :sigla WHERE id = :id";
-            DB::update($sql, $params);
+            $sql = "UPDATE unidades SET codigo = :codigo, nome = :nome, sigla = :sigla, cidade_id = :cidade_id WHERE id = :id";
+            DB::update($sql, $values);
             $this->atualizaLogs('unidades', $values[':id'], 'EDIT', [
                 'Rotina' => 'Integração', 
-                'Observação' => '',
-                'Valores anteriores' => $valores_originais, 
-                'Valores atuais' => $values
+                'Observação' => 'A Unidade sofreu alterações em algum(ns) campos (ver: nome/codigo/sigla/cidade_id)!',
+                'Valores anteriores' => ['codigo' => $unidade->codigo_antigo, 'nome' => $unidade->nome_antigo, 'sigla' => $unidade->sigla_antiga, 'cidade_id' => $unidade->cidade_antiga], 
+                'Valores atuais' => ['codigo' => $values[':codigo'], ':nome' => $values[':nome'], ':sigla' => $values[':sigla'], 'cidade_id' => $values[':cidade_id']]
             ]);
+            array_push($this->unidadesAlteradas, $unidade);
+
             // Se necessário, insere o vínculo com a Unidade Raiz das Atividades
             $this->verificaVinculoRaiz($values[':id']);
 
-            $this->unidadesInseridas[$unidade->id_servo] = ["unidade_id" => $values[':id'], "path" => $values[':path']];
-
-            return ["unidade_id" => $values[':id'], "path" => $values[':path']];
+            return ["unidade_id" => $values[':id'], "path" => $unidade->path_antigo];
         }
     }
 
@@ -242,14 +236,18 @@ class IntegracaoService extends ServiceBase {
         ini_set('memory_limit', '-1');
         set_time_limit(1800);
         $self = $this;
-        $result = ['unidades' => '', 'servidores' => '', 'chefias' => ''];
+        $result = [
+            'unidades' => ['Resultado' => '','Observações' => [], 'Falhas' => []], 
+            'servidores' => ['Resultado' => '','Observações' => [], 'Falhas' => []], 
+            'chefias' => ['Resultado' => '','Observações' => [], 'Falhas' => []]
+        ];
         $token = $this->useLocalFiles ? "LOCAL" : $this->getToken($this->integracao_config);
-        $entidade = $inputs["entidade"] ?: "";
+        $entidade_id = $inputs["entidade"] ?: "";
         $xmlStream = "";
-        LogError::newWarn("Sincronizar Entidade: " . $entidade);
+        LogError::newWarn("Sincronizar Entidade: " . $entidade_id);
 
         // Atualização das unidades
-        if(!empty($inputs["unidades"]) && $inputs["unidades"] != "false" && !empty($entidade)) {
+        if(!empty($inputs['unidades']) && $inputs['unidades'] != "false" && !empty($entidade_id)) {
             try {
                 $uos = [];
                 if($this->integracao_config["tipo"] == "SIAPE") {
@@ -311,45 +309,56 @@ class IntegracaoService extends ServiceBase {
                             ]);
                         }
                     }
-                    $this->atualizaLogs('integracao_unidades', 'todos os registros', 'ADD', ['Observação' => 'Total de unidades importadas do SIAPE: ' . DB::table('integracao_unidades')->get()->count() . ' (apenas ativas)']);
                 });
+                $n = DB::table('integracao_unidades')->get()->count();
+                $this->atualizaLogs('integracao_unidades', 'todos os registros', 'ADD', ['Observação' => 'Total de unidades importadas do SIAPE: ' . $n . ' (apenas ATIVAS)']);
+                array_push($result['unidades']["Observações"], 'Total de unidades importadas do SIAPE: ' . $n . ' (apenas ATIVAS)');
+
                 /* Insere as unidades faltantes ou atualiza dados e seus respectivos pais */
                 // OBS.: Não vejo a diferença de usar :entidade_id para restringir as Unidades.
                 // OBS.: Essa rotina de integração vai rodar nos diversos servidores onde estarão instaladas a aplicação... então ela tem que atualizar
                 //       todas as Unidades do SIAPE, de todas as agências que usarão o sistema. O ideal é essa consulta_sql utilizar um parâmetro de
                 //       identificação da entidade, presente no arquivo de configuração.
-                $this->unidadesInseridas = [];
-                $consulta_sql = "SELECT u.id_servo, u.nomeuorg, u.siglauorg, u.pai_servo, l.id, l.path, c.id AS cidade_id, p.id AS unidade_pai_id, ".
-                    "pl.codigo AS codigoPai, p.path AS path_pai ".
-                    "FROM integracao_unidades u LEFT JOIN unidades l ON (u.id_servo = l.codigo) ".
-                    "LEFT JOIN unidades pl ON (pl.id = l.unidade_id) ".
-                    "LEFT JOIN unidades p ON (u.pai_servo = p.codigo) ". 
-                    "LEFT JOIN cidades c ON (u.municipio_ibge = c.codigo_ibge) ".
-                    "WHERE (l.id is null OR u.nomeuorg != l.nome OR u.siglauorg != l.sigla OR u.pai_servo != pl.codigo) AND u.ativa = 'true'";
-                // OBS.: Pode haver casos em que só foi alterado o pai da Unidade (OR u.pai_servo != pl.codigo)
-                // OBS.: Existem Unidades repetidas na tabela INTEGRACAO UNIDADES, umas ativas e outras não, com ID_SERVO distintos
-                $this->unidadesSelecionadas = DB::select($consulta_sql);  //, [':entidade_id_l' => $entidade, ':entidade_id_p' => $entidade]);
+                $this->unidadesSelecionadas = [];
+                $consulta_sql = "SELECT iu.id_servo, u.codigo as codigo_antigo, iu.nomeuorg, u.nome as nome_antigo, iu.siglauorg, u.sigla as sigla_antiga, iu.pai_servo, ".
+                    "un.id as id_pai_antigo, u.id, u.path as path_antigo, c.id AS cidade_id, u.cidade_id as cidade_antiga, und.id AS unidade_pai_id, ".
+                    "un.codigo AS codigoPai, und.path AS path_pai ".
+                    "FROM integracao_unidades iu LEFT JOIN unidades u ON (iu.id_servo = u.codigo) ".
+                    "LEFT JOIN unidades un ON (un.id = u.unidade_id) ".
+                    "LEFT JOIN unidades und ON (iu.pai_servo = und.codigo) ". 
+                    "LEFT JOIN cidades c ON (iu.municipio_ibge = c.codigo_ibge) ".
+                    "WHERE (u.id is null OR iu.nomeuorg != u.nome OR iu.siglauorg != u.sigla OR iu.pai_servo != un.codigo) AND iu.ativa = 'true'";
+                $this->unidadesSelecionadas = DB::select($consulta_sql);
                 //OBS.: não seria interessante incluir o e-mail na tabela UNIDADES?
-                DB::transaction(function () use (&$self, $entidade) {
+                DB::transaction(function () use (&$self, $entidade_id) {
                     // identifica a Unidade Raiz para cadastro de Atividades.
                     $this->unidadeRaiz = Unidade::where('codigo', $this->codigoUnidadeRaiz)->first();
                     foreach($self->unidadesSelecionadas as $unidade) {
-                        $self->deepReplaceUnidades($unidade, $entidade);
+                        $self->deepReplaceUnidades($unidade, $entidade_id);
                     }
                     /* Seta inativo nas unidades que não existem em integracao_unidades e garante que não esteja inativo as que existem em integracao_unidades */
-                    DB::update("UPDATE unidades AS u SET inativo = NOW() WHERE NOT EXISTS (SELECT id FROM integracao_unidades i WHERE i.id_servo = u.codigo)"); 
-                    DB::update("UPDATE unidades AS u SET inativo = NULL WHERE inativo IS NOT NULL AND EXISTS (SELECT id FROM integracao_unidades i WHERE i.id_servo = u.codigo);");
+                    $this->inativadas = DB::update("UPDATE unidades AS u SET inativo = NOW() WHERE NOT EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo)"); 
+                    $this->ativadas = DB::update("UPDATE unidades AS u SET inativo = NULL WHERE inativo IS NOT NULL AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo);");
                 });
-                $result["unidades"] = 'Sucesso: ' . count($this->unidadesSelecionadas) . ' unidades atualizadas!';
+                $result['unidades']['Resultado'] = 'Sucesso';
+                array_push($result['unidades']['Observações'], 'Na tabela Unidades do Petrvs constam agora ' . DB::table('unidades')->get()->count() . ' unidades!');
+                $result['unidades']['Observações'] = [...$result['unidades']['Observações'], ...array_filter([
+                    count($this->unidadesInseridas) . count($this->unidadesInseridas) == 1 ? ' unidade nova informada pelo SIAPE foi inserida no Petrvs!' : ' unidades novas informadas pelo SIAPE foram inseridas no Petrvs!',
+                    count($this->paisAlterados) . count($this->paisAlterados) == 1 ? ' unidade sofreu alteração na hierarquia e possivelmente em outros dados e foi atualizada!' : ' unidades sofreram alteração na hierarquia e possivelmente em outros dados e foram atualizadas!',
+                    $this->filhasAlteradas . $this->filhasAlteradas == 1 ? ' unidade filha teve seu path alterado porque sua Unidade-pai mudou sua posição hierárquica!' : ' unidades filhas tiveram seus paths alterados porque sua Unidade-pai mudou sua posição hierárquica!',
+                    count($this->unidadesAlteradas) . count($this->unidadesAlteradas) == 1 ? ' unidade manteve sua hierarquia mas sofreu alteração em outros dados e foi atualizada!' : ' unidades mantiveram sua hierarquia mas sofreram alteração em outros dados e foram atualizadas!',
+                    $this->inativadas . $this->inativadas == 1 ? ' unidade do Petrvs foi INATIVADA porque não existe ou já está inativa no SIAPE!' : ' unidades do Petrvs foram INATIVADAS porque não existem ou já estão inativas no SIAPE!',
+                    $this->ativadas . $this->ativadas == 1 ? ' unidade foi ATIVADA no Petrvs porque constava como inativa mas ainda está ativa no SIAPE!' : ' unidades foram ATIVADAS no Petrvs porque constavam como inativas mas ainda estão ativas no SIAPE!'
+                    ], fn($o) => intval(substr($o,0,strpos($o, 'unidade')-1)) > 0)];
                 /* Unidades que foram removidas em integracao_unidades vão permanecer no sistema por questões de integridade */
             } catch (Throwable $e) {
                 LogError::newError("Erro ao importar unidades", $e);
-                $result["unidades"] = 'ERRO: '. $e->getMessage();
+                $result['unidades']['Resultado'] = 'ERRO: '. $e->getMessage();
             }
         }
 
         // Atualização dos servidores
-        if(!empty($inputs["servidores"]) && $inputs["servidores"] != "false" && !empty($entidade)) {
+        if(!empty($inputs["servidores"]) && $inputs["servidores"] != "false" && !empty($entidade_id)) {
             try {
                 $servidores = [];
                 if($this->integracao_config["tipo"] == "SIAPE") {
@@ -512,16 +521,17 @@ class IntegracaoService extends ServiceBase {
                     // Por fim, certifica-se de que todos os servidores ativos possuem alguma lotação com a Unidade Atual, Principal = 1 e Data_fim nula.
                     // Executada a consulta, podem surgir 2 casos: (a) usuários com unidade, mas sem lotação principal, e (b) usuários sem unidade e sem lotação principal
                     $servidores_sem_lotacoes_atualizadas = DB::select(
-                        "SELECT u.id AS id_usuario, d.id AS id_unidade_atual ".
+                        "SELECT u.id AS id_usuario, d.id AS id_unidade_atual, s.coduorgexercicio ".
                         "FROM usuarios u LEFT JOIN integracao_servidores s ON (u.cpf = s.cpf) ".
                         "LEFT JOIN unidades d ON (s.codigo_servo_exercicio = d.codigo) ".
                         "LEFT JOIN lotacoes l ON (d.id = l.unidade_id AND u.id = l.usuario_id AND l.principal = 1 AND l.data_fim is null) ".
-                        "WHERE l.id is null AND s.cpf is not null AND s.codigo_servo_exercicio is not null");
+                        //"WHERE l.id is null AND s.cpf is not null AND s.codigo_servo_exercicio is not null");
+                        "WHERE l.id is null AND s.cpf is not null AND s.coduorgexercicio is not null");
 
                     //$sql4_insert = "INSERT INTO lotacoes(id, data_inicio, principal, unidade_id, usuario_id) VALUES (:id, Now(), 1, :unidade_id, :usuario_id)";
                     if (!empty($servidores_sem_lotacoes_atualizadas)) {
                         foreach($servidores_sem_lotacoes_atualizadas as $lotacao) {
-                            if(!empty($lotacao->id_unidade_atual)) {
+                            if(!empty($lotacao->id_unidade_atual)) {    //(a) usuários com unidade, mas sem lotação principal
                                 $id = DB::table('lotacoes')->insertGetId([
                                     'id'            => Uuid::uuid4(),
                                     'data_inicio'   => Carbon::now(),
@@ -531,7 +541,12 @@ class IntegracaoService extends ServiceBase {
                                 ]);
                                 $this->atualizaLogs('lotacoes', $id, 'ADD', ['Rotina' => 'Integração', 'Observação' => 'Criação da lotação do servidor ' . $lotacao->id_usuario . ' e a unidade ' . $lotacao->id_unidade_atual]);
                             }else{
-                                throw new Exception("Erro ao cadastrar a lotação: Unidade não localizada!"); // SERVIDOR NÃO TEM UMA LOTAÇÃO PRINCIPAL PORQUE SUA UNIDADE NÃO ESTÁ CADASTRADA
+                                $result["falhas"] = $result["falhas"] ?? [];
+                                array_push($result["falhas"], [
+                                    'Observação' => "Lotação não inserida porque a Unidade não foi localizada!",
+                                    'ID do usuário' => $lotacao->id_usuario,
+                                    'Código SIAPE da Unidade de Lotação Atual' => $lotacao->coduorgexercicio
+                                ]); // SERVIDOR NÃO TEM UMA LOTAÇÃO PRINCIPAL PORQUE SUA UNIDADE NÃO FOI LOCALIZADA
                             }
                         };
                     };
@@ -546,7 +561,7 @@ class IntegracaoService extends ServiceBase {
 
         // Atualização das chefias
         // Serão atualizadas quando as rotinas de atualização das unidades e dos servidores tiverem sido atualizadas com sucesso, ou não tiverem sido atualizadas!
-        if(($result['unidades'] == '' || substr($result['unidades'], 0, 7) == 'Sucesso') && ($result['servidores'] == '' || substr($result['servidores'], 0, 7) == 'Sucesso')){
+        if($result['unidades']['Resultado'] == 'Sucesso' && $result['servidores']['Resultado'] == 'Sucesso'){
             try {
                 DB::beginTransaction();
                 // seleciona o Id do usuário, a data da modificação e as funções de todos os servidores ativos trazidos do SIAPE, e que já existem na tabela Usuários
@@ -569,7 +584,7 @@ class IntegracaoService extends ServiceBase {
                 }
                 // torna nulos os campos gestor_id e gestor_substituto_id das unidades, para refazê-los com o atual array de chefias
                 DB::update("UPDATE unidades SET gestor_id = null, gestor_substituto_id = null");
-                $this->atualizaLogs('unidades', 'todos os registros', 'EDIT', ['Rotina' => 'Integração', 'Observação' => 'Apagando todos os gestores antes de atualizá-los com a consulta ao SIAPE']);
+                $this->atualizaLogs('unidades', 'todas as unidades com gestores não nulos', 'EDIT', ['Rotina' => 'Integração', 'Observação' => 'Apagando todos os gestores antes de atualizá-los com a consulta ao SIAPE']);
                 // percorre o array das chefias, inserindo na tabela de unidades os IDs dos respectivos gestores e gestores substitutos
                 foreach($chefias as $chefia) {
                     // descobre o ID da Unidade
@@ -593,14 +608,19 @@ class IntegracaoService extends ServiceBase {
                             ]);
                 }
                 DB::commit();
-                $result["chefias"] = 'Sucesso: ' . count($chefes) . ' gestores atualizados, ' . count($chefias) . ' chefias atualizadas!';
+                $result['chefias']['Resultado'] = 'Sucesso';
+                $result['chefias']['Observações'] = [...$result['chefias']['Observações'], ...array_filter([
+                    count($chefes) . (count($chefes) == 1 ? ' gestor atualizado, ' : ' gestores atualizados, ') . count($chefias) . (count($chefias) == 1 ? ' chefia atualizada!' : ' chefias atualizadas!')
+                    ], fn($o) => intval(substr($o,0,strpos($o, 'gestor')-1)) > 0)];
             } catch (Throwable $e) {
                 DB::rollback();
                 LogError::newError("Erro ao atualizar as chefias (titulares/substitutos)", $e);
-                $result["chefias"] = $e->getMessage();
+                $result['chefias']['Resultado'] = 'ERRO: '. $e->getMessage();
             }        
         }else{
-            $result["chefias"] = 'As chefias não foram atualizadas porque houve alguma falha na atualização das unidades e/ou servidores';
+            $result["chefias"]['Resultado'] = 'As chefias não foram atualizadas porque as Unidades e/ou Servidores não o foram, ' . 
+                                              'ou ainda porque houve alguma falha em suas atualizações! As chefias só são atualizadas quando as Unidades ' .
+                                              'E os Servidores são atualizados e AMBOS com sucesso.';
         }
         return $result;
     }
@@ -670,9 +690,40 @@ class IntegracaoService extends ServiceBase {
  *      Coordenação de Inovação e Liderança                                     1213          sim         1514
  *      Núcleo de Articulação e Governança/RS                                   4574          sim         3636
  * 
- *      Servidores                                          coduorgexercicio   coduorglotacao   cod_servo_exercicio    funcao        vinc. ativo
- *                                                          (cod_siape)        (cod_siape)      (id_servo)             (cod_siape)     
+ *      Servidores                                          coduorgexercicio*  coduorglotacao   cod_servo_exercicio    funcao        vinc. ativo
+ *                                                          (cod_siape)        (cod_siape)      (id_servo)*            (cod_siape)     
  *      Caroline Freire                                     4773               4773             4111                   4773, 1213    sim
  *      Carlos Marian                                       4574               4574             3636                   4574          sim
  *      Ricardo Farias                                      4385               4385             3582                   -             sim
  *  */
+
+/*                                                              
+tabela: integracao_servidores               tabela: usuarios    tabela: lotacoes                    tabela: unidades       tabela: integracao_unidades
+                                            id                  id_usuario  id_unidade              id                       
+
+cpf*                                        cpf*                                                                                                                                                      codigo_siape
+coduorgexercicio* (cod.siape)                                                                                              codigo_siape
+coduorglotacao  (cod.siape)                                                                                                                                                                                                                          
+cod_servo_exercicio (id_servo)                                                                      codigo*                id_servo*
+                                                                                     
+
+Descobrir           Eu tenho            Como Fazer
+id_usuario          cpf_servidor        select id from usuarios where cpf = cpf_servidor
+id_unidade          coduorgexercicio    select u.id from unidades u left join integracao_unidades iu 
+                                                    on u.codigo = iu.id_servo
+                                                    where iu.codigo_siape = :codurgexercicio  
+                                                    
+usuarios u LEFT JOIN integracao_servidores s ON (u.cpf = s.cpf) ".
+    "LEFT JOIN unidades d ON (s.codigo_servo_exercicio = d.codigo) "
+
+(usuarios us LEFT JOIN integracao_servidores se ON us.cpf = se.cpf) LEFT JOIN 
+    (unidades un left join integracao_unidades iu ON un.codigo = iu.id_servo)
+    ()
+
+"LEFT JOIN lotacoes l ON (d.id = l.unidade_id AND u.id = l.usuario_id AND l.principal = 1 AND l.data_fim is null) ".
+
+
+
+
+*/  
+

@@ -29,3 +29,4 @@ back-end/public/info.php
 back-end/servidores.xml
 back-end/unidades.xml
 back-end/tests/*
+back-end/local_files/*
