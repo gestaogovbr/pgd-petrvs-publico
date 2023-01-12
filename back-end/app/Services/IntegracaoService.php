@@ -37,13 +37,13 @@ class IntegracaoService extends ServiceBase {
     function __construct($config = null) {
         ini_set('max_execution_time', 1200); /* 20 minutos */
         $this->integracao_config = $config ?: config('integracao');
-        $this->autoIncluir =$this->integracao_config['auto_incluir'];
-        $this->codigoUnidadeRaiz =$this->integracao_config['codigoUnidadeRaiz'];
-        $this->validaCertificado =$this->integracao_config['validaCertificado'];
-        $this->useLocalFiles =$this->integracao_config['useLocalFiles'];
-        $this->storeLocalFiles =$this->integracao_config['storeLocalFiles'];
-        $this->localUnidades =$this->integracao_config['localUnidades'];
-        $this->localServidores =$this->integracao_config['localServidores'];
+        $this->autoIncluir = $this->integracao_config['auto_incluir'];
+        $this->codigoUnidadeRaiz = $this->integracao_config['codigoUnidadeRaiz'];
+        $this->validaCertificado = $this->integracao_config['validaCertificado'];
+        $this->useLocalFiles = $this->integracao_config['useLocalFiles'];
+        $this->storeLocalFiles = $this->integracao_config['storeLocalFiles'];
+        $this->localUnidades = $this->integracao_config['localUnidades'];
+        $this->localServidores = $this->integracao_config['localServidores'];
     }
 
     /** Preenche os campos de uma lotação para o novo Usuário, se sua lotação já vier definida pelo SIAPE */
@@ -237,8 +237,8 @@ class IntegracaoService extends ServiceBase {
         set_time_limit(1800);
         $self = $this;
         $result = [
-            'unidades' => ['Resultado' => '','Observações' => [], 'Falhas' => []], 
-            'servidores' => ['Resultado' => '','Observações' => [], 'Falhas' => []], 
+            'unidades' => ['Resultado' => 'Não foi executado!','Observações' => [], 'Falhas' => []], 
+            'servidores' => ['Resultado' => 'Não foi executado!','Observações' => [], 'Falhas' => []], 
             'chefias' => ['Resultado' => '','Observações' => [], 'Falhas' => []]
         ];
         $token = $this->useLocalFiles ? "LOCAL" : $this->getToken($this->integracao_config);
@@ -313,6 +313,7 @@ class IntegracaoService extends ServiceBase {
                 $n = DB::table('integracao_unidades')->get()->count();
                 $this->atualizaLogs('integracao_unidades', 'todos os registros', 'ADD', ['Observação' => 'Total de unidades importadas do SIAPE: ' . $n . ' (apenas ATIVAS)']);
                 array_push($result['unidades']["Observações"], 'Total de unidades importadas do SIAPE: ' . $n . ' (apenas ATIVAS)');
+                array_push($result['unidades']['Observações'], 'Os dados das Unidades foram obtidos ' . ($this->useLocalFiles ? 'através de arquivo XML armazenado localmente!' : 'através de consulta à API do SIAPE!'));
 
                 /* Insere as unidades faltantes ou atualiza dados e seus respectivos pais */
                 // OBS.: Não vejo a diferença de usar :entidade_id para restringir as Unidades.
@@ -429,7 +430,8 @@ class IntegracaoService extends ServiceBase {
                 echo "Concluída a fase de reconstrução da tabela integração_servidores.....";
                 $n = DB::table('integracao_servidores')->get()->count();
                 $this->atualizaLogs('integracao_servidores', 'todos os registros', 'ADD', ['Observação' => 'Total de servidores importados do SIAPE: ' . $n . ' (apenas ativos)']);
-                array_push($result['servidores']["Observações"], 'Total de servidores importados do SIAPE: ' . $n . ' (apenas ATIVOS)');
+                array_push($result['servidores']['Observações'], 'Os dados dos Servidores foram obtidos ' . ($this->useLocalFiles ? 'através de arquivo XML armazenado localmente!' : 'através de consulta à API do SIAPE!'));
+                array_push($result['servidores']['Observações'], 'Total de servidores importados do SIAPE: ' . $n . ' (apenas ATIVOS)');
 
                 DB::transaction(function () use (&$atualizacoes, &$result) {
                     // Seleciona todos os servidores que sofreram alteração nos seus dados pessoais.
