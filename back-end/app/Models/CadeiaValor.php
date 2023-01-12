@@ -11,7 +11,7 @@ class CadeiaValor extends ModelBase
 {
     use AutoDataInicio, HasDataFim;
 
-    protected $table = 'cadeias-valores';
+    protected $table = 'cadeias_valores';
 
     protected $with = [];
 
