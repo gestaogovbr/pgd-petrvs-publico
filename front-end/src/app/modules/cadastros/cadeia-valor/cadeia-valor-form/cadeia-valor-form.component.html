@@ -1,0 +1,13 @@
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+  <div class="row">
+    <div class="row">
+      <input-text [size]="12" label="Nome da Cadeia de Valor" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome"></input-text>
+    </div>
+    <div class="row">
+      <input-datetime date [size]="3" label="Início" icon="bi bi-calendar-date" controlName="inicio" [control]="form!.controls.inicio" labelInfo="Início da Cadeia de Valor"></input-datetime>
+      <input-datetime date [size]="3" label="Fim" icon="bi bi-calendar-date" controlName="fim" [control]="form!.controls.fim" labelInfo="Fim da Cadeia de Valor"></input-datetime>
+      <input-search   [size]="6" label="Unidade" icon="fab fa-unity" controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+    </div>
+  </div>
+</editable-form>
+
