@@ -559,8 +559,8 @@ class IntegracaoService extends ServiceBase {
                                 ]);
                                 $this->atualizaLogs('lotacoes', $id, 'ADD', ['Rotina' => 'Integração', 'Observação' => 'Criação da lotação do servidor ' . $lotacao->nome . ' e a unidade ' . $lotacao->nome_unidade]);
                             }else{                                      // (b) usuários sem unidade e, portanto, sem lotação
-                                $result["falhas"] = $result["falhas"] ?? [];
-                                array_push($result["falhas"], [
+                                $result["Falhas"] = $result["Falhas"] ?? [];
+                                array_push($result["Falhas"], [
                                     'Observação' => "Lotação não existe nem foi inserida porque a Unidade não foi localizada!",
                                     'Usuário' => $lotacao->nome . " (ID: " . $lotacao->id_usuario . ")",
                                     'Código SIAPE da Unidade de Lotação Atual' => $lotacao->coduorgexercicio
