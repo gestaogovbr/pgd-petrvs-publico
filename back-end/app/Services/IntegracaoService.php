@@ -337,18 +337,18 @@ class IntegracaoService extends ServiceBase {
                         $self->deepReplaceUnidades($unidade, $entidade_id);
                     }
                     /* Seta inativo nas unidades que não existem em integracao_unidades e garante que não esteja inativo as que existem em integracao_unidades */
-                    $this->inativadas = DB::update("UPDATE unidades AS u SET inativo = NOW() WHERE NOT EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo)"); 
+                    $this->inativadas = DB::update("UPDATE unidades AS u SET inativo = NOW() WHERE inativo IS NULL AND NOT EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo)"); 
                     $this->ativadas = DB::update("UPDATE unidades AS u SET inativo = NULL WHERE inativo IS NOT NULL AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo);");
                 });
                 $result['unidades']['Resultado'] = 'Sucesso';
                 array_push($result['unidades']['Observações'], 'Na tabela Unidades do Petrvs constam agora ' . DB::table('unidades')->get()->count() . ' unidades!');
                 $result['unidades']['Observações'] = [...$result['unidades']['Observações'], ...array_filter([
-                    count($this->unidadesInseridas) . count($this->unidadesInseridas) == 1 ? ' unidade nova informada pelo SIAPE foi inserida no Petrvs!' : ' unidades novas informadas pelo SIAPE foram inseridas no Petrvs!',
-                    count($this->paisAlterados) . count($this->paisAlterados) == 1 ? ' unidade sofreu alteração na hierarquia e possivelmente em outros dados e foi atualizada!' : ' unidades sofreram alteração na hierarquia e possivelmente em outros dados e foram atualizadas!',
-                    $this->filhasAlteradas . $this->filhasAlteradas == 1 ? ' unidade filha teve seu path alterado porque sua Unidade-pai mudou sua posição hierárquica!' : ' unidades filhas tiveram seus paths alterados porque sua Unidade-pai mudou sua posição hierárquica!',
-                    count($this->unidadesAlteradas) . count($this->unidadesAlteradas) == 1 ? ' unidade manteve sua hierarquia mas sofreu alteração em outros dados e foi atualizada!' : ' unidades mantiveram sua hierarquia mas sofreram alteração em outros dados e foram atualizadas!',
-                    $this->inativadas . $this->inativadas == 1 ? ' unidade do Petrvs foi INATIVADA porque não existe ou já está inativa no SIAPE!' : ' unidades do Petrvs foram INATIVADAS porque não existem ou já estão inativas no SIAPE!',
-                    $this->ativadas . $this->ativadas == 1 ? ' unidade foi ATIVADA no Petrvs porque constava como inativa mas ainda está ativa no SIAPE!' : ' unidades foram ATIVADAS no Petrvs porque constavam como inativas mas ainda estão ativas no SIAPE!'
+                    count($this->unidadesInseridas) . (count($this->unidadesInseridas) == 1 ? ' unidade nova informada pelo SIAPE foi inserida no Petrvs!' : ' unidades novas informadas pelo SIAPE foram inseridas no Petrvs!'),
+                    count($this->paisAlterados) . (count($this->paisAlterados) == 1 ? ' unidade sofreu alteração na hierarquia e possivelmente em outros dados e foi atualizada!' : ' unidades sofreram alteração na hierarquia e possivelmente em outros dados e foram atualizadas!'),
+                    $this->filhasAlteradas . ($this->filhasAlteradas == 1 ? ' unidade filha teve seu path alterado porque sua Unidade-pai mudou sua posição hierárquica!' : ' unidades filhas tiveram seus paths alterados porque sua Unidade-pai mudou sua posição hierárquica!'),
+                    count($this->unidadesAlteradas) . (count($this->unidadesAlteradas) == 1 ? ' unidade manteve sua hierarquia mas sofreu alteração em outros dados e foi atualizada!' : ' unidades mantiveram sua hierarquia mas sofreram alteração em outros dados e foram atualizadas!'),
+                    $this->inativadas . ($this->inativadas == 1 ? ' unidade do Petrvs foi INATIVADA porque não existe ou já está inativa no SIAPE!' : ' unidades do Petrvs foram INATIVADAS porque não existem ou já estão inativas no SIAPE!'),
+                    $this->ativadas . ($this->ativadas == 1 ? ' unidade foi ATIVADA no Petrvs porque constava como inativa mas ainda está ativa no SIAPE!' : ' unidades foram ATIVADAS no Petrvs porque constavam como inativas mas ainda estão ativas no SIAPE!')
                     ], fn($o) => intval(substr($o,0,strpos($o, 'unidade')-1)) > 0)];
                 /* Unidades que foram removidas em integracao_unidades vão permanecer no sistema por questões de integridade */
             } catch (Throwable $e) {
@@ -366,7 +366,7 @@ class IntegracaoService extends ServiceBase {
                 } else {
                     if($this->useLocalFiles) {
                         //$xmlStream = file_get_contents($this->localServidores);
-                        $xmlStream = file_get_contents(base_path('../' . $this->localServidores));
+                        $xmlStream = file_get_contents(base_path($this->localServidores));
                     } else {
                         $url = $this->integracao_config["baseUrlpessoas"];
                         $response = $this->consultarApiSigepe($token, $url);
@@ -379,9 +379,7 @@ class IntegracaoService extends ServiceBase {
                     $xml = simplexml_load_string($xmlStream);
                     $servidores = $this->UtilService->object2array($xml)["Pessoa"];
                 }
-
-                //$sql = "INSERT INTO integracao_servidores(cpf_ativo, data_modificacao, cpf, nome, emailfuncional, sexo, municipio, uf, datanascimento, telefone, vinculo_ativo, matriculasiape, tipo, coduorgexercicio, coduorglotacao, codigo_servo_exercicio, nomeguerra, codsitfuncional, codupag, dataexercicionoorgao, funcoes) " .
-                //       "VALUES (:cpf_ativo, :data_modificacao, :cpf, :nome, :emailfuncional, :sexo, :municipio, :uf, :datanascimento, :telefone, :vinculo_ativo, :matriculasiape, :tipo, :coduorgexercicio, :coduorglotacao, :codigo_servo_exercicio, :nomeguerra, :codsitfuncional, :codupag, :dataexercicionoorgao, :funcoes)";
+                echo "Concluída a fase de obtenção dos dados dos servidores informados pelo SIAPE.....";
 
                 /* Insere os servidores ATIVOS obtidos pelo webservice para a tabela integracao_servidores */
                 DB::transaction(function () use (&$servidores, &$self) {
@@ -428,15 +426,18 @@ class IntegracaoService extends ServiceBase {
                         }
                     }
                 });
-                $this->atualizaLogs('integracao_servidores', 'todos os registros', 'ADD', ['Observação' => 'Total de servidores importados do SIAPE: ' . DB::table('integracao_servidores')->get()->count() . ' (apenas ativos)']);
+                echo "Concluída a fase de reconstrução da tabela integração_servidores.....";
+                $n = DB::table('integracao_servidores')->get()->count();
+                $this->atualizaLogs('integracao_servidores', 'todos os registros', 'ADD', ['Observação' => 'Total de servidores importados do SIAPE: ' . $n . ' (apenas ativos)']);
+                array_push($result['servidores']["Observações"], 'Total de servidores importados do SIAPE: ' . $n . ' (apenas ATIVOS)');
 
-                DB::transaction(function () use (&$atualizacoes) {
-
+                DB::transaction(function () use (&$atualizacoes, &$result) {
                     // Seleciona todos os servidores que sofreram alteração nos seus dados pessoais.
                     $atualizacoes = DB::select(
-                        "SELECT u.id, s.cpf AS cpf_servidor, u.nome AS nome_anterior, s.nome AS nome_servidor, u.apelido AS apelido_anterior, s.nomeguerra AS nome_guerra, ".
-                        "u.email AS email_anterior, s.emailfuncional, u.matricula AS matricula_anterior, s.matriculasiape, u.telefone AS telefone_anterior, s.telefone FROM integracao_servidores s LEFT JOIN usuarios u ON (s.cpf = u.cpf) ".
-                        "WHERE s.nome != u.nome OR s.emailfuncional != u.email OR s.matriculasiape != u.matricula OR s.nomeguerra != u.apelido OR s.telefone != u.telefone");
+                        "SELECT u.id, isr.cpf AS cpf_servidor, u.nome AS nome_anterior, isr.nome AS nome_servidor, u.apelido AS apelido_anterior, " .
+                        "isr.nomeguerra AS nome_guerra, u.email AS email_anterior, isr.emailfuncional, u.matricula AS matricula_anterior, " .
+                        "isr.matriculasiape, u.telefone AS telefone_anterior, isr.telefone FROM integracao_servidores isr LEFT JOIN usuarios u ON (isr.cpf = u.cpf) ".
+                        "WHERE isr.nome != u.nome OR isr.emailfuncional != u.email OR isr.matriculasiape != u.matricula OR isr.nomeguerra != u.apelido OR isr.telefone != u.telefone");
                     $sql_update = "UPDATE usuarios SET nome = :nome, apelido = :nomeguerra, email = :email, matricula = :matricula, telefone = :telefone WHERE id = :id";
 
                     // Atualiza os dados pessoais de todos os servidores ATIVOS presentes na tabela USUARIOS. ESTA ROTINA NÃO DEVE INSERIR NOVOS SERVIDORES
@@ -452,7 +453,7 @@ class IntegracaoService extends ServiceBase {
                                 ]);
                                 $this->atualizaLogs('usuarios', $linha->id, 'EDIT', [
                                     'Rotina' => 'Integração', 
-                                    'Observação' => 'Servidor ATIVO que apresentou alteração em seus dados pessoais',
+                                    'Observação' => 'Servidor ATIVO que foi atualizado porque apresentou alteração em seus dados pessoais!',
                                     'Valores anteriores' => [
                                                                 'nome'          => $linha->nome_anterior,
                                                                 'nomeguerra'    => $linha->apelido_anterior,
@@ -461,17 +462,27 @@ class IntegracaoService extends ServiceBase {
                                                                 'telefone'      => $linha->telefone_anterior,
                                                                 'id'            => $linha->id                                        
                                                             ], 
-                                    'Valores atuais' => $linha
+                                    'Valores atuais' => [
+                                                                'nome'          => $linha->nome_servidor,
+                                                                'nomeguerra'    => $linha->nome_guerra,
+                                                                'email'         => $linha->emailfuncional,
+                                                                'matricula'     => $linha->matriculasiape,
+                                                                'telefone'      => $linha->telefone,
+                                                                'id'            => $linha->id   
+                                    ]
                                 ]);
                         };
                     };
+                    echo('Concluída a fase de atualização de servidores que apresentaram alteração nos seus dados pessoais!.....');
+                    $n = count($atualizacoes);
+                    if($n > 0) array_push($result['servidores']["Observações"], $n . ($n == 1 ? ' servidor foi atualizado porque sofreu alteração em seus dados pessoais!' : ' servidores foram atualizados porque sofreram alteração em seus dados pessoais!'));
 
                     // Seleciona todas as lotações que não correspondem à Unidade Atual do servidor
                     $lotacoes_nao_atuais = DB::select(
-                        "SELECT u.id AS id_usuario, l.id AS id_lotacao, l.data_fim, l.principal, s.codigo_servo_exercicio, d.sigla ".
-                        "FROM usuarios u LEFT JOIN lotacoes l ON (l.usuario_id = u.id) LEFT JOIN unidades d ON (l.unidade_id = d.id) ".
-                        "LEFT JOIN integracao_servidores s ON (u.cpf = s.cpf) ".
-                        "WHERE d.codigo != s.codigo_servo_exercicio");//PODEM VIR TUPLAS ONDE O SERVIDOR AINDA NÃO TEM LOTAÇÃO MAS NÃO SERÃO AFETADAS PELO BLOCO FOREACH ABAIXO
+                        "SELECT u.id AS id_usuario, l.id AS id_lotacao, l.data_fim, l.principal, isr.codigo_servo_exercicio, und.sigla ".
+                        "FROM usuarios u LEFT JOIN lotacoes l ON (l.usuario_id = u.id) LEFT JOIN unidades und ON (l.unidade_id = und.id) ".
+                        "LEFT JOIN integracao_servidores isr ON (u.cpf = isr.cpf) ".
+                        "WHERE und.codigo != isr.codigo_servo_exercicio AND l.principal = 1"); 
                     $sql2_update = "UPDATE lotacoes SET principal = 0 WHERE id = :id_lotacao";
                     // Todas são setadas como PRINCIPAL = 0
                     if (!empty($lotacoes_nao_atuais)) {
@@ -485,53 +496,60 @@ class IntegracaoService extends ServiceBase {
                             ]);
                         };
                     }
+                    $n = count($lotacoes_nao_atuais);
+                    if($n > 0) array_push($result['servidores']["Observações"], $n . ($n == 1 ? ' lotação foi setada com principal = 0 porque não corresponde mais à lotação atual do servidor!' : ' lotações foram setadas com principal = 0 porque não correspondem mais às lotações atuais dos servidores!'));
 
                     // Seleciona todos os servidores que possuem alguma lotação registrada com a Unidade Atual
-                    // Podem ocorrer 2 casos: I - possuem lotação com data_fim não nula (setar com PRINCIPAL = 0), ou II - possuem com data_fim nula (ou seja, estão OK. Setar com PRINCIPAL = 1)
+                    // Podem ocorrer 2 casos: I - possuem lotação com data_fim não nula (setar com PRINCIPAL = 0), ou II - possuem com data_fim nula (ou seja, estão OK. Setar com PRINCIPAL = 1, se estiver com PRINCIPAL = 0)
                     $lotacoes_atuais = DB::select(
-                        "SELECT u.id AS id_usuario, l.id AS id_lotacao, l.data_fim, l.principal, s.codigo_servo_exercicio AS cod_unidade_atual, d2.id AS id_unidade_atual ".
+                        "SELECT u.id AS id_usuario, l.id AS id_lotacao, l.data_fim, l.principal, isr.codigo_servo_exercicio AS cod_unidade_atual, und2.id AS id_unidade_atual ".
                         "FROM usuarios u LEFT JOIN lotacoes l ON (l.usuario_id = u.id) ".
-                        "LEFT JOIN unidades d1 ON (l.unidade_id = d1.id) ".
-                        "LEFT JOIN integracao_servidores s ON (u.cpf = s.cpf) ".
-                        "LEFT JOIN unidades d2 ON (d2.codigo = s.codigo_servo_exercicio) ".
-                        "WHERE d1.codigo = d2.codigo");
+                        "LEFT JOIN unidades und1 ON (l.unidade_id = und1.id) ".
+                        "LEFT JOIN integracao_servidores isr ON (u.cpf = isr.cpf) ".
+                        "LEFT JOIN unidades und2 ON (und2.codigo = isr.codigo_servo_exercicio) ".
+                        "WHERE und1.codigo = und2.codigo");
                     $sql3_update = "UPDATE lotacoes SET principal = :principal WHERE id = :id_lotacao";
                     if (!empty($lotacoes_atuais)) {
+                        $x = 0; $y = 0;
                         foreach($lotacoes_atuais as $lotacao) {
-                            if (!empty($lotacao->data_fim)) {
+                            if (!empty($lotacao->data_fim) && $lotacao->principal == 1) {       // (I) cod. siape ok, data-fim não nula, principal = 1 
+                                $x++;
                                 DB::update($sql3_update, ['id_lotacao' => $lotacao->id_lotacao, 'principal' => 0]);
                                 $this->atualizaLogs('lotacoes', $lotacao->id_lotacao, 'EDIT', [
                                     'Rotina' => 'Integração', 
-                                    'Observação' => 'Esta lotação corresponde à lotação atual, mas o registro não é mais válido (data-fim não-nula)',
+                                    'Observação' => 'Esta lotação corresponde à lotação atual, o registro não é mais válido (data-fim não-nula), mas ainda constava como principal = 1. Principal foi então setada para 0.',
                                     'Valores anteriores' => ['principal' => $lotacao->principal, 'data-fim' => $lotacao->data_fim], 
                                     'Valores atuais' => ['principal' => 0, 'data-fim' => $lotacao->data_fim]
                                 ]);
-                            } else {
+                            } elseif(empty($lotacao->data_fim) && $lotacao->principal == 0) {   // (II) cod. siape ok, data-fim nula, principal = 0
+                                $y++;
                                 DB::update($sql3_update, ['id_lotacao' => $lotacao->id_lotacao, 'principal' => 1]);
                                 $this->atualizaLogs('lotacoes', $lotacao->id_lotacao, 'EDIT', [
                                     'Rotina' => 'Integração', 
-                                    'Observação' => 'Esta lotação corresponde à lotação atual, e o registro é válido (data-fim nula)',
+                                    'Observação' => 'Esta lotação corresponde à lotação atual, o registro é válido (data-fim nula), mas constava como principal = 0. Principal foi então setada para 1.',
                                     'Valores anteriores' => ['principal' => $lotacao->principal, 'data-fim' => $lotacao->data_fim], 
                                     'Valores atuais' => ['principal' => 1, 'data-fim' => $lotacao->data_fim]
                                 ]);
                             };
                         };
                     };
+                    if($x > 0) array_push($result['servidores']["Observações"], $x . ($x == 1 ? ' lotação foi setada com principal = 0 porque, apesar de corresponder à lotação atual, o registro não era mais válido (data-fim não nula)!' : ' lotações foram setadas com principal = 0 porque, apesar de corresponderem às lotações atuais, os registros não eram mais válidos (data-fim não nula)!'));
+                    if($y > 0) array_push($result['servidores']["Observações"], $y . ($y == 1 ? ' lotação foi setada com principal = 1 porque, apesar de corresponder à lotação atual e o registro ser válido (data-fim nula), o campo principal estava igual a 0!' : ' lotações foram setadas com principal = 1 porque, apesar de corresponderem às lotações atuais e os registros serem válidos (data-fim nula), o campo principal estava igual a 0!'));
 
                     // Por fim, certifica-se de que todos os servidores ativos possuem alguma lotação com a Unidade Atual, Principal = 1 e Data_fim nula.
-                    // Executada a consulta, podem surgir 2 casos: (a) usuários com unidade, mas sem lotação principal, e (b) usuários sem unidade e sem lotação principal
+                    // Executada a consulta, podem surgir 2 casos: (a) usuários com unidade localizada, mas sem lotação principal, e (b) usuários sem unidade localizada e, portanto, sem lotação principal
                     $servidores_sem_lotacoes_atualizadas = DB::select(
-                        "SELECT u.id AS id_usuario, d.id AS id_unidade_atual, s.coduorgexercicio ".
-                        "FROM usuarios u LEFT JOIN integracao_servidores s ON (u.cpf = s.cpf) ".
-                        "LEFT JOIN unidades d ON (s.codigo_servo_exercicio = d.codigo) ".
-                        "LEFT JOIN lotacoes l ON (d.id = l.unidade_id AND u.id = l.usuario_id AND l.principal = 1 AND l.data_fim is null) ".
-                        //"WHERE l.id is null AND s.cpf is not null AND s.codigo_servo_exercicio is not null");
-                        "WHERE l.id is null AND s.cpf is not null AND s.coduorgexercicio is not null");
+                        "SELECT u.id AS id_usuario, u.nome, und.id AS id_unidade_atual, und.nome as nome_unidade, isr.codigo_servo_exercicio as unidade_antiga, isr.coduorgexercicio, l.principal, l.data_fim ".
+                        "FROM usuarios u LEFT JOIN integracao_servidores isr ON (u.cpf = isr.cpf) ".
+                        "LEFT JOIN unidades und ON (isr.codigo_servo_exercicio = und.codigo) ".
+                        "LEFT JOIN lotacoes l ON (und.id = l.unidade_id AND u.id = l.usuario_id AND l.principal = 1 AND l.data_fim is null) ".
+                        "WHERE l.id is null AND isr.coduorgexercicio is not null");
 
-                    //$sql4_insert = "INSERT INTO lotacoes(id, data_inicio, principal, unidade_id, usuario_id) VALUES (:id, Now(), 1, :unidade_id, :usuario_id)";
                     if (!empty($servidores_sem_lotacoes_atualizadas)) {
+                        $x = 0; $y = 0;
                         foreach($servidores_sem_lotacoes_atualizadas as $lotacao) {
                             if(!empty($lotacao->id_unidade_atual)) {    //(a) usuários com unidade, mas sem lotação principal
+                                $x++;
                                 $id = DB::table('lotacoes')->insertGetId([
                                     'id'            => Uuid::uuid4(),
                                     'data_inicio'   => Carbon::now(),
@@ -539,23 +557,28 @@ class IntegracaoService extends ServiceBase {
                                     'unidade_id'    => $lotacao->id_unidade_atual,
                                     'usuario_id'    => $lotacao->id_usuario
                                 ]);
-                                $this->atualizaLogs('lotacoes', $id, 'ADD', ['Rotina' => 'Integração', 'Observação' => 'Criação da lotação do servidor ' . $lotacao->id_usuario . ' e a unidade ' . $lotacao->id_unidade_atual]);
-                            }else{
+                                $this->atualizaLogs('lotacoes', $id, 'ADD', ['Rotina' => 'Integração', 'Observação' => 'Criação da lotação do servidor ' . $lotacao->nome . ' e a unidade ' . $lotacao->nome_unidade]);
+                            }else{                                      // (b) usuários sem unidade e, portanto, sem lotação
                                 $result["falhas"] = $result["falhas"] ?? [];
                                 array_push($result["falhas"], [
-                                    'Observação' => "Lotação não inserida porque a Unidade não foi localizada!",
-                                    'ID do usuário' => $lotacao->id_usuario,
+                                    'Observação' => "Lotação não existe nem foi inserida porque a Unidade não foi localizada!",
+                                    'Usuário' => $lotacao->nome . " (ID: " . $lotacao->id_usuario . ")",
                                     'Código SIAPE da Unidade de Lotação Atual' => $lotacao->coduorgexercicio
-                                ]); // SERVIDOR NÃO TEM UMA LOTAÇÃO PRINCIPAL PORQUE SUA UNIDADE NÃO FOI LOCALIZADA
+                                ]);
+                                // criar uma notificação por email
                             }
                         };
+                        if($x > 0) array_push($result['servidores']["Observações"], $x . ($x == 1 ? ' lotação nova foi criada!' : ' lotações novas foram criadas!'));
+                        if($y > 0) array_push($result['servidores']["Observações"], $y . ($y == 1 ? ' lotação nova não pode ser criada porque é impossível localizar a Unidade!' : ' lotações novas não puderam ser criadas porque é impossível localizar as Unidades!'));
                     };
-
+                    echo('Concluída a fase de atualização das lotações dos servidores!.....');
                 });
-                $result["servidores"] = 'Sucesso: ' . count($atualizacoes) . ' servidores tiveram dados pessoais atualizados!';
+                $result['servidores']['Resultado'] = 'Sucesso';
+                array_push($result['servidores']["Observações"], 'A tabela Usuários está agora com ' . DB::table('usuarios')->get()->count() . ' servidores!');
+                
             } catch (Throwable $e) {
                 LogError::newError("Erro ao importar servidores", $e);
-                $result["servidores"] = 'ERRO: '. $e->getMessage();
+                $result["servidores"]['Resultado'] = 'ERRO: '. $e->getMessage();
             }
         }
 
@@ -582,9 +605,10 @@ class IntegracaoService extends ServiceBase {
                         array_push($chefias, ['id_usuario' => $chefe->id, 'codigo_siape' => $funcoes->funcao->uorg_funcao, 'tipo_funcao' => $funcoes->funcao->tipo_funcao]);
                     }
                 }
+                echo "Concluída a fase de montagem do array de chefias!.....";
                 // torna nulos os campos gestor_id e gestor_substituto_id das unidades, para refazê-los com o atual array de chefias
                 DB::update("UPDATE unidades SET gestor_id = null, gestor_substituto_id = null");
-                $this->atualizaLogs('unidades', 'todas as unidades com gestores não nulos', 'EDIT', ['Rotina' => 'Integração', 'Observação' => 'Apagando todos os gestores antes de atualizá-los com a consulta ao SIAPE']);
+                $this->atualizaLogs('unidades', 'unidades com gestores não nulos', 'EDIT', ['Rotina' => 'Integração', 'Observação' => 'Apagando todos os gestores antes de atualizá-los com a consulta ao SIAPE']);
                 // percorre o array das chefias, inserindo na tabela de unidades os IDs dos respectivos gestores e gestores substitutos
                 foreach($chefias as $chefia) {
                     // descobre o ID da Unidade
