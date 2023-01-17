@@ -1,13 +1,9 @@
 import { ChangeDetectorRef, Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { UtilService } from 'src/app/services/util.service';
 
-export type MapMetadata = {
-  color?: string,
-}
-
 export type MapItem = {
   data: any,
-  metadata?: MapMetadata,
+  metadata?: any,
   parent?: MapItem,
   hash?: string,
   children?: MapItem[]

@@ -89,7 +89,7 @@ export class AuthService {
     let dataHora = new Date();
     if (this.unidade?.cidade) {
       const delta = this.gb.horarioDelta.servidor.getTime() - this.gb.horarioDelta.local.getTime();
-      const utc = (this.unidade.cidade.timezone + 3) * 60 * 60 * 1000;
+      const utc = (this.unidade.cidade.timezone + Math.abs(this.unidade.cidade.timezone)) * 60 * 60 * 1000;
       dataHora.setTime(dataHora.getTime() + utc + delta);
     }
     return dataHora;

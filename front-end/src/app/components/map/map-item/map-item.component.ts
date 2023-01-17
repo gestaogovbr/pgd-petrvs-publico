@@ -8,6 +8,7 @@ import { MapComponent, MapItem } from '../map.component';
 })
 export class MapItemComponent implements OnInit {
   @Input() template?: TemplateRef<any>;
+  @Input() level: any = 0;
   @Input() public set item(value: MapItem | undefined) {
     if(this._item != value) {
       this._item = value;
@@ -34,6 +35,7 @@ export class MapItemComponent implements OnInit {
     if(this.template) this.viewContainerRef.createEmbeddedView(this.template, {
       item: this.item,
       data: this.item?.data,
+      level: this.level,
       parent: this.item?.parent,
       children: this.item?.children
     });

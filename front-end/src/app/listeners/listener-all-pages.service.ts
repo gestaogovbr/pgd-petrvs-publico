@@ -4,27 +4,27 @@ import { ListenerBase } from './listener-base';
 
 export type DadosSei = {
   processo: {
-      id_processo: number,
-      tipo_processo: string,
-      numero_processo: string,
-      assuntos: {[key: string]: string},
-      interessados: {[key: string]: string},
-      numero: string,
-      descricao: string,
-      observacoes: string,
-      nivel_acesso: string,
-      hipotese_legal: string
+    id_processo: number,
+    tipo_processo: string,
+    numero_processo: string,
+    assuntos: { [key: string]: string },
+    interessados: { [key: string]: string },
+    numero: string,
+    descricao: string,
+    observacoes: string,
+    nivel_acesso: string,
+    hipotese_legal: string
   } | undefined,
   documento?: {
-      id_documento: number,
-      numero_documento: number,
-      titulo_documento: string,
-      tipo_documento: string
-      assunto_documento: string,
-      prazo_documento: string,
-      assinatura_documento: string,
-      versao_documento: string,
-      data_documento: string
+    id_documento: number,
+    numero_documento: number,
+    titulo_documento: string,
+    tipo_documento: string
+    assunto_documento: string,
+    prazo_documento: string,
+    assinatura_documento: string,
+    versao_documento: string,
+    data_documento: string
   } | undefined
 } | undefined;
 
@@ -51,7 +51,7 @@ export class ListenerAllPagesService extends ListenerBase {
   }
 
   public openDocumentoSei(id_processo: number, id_documento?: number) {
-    window?.open(this.gb.URL_SEI + "sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=" + id_processo + (id_documento ? "&id_documento=" + id_documento : ""), '_blank')?.focus();
+    window?.open(this.auth.unidade?.entidade?.url_sei || this.gb.URL_SEI + "sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=" + id_processo + (id_documento ? "&id_documento=" + id_documento : ""), '_blank')?.focus();
   }
 
   public visibilidadeMenuSei(visivel: boolean) {

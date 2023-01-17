@@ -6,12 +6,12 @@
     <strong>Mapa de teste</strong>
     <table>
         <map-foreach [template]="cell">
-            <ng-template #cell let-data="data" let-children="children">
+            <ng-template #cell let-data="data" let-children="children" let-level="level">
                 <tr>
-                    <td>{{data.title}}</td>
+                    <td>Level: {{level}} - {{data.title}}</td>
                     <td>
                         <table *ngIf="children?.length">
-                            <map-foreach [template]="cell" [items]="children"></map-foreach>
+                            <map-foreach [template]="cell" [items]="children" [level]="level+1"></map-foreach>
                         </table>
                     </td>
                 </tr>

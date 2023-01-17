@@ -9,6 +9,7 @@ import { MapComponent, MapItem } from '../map.component';
 export class MapForeachComponent implements OnInit {
   @ViewChild('foreach', { static: true }) foreach?: TemplateRef<any>;  
   @Input() template?: TemplateRef<any>;
+  @Input() level: any = 0;
   @Input() public set items(value: MapItem[]) {
     if(this._items != value) {
       this._items = value;

@@ -55,6 +55,8 @@ import { TopAlertComponent } from './top-alert/top-alert.component';
 import { MapComponent } from './map/map.component';
 import { MapItemComponent } from './map/map-item/map-item.component';
 import { MapForeachComponent } from './map/map-foreach/map-foreach.component';
+import { InputEditorComponent } from './input/input-editor/input-editor.component';
+import { CKEditorModule } from "@ckeditor/ckeditor5-angular";
 
 const maskConfig: Partial<IConfig> = {
   validation: false,
@@ -110,7 +112,8 @@ const maskConfig: Partial<IConfig> = {
     InputNumberComponent,
     MapComponent,
     MapItemComponent,
-    MapForeachComponent
+    MapForeachComponent,
+    InputEditorComponent
   ],
   imports: [
     CommonModule,
@@ -120,7 +123,8 @@ const maskConfig: Partial<IConfig> = {
     DndModule,
     //CurrencyMaskModule,
     AngularDoubleScrollbarsModule,
-    NgxMaskModule.forRoot(maskConfig)
+    NgxMaskModule.forRoot(maskConfig),
+    CKEditorModule
   ],
   exports: [
     BarChartComponent,
@@ -166,7 +170,8 @@ const maskConfig: Partial<IConfig> = {
     InputNumberComponent,
     MapComponent,
     MapItemComponent,
-    MapForeachComponent
+    MapForeachComponent,
+    InputEditorComponent
   ]
 })
 export class ComponentsModule { }
