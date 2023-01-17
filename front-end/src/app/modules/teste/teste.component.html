@@ -1,7 +1,26 @@
 <!--div class="d-block">
     {{ID_GENERATOR_BASE}}
 </div!-->
-<separator title="Expediente" collapse transparent>
+
+<map [items]="mapa">
+    <strong>Mapa de teste</strong>
+    <table>
+        <map-foreach [template]="cell">
+            <ng-template #cell let-data="data" let-children="children">
+                <tr>
+                    <td>{{data.title}}</td>
+                    <td>
+                        <table *ngIf="children?.length">
+                            <map-foreach [template]="cell" [items]="children"></map-foreach>
+                        </table>
+                    </td>
+                </tr>
+            </ng-template>
+        </map-foreach>
+    </table>
+</map>
+
+<!--separator title="Expediente" collapse transparent>
     <calendar-expediente [expediente]="expediente"></calendar-expediente>
 </separator>
 <div class="row">
@@ -27,7 +46,7 @@
 <toolbar [buttons]="buttons"></toolbar>
 <separator *ngIf="efemerides" title="Cálculos" collapse>
     <calendar-efemerides [efemerides]="efemerides"></calendar-efemerides>
-</separator>
+</separator//-->
 
 
 <!--ckeditor [editor]="Editor" data="<p>Hello, world!</p>"></ckeditor//-->

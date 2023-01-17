@@ -16,6 +16,7 @@ import { Feriado } from 'src/app/models/feriado.model';
 import { Afastamento } from 'src/app/models/afastamento.model';
 import { CalendarService, Efemerides } from 'src/app/services/calendar.service';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { MapItem } from 'src/app/components/map/map.component';
 
 @Component({
   selector: 'app-teste',
@@ -74,6 +75,47 @@ export class TesteComponent implements OnInit {
   public project: GanttProject; 
   public efemerides?: Efemerides;
   public resources: GanttResource[] = [];
+
+  public mapa: MapItem[] = [
+    {
+      data: {title: "item 1"},
+      children: [
+        {
+          data: {title: "item 1"},
+          children: [
+            {
+              data: {title: "item 1"},
+            },
+            {
+              data: {title: "item 2"}
+            }
+          ]
+        },
+        {
+          data: {title: "item 2"},
+          children: [
+            {
+              data: {title: "item 1"},
+            },
+            {
+              data: {title: "item 2"}
+            }
+          ]
+        },
+        {
+          data: {title: "item 3"}
+        }
+      ]
+    },
+    {
+      data: {title: "item 2"}
+    },
+    {
+      data: {title: "item 3"}
+    }
+  ];
+
+  public JSON = JSON;
 
   constructor(
     public fh: FormHelperService, 

@@ -52,6 +52,9 @@ import { ProfilePictureComponent } from './profile-picture/profile-picture.compo
 import { ProgressBarComponent } from './progress-bar/progress-bar.component';
 import { InputNumberComponent } from './input/input-number/input-number.component';
 import { TopAlertComponent } from './top-alert/top-alert.component';
+import { MapComponent } from './map/map.component';
+import { MapItemComponent } from './map/map-item/map-item.component';
+import { MapForeachComponent } from './map/map-foreach/map-foreach.component';
 
 const maskConfig: Partial<IConfig> = {
   validation: false,
@@ -104,7 +107,10 @@ const maskConfig: Partial<IConfig> = {
     BadgeComponent,
     ProfilePictureComponent,
     ProgressBarComponent,
-    InputNumberComponent
+    InputNumberComponent,
+    MapComponent,
+    MapItemComponent,
+    MapForeachComponent
   ],
   imports: [
     CommonModule,
@@ -157,7 +163,10 @@ const maskConfig: Partial<IConfig> = {
     BadgeComponent,
     ProfilePictureComponent,
     ProgressBarComponent,
-    InputNumberComponent
+    InputNumberComponent,
+    MapComponent,
+    MapItemComponent,
+    MapForeachComponent
   ]
 })
 export class ComponentsModule { }
