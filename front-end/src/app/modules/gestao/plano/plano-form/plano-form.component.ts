@@ -35,9 +35,9 @@ import { CalendarService, Efemerides } from 'src/app/services/calendar.service';
 
 export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  @ViewChild('gridAtividades', { static: false }) public gridAtividades?: GridComponent; 
-  @ViewChild('gridDocumentos', { static: false }) public gridDocumentos?: GridComponent; 
-  @ViewChild('tabs', { static: false }) public tabs?: TabsComponent; 
+  @ViewChild('gridAtividades', { static: false }) public gridAtividades?: GridComponent;
+  @ViewChild('gridDocumentos', { static: false }) public gridDocumentos?: GridComponent;
+  @ViewChild('tabs', { static: false }) public tabs?: TabsComponent;
   @ViewChild('usuario', { static: false }) public usuario?: InputSearchComponent;
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
   @ViewChild('programa', { static: false }) public programa?: InputSearchComponent;
@@ -129,7 +129,7 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
 
     return result;
   }
-  
+
   public formValidation = (form?: FormGroup) => {
     if(this.gridAtividades?.editing) {
       this.tabs!.active = "ATIVIDADES";
@@ -333,7 +333,7 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
             } finally {
               this.dialog.closeSppinerOverlay();
             }
-          } 
+          }
           if(modalResult) {
             documentos.push(modalResult);
             this.form!.controls.documentos.setValue(documentos);
