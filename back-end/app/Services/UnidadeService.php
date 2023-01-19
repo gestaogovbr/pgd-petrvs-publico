@@ -211,7 +211,9 @@ class UnidadeService extends ServiceBase
         $unidade = Unidade::where('id', $unidade_id)->with(['planos', 'planos.demandas', 'planos.tipoModalidade'])->first();
         $metadadosPlanos = [];
         foreach ($unidade['planos']->toArray() as $plano) {
-            if (($plano['programa_id'] == $programa_id) && ($this->calendarioService->between(new DateTime(), $plano['data_inicio_vigencia'], $plano['data_fim_vigencia']))) array_push($metadadosPlanos, $this->planoService->metadadosPlano($plano['id']));
+            if (($plano['programa_id'] == $programa_id) && ($plano['data_fim'] == null) && ($this->calendarioService->between(new DateTime(), $plano['data_inicio_vigencia'], $plano['data_fim_vigencia']))) {
+                array_push($metadadosPlanos, $this->planoService->metadadosPlano($plano['id']));
+            };
         }
         $result = [
             "id" => $unidade->id,

@@ -1,0 +1,31 @@
+<grid [dao]="dao" [hasEdit]="false" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+    [selectable]="selectable" (select)="onSelect($event)"
+    [hasAdd]="auth.hasPermissionTo('MOD_ROT_INT_INCL')"
+    [hasEdit]="auth.hasPermissionTo('MOD_ROT_INT_EDT')">
+    <toolbar *ngIf="!selectable"></toolbar>
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+        </div>
+        <div class="row">
+        </div>
+        <div class="row">            
+        </div>
+    </filter>
+    <columns>
+        <column title="Responsável" [template]="columnResponsavel">
+            <ng-template let-row="row" #columnResponsavel>
+                <span> {{row.usuario.nome}} </span>
+            </ng-template>
+        </column>
+        <column title="Executada em" [template]="columnDataExecucao">
+            <ng-template let-row="row" #columnDataExecucao>
+                <span>{{ util.getDateTimeFormatted(row.data_execucao) }}</span>
+            </ng-template>
+        </column>
+        <column title="Unidades" field="atualizar_unidades"></column>
+        <column title="Servidores" field="atualizar_servidores"></column>
+        <column title="Gestores" field="atualizar_gestores"></column>
+        <column *ngIf="!selectable" type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

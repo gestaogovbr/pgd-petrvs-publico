@@ -24,6 +24,7 @@ class PerfilService extends ServiceBase {
      */
     public $developers = [
         ["25941933304", "Ricardo Farias"],
+        ["67703011053", "Edson Marian"],
         ["07408707425", "Genisson Albuquerque"]
     ];
 

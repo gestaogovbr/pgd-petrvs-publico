@@ -100,9 +100,14 @@ Route::middleware('auth:sanctum')->prefix('Error')->group(function () {
     defaultRoutes(ErrorController::class);
 });
 Route::middleware('auth:sanctum')->prefix('Traffic')->group(function () {
-    defaultRoutes(TrafficController::class);
 });
 Route::middleware('auth:sanctum')->post('/Petrvs/showTables', [PetrvsController::class, 'showTables']);
+
+/* Rotinas */
+Route::middleware(['auth:sanctum'])->prefix('Integracao')->group(function () { 
+    Route::post('store', [IntegracaoController::class, 'sincronizarPetrvs']);
+    Route::post('query', [IntegracaoController::class, 'query']);
+});
 
 /* Testes */
 //Route::middleware(['auth:sanctum', 'can:ADMINISTRADOR'])->get('/teste', function (Request $request) { return ["OK"]; });

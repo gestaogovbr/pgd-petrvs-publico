@@ -35,6 +35,7 @@ class IntegracaoService extends ServiceBase {
     public $localServidores = "";       // eventual alteração deve ser feita no arquivo .env
 
     function __construct($config = null) {
+        parent::__construct();
         ini_set('max_execution_time', 1200); /* 20 minutos */
         $this->integracao_config = $config ?: config('integracao');
         $this->autoIncluir = $this->integracao_config['auto_incluir'];
@@ -232,7 +233,34 @@ class IntegracaoService extends ServiceBase {
         return $this->token;
     }
 
-    public function sincronizar($inputs) {
+    public function sincronizarPetrvs($data,$usuario_id) {
+        $this->useLocalFiles = $data['usar_arquivos_locais'];
+        $this->storeLocalFiles = $data['gravar_arquivos_locais'];
+        $inputs['entidade'] = $data['entidade_id'];
+        $inputs['unidades'] = $data['atualizar_unidades'];
+        $inputs['servidores'] = $data['atualizar_servidores'];
+        $inputs['gestores'] = $data['atualizar_gestores'];
+        return $this->store(array_merge([$data],
+                ['usuario_id' => $usuario_id,
+                 'data_execucao' => Carbon::now(),
+                 'resultado' => json_encode($this->sincronizacao($inputs))]), null);
+    }
+
+    public function sincronizar($inputs){
+        return $this->store([
+                'entidade_id' => $inputs['entidade'],
+                'atualizar_unidades' => $inputs['unidades'] == "false" ? false : true,
+                'atualizar_servidores' => $inputs['servidores'] == "false" ? false : true,
+                'atualizar_gestores' => true,
+                'usar_arquivos_locais' => $this->useLocalFiles,
+                'gravar_arquivos_locais' => $this->storeLocalFiles,
+                'usuario_id' => null,
+                'data_execucao' => Carbon::now(),
+                'resultado' => $this->sincronizacao($inputs),
+        ], null)->resultado;
+    }
+
+    public function sincronizacao($inputs) {
         ob_start(); //inicia o buffer de saída
         ob_implicit_flush(true); //libera a chamada explícita para o output buffer
         ini_set('memory_limit', '-1');
@@ -372,7 +400,6 @@ class IntegracaoService extends ServiceBase {
                     $servidores = $this->IntegracaoSiapeService->retornarPessoas()["Pessoas"];
                 } else {
                     if($this->useLocalFiles) {
-                        //$xmlStream = file_get_contents($this->localServidores);
                         $xmlStream = file_get_contents(base_path($this->localServidores));
                     } else {
                         $url = $this->integracao_config["baseUrlpessoas"];
@@ -582,7 +609,7 @@ class IntegracaoService extends ServiceBase {
                     $this->imprimeNoTerminal('Concluída a fase de atualização das lotações dos servidores!.....');
                 });
                 $result['servidores']['Resultado'] = 'Sucesso';
-                array_push($result['servidores']["Observações"], 'A tabela Usuários está agora com ' . DB::table('usuarios')->get()->count() . ' servidores!');
+                array_push($result['servidores']["Observações"], 'Na tabela Usuários constam agora ' . DB::table('usuarios')->get()->count() . ' servidores!');
                 
             } catch (Throwable $e) {
                 LogError::newError("Erro ao importar servidores", $e);
@@ -591,8 +618,10 @@ class IntegracaoService extends ServiceBase {
         }
 
         // Atualização das chefias
-        // Serão atualizadas quando as rotinas de atualização das unidades e dos servidores tiverem sido atualizadas com sucesso, ou não tiverem sido atualizadas!
-        if($result['unidades']['Resultado'] == 'Sucesso' && $result['servidores']['Resultado'] == 'Sucesso'){
+        // As chefias só são atualizadas quando as Unidades E os Servidores são atualizados e AMBOS com sucesso.
+        if(!empty($inputs["gestores"]) && !$inputs["gestores"]){
+            $result["chefias"]['Resultado'] = 'As chefias não foram atualizadas, conforme solicitado!';
+        }elseif($result['unidades']['Resultado'] == 'Sucesso' && $result['servidores']['Resultado'] == 'Sucesso'){
             $this->imprimeNoTerminal("Iniciando a fase de reconstrução das funções de chefia!.....");
             try {
                 DB::beginTransaction();
