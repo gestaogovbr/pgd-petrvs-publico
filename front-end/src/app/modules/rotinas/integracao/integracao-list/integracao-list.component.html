@@ -5,16 +5,20 @@
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
+          <input-search [size]="6" label="Responsável pelo registro" controlName="usuario_id" [control]="filter!.controls.usuario_id" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
+          <input-datetime [size]="3" datetime label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" labelInfo="Início dos registros"></input-datetime>
+          <input-datetime [size]="3" datetime label="Fim" controlName="data_fim" [control]="filter!.controls.data_fim" labelInfo="Fim dos registros"></input-datetime>
         </div>
         <div class="row">
-        </div>
-        <div class="row">            
+          <input-text [size]="4" label="Unidades" controlName="atualizar_unidades" [control]="filter!.controls.atualizar_unidades" ></input-text>
+          <input-text [size]="4" label="Servidores" controlName="atualizar_servidores" [control]="filter!.controls.atualizar_servidores" ></input-text>
+          <input-text [size]="4" label="Gestores" controlName="atualizar_gestores" [control]="filter!.controls.atualizar_gestores" ></input-text>
         </div>
     </filter>
     <columns>
         <column title="Responsável" [template]="columnResponsavel">
             <ng-template let-row="row" #columnResponsavel>
-                <span> {{row.usuario.nome}} </span>
+                <span> {{row.usuario_id}} </span>
             </ng-template>
         </column>
         <column title="Executada em" [template]="columnDataExecucao">

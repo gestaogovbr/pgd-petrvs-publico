@@ -3,6 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { IntegracaoDaoService } from 'src/app/dao/integracao-dao.service';
+import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
 import { Integracao } from 'src/app/models/integracao.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
@@ -18,11 +19,13 @@ export class IntegracaoListComponent extends PageListBase<Integracao, Integracao
 
   public toolbarButtons: ToolbarButton[] = [];
   public allPages: ListenerAllPagesService;
+  public usuarioDao: UsuarioDaoService;
 
   constructor(public injector: Injector, dao: IntegracaoDaoService) {
     super(injector, Integracao, IntegracaoDaoService);
     /* Inicializações */
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
+    this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.title = "Rotinas de Integração";
     this.filter = this.fh.FormBuilder({
       usuario_id: {default: ""},
@@ -43,7 +46,7 @@ export class IntegracaoListComponent extends PageListBase<Integracao, Integracao
     this.cdRef.detectChanges();
   }
 
-  public filterClear(filter: FormGroup) 
+  public filterClear(filter: FormGroup)
   {
     filter.controls.usuario_id.setValue("");
     filter.controls.data_inicio.setValue("");
