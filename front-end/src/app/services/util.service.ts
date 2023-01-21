@@ -446,6 +446,10 @@ export class UtilService {
     return dataHora ? moment(dataHora).format("DD/MM/YYYY") : "";
   }
 
+  public getBooleanFormatted(n: number): string{
+    return n == 0 ? "não" : "sim";
+  }
+
   public getTimeFormatted(dataHora: any): string{
     return dataHora ? moment(dataHora).format("HH:mm") : "";
   }

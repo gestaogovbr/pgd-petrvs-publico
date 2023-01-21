@@ -106,6 +106,7 @@ class Usuario extends Authenticatable
     public function avaliacoes() { return $this->hasMany(DemandaAvaliacao::class); }
     public function demandas() { return $this->hasMany(Demanda::class); }
     public function favoritos() { return $this->hasMany(Favorito::class); }
+    public function integracoes() { return $this->hasMany(Integracao::class); }
     public function lotacoes() { return $this->hasMany(Lotacao::class); }
     public function planos() { return $this->hasMany(Plano::class); }
     public function usuariosHashes() { return $this->hasMany(UsuarioHahs::class); }

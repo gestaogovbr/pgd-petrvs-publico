@@ -15,7 +15,7 @@ export class IntegracaoDaoService extends DaoBaseService<Integracao> {
 
   public showResponsaveis(): Promise<LookupItem[]> {
     return new Promise<LookupItem[]>((resolve, reject) => {
-      this.server.post('api/integracao/showResponsaveis', []).subscribe(response => {
+      this.server.post('api/Integracao/showResponsaveis', []).subscribe(response => {
         resolve(response.responsaveis);
       }, error => {
         console.log("Erro ao buscar a lista dos responsáveis pela execução da Rotina de Integração!", error);

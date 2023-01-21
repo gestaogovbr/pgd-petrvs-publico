@@ -107,6 +107,8 @@ Route::middleware('auth:sanctum')->post('/Petrvs/showTables', [PetrvsController:
 Route::middleware(['auth:sanctum'])->prefix('Integracao')->group(function () { 
     Route::post('store', [IntegracaoController::class, 'sincronizarPetrvs']);
     Route::post('query', [IntegracaoController::class, 'query']);
+    Route::post('destroy', [IntegracaoController::class, 'destroy']);
+    Route::post('showResponsaveis', [IntegracaoController::class, 'showResponsaveis']);
 });
 
 /* Testes */

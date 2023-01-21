@@ -20,6 +20,9 @@ class IntegracaoController extends ControllerBase {
             case 'DESTROY':
                 if (!$usuario->hasPermissionTo('MOD_ROT_INT_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não executada");
                 break;
+            case 'QUERY':
+                if (!$usuario->hasPermissionTo('MOD_ROT_INT_CONS')) throw new ServerException("CapacidadeStore", "Consulta não executada");
+                break;    
         }
     }
 
@@ -50,6 +53,15 @@ class IntegracaoController extends ControllerBase {
                 'entidade_id' => ['required']
             ]);
             return response()->json([$this->service->sincronizarPetrvs($data,self::loggedUser()->id)]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function showResponsaveis(Request $request) {
+        try {
+            $this->checkPermissions("QUERY", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
+            return response()->json(['success' => true, 'responsaveis' => $this->service->showResponsaveis()]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }

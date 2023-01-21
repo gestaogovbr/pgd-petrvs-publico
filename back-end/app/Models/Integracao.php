@@ -7,6 +7,8 @@ use App\Models\ModelBase;
 class Integracao extends ModelBase
 {
     protected $table = 'integracoes';
+
+    protected $with = ['usuario'];
     
     public $fillable = [
         'data_execucao',

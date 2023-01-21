@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Http;
 use App\Exceptions\LogError;
 use App\Services\ServiceBase;
 use App\Models\Unidade;
+use App\Models\Usuario;
 use App\Models\Perfil;
 use App\Models\UnidadeOrigemAtividade;
 use Ramsey\Uuid\Uuid;
@@ -254,7 +255,7 @@ class IntegracaoService extends ServiceBase {
                 'atualizar_gestores' => true,
                 'usar_arquivos_locais' => $this->useLocalFiles,
                 'gravar_arquivos_locais' => $this->storeLocalFiles,
-                'usuario_id' => null,
+                'usuario_id' => "0",
                 'data_execucao' => Carbon::now(),
                 'resultado' => $this->sincronizacao($inputs),
         ], null)->resultado;
@@ -745,6 +746,23 @@ class IntegracaoService extends ServiceBase {
     public function imprimeNoTerminal($str){
         passthru("echo ".$str);
         ob_flush();
+    }
+
+    /**
+     * SHOW RESPONSÁVEIS devolve um array de objetos do tipo {'key' => 'value'}, onde 'value' é o nome do usuário que executou alguma vez 
+     * a rotina de integração e 'key' é o seu ID. No caso de a rotina de integração ter sido executada por um processo/alguém "por fora" do Petrvs,
+     * o seu ID será nulo e o nome será setado para "Usuário não logado".
+     */
+    public function showResponsaveis() {
+/*         return asort(array_merge(
+            [['key' => '0', 'value' => 'Usuário não logado']],
+            array_map(fn($u) => ['key' => $u['id'], 'value' => $u['nome']], Usuario::select(['id', 'nome'])->has('integracoes')->get()->toArray()))
+        ); */
+        $x = Usuario::select(['id', 'nome'])->has('integracoes')->get()->toArray();
+        $a = array_map(fn($u) => ['key' => $u['id'], 'value' => $u['nome']], $x);
+        $b = array_merge([['key' => "null", 'value' => 'Usuário não logado']],$a);
+        usort($b, function ($a, $b) {return strnatcmp($a['value'], $b['value']);});
+        return $b;
     }
 }
 /**
