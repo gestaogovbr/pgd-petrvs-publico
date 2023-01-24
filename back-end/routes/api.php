@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdesaoController;
 use App\Http\Controllers\CadeiaValorController;
+use App\Http\Controllers\MacroprocessoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
@@ -124,6 +125,7 @@ Route::middleware(['auth:sanctum'])->prefix('Documento')->group(function () {
 });
 Route::middleware(['auth:sanctum'])->prefix('EixoTematico')->group(function () { defaultRoutes(EixoTematicoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Entrega')->group(function () { defaultRoutes(EntregaController::class); });
+Route::middleware(['auth:sanctum'])->prefix('Macroprocesso')->group(function () { defaultRoutes(MacroprocessoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Feriado')->group(function () { defaultRoutes(FeriadoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('MaterialServico')->group(function () { defaultRoutes(MaterialServicoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Programa')->group(function () { defaultRoutes(ProgramaController::class); });

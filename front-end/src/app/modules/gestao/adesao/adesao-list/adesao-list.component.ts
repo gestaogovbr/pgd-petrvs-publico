@@ -9,8 +9,6 @@ import {UsuarioDaoService} from "../../../../dao/usuario-dao.service";
 import {ListenerAllPagesService} from "../../../../listeners/listener-all-pages.service";
 import {TipoModalidadeDaoService} from "../../../../dao/tipo-modalidade-dao.service";
 import {LookupItem} from "../../../../services/lookup.service";
-import {Plano} from "../../../../models/plano.model";
-import {PlanoDaoService} from "../../../../dao/plano-dao.service";
 import {AbstractControl, FormGroup} from "@angular/forms";
 import {IIndexable} from "../../../../models/base.model";
 import {ToolbarButton} from "../../../../components/toolbar/toolbar.component";
@@ -35,9 +33,9 @@ export class AdesaoListComponent extends PageListBase<Adesao, AdesaoDaoService> 
   public tipoModalidadeDao: TipoModalidadeDaoService;
   public multiselectAllFields: string[] = ["tipo_modalidade_id", "usuario_id", "unidade_id", "documento_id"];
   public SITUACAO_FILTRO: LookupItem[] = [
-    {key: "SOLICITADO", value: "Vigente"},
-    {key: "HOMOLOGADO", value: "Não vigente"},
-    {key: "CANCELADO", value: "Iniciam"}
+    {key: "SOLICITADO", value: "Solicitado"},
+    {key: "HOMOLOGADO", value: "Homologado"},
+    {key: "CANCELADO", value: "Cancelado"}
   ];
   constructor(public injector: Injector) {
     super(injector, Adesao, AdesaoDaoService);
@@ -136,19 +134,19 @@ export class AdesaoListComponent extends PageListBase<Adesao, AdesaoDaoService> 
     this.allPages.openDocumentoSei(row.documento.id_processo, row.documento.id_documento);
   }
 
-  public needSign(plano: Plano): boolean {
+  public needSign(adesao: Adesao): boolean {
     let ids: string[] = [];
-    if(plano.documento_id?.length) {
-      const tipoModalidade = plano.tipo_modalidade!; //(this.tipoModalidade?.searchObj as TipoModalidade);
-      const usuario = plano.usuario!; // (this.usuario?.searchObj as Usuario);
-      const unidade = plano.unidade!; // (this.unidade?.searchObj as Unidade);
-      const entidade = unidade.entidade!;
+    if(adesao.documento_id?.length) {
+      const tipoModalidade = adesao.tipo_modalidade!; //(this.tipoModalidade?.searchObj as TipoModalidade);
+      const usuario = adesao.usuario!; // (this.usuario?.searchObj as Usuario);
+      const unidade = adesao.unidade!; // (this.unidade?.searchObj as Unidade);
+      const entidade = adesao.entidade!;
       //const alredySigned = !!documento.assinaturas.find(x => x.usuario_id == this.auth.usuario!.id);
       if(tipoModalidade?.exige_assinatura && usuario) ids.push(usuario.id);
       if(tipoModalidade?.exige_assinatura_gestor_unidade && unidade) ids.push(unidade.gestor_id || "", unidade.gestor_substituto_id || "");
       if(tipoModalidade?.exige_assinatura_gestor_entidade && entidade) ids.push(entidade.gestor_id || "", entidade.gestor_substituto_id || "");
     }
-    return !!plano.documento_id?.length && ids.includes(this.auth.usuario!.id);
+    return !!adesao.documento_id?.length && ids.includes(this.auth.usuario!.id);
   }
 
   public dynamicMultiselectMenu = (multiselected: IIndexable): ToolbarButton[] => {

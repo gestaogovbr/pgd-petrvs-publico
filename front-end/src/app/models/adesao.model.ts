@@ -16,6 +16,7 @@ export class Adesao extends Base {
     public usuario?: Usuario;
     public programa?: Programa;
     public entidade?: Entidade;
+    public documento?: Documento;
 
 
     public status: Status = "SOLICITADO"; //tempo_total menos os afastamentos
@@ -28,6 +29,8 @@ export class Adesao extends Base {
     public unidade_id: string = "";
     public entidade_id: string = "";
     public tipo_modalidade_id: string = "";
+    public documento_id: string | null = null;
+    public documentos: Documento[] = []; /*TCR*/
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }
