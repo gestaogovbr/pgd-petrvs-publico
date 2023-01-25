@@ -23,6 +23,7 @@ export class IntegracaoListComponent extends PageListBase<Integracao, Integracao
   public allPages: ListenerAllPagesService;
   public usuarioDao: UsuarioDaoService;
   public responsaveis: LookupItem[] = [];
+  public labelAdd: string = "Executar";
 
   constructor(public injector: Injector, dao: IntegracaoDaoService) {
     super(injector, Integracao, IntegracaoDaoService);
@@ -39,7 +40,6 @@ export class IntegracaoListComponent extends PageListBase<Integracao, Integracao
       atualizar_gestores: {default: ""}
     });
     this.orderBy = [['data_execucao', 'desc']];
-    this.labelAdd = "Executar";
   }
 
   ngAfterViewInit() {

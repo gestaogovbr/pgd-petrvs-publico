@@ -7,6 +7,7 @@ import { IntegracaoListComponent } from './integracao/integracao-list/integracao
 
 const routes: Routes = [
   { path: 'integracao', component: IntegracaoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Rotinas de Integração" } },
+  { path: 'integracao/new', component: IntegracaoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Execução", modal: true } },
   { path: 'integracao/:id/consult', component: IntegracaoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } }
 ];
 

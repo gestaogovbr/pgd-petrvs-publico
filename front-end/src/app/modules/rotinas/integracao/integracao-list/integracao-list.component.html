@@ -1,5 +1,5 @@
-<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" labelAdd="Executar"
-    [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_ROT_INT_INCL')" [hasEdit]="false">
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [labelAdd]="labelAdd"
+      [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_ROT_INT_INCL')" [hasEdit]="false">
     <toolbar></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
@@ -32,7 +32,8 @@
                 Solic. alteração<br>de Unidades
             </ng-template>
             <ng-template let-row="row" #columnUnidades>
-                <span>{{ util.getBooleanFormatted(row.atualizar_unidades) }}</span>
+                <span>{{ util.getBooleanFormatted(row.atualizar_unidades) }}</span><br>
+                <!-- <span class="badge bg-light text-dark" title="a">teste</span> -->
             </ng-template>
         </column>
         <column [titleTemplate]="titleServidores" [template]="columnServidores">

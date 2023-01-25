@@ -68,7 +68,6 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
   public loadFilterParams?: (params: any, filter?: FormGroup) => void;
   public entities: LogEntity[] = [];
   public entity?: LogEntity;
-  public labelAdd?: string;
 
   constructor(public injector: Injector, mType: Type<M>, dType: Type<D>) {
     super(injector);

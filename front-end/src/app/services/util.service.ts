@@ -8,6 +8,7 @@ import { DaoBaseService } from '../dao/dao-base.service';
 import { MaskApplierService } from 'ngx-mask';
 import { DOCUMENT } from '@angular/common';
 import { AbstractControl, FormControl } from '@angular/forms';
+import { AuthService } from './auth.service';
 
 export type Interval = {start: Date | number, end: Date | number};
 export type DateInterval = {start: Date, end: Date};
@@ -27,10 +28,12 @@ export class UtilService {
   public static readonly TIME_VALIDATE = /^(([01][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?)|(24:00(:00)?)$/;
 
   public maskService: MaskApplierService;
+  public auth: AuthService;
   private renderer: Renderer2;
 
   constructor(public injector: Injector, @Inject(DOCUMENT) private document: Document, rendererFactory: RendererFactory2) {
     this.maskService = injector.get<MaskApplierService>(MaskApplierService);
+    this.auth = injector.get<AuthService>(AuthService);
     this.maskService.thousandSeparator = ".";
     this.renderer = rendererFactory.createRenderer(null, null);
   }
@@ -358,6 +361,10 @@ export class UtilService {
   public isDataValid(data: any): boolean {
     const dataRef = !!data && typeof data == "string" ? new Date(data) : data;
     return !!dataRef && (moment(dataRef).isValid() || (Object.prototype.toString.call(dataRef) === '[object Date]' && !isNaN(dataRef)));
+  }
+
+  public isDeveloper(): boolean {
+    return this.auth.usuario?.perfil?.nome == 'Desenvolvedor';
   }
 
   public decimalToTimer(value: number, onlyHours: boolean = false, hoursPerDay: number = 24) {

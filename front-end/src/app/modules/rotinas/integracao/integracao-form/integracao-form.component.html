@@ -1,10 +1,28 @@
-<editable-form [form]="form!" [disabled]="true" [title]="isModal ? '' : title" (cancel)="onCancel()">
-  <div class="row">
-      <div class="row">
-      </div>
-      <div class="row">
-      </div>
-      <div class="row">
-      </div>
-  </div>
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" [confirmLabel]="confirmLabel"
+               (submit)="onSaveData()" (cancel)="onCancel()">
+    <div class="row">
+        <div class="row" *ngIf="formDisabled">
+            <input-text #entidade [size]="9" label="Entidade" icon="bi bi-upc" controlName="entidade_id" [control]="form!.controls.entidade_id"></input-text>
+            <input-text #usuario [size]="9" label="Usuário" icon="bi bi-upc" controlName="usuario_id" [control]="form!.controls.usuario_id"></input-text>
+            <input-datetime datetime [size]="3" label="Execução" icon="bi bi-calendar-date" controlName="data_execucao" [control]="form!.controls.data_execucao"></input-datetime>
+        </div>
+        <div class="row" *ngIf="formDisabled">
+            <input-textarea #resultado [size]="12" [rows]="8" label="Resultado" icon="bi bi-textarea-t" controlName="resultado" [control]="form!.controls.resultado"></input-textarea>
+        </div>
+        <separator [title]="formDisabled ? 'Parâmetros utilizados' : ''" [collapse]="formDisabled ? 'collapse' : undefined">
+            <div class="row">
+                <separator title="Deve ser atualizado pela Rotina de Integração:">
+                    <input-switch labelPosition="right" [size]="4" label="Unidades" controlName="atualizar_unidades" [control]="form!.controls.atualizar_unidades" ></input-switch>
+                    <input-switch labelPosition="right" [size]="4" label="Servidores" controlName="atualizar_servidores" [control]="form!.controls.atualizar_servidores" ></input-switch>
+                    <input-switch [disabled]="!this.util.isDeveloper() ? 'disabled' : undefined" labelPosition="right" [size]="4" label="Gestores" controlName="atualizar_gestores" [control]="form!.controls.atualizar_gestores" ></input-switch>
+                </separator>
+            </div>
+            <div class="row mt-4">
+                <separator title="Com relação aos dados atualizados...">
+                    <input-switch labelPosition="right" [size]="4" label="Usar arquivos locais" controlName="usar_arquivos_locais" [control]="form!.controls.usar_arquivos_locais" labelInfo="Selecione se os dados para atualização devem ser lidos de um arquivo local"></input-switch>
+                    <input-switch labelPosition="right" [size]="4" label="Gravar em arquivos locais" controlName="gravar_arquivos_locais" [control]="form!.controls.gravar_arquivos_locais" labelInfo="Selecione se os dados atualizados devem ser salvos em um arquivo local"></input-switch>
+                </separator>
+            </div>
+        </separator>
+    </div>
 </editable-form>

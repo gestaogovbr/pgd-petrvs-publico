@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+//use Illuminate\Support\Facades\DB;
 use App\Services\IntegracaoService;
 use Throwable;
 
@@ -22,7 +22,10 @@ class IntegracaoController extends ControllerBase {
                 break;
             case 'QUERY':
                 if (!$usuario->hasPermissionTo('MOD_ROT_INT_CONS')) throw new ServerException("CapacidadeStore", "Consulta não executada");
-                break;    
+                break;   
+            case 'GETBYID':
+                if (!$usuario->hasPermissionTo('MOD_ROT_INT_INCL')) throw new ServerException("CapacidadeStore", "Consulta não executada");
+                break;  
         }
     }
 
@@ -42,17 +45,18 @@ class IntegracaoController extends ControllerBase {
 
     public function sincronizarPetrvs(Request $request) {
         try {
-            //$this->service = new IntegracaoService();
             $this->checkPermissions("STORE", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
-                'atualizarServidores' => ['required'],
-                'atualizarUnidades' => ['required'],
-                'atualizarGestores' => ['required'],
-                'usarArquivosLocais' => ['required'],
-                'salvarArquivosLocais' => ['required'],
-                'entidade_id' => ['required']
+                'entity.atualizar_unidades' => ['required'],
+                'entity.atualizar_servidores' => ['required'],
+                'entity.atualizar_gestores' => ['required'],
+                'entity.usar_arquivos_locais' => ['required'],
+                'entity.gravar_arquivos_locais' => ['required'],
+                'entity.entidade_id' => ['required'],
+                'with' => ['array']
             ]);
-            return response()->json([$this->service->sincronizarPetrvs($data,self::loggedUser()->id)]);
+            $result = $this->service->sincronizarPetrvs($data,self::loggedUser()->id);
+            return response()->json([$result]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }

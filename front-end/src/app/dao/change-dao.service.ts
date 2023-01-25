@@ -23,4 +23,15 @@ export class ChangeDaoService extends DaoBaseService<Change> {
       });
     });
   }
+
+  public showResponsaveis(): Promise<LookupItem[]> {
+    return new Promise<LookupItem[]>((resolve, reject) => {
+      this.server.post('api/Change/showResponsaveis', []).subscribe(response => {
+        resolve(response.responsaveis);
+      }, error => {
+        console.log("Erro ao buscar a lista dos responsáveis pelas alterações no Banco de Dados-!", error);
+        resolve([]);
+      });
+    });
+  }
 }

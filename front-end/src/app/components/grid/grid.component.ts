@@ -260,6 +260,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   }
 
   ngOnInit(): void {
+    this.BUTTON_ADD.label = this.labelAdd;
   }
 
   public getId(relativeId?: string) {
