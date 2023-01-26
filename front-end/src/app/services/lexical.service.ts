@@ -41,6 +41,7 @@ export class LexicalService {
     "usuário": {single: "usuário", plural: "usuários", female: false},
     "template": {single: "template", plural: "templates", female: false},
     "adesao": {single: "Adesão", plural: "Adesões", female: false},
+    "cadeia de valor": {single: "Cadeia de Valor", plural: "Cadeias de Valor", female: false}
   };
 
   public vocabulary: Translate = {};

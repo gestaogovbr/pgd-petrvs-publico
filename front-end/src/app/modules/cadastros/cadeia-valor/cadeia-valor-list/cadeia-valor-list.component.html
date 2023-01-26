@@ -1,0 +1,18 @@
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+      [selectable]="selectable" (select)="onSelect($event)"
+      [hasAdd]="auth.hasPermissionTo('MOD_EXTM_INCL')"
+      [hasEdit]="auth.hasPermissionTo('MOD_EXTM_EDT')">
+  <toolbar *ngIf="!selectable"></toolbar>
+  <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    <div class="row">
+      <input-text [size]="12" label="Cadeia de Valor" controlName="nome"
+                  [control]="filter!.controls.nome" placeholder="Nome da cadeia de valor..."></input-text>
+    </div>
+  </filter>
+  <columns>
+    <column title="Nome" field="nome" orderBy="nome"></column>
+    <column *ngIf="!selectable" type="options" [onEdit]="edit" [options]="options"></column>
+  </columns>
+  <pagination [rows]="rowsLimit"></pagination>
+</grid>
+

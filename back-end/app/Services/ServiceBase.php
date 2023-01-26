@@ -12,6 +12,7 @@ use App\Services\UtilService;
 use Illuminate\Support\Facades\Auth;
 use App\Exceptions\LogError;
 use App\Models\Usuario;
+use App\Services\PlanoService;
 use Carbon\Carbon;
 use ReflectionObject;
 use Throwable;
@@ -431,7 +432,7 @@ class ServiceBase extends DynamicMethods
         if(count($data['with']) > 0) {
             $data['with'] = $this->getCamelWith($data['with']);
             foreach($data['with'] as $with) {
-                $entity->with($with);
+                method_exists($this, 'proxyWith') ? $this->proxyWith($entity,$with) : $entity->with($with);
             }
         }
         $entity = $entity->find($data["key"]);
@@ -520,7 +521,7 @@ class ServiceBase extends DynamicMethods
         }
         $query->where('id', $data['id']);
         $rows = method_exists($this, 'proxyRows') ? $this->proxyRows($query->get()) : $query->get();
-/*         if(method_exists($this, 'proxyById')) $rows = $this->proxyById($rows); */
+        /*         if(method_exists($this, 'proxyById')) $rows = $this->proxyById($rows); */
         if(count($rows) == 1) {
             return $rows[0];
         } else {
@@ -805,7 +806,7 @@ class ServiceBase extends DynamicMethods
         if(isset($entity)) {
             try {
                 if($transaction) DB::beginTransaction();
-                if(method_exists($this, "proxyDestroy") ? $this->proxyDestroy($entity) : true) { if(method_exists($entity, 'deleteCascade')) $entity->deleteCascade(); }
+                if(method_exists($this, "proxyDestroy") ? $this->proxyDestroy($entity) : true) {if(method_exists($entity, 'deleteCascade')) $entity->deleteCascade();}
                 if($transaction) DB::commit();
                 return true;
             } catch (Throwable $e) {

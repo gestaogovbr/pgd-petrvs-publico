@@ -23,6 +23,7 @@ const routes: Routes = [
   { path: 'cadastros/entrega', loadChildren: () => import('./modules/cadastros/entrega/entrega.module').then(m => m.EntregaModule), canActivate: [AuthGuard] },
   { path: 'cadastros/eixo-tematico', loadChildren: () => import('./modules/cadastros/eixo-tematico/eixo-tematico.module').then(m => m.EixoTematicoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/feriado', loadChildren: () => import('./modules/cadastros/feriado/feriado.module').then(m => m.FeriadoModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/cadeia-valor', loadChildren: () => import('./modules/cadastros/cadeia-valor/cadeia-valor.module').then(m => m.CadeiaValorModule), canActivate: [AuthGuard] },
   { path: 'cadastros/material-servico', loadChildren: () => import('./modules/cadastros/material-servico/material-servico.module').then(m => m.MaterialServicoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/programa', loadChildren: () => import('./modules/cadastros/programa/programa.module').then(m => m.ProgramaModule), canActivate: [AuthGuard] },
   { path: 'cadastros/tarefa', loadChildren: () => import('./modules/cadastros/tarefa/tarefa.module').then(m => m.TarefaModule), canActivate: [AuthGuard] },
@@ -47,7 +48,8 @@ const routes: Routes = [
   { path: 'listeners', loadChildren: () => import('./listeners/listeners.module').then(m => m.ListenersModule), canActivate: [AuthGuard] },
   { path: 'extension', loadChildren: () => import('./modules/extension/extension.module').then(m => m.ExtensionModule) },
   { path: 'relatorios', loadChildren: () => import('./modules/relatorios/relatorio.module').then(m => m.RelatorioModule), canActivate: [AuthGuard] },
-  { path: 'logs', loadChildren: () => import('./modules/logs/logs.module').then(m => m.LogsModule), canActivate: [AuthGuard] },
+  { path: 'logs', loadChildren: () => import('./modules/logs/log.module').then(m => m.LogModule), canActivate: [AuthGuard] },
+  { path: 'rotinas', loadChildren: () => import('./modules/rotinas/rotina.module').then(m => m.RotinaModule), canActivate: [AuthGuard] },
   { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];
 

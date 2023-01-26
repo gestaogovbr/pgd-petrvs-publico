@@ -319,7 +319,7 @@ abstract class ControllerBase extends Controller
             ]);
             return response()->json([
                 'success' => true,
-                'rows' => [$result] //[$this->service->store($request->all(), $unidade)]
+                'rows' => [$result] 
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);

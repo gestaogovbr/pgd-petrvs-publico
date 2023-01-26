@@ -237,7 +237,7 @@ class PerfilFormComponent extends src_app_modules_base_page_form_base__WEBPACK_I
             this.tiposCapacidades = yield this.tipoCapacidadeDao.query().asPromise();
             formValue = this.util.fillForm(formValue, entity);
             for (let tipoCapacidade of this.tiposCapacidades) {
-                const capacidade = (_a = entity.capacidades) === null || _a === void 0 ? void 0 : _a.find(x => { var _a; return ((_a = x.tipo_capacidade) === null || _a === void 0 ? void 0 : _a.codigo) == tipoCapacidade.codigo; });
+                const capacidade = (_a = entity.capacidades) === null || _a === void 0 ? void 0 : _a.find(x => { var _a; return (((_a = x.tipo_capacidade) === null || _a === void 0 ? void 0 : _a.codigo) == tipoCapacidade.codigo); });
                 this.capacidades[tipoCapacidade.codigo] = !!capacidade;
                 capacidades.push(Object.assign(new src_app_models_capacidade_model__WEBPACK_IMPORTED_MODULE_4__["Capacidade"](), {
                     id: capacidade ? capacidade.id : this.tipoCapacidadeDao.generateUuid(),

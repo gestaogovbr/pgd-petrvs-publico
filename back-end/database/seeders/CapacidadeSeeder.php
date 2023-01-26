@@ -21,6 +21,7 @@ class CapacidadeSeeder extends Seeder
         $util = new UtilService();
         $dadosCapacidades = $capacidadesService->capacidades;
         foreach ($dadosCapacidades as $registro) {
+            $ids_perfis = [];
             for ($i = 1; $i < count($registro); $i++) {
                 $id = $util::uuid($registro[$i].$registro[0]);
                 $capacidade = Capacidade::where('id', $id)->first() ?? new Capacidade();
@@ -32,7 +33,9 @@ class CapacidadeSeeder extends Seeder
                     'tipo_capacidade_id' => $util->uuid($registro[0])
                 ]);
                 $capacidade->save();
+                array_push($ids_perfis, $util->uuid($registro[$i]));
             }
+            //Capacidade::where('tipo_capacidade_id',$util->uuid($registro[0]))->whereNotIn('perfil_id', $ids_perfis)->delete();
         }
     }
 }

@@ -24,8 +24,8 @@ class PerfilService extends ServiceBase {
      */
     public $developers = [
         ["25941933304", "Ricardo Farias"],
-        ["07408707425", "Genisson Albuquerque"],
-        ["67703011053", "Edson Marian"]
+        ["67703011053", "Edson Marian"],
+        ["07408707425", "Genisson Albuquerque"]
     ];
 
     public function proxySearch($query, &$data, &$text) {

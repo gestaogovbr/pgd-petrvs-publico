@@ -94,7 +94,8 @@ export class AppComponent {
       { name: "Gestão", permition: "MENU_GESTAO_ACESSO", route: ['gestao'], id: "navbarDropdownGestao", menu: "gestao" },
       { name: "Relatórios", permition: "MENU_REL_ACESSO", route: ['relatorios'], id: "navbarDropdownRelatorios", menu: "relatorios" },
       { name: "Configurações", permition: "MENU_CONFIG_ACESSO", route: ['configuracoes'], id: "navbarDropdownConfiguracoes", menu: "configuracoes" },
-      { name: "Desenvolvedor", permition: "DEV_MENU_LOGS_ACESSO", route: ['logs'], id: "navbarDropdownLogs", menu: "logs" },
+      { name: "Rotinas Internas", permition: "MENU_ROTINAS_ACESSO", route: ['rotinas'], id: "navbarDropdownRotinas", menu: "rotinas" },
+      { name: "Desenvolvedor", permition: "DEV_MENU_LOGS_ACESSO", route: ['logs'], id: "navbarDropdownLogs", menu: "logs" }
     ];
     this.menuSchema = {
       cadastros: [
@@ -102,6 +103,7 @@ export class AppComponent {
         { name: this.lex.noun("Afastamento", true), permition: 'MOD_AFT', route: ['cadastros', 'afastamento'], icon: "bi bi-toggle-off" },
         { name: this.lex.noun("Cidades", true), permition: 'MOD_CID', route: ['cadastros', 'cidade'], icon: "bi bi-building" },
         { name: this.lex.noun("Eixos temáticos", true), permition: 'MOD_EXTM', route: ['cadastros', 'eixo-tematico'], icon: "bi bi-gear" },
+        { name: this.lex.noun("Cadeia de Valor", true), permition: 'MOD_EXTM', route: ['cadastros', 'cadeia-valor'], icon: "bi bi-bar-chart-steps" },
         { name: this.lex.noun("Entregas", true), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: "bi bi-list-check" },
         { name: this.lex.noun("Feriados", true), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: "bi bi-emoji-sunglasses" },
         { name: this.lex.noun("Material e serviço", true), permition: '', route: ['cadastros', 'material-servico'], icon: "bi bi-box-seam" },
@@ -138,12 +140,15 @@ export class AppComponent {
         "-",
         { name: "Sobre", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
       ],
+      rotinas: [
+        { name: "Integração", permition: '', route: ['rotinas', 'integracao'], icon: "bi bi-pencil-square" }
+      ],
       logs: [
         { name: "Alterações", permition: 'DEV_MOD_LOGS', route: ['logs', 'change'], icon: "bi bi-pencil-square" },
         { name: "Erros", permition: 'DEV_MOD_LOGS', route: ['logs', 'error'], icon: "bi bi-bug" },
         { name: "Tráfego", permition: 'DEV_MOD_LOGS', route: ['logs', 'traffic'], icon: "bi bi-stoplights" },
-		{ name: "Teste Expediente", permition: '', route: ['teste'], icon: "bi bi-check-all" },
-		{ name: "Teste Calcula Tempo", permition: '', route: ['teste', 'calcula-tempo'], icon: "bi bi-check-all" }
+		    { name: "Teste Expediente", permition: '', route: ['teste'], icon: "bi bi-check-all" },
+		    { name: "Teste Calcula Tempo", permition: '', route: ['teste', 'calcula-tempo'], icon: "bi bi-check-all" }
       ],
     }
   }
@@ -165,6 +170,7 @@ export class AppComponent {
         gestao: itensMenu(this.menuSchema.gestao),
         relatorios: itensMenu(this.menuSchema.relatorios),
         configuracoes: itensMenu(this.menuSchema.configuracoes),
+        rotinas: itensMenu(this.menuSchema.rotinas),
         logs: itensMenu(this.menuSchema.logs)
       };
     }
