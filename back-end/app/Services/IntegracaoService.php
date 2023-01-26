@@ -10,6 +10,7 @@ use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Models\Perfil;
 use App\Models\UnidadeOrigemAtividade;
+use Illuminate\Support\Facades\Auth;
 use Ramsey\Uuid\Uuid;
 use Carbon\Carbon;
 use DateTime;
@@ -29,6 +30,7 @@ class IntegracaoService extends ServiceBase {
     public $inativadas = 0;
     public $token = "";
     public $result = [];
+    public $logged_user_id;
     public $echo = false;
     public $integracao_config = "";
     public $unidadeRaiz = null;
@@ -94,7 +96,7 @@ class IntegracaoService extends ServiceBase {
 	            'unidade_id' => $unidade_id,
 	            'unidade_origem_atividade_id' => $this->unidadeRaiz->id
 	        ]);
-            $this->atualizaLogs('unidades_origem_atividades', $id, 'ADD', ['Rotina' => 'Integração', 'Observação' => 'Criação do vínculo entre a unidade ' . $unidade_id . 'e a unidade ' . $this->unidadeRaiz]);
+            $this->atualizaLogs($this->logged_user_id, 'unidades_origem_atividades', $id, 'ADD', ['Rotina' => 'Integração', 'Observação' => 'Criação do vínculo entre a unidade ' . $unidade_id . 'e a unidade ' . $this->unidadeRaiz]);
         }
     }
 
@@ -145,7 +147,7 @@ class IntegracaoService extends ServiceBase {
                         'data_fim' => null,
                         'checklist' => '[]'
                     ]);
-                    $this->atualizaLogs('unidades', $id, 'ADD', ['Rotina' => 'Integração', 'Observação' => 'Unidade nova inserida informada pelo SIAPE: ' . $values[':nome'], 'Valores inseridos' => DB::table('unidades')->where('id', $id)->first()]);
+                    $this->atualizaLogs($this->logged_user_id, 'unidades', $id, 'ADD', ['Rotina' => 'Integração', 'Observação' => 'Unidade nova inserida informada pelo SIAPE: ' . $values[':nome'], 'Valores inseridos' => DB::table('unidades')->where('id', $id)->first()]);
                 } catch (Throwable $e) {
                     LogError::newWarn("Erro ao inserir Unidade", $values);
                 }
@@ -165,7 +167,7 @@ class IntegracaoService extends ServiceBase {
             $sql = "UPDATE unidades SET path = :path, unidade_id = :unidade_id, codigo = :codigo, ".
                 "nome = :nome, sigla = :sigla, cidade_id = :cidade_id WHERE id = :id";
             DB::update($sql, $values);                  
-            $this->atualizaLogs('unidades', $values[':id'], 'EDIT', [
+            $this->atualizaLogs($this->logged_user_id, 'unidades', $values[':id'], 'EDIT', [
                 'Rotina' => 'Integração', 
                 'Observação' => 'A Unidade sofreu alterações na hierarquia e possivelmente em outros campos (ver: nome/codigo/sigla/path/cidade_id/unidade_id)!',
                 'Valores anteriores' => ['path' => $unidade->path_antigo, 'unidade_id' => $unidade->id_pai_antigo, 'codigo' => $unidade->codigo_antigo, 'nome' => $unidade->nome_antigo, 'sigla' => $unidade->sigla_antiga, 'cidade_id' => $unidade->cidade_antiga], 
@@ -187,7 +189,7 @@ class IntegracaoService extends ServiceBase {
                     ':depois' => $depois,
                     ':like' => $like
                 ]);
-                $this->atualizaLogs('unidades', 'IDs das Unidades-filhas', 'EDIT', [
+                $this->atualizaLogs($this->logged_user_id, 'unidades', 'IDs das Unidades-filhas', 'EDIT', [
                     'Rotina' => 'Integração', 
                     'Observação' => 'Os paths de todas as unidades-filhas foram alterados, devido à alteração na unidade-pai da Unidade - ' . $values[':nome'],
                     'Path anterior das unidades filhas' => $antes, 
@@ -203,7 +205,7 @@ class IntegracaoService extends ServiceBase {
 
             $sql = "UPDATE unidades SET codigo = :codigo, nome = :nome, sigla = :sigla, cidade_id = :cidade_id WHERE id = :id";
             DB::update($sql, $values);
-            $this->atualizaLogs('unidades', $values[':id'], 'EDIT', [
+            $this->atualizaLogs($this->logged_user_id, 'unidades', $values[':id'], 'EDIT', [
                 'Rotina' => 'Integração', 
                 'Observação' => 'A Unidade sofreu alterações em algum(ns) campos (ver: nome/codigo/sigla/cidade_id)!',
                 'Valores anteriores' => ['codigo' => $unidade->codigo_antigo, 'nome' => $unidade->nome_antigo, 'sigla' => $unidade->sigla_antiga, 'cidade_id' => $unidade->cidade_antiga], 
@@ -240,17 +242,20 @@ class IntegracaoService extends ServiceBase {
 
     public function sincronizarPetrvs($data,$usuario_id) {
         $dados = $data['entity'];
-        $this->useLocalFiles = $dados['usar_arquivos_locais'];
-        $this->storeLocalFiles = $dados['gravar_arquivos_locais'];
+        $this->logged_user_id = Auth::user() ? Auth::user()->id : null;
+        $this->useLocalFiles = config('app')['env'] == 'local' ? $dados['usar_arquivos_locais'] : false;
+        $this->storeLocalFiles = config('app')['env'] == 'local' ? $dados['gravar_arquivos_locais'] : false;
         $inputs['entidade'] = $dados['entidade_id'];
         $inputs['unidades'] = $dados['atualizar_unidades'];
         $inputs['servidores'] = $dados['atualizar_servidores'];
         $inputs['gestores'] = $dados['atualizar_gestores'];
+        $dados['usar_arquivos_locais'] = $this->useLocalFiles;              // atualiza esse parâmetro para que seja salvo no banco corretamente
+        $dados['gravar_arquivos_locais'] = $this->storeLocalFiles;          // atualiza esse parâmetro para que seja salvo no banco corretamente
         $this->sincronizacao($inputs);
         return $this->store([...$dados,
                  'usuario_id' => $usuario_id,
                  'data_execucao' => Carbon::now(),
-                 'resultado' => json_encode($this->result)], null);
+                 'resultado' => $this->result], null);
     }
 
     public function sincronizar($inputs){
@@ -274,12 +279,13 @@ class IntegracaoService extends ServiceBase {
         ob_start(); //inicia o buffer de saída
         ob_implicit_flush(true); //libera a chamada explícita para o output buffer
         ini_set('memory_limit', '-1');
+        ini_set('default_socket_timeout', 300); //5 minutos 
         set_time_limit(1800);
         $self = $this;
         $this->result = [
             'unidades' => ['Resultado' => 'Não foi executado!','Observações' => [], 'Falhas' => []], 
             'servidores' => ['Resultado' => 'Não foi executado!','Observações' => [], 'Falhas' => []], 
-            'chefias' => ['Resultado' => '','Observações' => [], 'Falhas' => []]
+            'gestores' => ['Resultado' => '','Observações' => [], 'Falhas' => []]
         ];
         $token = $this->useLocalFiles ? "LOCAL" : $this->getToken($this->integracao_config);
         $entidade_id = $inputs["entidade"] ?: "";
@@ -300,8 +306,8 @@ class IntegracaoService extends ServiceBase {
                         $response = $this->consultarApiSigepe($token, $url);
                         $xmlStream = $response->body();
                         if($this->storeLocalFiles) {        // aqui decide se salva ou não em arquivo as informações trazidas do servidor do SIGEPE
-                            if(file_exists(base_path('../' . $this->localUnidades))) unlink(base_path('../' . $this->localUnidades));
-                            file_put_contents(base_path('../' . $this->localUnidades), $xmlStream);
+                            if(file_exists(base_path($this->localUnidades))) unlink(base_path($this->localUnidades));
+                            file_put_contents(base_path($this->localUnidades), $xmlStream);
                         }
                     }
                     $xml = simplexml_load_string($xmlStream);
@@ -354,7 +360,7 @@ class IntegracaoService extends ServiceBase {
                 });
                 if($this->echo) $this->imprimeNoTerminal("Concluída a fase de reconstrução da tabela Integracao_unidades!.....");
                 $n = DB::table('integracao_unidades')->get()->count();
-                $this->atualizaLogs('integracao_unidades', 'todos os registros', 'ADD', ['Observação' => 'Total de unidades importadas do SIAPE: ' . $n . ' (apenas ATIVAS)']);
+                $this->atualizaLogs($this->logged_user_id, 'integracao_unidades', 'todos os registros', 'ADD', ['Observação' => 'Total de unidades importadas do SIAPE: ' . $n . ' (apenas ATIVAS)']);
                 array_push($this->result['unidades']["Observações"], 'Total de unidades importadas do SIAPE: ' . $n . ' (apenas ATIVAS)');
                 array_push($this->result['unidades']['Observações'], 'Os dados das Unidades foram obtidos ' . ($this->useLocalFiles ? 'através de arquivo XML armazenado localmente!' : 'através de consulta à API do SIAPE!'));
 
@@ -416,8 +422,8 @@ class IntegracaoService extends ServiceBase {
                         $response = $this->consultarApiSigepe($token, $url);
                         $xmlStream = $response->body();
                         if($this->storeLocalFiles) {
-                            if(file_exists(base_path('../' . $this->localServidores))) unlink(base_path('../' . $this->localServidores));
-                            file_put_contents(base_path('../' . $this->localServidores), $xmlStream);
+                            if(file_exists(base_path($this->localServidores))) unlink(base_path($this->localServidores));
+                            file_put_contents(base_path($this->localServidores), $xmlStream);
                         }
                     }
                     $xml = simplexml_load_string($xmlStream);
@@ -472,7 +478,7 @@ class IntegracaoService extends ServiceBase {
                 });
                 if($this->echo) $this->imprimeNoTerminal("Concluída a fase de reconstrução da tabela integração_servidores.....");
                 $n = DB::table('integracao_servidores')->get()->count();
-                $this->atualizaLogs('integracao_servidores', 'todos os registros', 'ADD', ['Observação' => 'Total de servidores importados do SIAPE: ' . $n . ' (apenas ativos)']);
+                $this->atualizaLogs($this->logged_user_id, 'integracao_servidores', 'todos os registros', 'ADD', ['Observação' => 'Total de servidores importados do SIAPE: ' . $n . ' (apenas ativos)']);
                 array_push($this->result['servidores']['Observações'], 'Os dados dos Servidores foram obtidos ' . ($this->useLocalFiles ? 'através de arquivo XML armazenado localmente!' : 'através de consulta à API do SIAPE!'));
                 array_push($this->result['servidores']['Observações'], 'Total de servidores importados do SIAPE: ' . $n . ' (apenas ATIVOS)');
 
@@ -496,7 +502,7 @@ class IntegracaoService extends ServiceBase {
                                     'telefone'      => $linha->telefone,
                                     'id'            => $linha->id
                                 ]);
-                                $this->atualizaLogs('usuarios', $linha->id, 'EDIT', [
+                                $this->atualizaLogs($this->logged_user_id, 'usuarios', $linha->id, 'EDIT', [
                                     'Rotina' => 'Integração', 
                                     'Observação' => 'Servidor ATIVO que foi atualizado porque apresentou alteração em seus dados pessoais!',
                                     'Valores anteriores' => [
@@ -533,7 +539,7 @@ class IntegracaoService extends ServiceBase {
                     if (!empty($lotacoes_nao_atuais)) {
                         foreach($lotacoes_nao_atuais as $lotacao) {
                             DB::update($sql2_update, ['id_lotacao' => $lotacao->id_lotacao]);
-                            $this->atualizaLogs('lotacoes', $lotacao->id_lotacao, 'EDIT', [
+                            $this->atualizaLogs($this->logged_user_id, 'lotacoes', $lotacao->id_lotacao, 'EDIT', [
                                 'Rotina' => 'Integração', 
                                 'Observação' => 'Esta lotação não é a lotação atual do servidor (' . $lotacao->nome . '), mas estava setada com principal = 1',
                                 'Valores anteriores' => ['principal' => $lotacao->principal], 
@@ -560,7 +566,7 @@ class IntegracaoService extends ServiceBase {
                             if (!empty($lotacao->data_fim) && $lotacao->principal == 1) {       // (I) cod. siape ok, data-fim não nula, principal = 1 
                                 $x++;
                                 DB::update($sql3_update, ['id_lotacao' => $lotacao->id_lotacao, 'principal' => 0]);
-                                $this->atualizaLogs('lotacoes', $lotacao->id_lotacao, 'EDIT', [
+                                $this->atualizaLogs($this->logged_user_id, 'lotacoes', $lotacao->id_lotacao, 'EDIT', [
                                     'Rotina' => 'Integração', 
                                     'Observação' => 'Esta lotação corresponde à lotação atual do servidor (' . $lotacao->nome . '). Entretanto, o registro não é mais válido (data-fim não-nula), mas ainda constava como principal = 1. O campo principal foi então setado para 0.',
                                     'Valores anteriores' => ['principal' => $lotacao->principal, 'data-fim' => $lotacao->data_fim], 
@@ -569,7 +575,7 @@ class IntegracaoService extends ServiceBase {
                             } elseif(empty($lotacao->data_fim) && $lotacao->principal == 0) {   // (II) cod. siape ok, data-fim nula, principal = 0
                                 $y++;
                                 DB::update($sql3_update, ['id_lotacao' => $lotacao->id_lotacao, 'principal' => 1]);
-                                $this->atualizaLogs('lotacoes', $lotacao->id_lotacao, 'EDIT', [
+                                $this->atualizaLogs($this->logged_user_id, 'lotacoes', $lotacao->id_lotacao, 'EDIT', [
                                     'Rotina' => 'Integração', 
                                     'Observação' => 'Esta lotação corresponde à lotação atual do servidor (' . $lotacao->nome . '), mas constava como principal = 0. O campo principal foi então setado para 1.',
                                     'Valores anteriores' => ['principal' => $lotacao->principal, 'data-fim' => $lotacao->data_fim], 
@@ -602,14 +608,13 @@ class IntegracaoService extends ServiceBase {
                                     'unidade_id'    => $lotacao->id_unidade_atual,
                                     'usuario_id'    => $lotacao->id_usuario
                                 ]);
-                                $this->atualizaLogs('lotacoes', $id, 'ADD', ['Rotina' => 'Integração', 'Observação' => 'Criação da lotação do servidor ' . $lotacao->nome . ' e a unidade ' . $lotacao->nome_unidade]);
+                                $this->atualizaLogs($this->logged_user_id, 'lotacoes', $id, 'ADD', ['Rotina' => 'Integração', 'Observação' => 'Criação da lotação do servidor ' . $lotacao->nome . ' e a unidade ' . $lotacao->nome_unidade]);
                             }else{                                      // (b) usuários sem unidade e, portanto, sem lotação
-                                $this->result["Falhas"] = $this->result["Falhas"] ?? [];
-                                array_push($this->result["Falhas"], [
-                                    'Observação' => "Lotação não existe nem foi inserida porque a Unidade não foi localizada!",
-                                    'Usuário' => $lotacao->nome . " (ID: " . $lotacao->id_usuario . ")",
-                                    'Código SIAPE da Unidade de Lotação Atual' => $lotacao->coduorgexercicio
-                                ]);
+                                $this->result["servidores"]["Falhas"] = $this->result["servidores"]["Falhas"] ?? [];
+                                array_push($this->result["servidores"]["Falhas"], [
+                                    "Lotação não existe nem foi inserida porque a Unidade não foi localizada!",
+                                    "Lotação: " . $lotacao->nome . " (ID do Usuário: " . $lotacao->id_usuario . ")",
+                                    "Código SIAPE da Unidade de Lotação Atualizada: " . $lotacao->coduorgexercicio]);
                                 // criar uma notificação por email
                             }
                         };
@@ -627,10 +632,10 @@ class IntegracaoService extends ServiceBase {
             }
         }
 
-        // Atualização das chefias
-        // As chefias só são atualizadas quando as Unidades E os Servidores são atualizados e AMBOS com sucesso.
+        // Atualização dos Gestores
+        // Os gestores só são atualizadas quando as Unidades E os Servidores são atualizados e AMBOS com sucesso.
         if(!empty($inputs["gestores"]) && !$inputs["gestores"]){
-            $this->result["chefias"]['Resultado'] = 'As chefias não foram atualizadas, conforme solicitado!';
+            $this->result["gestores"]['Resultado'] = 'Os gestores não foram atualizados, conforme solicitado!';
         }elseif($this->result['unidades']['Resultado'] == 'Sucesso' && $this->result['servidores']['Resultado'] == 'Sucesso'){
             if($this->echo) $this->imprimeNoTerminal("Iniciando a fase de reconstrução das funções de chefia!.....");
             try {
@@ -656,7 +661,7 @@ class IntegracaoService extends ServiceBase {
                 if($this->echo) $this->imprimeNoTerminal("Concluída a fase de montagem do array de chefias!.....");
                 // torna nulos os campos gestor_id e gestor_substituto_id das unidades, para refazê-los com o atual array de chefias
                 DB::update("UPDATE unidades SET gestor_id = null, gestor_substituto_id = null");
-                $this->atualizaLogs('unidades', 'unidades com gestores não nulos', 'EDIT', ['Rotina' => 'Integração', 'Observação' => 'Apagando todos os gestores antes de atualizá-los com a consulta ao SIAPE']);
+                $this->atualizaLogs($this->logged_user_id, 'unidades', 'unidades com gestores não nulos', 'EDIT', ['Rotina' => 'Integração', 'Observação' => 'Apagando todos os gestores antes de atualizá-los com a consulta ao SIAPE']);
                 // percorre o array das chefias, inserindo na tabela de unidades os IDs dos respectivos gestores e gestores substitutos
                 foreach($chefias as $chefia) {
                     // descobre o ID da Unidade
@@ -672,7 +677,7 @@ class IntegracaoService extends ServiceBase {
                     }
                     // insere o ID do usuário na Unidade como gestor ou gestor substituto
                     DB::update($sql_4, [':id_usuario'=> $chefia['id_usuario'], ':id_unidade' => $unidade[0]->id]);
-                    $this->atualizaLogs('unidades', $unidade[0]->id, 'EDIT', [
+                    $this->atualizaLogs($this->logged_user_id, 'unidades', $unidade[0]->id, 'EDIT', [
                                 'Rotina' => 'Integração', 
                                 'Observação' => 'Atualização do ' . ($chefia['tipo_funcao'] == '1' ? 'Gestor' : 'Gestor substituto') . ' da Unidade',
                                 'Valores anteriores' => ['gestor_id' => $unidade[0]->gestor_id, 'gestor_substituto_id' => $unidade[0]->gestor_substituto_id], 
@@ -680,19 +685,19 @@ class IntegracaoService extends ServiceBase {
                             ]);
                 }
                 DB::commit();
-                $this->result['chefias']['Resultado'] = 'Sucesso';
-                $this->result['chefias']['Observações'] = [...$this->result['chefias']['Observações'], ...array_filter([
+                $this->result["gestores"]['Resultado'] = 'Sucesso';
+                $this->result["gestores"]['Observações'] = [...$this->result["gestores"]['Observações'], ...array_filter([
                     count($chefes) . (count($chefes) == 1 ? ' gestor atualizado, ' : ' gestores atualizados, ') . count($chefias) . (count($chefias) == 1 ? ' chefia atualizada!' : ' chefias atualizadas!')
                     ], fn($o) => intval(substr($o,0,strpos($o, 'gestor')-1)) > 0)];
             } catch (Throwable $e) {
                 DB::rollback();
-                LogError::newError("Erro ao atualizar as chefias (titulares/substitutos)", $e);
-                $this->result['chefias']['Resultado'] = 'ERRO: '. $e->getMessage();
+                LogError::newError("Erro ao atualizar os gestores (titulares/substitutos)", $e);
+                $this->result["gestores"]['Resultado'] = 'ERRO: '. $e->getMessage();
             }        
         }else{
-            $this->result["chefias"]['Resultado'] = 'As chefias não foram atualizadas porque as Unidades e/ou Servidores não o foram, ' . 
-                                              'ou ainda porque houve alguma falha em suas atualizações! As chefias só são atualizadas quando as Unidades ' .
-                                              'E os Servidores são atualizados e AMBOS com sucesso.';
+            $this->result["gestores"]['Resultado'] = 'Os gestores não foram atualizados porque as Unidades e/ou Servidores não o foram, ' . 
+                                              'ou ainda porque houve alguma falha em suas atualizações! Os gestores só são atualizados quando as Unidades ' .
+                                              'e os Servidores são atualizados e AMBOS com sucesso.';
         }
         //return $result;
     }
@@ -740,11 +745,11 @@ class IntegracaoService extends ServiceBase {
             return $response;
     }
 
-    public function atualizaLogs(string $table_name, string $row_id, string $type, array $delta)
+    public function atualizaLogs($user_id, string $table_name, string $row_id, string $type, array $delta)
     {
         DB::connection("log")->table('changes')->insert([
             'date_time' => new DateTime(), 
-            'user_id' => null, 
+            'user_id' => $user_id, 
             'table_name' => $table_name, 
             'row_id' => $row_id, 
             'type' => $type, 

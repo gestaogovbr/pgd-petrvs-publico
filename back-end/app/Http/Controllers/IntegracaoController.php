@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-//use Illuminate\Support\Facades\DB;
 use App\Services\IntegracaoService;
 use Throwable;
 
@@ -55,8 +54,15 @@ class IntegracaoController extends ControllerBase {
                 'entity.entidade_id' => ['required'],
                 'with' => ['array']
             ]);
-            $result = $this->service->sincronizarPetrvs($data,self::loggedUser()->id);
-            return response()->json([$result]);
+            $entity = $this->service->sincronizarPetrvs($data,self::loggedUser()->id);
+            $result = $this->service->getById([
+                'id' => $entity->id,
+                'with' => ['entidade','usuario']
+            ]);
+            return response()->json([
+                'success' => true,
+                'rows' => [$result] 
+            ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }

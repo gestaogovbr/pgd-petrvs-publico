@@ -2,12 +2,14 @@
                (submit)="onSaveData()" (cancel)="onCancel()">
     <div class="row">
         <div class="row" *ngIf="formDisabled">
-            <input-text #entidade [size]="9" label="Entidade" icon="bi bi-upc" controlName="entidade_id" [control]="form!.controls.entidade_id"></input-text>
-            <input-text #usuario [size]="9" label="Usuário" icon="bi bi-upc" controlName="usuario_id" [control]="form!.controls.usuario_id"></input-text>
+            <input-text #entidade [size]="4" label="Entidade" icon="bi bi-upc" controlName="entidade_id" [control]="form!.controls.entidade_id"></input-text>
+            <input-text #usuario [size]="5" label="Usuário" icon="bi bi-upc" controlName="usuario_id" [control]="form!.controls.usuario_id"></input-text>
             <input-datetime datetime [size]="3" label="Execução" icon="bi bi-calendar-date" controlName="data_execucao" [control]="form!.controls.data_execucao"></input-datetime>
         </div>
         <div class="row" *ngIf="formDisabled">
-            <input-textarea #resultado [size]="12" [rows]="8" label="Resultado" icon="bi bi-textarea-t" controlName="resultado" [control]="form!.controls.resultado"></input-textarea>
+            <input-textarea #resultado_unidades [size]="12" [rows]="3" label="Unidades" icon="bi bi-textarea-t"></input-textarea><br>
+            <input-textarea #resultado_servidores [size]="12" [rows]="3" label="Servidores" icon="bi bi-textarea-t"></input-textarea><br>
+            <input-textarea #resultado_gestores [size]="12" [rows]="2" label="Gestores" icon="bi bi-textarea-t"></input-textarea>
         </div>
         <separator [title]="formDisabled ? 'Parâmetros utilizados' : ''" [collapse]="formDisabled ? 'collapse' : undefined">
             <div class="row">
@@ -17,10 +19,11 @@
                     <input-switch [disabled]="!this.util.isDeveloper() ? 'disabled' : undefined" labelPosition="right" [size]="4" label="Gestores" controlName="atualizar_gestores" [control]="form!.controls.atualizar_gestores" ></input-switch>
                 </separator>
             </div>
-            <div class="row mt-4">
-                <separator title="Com relação aos dados atualizados...">
-                    <input-switch labelPosition="right" [size]="4" label="Usar arquivos locais" controlName="usar_arquivos_locais" [control]="form!.controls.usar_arquivos_locais" labelInfo="Selecione se os dados para atualização devem ser lidos de um arquivo local"></input-switch>
-                    <input-switch labelPosition="right" [size]="4" label="Gravar em arquivos locais" controlName="gravar_arquivos_locais" [control]="form!.controls.gravar_arquivos_locais" labelInfo="Selecione se os dados atualizados devem ser salvos em um arquivo local"></input-switch>
+            <div class="row mt-4" >
+                <separator title="Com relação aos dados atualizados...(*)">
+                    <span class="badge rounded-pill bg-info text-dark">(*) Não funciona em ambientes de Produção / Homologação</span>
+                    <input-switch [disabled]="production ? 'disabled' : undefined" labelPosition="right" [size]="4" label="Usar arquivos locais" controlName="usar_arquivos_locais" [control]="form!.controls.usar_arquivos_locais" labelInfo="Selecione se os dados para atualização devem ser lidos de um arquivo local"></input-switch>
+                    <input-switch [disabled]="production ? 'disabled' : undefined" labelPosition="right" [size]="4" label="Gravar em arquivos locais" controlName="gravar_arquivos_locais" [control]="form!.controls.gravar_arquivos_locais" labelInfo="Selecione se os dados atualizados devem ser salvos em um arquivo local"></input-switch>
                 </separator>
             </div>
         </separator>

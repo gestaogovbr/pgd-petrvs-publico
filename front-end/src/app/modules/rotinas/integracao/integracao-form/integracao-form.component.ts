@@ -8,6 +8,7 @@ import { IntegracaoDaoService } from 'src/app/dao/integracao-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Integracao } from 'src/app/models/integracao.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-integracao-form',
@@ -18,11 +19,14 @@ export class IntegracaoFormComponent extends PageFormBase<Integracao, Integracao
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('entidade', { static: false }) public entidade?: InputTextComponent;
   @ViewChild('usuario', { static: false })  public usuario?: InputTextComponent;
-  @ViewChild('resultado', { static: false })  public resultado?: InputTextareaComponent;
+  @ViewChild('resultado_unidades', { static: false })  public resultado_unidades?: InputTextareaComponent;
+  @ViewChild('resultado_servidores', { static: false })  public resultado_servidores?: InputTextareaComponent;
+  @ViewChild('resultado_gestores', { static: false })  public resultado_gestores?: InputTextareaComponent;
 
   public form: FormGroup;
   public entidadeDao: EntidadeDaoService;
   public confirmLabel: string = "Executar";
+  public production: boolean = false;
     
   constructor(public injector: Injector, dao: IntegracaoDaoService) {
     super(injector, Integracao, IntegracaoDaoService);
@@ -48,9 +52,12 @@ export class IntegracaoFormComponent extends PageFormBase<Integracao, Integracao
   }
 
   public preparaFormulario(entity: Integracao) {
+    this.production = environment.production;
     this.form.controls.entidade_id.setValue(entity.id ? entity.entidade!.nome : this.auth.unidade?.entidade_id);
     this.form.controls.usuario_id.setValue(entity.id ? (entity.usuario_id ? entity.usuario!.nome : 'Usuário não logado') : this.auth.usuario!.id);
-    this.form.controls.resultado.setValue(entity.id ? entity.resultado : '');
+    if(this.resultado_unidades) this.resultado_unidades!.inputElement!.nativeElement.value = entity.id ? JSON.stringify(entity.resultado?.unidades) : '';
+    if(this.resultado_servidores) this.resultado_servidores!.inputElement!.nativeElement.value = entity.id ? JSON.stringify(entity.resultado?.servidores) : '';
+    if(this.resultado_gestores) this.resultado_gestores!.inputElement!.nativeElement.value = entity.id ? JSON.stringify(entity.resultado?.gestores) : '';
   }
 
   public initializeData(form: FormGroup): void {

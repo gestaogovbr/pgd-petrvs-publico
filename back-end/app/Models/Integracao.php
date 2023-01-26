@@ -23,11 +23,20 @@ class Integracao extends ModelBase
     ];
 
     protected $casts = [
-        'data_execucao' => 'datetime',
-        'resultado' => 'array'
+        'data_execucao' => 'datetime'
     ];
 
     // Belongs
     public function entidade() { return $this->belongsTo(Entidade::class); }   
     public function usuario() { return $this->belongsTo(Usuario::class); }   
+
+    // Mutattors e Casts
+    public function getResultadoAttribute($value)
+    {
+        return json_decode($value);
+    }   
+    public function setResultadoAttribute($value)
+    {
+        $this->attributes['resultado'] = json_encode($value);
+    }
 }
