@@ -25,7 +25,7 @@ class PetrvsService extends ServiceBase
                 'value' => $util->inicialMaiuscula(array_values((array)$r)[0])
             ]);
         }
-/*         $tabelas = array_map(fn($t) => [
+        /*  $tabelas = array_map(fn($t) => [
             'key' => $t->Tables_in_petrvs, 
             'value' => $util->inicialMaiuscula($t->Tables_in_petrvs)
         ], DB::select('SHOW TABLES')); */

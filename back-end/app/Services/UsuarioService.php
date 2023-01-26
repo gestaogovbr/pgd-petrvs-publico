@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Iterator;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Throwable;
 
 class UsuarioService extends ServiceBase
@@ -154,13 +155,10 @@ class UsuarioService extends ServiceBase
         $planos_ids = $planosAtivos->map(function($plano){return $plano->id;});
         $notas_validas = TipoAvaliacao::where('aceita_entrega', true)->get()->pluck('nota_atribuida');
   
-       
-
         $media_avaliacao = Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->avaliadas()->with(['avaliacao'])->get()->avg(function($demanda){
             return $demanda["avaliacao"]["nota_atribuida"];
         });
         
-
         foreach ($planosAtivos as $plano) {
             $total_consolidadas = Demanda::doUsuario($usuario_id)->dosPlanos([$plano->id])->avaliadas()->with(['avaliacao'])->get()->sum(function($demanda) use ($notas_validas){
                 return in_array($demanda["avaliacao"]["nota_atribuida"], $notas_validas->all()) ? $demanda['tempo_pactuado'] : 0;
@@ -344,4 +342,12 @@ class UsuarioService extends ServiceBase
         if((($perfilAtual == $this->developerId) || ($data["perfil_id"] != $this->developerId)) && (!$this->isLoggedUserADeveloper())) throw new Exception("Tentativa de alterar o perfil de/para um Desenvolvedor");
     }
 
+    public function proxyWith(&$entity, &$with) {
+        if(explode(".",$with)[0] == 'planos'){
+            $entity->with($with);
+            $entity->with(['planos' => function($query) {$query->whereNull('data_fim');}]);
+        }else{
+            $entity->with($with);      
+        }
+    }
 }

@@ -18,4 +18,11 @@ class ChangeService extends ServiceBase {
         }
         return $rows;
     }
+
+    public function showResponsaveis() {
+        $a = array_map(fn($u) => ['key' => $u['id'], 'value' => $u['nome']], Usuario::select(['id', 'nome'])->has('changes')->get()->toArray());
+        $b = array_merge([['key' => "null", 'value' => 'Usuário não logado']],$a);
+        usort($b, function ($a, $b) {return strnatcmp($a['value'], $b['value']);});
+        return $b;
+    }
 }

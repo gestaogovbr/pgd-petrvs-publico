@@ -96,14 +96,23 @@ Route::middleware('auth:sanctum')->prefix('Calendario')->group(function () {
 /* Logs */
 Route::middleware('auth:sanctum')->prefix('Change')->group(function () {
     defaultRoutes(ChangeController::class);
+    Route::post('showResponsaveis', [ChangeController::class, 'showResponsaveis']);
 });
 Route::middleware('auth:sanctum')->prefix('Error')->group(function () {
     defaultRoutes(ErrorController::class);
 });
 Route::middleware('auth:sanctum')->prefix('Traffic')->group(function () {
-    defaultRoutes(TrafficController::class);
 });
 Route::middleware('auth:sanctum')->post('/Petrvs/showTables', [PetrvsController::class, 'showTables']);
+
+/* Rotinas */
+Route::middleware(['auth:sanctum'])->prefix('Integracao')->group(function () { 
+    Route::post('store', [IntegracaoController::class, 'sincronizarPetrvs']);
+    Route::post('query', [IntegracaoController::class, 'query']);
+    Route::post('destroy', [IntegracaoController::class, 'destroy']);
+    Route::post('showResponsaveis', [IntegracaoController::class, 'showResponsaveis']);
+    Route::post('get-by-id', [IntegracaoController::class, 'getById']);
+});
 
 /* Testes */
 //Route::middleware(['auth:sanctum', 'can:ADMINISTRADOR'])->get('/teste', function (Request $request) { return ["OK"]; });
