@@ -31,9 +31,11 @@ class PlanoService extends ServiceBase
     }
 
     public function planosAtivosPorData($data_inicial, $data_final, $usuario_id){
-        return Plano::where("usuario_id", $usuario_id)
-                    ->where("data_inicio_vigencia", "<=", $data_final)
-                    ->where("data_fim_vigencia", ">=", $data_inicial)->get();
+        return Plano::whereNull("data_fim")->where([
+            ["usuario_id", "==", $usuario_id],
+            ["data_inicio_vigencia", "<=", $data_final],
+            ["data_fim_vigencia", ">=", $data_inicial]
+        ])->get();
     }
 
     public function proxyQuery($query, &$data) {

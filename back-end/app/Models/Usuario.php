@@ -12,6 +12,7 @@ use App\Traits\AutoUuid;
 use App\Models\Afastamento;
 use App\Models\DemandaAvaliacao;
 use App\Models\Demanda;
+use App\Models\Change;
 use App\Models\Favorito;
 use App\Models\Lotacao;
 use App\Models\Plano;
@@ -106,6 +107,8 @@ class Usuario extends Authenticatable
     public function avaliacoes() { return $this->hasMany(DemandaAvaliacao::class); }
     public function demandas() { return $this->hasMany(Demanda::class); }
     public function favoritos() { return $this->hasMany(Favorito::class); }
+    public function integracoes() { return $this->hasMany(Integracao::class); }
+    public function changes() { return $this->hasMany(Change::class, 'user_id'); }
     public function lotacoes() { return $this->hasMany(Lotacao::class); }
     public function planos() { return $this->hasMany(Plano::class); }
     public function usuariosHashes() { return $this->hasMany(UsuarioHahs::class); }

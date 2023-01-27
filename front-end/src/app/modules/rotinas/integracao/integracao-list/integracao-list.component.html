@@ -1,0 +1,58 @@
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [labelAdd]="labelAdd"
+      [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_ROT_INT_INCL')" [hasEdit]="false">
+    <toolbar></toolbar>
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-select #selectResponsaveis label="Responsável" [size]="4" controlName="usuario_id" [control]="filter!.controls.usuario_id" 
+            [items]="responsaveis"></input-select>
+            <input-datetime [size]="3" datetime label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" labelInfo="Início dos registros"></input-datetime>
+            <input-datetime [size]="3" datetime label="Fim" controlName="data_fim" [control]="filter!.controls.data_fim" labelInfo="Fim dos registros"></input-datetime>
+        </div>
+        <div class="row">
+            <separator title="Considerar integrações com a atualização solicitada: ">
+                <input-switch scale="small" labelPosition="right" [size]="4" label="de Unidades" controlName="atualizar_unidades" [control]="filter!.controls.atualizar_unidades" ></input-switch>
+                <input-switch scale="small" labelPosition="right" [size]="4" label="de Servidores" controlName="atualizar_servidores" [control]="filter!.controls.atualizar_servidores" ></input-switch>
+                <input-switch scale="small" labelPosition="right" [size]="4" label="de Gestores" controlName="atualizar_gestores" [control]="filter!.controls.atualizar_gestores" ></input-switch>
+            </separator>
+        </div>
+    </filter>
+    <columns>
+        <column title="Responsável" [template]="columnResponsavel">
+            <ng-template let-row="row" #columnResponsavel>
+                <span> {{row.usuario ? row.usuario.nome : 'Usuário não logado'}} </span>
+            </ng-template>
+        </column>
+        <column title="Executada em" orderBy="data_execucao" [template]="columnDataExecucao">
+            <ng-template let-row="row" #columnDataExecucao>
+                <span>{{ util.getDateTimeFormatted(row.data_execucao) }}</span>
+            </ng-template>
+        </column>
+        <column [titleTemplate]="titleUnidades" [template]="columnUnidades">
+            <ng-template let-header="header" #titleUnidades>
+                Solic. alteração<br>de Unidades
+            </ng-template>
+            <ng-template let-row="row" #columnUnidades>
+                <span>{{ util.getBooleanFormatted(row.atualizar_unidades) }}</span><br>
+                <!-- <span class="badge bg-light text-dark" title="a">teste</span> -->
+            </ng-template>
+        </column>
+        <column [titleTemplate]="titleServidores" [template]="columnServidores">
+            <ng-template let-header="header" #titleServidores>
+                Solic. alteração<br>de Servidores
+            </ng-template>
+            <ng-template let-row="row" #columnServidores>
+                <span>{{ util.getBooleanFormatted(row.atualizar_servidores) }}</span>
+            </ng-template>
+        </column>
+        <column [titleTemplate]="titleGestores" [template]="columnGestores">
+            <ng-template let-header="header" #titleGestores>
+                Solic. alteração<br>de Gestores
+            </ng-template>
+            <ng-template let-row="row" #columnGestores>
+                <span>{{ util.getBooleanFormatted(row.atualizar_gestores) }}</span>
+            </ng-template>
+        </column>
+        <column *ngIf="!selectable" type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

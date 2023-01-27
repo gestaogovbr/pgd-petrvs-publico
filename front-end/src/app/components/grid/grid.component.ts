@@ -62,6 +62,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   @Input() save?: (form: FormGroup, row: any) => Promise<IIndexable | Base | undefined | void>;
   @Input() addRoute?: FullRoute;
   @Input() addMetadata?: RouteMetadata;
+  @Input() labelAdd: string = "Incluir";
   @Input() orderBy?: QueryOrderBy[];
   @Input() groupBy?: GroupBy[];
   @Input() join: string[] = [];
@@ -203,7 +204,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   public BUTTON_ADD: ToolbarButton = {
     icon: "bi bi-plus-circle",
     color: "btn-outline-success",
-    label: "Incluir",
+    label: this.labelAdd,
     onClick: async () => await (this.add ? this.add() : this.go.navigate(this.addRoute!, this.addMetadata))
   };
   public BUTTON_REPORT: ToolbarButton = {
@@ -259,6 +260,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   }
 
   ngOnInit(): void {
+    this.BUTTON_ADD.label = this.labelAdd;
   }
 
   public getId(relativeId?: string) {

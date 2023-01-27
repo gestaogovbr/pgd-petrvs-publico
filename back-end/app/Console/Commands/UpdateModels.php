@@ -16,7 +16,8 @@ class UpdateModels extends Command
         "failed_jobs",
         "traffic",
         "api_siape_uorgs",
-        "tipos_modalidades_config"
+        "tipos_modalidades_config",
+        "integracoes"
     ];
 
     protected $ignoreFields = [
