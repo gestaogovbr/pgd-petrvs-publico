@@ -6,6 +6,7 @@ import { EntregaDaoService } from 'src/app/dao/entrega-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Entrega } from 'src/app/models/entrega.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
+import {LookupItem} from "../../../../services/lookup.service";
 
 @Component({
   selector: 'app-entrega-form',
@@ -92,5 +93,20 @@ export class EntregaFormComponent extends PageFormBase<Entrega, EntregaDaoServic
   public loadListaQualitativos() {
     this.listaQualitativos = this.form!.controls.lista_qualitativos.value || [];
   }
+
+  public addItemHandleItemQualitativo(): LookupItem | undefined {
+    let result = undefined;
+    const value = this.form!.controls.lista_qualitativos.value;
+    const key = this.util.textHash(value);
+    if(value?.length && this.util.validateLookupItem(this.form!.controls.lista_qualitativos.value, key)) {
+      result = {
+        key: key,
+        value: this.form!.controls.lista_qualitativos.value
+      };
+      this.form!.controls.lista_qualitativos.setValue("");
+    }
+    return result;
+  };
+
 }
 

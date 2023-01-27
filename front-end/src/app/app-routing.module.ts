@@ -19,6 +19,7 @@ const routes: Routes = [
   { path: 'cadastros/atividade', loadChildren: () => import('./modules/cadastros/atividade/atividade.module').then(m => m.AtividadeModule), canActivate: [AuthGuard] },
   { path: 'cadastros/cidade', loadChildren: () => import('./modules/cadastros/cidade/cidade.module').then(m => m.CidadeModule), canActivate: [AuthGuard] },
   { path: 'cadastros/entrega', loadChildren: () => import('./modules/cadastros/entrega/entrega.module').then(m => m.EntregaModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/macroprocesso', loadChildren: () => import('./modules/cadastros/macroprocesso/macroprocesso.module').then(m => m.MacroprocessoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/eixo-tematico', loadChildren: () => import('./modules/cadastros/eixo-tematico/eixo-tematico.module').then(m => m.EixoTematicoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/feriado', loadChildren: () => import('./modules/cadastros/feriado/feriado.module').then(m => m.FeriadoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/cadeia-valor', loadChildren: () => import('./modules/cadastros/cadeia-valor/cadeia-valor.module').then(m => m.CadeiaValorModule), canActivate: [AuthGuard] },

@@ -8,6 +8,7 @@ import {CadeiaValorDaoService} from "../../../../dao/cadeia-valor-dao.service";
 import {EditableFormComponent} from "../../../../components/editable-form/editable-form.component";
 import {UnidadeDaoService} from "../../../../dao/unidade-dao.service";
 import {PlanejamentoDaoService} from "../../../../dao/planejamento-dao.service";
+import {EntidadeDaoService} from "../../../../dao/entidade-dao.service";
 
 @Component({
   selector: 'app-cadeia-valor-form',
@@ -18,13 +19,16 @@ export class CadeiaValorFormComponent extends PageFormBase<CadeiaValor, CadeiaVa
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
 
   public unidadeDao: UnidadeDaoService;
+  public entidadeDao: EntidadeDaoService;
 
   constructor(public injector: Injector) {
     super(injector, CadeiaValor, CadeiaValorDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    this.entidadeDao = injector.get<EntidadeDaoService>(EntidadeDaoService);
     this.form = this.fh.FormBuilder({
       nome: {default: ""},
       unidade_id: {default: ""},
+      entidade_id: {default: ""},
       inicio: {default: new Date()},
       fim: {default: null}
     }, this.cdRef, this.validate);
@@ -32,7 +36,7 @@ export class CadeiaValorFormComponent extends PageFormBase<CadeiaValor, CadeiaVa
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if(['nome','unidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if(['nome','unidade_id', "entidade_id"].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
     if(['inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
