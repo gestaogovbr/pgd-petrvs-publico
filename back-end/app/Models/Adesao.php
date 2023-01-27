@@ -32,7 +32,6 @@ class Adesao extends ModelBase
         'entidade_id', /* char(36); */
         'tipo_modalidade_id', /* char(36); NOT NULL; */
         //'data_fim', /* datetime; */// Data final do registro
-        /*'documento_id',*/// REMOVED
     ];
 
     public $delete_cascade = ['documentos'];
