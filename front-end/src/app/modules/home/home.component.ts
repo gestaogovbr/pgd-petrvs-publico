@@ -97,6 +97,7 @@ export class HomeComponent implements OnInit {
     if (this.gb.isEmbedded) {
       this.allPages.visibilidadeMenuSei(!this.auth.usuario!.config.ocultar_menu_sei);
     }
+
   }
 
   async ngAfterViewInit() {

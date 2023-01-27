@@ -3,15 +3,26 @@
 </div!-->
 
 <map [items]="mapa">
-    <strong>Mapa de teste</strong>
+    <strong></strong>
     <table>
-        <map-foreach [template]="cell">
-            <ng-template #cell let-data="data" let-children="children" let-level="level">
+        <map-foreach [template]="eixoTemplate">
+            <ng-template #eixoTemplate let-eixo="data" let-objetivos="children" let-metadata="metadata" let-level="level">
                 <tr>
-                    <td>Level: {{level}} - {{data.title}}</td>
+                    <td><h3>{{eixo.nome}}</h3></td>
                     <td>
-                        <table *ngIf="children?.length">
-                            <map-foreach [template]="cell" [items]="children" [level]="level+1"></map-foreach>
+                        <table *ngIf="objetivos?.length">
+                            <map-foreach [template]="objetivoTemplate" [items]="objetivos" [level]="level">
+                                <ng-template #objetivoTemplate let-objetivo="data" let-eixos="children" let-metadata="metadata" let-level="level">
+                                    <tr>
+                                        <td>{{objetivo.nome}}</td>
+                                        <td>
+                                            <table *ngIf="eixos?.length">
+                                                <map-foreach [template]="eixoTemplate" [items]="eixos" [level]="level+1"></map-foreach>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </map-foreach>
                         </table>
                     </td>
                 </tr>

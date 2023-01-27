@@ -68,7 +68,7 @@ export class CadeiaValorFormComponent extends PageFormBase<CadeiaValor, CadeiaVa
     });
   }
 
-  public titleEdit = (entity: Planejamento): string => {
+  public titleEdit = (entity: CadeiaValor): string => {
     return "Editando "+ (entity?.nome || "");
   }
 

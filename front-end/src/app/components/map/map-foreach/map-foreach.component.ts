@@ -32,8 +32,15 @@ export class MapForeachComponent implements OnInit {
     public cdRef: ChangeDetectorRef
   ) { }
 
-  ngOnInit(): void {
-    if(this.foreach) this.viewContainerRef.createEmbeddedView(this.foreach, { items: this.items });
+  public context = {
+    self: this,
+    get items(): MapItem[] { return this.self.items }
   }
+
+  ngOnInit(): void {
+    if(this.foreach) this.viewContainerRef.createEmbeddedView(this.foreach, this.context);
+  }
+
+
 
 }

@@ -31,14 +31,18 @@ export class MapItemComponent implements OnInit {
     public map: MapComponent
   ) { }
 
+  public context = {
+    self: this,
+    get item(): MapItem | undefined { return this.self.item },
+    get metadata(): any { return this.self.item?.metadata },
+    get data(): any { return this.self.item?.data },
+    get level(): any { return this.self.level },
+    get parent(): MapItem | undefined { return this.self.item?.parent },
+    get children(): MapItem[] | undefined { return this.self.item?.children }
+  }
+
   ngOnInit(): void {
-    if(this.template) this.viewContainerRef.createEmbeddedView(this.template, {
-      item: this.item,
-      data: this.item?.data,
-      level: this.level,
-      parent: this.item?.parent,
-      children: this.item?.children
-    });
+    if(this.template) this.viewContainerRef.createEmbeddedView(this.template, this.context);
   }
 
 }

@@ -21,12 +21,12 @@ class Template extends ModelBase
     }
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'numero', /* varchar(256); NOT NULL; */// Nome da tarefa
-        'tipo', /* double(8,2); NOT NULL; */// Tempo estimado para a execução da tarefa (Horas decimais)
-        'titulo', /* tinyint; NOT NULL; */// Se a entrega requer obrigatoriamente um documento
+        'numero', /* int; NOT NULL; */// Número do template (Gerado pelo sistema)
+        'tipo', /* enum('TCR'); NOT NULL; */// Especificação do tipo do template (interno do sistema)
+        'titulo', /* varchar(256); NOT NULL; */// Nome da tarefa
         'conteudo', /* text; */// Comentário predefinida para a tarefa
-        'data_set', /* text; */// Comentário predefinida para a tarefa
-        'data_inicio', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data inicio da vigência
+        'data_set', /* json; */// Dados da parametrização
+        'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
         'data_fim', /* datetime; */// Data fim da vigência
     ];
 

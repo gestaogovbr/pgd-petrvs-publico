@@ -16,9 +16,9 @@ class CadeiaValor extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'inicio', /* datetime; NOT NULL; */// Data inicio do planejamento
-        'fim', /* datetime; */// Data fim do planejamento
-        'nome', /* varchar(256); NOT NULL; */// Nome do planejamento estratégico
+        'inicio', /* datetime; NOT NULL; */// Data inicio da cadeia de valor
+        'fim', /* datetime; */// Data fim da cadeia de valor
+        'nome', /* varchar(256); NOT NULL; */// Nome da Cadeia de Valores
         'unidade_id', /* char(36); */
         //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência do registro
         //'data_fim', /* datetime; */// Data fim da vigência do registro
