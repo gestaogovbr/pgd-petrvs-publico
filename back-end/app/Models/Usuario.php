@@ -18,6 +18,7 @@ use App\Models\Lotacao;
 use App\Models\Plano;
 use App\Models\Perfil;
 use App\Traits\MergeRelations;
+use App\Traits\LogChanges;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasPermissions;
 use App\Services\UsuarioService;
@@ -37,7 +38,7 @@ class UsuarioNotificacoes {
 
 class Usuario extends Authenticatable
 {
-    use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, AutoDataInicio;
+    use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, AutoDataInicio, LogChanges;
 
     protected $table = "usuarios";
 
@@ -107,11 +108,12 @@ class Usuario extends Authenticatable
     public function avaliacoes() { return $this->hasMany(DemandaAvaliacao::class); }
     public function demandas() { return $this->hasMany(Demanda::class); }
     public function favoritos() { return $this->hasMany(Favorito::class); }
-    public function integracoes() { return $this->hasMany(Integracao::class); }
-    public function changes() { return $this->hasMany(Change::class, 'user_id'); }
     public function lotacoes() { return $this->hasMany(Lotacao::class); }
     public function planos() { return $this->hasMany(Plano::class); }
     public function usuariosHashes() { return $this->hasMany(UsuarioHahs::class); }
+    
+    public function integracoes() { return $this->hasMany(Integracao::class); }
+    public function changes() { return $this->hasMany(Change::class, 'user_id'); }
     // Belongs
     public function perfil() { return $this->belongsTo(Perfil::class, 'perfil_id'); }
     // Mutattors e Casts

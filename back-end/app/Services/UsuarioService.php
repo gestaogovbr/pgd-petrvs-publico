@@ -342,12 +342,4 @@ class UsuarioService extends ServiceBase
         if((($perfilAtual == $this->developerId) || ($data["perfil_id"] != $this->developerId)) && (!$this->isLoggedUserADeveloper())) throw new Exception("Tentativa de alterar o perfil de/para um Desenvolvedor");
     }
 
-    public function proxyWith(&$entity, &$with) {
-        if(explode(".",$with)[0] == 'planos'){
-            $entity->with($with);
-            $entity->with(['planos' => function($query) {$query->whereNull('data_fim');}]);
-        }else{
-            $entity->with($with);      
-        }
-    }
 }
