@@ -1,7 +1,37 @@
 <!--div class="d-block">
     {{ID_GENERATOR_BASE}}
 </div!-->
-<separator title="Expediente" collapse transparent>
+
+<map [items]="mapa">
+    <strong></strong>
+    <table>
+        <map-foreach [template]="eixoTemplate">
+            <ng-template #eixoTemplate let-eixo="data" let-objetivos="children" let-metadata="metadata" let-level="level">
+                <tr>
+                    <td><h3>{{eixo.nome}}</h3></td>
+                    <td>
+                        <table *ngIf="objetivos?.length">
+                            <map-foreach [template]="objetivoTemplate" [items]="objetivos" [level]="level">
+                                <ng-template #objetivoTemplate let-objetivo="data" let-eixos="children" let-metadata="metadata" let-level="level">
+                                    <tr>
+                                        <td>{{objetivo.nome}}</td>
+                                        <td>
+                                            <table *ngIf="eixos?.length">
+                                                <map-foreach [template]="eixoTemplate" [items]="eixos" [level]="level+1"></map-foreach>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </map-foreach>
+                        </table>
+                    </td>
+                </tr>
+            </ng-template>
+        </map-foreach>
+    </table>
+</map>
+
+<!--separator title="Expediente" collapse transparent>
     <calendar-expediente [expediente]="expediente"></calendar-expediente>
 </separator>
 <div class="row">
@@ -27,7 +57,7 @@
 <toolbar [buttons]="buttons"></toolbar>
 <separator *ngIf="efemerides" title="Cálculos" collapse>
     <calendar-efemerides [efemerides]="efemerides"></calendar-efemerides>
-</separator>
+</separator//-->
 
 
 <!--ckeditor [editor]="Editor" data="<p>Hello, world!</p>"></ckeditor//-->

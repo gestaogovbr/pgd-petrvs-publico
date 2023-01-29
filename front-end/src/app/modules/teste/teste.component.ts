@@ -16,6 +16,11 @@ import { Feriado } from 'src/app/models/feriado.model';
 import { Afastamento } from 'src/app/models/afastamento.model';
 import { CalendarService, Efemerides } from 'src/app/services/calendar.service';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { MapItem } from 'src/app/components/map/map.component';
+import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
+import { Planejamento } from 'src/app/models/planejamento.model';
+import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model';
+import { EixoTematico } from 'src/app/models/eixo-tematico.model';
 
 @Component({
   selector: 'app-teste',
@@ -27,6 +32,7 @@ export class TesteComponent implements OnInit {
   public items: LookupItem[] = [];
   public disabled: boolean = true;
   public Editor = ClassicEditor;
+  public planejamento?: Planejamento;
   public expediente = new Expediente({"domingo":[],"segunda":[{"inicio":"08:00","fim":"12:00","data":null,"sem":false},{"inicio":"14:00","fim":"18:00","data":null,"sem":false}],"terca":[{"inicio":"08:00","fim":"12:00","data":null,"sem":false},{"inicio":"14:00","fim":"18:00","data":null,"sem":false}],"quarta":[{"inicio":"08:00","fim":"12:00","data":null,"sem":false},{"inicio":"14:00","fim":"18:00","data":null,"sem":false}],"quinta":[{"inicio":"08:00","fim":"12:00","data":null,"sem":false},{"inicio":"14:00","fim":"18:00","data":null,"sem":false}],"sexta":[{"inicio":"08:00","fim":"12:00","data":null,"sem":false},{"inicio":"14:00","fim":"18:00","data":null,"sem":false}],"sabado":[],"especial":[]});
 
   public naoIniciadas: CardItem[] = [
@@ -75,8 +81,50 @@ export class TesteComponent implements OnInit {
   public efemerides?: Efemerides;
   public resources: GanttResource[] = [];
 
+  public mapa: MapItem[] = [];/*
+    {
+      data: {title: "item 1"},
+      children: [
+        {
+          data: {title: "item 1"},
+          children: [
+            {
+              data: {title: "item 1"},
+            },
+            {
+              data: {title: "item 2"}
+            }
+          ]
+        },
+        {
+          data: {title: "item 2"},
+          children: [
+            {
+              data: {title: "item 1"},
+            },
+            {
+              data: {title: "item 2"}
+            }
+          ]
+        },
+        {
+          data: {title: "item 3"}
+        }
+      ]
+    },
+    {
+      data: {title: "item 2"}
+    },
+    {
+      data: {title: "item 3"}
+    }
+  ];*/
+
+  public JSON = JSON;
+
   constructor(
-    public fh: FormHelperService, 
+    public fh: FormHelperService,
+    public planejamentoDao: PlanejamentoDaoService, 
     public usuarioDao: UsuarioDaoService, 
     public lookup: LookupService,
     public util: UtilService,
@@ -230,6 +278,23 @@ export class TesteComponent implements OnInit {
     });
   } */
   ngOnInit(): void {
+    this.planejamentoDao.getById("867c7768-9690-11ed-b4ae-0242ac130002", ["objetivos.eixo_tematico", "unidade", "entidade"]).then(planejamento => {
+      let mapa: MapItem[] = [];
+      this.planejamento = planejamento || undefined;
+      if(planejamento) {
+        let eixos = planejamento.objetivos?.reduce((a, v) => {
+          if(!a.find(x => x.id == v.eixo_tematico_id)) a.push(v.eixo_tematico!);
+          return a;
+        }, [] as EixoTematico[]) || [];
+        mapa = eixos.map(x => {
+          return {
+            data: x,
+            children: planejamento.objetivos?.filter(y => y.eixo_tematico_id == x.id).map(z => Object.assign({}, {data: z}) as MapItem)
+          } as MapItem;
+        });
+      }
+      this.mapa = mapa;
+    });
   }
 
   ngAfterViewInit() {

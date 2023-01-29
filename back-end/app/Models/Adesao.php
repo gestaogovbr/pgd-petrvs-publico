@@ -22,17 +22,16 @@ class Adesao extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'data_inicio_vigencia', /* datetime; NOT NULL; */// Inicio do plano
-        'data_fim_vigencia', /* datetime; NOT NULL; */// Fim do plano
-        'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
-        'status',
-        'programa_id', /* char(36); NOT NULL; */
-        'usuario_id', /* char(36); NOT NULL; */
-        'unidade_id', /* char(36); NOT NULL; */
-        'entidade_id', /* char(36); NOT NULL; */
-        'documento_id', /* char(36); */
+        'data_inicio_vigencia', /* datetime; NOT NULL; */// Inicio no programa
+        'data_fim_vigencia', /* datetime; */// Fim no programa
+        'data_inicio', /* datetime; NOT NULL; */// Data de criação
+        'status', /* enum('SOLICITADO','HOMOLOGADO','CANCELADO'); NOT NULL; */// Status da adesão
+        'programa_id', /* char(36); */
+        'usuario_id', /* char(36); */
+        'unidade_id', /* char(36); */
+        'entidade_id', /* char(36); */
         'tipo_modalidade_id', /* char(36); NOT NULL; */
-        //'data_fim', /* datetime; */// Data fim da vigência
+        //'data_fim', /* datetime; */// Data final do registro
     ];
 
     public $delete_cascade = ['documentos'];

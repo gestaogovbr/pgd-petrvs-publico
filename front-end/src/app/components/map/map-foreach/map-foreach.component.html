@@ -1,0 +1,4 @@
+<ng-content></ng-content>
+<ng-template #foreach let-items="items">
+    <map-item [template]="template" *ngFor="let item of items" [item]="item" [level]="level"></map-item>
+</ng-template>
