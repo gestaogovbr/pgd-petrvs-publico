@@ -1,16 +1,44 @@
 <!--div class="d-block">
     {{ID_GENERATOR_BASE}}
 </div!-->
-<separator title="Expediente" collapse transparent>
+
+<map [items]="mapa">
+    <strong></strong>
+    <table>
+        <map-foreach [template]="eixoTemplate">
+            <ng-template #eixoTemplate let-eixo="data" let-objetivos="children" let-metadata="metadata" let-level="level">
+                <tr>
+                    <td><h3>{{eixo.nome}}</h3></td>
+                    <td>
+                        <table *ngIf="objetivos?.length">
+                            <map-foreach [template]="objetivoTemplate" [items]="objetivos" [level]="level">
+                                <ng-template #objetivoTemplate let-objetivo="data" let-eixos="children" let-metadata="metadata" let-level="level">
+                                    <tr>
+                                        <td>{{objetivo.nome}}</td>
+                                        <td>
+                                            <table *ngIf="eixos?.length">
+                                                <map-foreach [template]="eixoTemplate" [items]="eixos" [level]="level+1"></map-foreach>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </map-foreach>
+                        </table>
+                    </td>
+                </tr>
+            </ng-template>
+        </map-foreach>
+    </table>
+</map>
+
+<!--separator title="Expediente" collapse transparent>
     <calendar-expediente [expediente]="expediente"></calendar-expediente>
 </separator>
 <div class="row">
     <input-select [size]="2" label="Forma" controlName="forma" [control]="form!.controls.forma" [items]="lookup.DIA_HORA_CORRIDOS_OU_UTEIS"></input-select>
     <input-number number label="Carga" [size]="1" [control]="form!.controls.carga_horaria"></input-number>
-    <input-datetime datetime [size]="3" label="Início" controlName="inicio" [control]="form!.controls.inicio"></input-datetime>
-    <!-- <input-datetime [date]="isHoras() ? undefined : 'true'" [size]="3" label="Início" controlName="inicio" [control]="form!.controls.inicio"></input-datetime> -->
-    <input-datetime datetime [size]="3" label="Fim" controlName="fim" [control]="form!.controls.fim"></input-datetime>
-    <!-- <input-datetime [date]="isHoras() ? undefined : 'true'" [size]="3" label="Fim" controlName="fim" [control]="form!.controls.fim"></input-datetime> -->
+    <input-datetime [date]="isHoras() ? undefined : 'true'" [size]="3" label="Início" controlName="inicio" [control]="form!.controls.inicio"></input-datetime>
+    <input-datetime [date]="isHoras() ? undefined : 'true'" [size]="3" label="Fim" controlName="fim" [control]="form!.controls.fim"></input-datetime>
     <input-timer onlyHours label="Tempo" [size]="3" icon="bi bi-clock" controlName="tempo" [control]="form!.controls.tempo"></input-timer>
 </div>
 <div class="row">
@@ -29,7 +57,7 @@
 <toolbar [buttons]="buttons"></toolbar>
 <separator *ngIf="efemerides" title="Cálculos" collapse>
     <calendar-efemerides [efemerides]="efemerides"></calendar-efemerides>
-</separator>
+</separator//-->
 
 
 <!--ckeditor [editor]="Editor" data="<p>Hello, world!</p>"></ckeditor//-->

@@ -9,21 +9,23 @@ use DateTime;
 
 trait LogChanges
 {
-
+    public static $x = 1;
     public static function bootLogChanges()
     {
         static::saved(function (Model $model) {
-            if ($model->wasRecentlyCreated) {
-                static::logChange($model, 'ADD');
-            } elseif ($model->getChanges()) {
-                //if($model->attributes['updated_at'] == $model->attributes['data_fim']){
-                if(!empty($model->attributes['data_fim'])){
-                    static::logChange($model, 'DELETE');
-                }else{
+            if(static::$x == 1){   //Só entra se for a primeira vez que está executando.
+                static::$x++;
+                if ($model->wasRecentlyCreated) {
+                    static::logChange($model, 'ADD');
+                } elseif ($model->getChanges()) {
+                    if(!empty($model->attributes['data_fim'])){
+                        static::logChange($model, 'DELETE');
+                    }else{
+                        static::logChange($model, 'EDIT');
+                    }
+                } else {
                     static::logChange($model, 'EDIT');
                 }
-            } else {
-                static::logChange($model, 'EDIT');
             }
         });
 
@@ -42,7 +44,9 @@ trait LogChanges
                 'table_name' => $model->getTable(),
                 'row_id' => $model->attributesToArray()["id"],
                 'type' => $action,
-                'delta' => json_encode($action == 'ADD' ? $model->getAttributes() : ($action == 'EDIT' ? ['Valores anteriores' => $model->getOriginal(), 'Valores atuais' => $model->getAttributes()] : $model->getOriginal()))
+                'delta' => json_encode($action == 'ADD' ? $model->getAttributes() : 
+                            ($action == 'EDIT' ? ['Valores anteriores' => $model->getOriginal(), 
+                            'Valores atuais' => $model->getAttributes()] : $model->getOriginal()))
             ]);
         }
     }

@@ -4,12 +4,14 @@ import { AuthGuard } from 'src/app/guards/auth.guard';
 import { ConfigResolver } from 'src/app/resolvies/config.resolver';
 import {TemplateListComponent} from "./template-list/template-list.component";
 import {TemplateFormComponent} from "./template-form/template-form.component";
+//import {TemplateFormVinculaComponent} from "./template-form-vincula/template-form-vincula.component";
 
 const routes: Routes = [
   { path: '', component: TemplateListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Template" } },
   { path: 'new', component: TemplateFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
   { path: ':id/edit', component: TemplateFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
-  { path: ':id/consult', component: TemplateFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } }
+  { path: ':id/consult', component: TemplateFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } },
+  //{ path: ':id/termos', component: TemplateFormVinculaComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Associar TCR", modal: true } }
 ];
 
 @NgModule({
