@@ -32,12 +32,12 @@ class Lotacao extends ModelBase
 
     // Has
     // public function usuarios() { return $this->hasMany(Usuario::class); }
-    public function patrulhas() { return $this->hasMany(Patrulha::class); }
+/*     public function patrulhas() { return $this->hasMany(Patrulha::class); }
     public function incidentes() { return $this->hasMany(Incidente::class); }
     public function feeds() { return $this->hasMany(Feed::class); }
     public function exames() { return $this->hasMany(Exame::class); }
     public function covids() { return $this->hasMany(Covid::class); }
-    public function afastamentos() { return $this->hasMany(Afastamento::class); }    
+    public function afastamentos() { return $this->hasMany(Afastamento::class); }  */   
     // Belongs
     public function usuario() { return $this->belongsTo(Usuario::class); }    
     public function unidade() { return $this->belongsTo(Unidade::class); }    

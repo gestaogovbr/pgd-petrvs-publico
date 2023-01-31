@@ -19,6 +19,7 @@ import { LogModule } from './modules/logs/log.module';
 import { UteisModule } from './modules/uteis/uteis.module';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { RotinaModule } from './modules/rotinas/rotina.module';
+import { TemplateModule } from './modules/cadastros/template/template.module';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { RotinaModule } from './modules/rotinas/rotina.module';
     UteisModule,
     LogModule,
     RotinaModule,
-    CKEditorModule
+    CKEditorModule,
+    TemplateModule
   ],
   providers: [],
   bootstrap: [AppComponent]
