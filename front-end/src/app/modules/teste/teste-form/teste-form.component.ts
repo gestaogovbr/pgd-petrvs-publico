@@ -2,7 +2,6 @@ import { Component, Injector } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
-import { AfastamentoDaoService } from 'src/app/dao/afastamento-dao.service';
 import { TipoMotivoAfastamentoDaoService } from 'src/app/dao/tipo-motivo-afastamento-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
@@ -14,7 +13,7 @@ import { Usuario } from 'src/app/models/usuario.model';
 import { CalendarService, Efemerides, TipoContagem } from 'src/app/services/calendar.service';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { NavigateResult } from 'src/app/services/navigate.service';
-import { Interval, UtilService } from 'src/app/services/util.service';
+import { Interval } from 'src/app/services/util.service';
 import { PageFormBase } from '../../base/page-form-base';
 
 @Component({
@@ -70,84 +69,8 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
           });
         }
       }
-    },
-    {
-      label: "Testar UNION",
-      icon: "bi bi-backspace",
-      onClick: () => {
-        let intervals_i: Interval[] = [{start: new Date('2022-01-15T00:00:00'), end: new Date('2022-02-15T00:00:00')},
-                                       {start: new Date('2022-03-15T00:00:00'), end: new Date('2022-04-15T00:00:00')},
-                                       {start: new Date('2022-05-01T00:00:00'), end: new Date('2022-05-15T00:00:00')}];  
-        //Retorno esperado da função UNION:    15/01/22---15/02/22     15/03/22---15/04/22       01/05/22---15/05/22  
-
-        let intervals_ii: Interval[] = [{start: new Date('2022-01-15T00:00:00'), end: new Date('2022-02-15T00:00:00')},
-                                        {start: new Date('2022-02-01T00:00:00'), end: new Date('2022-04-01T00:00:00')},
-                                        {start: new Date('2022-05-01T00:00:00'), end: new Date('2022-05-15T00:00:00')}];
-        //Retorno esperado da função UNION:    15/01/22---01/04/22     01/05/22---15/05/22 
-
-        let intervals_iii: Interval[] = [{start: new Date('2022-01-15T00:00:00'), end: new Date('2022-02-15T00:00:00')},
-                                         {start: new Date('2022-02-01T00:00:00'), end: new Date('2022-04-01T00:00:00')},
-                                         {start: new Date('2022-03-15T00:00:00'), end: new Date('2022-05-15T00:00:00')}]; 
-        //Retorno esperado da função UNION:    15/01/22---15/05/22 
-
-        let intervals_iv: Interval[] = [{start: new Date('2022-01-15T00:00:00'), end: new Date('2022-03-01T00:00:00')},
-                                        {start: new Date('2022-02-01T00:00:00'), end: new Date('2022-02-15T00:00:00')},
-                                        {start: new Date('2022-03-15T00:00:00'), end: new Date('2022-05-15T00:00:00')},
-                                        {start: new Date('2022-04-15T00:00:00'), end: new Date('2022-05-01T00:00:00')}];
-        //Retorno esperado da função UNION:    15/01/22---01/03/22     15/03/22---15/05/22  
-
-        let intervals_v: Interval[] = [{start: new Date('2022-01-15T00:00:00'), end: new Date('2022-05-15T00:00:00')},
-                                       {start: new Date('2022-02-01T00:00:00'), end: new Date('2022-05-01T00:00:00')},
-                                       {start: new Date('2022-02-15T00:00:00'), end: new Date('2022-04-15T00:00:00')}];
-        //Retorno esperado da função UNION:    15/01/22---15/05/22  
-
-        let intervals_vi: Interval[] = [{start: new Date('2022-01-15T00:00:00'), end: new Date('2022-03-01T00:00:00')},
-                                        {start: new Date('2022-04-01T00:00:00'), end: new Date('2022-05-15T00:00:00')},
-                                        {start: new Date('2022-02-01T00:00:00'), end: new Date('2022-02-15T00:00:00')},
-                                        {start: new Date('2022-03-15T00:00:00'), end: new Date('2022-04-15T00:00:00')},
-                                        {start: new Date('2022-02-15T00:00:00'), end: new Date('2022-04-01T00:00:00')}]; 
-        //Retorno esperado da função UNION:    15/01/22---15/05/22  
-
-        let intervals_vii: Interval[] = [{start: new Date('2022-01-15T00:00:00'), end: new Date('2022-02-01T00:00:00')},
-                                         {start: new Date('2022-02-01T00:00:00'), end: new Date('2022-02-15T00:00:00')},
-                                         {start: new Date('2022-03-01T00:00:00'), end: new Date('2022-04-01T00:00:00')},
-                                         {start: new Date('2022-03-15T00:00:00'), end: new Date('2022-04-15T00:00:00')},
-                                         {start: new Date('2022-05-01T00:00:00'), end: new Date('2022-05-15T00:00:00')},
-                                         {start: new Date('2022-05-15T00:00:00'), end: new Date('2022-06-01T00:00:00')},
-                                         {start: new Date('2022-06-15T00:00:00'), end: new Date('2022-07-01T00:00:00')}];                                                                                                                                                                               
-        //Retorno esperado da função UNION:    15/01/22---15/02/22     01/03/22---15/04/22     01/05/22---01/06/22   15/06/22---01/07/22
-
-        let result: Interval[];
-        result = this.util.union(intervals_i);
-        console.log('Resultado Esperado: 15/01/22---15/02/22     15/03/22---15/04/22       01/05/22---15/05/22');
-        console.log('Resultado Obtido: ', result);
-
-        result = this.util.union(intervals_ii);
-        console.log('Resultado Esperado: 15/01/22---01/04/22     01/05/22---15/05/22');
-        console.log('Resultado Obtido: ', result);
-
-        result = this.util.union(intervals_iii);
-        console.log('Resultado Esperado: 15/01/22---15/05/22');
-        console.log('Resultado Obtido: ', result);
-
-        result = this.util.union(intervals_iv);
-        console.log('Resultado Esperado: 15/01/22---01/03/22     15/03/22---15/05/22');
-        console.log('Resultado Obtido: ', result);
-
-        result = this.util.union(intervals_v);
-        console.log('Resultado Esperado: 15/01/22---15/05/22');
-        console.log('Resultado Obtido: ', result);
-
-        result = this.util.union(intervals_vi);
-        console.log('Resultado Esperado: 15/01/22---15/05/22');
-        console.log('Resultado Obtido: ', result);
-
-        result = this.util.union(intervals_vii);
-        console.log('Resultado Esperado: 15/01/22---15/02/22     01/03/22---15/04/22     01/05/22---01/06/22   15/06/22---01/07/22');
-        console.log('Resultado Obtido: ', result);
-      }
     }
-  ];
+   ];
 
   constructor(public injector: Injector) {
     super(injector, Usuario, UsuarioDaoService);
@@ -249,7 +172,7 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
     let cargaHoraria: number = this.form.controls.carga_horaria.value;
     let unidade: Unidade | null = await this.unidadeDao.getById(this.form.controls.unidade_id.value, ['entidade']);
     let tipo: TipoContagem = this.form.controls.tipo.value;
-    let pausas: DemandaPausa[] | null = [];
+    let pausas: DemandaPausa[] | undefined = this.form.controls.incluir_pausas.value ? [] : [];
     let afastamentos: Afastamento[] | undefined = this.form.controls.incluir_afastamentos.value ? this.usuario?.afastamentos : [];
     this.efemeridesFrontEnd = this.calendar.calculaDataTempoUnidade(inicio, calculo ? fim : tempo, cargaHoraria, unidade!, tipo, pausas, afastamentos);
     this.dao!.calculaDataTempoUnidade(inicio_dao, calculo ? fim_dao : tempo, cargaHoraria, unidade!.id, tipo, pausas, afastamentos).then(response => {
@@ -258,3 +181,83 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
   }
 
 }
+
+/*
+   {
+      label: "Testar UNION",
+      icon: "bi bi-backspace",
+      onClick: () => {
+        let intervals_i: Interval[] = [{start: new Date('2022-01-15T00:00:00'), end: new Date('2022-02-15T00:00:00')},
+                                       {start: new Date('2022-03-15T00:00:00'), end: new Date('2022-04-15T00:00:00')},
+                                       {start: new Date('2022-05-01T00:00:00'), end: new Date('2022-05-15T00:00:00')}];  
+        //Retorno esperado da função UNION:    15/01/22---15/02/22     15/03/22---15/04/22       01/05/22---15/05/22  
+
+        let intervals_ii: Interval[] = [{start: new Date('2022-01-15T00:00:00'), end: new Date('2022-02-15T00:00:00')},
+                                        {start: new Date('2022-02-01T00:00:00'), end: new Date('2022-04-01T00:00:00')},
+                                        {start: new Date('2022-05-01T00:00:00'), end: new Date('2022-05-15T00:00:00')}];
+        //Retorno esperado da função UNION:    15/01/22---01/04/22     01/05/22---15/05/22 
+
+        let intervals_iii: Interval[] = [{start: new Date('2022-01-15T00:00:00'), end: new Date('2022-02-15T00:00:00')},
+                                         {start: new Date('2022-02-01T00:00:00'), end: new Date('2022-04-01T00:00:00')},
+                                         {start: new Date('2022-03-15T00:00:00'), end: new Date('2022-05-15T00:00:00')}]; 
+        //Retorno esperado da função UNION:    15/01/22---15/05/22 
+
+        let intervals_iv: Interval[] = [{start: new Date('2022-01-15T00:00:00'), end: new Date('2022-03-01T00:00:00')},
+                                        {start: new Date('2022-02-01T00:00:00'), end: new Date('2022-02-15T00:00:00')},
+                                        {start: new Date('2022-03-15T00:00:00'), end: new Date('2022-05-15T00:00:00')},
+                                        {start: new Date('2022-04-15T00:00:00'), end: new Date('2022-05-01T00:00:00')}];
+        //Retorno esperado da função UNION:    15/01/22---01/03/22     15/03/22---15/05/22  
+
+        let intervals_v: Interval[] = [{start: new Date('2022-01-15T00:00:00'), end: new Date('2022-05-15T00:00:00')},
+                                       {start: new Date('2022-02-01T00:00:00'), end: new Date('2022-05-01T00:00:00')},
+                                       {start: new Date('2022-02-15T00:00:00'), end: new Date('2022-04-15T00:00:00')}];
+        //Retorno esperado da função UNION:    15/01/22---15/05/22  
+
+        let intervals_vi: Interval[] = [{start: new Date('2022-01-15T00:00:00'), end: new Date('2022-03-01T00:00:00')},
+                                        {start: new Date('2022-04-01T00:00:00'), end: new Date('2022-05-15T00:00:00')},
+                                        {start: new Date('2022-02-01T00:00:00'), end: new Date('2022-02-15T00:00:00')},
+                                        {start: new Date('2022-03-15T00:00:00'), end: new Date('2022-04-15T00:00:00')},
+                                        {start: new Date('2022-02-15T00:00:00'), end: new Date('2022-04-01T00:00:00')}]; 
+        //Retorno esperado da função UNION:    15/01/22---15/05/22  
+
+        let intervals_vii: Interval[] = [{start: new Date('2022-01-15T00:00:00'), end: new Date('2022-02-01T00:00:00')},
+                                         {start: new Date('2022-02-01T00:00:00'), end: new Date('2022-02-15T00:00:00')},
+                                         {start: new Date('2022-03-01T00:00:00'), end: new Date('2022-04-01T00:00:00')},
+                                         {start: new Date('2022-03-15T00:00:00'), end: new Date('2022-04-15T00:00:00')},
+                                         {start: new Date('2022-05-01T00:00:00'), end: new Date('2022-05-15T00:00:00')},
+                                         {start: new Date('2022-05-15T00:00:00'), end: new Date('2022-06-01T00:00:00')},
+                                         {start: new Date('2022-06-15T00:00:00'), end: new Date('2022-07-01T00:00:00')}];                                                                                                                                                                               
+        //Retorno esperado da função UNION:    15/01/22---15/02/22     01/03/22---15/04/22     01/05/22---01/06/22   15/06/22---01/07/22
+
+        let result: Interval[];
+        result = this.util.union(intervals_i);
+        console.log('Resultado Esperado: 15/01/22---15/02/22     15/03/22---15/04/22       01/05/22---15/05/22');
+        console.log('Resultado Obtido: ', result);
+
+        result = this.util.union(intervals_ii);
+        console.log('Resultado Esperado: 15/01/22---01/04/22     01/05/22---15/05/22');
+        console.log('Resultado Obtido: ', result);
+
+        result = this.util.union(intervals_iii);
+        console.log('Resultado Esperado: 15/01/22---15/05/22');
+        console.log('Resultado Obtido: ', result);
+
+        result = this.util.union(intervals_iv);
+        console.log('Resultado Esperado: 15/01/22---01/03/22     15/03/22---15/05/22');
+        console.log('Resultado Obtido: ', result);
+
+        result = this.util.union(intervals_v);
+        console.log('Resultado Esperado: 15/01/22---15/05/22');
+        console.log('Resultado Obtido: ', result);
+
+        result = this.util.union(intervals_vi);
+        console.log('Resultado Esperado: 15/01/22---15/05/22');
+        console.log('Resultado Obtido: ', result);
+
+        result = this.util.union(intervals_vii);
+        console.log('Resultado Esperado: 15/01/22---15/02/22     01/03/22---15/04/22     01/05/22---01/06/22   15/06/22---01/07/22');
+        console.log('Resultado Obtido: ', result);
+      }
+    }
+
+*/

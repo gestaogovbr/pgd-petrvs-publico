@@ -22,24 +22,25 @@
                 <input-select [size]="6" label="Demanda" controlName="demanda_id" [control]="form!.controls.demanda_id" [items]="demandas_usuario"></input-select>
             </div>
         </separator>
-<!--         <separator title="Pesquisa de Afastamentos">
-            <div class="row">
-              <input-switch [size]="2" label="Incluir Afastamentos" controlName="incluir_afastamentos" [control]="form!.controls.incluir_afastamentos" (change)="onAfastamentosChange($event)"></input-switch>
-                <input-select [size]="4" #tipoMotivoAfastamento [disabled]="disabled_afastamentos ? 'disabled' : undefined" label="Motivo" itemTodos="- Todos -" [valueTodos]="null" controlName="tipo_motivo_afastamento_id" [control]="form!.controls.tipo_motivo_afastamento_id" [dao]="tipoMotivoAfastamentoDao"></input-select>
-                 <input-datetime datetime [size]="3" [disabled]="disabled_afastamentos ? 'disabled' : undefined" label="Início" controlName="inicio_afastamento" [control]="form!.controls.inicio_afastamento"></input-datetime>
-                <input-datetime datetime [size]="3" [disabled]="disabled_afastamentos ? 'disabled' : undefined" label="Fim" controlName="fim_afastamento" [control]="form!.controls.fim_afastamento"></input-datetime>
-             </div>
-        </separator> -->
+
     </div>
     <separator title="Botões para Testes">
         <toolbar [buttons]="toolbarButtons"></toolbar>
     </separator>
-  </editable-form>
-  <separator title="Resultados">
+</editable-form>
+<separator title="Resultados">
     <div *ngIf="efemeridesFrontEnd" class="col-6">
         <calendar-efemerides [efemerides]="efemeridesFrontEnd"></calendar-efemerides>    
     </div>
     <div *ngIf="efemeridesBackEnd" class="col-6">
         <calendar-efemerides [efemerides]="efemeridesBackEnd"></calendar-efemerides>
     </div>  
-  </separator>
+</separator>
+<!--         <separator title="Pesquisa de Afastamentos">
+            <div class="row">
+                <input-switch [size]="2" label="Incluir Afastamentos" controlName="incluir_afastamentos" [control]="form!.controls.incluir_afastamentos" (change)="onAfastamentosChange($event)"></input-switch>
+                <input-select [size]="4" #tipoMotivoAfastamento [disabled]="disabled_afastamentos ? 'disabled' : undefined" label="Motivo" itemTodos="- Todos -" [valueTodos]="null" controlName="tipo_motivo_afastamento_id" [control]="form!.controls.tipo_motivo_afastamento_id" [dao]="tipoMotivoAfastamentoDao"></input-select>
+                <input-datetime datetime [size]="3" [disabled]="disabled_afastamentos ? 'disabled' : undefined" label="Início" controlName="inicio_afastamento" [control]="form!.controls.inicio_afastamento"></input-datetime>
+                <input-datetime datetime [size]="3" [disabled]="disabled_afastamentos ? 'disabled' : undefined" label="Fim" controlName="fim_afastamento" [control]="form!.controls.fim_afastamento"></input-datetime>
+            </div>
+        </separator> -->

@@ -25,6 +25,7 @@ class PlanejamentoObjetivo extends ModelBase
         'objetivo_pai_id', /* char(36); */
         //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
         //'data_fim', /* datetime; */// Data fim da vigência
+        //'fundamentacao', /* varchar(256); NOT NULL; */// Fundamentação
     ];
 
     // Has

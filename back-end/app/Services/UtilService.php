@@ -167,7 +167,7 @@ class UtilService
     }
 
 
-    public function addTimeHours(DateTime $dateRef, int $hours): DateTime {
+    public static function addTimeHours(DateTime $dateRef, int $hours): DateTime {
         $result = new DateTime($dateRef->getTimestamp());
         return date_timestamp_set($result, $result->getTimestamp() + ($hours * 60 * 60));
     }
@@ -385,7 +385,7 @@ class UtilService
         ];
     }
 
-    public function round(number $num, number $decimal) {
+    public static function round(float $num, float $decimal) {
         $EPSILON = 2.2204460492503130808472633361816 * pow(10,-16);
         $factor = pow(10, $decimal);
         return round(($num + $EPSILON) * $factor) / $factor;
