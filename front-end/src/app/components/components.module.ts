@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { NgxMaskModule, IConfig } from 'ngx-mask';
 import { GridComponent } from './grid/grid.component';
 import { ColumnComponent } from './grid/column/column.component';
@@ -120,6 +121,7 @@ const maskConfig: Partial<IConfig> = {
     ChartsModule,
     InfiniteScrollModule,
     ReactiveFormsModule,
+    FormsModule,
     DndModule,
     //CurrencyMaskModule,
     AngularDoubleScrollbarsModule,

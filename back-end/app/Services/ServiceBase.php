@@ -829,6 +829,7 @@ class ServiceBase extends DynamicMethods
      */
     public function proxyWith(&$entity,&$data) {
         $data['with'] = $this->getCamelWith($data['with']);
+        $model = $this->getModel();
         foreach($data['with'] as $key => $with) {
             $withs = explode('.',$with);
             if(str_contains(array_slice($withs, -1, 1)[0],':')) {   // se o último elemento contiver campos...
@@ -836,12 +837,31 @@ class ServiceBase extends DynamicMethods
                 array_splice($withs, -1, 1, explode(':',array_slice($withs, -1, 1)[0])[0]);     // depois retira os : e os campos
             }
             while (count($withs)>0) {
-                $entity->with([implode('.',$withs) => function($query) {$query->whereNull('data_fim');}]);
-                $entity->with(gettype($key) == "string" 
-                        ? [$key => [implode('.',$withs) => function($query) {$query->whereNull('data_fim');}]]
-                        : [implode('.',$withs) => function($query) {$query->whereNull('data_fim');}]);
+                $relation = $this->getNestedModel($model, implode('.',$withs));
+                //SHOW COLUMNS FROM `table` LIKE 'fieldname'
+                if(!empty($relation) && !empty((new $relation)->has_data_fim)) {
+                    $entity->with([implode('.',$withs) => function($query) {$query->whereNull('data_fim');}]);
+                    $entity->with(gettype($key) == "string" 
+                            ? [$key => [implode('.',$withs) => function($query) {$query->whereNull('data_fim');}]]
+                            : [implode('.',$withs) => function($query) {$query->whereNull('data_fim');}]);    
+                } else {
+                    $entity->with(implode('.',$withs));
+                }
                 array_pop($withs);
             }
         }
+    }
+
+    public function getNestedModel($model, $nested) {
+        $relations = explode('.', explode(':', $nested)[0]);
+        foreach($relations as $related) {
+            if(method_exists($model, Str::camel($related))) {
+                $relation = $model->{Str::camel($related)}();
+                $model = $relation->getRelated();
+            } else {
+                return null;
+            }
+        }
+        return $model;
     }
 }
