@@ -83,7 +83,7 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
       tipo_calculo: {default: 0},
       datafim_fimoutempo: {default: new Date()},
       tempo_fimoutempo: {default: 0}, 
-      carga_horaria: {default: ""},
+      carga_horaria: {default: 8},
       unidade_id: {default: ""},
       tipo: {default: "DISTRIBUICAO"},
       demanda_id: {default: ""},
