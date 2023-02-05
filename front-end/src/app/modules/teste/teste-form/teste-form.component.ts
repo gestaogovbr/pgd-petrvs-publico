@@ -1,19 +1,21 @@
-import { Component, Injector } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
+import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { DemandaDaoService } from 'src/app/dao/demanda-dao.service';
 import { TipoMotivoAfastamentoDaoService } from 'src/app/dao/tipo-motivo-afastamento-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { Afastamento } from 'src/app/models/afastamento.model';
 import { IIndexable } from 'src/app/models/base.model';
 import { DemandaPausa } from 'src/app/models/demanda-pausa.model';
+import { Demanda } from 'src/app/models/demanda.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { Usuario } from 'src/app/models/usuario.model';
 import { CalendarService, Efemerides, TipoContagem } from 'src/app/services/calendar.service';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { NavigateResult } from 'src/app/services/navigate.service';
-import { Interval } from 'src/app/services/util.service';
 import { PageFormBase } from '../../base/page-form-base';
 
 @Component({
@@ -22,8 +24,10 @@ import { PageFormBase } from '../../base/page-form-base';
   styleUrls: ['./teste-form.component.scss']
 })
 export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService> {
+  @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
+  @ViewChild('demandas', { static: false }) public demandas?: InputSelectComponent;
 
-  public editableForm?: EditableFormComponent | undefined;
+  //public editableForm?: EditableFormComponent | undefined;
   public calendar: CalendarService;
   public efemeridesFrontEnd?: Efemerides;
   public efemeridesBackEnd?: Efemerides;
@@ -31,14 +35,17 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
   public usuarioDao: UsuarioDaoService;
   public usuario?: Usuario;
   public unidadeDao: UnidadeDaoService;
+  public demandaDao!: DemandaDaoService;
   public demandas_usuario: LookupItem[] = [];
+  public demanda?: Demanda;
   public tipoMotivoAfastamentoDao: TipoMotivoAfastamentoDaoService;
   public form: FormGroup;
   public disabled_datetime: boolean = false;
   public disabled_pausas: boolean = false;
   public disabled_afastamentos: boolean = false;
   public opcoes_calculo: LookupItem[] = [
-    {'key': 0, 'value': 'Data-fim'},{'key': 1, 'value': 'Tempo'}];
+    {'key': 0, 'value': 'Data-fim'},{'key': 1, 'value': 'Tempo'}
+  ];
   public erros: string = '';
   public toolbarButtons: ToolbarButton[] = [
     {
@@ -74,9 +81,11 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
 
   constructor(public injector: Injector) {
     super(injector, Usuario, UsuarioDaoService);
+    this.log('constructor');
     this.calendar = injector.get<CalendarService>(CalendarService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
+    this.demandaDao = injector.get<DemandaDaoService>(DemandaDaoService);
     this.tipoMotivoAfastamentoDao = injector.get<TipoMotivoAfastamentoDaoService>(TipoMotivoAfastamentoDaoService);
     this.form = this.fh.FormBuilder({
       inicio: {default: new Date()},
@@ -98,11 +107,11 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
   }
 
   public loadData(entity: Usuario, form: FormGroup): void | Promise<void> {
-    throw new Error('Method not implemented.');
+    //throw new Error('Method not implemented.');
   }
 
   public initializeData(form: FormGroup): void | Promise<void> {
-    throw new Error('Method not implemented.');
+    //throw new Error('Method not implemented.');
   }
 
   public saveData(form: IIndexable): Promise<boolean | Usuario | NavigateResult | null | undefined> {
@@ -149,17 +158,24 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
   }
 
   public async onUsuarioSelect(){
-    const entity = undefined;
-    this.dao!.getById(this.form.controls.usuario_id.value, this.join).then(usuario => {
+    await this.dao!.getById(this.form.controls.usuario_id.value, this.join).then(usuario => {
       this.usuario = usuario!;
       usuario?.demandas?.forEach(demanda => {
         this.demandas_usuario.push({
           key: demanda.id,
           value: demanda.assunto || ''
         });
-      this.cdRef.detectChanges();
       });
-    });
+      this.demandas!.items = this.demandas_usuario;
+      this.cdRef.detectChanges();
+    }
+    );
+  }
+
+  public async onDemandaChange(event: Event){
+    await this.demandaDao.getById(this.form.controls.demanda_id.value).then( demanda => {
+      this.demanda = demanda!;
+    })
   }
 
   public async compararFuncoes() {
@@ -172,13 +188,53 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
     let cargaHoraria: number = this.form.controls.carga_horaria.value;
     let unidade: Unidade | null = await this.unidadeDao.getById(this.form.controls.unidade_id.value, ['entidade']);
     let tipo: TipoContagem = this.form.controls.tipo.value;
-    let pausas: DemandaPausa[] | undefined = this.form.controls.incluir_pausas.value ? [] : [];
-    let afastamentos: Afastamento[] | undefined = this.form.controls.incluir_afastamentos.value ? this.usuario?.afastamentos : [];
+    let pausas: DemandaPausa[]  = this.form.controls.incluir_pausas.value ? this.demanda!.pausas : [];
+    let afastamentos: Afastamento[]  = this.form.controls.incluir_afastamentos.value ? (this.usuario!.afastamentos ?? []) : [];
     this.efemeridesFrontEnd = this.calendar.calculaDataTempoUnidade(inicio, calculo ? fim : tempo, cargaHoraria, unidade!, tipo, pausas, afastamentos);
     this.dao!.calculaDataTempoUnidade(inicio_dao, calculo ? fim_dao : tempo, cargaHoraria, unidade!.id, tipo, pausas, afastamentos).then(response => {
       this.efemeridesBackEnd = response;
     });
   }
+
+  public log(message: string){
+    console.log(message);
+  }
+  
+  ngOnInit() {
+    super.ngOnInit();
+    this.log('ngOnInit');
+  }
+
+  ngOnChanges() {
+    //this.log('ngOnChanges');
+  }
+
+  ngDoCheck() {
+    //this.log('ngDoCheck');
+  }
+
+  ngAfterContentInit() {
+    this.log('ngAfterContentInit');
+  }
+
+  ngAfterContentChecked() {
+    //this.log('ngAfterContentChecked');
+  }
+
+  ngAfterViewInit() {
+    super.ngAfterViewInit();
+    this.log('ngAfterViewInit');
+  }
+
+  ngAfterViewChecked() {
+    //this.log('ngAfterViewChecked');
+  }
+
+  ngOnDestroy(){
+    this.log('ngOnDestroy');
+  }
+
+
 
 }
 

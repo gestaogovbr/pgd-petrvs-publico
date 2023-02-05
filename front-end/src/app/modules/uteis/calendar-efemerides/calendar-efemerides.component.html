@@ -89,7 +89,7 @@
 <separator [bold]="true" [title]="'Detalhes dia-a-dia (' + efemerides?.diasDetalhes?.length + '):'" collapse transparent>
     <span *ngFor="let dia of efemerides?.diasDetalhes">
         <b>{{dia.diaSemana}}</b> - Início: {{util.getDateTimeFormatted(data(dia.tInicio))}} - Fim: {{util.getDateTimeFormatted(data(dia.tFim))}} - Total: {{dia.hExpediente}}h<br>
-        Intervalos: Qde({{dia.intervalo.length}}) - Total de horas({{totalHoras(dia.intervalo)}}h)<br>
-        Qde. horas contabilizadas: {{dia.hExpediente-totalHoras(dia.intervalo)}}<br><br>
+        Intervalos: Qde({{dia.intervalos.length}}) - Total de horas({{totalHoras(dia.intervalos)}}h)<br>
+        Qde. horas contabilizadas: {{dia.hExpediente-totalHoras(dia.intervalos)}}<br><br>
     </span>
 </separator>

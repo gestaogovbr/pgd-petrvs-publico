@@ -25,11 +25,11 @@ export type Efemerides = {
   tempoUtil: number, /* horas (Caso seja dia, os dias serão tempoUtil / cargaHoraria, será calculado ou informado) */
   forma: FormaContagem, /* Forma de contagem */
   horasNaoUteis: number, /* Horas de Afastamento, Pausas e Intervalos do expediente */
-  cargaHoraria: number, /* Cargo horária para os cálculos (Será utilizado inclusive para o cálculo em dias) */
+  cargaHoraria: number, /* Carga horária para os cálculos (Será utilizado inclusive para o cálculo em dias) */
   expediente: Expediente, /* Expediente da unidade/entidade */
   afastamentos: Afastamento[], /* Afastamentos válidos no período */
   pausas: DemandaPausa[], /* Pausas */
-  diaNaoUtil: FeriadoList, /* Dias sem expediente (ex.: Fins de semana) */
+  diasNaoUteis: FeriadoList, /* Dias sem expediente (ex.: Fins de semana) */
   feriados: FeriadoList, /* Feriados cadastrados e religiosos no período */
   diasDetalhes: ExpedienteDia[]
 }
@@ -41,7 +41,7 @@ export type ExpedienteDia = {
   tFim: number;
   hExpediente: number,
   //hNaoUteis: number,
-  intervalo: Interval[];
+  intervalos: Interval[];
 }
 
 @Injectable({
@@ -206,7 +206,7 @@ export class CalendarService {
   Obs.: As variáveis que armazenam tempo/data são iniciadas com as respectivas letras:
   - d: Data, do tipo Date do javascript
   - h: Tempo em formato de horas, de forma numérica, por exempo 01h30 será igual a 1.5
-  - t: Tempo em formado de milesegundos (getTime() do javascript)
+  - t: Tempo em formado de milissegundos (Date.getTime() do javascript)
   - u: Unidade de dia, é um formato semelhante ao timestamp, porem contado em dias
   - s: Hora em formato string (hh:mm(:ss)?)
 
@@ -218,6 +218,7 @@ export class CalendarService {
   @param FormaContagem forma        Forma de contagem dos prazos (dias/horas úteis/corridos)
   @param number        cargaHoraria Carga horária que será considerada para os cálculos
   @param Expediente    expediente   Expediente que será utilizado para os cálculos. Não obrigatório caso seja dias/horas corridas.
+  @param FeriadoList?  feriados
   @param DemandaPausa? pausas       Lista das pausas, quando aplicável
   @param Afastamento?  afastamentos Lista dos afastamento a partir da data Inicio para o usuario, quando aplicável
   @return Efemerides Retorna todas as informações do cálculo com as horas ou a data fim calculados
@@ -269,7 +270,7 @@ export class CalendarService {
         tInicio: tLimiteInicio,
         tFim: tLimiteFim,
         hExpediente: this.util.getHoursBetween(tLimiteInicio, tLimiteFim),
-        intervalo: []
+        intervalos: []
       };
       if (expediente) {
         const diaIso = moment(dDiaAtual).format("YYYY-MM-DD");
@@ -287,7 +288,7 @@ export class CalendarService {
             const tInicio = this.util.setStrTime(dDiaAtual, turno.inicio).getTime();
             const tFim = this.util.setStrTime(dDiaAtual, turno.fim).getTime();
             if (tLimiteInicio < tFim && tInicio < tLimiteFim) {
-              if (tFimTurno && tFimTurno < tInicio) dia.intervalo.push({ start: tFimTurno, end: tInicio });
+              if (tFimTurno && tFimTurno < tInicio) dia.intervalos.push({ start: tFimTurno, end: tInicio });
               dia.tInicio = Math.max(tLimiteInicio, Math.min(dia.tInicio, tInicio));
               dia.tFim = Math.min(tLimiteFim, Math.max(dia.tFim, tFim));
               tFimTurno = tFimTurno ? Math.max(tFimTurno, tFim) : tFim;
@@ -295,12 +296,12 @@ export class CalendarService {
           }
           dia.hExpediente = this.util.getHoursBetween(dia.tInicio, dia.tFim);
           /* Adiciona os expedientes especiais SEM expediente e faz a união com os intervalos já existentes do expediente */
-          especial.filter(x => !!x.sem).forEach(x => dia.intervalo.push({ start: this.util.setStrTime(dDiaAtual, x.inicio).getTime(), end: this.util.setStrTime(dDiaAtual, x.fim).getTime() }));
-          dia.intervalo = this.util.union(dia.intervalo);
+          especial.filter(x => !!x.sem).forEach(x => dia.intervalos.push({ start: this.util.setStrTime(dDiaAtual, x.inicio).getTime(), end: this.util.setStrTime(dDiaAtual, x.fim).getTime() }));
+          dia.intervalos = this.util.union(dia.intervalos);
           /* Filtra e ajusta os intervalos para caberem entre inicio e fim */
-          dia.intervalo = dia.intervalo.filter(x => x.start <= dia.tFim && x.end >= dia.tInicio).map(x => Object.assign(x, { start: Math.max(x.start as number, dia.tInicio), end: Math.min(x.end as number, dia.tFim) }));
+          dia.intervalos = dia.intervalos.filter(x => x.start <= dia.tFim && x.end >= dia.tInicio).map(x => Object.assign(x, { start: Math.max(x.start as number, dia.tInicio), end: Math.min(x.end as number, dia.tFim) }));
           /* Calcula as horas dos intervalos (os intervalos já estão unificados e ajustados para dentro do expediente) 
-          dia.hNaoUteis = dia.intervalo.reduce((a, v) => a + this.util.getHoursBetween(v.start, v.end), 0); */
+          dia.hNaoUteis = dia.intervalos.reduce((a, v) => a + this.util.getHoursBetween(v.start, v.end), 0); */
         } else { /* Caso no dia não tenha nenhum turno ou horario especial com expediente */
           dia.tInicio = 0;
           dia.tFim = 0;
@@ -324,7 +325,7 @@ export class CalendarService {
       afastamentos: [],
       pausas: [],
       feriados: {},
-      diaNaoUtil: {},
+      diasNaoUteis: {},
       diasDetalhes: []
     };
     cargaHoraria = forma == "HORAS_CORRIDAS" ? 24 : result.cargaHoraria; /* Garante que se a carga horária vier zerado, será considerado 24hrs */
@@ -346,11 +347,11 @@ export class CalendarService {
         if (feriadoReligioso) result.feriados[strDiaAtual] = feriadoReligioso; /* Se feriado religioso, adiciona ao resultado */
       }
       /* Calcula se é dia útil ou não */
-      const naoUteis = useCorridos ? [] : this.util.union([...afastamentos, ...pausas, ...diaAtual.intervalo]) as TimeInterval[];
+      const naoUteis = useCorridos ? [] : this.util.union([...afastamentos, ...pausas, ...diaAtual.intervalos]) as TimeInterval[];
       const hNaoUteis = naoUteis.reduce((a, v) => a + this.util.getHoursBetween(v.start, v.end), 0);
       const diaUtil = useCorridos || (!feriadoCadastrado && !feriadoReligioso && diaAtual.hExpediente > hNaoUteis);
       //result.horasNaoUteis += hNaoUteis;
-      if (!diaUtil) result.diaNaoUtil[strDiaAtual] = [diaAtual.diaLiteral, feriadoCadastrado, feriadoReligioso].filter(x => x?.length).join(", ");
+      if (!diaUtil) result.diasNaoUteis[strDiaAtual] = [diaAtual.diaLiteral, feriadoCadastrado, feriadoReligioso].filter(x => x?.length).join(", ");
       /* Calculo em dias */
       if (useDias) {
         if (diaUtil && (useCorridos || (!afastamentos.length && !pausas.length))) {
@@ -388,7 +389,7 @@ export class CalendarService {
       }
       if(diaUtil) {
         result.diasDetalhes.push(diaAtual);
-        result.diasDetalhes[result.diasDetalhes.length-1].intervalo = naoUteis;
+        result.diasDetalhes[result.diasDetalhes.length-1].intervalos = naoUteis;
       }
       dDiaAtual.setDate(dDiaAtual.getDate() + 1);
       result.dias_corridos++;

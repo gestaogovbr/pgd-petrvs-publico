@@ -7,7 +7,7 @@
     "require": {
         "php": "^7.3|^8.0",
         "doctrine/dbal": "^3.3",
-        "fightbulc/moment": "^1.33",
+        "lawondyss/moment-php": "dev-master",
         "firebase/php-jwt": "5.4",
         "fruitcake/laravel-cors": "^2.0",
         "google/apiclient": "^2.11",

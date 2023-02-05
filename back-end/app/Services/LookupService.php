@@ -19,5 +19,9 @@ class LookupService {
     public static function getCode($itens, $k) : string {
         return array_values(array_filter($itens, function($d) use ($k) {return $d['key'] == $k;}))[0]['code'];
     }
+
+    public static function getValue($itens, $k) : string {
+        return array_values(array_filter($itens, function($d) use ($k) {return $d['key'] == $k;}))[0]['value'];
+    }
 }
 

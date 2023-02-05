@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\DB;
 use App\Services\CalendarioService;
 use Carbon\Carbon;
+use \MomentPHP\MomentPHP;
 use DateTime;
 
 class UtilService
@@ -33,7 +34,7 @@ class UtilService
     }
 
     public static function getTimeFormatted($dataHora) {
-        return Carbon::parse($dataHora)->format("H:i");
+        return (new MomentPHP($dataHora))->format("H:i");
     }
 
     public static function getDateTimeFormatted($dataHora, $separator = " ") {
@@ -55,16 +56,17 @@ class UtilService
     }
 
     /**
-     * A função devolve um Timestamp, se receber uma data em qualquer um dos seguintes formatos: DateTime, Timestamp, string;
+     * A função devolve um float, que será o Timestamp, se receber uma data em qualquer um dos seguintes formatos: DateTime, Timestamp, string.
+     * Se o formato recebido for inválido, retorna -1.
      */
-    public static function asTimestamp($date) {
-        return gettype($date) == "integer" ? $date : ($date instanceof DateTime ? $date->getTimestamp() : (gettype($date) == "string" ? strtotime($date) : $date));
+    public static function asTimestamp($date): float {
+        return gettype($date) == "integer" ? $date : ($date instanceof DateTime ? $date->getTimestamp() : (gettype($date) == "string" ? (strtotime($date) ? strtotime($date) : -1) : -1));
     }
 
     /**
      * A função devolve um DateTime, se receber uma data em qualquer um dos seguintes formatos: DateTime, Timestamp, string;
      */
-    public static function asDateTime($date) {
+    public static function asDateTime(DateTime | int | string $date): DateTime {
         return $date instanceof DateTime ? $date : (gettype($date) == "integer" ? new DateTime(date(ServiceBase::ISO8601_FORMAT,$date)) : (gettype($date) == "string" ? new DateTime($date) : $date));
     }
 
@@ -161,9 +163,9 @@ class UtilService
      * @param  $time: uma string representando um tempo (hh:mm:ss) 
      * @return: retorna um DateTime
      */
-    public function setStrTime(DateTime $dateRef, string $time): DateTime {
+    public static function setStrTime(DateTime $dateRef, string $time): DateTime {
         $aTime = array_map(fn($x) => intval($x), explode(":", $time));
-        return $this->setTime($dateRef, $aTime[0] || 0, $aTime[1] || 0, $aTime[2] || 0);
+        return static::setTime($dateRef, $aTime[0] ?? 0, $aTime[1] ?? 0, $aTime[2] ?? 0);
     }
 
 
@@ -181,7 +183,7 @@ class UtilService
      * @param  $seg: um inteiro representando os segundos 
      * @return: retorna um DateTime
      */
-    public function setTime(DateTime $dateRef, int $hour, int $min, int $sec): DateTime {
+    public static function setTime(DateTime $dateRef, int $hour, int $min, int $sec): DateTime {
         $result = new DateTime(date(ServiceBase::ISO8601_FORMAT, $dateRef->getTimeStamp()));
         return date_time_set($result, $hour, $min, $sec);
     }

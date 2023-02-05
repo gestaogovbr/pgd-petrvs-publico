@@ -28,8 +28,9 @@ export class CalendarEfemeridesComponent implements OnInit {
   }
 
   public get expediente(): string[] {
+    let a = this.efemerides?.expediente;
     let expediente = this.lookup.DIA_SEMANA.map(x => this.efemerides?.expediente[x.code!]?.length ? x.value + ": " + this.efemerides.expediente[x.code!].map((y: Turno) => y.inicio + " até " + y.fim).join(", ") : "").filter(x => x.length);
-    if(this.efemerides?.expediente?.especial?.length) expediente.push("Expecial: " + this.efemerides.expediente.especial.map((y: Turno) => this.util.getDateFormatted(y.data!) + " - " + y.inicio + " até " + y.fim + (y.sem ? " (Sem expediente)" : "")).join(", "));
+    if(this.efemerides?.expediente?.especial?.length) expediente.push("Especial: " + this.efemerides.expediente.especial.map((y: Turno) => this.util.getDateFormatted(y.data!) + " - " + y.inicio + " até " + y.fim + (y.sem ? " (Sem expediente)" : "")).join(", "));
     if(JSON.stringify(this._expediente) != JSON.stringify(expediente)) this._expediente = expediente;
     return this._expediente;
   }
@@ -51,7 +52,7 @@ export class CalendarEfemeridesComponent implements OnInit {
   }
 
   public get diasNaoUteis(): [string, string][] {
-    return Object.entries(this.efemerides?.diaNaoUtil || {}).map(x => [this.isoToFormatted(x[0]), x[1]]);
+    return Object.entries(this.efemerides?.diasNaoUteis || {}).map(x => [this.isoToFormatted(x[0]), x[1]]);
   }
 
   public data(timestamp: number): Date {

@@ -106,8 +106,6 @@ Route::middleware('auth:sanctum')->prefix('Error')->group(function () {
 Route::middleware('auth:sanctum')->prefix('Traffic')->group(function () {
 });
 Route::middleware('auth:sanctum')->post('/Petrvs/showTables', [PetrvsController::class, 'showTables']);
-
-/* Rotinas */
 Route::middleware(['auth:sanctum'])->prefix('Integracao')->group(function () { 
     Route::post('store', [IntegracaoController::class, 'sincronizarPetrvs']);
     Route::post('query', [IntegracaoController::class, 'query']);
