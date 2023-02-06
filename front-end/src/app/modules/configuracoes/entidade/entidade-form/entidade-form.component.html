@@ -16,6 +16,9 @@
         <input-display *ngIf="form!.controls.abrangencia.value == 'NACIONAL'" [size]="8" label="Âmbito" value="Nacional"></input-display>
       </div>
     </tab>
+    <tab key="EXPEDIENTE" label="Expediente">
+      <calendar-expediente #expediente [control]="form!.controls.expediente"></calendar-expediente>
+    </tab>
     <!--tab key="CONFIGURACOES" label="Configurações">
       <div class="row">
           <input-radio [size]="4"  label="Formulário de Demanda" controlName="layout_formulario_demanda" [control]="form!.controls.layout_formulario_demanda" [items]="lookup.TIPO_LAYOUT" labelInfo="Forma do layout do formulário de Demanda"></input-radio>

@@ -25,6 +25,9 @@ class Planejamento extends ModelBase
         'entidade_id', /* char(36); NOT NULL; */
         //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência do registro
         //'data_fim', /* datetime; */// Data fim da vigência do registro
+        //'missao', /* text; NOT NULL; */// Missão
+        //'visao', /* text; NOT NULL; */// Visão
+        //'valores', /* json; NOT NULL; */// Valores
     ];
 
     // Has

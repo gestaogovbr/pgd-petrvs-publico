@@ -121,6 +121,7 @@ export class TesteComponent implements OnInit {
   ];*/
 
   public JSON = JSON;
+  public textoEditor: string = "teste";
 
   constructor(
     public fh: FormHelperService,
@@ -132,6 +133,7 @@ export class TesteComponent implements OnInit {
     @Inject('ID_GENERATOR_BASE') public ID_GENERATOR_BASE: any
   ) {
     this.form = fh.FormBuilder({
+      editor: {default: "qualquer coisa"},
       id: {default: ""},
       campo1: {default: ""},
       campo2: {default: new Date()},

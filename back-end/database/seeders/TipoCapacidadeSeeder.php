@@ -38,7 +38,6 @@ class TipoCapacidadeSeeder extends Seeder
 
         $developerId = $perfil->id;
 
-        //$developerId = ((config('petrvs') ?: [])['ids-fixos'] ?: [])['developer-id'] ?: $utilService->uuid("Desenvolvedor");
         // carrega os tipos de capacidades do vetor declarado no serviço TipoCapacidadeService
         $dadosTiposCapacidades = array_map(fn ($capacidade) => array_merge([$utilService->uuid($capacidade[0])], $capacidade), $tiposCapacidadesService->tiposCapacidades);
         foreach ($dadosTiposCapacidades as $linha) {

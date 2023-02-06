@@ -4,7 +4,6 @@ import { AuthGuard } from 'src/app/guards/auth.guard';
 import { ConfigResolver } from 'src/app/resolvies/config.resolver';
 import {TemplateListComponent} from "./template-list/template-list.component";
 import {TemplateFormComponent} from "./template-form/template-form.component";
-//import {TemplateFormVinculaComponent} from "./template-form-vincula/template-form-vincula.component";
 
 const routes: Routes = [
   { path: '', component: TemplateListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Template" } },

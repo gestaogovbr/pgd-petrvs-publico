@@ -52,6 +52,11 @@ export class LookupService {
     { key: 'TCR', value: "Termo de Ciência e Responsabilidade" }
   ];
 
+  public TIPO_CONTAGEM: LookupItem[] = [
+    { key: 'DISTRIBUICAO', value: "DISTRIBUIÇÃO" },
+    { key: 'ENTREGA', value: "ENTREGA" }
+  ];
+
   public COMENTARIO_PRIVACIDADE: LookupItem[] = [
     { key: 'PUBLICO', value: "Público" },
     { key: 'PRIVADO', value: "Privado" }

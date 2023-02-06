@@ -92,9 +92,9 @@ export class AppComponent {
     this.menuToolbar = [
       { name: "Cadastros", permition: "MENU_CAD_ACESSO", route: ['cadastros'], id: "navbarDropdownCadastros", menu: "cadastros" },
       { name: "Gestão", permition: "MENU_GESTAO_ACESSO", route: ['gestao'], id: "navbarDropdownGestao", menu: "gestao" },
-      { name: "Relatórios", permition: "", route: ['relatorios'], id: "navbarDropdownRelatorios", menu: "relatorios" },
+      { name: "Relatórios", permition: "MENU_REL_ACESSO", route: ['relatorios'], id: "navbarDropdownRelatorios", menu: "relatorios" },
       { name: "Configurações", permition: "MENU_CONFIG_ACESSO", route: ['configuracoes'], id: "navbarDropdownConfiguracoes", menu: "configuracoes" },
-      { name: "Rotinas Internas", permition: "MENU_ROTINAS_ACESSO", route: ['rotinas'], id: "navbarDropdownRotinas", menu: "rotinas" },
+      //{ name: "Rotinas Internas", permition: "MENU_ROTINAS_ACESSO", route: ['rotinas'], id: "navbarDropdownRotinas", menu: "rotinas" },
       { name: "Desenvolvedor", permition: "DEV_MENU_LOGS_ACESSO", route: ['logs'], id: "navbarDropdownLogs", menu: "logs" }
     ];
     this.menuSchema = {
@@ -104,7 +104,7 @@ export class AppComponent {
         { name: this.lex.noun("Cidades", true), permition: 'MOD_CID', route: ['cadastros', 'cidade'], icon: "bi bi-building" },
         { name: this.lex.noun("Eixos temáticos", true), permition: 'MOD_EXTM', route: ['cadastros', 'eixo-tematico'], icon: "bi bi-gear" },
         { name: this.lex.noun("Entregas", true), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: "bi bi-list-check" },
-        { name: this.lex.noun("Macroprocessos", true), permition: '', route: ['cadastros', 'macroprocesso'], icon: "bi bi-list-check" },
+        //{ name: this.lex.noun("Macroprocessos", true), permition: '', route: ['cadastros', 'macroprocesso'], icon: "bi bi-list-check" },
         { name: this.lex.noun("Feriados", true), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: "bi bi-emoji-sunglasses" },
         { name: this.lex.noun("Material e serviço", true), permition: '', route: ['cadastros', 'material-servico'], icon: "bi bi-box-seam" },
         { name: this.lex.noun("Tarefa", true), permition: 'MOD_DMD', route: ['cadastros', 'tarefa'], icon: "bi bi-boxes" },
@@ -120,16 +120,16 @@ export class AppComponent {
       ],
       gestao: [
         { name: this.lex.noun("Adesão", true), permition: 'MOD_ADES', route: ['gestao', 'adesao'], icon: "bi bi-check-all" },
-        { name: this.lex.noun("Cadeia de Valor", true), permition: 'MOD_EXTM', route: ['cadastros', 'cadeia-valor'], icon: "bi bi-bar-chart-steps" },
+        { name: this.lex.noun("Cadeia de valor", true), permition: 'MOD_EXTM', route: ['cadastros', 'cadeia-valor'], icon: "bi bi-bar-chart-steps" },
         { name: this.lex.noun("Demanda", true), permition: '', route: ['gestao', 'demanda'], icon: "bi bi-activity" },
-        { name: this.lex.noun("Planos de Gestão/Entregas", true), permition: 'MOD_PGENTR', route: ['gestao', 'planejamento'], icon: "bi bi-files" },
+        { name: this.lex.noun("Planejamento estratégico", true), permition: 'MOD_PGENTR', route: ['gestao', 'planejamento'], icon: "bi bi-files" },
         { name: this.lex.noun("Programa de gestão", true), permition: 'MOD_PRGT', route: ['cadastros', 'programa'], icon: "bi bi-graph-up-arrow" },
         { name: this.lex.noun("Plano de trabalho", true), permition: 'MOD_PTR', route: ['gestao', 'plano'], icon: "bi bi-list-check" },
         { name: this.lex.noun("Projetos", true), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: "bi bi-diagram-2" }
       ],
       relatorios: [
-        { name: "Força de Trabalho - Servidor", permition: '', route: ['relatorios', 'forca-de-trabalho', 'servidor'], icon: "bi bi-file-person" },
-        { name: "Força de Trabalho - Área", permition: '', route: ['relatorios', 'forca-de-trabalho', 'area'], icon: "bi bi-diagram-3-fill" }
+        { name: "Força de Trabalho - Servidor", permition: 'MOD_PTR_CONS', route: ['relatorios', 'forca-de-trabalho', 'servidor'], icon: "bi bi-file-person" },
+        { name: "Força de Trabalho - Área", permition: 'MOD_PTR_CONS', route: ['relatorios', 'forca-de-trabalho', 'area'], icon: "bi bi-diagram-3-fill" }
       ],
       configuracoes: [
         { name: "Preferências", permition: '', route: ['configuracoes', 'preferencia'], metadata: {root: true, modal: true}, icon: "bi bi-gear" },
@@ -141,14 +141,15 @@ export class AppComponent {
         "-",
         { name: "Sobre", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
       ],
-      rotinas: [
-        { name: "Integração", permition: '', route: ['rotinas', 'integracao'], icon: "bi bi-pencil-square" }
-      ],
       logs: [
+        { name: "Integração", permition: '', route: ['rotinas', 'integracao'], icon: "bi bi-pencil-square" },
+        "-",
         { name: "Alterações", permition: '', route: ['logs', 'change'], icon: "bi bi-pencil-square" },
         { name: "Erros", permition: '', route: ['logs', 'error'], icon: "bi bi-bug" },
         { name: "Tráfego", permition: '', route: ['logs', 'traffic'], icon: "bi bi-stoplights" },
-        { name: "Teste", permition: '', route: ['teste'], icon: "bi bi-check-all" }
+        "-",
+		    { name: "Teste Expediente", permition: '', route: ['teste'], icon: "bi bi-check-all" },
+		    { name: "Teste Calcula Tempo", permition: '', route: ['teste', 'calcula-tempo'], icon: "bi bi-check-all" }
       ],
     }
   }
@@ -170,7 +171,6 @@ export class AppComponent {
         gestao: itensMenu(this.menuSchema.gestao),
         relatorios: itensMenu(this.menuSchema.relatorios),
         configuracoes: itensMenu(this.menuSchema.configuracoes),
-        rotinas: itensMenu(this.menuSchema.rotinas),
         logs: itensMenu(this.menuSchema.logs)
       };
     }

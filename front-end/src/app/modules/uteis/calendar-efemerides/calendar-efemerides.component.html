@@ -57,10 +57,10 @@
 <strong>[I] Início:</strong> {{util.getDateTimeFormatted(efemerides?.inicio)}}<br> 
 <strong>[F] Fim:</strong> {{util.getDateTimeFormatted(efemerides?.fim)}}<br>
 <strong>[DC] Dias corridos:</strong> {{efemerides?.dias_corridos}}<br>
-<strong>[HU] Horas úteis:</strong> {{util.decimalToTimerFormated(efemerides?.tempoUtil, true)}}<br>
-<strong>[HNU] Horas não úteis:</strong> {{util.decimalToTimerFormated(efemerides?.horasNaoUteis, true)}}<br>
+<strong>[HU] Horas {{useCorridos ? 'corridas' : 'úteis'}}:</strong> {{util.decimalToTimerFormated(efemerides?.tempoUtil, true)}}<br>
+<strong>[HNU] Horas {{useCorridos ? 'não contabilizadas' : 'não úteis'}}:</strong> {{util.decimalToTimerFormated(efemerides?.horasNaoUteis, true)}}<br>
 <strong>[FC] Forma de cálculo:</strong> {{forma}}<br>
-<strong>[CH] Carga horária:</strong> {{util.decimalToTimerFormated(efemerides?.cargaHoraria, true)}}<br>
+<strong>[CH] Carga horária:</strong> {{util.decimalToTimerFormated(efemerides?.cargaHoraria, true)}}{{useCorridos ? ' - Utilizada: 24h/dia' : ''}}<br>
 <strong>Expediente (nos dias da semana):</strong><br>
 <span *ngFor="let dia of expediente" class="ms-2 d-block">{{dia}}</span>
 <!--strong>[HIE] Horário de início do expediente na unidade:</strong> {{efemerides?.horario_trabalho_inicio?.substring(0,5)}}<br>
@@ -86,3 +86,10 @@
 <span *ngFor="let feriado of feriados">
     {{feriado[0]}} - {{feriado[1]}}<br>
 </span>
+<separator [bold]="true" [title]="'Detalhes dia-a-dia (' + efemerides?.diasDetalhes?.length + '):'" collapse transparent>
+    <span *ngFor="let dia of efemerides?.diasDetalhes">
+        <b>{{dia.diaSemana}}</b> - Início: {{util.getDateTimeFormatted(data(dia.tInicio))}} - Fim: {{util.getDateTimeFormatted(data(dia.tFim))}} - Total: {{dia.hExpediente}}h<br>
+        Intervalos: Qde({{dia.intervalos.length}}) - Total de horas({{totalHoras(dia.intervalos)}}h)<br>
+        Qde. horas contabilizadas: {{dia.hExpediente-totalHoras(dia.intervalos)}}<br><br>
+    </span>
+</separator>

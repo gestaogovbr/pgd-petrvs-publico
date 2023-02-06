@@ -424,21 +424,30 @@ export class UtilService {
   }
 
   public union(intervals: Interval[]) : Interval[] {
-    const isDate = (intervals[0])?.start instanceof Date;
-    let result = intervals.map(x => this.asTimeInterval(x));
-    for(let i = 0; i < result.length; i++) {
-      for(let j = 0; j < result.length; j++) {
-        if(i != j && result[i].end >= result[j].start && result[i].start <= result[j].end) {
-          result[i] = {
-            start: Math.max(result[i].start, result[j].start),
-            end: Math.min(result[i].end, result[j].end)
-          };
-          result.splice(j, 1);
-          j--;
+    if(intervals.length < 2){
+        return intervals;
+    } else {
+        const isDate = (intervals[0])?.start instanceof Date;
+        let intervalos: TimeInterval[] = intervals.map(x => this.asTimeInterval(x));
+        let result: TimeInterval[] = [];
+        result.push(intervalos[0]);
+        intervalos.shift();
+        for(let i = 0; i < result.length; i++) {
+            for(let j = 0; j < intervalos.length; j++) {
+                if(result[i].end >= intervalos[j].start && result[i].start <= intervalos[j].end) {
+                    result[i] = {start: Math.min(result[i].start, intervalos[j].start),
+                                 end: Math.max(result[i].end, intervalos[j].end)};
+                    intervalos.splice(j, 1);
+                    j = -1;
+                } 
+            }
+            if(intervalos.length) {
+              result.push(intervalos[0]);
+              intervalos.shift();
+            }
         }
-      }
+        return isDate ? result.map(x => this.asDateInterval(x)) : result;
     }
-    return isDate ? result.map(x => this.asDateInterval(x)) : result;
   }
 
   public merge(aItems: any[] | undefined, bItems: any[] | undefined, role: (a: any, b: any) => boolean): any[] {

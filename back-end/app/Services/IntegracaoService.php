@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use App\Exceptions\LogError;
 use App\Services\ServiceBase;
+use App\Services\UtilService;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Models\Perfil;

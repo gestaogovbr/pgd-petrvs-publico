@@ -208,11 +208,6 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PGENTR_EDT", "Permite editar planos de gestão/entregas"],
         ["MOD_PGENTR_EXCL", "Permite excluir planos de gestão/entregas"],
         ["MOD_PGENTR_INCL", "Permite incluir planos de gestão/entregas"],
-        /* Capacidades do módulo ROTINAS*/
-        ["MOD_ROT_INT_EDT", "Permite editar a rotina integração"],
-        ["MOD_ROT_INT_EXCL", "Permite excluir a rotina integração"],
-        ["MOD_ROT_INT_INCL", "Permite incluir a rotina integração"],
-        ["MOD_ROT_INT_CONS", "Permite consultar a rotina integração"],
         /* Capacidades do módulo TIPO ATIVIDADE*/
         ["MOD_TIPO_ATV", "Permite acessar item de menu cadastro->tipo de atividade"],
         ["MOD_TIPO_ATV_CONS", "Permite consultar atividade"],

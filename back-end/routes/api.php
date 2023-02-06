@@ -94,7 +94,8 @@ Route::middleware('auth:sanctum')->prefix('Calendario')->group(function () {
     Route::post('feriados', [CalendarioController::class, 'feriados']);
     Route::post('feriados-cadastrados', [CalendarioController::class, 'feriadosCadastrados']);
 });
-/* Logs */
+
+/* Desenvolvedor */
 Route::middleware('auth:sanctum')->prefix('Change')->group(function () {
     defaultRoutes(ChangeController::class);
     Route::post('showResponsaveis', [ChangeController::class, 'showResponsaveis']);
@@ -105,8 +106,6 @@ Route::middleware('auth:sanctum')->prefix('Error')->group(function () {
 Route::middleware('auth:sanctum')->prefix('Traffic')->group(function () {
 });
 Route::middleware('auth:sanctum')->post('/Petrvs/showTables', [PetrvsController::class, 'showTables']);
-
-/* Rotinas */
 Route::middleware(['auth:sanctum'])->prefix('Integracao')->group(function () { 
     Route::post('store', [IntegracaoController::class, 'sincronizarPetrvs']);
     Route::post('query', [IntegracaoController::class, 'query']);
@@ -118,6 +117,8 @@ Route::middleware(['auth:sanctum'])->prefix('Integracao')->group(function () {
 /* Testes */
 //Route::middleware(['auth:sanctum', 'can:ADMINISTRADOR'])->get('/teste', function (Request $request) { return ["OK"]; });
 Route::get('/teste', function (Request $request) { return ["OK"]; });
+Route::middleware('auth:sanctum')->post('/Teste/calculaDataTempoUnidade', [UsuarioController::class, 'calculaDataTempoUnidade']);
+//Route::middleware(['auth:sanctum', 'can:ADMINISTRADOR'])->get('/teste', function (Request $request) { return ["OK"]; });
 
 /* Modulos: Cadastros */
 Route::middleware(['auth:sanctum'])->prefix('Afastamento')->group(function () { defaultRoutes(AfastamentoController::class); });

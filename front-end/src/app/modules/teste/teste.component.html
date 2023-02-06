@@ -2,6 +2,16 @@
     {{ID_GENERATOR_BASE}}
 </div!-->
 
+<editable-form [form]="form">
+    <div class="row">
+        <input-editor controlName="editor"></input-editor>
+    </div>
+</editable-form>
+
+
+
+<br><br><br><br>
+{{form?.controls?.editor?.value || ""}}
 <map [items]="mapa">
     <strong></strong>
     <table>
