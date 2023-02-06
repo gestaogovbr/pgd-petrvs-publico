@@ -11,7 +11,6 @@ const routes: Routes = [
   { path: 'new', component: TemplateFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
   { path: ':id/edit', component: TemplateFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
   { path: ':id/consult', component: TemplateFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } },
-  //{ path: ':id/termos', component: TemplateFormVinculaComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Associar TCR", modal: true } }
 ];
 
 @NgModule({

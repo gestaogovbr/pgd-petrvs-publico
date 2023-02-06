@@ -28,6 +28,7 @@ import {UnitWorkload} from "../../../../components/input/input-workload/input-wo
 import {AdesaoDaoService} from "../../../../dao/adesao-dao.service";
 import {Adesao} from "../../../../models/adesao.model";
 import {EntidadeDaoService} from "../../../../dao/entidade-dao.service";
+import {LookupItem} from "../../../../services/lookup.service";
 
 @Component({
   selector: 'app-adesao-form',
@@ -290,4 +291,32 @@ export class AdesaoFormComponent extends PageFormBase<Adesao, AdesaoDaoService> 
   public onProcessoClick(row: any) {
     this.allPages.openDocumentoSei(row.id_processo, row.id_documento);
   }
+
+  public addUsuarioHandle(): LookupItem | undefined {
+    let form = this.form?.value;
+    let adesao = new Adesao({
+      id: this.util.md5(),
+      usuario_id: form.usuario_id,
+      nome: form.usuario.nome
+    });
+    return {
+      key: adesao.id,
+      value: form.nome,
+      data: adesao
+    };
+  };
+
+  public addUnidadeHandle(): LookupItem | undefined {
+    let form = this.form?.value;
+    let adesao = new Adesao({
+      id: this.util.md5(),
+      usuario_id: form.usuario_id,
+      unidade: form.unidade.nome
+    });
+    return {
+      key: adesao.id,
+      value: form.unidade,
+      data: adesao
+    };
+  };
 }
