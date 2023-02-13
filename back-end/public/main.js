@@ -2338,10 +2338,10 @@ class CalendarService {
         const pascoaMes = pascoa.getMonth() - 1; /* Indexar pelo 0 e não pelo 1 */
         const pascoaAno = pascoa.getFullYear();
         let result = {};
-        result[moment__WEBPACK_IMPORTED_MODULE_0__(new Date(pascoaAno, pascoaMes, pascoaDia - 48, 0, 0, 0, 0)).format("YYYY-MM-DD")] = "2º-feira Carnaval";
-        result[moment__WEBPACK_IMPORTED_MODULE_0__(new Date(pascoaAno, pascoaMes, pascoaDia - 47, 0, 0, 0, 0)).format("YYYY-MM-DD")] = "3º-feira Carnaval";
-        result[moment__WEBPACK_IMPORTED_MODULE_0__(new Date(pascoaAno, pascoaMes, pascoaDia - 2, 0, 0, 0, 0)).format("YYYY-MM-DD")] = "6º-feira Santa";
-        result[moment__WEBPACK_IMPORTED_MODULE_0__(new Date(pascoaAno, pascoaMes, pascoaDia, 0, 0, 0, 0)).format("YYYY-MM-DD")] = "Pascoa";
+        result[moment__WEBPACK_IMPORTED_MODULE_0__(new Date(pascoaAno, pascoaMes, pascoaDia - 48, 0, 0, 0, 0)).format("YYYY-MM-DD")] = "2ª-feira Carnaval";
+        result[moment__WEBPACK_IMPORTED_MODULE_0__(new Date(pascoaAno, pascoaMes, pascoaDia - 47, 0, 0, 0, 0)).format("YYYY-MM-DD")] = "3ª-feira Carnaval";
+        result[moment__WEBPACK_IMPORTED_MODULE_0__(new Date(pascoaAno, pascoaMes, pascoaDia - 2, 0, 0, 0, 0)).format("YYYY-MM-DD")] = "6ª-feira Santa";
+        result[moment__WEBPACK_IMPORTED_MODULE_0__(new Date(pascoaAno, pascoaMes, pascoaDia, 0, 0, 0, 0)).format("YYYY-MM-DD")] = "Páscoa";
         result[moment__WEBPACK_IMPORTED_MODULE_0__(new Date(pascoaAno, pascoaMes, pascoaDia + 60, 0, 0, 0, 0)).format("YYYY-MM-DD")] = "Corpus Christi";
         return result;
     }
@@ -2370,7 +2370,7 @@ class CalendarService {
             return feriados[isoData] || feriados["0000" + isoData.substr(-6)];
         }
         else {
-            throw new Error("Lista de feriados da unidade não carregado no sistema.");
+            throw new Error("Lista de feriados da unidade não carregada no sistema.");
         }
     }
     isFeriadoReligioso(data) {
@@ -2439,7 +2439,11 @@ class CalendarService {
         return this.util.round(this.calculaDataTempo(data_entrega, prazo_entrega, unidade.entrega_forma_contagem_prazos, cargaHoraria, expediente).tempoUtil, 2);
     }
     calculaDataTempoUnidade(inicio, fimOuTempo, cargaHoraria, unidade, tipo, pausas, afastamentos) {
-        const feriados = this.feriadosCadastrados[unidade.id] || [];
+        let feriados = this.feriadosCadastrados[unidade.id] || [];
+        if (!feriados.length) {
+            this.loadFeriadosCadastrados(unidade.id);
+            feriados = this.feriadosCadastrados[unidade.id] || [];
+        }
         const forma = tipo == 'DISTRIBUICAO' ? unidade.distribuicao_forma_contagem_prazos : unidade.entrega_forma_contagem_prazos;
         const expediente = this.nestedExpediente(unidade);
         return this.calculaDataTempo(inicio, fimOuTempo, forma, cargaHoraria, expediente, feriados, pausas, afastamentos);
@@ -2634,6 +2638,10 @@ class CalendarService {
                                 return a;
                             }, diaAtual.tInicio);
                             result.fim = this.util.addTimeHours(new Date(ultimoTurno), hSaldo);
+                            if (!hTempo) {
+                                diaAtual.tFim = this.util.addTimeHours(new Date(ultimoTurno), hSaldo).getTime();
+                                diaAtual.hExpediente = hSaldo;
+                            }
                         }
                         else { /* calcula o tempoUtil */
                             result.tempoUtil += hSaldo;
@@ -4519,11 +4527,11 @@ function CalendarEfemeridesComponent_span_48_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](dia_r30.diaSemana);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate3"](" - In\u00EDcio: ", ctx_r9.util.getDateTimeFormatted(ctx_r9.data(dia_r30.tInicio)), " - Fim: ", ctx_r9.util.getDateTimeFormatted(ctx_r9.data(dia_r30.tFim)), " - Total: ", dia_r30.hExpediente, "h");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate3"](" - In\u00EDcio: ", ctx_r9.util.getDateTimeFormatted(ctx_r9.data(dia_r30.tInicio)), " - Fim: ", ctx_r9.util.getDateTimeFormatted(ctx_r9.data(dia_r30.tFim)), " - Total: ", +dia_r30.hExpediente.toFixed(2), "h");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate2"](" Intervalos: Qde(", dia_r30.intervalos.length, ") - Total de horas(", ctx_r9.totalHoras(dia_r30.intervalos), "h)");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" Qde. horas contabilizadas: ", dia_r30.hExpediente - ctx_r9.totalHoras(dia_r30.intervalos), "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" Qde. horas contabilizadas: ", +dia_r30.hExpediente.toFixed(2) - ctx_r9.totalHoras(dia_r30.intervalos), "");
 } }
 class CalendarEfemeridesComponent {
     constructor(util, lookup) {
@@ -4568,7 +4576,7 @@ class CalendarEfemeridesComponent {
         return new Date(timestamp);
     }
     totalHoras(intervalos) {
-        return intervalos.reduce((a, v) => a + this.util.getHoursBetween(v.start, v.end), 0);
+        return +(intervalos.reduce((a, v) => a + this.util.getHoursBetween(v.start, v.end), 0)).toFixed(2);
     }
 }
 CalendarEfemeridesComponent.ɵfac = function CalendarEfemeridesComponent_Factory(t) { return new (t || CalendarEfemeridesComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_services_util_service__WEBPACK_IMPORTED_MODULE_1__["UtilService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_2__["LookupService"])); };
@@ -30006,7 +30014,7 @@ class TesteFormComponent extends _base_page_form_base__WEBPACK_IMPORTED_MODULE_8
             datafim_fimoutempo: { default: new Date('2023-02-15 09:00:00 -03:00') },
             tempo_fimoutempo: { default: 0 },
             carga_horaria: { default: 8 },
-            unidade_id: { default: "35740546-91e6-4a71-a8a2-7cf69be59d3d" },
+            unidade_id: { default: "" },
             tipo: { default: "DISTRIBUICAO" },
             demanda_id: { default: "" },
             usuario_id: { default: "" },
@@ -30062,6 +30070,7 @@ class TesteFormComponent extends _base_page_form_base__WEBPACK_IMPORTED_MODULE_8
     compararFuncoes() {
         var _a;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            // Prepara os parâmetros para a requisição...
             let calculo = this.form.controls.tipo_calculo.value;
             let inicio = this.form.controls.inicio.value;
             let inicio_dao = inicio.toString().substring(0, 33);
@@ -30073,16 +30082,23 @@ class TesteFormComponent extends _base_page_form_base__WEBPACK_IMPORTED_MODULE_8
             let tipo = this.form.controls.tipo.value;
             let pausas = this.form.controls.incluir_pausas.value ? this.demanda.pausas : [];
             let afastamentos = this.form.controls.incluir_afastamentos.value ? ((_a = this.usuario.afastamentos) !== null && _a !== void 0 ? _a : []) : [];
+            // chama a função no FrontEnd
             this.efemeridesFrontEnd = this.calendar.calculaDataTempoUnidade(inicio, calculo ? fim : tempo, cargaHoraria, unidade, tipo, pausas, afastamentos);
-            this.dao.calculaDataTempoUnidade(inicio_dao, calculo ? fim_dao : tempo, cargaHoraria, unidade.id, tipo, pausas, afastamentos).then(response => {
-                var _a, _b;
+            // chama a função no BackEnd
+            yield this.dao.calculaDataTempoUnidade(inicio_dao, calculo ? fim_dao : tempo, cargaHoraria, unidade.id, tipo, pausas, afastamentos).then(response => {
                 this.efemeridesBackEnd = response;
-                this.efemeridesBackEnd.inicio = new Date(this.efemeridesBackEnd.inicio);
-                this.efemeridesBackEnd.fim = new Date(this.efemeridesBackEnd.fim);
-                (_a = this.efemeridesBackEnd) === null || _a === void 0 ? void 0 : _a.afastamentos.forEach(x => x.inicio_afastamento = new Date(x.inicio_afastamento));
-                (_b = this.efemeridesBackEnd) === null || _b === void 0 ? void 0 : _b.afastamentos.forEach(x => x.fim_afastamento = new Date(x.fim_afastamento));
             });
+            this.preparaParaExibicao();
         });
+    }
+    preparaParaExibicao() {
+        var _a, _b, _c;
+        this.efemeridesBackEnd.inicio = new Date(this.efemeridesBackEnd.inicio);
+        this.efemeridesBackEnd.fim = new Date(this.efemeridesBackEnd.fim);
+        (_a = this.efemeridesBackEnd) === null || _a === void 0 ? void 0 : _a.afastamentos.forEach(x => x.inicio_afastamento = new Date(x.inicio_afastamento));
+        (_b = this.efemeridesBackEnd) === null || _b === void 0 ? void 0 : _b.afastamentos.forEach(x => x.fim_afastamento = new Date(x.fim_afastamento));
+        (_c = this.efemeridesBackEnd) === null || _c === void 0 ? void 0 : _c.diasDetalhes.forEach(d => d.intervalos = Object.values(d.intervalos));
+        let a = 1;
     }
     log(message) {
         console.log(message);
