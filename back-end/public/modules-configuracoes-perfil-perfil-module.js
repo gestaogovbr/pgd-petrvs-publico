@@ -212,7 +212,9 @@ class PerfilFormComponent extends src_app_modules_base_page_form_base__WEBPACK_I
             if (['nome', 'descricao'].indexOf(controlName) >= 0 && !((_a = control.value) === null || _a === void 0 ? void 0 : _a.length)) {
                 result = "Obrigatório";
             }
-            ;
+            else if (['nivel'].indexOf(controlName) >= 0 && !control.value) {
+                result = "Não pode ser zero.";
+            }
             return result;
         };
         this.titleEdit = (entity) => {

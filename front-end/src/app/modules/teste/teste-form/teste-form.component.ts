@@ -16,6 +16,8 @@ import { Usuario } from 'src/app/models/usuario.model';
 import { CalendarService, Efemerides, TipoContagem } from 'src/app/services/calendar.service';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { NavigateResult } from 'src/app/services/navigate.service';
+import { Interval } from 'src/app/services/util.service';
+import { forEachChild } from 'typescript';
 import { PageFormBase } from '../../base/page-form-base';
 
 @Component({
@@ -88,12 +90,12 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
     this.demandaDao = injector.get<DemandaDaoService>(DemandaDaoService);
     this.tipoMotivoAfastamentoDao = injector.get<TipoMotivoAfastamentoDaoService>(TipoMotivoAfastamentoDaoService);
     this.form = this.fh.FormBuilder({
-      inicio: {default: new Date()},
-      tipo_calculo: {default: 0},
-      datafim_fimoutempo: {default: new Date()},
+      inicio: {default: new Date('2023-01-01 09:00:00 -03:00')},
+      tipo_calculo: {default: 1},
+      datafim_fimoutempo: {default: new Date('2023-02-15 09:00:00 -03:00')},
       tempo_fimoutempo: {default: 0}, 
       carga_horaria: {default: 8},
-      unidade_id: {default: ""},
+      unidade_id: {default: ""}, 
       tipo: {default: "DISTRIBUICAO"},
       demanda_id: {default: ""},
       usuario_id: {default: ""},
@@ -179,21 +181,36 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
   }
 
   public async compararFuncoes() {
+    // Prepara os parâmetros para a requisição...
     let calculo: number = this.form.controls.tipo_calculo.value;
     let inicio: Date = this.form.controls.inicio.value;
     let inicio_dao = inicio.toString().substring(0,33);
     let fim: Date = this.form.controls.datafim_fimoutempo.value;
-    let fim_dao = fim.toString().substring(0,33);
+    let fim_dao = fim ? fim.toString().substring(0,33) : '';
     let tempo: number = this.form.controls.tempo_fimoutempo.value;
     let cargaHoraria: number = this.form.controls.carga_horaria.value;
     let unidade: Unidade | null = await this.unidadeDao.getById(this.form.controls.unidade_id.value, ['entidade']);
     let tipo: TipoContagem = this.form.controls.tipo.value;
     let pausas: DemandaPausa[]  = this.form.controls.incluir_pausas.value ? this.demanda!.pausas : [];
     let afastamentos: Afastamento[]  = this.form.controls.incluir_afastamentos.value ? (this.usuario!.afastamentos ?? []) : [];
+
+    // chama a função no FrontEnd
     this.efemeridesFrontEnd = this.calendar.calculaDataTempoUnidade(inicio, calculo ? fim : tempo, cargaHoraria, unidade!, tipo, pausas, afastamentos);
-    this.dao!.calculaDataTempoUnidade(inicio_dao, calculo ? fim_dao : tempo, cargaHoraria, unidade!.id, tipo, pausas, afastamentos).then(response => {
+
+    // chama a função no BackEnd
+    await this.dao!.calculaDataTempoUnidade(inicio_dao, calculo ? fim_dao : tempo, cargaHoraria, unidade!.id, tipo, pausas, afastamentos).then(response => {
       this.efemeridesBackEnd = response;
     });
+    this.preparaParaExibicao();
+  }
+
+  public preparaParaExibicao() {
+    this.efemeridesBackEnd!.inicio = new Date(this.efemeridesBackEnd!.inicio);
+    this.efemeridesBackEnd!.fim = new Date(this.efemeridesBackEnd!.fim);
+    this.efemeridesBackEnd?.afastamentos.forEach(x => x.inicio_afastamento = new Date(x.inicio_afastamento));
+    this.efemeridesBackEnd?.afastamentos.forEach(x => x.fim_afastamento = new Date(x.fim_afastamento));
+    this.efemeridesBackEnd?.diasDetalhes.forEach(d => d.intervalos = Object.values(d.intervalos));
+    let a = 1;
   }
 
   public log(message: string){
