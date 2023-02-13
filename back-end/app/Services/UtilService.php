@@ -7,6 +7,7 @@ use App\Services\CalendarioService;
 use Carbon\Carbon;
 use \MomentPHP\MomentPHP;
 use DateTime;
+use PhpParser\Node\Stmt\Switch_;
 
 class UtilService
 {
@@ -56,11 +57,12 @@ class UtilService
     }
 
     /**
-     * A função devolve um float, que será o Timestamp, se receber uma data em qualquer um dos seguintes formatos: DateTime, Timestamp, string.
+     * A função devolve um int, que será o Timestamp, se receber uma data em qualquer um dos seguintes formatos: DateTime, Timestamp, string.
      * Se o formato recebido for inválido, retorna -1.
      */
-    public static function asTimestamp($date): float {
-        return gettype($date) == "integer" ? $date : ($date instanceof DateTime ? $date->getTimestamp() : (gettype($date) == "string" ? (strtotime($date) ? strtotime($date) : -1) : -1));
+    public static function asTimestamp($date): int | null {
+        $result = gettype($date) == "integer" ? $date : ($date instanceof DateTime ? $date->getTimestamp() : (gettype($date) == "string" ? (strtotime($date) ? strtotime($date) : null) : null));
+        return $result;
     }
 
     /**
@@ -169,8 +171,8 @@ class UtilService
     }
 
 
-    public static function addTimeHours(DateTime $dateRef, int $hours): DateTime {
-        $result = new DateTime($dateRef->getTimestamp());
+    public static function addTimeHours(DateTime $dateRef, int | float $hours): DateTime {
+        $result = static::asDateTime($dateRef->getTimestamp());
         return date_timestamp_set($result, $result->getTimestamp() + ($hours * 60 * 60));
     }
 
@@ -220,27 +222,25 @@ class UtilService
      *          onde number são Timestamps. Se houver uma interseção entre todos os intervalos do array, a função retorna essa interseção no formato
      *          de um intervalo, que poderá ser de DateTime ou de Timestamp, dependendo do formato recebido no start do primeiro elemento do parâmetro $intervals.
      */
-    public static function intersection(array $intervals) {
-        $isDate = ($intervals[0])['start'] instanceof DateTime;
+    public static function intersection(array $intervals): Interval | null {
+        $isDate = ($intervals[0])->start instanceof DateTime;
         $result = null;
         if(count($intervals) > 1) {
-          $result = static::asTimeInterval($intervals[0]);
+          $compare_0 = $intervals[0];
           for($i = 1; $i < count($intervals); $i++) {
-            $compare = static::asTimeInterval($intervals[$i]);
-            if ($result['end'] >= $compare['start'] && $result['start'] <= $compare['end']) {
-                $result = ['start' => max($result['start'], $compare['start']), 'end' => min($result['end'], $compare['end'])];
-            } else {
-                $result = null;
+            $compare_i = $intervals[$i];
+            if ($compare_0->end >= $compare_i->start && $compare_0->start <= $compare_i->end) {
+                $result = new Interval(['start' => max($compare_0->start, $compare_i->start), 'end' => min($compare_0->end, $compare_i->end)]);
             }
           }
         }
-        return $result && $isDate ? static::asDateInterval($result) : $result;
+        return $result && $isDate ? static::asDateInterval((array) $result) : $result;
     }
 
     /**
      * @param   $intervals - esperado um array de intervalos, na seguinte forma:
      *          [['start' => number | DateTime, 'end' => number | DateTime],...['start' => number | DateTime, 'end' => number | DateTime]], 
-     *          onde number são Timestamps. A função retorna um array que representa a união de todos os intervalos recebidos como parâmetro.
+     *          onde number são Timestamps. A função retorna um array, com um ou mais intervalos, que representa a união de todos os intervalos recebidos como parâmetro.
      *          Os elementos do array retornado poderão ser no formato DateTime ou Timestamp, dependendo do formato recebido 
      *          no start do primeiro elemento do parâmetro $intervals.
      */
@@ -248,21 +248,18 @@ class UtilService
         if(count($intervals) < 2){
             return $intervals;
         } else {
-            $isDate = ($intervals[0])['start'] instanceof DateTime;
-            $intervalos = array_map(fn($x) => static::asTimeInterval($x), $intervals);
-            $result = [array_shift($intervalos)];                  
+            $isDate = ($intervals[0])->start instanceof DateTime;
+            $result = [array_shift($intervals)];                  
             for($i = 0; $i < count($result); $i++) {
-                for($j = 0; $j < count($intervalos); $j++) {
-                    if($result[$i]['end'] >= $intervalos[$j]['start'] && $result[$i]['start'] <= $intervalos[$j]['end']) {
-                        $result[$i] = [
-                            'start' => min($result[$i]['start'], $intervalos[$j]['start']),
-                            'end'=> max($result[$i]['end'], $intervalos[$j]['end'])
-                        ];
-                        array_splice($intervalos, $j, 1);
+                for($j = 0; $j < count($intervals); $j++) {
+                    if($result[$i]->end >= $intervals[$j]->start && $result[$i]->start <= $intervals[$j]->end) {
+                        $result[$i]->start = min($result[$i]->start, $intervals[$j]->start);
+                        $result[$i]->end = max($result[$i]->end, $intervals[$j]->end);
+                        array_splice($intervals, $j, 1);
                         $j = -1;
                     } 
                 }
-                if($intervalos) array_push($result, array_shift($intervalos));
+                if($intervals) array_push($result, array_shift($intervals));
             }
             return $isDate ? array_map(fn($x) => static::asDateInterval($x), $result) : $result;
         }
@@ -365,26 +362,23 @@ class UtilService
      * @param $interval - esperado um array na seguinte forma ['start' => number | DateTime, 'end' => number | DateTime], 
      * onde number são Timestamps.
      */
-    public static function asTimeInterval(array $interval): array {
-        if(count($interval)>0){
-            return [
-                'start' => static::asTimestamp($interval['start']),
-                'end' => static::asTimestamp($interval['end'])
-            ];
-        } else {
-            return [];
-        }
+    public static function asTimeInterval(Interval $interval): Interval {
+        return new Interval([
+            'start' => $interval ? ($interval->start instanceof DateTime ? static::asTimestamp($interval->start) : $interval->start) : 0, 
+            'end' => $interval ? ($interval->end instanceof DateTime ? static::asTimestamp($interval->end) : $interval->end) : 0
+        ]);
+
     }
 
     /**
      * @param $interval - esperado um array na seguinte forma ['start' => number | DateTime, 'end' => number | DateTime], 
      * onde number são Timestamps.
      */
-    public static function asDateInterval(array $interval): array {
-        return [
-            'start' => static::asDateTime($interval['start']),
-            'end' => static::asDateTime($interval['end'])
-        ];
+    public static function asDateInterval(array $interval): Interval {
+        return new Interval([
+            'start' => $interval ? ($interval['start'] instanceof DateTime ? static::asDateTime($interval['start']) : $interval['start']) : 0, 
+            'end' => $interval ? ($interval['end'] instanceof DateTime ? static::asDateTime($interval['end']) : $interval['end']) : 0
+        ]);
     }
 
     public static function round(float $num, float $decimal) {

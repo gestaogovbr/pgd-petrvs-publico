@@ -83,10 +83,10 @@ export class CalendarService {
     const pascoaMes = pascoa.getMonth() - 1; /* Indexar pelo 0 e não pelo 1 */
     const pascoaAno = pascoa.getFullYear();
     let result: FeriadoList = {};
-    result[moment(new Date(pascoaAno, pascoaMes, pascoaDia - 48, 0, 0, 0, 0)).format("YYYY-MM-DD")] = "2º-feira Carnaval";
-    result[moment(new Date(pascoaAno, pascoaMes, pascoaDia - 47, 0, 0, 0, 0)).format("YYYY-MM-DD")] = "3º-feira Carnaval";
-    result[moment(new Date(pascoaAno, pascoaMes, pascoaDia - 2, 0, 0, 0, 0)).format("YYYY-MM-DD")] = "6º-feira Santa";
-    result[moment(new Date(pascoaAno, pascoaMes, pascoaDia, 0, 0, 0, 0)).format("YYYY-MM-DD")] = "Pascoa";
+    result[moment(new Date(pascoaAno, pascoaMes, pascoaDia - 48, 0, 0, 0, 0)).format("YYYY-MM-DD")] = "2ª-feira Carnaval";
+    result[moment(new Date(pascoaAno, pascoaMes, pascoaDia - 47, 0, 0, 0, 0)).format("YYYY-MM-DD")] = "3ª-feira Carnaval";
+    result[moment(new Date(pascoaAno, pascoaMes, pascoaDia - 2, 0, 0, 0, 0)).format("YYYY-MM-DD")] = "6ª-feira Santa";
+    result[moment(new Date(pascoaAno, pascoaMes, pascoaDia, 0, 0, 0, 0)).format("YYYY-MM-DD")] = "Páscoa";
     result[moment(new Date(pascoaAno, pascoaMes, pascoaDia + 60, 0, 0, 0, 0)).format("YYYY-MM-DD")] = "Corpus Christi";
     return result;
   }
@@ -116,7 +116,7 @@ export class CalendarService {
       const isoData = moment(data).format("YYYY-MM-DD");
       return feriados[isoData] || feriados["0000" + isoData.substr(-6)];
     } else {
-      throw new Error("Lista de feriados da unidade não carregado no sistema.");
+      throw new Error("Lista de feriados da unidade não carregada no sistema.");
     }
   }
 
@@ -195,7 +195,11 @@ export class CalendarService {
   }
 
   public calculaDataTempoUnidade(inicio: Date, fimOuTempo: Date | number, cargaHoraria: number, unidade: Unidade, tipo: TipoContagem, pausas?: DemandaPausa[], afastamentos?: Afastamento[]) {
-    const feriados = this.feriadosCadastrados[unidade.id] || [];
+    let feriados = this.feriadosCadastrados[unidade.id] || [];
+    if(!feriados.length) {
+      this.loadFeriadosCadastrados(unidade.id);
+      feriados = this.feriadosCadastrados[unidade.id] || [];
+    } 
     const forma = tipo == 'DISTRIBUICAO' ? unidade.distribuicao_forma_contagem_prazos : unidade.entrega_forma_contagem_prazos;
     const expediente = this.nestedExpediente(unidade);
     return this.calculaDataTempo(inicio, fimOuTempo, forma, cargaHoraria, expediente, feriados, pausas, afastamentos);
@@ -238,8 +242,8 @@ export class CalendarService {
       for (let afastamento of (afastamentos || [])) {
         /* calcula a intersecção entre start e end e o inicio e fim do afastamento */
         const intervalo = this.util.intersection([{ start, end }, { start: afastamento.inicio_afastamento.getTime(), end: afastamento.fim_afastamento.getTime() }]) as TimeInterval;
-        if (intervalo) {
-          /* Caso tenha uma intersecção, adiciona o pedíodo para retorno e insere em result.afastamentos */
+        if (intervalo && intervalo.start != intervalo.end) {
+          /* Caso tenha uma intersecção, adiciona o período para retorno e insere em result.afastamentos */
           periodos.push(intervalo);
           if (!result.afastamentos.includes(afastamento)) result.afastamentos.push(afastamento);
         }
@@ -379,6 +383,10 @@ export class CalendarService {
                 return a;
               }, diaAtual.tInicio);
               result.fim = this.util.addTimeHours(new Date(ultimoTurno), hSaldo);
+              if(!hTempo){
+                diaAtual.tFim = this.util.addTimeHours(new Date(ultimoTurno), hSaldo).getTime();
+                diaAtual.hExpediente = hSaldo;
+              }
             } else { /* calcula o tempoUtil */
               result.tempoUtil += hSaldo;
             }

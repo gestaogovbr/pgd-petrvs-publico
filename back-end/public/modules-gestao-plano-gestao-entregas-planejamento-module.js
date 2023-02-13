@@ -367,33 +367,6 @@ PlanejamentoListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵ
 
 /***/ }),
 
-/***/ "NJJz":
-/*!*************************************************!*\
-  !*** ./src/app/dao/planejamento-dao.service.ts ***!
-  \*************************************************/
-/*! exports provided: PlanejamentoDaoService */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanejamentoDaoService", function() { return PlanejamentoDaoService; });
-/* harmony import */ var _dao_base_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./dao-base.service */ "WScx");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
-
-
-class PlanejamentoDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0__["DaoBaseService"] {
-    constructor(injector) {
-        super("Planejamento", injector);
-        this.injector = injector;
-        this.searchFields = ["nome", "inicio", "fim", "unidade_id"];
-    }
-}
-PlanejamentoDaoService.ɵfac = function PlanejamentoDaoService_Factory(t) { return new (t || PlanejamentoDaoService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
-PlanejamentoDaoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: PlanejamentoDaoService, factory: PlanejamentoDaoService.ɵfac, providedIn: 'root' });
-
-
-/***/ }),
-
 /***/ "yttb":
 /*!**********************************************!*\
   !*** ./src/app/models/planejamento.model.ts ***!
@@ -409,10 +382,12 @@ __webpack_require__.r(__webpack_exports__);
 class Planejamento extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
     constructor(data) {
         super();
+        this.data_inicio = new Date(); /* Data de criação */
+        this.data_fim = null; /* Data final do registro */
         this.inicio = new Date(); /* Data de início do planejamento */
         this.fim = null; /* Data do fim do planejamento */
-        this.unidade_id = ""; /* Unidade à qual está vinculado o plano de gestão/entregas */
         this.nome = ""; /* Nome do plano de gestão/entregas */
+        this.unidade_id = ""; /* Unidade à qual está vinculado o plano de gestão/entregas */
         this.initialization(data);
     }
 }
