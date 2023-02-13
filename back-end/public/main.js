@@ -20164,7 +20164,7 @@ IntegracaoListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵ
         const _r11 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵreference"](29);
         const _r13 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵreference"](32);
         const _r15 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵreference"](34);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("labelAdd", ctx.labelAdd)("selectable", ctx.selectable)("hasAdd", ctx.auth.hasPermissionTo("MOD_ROT_INT_INCL"))("hasEdit", false);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("labelAdd", ctx.labelAdd)("selectable", ctx.selectable)("hasAdd", ctx.auth.hasPermissionTo("DEV_MOD_LOGS"))("hasEdit", false);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
