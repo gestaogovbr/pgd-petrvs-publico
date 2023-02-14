@@ -19,11 +19,13 @@ import { LookupItem } from 'src/app/services/lookup.service';
 export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @ViewChild('selectTabelas', { static: false }) public selectTabelas?: InputSelectComponent;
+  @ViewChild('selectResponsaveis', { static: false }) public selectResponsaveis?: InputSelectComponent;
 
   public toolbarButtons: ToolbarButton[] = [];
   public allPages: ListenerAllPagesService;
   public usuarioDao: UsuarioDaoService;
   public tabelas: LookupItem[] = [];
+  public responsaveis: LookupItem[] = [];
   public opcoes_filtro: LookupItem[] = [
     {'key': 0, 'value': 'ID do registro'},{'key': 1, 'value': ''}];
 
@@ -45,15 +47,22 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     this.orderBy = [['id', 'desc']];
   }
 
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
     super.ngAfterViewInit();
     this.selectTabelas!.loading = true;
-    this.dao?.showTables().then(tabelas => {
-      this.tabelas = tabelas || [];
+    this.selectResponsaveis!.loading = true;
+    await Promise.all([
+      this.dao?.showTables().then(tabelas => {
+        this.tabelas = tabelas || []}),
+      this.dao?.showResponsaveis().then(responsaveis => {
+        this.responsaveis = responsaveis || []})
+    ]).finally(() => {
       this.cdRef.detectChanges();
-    }).finally(() => this.selectTabelas!.loading = false);
+      this.selectTabelas!.loading = false;
+      this.selectResponsaveis!.loading = false;
+    });
   }
-
+  
   ngAfterViewChecked(){
     this.cdRef.detectChanges();
   }
@@ -96,7 +105,7 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     let form: any = filter.value;
 
     if(form.responsavel_id?.length){
-      result.push(["user_id", "like", "%" + form.responsavel_id + "%"]);
+      result.push(["user_id", "==", form.responsavel_id == "null" ? null : form.responsavel_id]);
     };
     if(form.data_inicio){
       result.push(["date_time", ">=", form.data_inicio]);

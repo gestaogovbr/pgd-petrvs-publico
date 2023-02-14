@@ -15,9 +15,12 @@ import { TesteComponent } from './modules/teste/teste.component';
 import { DemandaModule } from './modules/gestao/demanda/demanda.module';
 import { RelatorioModule } from './modules/relatorios/relatorio.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { LogsModule } from './modules/logs/logs.module';
+import { LogModule } from './modules/logs/log.module';
 import { UteisModule } from './modules/uteis/uteis.module';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import { RotinaModule } from './modules/rotinas/rotina.module';
+import { TemplateModule } from './modules/cadastros/template/template.module';
+import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +30,8 @@ import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
     ConfigComponent,
     DialogComponent,
     SpinnerOverlayComponent,
-    TesteComponent
+    TesteComponent,
+    TesteFormComponent
   ],
   imports: [
     BrowserModule,
@@ -40,8 +44,10 @@ import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
     ChartsModule,
     RelatorioModule,
     UteisModule,
-    LogsModule,
-    CKEditorModule
+    LogModule,
+    RotinaModule,
+    CKEditorModule,
+    TemplateModule
   ],
   providers: [],
   bootstrap: [AppComponent]

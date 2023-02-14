@@ -134,9 +134,8 @@ class AfastamentoFormComponent extends src_app_modules_base_page_form_base__WEBP
             if (!this.isHoras()) {
                 afastamento.inicio_afastamento.setHours(0, 0, 0);
                 afastamento.fim_afastamento.setHours(23, 59, 0);
-                afastamento.fim_afastamento.setDate(afastamento.fim_afastamento.getDate() + 1); //Acrescendo 1 dia, pois estava vindo um dia antes do setado.
+                afastamento.fim_afastamento.setDate(afastamento.fim_afastamento.getDate());
             }
-            //console.log(afastamento)
             resolve(afastamento);
         });
     }
@@ -426,33 +425,6 @@ AfastamentoListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵ�
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("rows", ctx.rowsLimit);
     } }, directives: [src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__["GridComponent"], _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_7__["ToolbarComponent"], _components_grid_filter_filter_component__WEBPACK_IMPORTED_MODULE_8__["FilterComponent"], _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_9__["InputSearchComponent"], _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_10__["InputDatetimeComponent"], _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_11__["ColumnsComponent"], _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_12__["ColumnComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_13__["NgIf"], _components_grid_pagination_pagination_component__WEBPACK_IMPORTED_MODULE_14__["PaginationComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJhZmFzdGFtZW50by1saXN0LmNvbXBvbmVudC5zY3NzIn0= */"] });
-
-
-/***/ }),
-
-/***/ "cLR3":
-/*!*********************************************!*\
-  !*** ./src/app/models/afastamento.model.ts ***!
-  \*********************************************/
-/*! exports provided: Afastamento */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Afastamento", function() { return Afastamento; });
-/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
-
-class Afastamento extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor(data) {
-        super();
-        this.observacoes = null; /* Observação sobre o afastamento */
-        this.inicio_afastamento = new Date(); /* Inicio do afastamento  */
-        this.fim_afastamento = new Date(); /* Fim do afastamento */
-        this.usuario_id = ""; /*  */
-        this.tipo_motivo_afastamento_id = ""; /*  */
-        this.initialization(data);
-    }
-}
 
 
 /***/ }),

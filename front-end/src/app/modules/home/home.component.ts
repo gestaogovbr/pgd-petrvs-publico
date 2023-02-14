@@ -1,16 +1,18 @@
+
 import { Component, Injector, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
-import { UsuarioDaoService, UsuarioDashboard } from 'src/app/dao/usuario-dao.service';
+import { GestorDashboard, UsuarioDaoService, UsuarioDashboard } from 'src/app/dao/usuario-dao.service';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { LexicalService } from 'src/app/services/lexical.service';
 import { NavigateService } from 'src/app/services/navigate.service';
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
 import { GlobalsService } from 'src/app/services/globals.service';
-import { ChartDataSets, ChartOptions } from 'chart.js';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { Chart } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { UtilService } from 'src/app/services/util.service';
+import { FormControl, FormGroup } from '@angular/forms';
+import { Unidade } from 'src/app/models/unidade.model';
 
 @Component({
   selector: 'app-home',
@@ -19,58 +21,49 @@ import { UtilService } from 'src/app/services/util.service';
 })
 export class HomeComponent implements OnInit {
 
-  // Variáveis associadas aos objetos gráficos
-  public : ChartDataSets[] = [];
-  public opcoesMinhasDemandas: ChartOptions = {
-    legend: {
-      display: true,
-      position: 'top',
-      align: 'start'
-    },
-    scales: {
-      xAxes: [{
-        display: false,
-        stacked: true,
-        ticks: {
-          beginAtZero: true
-        }
-      }],
-      yAxes: [{
-        labels: ['Minhas Demandas'],
-        display: false,
-        stacked: true,
-        ticks: {
-          beginAtZero: true
-        }
-      }]
-    },
-    responsive: true,
-    plugins: {
-      datalabels: {
-        display: 'auto',
-        align: 'start',
-        anchor: 'end',
-        color: 'white',
-        font: {
-          weight: 'bold'
-        },
-        clamp: true,
-        clip: false
-      }
-    }
-  };
-  public dadosMinhasDemandas: ChartDataSets[] = [];
+  public formSearch: FormGroup;
   public dashUsuario: UsuarioDashboard = {
-    total_demandas: 0,
-    media_avaliacoes: 0,
-    produtividade: 0,
-    demandas_totais_nao_iniciadas: 0,
-    demandas_totais_concluidas: 0,
-    demandas_totais_nao_concluidas: 0,
-    demandas_totais_atrasadas: 0,
-    demandas_totais_avaliadas: 0,
-    tarefas_totais_nao_concluidas: 0,
+    planos: [{
+      data_inicio_vigencia: new Date,
+      data_fim_vigencia: new Date,
+      horas_alocadas: 0,
+      horas_consolidadas: 0,
+      progresso: 0,
+      total_horas: 0
+    }],
+    demandas: {
+      atrasadas: 0,
+      avaliadas: 0,
+      concluidas: 0,
+      media_avaliacoes: 0,
+      nao_concluidas: 0,
+      nao_iniciadas: 0,
+      total_demandas: 0
+    },
+    horas_afastamentos: 0
   };
+
+  public dashGestor: GestorDashboard = {
+    usuarios: [
+      {
+        nome: '',
+        foto: '',
+        planos: [{
+          data_inicio_vigencia: new Date,
+          data_fim_vigencia: new Date,
+          horas_alocadas: 0,
+          horas_consolidadas: 0,
+          progresso: 0,
+          total_horas: 0
+        }]
+      }
+    ]
+  }
+
+  public data_inicial: Date;
+  public data_final: Date;
+
+
 
   constructor(
     public auth: AuthService,
@@ -83,53 +76,56 @@ export class HomeComponent implements OnInit {
     public go: NavigateService,
     public gb: GlobalsService,
     public allPages: ListenerAllPagesService
-  ) {}
+  ) {
+    const hoje = new Date()
+    const lastDayCurrentMonth = this.getLastDayOfMonth(
+      hoje.getFullYear(),
+      hoje.getMonth(),
+    );
+
+    this.data_inicial = new Date(hoje.getFullYear(), hoje.getMonth(), 1)
+    this.data_final = new Date(lastDayCurrentMonth)
+
+    this.formSearch = new FormGroup({
+      data_inicial: new FormControl(this.data_inicial),
+      data_final: new FormControl(this.data_final)
+    })
+  }
 
   ngOnInit(): void {
     Chart.plugins.register(ChartDataLabels);
-    if(this.gb.isEmbedded) {
+    if (this.gb.isEmbedded) {
       this.allPages.visibilidadeMenuSei(!this.auth.usuario!.config.ocultar_menu_sei);
     }
+
   }
 
-  async ngAfterViewInit(){
-    const dadosUsuario = await this.usuarioDao.dashboard(this.auth.usuario!.id)
+  async ngAfterViewInit() {
+    const unidades_gerenciadas = this.auth.usuario?.lotacoes.filter(lotacao => {
+      return lotacao.unidade?.gestor_id == this.auth.usuario?.id
+    }).map(lotacoes => { return lotacoes.unidade?.id }).filter((item): item is string => !!item)
+
+    if (unidades_gerenciadas?.length) {
+      this.filtrarDemandasGerenciadas(unidades_gerenciadas);
+    }
+
+    this.filtrarDemandas();
+  }
+
+  async filtrarDemandasGerenciadas(unidades_gerenciadas: string[]) {
+    this.data_inicial = this.formSearch.controls['data_inicial'].value;
+    this.data_final = this.formSearch.controls['data_final'].value;
+
+    const dadosGestor = await this.usuarioDao.dashboard_gestor(this.data_inicial, this.data_final, unidades_gerenciadas)
+    if (dadosGestor) this.dashGestor = dadosGestor;
+  }
+
+  async filtrarDemandas() {
+    this.data_inicial = this.formSearch.controls['data_inicial'].value;
+    this.data_final = this.formSearch.controls['data_final'].value;
+
+    const dadosUsuario = await this.usuarioDao.dashboard(this.data_inicial, this.data_final, this.auth.usuario!.id)
     if (dadosUsuario) this.dashUsuario = dadosUsuario;
-    this.idExclamacao();
-    this.construirGraficoMinhasDemandas();
-  }
-
-  public construirGraficoMinhasDemandas() {
-    this.dadosMinhasDemandas = [
-      {
-        label: 'Demandas Não-iniciadas',
-        data: [this.dashUsuario.demandas_totais_nao_iniciadas],
-        backgroundColor: '#0dcaf0',
-        stack: 'Demandas',
-        barThickness: 30
-      },
-      {
-        label: 'Demandas Iniciadas',
-        data: [this.dashUsuario.demandas_totais_nao_concluidas],
-        backgroundColor: '#ffc107',
-        stack: 'Demandas',
-        barThickness: 30
-      },
-      {
-        label: 'Demandas Concluídas',
-        data: [this.dashUsuario.demandas_totais_concluidas],
-        backgroundColor: '#af4201',
-        stack: 'Demandas',
-        barThickness: 30
-      },
-      {
-        label: 'Demandas Avaliadas',
-        data: [this.dashUsuario.demandas_totais_avaliadas],
-        backgroundColor: '#af4af0',
-        stack: 'Demandas',
-        barThickness: 30
-      }
-    ];
   }
 
   public mensagemSaudacao() {
@@ -150,19 +146,8 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  public execucaoPlanos(){
-      this.dashUsuario.produtividade;
-  }
-
-  public produtividadeMedia(){
-  }
-
-  public idExclamacao(){
-    return this.dashUsuario.produtividade == 0 ? "icon-demandas-natraso" : "icon-demandas-atraso";
-  }
-
-  public totalAtividades(){
-    return 0;
+  getLastDayOfMonth(year: number, month: number) {
+    return new Date(year, month + 1, 0);
   }
 
 }

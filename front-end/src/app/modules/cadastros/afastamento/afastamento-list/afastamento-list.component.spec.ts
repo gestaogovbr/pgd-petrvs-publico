@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import 'jasmine';
 import { AfastamentoListComponent } from './afastamento-list.component';
 
 describe('AfastamentoListComponent', () => {

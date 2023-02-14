@@ -6,6 +6,8 @@ use App\Models\Usuario;
 use App\Models\Demanda;
 use App\Models\Plano;
 use App\Models\Unidade;
+use App\Models\Lotacao;
+use App\Models\TipoAvaliacao;
 use App\Models\DemandaEntrega;
 use App\Services\ServiceBase;
 use App\Services\PlanoService;
@@ -20,6 +22,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Iterator;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Throwable;
 
 class UsuarioService extends ServiceBase
@@ -146,14 +149,115 @@ class UsuarioService extends ServiceBase
         return $data;
     }
 
+    public function dashboard($data_inicial, $data_final, $usuario_id) {
+        $result = [];
+        $planosAtivos = $this->PlanoService->planosAtivosPorData($data_inicial, $data_final, $usuario_id);
+        $planos_ids = $planosAtivos->map(function($plano){return $plano->id;});
+        $notas_validas = TipoAvaliacao::where('aceita_entrega', true)->get()->pluck('nota_atribuida');
+  
+        $media_avaliacao = Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->avaliadas()->with(['avaliacao'])->get()->avg(function($demanda){
+            return $demanda["avaliacao"]["nota_atribuida"];
+        });
+        
+        foreach ($planosAtivos as $plano) {
+            $total_consolidadas = Demanda::doUsuario($usuario_id)->dosPlanos([$plano->id])->avaliadas()->with(['avaliacao'])->get()->sum(function($demanda) use ($notas_validas){
+                return in_array($demanda["avaliacao"]["nota_atribuida"], $notas_validas->all()) ? $demanda['tempo_pactuado'] : 0;
+            });
+
+            $horas_alocadas = $plano->demandas->sum('tempo_pactuado');
+            $result['planos'][] = [
+                'data_inicio_vigencia' => $plano['data_inicio_vigencia'],
+                'data_fim_vigencia' => $plano['data_fim_vigencia'],
+                'total_horas' => $plano['tempo_total'],
+                'horas_alocadas' => $horas_alocadas,
+                'horas_consolidadas' => $total_consolidadas,
+                'progresso' => $total_consolidadas > 0 ? round((float)(($total_consolidadas / $plano['tempo_total']) * 100), 2) : 0
+            ];           
+        }
+        $result['demandas'] = [
+            'avaliadas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->avaliadas()->get()->count(),
+            'nao_iniciadas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->naoIniciadas()->get()->count(),
+            'concluidas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->concluidas()->get()->count(),
+            'nao_concluidas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->naoConcluidas()->get()->count(),
+            'atrasadas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->atrasadas()->get()->count(),
+            'media_avaliacoes' => $media_avaliacao,
+            'total_demandas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->get()->count()
+        ];
+        $result['horas_afastamentos'] = 0;
+
+        return $result;
+    }
 
     /**
      * dashboard
      *
+     * @param  mixed $data_inicial: Data inicial dos planos de trabalho
+     * @param  mixed $data_final: Data final dos planos de trabalho
      * @param  mixed $usuario_id: ID do usuário do qual se deseja as informações para o dashboard
-     * @return array: array contendo todas as informações para o front-end
+     * @return array: array contendo todas as informações para o front-end do usuário
      */
-    public function dashboard($usuario_id): array {
+
+
+    public function dashboard_gestor($data_inicial, $data_final, $unidade_ids) {
+        $result = [];
+        // $lotacoes = Lotacao::whereIn("unidade_id", $unidade_ids)->with(['usuario'])->get();
+
+        $usuarios = Usuario::select('usuarios.*')
+                    ->distinct()
+                    ->join('lotacoes', 'lotacoes.usuario_id', '=', 'usuarios.id')
+                    ->whereIn('lotacoes.unidade_id', $unidade_ids)->get();
+
+        foreach ($usuarios as $usuario) {
+            $planosAtivos = $this->PlanoService->planosAtivosPorData($data_inicial, $data_final, $usuario->id);
+            $planos_ids = $planosAtivos->map(function($plano){return $plano->id;});
+            $notas_validas = TipoAvaliacao::where('aceita_entrega', true)->get()->pluck('nota_atribuida');
+    
+            $total_consolidadas = Demanda::doUsuario($usuario->id)->dosPlanos($planos_ids)->avaliadas()->with(['avaliacao'])->get()->sum(function($demanda) use ($notas_validas){
+                return in_array($demanda["avaliacao"]["nota_atribuida"], $notas_validas->all()) ? $demanda['tempo_pactuado'] : 0;
+            });
+
+            $media_avaliacao = Demanda::doUsuario($usuario->id)->dosPlanos($planos_ids)->avaliadas()->with(['avaliacao'])->get()->avg(function($demanda){
+                return $demanda["avaliacao"]["nota_atribuida"];
+            });
+
+            $planos = [];
+            
+
+            foreach ($planosAtivos as $plano) {
+                $horas_alocadas = $plano->demandas->sum('tempo_pactuado');
+                $planos[] = [
+                    'data_inicio_vigencia' => $plano['data_inicio_vigencia'],
+                    'data_fim_vigencia' => $plano['data_fim_vigencia'],
+                    'total_horas' => $plano['tempo_total'],
+                    'horas_alocadas' => $horas_alocadas,
+                    'horas_consolidadas' => $total_consolidadas,
+                    'progresso' => $total_consolidadas > 0 ? round((float)(($total_consolidadas / $plano['tempo_total']) * 100), 2) : 0
+                ];           
+            }
+
+            
+            $result['usuarios'][] = [
+                'nome' => $usuario->nome,
+                'foto' => $usuario->foto_perfil,
+                'planos' => $planos
+            ];
+
+            
+        }
+
+        return $result;
+    }
+    /**
+     * dashboard gestor
+     *
+     * @param  mixed $data_inicial: Data inicial dos planos de trabalho
+     * @param  mixed $data_final: Data final dos planos de trabalho
+     * @param  mixed $unidade_ids: Unidades que o usuário gerencia
+     * @return array: array contendo todas as informações dos planos de trabalho de cada usuário da unidade (front-end do gestor)
+     */
+
+
+    public function old_dashboard($usuario_id): array {
         $planosAtivos = $this->PlanoService->planosAtivos($usuario_id);
         $planos_ids = [];
         $result = [

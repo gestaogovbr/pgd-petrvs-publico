@@ -1,21 +1,21 @@
 <div *ngIf="efemerides?.resultado == 'DATA'" class="mt-2 alert alert-primary" role="alert">
     <i class="bi bi-info-circle-fill"></i>
     A data final [F] é obtida através do cálculo:<br><br>
-    <ng-template *ngIf="useDias; else dataUseHoras">
+    <ng-container *ngIf="useDias; else dataUseHoras">
         [DU]=[HU]/[CH] <small>(Dias úteis necessários)</small><br>
-        <ng-template *ngIf="partial">
+        <ng-container *ngIf="partial">
             [DAP]=[HA]+[HP]-([HA]&#8745;[HP]) <small>(União da quantidade de dias que têm ao menos um Afastamento [HA] ou uma Pausa [HP])</small><br>
-        </ng-template>
+        </ng-container>
         [F]=[I]+[DU]{{partial ? "+[DAP]" : ""}}{{!useCorridos ? "+[FER]+[FDS]" : ""}}
-    </ng-template>
+    </ng-container>
     <ng-template #dataUseHoras>
         [EX]=[HFE]-[HIE]-[TIN]<br>
         [HD]=MIN([EX], [CH]) <small>(Horas por dia, será o menor valor entre: [EX] e [CH])</small><br>
         [IE]=[HFE]-[HD] <small>(Início do expediente para o servidor, para encerrar o dia exatamente no [HFE])</small><br>
         [SHI]=[I]-[IE] <small>(Saldo inicial, horas a partir do início do expediente [IE] até a data e hora inicial [I])</small><br>
-        <ng-template *ngIf="partial">
+        <ng-container *ngIf="partial">
             [HAP]=[HA]+[HP]-([HA]&#8745;[HP]) <small>(União das horas de afastamentos e/ou pausas)</small><br>
-        </ng-template>
+        </ng-container>
         [QDU]=([HU]{{partial ? "+[HAP]" : ""}}+[SHI])/[HD] <small>(Quantidade de dias úteis necessários, sendo arredondado sempre para cima, ex: 3.2 = 4)</small><br>
         [SHF]=([HD]*[QDU])-([HU]{{partial ? "+[HAP]" : ""}}+[SHI]) <small>(Saldo final, diferença do [DF] que estamos buscando até o final do expediente [HFE], em horas)</small><br>
         [DF]=[QDU]{{!useCorridos ? "+[FER]+[FDS]" : ""}}+[HFE]-[SHF] <small>(Data e horário final até o cumprimento das [HU])</small><br>
@@ -23,63 +23,73 @@
 </div>
 <div *ngIf="efemerides?.resultado == 'TEMPO'" class="mt-2 alert alert-primary" role="alert">
     <i class="bi bi-info-circle-fill"></i>
-    As horas úteis são obtidas através do cálculo:<br><br>
-    <ng-template *ngIf="useDias; else tempoUseHoras">
+    As horas são obtidas através do cálculo:<br><br>
+    <ng-container *ngIf="useDias; else tempoUseHoras">
         [DC]=[F]-[I]
-        <ng-template *ngIf="partial">
+        <ng-container *ngIf="partial">
             [DAP]=[HA]+[HP]-([HA]&#8745;[HP]) <small>(União da quantidade de dias que têm ao menos um Afastamento [HA] ou uma Pausa [HP])</small><br>
-        </ng-template>
+        </ng-container>
         [DU]=[DC]{{!useCorridos ? "-[FER]-[FDS]" : ""}}{{partial ? "-[DAP]" : ""}} <small>(Dias úteis)</small><br>
         [HU]=[CH]*[DU]
-    </ng-template>
+    </ng-container>
     <ng-template #tempoUseHoras>
         [EX]=[HFE]-[HIE]-[TIN]<br>
         [SHI]=[I]-[IE] <small>(Saldo inicial, horas a partir do início do expediente [IE] até a data e hora inicial [I])</small><br>
         [SHF]=[HFE]-[F] <small>(Saldo final, horas a partir da data e hora final [F] até o fim do expediente [HFE])</small><br>
-        <ng-template *ngIf="partial">
+        <ng-container *ngIf="partial">
             [HAP]=[HA]+[HP]-([HA]&#8745;[HP]) <small>(União das horas de afastamentos e/ou pausas)</small><br>
-        </ng-template>
+        </ng-container>
         [DU]=[DC](-[FER]-[FDS])<br>
         [HU]=[CH]*[DU](-[SHI]-[SHF]){{partial ? "-[HAP]" : ""}}
     </ng-template>
 </div>
 <ng-template *ngIf="useDias; else obsUseHoras">
-    <ng-template *ngIf="useCorridos">
+    <ng-container *ngIf="useCorridos">
         * O cálculo para dias corridos não considera feriados nem fins de semana e levará em consideração o expediente da unidade
-    </ng-template>
+    </ng-container>
 </ng-template>
 <ng-template #obsUseHoras>
-    <ng-template *ngIf="useCorridos">
+    <ng-container *ngIf="useCorridos">
         * O cálculo para horas corridas NÃO considera o expediente da unidade, APENAS leva em consideração afastamentos [HA] e pausas [HP]
-    </ng-template>
+    </ng-container>
 </ng-template>
 <br>
 <strong>[I] Início:</strong> {{util.getDateTimeFormatted(efemerides?.inicio)}}<br> 
 <strong>[F] Fim:</strong> {{util.getDateTimeFormatted(efemerides?.fim)}}<br>
 <strong>[DC] Dias corridos:</strong> {{efemerides?.dias_corridos}}<br>
-<strong>[HU] Horas úteis:</strong> {{util.decimalToTimerFormated(efemerides?.tempoUtil, true)}}<br>
+<strong>[HU] Horas {{useCorridos ? 'corridas' : 'úteis'}}:</strong> {{util.decimalToTimerFormated(efemerides?.tempoUtil, true)}}<br>
+<strong>[HNU] Horas {{useCorridos ? 'não contabilizadas' : 'não úteis'}}:</strong> {{util.decimalToTimerFormated(efemerides?.horasNaoUteis, true)}}<br>
 <strong>[FC] Forma de cálculo:</strong> {{forma}}<br>
-<strong>[CH] Carga horária:</strong> {{util.decimalToTimerFormated(efemerides?.cargaHoraria, true)}}<br>
-<strong>[HIE] Horário de início do expediente na unidade:</strong> {{efemerides?.horario_trabalho_inicio?.substring(0,5)}}<br>
+<strong>[CH] Carga horária:</strong> {{util.decimalToTimerFormated(efemerides?.cargaHoraria, true)}}{{useCorridos ? ' - Utilizada: 24h/dia' : ''}}<br>
+<strong>Expediente (nos dias da semana):</strong><br>
+<span *ngFor="let dia of expediente" class="ms-2 d-block">{{dia}}</span>
+<!--strong>[HIE] Horário de início do expediente na unidade:</strong> {{efemerides?.horario_trabalho_inicio?.substring(0,5)}}<br>
 <strong>[HFE] Horário de fim do expediente na unidade:</strong> {{efemerides?.horario_trabalho_fim?.substring(0,5)}}<br>
 <strong>[TIN] Tempo de intervalor (ex.: horas de almoço) na unidade:</strong> {{efemerides?.horario_trabalho_intervalo?.substring(0,5)}}<br>
-<strong>[EX] Expediente:</strong> {{util.decimalToTimerFormated(efemerides?.expediente, true)}}<br>
-<ng-template *ngIf="partial">
-    <strong>[HAP] Horas de afastamentos e/ou pausas:</strong> {{util.decimalToTimerFormated(efemerides?.horasAfastamentosPausas, true)}}<br>
+<strong>[EX] Expediente:</strong> {{util.decimalToTimerFormated(efemerides?.expediente, true)}}<br//-->
+<ng-container *ngIf="partial">
+    <!--strong>[HAP] Horas de afastamentos e/ou pausas:</strong> {{util.decimalToTimerFormated(efemerides?.horasAfastamentosPausas, true)}}<br /-->
     <strong>[HA] Afastamento(s) ({{efemerides?.afastamentos?.length}}):</strong><br>
     <span *ngFor="let afastamento of efemerides!.afastamentos">
-        De {{util.getDateTimeFormatted(afastamento.inicio_afastamento)}} até {{util.getDateTimeFormatted(afastamento.fim_afastamento)}} - afastamento.observacoes<br>
+        De {{util.getDateTimeFormatted(afastamento.inicio_afastamento)}} até {{util.getDateTimeFormatted(afastamento.fim_afastamento)}} - {{afastamento.observacoes}}<br>
     </span>
     <strong>[HP] Pausa(s) ({{efemerides?.pausas?.length}}):</strong><br>
     <span *ngFor="let pausa of efemerides!.pausas">
         De {{util.getDateTimeFormatted(pausa.data_inicio)}} - {{pausa.data_fim ? 'até ' + util.getDateTimeFormatted(pausa.data_fim) : 'em aberto'}}<br>
     </span>
-</ng-template>
-<strong>[FDS] Finais de semana ({{finsSemana.length}}):</strong><br>
-<span *ngFor="let fimSemanda of finsSemana">
-    {{fimSemanda[0]}} - {{fimSemanda[1]}}<br>
+</ng-container>
+<strong>[DNU] Dias não úteis ({{diasNaoUteis.length}}):</strong><br>
+<span *ngFor="let diaNaoUtil of diasNaoUteis">
+    {{diaNaoUtil[0]}} - {{diaNaoUtil[1]}}<br>
 </span>
 <strong>[FER] Feriado(s) ({{feriados.length}}):</strong><br>
 <span *ngFor="let feriado of feriados">
     {{feriado[0]}} - {{feriado[1]}}<br>
 </span>
+<separator [bold]="true" [title]="'Detalhes dia-a-dia (' + efemerides?.diasDetalhes?.length + '):'" collapse transparent>
+    <span *ngFor="let dia of efemerides?.diasDetalhes">
+        <b>{{dia.diaSemana}}</b> - Início: {{util.getDateTimeFormatted(data(dia.tInicio))}} - Fim: {{util.getDateTimeFormatted(data(dia.tFim))}} - Total: {{+dia.hExpediente.toFixed(2)}}h<br>
+        Intervalos: Qde({{dia.intervalos.length}}) - Total de horas({{totalHoras(dia.intervalos)}}h)<br>
+        Qde. horas contabilizadas: {{+dia.hExpediente.toFixed(2)-totalHoras(dia.intervalos)}}<br><br>
+    </span>
+</separator>

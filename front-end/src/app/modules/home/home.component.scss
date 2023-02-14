@@ -1,136 +1,68 @@
-.card{
-    color: black;
-    width: 100%;
+.card {
+    box-shadow: 0 0.1875rem 0.1875rem 0 rgba(14, 34, 56, .07);
+    margin-bottom: 1.875rem;
+
+    h3 {
+        font-size: 2rem;
+        font-weight: 600;
+    }
+
+    p {
+        margin-bottom: 0;
+        font-weight: 200;
+    }
+
+    &.atrasadas {
+        p {
+            color: #a00d0d;
+        }
+    }
+
+    &.concluidas {
+        p {
+            color: #0e8554;
+        }
+    }
 }
 
-.card-header{
-    color: black;
-    width: auto;
+.minhas {
+    padding: 15px;
+    color: #adadad;
+
+    h4,
+    h5 {
+        margin: 0;
+    }
 }
 
-.card-text{
-    color: black;
-    width: auto;
+.avaliacoes {
+    color: white;
+
+    &.acima {
+        background: #ffc100;
+    }
+
+    &.abaixo {
+        background: #ff4000;
+    }
 }
 
-.card-title{
-    color: black;
-    text-align: center;
-    width: auto;
-}
+.dashGestor {
+    .usuario {
+        border-bottom: 1px solid #dcdcdc;
+        padding: 10px 0;
 
-.card-body{
-    text-align: left;
-    width: auto;
-}
+        h3 {
+            font-size: 1rem;
+            margin: 0 20px;
+        }
 
-.progress{
-    height: 20px;
-    width: auto;
-}
+        .w-30 {
+            width: 30%;
+        }
 
-.img{
-    align-content: center;
-
-}
-
-.imagemdeFundo{
-    background-image:url('/resources/prf1.png');
-    background-size: 100%;
-    border-radius: 15px;
-    height: 260px;
-    padding-right: 10px;
-    margin-right: 5px;
-}
-
-.card-header{
-    text-align: center;
-    width: auto;
-
-}
-
-.card-header2{
-    text-align: center;
-    color:grey;
-}
-
-.headers2{
-    text-align: left;
-    font-weight: lighter;
-    font-size: small;
-
-
-}
-
-.h5-1{
-    text-align: center;
-}
-
-#icon-demandas-andamento{
-    color:blue;
-    text-align: center;
-    object-position: center;
-    width: auto;
-}
-
-#icon-demandas-atraso{
-    color:red;
-    text-align: center;
-    width: auto;
-}
-
-#icon-demandas-natraso{
-    color:gray;
-    text-align: center;
-    width: auto;
-}
-
-#icon-planos-execucao{
-    color: blue;
-    text-align: center;
-    width: auto;
-}
-
-#icon-produtividade-media{
-    color: blue;
-    text-align: center;
-    width: auto;
-}
-
-#qtde-demanda{
-    font-size: xx-large;
-    width: auto;
-    text-align: center;
-}
-
-#qtde-atraso{
-    font-size: xx-large;
-    width: auto;
-    text-align: center;
-}
-
-#barra{
-
-}
-
-#header1{
-    text-align: center;
-    color: black;
-
-}
-
-div[role="link"] {
-  color: blue;
-  text-decoration: underline;
-  //cursor: purple;
-}
-div[role="link"]:hover,
-div[role="link"]:active,
-div[role="link"]:focus {
-  color: purple;
-}
-
-div[role="link"]:focus {
-  background-color: palegoldenrod;
-  outline: 1px dotted;
+        &:last-child {
+            border: none;
+        }
+    }
 }

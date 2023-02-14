@@ -12,6 +12,7 @@ use App\Services\UtilService;
 use Illuminate\Support\Facades\Auth;
 use App\Exceptions\LogError;
 use App\Models\Usuario;
+use App\Services\PlanoService;
 use Carbon\Carbon;
 use ReflectionObject;
 use Throwable;
@@ -429,10 +430,7 @@ class ServiceBase extends DynamicMethods
         $model = App($this->collection);
         $entity = $model::query();
         if(count($data['with']) > 0) {
-            $data['with'] = $this->getCamelWith($data['with']);
-            foreach($data['with'] as $with) {
-                $entity->with($with);
-            }
+            $this->proxyWith($entity,$data);
         }
         $entity = $entity->find($data["key"]);
         $text = "";
@@ -513,14 +511,10 @@ class ServiceBase extends DynamicMethods
         $query = $model::query();
         $data["with"] = isset($this->joinable) ? $this->getJoinable($data["with"] ?? []) : $data["with"];
         if(count($data['with']) > 0) {
-            $data['with'] = $this->getCamelWith($data['with']);
-            foreach($data['with'] as $key => $with) {
-                $query->with(gettype($key) == "string" ? [$key => $with] : $with);
-            }
+            $this->proxyWith($query,$data);
         }
         $query->where('id', $data['id']);
         $rows = method_exists($this, 'proxyRows') ? $this->proxyRows($query->get()) : $query->get();
-/*         if(method_exists($this, 'proxyById')) $rows = $this->proxyById($rows); */
         if(count($rows) == 1) {
             return $rows[0];
         } else {
@@ -566,10 +560,7 @@ class ServiceBase extends DynamicMethods
         if(method_exists($this, 'proxyQuery')) $this->proxyQuery($query, $data);
         $data["with"] = isset($this->joinable) ? $this->getJoinable($data["with"] ?? []) : $data["with"];
         if(count($data['with']) > 0) {
-            $data['with'] = $this->getCamelWith($data['with']);
-            foreach($data['with'] as $key => $with) {
-                $query->with(gettype($key) == "string" ? [$key => $with] : $with);
-            }
+            $this->proxyWith($query,$data);
         }
         $this->applyWhere($query, $data['where'], $data);
         $this->applyOrderBy($query, $data);
@@ -805,7 +796,7 @@ class ServiceBase extends DynamicMethods
         if(isset($entity)) {
             try {
                 if($transaction) DB::beginTransaction();
-                if(method_exists($this, "proxyDestroy") ? $this->proxyDestroy($entity) : true) { if(method_exists($entity, 'deleteCascade')) $entity->deleteCascade(); }
+                if(method_exists($this, "proxyDestroy") ? $this->proxyDestroy($entity) : true) {if(method_exists($entity, 'deleteCascade')) $entity->deleteCascade();}
                 if($transaction) DB::commit();
                 return true;
             } catch (Throwable $e) {
@@ -831,5 +822,46 @@ class ServiceBase extends DynamicMethods
      */
     public static function loggedUser(): ?Usuario {
         return Auth::user();
+    }
+
+    /**
+     * Este método filtra todos os relacionamentos que tenham sido apagados (Data_fim não nula)
+     */
+    public function proxyWith(&$entity,&$data) {
+        $data['with'] = $this->getCamelWith($data['with']);
+        $model = $this->getModel();
+        foreach($data['with'] as $key => $with) {
+            $withs = explode('.',$with);
+            if(str_contains(array_slice($withs, -1, 1)[0],':')) {   // se o último elemento contiver campos...
+                $entity->with(gettype($key) == "string" ? [$key => $with] : $with);       // aplica o método 'with' normalmente nele...
+                array_splice($withs, -1, 1, explode(':',array_slice($withs, -1, 1)[0])[0]);     // depois retira os : e os campos
+            }
+            while (count($withs)>0) {
+                $relation = $this->getNestedModel($model, implode('.',$withs));
+                //SHOW COLUMNS FROM `table` LIKE 'fieldname'
+                if(!empty($relation) && !empty((new $relation)->has_data_fim)) {
+                    $entity->with([implode('.',$withs) => function($query) {$query->whereNull('data_fim');}]);
+                    $entity->with(gettype($key) == "string" 
+                            ? [$key => [implode('.',$withs) => function($query) {$query->whereNull('data_fim');}]]
+                            : [implode('.',$withs) => function($query) {$query->whereNull('data_fim');}]);    
+                } else {
+                    $entity->with(implode('.',$withs));
+                }
+                array_pop($withs);
+            }
+        }
+    }
+
+    public function getNestedModel($model, $nested) {
+        $relations = explode('.', explode(':', $nested)[0]);
+        foreach($relations as $related) {
+            if(method_exists($model, Str::camel($related))) {
+                $relation = $model->{Str::camel($related)}();
+                $model = $relation->getRelated();
+            } else {
+                return null;
+            }
+        }
+        return $model;
     }
 }

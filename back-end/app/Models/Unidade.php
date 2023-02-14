@@ -60,6 +60,7 @@ class Unidade extends ModelBase
         'gestor_substituto_id', /* char(36); */
         'entidade_id', /* char(36); NOT NULL; */
         'cidade_id', /* char(36); */
+        'expediente', /* json; */// Configuração de expediente
         //'checklist', /* json; */// Nome dos checklist predefinidas
         //'data_fim', /* datetime; */// Data final da vigência
         //'inativo', /* datetime; */// Se a unidade está inativa
@@ -119,5 +120,13 @@ class Unidade extends ModelBase
     public function setNotificacoesAttribute($value)
     {
         $this->attributes['notificacoes'] = json_encode($value);
+    }
+    public function getExpedienteAttribute($value)
+    {
+        return json_decode($value);
+    }   
+    public function setExpedienteAttribute($value)
+    {
+        $this->attributes['expediente'] = json_encode($value);
     }
 }

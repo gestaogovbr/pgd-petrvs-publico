@@ -8,13 +8,10 @@ import { ChangeListComponent } from './change/change-list/change-list.component'
 const routes: Routes = [
   { path: 'change', component: ChangeListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Registros de Log - tipo CHANGE" } },
   { path: 'change/:id/consult', component: ChangeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } }
-/*   { path: 'logs/error', component: ErrorListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Registros de Log - tipo ERROR" } },
-  { path: 'logs/traffic', component: TrafficListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Registros de Log - tipo TRAFFIC" } }, */
-
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class LogsRoutingModule { }
+export class LogRoutingModule { }

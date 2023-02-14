@@ -30,6 +30,8 @@ import { TipoJustificativaDaoService } from 'src/app/dao/tipo-justificativa-dao.
 import { TipoModalidadeDaoService } from 'src/app/dao/tipo-modalidade-dao.service';
 import { TipoMotivoAfastamentoDaoService } from 'src/app/dao/tipo-motivo-afastamento-dao.service';
 import { TipoProcessoDaoService } from 'src/app/dao/tipo-processo-dao.service';
+import {TemplateDaoService} from "src/app/dao/template-dao.service";
+import {AdesaoDaoService} from "src/app/dao/adesao-dao.service";
 
 export type LogEntity = {
   table: string,
@@ -74,7 +76,6 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
       {table: 'afastamentos', campo: 'observacoes', dao: injector.get<AfastamentoDaoService>(AfastamentoDaoService), label: "Afastamento", selectRoute: {route: ['cadastros', 'afastamento']}},
       {table: 'atividades', campo: 'nome', dao: injector.get<AtividadeDaoService>(AtividadeDaoService), label: "Atividade", selectRoute: {route: ['cadastros', 'atividade']}},
       {table: 'cidades', campo: 'nome', dao: injector.get<CidadeDaoService>(CidadeDaoService), label: "Cidade", selectRoute: {route: ['cadastros', 'cidade']}},
-      //{table: 'demandas', campo: 'assunto', dao: injector.get<DemandaDaoService>(DemandaDaoService), label: "Demanda", selectRoute: {route: ['gestao', 'demanda']}},
       {table: 'entidades', campo: 'nome', dao: injector.get<EntidadeDaoService>(EntidadeDaoService), label: "Entidade", selectRoute: {route: ['configuracoes', 'entidade']}},
       {table: 'feriados', campo: 'nome', dao: injector.get<FeriadoDaoService>(FeriadoDaoService), label: "Feriado", selectRoute: {route: ['cadastros', 'feriado']}},
       {table: 'materiais_servicos', campo: 'descricao', dao: injector.get<MaterialServicoDaoService>(MaterialServicoDaoService), label: "Material/Serviço", selectRoute: {route: ['cadastros', 'material-servico']}},
@@ -83,6 +84,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
       {table: 'programas', campo: 'nome', dao: injector.get<ProgramaDaoService>(ProgramaDaoService), label: "Programa", selectRoute: {route: ['cadastros', 'programa']}},
       {table: 'projetos', campo: 'nome', dao: injector.get<ProjetoDaoService>(ProjetoDaoService), label: "Projeto", selectRoute: {route: ['gestao', 'projeto']}},
       {table: 'tarefas', campo: 'nome', dao: injector.get<TarefaDaoService>(TarefaDaoService), label: "Tarefa", selectRoute: {route: ['cadastros', 'tarefa']}},
+      {table: 'templates', campo: 'titulo', dao: injector.get<TemplateDaoService>(TemplateDaoService), label: "Template", selectRoute: {route: ['cadastros', 'template']}},
       {table: 'tipos-atividades', campo: 'nome', dao: injector.get<TipoAtividadeDaoService>(TipoAtividadeDaoService), label: "Tipo de Atividade", selectRoute: {route: ['cadastros', 'tipo-atividade']}},
       {table: 'tipos-avaliacoes', campo: 'nome', dao: injector.get<TipoAvaliacaoDaoService>(TipoAvaliacaoDaoService), label: "Tipo de Avaliação", selectRoute: {route: ['cadastros', 'tipo-avaliacao']}},
       {table: 'tipos-documentos', campo: 'nome', dao: injector.get<TipoDocumentoDaoService>(TipoDocumentoDaoService), label: "Tipo de Documento", selectRoute: {route: ['cadastros', 'tipo-documento']}},

@@ -23,6 +23,7 @@ export class TipoModalidadeListComponent extends PageListBase<TipoModalidade, Ti
       atividades_homologadas: {default: ""},
       dispensa_avaliacao: {default: ""},
       exige_assinatura: {default: ""},
+      exige_adesao: {default: ""},
       data_inicio: {default: ""},
       data_fim: {default: ""}
     });

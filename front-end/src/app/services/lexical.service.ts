@@ -13,11 +13,13 @@ export type Translate = {
   providedIn: 'root'
 })
 export class LexicalService {
-
+  /* Colocar single e plural em minúsculo (Sempre seguir a ordem Alfabética)*/
   public defaults: Translate = {
+    "adesao": {single: "adesão", plural: "adesões", female: false},
     "afastamento": {single: "afastamento", plural: "afastamentos", female: false},
     "atividade": {single: "atividade", plural: "atividades", female: true},
     "avaliação": {single: "avaliação", plural: "avaliações", female: true},
+    "cadeia de valor": {single: "cadeia de valor", plural: "cadeias de valor", female: false},
     "capacidade": {single: "capacidade", plural: "capacidades", female: true},
     "data de distribuição": {single: "data de distribuição", plural: "datas de distribuição", female: false},
     "demanda": {single: "demanda", plural: "demandas", female: true},
@@ -25,6 +27,7 @@ export class LexicalService {
     "entidade": {single: "entidade", plural: "entidades", female: true},
     "entrega": {single: "Entrega", plural: "Entregas", female: true},
     "justificativa": {single: "justificativa", plural: "justificativas", female: true},
+    "macroprocesso": {single: "macroprocesso", plural: "macroprocessos", female: false},
     "material e serviço": {single: "material e serviço", plural: "materiais e serviços", female: false},
     "modalidade": {single: "modalidade", plural: "modalidades", female: true},
     "motivo de afastamento": {single: "motivo de afastamento", plural: "motivos de afastamento", female: false},
@@ -39,6 +42,7 @@ export class LexicalService {
     "tempo planejado": {single: "tempo planejado", plural: "tempos planejados", female: false},
     "unidade": {single: "unidade", plural: "unidades", female: true},
     "usuário": {single: "usuário", plural: "usuários", female: false},
+    "template": {single: "template", plural: "templates", female: false}
   };
 
   public vocabulary: Translate = {};

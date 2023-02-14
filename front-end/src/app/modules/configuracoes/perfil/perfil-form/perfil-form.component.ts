@@ -40,9 +40,10 @@ export class PerfilFormComponent extends PageFormBase<Perfil, PerfilDaoService> 
 
     if(['nome', 'descricao'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    }  else if(['nivel'].indexOf(controlName) >= 0 && !control.value) {
+    }
+/*       else if(['nivel'].indexOf(controlName) >= 0 && !control.value) {
     result = "Não pode ser zero.";
-    } 
+    }  */
 
     return result;
   }
@@ -53,7 +54,7 @@ export class PerfilFormComponent extends PageFormBase<Perfil, PerfilDaoService> 
     this.tiposCapacidades = await this.tipoCapacidadeDao.query().asPromise();
     formValue = this.util.fillForm(formValue, entity);
     for(let tipoCapacidade of this.tiposCapacidades) {
-      const capacidade = entity.capacidades?.find(x => x.tipo_capacidade?.codigo == tipoCapacidade.codigo);
+      const capacidade = entity.capacidades?.find(x => (x.tipo_capacidade?.codigo == tipoCapacidade.codigo));
       this.capacidades[tipoCapacidade.codigo] = !!capacidade;
       capacidades.push(Object.assign(new Capacidade(), {
         id: capacidade ? capacidade.id : this.tipoCapacidadeDao.generateUuid(),

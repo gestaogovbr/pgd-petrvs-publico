@@ -8,6 +8,7 @@ import { DaoBaseService } from '../dao/dao-base.service';
 import { MaskApplierService } from 'ngx-mask';
 import { DOCUMENT } from '@angular/common';
 import { AbstractControl, FormControl } from '@angular/forms';
+import { AuthService } from './auth.service';
 
 export type Interval = {start: Date | number, end: Date | number};
 export type DateInterval = {start: Date, end: Date};
@@ -27,10 +28,12 @@ export class UtilService {
   public static readonly TIME_VALIDATE = /^(([01][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?)|(24:00(:00)?)$/;
 
   public maskService: MaskApplierService;
+  public auth: AuthService;
   private renderer: Renderer2;
 
   constructor(public injector: Injector, @Inject(DOCUMENT) private document: Document, rendererFactory: RendererFactory2) {
     this.maskService = injector.get<MaskApplierService>(MaskApplierService);
+    this.auth = injector.get<AuthService>(AuthService);
     this.maskService.thousandSeparator = ".";
     this.renderer = rendererFactory.createRenderer(null, null);
   }
@@ -360,6 +363,10 @@ export class UtilService {
     return !!dataRef && (moment(dataRef).isValid() || (Object.prototype.toString.call(dataRef) === '[object Date]' && !isNaN(dataRef)));
   }
 
+  public isDeveloper(): boolean {
+    return this.auth.usuario?.perfil?.nome == 'Desenvolvedor';
+  }
+
   public decimalToTimer(value: number, onlyHours: boolean = false, hoursPerDay: number = 24) {
     const hours = onlyHours ? Math.trunc(value) : Math.trunc(value) % hoursPerDay;
     const minutes =  Math.round((value % 1) * 60);
@@ -417,21 +424,30 @@ export class UtilService {
   }
 
   public union(intervals: Interval[]) : Interval[] {
-    const isDate = (intervals[0])?.start instanceof Date;
-    let result = intervals.map(x => this.asTimeInterval(x));
-    for(let i = 0; i < result.length; i++) {
-      for(let j = 0; j < result.length; j++) {
-        if(i != j && result[i].end >= result[j].start && result[i].start <= result[j].end) {
-          result[i] = {
-            start: Math.max(result[i].start, result[j].start),
-            end: Math.min(result[i].end, result[j].end)
-          };
-          result.splice(j, 1);
-          j--;
+    if(intervals.length < 2){
+        return intervals;
+    } else {
+        const isDate = (intervals[0])?.start instanceof Date;
+        let intervalos: TimeInterval[] = intervals.map(x => this.asTimeInterval(x));
+        let result: TimeInterval[] = [];
+        result.push(intervalos[0]);
+        intervalos.shift();
+        for(let i = 0; i < result.length; i++) {
+            for(let j = 0; j < intervalos.length; j++) {
+                if(result[i].end >= intervalos[j].start && result[i].start <= intervalos[j].end) {
+                    result[i] = {start: Math.min(result[i].start, intervalos[j].start),
+                                 end: Math.max(result[i].end, intervalos[j].end)};
+                    intervalos.splice(j, 1);
+                    j = -1;
+                } 
+            }
+            if(intervalos.length) {
+              result.push(intervalos[0]);
+              intervalos.shift();
+            }
         }
-      }
+        return isDate ? result.map(x => this.asDateInterval(x)) : result;
     }
-    return isDate ? result.map(x => this.asDateInterval(x)) : result;
   }
 
   public merge(aItems: any[] | undefined, bItems: any[] | undefined, role: (a: any, b: any) => boolean): any[] {
@@ -444,6 +460,10 @@ export class UtilService {
 
   public getDateFormatted(dataHora: any): string{
     return dataHora ? moment(dataHora).format("DD/MM/YYYY") : "";
+  }
+
+  public getBooleanFormatted(n: number): string{
+    return n == 0 ? "não" : "sim";
   }
 
   public getTimeFormatted(dataHora: any): string{
@@ -513,8 +533,8 @@ export class UtilService {
     };
   }
 
-  public getHoursBetween(dateStart: Date, dateEnd: Date): number {
-    const timestamp = Math.floor((dateEnd.getTime() - dateStart.getTime()) / 1000);
+  public getHoursBetween(start: Date | number, end: Date | number): number {
+    const timestamp = Math.floor(((end instanceof Date ? end.getTime() : end) - (start instanceof Date ? start.getTime() : start)) / 1000);
     const timer = this.secondsToTimer(timestamp);
     return timer.hours + (timer.minutes / 60) + (timer.secounds / (60*60));
   }

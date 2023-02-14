@@ -49,9 +49,11 @@ class Entidade extends ModelBase
         'notificacoes', /* json; */// Configurações das notificações (Se envia email, whatsapp, tipos, templates)
         'forma_contagem_carga_horaria', /* enum('DIA','SEMANA','MES'); NOT NULL; DEFAULT: 'DIA'; */// Forma de contagem padrão da carga horária
         'data_inicio', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data inicio da vigência
+        'expediente', /* json; NOT NULL; DEFAULT: '_utf8mb4\'{"domingo":[],"segunda":[],"terca":[],"quarta":[],"quinta":[],"sexta":[],"sabado":[],"especial":[]}\''; */// Configuração de expediente
         //'data_fim', /* datetime; */// Data fim da vigência
         //'api_public_key', /* text; */// Chave pública de API
         //'api_private_key', /* text; */// Chave privada de API
+        //'template_adesao_id', /* char(36); */
     ];
 
     public $delete_cascade = ['feriados'];
@@ -101,5 +103,13 @@ class Entidade extends ModelBase
     public function setNotificacoesAttribute($value)
     {
         $this->attributes['notificacoes'] = json_encode($value);
+    }
+    public function getExpedienteAttribute($value)
+    {
+        return json_decode($value);
+    }   
+    public function setExpedienteAttribute($value)
+    {
+        $this->attributes['expediente'] = json_encode($value);
     }
 }

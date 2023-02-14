@@ -46,6 +46,7 @@ export class EntidadeFormComponent extends PageFormBase<Entidade, EntidadeDaoSer
       cidade_id: {default: null},
       gestor_id: {default: null},
       gestor_substituto_id: {default: null},
+      expediente: {default: null},
       uf: {default: null}
     }, this.cdRef, this.validate);
     this.join = ["cidade", "tipoModalidade", "gestor", "gestor_substituto"];

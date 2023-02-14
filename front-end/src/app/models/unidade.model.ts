@@ -2,6 +2,7 @@ import { LookupItem } from '../services/lookup.service';
 import { Base, IIndexable } from './base.model';
 import { Cidade } from './cidade.model';
 import { Entidade } from './entidade.model';
+import { Expediente } from './expediente.model';
 import { UnidadeOrigemAtividade } from './unidade-origem-atividade.model';
 import { Usuario } from './usuario.model';
 
@@ -50,6 +51,7 @@ export class Unidade extends Base {
     public data_fim: Date | null = null; //Data final da vigência
     public inativo: Date | null = null; //Se a unidade está inativa
     public unidades_origem_atividades: UnidadeOrigemAtividade[] = [];
+    public expediente: Expediente | null = null; // Expediente (Não nulo)
 
     public unidade_id: string | null = null; //Unidade superior (nó pai hierárquico)
     public entidade_id: string | null = null; // Entidade referente

@@ -1,8 +1,76 @@
 <!--div class="d-block">
     {{ID_GENERATOR_BASE}}
+</div!-->
+
+<editable-form [form]="form">
+    <div class="row">
+        <input-editor controlName="editor"></input-editor>
+    </div>
+</editable-form>
+
+
+
+<br><br><br><br>
+{{form?.controls?.editor?.value || ""}}
+<map [items]="mapa">
+    <strong></strong>
+    <table>
+        <map-foreach [template]="eixoTemplate">
+            <ng-template #eixoTemplate let-eixo="data" let-objetivos="children" let-metadata="metadata" let-level="level">
+                <tr>
+                    <td><h3>{{eixo.nome}}</h3></td>
+                    <td>
+                        <table *ngIf="objetivos?.length">
+                            <map-foreach [template]="objetivoTemplate" [items]="objetivos" [level]="level">
+                                <ng-template #objetivoTemplate let-objetivo="data" let-eixos="children" let-metadata="metadata" let-level="level">
+                                    <tr>
+                                        <td>{{objetivo.nome}}</td>
+                                        <td>
+                                            <table *ngIf="eixos?.length">
+                                                <map-foreach [template]="eixoTemplate" [items]="eixos" [level]="level+1"></map-foreach>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </map-foreach>
+                        </table>
+                    </td>
+                </tr>
+            </ng-template>
+        </map-foreach>
+    </table>
+</map>
+
+<!--separator title="Expediente" collapse transparent>
+    <calendar-expediente [expediente]="expediente"></calendar-expediente>
+</separator>
+<div class="row">
+    <input-select [size]="2" label="Forma" controlName="forma" [control]="form!.controls.forma" [items]="lookup.DIA_HORA_CORRIDOS_OU_UTEIS"></input-select>
+    <input-number number label="Carga" [size]="1" [control]="form!.controls.carga_horaria"></input-number>
+    <input-datetime [date]="isHoras() ? undefined : 'true'" [size]="3" label="Início" controlName="inicio" [control]="form!.controls.inicio"></input-datetime>
+    <input-datetime [date]="isHoras() ? undefined : 'true'" [size]="3" label="Fim" controlName="fim" [control]="form!.controls.fim"></input-datetime>
+    <input-timer onlyHours label="Tempo" [size]="3" icon="bi bi-clock" controlName="tempo" [control]="form!.controls.tempo"></input-timer>
 </div>
-<calendar-expediente></calendar-expediente//-->
-<ckeditor [editor]="Editor" data="<p>Hello, world!</p>"></ckeditor>
+<div class="row">
+    <input-multiselect controlName="multiselect" label="Feriados" [size]="6" [control]="form!.controls.feriados" [addItemHandle]="addFeriadoHandle.bind(this)">
+        <input-number number label="Dia" [size]="2" [control]="form!.controls.dia"></input-number>
+        <input-number number label="Mes" [size]="2" [control]="form!.controls.mes"></input-number>
+        <input-number number label="Ano" [size]="3" [control]="form!.controls.ano"></input-number>
+        <input-text [size]="5" label="Nome" controlName="nome" [control]="form!.controls.nome"></input-text>
+    </input-multiselect>
+    <input-multiselect controlName="multiselect" label="Afastamentos" [size]="6" [control]="form!.controls.afastamentos" [addItemHandle]="addAfastamentoHandle.bind(this)">
+        <input-datetime [size]="4" label="Início" [control]="form!.controls.inicio_afastamento"></input-datetime>
+        <input-datetime [size]="4" label="Fim" [control]="form!.controls.fim_afastamento"></input-datetime>
+        <input-text [size]="4" label="Observacao" [control]="form!.controls.observacao"></input-text>
+    </input-multiselect>
+</div>
+<toolbar [buttons]="buttons"></toolbar>
+<separator *ngIf="efemerides" title="Cálculos" collapse>
+    <calendar-efemerides [efemerides]="efemerides"></calendar-efemerides>
+</separator//-->
+
+
+<!--ckeditor [editor]="Editor" data="<p>Hello, world!</p>"></ckeditor//-->
 <!--comment contents="Teste de <b> comentario </b> teste"></comment/-->
 
 <!--gantt [project]="project"></gantt/-->

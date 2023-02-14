@@ -1,82 +1,160 @@
-<div class="row">
-    <div class="col-md-2">
-        <profile-picture thumbnail [url]="auth.usuario?.url_foto" [size]="120"></profile-picture>
-        <!--img [src]="auth.usuario?.url_foto" class="img-thumbnail" onerror="this.src='./assets/images/profile.png'"//--><!-- width="25" height="25"-->
+<div class="container">
+    <div class="saudacao">
+        <h2 class="text-black-50">{{mensagemSaudacao()}}</h2>
     </div>
-    <div class="col-md-10 mb-4">
-        <div class="row">
-            <div class="col-md-12">
-                <h4 class="text-center">{{mensagemSaudacao()}} !</h4>
+    <div class="search">
+        <form [formGroup]="formSearch" class="row d-flex align-items-center">
+            <div class="col">Filtrar período</div>
+            <div class="col-auto d-flex justify-content-end align-items-center">
+                <input-datetime date [size]="3" controlName="data_inicial" class="flex-fill"
+                    [control]="formSearch!.controls.data_inicial">
+                </input-datetime>
+
+                <span class="mx-2">até</span>
+
+                <input-datetime date [size]="3" controlName="data_final" [control]="formSearch!.controls.data_final"
+                    class="flex-fill">
+                </input-datetime>
+
+                <button class="btn btn-outline-info ms-2" (click)="filtrarDemandas()"><i
+                        class="bi bi-search"></i></button>
             </div>
-            <table class="my-2">
-              <tr class="border-start-0 border-end-0 border-top-0 border-3">
-                <h4>Minhas {{lex.noun("Demandas",true)}}</h4>
-              </tr>
-            </table>
+        </form>
+    </div>
+    <div class="d-flex">
+        <div class="card border-0 mt-3 w-100">
+            <div class="card-header bg-info">Planos de trabalho</div>
+            <div class="card-body">
+                <table class="table align-middle table-row-bordered table-row-dashed gy-5" id="kt_table_widget_1">
+                    <tbody>
+                        <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase">
+
+                            <th class="min-w-200px px-0">Vigência</th>
+                            <th class="min-w-125px">Horas</th>
+                            <th class="min-w-125px">Progresso</th>
+                        </tr>
+                        <tr *ngFor="let plano of dashUsuario.planos">
+
+                            <td class="p-0">
+                                <span class="text-black-50 fw-semibold d-block">{{plano.data_inicio_vigencia | date:
+                                    'dd/MM/yyyy' }}</span>
+                                <span class="text-black-50 fw-semibold">{{plano.data_fim_vigencia | date:
+                                    'dd/MM/yyyy'}}</span>
+                            </td>
+                            <td>
+                                <div class="row">
+                                    <div class="border-end pb-3 pb-lg-0 col-lg-4">
+                                        <h6 class="mb-0 flex-1">Total</h6>
+                                        <p class="font-sans-serif lh-1 mb-1 fs-4 pe-2 text-primary">
+                                            {{plano.horas_consolidadas}} de {{plano.total_horas}}</p>
+                                    </div>
+                                    <div class="pb-3 pb-lg-0 col-lg-4">
+                                        <h6 class="mb-0 flex-1">Alocadas</h6>
+                                        <p class="font-sans-serif lh-1 mb-1 fs-4 pe-2 text-primary">
+                                            {{plano.horas_alocadas}}
+                                        </p>
+                                    </div>
+                                </div>
+
+                            </td>
+                            <td>
+                                <div class="d-flex flex-column w-100 me-2 mt-2">
+                                    <span class="text-gray-400 me-2 fw-bolder mb-2">{{plano.progresso}}%</span>
+                                    <progress-bar [value]="plano.progresso" noPercentage="Sim"></progress-bar>
+                                </div>
+                            </td>
+                        </tr>
+
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-around flex-wrap">
+
+        <div class="minhas">
+            <h5>Minhas</h5>
+            <h4>Demandas</h4>
+            <p>({{dashUsuario.demandas.total_demandas}} demandas)</p>
         </div>
 
-        <!-- Gráfico das Minhas Demandas -->
-        <div class="row mb-2">
-          <div class="row ms-0 d-inline-block container" style="width: 450px;">
-            <div class="bg-light mx-1 d-inline-block container" style="width: 400px;">
-                <app-bar-chart
-                  barChartType = "horizontalBar"
-                  [barChartData]="dadosMinhasDemandas"
-                  [barChartOptions]="opcoesMinhasDemandas">
-                </app-bar-chart>
+        <div class="card border-0 m-2 nao_iniciadas">
+            <div class="card-body">
+                <h3>{{dashUsuario.demandas.nao_iniciadas}}</h3>
+                <p>Não iniciadas</p>
             </div>
-          </div>
-          <div class="row ms-0 d-inline-block container" style="width: 450px;">
-            <span class="h5-1">Qde. total de Demandas: {{ dashUsuario.total_demandas }}</span><br>
-            <span class="h5-1">Médias das Avaliações: {{ dashUsuario.media_avaliacoes ? dashUsuario.media_avaliacoes.toFixed(2) : '   (Nenhuma demanda avaliada!)' }}</span>
-            <h5 class="my-4" role="button" (click)="go.navigate({route: ['gestao', 'demanda']}, {root: true})">
-              <i class="bi bi-activity"></i> Ver Detalhes
-            </h5>
-          </div>
         </div>
 
-        <div *ngIf="false" class="row">
-            <div class="col-md-3">
-                <div class="card text-dark bg-light mb-3 card-header" role="button" (click)="go.navigate({route: ['gestao', 'demanda']}, {root: true})">Demandas a concluir
-                    <div class="card border-left-primary shadow h-100 py-2">
-                        <div class="card-body">
-                            <h5 class="h5-1" id="qtde-demandas-totais-nao-concluidas">{{dashUsuario.demandas_totais_nao_concluidas}}</h5>
-                        </div>
-                        <i class="fas fa-copy fa-2x" id="icon-demandas-andamento"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-dark bg-light mb-3 card-header" role="button" (click)="go.navigate({route: ['gestao', 'demanda']}, {root: true})">Demandas em atraso
-                    <div class="card border-left-primary shadow h-100 py-2">
-                        <div class="card-body">
-                            <h5 class="h5-1" id="qtde-demandas-totais-atrasadas">{{dashUsuario.demandas_totais_atrasadas}}</h5>
-                        </div>
-                        <i class="fas fa-exclamation-triangle fa-2x" [id]="idExclamacao()"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-dark bg-light mb-3 card-header" role="button" (click)="go.navigate({route: ['gestao', 'demanda']}, {root: true})">Demandas concluídas
-                    <div class="card border-left-primary shadow h-100 py-2">
-                        <div class="card-body">
-                            <h5 class="h5-1" id="qtde-demandas-totais-concluidas">{{dashUsuario.demandas_totais_concluidas}}</h5>
-                        </div>
-                        <i class="fas fa-clipboard-check fa-2x" id="icon-planos-execucao"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-dark bg-light mb-3 card-header" role="button" (click)="go.navigate({route: ['gestao', 'demanda']}, {root: true})">{{lex.noun("Tarefa", true)}} a concluir
-                    <div class="card border-left-primary shadow h-100 py-2">
-                        <div class="card-body">
-                            <h5 class="h5-1" id="qtde-tarefas-totais-nao-concluidas">{{dashUsuario.tarefas_totais_nao_concluidas}}</h5>
-                        </div>
-                        <i class="fas fa-chart-bar fa-2x" id="icon-produtividade-media"></i>
-                    </div>
-                </div>
+        <div class="card border-0 m-2 atrasadas">
+            <div class="card-body">
+                <h3>{{dashUsuario.demandas.atrasadas}}</h3>
+                <p>Atrasadas</p>
             </div>
         </div>
+
+        <div class="card border-0 m-2 nao_concluidas">
+            <div class="card-body">
+                <h3>{{dashUsuario.demandas.nao_concluidas}}</h3>
+                <p>Não concluídas</p>
+            </div>
+        </div>
+
+        <div class="card border-0 m-2 concluidas">
+            <div class="card-body">
+                <h3>{{dashUsuario.demandas.concluidas}}</h3>
+                <p>Concluídas</p>
+            </div>
+        </div>
+
+        <div class="card border-0 m-2 avaliadas">
+            <div class="card-body">
+                <h3>{{dashUsuario.demandas.avaliadas}}</h3>
+                <p>Avaliadas</p>
+            </div>
+        </div>
+
+        <div class="card border-0 m-2 avaliacoes" *ngIf="dashUsuario.demandas.media_avaliacoes"
+            [ngClass]="dashUsuario.demandas.media_avaliacoes > 5 ? 'acima' : 'abaixo'">
+            <div class="card-body flex-column d-flex align-items-center justify-content-center">
+                <h3>{{dashUsuario.demandas.media_avaliacoes}}</h3>
+                <p>Avaliação média</p>
+            </div>
+        </div>
+
+        <!-- Aguardando função do backend -->
+
+        <!-- <div class="card border-0 m-2">
+            <div class="card-body flex-column d-flex align-items-center justify-content-center">
+                <h3>{{dashUsuario.horas_afastamentos}}</h3>
+                <p>Horas de afastamento</p>
+            </div>
+        </div> -->
 
     </div>
+
+
+    <div class="card border-0 mt-3 w-100 dashGestor" *ngIf="dashGestor">
+        <div class="card-header bg-primary text-white">Acompanhamento da equipe</div>
+        <div class="card-body">
+            <div class="d-flex align-items-center usuario" *ngFor="let usuario of dashGestor.usuarios">
+                <profile-picture [url]="usuario.foto"></profile-picture>
+                <h3>{{usuario.nome}}</h3>
+                <div class="flex-shrink-1 w-30 ms-auto">
+                    <div *ngFor="let plano of usuario.planos" class="mb-2 d-flex align-items-center">
+                        <div class="w-100">
+                            <progress-bar [value]="plano.progresso" noPercentage="Sim"></progress-bar>
+                        </div>
+                        <span class="text-gray-400 fw-bolder ms-2">{{plano.progresso}}%</span>
+                    </div>
+                    <div *ngIf="!usuario.planos.length">
+                        <p>Sem planos de trabalho</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>

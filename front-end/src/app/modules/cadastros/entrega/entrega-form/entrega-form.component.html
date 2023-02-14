@@ -8,30 +8,11 @@
             <div *ngIf="form?.controls!.tipo_indicador.value == 'QUALITATIVO' || null" class="row col-6">
                 <div class="row">
                     <div class="row mb-3">
-                        <div class="col-10">
-                            <input-text #itemQualitativo label="Item de qualitativo" controlName="qualitativo" [control]="form!.controls.qualitativo"></input-text>
-                        </div>
-                        <div class="col-2">
-                            <label for="itensQualitativos" class="radio control-label">&nbsp;</label>
-                            <div class="btn-group full-container-button-group col-2" id="itensQualitativos" role="group" aria-label="itensQualitativos">
-                                <button type="button" class="btn btn-success d-flex justify-content-center" (click)="incluirQualitativo(itemQualitativo.formControl.value)" [disabled]="!itemQualitativo.formControl.value">
-                                    <i class="bi-plus-circle"></i>
-                                    <span class="d-none d-md-inline-block">&nbsp;INCLUIR</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div *ngFor="let item of listaQualitativos" class="row">
-                        <div class="col-10">
-                            <input-display [value]="item"></input-display>
-                        </div>
-                        <div class="form-group col-2 mb-1">
-                            <div class="btn-group full-container-button-group" role="group" aria-label="itensQualitativos">
-                                <button type="button" class="btn btn-danger d-flex justify-content-center" (click)="excluirQualitativo(item)">
-                                    <i class="bi-trash"></i>
-                                    <span class="d-none d-md-inline-block">&nbsp;EXCLUIR</span>
-                                </button>
-                            </div>
+                        <div class="col-12">
+                          <label for="itemQualitativo" class="radio control-label">&nbsp;</label>
+                          <input-multiselect controlName="qualitativo" [addItemHandle]="addItemHandleItemQualitativo.bind(this)">
+                            <input-text [size]="12" icon="far fa-edit" controlName="itemQualitativo" [control]="form!.controls.itemQualitativo"></input-text>
+                          </input-multiselect>
                         </div>
                     </div>
                  </div>

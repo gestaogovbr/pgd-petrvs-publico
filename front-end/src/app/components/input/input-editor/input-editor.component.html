@@ -1,0 +1,3 @@
+<input-container [labelPosition]="labelPosition" [controlName]="controlName" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
+    <ckeditor #editor *ngIf="viewInit" [editor]="classicEditor" [config]="configEditor" [(ngModel)]="value" [ngModelOptions]="{standalone: true}" (ready)="onReady($event)"></ckeditor>
+</input-container>
