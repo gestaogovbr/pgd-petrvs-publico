@@ -438,6 +438,12 @@ export class LookupService {
     { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "bg-danger" }
   ];
 
+  public ADESAO_STATUS: LookupItem[] = [
+    { key: "SOLICITADO", value: "Solicitado", color: "bg-primary" },
+    { key: "HOMOLOGADO", value: "Homologado", color: "bg-success" },
+    { key: "CANCELADO", value: "Cancelado",  color: "bg-danger" },
+  ];
+
   public PROJETO_TAREFA_STATUS: LookupItem[] = [
     { key: "PLANEJADO", value: "Planejado", icon: "bi bi-bar-chart-steps", color: "primary" },
     { key: "INICIADO", value: "Iniciado", icon: "bi bi-collection-play", color: "success" },
@@ -485,5 +491,4 @@ export class LookupService {
   public getIcon(itens: LookupItem[], key: any) : string {
     return itens.find(x => x.key == key)?.icon || "";
   }
-
 }

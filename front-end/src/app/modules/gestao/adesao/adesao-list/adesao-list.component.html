@@ -45,9 +45,12 @@
                 <span> {{row.usuario?.nome || ""}}</span>
             </ng-template>
         </column>
-        <column [titleTemplate]="titleStatus" field="status" [minWidth]="50">
-            <ng-template let-header="header" #titleStatus>
-                <order by="status" [header]="header">Status</order>
+        <column title="Status" [template]="columnStatus">
+            <ng-template let-row="row" #columnStatus>
+                <span class="text-wrap">
+                    <badge [class]="lookup.getColor(lookup.ADESAO_STATUS, row.status)" [label]="lookup.getValue(lookup.ADESAO_STATUS, row.status)"></badge>
+                    <badge *ngIf="row.fase" [color]="row.fase.cor" [label]="row.fase.nome"></badge>
+                </span>
             </ng-template>
         </column>
         <column title="Programa/Unidade" [template]="columnProgramaUnidade">

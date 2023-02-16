@@ -1,0 +1,39 @@
+<editable-form noButtons [form]="form!" [disabled]="formDisabled">
+    <div class="row">
+        <grid [control]="form!.controls.documentos" #gridDocumentos [disabled]="undefined" #documentos [hasEdit]="false" [hasDelete]="false" [hasAdd]="isTermos" [add]="isTermos ? addDocumento.bind(this) : undefined" editable>
+            <columns>
+                <column title="Data" [template]="dataInicio">
+                  <ng-template let-row="row" #dataInicio>
+                                    <span class="badge bg-light text-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Data da inclusão">
+                                        <i class="bi bi-calendar-plus"></i>
+                                      {{util.getDateTimeFormatted(row.data_inicio)}}
+                                    </span>
+                    <span *ngIf="row.data_fim" class="badge bg-light text-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Data substituição">
+                                        <i class="bi bi-calendar-x"></i>
+                      {{util.getDateTimeFormatted(row.data_fim)}}
+                                    </span>
+                  </ng-template>
+                </column>
+                <column title="Status" [template]="vigente">
+                  <ng-template let-row="row" #vigente>
+                                    <span [class]="lookup.getColor(lookup.DOCUMENTO_STATUS, row.status)">
+                                        <i [class]="lookup.getIcon(lookup.DOCUMENTO_STATUS, row.status)"></i>
+                                      {{lookup.getValue(lookup.DOCUMENTO_STATUS, row.status)}}
+                                    </span>
+                    <span *ngIf="isVigente(row)" class="badge rounded-pill bg-info text-dark">
+                                        <i class="bi bi-clipboard-check"></i>
+                                        Vigente
+                                    </span>
+                    <div class="d-block">
+                                        <span *ngFor="let assinatura of row.assinaturas" class="badge rounded-pill bg-primary">
+                                            <i class="bi bi-pen"></i>
+                                          {{util.apelidoOuNome(assinatura.usuario)}}
+                                        </span>
+                    </div>
+                  </ng-template>
+                </column>
+                <column type="options" [dynamicButtons]="documentoDynamicButtons.bind(this)"></column>
+              </columns>
+        </grid>
+    </div>
+</editable-form>

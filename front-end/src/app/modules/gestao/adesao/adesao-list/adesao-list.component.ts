@@ -46,7 +46,7 @@ export class AdesaoListComponent extends PageListBase<Adesao, AdesaoDaoService> 
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
     /* Inicializações */
-    this.title = this.lex.noun("Adesão",true);
+    this.title = this.lex.noun("adesao",true);
     this.code = "MOD_ADES";
     this.filter = this.fh.FormBuilder({
       usuario: {default: ""},
@@ -69,8 +69,8 @@ export class AdesaoListComponent extends PageListBase<Adesao, AdesaoDaoService> 
     if (this.auth.hasPermissionTo("MOD_ADES_EXCL")) {
       this.options.push({
         icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
+        label: "Cancelar",
+        onClick: this.cancel.bind(this)
       });
     }
     this.options.push({

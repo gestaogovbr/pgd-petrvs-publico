@@ -9,6 +9,7 @@ import {EditableFormComponent} from "../../../../components/editable-form/editab
 import {UnidadeDaoService} from "../../../../dao/unidade-dao.service";
 import {PlanejamentoDaoService} from "../../../../dao/planejamento-dao.service";
 import {EntidadeDaoService} from "../../../../dao/entidade-dao.service";
+import { GridComponent } from 'src/app/components/grid/grid.component';
 
 @Component({
   selector: 'app-cadeia-valor-form',

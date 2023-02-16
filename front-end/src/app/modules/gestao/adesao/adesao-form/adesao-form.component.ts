@@ -54,8 +54,8 @@ export class AdesaoFormComponent extends PageFormBase<Adesao, AdesaoDaoService> 
   public allPages: ListenerAllPagesService;
   public calendar: CalendarService;
   public tipoModalidadeDao: TipoModalidadeDaoService;
-  public horasTotais?: Efemerides;
-  public horasParciais?: Efemerides;
+public listaUsuarios: LookupItem[] = [];
+
 
   constructor(public injector: Injector) {
     super(injector, Adesao, AdesaoDaoService);
@@ -81,6 +81,9 @@ export class AdesaoFormComponent extends PageFormBase<Adesao, AdesaoDaoService> 
       unidade_id: {default: ""},
       entidade_id: {default: ""},
       tipo_modalidade_id: {default: ""},
+      documentos: {default: []},
+      usuarios: {default: ""},
+      unidades: {default: ""},
     }, this.cdRef, this.validate);
   }
 
@@ -158,13 +161,9 @@ export class AdesaoFormComponent extends PageFormBase<Adesao, AdesaoDaoService> 
     this.cdRef.detectChanges();
   }
 
-
-
   public async loadData(entity: Adesao, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
     await Promise.all ([
-      this.calendar.loadFeriadosCadastrados(entity.unidade_id),
-      this.entidade?.loadSearch(entity.entidade || entity.entidade_id),
       this.unidade?.loadSearch(entity.unidade || entity.unidade_id),
       this.usuario?.loadSearch(entity.usuario || entity.usuario_id),
       this.programa?.loadSearch(entity.programa || entity.programa_id),
@@ -179,10 +178,15 @@ export class AdesaoFormComponent extends PageFormBase<Adesao, AdesaoDaoService> 
       this.entity = (await this.dao!.getById(this.urlParams!.get("id")!, this.join))!;
     } else {
       this.entity = new Adesao();
-      this.entity.entidade = this.auth.unidade!.entidade;
-      this.entity.unidade = this.auth.unidade;
-      this.entity.unidade_id = this.auth.unidade!.id;
-      this.entity.entidade_id = this.auth.unidade!.entidade_id!;
+
+console.log(this.auth.usuario?.perfil?.nivel);
+
+      if (this.auth.usuario?.perfil?.nivel !== 0) {
+        this.entity.entidade = this.auth.unidade!.entidade;
+        this.entity.unidade = this.auth.unidade;
+        this.entity.unidade_id = this.auth.unidade!.id;
+        this.entity.entidade_id = this.auth.unidade!.entidade_id!;
+      }
     }
     this.loadData(this.entity, this.form!);
   }
@@ -207,7 +211,7 @@ export class AdesaoFormComponent extends PageFormBase<Adesao, AdesaoDaoService> 
     if(this.isTermos && this.needSign(documento)) {
       result.push({hint: "Assinar", icon: "bi bi-pen", onClick: this.signDocumento.bind(this) });
     }
-    result.push({hint: "Preview", icon: "bi bi-zoom-in", onClick: ((documento: Documento) => { this.dialog.html({title: "Termo de adesão", modalWidth: 1000}, documento.conteudo || ""); }).bind(this) });
+    result.push({hint: "Preview", icon: "bi bi-zoom-in", onClick: ((documento: Documento) => { this.dialog.html({title: "Termo de ciência e responsabilidade", modalWidth: 1000}, documento.conteudo || ""); }).bind(this) });
 
     return result;
   }
@@ -248,7 +252,7 @@ export class AdesaoFormComponent extends PageFormBase<Adesao, AdesaoDaoService> 
     documento.id = this.dao!.generateUuid();
     documento.plano_id = this.entity!.id;
     documento._status = "ADD";
-    this.go.navigate({route: ['gestao', 'adesao', 'termo']}, {metadata: {documento: documento, plano: this.entity}, modalClose: (modalResult) => {
+    this.go.navigate({route: ['gestao', 'adesao', 'termo']}, {metadata: {documento: documento, adesao: this.entity}, modalClose: (modalResult) => {
         if(modalResult) {
           (async () => {
             let documentos = (this.form!.controls.documentos.value || []) as Documento[];
@@ -260,7 +264,7 @@ export class AdesaoFormComponent extends PageFormBase<Adesao, AdesaoDaoService> 
                   especie: "TCR",
                   conteudo: modalResult?.termo,
                   metadados: {atividades_termo_adesao: modalResult.atividades_termo_adesao},
-                  plano_id: this.entity!.id,
+                  programa_adesao_id: this.entity!.id,
                   status: "GERADO"
                 }), ["assinaturas.usuario:id,nome,apelido"]);
               } catch (error: any) {
@@ -293,30 +297,40 @@ export class AdesaoFormComponent extends PageFormBase<Adesao, AdesaoDaoService> 
   }
 
   public addUsuarioHandle(): LookupItem | undefined {
-    let form = this.form?.value;
-    let adesao = new Adesao({
-      id: this.util.md5(),
-      usuario_id: form.usuario_id,
-      nome: form.usuario.nome
-    });
-    return {
-      key: adesao.id,
-      value: form.nome,
-      data: adesao
-    };
+    /*let result = undefined;
+    if (this.util.validateLookupItem(this.listaUsuarios, this.form?.controls.usuario_id.value)) {
+      this.usuarioDao.getById(this.form?.controls.usuario_id.value).then(user =>{
+        result =  {
+          key: user?.id,
+          value: user?.apelido,
+        }
+        this.form.controls.entrega_texto.setValue("");
+      })
+    }
+    reurn result; */
+    let result = undefined;
+      const value = this.form!.controls.usuarios.value;
+      const key = this.util.textHash(value);
+      if(value?.length && this.util.validateLookupItem(this.form!.controls.usuario_id.value, key)) {
+        result = {
+          key: key,
+          value: this.form!.controls.usuario_id.value
+        };
+        this.form!.controls.usuarios.setValue("");
+      }
+      return result;
+
   };
 
   public addUnidadeHandle(): LookupItem | undefined {
-    let form = this.form?.value;
-    let adesao = new Adesao({
+    let form = this.form!.value;
+    let unidade = new Unidade({
       id: this.util.md5(),
-      usuario_id: form.usuario_id,
-      unidade: form.unidade.nome
+      nome: form.nome, //Descrição do usuário
     });
     return {
-      key: adesao.id,
-      value: form.unidade,
-      data: adesao
+      key: unidade.id,
+      value: unidade.id,
     };
-  };
+  }
 }

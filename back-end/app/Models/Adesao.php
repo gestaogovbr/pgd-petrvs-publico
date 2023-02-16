@@ -32,14 +32,21 @@ class Adesao extends ModelBase
         'entidade_id', /* char(36); */
         'tipo_modalidade_id', /* char(36); NOT NULL; */
         //'data_fim', /* datetime; */// Data final do registro
+        //'numero', /* int; NOT NULL; */// Número da adesão (Gerado pelo sistema)
     ];
 
     public $delete_cascade = ['documentos'];
 
+    protected static function booted()
+    {
+        static::creating(function ($plano) {
+            $plano->numero = DB::select("CALL sequence_adesao_numero()")[0]->number;
+        });
+    }
+
     // Has
     public function atividades() { return $this->hasMany(PlanoAtividade::class); }
-    public function documentos() { return $this->hasMany(Documento::class); }
-    public function demandas() { return $this->hasMany(Demanda::class); }
+    public function documentos() { return $this->hasMany(Documento::class, 'programa_adesao_id'); }
     // Belongs
     public function usuario() { return $this->belongsTo(Usuario::class, 'usuario_id'); }
     public function programa() { return $this->belongsTo(Programa::class, 'programa_id'); }

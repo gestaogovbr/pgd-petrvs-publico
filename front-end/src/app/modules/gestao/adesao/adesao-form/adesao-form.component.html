@@ -3,17 +3,20 @@
   <tabs #tabs display right [hidden]="isTermos ? 'true' : undefined" [title]="!isModal ? title : ''">
     <tab *ngIf="!isTermos" key="DADOS" label="Dados">
       <div class="row">
-        <input-search #programa [size]="3" label="Programa" icon="bi bi-layout-text-window-reverse" controlName="programa_id" [control]="form!.controls.programa_id" [dao]="programaDao" (select)="onProgramaSelect($event)" [selectRoute]="{route: ['cadastros', 'programa']}"></input-search>
-        <input-datetime [size]="3" label="Início" icon="bi bi-calendar-date" controlName="data_inicio_vigencia" [control]="form!.controls.data_inicio_vigencia" (change)="onDataInicioChange($event)" labelInfo="Início da Vigência do Plano de Trabalho"></input-datetime>
-        <input-datetime [size]="3" label="Final" icon="bi bi-calendar-date" controlName="data_fim_vigencia" [control]="form!.controls.data_fim_vigencia" (change)="onDataFimChange($event)" labelInfo="Final da Vigência do Plano de Trabalho"></input-datetime>
-        <input-search #tipo_modalidade [size]="3" label="Modalidade" icon="bi bi-cast" controlName="tipo_modalidade_id" [control]="form!.controls.tipo_modalidade_id" [dao]="tipoModalidadeDao" (select)="onTipoModalidadeSelect($event)" [selectRoute]="{route: ['cadastros', 'tipo-modalidade']}"></input-search>
+        <input-search #programa [size]="4" label="Programa" icon="bi bi-layout-text-window-reverse" controlName="programa_id" [control]="form!.controls.programa_id" [dao]="programaDao" (select)="onProgramaSelect($event)" [selectRoute]="{route: ['cadastros', 'programa']}"></input-search>
+        <input-search #tipo_modalidade [size]="4" label="Modalidade" icon="bi bi-cast" controlName="tipo_modalidade_id" [control]="form!.controls.tipo_modalidade_id" [dao]="tipoModalidadeDao" (select)="onTipoModalidadeSelect($event)" [selectRoute]="{route: ['cadastros', 'tipo-modalidade']}"></input-search>
+        <input-text #status [size]="4" label="Status" controlName="status" [control]="form!.controls.status" disabled></input-text>
       </div>
       <div class="row">
-        <input-multiselect controlName="multiselect" label="Usuários" [size]="6" [control]="form!.controls.usuarios" [addItemHandle]="addUsuarioHandle.bind(this)">
-          <input-search #usuario label="Usuário" icon="bi bi-person" controlName="usuario_id" [control]="form!.controls.usuario_id" [dao]="usuarioDao" [join]="['afastamentos']" (select)="onUsuarioSelect($event)" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
+        <input-datetime [size]="6" label="Início" icon="bi bi-calendar-date" controlName="data_inicio_vigencia" [control]="form!.controls.data_inicio_vigencia" (change)="onDataInicioChange($event)" labelInfo="Início da Vigência do Plano de Trabalho"></input-datetime>
+        <input-datetime [size]="6" label="Final" icon="bi bi-calendar-date" controlName="data_fim_vigencia" [control]="form!.controls.data_fim_vigencia" (change)="onDataFimChange($event)" labelInfo="Final da Vigência do Plano de Trabalho"></input-datetime>
+      </div>
+      <div class="row">
+        <input-multiselect label="Usuários" controlName="listaUsuarios" [size]="6" [addItemHandle]="addUsuarioHandle.bind(this)">
+          <input-search label="Usuário" icon="far fa-edit" controlName="usuario_id" [dao]="usuarioDao" [join]="['afastamentos']" (select)="onUsuarioSelect($event)" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
         </input-multiselect>
-        <input-multiselect controlName="multiselect" label="Unidades" [size]="6" [control]="form!.controls.unidades" [addItemHandle]="addUnidadeHandle.bind(this)">
-          <input-search #unidade label="Unidade" icon="fab fa-unity" controlName="unidade_id" [control]="form!.controls.unidade_id" [join]="['entidade']" [dao]="unidadeDao" (select)="onUnidadeSelect($event)" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+        <input-multiselect label="Unidades" controlName="unidades" [size]="6" [addItemHandle]="addUnidadeHandle.bind(this)">
+          <input-search label="Usuário" icon="far fa-edit" controlName="unidade_id" [dao]="unidadeDao" [join]="['entidade']" [dao]="unidadeDao" (select)="onUnidadeSelect($event)" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
         </input-multiselect>
       </div>
     </tab>
