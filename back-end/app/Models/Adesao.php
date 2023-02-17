@@ -27,12 +27,18 @@ class Adesao extends ModelBase
         'data_inicio', /* datetime; NOT NULL; */// Data de criação
         'status', /* enum('SOLICITADO','HOMOLOGADO','CANCELADO'); NOT NULL; */// Status da adesão
         'programa_id', /* char(36); */
-        'usuario_id', /* char(36); */
-        'unidade_id', /* char(36); */
+        //'usuario_id', /* char(36); */
+        //'unidade_id', /* char(36); */
         'entidade_id', /* char(36); */
         'tipo_modalidade_id', /* char(36); NOT NULL; */
         //'data_fim', /* datetime; */// Data final do registro
         //'numero', /* int; NOT NULL; */// Número da adesão (Gerado pelo sistema)
+        //'documento_id', /* char(36); */
+    ];
+
+    public $fillable_relations = [
+        "unidades",
+        "usuarios"
     ];
 
     public $delete_cascade = ['documentos'];
@@ -45,7 +51,8 @@ class Adesao extends ModelBase
     }
 
     // Has
-    public function atividades() { return $this->hasMany(PlanoAtividade::class); }
+    public function usuarios() { return $this->hasMany(AdesaoUsuario::class, 'programa_adesao_id'); }
+    public function unidades() { return $this->hasMany(AdesaoUnidade::class, 'programa_adesao_id'); }
     public function documentos() { return $this->hasMany(Documento::class, 'programa_adesao_id'); }
     // Belongs
     public function usuario() { return $this->belongsTo(Usuario::class, 'usuario_id'); }

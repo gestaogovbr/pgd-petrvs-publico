@@ -28,9 +28,6 @@ class Template extends ModelBase
         'data_set', /* json; */// Dados da parametrização
         'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
         'data_fim', /* datetime; */// Data fim da vigência
-        //'documento_id', /* char(36); */
-        //'unidade_id', /* char(36); */
-        //'entidade_id', /* char(36); */
     ];
 
     // Mutattors e Casts

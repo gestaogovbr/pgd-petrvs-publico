@@ -4,6 +4,7 @@ import {GridComponent} from "../../../../components/grid/grid.component";
 import {FormGroup} from "@angular/forms";
 import {CadeiaValor} from "../../../../models/cadeia-valor.model";
 import {CadeiaValorDaoService} from "../../../../dao/cadeia-valor-dao.service";
+import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
   selector: 'app-cadeia-valor-list',
@@ -12,6 +13,8 @@ import {CadeiaValorDaoService} from "../../../../dao/cadeia-valor-dao.service";
 })
 export class CadeiaValorListComponent extends PageListBase<CadeiaValor, CadeiaValorDaoService>{
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
+
+  public activeTab: string = "TABELA";
 
   constructor(public injector: Injector) {
     super(injector, CadeiaValor, CadeiaValorDaoService);
@@ -52,6 +55,22 @@ export class CadeiaValorListComponent extends PageListBase<CadeiaValor, CadeiaVa
     }
 
     return result;
+  }
+
+  public async onSelectTab(tab: LookupItem) {
+    this.activeTab = tab.key;
+    this.saveUsuarioConfig({active_tab: this.activeTab});
+    // if (tab.key == "DASHBOARD") {
+    //   this.programaDao.query({where: [
+    //     ["normativa", "!=", null],
+    //     ["unidade_id", "==",this.auth.unidade!.id],
+    //     ["data_fim", "==", null],
+    //     //["data_fim_vigencia", ">=", Date.now()]
+    //   ]}).asPromise().then((programas) => {
+    //     this.programaSelecionado = programas.sort((a, b) => b.data_inicio_vigencia.getMilliseconds() - a.data_inicio_vigencia.getMilliseconds())[0];
+    //     this.programa?.loadSearch(this.programaSelecionado);
+    //   });
+    // }
   }
 
 

@@ -1,17 +1,17 @@
 import { Base } from './base.model';
 import { TipoModalidade } from './tipo-modalidade.model';
-import { Unidade } from './unidade.model';
-import { Usuario } from './usuario.model';
 import { Programa } from './programa.model';
 import { Documento, HasDocumentos } from './documento.model';
-import {Entidade} from './entidade.model';
+import { Entidade } from './entidade.model';
+import { AdesaoUsuario } from './adesao-usuario.model';
+import { AdesaoUnidade } from './adesao-unidade.model';
 
 export type Status = "SOLICITADO" | "HOMOLOGADO" | "CANCELADO";
 
 export class Adesao extends Base implements HasDocumentos{
     public tipo_modalidade?: TipoModalidade;
-    public unidade?: Unidade;
-    public usuario?: Usuario;
+    public unidades?: AdesaoUnidade[];
+    public usuarios?: AdesaoUsuario[];
     public programa?: Programa;
     public entidade?: Entidade;
     public documento?: Documento;

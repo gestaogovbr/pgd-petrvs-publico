@@ -11,6 +11,7 @@ import {PlanejamentoDaoService} from "../../../../dao/planejamento-dao.service";
 import {EntidadeDaoService} from "../../../../dao/entidade-dao.service";
 import { GridComponent } from 'src/app/components/grid/grid.component';
 
+
 @Component({
   selector: 'app-cadeia-valor-form',
   templateUrl: './cadeia-valor-form.component.html',
@@ -18,6 +19,7 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 })
 export class CadeiaValorFormComponent extends PageFormBase<CadeiaValor, CadeiaValorDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
+  @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
   public unidadeDao: UnidadeDaoService;
   public entidadeDao: EntidadeDaoService;

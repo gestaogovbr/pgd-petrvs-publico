@@ -94,8 +94,8 @@ export class AdesaoFormTermoComponent  extends PageFormBase<Adesao, AdesaoDaoSer
     let formValue = Object.assign({}, form.value);
     formValue = this.util.fillForm(formValue, entity);
     await Promise.all ([
-      this.unidade!.loadSearch(entity.unidade || entity.unidade_id),
-      this.usuario!.loadSearch(entity.usuario || entity.usuario_id),
+      //this.unidade!.loadSearch(entity.unidade || entity.unidade_id),
+      //this.usuario!.loadSearch(entity.usuario || entity.usuario_id),
       this.programa!.loadSearch(entity.programa || entity.programa_id),
       this.tipoModalidade!.loadSearch(entity.tipo_modalidade || entity.tipo_modalidade_id)
     ]);

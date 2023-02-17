@@ -23,7 +23,7 @@ class TipoModalidade extends ModelBase
         'atividades_homologadas', /* tinyint; NOT NULL; */// Permitir apenas atividades homologadas
         'dispensa_avaliacao', /* tinyint; NOT NULL; */// Dispensa a avaliação
         'exige_assinatura', /* tinyint; NOT NULL; */// Exigir assinatura
-        'exige_adesao', /* tinyint; */
+        'exige_adesao', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se será necessário o participante realiza a adesão
         'exige_assinatura_gestor_unidade', /* tinyint; NOT NULL; */// Exigir assinatura do gestor da unidade do plano
         'exige_assinatura_gestor_entidade', /* tinyint; NOT NULL; */// Exigir assinatura do gestor da entidade
         'calcula_tempo_despendido', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se calcula tempo despendido
