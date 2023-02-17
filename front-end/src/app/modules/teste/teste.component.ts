@@ -10,7 +10,7 @@ import * as moment from 'moment';
 import { CardItem } from 'src/app/components/kanban/docker/docker.component';
 import { GanttAssignment, GanttProject, GanttResource, GanttTask } from 'src/app/components/gantt/gantt-models';
 import { CalendarOptions } from '@fullcalendar/angular';
-import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+//import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { Expediente } from 'src/app/models/expediente.model';
 import { Feriado } from 'src/app/models/feriado.model';
 import { Afastamento } from 'src/app/models/afastamento.model';
@@ -21,6 +21,7 @@ import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { Planejamento } from 'src/app/models/planejamento.model';
 import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model';
 import { EixoTematico } from 'src/app/models/eixo-tematico.model';
+import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
 
 @Component({
   selector: 'app-teste',
@@ -31,7 +32,7 @@ export class TesteComponent implements OnInit {
   public form: FormGroup;
   public items: LookupItem[] = [];
   public disabled: boolean = true;
-  public Editor = ClassicEditor;
+  //public Editor = ClassicEditor;
   public planejamento?: Planejamento;
   public expediente = new Expediente({"domingo":[],"segunda":[{"inicio":"08:00","fim":"12:00","data":null,"sem":false},{"inicio":"14:00","fim":"18:00","data":null,"sem":false}],"terca":[{"inicio":"08:00","fim":"12:00","data":null,"sem":false},{"inicio":"14:00","fim":"18:00","data":null,"sem":false}],"quarta":[{"inicio":"08:00","fim":"12:00","data":null,"sem":false},{"inicio":"14:00","fim":"18:00","data":null,"sem":false}],"quinta":[{"inicio":"08:00","fim":"12:00","data":null,"sem":false},{"inicio":"14:00","fim":"18:00","data":null,"sem":false}],"sexta":[{"inicio":"08:00","fim":"12:00","data":null,"sem":false},{"inicio":"14:00","fim":"18:00","data":null,"sem":false}],"sabado":[],"especial":[]});
 
@@ -59,6 +60,83 @@ export class TesteComponent implements OnInit {
       { title: 'event 2', start: moment().add(1, 'days').toDate(), end: moment().add(5, 'days').toDate() }
     ]
   };
+
+  public dataset: TemplateDataset[] = [
+    {
+      field: "nome",
+      label: "Usuário: Nome"
+    },
+    {
+      field: "atividades",
+      label: "Atividades",
+      type: 'ARRAY',
+      fields: [
+        {
+          field: "nome",
+          label: "Nome"
+        },
+        {
+          field: "valor",
+          label: "Valor"
+        }
+      ]
+    }
+  ];  
+
+  public datasource: IIndexable = {
+    nome: "Genisson Rodrigues Albuquerque",
+    atividades: [
+      {nome: "atividade 1", valor: 100},
+      {nome: "atividade 2", valor: 200},
+      {nome: "atividade 3", valor: 300}
+    ]
+  }
+  
+  public textoEditor: string = `
+  <table>
+      <thead>
+        <tr>
+            <th scope="col">Items</th>
+            <th scope="col">Expenditure</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="overflow: visible">{{for:atividades[0..x]}}</td>
+        </tr>
+        <tr>
+            <td>{{atividades[x].nome}}</td>
+            <td>{{atividades[x].valor}}</td>
+        </tr>
+        <tr>
+            <td style="overflow: visible">{{end:atividades[0..x]}}</td>
+        </tr>
+    </tbody>
+</table>
+`;
+  public template: string = `
+<p>Este &eacute; o {{nome}}.</p>
+<table>
+    <thead>
+        <tr>
+            <th scope="col">Items</th>
+            <th scope="col">Expenditure</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td colspan="2">{{for:atividades[0..x];drop=tr}}</td>
+        </tr>
+        <tr>
+            <td>{{atividades[x].nome}}</td>
+            <td>{{atividades[x].valor}}</td>
+        </tr>
+        <tr>
+            <td colspan="2">{{end-for:atividades[0..x];drop=tr}}</td>
+        </tr>
+    </tbody>
+</table>
+  `;
 
   public buttons: ToolbarButton[] = [
     {
@@ -121,7 +199,6 @@ export class TesteComponent implements OnInit {
   ];*/
 
   public JSON = JSON;
-  public textoEditor: string = "teste";
 
   constructor(
     public fh: FormHelperService,
@@ -133,7 +210,8 @@ export class TesteComponent implements OnInit {
     @Inject('ID_GENERATOR_BASE') public ID_GENERATOR_BASE: any
   ) {
     this.form = fh.FormBuilder({
-      editor: {default: "qualquer coisa"},
+      editor: {default: this.textoEditor},
+      template: {default: this.template},
       id: {default: ""},
       campo1: {default: ""},
       campo2: {default: new Date()},

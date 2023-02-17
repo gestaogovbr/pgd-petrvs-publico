@@ -2,17 +2,21 @@
     {{ID_GENERATOR_BASE}}
 </div!-->
 
+
+
+
+
 <editable-form [form]="form">
     <div class="row">
-        <input-editor controlName="editor"></input-editor>
+        <input-editor controlName="template" [dataset]="dataset"></input-editor>
+    </div>
+    <div class="row">
+        <input-editor controlName="editor" [template]="form.controls.template.value" [datasource]="datasource"></input-editor>
     </div>
 </editable-form>
-
-
-
-<br><br><br><br>
+<br><br>
 {{form?.controls?.editor?.value || ""}}
-<map [items]="mapa">
+<!--map [items]="mapa">
     <strong></strong>
     <table>
         <map-foreach [template]="eixoTemplate">
@@ -39,7 +43,7 @@
             </ng-template>
         </map-foreach>
     </table>
-</map>
+</map/-->
 
 <!--separator title="Expediente" collapse transparent>
     <calendar-expediente [expediente]="expediente"></calendar-expediente>
@@ -136,9 +140,9 @@
     <div clss="row">
         <input-select [size]="3" label="Ícone" controlName="icon" [control]="form!.controls.icon" [items]="lookup.ICONES"></input-select>
         < !--input-multiselect controlName="multiselect" label="MultiSleect" [size]="12" [control]="form!.controls.multiselect" [addItemHandle]="addItemHandle.bind(this)"!-->
-            <!--input-text [size]="6" label="Título" controlName="label" [control]="form!.controls.label"></input-text!-->
-            <!--input-color [size]="3" label="Cor" controlName="color" [control]="form!.controls.color"></input-color!-->
-        <!--/input-multiselect/-- >
+<!--input-text [size]="6" label="Título" controlName="label" [control]="form!.controls.label"></input-text!-->
+<!--input-color [size]="3" label="Cor" controlName="color" [control]="form!.controls.color"></input-color!-->
+<!--/input-multiselect/-- >
     </div>
     <separator></separator>
     < !--div class="row">

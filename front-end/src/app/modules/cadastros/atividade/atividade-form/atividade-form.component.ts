@@ -211,11 +211,9 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     this.loadData(this.entity, form);
   }
 
-  public saveData(form: IIndexable): Promise<Atividade> {
-    return new Promise<Atividade>((resolve, reject) => {
-      let atividade = this.util.fill(new Atividade(), this.entity!);
-      resolve(this.util.fillForm(atividade, this.form!.value));
-    });
+  public async saveData(form: IIndexable) {
+    let atividade = this.util.fill(new Atividade(), this.entity!);
+    return this.util.fillForm(atividade, this.form!.value) as Atividade;
   }
 
   public titleEdit = (entity: Atividade): string => {

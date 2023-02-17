@@ -17,7 +17,6 @@ import { RelatorioModule } from './modules/relatorios/relatorio.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LogModule } from './modules/logs/log.module';
 import { UteisModule } from './modules/uteis/uteis.module';
-import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { RotinaModule } from './modules/rotinas/rotina.module';
 import { TemplateModule } from './modules/cadastros/template/template.module';
 
@@ -44,7 +43,6 @@ import { TemplateModule } from './modules/cadastros/template/template.module';
     UteisModule,
     LogModule,
     RotinaModule,
-    CKEditorModule,
     TemplateModule
   ],
   providers: [],

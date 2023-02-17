@@ -6,7 +6,7 @@ import { TemplateFormComponent } from './template-form/template-form.component';
 import { TemplateListComponent } from './template-list/template-list.component';
 import {ComponentsModule} from "../../../components/components.module";
 import {ReactiveFormsModule} from "@angular/forms";
-import {CKEditorModule} from "@ckeditor/ckeditor5-angular";
+//import {CKEditorModule} from "@ckeditor/ckeditor5-angular";
 
 @NgModule({
   declarations: [
@@ -17,8 +17,8 @@ import {CKEditorModule} from "@ckeditor/ckeditor5-angular";
         CommonModule,
         ComponentsModule,
         ReactiveFormsModule,
-        TemplateRoutingModule,
-        CKEditorModule
+        TemplateRoutingModule
+        //CKEditorModule
     ]
 })
 export class TemplateModule { }

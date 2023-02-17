@@ -57,7 +57,8 @@ import { MapComponent } from './map/map.component';
 import { MapItemComponent } from './map/map-item/map-item.component';
 import { MapForeachComponent } from './map/map-foreach/map-foreach.component';
 import { InputEditorComponent } from './input/input-editor/input-editor.component';
-import { CKEditorModule } from "@ckeditor/ckeditor5-angular";
+import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
+import { GlobalsService } from '../services/globals.service';
 
 const maskConfig: Partial<IConfig> = {
   validation: false,
@@ -126,7 +127,7 @@ const maskConfig: Partial<IConfig> = {
     //CurrencyMaskModule,
     AngularDoubleScrollbarsModule,
     NgxMaskModule.forRoot(maskConfig),
-    CKEditorModule
+    EditorModule
   ],
   exports: [
     BarChartComponent,
@@ -174,6 +175,13 @@ const maskConfig: Partial<IConfig> = {
     MapItemComponent,
     MapForeachComponent,
     InputEditorComponent
+  ],
+  providers: [
+    { 
+      provide: TINYMCE_SCRIPT_SRC, //useValue: 'tinymce/tinymce.min.js' 
+      useFactory: (gb: GlobalsService) => gb.baseURL + '/tinymce/tinymce.min.js',
+      deps: [GlobalsService]
+    }
   ]
 })
 export class ComponentsModule { }

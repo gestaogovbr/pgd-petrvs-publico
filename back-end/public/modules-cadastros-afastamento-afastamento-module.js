@@ -134,9 +134,8 @@ class AfastamentoFormComponent extends src_app_modules_base_page_form_base__WEBP
             if (!this.isHoras()) {
                 afastamento.inicio_afastamento.setHours(0, 0, 0);
                 afastamento.fim_afastamento.setHours(23, 59, 0);
-                afastamento.fim_afastamento.setDate(afastamento.fim_afastamento.getDate() + 1); //Acrescendo 1 dia, pois estava vindo um dia antes do setado.
+                afastamento.fim_afastamento.setDate(afastamento.fim_afastamento.getDate());
             }
-            //console.log(afastamento)
             resolve(afastamento);
         });
     }
