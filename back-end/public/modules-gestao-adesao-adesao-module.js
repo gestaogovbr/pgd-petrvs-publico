@@ -25,6 +25,8 @@ class Adesao extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.unidade_id = "";
         this.entidade_id = "";
         this.tipo_modalidade_id = "";
+        this.documento_id = null;
+        this.documentos = []; /*TCR*/
         this.initialization(data);
     }
 }
@@ -291,9 +293,9 @@ class AdesaoListComponent extends _base_page_list_base__WEBPACK_IMPORTED_MODULE_
         this.injector = injector;
         this.multiselectAllFields = ["tipo_modalidade_id", "usuario_id", "unidade_id", "documento_id"];
         this.SITUACAO_FILTRO = [
-            { key: "SOLICITADO", value: "Vigente" },
-            { key: "HOMOLOGADO", value: "Não vigente" },
-            { key: "CANCELADO", value: "Iniciam" }
+            { key: "SOLICITADO", value: "Solicitado" },
+            { key: "HOMOLOGADO", value: "Homologado" },
+            { key: "CANCELADO", value: "Cancelado" }
         ];
         this.filterValidate = (control, controlName) => {
             var _a, _b;
@@ -397,14 +399,14 @@ class AdesaoListComponent extends _base_page_list_base__WEBPACK_IMPORTED_MODULE_
     onProcessoClick(row) {
         this.allPages.openDocumentoSei(row.documento.id_processo, row.documento.id_documento);
     }
-    needSign(plano) {
+    needSign(adesao) {
         var _a, _b;
         let ids = [];
-        if ((_a = plano.documento_id) === null || _a === void 0 ? void 0 : _a.length) {
-            const tipoModalidade = plano.tipo_modalidade; //(this.tipoModalidade?.searchObj as TipoModalidade);
-            const usuario = plano.usuario; // (this.usuario?.searchObj as Usuario);
-            const unidade = plano.unidade; // (this.unidade?.searchObj as Unidade);
-            const entidade = unidade.entidade;
+        if ((_a = adesao.documento_id) === null || _a === void 0 ? void 0 : _a.length) {
+            const tipoModalidade = adesao.tipo_modalidade; //(this.tipoModalidade?.searchObj as TipoModalidade);
+            const usuario = adesao.usuario; // (this.usuario?.searchObj as Usuario);
+            const unidade = adesao.unidade; // (this.unidade?.searchObj as Unidade);
+            const entidade = adesao.entidade;
             //const alredySigned = !!documento.assinaturas.find(x => x.usuario_id == this.auth.usuario!.id);
             if ((tipoModalidade === null || tipoModalidade === void 0 ? void 0 : tipoModalidade.exige_assinatura) && usuario)
                 ids.push(usuario.id);
@@ -413,7 +415,7 @@ class AdesaoListComponent extends _base_page_list_base__WEBPACK_IMPORTED_MODULE_
             if ((tipoModalidade === null || tipoModalidade === void 0 ? void 0 : tipoModalidade.exige_assinatura_gestor_entidade) && entidade)
                 ids.push(entidade.gestor_id || "", entidade.gestor_substituto_id || "");
         }
-        return !!((_b = plano.documento_id) === null || _b === void 0 ? void 0 : _b.length) && ids.includes(this.auth.usuario.id);
+        return !!((_b = adesao.documento_id) === null || _b === void 0 ? void 0 : _b.length) && ids.includes(this.auth.usuario.id);
     }
     assinar() {
         if (!this.grid.multiselectedCount) {

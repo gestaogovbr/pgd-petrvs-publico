@@ -108,7 +108,7 @@ export class UtilService {
   }
 
   public getNested(source: IIndexable, path: string): any {
-    return path.replace('[', '.').replace(']', '.').replace(/^\./g, "").split('.').reduce((a, o)=> a && a[Array.isArray(a) ? parseInt(o) : o], source);
+    return path.replace('[', '.').replace(']', '.').replace(/^\./g, "").split('.').filter(x => x.length).reduce((a, o)=> a && a[Array.isArray(a) ? parseInt(o) : o], source);
   }
 
   public setNested(source: IIndexable, path: string, value: any) {

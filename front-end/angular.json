@@ -72,6 +72,11 @@
                 "glob": "*.*",
                 "input": "node_modules/@fortawesome/fontawesome-free/webfonts",
                 "output": "webfonts"
+              },
+              { 
+                "glob": "**/*", 
+                "input": "node_modules/tinymce", 
+                "output": "/tinymce/" 
               }
             ],
             "styles": [

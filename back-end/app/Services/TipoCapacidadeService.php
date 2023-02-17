@@ -14,7 +14,6 @@ class TipoCapacidadeService extends ServiceBase {
         ["MENU_CONFIG_ACESSO", "Permite acessar o menu configurações"],
         ["MENU_GESTAO_ACESSO", "Permite acessar o menu gestão"],
         ["MENU_REL_ACESSO", "Permite acessar o menu relatórios"],
-        ["MENU_ROTINAS_ACESSO", "Permite acessar o menu rotinas internas"],
         ["DEV_MENU_LOGS_ACESSO", "Permite acessar o menu logs"],
         /* Capacidades do DASHBOARD */
         ["DASH_PRG", "Permite mostrar informações do Programa de Gestão"],

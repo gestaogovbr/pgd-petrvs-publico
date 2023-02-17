@@ -109,7 +109,7 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
       }
     });
   }
-  public calculaDataTempoUnidade(inicio: string, fimOuTempo: string | number, cargaHoraria: number, unidade_id: string, tipo: TipoContagem, pausas?: DemandaPausa[], afastamentos?: Afastamento[]): Promise<Efemerides | undefined>{
+  public calculaDataTempoUnidade(inicio: string, fimOuTempo: string | number, cargaHoraria: number, unidade_id: string, tipo: TipoContagem, pausas?: DemandaPausa[], afastamentos?: Afastamento[]): Promise<Efemerides | undefined>{ 
     return new Promise<Efemerides | undefined>((resolve,reject) => {
       this.server.post('api/Teste/calculaDataTempoUnidade', {inicio: inicio, fimOuTempo: fimOuTempo, cargaHoraria: cargaHoraria, unidade_id: unidade_id, tipo: tipo, pausas: pausas, afastamentos: afastamentos})
       .subscribe(response => {                        
@@ -120,5 +120,17 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
       });
     });
   }
+
+/*   public calculaDataTempoUnidade(inicio: string, fimOuTempo: string | number, cargaHoraria: number, unidade_id: string, tipo: TipoContagem, pausas?: DemandaPausa[], afastamentos?: Afastamento[]): Promise<any>{ //Efemerides | undefined
+    return new Promise<any>((resolve,reject) => {
+      this.server.post('api/Teste/calculaDataTempoUnidade', {inicio: inicio, fimOuTempo: fimOuTempo, cargaHoraria: cargaHoraria, unidade_id: unidade_id, tipo: tipo, pausas: pausas, afastamentos: afastamentos})
+      .subscribe(response => {                        
+        resolve(response.data);
+      }, error => {
+        console.log("Erro no cálculo das Efemerides pelo servidor!", error);
+        resolve(undefined);
+      });
+    });
+  } */
 
 }

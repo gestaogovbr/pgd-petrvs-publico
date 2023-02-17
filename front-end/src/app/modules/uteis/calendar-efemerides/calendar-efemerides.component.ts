@@ -60,7 +60,7 @@ export class CalendarEfemeridesComponent implements OnInit {
   }
 
   public totalHoras(intervalos: Interval[]): number {
-    return intervalos.reduce((a, v) => a + this.util.getHoursBetween(v.start, v.end), 0);
+    return +(intervalos.reduce((a, v) => a + this.util.getHoursBetween(v.start, v.end), 0)).toFixed(2);
   }
 
 }

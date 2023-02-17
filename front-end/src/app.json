@@ -1,5 +1,5 @@
 {
-    "version": "1.0.25",
+    "version": "1.0.26",
     "externalLibs": [
         "https://apis.google.com/js/platform.js"
     ],
@@ -75,7 +75,7 @@
         {
             "regex": ".*controlador\\.php\\?acao\\=procedimento_trabalhar.*",
             "route": "/listeners/procedimento-trabalhar",
-            "toolbar": true,
+            "toolbar": false,
             "logged": true,
             "prepend": "#divInfraAreaTelaD",
             "files": [
@@ -84,7 +84,7 @@
         },
         {
             "regex": ".*controlador\\.php\\?acao\\=editor_montar.*",
-            "route": "/listeners/editor-montar",
+            "route": "/teste",
             "toolbar": true,
             "logged": true,
             "before": "#divCarregando",

@@ -12,7 +12,9 @@
     <columns>
         <column title="Nome" field="nome"></column>
         <column title="Descrição" field="descricao"></column>
-        <column title="Nível de acesso" field="nivel"></column>
+        <column title="Nível de acesso" [template]="columnNivel">
+            <ng-template let-row="row" #columnNivel><span>{{row.nivel}}</span></ng-template>
+        </column>
         <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
