@@ -19,6 +19,7 @@ import { LogModule } from './modules/logs/log.module';
 import { UteisModule } from './modules/uteis/uteis.module';
 import { RotinaModule } from './modules/rotinas/rotina.module';
 import { TemplateModule } from './modules/cadastros/template/template.module';
+import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { TemplateModule } from './modules/cadastros/template/template.module';
     ConfigComponent,
     DialogComponent,
     SpinnerOverlayComponent,
-    TesteComponent
+    TesteComponent,
+    TesteFormComponent
   ],
   imports: [
     BrowserModule,

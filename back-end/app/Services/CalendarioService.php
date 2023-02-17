@@ -5,23 +5,100 @@ namespace App\Services;
 use App\Models\Unidade;
 use App\Models\Feriado;
 use App\Services\ServiceBase;
+use Illuminate\Support\Facades\Auth;
+use \MomentPHP\MomentPHP;
 use DateTime;
 use DateTimeZone;
+use Exception;
+//use \Moment\Moment;
 
-class TimeInterval
+class Interval
 {
- public $start;
- public $end;
+ public int $start;
+ public int $end;
+
+    function __construct($value = null) {
+        $value = (array) $value;
+        if($value) foreach(array_keys($value) as $key) $this->$key = $value[$key];
+    }
+}
+
+class Turno
+{
+    public string $inicio;
+    public string $fim;
+    public string | null $data;
+    public bool $sem;
+
+    function __construct($value = null) {
+        $value = (array) $value;
+        if($value) foreach(array_keys($value) as $key) $this->$key = $value[$key];
+    }
+}
+
+class Expediente 
+{
+    public $domingo = [];
+    public $segunda = [];
+    public $terca = [];
+    public $quarta = [];
+    public $quinta = [];
+    public $sexta = [];
+    public $sabado = [];
+    public $especial = [];
+
+    function __construct($value = null) {
+        $value = (array) $value;
+        if($value) foreach(array_keys($value) as $key) if($value[$key]) $this->$key = $value[$key];
+    }
+}
+
+class ExpedienteDia
+{
+    public $diaSemana = '';
+    public $diaLiteral = '';
+    public $tInicio = 0;
+    public $tFim = 0;
+    public $hExpediente = 0;
+    public $intervalos = [];
+
+    function __construct($value = null) {
+        $value = (array) $value;
+        if($value) foreach(array_keys($value) as $key) if($value[$key]) $this->$key = $value[$key];
+    }
+}
+
+class Efemerides
+{ 
+    public string $resultado;                              
+    public int $dias_corridos = 0; 
+    public string $inicio;
+    public string $fim;
+    public float $tempoUtil = 0.0;                              
+    public string $forma;                      
+    public float $horasNaoUteis = 0.0;
+    public float $cargaHoraria = 0.0;                           
+    public Expediente $expediente;                             
+    public array $afastamentos = [];
+    public array $pausas = [];
+    public array $feriados = [];                               
+    public array $diasNaoUteis = [];                
+    public array $diasDetalhes = [];                   
+    
+    function __construct($value = null) {
+        $value = (array) $value;
+        if($value) foreach(array_keys($value) as $key) if($value[$key]) $this->$key = $value[$key];
+    }
 }
 
 class CalendarioService
 {
-    public const DIA_EM_SEGUNDOS = 86400;
+    const DIA_EM_SEGUNDOS = 86400;
     public $feriadosCadastrados = [];
     public $feriadosReligiosos = [];
     public $util;
 
-    public function feriadosCadastrados($unidade_id) {
+    public static function feriadosCadastrados($unidade_id) {
         $unidade = Unidade::find($unidade_id);
         $feriados = Feriado::whereRaw(
             "(entidade_id IS NULL OR entidade_id = :entidade_id) AND ("
@@ -35,7 +112,7 @@ class CalendarioService
             ])->get();
         $result = [];
         foreach($feriados as $feriado) {
-            $data = ($feriado->recorrent ? "" : str_pad($feriado->ano, 4, "0", STR_PAD_LEFT)) . "-" .
+            $data = ($feriado->recorrente ? "" : str_pad($feriado->ano, 4, "0", STR_PAD_LEFT)) . "-" .
             str_pad($feriado->mes, 2, "0", STR_PAD_LEFT) . "-" .
             str_pad($feriado->dia, 2, "0", STR_PAD_LEFT);
             $result[$data] = $feriado->nome;
@@ -43,46 +120,60 @@ class CalendarioService
         return $result;
     }
 
-    public function isFimSemana($timestamp) {
+    public static function isFinalSemana($timestamp) {
         return date("N", $timestamp) > 5;
     }
 
-    public function isFeriadoSanto($timestamp, $listaFeriados) {
-        return array_search(date("Y-m-d", $timestamp), $listaFeriados) !== false;
+    public static function isFeriadoReligioso($timestamp): string | null {
+        $listaFeriados = static::listaFeriadosReligiosos($timestamp,$timestamp);
+        return static::isFeriadoCadastrado($timestamp,$listaFeriados);
     }
 
-    public function listaFeriadosReligiosos($inicio, $fim) {
+    public static function isFeriadoCadastrado($timestamp, $listaFeriados): string | null {
+        $result = array_key_exists(date("Y-m-d", $timestamp), $listaFeriados);
+        if($result) return $listaFeriados[date("Y-m-d", $timestamp)];
+        $result = array_key_exists(date("0000-m-d", $timestamp), $listaFeriados);
+        return $result ? $listaFeriados[date("0000-m-d", $timestamp)] : null;
+    }
+
+    public static function easter(int $ano = null) {
+        $year = $ano ?? getdate()['year'];
+        $G = $year % 19; 
+        $C = floor($year / 100); 
+        $H = ($C - floor($C / 4) - floor((8 * $C + 13) / 25) + 19 * $G + 15) % 30;
+        $I = $H - floor($H / 28) * (1 - floor(29 / ($H + 1)) * floor((21 - $G) / 11)); 
+        $J = ($year + floor($year / 4) + $I + 2 - $C + floor($C / 4)) % 7;
+        $L = $I - $J;
+        $month = 3 + floor(($L + 40) / 44);
+        $day = $L + 28 - 31 * floor($month / 4);
+        return new DateTime($year."-".$month."-".$day." 00:00:00");
+    }
+
+    public static function listaFeriadosReligiosos(int $inicio, int $fim) {
         $feriados = [];
         for($ano = intval(date('Y', $inicio)), $anoFim = intval(date('Y', $fim)); $ano <= $anoFim; $ano++) {
-            $pascoa = easter_date($ano);
-            $pascoaDia = date('j', $pascoa);
-            $pascoaMes = date('n', $pascoa);
-            $pascoaAno = date('Y', $pascoa);
-            array_push($feriados,
-                date("Y-m-d", mktime(0, 0, 0, $pascoaMes, $pascoaDia - 48,  $pascoaAno)), //2ºfeira Carnaval
-                date("Y-m-d", mktime(0, 0, 0, $pascoaMes, $pascoaDia - 47,  $pascoaAno)), //3ºfeira Carnaval
-                date("Y-m-d", mktime(0, 0, 0, $pascoaMes, $pascoaDia - 2 ,  $pascoaAno)), //6ºfeira Santa
-                date("Y-m-d", mktime(0, 0, 0, $pascoaMes, $pascoaDia     ,  $pascoaAno)), //Pascoa
-                date("Y-m-d", mktime(0, 0, 0, $pascoaMes, $pascoaDia + 60,  $pascoaAno))  //Corpus Christi
-            );
+            $pascoa = static::easter($ano);
+            $pascoaDia = date('j', UtilService::asTimestamp($pascoa));
+            $pascoaMes = date('n', UtilService::asTimestamp($pascoa));
+            $pascoaAno = date('Y', UtilService::asTimestamp($pascoa));
+            $feriados[date("Y-m-d", mktime(0, 0, 0, $pascoaMes, $pascoaDia - 48,  $pascoaAno))] = '2ª-feira Carnaval';
+            $feriados[date("Y-m-d", mktime(0, 0, 0, $pascoaMes, $pascoaDia - 47,  $pascoaAno))] = '3ª-feira Carnaval';
+            $feriados[date("Y-m-d", mktime(0, 0, 0, $pascoaMes, $pascoaDia - 2 ,  $pascoaAno))] = '6ª-feira Santa';
+            $feriados[date("Y-m-d", mktime(0, 0, 0, $pascoaMes, $pascoaDia     ,  $pascoaAno))] = 'Páscoa';
+            $feriados[date("Y-m-d", mktime(0, 0, 0, $pascoaMes, $pascoaDia + 60,  $pascoaAno))] = 'Corpus Christi';
         }
         return $feriados;
     }
 
-    public function isFeriadoCadastrado($timestamp, $listaFeriados) {
-        return array_search(date("Y-m-d", $timestamp), $listaFeriados) !== false;
-    }
-
     public static function horarioServidor() {
         $timezone_abbr = timezone_name_from_abbr("", -3600*abs(config('petrvs')["timezone"]), 0);
-        $dateTime = new DateTime('now', new DateTimeZone($timezone_abbr));
+        $dateTime = new DateTime('now', new DateTimeZone($timezone_abbr));   
         $dateTime->setTimestamp($dateTime->getTimestamp());
-        return ServiceBase::toIso8601($dateTime);
+        return ServiceBase::toIso8601($dateTime); //retorna a data no formato "Y-m-d\TH:i:s"
     }
 
     public static function getTimestamp($date) {
-        return UtilService::asTimestemp($date);
-        //return gettype($date) == "integer" ? $date : ($date instanceof DateTime ? $date->getTimestamp() : strtotime($date));
+        return UtilService::asTimestamp($date);
     }
 
     public static function between($date, $start, $end): bool {
@@ -145,8 +236,7 @@ class CalendarioService
         return $hours + ($min / 60) + ($sec / (60*60));
     }
 
-    public function prazo($inicio_data, $horas, $carga_horaria, $unidade_id)
-    {
+    public function prazo($inicio_data, $horas, $carga_horaria, $unidade_id){
         $unidade = Unidade::find($unidade_id);
         $dataInicio = $inicio_data instanceof DateTime ? $inicio_data->getTimestamp() : strtotime($inicio_data);
         $diaAtual = $dataInicio;
@@ -164,7 +254,7 @@ class CalendarioService
                 $listaFeriados = $this->listaFeriadosCadastrados($inicio, $fim, $unidade);
                 $listaFeriadosReligiosos = $this->listaFeriadosReligiosos($inicio, $fim, $unidade);
             }
-            $diaUtil = !$this->isFeriadoSanto($diaAtual, $listaFeriadosReligiosos) && !$this->isFeriadoCadastrado($diaAtual, $listaFeriados) && !$this->isFimSemana($inicio);
+            $diaUtil = !static::isFeriadoReligioso($diaAtual, $listaFeriadosReligiosos) && static::isFeriadoCadastrado($diaAtual, $listaFeriados) && !static::isFinalSemana($inicio);
             /* calcula em dias */
             if($forma == "DIAS_CORRIDOS" || $forma == "DIAS_UTEIS") {
                 /* Conta sempre a partir do próximo dia útil e encerra sempre com $unidade->horario_trabalho_fim */
@@ -186,8 +276,7 @@ class CalendarioService
         return $result;
     }
 
-    public function qtdDiasUteis($inicioData, $fimData, $unidade_id)
-    {
+    public function qtdDiasUteis($inicioData, $fimData, $unidade_id){
         $inicio = $inicioData instanceof DateTime ? $inicioData->getTimestamp() : strtotime($inicioData);
         $fim = $fimData instanceof DateTime ? $fimData->getTimestamp() : strtotime($fimData);
         $unidade = Unidade::find($unidade_id);
@@ -196,7 +285,7 @@ class CalendarioService
             $listaFeriadosReligiosos = $this->listaFeriadosReligiosos($inicio, $fim, $unidade);
             $diasUteis = 0;
             for (; $inicio <= $fim; $inicio += self::DIA_EM_SEGUNDOS) {
-                if(!$this->isFeriadoSanto($inicio, $listaFeriadosReligiosos) && !$this->isFeriadoCadastrado($inicio, $listaFeriados) && !$this->isFimSemana($inicio)) {
+                if(!static::isFeriadoReligioso($inicio, $listaFeriadosReligiosos) && !static::isFeriadoCadastrado($inicio, $listaFeriados) && !static::isFinalSemana($inicio)) {
                     $diasUteis++;
                 }
             };
@@ -220,12 +309,6 @@ class CalendarioService
         //$this->timerToDecimal();
     }
 
-
-
-
-
-
-
     /**
      * expediente
      *
@@ -233,218 +316,275 @@ class CalendarioService
      * @param  mixed $inicio: parâmetro opcional
      * @return: retorna a duração do expediente em horas. Se a $unidade não for informada, retorna 24.
      */
-    public function expediente(Unidade $unidade = null, DateTime $inicio = null) {
-        /* Retorna (horario_trabalho_fim - (inicio ou horario_trabalho_inicio) - horario_trabalho_intervalo) ou 24 caso não tenha unidade */
-        return is_null($unidade) ? 24 : max($this->getStrTimeHours($unidade->horario_trabalho_fim) -
-          ($inicio ? $this->getTimeHours($inicio) : $this->getStrTimeHours($unidade->horario_trabalho_inicio)) -
-          $this->getStrTimeHours($unidade->horario_trabalho_intervalo ?? "00:00"), 0);
+    public static function expediente(Unidade $unidade = null, DateTime $inicio = null) {
+        return is_null($unidade) ? 24 : max(UtilService::getStrTimeHours($unidade->horario_trabalho_fim) -
+          ($inicio ? UtilService::getTimeHours($inicio) : UtilService::getStrTimeHours($unidade->horario_trabalho_inicio)) -
+          UtilService::getStrTimeHours($unidade->horario_trabalho_intervalo ?? "00:00"), 0);
     }
 
-    /**
-     * getStrTimeHours
-     *
-     * @param  mixed $time: tempo em formato de string ("hh:mm:ss", "hh:mm", "hh")
-     * @return: retorna um número que representa sua conversão em horas
-     */
-    public function getStrTimeHours(string $time) {
-        $aTime = array_map(fn($x) => intval($x), explode(":", $time));
-        return $aTime[0] + (($aTime[1] ?? 0) / 60) + (($aTime[2] ?? 0) / (60*60));
+    public static function preparaParametros(array $data): Efemerides {
+        $inicio = UtilService::asDateTime($data['inicio']);
+        $fimOuTempo = in_array(gettype($data['fimOuTempo']),["integer","double"]) ? $data['fimOuTempo'] : UtilService::asDateTime($data['fimOuTempo']) ;
+        $cargaHoraria = doubleval($data['cargaHoraria']);
+        $unidade = Unidade::find($data['unidade_id']);
+        $tipo = $data['tipo'];
+        $pausas = $data['pausas'];
+        $afastamentos = $data['afastamentos'];
+        $resultado = static::calculaDataTempoUnidade($inicio, $fimOuTempo, $cargaHoraria, $unidade, $tipo, $pausas, $afastamentos);
+        return $resultado;
     }
 
-    /**
-     * getTimeHours
-     *
-     * @param  mixed $dateTime: uma Data ou um número. Caso seja numérico deverá representar um intervalo em milisegundos.
-     * @return: retorna um número que equivale à sua conversão em horas.
-     */
-    public function getTimeHours(DateTime | float $dateTime) {
-        return $dateTime instanceof DateTime ? $this->getStrTimeHours($dateTime->format('H:i:s')) : $dateTime / 3600000;
+    public static function calculaDataTempoUnidade(DateTime $inicio, $fimOuTempo, int $cargaHoraria, Unidade $unidade, string $tipo, array $pausas = null, array $afastamentos = null): Efemerides {
+        $feriados = static::feriadosCadastrados($unidade->id) ?? [];
+        $forma = $tipo == 'DISTRIBUICAO' ? $unidade->distribuicao_forma_contagem_prazos : $unidade->entrega_forma_contagem_prazos;
+        $expediente = static::nestedExpediente($unidade);
+        return static::calculaDataTempo($inicio, $fimOuTempo, $forma, $cargaHoraria, $expediente, $feriados, $pausas, $afastamentos);
     }
 
-    /**
-     * daystamp
-     *
-     * @param  mixed $dateRef: parâmetro obrigatório. Representa uma data.
-     * @return: retorna um número que representa a conversão da data recebida em quantidade de dias
-     */
-    public function daystamp(DateTime $dateRef) {
-        //$userTimezoneOffset = $dateRef->getTimezoneOffset() * 60000;
-        return floor(($dateRef->getTimestamp()) / (60 * 60 * 24));
-    }
-
-    public function intersection(array $intervals) {
-        $isDate = ($intervals[0])->start instanceof DateTime;
-        $result = undefined;
-        if(count($intervals) > 1) {
-          $result = $this->asTimeInterval($intervals[0]);
-          for($i = 1; $i < count($intervals) && $result; $i++) {
-            $compare = $this->asTimeInterval($intervals[i]);
-            if ($result->end >= $compare->start && $result->start <= $compare->end) {
-                //$result = {'start' => max($result->start, $compare->start), 'end' => min($result->end, $compare->end);}
-            } else {
-                $result = undefined;
+    public static function nestedExpediente(Unidade $unidade): Expediente {
+        $expediente = $unidade->expediente ? new Expediente($unidade->expediente) : new Expediente($unidade->entidade->expediente);
+        $expediente = $expediente ? $expediente : ($unidade->entidade_id == Auth::user()->unidade->entidade_id ? new Expediente(Auth::user()->unidade->entidade->expediente) : new Expediente());
+        //transforma objetos da classe stdClass em objetos da classe Turno
+        foreach(array_keys((array)$expediente) as $dia)
+        {
+            foreach(array_keys((array)$expediente->$dia) as $t)
+            { 
+                if(array_key_exists($t,$expediente->$dia)) {$expediente->$dia[$t] = new Turno((array)$expediente->$dia[$t]);}
             }
-          }
         }
-        return $result && $isDate ? this.asDateInterval(result) : result;
+        return $expediente;
     }
 
-    /*        Função responsável por todos os cálculos de períodos no sistema.
-        Obs.: As variáveis que armazenam tempo/data são iniciadas com as respectivas letras:
-        - d: Data, do tipo Date do javascript
-        - h: Tempo em formato de horas, de forma numérica, por exempo 01h30 será igual a 1.5
-        - t: Tempo em formado de milesegundos (getTime() do javascript)
-        - u: Unidade de dia, é um formato semelhante ao timestemp, porem contado em dias
+    /*
+    Função responsável por todos os cálculos de períodos no sistema.
+    Obs.: As variáveis que armazenam tempo/data são iniciadas com as respectivas letras:
+    - d: data, do tipo DateTime do PHP
+    - h: tempo em formato de horas, de forma numérica, por exempo 01h30 será igual a 1.5
+    - t: tempo em formado de segundos (DateTime.getTimestamp() do PHP)
+    - u: Unidade de dia, é um formato semelhante ao timestamp, porem contado em dias
+    - s: Hora em formato string (hh:mm(:ss)?)
 
-        @param Date          inicio       Data e hora de inicio
-        @param Date|number   fimOuTempo   Se a intenção for calcular a dataFim então será passado o tempo,
-            caso passe uma dataFim será calculado o tempo. O tempo é calculado da seguinte form:
-            1) Se forma for DIAS, então será sempre um mútiplo de cargaHoraria (dias = fimOuTempo / cargaHoraria)
-            2) Se forma for HORAS, será as horas em forma decimal
-        @param number        cargaHoraria Carga horária que sserá considerada para os cálculos
-        @param Unidade       unidade      Unidade com as configurações necessárias
-        @param TipoContagem  tipo         Se será utilizado a forma de cálculo da distribuição ou da entrega (pego na unidade)
-        @param DemandaPausa? pausas       Lista das pausas, quando aplicável
-        @param Afastamento?  afastamentos Lista dos afastamento a partir da data Inicio para o usuario, quando aplicável
-        @return Efemerides Retorna todas as informações do cálculo com as horas ou a data fim calculados
-  */
-    public function calculaDataTempo(DateTime $inicio, $fimOuTempo, $cargaHoraria, Unidade $unidade, $tipo, array $pausas = null, array $afastamentos = null) {
-        $formaDistribuicao = $unidade->distribuicao_forma_contagem_prazos;
-        $formaEntrega = $unidade->entrega_forma_contagem_prazos;
-        $forma = $tipo == "DISTRIBUICAO" ? $formaDistribuicao : $formaEntrega;
+    @param  DateTime         $inicio        Data e hora de inicio
+    @param  (data | número)  $fimOuTempo    Se a intenção for calcular a dataFim então será passado o tempo.
+                                            Se for passada uma data, então será calculado o tempo. 
+        O tempo é calculado da seguinte forma:
+        1) Se forma for DIAS, então será sempre um mútiplo de cargaHoraria (dias = fimOuTempo / cargaHoraria)
+        2) Se forma for HORAS, será as horas em forma decimal
+    @param  string           $forma         Forma de contagem dos prazos (dias/horas - úteis/corridos)      
+    @param  int | null       $cargaHoraria  Carga horária que será considerada para os cálculos
+    @param  Expediente       $expediente    Expediente que será utilizado para os cálculos. Não obrigatório caso seja dias/horas corridas.
+    @param  array | null     $feriados      Lista dos feriados, quando aplicável
+    @param  array | null     $pausas        Lista das pausas, quando aplicável
+    @param  array | null     $afastamentos  Lista dos afastamentos do usuário, a partir da data $inicio, quando aplicável
+    @return Efemerides                      Retorna todas as informações do cálculo com as horas ou a data fim calculados
+    */
+    public static function calculaDataTempo(DateTime $inicio, $fimOuTempo, string $forma, int $cargaHoraria = null, Expediente $expediente, array $feriados = null, array $pausas = null, array $afastamentos = null): Efemerides {
+        define('INICIO_PERIODO', $inicio->format(DateTime::ATOM));
         $useCorridos = $forma == "DIAS_CORRIDOS" || $forma == "HORAS_CORRIDAS";
         $useDias = $forma == "DIAS_CORRIDOS" || $forma == "DIAS_UTEIS";
-        $useTempo = is_int($fimOuTempo) || is_float($fimOuTempo); /* Se o parametro fimOuTempo é DataFim ou Horas/Dias */
-        $uDiasInicio = $this->daystamp($inicio); /* Dia inicio (usado somente se !useTempo) */
-        $uDiasFim = $useTempo ? $uDiasInicio : $this->daystamp((object) $fimOuTempo); /* Dia fim (usado somente se !useTempo) */
-        $hExpediente = $this->expediente($unidade); /* em horas */
+        $useTempo = in_array(gettype($fimOuTempo),["integer","double"]); /* Se o parametro fimOuTempo for a DataFim, é porque deve-se usá-la para calcular o Tempo (nr. de horas); Caso ele seja um tempo (nr. de horas), é porque deve-se usá-lo para calcular a DataFim */
+        $uDiasInicio = UtilService::daystamp($inicio); /* Dia inicio (usado somente se !useTempo) */
+        $uDiasFim = $useTempo ? $uDiasInicio : UtilService::daystamp(UtilService::asDateTime($fimOuTempo)); /* Dia fim (usado somente se !useTempo) */
+
+        /* Verifica se existe $expediente quando ele é obrigatório, e cria uma exceção se ele não foi informado. Quando não for obrigatório, $expediente será nulo  */
+        if (!$expediente && !$useCorridos) throw new Exception('Expediente não informado');
+        $expediente = $useCorridos ? null : $expediente;
+
+        $result = new Efemerides([
+                'resultado' => $useTempo ? "DATA" : "TEMPO",
+                'tempoUtil' => $useTempo ? $fimOuTempo : 0,
+                'fim' => !$useTempo ? (UtilService::asDateTime($fimOuTempo))->format(DateTime::ATOM) : $inicio->format(DateTime::ATOM),
+                'expediente' => new Expediente(),
+                'forma' => $forma,
+                'cargaHoraria' => $cargaHoraria ?? 24
+            ]);
 
         /* Calcula as horas de afastamento */
-        $horasAfastamento = function($start, $end) use ($afastamentos) {
+        $horasAfastamentos = function (int $start, int $end) use (&$result, &$afastamentos): array {
             $periodos = [];
-            foreach($afastamentos as $afastamento) {
+            foreach(($afastamentos ?? []) as $afastamento) {
                 /* calcula a intersecção entre start e end e o inicio e fim do afastamento */
-                //$intervalo = $this->intersection([{$start, $end}, {$start: afastamento.inicio_afastamento.getTime(), $end: afastamento.fim_afastamento.getTime()}]) as TimeInterval;
-                if($intervalo) {
-                    /* Caso tenha uma intersecção, adiciona o período para retorno e insere em result.afastamentos */
-                    $periodos.push($intervalo);
-                    if(!result.afastamentos.includes(afastamento)) result.afastamentos.push(afastamento);
-                };
+                $a = UtilService::asTimestamp($afastamento['inicio_afastamento']);
+                $b = UtilService::asTimestamp($afastamento['fim_afastamento']);
+                $intervalo = UtilService::intersection([new Interval(['start' => $start, 'end' => $end]), new Interval(['start' => $a, 'end' => $b])]);
+                if($intervalo && $intervalo->start != $intervalo->end) {
+                    /* Caso tenha uma intersecção, adiciona o período para retorno e insere em $result->afastamentos */
+                    array_push($periodos, $intervalo);
+                    if(gettype(array_search($afastamento, $result->afastamentos)) != 'integer') {array_push($result->afastamentos, $afastamento);}
+                }
             };
-            return periodos;
+            return $periodos;
         };
 
         /* Calcula as horas pausadas */
-        /*     const horasPausas = (start: number, end: number): TimeInterval[] => {
-      let periodos: TimeInterval[] = [];
-      for(let pausa of (pausas || [])) {
-        const intervalo = this.util.intersection([{start, end}, {start: pausa.data_inicio.getTime(), end: pausa.data_fim?.getTime() || end}]) as TimeInterval;
-        if(intervalo) {
-          periodos.push(intervalo);
-          if(!result.pausas.includes(pausa)) result.pausas.push(pausa);
-        }
-      }
-      return periodos;
-        } */
-        /* Calcula a união entre afastamentos e pausas */
-        /*     const horasAfastamentoPausa = (start: number, end: number): TimeInterval[] => {
-      const hAfastamentos = horasAfastamento(start, end);
-      const hPausas = horasPausas(start, end);
-      return this.util.union([...hAfastamentos, ...hPausas]) as TimeInterval[];
-        }
-        let hTempo = useTempo ? fimOuTempo as number : 0; */ /* variável saldo de horas/dias (usado somente se useTempo) */
-        /*   let dDiaAtual = new Date(inicio.getTime()); /* Variável que irá percorrer todas as datas (do inicio ao fim ou a quantidade de horas) */
-        /*    let result: Efemerides = { /* Variável que irá retonar todas as informações calculadas */
-        /*     resultado: useTempo ? "DATA" : "TEMPO",
-      dias_corridos: 0,
-      inicio: inicio,
-      fim: !useTempo ? fimOuTempo as Date: new Date(inicio.getTime()),
-      tempoUtil: useTempo ? fimOuTempo as number : 0,
-      tipo: tipo,
-      formaDistribuicao: formaDistribuicao,
-      formaEntrega: formaEntrega,
-      horasAfastamentosPausas: 0,
-      unidade_id: unidade.id,
-      cargaHoraria: cargaHoraria || 24,
-      expediente: hExpediente,
-      afastamentos: [],
-      pausas: [],
-      finsSemana: {},
-      feriados: {}
-        }; */
+        $horasPausas = function (int $start, int $end) use (&$result, &$pausas): array {
+            $periodos = [];
+            foreach(($pausas ?? []) as $pausa) {
+                $intervalo = UtilService::intersection([
+                        new Interval(['start' =>$start, 'end' => $end]), 
+                        new Interval(['start' => UtilService::asTimestamp($pausa['data_inicio']), 'end' => $pausa['data_fim'] ? UtilService::asTimestamp($pausa['data_fim']) : $end])
+                    ]);
+                if($intervalo && $intervalo->start != $intervalo->end) {
+                    array_push($periodos, $intervalo);
+                    if(!array_search($pausa, $result->pausas)) {array_push($result->pausas, $pausa);}
+                }
+            };
+            return $periodos;
+        };
 
-        /*   cargaHoraria = result.cargaHoraria; /* Garante que se a carga horária vier zerado, será considerado 24hrs */
-        /*    while(useTempo ? this.util.round(hTempo, 2) > 0 : this.util.daystamp(dDiaAtual) <= uDiasFim) {
-      const firstDay = this.util.daystamp(dDiaAtual) == uDiasInicio;
-      const lastDay = this.util.daystamp(dDiaAtual) == uDiasFim; */
-        /*     const strDiaAtual = moment(dDiaAtual).format("YYYY-MM-DD"); /* Usado somente para indexar os vetores com a data do feriado/fds */
-      /* Se for dias corridos ou horas corridas não é necessário calcular Feriados e nem Fins de Semana */
-        /*      const feriadoCadastrado = useCorridos ? undefined : this.isFeriadoCadastrado(dDiaAtual, unidade);
-      const feriadoReligioso = useCorridos ? undefined : this.isFeriadoReligioso(dDiaAtual);
-      const fimSemana = useCorridos ? undefined : this.isFinalSemana(dDiaAtual);
-      const diaUtil = !feriadoCadastrado && !feriadoReligioso && !fimSemana;
-      if(!useCorridos) { */
-        /*      if(feriadoCadastrado) result.feriados[strDiaAtual] = feriadoCadastrado; /* Se feriado cadastrado, adiciona ao resultado */
-        /*    if(feriadoReligioso) result.feriados[strDiaAtual] = feriadoReligioso; /* Se feriado religioso, adiciona ao resultado */
-      /*  if(fimSemana) result.finsSemana[strDiaAtual] = fimSemana; /* Se final de semana, adiciona ao resultado */
-        /*     }
-      /* Calculo em dias */
-        /*      if (useDias) {
-        const tInicioDia = this.util.setStrTime(dDiaAtual, unidade.horario_trabalho_inicio).getTime();
-        const tFimDia = this.util.setStrTime(dDiaAtual, unidade.horario_trabalho_fim).getTime(); */
-        //      const intersticio = horasAfastamentoPausa(tInicioDia, tFimDia); /* Calula perído de afastamento e/ou pausa no dia atual */
-        //    result.horasAfastamentosPausas += intersticio.length ? cargaHoraria : 0; /* Se tiver afastamento e/ou pausa no dia atual, considera o tempo do dia inteiro */
-        /* Se houver algum afastamento ou pausa durante o horário de expediente, o dia tambem não será contado */
-        //(lastDay || !firstDay) para considerar o proximo dia util
-        //        if (!intersticio.length && (useCorridos || diaUtil)) {
-        //        if(useTempo) { /* se for pra calcular a data fim, como é dia, será sempre a data na hora final do expediente, mas não importa, porque o que contará é somente o data sem hora */
-        //        hTempo -= cargaHoraria;
-      //      result.fim = new Date(tFimDia);
-        //  } else { /* se for pra calcular o tempoUtil (lembrando que a quantidade de dias é tempoUtil / cargaHoraria) */
-          //  result.tempoUtil += cargaHoraria;
-     //     }
-        //        }
-        //    } else { /* calcula em horas */
-        //     if(useCorridos || diaUtil) {
-        //         const hIntervalo = this.util.getStrTimeHours(unidade.horario_trabalho_intervalo || "00:00");
-        //       const hUteisDia = Math.min(cargaHoraria, hExpediente, useTempo ? hTempo : hExpediente); /* Horas úteis diárias, tempo útil máximo para um dia é o menor entre eles */
-     //     const dInicioDia = firstDay ? inicio : this.util.setStrTime(dDiaAtual, useCorridos ? "00:00" : unidade.horario_trabalho_inicio); /* Inicio do expediente */
-       //   const dFimDia = lastDay && !useTempo ? fimOuTempo as Date : this.util.minDate(this.util.addTimeHours(dInicioDia, hUteisDia + hIntervalo), this.util.setStrTime(dInicioDia, unidade.horario_trabalho_fim))!; /* fim do expediente */
-        //          const intersticio = horasAfastamentoPausa(dInicioDia.getTime(), dFimDia.getTime()); /* Calula perído de afastamento e/ou pausa no dia atual */
-        //        const hUteis = Math.min(hUteisDia, this.util.getHoursBetween(dInicioDia, dFimDia)); /* Horas úteis aproveitáveis para os cálculos (considerando o inicio e fim da atividade) */
-        //      const hAfastamentoPausa = Math.min(hUteis, this.util.getTimeHours(intersticio.reduce((a, v) => a + (v.end - v.start), 0))); /* Afastamento e/ou pausas no dia, em horas */
-      //    const hSaldo = hUteis - hAfastamentoPausa; /* Calcula quantas horas realmente podem ser aproveitadas (sem afastamentos ou pausas) */
-        //          result.horasAfastamentosPausas += hAfastamentoPausa;
-        //        if(hSaldo) {
-        //        if(useTempo) { /* calcula a data fim */
-      //        hTempo -= hSaldo;
-        //      result.fim = dFimDia;
-        //            } else { /* calcula o tempoUtil */
-        //            result.tempoUtil += hSaldo;
-        //        }
-      //    }
-        //        }
-        //    }
-        //  dDiaAtual.setDate(dDiaAtual.getDate() + 1);
-        //      result.dias_corridos++;
-        //  }
-        return result;
+        $hTempo = $useTempo ? $fimOuTempo : 0.0; /* variável saldo de horas/dias (usado somente se useTempo) */
+        $dDiaAtual = $inicio; /* Variável que irá percorrer todas as datas (do inicio ao fim ou a quantidade de horas) */
+        
+        /* Calculo do expediente (inicio, fim, e intervalos. Considerando os especiais). Caso expediente seja undefined então será 24h, e caso não tenha expediente no dia será undefined */
+        $expedienteDia = function (string $sInicio = null, string $sFim = null) use (&$dDiaAtual, &$expediente, &$result): ExpedienteDia {
+            $diaSemana = LookupService::getCode(LookupService::DIA_SEMANA, date('w', UtilService::asTimestamp($dDiaAtual)));
+            $diaLiteral = LookupService::getValue(LookupService::DIA_SEMANA, date('w', UtilService::asTimestamp($dDiaAtual)));
+            $tLimiteInicio = UtilService::asTimestamp(UtilService::setStrTime($dDiaAtual, $sInicio ?? "00:00")); 
+            $tLimiteFim = UtilService::asTimestamp(UtilService::setStrTime($dDiaAtual, $sFim ?? "24:00")); 
+            $dia = new ExpedienteDia([
+                'diaSemana' => $diaSemana,
+                'diaLiteral' => $diaLiteral,
+                'tInicio' => $tLimiteInicio,
+                'tFim' => $tLimiteFim,
+                'hExpediente' => UtilService::getHoursBetween(UtilService::asDateTime($tLimiteInicio), UtilService::asDateTime($tLimiteFim)),
+                'intervalos' => [new Interval(['start' => 0, 'end' => 0])]
+            ]);
+            if($expediente){
+                $diaIso = (new MomentPHP($dDiaAtual))->format("Y-m-d");
+                $especial = array_filter($expediente->especial, function(Turno $x) use (&$diaIso) {if((new MomentPHP($x->data))->format("Y-m-d") == $diaIso) return $x;});
+                $turnos = [...$expediente->$diaSemana, ...array_filter($especial, function($x) {!$x->sem;})]; 
+                usort($turnos, function($a, $b) {UtilService::getStrTimeHours($a->inicio) - UtilService::getStrTimeHours($b->inicio);});
+                /* Adiciona o expediente utilizado */
+                $result->expediente->$diaSemana = $expediente->$diaSemana;
+                array_push($result->expediente->especial, ...$especial);
+                if (count($turnos)>0) {
+                    $tFimTurno = null;
+                    $dia->tInicio = max($tLimiteInicio, UtilService::setStrTime($dDiaAtual, $turnos[0]->inicio)->getTimestamp());
+                    $dia->tFim = min($tLimiteFim, max(UtilService::setStrTime($dDiaAtual, $turnos[0]->fim)->getTimestamp(), $dia->tInicio));
+                    /* Calcula o inicio e fim e adiciona intervalos, e soma os expedientes especiais COM expediente */
+                    foreach($turnos as $turno){
+                        $tInicio = UtilService::setStrTime($dDiaAtual, $turno->inicio)->getTimestamp();
+                        $tFim = UtilService::setStrTime($dDiaAtual, $turno->fim)->getTimestamp();
+                        if ($tLimiteInicio < $tFim && $tInicio < $tLimiteFim) {
+                          if ($tFimTurno && $tFimTurno < $tInicio) array_push($dia->intervalos, new Interval(['start' => $tFimTurno, 'end' => $tInicio]));
+                          $dia->tInicio = max($tLimiteInicio, min($dia->tInicio, $tInicio));
+                          $dia->tFim = min($tLimiteFim, max($dia->tFim, $tFim));
+                          $tFimTurno = $tFimTurno ? max($tFimTurno, $tFim) : $tFim;
+                        }
+                    }
+                    $dia->hExpediente = UtilService::getHoursBetween(UtilService::asDateTime($dia->tInicio), UtilService::asDateTime($dia->tFim));
+                    /* Adiciona os expedientes especiais SEM expediente e faz a união com os intervalos já existentes do expediente */
+                    array_map(function(Turno $x) use (&$dia, &$dDiaAtual) { array_push($dia->intervalos, new Interval([
+                                                'start' => UtilService::setStrTime($dDiaAtual, $x->inicio)->getTimestamp(), 
+                                                'end' => UtilService::setStrTime($dDiaAtual, $x->fim)->getTimestamp()
+                                            ]));}, array_filter($especial, function(Turno $x) {if($x->sem) return $x;}));
+                    $dia->intervalos = UtilService::union($dia->intervalos);
+                    /* Filtra e ajusta os intervalos para caberem entre inicio e fim */
+                    $dia->intervalos = array_map(function(Interval $x) use (&$dia) {return new Interval(['start' => max($x->start, $dia->tInicio), 'end' => min($x->end, $dia->tFim)]);}, 
+                                                array_filter($dia->intervalos, function(Interval $x) use(&$dia) {return $x->start <= $dia->tFim && $x->end >= $dia->tInicio;}), 
+                                       );
+                    /* Calcula as horas dos intervalos (os intervalos já estão unificados e ajustados para dentro do expediente) 
+                    dia.hNaoUteis = dia.intervalo.reduce((a, v) => a + this.util.getHoursBetween(v.start, v.end), 0); */
+                } else { /* Caso no dia não tenha nenhum turno ou horario especial com expediente */
+                    $dia->tInicio = 0;
+                    $dia->tFim = 0;
+                    $dia->hExpediente = 0;
+                }
+            }
+            return $dia;
+        };
+
+        $cargaHoraria = $forma == "HORAS_CORRIDAS" ? 24 : $result->cargaHoraria; /* Garante que se a carga horária vier zerado, será considerado 24hrs */
+        while($useTempo ? (UtilService::round($hTempo, 2) > 0) : (UtilService::daystamp($dDiaAtual) <= $uDiasFim)) {
+            $firstDay = UtilService::daystamp($dDiaAtual) == $uDiasInicio;
+            $lastDay = UtilService::daystamp($dDiaAtual) == $uDiasFim;
+            $strDiaAtual = (new MomentPHP($dDiaAtual))->format('Y-m-d'); /* Usado somente para indexar os vetores com a data do feriado/fds */
+            $sInicio = $useDias || !$firstDay ? null : UtilService::getTimeFormatted($inicio);
+            $sFim = $useDias || !$lastDay || $useTempo ? null : UtilService::getTimeFormatted($fimOuTempo);
+            $diaAtual = $expedienteDia($sInicio, $sFim); /* Em caso de useTempo, sFim ainda não corresponde ao fim do expediente, será encontrado depois */
+            /* Afastamentos e pausas baseados no inicio e fim do expediente */
+            $afastamentosDia = $horasAfastamentos($diaAtual->tInicio, $diaAtual->tFim);
+            if($afastamentosDia == []) $afastamentosDia = [new Interval(['start' => 0, 'end' => 0])];
+            $pausasDia = $horasPausas($diaAtual->tInicio, $diaAtual->tFim);
+            if($pausasDia == []) $pausasDia = [new Interval(['start' => 0, 'end' => 0])];
+            /* Se for dias corridos ou horas corridas não é necessário calcular Feriados e nem Fins de Semana */
+            $feriadoCadastrado = $useCorridos ? null : static::isFeriadoCadastrado(UtilService::asTimestamp($dDiaAtual), $feriados);
+            $feriadoReligioso = $useCorridos ? null : static::isFeriadoReligioso(UtilService::asTimestamp($dDiaAtual));
+            if(!$useCorridos) {
+              if($feriadoCadastrado) $result->feriados[$strDiaAtual] = $feriadoCadastrado; /* Se feriado cadastrado, adiciona ao resultado */
+              if($feriadoReligioso) $result->feriados[$strDiaAtual] = $feriadoReligioso; /* Se feriado religioso, adiciona ao resultado */
+            }
+            /* Calcula se é dia útil ou não */
+            $naoUteis = $useCorridos ? [new Interval(['start' => 0, 'end' => 0])] : UtilService::union([...$afastamentosDia, ...$pausasDia, ...$diaAtual->intervalos]);
+            $hNaoUteis = array_reduce($naoUteis, function($acum, $item) { 
+                $acum += UtilService::getHoursBetween(UtilService::asDateTime($item->start), UtilService::asDateTime($item->end));
+                return $acum;
+            }, 0);
+            $diaUtil = $useCorridos || (!$feriadoCadastrado && !$feriadoReligioso && $diaAtual->hExpediente > $hNaoUteis);
+            if (!$diaUtil) $result->diasNaoUteis[$strDiaAtual] = implode(', ', array_filter([$diaAtual->diaLiteral, $feriadoCadastrado, $feriadoReligioso], function($x) { return strlen($x);}));
+
+            /* Calculo em dias */
+            if ($useDias) {
+                foreach($afastamentosDia as $a){if($a->start == 0){unset($afastamentosDia[array_search($a, $afastamentosDia)]);}}    // elimina eventual intervalo do tipo ['start' => 0, 'end' => 0]
+                foreach($pausasDia as $p){if($p->start == 0){unset($pausasDia[array_search($p, $pausasDia)]);}}    // elimina eventual intervalo do tipo ['start' => 0, 'end' => 0]
+                if ($diaUtil && ($useCorridos || (!count($afastamentosDia) && !count($pausasDia)))) {
+                    if($useTempo) { /* se for pra calcular a data fim, como é dia, será sempre a data na hora final do expediente, mas não importa, porque o que contará é somente o data sem hora */
+                        $hTempo -= $cargaHoraria;
+                        $result->fim = (UtilService::asDateTime($diaAtual->tFim))->format(DateTime::ATOM);
+                    } else { /* se for pra calcular o tempoUtil (lembrando que a quantidade de dias é tempoUtil / cargaHoraria) */
+                        $result->tempoUtil += $cargaHoraria;
+                    }
+                }else {
+                    $result->horasNaoUteis += $cargaHoraria; /* Se o dia não for útil considera o tempo do dia inteiro */
+                }
+            } else { /* calcula em horas */
+              if($diaUtil) {
+                $hSaldo = min($diaAtual->hExpediente - $hNaoUteis, $cargaHoraria, $useTempo ? $hTempo : 24);
+                if($hSaldo) {
+                  if($useTempo) { /* calcula a data fim */
+                    $hTempo -= $hSaldo;
+                    foreach($naoUteis as $n){if($n->start == 0){unset($naoUteis[array_search($n, $naoUteis)]);}}    // elimina eventual intervalo do tipo ['start' => 0, 'end' => 0]
+                    $ultimoTurno = array_reduce($naoUteis, function($a, $v) use (&$hSaldo) {
+                        $hTurno = UtilService::getHoursBetween($a, UtilService::asDateTime($v->start));
+                        if ($hTurno < $hSaldo) {
+                          $hSaldo -= $hTurno;
+                          return $v->end;
+                        }
+                        return $a;
+                      }, UtilService::asDateTime($diaAtual->tInicio));
+                    $result->fim = (UtilService::addTimeHours(UtilService::asDateTime($ultimoTurno), $hSaldo))->format(DateTime::ATOM);
+                    if(!$hTempo) {
+                        $diaAtual->tFim = UtilService::asTimestamp(UtilService::addTimeHours(UtilService::asDateTime($ultimoTurno), $hSaldo));
+                        $diaAtual->hExpediente = $hSaldo;
+                    }
+                  } else { /* calcula o tempoUtil */
+                    $result->tempoUtil += $hSaldo;
+                  }
+                }
+              } else {
+                $result->horasNaoUteis += min($diaAtual->hExpediente, $cargaHoraria);
+              }
+            }
+            if($diaUtil) {
+                // prepara os valores para o front-end
+                $diaAtual->tInicio *= 1000;
+                $diaAtual->tFim *= 1000;
+                foreach($naoUteis as $n){
+                    if($n->start == 0){
+                        unset($naoUteis[array_search($n, $naoUteis)]);
+                    }else{
+                        $n->start *= 1000;
+                        $n->end *= 1000;
+                    }
+                }
+                array_push($result->diasDetalhes, $diaAtual);
+                $result->diasDetalhes[count($result->diasDetalhes) - 1]->intervalos = (array)$naoUteis;
+            }
+            $dDiaAtual = new DateTime((new MomentPHP($dDiaAtual))->add(1, 'day')->isoDate());
+            $result->dias_corridos++;
+        }
+        $result->inicio = INICIO_PERIODO;
+        return $result;
     }
 
-    /* Calcula as horas de afastamento - FUNÇÃO EM DESENVOLVIMENTO */
-    public function calculaHorasAfastamento(number $start, number $end, array $afastamentos){
-      $periodos = [];
-      foreach($afastamentos as $afastamento) {
-        /* calcula a intersecção entre start e end e o inicio e fim do afastamento */
-        //$intervalo = UtilService::intersection([{start, end}, {start: afastamento.inicio_afastamento.getTime(), end: afastamento.fim_afastamento.getTime()}]) as TimeInterval;
-        if($intervalo) {
-          /* Caso tenha uma intersecção, adiciona o período para retorno e insere em result.afastamentos */
-          array_push($periodos, $intervalo);
-          if(!result.afastamentos.includes(afastamento)) result.afastamentos.push(afastamento);
-        }
-      }
-      return $periodos;
-    }
-
-
-}
+}        

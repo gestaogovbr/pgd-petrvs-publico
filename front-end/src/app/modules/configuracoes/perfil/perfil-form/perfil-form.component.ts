@@ -40,9 +40,10 @@ export class PerfilFormComponent extends PageFormBase<Perfil, PerfilDaoService> 
 
     if(['nome', 'descricao'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    }  else if(['nivel'].indexOf(controlName) >= 0 && !control.value) {
+    }
+/*       else if(['nivel'].indexOf(controlName) >= 0 && !control.value) {
     result = "Não pode ser zero.";
-    } 
+    }  */
 
     return result;
   }

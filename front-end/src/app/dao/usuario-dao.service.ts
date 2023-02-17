@@ -1,9 +1,12 @@
 
 import { Injectable, Injector } from '@angular/core';
 import { ChartDataSets, ChartOptions } from 'chart.js';
+import { Afastamento } from '../models/afastamento.model';
+import { DemandaPausa } from '../models/demanda-pausa.model';
 import { Plano } from '../models/plano.model';
 import { Unidade } from '../models/unidade.model';
 import { Usuario } from '../models/usuario.model';
+import { Efemerides, TipoContagem } from '../services/calendar.service';
 import { DaoBaseService } from './dao-base.service';
 
 export type UsuarioDashboard = {
@@ -106,4 +109,28 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
       }
     });
   }
+  public calculaDataTempoUnidade(inicio: string, fimOuTempo: string | number, cargaHoraria: number, unidade_id: string, tipo: TipoContagem, pausas?: DemandaPausa[], afastamentos?: Afastamento[]): Promise<Efemerides | undefined>{ 
+    return new Promise<Efemerides | undefined>((resolve,reject) => {
+      this.server.post('api/Teste/calculaDataTempoUnidade', {inicio: inicio, fimOuTempo: fimOuTempo, cargaHoraria: cargaHoraria, unidade_id: unidade_id, tipo: tipo, pausas: pausas, afastamentos: afastamentos})
+      .subscribe(response => {                        
+        resolve(response.data as Efemerides);
+      }, error => {
+        console.log("Erro no cálculo das Efemerides pelo servidor!", error);
+        resolve(undefined);
+      });
+    });
+  }
+
+/*   public calculaDataTempoUnidade(inicio: string, fimOuTempo: string | number, cargaHoraria: number, unidade_id: string, tipo: TipoContagem, pausas?: DemandaPausa[], afastamentos?: Afastamento[]): Promise<any>{ //Efemerides | undefined
+    return new Promise<any>((resolve,reject) => {
+      this.server.post('api/Teste/calculaDataTempoUnidade', {inicio: inicio, fimOuTempo: fimOuTempo, cargaHoraria: cargaHoraria, unidade_id: unidade_id, tipo: tipo, pausas: pausas, afastamentos: afastamentos})
+      .subscribe(response => {                        
+        resolve(response.data);
+      }, error => {
+        console.log("Erro no cálculo das Efemerides pelo servidor!", error);
+        resolve(undefined);
+      });
+    });
+  } */
+
 }
