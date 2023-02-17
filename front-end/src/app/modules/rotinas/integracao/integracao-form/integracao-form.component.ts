@@ -19,14 +19,20 @@ export class IntegracaoFormComponent extends PageFormBase<Integracao, Integracao
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('entidade', { static: false }) public entidade?: InputTextComponent;
   @ViewChild('usuario', { static: false })  public usuario?: InputTextComponent;
-  @ViewChild('resultado_unidades', { static: false })  public resultado_unidades?: InputTextareaComponent;
-  @ViewChild('resultado_servidores', { static: false })  public resultado_servidores?: InputTextareaComponent;
-  @ViewChild('resultado_gestores', { static: false })  public resultado_gestores?: InputTextareaComponent;
 
   public form: FormGroup;
   public entidadeDao: EntidadeDaoService;
   public confirmLabel: string = "Executar";
   public production: boolean = false;
+  public resultado_unidades: string = '';
+  public obs_unidades: string[] = [];
+  public falhas_unidades: string[] = [];
+  public resultado_servidores: string = '';
+  public obs_servidores: string[] = [];
+  public falhas_servidores: string[] = [];
+  public resultado_gestores: string = '';
+  public obs_gestores: string[] = [];
+  public falhas_gestores: string[] = [];
     
   constructor(public injector: Injector, dao: IntegracaoDaoService) {
     super(injector, Integracao, IntegracaoDaoService);
@@ -55,9 +61,15 @@ export class IntegracaoFormComponent extends PageFormBase<Integracao, Integracao
     this.production = environment.production;
     this.form.controls.entidade_id.setValue(entity.id ? entity.entidade!.nome : this.auth.unidade?.entidade_id);
     this.form.controls.usuario_id.setValue(entity.id ? (entity.usuario_id ? entity.usuario!.nome : 'Usuário não logado') : this.auth.usuario!.id);
-    if(this.resultado_unidades) this.resultado_unidades!.inputElement!.nativeElement.value = entity.id ? JSON.stringify(entity.resultado?.unidades) : '';
-    if(this.resultado_servidores) this.resultado_servidores!.inputElement!.nativeElement.value = entity.id ? JSON.stringify(entity.resultado?.servidores) : '';
-    if(this.resultado_gestores) this.resultado_gestores!.inputElement!.nativeElement.value = entity.id ? JSON.stringify(entity.resultado?.gestores) : '';
+    this.resultado_unidades = entity.id ? JSON.parse(entity.resultado!).unidades.Resultado : ''; 
+    this.obs_unidades = entity.id ? JSON.parse(entity.resultado!).unidades.Observações : []; 
+    this.falhas_unidades = entity.id ? JSON.parse(entity.resultado!).unidades.Falhas : []; 
+    this.resultado_servidores = entity.id ? JSON.parse(entity.resultado!).servidores.Resultado : ''; 
+    this.obs_servidores = entity.id ? JSON.parse(entity.resultado!).servidores.Observações : []; 
+    this.falhas_servidores = entity.id ? JSON.parse(entity.resultado!).servidores.Falhas : [];     
+    this.resultado_gestores = entity.id ? JSON.parse(entity.resultado!).gestores.Resultado : ''; 
+    this.obs_gestores = entity.id ? JSON.parse(entity.resultado!).gestores.Observações : []; 
+    this.falhas_gestores = entity.id ? JSON.parse(entity.resultado!).gestores.Falhas : []; 
   }
 
   public initializeData(form: FormGroup): void {
