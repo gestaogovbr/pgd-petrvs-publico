@@ -101,8 +101,8 @@ export class InputEditorComponent extends InputBase implements OnInit {
   public static EXPRESSION_BOOLEAN = /^((true)|(false))$/;
   public static EXPRESSION_NUMBER = /^[0-9,\.]+$/;
   public static EXPRESSION_VAR = /^[a-zA-z]\w*?((\.\w+?)|(\[(\d+?|[a-zA-z]\w*?)\]))*$/;
-  public static EXPRESSION_FOR = /^for:([a-zA-z]\w*?((\.\w+?)|(\[\d\]))*)\[((\d+\.\.[a-zA-Z]\w*?(\.\.[a-zA-Z]\w*?)?)|(([a-zA-Z]\w*?\.\.)?[a-zA-Z]\w*?\.\.\d+)|([a-zA-Z]\w*?))\](;.+?\=.+?)*$/;
-  public static STATEMENT_FOR = /^for:(?<EXP>.+?)\[(((?<START>\w+?)\.\.(?<INDEX>\w*?)(\.\.(?<END>\w+?))?)|(?<EACH>\w+?))\](?<PARS>(;.+?\=.+?)*)$/;
+  public static EXPRESSION_FOR = /^for:([a-zA-z]\w*?((\.\w+?)|(\[(\d+?|[a-zA-z]\w*?)\]))*)\[((\d+\.\.[a-zA-Z]\w*?(\.\.[a-zA-Z]\w*?)?)|(([a-zA-Z]\w*?\.\.)?[a-zA-Z]\w*?\.\.\d+)|([a-zA-Z]\w*?))\](;.+?\=.+?)*$/;
+  public static STATEMENT_FOR = /^for:(?<EXP>([a-zA-z]\w*?((\.\w+?)|(\[(\d+?|[a-zA-z]\w*?)\]))*))\[(((?<START>\w+?)\.\.(?<INDEX>\w*?)(\.\.(?<END>\w+?))?)|(%(?<EACH>\w+?)%))\](?<PARS>(;.+?\=.+?)*)$/;
   public static STATEMENT_FOR_WITHOUT_PARS = /^(?<STATMENT>for:\w+\[.+\])/;
   public static PARAMETER_DROP = "drop";
 
@@ -197,7 +197,7 @@ export class InputEditorComponent extends InputBase implements OnInit {
     while(tag = this.tagSplit(next, InputEditorComponent.OPEN_TAG, InputEditorComponent.CLOSE_TAG)) {
       try {
         if(tag.content.match(InputEditorComponent.EXPRESSION_VAR)) {
-          tag.content = this.getExpressionValue(tag.content, context);
+          tag.content = (this.getExpressionValue(tag.content, context) + "").replace(/^undefined$/, "");
         } else if(tag.content.match(InputEditorComponent.EXPRESSION_FOR)) {
           let statement = tag.content.match(InputEditorComponent.STATEMENT_FOR); /* for:EXP[(t..)x..0|0..x(..t)|EACH];par=0;par=0... */
           let parameter: string[] = []; /* Usado penas para iterar os parametros */
