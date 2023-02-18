@@ -256,7 +256,7 @@ class IntegracaoService extends ServiceBase {
         $dados['usar_arquivos_locais'] = $this->useLocalFiles;              // atualiza esse parâmetro para que seja salvo no banco corretamente
         $dados['gravar_arquivos_locais'] = $this->storeLocalFiles;          // atualiza esse parâmetro para que seja salvo no banco corretamente
         $this->sincronizacao($inputs);
-        return $this->store(array_merge($dados, ['usuario_id' => $usuario_id,'data_execucao' => Carbon::now(),'resultado' => $this->result]), null);
+        return $this->store(array_merge($dados, ['usuario_id' => $usuario_id,'data_execucao' => Carbon::now(),'resultado' => json_encode($this->result)]), null);
     }
 
     /**
@@ -275,7 +275,7 @@ class IntegracaoService extends ServiceBase {
                 'gravar_arquivos_locais' => $this->storeLocalFiles,
                 'usuario_id' => null,//"0",
                 'data_execucao' => Carbon::now(),
-                'resultado' => $this->result
+                'resultado' => json_encode($this->result)      
         ], null)->resultado;
     }
 
@@ -661,6 +661,7 @@ class IntegracaoService extends ServiceBase {
                         // nesse caso o servidor é gestor de apenas uma unidade
                         array_push($chefias, ['id_usuario' => $chefe->id, 'codigo_siape' => $funcoes->funcao->uorg_funcao, 'tipo_funcao' => $funcoes->funcao->tipo_funcao]);
                     }
+
                 }
                 if($this->echo) $this->imprimeNoTerminal("Concluída a fase de montagem do array de chefias!.....");
                 // torna nulos os campos gestor_id e gestor_substituto_id das unidades, para refazê-los com o atual array de chefias
@@ -672,21 +673,26 @@ class IntegracaoService extends ServiceBase {
                     $sql_3 = "SELECT u.id, u.gestor_id, u.gestor_substituto_id FROM integracao_unidades iu join unidades u on iu.id_servo = u.codigo WHERE iu.codigo_siape = :codigo_siape";
                     $unidade = DB::select($sql_3, [':codigo_siape' => $chefia['codigo_siape']]);
                     // monta a consulta de acordo com o tipo de função
-                    if($chefia['tipo_funcao'] == '1'){
-                        $sql_4 = "UPDATE unidades SET gestor_id = :id_usuario WHERE id = :id_unidade";
-                    } else if($chefia['tipo_funcao'] == '2'){
-                        $sql_4 = "UPDATE unidades SET gestor_substituto_id = :id_usuario WHERE id = :id_unidade";
-                    } else {
-                        throw new Exception("Falha no array de funções do servidor");
+                    if($unidade){
+                        if($chefia['tipo_funcao'] == '1'){
+                            $sql_4 = "UPDATE unidades SET gestor_id = :id_usuario WHERE id = :id_unidade";
+                        } else if($chefia['tipo_funcao'] == '2'){
+                            $sql_4 = "UPDATE unidades SET gestor_substituto_id = :id_usuario WHERE id = :id_unidade";
+                        } else {
+                            throw new Exception("Falha no array de funções do servidor");
+                        }
+                        // insere o ID do usuário na Unidade como gestor ou gestor substituto
+                        DB::update($sql_4, [':id_usuario'=> $chefia['id_usuario'], ':id_unidade' => $unidade[0]->id]);
+                        $this->atualizaLogs($this->logged_user_id, 'unidades', $unidade[0]->id, 'EDIT', [
+                                    'Rotina' => 'Integração',
+                                    'Observação' => 'Atualização do ' . ($chefia['tipo_funcao'] == '1' ? 'Gestor' : 'Gestor substituto') . ' da Unidade',
+                                    'Valores anteriores' => ['gestor_id' => $unidade[0]->gestor_id, 'gestor_substituto_id' => $unidade[0]->gestor_substituto_id],
+                                    'Valores atuais' => ['gestor_id' => $chefia['tipo_funcao'] == '1' ? $chefia['id_usuario'] : null, 'gestor_substituto_id' => $chefia['tipo_funcao'] == '2' ? $chefia['id_usuario'] : null]
+                                ]);
+                    }else{
+                        $nomeUsuario = Usuario::where('id',$chefia['id_usuario'])->first()->nome;
+                        array_push($this->result['gestores']["Falhas"], 'Impossível lançar a chefia do servidor ' . strtoupper($nomeUsuario) . ' porque a Unidade de código SIAPE ' . $chefia['codigo_siape'] . ' não está cadastrada/ativa!');
                     }
-                    // insere o ID do usuário na Unidade como gestor ou gestor substituto
-                    DB::update($sql_4, [':id_usuario'=> $chefia['id_usuario'], ':id_unidade' => $unidade[0]->id]);
-                    $this->atualizaLogs($this->logged_user_id, 'unidades', $unidade[0]->id, 'EDIT', [
-                                'Rotina' => 'Integração',
-                                'Observação' => 'Atualização do ' . ($chefia['tipo_funcao'] == '1' ? 'Gestor' : 'Gestor substituto') . ' da Unidade',
-                                'Valores anteriores' => ['gestor_id' => $unidade[0]->gestor_id, 'gestor_substituto_id' => $unidade[0]->gestor_substituto_id],
-                                'Valores atuais' => ['gestor_id' => $chefia['tipo_funcao'] == '1' ? $chefia['id_usuario'] : null, 'gestor_substituto_id' => $chefia['tipo_funcao'] == '2' ? $chefia['id_usuario'] : null]
-                            ]);
                 }
                 DB::commit();
                 $this->result["gestores"]['Resultado'] = 'Sucesso';
@@ -703,7 +709,6 @@ class IntegracaoService extends ServiceBase {
                                               'ou ainda porque houve alguma falha em suas atualizações! Os gestores só são atualizados quando as Unidades ' .
                                               'e os Servidores são atualizados e AMBOS com sucesso.';
         }
-        //return $result;
     }
 
     public function salvaUsuarioLotacaoGoogle(&$usuario, &$lotacao, $tokenData, $auth){
@@ -757,7 +762,7 @@ class IntegracaoService extends ServiceBase {
             'table_name' => $table_name,
             'row_id' => $row_id,
             'type' => $type,
-            'delta' => json_encode( $delta ?? ['Rotina' => 'Integração'])
+            'delta' => json_encode($delta ?? ['Rotina' => 'Integração'])
         ]);
     }
 

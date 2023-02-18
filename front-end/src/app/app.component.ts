@@ -142,14 +142,14 @@ export class AppComponent {
         { name: "Sobre", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
       ],
       logs: [
-        { name: "Integração", permition: '', route: ['rotinas', 'integracao'], icon: "bi bi-pencil-square" },
+        { name: "Rotina de Integração", permition: '', route: ['rotinas', 'integracao'], icon: "bi bi-pencil-square" },
         "-",
-        { name: "Alterações", permition: '', route: ['logs', 'change'], icon: "bi bi-pencil-square" },
-        { name: "Erros", permition: '', route: ['logs', 'error'], icon: "bi bi-bug" },
-        { name: "Tráfego", permition: '', route: ['logs', 'traffic'], icon: "bi bi-stoplights" },
+        { name: "Log das Alterações", permition: '', route: ['logs', 'change'], icon: "bi bi-pencil-square" },
+        { name: "Log dos Erros", permition: '', route: ['logs', 'error'], icon: "bi bi-bug" },
+        { name: "Log do Tráfego", permition: '', route: ['logs', 'traffic'], icon: "bi bi-stoplights" },
         "-",
 		    { name: "Teste Expediente", permition: '', route: ['teste'], icon: "bi bi-check-all" },
-		    { name: "Teste Calcula Tempo", permition: '', route: ['teste', 'calcula-tempo'], icon: "bi bi-check-all" }
+		    { name: "Teste calculaDataTempo", permition: '', route: ['teste', 'calcula-tempo'], icon: "bi bi-check-all" }
       ],
     }
   }

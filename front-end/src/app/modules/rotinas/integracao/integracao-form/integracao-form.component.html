@@ -7,11 +7,50 @@
             <input-datetime datetime [size]="3" label="Execução" icon="bi bi-calendar-date" controlName="data_execucao" [control]="form!.controls.data_execucao"></input-datetime>
         </div>
         <div class="row" *ngIf="formDisabled">
-            <input-textarea #resultado_unidades [size]="12" [rows]="3" label="Unidades" icon="bi bi-textarea-t"></input-textarea><br>
-            <input-textarea #resultado_servidores [size]="12" [rows]="3" label="Servidores" icon="bi bi-textarea-t"></input-textarea><br>
-            <input-textarea #resultado_gestores [size]="12" [rows]="2" label="Gestores" icon="bi bi-textarea-t"></input-textarea>
+            <separator title="UNIDADES" [collapse]="'collapse'" class="mt-2">
+                <div class="row">
+                    <span><strong>Resultado</strong></span>
+                    <span>{{ resultado_unidades }}</span>
+                </div>
+                <div class="row mt-2">
+                    <span><strong>Observações</strong></span>
+                    <span *ngFor="let obs of obs_unidades; index as i">{{ '[' + (i+1) + '] ' + obs }}</span>
+                </div>
+                <div *ngIf="falhas_unidades.length > 0" class="row mt-2">
+                    <span><strong>Falhas</strong></span>
+                    <span *ngFor="let falha of falhas_unidades; index as i">{{ '[' + (i+1) + '] ' + falha }}</span>
+                </div>
+            </separator>
+            <separator title="SERVIDORES" [collapse]="'collapse'">
+                <div class="row">
+                    <span><strong>Resultado</strong></span>
+                    <span>{{ resultado_servidores }}</span>
+                </div>
+                <div class="row mt-2">
+                    <span><strong>Observações</strong></span>
+                    <span *ngFor="let obs of obs_servidores; index as i">{{ '[' + (i+1) + '] ' + obs }}</span>
+                </div>
+                <div *ngIf="falhas_servidores.length > 0" class="row mt-2">
+                    <span><strong>Falhas</strong></span>
+                    <span *ngFor="let falha of falhas_servidores; index as i">{{ '[' + (i+1) + '] ' + falha }}</span>
+                </div>
+            </separator>
+            <separator title="GESTORES" [collapse]="'collapse'">
+                <div class="row">
+                    <span><strong>Resultado</strong></span>
+                    <span>{{ resultado_gestores }}</span>
+                </div>
+                <div class="row mt-2">
+                    <span><strong>Observações</strong></span>
+                    <span *ngFor="let obs of obs_gestores; index as i">{{ '[' + (i+1) + '] ' + obs }}</span>
+                </div>
+                <div *ngIf="falhas_gestores.length > 0" class="row mt-2">
+                    <span><strong>Falhas</strong></span>
+                    <span *ngFor="let falha of falhas_gestores; index as i">{{ '[' + (i+1) + '] ' + falha }}</span>
+                </div>
+            </separator>
         </div>
-        <separator [title]="formDisabled ? 'Parâmetros utilizados' : ''" [collapse]="formDisabled ? 'collapse' : undefined">
+        <separator [title]="formDisabled ? 'Parâmetros utilizados' : ''" [collapse]="formDisabled ? 'collapse' : undefined" class="mt-2">
             <div class="row">
                 <separator title="Deve ser atualizado pela Rotina de Integração:">
                     <input-switch labelPosition="right" [size]="4" label="Unidades" controlName="atualizar_unidades" [control]="form!.controls.atualizar_unidades" ></input-switch>

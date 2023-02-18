@@ -33,4 +33,14 @@ class Change extends Model
     // Belongs
     public function usuario() { return $this->belongsTo(Usuario::class, 'user_id'); }   
 
+/*     // Mutattors e Casts
+    public function getDeltaAttribute($value)
+    {
+        return json_decode($value);
+    }   
+    public function setDeltaAttribute($value)
+    {
+        $this->attributes['delta'] = json_encode($value);
+    } */
+
 }
