@@ -6,13 +6,15 @@ import { ComponentsModule } from 'src/app/components/components.module';
 import { ComentariosWidgetComponent } from './comentarios-widget/comentarios-widget.component';
 import { UteisRoutingModule } from './uteis-routing.module';
 import { CalendarExpedienteComponent } from './calendar-expediente/calendar-expediente.component';
+import { DocumentosComponent } from './documentos/documentos.component';
 
 @NgModule({
   declarations: [
     CalendarEfemeridesComponent,
     ComentariosComponent,
     ComentariosWidgetComponent,
-    CalendarExpedienteComponent
+    CalendarExpedienteComponent,
+    DocumentosComponent
   ],
   imports: [
     CommonModule,

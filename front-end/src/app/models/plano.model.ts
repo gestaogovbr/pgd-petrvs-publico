@@ -3,7 +3,7 @@ import { TipoModalidade } from './tipo-modalidade.model';
 import { Unidade } from './unidade.model';
 import { Usuario } from './usuario.model';
 import { Programa } from './programa.model';
-import { Documento } from './documento.model';
+import { Documento, HasDocumentos } from './documento.model';
 import { PlanoAtividade } from './plano-atividade.model';
 import { Demanda } from './demanda.model';
 import { TipoCargaHoraria } from './entidade.model';
@@ -12,7 +12,7 @@ export type PlanoMetadados = {
   concluido: boolean
 }
 
-export class Plano extends Base {
+export class Plano extends Base implements HasDocumentos {
     public tipo_modalidade?: TipoModalidade;
     public unidade?: Unidade;
     public usuario?: Usuario;

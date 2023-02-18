@@ -33,9 +33,9 @@ class Documento extends ModelBase
         'tipo_documento_id', /* char(36); */
         'tipo_processo_id', /* char(36); */
         'plano_id', /* char(36); */
+        'programa_adesao_id', /* char(36); */
         'status', /* enum('GERADO','AGUARDANDO_SEI'); NOT NULL; DEFAULT: 'GERADO'; */// Status do documento: GERADO (documento gerado); AGUARDANDO_SEI (Aguardando abrir o documento no sei para colar o conteúdo dentro)
         //'data_fim', /* datetime; */// Data fim
-        //'programa_adesao_id', /* char(36); */
         //'template', /* text; */// Campo de Template
         //'data_source', /* json; */// Conjunto de dados do template
         //'template_id', /* char(36); */
