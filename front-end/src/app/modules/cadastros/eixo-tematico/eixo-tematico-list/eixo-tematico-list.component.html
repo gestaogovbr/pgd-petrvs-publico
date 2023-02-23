@@ -11,7 +11,7 @@
     </filter>
     <columns>
         <column title="Nome" field="nome" orderBy="nome"></column>
-        <column *ngIf="!selectable" type="options" [onEdit]="edit" [options]="options"></column>
+        <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

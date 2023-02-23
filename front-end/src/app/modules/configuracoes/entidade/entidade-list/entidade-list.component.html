@@ -14,7 +14,7 @@
         <column title="Sigla" field="sigla"></column>
         <column title="Nome" field="nome"></column>
         <column title="Abrangência" field="abrangencia"></column>
-        <column *ngIf="!selectable" type="options" [onEdit]="edit" [options]="options"></column>
+        <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

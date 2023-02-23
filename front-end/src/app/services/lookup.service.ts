@@ -105,6 +105,13 @@ export class LookupService {
     { key: "AGUARDANDO_SEI", value: "Aguardando SEI", icon: "bi bi-hourglass-split", color: "badge rounded-pill bg-warning text-dark" }
   ];
 
+  public DOCUMENTO_ESPECIE: LookupItem[] = [
+    { key: 'TERMO_ADESAO', value: "Termo de adesão (OBSOLETO)", icon: "bi bi-file-earmark-excel", color: "danger" },
+    { key: 'SEI', value: "Documento SEI", icon: "bi bi-exclamation", color: "primary"},
+    { key: 'TCR', value: "TCR", icon: "bi bi-file-medical-fill", color: "success"},
+    { key: 'TCR_CANCELAMENTO', value: "Cancelamento TCR", icon: "bi bi-file-earmark-x", color: "danger" }
+  ]
+
   public DIA_HORA_CORRIDOS_OU_UTEIS: LookupItem[] = [
     { key: 'HORAS_CORRIDAS', value: "Horas Corridas" },
     { key: 'DIAS_CORRIDOS', value: "Dias Corridos" },

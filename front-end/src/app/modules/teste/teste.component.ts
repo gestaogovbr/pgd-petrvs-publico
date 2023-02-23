@@ -22,6 +22,8 @@ import { Planejamento } from 'src/app/models/planejamento.model';
 import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model';
 import { EixoTematico } from 'src/app/models/eixo-tematico.model';
 import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
+import { NavigateService } from 'src/app/services/navigate.service';
+import { Documento, HasDocumentos } from 'src/app/models/documento.model';
 
 @Component({
   selector: 'app-teste',
@@ -190,6 +192,7 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
     public usuarioDao: UsuarioDaoService,
     public lookup: LookupService,
     public util: UtilService,
+    public go: NavigateService,
     public calendar: CalendarService,
     @Inject('ID_GENERATOR_BASE') public ID_GENERATOR_BASE: any
   ) {
@@ -324,6 +327,18 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
 
   public isHoras(): boolean {
     return ["HORAS_CORRIDOS", "HORAS_UTEIS"].includes(this.form!.controls.forma.value);
+  }
+
+  public openDocumentos() {
+    this.go.navigate({route: ['utils', 'documentos']}, {metadata: {
+      needSign: (d: Documento) => true,
+      extraTags: (row: HasDocumentos, metadata: any) => [],
+      especie: "TCR",
+      dataset: this.dataset,
+      datasource: this.datasource,
+      template: this.template,
+      template_id: "ID"
+    }});
   }
 
   public gridItems = [

@@ -1,5 +1,7 @@
 <!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
-<grid multiselect [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_ADES_INCL')" [hasEdit]="auth.hasPermissionTo('MOD_ADES_EDT')" [dynamicMultiselectMenu]="dynamicMultiselectMenu.bind(this)" [multiselectAllFields]="multiselectAllFields">
+<grid multiselect [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="selectable" (select)="onSelect($event)" [dynamicMultiselectMenu]="dynamicMultiselectMenu.bind(this)" [multiselectAllFields]="multiselectAllFields"
+    [hasAdd]="auth.hasPermissionTo('MOD_ADES_INCL')" 
+    [hasEdit]="auth.hasPermissionTo('MOD_ADES_EDT')">
     <toolbar *ngIf="!selectable">
     </toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
@@ -73,7 +75,7 @@
                 </span>
             </ng-template>
         </column>
-        <column *ngIf="!selectable" type="options" [onEdit]="edit" [options]="options"></column>
+        <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <report>
         <column title="Numero" [template]="reportNumero">

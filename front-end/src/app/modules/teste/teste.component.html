@@ -2,11 +2,12 @@
     {{ID_GENERATOR_BASE}}
 </div!-->
 
+<button type="button" class="btn btn-primary" (click)="opneDocumentos()">Primary</button>
 
 
 
 
-<editable-form [form]="form">
+<!--editable-form [form]="form">
     <div class="row">
         <input-editor controlName="template" [dataset]="dataset"></input-editor>
     </div>
@@ -15,7 +16,7 @@
     </div>
 </editable-form>
 <br><br>
-{{form?.controls?.editor?.value || ""}}
+{{form?.controls?.editor?.value || ""}} //-->
 <!--map [items]="mapa">
     <strong></strong>
     <table>

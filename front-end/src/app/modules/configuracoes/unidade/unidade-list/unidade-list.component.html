@@ -35,7 +35,7 @@
                 <badge [color]="!row.inativo ? 'success' : 'danger'" [icon]="!row.inativo ? 'bi bi-check-circle' : 'bi bi-x-circle'" [label]="!row.inativo ? 'Ativo' : 'Inativo'"></badge>
             </ng-template>
         </column>
-        <column *ngIf="!selectable" type="options" [onEdit]="edit" [dynamicOptions]="dynamicOptions.bind(this)"></column>
+        <column type="options" [onEdit]="edit" [dynamicOptions]="dynamicOptions.bind(this)"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

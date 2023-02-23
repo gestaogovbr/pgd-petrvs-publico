@@ -1,6 +1,4 @@
-<!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
 <editable-form [form]="form!" [disabled]="formDisabled" [noButtons]="isTermos ? 'true' : undefined" (submit)="onSaveData()" (cancel)="onCancel()">
-  <!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
   <tabs #tabs display right [hidden]="isTermos ? 'true' : undefined" [title]="!isModal ? title : ''">
     <tab *ngIf="!isTermos" key="DADOS" label="Dados">
       <div class="row">
@@ -24,6 +22,7 @@
     <tab *ngIf="isTermos || !isNew" key="TERMO" label="Termo de Ciência e Responsabilidade">
       <top-alert *ngIf="!isTermos" type="warning" message="Para [INSERIR] ou [ASSINAR] termos escolha opção TCR o na tela de listagem"></top-alert>
       <div clss="row">
+        <documentos [control]="form!.controls.documentos" ></documentos>
         <!--grid [control]="form!.controls.documentos" #gridDocumentos [disabled]="undefined" #documentos [hasEdit]="false" [hasDelete]="false" [hasAdd]="isTermos" [add]="isTermos ? addDocumento.bind(this) : undefined" editable>
           <columns>
             <column title="Data" [template]="dataInicio">

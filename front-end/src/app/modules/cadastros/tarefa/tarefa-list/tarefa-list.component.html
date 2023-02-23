@@ -24,7 +24,7 @@
                 </span>
             </ng-template>
         </column>
-        <column *ngIf="!selectable" type="options" [onEdit]="edit" [options]="options"></column>
+        <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>
