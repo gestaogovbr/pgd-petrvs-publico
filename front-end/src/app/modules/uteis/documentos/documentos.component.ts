@@ -102,8 +102,8 @@ export class DocumentosComponent extends PageFrameBase {
     return this.entity!;
   }
 
-  public onSelect(row: Documento) {
-    this.selected = row;
+  public onSelect(row: any) {
+    this.selected = row as Documento;
   }
 
   public gravarEdicao() {

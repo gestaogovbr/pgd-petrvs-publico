@@ -22,7 +22,7 @@
     <tab *ngIf="isTermos || !isNew" key="TERMO" label="Termo de Ciência e Responsabilidade">
       <top-alert *ngIf="!isTermos" type="warning" message="Para [INSERIR] ou [ASSINAR] termos escolha opção TCR o na tela de listagem"></top-alert>
       <div clss="row">
-        <documentos [control]="form!.controls.documentos" ></documentos>
+        <!--documentos [control]="form!.controls.documentos" ></documentos//-->
         <!--grid [control]="form!.controls.documentos" #gridDocumentos [disabled]="undefined" #documentos [hasEdit]="false" [hasDelete]="false" [hasAdd]="isTermos" [add]="isTermos ? addDocumento.bind(this) : undefined" editable>
           <columns>
             <column title="Data" [template]="dataInicio">

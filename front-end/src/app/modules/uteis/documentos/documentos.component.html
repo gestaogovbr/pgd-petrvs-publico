@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-3" [class.d-none]="!!grid?.editing">
-    <grid [control]="gridControl" #gridDocumentos [hasEdit]="true" [hasDelete]="false" [hasAdd]="true" [add]="add" editable [selectable]="true" (select)="onSelect($event)">
+    <grid [control]="gridControl" #gridDocumentos [hasEdit]="true" [hasDelete]="false" [hasAdd]="true" [add]="addDocumento" editable [selectable]="true" (select)="onSelect($event)">
       <columns>
         <column title="#ID/Especie" [template]="documentoTemplate">
           <ng-template let-row="row" #documentoTemplate>
@@ -35,12 +35,12 @@
   </div>
   <div [class]="!grid?.editing ? 'col-9' : 'col-12'">
     <toolbar *ngIf="!!grid?.editing" [buttons]="editingButtons"></toolbar>
-    <editable-form *ngIf="selected; else noSelected" noButtons [form]="formHomologacao!" [disabled]="!grid?.editing">
+    <editable-form *ngIf="selected; else noSelected" noButtons [form]="form!" [disabled]="!grid?.editing">
       <div class="row">
         <input-text [size]="12" label="Título" [control]="form!.controls.titulo"></input-text>
       </div>
       <div>
-        <input-editor [size]="12" [control]="editor" [template]="templateEdit" [datasource]="datasourceEdit"></input-editor>
+        <input-editor [size]="12" [control]="form!.controls.conteudo" [template]="templateEdit" [datasource]="datasourceEdit"></input-editor>
       </div>
     </editable-form>
     <ng-template #noSelected>
