@@ -15,7 +15,7 @@
         <column title="UF" field="uf"></column>
         <column title="Tipo" type="select" field="tipo" [items]="lookup.TIPO_CIDADE"></column>
         <column title="Timezone" type="select" field="timezone" [items]="lookup.TIMEZONE"></column>
-        <column *ngIf="!selectable" type="options" [onEdit]="edit" [options]="options"></column>
+        <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

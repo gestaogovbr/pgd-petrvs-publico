@@ -59,7 +59,7 @@
                     </span>
                 </ng-template>
             </column>
-            <column *ngIf="!selectable" type="options" [onEdit]="edit" [onDelete]="delete" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+            <column type="options" [onEdit]="edit" [onDelete]="delete" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
         </columns>
         <pagination [rows]="rowsLimit"></pagination>
     </grid>

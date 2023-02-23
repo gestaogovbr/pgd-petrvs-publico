@@ -1,1 +1,38 @@
-<p>cadeia-valor-list-grid works!</p>
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+    [selectable]="selectable" (select)="onSelect($event)">
+    <toolbar *ngIf="!selectable"></toolbar>
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-datetime [size]="3" date label="Início" controlName="inicio" [control]="filter!.controls.inicio" labelInfo="Data de início do plano de gestão/entregas"></input-datetime>
+            <input-datetime [size]="3" date label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Data do fim do plano de gestão/entregas"></input-datetime>
+            <input-search #unidade [size]="6" label="Unidade" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+        </div>
+    </filter>
+    <columns>
+        <column title="Nome" field="nome" orderBy="nome"></column>
+        <column title="Entidade/Unidade" [template]="columnEntidadeUnidade">
+            <ng-template let-row="row" #columnEntidadeUnidade>
+                <span *ngIf="row.programa" class="badge bg-light text-dark">
+                    <i class="fas fa-university"></i>
+                    {{row.entidade?.nome}}
+                </span>
+                <span *ngIf="row.unidade" class="badge bg-light text-dark">
+                    <i class="bi bi-briefcase"></i>
+                    {{row.unidade.sigla}}
+                </span>
+            </ng-template>
+        </column>
+        <column title="Início" [template]="columnInicio">
+            <ng-template let-row="row" #columnInicio>
+                <span> {{dao!.getDateFormatted(row.inicio)}}</span>
+            </ng-template>
+        </column>
+        <column title="Fim" [template]="columnFim">
+            <ng-template let-row="row" #columnFim>
+                <span> {{dao!.getDateFormatted(row.fim)}}</span>
+            </ng-template>
+        </column>
+        <column *ngIf="!selectable" type="options" [onEdit]="edit" [options]="options"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

@@ -201,11 +201,12 @@ export class GridComponent extends ComponentBase implements OnInit {
     label: "Filtros",
     onClick: () => this.filterRef?.toggle()
   };
+  public addToolbarButtonClick = (async () => await (this.add ? this.add() : this.go.navigate(this.addRoute!, this.addMetadata))).bind(this);
   public BUTTON_ADD: ToolbarButton = {
     icon: "bi bi-plus-circle",
     color: "btn-outline-success",
     label: this.labelAdd,
-    onClick: async () => await (this.add ? this.add() : this.go.navigate(this.addRoute!, this.addMetadata))
+    onClick: this.addToolbarButtonClick
   };
   public BUTTON_REPORT: ToolbarButton = {
     icon: "bi-file-earmark-spreadsheet",
@@ -506,7 +507,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   }
 
   public isEditableGridOptions(column: GridColumn) {
-    return column.type == 'options' && this.isEditable && this.hasAdd && !this.hasToolbar;
+    return column.type == 'options' && (this.isEditable || this.selectable) && this.hasAdd && !this.hasToolbar;
   }
 
   public get expandedColumn(): GridColumn | undefined {
@@ -528,10 +529,11 @@ export class GridComponent extends ComponentBase implements OnInit {
   public loadColumns() {
     this.columns = [];
     this.columnsRef?.columns.forEach(column => {
-      if(column.type != "options" || !this.isDisabled) {
-        const buttons = [];
-        if(this.hasEdit) buttons.push(Object.assign(this.BUTTON_EDIT, { onClick: this.isEditable && !column.onEdit ? this.onEditItem.bind(this) : column.onEdit }));
-        if(this.hasDelete) buttons.push(Object.assign(this.BUTTON_DELETE, { onClick: this.isEditable && !column.onDelete ? this.onDeleteItem.bind(this) : column.onDelete }));
+      const isOptions = column.type == "options";
+      if(!isOptions || !this.isDisabled) {
+        let buttons = [];
+        if(isOptions && this.hasEdit) buttons.push(Object.assign(this.BUTTON_EDIT, { onClick: this.isEditable && !column.onEdit ? this.onEditItem.bind(this) : column.onEdit }));
+        if(isOptions && this.hasDelete) buttons.push(Object.assign(this.BUTTON_DELETE, { onClick: this.isEditable && !column.onDelete ? this.onDeleteItem.bind(this) : column.onDelete }));
         this.columns.push(Object.assign(new GridColumn(), column, {
           items: column.items || [],
           buttons: column.type != "options" ? undefined : column.buttons || buttons

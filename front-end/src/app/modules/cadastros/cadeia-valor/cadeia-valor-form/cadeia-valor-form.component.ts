@@ -9,6 +9,8 @@ import {EditableFormComponent} from "../../../../components/editable-form/editab
 import {UnidadeDaoService} from "../../../../dao/unidade-dao.service";
 import {PlanejamentoDaoService} from "../../../../dao/planejamento-dao.service";
 import {EntidadeDaoService} from "../../../../dao/entidade-dao.service";
+import { GridComponent } from 'src/app/components/grid/grid.component';
+
 
 @Component({
   selector: 'app-cadeia-valor-form',
@@ -17,6 +19,7 @@ import {EntidadeDaoService} from "../../../../dao/entidade-dao.service";
 })
 export class CadeiaValorFormComponent extends PageFormBase<CadeiaValor, CadeiaValorDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
+  @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
   public unidadeDao: UnidadeDaoService;
   public entidadeDao: EntidadeDaoService;

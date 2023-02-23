@@ -19,6 +19,7 @@ import { InputTextComponent } from '../input/input-text/input-text.component';
 import { InputTextareaComponent } from '../input/input-textarea/input-textarea.component';
 import { InputTimerComponent } from '../input/input-timer/input-timer.component';
 import { ComponentBase } from '../component-base';
+import { InputEditorComponent } from '../input/input-editor/input-editor.component';
 
 @Component({
   selector: 'editable-form',
@@ -53,6 +54,7 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
   @ContentChildren(InputMultiselectComponent, { descendants: true }) inputMultiselects!: QueryList<InputMultiselectComponent>;
   @ContentChildren(InputTimerComponent, { descendants: true }) inputTimers!: QueryList<InputTimerComponent>;
   @ContentChildren(InputRateComponent, { descendants: true }) inputRates!: QueryList<InputRateComponent>;
+  @ContentChildren(InputEditorComponent, { descendants: true }) inputEditors!: QueryList<InputEditorComponent>;
   @ContentChildren(InputMultitoggleComponent, { descendants: true }) inputMultitoggles!: QueryList<InputMultitoggleComponent>;
   @Output() disable = new EventEmitter<Event>();
   @Output() submit = new EventEmitter<EditableFormComponent>();
@@ -136,6 +138,7 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
       ...(this.inputMultiselects?.toArray() || []),
       ...(this.inputTimers?.toArray() || []),
       ...(this.inputRates?.toArray() || []),
+      ...(this.inputEditors?.toArray() || []),
       ...(this.inputMultitoggles?.toArray() || [])
     ];
   }

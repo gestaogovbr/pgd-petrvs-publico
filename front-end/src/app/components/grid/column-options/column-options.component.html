@@ -1,5 +1,5 @@
 <!-- Modo display -->
-<div *ngIf="!isRowEditing" class="btn-group" [class.invisible]="grid?.editing" role="group">
+<div *ngIf="!isRowEditing && !grid?.selectable" class="btn-group" [class.invisible]="grid?.editing" role="group">
     <button *ngIf="isUpDownButtons" [id]="grid?.getId('_' + index + '_' + row.id) + '_up_button'" type="button" class="btn btn-outline-secondary" (click)="onMoveClick(true)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mover registro para cima">
         <i class="bi bi-arrow-up"></i>
     </button>

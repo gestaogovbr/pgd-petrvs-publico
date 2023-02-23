@@ -66,7 +66,7 @@
                 </span>
             </ng-template>
         </column>
-        <column *ngIf="!selectable" type="options" [onEdit]="edit" [options]="options"></column>
+        <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <report>
       <column title="Numero" [template]="reportNumero"><ng-template let-row="row" #reportNumero>{{row.numero}}</ng-template></column>

@@ -7,6 +7,10 @@ import { TipoProcesso } from './tipo-processo.model';
 
 export type DocumentoEspecie = "TERMO_ADESAO" | "SEI" | "TCR";
 export type DocumentoStatus = "GERADO" | "AGUARDANDO_SEI";
+export interface HasDocumentos {
+    documentos: Documento[];
+    id: string;
+}
 
 export class Documento extends Base {
 
@@ -30,6 +34,7 @@ export class Documento extends Base {
     public titulo_documento: string | null = null; /* Numeração do tipo de documento no sistema integrado */
     public entidade_id: string | null = null; /* Entidade */
     public plano_id: string | null = null; /* Plano */
+    public programa_adesao_id: string | null = null; /* Adesao */
     public tipo_documento_id: string | null = null; /* Tipo documento */
     public tipo_processo_id: string | null = null; /* Tipo processo */
     public data_inicio: Date = new Date(); /* Data de início */

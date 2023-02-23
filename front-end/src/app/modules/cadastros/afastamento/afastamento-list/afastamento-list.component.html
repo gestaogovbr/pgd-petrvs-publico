@@ -2,7 +2,7 @@
 <grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
     [hasAdd]="auth.hasPermissionTo('MOD_AFT_INCL')"
     [hasEdit]="auth.hasPermissionTo('MOD_AFT_EDT')">
-    <toolbar></toolbar>
+    <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
         <div class="row">
             <input-search [size]="3" #usuario label="Usuário" controlName="usuario_id" [control]="filter!.controls.usuario_id" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
@@ -35,7 +35,7 @@
             </ng-template>
         </column>
         <column title="Observações" field="observacoes"></column>
-        <column *ngIf="!selectable" type="options" [onEdit]="edit" [options]="options"></column>
+        <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

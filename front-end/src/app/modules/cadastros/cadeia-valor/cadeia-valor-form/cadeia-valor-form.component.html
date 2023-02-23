@@ -14,8 +14,9 @@
   </div>
   <separator></separator>
   <div class="row">
+    <grid [dao]="dao" [title]="isModal ? '' : title" >
     <columns>
-      <column  field="nivel" [minWidth]="50">
+      <column field="nivel" [minWidth]="50">
         <ng-template let-header="header">
           <order [header]="header">Nível</order>
         </ng-template>
@@ -26,6 +27,7 @@
         </ng-template>
       </column>
     </columns>
+  </grid>
   </div>
 </editable-form>
 

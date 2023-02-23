@@ -40,7 +40,11 @@ export class ColumnHeaderComponent implements OnInit {
     }
   }
 
-  public onAddClick() {
-    this.grid!.onAddItem();
+  public async onAddClick() {
+    if(this.grid!.selectable) {
+      await this.grid!.addToolbarButtonClick();
+    } else {
+      this.grid!.onAddItem();
+    }
   }
 }
