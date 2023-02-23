@@ -5,7 +5,7 @@ import {TemplateDaoService} from "../../../../dao/template-dao.service";
 import {EditableFormComponent} from "../../../../components/editable-form/editable-form.component";
 import {AbstractControl, FormGroup} from "@angular/forms";
 import {IIndexable} from "../../../../models/base.model";
-import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+//import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 @Component({
   selector: 'app-template-form',
@@ -15,7 +15,7 @@ import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 export class TemplateFormComponent extends PageFormBase<Template, TemplateDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
 
-  public Editor = ClassicEditor;
+  //public Editor = ClassicEditor;
 
   constructor(public injector: Injector) {
     super(injector, Template, TemplateDaoService);

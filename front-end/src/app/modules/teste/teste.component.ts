@@ -10,7 +10,7 @@ import * as moment from 'moment';
 import { CardItem } from 'src/app/components/kanban/docker/docker.component';
 import { GanttAssignment, GanttProject, GanttResource, GanttTask } from 'src/app/components/gantt/gantt-models';
 import { CalendarOptions } from '@fullcalendar/angular';
-import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+//import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { Expediente } from 'src/app/models/expediente.model';
 import { Feriado } from 'src/app/models/feriado.model';
 import { Afastamento } from 'src/app/models/afastamento.model';
@@ -21,6 +21,7 @@ import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { Planejamento } from 'src/app/models/planejamento.model';
 import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model';
 import { EixoTematico } from 'src/app/models/eixo-tematico.model';
+import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
 
 @Component({
   selector: 'app-teste',
@@ -31,25 +32,25 @@ export class TesteComponent implements OnInit {
   public form: FormGroup;
   public items: LookupItem[] = [];
   public disabled: boolean = true;
-  public Editor = ClassicEditor;
+  //public Editor = ClassicEditor;
   public planejamento?: Planejamento;
-  public expediente = new Expediente({"domingo":[],"segunda":[{"inicio":"08:00","fim":"12:00","data":null,"sem":false},{"inicio":"14:00","fim":"18:00","data":null,"sem":false}],"terca":[{"inicio":"08:00","fim":"12:00","data":null,"sem":false},{"inicio":"14:00","fim":"18:00","data":null,"sem":false}],"quarta":[{"inicio":"08:00","fim":"12:00","data":null,"sem":false},{"inicio":"14:00","fim":"18:00","data":null,"sem":false}],"quinta":[{"inicio":"08:00","fim":"12:00","data":null,"sem":false},{"inicio":"14:00","fim":"18:00","data":null,"sem":false}],"sexta":[{"inicio":"08:00","fim":"12:00","data":null,"sem":false},{"inicio":"14:00","fim":"18:00","data":null,"sem":false}],"sabado":[],"especial":[]});
+  public expediente = new Expediente({ "domingo": [], "segunda": [{ "inicio": "08:00", "fim": "12:00", "data": null, "sem": false }, { "inicio": "14:00", "fim": "18:00", "data": null, "sem": false }], "terca": [{ "inicio": "08:00", "fim": "12:00", "data": null, "sem": false }, { "inicio": "14:00", "fim": "18:00", "data": null, "sem": false }], "quarta": [{ "inicio": "08:00", "fim": "12:00", "data": null, "sem": false }, { "inicio": "14:00", "fim": "18:00", "data": null, "sem": false }], "quinta": [{ "inicio": "08:00", "fim": "12:00", "data": null, "sem": false }, { "inicio": "14:00", "fim": "18:00", "data": null, "sem": false }], "sexta": [{ "inicio": "08:00", "fim": "12:00", "data": null, "sem": false }, { "inicio": "14:00", "fim": "18:00", "data": null, "sem": false }], "sabado": [], "especial": [] });
 
   public naoIniciadas: CardItem[] = [
-    {id: "ni1", title: "Não iniciada 1", subTitle: "Texto não iniciado 1", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens"},
-    {id: "ni2", title: "Não iniciada 2", subTitle: "Texto não iniciado 2", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens"},
-    {id: "ni3", title: "Não iniciada 3", subTitle: "Texto não iniciado 3", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens"}
+    { id: "ni1", title: "Não iniciada 1", subTitle: "Texto não iniciado 1", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens" },
+    { id: "ni2", title: "Não iniciada 2", subTitle: "Texto não iniciado 2", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens" },
+    { id: "ni3", title: "Não iniciada 3", subTitle: "Texto não iniciado 3", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens" }
   ];
   public pausadas: CardItem[] = [
-    {id: "p1", title: "Pausada 1", subTitle: "Texto 1", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens"}
+    { id: "p1", title: "Pausada 1", subTitle: "Texto 1", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens" }
   ];
   public iniciadas: CardItem[] = [
-    {id: "i1", title: "iniciada 1", subTitle: "Texto iniciado 1", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens"},
-    {id: "i2", title: "iniciada 2", subTitle: "Texto iniciado 2", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens"}
+    { id: "i1", title: "iniciada 1", subTitle: "Texto iniciado 1", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens" },
+    { id: "i2", title: "iniciada 2", subTitle: "Texto iniciado 2", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens" }
   ];
   public concluidas: CardItem[] = [];
   public avaliadas: CardItem[] = [
-    {id: "a1", title: "avaliada 1", subTitle: "avaliado 1", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens"}
+    { id: "a1", title: "avaliada 1", subTitle: "avaliado 1", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens" }
   ];
 
   public calendarOptions: CalendarOptions = {
@@ -59,6 +60,67 @@ export class TesteComponent implements OnInit {
       { title: 'event 2', start: moment().add(1, 'days').toDate(), end: moment().add(5, 'days').toDate() }
     ]
   };
+
+  public dataset: TemplateDataset[] = [
+    {
+      field: "nome",
+      label: "Usuário: Nome"
+    },
+    {
+      field: "atividades",
+      label: "Atividades",
+      type: 'ARRAY',
+      fields: [
+        {
+          field: "nome",
+          label: "Nome"
+        },
+        {
+          field: "valor",
+          label: "Valor"
+        }
+      ]
+    }
+  ];
+
+  public datasource: IIndexable = {
+    nome: "Genisson Rodrigues Albuquerque",
+    atividades: [
+      { nome: "atividade 1", valor: 100, opcoes: [{ nome: "opc 1" }, { nome: "opc 2" }] },
+      { nome: "atividade 2", valor: 200, opcoes: [] },
+      { nome: "atividade 3", valor: 300, opcoes: [{ nome: "opc 3" }] }
+    ]
+  }
+
+  public textoEditor: string = ``;
+  public template: string = `
+<p>Este &eacute; o {{nome}}.</p>
+<table>
+    <thead>
+        <tr>
+            <th scope="col">Items</th>
+            <th scope="col">Expenditure</th>
+            <th scope="col">Opções</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td colspan="3">{{for:atividades[0..x];drop=tr}}</td>
+        </tr>
+        <tr>
+            <td>{{atividades[x].nome}}</td>
+            <td>{{atividades[x].valor}}</td>
+            <td>{{atividades[x].opcoes[0].nome}}{{for:atividades[x].opcoes[1..y]}}, {{atividades[x].opcoes[y].nome}}{{end-for:atividades[x].opcoes[1..y]}}</td>
+        </tr>
+        <tr>
+            <td colspan="3">{{end-for:atividades[0..x];drop=tr}}</td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<br>
+atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome}}{{end-for:atividades[0..y]}}
+  `;
 
   public buttons: ToolbarButton[] = [
     {
@@ -77,7 +139,7 @@ export class TesteComponent implements OnInit {
     }
   ];
 
-  public project: GanttProject; 
+  public project: GanttProject;
   public efemerides?: Efemerides;
   public resources: GanttResource[] = [];
 
@@ -121,47 +183,47 @@ export class TesteComponent implements OnInit {
   ];*/
 
   public JSON = JSON;
-  public textoEditor: string = "teste";
 
   constructor(
     public fh: FormHelperService,
-    public planejamentoDao: PlanejamentoDaoService, 
-    public usuarioDao: UsuarioDaoService, 
+    public planejamentoDao: PlanejamentoDaoService,
+    public usuarioDao: UsuarioDaoService,
     public lookup: LookupService,
     public util: UtilService,
     public calendar: CalendarService,
     @Inject('ID_GENERATOR_BASE') public ID_GENERATOR_BASE: any
   ) {
     this.form = fh.FormBuilder({
-      editor: {default: "qualquer coisa"},
-      id: {default: ""},
-      campo1: {default: ""},
-      campo2: {default: new Date()},
-      campo3: {default: new Date()},
-      campo4: {default: ""},
-      campo5: {default: true},
-      datetime: {default: new Date()},
-      forma: {default: ""},
-      tempo: {default: 0},
-      feriados: {default: []},
-      afastamentos: {default: []},
-      inicio: {default: new Date()},
-      fim: {default: new Date()},
-      carga_horaria: {default: 24},
-      dia: {default: 0},
-      mes: {default: 0},
-      ano: {default: 0},
-      inicio_afastamento: {default: new Date()},
-      fim_afastamento: {default: new Date()},
-      observacao: {default: ""},
-      nome: {default: ""},
-      rate: {default: 2},
-      horas: {default: 150.5},
-      label: {default: ""},
-      valor: {default: 15.5},
-      icon: {default: null},
-      color: {default: null},
-      multiselect: {default: []}
+      editor: { default: this.textoEditor },
+      template: { default: this.template },
+      id: { default: "" },
+      campo1: { default: "" },
+      campo2: { default: new Date() },
+      campo3: { default: new Date() },
+      campo4: { default: "" },
+      campo5: { default: true },
+      datetime: { default: new Date() },
+      forma: { default: "" },
+      tempo: { default: 0 },
+      feriados: { default: [] },
+      afastamentos: { default: [] },
+      inicio: { default: new Date() },
+      fim: { default: new Date() },
+      carga_horaria: { default: 24 },
+      dia: { default: 0 },
+      mes: { default: 0 },
+      ano: { default: 0 },
+      inicio_afastamento: { default: new Date() },
+      fim_afastamento: { default: new Date() },
+      observacao: { default: "" },
+      nome: { default: "" },
+      rate: { default: 2 },
+      horas: { default: 150.5 },
+      label: { default: "" },
+      valor: { default: 15.5 },
+      icon: { default: null },
+      color: { default: null },
+      multiselect: { default: [] }
       /*display: {default: "Mensagem de teste"},
       switch: {default: false},
       search: {default: ""},
@@ -177,7 +239,7 @@ export class TesteComponent implements OnInit {
       color: {default: null}*/
     });
     this.project = new GanttProject();
-    this.project.tasks =[new GanttTask({
+    this.project.tasks = [new GanttTask({
       id: "a80b71cf-e112-11ec-a5bb-0050569c64a0",
       name: "Projeto 1",
       description: "Projeto de testes 1",
@@ -195,7 +257,7 @@ export class TesteComponent implements OnInit {
           start: this.incDate(-1),
           end: this.incDate(1),
           duration: 2,
-          assignments: [new GanttAssignment({resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a1"})]
+          assignments: [new GanttAssignment({ resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a1" })]
         }),
         new GanttTask({
           id: "a80b71cf-e112-11ec-a5bb-0050569c64a2",
@@ -205,12 +267,12 @@ export class TesteComponent implements OnInit {
           start: this.incDate(1),
           end: this.incDate(3),
           duration: 2,
-          assignments: [new GanttAssignment({resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a2"})]
+          assignments: [new GanttAssignment({ resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a2" })]
         })
       ],
       assignments: [
-        new GanttAssignment({resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a1"}), 
-        new GanttAssignment({resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a2"})
+        new GanttAssignment({ resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a1" }),
+        new GanttAssignment({ resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a2" })
       ]
     }),
     new GanttTask({
@@ -231,11 +293,11 @@ export class TesteComponent implements OnInit {
           start: this.incDate(3),
           end: this.incDate(9),
           duration: 2,
-          assignments: [new GanttAssignment({resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a1"})]
-        }        
+          assignments: [new GanttAssignment({ resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a1" })]
+        }
       ],
       assignments: [
-        new GanttAssignment({resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a1"}), 
+        new GanttAssignment({ resource_id: "a80b71ff-e112-11ec-a5bb-0050569c64a1" }),
       ]
     })];
     this.project.resources = [
@@ -265,33 +327,33 @@ export class TesteComponent implements OnInit {
   }
 
   public gridItems = [
-    { id: this.util.md5(), campo1: "campo1-1", campo2: new Date(), campo3: new Date(), campo4: "campo4-1", campo5: false},
-    { id: this.util.md5(), campo1: "campo1-2", campo2: new Date(), campo3: new Date(), campo4: "campo4-2", campo5: false},
-    { id: this.util.md5(), campo1: "campo1-3", campo2: new Date(), campo3: new Date(), campo4: "campo4-3", campo5: false},
-    { id: this.util.md5(), campo1: "campo1-4", campo2: new Date(), campo3: new Date(), campo4: "campo4-4", campo5: false},
-    { id: this.util.md5(), campo1: "campo1-5", campo2: new Date(), campo3: new Date(), campo4: "campo4-5", campo5: false}
+    { id: this.util.md5(), campo1: "campo1-1", campo2: new Date(), campo3: new Date(), campo4: "campo4-1", campo5: false },
+    { id: this.util.md5(), campo1: "campo1-2", campo2: new Date(), campo3: new Date(), campo4: "campo4-2", campo5: false },
+    { id: this.util.md5(), campo1: "campo1-3", campo2: new Date(), campo3: new Date(), campo4: "campo4-3", campo5: false },
+    { id: this.util.md5(), campo1: "campo1-4", campo2: new Date(), campo3: new Date(), campo4: "campo4-4", campo5: false },
+    { id: this.util.md5(), campo1: "campo1-5", campo2: new Date(), campo3: new Date(), campo4: "campo4-5", campo5: false }
   ];
 
 
-/*   public testeRetorno(form: IIndexable): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      const usuario = this.util.fill(new Usuario(), this.entity!);
-      resolve(this.util.fillForm(usuario, this.form!.value));
-    });
-  } */
+  /*   public testeRetorno(form: IIndexable): Promise<void> {
+      return new Promise<void>((resolve, reject) => {
+        const usuario = this.util.fill(new Usuario(), this.entity!);
+        resolve(this.util.fillForm(usuario, this.form!.value));
+      });
+    } */
   ngOnInit(): void {
     this.planejamentoDao.getById("867c7768-9690-11ed-b4ae-0242ac130002", ["objetivos.eixo_tematico", "unidade", "entidade"]).then(planejamento => {
       let mapa: MapItem[] = [];
       this.planejamento = planejamento || undefined;
-      if(planejamento) {
+      if (planejamento) {
         let eixos = planejamento.objetivos?.reduce((a, v) => {
-          if(!a.find(x => x.id == v.eixo_tematico_id)) a.push(v.eixo_tematico!);
+          if (!a.find(x => x.id == v.eixo_tematico_id)) a.push(v.eixo_tematico!);
           return a;
         }, [] as EixoTematico[]) || [];
         mapa = eixos.map(x => {
           return {
             data: x,
-            children: planejamento.objetivos?.filter(y => y.eixo_tematico_id == x.id).map(z => Object.assign({}, {data: z}) as MapItem)
+            children: planejamento.objetivos?.filter(y => y.eixo_tematico_id == x.id).map(z => Object.assign({}, { data: z }) as MapItem)
           } as MapItem;
         });
       }

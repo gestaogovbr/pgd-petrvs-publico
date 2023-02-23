@@ -40,6 +40,7 @@ class EntidadeController extends ControllerBase {
                 'entidade_id' => ['required']
             ]);
             return response()->json([
+                'success' => true,
                 'api_public_key' => $this->service->generateApiKey($data['entidade_id'])
             ]);
         } catch (Throwable $e) {

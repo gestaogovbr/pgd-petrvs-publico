@@ -3,15 +3,7 @@ import {Entidade} from './entidade.model';
 import {Unidade} from './unidade.model';
 import {Documento} from "./documento.model";
 import {Usuario} from "./usuario.model";
-
-export type TemplateFieldType = "VALUE" | "OBJECT" | "ARRAY";
-
-export type TemplateDataset = {
-  field: string,
-  label: string,
-  type: TemplateFieldType,
-  fields?: TemplateDataset[]
-}
+import { TemplateDataset } from '../components/input/input-editor/input-editor.component';
 
 export class Template extends Base {
 

@@ -49,6 +49,7 @@ export class ChangeFormComponent extends PageFormBase<Change, ChangeDaoService> 
           label: entity.label + ': ' + campo,
           value: c[campo] ? c[campo] : entity_id
         };
+
       });
       this.cdRef.detectChanges();
     }
@@ -58,6 +59,7 @@ export class ChangeFormComponent extends PageFormBase<Change, ChangeDaoService> 
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
     this.form!.controls.row_id.setValue(this.objeto!.value);
+    //this.form!.controls.delta.setValue(JSON.stringify(this.form!.controls.delta));
     this.cdRef.detectChanges();
   }
 

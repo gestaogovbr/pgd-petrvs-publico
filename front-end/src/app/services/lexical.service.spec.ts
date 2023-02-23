@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { LexicalService, Translate } from './lexical.service';
 
-fdescribe('LexicalService', () => {
+describe('LexicalService', () => {
   let $service: LexicalService;
   let $defaults: Translate;
 
