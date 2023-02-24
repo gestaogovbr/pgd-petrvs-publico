@@ -2,17 +2,17 @@
 
 ## Visão geral do sistema
 
-> Planejamento Estratégico
->> Objetivos
-> Cadeia de Valor
->> Processos
-> Programa
->> Adesão
->>> Plano de Entregas
->>>> Entregas
->>> Plano de Trabalho
->>>> Demandas
-> Projetos
+- Planejamento Estratégico
+ - Objetivos
+- Cadeia de Valor
+ - Processos
+- Programa
+ - Adesão
+  - Plano de Entregas
+   - Entregas
+  - Plano de Trabalho
+   - Demandas
+- Projetos
 
 ## Módulos
 
