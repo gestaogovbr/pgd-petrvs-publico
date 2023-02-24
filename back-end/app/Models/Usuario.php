@@ -111,13 +111,14 @@ class Usuario extends Authenticatable
     public function lotacoes() { return $this->hasMany(Lotacao::class); }
     public function planos() { return $this->hasMany(Plano::class); }
     public function usuariosHashes() { return $this->hasMany(UsuarioHahs::class); }
-    
     public function integracoes() { return $this->hasMany(Integracao::class); }
-    public function changes() { return $this->hasMany(Change::class, 'user_id'); }
+
     // Belongs
     public function perfil() { return $this->belongsTo(Perfil::class, 'perfil_id'); }
+
     // Mutattors e Casts
-    public function getUrlFotoAttribute($value) {
+    public function getUrlFotoAttribute($value) 
+    {
         $usuarioService = new UsuarioService();
         $url = "/assets/images/profile.png";
         try {
@@ -144,5 +145,10 @@ class Usuario extends Authenticatable
     public function setNotificacoesAttribute($value)
     {
         $this->attributes['notificacoes'] = json_encode($value);
+    }
+
+    // Outros métodos
+    public function changes(): array {
+        return Change::where('user_id', $this->id)->get()->toArray() ?? [];
     }
 }
