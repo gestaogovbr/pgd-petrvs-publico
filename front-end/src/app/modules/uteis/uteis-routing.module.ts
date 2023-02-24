@@ -7,7 +7,9 @@ import { DocumentosComponent } from './documentos/documentos.component';
 
 const routes: Routes = [
   { path: 'comentarios/:origem/:id/new', component: ComentariosComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Comentários", modal: true } },
-  { path: 'documentos/:especie/:origem', component: DocumentosComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Documentos", modal: true } }
+  { path: 'documentos/:especie/:id', component: DocumentosComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Documentos", modal: true } },
+  { path: 'documentos/:especie/:id/:action', component: DocumentosComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Documentos", modal: true } },
+  { path: 'documentos/:especie/:id/:action/:documentoId', component: DocumentosComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Documentos", modal: true } }
 ];
 
 @NgModule({

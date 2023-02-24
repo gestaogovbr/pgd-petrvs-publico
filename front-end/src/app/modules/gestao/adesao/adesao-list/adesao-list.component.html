@@ -6,7 +6,7 @@
     </toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="6" label="Usuário" controlName="usuario" [control]="filter!.controls.usuario" placeholder="Usuário"></input-text>
+            <input-search [size]="6" label="Usuário" controlName="usuario_id" [control]="filter!.controls.usuario_id" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
             <input-search [size]="6" label="Unidade" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
         </div>
         <div class="row">
@@ -58,8 +58,7 @@
         <column [titleTemplate]="titleVigencia" [template]="columnInicioVigencia">
             <ng-template let-header="header" #titleVigencia>
                 Vigência de<br>
-                <order by="data_inicio_vigencia" [header]="header">Início</order>
-                a
+                <order by="data_inicio_vigencia" [header]="header">Início</order> a
                 <order by="data_fim_vigencia" [header]="header">Fim</order>
             </ng-template>
             <ng-template let-row="row" #columnInicioVigencia>
@@ -78,30 +77,14 @@
         <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <report>
-        <column title="Numero" [template]="reportNumero">
-            <ng-template let-row="row" #reportNumero>{{row.numero}}</ng-template>
-        </column>
-        <column title="Matricula usuário" [template]="reportMatricula">
-            <ng-template let-row="row" #reportMatricula>{{row.usuario?.matricula || ""}}</ng-template>
-        </column>
-        <column title="Programa" [template]="reportPrograma">
-            <ng-template let-row="row" #reportPrograma>{{row.programa?.nome || ""}}</ng-template>
-        </column>
-        <column title="Unidade" [template]="reportUnidade">
-            <ng-template let-row="row" #reportUnidade>{{row.unidade?.nome || ""}}</ng-template>
-        </column>
-        <column title="Modalidade" [template]="reportModalidade">
-            <ng-template let-row="row" #reportModalidade>{{row.tipo_modalidade?.nome || ""}}</ng-template>
-        </column>
-        <column title="Início vigência" [template]="reportInicioVigencia">
-            <ng-template let-row="row" #reportInicioVigencia>{{util.getDateTimeFormatted(row.data_inicio_vigencia)}}</ng-template>
-        </column>
-        <column title="Fim vigência" [template]="reportFimVigencia">
-            <ng-template let-row="row" #reportFimVigencia>{{util.getDateTimeFormatted(row.data_fim_vigencia)}}</ng-template>
-        </column>
-        <column title="Termo de Adesão" [template]="reportTermoAdesao">
-            <ng-template let-row="row" #reportTermoAdesao>{{row.documento?.numero_processo?.length ? row.documento?.numero_processo : "Não atribuído"}}</ng-template>
-        </column>
+        <column title="Numero" [template]="reportNumero"><ng-template  let-row="row" #reportNumero>{{row.numero}}</ng-template></column>
+        <column title="Matricula usuário" [template]="reportMatricula"><ng-template  let-row="row" #reportMatricula>{{row.usuario?.matricula || ""}}</ng-template></column>
+        <column title="Programa" [template]="reportPrograma"><ng-template  let-row="row" #reportPrograma>{{row.programa?.nome || ""}}</ng-template></column>
+        <column title="Unidade" [template]="reportUnidade"><ng-template  let-row="row" #reportUnidade>{{row.unidade?.nome || ""}}</ng-template></column>
+        <column title="Modalidade" [template]="reportModalidade"><ng-template  let-row="row" #reportModalidade>{{row.tipo_modalidade?.nome || ""}}</ng-template></column>
+        <column title="Início vigência" [template]="reportInicioVigencia"><ng-template  let-row="row" #reportInicioVigencia>{{util.getDateTimeFormatted(row.data_inicio_vigencia)}}</ng-template></column>
+        <column title="Fim vigência" [template]="reportFimVigencia"><ng-template  let-row="row" #reportFimVigencia>{{util.getDateTimeFormatted(row.data_fim_vigencia)}}</ng-template></column>
+        <column title="Termo de Adesão" [template]="reportTermoAdesao"><ng-template  let-row="row" #reportTermoAdesao>{{row.documento?.numero_processo?.length ? row.documento?.numero_processo : "Não atribuído"}}</ng-template></column>
     </report>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

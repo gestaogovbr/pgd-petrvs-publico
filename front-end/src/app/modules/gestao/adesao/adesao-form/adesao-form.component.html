@@ -12,10 +12,10 @@
       </div>
       <div class="row">
         <input-multiselect label="Usuários" controlName="usuarios_list" [size]="6" [addItemHandle]="addUsuarioHandle.bind(this)">
-          <input-search #usuario label="Usuário" icon="far fa-edit" controlName="usuario_id" [dao]="usuarioDao" [join]="['afastamentos']" (select)="onUsuarioSelect($event)" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
+          <input-search #usuario label="Usuário" icon="far fa-edit" controlName="usuarios_id" [dao]="usuarioDao" [join]="['afastamentos']" (select)="onUsuarioSelect($event)" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
         </input-multiselect>
         <input-multiselect label="Unidades" controlName="unidades_list" [size]="6" [addItemHandle]="addUnidadeHandle.bind(this)">
-          <input-search #unidade label="Unidade" icon="far fa-edit" controlName="unidade_id" [dao]="unidadeDao" [join]="['entidade']" [dao]="unidadeDao" (select)="onUnidadeSelect($event)" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+          <input-search #unidade label="Unidade" icon="far fa-edit" controlName="unidades_id" [dao]="unidadeDao" [join]="['entidade']" [dao]="unidadeDao" (select)="onUnidadeSelect($event)" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
         </input-multiselect>
       </div>
     </tab>

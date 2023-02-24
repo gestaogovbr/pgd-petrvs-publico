@@ -14,6 +14,7 @@ import { IIndexable } from "../../../../models/base.model";
 import { ToolbarButton } from "../../../../components/toolbar/toolbar.component";
 import { Adesao } from "../../../../models/adesao.model";
 import { AdesaoDaoService } from "../../../../dao/adesao-dao.service";
+import { AdesaoService } from '../adesao.service';
 
 @Component({
   selector: 'app-adesao-list',
@@ -28,6 +29,7 @@ export class AdesaoListComponent extends PageListBase<Adesao, AdesaoDaoService> 
   public documentoDao: DocumentoDaoService;
   public programaDao: ProgramaDaoService;
   public usuarioDao: UsuarioDaoService;
+  public adesaoService: AdesaoService;
   public allPages: ListenerAllPagesService;
   public tipoModalidadeDao: TipoModalidadeDaoService;
   public multiselectAllFields: string[] = ["tipo_modalidade_id", "usuario_id", "unidade_id", "documento_id"];
@@ -42,13 +44,14 @@ export class AdesaoListComponent extends PageListBase<Adesao, AdesaoDaoService> 
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.documentoDao = injector.get<DocumentoDaoService>(DocumentoDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
+    this.adesaoService = injector.get<AdesaoService>(AdesaoService);
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
     /* Inicializações */
     this.title = this.lex.noun("adesao", true);
     this.code = "MOD_ADES";
     this.filter = this.fh.FormBuilder({
-      usuario: { default: "" },
+      usuario_id: { default: null },
       unidade_id: { default: null },
       tipo_modalidade_id: { default: null },
       data_filtro: { default: null },
@@ -75,7 +78,7 @@ export class AdesaoListComponent extends PageListBase<Adesao, AdesaoDaoService> 
     this.options.push({
       label: "TCR",
       icon: "bi bi-file-earmark-check",
-      onClick: ((row: Adesao) => this.go.navigate({ route: ['gestao', 'adesao', row.id, 'termos'] }, { modalClose: (modalResult) => console.log(modalResult?.conteudo) })).bind(this)
+      onClick: ((row: Adesao) => this.go.navigate({ route: ['uteis', 'documentos', 'TCR', row.id ] }, { modalClose: (modalResult) => console.log(modalResult?.conteudo) })).bind(this)
     });
   }
 
@@ -112,10 +115,10 @@ export class AdesaoListComponent extends PageListBase<Adesao, AdesaoDaoService> 
       result.push(["data_filtro_fim", "==", form.data_filtro_fim]);
     }
     if (form.usuario?.length) {
-      result.push(["usuario.nome", "like", "%" + form.usuario + "%"]);
+      result.push(["usuarios.usuario_id", "==", form.usuario_id]);
     }
     if (form.unidade_id?.length) {
-      result.push(["unidade_id", "==", form.unidade_id]);
+      result.push(["unidades.unidade_id", "==", form.unidade_id]);
     }
 
     return result;

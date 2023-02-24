@@ -19,7 +19,7 @@ class Documento extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'numero', /* int; NOT NULL; */// Número do documento (Gerado pelo sistema)
-        'especie', /* enum('TERMO_ADESAO','SEI','TCR', ''); */// Especificação da espécie do documento (interno do sistema)
+        'especie', /* enum('TERMO_ADESAO','SEI','TCR','TCR_CANCELAMENTO'); */// Especificação da espécie do documento (interno do sistema)
         'conteudo', /* longtext; */// Conteúdo do arquivo
         'assinatura', /* json; */// Dados da assinatura, se nulo não está assinado
         'metadados', /* json; */// Metadados
@@ -35,10 +35,11 @@ class Documento extends ModelBase
         'plano_id', /* char(36); */
         'programa_adesao_id', /* char(36); */
         'status', /* enum('GERADO','AGUARDANDO_SEI'); NOT NULL; DEFAULT: 'GERADO'; */// Status do documento: GERADO (documento gerado); AGUARDANDO_SEI (Aguardando abrir o documento no sei para colar o conteúdo dentro)
-        //'data_fim', /* datetime; */// Data fim
         'template', /* text; */// Campo de Template
-        'data_source', /* json; */// Conjunto de dados do template
-        //'template_id', /* char(36); */
+        'template_id', /* char(36); */
+        //'data_fim', /* datetime; */// Data fim
+        'datasource', /* json; */// Conjunto de dados do template
+        'dataset', /* json; */// Definição das variáveis disponíveis para o template
     ];
 
     public $delete_cascade = ['assinaturas'];
@@ -71,5 +72,21 @@ class Documento extends ModelBase
     public function setMetadadosAttribute($value)
     {
         $this->attributes['metadados'] = json_encode($value);
+    }
+    public function getDatasourceAttribute($value)
+    {
+        return json_decode($value);
+    }   
+    public function setDatasourceAttribute($value)
+    {
+        $this->attributes['datasource'] = json_encode($value);
+    }
+    public function getDatasetAttribute($value)
+    {
+        return json_decode($value);
+    }   
+    public function setDatasetAttribute($value)
+    {
+        $this->attributes['dataset'] = json_encode($value);
     }
 }

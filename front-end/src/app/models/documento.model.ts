@@ -1,7 +1,9 @@
+import { TemplateDataset } from '../components/input/input-editor/input-editor.component';
 import { Base } from './base.model';
 import { DocumentoAssinatura } from './documento-assinatura.model';
 import { Entidade } from './entidade.model';
 import { Plano } from './plano.model';
+import { Template } from './template.model';
 import { TipoDocumento } from './tipo-documento.model';
 import { TipoProcesso } from './tipo-processo.model';
 
@@ -32,15 +34,20 @@ export class Documento extends Base {
     public id_documento: number | null = null; /* ID da entrega, caso seja o Sei será o ID_Documento */
     public numero_documento: string | null = null; /* Numero do documento de entrega, caso seja o Sei é o numero Sei */
     public titulo_documento: string | null = null; /* Numeração do tipo de documento no sistema integrado */
+    public data_inicio: Date = new Date(); /* Data de início */
+    public data_fim: Date | null = null; /* Data do fim */
+    public status: DocumentoStatus = "GERADO";
+    public assinaturas: DocumentoAssinatura[] = [];
+    public template: string | null = null; /* Campo de Template */
+    public dataset: TemplateDataset[] | null = null; /* DataSet do template (Define as variáveis disponíveis) */
+    public datasource: any = null; /* DataSource do template (Dados disponíveis para interpolação) */
+
     public entidade_id: string | null = null; /* Entidade */
     public plano_id: string | null = null; /* Plano */
     public programa_adesao_id: string | null = null; /* Adesao */
     public tipo_documento_id: string | null = null; /* Tipo documento */
     public tipo_processo_id: string | null = null; /* Tipo processo */
-    public data_inicio: Date = new Date(); /* Data de início */
-    public data_fim: Date | null = null; /* Data do fim */
-    public status: DocumentoStatus = "GERADO";
-    public assinaturas: DocumentoAssinatura[] = [];
+    public template_id: string | null = null; /* Template */
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

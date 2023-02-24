@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-3" [class.d-none]="!!grid?.editing">
-    <grid [control]="gridControl" #gridDocumentos [hasEdit]="true" [hasDelete]="false" [hasAdd]="true" [add]="addDocumento" editable [selectable]="true" (select)="onSelect($event)">
+    <grid [control]="gridControl" [form]="form!" #gridDocumentos [hasEdit]="true" [hasDelete]="false" [hasAdd]="true" [add]="addDocumento" editable [selectable]="true" (select)="onSelect($event)">
       <columns>
         <column title="#ID/Especie" [template]="documentoTemplate">
           <ng-template let-row="row" #documentoTemplate>

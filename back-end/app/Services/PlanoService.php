@@ -31,12 +31,11 @@ class PlanoService extends ServiceBase
     }
 
     public function planosAtivosPorData($data_inicial, $data_final, $usuario_id){
-        $planos = Plano::whereNull("data_fim")->where([
-            ["usuario_id", "=", $usuario_id],
+        return Plano::whereNull("data_fim")->where([
+            ["usuario_id", "==", $usuario_id],
             ["data_inicio_vigencia", "<=", $data_final],
             ["data_fim_vigencia", ">=", $data_inicial]
         ])->get();
-        return $planos;
     }
 
     public function proxyQuery($query, &$data) {
@@ -220,9 +219,10 @@ class PlanoService extends ServiceBase
         foreach ($result['demandasAvaliadas'] as $demanda) {
             $result['horasDemandasAvaliadas'] += $demanda['tempo_pactuado'];
         }
-        $result['mediaAvaliacoes'] = (count($result['demandasAvaliadas']) == 0) ? null : $this->utilService->avg(array_map(function($d) {
-                                                                                                                        return $d['avaliacao']['nota_atribuida'];
-                                                                                                                    }, $result['demandasAvaliadas']));
+        $result['mediaAvaliacoes'] = (count($result['demandasAvaliadas']) == 0) ? null : $this->utilService->avg(array_map(
+            function($d) {
+                return $d['avaliacao']['nota_atribuida'];
+            }, $result['demandasAvaliadas']));
 
         /* Nesse trecho, o método calcula a soma dos tempos pactuados das demandas ainda não iniciadas */
         foreach ($result['demandasNaoIniciadas'] as $demanda) {

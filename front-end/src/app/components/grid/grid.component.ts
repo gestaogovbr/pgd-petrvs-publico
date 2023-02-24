@@ -636,6 +636,12 @@ export class GridComponent extends ComponentBase implements OnInit {
     }
   }
 
+  public selectById(id: string): any {
+    let row = this.items.find(x => x.id == id);
+    if(this.selectable && row) this.onRowClick(new Event("SelectById"), row);
+    return row;
+  }
+
   public isInvalid(): boolean {
     return !!this.control?.invalid && (this.control!.dirty || this.control!.touched);
   }

@@ -13,7 +13,6 @@ class AlterProgramasAdesoesTableAddDocumento extends Migration
      */
     public function up()
     {
-         
         Schema::table('programas_adesoes', function (Blueprint $table) {
             $table->foreignUuid('documento_id')->nullable()->constrained("documentos")->onDelete('restrict')->onUpdate('cascade');
         });

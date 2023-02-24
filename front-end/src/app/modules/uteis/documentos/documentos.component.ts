@@ -4,10 +4,13 @@ import { EditableFormComponent } from 'src/app/components/editable-form/editable
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { AdesaoDaoService } from 'src/app/dao/adesao-dao.service';
 import { DocumentoDaoService } from 'src/app/dao/documento-dao-service';
+import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Documento, HasDocumentos } from 'src/app/models/documento.model';
+import { Template } from 'src/app/models/template.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 
@@ -19,9 +22,7 @@ export type DocumentoEspecie = 'TERMO_ADESAO' | 'SEI' | 'TCR' | 'TCR_CANCELAMENT
   styleUrls: ['./documentos.component.scss']
 })
 export class DocumentosComponent extends PageFrameBase {
-  @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
-  @ViewChild('addDocumentoTemplate', { static: false }) public addDocumentoTemplate?: TemplateRef<any>;
   @Input() cdRef: ChangeDetectorRef;
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: HasDocumentos | undefined) { super.entity = value; } get entity(): HasDocumentos | undefined { return super.entity; }
@@ -30,14 +31,19 @@ export class DocumentosComponent extends PageFrameBase {
   @Input() especie: DocumentoEspecie = 'OUTRO';
   @Input() dataset?: TemplateDataset[];
   @Input() datasource?: any;
-  @Input() template?: string;
-  @Input() template_id?: string;
+  @Input() template?: Template;
 
   public get items(): Documento[] {
     if(!this.gridControl.value) this.gridControl.setValue({documentos: []});
     if(!this.gridControl.value.documentos) this.gridControl.value.documentos = [];
     return this.gridControl.value.documentos;
   }
+  public documentoDao: DocumentoDaoService;
+  public allPages: ListenerAllPagesService;
+  public datasourceEdit?: any;
+  public templateEdit?: string;
+  public selected?: Documento;
+  public documentoId?: string;
   public editingButtons: ToolbarButton[] = [
     {
       label: "Gravar",
@@ -54,11 +60,6 @@ export class DocumentosComponent extends PageFrameBase {
       onClick: this.cancelarEdicao.bind(this)
     } 
   ];
-  public documentoDao: DocumentoDaoService;
-  public allPages: ListenerAllPagesService;
-  public datasourceEdit?: any;
-  public templateEdit?: string;
-  public selected?: Documento;
 
   constructor(public injector: Injector) {
     super(injector);
@@ -68,19 +69,28 @@ export class DocumentosComponent extends PageFrameBase {
     this.documentoDao = injector.get<DocumentoDaoService>(DocumentoDaoService);
     this.form = this.fh.FormBuilder({
       titulo: {default: ""},
-      conteudo: {default: ""}
+      conteudo: {default: ""},
+      dataset: {default: undefined},
+      datasource: {default: undefined},
+      template: {default: undefined},
+      template_id: {default: undefined}
     }, this.cdRef, this.validate);
+    this.join = ["documentos"];
   }
 
   public ngOnInit() {
     super.ngOnInit();
     this.needSign = this.metadata?.needSign || this.needSign;
     this.extraTags = this.metadata?.extraTags || this.extraTags;
-    this.especie = this.metadata?.especie || this.especie;
+    this.especie = this.urlParams?.has("especie") ? this.urlParams!.get("especie") : this.metadata?.especie || this.especie;
+    this.action = this.urlParams?.has("action") ? this.urlParams!.get("action") || "" : "";
+    this.documentoId = this.urlParams?.has("documentoId") ? this.urlParams!.get("documentoId") || undefined : undefined;
     this.dataset = this.metadata?.dataset || this.dataset;
     this.datasource = this.metadata?.datasource || this.datasource;
     this.template = this.metadata?.template || this.template;
-    this.template_id = this.metadata?.template_id || this.template_id;
+    /* Obrigatório instanciar o DAO correto a depender da espécie */
+    this.dao = this.especie == "TERMO_ADESAO" ? this.injector.get<PlanoDaoService>(PlanoDaoService) :
+      ["TCR", "TCR_CANCELAMENTO"].includes(this.especie) ? this.injector.get<AdesaoDaoService>(AdesaoDaoService) : undefined;
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -89,7 +99,13 @@ export class DocumentosComponent extends PageFrameBase {
   }
 
   public loadData(entity: IIndexable, form?: FormGroup) {
-    super.loadData(entity, form);
+    this.entity = entity as HasDocumentos;
+    if(this.action == "add") this.grid!.onAddItem();
+    if(this.action == "edit") {
+      const row = this.grid!.selectById(this.documentoId || "");
+      this.grid!.onEditItem(row);
+    }
+    //super.loadData(entity, form);
   }
 
   public initializeData(form?: FormGroup) {
@@ -104,14 +120,23 @@ export class DocumentosComponent extends PageFrameBase {
 
   public onSelect(row: any) {
     this.selected = row as Documento;
+    this.form!.patchValue({
+      titulo: this.selected?.titulo_documento || "",
+      conteudo: this.selected?.conteudo || "",
+      dataset: this.selected?.dataset,
+      datasource: this.selected?.datasource,
+      template: this.selected?.template,
+      template_id: this.selected?.template_id
+    });
+    this.cdRef.detectChanges();
   }
 
   public gravarEdicao() {
-
+    this.grid!.onSaveItem(this.selected!);
   }
 
   public cancelarEdicao() {
-
+    this.grid!.onCancelItem();
   }
 
   public documentoDynamicButtons(row: any): ToolbarButton[] {
@@ -163,6 +188,7 @@ export class DocumentosComponent extends PageFrameBase {
     documento._status = "ADD";
     if(this.especie == "TERMO_ADESAO") documento.plano_id = this.entity!.id;
     if(["TCR", "TCR_CANCELAMENTO"].includes(this.especie)) documento.programa_adesao_id = this.entity!.id;
+    return documento;
     /*let result = await this.dialog.template({ title: "Edição de documento", modalWidth: 700 }, this.addDocumentoTemplate!, [
       {
         label: "Salvar",
@@ -211,7 +237,6 @@ export class DocumentosComponent extends PageFrameBase {
           })();
         }
       }});*/
-    return undefined;
   }
 
   public onProcessoClick(row: any) {
