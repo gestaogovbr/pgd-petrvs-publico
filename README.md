@@ -29,8 +29,8 @@ https://gitlab.com/petrvs.app/Petrvs.git
 
 - A documentação do sistema é feita na pasta ./resources/documentacao e pode ser acessada [AQUI](./resources/documentacao/manual.md)
 - O dicionário de dados (apenas para os desenvolvedores) está localizado na sua respectiva pasta:
- - [Front-end](./front-end/README.md)
- - [Back-end](./back-end/README.md)  
+  - [Front-end](./front-end/README.md)
+  - [Back-end](./back-end/README.md)  
 
 ## Extensões recomendadas para o VS Code
 
