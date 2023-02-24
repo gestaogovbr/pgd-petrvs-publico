@@ -30,13 +30,4 @@ class Integracao extends ModelBase
     public function entidade() { return $this->belongsTo(Entidade::class); }   
     public function usuario() { return $this->belongsTo(Usuario::class); }   
 
-/*     // Mutattors e Casts
-    public function getResultadoAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setResultadoAttribute($value)
-    {
-        $this->attributes['resultado'] = json_encode($value);
-    } */
 }
