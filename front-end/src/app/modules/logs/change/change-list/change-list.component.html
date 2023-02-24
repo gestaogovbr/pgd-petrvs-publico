@@ -4,8 +4,6 @@
         <div class="row">
             <input-select #selectResponsaveis label="Responsável pelo registro" [size]="6" controlName="responsavel_id" [control]="filter!.controls.responsavel_id" 
             [items]="responsaveis"></input-select>
-
-            <!-- <input-search  [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search> -->
             <input-datetime [size]="3" datetime label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" labelInfo="Início dos registros"></input-datetime>
             <input-datetime [size]="3" datetime label="Fim" controlName="data_fim" [control]="filter!.controls.data_fim" labelInfo="Fim dos registros"></input-datetime>
         </div>
