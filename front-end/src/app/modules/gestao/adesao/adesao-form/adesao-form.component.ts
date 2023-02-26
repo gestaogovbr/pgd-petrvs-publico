@@ -11,15 +11,13 @@ import { UsuarioDaoService } from "../../../../dao/usuario-dao.service";
 import { AtividadeDaoService } from "../../../../dao/atividade-dao.service";
 import { DocumentoDaoService } from "../../../../dao/documento-dao-service";
 import { ListenerAllPagesService } from "../../../../listeners/listener-all-pages.service";
-import { CalendarService, Efemerides } from "../../../../services/calendar.service";
+import { CalendarService } from "../../../../services/calendar.service";
 import { TipoModalidadeDaoService } from "../../../../dao/tipo-modalidade-dao.service";
 import { SelectItem } from "../../../../components/input/input-base";
 import { TipoModalidade } from "../../../../models/tipo-modalidade.model";
 import { Unidade } from "../../../../models/unidade.model";
 import { Usuario } from "../../../../models/usuario.model";
 import { IIndexable } from "../../../../models/base.model";
-import { ToolbarButton } from "../../../../components/toolbar/toolbar.component";
-import { Documento } from "../../../../models/documento.model";
 import { AdesaoDaoService } from "../../../../dao/adesao-dao.service";
 import { Adesao } from "../../../../models/adesao.model";
 import { EntidadeDaoService } from "../../../../dao/entidade-dao.service";
@@ -153,12 +151,12 @@ export class AdesaoFormComponent extends PageFormBase<Adesao, AdesaoDaoService> 
     form.controls.usuarios_list.setValue((entity.usuarios || []).map(x => Object.assign({}, {
       key: x.id, /* id do AdesaoUsuario e não do Usuario */
       data: x.usuario,
-      value: x.usuario?.id || "Desconhecido"
+      value: x.usuario?.nome || "Desconhecido"
     })));
     form.controls.unidades_list.setValue((entity.unidades || []).map(x => Object.assign({}, {
       key: x.id, /* id do AdesaoUnidade e não da Unidade */
       data: x.unidade,
-      value: x.unidade?.id || "Desconhecido"
+      value: x.unidade?.nome || "Desconhecido"
     })));
     this.cdRef.detectChanges();
   }
@@ -168,10 +166,8 @@ export class AdesaoFormComponent extends PageFormBase<Adesao, AdesaoDaoService> 
       this.entity = (await this.dao!.getById(this.urlParams!.get("id")!, this.join))!;
     } else {
       this.entity = new Adesao();
-      this.entity.entidade = this.auth.unidade!.entidade;
-      //this.entity.unidade = this.auth.unidade;
-      //this.entity.unidade_id = this.auth.unidade!.id;
-      this.entity.entidade_id = this.auth.unidade!.entidade_id!;
+      if(this.auth.usuario?.perfil?.nivel === 4)
+        this.entity.unidade_id = this.auth.unidade!.id;
     }
     this.loadData(this.entity, this.form!);
   }

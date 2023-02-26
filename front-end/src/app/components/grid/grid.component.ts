@@ -181,6 +181,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   public rowsLimit?: number;
   public groupIds: IIndexable = { _qtdRows: -1 };
   public expandedIds: IIndexable = {};
+  public metadatas: IIndexable = {};
   public set error(error: string | undefined) {
     this._error = error;
   }
@@ -609,6 +610,15 @@ export class GridComponent extends ComponentBase implements OnInit {
       await this.endEdit();
     })();
   }
+
+  public getMetadata(row: any): IIndexable {
+    if(row.id) {
+      if(!this.metadatas[row.id]) this.metadatas[row.id] = {} as IIndexable;
+      return this.metadatas[row.id];
+    }
+    return {};
+  }
+
 
   public async edit(itemRow: Base | IIndexable) {
     this.editing = itemRow;

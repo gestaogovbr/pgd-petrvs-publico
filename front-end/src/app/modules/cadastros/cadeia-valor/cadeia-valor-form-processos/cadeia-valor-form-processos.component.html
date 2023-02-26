@@ -1,0 +1,43 @@
+<editable-form noButtons [form]="form!" [disabled]="formDisabled">
+    <div class="row">
+        <grid [items]="items" [form]="form!" [hasDelete]="true" [add]="addProcesso.bind(this)" [load]="loadProcesso.bind(this)" [remove]="removeProcesso.bind(this)" [save]="saveProcesso.bind(this)" editable>
+            <columns>
+                <column title="Nível" [template]="nivel" type="template">
+                    <ng-template let-row="row" let-metadata="metadata" #nivel>
+                        <small class="d-block">{{getSequencia(metadata, row)}}</small>
+                    </ng-template>
+                </column>
+                <column title="Processos" [template]="processo" [editTemplate]="editProcesso">
+                    <ng-template let-row="row" let-metadata="metadata" #processo>
+                        <strong class="d-block" [style.margin-left.px]="getNivelSequencia(metadata)">{{row.nome || ""}}</strong>
+                    </ng-template>
+                    <ng-template let-row="row" #editProcesso>
+                        <input-text [size]="12" controlName="nome" [control]="form!.controls.nome"></input-text>
+                    </ng-template>
+                </column>
+                <column type="options" [dynamicButtons]="dynamicButtons.bind(this)" ></column>
+            </columns>
+        </grid>
+    </div>
+</editable-form>
+
+
+<!--
+nome
+inio          fim         unidade
+-------------------------------------------------------------------------------------
+Nível               Processos      [ + ]
+----------+--------------------------
+1        Proc 1
+1.1        Proc 2
+1.2        Proc 3
+2        Proc 4
+2.1        Proc 5
+2.1.1        Proc 6
+
+-
+Pai: Raiz
+Processo: [     ]
+
+
+//-->
