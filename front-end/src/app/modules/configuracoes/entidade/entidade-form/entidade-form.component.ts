@@ -69,7 +69,7 @@ export class EntidadeFormComponent extends PageFormBase<Entidade, EntidadeDaoSer
       this.cidade?.loadSearch(entity.cidade || entity.cidade_id),
       this.gestor!.loadSearch(entity.gestor || entity.gestor_id),
       this.gestorSubstituto!.loadSearch(entity.gestor_substituto || entity.gestor_substituto_id),
-      this.tipoModalidade?.loadSearch(entity.tipoModalidade || entity.tipo_modalidade_id)
+      this.tipoModalidade?.loadSearch(entity.tipo_modalidade || entity.tipo_modalidade_id)
     ]);
     form.patchValue(this.util.fillForm(formValue, entity));
   }

@@ -3,11 +3,13 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputWorkloadComponent, UnitWorkload } from 'src/app/components/input/input-workload/input-workload.component';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
+import { TemplateDaoService } from 'src/app/dao/template-dao.service';
 import { TipoModalidadeDaoService } from 'src/app/dao/tipo-modalidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Entidade, EntidadeNotificacoes } from 'src/app/models/entidade.model';
 import { Expediente } from 'src/app/models/expediente.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
+import { TemplateService } from 'src/app/modules/uteis/templates/template.service';
 import { NotificacaoService } from 'src/app/services/notificacao.service';
 
 @Component({
@@ -22,11 +24,15 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
   public form: FormGroup;
   public formNomenclatura: FormGroup;
   public tipoModalidadeDao: TipoModalidadeDaoService;
+  public templateDao: TemplateDaoService;
+  public template: TemplateService;
   public notificacao: NotificacaoService;
 
   constructor(public injector: Injector) {
     super(injector, Entidade, EntidadeDaoService);
     this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
+    this.templateDao = injector.get<TemplateDaoService>(TemplateDaoService);
+    this.template = injector.get<TemplateService>(TemplateService);
     this.notificacao = injector.get<NotificacaoService>(NotificacaoService);
     this.modalWidth = 1200;
     this.form = this.fh.FormBuilder({
@@ -48,7 +54,9 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
       expediente: {default: new Expediente()},
       carga_horaria_padrao: {default: 8},
       forma_contagem_carga_horaria: {default: "DIA"},
-      api_public_key: {default: ""}
+      api_public_key: {default: ""},
+      template_adesao_id: {default: null},
+      template_adesao_cancelamento_id: {default: null}
     }, this.cdRef, this.validate);
     this.formNomenclatura = this.fh.FormBuilder({
       id: {default: ""},

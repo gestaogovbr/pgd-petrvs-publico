@@ -1,13 +1,9 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
-import { AfastamentoDaoService } from 'src/app/dao/afastamento-dao.service';
 import { ChangeDaoService } from 'src/app/dao/change-dao.service';
-import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
-import { DaoBaseService } from 'src/app/dao/dao-base.service';
-import { Base, IIndexable } from 'src/app/models/base.model';
+import { IIndexable } from 'src/app/models/base.model';
 import { Change } from 'src/app/models/change.model';
-import { TipoAtividade } from 'src/app/models/tipo-atividade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
 @Component({
@@ -19,6 +15,11 @@ export class ChangeFormComponent extends PageFormBase<Change, ChangeDaoService> 
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   
   public objeto?: {'label': string, 'value': string};
+  public delta: any = {};
+  public resultado: any[] = [];
+  public valoresAtuais?: any[];
+  public valoresAnteriores?: any[];
+  public valoresAlterados: any[] = [];
  
   constructor(public injector: Injector) {
     super(injector, Change, ChangeDaoService);
@@ -28,8 +29,7 @@ export class ChangeFormComponent extends PageFormBase<Change, ChangeDaoService> 
       date_time: {default: null},
       table_name: {default: ""},
       type: {default: ""},
-      row_id: {default: ""},
-      delta: {default: ""}
+      row_id: {default: ""}
     }, this.cdRef);
   }
 
@@ -58,9 +58,7 @@ export class ChangeFormComponent extends PageFormBase<Change, ChangeDaoService> 
   public loadData(entity: Change, form: FormGroup): void {
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
-    this.form!.controls.row_id.setValue(this.objeto!.value);
-    //this.form!.controls.delta.setValue(JSON.stringify(this.form!.controls.delta));
-    this.cdRef.detectChanges();
+    this.preparaFormulario(entity);
   }
 
   public initializeData(form: FormGroup): void {
@@ -72,6 +70,26 @@ export class ChangeFormComponent extends PageFormBase<Change, ChangeDaoService> 
       const change = this.util.fill(new Change(), this.entity!);
       resolve(this.util.fillForm(change, this.form!.value));
     });
+  }
+
+  public preparaFormulario(entity: Change){
+    this.form!.controls.row_id.setValue(this.objeto!.value);
+    this.delta = this.util.friendlyJson(entity.delta);
+    if(this.delta.versao == '2.0'){
+      this.valoresAtuais = this.util.endentarArray(this.util.objectToArray(this.delta['Valores atuais']));
+      this.valoresAnteriores = this.util.endentarArray(this.util.objectToArray(this.delta['Valores anteriores']));
+      (this.delta['Valores alterados'] as Array<any>).forEach(element => {
+        let path = (element[0] as string).split('*');
+        if(path.length > 1){
+          for (let index = 0; index < path.length - 1; index++) {
+            const atrib = path[index];
+            if(!(this.valoresAlterados.find(x => JSON.stringify(x) === JSON.stringify([index*15,atrib,'','','grupo'])))) this.valoresAlterados.push([index*15,atrib,'','','grupo']);
+          }
+          this.valoresAlterados.push([(path.length - 1)*15,path.pop(),element[1],element[2],'']);
+        }else{ this.valoresAlterados.push([0,...element,'']); }
+      }); 
+    }else{this.resultado = this.util.endentarArray(this.util.objectToArray(this.delta));}
+    this.cdRef.detectChanges();
   }
 
 }

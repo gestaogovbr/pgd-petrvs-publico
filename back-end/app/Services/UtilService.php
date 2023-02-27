@@ -30,8 +30,15 @@ class UtilService
         return empty($value) || gettype($value) == "array" ? $default : $value;
     }
 
-    public function object2array($object) {
-        return @json_decode(@json_encode($object),1);
+    public function object2array($object, $k = 1) {
+        return @json_decode(@json_encode($object),$k);
+    }
+
+    public static function arrayToObject($array) {
+        foreach($array as $key => $value) {
+          if(is_array($value)) $array[$key] = static::arrayToObject($value);
+        }
+        return (object) $array;
     }
 
     public static function getTimeFormatted($dataHora) {
@@ -396,4 +403,76 @@ class UtilService
         }        
         return false;
     }
+
+    /**
+     * @param array $valoresAtuais  Array com os valores atuais dos atributos, no formato [...['string', any]]
+     * @param array $valoresAnteriores  Array com os valores anteriores dos atributos, no formato [...['string', any]]
+     * @return      Array com as diferenças encontradas, no formato [...['path\para\chave', 'valor atual', 'valor antigo']]
+     */
+    public function differentAttributes(array $valoresAtuais, array $valoresAnteriores): array {
+        $diferenca=array();
+        $incluirDiferenca = function (string $pathParaAtributo, $valorAtual, $valorAnterior) use (&$diferenca) {
+            array_push($diferenca,[$pathParaAtributo,$valorAtual,$valorAnterior]);
+        };
+        foreach($valoresAtuais as $atributo => $valorAtual) {
+            $valorAnterior = $valoresAnteriores[$atributo] ?? null;
+            if( is_array($valorAtual) || $valorAtual === '[]') {                    // SE O VALOR ATUAL FOR UM ARRAY
+                if( !(is_array($valorAnterior) || $valorAnterior === '[]')) { 
+
+                    if($valorAnterior) {
+                        $incluirDiferenca($atributo,$valorAtual,$valorAnterior);
+                    }else{
+                        $new_diff = $this->differentAttributes($valorAtual === '[]' ? [] : $valorAtual, []);
+                        if( !empty($new_diff) ) {
+                            foreach ($new_diff as $dif) { $incluirDiferenca("{$atributo}*{$dif[0]}",$dif[1],$dif[2]); }
+                        }
+                    }
+
+                } else {
+                    $new_diff = $this->differentAttributes($valorAtual === '[]' ? [] : $valorAtual, $valorAnterior === '[]' ? [] : $valorAnterior);
+                    if( !empty($new_diff) ) {
+                        foreach ($new_diff as $dif) { $incluirDiferenca("{$atributo}*{$dif[0]}",$dif[1],$dif[2]); }
+                    }
+                }
+            } else if( is_string($valorAtual) && json_decode($valorAtual) ){        // SE O VALOR ATUAL FOR UMA STRING JSON                    
+                if( is_array($valorAnterior) ){                                         // E O VALOR ANTERIOR FOR UM ARRAY
+                    if(is_array($this->object2array(json_decode($valorAtual)))) {     //... se o valor atual puder ser convertido para array,
+                        $new_diff = $this->differentAttributes($this->object2array(json_decode($valorAtual)),$valorAnterior); //... chama a função recursivamente passando os dois arrays
+                        if( !empty($new_diff) ) {
+                            foreach ($new_diff as $dif) { $incluirDiferenca("{$atributo}*{$dif[0]}",$dif[1],$dif[2]); }
+                        }                    
+                    } else {
+                        $incluirDiferenca($atributo,$valorAtual,$valorAnterior);      //... se não puder, inclui essa diferença
+                    }                               
+                }else if( (is_string($valorAnterior) && json_decode($valorAnterior)) || json_encode($valorAnterior) ) {  // E O VALOR ANTERIOR TAMBÉM FOR UMA STRING/OBJETO JSON 
+                    //... se ambos puderem ser convertidas para array, chama-se a função recursivamente                    
+                    if(is_array($this->object2array(json_decode($valorAtual))) && (json_encode($valorAnterior) ? is_array($this->object2array($valorAnterior)) : is_array($this->object2array(json_decode($valorAnterior),3)))){
+                        $new_diff = $this->differentAttributes($this->object2array(json_decode($valorAtual)),json_encode($valorAnterior) ? $this->object2array($valorAnterior) : $this->object2array(json_decode($valorAnterior),3));
+                        if( !empty($new_diff) ) {
+                            foreach ($new_diff as $dif) { $incluirDiferenca("{$atributo}*{$dif[0]}",$dif[1],$dif[2]); }
+                        }                      
+                    }else{      //... caso contrário, inclui essa diferença
+                        if($valorAnterior != $valorAtual) $incluirDiferenca($atributo,$valorAtual,$valorAnterior);
+                    }
+                } else if( json_encode($valorAnterior) ) {                        
+                    if( json_encode($valorAnterior) != $valorAtual ) $incluirDiferenca($atributo,$valorAtual,json_encode($valorAnterior)); 
+                }
+            } else if( strtotime($valorAtual) && strtotime($valorAnterior) ) {      // SE OS VALORES ATUAL E ANTERIOR FOREM STRING DO TIPO DATA E/OU HORA 
+                if( strtotime($valorAtual) != strtotime($valorAnterior) ) $incluirDiferenca($atributo,$valorAtual,$valorAnterior); 
+            } else if( strtotime($valorAtual) && is_a(new MomentPHP($valorAtual),'DateTime') && is_a(new MomentPHP($valorAnterior),'DateTime') ){
+                $incluirDiferenca($atributo,$valorAtual,$valorAnterior);          // SE O VALOR ATUAL FOR UMA STRING DO TIPO DATA E/OU HORA E O VALOR ANTERIOR FOR UM OBJETO DO TIPO DATETIME
+            } else if( $valorAnterior != $valorAtual ) { 
+                $incluirDiferenca($atributo,$valorAtual,$valorAnterior);          // SE NÃO FOR NENHUM DOS CASOS ANTERIORES
+            }
+        }
+        return $diferenca;
+    }
+
 }
+
+/* EXEMPLO:
+
+$a = ['nome' => 'Ricardo', 'sexo' => 'MASC', 'endereco' => 'Av. Abdias Neves, 2168', 'esposa' => ['nome' => 'Suzana', 'idade' => 49]];
+$b = ['nome' => 'Ricardo de Sousa', 'sexo' => 'MASC', 'endereco' => [
+    'logradouro' => 'Av. Abdias Neves', 'numero' => '2168'], 'esposa' => ['nome' => 'Susana', 'idade' => 49]];
+$diferenca = ['nome' => 'Ricardo', 'endereco' => 'Av. Abdias Neves, 2168', 'esposa' => ['nome' => 'Suzana']]; */

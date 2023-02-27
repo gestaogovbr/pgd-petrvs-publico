@@ -73,10 +73,11 @@
                         </column>
                         <column title="Status" [template]="vigente">
                             <ng-template let-row="row" #vigente>
-                                <span [class]="lookup.getColor(lookup.DOCUMENTO_STATUS, row.status)">
+                                <badge [color]="lookup.getColor(lookup.DOCUMENTO_STATUS, row.status)" [icon]="lookup.getIcon(lookup.DOCUMENTO_STATUS, row.status)" [label]="lookup.getValue(lookup.DOCUMENTO_STATUS, row.status)"></badge>
+                                <!--span [class]="lookup.getColor(lookup.DOCUMENTO_STATUS, row.status)">
                                     <i [class]="lookup.getIcon(lookup.DOCUMENTO_STATUS, row.status)"></i>
                                     {{lookup.getValue(lookup.DOCUMENTO_STATUS, row.status)}}
-                                </span>
+                                </span//-->
                                 <span *ngIf="isVigente(row)" class="badge rounded-pill bg-info text-dark">
                                     <i class="bi bi-clipboard-check"></i>
                                     Vigente

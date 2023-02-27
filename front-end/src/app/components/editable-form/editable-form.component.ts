@@ -69,8 +69,10 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
   @Input() noMargin?: string;
   @Input() forceInvalid: boolean = false;
   @Input() set disabled(value: boolean) {
-    this._disabled = value;
-    if(value) this.disableAll();
+    if(this._disabled != value) {
+      this._disabled = value;
+      this.disableAll(value);
+    }
   }
   get disabled(): boolean {
     return this._disabled;
@@ -118,7 +120,7 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
   }
 
   ngAfterViewInit() {
-    if(this.disabled) this.disableAll();
+    if(this.disabled) this.disableAll(true);
   }
 
   public get components() {
@@ -143,9 +145,9 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
     ];
   }
 
-  public disableAll() {
+  public disableAll(disabled: boolean) {
     for (const component of this.components) {
-      component.disabled = "true";
+      component.disabled = disabled ? "true" : undefined;
     }
     if(this.disable) this.disable.emit(new Event("disabled"));
   }

@@ -69,8 +69,8 @@ export class AdesaoFormComponent extends PageFormBase<Adesao, AdesaoDaoService> 
       data_fim: { default: "" },
       status: { default: "SOLICITADO" },
       programa_id: { default: "" },
-      usuario_id: { default: "" },
-      unidade_id: { default: "" },
+      usuarios_id: { default: "" },
+      unidades_id: { default: "" },
       entidade_id: { default: "" },
       tipo_modalidade_id: { default: "" },
       documentos: { default: [] },
@@ -91,6 +91,8 @@ export class AdesaoFormComponent extends PageFormBase<Adesao, AdesaoDaoService> 
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
+
+    // TODO: Implementar validações
 
     // if(['usuario_id', 'unidade_id', 'programa_id', 'tipo_modalidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
     //   result = "Obrigatório";
@@ -117,8 +119,8 @@ export class AdesaoFormComponent extends PageFormBase<Adesao, AdesaoDaoService> 
   }
 
   public onTipoModalidadeSelect(selected: SelectItem) {
-    const tipoModalidade = this.tipoModalidade?.searchObj as TipoModalidade;
-    if (tipoModalidade) this.form?.controls.ganho_produtividade.setValue(tipoModalidade.ganho_produtividade);
+    /*const tipoModalidade = this.tipoModalidade?.searchObj as TipoModalidade;
+    if (tipoModalidade) this.form?.controls.ganho_produtividade.setValue(tipoModalidade.ganho_produtividade);*/
   }
 
   public onUsuarioSelect(selected: SelectItem) {
@@ -171,7 +173,6 @@ export class AdesaoFormComponent extends PageFormBase<Adesao, AdesaoDaoService> 
     }
     this.loadData(this.entity, this.form!);
   }
-
 
   public saveData(form: IIndexable): Promise<Adesao> {
     return new Promise<Adesao>((resolve, reject) => {
@@ -284,7 +285,7 @@ export class AdesaoFormComponent extends PageFormBase<Adesao, AdesaoDaoService> 
   public addUsuarioHandle(): LookupItem | undefined {
     let result = undefined;
     const key = this.dao!.generateUuid();
-    if (this.form!.controls.usuario_id.value?.length && this.util.validateLookupItem(this.form!.controls.usuarios_list.value, key)) {
+    if (this.form!.controls.usuarios_id.value?.length && this.util.validateLookupItem(this.form!.controls.usuarios_list.value, key)) {
       result = {
         key: key,
         data: this.usuario?.selectedItem?.entity,
@@ -298,7 +299,7 @@ export class AdesaoFormComponent extends PageFormBase<Adesao, AdesaoDaoService> 
   public addUnidadeHandle(): LookupItem | undefined {
     let result = undefined;
     const key = this.dao!.generateUuid();
-    if (this.form!.controls.unidade_id.value?.length && this.util.validateLookupItem(this.form!.controls.unidades_list.value, key)) {
+    if (this.form!.controls.unidades_id.value?.length && this.util.validateLookupItem(this.form!.controls.unidades_list.value, key)) {
       result = {
         key: key,
         data: this.unidade?.selectedItem?.entity,

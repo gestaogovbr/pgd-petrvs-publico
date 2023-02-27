@@ -8,6 +8,7 @@ import { QueryContext } from './query-context';
 import { v4 as uuid } from 'uuid';
 import { SelectItem } from '../components/input/input-base';
 import { UtilService } from '../services/util.service';
+import { TemplateDataset } from '../components/input/input-editor/input-editor.component';
 
 export type QueryOrderBy = [string, "desc" | "asc" | undefined];
 export type queryEvents = {
@@ -31,6 +32,36 @@ export class DaoBaseService<T extends Base> {
     protected collection: string,
     protected injector: Injector
   ) { }
+
+  public datasource(entity: T, deeps?: string[]): IIndexable {
+    return this.values(entity, this.dataset(deeps));
+  }
+
+  public dataset(deeps?: string[]): TemplateDataset[] {
+    return [];
+  }
+
+  public values(entity: IIndexable, dataset: TemplateDataset[]): IIndexable {
+    return dataset.reduce((a, v) => {
+      if(v.type == "OBJECT" && typeof entity[v.field] != "undefined") {
+        a[v.field] = this.values(entity[v.field], v.fields || []);
+      } else if(v.type == "ARRAY" && Array.isArray(entity[v.field])) {
+        a[v.field] = entity[v.field].map((x: IIndexable) => this.values(x, v.fields || []));
+      } else if(v.type == "VALUE" && typeof entity[v.field] != "undefined") {
+        a[v.field] = entity[v.field];
+      }
+      return a;
+    }, {} as IIndexable);
+  }
+
+  public deepsFilter(fields: TemplateDataset[], deeps?: string[]): TemplateDataset[] {
+    fields = fields.filter(x => typeof fields == "undefined" || !["ARRAY", "OBJECT"].includes(x.type || "VALUE") || deeps?.includes(x.field));
+    return fields.map(x => ["ARRAY", "OBJECT"].includes(x.type || "VALUE") && x.dao ? Object.assign(x, { fields: x.dao!.dataset([]) }) : x);
+  }
+
+  public deep(deeps: string[] | undefined, field: string, label: string, type: "ARRAY" | "OBJECT", dao: DaoBaseService<Base>): TemplateDataset | undefined {
+    return typeof deeps == "undefined" || deeps.includes(field) ? { field, label, type, fields: dao.dataset([]) } : undefined;
+  }
 
   public searchText(query: string, fieldsToSearch?: string[], where?: any[], orderBy?: QueryOrderBy[]): Promise<SelectItem[]> {
     return new Promise<SelectItem[]>((resolve, reject) => {

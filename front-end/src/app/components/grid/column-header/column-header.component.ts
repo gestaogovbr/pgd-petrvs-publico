@@ -41,7 +41,7 @@ export class ColumnHeaderComponent implements OnInit {
   }
 
   public async onAddClick() {
-    if(this.grid!.selectable) {
+    if(this.grid!.selectable && !this.grid!.isEditable) {
       await this.grid!.addToolbarButtonClick();
     } else {
       this.grid!.onAddItem();
