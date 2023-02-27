@@ -5,7 +5,7 @@ import {TemplateDaoService} from "../../../../dao/template-dao.service";
 import {EditableFormComponent} from "../../../../components/editable-form/editable-form.component";
 import {AbstractControl, FormGroup} from "@angular/forms";
 import {IIndexable} from "../../../../models/base.model";
-//import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
 
 @Component({
   selector: 'app-template-form',
@@ -15,14 +15,16 @@ import {IIndexable} from "../../../../models/base.model";
 export class TemplateFormComponent extends PageFormBase<Template, TemplateDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
 
-  //public Editor = ClassicEditor;
+  public dataset: TemplateDataset[] = [];
+  public template: TemplateDaoService;
 
   constructor(public injector: Injector) {
     super(injector, Template, TemplateDaoService);
-    this.modalWidth = 1100;
+    this.template = injector.get<TemplateDaoService>(TemplateDaoService);
+    this.modalWidth = 1200;
     this.form = this.fh.FormBuilder({
       titulo: {default: ""},
-      tipo: {default: "TCR"},
+      especie: {default: "OUTRO"},
       numero: {default: ""},
       conteudo: {default: ""},
       data_inicio: {default: ""},
@@ -36,13 +38,15 @@ export class TemplateFormComponent extends PageFormBase<Template, TemplateDaoSer
     // }
     return result;
   }
+
   public loadData(entity: Template, form: FormGroup): void {
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
+    this.dataset = this.template.dataset(form.controls.especie.value);
   }
 
   public initializeData(form: FormGroup): void {
-    form.patchValue(new Template());
+    form.patchValue(new Template({ especie: this.queryParams?.especie || "OUTRO" }));
   }
 
   public saveData(form: IIndexable): Promise<Template> {

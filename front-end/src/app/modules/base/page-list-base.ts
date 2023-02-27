@@ -64,6 +64,8 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
   public rowsLimit = QueryContext.DEFAULT_LIMIT;
   public selectable: boolean = false;
   public static selectRoute?: FullRoute;
+  public afterAdd?: (modalResult: any) => void;
+  public afterEdit?: (modalResult: any) => void;
   public storeFilter?: (filter?: FormGroup) => any;
   public loadFilterParams?: (params: any, filter?: FormGroup) => void;
   public entities: LogEntity[] = [];
@@ -195,6 +197,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
       modalClose: (modalResult) => {
         if(modalResult) {
           this.refresh();
+          if(this.afterAdd) this.afterAdd(modalResult);
           this.dialog.topAlert("Registro incluído com sucesso!", 5000);
         }
       }
@@ -220,6 +223,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
       modalClose: (modalResult) => {
         if(modalResult) {
           this.refresh(doc.id);
+          if(this.afterEdit) this.afterEdit(modalResult);
           this.dialog.topAlert("Registro alterado com sucesso!", 5000);
         }
       }

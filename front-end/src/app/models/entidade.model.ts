@@ -2,6 +2,7 @@ import { LookupItem } from '../services/lookup.service';
 import { Base } from './base.model';
 import { Cidade } from './cidade.model';
 import { Expediente } from './expediente.model';
+import { Template } from './template.model';
 import { TipoModalidade } from './tipo-modalidade.model';
 import { Usuario } from './usuario.model';
 
@@ -32,9 +33,10 @@ export class EntidadeNotificacoes {
 
 export class Entidade extends Base {
     public cidade?: Cidade;
-    public tipoModalidade?: TipoModalidade;
+    public tipo_modalidade?: TipoModalidade;
     public gestor?: Usuario; /* Objeto do ususario gestor */
     public gestor_substituto?: Usuario; /* Objeto do ususario gestor substituto */
+    public template_adesao?: Template;
 
     public sigla: string = ""; // Sigla da entidade
     public nome: string = ""; // Nome da entidade
@@ -44,16 +46,19 @@ export class Entidade extends Base {
     public gravar_historico_processo: number = 0; //default(0) //Se grava andamento da demanda dentro do processo vinculado (Caso seja o Sei, será em Consultar Andamento)
     public layout_formulario_demanda: string = "COMPLETO"; //["COMPLETO", "SIMPLIFICADO"]) default("COMPLETO") //Layout para a tela do formulário de demandas (cadastro simplificado ou completo)
     public campos_ocultos_demanda: LookupItem[] = []; //Campos que se deseja ocultar do formulário de demanda, com seu respectivo valor padrão, em caso de null será utilizado o valor default do banco"
-    public tipo_modalidade_id: string | null = null; //Tipo de modalidade utilizada ao criar plano de trabalho
-    public cidade_id: string | null = null;
     public uf: string | null = null; /* UF para abrangencia estadual */
     public nomenclatura: Nomenclatura[] = []; /* Nomenclatura da entidade */
     public notificacoes: EntidadeNotificacoes = new EntidadeNotificacoes();
     public url_sei: string = ""; /* Url base do sei */
-    public gestor_id: string | null = null; // Usuário gestor da unidade
-    public gestor_substituto_id: string | null = null; // Usuário gestor substituto da unidade
     public forma_contagem_carga_horaria: TipoCargaHoraria = "DIA"; // Forma de contagem padrão da carga horária
     public expediente: Expediente = new Expediente(); // Expediente (Não nulo)
+
+    public gestor_id: string | null = null; // Usuário gestor da unidade
+    public gestor_substituto_id: string | null = null; // Usuário gestor substituto da unidade
+    public cidade_id: string | null = null;
+    public tipo_modalidade_id: string | null = null; //Tipo de modalidade utilizada ao criar plano de trabalho
+    public template_adesao_id: string | null = null; //Templeta utilizado no documento da adesão
+    public template_adesao_cancelamento_id: string | null = null; //Templeta utilizado no documento de cancelamento da adesão
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

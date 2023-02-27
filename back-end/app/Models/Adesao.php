@@ -29,9 +29,9 @@ class Adesao extends ModelBase
         'programa_id', /* char(36); */
         'entidade_id', /* char(36); */
         'tipo_modalidade_id', /* char(36); NOT NULL; */
+        'usuario_id', /* char(36); */
+        'unidade_id', /* char(36); */
         //'data_fim', /* datetime; */// Data final do registro
-        //'usuario_id', /* char(36); */
-        //'unidade_id', /* char(36); */
         //'numero', /* int; NOT NULL; */// Número da adesão (Gerado pelo sistema)
         //'documento_id', /* char(36); */
     ];

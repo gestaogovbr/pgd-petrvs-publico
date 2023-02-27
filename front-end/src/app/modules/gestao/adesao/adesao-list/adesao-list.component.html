@@ -55,6 +55,18 @@
                 <span> {{row.tipo_modalidade?.nome || ""}}</span>
             </ng-template>
         </column>
+        <column title="Usuários" [template]="columnUsuario">
+            <ng-template let-row="row" #columnUsuario>
+                <profile-picture *ngFor="let usuario of row.usuarios" [url]="usuario.usuario?.url_foto" [hint]="util.apelidoOuNome(usuario.usuario)"></profile-picture>
+            </ng-template>
+        </column>
+        <column title="Unidades" [template]="columnUnidades">
+            <ng-template let-row="row" #columnUnidades>
+                <div class="text-nowrap">
+                    <badge *ngFor="let unidade of row.unidades" color="light" icon="fa-unity fab" [label]="unidade.unidade.sigla"></badge>
+                </div>
+            </ng-template>
+        </column>
         <column [titleTemplate]="titleVigencia" [template]="columnInicioVigencia">
             <ng-template let-header="header" #titleVigencia>
                 Vigência de<br>
@@ -62,10 +74,11 @@
                 <order by="data_fim_vigencia" [header]="header">Fim</order>
             </ng-template>
             <ng-template let-row="row" #columnInicioVigencia>
-                <span> {{dao!.getDateFormatted(row.data_inicio_vigencia) + " até " + dao!.getDateFormatted(row.data_fim_vigencia)}}</span>
+                <badge color="light" icon="bi bi-box-arrow-right" [label]="util.getDateTimeFormatted(row.data_inicio_vigencia)" hint="Data de início"></badge><br>
+                <badge color="light" icon="bi bi-box-arrow-in-right" [label]="util.getDateTimeFormatted(row.data_fim_vigencia)" hint="Data de término"></badge>
             </ng-template>
         </column>
-        <column title="TCR" [template]="documento">
+        <column title="Termo" [template]="documento">
             <ng-template let-row="row" #documento>
                 <span *ngIf="row.documento?.numero_processo?.length" class="badge bg-light text-dark" [attr.role]="row.documento?.numero_processo?.length ? 'button' : undefined" data-bs-toggle="tooltip" data-bs-placement="top" (click)="onProcessoClick(row)" [title]="allPages.getButtonTitle(row.documento?.numero_processo, row.documento?.numero_documento)">
                     <i [class]="'bi ' + (row.documento?.numero_processo?.length ? 'bi bi-folder-symlink' : 'bi bi-x-lg')"></i>

@@ -1,7 +1,8 @@
 import { Component, ElementRef, EventEmitter, HostBinding, Injector, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, ControlContainer, FormGroup, FormGroupDirective } from "@angular/forms";
 import { EditorComponent } from '@tinymce/tinymce-angular';
-import { IIndexable } from 'src/app/models/base.model';
+import { DaoBaseService } from 'src/app/dao/dao-base.service';
+import { Base, IIndexable } from 'src/app/models/base.model';
 import { Editor } from 'tinymce';
 import { InputBase, LabelPosition } from "../input-base";
 
@@ -11,6 +12,7 @@ export type TemplateDataset = {
   field: string,
   label: string,
   type?: TemplateFieldType,
+  dao?: DaoBaseService<Base>;
   fields?: TemplateDataset[]
 }
 
@@ -108,7 +110,7 @@ export class InputEditorComponent extends InputBase implements OnInit {
 
   public editorConfig = {
     plugins: 'print preview paste importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists wordcount imagetools textpattern noneditable help charmap quickbars emoticons',
-    toolbar: 'customRefreshTemplate | undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl',
+    toolbar: 'customRefreshTemplate | undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl',
     imagetools_cors_hosts: ['picsum.photos'],
     toolbar_sticky: true,
     image_advtab: true,
@@ -124,7 +126,8 @@ export class InputEditorComponent extends InputBase implements OnInit {
     content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'*/
     setup: ((editor: Editor) => {
       editor.ui.registry.addButton('customRefreshTemplate', {
-        text: 'Template',
+        icon: 'code-sample',
+        tooltip: "Inserir macro (valores dinâmicos)",
         onAction: (_) => this.value = this.renderTemplate(this.template || "", this.datasource || {}) //;;editor.insertContent(`&nbsp;<strong>It's my button!</strong>&nbsp;`)
       });
     }).bind(this)

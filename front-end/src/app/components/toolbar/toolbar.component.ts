@@ -11,6 +11,7 @@ export type ToolbarButton = {
   metadata?: RouteMetadata,
   class?: string,
   icon?: string,
+  disabled?: boolean | (() => boolean),
   iconChar?: string, 
   color?: string,
   label?: string,
@@ -63,6 +64,10 @@ export class ToolbarComponent extends ComponentBase implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  public buttonDisabled(button: ToolbarButton): boolean {
+    return typeof button.disabled == "function" ? button.disabled() : !!button.disabled;
   }
 
   public buttonPressed(button: ToolbarButton): boolean {

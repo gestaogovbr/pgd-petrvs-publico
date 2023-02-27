@@ -1,28 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
 
-/* Define variáveis do bootstrap */
-:root {
-    --bs-font-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    --bs-body-font-family: var(--bs-font-sans-serif);
-    --bs-body-font-size: 1rem;
-    --bs-body-font-weight: 400;
-    --bs-body-line-height: 1.5;
-    --bs-body-color: #212529;
-    --bs-body-bg: #fff;
-}
-
-body {
-    margin: 0px;
-    background: #f1f5f7;
-}
-
 .petrvs {
     /* Reseta todas as propriedades anteriores */
     all: initial;
     cursor: inherit;
+    --bs-body-font-size: 1rem;
 
     /* Sobrescreve propriedades do Sei */
     * {
+        --bs-body-font-size: 1rem;
         font-family: var(--bs-body-font-family);
         font-weight: var(--bs-body-font-weight);
         color: inherit;
@@ -194,6 +180,23 @@ body {
         box-shadow: 0px 2px 3px #ddd;
         margin-bottom: 30px;
     }
+}
+
+/* Define variáveis do bootstrap */
+:root {
+    --bs-font-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --bs-body-font-family: var(--bs-font-sans-serif);
+    --bs-body-font-size: 10px;
+    --bs-body-font-weight: 400;
+    --bs-body-line-height: 1.5;
+    --bs-body-color: #212529;
+    --bs-body-bg: #fff;
+}
+
+body {
+    margin: 0px;
+    //background: #f1f5f7;
+    font-size: var(--bs-body-font-size);
 }
 
 .full-container-button-group {

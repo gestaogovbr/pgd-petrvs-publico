@@ -42,16 +42,18 @@ class Entidade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.gravar_historico_processo = 0; //default(0) //Se grava andamento da demanda dentro do processo vinculado (Caso seja o Sei, será em Consultar Andamento)
         this.layout_formulario_demanda = "COMPLETO"; //["COMPLETO", "SIMPLIFICADO"]) default("COMPLETO") //Layout para a tela do formulário de demandas (cadastro simplificado ou completo)
         this.campos_ocultos_demanda = []; //Campos que se deseja ocultar do formulário de demanda, com seu respectivo valor padrão, em caso de null será utilizado o valor default do banco"
-        this.tipo_modalidade_id = null; //Tipo de modalidade utilizada ao criar plano de trabalho
-        this.cidade_id = null;
         this.uf = null; /* UF para abrangencia estadual */
         this.nomenclatura = []; /* Nomenclatura da entidade */
         this.notificacoes = new EntidadeNotificacoes();
         this.url_sei = ""; /* Url base do sei */
-        this.gestor_id = null; // Usuário gestor da unidade
-        this.gestor_substituto_id = null; // Usuário gestor substituto da unidade
         this.forma_contagem_carga_horaria = "DIA"; // Forma de contagem padrão da carga horária
         this.expediente = new _expediente_model__WEBPACK_IMPORTED_MODULE_1__["Expediente"](); // Expediente (Não nulo)
+        this.gestor_id = null; // Usuário gestor da unidade
+        this.gestor_substituto_id = null; // Usuário gestor substituto da unidade
+        this.cidade_id = null;
+        this.tipo_modalidade_id = null; //Tipo de modalidade utilizada ao criar plano de trabalho
+        this.template_adesao_id = null; //Templeta utilizado no documento da adesão
+        this.template_adesao_cancelamento_id = null; //Templeta utilizado no documento de cancelamento da adesão
         this.initialization(data);
     }
 }

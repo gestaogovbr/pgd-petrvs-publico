@@ -48,10 +48,6 @@ export class LookupService {
     { key: 'SIMPLIFICADO', value: "Simplificado" }
   ];
 
-  public TEMPLATE_TIPO: LookupItem[] = [
-    { key: 'TCR', value: "Termo de Ciência e Responsabilidade" }
-  ];
-
   public TIPO_CONTAGEM: LookupItem[] = [
     { key: 'DISTRIBUICAO', value: "DISTRIBUIÇÃO" },
     { key: 'ENTREGA', value: "ENTREGA" }
@@ -101,16 +97,19 @@ export class LookupService {
   ];
 
   public DOCUMENTO_STATUS: LookupItem[] = [
-    { key: "GERADO", value: "Gerado", icon: "bi bi-file-earmark-check", color: "badge rounded-pill bg-success" },
-    { key: "AGUARDANDO_SEI", value: "Aguardando SEI", icon: "bi bi-hourglass-split", color: "badge rounded-pill bg-warning text-dark" }
+    { key: "GERADO", value: "Gerado", icon: "bi bi-file-earmark-check", color: "success" },
+    { key: "AGUARDANDO_SEI", value: "Aguardando SEI", icon: "bi bi-hourglass-split", color: "warning" }
   ];
 
   public DOCUMENTO_ESPECIE: LookupItem[] = [
     { key: 'TERMO_ADESAO', value: "Termo de adesão (OBSOLETO)", icon: "bi bi-file-earmark-excel", color: "danger" },
     { key: 'SEI', value: "Documento SEI", icon: "bi bi-exclamation", color: "primary"},
     { key: 'TCR', value: "TCR", icon: "bi bi-file-medical-fill", color: "success"},
-    { key: 'TCR_CANCELAMENTO', value: "Cancelamento TCR", icon: "bi bi-file-earmark-x", color: "danger" }
+    { key: 'TCR_CANCELAMENTO', value: "Cancelamento TCR", icon: "bi bi-file-earmark-x", color: "danger" },
+    { key: 'OUTRO', value: "Outro", icon: "bi bi-question-circle", color: "danger" }
   ]
+
+  public TEMPLATE_ESPECIE: LookupItem[] = this.DOCUMENTO_ESPECIE;
 
   public DIA_HORA_CORRIDOS_OU_UTEIS: LookupItem[] = [
     { key: 'HORAS_CORRIDAS', value: "Horas Corridas" },

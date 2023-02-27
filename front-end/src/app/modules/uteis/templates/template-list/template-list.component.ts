@@ -5,6 +5,8 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import {FormGroup} from "@angular/forms";
 import {PageListBase} from "src/app/modules/base/page-list-base";
 import {Adesao} from "../../../../models/adesao.model";
+import { Base, IIndexable } from 'src/app/models/base.model';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 
 @Component({
   selector: 'app-template-list',
@@ -14,11 +16,34 @@ import {Adesao} from "../../../../models/adesao.model";
 export class TemplateListComponent extends PageListBase<Template, TemplateDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
+  public selected?: Template; 
+  public form: FormGroup;
+  public selectButtons: ToolbarButton[] = [
+    {
+      color: "btn-outline-success", 
+      label: "Selecionar", 
+      icon: "bi-check-circle",
+      disabled: () => !this.selected,
+      onClick: () => this.onSelect(this.selected!)
+    }, 
+    {
+      color: "btn-outline-danger",
+      label: "Cancelar",
+      icon: "bi bi-dash-circle",
+      onClick: () => this.close()
+    }
+  ];
+
   constructor(public injector: Injector) {
     super(injector, Template, TemplateDaoService);
     this.title = this.lex.noun("TCR", true);
-    this.code="MOD_TEMP";
+    this.code = "MOD_TEMP";
+    this.modalWidth = 1200;
     this.filter = this.fh.FormBuilder({
+      titulo: {default: ""},
+      especie: {default: "OUTRO"}
+    });
+    this.form = this.fh.FormBuilder({
       titulo: {default: ""},
       conteudo: {default: ""}
     });
@@ -47,6 +72,11 @@ export class TemplateListComponent extends PageListBase<Template, TemplateDaoSer
     }
   }
 
+  ngAfterViewInit(): void {
+    super.ngAfterViewInit();
+    this.addParams = { especie: this.filter?.controls.especie.value };
+  }
+
   public filterClear(filter: FormGroup) {
     filter.controls.titulo.setValue("");
     super.filterClear(filter);
@@ -56,11 +86,21 @@ export class TemplateListComponent extends PageListBase<Template, TemplateDaoSer
     let result: any[] = [];
     let form: any = filter.value;
 
+    result.push(["especie", "==", form.especie]);
     if(form.titulo?.length) {
       result.push(["titulo", "like", "%" + form.titulo + "%"]);
     }
 
     return result;
+  }
+
+  public onTemplateSelect(selected: Base | IIndexable | null) {
+    this.selected = selected as Template || undefined;
+    this.form.patchValue({
+      titulo: this.selected?.titulo || "",
+      conteudo: this.selected?.conteudo || ""
+    });
+    this.cdRef.detectChanges();
   }
 
 }

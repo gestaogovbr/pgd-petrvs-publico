@@ -477,7 +477,7 @@ export class UtilService {
   public getDateTimeFormatted(dataHora: any, separator: string = " "): string{
     if(!dataHora) {
       return "";
-    } else if(dataHora instanceof Date){
+    } else if((dataHora instanceof Date) || (typeof dataHora == "string" && dataHora.match(UtilService.ISO8601_VALIDATE))){
       return this.getDateFormatted(dataHora) + separator + this.getTimeFormatted(dataHora);
     } else {
       return JSON.stringify(dataHora);

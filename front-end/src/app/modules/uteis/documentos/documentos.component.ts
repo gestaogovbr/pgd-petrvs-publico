@@ -9,12 +9,12 @@ import { DocumentoDaoService } from 'src/app/dao/documento-dao-service';
 import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
 import { IIndexable } from 'src/app/models/base.model';
-import { Documento, HasDocumentos } from 'src/app/models/documento.model';
+import { Documento, DocumentoEspecie, HasDocumentos } from 'src/app/models/documento.model';
 import { Template } from 'src/app/models/template.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 
-export type DocumentoEspecie = 'TERMO_ADESAO' | 'SEI' | 'TCR' | 'TCR_CANCELAMENTO' | 'OUTRO';
+//export type DocumentoEspecie = 'TERMO_ADESAO' | 'SEI' | 'TCR' | 'TCR_CANCELAMENTO' | 'OUTRO';
 
 @Component({
   selector: 'documentos',
@@ -26,8 +26,8 @@ export class DocumentosComponent extends PageFrameBase {
   @Input() cdRef: ChangeDetectorRef;
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: HasDocumentos | undefined) { super.entity = value; } get entity(): HasDocumentos | undefined { return super.entity; }
-  @Input() needSign: ((documento: Documento) => boolean) = (d: Documento) => true;
-  @Input() extraTags: ((row: HasDocumentos, metadata: any) => LookupItem[]) = (row: HasDocumentos, metadata: any) => [];
+  @Input() needSign: ((entity: HasDocumentos, documento: Documento) => boolean) = (e: HasDocumentos, d: Documento) => true;
+  @Input() extraTags: ((entity: HasDocumentos, documento: Documento, metadata: any) => LookupItem[]) = (e: HasDocumentos, d: Documento, m: any) => [];
   @Input() especie: DocumentoEspecie = 'OUTRO';
   @Input() dataset?: TemplateDataset[];
   @Input() datasource?: any;
@@ -50,6 +50,7 @@ export class DocumentosComponent extends PageFrameBase {
       hint: "Salvar o texto do documento",
       icon: "bi bi-plus-circle",
       color: "btn-outline-success",
+      disabled: () => !this.form!.valid,
       onClick: this.gravarEdicao.bind(this)
     },
     {
@@ -67,7 +68,9 @@ export class DocumentosComponent extends PageFrameBase {
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
     this.documentoDao = injector.get<DocumentoDaoService>(DocumentoDaoService);
+    this.modalWidth = 1200;
     this.form = this.fh.FormBuilder({
+      id: {default: ""},
       titulo: {default: ""},
       conteudo: {default: ""},
       dataset: {default: undefined},
@@ -95,15 +98,18 @@ export class DocumentosComponent extends PageFrameBase {
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
+
+    if(controlName == "titulo" && !control?.value?.length) {
+      result = "Obrigatório";
+    }
     return result;
   }
 
   public loadData(entity: IIndexable, form?: FormGroup) {
     this.entity = entity as HasDocumentos;
-    if(this.action == "add") this.grid!.onAddItem();
-    if(this.action == "edit") {
-      const row = this.grid!.selectById(this.documentoId || "");
-      this.grid!.onEditItem(row);
+    if(!this.grid!.editing && !this.grid!.adding) {
+      if(this.action == "new") this.grid!.onAddItem();
+      if(this.action == "edit") this.grid!.onEditItem(this.grid!.selectById(this.documentoId || ""));
     }
     //super.loadData(entity, form);
   }
@@ -121,6 +127,7 @@ export class DocumentosComponent extends PageFrameBase {
   public onSelect(row: any) {
     this.selected = row as Documento;
     this.form!.patchValue({
+      id: this.selected?.id || "",
       titulo: this.selected?.titulo_documento || "",
       conteudo: this.selected?.conteudo || "",
       dataset: this.selected?.dataset,
@@ -143,7 +150,7 @@ export class DocumentosComponent extends PageFrameBase {
     let result: ToolbarButton[] = [];
     let documento: Documento = row as Documento;
 
-    if(!this.isNoPersist && this.needSign(documento)) {
+    if(!this.isNoPersist && this.entity && this.needSign(this.entity, documento)) {
       result.push({hint: "Assinar", icon: "bi bi-pen", onClick: this.signDocumento.bind(this) });
     }
     result.push({hint: "Preview", icon: "bi bi-zoom-in", onClick: ((documento: Documento) => { this.dialog.html({title: "Termo de ciência e responsabilidade", modalWidth: 1000}, documento.conteudo || ""); }).bind(this) });
@@ -185,9 +192,13 @@ export class DocumentosComponent extends PageFrameBase {
     const documento = new Documento();
     documento.id = this.dao!.generateUuid();
     documento.entidade_id = this.auth.unidade?.entidade_id || null;
+    documento.especie = this.especie;
     documento._status = "ADD";
+
+    
     if(this.especie == "TERMO_ADESAO") documento.plano_id = this.entity!.id;
     if(["TCR", "TCR_CANCELAMENTO"].includes(this.especie)) documento.programa_adesao_id = this.entity!.id;
+    this.onSelect(documento);
     return documento;
     /*let result = await this.dialog.template({ title: "Edição de documento", modalWidth: 700 }, this.addDocumentoTemplate!, [
       {
@@ -237,6 +248,16 @@ export class DocumentosComponent extends PageFrameBase {
           })();
         }
       }});*/
+  }
+
+  public async saveDocumento(form: FormGroup, item: Documento) {
+    const entity = form.value;
+    item.titulo_documento = form.controls.titulo.value;
+    item.conteudo = form.controls.conteudo.value;
+    const documento = await this.documentoDao.save(item);
+    form.controls.id.setValue(documento.id);
+    item.id = documento.id;
+    return documento;
   }
 
   public onProcessoClick(row: any) {

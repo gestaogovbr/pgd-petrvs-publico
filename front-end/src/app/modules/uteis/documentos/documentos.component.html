@@ -1,28 +1,27 @@
 <div class="row">
   <div class="col-3" [class.d-none]="!!grid?.editing">
-    <grid [control]="gridControl" [form]="form!" #gridDocumentos [hasEdit]="true" [hasDelete]="false" [hasAdd]="true" [add]="addDocumento" editable [selectable]="true" (select)="onSelect($event)">
+    <grid [items]="items" [form]="form!" #gridDocumentos [hasEdit]="true" [hasDelete]="false" [hasAdd]="true" [add]="addDocumento.bind(this)" [save]="saveDocumento.bind(this)" editable [selectable]="true" (select)="onSelect($event)">
       <columns>
         <column title="#ID/Especie" [template]="documentoTemplate">
           <ng-template let-row="row" #documentoTemplate>
             <div class="row">
-              <strong>#{{row.numero}}</strong>
-              <small> • {{util.getDateTimeFormatted(row.data_inicio)}}</small>
-              <badge [color]="lookup.getColor(lookup.DOCUMENTO_ESPECIE, row.especie)" icon="bi bi-hash" [label]="lookup.getValue(lookup.DOCUMENTO_ESPECIE, row.especie)"></badge>
+              <strong>#{{row.numero}}<small> • {{util.getDateTimeFormatted(row.data_inicio)}}</small></strong>
             </div>
             <div class="row">
               <small>{{row.titulo_documento}}</small>
             </div>
             <div class="row">
-              <div class="col-6">
+              <div class="col-6 text-nowrap">
+                <badge [color]="lookup.getColor(lookup.DOCUMENTO_ESPECIE, row.especie)" icon="bi bi-hash" [label]="lookup.getValue(lookup.DOCUMENTO_ESPECIE, row.especie)"></badge>
                 <badge *ngIf="row.numero_processo?.length" icon="bi bi-folder-symlink" [click]="onProcessoClick" [hint]="allPages.getButtonTitle(row.numero_processo, row.numero_documento)">
                   {{row.numero_processo || "Não atribuído"}}<br>
                   <small>Sei nº {{row.numero_documento}}</small>
                 </badge>
                 <badge [color]="lookup.getColor(lookup.DOCUMENTO_STATUS, row.status)" [icon]="lookup.getIcon(lookup.DOCUMENTO_STATUS, row.status)" [label]="lookup.getValue(lookup.DOCUMENTO_STATUS, row.status)"></badge>
-                <badge *ngFor="let tag of extraTags(row, metadata)" [color]="tag.color" [icon]="tag.icon" [label]="tag.value"></badge>
+                <badge *ngFor="let tag of extraTags(entity!, row, metadata)" [color]="tag.color" [icon]="tag.icon" [label]="tag.value"></badge>
               </div>
               <div class="col-6">
-                <separator title="Assinaturas" small>
+                <separator *ngIf="row.assinaturas?.length" title="Assinaturas" small>
                   <profile-picture *ngFor="let assinatura of row.assinaturas" [url]="assinatura.usuario?.url_foto" [hint]="util.apelidoOuNome(assinatura.usuario)"></profile-picture>
                 </separator>
               </div>
@@ -34,19 +33,19 @@
     </grid>
   </div>
   <div [class]="!grid?.editing ? 'col-9' : 'col-12'">
-    <toolbar *ngIf="!!grid?.editing" [buttons]="editingButtons"></toolbar>
     <editable-form *ngIf="selected; else noSelected" noButtons [form]="form!" [disabled]="!grid?.editing">
       <div class="row">
         <input-text [size]="12" label="Título" [control]="form!.controls.titulo"></input-text>
       </div>
       <div>
-        <input-editor [size]="12" [control]="form!.controls.conteudo" [template]="templateEdit" [datasource]="datasourceEdit"></input-editor>
+        <input-editor [size]="12" label="Conteúdo" [control]="form!.controls.conteudo" [template]="templateEdit" [datasource]="datasourceEdit"></input-editor>
       </div>
     </editable-form>
     <ng-template #noSelected>
-      <div class="block w-100">
+      <div class="block w-100 text-center">
         Nenhum documento selecionado
       </div>
     </ng-template>
   </div>
 </div>
+<toolbar *ngIf="!!grid?.editing" [buttons]="editingButtons"></toolbar>

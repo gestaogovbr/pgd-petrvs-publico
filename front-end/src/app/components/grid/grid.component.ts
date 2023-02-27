@@ -547,9 +547,12 @@ export class GridComponent extends ComponentBase implements OnInit {
   }*/
 
   public onEditItem(row: any) {
-    (async () => {
-      await this.edit(row);
-    })();
+    if(!this.editing) {
+      this.editing = row; /* Previne multiplas chamadas para inserir */
+      (async () => {
+        await this.edit(row);
+      })();
+    }
   }
 
   public onDeleteItem(row: any) {
@@ -563,18 +566,23 @@ export class GridComponent extends ComponentBase implements OnInit {
   }
 
   public onAddItem() {
-    (async () => {
-      this.form.reset((this.form as unknown as IFormGroupHelper).initialState);
-      let newItem = this.add ? await this.add() : this.form.value;
-      if(newItem) {
-        if(!(newItem["id"] || "").length && this.hasItems) {
-          newItem["id"] = this.dao ? this.dao.generateUuid() : this.util.md5();
+    if(!this.adding) {
+      this.adding = true; /* Previne multiplas chamadas para inserir */
+      (async () => {
+        this.form.reset((this.form as unknown as IFormGroupHelper).initialState);
+        let newItem = this.add ? await this.add() : this.form.value;
+        if(newItem) {
+          if(!(newItem["id"] || "").length && this.hasItems) {
+            newItem["id"] = this.dao ? this.dao.generateUuid() : this.util.md5();
+          }
+          this.items.push(newItem);
+          //this.adding = true;
+          await this.edit(newItem);
+        } else {
+          this.adding = false;
         }
-        this.items.push(newItem);
-        this.adding = true;
-        await this.edit(newItem);
-      }
-    })();
+      })();
+    }
   }
 
   private async saveItem(itemRow: Base | IIndexable) {

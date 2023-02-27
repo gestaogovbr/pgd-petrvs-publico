@@ -58,7 +58,7 @@ export class AdesaoListComponent extends PageListBase<Adesao, AdesaoDaoService> 
       data_filtro_inicio: { default: new Date() },
       data_filtro_fim: { default: new Date() }
     }, this.cdRef, this.filterValidate);
-    this.join = ["unidade.entidade", "usuarios.usuario:id,nome", "unidades.unidade:id,nome", "programa", "documento", "tipo_modalidade"];
+    this.join = ["unidade.entidade", "usuarios.usuario:id,nome,url,apelido", "unidades.unidade:id,nome,sigla", "programa", "documento.assinaturas", "tipo_modalidade"];
     // Testa se o usuário possui permissão para exibir dados do plano de trabalho
     if (this.auth.hasPermissionTo("MOD_ADES_CONS")) {
       this.options.push({
@@ -76,9 +76,9 @@ export class AdesaoListComponent extends PageListBase<Adesao, AdesaoDaoService> 
       });
     }
     this.options.push({
-      label: "TCR",
+      label: "Termo",
       icon: "bi bi-file-earmark-check",
-      onClick: ((row: Adesao) => this.go.navigate({ route: ['uteis', 'documentos', 'TCR', row.id ] }, { modalClose: (modalResult) => console.log(modalResult?.conteudo) })).bind(this)
+      onClick: ((row: Adesao) => this.go.navigate({ route: ['uteis', 'documentos', 'TCR', row.id, 'new' ] }, { modalClose: (modalResult) => console.log(modalResult?.conteudo), metadata: this.adesaoService.metadados(row) })).bind(this)
     });
   }
 
@@ -137,18 +137,7 @@ export class AdesaoListComponent extends PageListBase<Adesao, AdesaoDaoService> 
   }
 
   public needSign(adesao: Adesao): boolean {
-    let ids: string[] = [];
-    if (adesao.documento_id?.length) {
-      const tipoModalidade = adesao.tipo_modalidade!; //(this.tipoModalidade?.searchObj as TipoModalidade);
-      //const usuario = adesao.usuario!; // (this.usuario?.searchObj as Usuario);
-      //onst unidade = adesao.unidade!; // (this.unidade?.searchObj as Unidade);
-      const entidade = adesao.entidade!;
-      //const alredySigned = !!documento.assinaturas.find(x => x.usuario_id == this.auth.usuario!.id);
-      //if(tipoModalidade?.exige_assinatura && usuario) ids.push(usuario.id);
-      //if(tipoModalidade?.exige_assinatura_gestor_unidade && unidade) ids.push(unidade.gestor_id || "", unidade.gestor_substituto_id || "");
-      if (tipoModalidade?.exige_assinatura_gestor_entidade && entidade) ids.push(entidade.gestor_id || "", entidade.gestor_substituto_id || "");
-    }
-    return !!adesao.documento_id?.length && ids.includes(this.auth.usuario!.id);
+    return !!adesao.documento && this.adesaoService.needSign(adesao, adesao.documento);
   }
 
   public dynamicMultiselectMenu = (multiselected: IIndexable): ToolbarButton[] => {
@@ -159,6 +148,15 @@ export class AdesaoListComponent extends PageListBase<Adesao, AdesaoDaoService> 
     });
     if (assinar) menu.push({ label: "Assinar", icon: "bi bi-pen", onClick: this.assinar.bind(this) });
     return menu;
+  }
+
+  public afterAdd = (modalResult: any) => {
+    this.dialog.confirm("Gerar TCR", "Deseja gerar o Termo de Ciência e Responsabilidade?").then(confirm => {
+      if(confirm && typeof modalResult == "string" && modalResult.length) {
+        const adesao = this.grid?.items.find(x => x.id == modalResult) as Adesao;
+        this.go.navigate({ route: ['uteis', 'documentos', 'TCR', modalResult, 'new' ] }, { modalClose: (modalResult) => console.log(modalResult?.conteudo), metadata: this.adesaoService.metadados(adesao) })
+      } 
+    });
   }
 
   public assinar() {
