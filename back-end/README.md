@@ -4,20 +4,20 @@
 - build no front da aplicação (transpilar o front-end para a pasta public do back-end)
 - commit no back e front (obrigatório para permitir o pull)
 - pull no back e front
-- resolver os conflitos no back e front, resolver os .maps com HEAD, e quando tiver conflito, perguntar a pessoa do arquivo que deu conflito
+- resolver os conflitos no back e front, resolver os .maps com HEAD, e quando tiver conflito, perguntar à pessoa do arquivo que deu conflito
 - se for pra gerar uma nova versão precisa alterar o arquivo app.json na propriedade "version"
-- npm run build-prf
+- npm run build
 - commmit no back-end e no front-end
 - push no back-end e no front-end
 
 ### Dicionário de dados
-## Sintax
+## Sintaxe
 - Usar sempre a extensão do VSCode php intelephense (Nunca deixar arquivo em vermelho)
-- Identação com 4 espaços
-- Campos de bando de dados com nome composto sempre usar "_" (não pode haver letras maísculas)
+- Indentação com 4 espaços
+- Campos de banco de dados com nome composto sempre usar "_" (não pode haver letras maiúsculas)
 - Propriedades de classes são sempre camelcase (exceto se for referente a campo de banco)
 - Funções são sempre camelcase
-- Propriedades do config (larevel) sempre são separados por "-"
+- Propriedades do config (laravel) sempre são separados por "-"
 
 ## Metodos úteis
 - Usar o metodo parent::loggedUser() ao invés do Auth::user() nos controllers e services
