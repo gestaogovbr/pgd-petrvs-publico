@@ -14,6 +14,10 @@
       - Demandas
 - Projetos
 
+## Modelagem
+
+- A Modelagem do sistema está disponível [Aqui](modelagem.md)  
+
 ## Módulos
 
 * [Adesão](adesao.md)
