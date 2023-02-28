@@ -54,14 +54,14 @@
 
 - Esquema do grid de entregas  
   
-|  dfdf| Inicio     |    Fim     | Indicador   |     Meta  |  Geral  | Realizado | Objetivos | Processos   | Atividades | Cliente     |  Hmg  |
+| &nbsp;| Inicio     |    Fim     | Indicador   |     Meta  |  Geral  | Realizado | Objetivos | Processos   | Atividades | Cliente     |  Hmg  |
 | :---:| :---:      | :---:      | :---:       | :---:     | :---:    :---:      | :---:     | :---:       | :---:      | :---:       | :---: |
 | Ent1 | 01/01/2022 |     -      |  Quantidade |    1000   |   400   |     200   |  Ob1,Ob2  | Proc1,Proc2 | Atv1,Atv2  | uOrg1,uOrg2 |  S    |
-| Ent2 | 01/01/2022 | 30/12/2022 |      %      |    100    |    70   |           |    Ob2    |             |            |             |  S    |
-| Ent3 | 01/01/2022 | 30/12/2024 | Qualitativo | Excelente |   Bom   |           |           |             |            |             |  S    |
-| Ent4 | 09/12/2022 | 30/12/2022 | Qualitativo | Excelente |   Bom   |           |           |             |            |             |  N    |  
-  <sup>As opções de Indicador vem do cadastro de entregas</sup> 
-
+| Ent2 | 01/01/2022 | 30/12/2022 |      %      |    100    |    70   |     -     |    Ob2    |      -      |     -      |      -      |  S    |
+| Ent3 | 01/01/2022 | 30/12/2024 | Qualitativo | Excelente |   Bom   |     -     |     -     |      -      |     -      |      -      |  S    |
+| Ent4 | 09/12/2022 | 30/12/2022 | Qualitativo | Excelente |   Bom   |     -     |     -     |      -      |     -      |      -      |  N    |
+  <sup>As opções de Indicador vem do cadastro de entregas</sup>  
+  
    Ponto de controle
       [01/01/2023][30/01/2023]:
           Responsável
