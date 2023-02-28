@@ -14,12 +14,15 @@
    Entidade 
    Unidade (Setor, opc)
    Objetivos
-              Grupo-tematico Obj-estratégico-superior
-      Ob1 ... -              -
-      Ob2 ... -              -
+```  
 
-      listagem com duas abas: grid e mapa
-```
+    |       | Grupo-tematico    | Obj-estratégico-superior  |  
+    |-------|-------------------|---------------------------|  
+    | Ob1   |        -          |              -            |
+    | Ob2   |        -          |              -            |  
+
+    - (*) listagem com duas abas: grid e mapa
+
 
 ### Tipos de Processos
 ```
@@ -35,13 +38,13 @@
        Tipo_Proc1 ... - 
 ```
 
-### Plano de Entregas[^1]
+### Plano de Entregas
 ```
    Unidade (Setor)
    Planejamento_estrategico_id
    Cadeia_valor_id
    Entregas
-          Inicio     Fim        Indicador (vem do cadastro entrega) Metal geral Realizado Objetivos[^1] Processos[^1]   Atividades[^1]  Cliente      Hmg
+          Inicio     Fim        Indicador (vem do cadastro entrega) Metal geral Realizado Objetivos  Processos   Atividades  Cliente      Hmg
       Ent1: 01/01/2022 -          Quantidade                          1000        200       Ob1, Ob1 Proc1, Proc2, Ativ1, Atv2, uOrg1, uOrg2 S 
       Ent2: 01/01/2022 30/12/2022 %                                   100         70        Ob2                                                S 
       Ent3: 01/01/2022 30/12/2024 Qualitativo                         Excelente   Bom                                                          S
