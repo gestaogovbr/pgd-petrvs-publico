@@ -16,8 +16,9 @@
 
 ## Módulos
 
-* [Adesão](./adesao.md)
-* [Plano](./plano.md)
+* [Adesão](adesao.md)
+* [Plano de Entregas](plano_de_entregas.md)
+* [Planejamento Estratégico](Planejamento_estratégico.md)
 
 ## Regra geral do sistema
 
