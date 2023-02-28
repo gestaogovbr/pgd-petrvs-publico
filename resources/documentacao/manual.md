@@ -16,7 +16,7 @@
 
 ## Modelagem
 
-- A Modelagem do sistema está disponível [Aqui](modelagem.md)  
+- A Modelagem do sistema está disponível [aqui.](Modelagem.md)  
 
 ## Módulos
 
