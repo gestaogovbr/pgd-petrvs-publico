@@ -190,6 +190,11 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PROJ_EDT", "Permite editar projeto"],
         ["MOD_PROJ_EXCL", "Permite excluir projeto"],
         ["MOD_PROJ_INCL", "Permite incluir Projetos"],
+        /* Capacidades do módulo de templates */
+        ["MOD_TEMP_INCL", "Permite incluir template"],
+        ["MOD_TEMP_CONS", "Permite consultar template"],
+        ["MOD_TEMP_EDT", "Permite editar template"],
+        ["MOD_TEMP_EXCL", "Permite excluir template"],
         /* Capacidades do módulo PLANO TRABALHO*/
         ["MOD_PTR", "Permite acessar item menu plano de trabalho"],
         ["MOD_PTR_CONS", "Permite consultar plano de trabalho"],

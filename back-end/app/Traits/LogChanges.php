@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use App\Services\UtilService;
 use App\Models\Change;
 use DateTime;
 
@@ -19,7 +20,7 @@ trait LogChanges
                     static::logChange($model, 'ADD');
                 } elseif ($model->getChanges()) {
                     if(!empty($model->attributes['data_fim'])){
-                        static::logChange($model, 'DELETE');
+                        static::logChange($model, 'SOFT_DELETE');
                     }else{
                         static::logChange($model, 'EDIT');
                     }
@@ -37,16 +38,40 @@ trait LogChanges
     public static function logChange(Model $model, string $action)
     {
         $config = config("log");
+        $util = new UtilService();
         if($config["log_changes"]) {
+            $valoresAtuais = []; $valoresAnteriores = []; $valoresAlterados = [];
+            switch ($action) {
+                case 'ADD':
+                    $valoresAtuais = $model->getAttributes();
+                    break;
+
+                case 'EDIT':
+                    $valoresAtuais = $model->getAttributes();     // strings json e '[]'
+                    $valoresAnteriores = $model->getOriginal();   // objetos json e arrays
+                    $valoresAlterados = $util->differentAttributes($valoresAtuais,$valoresAnteriores);
+                    break;
+                case 'SOFT_DELETE':
+                    $valoresAtuais = $model->getAttributes();
+                    $valoresAnteriores = $model->getOriginal();
+                    $valoresAlterados = $util->differentAttributes($valoresAtuais,$valoresAnteriores);
+                    break;
+
+                case 'DELETE':
+                    $valoresAnteriores = $model->getOriginal();
+                    break;
+            }
             Change::create([
                 'date_time' => new DateTime(),
                 'user_id' => Auth::check() ? Auth::user()->id : null,
                 'table_name' => $model->getTable(),
                 'row_id' => $model->attributesToArray()["id"],
                 'type' => $action,
-                'delta' => json_encode($action == 'ADD' ? $model->getAttributes() : 
-                            ($action == 'EDIT' ? ['Valores anteriores' => $model->getOriginal(), 
-                            'Valores atuais' => $model->getAttributes()] : $model->getOriginal()))
+                'delta' => json_encode([
+                    'versao' => '2.0',
+                    'Valores anteriores' => $valoresAnteriores, 
+                    'Valores atuais' => $valoresAtuais,
+                    'Valores alterados' => $valoresAlterados])
             ]);
         }
     }
