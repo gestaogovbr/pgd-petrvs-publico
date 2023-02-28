@@ -14,12 +14,13 @@
     - Prazo (data)
     - Cliente/usuário (campo aberto descritivo)
       - (Todos os campos são obrigatórios)
-    - As entregas ainda podem estar vinculadas a objetivos do planejamento estratégico e à cadeia de valor do órgão, ambos opcionais e previamente cadastrados no âmbito da unidade instituidora do PGD (secretaria):
+    - As entregas ainda podem estar vinculadas a objetivos do planejamento estratégico e à cadeia de valor do órgão,  
+    ambos opcionais e previamente cadastrados no âmbito da unidade instituidora do PGD (secretaria):
         - a) Planejamento Institucional;
         - b) Cadeia de Valor;
 ```
-- Exemplo de Plano de Entregas (tabela 1):
-![Plano de Entregas da Unidade CGX/DTX/SECX](Tabela%201%20-%20Plano%20de%20Entregas.png)
+- Exemplo de Plano de Entregas (tabela 1):  
+![Plano de Entregas da Unidade CGX/DTX/SECX](Tabela%201%20-%20Plano%20de%20Entregas.png)  
 <sup>Tabela 1 - Plano de Entregas da Unidade CGX/DTX/SECX</sup>
 
 -   Deve ser cadastrada no mínimo uma entrega, sem limite máximo
