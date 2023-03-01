@@ -17,7 +17,7 @@
 ## Módulos
 
 * [Adesão](./adesao.md)
-* [Plano](./plano.md)
+* [Planejamento](./planejamento.md)
 
 ## Regra geral do sistema
 
