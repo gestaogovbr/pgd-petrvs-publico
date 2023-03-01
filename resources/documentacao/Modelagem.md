@@ -25,7 +25,8 @@ Cadeia de Valor
    Processos
                         Sequencia Path Pai
        Tipo_Proc1 ... - 
-
+```  
+```
 Plano de Entregas
    Unidade (Setor)
    Planejamento_estrategico_id
@@ -50,7 +51,8 @@ Plano de Entregas
           Ent2:     %                                   70           70
           Ent3:     Qualitativo                         Excelente    Bom
 * Deverá haver pelo menos 1
-
+```  
+```
 Plano Trabalho: 
 Unidade (Setor) - *TCR - Plano de entregas - Carga horária - [01/01/2023] - [30/06/2023]
     - Pontos de controle
