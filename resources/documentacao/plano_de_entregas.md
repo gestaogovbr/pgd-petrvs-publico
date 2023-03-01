@@ -14,8 +14,7 @@
     - Prazo (data)
     - Cliente/usuário (campo aberto descritivo)
       - (Todos os campos são obrigatórios)
-    - As entregas ainda podem estar vinculadas a objetivos do planejamento estratégico e à cadeia de valor do órgão,  
-    ambos opcionais e previamente cadastrados no âmbito da unidade instituidora do PGD (secretaria):
+    - As entregas ainda podem estar vinculadas a objetivos do planejamento estratégico e à cadeia de valor do órgão, ambos opcionais e previamente cadastrados no âmbito da unidade instituidora do PGD (secretaria):
         - a) Planejamento Institucional;
         - b) Cadeia de Valor;
 ```
