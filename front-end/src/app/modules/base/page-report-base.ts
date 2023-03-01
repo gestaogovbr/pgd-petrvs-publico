@@ -19,6 +19,7 @@ export type Metadado = {
   demandasConcluidas: Demanda[],        // todas as demandas que possuem uma data de entrega não nula
   demandasAvaliadas: Demanda[],         // todas as demandas cujo campo avaliacao_id não é nulo
   demandasCumpridas: Demanda[],         // todas as demandas que possuem um tempo homologado não nulo
+  horasAfastamento: number,             // total das horas de afastamento do servidor (férias, atestados, etc.)
   horasDemandasNaoIniciadas: number,    // soma do tempo pactuado de todas as demandas ainda não iniciadas
   horasDemandasEmAndamento: number,     // soma do tempo pactuado de todas as demandas já iniciadas, mas ainda não concluidas
   horasDemandasConcluidas: number,      // soma do tempo pactuado de todas as demandas concluídas
@@ -27,6 +28,7 @@ export type Metadado = {
   horasDecorridas: number,              // total de horas que se passaram desde a data/hora de início de vigência do plano até a data/hora atual
   percentualDecorridoPlano: number,     // razão entre as horas úteis decorridas e as horas úteis totais do Plano
   horasUteisTotais: number,             // Horas úteis de trabalho no período de vigência do Plano, considerando carga_horaria, feriados, fins de semana
+  horasUteisDecorridas: number,         // Horas úteis decorridas do Plano, considerando carga_horaria, feriados, fins de semana
   horasTotais: number,                  // total de horas compreendidas entre a data final de vigência do plano e a data inicial de vigência do plano
   percentualEsperado: number,           // razão entre as horas já decorridas do plano e as suas horas totais (cálculo simples)
   percentualCumprido: number,           // razão entre as horas das demandas já cumpridas e o tempoTotal do plano
@@ -46,11 +48,13 @@ export type MetadadosPlano = {
   demandasEmAndamento: Demanda[],       // totas as demandas já iniciadas (data_inicio diferente de nulo), mas ainda não concluídas (data_entrega nula)
   demandasConcluidas: Demanda[],        // todas as demandas que possuem uma data de entrega não nula
   demandasAvaliadas: Demanda[],         // todas as demandas cujo campo avaliacao_id não é nulo
+  horasAfastamento: number,             // total das horas de afastamento do servidor (férias, atestados, etc.)
   horasDemandasNaoIniciadas: number,    // soma do tempo pactuado de todas as demandas ainda não iniciadas
   horasDemandasEmAndamento: number,     // soma do tempo pactuado de todas as demandas já iniciadas, mas ainda não concluidas
   horasDemandasConcluidas: number,      // soma do tempo pactuado de todas as demandas concluídas
   horasDemandasAvaliadas: number,       // soma do tempo pactuado de todas as demandas avaliadas
   horasUteisTotais: number,             // Horas úteis de trabalho no período de vigência do Plano, considerando carga_horaria, feriados, fins de semana
+  horasUteisDecorridas: number          // Horas úteis de trabalho decorridas do Plano, considerando carga_horaria, feriados, fins de semana
 };
 
 export type MetadadosUnidade = {
@@ -112,6 +116,7 @@ export type PlanoExtendido2 = {
   percentualHorasConcluidas: number,    // razão entre as horas pactuadas das demandas concluidas, em relação às horas úteis totais do Plano
   percentualHorasAvaliadas: number,     // razão entre as horas pactuadas das demandas avaliadas, em relação às horas úteis totais do Plano
   percentualHorasTotaisAlocadas: number,// razão entre as horas totais alocadas e as horas úteis totais do Plano
+  percentualAfastamento: number,        // razão entre as horas de afastamento do servidor e as horas úteis totais do Plano
   mediaAvaliacoes: number,              // média aritmética das notas de todas as demandas avaliadas
   dadosGraficoPlano: any,
   dadosGraficoDemandas: any
