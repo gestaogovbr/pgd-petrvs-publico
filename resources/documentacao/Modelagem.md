@@ -35,7 +35,8 @@ Plano de Entregas
             Inicio     Fim        Indicador (vem do cadastro entrega) Metal geral Realizado Objetivos* Processos*    Atividades*          Cliente      Hmg
       Ent1: 01/01/2022 -          Quantidade                          1000        200       Ob1, Ob1   Proc1, Proc2  Tip.Ativ1, Tip.Atv2  uOrg1, uOrg2 S
       Ent2: 01/01/2022 30/12/2022 %                                   100         70        Ob2                                                        S
-      Ent3: 01/01/2022 30/12/2024 Qualitativo                         Excelente   Bom                                                                  S      Ent4: 09/12/2022 30/12/2022 ...                                                                                                                  N
+      Ent3: 01/01/2022 30/12/2024 Qualitativo                         Excelente   Bom                                                                  S
+      Ent4: 09/12/2022 30/12/2022 ...                                                                                                                  N
    Ponto de controle
       [01/01/2023][30/01/2023]:
           Responsável: Genisson
