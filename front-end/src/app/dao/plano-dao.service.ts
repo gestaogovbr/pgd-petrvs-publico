@@ -1,7 +1,7 @@
 import { Injectable, Injector } from '@angular/core';
 import { Demanda } from '../models/demanda.model';
 import { Plano } from '../models/plano.model';
-import { Metadado } from 'src/app/modules/base/page-report-base';
+import { Metadado, MetadadosPlano } from 'src/app/modules/base/page-report-base';
 import { DaoBaseService } from './dao-base.service';
 
 @Injectable({
@@ -23,8 +23,8 @@ export class PlanoDaoService extends DaoBaseService<Plano> {
     });
   }
 
-  public metadadosPlano(plano_id: string): Promise<Metadado> {
-    return new Promise<Metadado>((resolve, reject) => {
+  public metadadosPlano(plano_id: string): Promise<MetadadosPlano> {
+    return new Promise<MetadadosPlano>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/metadadosPlano', {plano_id}).subscribe(response => {
         resolve(response?.metadadosPlano || []);
       }, error => reject(error));

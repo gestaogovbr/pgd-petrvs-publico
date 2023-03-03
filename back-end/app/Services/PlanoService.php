@@ -183,33 +183,34 @@ class PlanoService extends ServiceBase
     public function metadadosPlano($plano_id) {
         $plano = Plano::where('id', $plano_id)->with(['demandas', 'demandas.avaliacao', 'tipoModalidade'])->first()->toArray();
         $result = [
-            "usuario_id" => $plano['usuario_id'],
             "concluido" => true,
-            "horasUteisTotais" => $plano['tempo_total'],
             "demandasNaoIniciadas" => array_filter($plano['demandas'], fn($demanda) => $demanda['data_inicio'] == null),
             "demandasEmAndamento" => array_filter($plano['demandas'], fn($demanda) => $demanda['data_inicio'] != null && $demanda['data_entrega'] == null),
             "demandasConcluidas" => $this->demandasConcluidas($plano, null, null),
             "demandasAvaliadas" => $this->demandasAvaliadas($plano, null, null),
-            "horasTotaisAlocadas" => 0,
-            "mediaAvaliacoes" => null,
-            "horasTotaisAfastamento" => 0,
             "horasAfastamentoDecorridas" => 0,
             "horasDemandasNaoIniciadas" => 0,
             "horasDemandasEmAndamento" => 0,
             "horasDemandasConcluidas" => 0,
             "horasDemandasAvaliadas" => 0,
+            "horasTotaisAlocadas" => 0,
+            "horasUteisAfastamento" => 0,
+            "horasUteisDecorridas" => 0,
+            "horasUteisTotais" => $plano['tempo_total'],
+            "mediaAvaliacoes" => null,
+            "modalidade" => $plano['tipo_modalidade']['nome'],
             "percentualHorasNaoIniciadas" => 0,
-            "modalidade" => $plano['tipo_modalidade']['nome']
+            "usuario_id" => $plano['usuario_id']
         ];
         $inicioPlano = new DateTime($plano['data_inicio_vigencia']);
         $fimPlano = new DateTime($plano['data_fim_vigencia'], $inicioPlano->getTimezone());
         $unidadePlano = Unidade::find($plano['unidade_id'])->first();
         $afastamentosUsuario = Afastamento::where('usuario_id',$plano['usuario_id'])->get()->toArray();
 
-        // Cálculo das horas totais de afastamento
-        $result["horasTotaisAfastamento"] = CalendarioService::calculaDataTempoUnidade($inicioPlano,$fimPlano,$plano['carga_horaria'],$unidadePlano,"HORAS_UTEIS",null,$afastamentosUsuario)->horasAfastamento;
+        // Cálculo das horas úteis totais de afastamento
+        $result["horasUteisAfastamento"] = CalendarioService::calculaDataTempoUnidade($inicioPlano,$fimPlano,$plano['carga_horaria'],$unidadePlano,"HORAS_UTEIS",null,$afastamentosUsuario)->horasAfastamento;
 
-        // Cálculo das horas úteis decorridas do plano e das horas de afastamento decorridas
+        // Cálculo das horas úteis decorridas do plano e das horas úteis decorridas dos afastamentos
         $result["horasUteisDecorridas"] = new DateTime() < $inicioPlano ? 0 : CalendarioService::calculaDataTempoUnidade(
             $inicioPlano,new DateTime() > $fimPlano ? $fimPlano : new DateTime(),$plano['carga_horaria'],$unidadePlano,"HORAS_UTEIS")->tempoUtil;
         $result["horasAfastamentoDecorridas"] = new DateTime() < $inicioPlano ? 0 : CalendarioService::calculaDataTempoUnidade(
