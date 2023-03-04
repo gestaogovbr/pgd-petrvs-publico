@@ -627,6 +627,9 @@ export class GridComponent extends ComponentBase implements OnInit {
     return {};
   }
 
+  public setMetadata(row: any, value: any) {
+    if(row.id) this.metadatas[row.id] = value;
+  }
 
   public async edit(itemRow: Base | IIndexable) {
     this.editing = itemRow;

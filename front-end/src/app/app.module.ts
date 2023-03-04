@@ -20,7 +20,7 @@ import { UteisModule } from './modules/uteis/uteis.module';
 import { RotinaModule } from './modules/rotinas/rotina.module';
 import { TemplateModule } from './modules/uteis/templates/template.module';
 import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
-import { CadeiaValorFormProcessosComponent } from './modules/cadastros/cadeia-valor/cadeia-valor-form-processos/cadeia-valor-form-processos.component';
+import { CadeiaValorFormProcessosComponent } from './modules/gestao/cadeia-valor/cadeia-valor-form-processos/cadeia-valor-form-processos.component';
 
 @NgModule({
   declarations: [
