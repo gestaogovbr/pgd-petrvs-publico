@@ -24,7 +24,7 @@ export class CadeiaValorListComponent extends PageListBase<CadeiaValor, CadeiaVa
       nome: {default: ""}
     });
 
-    if (this.auth.hasPermissionTo("MOD_EXTM_CONS")) {
+    if (this.auth.hasPermissionTo("MOD_PLAN_INST_CONS")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",
