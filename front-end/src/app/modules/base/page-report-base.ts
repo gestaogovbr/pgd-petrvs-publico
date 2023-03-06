@@ -5,59 +5,63 @@ import { CalendarService } from 'src/app/services/calendar.service';
 import { Base } from 'src/app/models/base.model';
 import { Demanda } from 'src/app/models/demanda.model';
 import { PageBase } from './page-base';
-import { ChartData, ChartDataSets } from 'chart.js';
 import { Plano } from 'src/app/models/plano.model';
-import { Unidade } from 'src/app/models/unidade.model';
 import { Chart } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-export type Metadado = {
-  descricaoPlano: string,
-  concluido: Boolean,                   // define se o Plano é concluído, ou seja, se todas as suas demandas foram cumpridas.
-  demandasNaoIniciadas: Demanda[],      // todas as demandas ainda não iniciadas pelo servidor
-  demandasEmAndamento: Demanda[],       // totas as demandas já iniciadas (data_inicio diferente de nulo), mas ainda não concluídas (data_entrega nula)
-  demandasConcluidas: Demanda[],        // todas as demandas que possuem uma data de entrega não nula
-  demandasAvaliadas: Demanda[],         // todas as demandas cujo campo avaliacao_id não é nulo
-  demandasCumpridas: Demanda[],         // todas as demandas que possuem um tempo homologado não nulo
-  horasAfastamento: number,             // total das horas de afastamento do servidor (férias, atestados, etc.)
-  horasDemandasNaoIniciadas: number,    // soma do tempo pactuado de todas as demandas ainda não iniciadas
-  horasDemandasEmAndamento: number,     // soma do tempo pactuado de todas as demandas já iniciadas, mas ainda não concluidas
-  horasDemandasConcluidas: number,      // soma do tempo pactuado de todas as demandas concluídas
-  horasDemandasAvaliadas: number,       // soma do tempo pactuado de todas as demandas avaliadas
-  horasDemandasCumpridas: number,       // soma do tempo pactuado de todas as demandas cumpridas
-  horasDecorridas: number,              // total de horas que se passaram desde a data/hora de início de vigência do plano até a data/hora atual
-  percentualDecorridoPlano: number,     // razão entre as horas úteis decorridas e as horas úteis totais do Plano
-  horasUteisTotais: number,             // Horas úteis de trabalho no período de vigência do Plano, considerando carga_horaria, feriados, fins de semana
-  horasUteisDecorridas: number,         // Horas úteis decorridas do Plano, considerando carga_horaria, feriados, fins de semana
-  horasTotais: number,                  // total de horas compreendidas entre a data final de vigência do plano e a data inicial de vigência do plano
-  percentualEsperado: number,           // razão entre as horas já decorridas do plano e as suas horas totais (cálculo simples)
-  percentualCumprido: number,           // razão entre as horas das demandas já cumpridas e o tempoTotal do plano
-  percentualHorasNaoIniciadas: number,  // razão entre as horas pactuadas das demandas não-iniciadas, em relação às horas úteis totais do Plano
-  percentualHorasEmAndamento: number,   // razão entre as horas pactuadas das demandas iniciadas mas ainda não concluidas, em relação às horas úteis totais do Plano
-  percentualHorasConcluidas: number,    // razão entre as horas pactuadas das demandas concluidas, em relação às horas úteis totais do Plano
-  percentualHorasAvaliadas: number,     // razão entre as horas pactuadas das demandas avaliadas, em relação às horas úteis totais do Plano
-  percentualHorasTotaisAlocadas: number,// razão entre as horas totais alocadas e as horas úteis totais do Plano
-  mediaAvaliacoes: number,              // média aritmética das notas de todas as demandas avaliadas
-  produtividadeMedia: number,           // só existe quando o plano já foi concluído. Representa a média de produtividade de todas as demandas do plano+
-  eficiencia: number                    // divisão do percentual cumprido do plano pelo seu percentual estimado
-};
+export type Metadado = {    
+  descricaoPlano: string,   
+  concluido: Boolean,                       // define se o Plano é concluído, ou seja, se todas as suas demandas foram cumpridas.
+  demandasNaoIniciadas: Demanda[],          // todas as demandas ainda não iniciadas pelo servidor
+  demandasEmAndamento: Demanda[],           // totas as demandas já iniciadas (data_inicio diferente de nulo), mas ainda não concluídas (data_entrega nula)
+  demandasConcluidas: Demanda[],            // todas as demandas que possuem uma data de entrega não nula
+  demandasAvaliadas: Demanda[],             // todas as demandas cujo campo avaliacao_id não é nulo
+  demandasCumpridas: Demanda[],             // todas as demandas que possuem um tempo homologado não nulo
+  horasUteisAfastamento: number,            // total das horas úteis de afastamento do servidor
+  horasDemandasNaoIniciadas: number,        // soma do tempo pactuado de todas as demandas ainda não iniciadas
+  horasDemandasEmAndamento: number,         // soma do tempo pactuado de todas as demandas já iniciadas, mas ainda não concluidas
+  horasDemandasConcluidas: number,          // soma do tempo pactuado de todas as demandas concluídas
+  horasDemandasAvaliadas: number,           // soma do tempo pactuado de todas as demandas avaliadas
+  horasDemandasCumpridas: number,           // soma do tempo pactuado de todas as demandas cumpridas
+  horasDecorridas: number,                  // total de horas que se passaram desde a data/hora de início de vigência do plano até a data/hora atual
+  percentualDecorridoPlano: number,         // razão entre as horas úteis decorridas e as horas úteis totais do Plano
+  horasUteisTotais: number,                 // Horas úteis de trabalho no período de vigência do Plano, considerando carga_horaria, feriados, fins de semana
+  horasUteisDecorridas: number,             // Horas úteis decorridas do Plano, considerando carga_horaria, feriados, fins de semana
+  horasTotais: number,                      // total de horas compreendidas entre a data final de vigência do plano e a data inicial de vigência do plano
+  percentualEsperado: number,               // razão entre as horas já decorridas do plano e as suas horas totais (cálculo simples)
+  percentualCumprido: number,               // razão entre as horas das demandas já cumpridas e o tempoTotal do plano
+  percentualHorasNaoIniciadas: number,      // razão entre as horas pactuadas das demandas não-iniciadas, em relação às horas úteis totais do Plano
+  percentualHorasEmAndamento: number,       // razão entre as horas pactuadas das demandas iniciadas mas ainda não concluidas, em relação às horas úteis totais do Plano
+  percentualHorasConcluidas: number,        // razão entre as horas pactuadas das demandas concluidas, em relação às horas úteis totais do Plano
+  percentualHorasAvaliadas: number,         // razão entre as horas pactuadas das demandas avaliadas, em relação às horas úteis totais do Plano
+  percentualHorasTotaisAlocadas: number,    // razão entre as horas totais alocadas e as horas úteis totais do Plano
+  mediaAvaliacoes: number,                  // média aritmética das notas de todas as demandas avaliadas
+  produtividadeMedia: number,               // só existe quando o plano já foi concluído. Representa a média de produtividade de todas as demandas do plano+
+  eficiencia: number                        // divisão do percentual cumprido do plano pelo seu percentual estimado
+};    
 
-export type MetadadosPlano = {
-  concluido: Boolean,                   // define se o Plano é concluído, ou seja, se todas as suas demandas foram cumpridas.
-  demandasNaoIniciadas: Demanda[],      // todas as demandas ainda não iniciadas pelo servidor
-  demandasEmAndamento: Demanda[],       // totas as demandas já iniciadas (data_inicio diferente de nulo), mas ainda não concluídas (data_entrega nula)
-  demandasConcluidas: Demanda[],        // todas as demandas que possuem uma data de entrega não nula
-  demandasAvaliadas: Demanda[],         // todas as demandas cujo campo avaliacao_id não é nulo
-  horasAfastamento: number,             // total das horas de afastamento do servidor (férias, atestados, etc.)
-  horasDemandasNaoIniciadas: number,    // soma do tempo pactuado de todas as demandas ainda não iniciadas
-  horasDemandasEmAndamento: number,     // soma do tempo pactuado de todas as demandas já iniciadas, mas ainda não concluidas
-  horasDemandasConcluidas: number,      // soma do tempo pactuado de todas as demandas concluídas
-  horasDemandasAvaliadas: number,       // soma do tempo pactuado de todas as demandas avaliadas
-  horasUteisTotais: number,             // Horas úteis de trabalho no período de vigência do Plano, considerando carga_horaria, feriados, fins de semana
-  horasUteisDecorridas: number          // Horas úteis de trabalho decorridas do Plano, considerando carga_horaria, feriados, fins de semana
-};
+export type MetadadosPlano = {    
+  concluido: Boolean,                       // define se o Plano é concluído, ou seja, se todas as suas demandas foram cumpridas.
+  demandasNaoIniciadas: Demanda[],          // todas as demandas ainda não iniciadas pelo servidor
+  demandasEmAndamento: Demanda[],           // totas as demandas já iniciadas (data_inicio diferente de nulo), mas ainda não concluídas (data_entrega nula)
+  demandasConcluidas: Demanda[],            // todas as demandas que possuem uma data de entrega não nula
+  demandasAvaliadas: Demanda[],             // todas as demandas cujo campo avaliacao_id não é nulo
+  horasAfastamentoDecorridas: number,       // total das horas úteis dos afastamentos do servidor já ocorridos
+  horasDemandasNaoIniciadas: number,        // soma do tempo pactuado de todas as demandas ainda não iniciadas
+  horasDemandasEmAndamento: number,         // soma do tempo pactuado de todas as demandas já iniciadas, mas ainda não concluidas
+  horasDemandasConcluidas: number,          // soma do tempo pactuado de todas as demandas concluídas
+  horasDemandasAvaliadas: number,           // soma do tempo pactuado de todas as demandas avaliadas
+  horasTotaisAlocadas: number,              // soma total do tempo pactuado de todas as demandas
+  horasUteisAfastamento: number,            // total das horas úteis de afastamento do servidor
+  horasUteisDecorridas: number              // Horas úteis de trabalho decorridas do Plano, considerando carga_horaria, feriados, fins de semana
+  horasUteisTotais: number,                 // Horas úteis de trabalho no período de vigência do Plano, considerando carga_horaria, feriados, fins de semana
+  mediaAvaliacoes: number,                  // média das avaliações das demandas
+  modalidade: string,                       // tipo de modalidade do plano
+  percentualHorasNaoIniciadas: number,  
+  usuario_id: string
+};    
 
-export type MetadadosUnidade = {
+export type MetadadosUnidade = {    
   qdePlanos: number,
   horasUteisTotais: number,
   horasUteisTotaisDecorridas: number,
@@ -97,8 +101,8 @@ export type AreaRelatorio = {
 export type PlanoExtendido = {
   plano: Plano,
   extras: Metadado,
-  horasTotaisAlocadas: number,          // soma dos tempos pactuados de todas as demandas, independente do status
-  horasUteisDecorridas: number,         // total de horas decorridas, levando-se em consideração carga horária, feriados e finais de semana
+  horasTotaisAlocadas: number,              // soma dos tempos pactuados de todas as demandas, independente do status
+  horasUteisDecorridas: number,             // total de horas decorridas, levando-se em consideração carga horária, feriados e finais de semana
   dadosGraficoPlano: any,
   dadosGraficoHoras: any
 }
@@ -108,16 +112,19 @@ export type PlanoExtendido2 = {
   descricaoPlano: string,
   statusPlano: string,
   extras: MetadadosPlano,
-  horasTotaisAlocadas: number,          // soma dos tempos pactuados de todas as demandas, independente do status
-  horasUteisDecorridas: number,         // total de horas decorridas, levando-se em consideração carga horária, feriados e finais de semana
-  percentualDecorridoPlano: number,     // razão entre as horas úteis decorridas e as horas úteis totais do Plano
-  percentualHorasNaoIniciadas: number,  // razão entre as horas pactuadas das demandas não-iniciadas, em relação às horas úteis totais do Plano
-  percentualHorasEmAndamento: number,   // razão entre as horas pactuadas das demandas iniciadas mas ainda não concluidas, em relação às horas úteis totais do Plano
-  percentualHorasConcluidas: number,    // razão entre as horas pactuadas das demandas concluidas, em relação às horas úteis totais do Plano
-  percentualHorasAvaliadas: number,     // razão entre as horas pactuadas das demandas avaliadas, em relação às horas úteis totais do Plano
-  percentualHorasTotaisAlocadas: number,// razão entre as horas totais alocadas e as horas úteis totais do Plano
-  percentualAfastamento: number,        // razão entre as horas de afastamento do servidor e as horas úteis totais do Plano
-  mediaAvaliacoes: number,              // média aritmética das notas de todas as demandas avaliadas
+  horasDisponiveisPlano: number,                // total das horas úteis líquidas do Plano que ainda falta ser executado pelo servidor
+  horasLiquidasDecorridasPlano: number,         // total de horas úteis ainda disponíveis no plano para serem executadas pelo servidor
+  horasUteisLiquidasPlano: number,              // total de horas úteis do plano subtraídas as horas úteis dos afastamentos do servidor
+  percentualDecorridoAfastamentos: number,      // razão entre as horas úteis dos afastamentos já ocorridos, em relação às horas úteis totais dos afastamentos
+  percentualDecorridoPlano: number,             // razão entre as horas úteis decorridas e as horas úteis totais do Plano
+  percentualHorasDisponiveis: number,           // razão entre as horas líquidas ainda disponíveis do plano e as horas líquidas totais do Plano
+  percentualHorasLiquidasDecorridas: number,    // razão entre as horas úteis líquidas decorridas do plano e as horas úteis líquidas totais do plano
+  percentualHorasNaoIniciadas: number,          // razão entre as horas pactuadas das demandas não-iniciadas, em relação às horas úteis totais do Plano
+  percentualHorasEmAndamento: number,           // razão entre as horas pactuadas das demandas iniciadas mas ainda não concluidas, em relação às horas úteis totais do Plano
+  percentualHorasConcluidas: number,            // razão entre as horas pactuadas das demandas concluidas, em relação às horas úteis totais do Plano
+  percentualHorasAvaliadas: number,             // razão entre as horas pactuadas das demandas avaliadas, em relação às horas úteis totais do Plano
+  percentualHorasTotaisAlocadas: number,        // razão entre as horas totais alocadas e as horas úteis totais do Plano
+  percentualAfastamento: number,                // razão entre as horas de afastamento do servidor e as horas úteis totais do Plano
   dadosGraficoPlano: any,
   dadosGraficoDemandas: any
 }

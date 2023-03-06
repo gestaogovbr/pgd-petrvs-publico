@@ -125,35 +125,27 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
       let $metadados: MetadadosPlano = await this.planoDao.metadadosPlano(plano!.id);
       if (!Array.isArray($metadados.demandasNaoIniciadas)) $metadados.demandasNaoIniciadas = [$metadados.demandasNaoIniciadas];
       if (!Array.isArray($metadados.demandasEmAndamento)) $metadados.demandasEmAndamento = [$metadados.demandasEmAndamento];
-
-      // trecho que usa a função calculaDataTempo para obter as horasUteisDecorridas do Plano
-      //await this.calendar.loadFeriadosCadastrados(plano.unidade_id);
-/*       let $marco_inicial = this.horaAtual < plano.data_inicio_vigencia ? null : plano.data_inicio_vigencia;
-      let $marco_final = this.horaAtual > plano.data_fim_vigencia ? plano.data_fim_vigencia : this.horaAtual;
-      let $horasUteisDecorridas = null;
-      if ($marco_inicial == null) {
-        $horasUteisDecorridas = -1;
-      } else if ($marco_final == plano.data_fim_vigencia) {
-        $horasUteisDecorridas = -2;
-      } else {
-        $horasUteisDecorridas = this.calendar.calculaDataTempoUnidade($marco_inicial!, $marco_final, plano.carga_horaria, plano.unidade!, "ENTREGA", [], []).tempoUtil
-      } */
-      let $horasTotaisAlocadas = $metadados.horasDemandasNaoIniciadas + $metadados.horasDemandasEmAndamento + $metadados.horasDemandasConcluidas + $metadados.horasDemandasAvaliadas;
+      let $horasUteisLiquidasPlano = $metadados.horasUteisTotais - $metadados.horasUteisAfastamento;
+      let $horasLiquidasDecorridasPlano = $metadados.horasUteisDecorridas - $metadados.horasAfastamentoDecorridas;
+      let $percentualHorasLiquidasDecorridas = $metadados.horasUteisTotais ? Math.round($horasLiquidasDecorridasPlano / $metadados.horasUteisTotais * 10000)/100 : 0;
       this.planoRelatorio = {
           'plano': plano!,
           'extras': $metadados,
           'descricaoPlano': (plano!.tipo_modalidade!.nome || "") + " - " + this.dao!.getDateFormatted(plano!.data_inicio_vigencia) + " a " + this.dao!.getDateFormatted(plano!.data_fim_vigencia) + " (" + plano!.unidade!.sigla + ")",
           'statusPlano': $metadados.concluido ? (plano.demandas.length ? 'CONCLUÍDO - estatísticas CONCLUSIVAS' : 'VAZIO - nenhuma demanda foi cadastrada neste Plano') : 'EM ANDAMENTO - estatísticas sujeitas a alterações',
-          'horasUteisDecorridas': $metadados.horasUteisDecorridas,
+          'horasDisponiveisPlano': $horasUteisLiquidasPlano - $horasLiquidasDecorridasPlano,
+          'horasLiquidasDecorridasPlano': $horasLiquidasDecorridasPlano,
+          'horasUteisLiquidasPlano': $horasUteisLiquidasPlano,
+          'percentualDecorridoAfastamentos': $metadados.horasUteisAfastamento ? Math.round($metadados.horasAfastamentoDecorridas / $metadados.horasUteisAfastamento * 10000)/100 : 0,
           'percentualDecorridoPlano': $metadados.horasUteisTotais ? Math.round($metadados.horasUteisDecorridas / $metadados.horasUteisTotais * 10000)/100 : 0,
-          'percentualAfastamento': $metadados.horasUteisTotais ? Math.round($metadados.horasAfastamento / $metadados.horasUteisTotais * 10000)/100 : 0,
-          'horasTotaisAlocadas': $horasTotaisAlocadas,
-          'percentualHorasTotaisAlocadas': $metadados.horasUteisTotais ? Math.round($horasTotaisAlocadas / $metadados.horasUteisTotais * 10000)/100 : 0,
+          'percentualAfastamento': $metadados.horasUteisTotais ? Math.round($metadados.horasUteisAfastamento / $metadados.horasUteisTotais * 10000)/100 : 0,
+          'percentualHorasLiquidasDecorridas': $percentualHorasLiquidasDecorridas,
+          'percentualHorasTotaisAlocadas': $metadados.horasUteisTotais ? Math.round($metadados.horasTotaisAlocadas / $metadados.horasUteisTotais * 10000)/100 : 0,
           'percentualHorasNaoIniciadas': $metadados.horasUteisTotais ? Math.round($metadados.horasDemandasNaoIniciadas / $metadados.horasUteisTotais * 10000)/100 : 0,
+          'percentualHorasDisponiveis' : 100 - $percentualHorasLiquidasDecorridas,
           'percentualHorasEmAndamento': $metadados.horasUteisTotais ? Math.round($metadados.horasDemandasEmAndamento / $metadados.horasUteisTotais * 10000)/100 : 0,
           'percentualHorasConcluidas': $metadados.horasUteisTotais ? Math.round($metadados.horasDemandasConcluidas / $metadados.horasUteisTotais * 10000)/100 : 0,
           'percentualHorasAvaliadas': $metadados.horasUteisTotais ? Math.round($metadados.horasDemandasAvaliadas / $metadados.horasUteisTotais * 10000)/100 : 0,
-          'mediaAvaliacoes': this.util.avg($metadados.demandasAvaliadas.map(d => d.avaliacao!.nota_atribuida)),
           'dadosGraficoPlano': this.obterDadosGrafico($metadados, 'GERAL'),
           'dadosGraficoDemandas': this.obterDadosGrafico($metadados, 'DETALHADO')
       };

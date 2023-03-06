@@ -644,7 +644,7 @@ class IntegracaoService extends ServiceBase {
             if($this->echo) $this->imprimeNoTerminal("Iniciando a fase de reconstrução das funções de chefia!.....");
             try {
                 DB::beginTransaction();
-                // seleciona o Id do usuário, a data da modificação e as funções de todos os servidores ativos trazidos do SIAPE, e que já existem na tabela Usuários
+                // seleciona o Id do usuário e as funções de todos os servidores ativos trazidos do SIAPE, e que já existem na tabela Usuários
                 $sql_1 = "SELECT u.id, s.funcoes FROM integracao_servidores s INNER JOIN usuarios u " .
                          "ON s.cpf = u.cpf WHERE s.vinculo_ativo = 'true' and u.cpf is not null";
                 $servidores = DB::select($sql_1);
