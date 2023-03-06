@@ -24,6 +24,7 @@ class AlterChangesTableAlterType extends Migration
      */
     public function down()
     {
+        DB::connection("log")->statement("DELETE FROM changes WHERE type = 'SOFT_DELETE'");
         DB::connection("log")->statement("ALTER TABLE changes MODIFY COLUMN type ENUM('ADD', 'EDIT', 'DELETE')");
     }
 }
