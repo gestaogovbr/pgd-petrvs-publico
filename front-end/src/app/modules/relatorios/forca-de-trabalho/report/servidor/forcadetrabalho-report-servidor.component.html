@@ -77,10 +77,17 @@
       <tr>
         <td class="text-center">B</td>
         <td>Horas úteis decorridas do Plano</td>
-        <td class="text-center">{{ x.percentualDecorridoPlano == -1 ? '' : (x.percentualDecorridoPlano == -2 ? this.util.decimalToTimerFormated(x.extras.horasUteisTotais, true) : (x.extras.horasUteisDecorridas == 0 ? 0 : this.util.decimalToTimerFormated(x.extras.horasUteisDecorridas, true))) }}</td>
-        <td class="text-center">{{ x.percentualDecorridoPlano == -1 ? '0,0' : (x.percentualDecorridoPlano == -2 ? '100,0' : x.percentualDecorridoPlano) }} %</td>
+        <td class="text-center">{{ x.extras.horasUteisDecorridas == 0 ? 0 : this.util.decimalToTimerFormated(x.extras.horasUteisDecorridas, true) }}</td>
+        <td class="text-center">{{ x.percentualDecorridoPlano }} %</td>
         <td><span><small class="micro-text fw-ligh">{{ x.percentualDecorridoPlano == -1 ? 'A vigência do Plano ainda não iniciou.' : (x.percentualDecorridoPlano == -2 ? 'A vigência do Plano já encerrou.' : 'Horas úteis do Plano de Trabalho, do início de sua vigência até o instante atual, considerando-se a carga_horaria, os feriados e finais de semana.') }}</small></span></td>
       </tr>
+      <tr>
+        <td class="text-center"></td>
+        <td>Horas de afastamento</td>
+        <td class="text-center">{{ this.util.decimalToTimerFormated(x.extras.horasAfastamento, true) }}</td>
+        <td class="text-center">{{ x.percentualAfastamento }} %</td>
+        <td><span><small class="micro-text fw-ligh"></small>Total das horas dos afastamentos do servidor compreendidas no período do Plano (férias, atestados, etc.)</span></td>
+      </tr>      
       <tr>
         <td class="text-center">C</td>
         <td>Total de horas não-iniciadas</td>

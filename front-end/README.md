@@ -1,5 +1,5 @@
 ### Recomendações
-- Para executar o código localmente em desenvolvimento utilizar o comendo:
+- Para executar o código localmente em desenvolvimento utilizar o comando:
 ``` 
 npm start
 ```
@@ -11,12 +11,12 @@ npm run build
 ### Dicionário de dados
 ## Sintax
 # TypeScript
-- identação de 2 espaços
-- Campos de model com nome composto sempre usar "_" (não pode haver letras maísculas)
+- indentação de 2 espaços
+- Campos de model com nome composto sempre usar "_" (não pode haver letras maiúsculas)
 - Propriedades de classes são sempre camelcase (exceto se for referente a campo de banco)
 - Funções são sempre camelcase
 # HTML
-- identação de 4 espaçoes
+- indentação de 4 espaços
 # SCSS
-- 4 espaçoes
+- 4 espaços
 - Classes separadas por "-" e tudo minúsculo
