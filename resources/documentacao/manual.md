@@ -22,7 +22,7 @@
 
 * [Adesão](adesao.md)
 * [Plano de Entregas](plano_de_entregas.md)
-* [Planejamento Estratégico](Planejamento_estratégico.md)
+* [Planejamento Estratégico](Planejamento_institucional.md)
 
 ## Regra geral do sistema
 
