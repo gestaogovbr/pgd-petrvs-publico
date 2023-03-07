@@ -17,8 +17,6 @@ class PlanejamentoObjetivo extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'sequencia', /* int; NOT NULL; */// Sequencia dentro do grupo
-        'path', /* text; */// Path dos nós pais separados por /, ou null caso seja um nó raiz
         'nome', /* varchar(256); NOT NULL; */// Nome do objetivo
         'planejamento_id', /* char(36); NOT NULL; */
         'eixo_tematico_id', /* char(36); NOT NULL; */
@@ -26,6 +24,8 @@ class PlanejamentoObjetivo extends ModelBase
         //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
         //'data_fim', /* datetime; */// Data fim da vigência
         //'fundamentacao', /* varchar(256); NOT NULL; */// Fundamentação
+        /*'sequencia',*/// REMOVED
+        /*'path',*/// REMOVED
     ];
 
     // Has
