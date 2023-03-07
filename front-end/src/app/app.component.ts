@@ -121,9 +121,9 @@ export class AppComponent {
         { name: this.lex.noun("Adesao", true), permition: 'MOD_ADES', route: ['gestao', 'adesao'], icon: "bi bi-check-all" },
         { name: this.lex.noun("Cadeia de valor", true), permition: 'MOD_EXTM', route: ['gestao', 'cadeia-valor'], icon: "bi bi-bar-chart-steps" },
         { name: this.lex.noun("Demanda", true), permition: '', route: ['gestao', 'demanda'], icon: "bi bi-activity" },
-        { name: this.lex.noun("Planejamento estratégico", true), permition: 'MOD_PGENTR', route: ['gestao', 'planejamento'], icon: "bi bi-files" },
-        { name: this.lex.noun("Programa de gestão", true), permition: 'MOD_PRGT', route: ['cadastros', 'programa'], icon: "bi bi-graph-up-arrow" },
+        { name: this.lex.noun("Planejamento institucional", true), permition: 'MOD_PLAN_INST', route: ['gestao', 'planejamento'], icon: "bi bi-files" },
         { name: this.lex.noun("Plano de trabalho", true), permition: 'MOD_PTR', route: ['gestao', 'plano'], icon: "bi bi-list-check" },
+        { name: this.lex.noun("Programa de gestão", true), permition: 'MOD_PRGT', route: ['cadastros', 'programa'], icon: "bi bi-graph-up-arrow" },
         { name: this.lex.noun("Projetos", true), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: "bi bi-diagram-2" }
       ],
       relatorios: [

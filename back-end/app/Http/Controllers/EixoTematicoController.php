@@ -20,6 +20,9 @@ class EixoTematicoController extends ControllerBase {
             case 'DESTROY':
                 if (!$usuario->hasPermissionTo('MOD_PLAN_INST_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não executada");
                 break;
-        }
+            case 'QUERY':
+                if (!$usuario->hasPermissionTo('MOD_PLAN_INST_CONS')) throw new ServerException("CapacidadeStore", "Consulta não executada");
+                break;
+            }
     }
 }
