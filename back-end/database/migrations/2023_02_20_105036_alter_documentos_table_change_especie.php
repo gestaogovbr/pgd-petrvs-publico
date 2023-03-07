@@ -24,6 +24,7 @@ class AlterDocumentosTableChangeEspecie extends Migration
      */
     public function down()
     {
+        DB::statement("DELETE FROM documentos WHERE especie = 'TCR_CANCELAMENTO'");
         DB::statement("ALTER TABLE documentos MODIFY especie ENUM('TERMO_ADESAO', 'SEI', 'TCR') COMMENT 'Especificação da espécie do documento (interno do sistema)'");
     }
 }

@@ -13,10 +13,12 @@ class DropTiposProcessosCadeias extends Migration
      */
     public function up()
     {
-        Schema::table('cadeias_valores_processos', function (Blueprint $table) {
-            $table->dropForeign(['tipo_processo_id']);
-            $table->dropColumn('tipo_processo_id');
-        });        
+        if(Schema::hasTable('cadeias_valores_processos') && Schema::hasColumn('cadeias_valores_processos', 'tipo_processo_id')) {
+            Schema::table('cadeias_valores_processos', function (Blueprint $table) {
+                $table->dropForeign(['tipo_processo_id']);
+                $table->dropColumn('tipo_processo_id');
+            });
+        }
         Schema::dropIfExists("tipos_processos_cadeias");
     }
 

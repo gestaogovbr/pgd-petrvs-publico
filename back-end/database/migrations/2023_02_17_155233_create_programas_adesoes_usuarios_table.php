@@ -32,6 +32,8 @@ class CreateProgramasAdesoesUsuariosTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('programas_adesoes_usuarios');
+        Schema::enableForeignKeyConstraints();
     }
 }

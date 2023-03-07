@@ -17,7 +17,7 @@ class AlterDocumentosTableAddTemplateId extends Migration
             $table->text('template')->nullable()->comment("Campo de Template");
             $table->json("data_source")->nullable()->comment("Conjunto de dados do template");
             $table->foreignUuid('template_id')->nullable()->constrained("templates")->onDelete('restrict')->onUpdate('cascade');
-            
+
             // já estava adicionado na migrate AlterDocumentosTableAddProgramaAdesao
             //$table->foreignUuid('programa_adesao_id')->nullable()->constrained("programas_adesoes")->onDelete('restrict')->onUpdate('cascade');
         });
