@@ -175,13 +175,7 @@ Route::middleware(['auth:sanctum'])->prefix('Demanda')->group(function () {
     Route::post('arquivar', [DemandaController::class, 'arquivar']);
 });
 Route::middleware(['auth:sanctum'])->prefix('DemandaEntrega')->group(function () { defaultRoutes(DemandaEntregaController::class); });
-Route::middleware(['auth:sanctum'])->prefix('Planejamento')->group(function () {
-    defaultRoutes(PlanejamentoController::class);
-/*     Route::post('avaliar', [PlanejamentoController::class, 'avaliar']);
-    Route::post('cancelar-avaliacao', [PlanejamentoController::class, 'cancelarAvaliacao']);
-    Route::post('arquivar', [PlanejamentoController::class, 'arquivar']);
-    Route::post('metadadosPlano', [PlanejamentoController::class, 'metadadosPlano']); */
-});
+Route::middleware(['auth:sanctum'])->prefix('Planejamento')->group(function () { defaultRoutes(PlanejamentoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Plano')->group(function () {
     defaultRoutes(PlanoController::class);
     Route::post('avaliar', [PlanoController::class, 'avaliar']);

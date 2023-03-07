@@ -22,17 +22,17 @@ class Planejamento extends ModelBase
         'fim', /* datetime; */// Data fim do planejamento
         'nome', /* varchar(256); NOT NULL; */// Nome do planejamento estratégico
         'unidade_id', /* char(36); */
-        'entidade_id', /* char(36); NOT NULL; */
+        'missao', /* text; NOT NULL; */// Missão da entidade/unidade
+        'visao', /* text; NOT NULL; */// Visão da entidade/unidade
+        'valores', /* json; NOT NULL; */// Valores da entidade/unidade
+        //'entidade_id', /* char(36); NOT NULL; */
         //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência do registro
         //'data_fim', /* datetime; */// Data fim da vigência do registro
-        //'missao', /* text; NOT NULL; */// Missão
-        //'visao', /* text; NOT NULL; */// Visão
-        //'valores', /* json; NOT NULL; */// Valores
     ];
 
     // Has
     public function objetivos() { return $this->hasMany(PlanejamentoObjetivo::class); }    
     // Belongs
-    public function unidade() { return $this->belongsTo(Unidade::class, 'unidade_id'); }
-    public function entidade() { return $this->belongsTo(Entidade::class, 'entidade_id'); }
+    public function unidade() { return $this->belongsTo(Unidade::class); }
+    public function entidade() { return $this->belongsTo(Entidade::class); }
 }

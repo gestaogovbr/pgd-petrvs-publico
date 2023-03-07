@@ -37,7 +37,7 @@ const routes: Routes = [
   { path: 'gestao/demanda', loadChildren: () => import('./modules/gestao/demanda/demanda.module').then(m => m.DemandaModule), canActivate: [AuthGuard] },
   { path: 'gestao/adesao', loadChildren: () => import('./modules/gestao/adesao/adesao.module').then(m => m.AdesaoModule), canActivate: [AuthGuard] },
   { path: 'gestao/plano', loadChildren: () => import('./modules/gestao/plano/plano.module').then(m => m.PlanoModule), canActivate: [AuthGuard] },
-  { path: 'gestao/planejamento', loadChildren: () => import('./modules/gestao/plano-gestao-entregas/planejamento.module').then(m => m.PlanejamentoModule), canActivate: [AuthGuard] },
+  { path: 'gestao/planejamento', loadChildren: () => import('./modules/gestao/planejamento-institucional/planejamento.module').then(m => m.PlanejamentoModule), canActivate: [AuthGuard] },
   { path: 'gestao/projeto', loadChildren: () => import('./modules/gestao/projeto/projeto.module').then(m => m.ProjetoModule), canActivate: [AuthGuard] },
   { path: 'configuracoes/preferencia', loadChildren: () => import('./modules/configuracoes/preferencia/preferencia.module').then(m => m.PreferenciaModule), canActivate: [AuthGuard] },
   { path: 'configuracoes/entidade', loadChildren: () => import('./modules/configuracoes/entidade/entidade.module').then(m => m.EntidadeModule), canActivate: [AuthGuard] },

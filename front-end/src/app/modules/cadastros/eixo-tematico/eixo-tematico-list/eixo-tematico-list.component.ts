@@ -20,16 +20,16 @@ export class EixoTematicoListComponent extends PageListBase<EixoTematico, EixoTe
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}
      });
-    // Testa se o usuário possui permissão para exibir dados de entrega
-    if (this.auth.hasPermissionTo("MOD_EXTM_CONS")) {
+    // Testa se o usuário possui permissão para consultar eixos temáticos
+    if (this.auth.hasPermissionTo("MOD_PLAN_INST_CONS")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",
         onClick: this.consult.bind(this)
       });
     }
-    // Testa se o usuário possui permissão para excluir a entrega
-    if (this.auth.hasPermissionTo("MOD_EXTM_EXCL")) {
+    // Testa se o usuário possui permissão para excluir eixos temáticos
+    if (this.auth.hasPermissionTo("MOD_PLAN_INST_EXCL")) {
       this.options.push({
         icon: "bi bi-trash",
         label: "Excluir",

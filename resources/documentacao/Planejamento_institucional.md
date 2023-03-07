@@ -1,7 +1,7 @@
 #   Planejamento Institucional
 
 ##  Acessos  
--   válidos para 'planejamento institucional' e 'eixos temáticos'
+-   válidos para *'planejamento institucional'* e *'eixos temáticos'*
 ~~~
     MOD_PLAN_INST
     MOD_PLAN_INST_CONS
@@ -21,11 +21,13 @@
 ##  Eixos Temáticos (Grupo de objetivos)
 -   Tabela: eixos_tematicos
 ~~~   
-    Nome
-    Icone
-    Cor
-    Descrição
+    Nome (*)
+    Icone (*)
+    Cor (*)
+    Descrição (*)
     (id/created_at/updated_at/data_inicio/data_fim)
+
+    (*) campo obrigatório
 ~~~
 
 ##  Planejamento Institucional
