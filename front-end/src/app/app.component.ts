@@ -102,7 +102,7 @@ export class AppComponent {
         { name: this.lex.noun("Atividade", true), permition: 'MOD_ATV', route: ['cadastros', 'atividade'], icon: "bi bi-activity" },
         { name: this.lex.noun("Afastamento", true), permition: 'MOD_AFT', route: ['cadastros', 'afastamento'], icon: "bi bi-toggle-off" },
         { name: this.lex.noun("Cidades", true), permition: 'MOD_CID', route: ['cadastros', 'cidade'], icon: "bi bi-building" },
-        { name: this.lex.noun("Eixos temáticos", true), permition: 'MOD_PLAN_INST', route: ['cadastros', 'eixo-tematico'], icon: "bi bi-gear" },
+        { name: this.lex.noun("Eixos Temáticos", true), permition: 'MOD_PLAN_INST', route: ['cadastros', 'eixo-tematico'], icon: "bi bi-gear" },
         { name: this.lex.noun("Entregas", true), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: "bi bi-list-check" },
         //{ name: this.lex.noun("Macroprocessos", true), permition: '', route: ['cadastros', 'macroprocesso'], icon: "bi bi-list-check" },
         { name: this.lex.noun("Feriados", true), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: "bi bi-emoji-sunglasses" },
@@ -121,7 +121,7 @@ export class AppComponent {
         { name: this.lex.noun("Adesao", true), permition: 'MOD_ADES', route: ['gestao', 'adesao'], icon: "bi bi-check-all" },
         { name: this.lex.noun("Cadeia de valor", true), permition: 'MOD_EXTM', route: ['gestao', 'cadeia-valor'], icon: "bi bi-bar-chart-steps" },
         { name: this.lex.noun("Demanda", true), permition: '', route: ['gestao', 'demanda'], icon: "bi bi-activity" },
-        { name: this.lex.noun("Planejamento institucional", true), permition: 'MOD_PLAN_INST', route: ['gestao', 'planejamento'], icon: "bi bi-files" },
+        { name: this.lex.noun("Planejamentos Institucionais", true), permition: 'MOD_PLAN_INST', route: ['gestao', 'planejamento'], icon: "bi bi-files" },
         { name: this.lex.noun("Plano de trabalho", true), permition: 'MOD_PTR', route: ['gestao', 'plano'], icon: "bi bi-list-check" },
         { name: this.lex.noun("Programa de gestão", true), permition: 'MOD_PRGT', route: ['cadastros', 'programa'], icon: "bi bi-graph-up-arrow" },
         { name: this.lex.noun("Projetos", true), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: "bi bi-diagram-2" }

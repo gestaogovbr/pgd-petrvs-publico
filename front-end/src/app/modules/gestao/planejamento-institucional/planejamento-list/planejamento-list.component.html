@@ -1,19 +1,25 @@
-<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
-    [selectable]="selectable" (select)="onSelect($event)"
-    [hasAdd]="auth.hasPermissionTo('MOD_PGENTR_INCL')"
-    [hasEdit]="auth.hasPermissionTo('MOD_PGENTR_EDT')">
-    <toolbar *ngIf="!selectable"></toolbar>
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [join]="join" [groupBy]="groupBy"
+    [selectable]="selectable" (select)="onSelect($event)" [groupTemplate]="groupUnidade"
+    [hasAdd]="auth.hasPermissionTo('MOD_PLAN_INST_INCL')"
+    [hasEdit]="auth.hasPermissionTo('MOD_PLAN_INST_EDT')">
+    <toolbar *ngIf="!selectable">
+        <input-switch [size]="4" labelPosition="left" label="Agrupar por Unidade" controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
+    </toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="12" label="Plano de Gestão/Entregas" controlName="nome"
-                [control]="filter!.controls.nome" placeholder="Nome do plano de gestão/entregas..."></input-text>
+            <input-text [size]="12" label="Planejamento Institucional" controlName="nome"
+                [control]="filter!.controls.nome" placeholder="Nome do planejamento institucional..."></input-text>
         </div>
         <div class="row">
-            <input-datetime [size]="3" date label="Início" controlName="inicio" [control]="filter!.controls.inicio" labelInfo="Data de início do plano de gestão/entregas"></input-datetime>
-            <input-datetime [size]="3" date label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Data do fim do plano de gestão/entregas"></input-datetime>
-            <input-search #unidade [size]="6" label="Unidade" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+            <input-switch class="pt-4" [size]="2" labelPosition="left" label="Só da Entidade" controlName="so_entidade" [control]="filter!.controls.so_entidade" (change)="onSoEntidadeChange($event)"></input-switch>
+            <input-search #unidade [size]="6" label="Unidade" [disabled]="unidade_disabled" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+            <input-datetime [size]="2" date label="Início" controlName="inicio" [control]="filter!.controls.inicio" labelInfo="Data de início do planejamento institucional"></input-datetime>
+            <input-datetime [size]="2" date label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Data do fim do planejamento institucional"></input-datetime>
         </div>
     </filter>
+    <ng-template let-separator="separator" #groupUnidade>
+        <strong class="grid-group-text">{{separator?.text || auth.unidade!.entidade!.sigla}}</strong>
+    </ng-template>
     <columns>
         <column title="Nome" field="nome" orderBy="nome"></column>
         <column title="Início" [template]="columnInicio">
