@@ -18,7 +18,7 @@
         </div>
     </filter>
     <ng-template let-separator="separator" #groupUnidade>
-        <strong class="grid-group-text">{{separator?.text || auth.unidade!.entidade!.sigla}}</strong>
+        <strong *ngIf="filter!.controls.agrupar.value" class="grid-group-text">{{separator?.text || auth.unidade!.entidade!.sigla}}</strong>
     </ng-template>
     <columns>
         <column title="Nome" field="nome" orderBy="nome"></column>

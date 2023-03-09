@@ -33,7 +33,7 @@
 ##  Planejamento Institucional
 -   Tabela: planejamentos
 ~~~
-    Nome
+    Nome (*)
     Missão
     Visão
     Valores
@@ -68,9 +68,9 @@ Inicio:         Fim:
 ----------+--------------------------------
 EIXO TEMATICO 1
     Objetivo1      ObjSup1
-    Objetivo2      ObjSup2
+    Objetivo2      ObjSup4
 
 EIXO TEMATICO 2
-    Objetivo1      ObjSup1
-    Objetivo1    
+    Objetivo1      ObjSup7
+    Objetivo2      ObjSup7
 ~~~

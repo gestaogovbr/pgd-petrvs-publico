@@ -6,6 +6,7 @@ import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Planejamento } from 'src/app/models/planejamento.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
+import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
   selector: 'app-planejamento-form',
@@ -16,21 +17,27 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
     @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
 
     public unidadeDao: UnidadeDaoService;
+    public form: FormGroup;
     
     constructor(public injector: Injector) {
       super(injector, Planejamento, PlanejamentoDaoService);
       this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
       this.form = this.fh.FormBuilder({
         nome: {default: ""},
-        unidade_id: {default: ""},
+        unidade_id: {default: null},
+        entidade_id: {default: null},
         inicio: {default: new Date()},
-        fim: {default: null}
+        fim: {default: null},
+        missao: {default: ""},
+        visao: {default: ""},
+        valores: { default: []},
+        valor_texto: {default: ""}
       }, this.cdRef, this.validate);
     }
   
     public validate = (control: AbstractControl, controlName: string) => {
       let result = null;
-      if(['nome','unidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+      if(['nome','missao','visao'].indexOf(controlName) >= 0 && !control.value?.length) {
         result = "Obrigatório";
       }
       if(['inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
@@ -69,6 +76,20 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
     public titleEdit = (entity: Planejamento): string => {
       return "Editando "+ (entity?.nome || "");
     }
+
+    public addValorHandle(): LookupItem | undefined {
+      let result = undefined;
+      const value = this.form.controls.valor_texto.value;
+      const key = this.util.textHash(value);
+      if(value?.length && this.util.validateLookupItem(this.form.controls.valores.value, key)) {
+        result = {
+          key: key,
+          value: this.form.controls.valor_texto.value
+        };
+        this.form.controls.valor_texto.setValue("");
+      }
+      return result;
+    };
   
 }
   
