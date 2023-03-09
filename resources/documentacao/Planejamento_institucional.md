@@ -34,14 +34,16 @@
 -   Tabela: planejamentos
 ~~~
     Nome (*)
-    Missão
-    Visão
+    Missão (*)
+    Visão (*)
     Valores
-    inicio
+    inicio (*)
     fim
     (id/created_at/updated_at/data_inicio/data_fim)
-        entidade_id
+        entidade_id (*)
         unidade_id
+
+    (*) campo obrigatório
 ~~~
 
 ##  Objetivos
@@ -52,7 +54,7 @@
     (id/created_at/updated_at/data_inicio/data_fim)
         planejamento_id
         eixo_tematico_id
-        objetivo_pai_id
+        objetivo_superior_id
 ~~~
 
 ### Exemplo de grid

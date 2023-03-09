@@ -7,6 +7,7 @@ import { Unidade } from './unidade.model';
 export class Planejamento extends Base {
     public unidade?: Unidade;
     public entidade?: Entidade;
+    public objetivos?: PlanejamentoObjetivo[];
     
     public data_inicio: Date = new Date();  /* Data de criação */
     public data_fim: Date | null = null;  /* Data final do registro */
@@ -16,7 +17,6 @@ export class Planejamento extends Base {
     public missao: string = ""; /* Missão da Instituição/Unidade */
     public visao: string = ""; /* Visão da Instituição/Unidade */
     public valores: LookupItem[] = []; /* Valores da Instituição/Unidade */
-    public objetivos?: PlanejamentoObjetivo[];
     public unidade_id: string | null = null; /* Unidade à qual está vinculado o planejamento institucional */
     public entidade_id: string | null = null; /* Entidade à qual está vinculado o planejamento institucional */
 

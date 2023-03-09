@@ -7,6 +7,7 @@ import { IIndexable } from 'src/app/models/base.model';
 import { Planejamento } from 'src/app/models/planejamento.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
+import { PlanejamentoFormObjetivoComponent } from '../planejamento-form-objetivo/planejamento-form-objetivo.component';
 
 @Component({
   selector: 'app-planejamento-form',
@@ -15,6 +16,7 @@ import { LookupItem } from 'src/app/services/lookup.service';
 })
 export class PlanejamentoFormComponent extends PageFormBase<Planejamento, PlanejamentoDaoService> {
     @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
+    @ViewChild('objetivos', { static: false }) public objetivos?: PlanejamentoFormObjetivoComponent;
 
     public unidadeDao: UnidadeDaoService;
     public form: FormGroup;
@@ -22,6 +24,7 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
     constructor(public injector: Injector) {
       super(injector, Planejamento, PlanejamentoDaoService);
       this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+      this.join = ['objetivos'];
       this.form = this.fh.FormBuilder({
         nome: {default: ""},
         unidade_id: {default: null},
@@ -63,14 +66,18 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
     }
   
     public initializeData(form: FormGroup) {
-      form.patchValue(new Planejamento());
+      //form.patchValue(new Planejamento());
+      let planejamento = new Planejamento();
+      this.entity = planejamento;
+      this.cdRef.detectChanges();
+      this.loadData(this.entity, form); 
     }
   
     public async saveData(form: IIndexable): Promise<Planejamento> {
-      return new Promise<Planejamento>((resolve, reject) => {
-        const planejamento = this.util.fill(new Planejamento(), this.entity!);
-        resolve(this.util.fillForm(planejamento, this.form!.value));
-      });
+      await Promise.all([
+        this.objetivos!.saveData(),
+      ]);
+      return this.entity! as Planejamento;
     }
    
     public titleEdit = (entity: Planejamento): string => {
@@ -90,6 +97,14 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
       }
       return result;
     };
+
+    public onTabsSelect() {
+      this.saveData(this.form!);
+    }
+
+/*     public get titlePlanejamento(): string {
+      return this.entity?.numero ? "#" + this.entity?.numero : "";
+    } */
   
 }
   
