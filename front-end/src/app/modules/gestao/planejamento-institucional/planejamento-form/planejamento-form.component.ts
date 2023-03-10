@@ -17,7 +17,7 @@ import { PlanejamentoFormObjetivoComponent } from '../planejamento-form-objetivo
 })
 export class PlanejamentoFormComponent extends PageFormBase<Planejamento, PlanejamentoDaoService> {
     @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-    //@ViewChild('comp_objetivos', { static: false }) public comp_objetivos?: PlanejamentoFormObjetivoComponent;
+    @ViewChild('objetivos', { static: false }) public objetivos?: PlanejamentoFormObjetivoComponent;
     @ViewChild(GridComponent, { static: true }) public grid?: GridComponent;
     
     public unidadeDao: UnidadeDaoService;
@@ -35,7 +35,7 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
         fim: {default: null},
         missao: {default: ""},
         visao: {default: ""},
-        objetivos: {default: []},
+        //objetivos: {default: []},
         valores: { default: []},
         valor_texto: {default: ""}
       }, this.cdRef, this.validate);
@@ -70,26 +70,20 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
   
     public initializeData(form: FormGroup) {
       this.entity = new Planejamento();
-      this.cdRef.detectChanges();
       this.loadData(this.entity, form); 
     }
 
     public async saveData(form: IIndexable): Promise<Planejamento> {
       return new Promise<Planejamento>((resolve, reject) => {
-        const planejamento = this.util.fill(new Planejamento(), this.entity!);
-
-        resolve(this.util.fillForm(planejamento, this.form!.value));
+        this.objetivos!.grid!.confirm();
+        let planejamento = this.util.fill(new Planejamento(), this.entity!);
+        //this.form!.value.entidade_id = this.auth.unidade?.entidade?.id
+        //this.form!.value.unidade_id = this.auth.unidade?.id
+        planejamento = this.util.fillForm(planejamento, this.form!.value);
+        planejamento.objetivos = this.objetivos!.items;
+        resolve(planejamento);
       });
     }
-
-/*     public async saveData(form: IIndexable): Promise<CadeiaValor> {
-      return new Promise<CadeiaValor>((resolve, reject) => {
-        const cadeiaValor = this.util.fill(new CadeiaValor(), this.entity!);
-        this.form!.value.entidade_id = this.auth.unidade?.entidade?.id
-        this.form!.value.unidade_id = this.auth.unidade?.id
-        resolve(this.util.fillForm(cadeiaValor, this.form!.value));
-      });
-    } */
    
     public titleEdit = (entity: Planejamento): string => {
       return "Editando "+ (entity?.nome || "");
