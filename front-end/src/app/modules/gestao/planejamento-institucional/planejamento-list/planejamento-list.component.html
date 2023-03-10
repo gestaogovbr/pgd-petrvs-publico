@@ -17,8 +17,8 @@
             <input-datetime [size]="2" date label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Data do fim do planejamento institucional"></input-datetime>
         </div>
     </filter>
-    <ng-template let-separator="separator" #groupUnidade>
-        <strong *ngIf="filter!.controls.agrupar.value" class="grid-group-text">{{separator?.text || auth.unidade!.entidade!.sigla}}</strong>
+    <ng-template let-group="group" #groupUnidade>
+        <!-- <strong *ngIf="filter!.controls.agrupar.value" class="grid-group-text">{{separator?.text || auth.unidade!.entidade!.sigla}}</strong> -->
     </ng-template>
     <columns>
         <column title="Nome" field="nome" orderBy="nome"></column>
