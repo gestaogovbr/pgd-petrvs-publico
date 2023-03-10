@@ -52,6 +52,7 @@ class Entidade extends ModelBase
         //'data_fim', /* datetime; */// Data fim da vigência
         //'api_public_key', /* text; */// Chave pública de API
         //'api_private_key', /* text; */// Chave privada de API
+        //'template_adesao_cancelamento_id', /* char(36); */
     ];
 
     public $delete_cascade = ['feriados'];
