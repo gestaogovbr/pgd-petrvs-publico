@@ -55,7 +55,7 @@ class TipoCapacidadeSeeder extends Seeder
                     'id' => $utilService->uuid(),
                     'data_inicio' => date("Y-m-d H:i:s"),
                     'data_fim' => null,
-                    'perfil_id' => $developerId, // ID do Perfil DESENVOLVEDOR
+                    'perfil_id' => $developerId,
                     'tipo_capacidade_id' => $registro[0]
                 ]);
                 $capacidade->save();

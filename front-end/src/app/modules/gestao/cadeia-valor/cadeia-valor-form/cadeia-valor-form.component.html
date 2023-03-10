@@ -1,0 +1,37 @@
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+  <div class="row">
+    <div class="row">
+      <input-text [size]="12" label="Nome da Cadeia de Valor" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome"></input-text>
+    </div>
+    <div class="row">
+      <input-datetime date [size]="6" label="Início" icon="bi bi-calendar-date" controlName="inicio" [control]="form!.controls.inicio" labelInfo="Início da Cadeia de Valor"></input-datetime>
+      <input-datetime date [size]="6" label="Fim" icon="bi bi-calendar-date" controlName="fim" [control]="form!.controls.fim" labelInfo="Fim da Cadeia de Valor"></input-datetime>
+    </div>
+  </div>
+  <separator></separator>
+  <cadeia-valor-form-processos #processos [entity]="entity" [cdRef]="cdRef"></cadeia-valor-form-processos>
+</editable-form>
+
+<!--
+nome
+inio          fim         unidade
+-------------------------------------------------------------------------------------
+Nível               Processos      [ + ]
+----------+--------------------------
+1        Proc 1
+1.1        Proc 2
+1.2        Proc 3
+2        Proc 4
+2.1        Proc 5
+2.1.1        Proc 6
+
+-
+Pai: Raiz
+Processo: [     ]
+
+
+//-->
+
+
+
+

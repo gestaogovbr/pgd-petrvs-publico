@@ -1,132 +1,122 @@
-## Cadastro Entregas
-``` 
+# Exemplo
+
+```
+Cadastro Entregas 
    Nome
    Indicador
-```
 
-## Cadastro de Eixos Temáticos (Grupo de objetivos)
-``` 
+Cadastro de Eixos Temáticos (Grupo de objetivos) 
    Nome
-```
 
-## Planejamento Estratégico
-~~~
+Planejamento Institucional
    Entidade 
    Unidade (Setor, opc)
    Objetivos
-~~~
-- Esquema do grid de objetivos
-  
+              Grupo-tematico Obj-estratégico-superior
+      Ob1 ... -              -
+      Ob2 ... -              -
 
-|&nbsp;|Grupo-tematico|Obj-estratégico-superior|
-|:---:|:---:|:---:|
-|Ob1|-|-|
-|Ob2|-|-|  
-  - listagem com duas abas: grid e mapa
-
-
-## Tipos de Processos
-```
+Tipos de Processos
   Nome
-```
 
-## Cadeia de Valor
-~~~
+Cadeia de Valor
    Entidade 
    Unidade (Setor, opc)
-   Processos  
-~~~
-- Esquema do grid de Processos
-  
-
-|&nbsp;|Sequencia do Path do Pai|
-|:---:|:---:|
-|Tipo_Proc1|-|
-
-
-## Plano de Entregas
-~~~
+   Processos
+                        Sequencia Path Pai
+       Tipo_Proc1 ... - 
+```  
+```
+Plano de Entregas
    Unidade (Setor)
    Planejamento_estrategico_id
    Cadeia_valor_id
    Entregas
-~~~  
-
-- Esquema do grid de entregas  
-  
-| &nbsp;| Inicio     |    Fim     | Indicador   |     Meta  |  Geral  | Realizado | Objetivos | Processos   | Atividades | Cliente     |  Hmg  |
-| :---:| :---:      | :---:      | :---:       | :---:     | :---:    :---:      | :---:     | :---:       | :---:      | :---:       | :---: |
-| Ent1 | 01/01/2022 |     -      |  Quantidade |    1000   |   400   |     200   |  Ob1,Ob2  | Proc1,Proc2 | Atv1,Atv2  | uOrg1,uOrg2 |  S    |
-| Ent2 | 01/01/2022 | 30/12/2022 |      %      |    100    |    70   |     -     |    Ob2    |      -      |     -      |      -      |  S    |
-| Ent3 | 01/01/2022 | 30/12/2024 | Qualitativo | Excelente |   Bom   |     -     |     -     |      -      |     -      |      -      |  S    |
-| Ent4 | 09/12/2022 | 30/12/2022 | Qualitativo | Excelente |   Bom   |     -     |     -     |      -      |     -      |      -      |  N    |
-  <sup>As opções de Indicador vem do cadastro de entregas</sup>  
-  
+            Inicio     Fim        Indicador (vem do cadastro entrega) Metal geral Realizado Objetivos* Processos*    Atividades*          Cliente      Hmg
+      Ent1: 01/01/2022 -          Quantidade                          1000        200       Ob1, Ob1   Proc1, Proc2  Tip.Ativ1, Tip.Atv2  uOrg1, uOrg2 S
+      Ent2: 01/01/2022 30/12/2022 %                                   100         70        Ob2                                                        S
+      Ent3: 01/01/2022 30/12/2024 Qualitativo                         Excelente   Bom                                                                  S
+      Ent4: 09/12/2022 30/12/2022 ...                                                                                                                  N
    Ponto de controle
       [01/01/2023][30/01/2023]:
-          Responsável
+          Responsável: Genisson
           Entregas:
-                    Indicador (vem do cadastro entrega) Meta         Realizado  
+                    Indicador (vem do cadastro entrega) Meta do Mês  Realizado  
           Ent1:     Quantidade                          100          90
           Ent3:     Qualitativo                         Satisfatório Ruim
       [01/02/2023][30/02/2023]:
-          Responsável
+          Responsável: Paiva
           Entregas:
                     Indicador (vem do cadastro entrega) Meta         Realizado
           Ent1:     Quantidade                          110          110
           Ent2:     %                                   70           70
           Ent3:     Qualitativo                         Excelente    Bom
+* Deverá haver pelo menos 1
+```  
 ```
-[^1]: Deverá haver pelo menos 1
-
-## Plano de Trabalho
-```
-Unidade (Setor) - *TCR - Plano de entregas - [01/01/2023] - [30/06/2023] - Programa de Gestão: PGD 2.0 (Mensal)
+Plano Trabalho: 
+Unidade (Setor) - *TCR - Plano de entregas - Carga horária - [01/01/2023] - [30/06/2023]
     - Pontos de controle
       [01/01/2023][30/01/2023]:
          Entregas:
-              			Meta Realizado Demanda
-            - Ent1: 10h       20h      0h
-            - Ent2: 10h       0h       0h
-            - Ent3: 10h       10h      0h
-            - Ent4: 10h       10h      0h
+              			Planejado Realizado Atividade
+            - Ent1: 10h       20h       0h
+            - Ent2: 10h       0h        0h
+            - Ent3: 10h       10h       0h
+            - Ent4: 10h       10h       0h
             Nota: 8
+         Eventos:
+              Descição                        Tempo 
+            - Deslocamento de X para local Y  16h
+            - Reunião com ministério          30h
+         Total horas realizadas: 40 
       [01/02/2023][30/02/2023]
          Entregas:
-         			Planejado Realizado Demanda
+         			Planejado Realizado Atividade
             - Ent1: 10h       0h       0h
             - Ent2: 10h       0h       0h
             - Ent3: 10h       0h       0h
             - Ent4: 10h       5h       0h
             - Ent5: 0h        35h      0h
+         Total horas realizadas: 40 
       [01/03/2023][30/03/2023]
          Entregas:
-         			Planejado Realizado Demanda
+         			Planejado Realizado Atividade 
             - Ent1: 10h       20h      20h
             - Ent2: 10h       10h      10h
-            - Ent3: 10h       0h       10h
+            - Ent3: 10h       0h       10h 
             - Ent4: 10h       10h      10h
+         Total horas realizadas: 40 
       [01/04/2023][30/04/2023]
          Entregas:
-         			Planejado Realizado Demanda
+         			Planejado Realizado Atividade
             - Ent1: 10h       10h      10h
             - Ent2: 10h       0h       0h
             - Ent3: 10h       0h       0h
             - Ent4: 10h       0h       0h
-            Horas de afastamento: 30h
+         Eventos:
+              Descição                        Tempo 
+            - Afastamento de Saúde            20h
+         Total horas realizadas: 30 Saldo?
       [01/05/2023][30/05/2023]
          Entregas:
             - Ent1: 10h
             - Ent2: 10h
             - Ent3: 10h
-            - Ent4: 10h
+            - Ent4: 20h
+         Total horas realizadas: 50 Saldo?
       [30/06/2023]
+      ...
+      ...
 ```
 
+# Vinculos
 
-
-Demandas
+```
+Demandas:
   [Plano de trabalho] -> [Plano de entrega] -> *[Entrega]
+```
 
-Obs.:
-  - Criar vinculação, que servirá quando o servidor for cedido a outra unidade ou outro orgão. A demanda é criada na unidade do servidor, o qual ele tem plano de trabalho, e a outra unidade poderá visualizar. Caso uma unidade precise criar uma demanda para servidor de outra unidade, ele criará na unidade do servidor, e terá acesso a visualizar essa demanda (será adicionado automaticamente o vinculo)
+# Observações
+
+- Criar vinculação, que servirá quando o servidor for cedido a outra unidade ou outro orgão. A demanda é criada na unidade do servidor, o qual ele tem plano de trabalho, e a outra unidade poderá visualizar. Caso uma unidade precise criar uma demanda para servidor de outra unidade, ele criará na unidade do servidor, e terá acesso a visualizar essa demanda (será adicionado automaticamente o vinculo)

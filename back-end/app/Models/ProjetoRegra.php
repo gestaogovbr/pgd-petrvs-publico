@@ -22,6 +22,8 @@ class ProjetoRegra extends ModelBase
         'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
         'perfis', /* json; */// Perfis de capacidade aplicáveis a quem possuir a regra
         //'data_fim', /* datetime; */// Data final da vigência
+        //'recurso_tipo', /* enum('HUMANO','MATERIAL','SERVICO','CUSTO','DEPARTAMENTO'); NOT NULL; */// Tipo do recurso
+        //'finalidade', /* enum('OUTRA','ESCRITORIO_PROJETO','GERENTE_PROJETO','GERENTE_RISCO','GERENTE_COMUNICACAO','GERENTE_RECURSO','PATROCINADOR','GESTOR_NEGOCIAL','MEMBRO'); NOT NULL; */// Finalidade/Papel
     ];
 
     /*public $fillable_changes = [

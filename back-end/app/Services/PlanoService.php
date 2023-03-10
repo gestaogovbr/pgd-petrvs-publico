@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\Plano;
 use App\Models\Usuario;
+use App\Models\Unidade;
+use App\Models\Afastamento;
 use App\Services\RawWhere;
 use App\Services\ServiceBase;
 use App\Services\DemandaService;
@@ -31,12 +33,11 @@ class PlanoService extends ServiceBase
     }
 
     public function planosAtivosPorData($data_inicial, $data_final, $usuario_id){
-        return Plano::whereNull("data_fim")->where([
-            ["usuario_id", "==", $usuario_id],
-            ["data_inicio_vigencia", "<=", $data_final],
-            ["data_fim_vigencia", ">=", $data_inicial]
-        ])->get();
+        return Plano::whereNull("data_fim")->where("usuario_id", $usuario_id)
+                    ->where("data_inicio_vigencia", "<=", $data_final)
+                    ->where("data_fim_vigencia", ">=", $data_inicial)->get();
     }
+
 
     public function proxyQuery($query, &$data) {
         $where = [];
@@ -181,31 +182,38 @@ class PlanoService extends ServiceBase
     public function metadadosPlano($plano_id) {
         $plano = Plano::where('id', $plano_id)->with(['demandas', 'demandas.avaliacao', 'tipoModalidade'])->first()->toArray();
         $result = [
-            "usuario_id" => $plano['usuario_id'],
             "concluido" => true,
-            "horasUteisTotais" => $plano['tempo_total'],
             "demandasNaoIniciadas" => array_filter($plano['demandas'], fn($demanda) => $demanda['data_inicio'] == null),
             "demandasEmAndamento" => array_filter($plano['demandas'], fn($demanda) => $demanda['data_inicio'] != null && $demanda['data_entrega'] == null),
             "demandasConcluidas" => $this->demandasConcluidas($plano, null, null),
             "demandasAvaliadas" => $this->demandasAvaliadas($plano, null, null),
-            "horasTotaisAlocadas" => 0,
-            "mediaAvaliacoes" => null,
+            "horasAfastamentoDecorridas" => 0,
             "horasDemandasNaoIniciadas" => 0,
             "horasDemandasEmAndamento" => 0,
             "horasDemandasConcluidas" => 0,
             "horasDemandasAvaliadas" => 0,
+            "horasTotaisAlocadas" => 0,
+            "horasUteisAfastamento" => 0,
+            "horasUteisDecorridas" => 0,
+            "horasUteisTotais" => $plano['tempo_total'],
+            "mediaAvaliacoes" => null,
+            "modalidade" => $plano['tipo_modalidade']['nome'],
             "percentualHorasNaoIniciadas" => 0,
-            "modalidade" => $plano['tipo_modalidade']['nome']
+            "usuario_id" => $plano['usuario_id']
         ];
+        $inicioPlano = new DateTime($plano['data_inicio_vigencia']);
+        $fimPlano = new DateTime($plano['data_fim_vigencia'], $inicioPlano->getTimezone());
+        $unidadePlano = Unidade::find($plano['unidade_id'])->first();
+        $afastamentosUsuario = Afastamento::where('usuario_id',$plano['usuario_id'])->get()->toArray();
 
-        /** TRECHO A SER EXCLUÍDO, APÓS A CONCLUSÃO DA FUNÇÃO 'CALCULA DATA TEMPO' */
-        $hi = new DateTime($plano['data_inicio_vigencia']);
-        $hf = new DateTime('now', $hi->getTimezone());
-        $horasDecorridas = $this->calendario->horasEntreDatas($hi, $hf);
-        $hf = new DateTime($plano['data_fim_vigencia'], $hi->getTimezone());
-        $horasTotais = $this->calendario->horasEntreDatas($hi, $hf);
-        $percentualAjuste = $result["horasUteisTotais"] / $horasTotais;
-        $result["horasUteisDecorridas"] = $horasDecorridas * $percentualAjuste;
+        // Cálculo das horas úteis totais de afastamento
+        $result["horasUteisAfastamento"] = CalendarioService::calculaDataTempoUnidade($inicioPlano,$fimPlano,$plano['carga_horaria'],$unidadePlano,"HORAS_UTEIS",null,$afastamentosUsuario)->horasAfastamento;
+
+        // Cálculo das horas úteis decorridas do plano e das horas úteis decorridas dos afastamentos
+        $result["horasUteisDecorridas"] = new DateTime() < $inicioPlano ? 0 : CalendarioService::calculaDataTempoUnidade(
+            $inicioPlano,new DateTime() > $fimPlano ? $fimPlano : new DateTime(),$plano['carga_horaria'],$unidadePlano,"HORAS_UTEIS")->tempoUtil;
+        $result["horasAfastamentoDecorridas"] = new DateTime() < $inicioPlano ? 0 : CalendarioService::calculaDataTempoUnidade(
+            $inicioPlano,new DateTime() > $fimPlano ? $fimPlano : new DateTime(),$plano['carga_horaria'],$unidadePlano,"HORAS_UTEIS",null,$afastamentosUsuario)->horasAfastamento;
 
         /*  Nesse trecho, o método define se o plano foi concluído ou não.
         O plano será considerado CONCLUÍDO quando todas as suas demandas forem CUMPRIDAS. Uma demanda é considerada cumprida quando

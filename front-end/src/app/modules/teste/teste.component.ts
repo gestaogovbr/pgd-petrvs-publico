@@ -357,12 +357,12 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
       });
     } */
   ngOnInit(): void {
-    this.planejamentoDao.getById("867c7768-9690-11ed-b4ae-0242ac130002", ["objetivos.eixo_tematico", "unidade", "entidade"]).then(planejamento => {
+    this.planejamentoDao.getById("867c7768-9690-11ed-b4ae-0242ac130002", ["objetivos.eixoTematico", "unidade", "entidade"]).then(planejamento => {
       let mapa: MapItem[] = [];
       this.planejamento = planejamento || undefined;
       if (planejamento) {
         let eixos = planejamento.objetivos?.reduce((a, v) => {
-          if (!a.find(x => x.id == v.eixo_tematico_id)) a.push(v.eixo_tematico!);
+          if (!a.find(x => x.id == v.eixo_tematico_id)) a.push(v.eixoTematico!);
           return a;
         }, [] as EixoTematico[]) || [];
         mapa = eixos.map(x => {

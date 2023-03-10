@@ -37,9 +37,9 @@ class Documento extends ModelBase
         'status', /* enum('GERADO','AGUARDANDO_SEI'); NOT NULL; DEFAULT: 'GERADO'; */// Status do documento: GERADO (documento gerado); AGUARDANDO_SEI (Aguardando abrir o documento no sei para colar o conteúdo dentro)
         'template', /* text; */// Campo de Template
         'template_id', /* char(36); */
-        //'data_fim', /* datetime; */// Data fim
         'datasource', /* json; */// Conjunto de dados do template
         'dataset', /* json; */// Definição das variáveis disponíveis para o template
+        //'data_fim', /* datetime; */// Data fim
     ];
 
     public $delete_cascade = ['assinaturas'];
