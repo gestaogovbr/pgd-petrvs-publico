@@ -21,25 +21,31 @@ import { LookupItem } from 'src/app/services/lookup.service';
 export class PlanejamentoFormObjetivoComponent extends PageFrameBase {
     @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
     @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
+    @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
     @Input() set entity(value: Planejamento | undefined) { super.entity = value; } get entity(): Planejamento | undefined { return super.entity; }
     @Input() cdRef: ChangeDetectorRef;
 
     public planejamentoObjetivoDao: PlanejamentoObjetivoDaoService;
     public form: FormGroup;
+
+    public get items(): PlanejamentoObjetivo[] {
+      if (!this.gridControl.value) this.gridControl.setValue(new Planejamento());
+      if (!this.gridControl.value.objetivos) this.gridControl.value.objetivos = [];
+      return this.gridControl.value.objetivos;
+    }
     
     constructor(public injector: Injector) {
       super(injector);
       this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
       this.dao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
       this.planejamentoObjetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
+      this.groupBy = [{field: "eixoTematico.nome", label: "Eixo Temático"}];
       this.form = this.fh.FormBuilder({
         nome: {default: ""},
         fundamentacao: {default: ""},
         planejamento_id: {default: null},
         eixo_tematico_id: {default: null},
         objetivo_superior_id: {default: null}
-/*        valores: { default: []},
-        valor_texto: {default: ""} */
       }, this.cdRef, this.validate);
     }
   
@@ -59,71 +65,19 @@ export class PlanejamentoFormObjetivoComponent extends PageFrameBase {
       return result;
     }
   
-    public loadData(entity: IIndexable, form?: FormGroup) {
-      super.loadData(entity, form);
-    }
-  
-    public initializeData(form?: FormGroup) {
-      this.entity = new Planejamento();
-      this.loadData(this.entity, this.form);
-    }
-  
-    public async saveData(form?: IIndexable) {
-      await this.grid?.confirm();
-      return this.entity!;
-    }
-
-    public get items(): PlanejamentoObjetivo[] {
-/*       if (!this.gridControl.value) this.gridControl.setValue(new CadeiaValor());
-      if (!this.gridControl.value.fases) this.gridControl.value.fases = [];*/
-      
-      return [];
-    }
-   
-/*     public addValorHandle(): LookupItem | undefined {
-      let result = undefined;
-      const value = this.form.controls.valor_texto.value;
-      const key = this.util.textHash(value);
-      if(value?.length && this.util.validateLookupItem(this.form.controls.valores.value, key)) {
-        result = {
-          key: key,
-          value: this.form.controls.valor_texto.value
-        };
-        this.form.controls.valor_texto.setValue("");
-      }
-      return result;
-    }; */
-
     public async addObjetivo() {
       return new PlanejamentoObjetivo({
         id: this.dao!.generateUuid(),
-        eixo_tematico_id: "1825f98b-744e-44db-8847-198f247ca7e1"
+        eixo_tematico_id: "1825f98b-744e-44db-8847-198f247ca7e1",
+        planejamento_id: this.entity?.id
       }) as IIndexable;
     }
-  
-/*     public async addChildProcesso(row: CadeiaValorProcesso, metadata: any, index: number) {
-      let processo = new CadeiaValorProcesso({
-        id: this.dao!.generateUuid(),
-        processo_pai_id: row.id,
-        sequencia: this.items.filter(x => x.processo_pai_id == row.id).length + 1,
-        nome: ""
-      });
-  
-      this.items.push(processo);
-      this.grid!.setMetadata(processo, { nivel: this.getSequencia({}, processo) });
-      this.items.sort((a, b) => {
-        const sa = (this.grid!.getMetadata(a)?.nivel || "").split(".").map((x: string) => ("000" + x).substr(-3)).join(".");
-        const sb = (this.grid!.getMetadata(b)?.nivel || "").split(".").map((x: string) => ("000" + x).substr(-3)).join(".");
-        return sa < sb ? -1 : sa > sb ? 1 : 0;
-      });
-      this.grid!.adding = true;
-      await this.grid!.edit(processo);
-      return undefined;
-    } */
-  
+
+    public async removeObjetivo(row: any) {
+      return true;
+    }
+
     public async loadObjetivo(form: FormGroup, row: any) {
-/*       this.loadRecursos(row);
-      this.tipoRecurso = row.recurso?.tipo; */
       form.controls.nome.setValue(row.nome);
       form.controls.fundamentacao.setValue(row.fundamentacao);
       form.controls.planejamento_id.setValue(row.planejamento_id);
@@ -131,30 +85,29 @@ export class PlanejamentoFormObjetivoComponent extends PageFrameBase {
       form.controls.objetivo_superior_id.setValue(row.objetivo_superior_id);
       this.cdRef.detectChanges();
     }
-  
-    public async removeObjetivo(row: any) {
 
-    }
-  
     public async saveObjetivo(form: FormGroup, row: any) {
-/*       let result = undefined;
+      let result = undefined;
       this.form!.markAllAsTouched();
       if (this.form!.valid) {
         row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
-        row.sequencia = form.controls.sequencia.value;
         row.nome = form.controls.nome.value;
+        row.fundamentacao = form.controls.fundamentacao.value;
+        row.planejamento_id = form.controls.planejamento_id.value;
+        row.eixo_tematico_id = form.controls.eixo_tematico_id.value;
+        row.objetivo_superior_id = form.controls.objetivo_superior_id.value;
         result = row;
         this.cdRef.detectChanges();
       }
-      return result; */
-    }
-    
-    public dynamicButtons(row: any): ToolbarButton[] {
-      let result: ToolbarButton[] = [];
-     /* let cadeiaValorProcesso: CadeiaValorProcesso = row as CadeiaValorProcesso;
-      result.push({ hint: "Adicionar filho", icon: "bi bi-plus-circle", onClick: this.addChildProcesso.bind(this) });*/
       return result;
     }
+
+    public async saveData(form?: IIndexable) {
+      await this.grid?.confirm();
+      return this.entity!;
+    }
+ 
+
 }
   
   

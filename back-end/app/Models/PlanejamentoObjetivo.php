@@ -18,20 +18,16 @@ class PlanejamentoObjetivo extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'nome', /* varchar(256); NOT NULL; */// Nome do objetivo
+        'fundamentacao', /* varchar(256); NOT NULL; */// Fundamentação
         'planejamento_id', /* char(36); NOT NULL; */
         'eixo_tematico_id', /* char(36); NOT NULL; */
-        'objetivo_pai_id', /* char(36); */
+        'objetivo_superior_id', /* char(36); */
         //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
         //'data_fim', /* datetime; */// Data fim da vigência
-        //'fundamentacao', /* varchar(256); NOT NULL; */// Fundamentação
-        /*'sequencia',*/// REMOVED
-        /*'path',*/// REMOVED
     ];
 
-    // Has
-    public function objetivos() { return $this->hasMany(PlanejamentoObjetivo::class, "objetivo_pai_id"); }
     // Belongs
     public function planejamento() { return $this->belongsTo(Planejamento::class, 'planejamento_id'); }
     public function eixoTematico() { return $this->belongsTo(EixoTematico::class, 'eixo_tematico_id'); }
-    public function objetivoPai() { return $this->belongsTo(PlanejamentoObjetivo::class, 'objetivo_pai_id'); }
+    public function objetivoSuperior() { return $this->belongsTo(PlanejamentoObjetivo::class, 'objetivo_superior_id'); }
 }

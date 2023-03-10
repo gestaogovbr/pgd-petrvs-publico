@@ -1,6 +1,7 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
+import { GridComponent } from 'src/app/components/grid/grid.component';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
@@ -16,8 +17,9 @@ import { PlanejamentoFormObjetivoComponent } from '../planejamento-form-objetivo
 })
 export class PlanejamentoFormComponent extends PageFormBase<Planejamento, PlanejamentoDaoService> {
     @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-    @ViewChild('objetivos', { static: false }) public objetivos?: PlanejamentoFormObjetivoComponent;
-
+    //@ViewChild('comp_objetivos', { static: false }) public comp_objetivos?: PlanejamentoFormObjetivoComponent;
+    @ViewChild(GridComponent, { static: true }) public grid?: GridComponent;
+    
     public unidadeDao: UnidadeDaoService;
     public form: FormGroup;
     
@@ -33,6 +35,7 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
         fim: {default: null},
         missao: {default: ""},
         visao: {default: ""},
+        objetivos: {default: []},
         valores: { default: []},
         valor_texto: {default: ""}
       }, this.cdRef, this.validate);
@@ -66,19 +69,27 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
     }
   
     public initializeData(form: FormGroup) {
-      //form.patchValue(new Planejamento());
-      let planejamento = new Planejamento();
-      this.entity = planejamento;
+      this.entity = new Planejamento();
       this.cdRef.detectChanges();
       this.loadData(this.entity, form); 
     }
-  
+
     public async saveData(form: IIndexable): Promise<Planejamento> {
-      await Promise.all([
-        this.objetivos!.saveData(),
-      ]);
-      return this.entity! as Planejamento;
+      return new Promise<Planejamento>((resolve, reject) => {
+        const planejamento = this.util.fill(new Planejamento(), this.entity!);
+
+        resolve(this.util.fillForm(planejamento, this.form!.value));
+      });
     }
+
+/*     public async saveData(form: IIndexable): Promise<CadeiaValor> {
+      return new Promise<CadeiaValor>((resolve, reject) => {
+        const cadeiaValor = this.util.fill(new CadeiaValor(), this.entity!);
+        this.form!.value.entidade_id = this.auth.unidade?.entidade?.id
+        this.form!.value.unidade_id = this.auth.unidade?.id
+        resolve(this.util.fillForm(cadeiaValor, this.form!.value));
+      });
+    } */
    
     public titleEdit = (entity: Planejamento): string => {
       return "Editando "+ (entity?.nome || "");
@@ -96,16 +107,7 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
         this.form.controls.valor_texto.setValue("");
       }
       return result;
-    };
-
-    public onTabsSelect() {
-      this.saveData(this.form!);
-    }
-
-/*     public get titlePlanejamento(): string {
-      return this.entity?.numero ? "#" + this.entity?.numero : "";
-    } */
-  
+    };  
 }
   
   

@@ -46,11 +46,7 @@ class Planejamento extends ModelBase
     protected $casts = [
         'valores' => AsArrayObject::class,
     ];
-/*     public function getTiposProcessoAttribute($value) {
-        return json_decode($value);
-    }
-    public function setTiposProcessoAttribute($value)
-    {
-        $this->attributes['tipos_processo'] = json_encode($value);
-    } */
+
+    public $fillable_relations = ['objetivos'];
+
 }
