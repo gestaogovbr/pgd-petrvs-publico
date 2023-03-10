@@ -1,4 +1,5 @@
 import { Base } from './base.model';
+import { CadeiaValorProcesso } from './cadeia-valor-processo.model';
 import { Entidade } from './entidade.model';
 import { Unidade } from './unidade.model';
 
@@ -6,6 +7,7 @@ export class CadeiaValor extends Base {
 
   public unidade?: Unidade;
   public entidade?: Entidade;
+  public processos: CadeiaValorProcesso[] = [];
 
   public inicio: Date = new Date(); /* Data de início do planejamento */
   public fim: Date | null = null; /* Data do fim do planejamento */
