@@ -3,21 +3,13 @@
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
+            <input-text [size]="6" label="Nome Cadeia de Valor" controlName="nome" [control]="filter!.controls.nome" placeholder="Nome"></input-text>
             <input-datetime [size]="3" date label="Início" controlName="inicio" [control]="filter!.controls.inicio" labelInfo="Data de início do plano de gestão/entregas"></input-datetime>
             <input-datetime [size]="3" date label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Data do fim do plano de gestão/entregas"></input-datetime>
-            <input-search #unidade [size]="6" label="Entidade" controlName="entidade_id" [control]="filter!.controls.entidade_id" [dao]="entidadeDao" [selectRoute]="{route: ['configuracoes', 'entidade']}"></input-search>
         </div>
     </filter>
     <columns>
         <column title="Nome" field="nome" orderBy="nome"></column>
-        <column title="Entidade" [template]="columnEntidade">
-            <ng-template let-row="row" #columnEntidade>
-                <span *ngIf="row.entidade" class="badge bg-light text-dark">
-                    <i class="fas fa-university"></i>
-                    {{row.entidade?.nome}}
-                </span>
-            </ng-template>
-        </column>
         <column title="Início" [template]="columnInicio">
             <ng-template let-row="row" #columnInicio>
                 <span> {{dao!.getDateFormatted(row.inicio)}}</span>

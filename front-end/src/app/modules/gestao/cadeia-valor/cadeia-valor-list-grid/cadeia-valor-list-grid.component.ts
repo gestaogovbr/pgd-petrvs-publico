@@ -75,9 +75,6 @@ export class CadeiaValorListGridComponent  extends PageListBase<CadeiaValor, Cad
     if(form.fim) {
       result.push(["fim", "<=", form.fim]);
     }
-    if(form.entidade_id?.length) {
-      result.push(["entidade_id", "==", form.entidade_id]);
-    }
 
     return result;
   }
