@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\Unidade;
+use App\Models\CadeiaValorProcesso;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasDataFim;
 
@@ -25,6 +26,14 @@ class CadeiaValor extends ModelBase
         //'data_fim', /* datetime; */// Data fim da vigência do registro
     ];
 
+    public $fillable_changes = [];
+
+    public $fillable_relations = ["processos"];
+
+    public $delete_cascade = ["processos"];
+
+    // Has
+    public function processos() { return $this->hasMany(CadeiaValorProcesso::class); }    
     // Belongs
     public function unidade() { return $this->belongsTo(Unidade::class, 'unidade_id'); }
     public function entidade() { return $this->belongsTo(Entidade::class, 'entidade_id'); }
