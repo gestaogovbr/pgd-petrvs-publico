@@ -6,6 +6,7 @@ import { CadeiaValor } from "../../../../models/cadeia-valor.model";
 import { CadeiaValorDaoService } from "../../../../dao/cadeia-valor-dao.service";
 import { EditableFormComponent } from "../../../../components/editable-form/editable-form.component";
 import { GridComponent } from 'src/app/components/grid/grid.component';
+import { CadeiaValorFormProcessosComponent } from '../cadeia-valor-form-processos/cadeia-valor-form-processos.component';
 
 
 @Component({
@@ -16,9 +17,11 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 export class CadeiaValorFormComponent extends PageFormBase<CadeiaValor, CadeiaValorDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild(GridComponent, { static: true }) public grid?: GridComponent;
+  @ViewChild('processos', { static: false }) public processos?: CadeiaValorFormProcessosComponent;
 
   constructor(public injector: Injector) {
     super(injector, CadeiaValor, CadeiaValorDaoService);
+    this.join = ['processos'];
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
       inicio: { default: new Date() },
@@ -54,15 +57,19 @@ export class CadeiaValorFormComponent extends PageFormBase<CadeiaValor, CadeiaVa
   }
 
   public initializeData(form: FormGroup) {
-    form.patchValue(new CadeiaValor());
+    this.entity = new CadeiaValor();
+    this.loadData(this.entity, form);
   }
 
   public async saveData(form: IIndexable): Promise<CadeiaValor> {
     return new Promise<CadeiaValor>((resolve, reject) => {
-      const cadeiaValor = this.util.fill(new CadeiaValor(), this.entity!);
+      this.processos!.grid!.confirm();
+      let cadeiaValor = this.util.fill(new CadeiaValor(), this.entity!);
       this.form!.value.entidade_id = this.auth.unidade?.entidade?.id
       this.form!.value.unidade_id = this.auth.unidade?.id
-      resolve(this.util.fillForm(cadeiaValor, this.form!.value));
+      cadeiaValor = this.util.fillForm(cadeiaValor, this.form!.value);
+      cadeiaValor.processos = this.processos!.items;
+      resolve(cadeiaValor);
     });
   }
 

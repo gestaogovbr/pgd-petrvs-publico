@@ -116,11 +116,38 @@ export class CadeiaValorFormProcessosComponent extends PageFrameBase {
     
     return true;
     
+    // const encontrarPai: (pai: any) => {
+    //   let pai: CadeiaValorProcesso;
+    //   while(pai = this.items.find(x => x.processo_pai_id = pai.id)) {
+    //     if(pai.id == pai) return true;
+    //   };
+    //   return false;
+    // };
+    // return true;
 
+    // let filhos = this.items.find(x => x.path.indexOf(idPai) >= 0);
   }
 
 
+/*
+percorrer arvore em profundidade
 
+m(i, novopath)
+    for(i){
+      i.path = novoPath 
+      novopath = i.path+'/'+i.id;
+      m(i, novoPath)
+    }
+a
+    b
+        c
+            d
+
+
+b)
+  
+
+*/
 
   public async saveProcesso(form: FormGroup, row: any) {
     let result = undefined;
