@@ -4,7 +4,7 @@ import { EditableFormComponent } from 'src/app/components/editable-form/editable
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { CadeiaValorDaoService } from 'src/app/dao/cadeia-valor-dao.service';
-import { IIndexable } from 'src/app/models/base.model';
+import { Base, IIndexable } from 'src/app/models/base.model';
 import { CadeiaValorProcesso } from 'src/app/models/cadeia-valor-processo.model';
 import { CadeiaValor } from 'src/app/models/cadeia-valor.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
@@ -25,8 +25,9 @@ export class CadeiaValorFormProcessosComponent extends PageFrameBase {
 
   public get items(): CadeiaValorProcesso[] {
     if (!this.gridControl.value) this.gridControl.setValue(new CadeiaValor());
-    if (!this.gridControl.value.fases) this.gridControl.value.fases = [];
-    return this.gridControl.value.fases;
+    if (!this.gridControl.value.processos) this.gridControl.value.processos = [];
+
+    return this.gridControl.value.processos;
   }
 
   constructor(public injector: Injector) {
@@ -45,17 +46,12 @@ export class CadeiaValorFormProcessosComponent extends PageFrameBase {
   }
 
   public loadData(entity: IIndexable, form?: FormGroup) {
-    super.loadData(entity, form);
+    //super.loadData(entity, form);
   }
 
   public initializeData(form?: FormGroup) {
-    this.entity = new CadeiaValor();
-    this.loadData(this.entity, this.form);
-  }
-
-  public async saveData(form?: IIndexable) {
-    await this.grid?.confirm();
-    return this.entity!;
+    /*this.entity = new CadeiaValor();
+    this.loadData(this.entity, this.form);*/
   }
 
   public async addProcesso() {
@@ -117,19 +113,14 @@ export class CadeiaValorFormProcessosComponent extends PageFrameBase {
   }
 
   public async removeProcesso(row: any) {
+    
+    return true;
+    
 
-    console.log(row);
-  //   var itemPai = document.getElementById(itemId);
-
-  // // Obtém todos os subitens
-  //   var subitens = itemPai.nextElementSibling;
-
-  // // Remove os subitens
-  //   while (subitens && subitens.classList.contains('subitem')) {
-  //     subitens.remove();
-  //     subitens = itemPai.nextElementSibling;
-  //   }
   }
+
+
+
 
   public async saveProcesso(form: FormGroup, row: any) {
     let result = undefined;
