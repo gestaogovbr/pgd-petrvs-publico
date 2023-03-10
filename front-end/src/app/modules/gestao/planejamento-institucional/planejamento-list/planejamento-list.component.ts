@@ -17,29 +17,33 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
   
   public unidadeDao: UnidadeDaoService;
+  public unidade_disabled: string | undefined;
 
   constructor(public injector: Injector) {
     super(injector, Planejamento, PlanejamentoDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     /* Inicializações */
-    this.title = 'Planos de Gestão/Entregas';
+    this.title = 'Planejamentos Institucionais';
     this.filter = this.fh.FormBuilder({
       inicio: {default: null},
       fim: {default: null},
       nome: {default: ""},
-      unidade_id: {default: null}
+      unidade_id: {default: null},
+      so_entidade: { default: false },
+      agrupar: { default: true },
      });
-     this.join = ['unidade'];
-    // Testa se o usuário possui permissão para exibir planos de gestão/entregas
-    if (this.auth.hasPermissionTo("MOD_PGENTR_CONS")) {
+     this.join = ['unidade:nome,sigla'];
+     this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }];
+    // Testa se o usuário possui permissão para exibir planejamentos institucionais
+    if (this.auth.hasPermissionTo("MOD_PLAN_INST_CONS")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",
         onClick: this.consult.bind(this)
       });
     }
-    // Testa se o usuário possui permissão para excluir planos de gestão/entregas
-    if (this.auth.hasPermissionTo("MOD_PGENTR_EXCL")) {
+    // Testa se o usuário possui permissão para excluir planejamentos institucionais
+    if (this.auth.hasPermissionTo("MOD_PLAN_INST_EXCL")) {
       this.options.push({
         icon: "bi bi-trash",
         label: "Excluir",
@@ -53,6 +57,7 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
     filter.controls.inicio.setValue(null);
     filter.controls.fim.setValue(null);
     filter.controls.unidade_id.setValue(null);
+    filter.controls.so_entidade.setValue(false);
     super.filterClear(filter);
   }
 
@@ -60,6 +65,12 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
     let result: any[] = [];
     let form: any = filter.value;
 
+    if (form.so_entidade) {
+      filter.controls.unidade_id.setValue(null);
+      result.push(["unidade_id", "==", null]);
+    } else {
+      if(form.unidade_id) result.push(["unidade_id", "==", form.unidade_id]);
+    }
     if(form.nome?.length) {
       result.push(["nome", "like", "%" + form.nome + "%"]);
     }
@@ -69,11 +80,25 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
     if(form.fim) {
       result.push(["fim", "<=", form.fim]);
     }
-    if(form.unidade_id?.length) {
-      result.push(["unidade_id", "==", form.unidade_id]);
-    }
-
     return result;
+  }
+
+  public onAgruparChange(event: Event) {
+    const agrupar = this.filter!.controls.agrupar.value;
+    if ((agrupar && !this.groupBy?.length) || (!agrupar && this.groupBy?.length)) {
+      this.groupBy = agrupar ? [{ field: "unidade.sigla", label: "Unidade" }] : [];
+      this.grid!.reloadFilter();
+    }
+  }
+
+  public onSoEntidadeChange(event: Event) {
+    if (this.filter!.controls.so_entidade.value) {
+      this.filter!.controls.unidade_id.setValue(null);
+      this.unidade_disabled = 'disabled';
+    } else {
+      this.filter!.controls.unidade_id.setValue(undefined);
+      this.unidade_disabled = undefined;
+    }
   }
 
 }

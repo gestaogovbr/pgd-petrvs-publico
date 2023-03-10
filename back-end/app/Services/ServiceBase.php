@@ -124,8 +124,8 @@ class ServiceBase extends DynamicMethods
     }
 
     /**
-     * Get all foreign constraint of a table 
-     * 
+     * Get all foreign constraint of a table
+     *
      * @param  string $table
      * @return Array
      */
@@ -179,7 +179,7 @@ class ServiceBase extends DynamicMethods
             $result = (array) (clone (object) $now);
             $result["_status"] = "ADD";
         } else {
-            if(gettype($from) != gettype($to)) throw new Exception("ObjectDelta: Tipos diferentes");           
+            if(gettype($from) != gettype($to)) throw new Exception("ObjectDelta: Tipos diferentes");
             foreach($now as $key => $value) {
                 if(gettype($value) == "array") {
                     $delta = isset($before[$key]) ? $this->arrayDelta($before[$key], $value) : $value;
@@ -397,7 +397,7 @@ class ServiceBase extends DynamicMethods
 
     /**
      * Search for a given text
-     * 
+     *
      * @param  Array $data
      * @return Array
      */
@@ -851,9 +851,9 @@ class ServiceBase extends DynamicMethods
                 //SHOW COLUMNS FROM `table` LIKE 'fieldname'
                 if(!empty($relation) && !empty((new $relation)->has_data_fim)) {
                     $entity->with([implode('.',$withs) => function($query) {$query->whereNull('data_fim');}]);
-                    $entity->with(gettype($key) == "string" 
+                    $entity->with(gettype($key) == "string"
                             ? [$key => [implode('.',$withs) => function($query) {$query->whereNull('data_fim');}]]
-                            : [implode('.',$withs) => function($query) {$query->whereNull('data_fim');}]);    
+                            : [implode('.',$withs) => function($query) {$query->whereNull('data_fim');}]);
                 } else {
                     $entity->with(implode('.',$withs));
                 }
@@ -876,5 +876,4 @@ class ServiceBase extends DynamicMethods
     }
 
 }
-
 

@@ -10,7 +10,6 @@ use \MomentPHP\MomentPHP;
 use DateTime;
 use DateTimeZone;
 use Exception;
-//use \Moment\Moment;
 
 class Interval
 {
@@ -77,6 +76,7 @@ class Efemerides
     public float $tempoUtil = 0.0;                              
     public string $forma;                      
     public float $horasNaoUteis = 0.0;
+    public float $horasAfastamento = 0.0;
     public float $cargaHoraria = 0.0;                           
     public Expediente $expediente;                             
     public array $afastamentos = [];
@@ -336,7 +336,7 @@ class CalendarioService
 
     public static function calculaDataTempoUnidade(DateTime $inicio, $fimOuTempo, int $cargaHoraria, Unidade $unidade, string $tipo, array $pausas = null, array $afastamentos = null): Efemerides {
         $feriados = static::feriadosCadastrados($unidade->id) ?? [];
-        $forma = $tipo == 'DISTRIBUICAO' ? $unidade->distribuicao_forma_contagem_prazos : $unidade->entrega_forma_contagem_prazos;
+        $forma = in_array($tipo,['HORAS_UTEIS','HORAS_CORRIDAS','DIAS_UTEIS','DIAS_CORRIDOS']) ? $tipo : ($tipo == 'DISTRIBUICAO' ? $unidade->distribuicao_forma_contagem_prazos : $unidade->entrega_forma_contagem_prazos);
         $expediente = static::nestedExpediente($unidade);
         return static::calculaDataTempo($inicio, $fimOuTempo, $forma, $cargaHoraria, $expediente, $feriados, $pausas, $afastamentos);
     }
@@ -379,10 +379,10 @@ class CalendarioService
     @return Efemerides                      Retorna todas as informações do cálculo com as horas ou a data fim calculados
     */
     public static function calculaDataTempo(DateTime $inicio, $fimOuTempo, string $forma, int $cargaHoraria = null, Expediente $expediente, array $feriados = null, array $pausas = null, array $afastamentos = null): Efemerides {
-        define('INICIO_PERIODO', $inicio->format(DateTime::ATOM));
+        if(!defined('INICIO_PERIODO')) define('INICIO_PERIODO', $inicio->format(DateTime::ATOM));
         $useCorridos = $forma == "DIAS_CORRIDOS" || $forma == "HORAS_CORRIDAS";
         $useDias = $forma == "DIAS_CORRIDOS" || $forma == "DIAS_UTEIS";
-        $useTempo = in_array(gettype($fimOuTempo),["integer","double"]); /* Se o parametro fimOuTempo for a DataFim, é porque deve-se usá-la para calcular o Tempo (nr. de horas); Caso ele seja um tempo (nr. de horas), é porque deve-se usá-lo para calcular a DataFim */
+        $useTempo = in_array(gettype($fimOuTempo),["integer","double"]); /* Se o parametro fimOuTempo for uma data, é porque deve-se usá-la para calcular o Tempo (ou seja, useTempo = false); Caso ele seja um nr. de horas, é porque deve-se usá-lo para calcular a DataFim (useTempo = true)*/
         $uDiasInicio = UtilService::daystamp($inicio); /* Dia inicio (usado somente se !useTempo) */
         $uDiasFim = $useTempo ? $uDiasInicio : UtilService::daystamp(UtilService::asDateTime($fimOuTempo)); /* Dia fim (usado somente se !useTempo) */
 
@@ -561,6 +561,14 @@ class CalendarioService
                     $result->tempoUtil += $hSaldo;
                   }
                 }
+
+                // cálculo das horas dos afastamentos do servidor
+                $afastamentoHoje = UtilService::union($afastamentosDia);
+                $hAfastamentoHoje = array_reduce($afastamentoHoje, function($acum, $item) { 
+                    $acum += UtilService::getHoursBetween(UtilService::asDateTime($item->start), UtilService::asDateTime($item->end));
+                    return $acum;
+                }, 0);
+                $result->horasAfastamento += $hAfastamentoHoje;                
               } else {
                 $result->horasNaoUteis += min($diaAtual->hExpediente, $cargaHoraria);
               }

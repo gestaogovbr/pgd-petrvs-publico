@@ -14,9 +14,9 @@ class AlterPlanejamentosTableAddMissaoVisaoValores extends Migration
     public function up()
     {
         Schema::table('planejamentos', function (Blueprint $table) {
-            $table->text('missao')->comment("Missão");
-            $table->text('visao')->comment("Visão");
-            $table->json('valores')->comment("Valores");
+            $table->text('missao')->comment("Missão da entidade/unidade");
+            $table->text('visao')->comment("Visão da entidade/unidade");
+            $table->json('valores')->comment("Valores da entidade/unidade");
         });
     }
 

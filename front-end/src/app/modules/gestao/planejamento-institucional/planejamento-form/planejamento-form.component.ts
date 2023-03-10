@@ -1,11 +1,14 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
+import { GridComponent } from 'src/app/components/grid/grid.component';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Planejamento } from 'src/app/models/planejamento.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
+import { LookupItem } from 'src/app/services/lookup.service';
+import { PlanejamentoFormObjetivoComponent } from '../planejamento-form-objetivo/planejamento-form-objetivo.component';
 
 @Component({
   selector: 'app-planejamento-form',
@@ -14,23 +17,35 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 })
 export class PlanejamentoFormComponent extends PageFormBase<Planejamento, PlanejamentoDaoService> {
     @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-
+    @ViewChild('objetivos', { static: false }) public objetivos?: PlanejamentoFormObjetivoComponent;
+    @ViewChild(GridComponent, { static: true }) public grid?: GridComponent;
+    
     public unidadeDao: UnidadeDaoService;
+    //public planejamentoDao: PlanejamentoDaoService;
+    public planejamentosUnidadeInstituidora: LookupItem[] = [];
+    public form: FormGroup;
     
     constructor(public injector: Injector) {
       super(injector, Planejamento, PlanejamentoDaoService);
       this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+      //this.planejamentoDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
+      this.join = ['objetivos','objetivos.eixoTematico:nome'];
       this.form = this.fh.FormBuilder({
         nome: {default: ""},
-        unidade_id: {default: ""},
+        unidade_id: {default: null},
+        entidade_id: {default: null},
         inicio: {default: new Date()},
-        fim: {default: null}
+        fim: {default: null},
+        missao: {default: ""},
+        visao: {default: ""},
+        valores: { default: []},
+        valor_texto: {default: ""}
       }, this.cdRef, this.validate);
     }
   
     public validate = (control: AbstractControl, controlName: string) => {
       let result = null;
-      if(['nome','unidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+      if(['nome','missao','visao'].indexOf(controlName) >= 0 && !control.value?.length) {
         result = "Obrigatório";
       }
       if(['inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
@@ -51,25 +66,53 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
     }
   
     public loadData(entity: Planejamento, form: FormGroup) {
+      this.dao?.query({where: [['unidade_id', '==', null]]}).getAll().then((pls) => {
+        this.planejamentosUnidadeInstituidora = pls.map(x => Object.assign({},{key: x.id, value: x.nome}) as LookupItem);
+      });
       let formValue = Object.assign({}, form.value);
       form.patchValue(this.util.fillForm(formValue, entity));
     }
-  
+
     public initializeData(form: FormGroup) {
-      form.patchValue(new Planejamento());
+      this.entity = new Planejamento();
+      this.loadData(this.entity, form); 
     }
-  
+
     public async saveData(form: IIndexable): Promise<Planejamento> {
       return new Promise<Planejamento>((resolve, reject) => {
-        const planejamento = this.util.fill(new Planejamento(), this.entity!);
-        resolve(this.util.fillForm(planejamento, this.form!.value));
+        this.objetivos!.grid!.confirm();
+        let planejamento = this.util.fill(new Planejamento(), this.entity!);
+        //this.form!.value.entidade_id = this.auth.unidade?.entidade?.id
+        //this.form!.value.unidade_id = this.auth.unidade?.id
+        planejamento = this.util.fillForm(planejamento, this.form!.value);
+        planejamento.objetivos = this.objetivos!.items;
+        resolve(planejamento);
       });
     }
    
     public titleEdit = (entity: Planejamento): string => {
       return "Editando "+ (entity?.nome || "");
     }
-  
+
+    public addValorHandle(): LookupItem | undefined {
+      let result = undefined;
+      const value = this.form.controls.valor_texto.value;
+      const key = this.util.textHash(value);
+      if(value?.length && this.util.validateLookupItem(this.form.controls.valores.value, key)) {
+        result = {
+          key: key,
+          value: this.form.controls.valor_texto.value
+        };
+        this.form.controls.valor_texto.setValue("");
+      }
+      return result;
+    }; 
+    
+    public onUnidadeChange(event: Event){
+      let a = this.form.controls.unidade_id.value;
+      //this.form.controls.unidade_id.setValue(null);
+      this.cdRef.detectChanges();
+    }
 }
   
   

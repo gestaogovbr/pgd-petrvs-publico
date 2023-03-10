@@ -6,7 +6,7 @@ import { LookupItem } from "src/app/services/lookup.service";
 import { ToolbarButton } from "../toolbar/toolbar.component";
 import { ColumnAlign } from "./column/column.component";
 
-export type ColumnType = "search" | "display" | "text" | "number" | "date" | "datetime" | "time" | "timer" | "radio" | "select" | "switch" | "options" | "expand";
+export type ColumnType = "search" | "display" | "text" | "number" | "date" | "datetime" | "time" | "timer" | "radio" | "select" | "switch" | "options" | "expand" | "template";
 
 export class GridColumn {
   public icon?: string;

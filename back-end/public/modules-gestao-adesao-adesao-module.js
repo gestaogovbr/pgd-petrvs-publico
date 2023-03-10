@@ -1176,7 +1176,7 @@ class AdesaoFormComponent extends _base_page_form_base__WEBPACK_IMPORTED_MODULE_
                 return Object.assign({}, {
                     key: x.id,
                     data: x.usuario,
-                    value: ((_a = x.usuario) === null || _a === void 0 ? void 0 : _a.id) || "Desconhecido"
+                    value: ((_a = x.usuario) === null || _a === void 0 ? void 0 : _a.nome) || "Desconhecido"
                 });
             }));
             form.controls.unidades_list.setValue((entity.unidades || []).map(x => {
@@ -1184,23 +1184,22 @@ class AdesaoFormComponent extends _base_page_form_base__WEBPACK_IMPORTED_MODULE_
                 return Object.assign({}, {
                     key: x.id,
                     data: x.unidade,
-                    value: ((_a = x.unidade) === null || _a === void 0 ? void 0 : _a.id) || "Desconhecido"
+                    value: ((_a = x.unidade) === null || _a === void 0 ? void 0 : _a.nome) || "Desconhecido"
                 });
             }));
             this.cdRef.detectChanges();
         });
     }
     initializeData(form) {
+        var _a, _b;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             if (this.isTermos) {
                 this.entity = (yield this.dao.getById(this.urlParams.get("id"), this.join));
             }
             else {
                 this.entity = new _models_adesao_model__WEBPACK_IMPORTED_MODULE_12__["Adesao"]();
-                this.entity.entidade = this.auth.unidade.entidade;
-                this.entity.usuario_id = this.auth.usuario.id; /* Apenas para registrar quem incluiu a adesão */
-                this.entity.unidade_id = this.auth.unidade.id; /* Lotação do usuário que registrou a desão */
-                this.entity.entidade_id = this.auth.unidade.entidade_id;
+                if (((_b = (_a = this.auth.usuario) === null || _a === void 0 ? void 0 : _a.perfil) === null || _b === void 0 ? void 0 : _b.nivel) === 4)
+                    this.entity.unidade_id = this.auth.unidade.id;
             }
             this.loadData(this.entity, this.form);
         });

@@ -4,31 +4,12 @@
       <input-text [size]="12" label="Nome da Cadeia de Valor" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome"></input-text>
     </div>
     <div class="row">
-      <input-search   [size]="6" label="Entidade" icon="bi bi-bookmark-heart" controlName="entidade_id" [control]="form!.controls.entidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'entidade']}"></input-search>
-      <input-search   [size]="6" label="Unidade" icon="fab fa-unity" controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
-    </div>
-    <div class="row">
       <input-datetime date [size]="6" label="Início" icon="bi bi-calendar-date" controlName="inicio" [control]="form!.controls.inicio" labelInfo="Início da Cadeia de Valor"></input-datetime>
       <input-datetime date [size]="6" label="Fim" icon="bi bi-calendar-date" controlName="fim" [control]="form!.controls.fim" labelInfo="Fim da Cadeia de Valor"></input-datetime>
     </div>
   </div>
   <separator></separator>
-  <div class="row">
-    <grid [dao]="dao" [title]="isModal ? '' : title" >
-    <columns>
-      <column field="nivel" [minWidth]="50">
-        <ng-template let-header="header">
-          <order [header]="header">Nível</order>
-        </ng-template>
-      </column>
-      <column>
-        <ng-template let-header="header">
-          <order [header]="header">Processo</order>
-        </ng-template>
-      </column>
-    </columns>
-  </grid>
-  </div>
+  <cadeia-valor-form-processos #processos [entity]="entity" [cdRef]="cdRef"></cadeia-valor-form-processos>
 </editable-form>
 
 <!--
