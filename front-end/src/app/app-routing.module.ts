@@ -24,6 +24,7 @@ const routes: Routes = [
   { path: 'cadastros/eixo-tematico', loadChildren: () => import('./modules/cadastros/eixo-tematico/eixo-tematico.module').then(m => m.EixoTematicoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/feriado', loadChildren: () => import('./modules/cadastros/feriado/feriado.module').then(m => m.FeriadoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/material-servico', loadChildren: () => import('./modules/cadastros/material-servico/material-servico.module').then(m => m.MaterialServicoModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/planejamento-objetivo', loadChildren: () => import('./modules/cadastros/planejamento-objetivo/planejamento-objetivo.module').then(m => m.PlanejamentoObjetivoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/programa', loadChildren: () => import('./modules/cadastros/programa/programa.module').then(m => m.ProgramaModule), canActivate: [AuthGuard] },
   { path: 'cadastros/tarefa', loadChildren: () => import('./modules/cadastros/tarefa/tarefa.module').then(m => m.TarefaModule), canActivate: [AuthGuard] },
   { path: 'cadastros/tipo-atividade', loadChildren: () => import('./modules/cadastros/tipo-atividade/tipo-atividade.module').then(m => m.TipoAtividadeModule), canActivate: [AuthGuard] },

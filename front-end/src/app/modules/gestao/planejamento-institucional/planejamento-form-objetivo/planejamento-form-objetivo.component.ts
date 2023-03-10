@@ -3,6 +3,7 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { EixoTematicoDaoService } from 'src/app/dao/eixo-tematico-dao.service';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { PlanejamentoObjetivoDaoService } from 'src/app/dao/planejamento-objetivo-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
@@ -26,6 +27,7 @@ export class PlanejamentoFormObjetivoComponent extends PageFrameBase {
     @Input() cdRef: ChangeDetectorRef;
 
     public planejamentoObjetivoDao: PlanejamentoObjetivoDaoService;
+    public eixoTematicoDao: EixoTematicoDaoService;
     public form: FormGroup;
 
     public get items(): PlanejamentoObjetivo[] {
@@ -39,7 +41,9 @@ export class PlanejamentoFormObjetivoComponent extends PageFrameBase {
       this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
       this.dao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
       this.planejamentoObjetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
-      this.groupBy = [{field: "eixoTematico.nome", label: "Eixo Temático"}];
+      this.eixoTematicoDao = injector.get<EixoTematicoDaoService>(EixoTematicoDaoService);
+      this.groupBy = [{field: "eixo_tematico_id", label: "Eixo Temático"}];
+      this.join = ['eixoTematico:nome','objetivoSuperior:nome'];
       this.form = this.fh.FormBuilder({
         nome: {default: ""},
         fundamentacao: {default: ""},
@@ -68,12 +72,13 @@ export class PlanejamentoFormObjetivoComponent extends PageFrameBase {
     public async addObjetivo() {
       return new PlanejamentoObjetivo({
         id: this.dao!.generateUuid(),
-        eixo_tematico_id: "1825f98b-744e-44db-8847-198f247ca7e1",
         planejamento_id: this.entity?.id
       }) as IIndexable;
     }
 
     public async removeObjetivo(row: any) {
+
+
       return true;
     }
 

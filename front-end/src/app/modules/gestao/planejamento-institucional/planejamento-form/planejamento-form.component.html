@@ -6,10 +6,15 @@
                     <input-text [size]="12" label="Nome do Planejamento Institucional" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome"></input-text>
                 </div>
                 <div class="row">
-                    <input-search [size]="6" label="Unidade" icon="fab fa-unity" controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+                    <input-search [size]="6" label="Unidade Executora" icon="fab fa-unity" controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}" (change)="onUnidadeChange($event)"></input-search>
                     <input-datetime date [size]="3" label="Início" icon="bi bi-calendar-date" controlName="inicio" [control]="form!.controls.inicio" labelInfo="Início do Planejamento Institucional"></input-datetime>
                     <input-datetime date [size]="3" label="Fim" icon="bi bi-calendar-date" controlName="fim" [control]="form!.controls.fim" labelInfo="Fim do Planejamento Institucional"></input-datetime>
                 </div>
+                <div *ngIf="form!.controls.unidade_id.value" class="row">
+                    <input-select icon="far fa-edit" label="Selecione o Planejamento da Unidade Instituidora vinculado" [items]="planejamentosUnidadeInstituidora"></input-select>
+                    <!-- <input-search [size]="6" label="Selecione o Planejamento da Unidade Instituidora vinculado" icon="fab fa-unity" controlName="planejamento_entidade_id" [control]="form!.controls.planejamento_entidade_id" 
+                    [dao]="planejamentoDao" [selectRoute]="{route: ['gestao', 'planejamento'], params: {filter: {'unidade_id': null}}}"></input-search> -->
+                </div>                
                 <div class="row">
                     <input-textarea [size]="6" label="Missão" [rows]="3" controlName="missao" [control]="form!.controls.missao"></input-textarea>
                     <input-textarea [size]="6" label="Visão" [rows]="3" controlName="visao" [control]="form!.controls.visao"></input-textarea>

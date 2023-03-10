@@ -1,0 +1,21 @@
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [join]="join" [hasAdd]="auth.hasPermissionTo('MOD_PLAN_INST_INCL')"
+      [hasEdit]="auth.hasPermissionTo('MOD_PLAN_INST_EDT')" [selectable]="selectable" (select)="onSelect($event)">
+    <toolbar *ngIf="!selectable"></toolbar>
+<!--     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-text [size]="12" label="Eixo temático" controlName="nome"
+                [control]="filter!.controls.nome" placeholder="Nome do eixo temático..."></input-text>
+        </div>
+    </filter> -->
+    <columns>
+        <column title="Nome" [template]="columnNome" orderBy="nome">
+            <ng-template let-row="row" #columnNome><span> {{row.nome}}</span></ng-template>
+        </column>
+        <column title="Planejamento Institucional" [template]="columnPlanejamento">
+            <ng-template let-row="row" #columnPlanejamento><span> {{ row.planejamento?.nome }}</span></ng-template>
+        </column>
+        <column type="options" [onEdit]="edit" [options]="options"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>
+

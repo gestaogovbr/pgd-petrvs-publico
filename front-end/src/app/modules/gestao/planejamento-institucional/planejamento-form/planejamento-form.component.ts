@@ -21,12 +21,15 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
     @ViewChild(GridComponent, { static: true }) public grid?: GridComponent;
     
     public unidadeDao: UnidadeDaoService;
+    //public planejamentoDao: PlanejamentoDaoService;
+    public planejamentosUnidadeInstituidora: LookupItem[] = [];
     public form: FormGroup;
     
     constructor(public injector: Injector) {
       super(injector, Planejamento, PlanejamentoDaoService);
       this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
-      this.join = ['objetivos'];
+      //this.planejamentoDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
+      this.join = ['objetivos','objetivos.eixoTematico:nome'];
       this.form = this.fh.FormBuilder({
         nome: {default: ""},
         unidade_id: {default: null},
@@ -35,7 +38,6 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
         fim: {default: null},
         missao: {default: ""},
         visao: {default: ""},
-        //objetivos: {default: []},
         valores: { default: []},
         valor_texto: {default: ""}
       }, this.cdRef, this.validate);
@@ -64,10 +66,13 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
     }
   
     public loadData(entity: Planejamento, form: FormGroup) {
+      this.dao?.query({where: [['unidade_id', '==', null]]}).getAll().then((pls) => {
+        this.planejamentosUnidadeInstituidora = pls.map(x => Object.assign({},{key: x.id, value: x.nome}) as LookupItem);
+      });
       let formValue = Object.assign({}, form.value);
       form.patchValue(this.util.fillForm(formValue, entity));
     }
-  
+
     public initializeData(form: FormGroup) {
       this.entity = new Planejamento();
       this.loadData(this.entity, form); 
@@ -101,7 +106,13 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
         this.form.controls.valor_texto.setValue("");
       }
       return result;
-    };  
+    }; 
+    
+    public onUnidadeChange(event: Event){
+      let a = this.form.controls.unidade_id.value;
+      //this.form.controls.unidade_id.setValue(null);
+      this.cdRef.detectChanges();
+    }
 }
   
   
