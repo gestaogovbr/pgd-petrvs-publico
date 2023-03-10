@@ -17,7 +17,7 @@ class AlterDocumentoAddDataset extends Migration
         Schema::table('documentos', function (Blueprint $table) {
             $table->json("dataset")->nullable()->comment("Definição das variáveis disponíveis para o template");
         });
-        DB::statement("ALTER TABLE documentos RENAME COLUMN data_source TO datasource;");
+        if(Schema::hasColumn('documentos', 'data_source')) DB::statement("ALTER TABLE documentos RENAME COLUMN data_source TO datasource;");
     }
 
     /**
@@ -27,9 +27,9 @@ class AlterDocumentoAddDataset extends Migration
      */
     public function down()
     {
-        DB::statement("ALTER TABLE documentos RENAME COLUMN datasource TO data_source;");
+        if(Schema::hasColumn('documentos', 'datasource')) DB::statement("ALTER TABLE documentos RENAME COLUMN datasource TO data_source;");
         Schema::table('documentos', function (Blueprint $table) {
-            $table->dropColumn("dataset");
+            if(Schema::hasColumn('documentos', 'dataset')) $table->dropColumn("dataset");
         });
     }
 }

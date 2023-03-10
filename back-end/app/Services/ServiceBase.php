@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Query\Expression;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use App\Services\UtilService;
@@ -111,6 +112,15 @@ class ServiceBase extends DynamicMethods
                 return $values;
             });
         });
+    }
+
+    public function hasStoredProcedure($procedure) {
+        try {
+            DB::select("SHOW CREATE PROCEDURE `" . $procedure . "`");
+            return true;
+        } catch (QueryException $error) {
+            return false;
+        }
     }
 
     /**

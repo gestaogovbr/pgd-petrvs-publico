@@ -60,6 +60,7 @@ class Usuario extends Authenticatable
         'vinculacao', /* enum('SERVIDOR_EFETIVO','SERVIDOR_COMISSIONADO','EMPREGADO','CONTRATADO_TEMPORARIO'); NOT NULL; DEFAULT: 'SERVIDOR_EFETIVO'; */// Vinculo do usuário com a administração
         'perfil_id', /* char(36); */
         'uf', /* char(2); */// UF do usuário
+        'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho
         //'remember_token', /* varchar(100); */
         //'password', /* varchar(255); */
         //'data_fim', /* datetime; */

@@ -7,7 +7,7 @@ import { Template } from './template.model';
 import { TipoDocumento } from './tipo-documento.model';
 import { TipoProcesso } from './tipo-processo.model';
 
-export type DocumentoEspecie = "TERMO_ADESAO" | "SEI" | "TCR" | "TCR_CANCELAMENTO" | "OUTRO";
+export type DocumentoEspecie = "TERMO_ADESAO" | "SEI" | "TCR" | "OUTRO";
 export type DocumentoStatus = "GERADO" | "AGUARDANDO_SEI";
 export interface HasDocumentos {
     documentos: Documento[];
@@ -44,7 +44,6 @@ export class Documento extends Base {
 
     public entidade_id: string | null = null; /* Entidade */
     public plano_id: string | null = null; /* Plano */
-    public programa_adesao_id: string | null = null; /* Adesao */
     public tipo_documento_id: string | null = null; /* Tipo documento */
     public tipo_processo_id: string | null = null; /* Tipo processo */
     public template_id: string | null = null; /* Template */

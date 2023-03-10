@@ -27,7 +27,7 @@ export class EntidadeDaoService extends DaoBaseService<Entidade> {
       { field: "gestor", label: "Gestor", fields: this.usuarioDao.dataset([]) },
       { field: "gestor_substituto", label: "Gestor substituto", fields: this.usuarioDao.dataset([]) },
       { field: "cidade", label: "Cidade", dao: this.cidadeDao }
-    ]);
+    ], deeps);
   }
 
   public generateApiKey(entidade_id: string): Promise<string> {

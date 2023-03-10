@@ -69,6 +69,18 @@ export class TesteComponent implements OnInit {
       label: "Usuário: Nome"
     },
     {
+      field: "numero",
+      label: "Numero"
+    },
+    {
+      field: "texto",
+      label: "Texto"
+    },
+    {
+      field: "boo",
+      label: "Boolean"
+    },
+    {
       field: "atividades",
       label: "Atividades",
       type: 'ARRAY',
@@ -87,6 +99,9 @@ export class TesteComponent implements OnInit {
 
   public datasource: IIndexable = {
     nome: "Genisson Rodrigues Albuquerque",
+    numero: 10,
+    texto: "Teste",
+    boo: true,
     atividades: [
       { nome: "atividade 1", valor: 100, opcoes: [{ nome: "opc 1" }, { nome: "opc 2" }] },
       { nome: "atividade 2", valor: 200, opcoes: [] },
@@ -97,6 +112,7 @@ export class TesteComponent implements OnInit {
   public textoEditor: string = ``;
   public template: string = `
 <p>Este &eacute; o {{nome}}.</p>
+<p>{{if:texto="Teste"}}Texto é teste{{end-if}}{{if:numero!=10}}Número não é 10{{end-if}}</p>
 <table>
     <thead>
         <tr>
@@ -112,16 +128,16 @@ export class TesteComponent implements OnInit {
         <tr>
             <td>{{atividades[x].nome}}</td>
             <td>{{atividades[x].valor}}</td>
-            <td>{{atividades[x].opcoes[0].nome}}{{for:atividades[x].opcoes[1..y]}}, {{atividades[x].opcoes[y].nome}}{{end-for:atividades[x].opcoes[1..y]}}</td>
+            <td>{{atividades[x].opcoes[0].nome}}{{for:atividades[x].opcoes[1..y]}}, {{atividades[x].opcoes[y].nome}}{{end-for}}</td>
         </tr>
         <tr>
-            <td colspan="3">{{end-for:atividades[0..x];drop=tr}}</td>
+            <td colspan="3">{{end-for;drop=tr}}</td>
         </tr>
     </tbody>
 </table>
 <br>
 <br>
-atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome}}{{end-for:atividades[0..y]}}
+atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome}}{{end-for}}
   `;
 
   public buttons: ToolbarButton[] = [

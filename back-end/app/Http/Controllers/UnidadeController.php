@@ -11,6 +11,9 @@ use App\Exceptions\ServerException;
 use Throwable;
 
 class UnidadeController extends ControllerBase {
+
+    public $updatable = ["texto_complementar_plano"];
+
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
             case 'STORE':

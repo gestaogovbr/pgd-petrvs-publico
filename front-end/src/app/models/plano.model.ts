@@ -18,6 +18,9 @@ export class Plano extends Base implements HasDocumentos {
     public usuario?: Usuario;
     public programa?: Programa;
     public documento?: Documento;
+    public atividades: PlanoAtividade[] = []; /* Entregas da demanda */
+    public documentos: Documento[] = []; /* Termos de adesão */
+    public demandas: Demanda[] = []; /* Demandas vinculadas ao Plano */
 
     public carga_horaria: number = 0; //Carga horária diária do usuário
     public tempo_total: number = 0; //Horas úteis de trabalho no período de data_inicio_vigencia à data_fim_vigencia considerando carga_horaria, feriados, fins de semana
@@ -34,9 +37,6 @@ export class Plano extends Base implements HasDocumentos {
     public tipo_modalidade_id: string = "";
     public forma_contagem_carga_horaria: TipoCargaHoraria = "DIA"; // Forma de contagem padrão da carga horária
     public documento_id: string | null = null;
-    public atividades: PlanoAtividade[] = []; /* Entregas da demanda */
-    public documentos: Documento[] = []; /* Termos de adesão */
-    public demandas: Demanda[] = []; /* Demandas vinculadas ao Plano */
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

@@ -46,6 +46,8 @@ export class AppComponent {
   public utils: UtilService;
   public menuSchema: any;
   public menuToolbar: any[];
+  public menuContexto: any[];
+  public contexto: any;
 
   private _menu: any;
   private _menuDetectChanges: any;
@@ -89,12 +91,18 @@ export class AppComponent {
     this.lex.cdRef = this.cdRef;
     //this.auth.loadGapi();
     /* Definição do menu do sistema */
+    this.menuContexto = [
+      { name: "PGD" },
+      { name: "Projetos" },
+      { name: "Gestão" },
+      { name: "Operacional" }
+    ];
+    this.contexto = this.menuContexto[0];
     this.menuToolbar = [
       { name: "Cadastros", permition: "MENU_CAD_ACESSO", route: ['cadastros'], id: "navbarDropdownCadastros", menu: "cadastros" },
       { name: "Gestão", permition: "MENU_GESTAO_ACESSO", route: ['gestao'], id: "navbarDropdownGestao", menu: "gestao" },
       { name: "Relatórios", permition: "MENU_REL_ACESSO", route: ['relatorios'], id: "navbarDropdownRelatorios", menu: "relatorios" },
       { name: "Configurações", permition: "MENU_CONFIG_ACESSO", route: ['configuracoes'], id: "navbarDropdownConfiguracoes", menu: "configuracoes" },
-      //{ name: "Rotinas Internas", permition: "MENU_ROTINAS_ACESSO", route: ['rotinas'], id: "navbarDropdownRotinas", menu: "rotinas" },
       { name: "Desenvolvedor", permition: "DEV_MENU_LOGS_ACESSO", route: ['logs'], id: "navbarDropdownLogs", menu: "logs" }
     ];
     this.menuSchema = {
@@ -104,7 +112,6 @@ export class AppComponent {
         { name: this.lex.noun("Cidades", true), permition: 'MOD_CID', route: ['cadastros', 'cidade'], icon: "bi bi-building" },
         { name: this.lex.noun("Eixos temáticos", true), permition: 'MOD_EXTM', route: ['cadastros', 'eixo-tematico'], icon: "bi bi-gear" },
         { name: this.lex.noun("Entregas", true), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: "bi bi-list-check" },
-        //{ name: this.lex.noun("Macroprocessos", true), permition: '', route: ['cadastros', 'macroprocesso'], icon: "bi bi-list-check" },
         { name: this.lex.noun("Feriados", true), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: "bi bi-emoji-sunglasses" },
         { name: this.lex.noun("Material e serviço", true), permition: '', route: ['cadastros', 'material-servico'], icon: "bi bi-box-seam" },
         { name: this.lex.noun("Tarefa", true), permition: 'MOD_DMD', route: ['cadastros', 'tarefa'], icon: "bi bi-boxes" },
@@ -119,11 +126,10 @@ export class AppComponent {
         { name: "Tipos de " + this.lex.noun("Processo", true), permition: 'MOD_TIPO_PROC', route: ['cadastros', 'tipo-processo'], icon: "bi bi-folder-check" }
       ],
       gestao: [
-        { name: this.lex.noun("Adesao", true), permition: 'MOD_ADES', route: ['gestao', 'adesao'], icon: "bi bi-check-all" },
         { name: this.lex.noun("Cadeia de valor", true), permition: 'MOD_EXTM', route: ['cadastros', 'cadeia-valor'], icon: "bi bi-bar-chart-steps" },
         { name: this.lex.noun("Demanda", true), permition: '', route: ['gestao', 'demanda'], icon: "bi bi-activity" },
         { name: this.lex.noun("Planejamento estratégico", true), permition: 'MOD_PGENTR', route: ['gestao', 'planejamento'], icon: "bi bi-files" },
-        { name: this.lex.noun("Programa de gestão", true), permition: 'MOD_PRGT', route: ['cadastros', 'programa'], icon: "bi bi-graph-up-arrow" },
+        { name: this.lex.noun("Programa de gestão", true), permition: 'MOD_PRGT', route: ['gestao', 'programa'], icon: "bi bi-graph-up-arrow" },
         { name: this.lex.noun("Plano de trabalho", true), permition: 'MOD_PTR', route: ['gestao', 'plano'], icon: "bi bi-list-check" },
         { name: this.lex.noun("Projetos", true), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: "bi bi-diagram-2" }
       ],
@@ -156,6 +162,10 @@ export class AppComponent {
 
   public getMenuItems(nome: string) {
     return this.menu[nome];
+  }
+
+  public onContextoSelect(item: any) {
+    this.contexto = item;
   }
 
   public get menu(): IIndexable {

@@ -281,14 +281,7 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_USER_EXCL", "Permite excluir dados de usuário"],
         ["MOD_USER_INCL", "Permite incluir usuário"],
         ["MOD_USER_TUDO", "Permite consultar qualquer usuário independente de lotação"],
-        ["MOD_PERF_CONS", "Permite consultar perfil"],
-        /* Capacidades do módulo ADESÃO*/
-        ["MOD_ADES_CONS", "Permite consultar dados de usuário"],
-        ["MOD_ADES_EDT", "Permite alterar dados de usuário"],
-        ["MOD_ADES_EXCL", "Permite excluir dados de usuário"],
-        ["MOD_ADES_INCL", "Permite incluir usuário"],
-        ["MOD_ADES", "Permite consultar qualquer usuário independente de lotação"],
-
+        ["MOD_PERF_CONS", "Permite consultar perfil"]
     ];
 
     private function differentDev(&$data) {

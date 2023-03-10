@@ -105,7 +105,6 @@ export class LookupService {
     { key: 'TERMO_ADESAO', value: "Termo de adesão (OBSOLETO)", icon: "bi bi-file-earmark-excel", color: "danger" },
     { key: 'SEI', value: "Documento SEI", icon: "bi bi-exclamation", color: "primary"},
     { key: 'TCR', value: "TCR", icon: "bi bi-file-medical-fill", color: "success"},
-    { key: 'TCR_CANCELAMENTO', value: "Cancelamento TCR", icon: "bi bi-file-earmark-x", color: "danger" },
     { key: 'OUTRO', value: "Outro", icon: "bi bi-question-circle", color: "danger" }
   ]
 
@@ -413,9 +412,9 @@ export class LookupService {
   ];
 
   public TIPO_CARGA_HORARIA: LookupItem[] = [
-    { key: 'DIA', icon: "bi bi-calendar3-event", value: "Horas por dia" },
-    { key: 'DIA', icon: "bi bi-calendar3-week", value: "Horas por semana" },
-    { key: 'DIA', icon: "bi bi-calendar3", value: "Horas por mês" }
+    { key: 'DIA', icon: "bi bi-calendar3-event", value: "Dia" },
+    { key: 'SEMANA', icon: "bi bi-calendar3-week", value: "Semana" },
+    { key: 'MES', icon: "bi bi-calendar3", value: "Mês" }
   ];
 
   public MATERIAL_SERVICO_TIPO: LookupItem[] = [

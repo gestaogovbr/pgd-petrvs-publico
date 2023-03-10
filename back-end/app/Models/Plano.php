@@ -40,7 +40,7 @@ class Plano extends ModelBase
         //'plano_entrega_id', /* char(36); */
     ];
 
-    public $fillable_changes = ['atividades'];
+    public $fillable_changes = ['atividades', 'documentos'];
 
     public $delete_cascade = ['atividades', 'documentos'];
 

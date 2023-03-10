@@ -60,6 +60,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   @Input() load?: (form: FormGroup, row: any) => Promise<void>;
   @Input() remove?: (row: any) => Promise<boolean | undefined | void>;
   @Input() save?: (form: FormGroup, row: any) => Promise<IIndexable | Base | undefined | void>;
+  @Input() editEnd?: (id?: string) => void;
   @Input() addRoute?: FullRoute;
   @Input() addMetadata?: RouteMetadata;
   @Input() labelAdd: string = "Incluir";
@@ -629,11 +630,13 @@ export class GridComponent extends ComponentBase implements OnInit {
   }
 
   public async endEdit() {
+    const editedId = this.editing?.id;
     if(this.query && this.editing) await this.query.refreshId(this.editing.id);
     this.editing = undefined;
     this.adding = false;
     this.items = this.items;
     this.cdRef.detectChanges();
+    if(this.editEnd) this.editEnd(editedId);
   }
 
   public onRowClick(event: Event, row: Base | IIndexable) {

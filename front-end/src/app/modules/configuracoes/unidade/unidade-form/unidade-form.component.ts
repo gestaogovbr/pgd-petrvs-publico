@@ -1,9 +1,11 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
+import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
+import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
@@ -36,7 +38,9 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
   public cidadeDao: CidadeDaoService;
   public usuarioDao: UsuarioDaoService;
   public unidadeDao: UnidadeDaoService;
+  public planoDao: PlanoDaoService;
   public notificacao: NotificacaoService;
+  public planoDataset: TemplateDataset[];
 
   constructor(public injector: Injector) {
     super(injector, Unidade, UnidadeDaoService);
@@ -44,8 +48,10 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     this.cidadeDao = injector.get<CidadeDaoService>(CidadeDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
+    this.planoDao = injector.get<PlanoDaoService>(PlanoDaoService);
     this.notificacao = injector.get<NotificacaoService>(NotificacaoService);
     this.modalWidth = 1200;
+    this.planoDataset = this.planoDao.dataset();
     this.form = this.fh.FormBuilder({
       codigo: {default: ""},
       sigla: {default: ""},
@@ -89,7 +95,8 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       enviar_email: {default: true},
       enviar_whatsapp: {default: true},
       expediente: {default: null},
-      usar_expediente_entidade: {default: true}
+      usar_expediente_entidade: {default: true},
+      texto_complementar_plano: {default: ""}
     }, this.cdRef, this.validate);
     this.formUnidadesOrigemAtividades = this.fh.FormBuilder({
       unidade_origem_atividade_id: {default: ""}

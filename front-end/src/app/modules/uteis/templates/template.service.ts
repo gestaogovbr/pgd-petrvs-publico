@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
-import { AdesaoDaoService } from 'src/app/dao/adesao-dao.service';
+import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
 import { Template, TemplateEspecie } from 'src/app/models/template.model';
 import { AuthService } from 'src/app/services/auth.service';
+import { DialogService } from 'src/app/services/dialog.service';
 import { FullRoute } from 'src/app/services/navigate.service';
 
 @Injectable({
@@ -11,8 +12,9 @@ import { FullRoute } from 'src/app/services/navigate.service';
 export class TemplateService {
   
   constructor(
-    public adesaoDao: AdesaoDaoService,
-    public auth: AuthService
+    public planoDao: PlanoDaoService,
+    public auth: AuthService,
+    public dialog: DialogService
   ) { }
 
   public selectRoute(especie: TemplateEspecie): FullRoute {
@@ -20,15 +22,25 @@ export class TemplateService {
   }
 
   public details(data: any) {
-    console.log(data);
+    const template = data as Template;
+    this.dialog.html({ title: "Pre-visualização do documento", modalWidth: 600 }, template.conteudo!, []);
   }
 
   public dataset(especie: TemplateEspecie): TemplateDataset[] {
-    return ["TCR", "TCR_CANCELAMENTO"].includes(especie) ? this.adesaoDao.dataset() : []; 
+    return ["TCR", "TERMO_ADESAO"].includes(especie) ? this.planoDao.dataset() : []; 
   }
 
-  public template(especie: TemplateEspecie): Template | undefined {
-    return especie == "TCR" ? this.auth.unidade?.entidade?.template_adesao : undefined;
+  public template(especie: TemplateEspecie, extra?: any): Template | undefined {
+    return undefined; //especie == "TCR" ? this.auth.entidade?.template_adesao : undefined;
+    /* Continuar aqui */
   }
+
+  public prepareDatasetToSave(dataset: TemplateDataset[]): TemplateDataset[] {
+    for(let item of dataset) {
+      item.dao = undefined;
+      if(["OBJECT", "ARRAY"].includes(item.type || "")) this.prepareDatasetToSave(item.fields || []);
+    }
+    return dataset;
+  }  
 
 }

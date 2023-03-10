@@ -195,6 +195,10 @@ class Programa extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.data_fim_vigencia = new Date(); /* Data de fim vigencia */
         this.data_inicio = new Date(); /* Data de início */
         this.data_fim = null; /* Data do fim */
+        this.template_tcr_id = null; /* Template do TCR */
+        this.periodo_avaliacao = 'MENSAL'; /* Período para avaliação do plano */
+        this.termo_obrigatorio = false; /* tinyint; NOT NULL; */
+        this.tipo_documento_tcr_id = null; /* Tipo de documento do TCR */
         this.initialization(data);
     }
 }

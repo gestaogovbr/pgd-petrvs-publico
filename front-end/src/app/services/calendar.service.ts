@@ -139,9 +139,9 @@ export class CalendarService {
   }*/
 
   public nestedExpediente(unidade: Unidade): Expediente {
-    let expediente = unidade.expediente || unidade.entidade?.expediente;
-    expediente = expediente || (unidade.entidade_id == this.auth.unidade?.entidade_id ? this.auth.unidade!.entidade!.expediente : new Expediente());
-    return expediente;
+    return unidade.expediente || unidade.entidade?.expediente || this.auth.entidade?.expediente || new Expediente();
+    //expediente = expediente || (unidade.entidade_id == this.auth.unidade?.entidade_id ? this.auth.unidede.entidade!.expediente : new Expediente());
+    //return expediente;
   }
 
   /* Retorna uma média entre os expediente ou 24 hrs caso unidade seja undefined */

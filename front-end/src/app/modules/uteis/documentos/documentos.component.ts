@@ -1,10 +1,8 @@
 import { ChangeDetectorRef, Component, Injector, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
-import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
-import { AdesaoDaoService } from 'src/app/dao/adesao-dao.service';
 import { DocumentoDaoService } from 'src/app/dao/documento-dao-service';
 import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
@@ -13,8 +11,8 @@ import { Documento, DocumentoEspecie, HasDocumentos } from 'src/app/models/docum
 import { Template } from 'src/app/models/template.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { LookupItem } from 'src/app/services/lookup.service';
-
-//export type DocumentoEspecie = 'TERMO_ADESAO' | 'SEI' | 'TCR' | 'TCR_CANCELAMENTO' | 'OUTRO';
+import { TemplateService } from '../templates/template.service';
+import { DocumentoService } from './documento.service';
 
 @Component({
   selector: 'documentos',
@@ -24,14 +22,34 @@ import { LookupItem } from 'src/app/services/lookup.service';
 export class DocumentosComponent extends PageFrameBase {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @Input() cdRef: ChangeDetectorRef;
-  @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
+  //@Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: HasDocumentos | undefined) { super.entity = value; } get entity(): HasDocumentos | undefined { return super.entity; }
   @Input() needSign: ((entity: HasDocumentos, documento: Documento) => boolean) = (e: HasDocumentos, d: Documento) => true;
   @Input() extraTags: ((entity: HasDocumentos, documento: Documento, metadata: any) => LookupItem[]) = (e: HasDocumentos, d: Documento, m: any) => [];
   @Input() especie: DocumentoEspecie = 'OUTRO';
   @Input() dataset?: TemplateDataset[];
   @Input() datasource?: any;
+  @Input() canEditTemplate: boolean = false;
   @Input() template?: Template;
+  @Input() set noPersist(value: string | undefined) {
+    if(this._noPersist != value) this._noPersist = value;
+  }
+  get noPersist(): string | undefined {
+    return this._noPersist;
+  }
+  @Input() set editingId(value: string | undefined | null) {
+    if(this._editingId != value) {
+      this._editingId = value;
+      if(value) {
+        this.action = "edit";
+        this.documentoId = value;
+        this.loadData(this.entity!);
+      }
+    }
+  }
+  get editingId(): string | undefined | null {
+    return this._editingId;
+  }
 
   public get items(): Documento[] {
     if(!this.gridControl.value) this.gridControl.setValue({documentos: []});
@@ -39,9 +57,10 @@ export class DocumentosComponent extends PageFrameBase {
     return this.gridControl.value.documentos;
   }
   public documentoDao: DocumentoDaoService;
+  public templateService: TemplateService;
   public allPages: ListenerAllPagesService;
-  public datasourceEdit?: any;
   public templateEdit?: string;
+  public tituloDefault?: string;
   public selected?: Documento;
   public documentoId?: string;
   public editingButtons: ToolbarButton[] = [
@@ -62,12 +81,15 @@ export class DocumentosComponent extends PageFrameBase {
     } 
   ];
 
+  private _editingId?: string | null; 
+
   constructor(public injector: Injector) {
     super(injector);
     /* Inicializações */
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
     this.documentoDao = injector.get<DocumentoDaoService>(DocumentoDaoService);
+    this.templateService = injector.get<TemplateService>(TemplateService);
     this.modalWidth = 1200;
     this.form = this.fh.FormBuilder({
       id: {default: ""},
@@ -91,9 +113,9 @@ export class DocumentosComponent extends PageFrameBase {
     this.dataset = this.metadata?.dataset || this.dataset;
     this.datasource = this.metadata?.datasource || this.datasource;
     this.template = this.metadata?.template || this.template;
+    this.tituloDefault = this.metadata?.titulo_documento || this.tituloDefault;
     /* Obrigatório instanciar o DAO correto a depender da espécie */
-    this.dao = this.especie == "TERMO_ADESAO" ? this.injector.get<PlanoDaoService>(PlanoDaoService) :
-      ["TCR", "TCR_CANCELAMENTO"].includes(this.especie) ? this.injector.get<AdesaoDaoService>(AdesaoDaoService) : undefined;
+    this.dao = ["TCR", "TERMO_ADESAO"].includes(this.especie) ? this.injector.get<PlanoDaoService>(PlanoDaoService) : undefined;
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -107,7 +129,7 @@ export class DocumentosComponent extends PageFrameBase {
 
   public loadData(entity: IIndexable, form?: FormGroup) {
     this.entity = entity as HasDocumentos;
-    if(!this.grid!.editing && !this.grid!.adding) {
+    if(this.viewInit && !this.grid!.editing && !this.grid!.adding) {
       if(this.action == "new") this.grid!.onAddItem();
       if(this.action == "edit") this.grid!.onEditItem(this.grid!.selectById(this.documentoId || ""));
     }
@@ -135,7 +157,12 @@ export class DocumentosComponent extends PageFrameBase {
       template: this.selected?.template,
       template_id: this.selected?.template_id
     });
+    /*this.templateEdit = this.canEdit ? this.selected?.template || undefined : undefined;*/
     this.cdRef.detectChanges();
+  }
+
+  public get canEdit(): boolean {
+    return this.canEditTemplate && !this.selected?.assinaturas.length && !this.selected?.id_documento;
   }
 
   public gravarEdicao() {
@@ -144,6 +171,13 @@ export class DocumentosComponent extends PageFrameBase {
 
   public cancelarEdicao() {
     this.grid!.onCancelItem();
+  }
+  
+  public editEndDocumento(id?: string) {
+    /* Garante que caso tenha editingId esteja sempre em edição */
+    if(this.editingId?.length && !this.grid?.editing && this.action == "edit") {
+      this.grid!.onEditItem(this.grid!.selectById(this.editingId || ""));
+    }
   }
 
   public documentoDynamicButtons(row: any): ToolbarButton[] {
@@ -194,10 +228,12 @@ export class DocumentosComponent extends PageFrameBase {
     documento.entidade_id = this.auth.unidade?.entidade_id || null;
     documento.especie = this.especie;
     documento._status = "ADD";
-
-    
-    if(this.especie == "TERMO_ADESAO") documento.plano_id = this.entity!.id;
-    if(["TCR", "TCR_CANCELAMENTO"].includes(this.especie)) documento.programa_adesao_id = this.entity!.id;
+    documento.titulo_documento = this.tituloDefault || "";
+    documento.dataset = this.dataset || null;
+    documento.datasource = this.datasource || null;
+    documento.template = this.metadata?.template.conteudo;
+    documento.template_id = this.metadata?.template.id;
+    if(["TCR", "TERMO_ADESAO"].includes(this.especie)) documento.plano_id = this.entity!.id;
     this.onSelect(documento);
     return documento;
     /*let result = await this.dialog.template({ title: "Edição de documento", modalWidth: 700 }, this.addDocumentoTemplate!, [
@@ -254,7 +290,8 @@ export class DocumentosComponent extends PageFrameBase {
     const entity = form.value;
     item.titulo_documento = form.controls.titulo.value;
     item.conteudo = form.controls.conteudo.value;
-    const documento = await this.documentoDao.save(item);
+    item.dataset = this.templateService.prepareDatasetToSave(item.dataset || []);
+    const documento = !this.isNoPersist ? await this.documentoDao.save(item) : item;
     form.controls.id.setValue(documento.id);
     item.id = documento.id;
     return documento;

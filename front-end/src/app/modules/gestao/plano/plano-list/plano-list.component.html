@@ -1,8 +1,7 @@
-<!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
 <grid multiselect [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
     [selectable]="selectable" (select)="onSelect($event)"
     [hasAdd]="auth.hasPermissionTo('MOD_PTR_INCL')"
-    [hasEdit]="auth.hasPermissionTo('MOD_PTR_EDT')"
+    [hasEdit]="false"
     [dynamicMultiselectMenu]="dynamicMultiselectMenu.bind(this)"
     [multiselectAllFields]="multiselectAllFields">
     <toolbar *ngIf="!selectable">
@@ -57,16 +56,22 @@
                 <span> {{dao!.getDateFormatted(row.data_inicio_vigencia)+" até "+dao!.getDateFormatted(row.data_fim_vigencia)}}</span>
             </ng-template>
         </column>
-        <column title="Termo de adesão" [template]="documento">
+        <column [title]="'Termo\nAssinaturas'" [template]="documento">
             <ng-template let-row="row" #documento>
-                <span *ngIf="row.documento?.numero_processo?.length" class="badge bg-light text-dark" [attr.role]="row.documento?.numero_processo?.length ? 'button' : undefined" data-bs-toggle="tooltip" data-bs-placement="top" (click)="onProcessoClick(row)" [title]="allPages.getButtonTitle(row.documento?.numero_processo, row.documento?.numero_documento)">
+                <badge *ngIf="row.documento" color="light" icon="bi bi-file-earmark-check" [rounded]="false" [data]="row.documento" [click]="documentoService.preview.bind(documentoService)">
+                    <span [style.max-width.px]="200" class="text-wrap"><small><strong>#{{row.documento.numero}}</strong> - {{row.documento.titulo_documento}}</small></span>
+                    <separator *ngIf="row.documento?.assinaturas?.length" transparent>
+                        <profile-picture *ngFor="let assinatura of row.documento!.assinaturas" [url]="assinatura.usuario.url_foto" [hint]="assinatura.usuario.nome"></profile-picture>
+                    </separator>
+                </badge>
+                <span *ngIf="row.documento?.numero_processo?.length" class="badge bg-warning text-dark" [attr.role]="row.documento?.numero_processo?.length ? 'button' : undefined" data-bs-toggle="tooltip" data-bs-placement="top" (click)="onProcessoClick(row)" [title]="allPages.getButtonTitle(row.documento?.numero_processo, row.documento?.numero_documento)">
                     <i [class]="'bi ' + (row.documento?.numero_processo?.length ? 'bi bi-folder-symlink' : 'bi bi-x-lg')"></i>
                     {{row.documento?.numero_processo?.length ? row.documento?.numero_processo : "Não atribuído"}}
                     <small *ngIf="row.documento?.numero_documento?.length"><br>Sei nº {{row.documento?.numero_documento}}</small>
                 </span>
             </ng-template>
         </column>
-        <column type="options" [onEdit]="edit" [options]="options"></column>
+        <column type="options" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
     </columns>
     <report>
       <column title="Numero" [template]="reportNumero"><ng-template let-row="row" #reportNumero>{{row.numero}}</ng-template></column>

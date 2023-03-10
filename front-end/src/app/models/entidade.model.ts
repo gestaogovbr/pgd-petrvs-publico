@@ -36,7 +36,6 @@ export class Entidade extends Base {
     public tipo_modalidade?: TipoModalidade;
     public gestor?: Usuario; /* Objeto do ususario gestor */
     public gestor_substituto?: Usuario; /* Objeto do ususario gestor substituto */
-    public template_adesao?: Template;
 
     public sigla: string = ""; // Sigla da entidade
     public nome: string = ""; // Nome da entidade
@@ -57,8 +56,6 @@ export class Entidade extends Base {
     public gestor_substituto_id: string | null = null; // Usuário gestor substituto da unidade
     public cidade_id: string | null = null;
     public tipo_modalidade_id: string | null = null; //Tipo de modalidade utilizada ao criar plano de trabalho
-    public template_adesao_id: string | null = null; //Templeta utilizado no documento da adesão
-    public template_adesao_cancelamento_id: string | null = null; //Templeta utilizado no documento de cancelamento da adesão
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

@@ -29,6 +29,6 @@ class CreateDocumentoNumeroTrigger extends Migration
      */
     public function down()
     {
-        DB::unprepared('DROP PROCEDURE sequence_documento_numero');
+        DB::unprepared('DROP PROCEDURE IF EXISTS sequence_documento_numero');
     }
 }

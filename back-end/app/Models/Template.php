@@ -22,7 +22,7 @@ class Template extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'numero', /* int; NOT NULL; */// Número do template (Gerado pelo sistema)
-        'especie', /* enum('TCR'); NOT NULL; */// Especificação do tipo do template (interno do sistema)
+        'especie', /* enum('TERMO_ADESAO','SEI','TCR'); */// Especificação da espécie do template (interno do sistema)
         'titulo', /* varchar(256); NOT NULL; */// Nome da tarefa
         'conteudo', /* text; */// Comentário predefinida para a tarefa
         'data_set', /* json; */// Dados da parametrização

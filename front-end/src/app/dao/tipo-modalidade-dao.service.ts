@@ -17,7 +17,7 @@ export class TipoModalidadeDaoService extends DaoBaseService<TipoModalidade> {
     return this.deepsFilter([
       { field: "nome", label: "Nome" },
       { field: "ganho_produtividade", label: "% de ganho de produtividade" }
-    ]);
+    ], deeps);
   }
 
 }

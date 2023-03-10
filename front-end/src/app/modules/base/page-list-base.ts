@@ -31,7 +31,6 @@ import { TipoModalidadeDaoService } from 'src/app/dao/tipo-modalidade-dao.servic
 import { TipoMotivoAfastamentoDaoService } from 'src/app/dao/tipo-motivo-afastamento-dao.service';
 import { TipoProcessoDaoService } from 'src/app/dao/tipo-processo-dao.service';
 import {TemplateDaoService} from "src/app/dao/template-dao.service";
-import {AdesaoDaoService} from "src/app/dao/adesao-dao.service";
 
 export type LogEntity = {
   table: string,
@@ -83,7 +82,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
       {table: 'materiais_servicos', campo: 'descricao', dao: injector.get<MaterialServicoDaoService>(MaterialServicoDaoService), label: "Material/Serviço", selectRoute: {route: ['cadastros', 'material-servico']}},
       {table: 'perfis', campo: 'nome', dao: injector.get<PerfilDaoService>(PerfilDaoService), label: "Perfil", selectRoute: {route: ['configuracoes', 'perfil']}},
       {table: 'planos', campo: 'numero', dao: injector.get<PlanoDaoService>(PlanoDaoService), label: "Plano", selectRoute: {route: ['gestao', 'plano']}},
-      {table: 'programas', campo: 'nome', dao: injector.get<ProgramaDaoService>(ProgramaDaoService), label: "Programa", selectRoute: {route: ['cadastros', 'programa']}},
+      {table: 'programas', campo: 'nome', dao: injector.get<ProgramaDaoService>(ProgramaDaoService), label: "Programa", selectRoute: {route: ['gestao', 'programa']}},
       {table: 'projetos', campo: 'nome', dao: injector.get<ProjetoDaoService>(ProjetoDaoService), label: "Projeto", selectRoute: {route: ['gestao', 'projeto']}},
       {table: 'tarefas', campo: 'nome', dao: injector.get<TarefaDaoService>(TarefaDaoService), label: "Tarefa", selectRoute: {route: ['cadastros', 'tarefa']}},
       {table: 'templates', campo: 'titulo', dao: injector.get<TemplateDaoService>(TemplateDaoService), label: "Template", selectRoute: {route: ['cadastros', 'template']}},

@@ -1,3 +1,122 @@
+<ng-template #addMacroTemplate>
+    Funcionalidade em desenvolvimento. Utilize as instruções do botão "Ajuda sobre como utilizar variáveis" para adicionar manualmente macros no template.
+</ng-template>
+<ng-template #helpTemplate>
+    <tabs display>
+        <tab key="PRINCIPAL" label="Principal">
+            <h2>Conte&uacute;do din&acirc;mico</h2>
+            <p>O sistema permite renderizar conte&uacute;do din&acirc;mico. Todo conte&uacute;do din&acirc;mico ficar&aacute; dentro de chaves duplas: {{"{{"}}EXPRESS&Atilde;O{{"}}"}}</p>
+            <h3>1. Vari&aacute;vel</h3>
+            <p>Para renderizar o valor de uma vri&aacute;vel ser&aacute; necess&aacute;rio somente colocar o nome da vari&aacute;vel dentro do chaves duplas:&nbsp;</p>
+            <p>{{"{{"}}NOME_DA_VARIAVEL{{"}}"}}</p>
+            <p>O nome da vari&aacute;vel dever&aacute; ser exatamente o disponibilizado pelo dataset (descri&ccedil;&atilde;o da vari&aacute;vel), inclusive as letras mai&uacute;sculas e min&uacute;sculas. Para valores pertencentes a uma lista dever&aacute; ser utilizado colchetes com o indice dentro
+                (maiores detalhes ser&atilde;o apresentados na sess&atilde;o&nbsp;<em>3. Itera&ccedil;&atilde;o de lista</em>). Caso deseje obter o n&uacute;mero de itens de uma lista dever&aacute; ser utilizado o &#91;+&#93;.</p>
+            <p><strong>1.1 Exemplos</strong></p>
+            <ul>
+                <li>{{"{{"}}nome{{"}}"}}</li>
+                <li>{{"{{"}}lista&#91;+&#93;{{"}}"}}</li>
+                <li>{{"{{"}}lista&#91;x&#93;.nome{{"}}"}}</li>
+                <li>{{"{{"}}lista&#91;x&#93;.sublista&#91;y&#93;.quantidade{{"}}"}}</li>
+            </ul>
+            <h2>2. Condicional (if)</h2>
+            <p>As vezes pode ser necess&aacute;rio apresentar um conte&uacute;do somente se uma condi&ccedil;&atilde;o for aceita. Para isso basta colocar a condi&ccedil;&atilde;o dentro de chaves duplas precedido de "if:", como demonstrado nos exemplos abaixo. Cada condi&ccedil;&atilde;o dever&aacute;
+                obrigatoriamente ter o "end-if" correspondente. A condi&ccedil;&atilde;o dever&aacute; ser no formato OPERANDO OPERADOR OPERANDO, sendo que o OPERANDO pode ser qualquer express&atilde;o semelhante a <em>1. Vari&aacute;vel</em>, j&aacute; o OPERADOR pode ser (sem os dois pontos):</p>
+            <ul>
+                <li>=, ==: Se o valor &eacute; igual</li>
+                <li>&lt;: Se o valor &eacute; menor</li>
+                <li>&lt;=: Se o valor &eacute; menor ou igual</li>
+                <li>&gt;: Se o valor &eacute; maior</li>
+                <li>&gt;=: Se o valor &eacute; maior ou igual</li>
+                <li>&lt;&gt;, !=: Se o valor &eacute; diferente</li>
+            </ul>
+            <p><strong>2.1 Parametros</strong></p>
+            <ul>
+                <li>&nbsp;drop=tag: Ir&aacute; remover a tag em que o comando est&aacute; dentro, sendo que tag representa a tag HTML que ser&aacute; removida. Por exemplo drop=tr ir&aacute; remover a tag &lt;tr&gt; que o comando est&aacute; dentro.&nbsp;</li>
+            </ul>
+            <p><strong>2.2 Exemplos</strong></p>
+            <ul>
+                <li>{{"{{"}}if:nome="Usu&aacute;rio de Teste"{{"}}"}}Mostrar somente quando for o Usu&aacute;rio de Teste{{"{{"}}end-if{{"}}"}}</li>
+                <li>{{"{{"}}if:lista&#91;+&#93;&gt;0{{"}}"}}Ser&aacute; mostrado somente se a lista tiver ao menos um elemento{{"{{"}}end-if{{"}}"}}</li>
+                <li>{{"{{"}}if:lista&#91;x&#93;.ativo=true{{"}}"}}Ser&aacute; mostrado se a propriedade ativo da lista na posi&ccedil;&atilde;o x estriver como true{{"{{"}}end-if{{"}}"}}</li>
+                <li>{{"{{"}}if:status="CANCELADO"{{"}}"}}<br>
+                    <table style="border: 1px solid; width: 100%;">
+                        <colgroup>
+                            <col style="width: 50%;">
+                            <col style="width: 50%;">
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <td style="border: 1px solid;">Esta tabela ser&aacute; mostrado se status for cancelado</td>
+                                <td style="border: 1px solid;">Qualquer coisa</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid;">Dentro do if poder&aacute; ter qualquer conte&uacute;do como tabelas, imagens, enumeradores</td>
+                                <td style="border: 1px solid;">Outra coisa</td>
+                            </tr>
+                        </tbody>
+                    </table> {{"{{"}}end-if{{"}}"}}
+                </li>
+            </ul>
+            <h2>3. Itera&ccedil;&atilde;o de lista</h2>
+            <p>&Eacute; poss&iacute;vel iterar listas utilizando o "for:" dentro de chaves duplas e a express&atilde;o para itera&ccedil;&atilde;o, assim como demonstrado nos exemplos abaixo. A vari&aacute;vel da lista dever&aacute; ser acompanhada por colchetes, e dentro dos colchetes dever&aacute; ser
+                informado qual crit&eacute;rio de itera&ccedil;&atilde;o e qual o nome da vari&aacute;vel que ser&aacute; utilizado para indexar. Existem basicamente duas maneiras de iterar a lista:</p>
+            <p><strong>3.1 Iterando lista utilizando indice</strong></p>
+            <p>Para iterar a lista utilizando indice, ser&aacute; criado uma outra var&iacute;avel (que estar&aacute; dispon&iacute;vel somente dentro do {{"{{"}}for:..{{"}}"}} at&eacute; o respectivo {{"{{"}}end-for{{"}}"}}). A itera&ccedil;&atilde;o poder&aacute; ocorrer de forma acendente
+                ou decendente e poder&aacute; ser disponibilizado tamb&eacute;m uma vari&aacute;vel de total de itens:</p>
+            <ul>
+                <li>{{"{{"}}for:lista&#91;0..x..t&#93;{{"}}"}}: lista &eacute; a vari&aacute;vel do tipo lista, o valor zero significa que a itera&ccedil;&atilde;o come&ccedil;ar&aacute; do item 0 (em todas as lista o primeiro elemento sempre ser&aacute; 0), a vari&aacute;vel x conter&aacute; o
+                    indice atual na itera&ccedil;&atilde;o e por fim a vari&aacute;vel t conter&aacute; o total de elementos da lista. O "..t" &eacute; opcional, podendo ficar {{"{{"}}for:lista&#91;0..x&#93;{{"}}"}}. Nesta configura&ccedil;&atilde;o a itera&ccedil;&atilde;o ser&aacute; acendente (do
+                    menor para o maior).&nbsp;</li>
+                <li>{{"{{"}}for:lista&#91;t..x..1&#93;{{"}}"}}: lista &eacute; a vari&aacute;vel do tipo lista, a vari&aacute;vel t conter&aacute; o total de elementos da lista (o "..t" &eacute; opcional), a vari&aacute;vel x conter&aacute; o indice atual na itera&ccedil;&atilde;o e por fim o valor
+                    1 significa que a itera&ccedil;&atilde;o terminar&aacute; no item 1 (em todas as lista o primeiro elemento sempre ser&aacute; 0), podendo ficar {{"{{"}}for:lista&#91;x..1&#93;{{"}}"}}. Nesta configura&ccedil;&atilde;o a itera&ccedil;&atilde;o ser&aacute; descendente (do maior
+                    para o menor).&nbsp;</li>
+            </ul>
+            <p><strong>3.2 Iterando lista utilizando vari&aacute;vel</strong></p>
+            <p>A lista poder&aacute; ser iteranda utilizando uma outra vari&aacute;vel como destino dos itens que est&atilde;o sendo iterados (est&aacute; nova vari&aacute;vel estar&aacute; dispon&iacute;vel somente dentro do contexto do {{"{{"}}for:...{{"}}"}} at&eacute; o respectivo
+                {{"{{"}}end-for{{"}}"}}, e ser&aacute; iterado sempre de forma acendente). O for ser&aacute; no seguinte modelo {{"{{"}}for:lista&#91;item&#93;{{"}}"}}, onde lista representa a vari&aacute;vel que ser&aacute; iterada, e item representa o item atual da lista que est&aacute;
+                sendo iterada. A vari&aacute;vel item estar&aacute; dispon&iacute;vel somente dentro do {{"{{"}}for:..{{"}}"}} at&eacute; {{"{{"}}end-for{{"}}"}}.</p>
+            <p><strong>3.3 Parametros</strong></p>
+            <ul>
+                <li>&nbsp;drop=tag: Ir&aacute; remover a tag em que o comando est&aacute; dentro, sendo que tag representa a tag HTML que ser&aacute; removida. Por exemplo drop=tr ir&aacute; remover a tag &lt;tr&gt; que o comando est&aacute; dentro. Muito &uacute;til para iterar itens em tabelas, onde
+                    ser&aacute; necess&aacute;rio remover a linha que o comando do for est&aacute; dentro.&nbsp;</li>
+            </ul>
+            <p><strong>3.4 Exemplos</strong></p>
+            <ul>
+                <li>{{"{{"}}for:lista&#91;0..x..t&#93;{{"}}"}} Indice {{"{{"}}x{{"}}"}} de um total de {{"{{"}}t{{"}}"}} registros: {{"{{"}}lista&#91;x&#93;.nome{{"}}"}} {{"{{"}}end-for{{"}}"}}</li>
+                <li>{{"{{"}}for:lista&#91;item&#93;{{"}}"}} registros: {{"{{"}}item.nome{{"}}"}} {{"{{"}}end-for{{"}}"}}</li>
+                <li>
+                    <table style="border: 1px solid; width: 100%;">
+                        <colgroup>
+                            <col style="width: 50%;">
+                            <col style="width: 50%;">
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <td style="border: 1px solid;">T&iacute;tulo 1</td>
+                                <td style="border: 1px solid;">T&iacute;tulo 2</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="border: 1px solid;">{{"{{"}}for:lista[item];drop=tr{{"}}"}}</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid;">{{"{{"}}item.nome{{"}}"}}</td>
+                                <td style="border: 1px solid;">{{"{{"}}item.valor{{"}}"}}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="border: 1px solid;">{{"{{"}}end-for;drop=tr{{"}}"}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </li>
+            </ul>
+        </tab>
+        <tab key="VARIAVEIS" label="Variáveis">
+            <h2>Vari&aacute;veis dispon&iacute;veis</h2>
+            <span *ngFor="let variable of variables"><strong [style.margin-left.px]="variable.level * 10">{{variable.variable}}:</strong> {{variable.label}}<br></span>
+        </tab>
+    </tabs>
+</ng-template>
 <input-container [labelPosition]="labelPosition" [controlName]="controlName" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
-    <editor #editor *ngIf="viewInit" [disabled]="!!disabled" [(ngModel)]="value" [ngModelOptions]="{standalone: true}" [init]="editorConfig"></editor>
+    <!--toolbar *ngIf="hasToolbar" [buttons]="toolbarButtons"></toolbar//-->
+    <editor #editor *ngIf="viewInit" [disabled]="isDisabled" [(ngModel)]="value" [ngModelOptions]="{standalone: true}" [init]="editorConfig"></editor>
 </input-container>

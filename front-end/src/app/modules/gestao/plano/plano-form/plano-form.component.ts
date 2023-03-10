@@ -3,6 +3,7 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { SelectItem } from 'src/app/components/input/input-base';
+import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { UnitWorkload } from 'src/app/components/input/input-workload/input-workload.component';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
@@ -20,12 +21,14 @@ import { Documento } from 'src/app/models/documento.model';
 import { PlanoAtividade } from 'src/app/models/plano-atividade.model';
 import { Plano } from 'src/app/models/plano.model';
 import { Programa } from 'src/app/models/programa.model';
+import { Template } from 'src/app/models/template.model';
 import { TipoModalidade } from 'src/app/models/tipo-modalidade.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { Usuario } from 'src/app/models/usuario.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
-// import { AuthService } from 'src/app/services/auth.service';
+import { DocumentosComponent } from 'src/app/modules/uteis/documentos/documentos.component';
 import { CalendarService, Efemerides } from 'src/app/services/calendar.service';
+import { PlanoService } from '../plano.service';
 
 @Component({
   selector: 'app-plano-form',
@@ -42,6 +45,7 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
   @ViewChild('programa', { static: false }) public programa?: InputSearchComponent;
   @ViewChild('tipo_modalidade', { static: false }) public tipoModalidade?: InputSearchComponent;
+  @ViewChild('documentos', { static: false }) public documentos?: DocumentosComponent;
 
   public formAtividades: FormGroup;
   public unidadeDao: UnidadeDaoService;
@@ -52,12 +56,17 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
   public allPages: ListenerAllPagesService;
   public calendar: CalendarService;
   public tipoModalidadeDao: TipoModalidadeDaoService;
+  public planoService: PlanoService;
   public horasTotais?: Efemerides;
   public horasParciais?: Efemerides;
+  public planoDataset: TemplateDataset[];
+
+  private _datasource: any;
+  private _entityDocumentos: Plano = new Plano();
 
   constructor(public injector: Injector) {
     super(injector, Plano, PlanoDaoService);
-    this.join = ["unidade.entidade", "usuario", "programa", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "atividades.atividade"];
+    this.join = ["unidade.entidade", "usuario", "programa.template_tcr", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "atividades.atividade"];
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
@@ -66,7 +75,8 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
     this.documentoDao = injector.get<DocumentoDaoService>(DocumentoDaoService);
-
+    this.planoService = injector.get<PlanoService>(PlanoService);
+    this.planoDataset = this.dao!.dataset();
     this.form = this.fh.FormBuilder({
       carga_horaria: {default: ""},
       tempo_total: {default: ""},
@@ -83,7 +93,11 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
       documentos: {default: []},
       atividades: {default: []},
       tipo_modalidade_id: {default: ""},
-      forma_contagem_carga_horaria: {default: "DIA"}
+      forma_contagem_carga_horaria: {default: "DIA"},
+      editar_texto_complementar_unidade: {default: false},
+      editar_texto_complementar_usuario: {default: false},
+      unidade_texto_complementar: {default: ""},
+      usuario_texto_complementar: {default: ""}
     }, this.cdRef, this.validate);
     this.formAtividades = this.fh.FormBuilder({
       atividade_id: {default: ""}
@@ -94,6 +108,45 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
     super.ngOnInit();
     const segment = (this.url ? this.url[this.url.length-1]?.path : "") || "";
     this.action = ["termos"].includes(segment) ? segment : this.action;
+  }
+
+  public get datasource(): any {
+    let plano = this.loadEntity();
+    let data = this.dao!.datasource(plano);
+    if(JSON.stringify(data) != this.JSON.stringify(this._datasource)) {
+      this._datasource = data;
+      /* Se o termo for um documento obrigatório, então será gerado um termo automaticamente */
+      let programa = this.programa?.searchObj as Programa;
+      if(programa?.termo_obrigatorio) {
+        let documentoId = this.form!.controls.documento_id.value;
+        let documentos: Documento[] = this.form!.controls.documentos.value || [];
+        let documento = documentos?.find((x: Documento) => x.id == documentoId);
+        if(!documentoId?.length || !documento || documento.assinaturas.length || documento.id_documento) {
+          documentoId = this.dao?.generateUuid(),
+          documentos.push(new Documento({
+            id: documentoId, 
+            especie: "TCR",
+            titulo_documento: "Termo de Ciência e Responsabilidade",
+            conteudo: "",
+            status: "GERADO",
+            _status: "ADD",
+            template: programa.template_tcr?.conteudo,
+            dataset: this.dao!.dataset(),
+            datasource: this.datasource,
+            entidade_id: this.auth.entidade?.id,
+            plano_id: this.entity?.id,
+            template_id: programa.template_tcr_id
+          }));
+          this.form!.controls.documento_id.setValue(documentoId);
+          this.form!.controls.documentos.setValue(documentos);
+        }
+      }
+    }
+    return data;
+  }
+
+  public get template(): Template | undefined {
+    return this.planoService.template(this.loadEntity());
   }
 
   public get isTermos(): boolean {
@@ -141,15 +194,20 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
   public onProgramaSelect(selected: SelectItem) {
     this.form?.controls.data_inicio_vigencia.updateValueAndValidity();
     this.form?.controls.data_fim_vigencia.updateValueAndValidity();
+    let programa = selected.entity as Programa;
+    this.cdRef.detectChanges();
   }
 
   public onTipoModalidadeSelect(selected: SelectItem) {
     const tipoModalidade = this.tipoModalidade?.searchObj as TipoModalidade;
     if(tipoModalidade) this.form?.controls.ganho_produtividade.setValue(tipoModalidade.ganho_produtividade);
+    this.cdRef.detectChanges();
   }
 
   public onUsuarioSelect(selected: SelectItem) {
+    this.form!.controls.usuario_texto_complementar.setValue((selected.entity as Usuario)?.texto_complementar_plano || "");
     this.calculaTempos();
+    this.cdRef.detectChanges();
   }
 
   public onDataInicioChange(event: Event) {
@@ -165,6 +223,7 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
   }
 
   public onUnidadeSelect(selected: SelectItem) {
+    this.form!.controls.unidade_texto_complementar.setValue((selected.entity as Unidade)?.texto_complementar_plano || "");
     this.form!.controls.forma_contagem_carga_horaria.setValue((selected.entity as Unidade)?.entidade?.forma_contagem_carga_horaria || "DIA");
     this.calculaTempos();
     this.cdRef.detectChanges();
@@ -196,6 +255,8 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
       this.tipoModalidade?.loadSearch(entity.tipo_modalidade || entity.tipo_modalidade_id)
     ]);
     form.patchValue(this.util.fillForm(formValue, entity));
+    let documento = entity.documentos.find(x => x.id == entity.documento_id);
+    if(documento) this._datasource = documento.datasource;
     this.calculaTempos();
     this.cdRef.detectChanges();
   }
@@ -206,8 +267,8 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
     } else {
       this.entity = new Plano();
       this.entity.unidade_id = this.auth.unidade!.id;
-      this.entity.carga_horaria = this.auth.unidade?.entidade?.carga_horaria_padrao || 8;
-      this.entity.forma_contagem_carga_horaria = this.auth.unidade?.entidade?.forma_contagem_carga_horaria || "DIA";
+      this.entity.carga_horaria = this.auth.entidade?.carga_horaria_padrao || 8;
+      this.entity.forma_contagem_carga_horaria = this.auth.entidade?.forma_contagem_carga_horaria || "DIA";
     }
     this.loadData(this.entity, this.form!);
   }
@@ -237,17 +298,49 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
     return row;
   }
 
-  public saveData(form: IIndexable): Promise<Plano> {
-    return new Promise<Plano>((resolve, reject) => {
-      let plano = this.util.fill(new Plano(), this.entity!);
-      plano = this.util.fillForm(plano, this.form!.value);
-      /* Remove os ids gerados para os novos unidades_origem_atividades, será gerado pelo servidor como UUID */
-      plano.atividades = plano.atividades.filter((x: PlanoAtividade) => ["ADD", "EDIT", "DELETE"].includes(x._status || ""));
-      plano.atividades.forEach((atividade: PlanoAtividade) => {
-        atividade.id = atividade.id.includes("-") ? atividade.id : "";
-      });
-      resolve(plano);
+  public get entityDocumentos(): Plano {
+    let plano = this.loadEntity();
+    /* Para ignorar documentos na hora de comprar */
+    plano.documentos = []; 
+    this._entityDocumentos.documentos = [];
+    if(JSON.stringify(plano) != JSON.stringify(this._entityDocumentos)) {
+      this._entityDocumentos = plano;  
+    }
+    this._entityDocumentos.documentos = this.form!.controls.documentos.value;
+    return this._entityDocumentos;
+  }
+
+  public loadEntity(): Plano {
+    let plano: Plano = this.util.fill(new Plano(), this.entity!);
+    plano = this.util.fillForm(plano, this.form!.value);
+    plano.usuario = this.usuario!.searchObj as Usuario;
+    plano.unidade = this.unidade!.searchObj as Unidade;
+    plano.programa = this.programa!.searchObj as Programa;
+    plano.tipo_modalidade = this.tipoModalidade!.searchObj as TipoModalidade;
+    return plano;
+  }
+
+  public async saveData(form: IIndexable): Promise<Plano | boolean> {
+    let plano = this.loadEntity();
+    /* Confirma dados do documento */
+    this.documentos?.gravarEdicao();
+    /* Remove os ids gerados para os novos unidades_origem_atividades, será gerado pelo servidor como UUID */
+    plano.atividades = plano.atividades.filter((atividade: PlanoAtividade) => {
+      atividade.id = atividade.id.includes("-") ? atividade.id : "";
+      return ["ADD", "EDIT", "DELETE"].includes(atividade._status || "")
     });
+    plano.documentos = plano.documentos.filter((documento: Documento) => {
+      return ["ADD", "EDIT", "DELETE"].includes(documento._status || "")
+    });
+    /* Salva separadamente as informações do plano */
+    this.entity = await this.dao!.save(plano);
+    if(this.form!.controls.editar_texto_complementar_unidade.value) {
+      await this.unidadeDao.update(plano.unidade_id, {texto_complementar_plano: this.form!.controls.unidade_texto_complementar.value});
+    }
+    if(this.form!.controls.editar_texto_complementar_usuario.value) {
+      await this.usuarioDao.update(plano.unidade_id, {texto_complementar_plano: this.form!.controls.usuario_texto_complementar.value});
+    }
+    return true;
   }
 
   public titleEdit = (entity: Plano): string => {
@@ -258,7 +351,7 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
     let result: ToolbarButton[] = [];
     let documento: Documento = row as Documento;
 
-    if(this.isTermos && this.needSign(documento)) {
+    if(this.isTermos && this.planoService.needSign(this.entity, documento)) {
       result.push({hint: "Assinar", icon: "bi bi-pen", onClick: this.signDocumento.bind(this) });
     }
     result.push({hint: "Preview", icon: "bi bi-zoom-in", onClick: ((documento: Documento) => { this.dialog.html({title: "Termo de adesão", modalWidth: 1000}, documento.conteudo || ""); }).bind(this) });
@@ -266,7 +359,7 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
     return result;
   }
 
-  public needSign(documento: Documento): boolean {
+  /*public needSign(documento: Documento): boolean {
     const tipoModalidade = this.entity!.tipo_modalidade!; //(this.tipoModalidade?.searchObj as TipoModalidade);
     const usuario = this.entity!.usuario!; // (this.usuario?.searchObj as Usuario);
     const unidade = this.entity!.unidade!; // (this.unidade?.searchObj as Unidade);
@@ -277,7 +370,7 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
     if(tipoModalidade?.exige_assinatura_gestor_unidade && unidade) ids.push(unidade.gestor_id || "", unidade.gestor_substituto_id || "");
     if(tipoModalidade?.exige_assinatura_gestor_entidade && entidade) ids.push(entidade.gestor_id || "", entidade.gestor_substituto_id || "");
     return !alredySigned && tipoModalidade && ids.includes(this.auth.usuario!.id);
-  }
+  }*/
 
   public signDocumento(documento: Documento) {
     this.dialog.confirm("Assinar", "Deseja realmente assinar o documento?").then(response => {

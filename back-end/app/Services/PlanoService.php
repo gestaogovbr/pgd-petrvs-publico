@@ -19,6 +19,8 @@ class PlanoService extends ServiceBase
 {
     use UseDataFim;
 
+    public $documentoId = "";
+
     /**
      * planosAtivos: Este método retorna todos os Planos de Trabalho de um determinado usuário, que ainda se encontram dentro da vigência
      *
@@ -96,7 +98,16 @@ class PlanoService extends ServiceBase
         }
     }
 
+    public function proxyStore($plano, $unidade, $action) {
+        $this->documentoId = $plano["documento_id"];
+        $plano["documento_id"] = null;
+        return $plano;
+    }
+
     public function extraStore($plano, $unidade, $action) {
+        /* Retorna o documento_id armazenado para evitar erro de constraint */
+        $plano->documento_id = $this->documentoId;
+        $plano->save();
         /* Adiciona a Lotação automaticamente case o usuário não tenha */
         $usuario = Usuario::with(["lotacoes" => function ($query){
             $query->whereNull("data_fim");

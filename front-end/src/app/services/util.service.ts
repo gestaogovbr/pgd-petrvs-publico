@@ -108,7 +108,7 @@ export class UtilService {
   }
 
   public getNested(source: IIndexable, path: string): any {
-    return path.replace(/\[/g, '.').replace(/\]/g, '.').replace(/^\./g, "").split('.').filter(x => x.length).reduce((a, o)=> a && a[Array.isArray(a) ? parseInt(o) : o], source);
+    return path.replace(/\[/g, '.').replace(/\]/g, '.').replace(/^\./g, "").split('.').filter(x => x.length).reduce((a, o)=> a && a[Array.isArray(a) && !isNaN(+o) ? parseInt(o) : o], source);
   }
 
   public setNested(source: IIndexable, path: string, value: any) {
@@ -258,30 +258,32 @@ export class UtilService {
   }
 
   public fillForm(destination: any, source: any): any {
-    Object.keys(destination).forEach(key => {
-      if(typeof source[key] != "undefined"){
-        destination[key] = source[key];
-      } else if(key.indexOf("_") > 0 && source && typeof source[key.substr(0, key.indexOf("_"))] !== "undefined") {
-        let subprop = source[key.substr(0, key.indexOf("_"))];
-        if(subprop && typeof subprop[key.substr(key.indexOf("_") + 1)] !== "undefined"){
-          destination[key] = subprop[key.substr(key.indexOf("_") + 1)];
+    if(source) {
+      Object.keys(destination).forEach(key => {
+        if(typeof source[key] != "undefined"){
+          destination[key] = source[key];
+        } else if(key.indexOf("_") > 0 && typeof source[key.substr(0, key.indexOf("_"))] !== "undefined") {
+          let subprop = source[key.substr(0, key.indexOf("_"))];
+          if(subprop && typeof subprop[key.substr(key.indexOf("_") + 1)] !== "undefined"){
+            destination[key] = subprop[key.substr(key.indexOf("_") + 1)];
+          }
+        } else if(key.indexOf("$") > 0) {
+          const field = key.substr(0, key.indexOf("$"));
+          const value = key.substr(key.indexOf("$")+1);
+          destination[key] = !!(source[field]?.indexOf(value) >= 0);
+        } else if(typeof destination[key] ==  "object" && typeof source[key] != "undefined"){
+          if(Array.isArray(destination[key])){
+            destination[key] = Object.entries(source).filter(([k, v]) => k.startsWith(key) && v).map(([k, v]) => k) || [];
+          } else {
+            Object.keys(destination[key]).forEach(subKey => {
+              if(typeof source[key + "_" + subKey] !== "undefined"){
+                destination[key][subKey] = source[key + "_" + subKey];
+              }
+            });
+          }
         }
-      } else if(key.indexOf("$") > 0) {
-        const field = key.substr(0, key.indexOf("$"));
-        const value = key.substr(key.indexOf("$")+1);
-        destination[key] = !!(source && source[field]?.indexOf(value) >= 0);
-      } else if(typeof destination[key] ==  "object" && destination[key]){
-        if(Array.isArray(destination[key])){
-          destination[key] = Object.entries(source).filter(([k, v]) => k.startsWith(key) && v).map(([k, v]) => k) || [];
-        } else {
-          Object.keys(destination[key]).forEach(subKey => {
-            if(typeof source[key + "_" + subKey] !== "undefined"){
-              destination[key][subKey] = source[key + "_" + subKey];
-            }
-          });
-        }
-      }
-    });
+      });
+    }
     return destination;
   }
 

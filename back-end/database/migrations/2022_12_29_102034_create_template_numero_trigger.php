@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class CreateTemplateNumeroTrigger extends Migration
 {
@@ -28,6 +29,6 @@ class CreateTemplateNumeroTrigger extends Migration
      */
     public function down()
     {
-        DB::unprepared('DROP PROCEDURE sequence_template_numero');
+        DB::unprepared('DROP PROCEDURE IF EXISTS sequence_template_numero');
     }
 }

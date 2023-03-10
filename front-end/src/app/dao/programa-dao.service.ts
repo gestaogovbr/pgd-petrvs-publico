@@ -20,7 +20,7 @@ export class ProgramaDaoService extends DaoBaseService<Programa> {
       { field: "normativo", label: "Normativo" },
       { field: "data_inicio_vigencia", label: "Data início" },
       { field: "data_fim_vigencia", label: "Data termino" }
-    ]);
+    ], deeps);
   }
 
 }

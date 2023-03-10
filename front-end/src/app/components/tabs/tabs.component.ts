@@ -42,12 +42,14 @@ export class TabsComponent extends ComponentBase implements OnInit {
 
   ngAfterContentInit(): void {
     this.loadTabs();
+    this.tabsRef?.changes.subscribe((changes: any) => this.loadTabs());
     if(this.active == undefined && this.items.length) {
       this.active = this.items[0]!.key;
     }
   }
 
   public loadTabs() {
+    this.items.splice(0, this.items.length);
     this.tabsRef?.forEach(tab => {
       tab.tabs = this;
       this.items.push({

@@ -48,6 +48,10 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
     return this.action == "consult";
   }
 
+  public checkFilled(controls: string[]): boolean {
+    return !controls.find(x => !this.form!.controls[x].value?.length);
+  }
+
   public abstract loadData(entity: M, form: FormGroup): Promise<void> | void;
 
   public abstract initializeData(form: FormGroup): Promise<void> | void;

@@ -45,6 +45,10 @@
                     <input-color [size]="3" label="Cor" controlName="etiqueta_cor" [control]="form!.controls.etiqueta_cor"></input-color>
                 </input-multiselect>
             </div>
+            <separator></separator>
+            <div class="row">
+                <input-editor label="Texto complementar do Plano de Trabalho" controlName="texto_complementar_plano" [dataset]="planoDataset"></input-editor>
+            </div>
         </tab>
         <tab key="EXPEDIENTE" label="Expediente">
             <div class="row">

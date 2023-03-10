@@ -12,7 +12,7 @@ use Throwable;
 
 class UsuarioController extends ControllerBase
 {
-    public $updatable = ["config", "notificacoes"];
+    public $updatable = ["config", "notificacoes", "texto_complementar_plano"];
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
