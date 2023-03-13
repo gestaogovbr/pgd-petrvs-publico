@@ -22,7 +22,6 @@ import { TemplateModule } from './modules/uteis/templates/template.module';
 import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
 import { CadeiaValorFormProcessosComponent } from './modules/gestao/cadeia-valor/cadeia-valor-form-processos/cadeia-valor-form-processos.component';
 import { CadeiaValorModule } from './modules/gestao/cadeia-valor/cadeia-valor.module';
-import { PlanoEntregaListComponent } from './modules/gestao/plano_entrega/plano-entrega-list/plano-entrega-list.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +33,6 @@ import { PlanoEntregaListComponent } from './modules/gestao/plano_entrega/plano-
     SpinnerOverlayComponent,
     TesteComponent,
     TesteFormComponent,
-    PlanoEntregaListComponent
   ],
   imports: [
     BrowserModule,
