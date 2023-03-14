@@ -39,7 +39,7 @@ class Plano extends ModelBase
     protected static function booted()
     {
         static::creating(function ($plano) {
-            $plano->numero = DB::select("CALL sequence_plano_numero()")[0]->number;
+            $plano->numero = DB::select("CALL sequence_plano_entrega_numero()")[0]->number;
         });
     }
 
