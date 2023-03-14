@@ -194,6 +194,14 @@ Route::middleware(['auth:sanctum'])->prefix('Adesao')->group(function () {
 //    Route::post('metadadosPlano', [PlanoController::class, 'metadadosPlano']);
 });
 
+Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
+    defaultRoutes(PlanoEntregaController::class);
+//    Route::post('avaliar', [PlanoController::class, 'avaliar']);
+//    Route::post('cancelar-avaliacao', [PlanoController::class, 'cancelarAvaliacao']);
+//    Route::post('arquivar', [PlanoController::class, 'arquivar']);
+//    Route::post('metadadosPlano', [PlanoController::class, 'metadadosPlano']);
+});
+
 Route::middleware(['auth:sanctum'])->prefix('Projeto')->group(function () { defaultRoutes(ProjetoController::class); });
 
 /* Modulos: Configurações */
