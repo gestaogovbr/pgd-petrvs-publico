@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PLanoEntrega;
-use App\Services\PLanoEntregaService;
+use App\Models\PlanoEntrega;
+use App\Services\PlanoEntregaService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
 use Throwable;
 
-class PLanoEntregaController extends ControllerBase {
+class PlanoEntregaController extends ControllerBase {
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
