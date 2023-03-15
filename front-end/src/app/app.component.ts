@@ -129,7 +129,7 @@ export class AppComponent {
         { name: this.lex.noun("Demandas", true), permition: '', route: ['gestao', 'demanda'], icon: "bi bi-activity" },
         { name: this.lex.noun("Planejamentos Institucionais", true), permition: 'MOD_PENT', route: ['gestao', 'planejamento'], icon: "bi bi-files" },
         { name: this.lex.noun("Planos de Entrega", true), permition: 'MOD_PENT_CONS', route: ['gestao', 'plano-entrega'], icon: "bi bi-list-check" },
-        { name: this.lex.noun("Planos de Trabalho", true), permition: 'MOD_PTR', route: ['gestao', 'plano'], icon: "bi bi-list-check" },
+        { name: this.lex.noun("Planos de Trabalho", true), permition: 'MOD_PTR', route: ['gestao', 'plano-trabalho'], icon: "bi bi-list-check" },
         { name: this.lex.noun("Programas de Gestão", true), permition: 'MOD_PRGT', route: ['gestao', 'programa'], icon: "bi bi-graph-up-arrow" },
         { name: this.lex.noun("Projetos", true), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: "bi bi-diagram-2" }
       ],

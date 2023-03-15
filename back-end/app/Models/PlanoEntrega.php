@@ -3,17 +3,12 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
-use App\Models\Usuario;
 use App\Models\Unidade;
-use App\Models\Programa;
-use App\Models\Documento;
-use App\Models\TipoModalidade;
-use App\Models\PlanoAtividade;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasDataFim;
 use Illuminate\Support\Facades\DB;
 
-class Plano extends ModelBase
+class PlanoEntrega extends ModelBase
 {
     use AutoDataInicio, HasDataFim;
 
