@@ -82,8 +82,6 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
       return new Promise<Planejamento>((resolve, reject) => {
         this.objetivos!.grid!.confirm();
         let planejamento = this.util.fill(new Planejamento(), this.entity!);
-        //this.form!.value.entidade_id = this.auth.unidade?.entidade?.id
-        //this.form!.value.unidade_id = this.auth.unidade?.id
         planejamento = this.util.fillForm(planejamento, this.form!.value);
         planejamento.objetivos = this.objetivos!.items;
         resolve(planejamento);

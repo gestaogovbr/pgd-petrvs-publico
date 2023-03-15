@@ -46,7 +46,7 @@ class Plano extends ModelBase
     // Has
     // public function atividades() { return $this->hasMany(PlanoAtividade::class); }
     // Belongs
-    public function planejamentos() { return $this->belongsTo(Planejamneto::class, 'planejamento_id'); }
+    public function planejamento() { return $this->belongsTo(Planejamento::class, 'planejamento_id'); }
     public function cadeiaValor() { return $this->belongsTo(CadeiaValor::class, 'cadeia_valor_id'); }
     public function unidade() { return $this->belongsTo(Unidade::class, 'unidade_id'); }
 }

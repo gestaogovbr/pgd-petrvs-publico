@@ -783,8 +783,6 @@ class PlanejamentoFormComponent extends src_app_modules_base_page_form_base__WEB
             return new Promise((resolve, reject) => {
                 this.objetivos.grid.confirm();
                 let planejamento = this.util.fill(new src_app_models_planejamento_model__WEBPACK_IMPORTED_MODULE_5__["Planejamento"](), this.entity);
-                //this.form!.value.entidade_id = this.auth.unidade?.entidade?.id
-                //this.form!.value.unidade_id = this.auth.unidade?.id
                 planejamento = this.util.fillForm(planejamento, this.form.value);
                 planejamento.objetivos = this.objetivos.items;
                 resolve(planejamento);
