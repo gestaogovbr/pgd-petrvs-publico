@@ -230,7 +230,6 @@ class PlanoService extends ServiceBase
         }
         
         // Cálculo das horas úteis totais de afastamento
-        //$result["horasUteisAfastamento"] = CalendarioService::calculaDataTempoUnidade($inicioPlano,$fimPlano,$plano['carga_horaria'],$unidadePlano,"HORAS_UTEIS",null,$afastamentosUsuario)->horasAfastamento;
         $result["horasUteisAfastamento"] = CalendarioService::calculaDataTempoUnidade($inicioPlano,$fimPlano,$plano['carga_horaria'],$unidadePlano,$tipoCalculo,null,$afastamentosUsuario)->horasAfastamento;
 
         // Cálculo das horas úteis decorridas do plano e das horas úteis decorridas dos afastamentos

@@ -2756,9 +2756,8 @@ class CalendarService {
             const naoUteis = useCorridos ? [] : this.util.union([...afastamentos, ...pausas, ...diaAtual.intervalos]);
             const hNaoUteis = naoUteis.reduce((a, v) => a + this.util.getHoursBetween(v.start, v.end), 0);
             const diaUtil = useCorridos || (!feriadoCadastrado && !feriadoReligioso && diaAtual.hExpediente > hNaoUteis);
-            //result.horasNaoUteis += hNaoUteis;
             if (!diaUtil)
-                result.diasNaoUteis[strDiaAtual] = [diaAtual.diaLiteral, feriadoCadastrado, feriadoReligioso].filter(x => x === null || x === void 0 ? void 0 : x.length).join(", ");
+                result.diasNaoUteis[strDiaAtual] = [diaAtual.diaLiteral, feriadoCadastrado, feriadoReligioso,].filter(x => x === null || x === void 0 ? void 0 : x.length).join(", ");
             /* Calculo em dias */
             if (useDias) {
                 if (diaUtil && (useCorridos || (!afastamentos.length && !pausas.length))) {
