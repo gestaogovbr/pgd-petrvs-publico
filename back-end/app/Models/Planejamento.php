@@ -23,9 +23,9 @@ class Planejamento extends ModelBase
         'fim', /* datetime; */// Data fim do planejamento
         'nome', /* varchar(256); NOT NULL; */// Nome do planejamento estratégico
         'unidade_id', /* char(36); */
-        'missao', /* text; NOT NULL; */// Missão da entidade/unidade
-        'visao', /* text; NOT NULL; */// Visão da entidade/unidade
-        'valores', /* json; NOT NULL; */// Valores da entidade/unidade
+        'missao', /* text; NOT NULL; */// Missão
+        'visao', /* text; NOT NULL; */// Visão
+        'valores', /* json; NOT NULL; */// Valores
         'entidade_id', /* char(36); NOT NULL; */
         //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência do registro
         //'data_fim', /* datetime; */// Data fim da vigência do registro

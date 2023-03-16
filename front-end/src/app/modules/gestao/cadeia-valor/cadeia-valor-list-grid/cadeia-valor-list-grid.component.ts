@@ -37,7 +37,7 @@ export class CadeiaValorListGridComponent  extends PageListBase<CadeiaValor, Cad
      });
      this.join = ['entidade'];
     // Testa se o usuário possui permissão para exibir planos de gestão/entregas
-    if (this.auth.hasPermissionTo("MOD_PGENTR_CONS")) {
+    if (this.auth.hasPermissionTo("MOD_PENT_CONS")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",
@@ -45,7 +45,7 @@ export class CadeiaValorListGridComponent  extends PageListBase<CadeiaValor, Cad
       });
     }
     // Testa se o usuário possui permissão para excluir planos de gestão/entregas
-    if (this.auth.hasPermissionTo("MOD_PGENTR_EXCL")) {
+    if (this.auth.hasPermissionTo("MOD_PENT_EXCL")) {
       this.options.push({
         icon: "bi bi-trash",
         label: "Excluir",

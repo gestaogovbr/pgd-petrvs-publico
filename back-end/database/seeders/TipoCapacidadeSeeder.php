@@ -40,8 +40,8 @@ class TipoCapacidadeSeeder extends Seeder
 
         // carrega os tipos de capacidades do vetor declarado no serviço TipoCapacidadeService
         $dadosTiposCapacidades = array_map(fn ($capacidade) => array_merge([$utilService->uuid($capacidade[0])], $capacidade), $tiposCapacidadesService->tiposCapacidades);
-        foreach ($dadosTiposCapacidades as $linha) {
-            $registro = $linha;
+        foreach ($dadosTiposCapacidades as $registro) {
+            //insere no banco ou atualiza todos os tipos de capacidade constantes do vetor
             $tipocapacidade = TipoCapacidade::where('id', $registro[0])->first() ?? new TipoCapacidade();
             $tipocapacidade->fill([
                 'id' => $registro[0],
@@ -49,6 +49,7 @@ class TipoCapacidadeSeeder extends Seeder
                 'descricao' => $registro[2]
             ]);
             $tipocapacidade->save();
+            //garante que o perfil de Desenvolver tenha todos os tipos de permissão
             if (!Capacidade::where([['perfil_id', $developerId], ['tipo_capacidade_id', $registro[0]]])->exists()) {
                 $capacidade = new Capacidade();
                 $capacidade->fill([
@@ -61,5 +62,12 @@ class TipoCapacidadeSeeder extends Seeder
                 $capacidade->save();
             }
         }
+
+        // exclui as capacidades que não existem mais no vetor declarado no serviço TipoCapacidadeService
+        foreach (TipoCapacidade::whereNotIn('codigo',array_map(fn($x) => $x[0],$tiposCapacidadesService->tiposCapacidades))->get() as $tipo) {
+            if(count($tipo->capacidades) > 0) Capacidade::where('tipo_capacidade_id',$tipo->id)->delete();
+            $tipo->delete();
+        }
+
     }
 }

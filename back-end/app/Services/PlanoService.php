@@ -214,17 +214,19 @@ class PlanoService extends ServiceBase
         ];
         $inicioPlano = new DateTime($plano['data_inicio_vigencia']);
         $fimPlano = new DateTime($plano['data_fim_vigencia'], $inicioPlano->getTimezone());
-        $unidadePlano = Unidade::find($plano['unidade_id'])->first();
+        $unidadePlano = Unidade::where('id',$plano['unidade_id'])->first();
         $afastamentosUsuario = Afastamento::where('usuario_id',$plano['usuario_id'])->get()->toArray();
 
         // Cálculo das horas úteis totais de afastamento
-        $result["horasUteisAfastamento"] = CalendarioService::calculaDataTempoUnidade($inicioPlano,$fimPlano,$plano['carga_horaria'],$unidadePlano,"HORAS_UTEIS",null,$afastamentosUsuario)->horasAfastamento;
+        //$result["horasUteisAfastamento"] = CalendarioService::calculaDataTempoUnidade($inicioPlano,$fimPlano,$plano['carga_horaria'],$unidadePlano,"HORAS_UTEIS",null,$afastamentosUsuario)->horasAfastamento;
+        $tipoCalculo = $unidadePlano->entrega_forma_contagem_prazos;
+        $result["horasUteisAfastamento"] = CalendarioService::calculaDataTempoUnidade($inicioPlano,$fimPlano,$plano['carga_horaria'],$unidadePlano,$tipoCalculo,null,$afastamentosUsuario)->horasAfastamento;
 
         // Cálculo das horas úteis decorridas do plano e das horas úteis decorridas dos afastamentos
         $result["horasUteisDecorridas"] = new DateTime() < $inicioPlano ? 0 : CalendarioService::calculaDataTempoUnidade(
-            $inicioPlano,new DateTime() > $fimPlano ? $fimPlano : new DateTime(),$plano['carga_horaria'],$unidadePlano,"HORAS_UTEIS")->tempoUtil;
+            $inicioPlano,new DateTime() > $fimPlano ? $fimPlano : new DateTime(),$plano['carga_horaria'],$unidadePlano,$tipoCalculo)->tempoUtil;
         $result["horasAfastamentoDecorridas"] = new DateTime() < $inicioPlano ? 0 : CalendarioService::calculaDataTempoUnidade(
-            $inicioPlano,new DateTime() > $fimPlano ? $fimPlano : new DateTime(),$plano['carga_horaria'],$unidadePlano,"HORAS_UTEIS",null,$afastamentosUsuario)->horasAfastamento;
+            $inicioPlano,new DateTime() > $fimPlano ? $fimPlano : new DateTime(),$plano['carga_horaria'],$unidadePlano,$tipoCalculo,null,$afastamentosUsuario)->horasAfastamento;
 
         /*  Nesse trecho, o método define se o plano foi concluído ou não.
         O plano será considerado CONCLUÍDO quando todas as suas demandas forem CUMPRIDAS. Uma demanda é considerada cumprida quando

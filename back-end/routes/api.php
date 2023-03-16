@@ -24,6 +24,7 @@ use App\Http\Controllers\ProgramaController;
 use App\Http\Controllers\PlanejamentoController;
 use App\Http\Controllers\PlanejamentoObjetivoController;
 use App\Http\Controllers\PlanoController;
+use App\Http\Controllers\PlanoEntregaController;
 use App\Http\Controllers\PetrvsController;
 use App\Http\Controllers\DocumentoController;
 use App\Http\Controllers\TipoDocumentoController;
@@ -188,6 +189,14 @@ Route::middleware(['auth:sanctum'])->prefix('Plano')->group(function () {
 
 Route::middleware(['auth:sanctum'])->prefix('Adesao')->group(function () {
     defaultRoutes(AdesaoController::class);
+//    Route::post('avaliar', [PlanoController::class, 'avaliar']);
+//    Route::post('cancelar-avaliacao', [PlanoController::class, 'cancelarAvaliacao']);
+//    Route::post('arquivar', [PlanoController::class, 'arquivar']);
+//    Route::post('metadadosPlano', [PlanoController::class, 'metadadosPlano']);
+});
+
+Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
+    defaultRoutes(PlanoEntregaController::class);
 //    Route::post('avaliar', [PlanoController::class, 'avaliar']);
 //    Route::post('cancelar-avaliacao', [PlanoController::class, 'cancelarAvaliacao']);
 //    Route::post('arquivar', [PlanoController::class, 'arquivar']);

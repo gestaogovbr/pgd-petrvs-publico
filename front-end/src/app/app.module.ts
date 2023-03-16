@@ -32,7 +32,7 @@ import { CadeiaValorModule } from './modules/gestao/cadeia-valor/cadeia-valor.mo
     DialogComponent,
     SpinnerOverlayComponent,
     TesteComponent,
-    TesteFormComponent
+    TesteFormComponent,
   ],
   imports: [
     BrowserModule,

@@ -25,11 +25,11 @@ class Programa extends ModelBase
         'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
         'documento_id', /* char(36); */
         'unidade_id', /* char(36); NOT NULL; */
-        'template_tcr_id', /* char(36); */
         'periodo_avaliacao', /* enum('SEMANAL','QUINZENAL','MENSAL','BIMESTRAL','TRIMESTRAL','SEMESTRAL'); NOT NULL; DEFAULT: 'MENSAL'; */// Período para avaliação do plano
-        'termo_obrigatorio', /* tinyint; NOT NULL; */
-        'tipo_documento_tcr_id', /* char(36); */
         //'data_fim', /* datetime; */// Data fim da vigência
+        /*'template_tcr_id',*/// REMOVED
+        /*'termo_obrigatorio',*/// REMOVED
+        /*'tipo_documento_tcr_id',*/// REMOVED
     ];
 
     public $delete_cascade = ['documento'];

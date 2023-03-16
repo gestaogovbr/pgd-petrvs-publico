@@ -1,4 +1,4 @@
-#   Planejamento Institucional
+#   Módulo: Planejamento Institucional
 
 ##  Acessos  
 -   válidos para *'planejamento institucional'* e *'eixos temáticos'*

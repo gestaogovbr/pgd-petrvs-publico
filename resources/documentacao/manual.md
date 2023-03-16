@@ -12,12 +12,16 @@
       - Entregas
     - Plano de Trabalho
       - Demandas
-- Projetos
+- Projetos  
+
+* [Planejamento completo](./planejamento.md)
+
 
 ## Módulos
 
 * [Adesão](./adesao.md)
-* [Planejamento](./planejamento.md)
+* [Planejamento Institucional](./planejamento_institucional.md)
+* [Plano de Entregas](./plano_de_entregas.md)
 
 ## Regra geral do sistema
 

@@ -81,7 +81,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
       {table: 'feriados', campo: 'nome', dao: injector.get<FeriadoDaoService>(FeriadoDaoService), label: "Feriado", selectRoute: {route: ['cadastros', 'feriado']}},
       {table: 'materiais_servicos', campo: 'descricao', dao: injector.get<MaterialServicoDaoService>(MaterialServicoDaoService), label: "Material/Serviço", selectRoute: {route: ['cadastros', 'material-servico']}},
       {table: 'perfis', campo: 'nome', dao: injector.get<PerfilDaoService>(PerfilDaoService), label: "Perfil", selectRoute: {route: ['configuracoes', 'perfil']}},
-      {table: 'planos', campo: 'numero', dao: injector.get<PlanoDaoService>(PlanoDaoService), label: "Plano", selectRoute: {route: ['gestao', 'plano']}},
+      {table: 'planos', campo: 'numero', dao: injector.get<PlanoDaoService>(PlanoDaoService), label: "Plano", selectRoute: {route: ['gestao', 'plano-trabalho']}},
       {table: 'programas', campo: 'nome', dao: injector.get<ProgramaDaoService>(ProgramaDaoService), label: "Programa", selectRoute: {route: ['gestao', 'programa']}},
       {table: 'projetos', campo: 'nome', dao: injector.get<ProjetoDaoService>(ProjetoDaoService), label: "Projeto", selectRoute: {route: ['gestao', 'projeto']}},
       {table: 'tarefas', campo: 'nome', dao: injector.get<TarefaDaoService>(TarefaDaoService), label: "Tarefa", selectRoute: {route: ['cadastros', 'tarefa']}},
