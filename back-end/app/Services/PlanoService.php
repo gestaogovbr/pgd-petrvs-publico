@@ -210,16 +210,27 @@ class PlanoService extends ServiceBase
             "mediaAvaliacoes" => null,
             "modalidade" => $plano['tipo_modalidade']['nome'],
             "percentualHorasNaoIniciadas" => 0,
-            "usuario_id" => $plano['usuario_id']
+            "usuario_id" => $plano['usuario_id'],
+            "formaContagemPrazoEntrega" => '',
+            "observacao" => ''
         ];
         $inicioPlano = new DateTime($plano['data_inicio_vigencia']);
         $fimPlano = new DateTime($plano['data_fim_vigencia'], $inicioPlano->getTimezone());
         $unidadePlano = Unidade::where('id',$plano['unidade_id'])->first();
         $afastamentosUsuario = Afastamento::where('usuario_id',$plano['usuario_id'])->get()->toArray();
+        $tipoCalculo = $unidadePlano->entrega_forma_contagem_prazos;
+        $result["formaContagemPrazoEntrega"] = str_replace('_',' ',$tipoCalculo);
 
+        // Checar se houve alteração nas horas úteis totais do Plano
+        $horasUteisTotais = CalendarioService::calculaDataTempoUnidade($inicioPlano,$fimPlano,$plano['carga_horaria'],$unidadePlano,$tipoCalculo)->tempoUtil;
+        if(round($horasUteisTotais,2) <> round($plano['tempo_total'],2)) {
+            $result['observacao'] = 'Há divergência entre o cálculo das horas úteis do Plano hoje (' . $horasUteisTotais . 'h) e o que consta no Banco de Dados (' . $plano['tempo_total'] . 'h)!';
+            // pesquisar as possíveis modificações
+            //$novosFeriados = Feriado::where(['data_inicio','>',$plano['data_inicio']])->where([dataFeriado dentro do período doplano,])
+        }
+        
         // Cálculo das horas úteis totais de afastamento
         //$result["horasUteisAfastamento"] = CalendarioService::calculaDataTempoUnidade($inicioPlano,$fimPlano,$plano['carga_horaria'],$unidadePlano,"HORAS_UTEIS",null,$afastamentosUsuario)->horasAfastamento;
-        $tipoCalculo = $unidadePlano->entrega_forma_contagem_prazos;
         $result["horasUteisAfastamento"] = CalendarioService::calculaDataTempoUnidade($inicioPlano,$fimPlano,$plano['carga_horaria'],$unidadePlano,$tipoCalculo,null,$afastamentosUsuario)->horasAfastamento;
 
         // Cálculo das horas úteis decorridas do plano e das horas úteis decorridas dos afastamentos

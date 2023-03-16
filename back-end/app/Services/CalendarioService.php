@@ -560,19 +560,24 @@ class CalendarioService
                   } else { /* calcula o tempoUtil */
                     $result->tempoUtil += $hSaldo;
                   }
-                }
-
-                // cálculo das horas dos afastamentos do servidor
-                $afastamentoHoje = UtilService::union($afastamentosDia);
-                $hAfastamentoHoje = array_reduce($afastamentoHoje, function($acum, $item) { 
-                    $acum += UtilService::getHoursBetween(UtilService::asDateTime($item->start), UtilService::asDateTime($item->end));
-                    return $acum;
-                }, 0);
-                $result->horasAfastamento += $hAfastamentoHoje;                
+                }               
               } else {
                 $result->horasNaoUteis += min($diaAtual->hExpediente, $cargaHoraria);
               }
             }
+            // cálculo das horas dos afastamentos do servidor
+            $afastamentoHoje = UtilService::union($afastamentosDia);
+            $hAfastamentoHoje = array_reduce($afastamentoHoje, function($acum, $item) { 
+                $acum += UtilService::getHoursBetween(UtilService::asDateTime($item->start), UtilService::asDateTime($item->end));
+                return $acum;
+            }, 0);
+            // calcula se há interseção entre os afastamentos do servidor e os intervalos do dia
+            $intersecao = UtilService::intersection([...$diaAtual->intervalos, ...$afastamentosDia]);
+            $hIntersecao = !$intersecao ? 0 : array_reduce([$intersecao], function($acum, $item) { 
+                $acum += UtilService::getHoursBetween(UtilService::asDateTime($item->start), UtilService::asDateTime($item->end));
+                return $acum;
+            }, 0);
+            $result->horasAfastamento += ($hAfastamentoHoje - $hIntersecao); 
             if($diaUtil) {
                 // prepara os valores para o front-end
                 $diaAtual->tInicio *= 1000;

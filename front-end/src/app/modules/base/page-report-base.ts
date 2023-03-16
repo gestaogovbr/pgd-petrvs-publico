@@ -58,7 +58,9 @@ export type MetadadosPlano = {
   mediaAvaliacoes: number,                  // média das avaliações das demandas
   modalidade: string,                       // tipo de modalidade do plano
   percentualHorasNaoIniciadas: number,  
-  usuario_id: string
+  usuario_id: string,
+  formaContagemPrazoEntrega: string,
+  observacao: string
 };    
 
 export type MetadadosUnidade = {    
