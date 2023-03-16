@@ -166,11 +166,11 @@ class CalendarioService
     }
 
     public static function horarioServidor() {
-        $timezone_abbr = timezone_name_from_abbr("", -3600*abs(config('petrvs')["timezone"]), 0);
-        $dateTime = new DateTime('now', new DateTimeZone($timezone_abbr));   
-        $dateTime->setTimestamp($dateTime->getTimestamp());
-        return ServiceBase::toIso8601($dateTime); //retorna a data no formato "Y-m-d\TH:i:s"
+        $dateTime = new DateTime();
+        $dateTime->setTimestamp($dateTime->getTimestamp() + (60 * 60 * (config('petrvs')["timezone"]+3)));
+        return ServiceBase::toIso8601($dateTime);
     }
+
 
     public static function getTimestamp($date) {
         return UtilService::asTimestamp($date);
