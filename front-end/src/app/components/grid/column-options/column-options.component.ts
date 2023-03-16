@@ -62,7 +62,7 @@ export class ColumnOptionsComponent implements OnInit {
     if(button.route) {
       this.go.navigate(button.route, button.metadata);
     } else if(button.onClick) {
-      button.onClick(this.row);
+      button.onClick(this.row, this.grid!.getMetadata(this.row), this.index);
     }
   }
 

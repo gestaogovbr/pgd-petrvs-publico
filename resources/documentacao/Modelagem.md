@@ -5,17 +5,6 @@ Cadastro Entregas
    Nome
    Indicador
 
-Cadastro de Eixos Temáticos (Grupo de objetivos) 
-   Nome
-
-Planejamento Institucional
-   Entidade 
-   Unidade (Setor, opc)
-   Objetivos
-              Grupo-tematico Obj-estratégico-superior
-      Ob1 ... -              -
-      Ob2 ... -              -
-
 Tipos de Processos
   Nome
 

@@ -1,0 +1,39 @@
+<!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+    [selectable]="selectable" (select)="onSelect($event)"
+    [hasAdd]="auth.hasPermissionTo('MOD_PRGT_INCL')"
+    [hasEdit]="auth.hasPermissionTo('MOD_PRGT_EDT')">
+    <toolbar *ngIf="!selectable"></toolbar>
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-text [size]="12" label="Nome do Programa" controlName="nome"
+                [control]="filter!.controls.nome" placeholder="Nome do programa"></input-text>
+        </div>
+    </filter>
+    <columns>
+        <column title="Título/Normativa" [template]="columnTituloNormativa">
+            <ng-template let-row="row" #columnTituloNormativa>
+                <span> {{row.nome}}</span><br>
+                <small> {{row.normativa}}</small>
+            </ng-template>
+        </column>
+        <column title="Unidade instituidora" [template]="columnUnidadeInstituidora">
+            <ng-template let-row="row" #columnUnidadeInstituidora>
+                <span> {{row.unidade.nome}}</span><br>
+                <small> {{row.unidade.sigla}}</small>
+            </ng-template>
+        </column>
+        <column title="Início da Vigência" [template]="columnInicioVigencia">
+            <ng-template let-row="row" #columnInicioVigencia>
+                <span> {{dao!.getDateFormatted(row.data_inicio_vigencia)}}</span><br>
+            </ng-template>
+        </column>
+        <column title="Fim da Vigência" [template]="columnFimVigencia">
+            <ng-template let-row="row" #columnFimVigencia>
+                <span> {{dao!.getDateFormatted(row.data_fim_vigencia)}}</span>
+            </ng-template>
+        </column>
+        <column type="options" [onEdit]="edit" [options]="options"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

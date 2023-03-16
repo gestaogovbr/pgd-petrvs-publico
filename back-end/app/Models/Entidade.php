@@ -48,10 +48,11 @@ class Entidade extends ModelBase
         'forma_contagem_carga_horaria', /* enum('DIA','SEMANA','MES'); NOT NULL; DEFAULT: 'DIA'; */// Forma de contagem padrão da carga horária
         'data_inicio', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data inicio da vigência
         'expediente', /* json; NOT NULL; DEFAULT: '_utf8mb4\'{"domingo":[],"segunda":[],"terca":[],"quarta":[],"quinta":[],"sexta":[],"sabado":[],"especial":[]}\''; */// Configuração de expediente
-        'template_adesao_id', /* char(36); */
         //'data_fim', /* datetime; */// Data fim da vigência
         //'api_public_key', /* text; */// Chave pública de API
         //'api_private_key', /* text; */// Chave privada de API
+        //'template_adesao_id', /* char(36); */
+        //'template_adesao_cancelamento_id', /* char(36); */
     ];
 
     public $delete_cascade = ['feriados'];
@@ -71,7 +72,6 @@ class Entidade extends ModelBase
     // Has
     public function feriados() { return $this->hasMany(Feriado::class, 'entidade_id'); }        
     // Belongs
-    public function templateAdesao() { return $this->belongsTo(Template::class, 'template_adesao_id'); }   
     public function cidade() { return $this->belongsTo(Cidade::class, 'cidade_id'); }   
     public function gestor() { return $this->belongsTo(Usuario::class); }
     public function gestorSubstituto() { return $this->belongsTo(Usuario::class); }

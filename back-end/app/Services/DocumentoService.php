@@ -8,8 +8,6 @@ use App\Models\DocumentoAssinatura;
 use App\Services\ServiceBase;
 use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Throwable;
 
 class DocumentoService extends ServiceBase {
@@ -49,9 +47,9 @@ class DocumentoService extends ServiceBase {
         try {
             DB::beginTransaction();
             foreach($documentos as $documento) {
-                if($documento->especie == "TERMO_ADESAO") {
-                    $plano = Plano::find($documento->plano_id);
-                    $tipoModalidade = $plano->tipo_modalidade;
+                if(in_array($documento->especie, ["TERMO_ADESAO", "TCR"])) {
+                    $plano = Plano::with(["tipoModalidade", "usuario", "unidade.entidade"])->find($documento->plano_id);
+                    $tipoModalidade = $plano->tipoModalidade;
                     $servidor = $plano->usuario;
                     $unidade = $plano->unidade;
                     $entidade = $unidade->entidade;
@@ -77,7 +75,7 @@ class DocumentoService extends ServiceBase {
             DB::rollback();
             throw $e;
         }
-        return Documento::with('assinaturas.usuario:id,nome,apelido')->whereIn('id', $data["documentos_ids"])->all();
+        return Documento::with('assinaturas.usuario:id,nome,apelido')->whereIn('id', $data["documentos_ids"])->get()->all();
     }
 
 }

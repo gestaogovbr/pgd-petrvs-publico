@@ -15,6 +15,8 @@ import { Documento } from 'src/app/models/documento.model';
 import { Plano } from 'src/app/models/plano.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { FullRoute } from 'src/app/services/navigate.service';
+import { PlanoService } from '../plano.service';
+import { DocumentoService } from 'src/app/modules/uteis/documentos/documento.service';
 
 @Component({
   selector: 'app-plano-list',
@@ -27,8 +29,10 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
   public static selectRoute?: FullRoute = {route: ["gestao", "plano"]};
   public unidadeDao: UnidadeDaoService;
   public documentoDao: DocumentoDaoService;
+  public documentoService: DocumentoService;
   public programaDao: ProgramaDaoService;
   public usuarioDao: UsuarioDaoService;
+  public planoService: PlanoService;
   public allPages: ListenerAllPagesService;
   public tipoModalidadeDao: TipoModalidadeDaoService;
   public multiselectAllFields: string[] = ["tipo_modalidade_id", "usuario_id", "unidade_id", "documento_id"];
@@ -44,7 +48,9 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.documentoDao = injector.get<DocumentoDaoService>(DocumentoDaoService);
+    this.documentoService = injector.get<DocumentoService>(DocumentoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
+    this.planoService = injector.get<PlanoService>(PlanoService);
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
     /* Inicializações */
@@ -59,29 +65,36 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
       data_filtro_inicio: {default: new Date()},
       data_filtro_fim: {default: new Date()}
     }, this.cdRef, this.filterValidate);
-    this.join = ["unidade.entidade", "usuario", "programa", "documento", "tipo_modalidade"];
+    this.join = ["unidade.entidade", "usuario", "programa", "documento.assinaturas.usuario:id,nome,url_foto", "tipo_modalidade"];
     this.groupBy = [{field: "unidade.sigla", label: "Unidade"}];
-    // Testa se o usuário possui permissão para exibir dados do plano de trabalho
-    if (this.auth.hasPermissionTo("MOD_PTR_CONS")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir o plano de trabalho
-    if (this.auth.hasPermissionTo("MOD_PTR_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
-    this.options.push({
-      label: "Termos de adesão",
-      icon: "bi bi-file-earmark-check",
-      onClick: ((row: Plano) => this.go.navigate({route: ['gestao', 'plano', row.id, 'termos']}, {modalClose: (modalResult) => console.log(modalResult?.conteudo)})).bind(this)
-    });
+  }
+
+  public dynamicOptions(row: any): ToolbarButton[] {
+    let result: ToolbarButton[] = [];
+    let plano: Plano = row as Plano;
+    const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: this.consult.bind(this) };
+    const BOTAO_ALTERAR = { label: "Editar", icon: "bi bi-pencil-square", onClick: this.edit.bind(this) };
+    const BOTAO_EXCLUIR = { label: "Excluir demanda", icon: "bi bi-trash", onClick: this.delete.bind(this) };
+    const BOTAO_ASSINAR = { hint: "Assinar", icon: "bi bi-pen", onClick: this.assinar.bind(this) };
+    const BOTAO_TERMOS = { label: "Termos", icon: "bi bi-file-earmark-check", onClick: ((row: Plano) => this.go.navigate({ route: ['uteis', 'documentos', 'TCR', row.id ] }, { modalClose: (modalResult) => console.log(modalResult?.conteudo), metadata: this.planoService.metadados(row) })).bind(this) };
+    if(this.auth.hasPermissionTo("MOD_PTR_CONS")) result.push(BOTAO_INFORMACOES);
+    if(this.auth.hasPermissionTo('MOD_PTR_EDT')) result.push(BOTAO_ALTERAR);
+    if(this.auth.hasPermissionTo("MOD_PTR_EXCL")) result.push(BOTAO_EXCLUIR);
+    if(this.planoService.needSign(plano)) result.push(BOTAO_ASSINAR);
+    result.push(BOTAO_TERMOS);
+    return result;
+  }
+
+  public dynamicButtons(row: any): ToolbarButton[] {
+    let result: ToolbarButton[] = [];
+    let plano: Plano = row as Plano;
+    const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: this.consult.bind(this) };
+    const BOTAO_ALTERAR = { label: "Editar", icon: "bi bi-pencil-square", onClick: this.edit.bind(this) };
+    const BOTAO_ASSINAR = { hint: "Assinar", icon: "bi bi-pen", color: "btn-outline-dark", onClick: this.assinar.bind(this) };
+    if(this.planoService.needSign(plano)) result.push(BOTAO_ASSINAR);
+    else if(this.auth.hasPermissionTo('MOD_PTR_EDT')) result.push(BOTAO_ALTERAR);
+    else if(this.auth.hasPermissionTo("MOD_PTR_CONS")) result.push(BOTAO_INFORMACOES);
+    return result;
   }
 
   public filterValidate = (control: AbstractControl, controlName: string) => {
@@ -138,44 +151,46 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
     this.allPages.openDocumentoSei(row.documento.id_processo, row.documento.id_documento);
   }
 
-  public needSign(plano: Plano): boolean {
+  /*public needSign(plano: Plano): boolean {
     let ids: string[] = [];
-    if(plano.documento_id?.length) {
+    const documento = (plano.documentos || []).find(x => plano.documento_id?.length && x.id == plano.documento_id);
+    if(documento && !documento.assinaturas.find(x => x.usuario_id == this.auth.usuario!.id)) {
       const tipoModalidade = plano.tipo_modalidade!; //(this.tipoModalidade?.searchObj as TipoModalidade);
       const usuario = plano.usuario!; // (this.usuario?.searchObj as Usuario);
       const unidade = plano.unidade!; // (this.unidade?.searchObj as Unidade);
       const entidade = unidade.entidade!;
-      //const alredySigned = !!documento.assinaturas.find(x => x.usuario_id == this.auth.usuario!.id);
       if(tipoModalidade?.exige_assinatura && usuario) ids.push(usuario.id);
       if(tipoModalidade?.exige_assinatura_gestor_unidade && unidade) ids.push(unidade.gestor_id || "", unidade.gestor_substituto_id || "");
       if(tipoModalidade?.exige_assinatura_gestor_entidade && entidade) ids.push(entidade.gestor_id || "", entidade.gestor_substituto_id || "");
     }
-    return !!plano.documento_id?.length && ids.includes(this.auth.usuario!.id);
-  }
+    return !!documento && ids.includes(this.auth.usuario!.id);
+  }*/
 
   public dynamicMultiselectMenu = (multiselected: IIndexable): ToolbarButton[] => {
     let assinar = !!Object.keys(multiselected).length;
     let menu = [];
     Object.entries(multiselected).forEach(([key, value]) => {
-      if(!this.needSign(value)) assinar = false;
+      if(!this.planoService.needSign(value)) assinar = false;
     });
     if(assinar) menu.push({label: "Assinar", icon: "bi bi-pen", onClick: this.assinar.bind(this) });
     return menu;
   }
 
-  public assinar() {
-    if(!this.grid!.multiselectedCount) {
+  public assinar(row?: Plano) {
+    const planosIds = row ? [row.id] : Object.keys(this.grid!.multiselected || {});
+    const documentosIds = this.grid!.items.filter(x => planosIds.includes(x.id)).map(x => x.documento_id).filter(x => x?.length);
+    if(!documentosIds.length) {
       this.dialog.alert("Selecione", "Nenhum plano seleciono");
     } else {
-      this.dialog.confirm("Assinar", "Deseja realmente assinar " + this.grid!.multiselectedCount + " documento" + (this.grid!.multiselectedCount > 1 ? "s" : "") + "?").then(response => {
+      this.dialog.confirm("Assinar", "Deseja realmente assinar " + documentosIds.length + " documento" + (documentosIds.length > 1 ? "s" : "") + "?").then(response => {
         if(response) {
           this.loading = true;
-          this.documentoDao.assinar(Object.keys(this.grid!.multiselected)).then(response => {
+          this.documentoDao.assinar(documentosIds).then(response => {
             if(response?.length) {
               this.dialog.alert("Assinados", response.length > 1 ? "Foram assinados " + response.length + " documentos!" : "Documento assinado com sucesso!");
               this.refresh();
             }
-          }).finally(() => this.loading = false);
+          }).catch((error) => this.error("Erro ao tentar assinar: " + error.toString())).finally(() => this.loading = false);
         }
       });
     }

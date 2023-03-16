@@ -27,6 +27,11 @@
                 </div>
             </div>
         </tab>
+        <tab key="CONFIGURACOES" label="Configurações">
+            <div class="row">
+                <input-editor label="Texto complementar do Plano de Trabalho" controlName="texto_complementar_plano" [dataset]="planoDataset"></input-editor>
+            </div>
+        </tab>
         <tab key="LOTACOES" label="Lotações">
             <grid [control]="form!.controls.lotacoes" [form]="formLotacoes" [add]="addLotacao.bind(this)" [load]="loadLotacao.bind(this)" [hasDelete]="true" [remove]="removeLotacao.bind(this)" [save]="saveLotacao.bind(this)" editable>
                 <columns>

@@ -50,6 +50,7 @@ export class Usuario extends Base {
     public id_google: string | null = null; /* ID do usuário google */
     public url_foto: string | null = null; /* URL da foto do usuário (temporário) */
     public vinculacao: UsuarioVinculacao = "SERVIDOR_EFETIVO";
+    public texto_complementar_plano: string | null = ""; // Mensagem adicional para o plano de trabalho
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

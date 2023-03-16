@@ -1,7 +1,5 @@
-<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
-    [selectable]="selectable" (select)="onSelect($event)"
-    [hasAdd]="auth.hasPermissionTo('MOD_EXTM_INCL')"
-    [hasEdit]="auth.hasPermissionTo('MOD_EXTM_EDT')">
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [hasAdd]="auth.hasPermissionTo('MOD_PLAN_INST_INCL')" [hasEdit]="auth.hasPermissionTo('MOD_PLAN_INST_EDT')" 
+      [selectable]="selectable" (select)="onSelect($event)" [orderBy]="orderBy">
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
@@ -10,7 +8,11 @@
         </div>
     </filter>
     <columns>
-        <column title="Nome" field="nome" orderBy="nome"></column>
+        <column title="Nome" [template]="columnNome" orderBy="nome">
+            <ng-template let-row="row" #columnNome>
+                <i [class]="row.icone" [style.color]="row.cor"></i><span [style.color]="row.cor"> {{row.nome}}</span>
+            </ng-template>
+        </column>
         <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>

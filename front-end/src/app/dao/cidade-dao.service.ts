@@ -13,7 +13,7 @@ export class CidadeDaoService extends DaoBaseService<Cidade> {
       { field: "codigo_ibge", label: "Código" },
       { field: "nome", label: "Nome" },
       { field: "uf", label: "UF" }
-    ]);
+    ], deeps);
   }
 
   constructor(protected injector: Injector) { 

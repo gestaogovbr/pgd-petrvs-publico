@@ -23,7 +23,7 @@ export class DocumentoDaoService extends DaoBaseService<Documento> {
   public assinar(documentosIds: string[]) {
     return new Promise<Documento[] | undefined>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/assinar', {documentos_ids: documentosIds}).subscribe(response => {
-        if(response.error) throw new Error(response.error);
+        if(response.error) reject(response.error);
         resolve(response?.rows ? this.getRows(response) : undefined);
       }, error => reject(error));
     });

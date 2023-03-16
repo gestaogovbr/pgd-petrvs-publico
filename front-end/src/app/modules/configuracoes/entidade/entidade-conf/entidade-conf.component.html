@@ -46,14 +46,6 @@
                 <input-textarea [size]="12" [rows]="3" [label]="'Texto na inclusão de comentário ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaComentario" controlName="template_demanda_comentario" [control]="form!.controls.template_demanda_comentario"></input-textarea>
             </div>
         </tab>
-        <tab key="TEMPLATES" label="Templates">
-            <div class="row">
-                <input-search [size]="12" detailsButton [label]="'Template padrão ' + lex.noun('adesão', true, true)" labelInfo="Template do termo utilizado na adesão a um programa" controlName="template_adesao_id" [control]="form!.controls.template_adesao_id" [dao]="templateDao" [where]="[['especie', '==', 'TCR']]" [selectRoute]="template.selectRoute('TCR')" (details)="template.details($event)"></input-search>
-            </div>
-            <div class="row">
-                <input-search [size]="12" detailsButton [label]="'Template padrão para o cancelamento dos servidores ' + lex.noun('adesão', false, true)" labelInfo="Template do termo utilizado na adesão a um programa" controlName="template_adesao_cancelamento_id" [control]="form!.controls.template_adesao_cancelamento_id" [dao]="templateDao" [where]="[['especie', '==', 'TCR_CANCELAMENTO']]" [selectRoute]="template.selectRoute('TCR_CANCELAMENTO')" (details)="template.details($event)"></input-search>
-            </div>
-        </tab>
         <tab key="NOMENCLATURA" label="Nomenclatura">
             <div clss="row">
                 <grid [control]="form!.controls.nomenclatura" [form]="formNomenclatura" editable [hasAdd]="false">

@@ -1,10 +1,9 @@
 import { Injectable, Injector } from '@angular/core';
 import * as moment from 'moment';
 import { Afastamento } from '../models/afastamento.model';
-import { IIndexable } from '../models/base.model';
 import { DemandaPausa } from '../models/demanda-pausa.model';
 import { Expediente, Turno } from '../models/expediente.model';
-import { DistribuicaoFormaContagemPrazos, EntregaFormaContagemPrazos, Unidade } from '../models/unidade.model';
+import { Unidade } from '../models/unidade.model';
 import { AuthService } from './auth.service';
 import { GlobalsService } from './globals.service';
 import { LookupService } from './lookup.service';
@@ -40,7 +39,6 @@ export type ExpedienteDia = {
   tInicio: number;
   tFim: number;
   hExpediente: number,
-  //hNaoUteis: number,
   intervalos: Interval[];
 }
 
@@ -139,12 +137,12 @@ export class CalendarService {
   }*/
 
   public nestedExpediente(unidade: Unidade): Expediente {
-    let expediente = unidade.expediente || unidade.entidade?.expediente;
-    expediente = expediente || (unidade.entidade_id == this.auth.unidade?.entidade_id ? this.auth.unidade!.entidade!.expediente : new Expediente());
-    return expediente;
+    return unidade.expediente || unidade.entidade?.expediente || this.auth.entidade?.expediente || new Expediente();
+    //expediente = expediente || (unidade.entidade_id == this.auth.unidade?.entidade_id ? this.auth.unidede.entidade!.expediente : new Expediente());
+    //return expediente;
   }
 
-  /* Retorna uma média entre os expediente ou 24 hrs caso unidade seja undefined */
+  /* Retorna uma média entre os expedientes ou 24 h caso unidade seja undefined */
   public expedienteMedio(unidade: Unidade | undefined): number {
     if (unidade) {
       const soma = (total: number, next: Turno) => total + (this.util.getStrTimeHours(next.fim) - this.util.getStrTimeHours(next.inicio));
@@ -163,13 +161,6 @@ export class CalendarService {
     }
     return 24;
   }
-
-  /*public expedienteDia(expediente: Expediente, dia: Date): Turno[] {
-    const diaSemana = CalendarService.DIAS_SEMANA[dia.getDay()];
-    const diaIso = moment(dia).format("YYYY-MM-DD");
-    return [...expediente[diaSemana], ...expediente.especial.filter(x => moment(x.data).format("YYYY-MM-DD") == diaIso)]
-      .sort((a, b) => this.util.getStrTimeHours(a.inicio) - this.util.getStrTimeHours(b.inicio));
-  }*/
 
   public prazo(inicio: Date, horas: number, cargaHoraria: number, unidade: Unidade, tipo: TipoContagem) {
     const feriados = this.feriadosCadastrados[unidade.id] || [];

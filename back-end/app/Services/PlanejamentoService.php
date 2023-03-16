@@ -8,5 +8,4 @@ use App\Traits\UseDataFim;
 class PlanejamentoService extends ServiceBase
 {
     use UseDataFim;
-
 }

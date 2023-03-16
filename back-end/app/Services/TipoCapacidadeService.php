@@ -126,12 +126,6 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_DMD_TRF_EXCL", "Permite exluir tarefas dentro de demandas"],
         ["MOD_DMD_TRF_CONS", "Permite consultar tarefas dentro de demandas"],
         ["MOD_DMD_CLONAR", "Permite clonar demandas"],
-        /* Capacidades do módulo EIXOS TEMÁTICOS */
-        ["MOD_EXTM", "Permite acessar o item menu Eixos temáticos"],
-        ["MOD_EXTM_CONS", "Permite consultar Eixos temáticos"],
-        ["MOD_EXTM_INCL", "Permite incluir Eixos temáticos"],
-        ["MOD_EXTM_EDT", "Permite editar Eixos temáticos"],
-        ["MOD_EXTM_EXCL", "Permite excluir Eixos temáticos"],
         /* Capacidades do módulo ENTIDADE*/
         ["MOD_ENTD_CFG", "Permite configurar Entidade"],
         ["MOD_ENTD_CONS", "Permite consultar Entidade"],
@@ -177,11 +171,17 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PERF_EDT", "Permite editar perfil"],
         ["MOD_PERF_EXCL", "Permite excluir perfil"],
         ["MOD_PERF_INCL", "Permite incluir perfil"],
+        /* Capacidades do módulo PLANEJAMENTO INSTITUCIONAL */
+        ["MOD_PLAN_INST", "Permite visualizar/acessar os itens do menu: Cadastro/Eixos temáticos e Cadastro/Planejamento Institucional"],
+        ["MOD_PLAN_INST_CONS", "Permite consultar Eixos temáticos e/ou Planejamentos Institucionais"],
+        ["MOD_PLAN_INST_INCL", "Permite incluir Eixos temáticos e/ou Planejamentos Institucionais"],
+        ["MOD_PLAN_INST_EDT", "Permite editar Eixos temáticos e/ou Planejamentos Institucionais"],
+        ["MOD_PLAN_INST_EXCL", "Permite excluir Eixos temáticos e/ou Planejamentos Institucionais"],        
         /* Capacidades do módulo PROG TRABALHO*/
         ["MOD_PRGT", "Permite acessar item menu programa de gestão"],
         ["MOD_PRGT_CONS", "Permite consultar programa de gestão"],
         ["MOD_PRGT_EDT", "Permite editar programas de gestão"],
-        ["MOD_PRGT_EXCL", "Permite excluir programas de gestãoo"],
+        ["MOD_PRGT_EXCL", "Permite excluir programas de gestão"],
         ["MOD_PRGT_INCL", "Permite incluir programas de gestão"],
         ["MOD_PROC_INCL", "Permite incluir tipos de processos"],
         /* Capacidades do módulo PROJETO*/
@@ -206,12 +206,11 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PTR_USERS_INCL", "Permite incluir planos de trabalho de usuários fora da lotação"],
         ["MOD_PTR_INCL_SEM_LOT", "Permite incluir planos de trabalho para usuários não lotado na unidade do plano"],
         ["MOD_PTR_INTSC_DATA", "Permite incluir planos de trabalho para usuários que já possuem planos no período de mesma modalidade"],
-        /* Capacidades do módulo PLANO GESTÃO ENTREGAS*/
-        ["MOD_PGENTR", "Permite acessar item menu plano de gestão/entregas"],
-        ["MOD_PGENTR_CONS", "Permite consultar plano de gestão/entregas"],
-        ["MOD_PGENTR_EDT", "Permite editar planos de gestão/entregas"],
-        ["MOD_PGENTR_EXCL", "Permite excluir planos de gestão/entregas"],
-        ["MOD_PGENTR_INCL", "Permite incluir planos de gestão/entregas"],
+        /* Capacidades do módulo PLANO DE ENTREGAS*/
+        ["MOD_PENT_CONS", "Permite consultar plano de entregas"],
+        ["MOD_PENT_EDT", "Permite editar planos de entregas"],
+        ["MOD_PENT_EXCL", "Permite excluir planos de entregas"],
+        ["MOD_PENT_INCL", "Permite incluir planos de entregas"], 
         /* Capacidades do módulo TIPO ATIVIDADE*/
         ["MOD_TIPO_ATV", "Permite acessar item de menu cadastro->tipo de atividade"],
         ["MOD_TIPO_ATV_CONS", "Permite consultar atividade"],
@@ -281,18 +280,10 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_USER_EXCL", "Permite excluir dados de usuário"],
         ["MOD_USER_INCL", "Permite incluir usuário"],
         ["MOD_USER_TUDO", "Permite consultar qualquer usuário independente de lotação"],
-        ["MOD_PERF_CONS", "Permite consultar perfil"],
-        /* Capacidades do módulo ADESÃO*/
-        ["MOD_ADES_CONS", "Permite consultar dados de usuário"],
-        ["MOD_ADES_EDT", "Permite alterar dados de usuário"],
-        ["MOD_ADES_EXCL", "Permite excluir dados de usuário"],
-        ["MOD_ADES_INCL", "Permite incluir usuário"],
-        ["MOD_ADES", "Permite consultar qualquer usuário independente de lotação"],
-
+        ["MOD_PERF_CONS", "Permite consultar perfil"]
     ];
 
     private function differentDev(&$data) {
-        //$developerId = ((config('petrvs') ?: [])['ids-fixos'] ?: [])['developer-id'] ?: $this->UtilService->uuid("Desenvolvedor");
         if(!$this->isLoggedUserADeveloper()){
             if(isset($data['where']) && count($data['where']) > 0) {
                 if(gettype($data['where'][0]) == "string") {

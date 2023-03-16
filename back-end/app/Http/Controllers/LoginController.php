@@ -25,15 +25,29 @@ use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
 {
+    private function registrarEntidade($request, $session = false) {
+        $with = ["feriados", "gestor", "gestorSubstituto"]; 
+        $entidade = $session ? Entidade::with($with)->find($request->session()->put("entidade_id")) : null;
+        $sigla = $request->has('entidade') ? $request->input('entidade') : config("petrvs")["entidade"]; 
+        if(empty($entidade) && !empty($sigla)) {
+            $entidade = Entidade::with($with)->where("sigla", $sigla)->first();
+            $request->session()->put("entidade_id", $entidade->id);
+        }
+        return $entidade;
+    }
+
     private function registrarUsuario($request, $usuario, $update = null) {
         if(isset($usuario)) {
             if(isset($update) && count($update) > 0) {
                 $usuario->update($update);
                 $usuario->fresh();
             }
-            $usuario = Usuario::where("id", $usuario->id)->with(["lotacoes" => function ($query){
-                $query->whereNull("data_fim");
-            }, "lotacoes.unidade.entidade", "perfil.capacidades.tipoCapacidade"])->first();
+            $entidadeId = $request->session()->has("entidade_id") ? $request->session()->get("entidade_id") : null;
+            $usuario = Usuario::where("id", $usuario->id)->with(["lotacoes" => function ($query) use ($entidadeId) {
+                $query->with(["unidade"])->whereHas('unidade', function ($query) use ($entidadeId) {
+                    return $query->where('entidade_id', '=', $entidadeId);
+                })->whereNull("data_fim");
+            }, "perfil.capacidades.tipoCapacidade"])->first();
             foreach ($usuario->lotacoes as $lotacao) {
                 if($lotacao->principal) {
                     $request->session()->put("unidade_id", $lotacao->unidade_id);
@@ -129,10 +143,13 @@ class LoginController extends Controller
      */
     public function authenticateSession(Request $request) {
         if(Auth::check()) {
+            $entidade = $this->registrarEntidade($request, true);
+            $usuario = $this->registrarUsuario($request, self::loggedUser());
             return response()->json([
                 "success" => true,
                 "kind" => $request->session()->get("kind"),
-                "usuario" => $this->registrarUsuario($request, self::loggedUser()),
+                "usuario" => $usuario,
+                "entidade" => $entidade,
                 "horario_servidor" => CalendarioService::horarioServidor()
             ]);
         }
@@ -155,9 +172,12 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             $request->session()->put("kind", "USERPASSWORD");
+            $entidade = $this->registrarEntidade($request);
+            $usuario = $this->registrarUsuario($request, self::loggedUser());
             return response()->json([
                 'success' => true,
-                "usuario" => $this->registrarUsuario($request, self::loggedUser()),
+                "entidade" => $entidade,
+                "usuario" => $usuario,
                 "horario_servidor" => CalendarioService::horarioServidor()
             ]);
         }
@@ -172,9 +192,13 @@ class LoginController extends Controller
      */
     public function authenticateFirebaseToken(Request $request, FirebaseAuthService $auth)
     {
-        $credentials = $request->validate(['token' => ['required']]);
+        $credentials = $request->validate([
+            'entidade' => ['required'],
+            'token' => ['required']
+        ]);
         $tokenData = $auth->verifyFirebaseToken($credentials['token']);
         if(!isset($tokenData['error'])) {
+            $entidade = $this->registrarEntidade($request);
             $usuario = $this->registrarUsuario($request, Usuario::where('email', $tokenData['email'])->where("data_fim", null)->first());
             if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
                 $usuarioService = new UsuarioService();
@@ -183,6 +207,7 @@ class LoginController extends Controller
                 $request->session()->put("kind", "FIREBASE");
                 return response()->json([
                     'success' => true,
+                    "entidade" => $entidade,
                     "usuario" => $usuario,
                     "horario_servidor" => CalendarioService::horarioServidor()
                 ]);
@@ -199,9 +224,13 @@ class LoginController extends Controller
      */
     public function authenticateGoogleToken(Request $request, GoogleService $auth)
     {
-        $credentials = $request->validate(['token' => ['required']]);
+        $credentials = $request->validate([
+            'entidade' => ['required'],
+            'token' => ['required']
+        ]);
         $tokenData = $auth->verifyToken($credentials['token']);
         if(!isset($tokenData['error'])) {
+            $entidade = $this->registrarEntidade($request);
             $usuario = $this->registrarUsuario($request, Usuario::where('email', $tokenData['email'])->where("data_fim", null)->first());
             if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
                 $usuarioService = new UsuarioService();
@@ -210,6 +239,7 @@ class LoginController extends Controller
                 $request->session()->put("kind", "GOOGLE");
                 return response()->json([
                     'success' => true,
+                    "entidade" => $entidade,
                     "usuario" => $usuario,
                     "horario_servidor" => CalendarioService::horarioServidor()
                 ]);
@@ -226,24 +256,30 @@ class LoginController extends Controller
      */
     public function authenticatePrfGoogleToken(Request $request, GoogleService $auth, IntegracaoService $integracao)
     {
-        $credentials = $request->validate(['token' => ['required']]);
+        $credentials = $request->validate([
+            'entidade' => ['required'],
+            'token' => ['required']
+        ]);
         $tokenData = $auth->verifyToken($credentials['token']);
         if(!isset($tokenData['error'])) {
             $usuario = Usuario::where('email', $tokenData['email'])->where("data_fim", null)->first();
             if(!isset($usuario) && $integracao->autoIncluir) {
                 $usuario = new Usuario();
                 $lotacao = new Lotacao();
-                $this->service = new IntegracaoService();
-                $this->service->salvaUsuarioLotacaoGoogle($usuario, $lotacao, $tokenData, $auth);
+                $service = new IntegracaoService();
+                $service->salvaUsuarioLotacaoGoogle($usuario, $lotacao, $tokenData, $auth);
             }
             if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
                 $usuarioService = new UsuarioService();
                 $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
                 $request->session()->regenerate();
                 $request->session()->put("kind", "GOOGLE");
+                $entidade = $this->registrarEntidade($request);
+                $usuario = $this->registrarUsuario($request, $usuario, ['id_google' => $tokenData["sub"]]);
                 return response()->json([
                     'success' => true,
-                    "usuario" => $this->registrarUsuario($request, $usuario, ['id_google' => $tokenData["sub"]]), //, 'url_foto' => $tokenData["picture"]
+                    "entidade" => $entidade, 
+                    "usuario" => $usuario,
                     "horario_servidor" => CalendarioService::horarioServidor()
                 ]);
             }
@@ -260,6 +296,7 @@ class LoginController extends Controller
     public function authenticateDprfSeguranca(Request $request, DprfSegurancaAuthService $auth)
     {
         $credentials = $request->validate([
+            'entidade' => ['required'],
             'cpf' => ['regex:/^\d{11}$/'],
             'senha' => ['required'],
             'token' => ['required']
@@ -272,15 +309,18 @@ class LoginController extends Controller
             if(!isset($usuario) && $auth->autoIncluir) {
                 $usuario = new Usuario();
                 $lotacao = new Lotacao();
-                $this->service = new IntegracaoService();
-                $this->service->salvaUsuarioLotacaoDprf($usuario, $lotacao, $profile, $auth);
+                $service = new IntegracaoService();
+                $service->salvaUsuarioLotacaoDprf($usuario, $lotacao, $profile, $auth);
             }
             if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
                 $request->session()->regenerate();
                 $request->session()->put("kind", "DPRFSEGURANCA");
+                $entidade = $this->registrarEntidade($request);
+                $usuario = $this->registrarUsuario($request, $usuario);
                 return response()->json([
                     'success' => true,
-                    "usuario" => $this->registrarUsuario($request, $usuario),
+                    "entidade" => $entidade,
+                    "usuario" => $usuario,
                     "horario_servidor" => CalendarioService::horarioServidor()
                 ]);
             }
@@ -297,10 +337,13 @@ class LoginController extends Controller
     public function authenticateApiSession(Request $request) {
         if(Auth::check()) {
             $user = self::loggedUser();
+            $entidade = $this->registrarEntidade($request, true);
+            $usuario = $this->registrarUsuario($request, $user);
             return response()->json([
                 "token" => $user->currentAccessToken()->plainTextToken ?? $request->bearerToken(), // ?? $user->createToken($credentials['device_name'])->plainTextToken,
                 "kind" => $request->session()->get("kind"),
-                "usuario" => $this->registrarUsuario($request, $user),
+                "entidade" => $entidade,
+                "usuario" => $usuario,
                 "horario_servidor" => CalendarioService::horarioServidor()
             ]);
         }
@@ -316,6 +359,7 @@ class LoginController extends Controller
     public function authenticateApiUserPassword(Request $request, FirebaseAuthService $auth)
     {
         $credentials = $request->validate([
+            'entidade' => ['required'],
             'email' => ['required', 'email'],
             'password' => ['required'],
             'device_name' => ['required'],
@@ -324,9 +368,12 @@ class LoginController extends Controller
         if (isset($usuario)) {
             $request->session()->put("kind", "USERPASSWORD");
             $user = self::loggedUser();
+            $entidade = $this->registrarEntidade($request);
+            $usuario = $this->registrarUsuario($request, $usuario);
             return response()->json([
                 'token' => $user->createToken($credentials['device_name'])->plainTextToken,
-                'usuario' => $this->registrarUsuario($request, $usuario),
+                'entidade' => $entidade,
+                'usuario' => $usuario,
                 "horario_servidor" => CalendarioService::horarioServidor()
             ]);
         }
@@ -342,6 +389,7 @@ class LoginController extends Controller
     public function authenticateApiFirebaseToken(Request $request, FirebaseAuthService $auth)
     {
         $credentials = $request->validate([
+            'entidade' => ['required'],
             'token' => ['required'],
             'device_name' => ['required'],
         ]);
@@ -352,9 +400,12 @@ class LoginController extends Controller
                 $usuarioService = new UsuarioService();
                 $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_FIREBASE, $usuario, $tokenData["picture"]);
                 $request->session()->put("kind", "FIREBASE");
+                $entidade = $this->registrarEntidade($request);
+                $usuario = $this->registrarUsuario($request, $usuario);
                 return response()->json([
                     'token' => $usuario->createToken($credentials['device_name'])->plainTextToken,
-                    'usuario' => $this->registrarUsuario($request, $usuario),
+                    'entidade' => $entidade,
+                    'usuario' => $usuario,
                     "horario_servidor" => CalendarioService::horarioServidor()
                 ]);
             }
@@ -371,6 +422,7 @@ class LoginController extends Controller
     public function authenticateApiGoogleToken(Request $request, GoogleService $auth)
     {
         $credentials = $request->validate([
+            'entidade' => ['required'],
             'token' => ['required'],
             'device_name' => ['required'],
         ]);
@@ -382,9 +434,12 @@ class LoginController extends Controller
                 $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
                 $request->session()->regenerate();
                 $request->session()->put("kind", "GOOGLE");
+                $entidade = $this->registrarEntidade($request);
+                $usuario = $this->registrarUsuario($request, $usuario);                
                 return response()->json([
                     'token' => $usuario->createToken($credentials['device_name'])->plainTextToken,
-                    'usuario' => $this->registrarUsuario($request, $usuario),
+                    'entidade' => $entidade,
+                    'usuario' => $usuario,
                     "horario_servidor" => CalendarioService::horarioServidor()
                 ]);
             }
@@ -401,6 +456,7 @@ class LoginController extends Controller
     public function authenticateApiPrfGoogleToken(Request $request, GoogleService $auth, IntegracaoService $integracao)
     {
         $credentials = $request->validate([
+            'entidade' => ['required'],
             'token' => ['required'],
             'device_name' => ['required'],
         ]);
@@ -410,8 +466,8 @@ class LoginController extends Controller
             if(!isset($usuario) && $integracao->autoIncluir) {
                 $usuario = new Usuario();
                 $lotacao = new Lotacao();
-                $this->service = new IntegracaoService();
-                $this->service->salvaUsuarioLotacaoGoogle($usuario, $lotacao, $tokenData, $auth);
+                $service = new IntegracaoService();
+                $service->salvaUsuarioLotacaoGoogle($usuario, $lotacao, $tokenData, $auth);
             }
             if (isset($usuario)) { // && Hash::check($request->password, $user->password)
                 $usuarioService = new UsuarioService();
@@ -419,9 +475,12 @@ class LoginController extends Controller
                 $request->session()->regenerate();
                 $request->session()->put("kind", "GOOGLE");
                 $usuario->save();
+                $entidade = $this->registrarEntidade($request);
+                $usuario = $this->registrarUsuario($request, $usuario, ['id_google' => $tokenData["sub"]]);
                 return response()->json([
                     'token' => $usuario->createToken($credentials['device_name'])->plainTextToken,
-                    'usuario' => $this->registrarUsuario($request, $usuario, ['id_google' => $tokenData["sub"]]), //, 'url_foto' => $tokenData["picture"]
+                    'entidade' => $entidade,
+                    'usuario' => $usuario,
                     "horario_servidor" => CalendarioService::horarioServidor()
                 ]);
             }
@@ -438,6 +497,7 @@ class LoginController extends Controller
     public function generateApiPrfSessionToken(Request $request, ApiService $api, IntegracaoService $integracao)
     {
         $credentials = $request->validate([
+            'entidade' => ['required'],
             'token' => ['required'],
             'entidade' => ['required']
         ]);
@@ -450,16 +510,19 @@ class LoginController extends Controller
             if(!isset($usuario) && $integracao->autoIncluir) {
                 $usuario = new Usuario();
                 $lotacao = new Lotacao();
-                $this->service = new IntegracaoService();
-                $this->service->salvaUsuarioLotacaoApi($usuario, $lotacao, $tokenData, $api);
+                $service = new IntegracaoService();
+                $service->salvaUsuarioLotacaoApi($usuario, $lotacao, $tokenData, $api);
             }
             if (isset($usuario)) { // && Hash::check($request->password, $user->password)
                 $request->session()->regenerate();
                 $request->session()->put("kind", "SUPER");
                 $usuario->save();
+                $entidade = $this->registrarEntidade($request);
+                $usuario = $this->registrarUsuario($request, $usuario, !empty($tokenData["id_super"]) ? ['id_super' => $tokenData["id_super"]] : []);
                 return response()->json([
                     'token' => $usuario->createToken("SUPER_" . $tokenData["id_super"])->plainTextToken,
-                    'usuario' => $this->registrarUsuario($request, $usuario, !empty($tokenData["id_super"]) ? ['id_super' => $tokenData["id_super"]] : []), //, 'url_foto' => $tokenData["picture"]
+                    'entidade' => $entidade,
+                    'usuario' => $usuario,
                     "horario_servidor" => CalendarioService::horarioServidor()
                 ]);
             } else {
@@ -478,6 +541,7 @@ class LoginController extends Controller
     public function authenticateApiDprfSeguranca(Request $request, DprfSegurancaAuthService $auth)
     {
         $credentials = $request->validate([
+            'entidade' => ['required'],
             'cpf' => ['regex:/^\d{11}$/'],
             'senha' => ['required'],
             'token' => ['required'],
@@ -491,15 +555,18 @@ class LoginController extends Controller
             if(!isset($usuario) && $auth->autoIncluir) {
                 $usuario = new Usuario();
                 $lotacao = new Lotacao();
-                $this->service = new IntegracaoService();
-                $this->service->salvaUsuarioLotacaoDprf($usuario, $lotacao, $profile, $auth);
+                $service = new IntegracaoService();
+                $service->salvaUsuarioLotacaoDprf($usuario, $lotacao, $profile, $auth);
             }
             if (isset($usuario)) {
                 $request->session()->put("kind", "DPRFSEGURANCA");
                 $usuario->save();
+                $entidade = $this->registrarEntidade($request);
+                $usuario = $this->registrarUsuario($request, $usuario);
                 return response()->json([
                     'token' => $usuario->createToken($credentials['device_name'])->plainTextToken,
-                    'usuario' => $this->registrarUsuario($request, $usuario),
+                    'entidade' => $entidade,
+                    'usuario' => $usuario,
                     "horario_servidor" => CalendarioService::horarioServidor()
                 ]);
             }
@@ -538,7 +605,7 @@ class LoginController extends Controller
     }
 
     public function signInAzureRedirect(Request $request) {
-
+        $this->registrarEntidade($request);
         return $this->azureProvider()->scopes(['openid', 'email', 'profile'])->redirect();
     }
 

@@ -14,9 +14,9 @@ class AltereixosTematicosTableAddCor extends Migration
     public function up()
     {
         Schema::table('eixos_tematicos', function (Blueprint $table) {
-            $table->string('icone', 100)->comment("Class do icone relacionado ao afastamento"); // class="fa fa-icone"
-            $table->string('cor', 100)->comment("Código da cor em formato hex"); // style="color: #AABBCC00"
-            $table->string('descricao', 256)->comment("Descrição");
+            if(!Schema::hasColumn('eixos_tematicos', 'icone')) $table->string('icone', 100)->comment("Class do icone relacionado ao afastamento"); // class="fa fa-icone"
+            if(!Schema::hasColumn('eixos_tematicos', 'cor')) $table->string('cor', 100)->comment("Código da cor em formato hex"); // style="color: #AABBCC00"
+            if(!Schema::hasColumn('eixos_tematicos', 'descricao')) $table->string('descricao', 256)->comment("Descrição");
         });
     }
 
@@ -28,9 +28,9 @@ class AltereixosTematicosTableAddCor extends Migration
     public function down()
     {
         Schema::table('eixos_tematicos', function (Blueprint $table) {
-            $table->string('icone', 100)->comment("Class do icone relacionado ao afastamento"); // class="fa fa-icone"
-            $table->string('cor', 100)->comment("Código da cor em formato hex"); // style="color: #AABBCC00"
-            $table->string('descricao', 256)->comment("Descrição");
+            $table->dropColumn('icone');
+            $table->dropColumn('cor');
+            $table->dropColumn('descricao');
         });
     }
 }

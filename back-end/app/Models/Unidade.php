@@ -64,6 +64,7 @@ class Unidade extends ModelBase
         //'checklist', /* json; */// Nome dos checklist predefinidas
         //'data_fim', /* datetime; */// Data final da vigência
         //'inativo', /* datetime; */// Se a unidade está inativa
+        /*'texto_complementar_plano',*/// REMOVED
     ];
 
     public $fillable_relations = [

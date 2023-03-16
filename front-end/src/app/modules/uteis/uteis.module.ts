@@ -25,7 +25,8 @@ import { DocumentosComponent } from './documentos/documentos.component';
     CalendarEfemeridesComponent,
     ComentariosComponent,
     ComentariosWidgetComponent,
-    CalendarExpedienteComponent
+    CalendarExpedienteComponent,
+    DocumentosComponent
   ]
 })
 export class UteisModule { }

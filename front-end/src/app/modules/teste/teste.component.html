@@ -2,21 +2,19 @@
     {{ID_GENERATOR_BASE}}
 </div!-->
 
-<button type="button" class="btn btn-primary" (click)="openDocumentos()">Primary</button>
+<!--button type="button" class="btn btn-primary" (click)="openDocumentos()">Primary</button/-->
 
-
-
-
-<!--editable-form [form]="form">
+<editable-form [form]="form">
     <div class="row">
         <input-editor controlName="template" [dataset]="dataset"></input-editor>
     </div>
     <div class="row">
-        <input-editor controlName="editor" [template]="form.controls.template.value" [datasource]="datasource"></input-editor>
+        <input-editor controlName="editor" [canEditTemplate]="false" [template]="form.controls.template.value" [datasource]="datasource"></input-editor>
     </div>
 </editable-form>
 <br><br>
-{{form?.controls?.editor?.value || ""}} //-->
+{{form?.controls?.editor?.value || ""}}
+
 <!--map [items]="mapa">
     <strong></strong>
     <table>

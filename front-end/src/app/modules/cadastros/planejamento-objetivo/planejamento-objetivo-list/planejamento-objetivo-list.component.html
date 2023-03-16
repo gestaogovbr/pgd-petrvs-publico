@@ -1,0 +1,24 @@
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [join]="join" [hasAdd]="auth.hasPermissionTo('MOD_PLAN_INST_INCL')"
+      [hasEdit]="auth.hasPermissionTo('MOD_PLAN_INST_EDT')" [orderBy]="orderBy" [selectable]="selectable" (select)="onSelect($event)">
+    <toolbar *ngIf="!selectable"></toolbar>
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-text [size]="12" label="Nome" controlName="nome" [control]="filter!.controls.nome"></input-text>
+        </div>
+        <div class="row">
+            <input-search [size]="8" label="Planejamento Institucional" icon="fab fa-unity" controlName="planejamento_id" [control]="filter!.controls.planejamento_id" [dao]="planejamentoDao" [selectRoute]="{route: ['gestao', 'planejamento']}"></input-search>                
+            <input-search [size]="4" label="Eixo Temático" icon="fab fa-unity" controlName="eixo_tematico_id" [control]="filter!.controls.eixo_tematico_id" [dao]="eixoTematicoDao" [selectRoute]="{route: ['cadastros', 'eixo-tematico']}"></input-search>                
+        </div>
+    </filter>
+    <columns>
+        <column title="Nome" [template]="columnNome" orderBy="nome">
+            <ng-template let-row="row" #columnNome><span> {{row.nome}}</span></ng-template>
+        </column>
+        <column title="Planejamento Institucional" [template]="columnPlanejamento" orderBy="planejamento.nome">
+            <ng-template let-row="row" #columnPlanejamento><span> {{ row.planejamento?.nome }}</span></ng-template>
+        </column>
+        <column type="options" [onEdit]="edit" [options]="options"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>
+

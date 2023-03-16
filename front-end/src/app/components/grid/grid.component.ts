@@ -60,6 +60,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   @Input() load?: (form: FormGroup, row: any) => Promise<void>;
   @Input() remove?: (row: any) => Promise<boolean | undefined | void>;
   @Input() save?: (form: FormGroup, row: any) => Promise<IIndexable | Base | undefined | void>;
+  @Input() editEnd?: (id?: string) => void;
   @Input() addRoute?: FullRoute;
   @Input() addMetadata?: RouteMetadata;
   @Input() labelAdd: string = "Incluir";
@@ -181,6 +182,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   public rowsLimit?: number;
   public groupIds: IIndexable = { _qtdRows: -1 };
   public expandedIds: IIndexable = {};
+  public metadatas: IIndexable = {};
   public set error(error: string | undefined) {
     this._error = error;
   }
@@ -618,6 +620,18 @@ export class GridComponent extends ComponentBase implements OnInit {
     })();
   }
 
+  public getMetadata(row: any): IIndexable {
+    if(row.id) {
+      if(!this.metadatas[row.id]) this.metadatas[row.id] = {} as IIndexable;
+      return this.metadatas[row.id];
+    }
+    return {};
+  }
+
+  public setMetadata(row: any, value: any) {
+    if(row.id) this.metadatas[row.id] = value;
+  }
+
   public async edit(itemRow: Base | IIndexable) {
     this.editing = itemRow;
     if(this.load) {
@@ -629,11 +643,13 @@ export class GridComponent extends ComponentBase implements OnInit {
   }
 
   public async endEdit() {
+    const editedId = this.editing?.id;
     if(this.query && this.editing) await this.query.refreshId(this.editing.id);
     this.editing = undefined;
     this.adding = false;
     this.items = this.items;
     this.cdRef.detectChanges();
+    if(this.editEnd) this.editEnd(editedId);
   }
 
   public onRowClick(event: Event, row: Base | IIndexable) {

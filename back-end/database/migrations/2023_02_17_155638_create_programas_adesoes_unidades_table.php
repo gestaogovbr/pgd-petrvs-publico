@@ -21,7 +21,7 @@ class CreateProgramasAdesoesUnidadesTable extends Migration
             // Chaves estrangeiras:
             $table->foreignUuid('programa_adesao_id')->constrained("programas_adesoes")->onDelete('restrict')->onUpdate('cascade');
             $table->foreignUuid('unidade_id')->nullable()->constrained("unidades")->onDelete('restrict')->onUpdate('cascade');
-           
+
         });
     }
 
@@ -32,6 +32,8 @@ class CreateProgramasAdesoesUnidadesTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('programas_adesoes_unidades');
+        Schema::enableForeignKeyConstraints();
     }
 }

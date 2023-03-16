@@ -5,6 +5,16 @@
             <a class="navbar-brand" role="button">  <!-- Logo Petrvs -->
                 <img [src]="globals.getResourcePath('assets/images/logo-24x24.png')" alt="" width="30" height="24" class="d-inline-block align-text-top">
                 PETRVS
+                <span class="dropdown">
+                    <small class="text-secondary" id="petrvs-context" data-bs-toggle="dropdown" aria-expanded="false" data-bs-reference="parent">
+                        # {{contexto!.name}}
+                    </small>
+                    <ul class="dropdown-menu" aria-labelledby="petrvs-context">
+                        <li *ngFor="let item of menuContexto" (click)="onContextoSelect(item)">
+                            <a class="dropdown-item" role="button"><i class="bi bi-hash"></i>{{item.name}}</a>
+                        </li>
+                    </ul>
+                </span>
             </a>
             <button *ngIf="!isConfig && !globals.isToolbar" class="navbar-toggler" type="button" data-bs-toggle="collapse"
                       data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,13 +38,6 @@
                     <!-- spaccing para quando o menu não aparecer -->
                 </div>
                 <div *ngIf="globals.toolbarButtons?.length" class="btn-group" role="group" aria-label="Opções">
-                    <!--button *ngFor="let btn of globals.toolbarButtons" type="button" [class.disabled]="btn.running" [class]="'btn ' + (btn.color || 'btn-outline-primary')" (click)="onToolbarButtonClick(btn)" data-bs-toggle="tooltip" data-bs-placement="top" title="{{btn.hint || btn.label || ''}}">
-                        <i *ngIf="!btn.running && btn.icon?.length" [class]="btn.icon"></i>
-                        <div *ngIf="btn.running" width="25" class="spinner-border spinner-border-sm m-0" role="status">
-                            <span class="visually-hidden"></span>
-                        </div>
-                        {{btn.label || ""}}
-                    </button/-->
                     <div *ngFor="let btn of globals.toolbarButtons" class="btn-group" role="group">
                         <button type="button" [attr.id]="(btn.onClick ? '_' : '') + buttonId(btn)" [class.disabled]="isButtonRunning(btn)" [class]="'btn ' + (btn.color || 'btn-outline-primary')" [class.dropdown-toggle]="btn.items && !btn.onClick" [attr.data-bs-toggle]="btn.items && !btn.onClick ? 'dropdown' : undefined" aria-expanded="false" (click)="onToolbarButtonClick(btn)">
                             <i *ngIf="btn.icon?.length" [class]="btn.icon" data-bs-toggle="tooltip" data-bs-placement="top" title="{{btn.hint || btn.label || ''}}"></i> {{btn.label || ""}}

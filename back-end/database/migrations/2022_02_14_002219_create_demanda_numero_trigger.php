@@ -29,6 +29,6 @@ class CreateDemandaNumeroTrigger extends Migration
      */
     public function down()
     {
-        DB::unprepared('DROP PROCEDURE sequence_demanda_numero');
+        DB::unprepared('DROP PROCEDURE IF EXISTS sequence_demanda_numero');
     }
 }

@@ -47,15 +47,21 @@ export class DaoBaseService<T extends Base> {
         a[v.field] = this.values(entity[v.field], v.fields || []);
       } else if(v.type == "ARRAY" && Array.isArray(entity[v.field])) {
         a[v.field] = entity[v.field].map((x: IIndexable) => this.values(x, v.fields || []));
-      } else if(v.type == "VALUE" && typeof entity[v.field] != "undefined") {
+      } else if((!v.type || v.type == "VALUE") && typeof entity[v.field] != "undefined") {
+        a[v.field] = v.lookup ? v.lookup.find(x => x.key == entity[v.field])?.value || entity[v.field] : entity[v.field];
+      } else if(v.type == "TEMPLATE" && entity[v.field] != "undefined") {
         a[v.field] = entity[v.field];
+      } else if(v.type == "DATE" && entity[v.field] != "undefined") {
+        a[v.field] = this.util.getDateFormatted(entity[v.field]);
+      } else if(v.type == "DATETIME" && entity[v.field] != "undefined") {
+        a[v.field] = this.util.getDateTimeFormatted(entity[v.field]);
       }
       return a;
     }, {} as IIndexable);
   }
 
   public deepsFilter(fields: TemplateDataset[], deeps?: string[]): TemplateDataset[] {
-    fields = fields.filter(x => typeof fields == "undefined" || !["ARRAY", "OBJECT"].includes(x.type || "VALUE") || deeps?.includes(x.field));
+    fields = fields.filter(x => typeof deeps == "undefined" || !["ARRAY", "OBJECT"].includes(x.type || "VALUE") || deeps?.includes(x.field));
     return fields.map(x => ["ARRAY", "OBJECT"].includes(x.type || "VALUE") && x.dao ? Object.assign(x, { fields: x.dao!.dataset([]) }) : x);
   }
 
@@ -372,6 +378,13 @@ export class DaoBaseService<T extends Base> {
     return this.contextQuery(context).asPromise();
   }
 
+  /*public hasSetter(data: IIndexable, key: string): boolean {
+    let prop = Object.getOwnPropertyDescriptor(data, key);
+    let has = !!prop && ((!!prop.writable && !prop.get) || !!prop.set);
+    if(!has) console.log(data, key);
+    return has;
+  }*/
+
   public prepareToSave(data: any): any {
     if(data instanceof Date) {
       return UtilService.dateToIso8601(data);
@@ -379,7 +392,13 @@ export class DaoBaseService<T extends Base> {
       if(Array.isArray(data)){
         data.forEach((item, index) => data[index] = this.prepareToSave(item));
       } else {
-        Object.entries(data).forEach(([key, value]) => (data as IIndexable)[key] = this.prepareToSave(value));
+        Object.entries(data).forEach(([key, value]) => {
+          try { 
+            (data as IIndexable)[key] = this.prepareToSave(value);
+          } catch (erro) {
+            console.log("Erro ao tentar atribuir valor a " + key);
+          }
+        });
       }
       return data;
     } else {

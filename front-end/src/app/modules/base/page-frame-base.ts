@@ -38,6 +38,7 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
   }
 
   protected _entity: any = undefined;
+  protected _noPersist?: string = undefined;
   protected _control: AbstractControl | undefined = undefined;
   protected fakeControl: FormControl = new FormControl();
 
@@ -68,7 +69,7 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
   }
 
   public get isNoPersist(): boolean {
-    return this.entity_id == "NOPERSIST";
+    return this._noPersist != undefined || this.entity_id == "NOPERSIST";
   }
 
   public get gridControl(): AbstractControl {

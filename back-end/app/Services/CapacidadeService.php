@@ -914,6 +914,12 @@ class CapacidadeService extends ServiceBase {
         ["MOD_USER_EXCL", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
         ["MOD_USER_INCL", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
         ["MOD_USER_TUDO", 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_PLAN_ENTR_CONS", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_PLAN_ENTR_EDT", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_PLAN_ENTR_EXCL", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_PLAN_ENTR_INCL", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_PLAN_ENTR_TUDO", 'Administrador', 'Desenvolvedor'],
     ];
 
 }

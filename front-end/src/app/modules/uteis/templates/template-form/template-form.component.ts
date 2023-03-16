@@ -6,6 +6,7 @@ import {EditableFormComponent} from "../../../../components/editable-form/editab
 import {AbstractControl, FormGroup} from "@angular/forms";
 import {IIndexable} from "../../../../models/base.model";
 import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
+import { TemplateService } from '../template.service';
 
 @Component({
   selector: 'app-template-form',
@@ -16,18 +17,16 @@ export class TemplateFormComponent extends PageFormBase<Template, TemplateDaoSer
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
 
   public dataset: TemplateDataset[] = [];
-  public template: TemplateDaoService;
+  public templateService: TemplateService;
 
   constructor(public injector: Injector) {
     super(injector, Template, TemplateDaoService);
-    this.template = injector.get<TemplateDaoService>(TemplateDaoService);
+    this.templateService = injector.get<TemplateService>(TemplateService);
     this.modalWidth = 1200;
     this.form = this.fh.FormBuilder({
       titulo: {default: ""},
       especie: {default: "OUTRO"},
-      numero: {default: ""},
-      conteudo: {default: ""},
-      data_inicio: {default: ""},
+      conteudo: {default: ""}
     }, this.cdRef, this.validate);
   }
 
@@ -42,16 +41,17 @@ export class TemplateFormComponent extends PageFormBase<Template, TemplateDaoSer
   public loadData(entity: Template, form: FormGroup): void {
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
-    this.dataset = this.template.dataset(form.controls.especie.value);
+    this.dataset = this.templateService.dataset(form.controls.especie.value);
   }
 
   public initializeData(form: FormGroup): void {
-    form.patchValue(new Template({ especie: this.queryParams?.especie || "OUTRO" }));
+    this.loadData(new Template({ especie: this.queryParams?.especie || "OUTRO" }), form);
   }
 
   public saveData(form: IIndexable): Promise<Template> {
     return new Promise<Template>((resolve, reject) => {
       const template = this.util.fill(new Template(), this.entity!);
+      template.dataset = this.templateService.prepareDatasetToSave(this.dataset);
       resolve(this.util.fillForm(template, this.form!.value));
     });
   }

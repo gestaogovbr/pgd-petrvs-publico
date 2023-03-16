@@ -1,9 +1,9 @@
 <div class="row">
   <div class="col-3" [class.d-none]="!!grid?.editing">
-    <grid [items]="items" [form]="form!" #gridDocumentos [hasEdit]="true" [hasDelete]="false" [hasAdd]="true" [add]="addDocumento.bind(this)" [save]="saveDocumento.bind(this)" editable [selectable]="true" (select)="onSelect($event)">
+    <grid [items]="items" [form]="form!" #gridDocumentos [hasEdit]="true" [hasDelete]="false" [hasAdd]="true" [add]="addDocumento.bind(this)" [save]="saveDocumento.bind(this)" [editEnd]="editEndDocumento.bind(this)" editable [selectable]="true" (select)="onSelect($event)">
       <columns>
         <column title="#ID/Especie" [template]="documentoTemplate">
-          <ng-template let-row="row" #documentoTemplate>
+          <ng-template let-row="row" let-metadata="metadata" #documentoTemplate>
             <div class="row">
               <strong>#{{row.numero}}<small> • {{util.getDateTimeFormatted(row.data_inicio)}}</small></strong>
             </div>
@@ -38,7 +38,7 @@
         <input-text [size]="12" label="Título" [control]="form!.controls.titulo"></input-text>
       </div>
       <div>
-        <input-editor [size]="12" label="Conteúdo" [control]="form!.controls.conteudo" [template]="templateEdit" [datasource]="datasourceEdit"></input-editor>
+        <input-editor [size]="12" label="Conteúdo" [control]="form!.controls.conteudo" [canEditTemplate]="canEdit" [template]="form!.controls.template.value" [datasource]="form!.controls.datasource.value"></input-editor>
       </div>
     </editable-form>
     <ng-template #noSelected>
@@ -48,4 +48,4 @@
     </ng-template>
   </div>
 </div>
-<toolbar *ngIf="!!grid?.editing" [buttons]="editingButtons"></toolbar>
+<toolbar *ngIf="!editingId?.length && !!grid?.editing" [buttons]="editingButtons"></toolbar>

@@ -1,12 +1,14 @@
 
 import { Injectable, Injector } from '@angular/core';
 import { ChartDataSets, ChartOptions } from 'chart.js';
+import { TemplateDataset } from '../components/input/input-editor/input-editor.component';
 import { Afastamento } from '../models/afastamento.model';
 import { DemandaPausa } from '../models/demanda-pausa.model';
 import { Plano } from '../models/plano.model';
 import { Unidade } from '../models/unidade.model';
 import { Usuario } from '../models/usuario.model';
 import { Efemerides, TipoContagem } from '../services/calendar.service';
+import { LookupService } from '../services/lookup.service';
 import { DaoBaseService } from './dao-base.service';
 
 export type UsuarioDashboard = {
@@ -56,9 +58,26 @@ export type GestorDashboard = {
 })
 export class UsuarioDaoService extends DaoBaseService<Usuario> {
 
+  public lookup: LookupService;
+
   constructor(protected injector: Injector) {
     super("Usuario", injector);
+    this.lookup = injector.get<LookupService>(LookupService);
     this.searchFields = ["matricula", "nome"];
+  }
+
+  public dataset(deeps?: string[]): TemplateDataset[] {
+    return this.deepsFilter([
+      { field: "nome", label: "Nome" },
+      { field: "email", label: "E-mail" },
+      { field: "cpf", label: "CPF" },
+      { field: "matricula", label: "Matrícula" },
+      { field: "apelido", label: "Apelido" },
+      { field: "telefone", label: "Telefone" },
+      { field: "sexo", label: "Sexo", lookup: this.lookup.SEXO },
+      { field: "vinculacao", label: "Vinculo", lookup: this.lookup.USUARIO_VINCULACAO },
+      { field: "texto_complementar_plano", label: "Mensagem do Plano de trabalho", type: "TEMPLATE"}
+    ], deeps);
   }
 
   public dashboard(data_inicial: Date, data_final: Date, usuario_id: string): Promise<UsuarioDashboard | null> {

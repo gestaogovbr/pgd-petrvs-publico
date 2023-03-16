@@ -12,17 +12,16 @@
       - Entregas
     - Plano de Trabalho
       - Demandas
-- Projetos
+- Projetos  
 
-## Modelagem
+* [Planejamento completo](./planejamento.md)
 
-- A Modelagem do sistema está disponível [aqui.](Modelagem.md)  
 
 ## Módulos
 
-* [Adesão](adesao.md)
-* [Plano de Entregas](plano_de_entregas.md)
-* [Planejamento Estratégico](Planejamento_estratégico.md)
+* [Adesão](./adesao.md)
+* [Planejamento Institucional](./planejamento_institucional.md)
+* [Plano de Entregas](./plano_de_entregas.md)
 
 ## Regra geral do sistema
 

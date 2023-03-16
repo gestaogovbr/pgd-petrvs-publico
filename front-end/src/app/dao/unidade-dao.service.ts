@@ -40,8 +40,9 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
       { field: "gestor", label: "Gestor", fields: this.usuarioDao.dataset([]) },
       { field: "gestor_substituto", label: "Gestor substituto", fields: this.usuarioDao.dataset([]) },
       { field: "entidade", label: "Entidade", dao: this.entidadeDao },
-      { field: "cidade", label: "Cidade", dao: this.cidadeDao }
-    ]);
+      { field: "cidade", label: "Cidade", dao: this.cidadeDao },
+      { field: "texto_complementar_plano", label: "Mensagem do Plano de trabalho", type: "TEMPLATE"}
+    ], deeps);
   }
 
   public metadadosArea(unidade_id: String, programa_id: String): Promise<AreaRelatorio> {

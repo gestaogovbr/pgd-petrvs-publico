@@ -1,0 +1,19 @@
+<!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
+    <div class="row">
+        <input-search #unidade [size]="12" label="Unidade instituidora" icon="fab fa-unity" controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+    </div>
+    <div class="row">
+        <input-datetime date [size]="6" label="Início" icon="bi bi-calendar-date" controlName="data_inicio_vigencia" [control]="form!.controls.data_inicio_vigencia" labelInfo="Início da Vigência do Programa"></input-datetime>
+        <input-datetime date [size]="6" label="Final" icon="bi bi-calendar-date" controlName="data_fim_vigencia" [control]="form!.controls.data_fim_vigencia" labelInfo="Final da Vigência do Programa"></input-datetime>
+    </div>
+    <div class="row">
+        <input-text [size]="6" label="Título" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome"></input-text>
+        <input-text [size]="6" label="Normativa" icon="bi bi-blockquote-left" controlName="normativa" [control]="form!.controls.normativa" labelInfo="Normativa que regula o Programa"></input-text>
+    </div>
+    <separator title="Configurações">
+        <input-switch label="Se o termo é obrigatório" [size]="12" controlName="termo_obrigatorio" scale="small" labelPosition="right"></input-switch>
+        <input-search [label]="'Template ' + lex.noun('termo', true, true)" [size]="12" detailsButton labelInfo="Template do termo utilizado no plano de trabalho" controlName="template_tcr_id" [dao]="templateDao" [where]="[['especie', '==', 'TCR']]" [selectRoute]="templateService.selectRoute('TCR')" (details)="templateService.details($event)"></input-search>
+        <input-search [label]="'Tipo de documento ' + lex.noun('termo', true, true)" [size]="12" #tipoDocumento controlName="tipo_documento_tcr_id" [dao]="tipoDocumentoDao" [selectRoute]="{route: ['cadastros', 'tipo-documento']}" labelInfo="Tipo de documento utilizado para exportar o termo para o SEI/SUPER"></input-search>
+    </separator>
+</editable-form>

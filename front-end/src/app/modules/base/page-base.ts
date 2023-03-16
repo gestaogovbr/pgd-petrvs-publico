@@ -73,6 +73,7 @@ export abstract class PageBase implements OnInit, ModalPage {
   public breadcrumbs: FullRoute[] = [];
   public backRoute: FullRoute = { route: ['home'] };
   public modalWidth: number = 1000;
+  public viewInit: boolean = false;
   public storeExtra?: () => any;
   private _title: string = "";
   public set title(value: string) { if(this._title != value) { this._title = value; this.titleSubscriber.next(value); }};
@@ -120,6 +121,7 @@ export abstract class PageBase implements OnInit, ModalPage {
       if(this.onShow) this.onShow();
     };
     this.cdRef.detectChanges();
+    this.viewInit = true;
   }
 
   public saveUsuarioConfig(config?: any) {
