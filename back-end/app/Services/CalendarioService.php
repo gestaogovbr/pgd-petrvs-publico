@@ -523,7 +523,7 @@ class CalendarioService
             $diaUtil = $useCorridos || (!$feriadoCadastrado && !$feriadoReligioso && $diaAtual->hExpediente > $hNaoUteis);
             if (!$diaUtil) $result->diasNaoUteis[$strDiaAtual] = implode(', ', array_filter([$diaAtual->diaLiteral, $feriadoCadastrado, $feriadoReligioso], function($x) { return strlen($x);}));
 
-            /* Calculo em dias */
+            /* Calculo em dias (se a forma pretendida for DIAS ÚTEIS ou DIAS CORRIDOS) */
             if ($useDias) {
                 foreach($afastamentosDia as $a){if($a->start == 0){unset($afastamentosDia[array_search($a, $afastamentosDia)]);}}    // elimina eventual intervalo do tipo ['start' => 0, 'end' => 0]
                 foreach($pausasDia as $p){if($p->start == 0){unset($pausasDia[array_search($p, $pausasDia)]);}}    // elimina eventual intervalo do tipo ['start' => 0, 'end' => 0]
@@ -537,7 +537,7 @@ class CalendarioService
                 }else {
                     $result->horasNaoUteis += $cargaHoraria; /* Se o dia não for útil considera o tempo do dia inteiro */
                 }
-            } else { /* calcula em horas */
+            } else { /* calcula em horas (se a forma pretendida for HORAS ÚTEIS ou HORAS CORRIDAS) */
               if($diaUtil) {
                 $hSaldo = min($diaAtual->hExpediente - $hNaoUteis, $cargaHoraria, $useTempo ? $hTempo : 24);
                 if($hSaldo) {
