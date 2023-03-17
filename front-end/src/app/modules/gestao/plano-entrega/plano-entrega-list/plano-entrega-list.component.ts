@@ -2,7 +2,10 @@ import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { CadeiaValorDaoService } from 'src/app/dao/cadeia-valor-dao.service';
+import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
+import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
@@ -14,15 +17,29 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoEntregaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
+  public unidadeDao: UnidadeDaoService;
+  public planejamentoDao: PlanejamentoDaoService;
+  public cadeiaValorDao: CadeiaValorDaoService;
+
   constructor(public injector: Injector) {
     super(injector, PlanoEntrega, PlanoEntregaDaoService);
+    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    this.planejamentoDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
+    this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
     /* Inicializações */
     this.title = 'Planos de Entrega';
     this.filter = this.fh.FormBuilder({
-
+      agrupar: {default: true},
+      nome: {default: ''},
+      inicio: {default: ''},
+      fim: {default: ''},
+      //status: {default: ''},
+      unidade_id: {default: null},
+      planejamento_id: {default: null},
+      cadeia_valor_id: {default: null},
     });
-    this.join = ['planejamento:nome','cadeiaValor:nome'];
-    this.groupBy = [];
+    this.join = ['planejamento:nome','cadeiaValor:nome','unidade:sigla'];
+    this.groupBy = [{field: "unidade.sigla", label: "Unidade"}];
     // Testa se o usuário possui permissão para exibir planos de entrega
     if (this.auth.hasPermissionTo("MOD_PENT_CONS")) {
       this.options.push({
@@ -42,17 +59,38 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
    }
 
    public filterClear(filter: FormGroup) {
-/*     filter.controls.nome.setValue("");
+    filter.controls.nome.setValue("");
     filter.controls.inicio.setValue(null);
     filter.controls.fim.setValue(null);
+    //filter.controls.status.setValue("");
     filter.controls.unidade_id.setValue(null);
-    filter.controls.so_entidade.setValue(false); */
+    filter.controls.planejamento_id.setValue(null);
+    filter.controls.cadeia_valor_id.setValue(null);
     super.filterClear(filter);
   }
 
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
+
+    if(form.nome?.length) {
+      result.push(["nome", "like", "%" + form.nome + "%"]);
+    }
+    if(form.inicio) {
+      result.push(["inicio", ">=", form.inicio]);
+    }
+    if(form.fim) {
+      result.push(["fim", "<=", form.fim]);
+    }  
+    if(form.unidade_id) {
+      result.push(["unidade_id", "==", form.unidade_id]);
+    }  
+    if(form.planejamento_id) {
+      result.push(["planejamento_id", "==", form.planejamento_id]);
+    }
+    if(form.cadeia_valor_id) {
+      result.push(["cadeia_valor_id", "==", form.cadeia_valor_id]);
+    } 
     return result;
   }
 
@@ -81,6 +119,14 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     if(this.auth.hasPermissionTo('MOD_PENT_EDT')) result.push(BOTAO_ALTERAR);
     else if(this.auth.hasPermissionTo("MOD_PENT_CONS")) result.push(BOTAO_INFORMACOES);
     return result;
+  }
+
+  public onAgruparChange(event: Event) {
+    const agrupar = this.filter!.controls.agrupar.value;
+    if((agrupar && !this.groupBy?.length) || (!agrupar && this.groupBy?.length)) {
+      this.groupBy = agrupar ? [{field: "unidade.sigla", label: "Unidade"}] : [];
+      this.grid!.reloadFilter();
+    }
   }
 
   public editarEntregas(){
