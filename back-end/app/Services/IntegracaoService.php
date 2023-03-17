@@ -691,7 +691,11 @@ class IntegracaoService extends ServiceBase {
                                 ]);
                     }else{
                         $nomeUsuario = Usuario::where('id',$chefia['id_usuario'])->first()->nome;
-                        array_push($this->result['gestores']["Falhas"], 'Impossível lançar a chefia do servidor ' . strtoupper($nomeUsuario) . ' porque a Unidade de código SIAPE ' . $chefia['codigo_siape'] . ' não está cadastrada/ativa!');
+                        $unidade = array_filter($uos, function($o) use ($chefia){
+                            if($o['id_servo'] == $chefia['codigo_siape']) return $o['nomeuorg'];
+                        });
+                        array_push($this->result['gestores']["Falhas"], 'Impossível lançar a chefia do servidor ' . strtoupper($nomeUsuario) . ' porque a Unidade de código SIAPE ' . 
+                                    $chefia['codigo_siape'] . '(' . $unidade[0] ?? 'nome não localizado!' . ')' . ' não está cadastrada/ativa!');
                     }
                 }
                 DB::commit();

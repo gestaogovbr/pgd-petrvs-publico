@@ -121,7 +121,7 @@ export class InputDatetimeComponent extends InputBase implements OnInit {
       //let newValue = this.isTime ? strTime : this.util.strToDate(!this.isDate && this.isFirefox ? strDate + "T" + strTime : strDate);
       value = this.isTime ? strTime : new Date(strDate + (strDate.includes("T") ? "" : "T" + strTime));
       if((this.isTime && !this.util.isTimeValid(value)) || (!this.isTime && !this.util.isDataValid(value))) {
-        throw new Error("Data inválid");
+        throw new Error("Data inválida");
       }
     } catch (e: any) {
       value = null;

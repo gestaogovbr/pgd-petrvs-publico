@@ -1,4 +1,5 @@
-<toolbar [title]="isModal ? '' : title" [buttons]="buttons"></toolbar>
+<!-- <toolbar [title]="isModal ? '' : title" [buttons]="buttons"></toolbar> -->
+<toolbar [title]="isModal ? '' : title"></toolbar>
 
 <div *ngFor="let x of rows" class="mt-5"> <!-- Informações sobre cada Plano (como só existe um PlanoRelatório mesmo...) -->
   <div class="mt-5">
@@ -62,57 +63,63 @@
         <td colspan="2">Status do Plano</td><td colspan="3">{{ x.statusPlano }}</td>
       </tr>
       <tr>
-        <td class="text-center">HUTP</td>
-        <td>Horas úteis totais do Plano</td>
+        <td colspan="2">Forma de Contagem de Prazos na Entrega</td><td colspan="3">{{ x.extras.formaContagemPrazoEntrega }}</td>
+      </tr>
+      <tr *ngIf="x.extras.observacao.length" class="table-danger">
+        <td colspan="2">Observação</td><td colspan="3">{{ x.extras.observacao }}</td>
+      </tr>
+      <tr>
+        <td class="text-center">HTP</td>
+        <td>Horas totais do Plano</td>
         <td class="text-center">{{ x.extras.horasUteisTotais == 0 ? 0 : (this.util.decimalToTimerFormated(x.extras.horasUteisTotais, true)) }}</td>
-        <td class="text-center">100.00 %</td>
+        <td class="text-center">100 %</td>
         <td>
           <span>
-            <small class="micro-text fw-ligh">Horas úteis do Plano de Trabalho, ao longo de toda sua vigência, considerando-se a carga horária, os feriados e finais de semana. É a base de cálculo para a maioria dos percentuais.</small>
+            <small class="micro-text fw-ligh">Horas totais do Plano de Trabalho, ao longo de toda sua vigência, considerando-se carga horária, feriados, finais de semana e a forma de contagem dos prazos de entrega utilizados pela Unidade. É a base de cálculo para a maioria dos percentuais.</small>
           </span>
         </td>
       </tr>
       <tr>
-        <td class="text-center">HUAS</td>
-        <td>Horas úteis de afastamento do Servidor</td>
+        <td class="text-center">HAS</td>
+        <td>Horas de afastamento do Servidor</td>
         <td class="text-center">{{ this.util.decimalToTimerFormated(x.extras.horasUteisAfastamento, true) }}</td>
         <td class="text-center">{{ x.percentualAfastamento }} %</td>
-        <td><span><small class="micro-text fw-ligh">Total das horas úteis dos afastamentos do servidor compreendidos no período do Plano. O percentual indica a relação entre esse total e as horas úteis totais do Plano.</small></span></td>
+        <td><span><small class="micro-text fw-ligh">Total das horas dos afastamentos do servidor compreendidos no período do Plano, considerando-se a mesma forma de contagem dos prazos utilizada no cálculo do Plano de Trabalho. O percentual indica a relação entre essas horas de afastamento e as horas totais do Plano: HAS(%) = HAS / HTP.</small></span></td>
       </tr>
       <tr>
-        <td class="text-center">HULP</td>
-        <td>Horas úteis líquidas do Plano</td>
+        <td class="text-center">HLP</td>
+        <td>Horas líquidas totais do Plano</td>
         <td class="text-center">{{ this.util.decimalToTimerFormated(x.horasUteisLiquidasPlano, true) }}</td>
         <td class="text-center">{{ 100 - x.percentualAfastamento }} %</td>
-        <td><span><small class="micro-text fw-ligh">Total das horas úteis do Plano para alocação de demandas.</small></span></td>
+        <td><span><small class="micro-text fw-ligh">Horas totais do Plano destinadas à atribuição de atividades/demandas ao Servidor. O percentual indica a relação entre essas horas líquidas e as horas totais do Plano: HLP(%) = HLP / HTP.</small></span></td>
       </tr>
       <tr>
-        <td class="text-center">HUDP</td>
-        <td>Horas úteis decorridas do Plano</td>
+        <td class="text-center">HDP</td>
+        <td>Horas decorridas do Plano</td>
         <td class="text-center">{{ x.extras.horasUteisDecorridas == 0 ? 0 : this.util.decimalToTimerFormated(x.extras.horasUteisDecorridas, true) }}</td>
         <td class="text-center">{{ x.percentualDecorridoPlano }} %</td>
-        <td><span><small class="micro-text fw-ligh">{{ x.extras.horasUteisDecorridas == 0 ? 'A vigência do Plano ainda não iniciou.' : (x.extras.horasUteisDecorridas == x.extras.horasUteisTotais ? 'A vigência do Plano já encerrou.' : 'Horas úteis do Plano de Trabalho, do início de sua vigência até o instante atual, considerando-se a carga horária, os feriados e finais de semana.') }}</small></span></td>
+        <td><span><small class="micro-text fw-ligh">{{ x.extras.horasUteisDecorridas == 0 ? 'A vigência do Plano ainda não iniciou.' : (x.extras.horasUteisDecorridas == x.extras.horasUteisTotais ? 'A vigência do Plano já encerrou.' : 'Horas decorridas do Plano de Trabalho, do início de sua vigência até o instante atual, considerando-se carga horária, feriados, finais de semana e a forma de contagem dos prazos de entrega utilizados pela Unidade. O percentual indica a fração já decorrida em relação às horas totais do Plano: HDP(%) = HDP / HTP.') }}</small></span></td>
       </tr>
       <tr>
-        <td class="text-center">HUDA</td>
-        <td>Horas úteis decorridas de afastamento</td>
+        <td class="text-center">HDA</td>
+        <td>Horas decorridas de afastamento</td>
         <td class="text-center">{{ this.util.decimalToTimerFormated(x.extras.horasAfastamentoDecorridas, true) }}</td>
         <td class="text-center">{{ x.percentualDecorridoAfastamentos }} %</td>
-        <td><span><small class="micro-text fw-ligh">{{ x.extras.horasUteisDecorridas == 0 ? 'A vigência do Plano ainda não iniciou.' : (x.extras.horasUteisDecorridas == x.extras.horasUteisTotais ? 'Total das horas úteis dos afastamentos do Servidor ocorridos entre o início e o fim da vigência do Plano. O percentual indica a fração já decorrida em relação ao total previsto.' : 'Total das horas úteis dos afastamentos do Servidor ocorridos entre o início da vigência do Plano e o instante atual.') }}</small></span></td>
+        <td><span><small class="micro-text fw-ligh">{{ x.extras.horasUteisDecorridas == 0 ? 'A vigência do Plano ainda não iniciou.' : (x.extras.horasUteisDecorridas == x.extras.horasUteisTotais ? 'Total das horas dos afastamentos do Servidor compreendidos entre o início e o fim da vigência do Plano. O percentual indica a fração já decorrida em relação ao total dos afastamentos previstos: HDA(%) = HDA / HAS' : 'Total das horas já decorridas dos afastamentos do Servidor compreendidos entre o início da vigência do Plano e o instante atual. O percentual indica a fração já decorrida em relação ao total dos afastamentos previstos: HDA(%) = HDA / HAS.') }}</small></span></td>
       </tr>
       <tr>
         <td class="text-center">HLDP</td>
         <td>Horas líquidas decorridas do Plano</td>
         <td class="text-center">{{ this.util.decimalToTimerFormated(x.horasLiquidasDecorridasPlano, true) }}</td>
         <td class="text-center">{{ x.percentualHorasLiquidasDecorridas }} %</td>
-        <td><span><small class="micro-text fw-ligh">Total das horas úteis do Plano para alocação de demandas.</small></span></td>
+        <td><span><small class="micro-text fw-ligh">Total das horas do Plano destinadas à atribuição de atividades/demandas ao Servidor, já decorridas do início da vigência do Plano até o instante atual. O percentual indica a relação entre essas horas decorridas e as horas líquidas totais do Plano: HLDP (%) = HLDP / HLP</small></span></td>
       </tr>  
       <tr>
-        <td class="text-center">HDP</td>
-        <td>Horas disponiveis do Plano</td>
+        <td class="text-center">HRP</td>
+        <td>Horas restantes do Plano</td>
         <td class="text-center">{{ this.util.decimalToTimerFormated(x.horasDisponiveisPlano, true) }}</td>
         <td class="text-center">{{ x.percentualHorasDisponiveis }} %</td>
-        <td><span><small class="micro-text fw-ligh">Total das horas úteis líquidas do Plano que ainda falta ser executado.</small></span></td>
+        <td><span><small class="micro-text fw-ligh">Total das horas líquidas restantes do Plano. O percentual indica a relação entre este restante e as horas líquidas totais do Plano: HRP (%) = HRP / HLP.</small></span></td>
       </tr> 
       <tr>
         <td class="text-center">THNI</td>
@@ -122,7 +129,7 @@
         <td>
           <span>
             <small class="micro-text fw-ligh">Total dos tempos pactuados de todas as demandas ainda não iniciadas.</small>
-            <br><small class="micro-text fw-ligh">O percentual representa a relação entre este total e as horas úteis totais do Plano:<br>THNI(%) = THNI / HUTP.</small>
+            <br><small class="micro-text fw-ligh">O percentual representa a relação entre este total e as horas totais do Plano:<br>THNI(%) = THNI / HTP.</small>
           </span>
         </td>
       </tr>
@@ -134,7 +141,7 @@
         <td>
           <span>
             <small class="micro-text fw-ligh">Total dos tempos pactuados de todas as demandas já iniciadas, mas ainda não concluídas.</small>
-            <br><small class="micro-text fw-ligh">O percentual representa a relação entre este total e as horas úteis totais do Plano:<br>THI(%) = THI / HUTP.</small>
+            <br><small class="micro-text fw-ligh">O percentual representa a relação entre este total e as horas totais do Plano:<br>THI(%) = THI / HTP.</small>
           </span>
         </td>
       </tr>
@@ -146,7 +153,7 @@
         <td>
           <span>
             <small class="micro-text fw-ligh">Total dos tempos pactuados de todas as demandas já concluídas, mas ainda não avaliadas.</small>
-            <br><small class="micro-text fw-ligh">O percentual representa a relação entre este total e as horas úteis totais do Plano:<br>THC(%) = THC / HUTP.</small>
+            <br><small class="micro-text fw-ligh">O percentual representa a relação entre este total e as horas totais do Plano:<br>THC(%) = THC / HTP.</small>
           </span>
         </td>
       </tr>
@@ -158,7 +165,7 @@
         <td>
           <span>
             <small class="micro-text fw-ligh">Total dos tempos pactuados de todas as demandas avaliadas.</small>
-            <br><small class="micro-text fw-ligh">O percentual representa a relação entre este total e as horas úteis totais do Plano:<br>THA(%) = THA / HUTP.</small>
+            <br><small class="micro-text fw-ligh">O percentual representa a relação entre este total e as horas totais do Plano:<br>THA(%) = THA / HTP.</small>
           </span>
         </td>
       </tr>
@@ -170,7 +177,7 @@
         <td>
           <span>
             <small class="micro-text fw-ligh">Total dos tempos pactuados de todas as demandas, independente de seus status:<br>HTA  = THNI + THI + THC + THA.</small>
-            <br><small class="micro-text fw-ligh">O percentual representa a relação entre este total e as horas úteis totais do Plano:<br>HTA(%) = HTA  / HUTP.</small>
+            <br><small class="micro-text fw-ligh">O percentual representa a relação entre este total e as horas totais do Plano:<br>HTA(%) = HTA  / HTP.</small>
           </span>
         </td>
       </tr>
@@ -238,4 +245,4 @@
   </table>
 </div>
 
-<toolbar [buttons]="buttons"></toolbar>
+<!-- <toolbar [buttons]="buttons"></toolbar> -->
