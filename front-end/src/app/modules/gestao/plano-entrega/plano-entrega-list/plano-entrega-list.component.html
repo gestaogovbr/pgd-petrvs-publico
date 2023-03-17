@@ -1,7 +1,7 @@
 <grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [join]="join"
     [selectable]="selectable" (select)="onSelect($event)"
     [hasAdd]="auth.hasPermissionTo('MOD_PLAN_INST_INCL')"
-    [hasEdit]="auth.hasPermissionTo('MOD_PLAN_INST_EDT')">
+    [hasEdit]="false">
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
 <!--         <div class="row">
@@ -16,14 +16,18 @@
         </div> -->
     </filter>
     <columns>
-        <column title="Número" field="numero" orderBy="numero"></column>
+        <column title="Número" [template]="columnNumero" orderBy="numero">
+            <ng-template let-row="row" #columnNumero>
+                <span> {{ row.numero}}</span>
+            </ng-template>
+        </column>
         <column title="Nome" field="nome" orderBy="nome"></column>
-        <column title="Início" [template]="columnInicio">
+        <column title="Início" [template]="columnInicio" orderBy="inicio">
             <ng-template let-row="row" #columnInicio>
                 <span> {{dao!.getDateFormatted(row.inicio)}}</span>
             </ng-template>
         </column>
-        <column title="Fim" [template]="columnFim">
+        <column title="Fim" [template]="columnFim" orderBy="fim">
             <ng-template let-row="row" #columnFim>
                 <span> {{dao!.getDateFormatted(row.fim)}}</span>
             </ng-template>
@@ -43,7 +47,7 @@
                 <span> {{ row.status || ""}}</span>
             </ng-template>
         </column>
-        <column type="options" [onEdit]="edit" [options]="options"></column>
+        <column type="options" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

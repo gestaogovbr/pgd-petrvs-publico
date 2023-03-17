@@ -11,5 +11,9 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
     super("PlanoEntrega", injector);
   }
 
+  public needHomologate(plano: PlanoEntrega){
+
+  }
+
 }
 

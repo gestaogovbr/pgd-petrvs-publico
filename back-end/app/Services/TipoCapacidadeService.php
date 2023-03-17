@@ -211,6 +211,7 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PENT_EDT", "Permite editar planos de entregas"],
         ["MOD_PENT_EXCL", "Permite excluir planos de entregas"],
         ["MOD_PENT_INCL", "Permite incluir planos de entregas"], 
+        ["MOD_PENT_AVAL", "Permite avaliar planos de entregas"], 
         /* Capacidades do módulo TIPO ATIVIDADE*/
         ["MOD_TIPO_ATV", "Permite acessar item de menu cadastro->tipo de atividade"],
         ["MOD_TIPO_ATV_CONS", "Permite consultar atividade"],
