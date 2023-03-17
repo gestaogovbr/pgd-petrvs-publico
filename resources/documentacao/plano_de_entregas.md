@@ -41,6 +41,26 @@
 
     (*) campo obrigatório
 ~~~
+
+## Pontos de Controle do Plano de Entregas
+-   Tabela: planos_entregas_pontos_controles
+~~~   
+    inicio (*)
+    fim
+    descricao (*)
+    cliente (*)
+    homologado (*)
+    meta (*)
+    realizado
+    situacao
+    (id/created_at/updated_at/data_inicio/data_fim)
+        plano_entrega_id (*)
+        entrega_id (*)
+        entrega_pai_id
+
+    (*) campo obrigatório
+~~~
+
 ## Regras de Negócio
 
 -   As entregas que compõem um Plano de Entregas pertencem todas à Unidade Executora do Plano;  
