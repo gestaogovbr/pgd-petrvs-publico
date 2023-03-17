@@ -22,7 +22,6 @@
 * [Adesão](./adesao.md)
 * [Planejamento Institucional](./planejamento_institucional.md)
 * [Plano de Entregas](./plano_de_entregas.md)
-* [Ponto de Controle do Plano de Entregas](./plano_entregas_pontos_de_controle.md)
 
 ## Regra geral do sistema
 

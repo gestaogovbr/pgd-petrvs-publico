@@ -39,18 +39,13 @@ class PlanoEntrega extends ModelBase
         });
     }
 
-    // Has
-    // public function atividades() { return $this->hasMany(PlanoAtividade::class); }
+    // HasMany
+    public function pontosControle() { return $this->hasMany(PlanoEntregaPontoControle::class, 'plano_entrega_id'); }
+
     // Belongs
     public function planejamento() { return $this->belongsTo(Planejamento::class, 'planejamento_id'); }
     public function cadeiaValor() { return $this->belongsTo(CadeiaValor::class, 'cadeia_valor_id'); }
     public function unidade() { return $this->belongsTo(Unidade::class, 'unidade_id'); }
 
-    // mutators and casts
-    protected function siglaUnidade(): Attribute
-    {
-        return Attribute::make(
-            get: fn (string $value) => $this->unidade->sigla ?? $this->unidade->entidade->sigla,
-        );
-    }
+
 }

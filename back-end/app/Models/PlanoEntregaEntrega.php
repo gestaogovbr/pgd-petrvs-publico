@@ -41,10 +41,11 @@ class PlanoEntregaEntrega extends ModelBase
     public $delete_cascade = [];
 
   
-    // Has
-    // public function atividades() { return $this->hasMany(PlanoAtividade::class); }
+    // HasMany
+    public function entregasPontosControle() { return $this->hasMany(PlanoEntregaPontoControleEntrega::class, 'plano_entrega_entrega_id'); }
+    
     // Belongs
-    // public function planejamentos() { return $this->belongsTo(Planejamneto::class, 'planejamento_id'); }
-    // public function cadeiaValor() { return $this->belongsTo(CadeiaValor::class, 'cadeia_valor_id'); }
-    // public function unidade() { return $this->belongsTo(Unidade::class, 'unidade_id'); }
+    public function planoEntrega() { return $this->belongsTo(PlanoEntrega::class, 'plano_entrega_id'); }
+    public function entrega() { return $this->belongsTo(Entrega::class); }
+    public function entregaPai() { return $this->belongsTo(Entrega::class, 'entrega_pai_id'); }
 }

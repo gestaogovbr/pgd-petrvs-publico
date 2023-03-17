@@ -172,7 +172,6 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PERF_EXCL", "Permite excluir perfil"],
         ["MOD_PERF_INCL", "Permite incluir perfil"],
         /* Capacidades do módulo PLANEJAMENTO INSTITUCIONAL */
-        ["MOD_PLAN_INST", "Permite visualizar/acessar os itens do menu: Cadastro/Eixos temáticos e Cadastro/Planejamento Institucional"],
         ["MOD_PLAN_INST_CONS", "Permite consultar Eixos temáticos e/ou Planejamentos Institucionais"],
         ["MOD_PLAN_INST_INCL", "Permite incluir Eixos temáticos e/ou Planejamentos Institucionais"],
         ["MOD_PLAN_INST_EDT", "Permite editar Eixos temáticos e/ou Planejamentos Institucionais"],
