@@ -25,6 +25,7 @@ class PlanoEntrega extends ModelBase
         'planejamento_id', /* char(36); */
         'cadeia_valor_id', /* char(36); */
         'unidade_id', /* char(36); NOT NULL; */
+        //'numero', /* int; NOT NULL; */// Número do plano de entrega (Gerado pelo sistema)
     ];
 
     public $fillable_changes = [];
@@ -38,10 +39,13 @@ class PlanoEntrega extends ModelBase
         });
     }
 
-    // Has
-    // public function atividades() { return $this->hasMany(PlanoAtividade::class); }
+    // HasMany
+    public function pontosControle() { return $this->hasMany(PlanoEntregaPontoControle::class, 'plano_entrega_id'); }
+
     // Belongs
     public function planejamento() { return $this->belongsTo(Planejamento::class, 'planejamento_id'); }
     public function cadeiaValor() { return $this->belongsTo(CadeiaValor::class, 'cadeia_valor_id'); }
     public function unidade() { return $this->belongsTo(Unidade::class, 'unidade_id'); }
+
+
 }

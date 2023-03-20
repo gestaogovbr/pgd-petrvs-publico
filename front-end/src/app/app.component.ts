@@ -109,7 +109,7 @@ export class AppComponent {
         { name: this.lex.noun("Atividade", true), permition: 'MOD_ATV', route: ['cadastros', 'atividade'], icon: "bi bi-activity" },
         { name: this.lex.noun("Afastamento", true), permition: 'MOD_AFT', route: ['cadastros', 'afastamento'], icon: "bi bi-toggle-off" },
         { name: this.lex.noun("Cidades", true), permition: 'MOD_CID', route: ['cadastros', 'cidade'], icon: "bi bi-building" },
-        { name: this.lex.noun("Eixos Temáticos", true), permition: 'MOD_EXTM', route: ['cadastros', 'eixo-tematico'], icon: "bi bi-gear" },
+        { name: this.lex.noun("Eixos Temáticos", true), permition: 'MOD_PLAN_INST_CONS', route: ['cadastros', 'eixo-tematico'], icon: "bi bi-gear" },
         { name: this.lex.noun("Entregas", true), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: "bi bi-list-check" },
         { name: this.lex.noun("Feriados", true), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: "bi bi-emoji-sunglasses" },
         { name: this.lex.noun("Material e Serviço", true), permition: '', route: ['cadastros', 'material-servico'], icon: "bi bi-box-seam" },
@@ -127,7 +127,7 @@ export class AppComponent {
       gestao: [
         { name: this.lex.noun("Cadeias de Valor", true), permition: 'MOD_EXTM', route: ['cadastros', 'cadeia-valor'], icon: "bi bi-bar-chart-steps" },
         { name: this.lex.noun("Demandas", true), permition: '', route: ['gestao', 'demanda'], icon: "bi bi-activity" },
-        { name: this.lex.noun("Planejamentos Institucionais", true), permition: 'MOD_PENT', route: ['gestao', 'planejamento'], icon: "bi bi-files" },
+        { name: this.lex.noun("Planejamentos Institucionais", true), permition: 'MOD_PENT_CONS', route: ['gestao', 'planejamento'], icon: "bi bi-files" },
         { name: this.lex.noun("Planos de Entrega", true), permition: 'MOD_PENT_CONS', route: ['gestao', 'plano-entrega'], icon: "bi bi-list-check" },
         { name: this.lex.noun("Planos de Trabalho", true), permition: 'MOD_PTR', route: ['gestao', 'plano-trabalho'], icon: "bi bi-list-check" },
         { name: this.lex.noun("Programas de Gestão", true), permition: 'MOD_PRGT', route: ['gestao', 'programa'], icon: "bi bi-graph-up-arrow" },

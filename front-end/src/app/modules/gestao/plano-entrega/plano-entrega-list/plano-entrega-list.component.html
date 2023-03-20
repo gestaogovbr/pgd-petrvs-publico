@@ -1,29 +1,35 @@
-<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [join]="join"
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
     [selectable]="selectable" (select)="onSelect($event)"
     [hasAdd]="auth.hasPermissionTo('MOD_PLAN_INST_INCL')"
-    [hasEdit]="auth.hasPermissionTo('MOD_PLAN_INST_EDT')">
-    <toolbar *ngIf="!selectable"></toolbar>
+    [hasEdit]="false">
+    <toolbar *ngIf="!selectable">
+        <input-switch [size]="4" labelPosition="left" label="Agrupar por Un." controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
+    </toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
-<!--         <div class="row">
-            <input-text [size]="12" label="Planejamento Institucional" controlName="nome"
-                [control]="filter!.controls.nome" placeholder="Nome do planejamento institucional..."></input-text>
+        <div class="row">
+            <input-text [size]="6" label="Nome" controlName="nome" [control]="filter!.controls.nome" placeholder="Nome do plano de entregas"></input-text>
+            <input-search #unidade [size]="6" label="Unidade" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
         </div>
         <div class="row">
-            <input-switch class="pt-4" [size]="2" labelPosition="left" label="Só da Entidade" controlName="so_entidade" [control]="filter!.controls.so_entidade" (change)="onSoEntidadeChange($event)"></input-switch>
-            <input-search #unidade [size]="6" label="Unidade" [disabled]="unidade_disabled" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
-            <input-datetime [size]="2" date label="Início" controlName="inicio" [control]="filter!.controls.inicio" labelInfo="Data de início do planejamento institucional"></input-datetime>
-            <input-datetime [size]="2" date label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Data do fim do planejamento institucional"></input-datetime>
-        </div> -->
+            <input-search #planejamento [size]="4" label="Planejamento Institucional" controlName="planejamento_id" [control]="filter!.controls.planejamento_id" [dao]="planejamentoDao" [selectRoute]="{route: ['gestao', 'planejamento']}"></input-search>
+            <input-search #cadeiaValor [size]="4" label="Cadeia de Valor" controlName="cadeia_valor_id" [control]="filter!.controls.cadeia_valor_id" [dao]="cadeiaValorDao" [selectRoute]="{route: ['gestao', 'cadeia-valor']}"></input-search>
+            <input-datetime [size]="2" date label="Início" controlName="inicio" [control]="filter!.controls.inicio" labelInfo="Data de início do plano do entregas"></input-datetime>
+            <input-datetime [size]="2" date label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Data do fim do plano de entregas"></input-datetime>
+        </div>
     </filter>
     <columns>
-        <column title="Número" field="numero" orderBy="numero"></column>
+        <column title="Número" [template]="columnNumero" orderBy="numero">
+            <ng-template let-row="row" #columnNumero>
+                <span> {{ row.numero}}</span>
+            </ng-template>
+        </column>
         <column title="Nome" field="nome" orderBy="nome"></column>
-        <column title="Início" [template]="columnInicio">
+        <column title="Início" [template]="columnInicio" orderBy="inicio">
             <ng-template let-row="row" #columnInicio>
                 <span> {{dao!.getDateFormatted(row.inicio)}}</span>
             </ng-template>
         </column>
-        <column title="Fim" [template]="columnFim">
+        <column title="Fim" [template]="columnFim" orderBy="fim">
             <ng-template let-row="row" #columnFim>
                 <span> {{dao!.getDateFormatted(row.fim)}}</span>
             </ng-template>
@@ -43,7 +49,7 @@
                 <span> {{ row.status || ""}}</span>
             </ng-template>
         </column>
-        <column type="options" [onEdit]="edit" [options]="options"></column>
+        <column type="options" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

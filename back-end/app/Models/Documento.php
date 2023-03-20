@@ -19,7 +19,7 @@ class Documento extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'numero', /* int; NOT NULL; */// Número do documento (Gerado pelo sistema)
-        'especie', /* enum('TERMO_ADESAO','SEI','TCR','TCR_CANCELAMENTO'); */// Especificação da espécie do documento (interno do sistema)
+        'especie', /* enum('TERMO_ADESAO','SEI','TCR'); */// Especificação da espécie do documento (interno do sistema)
         'conteudo', /* longtext; */// Conteúdo do arquivo
         'assinatura', /* json; */// Dados da assinatura, se nulo não está assinado
         'metadados', /* json; */// Metadados
@@ -39,7 +39,6 @@ class Documento extends ModelBase
         'datasource', /* json; */// Conjunto de dados do template
         'dataset', /* json; */// Definição das variáveis disponíveis para o template
         //'data_fim', /* datetime; */// Data fim
-        //'programa_adesao_id', /* char(36); */
     ];
 
     public $delete_cascade = ['assinaturas'];

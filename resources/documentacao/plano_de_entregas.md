@@ -41,6 +41,36 @@
 
     (*) campo obrigatório
 ~~~
+
+## Pontos de Controle do Plano de Entregas
+-   Tabela: planos_entregas_pontos_controles
+~~~   
+    inicio (*)
+    fim (*)
+    nota_atribuida (*)
+    justificativas
+    comentarios
+    (id/created_at/updated_at/data_inicio/data_fim)
+        plano_entrega_id (*)
+        gestor_id
+        avaliador_id
+        tipo_avaliacao_id
+
+    (*) campo obrigatório
+~~~
+
+## Entregas do Ponto de Controle
+-   Tabela: planos_entregas_pontos_controles_entregas
+~~~   
+    meta (*)
+    realizado
+    (id/created_at/updated_at/data_inicio/data_fim)
+        plano_entrega_ponto_controle_id (*)
+        plano_entrega_entrega_id (*)
+
+    (*) campo obrigatório
+~~~  
+
 ## Regras de Negócio
 
 -   As entregas que compõem um Plano de Entregas pertencem todas à Unidade Executora do Plano;  
@@ -71,6 +101,7 @@
 
 ## Exemplos de grids
 -   exemplo 1
+~~~
 Plano de Entregas
    Unidade (Setor)
    Planejamento_estrategico_id
@@ -95,8 +126,10 @@ Plano de Entregas
           Ent2:     %                                   70           70
           Ent3:     Qualitativo                         Excelente    Bom
 * Deverá haver pelo menos 1
+~~~  
 
 - exemplo 2
+~~~
 Nome                         Data Inicio Data Fim
 XXXXXXXXXXXXXXXXXXXXXXXXXXXX xx/xx/xxxx  xx/xx/xxxx
 Planejamento institucional      Cadeia de valor
@@ -110,6 +143,7 @@ XXXXXX  XX/XX/XXXX                                        (XXX)(XXXXX)          
                                                                                         | Alterar  |
                                                                                         | Excluir  |
                                                                                         | Homologar|
+~~~  
 
 
 

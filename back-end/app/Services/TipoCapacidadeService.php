@@ -172,7 +172,6 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PERF_EXCL", "Permite excluir perfil"],
         ["MOD_PERF_INCL", "Permite incluir perfil"],
         /* Capacidades do módulo PLANEJAMENTO INSTITUCIONAL */
-        ["MOD_PLAN_INST", "Permite visualizar/acessar os itens do menu: Cadastro/Eixos temáticos e Cadastro/Planejamento Institucional"],
         ["MOD_PLAN_INST_CONS", "Permite consultar Eixos temáticos e/ou Planejamentos Institucionais"],
         ["MOD_PLAN_INST_INCL", "Permite incluir Eixos temáticos e/ou Planejamentos Institucionais"],
         ["MOD_PLAN_INST_EDT", "Permite editar Eixos temáticos e/ou Planejamentos Institucionais"],
@@ -211,6 +210,7 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PENT_EDT", "Permite editar planos de entregas"],
         ["MOD_PENT_EXCL", "Permite excluir planos de entregas"],
         ["MOD_PENT_INCL", "Permite incluir planos de entregas"], 
+        ["MOD_PENT_AVAL", "Permite avaliar planos de entregas"], 
         /* Capacidades do módulo TIPO ATIVIDADE*/
         ["MOD_TIPO_ATV", "Permite acessar item de menu cadastro->tipo de atividade"],
         ["MOD_TIPO_ATV_CONS", "Permite consultar atividade"],

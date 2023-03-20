@@ -4,14 +4,10 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\Usuario;
-use App\Models\Unidade;
-use App\Models\Programa;
-use App\Models\Documento;
-use App\Models\TipoModalidade;
-use App\Models\PlanoAtividade;
+use App\Models\PlanoEntrega;
+use App\Models\TipoAvaliacao;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasDataFim;
-use Illuminate\Support\Facades\DB;
 
 class PlanoEntregaPontoControle extends ModelBase
 {
@@ -35,15 +31,17 @@ class PlanoEntregaPontoControle extends ModelBase
         'tipo_avaliacao_id', /* char(36); */
     ];
 
-    public $fillable_changes = [];
+    //Casting
+    protected $casts = [
+        'justificativas' => AsArrayObject::class
+    ];
 
-    public $delete_cascade = [];
-
-  
-    // Has
-    // public function atividades() { return $this->hasMany(PlanoAtividade::class); }
+    // HasMany
+    public function entregas() { return $this->hasMany(PlanoEntregaPontoControleEntrega::class, 'plano_entrega_ponto_controle_id'); }
+    
     // Belongs
-    // public function planejamentos() { return $this->belongsTo(Planejamneto::class, 'planejamento_id'); }
-    // public function cadeiaValor() { return $this->belongsTo(CadeiaValor::class, 'cadeia_valor_id'); }
-    // public function unidade() { return $this->belongsTo(Unidade::class, 'unidade_id'); }
+    public function planoEntrega() { return $this->belongsTo(PlanoEntrega::class, 'plano_entrega_id'); }
+    public function gestor() { return $this->belongsTo(Usuario::class, 'gestor_id'); }
+    public function avaliador() { return $this->belongsTo(Usuario::class, 'avaliador_id'); }
+    public function tipoAvaliacao() { return $this->belongsTo(TipoAvaliacao::class, 'tipo_avaliacao_id'); }
 }

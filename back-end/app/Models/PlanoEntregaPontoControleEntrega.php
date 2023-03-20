@@ -30,15 +30,13 @@ class PlanoEntregaPontoControleEntrega extends ModelBase
         'plano_entrega_entrega_id', /* char(36); NOT NULL; */
     ];
 
-    public $fillable_changes = [];
+    //Casting
+    protected $casts = [
+        'meta' => AsArrayObject::class,
+        'realizado' => AsArrayObject::class,
+    ];
 
-    public $delete_cascade = [];
-
-  
-    // Has
-    // public function atividades() { return $this->hasMany(PlanoAtividade::class); }
     // Belongs
-    // public function planejamentos() { return $this->belongsTo(Planejamneto::class, 'planejamento_id'); }
-    // public function cadeiaValor() { return $this->belongsTo(CadeiaValor::class, 'cadeia_valor_id'); }
-    // public function unidade() { return $this->belongsTo(Unidade::class, 'unidade_id'); }
+    public function pontoControle() { return $this->belongsTo(PlanoEntregaPontoControle::class, 'plano_entrega_ponto_controle_id'); }
+    public function entregaPlanoEntrega() { return $this->belongsTo(PlanoEntregaEntrega::class, 'plano_entrega_entrega_id'); }
 }

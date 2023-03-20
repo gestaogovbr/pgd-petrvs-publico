@@ -70,7 +70,7 @@ class Usuario extends Authenticatable
         //'foto_microsoft', /* text; */// Foto do Azure (Microsoft)
         //'foto_firebase', /* text; */// Foto do Firebase (Google, Facebook, Instagram, Twiter, etc...)
         //'id_super', /* text; */// Id do usuário no SUPER
-        /*'texto_complementar_plano',*/// REMOVED
+        //'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho
     ];
 
     public $fillable_changes = [
@@ -102,7 +102,7 @@ class Usuario extends Authenticatable
 
     public $delete_cascade = ['favoritos', 'lotacoes'];
 
-    // Has
+    // HasMany
     public function afastamentos() { return $this->hasMany(Afastamento::class); }
     public function avaliacoes() { return $this->hasMany(DemandaAvaliacao::class); }
     public function demandas() { return $this->hasMany(Demanda::class); }
@@ -111,6 +111,7 @@ class Usuario extends Authenticatable
     public function planos() { return $this->hasMany(Plano::class); }
     public function usuariosHashes() { return $this->hasMany(UsuarioHahs::class); }
     public function integracoes() { return $this->hasMany(Integracao::class); }
+    public function avaliacoesPlanoEntrega() { return $this->hasMany(PlanoEntregaPontoControle::class, 'avaliador_id'); }
 
     // Belongs
     public function perfil() { return $this->belongsTo(Perfil::class, 'perfil_id'); }
