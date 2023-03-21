@@ -15,6 +15,7 @@
     nome (*)
     inicio (*)
     fim
+    status (fase futura)
     (id/created_at/updated_at/data_inicio/data_fim)
         unidade_id (*)
         cadeia_valor_id
@@ -33,7 +34,6 @@
     homologado (*)
     meta (*)
     realizado
-    situacao
     (id/created_at/updated_at/data_inicio/data_fim)
         plano_entrega_id (*)
         entrega_id (*)
@@ -42,36 +42,7 @@
     (*) campo obrigatório
 ~~~
 
-## Pontos de Controle do Plano de Entregas
--   Tabela: planos_entregas_pontos_controles
-~~~   
-    inicio (*)
-    fim (*)
-    nota_atribuida (*)
-    justificativas
-    comentarios
-    (id/created_at/updated_at/data_inicio/data_fim)
-        plano_entrega_id (*)
-        gestor_id
-        avaliador_id
-        tipo_avaliacao_id
-
-    (*) campo obrigatório
-~~~
-
-## Entregas do Ponto de Controle
--   Tabela: planos_entregas_pontos_controles_entregas
-~~~   
-    meta (*)
-    realizado
-    (id/created_at/updated_at/data_inicio/data_fim)
-        plano_entrega_ponto_controle_id (*)
-        plano_entrega_entrega_id (*)
-
-    (*) campo obrigatório
-~~~  
-
-## Regras de Negócio
+## Regras de Negócio aplicadas ao Plano de Entregas e suas entregas
 
 -   As entregas que compõem um Plano de Entregas pertencem todas à Unidade Executora do Plano;  
 -   O gestor da Unidade Executora e o gestor da Unidade hierarquicamente superior a ela podem iniciar a elaboração de Planos de Entrega da Unidade Executora;  
@@ -93,6 +64,48 @@
 ```  
 -   A unidade de execução poderá ter mais de um plano de entrega com status 'enviado para aceite' e 'em execução', desde que sejam para períodos diferentes;
 -   O participante conseguirá visualizar o Plano de Entregas da sua Unidade de Execução de forma automática, mas poderá navegar pela estrutura organizacional para visualizar planos de entregas de outras unidades que utilizam o mesmo sistema.
+
+## Pontos de Controle do Plano de Entregas
+-   Tabela: planos_entregas_pontos_controles
+~~~   
+    inicio (*)
+    fim (*)
+    nota_atribuida (*)
+    justificativas
+    comentarios
+    (id/created_at/updated_at/data_inicio/data_fim)
+        plano_entrega_id (*)
+        gestor_id
+        avaliador_id
+        tipo_avaliacao_id
+
+    (*) campo obrigatório
+~~~  
+
+## Entregas do Ponto de Controle
+-   Tabela: planos_entregas_pontos_controles_entregas
+~~~   
+    meta (*)
+    realizado
+    situacao da entrega (fase futura)
+    (id/created_at/updated_at/data_inicio/data_fim)
+        plano_entrega_ponto_controle_id (*)
+        plano_entrega_entrega_id (*)
+
+    (*) campo obrigatório
+~~~  
+
+## Regras de Negócio aplicadas aos Pontos de Controle e suas entregas
+
+-   Quando o gestor for cadastrar um Ponto de Controle para o Plano de Entregas da sua Unidade, o sistema checará se ele possui um Plano de Trabalho ativo durante o período do ponto de controle; caso negativo, o sistema deverá oferecer a possibilidade de incluir automaticamente o seu Plano de Trabalho, colhendo sua assinatura no TCR;  
+-   Ao exibir um Ponto de Controle, todas as entregas do Plano de Entregas serão mostradas. Aquelas em que o usuário alterar alguma informação, comporão as entregas daquele Ponto de Controle;
+   
+~~~ 
+-   DÚVIDAS:  
+
+-   O chefe imediato poderá incluir Pontos de Controle? E, se puder, poderá deixar o campo gestor_id em branco?  
+
+~~~
 
 <details>
 <summary>REGRAS DE NEGÓCIO A SEREM DISCUTIDAS (clique aqui para ver detalhes)</summary>

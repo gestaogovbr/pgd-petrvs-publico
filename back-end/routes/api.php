@@ -197,10 +197,15 @@ Route::middleware(['auth:sanctum'])->prefix('Adesao')->group(function () {
 
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
     defaultRoutes(PlanoEntregaController::class);
-//    Route::post('avaliar', [PlanoController::class, 'avaliar']);
+//    Route::post('avaliar', [PontoControleController::class, 'avaliar']);
 //    Route::post('cancelar-avaliacao', [PlanoController::class, 'cancelarAvaliacao']);
 //    Route::post('arquivar', [PlanoController::class, 'arquivar']);
 //    Route::post('metadadosPlano', [PlanoController::class, 'metadadosPlano']);
+});
+
+Route::middleware(['auth:sanctum'])->prefix('PontoControle')->group(function () {
+    defaultRoutes(PlanoEntregaPontoControleController::class);
+    Route::post('avaliar', [PlanoEntregaPontoControleController::class, 'avaliar']);
 });
 
 Route::middleware(['auth:sanctum'])->prefix('Projeto')->group(function () { defaultRoutes(ProjetoController::class); });
@@ -226,7 +231,3 @@ Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
     Route::post('inativo', [UnidadeController::class, 'inativo']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Capacidade')->group(function () { defaultRoutes(CapacidadeController::class); });
-
-//Route::middleware('auth:sanctum')->post('/Unidade/metadadosArea', [UnidadeController::class, 'metadadosArea']);
-//Route::middleware('auth:sanctum')->post('/Plano/metadadosPlano', [PlanoController::class, 'metadadosPlano']);
-//Route::middleware('auth:sanctum')->post('/Unidade/dashboards', [UnidadeController::class, 'dashboards']);

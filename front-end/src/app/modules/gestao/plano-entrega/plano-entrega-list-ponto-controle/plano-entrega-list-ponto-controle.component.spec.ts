@@ -1,20 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { PlanoFormPontoControleComponent } from './plano-form-ponto-controle.component';
+import { PlanoEntregaListPontoControleComponent } from './plano-entrega-list-ponto-controle.component';
 
 describe('PlanoFormPontoControleComponent', () => {
-  let component: PlanoFormPontoControleComponent;
-  let fixture: ComponentFixture<PlanoFormPontoControleComponent>;
+  let component: PlanoEntregaListPontoControleComponent;
+  let fixture: ComponentFixture<PlanoEntregaListPontoControleComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PlanoFormPontoControleComponent ]
+      declarations: [ PlanoEntregaListPontoControleComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PlanoFormPontoControleComponent);
+    fixture = TestBed.createComponent(PlanoEntregaListPontoControleComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

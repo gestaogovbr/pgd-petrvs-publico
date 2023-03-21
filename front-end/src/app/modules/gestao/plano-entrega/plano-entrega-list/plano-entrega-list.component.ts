@@ -100,13 +100,13 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: this.consult.bind(this) };
     const BOTAO_ALTERAR = { label: "Editar", icon: "bi bi-pencil-square", onClick: this.edit.bind(this) };
     const BOTAO_EXCLUIR = { label: "Excluir Plano", icon: "bi bi-trash", onClick: this.delete.bind(this) };
-    const BOTAO_ENTREGAS = { hint: "Entregas", icon: "bi bi-pen", onClick: this.editarEntregas.bind(this) };
+    //const BOTAO_ENTREGAS = { hint: "Entregas", icon: "bi bi-pen", onClick: this.editarEntregas.bind(this) };
     const BOTAO_HOMOLOGAR = { label: "Homologar", icon: "bi bi-file-earmark-check", onClick: this.homologar.bind(this) };
-    const BOTAO_AVALIAR = { label: "Ponto de Controle", icon: "bi bi-file-earmark-check", onClick: this.avaliar.bind(this) };
+    const BOTAO_PONTOS_CONTROLE = { label: "Pontos de Controle", icon: "bi bi-file-earmark-check", onClick: ((row: PlanoEntrega) => this.go.navigate({ route: ['gestao', 'plano-entrega', 'ponto-controle' ], params: {plano_entrega_id: row.id} }, { modalClose: (modalResult) => console.log(modalResult?.conteudo)})).bind(this) };
     if(this.auth.hasPermissionTo("MOD_PENT_CONS")) result.push(BOTAO_INFORMACOES);
     if(this.auth.hasPermissionTo('MOD_PENT_EDT')) result.push(BOTAO_ALTERAR);
     if(this.auth.hasPermissionTo("MOD_PENT_EXCL")) result.push(BOTAO_EXCLUIR);
-    if(this.auth.hasPermissionTo("MOD_PENT_AVAL")) result.push(BOTAO_AVALIAR);
+    if(this.auth.hasPermissionTo("MOD_PENT_PCTR_CONS")) result.push(BOTAO_PONTOS_CONTROLE);
     if(this.dao?.needHomologate(planoEntrega)) result.push(BOTAO_HOMOLOGAR);
     return result;
   }

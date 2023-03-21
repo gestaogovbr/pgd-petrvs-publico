@@ -19,7 +19,6 @@ class PlanoEntregaPontoControle extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
-        'data_fim', /* datetime; */// Data fim da vigência
         'inicio', /* datetime; NOT NULL; */// Data inicio
         'fim', /* datetime; NOT NULL; */// Data fim
         'nota_atribuida', /* int; NOT NULL; */// Nota da avaliação 0 - 10
@@ -29,6 +28,7 @@ class PlanoEntregaPontoControle extends ModelBase
         'gestor_id', /* char(36); */
         'avaliador_id', /* char(36); */
         'tipo_avaliacao_id', /* char(36); */
+        //'data_fim', /* datetime; */// Data fim da vigência
     ];
 
     //Casting

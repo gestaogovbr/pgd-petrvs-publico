@@ -210,7 +210,12 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PENT_EDT", "Permite editar planos de entregas"],
         ["MOD_PENT_EXCL", "Permite excluir planos de entregas"],
         ["MOD_PENT_INCL", "Permite incluir planos de entregas"], 
-        ["MOD_PENT_AVAL", "Permite avaliar planos de entregas"], 
+        /* Capacidades do módulo PLANO DE ENTREGAS - PONTO DE CONTROLE */
+        ["MOD_PENT_PCTR_CONS", "Permite consultar pontos de controle de um plano de entregas"],
+        ["MOD_PENT_PCTR_EDT", "Permite editar pontos de controle de um plano de entregas"],
+        ["MOD_PENT_PCTR_EXCL", "Permite excluir pontos de controle de um plano de entregas"],
+        ["MOD_PENT_PCTR_INCL", "Permite incluir pontos de controle de um plano de entregas"], 
+        ["MOD_PENT_PCTR_AVAL", "Permite avaliar um plano de entregas"], 
         /* Capacidades do módulo TIPO ATIVIDADE*/
         ["MOD_TIPO_ATV", "Permite acessar item de menu cadastro->tipo de atividade"],
         ["MOD_TIPO_ATV_CONS", "Permite consultar atividade"],
