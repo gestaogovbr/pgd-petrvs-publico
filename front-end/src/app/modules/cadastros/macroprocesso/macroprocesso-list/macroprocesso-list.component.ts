@@ -18,7 +18,7 @@ export class MacroprocessoListComponent extends PageListBase<Macroprocesso, Macr
   constructor(public injector: Injector) {
     super(injector, Macroprocesso, MacroprocessoDaoService);
     /* Inicializações */
-    this.title = 'Macroprocessos';
+    this.title = this.lex.noun('Macroprocesso',true);
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}
     });

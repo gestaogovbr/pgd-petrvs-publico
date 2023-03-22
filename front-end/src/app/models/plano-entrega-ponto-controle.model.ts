@@ -1,7 +1,17 @@
 import { LookupItem } from '../services/lookup.service';
 import { Base } from './base.model';
+import { PlanoEntregaPontoControleEntrega } from './plano-entrega-ponto-controle-entrega.model';
+import { PlanoEntrega } from './plano-entrega.model';
+import { TipoAvaliacao } from './tipo-avaliacao.model';
+import { Usuario } from './usuario.model';
 
 export class PlanoEntregaPontoControle extends Base {
+  public entregas: PlanoEntregaPontoControleEntrega[] = [];
+  public planoEntrega?: PlanoEntrega;  
+  public gestor?: Usuario;
+  public avaliador?: Usuario;
+  public tipoAvaliacao?: TipoAvaliacao;
+
   public inicio: Date = new Date();                   // Data inicio do ponto de controle
   public fim: Date = new Date();                      // Data fim do ponto de controle
   public nota_atribuida: number = 0;                  // Nota da avaliação (0 - 10)

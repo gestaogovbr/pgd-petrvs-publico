@@ -27,7 +27,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.planejamentoDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
     /* Inicializações */
-    this.title = 'Planos de Entrega';
+    this.title = this.lex.noun('Plano de Entrega',true);
     this.filter = this.fh.FormBuilder({
       agrupar: {default: true},
       nome: {default: ''},
@@ -102,7 +102,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     const BOTAO_EXCLUIR = { label: "Excluir Plano", icon: "bi bi-trash", onClick: this.delete.bind(this) };
     //const BOTAO_ENTREGAS = { hint: "Entregas", icon: "bi bi-pen", onClick: this.editarEntregas.bind(this) };
     const BOTAO_HOMOLOGAR = { label: "Homologar", icon: "bi bi-file-earmark-check", onClick: this.homologar.bind(this) };
-    const BOTAO_PONTOS_CONTROLE = { label: "Pontos de Controle", icon: "bi bi-file-earmark-check", onClick: ((row: PlanoEntrega) => this.go.navigate({ route: ['gestao', 'plano-entrega', 'ponto-controle' ], params: {plano_entrega_id: row.id} }, { modalClose: (modalResult) => console.log(modalResult?.conteudo)})).bind(this) };
+    const BOTAO_PONTOS_CONTROLE = { label: "Pontos de Controle", icon: "bi bi-file-earmark-check", onClick: ((row: PlanoEntrega) => this.go.navigate({ route: ['gestao', 'plano-entrega', row.id, 'ponto-controle' ] })).bind(this) };
     if(this.auth.hasPermissionTo("MOD_PENT_CONS")) result.push(BOTAO_INFORMACOES);
     if(this.auth.hasPermissionTo('MOD_PENT_EDT')) result.push(BOTAO_ALTERAR);
     if(this.auth.hasPermissionTo("MOD_PENT_EXCL")) result.push(BOTAO_EXCLUIR);

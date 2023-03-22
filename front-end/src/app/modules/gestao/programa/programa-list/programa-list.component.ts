@@ -16,7 +16,7 @@ export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoSer
   constructor(public injector: Injector, dao: ProgramaDaoService) {
     super(injector, Programa, ProgramaDaoService);
     /* Inicializações */
-    this.title = this.lex.noun("Programa de gestão", true);
+    this.title = this.lex.noun("Programa de Gestão", true);
     this.code = "MOD_PRGT";
     this.join = ["unidade"];
     this.filter = this.fh.FormBuilder({

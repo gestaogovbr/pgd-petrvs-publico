@@ -835,7 +835,7 @@ class ServiceBase extends DynamicMethods
     }
 
     /**
-     * Este método filtra todos os relacionamentos que tenham sido apagados (Data_fim não nula)
+     * Este método filtra todos os relacionamentos q tenham sido apagados (Data_fim não nula)
      */
     public function proxyWith(&$entity,&$data) {
         $data['with'] = $this->getCamelWith($data['with']);
@@ -848,7 +848,6 @@ class ServiceBase extends DynamicMethods
             }
             while (count($withs)>0) {
                 $relation = $this->getNestedModel($model, implode('.',$withs));
-                //SHOW COLUMNS FROM `table` LIKE 'fieldname'
                 if(!empty($relation) && !empty((new $relation)->has_data_fim)) {
                     $entity->with([implode('.',$withs) => function($query) {$query->whereNull('data_fim');}]);
                     $entity->with(gettype($key) == "string"

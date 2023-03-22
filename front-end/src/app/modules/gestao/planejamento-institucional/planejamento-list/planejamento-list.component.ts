@@ -23,7 +23,7 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
     super(injector, Planejamento, PlanejamentoDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     /* Inicializações */
-    this.title = 'Planejamentos Institucionais';
+    this.title = this.lex.noun('Planejamento Institucional',true);
     this.filter = this.fh.FormBuilder({
       inicio: {default: null},
       fim: {default: null},

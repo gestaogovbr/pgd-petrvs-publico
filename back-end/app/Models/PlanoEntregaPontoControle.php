@@ -8,6 +8,7 @@ use App\Models\PlanoEntrega;
 use App\Models\TipoAvaliacao;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasDataFim;
+use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 
 class PlanoEntregaPontoControle extends ModelBase
 {

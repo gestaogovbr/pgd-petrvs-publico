@@ -12,6 +12,7 @@ use App\Models\PlanoAtividade;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasDataFim;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 
 class PlanoEntregaPontoControleEntrega extends ModelBase
 {
@@ -23,11 +24,11 @@ class PlanoEntregaPontoControleEntrega extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
-        'data_fim', /* datetime; */// Data fim da vigência
         'meta', /* json; NOT NULL; */// Meta para a entrega
         'realizado', /* json; */// Valor realizado
         'plano_entrega_ponto_controle_id', /* char(36); NOT NULL; */
         'plano_entrega_entrega_id', /* char(36); NOT NULL; */
+        //'data_fim', /* datetime; */// Data fim da vigência
     ];
 
     //Casting

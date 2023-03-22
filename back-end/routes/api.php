@@ -25,6 +25,7 @@ use App\Http\Controllers\PlanejamentoController;
 use App\Http\Controllers\PlanejamentoObjetivoController;
 use App\Http\Controllers\PlanoController;
 use App\Http\Controllers\PlanoEntregaController;
+use App\Http\Controllers\PlanoEntregaPontoControleController;
 use App\Http\Controllers\PetrvsController;
 use App\Http\Controllers\DocumentoController;
 use App\Http\Controllers\TipoDocumentoController;
@@ -203,9 +204,8 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
 //    Route::post('metadadosPlano', [PlanoController::class, 'metadadosPlano']);
 });
 
-Route::middleware(['auth:sanctum'])->prefix('PontoControle')->group(function () {
+Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaPontoControle')->group(function () {
     defaultRoutes(PlanoEntregaPontoControleController::class);
-    Route::post('avaliar', [PlanoEntregaPontoControleController::class, 'avaliar']);
 });
 
 Route::middleware(['auth:sanctum'])->prefix('Projeto')->group(function () { defaultRoutes(ProjetoController::class); });

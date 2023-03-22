@@ -63,7 +63,7 @@ export class DemandaListComponent extends PageBase implements OnInit {
     ) {
     super(injector);
     /* Inicializações */
-    this.title = this.lex.noun("Demandas", true);
+    this.title = this.lex.noun("Demanda", true);
     this.code = "MOD_DMD";
     this.fh = this.injector.get<FormHelperService>(FormHelperService);
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
