@@ -205,11 +205,21 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PTR_USERS_INCL", "Permite incluir planos de trabalho de usuários fora da lotação"],
         ["MOD_PTR_INCL_SEM_LOT", "Permite incluir planos de trabalho para usuários não lotado na unidade do plano"],
         ["MOD_PTR_INTSC_DATA", "Permite incluir planos de trabalho para usuários que já possuem planos no período de mesma modalidade"],
+        /* Capacidades do módulo CADEIA DE VALOR*/
+        ["MOD_CADV_CONS", "Permite consultar cadeia de valor"],
+        ["MOD_CADV_EDT", "Permite editar cadeia de valor"],
+        ["MOD_CADV_EXCL", "Permite excluir cadeia de valor"],
+        ["MOD_CADV_INCL", "Permite incluir cadeia de valor"],
         /* Capacidades do módulo PLANO DE ENTREGAS*/
         ["MOD_PENT_CONS", "Permite consultar plano de entregas"],
         ["MOD_PENT_EDT", "Permite editar planos de entregas"],
         ["MOD_PENT_EXCL", "Permite excluir planos de entregas"],
         ["MOD_PENT_INCL", "Permite incluir planos de entregas"], 
+        /* Capacidades do módulo PLANO DE ENTREGAS - ENTREGAS*/
+        ["MOD_PENT_ENTR_CONS", "Permite consultar entregas de um plano de entregas"],
+        ["MOD_PENT_ENTR_EDT", "Permite editar entregas de um plano de entregas"],
+        ["MOD_PENT_ENTR_EXCL", "Permite excluir entregas de um plano de entregas"],
+        ["MOD_PENT_ENTR_INCL", "Permite incluir entregas de um plano de entregas"],
         /* Capacidades do módulo PLANO DE ENTREGAS - PONTO DE CONTROLE */
         ["MOD_PENT_PCTR_CONS", "Permite consultar pontos de controle de um plano de entregas"],
         ["MOD_PENT_PCTR_EDT", "Permite editar pontos de controle de um plano de entregas"],
