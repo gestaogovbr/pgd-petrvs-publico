@@ -1,5 +1,4 @@
-<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [form]="form" [join]="join" [orderBy]="orderBy" [selectable]="selectable" (select)="onSelect($event)" editable
-    [hasDelete]="auth.hasPermissionTo('MOD_PENT_PCTR_EXCL')" [hasAdd]="auth.hasPermissionTo('MOD_PENT_PCTR_INCL')" [hasEdit]="auth.hasPermissionTo('MOD_PENT_PCTR_EDT')">
+<grid [dao]="dao" [add]="add" [hasEdit]="false" [title]="isModal ? '' : title" [form]="form" [join]="join" [orderBy]="orderBy" [selectable]="selectable" (select)="onSelect($event)" editable>
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
@@ -27,19 +26,18 @@
         </column>
         <column title="Responsável" [template]="columnResponsavel">
             <ng-template let-row="row" #columnResponsavel>
-                <span> {{ row.gestor ? row.gestor.nome : ''}}</span>
+                <span> {{row.gestor?.nome || ''}}</span>
             </ng-template>
         </column>
         <column [titleTemplate]="titleAvaliacao" [template]="columnAvaliacao">
             <ng-template let-header="header" #titleAvaliacao>
                 <order by="tipo_avaliacao.nota" [header]="header">Nota</order><small>/Tipo</small><br>
                 <small>Avaliador/Justificativas</small>
-                <!-- Avaliação -->
             </ng-template>
             <ng-template let-row="row" #columnAvaliacao>
-                <span>{{ row.tipo_avaliacao ? row.tipo_avaliacao.nota_atribuida + ' - ' + row.tipo_avaliacao.nome : '(não avaliado)' }}</span><br>
-                <span>{{ row.tipo_avaliacao ? row.avaliador.nome : '' }}</span><br>
-                <span *ngFor="let j of row.justificativas">{{ j.value || ''}}<br></span>
+                <span><small>{{ row.tipo_avaliacao? row.tipo_avaliacao.nota_atribuida + ' - ' + row.tipo_avaliacao.nome : '(não avaliado)' }}</small></span><br>
+                <span><small>{{ row.avaliador?.nome || '' }}</small></span><br>
+                <span *ngFor="let j of row.justificativas"><small>{{ j.value || ''}}</small><br></span>
             </ng-template>
         </column>
         <column type="options" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>

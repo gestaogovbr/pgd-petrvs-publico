@@ -12,6 +12,7 @@ use App\Models\PlanoAtividade;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasDataFim;
 use Illuminate\Support\Facades\DB; 
+use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 
 class PlanoEntregaEntrega extends ModelBase
 {
@@ -40,7 +41,11 @@ class PlanoEntregaEntrega extends ModelBase
 
     public $delete_cascade = [];
 
-  
+    //Casting
+    protected $casts = [
+        'meta' => AsArrayObject::class
+    ];
+
     // HasMany
     public function entregasPontosControle() { return $this->hasMany(PlanoEntregaPontoControleEntrega::class, 'plano_entrega_entrega_id'); }
     

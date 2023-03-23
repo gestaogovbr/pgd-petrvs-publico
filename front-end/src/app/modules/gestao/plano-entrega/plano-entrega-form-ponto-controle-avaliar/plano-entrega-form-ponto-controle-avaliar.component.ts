@@ -33,7 +33,6 @@ export class PlanoEntregaFormPontoControleAvaliarComponent extends PageFormBase<
   public tiposAvaliacoes: TipoAvaliacao[] = [];
   public tiposJustificativas: LookupItem[] = [];
   public tipoAvaliacao?: LookupItem; 
-  //public allPages: ListenerAllPagesService;
   public form: FormGroup;
   public modalWidth: number = 900;
 
@@ -41,7 +40,7 @@ export class PlanoEntregaFormPontoControleAvaliarComponent extends PageFormBase<
     super(injector, PlanoEntregaPontoControle, PlanoEntregaPontoControleDaoService);
     this.tipoAvaliacaoDao = injector.get<TipoAvaliacaoDaoService>(TipoAvaliacaoDaoService); 
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService); 
-    //this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
+    this.join = ["gestor", "tipo_avaliacao", ];
     this.form = this.fh.FormBuilder({
       inicio: {default: null},
       fim: {default: null},
@@ -66,6 +65,15 @@ export class PlanoEntregaFormPontoControleAvaliarComponent extends PageFormBase<
   public async loadData(entity: PlanoEntregaPontoControle, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
     formValue = this.util.fillForm(formValue, entity);
+    if(entity.tipo_avaliacao) {
+      formValue.nota_atribuida = entity.nota_atribuida;
+      formValue.justificativas = entity.justificativas;
+      formValue.tipo_avaliacao_id = entity.tipo_avaliacao_id;
+    }
+    formValue.comentarios = entity.comentarios || "";
+    this.form.controls.nota_atribuida.setValue(formValue.nota_atribuida);
+    this.onNotaChange(new Event('change'));
+    form.patchValue(formValue);
   }
 
   public async initializeData(form: FormGroup) {
@@ -113,20 +121,6 @@ export class PlanoEntregaFormPontoControleAvaliarComponent extends PageFormBase<
     }
     this.cdRef.detectChanges();  
   }
-
-/*   public saveData(form: IIndexable): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-      const form = this.form!.value;
-      const avaliacao = {
-        tipo_avaliacao_id: this.tipoAvaliacao!.key,
-        nota_atribuida: form.nota_atribuida,
-        arquivar: form.arquivar,
-        //comentario_avaliacao: form.comentario_avaliacao, 
-        justificativas: form.justificativas || []          //this.justificativas?.items?.map(x => x.key) || []
-      };
-      this.dao!.avaliar(avaliacao).then(saved => resolve(saved)).catch(reject);
-    });
-  } */
 
   public async saveData(form: IIndexable): Promise<PlanoEntregaPontoControle> {
     return new Promise<PlanoEntregaPontoControle>((resolve, reject) => {

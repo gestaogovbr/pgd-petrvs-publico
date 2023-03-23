@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
@@ -24,7 +24,6 @@ export class PlanoEntregaListPontoControleComponent extends PageListBase<PlanoEn
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.title = this.lex.noun("Ponto de Controle",true);
     this.code = "MOD_PENT_PCTR_CONS";
-    //this.modalWidth = 1000;
     this.form = this.fh.FormBuilder({
       plano_entrega_id: {default: ''}
     });
@@ -33,8 +32,7 @@ export class PlanoEntregaListPontoControleComponent extends PageListBase<PlanoEn
       inicio: {default: ""},
       fim: {default: ""}
     });
-    this.join = ['gestor:nome','tipoAvaliacao','avaliador:nome'];
-    //this.orderBy = [['tipo_avaliacao.nota', 'asc']];
+    this.join = ['gestor:nome','tipo_avaliacao','avaliador:nome'];
     // Testa se o usuário possui permissão para exibir pontos de controle
     if (this.auth.hasPermissionTo("MOD_PENT_PCTR_CONS")) {
       this.options.push({
@@ -86,24 +84,20 @@ export class PlanoEntregaListPontoControleComponent extends PageListBase<PlanoEn
 
   public dynamicOptions(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
-/*     let planoEntrega: PlanoEntrega = row as PlanoEntrega;
-    const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: this.consult.bind(this) };
-    const BOTAO_ALTERAR = { label: "Editar", icon: "bi bi-pencil-square", onClick: this.edit.bind(this) };
-    const BOTAO_EXCLUIR = { label: "Excluir Plano", icon: "bi bi-trash", onClick: this.delete.bind(this) };
-    //const BOTAO_ENTREGAS = { hint: "Entregas", icon: "bi bi-pen", onClick: this.editarEntregas.bind(this) };
-    const BOTAO_HOMOLOGAR = { label: "Homologar", icon: "bi bi-file-earmark-check", onClick: this.homologar.bind(this) };
-    const BOTAO_PONTOS_CONTROLE = { label: "Pontos de Controle", icon: "bi bi-file-earmark-check", onClick: ((row: PlanoEntrega) => this.go.navigate({ route: ['gestao', 'plano-entrega', row.id, 'ponto-controle' ] })).bind(this) };
-    if(this.auth.hasPermissionTo("MOD_PENT_CONS")) result.push(BOTAO_INFORMACOES);
-    if(this.auth.hasPermissionTo('MOD_PENT_EDT')) result.push(BOTAO_ALTERAR);
-    if(this.auth.hasPermissionTo("MOD_PENT_EXCL")) result.push(BOTAO_EXCLUIR);
-    if(this.auth.hasPermissionTo("MOD_PENT_PCTR_CONS")) result.push(BOTAO_PONTOS_CONTROLE);
-    if(this.dao?.needHomologate(planoEntrega)) result.push(BOTAO_HOMOLOGAR); */
+    let pontoControle: PlanoEntregaPontoControle = row as PlanoEntregaPontoControle;
+    const BOTAO_INFORMACOES = { label: "Informações", hint: "Consultar o Ponto de Controle", icon: "bi bi-info-circle", onClick: this.consult.bind(this) };
+    const BOTAO_ALTERAR = { label: "Editar", hint: "Editar o Ponto de Controle", icon: "bi bi-pencil-square", onClick: this.edit.bind(this) };
+    const BOTAO_ALTERAR_AVALIACAO = { label: "Alterar avaliação", hint: "Alterar avaliação", icon: "bi bi-check-all", color: "btn-outline-danger", onClick: (pontoControle: PlanoEntregaPontoControle) => this.go.navigate({ route: ['gestao', 'plano-entrega', pontoControle.id, 'avaliar'] }, this.modalRefreshId(pontoControle)) };
+    const BOTAO_EXCLUIR = { label: "Excluir", hint: "Excluir o Ponto de Controle", icon: "bi bi-trash", onClick: this.delete.bind(this) };
+    if(this.auth.hasPermissionTo("MOD_PENT_PCTR_CONS")) result.push(BOTAO_INFORMACOES);
+    if(this.auth.hasPermissionTo('MOD_PENT_PCTR_EDT')) result.push(BOTAO_ALTERAR);
+    if(this.auth.hasPermissionTo('MOD_PENT_PCTR_EDT_AVAL') && pontoControle.tipo_avaliacao) result.push(BOTAO_ALTERAR_AVALIACAO);
+    if(this.auth.hasPermissionTo("MOD_PENT_PCTR_EXCL")) result.push(BOTAO_EXCLUIR);
     return result;
   }
 
   public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
-    //let planoEntregaPontoControle: PlanoEntregaPontoControle = row as PlanoEntregaPontoControle;
     const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: this.consult.bind(this) };
     const BOTAO_AVALIAR = { label: "Avaliar", icon: "bi bi-star-half", onClick: (pontoControle: PlanoEntregaPontoControle) => this.go.navigate({ route: ['gestao', 'plano-entrega', 'ponto-controle', pontoControle.id, 'avaliar'] }, this.modalRefreshId(pontoControle)) };
     if(this.auth.hasPermissionTo('MOD_PENT_PCTR_AVAL') && this.isAvailable(row)) result.push(BOTAO_AVALIAR);
@@ -117,7 +111,8 @@ export class PlanoEntregaListPontoControleComponent extends PageListBase<PlanoEn
    * e está definido um gestor a ser avaliado.
    */
     public isAvailable(row: PlanoEntregaPontoControle): boolean {
-      return row.tipo_avaliacao_id == null && row.gestor_id != null;
+      //return row.tipo_avaliacao_id == null && row.gestor_id != null;
+      return true;
     }
 
 

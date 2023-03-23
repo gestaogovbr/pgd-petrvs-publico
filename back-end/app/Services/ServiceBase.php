@@ -521,7 +521,7 @@ class ServiceBase extends DynamicMethods
         $query = $model::query();
         $data["with"] = isset($this->joinable) ? $this->getJoinable($data["with"] ?? []) : $data["with"];
         if(count($data['with']) > 0) {
-            $this->proxyWith($query,$data);
+            $this->applyWith($query,$data);
         }
         $query->where('id', $data['id']);
         $rows = method_exists($this, 'proxyRows') ? $this->proxyRows($query->get()) : $query->get();

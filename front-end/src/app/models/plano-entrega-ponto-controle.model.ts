@@ -7,10 +7,10 @@ import { Usuario } from './usuario.model';
 
 export class PlanoEntregaPontoControle extends Base {
   public entregas: PlanoEntregaPontoControleEntrega[] = [];
-  public planoEntrega?: PlanoEntrega;  
+  public plano_entrega?: PlanoEntrega;  
   public gestor?: Usuario;
   public avaliador?: Usuario;
-  public tipoAvaliacao?: TipoAvaliacao;
+  public tipo_avaliacao?: TipoAvaliacao;
 
   public inicio: Date = new Date();                   // Data inicio do ponto de controle
   public fim: Date = new Date();                      // Data fim do ponto de controle
