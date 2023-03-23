@@ -11,5 +11,9 @@ export class PlanoEntregaPontoControleDaoService extends DaoBaseService<PlanoEnt
     super("PlanoEntregaPontoControle", injector);
   }
 
+  public getPontoControle(id: string): Promise<PlanoEntregaPontoControle | null> {
+    return this.getById(id, ["gestor", "avaliador", "tipoAvaliacao"]); 
+  }
+
 }
 

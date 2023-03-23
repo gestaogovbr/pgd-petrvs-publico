@@ -440,7 +440,7 @@ class ServiceBase extends DynamicMethods
         $model = App($this->collection);
         $entity = $model::query();
         if(count($data['with']) > 0) {
-            $this->proxyWith($entity,$data);
+            $this->applyWith($entity,$data);
         }
         $entity = $entity->find($data["key"]);
         $text = "";
@@ -570,7 +570,7 @@ class ServiceBase extends DynamicMethods
         if(method_exists($this, 'proxyQuery')) $this->proxyQuery($query, $data);
         $data["with"] = isset($this->joinable) ? $this->getJoinable($data["with"] ?? []) : $data["with"];
         if(count($data['with']) > 0) {
-            $this->proxyWith($query,$data);
+            $this->applyWith($query, $data);
         }
         $this->applyWhere($query, $data['where'], $data);
         $this->applyOrderBy($query, $data);
@@ -834,17 +834,35 @@ class ServiceBase extends DynamicMethods
         return Auth::user();
     }
 
+/*
+
+["tab_1.tab_2.tab_3:campo1,campo2", "tab_3:campo3,campo4", ]
+[
+    "tab1.tab2.tab3:campo1,campo2"
+    "tab1.tab2.tab3"  => where data_fim ...,
+    "tab1.tab2"  => where data_fim ...,
+    "tab1" => where data_fim ...,
+]
+
+
+
+
+*/
+
+
+
     /**
      * Este método filtra todos os relacionamentos q tenham sido apagados (Data_fim não nula)
      */
-    public function proxyWith(&$entity,&$data) {
+    public function applyWith(&$entity,&$data) {
         $data['with'] = $this->getCamelWith($data['with']);
         $model = $this->getModel();
         foreach($data['with'] as $key => $with) {
             $withs = explode('.',$with);
-            if(str_contains(array_slice($withs, -1, 1)[0],':')) {   // se o último elemento contiver campos...
-                $entity->with(gettype($key) == "string" ? [$key => $with] : $with);       // aplica o método 'with' normalmente nele...
-                array_splice($withs, -1, 1, explode(':',array_slice($withs, -1, 1)[0])[0]);     // depois retira os : e os campos
+            $last = array_slice($withs, -1, 1)[0];
+            if(str_contains($last, ':')) {   // se o último elemento contiver campos...
+                $entity->with(gettype($key) == "string" ? [$key => $with] : $with);  // aplica o método 'with' normalmente nele...
+                array_splice($withs, -1, 1, explode(':', $last)[0]);   // depois retira os : e os campos
             }
             while (count($withs)>0) {
                 $relation = $this->getNestedModel($model, implode('.',$withs));

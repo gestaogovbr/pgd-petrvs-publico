@@ -25,7 +25,8 @@ export class EntregaFormComponent extends PageFormBase<Entrega, EntregaDaoServic
       nome: {default: ""},
       tipo_indicador: {default: ""},
       qualitativo: {default: ""},
-      lista_qualitativos: {default: []}
+      lista_qualitativos: {default: []},
+      itemQualitativo: {default: ""}
     }, this.cdRef, this.validate);
   }
 
@@ -96,7 +97,7 @@ export class EntregaFormComponent extends PageFormBase<Entrega, EntregaDaoServic
 
   public addItemHandleItemQualitativo(): LookupItem | undefined {
     let result = undefined;
-    const value = this.form!.controls.lista_qualitativos.value;
+    const value = this.form!.controls.itemQualitativo.value;
     const key = this.util.textHash(value);
     if(value?.length && this.util.validateLookupItem(this.form!.controls.lista_qualitativos.value, key)) {
       result = {

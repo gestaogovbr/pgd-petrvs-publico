@@ -115,8 +115,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     let result: ToolbarButton[] = [];
     let planoEntrega: PlanoEntrega = row as PlanoEntrega;
     const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: this.consult.bind(this) };
-    const BOTAO_ALTERAR = { label: "Editar", icon: "bi bi-pencil-square", onClick: this.edit.bind(this) };
-    if(this.auth.hasPermissionTo('MOD_PENT_EDT')) result.push(BOTAO_ALTERAR);
+    const BOTAO_PONTOS_CONTROLE = { label: "Pontos de Controle", icon: "bi bi-file-earmark-check", onClick: ((row: PlanoEntrega) => this.go.navigate({ route: ['gestao', 'plano-entrega', row.id, 'ponto-controle' ] })).bind(this) };
+    if(this.auth.hasPermissionTo('MOD_PENT_PCTR_CONS')) result.push(BOTAO_PONTOS_CONTROLE);
     else if(this.auth.hasPermissionTo("MOD_PENT_CONS")) result.push(BOTAO_INFORMACOES);
     return result;
   }

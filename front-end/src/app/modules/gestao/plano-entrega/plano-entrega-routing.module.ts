@@ -5,6 +5,8 @@ import { ConfigResolver } from 'src/app/resolvies/config.resolver';
 import { PlanoEntregaListComponent } from './plano-entrega-list/plano-entrega-list.component';
 import { PlanoEntregaFormComponent } from './plano-entrega-form/plano-entrega-form.component';
 import { PlanoEntregaListPontoControleComponent } from './plano-entrega-list-ponto-controle/plano-entrega-list-ponto-controle.component';
+import { PlanoEntregaFormPontoControleAvaliarComponent } from './plano-entrega-form-ponto-controle-avaliar/plano-entrega-form-ponto-controle-avaliar.component';
+import { PlanoEntregaListPontoControleEntregaComponent } from './plano-entrega-list-ponto-controle-entrega/plano-entrega-list-ponto-controle-entrega.component';
 
 const routes: Routes = [
   { path: '', component: PlanoEntregaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Plano de Entrega" } },
@@ -12,6 +14,8 @@ const routes: Routes = [
   { path: ':id/edit', component: PlanoEntregaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
   { path: ':id/consult', component: PlanoEntregaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } },
   { path: ':id/ponto-controle', component: PlanoEntregaListPontoControleComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Pontos de Controle do Plano de Entrega" } },
+  { path: 'ponto-controle/:id/avaliar', component: PlanoEntregaFormPontoControleAvaliarComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Avaliar Ponto de Controle" } },
+  { path: 'ponto-controle/entrega', component: PlanoEntregaListPontoControleEntregaComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Entregas do Ponto de Controle" } },
 ];
 
 @NgModule({
