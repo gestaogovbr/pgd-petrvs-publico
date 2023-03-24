@@ -2,20 +2,12 @@ import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { IIndexable } from 'src/app/models/base.model';
-import { Demanda } from 'src/app/models/demanda.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
-import { SelectItem } from 'src/app/components/input/input-base';
-import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { TipoAvaliacaoDaoService } from 'src/app/dao/tipo-avaliacao-dao.service';
-import { Atividade } from 'src/app/models/atividade.model';
-import { CalendarService, Efemerides } from 'src/app/services/calendar.service';
-import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
 import { TipoAvaliacao } from 'src/app/models/tipo-avaliacao.model';
 import { PlanoEntregaPontoControle } from 'src/app/models/plano-entrega-ponto-controle.model';
 import { PlanoEntregaPontoControleDaoService } from 'src/app/dao/plano-entrega-ponto-controle-dao.service';
-import { InputDatetimeComponent } from 'src/app/components/input/input-datetime/input-datetime.component';
-import { InputTextComponent } from 'src/app/components/input/input-text/input-text.component';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { PlanoEntregaPontoControleEntrega } from 'src/app/models/plano-entrega-ponto-controle-entrega.model';
 
@@ -40,7 +32,7 @@ export class PlanoEntregaFormPontoControleAvaliarComponent extends PageFormBase<
     super(injector, PlanoEntregaPontoControle, PlanoEntregaPontoControleDaoService);
     this.tipoAvaliacaoDao = injector.get<TipoAvaliacaoDaoService>(TipoAvaliacaoDaoService); 
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService); 
-    this.join = ["gestor", "tipo_avaliacao", ];
+    this.join = ["gestor", "tipo_avaliacao"];
     this.form = this.fh.FormBuilder({
       inicio: {default: null},
       fim: {default: null},

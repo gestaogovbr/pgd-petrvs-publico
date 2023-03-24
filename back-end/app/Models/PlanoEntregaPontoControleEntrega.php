@@ -39,5 +39,5 @@ class PlanoEntregaPontoControleEntrega extends ModelBase
 
     // Belongs
     public function pontoControle() { return $this->belongsTo(PlanoEntregaPontoControle::class, 'plano_entrega_ponto_controle_id'); }
-    public function entregaPlanoEntrega() { return $this->belongsTo(PlanoEntregaEntrega::class, 'plano_entrega_entrega_id'); }
+    public function planoEntregaEntrega() { return $this->belongsTo(PlanoEntregaEntrega::class, 'plano_entrega_entrega_id'); }
 }

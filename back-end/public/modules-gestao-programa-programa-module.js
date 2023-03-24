@@ -298,7 +298,7 @@ class ProgramaListComponent extends src_app_modules_base_page_list_base__WEBPACK
             return result;
         };
         /* Inicializações */
-        this.title = this.lex.noun("Programa de gestão", true);
+        this.title = this.lex.noun("Programa de Gestão", true);
         this.code = "MOD_PRGT";
         this.join = ["unidade"];
         this.filter = this.fh.FormBuilder({

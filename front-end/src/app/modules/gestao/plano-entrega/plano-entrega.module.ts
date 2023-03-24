@@ -7,7 +7,8 @@ import { PlanoEntregaListComponent } from './plano-entrega-list/plano-entrega-li
 import { PlanoEntregaFormComponent } from './plano-entrega-form/plano-entrega-form.component';
 import { PlanoEntregaListPontoControleComponent } from './plano-entrega-list-ponto-controle/plano-entrega-list-ponto-controle.component';
 import { PlanoEntregaFormPontoControleAvaliarComponent } from './plano-entrega-form-ponto-controle-avaliar/plano-entrega-form-ponto-controle-avaliar.component';
-import { PlanoEntregaListPontoControleEntregaComponent } from './plano-entrega-list-ponto-controle-entrega/plano-entrega-list-ponto-controle-entrega.component';
+import { PlanoEntregaPontoControleFormEntregaComponent } from './plano-entrega-ponto-controle-form-entrega/plano-entrega-ponto-controle-form-entrega.component';
+import { PlanoEntregaListEntregaComponent } from './plano-entrega-list-entrega/plano-entrega-list-entrega.component';
 
 
 @NgModule({
@@ -15,8 +16,9 @@ import { PlanoEntregaListPontoControleEntregaComponent } from './plano-entrega-l
     PlanoEntregaListComponent,
     PlanoEntregaFormComponent,
     PlanoEntregaListPontoControleComponent,
+    PlanoEntregaListEntregaComponent,
     PlanoEntregaFormPontoControleAvaliarComponent,
-    PlanoEntregaListPontoControleEntregaComponent
+    PlanoEntregaPontoControleFormEntregaComponent
   ],
   imports: [
     CommonModule,

@@ -1,4 +1,28 @@
-
+<grid [dao]="dao" [title]="isModal ? '' : title" [selectable]="selectable" (select)="onSelect($event)">
+    <columns>
+        <column title="Início" [template]="columnInicio">
+            <ng-template let-row="row" #columnInicio>
+                <span> {{dao!.getDateFormatted(row.inicio)}}</span>
+            </ng-template>
+        </column>
+        <column title="Fim" [template]="columnFim">
+            <ng-template let-row="row" #columnFim>
+                <span> {{dao!.getDateFormatted(row.fim)}}</span>
+            </ng-template>
+        </column>
+        <column title="Descrição" [template]="columnDescricao">
+            <ng-template let-row="row" #columnDescricao>
+                <span> {{ row.descricao || ''}}</span>
+            </ng-template>
+        </column>
+        <column title="Cliente" [template]="columnCliente">
+            <ng-template let-row="row" #columnCliente>
+                <span> {{ row.cliente || '' }}</span>
+            </ng-template>
+        </column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>
 
 
 <!-- Grid-List:
