@@ -10,6 +10,7 @@ use \MomentPHP\MomentPHP;
 use DateTime;
 use DateTimeZone;
 use Exception;
+use Throwable;
 
 class Interval
 {

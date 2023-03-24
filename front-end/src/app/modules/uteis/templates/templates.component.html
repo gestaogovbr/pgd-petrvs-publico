@@ -1,0 +1,37 @@
+<grid [dao]="dao" [form]="form" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="selectable"
+  [add]="addTemplate.bind(this)" [load]="loadTemplate.bind(this)" [remove]="removeTemplate.bind(this)" [save]="saveTemplate.bind(this)" editable
+  [hasAdd]="true"
+  [hasEdit]="true"
+  [hasDelete]="true">
+  <!--[hasAdd]="auth.hasPermissionTo('MOD_TEMP_INCL')"
+  [hasEdit]="auth.hasPermissionTo('MOD_TEMP_EDT')"
+  [hasDelete]="auth.hasPermissionTo('MOD_TEMP_DEL')"//-->
+  <toolbar *ngIf="!selectable"></toolbar>
+  <filter hidden [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed"></filter>
+  <side-panel [size]="8" fullSizeOnEdit [template]="panelTemplate" [editTemplate]="panelTemplateEdit">
+    <ng-template let-row="row" #panelTemplate>
+      <h5>{{row?.titulo || "Pre-view do template"}}</h5>
+      <document-preview [html]="row?.conteudo" emptyDocumentMensage="Nenhum template selecionado"></document-preview>
+    </ng-template>
+    <ng-template let-row="row" #panelTemplateEdit>
+      <div class="row">
+        <input-text [size]="12" label="Título" [control]="form!.controls.titulo"></input-text>
+      </div>
+      <div>
+        <input-editor [size]="12" label="Pre-view do template" [control]="form!.controls.conteudo"></input-editor>
+      </div>
+    </ng-template>
+  </side-panel>
+  <columns>
+    <column title="Template" [template]="columnTemplate">
+      <ng-template let-row="row" #columnTemplate>
+        <small>{{row.titulo}}</small><br>
+        <badge icon="bi bi-hash" color="light" [label]="row.numero"></badge>
+        <badge [icon]="lookup.getIcon(lookup.TEMPLATE_ESPECIE, row.especie)" [label]="lookup.getValue(lookup.TEMPLATE_ESPECIE, row.especie)" [color]="lookup.getColor(lookup.TEMPLATE_ESPECIE, row.especie)"></badge>
+      </ng-template>
+    </column>
+    <column type="options" always></column>
+  </columns>
+  <pagination [rows]="rowsLimit"></pagination>
+</grid>
+<toolbar *ngIf="selectable && !grid?.editing" [buttons]="selectButtons"></toolbar>

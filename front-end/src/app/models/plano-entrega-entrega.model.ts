@@ -1,8 +1,10 @@
 import { LookupItem } from '../services/lookup.service';
 import { Base } from './base.model';
+import { Entrega } from './entrega.model';
 
 export class PlanoEntregaEntrega extends Base {
-  
+  public entrega?: Entrega;
+
   public inicio: Date = new Date();               
   public fim: Date | null = null;                 
   public descricao: string = "";                  

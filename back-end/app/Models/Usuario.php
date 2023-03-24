@@ -60,6 +60,7 @@ class Usuario extends Authenticatable
         'vinculacao', /* enum('SERVIDOR_EFETIVO','SERVIDOR_COMISSIONADO','EMPREGADO','CONTRATADO_TEMPORARIO'); NOT NULL; DEFAULT: 'SERVIDOR_EFETIVO'; */// Vinculo do usuário com a administração
         'perfil_id', /* char(36); */
         'uf', /* char(2); */// UF do usuário
+        'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho
         //'remember_token', /* varchar(100); */
         //'password', /* varchar(255); */
         //'data_fim', /* datetime; */
@@ -69,8 +70,9 @@ class Usuario extends Authenticatable
         //'foto_google', /* text; */// Foto do G-Suit (Google)
         //'foto_microsoft', /* text; */// Foto do Azure (Microsoft)
         //'foto_firebase', /* text; */// Foto do Firebase (Google, Facebook, Instagram, Twiter, etc...)
+        //'projeto_id', /* char(36); */
+        //'projeto_tarefa_id', /* char(36); */
         //'id_super', /* text; */// Id do usuário no SUPER
-        //'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho
     ];
 
     public $fillable_changes = [
@@ -102,7 +104,7 @@ class Usuario extends Authenticatable
 
     public $delete_cascade = ['favoritos', 'lotacoes'];
 
-    // HasMany
+    // Has
     public function afastamentos() { return $this->hasMany(Afastamento::class); }
     public function avaliacoes() { return $this->hasMany(DemandaAvaliacao::class); }
     public function demandas() { return $this->hasMany(Demanda::class); }

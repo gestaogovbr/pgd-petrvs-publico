@@ -8,7 +8,7 @@ use App\Traits\HasDataFim;
 use Illuminate\Support\Facades\DB; 
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 
-class PlanoEntregaEntrega extends ModelBase
+class   PlanoEntregaEntrega extends ModelBase
 {
     use AutoDataInicio, HasDataFim;
 

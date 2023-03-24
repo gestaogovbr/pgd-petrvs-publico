@@ -17,7 +17,7 @@ export class BadgeComponent extends ComponentBase implements OnInit {
   @Input() rounded: boolean = true;
   @Input() set class(value: string) {
     if(value != this._class) {
-      this._class = value;
+      this._class = " " + value;
       this.cdRef.detectChanges();
     }
   }

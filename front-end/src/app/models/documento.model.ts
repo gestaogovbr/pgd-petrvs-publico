@@ -3,7 +3,6 @@ import { Base } from './base.model';
 import { DocumentoAssinatura } from './documento-assinatura.model';
 import { Entidade } from './entidade.model';
 import { Plano } from './plano.model';
-import { Template } from './template.model';
 import { TipoDocumento } from './tipo-documento.model';
 import { TipoProcesso } from './tipo-processo.model';
 

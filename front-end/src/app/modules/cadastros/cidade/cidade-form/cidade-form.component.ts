@@ -13,11 +13,9 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 })
 export class CidadeFormComponent extends PageFormBase<Cidade, CidadeDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  
 
   constructor(public injector: Injector) {
     super(injector, Cidade, CidadeDaoService);
-
     this.form = this.fh.FormBuilder({
       codigo_ibge: {default: ""},
       nome: {default: ""},

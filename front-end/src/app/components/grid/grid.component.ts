@@ -17,6 +17,7 @@ import { FilterComponent } from './filter/filter.component';
 import { GridColumn } from './grid-column';
 import { PaginationComponent } from './pagination/pagination.component';
 import { ReportComponent } from './report/report.component';
+import { SidePanelComponent } from './side-panel/side-panel.component';
 
 export type GroupBy = {field: string, label: string, value?: any};
 
@@ -47,6 +48,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   @ContentChild(ColumnsComponent) columnsRef?: ColumnsComponent;
   @ContentChild(ReportComponent) reportRef?: ReportComponent;
   @ContentChild(FilterComponent) filterRef?: FilterComponent;
+  @ContentChild(SidePanelComponent) sidePanel?: SidePanelComponent;
   @ContentChild(ToolbarComponent) toolbarRef?: ToolbarComponent;
   @ContentChild(PaginationComponent) paginationRef?: PaginationComponent;
   @ViewChild(FormGroupDirective) formDirective?: FormGroupDirective;
@@ -162,7 +164,6 @@ export class GridComponent extends ComponentBase implements OnInit {
   private _items?: IIndexable[];
   private _visible: boolean = true;
   private _exporting: boolean = false;
-  //private _multiselectDynamicMenu: ToolbarButton[] = [];
   private filterCollapsedOnMultiselect: boolean = false;
 
   /* Propriedades publicas */
@@ -203,7 +204,7 @@ export class GridComponent extends ComponentBase implements OnInit {
     label: "Filtros",
     onClick: () => this.filterRef?.toggle()
   };
-  public addToolbarButtonClick = (async () => await (this.add ? this.add() : this.go.navigate(this.addRoute!, this.addMetadata))).bind(this);
+  public addToolbarButtonClick = (async () => await (this.add ? (this.isEditable && this.hasToolbar ? this.onAddItem() : this.add()) : this.go.navigate(this.addRoute!, this.addMetadata))).bind(this);
   public BUTTON_ADD: ToolbarButton = {
     icon: "bi bi-plus-circle",
     color: "btn-outline-success",
@@ -254,6 +255,27 @@ export class GridComponent extends ComponentBase implements OnInit {
       }
     ]
   };
+  public panelButtons: ToolbarButton[] = [
+    {
+      label: "Gravar",
+      icon: "bi-check-circle",
+      color: "btn-outline-success",
+      dynamicVisible: (() => this.form!.valid).bind(this),
+      onClick: (() => this.onSaveItem(this.editing!)).bind(this)
+    },
+    {
+      label: "Gravar",
+      icon: "bi-exclamation-circle",
+      color: "btn-outline-success",
+      dynamicVisible: (() => !this.form!.valid).bind(this)
+    },
+    {
+      label: "Cancelar",
+      icon: "bi-dash-circle",
+      color: "btn-outline-danger",
+      onClick: this.onCancelItem.bind(this)
+    }
+  ];
 
   constructor(public injector: Injector) {
     super(injector);
@@ -316,6 +338,10 @@ export class GridComponent extends ComponentBase implements OnInit {
     return this.editable != undefined; //|| (this.hasItems && !!this.add);
   }
 
+  public get isSelectable(): boolean { /* Considera o sidePanel */
+    return this.selectable || !!this.sidePanel;
+  }
+
   /* Utilizado para caso esteja editando irá confirmar a gravação */
   public async confirm() {
     if(this.editing) return await this.saveItem(this.editing);
@@ -353,16 +379,10 @@ export class GridComponent extends ComponentBase implements OnInit {
         if(buffer != JSON.stringify(items[i]._group)) {
           buffer = JSON.stringify(items[i]._group);
           this.groupIds[items[i].id] = new GridGroupSeparator(items[i]._group);
-          //items.splice(i, 0, new GridGroupSeparator(items[i]._group));
         }
       }
     }
-    //return items;
   }
-
-  /*public ungroup(items: IIndexable[]) {
-    return items.filter(x => !(x instanceof GridGroupSeparator));
-  }*/
 
   public report() {
     if(this.reportRef) {
@@ -371,16 +391,6 @@ export class GridComponent extends ComponentBase implements OnInit {
       })();
     }
   }
-
-  /*public get multiselectDynamicMenu(): ToolbarButton[] {
-    if(this.dynamicMultiselectMenu) {
-      const menu = this.dynamicMultiselectMenu(this.multiselected);
-      if(JSON.stringify(menu) != JSON.stringify(this._multiselectDynamicMenu)) this._multiselectDynamicMenu = menu;
-      return this._multiselectDynamicMenu;
-    } else {
-      return [];
-    }
-  }*/
 
   public refreshMultiselectToolbar() {
     if(this.toolbarRef) this.toolbarRef!.buttons = this.multiselecting ? [this.BUTTON_MULTISELECT, ...(this.multiselectMenu || []), ...(this.dynamicMultiselectMenu ? this.dynamicMultiselectMenu(this.multiselected) : [])] : [...(this.initialButtons || []), ...this.toolbarButtons];
@@ -509,7 +519,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   }
 
   public isEditableGridOptions(column: GridColumn) {
-    return column.type == 'options' && (this.isEditable || this.selectable) && this.hasAdd && !this.hasToolbar;
+    return column.type == 'options' && (this.isEditable || this.isSelectable) && this.hasAdd && !this.hasToolbar;
   }
 
   public get expandedColumn(): GridColumn | undefined {
@@ -544,10 +554,6 @@ export class GridComponent extends ComponentBase implements OnInit {
     });
   }
 
-  /*public getColumnClass(column: GridColumn) {
-    return "grid-column" + (column.isType('expand') ? " align-bottom" : "");
-  }*/
-
   public onEditItem(row: any) {
     if(!this.editing) {
       this.editing = row; /* Previne multiplas chamadas para inserir */
@@ -563,6 +569,7 @@ export class GridComponent extends ComponentBase implements OnInit {
       const index = remove ? this.items.findIndex(x => x["id"] == row["id"]) : -1;
       if(index >= 0) this.items.splice(index, 1);
       this.group(this.items);
+      this.selected = undefined;
       this.cdRef.detectChanges();
     })();
   }
@@ -578,7 +585,6 @@ export class GridComponent extends ComponentBase implements OnInit {
             newItem["id"] = this.dao ? this.dao.generateUuid() : this.util.md5();
           }
           this.items.push(newItem);
-          //this.adding = true;
           await this.edit(newItem);
         } else {
           this.adding = false;
@@ -597,7 +603,6 @@ export class GridComponent extends ComponentBase implements OnInit {
           this.editing = this.items[index];
         }
       }
-      //this.control?.setValue(this.ungroup(this.items));
       this.group(this.items);
       this.control?.setValue(this.items);
       this.cdRef.detectChanges();
@@ -621,7 +626,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   }
 
   public getMetadata(row: any): IIndexable {
-    if(row.id) {
+    if(row?.id) {
       if(!this.metadatas[row.id]) this.metadatas[row.id] = {} as IIndexable;
       return this.metadatas[row.id];
     }
@@ -633,7 +638,10 @@ export class GridComponent extends ComponentBase implements OnInit {
   }
 
   public async edit(itemRow: Base | IIndexable) {
+    if(this.isSelectable && itemRow) this.onRowClick(new Event("SelectByEdit"), itemRow);
     this.editing = itemRow;
+    if(this.filterRef) this.filterRef.visible = false;
+    if(this.toolbarRef) this.toolbarRef.visible = false;
     if(this.load) {
       await this.load(this.form, itemRow);
     } else {
@@ -648,12 +656,16 @@ export class GridComponent extends ComponentBase implements OnInit {
     this.editing = undefined;
     this.adding = false;
     this.items = this.items;
+    if(this.filterRef) this.filterRef.visible = true;
+    if(this.toolbarRef) this.toolbarRef.visible = true;
     this.cdRef.detectChanges();
+    if(this.isSelectable) this.onRowClick(new Event("SelectByEdit"), this.items.find(x => x.id == editedId)!);
     if(this.editEnd) this.editEnd(editedId);
   }
 
   public onRowClick(event: Event, row: Base | IIndexable) {
-    if(this.selectable) {
+    if(this.isSelectable) {
+      if(this.editing != row) this.onCancelItem();
       this.selected = row;
       this.cdRef.detectChanges();
       if(this.select) this.select.emit(row);
@@ -662,9 +674,19 @@ export class GridComponent extends ComponentBase implements OnInit {
 
   public selectById(id: string): any {
     let row = this.items.find(x => x.id == id);
-    if(this.selectable && row) this.onRowClick(new Event("SelectById"), row);
+    if(this.isSelectable && row) this.onRowClick(new Event("SelectById"), row);
     return row;
   }
+
+  /* Side panel ****************************************************************/
+  public get classColTable(): string {
+    return this.sidePanel ? "col-md-" + (12 - this.sidePanel.size) + (this.sidePanel.isFullSizeOnEdit && this.editing ? " d-none" : "") : "col-md-12";
+  }
+
+  public get classColPanel(): string {
+    return "col-md-" + (this.sidePanel!.isFullSizeOnEdit && this.editing ? 12 : this.sidePanel!.size);
+  }
+  /**************************************************************** Side panel */
 
   public isInvalid(): boolean {
     return !!this.control?.invalid && (this.control!.dirty || this.control!.touched);

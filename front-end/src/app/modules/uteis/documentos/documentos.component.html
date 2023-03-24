@@ -1,39 +1,52 @@
-<div class="row">
-  <div class="col-3" [class.d-none]="!!grid?.editing">
-    <grid [items]="items" [form]="form!" #gridDocumentos [hasEdit]="true" [hasDelete]="false" [hasAdd]="true" [add]="addDocumento.bind(this)" [save]="saveDocumento.bind(this)" [editEnd]="editEndDocumento.bind(this)" editable [selectable]="true" (select)="onSelect($event)">
-      <columns>
-        <column title="#ID/Especie" [template]="documentoTemplate">
-          <ng-template let-row="row" let-metadata="metadata" #documentoTemplate>
-            <div class="row">
-              <strong>#{{row.numero}}<small> • {{util.getDateTimeFormatted(row.data_inicio)}}</small></strong>
-            </div>
-            <div class="row">
-              <small>{{row.titulo_documento}}</small>
-            </div>
-            <div class="row">
-              <div class="col-6 text-nowrap">
-                <badge [color]="lookup.getColor(lookup.DOCUMENTO_ESPECIE, row.especie)" icon="bi bi-hash" [label]="lookup.getValue(lookup.DOCUMENTO_ESPECIE, row.especie)"></badge>
-                <badge *ngIf="row.numero_processo?.length" icon="bi bi-folder-symlink" [click]="onProcessoClick" [hint]="allPages.getButtonTitle(row.numero_processo, row.numero_documento)">
-                  {{row.numero_processo || "Não atribuído"}}<br>
-                  <small>Sei nº {{row.numero_documento}}</small>
-                </badge>
-                <badge [color]="lookup.getColor(lookup.DOCUMENTO_STATUS, row.status)" [icon]="lookup.getIcon(lookup.DOCUMENTO_STATUS, row.status)" [label]="lookup.getValue(lookup.DOCUMENTO_STATUS, row.status)"></badge>
-                <badge *ngFor="let tag of extraTags(entity!, row, metadata)" [color]="tag.color" [icon]="tag.icon" [label]="tag.value"></badge>
-              </div>
-              <div class="col-6">
-                <separator *ngIf="row.assinaturas?.length" title="Assinaturas" small>
-                  <profile-picture *ngFor="let assinatura of row.assinaturas" [url]="assinatura.usuario?.url_foto" [hint]="util.apelidoOuNome(assinatura.usuario)"></profile-picture>
-                </separator>
-              </div>
-            </div>
-          </ng-template>
-        </column>
-        <column type="options" [dynamicButtons]="documentoDynamicButtons.bind(this)"></column>
-      </columns>
-    </grid>
-  </div>
-  <div [class]="!grid?.editing ? 'col-9' : 'col-12'">
-    <editable-form *ngIf="selected; else noSelected" noButtons [form]="form!" [disabled]="!grid?.editing">
+<grid [items]="items" [form]="form!" #gridDocumentos [hasEdit]="true" editable [selectable]="true"
+  [add]="addDocumento.bind(this)" [load]="loadDocumento.bind(this)" [remove]="removeDocumento.bind(this)" [save]="saveDocumento.bind(this)" [editEnd]="editEndDocumento.bind(this)"
+  [hasAdd]="true"
+  [hasEdit]="true"
+  [hasDelete]="false">
+  <side-panel [size]="8" fullSizeOnEdit [noToolbar]="editingId ? 'true' : undefined" [template]="panelDocumento" [editTemplate]="panelDocumentoEdit">
+    <ng-template let-row="row" #panelDocumento>
+      <h5>{{row?.titulo || "Pre-view do template"}}</h5>
+      <document-preview [html]="row?.conteudo" emptyDocumentMensage="Nenhum documento selecionado"></document-preview>
+    </ng-template>
+    <ng-template let-row="row" #panelDocumentoEdit>
+      <div class="row">
+        <input-text [size]="12" label="Título" [control]="form!.controls.titulo"></input-text>
+      </div>
+      <div>
+        <input-editor [size]="12" label="Conteúdo" [control]="form!.controls.conteudo" [canEditTemplate]="canEdit" [template]="form!.controls.template.value" [datasource]="form!.controls.datasource.value"></input-editor>
+      </div>
+    </ng-template>
+  </side-panel>
+  <columns>
+    <column title="#ID/Especie" [template]="documentoTemplate">
+      <ng-template let-row="row" let-metadata="metadata" #documentoTemplate>
+        <div class="row">
+          <strong>#{{row.numero}}<small> • {{util.getDateTimeFormatted(row.data_inicio)}}</small></strong>
+        </div>
+        <div class="row">
+          <small>{{row.titulo_documento}}</small>
+        </div>
+        <div class="row">
+          <div class="col-12 text-nowrap">
+            <badge [color]="lookup.getColor(lookup.DOCUMENTO_ESPECIE, row.especie)" icon="bi bi-hash" [label]="lookup.getValue(lookup.DOCUMENTO_ESPECIE, row.especie)"></badge>
+            <badge *ngIf="row.numero_processo?.length" icon="bi bi-folder-symlink" [click]="documentoService.onProcessoClick.bind(this)" [hint]="documentoService.processoHint(row)">
+              {{row.numero_processo || "Não atribuído"}}<br>
+              <small>Sei nº {{row.numero_documento}}</small>
+            </badge>
+            <badge [color]="lookup.getColor(lookup.DOCUMENTO_STATUS, row.status)" [icon]="lookup.getIcon(lookup.DOCUMENTO_STATUS, row.status)" [label]="lookup.getValue(lookup.DOCUMENTO_STATUS, row.status)"></badge>
+            <badge *ngFor="let tag of extraTags(entity!, row, metadata)" [color]="tag.color" [icon]="tag.icon" [label]="tag.value"></badge>
+            <separator *ngIf="row.assinaturas?.length" title="Assinaturas" small transparent>
+              <profile-picture *ngFor="let assinatura of row.assinaturas" [url]="assinatura.usuario?.url_foto" [hint]="util.apelidoOuNome(assinatura.usuario)"></profile-picture>
+            </separator>
+          </div>
+        </div>
+      </ng-template>
+    </column>
+    <column type="options" [dynamicButtons]="documentoDynamicButtons.bind(this)"></column>
+  </columns>
+</grid>
+
+    <!--editable-form *ngIf="selected; else noSelected" noButtons [form]="form!" [disabled]="!grid?.editing">
       <div class="row">
         <input-text [size]="12" label="Título" [control]="form!.controls.titulo"></input-text>
       </div>
@@ -48,4 +61,4 @@
     </ng-template>
   </div>
 </div>
-<toolbar *ngIf="!editingId?.length && !!grid?.editing" [buttons]="editingButtons"></toolbar>
+<toolbar *ngIf="!editingId?.length && !!grid?.editing" [buttons]="editingButtons"></toolbar/-->

@@ -69,6 +69,21 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
   public loadFilterParams?: (params: any, filter?: FormGroup) => void;
   public entities: LogEntity[] = [];
   public entity?: LogEntity;
+  public selectButtons: ToolbarButton[] = [
+    {
+      color: "btn-outline-success",
+      label: "Selecionar",
+      icon: "bi-check-circle",
+      disabled: () => !this.grid?.selected,
+      onClick: () => this.onSelect(this.grid!.selected!)
+    },
+    {
+      color: "btn-outline-danger",
+      label: "Cancelar",
+      icon: "bi bi-dash-circle",
+      onClick: () => this.close()
+    }
+  ];
 
   constructor(public injector: Injector, mType: Type<M>, dType: Type<D>) {
     super(injector);
@@ -81,7 +96,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
       {table: 'feriados', campo: 'nome', dao: injector.get<FeriadoDaoService>(FeriadoDaoService), label: "Feriado", selectRoute: {route: ['cadastros', 'feriado']}},
       {table: 'materiais_servicos', campo: 'descricao', dao: injector.get<MaterialServicoDaoService>(MaterialServicoDaoService), label: "Material/Serviço", selectRoute: {route: ['cadastros', 'material-servico']}},
       {table: 'perfis', campo: 'nome', dao: injector.get<PerfilDaoService>(PerfilDaoService), label: "Perfil", selectRoute: {route: ['configuracoes', 'perfil']}},
-      {table: 'planos', campo: 'numero', dao: injector.get<PlanoDaoService>(PlanoDaoService), label: "Plano", selectRoute: {route: ['gestao', 'plano-trabalho']}},
+      {table: 'planos', campo: 'numero', dao: injector.get<PlanoDaoService>(PlanoDaoService), label: "Plano", selectRoute: {route: ['gestao', 'plano']}},
       {table: 'programas', campo: 'nome', dao: injector.get<ProgramaDaoService>(ProgramaDaoService), label: "Programa", selectRoute: {route: ['gestao', 'programa']}},
       {table: 'projetos', campo: 'nome', dao: injector.get<ProjetoDaoService>(ProjetoDaoService), label: "Projeto", selectRoute: {route: ['gestao', 'projeto']}},
       {table: 'tarefas', campo: 'nome', dao: injector.get<TarefaDaoService>(TarefaDaoService), label: "Tarefa", selectRoute: {route: ['cadastros', 'tarefa']}},
@@ -163,9 +178,6 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
   ngOnInit() {
     super.ngOnInit();
     this.selectable = !!this.queryParams?.selectable;
-    if(this.selectable) {
-      this.title = "Selecionar " + this.title;
-    }
   }
 
   ngAfterViewInit() {
@@ -185,6 +197,9 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
     }
     if(this.queryParams?.fixedFilter) {
       this.fixedFilter = this.queryParams?.fixedFilter;
+    }
+    if(this.selectable && !this.title.startsWith("Selecionar ")) {
+      this.title = "Selecionar " + this.title;
     }
     this.onLoad();
   }

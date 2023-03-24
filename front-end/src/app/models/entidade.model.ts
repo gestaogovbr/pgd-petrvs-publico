@@ -2,7 +2,6 @@ import { LookupItem } from '../services/lookup.service';
 import { Base } from './base.model';
 import { Cidade } from './cidade.model';
 import { Expediente } from './expediente.model';
-import { Template } from './template.model';
 import { TipoModalidade } from './tipo-modalidade.model';
 import { Usuario } from './usuario.model';
 

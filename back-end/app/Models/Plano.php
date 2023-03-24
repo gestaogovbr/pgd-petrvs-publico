@@ -7,6 +7,8 @@ use App\Models\Usuario;
 use App\Models\Unidade;
 use App\Models\Programa;
 use App\Models\Documento;
+use App\Models\PlanoEntrega;
+use App\Models\PlanoTrabalhoEntrega;
 use App\Models\TipoModalidade;
 use App\Models\PlanoAtividade;
 use App\Traits\AutoDataInicio;
@@ -36,11 +38,11 @@ class Plano extends ModelBase
         'documento_id', /* char(36); */
         'tipo_modalidade_id', /* char(36); NOT NULL; */
         'forma_contagem_carga_horaria', /* enum('DIA','SEMANA','MES'); NOT NULL; DEFAULT: 'DIA'; */// Forma de contagem padrão da carga horária
+        'plano_entrega_id', /* char(36); */
         //'data_fim', /* datetime; */// Data fim da vigência
-        //'plano_entrega_id', /* char(36); */
     ];
 
-    public $fillable_changes = ['atividades', 'documentos'];
+    public $fillable_changes = ['atividades', 'entregas', 'documentos'];
 
     public $delete_cascade = ['atividades', 'documentos'];
 
@@ -53,6 +55,7 @@ class Plano extends ModelBase
 
     // Has
     public function atividades() { return $this->hasMany(PlanoAtividade::class); }
+    public function entregas() { return $this->hasMany(PlanoTrabalhoEntrega::class); }
     public function documentos() { return $this->hasMany(Documento::class); }
     public function demandas() { return $this->hasMany(Demanda::class); }
     // Belongs
@@ -60,5 +63,6 @@ class Plano extends ModelBase
     public function programa() { return $this->belongsTo(Programa::class, 'programa_id'); }
     public function unidade() { return $this->belongsTo(Unidade::class, 'unidade_id'); }
     public function tipoModalidade() { return $this->belongsTo(TipoModalidade::class, 'tipo_modalidade_id'); }
+    public function planoEntrega() { return $this->belongsTo(PlanoEntrega::class, 'plano_entrega_id'); }
     public function documento() { return $this->belongsTo(Documento::class, 'documento_id'); }
 }

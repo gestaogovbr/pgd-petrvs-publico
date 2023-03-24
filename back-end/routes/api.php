@@ -21,6 +21,7 @@ use App\Http\Controllers\EixoTematicoController;
 use App\Http\Controllers\ErrorController;
 use App\Http\Controllers\TrafficController;
 use App\Http\Controllers\ProgramaController;
+use App\Http\Controllers\ProgramaParticipanteController;
 use App\Http\Controllers\PlanejamentoController;
 use App\Http\Controllers\PlanejamentoObjetivoController;
 use App\Http\Controllers\PlanoController;
@@ -143,6 +144,7 @@ Route::middleware(['auth:sanctum'])->prefix('Feriado')->group(function () { defa
 Route::middleware(['auth:sanctum'])->prefix('MaterialServico')->group(function () { defaultRoutes(MaterialServicoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('PlanejamentoObjetivo')->group(function () { defaultRoutes(PlanejamentoObjetivoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Programa')->group(function () { defaultRoutes(ProgramaController::class); });
+Route::middleware(['auth:sanctum'])->prefix('ProgramaParticipante')->group(function () { defaultRoutes(ProgramaParticipanteController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Tarefa')->group(function () { defaultRoutes(TarefaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Template')->group(function () { defaultRoutes(TemplateController::class); });
 Route::middleware(['auth:sanctum'])->prefix('CadeiaValor')->group(function () { defaultRoutes(CadeiaValorController::class); });

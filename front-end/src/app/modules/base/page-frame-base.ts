@@ -36,6 +36,12 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
   public get entity(): any {
     return this._entity;
   }
+  public set noPersist(value: string | undefined) {
+    if(this._noPersist != value) this._noPersist = value;
+  }
+  public get noPersist(): string | undefined {
+    return this._noPersist;
+  }
 
   protected _entity: any = undefined;
   protected _noPersist?: string = undefined;
@@ -46,6 +52,7 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
   public join: string[] = [];
   public orderBy?: QueryOrderBy[];
   public groupBy?: GroupBy[];
+
   constructor(public injector: Injector) {
     super(injector);
   }

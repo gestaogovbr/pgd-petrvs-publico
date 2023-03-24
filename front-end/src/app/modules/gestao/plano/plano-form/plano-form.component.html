@@ -2,16 +2,17 @@
     <tabs #tabs display right [hidden]="isTermos ? 'true' : undefined" [title]="!isModal ? title : ''">
         <tab key="DADOS" label="Dados">
             <div class="row">
-                <input-search #programa [size]="6" label="Programa" icon="bi bi-layout-text-window-reverse" controlName="programa_id" [control]="form!.controls.programa_id" [join]="['template_tcr']" [dao]="programaDao" (select)="onProgramaSelect($event)" [selectRoute]="{route: ['gestao', 'programa']}"></input-search>
+                <input-search #unidade [size]="6" label="Unidade" icon="fab fa-unity" controlName="unidade_id" [control]="form!.controls.unidade_id" [join]="['entidade']" [dao]="unidadeDao" (select)="onUnidadeSelect($event)" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
                 <input-search #usuario [size]="6" label="Usuário" icon="bi bi-person" controlName="usuario_id" [control]="form!.controls.usuario_id" [dao]="usuarioDao" [join]="['afastamentos']" (select)="onUsuarioSelect($event)" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
             </div>
             <div class="row">
-                <input-datetime [size]="6" label="Início" icon="bi bi-calendar-date" controlName="data_inicio_vigencia" [control]="form!.controls.data_inicio_vigencia" (change)="onDataInicioChange($event)" labelInfo="Início da Vigência do Plano de Trabalho"></input-datetime>
-                <input-datetime [size]="6" label="Final" icon="bi bi-calendar-date" controlName="data_fim_vigencia" [control]="form!.controls.data_fim_vigencia" (change)="onDataFimChange($event)" labelInfo="Final da Vigência do Plano de Trabalho"></input-datetime>
+                <input-search #programa [size]="6" label="Programa" icon="bi bi-layout-text-window-reverse" controlName="programa_id" [control]="form!.controls.programa_id" [join]="['template_tcr']" [dao]="programaDao" (select)="onProgramaSelect($event)" [selectRoute]="{route: ['gestao', 'programa']}"></input-search>
+                <input-search #planoEntrega [size]="6" label="Plano de Entrega" icon="bi bi-list-check" controlName="plano_entrega_id" [control]="form!.controls.plano_entrega_id" [join]="['entregas.entrega']" [dao]="planoEntregaDao" (select)="onPlanoEntregaSelect($event)" [selectRoute]="{route: ['gestao', 'plano-entrega']}"></input-search>
             </div>
             <div class="row">
-                <input-search #unidade [size]="6" label="Unidade" icon="fab fa-unity" controlName="unidade_id" [control]="form!.controls.unidade_id" [join]="['entidade']" [dao]="unidadeDao" (select)="onUnidadeSelect($event)" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
-                <input-search #tipo_modalidade [size]="6" label="Modalidade" icon="bi bi-cast" controlName="tipo_modalidade_id" [control]="form!.controls.tipo_modalidade_id" [dao]="tipoModalidadeDao" (select)="onTipoModalidadeSelect($event)" [selectRoute]="{route: ['cadastros', 'tipo-modalidade']}"></input-search>
+                <input-datetime [size]="3" label="Início" icon="bi bi-calendar-date" controlName="data_inicio_vigencia" [control]="form!.controls.data_inicio_vigencia" (change)="onDataInicioChange($event)" labelInfo="Início da Vigência do Plano de Trabalho"></input-datetime>
+                <input-datetime [size]="3" label="Final" icon="bi bi-calendar-date" controlName="data_fim_vigencia" [control]="form!.controls.data_fim_vigencia" (change)="onDataFimChange($event)" labelInfo="Final da Vigência do Plano de Trabalho"></input-datetime>
+                <input-search #tipoModalidade [size]="6" label="Modalidade" icon="bi bi-cast" controlName="tipo_modalidade_id" [control]="form!.controls.tipo_modalidade_id" [dao]="tipoModalidadeDao" (select)="onTipoModalidadeSelect($event)" [selectRoute]="{route: ['cadastros', 'tipo-modalidade']}"></input-search>
             </div>
             <div class="row">
                 <input-workload [size]="3" [unit]="formaContagemCargaHoraria" label="Carga Horária" icon="bi bi-hourglass-split" controlName="carga_horaria" [control]="form!.controls.carga_horaria" [unitChange]="onFormaContagemCargaHorariaChange.bind(this)" (change)="onCargaHorariaChenge($event)" labelInfo="Carga horária do usuário (Máx.: diária 24 horas; semana 24*5=240 horas; mensal 24*20=480 horas)"></input-workload>
@@ -44,6 +45,33 @@
                 </grid>
             </div>
         </tab>
+        <tab key="ENTREGAS" label="Entregas">
+            <top-alert type="warning" message="Entregas do plano de entregas da unidade"></top-alert>
+            <div clss="row">
+                <grid #gridEntregas [control]="form!.controls.entregas" [form]="formEntregas" [add]="addEntregas.bind(this)" [load]="loadEntregas.bind(this)" [hasDelete]="true" [remove]="removeEntregas.bind(this)" [save]="saveEntregas.bind(this)" editable>
+                    <columns>
+                        <column title="Entrega" titleHint="Entrega do plano de entregas da unidade" [template]="columnEntrega" [editTemplate]="editEntrega">
+                            <ng-template let-row="row" #columnEntrega>
+                                <strong>{{row.entrega?.entrega?.nome || ""}}</strong><br>
+                                <small>{{row.entrega?.descricao}}</small>
+                            </ng-template>
+                            <ng-template let-row="row" #editEntrega>
+                                <input-select [size]="12" #entrega controlName="entrega_id" [control]="formEntregas!.controls.entrega_id" [items]="entregas"></input-select>
+                            </ng-template>
+                        </column>
+                        <column title="Detalhamento" titleHint="Detalhamento da entrega" [template]="columnDetalhamento" [editTemplate]="editDetalhamento">
+                            <ng-template let-row="row" #columnDetalhamento>
+                                <span> {{row.nome || ""}}</span>
+                            </ng-template>
+                            <ng-template let-row="row" #editDetalhamento>
+                                <input-text [size]="12" controlName="nome" [control]="formEntregas!.controls.nome"></input-text>
+                            </ng-template>
+                        </column>
+                        <column type="options"></column>
+                    </columns>
+                </grid>
+            </div>
+        </tab>
         <tab *ngIf="checkFilled(['usuario_id', 'unidade_id'])" key="MENSAGENS" label="Texto Complementar">
             <separator title="Texto complementar da unidade">
                 <input-switch controlName="editar_texto_complementar_unidade" [size]="12" scale="small" labelPosition="right" label="Editar texto complementar na unidade"></input-switch>
@@ -57,7 +85,7 @@
         <tab *ngIf="checkFilled(['programa_id', 'usuario_id', 'unidade_id', 'tipo_modalidade_id'])" key="TERMO" label="Termo">
             <!--top-alert *ngIf="!isTermos" type="warning" message="Para [INSERIR] ou [ASSINAR] termos escolha opção Termos de adesão na tela de listagem, ou utilize o Sei"></top-alert/-->
             <div clss="row">
-                <documentos #documentos [entity]="entityDocumentos" noPersist [cdRef]="cdRef" [needSign]="planoService.needSign" [extraTags]="planoService.extraTags" especie="TCR" [editingId]="form!.controls.documento_id.value" [datasource]="datasource" [template]="template"></documentos>
+                <documentos #documentos [entity]="entityDocumentos" noPersist [cdRef]="cdRef" [needSign]="planoService.needSign" [extraTags]="planoService.extraTags" especie="TCR" [editingId]="documentoId" [datasource]="datasource" [template]="template"></documentos>
                 <!--grid [control]="form!.controls.documentos" #gridDocumentos [disabled]="undefined" #documentos [hasEdit]="false" [hasDelete]="false" [hasAdd]="isTermos" [add]="isTermos ? addDocumento.bind(this) : undefined" editable>
                     <columns>
                         <column title="Data" [template]="dataInicio">

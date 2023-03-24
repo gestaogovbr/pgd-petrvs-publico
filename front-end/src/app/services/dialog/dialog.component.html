@@ -9,7 +9,7 @@
                 <button type="button" class="btn-close" [class.btn-no-left-margin]="gb.isEmbedded" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div *ngIf="html?.length" [innerHTML]="html"></div>
+                <document-preview *ngIf="html?.length" noMargin [html]="html"></document-preview>
                 <ng-template #body></ng-template>
                 <ng-container *ngIf="template" [ngTemplateOutlet]="template" [ngTemplateOutletContext]="templateContext"></ng-container>
                 {{message}}
