@@ -32,7 +32,7 @@ export class PlanoEntregaListPontoControleComponent extends PageListBase<PlanoEn
       inicio: {default: ""},
       fim: {default: ""}
     });
-    this.join = ['gestor:nome','tipo_avaliacao','avaliador:nome'];
+    this.join = ['gestor:nome','tipo_avaliacao','avaliador:nome', 'entregas', 'entregas.plano_entrega_entrega'];
     // Testa se o usuário possui permissão para exibir pontos de controle
     if (this.auth.hasPermissionTo("MOD_PENT_PCTR_CONS")) {
       this.options.push({
@@ -111,8 +111,7 @@ export class PlanoEntregaListPontoControleComponent extends PageListBase<PlanoEn
    * e está definido um gestor a ser avaliado.
    */
     public isAvailable(row: PlanoEntregaPontoControle): boolean {
-      //return row.tipo_avaliacao_id == null && row.gestor_id != null;
-      return true;
+      return row.tipo_avaliacao_id == null && row.gestor_id != null;
     }
 
 

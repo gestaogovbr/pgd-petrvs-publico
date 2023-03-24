@@ -37,11 +37,12 @@ class   PlanoEntregaEntrega extends ModelBase
 
     //Casting
     protected $casts = [
-        'meta' => AsArrayObject::class
+        'meta' => AsArrayObject::class,
+        'realizado' => AsArrayObject::class
     ];
 
     // HasMany
-    public function entregasPontosControle() { return $this->hasMany(PlanoEntregaPontoControleEntrega::class, 'plano_entrega_entrega_id'); }
+    public function planoEntregaPontoControleEntregas() { return $this->hasMany(PlanoEntregaPontoControleEntrega::class, 'plano_entrega_entrega_id'); }
     
     // Belongs
     public function planoEntrega() { return $this->belongsTo(PlanoEntrega::class, 'plano_entrega_id'); }

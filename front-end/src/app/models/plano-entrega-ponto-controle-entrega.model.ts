@@ -4,8 +4,8 @@ import { PlanoEntregaEntrega } from './plano-entrega-entrega.model';
 import { PlanoEntregaPontoControle } from './plano-entrega-ponto-controle.model';
 
 export class PlanoEntregaPontoControleEntrega extends Base {
-  public pontoControle?: PlanoEntregaPontoControle;
-  public entregaPlanoEntrega?: PlanoEntregaEntrega;  
+  public plano_entrega_ponto_controle?: PlanoEntregaPontoControle;
+  public plano_entrega_entrega?: PlanoEntregaEntrega;  
 
   public meta: LookupItem | null = null;                  // Meta para a entrega
   public realizado: LookupItem | null = null;             // Valor realizado

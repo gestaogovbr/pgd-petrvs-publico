@@ -174,7 +174,7 @@ class EixoTematicoListComponent extends src_app_modules_base_page_list_base__WEB
             return result;
         };
         /* Inicializações */
-        this.title = 'Eixos temáticos';
+        this.title = this.lex.noun('Eixo Temático', true);
         this.orderBy = [['nome', 'asc']];
         this.filter = this.fh.FormBuilder({
             nome: { default: "" }
