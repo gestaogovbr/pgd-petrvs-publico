@@ -27,7 +27,7 @@
           <small>{{row.titulo_documento}}</small>
         </div>
         <div class="row">
-          <div class="col-12 text-nowrap">
+          <div class="col-12 text-wrap">
             <badge [color]="lookup.getColor(lookup.DOCUMENTO_ESPECIE, row.especie)" icon="bi bi-hash" [label]="lookup.getValue(lookup.DOCUMENTO_ESPECIE, row.especie)"></badge>
             <badge *ngIf="row.numero_processo?.length" icon="bi bi-folder-symlink" [click]="documentoService.onProcessoClick.bind(this)" [hint]="documentoService.processoHint(row)">
               {{row.numero_processo || "Não atribuído"}}<br>

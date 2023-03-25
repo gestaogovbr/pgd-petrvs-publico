@@ -183,6 +183,7 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PRGT_EXCL", "Permite excluir programas de gestão"],
         ["MOD_PRGT_INCL", "Permite incluir programas de gestão"],
         ["MOD_PROC_INCL", "Permite incluir tipos de processos"],
+        ["MOD_PRGT_PART", "Participantes do programa"],
         /* Capacidades do módulo PROJETO*/
         ["MOD_PROJ", "Permite acessar módulo projetos"],
         ["MOD_PROJ_CONS", "Permite consultar projeto"],
