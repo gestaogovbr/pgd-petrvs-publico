@@ -1,0 +1,90 @@
+<body>
+    <div class="saudacao">
+        <h2 class="msgSaudacao">{{mensagemSaudacao()}}</h2>
+    </div>
+
+<div class="logo-raio-x">
+    <img [src]="logoInicial" id="logoRaioX">
+</div>
+
+<div class="card-group card-group--custom">
+    <div class="row justify-content-md-center mx-3">
+      
+
+      <div class="col-lg-3 col-md-12 my-2 d-lg-flex align-items-stretch">
+          <div class="card menu card-custom">
+            
+            <div class="card-body my-1">
+              
+
+              <div class="card-header card-header--custom">
+                <h5 class="card-title text-center title-custom">Dados Pessoais</h5>
+              </div>
+              
+              <p class="card-text py-2 p-custom-inicial">Nos conte um pouco sobre você, sua família, os idiomas que fala e as graduações que tem!</p>
+              
+            </div>
+            <div class="card-footer text-muted text-center">
+                <button id="BTNPessoal" class="closing" ><img [src]="imgDadosPessoais" id="imgBTNPessoal" (click)="dadosPessoais()"></button>
+            </div>
+          </div>
+      </div>
+      <div class="col-lg-3 col-md-12 my-2 d-lg-flex align-items-stretch">
+          <div class="card menu card-custom">
+          
+            <div class="card-body">
+              
+              <div class="card-header card-header--custom">
+                <h5 class="card-title text-center title-custom">Dados Profissionais</h5>
+              </div>
+              <p class="card-text py-2 p-custom-inicial">Como está sendo sua jornada profissional? Informe suas qualificações e experiências.</p>
+              
+            </div>
+            <div class="card-footer text-muted text-center">
+              <button id="BTNProf" class="closing" data-bs-toggle="modal" data-bs-target="#dadosP"><img [src]="imgDadosProfissionais" id="imgBTNProf"></button>
+                  
+            </div>
+          </div>
+      </div>
+      <div class="col-lg-3 col-md-12 my-2 d-lg-flex align-items-stretch">
+          <div class="card menu card-custom">
+            
+            <div class="card-body">
+              <div class="card-header card-header--custom">
+                <h5 class="card-title text-center title-custom">Oportunidades</h5>
+                
+              </div>
+                <p class="card-text py-2 p-custom-inicial">Espaço reservado para inscrições oportunidades como cursos e processos seletivos.</p>
+                <!--<p class="card-text py-2 p-custom-inicial">Pós-graduação em Ciências Policiais "Gestão, Estratégia e Planejamento em Fronteiras", pós-graduação lato sensu, modalidade EAD</p>-->
+              
+            </div>
+            <div class="card-footer text-muted text-center">
+              <!--<button id="BTNGer" class="closing" data-bs-toggle="modal" data-bs-target="#oportunidades"><img src="" id="imgBTNGer"></button>-->
+              <button id="BTNGer" class="closing" onclick="msgInicial()"><img [src]="imgOportunidades" id="imgBTNGer"></button>
+    
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-12 my-2 d-lg-flex align-items-stretch">
+            <div class="card menu card-custom">
+              
+              <div class="card-body">
+               
+                <div class="card-header card-header--custom">
+                  <h5 class="card-title text-center title-custom">Atributos Comportamentais</h5>
+                </div>
+                <p class="card-text py-2 p-custom-inicial">Informe seus Soft Skills, tenha um relatório gerencial sobre seus atributos comportamentais com base no teste Big Five e DISC.</p>
+                
+              </div>
+              <div class="card-footer text-muted text-center">
+                <button id="BTNatributos" class="closing" data-bs-toggle="modal" data-bs-target="#atributos"><img [src]="imgAtributos" id="imgBTNatributos"></button>
+                                                                          
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+
+

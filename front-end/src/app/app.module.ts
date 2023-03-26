@@ -22,6 +22,8 @@ import { TemplateModule } from './modules/uteis/templates/template.module';
 import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
 import { CadeiaValorFormProcessosComponent } from './modules/gestao/cadeia-valor/cadeia-valor-form-processos/cadeia-valor-form-processos.component';
 import { CadeiaValorModule } from './modules/gestao/cadeia-valor/cadeia-valor.module';
+import { RaioxhomeComponent } from './modules/raio-x/raioxhome/raioxhome.component';
+import { RaioxPessoalComponent } from './modules/raio-x/raiox-pessoal/raiox-pessoal.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +35,8 @@ import { CadeiaValorModule } from './modules/gestao/cadeia-valor/cadeia-valor.mo
     SpinnerOverlayComponent,
     TesteComponent,
     TesteFormComponent,
+    RaioxhomeComponent,
+    RaioxPessoalComponent,
   ],
   imports: [
     BrowserModule,
