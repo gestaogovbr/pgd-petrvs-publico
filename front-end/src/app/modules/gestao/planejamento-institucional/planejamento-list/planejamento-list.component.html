@@ -11,10 +11,10 @@
                 [control]="filter!.controls.nome" placeholder="Nome do planejamento institucional..."></input-text>
         </div>
         <div class="row">
-            <input-switch class="pt-4" [size]="2" labelPosition="left" label="Só da Entidade" controlName="so_entidade" [control]="filter!.controls.so_entidade" (change)="onSoEntidadeChange($event)"></input-switch>
-            <input-search #unidade [size]="6" label="Unidade" [disabled]="unidade_disabled" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
-            <input-datetime [size]="2" date label="Início" controlName="inicio" [control]="filter!.controls.inicio" labelInfo="Data de início do planejamento institucional"></input-datetime>
-            <input-datetime [size]="2" date label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Data do fim do planejamento institucional"></input-datetime>
+            <input-switch [size]="2" label="Só da Entidade" controlName="so_entidade" [control]="filter!.controls.so_entidade" (change)="onSoEntidadeChange($event)"></input-switch>
+            <input-search #unidade [size]="4" label="Unidade" [disabled]="unidade_disabled" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+            <input-datetime [size]="3" date label="Início" controlName="inicio" [control]="filter!.controls.inicio" labelInfo="Data de início do planejamento institucional"></input-datetime>
+            <input-datetime [size]="3" date label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Data do fim do planejamento institucional"></input-datetime>
         </div>
     </filter>
 <!--     <ng-template let-group="separator" #groupUnidade>
