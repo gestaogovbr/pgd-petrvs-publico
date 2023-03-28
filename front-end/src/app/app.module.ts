@@ -18,9 +18,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LogModule } from './modules/logs/log.module';
 import { UteisModule } from './modules/uteis/uteis.module';
 import { RotinaModule } from './modules/rotinas/rotina.module';
-import { TemplateModule } from './modules/uteis/templates/template.module';
 import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
-import { CadeiaValorFormProcessosComponent } from './modules/gestao/cadeia-valor/cadeia-valor-form-processos/cadeia-valor-form-processos.component';
 import { CadeiaValorModule } from './modules/gestao/cadeia-valor/cadeia-valor.module';
 
 @NgModule({
@@ -32,7 +30,7 @@ import { CadeiaValorModule } from './modules/gestao/cadeia-valor/cadeia-valor.mo
     DialogComponent,
     SpinnerOverlayComponent,
     TesteComponent,
-    TesteFormComponent,
+    TesteFormComponent
   ],
   imports: [
     BrowserModule,
@@ -47,7 +45,6 @@ import { CadeiaValorModule } from './modules/gestao/cadeia-valor/cadeia-valor.mo
     UteisModule,
     LogModule,
     RotinaModule,
-    TemplateModule,
     CadeiaValorModule
   ],
   providers: [],

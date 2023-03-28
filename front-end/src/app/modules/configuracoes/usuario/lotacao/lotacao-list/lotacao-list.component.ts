@@ -25,7 +25,7 @@ export class LotacaoListComponent extends PageListBase<Lotacao, LotacaoDaoServic
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
 
     /* Inicializações */
-    this.title = "Lotações";
+    this.title = this.lex.noun("Lotação",true);
     this.join = ["usuario", "unidade"];
     this.modalWidth = 500;
     this.filter = this.fh.FormBuilder({
@@ -40,7 +40,7 @@ export class LotacaoListComponent extends PageListBase<Lotacao, LotacaoDaoServic
     const usuarioId = this.urlParams!.get("usuario_id")!;
     this.addParams = {usuario_id: usuarioId};
     this.usuarioDao.getById(usuarioId).then(usuario => {
-      this.title = "Lotações do " + this.lex.noun("usuário") + " " + this.util.apelidoOuNome(usuario!);
+      this.title = this.lex.noun("Lotação",true) + this.lex.noun("usuário", false, true) + " " + this.util.apelidoOuNome(usuario!);
       this.cdRef.detectChanges();
     });
   }

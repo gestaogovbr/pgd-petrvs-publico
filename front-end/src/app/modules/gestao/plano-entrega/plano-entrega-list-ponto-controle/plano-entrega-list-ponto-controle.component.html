@@ -1,0 +1,101 @@
+<grid [dao]="dao" [add]="add" [hasEdit]="false" [title]="isModal ? '' : title" [form]="form" [join]="join" [orderBy]="orderBy" [selectable]="selectable" (select)="onSelect($event)" editable>
+    <toolbar *ngIf="!selectable"></toolbar>
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-search #gestor [size]="6" label="Gestor" controlName="gestor_id" [control]="filter!.controls.gestor_id" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
+            <input-datetime [size]="3" date label="Início" controlName="inicio" [control]="filter!.controls.inicio" labelInfo="Data de início do ponto de controle"></input-datetime>
+            <input-datetime [size]="3" date label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Data do fim do ponto de controle"></input-datetime>
+        </div>
+    </filter>
+    <columns>
+        <column *ngIf="!selectable" type="expand" icon="bi bi-boxes" [align]="'center'" [hint]="lex.noun('Entrega', true)" [template]="columnEntregas" [expandTemplate]="columnExpandedEntregas">
+            <ng-template let-row="row" #columnEntregas>
+                <span *ngIf="row.entregas?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row.entregas?.length}}</span>
+            </ng-template>
+            <ng-template let-row="row" #columnExpandedEntregas>
+                <plano-entrega-ponto-controle-form-entrega [entity]="row" [cdRef]="cdRef"></plano-entrega-ponto-controle-form-entrega>
+            </ng-template>
+        </column>
+        <column [titleTemplate]="titleInicio" [template]="columnInicio">
+            <ng-template let-header="header" #titleInicio>
+                <order by="inicio" [header]="header">Início</order>
+            </ng-template>
+            <ng-template let-row="row" #columnInicio>
+                <span> {{dao!.getDateFormatted(row.inicio)}}</span>
+            </ng-template>
+        </column>
+        <column [titleTemplate]="titleFim" [template]="columnFim">
+            <ng-template let-header="header" #titleFim>
+                <order by="fim" [header]="header">Fim</order>
+            </ng-template>
+            <ng-template let-row="row" #columnFim>
+                <span> {{dao!.getDateFormatted(row.fim)}}</span>
+            </ng-template>
+        </column>
+        <column title="Responsável" [template]="columnResponsavel">
+            <ng-template let-row="row" #columnResponsavel>
+                <span> {{row.gestor?.nome || ''}}</span>
+            </ng-template>
+        </column>
+        <column [titleTemplate]="titleAvaliacao" [template]="columnAvaliacao">
+            <ng-template let-header="header" #titleAvaliacao>
+                <order by="tipo_avaliacao.nota" [header]="header">Nota</order><small>/Tipo</small><br>
+                <small>Avaliador/Justificativas</small>
+            </ng-template>
+            <ng-template let-row="row" #columnAvaliacao>
+                <span><small>{{ row.tipo_avaliacao? row.tipo_avaliacao.nota_atribuida + ' - ' + row.tipo_avaliacao.nome : '(não avaliado)' }}</small></span><br>
+                <span><small>{{ row.avaliador?.nome || '' }}</small></span><br>
+                <span *ngFor="let j of row.justificativas"><small>{{ j.value || ''}}</small><br></span>
+            </ng-template>
+        </column>
+        <column type="options" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>
+
+
+<!-- Grid-List:
+
+[+]  Data Início Data Fim    Responsável                            Avaliação
+   +-----------+-----------+-------------------------------------+-------------------------
+   | XX/XX/XXXX  XX/XX/XXXX  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX (NOTA) (TIPO AVALIACAO)
+   |                                                              (AVALIADOR)
+   |                                                              (Justificativa)  
+   .......................................................................................
+   Entrega       Indicador           Meta         Realizado
+   -------------+-------------------+------------+------------- 
+   XXXXXXXXXXXXX XXXXXXXXXXXXXXXXXX   9999999     99999999
+
+
+
+
+
+
+
+   Plano de Entregas
+   Unidade (Setor)
+   Planejamento_estrategico_id
+   Cadeia_valor_id
+   Entregas
+            Inicio     Fim        Indicador (vem do cadastro entrega) Metal geral Realizado Objetivos* Processos*    Atividades*          Cliente      Hmg
+      Ent1: 01/01/2022 -          Quantidade                          1000        200       Ob1, Ob1   Proc1, Proc2  Tip.Ativ1, Tip.Atv2  uOrg1, uOrg2 S
+      Ent2: 01/01/2022 30/12/2022 %                                   100         70        Ob2                                                        S
+      Ent3: 01/01/2022 30/12/2024 Qualitativo                         Excelente   Bom                                                                  S      Ent4: 09/12/2022 30/12/2022 ...                                                                                                                  N
+   Ponto de controle
+      [01/01/2023][30/01/2023]:
+          Responsável: Genisson
+          Entregas:
+                    Indicador (vem do cadastro entrega) Meta do Mês  Realizado  
+          Ent1:     Quantidade                          100          90
+          Ent3:     Qualitativo                         Satisfatório Ruim
+      [01/02/2023][30/02/2023]:
+          Responsável: Paiva
+          Entregas:
+                    Indicador (vem do cadastro entrega) Meta         Realizado
+          Ent1:     Quantidade                          110          110
+          Ent2:     %                                   70           70
+          Ent3:     Qualitativo                         Excelente    Bom
+* Deverá haver pelo menos 1
+
+
+ -->

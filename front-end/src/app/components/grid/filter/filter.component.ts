@@ -29,6 +29,7 @@ export class FilterComponent extends ComponentBase implements OnInit {
   @Input() clear?: (filter: FormGroup) => void;
   @Input() where?: (filter: FormGroup) => any[];
   @Input() collapseChange?: (filter: FormGroup) => void;
+  @Input() visible: boolean = true;
   @Input() noButtons?: string;
   @Input() collapsed: boolean = true;
   @Input() grid?: GridComponent;

@@ -19,7 +19,7 @@ export class CadeiaValorListComponent extends PageListBase<CadeiaValor, CadeiaVa
   constructor(public injector: Injector) {
     super(injector, CadeiaValor, CadeiaValorDaoService);
     /* Inicializações */
-    this.title = 'Cadeias de Valor';
+    this.title = this.lex.noun('Cadeia de Valor',true);
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}
     });

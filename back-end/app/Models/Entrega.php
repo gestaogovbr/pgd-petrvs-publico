@@ -27,3 +27,4 @@ class Entrega extends ModelBase
         'lista_qualitativos' => AsArrayObject::class,
     ];
 }
+   

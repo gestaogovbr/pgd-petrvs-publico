@@ -183,6 +183,7 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PRGT_EXCL", "Permite excluir programas de gestão"],
         ["MOD_PRGT_INCL", "Permite incluir programas de gestão"],
         ["MOD_PROC_INCL", "Permite incluir tipos de processos"],
+        ["MOD_PRGT_PART", "Participantes do programa"],
         /* Capacidades do módulo PROJETO*/
         ["MOD_PROJ", "Permite acessar módulo projetos"],
         ["MOD_PROJ_CONS", "Permite consultar projeto"],
@@ -205,12 +206,28 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PTR_USERS_INCL", "Permite incluir planos de trabalho de usuários fora da lotação"],
         ["MOD_PTR_INCL_SEM_LOT", "Permite incluir planos de trabalho para usuários não lotado na unidade do plano"],
         ["MOD_PTR_INTSC_DATA", "Permite incluir planos de trabalho para usuários que já possuem planos no período de mesma modalidade"],
+        /* Capacidades do módulo CADEIA DE VALOR*/
+        ["MOD_CADV_CONS", "Permite consultar cadeia de valor"],
+        ["MOD_CADV_EDT", "Permite editar cadeia de valor"],
+        ["MOD_CADV_EXCL", "Permite excluir cadeia de valor"],
+        ["MOD_CADV_INCL", "Permite incluir cadeia de valor"],
         /* Capacidades do módulo PLANO DE ENTREGAS*/
         ["MOD_PENT_CONS", "Permite consultar plano de entregas"],
         ["MOD_PENT_EDT", "Permite editar planos de entregas"],
         ["MOD_PENT_EXCL", "Permite excluir planos de entregas"],
         ["MOD_PENT_INCL", "Permite incluir planos de entregas"], 
-        ["MOD_PENT_AVAL", "Permite avaliar planos de entregas"], 
+        /* Capacidades do módulo PLANO DE ENTREGAS - ENTREGAS*/
+        ["MOD_PENT_ENTR_CONS", "Permite consultar entregas de um plano de entregas"],
+        ["MOD_PENT_ENTR_EDT", "Permite editar entregas de um plano de entregas"],
+        ["MOD_PENT_ENTR_EXCL", "Permite excluir entregas de um plano de entregas"],
+        ["MOD_PENT_ENTR_INCL", "Permite incluir entregas de um plano de entregas"],
+        /* Capacidades do módulo PLANO DE ENTREGAS - PONTO DE CONTROLE */
+        ["MOD_PENT_PCTR_CONS", "Permite consultar pontos de controle de um plano de entregas"],
+        ["MOD_PENT_PCTR_EDT", "Permite editar pontos de controle de um plano de entregas"],
+        ["MOD_PENT_PCTR_EXCL", "Permite excluir pontos de controle de um plano de entregas"],
+        ["MOD_PENT_PCTR_INCL", "Permite incluir pontos de controle de um plano de entregas"], 
+        ["MOD_PENT_PCTR_AVAL", "Permite avaliar pontos de controle de um plano de entregas"], 
+        ["MOD_PENT_PCTR_EDT_AVAL", "Permite alterar a avaliação dos pontos de controle de um plano de entregas"], 
         /* Capacidades do módulo TIPO ATIVIDADE*/
         ["MOD_TIPO_ATV", "Permite acessar item de menu cadastro->tipo de atividade"],
         ["MOD_TIPO_ATV_CONS", "Permite consultar atividade"],

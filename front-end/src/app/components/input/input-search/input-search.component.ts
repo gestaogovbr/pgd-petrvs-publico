@@ -7,6 +7,7 @@ import { FullRoute, NavigateService } from 'src/app/services/navigate.service';
 import { UtilService } from 'src/app/services/util.service';
 import { GroupBy } from '../../grid/grid.component';
 import { InputBase, LabelPosition, SelectItem } from '../input-base';
+//import * as bootstrap from 'bootstrap';
 
 export class SearchGroupSeparator {
   constructor(public groups: GroupBy[]) {}
@@ -36,7 +37,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
   @Input() hostClass: string = "";
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
-  @Input() disabled?: string;
+  //@Input() disabled?: string;
   @Input() icon: string = "";
   @Input() label: string = "";
   @Input() labelInfo: string = "";
@@ -71,11 +72,23 @@ export class InputSearchComponent extends InputBase implements OnInit {
   get size(): number {
     return this.getSize();
   }
+  @Input() set disabled(value: string | undefined) {
+    if(value != this._disabled) {
+      this._disabled = value;
+      this.cdRef.detectChanges();
+      this.dropdown?.toString(); /* Força atualização do dropdown */
+    }
+  }
+  get disabled(): string | undefined {
+    return this._disabled;
+  }
 
   private DEBOUNCE_TIMER = 1000;
   private queryText: string = "";
   private timer: any = undefined;
-  private dropdown?: Dropdown;
+  private _dropdown?: Dropdown;
+  private _disabled?: string;
+
   public dropdownWidth: number = 200;
   public items: (SelectItem | SearchGroupSeparator)[] = [];
   public selectedItem?: SelectItem = undefined;
@@ -84,6 +97,12 @@ export class InputSearchComponent extends InputBase implements OnInit {
   public searchObj: any = undefined;
   public go: NavigateService;
   public util: UtilService;
+  public get dropdown(): Dropdown | undefined {
+    const elm = document.getElementById(this.generatedId(this.controlName) + '_search_dropdown');
+    //@ts-ignore
+    this._dropdown = this.isDisabled ? undefined : this._dropdown || new bootstrap.Dropdown(elm as Element);
+    return this._dropdown;
+  } 
 
   constructor(public injector: Injector) {
     super(injector);
@@ -93,17 +112,17 @@ export class InputSearchComponent extends InputBase implements OnInit {
 
   ngOnInit(): void {
     super.ngOnInit();
-    if(!this.isDisabled){
+  }
+
+  public ngAfterViewInit(): void {
+    super.ngAfterViewInit();
+    /*if(!this.isDisabled){
       $(() => {
         const elm = document.getElementById(this.generatedId(this.controlName) + '_search_dropdown');
         // @ts-ignore
         if(elm) this.dropdown = new bootstrap.Dropdown(elm);
       });
-    }
-  }
-
-  public ngAfterViewInit(): void {
-    super.ngAfterViewInit();
+    }*/
     this.control?.valueChanges.subscribe(async newValue => {
       if(this.selectedValue != newValue) {
         this.selectedValue = newValue;

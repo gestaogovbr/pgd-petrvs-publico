@@ -7,6 +7,8 @@ import { ComentariosWidgetComponent } from './comentarios-widget/comentarios-wid
 import { UteisRoutingModule } from './uteis-routing.module';
 import { CalendarExpedienteComponent } from './calendar-expediente/calendar-expediente.component';
 import { DocumentosComponent } from './documentos/documentos.component';
+import { TemplatesComponent } from './templates/templates.component';
+import { AssinarComponent } from './documentos/assinar/assinar.component';
 
 @NgModule({
   declarations: [
@@ -14,7 +16,9 @@ import { DocumentosComponent } from './documentos/documentos.component';
     ComentariosComponent,
     ComentariosWidgetComponent,
     CalendarExpedienteComponent,
-    DocumentosComponent
+    DocumentosComponent,
+    TemplatesComponent,
+    AssinarComponent
   ],
   imports: [
     CommonModule,
@@ -26,7 +30,8 @@ import { DocumentosComponent } from './documentos/documentos.component';
     ComentariosComponent,
     ComentariosWidgetComponent,
     CalendarExpedienteComponent,
-    DocumentosComponent
+    DocumentosComponent,
+    TemplatesComponent
   ]
 })
 export class UteisModule { }

@@ -33,7 +33,6 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
   public programaDao: ProgramaDaoService;
   public usuarioDao: UsuarioDaoService;
   public planoService: PlanoService;
-  public allPages: ListenerAllPagesService;
   public tipoModalidadeDao: TipoModalidadeDaoService;
   public multiselectAllFields: string[] = ["tipo_modalidade_id", "usuario_id", "unidade_id", "documento_id"];
   public DATAS_FILTRO: LookupItem[] = [
@@ -51,7 +50,6 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
     this.documentoService = injector.get<DocumentoService>(DocumentoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.planoService = injector.get<PlanoService>(PlanoService);
-    this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
     /* Inicializações */
     this.title = this.lex.noun("Plano de trabalho",true);
@@ -75,7 +73,7 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
     const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: this.consult.bind(this) };
     const BOTAO_ALTERAR = { label: "Editar", icon: "bi bi-pencil-square", onClick: this.edit.bind(this) };
     const BOTAO_EXCLUIR = { label: "Excluir demanda", icon: "bi bi-trash", onClick: this.delete.bind(this) };
-    const BOTAO_ASSINAR = { hint: "Assinar", icon: "bi bi-pen", onClick: this.assinar.bind(this) };
+    const BOTAO_ASSINAR = { label: "Assinar", icon: "bi bi-pen", onClick: this.assinar.bind(this) };
     const BOTAO_TERMOS = { label: "Termos", icon: "bi bi-file-earmark-check", onClick: ((row: Plano) => this.go.navigate({ route: ['uteis', 'documentos', 'TCR', row.id ] }, { modalClose: (modalResult) => console.log(modalResult?.conteudo), metadata: this.planoService.metadados(row) })).bind(this) };
     if(this.auth.hasPermissionTo("MOD_PTR_CONS")) result.push(BOTAO_INFORMACOES);
     if(this.auth.hasPermissionTo('MOD_PTR_EDT')) result.push(BOTAO_ALTERAR);
@@ -147,10 +145,6 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
     }
   }
 
-  public onProcessoClick(row: any) {
-    this.allPages.openDocumentoSei(row.documento.id_processo, row.documento.id_documento);
-  }
-
   /*public needSign(plano: Plano): boolean {
     let ids: string[] = [];
     const documento = (plano.documentos || []).find(x => plano.documento_id?.length && x.id == plano.documento_id);
@@ -178,11 +172,12 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
 
   public assinar(row?: Plano) {
     const planosIds = row ? [row.id] : Object.keys(this.grid!.multiselected || {});
-    const documentosIds = this.grid!.items.filter(x => planosIds.includes(x.id)).map(x => x.documento_id).filter(x => x?.length);
-    if(!documentosIds.length) {
+    const documentos = this.grid!.items.filter(x => planosIds.includes(x.id) && x.documento_id?.length).map(x => x.documento);
+    if(!documentos.length) {
       this.dialog.alert("Selecione", "Nenhum plano seleciono");
     } else {
-      this.dialog.confirm("Assinar", "Deseja realmente assinar " + documentosIds.length + " documento" + (documentosIds.length > 1 ? "s" : "") + "?").then(response => {
+      this.documentoService.sign(documentos).then(() => this.grid!.reset());
+      /*this.dialog.confirm("Assinar", "Deseja realmente assinar " + documentosIds.length + " documento" + (documentosIds.length > 1 ? "s" : "") + "?").then(response => {
         if(response) {
           this.loading = true;
           this.documentoDao.assinar(documentosIds).then(response => {
@@ -192,7 +187,7 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
             }
           }).catch((error) => this.error("Erro ao tentar assinar: " + error.toString())).finally(() => this.loading = false);
         }
-      });
+      });*/
     }
   }
 

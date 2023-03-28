@@ -161,7 +161,7 @@ class EntregaListComponent extends src_app_modules_base_page_list_base__WEBPACK_
             return result;
         };
         /* Inicializações */
-        this.title = 'Entregas';
+        this.title = this.lex.noun('Entrega', true);
         this.filter = this.fh.FormBuilder({
             nome: { default: "" }
         });
@@ -336,7 +336,8 @@ class EntregaFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
             nome: { default: "" },
             tipo_indicador: { default: "" },
             qualitativo: { default: "" },
-            lista_qualitativos: { default: [] }
+            lista_qualitativos: { default: [] },
+            itemQualitativo: { default: "" }
         }, this.cdRef, this.validate);
     }
     loadData(entity, form) {
@@ -381,7 +382,7 @@ class EntregaFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
     }
     addItemHandleItemQualitativo() {
         let result = undefined;
-        const value = this.form.controls.lista_qualitativos.value;
+        const value = this.form.controls.itemQualitativo.value;
         const key = this.util.textHash(value);
         if ((value === null || value === void 0 ? void 0 : value.length) && this.util.validateLookupItem(this.form.controls.lista_qualitativos.value, key)) {
             result = {

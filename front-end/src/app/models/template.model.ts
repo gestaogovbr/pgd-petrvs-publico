@@ -9,19 +9,13 @@ export type TemplateEspecie = DocumentoEspecie;
 
 export class Template extends Base {
 
-  public unidade?: Unidade;
-  public usuario?: Usuario;
-
   public conteudo: string = "";
   public numero: number = 0;
   public especie: TemplateEspecie = "OUTRO";
+  public titulo: string = "";
   public dataset: TemplateDataset[] = [];
   public data_inicio: Date = new Date();
   public data_fim: Date | null = null;
-  public titulo: string = "";
-
-  public usuario_id: string = "";
-  public unidade_id: string = "";
 
   public constructor(data?: any) { super(); this.initialization(data); }
 }

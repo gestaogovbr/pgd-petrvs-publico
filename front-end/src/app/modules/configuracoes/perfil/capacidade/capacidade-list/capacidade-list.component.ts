@@ -51,7 +51,7 @@ export class CapacidadeListComponent extends PageListBase<Capacidade, Capacidade
   ngOnInit(): void {
     super.ngOnInit();
     this.perfilDao.getById(this.urlParams!.get("perfil_id")!).then(perfil => {
-      this.title = "Capacidades de " + perfil?.nome;
+      this.title = this.lex.noun("Capacidade",true) + " de " + perfil?.nome;
       this.cdRef.detectChanges();
     });
   }

@@ -117,7 +117,7 @@ class CapacidadeListComponent extends src_app_modules_base_page_list_base__WEBPA
     ngOnInit() {
         super.ngOnInit();
         this.perfilDao.getById(this.urlParams.get("perfil_id")).then(perfil => {
-            this.title = "Capacidades de " + (perfil === null || perfil === void 0 ? void 0 : perfil.nome);
+            this.title = this.lex.noun("Capacidade", true) + " de " + (perfil === null || perfil === void 0 ? void 0 : perfil.nome);
             this.cdRef.detectChanges();
         });
     }

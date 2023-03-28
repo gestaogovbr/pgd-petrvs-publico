@@ -9,6 +9,9 @@ use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
 
 class ProgramaController extends ControllerBase {
+    
+    public $updatable = ["participantes"];
+
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
             case 'STORE':

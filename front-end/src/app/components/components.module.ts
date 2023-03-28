@@ -59,6 +59,8 @@ import { MapForeachComponent } from './map/map-foreach/map-foreach.component';
 import { InputEditorComponent } from './input/input-editor/input-editor.component';
 import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 import { GlobalsService } from '../services/globals.service';
+import { SidePanelComponent } from './grid/side-panel/side-panel.component';
+import { DocumentPreviewComponent } from './document-preview/document-preview.component';
 
 const maskConfig: Partial<IConfig> = {
   validation: false,
@@ -115,7 +117,9 @@ const maskConfig: Partial<IConfig> = {
     MapComponent,
     MapItemComponent,
     MapForeachComponent,
-    InputEditorComponent
+    InputEditorComponent,
+    SidePanelComponent,
+    DocumentPreviewComponent
   ],
   imports: [
     CommonModule,
@@ -174,7 +178,9 @@ const maskConfig: Partial<IConfig> = {
     MapComponent,
     MapItemComponent,
     MapForeachComponent,
-    InputEditorComponent
+    InputEditorComponent,
+    SidePanelComponent,
+    DocumentPreviewComponent
   ],
   providers: [
     { 

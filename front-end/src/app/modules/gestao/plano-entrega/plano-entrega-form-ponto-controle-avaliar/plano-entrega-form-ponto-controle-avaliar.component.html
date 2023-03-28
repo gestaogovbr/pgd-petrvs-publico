@@ -1,0 +1,48 @@
+<editable-form [form]="form!" [disabled]="formDisabled" (submit)="onSaveData()" (cancel)="onCancel()">
+    <separator title="Dados do Ponto de Controle" icon="bi bi-chat-left-quote" [collapse]="undefined">
+        <input-datetime noIcon [size]="3" label="Início" disabled controlName="inicio" [control]="form!.controls.inicio"></input-datetime>
+        <input-datetime noIcon [size]="3" label="Fim" disabled controlName="fim" [control]="form!.controls.fim"></input-datetime>
+        <input-search noIcon   [size]="6" label="Gestor" disabled controlName="gestor_id" [control]="form!.controls.gestor_id" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
+    </separator>
+    <separator [title]="lex.noun('Entrega', true)" collapse [collapsed]="!entity?.entregas?.length">
+        <grid [items]="items" [minHeight]="150">
+            <columns>
+                <column title="Descrição" [template]="columnDescricao">
+                    <ng-template let-row="row" #columnDescricao>
+                        <span>{{ row.entrega_plano_entrega.descricao }}</span>
+                    </ng-template>
+                </column>
+                <column title="Indicador" [template]="columnIndicador">
+                    <ng-template let-row="row"#columnIndicador>
+                        <span>{{ row.entrega_plano_entrega.entrega.tipo_indicador }}</span>
+                    </ng-template>
+                </column>
+                <column title="Meta" [template]="columnMeta">
+                    <ng-template let-row="row" #columnMeta>
+                        <span>{{ row.entrega_plano_entrega.meta[0].value }}</span>
+                    </ng-template>
+                </column>
+                <column title="Realizado" [template]="columnRealizado">
+                    <ng-template let-row="row" #columnRealizado>
+                        <span>{{ row.entrega_plano_entrega.realizado[0].value }}</span>
+                    </ng-template>
+                </column>
+            </columns>
+        </grid>
+    </separator>    
+    <div class="row">
+        <input-rate [size]="12" [bold]="true" [label]="'Como você avalia este Ponto de Controle ?'" (change)="onNotaChange($event)" controlName="nota_atribuida" [control]="form!.controls.nota_atribuida" controlName="rate"></input-rate>
+    </div>
+    <div *ngIf="tipoAvaliacao" class="d-flex justify-content-center">
+        <button type="button" class="pe-none btn" [style]="styleButtonTipoAvaliacao">
+            <i [class]="tipoAvaliacao.icon" [style.color]="tipoAvaliacao.color || 'black'"></i>
+            <strong class="ms-1">{{ tipoAvaliacao.value }}</strong> (Nota: {{ tipoAvaliacao.data.nota }})
+        </button>
+    </div>
+    <div *ngIf="tipoAvaliacao">
+        <input-multitoggle #justificativas [control]="form!.controls.justificativas" [label]="tipoAvaliacao.data.pergunta" [items]="tiposJustificativas"></input-multitoggle>
+    </div>
+    <separator *ngIf="tipoAvaliacao" title="Comentários adicionais?" icon="bi bi-chat-left-quote" [collapse]="!form!.controls.comentarios.value?.length ? 'true' : undefined">
+        <input-textarea label="Comentários" [size]="12" [rows]="2" controlName="comentarios" [control]="form!.controls.comentarios"></input-textarea>
+    </separator>
+</editable-form>
