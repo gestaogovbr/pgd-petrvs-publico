@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
@@ -21,15 +21,13 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
     @ViewChild(GridComponent, { static: true }) public grid?: GridComponent;
     
     public unidadeDao: UnidadeDaoService;
-    //public planejamentoDao: PlanejamentoDaoService;
     public planejamentosUnidadeInstituidora: LookupItem[] = [];
     public form: FormGroup;
     
     constructor(public injector: Injector) {
       super(injector, Planejamento, PlanejamentoDaoService);
       this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
-      //this.planejamentoDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
-      this.join = ['objetivos','objetivos.eixoTematico:nome'];
+      this.join = ['objetivos','objetivos.objetivo_superior:id,nome','objetivos.eixo_tematico:id,nome'];
       this.form = this.fh.FormBuilder({
         nome: {default: ""},
         unidade_id: {default: null},
@@ -66,7 +64,7 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
     }
   
     public loadData(entity: Planejamento, form: FormGroup) {
-      this.dao?.query({where: [['unidade_id', '==', null]]}).getAll().then((pls) => {
+      this.dao?.query({where: [['entidade_id','==',this.auth.entidade!.id],['unidade_id', '==', null]]}).getAll().then((pls) => {
         this.planejamentosUnidadeInstituidora = pls.map(x => Object.assign({},{key: x.id, value: x.nome}) as LookupItem);
       });
       let formValue = Object.assign({}, form.value);

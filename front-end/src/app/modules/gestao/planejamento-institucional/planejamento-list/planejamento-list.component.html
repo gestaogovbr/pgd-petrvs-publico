@@ -2,9 +2,7 @@
     [selectable]="selectable" (select)="onSelect($event)" 
     [hasAdd]="auth.hasPermissionTo('MOD_PLAN_INST_INCL')"
     [hasEdit]="auth.hasPermissionTo('MOD_PLAN_INST_EDT')">
-    <toolbar *ngIf="!selectable">
-        <!-- <input-switch [size]="4" labelPosition="left" label="Agrupar por Unidade" controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch> -->
-    </toolbar>
+    <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-text [size]="12" label="Planejamento Institucional" controlName="nome"
@@ -17,9 +15,6 @@
             <input-datetime [size]="3" date label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Data do fim do planejamento institucional"></input-datetime>
         </div>
     </filter>
-<!--     <ng-template let-group="separator" #groupUnidade>
-        <strong *ngIf="filter!.controls.agrupar.value" class="grid-group-text">{{separator?.text || auth.unidade!.entidade!.sigla}}</strong>
-    </ng-template> -->
     <columns>
         <column title="Nome" field="nome" orderBy="nome"></column>
         <column title="Início" [template]="columnInicio">

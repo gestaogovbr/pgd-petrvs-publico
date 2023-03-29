@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, Input, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
@@ -6,13 +6,10 @@ import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { EixoTematicoDaoService } from 'src/app/dao/eixo-tematico-dao.service';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { PlanejamentoObjetivoDaoService } from 'src/app/dao/planejamento-objetivo-dao.service';
-import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model';
 import { Planejamento } from 'src/app/models/planejamento.model';
-import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
-import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
   selector: 'planejamento-form-objetivo',
@@ -24,11 +21,6 @@ export class PlanejamentoFormObjetivoComponent extends PageFrameBase {
     @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
     @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
     @Input() set entity(value: Planejamento | undefined) { super.entity = value; } get entity(): Planejamento | undefined { return super.entity; }
-    @Input() cdRef: ChangeDetectorRef;
-
-    public planejamentoObjetivoDao: PlanejamentoObjetivoDaoService;
-    public eixoTematicoDao: EixoTematicoDaoService;
-    public form: FormGroup;
 
     public get items(): PlanejamentoObjetivo[] {
       if (!this.gridControl.value) this.gridControl.setValue(new Planejamento());
@@ -38,35 +30,15 @@ export class PlanejamentoFormObjetivoComponent extends PageFrameBase {
     
     constructor(public injector: Injector) {
       super(injector);
-      this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
       this.dao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
-      this.planejamentoObjetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
-      this.eixoTematicoDao = injector.get<EixoTematicoDaoService>(EixoTematicoDaoService);
-      this.groupBy = [{field: "eixo_tematico_id", label: "Eixo Temático"}];
-      this.join = ['eixoTematico:nome','objetivoSuperior:nome'];
+      this.groupBy = [{field: "eixo_tematico.nome", label: "Eixo Temático"}];
       this.form = this.fh.FormBuilder({
         nome: {default: ""},
         fundamentacao: {default: ""},
         planejamento_id: {default: null},
         eixo_tematico_id: {default: null},
         objetivo_superior_id: {default: null}
-      }, this.cdRef, this.validate);
-    }
-  
-    public validate = (control: AbstractControl, controlName: string) => {
-      let result = null;
-      if(['nome','fundamentacao'].indexOf(controlName) >= 0 && !control.value?.length) {
-        result = "Obrigatório";
-      }
-      return result;
-    }
-  
-    public formValidation = (form?: FormGroup) =>{
-      let result = null;
-/*       if(this.form!.controls.fim.value && this.form!.controls.inicio.value > this.form!.controls.fim.value) {
-        return "A data do início não pode ser maior que a data do fim!";
-      } */
-      return result;
+      }, this.cdRef);
     }
   
     public async addObjetivo() {
@@ -110,6 +82,13 @@ export class PlanejamentoFormObjetivoComponent extends PageFrameBase {
     public async saveData(form?: IIndexable) {
       await this.grid?.confirm();
       return this.entity!;
+    }
+
+    public dynamicOptions(row: any): ToolbarButton[] {
+      let result: ToolbarButton[] = [];
+      // Testa se o usuário possui permissão para excluir um plano institucional
+      if (this.auth.hasPermissionTo("MOD_PLAN_INST_EXCL")) result.push({icon: "bi bi-trash", label: "Excluir", onClick: this.removeObjetivo.bind(this)});
+      return result;
     }
  
 

@@ -11,7 +11,7 @@
                     <input-datetime date [size]="3" label="Fim" icon="bi bi-calendar-date" controlName="fim" [control]="form!.controls.fim" labelInfo="Fim do Planejamento Institucional"></input-datetime>
                 </div>
                 <div *ngIf="form!.controls.unidade_id.value" class="row">
-                    <input-select icon="far fa-edit" label="Selecione o Planejamento da Unidade Instituidora vinculado" [items]="planejamentosUnidadeInstituidora"></input-select>
+                    <input-select icon="far fa-edit" label="Selecione o Planejamento da Unidade Instituidora vinculado" [items]="planejamentosUnidadeInstituidora" controlName="planejamento_superior_id" [control]="form!.controls.planejamento_superior_id"></input-select>
                     <!-- <input-search [size]="6" label="Selecione o Planejamento da Unidade Instituidora vinculado" icon="fab fa-unity" controlName="planejamento_entidade_id" [control]="form!.controls.planejamento_entidade_id" 
                     [dao]="planejamentoDao" [selectRoute]="{route: ['gestao', 'planejamento'], params: {filter: {'unidade_id': null}}}"></input-search> -->
                 </div>                
@@ -27,7 +27,7 @@
             </div>
         </tab>
         <tab key="OBJETIVOS" label="Objetivos">
-            <planejamento-form-objetivo #objetivos [entity]="entity" [cdRef]="cdRef"></planejamento-form-objetivo>
+            <planejamento-form-objetivo #objetivos [entity]="entity" noPersist></planejamento-form-objetivo>
         </tab>
     </tabs>
 </editable-form>

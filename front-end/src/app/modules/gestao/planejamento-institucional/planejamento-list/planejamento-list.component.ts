@@ -82,14 +82,6 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
     return result;
   }
 
-  public onAgruparChange(event: Event) {
-    const agrupar = this.filter!.controls.agrupar.value;
-    if ((agrupar && !this.groupBy?.length) || (!agrupar && this.groupBy?.length)) {
-      this.groupBy = agrupar ? [{ field: "unidade.sigla", label: "Unidade" }] : [];
-      this.grid!.reloadFilter();
-    }
-  }
-
   public onSoEntidadeChange(event: Event) {
     if (this.filter!.controls.so_entidade.value) {
       this.filter!.controls.unidade_id.setValue(null);

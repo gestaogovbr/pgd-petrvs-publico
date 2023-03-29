@@ -378,7 +378,7 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
       this.planejamento = planejamento || undefined;
       if (planejamento) {
         let eixos = planejamento.objetivos?.reduce((a, v) => {
-          if (!a.find(x => x.id == v.eixo_tematico_id)) a.push(v.eixoTematico!);
+          if (!a.find(x => x.id == v.eixo_tematico_id)) a.push(v.eixo_tematico!);
           return a;
         }, [] as EixoTematico[]) || [];
         mapa = eixos.map(x => {
