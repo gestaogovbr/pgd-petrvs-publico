@@ -26,6 +26,7 @@ export class CadeiaValorFormComponent extends PageFormBase<CadeiaValor, CadeiaVa
       nome: { default: "" },
       inicio: { default: new Date() },
       fim: { default: null },
+      moveFilhos: { default: false }
     }, this.cdRef, this.validate);
   }
 
