@@ -94,9 +94,11 @@ export class AppComponent {
       { name: "PGD" },
       { name: "Projetos" },
       { name: "Gestão" },
-      { name: "Operacional" }
+      { name: "Operacional" },
+      { name: "Raio X" }
     ];
     this.contexto = this.menuContexto[0];
+   
     this.menuToolbar = [
       { name: "Cadastros", permition: "MENU_CAD_ACESSO", route: ['cadastros'], id: "navbarDropdownCadastros", menu: "cadastros" },
       { name: "Gestão", permition: "MENU_GESTAO_ACESSO", route: ['gestao'], id: "navbarDropdownGestao", menu: "gestao" },
@@ -158,6 +160,7 @@ export class AppComponent {
 		    { name: "Teste calculaDataTempo", permition: '', route: ['teste', 'calcula-tempo'], icon: "bi bi-check-all" }
       ],
     }
+  
   }
 
   public getMenuItems(nome: string) {
@@ -166,6 +169,14 @@ export class AppComponent {
 
   public onContextoSelect(item: any) {
     this.contexto = item;
+    console.log(item.name)
+    if(item.name=='Raio X'){
+      console.log('Dentro do if')
+      this.router.navigate(['raioxhome'])
+    }else{
+      this.router.navigate(['home'])
+    }
+    
   }
 
   public get menu(): IIndexable {

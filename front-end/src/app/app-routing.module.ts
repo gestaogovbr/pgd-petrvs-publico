@@ -5,6 +5,8 @@ import { ConfigComponent } from './modules/config/config.component';
 import { HomeComponent } from './modules/home/home.component';
 import { LoginRetornoComponent } from './modules/login/login-retorno/login-retorno.component';
 import { LoginComponent } from './modules/login/login.component';
+import { RaioxPessoalComponent } from './modules/raio-x/raiox-pessoal/raiox-pessoal.component';
+import { RaioxhomeComponent } from './modules/raio-x/raioxhome/raioxhome.component';
 import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
 import { TesteComponent } from './modules/teste/teste.component';
 import { ConfigResolver } from './resolvies/config.resolver';
@@ -49,6 +51,8 @@ const routes: Routes = [
   { path: 'relatorios', loadChildren: () => import('./modules/relatorios/relatorio.module').then(m => m.RelatorioModule), canActivate: [AuthGuard] },
   { path: 'logs', loadChildren: () => import('./modules/logs/log.module').then(m => m.LogModule), canActivate: [AuthGuard] },
   { path: 'rotinas', loadChildren: () => import('./modules/rotinas/rotina.module').then(m => m.RotinaModule), canActivate: [AuthGuard] },
+  { path: 'raioxhome', component: RaioxhomeComponent, canActivate: [AuthGuard], data: { title: "Raio-X" } },
+  { path: 'raioxhome/pessoal', component: RaioxPessoalComponent, canActivate: [AuthGuard], data: { title: "Dados Pessoais" } },
   { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];
 
