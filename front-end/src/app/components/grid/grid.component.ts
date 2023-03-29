@@ -637,6 +637,11 @@ export class GridComponent extends ComponentBase implements OnInit {
     if(row.id) this.metadatas[row.id] = value;
   }
 
+  public clearMetadata() {
+    this.metadatas = {};
+    this.cdRef.detectChanges();
+  } 
+  
   public async edit(itemRow: Base | IIndexable) {
     if(this.isSelectable && itemRow) this.onRowClick(new Event("SelectByEdit"), itemRow);
     this.editing = itemRow;

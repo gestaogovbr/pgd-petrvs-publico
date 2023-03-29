@@ -49,6 +49,11 @@ export class CadeiaValorFormProcessosComponent extends PageFrameBase {
     return result;
   }
 
+  public loadData(entity: IIndexable, form?: FormGroup): Promise<void> | void {
+    this.cdRef.detectChanges();
+    this.sortProcessos();
+  }
+
   public async addProcesso() {
     return new CadeiaValorProcesso({
       id: this.dao!.generateUuid(),
@@ -64,14 +69,9 @@ export class CadeiaValorFormProcessosComponent extends PageFrameBase {
       sequencia: this.items.filter(x => x.processo_pai_id == row.id).length + 1,
       nome: ""
     });
-
     this.items.push(processo);
     this.grid!.setMetadata(processo, { nivel: this.getSequencia({}, processo) });
-    this.items.sort((a, b) => {
-      const sa = (this.grid!.getMetadata(a)?.nivel || "").split(".").map((x: string) => ("000" + x).substr(-3)).join(".");
-      const sb = (this.grid!.getMetadata(b)?.nivel || "").split(".").map((x: string) => ("000" + x).substr(-3)).join(".");
-      return sa < sb ? -1 : sa > sb ? 1 : 0;
-    });
+    this.sortProcessos();
     this.grid!.adding = true;
     await this.grid!.edit(processo);
     return undefined;
@@ -104,25 +104,39 @@ export class CadeiaValorFormProcessosComponent extends PageFrameBase {
   public async loadProcesso(form: FormGroup, row: any) {
     form.controls.sequencia.setValue(row.sequencia);
     form.controls.nome.setValue(row.nome);
+
     this.cdRef.detectChanges();
   }
 
-  public async removeProcesso(row: any) {
-    
-    return true;
-    
-    // const encontrarPai: (pai: any) => {
-    //   let pai: CadeiaValorProcesso;
-    //   while(pai = this.items.find(x => x.processo_pai_id = pai.id)) {
-    //     if(pai.id == pai) return true;
-    //   };
-    //   return false;
-    // };
-    // return true;
-
-    // let filhos = this.items.find(x => x.path.indexOf(idPai) >= 0);
+  public sortProcessos() {
+    this.items.sort((a, b) => {
+      const sa = (this.grid!.getMetadata(a)?.nivel || "").split(".").map((x: string) => ("000" + x).substr(-3)).join(".");
+      const sb = (this.grid!.getMetadata(b)?.nivel || "").split(".").map((x: string) => ("000" + x).substr(-3)).join(".");
+      return sa < sb ? -1 : sa > sb ? 1 : 0;
+    });
   }
 
+  public async removeProcesso(row: any) {
+    let processo = row as CadeiaValorProcesso;
+    let filhos = this.items.filter(x => x.processo_pai_id == processo.id) || [];
+    filhos.forEach(x => this.removeProcesso(x));
+    this.items.splice(this.items.findIndex(x => x.id == processo.id), 1);
+    return true;
+  }
+
+  /*public searchProcessos(row, pai){
+    if(pai = this.items.find(x => x.processo_pai_id = pai.id)){
+         return row;
+    }else if (row.children != null){
+         var i;
+         var result = null;
+         for(i=0; result == null && i < row.children.length; i++){
+              result = this.searchProcessos(row.children[i], pai);
+         }
+         return result;
+    }
+    return result;
+  }*/
 
 /*
 percorrer arvore em profundidade

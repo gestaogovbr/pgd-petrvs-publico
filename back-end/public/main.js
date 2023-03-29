@@ -5408,17 +5408,19 @@ CalendarEfemeridesComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "environment", function() { return environment; });
-var _a;
-//@ts-ignore
-const webBrowser = typeof chrome != "undefined" ? chrome : typeof browser != "undefined" ? browser : undefined;
-const defaultExtensionOptionsConfig = {
-    api_url: ((_a = webBrowser === null || webBrowser === void 0 ? void 0 : webBrowser.runtime) === null || _a === void 0 ? void 0 : _a.getURL) ? webBrowser.runtime.getURL("") : "",
-    suporte_url: "https://suporte.prf.gov.br",
+// This file can be replaced during build by using the `fileReplacements` array.
+// `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
+// The list of file replacements can be found in `angular.json`.
+const environment = {
+    production: false,
+    host: "localhost",
+    https: false,
+    suporte: "https://docs.google.com/forms/d/e/1FAIpQLScWhTbN5NnHl8tLfjNjSkWL7o9v4eaGoy0d8gvQLB9R6dWPuw/viewform",
     entidade: "PRF",
-    logo_url: "logo-login-prf.png",
+    images: { login: "logo-login.png" },
     versao: "1.0.0",
     login: {
-        google_client_id: "",
+        google_client_id: "658610174073-2l3gapp369n09q7fabji01977hcpiipf.apps.googleusercontent.com",
         gsuit: true,
         azure: true,
         institucional: false,
@@ -5426,32 +5428,14 @@ const defaultExtensionOptionsConfig = {
         user_password: false
     }
 };
-//@ts-ignore
-const global = typeof PETRVS_GLOBAL_CONFIG != "undefined" ? PETRVS_GLOBAL_CONFIG : defaultExtensionOptionsConfig;
-//@ts-ignore
-const baseUrl = typeof EXTENSION_BASE_URL != "undefined" ? EXTENSION_BASE_URL : typeof PETRVS_BASE_URL != "undefined" ? PETRVS_BASE_URL : undefined;
-//@ts-ignore
-const servidorUrl = typeof EXTENSION_SERVIDOR_URL !== "undefined" ? EXTENSION_SERVIDOR_URL : typeof PETRVS_SERVIDOR_URL != "undefined" ? PETRVS_SERVIDOR_URL : undefined;
-const URL = servidorUrl || baseUrl || global.api_url;
-const HOST = URL.replace(/^https?:\/\//, "").replace(/\/$/, "");
-const HTTPS = URL.startsWith("https");
-const environment = {
-    production: true,
-    host: HOST,
-    https: HTTPS,
-    suporte: (global === null || global === void 0 ? void 0 : global.suporte_url) || "https://suporte.prf.gov.br",
-    entidade: (global === null || global === void 0 ? void 0 : global.entidade) || "PRF",
-    images: { login: (global === null || global === void 0 ? void 0 : global.logo_url) || "logo-login-prf.png" },
-    versao: (global === null || global === void 0 ? void 0 : global.versao) || "1.0.0",
-    login: (global === null || global === void 0 ? void 0 : global.login) || {
-        google_client_id: (global === null || global === void 0 ? void 0 : global.google_client_id) || "",
-        gsuit: true,
-        azure: true,
-        institucional: false,
-        firebase: false,
-        user_password: false
-    }
-};
+/*
+ * For easier debugging in development mode, you can import the following file
+ * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
+ *
+ * This import should be commented out in production mode because it will have a negative impact
+ * on performance if an error is thrown.
+ */
+// import 'zone.js/dist/zone-error';  // Included with Angular CLI.
 
 
 /***/ }),
@@ -9290,11 +9274,11 @@ class CadeiaValorFormComponent extends _base_page_form_base__WEBPACK_IMPORTED_MO
     saveData(form) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => {
-                var _a, _b, _c;
+                var _a, _b;
                 this.processos.grid.confirm();
                 let cadeiaValor = this.util.fill(new _models_cadeia_valor_model__WEBPACK_IMPORTED_MODULE_2__["CadeiaValor"](), this.entity);
-                this.form.value.entidade_id = (_b = (_a = this.auth.unidade) === null || _a === void 0 ? void 0 : _a.entidade) === null || _b === void 0 ? void 0 : _b.id;
-                this.form.value.unidade_id = (_c = this.auth.unidade) === null || _c === void 0 ? void 0 : _c.id;
+                this.form.value.entidade_id = (_a = this.auth.entidade) === null || _a === void 0 ? void 0 : _a.id;
+                this.form.value.unidade_id = (_b = this.auth.unidade) === null || _b === void 0 ? void 0 : _b.id;
                 cadeiaValor = this.util.fillForm(cadeiaValor, this.form.value);
                 cadeiaValor.processos = this.processos.items;
                 resolve(cadeiaValor);
@@ -12111,7 +12095,7 @@ class PlanejamentoDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_
     constructor(injector) {
         super("Planejamento", injector);
         this.injector = injector;
-        this.searchFields = ["nome", "inicio", "fim", "unidade_id"];
+        this.searchFields = ["nome", "inicio", "fim"];
     }
 }
 PlanejamentoDaoService.ɵfac = function PlanejamentoDaoService_Factory(t) { return new (t || PlanejamentoDaoService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
@@ -13007,7 +12991,11 @@ class CadeiaValorFormProcessosComponent extends src_app_modules_base_page_frame_
         super(injector);
         this.injector = injector;
         this.validate = (control, controlName) => {
+            var _a;
             let result = null;
+            if (['nome'].indexOf(controlName) >= 0 && !((_a = control.value) === null || _a === void 0 ? void 0 : _a.length)) {
+                result = "Obrigatório";
+            }
             return result;
         };
         this.cdRef = injector.get(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ChangeDetectorRef"]);
@@ -13027,13 +13015,6 @@ class CadeiaValorFormProcessosComponent extends src_app_modules_base_page_frame_
         if (!this.gridControl.value.processos)
             this.gridControl.value.processos = [];
         return this.gridControl.value.processos;
-    }
-    loadData(entity, form) {
-        //super.loadData(entity, form);
-    }
-    initializeData(form) {
-        /*this.entity = new CadeiaValor();
-        this.loadData(this.entity, this.form);*/
     }
     addProcesso() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
@@ -25721,7 +25702,7 @@ DocumentosComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefi
     } if (rf & 2) {
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵloadQuery"]()) && (ctx.grid = _t.first);
-    } }, inputs: { cdRef: "cdRef", entity: "entity", noPersist: "noPersist", needSign: "needSign", extraTags: "extraTags", especie: "especie", dataset: "dataset", canEditTemplate: "canEditTemplate", template: "template", datasource: "datasource", editingId: "editingId" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]], decls: 12, vars: 18, consts: [["editable", "", 3, "items", "form", "hasEdit", "selectable", "add", "load", "remove", "save", "editEnd", "hasAdd", "hasDelete"], ["gridDocumentos", ""], ["fullSizeOnEdit", "", 3, "size", "noToolbar", "template", "editTemplate"], ["panelDocumento", ""], ["panelDocumentoEdit", ""], ["title", "#ID/Especie", 3, "template"], ["documentoTemplate", ""], ["type", "options", 3, "dynamicButtons"], ["emptyDocumentMensage", "Nenhum documento selecionado", 3, "html"], [1, "row"], ["label", "T\u00EDtulo", 3, "size", "control"], ["label", "Conte\u00FAdo", 3, "size", "control", "canEditTemplate", "template", "datasource"], [1, "col-12", "text-nowrap"], ["icon", "bi bi-hash", 3, "color", "label"], ["icon", "bi bi-folder-symlink", 3, "click", "hint", 4, "ngIf"], [3, "color", "icon", "label"], [3, "color", "icon", "label", 4, "ngFor", "ngForOf"], ["title", "Assinaturas", "small", "", "transparent", "", 4, "ngIf"], ["icon", "bi bi-folder-symlink", 3, "click", "hint"], ["title", "Assinaturas", "small", "", "transparent", ""], [3, "url", "hint", 4, "ngFor", "ngForOf"], [3, "url", "hint"]], template: function DocumentosComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, inputs: { cdRef: "cdRef", entity: "entity", noPersist: "noPersist", needSign: "needSign", extraTags: "extraTags", especie: "especie", dataset: "dataset", canEditTemplate: "canEditTemplate", template: "template", datasource: "datasource", editingId: "editingId" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]], decls: 12, vars: 18, consts: [["editable", "", 3, "items", "form", "hasEdit", "selectable", "add", "load", "remove", "save", "editEnd", "hasAdd", "hasDelete"], ["gridDocumentos", ""], ["fullSizeOnEdit", "", 3, "size", "noToolbar", "template", "editTemplate"], ["panelDocumento", ""], ["panelDocumentoEdit", ""], ["title", "#ID/Especie", 3, "template"], ["documentoTemplate", ""], ["type", "options", 3, "dynamicButtons"], ["emptyDocumentMensage", "Nenhum documento selecionado", 3, "html"], [1, "row"], ["label", "T\u00EDtulo", 3, "size", "control"], ["label", "Conte\u00FAdo", 3, "size", "control", "canEditTemplate", "template", "datasource"], [1, "col-12", "text-wrap"], ["icon", "bi bi-hash", 3, "color", "label"], ["icon", "bi bi-folder-symlink", 3, "click", "hint", 4, "ngIf"], [3, "color", "icon", "label"], [3, "color", "icon", "label", 4, "ngFor", "ngForOf"], ["title", "Assinaturas", "small", "", "transparent", "", 4, "ngIf"], ["icon", "bi bi-folder-symlink", 3, "click", "hint"], ["title", "Assinaturas", "small", "", "transparent", ""], [3, "url", "hint", 4, "ngFor", "ngForOf"], [3, "url", "hint"]], template: function DocumentosComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "grid", 0, 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](2, "side-panel", 2);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](3, DocumentosComponent_ng_template_3_Template, 3, 2, "ng-template", null, 3, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplateRefExtractor"]);
@@ -33687,8 +33668,8 @@ const routes = [
     { path: 'gestao/cadeia-valor', loadChildren: () => Promise.resolve(/*! import() */).then(__webpack_require__.bind(null, /*! ./modules/gestao/cadeia-valor/cadeia-valor.module */ "pRTT")).then(m => m.CadeiaValorModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'gestao/demanda', loadChildren: () => Promise.resolve(/*! import() */).then(__webpack_require__.bind(null, /*! ./modules/gestao/demanda/demanda.module */ "17YW")).then(m => m.DemandaModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'gestao/planejamento', loadChildren: () => Promise.all(/*! import() | modules-gestao-planejamento-institucional-planejamento-module */[__webpack_require__.e("common"), __webpack_require__.e("modules-gestao-planejamento-institucional-planejamento-module")]).then(__webpack_require__.bind(null, /*! ./modules/gestao/planejamento-institucional/planejamento.module */ "f1z4")).then(m => m.PlanejamentoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
-    { path: 'gestao/plano-trabalho', loadChildren: () => Promise.all(/*! import() | modules-gestao-plano-plano-module */[__webpack_require__.e("default~listeners-listeners-module~modules-gestao-plano-plano-module"), __webpack_require__.e("common"), __webpack_require__.e("modules-gestao-plano-plano-module")]).then(__webpack_require__.bind(null, /*! ./modules/gestao/plano/plano.module */ "ALD5")).then(m => m.PlanoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
-    { path: 'gestao/plano-entrega', loadChildren: () => Promise.all(/*! import() | modules-gestao-plano-entrega-plano-entrega-module */[__webpack_require__.e("common"), __webpack_require__.e("modules-gestao-plano-entrega-plano-entrega-module")]).then(__webpack_require__.bind(null, /*! ./modules/gestao/plano-entrega/plano-entrega.module */ "PtyJ")).then(m => m.PlanoEntregaModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
+    { path: 'gestao/plano-trabalho', loadChildren: () => Promise.all(/*! import() | modules-gestao-plano-plano-module */[__webpack_require__.e("default~listeners-listeners-module~modules-gestao-plano-plano-module"), __webpack_require__.e("modules-gestao-plano-plano-module")]).then(__webpack_require__.bind(null, /*! ./modules/gestao/plano/plano.module */ "ALD5")).then(m => m.PlanoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
+    // { path: 'gestao/plano-entrega', loadChildren: () => import('./modules/gestao/plano-entrega/plano-entrega.module').then(m => m.PlanoEntregaModule), canActivate: [AuthGuard] },
     { path: 'gestao/projeto', loadChildren: () => __webpack_require__.e(/*! import() | modules-gestao-projeto-projeto-module */ "modules-gestao-projeto-projeto-module").then(__webpack_require__.bind(null, /*! ./modules/gestao/projeto/projeto.module */ "mH8K")).then(m => m.ProjetoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'configuracoes/preferencia', loadChildren: () => __webpack_require__.e(/*! import() | modules-configuracoes-preferencia-preferencia-module */ "modules-configuracoes-preferencia-preferencia-module").then(__webpack_require__.bind(null, /*! ./modules/configuracoes/preferencia/preferencia.module */ "GDlR")).then(m => m.PreferenciaModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'configuracoes/entidade', loadChildren: () => Promise.all(/*! import() | modules-configuracoes-entidade-entidade-module */[__webpack_require__.e("common"), __webpack_require__.e("modules-configuracoes-entidade-entidade-module")]).then(__webpack_require__.bind(null, /*! ./modules/configuracoes/entidade/entidade.module */ "sPLe")).then(m => m.EntidadeModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
