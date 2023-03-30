@@ -32,6 +32,7 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
         nome: {default: ""},
         unidade_id: {default: null},
         entidade_id: {default: null},
+        planejamento_superior_id: {default: null},
         inicio: {default: new Date()},
         fim: {default: null},
         missao: {default: ""},
@@ -105,9 +106,13 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
     }; 
     
     public onUnidadeChange(event: Event){
-      let a = this.form.controls.unidade_id.value;
-      //this.form.controls.unidade_id.setValue(null);
+      this.entity!.unidade_id = this.form.controls.unidade_id.value;
+      this.objetivos!.loadData(this.entity!, this.form!);
       this.cdRef.detectChanges();
+    }
+
+    public onPlanejamentoSelect(event: Event){
+
     }
 }
   

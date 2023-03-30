@@ -90,4 +90,13 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
     });
   }
 
+  
+  public subordinadas(unidade_id: string): Promise<Unidade[]> {
+    return new Promise<Unidade[]>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/subordinadas', {unidade_id}).subscribe(response => {
+        resolve(response?.subordinadas || []);
+      }, error => reject(error));
+    });
+  }
+
 }

@@ -3,9 +3,7 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
-import { EixoTematicoDaoService } from 'src/app/dao/eixo-tematico-dao.service';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
-import { PlanejamentoObjetivoDaoService } from 'src/app/dao/planejamento-objetivo-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model';
 import { Planejamento } from 'src/app/models/planejamento.model';
@@ -27,6 +25,7 @@ export class PlanejamentoFormObjetivoComponent extends PageFrameBase {
       if (!this.gridControl.value.objetivos) this.gridControl.value.objetivos = [];
       return this.gridControl.value.objetivos;
     }
+    public minHeight: number = 100;
     
     constructor(public injector: Injector) {
       super(injector);

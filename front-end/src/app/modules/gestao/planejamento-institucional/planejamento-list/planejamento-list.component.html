@@ -16,6 +16,14 @@
         </div>
     </filter>
     <columns>
+        <column *ngIf="!selectable" type="expand" icon="bi bi-bullseye" [align]="'center'" [hint]="lex.noun('Objetivo', true)" [template]="columnObjetivos" [expandTemplate]="columnExpandedObjetivos">
+            <ng-template let-row="row" #columnObjetivos>
+                <span *ngIf="row.objetivos?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-bullseye"></i> {{row.objetivos?.length}}</span>
+            </ng-template>
+            <ng-template let-row="row" #columnExpandedObjetivos>
+                <planejamento-form-objetivo persist [entity]="row"></planejamento-form-objetivo>
+            </ng-template>
+        </column>
         <column title="Nome" field="nome" orderBy="nome"></column>
         <column title="Início" [template]="columnInicio">
             <ng-template let-row="row" #columnInicio>

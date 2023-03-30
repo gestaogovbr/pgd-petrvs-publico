@@ -132,6 +132,12 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_DMD_TRF_EXCL", "Permite exluir tarefas dentro de demandas"],
         ["MOD_DMD_TRF_CONS", "Permite consultar tarefas dentro de demandas"],
         ["MOD_DMD_CLONAR", "Permite clonar demandas"],
+        /* Capacidades do módulo EIXOS TEMÁTICOS */
+        ["MOD_EXTM", "Permite acessar item do menu Eixos temáticos"],
+        ["MOD_EXTM_CONS", "Permite consultar Eixos temáticos"],
+        ["MOD_EXTM_INCL", "Permite incluir Eixos temáticos"],
+        ["MOD_EXTM_EDT", "Permite editar Eixos temáticos"],
+        ["MOD_EXTM_EXCL", "Permite excluir Eixos temáticos"], 
         /* Capacidades do módulo ENTIDADE*/
         ["MOD_ENTD_CFG", "Permite configurar Entidade"],
         ["MOD_ENTD_CONS", "Permite consultar Entidade"],
@@ -170,11 +176,15 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PERF_EXCL", "Permite excluir perfil"],
         ["MOD_PERF_INCL", "Permite incluir perfil"],
         /* Capacidades do módulo PLANEJAMENTO INSTITUCIONAL */
-        ["MOD_PLAN_INST", "Permite acessar item do menu Eixos temáticos e/ou Planejamentos Institucionais"],
-        ["MOD_PLAN_INST_CONS", "Permite consultar Eixos temáticos e/ou Planejamentos Institucionais"],
-        ["MOD_PLAN_INST_INCL", "Permite incluir Eixos temáticos e/ou Planejamentos Institucionais"],
-        ["MOD_PLAN_INST_EDT", "Permite editar Eixos temáticos e/ou Planejamentos Institucionais"],
-        ["MOD_PLAN_INST_EXCL", "Permite excluir Eixos temáticos e/ou Planejamentos Institucionais"],   
+        ["MOD_PLAN_INST", "Permite acessar item do menu Planejamentos Institucionais"],
+        ["MOD_PLAN_INST_CONS", "Permite consultar Planejamentos Institucionais"],
+        ["MOD_PLAN_INST_INCL", "Permite incluir algum tipo de Planejamento Institucional"],
+        ["MOD_PLAN_INST_INCL_UNID_INST", "Permite incluir Planejamento Institucional para a Unidade Instituidora"],
+        ["MOD_PLAN_INST_INCL_UNEX_PROPRIA", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas as de sua lotação)"],
+        ["MOD_PLAN_INST_INCL_UNEX_SUBORD", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas as de sua lotação e suas subordinadas)"],
+        ["MOD_PLAN_INST_INCL_UNEX_QUALQUER", "Permite incluir Planejamentos Institucionais para qualquer Unidade Executora, independente de sua lotação"],
+        ["MOD_PLAN_INST_EDT", "Permite editar Planejamentos Institucionais"],
+        ["MOD_PLAN_INST_EXCL", "Permite excluir Planejamentos Institucionais"],   
         /* Capacidades do módulo PLANO TRABALHO*/
         ["MOD_PTR", "Permite acessar item menu plano de trabalho"],
         ["MOD_PTR_CONS", "Permite consultar plano de trabalho"],
