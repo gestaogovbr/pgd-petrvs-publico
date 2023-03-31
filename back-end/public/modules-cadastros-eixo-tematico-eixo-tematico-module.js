@@ -1,5 +1,32 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["modules-cadastros-eixo-tematico-eixo-tematico-module"],{
 
+/***/ "M+Kp":
+/*!**************************************************!*\
+  !*** ./src/app/dao/eixo-tematico-dao.service.ts ***!
+  \**************************************************/
+/*! exports provided: EixoTematicoDaoService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EixoTematicoDaoService", function() { return EixoTematicoDaoService; });
+/* harmony import */ var _dao_base_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./dao-base.service */ "WScx");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
+
+
+class EixoTematicoDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0__["DaoBaseService"] {
+    constructor(injector) {
+        super("EixoTematico", injector);
+        this.injector = injector;
+        this.searchFields = ["nome"];
+    }
+}
+EixoTematicoDaoService.ɵfac = function EixoTematicoDaoService_Factory(t) { return new (t || EixoTematicoDaoService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
+EixoTematicoDaoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: EixoTematicoDaoService, factory: EixoTematicoDaoService.ɵfac, providedIn: 'root' });
+
+
+/***/ }),
+
 /***/ "OaI/":
 /*!*************************************************************************!*\
   !*** ./src/app/modules/cadastros/eixo-tematico/eixo-tematico.module.ts ***!
@@ -180,7 +207,7 @@ class EixoTematicoListComponent extends src_app_modules_base_page_list_base__WEB
             nome: { default: "" }
         });
         // Testa se o usuário possui permissão para consultar eixos temáticos
-        if (this.auth.hasPermissionTo("MOD_PLAN_INST_CONS")) {
+        if (this.auth.hasPermissionTo("MOD_EXTM_CONS")) {
             this.options.push({
                 icon: "bi bi-info-circle",
                 label: "Informações",
@@ -188,7 +215,7 @@ class EixoTematicoListComponent extends src_app_modules_base_page_list_base__WEB
             });
         }
         // Testa se o usuário possui permissão para excluir eixos temáticos
-        if (this.auth.hasPermissionTo("MOD_PLAN_INST_EXCL")) {
+        if (this.auth.hasPermissionTo("MOD_EXTM_EXCL")) {
             this.options.push({
                 icon: "bi bi-trash",
                 label: "Excluir",
@@ -226,7 +253,7 @@ EixoTematicoListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵ
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
     } if (rf & 2) {
         const _r1 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵreference"](8);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("title", ctx.isModal ? "" : ctx.title)("hasAdd", ctx.auth.hasPermissionTo("MOD_PLAN_INST_INCL"))("hasEdit", ctx.auth.hasPermissionTo("MOD_PLAN_INST_EDT"))("selectable", ctx.selectable)("orderBy", ctx.orderBy);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("title", ctx.isModal ? "" : ctx.title)("hasAdd", ctx.auth.hasPermissionTo("MOD_EXTM_INCL"))("hasEdit", ctx.auth.hasPermissionTo("MOD_EXTM_EDT"))("selectable", ctx.selectable)("orderBy", ctx.orderBy);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", !ctx.selectable);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);

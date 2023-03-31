@@ -1533,7 +1533,7 @@ HomeComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineComp
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", ctx.dashUsuario.demandas.media_avaliacoes);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", ctx.dashGestor);
-    } }, directives: [_angular_forms__WEBPACK_IMPORTED_MODULE_3__["ɵangular_packages_forms_forms_ba"], _angular_forms__WEBPACK_IMPORTED_MODULE_3__["NgControlStatusGroup"], _angular_forms__WEBPACK_IMPORTED_MODULE_3__["FormGroupDirective"], _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_14__["InputDatetimeComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_15__["NgForOf"], _angular_common__WEBPACK_IMPORTED_MODULE_15__["NgIf"], _components_progress_bar_progress_bar_component__WEBPACK_IMPORTED_MODULE_16__["ProgressBarComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_15__["NgClass"], _components_profile_picture_profile_picture_component__WEBPACK_IMPORTED_MODULE_17__["ProfilePictureComponent"]], pipes: [_angular_common__WEBPACK_IMPORTED_MODULE_15__["DatePipe"]], styles: [".card[_ngcontent-%COMP%] {\n  box-shadow: 0 0.1875rem 0.1875rem 0 rgba(14, 34, 56, 0.07);\n  margin-bottom: 1.875rem;\n}\n.card[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  font-size: 2rem;\n  font-weight: 600;\n}\n.card[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  margin-bottom: 0;\n  font-weight: 200;\n}\n.card.atrasadas[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  color: #a00d0d;\n}\n.card.concluidas[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  color: #0e8554;\n}\n.minhas[_ngcontent-%COMP%] {\n  padding: 15px;\n  color: #adadad;\n}\n.minhas[_ngcontent-%COMP%]   h4[_ngcontent-%COMP%], .minhas[_ngcontent-%COMP%]   h5[_ngcontent-%COMP%] {\n  margin: 0;\n}\n.avaliacoes[_ngcontent-%COMP%] {\n  color: white;\n}\n.avaliacoes.acima[_ngcontent-%COMP%] {\n  background: #ffc100;\n}\n.avaliacoes.abaixo[_ngcontent-%COMP%] {\n  background: #ff4000;\n}\n.dashGestor[_ngcontent-%COMP%]   .usuario[_ngcontent-%COMP%] {\n  border-bottom: 1px solid #dcdcdc;\n  padding: 10px 0;\n}\n.dashGestor[_ngcontent-%COMP%]   .usuario[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  font-size: 1rem;\n  margin: 0 20px;\n}\n.dashGestor[_ngcontent-%COMP%]   .usuario[_ngcontent-%COMP%]   .w-30[_ngcontent-%COMP%] {\n  width: 30%;\n}\n.dashGestor[_ngcontent-%COMP%]   .usuario[_ngcontent-%COMP%]:last-child {\n  border: none;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uL2hvbWUuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDSSwwREFBQTtFQUNBLHVCQUFBO0FBQ0o7QUFDSTtFQUNJLGVBQUE7RUFDQSxnQkFBQTtBQUNSO0FBRUk7RUFDSSxnQkFBQTtFQUNBLGdCQUFBO0FBQVI7QUFJUTtFQUNJLGNBQUE7QUFGWjtBQU9RO0VBQ0ksY0FBQTtBQUxaO0FBVUE7RUFDSSxhQUFBO0VBQ0EsY0FBQTtBQVBKO0FBU0k7O0VBRUksU0FBQTtBQVBSO0FBV0E7RUFDSSxZQUFBO0FBUko7QUFVSTtFQUNJLG1CQUFBO0FBUlI7QUFXSTtFQUNJLG1CQUFBO0FBVFI7QUFjSTtFQUNJLGdDQUFBO0VBQ0EsZUFBQTtBQVhSO0FBYVE7RUFDSSxlQUFBO0VBQ0EsY0FBQTtBQVhaO0FBY1E7RUFDSSxVQUFBO0FBWlo7QUFlUTtFQUNJLFlBQUE7QUFiWiIsImZpbGUiOiJob21lLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLmNhcmQge1xuICAgIGJveC1zaGFkb3c6IDAgMC4xODc1cmVtIDAuMTg3NXJlbSAwIHJnYmEoMTQsIDM0LCA1NiwgLjA3KTtcbiAgICBtYXJnaW4tYm90dG9tOiAxLjg3NXJlbTtcblxuICAgIGgzIHtcbiAgICAgICAgZm9udC1zaXplOiAycmVtO1xuICAgICAgICBmb250LXdlaWdodDogNjAwO1xuICAgIH1cblxuICAgIHAge1xuICAgICAgICBtYXJnaW4tYm90dG9tOiAwO1xuICAgICAgICBmb250LXdlaWdodDogMjAwO1xuICAgIH1cblxuICAgICYuYXRyYXNhZGFzIHtcbiAgICAgICAgcCB7XG4gICAgICAgICAgICBjb2xvcjogI2EwMGQwZDtcbiAgICAgICAgfVxuICAgIH1cblxuICAgICYuY29uY2x1aWRhcyB7XG4gICAgICAgIHAge1xuICAgICAgICAgICAgY29sb3I6ICMwZTg1NTQ7XG4gICAgICAgIH1cbiAgICB9XG59XG5cbi5taW5oYXMge1xuICAgIHBhZGRpbmc6IDE1cHg7XG4gICAgY29sb3I6ICNhZGFkYWQ7XG5cbiAgICBoNCxcbiAgICBoNSB7XG4gICAgICAgIG1hcmdpbjogMDtcbiAgICB9XG59XG5cbi5hdmFsaWFjb2VzIHtcbiAgICBjb2xvcjogd2hpdGU7XG5cbiAgICAmLmFjaW1hIHtcbiAgICAgICAgYmFja2dyb3VuZDogI2ZmYzEwMDtcbiAgICB9XG5cbiAgICAmLmFiYWl4byB7XG4gICAgICAgIGJhY2tncm91bmQ6ICNmZjQwMDA7XG4gICAgfVxufVxuXG4uZGFzaEdlc3RvciB7XG4gICAgLnVzdWFyaW8ge1xuICAgICAgICBib3JkZXItYm90dG9tOiAxcHggc29saWQgI2RjZGNkYztcbiAgICAgICAgcGFkZGluZzogMTBweCAwO1xuXG4gICAgICAgIGgzIHtcbiAgICAgICAgICAgIGZvbnQtc2l6ZTogMXJlbTtcbiAgICAgICAgICAgIG1hcmdpbjogMCAyMHB4O1xuICAgICAgICB9XG5cbiAgICAgICAgLnctMzAge1xuICAgICAgICAgICAgd2lkdGg6IDMwJTtcbiAgICAgICAgfVxuXG4gICAgICAgICY6bGFzdC1jaGlsZCB7XG4gICAgICAgICAgICBib3JkZXI6IG5vbmU7XG4gICAgICAgIH1cbiAgICB9XG59Il19 */"] });
+    } }, directives: [_angular_forms__WEBPACK_IMPORTED_MODULE_3__["ɵangular_packages_forms_forms_ba"], _angular_forms__WEBPACK_IMPORTED_MODULE_3__["NgControlStatusGroup"], _angular_forms__WEBPACK_IMPORTED_MODULE_3__["FormGroupDirective"], _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_14__["InputDatetimeComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_15__["NgForOf"], _angular_common__WEBPACK_IMPORTED_MODULE_15__["NgIf"], _components_progress_bar_progress_bar_component__WEBPACK_IMPORTED_MODULE_16__["ProgressBarComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_15__["NgClass"], _components_profile_picture_profile_picture_component__WEBPACK_IMPORTED_MODULE_17__["ProfilePictureComponent"]], pipes: [_angular_common__WEBPACK_IMPORTED_MODULE_15__["DatePipe"]], styles: [".card[_ngcontent-%COMP%] {\n  box-shadow: 0 0.1875rem 0.1875rem 0 rgba(14, 34, 56, 0.07);\n  margin-bottom: 1.875rem;\n}\n.card[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  font-size: 2rem;\n  font-weight: 600;\n}\n.card[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  margin-bottom: 0;\n  font-weight: 200;\n}\n.card.atrasadas[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  color: #a00d0d;\n}\n.card.concluidas[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  color: #0e8554;\n}\n.minhas[_ngcontent-%COMP%] {\n  padding: 15px;\n  color: #adadad;\n}\n.minhas[_ngcontent-%COMP%]   h4[_ngcontent-%COMP%], .minhas[_ngcontent-%COMP%]   h5[_ngcontent-%COMP%] {\n  margin: 0;\n}\n.avaliacoes[_ngcontent-%COMP%] {\n  color: white;\n}\n.avaliacoes.acima[_ngcontent-%COMP%] {\n  background: #ffc100;\n}\n.avaliacoes.abaixo[_ngcontent-%COMP%] {\n  background: #ff4000;\n}\n.dashGestor[_ngcontent-%COMP%]   .usuario[_ngcontent-%COMP%] {\n  border-bottom: 1px solid #dcdcdc;\n  padding: 10px 0;\n}\n.dashGestor[_ngcontent-%COMP%]   .usuario[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  font-size: 1rem;\n  margin: 0 20px;\n}\n.dashGestor[_ngcontent-%COMP%]   .usuario[_ngcontent-%COMP%]   .w-30[_ngcontent-%COMP%] {\n  width: 30%;\n}\n.dashGestor[_ngcontent-%COMP%]   .usuario[_ngcontent-%COMP%]:last-child {\n  border: none;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uL2hvbWUuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDSSwwREFBQTtFQUNBLHVCQUFBO0FBQ0o7QUFDSTtFQUNJLGVBQUE7RUFDQSxnQkFBQTtBQUNSO0FBRUk7RUFDSSxnQkFBQTtFQUNBLGdCQUFBO0FBQVI7QUFJUTtFQUNJLGNBQUE7QUFGWjtBQU9RO0VBQ0ksY0FBQTtBQUxaO0FBVUE7RUFDSSxhQUFBO0VBQ0EsY0FBQTtBQVBKO0FBU0k7O0VBRUksU0FBQTtBQVBSO0FBV0E7RUFDSSxZQUFBO0FBUko7QUFVSTtFQUNJLG1CQUFBO0FBUlI7QUFXSTtFQUNJLG1CQUFBO0FBVFI7QUFjSTtFQUNJLGdDQUFBO0VBQ0EsZUFBQTtBQVhSO0FBYVE7RUFDSSxlQUFBO0VBQ0EsY0FBQTtBQVhaO0FBY1E7RUFDSSxVQUFBO0FBWlo7QUFlUTtFQUNJLFlBQUE7QUFiWiIsImZpbGUiOiJob21lLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLmNhcmQge1xyXG4gICAgYm94LXNoYWRvdzogMCAwLjE4NzVyZW0gMC4xODc1cmVtIDAgcmdiYSgxNCwgMzQsIDU2LCAuMDcpO1xyXG4gICAgbWFyZ2luLWJvdHRvbTogMS44NzVyZW07XHJcblxyXG4gICAgaDMge1xyXG4gICAgICAgIGZvbnQtc2l6ZTogMnJlbTtcclxuICAgICAgICBmb250LXdlaWdodDogNjAwO1xyXG4gICAgfVxyXG5cclxuICAgIHAge1xyXG4gICAgICAgIG1hcmdpbi1ib3R0b206IDA7XHJcbiAgICAgICAgZm9udC13ZWlnaHQ6IDIwMDtcclxuICAgIH1cclxuXHJcbiAgICAmLmF0cmFzYWRhcyB7XHJcbiAgICAgICAgcCB7XHJcbiAgICAgICAgICAgIGNvbG9yOiAjYTAwZDBkO1xyXG4gICAgICAgIH1cclxuICAgIH1cclxuXHJcbiAgICAmLmNvbmNsdWlkYXMge1xyXG4gICAgICAgIHAge1xyXG4gICAgICAgICAgICBjb2xvcjogIzBlODU1NDtcclxuICAgICAgICB9XHJcbiAgICB9XHJcbn1cclxuXHJcbi5taW5oYXMge1xyXG4gICAgcGFkZGluZzogMTVweDtcclxuICAgIGNvbG9yOiAjYWRhZGFkO1xyXG5cclxuICAgIGg0LFxyXG4gICAgaDUge1xyXG4gICAgICAgIG1hcmdpbjogMDtcclxuICAgIH1cclxufVxyXG5cclxuLmF2YWxpYWNvZXMge1xyXG4gICAgY29sb3I6IHdoaXRlO1xyXG5cclxuICAgICYuYWNpbWEge1xyXG4gICAgICAgIGJhY2tncm91bmQ6ICNmZmMxMDA7XHJcbiAgICB9XHJcblxyXG4gICAgJi5hYmFpeG8ge1xyXG4gICAgICAgIGJhY2tncm91bmQ6ICNmZjQwMDA7XHJcbiAgICB9XHJcbn1cclxuXHJcbi5kYXNoR2VzdG9yIHtcclxuICAgIC51c3VhcmlvIHtcclxuICAgICAgICBib3JkZXItYm90dG9tOiAxcHggc29saWQgI2RjZGNkYztcclxuICAgICAgICBwYWRkaW5nOiAxMHB4IDA7XHJcblxyXG4gICAgICAgIGgzIHtcclxuICAgICAgICAgICAgZm9udC1zaXplOiAxcmVtO1xyXG4gICAgICAgICAgICBtYXJnaW46IDAgMjBweDtcclxuICAgICAgICB9XHJcblxyXG4gICAgICAgIC53LTMwIHtcclxuICAgICAgICAgICAgd2lkdGg6IDMwJTtcclxuICAgICAgICB9XHJcblxyXG4gICAgICAgICY6bGFzdC1jaGlsZCB7XHJcbiAgICAgICAgICAgIGJvcmRlcjogbm9uZTtcclxuICAgICAgICB9XHJcbiAgICB9XHJcbn0iXX0= */"] });
 
 
 /***/ }),
@@ -5408,50 +5408,34 @@ CalendarEfemeridesComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "environment", function() { return environment; });
-var _a;
-//@ts-ignore
-const webBrowser = typeof chrome != "undefined" ? chrome : typeof browser != "undefined" ? browser : undefined;
-const defaultExtensionOptionsConfig = {
-    api_url: ((_a = webBrowser === null || webBrowser === void 0 ? void 0 : webBrowser.runtime) === null || _a === void 0 ? void 0 : _a.getURL) ? webBrowser.runtime.getURL("") : "",
-    suporte_url: "https://suporte.prf.gov.br",
+// This file can be replaced during build by using the `fileReplacements` array.
+// `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
+// The list of file replacements can be found in `angular.json`.
+const environment = {
+    production: false,
+    host: "localhost",
+    https: false,
+    suporte: "https://docs.google.com/forms/d/e/1FAIpQLScWhTbN5NnHl8tLfjNjSkWL7o9v4eaGoy0d8gvQLB9R6dWPuw/viewform",
     entidade: "PRF",
-    logo_url: "logo-login-prf.png",
+    images: { login: "logo-login.png" },
     versao: "1.0.0",
     login: {
-        google_client_id: "",
         gsuit: true,
         azure: true,
         institucional: false,
         firebase: false,
-        user_password: false
+        user_password: false,
+        google_client_id: "658610174073-2l3gapp369n09q7fabji01977hcpiipf.apps.googleusercontent.com"
     }
 };
-//@ts-ignore
-const global = typeof PETRVS_GLOBAL_CONFIG != "undefined" ? PETRVS_GLOBAL_CONFIG : defaultExtensionOptionsConfig;
-//@ts-ignore
-const baseUrl = typeof EXTENSION_BASE_URL != "undefined" ? EXTENSION_BASE_URL : typeof PETRVS_BASE_URL != "undefined" ? PETRVS_BASE_URL : undefined;
-//@ts-ignore
-const servidorUrl = typeof EXTENSION_SERVIDOR_URL !== "undefined" ? EXTENSION_SERVIDOR_URL : typeof PETRVS_SERVIDOR_URL != "undefined" ? PETRVS_SERVIDOR_URL : undefined;
-const URL = servidorUrl || baseUrl || global.api_url;
-const HOST = URL.replace(/^https?:\/\//, "").replace(/\/$/, "");
-const HTTPS = URL.startsWith("https");
-const environment = {
-    production: true,
-    host: HOST,
-    https: HTTPS,
-    suporte: (global === null || global === void 0 ? void 0 : global.suporte_url) || "https://suporte.prf.gov.br",
-    entidade: (global === null || global === void 0 ? void 0 : global.entidade) || "PRF",
-    images: { login: (global === null || global === void 0 ? void 0 : global.logo_url) || "logo-login-prf.png" },
-    versao: (global === null || global === void 0 ? void 0 : global.versao) || "1.0.0",
-    login: (global === null || global === void 0 ? void 0 : global.login) || {
-        google_client_id: (global === null || global === void 0 ? void 0 : global.google_client_id) || "",
-        gsuit: true,
-        azure: true,
-        institucional: false,
-        firebase: false,
-        user_password: false
-    }
-};
+/*
+ * For easier debugging in development mode, you can import the following file
+ * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
+ *
+ * This import should be commented out in production mode because it will have a negative impact
+ * on performance if an error is thrown.
+ */
+// import 'zone.js/dist/zone-error';  // Included with Angular CLI.
 
 
 /***/ }),
@@ -9290,11 +9274,11 @@ class CadeiaValorFormComponent extends _base_page_form_base__WEBPACK_IMPORTED_MO
     saveData(form) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => {
-                var _a, _b, _c;
+                var _a, _b;
                 this.processos.grid.confirm();
                 let cadeiaValor = this.util.fill(new _models_cadeia_valor_model__WEBPACK_IMPORTED_MODULE_2__["CadeiaValor"](), this.entity);
-                this.form.value.entidade_id = (_b = (_a = this.auth.unidade) === null || _a === void 0 ? void 0 : _a.entidade) === null || _b === void 0 ? void 0 : _b.id;
-                this.form.value.unidade_id = (_c = this.auth.unidade) === null || _c === void 0 ? void 0 : _c.id;
+                this.form.value.entidade_id = (_a = this.auth.entidade) === null || _a === void 0 ? void 0 : _a.id;
+                this.form.value.unidade_id = (_b = this.auth.unidade) === null || _b === void 0 ? void 0 : _b.id;
                 cadeiaValor = this.util.fillForm(cadeiaValor, this.form.value);
                 cadeiaValor.processos = this.processos.items;
                 resolve(cadeiaValor);
@@ -12111,7 +12095,7 @@ class PlanejamentoDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_
     constructor(injector) {
         super("Planejamento", injector);
         this.injector = injector;
-        this.searchFields = ["nome", "inicio", "fim", "unidade_id"];
+        this.searchFields = ["nome", "inicio", "fim"];
     }
 }
 PlanejamentoDaoService.ɵfac = function PlanejamentoDaoService_Factory(t) { return new (t || PlanejamentoDaoService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
@@ -13007,7 +12991,11 @@ class CadeiaValorFormProcessosComponent extends src_app_modules_base_page_frame_
         super(injector);
         this.injector = injector;
         this.validate = (control, controlName) => {
+            var _a;
             let result = null;
+            if (['nome'].indexOf(controlName) >= 0 && !((_a = control.value) === null || _a === void 0 ? void 0 : _a.length)) {
+                result = "Obrigatório";
+            }
             return result;
         };
         this.cdRef = injector.get(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ChangeDetectorRef"]);
@@ -13027,13 +13015,6 @@ class CadeiaValorFormProcessosComponent extends src_app_modules_base_page_frame_
         if (!this.gridControl.value.processos)
             this.gridControl.value.processos = [];
         return this.gridControl.value.processos;
-    }
-    loadData(entity, form) {
-        //super.loadData(entity, form);
-    }
-    initializeData(form) {
-        /*this.entity = new CadeiaValor();
-        this.loadData(this.entity, this.form);*/
     }
     addProcesso() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
@@ -14704,7 +14685,7 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
             if (planejamento) {
                 let eixos = ((_a = planejamento.objetivos) === null || _a === void 0 ? void 0 : _a.reduce((a, v) => {
                     if (!a.find(x => x.id == v.eixo_tematico_id))
-                        a.push(v.eixoTematico);
+                        a.push(v.eixo_tematico);
                     return a;
                 }, [])) || [];
                 mapa = eixos.map(x => {
@@ -14799,7 +14780,7 @@ TesteComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineCom
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("canEditTemplate", false)("template", ctx.form.controls.template.value)("datasource", ctx.datasource);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate1"]("\n", (ctx.form == null ? null : ctx.form.controls == null ? null : ctx.form.controls.editor == null ? null : ctx.form.controls.editor.value) || "", " ");
-    } }, directives: [_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_13__["EditableFormComponent"], _components_input_input_editor_input_editor_component__WEBPACK_IMPORTED_MODULE_14__["InputEditorComponent"]], styles: [".eixo-tematico[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  transform: rotate(-90deg);\n  -webkit-transform: rotate(-90deg);\n  -moz-transform: rotate(-90deg);\n  -ms-transform: rotate(-90deg);\n  -o-transform: rotate(-90deg);\n  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uL3Rlc3RlLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUNJO0VBQ0kseUJBQUE7RUFDQSxpQ0FBQTtFQUNBLDhCQUFBO0VBQ0EsNkJBQUE7RUFDQSw0QkFBQTtFQUNBLGdFQUFBO0FBQVIiLCJmaWxlIjoidGVzdGUuY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyIuZWl4by10ZW1hdGljbyB7XG4gICAgaDMge1xuICAgICAgICB0cmFuc2Zvcm06IHJvdGF0ZSgtOTBkZWcpO1xuICAgICAgICAtd2Via2l0LXRyYW5zZm9ybTogcm90YXRlKC05MGRlZyk7XG4gICAgICAgIC1tb3otdHJhbnNmb3JtOiByb3RhdGUoLTkwZGVnKTtcbiAgICAgICAgLW1zLXRyYW5zZm9ybTogcm90YXRlKC05MGRlZyk7XG4gICAgICAgIC1vLXRyYW5zZm9ybTogcm90YXRlKC05MGRlZyk7XG4gICAgICAgIGZpbHRlcjogcHJvZ2lkOkRYSW1hZ2VUcmFuc2Zvcm0uTWljcm9zb2Z0LkJhc2ljSW1hZ2Uocm90YXRpb249Myk7XG4gICAgfVxufSJdfQ== */"] });
+    } }, directives: [_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_13__["EditableFormComponent"], _components_input_input_editor_input_editor_component__WEBPACK_IMPORTED_MODULE_14__["InputEditorComponent"]], styles: [".eixo-tematico[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  transform: rotate(-90deg);\n  -webkit-transform: rotate(-90deg);\n  -moz-transform: rotate(-90deg);\n  -ms-transform: rotate(-90deg);\n  -o-transform: rotate(-90deg);\n  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uL3Rlc3RlLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUNJO0VBQ0kseUJBQUE7RUFDQSxpQ0FBQTtFQUNBLDhCQUFBO0VBQ0EsNkJBQUE7RUFDQSw0QkFBQTtFQUNBLGdFQUFBO0FBQVIiLCJmaWxlIjoidGVzdGUuY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyIuZWl4by10ZW1hdGljbyB7XHJcbiAgICBoMyB7XHJcbiAgICAgICAgdHJhbnNmb3JtOiByb3RhdGUoLTkwZGVnKTtcclxuICAgICAgICAtd2Via2l0LXRyYW5zZm9ybTogcm90YXRlKC05MGRlZyk7XHJcbiAgICAgICAgLW1vei10cmFuc2Zvcm06IHJvdGF0ZSgtOTBkZWcpO1xyXG4gICAgICAgIC1tcy10cmFuc2Zvcm06IHJvdGF0ZSgtOTBkZWcpO1xyXG4gICAgICAgIC1vLXRyYW5zZm9ybTogcm90YXRlKC05MGRlZyk7XHJcbiAgICAgICAgZmlsdGVyOiBwcm9naWQ6RFhJbWFnZVRyYW5zZm9ybS5NaWNyb3NvZnQuQmFzaWNJbWFnZShyb3RhdGlvbj0zKTtcclxuICAgIH1cclxufSJdfQ== */"] });
 
 
 /***/ }),
@@ -19095,12 +19076,12 @@ class AppComponent {
                 { name: this.lex.noun("Atividade", true), permition: 'MOD_ATV', route: ['cadastros', 'atividade'], icon: "bi bi-activity" },
                 { name: this.lex.noun("Afastamento", true), permition: 'MOD_AFT', route: ['cadastros', 'afastamento'], icon: "bi bi-toggle-off" },
                 { name: this.lex.noun("Cidade", true), permition: 'MOD_CID', route: ['cadastros', 'cidade'], icon: "bi bi-building" },
-                { name: this.lex.noun("Eixo Temático", true), permition: 'MOD_PLAN_INST_CONS', route: ['cadastros', 'eixo-tematico'], icon: "bi bi-gear" },
+                { name: this.lex.noun("Eixo Temático", true), permition: 'MOD_EXTM', route: ['cadastros', 'eixo-tematico'], icon: "bi bi-gear" },
                 { name: this.lex.noun("Entrega", true), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: "bi bi-list-check" },
                 { name: this.lex.noun("Feriado", true), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: "bi bi-emoji-sunglasses" },
                 { name: this.lex.noun("Material e Serviço", true), permition: '', route: ['cadastros', 'material-servico'], icon: "bi bi-box-seam" },
                 { name: this.lex.noun("Tarefa", true), permition: 'MOD_DMD', route: ['cadastros', 'tarefa'], icon: "bi bi-boxes" },
-                { name: this.lex.noun("Template", true), permition: 'MOD_DMD', route: ['cadastros', 'template'], icon: "bi bi-archive" },
+                { name: this.lex.noun("Template", true), permition: 'MOD_TEMP', route: ['cadastros', 'template'], icon: "bi bi-archive" },
                 "-",
                 { name: "Tipos de " + this.lex.noun("Atividade", true), permition: 'MOD_TIPO_ATV', route: ['cadastros', 'tipo-atividade'], icon: "bi bi-check-all" },
                 { name: "Tipos de " + this.lex.noun("Avaliação", true), permition: 'MOD_TIPO_AVAL', route: ['cadastros', 'tipo-avaliacao'], icon: "bi bi-question-square" },
@@ -19111,10 +19092,10 @@ class AppComponent {
                 { name: "Tipos de " + this.lex.noun("Processo", true), permition: 'MOD_TIPO_PROC', route: ['cadastros', 'tipo-processo'], icon: "bi bi-foldeer-check" }
             ],
             gestao: [
-                { name: this.lex.noun("Cadeia de Valor", true), permition: 'MOD_CADV_CONS', route: ['gestao', 'cadeia-valor'], icon: "bi bi-bar-chart-steps" },
+                { name: this.lex.noun("Cadeia de Valor", true), permition: 'MOD_CADV', route: ['gestao', 'cadeia-valor'], icon: "bi bi-bar-chart-steps" },
                 { name: this.lex.noun("Demanda", true), permition: '', route: ['gestao', 'demanda'], icon: "bi bi-activity" },
-                { name: this.lex.noun("Planejamento Institucional", true), permition: 'MOD_PENT_CONS', route: ['gestao', 'planejamento'], icon: "bi bi-files" },
-                { name: this.lex.noun("Plano de Entrega", true), permition: 'MOD_PENT_CONS', route: ['gestao', 'plano-entrega'], icon: "bi bi-list-columns-reverse" },
+                { name: this.lex.noun("Planejamento Institucional", true), permition: 'MOD_PLAN_INST', route: ['gestao', 'planejamento'], icon: "bi bi-files" },
+                { name: this.lex.noun("Plano de Entrega", true), permition: 'MOD_PENT', route: ['gestao', 'plano-entrega'], icon: "bi bi-list-columns-reverse" },
                 { name: this.lex.noun("Plano de Trabalho", true), permition: 'MOD_PTR', route: ['gestao', 'plano-trabalho'], icon: "bi bi-list-check" },
                 { name: this.lex.noun("Programa de Gestão", true), permition: 'MOD_PRGT', route: ['gestao', 'programa'], icon: "bi bi-graph-up-arrow" },
                 { name: this.lex.noun("Projeto", true), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: "bi bi-diagram-2" }
@@ -19545,6 +19526,13 @@ class UnidadeDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_1__["
         return new Promise((resolve, reject) => {
             this.server.post('api/' + this.collection + '/inativo', { id, inativo }).subscribe(response => {
                 resolve(!!(response === null || response === void 0 ? void 0 : response.success));
+            }, error => reject(error));
+        });
+    }
+    subordinadas(unidade_id) {
+        return new Promise((resolve, reject) => {
+            this.server.post('api/' + this.collection + '/subordinadas', { unidade_id }).subscribe(response => {
+                resolve((response === null || response === void 0 ? void 0 : response.subordinadas) || []);
             }, error => reject(error));
         });
     }
@@ -25721,7 +25709,7 @@ DocumentosComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefi
     } if (rf & 2) {
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵloadQuery"]()) && (ctx.grid = _t.first);
-    } }, inputs: { cdRef: "cdRef", entity: "entity", noPersist: "noPersist", needSign: "needSign", extraTags: "extraTags", especie: "especie", dataset: "dataset", canEditTemplate: "canEditTemplate", template: "template", datasource: "datasource", editingId: "editingId" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]], decls: 12, vars: 18, consts: [["editable", "", 3, "items", "form", "hasEdit", "selectable", "add", "load", "remove", "save", "editEnd", "hasAdd", "hasDelete"], ["gridDocumentos", ""], ["fullSizeOnEdit", "", 3, "size", "noToolbar", "template", "editTemplate"], ["panelDocumento", ""], ["panelDocumentoEdit", ""], ["title", "#ID/Especie", 3, "template"], ["documentoTemplate", ""], ["type", "options", 3, "dynamicButtons"], ["emptyDocumentMensage", "Nenhum documento selecionado", 3, "html"], [1, "row"], ["label", "T\u00EDtulo", 3, "size", "control"], ["label", "Conte\u00FAdo", 3, "size", "control", "canEditTemplate", "template", "datasource"], [1, "col-12", "text-nowrap"], ["icon", "bi bi-hash", 3, "color", "label"], ["icon", "bi bi-folder-symlink", 3, "click", "hint", 4, "ngIf"], [3, "color", "icon", "label"], [3, "color", "icon", "label", 4, "ngFor", "ngForOf"], ["title", "Assinaturas", "small", "", "transparent", "", 4, "ngIf"], ["icon", "bi bi-folder-symlink", 3, "click", "hint"], ["title", "Assinaturas", "small", "", "transparent", ""], [3, "url", "hint", 4, "ngFor", "ngForOf"], [3, "url", "hint"]], template: function DocumentosComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, inputs: { cdRef: "cdRef", entity: "entity", noPersist: "noPersist", needSign: "needSign", extraTags: "extraTags", especie: "especie", dataset: "dataset", canEditTemplate: "canEditTemplate", template: "template", datasource: "datasource", editingId: "editingId" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]], decls: 12, vars: 17, consts: [["editable", "", 3, "items", "form", "selectable", "add", "load", "remove", "save", "editEnd", "hasAdd", "hasEdit", "hasDelete"], ["gridDocumentos", ""], ["fullSizeOnEdit", "", 3, "size", "noToolbar", "template", "editTemplate"], ["panelDocumento", ""], ["panelDocumentoEdit", ""], ["title", "#ID/Especie", 3, "template"], ["documentoTemplate", ""], ["type", "options", 3, "dynamicButtons"], ["emptyDocumentMensage", "Nenhum documento selecionado", 3, "html"], [1, "row"], ["label", "T\u00EDtulo", 3, "size", "control"], ["label", "Conte\u00FAdo", 3, "size", "control", "canEditTemplate", "template", "datasource"], [1, "col-12", "text-wrap"], ["icon", "bi bi-hash", 3, "color", "label"], ["icon", "bi bi-folder-symlink", 3, "click", "hint", 4, "ngIf"], [3, "color", "icon", "label"], [3, "color", "icon", "label", 4, "ngFor", "ngForOf"], ["title", "Assinaturas", "small", "", "transparent", "", 4, "ngIf"], ["icon", "bi bi-folder-symlink", 3, "click", "hint"], ["title", "Assinaturas", "small", "", "transparent", ""], [3, "url", "hint", 4, "ngFor", "ngForOf"], [3, "url", "hint"]], template: function DocumentosComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "grid", 0, 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](2, "side-panel", 2);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](3, DocumentosComponent_ng_template_3_Template, 3, 2, "ng-template", null, 3, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplateRefExtractor"]);
@@ -25738,7 +25726,7 @@ DocumentosComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefi
         const _r1 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵreference"](4);
         const _r3 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵreference"](6);
         const _r5 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵreference"](10);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("items", ctx.items)("form", ctx.form)("hasEdit", true)("selectable", true)("add", ctx.addDocumento.bind(ctx))("load", ctx.loadDocumento.bind(ctx))("remove", ctx.removeDocumento.bind(ctx))("save", ctx.saveDocumento.bind(ctx))("editEnd", ctx.editEndDocumento.bind(ctx))("hasAdd", true)("hasEdit", true)("hasDelete", false);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("items", ctx.items)("form", ctx.form)("selectable", true)("add", ctx.addDocumento.bind(ctx))("load", ctx.loadDocumento.bind(ctx))("remove", ctx.removeDocumento.bind(ctx))("save", ctx.saveDocumento.bind(ctx))("editEnd", ctx.editEndDocumento.bind(ctx))("hasAdd", true)("hasEdit", true)("hasDelete", false);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 8)("noToolbar", ctx.editingId ? "true" : undefined)("template", _r1)("editTemplate", _r3);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](6);
@@ -26940,7 +26928,7 @@ class AuthService {
         if (user) {
             this.usuario = Object.assign(new _models_usuario_model__WEBPACK_IMPORTED_MODULE_1__["Usuario"](), user);
             //this.usuario.config = Object.assign(new UsuarioConfig(), this.usuario.config || {});
-            this.capacidades = ((_c = (_b = (_a = this.usuario) === null || _a === void 0 ? void 0 : _a.perfil) === null || _b === void 0 ? void 0 : _b.capacidades) === null || _c === void 0 ? void 0 : _c.map(x => { var _a; return ((_a = x.tipo_capacidade) === null || _a === void 0 ? void 0 : _a.codigo) || ""; })) || [];
+            this.capacidades = ((_c = (_b = (_a = this.usuario) === null || _a === void 0 ? void 0 : _a.perfil) === null || _b === void 0 ? void 0 : _b.capacidades) === null || _c === void 0 ? void 0 : _c.filter(x => x.data_fim == null).map(x => { var _a; return ((_a = x.tipo_capacidade) === null || _a === void 0 ? void 0 : _a.codigo) || ""; })) || [];
             this.kind = this.kind;
             this.logged = true;
             this.unidades = ((_e = (_d = this.usuario) === null || _d === void 0 ? void 0 : _d.lotacoes) === null || _e === void 0 ? void 0 : _e.map(x => x.unidade)) || [];
@@ -33672,7 +33660,7 @@ const routes = [
     { path: 'cadastros/atividade', loadChildren: () => __webpack_require__.e(/*! import() | modules-cadastros-atividade-atividade-module */ "modules-cadastros-atividade-atividade-module").then(__webpack_require__.bind(null, /*! ./modules/cadastros/atividade/atividade.module */ "LxS3")).then(m => m.AtividadeModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'cadastros/cidade', loadChildren: () => __webpack_require__.e(/*! import() | modules-cadastros-cidade-cidade-module */ "modules-cadastros-cidade-cidade-module").then(__webpack_require__.bind(null, /*! ./modules/cadastros/cidade/cidade.module */ "5p2+")).then(m => m.CidadeModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'cadastros/entrega', loadChildren: () => __webpack_require__.e(/*! import() | modules-cadastros-entrega-entrega-module */ "modules-cadastros-entrega-entrega-module").then(__webpack_require__.bind(null, /*! ./modules/cadastros/entrega/entrega.module */ "9Nu7")).then(m => m.EntregaModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
-    { path: 'cadastros/eixo-tematico', loadChildren: () => Promise.all(/*! import() | modules-cadastros-eixo-tematico-eixo-tematico-module */[__webpack_require__.e("common"), __webpack_require__.e("modules-cadastros-eixo-tematico-eixo-tematico-module")]).then(__webpack_require__.bind(null, /*! ./modules/cadastros/eixo-tematico/eixo-tematico.module */ "OaI/")).then(m => m.EixoTematicoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
+    { path: 'cadastros/eixo-tematico', loadChildren: () => __webpack_require__.e(/*! import() | modules-cadastros-eixo-tematico-eixo-tematico-module */ "modules-cadastros-eixo-tematico-eixo-tematico-module").then(__webpack_require__.bind(null, /*! ./modules/cadastros/eixo-tematico/eixo-tematico.module */ "OaI/")).then(m => m.EixoTematicoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'cadastros/feriado', loadChildren: () => __webpack_require__.e(/*! import() | modules-cadastros-feriado-feriado-module */ "modules-cadastros-feriado-feriado-module").then(__webpack_require__.bind(null, /*! ./modules/cadastros/feriado/feriado.module */ "mLmR")).then(m => m.FeriadoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'cadastros/material-servico', loadChildren: () => __webpack_require__.e(/*! import() | modules-cadastros-material-servico-material-servico-module */ "modules-cadastros-material-servico-material-servico-module").then(__webpack_require__.bind(null, /*! ./modules/cadastros/material-servico/material-servico.module */ "XbjS")).then(m => m.MaterialServicoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'cadastros/tarefa', loadChildren: () => __webpack_require__.e(/*! import() | modules-cadastros-tarefa-tarefa-module */ "modules-cadastros-tarefa-tarefa-module").then(__webpack_require__.bind(null, /*! ./modules/cadastros/tarefa/tarefa.module */ "el9s")).then(m => m.TarefaModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
@@ -33686,7 +33674,7 @@ const routes = [
     { path: 'gestao/programa', loadChildren: () => __webpack_require__.e(/*! import() | modules-gestao-programa-programa-module */ "modules-gestao-programa-programa-module").then(__webpack_require__.bind(null, /*! ./modules/gestao/programa/programa.module */ "iaiR")).then(m => m.ProgramaModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'gestao/cadeia-valor', loadChildren: () => Promise.resolve(/*! import() */).then(__webpack_require__.bind(null, /*! ./modules/gestao/cadeia-valor/cadeia-valor.module */ "pRTT")).then(m => m.CadeiaValorModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'gestao/demanda', loadChildren: () => Promise.resolve(/*! import() */).then(__webpack_require__.bind(null, /*! ./modules/gestao/demanda/demanda.module */ "17YW")).then(m => m.DemandaModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
-    { path: 'gestao/planejamento', loadChildren: () => Promise.all(/*! import() | modules-gestao-planejamento-institucional-planejamento-module */[__webpack_require__.e("common"), __webpack_require__.e("modules-gestao-planejamento-institucional-planejamento-module")]).then(__webpack_require__.bind(null, /*! ./modules/gestao/planejamento-institucional/planejamento.module */ "f1z4")).then(m => m.PlanejamentoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
+    { path: 'gestao/planejamento', loadChildren: () => __webpack_require__.e(/*! import() | modules-gestao-planejamento-institucional-planejamento-module */ "modules-gestao-planejamento-institucional-planejamento-module").then(__webpack_require__.bind(null, /*! ./modules/gestao/planejamento-institucional/planejamento.module */ "f1z4")).then(m => m.PlanejamentoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'gestao/plano-trabalho', loadChildren: () => Promise.all(/*! import() | modules-gestao-plano-plano-module */[__webpack_require__.e("default~listeners-listeners-module~modules-gestao-plano-plano-module"), __webpack_require__.e("common"), __webpack_require__.e("modules-gestao-plano-plano-module")]).then(__webpack_require__.bind(null, /*! ./modules/gestao/plano/plano.module */ "ALD5")).then(m => m.PlanoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'gestao/plano-entrega', loadChildren: () => Promise.all(/*! import() | modules-gestao-plano-entrega-plano-entrega-module */[__webpack_require__.e("common"), __webpack_require__.e("modules-gestao-plano-entrega-plano-entrega-module")]).then(__webpack_require__.bind(null, /*! ./modules/gestao/plano-entrega/plano-entrega.module */ "PtyJ")).then(m => m.PlanoEntregaModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'gestao/projeto', loadChildren: () => __webpack_require__.e(/*! import() | modules-gestao-projeto-projeto-module */ "modules-gestao-projeto-projeto-module").then(__webpack_require__.bind(null, /*! ./modules/gestao/projeto/projeto.module */ "mH8K")).then(m => m.ProjetoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
@@ -34380,7 +34368,7 @@ DocumentPreviewComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵ�
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.html);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", !ctx.html && ctx.emptyDocumentMensage);
-    } }, directives: [_angular_common__WEBPACK_IMPORTED_MODULE_1__["NgIf"]], styles: [".document-preview-paper[_ngcontent-%COMP%] {\n  display: block;\n  padding: 10px;\n  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);\n  width: 100%;\n  min-height: 300px;\n}\n\n.document-preview-margin[_ngcontent-%COMP%] {\n  margin: 10px;\n}\n\n.document-preview-no-document[_ngcontent-%COMP%] {\n  padding-top: 100px;\n  display: block;\n  width: 100%;\n  text-align: center;\n  display: inline;\n  min-height: 300px;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uL2RvY3VtZW50LXByZXZpZXcuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDSSxjQUFBO0VBQ0EsYUFBQTtFQUNBLHdDQUFBO0VBQ0EsV0FBQTtFQUNBLGlCQUFBO0FBQ0o7O0FBRUE7RUFDSSxZQUFBO0FBQ0o7O0FBRUE7RUFDSSxrQkFBQTtFQUNBLGNBQUE7RUFDQSxXQUFBO0VBQ0Esa0JBQUE7RUFDQSxlQUFBO0VBQ0EsaUJBQUE7QUFDSiIsImZpbGUiOiJkb2N1bWVudC1wcmV2aWV3LmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLmRvY3VtZW50LXByZXZpZXctcGFwZXIge1xuICAgIGRpc3BsYXk6IGJsb2NrO1xuICAgIHBhZGRpbmc6IDEwcHg7XG4gICAgYm94LXNoYWRvdzogMCAzcHggNXB4IHJnYmEoMCwwLDAsMC4xKTtcbiAgICB3aWR0aDogMTAwJTtcbiAgICBtaW4taGVpZ2h0OiAzMDBweDtcbn1cblxuLmRvY3VtZW50LXByZXZpZXctbWFyZ2luIHtcbiAgICBtYXJnaW46IDEwcHg7XG59XG5cbi5kb2N1bWVudC1wcmV2aWV3LW5vLWRvY3VtZW50IHtcbiAgICBwYWRkaW5nLXRvcDogMTAwcHg7XG4gICAgZGlzcGxheTogYmxvY2s7XG4gICAgd2lkdGg6IDEwMCU7XG4gICAgdGV4dC1hbGlnbjogY2VudGVyO1xuICAgIGRpc3BsYXk6IGlubGluZTtcbiAgICBtaW4taGVpZ2h0OiAzMDBweDtcbn0iXX0= */"] });
+    } }, directives: [_angular_common__WEBPACK_IMPORTED_MODULE_1__["NgIf"]], styles: [".document-preview-paper[_ngcontent-%COMP%] {\n  display: block;\n  padding: 10px;\n  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);\n  width: 100%;\n  min-height: 300px;\n}\n\n.document-preview-margin[_ngcontent-%COMP%] {\n  margin: 10px;\n}\n\n.document-preview-no-document[_ngcontent-%COMP%] {\n  padding-top: 100px;\n  display: block;\n  width: 100%;\n  text-align: center;\n  display: inline;\n  min-height: 300px;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uL2RvY3VtZW50LXByZXZpZXcuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDSSxjQUFBO0VBQ0EsYUFBQTtFQUNBLHdDQUFBO0VBQ0EsV0FBQTtFQUNBLGlCQUFBO0FBQ0o7O0FBRUE7RUFDSSxZQUFBO0FBQ0o7O0FBRUE7RUFDSSxrQkFBQTtFQUNBLGNBQUE7RUFDQSxXQUFBO0VBQ0Esa0JBQUE7RUFDQSxlQUFBO0VBQ0EsaUJBQUE7QUFDSiIsImZpbGUiOiJkb2N1bWVudC1wcmV2aWV3LmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLmRvY3VtZW50LXByZXZpZXctcGFwZXIge1xyXG4gICAgZGlzcGxheTogYmxvY2s7XHJcbiAgICBwYWRkaW5nOiAxMHB4O1xyXG4gICAgYm94LXNoYWRvdzogMCAzcHggNXB4IHJnYmEoMCwwLDAsMC4xKTtcclxuICAgIHdpZHRoOiAxMDAlO1xyXG4gICAgbWluLWhlaWdodDogMzAwcHg7XHJcbn1cclxuXHJcbi5kb2N1bWVudC1wcmV2aWV3LW1hcmdpbiB7XHJcbiAgICBtYXJnaW46IDEwcHg7XHJcbn1cclxuXHJcbi5kb2N1bWVudC1wcmV2aWV3LW5vLWRvY3VtZW50IHtcclxuICAgIHBhZGRpbmctdG9wOiAxMDBweDtcclxuICAgIGRpc3BsYXk6IGJsb2NrO1xyXG4gICAgd2lkdGg6IDEwMCU7XHJcbiAgICB0ZXh0LWFsaWduOiBjZW50ZXI7XHJcbiAgICBkaXNwbGF5OiBpbmxpbmU7XHJcbiAgICBtaW4taGVpZ2h0OiAzMDBweDtcclxufSJdfQ== */"] });
 
 
 /***/ }),
