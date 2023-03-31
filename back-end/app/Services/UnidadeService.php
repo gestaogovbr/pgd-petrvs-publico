@@ -43,7 +43,7 @@ class UnidadeService extends ServiceBase
     }
 
     public function proxySearch($query, &$data, &$text) {
-        $data["where"][] = ["subordinadas", "==", true];
+        //$data["where"][] = ["subordinadas", "==", true];
         //$data["where"][] = ["inativo", "==", null];
         return $this->proxyQuery($query, $data);
     }
@@ -66,8 +66,8 @@ class UnidadeService extends ServiceBase
         if(!$inativos) {
             array_push($where, ["inativo", "==", null]);
         }
-        if(!$usuario->hasPermissionTo("MOD_UND_TUDO") || ($unidadesPlanejamento && ($usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_SUBORD") || $usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_PROPRIA")))) {
-            if($unidadesPlanejamento && $usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_PROPRIA")) $subordinadas = false;
+        if(!$usuario->hasPermissionTo("MOD_UND_TUDO") || ($unidadesPlanejamento && ($usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_SUBORD") || $usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_QQLOT")))) {
+            if($unidadesPlanejamento && $usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_QQLOT")) $subordinadas = false;
             $lotacoesWhere = $this->usuarioService->lotacoesWhere($subordinadas, null, "unidades");
             array_push($where, new RawWhere("($lotacoesWhere)", []));
         }
