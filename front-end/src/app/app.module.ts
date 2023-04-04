@@ -20,6 +20,8 @@ import { UteisModule } from './modules/uteis/uteis.module';
 import { RotinaModule } from './modules/rotinas/rotina.module';
 import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
 import { CadeiaValorModule } from './modules/gestao/cadeia-valor/cadeia-valor.module';
+import { PlanejamentoObjetivoModule } from './modules/cadastros/planejamento-objetivo/planejamento-objetivo.module';
+import { PlanejamentoModule } from './modules/gestao/planejamento-institucional/planejamento.module';
 
 @NgModule({
   declarations: [

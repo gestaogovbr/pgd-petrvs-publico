@@ -180,7 +180,7 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PLAN_INST_CONS", "Permite consultar Planejamentos Institucionais"],
         ["MOD_PLAN_INST_INCL", "Permite incluir algum tipo de Planejamento Institucional"],
         ["MOD_PLAN_INST_INCL_UNID_INST", "Permite incluir Planejamento Institucional para a Unidade Instituidora"],
-        ["MOD_PLAN_INST_INCL_UNEX_LOTPR", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas para a sua lotação principal)"],
+        ["MOD_PLAN_INST_INCL_UNEX_LOTPRI", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas para a sua lotação principal)"],
         ["MOD_PLAN_INST_INCL_UNEX_QQLOT", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas as de suas lotações)"],
         ["MOD_PLAN_INST_INCL_UNEX_SUBORD", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas as de suas lotações e suas subordinadas)"],
         ["MOD_PLAN_INST_INCL_UNEX_QUALQUER", "Permite incluir Planejamentos Institucionais para qualquer Unidade Executora, independente de sua lotação"],

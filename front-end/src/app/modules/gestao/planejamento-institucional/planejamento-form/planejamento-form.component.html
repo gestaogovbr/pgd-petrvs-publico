@@ -6,13 +6,13 @@
                     <input-text [size]="12" label="Nome do Planejamento Institucional" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome"></input-text>
                 </div>
                 <div class="row">
-                    <input-search [size]="6" label="Unidade Executora" icon="fab fa-unity" [disabled]="(auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_LOTPR') || auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_QQLOT') || auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_SUBORD') || auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_QUALQUER')) ? undefined : 'true'" controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" 
+                    <input-search [size]="6" label="Unidade Executora" icon="fab fa-unity" [disabled]="hasPermissionToUNEX ? undefined : 'true'" controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" 
                                   [selectRoute]="{route: ['configuracoes', 'unidade'], params: {filter: {unidades_planejamento: true}}}" [where]="[['unidades_planejamento','==',true]]" (change)="onUnidadeChange($event)"></input-search>
                     <input-datetime date [size]="3" label="Início" icon="bi bi-calendar-date" controlName="inicio" [control]="form!.controls.inicio" labelInfo="Início do Planejamento Institucional"></input-datetime>
                     <input-datetime date [size]="3" label="Fim" icon="bi bi-calendar-date" controlName="fim" [control]="form!.controls.fim" labelInfo="Fim do Planejamento Institucional"></input-datetime>
                 </div>
                 <div *ngIf="form!.controls.unidade_id.value" class="row">
-                    <input-select icon="far fa-edit" label="Selecione o Planejamento da Unidade Instituidora vinculado" [items]="planejamentosUnidadeInstituidora" controlName="planejamento_superior_id" [control]="form!.controls.planejamento_superior_id" (select)="onPlanejamentoSelect($event)"></input-select>
+                    <input-select icon="far fa-edit" label="Selecione o Planejamento Superior vinculado" [items]="planejamentosSuperiores" controlName="planejamento_superior_id" [control]="form!.controls.planejamento_superior_id" (select)="onPlanejamentoSelect($event)"></input-select>
                 </div>                
                 <div class="row">
                     <input-textarea [size]="6" label="Missão" [rows]="3" controlName="missao" [control]="form!.controls.missao"></input-textarea>
@@ -26,7 +26,7 @@
             </div>
         </tab>
         <tab key="OBJETIVOS" label="Objetivos">
-            <planejamento-form-objetivo #objetivos [entity]="entity" noPersist></planejamento-form-objetivo>
+            <planejamento-list-objetivo #objetivos [entity]="entity" noPersist></planejamento-list-objetivo>
         </tab>
     </tabs>
 </editable-form>

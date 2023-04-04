@@ -32,7 +32,7 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
       so_entidade: { default: false },
       agrupar: { default: true },
      });
-     this.join = ['unidade:nome,sigla','objetivos','objetivos.eixo_tematico:id,nome','objetivos.objetivo_superior:id,nome'];
+    this.join = ['unidade:nome,sigla','objetivos','objetivos.eixo_tematico:id,nome','objetivos.objetivo_superior:id,nome'];
     // Testa se o usuário possui permissão para exibir planejamentos institucionais
     if (this.auth.hasPermissionTo("MOD_PLAN_INST_CONS")) {
       this.options.push({

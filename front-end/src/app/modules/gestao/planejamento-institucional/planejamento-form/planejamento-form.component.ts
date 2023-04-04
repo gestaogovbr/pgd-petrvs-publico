@@ -8,7 +8,8 @@ import { IIndexable } from 'src/app/models/base.model';
 import { Planejamento } from 'src/app/models/planejamento.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
-import { PlanejamentoFormObjetivoComponent } from '../planejamento-form-objetivo/planejamento-form-objetivo.component';
+import { PlanejamentoListObjetivoComponent } from '../planejamento-list-objetivo/planejamento-list-objetivo.component';
+import { createThis } from 'typescript';
 
 @Component({
   selector: 'app-planejamento-form',
@@ -17,16 +18,18 @@ import { PlanejamentoFormObjetivoComponent } from '../planejamento-form-objetivo
 })
 export class PlanejamentoFormComponent extends PageFormBase<Planejamento, PlanejamentoDaoService> {
     @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-    @ViewChild('objetivos', { static: false }) public objetivos?: PlanejamentoFormObjetivoComponent;
+    @ViewChild('objetivos', { static: false }) public objetivos?: PlanejamentoListObjetivoComponent;
     @ViewChild(GridComponent, { static: true }) public grid?: GridComponent;
     
     public unidadeDao: UnidadeDaoService;
-    public planejamentosUnidadeInstituidora: LookupItem[] = [];
+    public planejamentosSuperiores: LookupItem[] = [];
+    public hasPermissionToUNEX: boolean = false;
     public form: FormGroup;
     
     constructor(public injector: Injector) {
       super(injector, Planejamento, PlanejamentoDaoService);
       this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+      this.hasPermissionToUNEX = this.auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_LOTPRI') || this.auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_QQLOT') || this.auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_SUBORD') || this.auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_QUALQUER');
       this.join = ['objetivos','objetivos.objetivo_superior:id,nome','objetivos.eixo_tematico:id,nome'];
       this.form = this.fh.FormBuilder({
         nome: {default: ""},
@@ -65,9 +68,6 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
     }
   
     public loadData(entity: Planejamento, form: FormGroup) {
-      this.dao?.query({where: [['entidade_id','==',this.auth.entidade!.id],['unidade_id', '==', null]]}).getAll().then((pls) => {
-        this.planejamentosUnidadeInstituidora = pls.map(x => Object.assign({},{key: x.id, value: x.nome}) as LookupItem);
-      });
       let formValue = Object.assign({}, form.value);
       form.patchValue(this.util.fillForm(formValue, entity));
     }
@@ -107,8 +107,11 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
     
     public onUnidadeChange(event: Event){
       this.entity!.unidade_id = this.form.controls.unidade_id.value;
-      this.objetivos!.loadData(this.entity!, this.form!);
-      this.cdRef.detectChanges();
+      this.dao?.query({where: [['unidade_executora_id', '==', this.form.controls.unidade_id.value], ['manut_planej_unidades_executoras','==',true]]}).getAll().then((pls) => {
+        this.planejamentosSuperiores = pls.map(x => Object.assign({},{key: x.id, value: x.nome}) as LookupItem);
+        this.objetivos!.loadData(this.entity!, this.form!);
+        this.cdRef.detectChanges();
+      });
     }
 
     public onPlanejamentoSelect(event: Event){

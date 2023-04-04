@@ -5,18 +5,20 @@ import { ComponentsModule } from 'src/app/components/components.module';
 import { PlanejamentoListComponent } from './planejamento-list/planejamento-list.component';
 import { PlanejamentoFormComponent } from './planejamento-form/planejamento-form.component';
 import { PlanejamentoRoutingModule } from './planejamento-routing.module';
+import { PlanejamentoListObjetivoComponent } from './planejamento-list-objetivo/planejamento-list-objetivo.component';
 import { PlanejamentoFormObjetivoComponent } from './planejamento-form-objetivo/planejamento-form-objetivo.component';
 
 @NgModule({
   declarations: [
     PlanejamentoListComponent,
     PlanejamentoFormComponent,
+    PlanejamentoListObjetivoComponent,
     PlanejamentoFormObjetivoComponent
   ],
   imports: [
+    CommonModule,
     ComponentsModule,
-    PlanejamentoRoutingModule,
-    CommonModule
+    PlanejamentoRoutingModule
   ]
 })
 export class PlanejamentoModule { }
