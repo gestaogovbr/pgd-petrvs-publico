@@ -42,7 +42,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
     }
   
     public async addObjetivo() {
-      this.go.navigate({route: ['gestao', 'planejamento', this.entity!.id, 'new']});
+      this.go.navigate({route: ['gestao', 'planejamento', 'objetivo', 'new'], params:{planejamento: this.entity!}});
     }
 
     public async removeObjetivo(row: any) {

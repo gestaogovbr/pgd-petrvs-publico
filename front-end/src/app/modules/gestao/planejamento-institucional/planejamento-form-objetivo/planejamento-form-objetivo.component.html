@@ -6,13 +6,13 @@
         <div class="row">
             <input-textarea label="Fundamentação" [size]="12" [rows]="4" controlName="fundamentacao" [control]="form!.controls.fundamentacao"></input-textarea>
         </div>
-        <div class="row">
+        <div *ngIf="!planejamento!.unidade_id" class="row">
             <input-search [size]="12" label="Eixo Temático" icon="fab fa-unity" controlName="eixo_tematico_id" [control]="form!.controls.eixo_tematico_id" [dao]="eixoTematicoDao" [selectRoute]="{route: ['cadastros', 'eixo-tematico']}"></input-search>                        
         </div>
         <div class="row">
-            <input-search [size]="12" label="Planejamento Institucional" icon="fab fa-unity" controlName="planejamento_id" [control]="form!.controls.planejamento_id" [dao]="planejamentoDao" [selectRoute]="{route: ['gestao', 'planejamento']}"></input-search>                        
+            <input-text #planejamento_nome [size]="12" [disabled]="'true'" label="Planejamento Institucional" icon="fab fa-unity" controlName="planejamento_nome"></input-text>                        
         </div>
-        <div class="row">
+        <div *ngIf="planejamento!.unidade_id" class="row">
             <input-search [size]="12" label="Objetivo Superior" icon="fab fa-unity" controlName="objetivo_superior_id" [control]="form!.controls.objetivo_superior_id" [dao]="planejamentoObjetivoDao" [selectRoute]="{route: ['cadastros', 'planejamento-objetivo']}"></input-search>                        
         </div>
     </div>
