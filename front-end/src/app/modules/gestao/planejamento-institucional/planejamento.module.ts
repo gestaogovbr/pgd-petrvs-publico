@@ -6,12 +6,16 @@ import { PlanejamentoListComponent } from './planejamento-list/planejamento-list
 import { PlanejamentoFormComponent } from './planejamento-form/planejamento-form.component';
 import { PlanejamentoRoutingModule } from './planejamento-routing.module';
 import { PlanejamentoFormObjetivoComponent } from './planejamento-form-objetivo/planejamento-form-objetivo.component';
+import { PlanejamentoMapaComponent } from './planejamento-mapa/planejamento-mapa.component';
+import { PlanejamentoMapaEntregasComponent } from './planejamento-mapa-entregas/planejamento-mapa-entregas.component';
 
 @NgModule({
   declarations: [
     PlanejamentoListComponent,
     PlanejamentoFormComponent,
-    PlanejamentoFormObjetivoComponent
+    PlanejamentoFormObjetivoComponent,
+    PlanejamentoMapaComponent,
+    PlanejamentoMapaEntregasComponent
   ],
   imports: [
     ComponentsModule,

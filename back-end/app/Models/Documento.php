@@ -50,42 +50,18 @@ class Documento extends ModelBase
         });
     }
 
+    // Casting
+    protected $casts = [
+        'assinatura' => AsJson::class,
+        'metadados' => AsJson::class,
+        'datasource' => AsJson::class,
+        'dataset' => AsJson::class
+    ];
+
     // Has
     public function assinaturas() { return $this->hasMany(DocumentoAssinatura::class); }    
     // Belongs
     public function plano() { return $this->belongsTo(Plano::class); }
     public function entidade() { return $this->belongsTo(Entidade::class); }    
-    // Mutattors e Casts
-    public function getAssinaturaAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setAssinaturaAttribute($value)
-    {
-        $this->attributes['assinatura'] = json_encode($value);
-    }
-    public function getMetadadosAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setMetadadosAttribute($value)
-    {
-        $this->attributes['metadados'] = json_encode($value);
-    }
-    public function getDatasourceAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setDatasourceAttribute($value)
-    {
-        $this->attributes['datasource'] = json_encode($value);
-    }
-    public function getDatasetAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setDatasetAttribute($value)
-    {
-        $this->attributes['dataset'] = json_encode($value);
-    }
+    
 }

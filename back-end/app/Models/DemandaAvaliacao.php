@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\AvaliacaoJustificativa;
 use App\Models\Demanda;
@@ -30,6 +31,11 @@ class DemandaAvaliacao extends ModelBase
 
     public $delete_cascade = [];
 
+    // Casting
+    protected $casts = [
+        'justificativas' => AsJson::class
+    ];
+    
     // Has
     //public function avaliacoesJustificativas() { return $this->hasMany(AvaliacaoJustificativa::class, 'avaliacao_id'); }
     public function demandaAvaliacao() { return $this->hasOne(Demanda::class, 'avaliacao_id'); }    
@@ -37,13 +43,5 @@ class DemandaAvaliacao extends ModelBase
     public function usuario() { return $this->belongsTo(Usuario::class); }    
     public function demanda() { return $this->belongsTo(Demanda::class); }
     public function tipoAvaliacao() { return $this->belongsTo(TipoAvaliacao::class, 'tipo_avaliacao_id'); }
-    // Mutattors e Casts
-    public function getJustificativasAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setJustificativasAttribute($value)
-    {
-        $this->attributes['justificativas'] = json_encode($value);
-    }
+
 }

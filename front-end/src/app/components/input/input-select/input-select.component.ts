@@ -189,7 +189,8 @@ export class InputSelectComponent extends InputBase implements OnInit {
 
   public setValue(value: any) {
     const stringValue = this.getStringValue(value);
-    if(this.selectedValue != stringValue) {
+    const found = this.items.find(x => x.key == value);
+    if(this.selectedValue != stringValue || (this.selectedItem?.code == "UNKNOWN" && found)) {
       this.value = value;
       this.selectedValue = stringValue;
       this.selectedItem = this.items.find(x => x.key == value);
@@ -200,8 +201,9 @@ export class InputSelectComponent extends InputBase implements OnInit {
           code: "UNKNOWN"
         };
         //this.items.push(this.selectedItem);
-        this.cdRef.detectChanges();
       }
+      this.cdRef.detectChanges();
+      this.cdRef.detectChanges();
       this.control?.setValue(value, {emitEvent: false});
       this.selectPicker?.selectpicker('refresh');
       this.selectPicker?.selectpicker('val', stringValue);

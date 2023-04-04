@@ -1,0 +1,18 @@
+<input-container [labelPosition]="labelPosition" [controlName]="controlName" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
+    <div class="input-group">
+        <ng-container *ngFor="let item of levels; let index = index">
+            <span *ngIf="index > 0" class="input-group-text">{{separator}}</span>
+            <input *ngIf="viewInit" [type]="type" class="form-control input-level" [style.width.px]="inputWidth" [attr.min]="item.min" [attr.max]="item.max" 
+                (change)="onChange($event, index)" [id]="generatedId(controlName) + '_' + index" [class.input-level-invalid]="!item.valid"
+                [readonly]="isDisabled" [attr.value]="item.value">
+        </ng-container>
+        <ng-container *ngIf="hasNewLevel">
+            <span *ngIf="levels.length" class="input-group-text">{{separator}}</span>
+            <input *ngIf="viewInit" #newInputLevel [type]="type" class="form-control input-level" [style.width.px]="inputWidth" [attr.min]="newLevel.min" [attr.max]="newLevel.max"
+                (change)="onNewLevelChange($event)" [id]="generatedId(controlName) + '_new'" [class.input-level-invalid]="!newLevel.valid"
+                [readonly]="isDisabled" [attr.value]="newLevel.value">
+        </ng-container>
+    </div>    
+</input-container>
+
+<!-- currencyMask [options]="maskOptions" //-->

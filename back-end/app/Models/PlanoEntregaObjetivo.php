@@ -25,17 +25,16 @@ class PlanoEntregaObjetivo extends ModelBase
         'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
         'data_fim', /* datetime; */// Data fim da vigência
         'objetivo_id', /* char(36); NOT NULL; */
+        'plano_entrega_entrega_id', /* char(36); NOT NULL; */
     ];
 
     public $fillable_changes = [];
 
     public $delete_cascade = [];
 
-  
     // Has
     // public function atividades() { return $this->hasMany(PlanoAtividade::class); }
     // Belongs
-    // public function planejamentos() { return $this->belongsTo(Planejamneto::class, 'planejamento_id'); }
-    // public function cadeiaValor() { return $this->belongsTo(CadeiaValor::class, 'cadeia_valor_id'); }
-    // public function unidade() { return $this->belongsTo(Unidade::class, 'unidade_id'); }
+    public function objetivo() { return $this->belongsTo(PlanejamentoObjetivo::class, 'objetivo_id'); }
+    public function entrega() { return $this->belongsTo(PlanoEntregaEntrega::class, 'plano_entrega_entrega_id'); }
 }

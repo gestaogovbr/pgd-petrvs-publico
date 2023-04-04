@@ -29,7 +29,7 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
       super(injector, Planejamento, PlanejamentoDaoService);
       this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
       //this.planejamentoDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
-      this.join = ['objetivos','objetivos.eixoTematico:nome'];
+      this.join = ['objetivos','objetivos.eixo_tematico:nome'];
       this.form = this.fh.FormBuilder({
         nome: {default: ""},
         unidade_id: {default: null},
