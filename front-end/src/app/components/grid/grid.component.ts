@@ -70,6 +70,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   @Input() groupBy?: GroupBy[];
   @Input() join: string[] = [];
   @Input() form: FormGroup = new FormGroup({});
+  @Input() noHeader?: string;
   @Input() editable?: string;
   @Input() hasEdit: boolean = true;
   @Input() hasDelete: boolean = false;
@@ -319,6 +320,10 @@ export class GridComponent extends ComponentBase implements OnInit {
 
   public isSeparator(row: any): boolean {
     return row instanceof GridGroupSeparator;
+  }
+
+  public isNoHeader(): boolean {
+    return this.noHeader != undefined;
   }
 
   public getGroupSeparator(row: any): GridGroupSeparator | undefined {

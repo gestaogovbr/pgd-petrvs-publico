@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\Projeto;
 use App\Traits\AutoDataInicio;
@@ -22,8 +23,6 @@ class ProjetoRegra extends ModelBase
         'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
         'perfis', /* json; */// Perfis de capacidade aplicáveis a quem possuir a regra
         //'data_fim', /* datetime; */// Data final da vigência
-        //'recurso_tipo', /* enum('HUMANO','MATERIAL','SERVICO','CUSTO','DEPARTAMENTO'); NOT NULL; */// Tipo do recurso
-        //'finalidade', /* enum('OUTRA','ESCRITORIO_PROJETO','GERENTE_PROJETO','GERENTE_RISCO','GERENTE_COMUNICACAO','GERENTE_RECURSO','PATROCINADOR','GESTOR_NEGOCIAL','MEMBRO'); NOT NULL; */// Finalidade/Papel
     ];
 
     /*public $fillable_changes = [
@@ -34,17 +33,14 @@ class ProjetoRegra extends ModelBase
 
     public $delete_cascade = [];
 
+    // Casting
+    protected $casts = [
+        'perfis' => AsJson::class
+    ];
+    
     // Has
     //public function () { return $this->hasMany(::class); }    
     // Belongs
     public function projeto() { return $this->belongsTo(Projeto::class); }    
-    // Mutattors e Casts
-    public function getPerfisAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setPerfisAttribute($value)
-    {
-        $this->attributes['perfis'] = json_encode($value);
-    }
+
 }

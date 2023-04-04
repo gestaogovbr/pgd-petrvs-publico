@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\Feriado;
 use App\Models\Usuario;
@@ -67,6 +68,13 @@ class Entidade extends ModelBase
         });
     }
 
+    // Casting
+    protected $casts = [
+        'campos_ocultos_demanda' => AsJson::class,
+        'nomenclatura' => AsJson::class,
+        'expediente' => AsJson::class
+    ];
+
     // Has
     public function feriados() { return $this->hasMany(Feriado::class, 'entidade_id'); }        
     // Belongs
@@ -76,22 +84,6 @@ class Entidade extends ModelBase
     public function tipoModalidade() { return $this->belongsTo(TipoModalidade::class, 'tipo_modalidade_id'); }
     
     // Mutattors e Casts
-    public function getCamposOcultosDemandaAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setCamposOcultosDemandaAttribute($value)
-    {
-        $this->attributes['campos_ocultos_demanda'] = json_encode($value);
-    }
-    public function getNomenclaturaAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setNomenclaturaAttribute($value)
-    {
-        $this->attributes['nomenclatura'] = json_encode($value);
-    }
     public function getNotificacoesAttribute($value)
     {
         $notificacoes = new EntidadeNotificacoes();
@@ -100,13 +92,5 @@ class Entidade extends ModelBase
     public function setNotificacoesAttribute($value)
     {
         $this->attributes['notificacoes'] = json_encode($value);
-    }
-    public function getExpedienteAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setExpedienteAttribute($value)
-    {
-        $this->attributes['expediente'] = json_encode($value);
     }
 }

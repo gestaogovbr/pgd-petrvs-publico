@@ -1,6 +1,6 @@
 import { LookupItem } from '../services/lookup.service';
 import { Base } from './base.model';
-import { Entrega } from './entrega.model';
+import { Entrega, EntregaValor } from './entrega.model';
 
 export class PlanoEntregaEntrega extends Base {
   public entrega?: Entrega;
@@ -10,8 +10,8 @@ export class PlanoEntregaEntrega extends Base {
   public descricao: string = "";                  
   public cliente: string = "";                    
   public homologado: boolean = false;                 
-  public meta: LookupItem[] = [];                       
-  public realizado: LookupItem[] = [];                 
+  public meta: EntregaValor = {}; 
+  public realizado: EntregaValor = {};
   public plano_entrega_id: string | null = null;
   public entrega_id: string = '';
   public entrega_pai_id: string = '';                        

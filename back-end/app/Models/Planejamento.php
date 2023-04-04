@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
+use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\Unidade;
 use App\Models\Entidade;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasDataFim;
 use App\Models\PlanejamentoObjetivo;
-use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 
 class Planejamento extends ModelBase
 {
@@ -27,6 +27,7 @@ class Planejamento extends ModelBase
         'visao', /* text; NOT NULL; */// Visão
         'valores', /* json; NOT NULL; */// Valores
         'entidade_id', /* char(36); NOT NULL; */
+        'data_arquivamento', /* datetime; */// Data de arquivamento da demanda
         //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência do registro
         //'data_fim', /* datetime; */// Data fim da vigência do registro
     ];
@@ -42,9 +43,9 @@ class Planejamento extends ModelBase
     public function unidade() { return $this->belongsTo(Unidade::class); }
     public function entidade() { return $this->belongsTo(Entidade::class); }
 
-    //Casting
+    // Casting
     protected $casts = [
-        'valores' => AsArrayObject::class,
+        'valores' => AsJson::class,
     ];
 
     public $fillable_relations = ['objetivos'];

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\Usuario;
 
@@ -27,24 +28,13 @@ class NotificacaoWhatsapp extends ModelBase
         });
     }
 
+    // Casting
+    protected $casts = [
+        'interacoes' => AsJson::class,
+        'atual' => AsJson::class
+    ];
+
     // Has
     // Belongs
     public function usuario() { return $this->belongsTo(Usuario::class); }
-    // Mutattors e Casts
-    public function getInteracoesAttribute($value)
-    {
-        return json_decode($value);
-    }
-    public function setInteracoesAttribute($value)
-    {
-        $this->attributes['interacoes'] = json_encode($value);
-    }
-    public function getAtualAttribute($value)
-    {
-        return json_decode($value);
-    }
-    public function setAtualAttribute($value)
-    {
-        $this->attributes['atual'] = json_encode($value);
-    }
 }

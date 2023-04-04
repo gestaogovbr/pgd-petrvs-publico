@@ -22,7 +22,7 @@ class PlanoEntregaPontoControle extends ModelBase
         'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
         'inicio', /* datetime; NOT NULL; */// Data inicio
         'fim', /* datetime; NOT NULL; */// Data fim
-        'nota_atribuida', /* int; NOT NULL; */// Nota da avaliação 0 - 10
+        'nota_atribuida', /* int; */// Nota da avaliação 0 - 10
         'justificativas', /* json; */// Justificativas da avaliação
         'comentarios', /* text; */// Comentário referente a nota
         'plano_entrega_id', /* char(36); NOT NULL; */

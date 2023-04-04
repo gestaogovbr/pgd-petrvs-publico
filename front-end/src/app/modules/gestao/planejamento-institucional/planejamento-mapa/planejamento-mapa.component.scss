@@ -1,0 +1,48 @@
+.blockquote p {
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.eixo .descricao h4 {
+    transform: rotate(-90deg);
+}
+
+.eixo .descricao button {
+    position: absolute;
+}
+
+.eixo .w-25 {
+    margin-bottom: 10px;
+}
+
+.eixo .objetivo {
+    background: #fff;
+    margin: 0 10px;
+    height: 100%;
+}
+
+.eixo .objetivo p {
+    padding: 10px;
+    color: #5e5b5b;
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.eixo .objetivo .buttons {
+    border-top: 1px solid #ddd;
+}
+
+.eixo .objetivo .buttons a {
+    cursor: pointer;
+    padding: 5px;
+}
+
+.eixo .objetivo .buttons a:hover {
+    background-color: #ddd;
+}
+
+.detalhe_entrega p {
+    font-size: 0.8rem;
+}
+
+/*# sourceMappingURL=style.css.map */

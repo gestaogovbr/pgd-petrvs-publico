@@ -17,11 +17,11 @@ class ProgramaParticipante extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'habilitado', /* varchar(255); NOT NULL; */// Nome do programa de gestão
-        'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
-        'programa_id', /* char(36); */
-        'usuario_id', /* char(36); NOT NULL; */
-        //'data_fim', /* datetime; */// Data fim da vigência
+        'habilitado', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se o perticipantes está habilitado para o programa
+        'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência do registro
+        'programa_id', /* char(36); NOT NULL; */
+        'usuario_id', /* char(36); */
+        //'data_fim', /* datetime; */// Data fim da vigência do registro
     ];
 
     public $delete_cascade = [];

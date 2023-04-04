@@ -25,6 +25,7 @@ class PlanoEntrega extends ModelBase
         'planejamento_id', /* char(36); */
         'cadeia_valor_id', /* char(36); */
         'unidade_id', /* char(36); NOT NULL; */
+        //'numero', /* int; NOT NULL; */// Número do plano de entrega (Gerado pelo sistema)
     ];
 
     public $fillable_changes = ["entregas"];

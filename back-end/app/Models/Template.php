@@ -33,14 +33,9 @@ class Template extends ModelBase
         'data_fim', /* datetime; */// Data fim da vigência
     ];
 
-    // Mutattors e Casts
-    public function getDatasetAttribute($value)
-    {
-        return json_decode($value);
-    }
-    public function setDatasetAttribute($value)
-    {
-        $this->attributes['dataset'] = json_encode($value);
-    }
-
+    // Casting
+    protected $casts = [
+        'dataset' => AsJson::class
+    ];
+    
 }
