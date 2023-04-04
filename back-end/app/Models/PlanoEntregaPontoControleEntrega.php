@@ -2,17 +2,12 @@
 
 namespace App\Models;
 
+use App\Casts\AsJson;
 use App\Models\ModelBase;
-use App\Models\Usuario;
-use App\Models\Unidade;
-use App\Models\Programa;
-use App\Models\Documento;
-use App\Models\TipoModalidade;
-use App\Models\PlanoAtividade;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasDataFim;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Casts\AsArrayObject;
+use App\Models\PlanoEntregaPontoControle;
+use App\Models\PlanoEntregaEntrega;
 
 class PlanoEntregaPontoControleEntrega extends ModelBase
 {
@@ -31,10 +26,10 @@ class PlanoEntregaPontoControleEntrega extends ModelBase
         //'data_fim', /* datetime; */// Data fim da vigência
     ];
 
-    //Casting
+    // Casting
     protected $casts = [
-        'meta' => AsArrayObject::class,
-        'realizado' => AsArrayObject::class,
+        'meta' => AsJson::class,
+        'realizado' => AsJson::class
     ];
 
     // Belongs

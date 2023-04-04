@@ -18,11 +18,11 @@ class PlanoTrabalhoEntrega extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'nome', 
-        'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
-        'plano_id', /* char(36); */
-        'plano_entrega_entrga_id', /* char(36); NOT NULL; */
-        //'data_fim', /* datetime; */// Data fim da vigência
+        'nome', /* varchar(256); NOT NULL; */// Nome da entrega
+        'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência do registro
+        'plano_id', /* char(36); NOT NULL; */
+        //'data_fim', /* datetime; */// Data fim da vigência do registro
+        //'entrega_id', /* char(36); NOT NULL; */
     ];
 
     public $fillable_changes = [];

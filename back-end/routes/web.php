@@ -1,11 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PetrvsController;
 use App\Http\Controllers\AngularController;
-use App\Http\Controllers\DownloadController;
-use Laravel\Socialite\Facades\Socialite;
+use App\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Routing\Middleware\SubstituteBindings;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,25 +18,14 @@ use Laravel\Socialite\Facades\Socialite;
 |
 */
 
-$actions = config('petrvs')['actions']['web'];
-
 /* Rotas do Angular */
-Route::any('/{any}', [AngularController::class, 'index'])->where('any', '^(?!api|web|download|environment-config).*$');
-
-/* Rotas do login/logout */
-Route::post('/web/login-user-password', [LoginController::class, $actions['login-user-password']]);
-Route::post('/web/login-firebase-token', [LoginController::class, $actions['login-firebase-token']]);
-Route::post('/web/login-google-token', [LoginController::class, $actions['login-google-token']]);
-Route::post('/web/login-institucional', [LoginController::class, $actions['login-institucional']]);
-Route::post('/web/login-session', [LoginController::class, 'authenticateSession']);
-Route::get('/web/logout', [LoginController::class, 'logout']);
-
-/* Rotas Login Azure*/
-Route::view('/web/login-azure-popup', 'azure');
-Route::get('/web/login-azure-redirect', [LoginController::class, 'signInAzureRedirect']);
-Route::get('/web/login-azure-callback', [LoginController::class, 'signInAzureCallback']);
-Route::get('/web/login-azure-simulate-callback', [LoginController::class, 'simulateAzureCallback']);
+Route::any('/{any}', [AngularController::class, 'index'])->where('any', '^(?!api|sanctum|web|download|environment-config).*$');
 
 /* Rotas diversas */
 Route::get('environment-config', [PetrvsController::class, 'environmentConfig']);
-Route::middleware(['signed'])->get('/download/{file}', [DownloadController::class, 'download'])->name('download')->where('file', '.*');
+/*
+    ->withoutMiddleware([
+        StartSession::class, 
+        VerifyCsrfToken::class,
+        SubstituteBindings::class
+    ]);*/

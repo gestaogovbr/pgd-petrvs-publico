@@ -43,8 +43,8 @@ class ProjetoTarefa extends ModelBase
         'aloca_proprios_recursos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui recursos próprios (somente se tem_filhos)
         'soma_recusos_alocados_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Mostra o somatório dos recursos filhos (somente se tem_filhos)
         'custos_proprios', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui custos próprios (somente se tem_filhos), se não tem filhos sempre será true
-        'soma_custos_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Mostra o somatório dos custos filhos (somente se tem_filhos)
-        'etiquetas', /* json; */// Etiquetas
+        'soma_custos_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui custos filhos (somente se tem_filhos)
+        'etiquetas', /* json; */
         'projeto_id', /* char(36); NOT NULL; */
         'tarefa_pai_id', /* char(36); */
         'demanda_id', /* char(36); */
@@ -60,19 +60,16 @@ class ProjetoTarefa extends ModelBase
 
     public $delete_cascade = ["alocacoes"];
 
+    // Casting
+    protected $casts = [
+        'etiquetas' => AsJson::class
+    ];
+
     // Has
     public function alocacoes() { return $this->hasMany(ProjetoAlocacao::class, "tarefa_id"); }    
     // Belongs
     public function projeto() { return $this->belongsTo(Projeto::class); }    
     public function demanda() { return $this->belongsTo(Demanda::class); }    
     public function usuario() { return $this->belongsTo(Usuario::class); }    
-    // Mutattors e Casts
-    public function getEtiquetasAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setEtiquetasAttribute($value)
-    {
-        $this->attributes['etiquetas'] = json_encode($value);
-    }
+    
 }

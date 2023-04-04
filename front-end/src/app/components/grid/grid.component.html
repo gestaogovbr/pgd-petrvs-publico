@@ -7,7 +7,7 @@
             <div [class]="classColTable">
                 <ng-content></ng-content>
                 <table class="table" [class.table-hover]="isSelectable" [class.scrollable]="scrollable">
-                    <thead>
+                    <thead *ngIf="!isNoHeader">
                         <tr>
                             <th *ngIf="multiselecting" class="grid-multiselect-header">
                                 <i class="bi bi-card-checklist"></i>

@@ -22,6 +22,7 @@ class CadeiaValor extends ModelBase
         'nome', /* varchar(256); NOT NULL; */// Nome da Cadeia de Valores
         'unidade_id', /* char(36); */
         'entidade_id', /* char(36); NOT NULL; */
+        'data_arquivamento', /* datetime; */// Data de arquivamento da demanda
         //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência do registro
         //'data_fim', /* datetime; */// Data fim da vigência do registro
     ];

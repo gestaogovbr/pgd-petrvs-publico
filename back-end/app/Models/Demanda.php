@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\DemandaPausa;
 use App\Models\DemandaVinculo;
@@ -77,6 +78,12 @@ class Demanda extends ModelBase
 
     public $delete_cascade = ['entregas', 'pausas', 'vinculos', 'avaliacoes', 'comentarios'];
 
+    // Casting
+    protected $casts = [
+        'etiquetas' => AsJson::class,
+        'checklist' => AsJson::class
+    ];
+
     // Has
     public function entregas() { return $this->hasMany(DemandaEntrega::class); }    
     //public function anexos() { return $this->hasMany(Anexo::class); }
@@ -93,51 +100,14 @@ class Demanda extends ModelBase
     public function tipoDocumentoEntrega() { return $this->belongsTo(TipoDocumento::class, 'tipo_documento_entrega_id'); }    
     public function avaliacao() { return $this->belongsTo(DemandaAvaliacao::class); }    
     public function plano() { return $this->belongsTo(Plano::class); }    
-    // Mutattors e Casts
-    public function getEtiquetasAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setEtiquetasAttribute($value)
-    {
-        $this->attributes['etiquetas'] = json_encode($value);
-    }
-    public function getChecklistAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setChecklistAttribute($value)
-    {
-        $this->attributes['checklist'] = json_encode($value);
-    }
 
     // Escopos
+    public function scopeDoUsuario($query, $usuario_id) { return $query->where("usuario_id", $usuario_id); }
+    public function scopeDosPlanos($query, $planos_ids) { return $query->whereIn("plano_id", $planos_ids); }
+    public function scopeAvaliadas($query) { return $query->whereNotNull("avaliacao_id"); }
+    public function scopeNaoIniciadas($query) { return $query->whereNull('data_inicio'); }
+    public function scopeConcluidas($query) { return $query->whereNotNull('data_entrega'); }
+    public function scopeNaoConcluidas($query) { return $query->whereNotNull('data_inicio')->whereNull('data_entrega'); }
+    public function scopeAtrasadas($query){ return $query->whereNotNull('data_inicio')->whereNull('data_entrega')->whereDate('prazo_entrega', '<', Carbon::today()); }
 
-    public function scopeDoUsuario($query, $usuario_id){
-        return $query->where("usuario_id", $usuario_id);
-    }
-
-    public function scopeDosPlanos($query, $planos_ids){
-        return $query->whereIn("plano_id", $planos_ids);
-    }
-
-    public function scopeAvaliadas($query){
-        return $query->whereNotNull("avaliacao_id");
-    }
-
-    public function scopeNaoIniciadas($query){
-        return $query->whereNull('data_inicio');
-    }
-
-    public function scopeConcluidas($query){
-        return $query->whereNotNull('data_entrega');
-    }
-
-    public function scopeNaoConcluidas($query){
-        return $query->whereNotNull('data_inicio')->whereNull('data_entrega');
-    }
-
-    public function scopeAtrasadas($query){
-        return $query->whereNotNull('data_inicio')->whereNull('data_entrega')->whereDate('prazo_entrega', '<', Carbon::today());
-    }
 }
