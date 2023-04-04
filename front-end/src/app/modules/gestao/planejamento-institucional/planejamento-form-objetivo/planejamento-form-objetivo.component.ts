@@ -44,9 +44,9 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
   ngOnInit(): void {
     super.ngOnInit();
     this.planejamento = this.queryParams.planejamento as Planejamento;
-    this.form!.controls.planejamento_id.setValue(this.planejamento.id);
+/*     this.form!.controls.planejamento_id.setValue(this.planejamento.id);
     this.form!.controls.planejamento_nome.setValue(this.planejamento.nome);
-    this.cdRef.detectChanges();
+    this.cdRef.detectChanges(); */
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -63,8 +63,10 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
   }
 
   public initializeData(form: FormGroup): void {
-    this.form!.patchValue(new PlanejamentoObjetivo());
-    this.form!.patchValue(form);
+    form!.patchValue(new PlanejamentoObjetivo());
+    form!.controls.planejamento_id.setValue(this.planejamento!.id);
+    form!.controls.planejamento_nome.setValue(this.planejamento!.nome);
+    //cdRef.detectChanges();
   }
 
   public saveData(form: IIndexable): Promise<PlanejamentoObjetivo> {
