@@ -65,7 +65,7 @@ export class CadeiaValorFormComponent extends PageFormBase<CadeiaValor, CadeiaVa
     return new Promise<CadeiaValor>((resolve, reject) => {
       this.processos!.grid!.confirm();
       let cadeiaValor = this.util.fill(new CadeiaValor(), this.entity!);
-      this.form!.value.entidade_id = this.auth.unidade?.entidade?.id
+      this.form!.value.entidade_id = this.auth.entidade?.id
       this.form!.value.unidade_id = this.auth.unidade?.id
       cadeiaValor = this.util.fillForm(cadeiaValor, this.form!.value);
       cadeiaValor.processos = this.processos!.items;

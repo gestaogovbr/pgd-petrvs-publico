@@ -42,16 +42,11 @@ export class CadeiaValorFormProcessosComponent extends PageFrameBase {
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
+    if (['nome'].indexOf(controlName) >= 0 && !control.value?.length) {
+      result = "Obrigatório";
+    }  
+    
     return result;
-  }
-
-  public loadData(entity: IIndexable, form?: FormGroup) {
-    //super.loadData(entity, form);
-  }
-
-  public initializeData(form?: FormGroup) {
-    /*this.entity = new CadeiaValor();
-    this.loadData(this.entity, this.form);*/
   }
 
   public async addProcesso() {
