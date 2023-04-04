@@ -6,11 +6,14 @@
 
 <editable-form [form]="form">
     <div class="row">
+        <input-level [size]="12" controlName="level" [validate]="validateLevel"></input-level>
+    </div>
+    <!--div class="row">
         <input-editor controlName="template" [dataset]="dataset"></input-editor>
     </div>
     <div class="row">
         <input-editor controlName="editor" [canEditTemplate]="false" [template]="form.controls.template.value" [datasource]="datasource"></input-editor>
-    </div>
+    </div//-->
 </editable-form>
 <br><br>
 {{form?.controls?.editor?.value || ""}}

@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use App\Models\Usuario;
+use Laravel\Sanctum\Sanctum;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -16,6 +17,17 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         // 'App\Models\Model' => 'App\Policies\ModelPolicy',
     ];
+
+    /**
+     * Register services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        Sanctum::ignoreMigrations();
+    }
+
 
     /**
      * Register any authentication / authorization services.

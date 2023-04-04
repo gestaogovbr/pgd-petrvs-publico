@@ -2,11 +2,10 @@
 
 namespace App\Models;
 
+use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasDataFim;
-use Illuminate\Support\Facades\DB; 
-use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 
 class   PlanoEntregaEntrega extends ModelBase
 {
@@ -35,17 +34,18 @@ class   PlanoEntregaEntrega extends ModelBase
 
     public $delete_cascade = [];
 
-    //Casting
+    // Casting
     protected $casts = [
-        'meta' => AsArrayObject::class,
-        'realizado' => AsArrayObject::class
+        'meta' => AsJson::class,
+        'realizado' => AsJson::class
     ];
 
     // HasMany
     public function planoEntregaPontoControleEntregas() { return $this->hasMany(PlanoEntregaPontoControleEntrega::class, 'plano_entrega_entrega_id'); }
-    
+    public function objetivos() { return $this->hasMany(PlanoEntregaObjetivo::class, 'plano_entrega_entrega_id'); }
     // Belongs
     public function planoEntrega() { return $this->belongsTo(PlanoEntrega::class, 'plano_entrega_id'); }
     public function entrega() { return $this->belongsTo(Entrega::class); }
-    public function entregaPai() { return $this->belongsTo(Entrega::class, 'entrega_pai_id'); }
+    public function entregaPai() { return $this->belongsTo(PlanoEntregaEntrega::class, 'entrega_pai_id'); }
+
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Traits\AutoDataInicio;
 use App\Models\Demanda;
@@ -51,60 +52,21 @@ class Atividade extends ModelBase
         });  
     }
     
+    // Casting
+    protected $casts = [
+        'entregas_esperadas' => AsJson::class,
+        'parametros_adotados' => AsJson::class,
+        'tipos_processo' => AsJson::class,
+        'checklist_predefinidos' => AsJson::class,
+        'etiquetas_predefinidas' => AsJson::class,
+        'complexidade' => AsJson::class
+    ];
+
     // Has
     public function demandas() { return $this->hasMany(Demanda::class); }
     // Belongs
     public function unidade() { return $this->belongsTo(Unidade::class); }
     public function tipoAtividade() { return $this->belongsTo(TipoAtividade::class); }
     public function tipoProcesso() { return $this->belongsTo(TipoProcesso::class); }
-    // Mutattors e Casts
-    public function getEntregasEsperadasAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setEntregasEsperadasAttribute($value)
-    {
-        $this->attributes['entregas_esperadas'] = json_encode($value);
-    }
-    // Mutattors e Casts
-    public function getParametrosAdotadosAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setParametrosAdotadosAttribute($value)
-    {
-        $this->attributes['parametros_adotados'] = json_encode($value);
-    }
-    public function getTiposProcessoAttribute($value) {
-        return json_decode($value);
-    }
-    public function setTiposProcessoAttribute($value)
-    {
-        $this->attributes['tipos_processo'] = json_encode($value);
-    }
-    public function getChecklistPredefinidosAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setChecklistPredefinidosAttribute($value)
-    {
-        $this->attributes['checklist_predefinidos'] = json_encode($value);
-    }
-    public function getEtiquetasPredefinidasAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setEtiquetasPredefinidasAttribute($value)
-    {
-        $this->attributes['etiquetas_predefinidas'] = json_encode($value);
-    }
-    public function getComplexidadeAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setComplexidadeAttribute($value)
-    {
-        $this->attributes['complexidade'] = json_encode($value);
-    }
 
 }

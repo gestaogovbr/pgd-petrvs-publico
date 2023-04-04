@@ -2,6 +2,9 @@
 
 return [
 
+    /* Desabilita a rota sanctum/csrf-cookie para funcionar com o tenant */
+    'routes' => false,
+
     /*
     |--------------------------------------------------------------------------
     | Stateful Domains

@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'tenant' => [
+        'type' => env('PETRVS_TENANT_TYPE', 'domain')
+    ],
     'entidade' => env('PETRVS_ENTIDADE', ''),
     'suporte' => env('PETRVS_SUPORTE', ''),
     'logo' => env('PETRVS_LOGO', ''),
