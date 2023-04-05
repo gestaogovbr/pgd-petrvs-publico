@@ -31,7 +31,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
     constructor(public injector: Injector) {
       super(injector);
       this.dao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
-      this.groupBy = [{field: "eixo_tematico.nome", label: "Eixo Temático"}];
+      this.groupBy = [{field: "eixo_tematico_id", label: "Eixo Temático"}];
       this.form = this.fh.FormBuilder({
         nome: {default: ""},
         fundamentacao: {default: ""},
@@ -42,10 +42,14 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
     }
   
     public async addObjetivo() {
-      this.go.navigate({route: ['gestao', 'planejamento', 'objetivo', 'new'], params:{planejamento: this.entity!, planejamento_superior_id: '33bfe90e-5724-44ff-9960-308869c2384b'}}).then(response => {
-        this.cdRef.detectChanges();
-      });
+      this.go.navigate({route: ['gestao', 'planejamento', 'objetivo', 'new'], params:{planejamento_superior_id: '33bfe90e-5724-44ff-9960-308869c2384b'}}, {metadata: {planejamento: this.entity!}, modalClose: (modalResult) => {
+        if(modalResult) {
+          this.grid!.query!.refresh();
+          this.cdRef.detectChanges();
+        };
+      }});
       //se o campo planejamento_superior_if for incluido na tabela planejamentos não será necessário passar o segundo argumento.
+
     }
 
     public async removeObjetivo(row: any) {
@@ -65,7 +69,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
       this.cdRef.detectChanges();
     }
 
-    public async saveObjetivo(form: FormGroup, row: any) {
+/*     public async saveObjetivo(form: FormGroup, row: any) {
       let result = undefined;
       this.form!.markAllAsTouched();
       if (this.form!.valid) {
@@ -79,12 +83,12 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
         this.cdRef.detectChanges();
       }
       return result;
-    }
+    } */
 
-    public async saveData(form?: IIndexable) {
+/*     public async saveData(form?: IIndexable) {
       await this.grid?.confirm();
       return this.entity!;
-    }
+    } */
 
 }
   

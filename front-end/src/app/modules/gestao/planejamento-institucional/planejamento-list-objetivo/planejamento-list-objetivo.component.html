@@ -1,5 +1,6 @@
+<!-- [save]="saveObjetivo.bind(this)" -->
 <grid [items]="items" [form]="form!" #gridObjetivos editable [selectable]="false" [minHeight]="minHeight" 
-        [add]="addObjetivo.bind(this)" [load]="loadObjetivo.bind(this)" [remove]="removeObjetivo.bind(this)" [save]="saveObjetivo.bind(this)"
+        [add]="addObjetivo.bind(this)" [load]="loadObjetivo.bind(this)" [remove]="removeObjetivo.bind(this)" 
         [hasDelete]="true" [hasEdit]="true" [join]="join" [groupBy]="groupBy" [groupTemplate]="groupEixoTematico">
         <toolbar></toolbar>
     <ng-template let-separator="separator" #groupEixoTematico>

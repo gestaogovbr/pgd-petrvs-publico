@@ -48,7 +48,7 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.planejamento = this.queryParams.planejamento as Planejamento;
+    this.planejamento = this.metadata.planejamento as Planejamento;
     this.planejamento_superior_id = this.queryParams.planejamento_superior_id || null;
   }
 
