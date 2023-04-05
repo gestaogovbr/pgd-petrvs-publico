@@ -1,0 +1,17 @@
+<!-- [save]="saveObjetivo.bind(this)" -->
+<grid [items]="items" [form]="form!" #gridObjetivos editable [selectable]="false" [minHeight]="minHeight" 
+        [add]="addObjetivo.bind(this)" [load]="loadObjetivo.bind(this)" [remove]="removeObjetivo.bind(this)" 
+        [hasDelete]="true" [hasEdit]="true" [join]="join" [groupBy]="groupBy" [groupTemplate]="groupEixoTematico">
+        <toolbar></toolbar>
+    <ng-template let-separator="separator" #groupEixoTematico>
+        <strong class="grid-group-text">Eixo Temático: </strong>
+        <span class="text-wrap"><badge color="primary" [label]="separator?.text"></badge></span>
+    </ng-template>
+    <columns>
+        <column title="Nome" [template]="columnNome"><ng-template let-row="row" #columnNome><span>{{ row.nome }}</span></ng-template></column>
+        <column title="Fundamentação" [template]="columnFundamentacao"><ng-template let-row="row" #columnFundamentacao><span>{{ row.fundamentacao }}</span></ng-template></column>
+        <column *ngIf="entity?.unidade_id" title="Objetivo Superior" [template]="columnObjetivoSuperior"><ng-template let-row="row" #columnObjetivoSuperior><span>{{ row.objetivo_superior?.nome  || '' }}</span></ng-template></column>
+        <!-- <column title="Eixo Temático" [template]="columnEixoTematico"><ng-template let-row="row" #columnEixoTematico><span>{{ row.eixo_tematico_id }}</span></ng-template></column> -->
+        <column type="options" [options]="options"></column>
+    </columns>
+</grid>

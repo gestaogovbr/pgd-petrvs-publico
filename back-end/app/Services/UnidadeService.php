@@ -43,7 +43,7 @@ class UnidadeService extends ServiceBase
     }
 
     public function proxySearch($query, &$data, &$text) {
-        $data["where"][] = ["subordinadas", "==", true];
+        //$data["where"][] = ["subordinadas", "==", true];
         //$data["where"][] = ["inativo", "==", null];
         return $this->proxyQuery($query, $data);
     }
@@ -53,6 +53,7 @@ class UnidadeService extends ServiceBase
         $where = [];
         $subordinadas = true;
         $inativos = !empty(array_filter($data["where"], fn($w) => $w[0] == "inativo"));
+        $unidadesPlanejamento = !empty(array_filter($data["where"], fn($w) => $w[0] == "unidades_planejamento"));
         foreach($data["where"] as $condition) {
             if(is_array($condition) && $condition[0] == "subordinadas") {
                 $subordinadas = $condition[2];
@@ -65,10 +66,12 @@ class UnidadeService extends ServiceBase
         if(!$inativos) {
             array_push($where, ["inativo", "==", null]);
         }
-        if(!$usuario->hasPermissionTo("MOD_UND_TUDO")) {
+        if(!$usuario->hasPermissionTo("MOD_UND_TUDO") || ($unidadesPlanejamento && ($usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_SUBORD") || $usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_QQLOT")))) {
+            if($unidadesPlanejamento && $usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_QQLOT")) $subordinadas = false;
             $lotacoesWhere = $this->usuarioService->lotacoesWhere($subordinadas, null, "unidades");
             array_push($where, new RawWhere("($lotacoesWhere)", []));
         }
+        $where = array_filter($where, fn($w) => ($w instanceof RawWhere) || ($w[0] != "unidades_planejamento"));
         $data["where"] = $where;
         return $data;
     }

@@ -32,7 +32,7 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
       so_entidade: { default: false },
       agrupar: { default: true },
      });
-     this.join = ['unidade:id,nome,sigla'];
+    this.join = ['unidade:id,nome,sigla','objetivos','objetivos.eixo_tematico:id,nome','objetivos.objetivo_superior:id,nome'];
     // Testa se o usuário possui permissão para exibir planejamentos institucionais
     if (this.auth.hasPermissionTo("MOD_PLAN_INST_CONS")) {
       this.options.push({
@@ -80,14 +80,6 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
       result.push(["fim", "<=", form.fim]);
     }
     return result;
-  }
-
-  public onAgruparChange(event: Event) {
-    const agrupar = this.filter!.controls.agrupar.value;
-    if ((agrupar && !this.groupBy?.length) || (!agrupar && this.groupBy?.length)) {
-      this.groupBy = agrupar ? [{ field: "unidade.sigla", label: "Unidade" }] : [];
-      this.grid!.reloadFilter();
-    }
   }
 
   public onSoEntidadeChange(event: Event) {

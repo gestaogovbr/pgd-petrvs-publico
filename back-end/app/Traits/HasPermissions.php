@@ -16,7 +16,7 @@ trait HasPermissions
         $permissions = is_array($permission) ? $permission : [$permission];
         $userPermissions = $this->perfil()->with("capacidades.tipoCapacidade")->get();
         $capabilities = count($userPermissions) > 0 ? $userPermissions[0]->capacidades->map(function ($item, $key) {
-            return $item->tipoCapacidade->codigo;
+            if($item->data_fim == null) return $item->tipoCapacidade->codigo;
         })->all() : [];
         foreach($permissions as $permition) {
             if(is_array($permition)) {

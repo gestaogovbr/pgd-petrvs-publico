@@ -13,6 +13,7 @@ use App\Services\UtilService;
 use Illuminate\Support\Facades\Auth;
 use App\Exceptions\LogError;
 use App\Models\Usuario;
+use App\Models\Unidade;
 use App\Services\PlanoService;
 use Carbon\Carbon;
 use ReflectionObject;
@@ -819,7 +820,7 @@ class ServiceBase extends DynamicMethods
     }
 
     /**
-     * Retorna se o usuário logado possui o perfil de Desenvolvedor
+     * @return boolean Informa se o usuário logado possui o perfil de Desenvolvedor ou não.
      */
     public function isLoggedUserADeveloper(){
         return Auth::user()->perfil_id == $this->developerId;
@@ -832,6 +833,13 @@ class ServiceBase extends DynamicMethods
      */
     public static function loggedUser(): ?Usuario {
         return Auth::user();
+    }
+
+    /**
+     * @return Unidade Retorna a Unidade de lotação principal do usuário logado
+     */
+    public static function unidadePrincipalUsuarioLogado(): Unidade {
+        return static::loggedUser()->lotacoes->first(fn($l) => $l->principal == 1 && $l->data_fim == null)->unidade;
     }
 
 /*
