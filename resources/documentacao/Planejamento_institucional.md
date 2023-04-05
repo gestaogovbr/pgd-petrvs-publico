@@ -3,7 +3,6 @@
 ##  Acessos  
 -   válidos para *'planejamento institucional'* e *'eixos temáticos'*
 ~~~
-    MOD_PLAN_INST
     MOD_PLAN_INST_CONS
     MOD_PLAN_INST_INCL
     MOD_PLAN_INST_EDT

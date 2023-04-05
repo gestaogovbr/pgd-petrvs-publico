@@ -45,6 +45,12 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_ATV_INCL_UND", "Permite incluir unidade associada à atividade"],
         ["MOD_ATV_INCL_VAR_P", "Permite incluir dados guia variação e produtividade"],
         ["MOD_ATV_PCPL", "Permite incluir atividades na guia principal"],
+        /* Capacidades do módulo CADEIA DE VALOR*/
+        ["MOD_CADV", "Permite acessar item do menu cadeia de valor"],
+        ["MOD_CADV_CONS", "Permite consultar cadeia de valor"],
+        ["MOD_CADV_EDT", "Permite editar cadeia de valor"],
+        ["MOD_CADV_EXCL", "Permite excluir cadeia de valor"],
+        ["MOD_CADV_INCL", "Permite incluir cadeia de valor"],
         /* Capacidades do módulo CONFIGURAÇÂO*/
         ["MOD_CFG_ENTD", "Permite acessar Entidade no menu configurações"],
         ["MOD_CFG_PERFS", "Permite configuração de perfis no petrvs"],
@@ -126,6 +132,12 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_DMD_TRF_EXCL", "Permite exluir tarefas dentro de demandas"],
         ["MOD_DMD_TRF_CONS", "Permite consultar tarefas dentro de demandas"],
         ["MOD_DMD_CLONAR", "Permite clonar demandas"],
+        /* Capacidades do módulo EIXOS TEMÁTICOS */
+        ["MOD_EXTM", "Permite acessar item do menu Eixos temáticos"],
+        ["MOD_EXTM_CONS", "Permite consultar Eixos temáticos"],
+        ["MOD_EXTM_INCL", "Permite incluir Eixos temáticos"],
+        ["MOD_EXTM_EDT", "Permite editar Eixos temáticos"],
+        ["MOD_EXTM_EXCL", "Permite excluir Eixos temáticos"], 
         /* Capacidades do módulo ENTIDADE*/
         ["MOD_ENTD_CFG", "Permite configurar Entidade"],
         ["MOD_ENTD_CONS", "Permite consultar Entidade"],
@@ -159,42 +171,21 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_MATSRV_EDT", "Permite editar materiais e serviços"],
         ["MOD_MATSRV_EXCL", "Permite excluir materiais e serviços"],
         ["MOD_MATSRV_INCL", "Permite incluir materiais e serviços"],
-        /* Capacidades do módulo PROJETO RECURSO*/
-        ["MOD_PROJ_REC_EDT", "Permite editar projeto recurso"],
-        ["MOD_PROJ_REC_EXCL", "Permite excluir projeto recurso"],
-        ["MOD_PROJ_REC_INCL", "Permite incluir projeto recurso"],
-        /* Capacidades do módulo PROJETO REGRA*/
-        ["MOD_PROJ_REG_EDT", "Permite editar projeto regra"],
-        ["MOD_PROJ_REG_EXCL", "Permite excluir projeto regra"],
-        ["MOD_PROJ_REG_INCL", "Permite incluir projeto regra"],
         /* Capacidades do módulo PERFIL*/
         ["MOD_PERF_EDT", "Permite editar perfil"],
         ["MOD_PERF_EXCL", "Permite excluir perfil"],
         ["MOD_PERF_INCL", "Permite incluir perfil"],
         /* Capacidades do módulo PLANEJAMENTO INSTITUCIONAL */
-        ["MOD_PLAN_INST_CONS", "Permite consultar Eixos temáticos e/ou Planejamentos Institucionais"],
-        ["MOD_PLAN_INST_INCL", "Permite incluir Eixos temáticos e/ou Planejamentos Institucionais"],
-        ["MOD_PLAN_INST_EDT", "Permite editar Eixos temáticos e/ou Planejamentos Institucionais"],
-        ["MOD_PLAN_INST_EXCL", "Permite excluir Eixos temáticos e/ou Planejamentos Institucionais"],        
-        /* Capacidades do módulo PROG TRABALHO*/
-        ["MOD_PRGT", "Permite acessar item menu programa de gestão"],
-        ["MOD_PRGT_CONS", "Permite consultar programa de gestão"],
-        ["MOD_PRGT_EDT", "Permite editar programas de gestão"],
-        ["MOD_PRGT_EXCL", "Permite excluir programas de gestão"],
-        ["MOD_PRGT_INCL", "Permite incluir programas de gestão"],
-        ["MOD_PROC_INCL", "Permite incluir tipos de processos"],
-        ["MOD_PRGT_PART", "Participantes do programa"],
-        /* Capacidades do módulo PROJETO*/
-        ["MOD_PROJ", "Permite acessar módulo projetos"],
-        ["MOD_PROJ_CONS", "Permite consultar projeto"],
-        ["MOD_PROJ_EDT", "Permite editar projeto"],
-        ["MOD_PROJ_EXCL", "Permite excluir projeto"],
-        ["MOD_PROJ_INCL", "Permite incluir Projetos"],
-        /* Capacidades do módulo de templates */
-        ["MOD_TEMP_INCL", "Permite incluir template"],
-        ["MOD_TEMP_CONS", "Permite consultar template"],
-        ["MOD_TEMP_EDT", "Permite editar template"],
-        ["MOD_TEMP_EXCL", "Permite excluir template"],
+        ["MOD_PLAN_INST", "Permite acessar item do menu Planejamentos Institucionais"],
+        ["MOD_PLAN_INST_CONS", "Permite consultar Planejamentos Institucionais"],
+        ["MOD_PLAN_INST_INCL", "Permite incluir algum tipo de Planejamento Institucional"],
+        ["MOD_PLAN_INST_INCL_UNID_INST", "Permite incluir Planejamento Institucional para a Unidade Instituidora"],
+        ["MOD_PLAN_INST_INCL_UNEX_LOTPRI", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas para a sua lotação principal)"],
+        ["MOD_PLAN_INST_INCL_UNEX_QQLOT", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas as de suas lotações)"],
+        ["MOD_PLAN_INST_INCL_UNEX_SUBORD", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas as de suas lotações e suas subordinadas)"],
+        ["MOD_PLAN_INST_INCL_UNEX_QUALQUER", "Permite incluir Planejamentos Institucionais para qualquer Unidade Executora, independente de sua lotação"],
+        ["MOD_PLAN_INST_EDT", "Permite editar Planejamentos Institucionais"],
+        ["MOD_PLAN_INST_EXCL", "Permite excluir Planejamentos Institucionais"],   
         /* Capacidades do módulo PLANO TRABALHO*/
         ["MOD_PTR", "Permite acessar item menu plano de trabalho"],
         ["MOD_PTR_CONS", "Permite consultar plano de trabalho"],
@@ -206,12 +197,8 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PTR_USERS_INCL", "Permite incluir planos de trabalho de usuários fora da lotação"],
         ["MOD_PTR_INCL_SEM_LOT", "Permite incluir planos de trabalho para usuários não lotado na unidade do plano"],
         ["MOD_PTR_INTSC_DATA", "Permite incluir planos de trabalho para usuários que já possuem planos no período de mesma modalidade"],
-        /* Capacidades do módulo CADEIA DE VALOR*/
-        ["MOD_CADV_CONS", "Permite consultar cadeia de valor"],
-        ["MOD_CADV_EDT", "Permite editar cadeia de valor"],
-        ["MOD_CADV_EXCL", "Permite excluir cadeia de valor"],
-        ["MOD_CADV_INCL", "Permite incluir cadeia de valor"],
         /* Capacidades do módulo PLANO DE ENTREGAS*/
+        ["MOD_PENT", "Permite acessar item do menu plano de entregas"],
         ["MOD_PENT_CONS", "Permite consultar plano de entregas"],
         ["MOD_PENT_EDT", "Permite editar planos de entregas"],
         ["MOD_PENT_EXCL", "Permite excluir planos de entregas"],
@@ -227,7 +214,34 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PENT_PCTR_EXCL", "Permite excluir pontos de controle de um plano de entregas"],
         ["MOD_PENT_PCTR_INCL", "Permite incluir pontos de controle de um plano de entregas"], 
         ["MOD_PENT_PCTR_AVAL", "Permite avaliar pontos de controle de um plano de entregas"], 
-        ["MOD_PENT_PCTR_EDT_AVAL", "Permite alterar a avaliação dos pontos de controle de um plano de entregas"], 
+        ["MOD_PENT_PCTR_EDT_AVAL", "Permite alterar a avaliação dos pontos de controle de um plano de entregas"],      
+        /* Capacidades do módulo PROG TRABALHO*/
+        ["MOD_PRGT", "Permite acessar item menu programa de gestão"],
+        ["MOD_PRGT_CONS", "Permite consultar programa de gestão"],
+        ["MOD_PRGT_EDT", "Permite editar programas de gestão"],
+        ["MOD_PRGT_EXCL", "Permite excluir programas de gestão"],
+        ["MOD_PRGT_INCL", "Permite incluir programas de gestão"],
+        ["MOD_PROC_INCL", "Permite incluir tipos de processos"],
+        ["MOD_PRGT_PART", "Participantes do programa"],
+        /* Capacidades do módulo PROJETO*/
+        ["MOD_PROJ", "Permite acessar módulo projetos"],
+        ["MOD_PROJ_CONS", "Permite consultar projeto"],
+        ["MOD_PROJ_EDT", "Permite editar projeto"],
+        ["MOD_PROJ_EXCL", "Permite excluir projeto"],
+        ["MOD_PROJ_INCL", "Permite incluir Projetos"],
+        /* Capacidades do módulo PROJETO RECURSO*/
+        ["MOD_PROJ_REC_EDT", "Permite editar projeto recurso"],
+        ["MOD_PROJ_REC_EXCL", "Permite excluir projeto recurso"],
+        ["MOD_PROJ_REC_INCL", "Permite incluir projeto recurso"],
+        /* Capacidades do módulo PROJETO REGRA*/
+        ["MOD_PROJ_REG_EDT", "Permite editar projeto regra"],
+        ["MOD_PROJ_REG_EXCL", "Permite excluir projeto regra"],
+        ["MOD_PROJ_REG_INCL", "Permite incluir projeto regra"],
+        /* Capacidades do módulo de templates */
+        ["MOD_TEMP_INCL", "Permite incluir template"],
+        ["MOD_TEMP_CONS", "Permite consultar template"],
+        ["MOD_TEMP_EDT", "Permite editar template"],
+        ["MOD_TEMP_EXCL", "Permite excluir template"],
         /* Capacidades do módulo TIPO ATIVIDADE*/
         ["MOD_TIPO_ATV", "Permite acessar item de menu cadastro->tipo de atividade"],
         ["MOD_TIPO_ATV_CONS", "Permite consultar atividade"],
