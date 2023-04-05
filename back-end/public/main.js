@@ -9213,8 +9213,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ "fXoL");
 /* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ "lYxd");
 /* harmony import */ var _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../components/input/input-datetime/input-datetime.component */ "NRF3");
-/* harmony import */ var _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/separator/separator.component */ "FVj5");
-/* harmony import */ var _cadeia_valor_form_processos_cadeia_valor_form_processos_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../cadeia-valor-form-processos/cadeia-valor-form-processos.component */ "OFSR");
+/* harmony import */ var _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/input/input-switch/input-switch.component */ "puzm");
+/* harmony import */ var _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../../components/separator/separator.component */ "FVj5");
+/* harmony import */ var _cadeia_valor_form_processos_cadeia_valor_form_processos_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../cadeia-valor-form-processos/cadeia-valor-form-processos.component */ "OFSR");
+
 
 
 
@@ -9261,6 +9263,7 @@ class CadeiaValorFormComponent extends _base_page_form_base__WEBPACK_IMPORTED_MO
             nome: { default: "" },
             inicio: { default: new Date() },
             fim: { default: null },
+            moveFilhos: { default: false }
         }, this.cdRef, this.validate);
     }
     loadData(entity, form) {
@@ -9296,7 +9299,7 @@ CadeiaValorFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵ�
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵloadQuery"]()) && (ctx.grid = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵloadQuery"]()) && (ctx.processos = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]], decls: 10, vars: 11, consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome da Cadeia de Valor", "icon", "bi bi-textarea-t", "controlName", "nome", 3, "size", "control"], ["date", "", "label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "inicio", "labelInfo", "In\u00EDcio da Cadeia de Valor", 3, "size", "control"], ["date", "", "label", "Fim", "icon", "bi bi-calendar-date", "controlName", "fim", "labelInfo", "Fim da Cadeia de Valor", 3, "size", "control"], [3, "entity", "cdRef"], ["processos", ""]], template: function CadeiaValorFormComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]], decls: 11, vars: 12, consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome da Cadeia de Valor", "icon", "bi bi-textarea-t", "controlName", "nome", 3, "size", "control"], ["date", "", "label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "inicio", "labelInfo", "In\u00EDcio da Cadeia de Valor", 3, "size", "control"], ["date", "", "label", "Fim", "icon", "bi bi-calendar-date", "controlName", "fim", "labelInfo", "Fim da Cadeia de Valor", 3, "size", "control"], ["label", "Mover filhos", "controlName", "moveFilhos", "labelInfo", "Os processos filhos ser\u00E3o movidos junto ao processo pai quando esta op\u00E7\u00E3o estiver selecionada.", 3, "size"], [3, "entity", "cdRef"], ["processos", ""]], template: function CadeiaValorFormComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "editable-form", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("submit", function CadeiaValorFormComponent_Template_editable_form_submit_0_listener() { return ctx.onSaveData(); })("cancel", function CadeiaValorFormComponent_Template_editable_form_cancel_0_listener() { return ctx.onCancel(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](1, "div", 1);
@@ -9306,22 +9309,25 @@ CadeiaValorFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵ�
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](4, "div", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](5, "input-datetime", 3);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](6, "input-datetime", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](7, "input-switch", 5);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](7, "separator");
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](8, "cadeia-valor-form-processos", 5, 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](8, "separator");
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](9, "cadeia-valor-form-processos", 6, 7);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
     } if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 12)("control", ctx.form.controls.nome);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.inicio);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 5)("control", ctx.form.controls.inicio);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.fim);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 5)("control", ctx.form.controls.fim);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 2);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("entity", ctx.entity)("cdRef", ctx.cdRef);
-    } }, directives: [_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_4__["EditableFormComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_7__["InputTextComponent"], _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_8__["InputDatetimeComponent"], _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_9__["SeparatorComponent"], _cadeia_valor_form_processos_cadeia_valor_form_processos_component__WEBPACK_IMPORTED_MODULE_10__["CadeiaValorFormProcessosComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJjYWRlaWEtdmFsb3ItZm9ybS5jb21wb25lbnQuc2NzcyJ9 */"] });
+    } }, directives: [_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_4__["EditableFormComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_7__["InputTextComponent"], _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_8__["InputDatetimeComponent"], _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_9__["InputSwitchComponent"], _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_10__["SeparatorComponent"], _cadeia_valor_form_processos_cadeia_valor_form_processos_component__WEBPACK_IMPORTED_MODULE_11__["CadeiaValorFormProcessosComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJjYWRlaWEtdmFsb3ItZm9ybS5jb21wb25lbnQuc2NzcyJ9 */"] });
 
 
 /***/ }),
@@ -12984,7 +12990,7 @@ function CadeiaValorFormProcessosComponent_ng_template_10_Template(rf, ctx) { if
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](0, "input-text", 10);
 } if (rf & 2) {
     const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 12)("control", ctx_r5.form.controls.nome);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 6)("control", ctx_r5.form.controls.nome);
 } }
 class CadeiaValorFormProcessosComponent extends src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_7__["PageFrameBase"] {
     constructor(injector) {
@@ -13016,6 +13022,10 @@ class CadeiaValorFormProcessosComponent extends src_app_modules_base_page_frame_
             this.gridControl.value.processos = [];
         return this.gridControl.value.processos;
     }
+    loadData(entity, form) {
+        this.cdRef.detectChanges();
+        this.sortProcessos();
+    }
     addProcesso() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             return new src_app_models_cadeia_valor_processo_model__WEBPACK_IMPORTED_MODULE_5__["CadeiaValorProcesso"]({
@@ -13035,12 +13045,7 @@ class CadeiaValorFormProcessosComponent extends src_app_modules_base_page_frame_
             });
             this.items.push(processo);
             this.grid.setMetadata(processo, { nivel: this.getSequencia({}, processo) });
-            this.items.sort((a, b) => {
-                var _a, _b;
-                const sa = (((_a = this.grid.getMetadata(a)) === null || _a === void 0 ? void 0 : _a.nivel) || "").split(".").map((x) => ("000" + x).substr(-3)).join(".");
-                const sb = (((_b = this.grid.getMetadata(b)) === null || _b === void 0 ? void 0 : _b.nivel) || "").split(".").map((x) => ("000" + x).substr(-3)).join(".");
-                return sa < sb ? -1 : sa > sb ? 1 : 0;
-            });
+            this.sortProcessos();
             this.grid.adding = true;
             yield this.grid.edit(processo);
             return undefined;
@@ -13075,20 +13080,36 @@ class CadeiaValorFormProcessosComponent extends src_app_modules_base_page_frame_
             this.cdRef.detectChanges();
         });
     }
-    removeProcesso(row) {
-        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            return true;
-            // const encontrarPai: (pai: any) => {
-            //   let pai: CadeiaValorProcesso;
-            //   while(pai = this.items.find(x => x.processo_pai_id = pai.id)) {
-            //     if(pai.id == pai) return true;
-            //   };
-            //   return false;
-            // };
-            // return true;
-            // let filhos = this.items.find(x => x.path.indexOf(idPai) >= 0);
+    sortProcessos() {
+        this.items.sort((a, b) => {
+            var _a, _b;
+            const sa = (((_a = this.grid.getMetadata(a)) === null || _a === void 0 ? void 0 : _a.nivel) || "").split(".").map((x) => ("000" + x).substr(-3)).join(".");
+            const sb = (((_b = this.grid.getMetadata(b)) === null || _b === void 0 ? void 0 : _b.nivel) || "").split(".").map((x) => ("000" + x).substr(-3)).join(".");
+            return sa < sb ? -1 : sa > sb ? 1 : 0;
         });
     }
+    removeProcesso(row) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            let processo = row;
+            let filhos = this.items.filter(x => x.processo_pai_id == processo.id) || [];
+            filhos.forEach(x => this.removeProcesso(x));
+            this.items.splice(this.items.findIndex(x => x.id == processo.id), 1);
+            return true;
+        });
+    }
+    /*public searchProcessos(row, pai){
+      if(pai = this.items.find(x => x.processo_pai_id = pai.id)){
+           return row;
+      }else if (row.children != null){
+           var i;
+           var result = null;
+           for(i=0; result == null && i < row.children.length; i++){
+                result = this.searchProcessos(row.children[i], pai);
+           }
+           return result;
+      }
+      return result;
+    }*/
     /*
     percorrer arvore em profundidade
     
@@ -28367,6 +28388,10 @@ class GridComponent extends _component_base__WEBPACK_IMPORTED_MODULE_6__["Compon
         if (row.id)
             this.metadatas[row.id] = value;
     }
+    clearMetadata() {
+        this.metadatas = {};
+        this.cdRef.detectChanges();
+    }
     edit(itemRow) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             if (this.isSelectable && itemRow)
@@ -33668,8 +33693,8 @@ const routes = [
     { path: 'gestao/cadeia-valor', loadChildren: () => Promise.resolve(/*! import() */).then(__webpack_require__.bind(null, /*! ./modules/gestao/cadeia-valor/cadeia-valor.module */ "pRTT")).then(m => m.CadeiaValorModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'gestao/demanda', loadChildren: () => Promise.resolve(/*! import() */).then(__webpack_require__.bind(null, /*! ./modules/gestao/demanda/demanda.module */ "17YW")).then(m => m.DemandaModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'gestao/planejamento', loadChildren: () => Promise.all(/*! import() | modules-gestao-planejamento-institucional-planejamento-module */[__webpack_require__.e("common"), __webpack_require__.e("modules-gestao-planejamento-institucional-planejamento-module")]).then(__webpack_require__.bind(null, /*! ./modules/gestao/planejamento-institucional/planejamento.module */ "f1z4")).then(m => m.PlanejamentoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
-    { path: 'gestao/plano-trabalho', loadChildren: () => Promise.all(/*! import() | modules-gestao-plano-plano-module */[__webpack_require__.e("default~listeners-listeners-module~modules-gestao-plano-plano-module"), __webpack_require__.e("modules-gestao-plano-plano-module")]).then(__webpack_require__.bind(null, /*! ./modules/gestao/plano/plano.module */ "ALD5")).then(m => m.PlanoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
-    // { path: 'gestao/plano-entrega', loadChildren: () => import('./modules/gestao/plano-entrega/plano-entrega.module').then(m => m.PlanoEntregaModule), canActivate: [AuthGuard] },
+    { path: 'gestao/plano-trabalho', loadChildren: () => Promise.all(/*! import() | modules-gestao-plano-plano-module */[__webpack_require__.e("default~listeners-listeners-module~modules-gestao-plano-plano-module"), __webpack_require__.e("common"), __webpack_require__.e("modules-gestao-plano-plano-module")]).then(__webpack_require__.bind(null, /*! ./modules/gestao/plano/plano.module */ "ALD5")).then(m => m.PlanoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
+    { path: 'gestao/plano-entrega', loadChildren: () => Promise.all(/*! import() | modules-gestao-plano-entrega-plano-entrega-module */[__webpack_require__.e("common"), __webpack_require__.e("modules-gestao-plano-entrega-plano-entrega-module")]).then(__webpack_require__.bind(null, /*! ./modules/gestao/plano-entrega/plano-entrega.module */ "PtyJ")).then(m => m.PlanoEntregaModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'gestao/projeto', loadChildren: () => __webpack_require__.e(/*! import() | modules-gestao-projeto-projeto-module */ "modules-gestao-projeto-projeto-module").then(__webpack_require__.bind(null, /*! ./modules/gestao/projeto/projeto.module */ "mH8K")).then(m => m.ProjetoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'configuracoes/preferencia', loadChildren: () => __webpack_require__.e(/*! import() | modules-configuracoes-preferencia-preferencia-module */ "modules-configuracoes-preferencia-preferencia-module").then(__webpack_require__.bind(null, /*! ./modules/configuracoes/preferencia/preferencia.module */ "GDlR")).then(m => m.PreferenciaModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'configuracoes/entidade', loadChildren: () => Promise.all(/*! import() | modules-configuracoes-entidade-entidade-module */[__webpack_require__.e("common"), __webpack_require__.e("modules-configuracoes-entidade-entidade-module")]).then(__webpack_require__.bind(null, /*! ./modules/configuracoes/entidade/entidade.module */ "sPLe")).then(m => m.EntidadeModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },

@@ -815,34 +815,6 @@ PlanoTermoAdesaoComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵ
 
 /***/ }),
 
-/***/ "lKXT":
-/*!**************************************************!*\
-  !*** ./src/app/dao/plano-entrega-dao.service.ts ***!
-  \**************************************************/
-/*! exports provided: PlanoEntregaDaoService */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanoEntregaDaoService", function() { return PlanoEntregaDaoService; });
-/* harmony import */ var _dao_base_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./dao-base.service */ "WScx");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
-
-
-class PlanoEntregaDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0__["DaoBaseService"] {
-    constructor(injector) {
-        super("PlanoEntrega", injector);
-        this.injector = injector;
-    }
-    needHomologate(plano) {
-    }
-}
-PlanoEntregaDaoService.ɵfac = function PlanoEntregaDaoService_Factory(t) { return new (t || PlanoEntregaDaoService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
-PlanoEntregaDaoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: PlanoEntregaDaoService, factory: PlanoEntregaDaoService.ɵfac, providedIn: 'root' });
-
-
-/***/ }),
-
 /***/ "sGQK":
 /*!*************************************************************************!*\
   !*** ./src/app/modules/gestao/plano/plano-form/plano-form.component.ts ***!
