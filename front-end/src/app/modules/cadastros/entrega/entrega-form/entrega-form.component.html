@@ -4,7 +4,7 @@
             <input-text [size]="12" label="Nome da entrega" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome"></input-text>
         </div>
         <div class="row">
-            <input-select [size]="6" label="Tipo de indicador" icon="bi bi-arrow-up-right-circle" controlName="tipo_indicador" [control]="form!.controls.tipo_indicador" [items]="lookup.TIPO_INDICADOR" (select)="onSelect()"></input-select>
+            <input-select [size]="6" label="Tipo de indicador" icon="bi bi-arrow-up-right-circle" controlName="tipo_indicador" [control]="form!.controls.tipo_indicador" [items]="lookup.TIPO_INDICADOR"></input-select>
             <div *ngIf="form?.controls!.tipo_indicador.value == 'QUALITATIVO' || null" class="row col-6">
                 <div class="row">
                     <div class="row mb-3">

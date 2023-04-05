@@ -39,6 +39,11 @@ export class PlanejamentoMapaEntregasComponent extends PageListBase<Planejamento
     this.join = ['plano_entrega.unidade:id,nome,sigla', 'plano_entrega.entrega:id,nome,tipo_indicador,lista_qualitativos'];
   }
 
+  ngOnInit(){
+    super.ngOnInit()
+    this.objetivoId = this.urlParams!.get("objetivo_id") || undefined;
+  }
+
   public filterClear(filter: FormGroup) {
     filter.controls.unidade_id.setValue(null);
     filter.controls.entrega_id.setValue(null);

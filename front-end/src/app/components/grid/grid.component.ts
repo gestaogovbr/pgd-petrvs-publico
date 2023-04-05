@@ -322,7 +322,7 @@ export class GridComponent extends ComponentBase implements OnInit {
     return row instanceof GridGroupSeparator;
   }
 
-  public isNoHeader(): boolean {
+  public get isNoHeader(): boolean {
     return this.noHeader != undefined;
   }
 

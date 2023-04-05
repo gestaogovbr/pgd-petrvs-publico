@@ -63,10 +63,6 @@ export class EntregaFormComponent extends PageFormBase<Entrega, EntregaDaoServic
     });
   }
 
-  public onSelect(){
-
-  }
-
   public titleEdit = (entity: Entrega): string => {
     return "Editando "+ (entity?.nome || "");
   }

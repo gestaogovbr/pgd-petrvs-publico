@@ -3,7 +3,7 @@
         [class.dropdown-toggle]="button.items && !button.toggle" [attr.data-bs-toggle]="button.items && !button.toggle ? 'dropdown' : undefined" aria-expanded="false" 
         (click)="onButtonClick(button)" [disabled]="buttonDisabled(button)">
         <i *ngIf="button.icon?.length" [class]="button.icon"></i>
-        <span class="d-none d-md-inline-block ms-2">{{button.label || ""}}</span>
+        <span *ngIf="button.label?.length" class="d-none d-md-inline-block ms-2">{{button.label}}</span>
         <span *ngIf="button.badge?.length" class="badge bg-primary ms-2">{{button.badge}}</span>
     </button>
     <button *ngIf="button.items && button.toggle" [attr.id]="generatedButtonId(button) + '_dropdown'" type="button" [class]="'btn dropdown-toggle dropdown-toggle-split ' + (button.color || 'btn-outline-primary')" data-bs-toggle="dropdown" aria-expanded="false">

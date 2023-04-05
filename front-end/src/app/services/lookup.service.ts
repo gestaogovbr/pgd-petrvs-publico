@@ -173,6 +173,20 @@ export class LookupService {
     { key: "#343a40", value: "Preto", color: "#343a40" }
   ];
 
+  public CORES_BACKGROUND = [
+    { key: "#FAEDCD", value: "Bege", color: "#FAEDCD" },
+    { key: "#E9EDC9", value: "Verde Claro", color: "#E9EDC9" },
+    { key: "#F1F7B5", value: "Verde Lima", color: "#F1F7B5" },
+    { key: "#B9F3FC", value: "Azul Claro", color: "#B9F3FC" },
+    { key: "#AEE2FF", value: "Azul Médio", color: "#AEE2FF" },
+    { key: "#FFD4B2", value: "Laranja", color: "#FFD4B2" },
+    { key: "#FFD1D1", value: "Rosa", color: "#FFD1D1" },
+    { key: "#D0C9C0", value: "Cinza", color: "#D0C9C0" },
+    { key: "#D7E9F7", value: "Azul", color: "#D7E9F7" },
+    { key: "#DBE4C6", value: "Verde", color: "#DBE4C6" },
+    { key: "#FFEB99", value: "Amarelo", color: "#FFEB99" }
+  ];
+
   public ICONES = [
     {key: "bi bi-award", value: "Medalha", icon: "bi bi-award" },
     {key: "bi bi-bell", value: "Sino", icon: "bi bi-bell" },

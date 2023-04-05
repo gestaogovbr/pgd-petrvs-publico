@@ -1,14 +1,7 @@
 <input-container [labelPosition]="labelPosition" [controlName]="controlName" [control]="control" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
     <div class="input-group">
         <select #inputElement class="selectpicker form-control select-config" [id]="generatedId(controlName)" [attr.data-live-search]="isLiveSearch ? 'true' : undefined"  [attr.disabled]="isDisabled ? true : undefined" [class.is-invalid]="isInvalid()" (change)="onChange($event)">
-            <option *ngIf="loading; else isntLoading" data-icon="bi bi-clock-history" selected>{{CARREGANDO}}</option>
-            <ng-template #isntLoading>
-                <option *ngIf="isNullable" value="null">{{itemNull}}</option>
-                <option *ngIf="itemTodos.length" value="{{getStringValue(valueTodos)}}">{{itemTodos}}</option>
-                <option *ngIf="unknown" value="{{getStringValue(selectedItem?.key || '')}}">{{selectedItem?.value || ' - Desconhecido - '}}</option>
-                <option *ngFor="let item of items" value="{{getStringValue(item.key)}}" class="input-select-dynamic-item" [attr.data-icon]="isNoIcon ? undefined : item.icon" [style.color]="isNoColor ? undefined : (item.color || '#000000')">{{item.value}}</option>
-            </ng-template>
-            <!-- [attr.selected]="itemSelected(item)" -->
+            <option *ngFor="let option of options" value="{{getStringValue(option.key)}}" class="input-select-dynamic-item" [attr.data-icon]="isNoIcon ? undefined : option.icon" [style.color]="isNoColor ? undefined : (option.color || '#000000')">{{option.value}}</option>
         </select>
         <button *ngIf="addRoute && dao" [id]="generatedId(controlName) + '_route_button'" class="btn btn-outline-success" type="button" (click)="onAddClick($event)">
             <i class="bi bi-plus-circle"></i>
