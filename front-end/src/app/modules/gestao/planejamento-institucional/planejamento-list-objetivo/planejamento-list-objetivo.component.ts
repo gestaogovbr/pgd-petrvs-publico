@@ -42,7 +42,9 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
     }
   
     public async addObjetivo() {
-      this.go.navigate({route: ['gestao', 'planejamento', 'objetivo', 'new'], params:{planejamento: this.entity!, planejamento_superior_id: '33bfe90e-5724-44ff-9960-308869c2384b'}});
+      this.go.navigate({route: ['gestao', 'planejamento', 'objetivo', 'new'], params:{planejamento: this.entity!, planejamento_superior_id: '33bfe90e-5724-44ff-9960-308869c2384b'}}).then(response => {
+        this.cdRef.detectChanges();
+      });
       //se o campo planejamento_superior_if for incluido na tabela planejamentos não será necessário passar o segundo argumento.
     }
 

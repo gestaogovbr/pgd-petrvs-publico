@@ -10,7 +10,7 @@
         <column title="Nome" [template]="columnNome"><ng-template let-row="row" #columnNome><span>{{ row.nome }}</span></ng-template></column>
         <column title="Fundamentação" [template]="columnFundamentacao"><ng-template let-row="row" #columnFundamentacao><span>{{ row.fundamentacao }}</span></ng-template></column>
         <column *ngIf="entity?.unidade_id" title="Objetivo Superior" [template]="columnObjetivoSuperior"><ng-template let-row="row" #columnObjetivoSuperior><span>{{ row.objetivo_superior?.nome  || '' }}</span></ng-template></column>
-        <column title="Eixo Temático" [template]="columnEixoTematico"><ng-template let-row="row" #columnEixoTematico><span>{{ row.eixo_tematico_id }}</span></ng-template></column>
+        <!-- <column title="Eixo Temático" [template]="columnEixoTematico"><ng-template let-row="row" #columnEixoTematico><span>{{ row.eixo_tematico_id }}</span></ng-template></column> -->
         <column type="options" [options]="options"></column>
     </columns>
 </grid>
