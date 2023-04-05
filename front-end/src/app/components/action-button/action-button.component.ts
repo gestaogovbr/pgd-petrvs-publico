@@ -28,6 +28,7 @@ export class ActionButtonComponent extends ComponentBase {
   @Input() public set dynamicItems(value: ((...args: any[]) => ToolbarButton[] | undefined) | undefined) { if(this._button.dynamicItems != value) this._button.dynamicItems = value; } public get dynamicItems(): ((...args: any[]) => ToolbarButton[] | undefined) | undefined { return this._button.dynamicItems; }
   @Input() public set dynamicVisible(value: ((...args: any[]) => boolean) | undefined) { if(this._button.dynamicVisible != value) this._button.dynamicVisible = value; } public get dynamicVisible(): ((...args: any[]) => boolean) | undefined { return this._button.dynamicVisible; }
   @Input() public set onClick(value: ((...args: any[]) => any) | undefined) { if(this._button.onClick != value) this._button.onClick = value; } public get onClick(): ((...args: any[]) => any) | undefined { return this._button.onClick; }
+  @Input() public data?: any;
 
   public go: NavigateService;
 
@@ -52,7 +53,7 @@ export class ActionButtonComponent extends ComponentBase {
     if(button.route) {
       this.go.navigate(button.route, button.metadata);
     } else if(button.onClick) {
-      button.onClick();
+      button.onClick(this.data);
     }
     this.cdRef.detectChanges();
   }

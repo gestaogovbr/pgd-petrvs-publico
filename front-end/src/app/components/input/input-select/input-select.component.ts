@@ -104,6 +104,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
   public CARREGANDO: string = "Carregando . . .";
 
   private _items: LookupItem[] = [];
+  private _options: LookupItem[] = [];
   private _loading: boolean = false;
   private _where: any[] | undefined = undefined;
   public selectedValue?: string;
@@ -164,6 +165,20 @@ export class InputSelectComponent extends InputBase implements OnInit {
     return JSON.stringify(value);
   }
 
+  public get options(): LookupItem[] {
+    let result: LookupItem[] = [];
+    if(this.loading) {
+      result.push({code: "LOADING", key: this.value, value: this.CARREGANDO, icon: "bi bi-clock-history"});
+    } else {
+      if(this.isNullable) result.push({code: "NULL", key: null, value: this.itemNull});
+      if(this.itemTodos.length) result.push({code: "ALL", key: this.valueTodos, value: this.itemTodos});
+      if(this.selectedItem?.code == "UNKNOWN" && !this.items.find(x => x.key == this.selectedItem!.key)) result.push({code: "ALL", key: this.selectedItem.key, value: this.selectedItem.value || ' - Desconhecido - '});
+      result.push(...this.items);
+    }
+    if(JSON.stringify(result) != JSON.stringify(this._options)) this._options = result;
+    return this._options;
+  }
+
   private loadItems() {
     this.loading = true;
     this.dao?.searchText("", this.fields.length ? this.fields : undefined, this.where).then(result => {
@@ -202,18 +217,17 @@ export class InputSelectComponent extends InputBase implements OnInit {
         };
         //this.items.push(this.selectedItem);
       }
-      this.cdRef.detectChanges();
-      this.cdRef.detectChanges();
       this.control?.setValue(value, {emitEvent: false});
+      this.cdRef.detectChanges();
       this.selectPicker?.selectpicker('refresh');
       this.selectPicker?.selectpicker('val', stringValue);
       if(this.change) this.change.emit(new Event("change"));
     }
   }
 
-  public get unknown(): boolean {
+  /*public get unknown(): boolean {
     return this.selectedItem?.code == "UNKNOWN";
-  }
+  }*/
 
   public onDetailsClick(event: Event){
     if(this.details && (this.isNullable || this.control?.value?.length)) {
