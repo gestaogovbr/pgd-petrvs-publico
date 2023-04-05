@@ -642,8 +642,8 @@ class PlanoEntregaEntrega extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base
         this.descricao = "";
         this.cliente = "";
         this.homologado = false;
-        this.meta = [];
-        this.realizado = [];
+        this.meta = {};
+        this.realizado = {};
         this.plano_entrega_id = null;
         this.entrega_id = '';
         this.entrega_pai_id = '';

@@ -42,12 +42,11 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
     }
   
     public async addObjetivo() {
-      this.go.navigate({route: ['gestao', 'planejamento', 'objetivo', 'new'], params:{planejamento: this.entity!}});
+      this.go.navigate({route: ['gestao', 'planejamento', 'objetivo', 'new'], params:{planejamento: this.entity!, planejamento_superior_id: '33bfe90e-5724-44ff-9960-308869c2384b'}});
+      //se o campo planejamento_superior_if for incluido na tabela planejamentos não será necessário passar o segundo argumento.
     }
 
     public async removeObjetivo(row: any) {
-
-
       return true;
     }
 
@@ -84,14 +83,6 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
       await this.grid?.confirm();
       return this.entity!;
     }
-
-    public dynamicOptions(row: any): ToolbarButton[] {
-      let result: ToolbarButton[] = [];
-      // Testa se o usuário possui permissão para excluir um plano institucional
-      if (this.auth.hasPermissionTo("MOD_PLAN_INST_EXCL")) result.push({icon: "bi bi-trash", label: "Excluir", onClick: this.removeObjetivo.bind(this)});
-      return result;
-    }
- 
 
 }
   
