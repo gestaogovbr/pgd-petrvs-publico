@@ -62,12 +62,24 @@ export class PlanejamentoMapaComponent extends PageFrameBase {
     });
   }
 
-  public onPlanejamentoSelect() {
+  public onPlanejamentoChange() {
     this.planejamento = this.planejamentoInstitucional!.selectedItem?.data as Planejamento;
-    this.eixos = this.query!.extra?.eixos?.map((x: EixoTematico) => Object.assign({} as EixoPlanejamento, {
+    this.eixos = this.query!.extra?.eixos?.filter((x: EixoTematico) => this.planejamento?.objetivos?.find(y => y.eixo_tematico_id == x.id)).map((x: EixoTematico) => Object.assign({} as EixoPlanejamento, {
       eixo: x,
       objetivos: this.planejamento?.objetivos?.filter(y => y.eixo_tematico_id == x.id) || []
     })) || [];
   }
 
+  public onObjetivoClick(data: any) {
+    let objetivo = data as PlanejamentoObjetivo;
+    this.go.navigate({route: ['gestao', 'planejamento', this.planejamento?.id, 'objetivos', objetivo.id]});
+  }
+
+  public onObjetivoDeleteClick(data: any) {
+    let objetivo = data as PlanejamentoObjetivo;
+  }
+
+  public onObjetivoEditClick(data: any) {
+    let objetivo = data as PlanejamentoObjetivo;
+  }
 }

@@ -6,6 +6,7 @@ import { PlanejamentoFormComponent } from './planejamento-form/planejamento-form
 import { PlanejamentoListComponent } from './planejamento-list/planejamento-list.component';
 import { PlanejamentoFormObjetivoComponent } from './planejamento-form-objetivo/planejamento-form-objetivo.component';
 import { PlanejamentoListObjetivoComponent } from './planejamento-list-objetivo/planejamento-list-objetivo.component';
+import { PlanejamentoMapaEntregasComponent } from './planejamento-mapa-entregas/planejamento-mapa-entregas.component';
 
 const routes: Routes = [
   { path: '', component: PlanejamentoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Planejamentos Institucionais" } },
@@ -16,7 +17,7 @@ const routes: Routes = [
   { path: 'objetivo/new', component: PlanejamentoFormObjetivoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Objetivo", modal: true } },
   { path: 'objetivo/:id/edit', component: PlanejamentoFormObjetivoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de Objetivo", modal: true } },
   { path: 'objetivo/:id/consult', component: PlanejamentoFormObjetivoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar Objetivo", modal: true } },
-
+  { path: ':id/objetivos/:objetivo_id', component: PlanejamentoMapaEntregasComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Objetivos do planejamento", modal: true } },
 ];
 
 @NgModule({
