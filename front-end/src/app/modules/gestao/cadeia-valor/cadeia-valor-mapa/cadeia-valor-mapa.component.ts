@@ -51,7 +51,7 @@ export class CadeiaValorMapaComponent extends PageFrameBase {
     { divider: true },
     {
       icon: "bi bi-plus-circle",
-      label: "Incluir " + this.lex.noun("demanda"),
+      label: "Incluir subprocesso",
       onClick: this.addProcesso.bind(this) 
     },
     {
