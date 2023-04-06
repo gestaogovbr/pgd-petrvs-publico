@@ -12,9 +12,12 @@
                 Valores
             </div>
             <div class="card-body">
-                <blockquote class="blockquote mb-0">
-                    <p *ngFor="let valor of planejamento!.valores">{{valor.value}}</p>
-                </blockquote>
+                <ul class="list-group list-group-flush">
+                    <li *ngFor="let valor of planejamento!.valores" class="list-group-item">{{valor.value}}</li>
+                </ul>
+                <!--blockquote class="blockquote mb-0">
+                    <p ></p>
+                </blockquote//-->
             </div>
         </div>
     </div>
@@ -64,3 +67,5 @@
         </div>
     </div>
 </div>
+<!-- Espaço -->
+<div class="row my-2"></div>
