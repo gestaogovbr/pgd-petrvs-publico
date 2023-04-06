@@ -48,6 +48,6 @@ class Planejamento extends ModelBase
         'valores' => AsJson::class,
     ];
 
-    public $fillable_relations = ['objetivos'];
+    public $fillable_changes = ['objetivos'];
 
 }

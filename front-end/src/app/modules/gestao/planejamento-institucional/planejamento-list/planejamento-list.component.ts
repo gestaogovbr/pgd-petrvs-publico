@@ -6,6 +6,8 @@ import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { Planejamento } from 'src/app/models/planejamento.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
+import { EixoPlanejamento } from '../planejamento-mapa/planejamento-mapa.component';
+import { EixoTematico } from 'src/app/models/eixo-tematico.model';
 
 @Component({
   selector: 'app-planejamento-list',
@@ -90,6 +92,10 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
       this.filter!.controls.unidade_id.setValue(undefined);
       this.unidade_disabled = undefined;
     }
+  }
+
+  public get eixos(): EixoTematico[] {
+    return this.grid!.query?.extra?.eixos || [];
   }
 
 }
