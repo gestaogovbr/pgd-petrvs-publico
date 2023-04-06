@@ -6,8 +6,8 @@
         <div class="row">
             <input-search #unidade [size]="4" label="Unidade" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
             <input-search #entrega [size]="4" label="Entrega" controlName="entrega_id" [control]="filter!.controls.entrega_id" [dao]="entregaDao" [selectRoute]="{route: ['cadastros', 'entrega']}"></input-search>
-            <input-datetime [size]="2" date label="Início" controlName="inicio" [control]="filter!.controls.inicio" labelInfo="Data de início do planejamento institucional"></input-datetime>
-            <input-datetime [size]="2" date label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Data do fim do planejamento institucional"></input-datetime>
+            <input-datetime [size]="2" date noIcon label="Início" controlName="inicio" [control]="filter!.controls.inicio" labelInfo="Data de início do planejamento institucional"></input-datetime>
+            <input-datetime [size]="2" date noIcon label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Data do fim do planejamento institucional"></input-datetime>
         </div>
     </filter>
     <columns>

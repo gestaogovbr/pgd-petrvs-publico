@@ -29,6 +29,7 @@ export class ActionButtonComponent extends ComponentBase {
   @Input() public set dynamicVisible(value: ((...args: any[]) => boolean) | undefined) { if(this._button.dynamicVisible != value) this._button.dynamicVisible = value; } public get dynamicVisible(): ((...args: any[]) => boolean) | undefined { return this._button.dynamicVisible; }
   @Input() public set onClick(value: ((...args: any[]) => any) | undefined) { if(this._button.onClick != value) this._button.onClick = value; } public get onClick(): ((...args: any[]) => any) | undefined { return this._button.onClick; }
   @Input() public data?: any;
+  @Input() public noArrow?: string;
 
   public go: NavigateService;
 
@@ -38,6 +39,10 @@ export class ActionButtonComponent extends ComponentBase {
     super(injector);
     this.go = injector.get<NavigateService>(NavigateService);
     this.button.id = this.generatedButtonId(this.button, this.util.md5());
+  }
+
+  public isNoArrow(): boolean {
+    return this.noArrow != undefined;
   }
 
   public buttonDisabled(button: ToolbarButton): boolean {
@@ -53,7 +58,7 @@ export class ActionButtonComponent extends ComponentBase {
     if(button.route) {
       this.go.navigate(button.route, button.metadata);
     } else if(button.onClick) {
-      button.onClick(this.data);
+      button.onClick(this.data, button);
     }
     this.cdRef.detectChanges();
   }

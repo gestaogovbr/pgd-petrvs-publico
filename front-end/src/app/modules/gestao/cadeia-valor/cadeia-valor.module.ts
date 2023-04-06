@@ -8,6 +8,7 @@ import { CadeiaValorListMapComponent } from './cadeia-valor-list-map/cadeia-valo
 import { ComponentsModule } from "../../../components/components.module";
 import { ReactiveFormsModule } from "@angular/forms";
 import { CadeiaValorFormProcessosComponent } from './cadeia-valor-form-processos/cadeia-valor-form-processos.component';
+import { CadeiaValorMapaComponent } from './cadeia-valor-mapa/cadeia-valor-mapa.component';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { CadeiaValorFormProcessosComponent } from './cadeia-valor-form-processos
     CadeiaValorFormComponent,
     CadeiaValorListGridComponent,
     CadeiaValorListMapComponent,
-    CadeiaValorFormProcessosComponent
+    CadeiaValorFormProcessosComponent,
+    CadeiaValorMapaComponent
   ],
   imports: [
     CommonModule,
