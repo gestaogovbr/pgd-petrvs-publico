@@ -9,9 +9,9 @@
         <div *ngIf="!planejamento?.unidade_id" class="row">
             <input-search [size]="12" label="Eixo Temático" icon="fab fa-unity" controlName="eixo_tematico_id" [control]="form!.controls.eixo_tematico_id" [dao]="eixoTematicoDao" [selectRoute]="{route: ['cadastros', 'eixo-tematico']}"></input-search>                        
         </div>
-        <div class="row">
+<!--         <div class="row">
             <input-text #planejamento_nome [size]="12" [disabled]="'true'" label="Planejamento Institucional" icon="fab fa-unity" controlName="planejamento_nome"></input-text>                        
-        </div>
+        </div> -->
         <div *ngIf="planejamento?.unidade_id" class="row">
             <input-text #planejamento_superior_nome [size]="12" [disabled]="'true'" label="Planejamento superior vinculado" icon="fab fa-unity" controlName="planejamento_superior_nome"></input-text>                        
         </div>

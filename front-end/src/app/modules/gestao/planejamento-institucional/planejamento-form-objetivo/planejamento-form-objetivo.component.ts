@@ -20,7 +20,7 @@ import { NavigateResult } from 'src/app/services/navigate.service';
 })
 export class PlanejamentoFormObjetivoComponent extends PageFormBase<PlanejamentoObjetivo, PlanejamentoObjetivoDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  @ViewChild('planejamento_nome', {static: false}) public planejamento_nome?: InputTextComponent;
+  //@ViewChild('planejamento_nome', {static: false}) public planejamento_nome?: InputTextComponent;
   @ViewChild('unidade_executora_nome', {static: false}) public unidade_executora_nome?: InputTextComponent;
   @ViewChild('planejamento_superior_nome', {static: false}) public planejamento_superior_nome?: InputTextComponent;
 
@@ -40,7 +40,7 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
       nome: {default: ""},
       fundamentacao: {default: ""},
       planejamento_id: {default: null},
-      planejamento_nome: {default: ""},
+     // planejamento_nome: {default: ""},
       planejamento_superior_nome: {default: ""},
       unidade_executora_nome: {default: ""},
       eixo_tematico_id: {default: null},
@@ -70,7 +70,8 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
   public loadData(entity: PlanejamentoObjetivo, form: FormGroup): void {
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
-    form!.controls.planejamento_nome.setValue(this.planejamento!.nome);
+    this.title = entity._status == 'ADD' ? 'Inclusão de Objetivo' : 'Editando objetivo...';
+    //form!.controls.planejamento_nome.setValue(this.planejamento!.nome);
   }
 
   public initializeData(form: FormGroup): void {
@@ -97,9 +98,9 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
     });
   }
 
-  public titleEdit = (entity: PlanejamentoObjetivo): string => {
+/*   public titleEdit = (entity: PlanejamentoObjetivo): string => {
     return "Editando "+ (entity?.nome || "");
-  }
+  } */
 
   public isPlanejamentoUNEX(): boolean {
     return this.planejamento?.unidade_id != null;

@@ -57,20 +57,36 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
       });  
     }
 
+    public dynamicButtons(row: any): ToolbarButton[] {
+      let result: ToolbarButton[] = [];
+      let objetivo: PlanejamentoObjetivo = row as PlanejamentoObjetivo;
+  
+      if(this.auth.hasPermissionTo('MOD_PLAN_INST_EDT')) {
+        result.push({hint: "Editar", icon: "bi bi-pencil-square", color: "btn-outline-info", onClick: (objetivo: PlanejamentoObjetivo) => { this.editObjetivo(objetivo); }});
+      }
+      if(this.auth.hasPermissionTo('MOD_PLAN_INST_EXCL')) {
+        result.push({hint: "Excluir", icon: "bi bi-trash", color: "btn-outline-danger", onClick: (objetivo: PlanejamentoObjetivo) => { this.removeObjetivo(objetivo); }});
+      }
+
+      return result;
+    }
+
+    public dynamicOptions(row: any): ToolbarButton[] {
+      let result: ToolbarButton[] = [];
+      let objetivo: PlanejamentoObjetivo = row as PlanejamentoObjetivo;
+  
+      result.push({label: "Informações", icon: "bi bi-info-circle", onClick: (objetivo: PlanejamentoObjetivo) => this.go.navigate({route: ['gestao', 'planejamento', 'objetivo', objetivo.id, 'consult']}, {modal: true})});  
+
+      return result;
+    }
+
     public async addObjetivo() {
       // ************ 
       // se for adicionar um objetivo num grid não persistente é necessário checar se o planejamento é da entidade ou da unidade, pois se
       // se for de uma unidade será obrigatório já ter escolhido o planejamento superior
       let objetivo = new PlanejamentoObjetivo({_status: "ADD", planejamento_id: this.entity?.id});
       this.go.navigate({route: ['gestao', 'planejamento', 'objetivo']}, {metadata: {planejamento: this.entity!, objetivo: objetivo}, modalClose: async (modalResult) => {
-        if(modalResult) {
-          // se for noPersist vc adiciona na lista e só, se for persis vc dao.save e adiciona na lista
-          if(this.isNoPersist){
-            this.items.push(modalResult);
-          } else {
-              this.items.push(await this.objetivoDao!.save(modalResult));
-          };
-        };
+        if(modalResult) {this.isNoPersist ? this.items.push(modalResult) : this.items.push(await this.objetivoDao!.save(modalResult));};
       }});
       //se o campo planejamento_superior_if for incluido na tabela planejamentos não será necessário passar o segundo argumento.
       
@@ -79,14 +95,13 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
 
     public async editObjetivo(objetivo: PlanejamentoObjetivo) {
       objetivo._status = objetivo._status == "ADD" ? "ADD" : "EDIT";
-      this.go.navigate({route: ['gestao', 'planejamento', 'objetivo']}, {metadata: {planejamento: this.entity!, objetivo: objetivo}, modalClose: (modalResult) => {
-        if(modalResult) {
-          // se for noPersist vc nao faz nada, se for persis vc dao.save
-            if(!this.isNoPersist) {
-              this.objetivoDao?.save(modalResult);
-              };
-          }
-        }});
+      let index = this.items.indexOf(objetivo);
+      this.go.navigate({route: ['gestao', 'planejamento', 'objetivo']}, {metadata: {planejamento: this.entity!, objetivo: objetivo}, modalClose: async (modalResult) => {
+        if(modalResult) { 
+          if(!this.isNoPersist) await this.objetivoDao?.save(modalResult);
+          this.items[index] = modalResult;
+        };
+      }});
       //se o campo planejamento_superior_if for incluido na tabela planejamentos não será necessário passar o segundo argumento.
     }
 
