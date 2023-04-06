@@ -7,3 +7,7 @@
     background-color: transparent;
     color: white;
 }
+
+.no-arrow::before {
+    display: none !important;
+}

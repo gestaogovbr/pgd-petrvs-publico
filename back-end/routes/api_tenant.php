@@ -202,17 +202,9 @@ Route::middleware(['auth:sanctum'])->prefix('Adesao')->group(function () {
 //    Route::post('metadadosPlano', [PlanoController::class, 'metadadosPlano']);
 });
 
-Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
-    defaultRoutes(PlanoEntregaController::class);
-    Route::post('entrega', [PlanoEntregaEntregaController::class, 'query']);
-//    Route::post('cancelar-avaliacao', [PlanoController::class, 'cancelarAvaliacao']);
-//    Route::post('arquivar', [PlanoController::class, 'arquivar']);
-//    Route::post('metadadosPlano', [PlanoController::class, 'metadadosPlano']);
-});
-
-Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaPontoControle')->group(function () {
-    defaultRoutes(PlanoEntregaPontoControleController::class);
-});
+Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () { defaultRoutes(PlanoEntregaController::class); });
+Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntrega')->group(function () { defaultRoutes(PlanoEntregaEntregaController::class); });
+Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaPontoControle')->group(function () { defaultRoutes(PlanoEntregaPontoControleController::class); });
 
 Route::middleware(['auth:sanctum'])->prefix('Projeto')->group(function () { defaultRoutes(ProjetoController::class); });
 

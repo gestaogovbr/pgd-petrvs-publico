@@ -4,9 +4,9 @@
             <cadeia-valor-list-grid [snapshot]="snapshot || modalRoute || route.snapshot"></cadeia-valor-list-grid>
         </ng-template>
     </tab>
-    <tab key="KANBAN" icon="bi bi-card-heading" label="Map" [template]="kanban">
-        <ng-template #kanban>
-            <!-- <cadeia-valor-list-map [snapshot]="snapshot || modalRoute || route.snapshot"></cadeia-valor-list-map> -->
+    <tab key="MAPA" icon="bi bi-card-heading" label="Mapa" [template]="mapa">
+        <ng-template #mapa>
+            <cadeia-valor-mapa></cadeia-valor-mapa>
         </ng-template>
     </tab>
 </tabs>

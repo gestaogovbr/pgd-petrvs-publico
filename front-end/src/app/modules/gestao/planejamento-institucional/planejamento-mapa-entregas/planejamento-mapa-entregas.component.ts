@@ -4,8 +4,12 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import { InputSearchComponent} from 'src/app/components/input/input-search/input-search.component';
 import { EntregaDaoService } from 'src/app/dao/entrega-dao.service';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
+import { PlanejamentoObjetivoDaoService } from 'src/app/dao/planejamento-objetivo-dao.service';
+import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
+import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model';
 import { Planejamento } from 'src/app/models/planejamento.model';
+import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { PlanoEntregaService } from '../../plano-entrega/plano-entrega.service';
 
@@ -14,7 +18,7 @@ import { PlanoEntregaService } from '../../plano-entrega/plano-entrega.service';
   templateUrl: './planejamento-mapa-entregas.component.html',
   styleUrls: ['./planejamento-mapa-entregas.component.scss']
 })
-export class PlanejamentoMapaEntregasComponent extends PageListBase<Planejamento, PlanejamentoDaoService> {
+export class PlanejamentoMapaEntregasComponent extends PageListBase<PlanoEntregaEntrega, PlanoEntregaEntregaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
   
@@ -24,19 +28,19 @@ export class PlanejamentoMapaEntregasComponent extends PageListBase<Planejamento
   public objetivoId?: string;
 
   constructor(public injector: Injector) {
-    super(injector, Planejamento, PlanejamentoDaoService);
+    super(injector, PlanoEntregaEntrega, PlanoEntregaEntregaDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.entregaDao = injector.get<EntregaDaoService>(EntregaDaoService);
     this.entregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
     /* Inicializações */
-    this.title = this.lex.noun('Planejamento Institucional',true);
+    this.title = "Entregas dos objetivos do " + this.lex.noun('Planejamento Institucional',true);
     this.filter = this.fh.FormBuilder({
       unidade_id: {default: null},
       entrega_id: {default: null},
       inicio: {default: null},
       fim: {default: null}
     });
-    this.join = ['plano_entrega.unidade:id,nome,sigla', 'plano_entrega.entrega:id,nome,tipo_indicador,lista_qualitativos'];
+    this.join = [];
   }
 
   ngOnInit(){
