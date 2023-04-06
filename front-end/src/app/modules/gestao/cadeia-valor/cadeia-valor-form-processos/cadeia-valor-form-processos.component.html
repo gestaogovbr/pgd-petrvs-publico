@@ -2,9 +2,12 @@
     <div class="row">
         <grid [items]="items" [form]="form!" [hasDelete]="true" [add]="addProcesso.bind(this)" [load]="loadProcesso.bind(this)" [remove]="removeProcesso.bind(this)" [save]="saveProcesso.bind(this)" editable>
             <columns>
-                <column title="Nível" [template]="nivel" type="template">
+                <column title="Nível" [template]="nivel" [editTemplate]="editNivel">
                     <ng-template let-row="row" let-metadata="metadata" #nivel>
                         <small class="d-block">{{getSequencia(metadata, row)}}</small>
+                    </ng-template>
+                    <ng-template let-row="row" #editNivel>
+                        <input-level [size]="6" controlName="sequencia" [validate]="validateLevel"></input-level>
                     </ng-template>
                 </column>
                 <column title="Processos" [template]="processo" [editTemplate]="editProcesso">
