@@ -23,7 +23,7 @@
                         <span *ngIf="row.objetivos?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-bullseye"></i> {{row.objetivos?.length}}</span>
                     </ng-template>
                     <ng-template let-row="row" #columnExpandedObjetivos>
-                        <planejamento-list-objetivo persist [entity]="row"></planejamento-list-objetivo>
+                        <planejamento-list-objetivo [entity]="row" [eixos]="eixos"></planejamento-list-objetivo>
                     </ng-template>
                 </column>
                 <column title="Nome" field="nome" orderBy="nome"></column>

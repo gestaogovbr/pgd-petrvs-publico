@@ -28,6 +28,7 @@ class Planejamento extends ModelBase
         'valores', /* json; NOT NULL; */// Valores
         'entidade_id', /* char(36); NOT NULL; */
         'data_arquivamento', /* datetime; */// Data de arquivamento da demanda
+        'planejamento_superior_id',
         //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência do registro
         //'data_fim', /* datetime; */// Data fim da vigência do registro
     ];
@@ -42,12 +43,13 @@ class Planejamento extends ModelBase
     // Belongs
     public function unidade() { return $this->belongsTo(Unidade::class); }
     public function entidade() { return $this->belongsTo(Entidade::class); }
+    public function planejamentoSuperior() { return $this->belongsTo(Planejamento::class, 'planejamento_superior_id'); }
 
     // Casting
     protected $casts = [
         'valores' => AsJson::class,
     ];
 
-    public $fillable_relations = ['objetivos'];
+    public $fillable_changes = ['objetivos'];
 
 }

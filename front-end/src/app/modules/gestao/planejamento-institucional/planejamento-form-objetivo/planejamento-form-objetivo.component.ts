@@ -6,10 +6,12 @@ import { EixoTematicoDaoService } from 'src/app/dao/eixo-tematico-dao.service';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { PlanejamentoObjetivoDaoService } from 'src/app/dao/planejamento-objetivo-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
+import { EixoTematico } from 'src/app/models/eixo-tematico.model';
 import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model';
 import { Planejamento } from 'src/app/models/planejamento.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
+import { NavigateResult } from 'src/app/services/navigate.service';
 
 @Component({
   selector: 'app-planejamento-form-objetivo',
@@ -18,7 +20,7 @@ import { LookupItem } from 'src/app/services/lookup.service';
 })
 export class PlanejamentoFormObjetivoComponent extends PageFormBase<PlanejamentoObjetivo, PlanejamentoObjetivoDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  @ViewChild('planejamento_nome', {static: false}) public planejamento_nome?: InputTextComponent;
+  //@ViewChild('planejamento_nome', {static: false}) public planejamento_nome?: InputTextComponent;
   @ViewChild('unidade_executora_nome', {static: false}) public unidade_executora_nome?: InputTextComponent;
   @ViewChild('planejamento_superior_nome', {static: false}) public planejamento_superior_nome?: InputTextComponent;
 
@@ -38,18 +40,12 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
       nome: {default: ""},
       fundamentacao: {default: ""},
       planejamento_id: {default: null},
-      planejamento_nome: {default: ""},
+     // planejamento_nome: {default: ""},
       planejamento_superior_nome: {default: ""},
       unidade_executora_nome: {default: ""},
       eixo_tematico_id: {default: null},
       objetivo_superior_id: {default: null},
     }, this.cdRef, this.validate);
-  }
-
-  ngOnInit(): void {
-    super.ngOnInit();
-    this.planejamento = this.metadata.planejamento as Planejamento;
-    this.planejamento_superior_id = this.queryParams.planejamento_superior_id || null;
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -74,28 +70,42 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
   public loadData(entity: PlanejamentoObjetivo, form: FormGroup): void {
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
+    this.title = entity._status == 'ADD' ? 'Inclusão de Objetivo' : 'Editando objetivo...';
+    //form!.controls.planejamento_nome.setValue(this.planejamento!.nome);
   }
 
   public initializeData(form: FormGroup): void {
-    form!.patchValue(new PlanejamentoObjetivo());
+    this.entity = this.metadata?.objetivo as PlanejamentoObjetivo;
+    this.planejamento = this.metadata?.planejamento as Planejamento;
+
+
+    /*
     form!.controls.planejamento_id.setValue(this.planejamento!.id);
-    form!.controls.planejamento_nome.setValue(this.planejamento!.nome);
+    
     if(this.planejamento_superior_id) this.planejamentoDao?.getById(this.planejamento_superior_id!, ['objetivos:id,nome']).then(planejamento => {
       this.form?.controls.planejamento_superior_nome.setValue(planejamento!.nome);
       this.objetivos_superiores = planejamento?.objetivos?.map(x => Object.assign({}, { key: x.id, value: x.nome, data: x })) || [];
     });
-    form!.controls.unidade_executora_nome.setValue(this.planejamento!.unidade?.nome);
+    form!.controls.unidade_executora_nome.setValue(this.planejamento!.unidade?.nome);*/
+    
+    this.loadData(this.entity!, form);
   }
 
-  public saveData(form: IIndexable): Promise<PlanejamentoObjetivo> {
-    return new Promise<PlanejamentoObjetivo>((resolve, reject) => {
+  public saveData(form: IIndexable): Promise<NavigateResult> {
+    return new Promise<NavigateResult>((resolve, reject) => {
       const objetivo = this.util.fill(new PlanejamentoObjetivo(), this.entity!);
-      resolve(this.util.fillForm(objetivo, this.form!.value));
+      resolve(new NavigateResult(this.util.fillForm(objetivo, this.form!.value)));
     });
   }
 
-  public titleEdit = (entity: PlanejamentoObjetivo): string => {
+/*   public titleEdit = (entity: PlanejamentoObjetivo): string => {
     return "Editando "+ (entity?.nome || "");
+  } */
+
+  public isPlanejamentoUNEX(): boolean {
+    return this.planejamento?.unidade_id != null;
   }
+
+
 
 }

@@ -6,19 +6,19 @@
         <div class="row">
             <input-textarea label="Fundamentação" [size]="12" [rows]="4" controlName="fundamentacao" [control]="form!.controls.fundamentacao"></input-textarea>
         </div>
-        <div *ngIf="!planejamento!.unidade_id" class="row">
+        <div *ngIf="!planejamento?.unidade_id" class="row">
             <input-search [size]="12" label="Eixo Temático" icon="fab fa-unity" controlName="eixo_tematico_id" [control]="form!.controls.eixo_tematico_id" [dao]="eixoTematicoDao" [selectRoute]="{route: ['cadastros', 'eixo-tematico']}"></input-search>                        
         </div>
-        <div class="row">
+<!--         <div class="row">
             <input-text #planejamento_nome [size]="12" [disabled]="'true'" label="Planejamento Institucional" icon="fab fa-unity" controlName="planejamento_nome"></input-text>                        
-        </div>
-        <div *ngIf="planejamento!.unidade_id" class="row">
+        </div> -->
+        <div *ngIf="planejamento?.unidade_id" class="row">
             <input-text #planejamento_superior_nome [size]="12" [disabled]="'true'" label="Planejamento superior vinculado" icon="fab fa-unity" controlName="planejamento_superior_nome"></input-text>                        
         </div>
-        <div *ngIf="planejamento!.unidade_id" class="row">
+        <div *ngIf="planejamento?.unidade_id" class="row">
             <input-text #unidade_executora_nome [size]="12" [disabled]="'true'" label="Unidade Executora" icon="fab fa-unity" controlName="unidade_executora_nome"></input-text>                        
         </div>
-        <div *ngIf="planejamento!.unidade_id" class="row">
+        <div *ngIf="planejamento?.unidade_id" class="row">
             <input-select [size]="12" label="Objetivo superior vinculado" icon="fab fa-unity" controlName="objetivo_superior_id" [control]="form!.controls.objetivo_superior_id" [items]="objetivos_superiores!"></input-select>                        
         </div>
     </div>
