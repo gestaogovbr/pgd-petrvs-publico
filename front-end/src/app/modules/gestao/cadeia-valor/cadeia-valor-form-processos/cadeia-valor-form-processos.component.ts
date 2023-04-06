@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, Injector, Input, ViewChild } from '@angul
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
+import { InputLevelItem } from 'src/app/components/input/input-level/input-level.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { CadeiaValorDaoService } from 'src/app/dao/cadeia-valor-dao.service';
 import { Base, IIndexable } from 'src/app/models/base.model';
@@ -124,40 +125,6 @@ export class CadeiaValorFormProcessosComponent extends PageFrameBase {
     return true;
   }
 
-  /*public searchProcessos(row, pai){
-    if(pai = this.items.find(x => x.processo_pai_id = pai.id)){
-         return row;
-    }else if (row.children != null){
-         var i;
-         var result = null;
-         for(i=0; result == null && i < row.children.length; i++){
-              result = this.searchProcessos(row.children[i], pai);
-         }
-         return result;
-    }
-    return result;
-  }*/
-
-/*
-percorrer arvore em profundidade
-
-m(i, novopath)
-    for(i){
-      i.path = novoPath 
-      novopath = i.path+'/'+i.id;
-      m(i, novoPath)
-    }
-a
-    b
-        c
-            d
-
-
-b)
-  
-
-*/
-
   public async saveProcesso(form: FormGroup, row: any) {
     let result = undefined;
     this.form!.markAllAsTouched();
@@ -177,4 +144,9 @@ b)
     result.push({ hint: "Adicionar filho", icon: "bi bi-plus-circle", onClick: this.addChildProcesso.bind(this) });
     return result;
   }
+
+  public validateLevel = (parents: InputLevelItem[], item: InputLevelItem, children: InputLevelItem[]): Promise<boolean> | boolean => {
+    return (item.value as number) % 2 == 0;
+  };
+
 }

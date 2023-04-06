@@ -16,7 +16,7 @@
                 <span *ngIf="row?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row?.length}}</span>
             </ng-template>
             <ng-template let-row="row" #columnExpandedProcessos>
-                <cadeia-valor-list-processo #processos [entity]="row" [cdRef]="cdRef"></cadeia-valor-list-processo>
+                <cadeia-valor-form-processos persist #processos [entity]="row" [cdRef]="cdRef"></cadeia-valor-form-processos>
             </ng-template>
         </column>
         <column title="Nome" field="nome" orderBy="nome"></column>
