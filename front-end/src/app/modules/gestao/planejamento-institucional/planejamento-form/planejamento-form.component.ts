@@ -9,7 +9,6 @@ import { Planejamento } from 'src/app/models/planejamento.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { PlanejamentoListObjetivoComponent } from '../planejamento-list-objetivo/planejamento-list-objetivo.component';
-import { createThis } from 'typescript';
 
 @Component({
   selector: 'app-planejamento-form',
@@ -59,13 +58,12 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
       return result;
     }
   
-    public formValidation = (form?: FormGroup) =>{
-      let result = null;
-      if(this.form!.controls.fim.value && this.form!.controls.inicio.value > this.form!.controls.fim.value) {
-        return "A data do início não pode ser maior que a data do fim!";
-      }
-      return result;
-    }
+    public formValidation = (form?: FormGroup) => {
+      if(this.form!.controls.fim.value && this.form!.controls.inicio.value > this.form!.controls.fim.value) return "A data do início não pode ser maior que a data do fim!";
+      if(this.form!.controls.valores.value.length == 0) return "É obrigatória a inclusão de ao menos um valor institucional!";
+      if(this.isPlanejamentoUNEXEC() && !this.form.controls.planejamento_superior_id.value?.length) return "Quando o Planejamento é de uma Unidade Executora, é obrigatória a definição do Planejamento superior ao qual ele será vinculado!";
+      return undefined;
+    } 
   
     public loadData(entity: Planejamento, form: FormGroup) {
       let formValue = Object.assign({}, form.value);
@@ -116,6 +114,22 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
 
     public onPlanejamentoSelect(event: Event){
 
+    }
+
+    /**
+     * 
+     * @returns boolean Informa se o planejamento é da Unidade Instituidora ou não.
+     */
+    public isPlanejamentoUNINST(): boolean {
+      return !this.form.controls.unidade_id.value?.length
+    }
+
+    /**
+     * 
+     * @returns boolean Informa se o planejamento é da Unidade Executora ou não.
+     */
+    public isPlanejamentoUNEXEC(): boolean {
+      return !this.isPlanejamentoUNINST();
     }
 }
   

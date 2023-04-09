@@ -21,7 +21,6 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
     @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
     @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
     @Input() set entity(value: Planejamento | undefined) { super.entity = value; } get entity(): Planejamento | undefined { return super.entity; }
-    //@Input() set entity_id(value: string | undefined) { super.entity_id = value; } get entity_id(): string | undefined { return super.entity_id; }
     @Input() eixos?: EixoTematico[];
     @Input() public entity_id?: string | undefined;
 
@@ -30,7 +29,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
       if (!this.gridControl.value.objetivos) this.gridControl.value.objetivos = [];
       return this.gridControl.value.objetivos;
     }
-    public minHeight: number = 100;
+    public minHeight: number = 350;
     public options: ToolbarButton[] = [];
     public objetivoDao?: PlanejamentoObjetivoDaoService;
     public eixoDao?: EixoTematicoDaoService;
@@ -41,6 +40,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
       this.objetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
       this.eixoDao = injector.get<EixoTematicoDaoService>(EixoTematicoDaoService);
       this.groupBy = [{field: "eixo_tematico_id", label: "Eixo Temático"}];
+      //this.join = ['planejamento:id','planejamento.planejamento_superior:id,nome'];
       this.form = this.fh.FormBuilder({
         nome: {default: ""},
         fundamentacao: {default: ""},
@@ -64,9 +64,6 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
       if(this.auth.hasPermissionTo('MOD_PLAN_INST_EDT')) {
         result.push({hint: "Editar", icon: "bi bi-pencil-square", color: "btn-outline-info", onClick: (objetivo: PlanejamentoObjetivo) => { this.editObjetivo(objetivo); }});
       }
-      if(this.auth.hasPermissionTo('MOD_PLAN_INST_EXCL')) {
-        result.push({hint: "Excluir", icon: "bi bi-trash", color: "btn-outline-danger", onClick: (objetivo: PlanejamentoObjetivo) => { this.removeObjetivo(objetivo); }});
-      }
 
       return result;
     }
@@ -74,8 +71,11 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
     public dynamicOptions(row: any): ToolbarButton[] {
       let result: ToolbarButton[] = [];
       let objetivo: PlanejamentoObjetivo = row as PlanejamentoObjetivo;
-  
+
       result.push({label: "Informações", icon: "bi bi-info-circle", onClick: (objetivo: PlanejamentoObjetivo) => this.go.navigate({route: ['gestao', 'planejamento', 'objetivo', objetivo.id, 'consult']}, {modal: true})});  
+      if(this.auth.hasPermissionTo('MOD_PLAN_INST_EXCL')) {
+        result.push({label: "Excluir", icon: "bi bi-trash", color: "btn-outline-danger", onClick: (objetivo: PlanejamentoObjetivo) => { this.removeObjetivo(objetivo); }});
+      }
 
       return result;
     }
@@ -88,7 +88,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
       this.go.navigate({route: ['gestao', 'planejamento', 'objetivo']}, {metadata: {planejamento: this.entity!, objetivo: objetivo}, modalClose: async (modalResult) => {
         if(modalResult) {this.isNoPersist ? this.items.push(modalResult) : this.items.push(await this.objetivoDao!.save(modalResult));};
       }});
-      //se o campo planejamento_superior_if for incluido na tabela planejamentos não será necessário passar o segundo argumento.
+      //se o campo planejamento_superior_id for incluido na tabela planejamentos não será necessário passar o segundo argumento.
       
 
     }
@@ -102,30 +102,29 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
           this.items[index] = modalResult;
         };
       }});
-      //se o campo planejamento_superior_if for incluido na tabela planejamentos não será necessário passar o segundo argumento.
+      //se o campo planejamento_superior_id for incluido na tabela planejamentos não será necessário passar o segundo argumento.
     }
 
-
-    public async removeObjetivo(row: any) {
-      return true;
+    public async removeObjetivo(objetivo: PlanejamentoObjetivo) {
+      let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
+      if(confirm) {
+        let index = this.items.indexOf(objetivo);
+        if(this.isNoPersist) {
+          objetivo._status = "DELETE";
+        } else {
+          await this.objetivoDao!.delete(objetivo);
+          this.grid?.items.splice(index,1);
+        };
+        return true;
+      } else {
+        return false;
+      }
     }
 
-    public async consult(row: any) {
-      this.go.navigate({route: [...this.go.currentOrDefault.route, row.id, "consult"]});
+    public getEixo(id: string): EixoTematico | undefined {
+      return this.eixos?.find(x => x.id == id);
     }
-
-    public async loadObjetivo(form: FormGroup, row: any) {
-      form.controls.nome.setValue(row.nome);
-      form.controls.fundamentacao.setValue(row.fundamentacao);
-      form.controls.planejamento_id.setValue(row.planejamento_id);
-      form.controls.eixo_tematico_id.setValue(row.eixo_tematico_id);
-      form.controls.objetivo_superior_id.setValue(row.objetivo_superior_id);
-      this.cdRef.detectChanges();
-    }
-
-    public getEixoNome(id: string): string {
-      return this.eixos?.find(x => x.id == id)?.nome || "Desconhecido";
-    }
+    
 
 /*     public async saveObjetivo(form: FormGroup, row: any) {
       let result = undefined;

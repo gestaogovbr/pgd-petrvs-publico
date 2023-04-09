@@ -4,7 +4,10 @@ namespace App\Services;
 
 use App\Models\Planejamento;
 use App\Models\EixoTematico;
+use App\Models\Unidade;
 use App\Traits\UseDataFim;
+use Illuminate\Support\Facades\DB;
+use App\Exceptions\ServerException;
 
 class PlanejamentoService extends ServiceBase
 {
@@ -38,32 +41,24 @@ class PlanejamentoService extends ServiceBase
 
         // se a unidade_id é nula, verificar se o usuário tem permissão para criar/editar planejamentos para unidades instituidoras
         if(empty($data["unidade_id"]) && !parent::loggedUser()->hasPermissionTo('MOD_PLAN_INST_INCL_UNID_INST')) {
-            throw new ServerException("ValidatePlanejamentoInstitucional", "Usuário não tem permissão para criar Planejamentos para a Unidade Instituidora (MOD_PLAN_INST_INCL_UNID_INST)");
+            throw new ServerException("ValidatePlanejamentoInstitucional", "Usuário não tem permissão para criar/editar Planejamentos para a Unidade Instituidora (MOD_PLAN_INST_INCL_UNID_INST)");
         }
 
         // se a unidade_id é não-nula, verificar se o usuário tem permissão para incluir/editar planejamentos institucionais para unidades executoras
         if(!empty($data["unidade_id"])) {
             if(!in_array($unidade_id, $subordinadas_ids) && !parent::loggedUser()->hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_QUALQUER'))
-                throw new ServerException("ValidatePlanejamentoInstitucional", "Usuário não tem permissão para criar Planejamentos para Unidades executoras quaisquer (MOD_PLAN_INST_INCL_UNEX_QUALQUER)");
+                throw new ServerException("ValidatePlanejamentoInstitucional", "Usuário não tem permissão para criar/editar Planejamentos para Unidades executoras quaisquer (MOD_PLAN_INST_INCL_UNEX_QUALQUER)");
             if(in_array($unidade_id, $subordinadas_ids) && !in_array($unidade_id, $lotacoes_ids) && !in_array($unidade_id, $lotacoes_ids) && !parent::loggedUser()->hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_SUBORD'))
-                throw new ServerException("ValidatePlanejamentoInstitucional", "Usuário não tem permissão para criar Planejamentos para Unidades executoras subordinadas (MOD_PLAN_INST_INCL_UNEX_SUBORD)");
+                throw new ServerException("ValidatePlanejamentoInstitucional", "Usuário não tem permissão para criar/editar Planejamentos para Unidades executoras subordinadas (MOD_PLAN_INST_INCL_UNEX_SUBORD)");
             if(in_array($unidade_id, $lotacoes_ids) && $unidade_id != $lotacao_principal_id && !parent::loggedUser()->hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_QQLOT'))
-                throw new ServerException("ValidatePlanejamentoInstitucional", "Usuário não tem permissão para criar Planejamentos para qualquer Unidade executora das suas lotações (MOD_PLAN_INST_INCL_UNEX_QQLOT)");
+                throw new ServerException("ValidatePlanejamentoInstitucional", "Usuário não tem permissão para criar/editar Planejamentos para qualquer Unidade executora das suas lotações (MOD_PLAN_INST_INCL_UNEX_QQLOT)");
             if($unidade_id == $lotacao_principal_id && !parent::loggedUser()->hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_LOTPRI'))
-                throw new ServerException("ValidatePlanejamentoInstitucional", "Usuário não tem permissão para criar Planejamentos para a Unidade executora de sua lotação principal (MOD_PLAN_INST_INCL_UNEX_LOTPRI)");
+                throw new ServerException("ValidatePlanejamentoInstitucional", "Usuário não tem permissão para criar/editar Planejamentos para a Unidade executora de sua lotação principal (MOD_PLAN_INST_INCL_UNEX_LOTPRI)");
         }
 
     }
 
     public function proxyExtra($rows, $data) {
-        /*$eixosIds = [];
-        $result = ['eixos' => []];
-        foreach($rows as $row) {
-            foreach ($row->objetivos as $objetivo) {
-                $eixosIds[] = $objetivo->eixo_tematico_id;
-            }
-        }
-        $eixos = EixoTematico::whereIn("id", array_unique($eixosIds))->get();*/
         $eixos = EixoTematico::all();
         $result["eixos"] = $eixos->toArray();
         return $result;

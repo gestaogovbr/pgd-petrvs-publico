@@ -11,6 +11,7 @@ import { GlobalsService } from './services/globals.service';
 import { LexicalService } from './services/lexical.service';
 import { FullRoute, NavigateService } from './services/navigate.service';
 import { UtilService } from './services/util.service';
+import { LookupService } from './services/lookup.service';
 
 export let appInjector: Injector;
 
@@ -43,6 +44,7 @@ export class AppComponent {
   public go: NavigateService;
   public allPages: ListenerAllPagesService;
   public utils: UtilService;
+  public lookup: LookupService;
   public menuSchema: any;
   public menuToolbar: any[];
   public menuContexto: any[];
@@ -64,6 +66,7 @@ export class AppComponent {
     this.go = injector.get<NavigateService>(NavigateService);
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.utils = injector.get<UtilService>(UtilService);
+    this.lookup = injector.get<LookupService>(LookupService);
     /* Inicializações */
     this.auth.success = (usuario: Usuario, redirectTo?: FullRoute) => {
       this.go.navigate(redirectTo || {route: this.globals.initialRoute});
@@ -106,14 +109,13 @@ export class AppComponent {
     ];
     this.menuSchema = {
       cadastros: [
-        { name: this.lex.noun("Atividade", true), permition: 'MOD_ATV', route: ['cadastros', 'atividade'], icon: "bi bi-activity" },
+        { name: this.lex.noun("Atividade", true), permition: 'MOD_ATV', route: ['cadastros', 'atividade'], icon: this.lookup.getIcon(this.lookup.ICONS,'atividade') },
         { name: this.lex.noun("Afastamento", true), permition: 'MOD_AFT', route: ['cadastros', 'afastamento'], icon: "bi bi-toggle-off" },
         { name: this.lex.noun("Cidade", true), permition: 'MOD_CID', route: ['cadastros', 'cidade'], icon: "bi bi-building" },
-        { name: this.lex.noun("Eixo Temático", true), permition: 'MOD_EXTM', route: ['cadastros', 'eixo-tematico'], icon: "bi bi-gear" },
+        { name: this.lex.noun("Eixo Temático", true), permition: 'MOD_EXTM', route: ['cadastros', 'eixo-tematico'], icon: this.lookup.getIcon(this.lookup.ICONS,'eixoTematico') },
         { name: this.lex.noun("Entrega", true), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: "bi bi-list-check" },
         { name: this.lex.noun("Feriado", true), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: "bi bi-emoji-sunglasses" },
         { name: this.lex.noun("Material e Serviço", true), permition: '', route: ['cadastros', 'material-servico'], icon: "bi bi-box-seam" },
-       // { name: this.lex.noun("Planejamento Institucional", true), permition: '', route: ['cadastros', 'planejamento-institucional'], icon: "bi bi-box-seam" },
         { name: this.lex.noun("Tarefa", true), permition: 'MOD_DMD', route: ['cadastros', 'tarefa'], icon: "bi bi-boxes" },
         { name: this.lex.noun("Template", true), permition: 'MOD_TEMP', route: ['cadastros', 'template'], icon: "bi bi-archive" },
         "-",
@@ -128,7 +130,7 @@ export class AppComponent {
       gestao: [
         { name: this.lex.noun("Cadeia de Valor", true), permition: 'MOD_CADV', route: ['gestao', 'cadeia-valor'], icon: "bi bi-bar-chart-steps" },
         { name: this.lex.noun("Demanda", true), permition: '', route: ['gestao', 'demanda'], icon: "bi bi-activity" },
-        { name: this.lex.noun("Planejamento Institucional", true), permition: 'MOD_PLAN_INST', route: ['gestao', 'planejamento'], icon: "bi bi-files" },
+        { name: this.lex.noun("Planejamento Institucional", true), permition: 'MOD_PLAN_INST', route: ['gestao', 'planejamento'], icon: this.lookup.getIcon(this.lookup.ICONS,'planejamento') },
         { name: this.lex.noun("Plano de Entrega", true), permition: 'MOD_PENT', route: ['gestao', 'plano-entrega'], icon: "bi bi-list-columns-reverse" },
         { name: this.lex.noun("Plano de Trabalho", true), permition: 'MOD_PTR', route: ['gestao', 'plano-trabalho'], icon: "bi bi-list-check" },
         { name: this.lex.noun("Programa de Gestão", true), permition: 'MOD_PRGT', route: ['gestao', 'programa'], icon: "bi bi-graph-up-arrow" },

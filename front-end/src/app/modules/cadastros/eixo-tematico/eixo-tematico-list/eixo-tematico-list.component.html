@@ -11,7 +11,6 @@
         <column title="Nome" [template]="columnNome" orderBy="nome">
             <ng-template let-row="row" #columnNome>
                 <badge [color]="row.cor" [icon]="row.icone" [label]="row.nome"></badge>
-                <!--i [class]="row.icone" [style.color]="row.cor"></i><span [style.color]="row.cor"> {{row.nome}}</span//-->
             </ng-template>
         </column>
         <column type="options" [onEdit]="edit" [options]="options"></column>

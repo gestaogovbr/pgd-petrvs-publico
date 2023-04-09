@@ -43,8 +43,8 @@ class ProjetoTarefa extends ModelBase
         'aloca_proprios_recursos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui recursos próprios (somente se tem_filhos)
         'soma_recusos_alocados_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Mostra o somatório dos recursos filhos (somente se tem_filhos)
         'custos_proprios', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui custos próprios (somente se tem_filhos), se não tem filhos sempre será true
-        'soma_custos_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui custos filhos (somente se tem_filhos)
-        'etiquetas', /* json; */
+        'soma_custos_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Mostra o somatório dos custos filhos (somente se tem_filhos)
+        'etiquetas', /* json; */// Etiquetas
         'projeto_id', /* char(36); NOT NULL; */
         'tarefa_pai_id', /* char(36); */
         'demanda_id', /* char(36); */
