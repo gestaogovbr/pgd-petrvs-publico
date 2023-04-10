@@ -1,5 +1,6 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
+import { DndDropEvent, DropEffect } from 'ngx-drag-drop';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
@@ -25,6 +26,7 @@ export class PlanejamentoMapaComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('planejamentoInstitucional', { static: false }) public planejamentoInstitucional?: InputSelectComponent;
 
+  public canEdit: boolean = true;
   public planejamentos: LookupItem[] = [];
   public planejamento?: Planejamento;
   public eixos: EixoPlanejamento[] = [];
@@ -72,7 +74,7 @@ export class PlanejamentoMapaComponent extends PageFrameBase {
 
   public onObjetivoClick(data: any) {
     let objetivo = data as PlanejamentoObjetivo;
-    this.go.navigate({route: ['gestao', 'planejamento', this.planejamento?.id, 'objetivos', objetivo.id]});
+    this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', 'objetivos', objetivo.id]});
   }
 
   public onObjetivoDeleteClick(data: any) {
@@ -82,4 +84,24 @@ export class PlanejamentoMapaComponent extends PageFrameBase {
   public onObjetivoEditClick(data: any) {
     let objetivo = data as PlanejamentoObjetivo;
   }
+
+  /* Drag & Drop */
+  onObjetivoDrop(event: DndDropEvent, list?: any[]) {
+    console.log("Drop", event);
+    list?.splice(typeof event.index === 'undefined' ? list.length : event.index, 0, event.data);
+  }
+
+  onObjetivoDragEnd(event: DragEvent) {
+    console.log("DragEnd", event);
+  }
+
+  onObjetivoDragged(item: any, list: any[], effect: DropEffect) {
+    console.log("Dragged", item, list);
+    list.splice(list.indexOf(item), 1);
+  }
+
+  onObjetivoDragStart(event: DragEvent) {
+    console.log("DragStart", event);
+  }
+
 }

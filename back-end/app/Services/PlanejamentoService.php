@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Exceptions\ServerException;
 use App\Models\Planejamento;
 use App\Models\EixoTematico;
+use App\Models\PlanejamentoObjetivo;
 use App\Models\Unidade;
 use App\Traits\UseDataFim;
 use Illuminate\Support\Facades\DB;
@@ -62,6 +63,27 @@ class PlanejamentoService extends ServiceBase
         $eixos = EixoTematico::all();
         $result["eixos"] = $eixos->toArray();
         return $result;
+    }
+
+    public function buildSequencia($id) {
+        $eixos = DB::table('planejamentos_objetivos')
+            ->selectRaw('MIN(sequencia) AS eixo_sequencia, eixo_tematico_id AS id')
+            ->where('planejamento_id', $id)->whereNull("data_fim")->groupBy("eixo_tematico_id")
+            ->orderBy("eixo_sequencia")->get();
+        $sequencia = 1;
+        foreach ($eixos as $eixo) {
+            $objetivos = PlanejamentoObjetivo::where("planejamento_id", $id)
+                ->where("eixo_tematico_id", $eixo->id)
+                ->whereNull("data_fim")
+                ->orderBy("sequencia")->orderBy("updated_at", "desc")->get();
+            foreach ($objetivos as $objetivo) {
+                if($objetivo->sequencia != $sequencia) {
+                    $objetivo->sequencia = $sequencia;
+                    $objetivo->save();
+                }
+                $sequencia++;
+            }
+        }
     }
 
 }
