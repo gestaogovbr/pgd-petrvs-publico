@@ -30,6 +30,7 @@ export class ActionButtonComponent extends ComponentBase {
   @Input() public set onClick(value: ((...args: any[]) => any) | undefined) { if(this._button.onClick != value) this._button.onClick = value; } public get onClick(): ((...args: any[]) => any) | undefined { return this._button.onClick; }
   @Input() public data?: any;
   @Input() public noArrow?: string;
+  @Input() public placeholder?: string;
 
   public go: NavigateService;
 
@@ -41,12 +42,24 @@ export class ActionButtonComponent extends ComponentBase {
     this.button.id = this.generatedButtonId(this.button, this.util.md5());
   }
 
-  public isNoArrow(): boolean {
+  public get isNoArrow(): boolean {
     return this.noArrow != undefined;
   }
 
+  public get isPlaceholder(): boolean {
+    return this.placeholder != undefined;
+  }
+
+  public get buttonClass(): string {
+    return (this.isPlaceholder ? "placeholder " : "") +
+      (this.buttonPressed(this.button) ? "active " : "") + 
+      (this.isNoArrow ? "no-arrow " : "") + 
+      (this.button.items && !this.button.toggle ? "dropdown-toggle " : "") + 
+      ('btn ' + (this.button.color || 'btn-outline-primary'));
+  }
+
   public buttonDisabled(button: ToolbarButton): boolean {
-    return typeof button.disabled == "function" ? button.disabled() : !!button.disabled;
+    return this.isPlaceholder || (typeof button.disabled == "function" ? button.disabled() : !!button.disabled);
   }
 
   public buttonPressed(button: ToolbarButton): boolean {

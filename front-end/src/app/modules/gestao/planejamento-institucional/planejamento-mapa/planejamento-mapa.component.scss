@@ -3,12 +3,23 @@
     margin: 0;
 }
 
+.eixo .descricao {
+    width: 250px;
+}
+
 .eixo .descricao h4 {
-    display: block;
-    transform-origin: top left;
-    transform: rotate(-90deg) translate(-100%);
-    margin-top: -50%;
-    white-space: nowrap;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    -webkit-transform: scaleX(-1) scaleY(-1);
+    transform: scaleX(-1) scaleY(-1);
+    white-space: normal;
+    height: min-content;
+    text-align: center;    
+    /*transform: rotate(-90deg);
+    width: 250px;
+    vertical-align: middle;
+    height: 100%;
+    text-align: center;*/
 }
 
 .eixo .descricao button {
@@ -23,6 +34,10 @@
     background: #fff;
     margin: 0 10px;
     height: 100%;
+}
+
+.eixo .objetivo .card-text {
+    cursor: grab;
 }
 
 .eixo .objetivo p {
@@ -49,4 +64,6 @@
     font-size: 0.8rem;
 }
 
-/*# sourceMappingURL=style.css.map */
+.dndDraggingSource {
+    display: none;
+}

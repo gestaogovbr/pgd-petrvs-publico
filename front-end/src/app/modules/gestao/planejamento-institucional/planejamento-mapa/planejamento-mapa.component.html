@@ -13,11 +13,12 @@
             </div>
             <div class="card-body">
                 <ul class="list-group list-group-flush">
-                    <li *ngFor="let valor of planejamento!.valores" class="list-group-item">{{valor.value}}</li>
+                    <li *ngFor="let valor of planejamento!.valores" class="list-group-item">
+                        <blockquote class="blockquote mb-0">
+                            <p>{{valor.value}}</p>
+                        </blockquote>
+                    </li>
                 </ul>
-                <!--blockquote class="blockquote mb-0">
-                    <p ></p>
-                </blockquote//-->
             </div>
         </div>
     </div>
@@ -49,14 +50,38 @@
 <!-- Eixos -->
 <div *ngFor="let eixo of eixos" class="eixo" [style.background-color]="eixo.eixo.cor">
     <action-button icon="bi bi-info-circle" color="transparent-black"></action-button>
-    <div class="d-flex align-items-center align-content-stretch p-3">
+    <div class="d-flex align-items-center align-content-stretch p-3"    >
         <div class="descricao">
             <h4>{{eixo.eixo.nome}}</h4>
         </div>
-        <div class="objetivos w-100 row"> <!-- d-flex flex-wrap align-content-stretch -->
-            <div *ngFor="let objetivo of eixo.objetivos" class="col-md-4">
+        <div class="objetivos w-100 row" [dndDropzone]="['objetivo']" (dndDrop)="onObjetivoDrop($event, eixo.objetivos)"> <!-- d-flex flex-wrap align-content-stretch -->
+            <!-- Placehold -->
+            <div class="col-md-4" dndPlaceholderRef>
                 <div class="objetivo shadow-sm d-flex flex-column align-content-between">
-                    <p>{{objetivo.nome}}</p>
+                    <p class="card-text placeholder-glow">
+                        <span class="placeholder col-2"></span>
+                        <span class="placeholder col-3"></span>
+                        <span class="placeholder col-1"></span>
+                        <span class="placeholder col-6"></span>
+                    </p>
+                    <div class="buttons w-100 d-flex justify-content-end px-1">
+                        <action-button placeholder icon="bi bi-question" color="transparent-black p-0"></action-button>
+                        <action-button placeholder icon="bi bi-question" color="transparent-black p-0"></action-button>
+                        <action-button placeholder icon="bi bi-question" color="transparent-black p-0"></action-button>
+                    </div>
+                </div>
+            </div>
+            <!-- Objetivos -->
+            <div *ngFor="let objetivo of eixo.objetivos" class="col-md-4"
+                [dndDisableIf]="!canEdit"
+                [dndDraggable]="objetivo"
+                (dndEnd)="onObjetivoDragEnd($event)"
+                (dndMoved)="onObjetivoDragged(objetivo, eixo.objetivos, 'move')"
+                (dndStart)="onObjetivoDragStart($event)"
+                dndType="objetivo"
+                dndEffectAllowed="move">
+                <div class="objetivo shadow-sm d-flex flex-column align-content-between">
+                    <p class="card-text" dndHandle>{{objetivo.nome}}</p>
                     <div class="buttons w-100 d-flex justify-content-end px-1">
                         <action-button icon="bi bi-file-earmark-bar-graph" [data]="objetivo" [onClick]="this.onObjetivoClick.bind(this)" color="transparent-black px-1"></action-button>
                         <action-button icon="bi bi-pencil-square" [data]="objetivo" [onClick]="this.onObjetivoEditClick.bind(this)" color="transparent-black px-1"></action-button>

@@ -10,6 +10,7 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { CadeiaValor } from 'src/app/models/cadeia-valor.model';
 import { CadeiaValorProcesso } from 'src/app/models/cadeia-valor-processo.model';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { DndDropEvent, DropEffect } from 'ngx-drag-drop';
 
 export class NeastedProcesso extends CadeiaValorProcesso {
   public children: NeastedProcesso[] = [];
@@ -31,6 +32,7 @@ export class CadeiaValorMapaComponent extends PageFrameBase {
   public cadeiaValor?: CadeiaValor;
   public processos: NeastedProcesso[] = [];
   public query?: QueryContext<CadeiaValor>;
+  public canEdit: boolean = true;
 
   constructor(public injector: Injector) {
     super(injector);
@@ -44,8 +46,8 @@ export class CadeiaValorMapaComponent extends PageFrameBase {
 
   public options: ToolbarButton[] = [
     {
-      icon: "bi bi-info-circle",
-      label: "Informações",
+      icon: "bi bi-file-earmark-bar-graph",
+      label: "Entregas",
       onClick: this.consultProcesso.bind(this)
     },
     { divider: true },
@@ -78,7 +80,8 @@ export class CadeiaValorMapaComponent extends PageFrameBase {
   }
 
   public consultProcesso(data: any, button: ToolbarButton) {
-
+    let processo = data as NeastedProcesso;
+    this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', 'processos', processo!.id]});
   }
 
   public addProcesso(data: any, button: ToolbarButton) {
@@ -106,7 +109,7 @@ export class CadeiaValorMapaComponent extends PageFrameBase {
   }
 
   public onCadeiaValorChange() {
-    const recursiveProcesso = (level: string, processos: CadeiaValorProcesso[]): NeastedProcesso[] => processos.sort((a, b) => b.sequencia - a.sequencia).map(x => Object.assign(new NeastedProcesso({
+    const recursiveProcesso = (level: string, processos: CadeiaValorProcesso[]): NeastedProcesso[] => processos.sort((a, b) => a.sequencia - b.sequencia).map(x => Object.assign(new NeastedProcesso({
       children: recursiveProcesso(level + x.sequencia + '.', this.cadeiaValor!.processos.filter(y => y.processo_pai_id == x.id)),
       level: level + x.sequencia,
       cor: this.lookup.CORES_BACKGROUND[Math.floor(Math.random() * this.lookup.CORES_BACKGROUND.length)].color
@@ -127,4 +130,24 @@ export class CadeiaValorMapaComponent extends PageFrameBase {
   public onObjetivoEditClick(data: any) {
     let objetivo = data as CadeiaValorProcesso;
   }
+
+  /* Drag & Drop */
+  onDrop(event: DndDropEvent, list?: any[]) {
+    console.log("Drop", event);
+    list?.splice(typeof event.index === 'undefined' ? list.length : event.index, 0, event.data);
+  }
+
+  onDragEnd(event: DragEvent) {
+    console.log("DragEnd", event);
+  }
+
+  onDragged(item: any, list: any[], effect: DropEffect) {
+    console.log("Dragged", item, list);
+    list.splice(list.indexOf(item), 1);
+  }
+
+  onDragStart(event: DragEvent) {
+    console.log("DragStart", event);
+  }
+  
 }
