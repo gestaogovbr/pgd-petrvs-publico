@@ -4,7 +4,11 @@
 }
 
 .eixo .descricao h4 {
-    transform: rotate(-90deg);
+    display: block;
+    transform-origin: top left;
+    transform: rotate(-90deg) translate(-100%);
+    margin-top: -50%;
+    white-space: nowrap;
 }
 
 .eixo .descricao button {

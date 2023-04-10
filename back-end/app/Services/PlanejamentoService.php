@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
+use App\Exceptions\ServerException;
 use App\Models\Planejamento;
 use App\Models\EixoTematico;
 use App\Models\Unidade;
 use App\Traits\UseDataFim;
 use Illuminate\Support\Facades\DB;
-use App\Exceptions\ServerException;
 
 class PlanejamentoService extends ServiceBase
 {
@@ -36,8 +36,8 @@ class PlanejamentoService extends ServiceBase
     public function validateStore($data, $unidade, $action) {
         $unidade_id = $data["unidade_id"];
         $lotacao_principal_id = parent::unidadePrincipalUsuarioLogado()->id;
-        $lotacoes_ids = array_map(fn($s) => $s->id,DB::select("SELECT id FROM unidades WHERE " . $this->usuarioService->lotacoesWhere(false)));
-        $subordinadas_ids = array_map(fn($s) => $s->id,DB::select("SELECT id FROM unidades WHERE " . $this->usuarioService->lotacoesWhere(true)));
+        $lotacoes_ids = array_map(fn($s) => $s->id, DB::select("SELECT id FROM unidades WHERE " . $this->usuarioService->lotacoesWhere(false)));
+        $subordinadas_ids = array_map(fn($s) => $s->id, DB::select("SELECT id FROM unidades WHERE " . $this->usuarioService->lotacoesWhere(true)));
 
         // se a unidade_id é nula, verificar se o usuário tem permissão para criar/editar planejamentos para unidades instituidoras
         if(empty($data["unidade_id"]) && !parent::loggedUser()->hasPermissionTo('MOD_PLAN_INST_INCL_UNID_INST')) {

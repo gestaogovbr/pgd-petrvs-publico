@@ -1,46 +1,53 @@
-<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [join]="join"
-    [selectable]="selectable" (select)="onSelect($event)" 
-    [hasAdd]="auth.hasPermissionTo('MOD_PLAN_INST_INCL')"
-    [hasEdit]="auth.hasPermissionTo('MOD_PLAN_INST_EDT')">
-    <toolbar *ngIf="!selectable"></toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
-        <div class="row">
-            <input-text [size]="12" label="Planejamento Institucional" controlName="nome"
-                [control]="filter!.controls.nome" placeholder="Nome do planejamento institucional..."></input-text>
-        </div>
-        <div class="row">
-            <input-switch [size]="2" label="Só da Entidade" controlName="so_entidade" [control]="filter!.controls.so_entidade" (change)="onSoEntidadeChange($event)"></input-switch>
-            <input-search #unidade [size]="4" label="Unidade" [disabled]="unidade_disabled" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
-            <input-datetime [size]="3" date label="Início" controlName="inicio" [control]="filter!.controls.inicio" labelInfo="Data de início do planejamento institucional"></input-datetime>
-            <input-datetime [size]="3" date label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Data do fim do planejamento institucional"></input-datetime>
-        </div>
-    </filter>
-    <columns>
-        <column *ngIf="!selectable" type="expand" [icon]="lookup.getIcon(lookup.ICONS,'planejamentoObjetivo')" [align]="'center'" [hint]="lex.noun('Objetivo', true)" [template]="columnObjetivos" [expandTemplate]="columnExpandedObjetivos">
-            <ng-template let-row="row" #columnObjetivos>
-                <span *ngIf="row.objetivos?.length" class="badge rounded-pill bg-light text-dark"><i [class]="lookup.getIcon(lookup.ICONS,'planejamentoObjetivo')"></i> {{row.objetivos?.length}}</span>
-            </ng-template>
-            <ng-template let-row="row" #columnExpandedObjetivos>
-                <planejamento-list-objetivo [entity]="row" [eixos]="eixos"></planejamento-list-objetivo>
-            </ng-template>
-        </column>
-        <column title="Nome" field="nome" orderBy="nome"></column>
-        <column title="Início" [template]="columnInicio">
-            <ng-template let-row="row" #columnInicio>
-                <span> {{dao!.getDateFormatted(row.inicio)}}</span>
-            </ng-template>
-        </column>
-        <column title="Fim" [template]="columnFim">
-            <ng-template let-row="row" #columnFim>
-                <span> {{dao!.getDateFormatted(row.fim)}}</span>
-            </ng-template>
-        </column>
-        <column title="Unidade" [template]="columnUnidade">
-            <ng-template let-row="row" #columnUnidade>
-                <span> {{row.unidade?.nome || ""}}</span>
-            </ng-template>
-        </column>
-        <column type="options" [onEdit]="edit" [options]="options"></column>
-    </columns>
-    <pagination [rows]="rowsLimit"></pagination>
-</grid>
+<tabs display right>
+    <tab key="TABELA" icon="bi bi-table" label="Lista">
+        <grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [join]="join"
+            [selectable]="selectable" (select)="onSelect($event)" 
+            [hasAdd]="auth.hasPermissionTo('MOD_PLAN_INST_INCL')"
+            [hasEdit]="auth.hasPermissionTo('MOD_PLAN_INST_EDT')">
+            <toolbar *ngIf="!selectable"></toolbar>
+            <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+                <div class="row">
+                    <input-text [size]="12" label="Planejamento Institucional" controlName="nome"
+                        [control]="filter!.controls.nome" placeholder="Nome do planejamento institucional..."></input-text>
+                </div>
+                <div class="row">
+                    <input-switch [size]="2" label="Só da Entidade" controlName="so_entidade" [control]="filter!.controls.so_entidade" (change)="onSoEntidadeChange($event)"></input-switch>
+                    <input-search #unidade [size]="4" label="Unidade" [disabled]="unidade_disabled" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+                    <input-datetime [size]="3" date label="Início" controlName="inicio" [control]="filter!.controls.inicio" labelInfo="Data de início do planejamento institucional"></input-datetime>
+                    <input-datetime [size]="3" date label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Data do fim do planejamento institucional"></input-datetime>
+                </div>
+            </filter>
+            <columns>
+                <column *ngIf="!selectable" type="expand" icon="bi bi-bullseye" [align]="'center'" [hint]="lex.noun('Objetivo', true)" [template]="columnObjetivos" [expandTemplate]="columnExpandedObjetivos">
+                    <ng-template let-row="row" #columnObjetivos>
+                        <span *ngIf="row.objetivos?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-bullseye"></i> {{row.objetivos?.length}}</span>
+                    </ng-template>
+                    <ng-template let-row="row" #columnExpandedObjetivos>
+                        <planejamento-list-objetivo [entity]="row" [eixos]="eixos"></planejamento-list-objetivo>
+                    </ng-template>
+                </column>
+                <column title="Nome" field="nome" orderBy="nome"></column>
+                <column title="Início" [template]="columnInicio">
+                    <ng-template let-row="row" #columnInicio>
+                        <span> {{dao!.getDateFormatted(row.inicio)}}</span>
+                    </ng-template>
+                </column>
+                <column title="Fim" [template]="columnFim">
+                    <ng-template let-row="row" #columnFim>
+                        <span> {{dao!.getDateFormatted(row.fim)}}</span>
+                    </ng-template>
+                </column>
+                <column title="Unidade" [template]="columnUnidade">
+                    <ng-template let-row="row" #columnUnidade>
+                        <span> {{row.unidade?.nome || ""}}</span>
+                    </ng-template>
+                </column>
+                <column type="options" [onEdit]="edit" [options]="options"></column>
+            </columns>
+            <pagination [rows]="rowsLimit"></pagination>
+        </grid>
+    </tab>
+    <tab key="MAPA" icon="bi bi-card-heading" label="Mapa">
+        <planejamento-mapa></planejamento-mapa>
+    </tab>
+</tabs>
