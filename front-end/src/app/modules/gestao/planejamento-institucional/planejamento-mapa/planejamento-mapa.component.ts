@@ -4,6 +4,7 @@ import { DndDropEvent, DropEffect } from 'ngx-drag-drop';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
+import { PlanejamentoObjetivoDaoService } from 'src/app/dao/planejamento-objetivo-dao.service';
 import { QueryContext } from 'src/app/dao/query-context';
 import { IIndexable } from 'src/app/models/base.model';
 import { EixoTematico } from 'src/app/models/eixo-tematico.model';
@@ -31,10 +32,12 @@ export class PlanejamentoMapaComponent extends PageFrameBase {
   public planejamento?: Planejamento;
   public eixos: EixoPlanejamento[] = [];
   public query?: QueryContext<Planejamento>;
+  public objetivoDao?: PlanejamentoObjetivoDaoService;
 
   constructor(public injector: Injector) {
     super(injector);
     this.dao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
+    this.objetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
     this.join = ['objetivos'];
     this.title = "Objetivos do " + this.lex.noun('planejamento Institucional', true);
     this.form = this.fh.FormBuilder({
@@ -53,7 +56,7 @@ export class PlanejamentoMapaComponent extends PageFrameBase {
   }
 
   public async loadData(entity: IIndexable, form?: FormGroup) {
-    this.query = this.dao!.query({ where: [["data_arquivamento", "==", null]], orderBy: [["inicio", "desc"]], join: this.join }) as QueryContext<Planejamento>;
+    this.query = this.dao!.query({ where: [["data_arquivamento", "==", null]], orderBy: [["inicio", "desc"]] }) as QueryContext<Planejamento>;
     this.query!.asPromise().then(planejamentos => {
       this.planejamentos = planejamentos.map(x => Object.assign({} as LookupItem, {
         key: x.id,
@@ -65,11 +68,14 @@ export class PlanejamentoMapaComponent extends PageFrameBase {
   }
 
   public onPlanejamentoChange() {
-    this.planejamento = this.planejamentoInstitucional!.selectedItem?.data as Planejamento;
-    this.eixos = this.query!.extra?.eixos?.filter((x: EixoTematico) => this.planejamento?.objetivos?.find(y => y.eixo_tematico_id == x.id)).map((x: EixoTematico) => Object.assign({} as EixoPlanejamento, {
-      eixo: x,
-      objetivos: this.planejamento?.objetivos?.filter(y => y.eixo_tematico_id == x.id) || []
-    })) || [];
+    this.dao!.getById(this.planejamentoInstitucional!.selectedItem?.key, this.join).then(planejamento => {
+      this.planejamento = planejamento as Planejamento;
+      this.eixos = this.query!.extra?.eixos?.filter((x: EixoTematico) => this.planejamento?.objetivos?.find(y => y.eixo_tematico_id == x.id)).map((x: EixoTematico) => Object.assign({} as EixoPlanejamento, {
+        eixo: x,
+        objetivos: this.planejamento?.objetivos?.filter(y => y.eixo_tematico_id == x.id) || []
+      })) || [];
+      this.cdRef.detectChanges();
+    });
   }
 
   public onObjetivoClick(data: any) {
@@ -79,10 +85,18 @@ export class PlanejamentoMapaComponent extends PageFrameBase {
 
   public onObjetivoDeleteClick(data: any) {
     let objetivo = data as PlanejamentoObjetivo;
+
   }
 
   public onObjetivoEditClick(data: any) {
     let objetivo = data as PlanejamentoObjetivo;
+    this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo'] }, {
+      metadata: { planejamento: this.planejamento!, objetivo: objetivo }, modalClose: async (modalResult) => {
+        if (modalResult) this.objetivoDao?.save(modalResult).then(planejamento => {
+          this.onPlanejamentoChange();
+        });
+      }
+    });
   }
 
   /* Drag & Drop */
