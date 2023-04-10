@@ -34,7 +34,8 @@
             <div class="col-2">
                 <select id="cadpesestado" class="form-select form-control input"
                     onchange="buscaMunicipio($(this).val())" oninvalid="">
-                    <option value="" selected></option>
+                     <option *ngFor="estado of estados" [value]="estado">{{estado}}</option>
+                    <!--<option value="" selected></option>
                     <option value="Acre"> Acre</option>
                     <option value="Alagoas"> Alagoas</option>
                     <option value="Amapá"> Amapá</option>
@@ -66,7 +67,7 @@
                     <option value="Sergipe"> Sergipe</option>
 
                     <option value="Tocantins"> Tocantins</option>
-                    <option value="Distrito Federal"> Distrito Federal</option>
+                    <option value="Distrito Federal"> Distrito Federal</option>-->
 
                 </select>
             </div>
