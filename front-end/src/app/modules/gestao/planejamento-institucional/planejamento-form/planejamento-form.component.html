@@ -12,7 +12,7 @@
                     <input-datetime date [size]="3" label="Fim" icon="bi bi-calendar-date" controlName="fim" [control]="form!.controls.fim" labelInfo="Fim do Planejamento Institucional"></input-datetime>
                 </div>
                 <div *ngIf="form!.controls.unidade_id.value" class="row">
-                    <input-select [items]="planejamentosSuperiores" label="Selecione o Planejamento Superior vinculado" controlName="planejamento_superior_id" [control]="form!.controls.planejamento_superior_id" (select)="onPlanejamentoSelect($event)" [icon]="lookup.getIcon(lookup.ICONS,'planejamento')"></input-select>
+                    <input-select [items]="planejamentosSuperiores" label="Selecione o Planejamento Superior vinculado" controlName="planejamento_superior_id" [control]="form!.controls.planejamento_superior_id" (change)="onPlanejamentoChange($event)" [icon]="lookup.getIcon(lookup.ICONS,'planejamento')"></input-select>
                 </div>                
                 <div class="row">
                     <input-textarea [size]="6" label="Missão" [rows]="3" controlName="missao" [control]="form!.controls.missao"></input-textarea>
@@ -26,7 +26,7 @@
             </div>
         </tab>
         <tab key="OBJETIVOS" label="Objetivos">
-            <planejamento-list-objetivo #objetivos [entity]="entity" [entity_id]="'NOPERSIST'"></planejamento-list-objetivo>
+            <planejamento-list-objetivo #objetivos [entity]="entity" [entity_id]="'NOPERSIST'" [disabled]="action == 'consult'"></planejamento-list-objetivo>
         </tab>
     </tabs>
 </editable-form>

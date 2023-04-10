@@ -1,7 +1,7 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
     <div class="row">
         <div *ngIf="planejamento?.unidade_id" class="row">
-            <input-text #planejamento_superior_nome [size]="12" disabled="true" label="Planejamento superior vinculado" [icon]="lookup.getIcon(lookup.ICONS,'planejamento')" controlName="planejamento_superior_nome" [control]="form!.controls.planejamento_superior_nome"></input-text>                        
+            <input-text #planejamento_superior_nome [size]="12" class="disabled" disabled="true" label="Planejamento superior vinculado" [icon]="lookup.getIcon(lookup.ICONS,'planejamento')" controlName="planejamento_superior_nome" [control]="form!.controls.planejamento_superior_nome"></input-text>                        
         </div>
         <div class="row">
             <input-text [size]="12" icon="bi bi-textarea-t" label="Nome" controlName="nome" [control]="form!.controls.nome"></input-text>

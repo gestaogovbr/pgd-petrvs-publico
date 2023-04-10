@@ -17,9 +17,9 @@ import { PlanejamentoListObjetivoComponent } from '../planejamento-list-objetivo
 })
 export class PlanejamentoFormComponent extends PageFormBase<Planejamento, PlanejamentoDaoService> {
     @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-    @ViewChild('objetivos', { static: false }) public objetivos?: PlanejamentoListObjetivoComponent;
     @ViewChild(GridComponent, { static: true }) public grid?: GridComponent;
-    
+    @ViewChild('objetivos', { static: false }) public objetivos?: PlanejamentoListObjetivoComponent;
+
     public unidadeDao: UnidadeDaoService;
     public planejamentosSuperiores: LookupItem[] = [];
     public hasPermissionToUNEX: boolean = false;
@@ -29,7 +29,13 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
       super(injector, Planejamento, PlanejamentoDaoService);
       this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
       this.hasPermissionToUNEX = this.auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_LOTPRI') || this.auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_QQLOT') || this.auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_SUBORD') || this.auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_QUALQUER');
-      this.join = ['objetivos','objetivos.objetivo_superior:id,nome','objetivos.eixo_tematico:id,nome'];
+      this.join = [
+        'objetivos',
+        'objetivos.objetivo_superior:id,nome',
+        'objetivos.eixo_tematico:id,nome',
+        'planejamento_superior:id,nome',
+        'planejamento_superior.objetivos'
+      ];
       this.form = this.fh.FormBuilder({
         nome: {default: ""},
         unidade_id: {default: null},
@@ -63,7 +69,7 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
       if(this.form!.controls.valores.value.length == 0) return "É obrigatória a inclusão de ao menos um valor institucional!";
       if(this.isPlanejamentoUNEXEC() && !this.form.controls.planejamento_superior_id.value?.length) return "Quando o Planejamento é de uma Unidade Executora, é obrigatória a definição do Planejamento superior ao qual ele será vinculado!";
       return undefined;
-    } 
+    }
   
     public loadData(entity: Planejamento, form: FormGroup) {
       let formValue = Object.assign({}, form.value);
@@ -104,16 +110,31 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
     }; 
     
     public onUnidadeChange(event: Event){
-      this.entity!.unidade_id = this.form.controls.unidade_id.value;
-      this.dao?.query({where: [['unidade_executora_id', '==', this.form.controls.unidade_id.value], ['manut_planej_unidades_executoras','==',true]]}).getAll().then((pls) => {
-        this.planejamentosSuperiores = pls.map(x => Object.assign({},{key: x.id, value: x.nome}) as LookupItem);
-        this.objetivos!.loadData(this.entity!, this.form!);
-        this.cdRef.detectChanges();
-      });
+      if(this.entity!.unidade_id != this.form.controls.unidade_id.value){
+        this.dao?.query({where: [['unidade_executora_id', '==', this.form.controls.unidade_id.value], ['manut_planej_unidades_executoras','==',true]]}).getAll().then((pls) => {
+          this.planejamentosSuperiores = pls.map(x => Object.assign({},{key: x.id, value: x.nome}) as LookupItem);
+          this.planejamentosSuperiores.unshift({key: null, value: 'Escolha um Planejamento superior...'});
+          this.objetivos!.loadData(this.entity!, this.form!);
+          this.cdRef.detectChanges();
+        });
+      };
     }
 
-    public onPlanejamentoSelect(event: Event){
-
+    /**
+     * @param event 
+     * Se o planejamento superior for alterado, e já houver objetivos na lista, avisar que eles serão desvinculados dos objetivos do planejamento anterior,
+     * para que novos objetivos superiores sejam selecionados.
+     */
+    public async onPlanejamentoChange(event: Event){
+      if(this.form.controls.planejamento_superior_id.value != this.entity?.planejamento_superior_id && this.entity?.objetivos?.length) {
+        let confirm = await this.dialog.confirm("Alteração de Planejamento superior", "Como já existem objetivos neste Planejamento, eles serão desvinculados dos objetivos do Planejamento anterior, para que novos objetivos sejam selecionados! Deseja continuar?");
+        if(confirm) {
+          this.entity?.objetivos?.forEach(obj => obj.objetivo_superior_id = null); 
+          //atualizar a lista de objetivos superiores
+        } else {
+          this.form.controls.planejamento_superior_id.setValue(this.entity?.planejamento_superior_id);
+        };
+      };
     }
 
     /**
