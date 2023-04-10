@@ -43,6 +43,7 @@ class   PlanoEntregaEntrega extends ModelBase
     // HasMany
     public function planoEntregaPontoControleEntregas() { return $this->hasMany(PlanoEntregaPontoControleEntrega::class, 'plano_entrega_entrega_id'); }
     public function objetivos() { return $this->hasMany(PlanoEntregaObjetivo::class, 'plano_entrega_entrega_id'); }
+    public function processos() { return $this->hasMany(PlanoEntregaProcesso::class, 'plano_entrega_entrega_id'); }
     // Belongs
     public function planoEntrega() { return $this->belongsTo(PlanoEntrega::class, 'plano_entrega_id'); }
     public function entrega() { return $this->belongsTo(Entrega::class); }

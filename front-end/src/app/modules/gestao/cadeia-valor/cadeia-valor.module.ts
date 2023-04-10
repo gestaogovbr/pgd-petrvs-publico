@@ -8,6 +8,7 @@ import { ComponentsModule } from "../../../components/components.module";
 import { ReactiveFormsModule } from "@angular/forms";
 import { CadeiaValorFormProcessosComponent } from './cadeia-valor-form-processos/cadeia-valor-form-processos.component';
 import { CadeiaValorMapaComponent } from './cadeia-valor-mapa/cadeia-valor-mapa.component';
+import { DndModule } from 'ngx-drag-drop';
 
 
 @NgModule({
@@ -22,6 +23,7 @@ import { CadeiaValorMapaComponent } from './cadeia-valor-mapa/cadeia-valor-mapa.
     CommonModule,
     ComponentsModule,
     ReactiveFormsModule,
+    DndModule,
     CadeiaValorRoutingModule
   ]
 })

@@ -8,6 +8,8 @@ import { Planejamento } from 'src/app/models/planejamento.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { EixoPlanejamento } from '../planejamento-mapa/planejamento-mapa.component';
 import { EixoTematico } from 'src/app/models/eixo-tematico.model';
+import { LookupItem } from 'src/app/services/lookup.service';
+import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 
 @Component({
   selector: 'app-planejamento-list',
@@ -16,6 +18,7 @@ import { EixoTematico } from 'src/app/models/eixo-tematico.model';
 })
 export class PlanejamentoListComponent extends PageListBase<Planejamento, PlanejamentoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
+  @ViewChild(TabsComponent, { static: false }) public tabs?: TabsComponent;
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
   
   public unidadeDao: UnidadeDaoService;
@@ -25,6 +28,7 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
     super(injector, Planejamento, PlanejamentoDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     /* Inicializações */
+    this.code = "MOD_PLAN_INST";
     this.title = this.lex.noun('Planejamento Institucional',true);
     this.filter = this.fh.FormBuilder({
       inicio: {default: null},
@@ -51,6 +55,15 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
         onClick: this.delete.bind(this)
       });
     }
+  }
+
+  ngAfterViewInit(): void {
+    super.ngAfterViewInit();
+    this.tabs!.active = ["TABELA", "MAPA"].includes(this.usuarioConfig.active_tab) ? this.usuarioConfig.active_tab : "TABELA";
+  }
+
+  public async onSelectTab(tab: LookupItem) {
+    this.saveUsuarioConfig({active_tab: tab});
   }
 
   public filterClear(filter: FormGroup) {

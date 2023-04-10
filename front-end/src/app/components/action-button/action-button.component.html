@@ -1,6 +1,5 @@
 <div *ngIf="!button.dynamicVisible || button.dynamicVisible(button)" class="btn-group" role="group">
-    <button type="button" [id]="generatedButtonId(button)" [class]="'btn ' + (button.color || 'btn-outline-primary')" [class.active]="buttonPressed(button)" [class.no-arrow]="isNoArrow"
-        [class.dropdown-toggle]="button.items && !button.toggle" [attr.data-bs-toggle]="button.items && !button.toggle ? 'dropdown' : undefined" aria-expanded="false" 
+    <button type="button" [id]="generatedButtonId(button)" [class]="buttonClass" [attr.data-bs-toggle]="button.items && !button.toggle ? 'dropdown' : undefined" aria-expanded="false" 
         (click)="onButtonClick(button)" [disabled]="buttonDisabled(button)">
         <i *ngIf="button.icon?.length" [class]="button.icon"></i>
         <span *ngIf="button.label?.length" class="d-none d-md-inline-block ms-2">{{button.label}}</span>

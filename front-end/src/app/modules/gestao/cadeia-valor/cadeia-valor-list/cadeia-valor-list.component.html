@@ -1,4 +1,4 @@
-<tabs right [title]="isModal ? '' : title" [select]="onSelectTab.bind(this)" [active]="activeTab">
+<tabs right [title]="isModal ? '' : title" [select]="onSelectTab.bind(this)">
     <tab key="TABELA" icon="bi bi-table" label="Lista" [template]="grid">
         <ng-template #grid>
             <cadeia-valor-list-grid [snapshot]="snapshot || modalRoute || route.snapshot"></cadeia-valor-list-grid>
