@@ -753,6 +753,7 @@ class ServiceBase extends DynamicMethods
                 if($relations) $entity->fillRelations($relations);
                 $model::where('id', $data['id'])->update($submit);
                 $entity->fresh();
+                if(method_exists($this, "extraUpdate")) $this->extraUpdate($entity, $unidade);
                 if($transaction) DB::commit();
             } catch (Throwable $e) {
                 if($transaction) DB::rollback();
