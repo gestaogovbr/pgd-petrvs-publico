@@ -8,7 +8,7 @@ use App\Models\PlanoEntrega;
 use App\Models\TipoAvaliacao;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasDataFim;
-use Illuminate\Database\Eloquent\Casts\AsArrayObject;
+use App\Casts\AsJson;
 
 class PlanoEntregaPontoControle extends ModelBase
 {
@@ -34,7 +34,7 @@ class PlanoEntregaPontoControle extends ModelBase
 
     //Casting
     protected $casts = [
-        'justificativas' => AsArrayObject::class
+        'justificativas' => AsJson::class
     ];
 
     // HasMany

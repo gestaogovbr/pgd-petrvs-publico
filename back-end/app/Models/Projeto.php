@@ -29,7 +29,7 @@ class Projeto extends ModelBase
         'status', /* enum('PLANEJADO','INICIADO','CONCLUIDO','SUSPENSO','CANCELADO'); NOT NULL; */// Status do projeto
         'inicio', /* datetime; NOT NULL; */// Inicio do projeto
         'termino', /* datetime; NOT NULL; */// Fim do projeto
-        'custo', /* decimal(15,2); NOT NULL; */
+        'custo', /* decimal(15,2); NOT NULL; */// Custo: Será a soma dos recursos, ou a soma dos filhos caso tem_filhos e soma_custos_filhos
         'calcula_custos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se o projeto calcula custos
         'tempo_corrido', /* tinyint; NOT NULL; */// Se o tempo é corrido ou usa a configuração de fins de semana, feriados e horário do expediente (quando usar horas)
         'usar_horas', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se usa horas nas datas
@@ -39,12 +39,12 @@ class Projeto extends ModelBase
         'aloca_proprios_recursos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui recursos próprios
         'soma_recusos_alocados_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Mostra o somatório dos recursos filhos
         'custos_proprios', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui custos próprios
-        'soma_custos_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui custos filhos
+        'soma_custos_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Mostra o somatório dos custos filhos
         'duracao', /* double(8,2); NOT NULL; */// Duração do projeto
         'progresso', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */// Percentual de progresso do projeto
         'usuario_id', /* char(36); */
         'tipo_projeto_id', /* char(36); */
-        'kanban_dockers', /* json; */
+        'kanban_dockers', /* json; */// Configuração das Labels das swimlanes do quadro Kanban
         'fase_id', /* char(36); */
         //'numero', /* int; NOT NULL; */// Número do projeto (Gerado pelo sistema)
         //'data_inicio', /* datetime; NOT NULL; */// Data de criação

@@ -6,7 +6,6 @@ import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { Planejamento } from 'src/app/models/planejamento.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
-import { EixoPlanejamento } from '../planejamento-mapa/planejamento-mapa.component';
 import { EixoTematico } from 'src/app/models/eixo-tematico.model';
 
 @Component({
@@ -34,7 +33,14 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
       so_entidade: { default: false },
       agrupar: { default: true },
      });
-    this.join = ['unidade:id,nome,sigla','objetivos','objetivos.eixo_tematico:id,nome','objetivos.objetivo_superior:id,nome'];
+    this.join = [
+      'unidade:id,nome,sigla',
+      'objetivos',
+      'objetivos.eixo_tematico:id,nome',
+      'objetivos.objetivo_superior:id,nome',
+      'planejamento_superior:id,nome',
+      'planejamento_superior.objetivos'
+    ];
     // Testa se o usuário possui permissão para exibir planejamentos institucionais
     if (this.auth.hasPermissionTo("MOD_PLAN_INST_CONS")) {
       this.options.push({

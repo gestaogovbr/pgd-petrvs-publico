@@ -317,6 +317,14 @@ export class LookupService {
     {key: "fa-light fa-calendar-days", value: "Calendario", icon: "far fa-calendar-alt"}
   ];
 
+  public ICONS: LookupItem[] = [
+    {key: "atividade", value: "Atividade", icon: "bi bi-activity"},
+    {key: "planejamento", value: "Planejamento", icon: "bi bi-rulers"},
+    {key: "eixoTematico", value: "Eixo Temático", icon: "bi bi-gear"},
+    {key: "planejamentoObjetivo", value: "Planejamento Objetivo", icon: "bi bi-bullseye"},
+
+  ]
+
   public NUMERO_SEMANA = [
     { key: 1, value: "1ª" },
     { key: 2, value: "2ª" },
@@ -511,4 +519,6 @@ export class LookupService {
   public getIcon(itens: LookupItem[], key: any) : string {
     return itens.find(x => x.key == key)?.icon || "";
   }
+
+
 }
