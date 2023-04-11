@@ -13,12 +13,13 @@
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-search [size]="6" label="Unidade" [disabled]="disableUnidade ? 'true' : undefined" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
-            <input-switch [size]="1" label="Vinculadas" controlName="vinculadas" [control]="filter!.controls.vinculadas"></input-switch>
+            <input-text [size]="7" label="Nome" controlName="nome" [control]="filter!.controls.nome"></input-text>
             <input-search [size]="5" label="Tipo de atividade" controlName="tipo_atividade_id" [control]="filter!.controls.tipo_atividade_id" [dao]="tipoAtividadeDao" [selectRoute]="{route: ['cadastros', 'tipo-atividade']}"></input-search>
         </div>
         <div class="row">
-            <input-text [size]="8" label="Nome" controlName="nome" [control]="filter!.controls.nome"></input-text>
+            <input-search [size]="auth.hasPermissionTo('MOD_UND_TUDO') ? 6 : 7" label="Unidade" [disabled]="disableUnidade ? 'true' : undefined" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+            <input-switch *ngIf="auth.hasPermissionTo('MOD_UND_TUDO')" [size]="1" label="Todas" controlName="todas" [control]="filter!.controls.todas"></input-switch>
+            <input-switch [size]="1" label="Vinculadas" controlName="vinculadas" [control]="filter!.controls.vinculadas"></input-switch>
             <input-radio [size]="4" label="Homologado?" controlName="homologado" [control]="filter!.controls.homologado" [items]="lookup.TODOSSIMNAO"></input-radio>
         </div>
     </filter>

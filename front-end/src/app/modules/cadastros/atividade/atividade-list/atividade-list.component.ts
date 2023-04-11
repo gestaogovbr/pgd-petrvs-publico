@@ -33,17 +33,18 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
 
     /* Inicializações */
-    this.title = this.lex.noun("Atividade",true);
+    this.title = this.lex.noun("Atividade", true);
     this.code = "MOD_ATV";
     this.filter = this.fh.FormBuilder({
-      nome: {default: ""},
-      unidade_id: {default: ""},
-      vinculadas: {default: true},
-      homologado: {default: ""},
-      tipo_atividade_id: {default: null}
+      nome: { default: "" },
+      unidade_id: { default: "" },
+      vinculadas: { default: true },
+      todas: { default: false },
+      homologado: { default: "" },
+      tipo_atividade_id: { default: null }
     });
     this.formHomologacao = this.fh.FormBuilder({
-      data_homologacao: {default: new Date()}
+      data_homologacao: { default: new Date() }
     }, this.cdRef, this.validateHomologacao);
     this.multiselectMenu = !this.auth.hasPermissionTo('MOD_ATV_EDT_OTR_OP_HOM') ? [] : [
       {
@@ -53,13 +54,13 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
       }
     ];
     //this.orderBy = [['unidade.sigla', 'asc']];
-    this.groupBy = [{field: "unidade.sigla", label: "Unidade"}];
+    this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }];
   }
 
   public validateHomologacao = (control: AbstractControl, controlName: string) => {
     let result = null;
 
-    if(['data_homologacao'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+    if (['data_homologacao'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
     }
 
@@ -69,14 +70,14 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
   public dynamicOptions(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let atividade: Atividade = row as Atividade;
-    
+
     //result.push({label: "Informações", icon: "bi bi-info-circle", onClick: (atividade: Atividade) => this.go.navigate({route: ['cadastros', 'atividade', atividade.id, 'consult']}, {modal: true})});  
     // Testa se o usuário possui permissão para exibir dados de atividade
-    if (this.auth.hasPermissionTo("MOD_ATV_CONS")) result.push({icon: "bi bi-info-circle", label: "Informações", onClick: this.consult.bind(this)});
+    if (this.auth.hasPermissionTo("MOD_ATV_CONS")) result.push({ icon: "bi bi-info-circle", label: "Informações", onClick: this.consult.bind(this) });
     // Testa se o usuário possui permissão para homologar a atividade
-    if(this.auth.hasPermissionTo('MOD_ATV_EDT_OTR_OP_HOM')) result.push(Object.assign({}, this.grid?.BUTTON_EDIT, {onClick: this.edit.bind(this)}));
+    if (this.auth.hasPermissionTo('MOD_ATV_EDT_OTR_OP_HOM')) result.push(Object.assign({}, this.grid?.BUTTON_EDIT, { onClick: this.edit.bind(this) }));
     // Testa se o usuário possui permissão para excluir a atividade
-    if (this.auth.hasPermissionTo("MOD_ATV_EXCL")) result.push({icon: "bi bi-trash", label: "Excluir", onClick: this.delete.bind(this)});
+    if (this.auth.hasPermissionTo("MOD_ATV_EXCL")) result.push({ icon: "bi bi-trash", label: "Excluir", onClick: this.delete.bind(this) });
     return result;
   }
 
@@ -84,27 +85,27 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
     let result: ToolbarButton[] = [];
     let atividade: Atividade = row as Atividade;
 
-    if(atividade.homologado || !this.auth.hasPermissionTo('MOD_ATV_EDT_OTR_OP_HOM')) {
-      result.push(Object.assign({}, this.grid?.BUTTON_EDIT, {onClick: this.edit.bind(this)}));
+    if (atividade.homologado || !this.auth.hasPermissionTo('MOD_ATV_EDT_OTR_OP_HOM')) {
+      result.push(Object.assign({}, this.grid?.BUTTON_EDIT, { onClick: this.edit.bind(this) }));
     } else {
-      result.push({hint: "Homologar", icon: "bi bi-hand-thumbs-up", onClick: this.homologar.bind(this) });
+      result.push({ hint: "Homologar", icon: "bi bi-hand-thumbs-up", onClick: this.homologar.bind(this) });
     }
     return result;
   }
 
   public homologar(doc: Atividade) {
     this.dialog.confirm("Homologar", "Deseja realmente homologar essa atividade?").then(response => {
-      if(response) {
+      if (response) {
         this.loading = true;
         this.dao!.homologar([doc.id], this.auth.hora).then(response => {
-            this.grid!.query!.refreshId(doc.id);
+          this.grid!.query!.refreshId(doc.id);
         }).finally(() => this.loading = false);
       }
     });
   }
 
   public async homologarAtividades() {
-    if(!this.grid!.multiselectedCount) {
+    if (!this.grid!.multiselectedCount) {
       this.dialog.alert("Selecione", "Nenhuma atividade seleciona para homologação");
     } else {
       const HOMOLOGAR = "HOMOLOGAR";
@@ -120,12 +121,12 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
           value: CANCELAR
         }
       ]).asPromise();
-      if(result.button.value == HOMOLOGAR) {
-        if(this.formHomologacao!.valid){
+      if (result.button.value == HOMOLOGAR) {
+        if (this.formHomologacao!.valid) {
           this.submitting = true;
           try {
             let result = await this.dao?.homologar(Object.keys(this.grid!.multiselected), this.formHomologacao.controls.data_homologacao.value);
-            if(result.error) throw new Error(result.error);
+            if (result.error) throw new Error(result.error);
             this.dialog.alert("Sucesso", "Foram homologados " + result.data + " " + this.lex.noun("atividade", true));
             this.grid!.enableMultiselect(false);
             this.refresh();
@@ -137,7 +138,7 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
           }
         } else {
           this.formHomologacao!.markAllAsTouched();
-        }  
+        }
       } else {
         result.dialog.close();
       }
@@ -161,24 +162,29 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
     let form: any = filter.value;
     let result: any[] = [];
 
-    if(form.nome?.length) {
+    if (form.nome?.length) {
       result.push(["nome", "like", "%" + form.nome.replace(" ", "%") + "%"]);
     }
-    if(form.unidade_id?.length) {
+    if (form.unidade_id?.length) {
       result.push(["unidade_id", "==", form.unidade_id]);
     }
-    if(form.tipo_atividade_id?.length) {
+    if (form.tipo_atividade_id?.length) {
       result.push(["tipo_atividade_id", "==", form.tipo_atividade_id]);
     }
-    if(form.vinculadas) {
+    if (form.vinculadas) {
       result.push(["vinculadas", "==", true]);
     }
-    if(form.homologado?.length) {
+    if (form.homologado?.length) {
       result.push(["homologado", "==", form.homologado == "S"]);
     }
 
     return result;
   }
+
+/*   public formValidation = (form?: FormGroup) => {
+    if (form?.controls.todas && form?.controls.unidade_id.value?.length) { return "Desmarque a opção TODAS ou apague a Unidade selecionada!"; } 
+    return undefined;
+  } */
 
   public getReportComplexidade(row: Atividade): string {
     let result = "";
@@ -219,6 +225,10 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
     });
     return result;
   }
+
+/*   public todasChange(){
+    if(this.filter?.controls.todas.value)
+  } */
 
 }
 
