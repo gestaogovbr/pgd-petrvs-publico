@@ -26,7 +26,7 @@ class AlterCadeiasValoresTableAddDataArquivamento extends Migration
     public function down()
     {
         Schema::table("cadeias_valores", function(Blueprint $table) {
-            $table->dateTime('data_arquivamento')->nullable()->comment("Data de arquivamento da demanda");
+            $table->dropColumn('data_arquivamento');
         });
     }
 }
