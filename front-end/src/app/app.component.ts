@@ -208,6 +208,21 @@ export class AppComponent {
       }
     ];
 
+    this.menuRaioX= [
+      {
+        name: "Home RX", permition: "RX", route: ['raioxhome'], id: "navbarDropdownCadastros", menu: [
+          this.menuSchema.RXHOME,
+         
+        ]
+      },
+      {
+        name: "Cadastros de Dados Pessoais", permition: "RX_CAD_PES", route: ['raioxhome/pessoal'], id: "navbarDropdownGestao", menu: [
+         
+          this.menuSchema.RXCADASTRO_PESSOAL,
+        ]
+      }
+    ];
+
     this.menuContexto = [
       { key: "PGD", name: "PGD", menu: this.menuPgd },
       { key: "PROJETO", name: "Projetos", menu: this.menuProjeto },
@@ -220,8 +235,8 @@ export class AppComponent {
     /*this.menuProjeto
     this.menuGestao
     this.menuOperacional
-    this.menuPonto
-    this.menuRaioX
+    this.menuPonto*/
+    
    
   
     /*this.menuToolbar = [
