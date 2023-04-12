@@ -11,11 +11,11 @@ import { CadeiaValor } from 'src/app/models/cadeia-valor.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 
 @Component({
-  selector: 'cadeia-valor-form-processos',
-  templateUrl: './cadeia-valor-form-processos.component.html',
-  styleUrls: ['./cadeia-valor-form-processos.component.scss']
+  selector: 'cadeia-valor-list-processos',
+  templateUrl: './cadeia-valor-list-processos.component.html',
+  styleUrls: ['./cadeia-valor-list-processos.component.scss']
 })
-export class CadeiaValorFormProcessosComponent extends PageFrameBase {
+export class CadeiaValorListProcessosComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @Input() cdRef: ChangeDetectorRef;
@@ -37,7 +37,8 @@ export class CadeiaValorFormProcessosComponent extends PageFrameBase {
     this.dao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
-      sequencia: { default: "" }
+      sequencia: { default: 1 },
+      nivel: { default: "" }
     }, this.cdRef, this.validate);
   }
 
@@ -45,8 +46,8 @@ export class CadeiaValorFormProcessosComponent extends PageFrameBase {
     let result = null;
     if (['nome'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    }  
-    
+    }
+
     return result;
   }
 
@@ -56,11 +57,15 @@ export class CadeiaValorFormProcessosComponent extends PageFrameBase {
   }
 
   public async addProcesso() {
-    return new CadeiaValorProcesso({
+    let processo = new CadeiaValorProcesso({
       id: this.dao!.generateUuid(),
       sequencia: this.items.filter(x => !x.processo_pai_id).length + 1,
       nome: ""
-    }) as IIndexable;
+    });
+
+    return processo;
+    // this.grid!.setMetadata(processo, { nivel: this.getSequencia({}, processo) });
+
   }
 
   public async addChildProcesso(row: CadeiaValorProcesso, metadata: any, index: number) {
@@ -101,8 +106,9 @@ export class CadeiaValorFormProcessosComponent extends PageFrameBase {
   public getNivelSequencia(metadata: any): number {
     return 10 * (metadata.nivel.match(/\./g) || []).length;
   }
- 
+
   public async loadProcesso(form: FormGroup, row: any) {
+    form.controls.nivel.setValue(this.getSequencia(this.grid?.getMetadata(row), row));
     form.controls.sequencia.setValue(row.sequencia);
     form.controls.nome.setValue(row.nome);
 
@@ -118,11 +124,15 @@ export class CadeiaValorFormProcessosComponent extends PageFrameBase {
   }
 
   public async removeProcesso(row: any) {
-    let processo = row as CadeiaValorProcesso;
-    let filhos = this.items.filter(x => x.processo_pai_id == processo.id) || [];
-    filhos.forEach(x => this.removeProcesso(x));
-    this.items.splice(this.items.findIndex(x => x.id == processo.id), 1);
-    return true;
+    if (this.isNoPersist) {
+      let processo = row as CadeiaValorProcesso;
+      let filhos = this.items.filter(x => x.processo_pai_id == processo.id) || [];
+      filhos.forEach(x => this.removeProcesso(x));
+      this.items.splice(this.items.findIndex(x => x.id == processo.id), 1);
+      return true;
+    } else {
+      return true;
+    }
   }
 
   public async saveProcesso(form: FormGroup, row: any) {
@@ -146,7 +156,29 @@ export class CadeiaValorFormProcessosComponent extends PageFrameBase {
   }
 
   public validateLevel = (parents: InputLevelItem[], item: InputLevelItem, children: InputLevelItem[]): Promise<boolean> | boolean => {
-    return (item.value as number) % 2 == 0;
+    if (children.length) {
+      let path = [...parents.map(x => x.value), item.value] as number[];
+      return this.processos(path).length == path.length;
+    } else {
+      let items = this.processos(parents.map(x => x.value) as number[]);
+      let sibilings = items.length == parents.length && items.length ? this.items.filter(x => x.processo_pai_id == items[items.length - 1].id) : [];
+      return sibilings.length + 1 >= (item.value as number);
+    }
+  }
+
+  public processos = (path: number[]): CadeiaValorProcesso[] => {
+    let items: CadeiaValorProcesso[] = [];
+    path.reduce((a, v) => {
+      let item = a.find(x => x.sequencia == v);
+      if (item) {
+        items.push(item);
+        return this.items.filter(x => x.processo_pai_id == item?.id);
+      } else {
+        return [];
+      }
+    }, this.items.filter(x => !x.processo_pai_id));
+    return items;
   };
+
 
 }

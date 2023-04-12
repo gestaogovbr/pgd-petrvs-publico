@@ -5,10 +5,7 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { CadeiaValorDaoService } from 'src/app/dao/cadeia-valor-dao.service';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
-import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
-import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { CadeiaValor } from 'src/app/models/cadeia-valor.model';
-import { Planejamento } from 'src/app/models/planejamento.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
@@ -19,7 +16,6 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 export class CadeiaValorListGridComponent  extends PageListBase<CadeiaValor, CadeiaValorDaoService>{
   // @Input() snapshot?: ActivatedRouteSnapshot;
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
-  @ViewChild('entidade', { static: false }) public unidade?: InputSearchComponent;
   @Input() snapshot?: ActivatedRouteSnapshot;
   @Input() fixedFilter?: any[];
   
@@ -35,7 +31,7 @@ export class CadeiaValorListGridComponent  extends PageListBase<CadeiaValor, Cad
       nome: {default: ""},
       entidade_id: {default: null}
      });
-     this.join = ['entidade'];
+     this.join = ['processos'];
     // Testa se o usuário possui permissão para exibir planos de gestão/entregas
     if (this.auth.hasPermissionTo("MOD_CADV_CONS")) {
       this.options.push({

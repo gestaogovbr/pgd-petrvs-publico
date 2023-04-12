@@ -7,7 +7,7 @@
                         <small class="d-block">{{getSequencia(metadata, row)}}</small>
                     </ng-template>
                     <ng-template let-row="row" #editNivel>
-                        <input-level [size]="6" controlName="sequencia" [validate]="validateLevel"></input-level>
+                        <input-level [size]="6" controlName="nivel" [validate]="validateLevel"></input-level>
                     </ng-template>
                 </column>
                 <column title="Processos" [template]="processo" [editTemplate]="editProcesso">
