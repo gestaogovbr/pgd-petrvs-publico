@@ -210,13 +210,13 @@ export class AppComponent {
 
     this.menuRaioX= [
       {
-        name: "Home RX", permition: "RX", route: ['raioxhome'], id: "navbarDropdownCadastros", menu: [
+        name: "Home RX", permition: "MENU_CAD_ACESSO", route: ['raioxhome'], id: "navbarDropdownCadastros", menu: [
           this.menuSchema.RXHOME,
          
         ]
       },
       {
-        name: "Cadastros de Dados Pessoais", permition: "RX_CAD_PES", route: ['raioxhome/pessoal'], id: "navbarDropdownGestao", menu: [
+        name: "Cadastros de Dados Pessoais", permition: "MENU_CAD_ACESSO", route: ['raioxhome/pessoal'], id: "navbarDropdownGestao", menu: [
          
           this.menuSchema.RXCADASTRO_PESSOAL,
         ]
