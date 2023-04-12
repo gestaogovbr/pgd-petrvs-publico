@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, Injector, Input, ViewChild } from '@angul
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
+import { InputLevelItem } from 'src/app/components/input/input-level/input-level.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { CadeiaValorDaoService } from 'src/app/dao/cadeia-valor-dao.service';
 import { Base, IIndexable } from 'src/app/models/base.model';
@@ -42,16 +43,16 @@ export class CadeiaValorFormProcessosComponent extends PageFrameBase {
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
+    if (['nome'].indexOf(controlName) >= 0 && !control.value?.length) {
+      result = "Obrigatório";
+    }  
+    
     return result;
   }
 
-  public loadData(entity: IIndexable, form?: FormGroup) {
-    //super.loadData(entity, form);
-  }
-
-  public initializeData(form?: FormGroup) {
-    /*this.entity = new CadeiaValor();
-    this.loadData(this.entity, this.form);*/
+  public loadData(entity: IIndexable, form?: FormGroup): Promise<void> | void {
+    this.cdRef.detectChanges();
+    this.sortProcessos();
   }
 
   public async addProcesso() {
@@ -69,14 +70,9 @@ export class CadeiaValorFormProcessosComponent extends PageFrameBase {
       sequencia: this.items.filter(x => x.processo_pai_id == row.id).length + 1,
       nome: ""
     });
-
     this.items.push(processo);
     this.grid!.setMetadata(processo, { nivel: this.getSequencia({}, processo) });
-    this.items.sort((a, b) => {
-      const sa = (this.grid!.getMetadata(a)?.nivel || "").split(".").map((x: string) => ("000" + x).substr(-3)).join(".");
-      const sb = (this.grid!.getMetadata(b)?.nivel || "").split(".").map((x: string) => ("000" + x).substr(-3)).join(".");
-      return sa < sb ? -1 : sa > sb ? 1 : 0;
-    });
+    this.sortProcessos();
     this.grid!.adding = true;
     await this.grid!.edit(processo);
     return undefined;
@@ -109,45 +105,25 @@ export class CadeiaValorFormProcessosComponent extends PageFrameBase {
   public async loadProcesso(form: FormGroup, row: any) {
     form.controls.sequencia.setValue(row.sequencia);
     form.controls.nome.setValue(row.nome);
+
     this.cdRef.detectChanges();
   }
 
-  public async removeProcesso(row: any) {
-    
-    return true;
-    
-    // const encontrarPai: (pai: any) => {
-    //   let pai: CadeiaValorProcesso;
-    //   while(pai = this.items.find(x => x.processo_pai_id = pai.id)) {
-    //     if(pai.id == pai) return true;
-    //   };
-    //   return false;
-    // };
-    // return true;
-
-    // let filhos = this.items.find(x => x.path.indexOf(idPai) >= 0);
+  public sortProcessos() {
+    this.items.sort((a, b) => {
+      const sa = (this.grid!.getMetadata(a)?.nivel || "").split(".").map((x: string) => ("000" + x).substr(-3)).join(".");
+      const sb = (this.grid!.getMetadata(b)?.nivel || "").split(".").map((x: string) => ("000" + x).substr(-3)).join(".");
+      return sa < sb ? -1 : sa > sb ? 1 : 0;
+    });
   }
 
-
-/*
-percorrer arvore em profundidade
-
-m(i, novopath)
-    for(i){
-      i.path = novoPath 
-      novopath = i.path+'/'+i.id;
-      m(i, novoPath)
-    }
-a
-    b
-        c
-            d
-
-
-b)
-  
-
-*/
+  public async removeProcesso(row: any) {
+    let processo = row as CadeiaValorProcesso;
+    let filhos = this.items.filter(x => x.processo_pai_id == processo.id) || [];
+    filhos.forEach(x => this.removeProcesso(x));
+    this.items.splice(this.items.findIndex(x => x.id == processo.id), 1);
+    return true;
+  }
 
   public async saveProcesso(form: FormGroup, row: any) {
     let result = undefined;
@@ -168,4 +144,9 @@ b)
     result.push({ hint: "Adicionar filho", icon: "bi bi-plus-circle", onClick: this.addChildProcesso.bind(this) });
     return result;
   }
+
+  public validateLevel = (parents: InputLevelItem[], item: InputLevelItem, children: InputLevelItem[]): Promise<boolean> | boolean => {
+    return (item.value as number) % 2 == 0;
+  };
+
 }

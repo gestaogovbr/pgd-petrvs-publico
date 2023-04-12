@@ -5,10 +5,13 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\Unidade;
 use App\Models\Entidade;
+use App\Traits\HasDataFim;
 use Illuminate\Support\Facades\DB;
 
 class Template extends ModelBase
 {
+    use HasDataFim;
+
     protected $table = 'templates';
 
     protected $with = [];
@@ -25,19 +28,14 @@ class Template extends ModelBase
         'especie', /* enum('TERMO_ADESAO','SEI','TCR'); */// Especificação da espécie do template (interno do sistema)
         'titulo', /* varchar(256); NOT NULL; */// Nome da tarefa
         'conteudo', /* text; */// Comentário predefinida para a tarefa
-        'data_set', /* json; */// Dados da parametrização
+        'dataset', /* json; */// Dados da parametrização
         'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
         'data_fim', /* datetime; */// Data fim da vigência
     ];
 
-    // Mutattors e Casts
-    public function getDatasetAttribute($value)
-    {
-        return json_decode($value);
-    }
-    public function setDatasetAttribute($value)
-    {
-        $this->attributes['data_set'] = json_encode($value);
-    }
-
+    // Casting
+    protected $casts = [
+        'dataset' => AsJson::class
+    ];
+    
 }

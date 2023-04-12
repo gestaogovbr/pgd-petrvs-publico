@@ -298,7 +298,7 @@ class LotacaoListComponent extends src_app_modules_base_page_list_base__WEBPACK_
         this.usuarioDao = injector.get(src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_3__["UsuarioDaoService"]);
         this.unidadeDao = injector.get(src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_2__["UnidadeDaoService"]);
         /* Inicializações */
-        this.title = "Lotações";
+        this.title = this.lex.noun("Lotação", true);
         this.join = ["usuario", "unidade"];
         this.modalWidth = 500;
         this.filter = this.fh.FormBuilder({
@@ -312,7 +312,7 @@ class LotacaoListComponent extends src_app_modules_base_page_list_base__WEBPACK_
         const usuarioId = this.urlParams.get("usuario_id");
         this.addParams = { usuario_id: usuarioId };
         this.usuarioDao.getById(usuarioId).then(usuario => {
-            this.title = "Lotações do " + this.lex.noun("usuário") + " " + this.util.apelidoOuNome(usuario);
+            this.title = this.lex.noun("Lotação", true) + this.lex.noun("usuário", false, true) + " " + this.util.apelidoOuNome(usuario);
             this.cdRef.detectChanges();
         });
     }

@@ -1,4 +1,4 @@
-<div *ngIf="!isHidden" class="container" [class.d-none]="collapsed">
+<div *ngIf="!isHidden && visible" class="container" [class.d-none]="collapsed">
     <form [formGroup]="form!" class="mt-2">
         <ng-content></ng-content>
     </form>

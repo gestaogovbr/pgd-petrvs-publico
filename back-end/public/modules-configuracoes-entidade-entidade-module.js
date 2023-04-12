@@ -454,7 +454,7 @@ class EntidadeConfComponent extends src_app_modules_base_page_form_base__WEBPACK
             plural: { default: "" },
             feminino: { default: false }
         }, this.cdRef, this.validateNomenclatura);
-        this.title = "Configurando entidade";
+        this.title = "Configurando " + this.lex.noun("entidade", false);
     }
     onApiKeyClick(event) {
         var _a;

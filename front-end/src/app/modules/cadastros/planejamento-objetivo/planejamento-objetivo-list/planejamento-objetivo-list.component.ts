@@ -1,10 +1,9 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { EixoTematicoDaoService } from 'src/app/dao/eixo-tematico-dao.service';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { PlanejamentoObjetivoDaoService } from 'src/app/dao/planejamento-objetivo-dao.service';
-import { EixoTematico } from 'src/app/models/eixo-tematico.model';
 import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
@@ -24,7 +23,7 @@ export class PlanejamentoObjetivoListComponent extends PageListBase<Planejamento
     /* Inicializações */
     this.eixoTematicoDao = injector.get<EixoTematicoDaoService>(EixoTematicoDaoService);
     this.planejamentoDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
-    this.title = 'Objetivos do Planejamento Institucional';
+    this.title = this.lex.noun('Objetivo',true) + this.lex.noun("Planejamento Institucional", false, true);
     this.join = ['planejamento:nome'];
     this.orderBy = [['nome', 'asc']];
     this.filter = this.fh.FormBuilder({

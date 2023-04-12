@@ -4,33 +4,14 @@
       <input-text [size]="12" label="Nome da Cadeia de Valor" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome"></input-text>
     </div>
     <div class="row">
-      <input-datetime date [size]="6" label="Início" icon="bi bi-calendar-date" controlName="inicio" [control]="form!.controls.inicio" labelInfo="Início da Cadeia de Valor"></input-datetime>
-      <input-datetime date [size]="6" label="Fim" icon="bi bi-calendar-date" controlName="fim" [control]="form!.controls.fim" labelInfo="Fim da Cadeia de Valor"></input-datetime>
+      <input-datetime date [size]="5" label="Início" icon="bi bi-calendar-date" controlName="inicio" [control]="form!.controls.inicio" labelInfo="Início da Cadeia de Valor"></input-datetime>
+      <input-datetime date [size]="5" label="Fim" icon="bi bi-calendar-date" controlName="fim" [control]="form!.controls.fim" labelInfo="Fim da Cadeia de Valor"></input-datetime>
+      <input-switch [size]="2" label="Mover filhos" controlName="moveFilhos" labelInfo="Os processos filhos serão movidos junto ao processo pai quando esta opção estiver selecionada." ></input-switch>
     </div>
   </div>
   <separator></separator>
   <cadeia-valor-form-processos #processos [entity]="entity" [cdRef]="cdRef"></cadeia-valor-form-processos>
 </editable-form>
-
-<!--
-nome
-inio          fim         unidade
--------------------------------------------------------------------------------------
-Nível               Processos      [ + ]
-----------+--------------------------
-1        Proc 1
-1.1        Proc 2
-1.2        Proc 3
-2        Proc 4
-2.1        Proc 5
-2.1.1        Proc 6
-
--
-Pai: Raiz
-Processo: [     ]
-
-
-//-->
 
 
 

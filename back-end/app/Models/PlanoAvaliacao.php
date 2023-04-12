@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\AvaliacaoJustificativa;
 use App\Models\Demanda;
@@ -30,17 +31,14 @@ class PlanoAvaliacao extends ModelBase
  
     public $delete_cascade = [];
 
+    // Casting
+    protected $casts = [
+        'justificativas' => AsJson::class
+    ];
+
     // Belongs
     public function usuario() { return $this->belongsTo(Usuario::class); }  //usuário que avaliou o Plano  
     public function plano() { return $this->belongsTo(Plano::class); }
     public function tipoAvaliacao() { return $this->belongsTo(TipoAvaliacao::class, 'tipo_avaliacao_id'); }
-    // Mutattors e Casts
-    public function getJustificativasAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setJustificativasAttribute($value)
-    {
-        $this->attributes['justificativas'] = json_encode($value);
-    }
+
 }

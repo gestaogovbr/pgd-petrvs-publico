@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\Demanda;
 use App\Models\Lotacao;
@@ -61,10 +62,10 @@ class Unidade extends ModelBase
         'entidade_id', /* char(36); NOT NULL; */
         'cidade_id', /* char(36); */
         'expediente', /* json; */// Configuração de expediente
+        'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho
         //'checklist', /* json; */// Nome dos checklist predefinidas
         //'data_fim', /* datetime; */// Data final da vigência
         //'inativo', /* datetime; */// Se a unidade está inativa
-        //'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho
     ];
 
     public $fillable_relations = [
@@ -82,6 +83,13 @@ class Unidade extends ModelBase
         });
     }
 
+    // Casting
+    protected $casts = [
+        'etiquetas' => AsJson::class,
+        'checklist' => AsJson::class,
+        'expediente' => AsJson::class
+    ];
+
     // Has
     public function demandas() { return $this->hasMany(Demanda::class); }
     public function lotacoes() { return $this->hasMany(Lotacao::class); }
@@ -97,22 +105,6 @@ class Unidade extends ModelBase
     public function cidade() { return $this->belongsTo(Cidade::class); }
     public function unidade() { return $this->belongsTo(Unidade::class); }
     // Mutattors e Casts
-    public function getChecklistAttribute($value)
-    {
-        return json_decode($value);
-    }
-    public function setChecklistAttribute($value)
-    {
-        $this->attributes['checklist'] = json_encode($value);
-    }
-    public function getEtiquetasAttribute($value)
-    {
-        return json_decode($value);
-    }
-    public function setEtiquetasAttribute($value)
-    {
-        $this->attributes['etiquetas'] = json_encode($value);
-    }
     public function getNotificacoesAttribute($value)
     {
         $notificacoes = new UnidadeNotificacoes();
@@ -122,12 +114,5 @@ class Unidade extends ModelBase
     {
         $this->attributes['notificacoes'] = json_encode($value);
     }
-    public function getExpedienteAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setExpedienteAttribute($value)
-    {
-        $this->attributes['expediente'] = json_encode($value);
-    }
+
 }

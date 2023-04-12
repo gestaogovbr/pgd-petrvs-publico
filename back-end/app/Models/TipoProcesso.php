@@ -27,24 +27,13 @@ class TipoProcesso extends ModelBase
         });  
     }
 
+    // Casting
+    protected $casts = [
+        'etiquetas' => AsJson::class,
+        'checklist' => AsJson::class
+    ];
+
     // Has
     public function unidade() { return $this->hasMany(Unidade::class, 'tipo_processo_id'); }        
-    // Mutattors e Casts
-    public function getEtiquetasAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setEtiquetasAttribute($value)
-    {
-        $this->attributes['etiquetas'] = json_encode($value);
-    }
-    public function getChecklistAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setChecklistAttribute($value)
-    {
-        $this->attributes['checklist'] = json_encode($value);
-    }
 
 }

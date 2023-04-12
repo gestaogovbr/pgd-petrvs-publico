@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasDataFim;
-use Illuminate\Database\Eloquent\Casts\AsArrayObject;
+use App\Casts\AsJson;
 
 class Entrega extends ModelBase
 {
@@ -24,6 +24,7 @@ class Entrega extends ModelBase
     ];
 
     protected $casts = [
-        'lista_qualitativos' => AsArrayObject::class,
+        'lista_qualitativos' => AsJson::class,
     ];
 }
+   

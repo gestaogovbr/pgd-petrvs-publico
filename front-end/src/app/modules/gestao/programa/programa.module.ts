@@ -6,12 +6,14 @@ import { ProgramaFormComponent } from './programa-form/programa-form.component';
 import { ProgramaListComponent } from './programa-list/programa-list.component';
 import { ComponentsModule } from 'src/app/components/components.module';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ProgramaParticipantesComponent } from './programa-participantes/programa-participantes.component';
 
 
 @NgModule({
   declarations: [
     ProgramaFormComponent,
-    ProgramaListComponent
+    ProgramaListComponent,
+    ProgramaParticipantesComponent
   ],
   imports: [
     CommonModule,

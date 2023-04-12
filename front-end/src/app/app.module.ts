@@ -18,9 +18,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LogModule } from './modules/logs/log.module';
 import { UteisModule } from './modules/uteis/uteis.module';
 import { RotinaModule } from './modules/rotinas/rotina.module';
-import { TemplateModule } from './modules/uteis/templates/template.module';
 import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
-import { CadeiaValorFormProcessosComponent } from './modules/gestao/cadeia-valor/cadeia-valor-form-processos/cadeia-valor-form-processos.component';
 import { CadeiaValorModule } from './modules/gestao/cadeia-valor/cadeia-valor.module';
 import { RaioxhomeComponent } from './modules/raio-x/raioxhome/raioxhome.component';
 import { RaioxPessoalComponent } from './modules/raio-x/raiox-pessoal/raiox-pessoal.component';
@@ -51,7 +49,6 @@ import { RaioxPessoalComponent } from './modules/raio-x/raiox-pessoal/raiox-pess
     UteisModule,
     LogModule,
     RotinaModule,
-    TemplateModule,
     CadeiaValorModule
   ],
   providers: [],

@@ -42,6 +42,7 @@ export class GridColumn {
   public maxWidth?: number = undefined;
   public width?: number = undefined;
   public cellClass?: string;
+  public always?: string;
 
   public isType(type: ColumnType) {
     return (this.type + ":").startsWith(type + ":");
@@ -61,5 +62,9 @@ export class GridColumn {
 
   public get isColumnEditable(): boolean {
     return this.editable && !!this.save;
+  }
+
+  public get isAlways(): boolean {
+    return this.always != undefined;
   }
 };

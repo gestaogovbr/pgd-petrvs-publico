@@ -39,33 +39,6 @@ EntregaRoutingModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdef
 
 /***/ }),
 
-/***/ "724m":
-/*!********************************************!*\
-  !*** ./src/app/dao/entrega-dao.service.ts ***!
-  \********************************************/
-/*! exports provided: EntregaDaoService */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EntregaDaoService", function() { return EntregaDaoService; });
-/* harmony import */ var _dao_base_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./dao-base.service */ "WScx");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
-
-
-class EntregaDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0__["DaoBaseService"] {
-    constructor(injector) {
-        super("Entrega", injector);
-        this.injector = injector;
-        this.searchFields = ["nome"];
-    }
-}
-EntregaDaoService.ɵfac = function EntregaDaoService_Factory(t) { return new (t || EntregaDaoService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
-EntregaDaoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: EntregaDaoService, factory: EntregaDaoService.ɵfac, providedIn: 'root' });
-
-
-/***/ }),
-
 /***/ "9Nu7":
 /*!*************************************************************!*\
   !*** ./src/app/modules/cadastros/entrega/entrega.module.ts ***!
@@ -161,7 +134,7 @@ class EntregaListComponent extends src_app_modules_base_page_list_base__WEBPACK_
             return result;
         };
         /* Inicializações */
-        this.title = 'Entregas';
+        this.title = this.lex.noun('Entrega', true);
         this.filter = this.fh.FormBuilder({
             nome: { default: "" }
         });
@@ -245,7 +218,7 @@ class Entrega extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
     constructor(data) {
         super();
         this.nome = ""; //Nome da entrega;
-        this.tipo_indicador = ""; //Tipo_indicador: "QUANTIDADE", "VALOR", "PORCENTAGEM", "QUALITATIVO");
+        this.tipo_indicador = "PORCENTAGEM"; //Tipo_indicador: "QUANTIDADE", "VALOR", "PORCENTAGEM", "QUALITATIVO");
         this.lista_qualitativos = [];
         this.initialization(data);
     }
@@ -336,7 +309,8 @@ class EntregaFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
             nome: { default: "" },
             tipo_indicador: { default: "" },
             qualitativo: { default: "" },
-            lista_qualitativos: { default: [] }
+            lista_qualitativos: { default: [] },
+            itemQualitativo: { default: "" }
         }, this.cdRef, this.validate);
     }
     loadData(entity, form) {
@@ -354,8 +328,6 @@ class EntregaFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
                 resolve(this.util.fillForm(entrega, this.form.value));
             });
         });
-    }
-    onSelect() {
     }
     incluirQualitativo(qualitativo) {
         var _a;
@@ -381,7 +353,7 @@ class EntregaFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
     }
     addItemHandleItemQualitativo() {
         let result = undefined;
-        const value = this.form.controls.lista_qualitativos.value;
+        const value = this.form.controls.itemQualitativo.value;
         const key = this.util.textHash(value);
         if ((value === null || value === void 0 ? void 0 : value.length) && this.util.validateLookupItem(this.form.controls.lista_qualitativos.value, key)) {
             result = {
@@ -402,7 +374,7 @@ EntregaFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdef
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵloadQuery"]()) && (ctx.itemQualitativo = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵInheritDefinitionFeature"]], decls: 7, vars: 9, consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome da entrega", "icon", "bi bi-textarea-t", "controlName", "nome", 3, "size", "control"], ["label", "Tipo de indicador", "icon", "bi bi-arrow-up-right-circle", "controlName", "tipo_indicador", 3, "size", "control", "items", "select"], ["class", "row col-6", 4, "ngIf"], [1, "row", "col-6"], [1, "row", "mb-3"], [1, "col-12"], ["for", "itemQualitativo", 1, "radio", "control-label"], ["controlName", "qualitativo", 3, "addItemHandle"], ["icon", "far fa-edit", "controlName", "itemQualitativo", 3, "size", "control"]], template: function EntregaFormComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵInheritDefinitionFeature"]], decls: 7, vars: 9, consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome da entrega", "icon", "bi bi-textarea-t", "controlName", "nome", 3, "size", "control"], ["label", "Tipo de indicador", "icon", "bi bi-arrow-up-right-circle", "controlName", "tipo_indicador", 3, "size", "control", "items"], ["class", "row col-6", 4, "ngIf"], [1, "row", "col-6"], [1, "row", "mb-3"], [1, "col-12"], ["for", "itemQualitativo", 1, "radio", "control-label"], ["controlName", "qualitativo", 3, "addItemHandle"], ["icon", "far fa-edit", "controlName", "itemQualitativo", 3, "size", "control"]], template: function EntregaFormComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "editable-form", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵlistener"]("submit", function EntregaFormComponent_Template_editable_form_submit_0_listener() { return ctx.onSaveData(); })("cancel", function EntregaFormComponent_Template_editable_form_cancel_0_listener() { return ctx.onCancel(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](1, "div", 1);
@@ -410,9 +382,7 @@ EntregaFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdef
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](3, "input-text", 2);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](4, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](5, "input-select", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵlistener"]("select", function EntregaFormComponent_Template_input_select_select_5_listener() { return ctx.onSelect(); });
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](5, "input-select", 3);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](6, EntregaFormComponent_div_6_Template, 8, 3, "div", 4);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();

@@ -30,6 +30,8 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
     this.title = this.lex.noun("Unidade",true);
     this.code = "MOD_CFG_UND";
     this.filter = this.fh.FormBuilder({
+      unidades_planejamento: {default: false},
+      subordinadas: {default: false},
       entidade_id: {default: null},
       inativos: {default: false},
       nome: {default: ""}
@@ -77,6 +79,14 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
   public filterWhere = (filter: FormGroup) => {
     let form: any = filter.value;
     let result: any[] = [];
+    
+
+    if(form.unidades_planejamento) {
+      result.push(["unidades_planejamento","==",true]);
+    }
+    if(form.subordinadas) {
+      result.push(["subordinadas","==",true]);
+    }
    
     /* Se for selectable trás somente os inativos ou os não inativos, se não for então trás juntamente os inativos se form.inativos */
     result.push(this.selectable ? ["inativo", form.inativos ? "!=" : "==", null] : ["inativos", "==", form.inativos]);
@@ -86,7 +96,6 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
     if(form.nome?.length) {
       result.push(["or", ["nome", "like", "%" + form.nome.replace(" ", "%") + "%"], ["sigla", "like", "%" + form.nome.replace(" ", "%") + "%"]]);
     }
-
     return result;
   }
 }

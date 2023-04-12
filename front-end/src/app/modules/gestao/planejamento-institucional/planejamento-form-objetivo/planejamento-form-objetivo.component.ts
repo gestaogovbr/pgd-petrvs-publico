@@ -1,118 +1,88 @@
-import { ChangeDetectorRef, Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
-import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { InputTextComponent } from 'src/app/components/input/input-text/input-text.component';
 import { EixoTematicoDaoService } from 'src/app/dao/eixo-tematico-dao.service';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { PlanejamentoObjetivoDaoService } from 'src/app/dao/planejamento-objetivo-dao.service';
-import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model';
 import { Planejamento } from 'src/app/models/planejamento.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
-import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { LookupItem } from 'src/app/services/lookup.service';
+import { NavigateResult } from 'src/app/services/navigate.service';
 
 @Component({
-  selector: 'planejamento-form-objetivo',
+  selector: 'app-planejamento-form-objetivo',
   templateUrl: './planejamento-form-objetivo.component.html',
   styleUrls: ['./planejamento-form-objetivo.component.scss']
 })
-export class PlanejamentoFormObjetivoComponent extends PageFrameBase {
-    @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-    @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
-    @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
-    @Input() set entity(value: Planejamento | undefined) { super.entity = value; } get entity(): Planejamento | undefined { return super.entity; }
-    @Input() cdRef: ChangeDetectorRef;
+export class PlanejamentoFormObjetivoComponent extends PageFormBase<PlanejamentoObjetivo, PlanejamentoObjetivoDaoService> {
+  @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
+  @ViewChild('planejamento_superior_nome', {static: false}) public planejamento_superior_nome?: InputTextComponent;
 
-    public planejamentoObjetivoDao: PlanejamentoObjetivoDaoService;
-    public eixoTematicoDao: EixoTematicoDaoService;
-    public form: FormGroup;
+  public planejamento?: Planejamento;
+  public objetivos_superiores?: LookupItem[] = [];
+  public planejamentoDao?: PlanejamentoDaoService;
+  public eixoTematicoDao?: EixoTematicoDaoService;
 
-    public get items(): PlanejamentoObjetivo[] {
-      if (!this.gridControl.value) this.gridControl.setValue(new Planejamento());
-      if (!this.gridControl.value.objetivos) this.gridControl.value.objetivos = [];
-      return this.gridControl.value.objetivos;
+  constructor(public injector: Injector) {
+    super(injector, PlanejamentoObjetivo, PlanejamentoObjetivoDaoService);
+    this.planejamentoDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
+    this.eixoTematicoDao = injector.get<EixoTematicoDaoService>(EixoTematicoDaoService);
+    this.form = this.fh.FormBuilder({
+      nome: {default: ""},
+      fundamentacao: {default: ""},
+      planejamento_id: {default: null},
+      planejamento_superior_nome: {default: ""},
+      eixo_tematico_id: {default: null},
+      objetivo_superior_id: {default: null},
+    }, this.cdRef, this.validate);
+  }
+
+  public validate = (control: AbstractControl, controlName: string) => {
+    let result = null;
+    if(['nome','fundamentacao','eixo_tematico_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+      result = "Obrigatório";
     }
-    
-    constructor(public injector: Injector) {
-      super(injector);
-      this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
-      this.dao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
-      this.planejamentoObjetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
-      this.eixoTematicoDao = injector.get<EixoTematicoDaoService>(EixoTematicoDaoService);
-      this.groupBy = [{field: "eixo_tematico_id", label: "Eixo Temático"}];
-      this.join = ['eixoTematico:nome','objetivoSuperior:nome'];
-      this.form = this.fh.FormBuilder({
-        nome: {default: ""},
-        fundamentacao: {default: ""},
-        planejamento_id: {default: null},
-        eixo_tematico_id: {default: null},
-        objetivo_superior_id: {default: null}
-      }, this.cdRef, this.validate);
-    }
-  
-    public validate = (control: AbstractControl, controlName: string) => {
-      let result = null;
-      if(['nome','fundamentacao'].indexOf(controlName) >= 0 && !control.value?.length) {
-        result = "Obrigatório";
-      }
-      return result;
-    }
-  
-    public formValidation = (form?: FormGroup) =>{
-      let result = null;
-/*       if(this.form!.controls.fim.value && this.form!.controls.inicio.value > this.form!.controls.fim.value) {
-        return "A data do início não pode ser maior que a data do fim!";
-      } */
-      return result;
-    }
-  
-    public async addObjetivo() {
-      return new PlanejamentoObjetivo({
-        id: this.dao!.generateUuid(),
-        planejamento_id: this.entity?.id
-      }) as IIndexable;
+    return result;
+  }
+
+  public formValidation = (form?: FormGroup) =>{
+    let result = null;
+
+    if(this.isPlanejamentoUNEX() && !this.form?.controls.objetivo_superior_id.value){
+      result = "Quando o Planejamento é de uma Unidade Executora é obrigatório associar cada objetivo a um objetivo do Planejamento Institucional superior!";
     }
 
-    public async removeObjetivo(row: any) {
+    return result;
+  }
 
+  public loadData(entity: PlanejamentoObjetivo, form: FormGroup): void {
+    let formValue = Object.assign({}, form.value);
+    form.patchValue(this.util.fillForm(formValue, entity));
+    this.title = entity._status == 'ADD' ? 'Inclusão de Objetivo' : 'Editando objetivo...';
+    this.planejamento = this.metadata?.planejamento as Planejamento;
+/*     if(this.planejamento) this.planejamento.planejamento_superior = this.metadata.planejamento_superior as Planejamento || null;
+    if(this.planejamento.planejamento_superior) this.planejamento.planejamento_superior.objetivos = this.metadata?.objetivos_superiores || null;  */
+    this.form?.controls.planejamento_superior_nome.setValue(this.planejamento?.planejamento_superior?.nome || '');
+    this.objetivos_superiores = this.planejamento?.planejamento_superior?.objetivos?.map(x => Object.assign({}, { key: x.id, value: x.nome, data: x })) || [];
+  }
 
-      return true;
-    }
+  public initializeData(form: FormGroup): void {
+    this.entity = this.metadata?.objetivo as PlanejamentoObjetivo;
+    this.loadData(this.entity!, form);
+  }
 
-    public async loadObjetivo(form: FormGroup, row: any) {
-      form.controls.nome.setValue(row.nome);
-      form.controls.fundamentacao.setValue(row.fundamentacao);
-      form.controls.planejamento_id.setValue(row.planejamento_id);
-      form.controls.eixo_tematico_id.setValue(row.eixo_tematico_id);
-      form.controls.objetivo_superior_id.setValue(row.objetivo_superior_id);
-      this.cdRef.detectChanges();
-    }
+  public saveData(form: IIndexable): Promise<NavigateResult> {
+    return new Promise<NavigateResult>((resolve, reject) => {
+      const objetivo = this.util.fill(new PlanejamentoObjetivo(), this.entity!);
+      resolve(new NavigateResult(this.util.fillForm(objetivo, this.form!.value)));
+    });
+  }
 
-    public async saveObjetivo(form: FormGroup, row: any) {
-      let result = undefined;
-      this.form!.markAllAsTouched();
-      if (this.form!.valid) {
-        row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
-        row.nome = form.controls.nome.value;
-        row.fundamentacao = form.controls.fundamentacao.value;
-        row.planejamento_id = form.controls.planejamento_id.value;
-        row.eixo_tematico_id = form.controls.eixo_tematico_id.value;
-        row.objetivo_superior_id = form.controls.objetivo_superior_id.value;
-        result = row;
-        this.cdRef.detectChanges();
-      }
-      return result;
-    }
-
-    public async saveData(form?: IIndexable) {
-      await this.grid?.confirm();
-      return this.entity!;
-    }
- 
+  public isPlanejamentoUNEX(): boolean {
+    return this.planejamento?.unidade_id != null;
+  }
 
 }
-  
-  

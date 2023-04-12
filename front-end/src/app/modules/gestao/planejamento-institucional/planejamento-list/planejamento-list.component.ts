@@ -6,6 +6,9 @@ import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { Planejamento } from 'src/app/models/planejamento.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
+import { EixoTematico } from 'src/app/models/eixo-tematico.model';
+import { LookupItem } from 'src/app/services/lookup.service';
+import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 
 @Component({
   selector: 'app-planejamento-list',
@@ -14,6 +17,7 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 })
 export class PlanejamentoListComponent extends PageListBase<Planejamento, PlanejamentoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
+  @ViewChild(TabsComponent, { static: false }) public tabs?: TabsComponent;
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
   
   public unidadeDao: UnidadeDaoService;
@@ -23,7 +27,8 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
     super(injector, Planejamento, PlanejamentoDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     /* Inicializações */
-    this.title = 'Planejamentos Institucionais';
+    this.code = "MOD_PLAN_INST";
+    this.title = this.lex.noun('Planejamento Institucional',true);
     this.filter = this.fh.FormBuilder({
       inicio: {default: null},
       fim: {default: null},
@@ -32,8 +37,14 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
       so_entidade: { default: false },
       agrupar: { default: true },
      });
-     this.join = ['unidade:nome,sigla'];
-     //this.groupBy = [{ field: "unidade:sigla", label: "Unidade" }];
+    this.join = [
+      'unidade:id,nome,sigla',
+      'objetivos',
+      'objetivos.eixo_tematico:id,nome',
+      'objetivos.objetivo_superior:id,nome',
+      'planejamento_superior:id,nome',
+      'planejamento_superior.objetivos'
+    ];
     // Testa se o usuário possui permissão para exibir planejamentos institucionais
     if (this.auth.hasPermissionTo("MOD_PLAN_INST_CONS")) {
       this.options.push({
@@ -50,6 +61,15 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
         onClick: this.delete.bind(this)
       });
     }
+  }
+
+  ngAfterViewInit(): void {
+    super.ngAfterViewInit();
+    this.tabs!.active = ["TABELA", "MAPA"].includes(this.usuarioConfig.active_tab) ? this.usuarioConfig.active_tab : "TABELA";
+  }
+
+  public async onSelectTab(tab: LookupItem) {
+    this.saveUsuarioConfig({active_tab: tab});
   }
 
   public filterClear(filter: FormGroup) {
@@ -83,14 +103,6 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
     return result;
   }
 
-  public onAgruparChange(event: Event) {
-    const agrupar = this.filter!.controls.agrupar.value;
-    if ((agrupar && !this.groupBy?.length) || (!agrupar && this.groupBy?.length)) {
-      this.groupBy = agrupar ? [{ field: "unidade.sigla", label: "Unidade" }] : [];
-      this.grid!.reloadFilter();
-    }
-  }
-
   public onSoEntidadeChange(event: Event) {
     if (this.filter!.controls.so_entidade.value) {
       this.filter!.controls.unidade_id.setValue(null);
@@ -99,6 +111,10 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
       this.filter!.controls.unidade_id.setValue(undefined);
       this.unidade_disabled = undefined;
     }
+  }
+
+  public get eixos(): EixoTematico[] {
+    return this.grid!.query?.extra?.eixos || [];
   }
 
 }

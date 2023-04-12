@@ -18,16 +18,20 @@ export class TemplateService {
   ) { }
 
   public selectRoute(especie: TemplateEspecie): FullRoute {
-    return {route: ['uteis', 'templates'], params: {filter: {especie}}};
+    return {route: ['uteis', 'templates', especie]};
   }
 
   public details(data: any) {
-    const template = data as Template;
-    this.dialog.html({ title: "Pre-visualização do documento", modalWidth: 600 }, template.conteudo!, []);
+    const template = data.entity as Template;
+    this.dialog.html({ title: "Pre-visualização do documento", modalWidth: 1000 }, template.conteudo!, []);
   }
 
   public dataset(especie: TemplateEspecie): TemplateDataset[] {
     return ["TCR", "TERMO_ADESAO"].includes(especie) ? this.planoDao.dataset() : []; 
+  }
+
+  public titulo(especie: TemplateEspecie): string {
+    return especie == "TCR" ? "Termo de ciência e responsabilidade" : "";
   }
 
   public template(especie: TemplateEspecie, extra?: any): Template | undefined {

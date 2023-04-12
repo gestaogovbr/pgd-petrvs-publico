@@ -38,6 +38,14 @@ export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoSer
         onClick: this.delete.bind(this)
       });
     }
+    // Testa se o usuário possui permissão para excluir o programa de gestão
+    if (this.auth.hasPermissionTo("MOD_PRGT_PART")) {
+      this.options.push({
+        icon: "bi bi-people",
+        label: "Participantes",
+        onClick: (programa: Programa) => this.go.navigate({route: ["gestao", "programa", programa.id, "participantes"]})
+      });
+    }
   }
 
   public filterClear(filter: FormGroup) {

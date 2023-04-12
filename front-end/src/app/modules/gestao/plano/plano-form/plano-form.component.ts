@@ -5,20 +5,25 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import { SelectItem } from 'src/app/components/input/input-base';
 import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
+import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { UnitWorkload } from 'src/app/components/input/input-workload/input-workload.component';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { DocumentoDaoService } from 'src/app/dao/documento-dao-service';
 import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
+import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
 import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 import { TipoModalidadeDaoService } from 'src/app/dao/tipo-modalidade-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
+import { Atividade } from 'src/app/models/atividade.model';
 import { IIndexable } from 'src/app/models/base.model';
 import { Documento } from 'src/app/models/documento.model';
 import { PlanoAtividade } from 'src/app/models/plano-atividade.model';
+import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
+import { PlanoTrabalhoEntrega } from 'src/app/models/plano-trabalho-entrega.model';
 import { Plano } from 'src/app/models/plano.model';
 import { Programa } from 'src/app/models/programa.model';
 import { Template } from 'src/app/models/template.model';
@@ -26,8 +31,10 @@ import { TipoModalidade } from 'src/app/models/tipo-modalidade.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { Usuario } from 'src/app/models/usuario.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
+import { DocumentoService } from 'src/app/modules/uteis/documentos/documento.service';
 import { DocumentosComponent } from 'src/app/modules/uteis/documentos/documentos.component';
 import { CalendarService, Efemerides } from 'src/app/services/calendar.service';
+import { LookupItem } from 'src/app/services/lookup.service';
 import { PlanoService } from '../plano.service';
 
 @Component({
@@ -44,33 +51,43 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
   @ViewChild('usuario', { static: false }) public usuario?: InputSearchComponent;
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
   @ViewChild('programa', { static: false }) public programa?: InputSearchComponent;
-  @ViewChild('tipo_modalidade', { static: false }) public tipoModalidade?: InputSearchComponent;
+  @ViewChild('tipoModalidade', { static: false }) public tipoModalidade?: InputSearchComponent;
+  @ViewChild('planoEntrega', { static: false }) public planoEntrega?: InputSearchComponent;
+  @ViewChild('atividade', { static: false }) public atividade?: InputSearchComponent;
+  @ViewChild('entrega', { static: false }) public entrega?: InputSelectComponent;
   @ViewChild('documentos', { static: false }) public documentos?: DocumentosComponent;
 
   public formAtividades: FormGroup;
+  public formEntregas: FormGroup;
   public unidadeDao: UnidadeDaoService;
   public programaDao: ProgramaDaoService;
   public usuarioDao: UsuarioDaoService;
   public atividadeDao: AtividadeDaoService;
   public documentoDao: DocumentoDaoService;
+  public documentoService: DocumentoService;
   public allPages: ListenerAllPagesService;
   public calendar: CalendarService;
   public tipoModalidadeDao: TipoModalidadeDaoService;
+  public planoEntregaDao: PlanoEntregaDaoService;
   public planoService: PlanoService;
   public horasTotais?: Efemerides;
   public horasParciais?: Efemerides;
   public planoDataset: TemplateDataset[];
+  public documentoId?: string;
+  public entregas: LookupItem[] = [];
 
   private _datasource: any;
   private _entityDocumentos: Plano = new Plano();
 
   constructor(public injector: Injector) {
     super(injector, Plano, PlanoDaoService);
-    this.join = ["unidade.entidade", "usuario", "programa.template_tcr", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "atividades.atividade"];
+    this.join = ["unidade.entidade", "entregas.entrega.entrega", "plano_entrega.entregas.entrega", "usuario", "programa.template_tcr", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "atividades.atividade"];
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.atividadeDao = injector.get<AtividadeDaoService>(AtividadeDaoService);
+    this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
+    this.documentoService = injector.get<DocumentoService>(DocumentoService);
     this.calendar = injector.get<CalendarService>(CalendarService);
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
@@ -92,6 +109,7 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
       documento_id: {default: null},
       documentos: {default: []},
       atividades: {default: []},
+      entregas: {default: []},
       tipo_modalidade_id: {default: ""},
       forma_contagem_carga_horaria: {default: "DIA"},
       editar_texto_complementar_unidade: {default: false},
@@ -102,6 +120,10 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
     this.formAtividades = this.fh.FormBuilder({
       atividade_id: {default: ""}
     }, this.cdRef, this.validateAtividades);
+    this.formEntregas = this.fh.FormBuilder({
+      nome: {default: ""},
+      entrega_id: {default: ""}
+    }, this.cdRef, this.validateEntregas);
   }
 
   public ngOnInit() {
@@ -111,20 +133,24 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
   }
 
   public get datasource(): any {
-    let plano = this.loadEntity();
-    let data = this.dao!.datasource(plano);
+    /* _entityDocumentos é atualizado pelo angular na chamada do get entityDocumentos() */
+    let data = this.dao!.datasource(this._entityDocumentos);
+    /* Atualiza os campos de texto complementar do usuário e da unidade */
+    data.usuario.texto_complementar_plano = this.form!.controls.usuario_texto_complementar.value || "";
+    data.unidade.texto_complementar_plano = this.form!.controls.unidade_texto_complementar.value || "";
     if(JSON.stringify(data) != this.JSON.stringify(this._datasource)) {
       this._datasource = data;
       /* Se o termo for um documento obrigatório, então será gerado um termo automaticamente */
       let programa = this.programa?.searchObj as Programa;
+      this.documentoId = undefined;
       if(programa?.termo_obrigatorio) {
-        let documentoId = this.form!.controls.documento_id.value;
+        this.documentoId = this.form!.controls.documento_id.value;
         let documentos: Documento[] = this.form!.controls.documentos.value || [];
-        let documento = documentos?.find((x: Documento) => x.id == documentoId);
-        if(!documentoId?.length || !documento || documento.assinaturas.length || documento.id_documento) {
-          documentoId = this.dao?.generateUuid(),
+        let documento = documentos?.find((x: Documento) => x.id == this.documentoId);
+        if(!this.documentoId?.length || !documento || documento.assinaturas.length || documento.id_documento) {
+          this.documentoId = this.dao?.generateUuid(),
           documentos.push(new Documento({
-            id: documentoId, 
+            id: this.documentoId, 
             especie: "TCR",
             titulo_documento: "Termo de Ciência e Responsabilidade",
             conteudo: "",
@@ -137,16 +163,17 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
             plano_id: this.entity?.id,
             template_id: programa.template_tcr_id
           }));
-          this.form!.controls.documento_id.setValue(documentoId);
+          this.form!.controls.documento_id.setValue(this.documentoId);
           this.form!.controls.documentos.setValue(documentos);
         }
       }
     }
-    return data;
+    return this._datasource;
   }
 
   public get template(): Template | undefined {
-    return this.planoService.template(this.loadEntity());
+    /* _entityDocumentos é atualizado pelo angular na chamada do get entityDocumentos() */
+    return this.planoService.template(this._entityDocumentos);
   }
 
   public get isTermos(): boolean {
@@ -156,6 +183,14 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
   public validateAtividades = (control: AbstractControl, controlName: string) => {
     let result = null;
     if(controlName == 'atividade_id' && !control.value?.length) {
+      result = "Obrigatório";
+    }
+    return result;
+  }
+
+  public validateEntregas = (control: AbstractControl, controlName: string) => {
+    let result = null;
+    if(controlName == 'entrega_id' && !control.value?.length) {
       result = "Obrigatório";
     }
     return result;
@@ -188,6 +223,10 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
       this.tabs!.active = "ATIVIDADES";
       return "Salve ou cancele o registro atual em edição";
     }
+    // Validar se o unidade & programa & plano de entrega são interlidados
+    // Validar se as entregas pertencem ao plano de entregas da unidade
+    // Validar o período está dentro do plano de entregas
+    // Validar se o usuários está habilitado no programa
     return undefined;
   };
 
@@ -195,6 +234,15 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
     this.form?.controls.data_inicio_vigencia.updateValueAndValidity();
     this.form?.controls.data_fim_vigencia.updateValueAndValidity();
     let programa = selected.entity as Programa;
+    this.cdRef.detectChanges();
+  }
+
+  public updateEntregas(planoEntrega: PlanoEntrega | undefined) {
+    this.entregas = planoEntrega?.entregas?.map(x => Object.assign({}, { key: x.id, value: x.entrega?.nome || x.descricao, data: x })) || [];
+  }
+
+  public onPlanoEntregaSelect(selected: SelectItem) {
+    this.updateEntregas(selected.entity as PlanoEntrega);
     this.cdRef.detectChanges();
   }
 
@@ -247,12 +295,14 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
 
   public async loadData(entity: Plano, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
+    this.updateEntregas(entity.plano_entrega);
     await Promise.all ([
       this.calendar.loadFeriadosCadastrados(entity.unidade_id),
       this.unidade?.loadSearch(entity.unidade || entity.unidade_id),
       this.usuario?.loadSearch(entity.usuario || entity.usuario_id),
       this.programa?.loadSearch(entity.programa || entity.programa_id),
-      this.tipoModalidade?.loadSearch(entity.tipo_modalidade || entity.tipo_modalidade_id)
+      this.tipoModalidade?.loadSearch(entity.tipo_modalidade || entity.tipo_modalidade_id),
+      this.planoEntrega?.loadSearch(entity.plano_entrega || entity.plano_entrega_id)
     ]);
     form.patchValue(this.util.fillForm(formValue, entity));
     let documento = entity.documentos.find(x => x.id == entity.documento_id);
@@ -273,8 +323,9 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
     this.loadData(this.entity, this.form!);
   }
 
+  /* Atividades */  
   public async addAtividades() {
-    return Object.assign(new PlanoAtividade(), {plano_id: this.entity?.id, _status: "ADD"}) as IIndexable;
+    return new PlanoAtividade({ plano_id: this.entity?.id, _status: "ADD" }) as IIndexable;
   }
 
   public async loadAtividades(form: FormGroup, row: any) {
@@ -285,31 +336,58 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
     row._status = "DELETE";
     return false;
   }
-
+ 
   public async saveAtividades(form: FormGroup, row: any) {
     row.atividade_id = form.controls.atividade_id.value;
+    row.atividade = this.atividade?.searchObj as Atividade;
     row._status = row._status == "ADD" ? row._status : "EDIT";
-    this.dialog.showSppinerOverlay("Carregando dados da atividade...");
+    /*this.dialog.showSppinerOverlay("Carregando dados da atividade...");
     try {
       row.atividade = await this.atividadeDao?.getById(row.atividade_id)!;
     } finally {
       this.dialog.closeSppinerOverlay();
-    }
+    }*/
     return row;
   }
 
+  /* Entregas */
+  public async addEntregas() {
+    return new PlanoTrabalhoEntrega({ plano_id: this.entity?.id, _status: "ADD" }) as IIndexable;
+  }
+
+  public async loadEntregas(form: FormGroup, row: any) {
+    form.controls.entrega_id.setValue(row.entrega_id);
+    form.controls.nome.setValue(row.nome);
+  }
+
+  public async removeEntregas(row: any) {
+    row._status = "DELETE";
+    return false;
+  }
+ 
+  public async saveEntregas(form: FormGroup, row: any) {
+    row.entrega_id = form.controls.entrega_id.value;
+    row.entrega = this.entrega?.selectedItem?.data as PlanoTrabalhoEntrega;
+    row.nome = form.controls.nome.value;
+    row._status = row._status == "ADD" ? row._status : "EDIT";
+    return row;
+  }
+
+  /* Gera o objeto entity baseado nas informações atuais do formulário para ser utilizado por Documentos */
   public get entityDocumentos(): Plano {
     let plano = this.loadEntity();
-    /* Para ignorar documentos na hora de comprar */
-    plano.documentos = []; 
+    /* Remove campo de documentos para comparar */
+    plano.documentos = [];
     this._entityDocumentos.documentos = [];
     if(JSON.stringify(plano) != JSON.stringify(this._entityDocumentos)) {
       this._entityDocumentos = plano;  
     }
+    /* Atribui novamente o campo de documentos */
     this._entityDocumentos.documentos = this.form!.controls.documentos.value;
     return this._entityDocumentos;
   }
 
+  /* Cria um objeto Plano baseado nos dados do formulário */
   public loadEntity(): Plano {
     let plano: Plano = this.util.fill(new Plano(), this.entity!);
     plano = this.util.fillForm(plano, this.form!.value);
@@ -323,7 +401,7 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
   public async saveData(form: IIndexable): Promise<Plano | boolean> {
     let plano = this.loadEntity();
     /* Confirma dados do documento */
-    this.documentos?.gravarEdicao();
+    this.documentos?.saveData();
     /* Remove os ids gerados para os novos unidades_origem_atividades, será gerado pelo servidor como UUID */
     plano.atividades = plano.atividades.filter((atividade: PlanoAtividade) => {
       atividade.id = atividade.id.includes("-") ? atividade.id : "";
@@ -372,8 +450,10 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
     return !alredySigned && tipoModalidade && ids.includes(this.auth.usuario!.id);
   }*/
 
-  public signDocumento(documento: Documento) {
-    this.dialog.confirm("Assinar", "Deseja realmente assinar o documento?").then(response => {
+  public async signDocumento(documento: Documento) {
+    await this.documentoService.sign([documento]);
+    this.cdRef.detectChanges();
+    /*this.dialog.confirm("Assinar", "Deseja realmente assinar o documento?").then(response => {
       if(response) {
         this.loading = true;
         this.documentoDao.assinar([documento.id]).then(response => {
@@ -386,7 +466,7 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
           }
         }).finally(() => this.loading = false);
       }
-    });
+    });*/
   }
 
   public get formaContagemCargaHoraria(): UnitWorkload {

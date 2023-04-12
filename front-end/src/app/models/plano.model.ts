@@ -7,6 +7,7 @@ import { Documento, HasDocumentos } from './documento.model';
 import { PlanoAtividade } from './plano-atividade.model';
 import { Demanda } from './demanda.model';
 import { TipoCargaHoraria } from './entidade.model';
+import { PlanoEntrega } from './plano-entrega.model';
 
 export type PlanoMetadados = {
   concluido: boolean
@@ -14,6 +15,7 @@ export type PlanoMetadados = {
 
 export class Plano extends Base implements HasDocumentos {
     public tipo_modalidade?: TipoModalidade;
+    public plano_entrega?: PlanoEntrega;
     public unidade?: Unidade;
     public usuario?: Usuario;
     public programa?: Programa;
@@ -30,13 +32,14 @@ export class Plano extends Base implements HasDocumentos {
     public data_inicio: Date = new Date(); /* Data de início */
     public data_fim: Date | null = null; /* Data do fim */
     public ganho_produtividade: number = 0; /* Ganho de produtividade */
+    public metadados: PlanoMetadados | undefined = undefined; /* Campo virtual contendo informações calculadas pelo servidor */
+    public forma_contagem_carga_horaria: TipoCargaHoraria = "DIA"; // Forma de contagem padrão da carga horária
     public programa_id: string = "";
     public usuario_id: string = "";
     public unidade_id: string = "";
-    public metadados: PlanoMetadados | undefined = undefined; /* Campo virtual contendo informações calculadas pelo servidor */
-    public tipo_modalidade_id: string = "";
-    public forma_contagem_carga_horaria: TipoCargaHoraria = "DIA"; // Forma de contagem padrão da carga horária
     public documento_id: string | null = null;
+    public tipo_modalidade_id: string = "";
+    public plano_entrega_id: string = "";
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

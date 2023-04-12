@@ -51,6 +51,7 @@ export class ServerService {
       xPetrvs["unidade_id"] = this.auth.unidade.id;
     }
     options.headers["X-PETRVS"] = btoa(JSON.stringify(xPetrvs));
+    options.headers["X-ENTIDADE"] = this.gb.ENTIDADE;
 
     return options;
   }

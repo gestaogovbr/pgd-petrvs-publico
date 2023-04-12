@@ -64,11 +64,15 @@
                         <profile-picture *ngFor="let assinatura of row.documento!.assinaturas" [url]="assinatura.usuario.url_foto" [hint]="assinatura.usuario.nome"></profile-picture>
                     </separator>
                 </badge>
-                <span *ngIf="row.documento?.numero_processo?.length" class="badge bg-warning text-dark" [attr.role]="row.documento?.numero_processo?.length ? 'button' : undefined" data-bs-toggle="tooltip" data-bs-placement="top" (click)="onProcessoClick(row)" [title]="allPages.getButtonTitle(row.documento?.numero_processo, row.documento?.numero_documento)">
+                <badge *ngIf="row.documento?.numero_processo?.length" [class]="'d-block'" color="warning" icon="bi bi-folder-symlink" [rounded]="false" [data]="row.documento" [click]="documentoService.onProcessoClick.bind(documentoService)" [hint]="documentoService.processoHint(row)">
+                    {{row.documento?.numero_processo?.length ? row.documento?.numero_processo : "Não atribuído"}}
+                    <small *ngIf="row.documento?.numero_documento?.length"><br>Sei nº {{row.documento?.numero_documento}}</small>
+                </badge>
+                <!--span *ngIf="row.documento?.numero_processo?.length" class="badge bg-warning text-dark" [attr.role]="row.documento?.numero_processo?.length ? 'button' : undefined" data-bs-toggle="tooltip" data-bs-placement="top" (click)="onProcessoClick(row)" [title]="allPages.getButtonTitle(row.documento?.numero_processo, row.documento?.numero_documento)">
                     <i [class]="'bi ' + (row.documento?.numero_processo?.length ? 'bi bi-folder-symlink' : 'bi bi-x-lg')"></i>
                     {{row.documento?.numero_processo?.length ? row.documento?.numero_processo : "Não atribuído"}}
                     <small *ngIf="row.documento?.numero_documento?.length"><br>Sei nº {{row.documento?.numero_documento}}</small>
-                </span>
+                </span//-->
             </ng-template>
         </column>
         <column type="options" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>

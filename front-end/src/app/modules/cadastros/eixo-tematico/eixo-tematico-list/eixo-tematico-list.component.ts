@@ -16,13 +16,13 @@ export class EixoTematicoListComponent extends PageListBase<EixoTematico, EixoTe
   constructor(public injector: Injector) {
     super(injector, EixoTematico, EixoTematicoDaoService);
     /* Inicializações */
-    this.title = 'Eixos temáticos';
+    this.title = this.lex.noun('Eixo Temático', true);
     this.orderBy = [['nome', 'asc']];
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}
      });
     // Testa se o usuário possui permissão para consultar eixos temáticos
-    if (this.auth.hasPermissionTo("MOD_PLAN_INST_CONS")) {
+    if (this.auth.hasPermissionTo("MOD_EXTM_CONS")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",
@@ -30,7 +30,7 @@ export class EixoTematicoListComponent extends PageListBase<EixoTematico, EixoTe
       });
     }
     // Testa se o usuário possui permissão para excluir eixos temáticos
-    if (this.auth.hasPermissionTo("MOD_PLAN_INST_EXCL")) {
+    if (this.auth.hasPermissionTo("MOD_EXTM_EXCL")) {
       this.options.push({
         icon: "bi bi-trash",
         label: "Excluir",
