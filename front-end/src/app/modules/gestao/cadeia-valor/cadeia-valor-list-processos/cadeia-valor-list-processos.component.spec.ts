@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CadeiaValorFormProcessosComponent } from './cadeia-valor-form-processos.component';
+import { CadeiaValorListProcessosComponent } from './cadeia-valor-list-processos.component';
 
 describe('CadeiaValorFormProcessosComponent', () => {
-  let component: CadeiaValorFormProcessosComponent;
-  let fixture: ComponentFixture<CadeiaValorFormProcessosComponent>;
+  let component: CadeiaValorListProcessosComponent;
+  let fixture: ComponentFixture<CadeiaValorListProcessosComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CadeiaValorFormProcessosComponent ]
+      declarations: [ CadeiaValorListProcessosComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CadeiaValorFormProcessosComponent);
+    fixture = TestBed.createComponent(CadeiaValorListProcessosComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -5,8 +5,8 @@ import { PageFormBase } from "../../../base/page-form-base";
 import { CadeiaValor } from "../../../../models/cadeia-valor.model";
 import { CadeiaValorDaoService } from "../../../../dao/cadeia-valor-dao.service";
 import { EditableFormComponent } from "../../../../components/editable-form/editable-form.component";
-import { GridComponent } from 'src/app/components/grid/grid.component';
-import { CadeiaValorFormProcessosComponent } from '../cadeia-valor-form-processos/cadeia-valor-form-processos.component';
+import { CadeiaValorListProcessosComponent } from '../cadeia-valor-list-processos/cadeia-valor-list-processos.component';
+
 
 
 @Component({
@@ -16,8 +16,7 @@ import { CadeiaValorFormProcessosComponent } from '../cadeia-valor-form-processo
 })
 export class CadeiaValorFormComponent extends PageFormBase<CadeiaValor, CadeiaValorDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  @ViewChild(GridComponent, { static: true }) public grid?: GridComponent;
-  @ViewChild('processos', { static: false }) public processos?: CadeiaValorFormProcessosComponent;
+  @ViewChild('processos', { static: false }) public processos?: CadeiaValorListProcessosComponent;
 
   constructor(public injector: Injector) {
     super(injector, CadeiaValor, CadeiaValorDaoService);
