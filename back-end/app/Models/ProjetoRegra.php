@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\Projeto;
 use App\Traits\AutoDataInicio;
@@ -34,17 +35,14 @@ class ProjetoRegra extends ModelBase
 
     public $delete_cascade = [];
 
+    // Casting
+    protected $casts = [
+        'perfis' => AsJson::class
+    ];
+    
     // Has
     //public function () { return $this->hasMany(::class); }    
     // Belongs
     public function projeto() { return $this->belongsTo(Projeto::class); }    
-    // Mutattors e Casts
-    public function getPerfisAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setPerfisAttribute($value)
-    {
-        $this->attributes['perfis'] = json_encode($value);
-    }
+
 }

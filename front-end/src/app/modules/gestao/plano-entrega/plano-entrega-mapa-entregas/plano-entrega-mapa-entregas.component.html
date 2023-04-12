@@ -1,0 +1,52 @@
+<grid [dao]="dao" noHeader [title]="isModal ? '' : title" [orderBy]="orderBy" [join]="join">
+    <toolbar>
+        <!-- input-switch [size]="4" labelPosition="left" label="Agrupar por Unidade" controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch -->
+    </toolbar>
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-search #unidade [size]="4" label="Unidade" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+            <input-search #entrega [size]="4" label="Entrega" controlName="entrega_id" [control]="filter!.controls.entrega_id" [dao]="entregaDao" [selectRoute]="{route: ['cadastros', 'entrega']}"></input-search>
+            <input-datetime [size]="2" date noIcon label="Início" controlName="inicio" [control]="filter!.controls.inicio" labelInfo="Data de início do planejamento institucional"></input-datetime>
+            <input-datetime [size]="2" date noIcon label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Data do fim do planejamento institucional"></input-datetime>
+        </div>
+    </filter>
+    <columns>
+        <column title="Entrega" [template]="columnEntrega">
+            <ng-template let-row="row" #columnEntrega>
+                <p><b>Data:</b> {{util.getDateFormatted(row.inicio)}} - {{util.getDateFormatted(row.fim)}}</p>
+                <p><b>Cliente:</b> {{row.cliente}}</p>
+                <p>{{row.descricao}}</p>
+                <badge icon="bi bi-list-columns-reverse" color="light" [label]="row.plano_entrega.unidade.sigla" hint="Plano de entrega"></badge>
+            </ng-template>
+        </column>
+        <column title="Meta" [template]="columnMeta">
+            <ng-template let-row="row" #columnMeta>
+                <div class="meta h-100">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Meta</h5>
+                            <h2 class="text-primary">{{entregaService.getValorMeta(row)}}</h2>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </column>
+        <column title="Realizado" [template]="columnRealizado">
+            <ng-template let-row="row" #columnRealizado>
+                <div class="realizado h-100">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Realizado</h5>
+                            <h2 *ngIf="!entregaService.isPorcentagem(row)" class="text-secondary">Regular</h2>
+                            <progress-bar *ngIf="entregaService.isPorcentagem(row)" [value]="row.realizado!.porcentagem!" color="success"></progress-bar>
+                        </div>
+                        <div class="card-footer p-0">
+                            <action-button icon="bi bi-card-checklist"></action-button>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

@@ -24,6 +24,7 @@ import { EixoTematico } from 'src/app/models/eixo-tematico.model';
 import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
 import { NavigateService } from 'src/app/services/navigate.service';
 import { Documento, HasDocumentos } from 'src/app/models/documento.model';
+import { InputLevelItem } from 'src/app/components/input/input-level/input-level.component';
 
 @Component({
   selector: 'app-teste',
@@ -216,6 +217,7 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
       editor: { default: this.textoEditor },
       template: { default: this.template },
       id: { default: "" },
+      level: { default: "2.4.6.8"},
       campo1: { default: "" },
       campo2: { default: new Date() },
       campo3: { default: new Date() },
@@ -357,6 +359,10 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
     }});
   }
 
+  public validateLevel = (parents: InputLevelItem[], item: InputLevelItem, children: InputLevelItem[]): Promise<boolean> | boolean => {
+    return (item.value as number) % 2 == 0;
+  };
+
   public gridItems = [
     { id: this.util.md5(), campo1: "campo1-1", campo2: new Date(), campo3: new Date(), campo4: "campo4-1", campo5: false },
     { id: this.util.md5(), campo1: "campo1-2", campo2: new Date(), campo3: new Date(), campo4: "campo4-2", campo5: false },
@@ -373,12 +379,12 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
       });
     } */
   ngOnInit(): void {
-    this.planejamentoDao.getById("867c7768-9690-11ed-b4ae-0242ac130002", ["objetivos.eixoTematico", "unidade", "entidade"]).then(planejamento => {
+    this.planejamentoDao.getById("867c7768-9690-11ed-b4ae-0242ac130002", ["objetivos.eixo_tematico", "unidade", "entidade"]).then(planejamento => {
       let mapa: MapItem[] = [];
       this.planejamento = planejamento || undefined;
       if (planejamento) {
         let eixos = planejamento.objetivos?.reduce((a, v) => {
-          if (!a.find(x => x.id == v.eixo_tematico_id)) a.push(v.eixoTematico!);
+          if (!a.find(x => x.id == v.eixo_tematico_id)) a.push(v.eixo_tematico!);
           return a;
         }, [] as EixoTematico[]) || [];
         mapa = eixos.map(x => {

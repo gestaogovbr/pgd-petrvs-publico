@@ -70,6 +70,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   @Input() groupBy?: GroupBy[];
   @Input() join: string[] = [];
   @Input() form: FormGroup = new FormGroup({});
+  @Input() noHeader?: string;
   @Input() editable?: string;
   @Input() hasEdit: boolean = true;
   @Input() hasDelete: boolean = false;
@@ -319,6 +320,10 @@ export class GridComponent extends ComponentBase implements OnInit {
 
   public isSeparator(row: any): boolean {
     return row instanceof GridGroupSeparator;
+  }
+
+  public get isNoHeader(): boolean {
+    return this.noHeader != undefined;
   }
 
   public getGroupSeparator(row: any): GridGroupSeparator | undefined {
@@ -637,6 +642,11 @@ export class GridComponent extends ComponentBase implements OnInit {
     if(row.id) this.metadatas[row.id] = value;
   }
 
+  public clearMetadata() {
+    this.metadatas = {};
+    this.cdRef.detectChanges();
+  } 
+  
   public async edit(itemRow: Base | IIndexable) {
     if(this.isSelectable && itemRow) this.onRowClick(new Event("SelectByEdit"), itemRow);
     this.editing = itemRow;

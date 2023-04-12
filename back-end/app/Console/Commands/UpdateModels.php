@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Tenant;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
@@ -17,7 +18,8 @@ class UpdateModels extends Command
         "traffic",
         "api_siape_uorgs",
         "tipos_modalidades_config",
-        "integracoes"
+        "integracoes",
+        "tenants"
     ];
 
     protected $ignoreFields = [
@@ -61,6 +63,9 @@ class UpdateModels extends Command
      */
     public function handle()
     {
+        $tenant = Tenant::find(config('petrvs')['entidade']);
+        tenancy()->initialize($tenant);
+        DB::reconnect('tenant');
         $create = $this->option('create');
         $tables = array_map(fn($row) => $row->TABLE_NAME, DB::select("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = :database", [":database" => env('DB_DATABASE')]));
         $models = array_map(fn($file) => str_replace(base_path() . '/app/Models/', "", $file), array_filter(glob(base_path() . '/app/Models/*.php'), 'is_file'));

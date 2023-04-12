@@ -60,19 +60,16 @@ class ProjetoTarefa extends ModelBase
 
     public $delete_cascade = ["alocacoes"];
 
+    // Casting
+    protected $casts = [
+        'etiquetas' => AsJson::class
+    ];
+
     // Has
     public function alocacoes() { return $this->hasMany(ProjetoAlocacao::class, "tarefa_id"); }    
     // Belongs
     public function projeto() { return $this->belongsTo(Projeto::class); }    
     public function demanda() { return $this->belongsTo(Demanda::class); }    
     public function usuario() { return $this->belongsTo(Usuario::class); }    
-    // Mutattors e Casts
-    public function getEtiquetasAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setEtiquetasAttribute($value)
-    {
-        $this->attributes['etiquetas'] = json_encode($value);
-    }
+    
 }

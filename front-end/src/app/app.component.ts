@@ -11,6 +11,7 @@ import { GlobalsService } from './services/globals.service';
 import { LexicalService } from './services/lexical.service';
 import { FullRoute, NavigateService } from './services/navigate.service';
 import { UtilService } from './services/util.service';
+import { LookupService } from './services/lookup.service';
 
 export let appInjector: Injector;
 
@@ -43,6 +44,7 @@ export class AppComponent {
   public go: NavigateService;
   public allPages: ListenerAllPagesService;
   public utils: UtilService;
+  public lookup: LookupService;
   public menuSchema: any;
   public menuContexto: any[];
   public contexto: any;
@@ -68,6 +70,7 @@ export class AppComponent {
     this.go = injector.get<NavigateService>(NavigateService);
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.utils = injector.get<UtilService>(UtilService);
+    this.lookup = injector.get<LookupService>(LookupService);
     /* Inicializações */
     this.auth.success = (usuario: Usuario, redirectTo?: FullRoute) => {
       this.go.navigate(redirectTo || { route: this.globals.initialRoute });
@@ -112,7 +115,7 @@ export class AppComponent {
       TIPOS_JUSTIFICATIVAS: { name: "Tipos de " + this.lex.noun("Justificativa", true), permition: 'MOD_TIPO_JUST', route: ['cadastros', 'tipo-justificativa'], icon: "bi bi-window-stack" },
       TIPOS_MODALIDADES: { name: "Tipos de " + this.lex.noun("Modalidade", true), permition: 'MOD_TIPO_MDL', route: ['cadastros', 'tipo-modalidade'], icon: "bi bi-bar-chart-steps" },
       TIPOS_MOTIVOS_AFASTAMENTOS: { name: "Tipos de " + this.lex.noun("Motivo de Afastamento", true), permition: 'MOD_TIPO_MTV_AFT', route: ['cadastros', 'tipo-motivo-afastamento'], icon: "bi bi-list-ol" },
-      TIPOS_POCESSOS: { name: "Tipos de " + this.lex.noun("Processo", true), permition: 'MOD_TIPO_PROC', route: ['cadastros', 'tipo-processo'], icon: "bi bi-foldeer-check" },
+      TIPOS_PROCESSOS: { name: "Tipos de " + this.lex.noun("Processo", true), permition: 'MOD_TIPO_PROC', route: ['cadastros', 'tipo-processo'], icon: "bi bi-foldeer-check" },
       /* Gestão */
       CADEIAS_VALORES: { name: this.lex.noun("Cadeia de Valor", true), permition: 'MOD_CADV_CONS', route: ['gestao', 'cadeia-valor'], icon: "bi bi-bar-chart-steps" },
       DEMANDAS: { name: this.lex.noun("Demanda", true), permition: '', route: ['gestao', 'demanda'], icon: "bi bi-activity" },
@@ -163,7 +166,7 @@ export class AppComponent {
           this.menuSchema.TIPOS_JUSTIFICATIVAS,
           this.menuSchema.TIPOS_MODALIDADES,
           this.menuSchema.TIPOS_MOTIVOS_AFASTAMENTOS,
-          this.menuSchema.TIPOS_POCESSOS
+          this.menuSchema.TIPOS_PROCESSOS
 
         ]
       },
@@ -249,6 +252,7 @@ export class AppComponent {
 
 
   }
+  
 
   /*public getMenuItems(nome: string) {
     return this.menu[nome];

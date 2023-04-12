@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\ProjetoTarefa;
 use App\Models\ProjetoAlocacao;
@@ -57,8 +58,6 @@ class Projeto extends ModelBase
 
     public $delete_cascade = ["tarefas", "fases", "regras", "alocacoes", "recursos", "historicos"];
 
-    protected $casts = ["progresso" => "decimal:2"];
-
     protected static function booted()
     {
         static::creating(function ($projeto) {
@@ -66,6 +65,13 @@ class Projeto extends ModelBase
         });
     }
 
+    // Casting
+    protected $casts = [
+        "progresso" => "decimal:2",
+        'kanban_dockers' => AsJson::class,
+        'expediente' => AsJson::class
+    ];
+    
     // Has
     public function fases() { return $this->hasMany(ProjetoFase::class); }    
     public function tarefas() { return $this->hasMany(ProjetoTarefa::class); }    
@@ -77,21 +83,5 @@ class Projeto extends ModelBase
     public function fase() { return $this->belongsTo(ProjetoFase::class); }    
     public function tipoProjeto() { return $this->belongsTo(TipoProjeto::class); }    
     public function usuario() { return $this->belongsTo(Usuario::class); }    
-    // Mutattors e Casts
-    public function getKanbanDockersAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setKanbanDockersAttribute($value)
-    {
-        $this->attributes['kanban_dockers'] = json_encode($value);
-    }
-    public function getExpedienteAttribute($value)
-    {
-        return json_decode($value);
-    }   
-    public function setExpedienteAttribute($value)
-    {
-        $this->attributes['expediente'] = json_encode($value);
-    }
+
 }

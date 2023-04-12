@@ -4,8 +4,8 @@ import { Planejamento } from './planejamento.model';
 
 export class PlanejamentoObjetivo extends Base {
     public planejamento?: Planejamento;
-    public eixoTematico?: EixoTematico;
-    public objetivoSuperior?: PlanejamentoObjetivo;
+    public eixo_tematico?: EixoTematico;
+    public objetivo_superior?: PlanejamentoObjetivo;
         
     public data_inicio: Date = new Date();  /* Data de criação */
     public data_fim: Date | null = null;  /* Data final do registro */

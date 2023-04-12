@@ -98,7 +98,7 @@ export class LexicalService {
       camelCase_noum = pieces[0][0].toUpperCase() + pieces[0].substring(1) +
         (isCompound ? " " + (pieces.length == 2 ? pieces[1][0].toUpperCase() + pieces[1].substring(1) :
         pieces[1] + " " + pieces[2][0].toUpperCase() + pieces[2].substring(1)) : "");
-      const prefix = !preposition ? "" : plural ? (this.vocabulary[index].female ? "das " : "dos ") : (this.vocabulary[index].female ? "da " : "do ");
+      const prefix = !preposition ? "" : plural ? (this.vocabulary[index].female ? " das " : " dos ") : (this.vocabulary[index].female ? " da " : " do ");
       return isAllUpperCase ? (prefix + lowercase_noum).toUpperCase() : isCamelCase ? prefix + camelCase_noum : prefix + lowercase_noum;
     } else {
       return name;
