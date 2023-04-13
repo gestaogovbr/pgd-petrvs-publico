@@ -11,6 +11,8 @@ use Throwable;
 
 class PlanejamentoObjetivoController extends ControllerBase {
 
+    public $updatable = ["sequencia", "eixo_tematico_id"];
+
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
             case 'STORE':
