@@ -44,7 +44,7 @@ export class InputMultiselectComponent extends InputBase implements OnInit {
   @Input() set items(value: LookupItem[]) {
     this._items = value;
     this.control?.setValue(value);
-    this.cdRef.detectChanges();
+    this.detectChanges();
   }
   get items(): LookupItem[] {
     return this.control?.value || this._items || [];

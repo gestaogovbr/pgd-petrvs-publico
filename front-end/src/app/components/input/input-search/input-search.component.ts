@@ -75,7 +75,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
   @Input() set disabled(value: string | undefined) {
     if(value != this._disabled) {
       this._disabled = value;
-      this.cdRef.detectChanges();
+      this.detectChanges();
       this.dropdown?.toString(); /* Força atualização do dropdown */
     }
   }
