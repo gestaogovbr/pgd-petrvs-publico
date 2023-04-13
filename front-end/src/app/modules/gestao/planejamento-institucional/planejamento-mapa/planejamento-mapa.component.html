@@ -1,6 +1,6 @@
 <!-- Seleção do planejamento -->
 <editable-form [form]="form!" noButtons>
-    <div class="row">
+    <div class="row mt-2">
         <input-select #planejamentoInstitucional [size]="12" controlName="planejamento_id" [control]="form!.controls.planejamento_id" [items]="planejamentos" (change)="onPlanejamentoChange()"></input-select>
     </div>
 </editable-form>
@@ -48,13 +48,16 @@
     </div>
 </div>
 <!-- Eixos -->
+<div class="row my-2">
+    <input-switch [size]="12" labelPosition="left" label="Todos os eixos" controlName="todos" [control]="form!.controls.todos" (change)="onTodosChange()"></input-switch>
+</div>
 <div *ngFor="let eixo of eixos" class="eixo" [style.background-color]="eixo.eixo.cor">
-    <action-button icon="bi bi-info-circle" color="transparent-black"></action-button>
-    <div class="d-flex align-items-center align-content-stretch p-3"    >
+    <action-button icon="bi bi-plus-circle" color="transparent-black" [data]="eixo" [onClick]="onObjetivoAddClick.bind(this)"></action-button>
+    <div class="d-flex align-items-center align-content-stretch p-3">
         <div class="descricao">
             <h4>{{eixo.eixo.nome}}</h4>
         </div>
-        <div class="objetivos w-100 row" [dndDropzone]="['objetivo']" (dndDrop)="onObjetivoDrop($event, eixo.objetivos)"> <!-- d-flex flex-wrap align-content-stretch -->
+        <div class="objetivos w-100 row" [dndDropzone]="['objetivo']" (dndDrop)="onObjetivoDrop($event, eixo)"> <!-- d-flex flex-wrap align-content-stretch -->
             <!-- Placehold -->
             <div class="col-md-4" dndPlaceholderRef>
                 <div class="objetivo shadow-sm d-flex flex-column align-content-between">
@@ -76,7 +79,7 @@
                 [dndDisableIf]="!canEdit"
                 [dndDraggable]="objetivo"
                 (dndEnd)="onObjetivoDragEnd($event)"
-                (dndMoved)="onObjetivoDragged(objetivo, eixo.objetivos, 'move')"
+                (dndMoved)="onObjetivoDragged(objetivo, eixo, 'move')"
                 (dndStart)="onObjetivoDragStart($event)"
                 dndType="objetivo"
                 dndEffectAllowed="move">

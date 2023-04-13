@@ -27,34 +27,6 @@ EntregaDaoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefin
 
 /***/ }),
 
-/***/ "DqQh":
-/*!**********************************************************!*\
-  !*** ./src/app/dao/plano-entrega-entrega-dao.service.ts ***!
-  \**********************************************************/
-/*! exports provided: PlanoEntregaEntregaDaoService */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanoEntregaEntregaDaoService", function() { return PlanoEntregaEntregaDaoService; });
-/* harmony import */ var _dao_base_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./dao-base.service */ "WScx");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
-
-
-class PlanoEntregaEntregaDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0__["DaoBaseService"] {
-    constructor(injector) {
-        super("PlanoEntregaEntrega", injector);
-        this.injector = injector;
-    }
-    needHomologate(plano) {
-    }
-}
-PlanoEntregaEntregaDaoService.ɵfac = function PlanoEntregaEntregaDaoService_Factory(t) { return new (t || PlanoEntregaEntregaDaoService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
-PlanoEntregaEntregaDaoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: PlanoEntregaEntregaDaoService, factory: PlanoEntregaEntregaDaoService.ɵfac, providedIn: 'root' });
-
-
-/***/ }),
-
 /***/ "Lsi6":
 /*!****************************************************!*\
   !*** ./src/app/models/tipo-justificativa.model.ts ***!
@@ -139,38 +111,6 @@ class NotificacaoService {
 }
 NotificacaoService.ɵfac = function NotificacaoService_Factory(t) { return new (t || NotificacaoService)(); };
 NotificacaoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: NotificacaoService, factory: NotificacaoService.ɵfac, providedIn: 'root' });
-
-
-/***/ }),
-
-/***/ "YrS0":
-/*!*******************************************************!*\
-  !*** ./src/app/models/plano-entrega-entrega.model.ts ***!
-  \*******************************************************/
-/*! exports provided: PlanoEntregaEntrega */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanoEntregaEntrega", function() { return PlanoEntregaEntrega; });
-/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
-
-class PlanoEntregaEntrega extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor(data) {
-        super();
-        this.inicio = new Date();
-        this.fim = null;
-        this.descricao = "";
-        this.cliente = "";
-        this.homologado = false;
-        this.meta = {};
-        this.realizado = {};
-        this.plano_entrega_id = null;
-        this.entrega_id = '';
-        this.entrega_pai_id = '';
-        this.initialization(data);
-    }
-}
 
 
 /***/ }),

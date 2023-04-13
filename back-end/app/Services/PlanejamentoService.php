@@ -65,6 +65,10 @@ class PlanejamentoService extends ServiceBase
         return $result;
     }
 
+    public function extraStore($plano, $unidade, $action) {
+        $this->buildSequencia($plano->id);
+    }
+
     public function buildSequencia($id) {
         $eixos = DB::table('planejamentos_objetivos')
             ->selectRaw('MIN(sequencia) AS eixo_sequencia, eixo_tematico_id AS id')

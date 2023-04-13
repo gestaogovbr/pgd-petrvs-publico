@@ -13,7 +13,8 @@ export class PlanejamentoObjetivo extends Base {
     public fundamentacao: string = ""; /* Fundamentação para a definição do objetivo */
     public planejamento_id: string | null = null; 
     public eixo_tematico_id: string | null = null; 
-    public objetivo_superior_id: string | null = null; 
+    public objetivo_superior_id: string | null = null;
+    public sequencia: number = 0; 
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

@@ -41,7 +41,8 @@ export class PlanejamentoMapaComponent extends PageFrameBase {
     this.join = ['objetivos'];
     this.title = "Objetivos do " + this.lex.noun('planejamento Institucional', true);
     this.form = this.fh.FormBuilder({
-      planejamento_id: {default: null}
+      planejamento_id: {default: null},
+      todos: {default: false}
     }, this.cdRef, this.validate);
   }
 
@@ -70,12 +71,16 @@ export class PlanejamentoMapaComponent extends PageFrameBase {
   public onPlanejamentoChange() {
     this.dao!.getById(this.planejamentoInstitucional!.selectedItem?.key, this.join).then(planejamento => {
       this.planejamento = planejamento as Planejamento;
-      this.eixos = this.query!.extra?.eixos?.filter((x: EixoTematico) => this.planejamento?.objetivos?.find(y => y.eixo_tematico_id == x.id)).map((x: EixoTematico) => Object.assign({} as EixoPlanejamento, {
+      this.eixos = this.query!.extra?.eixos?.filter((x: EixoTematico) => this.form?.controls.todos.value || this.planejamento?.objetivos?.find(y => y.eixo_tematico_id == x.id)).map((x: EixoTematico) => Object.assign({} as EixoPlanejamento, {
         eixo: x,
-        objetivos: this.planejamento?.objetivos?.filter(y => y.eixo_tematico_id == x.id) || []
+        objetivos: this.planejamento?.objetivos?.filter(y => y.eixo_tematico_id == x.id).sort((a, b) => a.sequencia < b.sequencia ? -1 : 1) || []
       })) || [];
       this.cdRef.detectChanges();
     });
+  }
+
+  public onTodosChange() {
+    this.onPlanejamentoChange();
   }
 
   public onObjetivoClick(data: any) {
@@ -83,35 +88,60 @@ export class PlanejamentoMapaComponent extends PageFrameBase {
     this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', 'objetivos', objetivo.id]});
   }
 
+  public onObjetivoAddClick(data: any) {
+    let eixo = this.eixos.find(x => x.eixo.id == data.id);   
+    let objetivo = new PlanejamentoObjetivo({
+      _status: "ADD", 
+      planejamento_id: this.planejamento?.id,
+      eixo_tematico_id: data.eixo.id,
+      eixo_tematico: data.eixo,
+      sequencia: eixo?.objetivos.length ? eixo?.objetivos[0].sequencia : 0
+    });
+    this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo'] }, {
+      metadata: { planejamento: this.planejamento!, objetivo: objetivo },
+      modalClose: async (modalResult) => {
+        if (modalResult) this.objetivoDao!.save(modalResult).then(objetivo => this.onPlanejamentoChange());
+      }
+    });
+  }
+
   public onObjetivoDeleteClick(data: any) {
     let objetivo = data as PlanejamentoObjetivo;
-
+    this.dialog.confirm("Exclui ?", "Deseja realmente excluir?").then(confirm => {
+      if (confirm) this.objetivoDao!.delete(objetivo).then(result => this.onPlanejamentoChange());
+    });
   }
 
   public onObjetivoEditClick(data: any) {
     let objetivo = data as PlanejamentoObjetivo;
     this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo'] }, {
       metadata: { planejamento: this.planejamento!, objetivo: objetivo }, modalClose: async (modalResult) => {
-        if (modalResult) this.objetivoDao?.save(modalResult).then(planejamento => {
-          this.onPlanejamentoChange();
-        });
+        if (modalResult) this.objetivoDao?.save(modalResult).then(planejamento => this.onPlanejamentoChange());
       }
     });
   }
 
   /* Drag & Drop */
-  onObjetivoDrop(event: DndDropEvent, list?: any[]) {
+  onObjetivoDrop(event: DndDropEvent, eixo: EixoPlanejamento) {
     console.log("Drop", event);
-    list?.splice(typeof event.index === 'undefined' ? list.length : event.index, 0, event.data);
+    let objetivo = event.data as PlanejamentoObjetivo; 
+    let index = typeof event.index === 'undefined' ? eixo.objetivos.length : event.index;
+    let neighborhood = index ? (eixo.objetivos[index] || eixo.objetivos[index-1] || undefined) : undefined;
+    eixo.objetivos.splice(index, 0, objetivo);
+    this.loading = true;
+    this.objetivoDao?.update(objetivo.id, {
+      eixo_tematico_id: eixo.eixo.id,
+      sequencia: neighborhood?.sequencia || 0
+    }).then(result => this.onPlanejamentoChange()).finally(() => this.loading = false);
   }
 
   onObjetivoDragEnd(event: DragEvent) {
     console.log("DragEnd", event);
   }
 
-  onObjetivoDragged(item: any, list: any[], effect: DropEffect) {
-    console.log("Dragged", item, list);
-    list.splice(list.indexOf(item), 1);
+  onObjetivoDragged(item: any, eixo: EixoPlanejamento, effect: DropEffect) {
+    console.log("Dragged", item, eixo.objetivos);
+    eixo.objetivos.splice(eixo.objetivos.indexOf(item), 1);
   }
 
   onObjetivoDragStart(event: DragEvent) {
