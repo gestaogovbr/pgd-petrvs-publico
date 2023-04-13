@@ -66,9 +66,9 @@ export class InputSelectComponent extends InputBase implements OnInit {
         const current = this.control ? this.control.value : this.value;
         this._items = [];
         this.selectPicker?.find('.input-select-dynamic-item').remove().end();
-        this.cdRef.detectChanges();
+        this.detectChanges();
         this._items = value;
-        this.cdRef.detectChanges();
+        this.detectChanges();
         this.selectPicker?.selectpicker('refresh');
         this.selectedValue = undefined;
         this.setValue(current);
@@ -87,7 +87,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
   @Input() set loading(value: boolean) {
     if(this._loading != value) {
       this._loading = value;
-      this.cdRef.detectChanges();
+      this.detectChanges();
       this.selectPicker?.selectpicker('refresh');
     }
   }

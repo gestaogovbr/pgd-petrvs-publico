@@ -10,6 +10,7 @@ export abstract class ComponentBase {
     /* Public properties */
     public isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
     public cdRef: ChangeDetectorRef;
+    public viewInit: boolean = false;
     public util: UtilService;
     public selfElement: ElementRef;
     public ID_GENERATOR_BASE: string;
@@ -54,12 +55,20 @@ export abstract class ComponentBase {
     public generatedButtonId(button: ToolbarButton, relativeId?: string) {
         return this.generatedId((button.label || button.hint || button.icon || "_button") + (relativeId || ""));
     }
-    
+
+    public detectChanges() {
+        this.viewInit ? this.cdRef.detectChanges() : this.cdRef.markForCheck();
+    }
+
     constructor(public injector: Injector) {
         this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
         this.selfElement = injector.get<ElementRef>(ElementRef);
         this.util = injector.get<UtilService>(UtilService);
         this.selfElement.nativeElement.component = this;
         this.ID_GENERATOR_BASE = injector.get<string>("ID_GENERATOR_BASE" as any);
+    }
+
+    ngAfterViewInit() {
+        this.viewInit = true;
     }
 }

@@ -33,7 +33,7 @@ export class InputRadioComponent extends InputBase implements OnInit {
   @Input() set value(value: any) {
     if(value != this._value) {
       this._value = value;
-      this.cdRef.detectChanges();
+      this.detectChanges();
       const element: any = document.getElementById(this.controlName + value);
       if(element) element.checked = true;
     }
