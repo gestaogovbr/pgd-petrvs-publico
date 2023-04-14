@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Planejamento;
-use App\Services\PlanejamentoService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
 use Throwable;
 
-class CadeiaValorController extends ControllerBase {
+class CadeiaValorProcessoController extends ControllerBase {
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {

@@ -41,6 +41,7 @@ use App\Http\Controllers\TipoCapacidadeController;
 use App\Http\Controllers\CapacidadeController;
 use App\Http\Controllers\FeriadoController;
 use App\Http\Controllers\AfastamentoController;
+use App\Http\Controllers\CadeiaValorProcessoController;
 use App\Http\Controllers\DemandaController;
 use App\Http\Controllers\CalendarioController;
 use App\Http\Controllers\TarefaController;
@@ -152,6 +153,7 @@ Route::middleware(['auth:sanctum'])->prefix('ProgramaParticipante')->group(funct
 Route::middleware(['auth:sanctum'])->prefix('Tarefa')->group(function () { defaultRoutes(TarefaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Template')->group(function () { defaultRoutes(TemplateController::class); });
 Route::middleware(['auth:sanctum'])->prefix('CadeiaValor')->group(function () { defaultRoutes(CadeiaValorController::class); });
+Route::middleware(['auth:sanctum'])->prefix('CadeiaValorProcesso')->group(function () { defaultRoutes(CadeiaValorProcessoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('TipoJustificativa')->group(function () { defaultRoutes(TipoJustificativaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('TipoAtividade')->group(function () { defaultRoutes(TipoAtividadeController::class); });
 Route::middleware(['auth:sanctum'])->prefix('TipoAvaliacao')->group(function () { defaultRoutes(TipoAvaliacaoController::class); });
