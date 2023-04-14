@@ -1,14 +1,11 @@
-import { Component, Inject, Injector, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Injector, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { Atividade } from 'src/app/models/atividade.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
-import { DaoBaseService } from 'src/app/dao/dao-base.service';
-import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { TipoAtividadeDaoService } from 'src/app/dao/tipo-atividade-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
-import { TipoMotivoAfastamento } from 'src/app/models/tipo-motivo-afastamento.model';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 
 @Component({
@@ -24,7 +21,11 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
   public unidadeDao: UnidadeDaoService;
   public formHomologacao: FormGroup;
   public disableUnidade: boolean = false;
+  public vinculadas_toolbar: boolean = false;
   public multiselectMenu: ToolbarButton[];
+  public filterHidden?: string;
+  public buttons: ToolbarButton[] = [];
+  public BUTTON_VINCULADAS: ToolbarButton;
 
   constructor(public injector: Injector) {
     super(injector, Atividade, AtividadeDaoService);
@@ -39,7 +40,7 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
       nome: { default: "" },
       unidade_id: { default: "" },
       vinculadas: { default: true },
-      todas: { default: false },
+      minhas: { default: false },
       homologado: { default: "" },
       tipo_atividade_id: { default: null }
     });
@@ -53,7 +54,12 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
         onClick: this.homologarAtividades.bind(this)
       }
     ];
-    //this.orderBy = [['unidade.sigla', 'asc']];
+    this.BUTTON_VINCULADAS = {
+      label: "Exibir Vinculadas",
+      pressed: false,
+      toggle: true,
+      onClick: this.onVinculadasClick.bind(this)
+    }
     this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }];
   }
 
@@ -147,14 +153,36 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
 
   public ngOnInit() {
     super.ngOnInit();
+    this.filterHidden = this.metadata?.filterHidden || this.filterHidden;
+    this.filter?.controls.minhas.setValue(this.metadata?.minhas || this.filter?.controls.minhas.value);
+    this.filter?.controls.unidade_id.setValue(this.metadata?.unidade_id || this.filter?.controls.unidade_id.value);
     this.disableUnidade = this.selectable && this.filter?.controls.unidade_id?.value?.lenght;
     this.filter?.controls.vinculadas.setValue(this.selectable);
+    this.vinculadas_toolbar = this.metadata?.vinculadas_toolbar || this.vinculadas_toolbar;
+    if (this.vinculadas_toolbar) this.buttons.push(this.BUTTON_VINCULADAS);
+  }
+
+  public onVinculadasClick() {
+    this.enableAtividadesVinculadas(!!this.BUTTON_VINCULADAS.pressed);
+  }
+
+  public enableAtividadesVinculadas(enable: boolean) {
+    this.BUTTON_VINCULADAS.label = enable ? "Ocultar Vinculadas" : "Exibir Vinculadas";
+    this.submitFilter(enable);
+    this.refreshToolbar();
+  }
+
+  public refreshToolbar() {
+    this.buttons = [...[this.BUTTON_VINCULADAS], ...this.grid!.toolbarButtons];
+    this.cdRef.detectChanges();
   }
 
   public filterClear(filter: FormGroup) {
     filter.controls.nome.setValue("");
     filter.controls.unidade_id.setValue("");
     filter.controls.homologado.setValue("");
+    filter.controls.vinculadas.setValue(false);
+    filter.controls.minhas.setValue(false);
     super.filterClear(filter);
   }
 
@@ -174,6 +202,9 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
     if (form.vinculadas) {
       result.push(["vinculadas", "==", true]);
     }
+    if (form.minhas) {
+      result.push(["minhas", "==", true]);
+    }
     if (form.homologado?.length) {
       result.push(["homologado", "==", form.homologado == "S"]);
     }
@@ -181,10 +212,9 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
     return result;
   }
 
-/*   public formValidation = (form?: FormGroup) => {
-    if (form?.controls.todas && form?.controls.unidade_id.value?.length) { return "Desmarque a opção TODAS ou apague a Unidade selecionada!"; } 
-    return undefined;
-  } */
+  public submitFilter(state: boolean) {
+    this.grid?.query?.reload({ where: [['unidade_id', '==', this.metadata?.unidade_id], ['minhas', '==', true], ['vinculadas', '==', state]] });
+  }
 
   public getReportComplexidade(row: Atividade): string {
     let result = "";
@@ -225,10 +255,6 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
     });
     return result;
   }
-
-/*   public todasChange(){
-    if(this.filter?.controls.todas.value)
-  } */
 
 }
 

@@ -97,7 +97,7 @@ class DemandaService extends ServiceBase
     }
 
     public function proxyQuery($query, &$data) {
-        LogError::newWarn("PROXY: Iniciou", $data);
+        //LogError::newWarn("PROXY: Iniciou", $data);
         $where = [];
         $with = [];
         $unidade_id = null;
@@ -140,7 +140,7 @@ class DemandaService extends ServiceBase
                 array_push($where, $condition);
             }
         }
-        LogError::newWarn("PROXY: Where", $data);
+        //LogError::newWarn("PROXY: Where", $data);
         $data["where"] = $this->prefixWhere($where, "Demanda");
         foreach($data["with"] as $join) {
             if($join == "comentarios") {
@@ -152,7 +152,7 @@ class DemandaService extends ServiceBase
                 array_push($with, $join);
             }
         }
-        LogError::newWarn("PROXY: prefix", $data);
+        //LogError::newWarn("PROXY: prefix", $data);
         $unidades_ids = [];
         if(!empty($unidade_id)) {
             array_push($unidades_ids, $unidade_id);
@@ -175,7 +175,7 @@ class DemandaService extends ServiceBase
                 WHERE " . (count($where) > 0 ? join(" OR ", $where) : "FALSE") . "
             ) AS subquery
         )", $params));
-        LogError::newWarn("PROXY: return", $data);
+        //LogError::newWarn("PROXY: return", $data);
         return $data;
     }
 

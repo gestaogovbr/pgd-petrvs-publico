@@ -52,10 +52,10 @@
             </div>
             <calendar-expediente #expediente [disabled]="form!.controls.usar_expediente_entidade.value ? 'true' : undefined" [expedienteDisabled]="entity?.entidade?.expediente" [control]="form!.controls.expediente"></calendar-expediente>
         </tab>
-        <tab key="ATIVIDADES" label="Atividades">
+        <tab key="UNIDADES_VINCULADAS" label="Unidades Vinculadas">
             <grid [control]="form!.controls.unidades_origem_atividades" [form]="formUnidadesOrigemAtividades" [add]="addUnidadesOrigemAtividades.bind(this)" [load]="loadUnidadesOrigemAtividades.bind(this)" [remove]="removeUnidadesOrigemAtividades.bind(this)" [save]="saveUnidadesOrigemAtividades.bind(this)" editable>
                 <columns>
-                    <column title="Unidades vinculadas" titleHint="Unidades auxiliares para origem de atividades" [template]="columnUnidade" [editTemplate]="editUnidade">
+                    <column title="Unidades" titleHint="Unidades auxiliares para origem de atividades" [template]="columnUnidade" [editTemplate]="editUnidade">
                         <ng-template let-row="row" #columnUnidade>
                             <span> {{row.unidade_origem_atividade?.nome || ""}}</span>
                         </ng-template>
