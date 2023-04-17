@@ -6,33 +6,38 @@ use App\Models\Plano;
 use App\Models\Usuario;
 use App\Models\Unidade;
 use App\Models\Afastamento;
-use App\Services\RawWhere;
 use App\Services\ServiceBase;
-use App\Services\DemandaService;
 use App\Services\CalendarioService;
 use App\Services\UtilService;
 use App\Exceptions\ServerException;
 use DateTime;
-use DateTimeZone;
-use Illuminate\Support\Facades\Auth;
 use App\Traits\UseDataFim;
+use Illuminate\Database\Eloquent\Collection;
 
 class PlanoService extends ServiceBase
 {
     use UseDataFim;
 
     /**
-     * planosAtivos: Este método retorna todos os Planos de Trabalho de um determinado usuário, que ainda se encontram dentro da vigência
+     * Retorna todos os Planos de Trabalho de um determinado usuário, que ainda se encontram dentro da vigência
      *
-     * @param  mixed $usuario_id
-     * @return void
+     * @param   string  $usuario_id
+     * @return  Illuminate\Database\Eloquent\Collection      
      */
-    public function planosAtivos($usuario_id) {
+    public function planosAtivos($usuario_id): Collection {
         return Plano::where("usuario_id", $usuario_id)->where("data_inicio_vigencia", "<=", now())->where("data_fim_vigencia", ">=", now())->get();
         // adicionar no gitlab para considerar o fuso horário
     }
 
-    public function planosAtivosPorData($data_inicial, $data_final, $usuario_id){
+    /**
+     * Retorna um array com todos os Planos de Trabalho de um determinado Usuário, cuja vigência encontra-se dentro do período estabelecido.
+     * 
+     * @param   string $data_inicial  Data inicial do período.
+     * @param   string $data_final    Data final do período.
+     * @param   string $usuario_id    O ID do Usuário.
+     * @return  Illuminate\Database\Eloquent\Collection
+     */
+    public function planosAtivosPorData($data_inicial, $data_final, $usuario_id): Collection {
         return Plano::whereNull("data_fim")->where("usuario_id", $usuario_id)
                     ->where("data_inicio_vigencia", "<=", $data_final)
                     ->where("data_fim_vigencia", ">=", $data_inicial)->get();
@@ -77,9 +82,6 @@ class PlanoService extends ServiceBase
         $criador = Usuario::with(["lotacoes" => function ($query){
             $query->whereNull("data_fim");
         }])->find(parent::loggedUser()->id);
-        /*if(!$this->usuarioService->hasLotacao($unidade_id, $usuario, false) && !parent::loggedUser()->hasPermissionTo('MOD_USER_TUDO')) {
-            throw new ServerException("ValidatePlano", $unidade->sigla . " não é uma unidade (lotação) do usuário");
-        }*/
         $usuario_lotacoes_ids = $usuario->lotacoes->map(function ($item, $key) { return $item->unidade_id; })->all();
         $criador_lotacoes_ids = $criador->lotacoes->map(function ($item, $key) { return $item->unidade_id; })->all();
         if(!count(array_intersect($usuario_lotacoes_ids, $criador_lotacoes_ids)) && !parent::loggedUser()->hasPermissionTo('MOD_PTR_USERS_INCL')) {
@@ -175,11 +177,16 @@ class PlanoService extends ServiceBase
         return $result;
     }
 
-    /** Este método foi criado para atender ao Relatório de Força de Trabalho - Servidor.
-     *  Observe também que os cálculos das horas leva em consideração sempre os tempos pactuados - uma alteração conceitual
-     *  introduzida nos Relatórios de Força de Trabalho.
+    /** 
+     * Retorna um array com os dados de um Plano de Trabalho. Método criado para atender ao Relatório de Força de Trabalho - Servidor.
+     * Os cálculos das horas levam em consideração sempre os tempos pactuados - uma alteração conceitual introduzida nos Relatórios de Força de Trabalho.
+     * 
+     * @param   string  $plano_id       O ID do Plano de Trabalho.
+     * @param   string  $inicioPeriodo  Data inicial do período de pesquisa.
+     * @param   string  $fimPeriodo     Data final do período de pesquisa.
+     * @return  array
     */
-    public function metadadosPlano($plano_id) {
+    public function metadadosPlano($plano_id, $inicioPeriodo = null, $fimPeriodo = null): array {
         $plano = Plano::where('id', $plano_id)->with(['demandas', 'demandas.avaliacao', 'tipoModalidade'])->first()->toArray();
         $result = [
             "concluido" => true,
@@ -250,9 +257,16 @@ class PlanoService extends ServiceBase
         return $result;
     }
 
-    /* Este método retorna um array com todas as demandas avaliadas de um determinado plano. Uma demanda é considerada avaliada se
-    o seu campo avalicao_id não for mulo. */
-    public function demandasAvaliadas($plano, $inicioPeriodo, $fimPeriodo) {
+    /**
+     * Retorna um array com todas as demandas avaliadas de um determinado Plano de Trabalho, cujas data de início ou data de entrega estejam
+     * dentro do período estabelecido. Uma demanda é considerada avaliada se o seu campo avalicao_id não for nulo.
+     * 
+     * @param   Plano   $plano          Plano de Trabalho a ser pesquisado.
+     * @param   string  $inicioPeriodo  Data inicial do período.
+     * @param   string  $fimPeriodo     Data final do período.
+     * @return  array
+     */ 
+    public function demandasAvaliadas($plano, $inicioPeriodo, $fimPeriodo): array {
         $result = [];
         foreach ($plano['demandas'] as $demanda) {
             if ($this->demandaService->isAvaliada($demanda) && $this->demandaService->withinPeriodo($demanda, $inicioPeriodo, $fimPeriodo)) array_push($result, $demanda);
@@ -260,9 +274,16 @@ class PlanoService extends ServiceBase
         return $result;
     }
 
-    /* Este método retorna um array com todas as demandas concluidas de um determinado plano. Uma demanda é considerada concluída se
-    o seu campo data_entrega não for mulo e se ainda não foi avaliada. */
-    public function demandasConcluidas($plano, $inicioPeriodo, $fimPeriodo) {
+    /** 
+     * Retorna um array com todas as demandas concluidas de um determinado Plano de Trabalho, cujas data de início ou data de entrega estejam
+     * dentro do período estabelecido. Uma demanda é considerada concluída se o seu campo data_entrega não for nulo e se ainda não foi avaliada. 
+     * 
+     * @param   Plano   $plano          Plano de Trabalho a ser pesquisado.
+     * @param   string  $inicioPeriodo  Data inicial do período.
+     * @param   string  $fimPeriodo     Data final do período.
+     * @return  array
+     */
+    public function demandasConcluidas($plano, $inicioPeriodo, $fimPeriodo): array {
         $result = [];
         foreach ($plano['demandas'] as $demanda) {
             if ($this->demandaService->isConcluida($demanda) && !($this->demandaService->isAvaliada($demanda)) && $this->demandaService->withinPeriodo($demanda, $inicioPeriodo, $fimPeriodo)) array_push($result, $demanda);
@@ -270,9 +291,16 @@ class PlanoService extends ServiceBase
         return $result;
     }
 
-    /* Este método retorna um array com todas as demandas cumpridas de um determinado plano. Uma demanda é considerada cumprida se
-    o seu campo tempo_homologado não for mulo. */
-    public function demandasCumpridas($plano, $inicioPeriodo, $fimPeriodo) {
+    /** 
+     * Retorna um array com todas as demandas cumpridas de um determinado Plano de Trabalho, cujas data de início ou data de entrega estejam
+     * dentro do período estabelecido. Uma demanda é considerada cumprida se o seu campo tempo_homologado não for nulo. 
+     * 
+     * @param   Plano   $plano          Plano de Trabalho a ser pesquisado.
+     * @param   string  $inicioPeriodo  Data inicial do período.
+     * @param   string  $fimPeriodo     Data final do período.
+     * @return  array
+     */
+    public function demandasCumpridas($plano, $inicioPeriodo, $fimPeriodo): array {
         $result = [];
         foreach ($plano['demandas'] as $demanda) {
             if ($this->demandaService->isCumprida($demanda) && $this->demandaService->withinPeriodo($demanda, $inicioPeriodo, $fimPeriodo)) array_push($result, $demanda);
@@ -280,7 +308,14 @@ class PlanoService extends ServiceBase
         return $result;
     }
 
-    public function isPlanoGestao($plano) {
+    /**
+     * Define se um Plano de Trabalho é considerado um Plano de Gestão ou não, ou seja, se existe ou não um normativo definindo como Programa de Gestão 
+     * o Programa ao qual ele está vinculado.
+     * 
+     * @param   Plano   $plano  O ID do Plano de Trabalho.
+     * @return  bool
+     */
+    public function isPlanoGestao($plano): bool {
         return !$plano['programa']['normativa'] == null;
     }
 

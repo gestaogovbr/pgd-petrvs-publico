@@ -19,6 +19,7 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
   public plano?: Plano | null;
   public row?: any;
   public planoRelatorio?: PlanoExtendido2;
+  public buscaPorPeriodo: boolean = false;
 
   public descricaoPlano: string = '';
   public statusPlano: string = '';
@@ -111,12 +112,15 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
 
   public async report(filter: any) {
     this.parametros = Object.assign({}, this.queryParams);
+    this.parametros.data_inicio = new Date(this.parametros.data_inicio);
+    this.parametros.data_fim = new Date(this.parametros.data_fim);
     let result = await Promise.all([
       this.dao?.getById(this.parametros.usuario_id),
       this.planoDao?.getById(this.parametros.plano_id, ["demandas", "demandas.avaliacao", "unidade", "tipoModalidade"])
     ]);
     this.usuario = result[0];
     this.plano = result[1];
+    this.buscaPorPeriodo = !(this.parametros.data_inicio.getTime() == this.plano!.data_inicio_vigencia.getTime() && this.parametros.data_fim.getTime() == this.plano!.data_fim_vigencia.getTime());
     await this.prepararParaRelatorio(this.plano!);
     return [this.planoRelatorio];
   }
@@ -167,25 +171,25 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
       ];
       let dadosDemandas: ChartDataSets[] = [
         {
-          label: 'Demandas Não-iniciadas',
+          label: 'Não-iniciadas',
           data: [metadados.horasDemandasNaoIniciadas],
           backgroundColor: '#0dcaf0',
           stack: 'Demandas'
         },
         {
-          label: 'Demandas Iniciadas',
+          label: 'Em Andamento',
           data: [metadados.horasDemandasEmAndamento],
           backgroundColor: '#ffc107',
           stack: 'Demandas'
         },
         {
-          label: 'Demandas Concluídas',
+          label: 'Concluídas',
           data: [metadados.horasDemandasConcluidas],
           backgroundColor: '#af4201',
           stack: 'Demandas'
         },
         {
-          label: 'Demandas Avaliadas',
+          label: 'Avaliadas',
           data: [metadados.horasDemandasAvaliadas],
           backgroundColor: '#af4af0',
           stack: 'Demandas'

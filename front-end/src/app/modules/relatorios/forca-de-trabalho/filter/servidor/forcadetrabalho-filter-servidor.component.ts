@@ -4,10 +4,10 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { SelectItem } from 'src/app/components/input/input-base';
 import { Usuario } from 'src/app/models/usuario.model';
+import { Plano } from 'src/app/models/plano.model';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { PageReportFilterBase } from 'src/app/modules/base/page-report-filter-base';
-import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 
 @Component({
@@ -18,12 +18,12 @@ import { InputSearchComponent } from 'src/app/components/input/input-search/inpu
 export class ForcaDeTrabalhoFilterServidorComponent extends PageReportFilterBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('usuario') usuario?: InputSearchComponent;
-  //@ViewChild('unidade') unidade?: InputSelectComponent;
 
   public form: FormGroup;
   public usuarioDao: UsuarioDaoService;
   public reportRoute: FullRoute;
   public planos: LookupItem[] = [];
+  public planoSelecionado?: Plano;
 
   constructor(public injector: Injector) {
     super(injector);
@@ -31,17 +31,25 @@ export class ForcaDeTrabalhoFilterServidorComponent extends PageReportFilterBase
     this.form = this.fh.FormBuilder({
       plano_id: {default: null},
       usuario_id: {default: null},
+      data_inicio: {default: null},
+      data_fim: {default: null},
     }, this.cdRef, this.validate);
     this.reportRoute = {route: ["relatorios", "forca-de-trabalho", "report-servidor"], params: {}};
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if(!control.value?.length) {
-      result = "Obrigatório";
-    }
+    if(['usuario_id','plano_id'].indexOf(controlName) >= 0 && !control.value?.length) result = "Obrigatório";
+    if(['data_inicio', 'data_fim'].indexOf(controlName) >= 0 && control.value && !this.usuarioDao?.validDateTime(control.value)) result = "Data inválida";
     return result;
   }
+
+  public formValidation = (form?: FormGroup) => {
+    if(this.form?.controls.data_inicio.value && this.form?.controls.data_inicio.value < this.planoSelecionado!.data_inicio_vigencia) return "Data inicial menor que o início da vigência do Plano!";
+    if(this.form?.controls.data_fim.value && this.form?.controls.data_fim.value > this.planoSelecionado!.data_fim_vigencia) return "Data final maior que o fim da vigência do Plano!";
+    if(this.form?.controls.data_inicio.value && this.form?.controls.data_fim.value && this.form?.controls.data_inicio.value > this.form?.controls.data_fim.value) return "Data inicial maior que data final!";
+    return undefined;
+  } 
 
   public initializeData(form: FormGroup): void {
     form.patchValue({});
@@ -63,6 +71,12 @@ export class ForcaDeTrabalhoFilterServidorComponent extends PageReportFilterBase
     } else { // caso contrário deixa o controle em branco para que o usuário selecione o valor desejado
       this.form.controls.plano_id.setValue(null);
     }
+  }
+
+  public onPlanoChange(event: Event) {
+    this.planoSelecionado = this.planos.find(x => x.key == this.form.controls.plano_id.value)?.data;
+    this.form.controls.data_inicio.setValue(this.planoSelecionado?.data_inicio_vigencia);
+    this.form.controls.data_fim.setValue(this.planoSelecionado?.data_fim_vigencia);
   }
 
 }

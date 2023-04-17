@@ -1,4 +1,4 @@
-<toolbar [title]="isModal ? '' : title" [buttons]="buttons"></toolbar>
+<toolbar [title]="isModal ? '' : title" [buttons]="buttons" [hidden]="true"></toolbar>
 
 <div *ngFor="let x of rows" class="mt-5"> <!-- Informações sobre cada Plano (como só existe um PlanoRelatório mesmo...) -->
   <div class="mt-5">
@@ -19,6 +19,10 @@
         </tr>
         <tr>
           <td>Plano</td><td colspan="2">{{ x.descricaoPlano }}</td>
+        </tr>
+        <tr *ngIf="buscaPorPeriodo">
+          <td>Período de pesquisa</td>
+          <td colspan="2">De {{ this.util.getDateTimeFormatted(parametros.data_inicio) }} a {{ this.util.getDateTimeFormatted(parametros.data_fim) }}</td>
         </tr>
       </tbody>
     </table>
@@ -84,7 +88,7 @@
         <td>Horas úteis líquidas do Plano</td>
         <td class="text-center">{{ this.util.decimalToTimerFormated(x.horasUteisLiquidasPlano, true) }}</td>
         <td class="text-center">{{ 100 - x.percentualAfastamento }} %</td>
-        <td><span><small class="micro-text fw-ligh">Total das horas úteis do Plano para alocação de demandas.</small></span></td>
+        <td><span><small class="micro-text fw-ligh">Total das horas úteis do Plano para alocação de demandas: HULP = HUTP - HUAS.</small></span></td>
       </tr>
       <tr>
         <td class="text-center">HUDP</td>
@@ -105,7 +109,7 @@
         <td>Horas líquidas decorridas do Plano</td>
         <td class="text-center">{{ this.util.decimalToTimerFormated(x.horasLiquidasDecorridasPlano, true) }}</td>
         <td class="text-center">{{ x.percentualHorasLiquidasDecorridas }} %</td>
-        <td><span><small class="micro-text fw-ligh">Total das horas úteis do Plano para alocação de demandas.</small></span></td>
+        <td><span><small class="micro-text fw-ligh">Total das horas úteis do Plano para alocação de demandas, já decorridas entre o início da vigência do Plano e o instante atual: HLDP = HUDP - HUDA.</small></span></td>
       </tr>  
       <tr>
         <td class="text-center">HDP</td>
@@ -127,14 +131,14 @@
         </td>
       </tr>
       <tr>
-        <td class="text-center">THI</td>
-        <td>Total de horas iniciadas</td>
+        <td class="text-center">THAn</td>
+        <td>Total de horas em andamento</td>
         <td class="text-center">{{ x.extras.horasDemandasEmAndamento == 0 ? 0 : this.util.decimalToTimerFormated(x.extras.horasDemandasEmAndamento, true) }}</td>
         <td class="text-center">{{ x.percentualHorasEmAndamento }} %</td>
         <td>
           <span>
             <small class="micro-text fw-ligh">Total dos tempos pactuados de todas as demandas já iniciadas, mas ainda não concluídas.</small>
-            <br><small class="micro-text fw-ligh">O percentual representa a relação entre este total e as horas úteis totais do Plano:<br>THI(%) = THI / HUTP.</small>
+            <br><small class="micro-text fw-ligh">O percentual representa a relação entre este total e as horas úteis totais do Plano:<br>THAn(%) = THAn / HUTP.</small>
           </span>
         </td>
       </tr>
@@ -151,14 +155,14 @@
         </td>
       </tr>
       <tr>
-        <td class="text-center">THA</td>
+        <td class="text-center">THAv</td>
         <td>Total de horas avaliadas</td>
         <td class="text-center">{{ x.extras.horasDemandasAvaliadas == 0 ? 0 : this.util.decimalToTimerFormated(x.extras.horasDemandasAvaliadas, true) }}</td>
         <td class="text-center">{{ x.percentualHorasAvaliadas }} %</td>
         <td>
           <span>
             <small class="micro-text fw-ligh">Total dos tempos pactuados de todas as demandas avaliadas.</small>
-            <br><small class="micro-text fw-ligh">O percentual representa a relação entre este total e as horas úteis totais do Plano:<br>THA(%) = THA / HUTP.</small>
+            <br><small class="micro-text fw-ligh">O percentual representa a relação entre este total e as horas úteis totais do Plano:<br>THAv(%) = THAv / HUTP.</small>
           </span>
         </td>
       </tr>
@@ -169,7 +173,7 @@
         <td class="text-center">{{ x.percentualHorasTotaisAlocadas }} %</td>
         <td>
           <span>
-            <small class="micro-text fw-ligh">Total dos tempos pactuados de todas as demandas, independente de seus status:<br>HTA  = THNI + THI + THC + THA.</small>
+            <small class="micro-text fw-ligh">Total dos tempos pactuados de todas as demandas, independente de seus status:<br>HTA  = THNI + THAn + THC + THAv.</small>
             <br><small class="micro-text fw-ligh">O percentual representa a relação entre este total e as horas úteis totais do Plano:<br>HTA(%) = HTA  / HUTP.</small>
           </span>
         </td>
@@ -238,4 +242,21 @@
   </table>
 </div>
 
-<toolbar [buttons]="buttons"></toolbar>
+<toolbar [buttons]="buttons" [hidden]="true"></toolbar>
+
+<!--
+qual o tempo alocado: através das demandas, soma dos tempos pactuados
+qual o tempo efetivo: soma de todos os tempos pactuados das atividades que foram concluidas e que a pontuação foi acima do mínimo
+qual o tempo despendido: 
+
+tempo pactuado: booleano = tem ou não. Se ele concluíu a demanda e ela foi avaliada com nota acima do mínimo, então seu tempo pactuado existe.
+caso contrário, não tem tempo pactuado.
+
+gráfico:
+tempo alocado, que é a soma de todos os tempos pactuado naquele periodo
+horas úteis no período - usa a função calendario para saber quantas horas uteis daquele servidor tem naquele periodo
+quantas horas foram alocadas, que são as demandas que já foram lançadas, somando seus tempos pactuados
+horas concluídas naquele período
+horas que foram iniciadas e não foram finalizadas
+*somatorio dos tempos despendidos
+-->

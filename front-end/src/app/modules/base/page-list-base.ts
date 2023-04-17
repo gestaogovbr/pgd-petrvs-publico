@@ -76,7 +76,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
     this.dao = injector.get<D>(dType);
     this.entities = [
       {table: 'afastamentos', campo: 'observacoes', dao: injector.get<AfastamentoDaoService>(AfastamentoDaoService), label: "Afastamento", selectRoute: {route: ['cadastros', 'afastamento']}},
-      {table: 'atividades', campo: 'nome', dao: injector.get<AtividadeDaoService>(AtividadeDaoService), label: "Atividade", selectRoute: {route: ['cadastros', 'atividade']}},
+      {table: 'atividades', campo: 'nome', dao: injector.get<AtividadeDaoService>(AtividadeDaoService), label: "Atividade", selectRoute: {route: ['gestao', 'atividade']}},
       {table: 'cidades', campo: 'nome', dao: injector.get<CidadeDaoService>(CidadeDaoService), label: "Cidade", selectRoute: {route: ['cadastros', 'cidade']}},
       {table: 'entidades', campo: 'nome', dao: injector.get<EntidadeDaoService>(EntidadeDaoService), label: "Entidade", selectRoute: {route: ['configuracoes', 'entidade']}},
       {table: 'feriados', campo: 'nome', dao: injector.get<FeriadoDaoService>(FeriadoDaoService), label: "Feriado", selectRoute: {route: ['cadastros', 'feriado']}},

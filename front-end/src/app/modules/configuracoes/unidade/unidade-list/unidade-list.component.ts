@@ -93,6 +93,6 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
   }
 
   public consultAtividades(unidade: Unidade) {
-    this.go.navigate({ route: ['gestao', 'atividade'] }, { metadata: { unidade_id: unidade.id, filterHidden: 'true', vinculadas_toolbar: true, minhas: true }, modal: true });
+    this.go.navigate({ route: ['gestao', 'atividade'] }, { metadata: { unidade_id: unidade.id, filterHidden: 'true', exibir_vinculadas_toolbar: true, minhas: true }, modal: true });
   }
 }

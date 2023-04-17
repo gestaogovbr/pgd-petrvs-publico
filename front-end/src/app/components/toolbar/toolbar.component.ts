@@ -79,7 +79,7 @@ export class ToolbarComponent extends ComponentBase implements OnInit {
     if(button.route) {
       this.go.navigate(button.route, button.metadata);
     } else if(button.onClick) {
-      button.onClick();
+      button.onClick(button);
     }
     this.cdRef.detectChanges();
   }

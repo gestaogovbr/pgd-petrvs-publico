@@ -171,6 +171,4 @@ export abstract class PageReportBase<M extends Base, D extends DaoBaseService<M>
 
   public abstract report(filter: any): Promise<any[] | undefined>;
 
-  //public abstract obterDadosGrafico(metadados: Metadado | MetadadosPlano | MetadadosUnidade, tipo: 'GERAL' | 'DETALHADO'): ChartDataSets[];
-
 }

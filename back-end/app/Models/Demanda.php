@@ -16,7 +16,7 @@ use App\Models\Comentario;
 use App\Models\DemandaEntrega;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-
+use Illuminate\Database\Eloquent\Collection;
 
 class Demanda extends ModelBase
 {
@@ -113,11 +113,18 @@ class Demanda extends ModelBase
 
     // Escopos
 
-    public function scopeDoUsuario($query, $usuario_id){
+/*     public function scopeDoUsuario($query, $usuario_id){
         return $query->where("usuario_id", $usuario_id);
-    }
+    } */
 
-    public function scopeDosPlanos($query, $planos_ids){
+    /**
+     * Acrescenta a $query a condição ['plano_id','in',$planos_ids].
+     * 
+     * @param mixed $query
+     * @param array $planos_ids
+     * @return Illuminate\Database\Eloquent
+     */
+    public function scopeDosPlanos($query, $planos_ids): Collection{
         return $query->whereIn("plano_id", $planos_ids);
     }
 

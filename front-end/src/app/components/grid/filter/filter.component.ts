@@ -48,7 +48,7 @@ export class FilterComponent extends ComponentBase implements OnInit {
   }
 
   public get isHidden(): boolean {
-    return this.hidden != undefined;
+    return this.hidden != undefined; 
   }
 
   public get isNoButtons(): boolean {
