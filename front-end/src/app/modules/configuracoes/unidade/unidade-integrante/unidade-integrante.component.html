@@ -1,0 +1,29 @@
+<grid [items]="items" [form]="form!" [add]="addIntegrante.bind(this)" [load]="loadIntegrante.bind(this)" [remove]="removeIntegrante.bind(this)" [save]="saveIntegrante.bind(this)" editable>
+    <columns>
+        <column title="Usuário" [template]="columnUsuario" [editTemplate]="editUsuario">
+            <ng-template let-row="row" #columnUsuario>
+                <profile-picture [url]="row.url_foto" [size]="40" [hint]="row.nome"></profile-picture>
+                <div class="d-flex">
+                    <strong>{{row.usuario?.nome || ""}}</strong><br>
+                    <small>{{row.usuario?.apelido || ""}}</small>
+                </div>
+            </ng-template>
+            <ng-template let-row="row" #editUsuario>
+                <input-search #usuario [size]="12" controlName="usuario_id" [control]="form!.controls.usuario_id" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
+            </ng-template>
+        </column>
+        <column title="Atribuições" titleHint="Atribuições do usuário nesta unidade" [template]="columnUnidadeDestino" [editTemplate]="editUnidadeDestino">
+            <ng-template let-row="row" #columnUnidadeDestino>
+                <div class="text-nowrap">
+                    <badge *ngFor="let atribuicao of row.atribuicoes" [color]="atribuicao.color" [icon]="atribuicao.icon" [label]="atribuicao.value"></badge>
+                </div>
+            </ng-template>
+            <ng-template let-row="row" #editUnidadeDestino>
+                <input-multiselect controlName="atribuicoes" [size]="8" [control]="form!.controls.atribuicoes" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
+                    <input-select [size]="12" label="" icon="fas fa-sign-out-alt" controlName="atribuicao" [control]="form!.controls.atribuicao" [items]="lookup.UNIDADE_INTEGRANTE_TIPO"></input-select>
+                </input-multiselect>
+            </ng-template>
+        </column>
+        <column type="options"></column>
+    </columns>
+</grid>

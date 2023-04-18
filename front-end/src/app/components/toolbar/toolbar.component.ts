@@ -35,6 +35,7 @@ export type ToolbarButton = {
 export class ToolbarComponent extends ComponentBase implements OnInit {
   @Input() icon: string = "";
   @Input() options?: ToolbarButton[];
+  @Input() visible: boolean = true;
   @Input() 
   get title(): string {
     return this._title;

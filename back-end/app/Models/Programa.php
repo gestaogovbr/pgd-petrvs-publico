@@ -27,6 +27,9 @@ class Programa extends ModelBase
         'unidade_id', /* char(36); NOT NULL; */
         //'data_fim', /* datetime; */// Data fim da vigência
         //'periodo_avaliacao', /* enum('SEMANAL','QUINZENAL','MENSAL','BIMESTRAL','TRIMESTRAL','SEMESTRAL'); NOT NULL; DEFAULT: 'MENSAL'; */// Período para avaliação do plano
+        //'termo_obrigatorio', /* tinyint; NOT NULL; */// Se o termo é obrigatório
+        //'template_tcr_id', /* char(36); */
+        //'tipo_documento_tcr_id', /* char(36); */
     ];
 
     public $delete_cascade = ['documento'];

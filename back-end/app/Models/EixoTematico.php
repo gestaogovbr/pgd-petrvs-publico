@@ -15,11 +15,11 @@ class EixoTematico extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'nome', /* varchar(256); NOT NULL; */// Nome do eixo temático
-        'icone', /* varchar(100); NOT NULL; */// Classe do icone relacionado ao eixo temático
+        'nome', /* varchar(256); NOT NULL; */// Nome
+        'icone', /* varchar(100); NOT NULL; */// Class do icone relacionado ao afastamento
         'cor', /* varchar(100); NOT NULL; */// Código da cor em formato hex
-        'descricao', /* varchar(256); NOT NULL; */// Descrição do eixo temático
-        //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência do registro (criação)
-        //'data_fim', /* datetime; */// Data fim da vigência do registro (deleção soft delete)
+        'descricao', /* varchar(256); NOT NULL; */// Descrição
+        //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
+        //'data_fim', /* datetime; */// Data fim da vigência
     ];
 }

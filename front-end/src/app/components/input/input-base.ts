@@ -20,6 +20,7 @@ export abstract class InputBase extends ComponentBase {
     public viewInit: boolean = false;
     public formDirective?: FormGroupDirective;
     public inputElement?: ElementRef;
+    public JSON = JSON;
     /* Abstract properties */
     public abstract controlName: string | null;
     public abstract control?: AbstractControl; 

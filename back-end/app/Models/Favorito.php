@@ -12,7 +12,7 @@ class Favorito extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        //'config', /* json; */// Configurações do favoritos
+        //'config', /* json; */// Configurações do favoritos do SEI-Pro
         //'usuario_id', /* char(36); NOT NULL; */
     ];
 

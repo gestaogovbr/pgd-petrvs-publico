@@ -1,5 +1,5 @@
 <!-- Modo display -->
-<div *ngIf="!isRowEditing && !grid?.selectable" class="btn-group" [class.invisible]="grid?.editing" role="group">
+<div *ngIf="!isRowEditing && (!grid?.selectable || column.isAlways)" class="btn-group" [class.invisible]="grid?.editing" role="group">
     <button *ngIf="isUpDownButtons" [id]="grid?.getId('_' + index + '_' + row.id) + '_up_button'" type="button" class="btn btn-outline-secondary" (click)="onMoveClick(true)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mover registro para cima">
         <i class="bi bi-arrow-up"></i>
     </button>
@@ -25,7 +25,7 @@
     </div>
 </div>
 <!-- Modo editando -->
-<div *ngIf="grid?.editing && isRowEditing" class="btn-group" role="group">
+<div *ngIf="grid?.editing && isRowEditing && (!grid?.sidePanel || grid?.sidePanel?.isNoToolbar)" class="btn-group" role="group">
     <button type="button" [id]="grid?.getId('_' + index + '_' + row.id) + '_edit_button'" class="btn btn-outline-primary" (click)="onSaveClick()">
         <i class="bi bi-check-circle"></i>
     </button>

@@ -1,0 +1,7 @@
+<div *ngIf="html" [innerHTML]="html" class="document-preview-paper" [class.document-preview-margin]="!isNoMargin"></div>
+<div *ngIf="!html && emptyDocumentMensage" class="document-preview-paper" [class.document-preview-margin]="!isNoMargin">
+    <div class="document-preview-no-document d-block">
+        <i class="bi bi-question-octagon" style="font-size: 2rem;"></i><br>
+        <h5>{{emptyDocumentMensage}}</h5>
+    </div>
+</div>
