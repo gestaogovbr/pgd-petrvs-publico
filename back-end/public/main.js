@@ -4115,7 +4115,7 @@ class InputEditorComponent extends _input_base__WEBPACK_IMPORTED_MODULE_4__["Inp
             if (this.control && this.control.value != value) {
                 this.control.setValue(value);
             }
-            this.cdRef.detectChanges();
+            this.detectChanges();
         }
     }
     ;
@@ -4718,7 +4718,7 @@ class InputSearchComponent extends _input_base__WEBPACK_IMPORTED_MODULE_5__["Inp
         var _a;
         if (value != this._disabled) {
             this._disabled = value;
-            this.cdRef.detectChanges();
+            this.detectChanges();
             (_a = this.dropdown) === null || _a === void 0 ? void 0 : _a.toString(); /* Força atualização do dropdown */
         }
     }
@@ -9490,7 +9490,7 @@ class InputRateComponent extends _input_base__WEBPACK_IMPORTED_MODULE_2__["Input
             this._max = value;
             this.stars = Array(value).fill(false);
             this.stars.map((x, i) => this.stars[i] = i < this.value);
-            this.cdRef.detectChanges();
+            this.detectChanges();
         }
     }
     get max() {
@@ -20408,6 +20408,7 @@ class ComponentBase {
         this.injector = injector;
         /* Public properties */
         this.isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+        this.viewInit = false;
         this._bgColors = {
             primary: { class: "bg-primary ", hex: "#0d6efd" },
             secondary: { class: "bg-secondary ", hex: "#6c757d" },
@@ -20447,6 +20448,12 @@ class ComponentBase {
     }
     generatedButtonId(button, relativeId) {
         return this.generatedId((button.label || button.hint || button.icon || "_button") + (relativeId || ""));
+    }
+    detectChanges() {
+        this.viewInit ? this.cdRef.detectChanges() : this.cdRef.markForCheck();
+    }
+    ngAfterViewInit() {
+        this.viewInit = true;
     }
 }
 ComponentBase.ɵfac = function ComponentBase_Factory(t) { return new (t || ComponentBase)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injector"])); };
@@ -23678,7 +23685,6 @@ class InputBase extends _component_base__WEBPACK_IMPORTED_MODULE_1__["ComponentB
     constructor(injector) {
         super(injector);
         this.injector = injector;
-        this.viewInit = false;
         this.JSON = JSON;
         this._fakeControl = new _angular_forms__WEBPACK_IMPORTED_MODULE_0__["FormControl"]();
         this._size = 12;
@@ -23737,12 +23743,12 @@ class InputBase extends _component_base__WEBPACK_IMPORTED_MODULE_1__["ComponentB
     }
     ngAfterViewInit() {
         var _a;
+        super.ngAfterViewInit();
         try {
             this.formDirective = this.injector.get(_angular_forms__WEBPACK_IMPORTED_MODULE_0__["FormGroupDirective"]);
         }
         catch (_b) { }
         this.form = this.form || ((_a = this.formDirective) === null || _a === void 0 ? void 0 : _a.form);
-        this.viewInit = true;
         this.cdRef.detectChanges();
     }
     get isDisabled() {
@@ -29484,7 +29490,7 @@ class InputMultitoggleComponent extends _input_base__WEBPACK_IMPORTED_MODULE_1__
             this._value = value;
             (_a = this.control) === null || _a === void 0 ? void 0 : _a.setValue(this.value);
         }
-        this.cdRef.detectChanges();
+        this.cdRef.markForCheck();
     }
     get value() {
         return this._value;
@@ -30412,7 +30418,7 @@ class InputMultiselectComponent extends _input_base__WEBPACK_IMPORTED_MODULE_2__
         var _a;
         this._items = value;
         (_a = this.control) === null || _a === void 0 ? void 0 : _a.setValue(value);
-        this.cdRef.detectChanges();
+        this.detectChanges();
     }
     get items() {
         var _a;
@@ -31572,7 +31578,7 @@ class InputRadioComponent extends _input_base__WEBPACK_IMPORTED_MODULE_1__["Inpu
     set value(value) {
         if (value != this._value) {
             this._value = value;
-            this.cdRef.detectChanges();
+            this.detectChanges();
             const element = document.getElementById(this.controlName + value);
             if (element)
                 element.checked = true;
@@ -31854,7 +31860,7 @@ class InputTimerComponent extends _input_base__WEBPACK_IMPORTED_MODULE_4__["Inpu
     set hoursPerDay(value) {
         this._hoursPerDay = value;
         this.updateForm(this.value);
-        this.cdRef.detectChanges();
+        this.detectChanges();
     }
     ;
     get hoursPerDay() {
@@ -32416,7 +32422,7 @@ class InputWorkloadComponent extends _input_base__WEBPACK_IMPORTED_MODULE_2__["I
             this._unit = value;
             this.maxValue = this.unit == "day" ? 24 : this.unit == "week" ? 120 : 480;
             this.valueToWork();
-            this.cdRef.detectChanges();
+            this.detectChanges();
         }
     }
     get unit() {
@@ -32810,9 +32816,9 @@ class InputSelectComponent extends _input_base__WEBPACK_IMPORTED_MODULE_3__["Inp
                 const current = this.control ? this.control.value : this.value;
                 this._items = [];
                 (_a = this.selectPicker) === null || _a === void 0 ? void 0 : _a.find('.input-select-dynamic-item').remove().end();
-                this.cdRef.detectChanges();
+                this.detectChanges();
                 this._items = value;
-                this.cdRef.detectChanges();
+                this.detectChanges();
                 (_b = this.selectPicker) === null || _b === void 0 ? void 0 : _b.selectpicker('refresh');
                 this.selectedValue = undefined;
                 this.setValue(current);
@@ -32833,7 +32839,7 @@ class InputSelectComponent extends _input_base__WEBPACK_IMPORTED_MODULE_3__["Inp
         var _a;
         if (this._loading != value) {
             this._loading = value;
-            this.cdRef.detectChanges();
+            this.detectChanges();
             (_a = this.selectPicker) === null || _a === void 0 ? void 0 : _a.selectpicker('refresh');
         }
     }
@@ -34362,6 +34368,9 @@ class InputLevelComponent extends _input_base__WEBPACK_IMPORTED_MODULE_3__["Inpu
     isEmpty(value) {
         return [undefined, "0", "", 0].includes(value);
     }
+    // public get isValid(): boolean {
+    //   return !this.levels.find(x => !x.valid);
+    // }
     updateControl() {
         if (this.control)
             this.control.setValue(this.levels.map(x => x.value).join(this.separator));
@@ -34383,6 +34392,7 @@ class InputLevelComponent extends _input_base__WEBPACK_IMPORTED_MODULE_3__["Inpu
                 if (this.stepValue)
                     this.levels[i].step = yield this.stepValue(parents, this.levels[i], children);
             }
+            // if(this.control) this.control.setErrors(this.isValid ? null : {invalid: true});  
             this.cdRef.detectChanges();
         }))();
     }
