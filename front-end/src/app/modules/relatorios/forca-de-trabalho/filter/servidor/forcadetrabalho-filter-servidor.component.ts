@@ -9,6 +9,7 @@ import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { PageReportFilterBase } from 'src/app/modules/base/page-report-filter-base';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-forcadetrabalho-filter-servidor',
@@ -46,8 +47,9 @@ export class ForcaDeTrabalhoFilterServidorComponent extends PageReportFilterBase
 
   public formValidation = (form?: FormGroup) => {
     if(this.form?.controls.data_inicio.value && this.form?.controls.data_inicio.value < this.planoSelecionado!.data_inicio_vigencia) return "Data inicial menor que o início da vigência do Plano!";
-    if(this.form?.controls.data_fim.value && this.form?.controls.data_fim.value > this.planoSelecionado!.data_fim_vigencia) return "Data final maior que o fim da vigência do Plano!";
     if(this.form?.controls.data_inicio.value && this.form?.controls.data_fim.value && this.form?.controls.data_inicio.value > this.form?.controls.data_fim.value) return "Data inicial maior que data final!";
+    if(this.form?.controls.data_fim.value && this.form?.controls.data_fim.value > this.planoSelecionado!.data_fim_vigencia) return "Data final maior que o fim da vigência do Plano!";
+    if(this.form?.controls.data_fim.value && this.form?.controls.data_fim.value > moment()) return "Data final não pode ser maior que a data de hoje!";
     return undefined;
   } 
 
@@ -75,8 +77,8 @@ export class ForcaDeTrabalhoFilterServidorComponent extends PageReportFilterBase
 
   public onPlanoChange(event: Event) {
     this.planoSelecionado = this.planos.find(x => x.key == this.form.controls.plano_id.value)?.data;
-    this.form.controls.data_inicio.setValue(this.planoSelecionado?.data_inicio_vigencia);
-    this.form.controls.data_fim.setValue(this.planoSelecionado?.data_fim_vigencia);
+/*     this.form.controls.data_inicio.setValue(this.planoSelecionado?.data_inicio_vigencia);
+    this.form.controls.data_fim.setValue(this.util.minDate(new Date(),this.planoSelecionado?.data_fim_vigencia)); */
   }
 
 }

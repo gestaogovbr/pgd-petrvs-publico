@@ -42,9 +42,15 @@ export type Metadado = {
 
 export type MetadadosPlano = {    
   concluido: Boolean,                       // define se o Plano é concluído, ou seja, se todas as suas demandas foram cumpridas.
+/*   distribuidas: Demanda[],
+  demandasAtrasadas: Demanda[],
+  demandasIniciadas: Demanda[], */
   demandasNaoIniciadas: Demanda[],          // todas as demandas ainda não iniciadas pelo servidor
   demandasEmAndamento: Demanda[],           // totas as demandas já iniciadas (data_inicio diferente de nulo), mas ainda não concluídas (data_entrega nula)
   demandasConcluidas: Demanda[],            // todas as demandas que possuem uma data de entrega não nula
+/*   demandasConcluidasComAtraso: Demanda[],
+  demandasConcluidasNoPrazo: Demanda[],
+  demandasNaoConcluidas: Demanda[], */
   demandasAvaliadas: Demanda[],             // todas as demandas cujo campo avaliacao_id não é nulo
   horasAfastamentoDecorridas: number,       // total das horas úteis dos afastamentos do servidor já ocorridos
   horasDemandasNaoIniciadas: number,        // soma do tempo pactuado de todas as demandas ainda não iniciadas
@@ -112,19 +118,20 @@ export type PlanoExtendido2 = {
   descricaoPlano: string,
   statusPlano: string,
   extras: MetadadosPlano,
-  horasDisponiveisPlano: number,                // total das horas úteis líquidas do Plano que ainda falta ser executado pelo servidor
-  horasLiquidasDecorridasPlano: number,         // total de horas úteis ainda disponíveis no plano para serem executadas pelo servidor
-  horasUteisLiquidasPlano: number,              // total de horas úteis do plano subtraídas as horas úteis dos afastamentos do servidor
-  percentualDecorridoAfastamentos: number,      // razão entre as horas úteis dos afastamentos já ocorridos, em relação às horas úteis totais dos afastamentos
-  percentualDecorridoPlano: number,             // razão entre as horas úteis decorridas e as horas úteis totais do Plano
-  percentualHorasDisponiveis: number,           // razão entre as horas líquidas ainda disponíveis do plano e as horas líquidas totais do Plano
-  percentualHorasLiquidasDecorridas: number,    // razão entre as horas úteis líquidas decorridas do plano e as horas úteis líquidas totais do plano
-  percentualHorasNaoIniciadas: number,          // razão entre as horas pactuadas das demandas não-iniciadas, em relação às horas úteis totais do Plano
-  percentualHorasEmAndamento: number,           // razão entre as horas pactuadas das demandas iniciadas mas ainda não concluidas, em relação às horas úteis totais do Plano
-  percentualHorasConcluidas: number,            // razão entre as horas pactuadas das demandas concluidas, em relação às horas úteis totais do Plano
-  percentualHorasAvaliadas: number,             // razão entre as horas pactuadas das demandas avaliadas, em relação às horas úteis totais do Plano
-  percentualHorasTotaisAlocadas: number,        // razão entre as horas totais alocadas e as horas úteis totais do Plano
-  percentualAfastamento: number,                // razão entre as horas de afastamento do servidor e as horas úteis totais do Plano
+  horasDisponiveisPlano: number,                    // total das horas úteis líquidas do Plano que ainda falta ser executado pelo servidor
+  horasAfastamentoTranscorrer: number,              // total de horas úteis dos afastamentos do servidor, ainda a transcorrerem
+  horasUteisLiquidasPlano: number,                  // total de horas úteis do plano subtraídas as horas úteis dos afastamentos do servidor
+  percentualDecorridoAfastamentos: number,          // razão entre as horas úteis dos afastamentos já ocorridos, em relação às horas úteis totais dos afastamentos
+  percentualDecorridoPlano: number,                 // razão entre as horas úteis decorridas e as horas úteis totais do Plano
+  percentualHorasDisponiveis: number,               // razão entre as horas líquidas ainda disponíveis do plano e as horas líquidas totais do Plano
+  percentualHorasAfastamentoTranscorrer: number,    // razão entre as horas de afastamento a transcorrer e as horas úteis totais de afastamento do servidor
+  percentualHorasNaoIniciadas: number,              // razão entre as horas pactuadas das demandas não-iniciadas, em relação às horas úteis totais do Plano
+  percentualHorasUteisLiquidasPlano: number,        // razão entre as horas pactuadas das demandas não-iniciadas, em relação às horas úteis totais do Plano
+  percentualHorasEmAndamento: number,               // razão entre as horas pactuadas das demandas iniciadas mas ainda não concluidas, em relação às horas úteis totais do Plano
+  percentualHorasConcluidas: number,                // razão entre as horas pactuadas das demandas concluidas, em relação às horas úteis totais do Plano
+  percentualHorasAvaliadas: number,                 // razão entre as horas pactuadas das demandas avaliadas, em relação às horas úteis totais do Plano
+  percentualHorasTotaisAlocadas: number,            // razão entre as horas totais alocadas e as horas úteis totais do Plano
+  percentualAfastamento: number,                    // razão entre as horas de afastamento do servidor e as horas úteis totais do Plano
   dadosGraficoPlano: any,
   dadosGraficoDemandas: any
 }

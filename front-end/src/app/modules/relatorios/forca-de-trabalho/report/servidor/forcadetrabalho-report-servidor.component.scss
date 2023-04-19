@@ -1,1 +1,12 @@
-
+.vertical {
+    //vertical-align: middle;
+    //text-align: center;
+    padding: 0 !important;
+    div {
+        transform: rotate(-90deg);
+        white-space: nowrap;
+        display: block;
+        width: 30px;
+        text-align: center;
+    }
+}

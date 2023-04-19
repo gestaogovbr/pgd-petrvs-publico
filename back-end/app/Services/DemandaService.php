@@ -269,11 +269,19 @@ class DemandaService extends ServiceBase
 
     public function avaliadas($usuario_id) {
         $result = [];
-        $demandas = Demanda::select("id")->where("usuario_id", $usuario_id)->whereNotNull("avaliacao_id")->get();
+        $demandas = Demanda::select("id")->where("usuario_id", $usuario_id)->whereNotNull("avaliacao_id")->where(["tempo_homologado",">",0])->get();
         foreach ($demandas as $demanda) {
             array_push($result, $demanda->id);
         }
         return $result;
+    }
+
+    public function isAprovada($demanda) {
+        return $demanda['avaliacao_id'] !== null && $demanda['tempo_homologado'] > 0;
+    }
+
+    public function isReprovada($demanda) {
+        return $demanda['avaliacao_id'] !== null && $demanda['tempo_homologado'] = 0;
     }
 
     public function isAvaliada($demanda) {
@@ -282,6 +290,10 @@ class DemandaService extends ServiceBase
 
     public function isConcluida($demanda) {
         return !empty($demanda['data_entrega']);
+    }
+
+    public function isIniciada($demanda) {
+        return !empty($demanda['data_inicio']);
     }
 
     public function isCumprida($demanda) {

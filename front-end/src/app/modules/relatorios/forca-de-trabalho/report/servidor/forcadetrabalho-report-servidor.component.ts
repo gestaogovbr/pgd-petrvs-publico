@@ -112,44 +112,56 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
 
   public async report(filter: any) {
     this.parametros = Object.assign({}, this.queryParams);
-    this.parametros.data_inicio = new Date(this.parametros.data_inicio);
-    this.parametros.data_fim = new Date(this.parametros.data_fim);
+    this.parametros.data_inicio = this.parametros.data_inicio ? new Date(this.parametros.data_inicio) : null;
+    this.parametros.data_fim = this.parametros.data_fim ? new Date(this.parametros.data_fim) : null;
     let result = await Promise.all([
       this.dao?.getById(this.parametros.usuario_id),
       this.planoDao?.getById(this.parametros.plano_id, ["demandas", "demandas.avaliacao", "unidade", "tipoModalidade"])
     ]);
     this.usuario = result[0];
     this.plano = result[1];
-    this.buscaPorPeriodo = !(this.parametros.data_inicio.getTime() == this.plano!.data_inicio_vigencia.getTime() && this.parametros.data_fim.getTime() == this.plano!.data_fim_vigencia.getTime());
+    //this.buscaPorPeriodo = !(this.parametros.data_inicio && this.parametros.data_fim && this.parametros.data_inicio.getTime() == this.plano!.data_inicio_vigencia.getTime() && this.parametros.data_fim.getTime() == this.plano!.data_fim_vigencia.getTime());
+    this.buscaPorPeriodo = this.parametros.data_inicio || this.parametros.data_fim;
     await this.prepararParaRelatorio(this.plano!);
     return [this.planoRelatorio];
   }
 
   public async prepararParaRelatorio(plano: Plano){
-      let $metadados: MetadadosPlano = await this.planoDao.metadadosPlano(plano!.id);
+      if(this.buscaPorPeriodo){
+        this.parametros.data_inicio = this.parametros.data_inicio || this.plano?.data_inicio_vigencia; 
+        this.parametros.data_fim = this.parametros.data_fim || this.util.minDate(new Date(), this.plano?.data_fim_vigencia); 
+      }
+      let $metadados: MetadadosPlano = await this.planoDao.metadadosPlano(plano!.id, this.buscaPorPeriodo ? this.parametros.data_inicio : null, this.buscaPorPeriodo ? this.parametros.data_fim : null);
       if (!Array.isArray($metadados.demandasNaoIniciadas)) $metadados.demandasNaoIniciadas = [$metadados.demandasNaoIniciadas];
       if (!Array.isArray($metadados.demandasEmAndamento)) $metadados.demandasEmAndamento = [$metadados.demandasEmAndamento];
       let $horasUteisLiquidasPlano = $metadados.horasUteisTotais - $metadados.horasUteisAfastamento;
-      let $horasLiquidasDecorridasPlano = $metadados.horasUteisDecorridas - $metadados.horasAfastamentoDecorridas;
-      let $percentualHorasLiquidasDecorridas = $metadados.horasUteisTotais ? Math.round($horasLiquidasDecorridasPlano / $metadados.horasUteisTotais * 10000)/100 : 0;
+      let $percentualAfastamento = $metadados.horasUteisTotais ? Math.round($metadados.horasUteisAfastamento / $metadados.horasUteisTotais * 10000)/100 : 0;
+      let $percentualDecorridoPlano = $metadados.horasUteisTotais ? Math.round($metadados.horasUteisDecorridas / $metadados.horasUteisTotais * 10000)/100 : 0;
+      let $percentualDecorridoAfastamentos = $metadados.horasUteisAfastamento ? Math.round($metadados.horasAfastamentoDecorridas / $metadados.horasUteisAfastamento * 10000)/100 : 0;
+      let $percentualHorasAvaliadas = $metadados.horasUteisTotais ? Math.round($metadados.horasDemandasAvaliadas / $metadados.horasUteisTotais * 10000)/100 : 0;
+      let $percentualHorasConcluidas = $metadados.horasUteisTotais ? Math.round($metadados.horasDemandasConcluidas / $metadados.horasUteisTotais * 10000)/100 : 0;
+      let $percentualHorasEmAndamento = $metadados.horasUteisTotais ? Math.round($metadados.horasDemandasEmAndamento / $metadados.horasUteisTotais * 10000)/100 : 0;
+      let $percentualHorasNaoIniciadas = $metadados.horasUteisTotais ? Math.round($metadados.horasDemandasNaoIniciadas / $metadados.horasUteisTotais * 10000)/100 : 0;
+      let $percentualHorasTotaisAlocadas = $metadados.horasUteisTotais ? Math.round($metadados.horasTotaisAlocadas / $metadados.horasUteisTotais * 10000)/100 : 0;
       this.planoRelatorio = {
           'plano': plano!,
           'extras': $metadados,
           'descricaoPlano': (plano!.tipo_modalidade!.nome || "") + " - " + this.dao!.getDateFormatted(plano!.data_inicio_vigencia) + " a " + this.dao!.getDateFormatted(plano!.data_fim_vigencia) + " (" + plano!.unidade!.sigla + ")",
           'statusPlano': $metadados.concluido ? (plano.demandas.length ? 'CONCLUÍDO - estatísticas CONCLUSIVAS' : 'VAZIO - nenhuma demanda foi cadastrada neste Plano') : 'EM ANDAMENTO - estatísticas sujeitas a alterações',
-          'horasDisponiveisPlano': $horasUteisLiquidasPlano - $horasLiquidasDecorridasPlano,
-          'horasLiquidasDecorridasPlano': $horasLiquidasDecorridasPlano,
+          'horasDisponiveisPlano': $horasUteisLiquidasPlano - $metadados.horasUteisDecorridas,
           'horasUteisLiquidasPlano': $horasUteisLiquidasPlano,
-          'percentualDecorridoAfastamentos': $metadados.horasUteisAfastamento ? Math.round($metadados.horasAfastamentoDecorridas / $metadados.horasUteisAfastamento * 10000)/100 : 0,
-          'percentualDecorridoPlano': $metadados.horasUteisTotais ? Math.round($metadados.horasUteisDecorridas / $metadados.horasUteisTotais * 10000)/100 : 0,
-          'percentualAfastamento': $metadados.horasUteisTotais ? Math.round($metadados.horasUteisAfastamento / $metadados.horasUteisTotais * 10000)/100 : 0,
-          'percentualHorasLiquidasDecorridas': $percentualHorasLiquidasDecorridas,
-          'percentualHorasTotaisAlocadas': $metadados.horasUteisTotais ? Math.round($metadados.horasTotaisAlocadas / $metadados.horasUteisTotais * 10000)/100 : 0,
-          'percentualHorasNaoIniciadas': $metadados.horasUteisTotais ? Math.round($metadados.horasDemandasNaoIniciadas / $metadados.horasUteisTotais * 10000)/100 : 0,
-          'percentualHorasDisponiveis' : 100 - $percentualHorasLiquidasDecorridas,
-          'percentualHorasEmAndamento': $metadados.horasUteisTotais ? Math.round($metadados.horasDemandasEmAndamento / $metadados.horasUteisTotais * 10000)/100 : 0,
-          'percentualHorasConcluidas': $metadados.horasUteisTotais ? Math.round($metadados.horasDemandasConcluidas / $metadados.horasUteisTotais * 10000)/100 : 0,
-          'percentualHorasAvaliadas': $metadados.horasUteisTotais ? Math.round($metadados.horasDemandasAvaliadas / $metadados.horasUteisTotais * 10000)/100 : 0,
+          'horasAfastamentoTranscorrer': $metadados.horasUteisAfastamento - $metadados.horasAfastamentoDecorridas,
+          'percentualDecorridoAfastamentos': $percentualDecorridoAfastamentos,
+          'percentualDecorridoPlano': $percentualDecorridoPlano,
+          'percentualAfastamento': $percentualAfastamento,
+          'percentualHorasAfastamentoTranscorrer': Math.round(100 - $percentualDecorridoAfastamentos),
+          'percentualHorasTotaisAlocadas': $percentualHorasTotaisAlocadas,
+          'percentualHorasNaoIniciadas': $percentualHorasNaoIniciadas,
+          'percentualHorasDisponiveis' : Math.round(100 - $percentualDecorridoPlano),
+          'percentualHorasEmAndamento': $percentualHorasEmAndamento,
+          'percentualHorasConcluidas': $percentualHorasConcluidas,
+          'percentualHorasAvaliadas': $percentualHorasAvaliadas,
+          'percentualHorasUteisLiquidasPlano': Math.round(100 - $percentualAfastamento),
           'dadosGraficoPlano': this.obterDadosGrafico($metadados, 'GERAL'),
           'dadosGraficoDemandas': this.obterDadosGrafico($metadados, 'DETALHADO')
       };
@@ -196,7 +208,7 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
         },
         {
           label: 'Disponível no Plano',
-          data: [metadados.horasUteisTotais - metadados.horasDemandasNaoIniciadas - metadados.horasDemandasEmAndamento - metadados.horasDemandasConcluidas - metadados.horasDemandasAvaliadas],
+          data: [metadados.horasUteisTotais - metadados.horasUteisAfastamento - metadados.horasUteisDecorridas],
           backgroundColor: '#6c757d',
           stack: 'Demandas'
         }
