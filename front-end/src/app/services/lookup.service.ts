@@ -6,7 +6,8 @@ export type LookupItem =  {
   code?: string,
   color?: string,
   icon?: string,
-  data?: any
+  data?: any,
+  
 };
 
 @Injectable({
@@ -498,6 +499,27 @@ export class LookupService {
     { key: "ESCRITORIO", value: "Escritório", icon: "bi bi-house-gear", data: ["DEPARTAMENTO"]},
     { key: "GERENTE", value: "Gerente", icon: "bi bi-person-gear", data: ["HUMANO"]},
     { key: "ACESSAR", value: "Acessar o projeto", icon: "bi bi-unlock", data: ["HUMANO", "DEPARTAMENTO"]}
+  ];
+  public IDIOMAS : LookupItem[] = [
+    { 'key': "ALEMAO", 'value': 'Alemão' }, 
+    { 'key': "ARABE", 'value': 'Árabe' }, 
+    { 'key': "CHINES", 'value': 'Chinês' }, 
+    { 'key': "ESPANHOL", 'value': 'Espanhol' }, 
+    { 'key': "INGLES", 'value': 'Inglês' }
+    ];
+
+    public NIVEL_IDIOMA : LookupItem[] = [
+    { 'key': 'BASICO', 'value': 'Básico' }, 
+    { 'key': 'INTERMEDIARIO', 'value': 'Intermediário' }, 
+    { 'key': 'AVANCADO', 'value': 'Avançado' }, 
+    { 'key': 'FLUENTE', 'value': 'Fluente' }
+    ];
+  public ESTADO_CIVIL : LookupItem[] = [
+  { 'key': 'CASADO', 'value': 'Casado' }, 
+  { 'key': 'DIVORCIADO', 'value': 'Divorciado' }, 
+  { 'key': 'SOLTEIRO', 'value': 'Solteiro' }, 
+  { 'key': 'SEPARADO', 'value': 'Separado' }, 
+  { 'key': 'VIUVO', 'value': 'Viúvo' }
   ];
 
   public getLookup(itens: LookupItem[], key: any) {

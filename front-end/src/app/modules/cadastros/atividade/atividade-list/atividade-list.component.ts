@@ -69,8 +69,8 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
   public dynamicOptions(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let atividade: Atividade = row as Atividade;
-    
-    //result.push({label: "Informações", icon: "bi bi-info-circle", onClick: (atividade: Atividade) => this.go.navigate({route: ['cadastros', 'atividade', atividade.id, 'consult']}, {modal: true})});  
+
+    //result.push({label: "Informações", icon: "bi bi-info-circle", onClick: (atividade: Atividade) => this.go.navigate({route: ['cadastros', 'atividade', atividade.id, 'consult']}, {modal: true})});
     // Testa se o usuário possui permissão para exibir dados de atividade
     if (this.auth.hasPermissionTo("MOD_ATV_CONS")) result.push({icon: "bi bi-info-circle", label: "Informações", onClick: this.consult.bind(this)});
     // Testa se o usuário possui permissão para homologar a atividade
@@ -83,7 +83,6 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
   public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let atividade: Atividade = row as Atividade;
-
     if(atividade.homologado || !this.auth.hasPermissionTo('MOD_ATV_EDT_OTR_OP_HOM')) {
       result.push(Object.assign({}, this.grid?.BUTTON_EDIT, {onClick: this.edit.bind(this)}));
     } else {
@@ -137,7 +136,7 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
           }
         } else {
           this.formHomologacao!.markAllAsTouched();
-        }  
+        }
       } else {
         result.dialog.close();
       }

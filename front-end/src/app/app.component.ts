@@ -143,7 +143,11 @@ export class AppComponent {
       TESTE_CALCULA_DATATEMPO: { name: "Teste calculaDataTempo", permition: '', route: ['teste', 'calcula-tempo'], icon: "bi bi-check-all" },
       /* RAIO X */
       RXHOME: { name: this.lex.noun("Home RX", true), permition: 'RX', route: ['raioxhome', 'Home RX'], icon: "bi bi-toggle-off" },
-      RXCADASTRO_PESSOAL: { name: this.lex.noun("Cadastro dos Dados Pessoais", true), permition: 'RX_CAD_PES', route: ['raioxhome/pessoal', 'cadpes'], icon: "bi bi-activity" },
+      RXCADASTRO_PESSOAL: { name: this.lex.noun("Cadastro dos Dados Pessoais", true), permition: 'MOD_RX_VIS_DPE', route: ['raioxhome', 'pessoal'], icon: "bi bi-activity" },
+      RXCADASTRO_PROFISSIONAL: { name: this.lex.noun("Cadastro dos Dados Profissionais", true), permition: 'MOD_RX_VIS_DPR', route: ['raioxhome', 'pessoal'], icon: "bi bi-activity" },
+      RXCADASTRO_ATRIBUTOS: { name: this.lex.noun("Cadastro dos Atributos Comportamentais", true), permition: 'MOD_RX_VIS_ATR', route: ['raioxhome', 'pessoal'], icon: "bi bi-activity" },
+      RXVISUALIZA_OPORTUNIDADES: { name: this.lex.noun("Cadastro Pesquisa Oportunidades", true), permition: 'MOD_RX_VIS_OPO', route: ['raioxhome', 'pessoal'], icon: "bi bi-activity" },
+      RXCADASTRO_OPORTUNIDADES: { name: this.lex.noun("Cadastro das Oportunidades", true), permition: 'MOD_RX_EDT_OPO', route: ['raioxhome', 'pessoal'], icon: "bi bi-activity" },
       /*PROJETOS*/
 
     
@@ -216,17 +220,58 @@ export class AppComponent {
 
     this.menuRaioX= [
       {
-        name: "Home RX", permition: "RX", route: ['raioxhome'], id: "navbarDropdownCadastros", menu: [
-          this.menuSchema.RXHOME,
-         
+        name: "Cadastros", permition: "MOD_RX_VIS_DPE", route: ['raioxhome'], id: "navbarDropdownCadastros", menu: [
+          this.menuSchema.RXCADASTRO_PESSOAL,
+          this.menuSchema.RXCADASTRO_PROFISSIONAL,
+          this.menuSchema.RXCADASTRO_ATRIBUTOS,
+          this.menuSchema.RXCADASTRO_OPORTUNIDADES
         ]
       },
       {
-        name: "Cadastros de Dados Pessoais", permition: "RX_CAD_PES", route: ['raioxhome/pessoal'], id: "navbarDropdownGestao", menu: [
-         
+        name: "Oportunidades", permition: "MOD_RX_VIS_DPE", route: ['raioxhome'], id: "navbarDropdownCadastros", menu: [
           this.menuSchema.RXCADASTRO_PESSOAL,
+          this.menuSchema.RXCADASTRO_PROFISSIONAL,
+          this.menuSchema.RXCADASTRO_ATRIBUTOS,
+          this.menuSchema.RXCADASTRO_OPORTUNIDADES
+        ]
+      },
+      {
+        name: "Pesquisas", permition: "MOD_RX_VIS_DPE", route: ['raioxhome'], id: "navbarDropdownCadastros", menu: [
+          this.menuSchema.RXCADASTRO_PESSOAL,
+          this.menuSchema.RXCADASTRO_PROFISSIONAL,
+          this.menuSchema.RXCADASTRO_ATRIBUTOS,
+          this.menuSchema.RXCADASTRO_OPORTUNIDADES
         ]
       }
+
+    ];
+
+    this.menuPonto= [
+      {
+        name: "Cadastros", permition: "MOD_RX_VIS_DPE", route: ['raioxhome'], id: "navbarDropdownCadastros", menu: [
+          this.menuSchema.RXCADASTRO_PESSOAL,
+          this.menuSchema.RXCADASTRO_PROFISSIONAL,
+          this.menuSchema.RXCADASTRO_ATRIBUTOS,
+          this.menuSchema.RXCADASTRO_OPORTUNIDADES
+        ]
+      },
+      {
+        name: "Oportunidades", permition: "MOD_RX_VIS_DPE", route: ['raioxhome'], id: "navbarDropdownCadastros", menu: [
+          this.menuSchema.RXCADASTRO_PESSOAL,
+          this.menuSchema.RXCADASTRO_PROFISSIONAL,
+          this.menuSchema.RXCADASTRO_ATRIBUTOS,
+          this.menuSchema.RXCADASTRO_OPORTUNIDADES
+        ]
+      },
+      {
+        name: "Pesquisas", permition: "MOD_RX_VIS_DPE", route: ['raioxhome'], id: "navbarDropdownCadastros", menu: [
+          this.menuSchema.RXCADASTRO_PESSOAL,
+          this.menuSchema.RXCADASTRO_PROFISSIONAL,
+          this.menuSchema.RXCADASTRO_ATRIBUTOS,
+          this.menuSchema.RXCADASTRO_OPORTUNIDADES
+        ]
+      }
+
     ];
 
     this.menuContexto = [
@@ -238,29 +283,10 @@ export class AppComponent {
       { key: "RAIOX", name: "Raio X", menu: this.menuRaioX }
     ];
     this.contexto = this.menuContexto[0].key;
-    /*this.menuProjeto
-    this.menuGestao
-    this.menuOperacional
-    this.menuPonto*/
-    
+   // this.contexto.key = "PGD"
    
-  
-    /*this.menuToolbar = [
-      { name: "Cadastros", permition: "MENU_CAD_ACESSO", route: ['cadastros'], id: "navbarDropdownCadastros", menu: "cadastros" },
-      { name: "Gestão", permition: "MENU_GESTAO_ACESSO", route: ['gestao'], id: "navbarDropdownGestao", menu: "gestao" },
-      { name: "Relatórios", permition: "MENU_REL_ACESSO", route: ['relatorios'], id: "navbarDropdownRelatorios", menu: "relatorios" },
-      { name: "Configurações", permition: "MENU_CONFIG_ACESSO", route: ['configuracoes'], id: "navbarDropdownConfiguracoes", menu: "configuracoes" },
-      { name: "Desenvolvedor", permition: "DEV_MENU_LOGS_ACESSO", route: ['logs'], id: "navbarDropdownLogs", menu: "logs" }
-    ];*/
-
-
   }
   
-
-  /*public getMenuItems(nome: string) {
-    return this.menu[nome];
-  }*/
-
   public onContextoSelect(item: any) {
     this.contexto = item;
     console.log('onContexto',item)
@@ -282,30 +308,14 @@ export class AppComponent {
       case "RAIOX":
         return this.menuRaioX;
 
+      case "PONTO":
+        return this.menuPonto;
+
       default:
         return [];
     }
 
-    /*return this.contexto == "PGD" ? this.menuPgd : 
-      this.contexto == "PROJETO" ? this.menuProjeto : 
-      this.contexto == "RAIOX" ? this.menuRaioX : [];
-    /*let todos = [...this.menuSchema?.cadastros, ...this.menuSchema?.gestao, ...this.menuSchema?.relatorios, ...this.menuSchema?.configuracoes, ...this.menuSchema?.logs];
-    let permitions = todos.map(m => !m.permition?.length || !this.auth.hasPermissionTo(m.permition) ? "" : m.permition);
-    let menuDetectChanges = JSON.stringify(permitions);
-    let itensMenu = (itens: any[]): any[] => itens.filter(x => !x.permition?.length || permitions.includes(x.permition));
-
-    if(this._menuDetectChanges != menuDetectChanges) {
-      this._menuDetectChanges = menuDetectChanges;
-      this._menu = {
-        cadastros: itensMenu(this.menuSchema.cadastros),
-        gestao: itensMenu(this.menuSchema.gestao),
-        relatorios: itensMenu(this.menuSchema.relatorios),
-        configuracoes: itensMenu(this.menuSchema.configuracoes),
-        logs: itensMenu(this.menuSchema.logs)
-      };
-    }
-
-    return this.;*/
+   
   }
 
   public ngAfterViewInit() {

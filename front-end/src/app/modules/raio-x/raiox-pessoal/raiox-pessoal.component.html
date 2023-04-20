@@ -1,180 +1,267 @@
-<div class="container-fluid">
-    <label class="lblescdiv" id="lblapresente" onclick="esc()">
-        <h4>Apresente-se <i class="fa-solid fa-square-plus" id="icoesc"></i></h4>
-    </label>
-    <div class="form-group col-md-12" id="divtextap">
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title">
+    <!--(submit)="onSaveData()" (cancel)="onCancel()"></editable-form>-->
+
+    <div class="row mt-5">
+        <input-textarea label="Apresente-se" [size]="12" [bold]="true" icon="bi-card-list" controlName="apresentese"
+            [control]="form!.controls.apresentese"></input-textarea><!-- [control]="form!.controls.apresentese">-->
+    </div>
+
+    <div class="row mt-5">
+        <label class="fw-bold">Dados residenciais</label>
+        <hr>
+    </div>
+
+    <div class="row mt-2">
+        <input-select [size]="4" label="Estado" icon="bi bi-arrow-up-right-circle" controlName="estados"
+            [control]="form!.controls.estados" [items]="lookup.UF" (change)="onEstadosChange()">
+        </input-select>
+        <input-select [size]="4" label="Município" icon="bi bi-arrow-up-right-circle" controlName="municipios"
+            [control]="form!.controls.municipios" [items]="municipios">
+        </input-select>
+        <input-text [size]="4" label="Telefone de contato WhatsAPP" icon="bi bi-arrow-up-right-circle"
+            controlName="telefone" [control]="form!.controls.telefone"></input-text>
+    </div>
 
 
-        <div class="form-group input-group">
-            <span class="input-group-text fw-bold" id="spanap">Fale um pouco sobre você<i
-                    class="fa fa-align-justify"></i></span>
-            <textarea type="text" class="form-control input" aria-describedby="inputGroupPrepend3"
-                aria-label="Apresente-se" id="textap" name="textap" onchange=""></textarea>
-        </div>
+    <div class="row mt-5">
+        <label class="fw-bold">Estado Civil</label>
+        <hr>
+    </div>
+    <div class="row mt-2">
+        <input-select [size]="5" label="Estado Civil" icon="bi bi-arrow-up-right-circle" controlName="estadoCivil"
+            [control]="form!.controls.estadoCivil" [items]="estadoCivil">
+        </input-select>
+        <input-radio [size]="3" label="Possui Filhos?" icon="fas fa-hourglass-start" controlName="radioFilhos"
+            [control]="form!.controls.radioFilhos" labelInfo="Possui Filhos?" [items]="lookup.SIMNAO"></input-radio>
+        <input-number [hidden]="form!.controls.radioFilhos.value ? undefined : 'true'" [size]="4" label="Quantos?"
+            icon="bi bi-arrow-up-right-circle" controlName="qtsFilhos" [control]="form!.controls.qtsFilhos"
+            [minValue]="0"></input-number>
+    </div>
+    <div class="row mt-5">
+        <label class="fw-bold">Idiomas</label>
+        <hr>
+    </div>
+    <div class="row my-3">
+        <input-radio [size]="3" label="Fala outros idiomas?" icon="fas fa-hourglass-start" controlName="radioFalaIdioma"
+            [control]="form!.controls.radioFalaIdioma" [items]="lookup.SIMNAO">
+        </input-radio>
+    </div>
+    <div *ngIf="form!.controls.radioFalaIdioma.value ? 'true' : undefined">
+        <input-multiselect controlName="idiomasM" [size]="8" [control]="form!.controls.idiomasM" [addItemHandle]="addItemIdioma.bind(this)" noBox>
+
+            <input-select [size]="3" label="Idioma" icon="fas fa-sign-out-alt" controlName="idioma" liveSearch
+                [control]="form!.controls.idioma" [items]="idiomas">
+
+            </input-select>
+            <input-select [size]="3" label="Qual nível de fala?" icon="fas fa-sign-out-alt" controlName="idiomaFala"
+                 [control]="form!.controls.idiomaFala" [items]="nivelIdioma">
+            </input-select>
+            <input-select [size]="3" label="Qual nível de escrita?" icon="fas fa-sign-out-alt"
+                controlName="idiomaEscrita"  [control]="form!.controls.idiomaEscrita" [items]="nivelIdioma">
+            </input-select>
+            <input-select [size]="3" label="Qual nível de entendimento?" icon="fas fa-sign-out-alt"
+                controlName="idiomaEntendimento"  [control]="form!.controls.idiomaEntendimento"
+                [items]="nivelIdioma">
+            </input-select>
+
+        </input-multiselect>
+    </div>
+    <div class="row mt-5">
+        <label class="fw-bold">Graduação</label>
+        <hr>
+    </div>
+    <div class="row my-3">
+        <input-radio [size]="2" label="Possui Graduação?" icon="fas fa-hourglass-start" controlName="radioGraduacao"
+            [control]="form!.controls.radioGraduacao" labelInfo="Possui graduacão?" [items]="lookup.SIMNAO">
+        </input-radio>
+        
+        <input-radio [hidden]="form!.controls.radioGraduacao.value ? 'true': undefined" [size]="2"
+            label="Pretende Cursar?" icon="fas fa-hourglass-start" controlName="radioPretendeGraduacao"
+            [control]="form!.controls.radioPretendeGraduacao" labelInfo="Pretende Cursar?" [items]="lookup.SIMNAO">
+        </input-radio>
+        
+    </div>
+    <!--<div class="row my-3">
+        <input-radio [disabled]="form!.controls.radioGraduacao.value ? 'true': undefined" [size]="2"
+            label="Pretende Cursar?" icon="fas fa-hourglass-start" controlName="radioPretendeGraduacao"
+            [control]="form!.controls.radioPretendeGraduacao" labelInfo="Pretende Cursar?" [items]="lookup.SIMNAO">
+        </input-radio>
+    </div>-->
+    <div *ngIf="form!.controls.radioGraduacao.value || form!.controls.radioPretendeGraduacao.value">
+        <input-multiselect  controlName="graduacao" [size]="12" [control]="form!.controls.graduacao"
+            [addItemHandle]="addItemGraduacao.bind(this)" noBox>
+
+            <input-select [size]="6" label="Area" icon="fas fa-sign-out-alt" controlName="area"
+                [control]="form!.controls.area" [items]="graduacaoArea" (change)="onAreaChange()">
+
+            </input-select>
+            <input-select [size]="6" label="Curso" icon="fas fa-sign-out-alt" controlName="curso" liveSearch
+                [control]="form!.controls.curso" [items]="cursos"></input-select>
+
+        </input-multiselect>
+    </div>
+    <div class="row mt-5">
+        <label class="fw-bold">Pós-Graduação</label>
+        <hr>
 
         <div class="row my-3">
-            <div class="col-lg-6">
-                <label class="label fw-bolder" id="lblresidencia" onclick="">Dados residenciais</label>
-            </div>
+            <input-radio [size]="2" label="Possui Pós-Graduação?" icon="fas fa-hourglass-start"
+                controlName="radioPosGraduacao" [control]="form!.controls.radioPosGraduacao"
+                labelInfo="Possui Pós graduacão?" [items]="lookup.SIMNAO">
+            </input-radio>
+        </div>
+        <div class="row my-3">
+            <input-radio [size]="2" label="Pretende Cursar?" icon="fas fa-hourglass-start"
+                controlName="radioPretendePosGraduacao" [control]="form!.controls.radioPretendePosGraduacao"
+                labelInfo="Pretende Cursar?" [items]="lookup.SIMNAO">
+            </input-radio>
         </div>
 
-        <div class="row">
-            <div class="col-2">
-                <label>Estado</label>
-            </div>
-            <div class="col-4">
-                <label>Municipio</label>
-            </div>
-            <div class="col-4">
-                <label>Telefone de contato WhatsAPP</label>
-            </div>
-        </div>
+        <input-multiselect label="Pós-Graduação" controlName="posgraduacao" [size]="12"
+            [control]="form!.controls.posgraduacao" [addItemHandle]="addItemGraduacao.bind(this)" noBox>
 
-        <div class="row">
-            <div class="col-2">
-                <select id="cadpesestado" class="form-select form-control input"
-                    onchange="buscaMunicipio($(this).val())" oninvalid="">
-                     <option *ngFor="let estado of estados" [value]="estado">{{estado}}</option>
-                    <!--<option value="" selected></option>
-                    <option value="Acre"> Acre</option>
-                    <option value="Alagoas"> Alagoas</option>
-                    <option value="Amapá"> Amapá</option>
-                    <option value="Amazonas"> Amazonas</option>
-                    <option value="Bahia"> Bahia</option>
+            <input-select [size]="6" label="Area" icon="fas fa-sign-out-alt" controlName="areaPos" liveSearch
+                [control]="form!.controls.areaPos" [items]="graduacaoArea" (change)="onAreaChange()">
 
-                    <option value="Ceará"> Ceará</option>
-                    <option value="Espírito Santo"> Espírito Santo</option>
-                    <option value="Goiás"> Goiás</option>
-                    <option value="Maranhão"> Maranhão</option>
-                    <option value="Mato Grosso"> Mato Grosso</option>
+            </input-select>
+            <input-select [size]="6" label="Curso" icon="fas fa-sign-out-alt" controlName="cursoPos" liveSearch
+                [control]="form!.controls.cursoPos"></input-select>
 
-                    <option value="Mato Grosso do Sul"> Mato Grosso do Sul</option>
-                    <option value="Minas Gerais"> Minas Gerais</option>
-                    <option value="Pará"> Pará</option>
-                    <option value="Paraíba"> Paraíba</option>
-                    <option value="Paraná"> Paraná</option>
-
-                    <option value="Pernambuco"> Pernambuco</option>
-                    <option value="Piauí"> Piauí</option>
-                    <option value="Rio de Janeiro"> Rio de Janeiro</option>
-                    <option value="Rio Grande do Norte"> Rio Grande do Norte</option>
-                    <option value="Rio Grande do Sul"> Rio Grande do Sul</option>
-
-                    <option value="Rondônia"> Rondônia</option>
-                    <option value="Roraima"> Roraima</option>
-                    <option value="Santa Catarina"> Santa Catarina</option>
-                    <option value="São Paulo"> São Paulo</option>
-                    <option value="Sergipe"> Sergipe</option>
-
-                    <option value="Tocantins"> Tocantins</option>
-                    <option value="Distrito Federal"> Distrito Federal</option>-->
-
-                </select>
-            </div>
-            <div class="col-4">
-                <select id="municipioDP" class="form-select form-control input" onchange="" oninvalid="" disabled>
-                    <option value="" selected>Selecione...</option>
-                </select>
-            </div>
-            <!--<div class="col-4">
-                  <input type="text" class="form-control" id="txtmunicipio" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-              </div>-->
-            <div class="col-4">
-                <input type="text" class="form-control phone" name="fonepessoal"
-                    id="fonepessoal"><!-- pattern="[0-9]{2}-[0-9]{5}-[0-9]{4}-->
-
-            </div>
-        </div>
+        </input-multiselect>
     </div>
+    <div class="row mt-5">
+        <label class="fw-bold">Mestrado</label>
+        <hr>
 
-    <hr>
-
-    <div class="row mb-3 mt-3">
-        <label class="lblescdiv1" id="lblfamilia" onclick="escfam()">
-            <h4>Família <i class="fas fa-solid fa-square-plus" id="icoescfam"></i></h4>
-        </label>
-    </div>
-    <div id="selectfam">
-        <div class="row">
-            <div class="form-group col-md-4">
-                <label for="cadpesecinput"> Estado Civil <i class="fa fa-solid fa-arrows-to-circle"></i>
-                </label>
-
-                <select id="cadpesecinput" class="form-select form-control input" onchange="" oninvalid="">
-                    <option value="" selected></option>
-                    <option value="Casado"> Casado</option>
-                    <option value="Divorciado"> Divorciado</option>
-                    <option value="Solteiro"> Solteiro</option>
-                    <option value="Separado"> Separado</option>
-                    <option value="Viúvo"> Viúvo</option>
-                </select>
-            </div>
-
-            <div class="form-group col-md-4 d-flex justify-content-center" id="radiofam">
-                <div>
-                    <label for="cadpesradiofilhosim"> Possui filhos ?</label><i class="fa fa-solid fa-child"></i>
-                    <p></p>
-                    <div class="form-group form-check-inline">
-                        <input class="form-check-input align-self-center" type="radio" name="radiofilhos"
-                            id="cadpesradiofilhosim" value="Sim">
-                        <label class="form-check-label" for="cadpesradiofilhosim"> Sim</label>
-                    </div>
-                    <div class="form-group form-check-inline">
-                        <input class="form-group form-check-input" type="radio" name="radiofilhos"
-                            id="cadpesradiofilhosnão" value="Não" checked>
-                        <label class=" form-group form-check-label" for="cadpesradiofilhosnão"> Não</label>
-                    </div>
-                </div>
-
-            </div>
-            <div class="form-group col-md-2" id="txtfam">
-                <label for="cadpestxtfilho"> Quantos?
-                </label>
-                <input type="number" min="1" class="form-control" aria-describedby="inputGroupPrepend3"
-                    id="cadpestxtfilho" placeholder="" disabled>
-
-            </div>
-
-
+        <div class="row my-3">
+            <input-radio [size]="2" label="Possui Mestrado?" icon="fas fa-hourglass-start" controlName="radioMestrado"
+                [control]="form!.controls.radioMestrado" labelInfo="Possui Mestrado?" [items]="lookup.SIMNAO">
+            </input-radio>
         </div>
-    </div><!--SelectFAm-->
-
-    <hr>
-
-    <div class="row mb-3 mt-3">
-        <label class="lblidio" id="lblidio" onclick="escidio()">
-            <h4>Idiomas <i class="fa-solid fa-square-plus" id="icoescidio"></i></h4>
-        </label>
-    </div>
-    <div id="selectidio">
-        <div class="row mb-3">
-
-            <div class="form-group col-lg-6" id="radioidio">
-                <div>
-                    <label for="cadidiosim"> Você se comunica por outros idiomas?</label><i
-                        class="fa-solid fa-earth-americas"></i>
-                    <p></p>
-                    <div class="form-group form-check-inline">
-                        <input class="form-check-input align-self-center" type="radio" name="radioidio" id="cadidiosim"
-                            value="Sim">
-                        <label class="form-check-label" for="cadidiosim"> Sim</label>
-                    </div>
-                    <div class="form-group form-check-inline">
-                        <input class="form-group form-check-input" type="radio" name="radioidio" id="cadidionao"
-                            value="Não" checked>
-                        <label class=" form-group form-check-label" for="cadidionao"> Não</label>
-                    </div>
-                </div>
-
-            </div>
+        <div class="row my-3">
+            <input-radio [size]="2" label="Pretende Cursar?" icon="fas fa-hourglass-start"
+                controlName="radioPretendeMestrado" [control]="form!.controls.radioPretendeMestrado"
+                labelInfo="Pretende Cursar?" [items]="lookup.SIMNAO">
+            </input-radio>
         </div>
-        <div id="selectidio1">
-            <div class="row">
-                <div class="form-group col-lg-2">
-                    <label for="selectcadidio1"> Idioma <i class="fa-solid fa-language"></i>
-                    </label>
 
-                    <select id="selectcadidio1" class="form-select form-control input" onchange="" oninvalid="">
+        <input-multiselect label="Mestrado" controlName="mestrado" [size]="12" [control]="form!.controls.mestrado"
+            [addItemHandle]="addItemGraduacao.bind(this)" noBox>
+
+            <input-select [size]="6" label="Area" icon="fas fa-sign-out-alt" controlName="areaMestrado" liveSearch
+                [control]="form!.controls.areaMestrado" [items]="graduacaoArea" (change)="onAreaChange()">
+
+            </input-select>
+            <input-text [size]="6" label="Curso" icon="far fa-edit" controlName="cursoMestrado"
+                [control]="form!.controls.cursoMestrado"></input-text>
+
+        </input-multiselect>
+    </div>
+    <div class="row mt-5">
+        <label class="fw-bold">Doutorado</label>
+        <hr>
+
+        <div class="row my-3">
+            <input-radio [size]="2" label="Possui Doutorado?" icon="fas fa-hourglass-start" controlName="radioDoutorado"
+                [control]="form!.controls.radioDoutorado" labelInfo="Possui graduacão?" [items]="lookup.SIMNAO">
+            </input-radio>
+        </div>
+        <div class="row my-3">
+            <input-radio [size]="2" label="Pretende Cursar?" icon="fas fa-hourglass-start"
+                controlName="radioPretendeDoutorado" [control]="form!.controls.radioPretendeDoutorado"
+                labelInfo="Pretende Cursar?" [items]="lookup.SIMNAO">
+            </input-radio>
+        </div>
+
+        <input-multiselect label="Doutorado" controlName="doutorado" [size]="12" [control]="form!.controls.doutorado"
+            [addItemHandle]="addItemGraduacao.bind(this)" noBox>
+
+            <input-select [size]="6" label="Area" icon="fas fa-sign-out-alt" controlName="areaDoutorado" liveSearch
+                [control]="form!.controls.areaDoutorado" [items]="graduacaoArea" (change)="onAreaChange()">
+
+            </input-select>
+            <input-text [size]="6" label="Curso" icon="far fa-edit" controlName="cursoDoutorado"
+                [control]="form!.controls.cursoDoutorado"></input-text>
+
+        </input-multiselect>
+    </div>
+    <div class="row mt-5">
+        <label class="fw-bold">Pós-Doutorado</label>
+        <hr>
+
+        <div class="row my-3">
+            <input-radio [size]="2" label="Possui Pós-Doutorado?" icon="fas fa-hourglass-start"
+                controlName="radioPosDoutorado" [control]="form!.controls.radioPosDoutorado" labelInfo="Possui PosDoc?"
+                [items]="lookup.SIMNAO">
+            </input-radio>
+        </div>
+        <div class="row my-3">
+            <input-radio [size]="2" label="Pretende Cursar?" icon="fas fa-hourglass-start"
+                controlName="radioPretendePosDoutorado" [control]="form!.controls.radioPretendePosDoutorado"
+                labelInfo="Pretende Cursar?" [items]="lookup.SIMNAO">
+            </input-radio>
+        </div>
+
+        <input-multiselect label="Pós-Doutorado" controlName="posdoutorado" [size]="12"
+            [control]="form!.controls.posdoutorado" [addItemHandle]="addItemGraduacao.bind(this)" noBox>
+
+            <input-select [size]="6" label="Area" icon="fas fa-sign-out-alt" controlName="areaPosDoutorado" liveSearch
+                [control]="form!.controls.areaPosDoutorado" [items]="graduacaoArea" (change)="onAreaChange()">
+
+            </input-select>
+            <input-text [size]="6" label="Curso" icon="far fa-edit" controlName="cursoPosDoutorado"
+                [control]="form!.controls.cursoPosDoutorado"></input-text>
+
+        </input-multiselect>
+    </div>
+    <!--<div class="row">
+            <grid [items]="idiomas" [form]="form!" [hasDelete]="true" [add]="addFase.bind(this)" [load]="loadFase.bind(this)" [remove]="removeFase.bind(this)" [save]="saveFase.bind(this)" editable>
+                <columns>
+                    <column title="Idioma" [template]="idioma" [editTemplate]="editIdioma">
+                        <ng-template let-row="row" #faseNome>
+                            <badge [color]="row.cor" [label]="row.nome"></badge>
+                        </ng-template>
+                        <ng-template let-row="row" #editFaseNome>
+                            <div class="row">
+                                <input-text [size]="8" controlName="nome" [control]="form!.controls.nome"></input-text>
+                                <input-color [size]="4" controlName="cor" [control]="form!.controls.cor"></input-color>
+                            </div>
+                        </ng-template>
+                    </column>
+                    <column title="Descrição" [template]="faseDescricao" [editTemplate]="editFaseDescricao">
+                        <ng-template let-row="row" #faseDescricao>
+                            <small class="d-block">{{row.descricao || ""}}</small>
+                        </ng-template>
+                        <ng-template let-row="row" #editFaseDescricao>
+                            <input-text [size]="12" controlName="descricao" [control]="form!.controls.descricao"></input-text>
+                        </ng-template>
+                    </column>
+                    <column title="Início" [template]="faseInicio" [editTemplate]="editFaseInicio">
+                        <ng-template let-row="row" #faseInicio>
+                            <strong class="d-block">{{util.getDateFormatted(row.inicio)}}</strong>
+                        </ng-template>
+                        <ng-template let-row="row" #editFaseInicio>
+                            <input-datetime date [size]="12" controlName="inicio" [control]="form!.controls.inicio"></input-datetime>
+                        </ng-template>
+                    </column>
+                    <column title="Termino" [template]="faseTermino" [editTemplate]="editFaseTermino">
+                        <ng-template let-row="row" #faseTermino>
+                            <strong class="d-block">{{util.getDateFormatted(row.termino)}}</strong>
+                        </ng-template>
+                        <ng-template let-row="row" #editFaseTermino>
+                            <input-datetime date [size]="12" controlName="termino" [control]="form!.controls.termino"></input-datetime>
+                        </ng-template>
+                    </column>
+                    <column type="options"></column>
+                </columns>
+            </grid>
+        </div>
+    
+-->
+    <!--
+
+
+ <select id="selectcadidio1" class="form-select form-control input" onchange="" oninvalid="">
                         <option value="" selected></option>
                         <option value="Alemão"> Alemão</option>
                         <option value="Árabe"> Árabe</option>
@@ -208,598 +295,8 @@
                         <option value="Vietnamita"> Vietnamita</option>
 
                     </select>
-                </div>
 
-
-                <div class="form-group col-lg-2">
-                    <label for="nivelidi1"> Qual nível de fala? <!--<i class="fa-solid fa-window-minimize"></i>-->
-                    </label>
-
-                    <select id="nivelidi1" class="form-select form-control input" onchange="" oninvalid="">
-                        <option value="" selected></option>
-                        <option value="Básico"> Básico</option>
-                        <option value="Intermediário"> Intermediário</option>
-                        <option value="Avançado"> Avançado</option>
-                        <option value="Fluente"> Fluente</option>
-
-                    </select>
-                </div>
-                <div class="form-group col-lg-2">
-                    <label for="escidi1"> Qual nível de escrita?</label>
-
-                    <select id="escidi1" class="form-select form-control input" onchange="" oninvalid="">
-                        <option value="" selected></option>
-                        <option value="Básico"> Básico</option>
-                        <option value="Intermediário"> Intermediário</option>
-                        <option value="Avançado"> Avançado</option>
-                        <option value="Fluente"> Fluente</option>
-
-                    </select>
-                </div>
-                <div class="form-group col-lg-3">
-                    <label for="entidi1"> Qual nível de entendimento?</label>
-
-                    <select id="entidi1" class="form-select form-control input" onchange="" oninvalid="">
-                        <option value="" selected></option>
-                        <option value="Básico"> Básico</option>
-                        <option value="Intermediário"> Intermediário</option>
-                        <option value="Avançado"> Avançado</option>
-                        <option value="Fluente"> Fluente</option>
-
-                    </select>
-                </div>
-
-                <div class="form-group col-lg-1">
-
-                    <i class="fa-solid fa-square-plus fa-2xl" id="iconidio" onclick="abreidio2()"></i>
-                </div>
-
-
-
-            </div> <!-- row idio 1-->
-        </div><!-- div selectidio1-->
-        <div id="selectidio2">
-            <div class="row mt-3">
-
-
-                <div class="form-group col-lg-2">
-                    <label for="selectcadidio1"> Idioma <i class="fa-solid fa-language"></i>
-                    </label>
-
-                    <select id="selectcadidio2" class="form-select form-control input" onchange="" oninvalid="">
-                        <option value="" selected></option>
-                        <option value="Alemão"> Alemão</option>
-                        <option value="Árabe"> Árabe</option>
-                        <option value="Argelino"> Argelino</option>
-                        <option value="Azeri"> Azeri</option>
-                        <option value="Bengali"> Bengali</option>
-                        <option value="Chinês"> Chinês</option>
-                        <option value="Coreano"> Coreano</option>
-                        <option value="Espanhol"> Espanhol</option>
-                        <option value="Francês"> Francês</option>
-                        <option value="Hindi"> Hindi</option>
-                        <option value="Holandês"> Holandês</option>
-                        <option value="Indonésio"> Indonésio</option>
-                        <option value="Inglês"> Inglês</option>
-                        <option value="Iorubá"> Iorubá</option>
-                        <option value="Italiano"> Italiano</option>
-                        <option value="Japonês"> Japonês</option>
-                        <option value="Javanês"> Javanês</option>
-                        <option value="Malaio"> Malaio</option>
-                        <option value="Malaio/Bahasa"> Malaio/Bahasa</option>
-                        <option value="Marata"> Marata</option>
-                        <option value="Persa"> Persa</option>
-                        <option value="Romeno"> Romeno</option>
-                        <option value="Russo"> Russo</option>
-                        <option value="Suaíli"> Suaíli</option>
-                        <option value="Tailandês"> Tailandês</option>
-                        <option value="Tâmil"> Tâmil</option>
-                        <option value="Telugu"> Telugu</option>
-                        <option value="Turco"> Turco</option>
-                        <option value="Urdu"> Urdu</option>
-                        <option value="Vietnamita"> Vietnamita</option>
-
-                    </select>
-                </div>
-
-
-                <div class="form-group col-lg-2">
-                    <label for="nivelidi2"> Qual nível de fala? <!--<i class="fa-solid fa-window-minimize"></i>-->
-                    </label>
-
-                    <select id="nivelidi2" class="form-select form-control input" onchange="" oninvalid="">
-                        <option value="" selected></option>
-                        <option value="Básico"> Básico</option>
-                        <option value="Intermediário"> Intermediário</option>
-                        <option value="Avançado"> Avançado</option>
-                        <option value="Fluente"> Fluente</option>
-
-                    </select>
-                </div>
-                <div class="form-group col-lg-2">
-                    <label for="escidi2"> Qual nível de escrita?</label>
-
-                    <select id="escidi2" class="form-select form-control input" onchange="" oninvalid="">
-                        <option value="" selected></option>
-                        <option value="Básico"> Básico</option>
-                        <option value="Intermediário"> Intermediário</option>
-                        <option value="Avançado"> Avançado</option>
-                        <option value="Fluente"> Fluente</option>
-
-                    </select>
-                </div>
-                <div class="form-group col-lg-3">
-                    <label for="entidi2"> Qual nível de entendimento?</label>
-
-                    <select id="entidi2" class="form-select form-control input" onchange="" oninvalid="">
-                        <option value="" selected></option>
-                        <option value="Básico"> Básico</option>
-                        <option value="Intermediário"> Intermediário</option>
-                        <option value="Avançado"> Avançado</option>
-                        <option value="Fluente"> Fluente</option>
-
-                    </select>
-                </div>
-
-                <div class="form-group col-lg-1 col-md-6">
-
-                    <i class="fa-solid fa-square-plus fa-2xl" id="iconidio2" onclick="abreidio3()"></i>
-                </div>
-                <div class="form-group col-lg-1 col-md-6 justify-content-md-start">
-
-                    <i class="fa-solid fa-square-minus fa-2xl" id="iconidio2b" onclick="fechaidio2()"></i>
-                </div>
-
-            </div>
-
-        </div><!---->
-
-        <div id="selectidio3">
-            <div class="row mt-3">
-
-
-                <div class="form-group col-lg-2">
-                    <label for="selectcadidio3"> Idioma <i class="fa-solid fa-language"></i>
-                    </label>
-
-                    <select id="selectcadidio3" class="form-select form-control input" onchange="" oninvalid="">
-                        <option value="" selected></option>
-                        <option value="Alemão"> Alemão</option>
-                        <option value="Árabe"> Árabe</option>
-                        <option value="Argelino"> Argelino</option>
-                        <option value="Azeri"> Azeri</option>
-                        <option value="Bengali"> Bengali</option>
-                        <option value="Chinês"> Chinês</option>
-                        <option value="Coreano"> Coreano</option>
-                        <option value="Espanhol"> Espanhol</option>
-                        <option value="Francês"> Francês</option>
-                        <option value="Hindi"> Hindi</option>
-                        <option value="Holandês"> Holandês</option>
-                        <option value="Indonésio"> Indonésio</option>
-                        <option value="Inglês"> Inglês</option>
-                        <option value="Iorubá"> Iorubá</option>
-                        <option value="Italiano"> Italiano</option>
-                        <option value="Japonês"> Japonês</option>
-                        <option value="Javanês"> Javanês</option>
-                        <option value="Malaio"> Malaio</option>
-                        <option value="Malaio/Bahasa"> Malaio/Bahasa</option>
-                        <option value="Marata"> Marata</option>
-                        <option value="Persa"> Persa</option>
-                        <option value="Romeno"> Romeno</option>
-                        <option value="Russo"> Russo</option>
-                        <option value="Suaíli"> Suaíli</option>
-                        <option value="Tailandês"> Tailandês</option>
-                        <option value="Tâmil"> Tâmil</option>
-                        <option value="Telugu"> Telugu</option>
-                        <option value="Turco"> Turco</option>
-                        <option value="Urdu"> Urdu</option>
-                        <option value="Vietnamita"> Vietnamita</option>
-
-                    </select>
-                </div>
-
-
-                <div class="form-group col-lg-2">
-                    <label for="nivelidi3"> Qual nível de fala? <!--<i class="fa-solid fa-window-minimize"></i>-->
-                    </label>
-
-                    <select id="nivelidi3" class="form-select form-control input" onchange="" oninvalid="">
-                        <option value="" selected></option>
-                        <option value="Básico"> Básico</option>
-                        <option value="Intermediário"> Intermediário</option>
-                        <option value="Avançado"> Avançado</option>
-                        <option value="Fluente"> Fluente</option>
-
-                    </select>
-                </div>
-                <div class="form-group col-lg-2">
-                    <label for="escidi3"> Qual nível de escrita?</label>
-
-                    <select id="escidi3" class="form-select form-control input" onchange="" oninvalid="">
-                        <option value="" selected></option>
-                        <option value="Básico"> Básico</option>
-                        <option value="Intermediário"> Intermediário</option>
-                        <option value="Avançado"> Avançado</option>
-                        <option value="Fluente"> Fluente</option>
-
-                    </select>
-                </div>
-                <div class="form-group col-lg-3">
-                    <label for="entidi3"> Qual nível de entendimento?</label>
-
-                    <select id="entidi3" class="form-select form-control input" onchange="" oninvalid="">
-                        <option value="" selected></option>
-                        <option value="Básico"> Básico</option>
-                        <option value="Intermediário"> Intermediário</option>
-                        <option value="Avançado"> Avançado</option>
-                        <option value="Fluente"> Fluente</option>
-
-                    </select>
-                </div>
-
-                <div class="form-group col-lg-1 col-md-6">
-
-                    <i class="fa-solid fa-square-plus fa-2xl" id="iconidio3" onclick="abreidio4()"></i>
-                </div>
-                <div class="form-group col-lg-1 col-md-6 justify-content-md-start">
-
-                    <i class="fa-solid fa-square-minus fa-2xl" id="iconidio3b" onclick="fechaidio3()"></i>
-                </div>
-
-            </div>
-
-        </div><!---->
-
-        <div id="selectidio4">
-            <div class="row mt-3">
-
-
-                <div class="form-group col-lg-2">
-                    <label for="selectcadidio4"> Idioma <i class="fa-solid fa-language"></i>
-                    </label>
-
-                    <select id="selectcadidio4" class="form-select form-control input" onchange="" oninvalid="">
-                        <option value="" selected></option>
-                        <option value="Alemão"> Alemão</option>
-                        <option value="Árabe"> Árabe</option>
-                        <option value="Argelino"> Argelino</option>
-                        <option value="Azeri"> Azeri</option>
-                        <option value="Bengali"> Bengali</option>
-                        <option value="Chinês"> Chinês</option>
-                        <option value="Coreano"> Coreano</option>
-                        <option value="Espanhol"> Espanhol</option>
-                        <option value="Francês"> Francês</option>
-                        <option value="Hindi"> Hindi</option>
-                        <option value="Holandês"> Holandês</option>
-                        <option value="Indonésio"> Indonésio</option>
-                        <option value="Inglês"> Inglês</option>
-                        <option value="Iorubá"> Iorubá</option>
-                        <option value="Italiano"> Italiano</option>
-                        <option value="Japonês"> Japonês</option>
-                        <option value="Javanês"> Javanês</option>
-                        <option value="Malaio"> Malaio</option>
-                        <option value="Malaio/Bahasa"> Malaio/Bahasa</option>
-                        <option value="Marata"> Marata</option>
-                        <option value="Persa"> Persa</option>
-                        <option value="Romeno"> Romeno</option>
-                        <option value="Russo"> Russo</option>
-                        <option value="Suaíli"> Suaíli</option>
-                        <option value="Tailandês"> Tailandês</option>
-                        <option value="Tâmil"> Tâmil</option>
-                        <option value="Telugu"> Telugu</option>
-                        <option value="Turco"> Turco</option>
-                        <option value="Urdu"> Urdu</option>
-                        <option value="Vietnamita"> Vietnamita</option>
-
-                    </select>
-                </div>
-
-
-                <div class="form-group col-lg-2">
-                    <label for="nivelidi4"> Qual nível de fala? <!--<i class="fa-solid fa-window-minimize"></i>-->
-                    </label>
-
-                    <select id="nivelidi4" class="form-select form-control input" onchange="" oninvalid="">
-                        <option value="" selected></option>
-                        <option value="Básico"> Básico</option>
-                        <option value="Intermediário"> Intermediário</option>
-                        <option value="Avançado"> Avançado</option>
-                        <option value="Fluente"> Fluente</option>
-
-                    </select>
-                </div>
-                <div class="form-group col-lg-2">
-                    <label for="escidi4"> Qual nível de escrita?</label>
-
-                    <select id="escidi4" class="form-select form-control input" onchange="" oninvalid="">
-                        <option value="" selected></option>
-                        <option value="Básico"> Básico</option>
-                        <option value="Intermediário"> Intermediário</option>
-                        <option value="Avançado"> Avançado</option>
-                        <option value="Fluente"> Fluente</option>
-
-                    </select>
-                </div>
-                <div class="form-group col-lg-3">
-                    <label for="entidi4"> Qual nível de entendimento?</label>
-
-                    <select id="entidi4" class="form-select form-control input" onchange="" oninvalid="">
-                        <option value="" selected></option>
-                        <option value="Básico"> Básico</option>
-                        <option value="Intermediário"> Intermediário</option>
-                        <option value="Avançado"> Avançado</option>
-                        <option value="Fluente"> Fluente</option>
-
-                    </select>
-                </div>
-
-                <div class="form-group col-lg-1">
-
-                    <i class="fa-solid fa-square-minus fa-2xl" id="iconidio4" onclick="fechaidio4()"></i>
-                </div>
-
-            </div>
-
-        </div> <!--SelectIdioma-->
-    </div>
-
-    <hr>
-
-    <div class="row mb-3">
-        <div class="form-group col-md-4">
-            <label class="lblescdiv" id="lblgradesc" onclick="escgrad()">
-                <h4>Graduação <i class="fa-solid fa-square-plus" id="icoescgrad"></i></h4>
-            </label>
-        </div>
-    </div>
-    <div id="divgradesc">
-        <div class="row mb-3">
-            <div class="form-group col-md-3">
-                <label for="cadpesradiogradsim"> Possui Graduação ?
-                </label><i class="fa-solid fa-graduation-cap"></i>
-                <p></p>
-
-                <div class="form-group form-check-inline">
-                    <input class="form-check-input" type="radio" name="radiograd" id="cadpesradiogradsim" value="Sim"
-                        onchange="cadpeschecklblgrad()">
-                    <label class="form-check-label" for="cadpesradiogradsim"> Sim</label>
-                </div>
-                <div class="form-group form-check-inline">
-                    <input class="form-group form-check-input" type="radio" name="radiograd" id="cadpesradiogradnão"
-                        value="Não" onchange="cadpeschecklblgrad()" checked>
-                    <label class=" form-group form-check-label" for="cadpesradiogradnão"> Não</label>
-                </div>
-            </div>
-
-
-
-            <div class="form-group col-md-3">
-                <label for="areagrad" id="lblareagrad1"> Área</label>
-                <!--id="cadpesgradinput"-->
-                <select name="parent" id="areagrad" data-child-id='id_child'
-                    class='dependent-selects__parent form-control form-select input' onchange="verificaTec()"
-                    onblur="verificaTec()">
-                    <option value="" selected></option>
-
-                </select>
-
-            </div>
-            <div class="form-group col-md-4">
-
-                <label for="cursograd" id="lblcursograd1"> Curso</label>
-
-                <!-- id="cadpescursoinput" -->
-                <select name="child" id="cursograd" class='dependent-selects__child form-control form-select input'>
-                    <option value="" selected></option>
-
-
-                </select>
-
-
-            </div>
-            <div class="form-group col-md-1">
-
-                <div class="row">
-
-                    <i class="fa-solid fa-square-plus fa-2xl" id="icongrad1" onclick="mostragrad2()"></i>
-                </div>
-
-            </div>
-
-
-        </div>
-        <div id="divgrad2">
-            <div class="row mb-3">
-                <p></p>
-                <div class="form-group col-md-3">
-
-
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="areagrad2" id="lblareagrad2"> Área</label>
-                    <!--id="cadpesgradinput"-->
-                    <select name="parent" id="areagrad2" data-child-id='id_child'
-                        class='dependent-selects__parent form-control form-select input'>
-                        <option id="1" value="" selected></option>
-
-                    </select>
-
-                </div>
-                <div class="form-group col-md-4">
-
-                    <label for="cursograd2" id="lblcursograd2"> Curso</label>
-
-                    <!-- id="cadpescursoinput" -->
-                    <select name="child" id="cursograd2"
-                        class='dependent-selects__child form-control form-select input'>
-                        <option id="1" value="" selected> </option>
-
-
-                    </select>
-
-
-                </div>
-                <div class="form-group col-md-1">
-
-                    <div class="row">
-
-                        <i class="fa-solid fa-square-plus fa-2xl" id="icongrad2" onclick="mostragrad3()"></i>
-                    </div>
-
-                </div>
-                <div class="form-group col-md-1">
-
-                    <div class="row">
-
-                        <i class="fa-solid fa-square-minus fa-2xl" id="iconmenosgrad2" onclick="fechagrad23()"></i>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-        <div id="divgrad3">
-            <div class="row mb-3">
-                <p></p>
-                <div class="form-group col-md-3">
-
-
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="areagrad3" id="lblareagrad3"> Área</label>
-                    <!--id="cadpesgradinput"-->
-                    <select name="parent" id="areagrad3" data-child-id='id_child'
-                        class='dependent-selects__parent form-control form-select input'>
-                        <option value="" selected></option>
-
-                    </select>
-
-                </div>
-                <div class="form-group col-md-4">
-
-                    <label for="cursograd3" id="lblcursograd3"> Curso</label>
-
-                    <!-- id="cadpescursoinput" -->
-                    <select name="child" id="cursograd3"
-                        class='dependent-selects__child form-control form-select input'>
-                        <option value="" selected></option>
-
-
-                    </select>
-
-
-                </div>
-
-                <div class="form-group col-md-1">
-
-                    <div class="row">
-
-                        <i class="fa-solid fa-square-minus fa-2xl" id="iconmenosgrad3" onclick="fechagrad3()"></i>
-                    </div>
-
-                </div>
-            </div>
-
-        </div>
-
-        <div id="divpretcurso">
-            <div class="row mb-3">
-                <p></p>
-                <div class="form-group col-md-3">
-                    <label for="cadpesradiopretgradsim" class="fst-italic" id="lblcadpespretgrad">Pretende
-                        cursar?</label>
-                    <p></p>
-
-                    <div class="form-group form-check-inline">
-                        <input class="form-check-input" type="radio" name="radiograd1" id="cadpesradiopretgradsim"
-                            value="Sim" onchange="pretgradcheck()">
-                        <label class="form-check-label fst-italic" for="cadpesradiopretgradsim"
-                            id="lblcadpesradiopretgradsim">Sim</label>
-                    </div>
-                    <div class="form-group form-check-inline">
-                        <input class="form-group form-check-input" type="radio" name="radiograd1"
-                            id="cadpesradiopretgradnao" value="Não" onchange="pretgradcheck()" checked>
-                        <label class=" form-group form-check-label fst-italic" for="cadpesradiopretgradnao"
-                            id="lblcadpesradiopretgradnao">Não</label>
-                    </div>
-
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="areapretgrad" id="lblpretgrad"> Área</label>
-                    <!--id="cadpesgradinput"-->
-                    <select name="parent" id="areapretgrad" data-child-id='id_child'
-                        class='dependent-selects__parent form-control form-select'>
-                        <option value="" selected></option>
-
-                    </select>
-
-                </div>
-                <div class="form-group col-md-4">
-
-                    <label for="cursopretgrad" id="lblcursopretgrad"> Curso</label>
-
-                    <!-- id="cadpescursoinput" -->
-                    <select name="child" id="cursopretgrad" class='dependent-selects__child form-control form-select'>
-                        <option value="" selected></option>
-
-
-                    </select>
-
-
-                </div>
-            </div>
-        </div>
-
-
-
-
-
-    </div><!--divgradesc-->
-
-
-
-    <hr>
-
-
-    <!-- POS  -->
-
-
-    <div class="row mb-3">
-        <div class="form-group col-md-3">
-            <label class="lblescdiv" id="lblgradesc" onclick="escposgrad()">
-                <h4>Pós-Graduação <i class="fa-solid fa-square-plus" id="icoescposgrad"></i></h4>
-            </label>
-        </div>
-    </div>
-    <div id="divposgradesc">
-        <div class="row mb-3">
-            <div class="form-group col-md-3">
-                <label for="cadpesradioposgradsim"> Possui Pós-Graduação ?</label>
-                <i class="fa-solid fa-graduation-cap"></i>
-                <p></p>
-
-                <div class="form-group form-check-inline">
-                    <input class="form-check-input" type="radio" name="radiogradpos" id="cadpesradioposgradsim"
-                        value="Sim" onchange="checapos()">
-                    <label class="form-check-label" for="cadpesradioposgradsim" id="lblcadpesradioposgradsim"> Sim
-                    </label>
-                </div>
-                <div class="form-group form-check-inline">
-                    <input class="form-group form-check-input" type="radio" name="radiogradpos"
-                        id="cadpesradioposgradnao" value="Não" onchange="checapos()" checked>
-                    <label class=" form-group form-check-label" for="cadpesradioposgradnao" id="cadpesradioposgradnao">
-                        Não
-                    </label>
-                </div>
-            </div>
-
-
-            <div class="form-group col-md-3">
-                <label for="areaposgrad" id="lblareaposgrad"> Área</label>
-
-                <select name="parent" id="areaposgrad" data-child-id='id_child'
-                    class='dependent-selects__parent form-control form-select'>
-                    <option value="" selected></option>
+                     <option value="" selected></option>
                     <option value="Ciências Agrárias">Ciências Agrárias</option>
                     <option value="Ciências Biológicas">Ciências Biológicas</option>
                     <option value="Ciências da Saúde">Ciências da Saúde</option>
@@ -809,550 +306,5 @@
                     <option value="Engenharias">Engenharias</option>
                     <option value="Linguística, Letras e Artes">Linguística, Letras e Artes</option>
                     <option value="Outro">Outro</option>
-
-                </select>
-
-            </div>
-            <div class="form-group col-md-4">
-                <label for="txtpos1" id="lbltxtpos1"> Curso</label>
-
-                <input type="text" class="form-control" id="txtpos1">
-            </div>
-            <div class="form-group col-md-1">
-
-                <div class="row">
-
-                    <i class="fa-solid fa-square-plus fa-2xl" id="iconpos1" onclick="mostrapos2()"></i>
-                </div>
-            </div>
-
-        </div>
-
-
-        <div id="divpos2">
-            <div class="row mb-3">
-                <p></p>
-                <div class="form-group col-md-3">
-
-
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="areapos2" id="lblareapos2"> Área</label>
-                    <!--id="cadpesgradinput"-->
-                    <select name="parent" id="areapos2" data-child-id='id_child'
-                        class='dependent-selects__parent form-control form-select'>
-                        <option id="" value="" selected></option>
-
-                        <option value="Ciências Agrárias">Ciências Agrárias</option>
-                        <option value="Ciências Biológicas">Ciências Biológicas</option>
-                        <option value="Ciências da Saúde">Ciências da Saúde</option>
-                        <option value="Ciências Exatas e da Terra">Ciências Exatas e da Terra</option>
-                        <option value="Ciências Humanas">Ciências Humanas</option>
-                        <option value="Ciências Sociais Aplicadas">Ciências Sociais Aplicadas</option>
-                        <option value="Engenharias">Engenharias</option>
-                        <option value="Linguística, Letras e Artes">Linguística, Letras e Artes</option>
-                        <option value="Outro">Outro</option>
-
-                    </select>
-
-                </div>
-                <div class="form-group col-md-4">
-                    <label for="txtpos2" id="lbltxtpos2"> Curso</label>
-
-                    <input type="text" class="form-control" id="txtpos2">
-                </div>
-                <div class="form-group col-md-1">
-
-                    <div class="row">
-
-                        <i class="fa-solid fa-square-plus fa-2xl" id="iconpos2" onclick="mostrapos3()"></i>
-                    </div>
-
-                </div>
-                <div class="form-group col-md-1">
-
-                    <div class="row">
-
-                        <i class="fa-solid fa-square-minus fa-2xl" id="iconmenospos2" onclick="fechapos234()"></i>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-        <div id="divpos3">
-            <div class="row mb-3">
-                <p></p>
-                <div class="form-group col-md-3">
-
-
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="areapos3" id="lblareapos3"> Área</label>
-                    <!--id="cadpesgradinput"-->
-                    <select name="parent" id="areapos3" data-child-id='id_child'
-                        class='dependent-selects__parent form-control form-select'>
-                        <option value="" selected></option>
-
-                        <option value="Ciências Agrárias">Ciências Agrárias</option>
-                        <option value="Ciências Biológicas">Ciências Biológicas</option>
-                        <option value="Ciências da Saúde">Ciências da Saúde</option>
-                        <option value="Ciências Exatas e da Terra">Ciências Exatas e da Terra</option>
-                        <option value="Ciências Humanas">Ciências Humanas</option>
-                        <option value="Ciências Sociais Aplicadas">Ciências Sociais Aplicadas</option>
-                        <option value="Engenharias">Engenharias</option>
-                        <option value="Linguística, Letras e Artes">Linguística, Letras e Artes</option>
-                        <option value="Outro">Outro</option>
-
-                    </select>
-
-                </div>
-                <div class="form-group col-md-4">
-                    <label for="txtpos3" id="lbltxtpos3"> Curso</label>
-
-                    <input type="text" class="form-control" id="txtpos3">
-                </div>
-                <div class="form-group col-md-1">
-
-                    <div class="row">
-
-                        <i class="fa-solid fa-square-plus fa-2xl" id="iconpos3" onclick="mostrapos4()"></i>
-                    </div>
-
-                </div>
-                <div class="form-group col-md-1">
-
-                    <div class="row">
-
-                        <i class="fa-solid fa-square-minus fa-2xl" id="iconmenospos3" onclick="fechapos34()"></i>
-                    </div>
-
-                </div>
-
-            </div>
-        </div>
-
-        <div id="divpos4">
-            <div class="row mb-3">
-                <p></p>
-                <div class="form-group col-md-3">
-
-
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="areapos4" id="lblareapos4"> Área</label>
-                    <!--id="cadpesgradinput"-->
-                    <select name="parent" id="areapos4" data-child-id='id_child'
-                        class='dependent-selects__parent form-control form-select'>
-                        <option value="" selected></option>
-
-                        <option value="Ciências Agrárias">Ciências Agrárias</option>
-                        <option value="Ciências Biológicas">Ciências Biológicas</option>
-                        <option value="Ciências da Saúde">Ciências da Saúde</option>
-                        <option value="Ciências Exatas e da Terra">Ciências Exatas e da Terra</option>
-                        <option value="Ciências Humanas">Ciências Humanas</option>
-                        <option value="Ciências Sociais Aplicadas">Ciências Sociais Aplicadas</option>
-                        <option value="Engenharias">Engenharias</option>
-                        <option value="Linguística, Letras e Artes">Linguística, Letras e Artes</option>
-                        <option value="Outro">Outro</option>
-
-                    </select>
-
-                </div>
-                <div class="form-group col-md-4">
-                    <label for="txtpos4" id="lbltxtpos4"> Curso</label>
-
-                    <input type="text" class="form-control" id="txtpos4">
-                </div>
-
-                <div class="form-group col-md-1">
-
-                    <div class="row">
-
-                        <i class="fa-solid fa-square-minus fa-2xl" id="iconmenospos4" onclick="fechapos4()"></i>
-                    </div>
-
-                </div>
-
-            </div>
-        </div>
-
-        <div id="divpretpos">
-            <div class="row mb-3">
-                <p></p>
-                <div class="form-group col-md-4">
-                    <label for="cadpesradiopretpossim" class="fst-italic" id="lblcadpespretpos">Pretende cursar pós
-                        graduação?</label>
-                    <p></p>
-
-                    <div class="form-group form-check-inline">
-                        <input class="form-check-input" type="radio" name="radiogradppos" id="cadpesradiopretpossim"
-                            value="Sim" onchange="pretposcheck()">
-                        <label class="form-check-label fst-italic" for="cadpesradiopretpossim"
-                            id="lblcadpesradiopretpossim">Sim</label>
-                    </div>
-                    <div class="form-group form-check-inline">
-                        <input class="form-group form-check-input" type="radio" name="radiogradppos"
-                            id="cadpesradiopretposnao" value="Não" onchange="pretposcheck()" checked>
-                        <label class=" form-group form-check-label fst-italic" for="cadpesradiopretposnao"
-                            id="lblcadpesradiopretposnao">Não</label>
-                    </div>
-
-                </div>
-                <div class="form-group col-md-4">
-                    <label for="areapretpos" id="lblpretpos"> Área</label>
-                    <!--id="cadpesgradinput"-->
-                    <select name="parent" id="areapretpos" data-child-id='id_child'
-                        class='dependent-selects__parent form-control form-select'>
-                        <option value="" selected></option>
-
-                        <option value="Ciências Agrárias">Ciências Agrárias</option>
-                        <option value="Ciências Biológicas">Ciências Biológicas</option>
-                        <option value="Ciências da Saúde">Ciências da Saúde</option>
-                        <option value="Ciências Exatas e da Terra">Ciências Exatas e da Terra</option>
-                        <option value="Ciências Humanas">Ciências Humanas</option>
-                        <option value="Ciências Sociais Aplicadas">Ciências Sociais Aplicadas</option>
-                        <option value="Engenharias">Engenharias</option>
-                        <option value="Linguística, Letras e Artes">Linguística, Letras e Artes</option>
-                        <option value="Outro">Outro</option>
-
-                    </select>
-
-                </div>
-                <div class="form-group col-md-4">
-                    <label for="txtpretpos" id="lbltxtpretpos"> Curso</label>
-
-                    <input type="text" class="form-control" id="txtpretpos">
-                </div>
-            </div>
-        </div>
-
-    </div><!--divposgradesc-->
-
-
-
-
-    <hr>
-
-    <div class="row mb-3">
-        <div class="form-group col-md-6">
-            <label class="lblescdiv" id="lblgradesc" onclick="escposoutros()">
-                <h4>Mestrado, Doutorado e Pós Doutorado <i class="fa-solid fa-square-plus" id="icoescposoutros"></i>
-                </h4>
-            </label>
-        </div>
-    </div>
-    <div id="divposoutrasesc">
-
-        <div class="row mb-3">
-            <div class="form-group col-md-4">
-                <label for="cadpesradiomestresim"> Possui Mestrado ?</label><i class="fa-solid fa-graduation-cap"></i>
-                <p></p>
-
-                <div class="form-group form-check-inline">
-                    <input class="form-check-input" type="radio" name="radiogradmestre" id="cadpesradiomestresim"
-                        value="Sim" onchange="checamestre()">
-                    <label class="form-check-label" for="cadpesradiomestresim"> Sim</label>
-                </div>
-                <div class="form-group form-check-inline">
-                    <input class="form-group form-check-input" type="radio" name="radiogradmestre"
-                        id="cadpesradiomestrenao" value="Não" onchange="checamestre()" checked>
-                    <label class=" form-group form-check-label" for="cadpesradiomestrenao"> Não</label>
-                </div>
-            </div>
-            <div class="form-group col-md-4">
-                <label for="cadpesradiodocsim"> Possui Doutorado ?</label><i class="fa-solid fa-graduation-cap"></i>
-                <p></p>
-
-                <div class="form-group form-check-inline">
-                    <input class="form-check-input" type="radio" name="radiograddoc" id="cadpesradiodocsim" value="Sim"
-                        onchange="checadoc()">
-                    <label class="form-check-label" for="cadpesradiodocsim"> Sim
-                    </label>
-                </div>
-                <div class="form-group form-check-inline">
-                    <input class="form-group form-check-input" type="radio" name="radiograddoc" id="cadpesradiodocnao"
-                        value="Não" onchange="checadoc()" checked>
-                    <label class=" form-group form-check-label" for="cadpesradiodocnao"> Não
-                    </label>
-                </div>
-            </div>
-            <div class="form-group col-md-4">
-                <label for="cadpesradioposdocsim"> Possui Pós-Doutorado ?</label><i
-                    class="fa-solid fa-graduation-cap"></i>
-                <p></p>
-
-                <div class="form-group form-check-inline">
-                    <input class="form-check-input" type="radio" name="radiogradposdoc" id="cadpesradioposdocsim"
-                        value="Sim" onchange="checaposdoc()">
-                    <label class="form-check-label" for="cadpesradioposdocsim"> Sim
-                    </label>
-                </div>
-                <div class="form-group form-check-inline">
-                    <input class="form-group form-check-input" type="radio" name="radiogradposdoc"
-                        id="cadpesradioposdocnao" value="Não" onchange="checaposdoc()" checked>
-                    <label class=" form-group form-check-label" for="cadpesradioposdocnao"> Não
-                    </label>
-                </div>
-            </div>
-
-        </div>
-        <div class="row">
-            <div class="form-group col-md-4">
-                <label for="areamestre" id="lblareamestre"> Área</label>
-                <!--id="cadpesgradinput"-->
-                <select name="parent" id="areamestre" data-child-id='id_child'
-                    class='dependent-selects__parent form-control form-select'>
-                    <option value="" selected></option>
-                    <option value="Ciências Agrárias">Ciências Agrárias</option>
-                    <option value="Ciências Biológicas">Ciências Biológicas</option>
-                    <option value="Ciências da Saúde">Ciências da Saúde</option>
-                    <option value="Ciências Exatas e da Terra">Ciências Exatas e da Terra</option>
-                    <option value="Ciências Humanas">Ciências Humanas</option>
-                    <option value="Ciências Sociais Aplicadas">Ciências Sociais Aplicadas</option>
-                    <option value="Engenharias">Engenharias</option>
-                    <option value="Linguística, Letras e Artes">Linguística, Letras e Artes</option>
-                    <option value="Outro">Outro</option>
-
-                </select>
-
-            </div>
-            <div class="form-group col-md-4">
-                <label for="areadoc" id="lblareadoc"> Área</label>
-                <!--id="cadpesgradinput"-->
-                <select name="parent" id="areadoc" data-child-id='id_child'
-                    class='dependent-selects__parent form-control form-select'>
-                    <option value="" selected></option>
-                    <option value="Ciências Agrárias">Ciências Agrárias</option>
-                    <option value="Ciências Biológicas">Ciências Biológicas</option>
-                    <option value="Ciências da Saúde">Ciências da Saúde</option>
-                    <option value="Ciências Exatas e da Terra">Ciências Exatas e da Terra</option>
-                    <option value="Ciências Humanas">Ciências Humanas</option>
-                    <option value="Ciências Sociais Aplicadas">Ciências Sociais Aplicadas</option>
-                    <option value="Engenharias">Engenharias</option>
-                    <option value="Linguística, Letras e Artes">Linguística, Letras e Artes</option>
-                    <option value="Outro">Outro</option>
-
-                </select>
-
-            </div>
-            <div class="form-group col-md-4">
-                <label for="areaposdoc" id="lblareaposdoc"> Área</label>
-
-                <select name="parent" id="areaposdoc" data-child-id='id_child'
-                    class='dependent-selects__parent form-control form-select'>
-                    <option value="" selected></option>
-                    <option value="Ciências Agrárias">Ciências Agrárias</option>
-                    <option value="Ciências Biológicas">Ciências Biológicas</option>
-                    <option value="Ciências da Saúde">Ciências da Saúde</option>
-                    <option value="Ciências Exatas e da Terra">Ciências Exatas e da Terra</option>
-                    <option value="Ciências Humanas">Ciências Humanas</option>
-                    <option value="Ciências Sociais Aplicadas">Ciências Sociais Aplicadas</option>
-                    <option value="Engenharias">Engenharias</option>
-                    <option value="Linguística, Letras e Artes">Linguística, Letras e Artes</option>
-                    <option value="Outro">Outro</option>
-
-                </select>
-
-            </div>
-
-        </div>
-
-        <div class="row">
-            <div class="form-group col-md-4">
-                <label for="lbltxtmestre" id="lbltxtmestre"> Curso</label>
-
-                <input type="text" class="form-control" id="txtmestre">
-            </div>
-            <div class="form-group col-md-4">
-                <label for="txtdoc" id="lbltxtdoc"> Curso</label>
-
-                <input type="text" class="form-control" id="txtdoc">
-            </div>
-            <div class="form-group col-md-4">
-                <label for="txtposdoc" id="lbltxtposdoc"> Curso</label>
-
-                <input type="text" class="form-control" id="txtposdoc">
-            </div>
-
-        </div>
-        <div id="divpret">
-
-            <div class="row my-3">
-
-                <div class="col-md-4" id="">
-                    <div class="form-group col-md-12">
-                        <label for="cadpesradiopretmestresim" class="fst-italic" id="lblpretcursarmestre">Pretende
-                            cursar Mestrado?</label>
-                        <p></p>
-
-                        <div class="form-group form-check-inline">
-                            <input class="form-check-input" type="radio" name="radiogradmestre1"
-                                id="cadpesradiopretmestresim" value="Sim" onchange="pretmestrecheck()">
-                            <label class="form-check-label fst-italic" for="cadpesradiopretmestresim"
-                                id="lblcadpesradiopretmestresim"> Sim
-                            </label>
-                        </div>
-                        <div class="form-group form-check-inline">
-                            <input class="form-group form-check-input fw-lighter" type="radio" name="radiogradmestre1"
-                                id="cadpesradiopretmestrenao" value="Não" onchange="pretmestrecheck()" checked>
-                            <label class=" form-group form-check-label fst-italic" for="cadpesradiopretmestrenao"
-                                id="lblcadpesradiopretmestrenao"> Não</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4" id="">
-                    <div class="form-group col-md-12">
-
-                        <label for="cadpesradiopretdoutoradosim" class="fst-italic" id="lblpretcursodoc">Pretende cursar
-                            Doutorado?</label>
-                        <p></p>
-
-                        <div class="form-group form-check-inline">
-                            <input class="form-check-input" type="radio" name="radiograddoc1"
-                                id="cadpesradiopretdoutoradosim" value="Sim" onchange="pretdoccheck()">
-                            <label class="form-check-label fst-italic" for="cadpesradiopretdoutoradosim"
-                                id="lblcadpesradiopretdoutoradosim"> Sim</label>
-                        </div>
-                        <div class="form-group form-check-inline">
-                            <input class="form-group form-check-input fw-lighter" type="radio" name="radiograddoc1"
-                                id="cadpesradiopretdoutoradonao" value="Não" onchange="pretdoccheck()" checked>
-                            <label class=" form-group form-check-label fst-italic" for="cadpesradiopretdoutoradonao"
-                                id="lblcadpesradiopretdoutoradonao">Não</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4" id="">
-                    <div class="form-group col-md-12">
-                        <label for="cadpesradiopretposdocsim" class="fst-italic" id="lblpretcursoposdoc">Pretende cursar
-                            Pós Doutorado?</label>
-                        <p></p>
-
-                        <div class="form-group form-check-inline">
-                            <input class="form-check-input" type="radio" name="radiogradposdoc1"
-                                id="cadpesradiopretposdocsim" value="Sim" onchange="pretposdoccheck()">
-                            <label class="form-check-label fst-italic" for="cadpesradiopretposdocsim"
-                                id="lblcadpesradiopretposdocsim">Sim</label>
-                        </div>
-                        <div class="form-group form-check-inline">
-                            <input class="form-group form-check-input fw-lighter" type="radio" name="radiogradposdoc1"
-                                id="cadpesradiopretposdocnao" value="Não" onchange="pretposdoccheck()" checked>
-                            <label class=" form-group form-check-label fst-italic" for="cadpesradiopretposdocnao"
-                                id="lblcadpesradiopretposdocnao">Não</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="form-group col-md-4">
-                <label for="pretareamestre" id="lblpretareamestre"> Área</label>
-                <!--id="cadpesgradinput"-->
-                <select name="parent" id="pretareamestre" data-child-id='id_child'
-                    class='dependent-selects__parent form-control form-select'>
-                    <option value="" selected></option>
-                    <option value="Ciências Agrárias">Ciências Agrárias</option>
-                    <option value="Ciências Biológicas">Ciências Biológicas</option>
-                    <option value="Ciências da Saúde">Ciências da Saúde</option>
-                    <option value="Ciências Exatas e da Terra">Ciências Exatas e da Terra</option>
-                    <option value="Ciências Humanas">Ciências Humanas</option>
-                    <option value="Ciências Sociais Aplicadas">Ciências Sociais Aplicadas</option>
-                    <option value="Engenharias">Engenharias</option>
-                    <option value="Linguística, Letras e Artes">Linguística, Letras e Artes</option>
-                    <option value="Outro">Outro</option>
-
-                </select>
-
-            </div>
-            <div class="form-group col-md-4">
-                <label for="pretareadoc" id="lblpretareadoc"> Área</label>
-                <!--id="cadpesgradinput"-->
-                <select name="parent" id="pretareadoc" data-child-id='id_child'
-                    class='dependent-selects__parent form-control form-select'>
-                    <option value="" selected></option>
-                    <option value="Ciências Agrárias">Ciências Agrárias</option>
-                    <option value="Ciências Biológicas">Ciências Biológicas</option>
-                    <option value="Ciências da Saúde">Ciências da Saúde</option>
-                    <option value="Ciências Exatas e da Terra">Ciências Exatas e da Terra</option>
-                    <option value="Ciências Humanas">Ciências Humanas</option>
-                    <option value="Ciências Sociais Aplicadas">Ciências Sociais Aplicadas</option>
-                    <option value="Engenharias">Engenharias</option>
-                    <option value="Linguística, Letras e Artes">Linguística, Letras e Artes</option>
-                    <option value="Outro">Outro</option>
-
-                </select>
-
-            </div>
-            <div class="form-group col-md-4">
-                <label for="pretareaposdoc" id="lblpretareaposdoc"> Área</label>
-
-                <select name="parent" id="pretareaposdoc" data-child-id='id_child'
-                    class='dependent-selects__parent form-control form-select'>
-                    <option value="" selected></option>
-                    <option value="Ciências Agrárias">Ciências Agrárias</option>
-                    <option value="Ciências Biológicas">Ciências Biológicas</option>
-                    <option value="Ciências da Saúde">Ciências da Saúde</option>
-                    <option value="Ciências Exatas e da Terra">Ciências Exatas e da Terra</option>
-                    <option value="Ciências Humanas">Ciências Humanas</option>
-                    <option value="Ciências Sociais Aplicadas">Ciências Sociais Aplicadas</option>
-                    <option value="Engenharias">Engenharias</option>
-                    <option value="Linguística, Letras e Artes">Linguística, Letras e Artes</option>
-                    <option value="Outro">Outro</option>
-
-                </select>
-
-            </div>
-
-        </div>
-
-        <div class="row">
-            <div class="form-group col-md-4" id="collblprettxtmestre">
-                <label for="lblprettxtmestre" id="lblprettxtmestre"> Curso</label>
-
-                <input type="text" class="form-control" id="prettxtmestre">
-            </div>
-            <div class="form-group col-md-4" id="collblprettxtdoc">
-                <label for="prettxtdoc" id="lblprettxtdoc"> Curso</label>
-
-                <input type="text" class="form-control" id="prettxtdoc">
-            </div>
-            <div class="form-group col-md-4" id="collblprettxtposdoc">
-                <label for="prettxtposdoc" id="lblprettxtposdoc"> Curso</label>
-
-                <input type="text" class="form-control" id="prettxtposdoc">
-            </div>
-
-        </div>
-
-
-    </div>
-</div>
-
-<hr>
-
-
-<div class="row mt-5 justify-content-lg-center">
-    <div class="col-lg-6">
-        <div class="progress"><label class="label fw-bold" id="lbldivProgressPes">Sem preenchimento</label>
-            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0"
-                aria-valuemin="0" aria-valuemax="100" style="" id="progressPessoal"><label
-                    id="lblprogressPessoal"></label></div><!---->
-
-        </div>
-    </div>
-</div>
-<!--<div class="row mt-5 justify-content-lg-center">
-    <div class="col-lg-2">
-      <button type="button" class="btn btn-primary" id="btnProgressPessoal" onclick="testaProgressP()">Teste</button>
-    </div>
-</div>-->
-
-
-
-<div class="modal-footer">
-    <button type="button" class="btn btn-secondary btn-secondary--custom" data-bs-dismiss="modal">Fechar</button>
-    <button type="submit" class="btn btn-primary btn-primary--custom" onclick="" id="btnGravarPessoal">Gravar</button>
-</div>
+-->
+</editable-form>
