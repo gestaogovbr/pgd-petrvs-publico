@@ -383,8 +383,8 @@ class UtilService
      */
     public static function asDateInterval(array $interval): Interval {
         return new Interval([
-            'start' => $interval ? ($interval['start'] instanceof DateTime ? static::asDateTime($interval['start']) : $interval['start']) : 0, 
-            'end' => $interval ? ($interval['end'] instanceof DateTime ? static::asDateTime($interval['end']) : $interval['end']) : 0
+            'start' => $interval ? ($interval['start'] instanceof DateTime ? $interval['start'] : static::asDateTime($interval['start'])) : 0, 
+            'end' => $interval ? ($interval['end'] instanceof DateTime ? $interval['end'] : static::asDateTime($interval['end'])) : 0
         ]);
     }
 

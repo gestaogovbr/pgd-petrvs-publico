@@ -4,7 +4,7 @@ import { Usuario } from 'src/app/models/usuario.model';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { Plano } from 'src/app/models/plano.model';
 import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
-import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
+import { ChartDataSets, ChartOptions } from 'chart.js';
 
 @Component({
   selector: 'app-forcadetrabalho-report-servidor',
@@ -104,6 +104,111 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
     },
     responsive: true
   };
+  public opcoesGraficoPeriodoComparativo: ChartOptions = {
+    title: {
+      // namespace para a configuração do título do gráfico
+      display: true,
+      text: 'Comparativo de Horas',
+      position: "bottom"
+    },
+    tooltips: {
+      // namespace para a configuração das dicas de ferramentas
+      //enabled: false
+    },
+    scales: {
+      xAxes: [{
+        ticks: {
+          beginAtZero: true
+        }
+      }],
+      yAxes: [{
+        ticks: {
+          beginAtZero: true
+        }
+      }]
+    },
+    plugins: {
+      datalabels: {
+        display: true,
+        align: 'start',
+        anchor: 'end',
+        color: 'black',
+        font: {
+          weight: 'bold'
+        },
+        clamp: true,
+        clip: false
+      }
+    },
+    layout: {
+      padding: 0
+    },
+    legend: {
+      //namespace para configuração das opções da legenda
+      //display: false
+    },
+    //events: ['click'],
+    responsive: true,
+    maintainAspectRatio: false
+  };
+  public opcoesGraficoPeriodoPizza: ChartOptions = {
+    scales: {
+      xAxes: [{
+        stacked: true
+      }],
+      yAxes: [{
+        labels: ['Horas das Demandas'],
+        display: false,
+        stacked: true
+      }]
+    },
+    plugins: {
+      datalabels: {
+        display: false,
+        align: 'start',
+        anchor: 'end',
+        color: 'black',
+        font: {
+          weight: 'bold'
+        },
+        clamp: true,
+        clip: false
+      }
+    },
+    responsive: true
+  };
+  public opcoesGraficoPeriodoDetalhado: ChartOptions = {
+    title: {
+      // namespace para a configuração do título do gráfico
+      display: true,
+      text: 'Composição das Demandas',
+      position: "bottom"
+    },
+    scales: {
+      xAxes: [{
+        display: false,
+        stacked: true
+      }],
+      yAxes: [{
+        display: true,
+        stacked: true
+      }]
+    },
+    plugins: {
+      datalabels: {
+        display: true,
+        align: 'start',
+        anchor: 'end',
+        color: 'black',
+        font: {
+          weight: 'bold'
+        },
+        clamp: true,
+        clip: false
+      }
+    },
+    responsive: true
+  };
 
   constructor(public injector: Injector) {
     super(injector, UsuarioDaoService);
@@ -120,7 +225,6 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
     ]);
     this.usuario = result[0];
     this.plano = result[1];
-    //this.buscaPorPeriodo = !(this.parametros.data_inicio && this.parametros.data_fim && this.parametros.data_inicio.getTime() == this.plano!.data_inicio_vigencia.getTime() && this.parametros.data_fim.getTime() == this.plano!.data_fim_vigencia.getTime());
     this.buscaPorPeriodo = this.parametros.data_inicio || this.parametros.data_fim;
     await this.prepararParaRelatorio(this.plano!);
     return [this.planoRelatorio];
@@ -163,11 +267,14 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
           'percentualHorasAvaliadas': $percentualHorasAvaliadas,
           'percentualHorasUteisLiquidasPlano': Math.round(100 - $percentualAfastamento),
           'dadosGraficoPlano': this.obterDadosGrafico($metadados, 'GERAL'),
-          'dadosGraficoDemandas': this.obterDadosGrafico($metadados, 'DETALHADO')
+          'dadosGraficoDemandas': this.obterDadosGrafico($metadados, 'DETALHADO'),
+          'dadosGraficoPeriodoComparativo': this.obterDadosGrafico($metadados, 'PERIODO_COMPARATIVO'),
+          'dadosGraficoPeriodoPizza': this.obterDadosGrafico($metadados, 'PERIODO_PIZZA'),
+          'dadosGraficoPeriodoDetalhado': this.obterDadosGrafico($metadados, 'PERIODO_DETALHADO'),
       };
   }
 
-  public obterDadosGrafico(metadados: MetadadosPlano, tipo: 'GERAL' | 'DETALHADO' | 'AVALIACAO') {
+  public obterDadosGrafico(metadados: MetadadosPlano, tipo: 'GERAL' | 'DETALHADO' | 'AVALIACAO' | 'PERIODO_COMPARATIVO' | 'PERIODO_PIZZA' | 'PERIODO_DETALHADO') {
       let result: any = null;
       let dadosPlano: ChartDataSets[] = [
         {
@@ -227,17 +334,77 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
           stack: 'Nota' // #EF5350 (vermelha) ou #283593 (azul)
         }
       ];
+      let dadosPeriodoComparativo: ChartDataSets[] = [
+        {
+          label: 'Previsão',
+          data: [metadados.noPeriodo.tempoTotalPrevistoNoPeriodo.toFixed(2)],
+          backgroundColor: '#6c757d'
+        },
+        {
+          label: 'Realizado',
+          data: [metadados.noPeriodo.tempoTotalRealizadoNoPeriodo.toFixed(2)],
+          backgroundColor: '#FF7043'
+        }
+      ];
+      let dadosPeriodoPizza: ChartDataSets[] = [
+        {
+          label: 'Não-iniciadas',
+          data: [metadados.horasDemandasNaoIniciadas],
+          backgroundColor: '#0dcaf0',
+          stack: 'Demandas'
+        },
+        {
+          label: 'Em Andamento',
+          data: [metadados.horasDemandasEmAndamento],
+          backgroundColor: '#ffc107',
+          stack: 'Demandas'
+        },
+        {
+          label: 'Concluídas',
+          data: [metadados.horasDemandasConcluidas],
+          backgroundColor: '#af4201',
+          stack: 'Demandas'
+        },
+        {
+          label: 'Avaliadas',
+          data: [metadados.horasDemandasAvaliadas],
+          backgroundColor: '#af4af0',
+          stack: 'Demandas'
+        },
+        {
+          label: 'Disponível no Plano',
+          data: [metadados.horasUteisTotais - metadados.horasUteisAfastamento - metadados.horasUteisDecorridas],
+          backgroundColor: '#6c757d',
+          stack: 'Demandas'
+        }
+      ];
+      let dadosPeriodoDetalhado: ChartDataSets[] = [
+        {
+          label: 'Aprov',
+          data: [metadados.noPeriodo.tempoTrabalhadoHomologado.toFixed(2)],
+          backgroundColor: '#0dcaf0',
+          stack: 'Demandas'
+        },
+        {
+          label: 'Reprov',
+          data: [metadados.noPeriodo.tempoTrabalhadoNaoHomologado.toFixed(2)],
+          backgroundColor: '#f44336',
+          stack: 'Demandas'
+        },
+        {
+          label: 'Concl',
+          data: [metadados.noPeriodo.tempoDespendidoSoConcluidas.toFixed(2)],
+          backgroundColor: '#af4201',
+          stack: 'Demandas'
+        }
+      ];
       switch (tipo) {
-        case 'GERAL':
-          result = dadosPlano;
-          break;
-
-        case 'DETALHADO':
-          result = dadosDemandas;
-          break;
-        case 'AVALIACAO':
-          result = dadosAvaliacao;
-          break;
+        case 'GERAL': result = dadosPlano; break;
+        case 'DETALHADO': result = dadosDemandas; break;
+        case 'AVALIACAO': result = dadosAvaliacao; break;
+        case 'PERIODO_COMPARATIVO': result = dadosPeriodoComparativo; break;
+        case 'PERIODO_PIZZA': result = dadosPeriodoPizza; break;
+        case 'PERIODO_DETALHADO': result = dadosPeriodoDetalhado; break;
       }
     return result;
   }

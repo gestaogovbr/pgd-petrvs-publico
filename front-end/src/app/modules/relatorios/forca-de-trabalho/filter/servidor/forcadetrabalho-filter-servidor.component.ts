@@ -77,8 +77,6 @@ export class ForcaDeTrabalhoFilterServidorComponent extends PageReportFilterBase
 
   public onPlanoChange(event: Event) {
     this.planoSelecionado = this.planos.find(x => x.key == this.form.controls.plano_id.value)?.data;
-/*     this.form.controls.data_inicio.setValue(this.planoSelecionado?.data_inicio_vigencia);
-    this.form.controls.data_fim.setValue(this.util.minDate(new Date(),this.planoSelecionado?.data_fim_vigencia)); */
   }
 
 }

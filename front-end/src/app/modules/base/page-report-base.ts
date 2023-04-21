@@ -42,15 +42,9 @@ export type Metadado = {
 
 export type MetadadosPlano = {    
   concluido: Boolean,                       // define se o Plano é concluído, ou seja, se todas as suas demandas foram cumpridas.
-/*   distribuidas: Demanda[],
-  demandasAtrasadas: Demanda[],
-  demandasIniciadas: Demanda[], */
   demandasNaoIniciadas: Demanda[],          // todas as demandas ainda não iniciadas pelo servidor
   demandasEmAndamento: Demanda[],           // totas as demandas já iniciadas (data_inicio diferente de nulo), mas ainda não concluídas (data_entrega nula)
   demandasConcluidas: Demanda[],            // todas as demandas que possuem uma data de entrega não nula
-/*   demandasConcluidasComAtraso: Demanda[],
-  demandasConcluidasNoPrazo: Demanda[],
-  demandasNaoConcluidas: Demanda[], */
   demandasAvaliadas: Demanda[],             // todas as demandas cujo campo avaliacao_id não é nulo
   horasAfastamentoDecorridas: number,       // total das horas úteis dos afastamentos do servidor já ocorridos
   horasDemandasNaoIniciadas: number,        // soma do tempo pactuado de todas as demandas ainda não iniciadas
@@ -65,6 +59,7 @@ export type MetadadosPlano = {
   modalidade: string,                       // tipo de modalidade do plano
   percentualHorasNaoIniciadas: number,  
   usuario_id: string
+  noPeriodo: any;
 };    
 
 export type MetadadosUnidade = {    
@@ -134,6 +129,9 @@ export type PlanoExtendido2 = {
   percentualAfastamento: number,                    // razão entre as horas de afastamento do servidor e as horas úteis totais do Plano
   dadosGraficoPlano: any,
   dadosGraficoDemandas: any
+  dadosGraficoPeriodoComparativo: any
+  dadosGraficoPeriodoPizza: any
+  dadosGraficoPeriodoDetalhado: any
 }
 
 @Injectable()

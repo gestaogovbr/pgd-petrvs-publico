@@ -223,9 +223,29 @@ class PlanoService extends ServiceBase
       "percentualHorasNaoIniciadas" => 0,
       "usuario_id" => $plano['usuario_id'],
       "noPeriodo" => [
-        "demandasEmAndamento" => [], "demandasSoConcluidas" => [], "demandasAprovadas" => [], "demandasReprovadas" => [],
-        "horasUteisDisponiveisServidor" => 0, "tempoTrabalhadoHomologado" => 0, "tempoTrabalhadoNaoHomologado" => 0,
-        "tempoDespendidoEmAndamento" => 0, "tempoDespendidoConcluidas" => 0
+        "demandasDistribuidas" => [], 
+        "demandasNaoIniciadas" => [], 
+        "demandasEmAndamento" => [], 
+        "demandasSoConcluidas" => [], 
+        "demandasReprovadas" => [], 
+        "demandasAprovadas" => [],
+        "horasUteisDisponiveisServidor" => 0, 
+        "tempoTrabalhadoHomologado" => 0, 
+        "tempoTrabalhadoNaoHomologado" => 0,
+        "tempoDespendidoSoConcluidas" => 0, 
+        "tempoTotalRealizadoNoPeriodo" => 0, 
+        "tempoTotalAlocado" => 0,
+        "tempoTotalNaoIniciadas" => 0,
+        "tempoTotalEmAndamento" => 0,
+        "tempoTotalSoConcluidas" => 0, 
+        "tempoTotalReprovadas" => 0, 
+        "tempoTotalAprovadas" => 0,
+        "tempoPrevistoNaoIniciadasNoPeriodo" => 0, 
+        "tempoPrevistoEmAndamentoNoPeriodo" => 0,
+        "tempoPrevistoSoConcluidasNoPeriodo" => 0,
+        "tempoPrevistoReprovadasNoPeriodo" => 0,
+        "tempoPrevistoAprovadasNoPeriodo" => 0, 
+        "tempoTotalPrevistoNoPeriodo" => 0, 
       ]
     ];
     $inicioPlano = new DateTime($plano['data_inicio_vigencia']);
@@ -253,16 +273,49 @@ class PlanoService extends ServiceBase
     /* Média das avaliações das demandas já avaliadas */
     $result['mediaAvaliacoes'] = (count($result['demandasAvaliadas']) == 0) ? null : $this->utilService->avg(array_map(fn ($d) => $d['avaliacao']['nota_atribuida'], $result['demandasAvaliadas']));
     /* Cálculo das estatísticas limitadas pelo período estabelecido, se houver um. */
-    if($inicioPeriodo || $fimPeriodo){
-      $result['noPeriodo']['demandasEmAndamento'] = $this->demandasEmAndamento($plano, $inicioPeriodo ?? $plano['data_inicio_vigencia'], $fimPeriodo ?? $plano['data_fim_vigencia']) ?? [];
-      $result['noPeriodo']['demandasSoConcluidas'] = $this->demandasSoConcluidas($plano, $inicioPeriodo ?? $plano['data_inicio_vigencia'], $fimPeriodo ?? $plano['data_fim_vigencia']) ?? [];
-      $result['noPeriodo']['demandasAprovadas'] = $this->demandasAprovadas($plano, $inicioPeriodo ?? $plano['data_inicio_vigencia'], $fimPeriodo ?? $plano['data_fim_vigencia']) ?? [];
-      $result['noPeriodo']['demandasReprovadas'] = $this->demandasReprovadas($plano, $inicioPeriodo ?? $plano['data_inicio_vigencia'], $fimPeriodo ?? $plano['data_fim_vigencia']) ?? [];
+    if($inicioPeriodo){ // se for solicitada a análise de um determinado período, obrigatoriamente serão fornecidos as datas de inicio e fim desse período
+      $result['noPeriodo']['demandasDistribuidas'] = $this->demandasDistribuidas($plano, $inicioPeriodo, $fimPeriodo);
+      $result['noPeriodo']['demandasNaoIniciadas'] = $this->demandasNaoIniciadas($plano, $inicioPeriodo, $fimPeriodo);
+      $result['noPeriodo']['demandasEmAndamento'] = $this->demandasEmAndamento($plano, $inicioPeriodo, $fimPeriodo);
+      $result['noPeriodo']['demandasSoConcluidas'] = $this->demandasSoConcluidas($plano, $inicioPeriodo, $fimPeriodo);
+      $result['noPeriodo']['demandasReprovadas'] = $this->demandasReprovadas($plano, $inicioPeriodo, $fimPeriodo);
+      $result['noPeriodo']['demandasAprovadas'] = $this->demandasAprovadas($plano, $inicioPeriodo, $fimPeriodo);
       $result['noPeriodo']['horasUteisDisponiveisServidor'] = CalendarioService::calculaDataTempoUnidade(new DateTime($inicioPeriodo), new DateTime($fimPeriodo), $plano['carga_horaria'], $unidadePlano, "HORAS_UTEIS", null, $afastamentosUsuario)->tempoUtil;
+      $result['noPeriodo']['tempoTotalAlocado'] = $this->somaTemposPactuados($result['noPeriodo']['demandasDistribuidas']);
+      $result['noPeriodo']['tempoTotalNaoIniciadas'] = $this->somaTemposPactuados($result['noPeriodo']['demandasNaoIniciadas']);
+      $result['noPeriodo']['tempoTotalEmAndamento'] = $this->somaTemposPactuados($result['noPeriodo']['demandasEmAndamento']);
+      $result['noPeriodo']['tempoTotalSoConcluidas'] = $this->somaTemposPactuados($result['noPeriodo']['demandasSoConcluidas']);
+      $result['noPeriodo']['tempoTotalReprovadas'] = $this->somaTemposPactuados($result['noPeriodo']['demandasReprovadas']);
+      $result['noPeriodo']['tempoTotalAprovadas'] = $this->somaTemposPactuados($result['noPeriodo']['demandasAprovadas']);
+      $result['noPeriodo']['tempoPrevistoNaoIniciadasNoPeriodo'] = $this->somaTemposPactuados($result['noPeriodo']['demandasNaoIniciadas'], $inicioPeriodo, $fimPeriodo, $plano['carga_horaria'], $unidadePlano, $afastamentosUsuario);
+      $result['noPeriodo']['tempoPrevistoEmAndamentoNoPeriodo'] = $this->somaTemposPactuados($result['noPeriodo']['demandasEmAndamento'], $inicioPeriodo, $fimPeriodo, $plano['carga_horaria'], $unidadePlano, $afastamentosUsuario);
+      $result['noPeriodo']['tempoPrevistoSoConcluidasNoPeriodo'] = $this->somaTemposPactuados($result['noPeriodo']['demandasSoConcluidas'], $inicioPeriodo, $fimPeriodo, $plano['carga_horaria'], $unidadePlano, $afastamentosUsuario);
+      $result['noPeriodo']['tempoPrevistoReprovadasNoPeriodo'] = $this->somaTemposPactuados($result['noPeriodo']['demandasReprovadas'], $inicioPeriodo, $fimPeriodo, $plano['carga_horaria'], $unidadePlano, $afastamentosUsuario);
+      $result['noPeriodo']['tempoPrevistoAprovadasNoPeriodo'] = $this->somaTemposPactuados($result['noPeriodo']['demandasAprovadas'], $inicioPeriodo, $fimPeriodo, $plano['carga_horaria'], $unidadePlano, $afastamentosUsuario);
+      $result['noPeriodo']['tempoTotalPrevistoNoPeriodo'] = $result['noPeriodo']['tempoPrevistoNaoIniciadasNoPeriodo'] + $result['noPeriodo']['tempoPrevistoEmAndamentoNoPeriodo'] + $result['noPeriodo']['tempoPrevistoSoConcluidasNoPeriodo'] + 
+                                                            $result['noPeriodo']['tempoPrevistoReprovadasNoPeriodo'] + $result['noPeriodo']['tempoPrevistoAprovadasNoPeriodo'];
       $result['noPeriodo']['tempoTrabalhadoHomologado'] = $this->tempoAvaliado($result['noPeriodo']['demandasAprovadas'], true, $inicioPeriodo, $fimPeriodo, $plano['carga_horaria'], $unidadePlano, $afastamentosUsuario);
       $result['noPeriodo']['tempoTrabalhadoNaoHomologado'] = $this->tempoAvaliado($result['noPeriodo']['demandasReprovadas'], false, $inicioPeriodo, $fimPeriodo, $plano['carga_horaria'], $unidadePlano, $afastamentosUsuario);
-      $result['noPeriodo']['tempoDespendidoConcluidas'] = $this->tempoAvaliado($result['noPeriodo']['demandasSoConcluidas'], false, $inicioPeriodo, $fimPeriodo, $plano['carga_horaria'], $unidadePlano, $afastamentosUsuario);
-      //$result['noPeriodo']['tempoDespendidoEmAndamento'] = ;
+      $result['noPeriodo']['tempoDespendidoSoConcluidas'] = $this->tempoAvaliado($result['noPeriodo']['demandasSoConcluidas'], false, $inicioPeriodo, $fimPeriodo, $plano['carga_horaria'], $unidadePlano, $afastamentosUsuario);
+      $result['noPeriodo']['tempoTotalRealizadoNoPeriodo'] = $result['noPeriodo']['tempoTrabalhadoHomologado'] + $result['noPeriodo']['tempoTrabalhadoNaoHomologado'] + $result['noPeriodo']['tempoDespendidoSoConcluidas']; 
+    }
+      return $result;
+  }
+
+  /** 
+   * Retorna um array com todas as demandas de um determinado Plano de Trabalho, cujas datas de distribuição ou de prazo_entrega estejam
+   * dentro do período estabelecido. 
+   * 
+   * @param   Plano   $plano          Plano de Trabalho a ser pesquisado.
+   * @param   string  $inicioPeriodo  Data inicial do período.
+   * @param   string  $fimPeriodo     Data final do período.
+   * @return  array
+   */
+  public function demandasDistribuidas($plano, $inicioPeriodo, $fimPeriodo): array
+  {
+    $result = [];
+    foreach ($plano['demandas'] as $demanda) {
+      if($this->demandaService->withinPeriodo($demanda, $inicioPeriodo, $fimPeriodo)) array_push($result, $demanda);
     }
     return $result;
   }
@@ -280,7 +333,43 @@ class PlanoService extends ServiceBase
   {
     $result = [];
     foreach ($plano['demandas'] as $demanda) {
-      if (!$this->demandaService->isIniciada($demanda) && $this->demandaService->withinPeriodo($demanda, $inicioPeriodo, $fimPeriodo)) array_push($result, $demanda);
+      if(!$this->demandaService->isIniciada($demanda) && $this->demandaService->withinPeriodo($demanda, $inicioPeriodo, $fimPeriodo)) array_push($result, $demanda);
+    }
+    return $result;
+  }
+
+  /** 
+   * Retorna um array com todas as demandas em andamento de um determinado Plano de Trabalho, cujas data de início ou data de entrega estejam
+   * dentro do período estabelecido. Uma demanda é considerada em andamento se o seu campo data_inicio não é nulo e seu campo data_entrega é nulo. 
+   * 
+   * @param   Plano   $plano          Plano de Trabalho a ser pesquisado.
+   * @param   string  $inicioPeriodo  Data inicial do período.
+   * @param   string  $fimPeriodo     Data final do período.
+   * @return  array
+   */
+  public function demandasEmAndamento($plano, $inicioPeriodo, $fimPeriodo): array
+  {
+    $result = [];
+    foreach ($plano['demandas'] as $demanda) {
+      if($this->demandaService->isIniciada($demanda) && !$this->demandaService->isConcluida($demanda) && $this->demandaService->withinPeriodo($demanda, $inicioPeriodo, $fimPeriodo)) array_push($result, $demanda);
+    }
+    return $result;
+  }
+
+  /** 
+   * Retorna um array com todas as demandas só concluidas de um determinado Plano de Trabalho, cujas data de início ou data de entrega estejam
+   * dentro do período estabelecido. Uma demanda é considerada só concluída se o seu campo data_entrega não for nulo e se ainda não foi avaliada. 
+   * 
+   * @param   Plano   $plano          Plano de Trabalho a ser pesquisado.
+   * @param   string  $inicioPeriodo  Data inicial do período.
+   * @param   string  $fimPeriodo     Data final do período.
+   * @return  array
+   */
+  public function demandasSoConcluidas($plano, $inicioPeriodo, $fimPeriodo): array
+  {
+    $result = [];
+    foreach ($plano['demandas'] as $demanda) {
+      if ($this->demandaService->isConcluida($demanda) && !($this->demandaService->isAvaliada($demanda)) && $this->demandaService->withinPeriodo($demanda, $inicioPeriodo, $fimPeriodo)) array_push($result, $demanda);
     }
     return $result;
   }
@@ -340,24 +429,6 @@ class PlanoService extends ServiceBase
   }
 
   /** 
-   * Retorna um array com todas as demandas só concluidas de um determinado Plano de Trabalho, cujas data de início ou data de entrega estejam
-   * dentro do período estabelecido. Uma demanda é considerada só concluída se o seu campo data_entrega não for nulo e se ainda não foi avaliada. 
-   * 
-   * @param   Plano   $plano          Plano de Trabalho a ser pesquisado.
-   * @param   string  $inicioPeriodo  Data inicial do período.
-   * @param   string  $fimPeriodo     Data final do período.
-   * @return  array
-   */
-  public function demandasSoConcluidas($plano, $inicioPeriodo, $fimPeriodo): array
-  {
-    $result = [];
-    foreach ($plano['demandas'] as $demanda) {
-      if ($this->demandaService->isConcluida($demanda) && !($this->demandaService->isAvaliada($demanda)) && $this->demandaService->withinPeriodo($demanda, $inicioPeriodo, $fimPeriodo)) array_push($result, $demanda);
-    }
-    return $result;
-  }
-
-  /** 
    * Retorna um array com todas as demandas cumpridas de um determinado Plano de Trabalho, cujas data de início ou data de entrega estejam
    * dentro do período estabelecido. Uma demanda é considerada cumprida se o seu campo tempo_homologado não for nulo. 
    * 
@@ -375,33 +446,28 @@ class PlanoService extends ServiceBase
     return $result;
   }
 
-  /** 
-   * Retorna um array com todas as demandas em andamento de um determinado Plano de Trabalho, cujas data de início ou data de entrega estejam
-   * dentro do período estabelecido. Uma demanda é considerada em andamento se o seu campo data_inicio não é nulo e seu campo data_entrega é nulo. 
-   * 
-   * @param   Plano   $plano          Plano de Trabalho a ser pesquisado.
-   * @param   string  $inicioPeriodo  Data inicial do período.
-   * @param   string  $fimPeriodo     Data final do período.
-   * @return  array
-   */
-  public function demandasEmAndamento($plano, $inicioPeriodo, $fimPeriodo): array
-  {
-    $result = [];
-    foreach ($plano['demandas'] as $demanda) {
-      if ($this->demandaService->isIniciada($demanda) && !$this->demandaService->isConcluida($demanda) && $this->demandaService->withinPeriodo($demanda, $inicioPeriodo, $fimPeriodo)) array_push($result, $demanda);
-    }
-    return $result;
-  }
-
   /**
    * Retorna a soma dos tempos pactuados de um array de demandas.
    * 
    * @param array $demandas
    * @return float
    */
-  public function somaTemposPactuados(array $demandas): float {
+  public function somaTemposPactuados(array $demandas, $inicio = null, $fim = null, $cargaHoraria = 0, $unidadePlano = null, $afastamentosUsuario = []): float {
     $total = 0;
-    foreach ($demandas as $demanda) { $total += $demanda['tempo_pactuado']; }
+    foreach ($demandas as $demanda) { 
+      $periodo = $inicio && $fim;
+      if($periodo){
+        $intersecao = UtilService::intersection([
+              new Interval(['start' => strtotime($demanda['data_distribuicao']), 'end' => strtotime($demanda['prazo_entrega'])]), 
+              new Interval(['start' => strtotime($inicio), 'end' => strtotime($fim)])
+          ]);
+        $hIntersecao = empty($intersecao) ? 0 : CalendarioService::calculaDataTempoUnidade(UtilService::asDateTime($intersecao->start), UtilService::asDateTime($intersecao->end), $cargaHoraria, $unidadePlano, "HORAS_UTEIS", null, $afastamentosUsuario)->tempoUtil;
+        $hPrazo = CalendarioService::calculaDataTempoUnidade(new DateTime($demanda['data_distribuicao']), new DateTime($demanda['prazo_entrega']), $cargaHoraria, $unidadePlano, "HORAS_UTEIS", null, $afastamentosUsuario)->tempoUtil;
+        $horasForaPeriodo = $hPrazo - $hIntersecao;
+        $tempoPactuadoPrevistoNoPeriodo = ($horasForaPeriodo >= $demanda['tempo_pactuado']) ? 0 : $demanda['tempo_pactuado'] - $horasForaPeriodo;
+      }
+      $total += $periodo ? $tempoPactuadoPrevistoNoPeriodo : $demanda['tempo_pactuado']; 
+    }
     return $total;
   }
 
@@ -437,10 +503,10 @@ class PlanoService extends ServiceBase
   }
 
   /**
-   * Retorna a soma dos tempos homologados/pactuados das demandas recebidas no array. Os tempos são calculados proporcionalmente dentro do período estabelecido pelos parâmetros
-   * $inicioPeriodo e $fimPeriodo. Para as demandas homologadas é utilizado o tempo_homologado e para as demandas não homologadas é utilizado o tempo_pactuado.
+   * Retorna a soma dos tempos homologados ou pactuados das demandas recebidas no array, a depender do parâmetro $homologadas. Os tempos são calculados proporcionalmente dentro do período 
+   * estabelecido pelos parâmetros $inicioPeriodo e $fimPeriodo. Para as demandas homologadas é utilizado o tempo_homologado e para as demandas não homologadas é utilizado o tempo_pactuado.
    * 
-   * @param array     $demandas             Um array de demandas já avaliadas, homologadas ou não (homologada é uma demanda com avaliação que atribuíu nota igual ou superior a 5.0).
+   * @param array     $demandas             Um array de demandas.
    * @param bool      $homologadas          Informa se o array passado como parâmetro se refere a demandas homologadas ou não.
    * @param string    $inicioPeriodo        Data inicial do período de pesquisa.
    * @param string    $fimPeriodo           Data final do período de pesquisa.
@@ -452,11 +518,11 @@ class PlanoService extends ServiceBase
   public function tempoAvaliado(array $demandas, bool $homologadas, string $inicioPeriodo, string $fimPeriodo, int|float $cargaHoraria, Unidade $unidadePlano, array $afastamentosUsuario): float {
     $total = 0.0;
     foreach ($demandas as $demanda) {
-      $marcoInicial = UtilService::maxDate(new DateTime($demanda['data_inicio']),new DateTime($inicioPeriodo)) ?? new DateTime();
+      $tempoTotalDemanda = CalendarioService::calculaDataTempoUnidade(new DateTime($demanda['data_inicio']), new DateTime($demanda['data_entrega']), $cargaHoraria, $unidadePlano, "HORAS_UTEIS", null, $afastamentosUsuario)->tempoUtil;
+      $marcoInicial = UtilService::maxDate(new DateTime($demanda['data_inicio']),new DateTime($inicioPeriodo));
       $marcoFinal = UtilService::minDate(new DateTime($demanda['data_entrega']),new DateTime($fimPeriodo));
-      $tempoTrabalhoNaDemandaNoPeriodo = CalendarioService::calculaDataTempoUnidade($marcoInicial, $marcoFinal, $cargaHoraria, $unidadePlano, "HORAS_UTEIS", null, $afastamentosUsuario)->tempoUtil;
-      $tempoTotalTrabalhadoNaDemanda = CalendarioService::calculaDataTempoUnidade(new DateTime($demanda['data_inicio']), new DateTime($demanda['data_entrega']), $cargaHoraria, $unidadePlano, "HORAS_UTEIS", null, $afastamentosUsuario)->tempoUtil;
-      $tempoProporcional = ($homologadas ? $demanda['tempo_homologado'] : $demanda['tempo_pactuado']) * ($tempoTrabalhoNaDemandaNoPeriodo / $tempoTotalTrabalhadoNaDemanda); 
+      $tempoDemandaNoPeriodo = CalendarioService::calculaDataTempoUnidade($marcoInicial, $marcoFinal, $cargaHoraria, $unidadePlano, "HORAS_UTEIS", null, $afastamentosUsuario)->tempoUtil;
+      $tempoProporcional = $tempoTotalDemanda == 0 ? 0 : ($homologadas ? $demanda['tempo_homologado'] : $demanda['tempo_pactuado']) * ($tempoDemandaNoPeriodo / $tempoTotalDemanda); 
       $total += $tempoProporcional;
     }
     return $total;
