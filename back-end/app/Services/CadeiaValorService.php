@@ -11,7 +11,7 @@ class CadeiaValorService extends ServiceBase
     use UseDataFim;
 
     public function buildSequencia($id) {
-        $recursivo = function($processos) use ($id, $recursivo) {
+        $recursivo = function($processos) use ($id, &$recursivo) {
             $sequencia = 1;
             foreach ($processos as $processo) {
                 if($processo->sequencia != $sequencia) {
@@ -27,6 +27,14 @@ class CadeiaValorService extends ServiceBase
         $raiz = CadeiaValorProcesso::where("cadeia_valor_id", $id)->whereNull("data_fim")->whereNull("processo_pai_id")
             ->orderBy("sequencia")->orderBy("updated_at", "desc")->get();
         $recursivo($raiz);
+    }
+
+    public function extraStore($cadeia, $unidade, $action) {
+        $this->buildSequencia($cadeia->id);
+    }
+
+    public function extraUpdate($cadeia, $unidade) {
+        $this->buildSequencia($cadeia->id);
     }
 
 }

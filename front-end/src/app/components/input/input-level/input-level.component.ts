@@ -83,6 +83,10 @@ export class InputLevelComponent extends InputBase implements OnInit {
     return [undefined, "0", "", 0].includes(value);
   }
 
+  // public get isValid(): boolean {
+  //   return !this.levels.find(x => !x.valid);
+  // }
+
   public updateControl() {
     if(this.control) this.control.setValue(this.levels.map(x => x.value).join(this.separator));
   }
@@ -101,6 +105,7 @@ export class InputLevelComponent extends InputBase implements OnInit {
         if(this.maxValue) this.levels[i].max = await this.maxValue(parents, this.levels[i], children);
         if(this.stepValue) this.levels[i].step = await this.stepValue(parents, this.levels[i], children);
       }
+      // if(this.control) this.control.setErrors(this.isValid ? null : {invalid: true});  
       this.cdRef.detectChanges();
     })();
   }

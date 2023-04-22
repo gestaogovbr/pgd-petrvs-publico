@@ -1,6 +1,6 @@
 <!-- Seleção do planejamento -->
 <editable-form [form]="form!" noButtons>
-    <div class="row">
+    <div class="row my-2">
         <input-select #cadeiaValorInstitucional [size]="12" controlName="cadeia_valor_id" [control]="form!.controls.cadeia_valor_id" [items]="cadeiasValor" (change)="onCadeiaValorChange()"></input-select>
     </div>
 </editable-form>
@@ -77,9 +77,11 @@
                                 (dndStart)="onDragStart($event)"
                                 dndType="processo"
                                 dndEffectAllowed="move">
-                                <h5>{{subprocesso.level}}. {{subprocesso.nome}}</h5>
-                                <div class="btn-group dropstart dropdown-menu-button ms-2">
-                                    <action-button noArrow icon="bi bi-wrench-adjustable-circle" [data]="subprocesso" [items]="options"  color="transparent-black p-1 py-0"></action-button>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <h5>{{subprocesso.level}}. {{subprocesso.nome}}</h5>
+                                    <div class="btn-group dropstart dropdown-menu-button ms-2 align-button">
+                                        <action-button noArrow icon="bi bi-wrench-adjustable-circle" [data]="subprocesso" [items]="options"  color="transparent-black p-1 py-0"></action-button>
+                                    </div>
                                 </div>
                                 <ng-container [ngTemplateOutlet]="innerProcessos" [ngTemplateOutletContext]="{processo: subprocesso}"></ng-container>
                             </div>    
