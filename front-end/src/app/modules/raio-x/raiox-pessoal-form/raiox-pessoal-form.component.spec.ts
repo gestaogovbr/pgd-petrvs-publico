@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RaioxPessoalComponent } from './raiox-pessoal.component';
+import { RaioxPessoalFormComponent } from './raiox-pessoal-form.component';
 
-describe('RaioxPessoalComponent', () => {
-  let component: RaioxPessoalComponent;
-  let fixture: ComponentFixture<RaioxPessoalComponent>;
+describe('RaioxPessoalFormComponent', () => {
+  let component: RaioxPessoalFormComponent;
+  let fixture: ComponentFixture<RaioxPessoalFormComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RaioxPessoalComponent ]
+      declarations: [ RaioxPessoalFormComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RaioxPessoalComponent);
+    fixture = TestBed.createComponent(RaioxPessoalFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

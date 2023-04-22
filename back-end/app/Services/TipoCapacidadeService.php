@@ -311,7 +311,20 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_USER_EXCL", "Permite excluir dados de usuário"],
         ["MOD_USER_INCL", "Permite incluir usuário"],
         ["MOD_USER_TUDO", "Permite consultar qualquer usuário independente de lotação"],
-        ["MOD_PERF_CONS", "Permite consultar perfil"]
+        ["MOD_PERF_CONS", "Permite consultar perfil"],
+        /* Capacidades do módulo RAIO X*/
+        ["MOD_RX_EDT_DPE", "Permite editar dados pessoais de outro usuário"],
+        ["MOD_RX_EDT_DPR", "Permite editar dados profissionais de outro usuário"],
+        ["MOD_RX_EDT_ATR", "Permite editar atributos comportamentais de outro usuário"],
+        ["MOD_RX_VIS_DPE", "Permite visualizar menu pessoais"],
+        ["MOD_RX_VIS_DPR", "Permite visualizar menu dados profissionais"],
+        ["MOD_RX_VIS_ATR", "Permite visualizar menu atributos comportamentais"],
+        ["MOD_RX_VIS_OPO", "Permite visualizar menu oportunidades"],
+        ["MOD_RX_EDT_USR", "Permite editar tudo para o usuário atual menos atributos comportamentais"],
+        ["MOD_RX_EDT_SUP", "Permite editar tudo para o usuário atual"],
+        ["MOD_RX_EDT_OPO", "Permite editar oportunidades"],
+        ["MOD_RX_VIS_OPO", "Permite visualizar oportunidades"],
+        ["MOD_RX_RES_ATR", "Permite resetar dados comportamentais"]
     ];
 
     private function differentDev(&$data) {

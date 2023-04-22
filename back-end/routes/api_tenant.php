@@ -49,6 +49,8 @@ use App\Http\Controllers\DemandaEntregaController;
 use App\Http\Controllers\ProjetoController;
 use App\Http\Controllers\RotinaDiariaController;
 use App\Http\Controllers\TemplateController;
+use App\Http\Controllers\AreaGraduacaoController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -229,3 +231,6 @@ Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
     Route::post('inativo', [UnidadeController::class, 'inativo']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Capacidade')->group(function () { defaultRoutes(CapacidadeController::class); });
+
+/* Modulos: RAIO X */
+Route::middleware(['auth:sanctum'])->prefix('AreaGraduacao')->group(function () { defaultRoutes(AreaGraduacaoController::class); });

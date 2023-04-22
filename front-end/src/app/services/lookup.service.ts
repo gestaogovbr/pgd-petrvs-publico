@@ -503,12 +503,43 @@ export class LookupService {
   public IDIOMAS : LookupItem[] = [
     { 'key': "ALEMAO", 'value': 'Alemão' }, 
     { 'key': "ARABE", 'value': 'Árabe' }, 
-    { 'key': "CHINES", 'value': 'Chinês' }, 
-    { 'key': "ESPANHOL", 'value': 'Espanhol' }, 
-    { 'key': "INGLES", 'value': 'Inglês' }
+    { 'key': "ARGELINO", 'value': 'Argelino' }, 
+    { 'key': "AZERI", 'value': 'Azeri' }, 
+    { 'key': "BENGALI", 'value': 'Bengali' },
+    { 'key': "CHINES", 'value': 'Chinês' },
+    //{ 'key': "CHINESCA", 'value': 'Chinês Cantonês' },
+    //{ 'key': "CHINESMA", 'value': 'Chinês Mandarim' },
+    //{ 'key': "CHINESWU", 'value': 'Chinês WU' },
+    { 'key': "COREANO", 'value': 'Coreano' }, 
+    { 'key': "EGIPCIO", 'value': 'Egípcio' },
+    { 'key': "ESPANHOL", 'value': 'Espanhol' },  
+    { 'key': "FRANCES", 'value': 'Frances' }, 
+    { 'key': "INDI", 'value': 'indi' },
+    { 'key': "HOLANDES", 'value': 'Holandês' }, 
+    { 'key': "INDONESIO", 'value': 'Indonésio' }, 
+    { 'key': "INGLES", 'value': 'Inglês' }, 
+    { 'key': "IORUBA", 'value': 'Iorubá' }, 
+    { 'key': "ITALIANO", 'value': 'Italiano' },
+    { 'key': "JAPONES", 'value': 'Japonês' }, 
+    { 'key': "JAVANES", 'value': 'Javanês' }, 
+    { 'key': "MALAIO", 'value': 'Malaio' }, 
+    { 'key': "MALAIOB", 'value': 'Malaio/Bahasa' }, 
+    { 'key': "MARATA", 'value': 'Marata' },
+    { 'key': "PERSA ", 'value': 'Persa' },
+    { 'key': "PUNJABI ", 'value': 'Punjabi' },  
+    { 'key': "ROMENO", 'value': 'Romeno' }, 
+    { 'key': "RUSSO", 'value': 'Russo' }, 
+    { 'key': "SUAILI", 'value': 'Suaíli' }, 
+    { 'key': "TAILANDES", 'value': 'Tailandes' },
+    { 'key': "TAMIL ", 'value': 'Tâmil' }, 
+    { 'key': "TELUGU", 'value': 'Telugu' }, 
+    { 'key': "TURCO", 'value': 'Turco' },
+    { 'key': "UCRANIANO", 'value': 'Ucraniano' }, 
+    { 'key': "URDU", 'value': 'Urdu' }, 
+    { 'key': "VIETNAMITA", 'value': 'Vietnamita' }
     ];
 
-    public NIVEL_IDIOMA : LookupItem[] = [
+  public NIVEL_IDIOMA : LookupItem[] = [
     { 'key': 'BASICO', 'value': 'Básico' }, 
     { 'key': 'INTERMEDIARIO', 'value': 'Intermediário' }, 
     { 'key': 'AVANCADO', 'value': 'Avançado' }, 
@@ -521,6 +552,17 @@ export class LookupService {
   { 'key': 'SEPARADO', 'value': 'Separado' }, 
   { 'key': 'VIUVO', 'value': 'Viúvo' }
   ];
+
+  public AREAS_GRADUACAO : LookupItem[] = [
+    { 'key': 'C_EXATAS', 'value': 'Ciências Exatas e da Terra' }, 
+    { 'key': 'C_BIOLOGICAS', 'value': 'Ciências Biológicas' }, 
+    { 'key': 'ENGENHARIAS', 'value': 'Engenharias' }, 
+    { 'key': 'C_SAUDE', 'value': 'Ciências da Saúde' }, 
+    { 'key': 'C_AGRARIAS', 'value': 'Ciências Agrárias' },
+    { 'key': 'LETRAS', 'value': 'Linguística, Letras e Artes' }, 
+    { 'key': 'C_SOCIAIS', 'value': 'Ciências Sociais Aplicadas' }, 
+    { 'key': 'C_HUMANAS', 'value': 'Ciências Humanas' }
+    ];
 
   public getLookup(itens: LookupItem[], key: any) {
     return itens.find(x => x.key == key);

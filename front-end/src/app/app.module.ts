@@ -21,7 +21,7 @@ import { RotinaModule } from './modules/rotinas/rotina.module';
 import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
 import { CadeiaValorModule } from './modules/gestao/cadeia-valor/cadeia-valor.module';
 import { RaioxhomeComponent } from './modules/raio-x/raioxhome/raioxhome.component';
-import { RaioxPessoalComponent } from './modules/raio-x/raiox-pessoal/raiox-pessoal.component';
+import { RaioxPessoalFormComponent } from './modules/raio-x/raiox-pessoal-form/raiox-pessoal-form.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +34,7 @@ import { RaioxPessoalComponent } from './modules/raio-x/raiox-pessoal/raiox-pess
     TesteComponent,
     TesteFormComponent,
     RaioxhomeComponent,
-    RaioxPessoalComponent,
+    RaioxPessoalFormComponent,
   ],
   imports: [
     BrowserModule,

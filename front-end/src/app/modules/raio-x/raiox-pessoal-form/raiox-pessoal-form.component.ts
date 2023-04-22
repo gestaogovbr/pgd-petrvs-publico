@@ -11,31 +11,26 @@ import { LookupService, LookupItem } from 'src/app/services/lookup.service';
 
 
 @Component({
-  selector: 'app-raiox-pessoal',
-  templateUrl: './raiox-pessoal.component.html',
-  styleUrls: ['./raiox-pessoal.component.scss']
+  selector: 'app-raiox-pessoal-form',
+  templateUrl: './raiox-pessoal-form.component.html',
+  styleUrls: ['./raiox-pessoal-form.component.scss']
 })
 
 
 
 
-export class RaioxPessoalComponent extends PageFormBase<Cidade, CidadeDaoService> {
+export class RaioxPessoalFormComponent extends PageFormBase<Cidade, CidadeDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
 
   public municipios: LookupItem[] = [];
-  public graduacaoArea: LookupItem[] = [{ 'key': 'EXATAS', 'value': 'Exatas' }, { 'key': 'HUMANAS', 'value': 'Humanas' }, { 'key': 'BIOLOGIA', 'value': 'Biologica' }];//{'key':1,'value':'Exatas'},{'key':2,'value':'Humanas'},{'key':3,'value':'Biologica'}];
-  public graduacaoCurso: LookupItem[] = [{ 'key': 'EXATAS', 'value': 'Curso de exatas 1' }, { 'key': "EXATAS", 'value': 'Curso de exatas 2' },
-  { 'key': "HUMANAS", 'value': 'Curso de Humanas 1' }, { 'key':"HUMANAS", 'value': 'Curso de Humanas 2' },
-  { 'key':"BIOLOGICA", 'value': 'Curso de Biologicas 1' }, { 'key': "BIOLOGICA", 'value': 'Curso de Biologicas 2' }];
+  public areasGraduacao: LookupItem[] = [];
+  //public graduacaoArea: LookupItem[] = [{ 'key': 'EXATAS', 'value': 'Exatas' }, { 'key': 'HUMANAS', 'value': 'Humanas' }, { 'key': 'BIOLOGIA', 'value': 'Biologica' }];//{'key':1,'value':'Exatas'},{'key':2,'value':'Humanas'},{'key':3,'value':'Biologica'}];
+  public graduacaoCurso: LookupItem[] = [{ 'key': 'C_EXATAS', 'value': 'Curso de exatas 1' }, { 'key': "C_EXATAS", 'value': 'Curso de exatas 2' },
+  { 'key': "C_HUMANAS", 'value': 'Curso de Humanas 1' }, { 'key':"C_HUMANAS", 'value': 'Curso de Humanas 2' },
+  { 'key':"C_BIOLOGICAS", 'value': 'Curso de Biologicas 1' }, { 'key': "C_BIOLOGICAS", 'value': 'Curso de Biologicas 2' }];
   public cursos: LookupItem[] = [];
 
   public cidadeDao: CidadeDaoService;
-
-  
-  estadoCivil = this.lookup.ESTADO_CIVIL;
-  nivelIdioma = this.lookup.NIVEL_IDIOMA;
-  idiomas=this.lookup.IDIOMAS;
-
 
   constructor(public injector: Injector) {
     super(injector, Cidade, CidadeDaoService);
@@ -58,7 +53,28 @@ export class RaioxPessoalComponent extends PageFormBase<Cidade, CidadeDaoService
       radioPretendeGraduacao: { default: false },
       area: { default: "" },
       curso: { default: "" },
-      graduacao: { default: [] }
+      graduacao: { default: [] },
+      radioPosGraduacao: { default: false },
+      radioPretendePosGraduacao: { default: false },
+      areaPos: { default: "" },
+      cursoPos: { default: "" },
+      posgraduacao: { default: [] },
+      radioMestrado: { default: false },
+      radioPretendeMestrado: { default: false },
+      areaMestrado: { default: "" },
+      cursoMestrado: { default: "" },
+      mestrado: { default: [] },
+      radioDoutorado: { default: false },
+      radioPretendeDoutorado: { default: false },
+      areaDoutorado: { default: "" },
+      cursoDoutorado: { default: "" },
+      doutorado: { default: [] },
+      radioPosDoutorado: { default: false },
+      radioPretendePosDoutorado: { default: false },
+      areaPosDoutorado: { default: "" },
+      cursoPosDoutorado: { default: "" },
+      posdoutorado: { default: [] },
+
 
     })//, this.cdRef, this.validate);
     
@@ -106,6 +122,14 @@ export class RaioxPessoalComponent extends PageFormBase<Cidade, CidadeDaoService
 
   }
 
+  public getAllAreasGraduacao() {
+    
+
+  }
+
+  
+
+
   public onAreaChange() {
     let area1 = this.form!.controls.area.value;
     //this.form!.controls.curso.setValue("");
@@ -120,7 +144,7 @@ export class RaioxPessoalComponent extends PageFormBase<Cidade, CidadeDaoService
     //console.log('addItemGraduacao',this.form!.value)
     let res=this.form!.value
     console.log('addItemIdioma',res)
-    const idioma = this.idiomas.find(x => x.key == this.form!.controls.idioma.value)
+    const idioma =this.lookup.IDIOMAS.find(x => x.key == this.form!.controls.idioma.value)
     console.log('addItemIdioma',idioma)
     const escrita = this.form!.controls.idiomaEscrita.value;
     const fala = this.form!.controls.idiomaFala.value;
@@ -152,7 +176,7 @@ export class RaioxPessoalComponent extends PageFormBase<Cidade, CidadeDaoService
     let res=this.form!.value
     console.log('addItemGraduacao',res.graduacao)
     const curso = this.graduacaoCurso.find(x => x.key == this.form!.controls.curso.value); //this.form!.controls.curso.value;
-    const area = this.graduacaoArea.find(x => x.key == this.form!.controls.area.value);
+    const area = this.lookup.AREAS_GRADUACAO.find(x => x.key == this.form!.controls.area.value);
     const key = this.util.textHash((area?.key || "") + (curso?.key || ""));
     if (curso && area && this.util.validateLookupItem(this.form!.controls.graduacao.value, key)) {// && this.util.validateLookupItem(key,value)) {
       result = {
@@ -169,5 +193,10 @@ export class RaioxPessoalComponent extends PageFormBase<Cidade, CidadeDaoService
     }
     return result;
   };
+
+  public setValueradioPretendePosGraduacao(){
+    this.form!.controls.radioPretendePosGraduacao.setValue(0);
+    this.cdRef.detectChanges()
+  }
 
 }
