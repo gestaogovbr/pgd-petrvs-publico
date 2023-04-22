@@ -21,23 +21,7 @@ export class CadeiaValorListComponent extends PageListBase<CadeiaValor, CadeiaVa
     /* Inicializações */
     this.code = "MOD_CADV";
     this.title = this.lex.noun('Cadeia de Valor',true);
-    this.filter = this.fh.FormBuilder({
-      nome: {default: ""}
-    });
-    if (this.auth.hasPermissionTo("MOD_CADV_CONS")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    if (this.auth.hasPermissionTo("MOD_CADV_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
+    this.filter = this.fh.FormBuilder({});
   }
 
   ngAfterViewInit(): void {
@@ -57,11 +41,6 @@ export class CadeiaValorListComponent extends PageListBase<CadeiaValor, CadeiaVa
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
-
-    if(form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome + "%"]);
-    }
-
     return result;
   }
 
