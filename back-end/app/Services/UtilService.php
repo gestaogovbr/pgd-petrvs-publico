@@ -42,7 +42,7 @@ class UtilService
     }
 
     public static function getTimeFormatted($dataHora) {
-        return (new MomentPHP($dataHora))->format("H:i");
+        return Carbon::parse($dataHora)->format("H:i");
     }
 
     public static function getDateTimeFormatted($dataHora, $separator = " ") {

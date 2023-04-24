@@ -175,6 +175,7 @@ class EixoTematicoListComponent extends src_app_modules_base_page_list_base__WEB
         };
         /* Inicializações */
         this.title = 'Eixos temáticos';
+        this.orderBy = [['nome', 'asc']];
         this.filter = this.fh.FormBuilder({
             nome: { default: "" }
         });
@@ -206,7 +207,7 @@ EixoTematicoListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵ
     } if (rf & 2) {
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵloadQuery"]()) && (ctx.grid = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵInheritDefinitionFeature"]], decls: 11, vars: 19, consts: [[3, "dao", "add", "title", "hasAdd", "hasEdit", "selectable", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Eixo tem\u00E1tico", "controlName", "nome", "placeholder", "Nome do eixo tem\u00E1tico...", 3, "size", "control"], ["title", "Nome", "orderBy", "nome", 3, "template"], ["columnNome", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"]], template: function EixoTematicoListComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵInheritDefinitionFeature"]], decls: 11, vars: 20, consts: [[3, "dao", "add", "title", "hasAdd", "hasEdit", "selectable", "orderBy", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Eixo tem\u00E1tico", "controlName", "nome", "placeholder", "Nome do eixo tem\u00E1tico...", 3, "size", "control"], ["title", "Nome", "orderBy", "nome", 3, "template"], ["columnNome", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"]], template: function EixoTematicoListComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "grid", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("select", function EixoTematicoListComponent_Template_grid_select_0_listener($event) { return ctx.onSelect($event); });
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](1, EixoTematicoListComponent_toolbar_1_Template, 1, 0, "toolbar", 1);
@@ -225,7 +226,7 @@ EixoTematicoListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵ
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
     } if (rf & 2) {
         const _r1 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵreference"](8);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("title", ctx.isModal ? "" : ctx.title)("hasAdd", ctx.auth.hasPermissionTo("MOD_PLAN_INST_INCL"))("hasEdit", ctx.auth.hasPermissionTo("MOD_PLAN_INST_EDT"))("selectable", ctx.selectable);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("title", ctx.isModal ? "" : ctx.title)("hasAdd", ctx.auth.hasPermissionTo("MOD_PLAN_INST_INCL"))("hasEdit", ctx.auth.hasPermissionTo("MOD_PLAN_INST_EDT"))("selectable", ctx.selectable)("orderBy", ctx.orderBy);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", !ctx.selectable);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);

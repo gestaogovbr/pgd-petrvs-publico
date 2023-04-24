@@ -46,6 +46,7 @@ export class ColumnComponent implements OnInit {
   @Input() maxWidth?: number = undefined;
   @Input() width?: number = undefined;
   @Input() cellClass?: string;
+  @Input() always?: string;
 
   constructor() { }
 

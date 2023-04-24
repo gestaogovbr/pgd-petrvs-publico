@@ -1,32 +1,36 @@
-<div class="d-flex justify-content-end mt-2">
+<div *ngIf="visible" class="d-flex justify-content-end mt-2">
     <h3 *ngIf="title.length" class="flex-fill">
         <i *ngIf="icon.length" [class]="icon"></i>
         {{title}}
     </h3>
     <ng-content></ng-content>
     <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-        <div *ngFor="let btn of buttons" class="btn-group" role="group">
-            <button type="button" [id]="generatedButtonId(btn)" [class]="'btn ' + (btn.color || 'btn-outline-primary')" [class.active]="buttonPressed(btn)"
-                [class.dropdown-toggle]="btn.items && !btn.toggle" [attr.data-bs-toggle]="btn.items && !btn.toggle ? 'dropdown' : undefined" aria-expanded="false" 
-                (click)="onButtonClick(btn)" [disabled]="buttonDisabled(btn)">
-                <i *ngIf="btn.icon?.length" [class]="btn.icon"></i>
-                <span class="d-none d-md-inline-block ms-2">{{btn.label || ""}}</span>
-                <span *ngIf="btn.badge?.length" class="badge bg-primary ms-2">{{btn.badge}}</span>
-            </button>
-            <button *ngIf="btn.items && btn.toggle" [attr.id]="generatedButtonId(btn) + '_dropdown'" type="button" [class]="'btn dropdown-toggle dropdown-toggle-split ' + (btn.color || 'btn-outline-primary')" data-bs-toggle="dropdown" aria-expanded="false">
-                <span class="visually-hidden">V</span>
-            </button>
-            <ul *ngIf="btn.items" class="dropdown-menu dropdown-menu-end" [attr.aria-labelledby]="generatedButtonId(btn) + (btn.items && btn.toggle ? '_dropdown' : '')">
-                <li *ngFor="let option of btn.items">
-                    <a class="dropdown-item" role="button" [id]="generatedButtonId(option, '_item')" (click)="onButtonClick(option)"><i *ngIf="option.icon?.length" [class]="option.icon"></i> {{option.label || ""}}</a>
-                </li>
-            </ul>
-        </div>
+        <ng-container *ngFor="let btn of buttons">
+            <div *ngIf="!btn.dynamicVisible || btn.dynamicVisible(btn)" class="btn-group" role="group">
+                <button type="button" [id]="generatedButtonId(btn)" [class]="'btn ' + (btn.color || 'btn-outline-primary')" [class.active]="buttonPressed(btn)"
+                    [class.dropdown-toggle]="btn.items && !btn.toggle" [attr.data-bs-toggle]="btn.items && !btn.toggle ? 'dropdown' : undefined" aria-expanded="false" 
+                    (click)="onButtonClick(btn)" [disabled]="buttonDisabled(btn)">
+                    <i *ngIf="btn.icon?.length" [class]="btn.icon"></i>
+                    <span class="d-none d-md-inline-block ms-2">{{btn.label || ""}}</span>
+                    <span *ngIf="btn.badge?.length" class="badge bg-primary ms-2">{{btn.badge}}</span>
+                </button>
+                <button *ngIf="btn.items && btn.toggle" [attr.id]="generatedButtonId(btn) + '_dropdown'" type="button" [class]="'btn dropdown-toggle dropdown-toggle-split ' + (btn.color || 'btn-outline-primary')" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="visually-hidden">V</span>
+                </button>
+                <ul *ngIf="btn.items" class="dropdown-menu dropdown-menu-end" [attr.aria-labelledby]="generatedButtonId(btn) + (btn.items && btn.toggle ? '_dropdown' : '')">
+                    <li *ngFor="let option of btn.items">
+                        <hr *ngIf="option.divider" class="dropdown-divider">
+                        <a *ngIf="!option.divider" class="dropdown-item" role="button" [id]="generatedButtonId(option, '_item')" (click)="onButtonClick(option)"><i *ngIf="option.icon?.length" [class]="option.icon"></i> {{option.label || ""}}</a>
+                    </li>
+                </ul>
+            </div>
+        </ng-container>
         <div *ngIf="options" class="btn-group" role="group">
             <button id="btnToolbarOptions" [id]="generatedId('_options')" type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Opções</button>
             <ul class="dropdown-menu dropdown-menu-end" [attr.aria-labelledby]="generatedId('_options')">
                 <li *ngFor="let option of options">
-                    <a class="dropdown-item" [id]="generatedButtonId(option, '_option')" role="button" (click)="onButtonClick(option)"><i *ngIf="option.icon?.length" [class]="option.icon"></i> {{option.label || ""}}</a>
+                    <hr *ngIf="option.divider" class="dropdown-divider">
+                    <a *ngIf="!option.divider" class="dropdown-item" [id]="generatedButtonId(option, '_option')" role="button" (click)="onButtonClick(option)"><i *ngIf="option.icon?.length" [class]="option.icon"></i> {{option.label || ""}}</a>
                 </li>
             </ul>
         </div>

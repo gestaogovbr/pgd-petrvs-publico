@@ -140,7 +140,6 @@ class DemandaService extends ServiceBase
                 array_push($where, $condition);
             }
         }
-        //LogError::newWarn("PROXY: Where", $data);
         $data["where"] = $this->prefixWhere($where, "Demanda");
         foreach($data["with"] as $join) {
             if($join == "comentarios") {
@@ -152,7 +151,6 @@ class DemandaService extends ServiceBase
                 array_push($with, $join);
             }
         }
-        //LogError::newWarn("PROXY: prefix", $data);
         $unidades_ids = [];
         if(!empty($unidade_id)) {
             array_push($unidades_ids, $unidade_id);
@@ -175,7 +173,6 @@ class DemandaService extends ServiceBase
                 WHERE " . (count($where) > 0 ? join(" OR ", $where) : "FALSE") . "
             ) AS subquery
         )", $params));
-        //LogError::newWarn("PROXY: return", $data);
         return $data;
     }
 
@@ -190,11 +187,15 @@ class DemandaService extends ServiceBase
         $afastamentos = [];
         $planos = [];
         $result = [
+            'avaliadores' => [],
             'planos' => [],
             'afastamentos' => [],
             'feriados' => []
         ];
         foreach($rows as $row) {
+            if(!array_key_exists($row->unidade_id, $result['avaliadores'])) {
+                $result['avaliadores'][$row->unidade_id] = $this->unidadeService->avaliadores($row->unidade_id);
+            }
             if(empty($row->data_entrega)) { /* Somente as que não estiverem concluídas */
                 if(!empty($row->plano_id)) $planos[$row->plano_id] = true;
                 $tomorrow = Carbon::now()->add(1, "days")->format(ServiceBase::ISO8601_FORMAT);
@@ -492,9 +493,12 @@ class DemandaService extends ServiceBase
         $dispensaAvaliacao = !empty($demanda->plano->tipo_modalidade) && $demanda->plano->tipo_modalidade->dispensa_avaliacao;
         try {
             /*Testa permissão para avaliar demanda de outros usuarios,
-            prevista para o Gestor ou Gestor substituto da Unidade da Demanda*/
+            prevista para o Gestor ou Gestor substituto da Unidade da Demanda*
             if (($demanda->unidade->gestor_id != parent::loggedUser()->id) && ($demanda->unidade->gestor_substituto_id != parent::loggedUser()->id)) {
                 throw new ServerException("ValidateDemanda", "Não é permitido avaliar demanda da qual usuário logado não é Gestor!");
+            }*/
+            if(!in_array(parent::loggedUser()->id, $this->unidadeService->avaliadores($demanda->unidade_id))) {
+                throw new ServerException("ValidateDemanda", "O avaliador deve ser gestor ou delegado como avaliador da unidade.");
             }
             DB::beginTransaction();
             $tipoAvaliacao = TipoAvaliacao::find($avaliacao["tipo_avaliacao_id"]);
