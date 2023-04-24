@@ -17,12 +17,12 @@ class CadeiaValorProcesso extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência do registro
-        //'data_fim', /* datetime; */// Data fim da vigência do registro
         'sequencia', /* int; NOT NULL; */// Sequencia dentro do grupo
         'path', /* text; */// Path dos nós pais separados por /, ou null caso sejam nós raiz
         'nome', /* varchar(256); NOT NULL; */// Nome
         'cadeia_valor_id', /* char(36); NOT NULL; */
         'processo_pai_id', /* char(36); */
+        //'data_fim', /* datetime; */// Data fim da vigência do registro
     ];
 
     public $fillable_changes = [];

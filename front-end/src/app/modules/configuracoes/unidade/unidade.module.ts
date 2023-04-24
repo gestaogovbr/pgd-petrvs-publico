@@ -8,13 +8,15 @@ import { ComponentsModule } from 'src/app/components/components.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UnidadeMergeComponent } from './unidade-merge/unidade-merge.component';
 import { UteisModule } from '../../uteis/uteis.module';
+import { UnidadeIntegranteComponent } from './unidade-integrante/unidade-integrante.component';
 
 
 @NgModule({
   declarations: [
     UnidadeFormComponent,
     UnidadeListComponent,
-    UnidadeMergeComponent
+    UnidadeMergeComponent,
+    UnidadeIntegranteComponent
   ],
   imports: [
     CommonModule,

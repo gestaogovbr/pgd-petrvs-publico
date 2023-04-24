@@ -30,6 +30,7 @@ export type StatusDemanda = {
 }
 
 export type ExtraDemanda = {
+  avaliadores: { [unidade_id: string]: string[] },
   planos: { [plano_id: string]: Plano },
   afastamentos: { [usuario_id: string]: Afastamento[] },
   feriados?: { [unidade_id: string]: FeriadoList }
@@ -70,7 +71,7 @@ export abstract class DemandaListBase extends PageListBase<Demanda, DemandaDaoSe
     this.comentario = injector.get<ComentarioService>(ComentarioService);
     this.join = ["atividade", "demandante", "pausas", "usuario", "unidade", "comentarios.usuario", "entregas.tarefa", "entregas.comentarios.usuario"];
     /* Inicializações */
-    this.extra = { planos: {}, afastamentos: {} };
+    this.extra = { avaliadores: {}, planos: {}, afastamentos: {} };
   }
 
   /*public orderComentarios(comentarios?: Comentario[]) {
@@ -97,6 +98,7 @@ export abstract class DemandaListBase extends PageListBase<Demanda, DemandaDaoSe
     /* Recebe informações extra da query para auxiliar em cálculos e melhorar performace da consulta */
     const extra = (this.grid?.query || this.query!).extra;
     if (extra) {
+      this.extra.avaliadores = Object.assign(this.extra.avaliadores, extra.avaliadores || {});
       this.extra.planos = Object.assign(this.extra.planos, extra.planos || {});
       for (let [key, value] of Object.entries(extra.afastamentos || {})) {
         this.extra.afastamentos[key] = (value as Array<Afastamento>).reduce((a, v) => {
@@ -190,6 +192,7 @@ export abstract class DemandaListBase extends PageListBase<Demanda, DemandaDaoSe
     let result: ToolbarButton[] = [];
     let demanda: Demanda = row as Demanda;
     const isGestor = this.auth.usuario?.id == demanda.unidade?.gestor_id || this.auth.usuario?.id == demanda.unidade?.gestor_substituto_id;
+    const isAvaliador = isGestor || (this.extra.avaliadores[demanda.unidade_id] || []).includes(this.auth.usuario?.id || ""); //|| demanda.unidade
     const isDemandante = this.auth.usuario?.id == demanda.demandante_id;
     const isResponsavel = this.auth.usuario?.id == demanda.usuario_id;
     const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: (demanda: Demanda) => this.go.navigate({ route: ['gestao', 'demanda', demanda.id, 'consult'] }, { modal: true }) };
@@ -229,11 +232,11 @@ export abstract class DemandaListBase extends PageListBase<Demanda, DemandaDaoSe
         result.push(BOTAO_EXCLUIR);
       }
     } else if (demanda.metadados?.avaliado) { /* Avaliado */
-      if (isGestor || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT_AVAL')) { /* Avaliado: Gestor ou substituto pode alterar*/
+      if (isAvaliador || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT_AVAL')) { /* Avaliado: Gestor ou substituto pode alterar*/
         result.push(BOTAO_ALTERAR_AVALIACAO, { divider: true }, BOTAO_ARQUIVAR, BOTAO_CANCELAR_AVALIACAO);
       }
     } else if (demanda.metadados?.concluido) { /* Concluído -> Gestor ou substituto pode avaliar */
-      if (isGestor || this.auth.hasPermissionTo('MOD_DMD_USERS_AVAL')) {
+      if (isAvaliador || this.auth.hasPermissionTo('MOD_DMD_USERS_AVAL')) {
         result.push(BOTAO_AVALIAR);
       }
       if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT_CONCL')) {
@@ -307,6 +310,7 @@ export abstract class DemandaListBase extends PageListBase<Demanda, DemandaDaoSe
     let result: ToolbarButton[] = [];
     let demanda: Demanda = row as Demanda;
     const isGestor = this.auth.usuario?.id == demanda.unidade?.gestor_id || this.auth.usuario?.id == demanda.unidade?.gestor_substituto_id;
+    const isAvaliador = isGestor || (this.extra.avaliadores[demanda.unidade_id] || []).includes(this.auth.usuario?.id || ""); //|| demanda.unidade
     const isDemandante = this.auth.usuario?.id == demanda.demandante_id;
     const isResponsavel = this.auth.usuario?.id == demanda.usuario_id;
     const BOTAO_ALTERAR_AVALIACAO = { hint: "Alterar avaliação", icon: "bi bi-check-all", color: "btn-outline-danger", onClick: (demanda: Demanda) => this.go.navigate({ route: ['gestao', 'demanda', demanda.id, 'avaliar'] }, this.modalRefreshId(demanda)) };
@@ -317,7 +321,7 @@ export abstract class DemandaListBase extends PageListBase<Demanda, DemandaDaoSe
     const BOTAO_CONCLUIR = { hint: "Concluir", icon: "bi bi-check", color: "btn-outline-success", onClick: (demanda: Demanda) => this.go.navigate({ route: ['gestao', 'demanda', demanda.id, 'concluir'] }, this.modalRefreshId(demanda)) };
 
     if (demanda.metadados?.avaliado) { /* Arquivado */
-      if (isGestor || isDemandante || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) { /* Usuário logado é gestor da Unidade ou substituto*/
+      if (isAvaliador || this.auth.hasPermissionTo('MOD_DMD_USERS_AVAL')) { /* Usuário logado é gestor da Unidade ou substituto*/
         result.push(BOTAO_ALTERAR_AVALIACAO);
       } else if (demanda.metadados?.arquivado && isGestor) { //Somente se gestor ou com capacidade para essa operação
         result.push({ hint: "Desarquivar", icon: "bi bi-reply", onClick: this.desarquivar.bind(this) });
@@ -327,7 +331,7 @@ export abstract class DemandaListBase extends PageListBase<Demanda, DemandaDaoSe
         result.push(BOTAO_INICIAR);
       }
     } else if (demanda.metadados?.concluido) { /* Concluído */
-      if (isGestor || this.auth.hasPermissionTo('MOD_DMD_USERS_AVAL')) { /* Usuário logado é gestor da Unidade ou substituto */
+      if (isAvaliador || this.auth.hasPermissionTo('MOD_DMD_USERS_AVAL')) { /* Usuário logado é gestor da Unidade ou substituto */
           result.push(BOTAO_AVALIAR);
       }
     } else if (demanda.metadados?.avaliado) { /* Avaliado */

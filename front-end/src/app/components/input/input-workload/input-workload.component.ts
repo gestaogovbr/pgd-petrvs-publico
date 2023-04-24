@@ -40,7 +40,7 @@ export class InputWorkloadComponent extends InputBase implements OnInit {
       this._unit = value;
       this.maxValue = this.unit == "day" ? 24 : this.unit == "week" ? 120 : 480;
       this.valueToWork();
-      this.cdRef.detectChanges();
+      this.detectChanges();
     }
   }
   get unit(): UnitWorkload {

@@ -294,7 +294,7 @@ export class CalendarService {
           especial.filter(x => !!x.sem).forEach(x => dia.intervalos.push({ start: this.util.setStrTime(dDiaAtual, x.inicio).getTime(), end: this.util.setStrTime(dDiaAtual, x.fim).getTime() }));
           dia.intervalos = this.util.union(dia.intervalos);
           /* Filtra e ajusta os intervalos para caberem entre inicio e fim */
-          dia.intervalos = dia.intervalos.filter(x => x.start <= dia.tFim && x.end >= dia.tInicio).map(x => Object.assign(x, { start: Math.max(x.start as number, dia.tInicio), end: Math.min(x.end as number, dia.tFim) }));
+          dia.intervalos = dia.intervalos.filter(x => (x.start as number) <= dia.tFim && (x.end as number) >= dia.tInicio).map(x => Object.assign(x, { start: Math.max(x.start as number, dia.tInicio), end: Math.min(x.end as number, dia.tFim) }));
           /* Calcula as horas dos intervalos (os intervalos já estão unificados e ajustados para dentro do expediente) 
           dia.hNaoUteis = dia.intervalos.reduce((a, v) => a + this.util.getHoursBetween(v.start, v.end), 0); */
         } else { /* Caso no dia não tenha nenhum turno ou horario especial com expediente */

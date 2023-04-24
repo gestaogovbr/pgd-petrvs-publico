@@ -48,11 +48,9 @@ class Entidade extends ModelBase
         'forma_contagem_carga_horaria', /* enum('DIA','SEMANA','MES'); NOT NULL; DEFAULT: 'DIA'; */// Forma de contagem padrão da carga horária
         'data_inicio', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data inicio da vigência
         'expediente', /* json; NOT NULL; DEFAULT: '_utf8mb4\'{"domingo":[],"segunda":[],"terca":[],"quarta":[],"quinta":[],"sexta":[],"sabado":[],"especial":[]}\''; */// Configuração de expediente
-        'template_adesao_id', /* char(36); */
         //'data_fim', /* datetime; */// Data fim da vigência
         //'api_public_key', /* text; */// Chave pública de API
         //'api_private_key', /* text; */// Chave privada de API
-        //'template_adesao_cancelamento_id', /* char(36); */
     ];
 
     public $delete_cascade = ['feriados'];

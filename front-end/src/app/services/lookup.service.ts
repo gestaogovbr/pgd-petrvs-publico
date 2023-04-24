@@ -109,6 +109,14 @@ export class LookupService {
     { key: 'OUTRO', value: "Outro", icon: "bi bi-question-circle", color: "danger" }
   ]
 
+  public UNIDADE_INTEGRANTE_TIPO: LookupItem[] = [
+    { key: 'GESTOR', value: "Chefe", icon: "bi bi-star-fill", color: "warning"},
+    { key: 'GESTOR_SUBSTITUTO', value: "Chefe substituto", icon: "bi bi-star-half", color: "warning"},
+    { key: 'AVALIADOR_DEMANDAS', value: "Avaliador (demandas)", icon: "bi bi-check-all", color: "success"},
+    { key: 'LOTADO', value: "Lotado", icon: "bi bi-geo-alt", color: "secondary"}
+  ];
+
+
   public TEMPLATE_ESPECIE: LookupItem[] = this.DOCUMENTO_ESPECIE;
 
   public DIA_HORA_CORRIDOS_OU_UTEIS: LookupItem[] = [
@@ -172,6 +180,20 @@ export class LookupService {
     { key: "#0dcaf0", value: "Ciano", color: "#0dcaf0" },
     { key: "#6c757d", value: "Cinza", color: "#6c757d" },
     { key: "#343a40", value: "Preto", color: "#343a40" }
+  ];
+
+  public CORES_BACKGROUND = [
+    { key: "#FAEDCD", value: "Bege", color: "#FAEDCD" },
+    { key: "#E9EDC9", value: "Verde Claro", color: "#E9EDC9" },
+    { key: "#F1F7B5", value: "Verde Lima", color: "#F1F7B5" },
+    { key: "#B9F3FC", value: "Azul Claro", color: "#B9F3FC" },
+    { key: "#AEE2FF", value: "Azul Médio", color: "#AEE2FF" },
+    { key: "#FFD4B2", value: "Laranja", color: "#FFD4B2" },
+    { key: "#FFD1D1", value: "Rosa", color: "#FFD1D1" },
+    { key: "#D0C9C0", value: "Cinza", color: "#D0C9C0" },
+    { key: "#D7E9F7", value: "Azul", color: "#D7E9F7" },
+    { key: "#DBE4C6", value: "Verde", color: "#DBE4C6" },
+    { key: "#FFEB99", value: "Amarelo", color: "#FFEB99" }
   ];
 
   public ICONES = [

@@ -44,7 +44,7 @@ export class InputRateComponent extends InputBase implements OnInit {
       this._max = value;
       this.stars = Array<boolean>(value).fill(false);
       this.stars.map((x, i) => this.stars[i] = i < this.value);
-      this.cdRef.detectChanges();
+      this.detectChanges();
     }
   }
   get max(): number {

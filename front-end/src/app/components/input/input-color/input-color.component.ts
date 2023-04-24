@@ -28,6 +28,8 @@ export class InputColorComponent extends InputBase implements OnInit {
   @Input() label: string = "";
   @Input() labelInfo: string = "";
   @Input() bold: boolean = false;
+  @Input() palette?: LookupItem[];
+  @Input() background?: string;
   @Input() value: any = "";
   @Input() loading: boolean = false;
   @Input() form?: FormGroup;
@@ -68,6 +70,14 @@ export class InputColorComponent extends InputBase implements OnInit {
     }
   }
 
+  public get isBackground(): boolean {
+    return this.background != undefined;
+  }
+
+  public get cores(): LookupItem[] {
+    return this.palette || (this.isBackground ? this.lookup.CORES_BACKGROUND : this.lookup.CORES)
+  }
+
   public select(value: string) {
     if(this.value != value) {
       this.value = value;
@@ -85,5 +95,14 @@ export class InputColorComponent extends InputBase implements OnInit {
     this.select(value);
     if(this.change) this.change.emit(event);
   }
+
+  public getColor(value?: string): string | undefined {
+    return this.isBackground ? '#000000' : (value || '#000000');
+  }
+
+  public getBackgroundColor(value?: string): string | undefined {
+    return this.isBackground ? (value || '#000000') : undefined;
+  }
+
 }
 
