@@ -21,11 +21,9 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
   public unidadeDao: UnidadeDaoService;
   public formHomologacao: FormGroup;
   public disableUnidade: boolean = false;
-  public vinculadas_toolbar: boolean = false;
+  public exibir_vinculadas_toolbar: boolean = false;
   public multiselectMenu: ToolbarButton[];
   public filterHidden?: string;
-  public buttons: ToolbarButton[] = [];
-  public BUTTON_VINCULADAS: ToolbarButton;
 
   constructor(public injector: Injector) {
     super(injector, Atividade, AtividadeDaoService);
@@ -40,6 +38,7 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
       nome: { default: "" },
       unidade_id: { default: "" },
       vinculadas: { default: true },
+      vinculadas_toolbar: { default: false },
       minhas: { default: false },
       homologado: { default: "" },
       tipo_atividade_id: { default: null }
@@ -54,12 +53,6 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
         onClick: this.homologarAtividades.bind(this)
       }
     ];
-    this.BUTTON_VINCULADAS = {
-      label: "Exibir Vinculadas",
-      pressed: false,
-      toggle: true,
-      onClick: this.onVinculadasClick.bind(this)
-    }
     this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }];
   }
 
@@ -77,7 +70,7 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
     let result: ToolbarButton[] = [];
     let atividade: Atividade = row as Atividade;
 
-    //result.push({label: "Informações", icon: "bi bi-info-circle", onClick: (atividade: Atividade) => this.go.navigate({route: ['cadastros', 'atividade', atividade.id, 'consult']}, {modal: true})});  
+    //result.push({label: "Informações", icon: "bi bi-info-circle", onClick: (atividade: Atividade) => this.go.navigate({route: ['gestao', 'atividade', atividade.id, 'consult']}, {modal: true})});  
     // Testa se o usuário possui permissão para exibir dados de atividade
     if (this.auth.hasPermissionTo("MOD_ATV_CONS")) result.push({ icon: "bi bi-info-circle", label: "Informações", onClick: this.consult.bind(this) });
     // Testa se o usuário possui permissão para homologar a atividade
@@ -157,24 +150,11 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
     this.filter?.controls.minhas.setValue(this.metadata?.minhas || this.filter?.controls.minhas.value);
     this.filter?.controls.unidade_id.setValue(this.metadata?.unidade_id || this.filter?.controls.unidade_id.value);
     this.disableUnidade = this.selectable && this.filter?.controls.unidade_id?.value?.lenght;
-    this.filter?.controls.vinculadas.setValue(this.selectable);
-    this.vinculadas_toolbar = this.metadata?.vinculadas_toolbar || this.vinculadas_toolbar;
-    if (this.vinculadas_toolbar) this.buttons.push(this.BUTTON_VINCULADAS);
+    this.exibir_vinculadas_toolbar = this.metadata?.exibir_vinculadas_toolbar || this.exibir_vinculadas_toolbar;
   }
 
-  public onVinculadasClick() {
-    this.enableAtividadesVinculadas(!!this.BUTTON_VINCULADAS.pressed);
-  }
-
-  public enableAtividadesVinculadas(enable: boolean) {
-    this.BUTTON_VINCULADAS.label = enable ? "Ocultar Vinculadas" : "Exibir Vinculadas";
-    this.submitFilter(enable);
-    this.refreshToolbar();
-  }
-
-  public refreshToolbar() {
-    this.buttons = [...[this.BUTTON_VINCULADAS], ...this.grid!.toolbarButtons];
-    this.cdRef.detectChanges();
+  public onVinculadasToolbarChange(event: Event) {
+    this.grid!.reloadFilter();
   }
 
   public filterClear(filter: FormGroup) {
@@ -189,31 +169,31 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
   public filterWhere = (filter: FormGroup) => {
     let form: any = filter.value;
     let result: any[] = [];
-
-    if (form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome.replace(" ", "%") + "%"]);
+    if (this.filterHidden) {
+      result.push(['unidade_id', '==', this.metadata?.unidade_id]);
+      result.push(['minhas', '==', true]);
+      result.push(['vinculadas', '==', form.vinculadas_toolbar]);
+    } else {
+      if (form.nome?.length) {
+        result.push(["nome", "like", "%" + form.nome.replace(" ", "%") + "%"]);
+      }
+      if (form.unidade_id?.length) {
+        result.push(["unidade_id", "==", form.unidade_id]);
+      }
+      if (form.tipo_atividade_id?.length) {
+        result.push(["tipo_atividade_id", "==", form.tipo_atividade_id]);
+      }
+      if (form.vinculadas) {
+        result.push(["vinculadas", "==", true]);
+      }
+      if (form.minhas) {
+        result.push(["minhas", "==", true]);
+      }
+      if (form.homologado?.length) {
+        result.push(["homologado", "==", form.homologado == "S"]);
+      }
     }
-    if (form.unidade_id?.length) {
-      result.push(["unidade_id", "==", form.unidade_id]);
-    }
-    if (form.tipo_atividade_id?.length) {
-      result.push(["tipo_atividade_id", "==", form.tipo_atividade_id]);
-    }
-    if (form.vinculadas) {
-      result.push(["vinculadas", "==", true]);
-    }
-    if (form.minhas) {
-      result.push(["minhas", "==", true]);
-    }
-    if (form.homologado?.length) {
-      result.push(["homologado", "==", form.homologado == "S"]);
-    }
-
     return result;
-  }
-
-  public submitFilter(state: boolean) {
-    this.grid?.query?.reload({ where: [['unidade_id', '==', this.metadata?.unidade_id], ['minhas', '==', true], ['vinculadas', '==', state]] });
   }
 
   public getReportComplexidade(row: Atividade): string {

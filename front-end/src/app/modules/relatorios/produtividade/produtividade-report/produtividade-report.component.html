@@ -49,16 +49,16 @@
         <div class="container border border-primary bg-light d-inline-block mx-4" style="position: relative; width:400px">
           <h5>Composição do Plano por Demandas</h5>
             <app-bar-chart
-              [barChartData]="x.dadosGraficoPlano"
-              [barChartOptions]="opcoesGraficoPlano">
+              [dadosGrafico]="x.dadosGraficoPlano"
+              [opcoesGrafico]="opcoesGraficoPlano">
             </app-bar-chart>
         </div>
         <div class="container border border-primary bg-light d-inline-block mx-4" style="position: relative; width:400px">
           <h5>Distribuição dos Tempos no Plano</h5>
             <app-bar-chart
-              [barChartType]="tipoGrafico"
-              [barChartData]="x.dadosGraficoHoras"
-              [barChartOptions]="opcoesGraficoHoras">
+              [tipoGrafico]="tipoGrafico"
+              [dadosGrafico]="x.dadosGraficoHoras"
+              [opcoesGrafico]="opcoesGraficoHoras">
             </app-bar-chart>
         </div>
       </div>

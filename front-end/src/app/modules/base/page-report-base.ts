@@ -7,7 +7,6 @@ import { Demanda } from 'src/app/models/demanda.model';
 import { PageBase } from './page-base';
 import { Plano } from 'src/app/models/plano.model';
 import { Chart } from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 export type Metadado = {    
   descricaoPlano: string,   
@@ -59,6 +58,7 @@ export type MetadadosPlano = {
   modalidade: string,                       // tipo de modalidade do plano
   percentualHorasNaoIniciadas: number,  
   usuario_id: string
+  noPeriodo: any;
 };    
 
 export type MetadadosUnidade = {    
@@ -112,21 +112,25 @@ export type PlanoExtendido2 = {
   descricaoPlano: string,
   statusPlano: string,
   extras: MetadadosPlano,
-  horasDisponiveisPlano: number,                // total das horas úteis líquidas do Plano que ainda falta ser executado pelo servidor
-  horasLiquidasDecorridasPlano: number,         // total de horas úteis ainda disponíveis no plano para serem executadas pelo servidor
-  horasUteisLiquidasPlano: number,              // total de horas úteis do plano subtraídas as horas úteis dos afastamentos do servidor
-  percentualDecorridoAfastamentos: number,      // razão entre as horas úteis dos afastamentos já ocorridos, em relação às horas úteis totais dos afastamentos
-  percentualDecorridoPlano: number,             // razão entre as horas úteis decorridas e as horas úteis totais do Plano
-  percentualHorasDisponiveis: number,           // razão entre as horas líquidas ainda disponíveis do plano e as horas líquidas totais do Plano
-  percentualHorasLiquidasDecorridas: number,    // razão entre as horas úteis líquidas decorridas do plano e as horas úteis líquidas totais do plano
-  percentualHorasNaoIniciadas: number,          // razão entre as horas pactuadas das demandas não-iniciadas, em relação às horas úteis totais do Plano
-  percentualHorasEmAndamento: number,           // razão entre as horas pactuadas das demandas iniciadas mas ainda não concluidas, em relação às horas úteis totais do Plano
-  percentualHorasConcluidas: number,            // razão entre as horas pactuadas das demandas concluidas, em relação às horas úteis totais do Plano
-  percentualHorasAvaliadas: number,             // razão entre as horas pactuadas das demandas avaliadas, em relação às horas úteis totais do Plano
-  percentualHorasTotaisAlocadas: number,        // razão entre as horas totais alocadas e as horas úteis totais do Plano
-  percentualAfastamento: number,                // razão entre as horas de afastamento do servidor e as horas úteis totais do Plano
+  horasDisponiveisPlano: number,                    // total das horas úteis líquidas do Plano que ainda falta ser executado pelo servidor
+  horasAfastamentoTranscorrer: number,              // total de horas úteis dos afastamentos do servidor, ainda a transcorrerem
+  horasUteisLiquidasPlano: number,                  // total de horas úteis do plano subtraídas as horas úteis dos afastamentos do servidor
+  percentualDecorridoAfastamentos: number,          // razão entre as horas úteis dos afastamentos já ocorridos, em relação às horas úteis totais dos afastamentos
+  percentualDecorridoPlano: number,                 // razão entre as horas úteis decorridas e as horas úteis totais do Plano
+  percentualHorasDisponiveis: number,               // razão entre as horas líquidas ainda disponíveis do plano e as horas líquidas totais do Plano
+  percentualHorasAfastamentoTranscorrer: number,    // razão entre as horas de afastamento a transcorrer e as horas úteis totais de afastamento do servidor
+  percentualHorasNaoIniciadas: number,              // razão entre as horas pactuadas das demandas não-iniciadas, em relação às horas úteis totais do Plano
+  percentualHorasUteisLiquidasPlano: number,        // razão entre as horas pactuadas das demandas não-iniciadas, em relação às horas úteis totais do Plano
+  percentualHorasEmAndamento: number,               // razão entre as horas pactuadas das demandas iniciadas mas ainda não concluidas, em relação às horas úteis totais do Plano
+  percentualHorasConcluidas: number,                // razão entre as horas pactuadas das demandas concluidas, em relação às horas úteis totais do Plano
+  percentualHorasAvaliadas: number,                 // razão entre as horas pactuadas das demandas avaliadas, em relação às horas úteis totais do Plano
+  percentualHorasTotaisAlocadas: number,            // razão entre as horas totais alocadas e as horas úteis totais do Plano
+  percentualAfastamento: number,                    // razão entre as horas de afastamento do servidor e as horas úteis totais do Plano
   dadosGraficoPlano: any,
-  dadosGraficoDemandas: any
+  dadosGraficoDemandas: any,
+  dadosGraficoPeriodoComparativo: any,
+  dadosGraficoPeriodoPizza: any,
+  dadosGraficoPeriodoDetalhado: any
 }
 
 @Injectable()
@@ -143,12 +147,13 @@ export abstract class PageReportBase<M extends Base, D extends DaoBaseService<M>
   public calendar: CalendarService;
   public rows?: any[] = [];
   public join: string[] = [];
+  //public pluginsGrafico?: Array<any>;
 
   constructor(public injector: Injector, dType: Type<D>) {
     super(injector);
     this.dao = injector.get<D>(dType);
     this.calendar = injector.get<CalendarService>(CalendarService);
-    Chart.plugins.register(ChartDataLabels);
+    //Chart.plugins.register(ChartDataLabels);
   }
 
   ngAfterViewInit() {
@@ -170,7 +175,5 @@ export abstract class PageReportBase<M extends Base, D extends DaoBaseService<M>
   }
 
   public abstract report(filter: any): Promise<any[] | undefined>;
-
-  //public abstract obterDadosGrafico(metadados: Metadado | MetadadosPlano | MetadadosUnidade, tipo: 'GERAL' | 'DETALHADO'): ChartDataSets[];
 
 }

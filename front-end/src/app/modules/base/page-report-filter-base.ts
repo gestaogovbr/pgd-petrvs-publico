@@ -18,19 +18,6 @@ export abstract class PageReportFilterBase extends PageBase implements OnInit {
     icon: "bi bi-clipboard-data",
     onClick: this.onReport.bind(this)
   }];
-  /*private _loading: boolean = false;
-  public set loading(value: boolean) {
-    if(!value) {
-      this.dialog.closeSppinerOverlay();
-    } else if(!this._loading) {
-      this.dialog.showSppinerOverlay("Carregando dados do formulário");
-    }
-    this._loading = value;
-  }
-  public get loading(): boolean {
-    return this._loading;
-  }*/
-
   public form?: FormGroup;
   public formValidation?: (form?: FormGroup) => string | undefined | null;
 

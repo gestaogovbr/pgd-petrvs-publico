@@ -55,7 +55,6 @@ class AtividadeService extends ServiceBase
                 array_push($where, $condition);
             }
         }
-        //$soMinhas = !$usuario->hasPermissionTo('MOD_UND_TUDO') ? true : $soMinhas;
         if ($soMinhas || !$usuario->hasPermissionTo('MOD_UND_TUDO')) {
             $unidades_ids = [];
             if (!empty($unidade_id)) {

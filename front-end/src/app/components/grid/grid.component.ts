@@ -518,7 +518,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   public loadToolbar() {
     if(this.toolbarRef && !this.isDisabled) {
       /* Grava os botoes informados diretamente no componente toolbar, pois a propriedade será sobrescrita */
-      if(!this.initialButtons) this.initialButtons = this.util.clone(this.toolbarRef.buttons || []);
+      if(!this.initialButtons) this.initialButtons = [...(this.toolbarRef.buttons || [])];  //this.util.clone(this.toolbarRef.buttons || []);
       /* Insere os botões necessários */
       if(this.isMultiselect) this.toolbarButtons.push(this.BUTTON_MULTISELECT);
       if(this.hasAdd && (this.addRoute || this.add)) this.toolbarButtons.push(this.BUTTON_ADD);

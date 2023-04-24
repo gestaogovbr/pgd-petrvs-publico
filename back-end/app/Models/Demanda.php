@@ -16,7 +16,7 @@ use App\Models\Comentario;
 use App\Models\DemandaEntrega;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-
+use Illuminate\Database\Eloquent\Collection;
 
 class Demanda extends ModelBase
 {
@@ -113,20 +113,31 @@ class Demanda extends ModelBase
 
     // Escopos
 
-    public function scopeDoUsuario($query, $usuario_id){
-        return $query->where("usuario_id", $usuario_id);
-    }
-
-    public function scopeDosPlanos($query, $planos_ids){
+    /**
+     * Acrescenta a $query a condição ['plano_id','in',$planos_ids].
+     * 
+     * @param mixed $query
+     * @param array $planos_ids
+     * @return Illuminate\Database\Eloquent
+     */
+    public function scopeDosPlanos($query, $planos_ids): Collection{
         return $query->whereIn("plano_id", $planos_ids);
     }
 
-    public function scopeAvaliadas($query){
-        return $query->whereNotNull("avaliacao_id");
+    public function scopeDistribuidas($query){
+        return $query->whereNotNull('data_distribuicao');
+    }
+
+    public function scopeIniciadas($query){
+        return $query->whereNotNull('data_inicio');
     }
 
     public function scopeNaoIniciadas($query){
         return $query->whereNull('data_inicio');
+    }
+
+    public function scopeEmAndamento($query){
+        return $query->whereNotNull('data_inicio')->whereNull('data_entrega');
     }
 
     public function scopeConcluidas($query){
@@ -134,10 +145,18 @@ class Demanda extends ModelBase
     }
 
     public function scopeNaoConcluidas($query){
-        return $query->whereNotNull('data_inicio')->whereNull('data_entrega');
+        return $query->whereNull('data_entrega');
     }
 
     public function scopeAtrasadas($query){
-        return $query->whereNotNull('data_inicio')->whereNull('data_entrega')->whereDate('prazo_entrega', '<', Carbon::today());
+        return $query->whereNull('data_entrega')->whereDate('prazo_entrega', '<', Carbon::now());
+    }
+
+    public function scopeAvaliadas($query){
+        return $query->whereNotNull("avaliacao_id");
+    }
+
+    public function scopeNaoAvaliadas($query){
+        return $query->whereNull("avaliacao_id");
     }
 }

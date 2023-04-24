@@ -23,9 +23,9 @@ export class PlanoDaoService extends DaoBaseService<Plano> {
     });
   }
 
-  public metadadosPlano(plano_id: string): Promise<MetadadosPlano> {
+  public metadadosPlano(plano_id: string, inicioPeriodo: string | null, fimPeriodo: string | null): Promise<MetadadosPlano> {
     return new Promise<MetadadosPlano>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/metadadosPlano', {plano_id}).subscribe(response => {
+      this.server.post('api/' + this.collection + '/metadadosPlano', {plano_id, inicioPeriodo, fimPeriodo}).subscribe(response => {
         resolve(response?.metadadosPlano || []);
       }, error => reject(error));
     });

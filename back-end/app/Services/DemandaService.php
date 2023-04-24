@@ -270,11 +270,19 @@ class DemandaService extends ServiceBase
 
     public function avaliadas($usuario_id) {
         $result = [];
-        $demandas = Demanda::select("id")->where("usuario_id", $usuario_id)->whereNotNull("avaliacao_id")->get();
+        $demandas = Demanda::select("id")->where("usuario_id", $usuario_id)->whereNotNull("avaliacao_id")->where(["tempo_homologado",">",0])->get();
         foreach ($demandas as $demanda) {
             array_push($result, $demanda->id);
         }
         return $result;
+    }
+
+    public function isAprovada($demanda) {
+        return $demanda['avaliacao_id'] !== null && $demanda['tempo_homologado'] > 0;
+    }
+
+    public function isReprovada($demanda) {
+        return $demanda['avaliacao_id'] !== null && $demanda['tempo_homologado'] == 0;
     }
 
     public function isAvaliada($demanda) {
@@ -285,13 +293,20 @@ class DemandaService extends ServiceBase
         return !empty($demanda['data_entrega']);
     }
 
+    public function isIniciada($demanda) {
+        return !empty($demanda['data_inicio']);
+    }
+
     public function isCumprida($demanda) {
         return !empty($demanda['tempo_homologado']);
     }
 
     public function withinPeriodo($demanda, $inicioPeriodo, $fimPeriodo) {
         if ($inicioPeriodo == null && $fimPeriodo == null) return true;
-        if (CalendarioService::between($demanda['data_inicio'], $inicioPeriodo, $fimPeriodo) || CalendarioService::between($demanda['data_entrega'], $inicioPeriodo, $fimPeriodo)) return true;
+        if(UtilService::intersection([
+                    new Interval(['start' => strtotime($inicioPeriodo), 'end' => strtotime($fimPeriodo)]),
+                    new Interval(['start' => strtotime($demanda['data_distribuicao']), 'end' => $demanda['data_entrega'] ? UtilService::maxDate(strtotime($demanda['prazo_entrega']),strtotime($demanda['data_entrega'])) : strtotime($demanda['prazo_entrega'])])
+            ])) return true;
         return false;
     }
 

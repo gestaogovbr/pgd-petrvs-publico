@@ -12,7 +12,11 @@
 <grid multiselect [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy"
     [join]="join" [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_ATV_INCL')"
     [hasEdit]="false" [multiselectMenu]="multiselectMenu">
-    <toolbar *ngIf="!selectable" [buttons]="buttons"></toolbar>
+    <toolbar *ngIf="!selectable">
+        <input-switch *ngIf="exibir_vinculadas_toolbar" [size]="4" labelPosition="left" label="Exibir Vinc."
+            controlName="vinculadas_toolbar" [control]="filter!.controls.vinculadas_toolbar"
+            (change)="onVinculadasToolbarChange($event)"></input-switch>
+    </toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)"
         [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed"
         [hidden]="filterHidden">

@@ -195,8 +195,8 @@ class UsuarioService extends ServiceBase
             'avaliadas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->avaliadas()->get()->count(),
             'nao_iniciadas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->naoIniciadas()->get()->count(),
             'concluidas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->concluidas()->get()->count(),
-            'nao_concluidas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->naoConcluidas()->get()->count(),
-            'atrasadas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->atrasadas()->get()->count(),
+            'nao_concluidas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->iniciadas()->naoConcluidas()->get()->count(),
+            'atrasadas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->iniciadas()->atrasadas()->get()->count(),
             'media_avaliacoes' => $media_avaliacao,
             'total_demandas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->get()->count()
         ];
