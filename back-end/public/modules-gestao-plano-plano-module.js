@@ -962,7 +962,7 @@ function PlanoFormComponent_tab_4_ng_template_7_Template(rf, ctx) { if (rf & 1) 
     _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵtextInterpolate1"](" ", (row_r23.atividade == null ? null : row_r23.atividade.nome) || "", "");
 } }
-const _c14 = function () { return ["cadastros", "atividade"]; };
+const _c14 = function () { return ["gestao", "atividade"]; };
 function PlanoFormComponent_tab_4_ng_template_9_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵelement"](0, "input-search", 37, 38);
 } if (rf & 2) {

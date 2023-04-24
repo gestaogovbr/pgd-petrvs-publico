@@ -20318,6 +20318,9 @@ body {
   width: min-content;
   display: block;
 }
+.width-min-content {
+  width: min-content;
+}
 /*!
  * Bootstrap Icons (https://icons.getbootstrap.com/)
  * Copyright 2019-2023 The Bootstrap Authors
