@@ -1,16 +1,18 @@
 <h3 *ngIf="!isModal" class="my-2">{{title}}</h3>
-<grid [dao]="dao" [add]="add" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
-    [selectable]="selectable" (select)="onSelect($event)"
-    [hasAdd]="auth.hasPermissionTo('MOD_UND_INCL')"
+<grid [dao]="dao" [add]="add" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="selectable"
+    (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_UND_INCL')"
     [hasEdit]="auth.hasPermissionTo('MOD_UND_EDT')">
     <toolbar *ngIf="!selectable" [buttons]="buttons"></toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)"
+        [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-search #entidade [size]="4" label="Entidade" controlName="entidade_id" [control]="filter!.controls.entidade_id" [dao]="entidadeDao" [selectRoute]="{route: ['configuracoes', 'entidade']}"></input-search>
-            <input-text [size]="7" label="Nome" controlName="nome" [control]="filter!.controls.nome" placeholder="Nome ou sigla..."></input-text>
-            <input-switch [size]="1" label="Inativos" controlName="inativos" [control]="filter!.controls.inativos"></input-switch>
-            <!--input-search [size]="12" label="Unidade" controlName="unidade_id"
-                [control]="filter!.controls.unidade_id" placeholder="Unidade..." [dao]="dao"></input-search/-->
+            <input-search #entidade [size]="4" label="Entidade" controlName="entidade_id"
+                [control]="filter!.controls.entidade_id" [dao]="entidadeDao"
+                [selectRoute]="{route: ['configuracoes', 'entidade']}"></input-search>
+            <input-text [size]="7" label="Nome" controlName="nome" [control]="filter!.controls.nome"
+                placeholder="Nome ou sigla..."></input-text>
+            <input-switch [size]="1" label="Inativos" controlName="inativos"
+                [control]="filter!.controls.inativos"></input-switch>
         </div>
     </filter>
     <columns>
@@ -20,7 +22,7 @@
                 <span class="d-block">{{row.nome}}</span>
                 <span *ngIf="row.unidade" class="badge bg-light text-dark">
                     <i class="bi bi-arrow-return-right"></i>
-                    {{row.unidade.sigla}}    
+                    {{row.unidade.sigla}}
                 </span>
             </ng-template>
         </column>
@@ -32,7 +34,9 @@
         </column>
         <column title="Situação" [template]="columnSituacao">
             <ng-template let-row="row" #columnSituacao>
-                <badge [color]="!row.inativo ? 'success' : 'danger'" [icon]="!row.inativo ? 'bi bi-check-circle' : 'bi bi-x-circle'" [label]="!row.inativo ? 'Ativo' : 'Inativo'"></badge>
+                <badge [color]="!row.inativo ? 'success' : 'danger'"
+                    [icon]="!row.inativo ? 'bi bi-check-circle' : 'bi bi-x-circle'"
+                    [label]="!row.inativo ? 'Ativo' : 'Inativo'"></badge>
             </ng-template>
         </column>
         <column type="options" [onEdit]="edit" [dynamicOptions]="dynamicOptions.bind(this)"></column>
