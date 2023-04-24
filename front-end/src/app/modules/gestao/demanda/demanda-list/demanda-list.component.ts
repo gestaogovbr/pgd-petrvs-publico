@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, HostBinding, Injector, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
-import { Chart } from 'chart.js';
+import { Chart, ChartData } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { ChartDataSets, ChartOptions } from 'chart.js';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
@@ -44,12 +44,12 @@ export class DemandaListComponent extends PageBase implements OnInit {
   public opcoesGraficoNrPlanos: ChartOptions = {};
   public opcoesGraficoServidores: ChartOptions = {};
   public opcoesGraficoModalidades: ChartOptions = {};
-  public dadosGraficoNrPlanos: ChartDataSets[] = [];
-  public dadosGraficoServidores: ChartDataSets[] = [];
-  public dadosGraficoModalidades: ChartDataSets[] = [];
+  public dadosGraficoNrPlanos: ChartData = {};
+  public dadosGraficoServidores: ChartData = {};
+  public dadosGraficoModalidades: ChartData = {};
   public dashUnidades: UnidadeDashboard[] | null = [];
   public labelsGraficosAreasEServidores: string[] = [];
-  public heightAreaGrafico: number = 300;
+  public alturaAreaGrafico: string = '300px';
 
   constructor(
     public injector: Injector,
@@ -136,32 +136,34 @@ export class DemandaListComponent extends PageBase implements OnInit {
       });
     this.totalUnidades = dashUnidades?.length;
     this.height = 40 * this.totalUnidades;
-    this.dadosGraficoNrPlanos = [
-      {
-        label: 'Nr. de PT ativos',
-        data: _dadosGraficoNrPlanos,
-        backgroundColor: '#0000CD',
-        borderColor: '#212121',
-        hoverBackgroundColor: '#212121',
-        hoverBorderColor: '#0000CD',
-        borderWidth: 2,
-        //barPercentage: 1,
-        //categoryPercentage: 1,
-        barThickness: 'flex',
-        maxBarThickness: 30,
-        datalabels: {
-          display: 'auto',
-          align: 'start',
-          anchor: 'end',
-          color: 'white',
-          font: {
-            weight: 'bold'
-          },
-/*           clamp: true,
-          clip: true */
+    this.dadosGraficoNrPlanos = {
+      datasets: [
+        {
+          label: 'Nr. de PT ativos',
+          data: _dadosGraficoNrPlanos,
+          backgroundColor: '#0000CD',
+          borderColor: '#212121',
+          hoverBackgroundColor: '#212121',
+          hoverBorderColor: '#0000CD',
+          borderWidth: 2,
+          //barPercentage: 1,
+          //categoryPercentage: 1,
+          barThickness: 'flex',
+          maxBarThickness: 30,
+          datalabels: {
+            display: 'auto',
+            align: 'start',
+            anchor: 'end',
+            color: 'white',
+            font: {
+              weight: 'bold'
+            },
+  /*           clamp: true,
+            clip: true */
+          }
         }
-      }
-    ];
+      ]
+    };
     this.opcoesGraficoNrPlanos = {
       legend: {
         display: true,
@@ -229,30 +231,32 @@ export class DemandaListComponent extends PageBase implements OnInit {
       _dadosGraficoServidores.push(element.qdeServidores);
       this.totalServidores += element.qdeServidores;
       });
-    this.dadosGraficoServidores = [
-      {
-        label: 'Nr. de Servidores',
-        data: _dadosGraficoServidores,
-        backgroundColor: '#FF5722',
-        borderColor: '#DD2C00',
-        hoverBackgroundColor: '#DD2C00',
-        hoverBorderColor: '#FF5722',
-        borderWidth: 2,
-        //barPercentage: 1,
-        //categoryPercentage: 1,
-        barThickness: 'flex',
-        maxBarThickness: 30,
-        datalabels: {
-          display: 'auto',
-          align: 'start',
-          anchor: 'end',
-          color: 'black',
-          font: {
-            weight: 'bold'
+    this.dadosGraficoServidores = {
+        datasets: [
+          {
+            label: 'Nr. de Servidores',
+            data: _dadosGraficoServidores,
+            backgroundColor: '#FF5722',
+            borderColor: '#DD2C00',
+            hoverBackgroundColor: '#DD2C00',
+            hoverBorderColor: '#FF5722',
+            borderWidth: 2,
+            //barPercentage: 1,
+            //categoryPercentage: 1,
+            barThickness: 'flex',
+            maxBarThickness: 30,
+            datalabels: {
+              display: 'auto',
+              align: 'start',
+              anchor: 'end',
+              color: 'black',
+              font: {
+                weight: 'bold'
+              }
+            }
           }
-        }
-      }
-    ];
+        ]
+    };
     this.opcoesGraficoServidores = {
       legend: {
         display: true,
@@ -319,28 +323,30 @@ export class DemandaListComponent extends PageBase implements OnInit {
     _labelsY.forEach(x => {
       _dadosGraficoModalidades.push(modalidades.filter(function(element){return element == x}).length);
     });
-    this.dadosGraficoModalidades = [
-      {
-        label: 'Servidores por Modalidade',
-        data: _dadosGraficoModalidades,
-        backgroundColor: '#66BB6A',
-        borderColor: '#00C853',
-        hoverBackgroundColor: '#00C853',
-        hoverBorderColor: '#66BB6A',
-        borderWidth: 2,
-        barThickness: 'flex',
-        maxBarThickness: 30,
-        datalabels: {
-          display: 'auto',
-          align: 'start',
-          anchor: 'end',
-          color: 'white',
-          font: {
-            weight: 'bold'
+    this.dadosGraficoModalidades = {
+      datasets: [
+        {
+          label: 'Servidores por Modalidade',
+          data: _dadosGraficoModalidades,
+          backgroundColor: '#66BB6A',
+          borderColor: '#00C853',
+          hoverBackgroundColor: '#00C853',
+          hoverBorderColor: '#66BB6A',
+          borderWidth: 2,
+          barThickness: 'flex',
+          maxBarThickness: 30,
+          datalabels: {
+            display: 'auto',
+            align: 'start',
+            anchor: 'end',
+            color: 'white',
+            font: {
+              weight: 'bold'
+            }
           }
         }
-      }
-    ];
+      ]
+    };
     this.opcoesGraficoModalidades = {
       legend: {
         display: true,

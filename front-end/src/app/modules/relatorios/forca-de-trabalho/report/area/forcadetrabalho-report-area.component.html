@@ -334,17 +334,17 @@ os Planos de Trabalho associados ao Programa escolhido, e dentro da vigência.</
   <div class="border border-primary bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
     <h5>Planos da Unidade - Horas</h5>
       <app-bar-chart
-        barChartType = "bar"
-        [barChartData]="x.graficoUnidadeGeral"
-        [barChartOptions]="opcoesGraficoBarrasHoras">
+        [tipoGrafico] = "'bar'"
+        [dadosGrafico]="x.graficoUnidadeGeral"
+        [opcoesGrafico]="opcoesGraficoBarrasHoras">
       </app-bar-chart>
   </div>
   <div class="border border-primary bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
     <h5>Planos da Unidade - Demandas</h5>
       <app-bar-chart
-        barChartType = "horizontalBar"
-        [barChartData]="x.graficoUnidadeDetalhado"
-        [barChartOptions]="opcoesGraficoBarrasDemandas">
+        [tipoGrafico] = "'horizontalBar'"
+        [dadosGrafico]="x.graficoUnidadeDetalhado"
+        [opcoesGrafico]="opcoesGraficoBarrasDemandas">
       </app-bar-chart>
   </div>
 </div>

@@ -9,20 +9,31 @@ import { BaseChartDirective, Label } from 'ng2-charts';
 })
 export class BarChartComponent {
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
-  @Input() barChartOptions: ChartOptions = {};
+/*   @Input() barChartOptions: ChartOptions = {};
   @Input() barChartData: ChartDataSets[] = [];
   @Input() barChartType: ChartType = 'bar';
   @Input() barChartPlugins = [];
   @Input() barChartLegend = true;
   @Input() barChartLabels = [];
-  @Input() heightAreaChart: number = 150;
+  @Input() heightAreaChart: number = 150; */
+  @Input() opcoesGrafico: ChartOptions = {};
+  //@Input() dadosGrafico: ChartDataSets[] = [];
+  @Input() dadosGrafico: ChartData = {};
+  @Input() tipoGrafico: ChartType = 'bar';
+  @Input() pluginsGrafico: Array<any> = [];
+  @Input() labelsX: string[] = [];
+  //@Input() legendaGrafico = true;
+  //@Input() labelsGrafico = [];
+  @Input() alturaAreaGrafico: string = '150px';
 
-  constructor() {}
-
-  ngOnInit() {}
-
-  ngDoCheck() {
-    //this.chart!.chart!.canvas!.parentNode!.parentElement!.style.height = '300px';
+  constructor() {
+    //this.chart!.chart!.canvas!.parentNode!.parentElement!.style.height = this.alturaAreaGrafico;
   }
+
+ /*  ngOnInit() {} */
+
+/*   ngDoCheck() {
+    //this.chart!.chart!.canvas!.parentNode!.parentElement!.style.height = '300px';
+  } */
 
 }

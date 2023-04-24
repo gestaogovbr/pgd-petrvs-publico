@@ -4,7 +4,8 @@ import { Usuario } from 'src/app/models/usuario.model';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { Plano } from 'src/app/models/plano.model';
 import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
-import { ChartDataSets, ChartOptions } from 'chart.js';
+import { ChartData, ChartDataSets, ChartOptions } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 @Component({
   selector: 'app-forcadetrabalho-report-servidor',
@@ -24,12 +25,23 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
   public descricaoPlano: string = '';
   public statusPlano: string = '';
   public horaAtual: Date = new Date();
+  public pluginsGrafico = [ChartDataLabels];
+  public labelsX: string[] = [];
 
-  public opcoesGraficoPlano: ChartOptions = {
+  public opcoesGraficoPeriodoComparativo: ChartOptions = {
+    
+/*     title: {
+      // namespace para a configuração do título do gráfico
+      display: true,
+      text: 'Comparativo de Horas',
+      position: "bottom"
+    }, */
+    tooltips: {
+      // namespace para a configuração das dicas de ferramentas
+      enabled: false
+    },
     scales: {
       xAxes: [{
-        labels: ['Horas do Plano'],
-        display: true,
         ticks: {
           beginAtZero: true
         }
@@ -38,6 +50,42 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
         ticks: {
           beginAtZero: true
         }
+      }]
+    },
+    plugins: {
+      datalabels: {
+        display: true,
+        align: 'start',
+        anchor: 'end',
+        color: 'black',
+        font: {
+          weight: 'bold'
+        },
+        clamp: false,
+        clip: false
+      }
+    },
+    layout: {
+      padding: 0
+    },
+    legend: {
+      //namespace para configuração das opções da legenda
+      display: true,
+      position: 'bottom'
+    },
+    //events: ['click'],
+    responsive: true,
+    maintainAspectRatio: false
+  };
+  public opcoesGraficoPeriodoPizza: ChartOptions = {
+    scales: {
+      xAxes: [{
+        stacked: true
+      }],
+      yAxes: [{
+        labels: ['Horas das Demandas'],
+        display: false,
+        stacked: true
       }]
     },
     plugins: {
@@ -53,16 +101,86 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
         clip: false
       }
     },
+    responsive: true
+  };
+  public opcoesGraficoPeriodoDetalhado: ChartOptions = {
+/*     title: {
+      // namespace para a configuração do título do gráfico
+      display: true,
+      text: 'Composição das Demandas',
+      position: "bottom"
+    }, */
+    scales: {
+      xAxes: [{
+        display: true,
+        stacked: true
+      }],
+      yAxes: [{
+        display: false,
+        stacked: true
+      }]
+    },
+    plugins: {
+      datalabels: {
+        display: true,
+        align: 'start',
+        anchor: 'end',
+        color: 'black',
+        font: {
+          weight: 'bold'
+        },
+        clamp: true,
+        clip: false
+      }
+    },
+    responsive: true
+  };
+  public opcoesGraficoPlano: ChartOptions = {
+    legend: {
+      display: true,
+      position: 'bottom'
+    },
+    scales: {
+/*       scaleLabel:{
+        display: true,
+        labelString: 'scalelabel'
+      }, */
+      xAxes: [{
+        display: true,
+        ticks: {
+          beginAtZero: true
+        }
+      }],
+      yAxes: [{
+        display: true,
+        ticks: {
+          beginAtZero: true
+        }
+      }]
+    },
+    plugins: {
+      datalabels: {
+        display: true,
+        align: 'start',
+        anchor: 'end',
+        color: 'black',
+        font: {
+          weight: 'bold'
+        },
+        clamp: false,
+        clip: false
+      }
+    },
     //events: ['click'],
     responsive: true
   };
   public opcoesGraficoDemandas: ChartOptions = {
     scales: {
       xAxes: [{
+        display: true,
         stacked: true
       }],
       yAxes: [{
-        labels: ['Horas das Demandas'],
         display: false,
         stacked: true
       }]
@@ -101,111 +219,6 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
       legend: {
         display: false,
       },
-    },
-    responsive: true
-  };
-  public opcoesGraficoPeriodoComparativo: ChartOptions = {
-    title: {
-      // namespace para a configuração do título do gráfico
-      display: true,
-      text: 'Comparativo de Horas',
-      position: "bottom"
-    },
-    tooltips: {
-      // namespace para a configuração das dicas de ferramentas
-      //enabled: false
-    },
-    scales: {
-      xAxes: [{
-        ticks: {
-          beginAtZero: true
-        }
-      }],
-      yAxes: [{
-        ticks: {
-          beginAtZero: true
-        }
-      }]
-    },
-    plugins: {
-      datalabels: {
-        display: true,
-        align: 'start',
-        anchor: 'end',
-        color: 'black',
-        font: {
-          weight: 'bold'
-        },
-        clamp: true,
-        clip: false
-      }
-    },
-    layout: {
-      padding: 0
-    },
-    legend: {
-      //namespace para configuração das opções da legenda
-      //display: false
-    },
-    //events: ['click'],
-    responsive: true,
-    maintainAspectRatio: false
-  };
-  public opcoesGraficoPeriodoPizza: ChartOptions = {
-    scales: {
-      xAxes: [{
-        stacked: true
-      }],
-      yAxes: [{
-        labels: ['Horas das Demandas'],
-        display: false,
-        stacked: true
-      }]
-    },
-    plugins: {
-      datalabels: {
-        display: false,
-        align: 'start',
-        anchor: 'end',
-        color: 'black',
-        font: {
-          weight: 'bold'
-        },
-        clamp: true,
-        clip: false
-      }
-    },
-    responsive: true
-  };
-  public opcoesGraficoPeriodoDetalhado: ChartOptions = {
-    title: {
-      // namespace para a configuração do título do gráfico
-      display: true,
-      text: 'Composição das Demandas',
-      position: "bottom"
-    },
-    scales: {
-      xAxes: [{
-        display: false,
-        stacked: true
-      }],
-      yAxes: [{
-        display: true,
-        stacked: true
-      }]
-    },
-    plugins: {
-      datalabels: {
-        display: true,
-        align: 'start',
-        anchor: 'end',
-        color: 'black',
-        font: {
-          weight: 'bold'
-        },
-        clamp: true,
-        clip: false
-      }
     },
     responsive: true
   };
@@ -276,128 +289,140 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
 
   public obterDadosGrafico(metadados: MetadadosPlano, tipo: 'GERAL' | 'DETALHADO' | 'AVALIACAO' | 'PERIODO_COMPARATIVO' | 'PERIODO_PIZZA' | 'PERIODO_DETALHADO') {
       let result: any = null;
-      let dadosPlano: ChartDataSets[] = [
-        {
-          label: 'Horas Totais',
-          data: [metadados.horasUteisTotais],
-          backgroundColor: '#6c757d'
-        },
-        {
-          label: 'Horas Alocadas',
-          data: [metadados.horasDemandasNaoIniciadas + metadados.horasDemandasEmAndamento + metadados.horasDemandasConcluidas + metadados.horasDemandasAvaliadas],
-          backgroundColor: '#FF7043'
-        }
-      ];
-      let dadosDemandas: ChartDataSets[] = [
-        {
-          label: 'Não-iniciadas',
-          data: [metadados.horasDemandasNaoIniciadas],
-          backgroundColor: '#0dcaf0',
-          stack: 'Demandas'
-        },
-        {
-          label: 'Em Andamento',
-          data: [metadados.horasDemandasEmAndamento],
-          backgroundColor: '#ffc107',
-          stack: 'Demandas'
-        },
-        {
-          label: 'Concluídas',
-          data: [metadados.horasDemandasConcluidas],
-          backgroundColor: '#af4201',
-          stack: 'Demandas'
-        },
-        {
-          label: 'Avaliadas',
-          data: [metadados.horasDemandasAvaliadas],
-          backgroundColor: '#af4af0',
-          stack: 'Demandas'
-        },
-        {
-          label: 'Disponível no Plano',
-          data: [metadados.horasUteisTotais - metadados.horasUteisAfastamento - metadados.horasUteisDecorridas],
-          backgroundColor: '#6c757d',
-          stack: 'Demandas'
-        }
-      ];
-      let dadosAvaliacao: ChartDataSets[] = [
-        {
-          label: '',
-          data: [2],
-          backgroundColor: '#F5F5F5',
-          stack: 'Nota'
-        },
-        {
-          label: '',
-          data: [8],
-          backgroundColor: '#6c757d',
-          stack: 'Nota' // #EF5350 (vermelha) ou #283593 (azul)
-        }
-      ];
-      let dadosPeriodoComparativo: ChartDataSets[] = [
-        {
-          label: 'Previsão',
-          data: [metadados.noPeriodo.tempoTotalPrevistoNoPeriodo.toFixed(2)],
-          backgroundColor: '#6c757d'
-        },
-        {
-          label: 'Realizado',
-          data: [metadados.noPeriodo.tempoTotalRealizadoNoPeriodo.toFixed(2)],
-          backgroundColor: '#FF7043'
-        }
-      ];
-      let dadosPeriodoPizza: ChartDataSets[] = [
-        {
-          label: 'Não-iniciadas',
-          data: [metadados.horasDemandasNaoIniciadas],
-          backgroundColor: '#0dcaf0',
-          stack: 'Demandas'
-        },
-        {
-          label: 'Em Andamento',
-          data: [metadados.horasDemandasEmAndamento],
-          backgroundColor: '#ffc107',
-          stack: 'Demandas'
-        },
-        {
-          label: 'Concluídas',
-          data: [metadados.horasDemandasConcluidas],
-          backgroundColor: '#af4201',
-          stack: 'Demandas'
-        },
-        {
-          label: 'Avaliadas',
-          data: [metadados.horasDemandasAvaliadas],
-          backgroundColor: '#af4af0',
-          stack: 'Demandas'
-        },
-        {
-          label: 'Disponível no Plano',
-          data: [metadados.horasUteisTotais - metadados.horasUteisAfastamento - metadados.horasUteisDecorridas],
-          backgroundColor: '#6c757d',
-          stack: 'Demandas'
-        }
-      ];
-      let dadosPeriodoDetalhado: ChartDataSets[] = [
-        {
-          label: 'Aprov',
-          data: [metadados.noPeriodo.tempoTrabalhadoHomologado.toFixed(2)],
-          backgroundColor: '#0dcaf0',
-          stack: 'Demandas'
-        },
-        {
-          label: 'Reprov',
-          data: [metadados.noPeriodo.tempoTrabalhadoNaoHomologado.toFixed(2)],
-          backgroundColor: '#f44336',
-          stack: 'Demandas'
-        },
-        {
-          label: 'Concl',
-          data: [metadados.noPeriodo.tempoDespendidoSoConcluidas.toFixed(2)],
-          backgroundColor: '#af4201',
-          stack: 'Demandas'
-        }
-      ];
+      let dadosPlano: ChartData = {
+        datasets: [
+          {
+            label: 'Totais',              // será exibido na legenda, se estivel visível
+            data: [Math.round((metadados.horasUteisTotais - metadados.horasUteisAfastamento) * 100)/100],  //HULP
+            backgroundColor: '#6c757d'
+          },
+          {
+            label: 'Alocadas',            // será exibido na legenda, se estivel visível
+            data: [Math.round(metadados.horasTotaisAlocadas * 100)/100],  //HTA
+            backgroundColor: '#FF7043'
+          }
+        ]
+      };
+      let dadosDemandas: ChartData = {
+        datasets: [
+          {
+            label: 'NÃO INIC',
+            data: [metadados.horasDemandasNaoIniciadas],
+            backgroundColor: '#0dcaf0',
+            stack: 'Demandas'
+          },
+          {
+            label: 'EM ANDAM',
+            data: [metadados.horasDemandasEmAndamento],
+            backgroundColor: '#ffc107',
+            stack: 'Demandas'
+          },
+          {
+            label: 'CONCL',
+            data: [metadados.horasDemandasConcluidas],
+            backgroundColor: '#af4201',
+            stack: 'Demandas'
+          },
+          {
+            label: 'AVAL',
+            data: [metadados.horasDemandasAvaliadas],
+            backgroundColor: '#af4af0',
+            stack: 'Demandas'
+          },
+          {
+            label: 'DISP',
+            data: [metadados.horasUteisTotais - metadados.horasUteisAfastamento - metadados.horasUteisDecorridas],
+            backgroundColor: '#6c757d',
+            stack: 'Demandas'
+          }
+        ]
+      };
+      let dadosAvaliacao: ChartData = {
+        datasets: [
+          {
+            label: '',
+            data: [2],
+            backgroundColor: '#F5F5F5',
+            stack: 'Nota'
+          },
+          {
+            label: '',
+            data: [8],
+            backgroundColor: '#6c757d',
+            stack: 'Nota' // #EF5350 (vermelha) ou #283593 (azul)
+          }
+        ]
+      };
+      let dadosPeriodoComparativo: ChartData = {
+        datasets: [
+          {
+            label: 'Previsto',                  // será exibido na legenda, se estivel visível
+            data: [metadados.noPeriodo.tempoTotalPrevistoNoPeriodo.toFixed(2)],
+            backgroundColor: '#6c757d'
+          },
+          {
+            label: 'Realizado',                 // será exibido na legenda, se estivel visível
+            data: [metadados.noPeriodo.tempoTotalRealizadoNoPeriodo.toFixed(2)],
+            backgroundColor: '#FF7043'
+          }
+        ]
+      };
+      let dadosPeriodoPizza: ChartData = {
+        datasets: [
+          {
+            label: 'NÃO INIC',
+            data: [Math.round(metadados.horasDemandasNaoIniciadas * 100)/100],
+            backgroundColor: '#0dcaf0',
+            stack: 'Demandas'
+          },
+          {
+            label: 'EM ANDAM',
+            data: [Math.round(metadados.horasDemandasEmAndamento * 100)/100],
+            backgroundColor: '#ffc107',
+            stack: 'Demandas'
+          },
+          {
+            label: 'CONCL',
+            data: [Math.round(metadados.horasDemandasConcluidas * 100)/100],
+            backgroundColor: '#af4201',
+            stack: 'Demandas'
+          },
+          {
+            label: 'AVAL',
+            data: [Math.round(metadados.horasDemandasAvaliadas * 100)/100],
+            backgroundColor: '#af4af0',
+            stack: 'Demandas'
+          },
+          {
+            label: 'DISP',
+            data: [Math.round((metadados.horasUteisTotais - metadados.horasUteisAfastamento - metadados.horasUteisDecorridas) * 100)/100],
+            backgroundColor: '#6c757d',
+            stack: 'Demandas'
+          }
+        ]
+      };
+      let dadosPeriodoDetalhado: ChartData = {
+        datasets: [
+          {
+            label: 'Aprov',
+            data: [metadados.noPeriodo.tempoTrabalhadoHomologado.toFixed(2)],
+            backgroundColor: '#0dcaf0',
+            stack: 'Demandas'
+          },
+          {
+            label: 'Reprov',
+            data: [metadados.noPeriodo.tempoTrabalhadoNaoHomologado.toFixed(2)],
+            backgroundColor: '#f44336',
+            stack: 'Demandas'
+          },
+          {
+            label: 'Concl',
+            data: [metadados.noPeriodo.tempoDespendidoSoConcluidas.toFixed(2)],
+            backgroundColor: '#af4201',
+            stack: 'Demandas'
+          }
+        ]
+      };
       switch (tipo) {
         case 'GERAL': result = dadosPlano; break;
         case 'DETALHADO': result = dadosDemandas; break;

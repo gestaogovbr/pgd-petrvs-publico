@@ -7,7 +7,6 @@ import { Demanda } from 'src/app/models/demanda.model';
 import { PageBase } from './page-base';
 import { Plano } from 'src/app/models/plano.model';
 import { Chart } from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 export type Metadado = {    
   descricaoPlano: string,   
@@ -128,9 +127,9 @@ export type PlanoExtendido2 = {
   percentualHorasTotaisAlocadas: number,            // razão entre as horas totais alocadas e as horas úteis totais do Plano
   percentualAfastamento: number,                    // razão entre as horas de afastamento do servidor e as horas úteis totais do Plano
   dadosGraficoPlano: any,
-  dadosGraficoDemandas: any
-  dadosGraficoPeriodoComparativo: any
-  dadosGraficoPeriodoPizza: any
+  dadosGraficoDemandas: any,
+  dadosGraficoPeriodoComparativo: any,
+  dadosGraficoPeriodoPizza: any,
   dadosGraficoPeriodoDetalhado: any
 }
 
@@ -148,12 +147,13 @@ export abstract class PageReportBase<M extends Base, D extends DaoBaseService<M>
   public calendar: CalendarService;
   public rows?: any[] = [];
   public join: string[] = [];
+  //public pluginsGrafico?: Array<any>;
 
   constructor(public injector: Injector, dType: Type<D>) {
     super(injector);
     this.dao = injector.get<D>(dType);
     this.calendar = injector.get<CalendarService>(CalendarService);
-    Chart.plugins.register(ChartDataLabels);
+    //Chart.plugins.register(ChartDataLabels);
   }
 
   ngAfterViewInit() {
