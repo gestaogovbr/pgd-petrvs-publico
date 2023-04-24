@@ -18,9 +18,10 @@
         </tab>
         <tab key="CONFIGURACOES" label="Configurações">
             <div class="row">
-                <input-radio [size]="4" label="Avaliação automática" controlName="atividades_avaliacao_automatico" [control]="form!.controls.atividades_avaliacao_automatico" [items]="lookup.SIMNAO" labelInfo="Se ao final do prazo de avaliação do gestor, avaliará como 10 a atividade."></input-radio>
-                <input-radio [size]="4" label="Arquivamento automático" controlName="atividades_arquivamento_automatico" [control]="form!.controls.atividades_arquivamento_automatico" [items]="lookup.SIMNAO" labelInfo="Se após a avaliação, arquivará automaticamente a atividade."></input-radio>
-                <input-radio [size]="4" label="Auto-edição (Subordinadas)" controlName="autoedicao_subordinadas" [control]="form!.controls.autoedicao_subordinadas" [items]="lookup.SIMNAO" labelInfo="Se as Unidades Subordinadas podem editar suas próprias Informações Gerais"></input-radio>
+                <input-radio [size]="3" label="Avaliação hierárquica" controlName="avaliacao_hierarquica" [control]="form!.controls.avaliacao_hierarquica" [items]="lookup.SIMNAO" labelInfo="Se permite que unidades supeiores faça avaliação."></input-radio>
+                <input-radio [size]="3" label="Avaliação automática" controlName="atividades_avaliacao_automatico" [control]="form!.controls.atividades_avaliacao_automatico" [items]="lookup.SIMNAO" labelInfo="Se ao final do prazo de avaliação do gestor, avaliará como 10 a atividade."></input-radio>
+                <input-radio [size]="3" label="Arquivamento automático" controlName="atividades_arquivamento_automatico" [control]="form!.controls.atividades_arquivamento_automatico" [items]="lookup.SIMNAO" labelInfo="Se após a avaliação, arquivará automaticamente a atividade."></input-radio>
+                <input-radio [size]="3" label="Auto-edição (Subordinadas)" controlName="autoedicao_subordinadas" [control]="form!.controls.autoedicao_subordinadas" [items]="lookup.SIMNAO" labelInfo="Se as Unidades Subordinadas podem editar suas próprias Informações Gerais"></input-radio>
             </div>
             <separator></separator>
             <div class="row">

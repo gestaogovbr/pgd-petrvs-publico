@@ -45,6 +45,7 @@ use App\Http\Controllers\DemandaEntregaController;
 use App\Http\Controllers\ProjetoController;
 use App\Http\Controllers\RotinaDiariaController;
 use App\Http\Controllers\TemplateController;
+use App\Http\Controllers\UnidadeIntegranteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -215,6 +216,11 @@ Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
     Route::post('unificar', [UnidadeController::class, 'unificar']);
     Route::post('dashboards', [UnidadeController::class, 'dashboards']);
     Route::post('inativo', [UnidadeController::class, 'inativo']);
+});
+Route::middleware(['auth:sanctum'])->prefix('UnidadeIntegrante')->group(function () {
+    //defaultRoutes(UnidadeIntegranteController::class);
+    Route::post('load-integrantes', [UnidadeIntegranteController::class, 'loadIntegrantes']);
+    Route::post('save-integrante', [UnidadeIntegranteController::class, 'saveIntegrante']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Capacidade')->group(function () { defaultRoutes(CapacidadeController::class); });
 

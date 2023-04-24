@@ -110,8 +110,8 @@ export class LookupService {
   ]
 
   public UNIDADE_INTEGRANTE_TIPO: LookupItem[] = [
-    { key: 'CHEFE', value: "Chefe", icon: "bi bi-star-fill", color: "warning"},
-    { key: 'CHEFE_SUBSTITUTO', value: "Chefe", icon: "bi bi-star-half", color: "warning"},
+    { key: 'GESTOR', value: "Chefe", icon: "bi bi-star-fill", color: "warning"},
+    { key: 'GESTOR_SUBSTITUTO', value: "Chefe substituto", icon: "bi bi-star-half", color: "warning"},
     { key: 'AVALIADOR_DEMANDAS', value: "Avaliador (demandas)", icon: "bi bi-check-all", color: "success"},
     { key: 'LOTADO', value: "Lotado", icon: "bi bi-geo-alt", color: "secondary"}
   ];

@@ -154,12 +154,20 @@ export class GridComponent extends ComponentBase implements OnInit {
   get visible(): boolean {
     return this._visible;
   }
+  @Input() set loading(value: boolean) {
+    this._loading = value;
+    this.cdRef.detectChanges();
+  }
+  get loading(): boolean {
+    return this._loading;
+  }
 
   /* Propriedades private e métodos get e set */
   private _query?: QueryContext<Base>;
   private _list?: Observable<any[]>;
   private _error?: string;
   private _disabled?: string;
+  private _loading: boolean = false;
   private _hasAdd: boolean = true;
   private _title: string = "";
   private _items?: IIndexable[];
@@ -324,6 +332,10 @@ export class GridComponent extends ComponentBase implements OnInit {
 
   public get isNoHeader(): boolean {
     return this.noHeader != undefined;
+  }
+
+  public get isLoading(): boolean {
+    return this.query?.loading || this.loading;
   }
 
   public getGroupSeparator(row: any): GridGroupSeparator | undefined {
@@ -625,7 +637,7 @@ export class GridComponent extends ComponentBase implements OnInit {
 
   public onCancelItem() {
     (async () => {
-      if(this.adding) this.items.splice(this.items.findIndex(x => !(x instanceof GridGroupSeparator) && x["id"] == (this.editing || [])["id"]), 1);
+      if(this.adding) this.items.splice(this.items.findIndex(x => !(x instanceof GridGroupSeparator) && x["id"] == (this.editing || {id: undefined})["id"]), 1);
       await this.endEdit();
     })();
   }

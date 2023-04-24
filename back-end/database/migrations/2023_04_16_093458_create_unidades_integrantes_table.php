@@ -21,7 +21,7 @@ class CreateUnidadesIntegrantesTable extends Migration
             // Campos:
             $table->dateTime('data_inicio')->comment("Data inicio da vigência");
             $table->dateTime('data_fim')->nullable()->comment("Data fim da vigência");
-            $table->enum("tipo", ["AVALIADOR_DEMANDAS"])->comment("Tipo do vinculo");
+            $table->enum("atribuicao", ["AVALIADOR_DEMANDAS"])->comment("Tipo do vinculo");
             // Chaves estrangeiras:
             $table->foreignUuid('unidade_id')->onDelete('restrict')->onUpdate('cascade');
             $table->foreignUuid('usuario_id')->onDelete('restrict')->onUpdate('cascade');

@@ -62,6 +62,7 @@ class Unidade extends ModelBase
         'entidade_id', /* char(36); NOT NULL; */
         'cidade_id', /* char(36); */
         'expediente', /* json; */// Configuração de expediente
+        'avaliacao_hierarquica',
         //'checklist', /* json; */// Nome dos checklist predefinidas
         //'data_fim', /* datetime; */// Data final da vigência
         //'inativo', /* datetime; */// Se a unidade está inativa
