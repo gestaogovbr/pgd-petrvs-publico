@@ -271,7 +271,7 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
   }
 
   public onUnidadeSelect(selected: SelectItem) {
-    this.form!.controls.unidade_texto_complementar.setValue((selected.entity as Unidade)?.texto_complementar_plano || "");
+    //this.form!.controls.unidade_texto_complementar.setValue((selected.entity as Unidade)?.texto_complementar_plano || "");
     this.form!.controls.forma_contagem_carga_horaria.setValue((selected.entity as Unidade)?.entidade?.forma_contagem_carga_horaria || "DIA");
     this.calculaTempos();
     this.cdRef.detectChanges();

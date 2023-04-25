@@ -1,11 +1,11 @@
 /**
- * TinyMCE version 6.4.1 (2023-03-29)
+ * TinyMCE version 6.3.2 (2023-02-22)
  */
 
 (function () {
     'use strict';
 
-    var global$3 = tinymce.util.Tools.resolve('tinymce.PluginManager');
+    var global$2 = tinymce.util.Tools.resolve('tinymce.PluginManager');
 
     const hasProto = (v, constructor, predicate) => {
       var _a;
@@ -62,7 +62,7 @@
 
     const escape = text => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-    var global$2 = tinymce.util.Tools.resolve('tinymce.util.Tools');
+    var global$1 = tinymce.util.Tools.resolve('tinymce.util.Tools');
 
     const option = name => editor => editor.options.get(name);
     const register$2 = editor => {
@@ -271,8 +271,6 @@
     };
     const has = (obj, key) => hasOwnProperty.call(obj, key);
 
-    var global$1 = tinymce.util.Tools.resolve('tinymce.html.Serializer');
-
     const entitiesAttr = {
       '"': '&quot;',
       '<': '&lt;',
@@ -282,7 +280,6 @@
     };
     const htmlEscape = html => html.replace(/["'<>&]/g, match => get(entitiesAttr, match).getOr(match));
     const hasAnyClasses = (dom, n, classes) => exists(classes.split(/\s+/), c => dom.hasClass(n, c));
-    const parseAndSerialize = (editor, html) => global$1({ validate: true }, editor.schema).serialize(editor.parser.parse(html, { insert: true }));
 
     const createTemplateList = (editor, callback) => {
       return () => {
@@ -301,7 +298,7 @@
       };
     };
     const replaceTemplateValues = (html, templateValues) => {
-      global$2.each(templateValues, (v, k) => {
+      global$1.each(templateValues, (v, k) => {
         if (isFunction(v)) {
           v = v(k);
         }
@@ -311,8 +308,8 @@
     };
     const replaceVals = (editor, scope) => {
       const dom = editor.dom, vl = getTemplateReplaceValues(editor);
-      global$2.each(dom.select('*', scope), e => {
-        global$2.each(vl, (v, k) => {
+      global$1.each(dom.select('*', scope), e => {
+        global$1.each(vl, (v, k) => {
           if (dom.hasClass(e, k)) {
             if (isFunction(v)) {
               v(e);
@@ -325,13 +322,13 @@
       const dom = editor.dom;
       const sel = editor.selection.getContent();
       html = replaceTemplateValues(html, getTemplateReplaceValues(editor));
-      let el = dom.create('div', {}, parseAndSerialize(editor, html));
+      let el = dom.create('div', {}, html);
       const n = dom.select('.mceTmpl', el);
       if (n && n.length > 0) {
         el = dom.create('div');
         el.appendChild(n[0].cloneNode(true));
       }
-      global$2.each(dom.select('*', el), n => {
+      global$1.each(dom.select('*', el), n => {
         if (hasAnyClasses(dom, n, getCreationDateClasses(editor))) {
           n.innerHTML = getDateTime(editor, getCdateFormat(editor));
         }
@@ -355,7 +352,7 @@
         let contentCssEntries = '';
         const contentStyle = (_a = getContentStyle(editor)) !== null && _a !== void 0 ? _a : '';
         const cors = shouldUseContentCssCors(editor) ? ' crossorigin="anonymous"' : '';
-        global$2.each(editor.contentCSS, url => {
+        global$1.each(editor.contentCSS, url => {
           contentCssEntries += '<link type="text/css" rel="stylesheet" href="' + editor.documentBaseURI.toAbsolute(url) + '"' + cors + '>';
         });
         if (contentStyle) {
@@ -367,7 +364,7 @@
         const preventClicksOnLinksScript = '<script>' + 'document.addEventListener && document.addEventListener("click", function(e) {' + 'for (var elm = e.target; elm; elm = elm.parentNode) {' + 'if (elm.nodeName === "A" && !(' + isMetaKeyPressed + ')) {' + 'e.preventDefault();' + '}' + '}' + '}, false);' + '</script> ';
         const directionality = editor.getBody().dir;
         const dirAttr = directionality ? ' dir="' + encode(directionality) + '"' : '';
-        html = '<!DOCTYPE html>' + '<html>' + '<head>' + '<base href="' + encode(editor.documentBaseURI.getURI()) + '">' + contentCssEntries + preventClicksOnLinksScript + '</head>' + '<body class="' + encode(bodyClass) + '"' + dirAttr + '>' + parseAndSerialize(editor, html) + '</body>' + '</html>';
+        html = '<!DOCTYPE html>' + '<html>' + '<head>' + '<base href="' + encode(editor.documentBaseURI.getURI()) + '">' + contentCssEntries + preventClicksOnLinksScript + '</head>' + '<body class="' + encode(bodyClass) + '"' + dirAttr + '>' + html + '</body>' + '</html>';
       }
       return replaceTemplateValues(html, getPreviewReplaceValues(editor));
     };
@@ -381,7 +378,7 @@
           });
           return Optional.none();
         }
-        return Optional.from(global$2.map(templateList, (template, index) => {
+        return Optional.from(global$1.map(templateList, (template, index) => {
           const isUrlTemplate = t => t.url !== undefined;
           return {
             selected: index === 0,
@@ -513,9 +510,9 @@
     const setup = editor => {
       editor.on('PreProcess', o => {
         const dom = editor.dom, dateFormat = getMdateFormat(editor);
-        global$2.each(dom.select('div', o.node), e => {
+        global$1.each(dom.select('div', o.node), e => {
           if (dom.hasClass(e, 'mceTmpl')) {
-            global$2.each(dom.select('*', e), e => {
+            global$1.each(dom.select('*', e), e => {
               if (hasAnyClasses(dom, e, getModificationDateClasses(editor))) {
                 e.innerHTML = getDateTime(editor, dateFormat);
               }
@@ -541,7 +538,7 @@
     };
 
     var Plugin = () => {
-      global$3.add('template', editor => {
+      global$2.add('template', editor => {
         register$2(editor);
         register(editor);
         register$1(editor);

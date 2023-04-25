@@ -21,7 +21,7 @@ class ProjetoRecurso extends ModelBase
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'nome', /* varchar(256); NOT NULL; */// Nome do recurso
         'tipo', /* enum('HUMANO','MATERIAL','SERVICO','CUSTO','DEPARTAMENTO'); NOT NULL; */// Tipo do recurso
-        'unidade_medida', /* enum('UNIDADE','CAIXA','METRO','KILO','LITRO','DUZIA','FARDO','HORAS','DIAS','PACOTE','FRASCO'); NOT NULL; */// Unidade do recurso
+        'unidade_medida', /* enum('UNIDADE','CAIXA','METRO','KILO','LITRO','DUZIA','MONETARIO','HORAS','DIAS','PACOTE'); NOT NULL; */// Unidade do recurso
         'valor', /* decimal(15,2); NOT NULL; */// Valor
         'data_inicio', /* datetime; NOT NULL; */// Data de criação
         'projeto_id', /* char(36); NOT NULL; */

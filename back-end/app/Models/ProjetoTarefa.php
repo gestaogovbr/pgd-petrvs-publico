@@ -38,16 +38,17 @@ class ProjetoTarefa extends ModelBase
         'soma_progresso_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se o progresso é calculado pela média do progresso dos filhos ou lançado manual (somente se tem_filhos)
         'status', /* enum('PLANEJADO','INICIADO','CONCLUIDO','FALHO','SUSPENSO','CANCELADO','AGUARDANDO'); NOT NULL; */// Status
         'contraido', /* tinyint; NOT NULL; */// Se esta contraído
-        'custo', /* decimal(15,2); NOT NULL; */// Custo: Será a soma dos recursos, sou a soma dos filhos caso temFilhos e sintetico
+        'custo', /* decimal(15,2); NOT NULL; */// Custo: Será a soma dos recursos, ou a soma dos filhos caso tem_filhos e soma_custos_filhos
         'calcula_intervalo', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se calcula o inicio e termino automaticamente pelos filhos (somente se tem_filhos)
         'aloca_proprios_recursos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui recursos próprios (somente se tem_filhos)
         'soma_recusos_alocados_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Mostra o somatório dos recursos filhos (somente se tem_filhos)
-        'custos_proprios', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui custos próprios (somente se tem_filhos)
-        'soma_custos_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui custos filhos (somente se tem_filhos)
+        'custos_proprios', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui custos próprios (somente se tem_filhos), se não tem filhos sempre será true
+        'soma_custos_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Mostra o somatório dos custos filhos (somente se tem_filhos)
         'projeto_id', /* char(36); NOT NULL; */
-        'tarefa_pai_id', /* char(36); NOT NULL; */
+        'tarefa_pai_id', /* char(36); */
         'demanda_id', /* char(36); */
         'usuario_id', /* char(36); */
+        //'etiquetas', /* json; */// Etiquetas
         //'tarefa_projeto_id', /* char(36); */
         //'data_inicio', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data inicio da vigência
         //'data_fim', /* datetime; */// Data fim da vigência

@@ -70,10 +70,7 @@ class Usuario extends Authenticatable
         //'foto_google', /* text; */// Foto do G-Suit (Google)
         //'foto_microsoft', /* text; */// Foto do Azure (Microsoft)
         //'foto_firebase', /* text; */// Foto do Firebase (Google, Facebook, Instagram, Twiter, etc...)
-        //'projeto_id', /* char(36); */
-        //'projeto_tarefa_id', /* char(36); */
         //'id_super', /* text; */// Id do usuário no SUPER
-        //'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho
     ];
 
     public $fillable_changes = [

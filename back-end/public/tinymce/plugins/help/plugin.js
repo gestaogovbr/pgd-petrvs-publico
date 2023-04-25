@@ -1,5 +1,5 @@
 /**
- * TinyMCE version 6.4.1 (2023-03-29)
+ * TinyMCE version 6.3.2 (2023-02-22)
  */
 
 (function () {
@@ -628,12 +628,6 @@
         type: 'premium'
       },
       {
-        key: 'advtemplate',
-        name: 'Advanced Templates',
-        type: 'premium',
-        slug: 'advanced-templates'
-      },
-      {
         key: 'casechange',
         name: 'Case Change',
         type: 'premium'
@@ -656,8 +650,7 @@
       {
         key: 'typography',
         name: 'Advanced Typography',
-        type: 'premium',
-        slug: 'advanced-typography'
+        type: 'premium'
       },
       {
         key: 'mediaembed',
@@ -678,8 +671,7 @@
       {
         key: 'inlinecss',
         name: 'Inline CSS',
-        type: 'premium',
-        slug: 'inline-css'
+        type: 'premium'
       },
       {
         key: 'linkchecker',
@@ -909,7 +901,7 @@
       };
       editor.windowManager.open({
         title: 'Help',
-        size: 'normal',
+        size: 'medium',
         body,
         buttons: [{
             type: 'cancel',

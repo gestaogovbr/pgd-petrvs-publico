@@ -940,7 +940,7 @@ function PlanoFormComponent_ng_template_33_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵtextInterpolate1"](" ", (row_r24.atividade == null ? null : row_r24.atividade.nome) || "", "");
 } }
-const _c11 = function () { return ["cadastros", "atividade"]; };
+const _c11 = function () { return ["gestao", "atividade"]; };
 const _c12 = function (a0) { return { route: a0 }; };
 function PlanoFormComponent_ng_template_35_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelement"](0, "input-search", 47, 48);
@@ -1224,9 +1224,9 @@ class PlanoFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IM
         this.calculaTempos();
     }
     onUnidadeSelect(selected) {
-        var _a, _b, _c;
-        this.form.controls.unidade_texto_complementar.setValue(((_a = selected.entity) === null || _a === void 0 ? void 0 : _a.texto_complementar_plano) || "");
-        this.form.controls.forma_contagem_carga_horaria.setValue(((_c = (_b = selected.entity) === null || _b === void 0 ? void 0 : _b.entidade) === null || _c === void 0 ? void 0 : _c.forma_contagem_carga_horaria) || "DIA");
+        var _a, _b;
+        //this.form!.controls.unidade_texto_complementar.setValue((selected.entity as Unidade)?.texto_complementar_plano || "");
+        this.form.controls.forma_contagem_carga_horaria.setValue(((_b = (_a = selected.entity) === null || _a === void 0 ? void 0 : _a.entidade) === null || _b === void 0 ? void 0 : _b.forma_contagem_carga_horaria) || "DIA");
         this.calculaTempos();
         this.cdRef.detectChanges();
     }
