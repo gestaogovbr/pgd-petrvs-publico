@@ -52,7 +52,7 @@ export class Unidade extends Base {
     public inativo: Date | null = null; //Se a unidade está inativa
     public unidades_origem_atividades: UnidadeOrigemAtividade[] = [];
     public expediente: Expediente | null = null; // Expediente (Não nulo)
-    public texto_complementar_plano: string | null = ""; // Mensagem adicional para o plano de trabalho
+    public avaliacao_hierarquica: boolean = false; // Se permite que unidades supeiores faça avaliação
 
     public unidade_id: string | null = null; //Unidade superior (nó pai hierárquico)
     public entidade_id: string | null = null; // Entidade referente

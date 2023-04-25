@@ -108,6 +108,14 @@ export class LookupService {
     { key: 'OUTRO', value: "Outro", icon: "bi bi-question-circle", color: "danger" }
   ]
 
+  public UNIDADE_INTEGRANTE_TIPO: LookupItem[] = [
+    { key: 'GESTOR', value: "Chefe", icon: "bi bi-star-fill", color: "warning"},
+    { key: 'GESTOR_SUBSTITUTO', value: "Chefe substituto", icon: "bi bi-star-half", color: "warning"},
+    { key: 'AVALIADOR_DEMANDAS', value: "Avaliador (demandas)", icon: "bi bi-check-all", color: "success"},
+    { key: 'LOTADO', value: "Lotado", icon: "bi bi-geo-alt", color: "secondary"}
+  ];
+
+
   public TEMPLATE_ESPECIE: LookupItem[] = this.DOCUMENTO_ESPECIE;
 
   public DIA_HORA_CORRIDOS_OU_UTEIS: LookupItem[] = [

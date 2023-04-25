@@ -1,11 +1,12 @@
-<div class="chart-container">
+<div class="chart-container" style="position: relative">
   <canvas baseChart
-    [datasets]="barChartData"
-    [chartType]="barChartType"
-    [options]="barChartOptions"
-    [plugins]="barChartPlugins"
-    [legend]="barChartLegend"
-    [labels]="barChartLabels"
-    [style.height.px]="heightAreaChart">
+    [datasets]="dadosGrafico.datasets!"
+    [labels]="labelsX"
+    [chartType]="tipoGrafico"
+    [options]="opcoesGrafico"
+    [plugins]="pluginsGrafico">
   </canvas>
 </div>
+<!-- [legend]="legendaGrafico"
+    [labels]="labelsGrafico"
+    [style.height.px]="alturaAreaGrafico" -->

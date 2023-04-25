@@ -18,7 +18,6 @@ export abstract class PageReportFilterBase extends PageBase implements OnInit {
     icon: "bi bi-clipboard-data",
     onClick: this.onReport.bind(this)
   }];
-
   public form?: FormGroup;
   public formValidation?: (form?: FormGroup) => string | undefined | null;
 

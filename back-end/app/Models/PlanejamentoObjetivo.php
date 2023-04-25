@@ -22,9 +22,9 @@ class PlanejamentoObjetivo extends ModelBase
         'planejamento_id', /* char(36); NOT NULL; */
         'sequencia', /* integer; */
         'eixo_tematico_id', /* char(36); NOT NULL; */
+        'objetivo_superior_id', /* char(36); */
         //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
         //'data_fim', /* datetime; */// Data fim da vigência
-        'objetivo_superior_id', /* char(36); */
     ];
 
     // Belongs

@@ -27,16 +27,14 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
     this.entidadeDao = injector.get<EntidadeDaoService>(EntidadeDaoService);
 
     /* Inicializações */
-    this.title = this.lex.noun("Unidade",true);
+    this.title = this.lex.noun("Unidade", true);
     this.code = "MOD_CFG_UND";
     this.filter = this.fh.FormBuilder({
-      unidades_planejamento: {default: false},
-      subordinadas: {default: false},
-      entidade_id: {default: null},
-      inativos: {default: false},
-      nome: {default: ""}
+      entidade_id: { default: null },
+      inativos: { default: false },
+      nome: { default: "" }
     });
-    this.groupBy = [{field: "entidade.sigla", label: "Entidade"}];
+    this.groupBy = [{ field: "entidade.sigla", label: "Entidade" }];
     // Testa se o usuário possui permissão unificar unidade
     if (this.auth.hasPermissionTo("MOD_UND_UNIR")) {
       this.buttons.push({
@@ -52,16 +50,20 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
     let result: ToolbarButton[] = [];
     let unidade: Unidade = row as Unidade;
     // Testa se o usuário possui permissão para exibir dados da unidade
-    if (this.auth.hasPermissionTo("MOD_UND_CONS")) result.push({icon: "bi bi-info-circle", label: "Informações", onClick: this.consult.bind(this)});
+    if (this.auth.hasPermissionTo("MOD_UND_CONS")) result.push({ icon: "bi bi-activity", label: "Ver Atividades", onClick: this.consultAtividades.bind(this) });
+    // Testa se o usuário possui permissão para exibir dados da unidade
+    if (this.auth.hasPermissionTo("MOD_UND_CONS")) result.push({ icon: "bi bi-info-circle", label: "Informações", onClick: this.consult.bind(this) });
     // Testa se o usuário possui permissão de inativar a unidade
     if (this.auth.hasPermissionTo("MOD_UND_INATV")) result.push({icon: unidade.inativo ? "bi bi-check-circle" : "bi bi-x-circle", label: unidade.inativo ? 'Reativar' : 'Inativar', onClick: async (unidade: Unidade) => await this.inativo(unidade, !unidade.inativo)});
+    // Testa se o usuário possui permissão para gerenciar integrantes da unidade
+    if (this.auth.hasPermissionTo("MOD_UND_INTG")) result.push({icon: "bi bi-people", label: "Integrantes", onClick: (unidade: Unidade) => this.go.navigate({ route: ['configuracoes', 'unidade', 'NOPERSIST', unidade.id, 'integrante'] })});
     // Testa se o usuário possui permissão para excluir unidade
-    if (this.auth.hasPermissionTo("MOD_UND_EXCL")) result.push({icon: "bi bi-trash", label: "Excluir", onClick: this.delete.bind(this)});
+    if (this.auth.hasPermissionTo("MOD_UND_EXCL")) result.push({ icon: "bi bi-trash", label: "Excluir", onClick: this.delete.bind(this) });
     return result;
   }
 
   public async inativo(unidade: Unidade, inativo: boolean) {
-    if(await this.dialog.confirm(inativo ? "Inativar" : "Reativar", inativo ? "Deseja realmente inativar a unidade?" : "Deseja reativar a unidade?")) {
+    if (await this.dialog.confirm(inativo ? "Inativar" : "Reativar", inativo ? "Deseja realmente inativar a unidade?" : "Deseja reativar a unidade?")) {
       try {
         this.submitting = true;
         await this.dao!.inativo(unidade.id, inativo);
@@ -79,23 +81,18 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
   public filterWhere = (filter: FormGroup) => {
     let form: any = filter.value;
     let result: any[] = [];
-    
-
-    if(form.unidades_planejamento) {
-      result.push(["unidades_planejamento","==",true]);
-    }
-    if(form.subordinadas) {
-      result.push(["subordinadas","==",true]);
-    }
-   
     /* Se for selectable trás somente os inativos ou os não inativos, se não for então trás juntamente os inativos se form.inativos */
     result.push(this.selectable ? ["inativo", form.inativos ? "!=" : "==", null] : ["inativos", "==", form.inativos]);
-    if(form.entidade_id?.length) {
+    if (form.entidade_id?.length) {
       result.push(["entidade_id", "==", form.entidade_id]);
     }
-    if(form.nome?.length) {
+    if (form.nome?.length) {
       result.push(["or", ["nome", "like", "%" + form.nome.replace(" ", "%") + "%"], ["sigla", "like", "%" + form.nome.replace(" ", "%") + "%"]]);
     }
     return result;
+  }
+
+  public consultAtividades(unidade: Unidade) {
+    this.go.navigate({ route: ['gestao', 'atividade'] }, { metadata: { unidade_id: unidade.id, filterHidden: 'true', exibir_vinculadas_toolbar: true, minhas: true }, modal: true });
   }
 }
