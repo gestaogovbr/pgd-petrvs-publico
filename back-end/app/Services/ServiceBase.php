@@ -52,6 +52,7 @@ class DynamicMethods {
  * @method afterUpdate($entity, $data)
  * @method proxyUpdateJson($data, $unidade)
  * @method proxyDestroy($entity)
+ * @method extraDestoy($entity)
  */
 class ServiceBase extends DynamicMethods
 {
@@ -808,7 +809,10 @@ class ServiceBase extends DynamicMethods
         if(isset($entity)) {
             try {
                 if($transaction) DB::beginTransaction();
-                if(method_exists($this, "proxyDestroy") ? $this->proxyDestroy($entity) : true) {if(method_exists($entity, 'deleteCascade')) $entity->deleteCascade();}
+                if(method_exists($this, "proxyDestroy") ? $this->proxyDestroy($entity) : true) {
+                    if(method_exists($entity, 'deleteCascade')) $entity->deleteCascade();
+                }
+                if(method_exists($this, "extraDestoy")) $this->extraDestoy($entity);
                 if($transaction) DB::commit();
                 return true;
             } catch (Throwable $e) {

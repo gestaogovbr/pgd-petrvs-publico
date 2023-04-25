@@ -153,7 +153,7 @@ export class DemandaFormAvaliarComponent extends PageFormBase<Demanda, DemandaDa
       const fator = form.fator_complexidade || 1;
       const fator_ganho_produtivade = 1 - ((this.entity?.plano?.ganho_produtividade || 0) / 100);
       this.form.controls.tempo_pactuado.setValue((atividade?.tempo_pactuado || 0) * fator * fator_ganho_produtivade || 0);
-      this.form.controls.produtividade.setValue(this.calendar.produtividade(this.form.controls.tempo_pactuado.value, form.tempo_despendido));
+      this.form.controls.produtividade.setValue(this.entity?.plano?.tipo_modalidade?.calcula_tempo_despendido ? this.calendar.produtividade(this.form.controls.tempo_pactuado.value, form.tempo_despendido) : 0);
     }
   }
 
@@ -188,7 +188,7 @@ export class DemandaFormAvaliarComponent extends PageFormBase<Demanda, DemandaDa
         tipo_avaliacao_id: this.tipoAvaliacao!.key,
         fator_complexidade: form.fator_complexidade,
         tempo_pactuado: form.tempo_pactuado,
-        produtividade: form.produtividade,
+        produtividade: this.entity?.plano?.tipo_modalidade?.calcula_tempo_despendido ? form.produtividade : null,
         nota_atribuida: form.nota_atribuida,
         arquivar: form.arquivar,
         comentario_avaliacao: form.comentario_avaliacao, 

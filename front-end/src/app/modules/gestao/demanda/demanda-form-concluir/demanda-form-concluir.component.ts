@@ -78,7 +78,7 @@ export class DemandaFormConcluirComponent extends PageFormBase<Demanda, DemandaD
     if(values.tempo_pactuado <= 0) {
       return "Tempo pactuado não pode ser zero";
     } 
-    if(values.tempo_despendido <= 0) {
+    if(values.tempo_despendido <= 0 && this.entity?.plano?.tipo_modalidade?.calcula_tempo_despendido) {
       return "Tempo despendido não pode ser zero";
     }
     /* Validações pelo plano */
@@ -193,7 +193,7 @@ export class DemandaFormConcluirComponent extends PageFormBase<Demanda, DemandaD
       demanda.id = this.entity!.id;
       demanda.descricao_tecnica = this.form!.controls.descricao_tecnica.value;
       demanda.data_arquivamento = this.form!.controls.arquivar.value ? new Date() : null;
-      demanda.produtividade = this.calendar.produtividade(demanda.tempo_pactuado, demanda.tempo_despendido);
+      demanda.produtividade = this.entity?.plano?.tipo_modalidade?.calcula_tempo_despendido ? this.calendar.produtividade(demanda.tempo_pactuado, demanda.tempo_despendido) : null;
       this.dao!.concluir(demanda).then(saved => resolve(saved)).catch(reject);
     });
   }

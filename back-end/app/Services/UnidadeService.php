@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Exceptions\LogError;
+use App\Exceptions\ServerException;
 use App\Models\ModelBase;
 use DateTime;
 use DateTimeZone;
@@ -43,8 +44,7 @@ class UnidadeService extends ServiceBase
     }
 
     public function proxySearch($query, &$data, &$text) {
-        //$data["where"][] = ["subordinadas", "==", true];
-        //$data["where"][] = ["inativo", "==", null];
+        $data["where"][] = ["subordinadas", "==", true];
         return $this->proxyQuery($query, $data);
     }
 
@@ -129,8 +129,38 @@ class UnidadeService extends ServiceBase
         return true;
     }
 
-    public function metadadosArea($unidade_id, $programa_id) {
-        $result = null;
+    public function avaliadores($id) {
+        $result = [];
+        $unidade = Unidade::with("integrantes")->where("id", $id)->first();
+        if(!empty($unidade->gestor_id)) $result[] = $unidade->gestor_id;
+        if(!empty($unidade->gestor_substituto_id)) $result[] = $unidade->gestor_substituto_id;
+        foreach($unidade->integrantes as $integrante) {
+            if($integrante->atribuicao == "AVALIADOR_DEMANDAS") $result[] = $integrante->usuario_id;  
+        }
+        if($unidade->avaliacao_hierarquica) {
+            $parentId = $unidade->unidade_id;
+            $maxLevel = 50;
+            while(!empty($parentId) && $maxLevel) {
+                $pai = Unidade::find($parentId);
+                if(!empty($pai->gestor_id)) $result[] = $pai->gestor_id;
+                if(!empty($pai->gestor_substituto_id)) $result[] = $pai->gestor_substituto_id;
+                $parentId = $pai->unidade_id;
+                $maxLevel--;
+            }
+            if(!$maxLevel) throw new ServerException("ValidateUnidade", "Referência circular na hierarquia da unidade");
+        }
+        return $result;
+    }
+
+    /**
+     * Retorna um array com os dados totais de uma determinada Área, e os dados individuais de cada uma das suas unidades componentes.
+     * 
+     * @param string $unidade_id    O ID de uma Unidade.
+     * @param string $programa_id   O ID de um Programa.
+     * @return array
+     */
+    public function metadadosArea($unidade_id, $programa_id): array {
+        $result = [];        
         $programa = Programa::find($programa_id);
         $dadosArea = [
             'nomePrograma' => $programa['nome'],
@@ -155,9 +185,7 @@ class UnidadeService extends ServiceBase
         foreach ($unidades_ids as $id) {
             $temp = $this->metadadosUnidade($id, $programa_id);
             if ($id == $unidade_id) $aux = $temp;
-
             if ($temp['qdePlanosPrograma'] != 0) {
-
                 array_push($dadosUnidades, [
                     'id' => $temp['id'],
                     'nome' => $temp['nome'],
@@ -165,9 +193,7 @@ class UnidadeService extends ServiceBase
                     'mediaAvaliacoes' => $temp['mediaAvaliacoes'],
                     'nrServidoresPrograma' => $temp['nrServidoresPrograma']
                 ]);
-                //array_push($idsServidoresPrograma, $temp['idsServidoresPrograma']);
                 $idsServidoresPrograma = array_merge($idsServidoresPrograma, $temp['idsServidoresPrograma']);
-
                 $dadosArea['qdePlanosPrograma'] += $temp['qdePlanosPrograma'];
                 $dadosArea['horasUteisTotais'] += $temp['horasUteisTotais'];
                 $dadosArea['horasUteisDecorridas'] += $temp['horasUteisDecorridas'];
@@ -191,26 +217,30 @@ class UnidadeService extends ServiceBase
         } else {
             $dadosArea['mediaAvaliacoes'] = $this->utilService->avg(array_map(fn($u) => $u['mediaAvaliacoes'],array_filter($dadosUnidades, fn($u) => $u['mediaAvaliacoes'] != null)));
         }
-
         $dadosArea['percentualHorasNaoIniciadas'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasDemandasNaoIniciadas'] / $dadosArea['horasUteisTotais'];
         $dadosArea['percentualHorasEmAndamento'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasDemandasEmAndamento'] / $dadosArea['horasUteisTotais'];
         $dadosArea['percentualHorasConcluidas'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasDemandasConcluidas'] / $dadosArea['horasUteisTotais'];
         $dadosArea['percentualHorasAvaliadas'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasDemandasAvaliadas'] / $dadosArea['horasUteisTotais'];
         $dadosArea['percentualHorasTotaisAlocadas'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasTotaisAlocadas'] / $dadosArea['horasUteisTotais'];
         $dadosArea['percentualPlanoDecorrido'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasUteisDecorridas'] / $dadosArea['horasUteisTotais'];
-
         $result = [
             'descricaoArea' => $unidadePrincipal->nome . ' - ' . $unidadePrincipal->sigla,
             'dadosArea' => $dadosArea,
             'dadosUnidade' => $aux,
             'dadosUnidades' => $dadosUnidades
         ];
-
         return $result;
     }
 
-    /** Este método retorna os dados acerca dos Planos de Trabalho de uma Unidade, associados a um determinado Programa, que se encontrem dentro da vigência. */
-    public function metadadosUnidade($unidade_id, $programa_id) {
+    /** 
+     * Retorna os dados acerca dos Planos de Trabalho de uma Unidade, associados a um determinado Programa,
+     * que se encontrem dentro da vigência. 
+     * 
+     * @param string $unidade_id    O ID de uma Unidade.
+     * @param string $programa_id   O ID de um Programa.
+     * @return array    
+    */
+    public function metadadosUnidade($unidade_id, $programa_id): array {
         $unidade = Unidade::where('id', $unidade_id)->with(['planos', 'planos.demandas', 'planos.tipoModalidade'])->first();
         $metadadosPlanos = [];
         foreach ($unidade['planos']->toArray() as $plano) {
@@ -255,15 +285,27 @@ class UnidadeService extends ServiceBase
         return $result;
     }
 
-    /** Este método recebe o ID de uma Unidade-Mãe e retorna um array com os IDs de todas as suas unidades-filhas, ou seja,
-     *  de todas as Unidades que estão hierarquicamente organizadas abaixo da Unidade-Mãe.
+    /** 
+     * Retorna um array com os IDs de todas as suas unidades-filhas, ou seja,
+     * de todas as Unidades que estão hierarquicamente organizadas abaixo da Unidade-mãe.
+     * 
+     * @param string $unidade_id    O ID de uma Unidade-mãe.
+     * @return array    
      */
-    public function unidadesFilhas($unidade_id) {
+    public function unidadesFilhas($unidade_id): array {
         $path = DB::table('unidades')->select('path')->where('id',$unidade_id)->first()->path . '/' . $unidade_id;
         return array_map(fn($x) => $x->id,DB::table('unidades')->select('id')->where('path', 'like', $path)->orWhere('path', 'like', $path . '/%')->get()->toArray());
     }
 
-    public function dashboards($idsUnidades, $programa_id, $unidadesSubordinadas) {
+    /** 
+     * Um array com os IDs de todas as Unidades pesquisadas, que possuem Planos de Trabalho ativos, e seus respectivos dashboards.
+     * 
+     * @param array     $idsUnidades    Um array com os ids das unidades das quais se deseja o dashboard
+     * @param string    $programa_id    O id do programa dentro do qual serão procurados os planos de trabalho
+     * @param boolean   $unidadesSubordinadas     Define se devem ser incluídas ou não as unidades subordinadas
+     * @return array|LogError   
+     */
+    public function dashboards($idsUnidades, $programa_id, $unidadesSubordinadas): array | LogError {
         if (count($idsUnidades) > 0) {
             $unidadesFilhas = [];
             if ($unidadesSubordinadas) foreach ($idsUnidades as $unidade_id) {

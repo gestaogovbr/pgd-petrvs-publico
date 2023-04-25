@@ -30,3 +30,6 @@ back-end/servidores.xml
 back-end/unidades.xml
 back-end/tests/*
 back-end/local_files/*
+front-end/src/environments/environment.prod.ts
+front-end/src/proxy.conf.json
+front-end/tsconfig.json
