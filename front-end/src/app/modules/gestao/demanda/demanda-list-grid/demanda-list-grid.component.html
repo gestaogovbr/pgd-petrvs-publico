@@ -21,7 +21,7 @@
             <input-switch [size]="1" label="Arq." controlName="arquivadas" [control]="filter!.controls.arquivadas" labelInfo="Listar também demandas arquivadas"></input-switch>
         </div>
         <div class="row">
-            <input-search [size]="3" [label]="lex.noun('Atividade')" controlName="atividade_id" [control]="filter!.controls.atividade_id" [dao]="atividadeDao" [groupBy]="[{field: 'unidade.sigla', label: 'Unidade'}]" [where]="[['vinculadas', '=', true]]" [selectRoute]="{route: ['cadastros', 'atividade']}"></input-search>
+            <input-search [size]="3" [label]="lex.noun('Atividade')" controlName="atividade_id" [control]="filter!.controls.atividade_id" [dao]="atividadeDao" [groupBy]="[{field: 'unidade.sigla', label: 'Unidade'}]" [where]="[['vinculadas', '=', true]]" [selectRoute]="{route: ['gestao', 'atividade']}"></input-search>
             <input-search [size]="3" label="Tipo de processo" controlName="tipo_processo_id" [control]="filter!.controls.tipo_processo_id" [dao]="tipoProcessoDao" [selectRoute]="{route: ['cadastros', 'tipo-processo']}"></input-search>
             <input-select [size]="2" label="Data" itemTodos="- Todos -" [valueTodos]="null" controlName="data_filtro" [control]="filter!.controls.data_filtro" [items]="DATAS_FILTRO"></input-select>
             <input-datetime [size]="2" noIcon [disabled]="filter!.controls.data_filtro.value == null ? 'true' : undefined" label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" labelInfo="Data início do período"></input-datetime>

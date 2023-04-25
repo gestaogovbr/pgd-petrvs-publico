@@ -14,11 +14,23 @@ export class TabsComponent extends ComponentBase implements OnInit {
   @Input() items: LookupItem[] = [];
   @Input() title: string = "";
   @Input() class_span: string = "h3";
-  @Input() active: any = undefined;
+  @Input() set active(value: any) {
+    if(this._active != value) {
+      this._active = value;
+      this.cdRef.detectChanges();
+      let selected = this.items.find(x => x.key == value);
+      if(this.select && selected) this.select(selected);
+    }
+  }
+  get active(): any {
+    return this._active;
+  }
   @Input() display?: string;
   @Input() hidden?: string;
   @Input() right?: string;
   @Input() cdRef: ChangeDetectorRef;
+
+  private _active: any = undefined;
 
   constructor(public injector: Injector) {
     super(injector);
@@ -63,7 +75,5 @@ export class TabsComponent extends ComponentBase implements OnInit {
 
   public onClick(tab: LookupItem) {
     this.active = tab.key;
-    this.cdRef.detectChanges();
-    if(this.select) this.select(tab);
   }
 }

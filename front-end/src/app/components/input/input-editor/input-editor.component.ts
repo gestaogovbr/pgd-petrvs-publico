@@ -98,7 +98,7 @@ export class InputEditorComponent extends InputBase implements OnInit {
       if (this.control && this.control.value != value) {
         this.control.setValue(value);
       }
-      this.cdRef.detectChanges();
+      this.detectChanges();
     }
   };
   get value(): string {

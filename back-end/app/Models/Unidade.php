@@ -10,6 +10,7 @@ use App\Models\Plano;
 use App\Models\Programa;
 use App\Models\Atividade;
 use App\Models\Entidade;
+use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeOrigemAtividade;
 use App\Models\Cidade;
 use App\Traits\AutoDataInicio;
@@ -62,10 +63,11 @@ class Unidade extends ModelBase
         'entidade_id', /* char(36); NOT NULL; */
         'cidade_id', /* char(36); */
         'expediente', /* json; */// Configuração de expediente
-        'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho
+        'avaliacao_hierarquica',
         //'checklist', /* json; */// Nome dos checklist predefinidas
         //'data_fim', /* datetime; */// Data final da vigência
         //'inativo', /* datetime; */// Se a unidade está inativa
+        //'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho
     ];
 
     public $fillable_relations = [
@@ -96,6 +98,7 @@ class Unidade extends ModelBase
     public function planos() { return $this->hasMany(Plano::class); }
     public function programas() { return $this->hasMany(Programa::class); }
     public function atividades() { return $this->hasMany(Atividade::class); }
+    public function integrantes() { return $this->hasMany(UnidadeIntegrante::class); }
     public function unidadesOrigemAtividades() { return $this->hasMany(UnidadeOrigemAtividade::class); }
     public function unidadesDestinoAtividades() { return $this->hasMany(UnidadeOrigemAtividade::class, 'unidade_origem_atividade_id'); }
     // Belongs

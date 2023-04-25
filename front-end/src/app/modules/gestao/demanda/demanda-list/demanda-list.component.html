@@ -56,18 +56,18 @@
         <div class="mx-4 d-inline-block container" style="position: relative; width: 400px; min-height: 200px;" [style.height.px]="height">
           <!-- <h5>PT ativos (por Área)</h5> -->
             <app-bar-chart
-              barChartType = "horizontalBar"
-              [barChartData]="dadosGraficoNrPlanos"
-              [barChartOptions]="opcoesGraficoNrPlanos">
+              [tipoGrafico] = "'horizontalBar'"
+              [dadosGrafico]="dadosGraficoNrPlanos"
+              [opcoesGrafico]="opcoesGraficoNrPlanos">
             </app-bar-chart>
         </div>
         <!-- Gráfico dos Servidores participantes -->
         <div id="teste" class="mx-4 d-inline-block container" style="position: relative;  width: 400px; min-height: 200px;" [style.height.px]="height">
           <!-- <h5>Servidores (por Área)</h5> -->
             <app-bar-chart
-              barChartType = "horizontalBar"
-              [barChartData]="dadosGraficoServidores"
-              [barChartOptions]="opcoesGraficoServidores">
+              [tipoGrafico] = "'horizontalBar'"
+              [dadosGrafico]="dadosGraficoServidores"
+              [opcoesGrafico]="opcoesGraficoServidores">
             </app-bar-chart>
         </div>
       </div>
@@ -76,10 +76,10 @@
       <div *ngIf="totalPlanosAtivos" class="my-4 text-center">
         <div class="mx-4 d-inline-block container" style="position: relative;  width: 600px; min-height: 400px;">
             <app-bar-chart
-              barChartType = "bar"
-              [barChartData]="dadosGraficoModalidades"
-              [barChartOptions]="opcoesGraficoModalidades"
-              [heightAreaChart]="heightAreaGrafico">
+              [tipoGrafico] = "'bar'"
+              [dadosGrafico]="dadosGraficoModalidades"
+              [opcoesGrafico]="opcoesGraficoModalidades"
+              [alturaAreaGrafico]="alturaAreaGrafico">
             </app-bar-chart>
         </div>
       </div>

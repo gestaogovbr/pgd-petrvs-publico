@@ -1,11 +1,11 @@
-<top-alert *ngIf="form!.controls.tempo_despendido.value < despendidoMinimo" type="warning" [message]="'Tempo despendido abaixo do mínimo esperado (' + util.decimalToTimerFormated(despendidoMinimo, true) + ')'"></top-alert>
+<top-alert *ngIf="entity?.plano?.tipo_modalidade?.calcula_tempo_despendido && form!.controls.tempo_despendido.value < despendidoMinimo" type="warning" [message]="'Tempo despendido abaixo do mínimo esperado (' + util.decimalToTimerFormated(despendidoMinimo, true) + ')'"></top-alert>
 <editable-form [form]="form!" [disabled]="formDisabled" (submit)="onSaveData()" (cancel)="onCancel()">
     <separator *ngIf="gb.isEmbedded" transparent bottom [collapsed]="false">
         <input-button label="Nº doc. entregue" #docEntregue [size]="4" controlName="numero_documento_entrega" [control]="form!.controls.numero_documento_entrega" disabled labelInfo="Numero do documento entregue, caso seja o Sei é o numero Sei"></input-button>
         <input-text label="Título do documento" [size]="8" controlName="titulo_documento_entrega" [control]="form!.controls.titulo_documento_entrega" disabled labelInfo="Título do documento entregue"></input-text>
     </separator>
     <div class="row">
-        <input-search label="Atividade" #atividade [size]="6" controlName="atividade_id" [control]="form!.controls.atividade_id" [dao]="atividadeDao" [groupBy]="[{field: 'unidade.sigla', label: 'Unidade'}]" [where]="[['unidade_id', '=', entity?.unidade_id], ['vinculadas', '=', true]]" (select)="onAtividadeSelect($event)" [selectRoute]="{route: ['cadastros', 'atividade'], params: {filter: {unidade_id: entity?.unidade_id}}}"></input-search>
+        <input-search label="Atividade" #atividade [size]="6" controlName="atividade_id" [control]="form!.controls.atividade_id" [dao]="atividadeDao" [groupBy]="[{field: 'unidade.sigla', label: 'Unidade'}]" [where]="[['unidade_id', '=', entity?.unidade_id], ['vinculadas', '=', true]]" (select)="onAtividadeSelect($event)" [selectRoute]="{route: ['gestao', 'atividade'], params: {filter: {unidade_id: entity?.unidade_id}}}"></input-search>
         <input-select label="Complexidade" [size]="4" controlName="fator_complexidade" [control]="form!.controls.fator_complexidade" [items]="complexidades" (change)="onComplexidadeChange($event)" labelInfo="Multiplicador do tempo da atividade"></input-select>
         <input-switch label="Arquivar" [size]="2" controlName="arquivar" [control]="form!.controls.arquivar" labelInfo="Arquivar automaticamente após a avaliação"></input-switch>      
     </div>

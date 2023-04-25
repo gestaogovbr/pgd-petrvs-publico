@@ -36,7 +36,7 @@ export class InputMultitoggleComponent extends InputBase implements OnInit {
       this._value = value;
       this.control?.setValue(this.value);
     }
-    this.cdRef.detectChanges();
+    this.cdRef.markForCheck();
   }
   get value(): LookupItem[] {
     return this._value;

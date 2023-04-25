@@ -17,7 +17,6 @@ export type SelectItem = {
 export abstract class InputBase extends ComponentBase {
     /* Public properties */
     public fb: FormBuilder;
-    public viewInit: boolean = false;
     public formDirective?: FormGroupDirective;
     public inputElement?: ElementRef;
     public JSON = JSON;
@@ -98,9 +97,9 @@ export abstract class InputBase extends ComponentBase {
     }
 
     public ngAfterViewInit() {
+        super.ngAfterViewInit();
         try { this.formDirective = this.injector.get<FormGroupDirective>(FormGroupDirective); } catch {}
         this.form = this.form || this.formDirective?.form;
-        this.viewInit = true;
         this.cdRef.detectChanges();
     }
 

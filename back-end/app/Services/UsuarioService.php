@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\ServerException;
 use App\Models\Usuario;
 use App\Models\Demanda;
 use App\Models\Plano;
@@ -36,13 +37,29 @@ class UsuarioService extends ServiceBase
     public function proxyStore(&$data, $unidade, $action) {
         $data['cpf'] = $this->UtilService->onlyNumbers($data['cpf']);
         $data['telefone'] = $this->UtilService->onlyNumbers($data['telefone']);
+        /* Faz as atualizações das lotações de forma segura 
+        if($action != ServiceBase::ACTION_INSERT) {
+            foreach($data['lotacoes'] as $lotacao) {
+                if($lotacao["status"] == "DELETE") {
+                    $this->LotacaoService->destroy($lotacao["id"], false);
+                } else {
+                    $this->LotacaoService->save($lotacao);
+                }
+            }
+            $data['lotacoes'] = []; /* avoid fillablechanges
+        } else if(empty($data['lotacoes'])) {
+            throw new ServerException("ValidateUsuario", "Obrigatório existir ao menos uma lotação para o usuário");
+        }*/
         return $data;
+    }
+
+    public function extraStore($entity, $unidade, $action) {
+        $this->LotacaoService->checksLotacoes($entity->id);
     }
 
     public function proxySearch($query, &$data, &$text) {
         $data["where"][] = ["subordinadas", "==", true];
         return $this->proxyQuery($query, $data);
-
         /*        $where = [];
         $unidade_id = null;
         $vinculadas = false;
@@ -178,8 +195,8 @@ class UsuarioService extends ServiceBase
             'avaliadas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->avaliadas()->get()->count(),
             'nao_iniciadas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->naoIniciadas()->get()->count(),
             'concluidas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->concluidas()->get()->count(),
-            'nao_concluidas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->naoConcluidas()->get()->count(),
-            'atrasadas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->atrasadas()->get()->count(),
+            'nao_concluidas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->iniciadas()->naoConcluidas()->get()->count(),
+            'atrasadas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->iniciadas()->atrasadas()->get()->count(),
             'media_avaliacoes' => $media_avaliacao,
             'total_demandas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->get()->count()
         ];

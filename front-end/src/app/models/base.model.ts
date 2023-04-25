@@ -9,6 +9,7 @@ export abstract class Base implements IIndexable {
     public created_at: Date = new Date();
     public updated_at: Date = new Date();
     public _status?: EntityStatus; /* Usado somente pelos componentes da UX */ 
+    public _metadata?: any; /* Usado exclusivamente para armazenar dados adicionar */ 
 
     public initialization(data?: any) {
         if(data) Object.assign(this, data);
