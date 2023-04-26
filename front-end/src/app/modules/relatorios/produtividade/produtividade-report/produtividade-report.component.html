@@ -48,18 +48,18 @@
       <div class="my-4 text-center">
         <div class="container border border-primary bg-light d-inline-block mx-4" style="position: relative; width:400px">
           <h5>Composição do Plano por Demandas</h5>
-            <app-bar-chart
+            <bar-chart
               [dadosGrafico]="x.dadosGraficoPlano"
               [opcoesGrafico]="opcoesGraficoPlano">
-            </app-bar-chart>
+            </bar-chart>
         </div>
         <div class="container border border-primary bg-light d-inline-block mx-4" style="position: relative; width:400px">
           <h5>Distribuição dos Tempos no Plano</h5>
-            <app-bar-chart
+            <bar-chart
               [tipoGrafico]="tipoGrafico"
               [dadosGrafico]="x.dadosGraficoHoras"
               [opcoesGrafico]="opcoesGraficoHoras">
-            </app-bar-chart>
+            </bar-chart>
         </div>
       </div>
 
@@ -187,12 +187,12 @@
               </div>
             </td>
           <!--             <td>
-              <app-bar-chart
+              <bar-chart
                 [barChartType]="tipoGrafico"
                 [barChartLabels]="labelsX"
-                [barChartData]="row.produtividade"
-                [barChartOptions]="opcoesGraficoRow">
-            </app-bar-chart>
+                [dadosGrafico]="row.produtividade"
+                [opcoesGrafico]="opcoesGraficoRow">
+            </bar-chart>
             </td> -->
           </tr>
         </tbody>

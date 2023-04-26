@@ -1,6 +1,8 @@
 <div class="container">
     <div class="saudacao">
         <h2 class="text-black-50">{{mensagemSaudacao()}}</h2>
+        <button class="btn btn-outline-success"
+            (click)="go.navigate({route: ['gestao', 'demanda']}, {root: true})">Minhas demandas</button>
     </div>
     <div class="search">
         <form [formGroup]="formSearch" class="row d-flex align-items-center">
@@ -133,6 +135,21 @@
             </div>
         </div> -->
 
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-6">
+            <h5>Horas dos Planos</h5>
+            <bar-chart tipoGrafico="horizontalBar" [dadosGrafico]="dadosPlanos"
+                [opcoesGrafico]="opcoesGraficoPlano">
+            </bar-chart>
+        </div>
+        <div class="col-6">
+            <h5>Horas das Demandas</h5>
+            <bar-chart tipoGrafico="horizontalBar" [dadosGrafico]="dadosDemandas"
+                [opcoesGrafico]="opcoesGraficoDemandas">
+            </bar-chart>
+        </div>
     </div>
 
 

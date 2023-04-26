@@ -117,43 +117,43 @@ class Demanda extends ModelBase
      * @param array $planos_ids
      * @return Illuminate\Database\Eloquent
      */
-    public function scopeDosPlanos($query, $planos_ids): Collection{
+    public function scopeDosPlanos($query, $planos_ids) {
         return $query->whereIn("plano_id", $planos_ids);
     }
 
-    public function scopeDistribuidas($query){
+    public function scopeDistribuidas($query) {
         return $query->whereNotNull('data_distribuicao');
     }
 
-    public function scopeIniciadas($query){
+    public function scopeIniciadas($query) {
         return $query->whereNotNull('data_inicio');
     }
 
-    public function scopeNaoIniciadas($query){
+    public function scopeNaoIniciadas($query) {
         return $query->whereNull('data_inicio');
     }
 
-    public function scopeEmAndamento($query){
+    public function scopeEmAndamento($query) {
         return $query->whereNotNull('data_inicio')->whereNull('data_entrega');
     }
 
-    public function scopeConcluidas($query){
+    public function scopeConcluidas($query) {
         return $query->whereNotNull('data_entrega');
     }
 
-    public function scopeNaoConcluidas($query){
+    public function scopeNaoConcluidas($query) {
         return $query->whereNull('data_entrega');
     }
 
-    public function scopeAtrasadas($query){
+    public function scopeAtrasadas($query) {
         return $query->whereNull('data_entrega')->whereDate('prazo_entrega', '<', Carbon::now());
     }
 
-    public function scopeAvaliadas($query){
+    public function scopeAvaliadas($query) {
         return $query->whereNotNull("avaliacao_id");
     }
 
-    public function scopeNaoAvaliadas($query){
+    public function scopeNaoAvaliadas($query) {
         return $query->whereNull("avaliacao_id");
     }
 }

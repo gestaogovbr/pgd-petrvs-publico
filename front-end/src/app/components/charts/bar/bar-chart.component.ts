@@ -3,7 +3,7 @@ import { ChartOptions, ChartType, ChartDataSets, ChartConfiguration, ChartData }
 import { BaseChartDirective, Label } from 'ng2-charts';
 
 @Component({
-  selector: 'app-bar-chart',
+  selector: 'bar-chart',
   templateUrl: './bar-chart.component.html',
   styleUrls: [ './bar-chart.component.scss' ],
 })

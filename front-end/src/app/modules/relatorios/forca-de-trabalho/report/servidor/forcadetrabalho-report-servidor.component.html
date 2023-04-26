@@ -38,30 +38,30 @@
         <div class="d-md-flex p-2 justify-content-center">
             <div class="card m-2 border-primary bg-light text-center">
                 <h5>Horas Trabalhadas</h5>
-                <app-bar-chart 
+                <bar-chart 
                     [tipoGrafico]="'bar'"
                     [dadosGrafico]="x.dadosGraficoPeriodoComparativo"
                     [opcoesGrafico]="opcoesGraficoPeriodoComparativo" 
                     [pluginsGrafico]="pluginsGrafico">
-                </app-bar-chart>
+                </bar-chart>
             </div>
 <!--             <div class="card m-2 border-primary bg-light text-center">
                 <h5>Gráfico de Pizza</h5>
-                <app-bar-chart 
+                <bar-chart 
                     [tipoGrafico]="'pie'" 
                     [dadosGrafico]="x.dadosGraficoPeriodoPizza"
                     [opcoesGrafico]="opcoesGraficoPeriodoPizza" 
                     [pluginsGrafico]="pluginsGrafico">
-                </app-bar-chart>
+                </bar-chart>
             </div> -->
             <div class="card m-2 border-primary bg-light text-center">
                 <h5>Composição das Demandas</h5>
-                <app-bar-chart 
+                <bar-chart 
                     [tipoGrafico]="'horizontalBar'" 
                     [dadosGrafico]="x.dadosGraficoPeriodoDetalhado"
                     [opcoesGrafico]="opcoesGraficoPeriodoDetalhado" 
                     [pluginsGrafico]="pluginsGrafico">
-                </app-bar-chart>
+                </bar-chart>
             </div>
         </div>
     </div>
@@ -171,22 +171,22 @@
 
             <div class="card m-2 border-primary bg-light text-center">
                 <h5>Comparativo de Horas Líquidas</h5>
-                <app-bar-chart 
+                <bar-chart 
                     [tipoGrafico]="'bar'"
                     [dadosGrafico]="x.dadosGraficoPlano" 
                     [opcoesGrafico]="opcoesGraficoPlano" 
                     [pluginsGrafico]="pluginsGrafico">
-                </app-bar-chart>
+                </bar-chart>
             </div>
 
             <div class="card m-2 border-primary bg-light text-center">
                 <h5>Horas das Demandas</h5>
-                <app-bar-chart 
+                <bar-chart 
                     [tipoGrafico]="'horizontalBar'" 
                     [dadosGrafico]="x.dadosGraficoDemandas"
                     [opcoesGrafico]="opcoesGraficoDemandas" 
                     [pluginsGrafico]="pluginsGrafico">
-                </app-bar-chart>
+                </bar-chart>
             </div>
 
         </div>
@@ -471,11 +471,11 @@
                         </div>
                     </td>
                     <!--         <td>
-              <app-bar-chart
-                barChartType="horizontalBar"
-                [barChartData]="x.dadosGraficoHoras"
-                [barChartOptions]="opcoesGraficoHoras">
-              </app-bar-chart>
+              <bar-chart
+                tipoGrafico="horizontalBar"
+                [dadosGrafico]="x.dadosGraficoHoras"
+                [opcoesGrafico]="opcoesGraficoHoras">
+              </bar-chart>
             </td> -->
                 </tr>
             </tbody>
