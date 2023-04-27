@@ -113,14 +113,9 @@ class UtilService
     }
 
     public static function avg($array) {
-        $i = 0;
-        $summ = 0;
-        $arrayLen = count($array);
-        while ($i < $arrayLen) {
-            $summ = $summ + $array[$i];
-            $i++;
-        }
-        return $summ / $arrayLen;
+        $sum = 0;
+        foreach ($array as $value) $sum += $value; 
+        return $sum / count($array);
     }
 
     public static function removeAcentos($source) {
