@@ -76,7 +76,7 @@ export class RaioxPessoalFormComponent extends PageFormBase<Cidade, CidadeDaoSer
       posdoutorado: { default: [] },
 
 
-    })//, this.cdRef, this.validate);
+    }, this.cdRef, this.validate);
     
 
   }
@@ -145,20 +145,21 @@ export class RaioxPessoalFormComponent extends PageFormBase<Cidade, CidadeDaoSer
     let res=this.form!.value
     console.log('addItemIdioma',res)
     const idioma =this.lookup.IDIOMAS.find(x => x.key == this.form!.controls.idioma.value)
-    console.log('addItemIdioma',idioma)
-    const escrita = this.form!.controls.idiomaEscrita.value;
-    const fala = this.form!.controls.idiomaFala.value;
-    const entende= this.form!.controls.idiomaEntendimento.value;
-    const key =""
+   
+    const escrita = this.lookup.NIVEL_IDIOMA.find(x => x.key == this.form!.controls.idiomaEscrita.value)//this.form!.controls.idiomaEscrita.value;
+    const fala = this.lookup.NIVEL_IDIOMA.find(x => x.key == this.form!.controls.idiomaFala.value)//this.form!.controls.idiomaFala.value;
+    const entende= this.lookup.NIVEL_IDIOMA.find(x => x.key == this.form!.controls.idiomaEntendimento.value)//idiomaFalathis.form!.controls.idiomaEntendimento.value;
+    const key =this.util.textHash(idioma?.key);
+    console.log('addItemIdioma',' - ',idioma,' - ',escrita,' - ',fala,' - ',entende,' - ',key)
     if (idioma && escrita && fala && entende && this.util.validateLookupItem(this.form!.controls.idiomasM.value,key)) {// && this.util.validateLookupItem(key,value)) {
       result = {
         key: key,
-        value: idioma.value + ' - ' + escrita + ' - ' + fala + ' - ' + entende,
+        value: idioma.value + ' - ' + escrita.value + ' - ' + fala.value + ' - ' + entende.value,
         data: {
-          idioma: idioma.value,
-          escrita: escrita,
-          fala: fala,
-          entende: entende
+          idioma: idioma.key,
+          escrita: escrita.key,
+          fala: fala.key,
+          entende: entende.key
         }
       };
       
