@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRxCursosGraduacoes extends Migration
+class CreateAreasConhecimentos extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,17 @@ class CreateRxCursosGraduacoes extends Migration
      */
     public function up()
     {
-        Schema::create('rx_cursos_graduacoes', function (Blueprint $table) {
+        Schema::create('areas_conhecimentos', function (Blueprint $table) {
             // Configurações:
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
             // Campos:
-            $table->string('nome_curso', 256)->comment("Nome do curso");
+            $table->string('nome_area', 256)->comment("Nome da área da graduação");
+            $table->tinyInteger('ativo')->default(1)->comment("Área ativa ou inativa");
+           
             // Chaves estrangeiras:
-            $table->foreignUuid('area_curso_id')->constrained("rx_areas_graduacoes")->onDelete('restrict')->onUpdate('cascade');
+            //$table->foreignUuid('plano_id')->constrained("planos")->onDelete('restrict')->onUpdate('cascade');
             //$table->foreignUuid('entrega_id')->constrained("planos_entregas_entregas")->onDelete('restrict')->onUpdate('cascade');
         });
     }
@@ -33,6 +35,6 @@ class CreateRxCursosGraduacoes extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('rx_cursos_graduacoes');
+        Schema::dropIfExists('areas_conhecimentos');
     }
 }

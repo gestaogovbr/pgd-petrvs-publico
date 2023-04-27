@@ -20,8 +20,8 @@ import { UteisModule } from './modules/uteis/uteis.module';
 import { RotinaModule } from './modules/rotinas/rotina.module';
 import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
 import { CadeiaValorModule } from './modules/gestao/cadeia-valor/cadeia-valor.module';
-import { RaioxhomeComponent } from './modules/raio-x/raioxhome/raioxhome.component';
-import { RaioxPessoalFormComponent } from './modules/raio-x/raiox-pessoal-form/raiox-pessoal-form.component';
+import { RaioxhomeComponent } from './modules/curriculum/curriculum-home/raioxhome.component';
+import { RaioxPessoalFormComponent } from './modules/curriculum/curriculum-pessoal-form/raiox-pessoal-form.component';
 
 @NgModule({
   declarations: [

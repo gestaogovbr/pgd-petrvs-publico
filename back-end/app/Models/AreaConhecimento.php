@@ -7,10 +7,10 @@ use App\Models\CursoGraduacao;
 use App\Traits\AutoDataInicio;
 
 
-class AreaGraduacao extends ModelBase
+class AreaConhecimento extends ModelBase
 {
    
-    protected $table = 'rx_areas_graduacoes';
+    protected $table = 'areas_conhecimentos';
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'nome_area', 
