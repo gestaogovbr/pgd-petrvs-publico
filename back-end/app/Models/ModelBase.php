@@ -28,6 +28,7 @@ class ModelBase extends Model
         }
         return json_encode($values);
     }
+
     public function deleteCascade() {
         if(property_exists($this, 'delete_cascade')) {
             foreach ($this->delete_cascade as $relationName) {
@@ -59,4 +60,10 @@ class ModelBase extends Model
             $this->delete();
         }
     }
+
+        // Escopos
+
+        public function scopeDoUsuario($query, $usuario_id){
+            return $query->where("usuario_id", $usuario_id);
+        }
 }

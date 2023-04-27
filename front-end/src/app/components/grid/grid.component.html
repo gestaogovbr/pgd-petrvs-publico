@@ -52,7 +52,7 @@
                                 </td>
                             </tr>
                         </ng-container>
-                        <tr *ngIf="query?.loading">
+                        <tr *ngIf="isLoading">
                             <td [attr.colspan]="columns.length" class="grid-no-hover">
                                 <div class="d-flex justify-content-center my-2">
                                     <div class="spinner-border" role="status">

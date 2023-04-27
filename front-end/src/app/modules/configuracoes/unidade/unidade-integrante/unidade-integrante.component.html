@@ -1,0 +1,34 @@
+<grid [items]="items" [minHeight]="500" [form]="form!" [hasDelete]="true"
+    [add]="addIntegrante.bind(this)" [load]="loadIntegrante.bind(this)" [remove]="removeIntegrante.bind(this)" [save]="saveIntegrante.bind(this)" editable>
+    <columns>
+        <column title="Usuário" [template]="columnUsuario" [editTemplate]="editUsuario">
+            <ng-template let-row="row" #columnUsuario>
+                <div class="row">
+                    <div class="col-2">
+                        <profile-picture [url]="row.usuario?.url_foto" [size]="40" [hint]="row.usuario?.nome"></profile-picture>
+                    </div>
+                    <div class="col-10">
+                        <strong>{{row.usuario?.nome || ""}}</strong><br>
+                        <small>{{row.usuario?.apelido || ""}}</small>
+                    </div>
+                </div>
+            </ng-template>
+            <ng-template let-row="row" #editUsuario>
+                <input-search #usuario [size]="12" controlName="usuario_id" [control]="form!.controls.usuario_id" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
+            </ng-template>
+        </column>
+        <column title="Atribuições" titleHint="Atribuições do usuário nesta unidade" [template]="columnUnidadeDestino" [editTemplate]="editUnidadeDestino">
+            <ng-template let-row="row" #columnUnidadeDestino>
+                <div class="text-wrap width-min-content">
+                    <badge *ngFor="let atribuicao of row.atribuicoes" [color]="lookup.getColor(lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao)" [icon]="lookup.getIcon(lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao)" [label]="lookup.getValue(lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao)"></badge>
+                </div>
+            </ng-template>
+            <ng-template let-row="row" #editUnidadeDestino>
+                <input-multiselect controlName="atribuicoes" [size]="8" [control]="form!.controls.atribuicoes" [addItemHandle]="addItemHandleAtribuicoes.bind(this)">
+                    <input-select [size]="12" label="" icon="fas fa-sign-out-alt" controlName="atribuicao" [control]="form!.controls.atribuicao" [items]="lookup.UNIDADE_INTEGRANTE_TIPO"></input-select>
+                </input-multiselect>
+            </ng-template>
+        </column>
+        <column type="options"></column>
+    </columns>
+</grid>

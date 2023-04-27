@@ -69,23 +69,23 @@ export class AppComponent {
     this.lookup = injector.get<LookupService>(LookupService);
     /* Inicializações */
     this.auth.success = (usuario: Usuario, redirectTo?: FullRoute) => {
-      this.go.navigate(redirectTo || {route: this.globals.initialRoute});
+      this.go.navigate(redirectTo || { route: this.globals.initialRoute });
     };
     this.auth.fail = (error: any) => {
-      this.go.navigate({route: ['login'], params: {error: error?.error || error?.message || error}});
+      this.go.navigate({ route: ['login'], params: { error: error?.error || error?.message || error } });
     };
     this.auth.leave = () => {
-      this.go.navigate({route: ['login']});
+      this.go.navigate({ route: ['login'] });
     };
     this.globals.refresh = () => {
       this.cdRef.detectChanges();
     };
-    if(this.globals.isEmbedded && this.globals.initialRoute?.length) {
-      this.go.navigate({route: this.globals.initialRoute});
+    if (this.globals.isEmbedded && this.globals.initialRoute?.length) {
+      this.go.navigate({ route: this.globals.initialRoute });
     }
     setInterval(() => {
       let hora = this.auth.unidade ? this.auth.unidadeHora : "--:--";
-      if(this.unidadeHora != hora) {
+      if (this.unidadeHora != hora) {
         this.unidadeHora = hora;
         this.cdRef.detectChanges();
       }
@@ -111,7 +111,6 @@ export class AppComponent {
     ];
     this.menuSchema = {
       cadastros: [
-        { name: this.lex.noun("Atividade", true), permition: 'MOD_ATV', route: ['cadastros', 'atividade'], icon: this.lookup.getIcon(this.lookup.ICONS,'atividade') },
         { name: this.lex.noun("Afastamento", true), permition: 'MOD_AFT', route: ['cadastros', 'afastamento'], icon: "bi bi-toggle-off" },
         { name: this.lex.noun("Cidade", true), permition: 'MOD_CID', route: ['cadastros', 'cidade'], icon: "bi bi-building" },
         { name: this.lex.noun("Eixo Temático", true), permition: 'MOD_EXTM', route: ['cadastros', 'eixo-tematico'], icon: this.lookup.getIcon(this.lookup.ICONS,'eixoTematico') },
@@ -130,7 +129,9 @@ export class AppComponent {
         { name: "Tipos de " + this.lex.noun("Processo", true), permition: 'MOD_TIPO_PROC', route: ['cadastros', 'tipo-processo'], icon: "bi bi-foldeer-check" }
       ],
       gestao: [
-        { name: this.lex.noun("Cadeia de Valor", true), permition: 'MOD_CADV', route: ['gestao', 'cadeia-valor'], icon: "bi bi-bar-chart-steps" },
+        { name: this.lex.noun("Adesao", true), permition: 'MOD_ADES', route: ['gestao', 'adesao'], icon: "bi bi-check-all" },
+        { name: this.lex.noun("Atividade", true), permition: 'MOD_ATV', route: ['gestao', 'atividade'], icon: "bi bi-activity" },
+        { name: this.lex.noun("Cadeia de valor", true), permition: 'MOD_EXTM', route: ['gestao', 'cadeia-valor'], icon: "bi bi-bar-chart-steps" },
         { name: this.lex.noun("Demanda", true), permition: '', route: ['gestao', 'demanda'], icon: "bi bi-activity" },
         { name: this.lex.noun("Planejamento Institucional", true), permition: 'MOD_PLAN_INST', route: ['gestao', 'planejamento'], icon: this.lookup.getIcon(this.lookup.ICONS,'planejamento') },
         { name: this.lex.noun("Plano de Entrega", true), permition: 'MOD_PENT', route: ['gestao', 'plano-entrega'], icon: "bi bi-list-columns-reverse" },
@@ -143,11 +144,11 @@ export class AppComponent {
         { name: "Força de Trabalho - Área", permition: 'MOD_PTR_CONS', route: ['relatorios', 'forca-de-trabalho', 'area'], icon: "bi bi-diagram-3-fill" }
       ],
       configuracoes: [
-        { name: "Preferências", permition: '', route: ['configuracoes', 'preferencia'], metadata: {root: true, modal: true}, icon: "bi bi-gear" },
+        { name: "Preferências", permition: '', route: ['configuracoes', 'preferencia'], metadata: { root: true, modal: true }, icon: "bi bi-gear" },
         "-",
-        { name: this.lex.noun("Entidade",true), permition: 'MOD_CFG_ENTD', route: ['configuracoes', 'entidade'], icon: "bi bi-bookmark-heart" },
-        { name: this.lex.noun("Unidade",true), permition: 'MOD_CFG_UND', route: ['configuracoes', 'unidade'], icon: "fa-unity fab" },
-        { name: this.lex.noun("Usuário",true), permition: 'MOD_CFG_USER', route: ['configuracoes', 'usuario'], icon: "bi bi-people" },
+        { name: this.lex.noun("Entidade", true), permition: 'MOD_CFG_ENTD', route: ['configuracoes', 'entidade'], icon: "bi bi-bookmark-heart" },
+        { name: this.lex.noun("Unidade", true), permition: 'MOD_CFG_UND', route: ['configuracoes', 'unidade'], icon: "fa-unity fab" },
+        { name: this.lex.noun("Usuário", true), permition: 'MOD_CFG_USER', route: ['configuracoes', 'usuario'], icon: "bi bi-people" },
         { name: "Perfis", permition: 'MOD_CFG_PERFS', route: ['configuracoes', 'perfil'], icon: "bi bi-fingerprint" },
         "-",
         { name: "Sobre", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
@@ -159,8 +160,8 @@ export class AppComponent {
         { name: "Log dos Erros", permition: '', route: ['logs', 'error'], icon: "bi bi-bug" },
         { name: "Log do Tráfego", permition: '', route: ['logs', 'traffic'], icon: "bi bi-stoplights" },
         "-",
-		    { name: "Teste Expediente", permition: '', route: ['teste'], icon: "bi bi-check-all" },
-		    { name: "Teste calculaDataTempo", permition: '', route: ['teste', 'calcula-tempo'], icon: "bi bi-check-all" }
+        { name: "Teste Expediente", permition: '', route: ['teste'], icon: "bi bi-check-all" },
+        { name: "Teste calculaDataTempo", permition: '', route: ['teste', 'calcula-tempo'], icon: "bi bi-check-all" }
       ],
     }
   
@@ -188,7 +189,7 @@ export class AppComponent {
     let menuDetectChanges = JSON.stringify(permitions);
     let itensMenu = (itens: any[]): any[] => itens.filter(x => !x.permition?.length || permitions.includes(x.permition));
 
-    if(this._menuDetectChanges != menuDetectChanges) {
+    if (this._menuDetectChanges != menuDetectChanges) {
       this._menuDetectChanges = menuDetectChanges;
       this._menu = {
         cadastros: itensMenu(this.menuSchema.cadastros),
@@ -208,7 +209,7 @@ export class AppComponent {
   }
 
   public toolbarLogin() {
-    this.go.navigate({route: ["login"]}, {modal: true});
+    this.go.navigate({ route: ["login"] }, { modal: true });
   }
 
   public menuItemClass(baseClass: string, activeRoute: string[]) {
@@ -237,7 +238,7 @@ export class AppComponent {
 
   public onCollapseContainerClick() {
     //this.auth.usuario!.config.ocultar_container_petrvs = !this.auth.usuario!.config.ocultar_container_petrvs;
-    this.auth.usuarioConfig = {ocultar_container_petrvs: !this.auth.usuario!.config.ocultar_container_petrvs};
+    this.auth.usuarioConfig = { ocultar_container_petrvs: !this.auth.usuario!.config.ocultar_container_petrvs };
     this.cdRef.detectChanges();
   }
 
@@ -258,7 +259,7 @@ export class AppComponent {
     try {
       btn.running = true;
       this.cdRef.detectChanges();
-      if(btn.onClick) await btn.onClick(btn);
+      if (btn.onClick) await btn.onClick(btn);
     } finally {
       btn.running = false;
       this.cdRef.detectChanges();

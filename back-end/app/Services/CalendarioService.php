@@ -335,7 +335,7 @@ class CalendarioService
         return $resultado;
     }
 
-    public static function calculaDataTempoUnidade(DateTime $inicio, $fimOuTempo, int $cargaHoraria, Unidade $unidade, string $tipo, array $pausas = null, array $afastamentos = null): Efemerides {
+    public static function calculaDataTempoUnidade($inicio, $fimOuTempo, int $cargaHoraria, Unidade $unidade, string $tipo, array $pausas = null, array $afastamentos = null): Efemerides {
         $feriados = static::feriadosCadastrados($unidade->id) ?? [];
         $forma = in_array($tipo,['HORAS_UTEIS','HORAS_CORRIDAS','DIAS_UTEIS','DIAS_CORRIDOS']) ? $tipo : ($tipo == 'DISTRIBUICAO' ? $unidade->distribuicao_forma_contagem_prazos : $unidade->entrega_forma_contagem_prazos);
         $expediente = static::nestedExpediente($unidade);
