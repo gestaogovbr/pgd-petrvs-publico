@@ -20,6 +20,7 @@ class ServerException extends Exception
         "ValidatePlano" => "Erro ao validar Plano",
         "ValidatePlanejamentoInstitucional" => "Erro ao validar Planejamento Institucional",
         "ValidateUnidade" => "Erro ao validar Unidade",
+        "ValidateLotacao" => "Erro ao validar Lotação do usuário",
         "ValidateDocumento" => "Erro ao validar Documento"
     ];
 

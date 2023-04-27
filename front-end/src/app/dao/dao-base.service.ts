@@ -29,7 +29,7 @@ export class DaoBaseService<T extends Base> {
   public get util(): UtilService { this._util = this._util || this.injector.get<UtilService>(UtilService); return this._util }
 
   constructor(
-    protected collection: string,
+    public collection: string,
     protected injector: Injector
   ) { }
 

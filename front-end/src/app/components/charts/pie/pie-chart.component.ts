@@ -3,7 +3,7 @@ import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 @Component({
-  selector: 'app-pie-chart',
+  selector: 'pie-chart',
   templateUrl: './pie-chart.component.html',
   styleUrls: [ './pie-chart.component.scss' ],
 })

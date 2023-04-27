@@ -17,6 +17,9 @@ class UpdateModels extends Command
         "failed_jobs",
         "traffic",
         "api_siape_uorgs",
+        "programas_adesoes",
+        "programas_adesoes_unidades",
+        "programas_adesoes_usuarios",
         "tipos_modalidades_config",
         "integracoes",
         "tenants"

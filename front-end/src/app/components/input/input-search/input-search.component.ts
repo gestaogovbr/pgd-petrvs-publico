@@ -7,6 +7,7 @@ import { FullRoute, NavigateService } from 'src/app/services/navigate.service';
 import { UtilService } from 'src/app/services/util.service';
 import { GroupBy } from '../../grid/grid.component';
 import { InputBase, LabelPosition, SelectItem } from '../input-base';
+import { EntityService } from 'src/app/services/entity.service';
 //import * as bootstrap from 'bootstrap';
 
 export class SearchGroupSeparator {
@@ -38,8 +39,6 @@ export class InputSearchComponent extends InputBase implements OnInit {
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
   //@Input() disabled?: string;
-  @Input() icon: string = "";
-  @Input() label: string = "";
   @Input() labelInfo: string = "";
   @Input() bold: boolean = false;
   @Input() loading: boolean = false;
@@ -82,12 +81,30 @@ export class InputSearchComponent extends InputBase implements OnInit {
   get disabled(): string | undefined {
     return this._disabled;
   }
+  @Input() set icon(value: string) {
+    if(value != this._icon) {
+      this._icon = value;
+    }
+  }
+  get icon(): string {
+    return this._icon || (this.dao ? this.entities.getIcon(this.dao.collection) : undefined) || "";
+  }
+  @Input() set label(value: string) {
+    if(value != this._label) {
+      this._label = value;
+    }
+  }
+  get label(): string {
+    return this._label || (this.dao ? this.entities.getLabel(this.dao.collection) : undefined) || "";
+  }
 
   private DEBOUNCE_TIMER = 1000;
   private queryText: string = "";
   private timer: any = undefined;
   private _dropdown?: Dropdown;
   private _disabled?: string;
+  private _icon?: string;
+  private _label?: string;
 
   public dropdownWidth: number = 200;
   public items: (SelectItem | SearchGroupSeparator)[] = [];
@@ -96,6 +113,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
   public searching: boolean = false;
   public searchObj: any = undefined;
   public go: NavigateService;
+  public entities: EntityService; 
   public util: UtilService;
   public get dropdown(): Dropdown | undefined {
     const elm = document.getElementById(this.generatedId(this.controlName) + '_search_dropdown');
@@ -106,6 +124,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
 
   constructor(public injector: Injector) {
     super(injector);
+    this.entities = this.injector.get<EntityService>(EntityService);
     this.util = this.injector.get<UtilService>(UtilService);
     this.go = injector.get<NavigateService>(NavigateService);
   }

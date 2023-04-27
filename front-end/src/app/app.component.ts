@@ -97,7 +97,7 @@ export class AppComponent {
     this.lex.cdRef = this.cdRef;
     //this.auth.loadGapi();
     /* Definição do menu do sistema */
-   
+
     this.menuSchema = {
       /* Cadastros */
       ATIVIDADES: { name: this.lex.noun("Atividade", true), permition: 'MOD_ATV', route: ['cadastros', 'atividade'], icon: "bi bi-activity" },
@@ -150,10 +150,10 @@ export class AppComponent {
       RXCADASTRO_OPORTUNIDADES: { name: this.lex.noun("Cadastro das Oportunidades", true), permition: 'MOD_RX_EDT_OPO', route: ['raioxhome', 'pessoal'], icon: "bi bi-activity" },
       /*PROJETOS*/
 
-    
+
     };
 
-   
+
     this.menuPgd = [
       {
         name: "Cadastros", permition: "MENU_CAD_ACESSO", route: ['cadastros'], id: "navbarDropdownCadastros", menu: [
@@ -284,9 +284,9 @@ export class AppComponent {
     ];
     this.contexto = this.menuContexto[0].key;
    // this.contexto.key = "PGD"
-   
+
   }
-  
+
   public onContextoSelect(item: any) {
     this.contexto = item;
     console.log('onContexto',item)
@@ -299,9 +299,9 @@ export class AppComponent {
 
   public get menu(): any {
     console.log('GET MENU',this.contexto)
-    
+
     switch (this.contexto.key) {
-      
+
       case "PGD":
         return this.menuPgd;
 
@@ -315,7 +315,7 @@ export class AppComponent {
         return [];
     }
 
-   
+
   }
 
   public ngAfterViewInit() {

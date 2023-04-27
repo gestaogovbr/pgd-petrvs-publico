@@ -29,7 +29,6 @@ class Projeto extends ModelBase
         'status', /* enum('PLANEJADO','INICIADO','CONCLUIDO','SUSPENSO','CANCELADO'); NOT NULL; */// Status do projeto
         'inicio', /* datetime; NOT NULL; */// Inicio do projeto
         'termino', /* datetime; NOT NULL; */// Fim do projeto
-        'custo', /* decimal(15,2); NOT NULL; */// Custo: Será a soma dos recursos, ou a soma dos filhos caso tem_filhos e soma_custos_filhos
         'calcula_custos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se o projeto calcula custos
         'tempo_corrido', /* tinyint; NOT NULL; */// Se o tempo é corrido ou usa a configuração de fins de semana, feriados e horário do expediente (quando usar horas)
         'usar_horas', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se usa horas nas datas
@@ -44,11 +43,12 @@ class Projeto extends ModelBase
         'progresso', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */// Percentual de progresso do projeto
         'usuario_id', /* char(36); */
         'tipo_projeto_id', /* char(36); */
-        'kanban_dockers', /* json; */// Configuração das Labels das swimlanes do quadro Kanban
         'fase_id', /* char(36); */
         //'numero', /* int; NOT NULL; */// Número do projeto (Gerado pelo sistema)
         //'data_inicio', /* datetime; NOT NULL; */// Data de criação
         //'data_fim', /* datetime; */// Data final do registro
+        //'custo', /* decimal(15,2); NOT NULL; */// Custo: Será a soma dos recursos, ou a soma dos filhos caso tem_filhos e soma_custos_filhos
+        //'kanban_dockers', /* json; */// Configuração das Labels das swimlanes do quadro Kanban
         //'expediente', /* json; */// Configuração de expediente
     ];
 

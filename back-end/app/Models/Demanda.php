@@ -17,7 +17,7 @@ use App\Models\Comentario;
 use App\Models\DemandaEntrega;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-
+use Illuminate\Database\Eloquent\Collection;
 
 class Demanda extends ModelBase
 {
@@ -109,5 +109,8 @@ class Demanda extends ModelBase
     public function scopeConcluidas($query) { return $query->whereNotNull('data_entrega'); }
     public function scopeNaoConcluidas($query) { return $query->whereNotNull('data_inicio')->whereNull('data_entrega'); }
     public function scopeAtrasadas($query){ return $query->whereNotNull('data_inicio')->whereNull('data_entrega')->whereDate('prazo_entrega', '<', Carbon::today()); }
-
+    public function scopeDistribuidas($query) { return $query->whereNotNull('data_distribuicao'); }
+    public function scopeIniciadas($query) { return $query->whereNotNull('data_inicio'); }
+    public function scopeEmAndamento($query) { return $query->whereNotNull('data_inicio')->whereNull('data_entrega'); }
+    public function scopeNaoAvaliadas($query) { return $query->whereNull("avaliacao_id"); }
 }

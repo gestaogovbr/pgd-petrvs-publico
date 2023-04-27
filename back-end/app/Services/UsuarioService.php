@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\ServerException;
 use App\Models\Usuario;
 use App\Models\Demanda;
 use App\Models\Plano;
@@ -36,13 +37,29 @@ class UsuarioService extends ServiceBase
     public function proxyStore(&$data, $unidade, $action) {
         $data['cpf'] = $this->UtilService->onlyNumbers($data['cpf']);
         $data['telefone'] = $this->UtilService->onlyNumbers($data['telefone']);
+        /* Faz as atualizações das lotações de forma segura 
+        if($action != ServiceBase::ACTION_INSERT) {
+            foreach($data['lotacoes'] as $lotacao) {
+                if($lotacao["status"] == "DELETE") {
+                    $this->LotacaoService->destroy($lotacao["id"], false);
+                } else {
+                    $this->LotacaoService->save($lotacao);
+                }
+            }
+            $data['lotacoes'] = []; /* avoid fillablechanges
+        } else if(empty($data['lotacoes'])) {
+            throw new ServerException("ValidateUsuario", "Obrigatório existir ao menos uma lotação para o usuário");
+        }*/
         return $data;
+    }
+
+    public function extraStore($entity, $unidade, $action) {
+        $this->LotacaoService->checksLotacoes($entity->id);
     }
 
     public function proxySearch($query, &$data, &$text) {
         $data["where"][] = ["subordinadas", "==", true];
         return $this->proxyQuery($query, $data);
-
         /*        $where = [];
         $unidade_id = null;
         $vinculadas = false;
@@ -174,12 +191,24 @@ class UsuarioService extends ServiceBase
                 'progresso' => $total_consolidadas > 0 ? round((float)(($total_consolidadas / $plano['tempo_total']) * 100), 2) : 0
             ];           
         }
+
+        $avaliadas = Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->avaliadas()->get();
+        $nao_iniciadas = Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->naoIniciadas()->get();
+        $concluidas = Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->concluidas()->get();
+        $nao_concluidas = Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->naoConcluidas()->get();
+        $atrasadas = Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->atrasadas()->get();
+
         $result['demandas'] = [
-            'avaliadas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->avaliadas()->get()->count(),
-            'nao_iniciadas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->naoIniciadas()->get()->count(),
-            'concluidas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->concluidas()->get()->count(),
-            'nao_concluidas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->naoConcluidas()->get()->count(),
-            'atrasadas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->atrasadas()->get()->count(),
+            'avaliadas' => $avaliadas->count(),
+            'horas_avalidas' => $avaliadas->sum('tempo_pactuado'),
+            'nao_iniciadas' => $nao_iniciadas->count(),
+            'horas_nao_iniciadas' => $nao_iniciadas->sum('tempo_pactuado'),
+            'concluidas' => $concluidas->count(),
+            'horas_concluidas' => $concluidas->sum('tempo_pactuado'),
+            'nao_concluidas' => $nao_concluidas->count(),
+            'horas_nao_concluidas' => $nao_concluidas->sum('tempo_pactuado'),
+            'atrasadas' => $atrasadas->count(),
+            'horas_atrasadas' => $atrasadas->sum('tempo_pactuado'),
             'media_avaliacoes' => $media_avaliacao,
             'total_demandas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->get()->count()
         ];
@@ -196,8 +225,6 @@ class UsuarioService extends ServiceBase
      * @param  mixed $usuario_id: ID do usuário do qual se deseja as informações para o dashboard
      * @return array: array contendo todas as informações para o front-end do usuário
      */
-
-
     public function dashboard_gestor($data_inicial, $data_final, $unidade_ids) {
         $result = [];
         // $lotacoes = Lotacao::whereIn("unidade_id", $unidade_ids)->with(['usuario'])->get();
@@ -221,7 +248,6 @@ class UsuarioService extends ServiceBase
             });
 
             $planos = [];
-            
 
             foreach ($planosAtivos as $plano) {
                 $horas_alocadas = $plano->demandas->sum('tempo_pactuado');

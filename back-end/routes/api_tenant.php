@@ -52,6 +52,7 @@ use App\Http\Controllers\RotinaDiariaController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\AreaGraduacaoController;
 
+use App\Http\Controllers\UnidadeIntegranteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -117,7 +118,7 @@ Route::middleware('auth:sanctum')->prefix('Error')->group(function () {
 Route::middleware('auth:sanctum')->prefix('Traffic')->group(function () {
 });
 Route::middleware('auth:sanctum')->post('/Petrvs/showTables', [PetrvsController::class, 'showTables']);
-Route::middleware(['auth:sanctum'])->prefix('Integracao')->group(function () { 
+Route::middleware(['auth:sanctum'])->prefix('Integracao')->group(function () {
     Route::post('store', [IntegracaoController::class, 'sincronizarPetrvs']);
     Route::post('query', [IntegracaoController::class, 'query']);
     Route::post('destroy', [IntegracaoController::class, 'destroy']);
@@ -231,6 +232,11 @@ Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
     Route::post('unificar', [UnidadeController::class, 'unificar']);
     Route::post('dashboards', [UnidadeController::class, 'dashboards']);
     Route::post('inativo', [UnidadeController::class, 'inativo']);
+});
+Route::middleware(['auth:sanctum'])->prefix('UnidadeIntegrante')->group(function () {
+    //defaultRoutes(UnidadeIntegranteController::class);
+    Route::post('load-integrantes', [UnidadeIntegranteController::class, 'loadIntegrantes']);
+    Route::post('save-integrante', [UnidadeIntegranteController::class, 'saveIntegrante']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Capacidade')->group(function () { defaultRoutes(CapacidadeController::class); });
 

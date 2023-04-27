@@ -32,18 +32,18 @@
 <!--   <div *ngIf="x.dadosArea.qdePlanosPrograma > 0" class="my-4 text-center">
     <div class="border border-primary bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
       <h5>Planos da Área - Geral</h5>
-        <app-pie-chart
+        <pie-chart
            pieChartType="pie"
           [pieChartData]="x.graficoAreaGeral"
           [pieChartOptions]="opcoesGraficoPizzaGeral">
-        </app-pie-chart>
+        </pie-chart>
     </div>
     <div class="border border-primary bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
       <h5>Planos da Área - Detalhado</h5>
-        <app-pie-chart
+        <pie-chart
           [pieChartData]="x.graficoAreaDetalhado"
           [pieChartOptions]="opcoesGraficoPizzaDetalhado">
-        </app-pie-chart>
+        </pie-chart>
     </div>
   </div> -->
 
@@ -333,19 +333,19 @@ os Planos de Trabalho associados ao Programa escolhido, e dentro da vigência.</
 <div *ngIf="x.dadosUnidade.qdePlanosPrograma > 0" class="my-4 text-center">
   <div class="border border-primary bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
     <h5>Planos da Unidade - Horas</h5>
-      <app-bar-chart
-        barChartType = "bar"
-        [barChartData]="x.graficoUnidadeGeral"
-        [barChartOptions]="opcoesGraficoBarrasHoras">
-      </app-bar-chart>
+      <bar-chart
+        [tipoGrafico] = "'bar'"
+        [dadosGrafico]="x.graficoUnidadeGeral"
+        [opcoesGrafico]="opcoesGraficoBarrasHoras">
+      </bar-chart>
   </div>
   <div class="border border-primary bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
     <h5>Planos da Unidade - Demandas</h5>
-      <app-bar-chart
-        barChartType = "horizontalBar"
-        [barChartData]="x.graficoUnidadeDetalhado"
-        [barChartOptions]="opcoesGraficoBarrasDemandas">
-      </app-bar-chart>
+      <bar-chart
+        [tipoGrafico] = "'horizontalBar'"
+        [dadosGrafico]="x.graficoUnidadeDetalhado"
+        [opcoesGrafico]="opcoesGraficoBarrasDemandas">
+      </bar-chart>
   </div>
 </div>
 
@@ -387,12 +387,12 @@ os Planos de Trabalho associados ao Programa escolhido, e dentro da vigência.</
         </td>
 <!--         <td class="text-center">
           <div class="border border-primary bg-light mx-4 d-inline-block container" style="position: relative; width:400px">
-              <app-bar-chart
-                barChartType="horizontalBar"
+              <bar-chart
+                tipoGrafico="horizontalBar"
                 [barChartLabels]="[]"
-                [barChartData]="p.avaliacao.nota_atribuida"
-                [barChartOptions]="opcoesGraficoAvaliacao">
-              </app-bar-chart>
+                [dadosGrafico]="p.avaliacao.nota_atribuida"
+                [opcoesGrafico]="opcoesGraficoAvaliacao">
+              </bar-chart>
           </div>
         </td> -->
       </tr>

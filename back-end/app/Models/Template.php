@@ -28,9 +28,9 @@ class Template extends ModelBase
         'especie', /* enum('TERMO_ADESAO','SEI','TCR'); */// Especificação da espécie do template (interno do sistema)
         'titulo', /* varchar(256); NOT NULL; */// Nome da tarefa
         'conteudo', /* text; */// Comentário predefinida para a tarefa
-        'dataset', /* json; */// Dados da parametrização
         'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
         'data_fim', /* datetime; */// Data fim da vigência
+        //'dataset', /* json; */// Dados da parametrização
     ];
 
     // Casting

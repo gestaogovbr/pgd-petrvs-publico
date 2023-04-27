@@ -20,7 +20,7 @@ export type EntityItem = {
 export class EntityService {
 
     public list: EntityItem[];
-    
+
     public constructor(public injector: Injector) {
         this.list = [
             {table: 'afastamentos', codigo: 'MOD_XXX', icon: 'bi-XXXX', nome: 'Afastamento', dao: injector.get<AfastamentoDaoService>(AfastamentoDaoService), selectRoute: {route: ['cadastros', 'afastamento']}},
@@ -29,5 +29,5 @@ export class EntityService {
             {table: 'afastamentos', codigo: 'MOD_XXX', icon: 'bi-XXXX', nome: 'Afastamento', dao: injector.get<AfastamentoDaoService>(AfastamentoDaoService), selectRoute: {route: ['cadastros', 'afastamento']}},
         ];
     }
-   
+
 }
