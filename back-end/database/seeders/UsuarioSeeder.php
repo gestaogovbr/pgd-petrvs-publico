@@ -20,6 +20,14 @@ class UsuarioSeeder extends Seeder
         //
         $usuarios = [
             [
+                'email' => 'henrique.alves@prf.gov.br',
+                'nome' => 'Carlos Henrique Alves Lopes',
+                'cpf' => '26751043880',
+                'apelido' => 'Carlos III',
+                'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+                'data_inicio' => Carbon::now()
+            ],
+            [
                 'email' => 'edson.marian@prf.gov.br',
                 'nome' => 'Edson dos Santos Marian',
                 'cpf' => '67703011053',
