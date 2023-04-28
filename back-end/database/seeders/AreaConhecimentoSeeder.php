@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\AreaGraduacao;
+use App\Models\AreaConhecimento;
 
 class AreaConhecimentoSeeder extends Seeder
 {
@@ -27,7 +27,8 @@ class AreaConhecimentoSeeder extends Seeder
             
         
         foreach($array_areas as $area) {
-            $areaI = new are();
+
+            $areaI = new AreaConhecimento();
             $areaI->fill([
                 //'id' => uuid(),
                 'nome_area'=> $area

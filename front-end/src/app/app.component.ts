@@ -248,28 +248,6 @@ export class AppComponent {
 
     this.menuPonto= [
       {
-        name: "Cadastros", permition: "MOD_RX_VIS_DPE", route: ['raioxhome'], id: "navbarDropdownCadastros", menu: [
-          this.menuSchema.RXCADASTRO_PESSOAL,
-          this.menuSchema.RXCADASTRO_PROFISSIONAL,
-          this.menuSchema.RXCADASTRO_ATRIBUTOS,
-          this.menuSchema.RXCADASTRO_OPORTUNIDADES
-        ]
-      },
-      {
-        name: "Oportunidades", permition: "MOD_RX_VIS_DPE", route: ['raioxhome'], id: "navbarDropdownCadastros", menu: [
-          this.menuSchema.RXCADASTRO_PESSOAL,
-          this.menuSchema.RXCADASTRO_PROFISSIONAL,
-          this.menuSchema.RXCADASTRO_ATRIBUTOS,
-          this.menuSchema.RXCADASTRO_OPORTUNIDADES
-        ]
-      },
-      {
-        name: "Pesquisas", permition: "MOD_RX_VIS_DPE", route: ['raioxhome'], id: "navbarDropdownCadastros", menu: [
-          this.menuSchema.RXCADASTRO_PESSOAL,
-          this.menuSchema.RXCADASTRO_PROFISSIONAL,
-          this.menuSchema.RXCADASTRO_ATRIBUTOS,
-          this.menuSchema.RXCADASTRO_OPORTUNIDADES
-        ]
       }
 
     ];
