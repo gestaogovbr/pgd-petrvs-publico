@@ -118,7 +118,7 @@ export class AppComponent {
         { name: this.lex.noun("Tarefa", true), permition: 'MOD_DMD', route: ['cadastros', 'tarefa'], icon: "bi bi-boxes" },
         { name: this.lex.noun("Template", true), permition: 'MOD_TEMP', route: ['cadastros', 'template'], icon: "bi bi-archive" },
         "-",
-        { name: "Tipos de " + this.lex.noun("Atividade", true), permition: 'MOD_TIPO_ATV', route: ['cadastros', 'tipo-atividade'], icon: "bi bi-check-all" },
+        { name: "Tipos de " + this.lex.noun("Atividade", true), permition: 'MOD_TIPO_ATV', route: ['cadastros', 'tipo-atividade'], icon: "bi bi-activity" },
         { name: "Tipos de " + this.lex.noun("Avaliação", true), permition: 'MOD_TIPO_AVAL', route: ['cadastros', 'tipo-avaliacao'], icon: "bi bi-question-square" },
         { name: "Tipos de " + this.lex.noun("Documento", true), permition: 'MOD_TIPO_DOC', route: ['cadastros', 'tipo-documento'], icon: "bi bi-files" },
         { name: "Tipos de " + this.lex.noun("Justificativa", true), permition: 'MOD_TIPO_JUST', route: ['cadastros', 'tipo-justificativa'], icon: "bi bi-window-stack" },

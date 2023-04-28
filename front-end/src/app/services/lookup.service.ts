@@ -36,6 +36,7 @@ export class LookupService {
     { key: "MASCULINO", value: "Masculino" },
     { key: "FEMININO", value: "Feminino" }
   ];
+
   public TIPO_INDICADOR: LookupItem[] = [
     { key: "QUANTIDADE", value: "Quantidade" },
     { key: "VALOR", value: "Valor" },
@@ -114,7 +115,6 @@ export class LookupService {
     { key: 'AVALIADOR_DEMANDAS', value: "Avaliador (demandas)", icon: "bi bi-check-all", color: "success"},
     { key: 'LOTADO', value: "Lotado", icon: "bi bi-geo-alt", color: "secondary"}
   ];
-
 
   public TEMPLATE_ESPECIE: LookupItem[] = this.DOCUMENTO_ESPECIE;
 
@@ -330,7 +330,6 @@ export class LookupService {
     {key: "planejamento", value: "Planejamento", icon: "bi bi-rulers"},
     {key: "eixoTematico", value: "Eixo Temático", icon: "bi bi-gear"},
     {key: "planejamentoObjetivo", value: "Planejamento Objetivo", icon: "bi bi-bullseye"},
-
   ]
 
   public NUMERO_SEMANA = [
