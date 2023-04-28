@@ -139,7 +139,6 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_EXTM_EDT", "Permite editar Eixos temáticos"],
         ["MOD_EXTM_EXCL", "Permite excluir Eixos temáticos"], 
         /* Capacidades do módulo ENTIDADE*/
-        ["MOD_ENTD", "Permite acessar o item menu Entidade"],
         ["MOD_ENTD_CFG", "Permite configurar Entidade"],
         ["MOD_ENTD_CONS", "Permite consultar Entidade"],
         ["MOD_ENTD_EDT", "Permite editar entidade"],
@@ -162,7 +161,6 @@ class TipoCapacidadeService extends ServiceBase {
         /* Capacidades do módulo LOGS*/
         ["DEV_MOD_LOGS", "Permite manter registros de logs"],
         /* Capacidades do módulo LOTAÇÃO*/
-        ["MOD_LOT", "Entrada para o grupo de permissões para lotação"],
         ["MOD_LOT_CONS", "Permite consultar lotação"],
         ["MOD_LOT_EDT", "Permite editar lotação"],
         ["MOD_LOT_EXCL", "Permite excluir lotação"],
@@ -174,7 +172,6 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_MATSRV_EXCL", "Permite excluir materiais e serviços"],
         ["MOD_MATSRV_INCL", "Permite incluir materiais e serviços"],
         /* Capacidades do módulo PERFIL*/
-        ["MOD_PERF", "Entrada para o grupo de permissões para perfil"],
         ["MOD_PERF_EDT", "Permite editar perfil"],
         ["MOD_PERF_EXCL", "Permite excluir perfil"],
         ["MOD_PERF_INCL", "Permite incluir perfil"],
@@ -212,13 +209,13 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PENT_ENTR_EXCL", "Permite excluir entregas de um plano de entregas"],
         ["MOD_PENT_ENTR_INCL", "Permite incluir entregas de um plano de entregas"],
         /* Capacidades do módulo PLANO DE ENTREGAS - PONTO DE CONTROLE */
-/*         ["MOD_PENT_PCTR_CONS", "Permite consultar pontos de controle de um plano de entregas"],
+        ["MOD_PENT_PCTR_CONS", "Permite consultar pontos de controle de um plano de entregas"],
         ["MOD_PENT_PCTR_EDT", "Permite editar pontos de controle de um plano de entregas"],
         ["MOD_PENT_PCTR_EXCL", "Permite excluir pontos de controle de um plano de entregas"],
         ["MOD_PENT_PCTR_INCL", "Permite incluir pontos de controle de um plano de entregas"], 
         ["MOD_PENT_PCTR_AVAL", "Permite avaliar pontos de controle de um plano de entregas"], 
-        ["MOD_PENT_PCTR_EDT_AVAL", "Permite alterar a avaliação dos pontos de controle de um plano de entregas"],   */    
-        /* Capacidades do módulo PROG GESTÃO*/
+        ["MOD_PENT_PCTR_EDT_AVAL", "Permite alterar a avaliação dos pontos de controle de um plano de entregas"],      
+        /* Capacidades do módulo PROG TRABALHO*/
         ["MOD_PRGT", "Permite acessar item menu programa de gestão"],
         ["MOD_PRGT_CONS", "Permite consultar programa de gestão"],
         ["MOD_PRGT_EDT", "Permite editar programas de gestão"],
@@ -315,7 +312,20 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_USER_EXCL", "Permite excluir dados de usuário"],
         ["MOD_USER_INCL", "Permite incluir usuário"],
         ["MOD_USER_TUDO", "Permite consultar qualquer usuário independente de lotação"],
-        ["MOD_PERF_CONS", "Permite consultar perfil"]
+        ["MOD_PERF_CONS", "Permite consultar perfil"],
+        /* Capacidades do módulo RAIO X*/
+        ["MOD_RX_EDT_DPE", "Permite editar dados pessoais de outro usuário"],
+        ["MOD_RX_EDT_DPR", "Permite editar dados profissionais de outro usuário"],
+        ["MOD_RX_EDT_ATR", "Permite editar atributos comportamentais de outro usuário"],
+        ["MOD_RX_VIS_DPE", "Permite visualizar menu pessoais"],
+        ["MOD_RX_VIS_DPR", "Permite visualizar menu dados profissionais"],
+        ["MOD_RX_VIS_ATR", "Permite visualizar menu atributos comportamentais"],
+        ["MOD_RX_VIS_OPO", "Permite visualizar menu oportunidades"],
+        ["MOD_RX_EDT_USR", "Permite editar tudo para o usuário atual menos atributos comportamentais"],
+        ["MOD_RX_EDT_SUP", "Permite editar tudo para o usuário atual"],
+        ["MOD_RX_EDT_OPO", "Permite editar oportunidades"],
+        ["MOD_RX_VIS_OPO", "Permite visualizar oportunidades"],
+        ["MOD_RX_RES_ATR", "Permite resetar dados comportamentais"]
     ];
 
     private function differentDev(&$data) {
