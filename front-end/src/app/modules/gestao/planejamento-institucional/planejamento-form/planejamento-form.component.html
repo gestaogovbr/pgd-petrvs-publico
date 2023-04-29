@@ -3,7 +3,7 @@
         <tab key="DADOS" label="Dados">
             <div class="row">
                 <div class="row">
-                    <input-text [size]="12" label="Nome do Planejamento Institucional" [icon]="lookup.getIcon(lookup.ICONS,'planejamento')" controlName="nome" [control]="form!.controls.nome"></input-text>
+                    <input-text [size]="12" label="Nome do Planejamento Institucional" [icon]="entityService.getIcon('Planejamento')" controlName="nome" [control]="form!.controls.nome"></input-text>
                 </div>
                 <div class="row">
                     <input-search [size]="6" label="Unidade Executora" icon="fab fa-unity" [disabled]="hasPermissionToUNEX ? undefined : 'true'" controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" 
@@ -12,7 +12,7 @@
                     <input-datetime date [size]="3" label="Fim" icon="bi bi-calendar-date" controlName="fim" [control]="form!.controls.fim" labelInfo="Fim do Planejamento Institucional"></input-datetime>
                 </div>
                 <div *ngIf="form!.controls.unidade_id.value" class="row">
-                    <input-select [items]="planejamentosSuperiores" label="Selecione o Planejamento Superior vinculado" controlName="planejamento_superior_id" [control]="form!.controls.planejamento_superior_id" (change)="onPlanejamentoChange($event)" [icon]="lookup.getIcon(lookup.ICONS,'planejamento')"></input-select>
+                    <input-select [items]="planejamentosSuperiores" label="Selecione o Planejamento Superior vinculado" controlName="planejamento_superior_id" [control]="form!.controls.planejamento_superior_id" (change)="onPlanejamentoChange($event)" [icon]="entityService.getIcon('Planejamento')"></input-select>
                 </div>                
                 <div class="row">
                     <input-textarea [size]="6" label="Missão" [rows]="3" controlName="missao" [control]="form!.controls.missao"></input-textarea>

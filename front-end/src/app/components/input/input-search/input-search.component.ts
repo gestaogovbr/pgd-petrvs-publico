@@ -52,7 +52,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
   @Input() dao?: DaoBaseService<Base> = undefined;
   @Input() detailsButton?: string;
   @Input() addRoute?: FullRoute;
-  @Input() selectRoute?: FullRoute;
+  //@Input() selectRoute?: FullRoute;
   @Input() onlySelect?: string;
   @Input() form?: FormGroup;
   @Input() source?: any;
@@ -97,6 +97,14 @@ export class InputSearchComponent extends InputBase implements OnInit {
   get label(): string {
     return this._label || (this.dao ? this.entities.getLabel(this.dao.collection) : undefined) || "";
   }
+  @Input() set selectRoute(value: FullRoute) {
+    if(value != this._selectRoute) {
+      this._selectRoute = value;
+    }
+  }
+  get selectRoute(): FullRoute {
+    return this._selectRoute! || this.dao ? this.entities.getSelectRoute(this.dao!.collection) : {route: []};
+  }
 
   private DEBOUNCE_TIMER = 1000;
   private queryText: string = "";
@@ -105,6 +113,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
   private _disabled?: string;
   private _icon?: string;
   private _label?: string;
+  private _selectRoute?: FullRoute;
 
   public dropdownWidth: number = 200;
   public items: (SelectItem | SearchGroupSeparator)[] = [];

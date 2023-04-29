@@ -10,7 +10,7 @@
         <div class="row">
             <input-select #selectTabelas label="Tabela" [size]="2" controlName="tabela" [control]="filter!.controls.tabela" [items]="tabelas" (change)="onTabelaChange($event)" itemTodos="Todas as tabelas" valueTodos=""></input-select>
             <input-radio *ngIf="entity" [size]="4" label="Opção para filtro" controlName="opcao_filtro" [control]="filter!.controls.opcao_filtro" [items]="opcoes_filtro"></input-radio>
-            <input-search *ngIf="entity && filter!.controls.opcao_filtro.value == 1" [size]="4" [label]="entity.label" controlName="row_id" [control]="filter!.controls.row_id" [dao]="entity.dao" [selectRoute]="entity.selectRoute"></input-search>
+            <input-search *ngIf="entity && filter!.controls.opcao_filtro.value == 1" [size]="4" [label]="entity.label" controlName="row_id" [control]="filter!.controls.row_id" [dao]="entity.dao" [selectRoute]="entityService.getSelectRoute(entity!.collection)"></input-search>
             <input-text *ngIf="filter!.controls.opcao_filtro.value == 0" [size]="4" label="ID do registro" controlName="row_id" [control]="filter!.controls.row_id"></input-text>
             <input-select [size]="2" label="Tipo" icon="bi bi-arrow-up-right-circle" controlName="tipo" [control]="filter!.controls.tipo" [items]="lookup.TIPO_LOG_CHANGE" itemTodos="Todos" valueTodos=""></input-select>
         </div>
