@@ -22,8 +22,8 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: Planejamento | undefined) { super.entity = value; } get entity(): Planejamento | undefined { return super.entity; }
   @Input() set disabled(value: boolean) { if (this._disabled != value) this._disabled = value; } get disabled(): boolean { return this._disabled; }
+  @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
   @Input() eixos?: EixoTematico[];
-  @Input() entity_id?: string | undefined;
 
   public get items(): PlanejamentoObjetivo[] {
     if (!this.gridControl.value) this.gridControl.setValue(new Planejamento());

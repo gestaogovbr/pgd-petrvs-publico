@@ -8,6 +8,4 @@ use App\Traits\UseDataFim;
 class CadeiaValorProcessoService extends ServiceBase
 {
     use UseDataFim;
-
-
 }

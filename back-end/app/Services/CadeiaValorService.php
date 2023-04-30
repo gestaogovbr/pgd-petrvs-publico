@@ -11,7 +11,7 @@ class CadeiaValorService extends ServiceBase
     use UseDataFim;
 
     public function buildSequencia($id) {
-        $recursivo = function($processos) use ($id, $recursivo) {
+        $recursivo = function($processos) use ($id, &$recursivo) {
             $sequencia = 1;
             foreach ($processos as $processo) {
                 if($processo->sequencia != $sequencia) {
