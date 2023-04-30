@@ -41,7 +41,7 @@
                             <span><i *ngIf="row.principal" class="bi bi-bookmark-star"></i> {{row.unidade.nome}} </span>
                         </ng-template>
                         <ng-template let-row="row" #editUnidade>
-                            <input-search #unidade [size]="12" controlName="unidade_id" [control]="formLotacoes!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+                            <input-search #unidade [size]="12" controlName="unidade_id" [control]="formLotacoes!.controls.unidade_id" [dao]="unidadeDao"></input-search>
                         </ng-template>
                     </column>
                     <column type="switch" title="Principal" field="principal"></column>

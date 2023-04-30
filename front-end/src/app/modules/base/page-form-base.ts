@@ -5,7 +5,6 @@ import { Base, IIndexable } from 'src/app/models/base.model';
 import { PageBase } from './page-base';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { NavigateResult } from 'src/app/services/navigate.service';
-import { EntityService } from 'src/app/services/entity.service';
 
 //@Component({ template: '' })
 @Injectable()
@@ -14,7 +13,6 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
 
   public form?: FormGroup;
   public entity?: M;
-  public entityService: EntityService;
   public dao?: D;
   public action: string = "";
   public formValidation?: (form?: FormGroup) => string | undefined | null;
@@ -28,7 +26,6 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
   constructor(public injector: Injector, mType: Type<M>, dType: Type<D>) {
     super(injector);
     this.dao = injector.get<D>(dType);
-    this.entityService = injector.get<EntityService>(EntityService);
   }
 
   ngOnInit() {

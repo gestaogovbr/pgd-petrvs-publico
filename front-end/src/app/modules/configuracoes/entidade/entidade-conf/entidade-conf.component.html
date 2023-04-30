@@ -2,7 +2,7 @@
     <tabs display right>
         <tab key="GERAL" label="Geral">
             <div class="row">
-                <input-search [size]="8" label="Modalidade" controlName="tipo_modalidade_id" [control]="form!.controls.tipo_modalidade_id" [dao]="tipoModalidadeDao" labelInfo="Tipo de modalidade padrão utilizada ao criar plano de trabalho." [selectRoute]="{route: ['cadastros', 'tipo-modalidade']}"></input-search>
+                <input-search [size]="8" controlName="tipo_modalidade_id" [dao]="tipoModalidadeDao" labelInfo="Tipo de modalidade padrão utilizada ao criar plano de trabalho."></input-search>
                 <input-workload [size]="4" #cargaHoraria [unit]="formaContagemCargaHoraria" label="Carga Horária" icon="bi bi-hourglass-split" controlName="carga_horaria_padrao" [control]="form!.controls.carga_horaria_padrao" [unitChange]="onFormaContagemCargaHorariaChange.bind(this)" labelInfo="Carga horária e forma de contagem (horas por dia, semana ou mês) padrão utilizada ao criar plano de trabalho."></input-workload>
             </div>
             <div class="row">

@@ -14,7 +14,7 @@
                 </div>
             </ng-template>
             <ng-template let-row="row" #editUsuario>
-                <input-search #usuario [size]="12" controlName="usuario_id" [control]="form!.controls.usuario_id" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
+                <input-search #usuario [size]="12" controlName="usuario_id" [control]="form!.controls.usuario_id" [dao]="usuarioDao"></input-search>
             </ng-template>
         </column>
         <column title="Atribuições" titleHint="Atribuições do usuário nesta unidade" [template]="columnUnidadeDestino" [editTemplate]="editUnidadeDestino">

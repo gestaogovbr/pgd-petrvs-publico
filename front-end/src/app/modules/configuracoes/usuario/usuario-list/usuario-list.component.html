@@ -7,7 +7,7 @@
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-text [size]="4" label="Usuário" controlName="usuario" [control]="filter!.controls.usuario" placeholder="Nome"></input-text>
-            <input-search [size]="4" label="Lotação" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+            <input-search [size]="4" label="Lotação" controlName="unidade_id" [dao]="unidadeDao"></input-search>
             <input-select [size]="4" label="Perfil" controlName="perfil_id" nullable [control]="filter!.controls.perfil_id" [dao]="perfilDao"></input-select>
         </div>
     </filter>

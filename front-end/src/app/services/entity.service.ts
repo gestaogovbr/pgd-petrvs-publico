@@ -105,8 +105,8 @@ export class EntityService {
             {collection: 'ProjetoRecurso',              codigo: '',                 table: 'projetos_recursos',                             campo: 'nome',                  icon: '',                               dao: injector.get<ProjetoRecursoDaoService>(ProjetoRecursoDaoService),                                  label: "Recurso"                                  },
             {collection: 'ProjetoRegra',                codigo: '',                 table: 'projetos_regras',                               campo: 'nome',                  icon: '',                               dao: injector.get<ProjetoRegraDaoService>(ProjetoRegraDaoService),                                      label: "Regra"                                  },
             {collection: 'ProjetoTarefa',               codigo: '',                 table: 'projetos_tarefas',                              campo: 'nome',                  icon: '',                               dao: injector.get<ProjetoTarefaDaoService>(ProjetoTarefaDaoService),                                    label: "Tarefa do Projeto"                                  },
-            {collection: 'RelatorioArea',               codigo: '',                 table: '',                                              campo: '',                      icon: 'bi bi-diagram-3-fill',                                                                                                                   label: ""                                  },
-            {collection: 'RelatorioServidor',           codigo: '',                 table: '',                                              campo: '',                      icon: 'bi bi-file-person',                                                                                                                      label: ""                                  },
+            {collection: 'RelatorioArea',               codigo: '',                 table: '',                                              campo: '',                      icon: 'bi bi-diagram-3-fill',                                                                                                                   label: "Área"                                  },
+            {collection: 'RelatorioServidor',           codigo: '',                 table: '',                                              campo: '',                      icon: 'bi bi-file-person',                                                                                                                      label: "Servidor"                                  },
             {collection: 'Tarefa',                      codigo: '',                 table: 'tarefas',                                       campo: 'nome',                  icon: 'bi bi-boxes',                    dao: injector.get<TarefaDaoService>(TarefaDaoService),                                                  label: "Tarefa",                            selectRoute: {route: ['cadastros', 'tarefa']}},
             {collection: 'Template',                    codigo: 'MOD_TEMP',         table: 'templates',                                     campo: 'titulo',                icon: 'bi bi-archive',                  dao: injector.get<TemplateDaoService>(TemplateDaoService),                                              label: "Template",                          selectRoute: {route: ['cadastros', 'template']}},
             {collection: 'Teste',                       codigo: '',                 table: '',                                              campo: '',                      icon: 'bi bi-clipboard-check',                                                                                                                  label: "Teste"                          },
@@ -126,9 +126,9 @@ export class EntityService {
           ];
     }
    
-    public getLabel(collection: string): string | undefined {
+    public getLabel(collection: string): string {
         let entity = this.list.find(x => x.collection == collection);
-        return entity ? this.lex.noun(entity.label) : undefined;
+        return entity ? this.lex.noun(entity.label) : '';
     }
 
     public getIcon(collection: string): string {
