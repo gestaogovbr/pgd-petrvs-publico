@@ -12,6 +12,7 @@ import { ModalPage } from './modal-page';
 import { Subject } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { IIndexable } from 'src/app/models/base.model';
+import { EntityService } from 'src/app/services/entity.service';
 
 @Injectable()
 export abstract class PageBase implements OnInit, ModalPage {
@@ -55,6 +56,7 @@ export abstract class PageBase implements OnInit, ModalPage {
 
   /* Injections */
   public lookup: LookupService;
+  public entityService: EntityService;
   public router: Router;
   public route: ActivatedRoute;
   public fb: FormBuilder;
@@ -99,6 +101,7 @@ export abstract class PageBase implements OnInit, ModalPage {
     this.go = this.injector.get<NavigateService>(NavigateService);
     this.lex = this.injector.get<LexicalService>(LexicalService);
     this.auth = this.injector.get<AuthService>(AuthService);
+    this.entityService = injector.get<EntityService>(EntityService);
   }
 
   ngOnInit(){

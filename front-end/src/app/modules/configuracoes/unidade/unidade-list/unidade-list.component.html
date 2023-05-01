@@ -6,9 +6,7 @@
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)"
         [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-search #entidade [size]="4" label="Entidade" controlName="entidade_id"
-                [control]="filter!.controls.entidade_id" [dao]="entidadeDao"
-                [selectRoute]="{route: ['configuracoes', 'entidade']}"></input-search>
+            <input-search #entidade [size]="4" controlName="entidade_id" [dao]="entidadeDao"></input-search>
             <input-text [size]="7" label="Nome" controlName="nome" [control]="filter!.controls.nome"
                 placeholder="Nome ou sigla..."></input-text>
             <input-switch [size]="1" label="Inativos" controlName="inativos"
