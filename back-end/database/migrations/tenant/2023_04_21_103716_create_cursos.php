@@ -20,7 +20,7 @@ class CreateCursos extends Migration
             $table->timestamps();
             // Campos:
             $table->string('nome_curso', 256)->comment("Nome do curso");
-            $table->string('titulo', 256)->comment("Titulação do curso->Graduação, Pos, etc");
+            $table->string('titulo', 64)->comment("Titulação do curso->Graduação, Pos, etc");
             $table->tinyInteger('ativo')->default(1)->comment("Curso ativo ou inativo");
             // Chaves estrangeiras:
             $table->foreignUuid('area_curso_id')->constrained("areas_conhecimentos")->onDelete('restrict')->onUpdate('cascade');
