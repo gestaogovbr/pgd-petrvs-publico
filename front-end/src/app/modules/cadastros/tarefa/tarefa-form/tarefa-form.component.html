@@ -6,8 +6,8 @@
             <input-switch label="Documental?" [size]="1" controlName="documental" [control]="form!.controls.documental" labelInfo=""></input-switch>
         </div>
         <div class="row">
-            <input-search [size]="6" label="Entidade" icone="fas fa-university" controlName="entidade_id" [control]="form!.controls.entidade_id" [dao]="entidadeDao" [selectRoute]="{route: ['configuracoes', 'entidade']}"></input-search>
-            <input-search [size]="6" label="Unidade" icon="fab fa-unity" controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+            <input-search [size]="6" controlName="entidade_id" [dao]="entidadeDao"></input-search>
+            <input-search [size]="6" controlName="unidade_id" [dao]="unidadeDao"></input-search>
         </div>
         <div class="row">
             <input-textarea [size]="12" [rows]="3" label="Comentário automático" icon="bi bi-textarea-t" controlName="comentario_predefinido" [control]="form!.controls.comentario_predefinido"></input-textarea>

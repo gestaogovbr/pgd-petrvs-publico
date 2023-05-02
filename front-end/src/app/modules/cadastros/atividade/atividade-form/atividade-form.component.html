@@ -12,8 +12,8 @@
             </div>
             <separator title="Classificação"></separator>
             <div class="row">
-                <input-search [size]="6" #tipoAtividade label="Tipo da Atividade" icon="bi bi-arrow-up-right-circle" controlName="tipo_atividade_id" [control]="form!.controls.tipo_atividade_id" [dao]="tipoAtividadeDao" [selectRoute]="{route: ['cadastros', 'tipo-atividade']}"></input-search>
-                <input-search [size]="6" #unidade label="Unidade" icon="fab fa-unity" controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+                <input-search [size]="6" #tipoAtividade controlName="tipo_atividade_id"  [dao]="tipoAtividadeDao"></input-search>
+                <input-search [size]="6" #unidade controlName="unidade_id"  [dao]="unidadeDao"></input-search>
             </div>
         </tab>
         <tab key="VARIACOES" label="Variação e Produtividade">

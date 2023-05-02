@@ -5,8 +5,8 @@
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
         <div class="row">
-            <input-search [size]="3" #usuario label="Usuário" controlName="usuario_id" [control]="filter!.controls.usuario_id" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
-            <input-search [size]="3" #tipoMotivoAfastamento label="Motivo" controlName="tipo_motivo_afastamento_id" [control]="filter!.controls.tipo_motivo_afastamento_id" [dao]="tipoMotivoAfastamentoDao" [selectRoute]="{route: ['cadastros', 'tipo-motivo-afastamento']}"></input-search>
+            <input-search [size]="3" #usuario controlName="usuario_id" [dao]="usuarioDao" ></input-search>
+            <input-search [size]="3" #tipoMotivoAfastamento controlName="tipo_motivo_afastamento_id" [dao]="tipoMotivoAfastamentoDao"></input-search>
             <input-datetime date [size]="3" label="Início" controlName="inicio_afastamento" [control]="filter!.controls.inicio_afastamento" (click)="filtro()"></input-datetime>
             <input-datetime date [size]="3" label="Fim" controlName="fim_afastamento" [control]="filter!.controls.fim_afastamento" (click)="filtro()"></input-datetime>
         </div>

@@ -1,9 +1,7 @@
 <editable-form [form]="form!" [title]="title" [buttons]="buttons">
     <div class="row">
-        <input-search #usuario [size]="6" label="Usuário" icon="bi bi-person" controlName="usuario_id"
-            [control]="form!.controls.usuario_id" [dao]="usuarioDao" (select)="onUsuarioSelect($event)"
-            [join]="['planos.tipo_modalidade:id,nome','planos.unidade:id,nome,sigla']"
-            [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
+        <input-search #usuario [size]="6" controlName="usuario_id" [dao]="usuarioDao" (select)="onUsuarioSelect($event)"
+            [join]="['planos.tipo_modalidade:id,nome','planos.unidade:id,nome,sigla']"></input-search>
         <input-select #plano nullable label="Plano de trabalho" [size]="6" controlName="plano_id"
             [control]="form!.controls.plano_id" [items]="planos" labelInfo="Planos de trabalho" (change)="onPlanoChange($event)"></input-select>
     </div>
