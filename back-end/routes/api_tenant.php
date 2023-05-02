@@ -50,7 +50,8 @@ use App\Http\Controllers\DemandaEntregaController;
 use App\Http\Controllers\ProjetoController;
 use App\Http\Controllers\RotinaDiariaController;
 use App\Http\Controllers\TemplateController;
-use App\Http\Controllers\AreaGraduacaoController;
+use App\Http\Controllers\AreaConhecimentoController;
+use App\Http\Controllers\CursoController;
 
 use App\Http\Controllers\UnidadeIntegranteController;
 
@@ -240,5 +241,7 @@ Route::middleware(['auth:sanctum'])->prefix('UnidadeIntegrante')->group(function
 });
 Route::middleware(['auth:sanctum'])->prefix('Capacidade')->group(function () { defaultRoutes(CapacidadeController::class); });
 
-/* Modulos: RAIO X */
-Route::middleware(['auth:sanctum'])->prefix('AreaGraduacao')->group(function () { defaultRoutes(AreaGraduacaoController::class); });
+/* Modulos: Curriculum */
+Route::middleware(['auth:sanctum'])->prefix('AreaConhecimento')->group(function () { defaultRoutes(AreaConhecimentoController::class); });
+Route::middleware(['auth:sanctum'])->prefix('Curso')->group(function () { defaultRoutes(CursoController::class); });
+Route::middleware(['auth:sanctum'])->prefix('Curriculum')->group(function () { defaultRoutes(CurriculumController::class); });

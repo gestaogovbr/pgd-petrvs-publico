@@ -22,6 +22,11 @@ import { TesteFormComponent } from './modules/teste/teste-form/teste-form.compon
 import { CadeiaValorModule } from './modules/gestao/cadeia-valor/cadeia-valor.module';
 import { RaioxhomeComponent } from './modules/curriculum/curriculum-home/raioxhome.component';
 import { RaioxPessoalFormComponent } from './modules/curriculum/curriculum-pessoal-form/raiox-pessoal-form.component';
+import { CurriculumProfissionalFormComponent } from './modules/curriculum/curriculum-profissional-form/curriculum-profissional-form.component';
+import { CurriculumAtributosbig5FormComponent } from './modules/curriculum/curriculum-atributosbig5-form/curriculum-atributosbig5-form.component';
+import { CurriculumAtributosdiscFormComponent } from './modules/curriculum/curriculum-atributosdisc-form/curriculum-atributosdisc-form.component';
+import { CursoFormComponent } from './modules/cadastros/curriculum/curso-form/curso-form.component';
+
 
 @NgModule({
   declarations: [
@@ -35,6 +40,11 @@ import { RaioxPessoalFormComponent } from './modules/curriculum/curriculum-pesso
     TesteFormComponent,
     RaioxhomeComponent,
     RaioxPessoalFormComponent,
+    CurriculumProfissionalFormComponent,
+    CurriculumAtributosbig5FormComponent,
+    CurriculumAtributosdiscFormComponent,
+    CursoFormComponent,
+    
   ],
   imports: [
     BrowserModule,

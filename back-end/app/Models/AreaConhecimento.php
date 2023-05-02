@@ -13,7 +13,8 @@ class AreaConhecimento extends ModelBase
     protected $table = 'areas_conhecimentos';
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'nome_area', 
+        'nome_area',
+        'ativo' 
     ];
 
     // Has

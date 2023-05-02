@@ -4,8 +4,10 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
+import { CursoDaoService } from 'src/app/dao/curso-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Cidade } from 'src/app/models/cidade.model';
+import { Curso } from 'src/app/models/curso.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupService, LookupItem } from 'src/app/services/lookup.service';
 
@@ -19,7 +21,7 @@ import { LookupService, LookupItem } from 'src/app/services/lookup.service';
 
 
 
-export class RaioxPessoalFormComponent extends PageFormBase<Cidade, CidadeDaoService> {
+export class RaioxPessoalFormComponent extends PageFormBase<Cidade, CidadeDaoService>{
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
 
   public municipios: LookupItem[] = [];
@@ -31,9 +33,11 @@ export class RaioxPessoalFormComponent extends PageFormBase<Cidade, CidadeDaoSer
   public cursos: LookupItem[] = [];
 
   public cidadeDao: CidadeDaoService;
+  //public cursoDao: CursoDaoService;
 
-  constructor(public injector: Injector) {
+  constructor(public injector: Injector, injectorCurso:Injector) {
     super(injector, Cidade, CidadeDaoService);
+    //super(injectorCurso,Curso, CursoDaoService)
     this.cidadeDao = injector.get<CidadeDaoService>(CidadeDaoService);
     this.form = this.fh.FormBuilder({
       apresentese: { default: "" },

@@ -17,11 +17,13 @@ use App\Models\Favorito;
 use App\Models\Lotacao;
 use App\Models\Plano;
 use App\Models\Perfil;
+use App\Models\Curriculum;
 use App\Traits\MergeRelations;
 use App\Traits\LogChanges;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasPermissions;
 use App\Services\UsuarioService;
+
 use Throwable;
 
 class UsuarioConfig {}
@@ -112,6 +114,7 @@ class Usuario extends Authenticatable
     public function usuariosHashes() { return $this->hasMany(UsuarioHahs::class); }
     public function integracoes() { return $this->hasMany(Integracao::class); }
     public function avaliacoesPlanoEntrega() { return $this->hasMany(PlanoEntregaPontoControle::class, 'avaliador_id'); }
+    public function curriculum() { return $this->hasOne(Curriculum::class); }
     // Belongs
     public function perfil() { return $this->belongsTo(Perfil::class, 'perfil_id'); }
     // Mutattors e Casts
