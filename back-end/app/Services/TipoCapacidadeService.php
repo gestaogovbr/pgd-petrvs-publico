@@ -208,13 +208,6 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PENT_ENTR_EDT", "Permite editar entregas de um plano de entregas"],
         ["MOD_PENT_ENTR_EXCL", "Permite excluir entregas de um plano de entregas"],
         ["MOD_PENT_ENTR_INCL", "Permite incluir entregas de um plano de entregas"],
-        /* Capacidades do módulo PLANO DE ENTREGAS - PONTO DE CONTROLE */
-        ["MOD_PENT_PCTR_CONS", "Permite consultar pontos de controle de um plano de entregas"],
-        ["MOD_PENT_PCTR_EDT", "Permite editar pontos de controle de um plano de entregas"],
-        ["MOD_PENT_PCTR_EXCL", "Permite excluir pontos de controle de um plano de entregas"],
-        ["MOD_PENT_PCTR_INCL", "Permite incluir pontos de controle de um plano de entregas"], 
-        ["MOD_PENT_PCTR_AVAL", "Permite avaliar pontos de controle de um plano de entregas"], 
-        ["MOD_PENT_PCTR_EDT_AVAL", "Permite alterar a avaliação dos pontos de controle de um plano de entregas"],      
         /* Capacidades do módulo PROG TRABALHO*/
         ["MOD_PRGT", "Permite acessar item menu programa de gestão"],
         ["MOD_PRGT_CONS", "Permite consultar programa de gestão"],

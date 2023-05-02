@@ -1196,15 +1196,12 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
         const BOTAO_EXCLUIR = { label: "Excluir Plano", icon: "bi bi-trash", onClick: this.delete.bind(this) };
         //const BOTAO_ENTREGAS = { hint: "Entregas", icon: "bi bi-pen", onClick: this.editarEntregas.bind(this) };
         const BOTAO_HOMOLOGAR = { label: "Homologar", icon: "bi bi-file-earmark-check", onClick: this.homologar.bind(this) };
-        const BOTAO_PONTOS_CONTROLE = { label: "Pontos de Controle", icon: "bi bi-file-earmark-check", onClick: ((row) => this.go.navigate({ route: ['gestao', 'plano-entrega', row.id, 'ponto-controle'] })).bind(this) };
         if (this.auth.hasPermissionTo("MOD_PENT_CONS"))
             result.push(BOTAO_INFORMACOES);
         if (this.auth.hasPermissionTo('MOD_PENT_EDT'))
             result.push(BOTAO_ALTERAR);
         if (this.auth.hasPermissionTo("MOD_PENT_EXCL"))
             result.push(BOTAO_EXCLUIR);
-        if (this.auth.hasPermissionTo("MOD_PENT_PCTR_CONS"))
-            result.push(BOTAO_PONTOS_CONTROLE);
         if ((_a = this.dao) === null || _a === void 0 ? void 0 : _a.needHomologate(planoEntrega))
             result.push(BOTAO_HOMOLOGAR);
         return result;
@@ -1213,10 +1210,7 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
         let result = [];
         let planoEntrega = row;
         const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: this.consult.bind(this) };
-        const BOTAO_PONTOS_CONTROLE = { label: "Pontos de Controle", icon: "bi bi-file-earmark-check", onClick: ((row) => this.go.navigate({ route: ['gestao', 'plano-entrega', row.id, 'ponto-controle'] })).bind(this) };
-        if (this.auth.hasPermissionTo('MOD_PENT_PCTR_CONS'))
-            result.push(BOTAO_PONTOS_CONTROLE);
-        else if (this.auth.hasPermissionTo("MOD_PENT_CONS"))
+        if (this.auth.hasPermissionTo("MOD_PENT_CONS"))
             result.push(BOTAO_INFORMACOES);
         return result;
     }
