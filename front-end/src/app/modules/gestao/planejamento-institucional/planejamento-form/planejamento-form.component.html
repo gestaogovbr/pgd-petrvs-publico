@@ -6,8 +6,8 @@
                     <input-text [size]="12" label="Nome do Planejamento Institucional" [icon]="entityService.getIcon('Planejamento')" controlName="nome" [control]="form!.controls.nome"></input-text>
                 </div>
                 <div class="row">
-                    <input-search [size]="6" label="Unidade Executora" icon="fab fa-unity" [disabled]="hasPermissionToUNEX ? undefined : 'true'" controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" 
-                                  [selectRoute]="{route: ['configuracoes', 'unidade'], params: {filter: {unidades_planejamento: true}}}" [where]="[['unidades_planejamento','==',true]]" (change)="onUnidadeChange($event)"></input-search>
+                    <input-search [size]="6" label="Unidade Executora" icon="fab fa-unity" [disabled]="hasPermissionToUNEX ? undefined : 'true'" controlName="unidade_id"  [dao]="unidadeDao" 
+                                  [where]="[['unidades_planejamento','==',true]]" (change)="onUnidadeChange($event)"></input-search>
                     <input-datetime date [size]="3" label="Início" icon="bi bi-calendar-date" controlName="inicio" [control]="form!.controls.inicio" labelInfo="Início do Planejamento Institucional"></input-datetime>
                     <input-datetime date [size]="3" label="Fim" icon="bi bi-calendar-date" controlName="fim" [control]="form!.controls.fim" labelInfo="Fim do Planejamento Institucional"></input-datetime>
                 </div>

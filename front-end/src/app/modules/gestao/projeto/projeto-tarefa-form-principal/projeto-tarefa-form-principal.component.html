@@ -8,7 +8,7 @@
         <input-text [size]="12" label="Nome" controlName="nome" labelInfo="Nome da tarefa"></input-text>
     </div>
     <div class="row">
-        <input-search [size]="12" displayOnlySelected #demanda [label]="lex.noun('Demanda')" icon="bi bi-activity" controlName="demanda_id" [dao]="demandaDao" [selectRoute]="{route: ['gestao', 'demanda']}" [displayTemplate]="displayDemanda">
+        <input-search [size]="12" displayOnlySelected #demanda controlName="demanda_id" [dao]="demandaDao" [displayTemplate]="displayDemanda">
             <ng-template #displayDemanda let-selected="selcted">
                 Mostrar dados quando selecionar
             </ng-template>

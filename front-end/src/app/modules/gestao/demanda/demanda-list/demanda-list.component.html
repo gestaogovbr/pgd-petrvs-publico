@@ -12,7 +12,7 @@
     <tab [hidden]="!auth.hasPermissionTo('DASH_PRG') ? 'true' : undefined" key="DASHBOARD" icon="bi bi-file-earmark-bar-graph" label="Dashboard">
       <filter [form]="filter" noButtons [where]="filterWhere" [collapsed]="false">
           <div class="row justify-content-md-center">
-              <input-search #programa [size]="9" label="Programa" controlName="programa_id" [control]="filter!.controls.programa_id" [dao]="programaDao" placeholder="Selecione um Programa..." (change)="onChange($event)" [selectRoute]="{route: ['gestao', 'programa']}"></input-search>
+              <input-search #programa [size]="9" label="Programa" controlName="programa_id"  [dao]="programaDao" placeholder="Selecione um Programa..." (change)="onChange($event)"></input-search>
               <input-switch [size]="1" label="Sub." controlName="unidades_subordinadas" [control]="filter!.controls.unidades_subordinadas" (change)="onChange($event)" labelInfo="Incluir as unidades subordinadas"></input-switch>
           </div>
       </filter>

@@ -4,23 +4,23 @@
             <separator *ngIf="isDemandaProcessual || gb.isEmbedded" transparent bottom>
                 <div class="row">
                     <input-button label="Número Processo" [size]="4" #procRequisicao controlName="numero_processo" [control]="form!.controls.numero_processo" [disabled]="!gb.isEmbedded || form!.controls.numero_requisicao.value?.length ? 'true' : undefined" (buttonClick)="onProcessoRequisicaoClick($event)" labelInfo="Número do processo, com a formatação de origem"></input-button>
-                    <input-search label="Tipo Processo" [size]="8" #tipoProcesso controlName="tipo_processo_id" [control]="form!.controls.tipo_processo_id" disabled [dao]="tipoProcessoDao" [selectRoute]="{route: ['cadastros', 'tipo-processo']}"></input-search>
+                    <input-search label="Tipo Processo" [size]="8" #tipoProcesso controlName="tipo_processo_id"  disabled [dao]="tipoProcessoDao"></input-search>
                 </div>
                 <div class="row">
                     <input-button label="Número doc. requisição" [size]="4" #docRequisicao controlName="numero_requisicao" [control]="form!.controls.numero_requisicao" [disabled]="!gb.isEmbedded ? 'true' : undefined" (buttonClick)="onNumeroRequisicaoClick($event)" labelInfo="Numero do documento de requisição, caso seja o Sei é o numero Sei"></input-button>
-                    <input-search label="Tipo doc. requisição" [size]="8" #tipoDocumento controlName="tipo_documento_requisicao_id" [control]="form!.controls.tipo_documento_requisicao_id" disabled [dao]="tipoDocumentoDao" [selectRoute]="{route: ['cadastros', 'tipo-documento']}"></input-search>
+                    <input-search label="Tipo doc. requisição" [size]="8" #tipoDocumento controlName="tipo_documento_requisicao_id"  disabled [dao]="tipoDocumentoDao"></input-search>
                 </div>
             </separator>
             <div class="row">
                 <input-textarea label="Assunto/Resumo" [size]="12" [rows]="2" controlName="assunto" [control]="form!.controls.assunto"></input-textarea>
             </div>
             <div class="row">
-                <input-search label="Responsável" [size]="4" [emptyValue]="null" #usuario controlName="usuario_id" [control]="form!.controls.usuario_id" [dao]="usuarioDao" [join]="['planos.tipo_modalidade:id,nome']" [selectRoute]="{route: ['configuracoes', 'usuario']}" labelInfo="Responsável por executar a demanda" (select)="onUsuarioSelect($event)" (change)="onUsuarioChange($event)"></input-search>
+                <input-search label="Responsável" [size]="4" [emptyValue]="null" #usuario controlName="usuario_id"  [dao]="usuarioDao" [join]="['planos.tipo_modalidade:id,nome']"  labelInfo="Responsável por executar a demanda" (select)="onUsuarioSelect($event)" (change)="onUsuarioChange($event)"></input-search>
                 <input-select label="Plano de trabalho" [size]="4" controlName="plano_id" #plano [control]="form!.controls.plano_id" [items]="planos" (change)="onPlanoChange($event)" labelInfo="Plano de trabalho"></input-select>
-                <input-search label="Unidade" [size]="4" #unidade controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}" (change)="onUnidadeChange($event)"></input-search>
+                <input-search label="Unidade" [size]="4" #unidade controlName="unidade_id" [dao]="unidadeDao"  (change)="onUnidadeChange($event)"></input-search>
             </div>
             <div class="row">
-                <input-search label="Atividade" #atividade [emptyValue]="null" [size]="8" controlName="atividade_id" [control]="form!.controls.atividade_id" [dao]="atividadeDao" [groupBy]="[{field: 'unidade.sigla', label: 'Unidade'}]" [where]="[['unidade_id', '=', form!.controls.unidade_id.value], ['vinculadas', '=', true]]" [selectRoute]="{route: ['gestao', 'atividade'], params: {filter: {unidade_id: form!.controls.unidade_id.value}}}" (select)="onAtividadeSelect($event)" (change)="onAtividadeChange($event)" labelInfo="Atividade que será executado pela demanda, não é obrigatório nesse momento."></input-search>
+                <input-search label="Atividade" #atividade [emptyValue]="null" [size]="8" controlName="atividade_id"  [dao]="atividadeDao" [groupBy]="[{field: 'unidade.sigla', label: 'Unidade'}]" [where]="[['unidade_id', '=', form!.controls.unidade_id.value], ['vinculadas', '=', true]]"  (select)="onAtividadeSelect($event)" (change)="onAtividadeChange($event)" labelInfo="Atividade que será executado pela demanda, não é obrigatório nesse momento."></input-search>
                 <input-select label="Complexidade" [size]="4" controlName="fator_complexidade" [control]="form!.controls.fator_complexidade" [items]="complexidades" (change)="onComplexidadeChange($event)" labelInfo="Multiplicador do tempo da atividade"></input-select>
             </div>
             <div class="row">
@@ -62,7 +62,7 @@
                 <input-text numbers label="ID doc. entrega" [size]="3" controlName="id_documento_entrega" [control]="form!.controls.id_documento_entrega" disabled labelInfo="ID da entrega, caso seja o Sei será o ID_Documento"></input-text>
             </div>
             <div class="row">
-                <input-search label="Demandante" [size]="10" controlName="demandante_id" [control]="form!.controls.demandante_id" [dao]="usuarioDao" disabled></input-search>
+                <input-search label="Demandante" [size]="10" controlName="demandante_id" [dao]="usuarioDao" disabled></input-search>
                 <input-switch label="Recalculável" [size]="2" controlName="recalcula_prazo" [control]="form!.controls.recalcula_prazo" labelInfo="Recalcula data de entrega baseado nos dias planejado"></input-switch>
             </div>
             <div clss="row">

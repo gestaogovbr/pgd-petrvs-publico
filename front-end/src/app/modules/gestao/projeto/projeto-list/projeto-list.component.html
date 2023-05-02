@@ -12,8 +12,8 @@
         <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
             <div class="row">
                 <input-text [size]="4" label="Nome" controlName="nome" [control]="filter!.controls.nome"></input-text>
-                <input-search [size]="4" [label]="lex.noun('Usuario')" controlName="usuario_id" [control]="filter!.controls.usuario_id" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
-                <input-search [size]="4" [label]="lex.noun('Unidade')" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+                <input-search [size]="4" controlName="usuario_id" [dao]="usuarioDao"></input-search>
+                <input-search [size]="4" controlName="unidade_id" [dao]="unidadeDao"></input-search>
             </div>
         </filter>
         <columns>

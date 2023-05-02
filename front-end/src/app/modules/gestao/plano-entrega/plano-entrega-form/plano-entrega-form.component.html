@@ -6,8 +6,8 @@
             <input-datetime date [size]="3" label="Fim" icon="bi bi-calendar-date" controlName="fim" [control]="form!.controls.fim" labelInfo="Fim do Plano de Entregas"></input-datetime>
         </div>
         <div  class="row">
-            <input-search [size]="6" icon="far fa-edit" controlName="planejamento_id" label="Selecione o Planejamento da Unidade Instituidora vinculado" [dao]="planejamentoInstitucionalDao" [selectRoute]="{route: ['gestao', 'planejamento']}" ></input-search>
-            <input-search [size]="6" icon="far fa-edit" controlName="cadiea_valor_id"label="Selecione a Cadeia de Valor vinculado" [dao]="cadeiaValorDao" [selectRoute]="{route: ['gestao', 'cadeia-valor']}"></input-search>    
+            <input-search [size]="6" controlName="planejamento_id" label="Selecione o Planejamento da Unidade Instituidora vinculado" [dao]="planejamentoInstitucionalDao" ></input-search>
+            <input-search [size]="6" controlName="cadiea_valor_id" label="Selecione a Cadeia de Valor vinculado" [dao]="cadeiaValorDao"></input-search>    
         </div>
         <separator></separator>
         <div class="row">
@@ -64,7 +64,7 @@
                             <span>{{row.objetivos}}</span>
                         </ng-template>
                         <ng-template let-row="row" #editObjetivos>
-                            <input-search [size]="6" controlName="objetivos"></input-search>                        
+                            <input-search [size]="6" controlName="objetivos" ></input-search>                        
                         </ng-template>
                     </column>
                     <column icon="bi bi-check-lg" titleHint="Se a entrega foi homologada" [template]="columnHomologado" [editTemplate]="editHomologado">
