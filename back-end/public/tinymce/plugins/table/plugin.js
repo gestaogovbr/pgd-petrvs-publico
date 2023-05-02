@@ -1,5 +1,5 @@
 /**
- * TinyMCE version 6.4.2 (2023-04-26)
+ * TinyMCE version 6.3.2 (2023-02-22)
  */
 
 (function () {
@@ -331,12 +331,6 @@
       return Optional.none();
     };
 
-    const COMMENT = 8;
-    const DOCUMENT = 9;
-    const DOCUMENT_FRAGMENT = 11;
-    const ELEMENT = 1;
-    const TEXT = 3;
-
     const fromHtml = (html, scope) => {
       const doc = scope || document;
       const div = doc.createElement('div');
@@ -373,6 +367,27 @@
       fromPoint
     };
 
+    typeof window !== 'undefined' ? window : Function('return this;')();
+
+    const COMMENT = 8;
+    const DOCUMENT = 9;
+    const DOCUMENT_FRAGMENT = 11;
+    const ELEMENT = 1;
+    const TEXT = 3;
+
+    const name = element => {
+      const r = element.dom.nodeName;
+      return r.toLowerCase();
+    };
+    const type = element => element.dom.nodeType;
+    const isType = t => element => type(element) === t;
+    const isComment = element => type(element) === COMMENT || name(element) === '#comment';
+    const isElement = isType(ELEMENT);
+    const isText = isType(TEXT);
+    const isDocument = isType(DOCUMENT);
+    const isDocumentFragment = isType(DOCUMENT_FRAGMENT);
+    const isTag = tag => e => isElement(e) && name(e) === tag;
+
     const is$2 = (element, selector) => {
       const dom = element.dom;
       if (dom.nodeType !== ELEMENT) {
@@ -404,21 +419,6 @@
 
     const eq = (e1, e2) => e1.dom === e2.dom;
     const is$1 = is$2;
-
-    typeof window !== 'undefined' ? window : Function('return this;')();
-
-    const name = element => {
-      const r = element.dom.nodeName;
-      return r.toLowerCase();
-    };
-    const type = element => element.dom.nodeType;
-    const isType = t => element => type(element) === t;
-    const isComment = element => type(element) === COMMENT || name(element) === '#comment';
-    const isElement = isType(ELEMENT);
-    const isText = isType(TEXT);
-    const isDocument = isType(DOCUMENT);
-    const isDocumentFragment = isType(DOCUMENT_FRAGMENT);
-    const isTag = tag => e => isElement(e) && name(e) === tag;
 
     const owner = element => SugarElement.fromDom(element.dom.ownerDocument);
     const documentOrOwner = dos => isDocument(dos) ? dos : owner(dos);
@@ -466,6 +466,21 @@
       return getShadowRoot(SugarElement.fromDom(dom)).fold(() => doc.body.contains(dom), compose1(inBody, getShadowHost));
     };
 
+    const children$2 = (scope, predicate) => filter(children$3(scope), predicate);
+    const descendants$1 = (scope, predicate) => {
+      let result = [];
+      each(children$3(scope), x => {
+        if (predicate(x)) {
+          result = result.concat([x]);
+        }
+        result = result.concat(descendants$1(x, predicate));
+      });
+      return result;
+    };
+
+    const children$1 = (scope, selector) => children$2(scope, e => is$2(e, selector));
+    const descendants = (scope, selector) => all$1(selector, scope);
+
     var ClosestOrAncestor = (is, ancestor, scope, a, isRoot) => {
       if (is(scope, a)) {
         return Optional.some(scope);
@@ -490,10 +505,6 @@
       }
       return Optional.none();
     };
-    const closest$2 = (scope, predicate, isRoot) => {
-      const is = (s, test) => test(s);
-      return ClosestOrAncestor(is, ancestor$1, scope, predicate, isRoot);
-    };
     const child$2 = (scope, predicate) => {
       const pred = node => predicate(SugarElement.fromDom(node));
       const result = find(scope.dom.childNodes, pred);
@@ -503,44 +514,10 @@
     const ancestor = (scope, selector, isRoot) => ancestor$1(scope, e => is$2(e, selector), isRoot);
     const child$1 = (scope, selector) => child$2(scope, e => is$2(e, selector));
     const descendant = (scope, selector) => one(selector, scope);
-    const closest$1 = (scope, selector, isRoot) => {
+    const closest = (scope, selector, isRoot) => {
       const is = (element, selector) => is$2(element, selector);
       return ClosestOrAncestor(is, ancestor, scope, selector, isRoot);
     };
-
-    const closest = target => closest$1(target, '[contenteditable]');
-    const isEditable = (element, assumeEditable = false) => {
-      if (inBody(element)) {
-        return element.dom.isContentEditable;
-      } else {
-        return closest(element).fold(constant(assumeEditable), editable => getRaw$1(editable) === 'true');
-      }
-    };
-    const getRaw$1 = element => element.dom.contentEditable;
-
-    const getNodeName = elm => elm.nodeName.toLowerCase();
-    const getBody = editor => SugarElement.fromDom(editor.getBody());
-    const getIsRoot = editor => element => eq(element, getBody(editor));
-    const removePxSuffix = size => size ? size.replace(/px$/, '') : '';
-    const addPxSuffix = size => /^\d+(\.\d+)?$/.test(size) ? size + 'px' : size;
-    const getSelectionStart = editor => SugarElement.fromDom(editor.selection.getStart());
-    const getSelectionEnd = editor => SugarElement.fromDom(editor.selection.getEnd());
-    const isInEditableContext = cell => closest$2(cell, isTag('table')).forall(isEditable);
-
-    const children$2 = (scope, predicate) => filter(children$3(scope), predicate);
-    const descendants$1 = (scope, predicate) => {
-      let result = [];
-      each(children$3(scope), x => {
-        if (predicate(x)) {
-          result = result.concat([x]);
-        }
-        result = result.concat(descendants$1(x, predicate));
-      });
-      return result;
-    };
-
-    const children$1 = (scope, selector) => children$2(scope, e => is$2(e, selector));
-    const descendants = (scope, selector) => all$1(selector, scope);
 
     const rawSet = (dom, key, value) => {
       if (isString(value) || isBoolean(value) || isNumber(value)) {
@@ -733,7 +710,7 @@
         return bind(columnGroups(ancestor), columnGroup => children$1(columnGroup, 'col'));
       }
     };
-    const table = (element, isRoot) => closest$1(element, 'table', isRoot);
+    const table = (element, isRoot) => closest(element, 'table', isRoot);
     const rows = ancestor => firstLayer(ancestor, 'tr');
     const columnGroups = ancestor => table(ancestor).fold(constant([]), table => children$1(table, 'colgroup'));
 
@@ -1085,6 +1062,14 @@
       return options.isSet('table_default_attributes') ? defaultAttributes : determineDefaultAttributes(editor, defaultAttributes);
     };
 
+    const getNodeName = elm => elm.nodeName.toLowerCase();
+    const getBody = editor => SugarElement.fromDom(editor.getBody());
+    const getIsRoot = editor => element => eq(element, getBody(editor));
+    const removePxSuffix = size => size ? size.replace(/px$/, '') : '';
+    const addPxSuffix = size => /^\d+(\.\d+)?$/.test(size) ? size + 'px' : size;
+    const getSelectionStart = editor => SugarElement.fromDom(editor.selection.getStart());
+    const getSelectionEnd = editor => SugarElement.fromDom(editor.selection.getEnd());
+
     const isWithin = (bounds, detail) => {
       return detail.column >= bounds.startCol && detail.column + detail.colspan - 1 <= bounds.finishCol && detail.row >= bounds.startRow && detail.row + detail.rowspan - 1 <= bounds.finishRow;
     };
@@ -1292,7 +1277,7 @@
       return {
         up: constant({
           selector: ancestor,
-          closest: closest$1,
+          closest: closest,
           predicate: ancestor$1,
           all: parents
         }),
@@ -1450,7 +1435,7 @@
     const getSelectionFromSelector = selector => (initCell, isRoot) => {
       const cellName = name(initCell);
       const cell = cellName === 'col' || cellName === 'colgroup' ? getSelectionCellFallback(initCell) : initCell;
-      return closest$1(cell, selector, isRoot);
+      return closest(cell, selector, isRoot);
     };
     const getSelectionCellOrCaption = getSelectionFromSelector('th,td,caption');
     const getSelectionCell = getSelectionFromSelector('th,td');
@@ -1480,7 +1465,7 @@
       }
     ];
 
-    const hexColour = value => ({ value: normalizeHex(value) });
+    const hexColour = value => ({ value });
     const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
     const longformRegex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i;
     const isHexString = hex => shorthandRegex.test(hex) || longformRegex.test(hex);
@@ -2725,17 +2710,14 @@
     };
 
     const registerCommands = editor => {
-      const runAction = f => {
-        if (isInEditableContext(getSelectionStart(editor))) {
-          f();
-        }
-      };
       each$1({
         mceTableProps: curry(open, editor, false),
         mceTableRowProps: curry(open$1, editor),
-        mceTableCellProps: curry(open$2, editor),
-        mceInsertTableDialog: curry(open, editor, true)
-      }, (func, name) => editor.addCommand(name, () => runAction(func)));
+        mceTableCellProps: curry(open$2, editor)
+      }, (func, name) => editor.addCommand(name, () => func()));
+      editor.addCommand('mceInsertTableDialog', _ui => {
+        open(editor, true);
+      });
     };
 
     const child = (scope, selector) => child$1(scope, selector).isSome();

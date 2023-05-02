@@ -27,7 +27,6 @@ use App\Http\Controllers\PlanejamentoObjetivoController;
 use App\Http\Controllers\PlanoController;
 use App\Http\Controllers\PlanoEntregaController;
 use App\Http\Controllers\PlanoEntregaEntregaController;
-use App\Http\Controllers\PlanoEntregaPontoControleController;
 use App\Http\Controllers\PetrvsController;
 use App\Http\Controllers\DocumentoController;
 use App\Http\Controllers\TipoDocumentoController;
@@ -209,7 +208,6 @@ Route::middleware(['auth:sanctum'])->prefix('Adesao')->group(function () {
 
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () { defaultRoutes(PlanoEntregaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntrega')->group(function () { defaultRoutes(PlanoEntregaEntregaController::class); });
-Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaPontoControle')->group(function () { defaultRoutes(PlanoEntregaPontoControleController::class); });
 
 Route::middleware(['auth:sanctum'])->prefix('Projeto')->group(function () { defaultRoutes(ProjetoController::class); });
 
