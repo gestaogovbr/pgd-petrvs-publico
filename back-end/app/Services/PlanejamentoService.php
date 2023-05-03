@@ -70,23 +70,32 @@ class PlanejamentoService extends ServiceBase
     }
 
     public function buildSequencia($id) {
-        $eixos = DB::table('planejamentos_objetivos')
-            ->selectRaw('MIN(sequencia) AS eixo_sequencia, eixo_tematico_id AS id')
-            ->where('planejamento_id', $id)->whereNull("data_fim")->groupBy("eixo_tematico_id")
-            ->orderBy("eixo_sequencia")->get();
         $sequencia = 1;
-        foreach ($eixos as $eixo) {
-            $objetivos = PlanejamentoObjetivo::where("planejamento_id", $id)
-                ->where("eixo_tematico_id", $eixo->id)
-                ->whereNull("data_fim")
-                ->orderBy("sequencia")->orderBy("updated_at", "desc")->get();
+        $recursivo = function($objetivos, $eixoId) use ($id, &$recursivo, &$sequencia) {
             foreach ($objetivos as $objetivo) {
                 if($objetivo->sequencia != $sequencia) {
                     $objetivo->sequencia = $sequencia;
                     $objetivo->save();
                 }
+                if($objetivo->eixo_tematico_id != $eixoId) {
+                    $objetivo->eixo_tematico_id = $eixoId;
+                    $objetivo->save();
+                }
+                $lista = PlanejamentoObjetivo::where("planejamento_id", $id)->whereNull("data_fim")->where("objetivo_pai_id", $objetivo->id)
+                    ->orderBy("sequencia")->orderBy("updated_at", "desc")->get();
+                $recursivo($lista, $eixoId);
                 $sequencia++;
             }
+        };
+        $eixos = DB::table('planejamentos_objetivos')
+            ->selectRaw('MIN(sequencia) AS eixo_sequencia, eixo_tematico_id AS id')
+            ->where('planejamento_id', $id)->whereNull("data_fim")->groupBy("eixo_tematico_id")
+            ->orderBy("eixo_sequencia")->get();
+        foreach ($eixos as $eixo) {
+            $objetivos = PlanejamentoObjetivo::where("planejamento_id", $id)
+                ->where("eixo_tematico_id", $eixo->id)->whereNull("data_fim")->whereNull("objetivo_pai_id")
+                ->orderBy("sequencia")->orderBy("updated_at", "desc")->get();
+            $recursivo($objetivos, $eixo->id);
         }
     }
 

@@ -68,12 +68,30 @@ export class PlanejamentoMapaComponent extends PageFrameBase {
     });
   }
 
+  public marcador(row: PlanejamentoObjetivo): string {
+    let level = row._metadata?.level || 0;
+    return level < 1 ? "" : (level < 2 ? "• " : (level < 3 ? "- " : "+ "));
+  }
+
+  public objetivosEixo(eixoId: string) {
+    let objetivos = this.planejamento?.objetivos?.filter(y => y.eixo_tematico_id == eixoId && !y.objetivo_pai_id).sort((a, b) => a.sequencia - b.sequencia) || [];
+    let recursivo = (list: PlanejamentoObjetivo[], level: number) => {
+      for(let item of list) {
+        item.objetivos = this.planejamento?.objetivos?.filter(y => y.objetivo_pai_id == item.id).sort((a, b) => a.sequencia - b.sequencia) || [];
+        item._metadata = Object.assign(item._metadata || {}, { level })
+        recursivo(item.objetivos, level + 1);
+      }
+    }
+    recursivo(objetivos, 0);
+    return objetivos;
+  }
+
   public onPlanejamentoChange() {
     this.dao!.getById(this.planejamentoInstitucional!.selectedItem?.key, this.join).then(planejamento => {
       this.planejamento = planejamento as Planejamento;
       this.eixos = this.query!.extra?.eixos?.filter((x: EixoTematico) => this.form?.controls.todos.value || this.planejamento?.objetivos?.find(y => y.eixo_tematico_id == x.id)).map((x: EixoTematico) => Object.assign({} as EixoPlanejamento, {
         eixo: x,
-        objetivos: this.planejamento?.objetivos?.filter(y => y.eixo_tematico_id == x.id).sort((a, b) => a.sequencia < b.sequencia ? -1 : 1) || []
+        objetivos: this.objetivosEixo(x.id)
       })) || [];
       this.cdRef.detectChanges();
     });

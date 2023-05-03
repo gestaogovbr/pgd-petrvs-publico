@@ -220,8 +220,8 @@ export class HomeComponent implements OnInit {
   public construirGraficoPlanos() {
     let somaTotal = 0
     let somaAlocadas = 0
-    this.dashUsuario.planos.map(p => somaTotal += p.total_horas)
-    this.dashUsuario.planos.map(p => somaAlocadas += p.horas_alocadas)
+    this.dashUsuario.planos?.map(p => somaTotal += p.total_horas)
+    this.dashUsuario.planos?.map(p => somaAlocadas += p.horas_alocadas)
 
     this.dadosPlanos.datasets = [
       {

@@ -1,6 +1,7 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
+import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { InputTextComponent } from 'src/app/components/input/input-text/input-text.component';
 import { EixoTematicoDaoService } from 'src/app/dao/eixo-tematico-dao.service';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
@@ -22,7 +23,8 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
   @ViewChild('planejamento_superior_nome', {static: false}) public planejamento_superior_nome?: InputTextComponent;
 
   public planejamento?: Planejamento;
-  public objetivos_superiores?: LookupItem[] = [];
+  public objetivos: LookupItem[] = [];
+  public objetivos_superiores: LookupItem[] = [];
   public planejamentoDao?: PlanejamentoDaoService;
   public eixoTematicoDao?: EixoTematicoDaoService;
 
@@ -37,6 +39,7 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
       planejamento_superior_nome: {default: ""},
       eixo_tematico_id: {default: null},
       objetivo_superior_id: {default: null},
+      objetivo_pai_id: {default: null},
     }, this.cdRef, this.validate);
   }
 
@@ -71,6 +74,11 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
 
   public initializeData(form: FormGroup): void {
     this.entity = this.metadata?.objetivo as PlanejamentoObjetivo;
+    this.objetivos = (this.metadata?.objetivos as PlanejamentoObjetivo[]).map(x => Object.assign({}, {
+      key: x.id,
+      value: x.nome,
+      data: x
+    }));
     this.loadData(this.entity!, form);
   }
 
@@ -83,6 +91,10 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
 
   public isPlanejamentoUNEX(): boolean {
     return this.planejamento?.unidade_id != null;
+  }
+
+  public onObjetivoPaiChange(objetivoPai: InputSelectComponent) {
+    this.form!.controls.eixo_tematico_id.setValue(objetivoPai.selectedItem?.data.eixo_tematico_id); 
   }
 
 }
