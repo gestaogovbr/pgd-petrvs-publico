@@ -66,33 +66,6 @@ class Capacidade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
 
 /***/ }),
 
-/***/ "AfNR":
-/*!****************************************************!*\
-  !*** ./src/app/dao/tipo-capacidade-dao.service.ts ***!
-  \****************************************************/
-/*! exports provided: TipoCapacidadeDaoService */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TipoCapacidadeDaoService", function() { return TipoCapacidadeDaoService; });
-/* harmony import */ var _dao_base_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./dao-base.service */ "WScx");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
-
-
-class TipoCapacidadeDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0__["DaoBaseService"] {
-    constructor(injector) {
-        super("TipoCapacidade", injector);
-        this.injector = injector;
-        this.searchFields = ["descricao"];
-    }
-}
-TipoCapacidadeDaoService.ɵfac = function TipoCapacidadeDaoService_Factory(t) { return new (t || TipoCapacidadeDaoService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
-TipoCapacidadeDaoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: TipoCapacidadeDaoService, factory: TipoCapacidadeDaoService.ɵfac, providedIn: 'root' });
-
-
-/***/ }),
-
 /***/ "HoqJ":
 /*!***********************************************************************************!*\
   !*** ./src/app/modules/configuracoes/perfil/perfil-form/perfil-form.component.ts ***!

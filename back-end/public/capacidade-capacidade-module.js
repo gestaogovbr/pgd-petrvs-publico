@@ -275,7 +275,7 @@ CapacidadeFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵ
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵloadQuery"]()) && (ctx.tipoCapacidade = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵInheritDefinitionFeature"]], decls: 7, vars: 8, consts: [["class", "my-2", 4, "ngIf"], [3, "form", "submit", "cancel"], [1, "row"], ["label", "Capacidade", "controlName", "tipo_capacidade_id", 3, "size", "control", "dao"], ["tipo_capacidade", ""], ["label", "Perfil", "controlName", "perfil_id", 3, "size", "control", "dao"], [1, "my-2"]], template: function CapacidadeFormComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵInheritDefinitionFeature"]], decls: 7, vars: 7, consts: [["class", "my-2", 4, "ngIf"], [3, "form", "submit", "cancel"], [1, "row"], ["controlName", "tipo_capacidade_id", 3, "size", "dao"], ["tipo_capacidade", ""], ["label", "Perfil", "controlName", "perfil_id", 3, "size", "control", "dao"], [1, "my-2"]], template: function CapacidadeFormComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](0, CapacidadeFormComponent_h3_0_Template, 2, 1, "h3", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](1, "editable-form", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("submit", function CapacidadeFormComponent_Template_editable_form_submit_1_listener() { return ctx.onSaveData(); })("cancel", function CapacidadeFormComponent_Template_editable_form_cancel_1_listener() { return ctx.onCancel(); });
@@ -291,7 +291,7 @@ CapacidadeFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵ
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("form", ctx.form);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 12)("control", ctx.form.controls.tipo_capacidade_id)("dao", ctx.tipoCapacidadeDao);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 12)("dao", ctx.tipoCapacidadeDao);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.perfil_id)("dao", ctx.perfilDao);
     } }, directives: [_angular_common__WEBPACK_IMPORTED_MODULE_8__["NgIf"], src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__["EditableFormComponent"], _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_9__["InputSearchComponent"], _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_10__["InputSelectComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJjYXBhY2lkYWRlLWZvcm0uY29tcG9uZW50LnNjc3MifQ== */"] });
@@ -338,33 +338,6 @@ CapacidadeModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineI
         src_app_components_components_module__WEBPACK_IMPORTED_MODULE_4__["ComponentsModule"],
         _angular_forms__WEBPACK_IMPORTED_MODULE_5__["ReactiveFormsModule"],
         _capacidade_routing_module__WEBPACK_IMPORTED_MODULE_1__["CapacidadeRoutingModule"]] }); })();
-
-
-/***/ }),
-
-/***/ "w/UD":
-/*!***********************************************!*\
-  !*** ./src/app/dao/capacidade-dao.service.ts ***!
-  \***********************************************/
-/*! exports provided: CapacidadeDaoService */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CapacidadeDaoService", function() { return CapacidadeDaoService; });
-/* harmony import */ var _dao_base_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./dao-base.service */ "WScx");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
-
-
-class CapacidadeDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0__["DaoBaseService"] {
-    constructor(injector) {
-        super("Capacidade", injector);
-        this.injector = injector;
-        //this.searchFields = ["descricao"];
-    }
-}
-CapacidadeDaoService.ɵfac = function CapacidadeDaoService_Factory(t) { return new (t || CapacidadeDaoService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
-CapacidadeDaoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: CapacidadeDaoService, factory: CapacidadeDaoService.ɵfac, providedIn: 'root' });
 
 
 /***/ }),

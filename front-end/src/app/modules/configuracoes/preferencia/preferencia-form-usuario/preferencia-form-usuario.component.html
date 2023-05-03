@@ -11,7 +11,7 @@
             <input-multiselect label="Etiquetas" multiselectStyle="inline" controlName="etiquetas" [size]="12" [control]="form!.controls.etiquetas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
                 <input-text [size]="5" label="Texto" icon="bi bi-textarea-t" controlName="etiqueta_texto" [control]="form!.controls.etiqueta_texto"></input-text>
                 <input-select [size]="3" label="Ícone" icon="fas fa-sign-out-alt" controlName="etiqueta_icone" liveSearch [control]="form!.controls.etiqueta_icone" [items]="lookup.ICONES"></input-select>
-                <input-color [size]="4" label="Cor" icon="bi bi-palette" controlName="etiqueta_cor" [control]="form!.controls.etiqueta_cor"></input-color>
+                <input-color [size]="4" label="Cor" controlName="etiqueta_cor" [control]="form!.controls.etiqueta_cor"></input-color>
             </input-multiselect>
         </div>
         <separator *ngIf="!etiquetas" transparent title="Preferências de exibição do usuário">
@@ -29,11 +29,11 @@
                 </div>
                 <div class="col-md-6">
                     <separator transparent title="Tipos de notificação"></separator>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar distribuição da demanda" controlName="notifica_demanda_distribuicao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar conclusão da demanda" controlName="notifica_demanda_conclusao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar avaliação da demanda" controlName="notifica_demanda_avaliacao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar modificação da demanda" controlName="notifica_demanda_modificacao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar comentário da demanda" controlName="notifica_demanda_comentario"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar distribuição da ' + lex.noun('demanda')" controlName="notifica_demanda_distribuicao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar conclusão da '+ lex.noun('demanda')" controlName="notifica_demanda_conclusao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar avaliação da '+ lex.noun('demanda')" controlName="notifica_demanda_avaliacao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar modificação da '+ lex.noun('demanda')" controlName="notifica_demanda_modificacao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar comentário da '+ lex.noun('demanda')" controlName="notifica_demanda_comentario"></input-switch>
                 </div>
             </div>
         </separator>

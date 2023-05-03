@@ -4,8 +4,8 @@
     </toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-search #unidade [size]="4" label="Unidade" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
-            <input-search #entrega [size]="4" label="Entrega" controlName="entrega_id" [control]="filter!.controls.entrega_id" [dao]="entregaDao" [selectRoute]="{route: ['cadastros', 'entrega']}"></input-search>
+            <input-search #unidade [size]="4" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+            <input-search #entrega [size]="4" controlName="entrega_id" [dao]="entregaDao"></input-search>
             <input-datetime [size]="2" date noIcon label="Início" controlName="inicio" [control]="filter!.controls.inicio" labelInfo="Data de início do planejamento institucional"></input-datetime>
             <input-datetime [size]="2" date noIcon label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Data do fim do planejamento institucional"></input-datetime>
         </div>
@@ -16,7 +16,7 @@
                 <p><b>Data:</b> {{util.getDateFormatted(row.inicio)}} - {{util.getDateFormatted(row.fim)}}</p>
                 <p><b>Cliente:</b> {{row.cliente}}</p>
                 <p>{{row.descricao}}</p>
-                <badge icon="bi bi-list-columns-reverse" color="light" [label]="row.plano_entrega.unidade.sigla" hint="Plano de entrega"></badge>
+                <badge icon="bi bi-list-columns-reverse" color="light" [label]="row.plano_entrega.unidade.sigla" [hint]="lex.noun('plano de entrega')"></badge>
             </ng-template>
         </column>
         <column title="Meta" [template]="columnMeta">

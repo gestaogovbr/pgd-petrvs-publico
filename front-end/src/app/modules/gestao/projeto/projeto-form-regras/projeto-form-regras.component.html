@@ -29,12 +29,12 @@
                     </ng-template>
                     <ng-template let-row="row" #editRegraPerfis>
                         <ng-container *ngIf="form!.controls.tipo_recurso!.value == 'HUMANO'">
-                            <input-switch [size]="12" label="Acesso ao projeto" scale="small" labelPosition="right" controlName="perfil_acesso" [control]="form!.controls.perfil_acesso"></input-switch>
-                            <input-switch [size]="12" label="Gerente de projeto" scale="small" labelPosition="right" controlName="perfil_gerente" [control]="form!.controls.perfil_gerente"></input-switch>
+                            <input-switch [size]="12" [label]="'Acesso ao '+ lex.noun('projeto')" scale="small" labelPosition="right" controlName="perfil_acesso" [control]="form!.controls.perfil_acesso"></input-switch>
+                            <input-switch [size]="12" [label]="'Gerente de '+ lex.noun('projeto')" scale="small" labelPosition="right" controlName="perfil_gerente" [control]="form!.controls.perfil_gerente"></input-switch>
                         </ng-container>
                         <ng-container *ngIf="form!.controls.tipo_recurso!.value == 'DEPARTAMENTO'">
-                            <input-switch [size]="12" label="Acesso ao projeto" scale="small" labelPosition="right" controlName="perfil_acesso" [control]="form!.controls.perfil_acesso"></input-switch>
-                            <input-switch [size]="12" label="Escritório de projeto" scale="small" labelPosition="right" controlName="perfil_escritorio" [control]="form!.controls.perfil_escritorio"></input-switch>
+                            <input-switch [size]="12" [label]="'Acesso ao '+ lex.noun('projeto')" scale="small" labelPosition="right" controlName="perfil_acesso" [control]="form!.controls.perfil_acesso"></input-switch>
+                            <input-switch [size]="12" [label]="'Escritório de '+ lex.noun('projeto')" scale="small" labelPosition="right" controlName="perfil_escritorio" [control]="form!.controls.perfil_escritorio"></input-switch>
                         </ng-container>
                     </ng-template>
                 </column>

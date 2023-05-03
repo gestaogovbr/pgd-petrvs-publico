@@ -7,8 +7,8 @@
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="6" label="Nome" controlName="nome" [control]="filter!.controls.nome" placeholder="Nome do usuário..."></input-text>
-            <input-search [size]="6" #unidade label="Unidade" icon="fab fa-unity" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+            <input-text [size]="6" label="Nome" controlName="nome" [control]="filter!.controls.nome" [placeholder]="'Nome do '+ lex.noun('usuario')+'...'"></input-text>
+            <input-search [size]="6" #unidade controlName="unidade_id"  [dao]="unidadeDao" ></input-search>
         </div>
     </filter>
     <columns>
@@ -27,7 +27,7 @@
                 <!-- Pensar na possibilidade de por as lotacoes -->
             </ng-template>
             <ng-template let-row="row" #editUsuario>
-                <input-search #usuario [size]="12" controlName="usuario_id" [control]="form.controls.usuario_id" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
+                <input-search #usuario [size]="12" controlName="usuario_id" [dao]="usuarioDao"></input-search>
             </ng-template>
         </column>
         <column title="Habilitado" [template]="columnHabilitado" [editTemplate]="editHabilitado">

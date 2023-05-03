@@ -53,7 +53,7 @@
         </tab>
         <tab key="EXPEDIENTE" label="Expediente">
             <div class="row">
-                <input-switch #usarExpedienteEntidade label="Usar o calendário da entidade" labelPosition="right" icon="bi bi-check2" [size]="12" (change)="onUsarExpedienteEntidadeChange()" controlName="usar_expediente_entidade" labelInfo="Se utiliza o expediente configurado na entidade ao invés de especificar na unidade"></input-switch>
+                <input-switch #usarExpedienteEntidade [label]="'Usar o calendário da ' + lex.noun('entidade')" labelPosition="right" icon="bi bi-check2" [size]="12" (change)="onUsarExpedienteEntidadeChange()" controlName="usar_expediente_entidade" labelInfo="Se utiliza o expediente configurado na entidade ao invés de especificar na unidade"></input-switch>
             </div>
             <calendar-expediente #expediente [disabled]="form!.controls.usar_expediente_entidade.value ? 'true' : undefined" [expedienteDisabled]="entity?.entidade?.expediente" [control]="form!.controls.expediente"></calendar-expediente>
         </tab>
@@ -81,11 +81,11 @@
                 </div>
                 <div class="col-md-6">
                     <separator transparent title="Tipos de notificação"></separator>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar distribuição da demanda" controlName="notifica_demanda_distribuicao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar conclusão da demanda" controlName="notifica_demanda_conclusao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar avaliação da demanda" controlName="notifica_demanda_avaliacao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar modificação da demanda" controlName="notifica_demanda_modificacao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar comentário da demanda" controlName="notifica_demanda_comentario"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar distribuição da ' + lex.noun('demanda')" controlName="notifica_demanda_distribuicao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar conclusão da ' + lex.noun('demanda')" controlName="notifica_demanda_conclusao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar avaliação da ' + lex.noun('demanda')" controlName="notifica_demanda_avaliacao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar modificação da ' + lex.noun('demanda')" controlName="notifica_demanda_modificacao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar comentário da ' + lex.noun('demanda')" controlName="notifica_demanda_comentario"></input-switch>
                 </div>
             </div>
             <separator transparent title="Templates das mensagens"></separator>

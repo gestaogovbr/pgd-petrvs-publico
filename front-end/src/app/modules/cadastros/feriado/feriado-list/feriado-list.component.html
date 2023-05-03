@@ -5,8 +5,8 @@
     <toolbar></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
         <div class="row">
-            <input-text [size]="12" label="Nome do Feriado" controlName="nome"
-                [control]="filter!.controls.nome" placeholder="Nome do feriado"></input-text>
+            <input-text [size]="12" [label]="'Nome ' + lex.noun('Feriado',false,true)" controlName="nome"
+                [control]="filter!.controls.nome" [placeholder]="'Nome ' + lex.noun('feriado',false,true)"></input-text>
         </div>
     </filter>
     <columns>

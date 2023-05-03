@@ -1,5 +1,5 @@
 /**
- * TinyMCE version 6.4.2 (2023-04-26)
+ * TinyMCE version 6.3.2 (2023-02-22)
  */
 
 (function () {
@@ -855,7 +855,9 @@
         each(buttons, toggle);
       };
       const notFoundAlert = api => {
-        api.redial(getDialogSpec(true, api.getData()));
+        editor.windowManager.alert('Could not find the specified string.', () => {
+          api.focus('findtext');
+        });
       };
       const focusButtonIfRequired = (api, name) => {
         if (global$2.browser.isSafari() && global$2.deviceType.isTouch() && (name === 'find' || name === 'replace' || name === 'replaceall')) {
@@ -893,59 +895,47 @@
         matchcase: initialState.matchCase,
         inselection: initialState.inSelection
       };
-      const getPanelItems = error => {
-        const items = [
-          {
-            type: 'bar',
-            items: [
-              {
-                type: 'input',
-                name: 'findtext',
-                placeholder: 'Find',
-                maximized: true,
-                inputMode: 'search'
-              },
-              {
-                type: 'button',
-                name: 'prev',
-                text: 'Previous',
-                icon: 'action-prev',
-                enabled: false,
-                borderless: true
-              },
-              {
-                type: 'button',
-                name: 'next',
-                text: 'Next',
-                icon: 'action-next',
-                enabled: false,
-                borderless: true
-              }
-            ]
-          },
-          {
-            type: 'input',
-            name: 'replacetext',
-            placeholder: 'Replace with',
-            inputMode: 'search'
-          }
-        ];
-        if (error) {
-          items.push({
-            type: 'alertbanner',
-            level: 'error',
-            text: 'Could not find the specified string.',
-            icon: 'warning'
-          });
-        }
-        return items;
-      };
-      const getDialogSpec = (showNoMatchesAlertBanner, initialData) => ({
+      const spec = {
         title: 'Find and Replace',
         size: 'normal',
         body: {
           type: 'panel',
-          items: getPanelItems(showNoMatchesAlertBanner)
+          items: [
+            {
+              type: 'bar',
+              items: [
+                {
+                  type: 'input',
+                  name: 'findtext',
+                  placeholder: 'Find',
+                  maximized: true,
+                  inputMode: 'search'
+                },
+                {
+                  type: 'button',
+                  name: 'prev',
+                  text: 'Previous',
+                  icon: 'action-prev',
+                  enabled: false,
+                  borderless: true
+                },
+                {
+                  type: 'button',
+                  name: 'next',
+                  text: 'Next',
+                  icon: 'action-next',
+                  enabled: false,
+                  borderless: true
+                }
+              ]
+            },
+            {
+              type: 'input',
+              name: 'replacetext',
+              placeholder: 'Replace with',
+              inputMode: 'search'
+            }
+          ]
         },
         buttons: [
           {
@@ -993,9 +983,6 @@
         ],
         initialData,
         onChange: (api, details) => {
-          if (showNoMatchesAlertBanner) {
-            api.redial(getDialogSpec(false, api.getData()));
-          }
           if (details.name === 'findtext' && currentSearchState.get().count > 0) {
             reset(api);
           }
@@ -1043,8 +1030,8 @@
           done(editor, currentSearchState);
           editor.undoManager.add();
         }
-      });
-      dialogApi.set(editor.windowManager.open(getDialogSpec(false, initialData), { inline: 'toolbar' }));
+      };
+      dialogApi.set(editor.windowManager.open(spec, { inline: 'toolbar' }));
     };
 
     const register$1 = (editor, currentSearchState) => {
