@@ -16,7 +16,7 @@
                 <p><b>Data:</b> {{util.getDateFormatted(row.inicio)}} - {{util.getDateFormatted(row.fim)}}</p>
                 <p><b>Cliente:</b> {{row.cliente}}</p>
                 <p>{{row.descricao}}</p>
-                <badge icon="bi bi-list-columns-reverse" color="light" [label]="row.plano_entrega.unidade.sigla" hint="Plano de entrega"></badge>
+                <badge icon="bi bi-list-columns-reverse" color="light" [label]="row.plano_entrega.unidade.sigla" [hint]="lex.noun('plano de entrega')"></badge>
             </ng-template>
         </column>
         <column title="Meta" [template]="columnMeta">

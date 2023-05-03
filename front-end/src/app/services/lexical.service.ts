@@ -19,7 +19,7 @@ export class LexicalService {
     "afastamento": {single: "afastamento", plural: "afastamentos", female: false},
     "atividade": {single: "atividade", plural: "atividades", female: true},
     "avaliação": {single: "avaliação", plural: "avaliações", female: true},
-    "cadeia de valor": {single: "cadeia de valor", plural: "cadeias de valor", female: true},
+    "cadeiaValor": {single: "cadeia de valor", plural: "cadeias de valor", female: true},
     "capacidade": {single: "capacidade", plural: "capacidades", female: true},
     "cidade": {single: "cidade", plural: "cidades", female: true},
     "data de distribuição": {single: "data de distribuição", plural: "datas de distribuição", female: true},
@@ -63,7 +63,7 @@ export class LexicalService {
     "tipo de atividade": {single: "tipo de atividade", plural: "tipos de atividades", female: false},
     "tipo de capacidade": {single: "tipo de capacidade", plural: "tipos de capacidades", female: false},
     "unidade": {single: "unidade", plural: "unidades", female: true},
-    "usuário": {single: "usuário", plural: "usuários", female: false}
+    "usuario": {single: "usuário", plural: "usuários", female: false}
   };
 
   public vocabulary: Translate = {};
