@@ -5,8 +5,8 @@
     <toolbar></toolbar>
     <filter [form]="filter"  [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
         <div class="row">
-            <input-text [size]="12" label="Nome do tipo da capacidade" controlName="descricao"
-            [control]="filter!.controls.descricao" placeholder="Nome do tipo da Capacidade"></input-text>
+            <input-text [size]="12" [label]="'Nome ' + lex.noun('tipo de capacidade',false,true)" controlName="descricao"
+            [control]="filter!.controls.descricao" placeholder="Nome..."></input-text>
         </div>
     </filter>
     <columns>

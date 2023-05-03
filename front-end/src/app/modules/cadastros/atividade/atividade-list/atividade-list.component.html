@@ -4,7 +4,6 @@
             [message]="grid!.multiselectedCount + ' ' + lex.noun('atividade', true) + ' serão homologadas'"></top-alert>
         <div class="row">
             <input-datetime [size]="12" label="Data e hora" controlName="data_homologacao"
-                [control]="formHomologacao!.controls.data_homologacao"
                 labelInfo="Data e hora para registro da homologação"></input-datetime>
         </div>
     </editable-form>
@@ -25,14 +24,10 @@
             <input-search [size]="5" controlName="tipo_atividade_id" [dao]="tipoAtividadeDao"></input-search>
         </div>
         <div class="row">
-            <input-switch *ngIf="auth.hasPermissionTo('MOD_UND_TUDO')" [size]="1" label="Minhas" controlName="minhas"
-                [control]="filter!.controls.minhas"></input-switch>
-            <input-search [size]="auth.hasPermissionTo('MOD_UND_TUDO') ? 6 : 7" [disabled]="disableUnidade ? 'true' : undefined" controlName="unidade_id"
-                [dao]="unidadeDao"></input-search>
-            <input-switch [size]="1" label="Vinculadas" controlName="vinculadas"
-                [control]="filter!.controls.vinculadas"></input-switch>
-            <input-radio [size]="4" label="Homologado?" controlName="homologado" [control]="filter!.controls.homologado"
-                [items]="lookup.TODOSSIMNAO"></input-radio>
+            <input-switch *ngIf="auth.hasPermissionTo('MOD_UND_TUDO')" [size]="1" label="Minhas" controlName="minhas"></input-switch>
+            <input-search [size]="auth.hasPermissionTo('MOD_UND_TUDO') ? 6 : 7" [disabled]="disableUnidade ? 'true' : undefined" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+            <input-switch [size]="1" label="Vinculadas" controlName="vinculadas"></input-switch>
+            <input-radio [size]="4" label="Homologado?" controlName="homologado" [control]="filter!.controls.homologado" [items]="lookup.TODOSSIMNAO"></input-radio>
         </div>
     </filter>
     <columns>
@@ -51,24 +46,23 @@
                     "Não"}}</span>
             </ng-template>
         </column>
-        <column title="Unidade" [template]="columnUnidade">
+        <column [title]="lex.noun('Unidade')" [template]="columnUnidade">
             <ng-template let-row="row" #columnUnidade>
                 <span> {{row.unidade.nome}}</span>
             </ng-template>
         </column>
-        <column type="options" [options]="[]" [dynamicOptions]="dynamicOptions.bind(this)"
-            [dynamicButtons]="dynamicButtons.bind(this)"></column>
+        <column type="options" [options]="[]" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
     </columns>
     <report>
         <column title="Nome" [template]="reportNome"><ng-template let-row="row" #reportNome>{{row.nome}}</ng-template>
         </column>
-        <column title="Tempo pactuado" [template]="reportTempoPactuado"><ng-template let-row="row"
+        <column [title]="lex.noun('Tempo pactuado')" [template]="reportTempoPactuado"><ng-template let-row="row"
                 #reportTempoPactuado>{{row.tempo_pactuado}}</ng-template></column>
         <column title="Dias planejamento" [template]="reportDiasPlanejado"><ng-template let-row="row"
                 #reportDiasPlanejado>{{row.dias_planejado}}</ng-template></column>
         <column title="Tempo mínimo" [template]="reportTempoMinimo"><ng-template let-row="row"
                 #reportTempoMinimo>{{row.tempo_minimo}}</ng-template></column>
-        <column title="Desativa produtividade" [template]="reportDesativaProdutividade"><ng-template let-row="row"
+        <column [title]="'Desativa ' + lex.noun('produtividade')" [template]="reportDesativaProdutividade"><ng-template let-row="row"
                 #reportDesativaProdutividade>{{lookup.getValue(lookup.SIMNAO,
                 row.desativa_produtividade)}}</ng-template></column>
         <column title="Complexidade" [template]="reportComplexidade"><ng-template let-row="row"
@@ -81,15 +75,15 @@
                 #reportComentario>{{row.comentario_predefinido}}</ng-template></column>
         <column title="Homologado" [template]="reportHomologado"><ng-template let-row="row"
                 #reportHomologado>{{lookup.getValue(lookup.SIMNAO, row.homologado)}}</ng-template></column>
-        <column title="Data Homologação" [template]="reportDataHomologacao"><ng-template let-row="row"
+        <column [title]="lex.noun('Data de Homologação')" [template]="reportDataHomologacao"><ng-template let-row="row"
                 #reportDataHomologacao>{{util.getDateTimeFormatted(row.data_homologacao)}}</ng-template></column>
-        <column title="Tipo Atividade" [template]="reportTipoAtividade"><ng-template let-row="row"
+        <column [title]="'Tipo ' + lex.noun('Atividade')" [template]="reportTipoAtividade"><ng-template let-row="row"
                 #reportTipoAtividade>{{row.tipo_atividade?.nome}}</ng-template></column>
-        <column title="Unidade" [template]="reportUnidade"><ng-template let-row="row" #reportUnidade>{{row.unidade ?
+        <column [title]="lex.noun('Unidade')" [template]="reportUnidade"><ng-template let-row="row" #reportUnidade>{{row.unidade ?
                 row.unidade.sigla + " - " + row.unidade.nome : ""}}</ng-template></column>
         <column title="Parâmetros adotados" [template]="reportParametrosAdotados"><ng-template let-row="row"
                 #reportParametrosAdotados>{{getReportParametrosAdotados(row)}}</ng-template></column>
-        <column title="Entregas esperadas" [template]="reportEntregasEsperadas"><ng-template let-row="row"
+        <column [title]="lex.noun('Entrega', true) + ' esperadas'" [template]="reportEntregasEsperadas"><ng-template let-row="row"
                 #reportEntregasEsperadas>{{getReportEntregasEsperadas(row)}}</ng-template></column>
     </report>
     <pagination [rows]="rowsLimit"></pagination>
