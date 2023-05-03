@@ -11,8 +11,8 @@
             </div>
             <separator title="Documento"></separator>
             <div class="row">
-                <input-button label="Número Processo" [size]="4" #procEntregue controlName="numero_processo" [control]="form!.controls.numero_processo" [disabled]="!gb.isEmbedded || form!.controls.numero_documento.value?.length ? 'true' : undefined" (buttonClick)="onNumeroProcessoClick($event)" labelInfo="Número do processo, com a formatação de origem"></input-button>
-                <input-search label="Tipo Processo" [size]="8" #tipoProcesso controlName="tipo_processo_id" disabled [dao]="tipoProcessoDao"></input-search>
+                <input-button [label]="'Número ' + lex.noun('Processo')" [size]="4" #procEntregue controlName="numero_processo" [control]="form!.controls.numero_processo" [disabled]="!gb.isEmbedded || form!.controls.numero_documento.value?.length ? 'true' : undefined" (buttonClick)="onNumeroProcessoClick($event)" labelInfo="Número do processo, com a formatação de origem"></input-button>
+                <input-search [label]="'Tipo ' + lex.noun('Processo')" [size]="8" #tipoProcesso controlName="tipo_processo_id" disabled [dao]="tipoProcessoDao"></input-search>
             </div>
             <div class="row">
                 <input-button label="Número doc. entregue" [size]="4" #docEntregue controlName="numero_documento" [control]="form!.controls.numero_documento" [disabled]="!gb.isEmbedded ? 'true' : undefined" (buttonClick)="onNumeroDocumentoClick($event)" labelInfo="Numero do documento de requisição, caso seja o Sei é o numero Sei"></input-button>

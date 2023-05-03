@@ -7,14 +7,14 @@
     </toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="6" label="Nome" controlName="nome" [control]="filter!.controls.nome" placeholder="Nome do plano de entregas"></input-text>
+            <input-text [size]="6" label="Nome" controlName="nome" [control]="filter!.controls.nome" [placeholder]="'Nome do '+lex.noun('plano de entrega')"></input-text>
             <input-search #unidade [size]="6" controlName="unidade_id" [dao]="unidadeDao"></input-search>
         </div>
         <div class="row">
             <input-search #planejamento [size]="4" controlName="planejamento_id" [dao]="planejamentoDao" ></input-search>
             <input-search #cadeiaValor [size]="4" controlName="cadeia_valor_id" [dao]="cadeiaValorDao"></input-search>
-            <input-datetime [size]="2" date label="Início" controlName="inicio" [control]="filter!.controls.inicio" labelInfo="Data de início do plano do entregas"></input-datetime>
-            <input-datetime [size]="2" date label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Data do fim do plano de entregas"></input-datetime>
+            <input-datetime [size]="2" date label="Início" controlName="inicio" [control]="filter!.controls.inicio" [labelInfo]="'Data de início do '+ lex.noun('plano de entrega')"></input-datetime>
+            <input-datetime [size]="2" date label="Fim" controlName="fim" [control]="filter!.controls.fim" [labelInfo]="'Data do fim do '+ lex.noun('plano de entrega')"></input-datetime>
         </div>
     </filter>
     <columns>

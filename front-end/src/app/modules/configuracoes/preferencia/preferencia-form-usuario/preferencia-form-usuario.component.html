@@ -29,11 +29,11 @@
                 </div>
                 <div class="col-md-6">
                     <separator transparent title="Tipos de notificação"></separator>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar distribuição da demanda" controlName="notifica_demanda_distribuicao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar conclusão da demanda" controlName="notifica_demanda_conclusao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar avaliação da demanda" controlName="notifica_demanda_avaliacao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar modificação da demanda" controlName="notifica_demanda_modificacao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar comentário da demanda" controlName="notifica_demanda_comentario"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar distribuição da ' + lex.noun('demanda')" controlName="notifica_demanda_distribuicao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar conclusão da '+ lex.noun('demanda')" controlName="notifica_demanda_conclusao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar avaliação da '+ lex.noun('demanda')" controlName="notifica_demanda_avaliacao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar modificação da '+ lex.noun('demanda')" controlName="notifica_demanda_modificacao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar comentário da '+ lex.noun('demanda')" controlName="notifica_demanda_comentario"></input-switch>
                 </div>
             </div>
         </separator>

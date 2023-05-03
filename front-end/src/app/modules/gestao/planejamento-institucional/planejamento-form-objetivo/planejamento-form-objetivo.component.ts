@@ -52,7 +52,7 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
     let result = null;
 
     if(this.isPlanejamentoUNEX() && !this.form?.controls.objetivo_superior_id.value){
-      result = "Quando o Planejamento é de uma Unidade Executora é obrigatório associar cada objetivo a um objetivo do Planejamento Institucional superior!";
+      result = "'Quando o Planejamento é de uma Unidade Executora é obrigatório associar cada objetivo a um objetivo do '+lex.noun('Planejamento Institucional)+ 'superior!'";
     }
 
     return result;

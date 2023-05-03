@@ -2,8 +2,8 @@
     <div>
         <div class="row">
             <input-text [size]="6" label="Nome " icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome"></input-text>
-            <input-datetime date [size]="3" label="Início" icon="bi bi-calendar-date" controlName="inicio" [control]="form!.controls.inicio" labelInfo="Início do Plano de Entregas"></input-datetime>
-            <input-datetime date [size]="3" label="Fim" icon="bi bi-calendar-date" controlName="fim" [control]="form!.controls.fim" labelInfo="Fim do Plano de Entregas"></input-datetime>
+            <input-datetime date [size]="3" label="Início" icon="bi bi-calendar-date" controlName="inicio" [control]="form!.controls.inicio" [labelInfo]="'Início do ' +lex.noun('plano de entrega')"></input-datetime>
+            <input-datetime date [size]="3" label="Fim" icon="bi bi-calendar-date" controlName="fim" [control]="form!.controls.fim" [labelInfo]="'Fim do '+lex.noun('plano de entrega')"></input-datetime>
         </div>
         <div  class="row">
             <input-search [size]="6" controlName="planejamento_id" label="Selecione o Planejamento da Unidade Instituidora vinculado" [dao]="planejamentoInstitucionalDao" ></input-search>

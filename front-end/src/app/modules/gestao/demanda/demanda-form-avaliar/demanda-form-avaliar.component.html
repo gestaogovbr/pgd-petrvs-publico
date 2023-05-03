@@ -26,7 +26,7 @@
             <input-datetime noIcon [size]="3" label="Data de inicio" disabled controlName="data_inicio" [control]="form!.controls.data_inicio" labelInfo="Data de inicio"></input-datetime>
             <input-timer label="Tempo despendido" [size]="3" disabled controlName="tempo_despendido" [control]="form!.controls.tempo_despendido" labelInfo="Tempo despendido na atividade (considerando fins de semana, feriados e afastamentos)"></input-timer>
             <input-datetime noIcon [size]="3" label="Data de entrega" disabled #entrega controlName="data_entrega" [control]="form!.controls.data_entrega" labelInfo="Data e hora da entrega"></input-datetime>
-            <input-text numbers label="Produtividade" sufix="%" [stepValue]="0.01" [size]="3" disabled controlName="produtividade" [control]="form!.controls.produtividade" labelInfo="Diferença entre o tempo pactuado e o despendido (proporcional, em porcentagem)"></input-text>
+            <input-text numbers label="Produtividade" sufix="%" [stepValue]="0.01" [size]="3" disabled controlName="produtividade" [control]="form!.controls.produtividade" [labelInfo]="'Diferença entre o '+ lex.noun('tempo pactuado')+ ' e o despendido (proporcional, em porcentagem)'"></input-text>
         </div>
     </ng-template>
     <separator [title]="lex.noun('Entrega', true)" collapse [collapsed]="!entity?.entregas?.length">

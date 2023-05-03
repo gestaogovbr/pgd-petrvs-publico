@@ -9,7 +9,7 @@
     </toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="6" label="Usuário" controlName="usuario" [control]="filter!.controls.usuario" placeholder="Usuário"></input-text>
+            <input-text [size]="6" [label]="lex.noun('Usuário')" controlName="usuario" [control]="filter!.controls.usuario" placeholder="Usuário"></input-text>
             <input-search [size]="6" controlName="unidade_id" [dao]="unidadeDao"></input-search>
         </div>
         <div class="row">

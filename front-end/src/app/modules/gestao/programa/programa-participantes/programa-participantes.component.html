@@ -7,7 +7,7 @@
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="6" label="Nome" controlName="nome" [control]="filter!.controls.nome" placeholder="Nome do usuário..."></input-text>
+            <input-text [size]="6" label="Nome" controlName="nome" [control]="filter!.controls.nome" [placeholder]="'Nome do '+ lex.noun('usuario')+'...'"></input-text>
             <input-search [size]="6" #unidade controlName="unidade_id"  [dao]="unidadeDao" ></input-search>
         </div>
     </filter>
