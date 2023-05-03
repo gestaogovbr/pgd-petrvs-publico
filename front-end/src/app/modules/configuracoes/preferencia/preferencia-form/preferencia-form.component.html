@@ -1,6 +1,6 @@
 <editable-form [form]="form!" [forceInvalid]="forceInvalid" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
     <tabs display right>
-        <tab key="USUARIO" [label]="lex.noun('Usuario')">
+        <tab key="USUARIO" [label]="lex.noun('Usuário')">
             <preferencia-form-usuario #usuario panel [usuarioId]="auth.usuario!.id"></preferencia-form-usuario>
         </tab>
         <tab key="PETRVS" label="Petrvs">

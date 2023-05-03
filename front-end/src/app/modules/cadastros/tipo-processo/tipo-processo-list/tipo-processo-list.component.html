@@ -5,7 +5,7 @@
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="12" label="Nome do tipo do documento" controlName="nome" [control]="filter!.controls.nome" placeholder="Nome do tipo do Documento"></input-text>
+            <input-text [size]="12" [label]="'Nome ' + lex.noun('tipo de documento',false,true)" controlName="nome" placeholder="Nome..."></input-text>
         </div>
     </filter>
     <columns>

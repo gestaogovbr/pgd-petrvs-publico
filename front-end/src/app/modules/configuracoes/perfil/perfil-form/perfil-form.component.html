@@ -3,14 +3,14 @@
     <tabs display right>
         <tab key="PRINCIPAL" label="Principal">
             <div class="row">
-                <input-text [size]="10" label="Nome" controlName="nome" [control]="form!.controls.nome"></input-text>
-                <input-text numbers [size]="2" label="Nível" controlName="nivel" [control]="form!.controls.nivel"></input-text>
+                <input-text [size]="10" label="Nome" controlName="nome"></input-text>
+                <input-text numbers [size]="2" label="Nível" controlName="nivel"></input-text>
             </div>
             <div class="row">
-                <input-text [size]="12" label="Descrição" controlName="descricao" [control]="form!.controls.descricao"></input-text>
+                <input-text [size]="12" label="Descrição" controlName="descricao"></input-text>
             </div>
         </tab>
-        <tab key="CAPACIDADES" *ngIf="auth.hasPermissionTo('MOD_TIPO_CAP_CONS')" label="Capacidades">
+        <tab key="CAPACIDADES" *ngIf="auth.hasPermissionTo('MOD_TIPO_CAP_CONS')" [label]="lex.noun('Capacidade',true)">
             <grid [control]="form!.controls.capacidades" [scrollable]="true">
                 <columns>
                     <column title="Código" [template]="columnCodCapacidade">
@@ -18,7 +18,7 @@
                             <span> {{row.tipo_capacidade.codigo}}</span>
                         </ng-template>
                     </column>
-                    <column title="Capacidade" [template]="columnTipoCapacidade">
+                    <column [title]="lex.noun('Capacidade')" [template]="columnTipoCapacidade">
                         <ng-template let-row="row" #columnTipoCapacidade>
                             <span> {{row.tipo_capacidade.descricao}}</span>
                         </ng-template>
