@@ -14,7 +14,7 @@
     transform: scaleX(-1) scaleY(-1);
     white-space: normal;
     height: min-content;
-    text-align: center;    
+    text-align: center;
     /*transform: rotate(-90deg);
     width: 250px;
     vertical-align: middle;
@@ -70,4 +70,10 @@
 
 .dndDraggingSource {
     display: none;
+}
+
+.acao-planos {
+    .dropdown-toggle::after {
+        display: none;
+    }
 }
