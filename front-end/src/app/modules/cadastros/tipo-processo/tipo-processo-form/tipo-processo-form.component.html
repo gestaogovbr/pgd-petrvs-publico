@@ -8,7 +8,7 @@
         <input-multiselect label="Etiquetas" controlName="etiquetas" [size]="8" [control]="form!.controls.etiquetas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
             <input-text [size]="5" label="Texto" icon="bi bi-textarea-t" controlName="etiqueta_texto" [control]="form!.controls.etiqueta_texto"></input-text>
             <input-select [size]="3" label="Ícone" icon="fas fa-sign-out-alt" controlName="etiqueta_icone" liveSearch [control]="form!.controls.etiqueta_icone" [items]="lookup.ICONES"></input-select>
-            <input-color [size]="4" label="Cor" icon="bi bi-palette" controlName="etiqueta_cor" [control]="form!.controls.etiqueta_cor"></input-color>
+            <input-color [size]="4" label="Cor" controlName="etiqueta_cor" [control]="form!.controls.etiqueta_cor"></input-color>
         </input-multiselect>
         <input-multiselect label="Checklists" controlName="checklist" [size]="4" [control]="form!.controls.checklist" [addItemHandle]="addItemHandleChecklist.bind(this)">
             <input-text [size]="12" controlName="checklist_texto" [control]="form!.controls.checklist_texto"></input-text>
