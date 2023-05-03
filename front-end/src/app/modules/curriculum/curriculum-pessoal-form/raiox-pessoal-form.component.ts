@@ -8,8 +8,10 @@ import { CursoDaoService } from 'src/app/dao/curso-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Cidade } from 'src/app/models/cidade.model';
 import { Curso } from 'src/app/models/curso.model';
+import { AreaConhecimento } from 'src/app/models/area-conhecimento.model'
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupService, LookupItem } from 'src/app/services/lookup.service';
+import { AreaConhecimentoDaoService } from 'src/app/dao/area-conhecimento-dao.service';
 
 
 @Component({
@@ -33,12 +35,15 @@ export class RaioxPessoalFormComponent extends PageFormBase<Cidade, CidadeDaoSer
   public cursos: LookupItem[] = [];
 
   public cidadeDao: CidadeDaoService;
-  //public cursoDao: CursoDaoService;
+  public cursoDao?: CursoDaoService;
+  public areaDao?: AreaConhecimentoDaoService;
 
   constructor(public injector: Injector, injectorCurso:Injector) {
     super(injector, Cidade, CidadeDaoService);
-    //super(injectorCurso,Curso, CursoDaoService)
+    //super(injector,Curso, CursoDaoService)
     this.cidadeDao = injector.get<CidadeDaoService>(CidadeDaoService);
+    
+    console.log(this.areaDao)
     this.form = this.fh.FormBuilder({
       apresentese: { default: "" },
       estados: { default: "" },

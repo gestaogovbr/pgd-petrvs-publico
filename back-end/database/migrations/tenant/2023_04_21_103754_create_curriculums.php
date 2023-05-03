@@ -19,7 +19,7 @@ class CreateCurriculums extends Migration
             $table->primary('id');
             $table->timestamps();
             // Campos:
-            $table->longText('apresentação')->comment("Nome da área da graduação");
+            $table->longText('apresentacao')->comment("Nome da área da graduação");
             $table->string('telefone',64)->comment("Nome da área da graduação");
             $table->json('idiomas')->nullable()->comment("Nome da área da graduação");
             $table->tinyInteger('ativo')->default(1)->comment("Curriculum ativa ou inativa");

@@ -1,6 +1,8 @@
 import { Base } from './base.model';
+import { AreaConhecimento } from './area-conhecimento.model';
 
 export class Curso extends Base {
+    public area?: AreaConhecimento;
     public nome_curso: string = ""; //Nome do curso
     public titulo: string = ""; //Graduação, pós, mestrado, doc ou posdoc
     public ativo: number = 1; //Curso esta ativo ou não
