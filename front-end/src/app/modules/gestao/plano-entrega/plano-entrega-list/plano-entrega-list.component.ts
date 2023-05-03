@@ -102,11 +102,9 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     const BOTAO_EXCLUIR = { label: "Excluir Plano", icon: "bi bi-trash", onClick: this.delete.bind(this) };
     //const BOTAO_ENTREGAS = { hint: "Entregas", icon: "bi bi-pen", onClick: this.editarEntregas.bind(this) };
     const BOTAO_HOMOLOGAR = { label: "Homologar", icon: "bi bi-file-earmark-check", onClick: this.homologar.bind(this) };
-    const BOTAO_PONTOS_CONTROLE = { label: "Pontos de Controle", icon: "bi bi-file-earmark-check", onClick: ((row: PlanoEntrega) => this.go.navigate({ route: ['gestao', 'plano-entrega', row.id, 'ponto-controle'] })).bind(this) };
     if (this.auth.hasPermissionTo("MOD_PENT_CONS")) result.push(BOTAO_INFORMACOES);
     if (this.auth.hasPermissionTo('MOD_PENT_EDT')) result.push(BOTAO_ALTERAR);
     if (this.auth.hasPermissionTo("MOD_PENT_EXCL")) result.push(BOTAO_EXCLUIR);
-    if (this.auth.hasPermissionTo("MOD_PENT_PCTR_CONS")) result.push(BOTAO_PONTOS_CONTROLE);
     if (this.dao?.needHomologate(planoEntrega)) result.push(BOTAO_HOMOLOGAR);
     return result;
   }
@@ -115,9 +113,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     let result: ToolbarButton[] = [];
     let planoEntrega: PlanoEntrega = row as PlanoEntrega;
     const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: this.consult.bind(this) };
-    const BOTAO_PONTOS_CONTROLE = { label: "Pontos de Controle", icon: "bi bi-file-earmark-check", onClick: ((row: PlanoEntrega) => this.go.navigate({ route: ['gestao', 'plano-entrega', row.id, 'ponto-controle'] })).bind(this) };
-    if (this.auth.hasPermissionTo('MOD_PENT_PCTR_CONS')) result.push(BOTAO_PONTOS_CONTROLE);
-    else if (this.auth.hasPermissionTo("MOD_PENT_CONS")) result.push(BOTAO_INFORMACOES);
+    if (this.auth.hasPermissionTo("MOD_PENT_CONS")) result.push(BOTAO_INFORMACOES);
     return result;
   }
 

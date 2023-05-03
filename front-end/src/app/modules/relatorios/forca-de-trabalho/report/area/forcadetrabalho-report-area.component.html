@@ -19,10 +19,10 @@
           <td>Marco temporal para as informações/estatísticas constantes do presente relatório.</td>
         </tr>
         <tr>
-          <td>Unidade Principal</td><td colspan="2">{{ (x.dadosUnidade.nome + ' (' + x.dadosUnidade.sigla + ') ' || '').toUpperCase() }}</td>
+          <td>{{ lex.noun('Unidade') + ' Principal' }}</td><td colspan="2">{{ (x.dadosUnidade.nome + ' (' + x.dadosUnidade.sigla + ') ' || '').toUpperCase() }}</td>
         </tr>
         <tr>
-          <td>Programa</td><td colspan="2">{{ x.dadosArea.nomePrograma.toUpperCase() }}</td>
+          <td>{{ lex.noun('Programa') }}</td><td colspan="2">{{ x.dadosArea.nomePrograma.toUpperCase() }}</td>
         </tr>
       </tbody>
     </table>
@@ -63,25 +63,25 @@
 os Planos de Trabalho associados ao Programa escolhido, e dentro da vigência.</td>
       </tr>
       <tr>
-        <td colspan="2">Programa</td><td colspan="3">{{ x.dadosArea.nomePrograma }}</td>
+        <td colspan="2">{{ lex.noun('Programa') }}</td><td colspan="3">{{ x.dadosArea.nomePrograma }}</td>
       </tr>
       <tr *ngIf="x.dadosArea.normativa.length" class="text-center">
-        <td colspan="5"><strong>PROGRAMA DE GESTÃO. Normativa: {{ x.dadosArea.normativa }}</strong></td>
+        <td colspan="5"><strong>{{ lex.noun('PROGRAMA DE GESTÃO') + '. Normativa: ' + x.dadosArea.normativa }}</strong></td>
       </tr>
       <tr>
         <td class="text-center">A</td>
-        <td>Qde. de Planos do Programa</td>
+        <td>{{ 'Qde. de Planos' + lex.noun('Programa', false, true) }}</td>
         <td class="text-center">{{ x.dadosArea.qdePlanosPrograma }}</td>
         <td class="text-center">-</td>
         <td>
           <span>
-            <small class="micro-text fw-ligh">Quantidade de Planos de Trabalho vigentes, em toda a Área.</small>
+            <small class="micro-text fw-ligh">{{ 'Quantidade de ' + lex.noun('Plano de Trabalho',true) + ' vigentes, em toda a Área.' }}</small>
           </span>
         </td>
       </tr>
       <tr *ngIf="x.dadosArea.qdePlanosPrograma == 0">
         <td style="padding:8px;" colspan="5">
-          <h5 style="text-align:center;">Esta Área não possui Planos de Trabalho vigentes, associados ao Programa!</h5>
+          <h5 style="text-align:center;">{{ 'Esta Área não possui ' + lex.noun('Plano de Trabalho',true) + ' vigentes, associados ao ' + lex.noun('Programa') + '!' }}</h5>
         </td>
       </tr>
       <tr *ngIf="x.dadosArea.qdePlanosPrograma > 0">
@@ -91,7 +91,7 @@ os Planos de Trabalho associados ao Programa escolhido, e dentro da vigência.</
         <td class="text-center">-</td>
         <td>
           <span>
-            <small class="micro-text fw-ligh">Soma das horas úteis totais de todos os Planos de Trabalho associados à Área. É a base para o cálculo de todos os percentuais.</small>
+            <small class="micro-text fw-ligh">{{ 'Soma das horas úteis totais de todos os ' + lex.noun('Plano de Trabalho',true) + ' associados à Área. É a base para o cálculo de todos os percentuais.' }}</small>
           </span>
         </td>
       </tr>
@@ -102,7 +102,7 @@ os Planos de Trabalho associados ao Programa escolhido, e dentro da vigência.</
         <td class="text-center">{{ x.dadosArea.percentualPlanoDecorrido}} %</td>
         <td>
           <span>
-            <small class="micro-text fw-ligh">{{ x.dadosArea.horasUteisDecorridas == -1 ? 'Nenhum dos Planos de Trabalho da área iniciou a vigência!' : (x.dadosArea.horasUteisDecorridas == -2 ? 'Todos os Planos de Trabalho da Área já encerraram suas vigências!' : 'Soma das horas úteis decorridas de todos os Planos de Trabalho associados à Área.') }}</small>
+            <small class="micro-text fw-ligh">{{ x.dadosArea.horasUteisDecorridas == -1 ? 'Nenhum ' + lex.noun('Plano de Trabalho',true,true) + ' da área iniciou a vigência!' : (x.dadosArea.horasUteisDecorridas == -2 ? 'Todos os ' + lex.noun('Plano de Trabalho',true) + ' da Área já encerraram suas vigências!' : 'Soma das horas úteis decorridas de todos os ' + lex.noun('Plano de Trabalho',true) + ' associados à Área.') }}</small>
             <br><small class="micro-text fw-ligh">O percentual representa a relação entre esta soma e a soma das horas úteis totais da Área: C(%) = C / B.</small>
           </span>
         </td>
@@ -114,7 +114,7 @@ os Planos de Trabalho associados ao Programa escolhido, e dentro da vigência.</
         <td class="text-center">{{ x.dadosArea.percentualHorasNaoIniciadas }} %</td>
         <td>
           <span>
-            <small class="micro-text fw-ligh">Soma dos tempos pactuados de todas as demandas ainda não iniciadas.</small>
+            <small class="micro-text fw-ligh">{{ 'Soma ' + lex.noun('tempo pactuado',true,true) + ' de todas as ' + lex.noun('demanda',true) + ' ainda não iniciadas.' }}</small>
             <br><small class="micro-text fw-ligh">O percentual representa a relação entre esta soma e a soma das horas úteis totais da Área: D(%) = D / B.</small>
           </span>
         </td>
@@ -126,7 +126,7 @@ os Planos de Trabalho associados ao Programa escolhido, e dentro da vigência.</
         <td class="text-center">{{ x.dadosArea.percentualHorasEmAndamento }} %</td>
         <td>
           <span>
-            <small class="micro-text fw-ligh">Soma dos tempos pactuados de todas as demandas já iniciadas, mas ainda não concluídas.</small>
+            <small class="micro-text fw-ligh">{{ 'Soma ' + lex.noun('tempo pactuado',true,true) + ' de todas as ' + lex.noun('demanda',true) + ' já iniciadas, mas ainda não concluídas.' }}</small>
             <br><small class="micro-text fw-ligh">O percentual representa a relação entre esta soma e a soma das horas úteis totais da Área: E(%) = E / B.</small>
           </span>
         </td>
@@ -138,7 +138,7 @@ os Planos de Trabalho associados ao Programa escolhido, e dentro da vigência.</
         <td class="text-center">{{ x.dadosArea.percentualHorasConcluidas }} %</td>
         <td>
           <span>
-            <small class="micro-text fw-ligh">Soma dos tempos pactuados de todas as demandas já concluídas, mas ainda não avaliadas.</small>
+            <small class="micro-text fw-ligh">{{ 'Soma ' + lex.noun('tempo pactuado',true,true) + ' de todas as ' + lex.noun('demanda',true) + ' já concluídas, mas ainda não avaliadas.' }}</small>
             <br><small class="micro-text fw-ligh">O percentual representa a relação entre esta soma e a soma das horas úteis totais da Área: F(%) = F / B.</small>
           </span>
         </td>
@@ -150,7 +150,7 @@ os Planos de Trabalho associados ao Programa escolhido, e dentro da vigência.</
         <td class="text-center">{{ x.dadosArea.percentualHorasAvaliadas }} %</td>
         <td>
           <span>
-            <small class="micro-text fw-ligh">Soma dos tempos pactuados de todas as demandas avaliadas.</small>
+            <small class="micro-text fw-ligh">{{ 'Soma ' + lex.noun('tempo pactuado',true,true) + ' de todas as ' + lex.noun('demanda',true) + ' avaliadas.' }}</small>
             <br><small class="micro-text fw-ligh">O percentual representa a relação entre esta soma e a soma das horas úteis totais da Área: G(%) = G / B.</small>
           </span>
         </td>
@@ -162,29 +162,29 @@ os Planos de Trabalho associados ao Programa escolhido, e dentro da vigência.</
         <td class="text-center">{{ x.dadosArea.percentualHorasTotaisAlocadas }} %</td>
         <td>
           <span>
-            <small class="micro-text fw-ligh">Soma dos tempos pactuados de todas as demandas, independente de seus status: H = D + E + F + G.</small>
+            <small class="micro-text fw-ligh">{{ 'Soma ' + lex.noun('tempo pactuado',true,true) + ' de todas as ' + lex.noun('demanda',true) + ', independente de seus status: H = D + E + F + G.' }}</small>
             <br><small class="micro-text fw-ligh">O percentual representa a relação entre esta soma e a soma das horas úteis totais da Área: H(%) = H / B.</small>
           </span>
         </td>
       </tr>
       <tr *ngIf="x.dadosArea.qdePlanosPrograma > 0">
         <td class="text-center">I</td>
-        <td>Nota média das avaliações</td>
+        <td>{{ 'Nota média ' + lex.noun('avaliação',true,true) }}</td>
         <td class="text-center">{{ x.dadosArea.qdeDemandasAvaliadas > 0 ? x.dadosArea.mediaAvaliacoes.toFixed(2) : '' }}</td>
         <td class="text-center">-</td>
         <td>
-          <span *ngIf="x.dadosArea.qdeDemandasAvaliadas > 0"><small class="micro-text fw-ligh">Média das notas de todas as demandas avaliadas.</small></span>
-          <span *ngIf="x.dadosArea.qdeDemandasAvaliadas == 0"><small class="micro-text fw-ligh">Esta Área não possui demandas avaliadas.</small></span>
+          <span *ngIf="x.dadosArea.qdeDemandasAvaliadas > 0"><small class="micro-text fw-ligh">{{ 'Média das notas de todas as ' + lex.noun('demanda',true) + ' avaliadas.' }}</small></span>
+          <span *ngIf="x.dadosArea.qdeDemandasAvaliadas == 0"><small class="micro-text fw-ligh">{{ 'Esta Área não possui ' + lex.noun('demanda',true) + ' avaliadas.' }}</small></span>
         </td>
       </tr>
       <tr *ngIf="x.dadosArea.qdePlanosPrograma > 0">
         <td class="text-center">J</td>
-        <td>Nr. de Servidores do Programa</td>
+        <td>{{ 'Nr. de Servidores ' + lex.noun('Programa',false,true) }}</td>
         <td class="text-center">{{ x.dadosArea.nrServidoresPrograma }}</td>
         <td class="text-center">-</td>
         <td>
           <span>
-            <small class="micro-text fw-ligh">Quantidade de servidores vinculados aos Planos de Trabalho vigentes do Programa escolhido, em toda a Área, excluídas as possíveis repetições.</small>
+            <small class="micro-text fw-ligh">{{ 'Quantidade de servidores vinculados aos ' + lex.noun('Plano de Trabalho') + ' vigentes ' + lex.noun('Programa',false,true) + ' escolhido, em toda a Área, excluídas as possíveis repetições.' }}</small>
           </span>
         </td>
       </tr>

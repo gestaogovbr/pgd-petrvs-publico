@@ -19,7 +19,7 @@
                 <badge color="light" [icon]="lookup.getIcon(lookup.MATERIAL_SERVICO_TIPO, row.tipo)" [label]="lookup.getValue(lookup.MATERIAL_SERVICO_TIPO, row.tipo)"></badge>
             </ng-template>
         </column>
-        <column title="Tipo" [template]="columnCodigoReferencia">
+        <column title="Cód./Ref." [template]="columnCodigoReferencia">
             <ng-template let-row="row" #columnCodigoReferencia>
                 <badge *ngIf="row.codigo?.length" color="light" icon="bi bi-upc-scan" [label]="row.codigo" hint="Código"></badge>
                 <badge *ngIf="row.referencia?.length" color="light" icon="bi bi-qr-code" [label]="row.referencia" hint="Referência"></badge>

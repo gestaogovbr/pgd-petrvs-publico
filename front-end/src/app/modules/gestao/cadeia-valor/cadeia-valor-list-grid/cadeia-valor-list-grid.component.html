@@ -5,8 +5,8 @@
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="6" label="Nome Cadeia de Valor" controlName="nome" [control]="filter!.controls.nome" placeholder="Nome"></input-text>
-            <input-datetime [size]="3" date label="Início" controlName="inicio" [control]="filter!.controls.inicio" labelInfo="Data de início da Cadeia de Valor"></input-datetime>
+            <input-datetime date [size]="6" label="Início" icon="bi bi-calendar-date" controlName="inicio" [control]="filter!.controls.inicio" [labelInfo]="'Início da ' + lex.noun('cadeia de valor')"></input-datetime>
+            <input-datetime date [size]="3" label="Fim" icon="bi bi-calendar-date" controlName="fim" [control]="filter!.controls.fim" [labelInfo]="'Fim da ' + lex.noun('cadeia de valor')"></input-datetime>
             <input-datetime [size]="3" date label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Data do fim do plano da Cadeia de Valor"></input-datetime>
         </div>
     </filter>

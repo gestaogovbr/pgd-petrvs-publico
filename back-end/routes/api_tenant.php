@@ -27,7 +27,6 @@ use App\Http\Controllers\PlanejamentoObjetivoController;
 use App\Http\Controllers\PlanoController;
 use App\Http\Controllers\PlanoEntregaController;
 use App\Http\Controllers\PlanoEntregaEntregaController;
-use App\Http\Controllers\PlanoEntregaPontoControleController;
 use App\Http\Controllers\PetrvsController;
 use App\Http\Controllers\DocumentoController;
 use App\Http\Controllers\TipoDocumentoController;
@@ -50,6 +49,8 @@ use App\Http\Controllers\DemandaEntregaController;
 use App\Http\Controllers\ProjetoController;
 use App\Http\Controllers\RotinaDiariaController;
 use App\Http\Controllers\TemplateController;
+use App\Http\Controllers\AreaGraduacaoController;
+
 use App\Http\Controllers\UnidadeIntegranteController;
 
 /*
@@ -116,7 +117,7 @@ Route::middleware('auth:sanctum')->prefix('Error')->group(function () {
 Route::middleware('auth:sanctum')->prefix('Traffic')->group(function () {
 });
 Route::middleware('auth:sanctum')->post('/Petrvs/showTables', [PetrvsController::class, 'showTables']);
-Route::middleware(['auth:sanctum'])->prefix('Integracao')->group(function () { 
+Route::middleware(['auth:sanctum'])->prefix('Integracao')->group(function () {
     Route::post('store', [IntegracaoController::class, 'sincronizarPetrvs']);
     Route::post('query', [IntegracaoController::class, 'query']);
     Route::post('destroy', [IntegracaoController::class, 'destroy']);
@@ -207,7 +208,6 @@ Route::middleware(['auth:sanctum'])->prefix('Adesao')->group(function () {
 
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () { defaultRoutes(PlanoEntregaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntrega')->group(function () { defaultRoutes(PlanoEntregaEntregaController::class); });
-Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaPontoControle')->group(function () { defaultRoutes(PlanoEntregaPontoControleController::class); });
 
 Route::middleware(['auth:sanctum'])->prefix('Projeto')->group(function () { defaultRoutes(ProjetoController::class); });
 
@@ -237,3 +237,6 @@ Route::middleware(['auth:sanctum'])->prefix('UnidadeIntegrante')->group(function
     Route::post('save-integrante', [UnidadeIntegranteController::class, 'saveIntegrante']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Capacidade')->group(function () { defaultRoutes(CapacidadeController::class); });
+
+/* Modulos: RAIO X */
+Route::middleware(['auth:sanctum'])->prefix('AreaGraduacao')->group(function () { defaultRoutes(AreaGraduacaoController::class); });

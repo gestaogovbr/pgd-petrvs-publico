@@ -2,23 +2,23 @@
     <tabs #tabs display right [hidden]="isTermos ? 'true' : undefined" [title]="!isModal ? title : ''">
         <tab key="DADOS" label="Dados">
             <div class="row">
-                <input-search #unidade [size]="6" label="Unidade" icon="fab fa-unity" controlName="unidade_id" [control]="form!.controls.unidade_id" [join]="['entidade']" [dao]="unidadeDao" (select)="onUnidadeSelect($event)" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
-                <input-search #usuario [size]="6" label="Usuário" icon="bi bi-person" controlName="usuario_id" [control]="form!.controls.usuario_id" [dao]="usuarioDao" [join]="['afastamentos']" (select)="onUsuarioSelect($event)" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
+                <input-search #unidade [size]="6"   controlName="unidade_id" [join]="['entidade']" [dao]="unidadeDao" (select)="onUnidadeSelect($event)" ></input-search>
+                <input-search #usuario [size]="6"  controlName="usuario_id" [dao]="usuarioDao" [join]="['afastamentos']" (select)="onUsuarioSelect($event)"></input-search>
             </div>
             <div class="row">
-                <input-search #programa [size]="6" label="Programa" icon="bi bi-layout-text-window-reverse" controlName="programa_id" [control]="form!.controls.programa_id" [join]="['template_tcr']" [dao]="programaDao" (select)="onProgramaSelect($event)" [selectRoute]="{route: ['gestao', 'programa']}"></input-search>
-                <input-search #planoEntrega [size]="6" label="Plano de Entrega" icon="bi bi-list-check" controlName="plano_entrega_id" [control]="form!.controls.plano_entrega_id" [join]="['entregas.entrega']" [dao]="planoEntregaDao" (select)="onPlanoEntregaSelect($event)" [selectRoute]="{route: ['gestao', 'plano-entrega']}"></input-search>
+                <input-search #programa [size]="6"  controlName="programa_id"  [join]="['template_tcr']" [dao]="programaDao" (select)="onProgramaSelect($event)"></input-search>
+                <input-search #planoEntrega [size]="6"  controlName="plano_entrega_id" [join]="['entregas.entrega']" [dao]="planoEntregaDao" (select)="onPlanoEntregaSelect($event)" ></input-search>
             </div>
             <div class="row">
-                <input-datetime [size]="3" label="Início" icon="bi bi-calendar-date" controlName="data_inicio_vigencia" [control]="form!.controls.data_inicio_vigencia" (change)="onDataInicioChange($event)" labelInfo="Início da Vigência do Plano de Trabalho"></input-datetime>
-                <input-datetime [size]="3" label="Final" icon="bi bi-calendar-date" controlName="data_fim_vigencia" [control]="form!.controls.data_fim_vigencia" (change)="onDataFimChange($event)" labelInfo="Final da Vigência do Plano de Trabalho"></input-datetime>
-                <input-search #tipoModalidade [size]="6" label="Modalidade" icon="bi bi-cast" controlName="tipo_modalidade_id" [control]="form!.controls.tipo_modalidade_id" [dao]="tipoModalidadeDao" (select)="onTipoModalidadeSelect($event)" [selectRoute]="{route: ['cadastros', 'tipo-modalidade']}"></input-search>
+                <input-datetime [size]="3" label="Início" icon="bi bi-calendar-date" controlName="data_inicio_vigencia" [control]="form!.controls.data_inicio_vigencia" (change)="onDataInicioChange($event)" labelInfo="'Início da Vigência do '+ lex.noun('Plano de trabalho')"></input-datetime>
+                <input-datetime [size]="3" label="Final" icon="bi bi-calendar-date" controlName="data_fim_vigencia" [control]="form!.controls.data_fim_vigencia" (change)="onDataFimChange($event)" labelInfo="'Final da Vigência do ' +lex.noun('Plano de trabalho')"></input-datetime>
+                <input-search #tipoModalidade [size]="6" controlName="tipo_modalidade_id" [dao]="tipoModalidadeDao" (select)="onTipoModalidadeSelect($event)"></input-search>
             </div>
             <div class="row">
                 <input-workload [size]="3" [unit]="formaContagemCargaHoraria" label="Carga Horária" icon="bi bi-hourglass-split" controlName="carga_horaria" [control]="form!.controls.carga_horaria" [unitChange]="onFormaContagemCargaHorariaChange.bind(this)" (change)="onCargaHorariaChenge($event)" labelInfo="Carga horária do usuário (Máx.: diária 24 horas; semana 24*5=240 horas; mensal 24*20=480 horas)"></input-workload>
                 <input-timer onlyHours disabled [size]="3" label="Horas Totais" icon="bi bi-clock" controlName="tempo_total" [control]="form!.controls.tempo_total" labelInfo="Horas úteis de trabalho no período de vigência considerando a carga horária, feriados e fins de semana"></input-timer>
                 <input-timer onlyHours disabled [size]="3" label="Horas Parciais" icon="bi bi-clock" controlName="tempo_proporcional" [control]="form!.controls.tempo_proporcional" labelInfo="Total de horas menos os afastamentos."></input-timer>
-                <input-text numbers [size]="3" label="% Ganho produtividade" icon="bi bi-hourglass-split" controlName="ganho_produtividade" [control]="form!.controls.ganho_produtividade" labelInfo="Percentual de ganho de produtividade (Será descontado do tempo pactuado)"></input-text>
+                <input-text numbers [size]="3" label="% Ganho produtividade" icon="bi bi-hourglass-split" controlName="ganho_produtividade" [control]="form!.controls.ganho_produtividade" [labelInfo]="'Percentual de ganho de produtividade (Será descontado do '+ lex.noun('tempo pactuado')+')'"></input-text>
             </div>
             <separator *ngIf="horasTotais" title="Cálculos das horas totais" collapse>
                 <calendar-efemerides [efemerides]="horasTotais" [partial]="false"></calendar-efemerides>
@@ -32,12 +32,12 @@
             <div clss="row">
                 <grid #gridAtividades [control]="form!.controls.atividades" [form]="formAtividades" [add]="addAtividades.bind(this)" [load]="loadAtividades.bind(this)" [hasDelete]="true" [remove]="removeAtividades.bind(this)" [save]="saveAtividades.bind(this)" editable>
                     <columns>
-                        <column title="Atividade" titleHint="Atividade autorizada para o plano de trabalho" [template]="columnAtividade" [editTemplate]="editAtividade">
+                        <column [title]="lex.noun('Atividade')" [titleHint]="lex.noun('Atividade') + ' autorizada para o ' + lex.noun('Plano de trabalho')" [template]="columnAtividade" [editTemplate]="editAtividade">
                             <ng-template let-row="row" #columnAtividade>
                                 <span> {{row.atividade?.nome || ""}}</span>
                             </ng-template>
                             <ng-template let-row="row" #editAtividade>
-                                <input-search #atividade [size]="12" controlName="atividade_id" [control]="formAtividades!.controls.atividade_id" [dao]="atividadeDao" [selectRoute]="{route: ['gestao', 'atividade']}"></input-search>
+                                <input-search #atividade [size]="12" controlName="atividade_id" [control]="formAtividades!.controls.atividade_id" [dao]="atividadeDao"></input-search>
                             </ng-template>
                         </column>
                         <column type="options"></column>
@@ -45,12 +45,12 @@
                 </grid>
             </div>
         </tab>
-        <tab key="ENTREGAS" label="Entregas">
-            <top-alert type="warning" message="Entregas do plano de entregas da unidade"></top-alert>
+        <tab key="ENTREGAS" [label]="lex.noun('Entrega', true)">
+            <top-alert type="warning" [message]="lex.noun('Entrega', true)+ ' do '+ lex.noun('plano de entrega', true)+ 'da' +lex.noun('unidade')"></top-alert>
             <div clss="row">
                 <grid #gridEntregas [control]="form!.controls.entregas" [form]="formEntregas" [add]="addEntregas.bind(this)" [load]="loadEntregas.bind(this)" [hasDelete]="true" [remove]="removeEntregas.bind(this)" [save]="saveEntregas.bind(this)" editable>
                     <columns>
-                        <column title="Entrega" titleHint="Entrega do plano de entregas da unidade" [template]="columnEntrega" [editTemplate]="editEntrega">
+                        <column [title]="lex.noun('Entrega', true)" titleHint="lex.noun('Entrega')+ ' do '+ lex.noun('plano de entrega')+ 'da' +lex.noun('unidade')" [template]="columnEntrega" [editTemplate]="editEntrega">
                             <ng-template let-row="row" #columnEntrega>
                                 <strong>{{row.entrega?.entrega?.nome || ""}}</strong><br>
                                 <small>{{row.entrega?.descricao}}</small>
@@ -59,7 +59,7 @@
                                 <input-select [size]="12" #entrega controlName="entrega_id" [control]="formEntregas!.controls.entrega_id" [items]="entregas"></input-select>
                             </ng-template>
                         </column>
-                        <column title="Detalhamento" titleHint="Detalhamento da entrega" [template]="columnDetalhamento" [editTemplate]="editDetalhamento">
+                        <column title="Detalhamento" titleHint="'Detalhamento da ' + lex.noun('Entrega')" [template]="columnDetalhamento" [editTemplate]="editDetalhamento">
                             <ng-template let-row="row" #columnDetalhamento>
                                 <span> {{row.nome || ""}}</span>
                             </ng-template>
@@ -73,12 +73,12 @@
             </div>
         </tab>
         <tab *ngIf="checkFilled(['usuario_id', 'unidade_id'])" key="MENSAGENS" label="Texto Complementar">
-            <separator title="Texto complementar da unidade">
-                <input-switch controlName="editar_texto_complementar_unidade" [size]="12" scale="small" labelPosition="right" label="Editar texto complementar na unidade"></input-switch>
+            <separator [title]="'Texto complementar da '+ lex.noun('unidade')">
+                <input-switch controlName="editar_texto_complementar_unidade" [size]="12" scale="small" labelPosition="right" [label]="'Editar texto complementar na '+ lex.noun('unidade')"></input-switch>
                 <input-editor controlName="unidade_texto_complementar" [disabled]="form!.controls.editar_texto_complementar_unidade.value ? undefined : 'true'" [dataset]="planoDataset"></input-editor>
             </separator>
             <separator title="Texto complementar do usuario">
-                <input-switch controlName="editar_texto_complementar_usuario" [size]="12" scale="small" labelPosition="right" label="Editar texto complementar do usuário"></input-switch>
+                <input-switch controlName="editar_texto_complementar_usuario" [size]="12" scale="small" labelPosition="right" [label]="'Editar texto complementar do '+ lex.noun('usuário')"></input-switch>
                 <input-editor controlName="usuario_texto_complementar" [disabled]="form!.controls.editar_texto_complementar_usuario.value ? undefined : 'true'" [dataset]="planoDataset"></input-editor>
             </separator>
         </tab>

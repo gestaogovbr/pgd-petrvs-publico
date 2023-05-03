@@ -22,8 +22,8 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: Planejamento | undefined) { super.entity = value; } get entity(): Planejamento | undefined { return super.entity; }
   @Input() set disabled(value: boolean) { if (this._disabled != value) this._disabled = value; } get disabled(): boolean { return this._disabled; }
+  @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
   @Input() eixos?: EixoTematico[];
-  @Input() entity_id?: string | undefined;
 
   public get items(): PlanejamentoObjetivo[] {
     if (!this.gridControl.value) this.gridControl.setValue(new Planejamento());
@@ -55,6 +55,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
     super.ngOnInit();
     this.entity = this.metadata?.entity || this.entity;
     this.eixos = this.metadata?.eixos || this.eixos;
+    this.sortObjetivos();
     if (!this.eixos) this.eixoDao?.query().getAll().then(eixos => {
       this.eixos = eixos;
     });
@@ -79,28 +80,82 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
     return result;
   }
 
+  public marcador(row: PlanejamentoObjetivo): string {
+    let level = row._metadata?.level || 0;
+    return level < 1 ? "" : (level < 2 ? "• " : (level < 3 ? "- " : "+ "));
+  }
+
   public async addObjetivo() {
     // ************ 
     // se for adicionar um objetivo num grid não persistente é necessário checar se o planejamento é da entidade ou da unidade, pois se
     // se for de uma unidade será obrigatório já ter escolhido o planejamento superior
-    let objetivo = new PlanejamentoObjetivo({ _status: "ADD", planejamento_id: this.entity?.id });
+    let objetivo = new PlanejamentoObjetivo({ 
+      _status: "ADD", 
+      id: this.dao!.generateUuid(),
+      planejamento_id: this.entity?.id
+    });
     this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo'] }, {
-      metadata: { planejamento: this.entity!, objetivo: objetivo },
+      metadata: { 
+        planejamento: this.entity!, 
+        objetivo: objetivo,
+        objetivos: this.objetivosPai(objetivo.id) 
+      },
       modalClose: async (modalResult) => {
-        if (modalResult) { this.isNoPersist ? this.items.push(modalResult) : this.items.push(await this.objetivoDao!.save(modalResult)); };
+        if (modalResult) {
+          try {
+            this.isNoPersist ? this.items.push(modalResult) : this.items.push(await this.objetivoDao!.save(modalResult)); 
+            this.sortObjetivos();
+          } catch (error: any) {
+            this.error(error?.error || error?.message || error);            
+          }
+        };
       }
     });
+  }
+
+  public objetivosPai(filhoId: string) {
+    let items: PlanejamentoObjetivo[] = [];
+    let addItens = (list: PlanejamentoObjetivo[]) => {
+      for(let item of list) {
+        if(item.id != filhoId) {
+          items.push(item);
+          addItens(this.items.filter(x => x.objetivo_pai_id == item.id).sort((a,b) => a.sequencia - b.sequencia));
+        }
+      }
+    }
+    addItens(this.items.filter(x => !x.objetivo_pai_id).sort((a,b) => a.sequencia - b.sequencia));
+    return items;
+  }
+
+  public sortObjetivos() {
+    let items: PlanejamentoObjetivo[] = [];
+    let addItens = (list: PlanejamentoObjetivo[], level: number) => {
+      for(let item of list) {
+        item._metadata = Object.assign(item._metadata || {}, { level });
+        items.push(item);
+        if(item._status != "DELETE") addItens(this.items.filter(x => x.objetivo_pai_id == item.id).sort((a,b) => a.sequencia - b.sequencia), level + 1);
+      }
+    }
+    addItens(this.items.filter(x => !x.objetivo_pai_id).sort((a,b) => a.sequencia - b.sequencia), 0);
+    this.items.length = 0;
+    this.items.push(...items);
+    this.cdRef.detectChanges();
   }
 
   public async editObjetivo(objetivo: PlanejamentoObjetivo) {
     objetivo._status = objetivo._status == "ADD" ? "ADD" : "EDIT";
     let index = this.items.indexOf(objetivo);
     this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo'] }, {
-      metadata: { planejamento: this.entity!, objetivo: objetivo },
+      metadata: { 
+        planejamento: this.entity!, 
+        objetivo: objetivo,
+        objetivos: this.objetivosPai(objetivo.id) 
+      },
       modalClose: async (modalResult) => {
         if (modalResult) {
           if (!this.isNoPersist) await this.objetivoDao?.save(modalResult);
           this.items[index] = modalResult;
+          this.sortObjetivos();
         };
       }
     });
@@ -116,6 +171,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
         await this.objetivoDao!.delete(objetivo);
         this.grid?.items.splice(index, 1);
       };
+      this.sortObjetivos();
       return true;
     } else {
       return false;

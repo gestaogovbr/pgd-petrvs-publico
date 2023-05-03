@@ -6,8 +6,8 @@
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="12" label="Nome do motivo do afastamento" controlName="nome"
-                [control]="filter!.controls.nome" placeholder="Nome do motivo do afastamento"></input-text>
+            <input-text [size]="12" [label]="'Nome ' + lex.noun('motivo de afastamento',false,true)" controlName="nome"
+                [control]="filter!.controls.nome" placeholder="Nome..."></input-text>
         </div>
     </filter>
     <columns>

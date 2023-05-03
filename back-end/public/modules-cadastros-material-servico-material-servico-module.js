@@ -43,27 +43,27 @@ function MaterialServicoListComponent_toolbar_1_Template(rf, ctx) { if (rf & 1) 
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "toolbar");
 } }
 function MaterialServicoListComponent_ng_template_11_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "badge", 17);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "badge", 18);
 } if (rf & 2) {
     const row_r9 = ctx.row;
     const ctx_r2 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("icon", ctx_r2.lookup.getIcon(ctx_r2.lookup.MATERIAL_SERVICO_TIPO, row_r9.tipo))("label", ctx_r2.lookup.getValue(ctx_r2.lookup.MATERIAL_SERVICO_TIPO, row_r9.tipo));
 } }
 function MaterialServicoListComponent_ng_template_14_badge_0_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "badge", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "badge", 21);
 } if (rf & 2) {
     const row_r10 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"]().row;
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("label", row_r10.codigo);
 } }
 function MaterialServicoListComponent_ng_template_14_badge_1_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "badge", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "badge", 22);
 } if (rf & 2) {
     const row_r10 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"]().row;
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("label", row_r10.referencia);
 } }
 function MaterialServicoListComponent_ng_template_14_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](0, MaterialServicoListComponent_ng_template_14_badge_0_Template, 1, 1, "badge", 18);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](1, MaterialServicoListComponent_ng_template_14_badge_1_Template, 1, 1, "badge", 19);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](0, MaterialServicoListComponent_ng_template_14_badge_0_Template, 1, 1, "badge", 19);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](1, MaterialServicoListComponent_ng_template_14_badge_1_Template, 1, 1, "badge", 20);
 } if (rf & 2) {
     const row_r10 = ctx.row;
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", row_r10.codigo == null ? null : row_r10.codigo.length);
@@ -151,7 +151,7 @@ MaterialServicoListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__[
     } if (rf & 2) {
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵloadQuery"]()) && (ctx.grid = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵInheritDefinitionFeature"]], decls: 24, vars: 33, consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Tipo", "itemTodos", "- Todos -", "controlName", "tipo", 3, "size", "valueTodos", "control", "items"], ["label", "C\u00F3digo", "controlName", "codigo", 3, "size", "control"], ["label", "Refer\u00EAncia", "controlName", "referencia", 3, "size", "control"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", 3, "size", "control"], ["title", "Tipo", 3, "template"], ["columnTipo", ""], ["columnCodigoReferencia", ""], ["title", "Descri\u00E7\u00E3o", 3, "template"], ["columnDescricao", ""], ["title", "Unidades", 3, "template"], ["columnUnidade", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"], ["color", "light", 3, "icon", "label"], ["color", "light", "icon", "bi bi-upc-scan", "hint", "C\u00F3digo", 3, "label", 4, "ngIf"], ["color", "light", "icon", "bi bi-qr-code", "hint", "Refer\u00EAncia", 3, "label", 4, "ngIf"], ["color", "light", "icon", "bi bi-upc-scan", "hint", "C\u00F3digo", 3, "label"], ["color", "light", "icon", "bi bi-qr-code", "hint", "Refer\u00EAncia", 3, "label"]], template: function MaterialServicoListComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵInheritDefinitionFeature"]], decls: 24, vars: 33, consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Tipo", "itemTodos", "- Todos -", "controlName", "tipo", 3, "size", "valueTodos", "control", "items"], ["label", "C\u00F3digo", "controlName", "codigo", 3, "size", "control"], ["label", "Refer\u00EAncia", "controlName", "referencia", 3, "size", "control"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", 3, "size", "control"], ["title", "Tipo", 3, "template"], ["columnTipo", ""], ["title", "C\u00F3d./Ref.", 3, "template"], ["columnCodigoReferencia", ""], ["title", "Descri\u00E7\u00E3o", 3, "template"], ["columnDescricao", ""], ["title", "Unidades", 3, "template"], ["columnUnidade", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"], ["color", "light", 3, "icon", "label"], ["color", "light", "icon", "bi bi-upc-scan", "hint", "C\u00F3digo", 3, "label", 4, "ngIf"], ["color", "light", "icon", "bi bi-qr-code", "hint", "Refer\u00EAncia", 3, "label", 4, "ngIf"], ["color", "light", "icon", "bi bi-upc-scan", "hint", "C\u00F3digo", 3, "label"], ["color", "light", "icon", "bi bi-qr-code", "hint", "Refer\u00EAncia", 3, "label"]], template: function MaterialServicoListComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "grid", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("select", function MaterialServicoListComponent_Template_grid_select_0_listener($event) { return ctx.onSelect($event); });
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](1, MaterialServicoListComponent_toolbar_1_Template, 1, 0, "toolbar", 1);
@@ -169,18 +169,18 @@ MaterialServicoListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__[
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](10, "column", 8);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](11, MaterialServicoListComponent_ng_template_11_Template, 1, 2, "ng-template", null, 9, _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](13, "column", 8);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](14, MaterialServicoListComponent_ng_template_14_Template, 2, 2, "ng-template", null, 10, _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](13, "column", 10);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](14, MaterialServicoListComponent_ng_template_14_Template, 2, 2, "ng-template", null, 11, _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](16, "column", 11);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](17, MaterialServicoListComponent_ng_template_17_Template, 2, 1, "ng-template", null, 12, _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](16, "column", 12);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](17, MaterialServicoListComponent_ng_template_17_Template, 2, 1, "ng-template", null, 13, _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](19, "column", 13);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](20, MaterialServicoListComponent_ng_template_20_Template, 2, 1, "ng-template", null, 14, _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](19, "column", 14);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](20, MaterialServicoListComponent_ng_template_20_Template, 2, 1, "ng-template", null, 15, _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](22, "column", 15);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](22, "column", 16);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](23, "pagination", 16);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](23, "pagination", 17);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
     } if (rf & 2) {
         const _r1 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵreference"](12);
@@ -286,7 +286,7 @@ MaterialServicoFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__[
     } if (rf & 2) {
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵInheritDefinitionFeature"]], decls: 8, vars: 10, consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Tipo", "icon", "bi bi-intersect", "controlName", "tipo", 3, "size", "items"], ["label", "C\u00F3digo", "icon", "bi bi-upc-scan", "controlName", "codigo", 3, "size"], ["label", "Refer\u00EAncia", "icon", "bi bi-qr-code", "controlName", "referencia", 3, "size"], ["label", "Descricao", "icon", "bi bi-textarea-t", "controlName", "descricao", 3, "size"], ["label", "Unidade", "icon", "bi bi-rulers", "controlName", "unidade_medida", 3, "size", "items"]], template: function MaterialServicoFormComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵInheritDefinitionFeature"]], decls: 8, vars: 10, consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Tipo", "icon", "bi bi-intersect", "controlName", "tipo", 3, "size", "items"], ["label", "C\u00F3digo", "icon", "bi bi-upc-scan", "controlName", "codigo", 3, "size"], ["label", "Refer\u00EAncia", "icon", "bi bi-qr-code", "controlName", "referencia", 3, "size"], ["label", "Descricao", "controlName", "descricao", 3, "size"], ["label", "Unidade", "icon", "bi bi-rulers", "controlName", "unidade_medida", 3, "size", "items"]], template: function MaterialServicoFormComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "editable-form", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("submit", function MaterialServicoFormComponent_Template_editable_form_submit_0_listener() { return ctx.onSaveData(); })("cancel", function MaterialServicoFormComponent_Template_editable_form_cancel_0_listener() { return ctx.onCancel(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](1, "div", 1);

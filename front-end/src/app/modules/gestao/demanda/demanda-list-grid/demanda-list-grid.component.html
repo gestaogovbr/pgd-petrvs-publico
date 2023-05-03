@@ -8,21 +8,21 @@
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && !queryParams?.filter && filterCollapsed">
         <div class="row">
             <input-switch [size]="1" label="Minhas" controlName="atribuidas_para_mim" [control]="filter!.controls.atribuidas_para_mim" (change)="onAtribuidasParaMimChange($event)"></input-switch>
-            <input-search [size]="5" label="Usuário" #usuario controlName="usuario_id" [control]="filter!.controls.usuario_id" [disabled]="filter!.controls.atribuidas_para_mim.value ? 'true' : undefined" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}"></input-search>
+            <input-search [size]="5" label="Usuário" #usuario controlName="usuario_id"  [disabled]="filter!.controls.atribuidas_para_mim.value ? 'true' : undefined" [dao]="usuarioDao" ></input-search>
             <input-switch [size]="1" label="Atual" controlName="somente_unidade_atual" [control]="filter!.controls.somente_unidade_atual" (change)="onSomenteUnidadeAtualChange($event)" labelInfo="Somente as demandas da unidade selecionada"></input-switch>
-            <input-search [size]="4" label="Unidade" #unidade controlName="unidade_id" [control]="filter!.controls.unidade_id" [disabled]="filter!.controls.somente_unidade_atual.value ? 'true' : undefined" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+            <input-search [size]="4" label="Unidade" #unidade controlName="unidade_id" [disabled]="filter!.controls.somente_unidade_atual.value ? 'true' : undefined" [dao]="unidadeDao" ></input-search>
             <input-switch [size]="1" label="Sub." controlName="unidades_subordinadas" [control]="filter!.controls.unidades_subordinadas" labelInfo="Incluir as unidades subordinadas"></input-switch>
         </div>
         <div class="row">
             <input-text [size]="1" label="#ID" controlName="numero" maskFormat="999999" [control]="filter!.controls.numero" [labelInfo]="'Número ' + lex.noun('demanda', false, true)"></input-text>
-            <input-text [size]="3" label="Nº Processo (Sei)" maskFormat="00000.000000/0000-00" controlName="numero_processo" [control]="filter!.controls.numero_processo" [labelInfo]="'Pesquisa na Requisição, Conclusão e ' + lex.noun('Entrega', true)"></input-text>
+            <input-text [size]="3" [label]="'Nº '+ lex.noun('Processo') +' (Sei)'" maskFormat="00000.000000/0000-00" controlName="numero_processo" [control]="filter!.controls.numero_processo" [labelInfo]="'Pesquisa na ' + lex.noun('requisição') + ', Conclusão e ' + lex.noun('Entrega', true)"></input-text>
             <input-select [size]="3" label="Status" itemTodos="- Todos -" [valueTodos]="null" [disabled]="fixedFilter?.length && fixedFilter![0]![0] == 'status' ? 'true' : undefined" controlName="status" [control]="filter!.controls.status" [items]="lookup.DEMANDA_STATUS_COM_ARQUIVADAS"></input-select>
             <input-multiselect noForm noBox [size]="4" label="Etiquetas" controlName="etiquetas" [control]="filter!.controls.etiquetas"></input-multiselect>
             <input-switch [size]="1" label="Arq." controlName="arquivadas" [control]="filter!.controls.arquivadas" labelInfo="Listar também demandas arquivadas"></input-switch>
         </div>
         <div class="row">
-            <input-search [size]="3" [label]="lex.noun('Atividade')" controlName="atividade_id" [control]="filter!.controls.atividade_id" [dao]="atividadeDao" [groupBy]="[{field: 'unidade.sigla', label: 'Unidade'}]" [where]="[['vinculadas', '=', true]]" [selectRoute]="{route: ['gestao', 'atividade']}"></input-search>
-            <input-search [size]="3" label="Tipo de processo" controlName="tipo_processo_id" [control]="filter!.controls.tipo_processo_id" [dao]="tipoProcessoDao" [selectRoute]="{route: ['cadastros', 'tipo-processo']}"></input-search>
+            <input-search [size]="3" [label]="lex.noun('Atividade')" controlName="atividade_id" [dao]="atividadeDao" [groupBy]="[{field: 'unidade.sigla', label: 'Unidade'}]" [where]="[['vinculadas', '=', true]]" ></input-search>
+            <input-search [size]="3" [label]="'Tipo de ' " controlName="tipo_processo_id" [dao]="tipoProcessoDao" ></input-search>
             <input-select [size]="2" label="Data" itemTodos="- Todos -" [valueTodos]="null" controlName="data_filtro" [control]="filter!.controls.data_filtro" [items]="DATAS_FILTRO"></input-select>
             <input-datetime [size]="2" noIcon [disabled]="filter!.controls.data_filtro.value == null ? 'true' : undefined" label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" labelInfo="Data início do período"></input-datetime>
             <input-datetime [size]="2" noIcon [disabled]="filter!.controls.data_filtro.value == null ? 'true' : undefined" label="Fim" controlName="data_fim" [control]="filter!.controls.data_fim" labelInfo="Data fim do período"></input-datetime>

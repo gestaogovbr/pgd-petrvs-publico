@@ -5,7 +5,11 @@
         <span class="text-wrap"><badge [icon]="getEixo(separator?.text)?.icone || 'bi bi-gear'" [color]="getEixo(separator?.text)?.cor || 'primary'" [label]="getEixo(separator?.text)?.nome || 'Desconhecido'"></badge></span>
     </ng-template>
     <columns>
-        <column title="Nome" [template]="columnNome"><ng-template let-row="row" #columnNome><span>{{ row.nome }}</span></ng-template></column>
+        <column title="Nome" [template]="columnNome">
+            <ng-template let-row="row" #columnNome>
+                <span [style.margin-left.px]="(row._metadata?.level || 0) * 20">{{ marcador(row) + row.nome }}</span>
+            </ng-template>
+        </column>
         <column title="Fundamentação" [template]="columnFundamentacao"><ng-template let-row="row" #columnFundamentacao><span>{{ row.fundamentacao }}</span></ng-template></column>
         <column *ngIf="entity?.unidade_id" title="Objetivo Superior" [template]="columnObjetivoSuperior"><ng-template let-row="row" #columnObjetivoSuperior><span>{{ row.objetivo_superior?.nome  || '' }}</span></ng-template></column>
         <!-- <column title="Objetivo Superior" [template]="columnObjetivoSuperior"><ng-template let-row="row" #columnObjetivoSuperior><span>{{ row.objetivo_superior?.nome  || '' }}</span></ng-template></column> -->

@@ -8,12 +8,12 @@
             <input-timer onlyHours [disabled]="disabled_datetime ? 'disabled' : undefined" label="Tempo" [size]="2" icon="bi bi-clock" controlName="tempo_fimoutempo" [control]="form!.controls.tempo_fimoutempo"></input-timer>
         </div>
         <div class="row">
-            <input-search #unidade [size]="7" label="Unidade" icon="fab fa-unity" controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+            <input-search #unidade [size]="7" controlName="unidade_id" [dao]="unidadeDao"></input-search>
             <input-number [size]="2" numbers label="Carga horária" icon="bi bi-upc" controlName="carga_horaria" [control]="form!.controls.carga_horaria"></input-number>
             <input-select [size]="3" label="Tipo Contagem" controlName="tipo" [control]="form!.controls.tipo" [items]="lookup.TIPO_CONTAGEM"></input-select>
         </div>
         <div class="row">
-            <input-search [size]="6" #usuario label="Usuário" controlName="usuario_id" [control]="form!.controls.usuario_id" [dao]="usuarioDao" [selectRoute]="{route: ['configuracoes', 'usuario']}" (select)="onUsuarioSelect()"></input-search>
+            <input-search [size]="6" #usuario controlName="usuario_id" [dao]="usuarioDao" (select)="onUsuarioSelect()"></input-search>
             <input-switch [size]="2" label="Incluir Afastamentos" controlName="incluir_afastamentos" [control]="form!.controls.incluir_afastamentos" (change)="onAfastamentosChange($event)"></input-switch>
         </div>
         <separator title="Pesquisa de Pausas">
