@@ -2,33 +2,33 @@
     <tabs display right>
         <tab key="PRINCIPAL" label="Principal">
             <div class="row">
-                <input-text [size]="2" label="Código" controlName="codigo" [control]="form!.controls.codigo"></input-text>
-                <input-text [size]="2" label="Sigla" controlName="sigla" [control]="form!.controls.sigla"></input-text>
-                <input-text [size]="8" label="Nome" controlName="nome" [control]="form!.controls.nome"></input-text>
+                <input-text [size]="2" label="Código" controlName="codigo"></input-text>
+                <input-text [size]="2" label="Sigla" controlName="sigla"></input-text>
+                <input-text [size]="8" label="Nome" controlName="nome"></input-text>
             </div>
             <div class="row">
-                <input-search #gestor label="Gestor" [size]="6" [emptyValue]="null" controlName="gestor_id" [control]="form!.controls.gestor_id" [dao]="usuarioDao" labelInfo="Responsável pela unidade"></input-search>
+                <input-search #gestor label="Gestor" [size]="6" [emptyValue]="null" controlName="gestor_id" [dao]="usuarioDao" labelInfo="Responsável pela unidade"></input-search>
                 <input-search #gestorSubstituto label="Gestor Substituto" [size]="6" [emptyValue]="null" controlName="gestor_substituto_id" [dao]="usuarioDao" labelInfo="Responsável substituto pela unidade"></input-search>
             </div>
             <div class="row">
                 <input-search #cidade [size]="4" controlName="cidade_id" [dao]="cidadeDao"></input-search>
-                <input-search #unidade_pai [size]="4" label="Unidade pai" controlName="unidade_id" [dao]="dao!"></input-search>
+                <input-search #unidade_pai [size]="4" [label]="lex.noun('Unidade') + ' pai'" controlName="unidade_id" [dao]="dao!"></input-search>
                 <input-search #entidade [size]="4" controlName="entidade_id" [dao]="entidadeDao"></input-search>
             </div>
         </tab>
         <tab key="CONFIGURACOES" label="Configurações">
             <div class="row">
-                <input-radio [size]="3" label="Avaliação hierárquica" controlName="avaliacao_hierarquica" [control]="form!.controls.avaliacao_hierarquica" [items]="lookup.SIMNAO" labelInfo="Se permite que unidades supeiores faça avaliação."></input-radio>
-                <input-radio [size]="3" label="Avaliação automática" controlName="atividades_avaliacao_automatico" [control]="form!.controls.atividades_avaliacao_automatico" [items]="lookup.SIMNAO" labelInfo="Se ao final do prazo de avaliação do gestor, avaliará como 10 a atividade."></input-radio>
-                <input-radio [size]="3" label="Arquivamento automático" controlName="atividades_arquivamento_automatico" [control]="form!.controls.atividades_arquivamento_automatico" [items]="lookup.SIMNAO" labelInfo="Se após a avaliação, arquivará automaticamente a atividade."></input-radio>
-                <input-radio [size]="3" label="Auto-edição (Subordinadas)" controlName="autoedicao_subordinadas" [control]="form!.controls.autoedicao_subordinadas" [items]="lookup.SIMNAO" labelInfo="Se as Unidades Subordinadas podem editar suas próprias Informações Gerais"></input-radio>
+                <input-radio [size]="3" [label]="lex.noun('Avaliação') + ' hierárquica'" controlName="avaliacao_hierarquica" [items]="lookup.SIMNAO" labelInfo="Se permite que unidades supeiores faça avaliação."></input-radio>
+                <input-radio [size]="3" [label]="lex.noun('Avaliação') + ' automática'" controlName="atividades_avaliacao_automatico" [items]="lookup.SIMNAO" labelInfo="Se ao final do prazo de avaliação do gestor, avaliará como 10 a atividade."></input-radio>
+                <input-radio [size]="3" label="Arquivamento automático" controlName="atividades_arquivamento_automatico" [items]="lookup.SIMNAO" labelInfo="Se após a avaliação, arquivará automaticamente a atividade."></input-radio>
+                <input-radio [size]="3" label="Auto-edição (Subordinadas)" controlName="autoedicao_subordinadas" [items]="lookup.SIMNAO" labelInfo="Se as Unidades Subordinadas podem editar suas próprias Informações Gerais"></input-radio>
             </div>
             <separator></separator>
             <div class="row">
-                <input-select [size]="4" label="Contagem Prazo Distribuição" controlName="distribuicao_forma_contagem_prazos" [control]="form!.controls.distribuicao_forma_contagem_prazos" [items]="lookup.DIA_HORA_CORRIDOS_OU_UTEIS" labelInfo="A forma da contagem dos prazos para a distribuição (lançamento da demanda)."></input-select>
-                <input-select [size]="4" label="Contagem Prazo Entrega" controlName="entrega_forma_contagem_prazos" [control]="form!.controls.entrega_forma_contagem_prazos" [items]="lookup.HORAS_CORRIDAS_OU_UTEIS" labelInfo="A forma da contagem dos prazos na entrega da demanda (data da entrega e tempo despendido)"></input-select>
-                <input-select [size]="2" label="Comparecer" controlName="planos_tipo_prazo_comparecimento" [control]="form!.controls.planos_tipo_prazo_comparecimento" [items]="lookup.DIA_OU_HORA" labelInfo="Formato de Prazo de Comparecimento a Unidade"></input-select>
-                <input-text numbers [size]="2" label="Prazo" controlName="planos_prazo_comparecimento" [control]="form!.controls.planos_prazo_comparecimento" labelInfo="Prazo de Comparecimento a Unidade"></input-text>
+                <input-select [size]="4" [label]="'Contagem ' + lex.noun('Prazo de Distribuição')" controlName="distribuicao_forma_contagem_prazos" [items]="lookup.DIA_HORA_CORRIDOS_OU_UTEIS" labelInfo="A forma da contagem dos prazos para a distribuição (lançamento da demanda)."></input-select>
+                <input-select [size]="4" [label]="'Contagem ' + lex.noun('Prazo de Entrega')" controlName="entrega_forma_contagem_prazos" [items]="lookup.HORAS_CORRIDAS_OU_UTEIS" labelInfo="A forma da contagem dos prazos na entrega da demanda (data da entrega e tempo despendido)"></input-select>
+                <input-select [size]="2" label="Comparecer" controlName="planos_tipo_prazo_comparecimento" [items]="lookup.DIA_OU_HORA" labelInfo="Formato de Prazo de Comparecimento a Unidade"></input-select>
+                <input-text numbers [size]="2" label="Prazo" controlName="planos_prazo_comparecimento" labelInfo="Prazo de Comparecimento a Unidade"></input-text>
             </div>
             <!--separator title="Expediente">
                 <div class="row">
@@ -40,27 +40,27 @@
             </separator//-->
             <separator></separator>
             <div clss="row">
-                <input-multiselect label="Etiquetas" multiselectStyle="inline" [maxItemWidth]="250" controlName="etiquetas" [size]="12" [control]="form!.controls.etiquetas" [addItemHandle]="addItemHandle.bind(this)">
-                    <input-text [size]="6" label="Texto" controlName="etiqueta_texto" [control]="form!.controls.etiqueta_texto"></input-text>
-                    <input-select [size]="3" label="Ícone" controlName="etiqueta_icone" [control]="form!.controls.etiqueta_icone" [items]="lookup.ICONES"></input-select>
-                    <input-color [size]="3" label="Cor" controlName="etiqueta_cor" [control]="form!.controls.etiqueta_cor"></input-color>
+                <input-multiselect label="Etiquetas" multiselectStyle="inline" [maxItemWidth]="250" controlName="etiquetas" [size]="12" [addItemHandle]="addItemHandle.bind(this)">
+                    <input-text [size]="6" label="Texto" controlName="etiqueta_texto"></input-text>
+                    <input-select [size]="3" label="Ícone" controlName="etiqueta_icone" [items]="lookup.ICONES"></input-select>
+                    <input-color [size]="3" label="Cor" controlName="etiqueta_cor"></input-color>
                 </input-multiselect>
             </div>
             <separator></separator>
             <div class="row">
-                <input-editor label="Texto complementar do Plano de Trabalho" controlName="texto_complementar_plano" [dataset]="planoDataset"></input-editor>
+                <input-editor [label]="'Texto complementar ' + lex.noun('Plano de Trabalho',false,true)" controlName="texto_complementar_plano" [dataset]="planoDataset"></input-editor>
             </div>
         </tab>
         <tab key="EXPEDIENTE" label="Expediente">
             <div class="row">
-                <input-switch #usarExpedienteEntidade label="Usar o calendário da entidade" labelPosition="right" icon="bi bi-check2" [size]="12" (change)="onUsarExpedienteEntidadeChange()" controlName="usar_expediente_entidade" labelInfo="Se utiliza o expediente configurado na entidade ao invés de especificar na unidade"></input-switch>
+                <input-switch #usarExpedienteEntidade [label]="'Usar o calendário ' + lex.noun('entidade',false,true)" labelPosition="right" icon="bi bi-check2" [size]="12" (change)="onUsarExpedienteEntidadeChange()" controlName="usar_expediente_entidade" labelInfo="Se utiliza o expediente configurado na entidade ao invés de especificar na unidade"></input-switch>
             </div>
             <calendar-expediente #expediente [disabled]="form!.controls.usar_expediente_entidade.value ? 'true' : undefined" [expedienteDisabled]="entity?.entidade?.expediente" [control]="form!.controls.expediente"></calendar-expediente>
         </tab>
-        <tab key="UNIDADES_VINCULADAS" label="Unidades Vinculadas">
+        <tab key="UNIDADES_VINCULADAS" [label]="lex.noun('Unidade',true) + ' Vinculadas'">
             <grid [control]="form!.controls.unidades_origem_atividades" [form]="formUnidadesOrigemAtividades" [add]="addUnidadesOrigemAtividades.bind(this)" [load]="loadUnidadesOrigemAtividades.bind(this)" [remove]="removeUnidadesOrigemAtividades.bind(this)" [save]="saveUnidadesOrigemAtividades.bind(this)" editable>
                 <columns>
-                    <column title="Unidades" titleHint="Unidades auxiliares para origem de atividades" [template]="columnUnidade" [editTemplate]="editUnidade">
+                    <column [title]="lex.noun('Unidade',true)" titleHint="Unidades auxiliares para origem de atividades" [template]="columnUnidade" [editTemplate]="editUnidade">
                         <ng-template let-row="row" #columnUnidade>
                             <span> {{row.unidade_origem_atividade?.nome || ""}}</span>
                         </ng-template>
@@ -81,28 +81,28 @@
                 </div>
                 <div class="col-md-6">
                     <separator transparent title="Tipos de notificação"></separator>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar distribuição da demanda" controlName="notifica_demanda_distribuicao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar conclusão da demanda" controlName="notifica_demanda_conclusao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar avaliação da demanda" controlName="notifica_demanda_avaliacao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar modificação da demanda" controlName="notifica_demanda_modificacao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar comentário da demanda" controlName="notifica_demanda_comentario"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar distribuição ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_distribuicao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar conclusão ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_conclusao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar avaliação ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_avaliacao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar modificação ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_modificacao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar comentário ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_comentario"></input-switch>
                 </div>
             </div>
-            <separator transparent title="Templates das mensagens"></separator>
+            <separator transparent [title]="lex.noun('Template',true) + ' das mensagens'"></separator>
             <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na criação ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaDistribuicao" controlName="template_demanda_distribuicao" placeholder="Caso em branco, será utilizado a configuração da Entidade..." [control]="form!.controls.template_demanda_distribuicao"></input-textarea>
+                <input-textarea [size]="12" [rows]="3" [label]="'Texto na criação ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaDistribuicao" controlName="template_demanda_distribuicao" placeholder="Caso em branco, será utilizado a configuração da Entidade..."></input-textarea>
             </div>
             <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na conclusão ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaConclusao" controlName="template_demanda_conclusao" placeholder="Caso em branco, será utilizado a configuração da Entidade..." [control]="form!.controls.template_demanda_conclusao"></input-textarea>
+                <input-textarea [size]="12" [rows]="3" [label]="'Texto na conclusão ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaConclusao" controlName="template_demanda_conclusao" placeholder="Caso em branco, será utilizado a configuração da Entidade..."></input-textarea>
             </div>
             <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na avaliação ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaAvaliacao" controlName="template_demanda_avaliacao" placeholder="Caso em branco, será utilizado a configuração da Entidade..." [control]="form!.controls.template_demanda_avaliacao"></input-textarea>
+                <input-textarea [size]="12" [rows]="3" [label]="'Texto na avaliação ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaAvaliacao" controlName="template_demanda_avaliacao" placeholder="Caso em branco, será utilizado a configuração da Entidade..."></input-textarea>
             </div>
             <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na modificação ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaModificacao" controlName="template_demanda_modificacao" placeholder="Caso em branco, será utilizado a configuração da Entidade..." [control]="form!.controls.template_demanda_modificacao"></input-textarea>
+                <input-textarea [size]="12" [rows]="3" [label]="'Texto na modificação ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaModificacao" controlName="template_demanda_modificacao" placeholder="Caso em branco, será utilizado a configuração da Entidade..."></input-textarea>
             </div>
             <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na inclusão de comentário ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaComentario" controlName="template_demanda_comentario" placeholder="Caso em branco, será utilizado a configuração da Entidade..." [control]="form!.controls.template_demanda_comentario"></input-textarea>
+                <input-textarea [size]="12" [rows]="3" [label]="'Texto na inclusão de comentário ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaComentario" controlName="template_demanda_comentario" placeholder="Caso em branco, será utilizado a configuração da Entidade..."></input-textarea>
             </div>
         </tab>
     </tabs>

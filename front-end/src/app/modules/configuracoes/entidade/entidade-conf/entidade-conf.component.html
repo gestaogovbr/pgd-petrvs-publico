@@ -3,11 +3,11 @@
         <tab key="GERAL" label="Geral">
             <div class="row">
                 <input-search [size]="8" controlName="tipo_modalidade_id" [dao]="tipoModalidadeDao" labelInfo="Tipo de modalidade padrão utilizada ao criar plano de trabalho."></input-search>
-                <input-workload [size]="4" #cargaHoraria [unit]="formaContagemCargaHoraria" label="Carga Horária" icon="bi bi-hourglass-split" controlName="carga_horaria_padrao" [control]="form!.controls.carga_horaria_padrao" [unitChange]="onFormaContagemCargaHorariaChange.bind(this)" labelInfo="Carga horária e forma de contagem (horas por dia, semana ou mês) padrão utilizada ao criar plano de trabalho."></input-workload>
+                <input-workload [size]="4" #cargaHoraria [unit]="formaContagemCargaHoraria" label="Carga Horária" icon="bi bi-hourglass-split" controlName="carga_horaria_padrao" [unitChange]="onFormaContagemCargaHorariaChange.bind(this)" labelInfo="Carga horária e forma de contagem (horas por dia, semana ou mês) padrão utilizada ao criar plano de trabalho."></input-workload>
             </div>
             <div class="row">
                 <input-text [size]="6" label="Url do Sei/SUPER" icon="bi bi-lin" controlName="url_sei" [control]="form!.controls.url_sei" labelInfo="Url base do Sei/SUPER, deve ser semelhante a: https://sei.minha-entidade.gov.br/"></input-text>
-                <input-button [size]="6" label="Chave de API" icon="bi bi-lin" placeholder="Visível somente no momento em que foi gerado" iconButton="bi bi-arrow-clockwise" controlName="api_public_key" [control]="form!.controls.api_public_key" (buttonClick)="onApiKeyClick($event)" labelInfo="Chave publica para comunicação por API, o valor é visível somente no momento em que for gerado."></input-button>
+                <input-button [size]="6" label="Chave de API" icon="bi bi-lin" placeholder="Visível somente no momento em que foi gerado" iconButton="bi bi-arrow-clockwise" controlName="api_public_key" (buttonClick)="onApiKeyClick($event)" labelInfo="Chave publica para comunicação por API, o valor é visível somente no momento em que for gerado."></input-button>
             </div>
         </tab>
         <tab key="EXPEDIENTE" label="Expediente">
@@ -22,28 +22,28 @@
                 </div>
                 <div class="col-md-6">
                     <separator transparent title="Tipos de notificação"></separator>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar distribuição da demanda" controlName="notifica_demanda_distribuicao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar conclusão da demanda" controlName="notifica_demanda_conclusao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar avaliação da demanda" controlName="notifica_demanda_avaliacao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar modificação da demanda" controlName="notifica_demanda_modificacao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar comentário da demanda" controlName="notifica_demanda_comentario"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar distribuição ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_distribuicao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar conclusão ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_conclusao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar avaliação ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_avaliacao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar modificação ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_modificacao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar comentário ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_comentario"></input-switch>
                 </div>
             </div>
             <separator transparent title="Templates das mensagens"></separator>
             <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na criação ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaDistribuicao" controlName="template_demanda_distribuicao" [control]="form!.controls.template_demanda_distribuicao"></input-textarea>
+                <input-textarea [size]="12" [rows]="3" [label]="'Texto na criação ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaDistribuicao" controlName="template_demanda_distribuicao"></input-textarea>
             </div>
             <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na conclusão ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaConclusao" controlName="template_demanda_conclusao" [control]="form!.controls.template_demanda_conclusao"></input-textarea>
+                <input-textarea [size]="12" [rows]="3" [label]="'Texto na conclusão ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaConclusao" controlName="template_demanda_conclusao"></input-textarea>
             </div>
             <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na avaliação ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaAvaliacao" controlName="template_demanda_avaliacao" [control]="form!.controls.template_demanda_avaliacao"></input-textarea>
+                <input-textarea [size]="12" [rows]="3" [label]="'Texto na avaliação ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaAvaliacao" controlName="template_demanda_avaliacao"></input-textarea>
             </div>
             <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na modificação ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaModificacao" controlName="template_demanda_modificacao" [control]="form!.controls.template_demanda_modificacao"></input-textarea>
+                <input-textarea [size]="12" [rows]="3" [label]="'Texto na modificação ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaModificacao" controlName="template_demanda_modificacao"></input-textarea>
             </div>
             <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na inclusão de comentário ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaComentario" controlName="template_demanda_comentario" [control]="form!.controls.template_demanda_comentario"></input-textarea>
+                <input-textarea [size]="12" [rows]="3" [label]="'Texto na inclusão de comentário ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaComentario" controlName="template_demanda_comentario"></input-textarea>
             </div>
         </tab>
         <tab key="NOMENCLATURA" label="Nomenclatura">

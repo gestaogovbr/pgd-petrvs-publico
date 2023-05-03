@@ -1,7 +1,7 @@
 <grid [items]="items" [minHeight]="500" [form]="form!" [hasDelete]="true"
     [add]="addIntegrante.bind(this)" [load]="loadIntegrante.bind(this)" [remove]="removeIntegrante.bind(this)" [save]="saveIntegrante.bind(this)" editable>
     <columns>
-        <column title="Usuário" [template]="columnUsuario" [editTemplate]="editUsuario">
+        <column [title]="lex.noun('Usuário')" [template]="columnUsuario" [editTemplate]="editUsuario">
             <ng-template let-row="row" #columnUsuario>
                 <div class="row">
                     <div class="col-2">
@@ -24,8 +24,8 @@
                 </div>
             </ng-template>
             <ng-template let-row="row" #editUnidadeDestino>
-                <input-multiselect controlName="atribuicoes" [size]="8" [control]="form!.controls.atribuicoes" [addItemHandle]="addItemHandleAtribuicoes.bind(this)">
-                    <input-select [size]="12" label="" icon="fas fa-sign-out-alt" controlName="atribuicao" [control]="form!.controls.atribuicao" [items]="lookup.UNIDADE_INTEGRANTE_TIPO"></input-select>
+                <input-multiselect controlName="atribuicoes" [size]="8" [addItemHandle]="addItemHandleAtribuicoes.bind(this)">
+                    <input-select [size]="12" label="" icon="fas fa-sign-out-alt" controlName="atribuicao" [items]="lookup.UNIDADE_INTEGRANTE_TIPO"></input-select>
                 </input-multiselect>
             </ng-template>
         </column>
