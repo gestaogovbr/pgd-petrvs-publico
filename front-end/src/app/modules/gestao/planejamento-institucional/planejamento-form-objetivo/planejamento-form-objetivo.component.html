@@ -1,7 +1,7 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
     <div class="row">
         <div class="row">
-            <input-search [size]="6" [disabled]="form?.controls?.objetivo_pai_id?.value ? 'true' : undefined" controlName="eixo_tematico_id" [dao]="eixoTematicoDao"></input-search>                        
+            <input-search [size]="6" #eixoTematico [disabled]="form?.controls?.objetivo_pai_id?.value ? 'true' : undefined" controlName="eixo_tematico_id" [dao]="eixoTematicoDao"></input-search>                        
             <input-select [size]="6" #objetivoPai nullable [items]="objetivos" label="Objetivo" icon="fab fa-unity" controlName="objetivo_pai_id" (change)="onObjetivoPaiChange(objetivoPai)"></input-select>                        
         </div>
         <div *ngIf="planejamento?.unidade_id" class="row">

@@ -9,7 +9,6 @@ class CadeiaValorProcessoService extends ServiceBase
 {
     use UseDataFim;
 
-
     public function extraStore($cadeia, $unidade, $action) {
         $this->cadeiaValorService->buildSequencia($cadeia->id);
     }

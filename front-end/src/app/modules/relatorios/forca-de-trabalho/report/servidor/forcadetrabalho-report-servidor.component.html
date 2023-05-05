@@ -16,11 +16,11 @@
                     <td>Marco temporal para as informações/estatísticas constantes do presente relatório.</td>
                 </tr>
                 <tr>
-                    <td>Servidor</td>
+                    <td>{{ lex.noun('Servidor') }}</td>
                     <td colspan="2">{{ (usuario?.nome || '').toUpperCase() }}</td>
                 </tr>
                 <tr>
-                    <td>Plano</td>
+                    <td>{{ lex.noun('Plano') }}</td>
                     <td colspan="2">{{ x.descricaoPlano }}</td>
                 </tr>
                 <tr *ngIf="buscaPorPeriodo">
@@ -55,7 +55,7 @@
                 </bar-chart>
             </div> -->
             <div class="card m-2 border-primary bg-light text-center">
-                <h5>Composição das Demandas</h5>
+                <h5>{{ 'Composição ' + lex.noun('Demanda',true,true) }}</h5>
                 <bar-chart 
                     [tipoGrafico]="'horizontalBar'" 
                     [dadosGrafico]="x.dadosGraficoPeriodoDetalhado"
@@ -71,7 +71,7 @@
         <table class="table table-bordered table-hover align-middle text-center" style="width: 700px; margin:auto">
             <thead class="table-active">
                 <tr>
-                    <th colspan="5"><strong>DEMANDAS</strong></th>
+                    <th colspan="5"><strong>{{ lex.noun('DEMANDA',true) }}</strong></th>
                 </tr>
                 <tr style="vertical-align: middle;">
                     <th><strong>CATEGORIAS</strong></th>
@@ -153,11 +153,10 @@
                 </tr>
                 <tr>
                     <td colspan="5" style="text-align: left; font-size: small;">
-                        <strong>(*1)</strong> Soma dos tempos pactuados.<br>
-                        <strong>(*2)</strong> Soma dos tempos pactuados previstos para o período da pesquisa.<br>
-                        <strong>(*3)</strong> Soma dos tempos efetivamente trabalhados pelo servidor; as horas
-                        trabalhadas nas
-                        demandas em andamento não são computadas por não haver registros suficientes no sistema.<br>
+                        <strong>(*1)</strong>{{ ' Soma ' + lex.noun('tempo pactuado',true,true) + '.' }}<br>
+                        <strong>(*2)</strong>{{ ' Soma ' + lex.noun('tempo pactuado',true,true) + ' previstos para o período da pesquisa.' }}<br>
+                        <strong>(*3)</strong>{{ ' Soma dos tempos efetivamente trabalhados pelo ' + lex.noun('servidor') + '; as horas
+                        trabalhadas nas ' + lex.noun('demanda',true) + ' em andamento não são computadas por não haver registros suficientes no sistema.' }}<br>
                     </td>
                 </tr>
             </tfoot>
@@ -166,7 +165,7 @@
 
     <!-- Gráficos do Plano usando ng2-charts -->
     <div class="my-4">
-        <h3 class="border-secondary bg-secondary text-start my-2 ps-4">Análise do Plano</h3>
+        <h3 class="border-secondary bg-secondary text-start my-2 ps-4">{{ 'Análise ' + lex.noun('Plano',false,true) }}</h3>
         <div class="d-md-flex p-2 justify-content-center">
 
             <div class="card m-2 border-primary bg-light text-center">
@@ -180,7 +179,7 @@
             </div>
 
             <div class="card m-2 border-primary bg-light text-center">
-                <h5>Horas das Demandas</h5>
+                <h5>{{ 'Horas ' + lex.noun('Demanda',true,true) }}</h5>
                 <bar-chart 
                     [tipoGrafico]="'horizontalBar'" 
                     [dadosGrafico]="x.dadosGraficoDemandas"
@@ -197,20 +196,20 @@
         <table class="table table-bordered table-hover align-middle text-center">
             <thead>
                 <tr class="table-active">
-                    <th colspan="6"><strong>INFORMAÇÕES SOBRE O PLANO</strong></th>
+                    <th colspan="6"><strong>{{ 'INFORMAÇÕES SOBRE O ' + lex.noun('PLANO') }}</strong></th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td colspan="3" style="text-align: right;">Nome do Plano</td>
+                    <td colspan="3" style="text-align: right;">{{ 'Nome ' + lex.noun('Plano',false,true) }}</td>
                     <td colspan="3">{{ x.descricaoPlano }}</td>
                 </tr>
                 <tr>
-                    <td colspan="3" style="text-align: right;">Unidade</td>
+                    <td colspan="3" style="text-align: right;">{{ lex.noun('Unidade') }}</td>
                     <td colspan="3">{{ x.plano.unidade?.sigla }}</td>
                 </tr>
                 <tr>
-                    <td colspan="3" style="text-align: right;">Status do Plano</td>
+                    <td colspan="3" style="text-align: right;">{{ 'Status ' + lex.noun('Plano',false,true) }}</td>
                     <td colspan="3">{{ x.statusPlano }}</td>
                 </tr>
                 <tr>
@@ -220,7 +219,7 @@
                 </tr>
                 <tr>
                     <td>HUTP</td>
-                    <td>Horas úteis totais do Plano</td>
+                    <td>{{ 'Horas úteis totais ' + lex.noun('Plano',false,true) }}</td>
                     <td>{{ x.extras.horasUteisTotais == 0 ? 0 :
                         (this.util.decimalToTimerFormated(x.extras.horasUteisTotais,
                         true))
@@ -228,37 +227,27 @@
                     <td>100.00 %</td>
                     <td style="min-width: 315px;">
                         <span>
-                            <small class="micro-text fw-light">Horas úteis do Plano de Trabalho, ao longo de toda sua
-                                vigência,
-                                considerando-se a carga horária, os feriados e finais de semana. É a base de cálculo
-                                para a maioria dos
-                                percentuais.</small>
+                            <small class="micro-text fw-light">{{ 'Horas úteis ' + lex.noun('Plano de Trabalho',false,true) + ', ao longo de toda sua
+                                vigência, considerando-se a carga horária, os feriados e finais de semana. É a base de cálculo para a maioria dos
+                                percentuais.' }}</small>
                         </span>
                     </td>
                 </tr>
                 <tr>
                     <td>HUAS</td>
-                    <td>Horas úteis de afastamento do Servidor</td>
+                    <td>{{ 'Horas úteis de ' + lex.noun('afastamento') + lex.noun('Servidor',false,true) }}</td>
                     <td>{{ this.util.decimalToTimerFormated(x.extras.horasUteisAfastamento, true) }}</td>
                     <td>{{ x.percentualAfastamento }} %</td>
-                    <td><span><small class="micro-text fw-light">Total das horas úteis dos afastamentos do servidor
-                                compreendidos
-                                no
-                                período do Plano. O percentual indica a relação entre esse total e as horas úteis totais
-                                do
-                                Plano.</small></span></td>
+                    <td><span><small class="micro-text fw-light">{{ 'Total das horas úteis ' + lex.noun('afastamento',true,true) + lex.noun('servidor',false,true) + ' compreendidos
+                                no período ' + lex.noun('Plano',false,true) + '. O percentual indica a relação entre esse total e as horas úteis totais ' + lex.noun('Plano',false,true) + '.' }}</small></span></td>
                 </tr>
                 <tr>
                     <td>HULP</td>
-                    <td>Horas úteis líquidas do Plano</td>
+                    <td>{{ 'Horas úteis líquidas ' + lex.noun('Plano',false,true) }}</td>
                     <td>{{ this.util.decimalToTimerFormated(x.horasUteisLiquidasPlano, true) }}</td>
                     <td>{{ x.percentualHorasUteisLiquidasPlano }} %</td>
-                    <td><span><small class="micro-text fw-light">Total das horas úteis do Plano para alocação de
-                                demandas: HULP =
-                                HUTP - HUAS.<br>O percentual indica a relação entre esse total e as horas úteis totais
-                                do Plano: HULP(%)
-                                =
-                                HULP / HUTP.</small></span></td>
+                    <td><span><small class="micro-text fw-light">{{ 'Total das horas úteis ' + lex.noun('Plano',false,true) + ' para alocação de ' + lex.noun('demanda',true) + ': HULP =
+                                HUTP - HUAS.' }}<br>{{ 'O percentual indica a relação entre esse total e as horas úteis totais ' + lex.noun('Plano',false,true) + ': HULP(%) = HULP / HUTP.' }}</small></span></td>
                 </tr>
                 <tr>
                     <td rowspan="3" class="vertical">
@@ -267,34 +256,26 @@
                 </tr>
                 <tr>
                     <td>HUDP</td>
-                    <td>Horas úteis decorridas do Plano</td>
+                    <td>{{ 'Horas úteis decorridas ' + lex.noun('Plano',false,true) }}</td>
                     <td>{{ x.extras.horasUteisDecorridas == 0 ? 0 :
                         this.util.decimalToTimerFormated(x.extras.horasUteisDecorridas,
                         true) }}</td>
                     <td>{{ x.percentualDecorridoPlano }} %</td>
-                    <td><span><small class="micro-text fw-light">{{ x.extras.horasUteisDecorridas == 0 ? 'A vigência do
-                                Plano ainda
-                                não iniciou.' : (x.extras.horasUteisDecorridas == x.extras.horasUteisTotais ? 'A
-                                vigência do Plano já
-                                encerrou.' : 'Horas úteis do Plano de Trabalho, do início de sua vigência até o instante
-                                atual,
-                                considerando-se a carga horária, os feriados e finais de semana.') }}</small></span>
+                    <td><span><small class="micro-text fw-light">{{ x.extras.horasUteisDecorridas == 0 ? 'A vigência ' + lex.noun('Plano',false,true) + ' ainda não iniciou.' : (x.extras.horasUteisDecorridas == x.extras.horasUteisTotais ? 'A
+                                vigência ' + lex.noun('Plano',false,true) + ' já encerrou.' : 'Horas úteis ' + lex.noun('Plano de Trabalho',false,true) + ', do início de sua vigência até o instante
+                                atual, considerando-se a carga horária, os feriados e finais de semana.') }}</small></span>
                     </td>
                 </tr>
                 <tr>
                     <td>HUDA</td>
-                    <td>Horas úteis decorridas de afastamento</td>
+                    <td>{{ 'Horas úteis decorridas de ' + lex.noun('afastamento') }}</td>
                     <td>{{ this.util.decimalToTimerFormated(x.extras.horasAfastamentoDecorridas, true) }}</td>
                     <td>{{ x.percentualDecorridoAfastamentos }} %</td>
-                    <td><span><small class="micro-text fw-light">{{ x.extras.horasUteisDecorridas == 0 ? 'A vigência do
-                                Plano ainda
+                    <td><span><small class="micro-text fw-light">{{ x.extras.horasUteisDecorridas == 0 ? 'A vigência ' + lex.noun('Plano',false,true) + ' ainda
                                 não iniciou.' : (x.extras.horasUteisDecorridas == x.extras.horasUteisTotais ? 'Total das
-                                horas úteis dos
-                                afastamentos do Servidor ocorridos entre o início e o fim da vigência do Plano. O
-                                percentual indica a
-                                fração já decorrida em relação ao total previsto.' : 'Total das horas úteis dos
-                                afastamentos do Servidor
-                                ocorridos entre o início da vigência do Plano e o instante atual.') }}</small></span>
+                                horas úteis ' + lex.noun('afastamento',true,true) + lex.noun('Servidor',false,true) + ' ocorridos entre o início e o fim da vigência ' + lex.noun('Plano',false,true) + '. O
+                                percentual indica a fração já decorrida em relação ao total previsto.' : 'Total das horas úteis ' + lex.noun('afastamento',true,true) + lex.noun('Servidor',false,true) + ' ocorridos entre o início da vigência ' 
+                                + lex.noun('Plano',false,true) + ' e o instante atual.') }}</small></span>
                     </td>
                 </tr>
                 <tr>
@@ -304,24 +285,22 @@
                 </tr>
                 <tr>
                     <td>HLPT</td>
-                    <td>Horas líquidas do Plano a transcorrer</td>
+                    <td>{{ 'Horas líquidas ' + lex.noun('Plano',false,true) + ' a transcorrer' }}</td>
                     <td>{{ this.util.decimalToTimerFormated(x.horasDisponiveisPlano, true) }}</td>
                     <td>{{ x.percentualHorasDisponiveis }} %</td>
-                    <td><span><small class="micro-text fw-light">Total das horas úteis líquidas do Plano ainda a
-                                transcorrer.</small></span></td>
+                    <td><span><small class="micro-text fw-light">{{ 'Total das horas úteis líquidas ' + lex.noun('Plano',false,true) + ' ainda a
+                                transcorrer.' }}</small></span></td>
                 </tr>
                 <tr>
                     <td>HAT</td>
-                    <td>Horas de Afastamento a transcorrer</td>
+                    <td>{{ 'Horas de ' + lex.noun('Afastamento') + ' a transcorrer' }}</td>
                     <td>{{ this.util.decimalToTimerFormated(x.horasAfastamentoTranscorrer, true) }}</td>
                     <td>{{ x.percentualHorasAfastamentoTranscorrer }} %</td>
-                    <td><span><small class="micro-text fw-light">Total das horas úteis de afastamento do servidor ainda
-                                a
-                                transcorrer.</small></span></td>
+                    <td><span><small class="micro-text fw-light">{{ 'Total das horas úteis de ' + lex.noun('afastamento') + lex.noun('servidor',false,true) + ' ainda a transcorrer.' }}</small></span></td>
                 </tr>
                 <tr>
                     <td rowspan="6" class="vertical">
-                        <div>Horas das Demandas</div>
+                        <div>{{ 'Horas ' + lex.noun('Demanda',true,true) }}</div>
                     </td>
                 </tr>
                 <tr>
@@ -332,11 +311,8 @@
                     <td>{{ x.percentualHorasNaoIniciadas }} %</td>
                     <td>
                         <span>
-                            <small class="micro-text fw-light">Total dos tempos pactuados de todas as demandas ainda não
-                                iniciadas.</small>
-                            <br><small class="micro-text fw-light">O percentual representa a relação entre este total e
-                                as horas úteis
-                                totais do Plano:<br>THNI(%) = THNI / HUTP.</small>
+                            <small class="micro-text fw-light">{{ 'Total ' + lex.noun('tempo pactuado', true, true) + ' de todas as ' + lex.noun('demanda',true) + ' ainda não iniciadas.' }}</small>
+                            <br><small class="micro-text fw-light">{{ 'O percentual representa a relação entre este total e as horas úteis totais ' + lex.noun('Plano',false,true) + ':' }}<br>THNI(%) = THNI / HUTP.</small>
                         </span>
                     </td>
                 </tr>
@@ -348,12 +324,10 @@
                     <td>{{ x.percentualHorasEmAndamento }} %</td>
                     <td>
                         <span>
-                            <small class="micro-text fw-light">Total dos tempos pactuados de todas as demandas já
-                                iniciadas, mas ainda
-                                não concluídas.</small>
-                            <br><small class="micro-text fw-light">O percentual representa a relação entre este total e
-                                as horas úteis
-                                totais do Plano:<br>THAn(%) = THAn / HUTP.</small>
+                            <small class="micro-text fw-light">{{ 'Total ' + lex.noun('tempo pactuado',true,true) + ' de todas as ' + lex.noun('demanda',true) + ' já
+                                iniciadas, mas ainda não concluídas.' }}</small>
+                            <br><small class="micro-text fw-light">{{ 'O percentual representa a relação entre este total e
+                                as horas úteis totais ' + lex.noun('Plano',false,true) + ':' }}<br>THAn(%) = THAn / HUTP.</small>
                         </span>
                     </td>
                 </tr>
@@ -365,12 +339,10 @@
                     <td>{{ x.percentualHorasConcluidas }} %</td>
                     <td>
                         <span>
-                            <small class="micro-text fw-light">Total dos tempos pactuados de todas as demandas já
-                                concluídas, mas ainda
-                                não avaliadas.</small>
-                            <br><small class="micro-text fw-light">O percentual representa a relação entre este total e
-                                as horas úteis
-                                totais do Plano:<br>THC(%) = THC / HUTP.</small>
+                            <small class="micro-text fw-light">{{ 'Total ' + lex.noun('tempo pactuado', true, true) + ' de todas as ' + lex.noun('demanda', true) + ' já
+                                concluídas, mas ainda não avaliadas.' }}</small>
+                            <br><small class="micro-text fw-light">{{ 'O percentual representa a relação entre este total e
+                                as horas úteis totais ' + lex.noun('Plano',false,true) + ':' }}<br>THC(%) = THC / HUTP.</small>
                         </span>
                     </td>
                 </tr>
@@ -382,46 +354,38 @@
                     <td>{{ x.percentualHorasAvaliadas }} %</td>
                     <td>
                         <span>
-                            <small class="micro-text fw-light">Total dos tempos pactuados de todas as demandas
-                                avaliadas.</small>
-                            <br><small class="micro-text fw-light">O percentual representa a relação entre este total e
-                                as horas úteis
-                                totais do Plano:<br>THAv(%) = THAv / HUTP.</small>
+                            <small class="micro-text fw-light">{{ 'Total ' + lex.noun('tempo pactuado',true,true) + ' de todas as ' + lex.noun('demanda',true) + ' avaliadas.' }}</small>
+                            <br><small class="micro-text fw-light">{{ 'O percentual representa a relação entre este total e
+                                as horas úteis totais ' + lex.noun('Plano', false, true) + ':' }}<br>THAv(%) = THAv / HUTP.</small>
                         </span>
                     </td>
                 </tr>
                 <tr>
                     <td>HTA</td>
-                    <td>Horas totais alocadas do Plano</td>
+                    <td>{{ 'Horas totais alocadas ' + lex.noun('Plano',false,true) }}</td>
                     <td>{{ x.extras.horasTotaisAlocadas == 0 ? 0 :
                         (this.util.decimalToTimerFormated(x.extras.horasTotaisAlocadas,
                         true)) }}</td>
                     <td>{{ x.percentualHorasTotaisAlocadas }} %</td>
                     <td>
                         <span>
-                            <small class="micro-text fw-light">Total dos tempos pactuados de todas as demandas,
-                                independente de seus
-                                status:<br>HTA = THNI + THAn + THC + THAv.</small>
-                            <br><small class="micro-text fw-light">O percentual representa a relação entre este total e
-                                as horas úteis
-                                totais do Plano:<br>HTA(%) = HTA / HUTP.</small>
+                            <small class="micro-text fw-light">{{ 'Total ' + lex.noun('tempo pactuado',true,true) + ' de todas as ' + lex.noun('demanda',true) + ',
+                                independente de seus status:' }}<br>HTA = THNI + THAn + THC + THAv.</small>
+                            <br><small class="micro-text fw-light">{{ 'O percentual representa a relação entre este total e
+                                as horas úteis totais ' + lex.noun('Plano',false,true) + ':' }}<br>HTA(%) = HTA / HUTP.</small>
                         </span>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2" class="text-center">NMA</td>
-                    <td>Nota média das avaliações</td>
+                    <td>{{ 'Nota média ' + lex.noun('avaliação',true,true) }}</td>
                     <td>{{ x.extras.demandasAvaliadas?.length > 0 ? x.extras.mediaAvaliacoes.toFixed(2) : '' }}</td>
                     <td></td>
                     <td>
-                        <span *ngIf="x.extras.demandasAvaliadas?.length > 0"><small class="micro-text fw-light">Média
-                                das
-                                notas de
-                                todas as demandas avaliadas.</small></span>
-                        <span *ngIf="x.extras.demandasAvaliadas?.length == 0"><small class="micro-text fw-light">Este
-                                Plano não
-                                possui
-                                demandas avaliadas.</small></span>
+                        <span *ngIf="x.extras.demandasAvaliadas?.length > 0"><small class="micro-text fw-light">{{ 'Média
+                                das notas de todas as ' + lex.noun('demanda',true) + ' avaliadas.' }}</small></span>
+                        <span *ngIf="x.extras.demandasAvaliadas?.length == 0"><small class="micro-text fw-light">{{ 'Este ' + lex.noun('Plano') + ' não
+                                possui ' + lex.noun('demanda',true) + ' avaliadas.' }}</small></span>
                     </td>
                 </tr>
             </tbody>
@@ -431,23 +395,20 @@
 
     <!-- Informações sobre as demandas avaliadas do plano -->
     <div class="table-responsive-sm my-4">
-        <h5 class="text-center"><strong>Análise individual das demandas avaliadas</strong></h5>
+        <h5 class="text-center"><strong>{{ 'Análise individual ' + lex.noun('demanda',true,true) + ' avaliadas' }}</strong></h5>
         <table class="table table-hover text-center">
             <thead class="align-middle">
                 <tr class="table-active">
                     <th scope="col">#ID/nº Processo</th>
                     <th scope="col">Assunto</th>
-                    <th scope="col">Nota da Avaliação</th>
+                    <th scope="col">{{ 'Nota ' + lex.noun('Avaliação',false,true) }}</th>
                     <!-- <th scope="col">Gráfico</th> -->
                 </tr>
             </thead>
             <tbody>
                 <tr *ngIf="!x.extras.demandasAvaliadas?.length">
                     <td style="padding:8px;" colspan="3">
-                        <h5 style="text-align:center;">O servidor não possui demandas avaliadas, associadas a este Plano
-                            de
-                            Trabalho!
-                        </h5>
+                        <h5 style="text-align:center;">{{ 'O ' + lex.noun('servidor') + ' não possui ' + lex.noun('demanda',true) + ' avaliadas, associadas a este ' + lex.noun('Plano de Trabalho') + '!' }}</h5>
                     </td>
                 </tr>
                 <tr *ngFor="let da of x.extras.demandasAvaliadas">

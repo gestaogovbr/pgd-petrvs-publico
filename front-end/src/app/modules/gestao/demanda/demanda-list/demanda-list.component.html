@@ -23,24 +23,24 @@
           <table class="table table-striped table-bordered table-hover my-4 align-middle">
             <thead>
               <tr>
-                <th colspan="2" class="text-center"><strong>INFORMAÇÕES SOBRE O PROGRAMA</strong></th>
+                <th colspan="2" class="text-center"><strong>{{ 'INFORMAÇÕES SOBRE O ' + lex.noun('PROGRAMA') }}</strong></th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>Nome do Programa</td><td>{{ programaSelecionado?.nome || "" }}</td>
+                <td>{{ 'Nome ' + lex.noun('Programa',false,true) }}</td><td>{{ programaSelecionado?.nome || "" }}</td>
               </tr>
               <tr>
                 <td>Normativa</td><td>{{ programaSelecionado?.normativa || "" }}</td>
               </tr>
               <tr>
-                <td>Qde. de Unidades com PT Ativos</td><td>{{ (totalUnidades || 0) + (totalUnidades == 1 ? ' Unidade' : ' Unidades') }}</td>
+                <td>{{ 'Qde. de ' + lex.noun('Unidade',true) + ' com PT Ativos' }}</td><td>{{ (totalUnidades || 0) + (totalUnidades == 1 ? ' ' + lex.noun('Unidade') : ' ' + lex.noun('Unidade',true)) }}</td>
               </tr>
               <tr>
-                <td>Qde. de PT Ativos</td><td>{{ totalPlanosAtivos + (totalPlanosAtivos == 1 ? ' Plano de Trabalho' : ' Planos de Trabalho') }}</td>
+                <td>Qde. de PT Ativos</td><td>{{ totalPlanosAtivos + (totalPlanosAtivos == 1 ? ' ' + lex.noun('Plano de Trabalho') : ' ' + lex.noun('Plano de Trabalho',true)) }}</td>
               </tr>
               <tr>
-                <td>Nr. de Servidores</td><td>{{ totalServidores + (totalServidores == 1 ? ' Servidor' : ' Servidores') + ' (sem repetições)' }}</td>
+                <td>{{ 'Nr. de ' + lex.noun('Servidor',true) }}</td><td>{{ totalServidores + (totalServidores == 1 ? ' ' + lex.noun('Servidor') : ' ' + lex.noun('Servidor',true)) + ' (sem repetições)' }}</td>
               </tr>
   <!--                 <tr>
                 <td>Unidades Subordinadas incluídas?</td><td>{{ unidadesSubordinadas ? 'SIM' : 'NÃO' }}</td>

@@ -1,10 +1,10 @@
 import { Component, Injector } from '@angular/core';
-import { MetadadosPlano, PageReportBase, PlanoExtendido2 } from 'src/app/modules/base/page-report-base';
+import { MetadadosPlano, PageReportBase, PlanoExtendido } from 'src/app/modules/base/page-report-base';
 import { Usuario } from 'src/app/models/usuario.model';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { Plano } from 'src/app/models/plano.model';
 import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
-import { ChartData, ChartDataSets, ChartOptions } from 'chart.js';
+import { ChartData, ChartOptions } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 @Component({
@@ -19,7 +19,7 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
   public usuario?: Usuario | null;
   public plano?: Plano | null;
   public row?: any;
-  public planoRelatorio?: PlanoExtendido2;
+  public planoRelatorio?: PlanoExtendido;
   public buscaPorPeriodo: boolean = false;
 
   public descricaoPlano: string = '';
@@ -83,7 +83,7 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
         stacked: true
       }],
       yAxes: [{
-        labels: ['Horas das Demandas'],
+        labels: ['Horas ' + this.lex.noun('Demanda',true,true)],
         display: false,
         stacked: true
       }]
@@ -309,31 +309,31 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
             label: 'NÃO INIC',
             data: [metadados.horasDemandasNaoIniciadas],
             backgroundColor: '#0dcaf0',
-            stack: 'Demandas'
+            stack: this.lex.noun('Demanda',true)
           },
           {
             label: 'EM ANDAM',
             data: [metadados.horasDemandasEmAndamento],
             backgroundColor: '#ffc107',
-            stack: 'Demandas'
+            stack: this.lex.noun('Demanda',true)
           },
           {
             label: 'CONCL',
             data: [metadados.horasDemandasConcluidas],
             backgroundColor: '#af4201',
-            stack: 'Demandas'
+            stack: this.lex.noun('Demanda',true)
           },
           {
             label: 'AVAL',
             data: [metadados.horasDemandasAvaliadas],
             backgroundColor: '#af4af0',
-            stack: 'Demandas'
+            stack: this.lex.noun('Demanda',true)
           },
           {
             label: 'DISP',
             data: [metadados.horasUteisTotais - metadados.horasUteisAfastamento - metadados.horasUteisDecorridas],
             backgroundColor: '#6c757d',
-            stack: 'Demandas'
+            stack: this.lex.noun('Demanda',true)
           }
         ]
       };
@@ -373,31 +373,31 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
             label: 'NÃO INIC',
             data: [Math.round(metadados.horasDemandasNaoIniciadas * 100)/100],
             backgroundColor: '#0dcaf0',
-            stack: 'Demandas'
+            stack: this.lex.noun('Demanda',true)
           },
           {
             label: 'EM ANDAM',
             data: [Math.round(metadados.horasDemandasEmAndamento * 100)/100],
             backgroundColor: '#ffc107',
-            stack: 'Demandas'
+            stack: this.lex.noun('Demanda',true)
           },
           {
             label: 'CONCL',
             data: [Math.round(metadados.horasDemandasConcluidas * 100)/100],
             backgroundColor: '#af4201',
-            stack: 'Demandas'
+            stack: this.lex.noun('Demanda',true)
           },
           {
             label: 'AVAL',
             data: [Math.round(metadados.horasDemandasAvaliadas * 100)/100],
             backgroundColor: '#af4af0',
-            stack: 'Demandas'
+            stack: this.lex.noun('Demanda',true)
           },
           {
             label: 'DISP',
             data: [Math.round((metadados.horasUteisTotais - metadados.horasUteisAfastamento - metadados.horasUteisDecorridas) * 100)/100],
             backgroundColor: '#6c757d',
-            stack: 'Demandas'
+            stack: this.lex.noun('Demanda',true)
           }
         ]
       };
@@ -407,19 +407,19 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
             label: 'Aprov',
             data: [metadados.noPeriodo.tempoTrabalhadoHomologado.toFixed(2)],
             backgroundColor: '#0dcaf0',
-            stack: 'Demandas'
+            stack: this.lex.noun('Demanda',true)
           },
           {
             label: 'Reprov',
             data: [metadados.noPeriodo.tempoTrabalhadoNaoHomologado.toFixed(2)],
             backgroundColor: '#f44336',
-            stack: 'Demandas'
+            stack: this.lex.noun('Demanda',true)
           },
           {
             label: 'Concl',
             data: [metadados.noPeriodo.tempoDespendidoSoConcluidas.toFixed(2)],
             backgroundColor: '#af4201',
-            stack: 'Demandas'
+            stack: this.lex.noun('Demanda',true)
           }
         ]
       };

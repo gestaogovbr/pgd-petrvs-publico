@@ -1,7 +1,9 @@
 <!-- Seleção do planejamento -->
 <editable-form [form]="form!" noButtons>
     <div class="row mt-2">
-        <input-select #planejamentoInstitucional [size]="12" controlName="planejamento_id" [control]="form!.controls.planejamento_id" [items]="planejamentos" (change)="onPlanejamentoChange()"></input-select>
+        <input-select #planejamentoInstitucional [size]="12" controlName="planejamento_id"
+            [control]="form!.controls.planejamento_id" [items]="planejamentos"
+            (change)="onPlanejamentoChange()"></input-select>
     </div>
 </editable-form>
 <!-- Cabeçalho -->
@@ -51,19 +53,21 @@
 </separator>
 <!-- Eixos -->
 <div class="row my-2">
-    <input-switch [size]="12" labelPosition="left" label="Todos os eixos" controlName="todos" [control]="form!.controls.todos" (change)="onTodosChange()"></input-switch>
+    <input-switch [size]="12" labelPosition="left" label="Todos os eixos" controlName="todos"
+        [control]="form!.controls.todos" (change)="onTodosChange()"></input-switch>
 </div>
 <div *ngFor="let eixo of eixos" class="eixo" [style.background-color]="eixo.eixo.cor">
-    <action-button icon="bi bi-plus-circle" color="transparent-black" [data]="eixo" [onClick]="onObjetivoAddClick.bind(this)"></action-button>
+    <action-button icon="bi bi-plus-circle" color="transparent-black" [data]="eixo"
+        [onClick]="onObjetivoAddClick.bind(this)"></action-button>
     <div class="d-flex align-items-center align-content-stretch p-3">
         <div class="descricao">
             <h4>{{eixo.eixo.nome}}</h4>
         </div>
-        <div class="objetivos w-100 row" [dndDropzone]="['objetivo']" (dndDrop)="onObjetivoDrop($event, eixo)"> <!-- d-flex flex-wrap align-content-stretch -->
+        <div class="objetivos w-100 row" [dndDropzone]="['objetivo']" (dndDrop)="onObjetivoDrop($event, eixo)">
             <!-- Placehold -->
             <div class="col-md-4" dndPlaceholderRef>
                 <div class="objetivo shadow-sm d-flex flex-column align-content-between">
-                    <p class="card-text placeholder-glow">
+                    <p class="placeholder-glow">
                         <span class="placeholder col-2"></span>
                         <span class="placeholder col-3"></span>
                         <span class="placeholder col-1"></span>
@@ -77,22 +81,34 @@
                 </div>
             </div>
             <!-- Objetivos -->
-            <div *ngFor="let objetivo of eixo.objetivos" class="col-md-4"
-                [dndDisableIf]="!canEdit"
-                [dndDraggable]="objetivo"
-                (dndEnd)="onObjetivoDragEnd($event)"
-                (dndMoved)="onObjetivoDragged(objetivo, eixo, 'move')"
-                (dndStart)="onObjetivoDragStart($event)"
-                dndType="objetivo"
-                dndEffectAllowed="move">
+            <div *ngFor="let objetivo of eixo.objetivos" class="col-md-4" [dndDisableIf]="!canEdit"
+                [dndDraggable]="objetivo" (dndEnd)="onObjetivoDragEnd($event)"
+                (dndMoved)="onObjetivoDragged(objetivo, eixo, 'move')" (dndStart)="onObjetivoDragStart($event)"
+                dndType="objetivo" dndEffectAllowed="move">
                 <div class="objetivo shadow-sm d-flex flex-column align-content-between">
-                    <p class="card-text" dndHandle>{{objetivo.nome}}
-                        <ng-container *ngFor="let subobjetivo of objetivo.objetivos" [ngTemplateOutlet]="subobjetivos" [ngTemplateOutletContext]="{objetivo: subobjetivo}"></ng-container>
-                    </p>
-                    <ng-template #subobjetivos let-objetivo="objetivo">
-                        <p class="card-text ms-2">{{marcador(objetivo) + objetivo.nome}}
-                            <ng-container *ngFor="let subobjetivo of objetivo.objetivos" [ngTemplateOutlet]="subobjetivos" [ngTemplateOutletContext]="{objetivo: subobjetivo}"></ng-container>
-                        </p>
+                    <div class="m-2">
+                        <div dndHandle class="card-text">{{objetivo.nome}}</div>
+                        <div class="subobjetivo" [dndDropzone]="['objetivo']" (dndDrop)="onObjetivoDrop($event, objetivo)">
+                            <!-- Placehold -->
+                            <div class="border mt-3 p-2" dndPlaceholderRef><span class="placeholder w-75"></span></div>
+                            <ng-container *ngFor="let subobjetivo of objetivo.objetivos" [ngTemplateOutlet]="subobjetivos" [ngTemplateOutletContext]="{objetivo: subobjetivo, pai: objetivo}"></ng-container>
+                        </div>
+                    </div>
+                    <ng-template #subobjetivos let-objetivo="objetivo" let-pai="pai">
+                        <div class="border mt-3 p-2" [dndDisableIf]="!canEdit"
+                            [dndDraggable]="objetivo" (dndEnd)="onObjetivoDragEnd($event)"
+                            (dndMoved)="onObjetivoDragged(objetivo, pai, 'move')" (dndStart)="onObjetivoDragStart($event)"
+                            dndType="objetivo" dndEffectAllowed="move">
+                            <div class="d-flex justify-content-between">
+                                <div class="me-2 card-text">{{objetivo.nome}}</div>
+                                <action-button noArrow [button]="subObjetivosMenu" [data]="objetivo"></action-button>
+                            </div>
+                            <div class="subobjetivo" [dndDropzone]="['objetivo']" (dndDrop)="onObjetivoDrop($event, objetivo)">
+                                <!-- Placehold -->
+                                <div class="border mt-3 p-2" dndPlaceholderRef><span class="placeholder w-75"></span></div>
+                                <ng-container *ngFor="let subobjetivo of objetivo.objetivos" [ngTemplateOutlet]="subobjetivos" [ngTemplateOutletContext]="{objetivo: subobjetivo, pai: objetivo}"></ng-container>
+                            </div>
+                        </div>
                     </ng-template>
                     <div class="buttons w-100 d-flex justify-content-end px-1">
                         <action-button icon="bi bi-file-earmark-bar-graph" [data]="objetivo" [onClick]="this.onObjetivoClick.bind(this)" color="transparent-black px-1"></action-button>
