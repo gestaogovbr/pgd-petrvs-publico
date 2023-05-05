@@ -6,9 +6,8 @@
     MOD_PENT_INCL
     MOD_PENT_EDT
     MOD_PENT_EXCL
-
     MOD_PENT_TOD_SUP = Visualizar todas unidades superiores
-    MOD_PENT_IMD_SUP = Visualizar somente a unidade imediatamente duperior
+    MOD_PENT_IMD_SUP = Visualizar somente a unidade imediatamente superior
     MOD_PENT_TOD_SUB = Visualizar todas unidades subordinadas 
 ~~~
 
@@ -19,17 +18,17 @@
     nome (*)
     inicio (*)
     fim
-    status (fase futura)
+    data_cancelamento
+    data_arquivamento
+    status ('INCLUINDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO', 'AVALIADO', 'SUSPENSO')
     (id/created_at/updated_at/data_inicio/data_fim)
         unidade_id (*)
         cadeia_valor_id
         planejamento_id
+        cancelamento_usuario_id
 
     (*) campo obrigatório
 ~~~
-
-'INCLUINDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO', 'AVALIADO', 'SUSPENSO', 
-
 
 * Botão cancelar tem em todos
 * Botão desarquivar quando estiver arquivado
@@ -55,14 +54,6 @@
   * Arquivar (Somente caso não esteja arquivado)
 
 * Na janela de avaliar, já deixar o swith de arquivamento marcado, igual a avaliação na demanda!
-
-
-
-
-
-
-Campo cancelado datetime nullabel
-Campo cancelamento_usuario_id nullabel
 
 
 ## Entregas do Plano de Entregas

@@ -31,7 +31,6 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   public form: FormGroup;
   public formEntregas: FormGroup;
 
-
   constructor(public injector: Injector) {
     super(injector, PlanoEntrega, PlanoEntregaDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
@@ -40,40 +39,49 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     this.planoEntregasEntregasDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
     this.join = [];
     this.modalWidth = 1200;
-    this.form = this.fh.FormBuilder({ 
-      nome: {default: ""},
-      inicio: {default: new Date()},
-      fim: {default: new Date()},
-      planejamento_id: {default: ""},
-      cadeia_valor_id: {default: ""},
-      entregas: {default: []},
+    this.form = this.fh.FormBuilder({
+      nome: { default: "" },
+      inicio: { default: new Date() },
+      fim: { default: new Date() },
+      status: { default: 'INCLUINDO' },
+      unidade_id: { default: "" },
+      plano_entrega_id: { default: null },
+      planejamento_id: { default: null },
+      cadeia_valor_id: { default: null },
+      entregas: { default: [] },
     }, this.cdRef, this.validate);
 
-    this.formEntregas = this.fh.FormBuilder({ 
-      descricao: {default: ""},
-      cliente: {default: ""},
-      dt_inicio: {default: new Date()},
-      dt_fim: {default: new Date()},
-      tipo_indicador: {default: ""},
-      meta: {default: ""},
-      vl_realizado: {default: ""},
-      objetivos: {default: ""},
-      homologado: {default: ""},
+    this.formEntregas = this.fh.FormBuilder({
+      descricao: { default: "" },
+      cliente: { default: "" },
+      dt_inicio: { default: new Date() },
+      dt_fim: { default: new Date() },
+      tipo_indicador: { default: "" },
+      meta: { default: "" },
+      vl_realizado: { default: "" },
+      objetivos: { default: "" },
+      homologado: { default: "" },
     }, this.cdRef, this.validate);
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-
-/*     if(['usuario_id', 'unidade_id', 'programa_id', 'tipo_modalidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if (['nome', 'unidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    }  */
+    }
+    if(['inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+      result = "Inválido";
+    }
+    if(controlName == 'fim' && control.value && !this.dao?.validDateTime(control.value)){
+      result = "Inválido";
+    }
     return result;
   }
 
   public formValidation = (form?: FormGroup) => {
+    if(this.form!.controls.fim.value && this.form!.controls.inicio.value > this.form!.controls.fim.value) return "A data do início não pode ser maior que a data do fim!";
     return undefined;
-  };
+  }
 
   public async loadData(entity: PlanoEntrega, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
@@ -85,13 +93,18 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     this.loadData(this.entity!, this.form!);
   }
 
-  public async saveData(form: IIndexable): Promise<PlanoEntrega | boolean> {
-
-    return true;
+  public async saveData(form: IIndexable): Promise<PlanoEntrega> {
+    return new Promise<PlanoEntrega>((resolve, reject) => {
+      this.grid!.confirm();
+      let planoEntrega = this.util.fill(new PlanoEntrega(), this.entity!);
+      planoEntrega = this.util.fillForm(planoEntrega, this.form!.value);
+      planoEntrega.entregas = this.grid!.items;
+      resolve(planoEntrega);
+    });
   }
 
   public titleEdit = (entity: PlanoEntrega): string => {
-    return "Editando " ;
+    return "Editando ";
   }
 
   public dynamicButtons(row: any): ToolbarButton[] {
@@ -131,7 +144,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
       row.descricao = this.formEntregas.controls.descricao.value;
       row.dt_inicio = this.formEntregas.controls.dt_inicio.value;
       row.dt_fim = this.formEntregas.controls.dt_fim.value;
-      row.tipo_indicador =this.formEntregas.controls.tipo_indicador.value;
+      row.tipo_indicador = this.formEntregas.controls.tipo_indicador.value;
       row.meta = this.formEntregas.controls.meta.value;
       row.vl_realizado = this.formEntregas.controls.vl_realizado.value;
       row.objetivos = this.formEntregas.controls.objetivos.value;

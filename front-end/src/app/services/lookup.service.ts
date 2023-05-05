@@ -325,6 +325,15 @@ export class LookupService {
     {key: "fa-light fa-calendar-days", value: "Calendario", icon: "far fa-calendar-alt"}
   ];
 
+  public PLANO_ENTREGA_STATUS: LookupItem[] = [
+    { key: "INCLUINDO", value: "Incluindo", icon: "bi bi-pencil-square", color: "secondary" },
+    { key: "HOMOLOGANDO", value: "Aguardando homologação", icon: "bi bi-clock", color: "warning" },
+    { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success" },
+    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-clipboard2-check", color: "primary" },
+    { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info" },
+    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "danger" }
+  ];
+
   public NUMERO_SEMANA = [
     { key: 1, value: "1ª" },
     { key: 2, value: "2ª" },
@@ -519,6 +528,4 @@ export class LookupService {
   public getIcon(itens: LookupItem[], key: any) : string {
     return itens.find(x => x.key == key)?.icon || "";
   }
-
-
 }

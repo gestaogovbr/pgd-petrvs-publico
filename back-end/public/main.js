@@ -6201,7 +6201,7 @@ function DemandaListComponent_div_13_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](4, "tr");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](5, "th", 16);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](6, "strong");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](7, "INFORMA\u00C7\u00D5ES SOBRE O PROGRAMA");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](7);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
@@ -6209,7 +6209,7 @@ function DemandaListComponent_div_13_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](8, "tbody");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](9, "tr");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](10, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](11, "Nome do Programa");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](11);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](12, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](13);
@@ -6225,7 +6225,7 @@ function DemandaListComponent_div_13_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](19, "tr");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](20, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](21, "Qde. de Unidades com PT Ativos");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](21);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](22, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](23);
@@ -6241,7 +6241,7 @@ function DemandaListComponent_div_13_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](29, "tr");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](30, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](31, "Nr. de Servidores");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](31);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](32, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](33);
@@ -6253,16 +6253,24 @@ function DemandaListComponent_div_13_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"]("INFORMA\u00C7\u00D5ES SOBRE O " + ctx_r5.lex.noun("PROGRAMA"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"]("Nome " + ctx_r5.lex.noun("Programa", false, true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"]((ctx_r5.programaSelecionado == null ? null : ctx_r5.programaSelecionado.nome) || "");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](5);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"]((ctx_r5.programaSelecionado == null ? null : ctx_r5.programaSelecionado.normativa) || "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"]("Qde. de " + ctx_r5.lex.noun("Unidade", true) + " com PT Ativos");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"]((ctx_r5.totalUnidades || 0) + (ctx_r5.totalUnidades == 1 ? " " + ctx_r5.lex.noun("Unidade") : " " + ctx_r5.lex.noun("Unidade", true)));
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"]((ctx_r5.totalUnidades || 0) + (ctx_r5.totalUnidades == 1 ? " Unidade" : " Unidades"));
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"](ctx_r5.totalPlanosAtivos + (ctx_r5.totalPlanosAtivos == 1 ? " Plano de Trabalho" : " Planos de Trabalho"));
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"](ctx_r5.totalServidores + (ctx_r5.totalServidores == 1 ? " Servidor" : " Servidores") + " (sem repeti\u00E7\u00F5es)");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"](ctx_r5.totalPlanosAtivos + (ctx_r5.totalPlanosAtivos == 1 ? " " + ctx_r5.lex.noun("Plano de Trabalho") : " " + ctx_r5.lex.noun("Plano de Trabalho", true)));
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"]("Nr. de " + ctx_r5.lex.noun("Servidor", true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"](ctx_r5.totalServidores + (ctx_r5.totalServidores == 1 ? " " + ctx_r5.lex.noun("Servidor") : " " + ctx_r5.lex.noun("Servidor", true)) + " (sem repeti\u00E7\u00F5es)");
 } }
 function DemandaListComponent_div_14_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 17);
@@ -6719,7 +6727,7 @@ DemandaListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdef
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](13, DemandaListComponent_div_13_Template, 34, 5, "div", 11);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](13, DemandaListComponent_div_13_Template, 34, 9, "div", 11);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](14, DemandaListComponent_div_14_Template, 5, 10, "div", 12);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](15, DemandaListComponent_div_15_Template, 3, 4, "div", 12);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
@@ -9842,8 +9850,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const routes = [
-    /* { path: '', component: ProdutividadeFilterComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Relatório de Produtividade Individual" } }, */
-    /*   { path: 'report', component: ProdutividadeReportComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Relatório Individual", modal: true } }, */
     { path: 'forca-de-trabalho/servidor', component: _forca_de_trabalho_filter_servidor_forcadetrabalho_filter_servidor_component__WEBPACK_IMPORTED_MODULE_3__["ForcaDeTrabalhoFilterServidorComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Relatório Individual" } },
     { path: 'forca-de-trabalho/area', component: _forca_de_trabalho_filter_area_forcadetrabalho_filter_area_component__WEBPACK_IMPORTED_MODULE_5__["ForcaDeTrabalhoFilterAreaComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Relatório por Área" } },
     { path: 'forca-de-trabalho/report-servidor', component: _forca_de_trabalho_report_servidor_forcadetrabalho_report_servidor_component__WEBPACK_IMPORTED_MODULE_4__["ForcaDeTrabalhoReportServidorComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Força de Trabalho - Relatório Individual", modal: true } },
@@ -10180,7 +10186,7 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_div_27_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](8, "div", 14);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](9, "h5");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](10, "Composi\u00E7\u00E3o das Demandas");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](10);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](11, "bar-chart", 15);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -10191,7 +10197,9 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_div_27_Template(rf, ctx) {
     const ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](7);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("tipoGrafico", "bar")("dadosGrafico", x_r1.dadosGraficoPeriodoComparativo)("opcoesGrafico", ctx_r3.opcoesGraficoPeriodoComparativo)("pluginsGrafico", ctx_r3.pluginsGrafico);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Composi\u00E7\u00E3o " + ctx_r3.lex.noun("Demanda", true, true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("tipoGrafico", "horizontalBar")("dadosGrafico", x_r1.dadosGraficoPeriodoDetalhado)("opcoesGrafico", ctx_r3.opcoesGraficoPeriodoDetalhado)("pluginsGrafico", ctx_r3.pluginsGrafico);
 } }
 function ForcaDeTrabalhoReportServidorComponent_div_1_div_28_Template(rf, ctx) { if (rf & 1) {
@@ -10201,7 +10209,7 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_div_28_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](3, "tr");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](4, "th", 35);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](5, "strong");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](6, "DEMANDAS");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](6);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -10366,17 +10374,17 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_div_28_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](108, "strong");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](109, "(*1)");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](110, " Soma dos tempos pactuados.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](110);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](111, "br");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](112, "strong");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](113, "(*2)");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](114, " Soma dos tempos pactuados previstos para o per\u00EDodo da pesquisa.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](114);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](115, "br");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](116, "strong");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](117, "(*3)");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](118, " Soma dos tempos efetivamente trabalhados pelo servidor; as horas trabalhadas nas demandas em andamento n\u00E3o s\u00E3o computadas por n\u00E3o haver registros suficientes no sistema.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](118);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](119, "br");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -10386,7 +10394,9 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_div_28_Template(rf, ctx) {
 } if (rf & 2) {
     const x_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"]().$implicit;
     const ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](38);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](ctx_r4.lex.noun("DEMANDA", true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](32);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]((x_r1.extras.noPeriodo.demandasNaoIniciadas == null ? null : x_r1.extras.noPeriodo.demandasNaoIniciadas.length) || 0);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.extras.noPeriodo.tempoTotalNaoIniciadas == 0 ? 0 : ctx_r4.util.decimalToTimerFormated(x_r1.extras.noPeriodo.tempoTotalNaoIniciadas, true));
@@ -10430,29 +10440,47 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_div_28_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](ctx_r4.util.decimalToTimerFormated(x_r1.extras.noPeriodo.tempoTotalPrevistoNoPeriodo, true));
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](ctx_r4.util.decimalToTimerFormated(x_r1.extras.noPeriodo.tempoTotalRealizadoNoPeriodo, true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](" Soma " + ctx_r4.lex.noun("tempo pactuado", true, true) + ".");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](" Soma " + ctx_r4.lex.noun("tempo pactuado", true, true) + " previstos para o per\u00EDodo da pesquisa.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](" Soma dos tempos efetivamente trabalhados pelo " + ctx_r4.lex.noun("servidor") + "; as horas trabalhadas nas " + ctx_r4.lex.noun("demanda", true) + " em andamento n\u00E3o s\u00E3o computadas por n\u00E3o haver registros suficientes no sistema.");
 } }
 function ForcaDeTrabalhoReportServidorComponent_div_1_span_274_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](1, "small", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](2, "M\u00E9dia das notas de todas as demandas avaliadas.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("M\u00E9dia das notas de todas as " + ctx_r5.lex.noun("demanda", true) + " avaliadas.");
 } }
 function ForcaDeTrabalhoReportServidorComponent_div_1_span_275_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](1, "small", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](2, "Este Plano n\u00E3o possui demandas avaliadas.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const ctx_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Este " + ctx_r6.lex.noun("Plano") + " n\u00E3o possui " + ctx_r6.lex.noun("demanda", true) + " avaliadas.");
 } }
 function ForcaDeTrabalhoReportServidorComponent_div_1_tr_290_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "tr");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](1, "td", 39);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](2, "h5", 40);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](3, "O servidor n\u00E3o possui demandas avaliadas, associadas a este Plano de Trabalho! ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("O " + ctx_r7.lex.noun("servidor") + " n\u00E3o possui " + ctx_r7.lex.noun("demanda", true) + " avaliadas, associadas a este " + ctx_r7.lex.noun("Plano de Trabalho") + "!");
 } }
 function ForcaDeTrabalhoReportServidorComponent_div_1_tr_291_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "tr");
@@ -10522,7 +10550,7 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](16, "tr");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](17, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](18, "Servidor");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](18);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](19, "td", 7);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](20);
@@ -10530,7 +10558,7 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](21, "tr");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](22, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](23, "Plano");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](23);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](24, "td", 7);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](25);
@@ -10540,11 +10568,11 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](27, ForcaDeTrabalhoReportServidorComponent_div_1_div_27_Template, 12, 8, "div", 9);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](28, ForcaDeTrabalhoReportServidorComponent_div_1_div_28_Template, 120, 22, "div", 10);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](27, ForcaDeTrabalhoReportServidorComponent_div_1_div_27_Template, 12, 9, "div", 9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](28, ForcaDeTrabalhoReportServidorComponent_div_1_div_28_Template, 120, 26, "div", 10);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](29, "div", 11);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](30, "h3", 12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](31, "An\u00E1lise do Plano");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](31);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](32, "div", 13);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](33, "div", 14);
@@ -10555,7 +10583,7 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](37, "div", 14);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](38, "h5");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](39, "Horas das Demandas");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](39);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](40, "bar-chart", 15);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -10567,7 +10595,7 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](44, "tr", 18);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](45, "th", 19);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](46, "strong");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](47, "INFORMA\u00C7\u00D5ES SOBRE O PLANO");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](47);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -10575,7 +10603,7 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](48, "tbody");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](49, "tr");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](50, "td", 20);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](51, "Nome do Plano");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](51);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](52, "td", 21);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](53);
@@ -10583,7 +10611,7 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](54, "tr");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](55, "td", 20);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](56, "Unidade");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](56);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](57, "td", 21);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](58);
@@ -10591,7 +10619,7 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](59, "tr");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](60, "td", 20);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](61, "Status do Plano");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](61);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](62, "td", 21);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](63);
@@ -10609,7 +10637,7 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](70, "HUTP");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](71, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](72, "Horas \u00FAteis totais do Plano");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](72);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](73, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](74);
@@ -10620,7 +10648,7 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](77, "td", 23);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](78, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](79, "small", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](80, "Horas \u00FAteis do Plano de Trabalho, ao longo de toda sua vig\u00EAncia, considerando-se a carga hor\u00E1ria, os feriados e finais de semana. \u00C9 a base de c\u00E1lculo para a maioria dos percentuais.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](80);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -10630,7 +10658,7 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](83, "HUAS");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](84, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](85, "Horas \u00FAteis de afastamento do Servidor");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](85);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](86, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](87);
@@ -10641,7 +10669,7 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](90, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](91, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](92, "small", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](93, "Total das horas \u00FAteis dos afastamentos do servidor compreendidos no per\u00EDodo do Plano. O percentual indica a rela\u00E7\u00E3o entre esse total e as horas \u00FAteis totais do Plano.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](93);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -10651,7 +10679,7 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](96, "HULP");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](97, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](98, "Horas \u00FAteis l\u00EDquidas do Plano");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](98);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](99, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](100);
@@ -10662,9 +10690,9 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](103, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](104, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](105, "small", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](106, "Total das horas \u00FAteis do Plano para aloca\u00E7\u00E3o de demandas: HULP = HUTP - HUAS.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](106);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](107, "br");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](108, "O percentual indica a rela\u00E7\u00E3o entre esse total e as horas \u00FAteis totais do Plano: HULP(%) = HULP / HUTP.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](108);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -10681,7 +10709,7 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](115, "HUDP");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](116, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](117, "Horas \u00FAteis decorridas do Plano");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](117);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](118, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](119);
@@ -10702,7 +10730,7 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](128, "HUDA");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](129, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](130, "Horas \u00FAteis decorridas de afastamento");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](130);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](131, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](132);
@@ -10730,7 +10758,7 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](145, "HLPT");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](146, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](147, "Horas l\u00EDquidas do Plano a transcorrer");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](147);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](148, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](149);
@@ -10741,7 +10769,7 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](152, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](153, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](154, "small", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](155, "Total das horas \u00FAteis l\u00EDquidas do Plano ainda a transcorrer.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](155);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -10751,7 +10779,7 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](158, "HAT");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](159, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](160, "Horas de Afastamento a transcorrer");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](160);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](161, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](162);
@@ -10762,7 +10790,7 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](165, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](166, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](167, "small", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](168, "Total das horas \u00FAteis de afastamento do servidor ainda a transcorrer.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](168);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -10770,7 +10798,7 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](169, "tr");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](170, "td", 26);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](171, "div");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](172, "Horas das Demandas");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](172);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -10790,11 +10818,11 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](182, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](183, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](184, "small", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](185, "Total dos tempos pactuados de todas as demandas ainda n\u00E3o iniciadas.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](185);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](186, "br");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](187, "small", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](188, "O percentual representa a rela\u00E7\u00E3o entre este total e as horas \u00FAteis totais do Plano:");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](188);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](189, "br");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](190, "THNI(%) = THNI / HUTP.");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -10817,11 +10845,11 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](200, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](201, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](202, "small", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](203, "Total dos tempos pactuados de todas as demandas j\u00E1 iniciadas, mas ainda n\u00E3o conclu\u00EDdas.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](203);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](204, "br");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](205, "small", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](206, "O percentual representa a rela\u00E7\u00E3o entre este total e as horas \u00FAteis totais do Plano:");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](206);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](207, "br");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](208, "THAn(%) = THAn / HUTP.");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -10844,11 +10872,11 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](218, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](219, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](220, "small", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](221, "Total dos tempos pactuados de todas as demandas j\u00E1 conclu\u00EDdas, mas ainda n\u00E3o avaliadas.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](221);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](222, "br");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](223, "small", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](224, "O percentual representa a rela\u00E7\u00E3o entre este total e as horas \u00FAteis totais do Plano:");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](224);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](225, "br");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](226, "THC(%) = THC / HUTP.");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -10871,11 +10899,11 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](236, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](237, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](238, "small", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](239, "Total dos tempos pactuados de todas as demandas avaliadas.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](239);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](240, "br");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](241, "small", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](242, "O percentual representa a rela\u00E7\u00E3o entre este total e as horas \u00FAteis totais do Plano:");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](242);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](243, "br");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](244, "THAv(%) = THAv / HUTP.");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -10887,7 +10915,7 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](247, "HTA");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](248, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](249, "Horas totais alocadas do Plano");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](249);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](250, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](251);
@@ -10898,13 +10926,13 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](254, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](255, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](256, "small", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](257, "Total dos tempos pactuados de todas as demandas, independente de seus status:");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](257);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](258, "br");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](259, "HTA = THNI + THAn + THC + THAv.");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](260, "br");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](261, "small", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](262, "O percentual representa a rela\u00E7\u00E3o entre este total e as horas \u00FAteis totais do Plano:");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](262);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](263, "br");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](264, "HTA(%) = HTA / HUTP.");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -10916,15 +10944,15 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](267, "NMA");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](268, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](269, "Nota m\u00E9dia das avalia\u00E7\u00F5es");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](269);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](270, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](271);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](272, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](273, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](274, ForcaDeTrabalhoReportServidorComponent_div_1_span_274_Template, 3, 0, "span", 8);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](275, ForcaDeTrabalhoReportServidorComponent_div_1_span_275_Template, 3, 0, "span", 8);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](274, ForcaDeTrabalhoReportServidorComponent_div_1_span_274_Template, 3, 1, "span", 8);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](275, ForcaDeTrabalhoReportServidorComponent_div_1_span_275_Template, 3, 1, "span", 8);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -10933,7 +10961,7 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](276, "div", 28);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](277, "h5", 29);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](278, "strong");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](279, "An\u00E1lise individual das demandas avaliadas");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](279);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](280, "table", 30);
@@ -10946,12 +10974,12 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](286, "Assunto");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](287, "th", 32);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](288, "Nota da Avalia\u00E7\u00E3o");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](288);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](289, "tbody");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](290, ForcaDeTrabalhoReportServidorComponent_div_1_tr_290_Template, 4, 0, "tr", 8);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](290, ForcaDeTrabalhoReportServidorComponent_div_1_tr_290_Template, 4, 1, "tr", 8);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](291, ForcaDeTrabalhoReportServidorComponent_div_1_tr_291_Template, 16, 6, "tr", 33);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -10962,9 +10990,13 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](13);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](ctx_r0.util.getDateTimeFormatted(ctx_r0.horaAtual));
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](ctx_r0.lex.noun("Servidor"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](((ctx_r0.usuario == null ? null : ctx_r0.usuario.nome) || "").toUpperCase());
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](ctx_r0.lex.noun("Plano"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.descricaoPlano);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", ctx_r0.buscaPorPeriodo);
@@ -10972,73 +11004,141 @@ function ForcaDeTrabalhoReportServidorComponent_div_1_Template(rf, ctx) { if (rf
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", ctx_r0.buscaPorPeriodo);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", ctx_r0.buscaPorPeriodo);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](8);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("An\u00E1lise " + ctx_r0.lex.noun("Plano", false, true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](5);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("tipoGrafico", "bar")("dadosGrafico", x_r1.dadosGraficoPlano)("opcoesGrafico", ctx_r0.opcoesGraficoPlano)("pluginsGrafico", ctx_r0.pluginsGrafico);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Horas " + ctx_r0.lex.noun("Demanda", true, true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("tipoGrafico", "horizontalBar")("dadosGrafico", x_r1.dadosGraficoDemandas)("opcoesGrafico", ctx_r0.opcoesGraficoDemandas)("pluginsGrafico", ctx_r0.pluginsGrafico);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("INFORMA\u00C7\u00D5ES SOBRE O " + ctx_r0.lex.noun("PLANO"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Nome " + ctx_r0.lex.noun("Plano", false, true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.descricaoPlano);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](ctx_r0.lex.noun("Unidade"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.plano.unidade == null ? null : x_r1.plano.unidade.sigla);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Status " + ctx_r0.lex.noun("Plano", false, true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.statusPlano);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Horas \u00FAteis totais " + ctx_r0.lex.noun("Plano", false, true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.extras.horasUteisTotais == 0 ? 0 : ctx_r0.util.decimalToTimerFormated(x_r1.extras.horasUteisTotais, true));
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Horas \u00FAteis " + ctx_r0.lex.noun("Plano de Trabalho", false, true) + ", ao longo de toda sua vig\u00EAncia, considerando-se a carga hor\u00E1ria, os feriados e finais de semana. \u00C9 a base de c\u00E1lculo para a maioria dos percentuais.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Horas \u00FAteis de " + ctx_r0.lex.noun("afastamento") + ctx_r0.lex.noun("Servidor", false, true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](ctx_r0.util.decimalToTimerFormated(x_r1.extras.horasUteisAfastamento, true));
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("", x_r1.percentualAfastamento, " %");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Total das horas \u00FAteis " + ctx_r0.lex.noun("afastamento", true, true) + ctx_r0.lex.noun("servidor", false, true) + " compreendidos no per\u00EDodo " + ctx_r0.lex.noun("Plano", false, true) + ". O percentual indica a rela\u00E7\u00E3o entre esse total e as horas \u00FAteis totais " + ctx_r0.lex.noun("Plano", false, true) + ".");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Horas \u00FAteis l\u00EDquidas " + ctx_r0.lex.noun("Plano", false, true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](ctx_r0.util.decimalToTimerFormated(x_r1.horasUteisLiquidasPlano, true));
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("", x_r1.percentualHorasUteisLiquidasPlano, " %");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](17);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Total das horas \u00FAteis " + ctx_r0.lex.noun("Plano", false, true) + " para aloca\u00E7\u00E3o de " + ctx_r0.lex.noun("demanda", true) + ": HULP = HUTP - HUAS.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("O percentual indica a rela\u00E7\u00E3o entre esse total e as horas \u00FAteis totais " + ctx_r0.lex.noun("Plano", false, true) + ": HULP(%) = HULP / HUTP.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Horas \u00FAteis decorridas " + ctx_r0.lex.noun("Plano", false, true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.extras.horasUteisDecorridas == 0 ? 0 : ctx_r0.util.decimalToTimerFormated(x_r1.extras.horasUteisDecorridas, true));
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("", x_r1.percentualDecorridoPlano, " %");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.extras.horasUteisDecorridas == 0 ? "A vig\u00EAncia do Plano ainda n\u00E3o iniciou." : x_r1.extras.horasUteisDecorridas == x_r1.extras.horasUteisTotais ? "A vig\u00EAncia do Plano j\u00E1 encerrou." : "Horas \u00FAteis do Plano de Trabalho, do in\u00EDcio de sua vig\u00EAncia at\u00E9 o instante atual, considerando-se a carga hor\u00E1ria, os feriados e finais de semana.");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.extras.horasUteisDecorridas == 0 ? "A vig\u00EAncia " + ctx_r0.lex.noun("Plano", false, true) + " ainda n\u00E3o iniciou." : x_r1.extras.horasUteisDecorridas == x_r1.extras.horasUteisTotais ? "A vig\u00EAncia " + ctx_r0.lex.noun("Plano", false, true) + " j\u00E1 encerrou." : "Horas \u00FAteis " + ctx_r0.lex.noun("Plano de Trabalho", false, true) + ", do in\u00EDcio de sua vig\u00EAncia at\u00E9 o instante atual, considerando-se a carga hor\u00E1ria, os feriados e finais de semana.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Horas \u00FAteis decorridas de " + ctx_r0.lex.noun("afastamento"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](ctx_r0.util.decimalToTimerFormated(x_r1.extras.horasAfastamentoDecorridas, true));
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("", x_r1.percentualDecorridoAfastamentos, " %");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.extras.horasUteisDecorridas == 0 ? "A vig\u00EAncia do Plano ainda n\u00E3o iniciou." : x_r1.extras.horasUteisDecorridas == x_r1.extras.horasUteisTotais ? "Total das horas \u00FAteis dos afastamentos do Servidor ocorridos entre o in\u00EDcio e o fim da vig\u00EAncia do Plano. O percentual indica a fra\u00E7\u00E3o j\u00E1 decorrida em rela\u00E7\u00E3o ao total previsto." : "Total das horas \u00FAteis dos afastamentos do Servidor ocorridos entre o in\u00EDcio da vig\u00EAncia do Plano e o instante atual.");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.extras.horasUteisDecorridas == 0 ? "A vig\u00EAncia " + ctx_r0.lex.noun("Plano", false, true) + " ainda n\u00E3o iniciou." : x_r1.extras.horasUteisDecorridas == x_r1.extras.horasUteisTotais ? "Total das horas \u00FAteis " + ctx_r0.lex.noun("afastamento", true, true) + ctx_r0.lex.noun("Servidor", false, true) + " ocorridos entre o in\u00EDcio e o fim da vig\u00EAncia " + ctx_r0.lex.noun("Plano", false, true) + ". O percentual indica a fra\u00E7\u00E3o j\u00E1 decorrida em rela\u00E7\u00E3o ao total previsto." : "Total das horas \u00FAteis " + ctx_r0.lex.noun("afastamento", true, true) + ctx_r0.lex.noun("Servidor", false, true) + " ocorridos entre o in\u00EDcio da vig\u00EAncia " + ctx_r0.lex.noun("Plano", false, true) + " e o instante atual.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Horas l\u00EDquidas " + ctx_r0.lex.noun("Plano", false, true) + " a transcorrer");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](ctx_r0.util.decimalToTimerFormated(x_r1.horasDisponiveisPlano, true));
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("", x_r1.percentualHorasDisponiveis, " %");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Total das horas \u00FAteis l\u00EDquidas " + ctx_r0.lex.noun("Plano", false, true) + " ainda a transcorrer.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Horas de " + ctx_r0.lex.noun("Afastamento") + " a transcorrer");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](ctx_r0.util.decimalToTimerFormated(x_r1.horasAfastamentoTranscorrer, true));
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("", x_r1.percentualHorasAfastamentoTranscorrer, " %");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](15);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Total das horas \u00FAteis de " + ctx_r0.lex.noun("afastamento") + ctx_r0.lex.noun("servidor", false, true) + " ainda a transcorrer.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Horas " + ctx_r0.lex.noun("Demanda", true, true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](7);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.extras.horasDemandasNaoIniciadas == 0 ? 0 : ctx_r0.util.decimalToTimerFormated(x_r1.extras.horasDemandasNaoIniciadas, true));
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("", x_r1.percentualHorasNaoIniciadas, " %");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Total " + ctx_r0.lex.noun("tempo pactuado", true, true) + " de todas as " + ctx_r0.lex.noun("demanda", true) + " ainda n\u00E3o iniciadas.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("O percentual representa a rela\u00E7\u00E3o entre este total e as horas \u00FAteis totais " + ctx_r0.lex.noun("Plano", false, true) + ":");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](9);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.extras.horasDemandasEmAndamento == 0 ? 0 : ctx_r0.util.decimalToTimerFormated(x_r1.extras.horasDemandasEmAndamento, true));
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("", x_r1.percentualHorasEmAndamento, " %");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Total " + ctx_r0.lex.noun("tempo pactuado", true, true) + " de todas as " + ctx_r0.lex.noun("demanda", true) + " j\u00E1 iniciadas, mas ainda n\u00E3o conclu\u00EDdas.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("O percentual representa a rela\u00E7\u00E3o entre este total e as horas \u00FAteis totais " + ctx_r0.lex.noun("Plano", false, true) + ":");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](9);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.extras.horasDemandasConcluidas == 0 ? 0 : ctx_r0.util.decimalToTimerFormated(x_r1.extras.horasDemandasConcluidas, true));
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("", x_r1.percentualHorasConcluidas, " %");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Total " + ctx_r0.lex.noun("tempo pactuado", true, true) + " de todas as " + ctx_r0.lex.noun("demanda", true) + " j\u00E1 conclu\u00EDdas, mas ainda n\u00E3o avaliadas.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("O percentual representa a rela\u00E7\u00E3o entre este total e as horas \u00FAteis totais " + ctx_r0.lex.noun("Plano", false, true) + ":");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](9);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.extras.horasDemandasAvaliadas == 0 ? 0 : ctx_r0.util.decimalToTimerFormated(x_r1.extras.horasDemandasAvaliadas, true));
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("", x_r1.percentualHorasAvaliadas, " %");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Total " + ctx_r0.lex.noun("tempo pactuado", true, true) + " de todas as " + ctx_r0.lex.noun("demanda", true) + " avaliadas.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("O percentual representa a rela\u00E7\u00E3o entre este total e as horas \u00FAteis totais " + ctx_r0.lex.noun("Plano", false, true) + ":");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Horas totais alocadas " + ctx_r0.lex.noun("Plano", false, true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.extras.horasTotaisAlocadas == 0 ? 0 : ctx_r0.util.decimalToTimerFormated(x_r1.extras.horasTotaisAlocadas, true));
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("", x_r1.percentualHorasTotaisAlocadas, " %");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Total " + ctx_r0.lex.noun("tempo pactuado", true, true) + " de todas as " + ctx_r0.lex.noun("demanda", true) + ", independente de seus status:");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("O percentual representa a rela\u00E7\u00E3o entre este total e as horas \u00FAteis totais " + ctx_r0.lex.noun("Plano", false, true) + ":");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Nota m\u00E9dia " + ctx_r0.lex.noun("avalia\u00E7\u00E3o", true, true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]((x_r1.extras.demandasAvaliadas == null ? null : x_r1.extras.demandasAvaliadas.length) > 0 ? x_r1.extras.mediaAvaliacoes.toFixed(2) : "");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", (x_r1.extras.demandasAvaliadas == null ? null : x_r1.extras.demandasAvaliadas.length) > 0);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", (x_r1.extras.demandasAvaliadas == null ? null : x_r1.extras.demandasAvaliadas.length) == 0);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](15);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("An\u00E1lise individual " + ctx_r0.lex.noun("demanda", true, true) + " avaliadas");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Nota " + ctx_r0.lex.noun("Avalia\u00E7\u00E3o", false, true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", !(x_r1.extras.demandasAvaliadas == null ? null : x_r1.extras.demandasAvaliadas.length));
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngForOf", x_r1.extras.demandasAvaliadas);
@@ -11107,7 +11207,7 @@ class ForcaDeTrabalhoReportServidorComponent extends src_app_modules_base_page_r
                         stacked: true
                     }],
                 yAxes: [{
-                        labels: ['Horas das Demandas'],
+                        labels: ['Horas ' + this.lex.noun('Demanda', true, true)],
                         display: false,
                         stacked: true
                     }]
@@ -11335,31 +11435,31 @@ class ForcaDeTrabalhoReportServidorComponent extends src_app_modules_base_page_r
                     label: 'NÃO INIC',
                     data: [metadados.horasDemandasNaoIniciadas],
                     backgroundColor: '#0dcaf0',
-                    stack: 'Demandas'
+                    stack: this.lex.noun('Demanda', true)
                 },
                 {
                     label: 'EM ANDAM',
                     data: [metadados.horasDemandasEmAndamento],
                     backgroundColor: '#ffc107',
-                    stack: 'Demandas'
+                    stack: this.lex.noun('Demanda', true)
                 },
                 {
                     label: 'CONCL',
                     data: [metadados.horasDemandasConcluidas],
                     backgroundColor: '#af4201',
-                    stack: 'Demandas'
+                    stack: this.lex.noun('Demanda', true)
                 },
                 {
                     label: 'AVAL',
                     data: [metadados.horasDemandasAvaliadas],
                     backgroundColor: '#af4af0',
-                    stack: 'Demandas'
+                    stack: this.lex.noun('Demanda', true)
                 },
                 {
                     label: 'DISP',
                     data: [metadados.horasUteisTotais - metadados.horasUteisAfastamento - metadados.horasUteisDecorridas],
                     backgroundColor: '#6c757d',
-                    stack: 'Demandas'
+                    stack: this.lex.noun('Demanda', true)
                 }
             ]
         };
@@ -11399,31 +11499,31 @@ class ForcaDeTrabalhoReportServidorComponent extends src_app_modules_base_page_r
                     label: 'NÃO INIC',
                     data: [Math.round(metadados.horasDemandasNaoIniciadas * 100) / 100],
                     backgroundColor: '#0dcaf0',
-                    stack: 'Demandas'
+                    stack: this.lex.noun('Demanda', true)
                 },
                 {
                     label: 'EM ANDAM',
                     data: [Math.round(metadados.horasDemandasEmAndamento * 100) / 100],
                     backgroundColor: '#ffc107',
-                    stack: 'Demandas'
+                    stack: this.lex.noun('Demanda', true)
                 },
                 {
                     label: 'CONCL',
                     data: [Math.round(metadados.horasDemandasConcluidas * 100) / 100],
                     backgroundColor: '#af4201',
-                    stack: 'Demandas'
+                    stack: this.lex.noun('Demanda', true)
                 },
                 {
                     label: 'AVAL',
                     data: [Math.round(metadados.horasDemandasAvaliadas * 100) / 100],
                     backgroundColor: '#af4af0',
-                    stack: 'Demandas'
+                    stack: this.lex.noun('Demanda', true)
                 },
                 {
                     label: 'DISP',
                     data: [Math.round((metadados.horasUteisTotais - metadados.horasUteisAfastamento - metadados.horasUteisDecorridas) * 100) / 100],
                     backgroundColor: '#6c757d',
-                    stack: 'Demandas'
+                    stack: this.lex.noun('Demanda', true)
                 }
             ]
         };
@@ -11433,19 +11533,19 @@ class ForcaDeTrabalhoReportServidorComponent extends src_app_modules_base_page_r
                     label: 'Aprov',
                     data: [metadados.noPeriodo.tempoTrabalhadoHomologado.toFixed(2)],
                     backgroundColor: '#0dcaf0',
-                    stack: 'Demandas'
+                    stack: this.lex.noun('Demanda', true)
                 },
                 {
                     label: 'Reprov',
                     data: [metadados.noPeriodo.tempoTrabalhadoNaoHomologado.toFixed(2)],
                     backgroundColor: '#f44336',
-                    stack: 'Demandas'
+                    stack: this.lex.noun('Demanda', true)
                 },
                 {
                     label: 'Concl',
                     data: [metadados.noPeriodo.tempoDespendidoSoConcluidas.toFixed(2)],
                     backgroundColor: '#af4201',
-                    stack: 'Demandas'
+                    stack: this.lex.noun('Demanda', true)
                 }
             ]
         };
@@ -11475,7 +11575,7 @@ class ForcaDeTrabalhoReportServidorComponent extends src_app_modules_base_page_r
 ForcaDeTrabalhoReportServidorComponent.ɵfac = function ForcaDeTrabalhoReportServidorComponent_Factory(t) { return new (t || ForcaDeTrabalhoReportServidorComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_5__["Injector"])); };
 ForcaDeTrabalhoReportServidorComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineComponent"]({ type: ForcaDeTrabalhoReportServidorComponent, selectors: [["app-forcadetrabalho-report-servidor"]], features: [_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵInheritDefinitionFeature"]], decls: 3, vars: 6, consts: [[3, "title", "buttons", "hidden"], ["class", "mt-5", 4, "ngFor", "ngForOf"], [3, "buttons", "hidden"], [1, "mt-5"], [1, "table-responsive-sm"], [1, "table", "table-striped", "table-bordered", "table-hover", "my-4"], ["colspan", "3", 1, "text-center"], ["colspan", "2"], [4, "ngIf"], ["class", "my-4", 4, "ngIf"], ["class", "table-responsive-sm", 4, "ngIf"], [1, "my-4"], [1, "border-secondary", "bg-secondary", "text-start", "my-2", "ps-4"], [1, "d-md-flex", "p-2", "justify-content-center"], [1, "card", "m-2", "border-primary", "bg-light", "text-center"], [3, "tipoGrafico", "dadosGrafico", "opcoesGrafico", "pluginsGrafico"], [1, "table-responsive-md"], [1, "table", "table-bordered", "table-hover", "align-middle", "text-center"], [1, "table-active"], ["colspan", "6"], ["colspan", "3", 2, "text-align", "right"], ["colspan", "3"], ["rowspan", "4", 1, "vertical"], [2, "min-width", "315px"], [1, "micro-text", "fw-light"], ["rowspan", "3", 1, "vertical"], ["rowspan", "6", 1, "vertical"], ["colspan", "2", 1, "text-center"], [1, "table-responsive-sm", "my-4"], [1, "text-center"], [1, "table", "table-hover", "text-center"], [1, "align-middle"], ["scope", "col"], [4, "ngFor", "ngForOf"], [1, "table", "table-bordered", "table-hover", "align-middle", "text-center", 2, "width", "700px", "margin", "auto"], ["colspan", "5"], [2, "vertical-align", "middle"], [1, "table-active", 2, "font-weight", "bold"], ["colspan", "5", 2, "text-align", "left", "font-size", "small"], ["colspan", "3", 2, "padding", "8px"], [2, "text-align", "center"], [1, "text-wrap"], [1, "badge", "bg-light", "text-dark"], [1, "badge", "bg-light", "text-dark", "text-wrap"]], template: function ForcaDeTrabalhoReportServidorComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](0, "toolbar", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](1, ForcaDeTrabalhoReportServidorComponent_div_1_Template, 292, 47, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](1, ForcaDeTrabalhoReportServidorComponent_div_1_Template, 292, 83, "div", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](2, "toolbar", 2);
     } if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("title", ctx.isModal ? "" : ctx.title)("buttons", ctx.buttons)("hidden", true);
@@ -17929,10 +18029,14 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_tr_102_Template(rf, ctx) { if 
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "tr");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](1, "td", 20);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](2, "h5", 21);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](3, "Esta Unidade n\u00E3o possui Planos de Trabalho vigentes associados ao Programa!");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const ctx_r13 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Esta " + ctx_r13.lex.noun("Unidade") + " n\u00E3o possui " + ctx_r13.lex.noun("Plano de Trabalho", true) + " vigentes associados ao " + ctx_r13.lex.noun("Programa") + "!");
 } }
 function ForcaDeTrabalhoReportAreaComponent_div_1_tr_103_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "tr");
@@ -17951,7 +18055,7 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_tr_103_Template(rf, ctx) { if 
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](9, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](10, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](11, "small", 12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](12, "Soma das horas \u00FAteis totais de todos os Planos de Trabalho da Unidade. \u00C9 a base para o c\u00E1lculo de todos os percentuais.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](12);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -17961,6 +18065,8 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_tr_103_Template(rf, ctx) { if 
     const ctx_r14 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](6);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.dadosUnidade.horasUteisTotais == 0 ? 0 : ctx_r14.util.decimalToTimerFormated(x_r1.dadosUnidade.horasUteisTotais, true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Soma das horas \u00FAteis totais de todos os " + ctx_r14.lex.noun("Plano de Trabalho", true) + " da " + ctx_r14.lex.noun("Unidade") + ". \u00C9 a base para o c\u00E1lculo de todos os percentuais.");
 } }
 function ForcaDeTrabalhoReportAreaComponent_div_1_tr_104_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "tr");
@@ -17983,7 +18089,7 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_tr_104_Template(rf, ctx) { if 
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](13, "br");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](14, "small", 12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](15, "O percentual representa a rela\u00E7\u00E3o entre esta soma e a soma das horas \u00FAteis totais da Unidade: C(%) = C / B.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](15);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -17996,7 +18102,9 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_tr_104_Template(rf, ctx) { if 
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("", x_r1.dadosUnidade.percentualPlanoDecorrido, " %");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.dadosUnidade.horasUteisDecorridas == -1 ? "Nenhum dos Planos de Trabalho da Unidade iniciou a vig\u00EAncia!" : x_r1.dadosUnidade.horasUteisDecorridas == -2 ? "Todos os Planos de Trabalho da Unidade j\u00E1 encerraram suas vig\u00EAncias!" : "Soma das horas \u00FAteis decorridas de todos os Planos de Trabalho associados \u00E0 Unidade.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.dadosUnidade.horasUteisDecorridas == -1 ? "Nenhum " + ctx_r15.lex.noun("Plano de Trabalho", true, true) + " da " + ctx_r15.lex.noun("Unidade") + " iniciou a vig\u00EAncia!" : x_r1.dadosUnidade.horasUteisDecorridas == -2 ? "Todos os " + ctx_r15.lex.noun("Plano de Trabalho", true) + " da " + ctx_r15.lex.noun("Unidade") + " j\u00E1 encerraram suas vig\u00EAncias!" : "Soma das horas \u00FAteis decorridas de todos os " + ctx_r15.lex.noun("Plano de Trabalho", true) + " associados \u00E0 " + ctx_r15.lex.noun("Unidade") + ".");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("O percentual representa a rela\u00E7\u00E3o entre esta soma e a soma das horas \u00FAteis totais da " + ctx_r15.lex.noun("Unidade") + ": C(%) = C / B.");
 } }
 function ForcaDeTrabalhoReportAreaComponent_div_1_tr_105_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "tr");
@@ -18015,11 +18123,11 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_tr_105_Template(rf, ctx) { if 
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](9, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](10, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](11, "small", 12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](12, "Soma dos tempos pactuados de todas as demandas ainda n\u00E3o iniciadas.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](12);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](13, "br");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](14, "small", 12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](15, "O percentual representa a rela\u00E7\u00E3o entre esta soma e a soma das horas \u00FAteis totais da Unidade: D(%) = D / B.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](15);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -18031,6 +18139,10 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_tr_105_Template(rf, ctx) { if 
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.dadosUnidade.horasDemandasNaoIniciadas == 0 ? 0 : ctx_r16.util.decimalToTimerFormated(x_r1.dadosUnidade.horasDemandasNaoIniciadas, true));
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("", x_r1.dadosUnidade.percentualHorasNaoIniciadas, " %");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Soma " + ctx_r16.lex.noun("tempo pactuado", true, true) + " de todas as " + ctx_r16.lex.noun("demanda", true) + " ainda n\u00E3o iniciadas.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("O percentual representa a rela\u00E7\u00E3o entre esta soma e a soma das horas \u00FAteis totais " + ctx_r16.lex.noun("Unidade", false, true) + ": D(%) = D / B.");
 } }
 function ForcaDeTrabalhoReportAreaComponent_div_1_tr_106_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "tr");
@@ -18049,11 +18161,11 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_tr_106_Template(rf, ctx) { if 
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](9, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](10, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](11, "small", 12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](12, "Soma dos tempos pactuados de todas as demandas j\u00E1 iniciadas, mas ainda n\u00E3o conclu\u00EDdas.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](12);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](13, "br");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](14, "small", 12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](15, "O percentual representa a rela\u00E7\u00E3o entre esta soma e a soma das horas \u00FAteis totais da Unidade: E(%) = E / B.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](15);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -18065,6 +18177,10 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_tr_106_Template(rf, ctx) { if 
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.dadosUnidade.horasDemandasEmAndamento == 0 ? 0 : ctx_r17.util.decimalToTimerFormated(x_r1.dadosUnidade.horasDemandasEmAndamento, true));
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("", x_r1.dadosUnidade.percentualHorasEmAndamento, " %");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Soma " + ctx_r17.lex.noun("tempo pactuado", true, true) + " de todas as " + ctx_r17.lex.noun("demanda", true) + " j\u00E1 iniciadas, mas ainda n\u00E3o conclu\u00EDdas.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("O percentual representa a rela\u00E7\u00E3o entre esta soma e a soma das horas \u00FAteis totais " + ctx_r17.lex.noun("Unidade", false, true) + ": E(%) = E / B.");
 } }
 function ForcaDeTrabalhoReportAreaComponent_div_1_tr_107_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "tr");
@@ -18083,11 +18199,11 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_tr_107_Template(rf, ctx) { if 
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](9, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](10, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](11, "small", 12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](12, "Soma dos tempos pactuados de todas as demandas j\u00E1 conclu\u00EDdas, mas ainda n\u00E3o avaliadas.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](12);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](13, "br");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](14, "small", 12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](15, "O percentual representa a rela\u00E7\u00E3o entre esta soma e a soma das horas \u00FAteis totais da Unidade: F(%) = F / B.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](15);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -18099,6 +18215,10 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_tr_107_Template(rf, ctx) { if 
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.dadosUnidade.horasDemandasConcluidas == 0 ? 0 : ctx_r18.util.decimalToTimerFormated(x_r1.dadosUnidade.horasDemandasConcluidas, true));
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("", x_r1.dadosUnidade.percentualHorasConcluidas, " %");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Soma " + ctx_r18.lex.noun("tempo pactuado", true, true) + " de todas as " + ctx_r18.lex.noun("demanda", true) + " j\u00E1 conclu\u00EDdas, mas ainda n\u00E3o avaliadas.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("O percentual representa a rela\u00E7\u00E3o entre esta soma e a soma das horas \u00FAteis totais " + ctx_r18.lex.noun("Unidade", false, true) + ": F(%) = F / B.");
 } }
 function ForcaDeTrabalhoReportAreaComponent_div_1_tr_108_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "tr");
@@ -18117,11 +18237,11 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_tr_108_Template(rf, ctx) { if 
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](9, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](10, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](11, "small", 12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](12, "Soma dos tempos pactuados de todas as demandas avaliadas.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](12);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](13, "br");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](14, "small", 12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](15, "O percentual representa a rela\u00E7\u00E3o entre esta soma e a soma das horas \u00FAteis totais da Unidade: G(%) = G / B.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](15);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -18133,6 +18253,10 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_tr_108_Template(rf, ctx) { if 
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.dadosUnidade.horasDemandasAvaliadas == 0 ? 0 : ctx_r19.util.decimalToTimerFormated(x_r1.dadosUnidade.horasDemandasAvaliadas, true));
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("", x_r1.dadosUnidade.percentualHorasAvaliadas, " %");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Soma " + ctx_r19.lex.noun("tempo pactuado", true, true) + " de todas as " + ctx_r19.lex.noun("demanda", true) + " avaliadas.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("O percentual representa a rela\u00E7\u00E3o entre esta soma e a soma das horas \u00FAteis totais " + ctx_r19.lex.noun("Unidade", false, true) + ": G(%) = G / B.");
 } }
 function ForcaDeTrabalhoReportAreaComponent_div_1_tr_109_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "tr");
@@ -18151,11 +18275,11 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_tr_109_Template(rf, ctx) { if 
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](9, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](10, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](11, "small", 12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](12, "Soma dos tempos pactuados de todas as demandas, independente de seus status: H = D + E + F + G.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](12);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](13, "br");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](14, "small", 12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](15, "O percentual representa a rela\u00E7\u00E3o entre esta soma e a soma das horas \u00FAteis totais da Unidade: H(%) = H / B.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](15);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -18167,20 +18291,32 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_tr_109_Template(rf, ctx) { if 
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.dadosUnidade.horasTotaisAlocadas == 0 ? 0 : ctx_r20.util.decimalToTimerFormated(x_r1.dadosUnidade.horasTotaisAlocadas, true));
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("", x_r1.dadosUnidade.percentualHorasTotaisAlocadas, " %");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Soma " + ctx_r20.lex.noun("tempo pactuado", true, true) + " de todas as " + ctx_r20.lex.noun("demanda", true) + ", independente de seus status: H = D + E + F + G.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("O percentual representa a rela\u00E7\u00E3o entre esta soma e a soma das horas \u00FAteis totais " + ctx_r20.lex.noun("Unidade", false, true) + ": H(%) = H / B.");
 } }
 function ForcaDeTrabalhoReportAreaComponent_div_1_tr_110_span_10_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](1, "small", 12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](2, "M\u00E9dia das notas de todas as demandas avaliadas.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const ctx_r45 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("M\u00E9dia das notas de todas as " + ctx_r45.lex.noun("demanda", true) + " avaliadas.");
 } }
 function ForcaDeTrabalhoReportAreaComponent_div_1_tr_110_span_11_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](1, "small", 12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](2, "Esta Unidade n\u00E3o possui demandas avaliadas.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const ctx_r46 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Esta " + ctx_r46.lex.noun("Unidade") + " n\u00E3o possui " + ctx_r46.lex.noun("demanda", true) + " avaliadas.");
 } }
 function ForcaDeTrabalhoReportAreaComponent_div_1_tr_110_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "tr");
@@ -18188,7 +18324,7 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_tr_110_Template(rf, ctx) { if 
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](2, "I");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](3, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](4, "Nota m\u00E9dia das avalia\u00E7\u00F5es");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](4);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](5, "td", 11);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](6);
@@ -18197,13 +18333,16 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_tr_110_Template(rf, ctx) { if 
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](8, "-");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](9, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](10, ForcaDeTrabalhoReportAreaComponent_div_1_tr_110_span_10_Template, 3, 0, "span", 13);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](11, ForcaDeTrabalhoReportAreaComponent_div_1_tr_110_span_11_Template, 3, 0, "span", 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](10, ForcaDeTrabalhoReportAreaComponent_div_1_tr_110_span_10_Template, 3, 1, "span", 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](11, ForcaDeTrabalhoReportAreaComponent_div_1_tr_110_span_11_Template, 3, 1, "span", 13);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const x_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"]().$implicit;
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](6);
+    const ctx_r21 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Nota m\u00E9dia " + ctx_r21.lex.noun("avalia\u00E7\u00E3o", true, true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.dadosUnidade.qdeDemandasAvaliadas > 0 ? x_r1.dadosUnidade.mediaAvaliacoes.toFixed(2) : "");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", x_r1.dadosUnidade.qdeDemandasAvaliadas > 0);
@@ -18216,7 +18355,7 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_tr_111_Template(rf, ctx) { if 
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](2, "J");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](3, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](4, "Nr. de Servidores do Programa");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](4);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](5, "td", 11);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](6);
@@ -18227,27 +18366,32 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_tr_111_Template(rf, ctx) { if 
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](9, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](10, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](11, "small", 12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](12, "Quantidade de servidores vinculados aos Planos de Trabalho vigentes do Programa escolhido, exclu\u00EDdas as poss\u00EDveis repeti\u00E7\u00F5es.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](12);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const x_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"]().$implicit;
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](6);
+    const ctx_r22 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Nr. de Servidores " + ctx_r22.lex.noun("Programa", false, true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.dadosUnidade.nrServidoresPrograma);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Quantidade de servidores vinculados aos " + ctx_r22.lex.noun("Plano de Trabalho", true) + " vigentes " + ctx_r22.lex.noun("Programa", false, true) + " escolhido, exclu\u00EDdas as poss\u00EDveis repeti\u00E7\u00F5es.");
 } }
 function ForcaDeTrabalhoReportAreaComponent_div_1_div_112_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "div", 22);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](1, "div", 23);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](2, "h5");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](3, "Planos da Unidade - Horas");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](4, "bar-chart", 24);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](5, "div", 23);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](6, "h5");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](7, "Planos da Unidade - Demandas");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](7);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](8, "bar-chart", 24);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -18255,19 +18399,27 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_div_112_Template(rf, ctx) { if
 } if (rf & 2) {
     const x_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"]().$implicit;
     const ctx_r23 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Planos " + ctx_r23.lex.noun("Unidade", false, true) + " - Horas");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("tipoGrafico", "bar")("dadosGrafico", x_r1.graficoUnidadeGeral)("opcoesGrafico", ctx_r23.opcoesGraficoBarrasHoras);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Planos " + ctx_r23.lex.noun("Unidade", false, true) + " - " + ctx_r23.lex.noun("Demanda", true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("tipoGrafico", "horizontalBar")("dadosGrafico", x_r1.graficoUnidadeDetalhado)("opcoesGrafico", ctx_r23.opcoesGraficoBarrasDemandas);
 } }
 function ForcaDeTrabalhoReportAreaComponent_div_1_tr_127_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "tr");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](1, "td", 25);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](2, "h5", 21);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](3, "Esta \u00C1rea n\u00E3o possui Unidades-filhas ligadas ao Programa!");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const ctx_r24 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Esta \u00C1rea n\u00E3o possui " + ctx_r24.lex.noun("Unidade", true) + "-filhas ligadas ao " + ctx_r24.lex.noun("Programa") + "!");
 } }
 function ForcaDeTrabalhoReportAreaComponent_div_1_tr_128_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "tr", 26);
@@ -18296,13 +18448,14 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_tr_128_Template(rf, ctx) { if 
 } if (rf & 2) {
     const u_r50 = ctx.$implicit;
     const x_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"]().$implicit;
+    const ctx_r25 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("hidden", x_r1.dadosUnidade.id == u_r50.id);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](u_r50.sigla);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](u_r50.nrServidoresPrograma);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](u_r50.mediaAvaliacoes ? u_r50.mediaAvaliacoes.toFixed(2) : "Ainda n\u00E3o possui demandas avaliadas!");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](u_r50.mediaAvaliacoes ? u_r50.mediaAvaliacoes.toFixed(2) : "Ainda n\u00E3o possui " + ctx_r25.lex.noun("demanda", true) + " avaliadas!");
 } }
 function ForcaDeTrabalhoReportAreaComponent_div_1_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "div", 3);
@@ -18422,7 +18575,7 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_Template(rf, ctx) { if (rf & 1
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](74, "tr");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](75, "th", 8);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](76, "strong");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](77, "INFORMA\u00C7\u00D5ES SOBRE A UNIDADE PRINCIPAL");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](77);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -18430,7 +18583,7 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_Template(rf, ctx) { if (rf & 1
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](78, "tbody");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](79, "tr");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](80, "td", 6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](81, "Nome da Unidade");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](81);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](82, "td", 9);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](83);
@@ -18441,7 +18594,7 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_Template(rf, ctx) { if (rf & 1
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](86, "Contexto");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](87, "td", 9);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](88, "As m\u00E9tricas s\u00E3o referentes apenas \u00E0 Unidade Principal. S\u00F3 est\u00E3o sendo considerados os Planos de Trabalho associados ao Programa escolhido.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](88);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](89, "tr");
@@ -18449,7 +18602,7 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_Template(rf, ctx) { if (rf & 1
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](91, "A");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](92, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](93, "Qde. de Planos do Programa");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](93);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](94, "td", 11);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](95);
@@ -18460,28 +18613,28 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_Template(rf, ctx) { if (rf & 1
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](98, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](99, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](100, "small", 12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](101, "Quantidade de Planos de Trabalho da Unidade.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](101);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](102, ForcaDeTrabalhoReportAreaComponent_div_1_tr_102_Template, 4, 0, "tr", 13);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](103, ForcaDeTrabalhoReportAreaComponent_div_1_tr_103_Template, 13, 1, "tr", 13);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](104, ForcaDeTrabalhoReportAreaComponent_div_1_tr_104_Template, 16, 3, "tr", 13);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](105, ForcaDeTrabalhoReportAreaComponent_div_1_tr_105_Template, 16, 2, "tr", 13);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](106, ForcaDeTrabalhoReportAreaComponent_div_1_tr_106_Template, 16, 2, "tr", 13);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](107, ForcaDeTrabalhoReportAreaComponent_div_1_tr_107_Template, 16, 2, "tr", 13);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](108, ForcaDeTrabalhoReportAreaComponent_div_1_tr_108_Template, 16, 2, "tr", 13);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](109, ForcaDeTrabalhoReportAreaComponent_div_1_tr_109_Template, 16, 2, "tr", 13);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](110, ForcaDeTrabalhoReportAreaComponent_div_1_tr_110_Template, 12, 3, "tr", 13);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](111, ForcaDeTrabalhoReportAreaComponent_div_1_tr_111_Template, 13, 1, "tr", 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](102, ForcaDeTrabalhoReportAreaComponent_div_1_tr_102_Template, 4, 1, "tr", 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](103, ForcaDeTrabalhoReportAreaComponent_div_1_tr_103_Template, 13, 2, "tr", 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](104, ForcaDeTrabalhoReportAreaComponent_div_1_tr_104_Template, 16, 4, "tr", 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](105, ForcaDeTrabalhoReportAreaComponent_div_1_tr_105_Template, 16, 4, "tr", 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](106, ForcaDeTrabalhoReportAreaComponent_div_1_tr_106_Template, 16, 4, "tr", 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](107, ForcaDeTrabalhoReportAreaComponent_div_1_tr_107_Template, 16, 4, "tr", 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](108, ForcaDeTrabalhoReportAreaComponent_div_1_tr_108_Template, 16, 4, "tr", 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](109, ForcaDeTrabalhoReportAreaComponent_div_1_tr_109_Template, 16, 4, "tr", 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](110, ForcaDeTrabalhoReportAreaComponent_div_1_tr_110_Template, 12, 4, "tr", 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](111, ForcaDeTrabalhoReportAreaComponent_div_1_tr_111_Template, 13, 3, "tr", 13);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](112, ForcaDeTrabalhoReportAreaComponent_div_1_div_112_Template, 9, 6, "div", 14);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](112, ForcaDeTrabalhoReportAreaComponent_div_1_div_112_Template, 9, 8, "div", 14);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](113, "div", 15);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](114, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](115, "strong");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](116, "An\u00E1lise individual das Unidades que comp\u00F5em a \u00C1rea");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](116);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -18489,18 +18642,18 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_Template(rf, ctx) { if (rf & 1
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](118, "thead");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](119, "tr", 11);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](120, "th", 17);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](121, "Nome da Unidade");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](121);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](122, "th", 17);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](123, "Nr. de Servidores no Programa");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](123);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](124, "th", 17);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](125, "M\u00E9dia das Avalia\u00E7\u00F5es da Unidade");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](125);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](126, "tbody");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](127, ForcaDeTrabalhoReportAreaComponent_div_1_tr_127_Template, 4, 0, "tr", 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](127, ForcaDeTrabalhoReportAreaComponent_div_1_tr_127_Template, 4, 1, "tr", 13);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](128, ForcaDeTrabalhoReportAreaComponent_div_1_tr_128_Template, 13, 4, "tr", 18);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
@@ -18552,11 +18705,21 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_Template(rf, ctx) { if (rf & 1
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", x_r1.dadosArea.qdePlanosPrograma > 0);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", x_r1.dadosArea.qdePlanosPrograma > 0);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("INFORMA\u00C7\u00D5ES SOBRE A " + ctx_r0.lex.noun("UNIDADE") + " PRINCIPAL");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Nome " + ctx_r0.lex.noun("Unidade", false, true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.dadosUnidade.nome);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("As m\u00E9tricas s\u00E3o referentes apenas \u00E0 " + ctx_r0.lex.noun("Unidade") + " Principal. S\u00F3 est\u00E3o sendo considerados os " + ctx_r0.lex.noun("Plano de Trabalho", true) + " associados ao " + ctx_r0.lex.noun("Programa") + " escolhido.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Qde. de Planos " + ctx_r0.lex.noun("Programa", false, true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r1.dadosUnidade.qdePlanosPrograma);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("", "Quantidade de " + ctx_r0.lex.noun("Plano de Trabalho", true) + " " + ctx_r0.lex.noun("Unidade", false, true), ".");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", x_r1.dadosUnidade.qdePlanosPrograma == 0);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", x_r1.dadosUnidade.qdePlanosPrograma > 0);
@@ -18578,7 +18741,15 @@ function ForcaDeTrabalhoReportAreaComponent_div_1_Template(rf, ctx) { if (rf & 1
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", x_r1.dadosUnidade.qdePlanosPrograma > 0);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", x_r1.dadosUnidade.qdePlanosPrograma > 0);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](15);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("An\u00E1lise individual " + ctx_r0.lex.noun("Unidade", true, true) + " que comp\u00F5em a \u00C1rea");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Nome " + ctx_r0.lex.noun("Unidade", false, true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("Nr. de Servidores no " + ctx_r0.lex.noun("Programa"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]("M\u00E9dia " + ctx_r0.lex.noun("Avalia\u00E7\u00E3o", true, true) + ctx_r0.lex.noun("Unidade", false, true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", x_r1.dadosUnidades.length == 0 || x_r1.dadosUnidades.length == 1 && x_r1.dadosUnidades[0].id == x_r1.dadosUnidade.id);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngForOf", x_r1.dadosUnidades);
@@ -18646,7 +18817,7 @@ class ForcaDeTrabalhoReportAreaComponent extends src_app_modules_base_page_repor
         this.opcoesGraficoBarrasHoras = {
             scales: {
                 xAxes: [{
-                        labels: ['Total de Horas da Unidade'],
+                        labels: ['Total de Horas ' + this.lex.noun('Unidade', false, true)],
                         display: false,
                         //stacked: true,
                         ticks: {
@@ -18685,7 +18856,7 @@ class ForcaDeTrabalhoReportAreaComponent extends src_app_modules_base_page_repor
                         }
                     }],
                 yAxes: [{
-                        labels: ['Total de Demandas da Unidade'],
+                        labels: ['Total de ' + this.lex.noun('Demanda', true) + this.lex.noun('Unidade', false, true)],
                         display: false,
                         stacked: true,
                         ticks: {
@@ -18750,34 +18921,34 @@ class ForcaDeTrabalhoReportAreaComponent extends src_app_modules_base_page_repor
         ];
         let dadosGraficoDetalhado = [
             {
-                label: 'Demandas Não-iniciadas',
+                label: this.lex.noun('Demanda', true) + ' Não-iniciadas',
                 data: [metadados.horasDemandasNaoIniciadas],
                 backgroundColor: '#0dcaf0',
-                stack: 'Demandas'
+                stack: this.lex.noun('Demanda', true)
             },
             {
-                label: 'Demandas Iniciadas',
+                label: this.lex.noun('Demanda', true) + ' Iniciadas',
                 data: [metadados.horasDemandasEmAndamento],
                 backgroundColor: '#ffc107',
-                stack: 'Demandas'
+                stack: this.lex.noun('Demanda', true)
             },
             {
-                label: 'Demandas Concluídas',
+                label: this.lex.noun('Demanda', true) + ' Concluídas',
                 data: [metadados.horasDemandasConcluidas],
                 backgroundColor: '#af4201',
-                stack: 'Demandas'
+                stack: this.lex.noun('Demanda', true)
             },
             {
-                label: 'Demandas Avaliadas',
+                label: this.lex.noun('Demanda', true) + ' Avaliadas',
                 data: [metadados.horasDemandasAvaliadas],
                 backgroundColor: '#af4af0',
-                stack: 'Demandas'
+                stack: this.lex.noun('Demanda', true)
             },
             {
                 label: 'Disponível no Plano',
                 data: [metadados.horasUteisTotais - metadados.horasTotaisAlocadas],
                 backgroundColor: '#6c757d',
-                stack: 'Demandas'
+                stack: this.lex.noun('Demanda', true)
             }
         ];
         let dadosGraficoAvaliacao = [
@@ -18806,12 +18977,12 @@ class ForcaDeTrabalhoReportAreaComponent extends src_app_modules_base_page_repor
         //let $dados: any = null;
         let dadosGraficoPizzaGeral = [
             {
-                label: 'Demandas Não-iniciadas',
+                label: this.lex.noun('Demanda', true) + ' Não-iniciadas',
                 data: [metadados.horasDemandasNaoIniciadas],
                 backgroundColor: '#0dcaf0'
             },
             {
-                label: 'Demandas Iniciadas',
+                label: this.lex.noun('Demanda', true) + ' Iniciadas',
                 data: [metadados.horasDemandasEmAndamento],
                 backgroundColor: '#ffc107'
             }
@@ -18830,12 +19001,12 @@ class ForcaDeTrabalhoReportAreaComponent extends src_app_modules_base_page_repor
             }; */
         let dadosGraficoPizzaDetalhado = [
             {
-                label: 'Demandas Não-iniciadas',
+                label: this.lex.noun('Demanda', true) + ' Não-iniciadas',
                 data: [metadados.horasDemandasNaoIniciadas],
                 backgroundColor: '#0dcaf0'
             },
             {
-                label: 'Demandas Iniciadas',
+                label: this.lex.noun('Demanda', true) + ' Iniciadas',
                 data: [metadados.horasDemandasEmAndamento],
                 backgroundColor: '#ffc107'
             },
@@ -18861,7 +19032,7 @@ ForcaDeTrabalhoReportAreaComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODUL
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵloadQuery"]()) && (ctx.chart = _t.first);
     } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵInheritDefinitionFeature"]], decls: 3, vars: 4, consts: [[3, "title", "buttons"], ["class", "mt-5", 4, "ngFor", "ngForOf"], [3, "buttons"], [1, "mt-5"], [1, "table", "table-striped", "table-bordered", "table-hover", "my-4"], ["colspan", "3", 1, "text-center"], ["colspan", "2"], [1, "table", "table-striped", "table-bordered", "table-hover", "my-4", "align-middle"], ["colspan", "5", 1, "text-center"], ["colspan", "3"], ["class", "text-center", 4, "ngIf"], [1, "text-center"], [1, "micro-text", "fw-ligh"], [4, "ngIf"], ["class", "my-4 text-center", 4, "ngIf"], [1, "text-center", "my-4"], [1, "table", "table-hover"], ["scope", "col"], ["class", "text-center", 3, "hidden", 4, "ngFor", "ngForOf"], ["colspan", "5"], ["colspan", "5", 2, "padding", "8px"], [2, "text-align", "center"], [1, "my-4", "text-center"], [1, "border", "border-primary", "bg-light", "mx-4", "d-inline-block", "container", 2, "position", "relative", "width", "400px"], [3, "tipoGrafico", "dadosGrafico", "opcoesGrafico"], ["colspan", "3", 2, "padding", "8px"], [1, "text-center", 3, "hidden"], [1, "badge", "bg-light", "text-dark", "text-wrap"]], template: function ForcaDeTrabalhoReportAreaComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](0, "toolbar", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](1, ForcaDeTrabalhoReportAreaComponent_div_1_Template, 129, 37, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](1, ForcaDeTrabalhoReportAreaComponent_div_1_Template, 129, 46, "div", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](2, "toolbar", 2);
     } if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("title", ctx.isModal ? "" : ctx.title)("buttons", ctx.buttons);
@@ -20078,6 +20249,7 @@ class LexicalService {
             "pela Unidade Gestora": { single: "pela Unidade Gestora", plural: "pelas Unidades Gestoras", female: true },
             "perfil": { single: "perfil", plural: "perfis", female: false },
             "planejamento institucional": { single: "planejamento institucional", plural: "planejamentos institucionais", female: false },
+            "plano": { single: "plano", plural: "planos", female: false },
             "plano de trabalho": { single: "plano de trabalho", plural: "planos de trabalho", female: false },
             "plano de entrega": { single: "plano de entrega", plural: "planos de entrega", female: false },
             "ponto de controle": { single: "ponto de controle", plural: "pontos de controle", female: false },
@@ -20091,6 +20263,7 @@ class LexicalService {
             "projeto": { single: "projeto", plural: "projetos", female: false },
             "requisição": { single: "requisição", plural: "requisições", female: true },
             "rotina de integração": { single: "rotina de integração", plural: "rotinas de integração", female: true },
+            "servidor": { single: "servidor", plural: "servidores", female: false },
             "tarefa": { single: "tarefa", plural: "tarefas", female: true },
             "tcr": { single: "tcr", plural: "tcrs", female: false },
             "tempo estimado": { single: "tempo estimado", plural: "tempos estimados", female: false },
@@ -21976,752 +22149,6 @@ class CadeiaValorProcesso extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base
 
 /***/ }),
 
-/***/ "Y5QY":
-/*!*********************************************************************************************************!*\
-  !*** ./src/app/modules/relatorios/produtividade/produtividade-report/produtividade-report.component.ts ***!
-  \*********************************************************************************************************/
-/*! exports provided: ProdutividadeReportComponent */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProdutividadeReportComponent", function() { return ProdutividadeReportComponent; });
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
-/* harmony import */ var src_app_modules_base_page_report_base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/modules/base/page-report-base */ "aa7a");
-/* harmony import */ var src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/usuario-dao.service */ "w5Sy");
-/* harmony import */ var src_app_dao_plano_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/plano-dao.service */ "eHo6");
-/* harmony import */ var src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/dao/unidade-dao.service */ "Ufbc");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../components/toolbar/toolbar.component */ "np0s");
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common */ "ofXK");
-/* harmony import */ var _components_charts_bar_bar_chart_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../components/charts/bar/bar-chart.component */ "+uzo");
-
-
-
-
-
-
-
-
-
-function ProdutividadeReportComponent_tr_31_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](1, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](2, "Plano");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](3, "td", 4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-} if (rf & 2) {
-    const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](ctx_r0.descricaoPlano);
-} }
-function ProdutividadeReportComponent_tr_32_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](1, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](2, "Per\u00EDodo do Relat\u00F3rio");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](3, "td", 4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-} if (rf & 2) {
-    const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](ctx_r1.descricaoPeriodo);
-} }
-function ProdutividadeReportComponent_tr_33_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](1, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](2, "Qde de Planos no per\u00EDodo");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](3, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](5, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](6, "Planos de Trabalho cuja vig\u00EAncia tem alguma interse\u00E7\u00E3o com o per\u00EDodo do relat\u00F3rio.");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-} if (rf & 2) {
-    const ctx_r2 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](ctx_r2.rows == null ? null : ctx_r2.rows.length);
-} }
-function ProdutividadeReportComponent_h5_35_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "h5", 8);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](1, "O servidor n\u00E3o possui nenhum Plano de Trabalho que atenda aos crit\u00E9rios selecionados (Unidade/Per\u00EDodo)!");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-} }
-function ProdutividadeReportComponent_div_36_div_1_tr_146_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](1, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](2, "Produtividade M\u00E9dia");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](3, "td", 14);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](5, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](6, "span");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](7, "small", 15);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](8, "M\u00E9dia da produtividade de todas as demandas conclu\u00EDdas.");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-} if (rf & 2) {
-    const x_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"]().$implicit;
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("", x_r6.extras.produtividadeMedia, " %");
-} }
-function ProdutividadeReportComponent_div_36_div_1_tr_161_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](1, "td", 18);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](2, "h5", 8);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](3, "O servidor n\u00E3o possui demandas avaliadas, associadas a este Plano de Trabalho!");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-} }
-function ProdutividadeReportComponent_div_36_div_1_tr_162_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](1, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](2, "span", 19);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](3, "small", 15);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](5, "span", 20);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](6, "i");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](7);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](8, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](9, "div");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](10, "span", 21);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](11);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](12, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](13, "div", 22);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](14, "span");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](15, "i");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](16);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-} if (rf & 2) {
-    const row_r12 = ctx.$implicit;
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("#", row_r12.numero, "");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵclassMap"]("bi bi bi-x-lg");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"](" ", (row_r12.numero_processo == null ? null : row_r12.numero_processo.length) ? row_r12.numero_processo : "N\u00E3o processual", " ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](row_r12.assunto);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵclassMap"]("tempo.class");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵclassMap"]("tempo.icon");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"](" ", row_r12.produtividade, "%");
-} }
-function ProdutividadeReportComponent_div_36_div_1_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "div");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](1, "div", 10);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](2, "div", 11);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](3, "h5");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](4, "Composi\u00E7\u00E3o do Plano por Demandas");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](5, "bar-chart", 12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](6, "div", 11);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](7, "h5");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](8, "Distribui\u00E7\u00E3o dos Tempos no Plano");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](9, "bar-chart", 13);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](10, "table", 2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](11, "thead");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](12, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](13, "th", 3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](14, "strong");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](15);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](16, "tbody");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](17, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](18, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](19, "Nome do Plano");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](20, "td", 4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](21);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](22, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](23, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](24, "Unidade");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](25, "td", 4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](26);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](27, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](28, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](29, "Status do Plano");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](30, "td", 4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](31);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](32, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](33, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](34, "Horas totais do Plano");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](35, "td", 14);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](36);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](37, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](38, "span");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](39, "small", 15);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](40, "C\u00E1lculo simples: intervalo de vig\u00EAncia do Plano, em horas.");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](41, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](42, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](43, "Horas decorridas do Plano");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](44, "td", 14);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](45);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](46, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](47, "span");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](48, "small", 15);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](49, "C\u00E1lculo simples: intervalo entre o in\u00EDcio da vig\u00EAncia do Plano e o instante atual, em horas.");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](50, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](51, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](52, "Demandas conclu\u00EDdas");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](53, "td", 14);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](54);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](55, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](56, "span");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](57, "small", 15);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](58, "Todas as demandas assim definidas pelo servidor.");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](59, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](60, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](61, "Total de horas conclu\u00EDdas");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](62, "td", 14);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](63);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](64, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](65, "span");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](66, "small", 15);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](67, "Soma do tempo despendido em todas as demandas conclu\u00EDdas.");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](68, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](69, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](70, "Demandas avaliadas");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](71, "td", 14);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](72);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](73, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](74, "span");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](75, "small", 15);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](76, "Todas aquelas para as quais foi realizada uma avalia\u00E7\u00E3o.");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](77, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](78, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](79, "Total de horas avaliadas");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](80, "td", 14);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](81);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](82, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](83, "span");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](84, "small", 15);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](85, "Soma do tempo homologado de todas as demandas avaliadas.");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](86, "br");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](87, "small", 15);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](88, "Tempo efetivamente contabilizado para fins de produtividade.");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](89, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](90, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](91, "Demandas cumpridas");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](92, "td", 14);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](93);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](94, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](95, "span");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](96, "small", 15);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](97, "Todas as demandas conclu\u00EDdas que dispensam avalia\u00E7\u00E3o ou com avalia\u00E7\u00E3o j\u00E1 realizada.");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](98, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](99, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](100, "Total de horas cumpridas");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](101, "td", 14);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](102);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](103, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](104, "span");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](105, "small", 15);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](106, "Soma do tempo homologado de todas as demandas cumpridas.");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](107, "br");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](108, "small", 15);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](109, "Tempo contabilizado para o c\u00E1lculo do % cumprido do Plano.");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](110, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](111, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](112, "Tempo total do Plano");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](113, "td", 14);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](114);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](115, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](116, "span");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](117, "small", 15);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](118, "Horas \u00FAteis do Plano de Trabalho, considerando-se a carga_horaria, os feriados e finais de semana. Tempo contabilizado para o c\u00E1lculo do % cumprido do Plano.");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](119, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](120, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](121, "Percentual do Plano efetivamente cumprido");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](122, "td", 14);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](123);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](124, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](125, "span");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](126, "small", 15);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](127, "Rela\u00E7\u00E3o entre o total de horas cumpridas e o tempo total do plano.");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](128, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](129, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](130, "Percentual de cumprimento do Plano esperado");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](131, "td", 14);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](132);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](133, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](134, "span");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](135, "small", 15);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](136, "Rela\u00E7\u00E3o entre as horas j\u00E1 decorridas e as horas totais do plano.");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](137, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](138, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](139);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](140, "td", 14);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](141);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](142, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](143, "span");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](144, "small", 15);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](145, "Rela\u00E7\u00E3o entre o % Cumprido do plano e % Esperado do seu cumprimento.");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](146, ProdutividadeReportComponent_div_36_div_1_tr_146_Template, 9, 1, "tr", 5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](147, "div");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](148, "span");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](149, "strong");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](150, "An\u00E1lise individual das demandas");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](151, "table", 16);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](152, "thead");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](153, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](154, "th", 17);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](155, "#ID/n\u00BA Processo");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](156, "th", 17);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](157, "Assunto");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](158, "th", 17);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](159, "Produtividade");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](160, "tbody");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](161, ProdutividadeReportComponent_div_36_div_1_tr_161_Template, 4, 0, "tr", 5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](162, ProdutividadeReportComponent_div_36_div_1_tr_162_Template, 17, 10, "tr", 9);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-} if (rf & 2) {
-    const x_r6 = ctx.$implicit;
-    const i_r7 = ctx.index;
-    const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("dadosGrafico", x_r6.dadosGraficoPlano)("opcoesGrafico", ctx_r5.opcoesGraficoPlano);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("tipoGrafico", ctx_r5.tipoGrafico)("dadosGrafico", x_r6.dadosGraficoHoras)("opcoesGrafico", ctx_r5.opcoesGraficoHoras);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("INFORMA\u00C7\u00D5ES SOBRE O PLANO", ctx_r5.rows.length > 1 ? " NR. " + (i_r7 + 1) : "", "");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r6.extras.descricaoPlano);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r6.plano.unidade == null ? null : x_r6.plano.unidade.sigla);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r6.extras.concluido ? "CONCLU\u00CDDO - estat\u00EDsticas CONCLUSIVAS" : "EM ANDAMENTO - estat\u00EDsticas sujeitas a altera\u00E7\u00F5es");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r6.extras.horasTotais == 0 ? 0 : ctx_r5.util.decimalToTimerFormated(x_r6.extras.horasTotais, true));
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](9);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r6.extras.horasDecorridas == 0 ? 0 : ctx_r5.util.decimalToTimerFormated(x_r6.extras.horasDecorridas, true));
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](9);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]((x_r6.extras.demandasConcluidas == null ? null : x_r6.extras.demandasConcluidas.length) ? x_r6.extras.demandasConcluidas == null ? null : x_r6.extras.demandasConcluidas.length : 0);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](9);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r6.extras.horasDemandasConcluidas == 0 ? 0 : ctx_r5.util.decimalToTimerFormated(x_r6.extras.horasDemandasConcluidas, true));
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](9);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]((x_r6.extras.demandasAvaliadas == null ? null : x_r6.extras.demandasAvaliadas.length) ? x_r6.extras.demandasAvaliadas == null ? null : x_r6.extras.demandasAvaliadas.length : 0);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](9);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r6.extras.horasDemandasAvaliadas == 0 ? 0 : ctx_r5.util.decimalToTimerFormated(x_r6.extras.horasDemandasAvaliadas, true));
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]((x_r6.extras.demandasCumpridas == null ? null : x_r6.extras.demandasCumpridas.length) ? x_r6.extras.demandasCumpridas == null ? null : x_r6.extras.demandasCumpridas.length : 0);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](9);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r6.extras.horasDemandasCumpridas == 0 ? 0 : ctx_r5.util.decimalToTimerFormated(x_r6.extras.horasDemandasCumpridas, true));
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r6.extras.tempoTotal == 0 ? 0 : ctx_r5.util.decimalToTimerFormated(x_r6.extras.tempoTotal, true));
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](9);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("", x_r6.extras.percentualCumprido, " %");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](9);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("", x_r6.extras.percentualEsperado, " %");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](7);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](x_r6.extras.concluido ? "Efici\u00EAncia" : "Efici\u00EAncia estimada");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("", x_r6.extras.eficiencia, " %");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", x_r6.extras.concluido);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](15);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", !(x_r6.extras.demandasAvaliadas == null ? null : x_r6.extras.demandasAvaliadas.length));
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngForOf", x_r6.extras.demandasAvaliadas);
-} }
-function ProdutividadeReportComponent_div_36_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "div");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](1, ProdutividadeReportComponent_div_36_div_1_Template, 163, 25, "div", 9);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-} if (rf & 2) {
-    const ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngForOf", ctx_r4.rows);
-} }
-class ProdutividadeReportComponent extends src_app_modules_base_page_report_base__WEBPACK_IMPORTED_MODULE_1__["PageReportBase"] {
-    constructor(injector) {
-        //super(injector, Usuario, UsuarioDaoService);
-        super(injector, src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_2__["UsuarioDaoService"]);
-        this.injector = injector;
-        this.rows = []; // alterar os textos explicativos sobre as demandas inclusas, no caso de relatório por periodo
-        this.planosRelatorio = []; // calcular as horas das demandas concluidas, avaliadas, etc, considerando
-        // o período do relatório
-        this.descricaoPeriodo = '';
-        this.descricaoPlano = '';
-        this.horaAtual = new Date();
-        this.tipoGrafico = 'horizontalBar';
-        this.labelsX = [];
-        this.opcoesGraficoPlano = {
-            scales: {
-                xAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }],
-                yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }]
-            },
-            plugins: {
-                legend: {
-                    display: true,
-                },
-            },
-            responsive: true
-        };
-        this.opcoesGraficoHoras = {
-            scales: {
-                xAxes: [{
-                        stacked: true,
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }],
-                yAxes: [{
-                        stacked: true,
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }]
-            },
-            plugins: {
-                legend: {
-                    display: true,
-                },
-                datalabels: {
-                    anchor: 'end',
-                    align: 'end'
-                }
-            },
-            responsive: true
-        };
-        this.opcoesGraficoRow = {
-            plugins: {
-                legend: {
-                    display: false,
-                },
-            },
-            responsive: true
-        };
-        //this.dao = injector.get<UsuarioDaoService>(UsuarioDaoService);
-        this.unidadeDao = injector.get(src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_4__["UnidadeDaoService"]);
-        this.planoService = injector.get(src_app_dao_plano_dao_service__WEBPACK_IMPORTED_MODULE_3__["PlanoDaoService"]);
-    }
-    report(filter) {
-        var _a, _b, _c, _d, _e, _f, _g;
-        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            this.parametros = Object.assign({}, this.queryParams);
-            let pp = this.parametros.tipo_relatorio == "POR_PLANO";
-            let result = yield Promise.all([
-                (_a = this.unidadeDao) === null || _a === void 0 ? void 0 : _a.getById(this.parametros.unidade_id),
-                (_b = this.dao) === null || _b === void 0 ? void 0 : _b.getById(this.parametros.usuario_id, ['demandas', 'planos', 'planos.demandas', 'planos.unidade', 'planos.tipo_modalidade']),
-                (_c = this.dao) === null || _c === void 0 ? void 0 : _c.planosPorPeriodo(this.parametros.usuario_id, pp ? null : this.util.getDateTimeFormatted(this.parametros.inicio_periodo), pp ? null : this.util.getDateTimeFormatted(this.parametros.fim_periodo))
-            ]);
-            this.unidade = result[0];
-            this.usuario = result[1];
-            this.planos = result[2];
-            if (pp) {
-                let $p = (_d = this.planos) === null || _d === void 0 ? void 0 : _d.find(x => x.id == this.parametros.plano_id);
-                this.planosAnalisados = [$p];
-                this.descricaoPlano = (((_e = $p.tipo_modalidade) === null || _e === void 0 ? void 0 : _e.nome) || "") + " - " + this.dao.getDateFormatted($p.data_inicio_vigencia) + " a " + this.dao.getDateFormatted($p.data_fim_vigencia);
-            }
-            else {
-                this.planosAnalisados = (_f = this.planos) === null || _f === void 0 ? void 0 : _f.filter(p => p.unidade_id == this.parametros.unidade_id);
-                this.descricaoPeriodo = "De " + this.dao.getDateFormatted(this.parametros.inicio_periodo) + " a " + this.dao.getDateFormatted(this.parametros.fim_periodo);
-            }
-            if ((_g = this.planosAnalisados) === null || _g === void 0 ? void 0 : _g.length) {
-                for (let $p of this.planosAnalisados) {
-                    yield this.adicionarAoRelatorio($p, pp ? null : this.util.getDateTimeFormatted(this.parametros.inicio_periodo), pp ? null : this.util.getDateTimeFormatted(this.parametros.fim_periodo));
-                }
-            }
-            return this.planosRelatorio;
-        });
-    }
-    adicionarAoRelatorio(planoAnalisado, inicioPeriodo, fimPeriodo) {
-        var _a;
-        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            let $metadados = yield this.planoService.metadados(planoAnalisado, inicioPeriodo, fimPeriodo);
-            if (!Array.isArray($metadados.demandasNaoIniciadas))
-                $metadados.demandasNaoIniciadas = [$metadados.demandasNaoIniciadas];
-            if (!Array.isArray($metadados.demandasEmAndamento))
-                $metadados.demandasEmAndamento = [$metadados.demandasEmAndamento];
-            $metadados.descricaoPlano = (((_a = planoAnalisado.tipo_modalidade) === null || _a === void 0 ? void 0 : _a.nome) || "") + " - " + this.dao.getDateFormatted(planoAnalisado.data_inicio_vigencia) + " a " + this.dao.getDateFormatted(planoAnalisado.data_fim_vigencia);
-            $metadados.percentualEsperado = $metadados.horasTotais ? Math.round($metadados.horasDecorridas / $metadados.horasTotais * 10000) / 100 : 0;
-            if ($metadados.percentualEsperado > 100)
-                $metadados.percentualEsperado = 100;
-            $metadados.percentualCumprido = $metadados.horasUteisTotais ? Math.round($metadados.horasDemandasCumpridas / $metadados.horasUteisTotais * 10000) / 100 : 0;
-            $metadados.eficiencia = $metadados.percentualEsperado ? Math.round($metadados.percentualCumprido / $metadados.percentualEsperado * 10000) / 100 : 0;
-            $metadados.produtividadeMedia = Math.round($metadados.produtividadeMedia * 100) / 100;
-            this.planosRelatorio.push({
-                'plano': planoAnalisado,
-                'extras': $metadados,
-                'horasTotaisAlocadas': 0,
-                'horasUteisDecorridas': 0,
-                'dadosGraficoPlano': this.obterDadosGrafico($metadados, 'GERAL'),
-                'dadosGraficoHoras': this.obterDadosGrafico($metadados, 'DETALHADO')
-            });
-        });
-    }
-    obterDadosGrafico(metadados, tipo) {
-        let dadosGeral = [
-            {
-                label: 'Não Iniciadas',
-                data: [metadados.demandasNaoIniciadas.length],
-                backgroundColor: '#d63384'
-            },
-            {
-                label: 'Em Andamento',
-                data: [metadados.demandasEmAndamento.length],
-                backgroundColor: '#0d6efd'
-            },
-            {
-                label: 'Concluidas',
-                data: [metadados.demandasConcluidas.length],
-                backgroundColor: '#198754'
-            },
-            {
-                label: 'Já Avaliadas',
-                data: [metadados.demandasAvaliadas.length],
-                backgroundColor: '#fd7e14'
-            }
-        ];
-        let tempoDespendido = metadados.horasDemandasConcluidas - metadados.horasDemandasCumpridas;
-        let tempoPactuado = metadados.horasDemandasNaoIniciadas + metadados.horasDemandasEmAndamento;
-        let tempoHomologado = metadados.horasDemandasCumpridas;
-        let dadosDetalhado = [
-            {
-                label: 'Tempo Despendido',
-                data: [tempoDespendido],
-                backgroundColor: '#0dcaf0'
-            },
-            {
-                label: 'Tempo Pactuado',
-                data: [tempoPactuado],
-                backgroundColor: '#ffc107'
-            },
-            {
-                label: 'Tempo Homologado',
-                data: [tempoHomologado],
-                backgroundColor: '#af4201'
-            },
-            {
-                label: 'Tempo Plano',
-                data: [metadados.horasUteisTotais - tempoPactuado - tempoDespendido - tempoHomologado],
-                backgroundColor: '#6c757d'
-            }
-        ];
-        return tipo == 'GERAL' ? dadosGeral : dadosDetalhado;
-    }
-}
-ProdutividadeReportComponent.ɵfac = function ProdutividadeReportComponent_Factory(t) { return new (t || ProdutividadeReportComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_5__["Injector"])); };
-ProdutividadeReportComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineComponent"]({ type: ProdutividadeReportComponent, selectors: [["app-produtividade-report"]], features: [_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵInheritDefinitionFeature"]], decls: 38, vars: 12, consts: [[3, "title", "buttons"], [1, "mt-5"], [1, "table", "table-striped", "table-bordered", "table-hover", "my-4"], ["colspan", "3", 1, "text-center"], ["colspan", "2"], [4, "ngIf"], ["style", "text-align:center;", 4, "ngIf"], [3, "buttons"], [2, "text-align", "center"], [4, "ngFor", "ngForOf"], [1, "my-4", "text-center"], [1, "container", "border", "border-primary", "bg-light", "d-inline-block", "mx-4", 2, "position", "relative", "width", "400px"], [3, "dadosGrafico", "opcoesGrafico"], [3, "tipoGrafico", "dadosGrafico", "opcoesGrafico"], [1, "text-center"], [1, "micro-text", "fw-ligh"], [1, "table", "table-hover"], ["scope", "col"], ["colspan", "3", 2, "padding", "8px"], [1, "text-wrap"], [1, "badge", "bg-light", "text-dark"], [1, "badge", "bg-light", "text-dark", "text-wrap"], [1, "one-per-line"]], template: function ProdutividadeReportComponent_Template(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](0, "toolbar", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](1, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](2, "table", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](3, "thead");
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](4, "tr");
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](5, "th", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](6, "strong");
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](7, "CRIT\u00C9RIOS PARA O RELAT\u00D3RIO");
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](8, "tbody");
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](9, "tr");
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](10, "td");
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](11, "Data e hora do Relat\u00F3rio");
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](12, "td");
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](13);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](14, "td");
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](15, "Marco temporal para as informa\u00E7\u00F5es/estat\u00EDsticas constantes do presente relat\u00F3rio.");
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](16, "tr");
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](17, "td");
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](18, "Servidor");
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](19, "td", 4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](20);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](21, "tr");
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](22, "td");
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](23, "Unidade");
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](24, "td", 4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](25);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](26, "tr");
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](27, "td");
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](28, "Tipo de Relat\u00F3rio");
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](29, "td", 4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](30);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](31, ProdutividadeReportComponent_tr_31_Template, 5, 1, "tr", 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](32, ProdutividadeReportComponent_tr_32_Template, 5, 1, "tr", 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](33, ProdutividadeReportComponent_tr_33_Template, 7, 1, "tr", 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](34, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](35, ProdutividadeReportComponent_h5_35_Template, 2, 0, "h5", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](36, ProdutividadeReportComponent_div_36_Template, 2, 1, "div", 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](37, "toolbar", 7);
-    } if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("title", ctx.isModal ? "" : ctx.title)("buttons", ctx.buttons);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](13);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](ctx.util.getDateTimeFormatted(ctx.horaAtual));
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](((ctx.usuario == null ? null : ctx.usuario.nome) || "").toUpperCase());
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](ctx.unidade == null ? null : ctx.unidade.sigla);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]((ctx.parametros == null ? null : ctx.parametros.tipo_relatorio) == "POR_PLANO" ? "POR PLANO DE TRABALHO" : "POR PER\u00CDODO");
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", (ctx.parametros == null ? null : ctx.parametros.tipo_relatorio) == "POR_PLANO");
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", (ctx.parametros == null ? null : ctx.parametros.tipo_relatorio) == "POR_PERIODO");
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", (ctx.parametros == null ? null : ctx.parametros.tipo_relatorio) == "POR_PERIODO");
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", !(ctx.rows == null ? null : ctx.rows.length));
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", ctx.rows == null ? null : ctx.rows.length);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("buttons", ctx.buttons);
-    } }, directives: [_components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_6__["ToolbarComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_7__["NgIf"], _angular_common__WEBPACK_IMPORTED_MODULE_7__["NgForOf"], _components_charts_bar_bar_chart_component__WEBPACK_IMPORTED_MODULE_8__["BarChartComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwcm9kdXRpdmlkYWRlLXJlcG9ydC5jb21wb25lbnQuc2NzcyJ9 */"] });
-
-
-/***/ }),
-
 /***/ "YD8X":
 /*!*****************************************************!*\
   !*** ./src/app/dao/material-servico-dao.service.ts ***!
@@ -24087,194 +23514,6 @@ IntegracaoListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵ
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("rows", ctx.rowsLimit);
     } }, directives: [src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__["GridComponent"], _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_7__["ToolbarComponent"], _components_grid_filter_filter_component__WEBPACK_IMPORTED_MODULE_8__["FilterComponent"], _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_9__["InputSelectComponent"], _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_10__["InputDatetimeComponent"], _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_11__["SeparatorComponent"], _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_12__["InputSwitchComponent"], _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_13__["ColumnsComponent"], _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_14__["ColumnComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_15__["NgIf"], _components_grid_pagination_pagination_component__WEBPACK_IMPORTED_MODULE_16__["PaginationComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJpbnRlZ3JhY2FvLWxpc3QuY29tcG9uZW50LnNjc3MifQ== */"] });
-
-
-/***/ }),
-
-/***/ "a3YM":
-/*!*********************************************************************************************************!*\
-  !*** ./src/app/modules/relatorios/produtividade/produtividade-filter/produtividade-filter.component.ts ***!
-  \*********************************************************************************************************/
-/*! exports provided: ProdutividadeFilterComponent */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProdutividadeFilterComponent", function() { return ProdutividadeFilterComponent; });
-/* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/components/editable-form/editable-form.component */ "RKEd");
-/* harmony import */ var src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/dao/usuario-dao.service */ "w5Sy");
-/* harmony import */ var src_app_modules_base_page_report_filter_base__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/modules/base/page-report-filter-base */ "Xlc8");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../components/input/input-search/input-search.component */ "8OLq");
-/* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../components/input/input-select/input-select.component */ "txHH");
-/* harmony import */ var _components_input_input_radio_input_radio_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../components/input/input-radio/input-radio.component */ "q/rX");
-/* harmony import */ var _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../components/input/input-datetime/input-datetime.component */ "NRF3");
-
-
-
-
-
-
-
-
-
-const _c0 = ["usuario"];
-const _c1 = ["unidade"];
-const _c2 = function () { return ["planos.tipo_modalidade:id,nome", "planos.unidade:id,nome,sigla"]; };
-class ProdutividadeFilterComponent extends src_app_modules_base_page_report_filter_base__WEBPACK_IMPORTED_MODULE_2__["PageReportFilterBase"] {
-    constructor(injector) {
-        super(injector);
-        this.injector = injector;
-        //public plains: LookupItem[] = [];
-        this.planos = [];
-        this.unidades = [];
-        this.validate = (control, controlName) => {
-            var _a, _b, _c, _d;
-            let result = null;
-            if (["usuario_id", "unidade_id", "tipo_relatorio"].includes(controlName) && !((_a = control.value) === null || _a === void 0 ? void 0 : _a.length)) {
-                result = "Obrigatório";
-            }
-            else if (["inicio_periodo", "fim_periodo"].includes(controlName) && ((_b = this.form) === null || _b === void 0 ? void 0 : _b.controls.tipo_relatorio.value) == "POR_PERIODO") {
-                if (!control.value) {
-                    result = "Obrigatório";
-                }
-                else if (!this.util.isDataValid(control.value)) {
-                    result = "Data inválida";
-                }
-            }
-            else if (controlName == "plano_id" && !((_c = control.value) === null || _c === void 0 ? void 0 : _c.length) && ((_d = this.form) === null || _d === void 0 ? void 0 : _d.controls.tipo_relatorio.value) == "POR_PLANO") {
-                result = "Obrigatório";
-            }
-            return result;
-        };
-        this.formValidation = (form) => {
-            const values = form.value;
-            if (values.inicio_periodo > values.fim_periodo) {
-                return "O início do período não pode ser maior que o final do período!";
-            }
-            return undefined;
-        };
-        this.usuarioDao = injector.get(src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_1__["UsuarioDaoService"]);
-        this.form = this.fh.FormBuilder({
-            inicio_periodo: { default: new Date() },
-            fim_periodo: { default: new Date() },
-            tipo_relatorio: { default: "POR_PERIODO" },
-            plano_id: { default: null },
-            unidade_id: { default: null },
-            usuario_id: { default: null },
-        }, this.cdRef, this.validate);
-        this.reportRoute = { route: ["relatorios", "produtividade", "report"], params: {} };
-    }
-    initializeData(form) {
-        form.patchValue({});
-    }
-    onUsuarioSelect(item) {
-        var _a, _b;
-        const usuario = item.entity;
-        const planos = (usuario === null || usuario === void 0 ? void 0 : usuario.planos) || [];
-        const unidades = [];
-        this.planos = planos.map(x => {
-            var _a, _b, _c;
-            if (!unidades.find(y => { var _a; return y.key == ((_a = x.unidade) === null || _a === void 0 ? void 0 : _a.id); })) {
-                unidades.push({
-                    key: (_a = x.unidade) === null || _a === void 0 ? void 0 : _a.id,
-                    value: (((_b = x.unidade) === null || _b === void 0 ? void 0 : _b.nome) || ""),
-                    data: x
-                });
-            }
-            return {
-                key: x.id,
-                value: (((_c = x.tipo_modalidade) === null || _c === void 0 ? void 0 : _c.nome) || "") + " - " + this.usuarioDao.getDateFormatted(x.data_inicio_vigencia) + " a " + this.usuarioDao.getDateFormatted(x.data_fim_vigencia) + " (" + x.unidade.sigla + ")",
-                data: x
-            };
-        });
-        this.unidades = unidades;
-        this.cdRef.detectChanges();
-        if (!((_a = this.form.controls.plano_id.value) === null || _a === void 0 ? void 0 : _a.length) && this.planos.length == 1) { //se o controle PLANO está em branco e o usuário só possui 1 plano, preenche o controle com este plano
-            this.form.controls.plano_id.setValue(this.planos[0].key);
-        }
-        else { // caso contrário deixa o controle em branco para que o usuário selecione o valor desejado
-            this.form.controls.plano_id.setValue(null);
-        }
-        if (!((_b = this.form.controls.unidade_id.value) === null || _b === void 0 ? void 0 : _b.length) && this.unidades.length == 1) { //se o controle UNIDADE está em branco e o usuário só está vinculado a 1 unidade, preenche o controle com esta unidade
-            this.form.controls.unidade_id.setValue(this.unidades[0].key);
-        }
-        else { // caso contrário deixa o controle em branco para que o usuário selecione o valor desejado
-            this.form.controls.unidade_id.setValue(null);
-        }
-    }
-    onPlanoChange(event) {
-    }
-    onUnidadeChange(event) {
-        var _a, _b;
-        if (event) {
-            const unidadeSelecionada = this.form.controls.unidade_id.value;
-            const planoSelecionado = this.form.controls.plano_id.value;
-            this.planos = (((_b = (_a = this.usuario) === null || _a === void 0 ? void 0 : _a.searchObj) === null || _b === void 0 ? void 0 : _b.planos) || []).filter(x => { var _a; return ((_a = x.unidade) === null || _a === void 0 ? void 0 : _a.id) == unidadeSelecionada; }).map(x => {
-                var _a;
-                return {
-                    key: x.id,
-                    value: (((_a = x.tipo_modalidade) === null || _a === void 0 ? void 0 : _a.nome) || "") + " - " + this.usuarioDao.getDateFormatted(x.data_inicio_vigencia) + " a " + this.usuarioDao.getDateFormatted(x.data_fim_vigencia) + " (" + x.unidade.sigla + ")",
-                    data: x
-                };
-            });
-            if (!this.planos.find(x => x.data.id == planoSelecionado))
-                this.form.controls.plano_id.setValue(null);
-            this.cdRef.detectChanges();
-        }
-    }
-    selecionaUnidade(event) {
-    }
-}
-ProdutividadeFilterComponent.ɵfac = function ProdutividadeFilterComponent_Factory(t) { return new (t || ProdutividadeFilterComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_3__["Injector"])); };
-ProdutividadeFilterComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineComponent"]({ type: ProdutividadeFilterComponent, selectors: [["app-produtividade-filter"]], viewQuery: function ProdutividadeFilterComponent_Query(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_0__["EditableFormComponent"], 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵviewQuery"](_c0, 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵviewQuery"](_c1, 1);
-    } if (rf & 2) {
-        let _t;
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵloadQuery"]()) && (ctx.usuario = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵloadQuery"]()) && (ctx.unidade = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵInheritDefinitionFeature"]], decls: 16, vars: 28, consts: [[3, "form", "title", "buttons"], [1, "row"], ["controlName", "usuario_id", 3, "size", "dao", "join", "select"], ["usuario", ""], ["nullable", "", "controlName", "unidade_id", "labelInfo", "Unidades \u00E0s quais o usu\u00E1rio possui Plano de Trabalho vinculado", 3, "label", "size", "control", "items", "change"], ["unidade", ""], ["label", "Tipo de Relat\u00F3rio", "icon", "bi bi-check2", "controlName", "tipo_relatorio", "labelInfo", "Define se o relat\u00F3rio ser\u00E1 gerado para um intervalo de tempo espec\u00EDfico ou para um Plano de Trabalho em particular", 3, "size", "control", "items"], ["tipo_relatorio", ""], ["date", "", "label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "inicio_periodo", 3, "size", "control"], ["inicio_periodo", ""], ["date", "", "label", "Fim", "icon", "bi bi-calendar-date", "controlName", "fim_periodo", 3, "size", "control"], ["fim_periodo", ""], ["nullable", "", "controlName", "plano_id", "labelInfo", "Planos de trabalho", 3, "label", "size", "control", "items", "change"], ["plano", ""]], template: function ProdutividadeFilterComponent_Template(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "editable-form", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](1, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](2, "input-search", 2, 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵlistener"]("select", function ProdutividadeFilterComponent_Template_input_search_select_2_listener($event) { return ctx.onUsuarioSelect($event); });
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](4, "input-select", 4, 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵlistener"]("change", function ProdutividadeFilterComponent_Template_input_select_change_4_listener($event) { return ctx.onUnidadeChange($event); });
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](6, "hr");
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](7, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](8, "input-radio", 6, 7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](10, "input-datetime", 8, 9);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](12, "input-datetime", 10, 11);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](14, "input-select", 12, 13);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵlistener"]("change", function ProdutividadeFilterComponent_Template_input_select_change_14_listener($event) { return ctx.onPlanoChange($event); });
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
-    } if (rf & 2) {
-        const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵreference"](9);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("form", ctx.form)("title", ctx.title)("buttons", ctx.buttons);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 6)("dao", ctx.usuarioDao)("join", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](27, _c2));
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("label", ctx.lex.noun("Unidade"))("size", 6)("control", ctx.form.controls.unidade_id)("items", ctx.unidades);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.tipo_relatorio)("items", ctx.lookup.TIPO_RELATORIO_PRODUTIVIDADE_INDIVIDUAL);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵclassProp"]("d-none", _r2.value == "POR_PLANO" ? true : false);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 3)("control", ctx.form.controls.inicio_periodo);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵclassProp"]("d-none", _r2.value == "POR_PLANO" ? true : false);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("size", 3)("control", ctx.form.controls.fim_periodo);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵclassProp"]("d-none", _r2.value == "POR_PLANO" ? false : true);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("label", ctx.lex.noun("Plano de Trabalo"))("size", 6)("control", ctx.form.controls.plano_id)("items", ctx.planos);
-    } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_0__["EditableFormComponent"], _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_4__["InputSearchComponent"], _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_5__["InputSelectComponent"], _components_input_input_radio_input_radio_component__WEBPACK_IMPORTED_MODULE_6__["InputRadioComponent"], _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_7__["InputDatetimeComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwcm9kdXRpdmlkYWRlLWZpbHRlci5jb21wb25lbnQuc2NzcyJ9 */"] });
 
 
 /***/ }),
@@ -25761,15 +25000,6 @@ class PlanoDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0__["Da
             { field: "usuario", label: "usuario", fields: this.usuarioDao.dataset(), type: "OBJECT" },
             { field: "programa", label: "programa", fields: this.programaDao.dataset(), type: "OBJECT" }
         ], deeps);
-    }
-    metadados(plano, inicioPeriodo, fimPeriodo) {
-        return new Promise((resolve, reject) => {
-            this.server.post('api/Relatorio/metadados', {
-                plano: plano, inicioPeriodo: inicioPeriodo, fimPeriodo: fimPeriodo
-            }).subscribe(response => {
-                resolve((response === null || response === void 0 ? void 0 : response.metadados) || []);
-            }, error => reject(error));
-        });
     }
     metadadosPlano(plano_id, inicioPeriodo, fimPeriodo) {
         return new Promise((resolve, reject) => {
@@ -29150,6 +28380,126 @@ class PlanoEntregaDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_
     constructor(injector) {
         super("PlanoEntrega", injector);
         this.injector = injector;
+    }
+    arquivar(plano_entrega_id, arquivar) {
+        return new Promise((resolve, reject) => {
+            this.server.post('api/' + this.collection + '/arquivar', { id: plano_entrega_id, arquivar: arquivar }).subscribe(response => {
+                if (response.error) {
+                    reject(response.error);
+                }
+                else {
+                    resolve(!!(response === null || response === void 0 ? void 0 : response.success));
+                }
+            }, error => reject(error));
+        });
+    }
+    cancelarConclusao(plano_entrega_id) {
+        return new Promise((resolve, reject) => {
+            this.server.post('api/' + this.collection + '/cancelar-conclusao', { id: plano_entrega_id }).subscribe(response => {
+                if (response.error) {
+                    reject(response.error);
+                }
+                else {
+                    resolve(!!(response === null || response === void 0 ? void 0 : response.success));
+                }
+            }, error => reject(error));
+        });
+    }
+    cancelarAvaliacao(plano_entrega_id) {
+        return new Promise((resolve, reject) => {
+            this.server.post('api/' + this.collection + '/cancelar-avaliacao', { id: plano_entrega_id }).subscribe(response => {
+                if (response.error) {
+                    reject(response.error);
+                }
+                else {
+                    resolve(!!(response === null || response === void 0 ? void 0 : response.success));
+                }
+            }, error => reject(error));
+        });
+    }
+    liberarHomologacao(plano_entrega_id) {
+        return new Promise((resolve, reject) => {
+            this.server.post('api/' + this.collection + '/liberar-homologacao', { id: plano_entrega_id }).subscribe(response => {
+                if (response.error) {
+                    reject(response.error);
+                }
+                else {
+                    resolve(!!(response === null || response === void 0 ? void 0 : response.success));
+                }
+            }, error => reject(error));
+        });
+    }
+    homologar(plano_entrega_id) {
+        return new Promise((resolve, reject) => {
+            this.server.post('api/' + this.collection + '/homologar', { id: plano_entrega_id }).subscribe(response => {
+                if (response.error) {
+                    reject(response.error);
+                }
+                else {
+                    resolve(!!(response === null || response === void 0 ? void 0 : response.success));
+                }
+            }, error => reject(error));
+        });
+    }
+    concluir(plano_entrega_id) {
+        return new Promise((resolve, reject) => {
+            this.server.post('api/' + this.collection + '/concluir', { id: plano_entrega_id }).subscribe(response => {
+                if (response.error) {
+                    reject(response.error);
+                }
+                else {
+                    resolve(!!(response === null || response === void 0 ? void 0 : response.success));
+                }
+            }, error => reject(error));
+        });
+    }
+    avaliar(plano_entrega_id) {
+        return new Promise((resolve, reject) => {
+            this.server.post('api/' + this.collection + '/avaliar', { id: plano_entrega_id }).subscribe(response => {
+                if (response.error) {
+                    reject(response.error);
+                }
+                else {
+                    resolve(!!(response === null || response === void 0 ? void 0 : response.success));
+                }
+            }, error => reject(error));
+        });
+    }
+    reativar(plano_entrega_id) {
+        return new Promise((resolve, reject) => {
+            this.server.post('api/' + this.collection + '/reativar', { id: plano_entrega_id }).subscribe(response => {
+                if (response.error) {
+                    reject(response.error);
+                }
+                else {
+                    resolve(!!(response === null || response === void 0 ? void 0 : response.success));
+                }
+            }, error => reject(error));
+        });
+    }
+    cancelarHomologacao(plano_entrega_id) {
+        return new Promise((resolve, reject) => {
+            this.server.post('api/' + this.collection + '/cancelar-homologacao', { id: plano_entrega_id }).subscribe(response => {
+                if (response.error) {
+                    reject(response.error);
+                }
+                else {
+                    resolve(!!(response === null || response === void 0 ? void 0 : response.success));
+                }
+            }, error => reject(error));
+        });
+    }
+    retirarHomologacao(plano_entrega_id) {
+        return new Promise((resolve, reject) => {
+            this.server.post('api/' + this.collection + '/retirar-homologacao', { id: plano_entrega_id }).subscribe(response => {
+                if (response.error) {
+                    reject(response.error);
+                }
+                else {
+                    resolve(!!(response === null || response === void 0 ? void 0 : response.success));
+                }
+            }, error => reject(error));
+        });
     }
     needHomologate(plano) {
     }
@@ -35930,15 +35280,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_modules_relatorios_relatorio_routing_module__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/modules/relatorios/relatorio-routing.module */ "I9iZ");
 /* harmony import */ var src_app_components_components_module__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/components/components.module */ "j1ZV");
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/forms */ "3Pt+");
-/* harmony import */ var _produtividade_produtividade_filter_produtividade_filter_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./produtividade/produtividade-filter/produtividade-filter.component */ "a3YM");
-/* harmony import */ var _forca_de_trabalho_filter_servidor_forcadetrabalho_filter_servidor_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./forca-de-trabalho/filter/servidor/forcadetrabalho-filter-servidor.component */ "OOt/");
-/* harmony import */ var _forca_de_trabalho_filter_area_forcadetrabalho_filter_area_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./forca-de-trabalho/filter/area/forcadetrabalho-filter-area.component */ "x7zD");
-/* harmony import */ var _produtividade_produtividade_report_produtividade_report_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./produtividade/produtividade-report/produtividade-report.component */ "Y5QY");
-/* harmony import */ var _forca_de_trabalho_report_servidor_forcadetrabalho_report_servidor_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./forca-de-trabalho/report/servidor/forcadetrabalho-report-servidor.component */ "JAl2");
-/* harmony import */ var _forca_de_trabalho_report_area_forcadetrabalho_report_area_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./forca-de-trabalho/report/area/forcadetrabalho-report-area.component */ "QxDE");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/core */ "fXoL");
-
-
+/* harmony import */ var _forca_de_trabalho_filter_servidor_forcadetrabalho_filter_servidor_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./forca-de-trabalho/filter/servidor/forcadetrabalho-filter-servidor.component */ "OOt/");
+/* harmony import */ var _forca_de_trabalho_filter_area_forcadetrabalho_filter_area_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./forca-de-trabalho/filter/area/forcadetrabalho-filter-area.component */ "x7zD");
+/* harmony import */ var _forca_de_trabalho_report_servidor_forcadetrabalho_report_servidor_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./forca-de-trabalho/report/servidor/forcadetrabalho-report-servidor.component */ "JAl2");
+/* harmony import */ var _forca_de_trabalho_report_area_forcadetrabalho_report_area_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./forca-de-trabalho/report/area/forcadetrabalho-report-area.component */ "QxDE");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/core */ "fXoL");
 
 
 
@@ -35952,20 +35298,18 @@ __webpack_require__.r(__webpack_exports__);
 class RelatorioModule {
 }
 RelatorioModule.ɵfac = function RelatorioModule_Factory(t) { return new (t || RelatorioModule)(); };
-RelatorioModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdefineNgModule"]({ type: RelatorioModule });
-RelatorioModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdefineInjector"]({ imports: [[
+RelatorioModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefineNgModule"]({ type: RelatorioModule });
+RelatorioModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefineInjector"]({ imports: [[
             _angular_common__WEBPACK_IMPORTED_MODULE_0__["CommonModule"],
             src_app_components_components_module__WEBPACK_IMPORTED_MODULE_3__["ComponentsModule"],
             _angular_forms__WEBPACK_IMPORTED_MODULE_4__["ReactiveFormsModule"],
             src_app_modules_relatorios_relatorio_routing_module__WEBPACK_IMPORTED_MODULE_2__["RelatorioRoutingModule"],
             _gestao_demanda_demanda_module__WEBPACK_IMPORTED_MODULE_1__["DemandaModule"]
         ]] });
-(function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵsetNgModuleScope"](RelatorioModule, { declarations: [_produtividade_produtividade_filter_produtividade_filter_component__WEBPACK_IMPORTED_MODULE_5__["ProdutividadeFilterComponent"],
-        _forca_de_trabalho_filter_servidor_forcadetrabalho_filter_servidor_component__WEBPACK_IMPORTED_MODULE_6__["ForcaDeTrabalhoFilterServidorComponent"],
-        _forca_de_trabalho_filter_area_forcadetrabalho_filter_area_component__WEBPACK_IMPORTED_MODULE_7__["ForcaDeTrabalhoFilterAreaComponent"],
-        _produtividade_produtividade_report_produtividade_report_component__WEBPACK_IMPORTED_MODULE_8__["ProdutividadeReportComponent"],
-        _forca_de_trabalho_report_servidor_forcadetrabalho_report_servidor_component__WEBPACK_IMPORTED_MODULE_9__["ForcaDeTrabalhoReportServidorComponent"],
-        _forca_de_trabalho_report_area_forcadetrabalho_report_area_component__WEBPACK_IMPORTED_MODULE_10__["ForcaDeTrabalhoReportAreaComponent"]], imports: [_angular_common__WEBPACK_IMPORTED_MODULE_0__["CommonModule"],
+(function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵsetNgModuleScope"](RelatorioModule, { declarations: [_forca_de_trabalho_filter_servidor_forcadetrabalho_filter_servidor_component__WEBPACK_IMPORTED_MODULE_5__["ForcaDeTrabalhoFilterServidorComponent"],
+        _forca_de_trabalho_filter_area_forcadetrabalho_filter_area_component__WEBPACK_IMPORTED_MODULE_6__["ForcaDeTrabalhoFilterAreaComponent"],
+        _forca_de_trabalho_report_servidor_forcadetrabalho_report_servidor_component__WEBPACK_IMPORTED_MODULE_7__["ForcaDeTrabalhoReportServidorComponent"],
+        _forca_de_trabalho_report_area_forcadetrabalho_report_area_component__WEBPACK_IMPORTED_MODULE_8__["ForcaDeTrabalhoReportAreaComponent"]], imports: [_angular_common__WEBPACK_IMPORTED_MODULE_0__["CommonModule"],
         src_app_components_components_module__WEBPACK_IMPORTED_MODULE_3__["ComponentsModule"],
         _angular_forms__WEBPACK_IMPORTED_MODULE_4__["ReactiveFormsModule"],
         src_app_modules_relatorios_relatorio_routing_module__WEBPACK_IMPORTED_MODULE_2__["RelatorioRoutingModule"],
