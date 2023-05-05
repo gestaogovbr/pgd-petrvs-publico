@@ -9,7 +9,7 @@
                 <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
                     <div class="row">
                         <input-text [size]="12" [label]="lex.noun('Planejamento Institucional')" controlName="nome"
-                            [control]="filter!.controls.nome" placeholder="'Nome do '+lex.noun('Planejamento Institucional) +'...'"></input-text>
+                            [control]="filter!.controls.nome" [placeholder]="'Nome ' + lex.noun('Planejamento Institucional',false,true) + '...'"></input-text>
                     </div>
                     <div class="row">
                         <input-switch [size]="2" [label]="'Só da '+ lex.noun('Entidade')" controlName="so_entidade" [control]="filter!.controls.so_entidade" (change)="onSoEntidadeChange($event)"></input-switch>

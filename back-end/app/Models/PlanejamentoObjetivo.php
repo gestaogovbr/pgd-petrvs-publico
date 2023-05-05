@@ -20,10 +20,10 @@ class PlanejamentoObjetivo extends ModelBase
         'nome', /* varchar(256); NOT NULL; */// Nome do objetivo
         'fundamentacao', /* varchar(256); NOT NULL; */// Fundamentação
         'planejamento_id', /* char(36); NOT NULL; */
-        'sequencia', /* integer; */
+        'sequencia', /* int; NOT NULL; */// Sequencia utilizada para ordenar
         'eixo_tematico_id', /* char(36); NOT NULL; */
         'objetivo_superior_id', /* char(36); */
-        'path', /* char(36); */
+        'path', /* text; */// Path dos nós pais separados por /, ou null caso sejam nós raiz
         'objetivo_pai_id', /* char(36); */
         //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
         //'data_fim', /* datetime; */// Data fim da vigência

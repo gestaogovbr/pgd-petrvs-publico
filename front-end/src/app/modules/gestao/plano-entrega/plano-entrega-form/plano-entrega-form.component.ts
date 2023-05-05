@@ -31,7 +31,6 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   public form: FormGroup;
   public formEntregas: FormGroup;
 
-
   constructor(public injector: Injector) {
     super(injector, PlanoEntrega, PlanoEntregaDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
@@ -44,8 +43,11 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
       nome: {default: ""},
       inicio: {default: new Date()},
       fim: {default: new Date()},
-      planejamento_id: {default: ""},
-      cadeia_valor_id: {default: ""},
+      status: {default: 'INCLUINDO'},
+      unidade_id: {default: ""},
+      plano_entrega_id: {default: null},
+      planejamento_id: {default: null},
+      cadeia_valor_id: {default: null},
       entregas: {default: []},
     }, this.cdRef, this.validate);
 
@@ -85,9 +87,14 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     this.loadData(this.entity!, this.form!);
   }
 
-  public async saveData(form: IIndexable): Promise<PlanoEntrega | boolean> {
-
-    return true;
+  public async saveData(form: IIndexable): Promise<PlanoEntrega> {
+    return new Promise<PlanoEntrega>((resolve, reject) => {
+      this.grid!.confirm();
+      let planoEntrega = this.util.fill(new PlanoEntrega(), this.entity!);
+      planoEntrega = this.util.fillForm(planoEntrega, this.form!.value);
+      planoEntrega.entregas = this.grid!.items;
+      resolve(planoEntrega);
+    });
   }
 
   public titleEdit = (entity: PlanoEntrega): string => {

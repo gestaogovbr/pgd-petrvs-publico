@@ -1,7 +1,5 @@
 <grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
-    [selectable]="selectable" (select)="onSelect($event)"
-    [hasAdd]="auth.hasPermissionTo('MOD_PENT_INCL')"
-    [hasEdit]="false">
+    [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_PENT_INCL')" [hasEdit]="false">
     <toolbar *ngIf="!selectable">
         <input-switch [size]="4" labelPosition="left" label="Agrupar por Un." controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
     </toolbar>
@@ -18,9 +16,9 @@
         </div>
     </filter>
     <columns>
-        <column title="Número" [template]="columnNumero" orderBy="numero">
+        <column title="Nr." [template]="columnNumero" orderBy="numero" align="center">
             <ng-template let-row="row" #columnNumero>
-                <span> {{ row.numero}}</span>
+                <span>#{{ row.numero}}</span>
             </ng-template>
         </column>
         <column title="Nome" field="nome" orderBy="nome"></column>
