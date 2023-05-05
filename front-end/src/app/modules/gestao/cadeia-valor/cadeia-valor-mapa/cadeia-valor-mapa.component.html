@@ -1,3 +1,11 @@
+<!-- Formuário de edição do processo -->
+<ng-template #editProcessoForm>
+    <editable-form [form]="form!" noButtons>
+        <div class="row">
+            <input-text [size]="12" [label]="'Nome do ' + lex.noun('processo')" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome"></input-text>
+        </div>
+    </editable-form>
+</ng-template>
 <!-- Seleção do planejamento -->
 <editable-form [form]="form!" noButtons>
     <div class="row my-2">
@@ -28,7 +36,7 @@
         dndEffectAllowed="move">
         <div class="nivel-1" [style]="'--border-color:' + macro.cor +';--bg:white;--color:black;'">
             <div class="d-flex justify-content-between">
-                <h3>{{macro.level}}. {{macro.nome}}</h3>
+                <h3 class="texto">{{macro.level}}. {{macro.nome}}</h3>
                 <div class="btn-group dropstart dropdown-menu-button ms-2">
                     <action-button noArrow icon="bi bi-wrench-adjustable-circle" [data]="macro" [items]="options" color="transparent-black p-1 py-0"></action-button>
                 </div>
@@ -53,7 +61,7 @@
                     dndType="processo"
                     dndEffectAllowed="move">
                     <div class="d-flex justify-content-between mb-2">
-                        <h4>{{processo.level}}. {{processo.nome}}</h4>
+                        <h4 class="texto">{{processo.level}}. {{processo.nome}}</h4>
                         <div class="btn-group dropstart dropdown-menu-button ms-2">
                             <action-button noArrow icon="bi bi-wrench-adjustable-circle" [data]="processo" [items]="options" color="transparent-black p-1 py-0"></action-button>
                         </div>
@@ -78,7 +86,7 @@
                                 dndType="processo"
                                 dndEffectAllowed="move">
                                 <div class="d-flex justify-content-between mb-2">
-                                    <h5>{{subprocesso.level}}. {{subprocesso.nome}}</h5>
+                                    <h5 class="texto">{{subprocesso.level}}. {{subprocesso.nome}}</h5>
                                     <div class="btn-group dropstart dropdown-menu-button ms-2 align-button">
                                         <action-button noArrow icon="bi bi-wrench-adjustable-circle" [data]="subprocesso" [items]="options"  color="transparent-black p-1 py-0"></action-button>
                                     </div>

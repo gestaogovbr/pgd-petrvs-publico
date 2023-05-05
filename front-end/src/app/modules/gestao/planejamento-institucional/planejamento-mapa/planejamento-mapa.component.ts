@@ -3,6 +3,7 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { DndDropEvent, DropEffect } from 'ngx-drag-drop';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { PlanejamentoObjetivoDaoService } from 'src/app/dao/planejamento-objetivo-dao.service';
 import { QueryContext } from 'src/app/dao/query-context';
@@ -14,7 +15,9 @@ import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 
 export type EixoPlanejamento = {
+  id?: string,
   eixo: EixoTematico,
+  eixo_tematico_id: string,
   objetivos: PlanejamentoObjetivo[]
 }
 
@@ -33,6 +36,28 @@ export class PlanejamentoMapaComponent extends PageFrameBase {
   public eixos: EixoPlanejamento[] = [];
   public query?: QueryContext<Planejamento>;
   public objetivoDao?: PlanejamentoObjetivoDaoService;
+  public objetivos: PlanejamentoObjetivo[] = [];
+  public subObjetivosMenu: ToolbarButton = {
+    icon: "bi bi-three-dots-vertical",
+    color: "transparent-black p-1 py-0",
+    items: [
+      {
+        icon: "bi bi-file-earmark-bar-graph",
+        label: "Entregas",
+        onClick: this.onObjetivoClick.bind(this)
+      },
+      {
+        icon: "bi bi-pencil-square",
+        label: "Editar",
+        onClick: this.onObjetivoEditClick.bind(this) 
+      },
+      {
+        icon: "bi bi-trash",
+        label: "Excluir",
+        onClick: this.onObjetivoDeleteClick.bind(this)
+      }
+    ]
+  };
 
   constructor(public injector: Injector) {
     super(injector);
@@ -68,6 +93,20 @@ export class PlanejamentoMapaComponent extends PageFrameBase {
     });
   }
 
+  public objetivosPai(filhoId: string) {
+    let items: PlanejamentoObjetivo[] = [];
+    let addItens = (list: PlanejamentoObjetivo[]) => {
+      for(let item of list) {
+        if(item.id != filhoId) {
+          items.push(item);
+          addItens(this.objetivos.filter(x => x.objetivo_pai_id == item.id).sort((a,b) => a.sequencia - b.sequencia));
+        }
+      }
+    }
+    addItens(this.objetivos.filter(x => !x.objetivo_pai_id).sort((a,b) => a.sequencia - b.sequencia));
+    return items;
+  }
+
   public marcador(row: PlanejamentoObjetivo): string {
     let level = row._metadata?.level || 0;
     return level < 1 ? "" : (level < 2 ? "• " : (level < 3 ? "- " : "+ "));
@@ -89,8 +128,10 @@ export class PlanejamentoMapaComponent extends PageFrameBase {
   public onPlanejamentoChange() {
     this.dao!.getById(this.planejamentoInstitucional!.selectedItem?.key, this.join).then(planejamento => {
       this.planejamento = planejamento as Planejamento;
+      this.objetivos = this.planejamento.objetivos || [];
       this.eixos = this.query!.extra?.eixos?.filter((x: EixoTematico) => this.form?.controls.todos.value || this.planejamento?.objetivos?.find(y => y.eixo_tematico_id == x.id)).map((x: EixoTematico) => Object.assign({} as EixoPlanejamento, {
         eixo: x,
+        eixo_tematico_id: x.id,
         objetivos: this.objetivosEixo(x.id)
       })) || [];
       this.cdRef.detectChanges();
@@ -109,14 +150,19 @@ export class PlanejamentoMapaComponent extends PageFrameBase {
   public onObjetivoAddClick(data: any) {
     let eixo = this.eixos.find(x => x.eixo.id == data.id);   
     let objetivo = new PlanejamentoObjetivo({
-      _status: "ADD", 
+      _status: "ADD",
+      id: this.dao!.generateUuid(),
       planejamento_id: this.planejamento?.id,
       eixo_tematico_id: data.eixo.id,
       eixo_tematico: data.eixo,
       sequencia: eixo?.objetivos.length ? eixo?.objetivos[0].sequencia : 0
     });
     this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo'] }, {
-      metadata: { planejamento: this.planejamento!, objetivo: objetivo },
+      metadata: { 
+        planejamento: this.planejamento!, 
+        objetivo: objetivo,
+        objetivos: this.objetivosPai(objetivo.id) 
+      },
       modalClose: async (modalResult) => {
         if (modalResult) this.objetivoDao!.save(modalResult).then(objetivo => this.onPlanejamentoChange());
       }
@@ -140,15 +186,17 @@ export class PlanejamentoMapaComponent extends PageFrameBase {
   }
 
   /* Drag & Drop */
-  onObjetivoDrop(event: DndDropEvent, eixo: EixoPlanejamento) {
+  onObjetivoDrop(event: DndDropEvent, dropped: EixoPlanejamento | PlanejamentoObjetivo) {
     console.log("Drop", event);
+    dropped.objetivos = dropped.objetivos || [];
     let objetivo = event.data as PlanejamentoObjetivo; 
-    let index = typeof event.index === 'undefined' ? eixo.objetivos.length : event.index;
-    let neighborhood = index ? (eixo.objetivos[index] || eixo.objetivos[index-1] || undefined) : undefined;
-    eixo.objetivos.splice(index, 0, objetivo);
+    let index = typeof event.index === 'undefined' ? dropped.objetivos.length : event.index;
+    let neighborhood = index ? (dropped.objetivos[index] || dropped.objetivos[index-1] || undefined) : undefined;
+    dropped.objetivos.splice(index, 0, objetivo);
     this.loading = true;
     this.objetivoDao?.update(objetivo.id, {
-      eixo_tematico_id: eixo.eixo.id,
+      eixo_tematico_id: dropped.eixo_tematico_id,
+      objetivo_pai_id: dropped.id || null,
       sequencia: neighborhood?.sequencia || 0
     }).then(result => this.onPlanejamentoChange()).finally(() => this.loading = false);
   }
@@ -157,9 +205,10 @@ export class PlanejamentoMapaComponent extends PageFrameBase {
     console.log("DragEnd", event);
   }
 
-  onObjetivoDragged(item: any, eixo: EixoPlanejamento, effect: DropEffect) {
-    console.log("Dragged", item, eixo.objetivos);
-    eixo.objetivos.splice(eixo.objetivos.indexOf(item), 1);
+  onObjetivoDragged(item: any, dragged: EixoPlanejamento | PlanejamentoObjetivo, effect: DropEffect) {
+    console.log("Dragged", item, dragged.objetivos);
+    dragged.objetivos = dragged.objetivos || [];
+    dragged.objetivos.splice(dragged.objetivos.indexOf(item), 1);
   }
 
   onObjetivoDragStart(event: DragEvent) {

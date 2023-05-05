@@ -69,6 +69,7 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
   }
 
   public async onSelectTab(tab: LookupItem) {
+    if(tab.key == "TABELA") this.grid?.reloadFilter();
     this.saveUsuarioConfig({active_tab: tab});
   }
 
