@@ -8,6 +8,6 @@
     color: white;
 }
 
-.no-arrow::before {
+.no-arrow::before, .no-arrow::after {
     display: none !important;
 }
