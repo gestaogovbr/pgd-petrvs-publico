@@ -41,6 +41,10 @@ export abstract class ComponentBase {
         return Object.keys(this._bgColors).includes(color || "") ? this._bgColors[color!].class : "";
     }
 
+    public getClassButtonColor(color: ComponentColor | undefined) {
+        return Object.keys(this._bgColors).includes(color || "") ? "btn-outline-" + color : color;
+    }
+
     public getHexColor(color: ComponentColor | undefined) {
         return Object.keys(this._bgColors).includes(color || "") ? this._bgColors[color!].hex : color;
     }
