@@ -206,6 +206,7 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PENT_LIB_HOMOL", "Permite liberar planos de entregas para homologação"],
         ["MOD_PENT_CONCLUIR", "Permite marcar planos de entregas como concluídos"],
         ["MOD_PENT_CANC_CONCL", "Permite cancelar a conclusão de planos de entregas"],
+        ["MOD_PENT_CANCELAR", "Permite cancelar planos de entregas"],
         ["MOD_PENT_REATIVAR", "Permite reativar planos de entregas suspensos"],
         ["MOD_PENT_SUSP", "Permite suspender planos de entregas"],
         ["MOD_PENT_ARQ", "Permite arquivar planos de entregas"],

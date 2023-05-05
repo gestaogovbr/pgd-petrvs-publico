@@ -210,6 +210,8 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
     Route::post('cancelar-avaliacao', [PlanoEntregaController::class, 'cancelarAvaliacao']);
     Route::post('arquivar', [PlanoEntregaController::class, 'arquivar']);
     Route::post('reativar', [PlanoEntregaController::class, 'reativar']);
+    Route::post('suspender', [PlanoEntregaController::class, 'suspender']);
+    Route::post('cancelar', [PlanoEntregaController::class, 'cancelar']);
 });
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntrega')->group(function () { defaultRoutes(PlanoEntregaEntregaController::class); });
 

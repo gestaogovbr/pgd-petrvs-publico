@@ -84,6 +84,20 @@ class PlanoEntregaController extends ControllerBase {
         }
     }
 
+    public function cancelar(Request $request) {
+        try {
+            $data = $request->validate([
+                'id' => ['required']
+            ]);
+            $unidade = $this->getUnidade($request);
+            return response()->json([
+                'success' => $this->service->cancelar($data, $unidade)
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
     public function concluir(Request $request) {
         try {
             $data = $request->validate([
@@ -92,6 +106,20 @@ class PlanoEntregaController extends ControllerBase {
             $unidade = $this->getUnidade($request);
             return response()->json([
                 'success' => $this->service->concluir($data, $unidade)
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function suspender(Request $request) {
+        try {
+            $data = $request->validate([
+                'id' => ['required']
+            ]);
+            $unidade = $this->getUnidade($request);
+            return response()->json([
+                'success' => $this->service->suspender($data, $unidade)
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
@@ -115,12 +143,7 @@ class PlanoEntregaController extends ControllerBase {
     public function avaliar(Request $request) {
         try {
             $data = $request->validate([
-                'plano_entrega_id' => ['required'],
-                'tipo_avaliacao_id' => ['required'],
-                'nota_atribuida' => ['required'],
-                'arquivar' => ['required'],
-                'comentario_avaliacao' => ['min:0'],
-                'justificativas' => ['array']
+                'id' => ['required']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([

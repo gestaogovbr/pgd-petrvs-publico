@@ -118,6 +118,22 @@ class PlanoEntregaService extends ServiceBase
         return true;
     }
 
+    public function suspender($data, $unidade){
+        try {
+            DB::beginTransaction();
+            $planoEntrega = PlanoEntrega::find($data["id"]);
+            $this->update([
+                "id" => $planoEntrega->id,
+                "status" => 'SUSPENSO',
+            ], $unidade, false);
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollback();
+            throw $e;
+        }
+        return true;
+    }
+
     public function cancelarConclusao($data, $unidade) {
         try {
             DB::beginTransaction();
@@ -125,6 +141,23 @@ class PlanoEntregaService extends ServiceBase
             $this->update([
                 "id" => $planoEntrega->id,
                 "status" => 'ATIVO',
+            ], $unidade, false);
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollback();
+            throw $e;
+        }
+        return true;
+    }
+
+    public function cancelar($data, $unidade) {
+        try {
+            DB::beginTransaction();
+            $planoEntrega = PlanoEntrega::find($data["id"]);
+            $this->update([
+                "id" => $planoEntrega->id,
+                "data_cancelamento" => Carbon::now(),
+                "cancelamento_usuario_id" => parent::loggedUser()->id
             ], $unidade, false);
             DB::commit();
         } catch (Throwable $e) {

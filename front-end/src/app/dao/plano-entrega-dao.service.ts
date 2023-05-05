@@ -13,125 +13,149 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
 
   public arquivar(plano_entrega_id: string, arquivar: boolean): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/arquivar', {id: plano_entrega_id, arquivar: arquivar}).subscribe(response => {
-        if(response.error){
+      this.server.post('api/' + this.collection + '/arquivar', { id: plano_entrega_id, arquivar: arquivar }).subscribe(response => {
+        if (response.error) {
           reject(response.error);
         } else {
           resolve(!!response?.success);
-        }        
+        }
       }, error => reject(error));
     });
   }
 
   public cancelarConclusao(plano_entrega_id: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/cancelar-conclusao', {id: plano_entrega_id}).subscribe(response => {
-        if(response.error){
+      this.server.post('api/' + this.collection + '/cancelar-conclusao', { id: plano_entrega_id }).subscribe(response => {
+        if (response.error) {
           reject(response.error);
         } else {
           resolve(!!response?.success);
-        }        
+        }
       }, error => reject(error));
     });
   }
 
   public cancelarAvaliacao(plano_entrega_id: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/cancelar-avaliacao', {id: plano_entrega_id}).subscribe(response => {
-        if(response.error){
+      this.server.post('api/' + this.collection + '/cancelar-avaliacao', { id: plano_entrega_id }).subscribe(response => {
+        if (response.error) {
           reject(response.error);
         } else {
           resolve(!!response?.success);
-        }        
+        }
       }, error => reject(error));
     });
   }
 
   public liberarHomologacao(plano_entrega_id: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/liberar-homologacao', {id: plano_entrega_id}).subscribe(response => {
-        if(response.error){
+      this.server.post('api/' + this.collection + '/liberar-homologacao', { id: plano_entrega_id }).subscribe(response => {
+        if (response.error) {
           reject(response.error);
         } else {
           resolve(!!response?.success);
-        }        
+        }
       }, error => reject(error));
     });
   }
 
   public homologar(plano_entrega_id: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/homologar', {id: plano_entrega_id}).subscribe(response => {
-        if(response.error){
+      this.server.post('api/' + this.collection + '/homologar', { id: plano_entrega_id }).subscribe(response => {
+        if (response.error) {
           reject(response.error);
         } else {
           resolve(!!response?.success);
-        }        
+        }
       }, error => reject(error));
     });
   }
 
   public concluir(plano_entrega_id: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/concluir', {id: plano_entrega_id}).subscribe(response => {
-        if(response.error){
+      this.server.post('api/' + this.collection + '/concluir', { id: plano_entrega_id }).subscribe(response => {
+        if (response.error) {
           reject(response.error);
         } else {
           resolve(!!response?.success);
-        }        
+        }
       }, error => reject(error));
     });
   }
 
   public avaliar(plano_entrega_id: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/avaliar', {id: plano_entrega_id}).subscribe(response => {
-        if(response.error){
+      this.server.post('api/' + this.collection + '/avaliar', { id: plano_entrega_id }).subscribe(response => {
+        if (response.error) {
           reject(response.error);
         } else {
           resolve(!!response?.success);
-        }        
+        }
       }, error => reject(error));
     });
   }
 
   public reativar(plano_entrega_id: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/reativar', {id: plano_entrega_id}).subscribe(response => {
-        if(response.error){
+      this.server.post('api/' + this.collection + '/reativar', { id: plano_entrega_id }).subscribe(response => {
+        if (response.error) {
           reject(response.error);
         } else {
           resolve(!!response?.success);
-        }        
+        }
+      }, error => reject(error));
+    });
+  }
+
+  public suspender(plano_entrega_id: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/suspender', { id: plano_entrega_id }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }
+      }, error => reject(error));
+    });
+  }
+
+  public cancelar(plano_entrega_id: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/cancelar', { id: plano_entrega_id }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }
       }, error => reject(error));
     });
   }
 
   public cancelarHomologacao(plano_entrega_id: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/cancelar-homologacao', {id: plano_entrega_id}).subscribe(response => {
-        if(response.error){
+      this.server.post('api/' + this.collection + '/cancelar-homologacao', { id: plano_entrega_id }).subscribe(response => {
+        if (response.error) {
           reject(response.error);
         } else {
           resolve(!!response?.success);
-        }        
+        }
       }, error => reject(error));
     });
   }
 
   public retirarHomologacao(plano_entrega_id: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/retirar-homologacao', {id: plano_entrega_id}).subscribe(response => {
-        if(response.error){
+      this.server.post('api/' + this.collection + '/retirar-homologacao', { id: plano_entrega_id }).subscribe(response => {
+        if (response.error) {
           reject(response.error);
         } else {
           resolve(!!response?.success);
-        }        
+        }
       }, error => reject(error));
     });
   }
 
-  public needHomologate(plano: PlanoEntrega){
+  public needHomologate(plano: PlanoEntrega) {
 
   }
 
