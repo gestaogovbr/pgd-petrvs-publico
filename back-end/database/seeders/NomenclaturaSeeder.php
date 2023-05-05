@@ -59,7 +59,7 @@ class NomenclaturaSeeder extends Seeder
 
         $entidade = Entidade::where('sigla', env("PETRVS_ENTIDADE"))->first() ?? new Entidade();
         $entidade->fill([
-            'nomenclatura' => json_encode($nomenclaturas),
+            'nomenclatura' => $nomenclaturas,
         ]);
         $entidade->save();
     }
