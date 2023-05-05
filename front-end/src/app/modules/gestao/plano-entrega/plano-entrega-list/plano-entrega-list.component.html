@@ -22,9 +22,12 @@
         </div>
     </filter>
     <columns>
-        <column title="Nr." [template]="columnNumero" orderBy="numero" align="center">
+        <column [titleTemplate]="titleIdNumeroStatus" [template]="columnNumero">
+            <ng-template let-header="header" #titleIdNumeroStatus>
+                <order by="numero" [header]="header">#ID</order>
+            </ng-template>
             <ng-template let-row="row" #columnNumero>
-                <span>#{{ row.numero}}</span>
+                <small class="micro-text fw-ligh">#{{row.numero}}</small>
             </ng-template>
         </column>
         <column title="Nome" field="nome" orderBy="nome"></column>
@@ -44,8 +47,8 @@
                 Cadeia de Valor
             </ng-template>
             <ng-template let-row="row" #columnPlanoCadeia>
-                <span> {{row.planejamento?.nome || "-"}}</span><br>
-                <span> {{row.cadeiaValor?.nome || "-"}}</span>
+                <badge *ngIf="row.planejamento" color="light" [icon]="entityService.getIcon('Planejamento')" [label]="row.planejamento?.nome"></badge>
+                <badge *ngIf="row.cadeiaValor" color="light" [icon]="entityService.getIcon('CadeiaValor')" [label]="row.cadeiaValor?.nome"></badge>
             </ng-template>
         </column>
         <column title="Status" [template]="columnStatus">
