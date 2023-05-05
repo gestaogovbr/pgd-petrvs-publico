@@ -96,7 +96,7 @@ export class CadeiaValorMapaComponent extends PageFrameBase {
       cadeia_valor_id: processo.cadeia_valor_id,
       processo_pai_id: processo.id,
       nome: "",
-      sequencia: 0
+      sequencia: 1
     });
     await this.editProcesso(child as NeastedProcesso);
   }
