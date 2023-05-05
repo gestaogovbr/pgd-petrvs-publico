@@ -1,15 +1,16 @@
-import { ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { NavigateService } from 'src/app/services/navigate.service';
 import { ToolbarButton } from '../../toolbar/toolbar.component';
 import { GridColumn } from '../grid-column';
 import { GridComponent } from '../grid.component';
+import { ComponentBase } from '../../component-base';
 
 @Component({
   selector: 'column-options',
   templateUrl: './column-options.component.html',
   styleUrls: ['./column-options.component.scss']
 })
-export class ColumnOptionsComponent implements OnInit {
+export class ColumnOptionsComponent extends ComponentBase implements OnInit {
   @ViewChild('optionButton', {static: false}) optionButton?: ElementRef;
   @Input() index: number = 0;
   @Input() column: GridColumn = new GridColumn();
@@ -22,17 +23,17 @@ export class ColumnOptionsComponent implements OnInit {
   @Input() dynamicOptions?: (row: any) => ToolbarButton[];
 
   public randomId = Math.round(Math.random() * 1000).toString();
+  public go: NavigateService;
 
   private _allButtons?: ToolbarButton[] = undefined;
   private _allOptions?: ToolbarButton[] = undefined;
 
-  constructor(
-    public go: NavigateService,
-    public cdRef: ChangeDetectorRef
-  ) {}
-
-  ngOnInit(): void {
+  constructor(public injector: Injector) {
+    super(injector); 
+    this.go = injector.get<NavigateService>(NavigateService);
   }
+
+  ngOnInit(): void {}
 
   public onMoveClick(up: boolean) {
     const list = this.grid!.items;
@@ -51,7 +52,7 @@ export class ColumnOptionsComponent implements OnInit {
   }
 
   public get isRowEditing(): boolean {
-    return this.row["id"] == (this.grid?.editing || [])["id"];
+    return this.row["id"] == (this.grid?.editing || {id: undefined})["id"];
   }
 
   public get isUpDownButtons(): boolean {
