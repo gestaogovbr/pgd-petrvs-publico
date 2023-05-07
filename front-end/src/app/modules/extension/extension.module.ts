@@ -8,16 +8,18 @@ import { ComponentsModule } from 'src/app/components/components.module';
 import { ReactiveFormsModule } from '@angular/forms';
 
 
+
 @NgModule({
   declarations: [
     PopupComponent,
-    OptionsComponent
+    OptionsComponent,
   ],
   imports: [
     CommonModule,
     ComponentsModule,
     ReactiveFormsModule,
-    ExtensionRoutingModule
+    ExtensionRoutingModule,
+    
   ]
 })
 export class ExtensionModule { }

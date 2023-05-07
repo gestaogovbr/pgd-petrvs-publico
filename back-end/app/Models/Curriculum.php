@@ -20,6 +20,9 @@ class Curriculum extends ModelBase
         'cidade_id'
     ];
 
+    //Has
+    public function graduacoes() { return $this->hasMany(CurriculumGraduacao::class,'curriculum_id'); }
+
     // Belongs
     public function usuario() { return $this->belongsTo(Usuario::class); }
         

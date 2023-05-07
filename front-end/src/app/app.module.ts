@@ -20,12 +20,7 @@ import { UteisModule } from './modules/uteis/uteis.module';
 import { RotinaModule } from './modules/rotinas/rotina.module';
 import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
 import { CadeiaValorModule } from './modules/gestao/cadeia-valor/cadeia-valor.module';
-import { RaioxhomeComponent } from './modules/curriculum/curriculum-home/raioxhome.component';
-import { RaioxPessoalFormComponent } from './modules/curriculum/curriculum-pessoal-form/raiox-pessoal-form.component';
-import { CurriculumProfissionalFormComponent } from './modules/curriculum/curriculum-profissional-form/curriculum-profissional-form.component';
-import { CurriculumAtributosbig5FormComponent } from './modules/curriculum/curriculum-atributosbig5-form/curriculum-atributosbig5-form.component';
-import { CurriculumAtributosdiscFormComponent } from './modules/curriculum/curriculum-atributosdisc-form/curriculum-atributosdisc-form.component';
-import { CursoFormComponent } from './modules/cadastros/curriculum/curso-form/curso-form.component';
+import { CurriculumModule } from './modules/curriculum/curriculum.module'
 
 
 @NgModule({
@@ -38,12 +33,7 @@ import { CursoFormComponent } from './modules/cadastros/curriculum/curso-form/cu
     SpinnerOverlayComponent,
     TesteComponent,
     TesteFormComponent,
-    RaioxhomeComponent,
-    RaioxPessoalFormComponent,
-    CurriculumProfissionalFormComponent,
-    CurriculumAtributosbig5FormComponent,
-    CurriculumAtributosdiscFormComponent,
-    CursoFormComponent,
+   
     
   ],
   imports: [
@@ -59,7 +49,8 @@ import { CursoFormComponent } from './modules/cadastros/curriculum/curso-form/cu
     UteisModule,
     LogModule,
     RotinaModule,
-    CadeiaValorModule
+    CadeiaValorModule,
+    CurriculumModule
   ],
   providers: [],
   bootstrap: [AppComponent]

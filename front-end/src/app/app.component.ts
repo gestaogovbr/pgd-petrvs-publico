@@ -142,12 +142,17 @@ export class AppComponent {
       LOGS_TESTES_EXPEDIENTES: { name: "Teste Expediente", permition: '', route: ['teste'], icon: "bi bi-check-all" },
       TESTE_CALCULA_DATATEMPO: { name: "Teste calculaDataTempo", permition: '', route: ['teste', 'calcula-tempo'], icon: "bi bi-check-all" },
       /* RAIO X */
-      RXHOME: { name: this.lex.noun("Home RX", true), permition: 'RX', route: ['raioxhome', 'Home RX'], icon: "bi bi-toggle-off" },
-      RXCADASTRO_PESSOAL: { name: this.lex.noun("Cadastro dos Dados Pessoais", true), permition: 'MOD_RX_VIS_DPE', route: ['raioxhome', 'pessoal'], icon: "bi bi-activity" },
-      RXCADASTRO_PROFISSIONAL: { name: this.lex.noun("Cadastro dos Dados Profissionais", true), permition: 'MOD_RX_VIS_DPR', route: ['raioxhome', 'pessoal'], icon: "bi bi-activity" },
-      RXCADASTRO_ATRIBUTOS: { name: this.lex.noun("Cadastro dos Atributos Comportamentais", true), permition: 'MOD_RX_VIS_ATR', route: ['raioxhome', 'pessoal'], icon: "bi bi-activity" },
-      RXVISUALIZA_OPORTUNIDADES: { name: this.lex.noun("Cadastro Pesquisa Oportunidades", true), permition: 'MOD_RX_VIS_OPO', route: ['raioxhome', 'pessoal'], icon: "bi bi-activity" },
-      RXCADASTRO_OPORTUNIDADES: { name: this.lex.noun("Cadastro das Oportunidades", true), permition: 'MOD_RX_EDT_OPO', route: ['raioxhome', 'pessoal'], icon: "bi bi-activity" },
+      RXHOME: { name: this.lex.noun("Home RX", true), permition: 'RX', route: ['raiox', 'home'], icon: "bi bi-toggle-off" },
+      RXCADASTRO_PESSOAL: { name: this.lex.noun("Cadastro dos Dados Pessoais", true), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'pessoal'], icon: "bi bi-activity" },
+      RXCADASTRO_PROFISSIONAL: { name: this.lex.noun("Cadastro dos Dados Profissionais", true), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'profissional'], icon: "bi bi-activity" },
+      RXCADASTRO_ATRIBUTOS: { name: this.lex.noun("Cadastro dos Atributos Comportamentais", true), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'pessoal'], icon: "bi bi-activity" },
+      RXVISUALIZA_OPORTUNIDADES: { name: this.lex.noun("Cadastro Pesquisa Oportunidades", true), permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pessoal'], icon: "bi bi-activity" },
+      RXCADASTRO_OPORTUNIDADES: { name: this.lex.noun("Cadastro das Oportunidades", true), permition: 'MOD_RX_EDT_OPO', route: ['raiox', 'pessoal'], icon: "bi bi-activity" },
+      RXCADASTRO_ADM_PESSOAL: { name: this.lex.noun("Cadastro ADM dos Dados Pessoais", true), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','areaconhecimento'], icon: "bi bi-activity" },
+      RXCADASTRO_ADM_PROFISSIONAL: { name: this.lex.noun("Cadastro ADM dos Dados Profissionais", true), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'profissionaladm'], icon: "bi bi-activity" },
+      RXCADASTRO_ADM_ATRIBUTOS: { name: this.lex.noun("Cadastro ADM dos Atributos Comportamentais", true), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'atribadm'], icon: "bi bi-activity" },
+      RXVISUALIZA_ADM_OPORTUNIDADES: { name: this.lex.noun("Cadastro ADM Pesquisa Oportunidades", true), permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-activity" },
+      RXCADASTRO_ADM_OPORTUNIDADES: { name: this.lex.noun("Cadastro ADM das Oportunidades", true), permition: 'MOD_RX_EDT_OPO', route: ['raiox', 'apoadm'], icon: "bi bi-activity" },
       /*PROJETOS*/
 
 
@@ -220,7 +225,7 @@ export class AppComponent {
 
     this.menuRaioX= [
       {
-        name: "Cadastros", permition: "MOD_RX_VIS_DPE", route: ['raioxhome'], id: "navbarDropdownCadastros", menu: [
+        name: "Cadastros", permition: "MOD_RX_VIS_DPE", route: ['raiox'], id: "navbarDropdownCadastros", menu: [
           this.menuSchema.RXCADASTRO_PESSOAL,
           this.menuSchema.RXCADASTRO_PROFISSIONAL,
           this.menuSchema.RXCADASTRO_ATRIBUTOS,
@@ -228,7 +233,7 @@ export class AppComponent {
         ]
       },
       {
-        name: "Oportunidades", permition: "MOD_RX_VIS_DPE", route: ['raioxhome'], id: "navbarDropdownCadastros", menu: [
+        name: "Oportunidades", permition: "MOD_RX_VIS_DPE", route: ['raiox'], id: "navbarDropdownCadastros", menu: [
           this.menuSchema.RXCADASTRO_PESSOAL,
           this.menuSchema.RXCADASTRO_PROFISSIONAL,
           this.menuSchema.RXCADASTRO_ATRIBUTOS,
@@ -236,11 +241,19 @@ export class AppComponent {
         ]
       },
       {
-        name: "Pesquisas", permition: "MOD_RX_VIS_DPE", route: ['raioxhome'], id: "navbarDropdownCadastros", menu: [
+        name: "Pesquisas", permition: "MOD_RX_VIS_DPE", route: ['raiox'], id: "navbarDropdownCadastros", menu: [
           this.menuSchema.RXCADASTRO_PESSOAL,
           this.menuSchema.RXCADASTRO_PROFISSIONAL,
           this.menuSchema.RXCADASTRO_ATRIBUTOS,
           this.menuSchema.RXCADASTRO_OPORTUNIDADES
+        ]
+      },
+      {
+        name: "Cadastro ADM", permition: "MOD_RX_VIS_DPE", route: ['raiox/cadastros/areaconhecimento'], id: "navbarDropdownCadastros", menu: [
+          this.menuSchema.RXCADASTRO_ADM_PESSOAL,
+          this.menuSchema.RXCADASTRO_ADM_PROFISSIONAL,
+          this.menuSchema.RXCADASTRO_ADM_ATRIBUTOS,
+          this.menuSchema.RXCADASTRO_ADM_OPORTUNIDADES
         ]
       }
 
@@ -272,7 +285,7 @@ export class AppComponent {
   }
 
   public goHome() {
-    this.go.navigate({ route: this.contexto?.key == 'RAIOX' ? ['raioxhome'] : ['home'] });
+    this.go.navigate({ route: this.contexto?.key == 'RAIOX' ? ['raiox/home'] : ['home'] });
   }
 
   public get menu(): any {

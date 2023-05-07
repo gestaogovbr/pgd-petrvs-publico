@@ -28,7 +28,7 @@ export class RaioxhomeComponent implements OnInit {
 
   dadosPessoais(){
 
-    this.router.navigate(['raioxhome/pessoal'])
+    this.router.navigate(['raiox/pessoal'])
 
 
   }
