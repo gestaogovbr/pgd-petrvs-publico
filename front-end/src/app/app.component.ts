@@ -148,8 +148,8 @@ export class AppComponent {
       RXCADASTRO_ATRIBUTOS: { name: this.lex.noun("Cadastro dos Atributos Comportamentais", true), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'pessoal'], icon: "bi bi-activity" },
       RXVISUALIZA_OPORTUNIDADES: { name: this.lex.noun("Cadastro Pesquisa Oportunidades", true), permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pessoal'], icon: "bi bi-activity" },
       RXCADASTRO_OPORTUNIDADES: { name: this.lex.noun("Cadastro das Oportunidades", true), permition: 'MOD_RX_EDT_OPO', route: ['raiox', 'pessoal'], icon: "bi bi-activity" },
-      RXCADASTRO_ADM_PESSOAL: { name: this.lex.noun("Cadastro ADM dos Dados Pessoais", true), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','areaconhecimento'], icon: "bi bi-activity" },
-      RXCADASTRO_ADM_PROFISSIONAL: { name: this.lex.noun("Cadastro ADM dos Dados Profissionais", true), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'profissionaladm'], icon: "bi bi-activity" },
+      RXCADASTRO_ADM_AREA_CONHECIMENTO: { name: this.lex.noun("Cadastro ADM das Áreas de Conhecimento", true), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','areaconhecimento'], icon: "bi bi-activity" },
+      RXCADASTRO_ADM_CURSOS: { name: this.lex.noun("Cadastro ADM dos Cursos", true), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'cadastros','gerais','curso'], icon: "bi bi-activity" },
       RXCADASTRO_ADM_ATRIBUTOS: { name: this.lex.noun("Cadastro ADM dos Atributos Comportamentais", true), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'atribadm'], icon: "bi bi-activity" },
       RXVISUALIZA_ADM_OPORTUNIDADES: { name: this.lex.noun("Cadastro ADM Pesquisa Oportunidades", true), permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-activity" },
       RXCADASTRO_ADM_OPORTUNIDADES: { name: this.lex.noun("Cadastro ADM das Oportunidades", true), permition: 'MOD_RX_EDT_OPO', route: ['raiox', 'apoadm'], icon: "bi bi-activity" },
@@ -249,9 +249,9 @@ export class AppComponent {
         ]
       },
       {
-        name: "Cadastro ADM", permition: "MOD_RX_VIS_DPE", route: ['raiox/cadastros/areaconhecimento'], id: "navbarDropdownCadastros", menu: [
-          this.menuSchema.RXCADASTRO_ADM_PESSOAL,
-          this.menuSchema.RXCADASTRO_ADM_PROFISSIONAL,
+        name: "Cadastros Gerais", permition: "MOD_RX_VIS_DPE", route: ['raiox/cadastros/gerais'], id: "navbarDropdownCadastros", menu: [
+          this.menuSchema.RXCADASTRO_ADM_AREA_CONHECIMENTO,
+          this.menuSchema.RXCADASTRO_ADM_CURSOS,
           this.menuSchema.RXCADASTRO_ADM_ATRIBUTOS,
           this.menuSchema.RXCADASTRO_ADM_OPORTUNIDADES
         ]

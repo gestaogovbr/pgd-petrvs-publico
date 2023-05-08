@@ -51,7 +51,8 @@ const routes: Routes = [
   { path: 'logs', loadChildren: () => import('./modules/logs/log.module').then(m => m.LogModule), canActivate: [AuthGuard] },
   { path: 'rotinas', loadChildren: () => import('./modules/rotinas/rotina.module').then(m => m.RotinaModule), canActivate: [AuthGuard] },
   { path: 'raiox',loadChildren: () => import('./modules/curriculum/curriculum.module').then(m => m.CurriculumModule), canActivate: [AuthGuard] },
-  { path: 'raiox/cadastros',loadChildren: () => import('./modules/cadastros/curriculum-cadastros/curriculum-cadastros.module').then(m => m.CurriculumModule), canActivate: [AuthGuard] },
+  { path: 'raiox/cadastros',loadChildren: () => import('./modules/cadastros/curriculum/curriculum-cadastros.module').then(m => m.CurriculumCadastrosModule), canActivate: [AuthGuard] },
+  { path: 'raiox/cadastros/gerais',loadChildren: () => import('./modules/cadastros/curriculum/curriculum-cadastros.module').then(m => m.CurriculumCadastrosModule), canActivate: [AuthGuard] },
  
   { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];

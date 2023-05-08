@@ -561,16 +561,27 @@ export class LookupService {
   { 'key': 'VIUVO', 'value': 'Viúvo' }
   ];
 
-  public AREAS_GRADUACAO : LookupItem[] = [
-    { 'key': 'C_EXATAS', 'value': 'Ciências Exatas e da Terra' }, 
-    { 'key': 'C_BIOLOGICAS', 'value': 'Ciências Biológicas' }, 
-    { 'key': 'ENGENHARIAS', 'value': 'Engenharias' }, 
-    { 'key': 'C_SAUDE', 'value': 'Ciências da Saúde' }, 
-    { 'key': 'C_AGRARIAS', 'value': 'Ciências Agrárias' },
-    { 'key': 'LETRAS', 'value': 'Linguística, Letras e Artes' }, 
-    { 'key': 'C_SOCIAIS', 'value': 'Ciências Sociais Aplicadas' }, 
-    { 'key': 'C_HUMANAS', 'value': 'Ciências Humanas' }
+  public TITULO_CURSO : LookupItem[] = [
+    { 'key': 'GRAD_TEC', 'value': 'Tecnólogo' }, 
+    { 'key': 'GRAD_BAC', 'value': 'Bacharelado' },
+    { 'key': 'GRAD_LIC', 'value': 'Licenciatura' }, 
+    { 'key': 'ESPECIAL', 'value': 'Especialização' },  
+    { 'key': 'MESTRADO', 'value': 'Mestrado' },    
+    { 'key': 'DOUTORADO', 'value': 'Doutorado' },
+    { 'key': 'POS_DOUTORADO', 'value': 'Pós Doutorado' }, 
+    
     ];
+
+  public AREAS_GRADUACAO : LookupItem[] = [
+      { 'key': 'GRAD_TEC', 'value': 'Tecnólogo' }, 
+      { 'key': 'GRAD_BAC', 'value': 'Bacharelado' },
+      { 'key': 'GRAD_LIC', 'value': 'Licenciatura' }, 
+      { 'key': 'ESPECIAL', 'value': 'Especialização' },  
+      { 'key': 'MESTRADO', 'value': 'Mestrado' },    
+      { 'key': 'DOUTORADO', 'value': 'Doutorado' },
+      { 'key': 'POS_DOUTORADO', 'value': 'Pós Doutorado' }, 
+      
+  ];
 
   public getLookup(itens: LookupItem[], key: any) {
     return itens.find(x => x.key == key);

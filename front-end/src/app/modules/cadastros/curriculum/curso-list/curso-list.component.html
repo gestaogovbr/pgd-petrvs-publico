@@ -1,0 +1,19 @@
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+    [selectable]="selectable" (select)="onSelect($event)"  [hasAdd]="auth.hasPermissionTo('MOD_RX_VIS_DPE')" [hasEdit]="auth.hasPermissionTo('MOD_RX_VIS_DPE')">
+    <toolbar *ngIf="!selectable"></toolbar>
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-text [size]="4" label="Nome da área de conhecimento" controlName="nome_area"
+                [control]="filter!.controls.nome_area" placeholder="Nome da área de conhecimento"></input-text>
+            <input-text [size]="4" label="Nome do curso" controlName="nome_curso" [control]="filter!.controls.nome_curso" placeholder="Nome do curso"></input-text>
+            <input-text [size]="4" label="Titulo" controlName="titulo" [control]="filter!.controls.titulo" placeholder=""Título></input-text>
+        </div>
+    </filter>
+    <columns>
+        <column title="Nome da área" field="nome_area" orderBy="nome_area"></column>
+        <column title="Curso" field="nome_curso" orderBy="nome_area"></column>
+        <column title="Título" field="titulo" orderBy="titulo"></column>
+        <column type="options" [onEdit]="edit" [options]="options"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>
