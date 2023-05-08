@@ -1,3 +1,4 @@
+import { listLazyRoutes } from '@angular/compiler/src/aot/lazy_routes';
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
@@ -5,10 +6,12 @@ import { InputSelectComponent } from 'src/app/components/input/input-select/inpu
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { ChangeDaoService } from 'src/app/dao/change-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
+import { EntityService } from 'src/app/services/entity.service';
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
 import { Base, IIndexable } from 'src/app/models/base.model';
 import { Change } from 'src/app/models/change.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
+import { EntityItem } from 'src/app/services/entity.service';
 import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
@@ -25,6 +28,8 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
   public allPages: ListenerAllPagesService;
   public usuarioDao: UsuarioDaoService;
   public tabelas: LookupItem[] = [];
+  public entityService: EntityService;
+  public entity?: EntityItem;
   public responsaveis: LookupItem[] = [];
   public opcoes_filtro: LookupItem[] = [
     {'key': 0, 'value': 'ID do registro'},{'key': 1, 'value': ''}];
@@ -32,6 +37,7 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
   constructor(public injector: Injector, dao: ChangeDaoService) {
     super(injector, Change, ChangeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
+    this.entityService = injector.get<EntityService>(EntityService);
     /* Inicializações */
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.title = "Log das alterações";
@@ -70,7 +76,7 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
   public onRowClick(row: Change) {
     if(row){
       let change = row as Change;
-      this.entity = this.entities.find(x => x.table == change!.table_name.toLowerCase());
+      this.entity = this.entityService.list.find(x => x.table == change!.table_name.toLowerCase());
       this.go.navigate({route: ['logs', 'change', change!.id, 'consult']}, {
         metadata: {entity: this.entity, entity_id: change!.row_id},
         modal: true, 
@@ -84,7 +90,7 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
   public onTabelaChange(event: Event) {
     this.filter!.controls.row_id.setValue("");
     this.filter!.controls.opcao_filtro.setValue(0);
-    this.entity = this.entities.find(x => x.table == this.filter?.controls.tabela.value);
+    this.entity = this.entityService.list.find(x => x.table == this.filter?.controls.tabela.value);
     if(this.entity) this.opcoes_filtro[1].value = this.entity!.label + ': ' + this.entity!.campo;
     this.cdRef.detectChanges();
   }

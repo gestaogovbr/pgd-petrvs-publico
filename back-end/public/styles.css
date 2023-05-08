@@ -20321,17 +20321,11 @@ body {
 .width-min-content {
   width: min-content;
 }
-/*!
- * Bootstrap Icons v1.10.5 (https://icons.getbootstrap.com/)
- * Copyright 2019-2023 The Bootstrap Authors
- * Licensed under MIT (https://github.com/twbs/icons/blob/main/LICENSE)
- */
-
 @font-face {
   font-display: block;
   font-family: "bootstrap-icons";
-  src: url('bootstrap-icons.woff2?1fa40e8900654d2863d011707b9fb6f2') format("woff2"),
-url('bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2') format("woff");
+  src: url('bootstrap-icons.woff2?24e3eb84d0bcaf83d77f904c78ac1f47') format("woff2"),
+url('bootstrap-icons.woff?24e3eb84d0bcaf83d77f904c78ac1f47') format("woff");
 }
 
 .bi::before,
@@ -21190,6 +21184,8 @@ url('bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2') format("woff");
 .bi-cloud-hail-fill::before { content: "\f2a3"; }
 
 .bi-cloud-hail::before { content: "\f2a4"; }
+
+.bi-cloud-haze-1::before { content: "\f2a5"; }
 
 .bi-cloud-haze-fill::before { content: "\f2a6"; }
 
@@ -23181,13 +23177,19 @@ url('bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2') format("woff");
 
 .bi-ear::before { content: "\f689"; }
 
+.bi-envelope-check-1::before { content: "\f68a"; }
+
 .bi-envelope-check-fill::before { content: "\f68b"; }
 
 .bi-envelope-check::before { content: "\f68c"; }
 
+.bi-envelope-dash-1::before { content: "\f68d"; }
+
 .bi-envelope-dash-fill::before { content: "\f68e"; }
 
 .bi-envelope-dash::before { content: "\f68f"; }
+
+.bi-envelope-exclamation-1::before { content: "\f690"; }
 
 .bi-envelope-exclamation-fill::before { content: "\f691"; }
 
@@ -23197,9 +23199,13 @@ url('bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2') format("woff");
 
 .bi-envelope-plus::before { content: "\f694"; }
 
+.bi-envelope-slash-1::before { content: "\f695"; }
+
 .bi-envelope-slash-fill::before { content: "\f696"; }
 
 .bi-envelope-slash::before { content: "\f697"; }
+
+.bi-envelope-x-1::before { content: "\f698"; }
 
 .bi-envelope-x-fill::before { content: "\f699"; }
 
@@ -23218,6 +23224,10 @@ url('bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2') format("woff");
 .bi-list-columns::before { content: "\f6a0"; }
 
 .bi-meta::before { content: "\f6a1"; }
+
+.bi-mortorboard-fill::before { content: "\f6a2"; }
+
+.bi-mortorboard::before { content: "\f6a3"; }
 
 .bi-nintendo-switch::before { content: "\f6a4"; }
 
@@ -23255,6 +23265,8 @@ url('bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2') format("woff");
 
 .bi-send-dash::before { content: "\f6b5"; }
 
+.bi-send-exclamation-1::before { content: "\f6b6"; }
+
 .bi-send-exclamation-fill::before { content: "\f6b7"; }
 
 .bi-send-exclamation::before { content: "\f6b8"; }
@@ -23276,6 +23288,8 @@ url('bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2') format("woff");
 .bi-send::before { content: "\f6c0"; }
 
 .bi-steam::before { content: "\f6c1"; }
+
+.bi-terminal-dash-1::before { content: "\f6c2"; }
 
 .bi-terminal-dash::before { content: "\f6c3"; }
 
@@ -23335,6 +23349,8 @@ url('bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2') format("woff");
 
 .bi-boombox-fill::before { content: "\f6df"; }
 
+.bi-displayport-1::before { content: "\f6e0"; }
+
 .bi-displayport::before { content: "\f6e1"; }
 
 .bi-gpu-card::before { content: "\f6e2"; }
@@ -23358,6 +23374,10 @@ url('bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2') format("woff");
 .bi-router-fill::before { content: "\f6eb"; }
 
 .bi-router::before { content: "\f6ec"; }
+
+.bi-ssd-fill::before { content: "\f6ed"; }
+
+.bi-ssd::before { content: "\f6ee"; }
 
 .bi-thunderbolt-fill::before { content: "\f6ef"; }
 
@@ -23571,6 +23591,8 @@ url('bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2') format("woff");
 
 .bi-filetype-png::before { content: "\f758"; }
 
+.bi-filetype-ppt-1::before { content: "\f759"; }
+
 .bi-filetype-ppt::before { content: "\f75a"; }
 
 .bi-filetype-psd::before { content: "\f75b"; }
@@ -23600,6 +23622,8 @@ url('bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2') format("woff");
 .bi-filetype-wav::before { content: "\f767"; }
 
 .bi-filetype-woff::before { content: "\f768"; }
+
+.bi-filetype-xls-1::before { content: "\f769"; }
 
 .bi-filetype-xls::before { content: "\f76a"; }
 
@@ -23685,6 +23709,10 @@ url('bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2') format("woff");
 
 .bi-filetype-xlsx::before { content: "\f793"; }
 
+.bi-1-circle-1::before { content: "\f794"; }
+
+.bi-1-circle-fill-1::before { content: "\f795"; }
+
 .bi-1-circle-fill::before { content: "\f796"; }
 
 .bi-1-circle::before { content: "\f797"; }
@@ -23692,6 +23720,10 @@ url('bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2') format("woff");
 .bi-1-square-fill::before { content: "\f798"; }
 
 .bi-1-square::before { content: "\f799"; }
+
+.bi-2-circle-1::before { content: "\f79a"; }
+
+.bi-2-circle-fill-1::before { content: "\f79b"; }
 
 .bi-2-circle-fill::before { content: "\f79c"; }
 
@@ -23701,6 +23733,10 @@ url('bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2') format("woff");
 
 .bi-2-square::before { content: "\f79f"; }
 
+.bi-3-circle-1::before { content: "\f7a0"; }
+
+.bi-3-circle-fill-1::before { content: "\f7a1"; }
+
 .bi-3-circle-fill::before { content: "\f7a2"; }
 
 .bi-3-circle::before { content: "\f7a3"; }
@@ -23708,6 +23744,10 @@ url('bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2') format("woff");
 .bi-3-square-fill::before { content: "\f7a4"; }
 
 .bi-3-square::before { content: "\f7a5"; }
+
+.bi-4-circle-1::before { content: "\f7a6"; }
+
+.bi-4-circle-fill-1::before { content: "\f7a7"; }
 
 .bi-4-circle-fill::before { content: "\f7a8"; }
 
@@ -23717,6 +23757,10 @@ url('bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2') format("woff");
 
 .bi-4-square::before { content: "\f7ab"; }
 
+.bi-5-circle-1::before { content: "\f7ac"; }
+
+.bi-5-circle-fill-1::before { content: "\f7ad"; }
+
 .bi-5-circle-fill::before { content: "\f7ae"; }
 
 .bi-5-circle::before { content: "\f7af"; }
@@ -23724,6 +23768,10 @@ url('bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2') format("woff");
 .bi-5-square-fill::before { content: "\f7b0"; }
 
 .bi-5-square::before { content: "\f7b1"; }
+
+.bi-6-circle-1::before { content: "\f7b2"; }
+
+.bi-6-circle-fill-1::before { content: "\f7b3"; }
 
 .bi-6-circle-fill::before { content: "\f7b4"; }
 
@@ -23733,6 +23781,10 @@ url('bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2') format("woff");
 
 .bi-6-square::before { content: "\f7b7"; }
 
+.bi-7-circle-1::before { content: "\f7b8"; }
+
+.bi-7-circle-fill-1::before { content: "\f7b9"; }
+
 .bi-7-circle-fill::before { content: "\f7ba"; }
 
 .bi-7-circle::before { content: "\f7bb"; }
@@ -23741,6 +23793,10 @@ url('bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2') format("woff");
 
 .bi-7-square::before { content: "\f7bd"; }
 
+.bi-8-circle-1::before { content: "\f7be"; }
+
+.bi-8-circle-fill-1::before { content: "\f7bf"; }
+
 .bi-8-circle-fill::before { content: "\f7c0"; }
 
 .bi-8-circle::before { content: "\f7c1"; }
@@ -23748,6 +23804,10 @@ url('bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2') format("woff");
 .bi-8-square-fill::before { content: "\f7c2"; }
 
 .bi-8-square::before { content: "\f7c3"; }
+
+.bi-9-circle-1::before { content: "\f7c4"; }
+
+.bi-9-circle-fill-1::before { content: "\f7c5"; }
 
 .bi-9-circle-fill::before { content: "\f7c6"; }
 
@@ -23785,6 +23845,10 @@ url('bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2') format("woff");
 
 .bi-browser-safari::before { content: "\f7d7"; }
 
+.bi-c-circle-1::before { content: "\f7d8"; }
+
+.bi-c-circle-fill-1::before { content: "\f7d9"; }
+
 .bi-c-circle-fill::before { content: "\f7da"; }
 
 .bi-c-circle::before { content: "\f7db"; }
@@ -23804,6 +23868,10 @@ url('bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2') format("woff");
 .bi-cassette-fill::before { content: "\f7e2"; }
 
 .bi-cassette::before { content: "\f7e3"; }
+
+.bi-cc-circle-1::before { content: "\f7e4"; }
+
+.bi-cc-circle-fill-1::before { content: "\f7e5"; }
 
 .bi-cc-circle-fill::before { content: "\f7e6"; }
 
@@ -23841,6 +23909,10 @@ url('bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2') format("woff");
 
 .bi-google-play::before { content: "\f7f7"; }
 
+.bi-h-circle-1::before { content: "\f7f8"; }
+
+.bi-h-circle-fill-1::before { content: "\f7f9"; }
+
 .bi-h-circle-fill::before { content: "\f7fa"; }
 
 .bi-h-circle::before { content: "\f7fb"; }
@@ -23857,6 +23929,10 @@ url('bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2') format("woff");
 
 .bi-microsoft-teams::before { content: "\f801"; }
 
+.bi-p-circle-1::before { content: "\f802"; }
+
+.bi-p-circle-fill-1::before { content: "\f803"; }
+
 .bi-p-circle-fill::before { content: "\f804"; }
 
 .bi-p-circle::before { content: "\f805"; }
@@ -23872,6 +23948,10 @@ url('bootstrap-icons.woff?1fa40e8900654d2863d011707b9fb6f2') format("woff");
 .bi-prescription::before { content: "\f80a"; }
 
 .bi-prescription2::before { content: "\f80b"; }
+
+.bi-r-circle-1::before { content: "\f80c"; }
+
+.bi-r-circle-fill-1::before { content: "\f80d"; }
 
 .bi-r-circle-fill::before { content: "\f80e"; }
 

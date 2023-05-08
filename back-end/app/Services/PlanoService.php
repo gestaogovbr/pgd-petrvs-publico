@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Collection;
 class PlanoService extends ServiceBase
 {
   use UseDataFim;
+  public $documentoId;
 
   /**
    * Retorna todos os Planos de Trabalho de um determinado usuário, que ainda se encontram dentro da vigência
@@ -131,69 +132,6 @@ class PlanoService extends ServiceBase
         'principal' => false
       ], $unidade);
     }
-  }
-
-  public function metadados($plano, $inicioPeriodo, $fimPeriodo)
-  {
-    $result = [
-      "concluido" => true,
-      "produtividadeMedia" => 0,
-      "horasDecorridas" => 0,
-      "horasUteisDecorridas" => 0,
-      "horasTotais" => 0,
-      "tempoTotal" => $plano['tempo_total'],
-      "demandasNaoIniciadas" => array_filter($plano['demandas'], fn ($demanda) => $demanda['data_inicio'] == null),
-      "demandasEmAndamento" => array_filter($plano['demandas'], fn ($demanda) => $demanda['data_inicio'] != null && $demanda['data_entrega'] == null),
-      "demandasConcluidas" => $this->demandasSoConcluidas($plano, $inicioPeriodo, $fimPeriodo),
-      "demandasAvaliadas" => $this->demandasAvaliadas($plano, $inicioPeriodo, $fimPeriodo),
-      "demandasCumpridas" => $this->demandasCumpridas($plano, $inicioPeriodo, $fimPeriodo),
-      "horasDemandasNaoIniciadas" => 0,
-      "horasDemandasEmAndamento" => 0,
-      "horasDemandasConcluidas" => 0,
-      "horasDemandasAvaliadas" => 0,
-      "horasDemandasCumpridas" => 0
-    ];
-
-    /*  Nesse trecho, o método define se o plano foi concluído ou não.
-        O plano será considerado CONCLUÍDO quando todas as suas demandas forem CUMPRIDAS. Uma demanda é considerada cumprida quando
-        seu tempo homologado não for mais nulo. */
-    foreach ($plano['demandas'] as $demanda) {
-      if ($demanda['tempo_homologado'] == null) $result['concluido'] = false;
-    }
-
-    /* Nesse trecho, o método calcula o total de horas das demandas avaliadas, ou seja, a soma dos seus tempos homologados */
-    foreach ($result['demandasAvaliadas'] as $demanda) {
-      $result['horasDemandasAvaliadas'] += $demanda['tempo_homologado'];
-    }
-
-    /* Nesse trecho, o método calcula o total de horas das demandas ainda não iniciadas, ou seja, a soma dos seus tempos pactuados */
-    foreach ($result['demandasNaoIniciadas'] as $demanda) {
-      $result['horasDemandasNaoIniciadas'] += $demanda['tempo_pactuado'];
-    }
-
-    /* Nesse trecho, o método calcula o total de horas das demandas já iniciadas, mas ainda não concluídas, ou seja, a soma dos seus tempos pactuados */
-    foreach ($result['demandasEmAndamento'] as $demanda) {
-      $result['horasDemandasEmAndamento'] += $demanda['tempo_pactuado'];
-    }
-
-    /* Nesse trecho, o método calcula o total de horas das demandas cumpridas, ou seja, a soma dos seus tempos homologados */
-    foreach ($result['demandasCumpridas'] as $demanda) {
-      $result['horasDemandasCumpridas'] += $demanda['tempo_homologado'];
-    }
-
-    /* Nesse trecho, o método calcula o total das horas das demandas concluidas, ou seja, a soma dos seus tempos despendidos.
-        Além disso, também calcula a produtividade média das demandas concluídas. */
-    foreach ($result['demandasConcluidas'] as $demanda) {
-      $result['horasDemandasConcluidas'] += $demanda['tempo_despendido'];
-      $result['produtividadeMedia'] += $demanda['produtividade'];
-    }
-    $result['produtividadeMedia'] = count($result['demandasConcluidas']) ? $result['produtividadeMedia'] / count($result['demandasConcluidas']) : 0;
-    $hi = new DateTime($plano['data_inicio_vigencia']);
-    $hf = new DateTime('now', $hi->getTimezone());
-    $result['horasDecorridas'] = $this->calendario->horasEntreDatas($hi, $hf);
-    $hf = new DateTime($plano['data_fim_vigencia'], $hi->getTimezone());
-    $result['horasTotais'] = $this->calendario->horasEntreDatas($hi, $hf);
-    return $result;
   }
 
   /** 

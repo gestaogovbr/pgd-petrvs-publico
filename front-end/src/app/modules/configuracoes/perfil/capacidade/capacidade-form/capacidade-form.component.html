@@ -1,9 +1,9 @@
 <h3 *ngIf="!isModal" class="my-2">{{title}}</h3>
 <editable-form [form]="form!" (submit)="onSaveData()" (cancel)="onCancel()">
     <div class="row">
-        <input-search #tipo_capacidade [size]="12" label="Capacidade" controlName="tipo_capacidade_id" [control]="form!.controls.tipo_capacidade_id" [dao]="tipoCapacidadeDao"></input-search>
+        <input-search #tipo_capacidade [size]="12" controlName="tipo_capacidade_id" [dao]="tipoCapacidadeDao"></input-search>
     </div>
     <div class="row">
-        <input-select [size]="6" label="Perfil" controlName="perfil_id" [control]="form!.controls.perfil_id" [dao]="perfilDao"></input-select>
+        <input-select [size]="6" [label]="lex.noun('Perfil')" controlName="perfil_id" [dao]="perfilDao"></input-select>
     </div>
 </editable-form>

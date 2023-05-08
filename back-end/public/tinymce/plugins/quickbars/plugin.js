@@ -1,11 +1,11 @@
 /**
- * TinyMCE version 6.4.2 (2023-04-26)
+ * TinyMCE version 6.3.2 (2023-02-22)
  */
 
 (function () {
     'use strict';
 
-    var global$1 = tinymce.util.Tools.resolve('tinymce.PluginManager');
+    var global$2 = tinymce.util.Tools.resolve('tinymce.PluginManager');
 
     const hasProto = (v, constructor, predicate) => {
       var _a;
@@ -111,10 +111,11 @@
       });
     };
 
+    var global$1 = tinymce.util.Tools.resolve('tinymce.Env');
+
     var global = tinymce.util.Tools.resolve('tinymce.util.Delay');
 
     const pickFile = editor => new Promise(resolve => {
-      let resolved = false;
       const fileInput = document.createElement('input');
       fileInput.type = 'file';
       fileInput.accept = 'image/*';
@@ -123,29 +124,20 @@
       fileInput.style.top = '0';
       fileInput.style.opacity = '0.001';
       document.body.appendChild(fileInput);
-      const resolveFileInput = value => {
-        var _a;
-        if (!resolved) {
-          (_a = fileInput.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(fileInput);
-          resolved = true;
-          resolve(value);
-        }
-      };
       const changeHandler = e => {
-        resolveFileInput(Array.prototype.slice.call(e.target.files));
+        resolve(Array.prototype.slice.call(e.target.files));
       };
-      fileInput.addEventListener('input', changeHandler);
       fileInput.addEventListener('change', changeHandler);
       const cancelHandler = e => {
         const cleanup = () => {
-          resolveFileInput([]);
+          var _a;
+          resolve([]);
+          (_a = fileInput.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(fileInput);
         };
-        if (!resolved) {
-          if (e.type === 'focusin') {
-            global.setEditorTimeout(editor, cleanup, 1000);
-          } else {
-            cleanup();
-          }
+        if (global$1.os.isAndroid() && e.type !== 'remove') {
+          global.setEditorTimeout(editor, cleanup, 0);
+        } else {
+          cleanup();
         }
         editor.off('focusin remove', cancelHandler);
       };
@@ -424,7 +416,7 @@
     };
 
     var Plugin = () => {
-      global$1.add('quickbars', editor => {
+      global$2.add('quickbars', editor => {
         register(editor);
         setupButtons(editor);
         addToEditor$1(editor);

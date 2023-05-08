@@ -14,7 +14,7 @@
     transform: scaleX(-1) scaleY(-1);
     white-space: normal;
     height: min-content;
-    text-align: center;    
+    text-align: center;
     /*transform: rotate(-90deg);
     width: 250px;
     vertical-align: middle;
@@ -37,10 +37,15 @@
 .eixo .objetivo {
     background: #fff;
     margin: 0 10px;
-    height: 100%;
+    //height: 100%;
+}
+
+.eixo .subobjetivo {
+    min-height: 50px;
 }
 
 .eixo .objetivo .card-text {
+    font-size: 0.8rem;
     cursor: grab;
 }
 
@@ -70,4 +75,10 @@
 
 .dndDraggingSource {
     display: none;
+}
+
+.acao-planos {
+    .dropdown-toggle::after {
+        display: none;
+    }
 }

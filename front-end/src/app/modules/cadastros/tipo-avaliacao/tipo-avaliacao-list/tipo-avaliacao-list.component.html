@@ -5,8 +5,8 @@
     <toolbar></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
         <div class="row">
-            <input-text [size]="12" label="Nome do tipo da avaliação" controlName="nome"
-                [control]="filter!.controls.nome" placeholder="Nome do tipo da avaliação"></input-text>
+            <input-text [size]="12" [label]="'Nome ' + lex.noun('tipo de avaliação',false,true)" controlName="nome"
+                [control]="filter!.controls.nome" placeholder="Nome..."></input-text>
         </div>
     </filter>
     <columns>
@@ -16,7 +16,7 @@
             </ng-template>
         </column>
         <column title="Nota" field="nota_atribuida"></column>
-        <column title="Aceita entrega" [template]="columnAceita_entrega">
+        <column [title]="'Aceita ' + lex.noun('entrega')" [template]="columnAceita_entrega">
             <ng-template let-row="row" #columnAceita_entrega>
                 <span>{{ row.aceita_entrega ? 'Sim' : 'Não'}}</span>
             </ng-template>

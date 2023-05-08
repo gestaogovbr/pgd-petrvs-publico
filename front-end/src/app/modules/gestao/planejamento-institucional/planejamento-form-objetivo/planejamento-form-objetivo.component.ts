@@ -1,6 +1,8 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
+import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
+import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { InputTextComponent } from 'src/app/components/input/input-text/input-text.component';
 import { EixoTematicoDaoService } from 'src/app/dao/eixo-tematico-dao.service';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
@@ -19,10 +21,12 @@ import { NavigateResult } from 'src/app/services/navigate.service';
 })
 export class PlanejamentoFormObjetivoComponent extends PageFormBase<PlanejamentoObjetivo, PlanejamentoObjetivoDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  @ViewChild('planejamento_superior_nome', {static: false}) public planejamento_superior_nome?: InputTextComponent;
+  @ViewChild('planejamentoSuperiorNome', {static: false}) public planejamentoSuperiorNome?: InputTextComponent;
+  @ViewChild('eixoTematico', {static: false}) public eixoTematico?: InputSearchComponent;
 
   public planejamento?: Planejamento;
-  public objetivos_superiores?: LookupItem[] = [];
+  public objetivos: LookupItem[] = [];
+  public objetivos_superiores: LookupItem[] = [];
   public planejamentoDao?: PlanejamentoDaoService;
   public eixoTematicoDao?: EixoTematicoDaoService;
 
@@ -37,6 +41,7 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
       planejamento_superior_nome: {default: ""},
       eixo_tematico_id: {default: null},
       objetivo_superior_id: {default: null},
+      objetivo_pai_id: {default: null},
     }, this.cdRef, this.validate);
   }
 
@@ -58,20 +63,26 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
     return result;
   }
 
-  public loadData(entity: PlanejamentoObjetivo, form: FormGroup): void {
+  public async loadData(entity: PlanejamentoObjetivo, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
+    await this.eixoTematico?.loadSearch(entity.eixo_tematico || entity.eixo_tematico_id);
     this.title = entity._status == 'ADD' ? 'Inclusão de Objetivo' : 'Editando objetivo...';
     this.planejamento = this.metadata?.planejamento as Planejamento;
-/*     if(this.planejamento) this.planejamento.planejamento_superior = this.metadata.planejamento_superior as Planejamento || null;
+/*  if(this.planejamento) this.planejamento.planejamento_superior = this.metadata.planejamento_superior as Planejamento || null;
     if(this.planejamento.planejamento_superior) this.planejamento.planejamento_superior.objetivos = this.metadata?.objetivos_superiores || null;  */
     this.form?.controls.planejamento_superior_nome.setValue(this.planejamento?.planejamento_superior?.nome || '');
     this.objetivos_superiores = this.planejamento?.planejamento_superior?.objetivos?.map(x => Object.assign({}, { key: x.id, value: x.nome, data: x })) || [];
   }
 
-  public initializeData(form: FormGroup): void {
+  public async initializeData(form: FormGroup) {
     this.entity = this.metadata?.objetivo as PlanejamentoObjetivo;
-    this.loadData(this.entity!, form);
+    this.objetivos = (this.metadata?.objetivos as PlanejamentoObjetivo[]).map(x => Object.assign({}, {
+      key: x.id,
+      value: x.nome,
+      data: x
+    }));
+    await this.loadData(this.entity!, form);
   }
 
   public saveData(form: IIndexable): Promise<NavigateResult> {
@@ -83,6 +94,10 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
 
   public isPlanejamentoUNEX(): boolean {
     return this.planejamento?.unidade_id != null;
+  }
+
+  public onObjetivoPaiChange(objetivoPai: InputSelectComponent) {
+    if(objetivoPai.selectedItem?.data?.eixo_tematico_id?.length) this.form!.controls.eixo_tematico_id.setValue(objetivoPai.selectedItem?.data.eixo_tematico_id); 
   }
 
 }

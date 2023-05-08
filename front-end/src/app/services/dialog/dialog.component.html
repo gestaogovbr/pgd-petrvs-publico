@@ -15,7 +15,10 @@
                 {{message}}
             </div>
             <div *ngIf="buttons.length" class="modal-footer">
-                <button *ngFor="let button of buttons" type="button" [class]="'btn ' + (button.color || 'btn-primary')" (click)="buttonClick(button)">{{button.label}}</button>
+                <button *ngFor="let button of buttons" type="button" [class]="'btn ' + (button.color || 'btn-primary')" (click)="buttonClick(button)">
+                    <i *ngIf="button.icon" [class]="button.icon"></i>
+                    {{button.label}}
+                </button>
             </div>
         </div>
     </div>

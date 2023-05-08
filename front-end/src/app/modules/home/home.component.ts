@@ -8,11 +8,13 @@ import { NavigateService } from 'src/app/services/navigate.service';
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
 import { GlobalsService } from 'src/app/services/globals.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
-import { Chart } from 'chart.js';
+import { Chart, ChartData } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { UtilService } from 'src/app/services/util.service';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Unidade } from 'src/app/models/unidade.model';
+import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
+import { MetadadosPlano } from '../base/page-report-base';
 
 @Component({
   selector: 'app-home',
@@ -38,7 +40,12 @@ export class HomeComponent implements OnInit {
       media_avaliacoes: 0,
       nao_concluidas: 0,
       nao_iniciadas: 0,
-      total_demandas: 0
+      total_demandas: 0,
+      horas_atrasadas: 0,
+      horas_avaliadas: 0,
+      horas_concluidas: 0,
+      horas_nao_concluidas: 0,
+      horas_nao_iniciadas: 0,
     },
     horas_afastamentos: 0
   };
@@ -63,7 +70,73 @@ export class HomeComponent implements OnInit {
   public data_inicial: Date;
   public data_final: Date;
 
+  public: ChartDataSets[] = [];
+  public opcoesGraficoPlano: ChartOptions = {
+    scales: {
+      xAxes: [{
+        labels: ['Horas do Plano'],
+        display: true,
+        ticks: {
+          beginAtZero: true
+        }
+      }],
+      yAxes: [{
+        ticks: {
+          beginAtZero: true
+        }
+      }]
+    },
+    plugins: {
+      datalabels: {
+        display: false,
+        align: 'start',
+        anchor: 'end',
+        color: 'black',
+        font: {
+          weight: 'bold'
+        },
+        clamp: true,
+        clip: false
+      }
+    },
+    //events: ['click'],
+    responsive: true
+  };
 
+  public opcoesGraficoDemandas: ChartOptions = {
+    scales: {
+      xAxes: [{
+        labels: ['Total de horas demandas'],
+        display: true,
+        ticks: {
+          beginAtZero: true
+        }
+      }],
+      yAxes: [{
+        ticks: {
+          beginAtZero: true
+        }
+      }]
+    },
+    plugins: {
+      datalabels: {
+        display: false,
+        align: 'start',
+        anchor: 'end',
+        color: 'black',
+        font: {
+          weight: 'bold'
+        },
+        clamp: true,
+        clip: false
+      }
+    },
+    //events: ['click'],
+    responsive: true
+  };
+
+  public dadosPlanos: ChartData = {};
+  public dadosDemandas: ChartData = {};
 
   constructor(
     public auth: AuthService,
@@ -125,7 +198,11 @@ export class HomeComponent implements OnInit {
     this.data_final = this.formSearch.controls['data_final'].value;
 
     const dadosUsuario = await this.usuarioDao.dashboard(this.data_inicial, this.data_final, this.auth.usuario!.id)
-    if (dadosUsuario) this.dashUsuario = dadosUsuario;
+    if (dadosUsuario) {
+      this.dashUsuario = dadosUsuario;
+      this.construirGraficoPlanos();
+      this.construirGraficoDemandas();
+    }
   }
 
   public mensagemSaudacao() {
@@ -139,6 +216,61 @@ export class HomeComponent implements OnInit {
     const mail = this.auth.usuario?.email;
     return mail;
   }
+
+  public construirGraficoPlanos() {
+    let somaTotal = 0
+    let somaAlocadas = 0
+    this.dashUsuario.planos?.map(p => somaTotal += p.total_horas)
+    this.dashUsuario.planos?.map(p => somaAlocadas += p.horas_alocadas)
+
+    this.dadosPlanos.datasets = [
+      {
+        label: 'Total de horas',
+        data: [somaTotal],
+        backgroundColor: '#0dcaf0',
+        stack: 'Horas do Plano',
+        barThickness: 30
+      },
+      {
+        label: 'Total de horas alocadas',
+        data: [somaAlocadas],
+        backgroundColor: '#ffc107',
+        stack: 'Horas do Plano',
+        barThickness: 30
+      }
+    ];
+  }
+
+  public construirGraficoDemandas() {
+    this.dadosDemandas.datasets = [
+      {
+        label: 'Demandas Não-iniciadas',
+        data: [this.dashUsuario.demandas.horas_nao_iniciadas],
+        backgroundColor: '#0dcaf0',
+        stack: 'Demandas'
+      },
+      {
+        label: 'Demandas Não Concluídas',
+        data: [this.dashUsuario.demandas.horas_nao_concluidas],
+        backgroundColor: '#ffc107',
+        stack: 'Demandas'
+      },
+      {
+        label: 'Demandas Concluídas',
+        data: [this.dashUsuario.demandas.horas_concluidas],
+        backgroundColor: '#239c24',
+        stack: 'Demandas'
+      },
+      {
+        label: 'Demandas Atrasadas',
+        data: [this.dashUsuario.demandas.horas_atrasadas],
+        backgroundColor: '#af4201',
+        stack: 'Demandas'
+      },
+
+    ];
+  }
+
 
   public tokenGAPI() {
     this.auth.googleApi.getAccessToken().then(res => {

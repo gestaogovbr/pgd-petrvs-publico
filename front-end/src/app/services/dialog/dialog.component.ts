@@ -8,6 +8,7 @@ import { UtilService } from '../util.service';
 
 export type DialogButton = {
   label: string,
+  icon?: string,
   color?: string,
   value?: any
 }

@@ -8,40 +8,40 @@
                 </div>
                 <div class="form-group col-md-9">
                     <div class="row">
-                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_CPF') ? 'true' : undefined" [size]="4" label="CPF" controlName="cpf" [control]="form!.controls.cpf" [maskFormat]="'000.000.000-00'"></input-text>
-                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAT') ? 'true' : undefined" [size]="3" label="Matrícula" controlName="matricula" [control]="form!.controls.matricula"></input-text>
-                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAIL') ? 'true' : undefined" [size]="5" label="E-mail" controlName="email" [control]="form!.controls.email" textCase="lower"></input-text>
+                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_CPF') ? 'true' : undefined" [size]="4" label="CPF" controlName="cpf" [maskFormat]="'000.000.000-00'"></input-text>
+                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAT') ? 'true' : undefined" [size]="3" label="Matrícula" controlName="matricula"></input-text>
+                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAIL') ? 'true' : undefined" [size]="5" label="E-mail" controlName="email" textCase="lower"></input-text>
                     </div>
                     <div class="row">
-                        <input-text [size]="12" label="Nome" controlName="nome" [control]="form!.controls.nome"></input-text>
+                        <input-text [size]="12" label="Nome" controlName="nome"></input-text>
                     </div>
                     <div class="row">
-                        <input-text [size]="6" label="Apelido" controlName="apelido" [control]="form!.controls.apelido"></input-text>
-                        <input-select [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_PERFIL') ? 'true' : undefined" [size]="6" label="Perfil" controlName="perfil_id" [control]="form!.controls.perfil_id" [dao]="perfilDao"></input-select>
+                        <input-text [size]="6" label="Apelido" controlName="apelido"></input-text>
+                        <input-select [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_PERFIL') ? 'true' : undefined" [size]="6" label="Perfil" controlName="perfil_id" [dao]="perfilDao"></input-select>
                     </div>
                     <div class="row">
-                        <input-select [size]="4" label="UF" controlName="uf" [control]="form!.controls.uf" [items]="lookup.UF"></input-select>
-                        <input-radio [size]="4" label="Sexo" controlName="sexo" [control]="form!.controls.sexo" [items]="lookup.SEXO"></input-radio>
-                        <input-text [size]="4" label="Telefone" controlName="telefone" [control]="form!.controls.telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'"></input-text>
+                        <input-select [size]="4" label="UF" icon="bi bi-flag" controlName="uf" [items]="lookup.UF"></input-select>
+                        <input-radio [size]="4" label="Sexo" controlName="sexo" [items]="lookup.SEXO"></input-radio>
+                        <input-text [size]="4" label="Telefone" controlName="telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'"></input-text>
                     </div>
                 </div>
             </div>
         </tab>
         <tab key="CONFIGURACOES" label="Configurações">
             <div class="row">
-                <input-editor label="Texto complementar do Plano de Trabalho" controlName="texto_complementar_plano" [dataset]="planoDataset"></input-editor>
+                <input-editor [label]="'Texto complementar ' + lex.noun('Plano de Trabalho',false,true)" controlName="texto_complementar_plano" [dataset]="planoDataset"></input-editor>
             </div>
         </tab>
-        <tab key="LOTACOES" label="Lotações">
+        <tab key="LOTACOES" [label]="lex.noun('Lotação',true)">
             <grid [control]="form!.controls.lotacoes" [form]="formLotacoes" [add]="addLotacao.bind(this)" [load]="loadLotacao.bind(this)" [hasDelete]="true" [remove]="removeLotacao.bind(this)" [save]="saveLotacao.bind(this)" editable>
                 <columns>
-                    <column title="Unidade" [template]="columnUnidade" [editTemplate]="editUnidade">
+                    <column [title]="lex.noun('Unidade')" [template]="columnUnidade" [editTemplate]="editUnidade">
                         <ng-template let-row="row" #columnUnidade>
                             <strong>{{row.unidade.sigla}}</strong><span> (IdServo: {{row.unidade.codigo}})</span><br>
                             <span><i *ngIf="row.principal" class="bi bi-bookmark-star"></i> {{row.unidade.nome}} </span>
                         </ng-template>
                         <ng-template let-row="row" #editUnidade>
-                            <input-search #unidade [size]="12" controlName="unidade_id" [control]="formLotacoes!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+                            <input-search #unidade [size]="12" controlName="unidade_id" [control]="formLotacoes!.controls.unidade_id" [dao]="unidadeDao"></input-search>
                         </ng-template>
                     </column>
                     <column type="switch" title="Principal" field="principal"></column>

@@ -1,6 +1,8 @@
 <div class="container">
     <div class="saudacao">
         <h2 class="text-black-50">{{mensagemSaudacao()}}</h2>
+        <button class="btn btn-outline-success"
+            (click)="go.navigate({route: ['gestao', 'demanda']}, {root: true})">{{ 'Minhas ' + lex.noun('demanda',true) }}</button>
     </div>
     <div class="search">
         <form [formGroup]="formSearch" class="row d-flex align-items-center">
@@ -23,7 +25,7 @@
     </div>
     <div class="d-flex">
         <div class="card border-0 mt-3 w-100">
-            <div class="card-header bg-info">Planos de trabalho</div>
+            <div class="card-header bg-info">{{ lex.noun('Plano de trabalho',true) }}</div>
             <div class="card-body">
                 <table class="table align-middle table-row-bordered table-row-dashed gy-5" id="kt_table_widget_1">
                     <tbody>
@@ -77,7 +79,7 @@
 
         <div class="minhas">
             <h5>Minhas</h5>
-            <h4>Demandas</h4>
+            <h4>{{ lex.noun('Demanda',true) }}</h4>
             <p>({{dashUsuario.demandas.total_demandas}} demandas)</p>
         </div>
 
@@ -120,7 +122,7 @@
             [ngClass]="dashUsuario.demandas.media_avaliacoes > 5 ? 'acima' : 'abaixo'">
             <div class="card-body flex-column d-flex align-items-center justify-content-center">
                 <h3>{{dashUsuario.demandas.media_avaliacoes.toFixed(2)}}</h3>
-                <p>Avaliação média</p>
+                <p>{{ lex.noun('Avaliação') + ' média' }}</p>
             </div>
         </div>
 
@@ -133,6 +135,21 @@
             </div>
         </div> -->
 
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-6">
+            <h5>Horas dos Planos</h5>
+            <bar-chart tipoGrafico="horizontalBar" [dadosGrafico]="dadosPlanos"
+                [opcoesGrafico]="opcoesGraficoPlano">
+            </bar-chart>
+        </div>
+        <div class="col-6">
+            <h5>{{ 'Horas ' + lex.noun('Demanda',true,true) }}</h5>
+            <bar-chart tipoGrafico="horizontalBar" [dadosGrafico]="dadosDemandas"
+                [opcoesGrafico]="opcoesGraficoDemandas">
+            </bar-chart>
+        </div>
     </div>
 
 
@@ -150,7 +167,7 @@
                         <span class="text-gray-400 fw-bolder ms-2">{{plano.progresso}}%</span>
                     </div>
                     <div *ngIf="!usuario.planos.length">
-                        <p>Sem planos de trabalho</p>
+                        <p>{{ 'Sem ' + lex.noun('plano de trabalho',true) }}</p>
                     </div>
                 </div>
             </div>

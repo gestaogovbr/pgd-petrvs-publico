@@ -3,7 +3,7 @@
         <tbody>
             <tr>
                 <td style="padding:15px;" colspan="2">
-                    <h3 style="text-align:center;">PLANO DE TRABALHO</h3>
+                    <h3 style="text-align:center;">{{ lex.noun('PLANO DE TRABALHO') }}</h3>
                 </td>
             </tr>
             <tr>
@@ -44,7 +44,7 @@
                     <p>{{plano?.tipo_modalidade?.nome}}</p>
                 </td>
                 <td style="padding:8px;">
-                    <p><b>Ganho percentual de produtividade:</b></p>
+                    <p><b>{{ 'Ganho percentual de ' + lex.noun('produtividade') + ':' }}</b></p>
                     <p>{{ganhoProdutividade}} </p>
                 </td>
             </tr>
@@ -54,7 +54,7 @@
                     <p>{{cargaHoraria}} horas</p>
                 </td>
                 <td style="padding:8px;">
-                    <p><b>Tempo pactuado do plano:</b></p>
+                    <p><b>{{ lex.noun('Tempo pactuado') + ' ' + lex.noun('plano',false,true) + ':' }}</b></p>
                     <p>{{plano?.tempo_total}} horas</p>
                 </td>
             </tr>
@@ -72,19 +72,19 @@
                     <p style="text-align:justify;">&nbsp;</p>
                     <p style="text-align:justify;">Pelo presente termo de ciência e responsabilidade, em razão da solicitação de adesão ao Programa de Gestão por Resultados da {{auth.entidade?.nome}},</p>
                     <ul>
-                        <li style="text-align:justify;">DECLARO estar ciente que a aferição das entregas será realizadas mediante análise fundamentada da chefia responsável pelo plano de trabalho, em até quarenta dias, quanto ao atingimento ou não das metas estipuladas.</li>
-                        <li style="text-align:justify;">DECLARO estar ciente que a chefia responsável pelo plano de trabalho poderá redefinir as metas do participante por necessidade do serviço, na hipótese de surgimento de demanda prioritária cujas atividades não tenham sido previamente acordadas.</li>
-                        <li style="text-align:justify;">DECLARO que atendo às condições para participação no PGPRF;</li>
-                        <li style="text-align:justify;">DECLARO que estou ciente do dever como participante de manter, às suas expensas, a infraestrutura necessária para o exercício de suas atribuições, inclusive aquelas relacionadas à segurança da informação, quando executar o programa de gestão na modalidade teletrabalho;</li>
-                        <li style="text-align:justify;">DECLARO que estou ciente que minha participação no programa de gestão não constitui direito adquirido, podendo ser desligado nas condições estabelecidas nesta Instrução Normativa;</li>
-                        <li style="text-align:justify;">DECLARO que estou ciente quanto à vedação de pagamento das vantagens descritas nesta normativa;</li>
-                        <li style="text-align:justify;">DECLARO que estou ciente quanto à vedação de utilização de terceiros para a execução dos trabalhos acordados como parte das metas;</li>
-                        <li style="text-align:justify;">DECLARO que estou ciente quanto ao dever de observar as disposições constantes da Lei nº 13.709, de 14 e agosto de 2018;</li>
-                        <li style="text-align:justify;">DECLARO que estou ciente quanto ao dever de observar as disposições constantes da Lei Geral de Proteção de Dados Pessoas (LGPD), no que couber;</li>
-                        <li style="text-align:justify;">DECLARO que estou ciente quanto ao dever de observar as disposições constantes da Portaria nº 15.543/SEDGG/ME, de 2 de julho de 2020 (Manual de Conduta do Agente Público Civil do Poder Executivo Federal); e</li>
-                        <li style="text-align:justify;">DECLARO que estou ciente quanto ao dever de manter os dados pessoais, inclusive de contato para acionamento, atualizados em sistema indicado pela Diretoria de Gestão de Pessoas.</li>
-                        <li style="text-align:justify;">DECLARO estar ciente quanto ao dever de manter meus dados pessoais, inclusive de contato para acionamento, atualizados na base de dados indicada pela DGP.</li>
-                        <li style="text-align:justify;">DECLARO estar ciente que o prazo de antecedência mínima para o comparecimento presencial à unidade, sempre que a presença física do participante for necessária e houver interesse da Administração Pública, deverá seguir o disposto na INSTRUÇÃO NORMATIVA PRF Nº 88, DE 15 DE JUNHO DE 2022 (SEI nº 41976568).</li>
+                        <li style="text-align:justify;">{{ 'DECLARO estar ciente que a aferição ' + lex.noun('entrega',true,true) + ' será realizada mediante análise fundamentada da chefia responsável pelo ' + lex.noun('plano de trabalho') + ', em até quarenta dias, quanto ao atingimento ou não das metas estipuladas.' }}</li>
+                        <li style="text-align:justify;">{{ 'DECLARO estar ciente que a chefia responsável pelo ' + lex.noun('plano de trabalho') + ' poderá redefinir as metas do participante por necessidade do serviço, na hipótese de surgimento de ' + lex.noun('demanda') + ' prioritária cujas atividades não tenham sido previamente acordadas.' }}</li>
+                        <li style="text-align:justify;">{{ 'DECLARO que atendo às condições para participação no ' + lex.noun('PROGRAMA DE GESTÃO') + ';' }}</li>
+                        <li style="text-align:justify;">{{ 'DECLARO que estou ciente do dever, como participante, de manter, às minhas expensas, a infraestrutura necessária para o exercício de minhas atribuições, inclusive aquelas relacionadas à segurança da informação, quando executar o ' + lex.noun('programa de gestão') + ' na modalidade teletrabalho;' }}</li>
+                        <li style="text-align:justify;">{{ 'DECLARO que estou ciente que minha participação no ' + lex.noun('programa de gestão') + ' não constitui direito adquirido, podendo ser desligado nas condições estabelecidas nesta Instrução Normativa;' }}</li>
+                        <li style="text-align:justify;">{{ 'DECLARO que estou ciente quanto à vedação de pagamento das vantagens descritas nesta normativa;' }}</li>
+                        <li style="text-align:justify;">{{ 'DECLARO que estou ciente quanto à vedação de utilização de terceiros para a execução dos trabalhos acordados como parte das metas;' }}</li>
+                        <li style="text-align:justify;">{{ 'DECLARO que estou ciente quanto ao dever de observar as disposições constantes da Lei nº 13.709, de 14 de agosto de 2018;' }}</li>
+                        <li style="text-align:justify;">{{ 'DECLARO que estou ciente quanto ao dever de observar as disposições constantes da Lei Geral de Proteção de Dados Pessoais (LGPD), no que couber;' }}</li>
+                        <li style="text-align:justify;">{{ 'DECLARO que estou ciente quanto ao dever de observar as disposições constantes da Portaria nº 15.543/SEDGG/ME, de 2 de julho de 2020 (Manual de Conduta do Agente Público Civil do Poder Executivo Federal); e' }}</li>
+                        <li style="text-align:justify;">{{ 'DECLARO que estou ciente quanto ao dever de manter os dados pessoais, inclusive de contato para acionamento, atualizados em sistema indicado pela Diretoria de Gestão de Pessoas.' }}</li>
+                        <li style="text-align:justify;">{{ 'DECLARO estar ciente quanto ao dever de manter meus dados pessoais, inclusive de contato para acionamento, atualizados na base de dados indicada pela DGP.' }}</li>
+                        <li style="text-align:justify;">{{ 'DECLARO estar ciente que o prazo de antecedência mínima para o comparecimento presencial à ' + lex.noun('unidade') + ', sempre que a presença física do participante for necessária e houver interesse da Administração Pública, deverá seguir o disposto na INSTRUÇÃO NORMATIVA PRF Nº 88, DE 15 DE JUNHO DE 2022 (SEI nº 41976568).' }}</li>
                     </ul>
                 </td>
             </tr>
@@ -168,16 +168,16 @@
             </tr//-->
             <tr>
                 <td style="padding:8px;" colspan="2">
-                    <h3 style="text-align:center;">ATIVIDADES</h3>
+                    <h3 style="text-align:center;">{{ lex.noun('ATIVIDADE',true) }}</h3>
                     <table>
                         <thead>
                             <tr>
-                                <th>Descrição da atividade</th>
+                                <th>{{ 'Descrição ' + lex.noun('atividade',false,true) }}</th>
                                 <!--th>Faixa de Complexidade da Atividade</th>
                                 <th>Parâmetros adotados para definição da faixa de complexidade</th//-->
-                                <th>Tempo de execução da atividade em regime presencial</th>
-                                <th>Tempo de execução da atividade em teletrabalho</th>
-                                <th>Ganho percentual de produtividade estabelecido, quando aplicável</th>
+                                <th>{{ 'Tempo de execução ' + lex.noun('atividade',false,true) + ' em regime presencial' }}</th>
+                                <th>{{ 'Tempo de execução ' + lex.noun('atividade',false,true) + ' em teletrabalho' }}</th>
+                                <th>{{ 'Ganho percentual de ' + lex.noun('produtividade') + ' estabelecido, quando aplicável' }}</th>
                                 <!--th>Entregas esperadas</th//-->
                             </tr>
                         </thead>

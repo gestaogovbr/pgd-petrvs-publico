@@ -6,7 +6,7 @@
     <button *ngIf="isUpDownButtons" [id]="grid?.getId('_' + index + '_' + row.id) + '_down_button'" type="button" class="btn btn-outline-secondary" (click)="onMoveClick(false)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mover registro para baixo">
         <i class="bi bi-arrow-down"></i>
     </button>
-    <button *ngFor="let btn of allButtons" [id]="grid?.getId('_' + index + '_' + row.id + '_' + btn.icon) + '_button'" type="button" [class]="'btn ' + (btn.color || 'btn-outline-primary')" (click)="onButtonClick(btn)" data-bs-toggle="tooltip" data-bs-placement="top" title="{{btn.hint || btn.label || ''}}">
+    <button *ngFor="let btn of allButtons" [id]="grid?.getId('_' + index + '_' + row.id + '_' + btn.icon) + '_button'" type="button" [class]="'btn ' + (getClassButtonColor(btn.color) || 'btn-outline-primary')" (click)="onButtonClick(btn)" data-bs-toggle="tooltip" data-bs-placement="top" title="{{btn.hint || btn.label || ''}}">
         <i *ngIf="btn.icon?.length" [class]="btn.icon"></i>
     </button>
     <div *ngIf="allOptions.length" class="btn-group" role="group">

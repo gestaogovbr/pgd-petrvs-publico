@@ -118,7 +118,7 @@ class Usuario extends Authenticatable
     // Belongs
     public function perfil() { return $this->belongsTo(Perfil::class, 'perfil_id'); }
     // Mutattors e Casts
-    public function getUrlFotoAttribute($value) 
+    public function getUrlFotoAttribute($value)
     {
         $usuarioService = new UsuarioService();
         $url = "/assets/images/profile.png";

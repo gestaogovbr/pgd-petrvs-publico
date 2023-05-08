@@ -12,6 +12,7 @@ import { LexicalService } from './services/lexical.service';
 import { FullRoute, NavigateService } from './services/navigate.service';
 import { UtilService } from './services/util.service';
 import { LookupService } from './services/lookup.service';
+import { EntityService } from './services/entity.service';
 
 export let appInjector: Injector;
 
@@ -45,6 +46,7 @@ export class AppComponent {
   public allPages: ListenerAllPagesService;
   public utils: UtilService;
   public lookup: LookupService;
+  public entity: EntityService;
   public menuSchema: any;
   public menuContexto: any[];
   public contexto: any;
@@ -71,6 +73,7 @@ export class AppComponent {
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.utils = injector.get<UtilService>(UtilService);
     this.lookup = injector.get<LookupService>(LookupService);
+    this.entity = injector.get<EntityService>(EntityService);
     /* Inicializações */
     this.auth.success = (usuario: Usuario, redirectTo?: FullRoute) => {
       this.go.navigate(redirectTo || { route: this.globals.initialRoute });

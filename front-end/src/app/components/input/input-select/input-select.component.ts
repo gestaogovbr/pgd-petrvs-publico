@@ -27,7 +27,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
   @Input() controlName: string | null = null;
   @Input() disabled?: string;
   @Input() value: any = undefined;
-  @Input() icon: string = "";
+  @Input() icon: string = "bi bi-menu-button-wide";
   @Input() label: string = "";
   @Input() labelInfo: string = "";
   @Input() bold: boolean = false;

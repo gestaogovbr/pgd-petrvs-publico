@@ -25,6 +25,8 @@ class PlanoEntrega extends ModelBase
         'planejamento_id', /* char(36); */
         'cadeia_valor_id', /* char(36); */
         'unidade_id', /* char(36); NOT NULL; */
+        'status', /* enum('INCLUINDO','HOMOLOGANDO','ATIVO','CONCLUIDO','AVALIADO','SUSPENSO'); NOT NULL; */// Status do plano de entrega
+        'plano_entrega_id', /* char(36); */
         //'numero', /* int; NOT NULL; */// Número do plano de entrega (Gerado pelo sistema)
     ];
 
@@ -40,10 +42,10 @@ class PlanoEntrega extends ModelBase
     }
 
     // Has
-//..
     public function entregas() { return $this->hasMany(PlanoEntregaEntrega::class); }
     // Belongs
     public function planejamento() { return $this->belongsTo(Planejamento::class, 'planejamento_id'); }
     public function cadeiaValor() { return $this->belongsTo(CadeiaValor::class, 'cadeia_valor_id'); }
     public function unidade() { return $this->belongsTo(Unidade::class, 'unidade_id'); }
+    public function planoEntregaSuperior() { return $this->belongsTo(PlanoEntrega::class, 'plano_entrega_id'); }
 }

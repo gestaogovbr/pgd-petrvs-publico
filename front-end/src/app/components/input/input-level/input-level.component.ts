@@ -29,7 +29,7 @@ export class InputLevelComponent extends InputBase implements OnInit {
   @ViewChild('inputElement') inputElement?: ElementRef;
   @ViewChild('newInputLevel') newInputLevel?: ElementRef;
   @Output() change = new EventEmitter<Event>();
-  @Input() hostClass: string = "";
+  @Input() hostClass: string = ""; 
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
   @Input() disabled?: string;
@@ -58,10 +58,10 @@ export class InputLevelComponent extends InputBase implements OnInit {
     return this.getControl();
   }
   @Input() set size(value: number) {
-    this.setSize(value);
+    this.setSize(value); 
   }
   get size(): number {
-    return this.getSize();
+    return this.getSize(); 
   }
 
   public levels: InputLevelItem[] = [];
@@ -105,7 +105,7 @@ export class InputLevelComponent extends InputBase implements OnInit {
         if(this.maxValue) this.levels[i].max = await this.maxValue(parents, this.levels[i], children);
         if(this.stepValue) this.levels[i].step = await this.stepValue(parents, this.levels[i], children);
       }
-      // if(this.control) this.control.setErrors(this.isValid ? null : {invalid: true});
+      // if(this.control) this.control.setErrors(this.isValid ? null : {invalid: true});  
       this.cdRef.detectChanges();
     })();
   }

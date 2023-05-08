@@ -8,14 +8,14 @@
                 <toolbar *ngIf="!selectable"></toolbar>
                 <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
                     <div class="row">
-                        <input-text [size]="12" label="Planejamento Institucional" controlName="nome"
-                            [control]="filter!.controls.nome" placeholder="Nome do planejamento institucional..."></input-text>
+                        <input-text [size]="12" [label]="lex.noun('Planejamento Institucional')" controlName="nome"
+                            [control]="filter!.controls.nome" [placeholder]="'Nome ' + lex.noun('Planejamento Institucional',false,true) + '...'"></input-text>
                     </div>
                     <div class="row">
-                        <input-switch [size]="2" label="Só da Entidade" controlName="so_entidade" [control]="filter!.controls.so_entidade" (change)="onSoEntidadeChange($event)"></input-switch>
-                        <input-search #unidade [size]="4" label="Unidade" [disabled]="unidade_disabled" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
-                        <input-datetime [size]="3" date label="Início" controlName="inicio" [control]="filter!.controls.inicio" labelInfo="Data de início do planejamento institucional"></input-datetime>
-                        <input-datetime [size]="3" date label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Data do fim do planejamento institucional"></input-datetime>
+                        <input-switch [size]="2" [label]="'Só da '+ lex.noun('Entidade')" controlName="so_entidade" [control]="filter!.controls.so_entidade" (change)="onSoEntidadeChange($event)"></input-switch>
+                        <input-search #unidade [size]="4" [label]="lex.noun('Unidade')" [disabled]="unidade_disabled" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+                        <input-datetime [size]="3" date label="Início" controlName="inicio" [control]="filter!.controls.inicio" [labelInfo]="'Data de início do' +lex.noun('Planejamento Institucional')"></input-datetime>
+                        <input-datetime [size]="3" date label="Fim" controlName="fim" [control]="filter!.controls.fim" [labelInfo]="'Data do fim do '+lex.noun('Planejamento Institucional')"></input-datetime>
                     </div>
                 </filter>
                 <columns>

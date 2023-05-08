@@ -30,12 +30,12 @@ type SplitTag = {
   start: TemplateTag,
   content: string,
   end: TemplateTag,
-  after: string
+  after: string 
 }
 
-type VariableTemplate = {
-  level: number,
-  variable: string,
+type VariableTemplate = { 
+  level: number, 
+  variable: string, 
   label: string
 };
 
@@ -153,7 +153,7 @@ export class InputEditorComponent extends InputBase implements OnInit {
     setup: ((editor: Editor) => {
       this.editor = editor;
       /* Hack para manter compatibilidade entre o @tinymce/tinymce-angular 4.2.4 e o tinymce 6.3.2 */
-      (editor as IIndexable)['setMode'] =  (mode: any) => editor.mode.set(mode);
+      (editor as IIndexable)['setMode'] =  (mode: any) => editor.mode.set(mode);      
       /* Botões personalizados para edição do template */
       editor.ui.registry.addButton('customDoneEditTemplateButton', {
         icon: 'checkmark',
@@ -211,7 +211,7 @@ export class InputEditorComponent extends InputBase implements OnInit {
 
   private _editingTemplate?: string;
   private _template?: string;
-  private _datasource?: any;
+  private _datasource?: any; 
   private _variables: VariableTemplate[] = [];
 
   constructor(public injector: Injector) {
@@ -277,7 +277,7 @@ export class InputEditorComponent extends InputBase implements OnInit {
       toolbarDataset.show();
     } else if(!this.hasTemplate && !this.disabled) {
       toolbarDefault.show();
-    }
+    } 
   }
 
   public get isEditingTemplate(): boolean {
@@ -297,8 +297,8 @@ export class InputEditorComponent extends InputBase implements OnInit {
   }
 
   public getStrRegEx(expression: string | RegExp | undefined): string {
-    return !expression ? "" : typeof expression == "string" ?
-      expression.split("").map(c => "<>/\\{}[]()-?*.!~".includes(c) ? "\\" + c : c).join("") :
+    return !expression ? "" : typeof expression == "string" ? 
+      expression.split("").map(c => "<>/\\{}[]()-?*.!~".includes(c) ? "\\" + c : c).join("") : 
       (expression as RegExp).toString().replace(/^\//, "").replace(/\/.*?$/, "");
   }
 
@@ -318,7 +318,7 @@ export class InputEditorComponent extends InputBase implements OnInit {
           end: { before: end.STERT, tag: end.TAG, after: end.END },
           after: end.AFTER
         };
-      }
+      } 
     }
     return undefined;
   }
@@ -451,7 +451,7 @@ export class InputEditorComponent extends InputBase implements OnInit {
         tag.content = "(ERRO)";
       } finally {
         tag.start.tag = "";
-        tag.end.tag = "";
+        tag.end.tag = ""; 
       }
       /* Incrementa o result e prepara o next */
       result += tag.before + (tag.start.before || "") + tag.start.tag + (tag.start.after || "") + tag.content + (tag.end.before || "") + tag.end.tag + (tag.end.after || "");

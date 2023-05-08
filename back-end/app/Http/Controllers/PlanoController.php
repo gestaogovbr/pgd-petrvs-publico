@@ -28,23 +28,6 @@ class PlanoController extends ControllerBase {
         }
     }
 
-    public function metadados(Request $request) {
-        try {
-            $this->checkPermissions('QUERY', $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
-            $data = $request->validate([
-                'plano' => ['required'],
-                'inicioPeriodo' => [],
-                'fimPeriodo' => []
-            ]);
-            return response()->json([
-                'success' => true,
-                'metadados' => $this->service->metadados($data["plano"], $data['inicioPeriodo'], $data['fimPeriodo'])
-            ]);
-        } catch (Throwable $e) {
-            return response()->json(['error' => $e->getMessage()]);
-        }
-    }
-
     public function metadadosPlano(Request $request) {
         try {
             $this->checkPermissions('QUERY', $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
