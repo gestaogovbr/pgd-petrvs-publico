@@ -1,7 +1,7 @@
 <!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
     <div class="row">
-        <input-search #unidade [size]="12" label="Unidade instituidora" icon="fab fa-unity" controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+        <input-search #unidade [size]="12" controlName="unidade_id" [dao]="unidadeDao"></input-search>
     </div>
     <div class="row">
         <input-datetime date [size]="6" label="Início" icon="bi bi-calendar-date" controlName="data_inicio_vigencia" [control]="form!.controls.data_inicio_vigencia" labelInfo="Início da Vigência do Programa"></input-datetime>
@@ -14,6 +14,6 @@
     <separator title="Configurações">
         <input-switch label="Se o termo é obrigatório" [size]="12" controlName="termo_obrigatorio" scale="small" labelPosition="right"></input-switch>
         <input-search [label]="'Template ' + lex.noun('termo', true, true)" [size]="12" detailsButton labelInfo="Template do termo utilizado no plano de trabalho" controlName="template_tcr_id" [dao]="templateDao" [where]="[['especie', '==', 'TCR']]" [selectRoute]="templateService.selectRoute('TCR')" (details)="templateService.details($event)"></input-search>
-        <input-search [label]="'Tipo de documento ' + lex.noun('termo', true, true)" [size]="12" #tipoDocumento controlName="tipo_documento_tcr_id" [dao]="tipoDocumentoDao" [selectRoute]="{route: ['cadastros', 'tipo-documento']}" labelInfo="Tipo de documento utilizado para exportar o termo para o SEI/SUPER"></input-search>
+        <input-search [label]="'Tipo de documento ' + lex.noun('termo', true, true)" [size]="12" #tipoDocumento controlName="tipo_documento_tcr_id" [dao]="tipoDocumentoDao" labelInfo="Tipo de documento utilizado para exportar o termo para o SEI/SUPER"></input-search>
     </separator>
 </editable-form>

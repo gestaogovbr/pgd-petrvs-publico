@@ -5,13 +5,13 @@
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="12" label="Entrega" controlName="nome"
-                [control]="filter!.controls.nome" placeholder="Nome da entrega..."></input-text>
+            <input-text [size]="12" [label]="lex.noun('Entrega')" controlName="nome"
+                [control]="filter!.controls.nome" [placeholder]="'Nome ' + lex.noun('entrega',false,true) + '...'"></input-text>
         </div>
     </filter>
     <columns>
         <column title="Nome" field="nome" orderBy="nome"></column>
-        <column title="Tipo do indicador" type="select" field="tipo_indicador" [items]="lookup.TIPO_INDICADOR"></column>
+        <column [title]="lex.noun('Tipo do indicador')" type="select" field="tipo_indicador" [items]="lookup.TIPO_INDICADOR"></column>
         <column title="Qualitativos" field="lista_qualitativos"></column>
         <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>

@@ -66,12 +66,12 @@ export class ActionButtonComponent extends ComponentBase {
     return !!button.toggle && (!button.pressed || typeof button.pressed == "boolean" ? !!button.pressed : !!button.pressed(this));
   }
 
-  public onButtonClick(button: ToolbarButton) {
+  public async onButtonClick(button: ToolbarButton) {
     if(button.toggle && typeof button.pressed == "boolean") button.pressed = !button.pressed;
     if(button.route) {
       this.go.navigate(button.route, button.metadata);
     } else if(button.onClick) {
-      button.onClick(this.data, button);
+      await button.onClick(this.data, button);
     }
     this.cdRef.detectChanges();
   }

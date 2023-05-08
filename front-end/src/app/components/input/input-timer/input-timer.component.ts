@@ -23,7 +23,7 @@ export class InputTimerComponent extends InputBase implements OnInit {
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
   @Input() disabled?: string;
-  @Input() icon: string = "";
+  @Input() icon: string = "bi bi-clock";
   @Input() label: string = "";
   @Input() labelInfo: string = "";
   @Input() bold: boolean = false;

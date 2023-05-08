@@ -202,19 +202,24 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PENT_CONS", "Permite consultar plano de entregas"],
         ["MOD_PENT_EDT", "Permite editar planos de entregas"],
         ["MOD_PENT_EXCL", "Permite excluir planos de entregas"],
-        ["MOD_PENT_INCL", "Permite incluir planos de entregas"], 
+        ["MOD_PENT_INCL", "Permite incluir planos de entregas"],
+        ["MOD_PENT_LIB_HOMOL", "Permite liberar planos de entregas para homologação"],
+        ["MOD_PENT_CONCLUIR", "Permite marcar planos de entregas como concluídos"],
+        ["MOD_PENT_CANC_CONCL", "Permite cancelar a conclusão de planos de entregas"],
+        ["MOD_PENT_CANCELAR", "Permite cancelar planos de entregas"],
+        ["MOD_PENT_REATIVAR", "Permite reativar planos de entregas suspensos"],
+        ["MOD_PENT_SUSP", "Permite suspender planos de entregas"],
+        ["MOD_PENT_ARQ", "Permite arquivar planos de entregas"],
+        ["MOD_PENT_DESARQ", "Permite desarquivar planos de entregas"],
+        ["MOD_PENT_RET_HOMOL", "Permite retirar de homologação os planos de entregas"],
+        ["MOD_PENT_TOD_SUP", "Permite visualizar todas as unidades superiores"],
+        ["MOD_PENT_IMD_SUP", "Permite visualizar somente a unidade imediatamente superior"],
+        ["MOD_PENT_TOD_SUB", "Permite visualizar todas as unidades subordinadas"],
         /* Capacidades do módulo PLANO DE ENTREGAS - ENTREGAS*/
         ["MOD_PENT_ENTR_CONS", "Permite consultar entregas de um plano de entregas"],
         ["MOD_PENT_ENTR_EDT", "Permite editar entregas de um plano de entregas"],
         ["MOD_PENT_ENTR_EXCL", "Permite excluir entregas de um plano de entregas"],
         ["MOD_PENT_ENTR_INCL", "Permite incluir entregas de um plano de entregas"],
-        /* Capacidades do módulo PLANO DE ENTREGAS - PONTO DE CONTROLE */
-        ["MOD_PENT_PCTR_CONS", "Permite consultar pontos de controle de um plano de entregas"],
-        ["MOD_PENT_PCTR_EDT", "Permite editar pontos de controle de um plano de entregas"],
-        ["MOD_PENT_PCTR_EXCL", "Permite excluir pontos de controle de um plano de entregas"],
-        ["MOD_PENT_PCTR_INCL", "Permite incluir pontos de controle de um plano de entregas"], 
-        ["MOD_PENT_PCTR_AVAL", "Permite avaliar pontos de controle de um plano de entregas"], 
-        ["MOD_PENT_PCTR_EDT_AVAL", "Permite alterar a avaliação dos pontos de controle de um plano de entregas"],      
         /* Capacidades do módulo PROG TRABALHO*/
         ["MOD_PRGT", "Permite acessar item menu programa de gestão"],
         ["MOD_PRGT_CONS", "Permite consultar programa de gestão"],
@@ -312,7 +317,20 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_USER_EXCL", "Permite excluir dados de usuário"],
         ["MOD_USER_INCL", "Permite incluir usuário"],
         ["MOD_USER_TUDO", "Permite consultar qualquer usuário independente de lotação"],
-        ["MOD_PERF_CONS", "Permite consultar perfil"]
+        ["MOD_PERF_CONS", "Permite consultar perfil"],
+        /* Capacidades do módulo RAIO X*/
+        ["MOD_RX_EDT_DPE", "Permite editar dados pessoais de outro usuário"],
+        ["MOD_RX_EDT_DPR", "Permite editar dados profissionais de outro usuário"],
+        ["MOD_RX_EDT_ATR", "Permite editar atributos comportamentais de outro usuário"],
+        ["MOD_RX_VIS_DPE", "Permite visualizar menu pessoais"],
+        ["MOD_RX_VIS_DPR", "Permite visualizar menu dados profissionais"],
+        ["MOD_RX_VIS_ATR", "Permite visualizar menu atributos comportamentais"],
+        ["MOD_RX_VIS_OPO", "Permite visualizar menu oportunidades"],
+        ["MOD_RX_EDT_USR", "Permite editar tudo para o usuário atual menos atributos comportamentais"],
+        ["MOD_RX_EDT_SUP", "Permite editar tudo para o usuário atual"],
+        ["MOD_RX_EDT_OPO", "Permite editar oportunidades"],
+        ["MOD_RX_VIS_OPO", "Permite visualizar oportunidades"],
+        ["MOD_RX_RES_ATR", "Permite resetar dados comportamentais"]
     ];
 
     private function differentDev(&$data) {

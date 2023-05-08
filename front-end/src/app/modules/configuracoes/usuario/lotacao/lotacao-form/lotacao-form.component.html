@@ -1,9 +1,9 @@
 <editable-form [title]="isModal ? '' : title" [form]="form!" (submit)="onSaveData()" (cancel)="onCancel()">
     <div class="row">
-        <input-search #usuario [size]="12" label="Usuário" disabled controlName="usuario_id" [control]="form!.controls.usuario_id" [dao]="usuarioDao"></input-search>
+        <input-search #usuario [size]="12" disabled controlName="usuario_id" [dao]="usuarioDao"></input-search>
     </div>
     <div class="row">
-        <input-search #unidade [size]="10" label="Unidade" controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
-        <input-switch [size]="2" label="Principal" controlName="principal" [control]="form!.controls.principal"></input-switch>
+        <input-search #unidade [size]="10" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+        <input-switch [size]="2" label="Principal" controlName="principal"></input-switch>
     </div>
 </editable-form>

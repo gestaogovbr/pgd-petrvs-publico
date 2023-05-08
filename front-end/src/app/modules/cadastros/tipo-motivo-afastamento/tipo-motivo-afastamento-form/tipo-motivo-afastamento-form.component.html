@@ -1,13 +1,13 @@
 <!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
     <div class="row">
-        <input-text [size]="7" label="Descrição" controlName="nome" [control]="form!.controls.nome"></input-text>
-        <input-radio [size]="2" label="Integração" controlName="integracao" [control]="form!.controls.integracao" [items]="lookup.SIMNAO" labelInfo="Se esse motivo é integrado a outro sistema. "></input-radio>
-        <input-text [size]="3" label="Código" controlName="codigo" [control]="form!.controls.codigo" [disabled]="checkIntegracao()" labelInfo="Código do Motivo de Afastamento vindo de outro sistema. "></input-text>
+        <input-text [size]="7" label="Descrição" controlName="nome"></input-text>
+        <input-radio [size]="2" label="Integração" controlName="integracao" [items]="lookup.SIMNAO" labelInfo="Se esse motivo é integrado a outro sistema. "></input-radio>
+        <input-text [size]="3" label="Código" controlName="codigo" [disabled]="checkIntegracao()" labelInfo="Código do Motivo de Afastamento vindo de outro sistema. "></input-text>
     </div>
     <div class="row">
-        <input-radio [size]="3" label="Formato" controlName="horas" [control]="form!.controls.horas" [items]="lookup.FORMATO_HORA" labelInfo="Se o afastamento será contado em Dias ou em Horas. "></input-radio>
-        <input-select [size]="5" label="Ícone" controlName="icone" [control]="form!.controls.icone" [items]="lookup.ICONES"></input-select>
-        <input-color [size]="4" label="Cor" controlName="cor" [control]="form!.controls.cor"></input-color>
+        <input-radio [size]="3" label="Formato" controlName="horas" [items]="lookup.FORMATO_HORA" labelInfo="Se o afastamento será contado em Dias ou em Horas. "></input-radio>
+        <input-select [size]="5" label="Ícone" controlName="icone" [items]="lookup.ICONES"></input-select>
+        <input-color [size]="4" label="Cor" controlName="cor"></input-color>
     </div>
 </editable-form>

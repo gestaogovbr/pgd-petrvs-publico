@@ -1,11 +1,14 @@
 # Módulo: Plano de Entregas
 
-##  Acessos  
+## Acessos  
 ~~~
     MOD_PENT_CONS
     MOD_PENT_INCL
     MOD_PENT_EDT
     MOD_PENT_EXCL
+    MOD_PENT_TOD_SUP = Visualizar todas unidades superiores
+    MOD_PENT_IMD_SUP = Visualizar somente a unidade imediatamente superior
+    MOD_PENT_TOD_SUB = Visualizar todas unidades subordinadas 
 ~~~
 
 ## Planos de Entrega
@@ -15,14 +18,43 @@
     nome (*)
     inicio (*)
     fim
-    status (fase futura)
+    data_cancelamento
+    data_arquivamento
+    status ('INCLUINDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO', 'AVALIADO', 'SUSPENSO')
     (id/created_at/updated_at/data_inicio/data_fim)
         unidade_id (*)
         cadeia_valor_id
         planejamento_id
+        cancelamento_usuario_id
 
     (*) campo obrigatório
 ~~~
+
+* Botão cancelar tem em todos
+* Botão desarquivar quando estiver arquivado
+1) Ao incluir fica como INCLUINDO
+  * Liberar para homologação (vai para HOMOLOGANDO) [PADRAO]
+  * Editar plano de entrega
+2) Em HOMOLOGANDO
+  * Se for chefe, Homologar (vai para ATIVO) [PADRAO]
+  * Se não for, Editar plano de entraga [PADRAO]
+  * Retirar de homologação (volta pra INCLUINDO)
+3) Em ATIVO
+  * Concluir (vai para CONCLUIDO) [PADRAO]
+  * Se for chefe, Cancelar homologação (volta pra HOMOLOGANDO)
+  * Suspender (vai para SUSPENSO)
+4) em CONCLUIDO
+  * Se for chefe, Avaliar (vai para avaliado) [PADRAO]
+  * Se não for, Cancelar conclusão (vai para ATIVO) [PADRAO]
+5) em SUSPENSO 
+  * Reativar (vai para ATIVO) [PADRAO]
+6) em AVALIADO
+  * Se for chefe, Cancelar avaliacao [PADRAO]
+  * Se nao for, Consultar [PADRAO]
+  * Arquivar (Somente caso não esteja arquivado)
+
+* Na janela de avaliar, já deixar o swith de arquivamento marcado, igual a avaliação na demanda!
+
 
 ## Entregas do Plano de Entregas
 -   Tabela: planos_entregas_entregas
@@ -43,6 +75,12 @@
 ~~~
 
 ## Regras de Negócio aplicadas ao Plano de Entregas e suas entregas
+
+-   Homologação pela chefia imediata ou autorizada
+-   Somente será permitido criar planos de trabalho e avaliar o plano de entregas se estiver homologado
+-   Somente poderar se vincular ao plano de entrega superior se estiver homologado
+
+
 
 -   As entregas que compõem um Plano de Entregas pertencem todas à Unidade Executora do Plano;  
 -   O gestor da Unidade Executora e o gestor da Unidade hierarquicamente superior a ela podem iniciar a elaboração de Planos de Entrega da Unidade Executora;  

@@ -2,18 +2,18 @@
     <tabs display right>
         <tab key="PRINCIPAL" label="Principal">
             <div class="row">
-                <input-text [size]="12" label="Nome" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome"></input-text>
+                <input-text [size]="12" label="Nome" controlName="nome"></input-text>
             </div>
             <separator title="Tempos"></separator>
             <div class="row">
-                <input-timer onlyHours [label]="lex.noun('Tempo Pactuado')" [size]="4" icon="bi bi-clock" controlName="tempo_pactuado" [control]="form!.controls.tempo_pactuado" (change)="onPactuadoChange($event)" labelInfo="Tempo em horas correntes previsto para a execução da atividade"></input-timer>
+                <input-timer onlyHours [label]="lex.noun('Tempo Pactuado')" [size]="4" controlName="tempo_pactuado" (change)="onPactuadoChange($event)" labelInfo="Tempo em horas correntes previsto para a execução da atividade"></input-timer>
                 <input-text numbers [label]="lex.noun('Tempo planejado')" sufix="dias" [size]="4" icon="bi bi-calendar-date" controlName="dias_planejado" [control]="form!.controls.dias_planejado" labelInfo="Tempo em dias previsto para realizar a atividade"></input-text>
-                <input-text numbers label="Tempo Mínimo" sufix="%" [size]="4" icon="bi bi-clock" controlName="tempo_minimo" [control]="form!.controls.tempo_minimo" labelInfo="Tempo mínimo aceitável para a atividade (% do tempo pactuado)"></input-text>
+                <input-text numbers label="Tempo Mínimo" sufix="%" [size]="4" controlName="tempo_minimo" labelInfo="Tempo mínimo aceitável para a atividade (% do tempo pactuado)"></input-text>
             </div>
             <separator title="Classificação"></separator>
             <div class="row">
-                <input-search [size]="6" #tipoAtividade label="Tipo da Atividade" icon="bi bi-arrow-up-right-circle" controlName="tipo_atividade_id" [control]="form!.controls.tipo_atividade_id" [dao]="tipoAtividadeDao" [selectRoute]="{route: ['cadastros', 'tipo-atividade']}"></input-search>
-                <input-search [size]="6" #unidade label="Unidade" icon="fab fa-unity" controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+                <input-search [size]="6" #tipoAtividade controlName="tipo_atividade_id"  [dao]="tipoAtividadeDao"></input-search>
+                <input-search [size]="6" #unidade controlName="unidade_id"  [dao]="unidadeDao"></input-search>
             </div>
         </tab>
         <tab key="VARIACOES" label="Variação e Produtividade">
@@ -31,44 +31,44 @@
         </tab>
         <tab key="PREDEFINIDAS" label="Configurações Pré-definidas">
             <div class="row">
-                <input-multiselect label="Tipos de Processo (SEI)" controlName="tipos_processo" [size]="12" [control]="form!.controls.tipos_processo" [addItemHandle]="addItemHandleTiposProcesso.bind(this)">
-                    <input-text [size]="12" label="Descrição" icon="far fa-edit" controlName="tipos_processo_texto" [control]="form!.controls.tipos_processo_texto"></input-text>
+                <input-multiselect [label]="'Tipos de ' + lex.noun('Processo') + ' (SEI)'" controlName="tipos_processo" [size]="12" [addItemHandle]="addItemHandleTiposProcesso.bind(this)">
+                    <input-text [size]="12" label="Descrição" icon="far fa-edit" controlName="tipos_processo_texto"></input-text>
                 </input-multiselect>
             </div>
             <div class="row">
-                <input-multiselect label="Etiquetas" controlName="etiquetas_predefinidas" [size]="8" [control]="form!.controls.etiquetas_predefinidas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
-                    <input-text [size]="5" label="Texto" icon="bi bi-textarea-t" controlName="etiqueta_texto" [control]="form!.controls.etiqueta_texto"></input-text>
-                    <input-select [size]="3" label="Ícone" icon="fas fa-sign-out-alt" controlName="etiqueta_icone" liveSearch [control]="form!.controls.etiqueta_icone" [items]="lookup.ICONES"></input-select>
-                    <input-color [size]="4" label="Cor" icon="bi bi-palette" controlName="etiqueta_cor" [control]="form!.controls.etiqueta_cor"></input-color>
+                <input-multiselect label="Etiquetas" controlName="etiquetas_predefinidas" [size]="8" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
+                    <input-text [size]="5" label="Texto" controlName="etiqueta_texto"></input-text>
+                    <input-select [size]="3" label="Ícone" icon="fas fa-sign-out-alt" controlName="etiqueta_icone" liveSearch [items]="lookup.ICONES"></input-select>
+                    <input-color [size]="4" label="Cor" controlName="etiqueta_cor"></input-color>
                 </input-multiselect>
-                <input-multiselect label="Checklists" controlName="checklist_predefinidos" [size]="4" [control]="form!.controls.checklist_predefinidos" [addItemHandle]="addItemHandleChecklist.bind(this)">
-                    <input-text [size]="12" controlName="checklist_texto" [control]="form!.controls.checklist_texto"></input-text>
+                <input-multiselect label="Checklists" controlName="checklist_predefinidos" [size]="4" [addItemHandle]="addItemHandleChecklist.bind(this)">
+                    <input-text [size]="12" controlName="checklist_texto"></input-text>
                 </input-multiselect>
             </div>
             <div class="row">
-                <input-textarea [size]="12" [rows]="3" label="Comentários" controlName="comentario_predefinido" [control]="form!.controls.comentario_predefinido"></input-textarea>
+                <input-textarea [size]="12" [rows]="3" label="Comentários" controlName="comentario_predefinido"></input-textarea>
             </div>
         </tab>
         <tab key="PARAMETROS" label="Parâmetros e Entregas">
             <div class="row">
-                <input-multiselect label="Parâmetros" controlName="parametros_adotados" [size]="12" [control]="form!.controls.parametros_adotados" [addItemHandle]="addItemHandleParametros.bind(this)">
-                    <input-text [size]="12" label="Descrição" icon="far fa-edit" controlName="parametro_texto" [control]="form!.controls.parametro_texto"></input-text>
+                <input-multiselect label="Parâmetros" controlName="parametros_adotados" [size]="12" [addItemHandle]="addItemHandleParametros.bind(this)">
+                    <input-text [size]="12" label="Descrição" icon="far fa-edit" controlName="parametro_texto"></input-text>
                 </input-multiselect>
             </div>
             <div class="row">
-                <input-multiselect label="Entregas" controlName="entregas_esperadas" [size]="12" [control]="form!.controls.entregas_esperadas" [addItemHandle]="addItemHandleEntregas.bind(this)">
-                    <input-text [size]="12" label="Descrição" icon="far fa-edit" controlName="entrega_texto" [control]="form!.controls.entrega_texto"></input-text>
+                <input-multiselect [label]="lex.noun('Entrega',true)" controlName="entregas_esperadas" [size]="12" [addItemHandle]="addItemHandleEntregas.bind(this)">
+                    <input-text [size]="12" label="Descrição" icon="far fa-edit" controlName="entrega_texto"></input-text>
                 </input-multiselect>
             </div>
         </tab>
         <tab key="OUTRAS" label="Outras Opções">
             <div class="row">
-                <input-radio [disabled]="!auth.hasPermissionTo('MOD_ATV_EDT_OTR_OP_HOM') ? 'true' : undefined" [size]="6" label="Homologado pela Unidade Gestora" icon="bi bi-check2" controlName="homologado" [control]="form!.controls.homologado" [items]="lookup.SIMNAO" labelInfo="Se a atividade foi homologada pela unidade gestora do teletrabalho"></input-radio>
-                <input-datetime [disabled]="!auth.hasPermissionTo('MOD_ATV_EDT_OTR_OP_HOM') ? 'true' : undefined" date [size]="6" label="Data da Homologação" icon="bi bi-calendar-date" controlName="data_homologacao" [control]="form!.controls.data_homologacao"></input-datetime>
+                <input-radio [disabled]="!auth.hasPermissionTo('MOD_ATV_EDT_OTR_OP_HOM') ? 'true' : undefined" [size]="6" [label]="'Homologado ' + lex.noun('pela Unidade Gestora')" icon="bi bi-check2" controlName="homologado" [items]="lookup.SIMNAO" labelInfo="Se a atividade foi homologada pela unidade gestora do teletrabalho"></input-radio>
+                <input-datetime [disabled]="!auth.hasPermissionTo('MOD_ATV_EDT_OTR_OP_HOM') ? 'true' : undefined" date [size]="6" [label]="lex.noun('Data da Homologação')" controlName="data_homologacao"></input-datetime>
             </div>
             <div class="row">
-                <input-radio [size]="6" label="Prazo Recalculado (se ao menos iniciada)" icon="fas fa-hourglass-start" controlName="recalcula_prazo" [control]="form!.controls.recalcula_prazo" [items]="lookup.SIMNAO" labelInfo="Caso acabe o prazo, mas já estiver iniciado, o prazo recalcula-se automaticamente."></input-radio>
-                <input-radio [disabled]="!auth.hasPermissionTo('MOD_ATV_EDT_OTR_OP_PROD') ? 'true' : undefined" [size]="6" label="Produtividade Desativada" icon="fas fa-chart-line" controlName="desativa_produtividade" [control]="form!.controls.desativa_produtividade" [items]="lookup.SIMNAO" labelInfo="Desativar o cálculo de produtividade e controle de tempo de execução (para atividades do tipo monitoramento)"></input-radio>
+                <input-radio [size]="6" [label]="lex.noun('Prazo Recalculado') + ' (se ao menos iniciada)'" icon="fas fa-hourglass-start" controlName="recalcula_prazo" [items]="lookup.SIMNAO" labelInfo="Caso acabe o prazo, mas já estiver iniciado, o prazo recalcula-se automaticamente."></input-radio>
+                <input-radio [disabled]="!auth.hasPermissionTo('MOD_ATV_EDT_OTR_OP_PROD') ? 'true' : undefined" [size]="6" [label]="lex.noun('Produtividade') + ' Desativada'" icon="fas fa-chart-line" controlName="desativa_produtividade" [items]="lookup.SIMNAO" labelInfo="Desativar o cálculo de produtividade e controle de tempo de execução (para atividades do tipo monitoramento)"></input-radio>
             </div>
         </tab>
     </tabs>

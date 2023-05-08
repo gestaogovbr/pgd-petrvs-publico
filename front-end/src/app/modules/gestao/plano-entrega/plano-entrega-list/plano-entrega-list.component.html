@@ -1,26 +1,33 @@
 <grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
-    [selectable]="selectable" (select)="onSelect($event)"
-    [hasAdd]="auth.hasPermissionTo('MOD_PENT_INCL')"
+    [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_PENT_INCL')"
     [hasEdit]="false">
     <toolbar *ngIf="!selectable">
-        <input-switch [size]="4" labelPosition="left" label="Agrupar por Un." controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
+        <input-switch [size]="4" labelPosition="left" label="Agrupar por Un." controlName="agrupar"
+            [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
     </toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)"
+        [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="6" label="Nome" controlName="nome" [control]="filter!.controls.nome" placeholder="Nome do plano de entregas"></input-text>
-            <input-search #unidade [size]="6" label="Unidade" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao" [selectRoute]="{route: ['configuracoes', 'unidade']}"></input-search>
+            <input-text [size]="6" label="Nome" controlName="nome" [control]="filter!.controls.nome"
+                [placeholder]="'Nome do '+lex.noun('plano de entrega')"></input-text>
+            <input-search #unidade [size]="6" controlName="unidade_id" [dao]="unidadeDao"></input-search>
         </div>
         <div class="row">
-            <input-search #planejamento [size]="4" label="Planejamento Institucional" controlName="planejamento_id" [control]="filter!.controls.planejamento_id" [dao]="planejamentoDao" [selectRoute]="{route: ['gestao', 'planejamento']}"></input-search>
-            <input-search #cadeiaValor [size]="4" label="Cadeia de Valor" controlName="cadeia_valor_id" [control]="filter!.controls.cadeia_valor_id" [dao]="cadeiaValorDao" [selectRoute]="{route: ['gestao', 'cadeia-valor']}"></input-search>
-            <input-datetime [size]="2" date label="Início" controlName="inicio" [control]="filter!.controls.inicio" labelInfo="Data de início do plano do entregas"></input-datetime>
-            <input-datetime [size]="2" date label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Data do fim do plano de entregas"></input-datetime>
+            <input-search #planejamento [size]="4" controlName="planejamento_id" [dao]="planejamentoDao"></input-search>
+            <input-search #cadeiaValor [size]="4" controlName="cadeia_valor_id" [dao]="cadeiaValorDao"></input-search>
+            <input-datetime [size]="2" date label="Início" controlName="inicio" [control]="filter!.controls.inicio"
+                [labelInfo]="'Data de início do '+ lex.noun('plano de entrega')"></input-datetime>
+            <input-datetime [size]="2" date label="Fim" controlName="fim" [control]="filter!.controls.fim"
+                [labelInfo]="'Data do fim do '+ lex.noun('plano de entrega')"></input-datetime>
         </div>
     </filter>
     <columns>
-        <column title="Número" [template]="columnNumero" orderBy="numero">
+        <column [titleTemplate]="titleIdNumeroStatus" [template]="columnNumero">
+            <ng-template let-header="header" #titleIdNumeroStatus>
+                <order by="numero" [header]="header">#ID</order>
+            </ng-template>
             <ng-template let-row="row" #columnNumero>
-                <span> {{ row.numero}}</span>
+                <small class="micro-text fw-ligh">#{{row.numero}}</small>
             </ng-template>
         </column>
         <column title="Nome" field="nome" orderBy="nome"></column>
@@ -40,21 +47,24 @@
                 Cadeia de Valor
             </ng-template>
             <ng-template let-row="row" #columnPlanoCadeia>
-                <span> {{row.planejamento?.nome || "-"}}</span><br>
-                <span> {{row.cadeiaValor?.nome || "-"}}</span>
+                <badge *ngIf="row.planejamento" color="light" [icon]="entityService.getIcon('Planejamento')" [label]="row.planejamento?.nome"></badge>
+                <badge *ngIf="row.cadeiaValor" color="light" [icon]="entityService.getIcon('CadeiaValor')" [label]="row.cadeiaValor?.nome"></badge>
             </ng-template>
         </column>
         <column title="Status" [template]="columnStatus">
             <ng-template let-row="row" #columnStatus>
-                <span> {{ row.status || ""}}</span>
+                <badge  [color]="lookup.getColor(lookup.PLANO_ENTREGA_STATUS, row.status)" [icon]="lookup.getIcon(lookup.PLANO_ENTREGA_STATUS, row.status)" 
+                        [label]="lookup.getValue(lookup.PLANO_ENTREGA_STATUS, row.status)"></badge>
+                <badge *ngIf="row.data_cancelamento" color="danger" icon="bi bi-dash-circle" label="Cancelado"></badge>
             </ng-template>
         </column>
-        <column type="options" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+        <column type="options" [dynamicOptions]="dynamicOptions.bind(this)"
+            [dynamicButtons]="dynamicButtons.bind(this)"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>
- 
- <!-- Planejamento/           [ Incluir ] 
+
+<!-- Planejamento/           [ Incluir ] 
 Numero  Nome              Data inicio  Data Fim   Cadeia de Valor    Status      
 ------------------------------------------------------------------------------- [...]
                                                    | Consultar                      |

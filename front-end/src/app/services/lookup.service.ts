@@ -36,6 +36,7 @@ export class LookupService {
     { key: "MASCULINO", value: "Masculino" },
     { key: "FEMININO", value: "Feminino" }
   ];
+
   public TIPO_INDICADOR: LookupItem[] = [
     { key: "QUANTIDADE", value: "Quantidade" },
     { key: "VALOR", value: "Valor" },
@@ -114,7 +115,6 @@ export class LookupService {
     { key: 'AVALIADOR_DEMANDAS', value: "Avaliador (demandas)", icon: "bi bi-check-all", color: "success"},
     { key: 'LOTADO', value: "Lotado", icon: "bi bi-geo-alt", color: "secondary"}
   ];
-
 
   public TEMPLATE_ESPECIE: LookupItem[] = this.DOCUMENTO_ESPECIE;
 
@@ -325,13 +325,14 @@ export class LookupService {
     {key: "fa-light fa-calendar-days", value: "Calendario", icon: "far fa-calendar-alt"}
   ];
 
-  public ICONS: LookupItem[] = [
-    {key: "atividade", value: "Atividade", icon: "bi bi-activity"},
-    {key: "planejamento", value: "Planejamento", icon: "bi bi-rulers"},
-    {key: "eixoTematico", value: "Eixo Temático", icon: "bi bi-gear"},
-    {key: "planejamentoObjetivo", value: "Planejamento Objetivo", icon: "bi bi-bullseye"},
-
-  ]
+  public PLANO_ENTREGA_STATUS: LookupItem[] = [
+    { key: "INCLUINDO", value: "Incluindo", icon: "bi bi-pencil-square", color: "secondary" },
+    { key: "HOMOLOGANDO", value: "Aguardando homologação", icon: "bi bi-clock", color: "warning" },
+    { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success" },
+    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-clipboard2-check", color: "primary" },
+    { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info" },
+    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "danger" }
+  ];
 
   public NUMERO_SEMANA = [
     { key: 1, value: "1ª" },
@@ -527,6 +528,4 @@ export class LookupService {
   public getIcon(itens: LookupItem[], key: any) : string {
     return itens.find(x => x.key == key)?.icon || "";
   }
-
-
 }

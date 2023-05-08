@@ -51,7 +51,7 @@ export class ForcaDeTrabalhoReportAreaComponent extends PageReportBase<Usuario, 
   public opcoesGraficoBarrasHoras: ChartOptions = {
     scales: {
       xAxes: [{
-        labels: ['Total de Horas da Unidade'],
+        labels: ['Total de Horas ' + this.lex.noun('Unidade',false,true)],
         display: false,
         //stacked: true,
         ticks: {
@@ -90,7 +90,7 @@ export class ForcaDeTrabalhoReportAreaComponent extends PageReportBase<Usuario, 
         }
       }],
       yAxes: [{
-        labels: ['Total de Demandas da Unidade'],
+        labels: ['Total de ' + this.lex.noun('Demanda',true) + this.lex.noun('Unidade',false,true)],
         display: false,
         stacked: true,
         ticks: {
@@ -190,34 +190,34 @@ export class ForcaDeTrabalhoReportAreaComponent extends PageReportBase<Usuario, 
     ];
     let dadosGraficoDetalhado: ChartDataSets[] = [
       {
-        label: 'Demandas Não-iniciadas',
+        label: this.lex.noun('Demanda',true) + ' Não-iniciadas',
         data: [metadados.horasDemandasNaoIniciadas],
         backgroundColor: '#0dcaf0',
-        stack: 'Demandas'
+        stack: this.lex.noun('Demanda',true)
       },
       {
-        label: 'Demandas Iniciadas',
+        label: this.lex.noun('Demanda',true) + ' Iniciadas',
         data: [metadados.horasDemandasEmAndamento],
         backgroundColor: '#ffc107',
-        stack: 'Demandas'
+        stack: this.lex.noun('Demanda',true)
       },
       {
-        label: 'Demandas Concluídas',
+        label: this.lex.noun('Demanda',true) + ' Concluídas',
         data: [metadados.horasDemandasConcluidas],
         backgroundColor: '#af4201',
-        stack: 'Demandas'
+        stack: this.lex.noun('Demanda',true)
       },
       {
-        label: 'Demandas Avaliadas',
+        label: this.lex.noun('Demanda',true) + ' Avaliadas',
         data: [metadados.horasDemandasAvaliadas],
         backgroundColor: '#af4af0',
-        stack: 'Demandas'
+        stack: this.lex.noun('Demanda',true)
       },
       {
         label: 'Disponível no Plano',
         data: [metadados.horasUteisTotais - metadados.horasTotaisAlocadas],
         backgroundColor: '#6c757d',
-        stack: 'Demandas'
+        stack: this.lex.noun('Demanda',true)
       }
     ];
     let dadosGraficoAvaliacao: ChartDataSets[] = [
@@ -248,12 +248,12 @@ export class ForcaDeTrabalhoReportAreaComponent extends PageReportBase<Usuario, 
     //let $dados: any = null;
     let dadosGraficoPizzaGeral: ChartDataSets[] = [
       {
-        label: 'Demandas Não-iniciadas',
+        label: this.lex.noun('Demanda',true) + ' Não-iniciadas',
         data: [metadados.horasDemandasNaoIniciadas],
         backgroundColor: '#0dcaf0'
       },
       {
-        label: 'Demandas Iniciadas',
+        label: this.lex.noun('Demanda',true) + ' Iniciadas',
         data: [metadados.horasDemandasEmAndamento],
         backgroundColor: '#ffc107'
       }];
@@ -272,12 +272,12 @@ export class ForcaDeTrabalhoReportAreaComponent extends PageReportBase<Usuario, 
 
     let dadosGraficoPizzaDetalhado: ChartDataSets[] = [
       {
-        label: 'Demandas Não-iniciadas',
+        label: this.lex.noun('Demanda',true) + ' Não-iniciadas',
         data: [metadados.horasDemandasNaoIniciadas],
         backgroundColor: '#0dcaf0'
       },
       {
-        label: 'Demandas Iniciadas',
+        label: this.lex.noun('Demanda',true) + ' Iniciadas',
         data: [metadados.horasDemandasEmAndamento],
         backgroundColor: '#ffc107'
       },

@@ -1,34 +1,46 @@
-<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()"
+    (cancel)="onCancel()">
     <div>
         <div class="row">
-            <input-text [size]="6" label="Nome " icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome"></input-text>
-            <input-datetime date [size]="3" label="Início" icon="bi bi-calendar-date" controlName="inicio" [control]="form!.controls.inicio" labelInfo="Início do Plano de Entregas"></input-datetime>
-            <input-datetime date [size]="3" label="Fim" icon="bi bi-calendar-date" controlName="fim" [control]="form!.controls.fim" labelInfo="Fim do Plano de Entregas"></input-datetime>
+            <input-text [size]="8" label="Nome" controlName="nome"></input-text>
+            <input-datetime date [size]="2" label="Início" controlName="inicio"
+                [labelInfo]="'Início ' + lex.noun('Planejamento Institucional',false,true)"></input-datetime>
+            <input-datetime date [size]="2" label="Fim" controlName="fim"
+                [labelInfo]="'Fim ' + lex.noun('Planejamento Institucional',false,true)"></input-datetime>
         </div>
-        <div  class="row">
-            <input-search [size]="6" icon="far fa-edit" controlName="planejamento_id" label="Selecione o Planejamento da Unidade Instituidora vinculado" [dao]="planejamentoInstitucionalDao" [selectRoute]="{route: ['gestao', 'planejamento']}" ></input-search>
-            <input-search [size]="6" icon="far fa-edit" controlName="cadiea_valor_id"label="Selecione a Cadeia de Valor vinculado" [dao]="cadeiaValorDao" [selectRoute]="{route: ['gestao', 'cadeia-valor']}"></input-search>    
+        <div class="row">
+            <input-search [size]="4" [label]="lex.noun('Unidade')" controlName="unidade_id"
+                [dao]="unidadeDao"></input-search>
+            <input-search [size]="4" controlName="planejamento_id" label="Planejamento Institucional"
+                [dao]="planejamentoInstitucionalDao"></input-search>
+            <input-search [size]="4" controlName="cadeia_valor_id" label="Cadeia de Valor"
+                [dao]="cadeiaValorDao"></input-search>
         </div>
         <separator></separator>
         <div class="row">
-            <grid [control]="form!.controls.entregas" [form]="formEntregas" [hasEdit]="true" [hasDelete]="true" [add]="addEntrega.bind(this)" [load]="loadEntrega.bind(this)" [remove]="removeEntrega.bind(this)" 
-                  [save]="saveEntrega.bind(this)" editable [groupTemplate]="groupEntregas" >
+            <grid [control]="form!.controls.entregas" [form]="formEntregas" [hasEdit]="true" [hasDelete]="true"
+                [add]="addEntrega.bind(this)" [load]="loadEntrega.bind(this)" [remove]="removeEntrega.bind(this)"
+                [save]="saveEntrega.bind(this)" editable [groupTemplate]="groupEntregas">
                 <ng-template let-separator="separator" #groupEntregas>
-                    <strong class="grid-group-text">Entregas: </strong><span class="text-wrap"><badge color="primary" [label]="separator?.text"></badge></span>
+                    <strong class="grid-group-text">Entregas: </strong><span class="text-wrap">
+                        <badge color="primary" [label]="separator?.text"></badge>
+                    </span>
                 </ng-template>
                 <columns>
-                    <column [title]="'Entrega/\nCliente'" [template]="columnEntregaCliente" [editTemplate]="editEntregaCliente">
+                    <column [title]="'Entrega/\nCliente'" [template]="columnEntregaCliente"
+                        [editTemplate]="editEntregaCliente">
                         <ng-template let-row="row" #columnEntregaCliente>
                             <span>{{row.descricao+" / "+row.cliente}}</span>
                         </ng-template>
                         <ng-template let-row="row" #editEntregaCliente>
                             <input-text [size]="6" controlName="descricao"></input-text>
-                            <input-text  [size]="6" controlName="cliente"></input-text>
+                            <input-text [size]="6" controlName="cliente"></input-text>
                         </ng-template>
                     </column>
                     <column [title]="'Data Início/\nData Fim'" [template]="columnDatas" [editTemplate]="editDatas">
                         <ng-template let-row="row" #columnDatas>
-                            <span> {{dao!.getDateFormatted(row.dt_inicio)+" até "+dao!.getDateFormatted(row.dt_fim)}}</span>
+                            <span> {{dao!.getDateFormatted(row.dt_inicio)+" até
+                                "+dao!.getDateFormatted(row.dt_fim)}}</span>
                         </ng-template>
                         <ng-template let-row="row" #editDatas>
                             <input-datetime noIcon date [size]="6" controlName="dt_inicio"></input-datetime>
@@ -40,7 +52,8 @@
                             <span>{{row.tipo_indicador}}</span>
                         </ng-template>
                         <ng-template let-row="row" #editIndicador>
-                            <input-select [items]="lookup.TIPO_INDICADOR" [size]="6"  controlName="tipo_indicador"></input-select>                        
+                            <input-select [items]="lookup.TIPO_INDICADOR" [size]="6"
+                                controlName="tipo_indicador"></input-select>
                         </ng-template>
                     </column>
                     <column title="Meta Geral" [template]="columnMetaGeral" [editTemplate]="editMetaGeral">
@@ -48,7 +61,7 @@
                             <span>{{row.meta}}</span>
                         </ng-template>
                         <ng-template let-row="row" #editMetaGeral>
-                            <input-text [size]="12"  controlName="meta" ></input-text>                        
+                            <input-text [size]="12" controlName="meta"></input-text>
                         </ng-template>
                     </column>
                     <column title="Realizado" [template]="columnRealizado" [editTemplate]="editRealizado">
@@ -56,23 +69,25 @@
                             <span>{{row.vl_realizado}}</span>
                         </ng-template>
                         <ng-template let-row="row" #editRealizado>
-                            <input-text [size]="6"  controlName="vl_realizado"></input-text>                        
+                            <input-text [size]="6" controlName="vl_realizado"></input-text>
                         </ng-template>
                     </column>
-                    <column title="Objetivos/Processos/Atividades" [template]="columnObjetivod" [editTemplate]="editObjetivos">
+                    <column title="Objetivos/Processos/Atividades" [template]="columnObjetivod"
+                        [editTemplate]="editObjetivos">
                         <ng-template let-row="row" #columnObjetivod>
                             <span>{{row.objetivos}}</span>
                         </ng-template>
                         <ng-template let-row="row" #editObjetivos>
-                            <input-search [size]="6" controlName="objetivos"></input-search>                        
+                            <input-search [size]="6" controlName="objetivos"></input-search>
                         </ng-template>
                     </column>
-                    <column icon="bi bi-check-lg" titleHint="Se a entrega foi homologada" [template]="columnHomologado" [editTemplate]="editHomologado">
+                    <column icon="bi bi-check-lg" titleHint="Se a entrega foi homologada" [template]="columnHomologado"
+                        [editTemplate]="editHomologado">
                         <ng-template let-row="row" #columnHomologado>
                             <div class="text-center"><i *ngIf="row.concluido" class="bi bi-check-circle"></i></div>
                         </ng-template>
                         <ng-template let-row="row" #editHomologado>
-                            <input-switch [size]="12" controlName="homologado"></input-switch>                       
+                            <input-switch [size]="12" controlName="homologado"></input-switch>
                         </ng-template>
                     </column>
                     <column type="options"></column>
@@ -81,4 +96,3 @@
         </div>
     </div>
 </editable-form>
-
