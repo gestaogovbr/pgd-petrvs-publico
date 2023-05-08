@@ -19,7 +19,7 @@ export class AreaConhecimentoListComponent extends PageListBase<AreaConhecimento
   constructor(public injector: Injector) {
     super(injector, AreaConhecimento, AreaConhecimentoDaoService);
     /* Inicializações */
-    //this.title = "Cidades";
+  
     this.title = this.lex.noun("Área de conhecimento",true);
     this.code = "MOD_RX";
 
