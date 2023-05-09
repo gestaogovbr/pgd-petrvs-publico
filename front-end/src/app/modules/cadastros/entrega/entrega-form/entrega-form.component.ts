@@ -23,6 +23,7 @@ export class EntregaFormComponent extends PageFormBase<Entrega, EntregaDaoServic
     super(injector, Entrega, EntregaDaoService);
     this.form = this.fh.FormBuilder({
       nome: {default: ""},
+      descricao: {default: ""},
       tipo_indicador: {default: ""},
       qualitativo: {default: ""},
       lista_qualitativos: {default: []},
@@ -32,7 +33,7 @@ export class EntregaFormComponent extends PageFormBase<Entrega, EntregaDaoServic
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if(['nome','tipo_indicador'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if(['nome','tipo_indicador','descricao'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
     return result;
