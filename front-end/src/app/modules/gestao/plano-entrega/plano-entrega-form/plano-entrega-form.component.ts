@@ -2,6 +2,7 @@ import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
+import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { CadeiaValorDaoService } from 'src/app/dao/cadeia-valor-dao.service';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
