@@ -6,9 +6,12 @@ export class Curriculum extends Base {
     public usuario?: Usuario;
 
     public apresentacao: string = ""; //Pretensão de fazer curso caso não tenha
-    public telefone: string = ""; //ID do curriculum
-    public idiomas: string = ""; //ID do curso 
-    public ativo: number = 1; //ID do curso 
+    public telefone: string = ""; 
+    public idiomas: string = "";
+    public estado_civil :  string="";
+    public filhos : number= 0;
+    public quantidade_filhos : number = 0;
+    public ativo: number = 1; 
     
     public usuario_id: string = ""; //ID do usuario 
     public cidade_id: string = ""; //ID da cidade

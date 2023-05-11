@@ -9,12 +9,15 @@ use App\Traits\AutoDataInicio;
 
 class Curriculum extends ModelBase
 {
-    protected $table = 'cursos';
+    protected $table = 'curriculums';
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'apresentacao',
         'telefone',
         'idiomas',
+        'estado_civil',
+        'filhos',
+        'quantidade_filhos',
         'ativo',
         'usuario_id',
         'cidade_id'

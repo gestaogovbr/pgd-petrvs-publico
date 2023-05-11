@@ -23,6 +23,9 @@ class CursoSeeder extends Seeder
     ['area'=>'ef07571b-d987-46f9-9f64-e438a107875d','nome'=>'Física','titulo'=>'GRAD_BAC'],
     ['area'=>'ef07571b-d987-46f9-9f64-e438a107875d','nome'=>'Química','titulo'=>'GRAD_BAC'],
     ['area'=>'ef07571b-d987-46f9-9f64-e438a107875d','nome'=>'Geociências','titulo'=>'GRAD_BAC'],
+    ['area'=>'81531e04-8a54-488c-9dd9-109242c96709','nome'=>'Tecnologia da Informação e Comunicação','titulo'=>'ESPECIAL'],//Especialização PRF
+    ['area'=>'ef07571b-d987-46f9-9f64-e438a107875d','nome'=>'Full Stack Developer','titulo'=>'ESPECIAL'],//Especialização
+    ['area'=>'ef07571b-d987-46f9-9f64-e438a107875d','nome'=>'MBA em Engenharia de Software','titulo'=>'ESPECIAL'],//MBA
      /* Ciências Biologicas */
     ['area'=>'e202e1e0-aec3-4f98-adae-a1d829e02328','nome'=>'Biologia','titulo'=>'GRAD_BAC'],
     ['area'=>'e202e1e0-aec3-4f98-adae-a1d829e02328','nome'=>'Bioquímica','titulo'=>'GRAD_BAC'],
@@ -34,6 +37,8 @@ class CursoSeeder extends Seeder
     ['area'=>'e202e1e0-aec3-4f98-adae-a1d829e02328','nome'=>'Ecologia','titulo'=>'GRAD_BAC'],
     ['area'=>'e202e1e0-aec3-4f98-adae-a1d829e02328','nome'=>'Fisiologia','titulo'=>'GRAD_BAC'],
     ['area'=>'e202e1e0-aec3-4f98-adae-a1d829e02328','nome'=>'Imunologia','titulo'=>'GRAD_BAC'],
+    ['area'=>'e202e1e0-aec3-4f98-adae-a1d829e02328','nome'=>'Anatomia Humana','titulo'=>'ESPECIAL'],//Especialização
+    ['area'=>'e202e1e0-aec3-4f98-adae-a1d829e02328','nome'=>'Citologia','titulo'=>'ESPECIAL'],//Especialização
      /* Engenharias */
     ['area'=>'ae78a2a4-65a6-431d-ad98-60d37a491e43','nome'=>'Civil','titulo'=>'GRAD_BAC'],
     ['area'=>'ae78a2a4-65a6-431d-ad98-60d37a491e43','nome'=>'Elétrica','titulo'=>'GRAD_BAC'],

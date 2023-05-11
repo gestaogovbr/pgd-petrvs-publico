@@ -121,6 +121,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   }
 
   public saveData(form: IIndexable): Promise<Curriculum> {
+
     return new Promise<Curriculum>((resolve, reject) => {
       const curriculum = this.util.fill(new Curriculum(), this.entity!);
       resolve(this.util.fillForm(curriculum, this.form!.value));
@@ -204,10 +205,42 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     return result;
   };
 
-  public setValueradioPretendePosGraduacao(){
+  public addItemPosGraduacao(): LookupItem | undefined {
+    let result = undefined;
+    
+    /*this.cursoDao?.query({where: [['id', '==', this.formGraduacao!.controls.curso.value]]}).getAll().then((curso2)=>{
+        curso = curso2.map(x => Object.assign({},{key: x.id, value: x.nome_curso}) as LookupItem);
+        console.log('CURSO DENTRO->',curso)
+    })*/
+
+    const area = { 'key': this.formGraduacao!.controls.areaPos.value, 'value': this.areaPos?.selectedItem?.text };
+    const curso= this.cursosPos.find(value => value.key == this.formGraduacao!.controls.cursoPos.value)
+    const titulo = this.lookup.POS_GRADUACOES.find(x => x.key == this.formGraduacao!.controls.titulo.value);
+    const key = this.util.textHash((area.key || "") + (curso?.key || "") + (titulo?.key || ""));
+   
+    if (curso && area && this.util.validateLookupItem(this.formGraduacao!.controls.posgraduacao.value, key)) {
+      
+      result = {
+        key: key,
+        value: area.value + ' - ' + curso.value + ' - ' + titulo?.value,
+        data: {
+          area: area.key,
+          curso: curso.key,
+          titulo:titulo?.key
+        }
+      };
+      
+      this.formGraduacao!.controls.areaPos.setValue("");
+      this.formGraduacao!.controls.cursoPos.setValue("");
+      this.formGraduacao!.controls.titulo.setValue("");
+    }
+    return result;
+  };
+
+  /*public setValueradioPretendePosGraduacao(){
     this.formGraduacao!.controls.radioPretendePosGraduacao.setValue(0);
     this.cdRef.detectChanges()
-  }
+  }*/
 
   public onAreaGraducaoChange(){
     

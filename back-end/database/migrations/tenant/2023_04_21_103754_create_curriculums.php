@@ -19,9 +19,12 @@ class CreateCurriculums extends Migration
             $table->primary('id');
             $table->timestamps();
             // Campos:
-            $table->longText('apresentacao')->comment("Nome da área da graduação");
-            $table->string('telefone',64)->comment("Nome da área da graduação");
-            $table->json('idiomas')->nullable()->comment("Nome da área da graduação");
+            $table->longText('apresentacao')->comment("Apresentação");
+            $table->string('telefone',64)->comment("Telefone");
+            $table->json('idiomas')->nullable()->comment("Idiomas que fala");
+            $table->string('estado_civil',64)->nullable()->comment("Estado Civil");
+            $table->tinyInteger('possui_filhos')->default(0)->comment("Possui filhos sim ou não");
+            $table->tinyInteger('quantidade_filhos')->default(0)->comment("Qtde de filhos");
             $table->tinyInteger('ativo')->default(1)->comment("Curriculum ativa ou inativa");
            
             // Chaves estrangeiras:

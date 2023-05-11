@@ -50,13 +50,13 @@
                 [control]="form!.controls.idioma" [items]="this.lookup.IDIOMAS">
 
             </input-select>
-            <input-select [size]="3" label="Qual nível de fala?" icon="fas fa-sign-out-alt" controlName="idiomaFala"
+            <input-select [size]="3" label="Nível de fala?" icon="fas fa-sign-out-alt" controlName="idiomaFala"
                 [control]="form!.controls.idiomaFala" [items]="this.lookup.NIVEL_IDIOMA">
             </input-select>
-            <input-select [size]="3" label="Qual nível de escrita?" icon="fas fa-sign-out-alt"
+            <input-select [size]="3" label="Nível de escrita?" icon="fas fa-sign-out-alt"
                 controlName="idiomaEscrita" [control]="form!.controls.idiomaEscrita" [items]="this.lookup.NIVEL_IDIOMA">
             </input-select>
-            <input-select [size]="3" label="Qual nível de entendimento?" icon="fas fa-sign-out-alt"
+            <input-select [size]="3" label="Nível de entendimento?" icon="fas fa-sign-out-alt"
                 controlName="idiomaEntendimento" [control]="form!.controls.idiomaEntendimento"
                 [items]="this.lookup.NIVEL_IDIOMA">
             </input-select>
@@ -94,11 +94,11 @@
     <div class="row mt-3">
         <separator title="Pós-Graduação"></separator>
     </div>
-        <div class="row my-3">
+        <div class="row mt-3 mb-5">
             <input-switch [hidden]="formGraduacao!.controls.radioPretendePosGraduacao.value" [size]="3"
                 label="Possui Pós-Graduação?" icon="bi bi-mortarboard-fill" controlName="radioPosGraduacao"
-                [control]="formGraduacao!.controls.radioPosGraduacao" labelInfo="Possui Pós graduacão?"
-                (change)="setValueradioPretendePosGraduacao.bind(this)">
+                [control]="formGraduacao!.controls.radioPosGraduacao" labelInfo="Possui Pós graduacão?">
+                <!--(change)="setValueradioPretendePosGraduacao.bind(this)">-->
             </input-switch>
             <input-switch [hidden]="formGraduacao!.controls.radioPosGraduacao.value" [size]="3" label="Pretende Cursar?"
                 icon="bi bi-mortarboard-fill" controlName="radioPretendePosGraduacao"
@@ -108,7 +108,7 @@
             <input-multiselect
                 *ngIf="formGraduacao!.controls.radioPosGraduacao.value || formGraduacao!.controls.radioPretendePosGraduacao.value"
                 controlName="posgraduacao" [size]="9" [control]="formGraduacao!.controls.posgraduacao"
-                [addItemHandle]="addItemGraduacao.bind(this)" noBox>
+                [addItemHandle]="addItemPosGraduacao.bind(this)" noBox>
 
                 <input-search #areaPos [size]="4" [dao]="areaDao" label="Área de conhecimento"
                     [control]="formGraduacao!.controls.areaPos" controlName="areaPos"
