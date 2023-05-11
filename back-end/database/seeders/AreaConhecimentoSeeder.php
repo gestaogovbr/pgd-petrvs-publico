@@ -31,7 +31,7 @@ class AreaConhecimentoSeeder extends Seeder
             $areaI = new AreaConhecimento();
             $areaI->fill([
                 //'id' => uuid(),
-                'nome_area'=> $area
+                'nome'=> $area
             ]);
             $areaI->save();
             

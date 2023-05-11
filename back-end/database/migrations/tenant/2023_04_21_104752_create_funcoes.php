@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCursos extends Migration
+class CreateFuncoes extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,16 @@ class CreateCursos extends Migration
      */
     public function up()
     {
-        Schema::create('cursos', function (Blueprint $table) {
+        Schema::create('funcoes', function (Blueprint $table) {
             // Configurações:
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
             // Campos:
-            $table->string('nome', 256)->comment("Nome do curso");
-            $table->string('titulo', 64)->comment("Titulação do curso->Graduação, Pos, etc");
-            $table->tinyInteger('ativo')->default(1)->comment("Curso ativo ou inativo");
+            $table->string('nome', 256)->comment("Nome da funcao exercendo/exercida");
+            $table->tinyInteger('ativo')->default(1)->comment("Função ativo ou inativo");
             // Chaves estrangeiras:
-            $table->foreignUuid('area_curso_id')->constrained("areas_conhecimentos")->onDelete('restrict')->onUpdate('cascade');
+           
             //$table->foreignUuid('entrega_id')->constrained("planos_entregas_entregas")->onDelete('restrict')->onUpdate('cascade');
         });
     }
@@ -35,6 +34,6 @@ class CreateCursos extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cursos');
+        Schema::dropIfExists('funcoes');
     }
 }

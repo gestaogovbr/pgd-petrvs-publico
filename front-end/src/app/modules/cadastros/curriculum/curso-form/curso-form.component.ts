@@ -3,8 +3,10 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { CursoDaoService } from 'src/app/dao/curso-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
+import { LookupItem } from 'src/app/services/lookup.service';
 import { Curso } from 'src/app/models/curso.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
+import { AreaConhecimentoDaoService } from 'src/app/dao/area-conhecimento-dao.service';
 
 
 @Component({
@@ -16,17 +18,24 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 export class CursoFormComponent extends PageFormBase<Curso, CursoDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
 
+  
+  public titulos: LookupItem[] = [];
+  public areaDao ?: AreaConhecimentoDaoService;
+  
 
   constructor(public injector: Injector) {
     super(injector, Curso, CursoDaoService);
+    this.areaDao = injector.get<AreaConhecimentoDaoService>(AreaConhecimentoDaoService);
     this.form = this.fh.FormBuilder({
-      nome_area: {default: ""},
+      area_curso_id: {default: ""},
       nome_curso: {default: ""},
+      titulo: {default: ""},
       ativo: {default: true},
            
-    }, this.cdRef, this.validate);
+    }, this.cdRef, this.validate)
   }
 
+  
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
 
@@ -56,7 +65,7 @@ export class CursoFormComponent extends PageFormBase<Curso, CursoDaoService> {
 
 
   public titleEdit = (entity: Curso): string => {
-    return "Editando " + (entity?.nome_curso || "");
+    return "Editando " + (entity?.nome || "");
   }
 }
 

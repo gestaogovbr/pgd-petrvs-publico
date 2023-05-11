@@ -49,6 +49,7 @@ import { CadeiaValorProcessoDaoService } from '../dao/cadeia-valor-processo-dao.
 import { ChangeDaoService } from '../dao/change-dao.service';
 import { ErrorDaoService } from '../dao/error-dao.service';
 import { TrafficDaoService } from '../dao/traffic-dao.service';
+import { AreaConhecimentoDaoService } from '../dao/area-conhecimento-dao.service';
 
 export type EntityItem = {
     collection: string,
@@ -74,6 +75,7 @@ export class EntityService {
         this.list = [
             { collection: 'Adesao', icon: 'bi bi-universal-access-circle', label: "Adesão" },
             { collection: 'Afastamento', codigo: 'MOD_AFT', table: 'afastamentos', campo: 'observacoes', icon: 'bi bi-toggle-off', dao: injector.get<AfastamentoDaoService>(AfastamentoDaoService), label: "Afastamento", selectRoute: { route: ['cadastros', 'afastamento'] } },
+            { collection: 'AreaConhecimento', codigo: 'MOD_RX', table: 'areas_conhecimentos', campo: 'nome_area', icon: 'bi bi-mortarboard', dao: injector.get<AreaConhecimentoDaoService>(AreaConhecimentoDaoService), label: "Area do Conhecimento", selectRoute: { route: ['raiox', 'cadastros','gerais','areaconhecimento'] } },
             { collection: 'Atividade', codigo: 'MOD_ATV', table: 'atividades', campo: 'nome', icon: 'bi bi-clipboard-pulse', dao: injector.get<AtividadeDaoService>(AtividadeDaoService), label: "Atividade", selectRoute: { route: ['gestao', 'atividade'] } },
             { collection: 'CadeiaValor', codigo: 'MOD_CADV', table: 'cadeias_valores', campo: 'nome', icon: 'bi bi-bar-chart-steps', dao: injector.get<CadeiaValorDaoService>(CadeiaValorDaoService), label: "Cadeia de Valor", selectRoute: { route: ['gestao', 'cadeia-valor'] } },
             { collection: 'CadeiaValorProcesso', table: 'cadeias_valores_processos', campo: 'nome', icon: '', dao: injector.get<CadeiaValorProcessoDaoService>(CadeiaValorProcessoDaoService), label: "Processo da Cadeia de Valor" },

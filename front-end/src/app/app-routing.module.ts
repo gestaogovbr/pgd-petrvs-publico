@@ -52,7 +52,7 @@ const routes: Routes = [
   { path: 'rotinas', loadChildren: () => import('./modules/rotinas/rotina.module').then(m => m.RotinaModule), canActivate: [AuthGuard] },
   { path: 'raiox',loadChildren: () => import('./modules/curriculum/curriculum.module').then(m => m.CurriculumModule), canActivate: [AuthGuard] },
   { path: 'raiox/cadastros',loadChildren: () => import('./modules/cadastros/curriculum/curriculum-cadastros.module').then(m => m.CurriculumCadastrosModule), canActivate: [AuthGuard] },
-  { path: 'raiox/cadastros/gerais',loadChildren: () => import('./modules/cadastros/curriculum/curriculum-cadastros.module').then(m => m.CurriculumCadastrosModule), canActivate: [AuthGuard] },
+  //{ path: 'raiox/cadastros/gerais',loadChildren: () => import('./modules/cadastros/curriculum/curriculum-cadastros.module').then(m => m.CurriculumCadastrosModule), canActivate: [AuthGuard] },
  
   { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];

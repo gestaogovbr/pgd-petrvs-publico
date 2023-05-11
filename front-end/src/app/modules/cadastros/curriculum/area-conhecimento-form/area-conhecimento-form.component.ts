@@ -53,7 +53,7 @@ export class AreaConhecimentoFormComponent extends PageFormBase<AreaConhecimento
 
 
   public titleEdit = (entity: AreaConhecimento): string => {
-    return "Editando " + (entity?.nome_area || "");
+    return "Editando " + (entity?.nome || "");
   }
 }
 

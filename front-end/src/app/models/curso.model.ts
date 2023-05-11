@@ -5,7 +5,7 @@ export class Curso extends Base {
     
     public area?: AreaConhecimento;
 
-    public nome_curso: string = ""; //Nome do curso
+    public nome: string = ""; //Nome do curso
     public titulo: string = ""; //Graduação, pós, mestrado, doc ou posdoc
     public ativo: number = 1; //Curso esta ativo ou não
     public area_curso_id: string = ""; //Área do conhecimento

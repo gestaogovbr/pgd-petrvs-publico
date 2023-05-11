@@ -5,7 +5,7 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import { Curso } from 'src/app/models/curso.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { CursoDaoService } from 'src/app/dao/curso-dao.service';
-import { AreaConhecimentoDaoService } from 'src/app/dao/area-conhecimento-dao.service';
+
 
 @Component({
   selector: 'curso-list',
@@ -16,17 +16,14 @@ import { AreaConhecimentoDaoService } from 'src/app/dao/area-conhecimento-dao.se
 export class CursoListComponent extends PageListBase<Curso, CursoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   
-  public areaconhecimento: LookupItem[] = [];
-  public areaDAO ?: AreaConhecimentoDaoService;
-  public conhecimentos?:any;
+ 
 
   constructor(public injector: Injector) {
     super(injector, Curso, CursoDaoService);
-    this.areaDAO = injector.get<AreaConhecimentoDaoService>(AreaConhecimentoDaoService);
-    /* Inicializações */
-    //this.title = "Cidades";
+       /* Inicializações */
     this.title = this.lex.noun("Cursos",true);
     this.code = "MOD_RX";
+    this.join = ["area:nome"];
 
     this.filter = this.fh.FormBuilder({
       nome_area: {default: ""},
@@ -55,7 +52,7 @@ export class CursoListComponent extends PageListBase<Curso, CursoDaoService> {
   }
 
   public filterClear(filter: FormGroup) {
-    filter.controls.nome_area.setValue("");
+    filter.controls.nome.setValue("");
     filter.controls.nome_curso.setValue("");
     filter.controls.titulo.setValue("");
     super.filterClear(filter);
@@ -80,11 +77,7 @@ export class CursoListComponent extends PageListBase<Curso, CursoDaoService> {
     return result;
   }
 
-  ngOnInit(): void {
-    this.conhecimentos=this.areaDAO// .getAll().then(this.conhecimentos) //=> {
-     // this.areaconhecimento = this.conhecimentos.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
-    console.log("this.conhecimentos=>",this.conhecimentos)
-  }
+ 
 }
 
 

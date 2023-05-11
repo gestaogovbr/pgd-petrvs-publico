@@ -6,13 +6,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { CurriculumRoutingModule } from './curriculum-routing.module';
 
-import { RaioxPessoalFormComponent } from  '../curriculum/curriculum-pessoal-form/raiox-pessoal-form.component'
+import { CurriculumFormComponent } from  './curriculum-form/curriculum-form.component'
 import { CurriculumProfissionalFormComponent } from  '../curriculum/curriculum-profissional-form/curriculum-profissional-form.component'
 
 @NgModule({
   declarations: [
  
-    RaioxPessoalFormComponent,
+    CurriculumFormComponent,
     CurriculumProfissionalFormComponent
   ],
   imports: [

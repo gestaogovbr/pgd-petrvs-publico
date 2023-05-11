@@ -19,7 +19,7 @@ class CreateAreasConhecimentos extends Migration
             $table->primary('id');
             $table->timestamps();
             // Campos:
-            $table->string('nome_area', 256)->comment("Nome da área da graduação");
+            $table->string('nome', 256)->comment("Nome da área da graduação");
             $table->tinyInteger('ativo')->default(1)->comment("Área ativa ou inativa");
            
             // Chaves estrangeiras:

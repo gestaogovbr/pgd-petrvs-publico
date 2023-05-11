@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
-use App\Models\Curso;
+//use App\Models\Curso;
 use App\Traits\AutoDataInicio;
 
 
@@ -12,7 +12,7 @@ class Curso extends ModelBase
     protected $table = 'cursos';
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'nome_curso',
+        'nome',
         'titulo',
         'ativo',
         'area_curso_id'

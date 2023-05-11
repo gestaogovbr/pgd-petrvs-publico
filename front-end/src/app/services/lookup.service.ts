@@ -562,27 +562,33 @@ export class LookupService {
   { 'key': 'VIUVO', 'value': 'Viúvo' }
   ];
 
-  public TITULO_CURSO : LookupItem[] = [
+  public TITULOS_CURSOS : LookupItem[] = [
+    { 'key': 'INSTITUCIONAL', 'value': 'Institucional' },
     { 'key': 'GRAD_TEC', 'value': 'Tecnólogo' }, 
     { 'key': 'GRAD_BAC', 'value': 'Bacharelado' },
     { 'key': 'GRAD_LIC', 'value': 'Licenciatura' }, 
-    { 'key': 'ESPECIAL', 'value': 'Especialização' },  
+    { 'key': 'ESPECIAL', 'value': 'Especialização' },
     { 'key': 'MESTRADO', 'value': 'Mestrado' },    
     { 'key': 'DOUTORADO', 'value': 'Doutorado' },
     { 'key': 'POS_DOUTORADO', 'value': 'Pós Doutorado' }, 
     
     ];
 
-  public AREAS_GRADUACAO : LookupItem[] = [
-      { 'key': 'GRAD_TEC', 'value': 'Tecnólogo' }, 
-      { 'key': 'GRAD_BAC', 'value': 'Bacharelado' },
-      { 'key': 'GRAD_LIC', 'value': 'Licenciatura' }, 
-      { 'key': 'ESPECIAL', 'value': 'Especialização' },  
+  public POS_GRADUACOES : LookupItem[] = [
+      { 'key': 'ESPECIAL', 'value': 'Especialização' },
       { 'key': 'MESTRADO', 'value': 'Mestrado' },    
       { 'key': 'DOUTORADO', 'value': 'Doutorado' },
       { 'key': 'POS_DOUTORADO', 'value': 'Pós Doutorado' }, 
       
-  ];
+      ];
+
+  
+  public CARGOS_PRF : LookupItem[] = [
+    { 'key': 'PRF', 'value': 'PRF' }, 
+    { 'key': 'ADM', 'value': 'Agente Administrativo' },
+    
+    
+];
 
   public getLookup(itens: LookupItem[], key: any) {
     return itens.find(x => x.key == key);

@@ -10,9 +10,17 @@
         </div>
     </filter>
     <columns>
-        <column title="Curso" field="nome_curso" orderBy="nome_area"></column>
-        <column title="Nome da área" field="nome_area" orderBy="nome_area"></column>
-        <column title="Título" field="titulo" orderBy="titulo"></column>
+        <column title="Curso" field="nome_curso" orderBy="nome_curso"></column>
+        <column title="Área do Conhecimento" [template]="columnNomeArea">
+            <ng-template let-row="row" #columnNomeArea>
+                <span>{{ row.area.nome_area }}</span>
+            </ng-template>
+        </column>
+        <column title="Título" [template]="columnTitulo">
+            <ng-template let-row="row" #columnTitulo>
+                <span>{{ lookup.getValue(lookup.TITULOS_CURSOS,row.titulo) }}</span>
+            </ng-template>
+        </column>
         <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
