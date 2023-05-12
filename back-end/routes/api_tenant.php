@@ -245,6 +245,7 @@ Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
     Route::post('unificar', [UnidadeController::class, 'unificar']);
     Route::post('dashboards', [UnidadeController::class, 'dashboards']);
     Route::post('inativo', [UnidadeController::class, 'inativo']);
+    Route::post('linha-ascendente', [UnidadeController::class, 'linhaAscendente']);
 });
 Route::middleware(['auth:sanctum'])->prefix('UnidadeIntegrante')->group(function () {
     //defaultRoutes(UnidadeIntegranteController::class);

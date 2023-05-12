@@ -152,6 +152,12 @@ class UnidadeService extends ServiceBase
         return $result;
     }
 
+    public function linhaAscendente($unidade_id) {
+        $unidade = Unidade::where("id", $unidade_id)->first();
+        $unidades_superiores_ids = array_filter(explode('/',$unidade->path),fn($x) => $x != "");
+        return Unidade::whereIn("id",$unidades_superiores_ids)->get()->toArray();
+    }
+
     /**
      * Retorna um array com os dados totais de uma determinada Área, e os dados individuais de cada uma das suas unidades componentes.
      * 

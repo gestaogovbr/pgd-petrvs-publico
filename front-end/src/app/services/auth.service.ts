@@ -16,6 +16,7 @@ import { UtilService } from './util.service';
 import { UsuarioDaoService } from '../dao/usuario-dao.service';
 import { IIndexable } from '../models/base.model';
 import { Entidade } from '../models/entidade.model';
+import { UnidadeDaoService } from '../dao/unidade-dao.service';
 
 export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION" | "SUPER";
 export type Permission = string | (string | string[])[];
@@ -314,5 +315,45 @@ export class AuthService {
   public hasLotacao(unidadeId: string) {
     return this.usuario!.lotacoes.find(x => x.unidade_id == unidadeId);
   }
+
+  /**
+   * Informa se o usuário logado é gestor(titular ou substituto) da unidade repassada como parâmetro. Se nenhuma unidade for repassada, 
+   * será adotada a unidade selecionada pelo servidor na homepage.
+   * @param pUnidade 
+   * @returns 
+   */
+    public isGestorUnidade(pUnidade: Unidade | null = null): boolean {
+      let unidade = pUnidade || this.unidade;
+      return this.usuario!.id == unidade!.gestor_id || this.usuario!.id == unidade!.gestor_substituto_id; 
+    }
+
+    /**
+     * Informa se a unidade repassada como parâmetro é a lotação principal do usuário logado. Se nenhuma unidade for repassada, 
+     * será adotada a unidade selecionada pelo servidor na homepage.
+     * @param pUnidade 
+     * @returns 
+     */
+    public isLotacaoPrincipal(pUnidade: Unidade | null = null): boolean {
+      let unidade = pUnidade || this.unidade;
+      let lotacao = this.usuario!.lotacoes.find(x => x.unidade_id == unidade!.id && x.principal);
+      return lotacao != undefined;
+    }
+
+    /**
+     * Informa se o usuário logado tem como lotação principal alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
+     * repassada como parâmetro.
+     * @param unidade 
+     * @returns 
+     */
+    public isLotadoNaLinhaAscendente(unidade: Unidade): boolean {
+      let result = false;
+      let unidadeDao = this.injector.get<UnidadeDaoService>(UnidadeDaoService);
+      unidadeDao.linhaAscendente(unidade.id).then(linhaAscendente => {
+        linhaAscendente.forEach(x => {
+          if(this.isLotacaoPrincipal(x)) result = true;
+        });
+      });
+      return result;
+    }
 
 }

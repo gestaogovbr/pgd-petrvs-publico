@@ -8,6 +8,7 @@ import { UnidadeDaoService } from './unidade-dao.service';
 import { UsuarioDaoService } from './usuario-dao.service';
 import { ProgramaDaoService } from './programa-dao.service';
 import { LookupService } from '../services/lookup.service';
+import { PlanoEntrega } from '../models/plano-entrega.model';
 
 @Injectable({
   providedIn: 'root'
@@ -50,6 +51,16 @@ export class PlanoDaoService extends DaoBaseService<Plano> {
         resolve(response?.metadadosPlano || []);
       }, error => reject(error));
     });
+  }
+
+  /**
+   * Informa de o plano de entrega repassado como parâmetro está em curso, ou seja: não foi deletado, não foi cancelado,
+   * não foi arquivado e possui o status ATIVO.
+   * @param planoEntrega 
+   * @returns 
+   */
+  public emCurso(planoEntrega: PlanoEntrega): boolean {
+    return !planoEntrega.data_fim && !planoEntrega.data_cancelamento && !planoEntrega.data_arquivamento && planoEntrega.status == 'ATIVO';
   }
 
 }

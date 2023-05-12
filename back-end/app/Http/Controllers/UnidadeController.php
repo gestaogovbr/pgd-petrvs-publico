@@ -28,6 +28,20 @@ class UnidadeController extends ControllerBase {
         }
     }
 
+    public function linhaAscendente(Request $request) {
+        try {
+            $data = $request->validate([
+                'unidade_id' => ['required']
+            ]);
+            return response()->json([
+                'success' => true,
+                'linhaAscendente' => $this->service->linhaAscendente($data["unidade_id"])
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
     public function metadadosUnidade(Request $request) {
         try {
             $data = $request->validate([

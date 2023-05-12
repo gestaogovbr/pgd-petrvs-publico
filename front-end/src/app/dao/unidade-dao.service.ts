@@ -99,4 +99,12 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
     });
   }
 
+  public linhaAscendente(unidade_id: string): Promise<Unidade[]> {
+    return new Promise<Unidade[]>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/linha-ascendente', {unidade_id}).subscribe(response => {
+        resolve(response?.linhaAscendente || []);
+      }, error => reject(error));
+    });
+  }
+
 }

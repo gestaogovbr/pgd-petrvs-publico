@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
@@ -8,7 +8,6 @@ import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
-import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
   selector: 'app-plano-entrega-list',
@@ -21,6 +20,16 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   public unidadeDao: UnidadeDaoService;
   public planejamentoDao: PlanejamentoDaoService;
   public cadeiaValorDao: CadeiaValorDaoService;
+  public exibirAdesao: boolean = true; 
+  public toolbarButtons: ToolbarButton[] = [];
+  public BOTAO_ADERIR: ToolbarButton = {
+    label: "Aderir",
+    icon: this.entityService.getIcon("Adesao"),
+    onClick: () => {
+      this.loading = true;
+      this.go.navigate({ route: ['gestao','plano-entrega','adesao'] });
+    }
+  };
 
   constructor(public injector: Injector) {
     super(injector, PlanoEntrega, PlanoEntregaDaoService);
@@ -41,23 +50,11 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     });
     this.join = ['planejamento:id,nome', 'cadeiaValor:id,nome', 'unidade:id,sigla'];
     this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }];
+  }
 
-    // Testa se o usuário possui permissão para exibir planos de entrega
-    /*     if (this.auth.hasPermissionTo("MOD_PENT_CONS")) {
-          this.options.push({
-            icon: "bi bi-info-circle",
-            label: "Informações",
-            onClick: this.consult.bind(this)
-          });
-        } */
-    // Testa se o usuário possui permissão para excluir planos de entrega
-    /*     if (this.auth.hasPermissionTo("MOD_PENT_EXCL")) {
-          this.options.push({
-            icon: "bi bi-trash",
-            label: "Excluir",
-            onClick: this.delete.bind(this)
-          });
-        } */
+  ngOnInit(): void {
+    super.ngOnInit();
+    if(this.exibirAdesao) this.toolbarButtons.push(this.BOTAO_ADERIR);
   }
 
   public filterClear(filter: FormGroup) {
@@ -95,21 +92,6 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     }
     return result;
   }
-
-  /*   public dynamicOptions(row: any): ToolbarButton[] {
-      //let result: ToolbarButton[] = [];
-      //let planoEntrega: PlanoEntrega = row as PlanoEntrega;
-      const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: this.consult.bind(this) };
-      const BOTAO_ALTERAR = { label: "Editar", icon: "bi bi-pencil-square", onClick: this.edit.bind(this) };
-      const BOTAO_EXCLUIR = { label: "Excluir Plano", icon: "bi bi-trash", onClick: this.delete.bind(this) };
-      //const BOTAO_ENTREGAS = { hint: "Entregas", icon: "bi bi-pen", onClick: this.editarEntregas.bind(this) };
-      const BOTAO_HOMOLOGAR = { label: "Homologar", icon: "bi bi-file-earmark-check", onClick: this.homologar.bind(this) };
-      if (this.auth.hasPermissionTo("MOD_PENT_CONS")) result.push(BOTAO_INFORMACOES);
-      if (this.auth.hasPermissionTo('MOD_PENT_EDT')) result.push(BOTAO_ALTERAR);
-      if (this.auth.hasPermissionTo("MOD_PENT_EXCL")) result.push(BOTAO_EXCLUIR);
-      if (this.dao?.needHomologate(planoEntrega)) result.push(BOTAO_HOMOLOGAR);
-      return result;
-    } */
 
   public onAgruparChange(event: Event) {
     const agrupar = this.filter!.controls.agrupar.value;
@@ -323,14 +305,13 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   }
 
   public desarquivar(planoEntrega: PlanoEntrega) {
-    this.dialog.confirm("Liberar para homologação ?", "Deseja realmente liberar para a homologação?").then(confirm => {
+    this.dialog.confirm("Desarquivar ?", "Deseja realmente desarquivar o Plano de Entregas?").then(confirm => {
       if (confirm) {
-
+        this.dao!.arquivar(planoEntrega.id, false).then(() => {
+          this.grid!.query!.refreshId(planoEntrega.id);
+        }).catch(error => this.dialog.alert("Erro", "Erro ao desarquivar o Plano de Entregas: " + error?.message ? error?.message : error));
       }
     });
-    this.dao!.arquivar(planoEntrega.id, false).then(() => {
-      this.grid!.query!.refreshId(planoEntrega.id);
-    }).catch(error => this.dialog.alert("Erro", "Erro ao desarquivar o Plano de Entregas: " + error?.message ? error?.message : error));
   }
 
   public cancelarConclusao(planoEntrega: PlanoEntrega) {
