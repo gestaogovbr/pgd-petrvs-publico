@@ -52,7 +52,7 @@ export class CursoListComponent extends PageListBase<Curso, CursoDaoService> {
   }
 
   public filterClear(filter: FormGroup) {
-    filter.controls.nome.setValue("");
+    filter.controls.nome_area.setValue("");
     filter.controls.nome_curso.setValue("");
     filter.controls.titulo.setValue("");
     super.filterClear(filter);
@@ -63,11 +63,11 @@ export class CursoListComponent extends PageListBase<Curso, CursoDaoService> {
     let form: any = filter.value;
 
     if(form.nome_curso?.length) {
-      result.push(["nome_curso", "like", "%" + form.nome_curso + "%"]);
+      result.push(["nome", "like", "%" + form.nome_curso + "%"]);
     }
 
     if(form.nome_area?.length) {
-      result.push(["nome_area", "like", "%" + form.nome_area + "%"]);
+      result.push(["nome", "like", "%" + form.nome_area + "%"]);
     }
     
     if(form.titulo?.length) {

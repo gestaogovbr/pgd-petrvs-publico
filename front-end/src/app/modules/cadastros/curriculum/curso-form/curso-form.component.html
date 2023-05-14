@@ -1,7 +1,7 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
     <div class="row">
         <input-search [size]="5" [dao]="areaDao" label="Nome da área de conhecimento" controlName="area_curso_id"></input-search>
-        <input-text [size]="5" label="Nome do curso" controlName="nome_curso"></input-text>
+        <input-text [size]="5" label="Nome do curso" controlName="nome"></input-text>
         <input-select [size]="5" label="Titulo" [items]="this.lookup.TITULOS_CURSOS" controlName="titulo"></input-select>
         <input-switch [size]="2" labelPosition="left" label="Ativo" controlName="ativo"></input-switch>
     </div>

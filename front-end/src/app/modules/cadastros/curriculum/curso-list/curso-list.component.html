@@ -10,10 +10,10 @@
         </div>
     </filter>
     <columns>
-        <column title="Curso" field="nome_curso" orderBy="nome_curso"></column>
+        <column title="Curso" field="nome" orderBy="nome"></column>
         <column title="Área do Conhecimento" [template]="columnNomeArea">
             <ng-template let-row="row" #columnNomeArea>
-                <span>{{ row.area.nome_area }}</span>
+                <span>{{ row.area.nome }}</span>
             </ng-template>
         </column>
         <column title="Título" [template]="columnTitulo">

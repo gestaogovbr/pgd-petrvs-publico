@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Usuario;
 use App\Models\ModelBase;
 use App\Traits\AutoDataInicio;
+use App\Casts\AsJson;
 
 
 class Curriculum extends ModelBase
@@ -16,11 +17,14 @@ class Curriculum extends ModelBase
         'telefone',
         'idiomas',
         'estado_civil',
-        'filhos',
         'quantidade_filhos',
         'ativo',
         'usuario_id',
         'cidade_id'
+    ];
+
+    protected $casts = [
+        'idiomas' => AsJson::class,
     ];
 
     //Has

@@ -1,215 +1,123 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()"
     (cancel)="onCancel()">
+    <tabs display left>
+        <tab key="DadosPessoais" class="fw-bold" label="Dados Pessoais">
+            <div class="row mt-3">
+                <input-textarea label="Apresente-se" [size]="12" [bold]="true" icon="bi-card-list"
+                    controlName="apresentacao"
+                    [control]="form!.controls.apresentacao"></input-textarea><!-- [control]="form!.controls.apresentese">-->
+            </div>
 
-    <div class="row mt-3">
-        <input-textarea label="Apresente-se" [size]="12" [bold]="true" icon="bi-card-list" controlName="apresentese"
-            [control]="form!.controls.apresentese"></input-textarea><!-- [control]="form!.controls.apresentese">-->
-    </div>
+            <div class="row mt-3">
+                <separator title="Dados Residenciais"></separator>
+            </div>
 
-    <div class="row mt-3">
-        <separator title="Dados Residenciais"></separator>
-    </div>
-
-    <div class="row mt-2">
-        <input-select [size]="4" label="Estado" icon="fas fa-flag" controlName="estados"
-            [control]="form!.controls.estados" [items]="lookup.UF" (change)="onEstadosChange()">
-        </input-select>
-        <input-select [size]="4" label="Município" icon="far fa-flag" controlName="municipios"
-            [control]="form!.controls.municipios" [items]="municipios">
-        </input-select>
-        <input-text [size]="4" label="Telefone de contato WhatsAPP" icon="fas fa-phone"
-            controlName="telefone" [control]="form!.controls.telefone"></input-text>
-    </div>
-
-
-    <div class="row mt-3">
-        <separator title="Estado Civil"></separator>
-    </div>
-    <div class="row mt-2">
-        <input-select [size]="5" label="Estado Civil" icon="fas fa-question-circle" controlName="estadoCivil"
-            [control]="form!.controls.estadoCivil" [items]="this.lookup.ESTADO_CIVIL">
-        </input-select>
-        <input-switch [size]="3" label="Possui Filhos?" icon="fas fa-child" controlName="switchFilhos"
-            [control]="form!.controls.radioFilhos" labelInfo="Possui Filhos?"></input-switch>
-        <input-number [hidden]="form!.controls.radioFilhos.value ? undefined : 'true'" [size]="4" label="Quantos?"
-            icon="bi bi-arrow-up-right-circle" controlName="qtsFilhos" [control]="form!.controls.qtsFilhos"
-            [minValue]="0"></input-number>
-    </div>
-    <div class="row mt-3">
-        <separator title="Idiomas"></separator>
-    </div>
-    <div class="row my-3">
-        <input-switch [size]="2" label="Fala outros idiomas?" icon="fas fa-language" controlName="radioFalaIdioma"
-            [control]="form!.controls.radioFalaIdioma">
-        </input-switch>
-        <input-multiselect *ngIf="form!.controls.radioFalaIdioma.value" controlName="idiomasM" [size]="10" 
-            [control]="form!.controls.idiomasM"
-            [addItemHandle]="addItemIdioma.bind(this)" noBox>
-
-            <input-select [size]="3" label="Idioma" icon="fas fa-sign-out-alt" controlName="idioma" liveSearch
-                [control]="form!.controls.idioma" [items]="this.lookup.IDIOMAS">
-
-            </input-select>
-            <input-select [size]="3" label="Nível de fala?" icon="fas fa-sign-out-alt" controlName="idiomaFala"
-                [control]="form!.controls.idiomaFala" [items]="this.lookup.NIVEL_IDIOMA">
-            </input-select>
-            <input-select [size]="3" label="Nível de escrita?" icon="fas fa-sign-out-alt"
-                controlName="idiomaEscrita" [control]="form!.controls.idiomaEscrita" [items]="this.lookup.NIVEL_IDIOMA">
-            </input-select>
-            <input-select [size]="3" label="Nível de entendimento?" icon="fas fa-sign-out-alt"
-                controlName="idiomaEntendimento" [control]="form!.controls.idiomaEntendimento"
-                [items]="this.lookup.NIVEL_IDIOMA">
-            </input-select>
-
-        </input-multiselect>
-    </div>
-    <div class="row mt-3">
-        <separator title="Graduação"></separator>
-    </div>
-    <div class="row my-3">
-
-        <input-switch *ngIf="!formGraduacao!.controls.radioPretendeGraduacao.value" [size]="3" label="Possui Graduação?"
-             icon="bi bi-mortarboard-fill" controlName="radioGraduacao"
-            [control]="formGraduacao!.controls.radioGraduacao" labelInfo="Possui graduacão?">
-        </input-switch>
-        <input-switch *ngIf="!formGraduacao!.controls.radioGraduacao.value" [size]="3" label="Pretende Cursar?"
-             icon="bi bi-mortarboard-fill" controlName="radioPretendeGraduacao"
-            [control]="formGraduacao!.controls.radioPretendeGraduacao" labelInfo="Pretende Cursar?">
-
-        </input-switch>
-
-        <input-multiselect
-            *ngIf="formGraduacao!.controls.radioGraduacao.value || formGraduacao!.controls.radioPretendeGraduacao.value"
-            controlName="graduacao" [size]="9" [control]="formGraduacao!.controls.graduacao"
-            [addItemHandle]="addItemGraduacao.bind(this)" noBox>
-            <input-search #area [size]="6" [dao]="areaDao" label="Área de conhecimento"
-                [control]="formGraduacao!.controls.area" controlName="area"
-                (change)="onAreaGraducaoChange()"></input-search>
-            <input-select [size]="6" label="Curso" icon="fas fa-sign-out-alt" controlName="curso" liveSearch
-                [control]="formGraduacao!.controls.curso" [items]="cursos">
-            </input-select>
-        </input-multiselect>
-    </div>
-
-    <div class="row mt-3">
-        <separator title="Pós-Graduação"></separator>
-    </div>
-        <div class="row mt-3 mb-5">
-            <input-switch [hidden]="formGraduacao!.controls.radioPretendePosGraduacao.value" [size]="3"
-                label="Possui Pós-Graduação?" icon="bi bi-mortarboard-fill" controlName="radioPosGraduacao"
-                [control]="formGraduacao!.controls.radioPosGraduacao" labelInfo="Possui Pós graduacão?">
-                <!--(change)="setValueradioPretendePosGraduacao.bind(this)">-->
-            </input-switch>
-            <input-switch [hidden]="formGraduacao!.controls.radioPosGraduacao.value" [size]="3" label="Pretende Cursar?"
-                icon="bi bi-mortarboard-fill" controlName="radioPretendePosGraduacao"
-                [control]="formGraduacao!.controls.radioPretendePosGraduacao" labelInfo="Pretende Cursar?">
-            </input-switch>
-
-            <input-multiselect
-                *ngIf="formGraduacao!.controls.radioPosGraduacao.value || formGraduacao!.controls.radioPretendePosGraduacao.value"
-                controlName="posgraduacao" [size]="9" [control]="formGraduacao!.controls.posgraduacao"
-                [addItemHandle]="addItemPosGraduacao.bind(this)" noBox>
-
-                <input-search #areaPos [size]="4" [dao]="areaDao" label="Área de conhecimento"
-                    [control]="formGraduacao!.controls.areaPos" controlName="areaPos"
-                    (change)="onAreaPosGraducaoChange()">
-                </input-search>
-                <input-select [size]="5" label="Curso" icon="fas fa-sign-out-alt" controlName="cursoPos" liveSearch
-                    [control]="formGraduacao!.controls.cursoPos" [items]="cursosPos">
+            <div class="row mt-2">
+                <input-select [size]="4" label="Estado" icon="fas fa-flag" controlName="estados"
+                    [control]="form!.controls.estados" [items]="lookup.UF" (change)="onEstadosChange()">
                 </input-select>
-                <input-select [size]="3" label="Titulo" icon="fas fa-sign-out-alt" controlName="titulo" liveSearch
-                    [control]="formGraduacao!.controls.titulo" [items]="this.lookup.POS_GRADUACOES">
-
+                <input-select [size]="4" label="Município" icon="far fa-flag" controlName="cidade_id"
+                    [control]="form!.controls.cidade_id" [items]="municipios">
                 </input-select>
-            </input-multiselect>
-        </div>
-    
-    <!-- <div class="row mt-5">
-        <label class="fw-bold">Mestrado</label>
-        <hr>
-    
-        <div class="row my-3">
-            <input-radio [size]="3" label="Possui Mestrado?" icon="bi bi-mortarboard-fill" controlName="radioMestrado"
-                [control]="formGraduacao!.controls.radioMestrado" labelInfo="Possui Mestrado?" [items]="lookup.SIMNAO">
-            </input-radio>
-            <input-radio [hidden]="formGraduacao!.controls.radioMestrado.value" [size]="3" label="Pretende Cursar?"
-                icon="bi bi-mortarboard-fill" controlName="radioPretendeMestrado"
-                [control]="formGraduacao!.controls.radioPretendeMestrado" labelInfo="Pretende Cursar?" [items]="lookup.SIMNAO">
-            </input-radio>
-        </div>
-        <div *ngIf="formGraduacao!.controls.radioMestrado.value || formGraduacao!.controls.radioPretendeMestrado.value">
-            <input-multiselect controlName="mestrado" [size]="12" [control]="formGraduacao!.controls.mestrado"
-                [addItemHandle]="addItemGraduacao.bind(this)" noBox>
-    
-                <input-select [size]="6" label="Area" icon="fas fa-sign-out-alt" controlName="areaMestrado" liveSearch
-                    [control]="formGraduacao!.controls.areaMestrado" [items]="this.lookup.AREAS_GRADUACAO" (change)="onAreaChange()">
-    
-                </input-select>
-                <input-text [size]="6" label="Curso" icon="far fa-edit" controlName="cursoMestrado"
-                    [control]="formGraduacao!.controls.cursoMestrado"></input-text>
-    
-            </input-multiselect>
-        </div>
-    </div>
-    <div class="row mt-5">
-        <label class="fw-bold">Doutorado</label>
-        <hr>
-    
-        <div class="row my-3">
-            <input-radio [size]="3" label="Possui Doutorado?" icon="bi bi-mortarboard-fill" controlName="radioDoutorado"
-                [control]="formGraduacao!.controls.radioDoutorado" labelInfo="Possui graduacão?" [items]="lookup.SIMNAO">
-            </input-radio>
-    
-            <input-radio [hidden]="formGraduacao!.controls.radioDoutorado.value" [size]="3" label="Pretende Cursar?"
-                icon="bi bi-mortarboard-fill" controlName="radioPretendeDoutorado"
-                [control]="formGraduacao!.controls.radioPretendeDoutorado" labelInfo="Pretende Cursar?" [items]="lookup.SIMNAO">
-            </input-radio>
-        </div>
-        <div *ngIf="formGraduacao!.controls.radioDoutorado.value || formGraduacao!.controls.radioPretendeDoutorado.value">
-            <input-multiselect controlName="doutorado" [size]="12" [control]="formGraduacao!.controls.doutorado"
-                [addItemHandle]="addItemGraduacao.bind(this)" noBox>
-    
-                <input-select [size]="6" label="Area" icon="fas fa-sign-out-alt" controlName="areaDoutorado" liveSearch
-                    [control]="formGraduacao!.controls.areaDoutorado" [items]="this.lookup.AREAS_GRADUACAO"
-                    (change)="onAreaChange()">
-    
-                </input-select>
-                <input-text [size]="6" label="Curso" icon="far fa-edit" controlName="cursoDoutorado"
-                    [control]="formGraduacao!.controls.cursoDoutorado"></input-text>
-    
-            </input-multiselect>
-        </div>
-    </div>
-    <div class="row mt-5">
-        <label class="fw-bold">Pós-Doutorado</label>
-        <hr>
-    
-        <div class="row my-3">
-            <input-radio [size]="3" label="Possui Pós-Doutorado?" icon="bi bi-mortarboard-fill"
-                controlName="radioPosDoutorado" [control]="formGraduacao!.controls.radioPosDoutorado" labelInfo="Possui PosDoc?"
-                [items]="lookup.SIMNAO">
-            </input-radio>
-    
-            <input-radio [hidden]="formGraduacao!.controls.radioPosDoutorado.value" [size]="3" label="Pretende Cursar?"
-                icon="bi bi-mortarboard-fill" controlName="radioPretendePosDoutorado"
-                [control]="formGraduacao!.controls.radioPretendePosDoutorado" labelInfo="Pretende Cursar?" [items]="lookup.SIMNAO">
-            </input-radio>
-        </div>
-        <div *ngIf="formGraduacao!.controls.radioPosDoutorado.value || formGraduacao!.controls.radioPretendePosDoutorado.value">
-            <input-multiselect controlName="posdoutorado" [size]="12" [control]="formGraduacao!.controls.posdoutorado"
-                [addItemHandle]="addItemGraduacao.bind(this)" noBox>
-    
-                <input-select [size]="6" label="Area" icon="fas fa-sign-out-alt" controlName="areaPosDoutorado" liveSearch
-                    [control]="formGraduacao!.controls.areaPosDoutorado" [items]="this.lookup.AREAS_GRADUACAO"
-                    (change)="onAreaChange()">
-    
-                </input-select>
-                <input-text [size]="6" label="Curso" icon="far fa-edit" controlName="cursoPosDoutorado"
-                    [control]="formGraduacao!.controls.cursoPosDoutorado"></input-text>
-    
-            </input-multiselect>
-        </div>
-    </div>-->
+                <input-text [size]="4" label="Telefone de contato WhatsAPP" icon="fas fa-phone" controlName="telefone"
+                    [control]="form!.controls.telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'"></input-text>
+            </div>
 
 
+            <div class="row mt-3">
+                <separator title="Estado Civil"></separator>
+            </div>
+            <div class="row mt-2">
+                <input-select [size]="5" label="Estado Civil" icon="fas fa-question-circle" controlName="estado_civil"
+                    [control]="form!.controls.estado_civil" [items]="this.lookup.ESTADO_CIVIL">
+                </input-select>
+                <input-switch [size]="3" label="Possui Filhos?" icon="fas fa-child" controlName="filhos"
+                    [control]="form!.controls.filhos" labelInfo="Possui Filhos?"></input-switch>
+                <input-number [hidden]="form!.controls.filhos.value ? undefined : 'true'" [size]="4" label="Quantos?"
+                    icon="bi bi-arrow-up-right-circle" controlName="quantidade_filhos"
+                    [control]="form!.controls.quantidade_filhos" [minValue]="0"></input-number>
+            </div>
+            <div class="row mt-3">
+                <separator title="Idiomas"></separator>
+            </div>
+            <div class="row my-3">
+                <input-switch [size]="2" label="Fala outros idiomas?" icon="fas fa-language"
+                    controlName="radioFalaIdioma" [control]="form!.controls.radioFalaIdioma">
+                </input-switch>
+                <input-multiselect *ngIf="form!.controls.radioFalaIdioma.value" controlName="idiomasM" [size]="10"
+                    [control]="form!.controls.idiomasM" [addItemHandle]="addItemIdioma.bind(this)" noBox>
+
+                    <input-select [size]="3" label="Idioma" icon="fas fa-sign-out-alt" controlName="idioma" liveSearch
+                        [control]="form!.controls.idioma" [items]="this.lookup.IDIOMAS">
+
+                    </input-select>
+                    <input-select [size]="3" label="Nível de fala?" icon="fas fa-sign-out-alt" controlName="idiomaFala"
+                        [control]="form!.controls.idiomaFala" [items]="this.lookup.NIVEL_IDIOMA">
+                    </input-select>
+                    <input-select [size]="3" label="Nível de escrita?" icon="fas fa-sign-out-alt"
+                        controlName="idiomaEscrita" [control]="form!.controls.idiomaEscrita"
+                        [items]="this.lookup.NIVEL_IDIOMA">
+                    </input-select>
+                    <input-select [size]="3" label="Nível de entendimento?" icon="fas fa-sign-out-alt"
+                        controlName="idiomaEntendimento" [control]="form!.controls.idiomaEntendimento"
+                        [items]="this.lookup.NIVEL_IDIOMA">
+                    </input-select>
+
+                </input-multiselect>
+            </div>
+
+            <!--<separator title="Graduação">-->
+
+            <div class="row my-3">
+
+                <input-multiselect [size]="12" label="Graduação" [control]="formGraduacao!.controls.graduacao"
+                    controlName="graduacao" [addItemHandle]="addItemGraduacao.bind(this)" noBox [bold]="true">
+                    <input-switch [size]="2" label="Pretende Cursar?" icon="fas fa-user-graduate"
+                        controlName="radioPretendeGraduacao" [control]="formGraduacao!.controls.radioPretendeGraduacao"
+                        labelInfo="Pretendo Cursar">
+                    </input-switch>
+                    <!-- <button type="button" [id]="'formGraduacao' + '_add_button'" class="btn btn-outline-primary" (click)="onAddClick()">
+                            <i class="bi bi-plus-circle"></i>
+            </button>-->
+                    <input-search #area [size]="4" [dao]="areaDao" label="Área de conhecimento"
+                        [control]="formGraduacao!.controls.area" controlName="area"
+                        (change)="onAreaGraducaoChange()"></input-search>
+                    <input-select [size]="4" label="Curso" icon="bi bi-mortarboard-fill" controlName="curso" liveSearch
+                        [control]="formGraduacao!.controls.curso" [items]="cursos">
+                    </input-select>
+
+                </input-multiselect>
+            </div>
+
+            <div class="row mt-3 mb-1">
+                <input-multiselect label="Pós-Graduações - Especialização, Mestrado, Doutorado e Pós Doutorado"
+                    [size]="12" controlName="posgraduacao" [control]="formGraduacao!.controls.posgraduacao"
+                    [addItemHandle]="addItemPosGraduacao.bind(this)" [bold]="true" noBox>
+                    <input-switch [size]="2" label="Pretende Cursar?" icon="fas fa-user-graduate"
+                        controlName="radioPretendePosGraduacao"
+                        [control]="formGraduacao!.controls.radioPretendePosGraduacao" labelInfo="Pretendo Cursar">
+                    </input-switch>
+                    <input-search #areaPos [size]="4" [dao]="areaDao" label="Área de conhecimento"
+                        [control]="formGraduacao!.controls.areaPos" controlName="areaPos"
+                        (change)="onAreaPosGraducaoChange()">
+                        <!--<button type="button" [id]="grid?.getId(index.toString()) + '_add_button'" class="btn btn-outline-primary" (click)="onAddClick()" [disabled]="grid?.editing">
+                            <i class="bi bi-plus-circle"></i>
+                        </button>-->
+                    </input-search>
+                    <!--<label onclick="labelClk()">Curso <i class="bi bi-mortarboard-fill"></i></label>-->
+                    <input-select [size]="4" label="Curso" icon="bi bi-mortarboard-fill" controlName="cursoPos"
+                        liveSearch [control]="formGraduacao!.controls.cursoPos" [items]="cursosPos">
+                    </input-select>
+                    <input-select [size]="2" label="Titulo" icon="bi bi-mortarboard-fill" controlName="titulo"
+                        liveSearch [control]="formGraduacao!.controls.titulo" [items]="this.lookup.POS_GRADUACOES">
+
+                    </input-select>
+                </input-multiselect>
+            </div>
+            <separator class="mb-1"></separator>
+        </tab>
+        <tab key="DADOSPROF" class="fw-bold" label="Dados Profissionais"></tab>
+        <tab key="ATRIBUTOS" class="fw-bold" label="Atributos Comportamentais"></tab>
+        <tab key="OPO" class="fw-bold" label="Oportunidades"></tab>
+    </tabs>
 </editable-form>

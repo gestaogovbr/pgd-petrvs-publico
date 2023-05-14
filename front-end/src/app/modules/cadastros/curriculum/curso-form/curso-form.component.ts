@@ -28,7 +28,7 @@ export class CursoFormComponent extends PageFormBase<Curso, CursoDaoService> {
     this.areaDao = injector.get<AreaConhecimentoDaoService>(AreaConhecimentoDaoService);
     this.form = this.fh.FormBuilder({
       area_curso_id: {default: ""},
-      nome_curso: {default: ""},
+      nome: {default: ""},
       titulo: {default: ""},
       ativo: {default: true},
            
@@ -39,7 +39,7 @@ export class CursoFormComponent extends PageFormBase<Curso, CursoDaoService> {
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
 
-    if(['nome_area, nome_curso'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if(['nome_area, nome'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
 
