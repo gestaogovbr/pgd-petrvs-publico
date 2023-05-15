@@ -55,12 +55,12 @@
 ## Regras de Negócio aplicadas aos Planos de Entregas
 1.  PLANOS DE ENTREGA PRÓPRIOS
     1.  Um Plano de Entregas próprio precisa da Homologação pela chefia imediata ou de pessoa autorizada para ser ativado (ir para o status ATIVO);
-    2.  Ao criar um Plano de Entregas próprio deve-se inserir ao menos uma entrega;
-    3.  O gestor da Unidade Executora e o gestor da sua unidade-pai podem iniciar a elaboração de Planos de Entrega da Unidade Executora;
+    2.  Para ir para o status HOMOLOGANDO o Plano de Entregas próprio deve ter ao menos uma entrega;
+    3.  O gestor da Unidade Executora e o gestor da sua unidade-pai (desde que tenha a capacidade "XXXXXXXXXX") podem iniciar a elaboração de Planos de Entrega da Unidade Executora;
 2.  PLANOS DE ENTREGA VINCULADOS
     1.  A adesão a um Plano de Entregas da unidade-pai precisa da aprovação do Chefe daquela unidade para ser ativado (ir para o status ATIVO);
     2.  Só é possível aderir a um Plano de Entregas da unidade-pai, se este estiver EM CURSO;
-    3.  O gestor da Unidade Executora e o gestor da sua unidade-pai podem realizar a adesão de um Plano de Entrega para a Unidade Executora;
+    3.  O gestor da Unidade Executora e o gestor da sua unidade-pai (desde que tenha a capacidade "XXXXXXXXXX") podem realizar a adesão de um Plano de Entrega para a Unidade Executora. No caso de ser a unidade-pai o plano já vai direto para o status ATIVO;
 3.  TODOS OS PLANOS DE ENTREGA
     1.  Um plano de entregas é considerado EM CURSO se não tiver sido deletado, não tiver sido cancelado, não tiver sido arquivado, e possuir o status ATIVO;
     2.  Se a Unidade A tem um plano de entrega próprio e a Unidade B aderiu ao plano de A, a Unidade C pode aderir ao plano de B;
@@ -76,11 +76,12 @@
     4.  A adesão a um Plano de Entregas de uma unidade somente pode ser realizada pelo gestor de uma de suas unidades-filha ou pelo gestor de qualquer uma de suas unidades subordinadas;
     5.  O Plano de Entregas somente pode ser elaborado pelo gestor da unidade para sua própria unidade ou para aquelas subordinadas a ele;
     6.  A unidade de execução poderá ter mais de um Plano de Entregas com status 'HOMOLOGANDO' e 'ATIVO', desde que sejam para períodos diferentes;
+    7.  Incluir campo para tornar todo o Plano de Entregas SIGILOSO ou permitir que algumas entregas não o sejam!
 ## Detalhes das views
 1. O botão Aderir, na toolbar, deverá ser exibido sempre, mas ficará habilitado apenas se:
     - o usuário logado for chefe da unidade selecionada, ou ela for sua lotação principal e ele possuir a capacidade "MOD_PENT_ADERIR"; e
     - se a unidade selecionada não possuir plano de entrega ativo; e
-    - se a unidade-pai unidade selecionada possuir plano de entrega EM CURSO;
+    - se a unidade-pai da unidade selecionada possuir plano de entrega EM CURSO;
 2. O botão Aderir, nas linhas do grid, deverá aparecer num plano somente se:
     - a unidade do plano for a unidade-pai da unidade selecionada pelo usuário; e
     - se o usuário for Gestor da unidade selecionada, ou possuir a capacidade "MOD_PENT_ADERIR" (já que ele sempre será lotado em qualquer uma das selecionadas); e

@@ -53,15 +53,5 @@ export class PlanoDaoService extends DaoBaseService<Plano> {
     });
   }
 
-  /**
-   * Informa de o plano de entrega repassado como parâmetro está em curso, ou seja: não foi deletado, não foi cancelado,
-   * não foi arquivado e possui o status ATIVO.
-   * @param planoEntrega 
-   * @returns 
-   */
-  public emCurso(planoEntrega: PlanoEntrega): boolean {
-    return !planoEntrega.data_fim && !planoEntrega.data_cancelamento && !planoEntrega.data_arquivamento && planoEntrega.status == 'ATIVO';
-  }
-
 }
 

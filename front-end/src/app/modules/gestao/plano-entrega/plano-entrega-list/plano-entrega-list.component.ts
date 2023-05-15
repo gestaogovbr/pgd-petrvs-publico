@@ -10,7 +10,7 @@ import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'app-plano-entrega-list',
+  selector: 'plano-entrega-list',
   templateUrl: './plano-entrega-list.component.html',
   styleUrls: ['./plano-entrega-list.component.scss']
 })
@@ -20,14 +20,15 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   public unidadeDao: UnidadeDaoService;
   public planejamentoDao: PlanejamentoDaoService;
   public cadeiaValorDao: CadeiaValorDaoService;
-  public exibirAdesao: boolean = true; 
+  public habilitarAdesao: boolean = true;
   public toolbarButtons: ToolbarButton[] = [];
   public BOTAO_ADERIR: ToolbarButton = {
     label: "Aderir",
+    disabled: !this.habilitarAdesao,
     icon: this.entityService.getIcon("Adesao"),
     onClick: () => {
       this.loading = true;
-      this.go.navigate({ route: ['gestao','plano-entrega','adesao'] });
+      this.go.navigate({ route: ['gestao', 'plano-entrega', 'adesao'] });
     }
   };
 
@@ -54,7 +55,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   ngOnInit(): void {
     super.ngOnInit();
-    if(this.exibirAdesao) this.toolbarButtons.push(this.BOTAO_ADERIR);
+    this.habilitarAdesao = (this.auth.isGestorUnidade(this.auth.unidade) || (this.auth.isLotacaoPrincipal() && this.auth.hasPermissionTo("MOD_PENT_ADERIR"))) && !this.unidadeDao.planosEntregasEmCurso(this.auth.unidade!) && this.unidadeDao.planosEntregasEmCurso(this.auth.unidade!.unidade_id);
+    this.toolbarButtons.push(this.BOTAO_ADERIR);
   }
 
   public filterClear(filter: FormGroup) {
@@ -104,7 +106,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let planoEntrega: PlanoEntrega = row as PlanoEntrega;
-    const isGestor = this.auth.usuario?.id == planoEntrega.unidade?.gestor_id || this.auth.usuario?.id == planoEntrega.unidade?.gestor_substituto_id;
+    const isGestor = this.auth.isGestorUnidade(planoEntrega.unidade);
     const BOTAO_LIBERAR_HOMOLOGACAO = { label: "Liberar para homologação", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "HOMOLOGANDO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "HOMOLOGANDO"), onClick: this.liberarHomologacao.bind(this) };
     const BOTAO_HOMOLOGAR = { label: "Homologar", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "ATIVO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "ATIVO"), onClick: this.homologar.bind(this) };
     const BOTAO_ALTERAR = { label: "Alterar", icon: "bi bi-pencil-square", onClick: (planoEntrega: PlanoEntrega) => this.go.navigate({ route: ['gestao', 'plano-entrega', planoEntrega.id, 'edit'] }, this.modalRefreshId(planoEntrega)) };
@@ -146,7 +148,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     const BOTAO_CONSULTAR: ToolbarButton = { label: "Informações", icon: "bi bi-info-circle", onClick: (planoEntrega: PlanoEntrega) => this.go.navigate({ route: ['gestao', 'plano-entrega', planoEntrega.id, 'consult'] }, { modal: true }) };
 
     result.push(BOTAO_CONSULTAR);
-    if(this.auth.hasPermissionTo("MOD_PENT_CANCELAR")) result.push(BOTAO_CANCELAR);
+    if (this.auth.hasPermissionTo("MOD_PENT_CANCELAR")) result.push(BOTAO_CANCELAR);
     if (this.auth.hasPermissionTo("MOD_PENT_EXCL")) result.push(BOTAO_EXCLUIR);
     if (planoEntrega.metadados?.arquivado) {
       if (this.auth.hasPermissionTo("MOD_PENT_DESARQ")) result.push(BOTAO_DESARQUIVAR);
