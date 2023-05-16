@@ -101,19 +101,25 @@ class PlanoEntregaController extends ControllerBase {
         }
     }
 
-    public function checkPermissions($action, &$request, $service, $unidade, $usuario) {
-        $planoEntrega = PlanoEntrega::find($request['id']);
-        $planoEmCurso = $this->service->emCurso($planoEntrega);
-        $planoEntregaValido = $this->service->isPlanoEntregaValido($planoEntrega);
-        $planoEntregaAtivo = $planoEntrega->status == "ATIVO";
-        $planoEntregaHomologando = $planoEntrega->status == "HOMOLOGANDO";
-        $planoEntregaIncluindo = $planoEntrega->status == "INCLUINDO";
+    public function checkPermissions($action, $request, $service, $unidade, $usuario) {
+        if(in_array($action,["QUERY","GETBYID"])){
+            if (!$usuario->hasPermissionTo('MOD_PENT_CONS')) throw new ServerException("CapacidadeStore", "Consulta não executada");
+        } else { $this->checarPermissoes($action, $request, $service, $unidade, $usuario); }
+    }
+
+    public function checarPermissoes($action, &$request, $service, $unidade, $usuario){
+        $plano_id = $request->input('id') ?? $request->input('entity')['id'];
+        $planoEntrega = PlanoEntrega::find($plano_id);
+        $planoValido = $this->service->isPlanoEntregaValido($planoEntrega);
+        $planoAtivo = $planoValido && $planoEntrega->status == "ATIVO";
+        $planoHomologando = $planoValido && $planoEntrega->status == "HOMOLOGANDO";
+        $planoIncluindo = $planoValido && $planoEntrega->status == "INCLUINDO";
         $planoProprio = $planoEntrega->plano_entrega_id == null;
-        $planoVinculado = $planoEntrega->plano_entrega_id != null;
+        $planoVinculado = !$planoProprio;
         $gestorUnidadePlano = $this->service->usuario->isGestorUnidade($planoEntrega->unidade_id);
         $gestorUnidadePaiPlano = $this->service->usuario->isGestorUnidade($planoEntrega->unidade->unidade_id);
         $unidadePlanoLotacaoPrincipal = $this->service->usuario->isLotacaoPrincipal($planoEntrega->unidade_id);
-        $lotadoLinhaAscendenteUnidadePlano = $this->service->usuario->isLotadoNaLinhaAscendente($planoEntrega->id);
+        $lotadoLinhaAscendenteUnidadePlano = $this->service->usuario->isLotadoNaLinhaAscendente($planoEntrega->unidade_id);
         switch ($action) {
             case 'ARQUIVAR':
                 if (!$usuario->hasPermissionTo('')) throw new ServerException("CapacidadeStore", "Operação não executada");
@@ -134,7 +140,7 @@ class PlanoEntregaController extends ControllerBase {
                 if (!$usuario->hasPermissionTo('')) throw new ServerException("CapacidadeStore", "Operação não executada");
                 break; 
             case 'CONCLUIR':
-                if (!($planoEntregaValido && $planoEntregaAtivo)) throw new ServerException("CapacidadeStore", "Operação não executada");
+                if (!$planoAtivo) throw new ServerException("CapacidadeStore", "Operação não executada");
                 if (!($gestorUnidadePlano || ($unidadePlanoLotacaoPrincipal && $usuario->hasPermissionTo('MOD_PENT_CONCLUIR')))) throw new ServerException("CapacidadeStore", "Operação não executada");
                 /*  para poder concluir um plano de entregas, é necessário que:
                     ele seja um plano de entregas válido e esteja com o status ATIVO; e
@@ -146,8 +152,8 @@ class PlanoEntregaController extends ControllerBase {
                 if (!$usuario->hasPermissionTo('MOD_PENT_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não executada");
                 break;
             case 'HOMOLOGAR':
-                if (!($planoProprio && $planoEntregaValido && $planoEntregaHomologando)) throw new ServerException("CapacidadeStore", "Operação não executada");
-                if (!($planoProprio && $gestorUnidadePaiPlano || ($lotadoLinhaAscendenteUnidadePlano && $usuario->hasPermissionTo('MOD_PENT_HOMOL_SUBORD')))) throw new ServerException("CapacidadeStore", "Operação não executada");
+                if (!($planoProprio && $planoHomologando)) throw new ServerException("CapacidadeStore", "Operação não executada");
+                if (!($gestorUnidadePaiPlano || ($lotadoLinhaAscendenteUnidadePlano && $usuario->hasPermissionTo('MOD_PENT_HOMOL_SUBORD')))) throw new ServerException("CapacidadeStore", "Operação não executada");
                 /*  para poder homologar um plano de entregas, é necessário que:
                     ele seja um plano de entregas válido e esteja com o status HOMOLOGANDO; e
                     o usuário logado seja gestor da unidade-pai do plano de entregas; ou
@@ -155,23 +161,20 @@ class PlanoEntregaController extends ControllerBase {
                 */
                 break;                
             case 'LIBERARHOMOLOGACAO':
-                if (!($planoProprio && $planoEntregaValido && $planoEntregaIncluindo)) throw new ServerException("CapacidadeStore", "Operação não executada");
-                if (!($planoProprio && $gestorUnidadePlano || ($unidadePlanoLotacaoPrincipal && $usuario->hasPermissionTo('MOD_PENT_LIB_HOMOL')))) throw new ServerException("CapacidadeStore", "Operação não executada");
+                if (!($planoProprio && $planoIncluindo)) throw new ServerException("CapacidadeStore", "Operação não executada");
+                if (!($gestorUnidadePlano || ($unidadePlanoLotacaoPrincipal && $usuario->hasPermissionTo('MOD_PENT_LIB_HOMOL')))) throw new ServerException("CapacidadeStore", "Operação não executada");
                 /*  para poder liberar um plano de entregas para homologação, é necessário que:
                     ele seja um plano de entregas válido e esteja com o status INCLUINDO; e
                     o usuário logado seja gestor da unidade do plano de entregas; ou
                     ela seja sua lotação principal e ele possua a capacidade "MOD_PENT_LIB_HOMOL"; 
                 */
                 break;
-            case 'QUERY':
-                if (!$usuario->hasPermissionTo('MOD_PENT_CONS')) throw new ServerException("CapacidadeStore", "Consulta não executada");
-                break;                
             case 'REATIVAR':
                 if (!$usuario->hasPermissionTo('')) throw new ServerException("CapacidadeStore", "Operação não executada");
                 break;   
             case 'RETIRARHOMOLOGACAO':
-                if (!($planoProprio && $planoEntregaValido && $planoEntregaHomologando)) throw new ServerException("CapacidadeStore", "Operação não executada");
-                if (!($planoProprio && ($gestorUnidadePlano || ($unidadePlanoLotacaoPrincipal && $usuario->hasPermissionTo('MOD_PENT_RET_HOMOL'))))) throw new ServerException("CapacidadeStore", "Operação não executada");                
+                if (!($planoProprio && $planoHomologando)) throw new ServerException("CapacidadeStore", "Operação não executada");
+                if (!($gestorUnidadePlano || ($unidadePlanoLotacaoPrincipal && $usuario->hasPermissionTo('MOD_PENT_RET_HOMOL')))) throw new ServerException("CapacidadeStore", "Operação não executada");                
                 /*  para poder retirar de homologação um plano de entregas, é necessário que:
                     ele seja um plano de entregas válido e esteja com o status HOMOLOGANDO; e
                     o usuário logado seja gestor da unidade do plano de entregas; ou
@@ -186,25 +189,15 @@ class PlanoEntregaController extends ControllerBase {
                 break; 
             case 'UPDATE':
                 $canUpdate = false;
-                $condition1 = $planoEntregaValido;
-                $condition2 = ($planoEntregaIncluindo || $planoEntregaHomologando) && ($gestorUnidadePlano || ($unidadePlanoLotacaoPrincipal && $usuario->hasPermissionTo('MOD_PENT_EDT')));
-                $condition3 = $planoEmCurso && $unidadePlanoLotacaoPrincipal && $usuario->hasPermissionTo('MOD_PENT_EDT_ATV_HOMOL');
-                $condition4 = $planoEmCurso && $unidadePlanoLotacaoPrincipal && $usuario->hasPermissionTo('MOD_PENT_EDT_ATV_ATV');
-                if($condition1 && $condition2) {
-                    $canUpdate = true; 
-                } else if($condition3) {
-                    $canUpdate = true;
-                    $request["status"] = "HOMOLOGANDO"; 
-                } else if($condition4) {
-                    $canUpdate = true;
-                    $request["status"] = "ATIVO"; 
-                }
-                if (!$canUpdate) throw new ServerException("CapacidadeStore", "Edição não executada");
-                /*  para poder editar um plano de entregas, é necessário que sejam atendidas as condições 1 e 2, ou a condição 3, ou a condição 4.
-                    condição1: o plano de entregas seja próprio e válido;
-                    condição2: o plano de entregas esteja com o status INCLUINDO ou HOMOLOGANDO, o usuário logado seja gestor da unidade do plano OU ela seja sua lotação principal e ele possua a capacidade "MOD_PENT_EDT";
-                    condição3: o plano de entregas esteja EM CURSO, a unidade do plano seja a lotação principal do usuário logado e ele tenha a capacidade "MOD_PENT_EDT_ATV_HOMOL";
-                    condição4: o plano de entregas esteja EM CURSO, a unidade do plano seja a lotação principal do usuário logado e ele tenha a capacidade "MOD_PENT_EDT_ATV_ATV"; 
+                $condition1 = ($planoIncluindo || $planoHomologando) && ($gestorUnidadePlano || ($unidadePlanoLotacaoPrincipal && $usuario->hasPermissionTo('MOD_PENT_EDT')));
+                $condition2 = $planoAtivo && $unidadePlanoLotacaoPrincipal && $usuario->hasPermissionTo(['MOD_PENT_EDT_ATV_HOMOL','MOD_PENT_EDT_ATV_ATV']);
+                if($condition1 || $condition2) $canUpdate = true;
+                if (!$canUpdate) throw new ServerException("CapacidadeStore", "Edição não executada"); else {
+                    $request->status = $usuario->hasPermissionTo('MOD_PENT_EDT_ATV_ATV') ? "ATIVO" : "HOMOLOGANDO";
+                };
+                /*  para poder editar um plano de entregas próprio, é necessário que seja atendida ao menos uma das seguintes condições:
+                    condição1: o plano de entregas seja válido e esteja com o status INCLUINDO ou HOMOLOGANDO, o usuário logado seja gestor da unidade do plano OU ela seja sua lotação principal e ele possua a capacidade "MOD_PENT_EDT";
+                    condição2: o plano de entregas seja válido e esteja com o status ATIVO, a unidade do plano seja a lotação principal do usuário logado e ele tenha a capacidade "MOD_PENT_EDT_ATV_HOMOL" ou "MOD_PENT_EDT_ATV_ATV";
                 */
                 break;
         }

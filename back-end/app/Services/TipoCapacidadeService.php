@@ -198,6 +198,7 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PTR_INCL_SEM_LOT", "Permite incluir planos de trabalho para usuários não lotado na unidade do plano"],
         ["MOD_PTR_INTSC_DATA", "Permite incluir planos de trabalho para usuários que já possuem planos no período de mesma modalidade"],
         /* Capacidades do módulo PLANO DE ENTREGAS*/
+        ["MOD_PENT", "Permite acessar item menu plano de entregas"],
         ["MOD_PENT_CONS", "Permite consultar planos de entrega"],
         ["MOD_PENT_INCL", "Permite incluir planos de entrega"],
         ["MOD_PENT_EDT", "Permite editar planos de entrega"],

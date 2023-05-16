@@ -148,12 +148,13 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     const BOTAO_CONSULTAR: ToolbarButton = { label: "Informações", icon: "bi bi-info-circle", onClick: (planoEntrega: PlanoEntrega) => this.go.navigate({ route: ['gestao', 'plano-entrega', planoEntrega.id, 'consult'] }, { modal: true }) };
 
     result.push(BOTAO_CONSULTAR);
+    result.push(BOTAO_ALTERAR);
     if (this.auth.hasPermissionTo("MOD_PENT_CANCELAR")) result.push(BOTAO_CANCELAR);
     if (this.auth.hasPermissionTo("MOD_PENT_EXCL")) result.push(BOTAO_EXCLUIR);
     if (planoEntrega.metadados?.arquivado) {
       if (this.auth.hasPermissionTo("MOD_PENT_DESARQ")) result.push(BOTAO_DESARQUIVAR);
     } else if (planoEntrega.metadados?.incluindo) {
-      if (this.auth.hasPermissionTo("MOD_PENT_EDT")) result.push(BOTAO_ALTERAR);
+/*       if (this.auth.hasPermissionTo("MOD_PENT_EDT") || (this.auth.isLotacaoPrincipal(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_EDT_ATV_HOMOL"))) result.push(BOTAO_ALTERAR); */
     } else if (planoEntrega.metadados?.homologando) {
       if (this.auth.hasPermissionTo("MOD_PENT_RET_HOMOL")) result.push(BOTAO_RETIRAR_HOMOLOGACAO);
     } else if (planoEntrega.metadados?.ativo) {
