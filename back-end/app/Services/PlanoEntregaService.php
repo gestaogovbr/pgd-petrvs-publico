@@ -139,7 +139,7 @@ class PlanoEntregaService extends ServiceBase
      * @param PlanoEntrega $planoEntrega  
      */
     public function emCurso(PlanoEntrega $planoEntrega): bool {
-        return !$planoEntrega->data_fim && !$planoEntrega->data_cancelamento && !$planoEntrega->data_arquivamento && $planoEntrega->status == 'ATIVO';
+        return $this->isPlanoEntregaValido($planoEntrega) && $planoEntrega->status == 'ATIVO';
     }
 
     public function homologar($data, $unidade) {
@@ -156,6 +156,15 @@ class PlanoEntregaService extends ServiceBase
             throw $e;
         }
         return true;
+    }
+
+    /**
+     * Informa se o plano de entregas repassado como parâmetro é um plano válido.
+     * Um Plano de Entregas é válido se não foi deletado, nem cancelado, nem arquivado.
+     * @param PlanoEntrega $planoEntrega  
+     */
+    public function isPlanoEntregaValido($planoEntrega): bool {
+        return !$planoEntrega->data_fim && !$planoEntrega->data_cancelamento && !$planoEntrega->data_arquivamento;
     }
 
     public function liberarHomologacao($data, $unidade) {

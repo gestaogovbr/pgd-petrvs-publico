@@ -201,6 +201,8 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PENT_CONS", "Permite consultar planos de entrega"],
         ["MOD_PENT_INCL", "Permite incluir planos de entrega"],
         ["MOD_PENT_EDT", "Permite editar planos de entrega"],
+        ["MOD_PENT_EDT_ATV_HOMOL", "Permite editar planos de entrega que estejam no status ATIVO. O plano voltará ao status HOMOLOGANDO"],
+        ["MOD_PENT_EDT_ATV_ATV", "Permite editar planos de entrega que estejam no status ATIVO, mantendo-os neste status."],
         ["MOD_PENT_EXCL", "Permite excluir planos de entrega"],
         ["MOD_PENT_HOMOL", "Permite homologar planos de entregas das unidades imediatamente subordinadas"],
         ["MOD_PENT_CANC_HOMOL", "Permite cancelar a homologação dos planos de entregas das unidades imediatamente subordinadas"],

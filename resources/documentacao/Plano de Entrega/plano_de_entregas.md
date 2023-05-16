@@ -110,11 +110,11 @@
   * Ao incluir fica com o status "INCLUINDO"
   * Estando no status "INCLUINDO"
         dynamicButtons: 
-            - se o usuário logado for gestor da unidade, ou se ela for sua lotação principal e ele possuir a capacidade "MOD_PENT_LIB_HOMOL", exibir o botão Liberar para homologação 
+            - se o usuário logado for gestor da unidade do plano de entregas, ou se ela for sua lotação principal e ele possuir a capacidade "MOD_PENT_LIB_HOMOL", exibir o botão Liberar para homologação 
               (vai para HOMOLOGANDO)
             - caso contrário, exibir o botão Consultar
         dynamicOptions: 
-            - se o usuário logado for gestor da unidade, ou se ela for sua lotação principal e ele possuir a capacidade "MOD_PENT_EDT", exibir o botão Editar plano de entrega
+            - se o usuário logado for gestor da unidade do plano, ou se ela for sua lotação principal e ele possuir a capacidade "MOD_PENT_EDT", exibir o botão Editar plano de entrega
   * Estando no status "HOMOLOGANDO"
         dynamicButtons: 
             - se o usuário logado for gestor da unidade-pai do plano, ou for lotado em alguma unidade da sua linha hierárquica ascendente e ele possuir a 
