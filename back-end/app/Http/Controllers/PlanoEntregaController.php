@@ -102,6 +102,14 @@ class PlanoEntregaController extends ControllerBase {
     }
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
+        switch ($action) {
+            case 'QUERY':
+                if (!$usuario->hasPermissionTo('MOD_PENT_CONS')) throw new ServerException("CapacidadeStore", "Consulta não executada");
+                return;
+            case 'GETBYID':
+                if (!$usuario->hasPermissionTo('MOD_PENT_CONS')) throw new ServerException("CapacidadeStore", "Consulta não executada");
+                return;
+        }
         $plano_id = $request->input('id') ?? $request->input('entity')['id'];
         $planoEntrega = PlanoEntrega::find($plano_id);
         $planoValido = $this->service->isPlanoEntregaValido($planoEntrega);
@@ -115,12 +123,6 @@ class PlanoEntregaController extends ControllerBase {
         $unidadePlanoLotacaoPrincipal = $this->service->usuario->isLotacaoPrincipal($planoEntrega->unidade_id);
         $lotadoLinhaAscendenteUnidadePlano = $this->service->usuario->isLotadoNaLinhaAscendente($planoEntrega->unidade_id);
         switch ($action) {
-            case 'QUERY':
-                if (!$usuario->hasPermissionTo('MOD_PENT_CONS')) throw new ServerException("CapacidadeStore", "Consulta não executada");
-                break;
-            case 'GETBYID':
-                if (!$usuario->hasPermissionTo('MOD_PENT_CONS')) throw new ServerException("CapacidadeStore", "Consulta não executada");
-                break;
             case 'STORE':
                 if (!$usuario->hasPermissionTo('MOD_PENT_INCL')) throw new ServerException("CapacidadeStore", "Inserção não executada");
                 break;
