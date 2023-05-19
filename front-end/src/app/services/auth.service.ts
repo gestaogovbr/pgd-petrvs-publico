@@ -79,8 +79,10 @@ export class AuthService {
   public get route(): ActivatedRoute { this._route = this._route || this.injector.get<ActivatedRoute>(ActivatedRoute); return this._route };
   private _calendar?: CalendarService;
   public get calendar(): CalendarService { this._calendar = this._calendar || this.injector.get<CalendarService>(CalendarService); return this._calendar };
-  private _usuarioDaoService?: UsuarioDaoService;
-  public get usuarioDaoService(): UsuarioDaoService { this._usuarioDaoService = this._usuarioDaoService || this.injector.get<UsuarioDaoService>(UsuarioDaoService); return this._usuarioDaoService };
+  private _usuarioDao?: UsuarioDaoService;
+  public get usuarioDao(): UsuarioDaoService { this._usuarioDao = this._usuarioDao || this.injector.get<UsuarioDaoService>(UsuarioDaoService); return this._usuarioDao };
+  private _unidadeDao?: UnidadeDaoService;
+  public get unidadeDao(): UnidadeDaoService { this._unidadeDao = this._unidadeDao || this.injector.get<UnidadeDaoService>(UnidadeDaoService); return this._unidadeDao };
 
   constructor(public injector: Injector) { }
 
@@ -124,12 +126,12 @@ export class AuthService {
 
   public updateUsuarioConfig(usuarioId: string, value: IIndexable) {
     if (this.usuario?.id == usuarioId) this.usuario!.config = this.util.assign(this.usuario!.config, value);
-    return this.usuarioDaoService.updateJson(usuarioId, 'config', value);
+    return this.usuarioDao.updateJson(usuarioId, 'config', value);
   }
 
   public updateUsuarioNotificacoes(usuarioId: string, value: IIndexable) {
     if (this.usuario?.id == usuarioId) this.usuario!.notificacoes = this.util.assign(this.usuario!.notificacoes, value);
-    return this.usuarioDaoService.updateJson(usuarioId, 'notificacoes', value);
+    return this.usuarioDao.updateJson(usuarioId, 'notificacoes', value);
   }
 
   public get usuarioConfig(): IIndexable {
@@ -322,8 +324,14 @@ export class AuthService {
    * @param pUnidade 
    * @returns 
    */
-    public isGestorUnidade(pUnidade: Unidade | null = null): boolean {
-      let unidade = pUnidade || this.unidade;
+    public isGestorUnidade(pUnidade: Unidade | string | null = null): boolean {
+      let unidade: Unidade;
+      if(pUnidade instanceof Unidade) unidade = pUnidade; else if(pUnidade == null) { unidade = this.unidade!;
+      } else { 
+          this.unidadeDao.getById(pUnidade as string, ['planos_entregas']).then(response => {
+          unidade = response as Unidade;
+        });
+      }
       return this.usuario!.id == unidade!.gestor_id || this.usuario!.id == unidade!.gestor_substituto_id; 
     }
 
@@ -347,10 +355,19 @@ export class AuthService {
      */
     public isLotadoNaLinhaAscendente(unidade: Unidade): boolean {
       let result = false;
-      let unidadeDao = this.injector.get<UnidadeDaoService>(UnidadeDaoService);
-      unidadeDao.linhaAscendente(unidade.id).then(linhaAscendente => {
+      this.unidadeDao.linhaAscendente(unidade.id).then(linhaAscendente => {
         linhaAscendente.forEach(x => {
           if(this.isLotacaoPrincipal(x)) result = true;
+        });
+      });
+      return result;
+    }
+
+    public isGestorLinhaAscendente(unidade: Unidade): boolean {
+      let result = false;
+      this.unidadeDao.linhaAscendente(unidade.id).then(linhaAscendente => {
+        linhaAscendente.forEach(x => {
+          if(this.isGestorUnidade(x)) result = true;
         });
       });
       return result;

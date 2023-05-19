@@ -289,33 +289,4 @@ class PlanoEntregaController extends ControllerBase {
         }
     }
 
-    public function update(Request $request)
-    {
-        try {
-            $data = $request->validate([
-                'id' => ['required'],
-                'data' => ['required'],
-                'with' => ['array']
-            ]);
-            $this->checkPermissions("UPDATE", $data, $this->service, $this->getUnidade($request), $this->getUsuario($request));
-            foreach (array_keys($data["data"]) as $key) {
-                if($key != "id" && !in_array($key, $this->updatable)) {
-                    return response()->json(['error' => "Não é possível atualizar"]);
-                }
-            }
-            $unidade = $this->getUnidade($request);
-            $data['data']['id'] = $data['id'];
-            $entity = $this->service->update($data['data'], $unidade);
-            $result = $this->service->getById([
-                'id' => $entity->id,
-                'with' => $data['with']
-            ]);
-            return response()->json([
-                'success' => true,
-                'rows' => [$result]
-            ]);
-        } catch (Throwable $e) {
-            return response()->json(['error' => $e->getMessage()]);
-        }
-    }
 }

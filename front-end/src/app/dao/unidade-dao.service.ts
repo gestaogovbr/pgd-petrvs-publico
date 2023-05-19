@@ -116,16 +116,16 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
   }
 
   /**
-   * Retorna um array com os planos de entregas EM CURSO relativos à unidade repassada como parâmetro (objeto Unidade ou apenas o ID de uma unidade);
+   * Retorna um array com os planos de entregas ativos relativos à unidade repassada como parâmetro (objeto Unidade ou apenas o ID de uma unidade);
    * @param pUnidade Objeto Unidade a ser analisado;
    * @returns 
    */
-  public planosEntregasEmCurso(pUnidade: Unidade | string | null): PlanoEntrega[] {
+  public planosEntregasAtivos(pUnidade: Unidade | string | null): PlanoEntrega[] {
     let unidade = pUnidade instanceof Unidade ? pUnidade : null;
     if (!unidade || unidade.planos_entregas == undefined) this.getById(pUnidade as string, ['planos_entregas']).then(response => {
       unidade = response as Unidade;
     });
-    return unidade?.planos_entregas?.filter(x => this.planoEntregaDao.emCurso(x)) || [];
+    return unidade?.planos_entregas?.filter(x => this.planoEntregaDao.isAtivo(x)) || [];
   }
 
 }
