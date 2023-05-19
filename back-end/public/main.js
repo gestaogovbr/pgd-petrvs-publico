@@ -28192,23 +28192,25 @@ DemandaFormProrrogarComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_5__
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AuthService", function() { return AuthService; });
-/* harmony import */ var _models_unidade_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../models/unidade.model */ "xiSz");
-/* harmony import */ var _models_usuario_model__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../models/usuario.model */ "11oC");
-/* harmony import */ var _dialog_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./dialog.service */ "CzQJ");
-/* harmony import */ var _globals_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./globals.service */ "LiVn");
-/* harmony import */ var _google_api_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./google-api.service */ "j4V1");
-/* harmony import */ var _navigate_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./navigate.service */ "RANn");
-/* harmony import */ var _server_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./server.service */ "H9vK");
-/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! moment */ "wd/R");
-/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/router */ "tyNb");
-/* harmony import */ var _calendar_service__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./calendar.service */ "3WFG");
-/* harmony import */ var _lexical_service__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./lexical.service */ "SttG");
-/* harmony import */ var _util_service__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./util.service */ "2Rin");
-/* harmony import */ var _dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../dao/usuario-dao.service */ "w5Sy");
-/* harmony import */ var _models_entidade_model__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../models/entidade.model */ "4IcU");
-/* harmony import */ var _dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../dao/unidade-dao.service */ "Ufbc");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var _models_unidade_model__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../models/unidade.model */ "xiSz");
+/* harmony import */ var _models_usuario_model__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../models/usuario.model */ "11oC");
+/* harmony import */ var _dialog_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./dialog.service */ "CzQJ");
+/* harmony import */ var _globals_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./globals.service */ "LiVn");
+/* harmony import */ var _google_api_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./google-api.service */ "j4V1");
+/* harmony import */ var _navigate_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./navigate.service */ "RANn");
+/* harmony import */ var _server_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./server.service */ "H9vK");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! moment */ "wd/R");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/router */ "tyNb");
+/* harmony import */ var _calendar_service__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./calendar.service */ "3WFG");
+/* harmony import */ var _lexical_service__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./lexical.service */ "SttG");
+/* harmony import */ var _util_service__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./util.service */ "2Rin");
+/* harmony import */ var _dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../dao/usuario-dao.service */ "w5Sy");
+/* harmony import */ var _models_entidade_model__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../models/entidade.model */ "4IcU");
+/* harmony import */ var _dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../dao/unidade-dao.service */ "Ufbc");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @angular/core */ "fXoL");
+
 
 
 
@@ -28257,28 +28259,28 @@ class AuthService {
         //@ts-ignore
         return typeof MD_MULTIAGENCIA_PETRVS_SESSION_TOKEN != "undefined" ? MD_MULTIAGENCIA_PETRVS_SESSION_TOKEN : this._apiToken;
     }
-    get server() { this._server = this._server || this.injector.get(_server_service__WEBPACK_IMPORTED_MODULE_6__["ServerService"]); return this._server; }
+    get server() { this._server = this._server || this.injector.get(_server_service__WEBPACK_IMPORTED_MODULE_7__["ServerService"]); return this._server; }
     ;
-    get lex() { this._lex = this._lex || this.injector.get(_lexical_service__WEBPACK_IMPORTED_MODULE_10__["LexicalService"]); return this._lex; }
+    get lex() { this._lex = this._lex || this.injector.get(_lexical_service__WEBPACK_IMPORTED_MODULE_11__["LexicalService"]); return this._lex; }
     ;
-    get gb() { this._gb = this._gb || this.injector.get(_globals_service__WEBPACK_IMPORTED_MODULE_3__["GlobalsService"]); return this._gb; }
+    get gb() { this._gb = this._gb || this.injector.get(_globals_service__WEBPACK_IMPORTED_MODULE_4__["GlobalsService"]); return this._gb; }
     ;
-    get util() { this._util = this._util || this.injector.get(_util_service__WEBPACK_IMPORTED_MODULE_11__["UtilService"]); return this._util; }
-    get go() { this._go = this._go || this.injector.get(_navigate_service__WEBPACK_IMPORTED_MODULE_5__["NavigateService"]); return this._go; }
-    get googleApi() { this._googleApi = this._googleApi || this.injector.get(_google_api_service__WEBPACK_IMPORTED_MODULE_4__["GoogleApiService"]); return this._googleApi; }
+    get util() { this._util = this._util || this.injector.get(_util_service__WEBPACK_IMPORTED_MODULE_12__["UtilService"]); return this._util; }
+    get go() { this._go = this._go || this.injector.get(_navigate_service__WEBPACK_IMPORTED_MODULE_6__["NavigateService"]); return this._go; }
+    get googleApi() { this._googleApi = this._googleApi || this.injector.get(_google_api_service__WEBPACK_IMPORTED_MODULE_5__["GoogleApiService"]); return this._googleApi; }
     ;
-    get dialogs() { this._dialogs = this._dialogs || this.injector.get(_dialog_service__WEBPACK_IMPORTED_MODULE_2__["DialogService"]); return this._dialogs; }
+    get dialogs() { this._dialogs = this._dialogs || this.injector.get(_dialog_service__WEBPACK_IMPORTED_MODULE_3__["DialogService"]); return this._dialogs; }
     ;
-    get route() { this._route = this._route || this.injector.get(_angular_router__WEBPACK_IMPORTED_MODULE_8__["ActivatedRoute"]); return this._route; }
+    get route() { this._route = this._route || this.injector.get(_angular_router__WEBPACK_IMPORTED_MODULE_9__["ActivatedRoute"]); return this._route; }
     ;
-    get calendar() { this._calendar = this._calendar || this.injector.get(_calendar_service__WEBPACK_IMPORTED_MODULE_9__["CalendarService"]); return this._calendar; }
+    get calendar() { this._calendar = this._calendar || this.injector.get(_calendar_service__WEBPACK_IMPORTED_MODULE_10__["CalendarService"]); return this._calendar; }
     ;
-    get usuarioDao() { this._usuarioDao = this._usuarioDao || this.injector.get(_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_12__["UsuarioDaoService"]); return this._usuarioDao; }
+    get usuarioDao() { this._usuarioDao = this._usuarioDao || this.injector.get(_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_13__["UsuarioDaoService"]); return this._usuarioDao; }
     ;
-    get unidadeDao() { this._unidadeDao = this._unidadeDao || this.injector.get(_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_14__["UnidadeDaoService"]); return this._unidadeDao; }
+    get unidadeDao() { this._unidadeDao = this._unidadeDao || this.injector.get(_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_15__["UnidadeDaoService"]); return this._unidadeDao; }
     ;
     get unidadeHora() {
-        return moment__WEBPACK_IMPORTED_MODULE_7__(this.hora).format("HH:mm");
+        return moment__WEBPACK_IMPORTED_MODULE_8__(this.hora).format("HH:mm");
     }
     get hora() {
         var _a;
@@ -28326,12 +28328,12 @@ class AuthService {
         return this.usuarioDao.updateJson(usuarioId, 'notificacoes', value);
     }
     get usuarioConfig() {
-        const defaults = new _models_usuario_model__WEBPACK_IMPORTED_MODULE_1__["UsuarioConfig"]();
+        const defaults = new _models_usuario_model__WEBPACK_IMPORTED_MODULE_2__["UsuarioConfig"]();
         return this.util.assign(defaults, this.usuario.config);
     }
     registerEntity(entity) {
         if (entity) {
-            this.entidade = Object.assign(new _models_entidade_model__WEBPACK_IMPORTED_MODULE_13__["Entidade"](), entity);
+            this.entidade = Object.assign(new _models_entidade_model__WEBPACK_IMPORTED_MODULE_14__["Entidade"](), entity);
             this.lex.loadVocabulary(this.entidade.nomenclatura || []);
         }
         else {
@@ -28341,7 +28343,7 @@ class AuthService {
     registerUser(user, token) {
         var _a, _b, _c, _d, _e, _f, _g, _h;
         if (user) {
-            this.usuario = Object.assign(new _models_usuario_model__WEBPACK_IMPORTED_MODULE_1__["Usuario"](), user);
+            this.usuario = Object.assign(new _models_usuario_model__WEBPACK_IMPORTED_MODULE_2__["Usuario"](), user);
             //this.usuario.config = Object.assign(new UsuarioConfig(), this.usuario.config || {});
             this.capacidades = ((_c = (_b = (_a = this.usuario) === null || _a === void 0 ? void 0 : _a.perfil) === null || _b === void 0 ? void 0 : _b.capacidades) === null || _c === void 0 ? void 0 : _c.filter(x => x.data_fim == null).map(x => { var _a; return ((_a = x.tipo_capacidade) === null || _a === void 0 ? void 0 : _a.codigo) || ""; })) || [];
             this.kind = this.kind;
@@ -28437,7 +28439,7 @@ class AuthService {
                 this.registerEntity(response.entidade);
                 this.registerUser(response.usuario, this.apiToken);
                 if ((_a = response.horario_servidor) === null || _a === void 0 ? void 0 : _a.length) {
-                    this.gb.horarioDelta.servidor = _util_service__WEBPACK_IMPORTED_MODULE_11__["UtilService"].iso8601ToDate(response.horario_servidor);
+                    this.gb.horarioDelta.servidor = _util_service__WEBPACK_IMPORTED_MODULE_12__["UtilService"].iso8601ToDate(response.horario_servidor);
                     this.gb.horarioDelta.local = new Date();
                 }
                 if (this.success && kind != "SESSION")
@@ -28494,7 +28496,7 @@ class AuthService {
             cdRef === null || cdRef === void 0 ? void 0 : cdRef.detectChanges();
             return this.server.post("api/seleciona-unidade", { unidade_id: id }).toPromise().then(response => {
                 if (response === null || response === void 0 ? void 0 : response.unidade) {
-                    this.unidade = Object.assign(new _models_unidade_model__WEBPACK_IMPORTED_MODULE_0__["Unidade"](), response === null || response === void 0 ? void 0 : response.unidade);
+                    this.unidade = Object.assign(new _models_unidade_model__WEBPACK_IMPORTED_MODULE_1__["Unidade"](), response === null || response === void 0 ? void 0 : response.unidade);
                     //if(!this.unidades?.find(x => x.id == this.unidade!.id)) this.unidades?.push(this.unidade);
                     this.calendar.loadFeriadosCadastrados(this.unidade.id);
                     if (this.unidade.entidade)
@@ -28521,18 +28523,9 @@ class AuthService {
      * @returns
      */
     isGestorUnidade(pUnidade = null) {
-        let unidade;
-        if (pUnidade instanceof _models_unidade_model__WEBPACK_IMPORTED_MODULE_0__["Unidade"])
-            unidade = pUnidade;
-        else if (pUnidade == null) {
-            unidade = this.unidade;
-        }
-        else {
-            this.unidadeDao.getById(pUnidade, ['planos_entregas']).then(response => {
-                unidade = response;
-            });
-        }
-        return this.usuario.id == unidade.gestor_id || this.usuario.id == unidade.gestor_substituto_id;
+        var _a;
+        let unidade = pUnidade == null ? this.unidade : typeof pUnidade == "string" ? (_a = this.unidades) === null || _a === void 0 ? void 0 : _a.find(x => x.id == pUnidade) : pUnidade;
+        return !!unidade && [unidade.gestor_substituto_id, unidade.gestor_id].includes(this.usuario.id);
     }
     /**
      * Informa se a unidade repassada como parâmetro é a lotação principal do usuário logado. Se nenhuma unidade for repassada,
@@ -28552,28 +28545,32 @@ class AuthService {
      * @returns
      */
     isLotadoNaLinhaAscendente(unidade) {
-        let result = false;
-        this.unidadeDao.linhaAscendente(unidade.id).then(linhaAscendente => {
-            linhaAscendente.forEach(x => {
-                if (this.isLotacaoPrincipal(x))
-                    result = true;
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            let result = false;
+            yield this.unidadeDao.linhaAscendente(unidade.id).then(linhaAscendente => {
+                linhaAscendente.forEach(x => {
+                    if (this.isLotacaoPrincipal(x))
+                        result = true;
+                });
             });
+            return result;
         });
-        return result;
     }
     isGestorLinhaAscendente(unidade) {
-        let result = false;
-        this.unidadeDao.linhaAscendente(unidade.id).then(linhaAscendente => {
-            linhaAscendente.forEach(x => {
-                if (this.isGestorUnidade(x))
-                    result = true;
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            let result = false;
+            yield this.unidadeDao.linhaAscendente(unidade.id).then(linhaAscendente => {
+                linhaAscendente.forEach((x) => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+                    if (yield this.isGestorUnidade(x))
+                        result = true;
+                }));
             });
+            return result;
         });
-        return result;
     }
 }
-AuthService.ɵfac = function AuthService_Factory(t) { return new (t || AuthService)(_angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_15__["Injector"])); };
-AuthService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵdefineInjectable"]({ token: AuthService, factory: AuthService.ɵfac, providedIn: 'root' });
+AuthService.ɵfac = function AuthService_Factory(t) { return new (t || AuthService)(_angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_16__["Injector"])); };
+AuthService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdefineInjectable"]({ token: AuthService, factory: AuthService.ɵfac, providedIn: 'root' });
 
 
 /***/ }),

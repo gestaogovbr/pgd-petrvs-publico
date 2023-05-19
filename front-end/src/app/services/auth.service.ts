@@ -325,14 +325,8 @@ export class AuthService {
    * @returns 
    */
     public isGestorUnidade(pUnidade: Unidade | string | null = null): boolean {
-      let unidade: Unidade;
-      if(pUnidade instanceof Unidade) unidade = pUnidade; else if(pUnidade == null) { unidade = this.unidade!;
-      } else { 
-          this.unidadeDao.getById(pUnidade as string, ['planos_entregas']).then(response => {
-          unidade = response as Unidade;
-        });
-      }
-      return this.usuario!.id == unidade!.gestor_id || this.usuario!.id == unidade!.gestor_substituto_id; 
+      let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? this.unidades?.find(x => x.id == pUnidade) : pUnidade;
+      return !!unidade && [unidade.gestor_substituto_id, unidade.gestor_id].includes(this.usuario!.id); 
     }
 
     /**
@@ -353,9 +347,9 @@ export class AuthService {
      * @param unidade 
      * @returns 
      */
-    public isLotadoNaLinhaAscendente(unidade: Unidade): boolean {
+    public async isLotadoNaLinhaAscendente(unidade: Unidade): Promise<boolean> {
       let result = false;
-      this.unidadeDao.linhaAscendente(unidade.id).then(linhaAscendente => {
+      await this.unidadeDao.linhaAscendente(unidade.id).then(linhaAscendente => {
         linhaAscendente.forEach(x => {
           if(this.isLotacaoPrincipal(x)) result = true;
         });
@@ -363,11 +357,11 @@ export class AuthService {
       return result;
     }
 
-    public isGestorLinhaAscendente(unidade: Unidade): boolean {
+    public async isGestorLinhaAscendente(unidade: Unidade): Promise<boolean> {
       let result = false;
-      this.unidadeDao.linhaAscendente(unidade.id).then(linhaAscendente => {
-        linhaAscendente.forEach(x => {
-          if(this.isGestorUnidade(x)) result = true;
+      await this.unidadeDao.linhaAscendente(unidade.id).then(linhaAscendente => {
+        linhaAscendente.forEach(async x => {
+          if(await this.isGestorUnidade(x)) result = true;
         });
       });
       return result;

@@ -131,30 +131,34 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       case 'INCLUINDO':
         if(this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_LIB_HOMOL"))) {
           result.push(BOTAO_LIBERAR_HOMOLOGACAO); 
-        } else if(this.isGestorLinhaAscendente(planoEntrega) || this.isLotadoUnidadePlano(planoEntrega)) {
-          result.push(BOTAO_CONSULTAR);
         };
+/*          else if(await this.isGestorLinhaAscendente(planoEntrega) || this.isLotadoUnidadePlano(planoEntrega)) {
+          result.push(BOTAO_CONSULTAR);
+        }; */
         break;
       case 'HOMOLOGANDO':
         if (this.isGestorUnidadePaiPlano(planoEntrega) || (this.isLotadoUnidadePai(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_HOMOL_SUBORD"))) {
           result.push(BOTAO_HOMOLOGAR); 
         } else if(this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_EDT"))){ 
           result.push(BOTAO_ALTERAR); 
-        } else if(this.isGestorLinhaAscendente(planoEntrega) || this.isLotadoUnidadePlano(planoEntrega)) {
-          result.push(BOTAO_CONSULTAR);
         };
+/*          else if(await this.isGestorLinhaAscendente(planoEntrega) || this.isLotadoUnidadePlano(planoEntrega)) {
+          result.push(BOTAO_CONSULTAR);
+        }; */
         break;
       case 'ATIVO':
         if(this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_CONCLUIR"))) {
           result.push(BOTAO_CONCLUIR); 
-        } else if(this.isGestorLinhaAscendente(planoEntrega) || this.isLotadoUnidadePlano(planoEntrega)) {
+        };
+/*          else if(await this.isGestorLinhaAscendente(planoEntrega) || this.isLotadoUnidadePlano(planoEntrega)) {
           result.push(BOTAO_CONSULTAR);
-        }
+        } */
         break;
       case 'CONCLUIDO':
-        if (this.isGestorUnidadePaiPlano(planoEntrega) || (this.isLotadoLinhaAscendente(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_AVAL_SUBORD"))) {
+/*         if (this.isGestorUnidadePaiPlano(planoEntrega) || (await this.isLotadoLinhaAscendente(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_AVAL_SUBORD"))) {
           result.push(BOTAO_AVALIAR); 
-        } else if(this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_CANC_CONCL"))){ 
+        } else */ 
+        if(this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_CANC_CONCL"))){ 
           result.push(BOTAO_CANCELAR_CONCLUSAO); 
         };
         break;
@@ -164,11 +168,12 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
         };
         break;
       case 'AVALIADO':
-        if(this.isGestorUnidadePaiPlano(planoEntrega) || (this.isLotadoLinhaAscendente(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_CANC_AVAL_SUBORD"))) {
+/*         if(this.isGestorUnidadePaiPlano(planoEntrega) || (await this.isLotadoLinhaAscendente(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_CANC_AVAL_SUBORD"))) {
           result.push(BOTAO_CANCELAR_AVALIACAO); 
-        } else if(this.isGestorLinhaAscendente(planoEntrega) || this.isLotadoUnidadePlano(planoEntrega)) {
+        }; */
+/*          else if(await this.isGestorLinhaAscendente(planoEntrega) || this.isLotadoUnidadePlano(planoEntrega)) {
           result.push(BOTAO_CONSULTAR);
-        }
+        } */
         break;
     }
     return result;
@@ -190,9 +195,10 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       case 'INCLUINDO':
         if(this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_EDT"))) {
           result.push(BOTAO_ALTERAR); 
-        } else if(this.isGestorLinhaAscendente(planoEntrega) || this.isLotadoUnidadePlano(planoEntrega)) {
+        }; 
+/*         else if(await this.isGestorLinhaAscendente(planoEntrega) || await this.isLotadoUnidadePlano(planoEntrega)) {
           result.push(BOTAO_CONSULTAR);
-        };
+        }; */
         break;
       case 'HOMOLOGANDO':
         if (this.isPlanoProprio(planoEntrega) && (this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_RET_HOMOL")))) {
@@ -202,9 +208,10 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
         };
         break;
       case 'ATIVO':
-        if(this.isGestorUnidadePaiPlano(planoEntrega) || (this.isLotadoLinhaAscendente(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_CANC_HOMOL_SUBORD"))) {
+/*         if(this.isGestorUnidadePaiPlano(planoEntrega) || (await this.isLotadoLinhaAscendente(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_CANC_HOMOL_SUBORD"))) {
           result.push(BOTAO_CANCELAR_HOMOLOGACAO); 
-        } else if(this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_SUSP"))) {
+        } else */
+        if(this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_SUSP"))) {
           result.push(BOTAO_SUSPENDER);
         };
         //-->(RN_PENT_6)
@@ -408,8 +415,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     });
   }
 
-  public isGestorLinhaAscendente(planoEntrega: PlanoEntrega): boolean {
-    return this.auth.isGestorLinhaAscendente(planoEntrega.unidade!);
+  public async isGestorLinhaAscendente(planoEntrega: PlanoEntrega): Promise<boolean> {
+    return await this.auth.isGestorLinhaAscendente(planoEntrega.unidade!);
   }
 
   public isGestorUnidadeSelecionada(): boolean {
@@ -424,8 +431,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     return this.auth.isGestorUnidade(planoEntrega.unidade)
   }
 
-  public isLotadoLinhaAscendente(planoEntrega: PlanoEntrega): boolean {
-    return this.auth.isLotadoNaLinhaAscendente(planoEntrega.unidade!);
+  public async isLotadoLinhaAscendente(planoEntrega: PlanoEntrega): Promise<boolean> {
+    return await this.auth.isLotadoNaLinhaAscendente(planoEntrega.unidade!);
   }
 
   public isLotadoUnidadePai(planoEntrega: PlanoEntrega): boolean {

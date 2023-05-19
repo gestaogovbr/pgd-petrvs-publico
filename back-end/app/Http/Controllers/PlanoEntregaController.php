@@ -102,12 +102,6 @@ class PlanoEntregaController extends ControllerBase {
     }
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
-        if(in_array($action,["QUERY","GETBYID"])){
-            if (!$usuario->hasPermissionTo('MOD_PENT_CONS')) throw new ServerException("CapacidadeStore", "Consulta não executada");
-        } else { $this->checarPermissoes($action, $request, $service, $unidade, $usuario); }
-    }
-
-    public function checarPermissoes($action, &$request, $service, $unidade, $usuario){
         $plano_id = $request->input('id') ?? $request->input('entity')['id'];
         $planoEntrega = PlanoEntrega::find($plano_id);
         $planoValido = $this->service->isPlanoEntregaValido($planoEntrega);
@@ -121,6 +115,29 @@ class PlanoEntregaController extends ControllerBase {
         $unidadePlanoLotacaoPrincipal = $this->service->usuario->isLotacaoPrincipal($planoEntrega->unidade_id);
         $lotadoLinhaAscendenteUnidadePlano = $this->service->usuario->isLotadoNaLinhaAscendente($planoEntrega->unidade_id);
         switch ($action) {
+            case 'QUERY':
+                if (!$usuario->hasPermissionTo('MOD_PENT_CONS')) throw new ServerException("CapacidadeStore", "Consulta não executada");
+                break;
+            case 'GETBYID':
+                if (!$usuario->hasPermissionTo('MOD_PENT_CONS')) throw new ServerException("CapacidadeStore", "Consulta não executada");
+                break;
+            case 'STORE':
+                if (!$usuario->hasPermissionTo('MOD_PENT_INCL')) throw new ServerException("CapacidadeStore", "Inserção não executada");
+                break;
+            case 'DESTROY':
+                if (!$usuario->hasPermissionTo('MOD_PENT_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não executada");
+                break;
+            case 'UPDATE':
+                $canUpdate = false;
+                $condition1 = ($planoIncluindo || $planoHomologando) && ($gestorUnidadePlano || ($unidadePlanoLotacaoPrincipal && $usuario->hasPermissionTo('MOD_PENT_EDT')));
+                $condition2 = $planoAtivo && $unidadePlanoLotacaoPrincipal && $usuario->hasPermissionTo(['MOD_PENT_EDT_ATV_HOMOL','MOD_PENT_EDT_ATV_ATV']);
+                if($condition1 || $condition2) $canUpdate = true;
+                if (!$canUpdate) throw new ServerException("CapacidadeStore", "Edição não executada");
+                /*  para poder editar um plano de entregas próprio, é necessário que seja atendida ao menos uma das seguintes condições:
+                    condição1: o plano de entregas seja válido e esteja com o status INCLUINDO ou HOMOLOGANDO, o usuário logado seja gestor da unidade do plano OU ela seja sua lotação principal e ele possua a capacidade "MOD_PENT_EDT";
+                    condição2: o plano de entregas seja válido e esteja com o status ATIVO, a unidade do plano seja a lotação principal do usuário logado e ele tenha a capacidade "MOD_PENT_EDT_ATV_HOMOL" ou "MOD_PENT_EDT_ATV_ATV";
+                */
+                break;
             case 'ARQUIVAR':
                 if (!$usuario->hasPermissionTo('')) throw new ServerException("CapacidadeStore", "Operação não executada");
                 break;
@@ -147,9 +164,6 @@ class PlanoEntregaController extends ControllerBase {
                     o usuário logado seja gestor da unidade do plano de entregas; ou
                     ela seja sua lotação principal e ele possua a capacidade "MOD_PENT_CONCLUIR"; 
                 */
-                break;
-            case 'DESTROY':
-                if (!$usuario->hasPermissionTo('MOD_PENT_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não executada");
                 break;
             case 'HOMOLOGAR':
                 if (!($planoProprio && $planoHomologando)) throw new ServerException("CapacidadeStore", "Operação não executada");
@@ -181,25 +195,9 @@ class PlanoEntregaController extends ControllerBase {
                     ela seja sua lotação principal e ele possua a capacidade "MOD_PENT_RET_HOMOL"; 
                 */
                 break;
-            case 'STORE':
-                if (!$usuario->hasPermissionTo('MOD_PENT_INCL')) throw new ServerException("CapacidadeStore", "Inserção não executada");
-                break;
             case 'SUSPENDER':
                 if (!$usuario->hasPermissionTo('')) throw new ServerException("CapacidadeStore", "Operação não executada");
                 break; 
-            case 'UPDATE':
-                $canUpdate = false;
-                $condition1 = ($planoIncluindo || $planoHomologando) && ($gestorUnidadePlano || ($unidadePlanoLotacaoPrincipal && $usuario->hasPermissionTo('MOD_PENT_EDT')));
-                $condition2 = $planoAtivo && $unidadePlanoLotacaoPrincipal && $usuario->hasPermissionTo(['MOD_PENT_EDT_ATV_HOMOL','MOD_PENT_EDT_ATV_ATV']);
-                if($condition1 || $condition2) $canUpdate = true;
-                if (!$canUpdate) throw new ServerException("CapacidadeStore", "Edição não executada"); else {
-                    $request->status = $usuario->hasPermissionTo('MOD_PENT_EDT_ATV_ATV') ? "ATIVO" : "HOMOLOGANDO";
-                };
-                /*  para poder editar um plano de entregas próprio, é necessário que seja atendida ao menos uma das seguintes condições:
-                    condição1: o plano de entregas seja válido e esteja com o status INCLUINDO ou HOMOLOGANDO, o usuário logado seja gestor da unidade do plano OU ela seja sua lotação principal e ele possua a capacidade "MOD_PENT_EDT";
-                    condição2: o plano de entregas seja válido e esteja com o status ATIVO, a unidade do plano seja a lotação principal do usuário logado e ele tenha a capacidade "MOD_PENT_EDT_ATV_HOMOL" ou "MOD_PENT_EDT_ATV_ATV";
-                */
-                break;
         }
     }
 
@@ -233,8 +231,8 @@ class PlanoEntregaController extends ControllerBase {
 
     public function liberarHomologacao(Request $request) {
         try {
+            $this->checkPermissions("LIBERARHOMOLOGACAO", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate(['id' => ['required']]);
-            $this->checkPermissions("LIBERARHOMOLOGACAO", $data, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $unidade = $this->getUnidade($request);
             return response()->json([
                 'success' => $this->service->liberarHomologacao($data, $unidade)
