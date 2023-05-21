@@ -101,16 +101,6 @@ class UnidadeService extends ServiceBase
         return true;
     }
 
-    /**
-     * Retorna um array contendo os objetos das Unidades que compõem a linha hierárquica ascendente da unidade repassada como parâmetro.
-     * @param string $unidade_id
-     */
-    public function linhaAscendente($unidade_id): array {
-        $unidade = Unidade::find($unidade_id);
-        $unidades_superiores_ids = array_filter(explode('/',$unidade->path),fn($x) => $x != "");
-        return Unidade::whereIn("id",$unidades_superiores_ids)->get()->toArray();
-    }
-
     public function mesmaSigla($entidadeId) {
         $repetidos = DB::table('unidades')->select(DB::raw('count(*) as qtd, sigla'))
             ->where('entidade_id', $entidadeId)

@@ -324,47 +324,47 @@ export class AuthService {
    * @param pUnidade 
    * @returns 
    */
-    public isGestorUnidade(pUnidade: Unidade | string | null = null): boolean {
-      let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? this.unidades?.find(x => x.id == pUnidade) : pUnidade;
-      return !!unidade && [unidade.gestor_substituto_id, unidade.gestor_id].includes(this.usuario!.id); 
-    }
+  public isGestorUnidade(pUnidade: Unidade | string | null = null): boolean {
+    /*       let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? this.unidades?.find(x => x.id == pUnidade) : pUnidade;
+          return !!unidade && [unidade.gestor_substituto_id, unidade.gestor_id].includes(this.usuario!.id);  */
+    let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? [...this.usuario!.chefias_titulares!, ...this.usuario!.chefias_substitutas!].find(x => x.id == pUnidade) : pUnidade;
+    return !!unidade && [unidade.gestor_substituto_id, unidade.gestor_id].includes(this.usuario!.id);
+  }
 
-    /**
-     * Informa se a unidade repassada como parâmetro é a lotação principal do usuário logado. Se nenhuma unidade for repassada, 
-     * será adotada a unidade selecionada pelo servidor na homepage.
-     * @param pUnidade 
-     * @returns 
-     */
-    public isLotacaoPrincipal(pUnidade: Unidade | null = null): boolean {
-      let unidade = pUnidade || this.unidade;
-      let lotacao = this.usuario!.lotacoes.find(x => x.unidade_id == unidade!.id && x.principal);
-      return lotacao != undefined;
-    }
+  /**
+   * Informa se a unidade repassada como parâmetro é a lotação principal do usuário logado. Se nenhuma unidade for repassada, 
+   * será adotada a unidade selecionada pelo servidor na homepage.
+   * @param pUnidade 
+   * @returns 
+   */
+  public isLotacaoPrincipal(pUnidade: Unidade | null = null): boolean {
+    let unidade = pUnidade || this.unidade;
+    let lotacao = this.usuario!.lotacoes.find(x => x.unidade_id == unidade!.id && x.principal);
+    return lotacao != undefined;
+  }
 
-    /**
-     * Informa se o usuário logado tem como lotação principal alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
-     * repassada como parâmetro.
-     * @param unidade 
-     * @returns 
-     */
-    public async isLotadoNaLinhaAscendente(unidade: Unidade): Promise<boolean> {
-      let result = false;
-      await this.unidadeDao.linhaAscendente(unidade.id).then(linhaAscendente => {
-        linhaAscendente.forEach(x => {
-          if(this.isLotacaoPrincipal(x)) result = true;
-        });
-      });
-      return result;
-    }
+  /**
+   * Informa se o usuário logado tem como lotação alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
+   * repassada como parâmetro.
+   * @param unidade 
+   * @returns 
+   */
+  public isLotadoNaLinhaAscendente(unidade: Unidade): boolean {
+    let result = false;
+    this.usuario!.lotacoes.map(x => x.unidade_id).forEach(x => { if (unidade.path.split('/').slice(1).includes(x)) result = true; });
+    return result;
+  }
 
-    public async isGestorLinhaAscendente(unidade: Unidade): Promise<boolean> {
-      let result = false;
-      await this.unidadeDao.linhaAscendente(unidade.id).then(linhaAscendente => {
-        linhaAscendente.forEach(async x => {
-          if(await this.isGestorUnidade(x)) result = true;
-        });
-      });
-      return result;
-    }
+  /**
+   * Informa se o usuário logado é gestor (titular ou substituto) de alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
+   * repassada como parâmetro.
+   * @param unidade 
+   * @returns 
+   */
+  public isGestorLinhaAscendente(unidade: Unidade): boolean {
+    let result = false;
+    [...this.usuario!.chefias_titulares!, ...this.usuario!.chefias_substitutas!].map(x => x.id).forEach(x => { if (unidade.path.split('/').slice(1).includes(x)) result = true; });
+    return result;
+  }
 
 }

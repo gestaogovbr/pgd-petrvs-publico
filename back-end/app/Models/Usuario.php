@@ -111,6 +111,8 @@ class Usuario extends Authenticatable
     public function planos() { return $this->hasMany(Plano::class); }
     public function usuariosHashes() { return $this->hasMany(UsuarioHahs::class); }
     public function integracoes() { return $this->hasMany(Integracao::class); }
+    public function chefiasTitulares() { return $this->hasMany(Unidade::class, 'gestor_id'); }
+    public function chefiasSubstitutas() { return $this->hasMany(Unidade::class, 'gestor_substituto_id'); }
     // Belongs
     public function perfil() { return $this->belongsTo(Perfil::class, 'perfil_id'); }
     // Mutattors e Casts

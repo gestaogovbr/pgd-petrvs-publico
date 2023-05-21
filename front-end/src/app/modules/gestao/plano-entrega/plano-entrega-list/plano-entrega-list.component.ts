@@ -7,7 +7,6 @@ import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
-import { Unidade } from 'src/app/models/unidade.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
@@ -44,7 +43,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       planejamento_id: { default: null },
       cadeia_valor_id: { default: null },
     });
-    this.join = ['planejamento:id,nome', 'cadeiaValor:id,nome', 'unidade:id,sigla'];
+    this.join = ['planejamento:id,nome', 'cadeiaValor:id,nome', 'unidade:id,sigla,path'];
     this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }];
     this.BOTAO_ADERIR = {
       label: "Aderir",
@@ -131,34 +130,30 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       case 'INCLUINDO':
         if(this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_LIB_HOMOL"))) {
           result.push(BOTAO_LIBERAR_HOMOLOGACAO); 
-        };
-/*          else if(await this.isGestorLinhaAscendente(planoEntrega) || this.isLotadoUnidadePlano(planoEntrega)) {
+        } else if(this.isGestorLinhaAscendente(planoEntrega) || this.isLotadoUnidadePlano(planoEntrega)) {
           result.push(BOTAO_CONSULTAR);
-        }; */
+        };
         break;
       case 'HOMOLOGANDO':
         if (this.isGestorUnidadePaiPlano(planoEntrega) || (this.isLotadoUnidadePai(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_HOMOL_SUBORD"))) {
           result.push(BOTAO_HOMOLOGAR); 
         } else if(this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_EDT"))){ 
           result.push(BOTAO_ALTERAR); 
-        };
-/*          else if(await this.isGestorLinhaAscendente(planoEntrega) || this.isLotadoUnidadePlano(planoEntrega)) {
+        } else if(this.isGestorLinhaAscendente(planoEntrega) || this.isLotadoUnidadePlano(planoEntrega)) {
           result.push(BOTAO_CONSULTAR);
-        }; */
+        };
         break;
       case 'ATIVO':
         if(this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_CONCLUIR"))) {
           result.push(BOTAO_CONCLUIR); 
-        };
-/*          else if(await this.isGestorLinhaAscendente(planoEntrega) || this.isLotadoUnidadePlano(planoEntrega)) {
+        } else if(this.isGestorLinhaAscendente(planoEntrega) || this.isLotadoUnidadePlano(planoEntrega)) {
           result.push(BOTAO_CONSULTAR);
-        } */
+        }
         break;
       case 'CONCLUIDO':
-/*         if (this.isGestorUnidadePaiPlano(planoEntrega) || (await this.isLotadoLinhaAscendente(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_AVAL_SUBORD"))) {
+        if (this.isGestorUnidadePaiPlano(planoEntrega) || (this.isLotadoLinhaAscendente(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_AVAL_SUBORD"))) {
           result.push(BOTAO_AVALIAR); 
-        } else */ 
-        if(this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_CANC_CONCL"))){ 
+        } else if(this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_CANC_CONCL"))){ 
           result.push(BOTAO_CANCELAR_CONCLUSAO); 
         };
         break;
@@ -168,12 +163,11 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
         };
         break;
       case 'AVALIADO':
-/*         if(this.isGestorUnidadePaiPlano(planoEntrega) || (await this.isLotadoLinhaAscendente(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_CANC_AVAL_SUBORD"))) {
+        if(this.isGestorUnidadePaiPlano(planoEntrega) || (this.isLotadoLinhaAscendente(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_CANC_AVAL_SUBORD"))) {
           result.push(BOTAO_CANCELAR_AVALIACAO); 
-        }; */
-/*          else if(await this.isGestorLinhaAscendente(planoEntrega) || this.isLotadoUnidadePlano(planoEntrega)) {
+        } else if(this.isGestorLinhaAscendente(planoEntrega) || this.isLotadoUnidadePlano(planoEntrega)) {
           result.push(BOTAO_CONSULTAR);
-        } */
+        }
         break;
     }
     return result;
@@ -195,10 +189,9 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       case 'INCLUINDO':
         if(this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_EDT"))) {
           result.push(BOTAO_ALTERAR); 
-        }; 
-/*         else if(await this.isGestorLinhaAscendente(planoEntrega) || await this.isLotadoUnidadePlano(planoEntrega)) {
+        } else if(this.isGestorLinhaAscendente(planoEntrega) || this.isLotadoUnidadePlano(planoEntrega)) {
           result.push(BOTAO_CONSULTAR);
-        }; */
+        };
         break;
       case 'HOMOLOGANDO':
         if (this.isPlanoProprio(planoEntrega) && (this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_RET_HOMOL")))) {
@@ -208,10 +201,9 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
         };
         break;
       case 'ATIVO':
-/*         if(this.isGestorUnidadePaiPlano(planoEntrega) || (await this.isLotadoLinhaAscendente(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_CANC_HOMOL_SUBORD"))) {
+        if(this.isGestorUnidadePaiPlano(planoEntrega) || (this.isLotadoLinhaAscendente(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_CANC_HOMOL_SUBORD"))) {
           result.push(BOTAO_CANCELAR_HOMOLOGACAO); 
-        } else */
-        if(this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_SUSP"))) {
+        } else if(this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_SUSP"))) {
           result.push(BOTAO_SUSPENDER);
         };
         //-->(RN_PENT_6)
@@ -415,8 +407,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     });
   }
 
-  public async isGestorLinhaAscendente(planoEntrega: PlanoEntrega): Promise<boolean> {
-    return await this.auth.isGestorLinhaAscendente(planoEntrega.unidade!);
+  public isGestorLinhaAscendente(planoEntrega: PlanoEntrega): boolean {
+    return this.auth.isGestorLinhaAscendente(planoEntrega.unidade!);
   }
 
   public isGestorUnidadeSelecionada(): boolean {
@@ -431,8 +423,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     return this.auth.isGestorUnidade(planoEntrega.unidade)
   }
 
-  public async isLotadoLinhaAscendente(planoEntrega: PlanoEntrega): Promise<boolean> {
-    return await this.auth.isLotadoNaLinhaAscendente(planoEntrega.unidade!);
+  public isLotadoLinhaAscendente(planoEntrega: PlanoEntrega): boolean {
+    return this.auth.isLotadoNaLinhaAscendente(planoEntrega.unidade!);
   }
 
   public isLotadoUnidadePai(planoEntrega: PlanoEntrega): boolean {

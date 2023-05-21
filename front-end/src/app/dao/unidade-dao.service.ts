@@ -107,13 +107,13 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
    * @param unidade_id 
    * @returns 
    */
-  public linhaAscendente(unidade_id: string): Promise<Unidade[]> {
+/*   public linhaAscendente(unidade_id: string): Promise<Unidade[]> {
     return new Promise<Unidade[]>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/linha-ascendente', { unidade_id }).subscribe(response => {
         resolve(response?.linhaAscendente || []);
       }, error => reject(error));
     });
-  }
+  } */
 
   /**
    * Retorna um array com os planos de entregas ativos relativos à unidade repassada como parâmetro (objeto Unidade ou apenas o ID de uma unidade);
