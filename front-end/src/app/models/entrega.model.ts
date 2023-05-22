@@ -11,6 +11,7 @@ export type EntregaValor = {
 
 export class Entrega extends Base {
     public nome: string = ""; //Nome da entrega;
+    public descricao: string = ""; //Descrição da entrega;
     public tipo_indicador: EntregaTipoIndicador = "PORCENTAGEM"; //Tipo_indicador: "QUANTIDADE", "VALOR", "PORCENTAGEM", "QUALITATIVO");
     public lista_qualitativos: LookupItem[] = [];
 

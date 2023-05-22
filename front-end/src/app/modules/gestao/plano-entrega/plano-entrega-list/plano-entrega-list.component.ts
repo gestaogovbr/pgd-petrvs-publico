@@ -43,7 +43,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       planejamento_id: { default: null },
       cadeia_valor_id: { default: null },
     });
-    this.join = ['planejamento:id,nome', 'cadeiaValor:id,nome', 'unidade:id,sigla,path'];
+    this.join = ['planejamento:id,nome', 'cadeiaValor:id,nome', 'unidade:id,sigla,path', 'entregas:id'];
     this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }];
     this.BOTAO_ADERIR = {
       label: "Aderir",

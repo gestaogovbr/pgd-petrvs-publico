@@ -27,10 +27,10 @@ class PlanoEntrega extends ModelBase
         'unidade_id', /* char(36); NOT NULL; */
         'status', /* enum('INCLUINDO','HOMOLOGANDO','ATIVO','CONCLUIDO','AVALIADO','SUSPENSO'); NOT NULL; */// Status do plano de entrega
         'plano_entrega_id', /* char(36); */
+        'numero', /* int; NOT NULL; */// Número do plano de entrega (Gerado pelo sistema)
         'data_arquivamento', /* datetime; */// Data de arquivamento do plano de entregas
         'data_cancelamento', /* datetime; */// Data de cancelamento do plano de entregas
         'cancelamento_usuario_id', /* char(36); */
-        //'numero', /* int; NOT NULL; */// Número do plano de entrega (Gerado pelo sistema)
     ];
 
     public $fillable_changes = ["entregas"];
