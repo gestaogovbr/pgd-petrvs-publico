@@ -14,7 +14,7 @@ class AlterEntregasTableAddDescricao extends Migration
     public function up()
     {
         Schema::table('entregas', function (Blueprint $table) {
-            $table->string("descricao", 500)->comment("Descrição da entrega.");
+            $table->string("descricao")->comment("Descrição da entrega.");
         });
     }
 

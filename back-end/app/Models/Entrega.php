@@ -17,7 +17,7 @@ class Entrega extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'nome', /* varchar(256); NOT NULL; */// Nome
-        'descricao', /* varchar(500); NOT NULL; */// Descrição da entrega.
+        'descricao', /* varchar(255); NOT NULL; */// Descrição da entrega.
         'tipo_indicador', /* enum('QUANTIDADE','VALOR','PORCENTAGEM','QUALITATIVO'); NOT NULL; */// Tipo do indicador
         'lista_qualitativos', /* json; */// valores do qualitativo
         //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
