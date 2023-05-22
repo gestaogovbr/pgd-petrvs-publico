@@ -7,6 +7,7 @@ import { Demanda } from './demanda.model';
 import { Lotacao } from './lotacao.model';
 import { Perfil } from './perfil.model';
 import { Plano } from './plano.model';
+import { Unidade } from './unidade.model';
 
 export type UsuarioVinculacao = "SERVIDOR_EFETIVO" | "SERVIDOR_COMISSIONADO" | "EMPREGADO" | "CONTRATADO_TEMPORARIO";
 
@@ -31,6 +32,8 @@ export class Usuario extends Base {
     public planos?: Plano[]; /* Lista de planos de trabalho */
     public afastamentos?: Afastamento[]; /* Lista de afastamentos */
     public demandas?: Demanda[];
+    public chefias_titulares?: Unidade[];
+    public chefias_substitutas?: Unidade[];
 
     public nome: string = ""; /* Nome do Usuário */
     public email: string = ""; /* Email do Usuário */

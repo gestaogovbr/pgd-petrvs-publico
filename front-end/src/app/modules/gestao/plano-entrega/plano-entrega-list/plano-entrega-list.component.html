@@ -1,7 +1,7 @@
 <grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
     [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_PENT_INCL')"
     [hasEdit]="false">
-    <toolbar *ngIf="!selectable">
+    <toolbar *ngIf="!selectable" [buttons]="toolbarButtons">
         <input-switch [size]="4" labelPosition="left" label="Agrupar por Un." controlName="agrupar"
             [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
     </toolbar>

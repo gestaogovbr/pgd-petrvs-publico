@@ -34,62 +34,6 @@ class UsuarioService extends ServiceBase
     const LOGIN_MICROSOFT = "AZURE";
     const LOGIN_FIREBASE = "FIREBASE";
 
-    public function proxyStore(&$data, $unidade, $action) {
-        $data['cpf'] = $this->UtilService->onlyNumbers($data['cpf']);
-        $data['telefone'] = $this->UtilService->onlyNumbers($data['telefone']);
-        /* Faz as atualizações das lotações de forma segura 
-        if($action != ServiceBase::ACTION_INSERT) {
-            foreach($data['lotacoes'] as $lotacao) {
-                if($lotacao["status"] == "DELETE") {
-                    $this->LotacaoService->destroy($lotacao["id"], false);
-                } else {
-                    $this->LotacaoService->save($lotacao);
-                }
-            }
-            $data['lotacoes'] = []; /* avoid fillablechanges
-        } else if(empty($data['lotacoes'])) {
-            throw new ServerException("ValidateUsuario", "Obrigatório existir ao menos uma lotação para o usuário");
-        }*/
-        return $data;
-    }
-
-    public function extraStore($entity, $unidade, $action) {
-        $this->LotacaoService->checksLotacoes($entity->id);
-    }
-
-    public function proxySearch($query, &$data, &$text) {
-        $data["where"][] = ["subordinadas", "==", true];
-        return $this->proxyQuery($query, $data);
-        /*        $where = [];
-        $unidade_id = null;
-        $vinculadas = false;
-        foreach($data["where"] as $condition) {
-            if(is_array($condition) && $condition[0] == "unidade_id") {
-                $unidade_id = $condition[2];
-            } else if(is_array($condition) && $condition[0] == "subordinadas") {
-                $vinculadas = $condition[2];
-            } else {
-                array_push($where, $condition);
-            }
-        }
-        $unidades_ids = [];
-        if(!empty($unidade_id)) {
-            array_push($unidades_ids, $unidade_id);
-        } else {
-            $usuario = parent::loggedUser();
-            foreach($usuario->lotacoes as $lotacao) {
-                array_push($unidades_ids, $lotacao->unidade_id);
-            }
-        }
-        if($vinculadas) {
-            $origens = UnidadeOrigemAtividade::whereIn("unidade_id", $unidades_ids)->whereNotIn("unidade_origem_atividade_id", $unidades_ids)->get();
-            $unidades_ids = array_merge($unidades_ids, array_map(fn($origem) => $origem->unidade_origem_atividade_id, $origens->all()));
-        }
-        array_push($where, ["unidade_id", "in", $unidades_ids]);
-        $data["where"] = $where;
-        return $data;*/
-    }
-
     public function atualizarFotoPerfil($tipo, &$usuario, $url) {
         $mudou = ($tipo == UsuarioService::LOGIN_GOOGLE ? $usuario->foto_google != $url :
                  ($tipo == UsuarioService::LOGIN_MICROSOFT ? $usuario->foto_microsoft != $url :
@@ -106,64 +50,6 @@ class UsuarioService extends ServiceBase
                 $usuario->save();
             }
         }
-    }
-
-    public function downloadImgProfile($url, $path) {
-        if(!Storage::exists($path)) {
-            Storage::makeDirectory($path, 0755, true);
-        }
-        try {
-            $contents = file_get_contents($url);
-        } catch(Throwable $e) {}
-        if(!empty($contents)) {
-            $name = $path . "/profile_" . md5($contents) . ".jpg";
-            if(!Storage::exists($name)) Storage::put($name, $contents);
-            return $name;
-        } else {
-            return "";
-        }
-    }
-
-    public function hasLotacao($id, $usuario = null, $subordinadas = true, $dataRef = null) {
-        return Unidade::where("id", $id)->whereRaw($this->lotacoesWhere($subordinadas, $usuario, "", false, $dataRef))->count() > 0;
-        /*Usuario::where("id", $usuario->id)->whereHas('lotacoes', function (Builder $query) use ($id) {
-            $query->where('id', $id);
-        })->count() > 0;*/
-    }
-
-    public function lotacoesWhere($subordinadas, $usuario = null, $prefix = "", $deleted = false, $dataRef = null) {
-        $where = [];
-        $prefix = empty($prefix) ? "" : $prefix . ".";
-        $usuario = $usuario ?? parent::loggedUser();
-        foreach($usuario->lotacoes as $lotacao) {
-            if(($deleted || empty($lotacao->data_fim)) && !UtilService::greaterThanOrIqual($dataRef, $lotacao->data_fim)) {
-                $where[] = $prefix . "id = '" . $lotacao->unidade_id . "'";
-                if($subordinadas) $where[] = $prefix . "path like '%" . $lotacao->unidade_id . "%'";
-            }
-        }
-        $result = implode(" OR ", $where);
-        return empty($result) ? "false" : "(" . $result . ")";
-    }
-
-    public function proxyQuery($query, &$data) {
-        $usuario = parent::loggedUser();
-        $where = [];
-        $subordinadas = true;
-        foreach($data["where"] as $condition) {
-            if(is_array($condition) && $condition[0] == "lotacao") {
-                array_push($where, new RawWhere("EXISTS(SELECT id FROM lotacoes where_lotacoes WHERE where_lotacoes.usuario_id = usuarios.id AND where_lotacoes.unidade_id = ?)", [$condition[2]]));
-            } else if(is_array($condition) && $condition[0] == "subordinadas") {
-                $subordinadas = $condition[2];
-            } else {
-                array_push($where, $condition);
-            }
-        }
-        if(!$usuario->hasPermissionTo("MOD_USER_TUDO")) {
-            $lotacoesWhere = $this->lotacoesWhere($subordinadas, null, "where_unidades");
-            array_push($where, new RawWhere("EXISTS(SELECT where_lotacoes.id FROM lotacoes where_lotacoes LEFT JOIN unidades where_unidades ON (where_unidades.id = where_lotacoes.unidade_id) WHERE where_lotacoes.usuario_id = usuarios.id AND ($lotacoesWhere))", []));
-        }
-        $data["where"] = $where;
-        return $data;
     }
 
     public function dashboard($data_inicial, $data_final, $usuario_id) {
@@ -273,6 +159,80 @@ class UsuarioService extends ServiceBase
 
         return $result;
     }
+
+    public function downloadImgProfile($url, $path) {
+        if(!Storage::exists($path)) {
+            Storage::makeDirectory($path, 0755, true);
+        }
+        try {
+            $contents = file_get_contents($url);
+        } catch(Throwable $e) {}
+        if(!empty($contents)) {
+            $name = $path . "/profile_" . md5($contents) . ".jpg";
+            if(!Storage::exists($name)) Storage::put($name, $contents);
+            return $name;
+        } else {
+            return "";
+        }
+    }
+
+    public function extraStore($entity, $unidade, $action) {
+        $this->LotacaoService->checksLotacoes($entity->id);
+    }
+
+    public function hasLotacao($id, $usuario = null, $subordinadas = true, $dataRef = null) {
+        return Unidade::where("id", $id)->whereRaw($this->lotacoesWhere($subordinadas, $usuario, "", false, $dataRef))->count() > 0;
+        /*Usuario::where("id", $usuario->id)->whereHas('lotacoes', function (Builder $query) use ($id) {
+            $query->where('id', $id);
+        })->count() > 0;*/
+    }
+
+    /**
+     * Informa se o usuário logado é gestor(titular ou substituto) da unidade repassada como parâmetro.
+     * @param string $unidade_id 
+     */
+    public function isGestorUnidade(string $unidade_id): bool {
+        $unidade = Unidade::find($unidade_id);
+        return in_array(parent::loggedUser()->id, [$unidade->gestor_id, $unidade->gestor_substituto_id]);
+    }
+
+    /**
+     * Informa se a unidade repassada como parâmetro é a lotação principal do usuário logado.
+     * @param string $unidade_id 
+     */
+    public function isLotacaoPrincipal(string $unidade_id): bool {
+        return !empty(Lotacao::where("usuario_id", parent::loggedUser()->id)->where("unidade_id",$unidade_id)->whereNull("data_fim")->where("principal", 1)->first());
+    }
+
+    /**
+     * Informa se o usuário logado tem como lotação principal alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
+     * repassada como parâmetro.
+     * @param string $unidade_id 
+     * @returns 
+     */
+    public function isLotadoNaLinhaAscendente(string $unidade_id): bool {
+        $result = false;
+        $linhaAscendente = $this->unidadeService->linhaAscendente($unidade_id);
+        foreach($linhaAscendente as $unidade) {
+            if($this->isLotacaoPrincipal($unidade_id)) $result = true;
+        };
+        return $result;
+    }
+
+    public function lotacoesWhere($subordinadas, $usuario = null, $prefix = "", $deleted = false, $dataRef = null) {
+        $where = [];
+        $prefix = empty($prefix) ? "" : $prefix . ".";
+        $usuario = $usuario ?? parent::loggedUser();
+        foreach($usuario->lotacoes as $lotacao) {
+            if(($deleted || empty($lotacao->data_fim)) && !UtilService::greaterThanOrIqual($dataRef, $lotacao->data_fim)) {
+                $where[] = $prefix . "id = '" . $lotacao->unidade_id . "'";
+                if($subordinadas) $where[] = $prefix . "path like '%" . $lotacao->unidade_id . "%'";
+            }
+        }
+        $result = implode(" OR ", $where);
+        return empty($result) ? "false" : "(" . $result . ")";
+    }
+
     /**
      * dashboard gestor
      *
@@ -282,47 +242,6 @@ class UsuarioService extends ServiceBase
      * @return array: array contendo todas as informações dos planos de trabalho de cada usuário da unidade (front-end do gestor)
      */
 
-
-    public function old_dashboard($usuario_id): array {
-        $planosAtivos = $this->PlanoService->planosAtivos($usuario_id);
-        $planos_ids = [];
-        $result = [
-            "total_demandas" => 0,
-            "produtividade" => 0,
-            "demandas_totais_atrasadas" => 0
-        ];
-        foreach($planosAtivos as $plano) {
-            array_push($planos_ids, $plano->id);
-        }
-        // A variável $demandas armazena todas as demandas de todos os planos ativos do usuário
-        $demandas = Demanda::where("usuario_id", $usuario_id)->whereIn("plano_id", $planos_ids)->get();
-        $demandasTotaisNaoIniciadas = Demanda::where("usuario_id", $usuario_id)->whereNull('data_inicio')->get();
-        $demandasTotaisNaoConcluidas = Demanda::where("usuario_id", $usuario_id)->whereNotNull('data_inicio')->whereNull('data_entrega')->get();
-        $demandasTotaisConcluidas = Demanda::where("usuario_id", $usuario_id)->whereNotNull('data_entrega')->get();
-        $demandasTotaisAvaliadas = Demanda::where("usuario_id", $usuario_id)->whereNotNull('avaliacao_id')->with(['avaliacao'])->get();
-
-        $tarefasTotaisNaoConcluidas = DemandaEntrega::where("usuario_id", $usuario_id)->where('concluido', 0)->get();
-
-        $result["total_demandas"] = $demandas->count();
-
-        foreach($demandasTotaisNaoConcluidas as $demanda) {
-            $metadados = $this->DemandaService->metadados($demanda);
-            $result["demandas_totais_atrasadas"] += $metadados["atrasado"] ? 1 : 0;
-        }
-
-        $result["demandas_totais_nao_iniciadas"] = $demandasTotaisNaoIniciadas->count();
-        $result["demandas_totais_nao_concluidas"] = $demandasTotaisNaoConcluidas->count();
-        $result["demandas_totais_concluidas"] = $demandasTotaisConcluidas->count();
-        $result["demandas_totais_avaliadas"] = $demandasTotaisAvaliadas->count();
-        $result["media_avaliacoes"] = (count($demandasTotaisAvaliadas) == 0) ? null : $this->utilService->avg(array_map(function($d) {
-                return $d["avaliacao"]["nota_atribuida"];
-            }, $demandasTotaisAvaliadas->toArray()));
-
-
-        $result["tarefas_totais_nao_concluidas"] = $tarefasTotaisNaoConcluidas->count();
-
-        return $result;
-    }
 
     public function planosPorPeriodo($usuario_id, $inicioPeriodo = null, $fimPeriodo = null){
         $result = [];
@@ -335,6 +254,87 @@ class UsuarioService extends ServiceBase
             }
         }
         return $result;
+    }
+
+    public function proxyQuery($query, &$data) {
+        $usuario = parent::loggedUser();
+        $where = [];
+        $subordinadas = true;
+        foreach($data["where"] as $condition) {
+            if(is_array($condition) && $condition[0] == "lotacao") {
+                array_push($where, new RawWhere("EXISTS(SELECT id FROM lotacoes where_lotacoes WHERE where_lotacoes.usuario_id = usuarios.id AND where_lotacoes.unidade_id = ?)", [$condition[2]]));
+            } else if(is_array($condition) && $condition[0] == "subordinadas") {
+                $subordinadas = $condition[2];
+            } else {
+                array_push($where, $condition);
+            }
+        }
+        if(!$usuario->hasPermissionTo("MOD_USER_TUDO")) {
+            $lotacoesWhere = $this->lotacoesWhere($subordinadas, null, "where_unidades");
+            array_push($where, new RawWhere("EXISTS(SELECT where_lotacoes.id FROM lotacoes where_lotacoes LEFT JOIN unidades where_unidades ON (where_unidades.id = where_lotacoes.unidade_id) WHERE where_lotacoes.usuario_id = usuarios.id AND ($lotacoesWhere))", []));
+        }
+        $data["where"] = $where;
+        return $data;
+    }
+
+    public function proxySearch($query, &$data, &$text) {
+        $data["where"][] = ["subordinadas", "==", true];
+        return $this->proxyQuery($query, $data);
+        /*        $where = [];
+        $unidade_id = null;
+        $vinculadas = false;
+        foreach($data["where"] as $condition) {
+            if(is_array($condition) && $condition[0] == "unidade_id") {
+                $unidade_id = $condition[2];
+            } else if(is_array($condition) && $condition[0] == "subordinadas") {
+                $vinculadas = $condition[2];
+            } else {
+                array_push($where, $condition);
+            }
+        }
+        $unidades_ids = [];
+        if(!empty($unidade_id)) {
+            array_push($unidades_ids, $unidade_id);
+        } else {
+            $usuario = parent::loggedUser();
+            foreach($usuario->lotacoes as $lotacao) {
+                array_push($unidades_ids, $lotacao->unidade_id);
+            }
+        }
+        if($vinculadas) {
+            $origens = UnidadeOrigemAtividade::whereIn("unidade_id", $unidades_ids)->whereNotIn("unidade_origem_atividade_id", $unidades_ids)->get();
+            $unidades_ids = array_merge($unidades_ids, array_map(fn($origem) => $origem->unidade_origem_atividade_id, $origens->all()));
+        }
+        array_push($where, ["unidade_id", "in", $unidades_ids]);
+        $data["where"] = $where;
+        return $data;*/
+    }
+    
+    public function proxyStore(&$data, $unidade, $action) {
+        $data['cpf'] = $this->UtilService->onlyNumbers($data['cpf']);
+        $data['telefone'] = $this->UtilService->onlyNumbers($data['telefone']);
+        /* Faz as atualizações das lotações de forma segura 
+        if($action != ServiceBase::ACTION_INSERT) {
+            foreach($data['lotacoes'] as $lotacao) {
+                if($lotacao["status"] == "DELETE") {
+                    $this->LotacaoService->destroy($lotacao["id"], false);
+                } else {
+                    $this->LotacaoService->save($lotacao);
+                }
+            }
+            $data['lotacoes'] = []; /* avoid fillablechanges
+        } else if(empty($data['lotacoes'])) {
+            throw new ServerException("ValidateUsuario", "Obrigatório existir ao menos uma lotação para o usuário");
+        }*/
+        return $data;
+    }
+
+    /**
+     * Este método impede que um usuário, com perfil diferente de Desenvolvedor, tenha seu perfil alterado para este último.
+     */
+    public function proxyUpdate($data, $unidade){
+        $perfilAtual = $this->getById($data["id"])["perfil_id"];
+        if((($perfilAtual == $this->developerId) || ($data["perfil_id"] != $this->developerId)) && (!$this->isLoggedUserADeveloper())) throw new Exception("Tentativa de alterar o perfil de/para um Desenvolvedor");
     }
 
     /**
@@ -359,13 +359,4 @@ class UsuarioService extends ServiceBase
             if(($data["perfil_id"] == $this->developerId) && (!$this->isLoggedUserADeveloper())) throw new Exception("Tentativa de inserir um usuário com o perfil de Desenvolvedor");
         }
     }
-
-    /**
-     * Este método impede que um usuário, com perfil diferente de Desenvolvedor, tenha seu perfil alterado para este último.
-     */
-    public function proxyUpdate($data, $unidade){
-        $perfilAtual = $this->getById($data["id"])["perfil_id"];
-        if((($perfilAtual == $this->developerId) || ($data["perfil_id"] != $this->developerId)) && (!$this->isLoggedUserADeveloper())) throw new Exception("Tentativa de alterar o perfil de/para um Desenvolvedor");
-    }
-
 }

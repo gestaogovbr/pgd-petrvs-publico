@@ -47,7 +47,7 @@ class LoginController extends Controller
                 $query->with(["unidade"])->whereHas('unidade', function ($query) use ($entidadeId) {
                     return $query->where('entidade_id', '=', $entidadeId);
                 })->whereNull("data_fim");
-            }, "perfil.capacidades.tipoCapacidade"])->first();
+            }, "perfil.capacidades.tipoCapacidade","chefiasTitulares","chefiasSubstitutas"])->first();
             foreach ($usuario->lotacoes as $lotacao) {
                 if($lotacao->principal) {
                     $request->session()->put("unidade_id", $lotacao->unidade_id);

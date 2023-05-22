@@ -6,7 +6,7 @@ import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model'
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'app-plano-entrega-list-entrega',
+  selector: 'plano-entrega-list-entrega',
   templateUrl: './plano-entrega-list-entrega.component.html',
   styleUrls: ['./plano-entrega-list-entrega.component.scss']
 })

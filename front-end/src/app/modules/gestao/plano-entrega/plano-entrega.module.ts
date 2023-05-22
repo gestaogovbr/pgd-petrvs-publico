@@ -8,6 +8,7 @@ import { PlanoEntregaListEntregaComponent } from './plano-entrega-list-entrega/p
 import { PlanoEntregaEntregaFormComponent } from './plano-entrega-entrega-form/plano-entrega-entrega-form.component';
 import { PlanoEntregaEntregaListComponent } from './plano-entrega-entrega-list/plano-entrega-entrega-list.component';
 import { PlanoEntregaMapaEntregasComponent } from './plano-entrega-mapa-entregas/plano-entrega-mapa-entregas.component';
+import { PlanoEntregaAdesaoComponent } from './plano-entrega-adesao/plano-entrega-adesao.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { PlanoEntregaMapaEntregasComponent } from './plano-entrega-mapa-entregas
     PlanoEntregaListEntregaComponent,
     PlanoEntregaEntregaFormComponent,
     PlanoEntregaEntregaListComponent,
+    PlanoEntregaAdesaoComponent,
     PlanoEntregaMapaEntregasComponent
   ],
   imports: [
