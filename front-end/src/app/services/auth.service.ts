@@ -16,6 +16,7 @@ import { UtilService } from './util.service';
 import { UsuarioDaoService } from '../dao/usuario-dao.service';
 import { IIndexable } from '../models/base.model';
 import { Entidade } from '../models/entidade.model';
+import { UnidadeDaoService } from '../dao/unidade-dao.service';
 
 export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION" | "SUPER";
 export type Permission = string | (string | string[])[];
@@ -78,8 +79,10 @@ export class AuthService {
   public get route(): ActivatedRoute { this._route = this._route || this.injector.get<ActivatedRoute>(ActivatedRoute); return this._route };
   private _calendar?: CalendarService;
   public get calendar(): CalendarService { this._calendar = this._calendar || this.injector.get<CalendarService>(CalendarService); return this._calendar };
-  private _usuarioDaoService?: UsuarioDaoService;
-  public get usuarioDaoService(): UsuarioDaoService { this._usuarioDaoService = this._usuarioDaoService || this.injector.get<UsuarioDaoService>(UsuarioDaoService); return this._usuarioDaoService };
+  private _usuarioDao?: UsuarioDaoService;
+  public get usuarioDao(): UsuarioDaoService { this._usuarioDao = this._usuarioDao || this.injector.get<UsuarioDaoService>(UsuarioDaoService); return this._usuarioDao };
+  private _unidadeDao?: UnidadeDaoService;
+  public get unidadeDao(): UnidadeDaoService { this._unidadeDao = this._unidadeDao || this.injector.get<UnidadeDaoService>(UnidadeDaoService); return this._unidadeDao };
 
   constructor(public injector: Injector) { }
 
@@ -123,12 +126,12 @@ export class AuthService {
 
   public updateUsuarioConfig(usuarioId: string, value: IIndexable) {
     if (this.usuario?.id == usuarioId) this.usuario!.config = this.util.assign(this.usuario!.config, value);
-    return this.usuarioDaoService.updateJson(usuarioId, 'config', value);
+    return this.usuarioDao.updateJson(usuarioId, 'config', value);
   }
 
   public updateUsuarioNotificacoes(usuarioId: string, value: IIndexable) {
     if (this.usuario?.id == usuarioId) this.usuario!.notificacoes = this.util.assign(this.usuario!.notificacoes, value);
-    return this.usuarioDaoService.updateJson(usuarioId, 'notificacoes', value);
+    return this.usuarioDao.updateJson(usuarioId, 'notificacoes', value);
   }
 
   public get usuarioConfig(): IIndexable {
@@ -313,6 +316,55 @@ export class AuthService {
 
   public hasLotacao(unidadeId: string) {
     return this.usuario!.lotacoes.find(x => x.unidade_id == unidadeId);
+  }
+
+  /**
+   * Informa se o usuário logado é gestor(titular ou substituto) da unidade repassada como parâmetro. Se nenhuma unidade for repassada, 
+   * será adotada a unidade selecionada pelo servidor na homepage.
+   * @param pUnidade 
+   * @returns 
+   */
+  public isGestorUnidade(pUnidade: Unidade | string | null = null): boolean {
+    /*       let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? this.unidades?.find(x => x.id == pUnidade) : pUnidade;
+          return !!unidade && [unidade.gestor_substituto_id, unidade.gestor_id].includes(this.usuario!.id);  */
+    let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? [...this.usuario!.chefias_titulares!, ...this.usuario!.chefias_substitutas!].find(x => x.id == pUnidade) : pUnidade;
+    return !!unidade && [unidade.gestor_substituto_id, unidade.gestor_id].includes(this.usuario!.id);
+  }
+
+  /**
+   * Informa se a unidade repassada como parâmetro é a lotação principal do usuário logado. Se nenhuma unidade for repassada, 
+   * será adotada a unidade selecionada pelo servidor na homepage.
+   * @param pUnidade 
+   * @returns 
+   */
+  public isLotacaoPrincipal(pUnidade: Unidade | null = null): boolean {
+    let unidade = pUnidade || this.unidade;
+    let lotacao = this.usuario!.lotacoes.find(x => x.unidade_id == unidade!.id && x.principal);
+    return lotacao != undefined;
+  }
+
+  /**
+   * Informa se o usuário logado tem como lotação alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
+   * repassada como parâmetro.
+   * @param unidade 
+   * @returns 
+   */
+  public isLotadoNaLinhaAscendente(unidade: Unidade): boolean {
+    let result = false;
+    this.usuario!.lotacoes.map(x => x.unidade_id).forEach(x => { if (unidade.path.split('/').slice(1).includes(x)) result = true; });
+    return result;
+  }
+
+  /**
+   * Informa se o usuário logado é gestor (titular ou substituto) de alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
+   * repassada como parâmetro.
+   * @param unidade 
+   * @returns 
+   */
+  public isGestorLinhaAscendente(unidade: Unidade): boolean {
+    let result = false;
+    [...this.usuario!.chefias_titulares!, ...this.usuario!.chefias_substitutas!].map(x => x.id).forEach(x => { if (unidade.path.split('/').slice(1).includes(x)) result = true; });
+    return result;
   }
 
 }
