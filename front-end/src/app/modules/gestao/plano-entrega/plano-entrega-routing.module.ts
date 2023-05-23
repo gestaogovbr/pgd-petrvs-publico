@@ -4,13 +4,9 @@ import { AuthGuard } from 'src/app/guards/auth.guard';
 import { ConfigResolver } from 'src/app/resolvies/config.resolver';
 import { PlanoEntregaListComponent } from './plano-entrega-list/plano-entrega-list.component';
 import { PlanoEntregaFormComponent } from './plano-entrega-form/plano-entrega-form.component';
-import { PlanoEntregaListEntregaComponent } from './plano-entrega-list-entrega/plano-entrega-list-entrega.component';
 import { PlanoEntregaMapaEntregasComponent } from './plano-entrega-mapa-entregas/plano-entrega-mapa-entregas.component';
-<<<<<<< front-end/src/app/modules/gestao/plano-entrega/plano-entrega-routing.module.ts
-import { PlanoEntregaFormEntregaComponent } from './plano-entrega-form-entrega/plano-entrega-form-entrega.component';
-=======
 import { PlanoEntregaAdesaoComponent } from './plano-entrega-adesao/plano-entrega-adesao.component';
->>>>>>> front-end/src/app/modules/gestao/plano-entrega/plano-entrega-routing.module.ts
+import { PlanoEntregaFormEntregaComponent } from './plano-entrega-form-entrega/plano-entrega-form-entrega.component';
 
 const routes: Routes = [
   { path: '', component: PlanoEntregaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Plano de Entrega" } },
