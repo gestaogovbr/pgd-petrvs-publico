@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class Notification
+class Panel
 {
     /**
      * Handle an incoming request.
@@ -17,11 +17,11 @@ class Notification
      */
     public function handle(Request $request, Closure $next)
     {
-        $config = config("notificacoes")["whatsapp"];
+        /*$config = config("panel");
         $authorization = $request->header('Authorization');
-        if(!isset($authorization) || $authorization != $config["authorization"]) {
-            return Response::json(array('error' => 'Erro ao autenticar endpoint de notificações'));
-        }
+        if(!isset($authorization) || $authorization != $config["token"]) {
+            return Response::json(array('error' => 'Erro ao autenticar painel'));
+        }*/
         return $next($request);          
     }
 }

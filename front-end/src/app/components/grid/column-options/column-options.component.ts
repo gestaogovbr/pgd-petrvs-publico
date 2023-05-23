@@ -29,7 +29,7 @@ export class ColumnOptionsComponent extends ComponentBase implements OnInit {
   private _allOptions?: ToolbarButton[] = undefined;
 
   constructor(public injector: Injector) {
-    super(injector); 
+    super(injector);
     this.go = injector.get<NavigateService>(NavigateService);
   }
 

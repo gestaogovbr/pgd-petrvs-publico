@@ -38,7 +38,7 @@ class Projeto extends ModelBase
         'aloca_proprios_recursos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui recursos próprios
         'soma_recusos_alocados_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Mostra o somatório dos recursos filhos
         'custos_proprios', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui custos próprios
-        'soma_custos_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Mostra o somatório dos custos filhos
+        'soma_custos_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui custos filhos
         'duracao', /* double(8,2); NOT NULL; */// Duração do projeto
         'progresso', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */// Percentual de progresso do projeto
         'usuario_id', /* char(36); */
@@ -47,8 +47,8 @@ class Projeto extends ModelBase
         //'numero', /* int; NOT NULL; */// Número do projeto (Gerado pelo sistema)
         //'data_inicio', /* datetime; NOT NULL; */// Data de criação
         //'data_fim', /* datetime; */// Data final do registro
-        //'custo', /* decimal(15,2); NOT NULL; */// Custo: Será a soma dos recursos, ou a soma dos filhos caso tem_filhos e soma_custos_filhos
-        //'kanban_dockers', /* json; */// Configuração das Labels das swimlanes do quadro Kanban
+        //'custo', /* decimal(15,2); NOT NULL; */
+        //'kanban_dockers', /* json; */
         //'expediente', /* json; */// Configuração de expediente
     ];
 

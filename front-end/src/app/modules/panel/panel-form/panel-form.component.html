@@ -1,0 +1,26 @@
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+    <separator title="Banco de dados da aplicação"></separator>
+    <div class="row">
+        <input-text [size]="2" label="Id" controlName="id" [disabled]="action == 'new' ? undefined : 'true'"></input-text>
+        <input-text [size]="4" label="Host" controlName="tenancy_db_host"></input-text>
+        <input-text [size]="4" label="Banco de dados" controlName="tenancy_db_name"></input-text>
+        <input-number [size]="2" label="Porta" controlName="tenancy_db_port"></input-number>
+    </div>
+    <div>
+        <input-text [size]="6" label="Usuário" controlName="tenancy_db_username"></input-text>
+        <input-text password [size]="6" label="Senha" controlName="tenancy_db_password"></input-text>
+    </div>
+    <separator title="Logs"></separator>
+    <div>
+        <input-text [size]="3" label="Host" controlName="log_host"></input-text>
+        <input-text [size]="2" label="Banco de dados" controlName="log_database"></input-text>
+        <input-number [size]="1" label="Porta" controlName="log_port"></input-number>
+        <input-text [size]="3" label="Usuário" controlName="log_username"></input-text>
+        <input-text password [size]="3" label="Senha" controlName="log_password"></input-text>
+    </div>
+    <div>
+        <input-switch [size]="2" label="Tráfego" controlName="log_traffic"></input-switch>
+        <input-switch [size]="2" label="Aditoria" controlName="log_changes"></input-switch>
+        <input-switch [size]="2" label="Erros" controlName="log_errors"></input-switch>
+    </div>
+</editable-form>

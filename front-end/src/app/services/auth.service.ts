@@ -133,7 +133,7 @@ export class AuthService {
 
   public get usuarioConfig(): IIndexable {
     const defaults = new UsuarioConfig();
-    return this.util.assign(defaults, this.usuario!.config);
+    return this.util.assign(defaults, this.usuario?.config || {});
   }
 
   public registerEntity(entity: any) {
