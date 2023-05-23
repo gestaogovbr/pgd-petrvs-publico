@@ -47,7 +47,7 @@
         </tab>
         <tab key="ENTREGAS" [label]="lex.noun('Entrega', true)">
             <top-alert type="warning" [message]="lex.noun('Entrega', true)+ ' do '+ lex.noun('plano de entrega', true)+ 'da' +lex.noun('unidade')"></top-alert>
-            <div clss="row">
+            <div class="row">
                 <grid #gridEntregas [control]="form!.controls.entregas" [form]="formEntregas" [add]="addEntregas.bind(this)" [load]="loadEntregas.bind(this)" [hasDelete]="true" [remove]="removeEntregas.bind(this)" [save]="saveEntregas.bind(this)" editable>
                     <columns>
                         <column [title]="lex.noun('Entrega', true)" titleHint="lex.noun('Entrega')+ ' do '+ lex.noun('plano de entrega')+ 'da' +lex.noun('unidade')" [template]="columnEntrega" [editTemplate]="editEntrega">
