@@ -33,6 +33,7 @@ export class PlanoEntrega extends Base {
   public plano_entrega_id: string | null = null;
   public planejamento_id: string | null = null;
   public cadeia_valor_id: string | null = null;
+  public programa_id: string | null = null;
   
   public constructor(data?: any) { super(); this.initialization(data); }
 }

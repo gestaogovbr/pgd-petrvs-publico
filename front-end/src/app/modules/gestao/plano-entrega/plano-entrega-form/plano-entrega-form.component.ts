@@ -8,6 +8,7 @@ import { CadeiaValorDaoService } from 'src/app/dao/cadeia-valor-dao.service';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
 import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
+import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
@@ -28,6 +29,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
 
   public entregas:PlanoEntregaEntregaDaoService;
   public unidadeDao: UnidadeDaoService;
+  public programaDao: ProgramaDaoService;
   public cadeiaValorDao: CadeiaValorDaoService;
   public planejamentoInstitucionalDao: PlanejamentoDaoService;
   public form: FormGroup;
@@ -35,6 +37,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   constructor(public injector: Injector) {
     super(injector, PlanoEntrega, PlanoEntregaDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
     this.planejamentoInstitucionalDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.entregas = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
@@ -49,6 +52,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
       plano_entrega_id: { default: null },
       planejamento_id: { default: null },
       cadeia_valor_id: { default: null },
+      programa_id: { default: null },
       entregas: { default: [] },
     }, this.cdRef, this.validate);
   }
