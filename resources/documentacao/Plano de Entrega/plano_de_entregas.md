@@ -28,6 +28,7 @@
         MOD_PENT_DESARQ = Permite desarquivar planos de entregas da sua unidade de lotação principal
         MOD_PENT_CANCELAR = Permite cancelar planos de entregas da sua unidade de lotação principal
 
+        MOD_PENT_TOD = Permite visualizar todas as unidades
         MOD_PENT_TOD_SUP = Permite visualizar todas as unidades superiores
         MOD_PENT_IMD_SUP = Permite visualizar somente a unidade imediatamente superior
         MOD_PENT_TOD_SUBORD = Permite visualizar todas as unidades subordinadas
@@ -60,7 +61,8 @@
 1. PLANOS DE ENTREGA PRÓPRIOS
     1. (RN_PENT_1_1) Quando um Plano de Entregas próprio é criado adquire automaticamente o status INCLUINDO;
     2. O gestor de uma unidade e o gestor da sua unidade-pai, podem iniciar a elaboração de Planos de Entrega para a sua unidade;
-    3. O superior hierárquico pode apenas homologar ou, antes de fazê-lo, realizar ajustes em um Plano de Entregas próprio;
+    3. O superior hierárquico pode homologar ou alterar o plano de entregas antes de homologá-lo;
+    4. Para ir para o status HOMOLOGANDO o Plano de Entregas deve ter ao menos uma entrega;
 2. PLANOS DE ENTREGA VINCULADOS
     1. Ao se criar um plano de entregas através da adesão ao da unidade-pai, aquele adquire de imediato o status "HOMOLOGANDO";
     2. A adesão a um Plano de Entregas da unidade-pai precisa da homologação do Chefe desta unidade para ser ativado (ir para o status ATIVO);
@@ -70,21 +72,21 @@
     6. Se um Plano de Entregas for concluído/cancelado, e possuir planos vinculados, estes também serão concluídos/cancelados automaticamente;
     7. Em caso de adesão, os campos 'inicio', 'fim', 'planejamento_id', e 'cadeia_valor_id', deverão ser sempre iguais aos do plano-pai; portanto, quando um plano de entregas próprio sofrer alteração em um desses campos, todos os planos a ele vinculados deverão ser atualizados também;
 3. TODOS OS PLANOS DE ENTREGA
-    1. Para ir para o status HOMOLOGANDO o Plano de Entregas deve ter ao menos uma entrega;
+    1. ;
     2. Um Plano de Entregas, seja próprio ou não, precisa da Homologação do chefe da sua unidade-pai, ou de servidor lotado nesta unidade e que possua a  capacidade "MOD_PENT_HOMOL", para ser ativado (ir para o status ATIVO);
     3. Se a Unidade A tem um plano de entrega próprio e a Unidade B aderiu ao plano de A, a Unidade C pode aderir ao plano de B e só a ele;
     4. O superior hierárquico deve poder visualizar o conjunto dos planos de entregas de todas as unidades hierarquicamente a ele subordinadas;
     5. Uma vez homologado um Plano de Entregas, a unidade do plano está em PGD (Um Plano de Trabalho só pode ser vinculado a planos de entregas homologados);
-    6. Os planos de entregas vão gerar dados que serão enviados ao órgão central;
+    6. Os planos de entregas vão gerar dados que serão enviados ao órgão central (aguardando a definição do formato);
     7. O participante poderá visualizar o Plano de Entregas da sua Unidade de forma automática;
     8. Uma unidade de execução poderá ter mais de um Plano de Entregas com status 'HOMOLOGANDO' e 'ATIVO', desde que sejam para períodos diferentes;
-    9. Um Plano de Entregas pode ser sigiloso, e nesse caso todas as suas entregas são automaticamente sigilosas, ou possuir apenas algumas de suas entregas como sigilosas (plano parcialmente sigiloso);
-    10. Se o Plano de Entregas for integralmente sigiloso, só poderá ser visualizado pelo Chefe da sua unidade;
-    11. Se o Plano de Entregas for parcialmente sigiloso, as entregas não sigilosas poderão ser visualizadas por quem puder visualizar o plano de entregas, mas as sigilosas só poderão ser visualizadas pelo Chefe da sua unidade e pelos servidores que as possuirem em seus respectivos Planos de Trabalho;
-    12. Somente o Chefe da unidade do Plano de Entregas deve ser capaz de adicionar uma entrega sigilosa a um plano de trabalho;
-4. ANALISAR MELHOR ESSAS REGRAS
-    Ao voltar no status, e já tiver outros planos de entrega (ou planos de trabalhos) vinculados ATIVO, estes deverão ir para SUSPENSO;
-    Adesão a planos sigilosos
+    9. (DESENVOLVIMENTO FUTURO) Um Plano de Entregas pode ser sigiloso, e nesse caso todas as suas entregas são automaticamente sigilosas, ou possuir apenas algumas de suas entregas como sigilosas (plano parcialmente sigiloso);
+    10. (DESENVOLVIMENTO FUTURO) Se o Plano de Entregas for integralmente sigiloso, só poderá ser visualizado pelo Chefe da sua unidade ou por quem tiver capacidade de acesso;
+    11. (DESENVOLVIMENTO FUTURO) Se o Plano de Entregas for parcialmente sigiloso, as entregas não sigilosas poderão ser visualizadas por quem puder visualizar o plano de entregas, mas as sigilosas só poderão ser visualizadas pelo Chefe da sua unidade e pelos servidores que as possuirem em seus respectivos Planos de Trabalho;
+    12. (DESENVOLVIMENTO FUTURO) Somente o Chefe da unidade do Plano de Entregas deve ser capaz de adicionar uma entrega sigilosa a um plano de trabalho;
+4. ANALISAR MELHOR ESSAS REGRAS  
+    1. Ao voltar no status, e já tiver outros planos de entrega (ou planos de trabalhos) vinculados ATIVO, estes deverão ir para SUSPENSO;
+    2. (DESENVOLVIMENTO FUTURO)Adesão a planos sigilosos
 
     ~~~text
     REGRAS DE NEGÓCIO APLICADAS ÀS VIEWS
@@ -104,15 +106,13 @@
 
 8. A consulta do grid retornará inicialmente os Planos de Entrega a depender do perfil/permissões do usuário logado:
     1. se for um usuário comum
-        1. os Planos de Entrega das suas unidades de lotação, que estejam ATIVOS;
+        1. os Planos de Entrega das suas unidades de lotação, que estejam VÁLIDOS;
     2. se for gestor de uma unidade
-        1. os planos ATIVOS das suas unidades de lotação
-        2. os planos ATIVOS de todas as suas unidades subordinadas
-        3. os planos das unidades-filhas das unidades em que ele seja gestor, e que possuam o status HOMOLOGANDO
+        1. os planos VÁLIDOS das suas unidades de lotação
+        2. os planos VÁLIDOS de todas as suas unidades subordinadas
     3. se possuir a capacidade "MOD_PENT_HOMOL_SUBORD"
-        1. os planos ATIVOS das suas unidades de lotação
-        2. os planos ATIVOS de todas as suas unidades subordinadas
-        3. os planos de todas as unidades subordinadas à sua unidade de lotação principal, e que possuam o status HOMOLOGANDO
+        1. os planos VÁLIDOS das suas unidades de lotação
+        2. os planos VÁLIDOS de todas as suas unidades subordinadas
 9. Nas opções do filtro o usuário poderá visualizar os planos de outras unidades, de acordo com as opções de filtro a ele disponibilizadas;
     1. Opções para o filtro:
         1. ANALISAR COM MAIS DETALHES: 'Incluir Unidades Superiores', 'Incluir Unidades Inferiores', 'Selecionar por Status'

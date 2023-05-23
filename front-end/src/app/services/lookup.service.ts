@@ -36,7 +36,6 @@ export class LookupService {
     { key: "MASCULINO", value: "Masculino" },
     { key: "FEMININO", value: "Feminino" }
   ];
-
   public TIPO_INDICADOR: LookupItem[] = [
     { key: "QUANTIDADE", value: "Quantidade" },
     { key: "VALOR", value: "Valor" },
@@ -106,6 +105,7 @@ export class LookupService {
     { key: 'TERMO_ADESAO', value: "Termo de adesão (OBSOLETO)", icon: "bi bi-file-earmark-excel", color: "danger" },
     { key: 'SEI', value: "Documento SEI", icon: "bi bi-exclamation", color: "primary"},
     { key: 'TCR', value: "TCR", icon: "bi bi-file-medical-fill", color: "success"},
+    { key: 'TCR_CANCELAMENTO', value: "Cancelamento TCR", icon: "bi bi-file-earmark-x", color: "danger" },
     { key: 'OUTRO', value: "Outro", icon: "bi bi-question-circle", color: "danger" }
   ]
 
@@ -115,6 +115,7 @@ export class LookupService {
     { key: 'AVALIADOR_DEMANDAS', value: "Avaliador (demandas)", icon: "bi bi-check-all", color: "success"},
     { key: 'LOTADO', value: "Lotado", icon: "bi bi-geo-alt", color: "secondary"}
   ];
+
 
   public TEMPLATE_ESPECIE: LookupItem[] = this.DOCUMENTO_ESPECIE;
 
@@ -325,15 +326,6 @@ export class LookupService {
     {key: "fa-light fa-calendar-days", value: "Calendario", icon: "far fa-calendar-alt"}
   ];
 
-  public PLANO_ENTREGA_STATUS: LookupItem[] = [
-    { key: "INCLUINDO", value: "Incluindo", icon: "bi bi-pencil-square", color: "secondary" },
-    { key: "HOMOLOGANDO", value: "Aguardando homologação", icon: "bi bi-clock", color: "warning" },
-    { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success" },
-    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-clipboard2-check", color: "primary" },
-    { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info" },
-    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "danger" }
-  ];
-
   public NUMERO_SEMANA = [
     { key: 1, value: "1ª" },
     { key: 2, value: "2ª" },
@@ -443,9 +435,9 @@ export class LookupService {
   ];
 
   public TIPO_CARGA_HORARIA: LookupItem[] = [
-    { key: 'DIA', icon: "bi bi-calendar3-event", value: "Dia" },
-    { key: 'SEMANA', icon: "bi bi-calendar3-week", value: "Semana" },
-    { key: 'MES', icon: "bi bi-calendar3", value: "Mês" }
+    { key: 'DIA', icon: "bi bi-calendar3-event", value: "Horas por dia" },
+    { key: 'DIA', icon: "bi bi-calendar3-week", value: "Horas por semana" },
+    { key: 'DIA', icon: "bi bi-calendar3", value: "Horas por mês" }
   ];
 
   public MATERIAL_SERVICO_TIPO: LookupItem[] = [
@@ -496,6 +488,14 @@ export class LookupService {
     { key: "SOFT_DELETE", value: "SOFT_DELETE" },
     { key: "DELETE", value: "DELETE" },
   ];
+
+  public TIPO_LOG_ERROR: LookupItem[] = [
+    { key: "ERROR", value: "ERROR" },
+    { key: "FRONT-ERROR", value: "FRONT-ERROR" },
+    { key: "FRONT-WARNING", value: "FRONT-WARNING" },
+    { key: "WARNING", value: "WARNING" }
+  ];
+
   public PROJETO_TIPO_RECURSOS: LookupItem[] = [
     { key: "HUMANO", value: "Humano", icon: "bi bi-people-fill", color: "primary" },
     { key: "DEPARTAMENTO", value: "Departamento", icon: "bi bi-house-gear-fill", color: "success" },
@@ -503,6 +503,16 @@ export class LookupService {
     { key: "SERVIÇO", value: "Serviço", icon: "bi bi-tools", color: "warning" },
     { key: "CUSTO", value: "Custo", icon: "bi bi-currency-exchange", color: "danger" }
   ];
+
+  public PLANO_ENTREGA_STATUS: LookupItem[] = [
+    { key: "INCLUINDO", value: "Incluindo", icon: "bi bi-pencil-square", color: "secondary" },
+    { key: "HOMOLOGANDO", value: "Aguardando homologação", icon: "bi bi-clock", color: "warning" },
+    { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success" },
+    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-clipboard2-check", color: "primary" },
+    { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info" },
+    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "danger" }
+  ];
+  
   public PROJETO_PERFIS: LookupItem[] = [
     { key: "ESCRITORIO", value: "Escritório", icon: "bi bi-house-gear", data: ["DEPARTAMENTO"]},
     { key: "GERENTE", value: "Gerente", icon: "bi bi-person-gear", data: ["HUMANO"]},
