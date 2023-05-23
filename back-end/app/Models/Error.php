@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 class Error extends Model
 {
     use HasFactory;
@@ -28,5 +28,6 @@ class Error extends Model
 
     protected $casts = [
         'date_time' => 'datetime',
+        'user' => AsArrayObject::class
     ];
 }

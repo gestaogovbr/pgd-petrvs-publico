@@ -155,14 +155,14 @@ export class AppComponent {
         { name: "Sobre", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
       ],
       logs: [
-        { name: "Rotina de Integração", permition: '', route: ['rotinas', 'integracao'], icon: this.entity.getIcon('Integracao') },
+        { name: "Rotina de Integração", permition: '', route: ['rotinas', 'integracao'], icon: "bi bi-pencil-square" },
         "-",
-        { name: "Log das Alterações", permition: '', route: ['logs', 'change'], icon: this.entity.getIcon('Change') },
-        { name: "Log dos Erros", permition: '', route: ['logs', 'error'], icon: this.entity.getIcon('Error') },
-        { name: "Log do Tráfego", permition: '', route: ['logs', 'traffic'], icon: this.entity.getIcon('Traffic') },
+        { name: "Log das Alterações", permition: '', route: ['logs', 'change'], icon: "bi bi-pencil-square" },
+        { name: "Log dos Erros", permition: '', route: ['logs', 'error'], icon: "bi bi-bug" },
+        { name: "Log do Tráfego", permition: '', route: ['logs', 'traffic'], icon: "bi bi-stoplights" },
         "-",
-        { name: "Teste Expediente", permition: '', route: ['teste'], icon: this.entity.getIcon('Teste') },
-        { name: "Teste calculaDataTempo", permition: '', route: ['teste', 'calcula-tempo'], icon: this.entity.getIcon('Teste') }
+        { name: "Teste Expediente", permition: '', route: ['teste'], icon: "bi bi-check-all" },
+        { name: "Teste calculaDataTempo", permition: '', route: ['teste', 'calcula-tempo'], icon: "bi bi-check-all" }
       ],
     }
   }
