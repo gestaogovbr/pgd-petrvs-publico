@@ -72,7 +72,7 @@
     6. Se um Plano de Entregas for concluído/cancelado, e possuir planos vinculados, estes também serão concluídos/cancelados automaticamente;
     7. Em caso de adesão, os campos 'inicio', 'fim', 'planejamento_id', e 'cadeia_valor_id', deverão ser sempre iguais aos do plano-pai; portanto, quando um plano de entregas próprio sofrer alteração em um desses campos, todos os planos a ele vinculados deverão ser atualizados também;
 3. TODOS OS PLANOS DE ENTREGA
-    1. ;
+    1. Ao voltar no status, e já tiver outros planos de entrega (ou planos de trabalhos) vinculados ATIVO, estes deverão ir para SUSPENSO;
     2. Um Plano de Entregas, seja próprio ou não, precisa da Homologação do chefe da sua unidade-pai, ou de servidor lotado nesta unidade e que possua a  capacidade "MOD_PENT_HOMOL", para ser ativado (ir para o status ATIVO);
     3. Se a Unidade A tem um plano de entrega próprio e a Unidade B aderiu ao plano de A, a Unidade C pode aderir ao plano de B e só a ele;
     4. O superior hierárquico deve poder visualizar o conjunto dos planos de entregas de todas as unidades hierarquicamente a ele subordinadas;
@@ -85,8 +85,7 @@
     11. (DESENVOLVIMENTO FUTURO) Se o Plano de Entregas for parcialmente sigiloso, as entregas não sigilosas poderão ser visualizadas por quem puder visualizar o plano de entregas, mas as sigilosas só poderão ser visualizadas pelo Chefe da sua unidade e pelos servidores que as possuirem em seus respectivos Planos de Trabalho;
     12. (DESENVOLVIMENTO FUTURO) Somente o Chefe da unidade do Plano de Entregas deve ser capaz de adicionar uma entrega sigilosa a um plano de trabalho;
 4. ANALISAR MELHOR ESSAS REGRAS  
-    1. Ao voltar no status, e já tiver outros planos de entrega (ou planos de trabalhos) vinculados ATIVO, estes deverão ir para SUSPENSO;
-    2. (DESENVOLVIMENTO FUTURO)Adesão a planos sigilosos
+    1. (DESENVOLVIMENTO FUTURO) Adesão a planos sigilosos
 
     ~~~text
     REGRAS DE NEGÓCIO APLICADAS ÀS VIEWS
@@ -101,9 +100,6 @@
     - se o plano estiver Ativo; e
     - se a unidade selecionada não possuir plano de entrega Ativo no mesmo período do plano em questão;
 7. Na janela de avaliar, já deixar o swith de arquivamento marcado, igual à janela de avaliação nas demandas;
-
-    ...................FALTA VER COM O GENISSON DAQUI PRA FRENTE
-
 8. A consulta do grid retornará inicialmente os Planos de Entrega a depender do perfil/permissões do usuário logado:
     1. se for um usuário comum
         1. os Planos de Entrega das suas unidades de lotação, que estejam VÁLIDOS;
