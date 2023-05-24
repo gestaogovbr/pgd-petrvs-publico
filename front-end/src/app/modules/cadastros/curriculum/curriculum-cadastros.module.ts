@@ -10,14 +10,17 @@ import { AreaConhecimentoFormComponent } from './area-conhecimento-form/area-con
 import { AreaConhecimentoListComponent } from './area-conhecimento-list/area-conhecimento-list.component';
 import { CursoFormComponent } from './curso-form/curso-form.component';
 import { CursoListComponent } from './curso-list/curso-list.component';
-
+import { TipoCursoFormComponent } from './tipo-curso-form/tipo-curso-form.component';
+import { TipoCursoListComponent } from './tipo-curso-list/tipo-curso-list.component';
 
 @NgModule({
   declarations: [
     AreaConhecimentoFormComponent,
     AreaConhecimentoListComponent,
     CursoFormComponent,
-    CursoListComponent
+    CursoListComponent,
+    TipoCursoFormComponent,
+    TipoCursoListComponent
   
   ],
   imports: [

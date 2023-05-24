@@ -23,9 +23,11 @@ class AreaConhecimentoSeeder extends Seeder
                 'Ciências Agrárias',
                 'Linguística, Letras e Artes',
                 'Ciências Sociais Aplicadas',
-                'Ciências Humanas' ];
-            
-        
+                'Ciências Humanas',
+                'Institucional',
+              
+         ];
+              
         foreach($array_areas as $area) {
 
             $areaI = new AreaConhecimento();

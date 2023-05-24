@@ -7,6 +7,8 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { Curso } from 'src/app/models/curso.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { AreaConhecimentoDaoService } from 'src/app/dao/area-conhecimento-dao.service';
+import { TipoCursoDaoService } from 'src/app/dao/tipo-curso-dao.service';
+
 
 
 @Component({
@@ -21,25 +23,27 @@ export class CursoFormComponent extends PageFormBase<Curso, CursoDaoService> {
   
   public titulos: LookupItem[] = [];
   public areaDao ?: AreaConhecimentoDaoService;
-  
+  public tipoCursoDao ?: TipoCursoDaoService;
 
   constructor(public injector: Injector) {
     super(injector, Curso, CursoDaoService);
     this.areaDao = injector.get<AreaConhecimentoDaoService>(AreaConhecimentoDaoService);
+    this.tipoCursoDao = injector.get<TipoCursoDaoService>(TipoCursoDaoService);
     this.form = this.fh.FormBuilder({
       area_curso_id: {default: ""},
+      tipo_curso_id:{default: ""},
       nome: {default: ""},
       titulo: {default: ""},
       ativo: {default: true},
            
-    }, this.cdRef, this.validate)
+    }, this.cdRef, this.validate);
   }
 
   
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
 
-    if(['nome_area, nome'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if(['nome'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
 

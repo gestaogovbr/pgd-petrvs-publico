@@ -21,6 +21,7 @@ class Curriculum extends ModelBase
         'ativo',
         'usuario_id',
         'cidade_id'
+        
     ];
 
     protected $casts = [

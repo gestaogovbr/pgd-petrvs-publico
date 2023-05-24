@@ -10,7 +10,7 @@ import { CurriculumProfissionalFormComponent } from 'src/app/modules/curriculum/
 const routes: Routes = [
   { path: '', component: RaioxhomeComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Home Raio-X" } },
   { path: 'home', component: RaioxhomeComponent, canActivate: [AuthGuard], data: { title: "Home Raio-X" } },
-  { path: 'pessoal', component: CurriculumFormComponent, canActivate: [AuthGuard], data: { title: "Dados Pessoais" } },
+  { path: 'pessoal', component: CurriculumFormComponent, canActivate: [AuthGuard], data: { title: "" } },
   { path: 'profissional', component: CurriculumProfissionalFormComponent, canActivate: [AuthGuard], data: { title: "Dados Profissionais" } },
   
   ];

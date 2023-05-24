@@ -23,11 +23,12 @@ export class CursoListComponent extends PageListBase<Curso, CursoDaoService> {
        /* Inicializações */
     this.title = this.lex.noun("Cursos",true);
     this.code = "MOD_RX";
-    this.join = ["area:nome"];
-
+    this.join = ["area:nome","tipo:nome"];
+  
     this.filter = this.fh.FormBuilder({
       nome_area: {default: ""},
       nome_curso: {default: ""},
+      nome_tipo:{default: ""},
       titulo: {default: ""},
      });
     // Testa se o usuário possui permissão para exibir dados de cursos
@@ -54,7 +55,9 @@ export class CursoListComponent extends PageListBase<Curso, CursoDaoService> {
   public filterClear(filter: FormGroup) {
     filter.controls.nome_area.setValue("");
     filter.controls.nome_curso.setValue("");
+    filter.controls.nome_tipo.setValue("");
     filter.controls.titulo.setValue("");
+
     super.filterClear(filter);
   }
 
@@ -72,6 +75,9 @@ export class CursoListComponent extends PageListBase<Curso, CursoDaoService> {
     
     if(form.titulo?.length) {
       result.push(["titulo", "like", "%" + form.titulo + "%"]);
+    }
+    if(form.nome_tipo?.length) {
+      result.push(["nome", "like", "%" + form.titulo + "%"]);
     }
 
     return result;

@@ -1,6 +1,6 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()"
     (cancel)="onCancel()">
-    <tabs display left>
+    <tabs display right>
         <tab key="DadosPessoais" class="fw-bold" label="Dados Pessoais">
             <div class="row mt-3">
                 <input-textarea label="Apresente-se" [size]="12" [bold]="true" icon="bi-card-list"
@@ -65,59 +65,36 @@
 
                 </input-multiselect>
             </div>
-
-            <!--<separator title="Graduação">-->
-
-            <div class="row my-3">
-
-                <input-multiselect [size]="12" label="Graduação" [control]="formGraduacao!.controls.graduacao"
-                    controlName="graduacao" [addItemHandle]="addItemGraduacao.bind(this)" noBox [bold]="true">
-                    <input-switch [size]="2" label="Pretende Cursar?" icon="fas fa-user-graduate"
-                        controlName="radioPretendeGraduacao" [control]="formGraduacao!.controls.radioPretendeGraduacao"
-                        labelInfo="Pretendo Cursar">
-                    </input-switch>
-                    <!-- <button type="button" [id]="'formGraduacao' + '_add_button'" class="btn btn-outline-primary" (click)="onAddClick()">
-                            <i class="bi bi-plus-circle"></i>
-            </button>-->
-                    <input-search #area [size]="4" [dao]="areaDao" label="Área de conhecimento"
-                        [control]="formGraduacao!.controls.area" controlName="area"
-                        (change)="onAreaGraducaoChange()"></input-search>
-                    <input-select [size]="4" label="Curso" icon="bi bi-mortarboard-fill" controlName="curso" liveSearch
-                        [control]="formGraduacao!.controls.curso" [items]="cursos">
-                    </input-select>
-
-                </input-multiselect>
-            </div>
-
+         
             <div class="row mt-3 mb-1">
-                <input-multiselect label="Pós-Graduações - Especialização, Mestrado, Doutorado e Pós Doutorado"
-                    [size]="12" controlName="posgraduacao" [control]="formGraduacao!.controls.posgraduacao"
-                    [addItemHandle]="addItemPosGraduacao.bind(this)" [bold]="true" noBox>
+                <input-multiselect label="Graduação e Pós-Graduação - Especialização, Mestrado, Doutorado e Pós Doutorado"
+                    [size]="12" controlName="graduacaopos" [control]="formGraduacao!.controls.graduacaopos"
+                    [addItemHandle]="addItemGraduacaoPos.bind(this)" [bold]="true" noBox>
                     <input-switch [size]="2" label="Pretende Cursar?" icon="fas fa-user-graduate"
-                        controlName="radioPretendePosGraduacao"
-                        [control]="formGraduacao!.controls.radioPretendePosGraduacao" labelInfo="Pretendo Cursar">
+                        controlName="radioPretendeGraduacaoPos"
+                        [control]="formGraduacao!.controls.radioPretendeGraduacaoPos" labelInfo="Pretendo Cursar">
                     </input-switch>
-                    <input-search #areaPos [size]="4" [dao]="areaDao" label="Área de conhecimento"
-                        [control]="formGraduacao!.controls.areaPos" controlName="areaPos"
-                        (change)="onAreaPosGraducaoChange()">
+                    <input-search  #areaPos [size]="4" [dao]="areaDao" label="Área de conhecimento" 
+                        [control]="formGraduacao!.controls.areaPos" controlName="areaPos">
                         <!--<button type="button" [id]="grid?.getId(index.toString()) + '_add_button'" class="btn btn-outline-primary" (click)="onAddClick()" [disabled]="grid?.editing">
                             <i class="bi bi-plus-circle"></i>
                         </button>-->
                     </input-search>
-                    <!--<label onclick="labelClk()">Curso <i class="bi bi-mortarboard-fill"></i></label>-->
-                    <input-select [size]="4" label="Curso" icon="bi bi-mortarboard-fill" controlName="cursoPos"
-                        liveSearch [control]="formGraduacao!.controls.cursoPos" [items]="cursosPos">
-                    </input-select>
                     <input-select [size]="2" label="Titulo" icon="bi bi-mortarboard-fill" controlName="titulo"
-                        liveSearch [control]="formGraduacao!.controls.titulo" [items]="this.lookup.POS_GRADUACOES">
-
+                        liveSearch [control]="formGraduacao!.controls.titulo" [items]="this.lookup.TITULOS_CURSOS" (change)="onAreaPosGraduacaoChange()">
                     </input-select>
+                    <input-select [size]="4" label="Curso" icon="bi bi-mortarboard-fill" controlName="cursoPos"
+                        liveSearch [control]="formGraduacao!.controls.cursoPos" [items]="cursosGradPos">
+                    </input-select>
+                    
                 </input-multiselect>
             </div>
             <separator class="mb-1"></separator>
         </tab>
-        <tab key="DADOSPROF" class="fw-bold" label="Dados Profissionais"></tab>
+        <tab key="DADOSPROF" class="fw-bold" label="Dados Profissionais">
+            <curriculum-profissional-form></curriculum-profissional-form>
+        </tab>
         <tab key="ATRIBUTOS" class="fw-bold" label="Atributos Comportamentais"></tab>
-        <tab key="OPO" class="fw-bold" label="Oportunidades"></tab>
+        
     </tabs>
 </editable-form>

@@ -23,12 +23,11 @@ class CreateCurriculums extends Migration
             $table->string('telefone',64)->comment("Telefone");
             $table->json('idiomas')->nullable()->comment("Idiomas que fala");
             $table->string('estado_civil',64)->nullable()->comment("Estado Civil");
-            $table->tinyInteger('possui_filhos')->default(0)->comment("Possui filhos sim ou não");
             $table->tinyInteger('quantidade_filhos')->default(0)->comment("Qtde de filhos");
             $table->tinyInteger('ativo')->default(1)->comment("Curriculum ativa ou inativa");
            
             // Chaves estrangeiras:
-            $table->foreignUuid('usuario_id')->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('usuario_id')->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->unique();
             $table->foreignUuid('cidade_id')->constrained("cidades")->onDelete('restrict')->onUpdate('cascade');
         });
     }

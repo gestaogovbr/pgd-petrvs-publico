@@ -1,167 +1,332 @@
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()"
+    (cancel)="onCancel()">
+    <tabs display left>
+        <tab key="FUNCIONAIS" class="fw-bold" label="Funcionais">
 
+            <div class="row mb-2 mt-4">
+                <input-select [size]="4" label="Ingresso na PRF" icon="bi bi-calendar-check-fill"
+                    controlName="ano_ingresso" [control]="form!.controls.ano_ingresso" [items]="testeLookup">
+                </input-select>
+                <input-select [size]="4" label="Centro de Treinamento" icon="bi bi-building-fill"
+                    controlName="centro_treinamento" [control]="form!.controls.centro_treinamento"
+                    [items]="testeLookup">
+                </input-select>
+                <input-select [size]="4" label="Cargo" icon="bi bi-person-badge" controlName="ingresso"
+                    [control]="form!.controls.ingresso" [items]="testeLookup">
+                </input-select>
 
-<div clas="container-fluid">
-    <div class="row mb-3 mt-3">
-            <label class="lblescdiv1" id="lblfamilia" ><h4>Ingresso na PRF <i class="fa-solid fa-square-plus" id="icoingresso"></i></h4></label>
-    </div>
-    <div id="divescconc">
-        <div class="row mb-3 mt-3">
+            </div>
+
+            <div class="row">
+                <separator class="mb-3 mt-3" title="Histórico de Lotações e Funções Gratificadas" [bold]="true">
+                </separator>
+
+                <input-multiselect [size]="6" [control]="form!.controls.funcoes" controlName="funcoes"
+                    [addItemHandle]="addItemFuncao.bind(this)" noBox [bold]="true">
+
+                    <input-select [size]="12" label="Funções ocupadas como titular ou substituto"
+                        icon="bi bi-check-circle-fill" controlName="funcoesOcupadas" liveSearch
+                        [control]="form!.controls.funcoesOcupadas" [items]="testeLookup">
+                    </input-select>
+                </input-multiselect>
+
+                <input-select [size]="6" label="Você faz parte de algum grupo especializado?" icon="bi bi-check-circle"
+                    controlName="grupo" [control]="form!.controls.grupo" [items]="testeLookup" id="testeID">
+                </input-select>
+
+            </div>
+            <div class="row my-3">
+
+                <input-multiselect [size]="6" [control]="form!.controls.lotaces" controlName="lotacoes"
+                    [addItemHandle]="addItemFuncao.bind(this)" noBox [bold]="true">
+
+                    <input-select [size]="12" label="Selecione todas as unidades em que já foi lotado"
+                        icon="bi bi-check-circle-fill" controlName="selectLotacoes" liveSearch
+                        [control]="form!.controls.selectLotacoes" [items]="testeLookup">
+                    </input-select>
+                </input-multiselect>
+
+                <input-select [size]="6" label="Lotação atual" icon="bi bi-check-circle" controlName="lotacaoAtual"
+                    [control]="form!.controls.lotacaoAtual" [items]="testeLookup">
+                </input-select>
+
+            </div>
+        </tab>
+        <tab key="HARD_SKILLS" class="fw-bold" label="Hard Skills">
+
+            <div class="row mb-2 mt-3">
+                <separator class="mb-3"
+                    title="Quais atividades você desempenhou fora da PRF que podem contribuir para a instituição?"
+                    [bold]="true"></separator>
+                <input-multiselect [size]="10" [control]="form!.controls.atividades_fora" controlName="atividades_fora"
+                    [addItemHandle]="addItemFuncao.bind(this)" noBox [bold]="true">
+
+                    <input-select [size]="12" label="Area" icon="bi bi-check-circle-fill"
+                        controlName="selecAtividadeFora" liveSearch [control]="form!.controls.selecAtividadeFora"
+                        [items]="testeLookup">
+                    </input-select>
+
+                </input-multiselect>
+            </div>
+
+            <div class="row">
+                <separator class="my-3"
+                    title="Quais atividades você desempenhou na PRF que podem contribuir para a instituição?"
+                    [bold]="true">
+                </separator>
+                <input-multiselect [size]="10" label="" [control]="form!.controls.atividadeDesempenhou"
+                    controlName="atividadeDesempenhou" [addItemHandle]="addItemFuncao.bind(this)" noBox>
+                    <input-search #area [size]="4" label="Área" [control]="form!.controls.areaatividadeDesempenhou"
+                        controlName="areaatividadeDesempenhou"></input-search>
+                    <input-select [size]="8" label="Atividade" icon="bi bi-mortarboard-fill"
+                        controlName="selectAtividade" liveSearch [control]="form!.controls.selectAtividade"
+                        [items]="testeLookup">
+                    </input-select>
+                </input-multiselect>
+            </div>
+            <!-- <div class="row my-3">
+                <input-multiselect [size]="10" label="Governança" [control]="form!.controls.governanca"
+                    controlName="governanca" [addItemHandle]="addItemFuncao.bind(this)" noBox>
+
+                    <input-select [size]="12" icon="bi bi-check-circle-fill" controlName="selectGovernanca" liveSearch
+                        [control]="form!.controls.selectGovernanca" [items]="testeLookup">
+                    </input-select>
+
+                </input-multiselect>
+            </div>
+            <div class="row my-3">
+                <input-multiselect [size]="10" label="Comunicação" [control]="form!.controls.comunicacao"
+                    controlName="comunicacao" [addItemHandle]="addItemFuncao.bind(this)" noBox>
+
+                    <input-select [size]="12" icon="bi bi-check-circle-fill" controlName="selectComunicacao" liveSearch
+                        [control]="form!.controls.selectComunicacao" [items]="testeLookup">
+                    </input-select>
+
+                </input-multiselect>
+            </div>
+            <div class="row my-3">
+                <input-multiselect [size]="10" label="Articulação" [control]="form!.controls.articulacao"
+                    controlName="articulacao" [addItemHandle]="addItemFuncao.bind(this)" noBox>
+
+                    <input-select [size]="12" icon="bi bi-check-circle-fill" controlName="selectArticulacao" liveSearch
+                        [control]="form!.controls.selectArticulacao" [items]="testeLookup">
+                    </input-select>
+
+                </input-multiselect>
+            </div>
+            <div class="row my-3">
+                <input-multiselect [size]="10" label="Operações" [control]="form!.controls.operacoes"
+                    controlName="operacoes" [addItemHandle]="addItemFuncao.bind(this)" noBox>
+
+                    <input-select [size]="12" icon="bi bi-check-circle-fill" controlName="selectOperacoes" liveSearch
+                        [control]="form!.controls.selectOperacoes" [items]="testeLookup">
+                    </input-select>
+
+                </input-multiselect>
+            </div>
+            <div class="row my-3">
+                <input-multiselect [size]="10" label="Ensino" [control]="form!.controls.Ensino" controlName="Ensino"
+                    [addItemHandle]="addItemFuncao.bind(this)" noBox>
+
+                    <input-select [size]="12" icon="bi bi-check-circle-fill" controlName="selectEnsino" liveSearch
+                        [control]="form!.controls.selectEnsino" [items]="testeLookup">
+                    </input-select>
+
+                </input-multiselect>
+            </div>
+            <div class="row my-3">
+                <input-multiselect [size]="10" label="Inteligência" [control]="form!.controls.inteligencia"
+                    controlName="inteligencia" [addItemHandle]="addItemFuncao.bind(this)" noBox>
+
+                    <input-select [size]="12" icon="bi bi-check-circle-fill" controlName="selectInteligencia" liveSearch
+                        [control]="form!.controls.selecEnsino" [items]="testeLookup">
+                    </input-select>
+
+                </input-multiselect>
+            </div>
+            <div class="row my-3">
+                <input-multiselect [size]="10" label="Corregedoria" [control]="form!.controls.corregedoria"
+                    controlName="corregedoria" [addItemHandle]="addItemFuncao.bind(this)" noBox>
+
+                    <input-select [size]="12" icon="bi bi-check-circle-fill" controlName="selectCorrgedoria" liveSearch
+                        [control]="form!.controls.selecEnsino" [items]="testeLookup">
+                    </input-select>
+
+                </input-multiselect>
+            </div>
+            <div class="row my-3">
+                <input-multiselect [size]="10" label="Adminisrção e Logística" [control]="form!.controls.adm"
+                    controlName="adm" [addItemHandle]="addItemFuncao.bind(this)" noBox>
+
+                    <input-select [size]="12" icon="bi bi-check-circle-fill" controlName="selectAdm" liveSearch
+                        [control]="form!.controls.selectAdm" [items]="testeLookup">
+                    </input-select>
+
+                </input-multiselect>
+            </div>
+            <div class="row my-3">
+                <input-multiselect [size]="10" label="Gestão de Pessoas" [control]="form!.controls.gestao"
+                    controlName="gestao" [addItemHandle]="addItemFuncao.bind(this)" noBox>
+
+                    <input-select [size]="12" icon="bi bi-check-circle-fill" controlName="selectGestao" liveSearch
+                        [control]="form!.controls.selectGestao" [items]="testeLookup">
+                    </input-select>
+
+                </input-multiselect>
+            </div>
+            <div class="row my-3">
+                <input-multiselect [size]="10" label="Tecnologia da Informação" [control]="form!.controls.tic"
+                    controlName="tic" [addItemHandle]="addItemFuncao.bind(this)" noBox>
+
+                    <input-select [size]="12" icon="bi bi-check-circle-fill" controlName="selectTic" liveSearch
+                        [control]="form!.controls.atividades" [items]="testeLookup">
+                    </input-select>
+
+                </input-multiselect>
+            </div>
+            <div class="row my-3">
+                <input-multiselect [size]="10" label="Especifique sua habilidade" [control]="form!.controls.especifique"
+                    controlName="especifique" [addItemHandle]="addItemFuncao.bind(this)" noBox>
+
+                    <input-text [size]="12" icon="bi bi-check-circle-fill" controlName="selectEspecifique" liveSearch
+                        [control]="form!.controls.selectEspecifique">
+                    </input-text>
+
+                </input-multiselect>
+            </div>-->
+        </tab>
+        <tab key="DOCENCIA" class="fw-bold mb-3" label="Docência">
+
+            <div class="row">
+                <separator class="my-3" title="Você já realizou algum trabalho de docência fora da PRF?" [bold]="true">
+                </separator>
+                <input-switch [size]="2" label="Realizei" icon="fas fa-user-graduate" controlName="radioDocenciaFora"
+                    [control]="form!.controls.radioDocenciaFora">
+                </input-switch>
+                <input-multiselect [hidden]="!(form!.controls.radioDocenciaFora.value)" [size]="8" label=""
+                    [control]="form!.controls.docenciaFora" controlName="docenciaFora"
+                    [addItemHandle]="addItemFuncao.bind(this)" noBox>
+
+                    <input-text [size]="8" label="Qual/Quais" icon="bi bi-mortarboard-fill" controlName="docenciaFora"
+                        liveSearch [control]="form!.controls.docenciaFora">
+                    </input-text>
+
+                </input-multiselect>
+            </div>
+            <div class="row">
+                <separator class="my-3" title="Você é docente ou instrutor da PRF?" [bold]="true"></separator>
+                <input-switch [size]="2" label="Sim" icon="fas fa-user-graduate" controlName="radioDocenciaPRF"
+                    [control]="form!.controls.radioDocenciaPRF">
+                </input-switch>
+                <input-multiselect [hidden]="!((form!.controls.radioDocenciaPRF.value))" [size]="8"
+                    label="Em qual/quais disciplinas?" icon="bi bi-mortarboard-fill"
+                    [control]="form!.controls.docenciaFora" controlName="docenciaPRF"
+                    [addItemHandle]="addItemFuncao.bind(this)" noBox>
+                    <input-select [size]="8" icon="bi bi-mortarboard-fill" controlName="selectDocenciaPRF"
+                        liveSearch [control]="form!.controls.selectDocenciaPRF" [items]="testeLookup">
+                    </input-select>
+
+                </input-multiselect>
+            </div>
+        </tab>
+        <tab key="CURSOS" class="fw-bold mb-3" label="Cursos">
+
+            <div class="row">
+                <separator class="my-3" title="Quais os principais cursos que você já fez e pretende fazer na PRF?" [bold]="true">
+                </separator>
+                <input-switch [size]="2" label="Pretendo" icon="fas fa-user-graduate"
+                    controlName="radioCursos" [control]="form!.controls.radioCursos">
+                </input-switch>
+                <input-multiselect [hidden]="!(form!.controls.radioCursos.value)" [size]="8" label=""
+                    [control]="form!.controls.cursosPRF" controlName="cursosPRF"
+                    [addItemHandle]="addItemFuncao.bind(this)" noBox>
+                    <input-search #area [size]="4" label="Área" [control]="form!.controls.areaCursoPRF"
+                        controlName="areaCursoPRF"></input-search>
+                    <input-select [size]="8" label="Curso" icon="bi bi-mortarboard-fill" controlName="selectCursosPRF"
+                        liveSearch [control]="form!.controls.selectCursosPRF" [items]="testeLookup">
+                    </input-select>
+
+                </input-multiselect>
+            </div>
+           
+            <div class="row mb-3">
+                <separator class="my-3" title="Quais cursos você já fez e quais pretende fazer fora da PRF?" [bold]="true"></separator>
+                <input-switch [size]="2" label="Pretendo" icon="fas fa-user-graduate"
+                    controlName="radioCursosFora" [control]="form!.controls.radioCursosFora">
+                </input-switch>
+                <input-multiselect [hidden]="!(form!.controls.radioCursosFora.value)" [size]="8" label=""
+                    [control]="form!.controls.cursosForaPRF" controlName="cursosForaPRF"
+                    [addItemHandle]="addItemFuncao.bind(this)" noBox>
+                    <input-search #area [size]="4" label="Instituição/Coorporação"
+                        [control]="form!.controls.instituicao" controlName="instituicao"></input-search>
+                    <input-select [size]="8" label="Curso" icon="bi bi-mortarboard-fill"
+                        controlName="selectCursosForaPRF" liveSearch [control]="form!.controls.selectCursosForaPRF"
+                        [items]="testeLookup">
+                    </input-select>
+                </input-multiselect>
+            </div>
             
-
-              <div class="form-group col-lg-2">
-                  <label for="cadprofturma"> Ano 
-                  </label><i class="fa-solid fa-taxi"></i>
-
-                  <select id="cadprofturma" class="form-select">
-                          
-                          <option selected></option>
-                              <!--<? for(let ano1=1974;ano1<=2022;ano1++){ ?>
-
-                                <option><?= ano1; ?></option>
-
-                              <? } ?>-->
-                        
-                  </select>
-
-              </div>
-              <div class="form-group col-lg-4">
-                  <label for="cadproftreino">Centro de Treinamento <i class="fa-solid fa-building fa-fw"></i></label>
-
-                  <select id="cadproftreino" class="form-select">
-                        <option value="" selected></option>
-                        <option value="ANP">ANP</option>
-                        <option value="CTCO">CTCO</option>
-                        <option value="CTNE">CTNE</option>
-                        <option value="CTRJ">CTRJ</option>
-                        <option value="CTSUL">CTSUL</option>
-                        <option value="NA"> Não se aplica</option>
-                        <option value="UniPRF">UniPRF</option>
-                        <option value= "Outro" >Outro</option>
-                  </select>
-
-              </div>
-              <div class="form-group col-lg-3">
-                  <label for="cadprofcargo">Cargo <i class="fa-solid fa-handcuffs"></i></label>
-
-                  <select id="cadprofcargo" class="form-select">
-                        <option value="" selected></option>
-                        <option value="PRF">PRF</option>
-                        <option value="Agente Administrativo">Agente Administrativo</option>
-                        
-                  </select>
-
-              </div>
+        </tab>
+        <tab key="DISPONIBILIDADE" class="fw-bold mb-3" label="Disponibilidade">
+            <div class="row">
+                <separator class="mb-3 mt-3" title="Viagens" [bold]="true"></separator>
+                <input-switch [size]="4" label="Já fez viagem nacional a trabalho?" icon="fas fa-user-graduate"
+                    controlName="radioViajaN" [control]="form!.controls.radioViajaN">
+                </input-switch>
+                <input-switch [size]="4" label="Já fez viagem internacional a trabalho?" icon="fas fa-user-graduate"
+                    controlName="radioViajaI" [control]="form!.controls.radioViajaI">
+                </input-switch>
 
 
-          </div>
-    </div>
+            </div>
+            <div class="row">
+                <separator class="my-3"
+                    title="Você tem interesse na participação do Banco Nacional de Talentos (BNT IN PRF Nº 58 de 27 de agosto de 2021) SEI 35010079?"
+                    [bold]="true">
+                </separator>
+                <input-switch [size]="1" label="SIm/Não" icon="fas fa-user-graduate" controlName="radioInteresseBNT"
+                    [control]="form!.controls.radioInteresseBNT">
+                </input-switch>
 
-    <hr>
+            </div>
+            <div class="row">
+                <separator class="my-3" title="Você está inserido no programa de gestão da PRF-PGPRF?" [bold]="true">
+                </separator>
+                <input-switch [size]="1" label="SIm/Não" icon="fas fa-user-graduate" controlName="radioPG"
+                    [control]="form!.controls.radioPG">
+                </input-switch>
+                <input-radio *ngIf="form!.controls.radioPG.value" [size]="4" label="Opções" [items]="lookup.PG_PRF"
+                    controlName="radioPG">
+                </input-radio>
 
-    <div class="row mb-3 mt-3">
-            <label class="lblescdiv1" id="lblfamilia"  onclick="escchefias()"><h4>Histórico de Lotações e Funções Gratificadas<i class="fa-solid fa-square-plus" id='icohlc'></i></h4></label>
-    </div>
-    <div  class="select2-container" id="divescchefias">
-          <div class="row mb-3">
-              <div class="col-lg-7">
-                  <label for="cadpesselectchefias"> Funções ocupadas como titular ou substituto</label><i class="fa-solid fa-person-circle-check" style="margin-left:5px;"></i>
-                
-                  <select id="cadpesselectchefias" class="form-select placeholder-multiple" style="width: 100%" name="chefias" multiple="multiple"  onchange="">
-                        <option></option>
-                        <option value="Chefe de Delegacia">Chefe de Delegacia</option>
-                        <option value="Chefe de Divisão">Chefe de Divisão</option>
-                        <option value="Chefe de Núcleo">Chefe de Núcleo</option>
-                        <option value="Chefe de Seção">Chefe de Seção</option>
-                        <option value="Chefe de Setor">Chefe de Setor</option>
-                        <option value="Coordenador Geral">Coordenador Geral</option>
-                        <option value="Coordenador">Coordenador</option>
-                        <option value="Diretor-Geral">Diretor-Geral</option>
-                        <option value="Diretor">Diretor</option>
-                        <option value="NPF">NPF</option>
-                        <option value="Superintendente">Superintendente</option>
-                  </select>
-              </div>
+            </div>
+            <div class="row">
+                <separator class="my-3" title="Você tem interesse em participar do PG-PRF" [bold]="true">
+                </separator>
+                <input-switch [size]="1" label="SIm/Não" icon="fas fa-user-graduate" controlName="radioInteressePG"
+                    [control]="form!.controls.radioInteressePG">
+                </input-switch>
+                <input-radio *ngIf="form!.controls.radioInteressePG.value" [size]="4" label="Opções"
+                    [items]="lookup.PG_PRF" controlName="radioInteressePG">
+                </input-radio>
 
-              <div class="col-lg-5">
-                  <label for="cadpesselectgrupo"> Você faz parte de um grupo especializado? </label><i class="fa-solid fa-person-circle-check" style="margin-left:5px;"></i>
-                  
-                  <!--<select id="cadpesselectgrupo" class="form-select placeholder-multiple" style="width: 100%" name="chefias" multiple="multiple"  onchange="">-->
-                  <select id="cadpesselectgrupo" class="form-select" style="width: 100%" name="cadpesselectgrupo" onchange="">
-                        <option></option>
-                        <option value="COE">COE</option>
-                        <option value="GECAM">GECAM</option>
-                        <option value="GECGH">GECGH</option>
-                        <option value="GECDH">GECDH</option>
-                        <option value="GEFRAV">GEFRAV</option>
-                        <option value="GETRAN">GETRAN</option>
-                        <option value="GFIS">GFIS</option>
-                        <option value="GFT">GFT</option>
-                        <option value="GIAT">GIAT</option>
-                        <option value="GMD">GMD</option>
-                        <option value="GMR">GMR</option>
-                        <option value="GNARC">GNARC</option>
-                        <option value="GOC">GOC</option>
-                        <option value="GPAT">GPAT</option>
-                        <option value="GPT">GPT</option>
-                        <option value="GTARM">GTARM</option>
-                        
-                  </select>
-              </div>
-              
-          </div>
-          <div class="row mb-3 align-items-center">
+            </div>
+            <div class="row">
+                <separator class="my-3" title="Você tem interesse em remoção?" [bold]="true">
+                </separator>
+                <input-switch [size]="1" label="SIm/Não" icon="fas fa-user-graduate" controlName="radioInteresseRemove"
+                    [control]="form!.controls.radioInteresseRemove">
+                </input-switch>
+            </div>
 
-                <div class="col-lg-7">
-                      <label for="cadhistlot1">Selecione todas as unidades e que você já foi lotado.</label><i class="fa-solid fa-person-circle-check"
-                          style="margin-left:5px;"></i>
-                      <p></p>
+        </tab>
 
-                      <select id="cadhistlot1" class="form-select placeholder-multiple" style="width: 100%" name="cadhistlot1" multiple="multiple"  onchange="">
-                          <option></option>
-                          <!--<? for(let i=0;i<listalotacao.length;i++){ ?>
+    </tabs>
+    <separator class="mb-5"></separator>
+</editable-form>
 
-                          <option>
-                                <?= listalotacao[i]; ?>
-                          </option>
-
-                          <? } ?>-->
-
-                      </select>
-                </div>
-              <div class="col-lg-5">
-                    <label for="selectlotatual"> Lotação Atual </label><i class="fa-solid fa-person-circle-check"
-                        style="margin-left:5px;"></i>
-                    <p></p>
-
-                    <select id="selectlotatual" class="form-select" name="selectlotatual" onchange="">
-                        <option></option>
-                        <!--<? for(let i=0;i<listalotacao.length;i++){ ?>
-
-                        <option>
-                              <?= listalotacao[i]; ?>
-                        </option>
-
-                        <? } ?>-->
-
-                    </select>
-              </div>
-
-             
-          </div>
-          <!-- Fechamento da class row mb-3 -->
-
-
-
-
-
-
-          
-    </div>
-    <!-- fechamento da div divescchefias -->
-
-    <hr>
-
-
+<!--
+<div clas="container-fluid">
     <div class="row mb-3 mt-3">
             <label class="lblexpantclass" id="lblexpant"  onclick="escexpant()"><h4>Habilidades externas (Hard Skills)<i class="fa-solid fa-square-plus" id="icoea"></i></h4></label>
     </div>
@@ -631,7 +796,7 @@
                       </div>
                                         
                 </div>
-          </div><!--fecha divcursofeito-->
+          </div>
           
           <div class="row my-3">
               <label class="fw-bold mb-3" onclick="esccursofazer()">Quais cursos você pretende fazer na PRF? <i class="fa-solid fa-square-plus"></i></label>
@@ -705,10 +870,10 @@
                     </div>
                                       
                 </div>
-          </div><!-- fecha divcursofazer-->
+          </div>
 
           <div class="row mb-3">
-                <label class="fw-bold" onclick="esccursofeitofora()">Quais os principais cursos você já fez fora da PRF?<i class="fa-solid fa-square-plus"></i></label> <!--<i class="fa-solid fa-arrows-up-down-left-right"></i></label>-->
+                <label class="fw-bold" onclick="esccursofeitofora()">Quais os principais cursos você já fez fora da PRF?<i class="fa-solid fa-square-plus"></i></label> <i class="fa-solid fa-arrows-up-down-left-right"></i></label>
           </div>
           <div id="divcursofeitofora">
                   <div class="row mb-3">
@@ -787,10 +952,7 @@
                                       </div>
                                       
                               </div>
-          </div><!-- Fecha divcursofeitofora2-->
-        </div><!-- Fecha divcursofeitofora-->
-        
-      </div><!---->
+          </div><
 
 
 
@@ -873,7 +1035,7 @@
                                       </div>
                                       
                               </div>
-          </div><!-- Fecha divcursofeitofora2-->
+          </div>
         </div>
       </div>
 
@@ -1083,7 +1245,7 @@
               </div>
 
               <div id="divconvoca2">
-                  <!--<div class="row">-->
+                 
                       <div class="form-check form-check-inline col-lg-3 mt-3">
                         <input class="form-check-input" type="radio" id="radiopresencial2" name="radiodeseja2" value="Presencial">
                         <label class="form-check-label" for="radiopresencial2">Presencial</label>
@@ -1099,7 +1261,7 @@
                         <input class="form-check-input" type="radio" id="radiohibrido2" name='radiodeseja2' value="Hibrido">
                         <label class="form-check-label" for="radiohibrido2">Híbrido</label>
                       </div>
-                  <!--</div>-->
+                  
                   <div class="row my-3">
                       <div class="col-5">
                         <label class="label" for="txtnomechefe">Nome do Chefe Imediato</label>
@@ -1121,8 +1283,7 @@
           </div>
           <div class="row mb-3">
                   <div class="form-group col-md-4">
-                    <!-- <label for="radioconvocaremovesim">Remoção?</label><i class="fa-solid fa-right-left"></i>
-                      <p></p>-->
+                   
                   
 
                       <div class="form-group form-check-inline">
@@ -1138,3 +1299,4 @@
 
       </div>
 </div>
+-->

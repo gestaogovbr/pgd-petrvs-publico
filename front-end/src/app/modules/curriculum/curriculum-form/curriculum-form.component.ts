@@ -9,11 +9,12 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
 import { AreaConhecimentoDaoService } from 'src/app/dao/area-conhecimento-dao.service';
 import { CursoDaoService } from 'src/app/dao/curso-dao.service';
-import { Curriculum } from 'src/app/models/currriculum.model';
+
 import { CurriculumDaoService } from 'src/app/dao/curriculum-dao.service';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { InputSwitchComponent } from 'src/app/components/input/input-switch/input-switch.component';
-import * as ts from 'typescript';
+import { Curriculum } from 'src/app/models/currriculum.model';
+
 
 @Component({
   selector: 'curriculum-pessoal-form',
@@ -26,13 +27,15 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   @ViewChild(InputSearchComponent, { static: false }) public area?: InputSearchComponent;
   @ViewChild(InputSearchComponent, { static: false }) public areaPos?: InputSearchComponent;
   @ViewChild(InputSelectComponent, { static: false }) public estados?: InputSelectComponent;
-  @ViewChild(InputSwitchComponent, { static: false }) public  cursoPos2?: InputSwitchComponent;
+  @ViewChild(InputSelectComponent, { static: false }) public titulo?: InputSelectComponent;
+
 
   public municipios: LookupItem[] = [];
-  public areasGraduacao: LookupItem[] = [];
+  //public areasGraduacao: LookupItem[] = [];
   public cursos: LookupItem[] = [];
   public cursosPos : LookupItem[] = [];
-  public grad : LookupItem[] = [];
+  public cursosGradPos : LookupItem[] = [];
+ // public grad : LookupItem[] = [];
   public opcoesEscolha : LookupItem[]=[   {'key': 1 , 'value': 'Pretendo Fazer'},{'key': 0 , 'value': 'Finalizado'}];
  
   public cidadeDao: CidadeDaoService;
@@ -69,16 +72,16 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     
     this.formGraduacao = this.fh.FormBuilder({
       curriculum_id:{default:""},
-      radioGraduacao: { default: false },
-      radioPretendeGraduacao: { default: false},
+      //radioGraduacao: { default: false },
+      //radioPretendeGraduacao: { default: false},
       area: { default: "" },
       curso: { default: "" },
       graduacao: { default: [] },
-      radioPretendePosGraduacao: { default: false },
+      radioPretendeGraduacaoPos: { default: false },
       areaPos: { default: "" },
       cursoPos: { default: "" },
       titulo:{ default: "" },
-      posgraduacao: { default: [] },
+      graduacaopos: { default: [] },
      
     }, this.cdRef, this.validate)
 
@@ -114,6 +117,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
       curriculum=this.util.fillForm(curriculum, this.form!.value);
       curriculum.usuario_id=this.auth.usuario?.id;
       (this.form?.controls.idiomasM.value as Array<LookupItem>).forEach(element  => curriculum.idiomas.push(element.data));
+     // let graduacoes = this.util.fill(new CurriculumGraduacao(),)
       resolve(curriculum);
       //resolve(this.util.fillForm(curriculum, this.form!.value));
     });
@@ -193,7 +197,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     return result;
   };
 
-  public addItemPosGraduacao(): LookupItem | undefined {
+  public addItemGraduacaoPos(): LookupItem | undefined {
     let result = undefined;
     
     /*this.cursoDao?.query({where: [['id', '==', this.formGraduacao!.controls.curso.value]]}).getAll().then((curso2)=>{
@@ -201,17 +205,18 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
         console.log('CURSO DENTRO->',curso)
     })*/
 
-    const area = { 'key': this.formGraduacao!.controls.areaPos.value, 'value': this.areaPos?.selectedItem?.text };
+    const area = { 'key': this.formGraduacao!.controls.areaPos.value, 'value': this.areaPos?.selectedItem?.text};
+    console.log('AREA',area)
     const curso= this.cursosPos.find(value => value.key == this.formGraduacao!.controls.cursoPos.value)
-    const titulo = this.lookup.POS_GRADUACOES.find(x => x.key == this.formGraduacao!.controls.titulo.value);
+    const titulo = this.lookup.TITULOS_CURSOS.find(x => x.key == this.formGraduacao!.controls.titulo.value);
     const status=this.opcoesEscolha.find(value => value.key == (this.formGraduacao!.controls.radioPretendePosGraduacao.value ? 1 : 0))//converte o value do switch
     const key = this.util.textHash((area.key || "") + (curso?.key || "") + (titulo?.key || "") + (status?.key || ""));
    
-    if (curso && area && this.util.validateLookupItem(this.formGraduacao!.controls.posgraduacao.value, key)) {
+    if (curso && area && titulo && status && this.util.validateLookupItem(this.formGraduacao!.controls.posgraduacao.value, key)) {
       
       result = {
         key: key,
-        value: area.value + ' - ' + curso.value + ' - ' + titulo?.value,
+        value: area.value + ' - ' + curso.value + ' - ' + titulo?.value + ' - ' + status?.value,
         data: {
           area: area.key,
           curso: curso.key,
@@ -219,7 +224,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
           status:status?.key
         }
       };
-      
+      console.log('FORMULARIOGRAD',this.formGraduacao!.value)
       this.formGraduacao!.controls.areaPos.setValue("");
       this.formGraduacao!.controls.cursoPos.setValue("");
       this.formGraduacao!.controls.titulo.setValue("");
@@ -228,22 +233,20 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     return result;
   };
 
-  public onAreaGraducaoChange(){
+  public onAreaGraducaoPosChange(){
     
     this.cursoDao?.query({where: [['area_curso_id', '==', this.formGraduacao!.controls.area.value], ['titulo', 'like', 'GRAD%']]}).getAll().then((cursos2) => {
-      //console.log('CURSOS2->',cursos2)
       this.cursos = cursos2.map(x => Object.assign({},{key: x.id, value: x.nome}) as LookupItem);
-      //console.log('onAreaGraducaoChange->',this.cursos2)
       this.cdRef.detectChanges();
     });
   }
   
-  public onAreaPosGraducaoChange(){
-    
-    this.cursoDao?.query({where: [['area_curso_id', '==', this.formGraduacao!.controls.areaPos.value], ['titulo', 'in', ["ESPECIAL", "MESTRADO","DOUTORADO","POS_DOUTORADO"]]]}).getAll().then((cursos3) => {
-      //console.log('CURSOSPOS2->',cursos3)
-      this.cursosPos = cursos3.map(x => Object.assign({},{key: x.id, value: x.nome}) as LookupItem);
-      //console.log('onAreaGraducaoChange->',this.cursos2)
+  public onAreaPosGraduacaoChange(){
+   
+    const titulo = this.lookup.TITULOS_CURSOS.find(x => x.key == this.formGraduacao!.controls.titulo.value);
+    // this.cursoDao?.query({where: [['area_curso_id', '==', this.formGraduacao!.controls.areaPos.value && 'titulo','==',titulo?.key], ['titulo', 'in', ["GRAD_TEC", "GRAD_BAC","GRAD_LIC","ESPECIAL","MESTRADO","DOUTORADO","POS_DOUTORADO"]]]}).getAll().then((cursos3) => {
+    this.cursoDao?.query({where: [['area_curso_id', '==', this.formGraduacao!.controls.areaPos.value],['titulo','==',titulo?.key],['titulo', 'in', ["GRAD_TEC", "GRAD_BAC","GRAD_LIC","ESPECIAL","MESTRADO","DOUTORADO","POS_DOUTORADO"]]]}).getAll().then((cursos3) => {
+      this.cursosGradPos = cursos3.map(x => Object.assign({},{key: x.id, value: x.nome}) as LookupItem);
       this.cdRef.detectChanges();
     });
  
@@ -253,15 +256,15 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
 
     this.dao?.query({where: ['usuario_id', '==', this.auth.usuario?.id]}).getAll().then((user) => {
       console.log('USER',user.map(x=>x.id))
-      if(user == null || user.length == 0 ){
+      if(!(user == null || user.length == 0 )){
         //console.log('VAZIO')
-        this.form?.controls.curriculum_id.setValue('')
-      }else{
         const userID=(user.map(x=>x.id)).toString()
         //console.log('USERID',userID)          
         this.form?.controls.id.setValue(userID)//.toString())))
       }
     });
+
+  
   }
 
   public onAddClick(){

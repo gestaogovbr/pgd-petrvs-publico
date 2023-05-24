@@ -1,13 +1,12 @@
 import { Injectable, Injector } from '@angular/core';
 
-export type LookupItem =  {
+export type LookupItem = {
   key: any,
   value: string,
   code?: string,
   color?: string,
   icon?: string,
   data?: any,
-  
 };
 
 @Injectable({
@@ -66,7 +65,7 @@ export class LookupService {
   ];
 
   public COMENTARIO_TIPO: LookupItem[] = [
-    { key: 'COMENTARIO', value: "Comentário", icon: "bi bi-chat-left-quote"},
+    { key: 'COMENTARIO', value: "Comentário", icon: "bi bi-chat-left-quote" },
     { key: 'TECNICO', value: "Técnico", icon: "bi bi-chat-left-text" },
     { key: 'GERENCIAL', value: "Gerencial", icon: "bi bi-clipboard2-pulse" },
     { key: 'AVALIACAO', value: "Avaliação", icon: "bi bi-check2-circle" },
@@ -86,11 +85,11 @@ export class LookupService {
     { key: "CONCLUIDO", value: "Concluído", icon: "bi bi bi-check-circle", color: "badge rounded-pill bg-primary" },
     { key: "NAOCONCLUIDO", value: "Não concluído", icon: "bi bi-play-circle", color: "badge rounded-pill bg-info text-dark" },
     { key: "INICIADO", value: "Iniciado", icon: "bi bi-play-circle", color: "badge rounded-pill bg-info text-dark" },
-    { key: "LANCADO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "badge rounded-pill bg-warning text-dark"}
+    { key: "LANCADO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "badge rounded-pill bg-warning text-dark" }
   ];
 
   public DEMANDA_STATUS_COM_ARQUIVADAS: LookupItem[] = [
-    { key: "LANCADO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "badge rounded-pill bg-warning text-dark"},
+    { key: "LANCADO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "badge rounded-pill bg-warning text-dark" },
     { key: "INICIADO", value: "Iniciado", icon: "bi bi-play-circle", color: "badge rounded-pill bg-info text-dark" },
     { key: "NAOCONCLUIDO", value: "Não concluído", icon: "bi bi-play-circle", color: "badge rounded-pill bg-info text-dark" },
     { key: "CONCLUIDO", value: "Concluído", icon: "bi bi bi-check-circle", color: "badge rounded-pill bg-primary" },
@@ -105,16 +104,16 @@ export class LookupService {
 
   public DOCUMENTO_ESPECIE: LookupItem[] = [
     { key: 'TERMO_ADESAO', value: "Termo de adesão (OBSOLETO)", icon: "bi bi-file-earmark-excel", color: "danger" },
-    { key: 'SEI', value: "Documento SEI", icon: "bi bi-exclamation", color: "primary"},
-    { key: 'TCR', value: "TCR", icon: "bi bi-file-medical-fill", color: "success"},
+    { key: 'SEI', value: "Documento SEI", icon: "bi bi-exclamation", color: "primary" },
+    { key: 'TCR', value: "TCR", icon: "bi bi-file-medical-fill", color: "success" },
     { key: 'OUTRO', value: "Outro", icon: "bi bi-question-circle", color: "danger" }
   ]
 
   public UNIDADE_INTEGRANTE_TIPO: LookupItem[] = [
-    { key: 'GESTOR', value: "Chefe", icon: "bi bi-star-fill", color: "warning"},
-    { key: 'GESTOR_SUBSTITUTO', value: "Chefe substituto", icon: "bi bi-star-half", color: "warning"},
-    { key: 'AVALIADOR_DEMANDAS', value: "Avaliador (demandas)", icon: "bi bi-check-all", color: "success"},
-    { key: 'LOTADO', value: "Lotado", icon: "bi bi-geo-alt", color: "secondary"}
+    { key: 'GESTOR', value: "Chefe", icon: "bi bi-star-fill", color: "warning" },
+    { key: 'GESTOR_SUBSTITUTO', value: "Chefe substituto", icon: "bi bi-star-half", color: "warning" },
+    { key: 'AVALIADOR_DEMANDAS', value: "Avaliador (demandas)", icon: "bi bi-check-all", color: "success" },
+    { key: 'LOTADO', value: "Lotado", icon: "bi bi-geo-alt", color: "secondary" }
   ];
 
   public TEMPLATE_ESPECIE: LookupItem[] = this.DOCUMENTO_ESPECIE;
@@ -193,137 +192,137 @@ export class LookupService {
     { key: "#D0C9C0", value: "Cinza", color: "#D0C9C0" },
     { key: "#D7E9F7", value: "Azul", color: "#D7E9F7" },
     { key: "#DBE4C6", value: "Verde", color: "#DBE4C6" },
-    { key: "#FFEB99", value: "Amarelo", color: "#FFEB99" }
+    { key: "#FFEB99", value: "Amarelo", color: "#FFEB99" }
   ];
 
   public ICONES = [
-    {key: "bi bi-award", value: "Medalha", icon: "bi bi-award" },
-    {key: "bi bi-bell", value: "Sino", icon: "bi bi-bell" },
-    {key: "bi bi-alarm", value: "Alarme", icon: "bi bi-alarm"},
-    {key: "bi bi-archive", value: "Arquivo", icon: "bi bi-archive"},
-    {key: "bi bi-asterisk", value: "Asterisco", icon: "bi bi-asterisk"},
-    {key: "bi bi-bar-chart", value: "Grafico", icon: "bi bi-bar-chart"},
-    {key: "bi bi-bell-slash", value: "Silencioso", icon: "bi bi-bell-slash"},
-    {key: "bi bi-book", value: "Livro", icon: "bi bi-book"},
-    {key: "bi bi-brightness-high", value: "Sol", icon: "bi bi-brightness-high"},
-    {key: "bi bi-brightness-alt-high", value: "Amanhecer", icon: "bi bi-brightness-alt-high"},
-    {key: "bi bi-brush", value: "Pincel", icon: "bi bi-brush"},
-    {key: "bi bi-calculator", value: "Calculadora", icon: "bi bi-calculator"},
-    {key: "bi bi-calendar-date", value: "Calendário", icon: "bi bi-calendar-date"},
-    {key: "bi bi-bug", value: "Bug", icon: "bi bi-bug"},
-    {key: "bi bi-building", value: "Edifícios", icon: "bi bi-building"},
-    {key: "bi bi-camera-fill", value: "Câmera", icon: "bi bi-camera-fill"},
-    {key: "bi bi-camera-reels", value: "Filmadora", icon: "bi bi-camera-reels"},
-    {key: "bi bi-camera-video-off", value: "Câmera OFF", icon: "bi bi-camera-video-off"},
-    {key: "bi bi-card-checklist", value: "Checklist", icon: "bi bi-card-checklist"},
-    {key: "bi bi-card-image", value: "Imagem", icon: "bi bi-card-image"},
-    {key: "bi bi-card-list", value: "Lista", icon: "bi bi-card-list"},
-    {key: "bi bi-cart3", value: "Carrinho", icon: "bi bi-cart3"},
-    {key: "bi bi-cash", value: "Dinheiro", icon: "bi bi-cash"},
-    {key: "bi bi-chat", value: "Balão de Fala (Vazio)", icon: "bi bi-chat"},
-    {key: "bi bi-chat-dots", value: "Balão de Fala (...)", icon: "bi bi-chat-dots"},
-    {key: "bi bi-check-circle", value: "Check", icon: "bi bi-check-circle"},
-    {key: "bi bi-clock", value: "Relógio", icon: "bi bi-clock"},
-    {key: "bi bi-clock-history", value: "Relógio Ativo", icon: "bi bi-clock-history"},
-    {key: "bi bi-cloud", value: "Nuvem", icon: "bi bi-cloud"},
-    {key: "bi bi-cone-striped", value: "Cone", icon: "bi bi-cone-striped"},
-    {key: "bi bi-diagram-3", value: "Diagrama", icon: "bi bi-diagram-3"},
-    {key: "bi bi-emoji-smile", value: "Emoji Sorrindo", icon: "bi bi-emoji-smile"},
-    {key: "bi bi-emoji-neutral", value: "Emoji Neutro", icon: "bi bi-emoji-neutral"},
-    {key: "bi bi-emoji-frown", value: "Emoji Triste", icon: "bi bi-emoji-frown"},
-    {key: "bi bi-envelope", value: "Envelope", icon: "bi bi-envelope"},
-    {key: "bi bi-eye", value: "Olho", icon: "bi bi-eye"},
-    {key: "bi bi-folder", value: "Pasta", icon: "bi bi-folder"},
-    {key: "bi bi-gear", value: "Configurações", icon: "bi bi-gear"},
-    {key: "bi bi-gift", value: "Presente", icon: "bi bi-gift"},
-    {key: "bi bi-hand-thumbs-up", value: "Positivo", icon: "bi bi-hand-thumbs-up"},
-    {key: "bi bi-hand-thumbs-down", value: "Negativo", icon: "bi bi-hand-thumbs-down"},
-    {key: "bi bi-heart", value: "Coração", icon: "bi bi-heart"},
-    {key: "bi bi-house", value: "Home", icon: "bi bi-house"},
-    {key: "bi bi-info-circle", value: "Informação", icon: "bi bi-info-circle"},
-    {key: "bi bi-moon-stars", value: "Noite", icon: "bi bi-moon-stars"},
-    {key: "bi bi-person-circle", value: "Perfil", icon: "bi bi-person-circle"},
-    {key: "bi bi-printer", value: "Impressora", icon: "bi bi-printer"},
-    {key: "bi bi-reply", value: "Retorno", icon: "bi bi-reply"},
-    {key: "bi bi-search", value: "Lupa de Pesquisa", icon: "bi bi-search"},
-    {key: "bi bi-trash", value: "Lixeira", icon: "bi bi-trash"},
-    {key: "bi bi-trophy", value: "Trófeu", icon: "bi bi-trophy"},
+    { key: "bi bi-award", value: "Medalha", icon: "bi bi-award" },
+    { key: "bi bi-bell", value: "Sino", icon: "bi bi-bell" },
+    { key: "bi bi-alarm", value: "Alarme", icon: "bi bi-alarm" },
+    { key: "bi bi-archive", value: "Arquivo", icon: "bi bi-archive" },
+    { key: "bi bi-asterisk", value: "Asterisco", icon: "bi bi-asterisk" },
+    { key: "bi bi-bar-chart", value: "Grafico", icon: "bi bi-bar-chart" },
+    { key: "bi bi-bell-slash", value: "Silencioso", icon: "bi bi-bell-slash" },
+    { key: "bi bi-book", value: "Livro", icon: "bi bi-book" },
+    { key: "bi bi-brightness-high", value: "Sol", icon: "bi bi-brightness-high" },
+    { key: "bi bi-brightness-alt-high", value: "Amanhecer", icon: "bi bi-brightness-alt-high" },
+    { key: "bi bi-brush", value: "Pincel", icon: "bi bi-brush" },
+    { key: "bi bi-calculator", value: "Calculadora", icon: "bi bi-calculator" },
+    { key: "bi bi-calendar-date", value: "Calendário", icon: "bi bi-calendar-date" },
+    { key: "bi bi-bug", value: "Bug", icon: "bi bi-bug" },
+    { key: "bi bi-building", value: "Edifícios", icon: "bi bi-building" },
+    { key: "bi bi-camera-fill", value: "Câmera", icon: "bi bi-camera-fill" },
+    { key: "bi bi-camera-reels", value: "Filmadora", icon: "bi bi-camera-reels" },
+    { key: "bi bi-camera-video-off", value: "Câmera OFF", icon: "bi bi-camera-video-off" },
+    { key: "bi bi-card-checklist", value: "Checklist", icon: "bi bi-card-checklist" },
+    { key: "bi bi-card-image", value: "Imagem", icon: "bi bi-card-image" },
+    { key: "bi bi-card-list", value: "Lista", icon: "bi bi-card-list" },
+    { key: "bi bi-cart3", value: "Carrinho", icon: "bi bi-cart3" },
+    { key: "bi bi-cash", value: "Dinheiro", icon: "bi bi-cash" },
+    { key: "bi bi-chat", value: "Balão de Fala (Vazio)", icon: "bi bi-chat" },
+    { key: "bi bi-chat-dots", value: "Balão de Fala (...)", icon: "bi bi-chat-dots" },
+    { key: "bi bi-check-circle", value: "Check", icon: "bi bi-check-circle" },
+    { key: "bi bi-clock", value: "Relógio", icon: "bi bi-clock" },
+    { key: "bi bi-clock-history", value: "Relógio Ativo", icon: "bi bi-clock-history" },
+    { key: "bi bi-cloud", value: "Nuvem", icon: "bi bi-cloud" },
+    { key: "bi bi-cone-striped", value: "Cone", icon: "bi bi-cone-striped" },
+    { key: "bi bi-diagram-3", value: "Diagrama", icon: "bi bi-diagram-3" },
+    { key: "bi bi-emoji-smile", value: "Emoji Sorrindo", icon: "bi bi-emoji-smile" },
+    { key: "bi bi-emoji-neutral", value: "Emoji Neutro", icon: "bi bi-emoji-neutral" },
+    { key: "bi bi-emoji-frown", value: "Emoji Triste", icon: "bi bi-emoji-frown" },
+    { key: "bi bi-envelope", value: "Envelope", icon: "bi bi-envelope" },
+    { key: "bi bi-eye", value: "Olho", icon: "bi bi-eye" },
+    { key: "bi bi-folder", value: "Pasta", icon: "bi bi-folder" },
+    { key: "bi bi-gear", value: "Configurações", icon: "bi bi-gear" },
+    { key: "bi bi-gift", value: "Presente", icon: "bi bi-gift" },
+    { key: "bi bi-hand-thumbs-up", value: "Positivo", icon: "bi bi-hand-thumbs-up" },
+    { key: "bi bi-hand-thumbs-down", value: "Negativo", icon: "bi bi-hand-thumbs-down" },
+    { key: "bi bi-heart", value: "Coração", icon: "bi bi-heart" },
+    { key: "bi bi-house", value: "Home", icon: "bi bi-house" },
+    { key: "bi bi-info-circle", value: "Informação", icon: "bi bi-info-circle" },
+    { key: "bi bi-moon-stars", value: "Noite", icon: "bi bi-moon-stars" },
+    { key: "bi bi-person-circle", value: "Perfil", icon: "bi bi-person-circle" },
+    { key: "bi bi-printer", value: "Impressora", icon: "bi bi-printer" },
+    { key: "bi bi-reply", value: "Retorno", icon: "bi bi-reply" },
+    { key: "bi bi-search", value: "Lupa de Pesquisa", icon: "bi bi-search" },
+    { key: "bi bi-trash", value: "Lixeira", icon: "bi bi-trash" },
+    { key: "bi bi-trophy", value: "Trófeu", icon: "bi bi-trophy" },
     // Emojis FontAwesome
-    {key: "far fa-frown-open", value: "Emoji triste boca aberta", icon: "far fa-frown-open"},
-    {key: "fas fa-frown-open", value: "Emoji triste solido", icon: "fas fa-frown-open"},
-    {key: "fas fa-frown", value: "Emoji triste solido", icon: "fas fa-frown"},
-    {key: "far fa-frown", value: "Emoji triste vazado", icon: "far fa-frown"},
-    {key: "fas fa-smile", value: "Emoji sorrindo solido", icon: "fas fa-smile"},
-    {key: "far fa-smile", value: "Emoji sorrindo vazado", icon: "far fa-smile"},
-    {key: "far fa-smile-wink", value: "Emoji piscando vazado", icon: "far fa-smile-wink"},
-    {key: "fas fa-smile-wink", value: "Emoji piscando solido", icon: "fas fa-smile-wink"},
-    {key: "far fa-sad-cry", value: "Emoji chorando vazado", icon: "far fa-sad-cry"},
-    {key: "fas fa-sad-cry", value: "Emoji chorando solido", icon: "fas fa-sad-cry"},
-    {key: "far fa-meh", value: "Emoji neutro vazado", icon: "far fa-meh"},
-    {key: "fas fa-meh", value: "Emoji neutro solido", icon: "fas fa-meh"},
-    {key: "far fa-grin-stars", value: "Emoji sorrindo estrela no olho vazado", icon: "far fa-grin-stars"},
-    {key: "fas fa-grin-stars", value: "Emoji sorrindo estrela no olho solido", icon: "fas fa-grin-stars"},
-    {key: "far fa-angry", value: "Emoji bravo vazado", icon: "far fa-angry"},
-    {key: "fas fa-angry", value: "Emoji bravo solido", icon: "fas fa-angry"},
-    {key: "far fa-surprise", value: "Emoji surpreso vazado", icon: "far fa-surprise"},
-    {key: "fas fa-surprise", value: "Emoji surpreso solido", icon: "fas fa-surprise"},
-    {key: "far fa-tired", value: "Emoji cansado vazado", icon: "far fa-tired"},
-    {key: "fas fa-tired", value: "Emoji cansado solido", icon: "fas fa-tired"},
-    {key: "far fa-sad-tear", value: "Emoji triste  1 lágrima", icon: "far fa-sad-tear"},
-    {key: "fas fa-sad-tear", value: "Emoji triste 1 lágrima solido", icon: "fas fa-sad-tear"},
-    {key: "far fa-smile-beam", value: "Emoji sorriso vazado", icon: "far fa-smile-beam"},
-    {key: "fas fa-smile-beam", value: "Emoji sorriso solido", icon: "fas fa-smile-beam"},
-    {key: "far fa-laugh-beam", value: "Emoji gargalhada", icon: "far fa-laugh-beam"},
-    {key: "fas fa-laugh-beam", value: "Emoji gargalhada solido", icon: "fas fa-laugh-beam"},
-    {key: "far fa-grin", value: "Emoji sorriso", icon: "far fa-grin"},
-    {key: "fas fa-grin", value: "Emoji sorriso solido", icon: "fas fa-grin"},
+    { key: "far fa-frown-open", value: "Emoji triste boca aberta", icon: "far fa-frown-open" },
+    { key: "fas fa-frown-open", value: "Emoji triste solido", icon: "fas fa-frown-open" },
+    { key: "fas fa-frown", value: "Emoji triste solido", icon: "fas fa-frown" },
+    { key: "far fa-frown", value: "Emoji triste vazado", icon: "far fa-frown" },
+    { key: "fas fa-smile", value: "Emoji sorrindo solido", icon: "fas fa-smile" },
+    { key: "far fa-smile", value: "Emoji sorrindo vazado", icon: "far fa-smile" },
+    { key: "far fa-smile-wink", value: "Emoji piscando vazado", icon: "far fa-smile-wink" },
+    { key: "fas fa-smile-wink", value: "Emoji piscando solido", icon: "fas fa-smile-wink" },
+    { key: "far fa-sad-cry", value: "Emoji chorando vazado", icon: "far fa-sad-cry" },
+    { key: "fas fa-sad-cry", value: "Emoji chorando solido", icon: "fas fa-sad-cry" },
+    { key: "far fa-meh", value: "Emoji neutro vazado", icon: "far fa-meh" },
+    { key: "fas fa-meh", value: "Emoji neutro solido", icon: "fas fa-meh" },
+    { key: "far fa-grin-stars", value: "Emoji sorrindo estrela no olho vazado", icon: "far fa-grin-stars" },
+    { key: "fas fa-grin-stars", value: "Emoji sorrindo estrela no olho solido", icon: "fas fa-grin-stars" },
+    { key: "far fa-angry", value: "Emoji bravo vazado", icon: "far fa-angry" },
+    { key: "fas fa-angry", value: "Emoji bravo solido", icon: "fas fa-angry" },
+    { key: "far fa-surprise", value: "Emoji surpreso vazado", icon: "far fa-surprise" },
+    { key: "fas fa-surprise", value: "Emoji surpreso solido", icon: "fas fa-surprise" },
+    { key: "far fa-tired", value: "Emoji cansado vazado", icon: "far fa-tired" },
+    { key: "fas fa-tired", value: "Emoji cansado solido", icon: "fas fa-tired" },
+    { key: "far fa-sad-tear", value: "Emoji triste  1 lágrima", icon: "far fa-sad-tear" },
+    { key: "fas fa-sad-tear", value: "Emoji triste 1 lágrima solido", icon: "fas fa-sad-tear" },
+    { key: "far fa-smile-beam", value: "Emoji sorriso vazado", icon: "far fa-smile-beam" },
+    { key: "fas fa-smile-beam", value: "Emoji sorriso solido", icon: "fas fa-smile-beam" },
+    { key: "far fa-laugh-beam", value: "Emoji gargalhada", icon: "far fa-laugh-beam" },
+    { key: "fas fa-laugh-beam", value: "Emoji gargalhada solido", icon: "fas fa-laugh-beam" },
+    { key: "far fa-grin", value: "Emoji sorriso", icon: "far fa-grin" },
+    { key: "fas fa-grin", value: "Emoji sorriso solido", icon: "fas fa-grin" },
     // Chart FontAwesome
-    {key: "fa-solid fa-chart-pie", value: "Grafico de Pizza solido", icon: "fas fa-chart-pie"},
-    {key: "fa-solid fa-chart-bar", value: "Grafico de barra vertical", icon: "fas fa-chart-bar"},
-    {key: "fa-solid fa-chart-line", value: "Grafico de linha", icon: "fas fa-chart-line"},
+    { key: "fa-solid fa-chart-pie", value: "Grafico de Pizza solido", icon: "fas fa-chart-pie" },
+    { key: "fa-solid fa-chart-bar", value: "Grafico de barra vertical", icon: "fas fa-chart-bar" },
+    { key: "fa-solid fa-chart-line", value: "Grafico de linha", icon: "fas fa-chart-line" },
     // Balão de comentario FontAwesome
-    {key: "fa-regular fa-comment", value: "Balao vazado", icon: "far fa-comment"},
-    {key: "fa-solid fa-comment", value: "Balao solido", icon: "fas fa-comment"},
-    {key: "fa-regular fa-comment-dots", value: "Balao vazado com ponto", icon: "far fa-comment-dots"},
-    {key: "fa-solid fa-comment-dots", value: "Balao solido com ponto", icon: "fas fa-comment-dots"},
-    {key: "fa-regular fa-comments", value: "2 Baloes vazados", icon: "far fa-comments"},
-    {key: "fa-solid fa-comments", value: "2 Baloes solidos", icon: "fas fa-comments"},
-    {key: "fa-regular fa-message", value: "Balao retangular vazado", icon: "far fa-comment-alt"},
-    {key: "fa-solid fa-message", value: "Balao retangular solido", icon: "fas fa-comment-alt"},
+    { key: "fa-regular fa-comment", value: "Balao vazado", icon: "far fa-comment" },
+    { key: "fa-solid fa-comment", value: "Balao solido", icon: "fas fa-comment" },
+    { key: "fa-regular fa-comment-dots", value: "Balao vazado com ponto", icon: "far fa-comment-dots" },
+    { key: "fa-solid fa-comment-dots", value: "Balao solido com ponto", icon: "fas fa-comment-dots" },
+    { key: "fa-regular fa-comments", value: "2 Baloes vazados", icon: "far fa-comments" },
+    { key: "fa-solid fa-comments", value: "2 Baloes solidos", icon: "fas fa-comments" },
+    { key: "fa-regular fa-message", value: "Balao retangular vazado", icon: "far fa-comment-alt" },
+    { key: "fa-solid fa-message", value: "Balao retangular solido", icon: "fas fa-comment-alt" },
     // Aperto de mao FontAwesome
-    {key: "fa-regular fa-handshake", value: "Aperto de mao vazado", icon: "far fa-handshake"},
-    {key: "fa-solid fa-handshake", value: "Aperto de mao solido", icon: "fas fa-handshake"},
+    { key: "fa-regular fa-handshake", value: "Aperto de mao vazado", icon: "far fa-handshake" },
+    { key: "fa-solid fa-handshake", value: "Aperto de mao solido", icon: "fas fa-handshake" },
     // Seta/Flecha -> FontAwesome
-    {key: "fa-solid fa-arrow-down", value: "Seta para baixo", icon: "fas fa-arrow-down"},
-    {key: "fa-solid fa-arrow-down-long", value: "Seta para baixo longa", icon: "fas fa-long-arrow-alt-down"},
-    {key: "fa-solid fa-arrow-left", value: "Seta para esquerda", icon: "fas fa-arrow-left"},
-    {key: "fa-solid fa-arrow-left-long", value: "Seta para esquerda longa", icon: "fas fa-long-arrow-alt-left"},
-    {key: "fa-solid fa-arrow-right", value: "Seta para direita", icon: "fas fa-arrow-right"},
-    {key: "fa-solid fa-arrow-right-long", value: "Seta para direita longa", icon: "fas fa-long-arrow-alt-right"},
-    {key: "fa-solid fa-arrow-up", value: "Seta para cima", icon: "fas fa-arrow-up"},
-    {key: "fa-solid fa-arrow-up-long", value: "Seta para cima longa", icon: "fas fa-long-arrow-alt-up"},
+    { key: "fa-solid fa-arrow-down", value: "Seta para baixo", icon: "fas fa-arrow-down" },
+    { key: "fa-solid fa-arrow-down-long", value: "Seta para baixo longa", icon: "fas fa-long-arrow-alt-down" },
+    { key: "fa-solid fa-arrow-left", value: "Seta para esquerda", icon: "fas fa-arrow-left" },
+    { key: "fa-solid fa-arrow-left-long", value: "Seta para esquerda longa", icon: "fas fa-long-arrow-alt-left" },
+    { key: "fa-solid fa-arrow-right", value: "Seta para direita", icon: "fas fa-arrow-right" },
+    { key: "fa-solid fa-arrow-right-long", value: "Seta para direita longa", icon: "fas fa-long-arrow-alt-right" },
+    { key: "fa-solid fa-arrow-up", value: "Seta para cima", icon: "fas fa-arrow-up" },
+    { key: "fa-solid fa-arrow-up-long", value: "Seta para cima longa", icon: "fas fa-long-arrow-alt-up" },
     // Checks FontAwesome
-    {key: "fa-solid fa-check", value: "Check", icon: "fas fa-check"},
-    {key: "fa-solid fa-check-double", value: "Check duplo", icon: "fas fa-check-double"},
-    {key: "fa-regular fa-circle-check", value: " Circulo com check vazado", icon: "far fa-check-circle"},
-    {key: "fa-solid fa-circle-check", value: "Circulo com check solido", icon: "fas fa-check-circle"},
-    {key: "fa-regular fa-square-check", value: " Quadrado com check vazado", icon: "far fa-check-square"},
-    {key: "fa-solid fa-square-check", value: "Quadrado com check solido", icon: "fas fa-check-square"},
-    {key: "fa-solid fa-clipboard-check", value: "Check de prancheta", icon: "fas fa-clipboard-check"},
-    {key: "fa-solid fa-user-check", value: "Check de usuario solido", icon: "fas fa-user-check"},
+    { key: "fa-solid fa-check", value: "Check", icon: "fas fa-check" },
+    { key: "fa-solid fa-check-double", value: "Check duplo", icon: "fas fa-check-double" },
+    { key: "fa-regular fa-circle-check", value: " Circulo com check vazado", icon: "far fa-check-circle" },
+    { key: "fa-solid fa-circle-check", value: "Circulo com check solido", icon: "fas fa-check-circle" },
+    { key: "fa-regular fa-square-check", value: " Quadrado com check vazado", icon: "far fa-check-square" },
+    { key: "fa-solid fa-square-check", value: "Quadrado com check solido", icon: "fas fa-check-square" },
+    { key: "fa-solid fa-clipboard-check", value: "Check de prancheta", icon: "fas fa-clipboard-check" },
+    { key: "fa-solid fa-user-check", value: "Check de usuario solido", icon: "fas fa-user-check" },
     // Filtros FontAwesome
-    {key: "fa-solid fa-filter", value: "Filtro solido", icon: "fas fa-filter"},
-    {key: "fa-light fa-arrow-down-a-z", value: "Filtro A-Z seta para baixo", icon: "fas fa-sort-alpha-down"},
-    {key: "fa-light fa-arrow-up-a-z", value: "Filtro A-Z seta para cima", icon: "fas fa-sort-alpha-up"},
-    {key: "fa-light fa-arrow-down-1-9", value: "Filtro 1-9 seta para baixo", icon: "fas fa-sort-numeric-down"},
-    {key: "fa-light fa-arrow-up-1-9", value: "Filtro 1-9 seta para cima", icon: "fas fa-sort-numeric-up"},
+    { key: "fa-solid fa-filter", value: "Filtro solido", icon: "fas fa-filter" },
+    { key: "fa-light fa-arrow-down-a-z", value: "Filtro A-Z seta para baixo", icon: "fas fa-sort-alpha-down" },
+    { key: "fa-light fa-arrow-up-a-z", value: "Filtro A-Z seta para cima", icon: "fas fa-sort-alpha-up" },
+    { key: "fa-light fa-arrow-down-1-9", value: "Filtro 1-9 seta para baixo", icon: "fas fa-sort-numeric-down" },
+    { key: "fa-light fa-arrow-up-1-9", value: "Filtro 1-9 seta para cima", icon: "fas fa-sort-numeric-up" },
     // Arquivos FontAwesome
-    {key: "fa-regular fa-file", value: " Arquivo Folha vazado", icon: "far fa-file"},
-    {key: "fa-solid fa-file", value: "Arquivo Folha solido", icon: "fas fa-file"},
-    {key: "fa-thin fa-folder-open", value: " Pasta vazado", icon: "far fa-folder-open"},
-    {key: "fa-solid fa-folder-open", value: "Pasta solido", icon: "fas fa-folder-open"},
+    { key: "fa-regular fa-file", value: " Arquivo Folha vazado", icon: "far fa-file" },
+    { key: "fa-solid fa-file", value: "Arquivo Folha solido", icon: "fas fa-file" },
+    { key: "fa-thin fa-folder-open", value: " Pasta vazado", icon: "far fa-folder-open" },
+    { key: "fa-solid fa-folder-open", value: "Pasta solido", icon: "fas fa-folder-open" },
     // Calendario
-    {key: "fa-light fa-calendar-days", value: "Calendario", icon: "far fa-calendar-alt"}
+    { key: "fa-light fa-calendar-days", value: "Calendario", icon: "far fa-calendar-alt" }
   ];
 
   public PLANO_ENTREGA_STATUS: LookupItem[] = [
@@ -478,7 +477,7 @@ export class LookupService {
   public ADESAO_STATUS: LookupItem[] = [
     { key: "SOLICITADO", value: "Solicitado", color: "bg-primary" },
     { key: "HOMOLOGADO", value: "Homologado", color: "bg-success" },
-    { key: "CANCELADO", value: "Cancelado",  color: "bg-danger" },
+    { key: "CANCELADO", value: "Cancelado", color: "bg-danger" },
   ];
 
   public PROJETO_TAREFA_STATUS: LookupItem[] = [
@@ -497,6 +496,7 @@ export class LookupService {
     { key: "SOFT_DELETE", value: "SOFT_DELETE" },
     { key: "DELETE", value: "DELETE" },
   ];
+
   public PROJETO_TIPO_RECURSOS: LookupItem[] = [
     { key: "HUMANO", value: "Humano", icon: "bi bi-people-fill", color: "primary" },
     { key: "DEPARTAMENTO", value: "Departamento", icon: "bi bi-house-gear-fill", color: "success" },
@@ -504,109 +504,103 @@ export class LookupService {
     { key: "SERVIÇO", value: "Serviço", icon: "bi bi-tools", color: "warning" },
     { key: "CUSTO", value: "Custo", icon: "bi bi-currency-exchange", color: "danger" }
   ];
+
   public PROJETO_PERFIS: LookupItem[] = [
-    { key: "ESCRITORIO", value: "Escritório", icon: "bi bi-house-gear", data: ["DEPARTAMENTO"]},
-    { key: "GERENTE", value: "Gerente", icon: "bi bi-person-gear", data: ["HUMANO"]},
-    { key: "ACESSAR", value: "Acessar o projeto", icon: "bi bi-unlock", data: ["HUMANO", "DEPARTAMENTO"]}
+    { key: "ESCRITORIO", value: "Escritório", icon: "bi bi-house-gear", data: ["DEPARTAMENTO"] },
+    { key: "GERENTE", value: "Gerente", icon: "bi bi-person-gear", data: ["HUMANO"] },
+    { key: "ACESSAR", value: "Acessar o projeto", icon: "bi bi-unlock", data: ["HUMANO", "DEPARTAMENTO"] }
   ];
-  public IDIOMAS : LookupItem[] = [
-    { 'key': "ALEMAO", 'value': 'Alemão' }, 
-    { 'key': "ARABE", 'value': 'Árabe' }, 
-    { 'key': "ARGELINO", 'value': 'Argelino' }, 
-    { 'key': "AZERI", 'value': 'Azeri' }, 
+
+  public IDIOMAS: LookupItem[] = [
+    { 'key': "ALEMAO", 'value': 'Alemão' },
+    { 'key': "ARABE", 'value': 'Árabe' },
+    { 'key': "ARGELINO", 'value': 'Argelino' },
+    { 'key': "AZERI", 'value': 'Azeri' },
     { 'key': "BENGALI", 'value': 'Bengali' },
     { 'key': "CHINES", 'value': 'Chinês' },
-    //{ 'key': "CHINESCA", 'value': 'Chinês Cantonês' },
-    //{ 'key': "CHINESMA", 'value': 'Chinês Mandarim' },
-    //{ 'key': "CHINESWU", 'value': 'Chinês WU' },
-    { 'key': "COREANO", 'value': 'Coreano' }, 
+    { 'key': "COREANO", 'value': 'Coreano' },
     { 'key': "EGIPCIO", 'value': 'Egípcio' },
-    { 'key': "ESPANHOL", 'value': 'Espanhol' },  
-    { 'key': "FRANCES", 'value': 'Frances' }, 
+    { 'key': "ESPANHOL", 'value': 'Espanhol' },
+    { 'key': "FRANCES", 'value': 'Frances' },
     { 'key': "INDI", 'value': 'indi' },
-    { 'key': "HOLANDES", 'value': 'Holandês' }, 
-    { 'key': "INDONESIO", 'value': 'Indonésio' }, 
-    { 'key': "INGLES", 'value': 'Inglês' }, 
-    { 'key': "IORUBA", 'value': 'Iorubá' }, 
+    { 'key': "HOLANDES", 'value': 'Holandês' },
+    { 'key': "INDONESIO", 'value': 'Indonésio' },
+    { 'key': "INGLES", 'value': 'Inglês' },
+    { 'key': "IORUBA", 'value': 'Iorubá' },
     { 'key': "ITALIANO", 'value': 'Italiano' },
-    { 'key': "JAPONES", 'value': 'Japonês' }, 
-    { 'key': "JAVANES", 'value': 'Javanês' }, 
-    { 'key': "MALAIO", 'value': 'Malaio' }, 
-    { 'key': "MALAIOB", 'value': 'Malaio/Bahasa' }, 
+    { 'key': "JAPONES", 'value': 'Japonês' },
+    { 'key': "JAVANES", 'value': 'Javanês' },
+    { 'key': "MALAIO", 'value': 'Malaio' },
+    { 'key': "MALAIOB", 'value': 'Malaio/Bahasa' },
     { 'key': "MARATA", 'value': 'Marata' },
     { 'key': "PERSA ", 'value': 'Persa' },
-    { 'key': "PUNJABI ", 'value': 'Punjabi' },  
-    { 'key': "ROMENO", 'value': 'Romeno' }, 
-    { 'key': "RUSSO", 'value': 'Russo' }, 
-    { 'key': "SUAILI", 'value': 'Suaíli' }, 
+    { 'key': "PUNJABI ", 'value': 'Punjabi' },
+    { 'key': "ROMENO", 'value': 'Romeno' },
+    { 'key': "RUSSO", 'value': 'Russo' },
+    { 'key': "SUAILI", 'value': 'Suaíli' },
     { 'key': "TAILANDES", 'value': 'Tailandes' },
-    { 'key': "TAMIL ", 'value': 'Tâmil' }, 
-    { 'key': "TELUGU", 'value': 'Telugu' }, 
+    { 'key': "TAMIL ", 'value': 'Tâmil' },
+    { 'key': "TELUGU", 'value': 'Telugu' },
     { 'key': "TURCO", 'value': 'Turco' },
-    { 'key': "UCRANIANO", 'value': 'Ucraniano' }, 
-    { 'key': "URDU", 'value': 'Urdu' }, 
+    { 'key': "UCRANIANO", 'value': 'Ucraniano' },
+    { 'key': "URDU", 'value': 'Urdu' },
     { 'key': "VIETNAMITA", 'value': 'Vietnamita' }
-    ];
-
-  public NIVEL_IDIOMA : LookupItem[] = [
-    { 'key': 'BASICO', 'value': 'Básico' }, 
-    { 'key': 'INTERMEDIARIO', 'value': 'Intermediário' }, 
-    { 'key': 'AVANCADO', 'value': 'Avançado' }, 
-    { 'key': 'FLUENTE', 'value': 'Fluente' }
-    ];
-  public ESTADO_CIVIL : LookupItem[] = [
-  { 'key': 'CASADO', 'value': 'Casado' }, 
-  { 'key': 'DIVORCIADO', 'value': 'Divorciado' }, 
-  { 'key': 'SOLTEIRO', 'value': 'Solteiro' }, 
-  { 'key': 'SEPARADO', 'value': 'Separado' }, 
-  { 'key': 'VIUVO', 'value': 'Viúvo' }
   ];
 
-  public TITULOS_CURSOS : LookupItem[] = [
+  public NIVEL_IDIOMA: LookupItem[] = [
+    { 'key': 'BASICO', 'value': 'Básico' },
+    { 'key': 'INTERMEDIARIO', 'value': 'Intermediário' },
+    { 'key': 'AVANCADO', 'value': 'Avançado' },
+    { 'key': 'FLUENTE', 'value': 'Fluente' }
+  ];
+
+  public ESTADO_CIVIL: LookupItem[] = [
+    { 'key': 'CASADO', 'value': 'Casado' },
+    { 'key': 'DIVORCIADO', 'value': 'Divorciado' },
+    { 'key': 'SOLTEIRO', 'value': 'Solteiro' },
+    { 'key': 'SEPARADO', 'value': 'Separado' },
+    { 'key': 'VIUVO', 'value': 'Viúvo' }
+  ];
+
+  public TITULOS_CURSOS: LookupItem[] = [
     { 'key': 'INSTITUCIONAL', 'value': 'Institucional' },
-    { 'key': 'GRAD_TEC', 'value': 'Tecnólogo' }, 
+    { 'key': 'GRAD_TEC', 'value': 'Tecnólogo' },
     { 'key': 'GRAD_BAC', 'value': 'Bacharelado' },
-    { 'key': 'GRAD_LIC', 'value': 'Licenciatura' }, 
+    { 'key': 'GRAD_LIC', 'value': 'Licenciatura' },
     { 'key': 'ESPECIAL', 'value': 'Especialização' },
-    { 'key': 'MESTRADO', 'value': 'Mestrado' },    
+    { 'key': 'MESTRADO', 'value': 'Mestrado' },
     { 'key': 'DOUTORADO', 'value': 'Doutorado' },
-    { 'key': 'POS_DOUTORADO', 'value': 'Pós Doutorado' }, 
-    
-    ];
+    { 'key': 'POS_DOUTORADO', 'value': 'Pós Doutorado' }
+  ];
 
-  public POS_GRADUACOES : LookupItem[] = [
-      { 'key': 'ESPECIAL', 'value': 'Especialização' },
-      { 'key': 'MESTRADO', 'value': 'Mestrado' },    
-      { 'key': 'DOUTORADO', 'value': 'Doutorado' },
-      { 'key': 'POS_DOUTORADO', 'value': 'Pós Doutorado' }, 
-      
-      ];
+  public CARGOS_PRF: LookupItem[] = [
+    { 'key': 'PRF', 'value': 'PRF' },
+    { 'key': 'ADM', 'value': 'Agente Administrativo' }
+  ];
 
-  
-  public CARGOS_PRF : LookupItem[] = [
-    { 'key': 'PRF', 'value': 'PRF' }, 
-    { 'key': 'ADM', 'value': 'Agente Administrativo' },
-    
-    
-];
+  public PG_PRF: LookupItem[] = [
+    { 'key': 'PRESENCIAL', 'value': 'Presencial' },
+    { 'key': 'REMOTO', 'value': 'Remoto' },
+    { 'key': 'HIBRIDO', 'value': 'Híbrido' }
+  ];
 
   public getLookup(itens: LookupItem[], key: any) {
     return itens.find(x => x.key == key);
   }
 
-  public getCode(itens: LookupItem[], key: any) : string {
+  public getCode(itens: LookupItem[], key: any): string {
     return itens.find(x => x.key == key)?.code || "";
   }
 
-  public getValue(itens: LookupItem[], key: any) : string {
+  public getValue(itens: LookupItem[], key: any): string {
     return itens.find(x => x.key == key)?.value || "";
   }
 
-  public getColor(itens: LookupItem[], key: any) : string {
+  public getColor(itens: LookupItem[], key: any): string {
     return itens.find(x => x.key == key)?.color || "";
   }
 
-  public getIcon(itens: LookupItem[], key: any) : string {
+  public getIcon(itens: LookupItem[], key: any): string {
     return itens.find(x => x.key == key)?.icon || "";
   }
 }

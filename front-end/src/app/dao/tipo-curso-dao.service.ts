@@ -1,16 +1,16 @@
 import { Injectable,Injector } from '@angular/core';
 import { DaoBaseService } from './dao-base.service';
 import { TemplateDataset } from '../components/input/input-editor/input-editor.component';
-import { CurriculumGraduacao } from '../models/curriculum-graduacao.model';
+import { TipoCurso } from '../models/tipo-curso.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CurriculumGraduacaoDaoService extends DaoBaseService<CurriculumGraduacao>{
+export class TipoCursoDaoService extends DaoBaseService<TipoCurso>{
  
   constructor(protected injector: Injector) { 
-    super("CurriculumGraduacao", injector);
-    this.searchFields = ["pretensão", "curriculum_id","curso_id"];
+    super("TipoCurso", injector);
+    this.searchFields = ["nome","ativo"];
   }  
 }
 

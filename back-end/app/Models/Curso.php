@@ -15,10 +15,12 @@ class Curso extends ModelBase
         'nome',
         'titulo',
         'ativo',
-        'area_curso_id'
+        'area_curso_id',
+        'tipo_curso_id'
     ];
 
     // Belongs
     public function area() { return $this->belongsTo(AreaConhecimento::class,'area_curso_id'); }
+    public function tipo() { return $this->belongsTo(TipoCurso::class,'tipo_curso_id'); }
     
 }
