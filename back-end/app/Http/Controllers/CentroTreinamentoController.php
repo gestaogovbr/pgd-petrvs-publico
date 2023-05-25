@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
 
-class CentroTreinamento extends ControllerBase {
+class CentroTreinamentoController extends ControllerBase {
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
             case 'STORE':

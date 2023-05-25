@@ -1,6 +1,6 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()"
     (cancel)="onCancel()">
-    <tabs display right>
+    <tabs display right >
         <tab key="DadosPessoais" class="fw-bold" label="Dados Pessoais">
             <div class="row mt-3">
                 <input-textarea label="Apresente-se" [size]="12" [bold]="true" icon="bi-card-list"
@@ -28,7 +28,7 @@
                 <separator title="Estado Civil"></separator>
             </div>
             <div class="row mt-2">
-                <input-select [size]="5" label="Estado Civil" icon="fas fa-question-circle" controlName="estado_civil"
+                <input-select [size]="5" label="Estado Civil" icon="fas fa-ring" controlName="estado_civil"
                     [control]="form!.controls.estado_civil" [items]="this.lookup.ESTADO_CIVIL">
                 </input-select>
                 <input-switch [size]="3" label="Possui Filhos?" icon="fas fa-child" controlName="filhos"
@@ -66,13 +66,13 @@
                 </input-multiselect>
             </div>
          
-            <div class="row mt-3 mb-1">
+            <div class="row mt-3 mb-5">
                 <input-multiselect label="Graduação e Pós-Graduação - Especialização, Mestrado, Doutorado e Pós Doutorado"
                     [size]="12" controlName="graduacaopos" [control]="formGraduacao!.controls.graduacaopos"
                     [addItemHandle]="addItemGraduacaoPos.bind(this)" [bold]="true" noBox>
                     <input-switch [size]="2" label="Pretende Cursar?" icon="fas fa-user-graduate"
-                        controlName="radioPretendeGraduacaoPos"
-                        [control]="formGraduacao!.controls.radioPretendeGraduacaoPos" labelInfo="Pretendo Cursar">
+                        controlName="pretensao"
+                        [control]="formGraduacao!.controls.pretensao" labelInfo="Pretendo Cursar">
                     </input-switch>
                     <input-search  #areaPos [size]="4" [dao]="areaDao" label="Área de conhecimento" 
                         [control]="formGraduacao!.controls.areaPos" controlName="areaPos">
@@ -83,7 +83,7 @@
                     <input-select [size]="2" label="Titulo" icon="bi bi-mortarboard-fill" controlName="titulo"
                         liveSearch [control]="formGraduacao!.controls.titulo" [items]="this.lookup.TITULOS_CURSOS" (change)="onAreaPosGraduacaoChange()">
                     </input-select>
-                    <input-select [size]="4" label="Curso" icon="bi bi-mortarboard-fill" controlName="cursoPos"
+                    <input-select [size]="4" label="Curso" icon="fas fa-graduation-cap" controlName="cursoPos"
                         liveSearch [control]="formGraduacao!.controls.cursoPos" [items]="cursosGradPos">
                     </input-select>
                     

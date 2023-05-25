@@ -9,6 +9,12 @@ import { CursoFormComponent } from './curso-form/curso-form.component';
 import { CursoListComponent } from './curso-list/curso-list.component';
 import { TipoCursoFormComponent } from './tipo-curso-form/tipo-curso-form.component';
 import { TipoCursoListComponent } from './tipo-curso-list/tipo-curso-list.component';
+import { CentroTreinamentoFormComponent } from './centro-treinamento-form/centro-treinamento-form.component';
+import { CentroTreinamentoListComponent } from './centro-treinamento-list/centro-treinamento-list.component'; 
+import { FuncaoFormComponent } from './funcao-form/funcao-form.component';
+import { FuncaoListComponent } from './funcao-list/funcao-list.component';
+import { GrupoEspecializadoListComponent } from './grupo-especializado-list/grupo-especializado-list.component';
+import { GrupoEspecializadoFormComponent } from './grupo-especializado-form/grupo-especializado-form.component';
 
 
 const routes: Routes = [
@@ -25,6 +31,18 @@ const routes: Routes = [
   { path: 'gerais/tipocurso/new', component: TipoCursoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
   { path: 'gerais/tipocurso/:id/edit', component: TipoCursoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
   { path: 'gerais/tipocurso/:id/consult', component: TipoCursoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } },
+  { path: 'gerais/centrotreinamento', component: CentroTreinamentoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Lista", modal: false } },
+  { path: 'gerais/centrotreinamento/new', component: CentroTreinamentoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
+  { path: 'gerais/centrotreinamento/:id/edit', component: CentroTreinamentoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
+  { path: 'gerais/centrotreinamento/:id/consult', component: CentroTreinamentoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } },
+  { path: 'gerais/funcao', component: FuncaoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Lista", modal: false } },
+  { path: 'gerais/funcao/new', component: FuncaoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
+  { path: 'gerais/funcao/:id/edit', component: FuncaoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
+  { path: 'gerais/funcao/:id/consult', component: FuncaoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } },
+  { path: 'gerais/ge', component: GrupoEspecializadoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Lista", modal: false } },
+  { path: 'gerais/ge/new', component: GrupoEspecializadoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
+  { path: 'gerais/ge/:id/edit', component: GrupoEspecializadoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
+  { path: 'gerais/ge/:id/consult', component: GrupoEspecializadoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } },
 
 
 ];

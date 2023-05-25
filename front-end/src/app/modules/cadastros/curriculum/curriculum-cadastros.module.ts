@@ -12,6 +12,12 @@ import { CursoFormComponent } from './curso-form/curso-form.component';
 import { CursoListComponent } from './curso-list/curso-list.component';
 import { TipoCursoFormComponent } from './tipo-curso-form/tipo-curso-form.component';
 import { TipoCursoListComponent } from './tipo-curso-list/tipo-curso-list.component';
+import { CentroTreinamentoFormComponent } from './centro-treinamento-form/centro-treinamento-form.component';
+import { CentroTreinamentoListComponent } from './centro-treinamento-list/centro-treinamento-list.component';
+import { FuncaoFormComponent } from './funcao-form/funcao-form.component';
+import { FuncaoListComponent } from './funcao-list/funcao-list.component';
+import { GrupoEspecializadoListComponent } from './grupo-especializado-list/grupo-especializado-list.component';
+import { GrupoEspecializadoFormComponent } from './grupo-especializado-form/grupo-especializado-form.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +26,13 @@ import { TipoCursoListComponent } from './tipo-curso-list/tipo-curso-list.compon
     CursoFormComponent,
     CursoListComponent,
     TipoCursoFormComponent,
-    TipoCursoListComponent
+    TipoCursoListComponent,
+    CentroTreinamentoFormComponent,
+    CentroTreinamentoListComponent,
+    FuncaoFormComponent,
+    FuncaoListComponent,
+    GrupoEspecializadoFormComponent,
+    GrupoEspecializadoListComponent
   
   ],
   imports: [

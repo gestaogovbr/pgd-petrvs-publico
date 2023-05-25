@@ -8,12 +8,14 @@ import { CurriculumRoutingModule } from './curriculum-routing.module';
 
 import { CurriculumFormComponent } from  './curriculum-form/curriculum-form.component'
 import { CurriculumProfissionalFormComponent } from  '../curriculum/curriculum-profissional-form/curriculum-profissional-form.component'
+import { CurriculumAtributosbig5FormComponent } from './curriculum-atributosbig5-form/curriculum-atributosbig5-form.component';
 
 @NgModule({
   declarations: [
  
     CurriculumFormComponent,
-    CurriculumProfissionalFormComponent
+    CurriculumProfissionalFormComponent,
+    CurriculumAtributosbig5FormComponent
   ],
   imports: [
     CommonModule,

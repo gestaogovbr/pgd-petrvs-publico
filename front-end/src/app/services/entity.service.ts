@@ -51,6 +51,9 @@ import { ErrorDaoService } from '../dao/error-dao.service';
 import { TrafficDaoService } from '../dao/traffic-dao.service';
 import { AreaConhecimentoDaoService } from '../dao/area-conhecimento-dao.service';
 import { TipoCursoDaoService } from '../dao/tipo-curso-dao.service';
+import { CentroTreinamentoDaoService } from '../dao/centro-treinamento-dao.service';
+import { FuncaoDaoService } from '../dao/funcao-dao.service';
+import { GrupoEspecializadoDaoService } from '../dao/grupo-epecializado-dao.service';
 
 export type EntityItem = {
     collection: string,
@@ -82,6 +85,7 @@ export class EntityService {
             { collection: 'CadeiaValorProcesso', table: 'cadeias_valores_processos', campo: 'nome', icon: '', dao: injector.get<CadeiaValorProcessoDaoService>(CadeiaValorProcessoDaoService), label: "Processo da Cadeia de Valor" },
             { collection: 'Capacidade', table: 'capacidades', campo: 'tipo_capacidade_id', icon: '', dao: injector.get<CapacidadeDaoService>(CapacidadeDaoService), label: "Capacidade" },
             { collection: 'Change', table: 'changes', campo: 'row_id', icon: 'bi bi-filter-square', dao: injector.get<ChangeDaoService>(ChangeDaoService), label: "Log de Alteração", selectRoute: { route: ['logs', 'change'] } },
+            { collection: 'CentroTreinamento', codigo: 'MOD_RX', table: 'centros_treinamentos', campo: 'nome', icon: 'bi bi-building-fill', dao: injector.get<CentroTreinamentoDaoService>(CentroTreinamentoDaoService), label: "Centro de Treinamento", selectRoute: { route: ['raiox', 'cadastros','gerais','centrotreinamento'] } },
             { collection: 'Cidade', codigo: 'MOD_CID', table: 'cidades', campo: 'nome', icon: 'bi bi-building', dao: injector.get<CidadeDaoService>(CidadeDaoService), label: "Cidade", selectRoute: { route: ['cadastros', 'cidade'] } },
             { collection: 'Demanda', codigo: 'MOD_DMD', table: 'demandas', campo: 'assunto', icon: 'bi bi-activity', dao: injector.get<DemandaDaoService>(DemandaDaoService), label: "Demanda", selectRoute: { route: ['gestao', 'demanda'] } },
             { collection: 'DemandaEntrega', table: 'demandas_entregas', campo: 'demanda_id', icon: '', dao: injector.get<DemandaEntregaDaoService>(DemandaEntregaDaoService), label: "Entrega da Demanda" },
@@ -91,6 +95,8 @@ export class EntityService {
             { collection: 'Entrega', codigo: 'MOD_ENTRG', table: 'entregas', campo: 'nome', icon: 'bi bi-list-check', dao: injector.get<EntregaDaoService>(EntregaDaoService), label: "Entrega", selectRoute: { route: ['cadastros', 'entrega'] } },
             { collection: 'Error', table: 'errors', campo: 'type', icon: 'bi bi-bug', dao: injector.get<ErrorDaoService>(ErrorDaoService), label: "Log de Erro", selectRoute: { route: ['logs', 'error'] } },
             { collection: 'Feriado', codigo: 'MOD_FER', table: 'feriados', campo: 'nome', icon: 'bi bi-emoji-sunglasses', dao: injector.get<FeriadoDaoService>(FeriadoDaoService), label: "Feriado", selectRoute: { route: ['cadastros', 'feriado'] } },
+            { collection: 'Funcao', codigo: 'MOD_RX', table: 'funcoes', campo: 'nome', icon: 'bi bi-check-circle-fill', dao: injector.get<FuncaoDaoService>(FuncaoDaoService), label: "Função", selectRoute: { route: ['raiox', 'cadastros','gerais','funcao'] } },
+            { collection: 'GrupoEspecializado', codigo: 'MOD_RX', table: 'grupos_especializados', campo: 'nome', icon: 'bi bi-check-circle', dao: injector.get<GrupoEspecializadoDaoService>(GrupoEspecializadoDaoService), label: "Grupos Especializados", selectRoute: { route: ['raiox', 'cadastros','gerais','ge'] } },
             { collection: 'Integracao', table: 'integracoes', campo: 'usuario_id', icon: 'bi bi-pencil-square', dao: injector.get<IntegracaoDaoService>(IntegracaoDaoService), label: "Integração" },
             { collection: 'Lotacao', codigo: 'MOD_LOT', table: 'lotacoes', campo: 'usuario_id', icon: '', dao: injector.get<LotacaoDaoService>(LotacaoDaoService), label: "Lotação" },
             { collection: 'MaterialServico', codigo: 'MOD_MATSRV', table: 'materiais_servicos', campo: 'descricao', icon: 'bi bi-box-seam', dao: injector.get<MaterialServicoDaoService>(MaterialServicoDaoService), label: "Material/Serviço", selectRoute: { route: ['cadastros', 'material-servico'] } },

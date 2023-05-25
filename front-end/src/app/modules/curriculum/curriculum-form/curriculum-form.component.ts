@@ -72,12 +72,11 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     
     this.formGraduacao = this.fh.FormBuilder({
       curriculum_id:{default:""},
-      //radioGraduacao: { default: false },
-      //radioPretendeGraduacao: { default: false},
+      curso_id:{default:""},
       area: { default: "" },
       curso: { default: "" },
       graduacao: { default: [] },
-      radioPretendeGraduacaoPos: { default: false },
+      pretensao: { default: false },
       areaPos: { default: "" },
       cursoPos: { default: "" },
       titulo:{ default: "" },
@@ -175,7 +174,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     
     const area = { 'key': this.formGraduacao!.controls.area.value, 'value': this.area?.selectedItem?.text };
     const curso= this.cursos.find(value => value.key == this.formGraduacao!.controls.curso.value)
-    const status=this.opcoesEscolha.find(value => value.key == (this.formGraduacao!.controls.radioPretendeGraduacao.value ? 1 : 0))//converte o value do switch
+    const status=this.opcoesEscolha.find(value => value.key == (this.formGraduacao!.controls.pretensao.value ? 1 : 0))//converte o value do switch
     const key = this.util.textHash((area.key || "") + (curso?.key || "") + (status?.key || ""));
 
     if (curso && area && status && this.util.validateLookupItem(this.formGraduacao!.controls.graduacao.value, key)) {
@@ -192,7 +191,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
       console.log('FORMGRAD->',this.formGraduacao!.value)
       this.formGraduacao!.controls.area.setValue("");
       this.formGraduacao!.controls.curso.setValue("");
-      this.formGraduacao!.controls.radioPretendeGraduacao.setValue(false);
+      this.formGraduacao!.controls.pretensao.setValue(false);
     }
     return result;
   };
@@ -206,13 +205,13 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     })*/
 
     const area = { 'key': this.formGraduacao!.controls.areaPos.value, 'value': this.areaPos?.selectedItem?.text};
-    console.log('AREA',area)
-    const curso= this.cursosPos.find(value => value.key == this.formGraduacao!.controls.cursoPos.value)
+    
+    const curso= this.cursosGradPos.find(value => value.key == this.formGraduacao!.controls.cursoPos.value)
     const titulo = this.lookup.TITULOS_CURSOS.find(x => x.key == this.formGraduacao!.controls.titulo.value);
-    const status=this.opcoesEscolha.find(value => value.key == (this.formGraduacao!.controls.radioPretendePosGraduacao.value ? 1 : 0))//converte o value do switch
+    const status=this.opcoesEscolha.find(value => value.key == (this.formGraduacao!.controls.pretensao.value ? 1 : 0))//converte o value do switch
     const key = this.util.textHash((area.key || "") + (curso?.key || "") + (titulo?.key || "") + (status?.key || ""));
-   
-    if (curso && area && titulo && status && this.util.validateLookupItem(this.formGraduacao!.controls.posgraduacao.value, key)) {
+    console.log('AREA',area,'AREA',curso,'AREA',titulo,'AREA',status)
+    if (curso && area && titulo && status && this.util.validateLookupItem(this.formGraduacao!.controls.graduacaopos.value, key)) {
       
       result = {
         key: key,
@@ -228,7 +227,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
       this.formGraduacao!.controls.areaPos.setValue("");
       this.formGraduacao!.controls.cursoPos.setValue("");
       this.formGraduacao!.controls.titulo.setValue("");
-      this.formGraduacao!.controls.radioPretendePosGraduacao.setValue(false);
+      this.formGraduacao!.controls.pretensao.setValue(false);
     }
     return result;
   };

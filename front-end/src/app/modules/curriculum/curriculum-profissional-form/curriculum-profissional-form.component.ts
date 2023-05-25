@@ -20,8 +20,11 @@ import { InputSwitchComponent } from 'src/app/components/input/input-switch/inpu
 })
 export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum, CurriculumDaoService> {
    @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
+   @ViewChild(InputSwitchComponent, { static: false }) public radioDocenciaFora?: InputSwitchComponent;
 
    public testeLookup :LookupItem[]=[{'key':'key 1','value':'value 1'}];
+   public anos : LookupItem[]=[];
+   public numeros : {}={}
 
   constructor(public injector: Injector) {
     super(injector, Curriculum, CurriculumDaoService);
@@ -80,6 +83,13 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
 
   }
 
+  ngOnInit(): void {
+    for(let i=1980;i<=(new Date()).getFullYear();i++){
+      this.anos.push(Object.assign({}, { key: i, value: (i.toString()) }));
+    }
+   
+  }
+
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
 
@@ -111,5 +121,10 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     }
 
     public onAddClick(){}
+
+    public onDocenciaForaChange(){
+      console.log('onDocenciaForaChange')
+      //this.radioDocenciaFora?
+    }
 
 }

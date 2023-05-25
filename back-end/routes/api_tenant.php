@@ -54,6 +54,8 @@ use App\Http\Controllers\CursoController;
 use App\Http\Controllers\TipoCursoController;
 use App\Http\Controllers\CurriculumController;
 use App\Http\Controllers\CurriculumGraduacaoController;
+use App\Http\Controllers\CentroTreinamentoController;
+use App\Http\Controllers\FuncaoController;
 
 use App\Http\Controllers\UnidadeIntegranteController;
 
