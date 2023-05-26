@@ -1,14 +1,14 @@
 import { Base } from './base.model';
-import { PlanejamentoObjetivo } from './planejamento-objetivo.model';
+import { CadeiaValorProcesso } from './cadeia-valor-processo.model';
 import { PlanoEntregaEntrega } from './plano-entrega-entrega.model';
 
-export class PlanoEntregaObjetivo extends Base {
-  public objetivo?: PlanejamentoObjetivo;
+export class PlanoEntregaProcesso extends Base {
+  public processo?: CadeiaValorProcesso;
   public entrega?: PlanoEntregaEntrega;
 
   public data_inicio: Date = new Date();               
   public data_fim: Date | null = null;                 
-  public objetivo_id: string = '';
+  public processo_id: string = '';
   public plano_entrega_entrega_id: string = '';                        
   
   public constructor(data?: any) { super(); this.initialization(data); }

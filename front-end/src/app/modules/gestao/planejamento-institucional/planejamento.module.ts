@@ -8,20 +8,26 @@ import { PlanejamentoListObjetivoComponent } from './planejamento-list-objetivo/
 import { PlanejamentoFormObjetivoComponent } from './planejamento-form-objetivo/planejamento-form-objetivo.component';
 import { PlanejamentoMapaComponent } from './planejamento-mapa/planejamento-mapa.component';
 import { DndModule } from 'ngx-drag-drop';
+import { PlanejamentoListObjetivosEntregasComponent } from './planejamento-list-objetivos-entregas/planejamento-list-objetivos-entregas.component';
+
 
 @NgModule({
-  declarations: [
+  declarations: [ 
     PlanejamentoListComponent,
     PlanejamentoFormComponent,
     PlanejamentoListObjetivoComponent,
     PlanejamentoFormObjetivoComponent,
-    PlanejamentoMapaComponent
+    PlanejamentoMapaComponent,
+    PlanejamentoListObjetivosEntregasComponent
   ],
   imports: [
     CommonModule,
     ComponentsModule,
     DndModule,
     PlanejamentoRoutingModule
+  ],
+  exports: [
+    PlanejamentoListObjetivosEntregasComponent
   ]
 })
 export class PlanejamentoModule { }

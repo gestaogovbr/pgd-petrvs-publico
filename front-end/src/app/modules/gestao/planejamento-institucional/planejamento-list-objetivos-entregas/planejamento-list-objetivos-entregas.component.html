@@ -1,0 +1,18 @@
+<editable-form noButtons [form]="form!" [disabled]="formDisabled">
+    <div class="row">
+        <grid [items]="items" [form]="form!" #gridObjetivos editable [hasDelete]="false" [hasEdit]="false">
+            <input-search [size]="4" #planejamento controlName="planejamento_id" [dao]="planejamentoDao" disabled></input-search>
+            <columns>
+                <column title="Objetivo" [template]="columnObjetivo" [editTemplate]="editObjetivo">
+                    <ng-template let-row="row" #columnObjetivo>
+                        <span>{{row.objetivo_id}}</span>
+                    </ng-template>
+                    <ng-template let-row="row" #editObjetivo>
+                        <input-search [size]="6" controlName="objetivo_id" label icon [where]="[['planejamento_id', '==', planejamentoId]]" [dao]="planejamentoObjetivoDao"></input-search>
+                    </ng-template>
+                </column>
+                <column type="options" [dynamicButtons]="dynamicButtons.bind(this)" [dynamicOptions]="dynamicOptions.bind(this)"></column>
+            </columns>
+        </grid>
+    </div>
+</editable-form>

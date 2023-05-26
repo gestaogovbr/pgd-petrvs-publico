@@ -14,7 +14,7 @@ class AlterPlanosEntregasTableAddPrograma extends Migration
     public function up()
     {
         Schema::table('planos_entregas', function (Blueprint $table) {
-            $table->foreignUuid('programa_id')->constrained("programas")->onDelete('restrict')->onUpdate('cascade')->comment('Progarama de gestão vinculado ao Plano de Entregas');
+            $table->foreignUuid('programa_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment('Progarama de gestão vinculado ao Plano de Entregas');
         });
     }
 

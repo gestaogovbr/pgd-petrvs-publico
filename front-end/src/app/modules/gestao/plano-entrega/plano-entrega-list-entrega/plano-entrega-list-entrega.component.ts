@@ -18,6 +18,24 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: PlanoEntregaEntrega | undefined) { super.entity = value; } get entity(): PlanoEntregaEntrega | undefined { return super.entity; }
+  @Input() set planejamentoId(value: string | undefined) {
+    if(this._planejamentoId != value) {
+      this._planejamentoId = value;
+      // verificar nas entregas quais objetivos não são desse planjemaneot e remove-los
+      // será remvido somente da lista de itens (em memória), independente de persistente ou não, MAS NO BACKEND HAVERÀ ESSA VALIDAÇÂO!
+    }
+  } get planejamentoId(): string | undefined {
+    return this._planejamentoId;
+  }
+  @Input() set cadeiaValorId(value: string | undefined) {
+    if(this._cadeiaValorId != value) {
+      this._cadeiaValorId = value;
+      // verificar nas entregas quais objetivos não são desse planjemaneot e remove-los
+      // será remvido somente da lista de itens (em memória), independente de persistente ou não, MAS NO BACKEND HAVERÀ ESSA VALIDAÇÂO!
+    }
+  } get cadeiaValorId(): string | undefined {
+    return this._cadeiaValorId;
+  }
 
   public get items(): PlanoEntregaEntrega[] {
     if (!this.gridControl.value) this.gridControl.setValue(new PlanoEntregaEntrega());
@@ -25,6 +43,9 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     return this.gridControl.value.planoEntregaEntrega;
   }
 
+  private _cadeiaValorId?: string;
+  private _planejamentoId?: string;
+  
   public planoEntregaId: string = "";
   public dao: PlanoEntregaEntregaDaoService;
 
@@ -75,6 +96,8 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     this.go.navigate({ route: ['gestao', 'plano-entrega', 'entrega'] }, {
       metadata: {
         plano_entrega_id: this.entity!,
+        planejamento_id: this.planejamentoId,
+        cadeia_valor_id: this.cadeiaValorId,
         entregas: entregas,
       },
       modalClose: async (modalResult) => {
@@ -118,6 +141,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     this.go.navigate({ route: ['gestao', 'plano-entrega', 'entrega'] }, {
       metadata: { 
         planoEntrega: this.entity!, 
+        planejamento_id: this.planejamentoId,
         enytrega: entrega,
       },
       modalClose: async (modalResult) => {

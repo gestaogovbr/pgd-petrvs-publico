@@ -5,6 +5,7 @@ import { ConfigResolver } from 'src/app/resolvies/config.resolver';
 import { PlanejamentoFormComponent } from './planejamento-form/planejamento-form.component';
 import { PlanejamentoListComponent } from './planejamento-list/planejamento-list.component';
 import { PlanejamentoFormObjetivoComponent } from './planejamento-form-objetivo/planejamento-form-objetivo.component';
+import { PlanejamentoListObjetivoComponent } from './planejamento-list-objetivo/planejamento-list-objetivo.component';
 
 const routes: Routes = [
   { path: '', component: PlanejamentoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Planejamentos Institucionais" } },
@@ -12,6 +13,7 @@ const routes: Routes = [
   { path: ':id/edit', component: PlanejamentoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
   { path: ':id/consult', component: PlanejamentoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } },
   { path: 'objetivo', component: PlanejamentoFormObjetivoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Objetivo", modal: true } },
+  { path: 'objetivoList', component: PlanejamentoListObjetivoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "LIsta de Objetivo", modal: true } },
   { path: 'objetivo/:id/consult', component: PlanejamentoFormObjetivoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar Objetivo", modal: true } },
 ];
 

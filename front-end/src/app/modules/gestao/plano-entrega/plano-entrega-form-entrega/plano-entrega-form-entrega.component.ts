@@ -32,19 +32,13 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   @ViewChild('entregas', { static: false }) public entregas?: EntregaFormComponent;
   gridControl: any;
 
-  public get itemsObjetivos(): PlanejamentoObjetivo[] {
-    if (!this.gridControl.value) this.gridControl.setValue(new Planejamento());
-    if (!this.gridControl.value.objetivos) this.gridControl.value.objetivos = [];
-    return this.gridControl.value.objetivos;
-  }
-  public get itemsProcessos(): CadeiaValorProcesso[] {
-    if (!this.gridControl.value) this.gridControl.setValue(new CadeiaValor());
-    if (!this.gridControl.value.processos) this.gridControl.value.processos = [];
-    return this.gridControl.value.processos;
-  }
-
+  public planejamentoId?: string;
+  public cadeiaValorId?: string;
   public unidadeDao: UnidadeDaoService;
   public entregaDao: EntregaDaoService;  
+  public planejamentoInstitucionalDao: PlanejamentoDaoService;  
+  public planoEntregaEntregaDao: PlanoEntregaEntregaDaoService;  
+  public cadeiaValorDao: CadeiaValorDaoService;  
   public cadeiaValorProcessoDao: CadeiaValorProcessoDaoService;
   public planejamentoObjetivoDao: PlanejamentoObjetivoDaoService;
 
@@ -52,6 +46,9 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     super(injector, PlanoEntregaEntrega, PlanoEntregaEntregaDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.entregaDao = injector.get<EntregaDaoService>(EntregaDaoService);
+    this.planejamentoInstitucionalDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
+    this.planoEntregaEntregaDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
+    this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
     this.cadeiaValorProcessoDao = injector.get<CadeiaValorProcessoDaoService>(CadeiaValorProcessoDaoService);
     this.planejamentoObjetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
     this.form = this.fh.FormBuilder({
@@ -78,6 +75,12 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       objetivos: {default: null},
       processos: {default: null},
     }, this.cdRef, this.validate);
+  }
+
+  public ngOnInit() {
+    super.ngOnInit();
+    this.planejamentoId = this.metadata?.planejamento_id;
+    this.cadeiaValorId = this.metadata?.cadeia_valor_id;
   }
 
   public validate = (control: AbstractControl, controlName: string) => {

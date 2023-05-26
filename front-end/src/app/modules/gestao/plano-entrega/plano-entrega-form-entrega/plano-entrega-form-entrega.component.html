@@ -1,9 +1,9 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
     <tabs #tabs display right [title]="!isModal ? title : ''">
-        <tab key="ENTREGAS" label="Entregas">   
+        <tab key="ENTREGAS" label="Entregas">
             <div class="row">
                 <div class="row">
-                    <input-search [size]="12" [label]="'Entrega Superior'"></input-search>
+                    <input-search [size]="12" [label]="'Entrega Superior'" controlName="entrega_pai_id" [dao]="planoEntregaEntregaDao"></input-search>
                 </div>
                 <separator></separator>
                 <div class="row">
@@ -32,25 +32,13 @@
                 </div>
             </div>
         </tab>
-    <!-- *ngIf="checkFilled(['planejamento_id'])" -->
-        <tab  key="OBJETIVOS" label="Objetivos">
-            <div class="row">
-                <input-search #objetivos [size]="12" controlName="objeitvos" [dao]="planejamentoObjetivoDao"></input-search>
-            </div>
-            <div class="row">
-                <input-datetime date [size]="6" label="Início" controlName="dt_inicio_objetivos" [labelInfo]="'Início ' + lex.noun('Plano de Entregas',false,true)"></input-datetime>
-                <input-datetime date [size]="6" label="Fim" controlName="dt_fim_objetivos" [labelInfo]="'Fim ' + lex.noun('Plano de Entregas',false,true) + '(Estimativa Inicial)'"></input-datetime>
-            </div>
+        <!-- *ngIf="checkFilled(['planejamento_id'])" -->
+        <tab key="OBJETIVOS" label="Objetivos">
+            <planejamento-list-objetivos-entregas [planejamentoId]="planejamentoId"></planejamento-list-objetivos-entregas>
         </tab>
         <!-- *ngIf="checkFilled(['cadeia_valor_id'])" -->
-        <tab  key="PROCESSOS" label="Processos">
-            <div class="row">
-                <input-search #processos [size]="12" controlName="processos" [dao]="cadeiaValorProcessoDao"></input-search>
-            </div>
-            <div class="row">
-                <input-datetime date [size]="6" label="Início" controlName="dt_inicio_processos" [labelInfo]="'Início ' + lex.noun('Plano de Entregas',false,true)"></input-datetime>
-                <input-datetime date [size]="6" label="Fim" controlName="dt_fim_processos" [labelInfo]="'Fim ' + lex.noun('Plano de Entregas',false,true) + '(Estimativa Inicial)'"></input-datetime>
-            </div>
+        <tab key="PROCESSOS" label="Processos">
+            <cadeia-valor-list-processos-entregas [cadeiaValorId]="cadeiaValorId"></cadeia-valor-list-processos-entregas>
         </tab>
     </tabs>
 </editable-form>

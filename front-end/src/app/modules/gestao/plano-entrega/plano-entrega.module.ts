@@ -7,6 +7,8 @@ import { PlanoEntregaFormComponent } from './plano-entrega-form/plano-entrega-fo
 import { PlanoEntregaListEntregaComponent } from './plano-entrega-list-entrega/plano-entrega-list-entrega.component';
 import { PlanoEntregaMapaEntregasComponent } from './plano-entrega-mapa-entregas/plano-entrega-mapa-entregas.component';
 import { PlanoEntregaFormEntregaComponent } from './plano-entrega-form-entrega/plano-entrega-form-entrega.component';
+import { PlanejamentoModule } from '../planejamento-institucional/planejamento.module';
+import { CadeiaValorModule } from '../cadeia-valor/cadeia-valor.module';
 
 @NgModule({
   declarations: [
@@ -15,12 +17,13 @@ import { PlanoEntregaFormEntregaComponent } from './plano-entrega-form-entrega/p
     PlanoEntregaListEntregaComponent,
     PlanoEntregaMapaEntregasComponent,
     PlanoEntregaFormEntregaComponent
-
   ],
   imports: [
     CommonModule,
     ComponentsModule,
-    PlanoEntregaRoutingModule
+    PlanoEntregaRoutingModule,
+    PlanejamentoModule,
+    CadeiaValorModule
   ]
 })
 export class PlanoEntregaModule { }

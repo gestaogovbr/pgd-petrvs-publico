@@ -87,7 +87,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
     }
   }
   get icon(): string {
-    return this._icon || (this.dao ? this.entities.getIcon(this.dao.collection) : undefined) || "";
+    return typeof this._icon == "string" ? this._icon : ((this.dao ? this.entities.getIcon(this.dao.collection) : undefined) || "");
   }
   @Input() set label(value: string) {
     if(value != this._label) {
@@ -95,7 +95,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
     }
   }
   get label(): string {
-    return this._label || (this.dao ? this.entities.getLabel(this.dao.collection) : undefined) || "";
+    return typeof this._label == "string" ? this._label : ((this.dao ? this.entities.getLabel(this.dao.collection) : undefined) || "");
   }
   @Input() set selectRoute(value: FullRoute) {
     if(value != this._selectRoute) {
