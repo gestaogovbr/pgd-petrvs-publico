@@ -21,12 +21,15 @@ class Curriculum extends ModelBase
         'ativo',
         'usuario_id',
         'cidade_id'
-        
     ];
 
     protected $casts = [
         'idiomas' => AsJson::class,
     ];
+
+    //public $fillable_changes = ['graduacoes'];
+
+    //public $fillable_relation = [];
 
     //Has
     public function graduacoes() { return $this->hasMany(CurriculumGraduacao::class,'curriculum_id'); }

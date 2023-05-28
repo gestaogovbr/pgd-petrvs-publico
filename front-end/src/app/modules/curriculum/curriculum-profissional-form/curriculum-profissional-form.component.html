@@ -9,10 +9,10 @@
                 </input-select>
                 <input-select [size]="4" label="Centro de Treinamento" icon="bi bi-building-fill"
                     controlName="centro_treinamento" [control]="form!.controls.centro_treinamento"
-                    [items]="testeLookup">
+                    [dao]="ctDao">
                 </input-select>
-                <input-select [size]="4" label="Cargo" icon="bi bi-person-badge" controlName="ingresso"
-                    [control]="form!.controls.ingresso" [items]="testeLookup">
+                <input-select [size]="4" label="Cargo" icon="bi bi-person-badge" controlName="cargo"
+                    [control]="form!.controls.cargo" [items]="this.lookup.CARGOS_PRF">
                 </input-select>
 
             </div>
@@ -26,12 +26,12 @@
 
                     <input-select [size]="12" label="Funções ocupadas como titular ou substituto"
                         icon="bi bi-check-circle-fill" controlName="funcoesOcupadas" liveSearch
-                        [control]="form!.controls.funcoesOcupadas" [items]="testeLookup">
+                        [control]="form!.controls.funcoesOcupadas" [dao]="funcaoDao">
                     </input-select>
                 </input-multiselect>
 
                 <input-select [size]="6" label="Você faz parte de algum grupo especializado?" icon="bi bi-check-circle"
-                    controlName="grupo" [control]="form!.controls.grupo" [items]="testeLookup" id="testeID">
+                    controlName="grupo" [control]="form!.controls.grupo" [dao]="grupoDao" id="testeID">
                 </input-select>
 
             </div>
@@ -41,13 +41,13 @@
                     [addItemHandle]="addItemFuncao.bind(this)" noBox [bold]="true">
 
                     <input-select [size]="12" label="Selecione todas as unidades em que já foi lotado"
-                        icon="bi bi-check-circle-fill" controlName="selectLotacoes" liveSearch
-                        [control]="form!.controls.selectLotacoes" [items]="testeLookup">
+                        icon="bi bi-check-circle-fill" controlName="selectLotacao" liveSearch
+                        [control]="form!.controls.selectLotacao" [dao]="unidadeDao">
                     </input-select>
                 </input-multiselect>
 
                 <input-select [size]="6" label="Lotação atual" icon="bi bi-check-circle" controlName="lotacaoAtual"
-                    [control]="form!.controls.lotacaoAtual" [items]="testeLookup">
+                    [control]="form!.controls.lotacaoAtual" [dao]="unidadeDao">
                 </input-select>
 
             </div>
@@ -56,7 +56,7 @@
 
             <div class="row mb-2 mt-3">
                 <separator class="mb-3"
-                    title="Quais atividades você desempenhou fora da PRF que podem contribuir para a instituição?"
+                    title="Quais atividades você desempenhou fora e que podem contribuir para a instituição?"
                     [bold]="true"></separator>
                 <input-multiselect [size]="10" [control]="form!.controls.atividades_fora" controlName="atividades_fora"
                     [addItemHandle]="addItemFuncao.bind(this)" noBox [bold]="true">
@@ -71,7 +71,7 @@
 
             <div class="row">
                 <separator class="my-3"
-                    title="Quais atividades você desempenhou na PRF que podem contribuir para a instituição?"
+                    title="Quais atividades você desempenhou internamente que podem contribuir para a instituição?"
                     [bold]="true">
                 </separator>
                 <input-multiselect [size]="10" label="" [control]="form!.controls.atividadeDesempenhou"
@@ -89,9 +89,9 @@
         <tab key="DOCENCIA" class="fw-bold mb-3" label="Docência">
 
             <div class="row">
-                <separator class="my-3" title="Você já realizou algum trabalho de docência fora da PRF?" [bold]="true">
+                <separator class="my-3" title="Você já realizou algum trabalho de docência fora da Instituição?" [bold]="true">
                 </separator>
-                <input-switch [size]="2" label="Realizei" icon="fas fa-chalkboard" controlName="radioDocenciaFora"
+                <input-switch [size]="2" label="Não" icon="fas fa-chalkboard" controlName="radioDocenciaFora"
                     [control]="form!.controls.radioDocenciaFora" (change)="onDocenciaForaChange()">
                 </input-switch>
                 <input-multiselect [hidden]="!(form!.controls.radioDocenciaFora.value)" [size]="8" label=""
@@ -105,9 +105,9 @@
                 </input-multiselect>
             </div>
             <div class="row">
-                <separator class="my-3" title="Você é docente ou instrutor da PRF?" [bold]="true"></separator>
-                <input-switch [size]="2" label="Sim" icon="fas fa-chalkboard" controlName="radioDocenciaPRF"
-                    [control]="form!.controls.radioDocenciaPRF">
+                <separator class="my-3" title="Você é docente ou instrutor da Instituição?" [bold]="true"></separator>
+                <input-switch [size]="2" label="Não" icon="fas fa-chalkboard" controlName="radioDocenciaPRF"
+                    [control]="form!.controls.radioDocenciaPRF" (change)="onDocenciaPRFChange()">
                 </input-switch>
                 <input-multiselect [hidden]="!((form!.controls.radioDocenciaPRF.value))" [size]="8"
                     label="Em qual/quais disciplinas?" icon="bi bi-mortarboard-fill"
@@ -123,10 +123,10 @@
         <tab key="CURSOS" class="fw-bold mb-3" label="Cursos">
 
             <div class="row">
-                <separator class="my-3" title="Quais os principais cursos que você já fez e pretende fazer na PRF?" [bold]="true">
+                <separator class="my-3" title="Quais os principais cursos que você já fez e pretende fazer na Instituição?" [bold]="true">
                 </separator>
                 <input-switch [size]="2" label="Pretendo" icon="fas fa-user-graduate"
-                    controlName="radioCursos" [control]="form!.controls.radioCursos">
+                    controlName="radioCursos" [control]="form!.controls.radioCursos" (change)="onCursoInternoChange()">
                 </input-switch>
                 <input-multiselect [hidden]="!(form!.controls.radioCursos.value)" [size]="8" label=""
                     [control]="form!.controls.cursosPRF" controlName="cursosPRF"
@@ -141,7 +141,7 @@
             </div>
            
             <div class="row mb-3">
-                <separator class="my-3" title="Quais cursos você já fez e quais pretende fazer fora da PRF?" [bold]="true"></separator>
+                <separator class="my-3" title="Quais cursos você já fez e quais pretende fazer fora da Instituição?" [bold]="true"></separator>
                 <input-switch [size]="2" label="Pretendo" icon="fas fa-user-graduate"
                     controlName="radioCursosFora" [control]="form!.controls.radioCursosFora">
                 </input-switch>
@@ -181,7 +181,7 @@
 
             </div>
             <div class="row">
-                <separator class="my-3" title="Você está inserido no programa de gestão da PRF-PGPRF?" [bold]="true">
+                <separator class="my-3" title="Você está inserido no programa de gestão da Instituição?" [bold]="true">
                 </separator>
                 <input-switch [size]="1" label="SIm/Não" icon="fas fa-user-graduate" controlName="radioPG"
                     [control]="form!.controls.radioPG">
@@ -192,7 +192,7 @@
 
             </div>
             <div class="row">
-                <separator class="my-3" title="Você tem interesse em participar do PG-PRF" [bold]="true">
+                <separator class="my-3" title="Você tem interesse em participar do programa de gestão da Instituição" [bold]="true">
                 </separator>
                 <input-switch [size]="1" label="SIm/Não" icon="fas fa-user-graduate" controlName="radioInteressePG"
                     [control]="form!.controls.radioInteressePG">

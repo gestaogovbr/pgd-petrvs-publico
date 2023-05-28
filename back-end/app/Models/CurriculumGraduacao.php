@@ -18,8 +18,6 @@ class CurriculumGraduacao extends ModelBase
     ];
 
     //Has
-   
-
     // Belongs
     public function curriculum() { return $this->belongsTo(Curriculum::class); }
     public function curso() { return $this->belongsTo(Curso::class); }

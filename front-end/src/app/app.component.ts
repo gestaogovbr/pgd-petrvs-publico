@@ -244,18 +244,12 @@ export class AppComponent {
       },
       {
         name: "Oportunidades", permition: "MOD_RX_VIS_DPE", route: ['raiox'], id: "navbarDropdownCadastros", menu: [
-          this.menuSchema.RXCADASTRO_PESSOAL,
-          this.menuSchema.RXCADASTRO_PROFISSIONAL,
-          this.menuSchema.RXCADASTRO_ATRIBUTOS,
-          this.menuSchema.RXCADASTRO_OPORTUNIDADES
+          
         ]
       },
       {
         name: "Pesquisas", permition: "MOD_RX_VIS_DPE", route: ['raiox'], id: "navbarDropdownCadastros", menu: [
-          this.menuSchema.RXCADASTRO_PESSOAL,
-          this.menuSchema.RXCADASTRO_PROFISSIONAL,
-          this.menuSchema.RXCADASTRO_ATRIBUTOS,
-          this.menuSchema.RXCADASTRO_OPORTUNIDADES
+          
         ]
       },
       {

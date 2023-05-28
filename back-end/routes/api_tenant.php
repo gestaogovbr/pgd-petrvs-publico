@@ -56,7 +56,8 @@ use App\Http\Controllers\CurriculumController;
 use App\Http\Controllers\CurriculumGraduacaoController;
 use App\Http\Controllers\CentroTreinamentoController;
 use App\Http\Controllers\FuncaoController;
-
+use App\Http\Controllers\GrupoEspecializadoController;
+use App\Http\Controllers\CargoController;
 use App\Http\Controllers\UnidadeIntegranteController;
 
 /*
@@ -268,3 +269,4 @@ Route::middleware(['auth:sanctum'])->prefix('CurriculumGraduacao')->group(functi
 Route::middleware(['auth:sanctum'])->prefix('Funcao')->group(function () { defaultRoutes(FuncaoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('CentroTreinamento')->group(function () { defaultRoutes(CentroTreinamentoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('GrupoEspecializado')->group(function () { defaultRoutes(GrupoEspecializadoController::class); });
+Route::middleware(['auth:sanctum'])->prefix('Cargo')->group(function () { defaultRoutes(CargoController::class); });
