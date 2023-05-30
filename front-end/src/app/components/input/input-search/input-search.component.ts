@@ -103,7 +103,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
     }
   }
   get selectRoute(): FullRoute {
-    return this._selectRoute! || this.dao ? this.entities.getSelectRoute(this.dao!.collection) : {route: []};
+    return this._selectRoute ? this._selectRoute : (this.dao ? this.entities.getSelectRoute(this.dao!.collection) : {route: []});
   }
 
   private DEBOUNCE_TIMER = 1000;

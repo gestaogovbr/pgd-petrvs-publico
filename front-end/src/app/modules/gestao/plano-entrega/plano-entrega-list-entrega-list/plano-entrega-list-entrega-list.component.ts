@@ -1,36 +1,38 @@
-import { Component, Injector, ViewChild } from '@angular/core';
+import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
-import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
-import { PlanejamentoObjetivoDaoService } from 'src/app/dao/planejamento-objetivo-dao.service';
+import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
+import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model';
+import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'planejamento-list-objetivos-entregas',
-  templateUrl: './planejamento-list-objetivos-entregas.component.html',
-  styleUrls: ['./planejamento-list-objetivos-entregas.component.scss']
+  selector: 'app-plano-entrega-list-entrega-list',
+  templateUrl: './plano-entrega-list-entrega-list.component.html',
+  styleUrls: ['./plano-entrega-list-entrega-list.component.scss']
 })
-export class PlanejamentoListObjetivosEntregasComponent extends PageListBase<PlanejamentoObjetivo, PlanejamentoObjetivoDaoService> {
+export class PlanoEntregaListEntregaListComponent extends PageListBase<PlanoEntregaEntrega,PlanoEntregaEntregaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
-  
-  public planejamentoDao: PlanejamentoDaoService;
-  public planejamentoObjetivoDao: PlanejamentoObjetivoDaoService;
+
+  public planoEntregaDao: PlanoEntregaEntregaDaoService;
+  public unidadeDao: UnidadeDaoService;
   public buttons: ToolbarButton[] = [];
-  
+
   constructor(public injector: Injector) {
-    super(injector, PlanejamentoObjetivo, PlanejamentoObjetivoDaoService);
-    this.join = ['objetivos']
-    this.planejamentoDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
-    this.planejamentoObjetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
-    this.title = this.lex.noun("Objetivos", true);
+    super(injector, PlanoEntregaEntrega, PlanoEntregaEntregaDaoService);
+    this.planoEntregaDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
+    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    this.title = this.lex.noun("Entregas", true);
     this.filter = this.fh.FormBuilder({
       nome: { default: "" },
-      planejamento_id: { default: null}
+      descricao: { default: "" },
+      unidade_id: { default: "" },
+      destinatario: { default: "" },
     });
-  }  
- 
+  }
+
   public dynamicOptions(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let objetivo: PlanejamentoObjetivo = row as PlanejamentoObjetivo;

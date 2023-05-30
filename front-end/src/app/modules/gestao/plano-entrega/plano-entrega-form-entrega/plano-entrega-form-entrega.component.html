@@ -19,12 +19,13 @@
                     <input-search [size]="6" label="Demandante" controlName="unidade_id" [dao]="unidadeDao"></input-search>
                     <input-text [size]="6" label="Destinatário" controlName="destinatario"></input-text>
                 </div>
-                <div class="row">
-                    <input-number [size]="6" label="Meta" controlName="meta" sufix="%"></input-number>
+                <div *ngIf="this.entrega?.selectedItem?.entity" class="row">
                     <input-number *ngIf="checkTipoIndicador(['PORCENTAGEM'])" [size]="6" label="Meta" controlName="meta" sufix="%"></input-number>
                     <input-number *ngIf="checkTipoIndicador(['QUANTIDADE', 'VALOR'])" [size]="6" label="Meta" controlName="meta"></input-number>
                     <input-select *ngIf="checkTipoIndicador(['QUALITATIVO'])" [size]="6" label="Meta" controlName="meta"></input-select>
-                    <input-number [size]="6" label="Realizado" controlName="realizado"></input-number>
+                    <input-number *ngIf="checkTipoIndicador(['PORCENTAGEM'])" [size]="6" label="Realizado" controlName="realizado" sufix="%"></input-number>
+                    <input-number *ngIf="checkTipoIndicador(['QUANTIDADE', 'VALOR'])" [size]="6" label="Realizado" controlName="realizado"></input-number>
+                    <input-select *ngIf="checkTipoIndicador(['QUALITATIVO'])" [size]="6" label="Realizado" controlName="realizado"></input-select>
                 </div>
                 <div class="row">
                     <input-number [size]="6" label="Progresso Esperado" controlName="progresso_esperado" sufix="%"></input-number>
@@ -33,12 +34,42 @@
             </div>
         </tab>
         <!-- *ngIf="checkFilled(['planejamento_id'])" -->
-        <tab key="OBJETIVOS" label="Objetivos">
-            <planejamento-list-objetivos-entregas [planejamentoId]="planejamentoId"></planejamento-list-objetivos-entregas>
+        <tab *ngIf="planejamentoId?.length" key="OBJETIVOS" label="Objetivos">
+            <input-search [size]="12" #planejamento controlName="planejamento_id" [dao]="planejamentoDao" disabled></input-search>
+            <grid [control]="form!.controls.objetivos" [form]="formObjetivos" #gridObjetivos editable [hasDelete]="false" [hasEdit]="false"
+                [add]="addObjetivo.bind(this)" [remove]="removeObjetivo.bind(this)" [save]="saveObjetivo.bind(this)">
+                <columns>
+                    <column title="Objetivo" [template]="columnObjetivo" [editTemplate]="editObjetivo">
+                        <ng-template let-row="row" #columnObjetivo>
+                            <span>{{row.objetivo.nome}}</span>
+                        </ng-template>
+                        <ng-template let-row="row" #editObjetivo>
+                            <input-search [size]="12" #inputObjetivo controlName="objetivo_id" label icon [where]="[['planejamento_id', '==', planejamentoId]]" [dao]="planejamentoObjetivoDao" [selectRoute]="{route: ['gestao', 'planejamento', 'objetivoList'], params: {filter: {planejamento_id: planejamentoId}}}"></input-search>
+                        </ng-template>
+                    </column>
+                    <!--column type="options" [dynamicButtons]="dynamicButtonsObjetivos.bind(this)" [dynamicOptions]="dynamicOptionsObjetivos.bind(this)"></!--column//-->
+                    <column type="options"></column>
+                </columns>
+            </grid>
+            <!-- <planejamento-list-objetivos-entregas [planejamentoId]="planejamentoId"></planejamento-list-objetivos-entregas> -->
         </tab>
         <!-- *ngIf="checkFilled(['cadeia_valor_id'])" -->
-        <tab key="PROCESSOS" label="Processos">
-            <cadeia-valor-list-processos-entregas [cadeiaValorId]="cadeiaValorId"></cadeia-valor-list-processos-entregas>
+        <tab *ngIf="cadeiaValorId?.length" key="PROCESSOS" label="Processos">
+            <input-search [size]="12" #cadeiaValor controlName="cadeia_valor_id" [dao]="cadeiaValorDao" disabled></input-search>
+            <grid [control]="form!.controls.processos" [form]="formProcessos" #gridProcessos editable [hasDelete]="false" [hasEdit]="false"
+                [add]="addProcesso.bind(this)" [remove]="removeProcesso.bind(this)" [save]="saveProcesso.bind(this)">
+                <columns>
+                    <column title="Processos" [template]="processo" [editTemplate]="editProcesso">
+                        <ng-template let-row="row" #processo>
+                            <span>{{row.processo.nome}}</span>
+                        </ng-template>
+                        <ng-template let-row="row" #editProcesso>
+                            <input-search [size]="12" #inputProcesso controlName="processo_id" label [where]="[['cadeia_valor_id', '==', cadeiaValorId]]" [dao]="cadeiaValorProcessoDao"[selectRoute]="{route: ['gestao', 'cadeia-valor', 'processoList'], params: {filter: {cadeia_valor_id: cadeiaValorId}}}"></input-search>
+                        </ng-template>
+                    </column>
+                    <column type="options" [dynamicButtons]="dynamicButtonsProcessos.bind(this)"></column>
+                </columns>
+            </grid>
         </tab>
     </tabs>
 </editable-form>

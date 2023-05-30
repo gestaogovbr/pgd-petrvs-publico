@@ -27,7 +27,6 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild(GridComponent, { static: true }) public grid?: GridComponent;
 
-  public entregas:PlanoEntregaEntregaDaoService;
   public unidadeDao: UnidadeDaoService;
   public programaDao: ProgramaDaoService;
   public cadeiaValorDao: CadeiaValorDaoService;
@@ -40,8 +39,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
     this.planejamentoInstitucionalDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
-    this.entregas = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
-    this.join = [];
+    this.join = ["entregas"];
     this.modalWidth = 1200;
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
@@ -88,10 +86,8 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
 
   public async saveData(form: IIndexable): Promise<PlanoEntrega> {
     return new Promise<PlanoEntrega>((resolve, reject) => {
-      this.grid!.confirm();
       let planoEntrega = this.util.fill(new PlanoEntrega(), this.entity!);
       planoEntrega = this.util.fillForm(planoEntrega, this.form!.value);
-      planoEntrega.entregas = this.entregas!;
       resolve(planoEntrega);
     });
   }
@@ -104,8 +100,5 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     let result: ToolbarButton[] = [];
     return result;
   }
-
- 
-
 }
 

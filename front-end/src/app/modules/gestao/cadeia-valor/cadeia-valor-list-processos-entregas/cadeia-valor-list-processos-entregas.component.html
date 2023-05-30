@@ -1,18 +1,21 @@
-<editable-form noButtons [form]="form!" [disabled]="formDisabled">
-    <div class="row">
-        <grid [items]="items" [form]="form!" #gridProcessos editable [selectable]="false" [hasDelete]="false" [hasEdit]="false">
-            <input-search [size]="4" #cadeiaValor controlName="cadeia_valor_id" [dao]="cadeiaValorDao" disabled></input-search>
-            <columns>
-                <column title="Processos" [template]="processo" [editTemplate]="editProcesso">
-                    <ng-template let-row="row" #processo>
-                        <span>{{row.processo_id}}</span>
-                    </ng-template>
-                    <ng-template let-row="row" #editProcesso>
-                        <input-search [size]="6" controlName="processo_id" label="" [where]="[['cadeia_valor_id', '==', cadeiaValorId]]" [dao]="cadeiaValorProcessoDao"></input-search>
-                    </ng-template>
-                </column>
-                <column type="options" [dynamicButtons]="dynamicButtons.bind(this)" [dynamicOptions]="dynamicOptions.bind(this)"></column>
-            </columns>
-        </grid>
-    </div>
-</editable-form>
+<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>
+<grid [dao]="dao" [add]="add" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="selectable"
+    (select)="onSelect($event)">
+    <toolbar *ngIf="!selectable" [buttons]="buttons"></toolbar>
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)"
+        [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-text [size]="7" label="Nome" controlName="nome" [control]="filter!.controls.nome"
+                placeholder="Nome"></input-text>
+        </div>
+    </filter>
+    <columns>
+        <column title="Nome" [template]="columnNome" orderBy="nome">
+            <ng-template let-row="row" #columnNome>
+                <span class="d-block">{{row.nome}}</span>
+            </ng-template>
+        </column>
+        <column type="options" [onEdit]="edit" [dynamicOptions]="dynamicOptions.bind(this)"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

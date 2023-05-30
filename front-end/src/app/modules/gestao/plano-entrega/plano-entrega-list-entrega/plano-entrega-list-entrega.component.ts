@@ -2,7 +2,9 @@ import { ChangeDetectorRef, Component, Injector, Input, ViewChild } from '@angul
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
+import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model';
 import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 
@@ -46,6 +48,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   private _cadeiaValorId?: string;
   private _planejamentoId?: string;
   
+  public options: ToolbarButton[] = [];
   public planoEntregaId: string = "";
   public dao: PlanoEntregaEntregaDaoService;
 
@@ -62,9 +65,26 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
       meta: { default: "" },
       realizado: { default: null },
       entrega_id: { default: null },
+      progresso_esperado: { default: null },
       progresso_realizado: { default: null },
       destinatario: { default: null },
     }, this.cdRef, this.validate);
+    // Testa se o usuário possui permissão para exibir dados do feriado
+    if (true || this.auth.hasPermissionTo("")) {
+      this.options.push({
+        icon: "bi bi-info-circle",
+        label: "Informações",
+        onClick: this.consult.bind(this)
+      });
+    }
+    // Testa se o usuário possui permissão para excluir o feriado
+    if (true || this.auth.hasPermissionTo("MOD_FER_EXCL")) {
+      this.options.push({
+        icon: "bi bi-trash",
+        label: "Excluir",
+        onClick: this.delete.bind(this)
+      });
+    }
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -72,9 +92,9 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     if (['nome'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
-
     return result;
   }
+  
   public ngOnInit() {
     super.ngOnInit();
     this.planoEntregaId = this.urlParams!.get("id") || "";
@@ -87,7 +107,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     return result;
   }
 
-  public async addEntrega() {
+  public async add() {
     let entregas = new PlanoEntregaEntrega({
       _status: "ADD",
       id: this.dao!.generateUuid(),
@@ -113,39 +133,18 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     });
   }
 
-  public async removeEntrega(row: any) {
-    return true;
-  }
-
-  public async saveEntrega(form: FormGroup, row: any) {
-    let result = undefined;
-    // this.form!.markAllAsTouched();
-    // if (this.form!.valid) {
-    //   row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
-    //   row.descricao = this.formEntregas.controls.descricao.value;
-    //   row.dt_inicio = this.formEntregas.controls.dt_inicio.value;
-    //   row.dt_fim = this.formEntregas.controls.dt_fim.value;
-    //   row.tipo_indicador = this.formEntregas.controls.tipo_indicador.value;
-    //   row.meta = this.formEntregas.controls.meta.value;
-    //   row.vl_realizado = this.formEntregas.controls.vl_realizado.value;
-    //   row.objetivos = this.formEntregas.controls.objetivos.value;
-    //   row.homologado = this.formEntregas.controls.homologado.value;
-    //   result = row;
-    //   this.cdRef.detectChanges();
-    // }
-    return result;
-  }
-  public async editEntrega(entrega: PlanoEntregaEntrega) {
+  public async edit(entrega: PlanoEntregaEntrega) {
     entrega._status = entrega._status == "ADD" ? "ADD" : "EDIT";
     let index = this.items.indexOf(entrega);
     this.go.navigate({ route: ['gestao', 'plano-entrega', 'entrega'] }, {
       metadata: { 
-        planoEntrega: this.entity!, 
+        plano_entrega_id: this.entity!,
         planejamento_id: this.planejamentoId,
-        enytrega: entrega,
+        cadeia_valor_id: this.cadeiaValorId,
+        entrega: entrega, 
       },
       modalClose: async (modalResult) => {
-        if (modalResult) {  
+        if (modalResult) {
           if (!this.isNoPersist) await this.dao?.save(modalResult);
           this.items[index] = modalResult;
         };
@@ -153,4 +152,20 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     });
   }
 
+  public async delete(entrega: PlanoEntregaEntrega) {
+    let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
+    if (confirm) {
+      let index = this.items.indexOf(entrega);
+      if (this.isNoPersist) {
+        entrega._status = "DELETE";
+      } else {
+        await this.dao!.delete(entrega);
+      };
+    }
+  }
+  
+  public async consult(entrega: PlanoEntregaEntrega) {
+    this.go.navigate({route: ['', entrega.id, "consult"]});
+  }
+  
 }

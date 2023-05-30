@@ -1,6 +1,9 @@
 <editable-form noButtons [form]="form!" [disabled]="formDisabled">
     <div class="row">
-        <grid [items]="items" [form]="form!" [hasEdit]="true" [hasDelete]="true" [add]="addEntrega.bind(this)" [save]="saveEntrega.bind(this)" [groupTemplate]="groupEntregas" editable >
+        <grid [items]="items" [form]="form!" editable
+            [hasAdd]="true || auth.hasPermissionTo('')"
+            [hasEdit]="true || auth.hasPermissionTo('')"
+            [add]="add.bind(this)" [groupTemplate]="groupEntregas">
             <ng-template let-separator="separator" #groupEntregas>
                 <strong class="grid-group-text">Entregas: </strong><span class="text-wrap">
                     <badge color="primary" [label]="separator?.text"></badge>
@@ -9,7 +12,7 @@
             <columns>
                 <column [title]="'Entrega\nDemandante\nDestinatário'" [template]="columnEntregaCliente">
                     <ng-template let-row="row" #columnEntregaCliente>
-                        <span>{{row.descricao+" / "+row.demandante +" / "+row.destinatario}}</span>
+                        <span>{{row.descricao+" / "+row.unidade?.nome +" / "+row.destinatario}}</span>
                     </ng-template>
                 </column>
                 <column [title]="'Data Início\nData Fim'" [template]="columnDatas" >
@@ -18,9 +21,9 @@
                             "+dao!.getDateFormatted(row.fim)}}</span>
                     </ng-template>
                 </column>
-                <column title="Entrega" [template]="columnIndicador">
-                    <ng-template let-row="row" #columnIndicador>
-                        <span>{{row.entrega_id}}</span>
+                <column title="Entrega" [template]="columnEntrega">
+                    <ng-template let-row="row" #columnEntrega>
+                        <span>{{row.entrega?.entrega?.nome}}</span>
                     </ng-template>
                 </column>
                 <column [title]="'Meta\nRealizado'" [template]="columnMetaRealizado">
@@ -33,7 +36,7 @@
                         <progress-bar [value]="row.progresso_realizado" color="success"></progress-bar>
                     </ng-template>
                 </column>
-                <column type="options"></column>
+                <column type="options" [onEdit]="edit.bind(this)" [options]="options"></column>
             </columns>
         </grid>
     </div>
@@ -50,11 +53,6 @@
    Entrega       Indicador           Meta         Realizado
    -------------+-------------------+------------+------------- 
    XXXXXXXXXXXXX XXXXXXXXXXXXXXXXXX   9999999     99999999
-
-
-
-
-
 
 
    Plano de Entregas

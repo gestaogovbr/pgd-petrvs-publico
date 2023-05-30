@@ -182,7 +182,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
     }
   }
 
-  public consult = async (doc: M) => {
+  public  consult = async (doc: M) => {
     this.go.navigate({route: [...this.go.currentOrDefault.route, doc.id, "consult"]});
   }
 
