@@ -339,7 +339,7 @@ export class AuthService {
    */
   public isLotacaoPrincipal(pUnidade: Unidade | null = null): boolean {
     let unidade = pUnidade || this.unidade;
-    let lotacao = this.usuario!.lotacoes.find(x => x.unidade_id == unidade!.id && x.principal);
+    let lotacao = this.usuario!.lotacoes.find(x => x.unidade_id == unidade?.id && x.principal);
     return lotacao != undefined;
   }
 

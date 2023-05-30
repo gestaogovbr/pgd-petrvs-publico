@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\IntegracaoService;
+use App\Exceptions\ServerException;
 use Throwable;
 
 class IntegracaoController extends ControllerBase {

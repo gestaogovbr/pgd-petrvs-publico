@@ -7,6 +7,7 @@ import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
+import { Unidade } from 'src/app/models/unidade.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
@@ -17,10 +18,13 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoEntregaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
+  
+  public showFilter: boolean = true;
   public unidadeDao: UnidadeDaoService;
   public planoEntregaDao: PlanoEntregaDaoService;
   public planejamentoDao: PlanejamentoDaoService;
   public cadeiaValorDao: CadeiaValorDaoService;
+  public unidadeSelecionada: Unidade;
   public habilitarAdesaoToolbar: boolean = false;
   public toolbarButtons: ToolbarButton[] = [];
   public BOTAO_ADERIR: ToolbarButton;
@@ -31,6 +35,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
     this.planejamentoDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
+    this.unidadeSelecionada = this.auth.unidade!;
     /* Inicializações */
     this.title = this.lex.noun('Plano de Entrega', true);
     this.filter = this.fh.FormBuilder({
@@ -58,15 +63,41 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   ngOnInit(): void {
     super.ngOnInit();
-    //-->(RN_PENT_5)
-    let condition1 = this.isGestorUnidadeSelecionada() || (this.unidadeSelecionadaLotacaoPrincipal() && this.auth.hasPermissionTo("MOD_PENT_ADERIR"));
-    let planos_ativos_unidade_pai_ids = this.unidadeDao.planosEntregasAtivos(this.auth.unidade!.unidade_id).map(x => x.id);
-    let planos_superiores_vinculados_unidade_selecionada_ids = this.unidadeDao.planosEntregasAtivos(this.auth.unidade!).map(x => x.plano_entrega_id).filter(x => x != null);
-    let condition2 = !!planos_ativos_unidade_pai_ids.filter(x => { !planos_superiores_vinculados_unidade_selecionada_ids.includes(x); }).length;
-    this.habilitarAdesaoToolbar = condition1 && condition2;
-    this.BOTAO_ADERIR.disabled = !this.habilitarAdesaoToolbar;
+    this.checaBotaoAderirToolbar();
     this.toolbarButtons.push(this.BOTAO_ADERIR);
-    //<--
+  }
+
+  ngAfterContentChecked(): void {
+    if(this.auth.unidade != this.unidadeSelecionada){
+      this.unidadeSelecionada = this.auth.unidade!;
+      this.checaBotaoAderirToolbar();
+      this.cdRef.detectChanges();
+    }
+  }
+
+  public checaBotaoAderirToolbar(){
+    //let planos_ativos_unidade_pai = this.unidadeDao.planosEntregasAtivos(this.auth.unidade?.unidade_id || '').map(x => x.id);
+    let planos_ativos_unidade_pai = this.planosEntregasAtivosUnidadePai().map(x => x.id);
+    let planos_superiores_vinculados_pela_unidade_selecionada = this.planosEntregasAtivosUnidadeSelecionada().map(x => x.plano_entrega_id).filter(x => x != null);
+    let condition1 = this.isGestorUnidadeSelecionada() || this.auth.isGestorUnidade(this.auth.unidade?.unidade_id) || (this.unidadeSelecionadaLotacaoPrincipal() && this.auth.hasPermissionTo("MOD_PENT_ADERIR"));
+    let condition2 = !!planos_ativos_unidade_pai.filter(x => !planos_superiores_vinculados_pela_unidade_selecionada.includes(x)).length;
+    this.habilitarAdesaoToolbar = condition1 && condition2;
+    //this.habilitarAdesaoToolbar = true;
+    this.BOTAO_ADERIR.disabled = !this.habilitarAdesaoToolbar;
+    /*  (RI_PENT_1)
+        O botão Aderir, na toolbar, deverá ser exibido sempre, mas para ficar habilitado:
+        1. o usuário logado precisa ser gestor da unidade selecionada ou da sua unidade-pai, ou uma destas ser sua unidade de lotação principal e ele 
+        possuir a capacidade "MOD_PENT_ADERIR" (RN_PENT_2_4); e
+        2. a unidade-pai da unidade selecionada precisa possuir plano de entrega com o status ATIVO, que já não tenha sido vinculado pela unidade selecionada;
+    */
+  }
+  
+  public planosEntregasAtivosUnidadePai(): PlanoEntrega[] {
+    return this.auth.unidade?.unidade?.planos_entregas?.filter(x => this.planoEntregaDao.isAtivo(x)) || [];
+  }
+
+  public planosEntregasAtivosUnidadeSelecionada(): PlanoEntrega[] {
+    return this.auth.unidade?.planos_entregas?.filter(x => this.planoEntregaDao.isAtivo(x)) || [];
   }
 
   public filterClear(filter: FormGroup) {
@@ -176,6 +207,10 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   public dynamicOptions(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let planoEntrega: PlanoEntrega = row as PlanoEntrega;
+    this.BOTAO_ADERIR.onClick = () => {
+      this.loading = true;
+      this.go.navigate({ route: ['gestao', 'plano-entrega', 'adesao'] }, { metadata: planoEntrega });
+    }
     const BOTAO_ALTERAR = { label: "Alterar", icon: "bi bi-pencil-square", onClick: (planoEntrega: PlanoEntrega) => this.go.navigate({ route: ['gestao', 'plano-entrega', planoEntrega.id, 'edit'] }, this.modalRefreshId(planoEntrega)) };
     const BOTAO_EXCLUIR: ToolbarButton = { label: "Excluir", icon: "bi bi-trash", onClick: this.delete.bind(this) };
     const BOTAO_SUSPENDER = { label: "Suspender", id: "PAUSADO", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "SUSPENSO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "SUSPENSO"), onClick: this.suspender.bind(this) };
@@ -185,6 +220,9 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     const BOTAO_ARQUIVAR = { label: "Arquivar", icon: "bi bi-inboxes", onClick: this.arquivar.bind(this) };
     const BOTAO_DESARQUIVAR = { label: "Desarquivar", icon: "bi bi-reply", onClick: this.desarquivar.bind(this) };
     const BOTAO_CONSULTAR: ToolbarButton = { label: "Informações", icon: "bi bi-info-circle", onClick: (planoEntrega: PlanoEntrega) => this.go.navigate({ route: ['gestao', 'plano-entrega', planoEntrega.id, 'consult'] }, { modal: true }) };
+    
+    result.push(BOTAO_EXCLUIR); 
+    
     switch (this.situacaoPlano(planoEntrega)) {
       case 'INCLUINDO':
         if(this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_EDT"))) {
@@ -207,8 +245,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
           result.push(BOTAO_SUSPENDER);
         };
         //-->(RN_PENT_6)
-        if((planoEntrega.unidade_id == this.auth.unidade!.unidade_id) && (this.isGestorUnidadeSelecionada() || (this.unidadeSelecionadaLotacaoPrincipal() && this.auth.hasPermissionTo("MOD_PENT_ADERIR"))) && 
-          (this.unidadeDao.planosEntregasAtivos(this.auth.unidade!).filter(x => this.util.intersection([{start: x.inicio, end: x.fim!},{start: planoEntrega.inicio, end: planoEntrega.fim!}])).length == 0)){
+        if((planoEntrega.unidade_id == this.auth.unidade?.unidade_id) && (this.isGestorUnidadeSelecionada() || (this.unidadeSelecionadaLotacaoPrincipal() && this.auth.hasPermissionTo("MOD_PENT_ADERIR"))) && 
+          (this.planosEntregasAtivosUnidadeSelecionada().filter(x => this.util.intersection([{start: x.inicio, end: x.fim!},{start: planoEntrega.inicio, end: planoEntrega.fim!}])).length == 0)){
             result.push(this.BOTAO_ADERIR);
         };
         //<--

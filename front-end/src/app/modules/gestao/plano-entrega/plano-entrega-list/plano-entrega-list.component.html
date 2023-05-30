@@ -5,7 +5,7 @@
         <input-switch [size]="4" labelPosition="left" label="Agrupar por Un." controlName="agrupar"
             [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
     </toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed" [visible]="showFilter">
         <div class="row">
             <input-text [size]="6" label="Nome" controlName="nome" [control]="filter!.controls.nome" [placeholder]="'Nome do '+lex.noun('plano de entrega')"></input-text>
             <input-search #unidade [size]="6" controlName="unidade_id" [dao]="unidadeDao"></input-search>

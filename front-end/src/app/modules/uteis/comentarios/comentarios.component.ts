@@ -131,7 +131,7 @@ export class ComentariosComponent extends PageFrameBase {
     let comentario: Comentario = row as Comentario;
 
     if(comentario.usuario_id == this.auth.usuario?.id) {
-      result.push({ icon: "bi bi-pencil-square", hint: "Editar", color: "btn-outline-info", onClick: (comentario: Comentario) => { this.grid!.edit(comentario); }});
+      result.push({ icon: "bi bi-pencil-square", hint: "Alterar", color: "btn-outline-info", onClick: (comentario: Comentario) => { this.grid!.edit(comentario); }});
     }
     result.push({ hint: "Responder", color: "btn-outline-success", icon: "bi bi-reply", onClick: (comentario: Comentario) => { this.comentario.newComentario(this.gridControl, this.comentarios!, comentario); }});
     return result;

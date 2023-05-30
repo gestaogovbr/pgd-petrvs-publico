@@ -329,14 +329,14 @@ export class DaoBaseService<T extends Base> {
     context.enablePrior = false;
     context.enableNext = false;
     if(!context.cumulate || context.page <= 1) context.subject.next();
-    const subcriber = this.server.post('api/' + context.collection + '/query', {
+    const subscriber = this.server.post('api/' + context.collection + '/query', {
       where: this.prepareWhere(context.options.where || []),
       orderBy: context.options.orderBy || [],
       limit: context.options.limit || 0,
       with: context.options.join || [],
       page: context.page
     });
-    subcriber.subscribe(response => {
+    subscriber.subscribe(response => {
       if(response.error){
         context.subject.error(response.error);
       } else {
@@ -353,7 +353,7 @@ export class DaoBaseService<T extends Base> {
       }
     }, error => {
       context.subject.error(error);
-      this.server.errorHandle(error, subcriber);
+      this.server.errorHandle(error, subscriber);
       if (context.events.reject) context.events.reject(error);
     });
     return context;
