@@ -25,13 +25,13 @@ class   PlanoEntregaEntrega extends ModelBase
         'homologado', /* tinyint; NOT NULL; */// Se a entrega foi homologada
         'meta', /* json; NOT NULL; */// Meta para a entrega
         'realizado', /* json; */// Valor realizado
-        'plano_entrega_id', /* char(36); NOT NULL; */
+        'plano_entrega_id', /* char(36); */
         'entrega_id', /* char(36); NOT NULL; */
         'entrega_pai_id', /* char(36); */
-        'progresso_esperado', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */// Percentual de progresso do Plano de Entregas esperado
-        'progresso_realizado', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */// Percentual de progresso do Plano de Entregas realizado
+        'progresso_esperado', /* decimal(5,2); DEFAULT: '0.00'; */// Percentual de progresso do Plano de Entregas esperado
+        'progresso_realizado', /* decimal(5,2); DEFAULT: '0.00'; */// Percentual de progresso do Plano de Entregas realizado
         'unidade_id', /* char(36); NOT NULL; */
-        'destinatario', /* varchar(255); NOT NULL; */// Destinatário da entrega
+        'destinatario', /* varchar(255); */// Destinatário da entrega
     ];
 
     public $fillable_changes = ['objetivos', 'processos']; 

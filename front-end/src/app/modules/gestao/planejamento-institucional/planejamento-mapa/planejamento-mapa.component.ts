@@ -48,7 +48,7 @@ export class PlanejamentoMapaComponent extends PageFrameBase {
       },
       {
         icon: "bi bi-pencil-square",
-        label: "Editar",
+        label: "Alterar",
         onClick: this.onObjetivoEditClick.bind(this) 
       },
       {

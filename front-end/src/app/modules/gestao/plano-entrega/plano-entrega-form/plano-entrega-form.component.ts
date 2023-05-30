@@ -84,7 +84,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
 
   public async saveData(form: IIndexable): Promise<PlanoEntrega> {
     return new Promise<PlanoEntrega>((resolve, reject) => {
-      this.grid!.confirm();
+      this.grid?.confirm();
       let planoEntrega = this.util.fill(new PlanoEntrega(), this.entity!);
       planoEntrega = this.util.fillForm(planoEntrega, this.form!.value);
       planoEntrega.entregas = this.entregas!;

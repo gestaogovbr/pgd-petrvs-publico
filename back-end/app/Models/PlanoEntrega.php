@@ -31,9 +31,10 @@ class PlanoEntrega extends ModelBase
         'data_arquivamento', /* datetime; */// Data de arquivamento do plano de entregas
         'data_cancelamento', /* datetime; */// Data de cancelamento do plano de entregas
         'cancelamento_usuario_id', /* char(36); */
+        'criacao_usuario_id', /* char(36); */
     ];
 
-    public $fillable_changes = ["entregas"];
+    //public $fillable_changes = ["entregas"];
 
     public $delete_cascade = [];
 
@@ -50,5 +51,6 @@ class PlanoEntrega extends ModelBase
     public function planejamento() { return $this->belongsTo(Planejamento::class, 'planejamento_id'); }
     public function cadeiaValor() { return $this->belongsTo(CadeiaValor::class, 'cadeia_valor_id'); }
     public function unidade() { return $this->belongsTo(Unidade::class, 'unidade_id'); }
+    public function usuario() { return $this->belongsTo(Usuario::class, 'criacao_usuario_id'); }
     public function planoEntregaSuperior() { return $this->belongsTo(PlanoEntrega::class, 'plano_entrega_id'); }
 }

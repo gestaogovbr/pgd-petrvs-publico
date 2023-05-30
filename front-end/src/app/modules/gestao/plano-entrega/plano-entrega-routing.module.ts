@@ -5,7 +5,7 @@ import { ConfigResolver } from 'src/app/resolvies/config.resolver';
 import { PlanoEntregaListComponent } from './plano-entrega-list/plano-entrega-list.component';
 import { PlanoEntregaFormComponent } from './plano-entrega-form/plano-entrega-form.component';
 import { PlanoEntregaMapaEntregasComponent } from './plano-entrega-mapa-entregas/plano-entrega-mapa-entregas.component';
-import { PlanoEntregaAdesaoComponent } from './plano-entrega-adesao/plano-entrega-adesao.component';
+import { PlanoEntregaFormAdesaoComponent } from './plano-entrega-form-adesao/plano-entrega-form-adesao.component';
 import { PlanoEntregaFormEntregaComponent } from './plano-entrega-form-entrega/plano-entrega-form-entrega.component';
 
 const routes: Routes = [
@@ -16,7 +16,7 @@ const routes: Routes = [
   { path: 'entrega', component: PlanoEntregaFormEntregaComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Entregas do Plano de Entrega", modal:true }},
   { path: 'entrega/objetivos/:objetivo_id', component: PlanoEntregaMapaEntregasComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Entregas", modal: true } },
   { path: 'entrega/processos/:processo_id', component: PlanoEntregaMapaEntregasComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Entregas", modal: true } },
-  { path: 'adesao', component: PlanoEntregaAdesaoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Adesão", modal: true } },
+  { path: 'adesao', component: PlanoEntregaFormAdesaoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Adesão", modal: true } },
 
 ];
 
