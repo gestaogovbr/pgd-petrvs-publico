@@ -213,7 +213,7 @@ class UsuarioService extends ServiceBase
     public function isLotadoNaLinhaAscendente(string $unidade_id): bool {
         $result = false;
         $linhaAscendente = $this->unidadeService->linhaAscendente($unidade_id);
-        foreach($linhaAscendente as $unidade) {
+        foreach($linhaAscendente as $unidade_id) {
             if($this->isLotacaoPrincipal($unidade_id)) $result = true;
         };
         return $result;

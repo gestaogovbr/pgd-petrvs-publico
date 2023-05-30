@@ -25,13 +25,12 @@ class   PlanoEntregaEntrega extends ModelBase
         'meta', /* json; NOT NULL; */// Meta para a entrega
         'realizado', /* json; */// Valor realizado
         'plano_entrega_id', /* char(36); */
-        'entrega_id', /* char(36); */
+        'entrega_id', /* char(36); NOT NULL; */
         'entrega_pai_id', /* char(36); */
+        'progresso_esperado', /* decimal(5,2); DEFAULT: '0.00'; */// Percentual de progresso do Plano de Entregas esperado
+        'progresso_realizado', /* decimal(5,2); DEFAULT: '0.00'; */// Percentual de progresso do Plano de Entregas realizado
         'unidade_id', /* char(36); NOT NULL; */
         'destinatario', /* varchar(255); */// Destinatário da entrega
-        /*'cliente',*/// REMOVED
-        /*'progresso_esperado',*/// REMOVED
-        /*'progresso_realizado',*/// REMOVED
     ];
 
     public $fillable_changes = ['objetivos', 'processos']; 

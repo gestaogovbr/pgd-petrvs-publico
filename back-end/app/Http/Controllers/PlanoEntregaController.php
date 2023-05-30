@@ -104,63 +104,77 @@ class PlanoEntregaController extends ControllerBase {
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
             case 'QUERY':
-                if (!$usuario->hasPermissionTo('MOD_PENT_CONS')) throw new ServerException("CapacidadeStore", "Consulta não executada");
-                return;
+                if (!$usuario->hasPermissionTo('MOD_PENT_CONS')) throw new ServerException("CapacidadeSearchText", "Consulta não executada");
+                break;
+                // no método proxyRows() do PlanoEntregaService serão selecionados os planos que poderão ser visualizados pelo usuário logado
             case 'GETBYID':
-                if (!$usuario->hasPermissionTo('MOD_PENT_CONS')) throw new ServerException("CapacidadeStore", "Consulta não executada");
-                return;
-        }
-        $plano_id = $request->input('id') ?? $request->input('entity')['id'];
-        $planoEntrega = PlanoEntrega::find($plano_id);
-        $planoValido = $this->service->isPlanoEntregaValido($planoEntrega);
-        $planoAtivo = $planoValido && $planoEntrega->status == "ATIVO";
-        $planoHomologando = $planoValido && $planoEntrega->status == "HOMOLOGANDO";
-        $planoIncluindo = $planoValido && $planoEntrega->status == "INCLUINDO";
-        $planoProprio = $planoEntrega->plano_entrega_id == null;
-        $planoVinculado = !$planoProprio;
-        $gestorUnidadePlano = $this->service->usuario->isGestorUnidade($planoEntrega->unidade_id);
-        $gestorUnidadePaiPlano = $this->service->usuario->isGestorUnidade($planoEntrega->unidade->unidade_id);
-        $unidadePlanoLotacaoPrincipal = $this->service->usuario->isLotacaoPrincipal($planoEntrega->unidade_id);
-        $lotadoLinhaAscendenteUnidadePlano = $this->service->usuario->isLotadoNaLinhaAscendente($planoEntrega->unidade_id);
-        switch ($action) {
+                if (!$usuario->hasPermissionTo('MOD_PENT_CONS') || !$service->canView($request->validate(['id' => ['required']])['id'])) throw new ServerException("CapacidadeSearchText", "Consulta não executada");
+                break;
+                //(RN_PENT_4_10)
             case 'STORE':
-                if (!$usuario->hasPermissionTo('MOD_PENT_INCL')) throw new ServerException("CapacidadeStore", "Inserção não executada");
+                $condicoes = $service->buscaCondicoes($request->validate(['entity' => ['required']])['entity']);
+                $canStore = false;
+                switch ($action) {
+                    case 'UPDATE':
+                        $condition1 = ($condicoes['planoIncluindo'] || $condicoes['planoHomologando']) && ($condicoes['gestorUnidadePlano'] || ($condicoes['unidadePlanoEhLotacaoPrincipal'] && $usuario->hasPermissionTo('MOD_PENT_EDT')));
+                        $condition2 = $condicoes['planoHomologando'] && $condicoes['gestorUnidadePaiPlano'];
+                        $condition3 = $condicoes['planoAtivo'] && $condicoes['unidadePlanoEhLotacaoPrincipal'] && $usuario->hasPermissionTo(['MOD_PENT_EDT_ATV_HOMOL','MOD_PENT_EDT_ATV_ATV']);
+                        if($condition1 || $condition2 || $condition3) $canStore = true;
+                        if (!$canStore) throw new ServerException("CapacidadeStore", "Alteração não executada");
+                        /*  (RN_PENT_4_2)
+                            1. o plano precisa estar com o status INCLUINDO ou HOMOLOGANDO, e o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_EDT"; ou
+                            2. o plano precisa estar com o status HOMOLOGANDO e o usuário logado ser gestor da unidade-pai do plano; (RN_PENT_1_3) ou
+                            3. o plano precisa estar com o status ATIVO, a unidade do plano ser a unidade de lotação principal do usuário logado, e ele possuir a capacidade "MOD_PENT_EDT_ATV_HOMOL" ou "MOD_PENT_EDT_ATV_ATV";
+                        */ 
+                    case 'INSERT': 
+                        if($condicoes['planoProprio']){
+                            if($condicoes['gestorUnidadePlano'] || $condicoes['gestorUnidadePaiPlano'] || ($condicoes['unidadePlanoEhLotacaoPrincipal'] && $usuario->hasPermissionTo('MOD_PENT_INCL'))) $canStore = true;
+                            /*  (RN_PENT_4_13)
+                                1. o usuário logado precisa ser gestor da unidade do plano, ou gestor da sua unidade-pai; ou
+                                2. a unidade do plano precisa ser a unidade de lotação principal do usuário logado e ele possuir a capacidade "MOD_PENT_INCL"; (RN_PENT_1_2)
+                            */
+                        } else if($condicoes['planoVinculado']) {
+                            $condition1 = $condicoes['gestorUnidadePlano'] || $condicoes['gestorUnidadePaiPlano'] || ($condicoes['unidadePaiPlanoEhLotacaoPrincipal'] && $usuario->hasPermissionTo('MOD_PENT_ADERIR'));
+                            $condition2 = $condicoes['unidadePlanoPaiEhUnidadePaiDoPlano'] && $condicoes['planoPaiAtivo'];
+                            $condition3 = !$condicoes['unidadePlanoPossuiPlanoAtivoMesmoPeriodoPlanoPai'];
+                            if($condition1 && $condition2 && $condition3) $canStore = true;
+                            /*  (RN_PENT_4_1)
+                                1. o usuário logado precisa ser gestor da unidade ou da sua unidade-pai, ou uma destas ser sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_ADERIR"; (RN_PENT_2_4) e
+                                2. a unidade do plano-pai precisa ser a unidade-pai da unidade do plano vinculado, e o plano-pai precisa estar com o status ATIVO; (RN_PENT_2_3) (RN_PENT_3_3) e
+                                3. a unidade não possua plano de entrega com o status ATIVO no mesmo período do plano ao qual está sendo feita a adesão;
+                            */
+                        }
+                        if (!$canStore) throw new ServerException("CapacidadeStore", "Inclusão não executada");                   
+                }
                 break;
             case 'DESTROY':
+                //$condicoes = $service->buscaCondicoes($request->validate(['id' => ['required']]));
                 if (!$usuario->hasPermissionTo('MOD_PENT_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não executada");
                 break;
             case 'UPDATE':
-                $canUpdate = false;
-                $condition1 = ($planoIncluindo || $planoHomologando) && ($gestorUnidadePlano || ($unidadePlanoLotacaoPrincipal && $usuario->hasPermissionTo('MOD_PENT_EDT')));
-                $condition2 = $planoAtivo && $unidadePlanoLotacaoPrincipal && $usuario->hasPermissionTo(['MOD_PENT_EDT_ATV_HOMOL','MOD_PENT_EDT_ATV_ATV']);
-                if($condition1 || $condition2) $canUpdate = true;
-                if (!$canUpdate) throw new ServerException("CapacidadeStore", "Edição não executada");
-                /*  para poder editar um plano de entregas próprio, é necessário que seja atendida ao menos uma das seguintes condições:
-                    condição1: o plano de entregas seja válido e esteja com o status INCLUINDO ou HOMOLOGANDO, o usuário logado seja gestor da unidade do plano OU ela seja sua lotação principal e ele possua a capacidade "MOD_PENT_EDT";
-                    condição2: o plano de entregas seja válido e esteja com o status ATIVO, a unidade do plano seja a lotação principal do usuário logado e ele tenha a capacidade "MOD_PENT_EDT_ATV_HOMOL" ou "MOD_PENT_EDT_ATV_ATV";
-                */
+                //$condicoes = $service->buscaCondicoes($request->validate(['id' => ['required']]));
                 break;
             case 'ARQUIVAR':
-                if (!$usuario->hasPermissionTo('')) throw new ServerException("CapacidadeStore", "Operação não executada");
+                if (!$usuario->hasPermissionTo('')) throw new ServerException("CapacidadeStore", "Arquivamento não executado");
                 break;
             case 'AVALIAR':
-                if (!$usuario->hasPermissionTo('')) throw new ServerException("CapacidadeStore", "Operação não executada");
+                if (!$usuario->hasPermissionTo('')) throw new ServerException("CapacidadeStore", "Avaliação não executada");
                 break;
             case 'CANCELAR':
-                if (!$usuario->hasPermissionTo('')) throw new ServerException("CapacidadeStore", "Operação não executada");
+                if (!$usuario->hasPermissionTo('')) throw new ServerException("CapacidadeStore", "Cancelamento do Plano não executado");
                 break;
             case 'CANCELARAVALIACAO':
-                if (!$usuario->hasPermissionTo('')) throw new ServerException("CapacidadeStore", "Operação não executada");
+                if (!$usuario->hasPermissionTo('')) throw new ServerException("CapacidadeStore", "Cancelamento de Avaliação não executado");
                 break; 
             case 'CANCELARCONCLUSAO':
-                if (!$usuario->hasPermissionTo('')) throw new ServerException("CapacidadeStore", "Operação não executada");
+                if (!$usuario->hasPermissionTo('')) throw new ServerException("CapacidadeStore", "Cancelamento de Conclusão não executado");
                 break;
             case 'CANCELARHOMOLOGACAO':
-                if (!$usuario->hasPermissionTo('')) throw new ServerException("CapacidadeStore", "Operação não executada");
+                if (!$usuario->hasPermissionTo('')) throw new ServerException("CapacidadeStore", "Cancelamento de Homologação não executado");
                 break; 
             case 'CONCLUIR':
-                if (!$planoAtivo) throw new ServerException("CapacidadeStore", "Operação não executada");
-                if (!($gestorUnidadePlano || ($unidadePlanoLotacaoPrincipal && $usuario->hasPermissionTo('MOD_PENT_CONCLUIR')))) throw new ServerException("CapacidadeStore", "Operação não executada");
+                //if (!$planoAtivo) throw new ServerException("CapacidadeStore", "Operação não executada");
+                //if (!($gestorUnidadePlano || ($unidadePlanoEhLotacaoPrincipal && $usuario->hasPermissionTo('MOD_PENT_CONCLUIR')))) throw new ServerException("CapacidadeStore", "Operação não executada");
                 /*  para poder concluir um plano de entregas, é necessário que:
                     ele seja um plano de entregas válido e esteja com o status ATIVO; e
                     o usuário logado seja gestor da unidade do plano de entregas; ou
@@ -168,8 +182,8 @@ class PlanoEntregaController extends ControllerBase {
                 */
                 break;
             case 'HOMOLOGAR':
-                if (!($planoProprio && $planoHomologando)) throw new ServerException("CapacidadeStore", "Operação não executada");
-                if (!($gestorUnidadePaiPlano || ($lotadoLinhaAscendenteUnidadePlano && $usuario->hasPermissionTo('MOD_PENT_HOMOL_SUBORD')))) throw new ServerException("CapacidadeStore", "Operação não executada");
+                //if (!($planoProprio && $planoHomologando)) throw new ServerException("CapacidadeStore", "Operação não executada");
+                //if (!($gestorUnidadePaiPlano || ($lotadoLinhaAscendenteUnidadePlano && $usuario->hasPermissionTo('MOD_PENT_HOMOL_SUBORD')))) throw new ServerException("CapacidadeStore", "Operação não executada");
                 /*  para poder homologar um plano de entregas, é necessário que:
                     ele seja um plano de entregas válido e esteja com o status HOMOLOGANDO; e
                     o usuário logado seja gestor da unidade-pai do plano de entregas; ou
@@ -177,8 +191,8 @@ class PlanoEntregaController extends ControllerBase {
                 */
                 break;                
             case 'LIBERARHOMOLOGACAO':
-                if (!($planoProprio && $planoIncluindo)) throw new ServerException("CapacidadeStore", "Operação não executada");
-                if (!($gestorUnidadePlano || ($unidadePlanoLotacaoPrincipal && $usuario->hasPermissionTo('MOD_PENT_LIB_HOMOL')))) throw new ServerException("CapacidadeStore", "Operação não executada");
+                //if (!($planoProprio && $planoIncluindo)) throw new ServerException("CapacidadeStore", "Operação não executada");
+                //if (!($gestorUnidadePlano || ($unidadePlanoEhLotacaoPrincipal && $usuario->hasPermissionTo('MOD_PENT_LIB_HOMOL')))) throw new ServerException("CapacidadeStore", "Operação não executada");
                 /*  para poder liberar um plano de entregas para homologação, é necessário que:
                     ele seja um plano de entregas válido e esteja com o status INCLUINDO; e
                     o usuário logado seja gestor da unidade do plano de entregas; ou
@@ -189,8 +203,8 @@ class PlanoEntregaController extends ControllerBase {
                 if (!$usuario->hasPermissionTo('')) throw new ServerException("CapacidadeStore", "Operação não executada");
                 break;   
             case 'RETIRARHOMOLOGACAO':
-                if (!($planoProprio && $planoHomologando)) throw new ServerException("CapacidadeStore", "Operação não executada");
-                if (!($gestorUnidadePlano || ($unidadePlanoLotacaoPrincipal && $usuario->hasPermissionTo('MOD_PENT_RET_HOMOL')))) throw new ServerException("CapacidadeStore", "Operação não executada");                
+                //if (!($planoProprio && $planoHomologando)) throw new ServerException("CapacidadeStore", "Operação não executada");
+                //if (!($gestorUnidadePlano || ($unidadePlanoEhLotacaoPrincipal && $usuario->hasPermissionTo('MOD_PENT_RET_HOMOL')))) throw new ServerException("CapacidadeStore", "Operação não executada");                
                 /*  para poder retirar de homologação um plano de entregas, é necessário que:
                     ele seja um plano de entregas válido e esteja com o status HOMOLOGANDO; e
                     o usuário logado seja gestor da unidade do plano de entregas; ou

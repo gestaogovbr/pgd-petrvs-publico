@@ -102,30 +102,4 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
     });
   }
 
-  /**
-   * Retorna um array contendo os objetos das Unidades que compõem a linha hierárquica ascendente da unidade repassada como parâmetro.
-   * @param unidade_id 
-   * @returns 
-   */
-/*   public linhaAscendente(unidade_id: string): Promise<Unidade[]> {
-    return new Promise<Unidade[]>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/linha-ascendente', { unidade_id }).subscribe(response => {
-        resolve(response?.linhaAscendente || []);
-      }, error => reject(error));
-    });
-  } */
-
-  /**
-   * Retorna um array com os planos de entregas ativos relativos à unidade repassada como parâmetro (objeto Unidade ou apenas o ID de uma unidade);
-   * @param pUnidade Objeto Unidade a ser analisado;
-   * @returns 
-   */
-  public planosEntregasAtivos(pUnidade: Unidade | string | null): PlanoEntrega[] {
-    let unidade = pUnidade instanceof Unidade ? pUnidade : null;
-    if (!unidade || unidade.planos_entregas == undefined) this.getById(pUnidade as string, ['planos_entregas']).then(response => {
-      unidade = response as Unidade;
-    });
-    return unidade?.planos_entregas?.filter(x => this.planoEntregaDao.isAtivo(x)) || [];
-  }
-
 }

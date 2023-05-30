@@ -52,6 +52,36 @@ class PlanoEntregaService extends ServiceBase
         return true;    
     }
 
+    /**
+     * Retorna um array com várias informações sobre o plano repassado como parâmetro que serão auxiliares na definição das permissões para as diversas operações possíveis com um Plano de Entregas.
+     * @param array $entity     Um array com os dados de um plano já existente ou que esteja sendo criado.
+     * @return array
+     */
+    public function buscaCondicoes(array $entity): array {
+        $planoEntrega = PlanoEntrega::firstOrNew(['id' => $entity['id']], $entity);
+        $planoEntregaPai = $planoEntrega->plano_entrega_id ? PlanoEntrega::find($planoEntrega->plano_entrega_id) : null;
+        return [
+            "planoValido" => $this->isPlanoEntregaValido($planoEntrega),
+            "planoAtivo" => $this->isPlano("ATIVO", $planoEntrega),
+            "planoPaiAtivo" => $planoEntrega->plano_entrega_id ? $this->isPlano("ATIVO", $planoEntregaPai) : false,
+            "planoHomologando" => $this->isPlano("HOMOLOGANDO", $planoEntrega),
+            "planoIncluindo" => $this->isPlano("INCLUINDO", $planoEntrega),
+            "planoProprio" => $planoEntrega->plano_entrega_id == null,
+            "planoVinculado" => $planoEntrega->plano_entrega_id != null,
+            "gestorUnidadePlano" => $this->usuario->isGestorUnidade($planoEntrega->unidade_id),
+            "gestorUnidadePaiPlano" => $this->usuario->isGestorUnidade($planoEntrega->unidade->unidade_id),
+            "gestorLinhaAscendenteUnidadePlano" => !!array_filter($this->unidade->linhaAscendente($planoEntrega->unidade_id), fn($u) => $this->usuario->isGestorUnidade($u)),
+            "unidadePlanoPaiEhUnidadePaiDoPlano" => $planoEntrega->plano_entrega_id ? $planoEntregaPai->unidade_id == $planoEntrega->unidade->unidade_id : false,
+            "unidadePlanoEhLotacaoPrincipal" => $this->usuario->isLotacaoPrincipal($planoEntrega->unidade_id),
+            "unidadePaiPlanoEhLotacaoPrincipal" => $this->usuario->isLotacaoPrincipal($planoEntrega->unidade->unidade_id),
+            "unidadePlanoEhLotacaoUsuario" => in_array($planoEntrega->unidade_id, array_map(fn($lot) => $lot['unidade_id'], array_filter($this->usuario->loggedUser()->lotacoes->toArray(), fn($lot) => $lot['data_fim'] == null))),
+            "unidadePlanoEhPaiAlgumaLotacaoUsuario" => $this->usuario->loggedUser()->lotacoes->filter(fn($lot) => $lot->data_fim == null)->map(fn($lot) => $lot->unidade_id)->map(fn($ul) => Unidade::find($ul)->unidade_id)->contains($planoEntrega->unidade_id),
+            "unidadePlanoPossuiPlanoAtivoMesmoPeriodoPlanoPai" => !!$planoEntrega->unidade->planosEntregas->filter(fn($p) => $this->isPlano('ATIVO',$p) && UtilService::intersect($planoEntrega->inicio,$planoEntrega->fim,$planoEntregaPai->inicio,$planoEntregaPai->fim)),
+            "lotadoLinhaAscendenteUnidadePlano" => $this->usuario->isLotadoNaLinhaAscendente($planoEntrega->unidade_id),
+            "unidadePlanoEstahLinhaAscendenteAlgumaLotacaoUsuario" => in_array($planoEntrega->unidade_id, array_values(array_unique(array_reduce(array_map(fn($ul) => $this->unidade->linhaAscendente($ul), array_map(fn($lot) => $lot['unidade_id'], array_filter($this->usuario->loggedUser()->lotacoes->toArray(), fn($lot) => $lot['data_fim'] == null))), 'array_merge', array()))))
+        ];
+    }
+
     public function cancelar($data, $unidade) {
         try {
             DB::beginTransaction();
@@ -117,6 +147,30 @@ class PlanoEntregaService extends ServiceBase
         return true;
     }
 
+    /**
+     * Retorna se o plano repassado como parâmetro pode ser visualizado pelo usuário logado.
+     * @param string $plano_id
+     * @return bool
+     */
+    public function canView($plano_id): bool {
+        $condicoes = $this->buscaCondicoes(['id' => $plano_id]);
+        $condition1 = $condicoes['unidadePlanoEhLotacaoUsuario'];
+        $condition2 = $condicoes['lotadoLinhaAscendenteUnidadePlano'] && $this->usuario->hasPermissionTo("MOD_PENT_TOD_SUBORD");
+        $condition3 = $this->usuario->loggedUser()->hasPermissionTo("MOD_PENT_TOD");
+        $condition4 = $condicoes['unidadePlanoEhPaiAlgumaLotacaoUsuario'] && $this->usuario->hasPermissionTo("MOD_PENT_IMD_SUP");
+        $condition5 = $condicoes['unidadePlanoEstahLinhaAscendenteAlgumaLotacaoUsuario'] && $this->usuario->hasPermissionTo("MOD_PENT_TOD_SUP");
+        $condition6 = $condicoes['gestorLinhaAscendenteUnidadePlano'];
+        return $condition1 || $condition2 || $condition3 || $condition4 || $condition5 || $condition6;
+        /*  (RN_PENT_4_10)
+            1. o usuário logado precisa ser lotado na unidade do plano; (RN_PENT_3_7) ou
+            2. o usuário logado precisa ser lotado em alguma unidade da linha hierárquica ascendente da unidade do plano e possuir a capacidade "MOD_PENT_TOD_SUBORD"; ou
+            3. o usuário logado precisa possuir a capacidade "MOD_PENT_TOD"; ou
+            4. a unidade do plano é a unidade-pai de alguma das lotações do usuário logado e este possui a capacidade "MOD_PENT_IMD_SUP"; ou
+            5. a unidade do plano é alguma das unidades da linha hierárquica ascendente de qualquer uma das lotações do usuário logado e este possui a capacidade "MOD_PENT_TOD_SUP"; ou
+            6. o usuário logado é gestor de alguma unidade da linha hierárquica ascendente da unidade do plano; (RN_PENT_3_4) 
+        */
+    }
+
     public function concluir($data, $unidade){
         try {
             DB::beginTransaction();
@@ -156,6 +210,16 @@ class PlanoEntregaService extends ServiceBase
             throw $e;
         }
         return true;
+    }
+
+    /**
+     * Informa o status do plano de entregas repassado como parâmetro.
+     * Um Plano de Entregas precisa ser VÁLIDO.
+     * @param string $status
+     * @param PlanoEntrega $planoEntrega  
+     */
+    public function isPlano($status, $planoEntrega): bool {
+        return $this->isPlanoEntregaValido($planoEntrega) && $planoEntrega->status == $status;
     }
 
     /**
@@ -205,6 +269,11 @@ class PlanoEntregaService extends ServiceBase
         return $rows;
     }
 
+    public function proxyStore(&$data, $unidade, $action){
+        if($action == "INSERT") { $data["criacao_usuario_id"] = parent::loggedUser()->id; }
+        return $data;
+    }
+
     public function reativar($data, $unidade) {
         try {
             DB::beginTransaction();
@@ -251,6 +320,10 @@ class PlanoEntregaService extends ServiceBase
             throw $e;
         }
         return true;
+    }
+
+    public function validateStore(){
+
     }
 
 }

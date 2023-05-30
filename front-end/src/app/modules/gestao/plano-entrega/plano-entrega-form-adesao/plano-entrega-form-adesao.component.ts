@@ -18,26 +18,26 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
 @Component({
   selector: 'plano-entrega-adesao',
-  templateUrl: './plano-entrega-adesao.component.html',
-  styleUrls: ['./plano-entrega-adesao.component.scss']
+  templateUrl: './plano-entrega-form-adesao.component.html',
+  styleUrls: ['./plano-entrega-form-adesao.component.scss']
 })
 
-export class PlanoEntregaAdesaoComponent extends PageFormBase<PlanoEntrega, PlanoEntregaDaoService> {
+export class PlanoEntregaFormAdesaoComponent extends PageFormBase<PlanoEntrega, PlanoEntregaDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild(GridComponent, { static: true }) public grid?: GridComponent;
 
   public unidadeDao: UnidadeDaoService;
+  public planoEntregaDao: PlanoEntregaDaoService;
   public cadeiaValorDao: CadeiaValorDaoService;
   public planejamentoInstitucionalDao: PlanejamentoDaoService;
-  public planoEntregasEntregasDao: PlanoEntregaEntregaDaoService;
   public form: FormGroup;
 
   constructor(public injector: Injector) {
     super(injector, PlanoEntrega, PlanoEntregaDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
     this.planejamentoInstitucionalDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
-    this.planoEntregasEntregasDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
     this.join = [];
     this.modalWidth = 1200;
     this.form = this.fh.FormBuilder({
@@ -51,8 +51,6 @@ export class PlanoEntregaAdesaoComponent extends PageFormBase<PlanoEntrega, Plan
       cadeia_valor_id: { default: null },
       entregas: { default: [] },
     }, this.cdRef, this.validate);
-
-
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -60,13 +58,10 @@ export class PlanoEntregaAdesaoComponent extends PageFormBase<PlanoEntrega, Plan
     if (['nome', 'unidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
-    if(['inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
-      result = "Inválido";
-    }
-    if(controlName == 'fim' && control.value && !this.dao?.validDateTime(control.value)){
-      result = "Inválido";
-    }
     return result;
+    /* 
+        Em caso de adesão, os campos 'inicio', 'fim', 'planejamento_id', e 'cadeia_valor_id', deverão ser sempre iguais aos do plano-pai; portanto, quando um plano de entregas próprio sofrer alteração em um desses campos, todos os planos a ele vinculados deverão ser atualizados também;
+    */  
   }
 
   public formValidation = (form?: FormGroup) => {
@@ -86,16 +81,21 @@ export class PlanoEntregaAdesaoComponent extends PageFormBase<PlanoEntrega, Plan
 
   public async saveData(form: IIndexable): Promise<PlanoEntrega> {
     return new Promise<PlanoEntrega>((resolve, reject) => {
-      this.grid!.confirm();
+      //this.grid?.confirm();
       let planoEntrega = this.util.fill(new PlanoEntrega(), this.entity!);
       planoEntrega = this.util.fillForm(planoEntrega, this.form!.value);
-      planoEntrega.entregas = this.grid!.items;
+      //planoEntrega.entregas = this.entregas!;
       resolve(planoEntrega);
     });
   }
 
   public titleEdit = (entity: PlanoEntrega): string => {
     return "Editando ";
+  }
+
+  public dynamicButtons(row: any): ToolbarButton[] {
+    let result: ToolbarButton[] = [];
+    return result;
   }
 
  

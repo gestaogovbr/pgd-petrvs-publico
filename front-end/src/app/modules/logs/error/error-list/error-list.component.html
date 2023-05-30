@@ -1,0 +1,31 @@
+<grid [dao]="dao" [hasEdit]="false" [title]="isModal ? '' : title" [orderBy]="orderBy">
+    <toolbar></toolbar>
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-select #selectResponsaveis label="Responsável pelo registro" controlName="responsavel_id" [control]="filter!.controls.responsavel_id" [size]="4" [items]="responsaveis" itemTodos="Todos" valueTodos=""></input-select>
+            <input-datetime [size]="3" datetime label="Início" controlName="inicio" [control]="filter!.controls.inicio" labelInfo="Início da pesquisa"></input-datetime>
+            <input-datetime [size]="3" datetime label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Fim da pesquisa"></input-datetime>
+            <input-select [size]="2" label="Tipo" icon="bi bi-arrow-up-right-circle" controlName="type" [control]="filter!.controls.type" [items]="lookup.TIPO_LOG_ERROR" itemTodos="Todos" valueTodos=""></input-select>
+        </div>
+    </filter>
+    <columns>
+        <column title="Responsável" field="user" [width]="80" [template]="columnUser">
+            <ng-template let-row="row" #columnUser>
+                <span><small>{{ row.user ? row.user.nome || '' : '' }}</small></span>
+            </ng-template>
+        </column>
+        <column title="Criado em" field="date_time" [width]="80" [template]="columnDataCriacao">
+            <ng-template let-row="row" #columnDataCriacao>
+                <span><small>{{ util.getDateTimeFormatted(row.date_time) }}</small></span>
+            </ng-template>
+        </column>
+        <column title="Mensagem" field="message" [width]="80" [template]="columnMessage">
+            <ng-template let-row="row" #columnMessage>
+                <span><small>{{ (row.message).substr(0,200) }}</small></span>
+            </ng-template>
+        </column>
+        <column title="Tipo" field="type"></column>
+        <column *ngIf="!selectable" type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>
