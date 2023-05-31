@@ -31,14 +31,17 @@ import { Entrega } from 'src/app/models/entrega.model';
 })
 export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaEntrega, PlanoEntregaEntregaDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
+  // @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
+  @ViewChild('gridProcessos', { static: false }) public gridProcessos?: GridComponent;
+  @ViewChild('gridObjetivos', { static: false }) public gridObjetivos?: GridComponent;
   @ViewChild('entregas', { static: false }) public entregas?: EntregaFormComponent;
   @ViewChild('planejamento', { static: false }) public planejamento?: InputSearchComponent;
   @ViewChild('cadeiaValor', { static: false }) public cadeiaValor?: InputSearchComponent;
   @ViewChild('inputObjetivo', { static: false }) public inputObjetivo?: InputSearchComponent;
   @ViewChild('inputProcesso', { static: false }) public inputProcesso?: InputSearchComponent;
   @ViewChild('entrega', { static: false }) public entrega?: InputSearchComponent;
-
+  @ViewChild('demandante', { static: false }) public demandante?: InputSearchComponent;
+  
   public planejamentoDao: PlanejamentoDaoService;
   public planejamentoId?: string;
   public cadeiaValorId?: string;
@@ -62,17 +65,15 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
     this.cadeiaValorProcessoDao = injector.get<CadeiaValorProcessoDaoService>(CadeiaValorProcessoDaoService);
     this.planejamentoObjetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
-    this.join = ['objetivos', 'processos'];
+    this.join = ['objetivos', 'processos', 'unidade'];
     this.form = this.fh.FormBuilder({
-      nome: {default: ""},
       descricao: {default: ""},
-      lista_qualitativos: {default: ""},
-      itemQualitativo: {default: ""},
       inicio: { default: new Date() },
       fim: { default: new Date() },
       meta: {default: 100},
       realizado: {default: null},
       plano_entrega_id: {default: ""},
+      entrega_pai_id: {default: null},
       entrega_id: {default: null},
       progresso_esperado: {default: 100},
       progresso_realizado: {default: null},
@@ -97,6 +98,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     super.ngOnInit();
     this.planejamentoId = this.metadata?.planejamento_id;
     this.cadeiaValorId = this.metadata?.cadeia_valor_id;
+    this.entity = this.metadata?.entrega as PlanoEntregaEntrega;
   }
 
   ngAfterViewInit() {
@@ -140,16 +142,19 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   }
 
   public async initializeData(form: FormGroup){
-    this.entity = this.metadata?.entrega as PlanoEntregaEntrega;
     await this.loadData(this.entity!, form);
   }
 
   public saveData(form: IIndexable): Promise<NavigateResult> {
     return new Promise<NavigateResult>((resolve, reject) => {
       let entrega: PlanoEntregaEntrega = this.util.fill(new PlanoEntregaEntrega(), this.entity!);
+      this.gridObjetivos?.confirm();
+      this.gridProcessos?.confirm();
       entrega = this.util.fillForm(entrega, this.form!.value);
       entrega.objetivos = entrega.objetivos.filter(x => ["ADD", "DELETE"].includes(x._status || ""));
       entrega.processos = entrega.processos.filter(x => ["ADD", "DELETE"].includes(x._status || ""));
+      entrega.unidade = this.demandante?.selectedItem?.entity;
+      entrega.entrega = this.entrega?.selectedItem?.entity;
       resolve(new NavigateResult(entrega));
     });
   }

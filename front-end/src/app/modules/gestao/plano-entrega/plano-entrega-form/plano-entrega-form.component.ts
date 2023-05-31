@@ -39,7 +39,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
     this.planejamentoInstitucionalDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
-    this.join = ["entregas"];
+    this.join = ["entregas.entrega", "unidade", "entregas.unidade"];
     this.modalWidth = 1200;
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
@@ -86,8 +86,9 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
 
   public async saveData(form: IIndexable): Promise<PlanoEntrega> {
     return new Promise<PlanoEntrega>((resolve, reject) => {
-      let planoEntrega = this.util.fill(new PlanoEntrega(), this.entity!);
+      let planoEntrega: PlanoEntrega = this.util.fill(new PlanoEntrega(), this.entity!);
       planoEntrega = this.util.fillForm(planoEntrega, this.form!.value);
+      planoEntrega.entregas = planoEntrega.entregas?.filter(x => x._status) || [];
       resolve(planoEntrega);
     });
   }

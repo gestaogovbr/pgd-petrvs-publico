@@ -6,6 +6,7 @@ import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
 import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model';
 import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
+import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 
 @Component({
@@ -40,14 +41,14 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   }
 
   public get items(): PlanoEntregaEntrega[] {
-    if (!this.gridControl.value) this.gridControl.setValue(new PlanoEntregaEntrega());
-    if (!this.gridControl.value.planoEntregaEntrega) this.gridControl.value.planoEntregaEntrega = [];
-    return this.gridControl.value.planoEntregaEntrega;
+    if (!this.gridControl.value) this.gridControl.setValue([]);
+    return this.gridControl.value;
   }
 
   private _cadeiaValorId?: string;
   private _planejamentoId?: string;
   
+  public entityToControl = (value: any) => (value as PlanoEntrega).entregas || [];
   public options: ToolbarButton[] = [];
   public planoEntregaId: string = "";
   public dao: PlanoEntregaEntregaDaoService;
@@ -55,6 +56,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   constructor(public injector: Injector) {
     super(injector);
     this.title = this.lex.noun("Entrega");
+    this.join = ["unidade", "entidade"];
     this.code = "MOD_PENT_CONS";
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
     this.dao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
@@ -94,7 +96,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     }
     return result;
   }
-  
+
   public ngOnInit() {
     super.ngOnInit();
     this.planoEntregaId = this.urlParams!.get("id") || "";
@@ -108,7 +110,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   }
 
   public async add() {
-    let entregas = new PlanoEntregaEntrega({
+    let entrega = new PlanoEntregaEntrega({
       _status: "ADD",
       id: this.dao!.generateUuid(),
       plano_entrega_id: this.entity?.id
@@ -118,7 +120,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
         plano_entrega_id: this.entity!,
         planejamento_id: this.planejamentoId,
         cadeia_valor_id: this.cadeiaValorId,
-        entregas: entregas,
+        entrega: entrega,
       },
       modalClose: async (modalResult) => {
         if (modalResult) {

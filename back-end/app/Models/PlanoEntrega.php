@@ -31,11 +31,11 @@ class PlanoEntrega extends ModelBase
         'data_arquivamento', /* datetime; */// Data de arquivamento do plano de entregas
         'data_cancelamento', /* datetime; */// Data de cancelamento do plano de entregas
         'cancelamento_usuario_id', /* char(36); */
-        'criacao_usuario_id', /* char(36); */
-        //'programa_id', /* char(36); NOT NULL; */
+        'programa_id', /* char(36); NOT NULL; */
+        //'criacao_usuario_id', /* char(36); */
     ];
 
-    //public $fillable_changes = ["entregas"];
+    public $fillable_changes = ["entregas"];
 
     public $delete_cascade = [];
 

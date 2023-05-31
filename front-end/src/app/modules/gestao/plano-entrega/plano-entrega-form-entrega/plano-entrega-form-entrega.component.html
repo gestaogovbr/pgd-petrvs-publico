@@ -16,7 +16,7 @@
                     <input-datetime date [size]="6" label="Fim" controlName="fim" [labelInfo]="'Fim ' + lex.noun('Plano de Entregas',false,true) + '(Estimativa Inicial)'"></input-datetime>
                 </div>
                 <div class="row">
-                    <input-search [size]="6" label="Demandante" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+                    <input-search [size]="6" #demandante label="Demandante" controlName="unidade_id" [dao]="unidadeDao"></input-search>
                     <input-text [size]="6" label="Destinatário" controlName="destinatario"></input-text>
                 </div>
                 <div *ngIf="this.entrega?.selectedItem?.entity" class="row">

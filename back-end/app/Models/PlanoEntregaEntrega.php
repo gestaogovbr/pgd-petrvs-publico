@@ -47,6 +47,7 @@ class   PlanoEntregaEntrega extends ModelBase
     // Belongs
     public function planoEntrega() { return $this->belongsTo(PlanoEntrega::class, 'plano_entrega_id'); }
     public function entrega() { return $this->belongsTo(Entrega::class); }
+    public function unidade() { return $this->belongsTo(Unidade::class); }
     public function entregaPai() { return $this->belongsTo(PlanoEntregaEntrega::class, 'entrega_pai_id'); }
 
 }
