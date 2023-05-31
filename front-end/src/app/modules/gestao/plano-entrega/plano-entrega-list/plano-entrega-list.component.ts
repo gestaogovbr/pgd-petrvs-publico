@@ -17,7 +17,6 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 })
 export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoEntregaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
-
   
   public showFilter: boolean = true;
   public unidadeDao: UnidadeDaoService;
@@ -54,15 +53,17 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       label: "Aderir",
       disabled: !this.habilitarAdesaoToolbar,
       icon: this.entityService.getIcon("Adesao"),
-      onClick: () => {
-        this.loading = true;
-        this.go.navigate({ route: ['gestao', 'plano-entrega', 'adesao'] });
-      }
+      onClick: (() => {
+        this.go.navigate({ route: ['gestao', 'plano-entrega', 'adesao'] }, { modalClose: (modalResult) => {
+          this.refresh();
+        }});
+      }).bind(this)
     };
   }
 
   ngOnInit(): void {
     super.ngOnInit();
+    this.showFilter = typeof this.queryParams?.showFilter != "undefined" ? (this.queryParams.showFilter == "true") : true;
     this.checaBotaoAderirToolbar();
     this.toolbarButtons.push(this.BOTAO_ADERIR);
   }
@@ -75,14 +76,12 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     }
   }
 
-  public checaBotaoAderirToolbar(){
-    //let planos_ativos_unidade_pai = this.unidadeDao.planosEntregasAtivos(this.auth.unidade?.unidade_id || '').map(x => x.id);
+  public checaBotaoAderirToolbar() {
     let planos_ativos_unidade_pai = this.planosEntregasAtivosUnidadePai().map(x => x.id);
     let planos_superiores_vinculados_pela_unidade_selecionada = this.planosEntregasAtivosUnidadeSelecionada().map(x => x.plano_entrega_id).filter(x => x != null);
     let condition1 = this.isGestorUnidadeSelecionada() || this.auth.isGestorUnidade(this.auth.unidade?.unidade_id) || (this.unidadeSelecionadaLotacaoPrincipal() && this.auth.hasPermissionTo("MOD_PENT_ADERIR"));
     let condition2 = !!planos_ativos_unidade_pai.filter(x => !planos_superiores_vinculados_pela_unidade_selecionada.includes(x)).length;
     this.habilitarAdesaoToolbar = condition1 && condition2;
-    //this.habilitarAdesaoToolbar = true;
     this.BOTAO_ADERIR.disabled = !this.habilitarAdesaoToolbar;
     /*  (RI_PENT_1)
         O botão Aderir, na toolbar, deverá ser exibido sempre, mas para ficar habilitado:
@@ -97,7 +96,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   }
 
   public planosEntregasAtivosUnidadeSelecionada(): PlanoEntrega[] {
-    return this.auth.unidade?.planos_entregas?.filter(x => this.planoEntregaDao.isAtivo(x)) || [];
+    return this.auth?.unidade?.planos_entregas?.filter(x => this.planoEntregaDao.isAtivo(x)) || [];
   }
 
   public filterClear(filter: FormGroup) {
@@ -207,10 +206,6 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   public dynamicOptions(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let planoEntrega: PlanoEntrega = row as PlanoEntrega;
-    this.BOTAO_ADERIR.onClick = () => {
-      this.loading = true;
-      this.go.navigate({ route: ['gestao', 'plano-entrega', 'adesao'] }, { metadata: planoEntrega });
-    }
     const BOTAO_ALTERAR = { label: "Alterar", icon: "bi bi-pencil-square", onClick: (planoEntrega: PlanoEntrega) => this.go.navigate({ route: ['gestao', 'plano-entrega', planoEntrega.id, 'edit'] }, this.modalRefreshId(planoEntrega)) };
     const BOTAO_EXCLUIR: ToolbarButton = { label: "Excluir", icon: "bi bi-trash", onClick: this.delete.bind(this) };
     const BOTAO_SUSPENDER = { label: "Suspender", id: "PAUSADO", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "SUSPENSO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "SUSPENSO"), onClick: this.suspender.bind(this) };
@@ -276,6 +271,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
         }).catch(function (error) {
           self.dialog.alert("Erro", "Erro ao homologar: " + error?.message ? error?.message : error);
         });
+        this.auth.selecionaUnidade(this.auth!.unidade!.id);
+        this.checaBotaoAderirToolbar();
       }
     });
 

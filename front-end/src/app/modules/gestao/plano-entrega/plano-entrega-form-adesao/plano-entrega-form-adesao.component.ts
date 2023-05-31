@@ -25,6 +25,7 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 export class PlanoEntregaFormAdesaoComponent extends PageFormBase<PlanoEntrega, PlanoEntregaDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild(GridComponent, { static: true }) public grid?: GridComponent;
+  @ViewChild(InputSearchComponent, { static: true}) public planoEntrega?: InputSearchComponent;
 
   public unidadeDao: UnidadeDaoService;
   public planoEntregaDao: PlanoEntregaDaoService;
@@ -39,34 +40,29 @@ export class PlanoEntregaFormAdesaoComponent extends PageFormBase<PlanoEntrega, 
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
     this.planejamentoInstitucionalDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.join = [];
-    this.modalWidth = 1200;
+    this.modalWidth = 1000;
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
-      inicio: { default: new Date() },
-      fim: { default: new Date() },
-      status: { default: 'INCLUINDO' },
-      unidade_id: { default: "" },
-      plano_entrega_id: { default: null },
+      inicio: { default: "" },
+      fim: { default: "" },
       planejamento_id: { default: null },
       cadeia_valor_id: { default: null },
-      entregas: { default: [] },
+      unidade_id: { default: this.auth.unidade?.id },
+      plano_entrega_id: { default: null },
+      status: { default: "HOMOLOGANDO" }
     }, this.cdRef, this.validate);
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if (['nome', 'unidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if (['nome', 'plano_entrega_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
     return result;
-    /* 
-        Em caso de adesão, os campos 'inicio', 'fim', 'planejamento_id', e 'cadeia_valor_id', deverão ser sempre iguais aos do plano-pai; portanto, quando um plano de entregas próprio sofrer alteração em um desses campos, todos os planos a ele vinculados deverão ser atualizados também;
+    /*  (RN_PENT_2_7)
+        Em caso de adesão, os campos 'inicio', 'fim', 'planejamento_id', e 'cadeia_valor_id', deverão ser sempre iguais aos do plano-pai; 
+        portanto, quando um plano de entregas próprio sofrer alteração em um desses campos, todos os planos a ele vinculados deverão ser atualizados também;
     */  
-  }
-
-  public formValidation = (form?: FormGroup) => {
-    if(this.form!.controls.fim.value && this.form!.controls.inicio.value > this.form!.controls.fim.value) return "A data do início não pode ser maior que a data do fim!";
-    return undefined;
   }
 
   public async loadData(entity: PlanoEntrega, form: FormGroup) {
@@ -81,10 +77,8 @@ export class PlanoEntregaFormAdesaoComponent extends PageFormBase<PlanoEntrega, 
 
   public async saveData(form: IIndexable): Promise<PlanoEntrega> {
     return new Promise<PlanoEntrega>((resolve, reject) => {
-      //this.grid?.confirm();
       let planoEntrega = this.util.fill(new PlanoEntrega(), this.entity!);
       planoEntrega = this.util.fillForm(planoEntrega, this.form!.value);
-      //planoEntrega.entregas = this.entregas!;
       resolve(planoEntrega);
     });
   }
@@ -93,12 +87,13 @@ export class PlanoEntregaFormAdesaoComponent extends PageFormBase<PlanoEntrega, 
     return "Editando ";
   }
 
-  public dynamicButtons(row: any): ToolbarButton[] {
-    let result: ToolbarButton[] = [];
-    return result;
+  public onPlanoEntregaChange(event: Event){
+    if(this.form.controls.plano_entrega_id.value){
+      this.form.controls.nome.setValue(this.planoEntrega?.selectedItem?.entity.nome);
+      this.form.controls.inicio.setValue(this.planoEntrega?.selectedItem?.entity.inicio);
+      this.form.controls.fim.setValue(this.planoEntrega?.selectedItem?.entity.fim);
+      this.form.controls.planejamento_id.setValue(this.planoEntrega?.selectedItem?.entity.planejamento_id);
+      this.form.controls.cadeia_valor_id.setValue(this.planoEntrega?.selectedItem?.entity.cadeia_valor_id);
+    }
   }
-
- 
-
 }
-

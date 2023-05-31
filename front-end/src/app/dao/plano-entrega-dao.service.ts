@@ -9,6 +9,7 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
 
   constructor(protected injector: Injector) {
     super("PlanoEntrega", injector);
+    this.searchFields = ["numero", "nome"];
   }
 
   public arquivar(plano_entrega_id: string, arquivar: boolean): Promise<boolean> {
