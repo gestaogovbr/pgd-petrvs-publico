@@ -182,7 +182,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
     }
   }
 
-  public consult = async (doc: M) => {
+  public  consult = async (doc: M) => {
     this.go.navigate({route: [...this.go.currentOrDefault.route, doc.id, "consult"]});
   }
 
@@ -222,7 +222,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
   }
 
   public onSelect(selected: Base | IIndexable | null) {
-    const routeId = this.modalRoute?.queryParams?.idroute;
+    const routeId = (this.modalRoute || this.snapshot)?.queryParams?.idroute;
     if(selected && routeId?.length) {
       this.go.setModalResult(routeId, selected);
       this.close();

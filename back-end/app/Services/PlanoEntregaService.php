@@ -60,6 +60,7 @@ class PlanoEntregaService extends ServiceBase
     public function buscaCondicoes(array $entity): array {
         $planoEntrega = PlanoEntrega::firstOrNew(['id' => $entity['id']], $entity);
         $planoEntregaPai = $planoEntrega->plano_entrega_id ? PlanoEntrega::find($planoEntrega->plano_entrega_id) : null;
+        $planoEntrega->unidade = $planoEntrega->unidade ?? Unidade::find($planoEntrega->unidade_id);
         return [
             "planoValido" => $this->isPlanoEntregaValido($planoEntrega),
             "planoAtivo" => $this->isPlano("ATIVO", $planoEntrega),

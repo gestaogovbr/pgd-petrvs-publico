@@ -1,0 +1,49 @@
+<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>
+<grid [dao]="dao" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="selectable"
+    (select)="onSelect($event)">
+    <toolbar *ngIf="!selectable" [buttons]="buttons"></toolbar>
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)"
+        [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-text [size]="6" label="Nome" controlName="nome" [control]="filter!.controls.nome"
+                placeholder="Nome"></input-text>
+            <input-text [size]="6" label="Descrição" controlName="descricao" [control]="filter!.controls.descricao"
+                placeholder="Descrição"></input-text>
+        </div>
+        <div class="row"> 
+                <input-search [size]="6" label="Demandante" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+                <input-text [size]="6" label="Destinatário" controlName="destinatario" [control]="filter!.controls.destinatario"
+                placeholder="Destinatário"></input-text>
+        </div>
+    </filter>
+    <columns>
+        <column [title]="'Entrega\nDemandante\nDestinatário'" [template]="columnEntregaCliente">
+            <ng-template let-row="row" #columnEntregaCliente>
+                <span>{{row.descricao+" / "+row.demandante +" / "+row.destinatario}}</span>
+            </ng-template>
+        </column>
+        <column [title]="'Data Início\nData Fim'" [template]="columnDatas" >
+            <ng-template let-row="row" #columnDatas>
+                <span> {{dao!.getDateFormatted(row.inicio)+" até
+                    "+dao!.getDateFormatted(row.fim)}}</span>
+            </ng-template>
+        </column>
+        <column title="Entrega" [template]="columnIndicador">
+            <ng-template let-row="row" #columnIndicador>
+                <span>{{row.entrega_id}}</span>
+            </ng-template>
+        </column>
+        <column [title]="'Meta\nRealizado'" [template]="columnMetaRealizado">
+            <ng-template let-row="row" #columnMetaRealizado>
+                <span>{{row.meta+" / "+row.realizado}}</span>
+            </ng-template>
+        </column>
+        <column title="Progresso" [template]="columnProgresso">
+            <ng-template let-row="row" #columnProgresso>
+                <progress-bar [value]="row.progresso_realizado" color="success"></progress-bar>
+            </ng-template>
+        </column>
+        <column type="options"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

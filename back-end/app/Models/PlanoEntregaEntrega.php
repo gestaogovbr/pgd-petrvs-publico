@@ -21,7 +21,6 @@ class   PlanoEntregaEntrega extends ModelBase
         'inicio', /* datetime; NOT NULL; */// Data inicio
         'fim', /* datetime; */// Data fim
         'descricao', /* varchar(256); NOT NULL; */// Descrição da entrega
-        'cliente', /* text; NOT NULL; */// Cliente da entrega
         'homologado', /* tinyint; NOT NULL; */// Se a entrega foi homologada
         'meta', /* json; NOT NULL; */// Meta para a entrega
         'realizado', /* json; */// Valor realizado
@@ -48,6 +47,7 @@ class   PlanoEntregaEntrega extends ModelBase
     // Belongs
     public function planoEntrega() { return $this->belongsTo(PlanoEntrega::class, 'plano_entrega_id'); }
     public function entrega() { return $this->belongsTo(Entrega::class); }
+    public function unidade() { return $this->belongsTo(Unidade::class); }
     public function entregaPai() { return $this->belongsTo(PlanoEntregaEntrega::class, 'entrega_pai_id'); }
 
 }

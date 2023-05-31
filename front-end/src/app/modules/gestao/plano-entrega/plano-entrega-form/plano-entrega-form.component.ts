@@ -8,6 +8,7 @@ import { CadeiaValorDaoService } from 'src/app/dao/cadeia-valor-dao.service';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
 import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
+import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
@@ -26,8 +27,8 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild(GridComponent, { static: true }) public grid?: GridComponent;
 
-  public entregas:PlanoEntregaEntregaDaoService;
   public unidadeDao: UnidadeDaoService;
+  public programaDao: ProgramaDaoService;
   public cadeiaValorDao: CadeiaValorDaoService;
   public planejamentoInstitucionalDao: PlanejamentoDaoService;
   public form: FormGroup;
@@ -35,10 +36,10 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   constructor(public injector: Injector) {
     super(injector, PlanoEntrega, PlanoEntregaDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
     this.planejamentoInstitucionalDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
-    this.entregas = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
-    this.join = [];
+    this.join = ["entregas.entrega", "unidade", "entregas.unidade"];
     this.modalWidth = 1200;
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
@@ -49,6 +50,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
       plano_entrega_id: { default: null },
       planejamento_id: { default: null },
       cadeia_valor_id: { default: null },
+      programa_id: { default: null },
       entregas: { default: [] },
     }, this.cdRef, this.validate);
   }
@@ -84,10 +86,9 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
 
   public async saveData(form: IIndexable): Promise<PlanoEntrega> {
     return new Promise<PlanoEntrega>((resolve, reject) => {
-      this.grid?.confirm();
-      let planoEntrega = this.util.fill(new PlanoEntrega(), this.entity!);
+      let planoEntrega: PlanoEntrega = this.util.fill(new PlanoEntrega(), this.entity!);
       planoEntrega = this.util.fillForm(planoEntrega, this.form!.value);
-      planoEntrega.entregas = this.entregas!;
+      planoEntrega.entregas = planoEntrega.entregas?.filter(x => x._status) || [];
       resolve(planoEntrega);
     });
   }
@@ -100,8 +101,5 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     let result: ToolbarButton[] = [];
     return result;
   }
-
- 
-
 }
 
