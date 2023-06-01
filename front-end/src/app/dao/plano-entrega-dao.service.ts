@@ -139,11 +139,6 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
     });
   }
 
-/*   public planosVinculados(planoEntrega: PlanoEntrega): PlanoEntrega[] {
-    let result: PlanoEntrega[] = [];
-    return result;
-  } */
-
   public reativar(plano_entrega_id: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/reativar', { id: plano_entrega_id }).subscribe(response => {

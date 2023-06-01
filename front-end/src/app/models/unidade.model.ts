@@ -4,6 +4,7 @@ import { Cidade } from './cidade.model';
 import { Entidade } from './entidade.model';
 import { Expediente } from './expediente.model';
 import { PlanoEntrega } from './plano-entrega.model';
+import { UnidadeIntegrante } from './unidade-integrante.model';
 import { UnidadeOrigemAtividade } from './unidade-origem-atividade.model';
 import { Usuario } from './usuario.model';
 
@@ -32,6 +33,7 @@ export class Unidade extends Base {
     public gestor_substituto?: Usuario; /* Objeto do ususario gestor substituto */
     public unidade?: Unidade; /* Objeto da unidade pai */
     public planos_entregas?: PlanoEntrega[]; /* Array de objetos de Plano de Entrega */
+    public integrantes?: UnidadeIntegrante[]; /* Array de objetos do tipo UnidadeIntegrante */
 
     public codigo: string = ""; //Código da unidade
     public sigla: string = ""; //Sigla da unidade

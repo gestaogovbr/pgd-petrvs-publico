@@ -455,7 +455,7 @@ class PlanoListComponent extends src_app_modules_base_page_list_base__WEBPACK_IM
         let result = [];
         let plano = row;
         const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: this.consult.bind(this) };
-        const BOTAO_ALTERAR = { label: "Editar", icon: "bi bi-pencil-square", onClick: this.edit.bind(this) };
+        const BOTAO_ALTERAR = { label: "Alterar", icon: "bi bi-pencil-square", onClick: this.edit.bind(this) };
         const BOTAO_EXCLUIR = { label: "Excluir demanda", icon: "bi bi-trash", onClick: this.delete.bind(this) };
         const BOTAO_ASSINAR = { label: "Assinar", icon: "bi bi-pen", onClick: this.assinar.bind(this) };
         const BOTAO_TERMOS = { label: "Termos", icon: "bi bi-file-earmark-check", onClick: ((row) => this.go.navigate({ route: ['uteis', 'documentos', 'TCR', row.id] }, { modalClose: (modalResult) => console.log(modalResult === null || modalResult === void 0 ? void 0 : modalResult.conteudo), metadata: this.planoService.metadados(row) })).bind(this) };
@@ -474,7 +474,7 @@ class PlanoListComponent extends src_app_modules_base_page_list_base__WEBPACK_IM
         let result = [];
         let plano = row;
         const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: this.consult.bind(this) };
-        const BOTAO_ALTERAR = { label: "Editar", icon: "bi bi-pencil-square", onClick: this.edit.bind(this) };
+        const BOTAO_ALTERAR = { label: "Alterar", icon: "bi bi-pencil-square", onClick: this.edit.bind(this) };
         const BOTAO_ASSINAR = { hint: "Assinar", icon: "bi bi-pen", color: "btn-outline-dark", onClick: this.assinar.bind(this) };
         if (this.planoService.needSign(plano))
             result.push(BOTAO_ASSINAR);

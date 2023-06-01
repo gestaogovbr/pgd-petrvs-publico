@@ -363,7 +363,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function UsuarioFormComponent_ng_template_27_i_6_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](0, "i", 26);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](0, "i", 28);
 } }
 function UsuarioFormComponent_ng_template_27_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "strong");
@@ -374,25 +374,34 @@ function UsuarioFormComponent_ng_template_27_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](4, "br");
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](5, "span");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](6, UsuarioFormComponent_ng_template_27_i_6_Template, 1, 0, "i", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](6, UsuarioFormComponent_ng_template_27_i_6_Template, 1, 0, "i", 27);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](7);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    const row_r4 = ctx.row;
+    const row_r6 = ctx.row;
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtextInterpolate"](row_r4.unidade.sigla);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtextInterpolate"](row_r6.unidade.sigla);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtextInterpolate1"](" (IdServo: ", row_r4.unidade.codigo, ")");
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtextInterpolate1"](" (IdServo: ", row_r6.unidade.codigo, ")");
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("ngIf", row_r4.principal);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("ngIf", row_r6.principal);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtextInterpolate1"](" ", row_r4.unidade.nome, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtextInterpolate1"](" ", row_r6.unidade.nome, " ");
 } }
 function UsuarioFormComponent_ng_template_29_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](0, "input-search", 27, 28);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](0, "input-search", 29, 30);
 } if (rf & 2) {
     const ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 12)("control", ctx_r3.formLotacoes.controls.unidade_id)("dao", ctx_r3.unidadeDao);
+} }
+function UsuarioFormComponent_ng_template_32_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "span");
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const row_r10 = ctx.row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtextInterpolate"](row_r10.unidade.gestor_id == row_r10.usuario_id ? "Titular" : row_r10.unidade.gestor_substituto_id == row_r10.usuario_id ? "Substituto" : "");
 } }
 class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_8__["PageFormBase"] {
     constructor(injector) {
@@ -522,7 +531,7 @@ UsuarioFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdef
     } if (rf & 2) {
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵInheritDefinitionFeature"]], decls: 33, vars: 36, consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], [1, "form-group", "col-md-3", "text-center"], [1, "mt-5", 3, "url", "size"], [1, "form-group", "col-md-9"], ["label", "CPF", "controlName", "cpf", 3, "disabled", "size", "maskFormat"], ["label", "Matr\u00EDcula", "controlName", "matricula", 3, "disabled", "size"], ["label", "E-mail", "controlName", "email", "textCase", "lower", 3, "disabled", "size"], ["label", "Nome", "controlName", "nome", 3, "size"], ["label", "Apelido", "controlName", "apelido", 3, "size"], ["label", "Perfil", "controlName", "perfil_id", 3, "disabled", "size", "dao"], ["label", "UF", "icon", "bi bi-flag", "controlName", "uf", 3, "size", "items"], ["label", "Sexo", "controlName", "sexo", 3, "size", "items"], ["label", "Telefone", "controlName", "telefone", 3, "size", "maskFormat"], ["key", "CONFIGURACOES", "label", "Configura\u00E7\u00F5es"], ["controlName", "texto_complementar_plano", 3, "label", "dataset"], ["key", "LOTACOES", 3, "label"], ["editable", "", 3, "control", "form", "add", "load", "hasDelete", "remove", "save"], [3, "title", "template", "editTemplate"], ["columnUnidade", ""], ["editUnidade", ""], ["type", "switch", "title", "Principal", "field", "principal"], ["type", "options"], ["class", "bi bi-bookmark-star", 4, "ngIf"], [1, "bi", "bi-bookmark-star"], ["controlName", "unidade_id", 3, "size", "control", "dao"], ["unidade", ""]], template: function UsuarioFormComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵInheritDefinitionFeature"]], decls: 36, vars: 38, consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], [1, "form-group", "col-md-3", "text-center"], [1, "mt-5", 3, "url", "size"], [1, "form-group", "col-md-9"], ["label", "CPF", "controlName", "cpf", 3, "disabled", "size", "maskFormat"], ["label", "Matr\u00EDcula", "controlName", "matricula", 3, "disabled", "size"], ["label", "E-mail", "controlName", "email", "textCase", "lower", 3, "disabled", "size"], ["label", "Nome", "controlName", "nome", 3, "size"], ["label", "Apelido", "controlName", "apelido", 3, "size"], ["label", "Perfil", "controlName", "perfil_id", 3, "disabled", "size", "dao"], ["label", "UF", "icon", "bi bi-flag", "controlName", "uf", 3, "size", "items"], ["label", "Sexo", "controlName", "sexo", 3, "size", "items"], ["label", "Telefone", "controlName", "telefone", 3, "size", "maskFormat"], ["key", "CONFIGURACOES", "label", "Configura\u00E7\u00F5es"], ["controlName", "texto_complementar_plano", 3, "label", "dataset"], ["key", "LOTACOES", 3, "label"], ["editable", "", 3, "control", "form", "add", "load", "hasDelete", "remove", "save"], [3, "title", "template", "editTemplate"], ["columnUnidade", ""], ["editUnidade", ""], [3, "title", "template"], ["columnGestor", ""], ["type", "switch", "title", "Principal", "field", "principal"], ["type", "options"], ["class", "bi bi-bookmark-star", 4, "ngIf"], [1, "bi", "bi-bookmark-star"], ["controlName", "unidade_id", 3, "size", "control", "dao"], ["unidade", ""]], template: function UsuarioFormComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "editable-form", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("submit", function UsuarioFormComponent_Template_editable_form_submit_0_listener() { return ctx.onSaveData(); })("cancel", function UsuarioFormComponent_Template_editable_form_cancel_0_listener() { return ctx.onCancel(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](1, "tabs", 1);
@@ -564,8 +573,11 @@ UsuarioFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdef
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](27, UsuarioFormComponent_ng_template_27_Template, 8, 4, "ng-template", null, 21, _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](29, UsuarioFormComponent_ng_template_29_Template, 2, 3, "ng-template", null, 22, _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](31, "column", 23);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](32, "column", 24);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](31, "column", 23);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](32, UsuarioFormComponent_ng_template_32_Template, 2, 1, "ng-template", null, 24, _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](34, "column", 25);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](35, "column", 26);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
@@ -574,6 +586,7 @@ UsuarioFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdef
     } if (rf & 2) {
         const _r0 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵreference"](28);
         const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵreference"](30);
+        const _r4 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵreference"](33);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](5);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("url", ctx.form.controls.url_foto == null ? null : ctx.form.controls.url_foto.value)("size", 150);
@@ -603,6 +616,8 @@ UsuarioFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdef
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("control", ctx.form.controls.lotacoes)("form", ctx.formLotacoes)("add", ctx.addLotacao.bind(ctx))("load", ctx.loadLotacao.bind(ctx))("hasDelete", true)("remove", ctx.removeLotacao.bind(ctx))("save", ctx.saveLotacao.bind(ctx));
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("title", ctx.lex.noun("Unidade"))("template", _r0)("editTemplate", _r2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("title", ctx.lex.noun("Gestor"))("template", _r4);
     } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__["EditableFormComponent"], _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_10__["TabsComponent"], _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_11__["TabComponent"], _components_profile_picture_profile_picture_component__WEBPACK_IMPORTED_MODULE_12__["ProfilePictureComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_13__["InputTextComponent"], _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_14__["InputSelectComponent"], _components_input_input_radio_input_radio_component__WEBPACK_IMPORTED_MODULE_15__["InputRadioComponent"], _components_input_input_editor_input_editor_component__WEBPACK_IMPORTED_MODULE_16__["InputEditorComponent"], _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_17__["GridComponent"], _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_18__["ColumnsComponent"], _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_19__["ColumnComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_20__["NgIf"], _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_21__["InputSearchComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJ1c3VhcmlvLWZvcm0uY29tcG9uZW50LnNjc3MifQ== */"] });
 
 
