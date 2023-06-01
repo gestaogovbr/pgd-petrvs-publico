@@ -14,6 +14,7 @@ import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model'
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
+import { NavigateResult } from 'src/app/services/navigate.service';
 
 
 @Component({
@@ -53,6 +54,19 @@ export class PlanoEntregaFormAdesaoComponent extends PageFormBase<PlanoEntrega, 
     }, this.cdRef, this.validate);
   }
 
+  ngOnInit(): void {
+    super.ngOnInit();
+    let planoEntrega = this.metadata?.planoEntrega ? this.metadata?.planoEntrega as PlanoEntrega : null;
+    if(planoEntrega){
+      this.form.controls.plano_entrega_id.setValue(planoEntrega.id);
+      this.form.controls.nome.setValue(planoEntrega.nome);
+      this.form.controls.inicio.setValue(planoEntrega.inicio);
+      this.form.controls.fim.setValue(planoEntrega.fim);
+      this.form.controls.planejamento_id.setValue(planoEntrega.planejamento_id);
+      this.form.controls.cadeia_valor_id.setValue(planoEntrega.cadeia_valor_id);
+    }
+  }
+
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
     if (['nome', 'plano_entrega_id'].indexOf(controlName) >= 0 && !control.value?.length) {
@@ -79,6 +93,7 @@ export class PlanoEntregaFormAdesaoComponent extends PageFormBase<PlanoEntrega, 
     return new Promise<PlanoEntrega>((resolve, reject) => {
       let planoEntrega = this.util.fill(new PlanoEntrega(), this.entity!);
       planoEntrega = this.util.fillForm(planoEntrega, this.form!.value);
+      //resolve(new NavigateResult((await this.dao!.aderir()).id));
       resolve(planoEntrega);
     });
   }

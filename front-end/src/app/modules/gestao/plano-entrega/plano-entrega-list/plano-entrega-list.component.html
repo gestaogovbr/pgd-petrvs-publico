@@ -2,13 +2,16 @@
     [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_PENT_INCL')"
     [hasEdit]="false">
     <toolbar *ngIf="!selectable" [buttons]="toolbarButtons">
-        <input-switch [size]="4" labelPosition="left" label="Agrupar por Un." controlName="agrupar"
+        <input-switch [size]="3" labelPosition="left" label="Agrupar por Un." controlName="agrupar"
             [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
+        <input-switch [size]="2" labelPosition="left" label="Principais" controlName="principais"
+        [control]="filter!.controls.principais" (change)="grid!.reloadFilter()"></input-switch>
     </toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed" [visible]="showFilter">
         <div class="row">
-            <input-text [size]="6" label="Nome" controlName="nome" [control]="filter!.controls.nome" [placeholder]="'Nome do '+lex.noun('plano de entrega')"></input-text>
-            <input-search #unidade [size]="6" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+            <input-text [size]="5" label="Nome" controlName="nome" [control]="filter!.controls.nome" [placeholder]="'Nome do '+lex.noun('plano de entrega')"></input-text>
+            <input-search #unidade [size]="4" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+            <input-select [size]="3" label="Status" controlName="status" [items]="lookup.PLANO_ENTREGA_STATUS" itemTodos="- Todos -" [valueTodos]="null"></input-select>
         </div>
         <div class="row">
             <input-search #planejamento [size]="4" controlName="planejamento_id" [dao]="planejamentoDao"></input-search>

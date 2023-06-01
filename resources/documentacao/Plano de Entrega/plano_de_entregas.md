@@ -131,7 +131,9 @@
     - o plano precisa estar Ativo; e
     - se a unidade selecionada não possuir plano de entrega Ativo no mesmo período do plano em questão;
 3. (RI_PENT_3) Na janela de avaliar, já deixar o swith de arquivamento marcado, igual à janela de avaliação nas demandas;
-4. (RI_PENT_4) A consulta do grid retornará inicialmente os Planos de Entrega das unidades onde o usuário logado possui lotação (ou seja, a opção "minhas" já vem inicialmente marcada);
+4. (RI_PENT_4) A consulta do grid retornará inicialmente os Planos de Entrega válidos das unidades onde o usuário logado possui lotação (ou seja, a opção "principais" já vem inicialmente marcada) e, se ele for gestor, os planos de entregas ativos das unidades-pai de onde ele é gestor;
+5. (RI_PENT_5) Por padrão, os planos de entregas retornados na listagem do grid são os que possuem data_arquivamento e data_cancelamento nulas.
+6. (RI_PENT_6) Na adesão a um plano de entregas, o input-search dos planos de entregas só exibirá aqueles que são da unidade-pai da unidade selecionada e que estejam com o status ATIVO; a listagem dos planos de entrega não exibirá as opções de filtro.
 
 ## REGRAS A SEREM MELHOR EXAMINADAS
 
@@ -164,7 +166,7 @@
 
 * Estando no status "ATIVO"
         padrão:
-            - se o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_CONCLUIR", exibir o botão 'Concluir' (vai para o status CONCLUIDO);
+            - o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_CONCLUIR", exibir o botão 'Concluir' (vai para o status CONCLUIDO);
             - caso contrário, exibir o 'botão Consultar';
         outras opções:
             - se o usuário logado for gestor da unidade-pai do plano, ou esta for sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_CANC_HOMOL", apresentar o botão 'Cancelar Homologação' (volta para o status HOMOLOGANDO);

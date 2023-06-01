@@ -101,14 +101,6 @@ export class AuthService {
   }
 
   public registerPopupLoginResultListener() {
-    /*
-    this.bc = new BroadcastChannel('petrvs_login_popup');
-    this.bc.onmessage = (event) => {
-      this.dialog.closeSppinerOverlay();
-      this.auth.authSession().then(success => {
-        if(success) this.auth.success!(this.auth.usuario!, {route: ["home"]});
-      });
-    };*/
     window.addEventListener("message", (event) => {
       //const fromUrl = event?.origin || "";
       if (event?.data == "COMPLETAR_LOGIN") { //fromUrl.includes("login-azure-callback")
@@ -151,7 +143,6 @@ export class AuthService {
   public registerUser(user: any, token?: string) {
     if (user) {
       this.usuario = Object.assign(new Usuario(), user) as Usuario;
-      //this.usuario.config = Object.assign(new UsuarioConfig(), this.usuario.config || {});
       this.capacidades = this.usuario?.perfil?.capacidades?.filter(x => x.data_fim == null).map(x => x.tipo_capacidade?.codigo || "") || [];
       this.kind = this.kind;
       this.logged = true;
@@ -329,6 +320,14 @@ export class AuthService {
           return !!unidade && [unidade.gestor_substituto_id, unidade.gestor_id].includes(this.usuario!.id);  */
     let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? [...this.usuario!.chefias_titulares!, ...this.usuario!.chefias_substitutas!].find(x => x.id == pUnidade) : pUnidade;
     return !!unidade && [unidade.gestor_substituto_id, unidade.gestor_id].includes(this.usuario!.id);
+  }
+
+  /**
+   * Informa se o usuário logado é gestor de alguma das suas lotações.
+   * @returns 
+   */
+  public isGestorAlgumaLotacao(): boolean {
+    return !!this.unidades?.filter(x => this.isGestorUnidade(x)).length;
   }
 
   /**

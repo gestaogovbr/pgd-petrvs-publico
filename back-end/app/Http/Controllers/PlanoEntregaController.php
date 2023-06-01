@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\PlanoEntrega;
+use App\Services\UtilService;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
 use Throwable;
@@ -114,7 +115,9 @@ class PlanoEntregaController extends ControllerBase {
             case 'STORE':
                 $condicoes = $service->buscaCondicoes($request->validate(['entity' => ['required']])['entity']);
                 $canStore = false;
-                switch ($action) {
+                $data = $request->validate(['entity' => ['required'],'with' => ['array']]);
+                $acao = UtilService::emptyEntry($data['entity'], "id") ? 'INSERT' : 'UPDATE';
+                switch ($acao) {
                     case 'UPDATE':
                         $condition1 = ($condicoes['planoIncluindo'] || $condicoes['planoHomologando']) && ($condicoes['gestorUnidadePlano'] || ($condicoes['unidadePlanoEhLotacaoPrincipal'] && $usuario->hasPermissionTo('MOD_PENT_EDT')));
                         $condition2 = $condicoes['planoHomologando'] && $condicoes['gestorUnidadePaiPlano'];
