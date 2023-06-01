@@ -1,11 +1,17 @@
-<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_PENT_INCL')" [hasEdit]="false">
-    <toolbar *ngIf="!selectable">
-        <input-switch [size]="4" labelPosition="left" label="Agrupar por Un." controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+    [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_PENT_INCL')"
+    [hasEdit]="false">
+    <toolbar *ngIf="!selectable" [buttons]="toolbarButtons">
+        <input-switch [size]="3" labelPosition="left" label="Agrupar por Un." controlName="agrupar"
+            [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
+        <input-switch [size]="2" labelPosition="left" label="Principais" controlName="principais"
+        [control]="filter!.controls.principais" (change)="grid!.reloadFilter()"></input-switch>
     </toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed" [visible]="showFilter">
         <div class="row">
-            <input-text [size]="6" label="Nome" controlName="nome" [control]="filter!.controls.nome" [placeholder]="'Nome do '+lex.noun('plano de entrega')"></input-text>
-            <input-search #unidade [size]="6" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+            <input-text [size]="5" label="Nome" controlName="nome" [control]="filter!.controls.nome" [placeholder]="'Nome do '+lex.noun('plano de entrega')"></input-text>
+            <input-search #unidade [size]="4" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+            <input-select [size]="3" label="Status" controlName="status" [items]="lookup.PLANO_ENTREGA_STATUS" itemTodos="- Todos -" [valueTodos]="null"></input-select>
         </div>
         <div class="row">
             <input-search #planejamento [size]="4" controlName="planejamento_id" [dao]="planejamentoDao"></input-search>
@@ -31,7 +37,11 @@
                 <small class="micro-text fw-ligh">#{{row.numero}}</small>
             </ng-template>
         </column>
-        <column title="Nome" field="nome" orderBy="nome"></column>
+        <column title="Nome" orderBy="nome" [template]="columnNome">
+            <ng-template let-row="row" #columnNome>
+                <span class="text-break text-wrap" [style.max-width.px]="400">{{row.nome}}</span>
+            </ng-template>
+        </column>
         <column title="Início" [template]="columnInicio" orderBy="inicio">
             <ng-template let-row="row" #columnInicio>
                 <span> {{dao!.getDateFormatted(row.inicio)}}</span>
@@ -48,8 +58,8 @@
                 Cadeia de Valor
             </ng-template>
             <ng-template let-row="row" #columnPlanoCadeia>
-                <badge *ngIf="row.planejamento" color="light" [icon]="entityService.getIcon('Planejamento')" [label]="row.planejamento?.nome"></badge>
-                <badge *ngIf="row.cadeiaValor" color="light" [icon]="entityService.getIcon('CadeiaValor')" [label]="row.cadeiaValor?.nome"></badge>
+                <badge *ngIf="row.planejamento" [maxWidth]="300" color="light" [icon]="entityService.getIcon('Planejamento')" [label]="row.planejamento?.nome"></badge>
+                <badge *ngIf="row.cadeiaValor" [maxWidth]="300" color="light" [icon]="entityService.getIcon('CadeiaValor')" [label]="row.cadeiaValor?.nome"></badge>
             </ng-template>
         </column>
         <column title="Status" [template]="columnStatus">

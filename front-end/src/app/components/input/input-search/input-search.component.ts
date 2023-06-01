@@ -38,7 +38,6 @@ export class InputSearchComponent extends InputBase implements OnInit {
   @Input() hostClass: string = "";
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
-  //@Input() disabled?: string;
   @Input() labelInfo: string = "";
   @Input() bold: boolean = false;
   @Input() loading: boolean = false;
@@ -52,7 +51,6 @@ export class InputSearchComponent extends InputBase implements OnInit {
   @Input() dao?: DaoBaseService<Base> = undefined;
   @Input() detailsButton?: string;
   @Input() addRoute?: FullRoute;
-  //@Input() selectRoute?: FullRoute;
   @Input() onlySelect?: string;
   @Input() form?: FormGroup;
   @Input() source?: any;
@@ -87,7 +85,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
     }
   }
   get icon(): string {
-    return typeof this._icon == "string" ? this._icon : ((this.dao ? this.entities.getIcon(this.dao.collection) : undefined) || "");
+    return typeof this._icon != "undefined" ? this._icon : ((this.dao ? this.entities.getIcon(this.dao.collection) : undefined) || "");
   }
   @Input() set label(value: string) {
     if(value != this._label) {
@@ -95,7 +93,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
     }
   }
   get label(): string {
-    return typeof this._label == "string" ? this._label : ((this.dao ? this.entities.getLabel(this.dao.collection) : undefined) || "");
+    return typeof this._label != "undefined" ? this._label : ((this.dao ? this.entities.getLabel(this.dao.collection) : undefined) || "");
   }
   @Input() set selectRoute(value: FullRoute) {
     if(value != this._selectRoute) {
@@ -103,7 +101,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
     }
   }
   get selectRoute(): FullRoute {
-    return this._selectRoute ? this._selectRoute : (this.dao ? this.entities.getSelectRoute(this.dao!.collection) : {route: []});
+    return typeof this._selectRoute != "undefined" ? this._selectRoute : (this.dao ? this.entities.getSelectRoute(this.dao!.collection) : {route: []});
   }
 
   private DEBOUNCE_TIMER = 1000;
@@ -144,13 +142,6 @@ export class InputSearchComponent extends InputBase implements OnInit {
 
   public ngAfterViewInit(): void {
     super.ngAfterViewInit();
-    /*if(!this.isDisabled){
-      $(() => {
-        const elm = document.getElementById(this.generatedId(this.controlName) + '_search_dropdown');
-        // @ts-ignore
-        if(elm) this.dropdown = new bootstrap.Dropdown(elm);
-      });
-    }*/
     this.control?.valueChanges.subscribe(async newValue => {
       if(this.selectedValue != newValue) {
         this.selectedValue = newValue;

@@ -47,7 +47,7 @@ class LoginController extends Controller
                 $query->with(["unidade"])->whereHas('unidade', function ($query) use ($entidadeId) {
                     return $query->where('entidade_id', '=', $entidadeId);
                 })->whereNull("data_fim");
-            }, "lotacoes.unidade.unidade.planosEntregas", "perfil.capacidades.tipoCapacidade","chefiasTitulares","chefiasSubstitutas"])->first();
+            }, "lotacoes.unidade.planosEntregas", "lotacoes.unidade.unidade.planosEntregas", "perfil.capacidades.tipoCapacidade","chefiasTitulares","chefiasSubstitutas"])->first();
             foreach ($usuario->lotacoes as $lotacao) {
                 if($lotacao->principal) {
                     $request->session()->put("unidade_id", $lotacao->unidade_id);
@@ -81,7 +81,7 @@ class LoginController extends Controller
             $usuario = Auth::user();
             $usuario = Usuario::where("id", $usuario->id)->with(["lotacoes" => function ($query) use ($data) {
                 $query->whereNull("data_fim")->where("unidade_id", $data["unidade_id"]);
-            }, "lotacoes.unidade.entidade", "lotacoes.unidade.unidade.planosEntregas", "perfil.capacidades.tipoCapacidade"])->first();
+            }, "lotacoes.unidade.entidade", "lotacoes.unidade.planosEntregas", "lotacoes.unidade.unidade.planosEntregas", "perfil.capacidades.tipoCapacidade"])->first();
             if(isset($usuario->lotacoes[0]) && !empty($usuario->lotacoes[0]->unidade_id)) {
                 $request->session()->put("unidade_id", $usuario->lotacoes[0]->unidade_id);
                 return response()->json([

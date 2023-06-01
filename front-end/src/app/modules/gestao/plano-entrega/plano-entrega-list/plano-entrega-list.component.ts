@@ -18,7 +18,6 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoEntregaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
-  
   public showFilter: boolean = true;
   public unidadeDao: UnidadeDaoService;
   public planoEntregaDao: PlanoEntregaDaoService;
@@ -40,10 +39,11 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.title = this.lex.noun('Plano de Entrega', true);
     this.filter = this.fh.FormBuilder({
       agrupar: { default: true },
+      principais: { default: true },
       nome: { default: '' },
       inicio: { default: '' },
       fim: { default: '' },
-      //status: {default: ''},
+      status: { default: '' },
       unidade_id: { default: null },
       planejamento_id: { default: null },
       cadeia_valor_id: { default: null },
@@ -54,35 +54,37 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       label: "Aderir",
       disabled: !this.habilitarAdesaoToolbar,
       icon: this.entityService.getIcon("Adesao"),
-      onClick: () => {
-        this.loading = true;
-        this.go.navigate({ route: ['gestao', 'plano-entrega', 'adesao'] });
-      }
+      onClick: (() => {
+        this.go.navigate({ route: ['gestao', 'plano-entrega', 'adesao'] }, {
+          modalClose: (modalResult) => {
+            this.refresh();
+          }
+        });
+      }).bind(this)
     };
   }
 
   ngOnInit(): void {
     super.ngOnInit();
+    this.showFilter = typeof this.queryParams?.showFilter != "undefined" ? (this.queryParams.showFilter == "true") : true;
     this.checaBotaoAderirToolbar();
     this.toolbarButtons.push(this.BOTAO_ADERIR);
   }
 
   ngAfterContentChecked(): void {
-    if(this.auth.unidade != this.unidadeSelecionada){
+    if (this.auth.unidade != this.unidadeSelecionada) {
       this.unidadeSelecionada = this.auth.unidade!;
       this.checaBotaoAderirToolbar();
       this.cdRef.detectChanges();
     }
   }
 
-  public checaBotaoAderirToolbar(){
-    //let planos_ativos_unidade_pai = this.unidadeDao.planosEntregasAtivos(this.auth.unidade?.unidade_id || '').map(x => x.id);
+  public checaBotaoAderirToolbar() {
     let planos_ativos_unidade_pai = this.planosEntregasAtivosUnidadePai().map(x => x.id);
     let planos_superiores_vinculados_pela_unidade_selecionada = this.planosEntregasAtivosUnidadeSelecionada().map(x => x.plano_entrega_id).filter(x => x != null);
-    let condition1 = this.isGestorUnidadeSelecionada() || this.auth.isGestorUnidade(this.auth.unidade?.unidade_id) || (this.unidadeSelecionadaLotacaoPrincipal() && this.auth.hasPermissionTo("MOD_PENT_ADERIR"));
+    let condition1 = this.auth.isGestorUnidade() || this.auth.isGestorUnidade(this.auth.unidade?.unidade_id) || (this.auth.isLotacaoPrincipal(this.auth.unidade) && this.auth.hasPermissionTo("MOD_PENT_ADERIR"));
     let condition2 = !!planos_ativos_unidade_pai.filter(x => !planos_superiores_vinculados_pela_unidade_selecionada.includes(x)).length;
     this.habilitarAdesaoToolbar = condition1 && condition2;
-    //this.habilitarAdesaoToolbar = true;
     this.BOTAO_ADERIR.disabled = !this.habilitarAdesaoToolbar;
     /*  (RI_PENT_1)
         O botão Aderir, na toolbar, deverá ser exibido sempre, mas para ficar habilitado:
@@ -91,48 +93,64 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
         2. a unidade-pai da unidade selecionada precisa possuir plano de entrega com o status ATIVO, que já não tenha sido vinculado pela unidade selecionada;
     */
   }
-  
+
   public planosEntregasAtivosUnidadePai(): PlanoEntrega[] {
     return this.auth.unidade?.unidade?.planos_entregas?.filter(x => this.planoEntregaDao.isAtivo(x)) || [];
   }
 
   public planosEntregasAtivosUnidadeSelecionada(): PlanoEntrega[] {
-    return this.auth.unidade?.planos_entregas?.filter(x => this.planoEntregaDao.isAtivo(x)) || [];
+    return this.auth?.unidade?.planos_entregas?.filter(x => this.planoEntregaDao.isAtivo(x)) || [];
   }
 
   public filterClear(filter: FormGroup) {
     filter.controls.nome.setValue("");
     filter.controls.inicio.setValue(null);
     filter.controls.fim.setValue(null);
-    //filter.controls.status.setValue("");
     filter.controls.unidade_id.setValue(null);
     filter.controls.planejamento_id.setValue(null);
     filter.controls.cadeia_valor_id.setValue(null);
+    filter.controls.status.setValue(null);
     super.filterClear(filter);
   }
 
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
-
-    if (form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome + "%"]);
+    /*
+        (RI_PENT_4)
+        A consulta do grid retornará inicialmente os principais Planos de Entrega válidos do usuário logado (a opção "principais" já vem marcada),
+        que são os das unidades onde ele possui lotação e, se ele for gestor, os planos ativos das unidades-pai de onde ele é gestor;
+    */
+    if (this.filter?.controls.principais.value) {
+      let w1 = ["unidade_id", "in", this.auth.unidades?.map(u => u.id)];
+      let w2 = ["unidade_id", "in", this.auth.unidades?.map(u => u.unidade?.id)];
+      if (this.auth.isGestorAlgumaLotacao()) result.push(["or", w1, w2]); else result.push(w1);
+    } else {
+      if (form.nome?.length) {
+        result.push(["nome", "like", "%" + form.nome + "%"]);
+      }
+      if (form.inicio) {
+        result.push(["inicio", ">=", form.inicio]);
+      }
+      if (form.fim) {
+        result.push(["fim", "<=", form.fim]);
+      }
+      if (form.unidade_id) {
+        result.push(["unidade_id", "==", form.unidade_id]);
+      }
+      if (form.planejamento_id) {
+        result.push(["planejamento_id", "==", form.planejamento_id]);
+      }
+      if (form.cadeia_valor_id) {
+        result.push(["cadeia_valor_id", "==", form.cadeia_valor_id]);
+      }
+      if (form.status) {
+        result.push(["status", "==", form.status]);
+      }
     }
-    if (form.inicio) {
-      result.push(["inicio", ">=", form.inicio]);
-    }
-    if (form.fim) {
-      result.push(["fim", "<=", form.fim]);
-    }
-    if (form.unidade_id) {
-      result.push(["unidade_id", "==", form.unidade_id]);
-    }
-    if (form.planejamento_id) {
-      result.push(["planejamento_id", "==", form.planejamento_id]);
-    }
-    if (form.cadeia_valor_id) {
-      result.push(["cadeia_valor_id", "==", form.cadeia_valor_id]);
-    }
+    //  (RI_PENT_5) Por padrão, os planos de entregas retornados na listagem do grid são os que possuem data_arquivamento e data_cancelamento nulas.
+    result.push(["data_cancelamento", "==", null]);
+    result.push(["data_arquivamento", "==", null]);
     return result;
   }
 
@@ -144,7 +162,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     }
   }
 
-  public dynamicButtons(row: any): ToolbarButton[] {
+  public dynamicButtons(row: PlanoEntrega): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let planoEntrega: PlanoEntrega = row as PlanoEntrega;
     const BOTAO_LIBERAR_HOMOLOGACAO = { label: "Liberar para homologação", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "HOMOLOGANDO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "HOMOLOGANDO"), onClick: this.liberarHomologacao.bind(this) };
@@ -156,47 +174,47 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     const BOTAO_REATIVAR = { label: "Reativar", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "ATIVO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "ATIVO"), onClick: this.reativar.bind(this) };
     const BOTAO_CANCELAR_AVALIACAO = { label: "Cancelar avaliação", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "CONCLUIDO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "CONCLUIDO"), onClick: this.cancelarAvaliacao.bind(this) };
     const BOTAO_CONSULTAR = { label: "Informações", icon: "bi bi-info-circle", onClick: (planoEntrega: PlanoEntrega) => this.go.navigate({ route: ['gestao', 'plano-entrega', planoEntrega.id, 'consult'] }, { modal: true }) };
-    
+
     switch (this.situacaoPlano(planoEntrega)) {
       case 'INCLUINDO':
-        if(this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_LIB_HOMOL"))) {
-          result.push(BOTAO_LIBERAR_HOMOLOGACAO); 
-        } else if(this.isGestorLinhaAscendente(planoEntrega) || this.isLotadoUnidadePlano(planoEntrega)) {
+        if (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoPrincipal(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_LIB_HOMOL"))) {
+          result.push(BOTAO_LIBERAR_HOMOLOGACAO);
+        } else if (this.auth.isGestorLinhaAscendente(planoEntrega.unidade!) || !!this.auth.hasLotacao(planoEntrega.unidade_id)) {
           result.push(BOTAO_CONSULTAR);
         };
         break;
       case 'HOMOLOGANDO':
-        if (this.isGestorUnidadePaiPlano(planoEntrega) || (this.isLotadoUnidadePai(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_HOMOL_SUBORD"))) {
-          result.push(BOTAO_HOMOLOGAR); 
-        } else if(this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_EDT"))){ 
-          result.push(BOTAO_ALTERAR); 
-        } else if(this.isGestorLinhaAscendente(planoEntrega) || this.isLotadoUnidadePlano(planoEntrega)) {
+        if (this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_id) || (!!this.auth.hasLotacao(planoEntrega.unidade!.unidade_id!) && this.auth.hasPermissionTo("MOD_PENT_HOMOL_SUBORD"))) {
+          result.push(BOTAO_HOMOLOGAR);
+        } else if (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoPrincipal(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_EDT"))) {
+          result.push(BOTAO_ALTERAR);
+        } else if (this.auth.isGestorLinhaAscendente(planoEntrega.unidade!) || !!this.auth.hasLotacao(planoEntrega.unidade_id)) {
           result.push(BOTAO_CONSULTAR);
         };
         break;
       case 'ATIVO':
-        if(this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_CONCLUIR"))) {
-          result.push(BOTAO_CONCLUIR); 
-        } else if(this.isGestorLinhaAscendente(planoEntrega) || this.isLotadoUnidadePlano(planoEntrega)) {
+        if (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoPrincipal(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_CONCLUIR"))) {
+          result.push(BOTAO_CONCLUIR);
+        } else if (this.auth.isGestorLinhaAscendente(planoEntrega.unidade!) || !!this.auth.hasLotacao(planoEntrega.unidade_id)) {
           result.push(BOTAO_CONSULTAR);
         }
         break;
       case 'CONCLUIDO':
-        if (this.isGestorUnidadePaiPlano(planoEntrega) || (this.isLotadoLinhaAscendente(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_AVAL_SUBORD"))) {
-          result.push(BOTAO_AVALIAR); 
-        } else if(this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_CANC_CONCL"))){ 
-          result.push(BOTAO_CANCELAR_CONCLUSAO); 
+        if (this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_id) || (this.auth.isLotadoNaLinhaAscendente(planoEntrega.unidade!) && this.auth.hasPermissionTo("MOD_PENT_AVAL_SUBORD"))) {
+          result.push(BOTAO_AVALIAR);
+        } else if (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoPrincipal(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_CANC_CONCL"))) {
+          result.push(BOTAO_CANCELAR_CONCLUSAO);
         };
         break;
       case 'SUSPENSO':
-        if(this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_REATIVAR"))) {
-          result.push(BOTAO_REATIVAR); 
+        if (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoPrincipal(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_REATIVAR"))) {
+          result.push(BOTAO_REATIVAR);
         };
         break;
       case 'AVALIADO':
-        if(this.isGestorUnidadePaiPlano(planoEntrega) || (this.isLotadoLinhaAscendente(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_CANC_AVAL_SUBORD"))) {
-          result.push(BOTAO_CANCELAR_AVALIACAO); 
-        } else if(this.isGestorLinhaAscendente(planoEntrega) || this.isLotadoUnidadePlano(planoEntrega)) {
+        if (this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_id) || (this.auth.isLotadoNaLinhaAscendente(planoEntrega.unidade!) && this.auth.hasPermissionTo("MOD_PENT_CANC_AVAL_SUBORD"))) {
+          result.push(BOTAO_CANCELAR_AVALIACAO);
+        } else if (this.auth.isGestorLinhaAscendente(planoEntrega.unidade!) || !!this.auth.hasLotacao(planoEntrega.unidade_id)) {
           result.push(BOTAO_CONSULTAR);
         }
         break;
@@ -204,13 +222,9 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     return result;
   }
 
-  public dynamicOptions(row: any): ToolbarButton[] {
+  public dynamicOptions(row: PlanoEntrega): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let planoEntrega: PlanoEntrega = row as PlanoEntrega;
-    this.BOTAO_ADERIR.onClick = () => {
-      this.loading = true;
-      this.go.navigate({ route: ['gestao', 'plano-entrega', 'adesao'] }, { metadata: planoEntrega });
-    }
     const BOTAO_ALTERAR = { label: "Alterar", icon: "bi bi-pencil-square", onClick: (planoEntrega: PlanoEntrega) => this.go.navigate({ route: ['gestao', 'plano-entrega', planoEntrega.id, 'edit'] }, this.modalRefreshId(planoEntrega)) };
     const BOTAO_EXCLUIR: ToolbarButton = { label: "Excluir", icon: "bi bi-trash", onClick: this.delete.bind(this) };
     const BOTAO_SUSPENDER = { label: "Suspender", id: "PAUSADO", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "SUSPENSO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "SUSPENSO"), onClick: this.suspender.bind(this) };
@@ -220,34 +234,46 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     const BOTAO_ARQUIVAR = { label: "Arquivar", icon: "bi bi-inboxes", onClick: this.arquivar.bind(this) };
     const BOTAO_DESARQUIVAR = { label: "Desarquivar", icon: "bi bi-reply", onClick: this.desarquivar.bind(this) };
     const BOTAO_CONSULTAR: ToolbarButton = { label: "Informações", icon: "bi bi-info-circle", onClick: (planoEntrega: PlanoEntrega) => this.go.navigate({ route: ['gestao', 'plano-entrega', planoEntrega.id, 'consult'] }, { modal: true }) };
-    
-    result.push(BOTAO_EXCLUIR); 
-    
+    const BOTAO_ADERIR = {
+      label: "Aderir",
+      icon: this.entityService.getIcon("Adesao"),
+      onClick: (() => {
+        this.go.navigate({route: ['gestao', 'plano-entrega', 'adesao']}, { metadata: { planoEntrega: row},
+          modalClose: (modalResult) => {
+            this.refresh();
+          }
+        });
+      }).bind(this)
+    };
+    //params: {plano_entrega_id: row.id}
+    result.push(BOTAO_EXCLUIR);
+    result.push(BOTAO_ADERIR);
+
     switch (this.situacaoPlano(planoEntrega)) {
       case 'INCLUINDO':
-        if(this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_EDT"))) {
-          result.push(BOTAO_ALTERAR); 
-        } else if(this.isGestorLinhaAscendente(planoEntrega) || this.isLotadoUnidadePlano(planoEntrega)) {
+        if (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoPrincipal(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_EDT"))) {
+          result.push(BOTAO_ALTERAR);
+        } else if (this.auth.isGestorLinhaAscendente(planoEntrega.unidade!) || !!this.auth.hasLotacao(planoEntrega.unidade_id)) {
           result.push(BOTAO_CONSULTAR);
         };
         break;
       case 'HOMOLOGANDO':
-        if (this.isPlanoProprio(planoEntrega) && (this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_RET_HOMOL")))) {
-          result.push(BOTAO_RETIRAR_HOMOLOGACAO); 
-        } else if(this.isPlanoVinculado(planoEntrega) && (this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_EXCL")))) { 
-          result.push(BOTAO_EXCLUIR); 
+        if (planoEntrega.plano_entrega_id == null && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoPrincipal(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_RET_HOMOL")))) {
+          result.push(BOTAO_RETIRAR_HOMOLOGACAO);
+        } else if (!planoEntrega.plano_entrega_id == null && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoPrincipal(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_EXCL")))) {
+          result.push(BOTAO_EXCLUIR);
         };
         break;
       case 'ATIVO':
-        if(this.isGestorUnidadePaiPlano(planoEntrega) || (this.isLotadoLinhaAscendente(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_CANC_HOMOL_SUBORD"))) {
-          result.push(BOTAO_CANCELAR_HOMOLOGACAO); 
-        } else if(this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_SUSP"))) {
+        if (this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_id) || (this.auth.isLotadoNaLinhaAscendente(planoEntrega.unidade!) && this.auth.hasPermissionTo("MOD_PENT_CANC_HOMOL_SUBORD"))) {
+          result.push(BOTAO_CANCELAR_HOMOLOGACAO);
+        } else if (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoPrincipal(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_SUSP"))) {
           result.push(BOTAO_SUSPENDER);
         };
         //-->(RN_PENT_6)
-        if((planoEntrega.unidade_id == this.auth.unidade?.unidade_id) && (this.isGestorUnidadeSelecionada() || (this.unidadeSelecionadaLotacaoPrincipal() && this.auth.hasPermissionTo("MOD_PENT_ADERIR"))) && 
-          (this.planosEntregasAtivosUnidadeSelecionada().filter(x => this.util.intersection([{start: x.inicio, end: x.fim!},{start: planoEntrega.inicio, end: planoEntrega.fim!}])).length == 0)){
-            result.push(this.BOTAO_ADERIR);
+        if ((planoEntrega.unidade_id == this.auth.unidade?.unidade_id) && (this.auth.isGestorUnidade() || (this.auth.isLotacaoPrincipal(this.auth.unidade) && this.auth.hasPermissionTo("MOD_PENT_ADERIR"))) &&
+          (this.planosEntregasAtivosUnidadeSelecionada().filter(x => this.util.intersection([{ start: x.inicio, end: x.fim! }, { start: planoEntrega.inicio, end: planoEntrega.fim! }])).length == 0)) {
+          result.push(this.BOTAO_ADERIR);
         };
         //<--
         break;
@@ -256,8 +282,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       case 'SUSPENSO':
         break;
       case 'AVALIADO':
-        if(this.isGestorUnidadePlano(planoEntrega) || (this.unidadePlanoLotacaoPrincipal(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_ARQ"))) {
-          result.push(BOTAO_ARQUIVAR); 
+        if (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoPrincipal(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_ARQ"))) {
+          result.push(BOTAO_ARQUIVAR);
         };
         break;
       case 'ARQUIVADO':
@@ -276,6 +302,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
         }).catch(function (error) {
           self.dialog.alert("Erro", "Erro ao homologar: " + error?.message ? error?.message : error);
         });
+        this.auth.selecionaUnidade(this.auth!.unidade!.id);
+        this.checaBotaoAderirToolbar();
       }
     });
 
@@ -445,55 +473,11 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     });
   }
 
-  public isGestorLinhaAscendente(planoEntrega: PlanoEntrega): boolean {
-    return this.auth.isGestorLinhaAscendente(planoEntrega.unidade!);
-  }
-
-  public isGestorUnidadeSelecionada(): boolean {
-    return this.auth.isGestorUnidade();
-  }
-
-  public isGestorUnidadePaiPlano(planoEntrega: PlanoEntrega): boolean {
-    return this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_id)
-  }
-
-  public isGestorUnidadePlano(planoEntrega: PlanoEntrega): boolean {
-    return this.auth.isGestorUnidade(planoEntrega.unidade)
-  }
-
-  public isLotadoLinhaAscendente(planoEntrega: PlanoEntrega): boolean {
-    return this.auth.isLotadoNaLinhaAscendente(planoEntrega.unidade!);
-  }
-
-  public isLotadoUnidadePai(planoEntrega: PlanoEntrega): boolean {
-    return !!this.auth.hasLotacao(planoEntrega.unidade!.unidade_id!);
-  }
-  
-  public isLotadoUnidadePlano(planoEntrega: PlanoEntrega): boolean {
-    return !!this.auth.hasLotacao(planoEntrega.unidade_id);
-  }
-
-  public isPlanoProprio(planoEntrega: PlanoEntrega): boolean {
-    return planoEntrega.plano_entrega_id == null;
-  }
-
-  public isPlanoVinculado(planoEntrega: PlanoEntrega): boolean {
-    return !this.isPlanoProprio(planoEntrega);
-  }
-
-  public unidadeSelecionadaLotacaoPrincipal(): boolean {
-    return this.auth.isLotacaoPrincipal(this.auth.unidade)
-  }
-
-  public unidadePlanoLotacaoPrincipal(planoEntrega: PlanoEntrega): boolean {
-    return this.auth.isLotacaoPrincipal(planoEntrega.unidade)
-  }
-
   public situacaoPlano(planoEntrega: PlanoEntrega): string {
-    if(planoEntrega.data_fim) return "EXCLUIDO"; 
-    else if(planoEntrega.data_cancelamento) return "CANCELADO";
-    else if(planoEntrega.data_arquivamento) return "ARQUIVADO";
+    if (planoEntrega.data_fim) return "EXCLUIDO";
+    else if (planoEntrega.data_cancelamento) return "CANCELADO";
+    else if (planoEntrega.data_arquivamento) return "ARQUIVADO";
     else return planoEntrega.status;
   }
-  
+
 }
