@@ -2826,6 +2826,11 @@ class UtilService {
         });
         return result;
     }
+    arrayUnique(array) {
+        return array.filter(function (x, i) {
+            return array.indexOf(x) === i;
+        });
+    }
 }
 UtilService.ISO8601_VALIDATE = /^[0-9]{4}-((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01])|(0[469]|11)-(0[1-9]|[12][0-9]|30)|(02)-(0[1-9]|[12][0-9]))((T|\s)(0[0-9]|1[0-9]|2[0-3]):(0[0-9]|[1-5][0-9])(:(0[0-9]|[1-5][0-9])(\.([0-9]{3}|[0-9]{6}))?)?)?Z?$/;
 UtilService.ISO8601_FORMAT = "YYYY-MM-DDTHH:mm:ss";
@@ -29056,6 +29061,16 @@ class AuthService {
         return lotacao != undefined;
     }
     /**
+     * Informa se o usuário logado possui determinada atribuição para uma unidade específica dentre as suas lotações/chefias.
+     * @param atribuicao
+     * @param unidade_id
+     */
+    isIntegrante(atribuicao, unidade_id) {
+        var _a, _b, _c, _d, _e;
+        let unidades = this.util.arrayUnique(((_a = this.unidades) === null || _a === void 0 ? void 0 : _a.concat(...((_b = this.usuario) === null || _b === void 0 ? void 0 : _b.chefias_titulares) || [], ...((_c = this.usuario) === null || _c === void 0 ? void 0 : _c.chefias_substitutas) || [])) || []);
+        return !!((_e = (_d = unidades.find(x => x.id == unidade_id)) === null || _d === void 0 ? void 0 : _d.integrantes) === null || _e === void 0 ? void 0 : _e.find(i => i.usuario_id == this.usuario.id && i.atribuicao == atribuicao));
+    }
+    /**
      * Informa se o usuário logado tem como lotação alguma das unidades pertencentes à linha hierárquica ascendente da unidade
      * repassada como parâmetro.
      * @param unidade
@@ -29231,10 +29246,6 @@ class PlanoEntregaDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_
             }, error => reject(error));
         });
     }
-    /*   public planosVinculados(planoEntrega: PlanoEntrega): PlanoEntrega[] {
-        let result: PlanoEntrega[] = [];
-        return result;
-      } */
     reativar(plano_entrega_id) {
         return new Promise((resolve, reject) => {
             this.server.post('api/' + this.collection + '/reativar', { id: plano_entrega_id }).subscribe(response => {

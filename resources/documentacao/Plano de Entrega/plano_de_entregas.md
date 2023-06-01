@@ -77,63 +77,66 @@
     11. (DESENVOLVIMENTO FUTURO) Se o Plano de Entregas for parcialmente sigiloso, as entregas não sigilosas poderão ser visualizadas por quem puder visualizar o plano de entregas, mas as sigilosas só poderão ser visualizadas pelo Chefe da sua unidade e pelos servidores que as possuirem em seus respectivos Planos de Trabalho;
     12. (DESENVOLVIMENTO FUTURO) Somente o Chefe da unidade do Plano de Entregas deve ser capaz de adicionar uma entrega sigilosa a um plano de trabalho;
 4. VALIDAÇÕES NECESSÁRIAS PARA AS AÇÕES PREVISTAS NO FLUXO
-   1. OK(RN_PENT_4_1) ADERIR (exclusivamente para planos vinculados)
-        1. o usuário logado precisa ser gestor da unidade ou da sua unidade-pai, ou uma destas ser sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_ADERIR"; (RN_PENT_2_4) e
-        2. a unidade do plano-pai precisa ser a unidade-pai da unidade do plano vinculado, e o plano-pai precisa estar com o status ATIVO; (RN_PENT_2_3) (RN_PENT_3_3) e
-        3. a unidade não possua plano de entrega com o status ATIVO no mesmo período do plano ao qual está sendo feita a adesão;
-   2. OK(RN_PENT_4_2) ALTERAR
-        1. o plano precisa estar com o status INCLUINDO ou HOMOLOGANDO, e o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_EDT"; ou
-        2. o plano precisa ser válido, o usuário logado precisa possuir a capacidade "MOD_PENT_EDT_FLH", e ser gestor da unidade-pai do plano ou possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a unidade-pai do plano; (RN_PENT_1_3) ou
-        3. o plano precisa estar com o status ATIVO, a unidade do plano ser a unidade de lotação principal do usuário logado, e ele possuir a capacidade "MOD_PENT_EDT_ATV_HOMOL" ou "MOD_PENT_EDT_ATV_ATV";
-   3. (RN_PENT_4_3) ARQUIVAR
-        1. o plano precisa estar com o status AVALIADO e o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_ARQ";
-   4. (RN_PENT_4_4) AVALIAR
-        1. o plano precisa estar com o status CONCLUIDO e o usuário logado precisa ser gestor da unidade-pai do plano, ou possuir a atribuição de AVALIADOR DE PLANOS DE ENTREGAS para esta unidade; ou
-        2. o plano precisa estar com o status CONCLUIDO, o usuário logado precisa ser gestor de alguma unidade da linha hierárquica ascendente da unidade do plano, e possuir a capacidade "MOD_PENT_AVAL_SUBORD";
-   5. (RN_PENT_4_5) CANCELAR AVALIAÇÃO
-        1. o plano precisa estar com o status AVALIADO e o usuário logado precisa ser gestor da unidade-pai do plano, ou possuir a atribuição de AVALIADOR DE PLANOS DE ENTREGAS para esta unidade;
-   6. (RN_PENT_4_6) CANCELAR CONCLUSÃO
-        1. o plano precisa estar com o status CONCLUIDO e o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_CANC_CONCL";
-   7. (RN_PENT_4_7) CANCELAR HOMOLOGAÇÃO
-        1. o plano precisa estar com o status ATIVO e o usuário logado precisa ser gestor da unidade-pai do plano, ou possuir a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para a unidade-pai do plano;
-   8. (RN_PENT_4_8) CONCLUIR
-        1. o plano precisa estar com o status ATIVO e o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_CONCLUIR";
-   9. OK(RN_PENT_4_9) CONSULTAR
-        1. todos os participantes podem visualizar todos os planos de entrega;
-   10. (RN_PENT_4_10) EXCLUIR
-        1. o plano precisa estar com o status INCLUINDO ou HOMOLOGANDO; e
-        2. o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_EXCL";
-        3. se o plano não atender às condições acima, o usuário deve ser informado das razões pelas quais o plano não foi excluído;
-   11. (RN_PENT_4_11) HOMOLOGAR
-        1. o plano precisa estar com o status HOMOLOGANDO e o usuário logado ser gestor da unidade-pai do plano, ou possuir a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para a unidade-pai; (RN_PENT_1_3)(RN_PENT_3_2)
-   12. OK(RN_PENT_4_12) INSERIR (exclusivamente para planos próprios)
-        1. o usuário logado precisa ser gestor da unidade do plano, ou gestor da sua unidade-pai; ou
-        2. o usuário precisa possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a unidade-pai do plano e possuir a capacidade "MOD_PENT_EDT_FLH";
-   13. (RN_PENT_4_13) LIBERAR PARA HOMOLOGAÇÃO
-        1. o plano precisa estar com o status INCLUINDO; e
-        2. o usuário logado precisa ser gestor da unidade do plano;
-   14. (RN_PENT_4_14) RETIRAR DE HOMOLOGAÇÃO
-        1. o plano precisa estar com o status HOMOLOGANDO, e o usuário logado precisa ser gestor da unidade do plano;
-   15. (RN_PENT_4_15) REATIVAR
-        1. o plano precisa estar com o status SUSPENSO e o usuário logado precisa ser gestor da unidade do plano, ou ser gestor de alguma unidade da linha hierarquica ascendente da unidade do plano;
+   1. *(RN_PENT_4_1) ADERIR (exclusivamente para planos vinculados)
+      *  1. o usuário logado precisa ser gestor da unidade ou da sua unidade-pai, ou uma destas ser sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_ADERIR"; (RN_PENT_2_4) e
+      *  2. a unidade do plano-pai precisa ser a unidade-pai da unidade do plano vinculado, e o plano-pai precisa estar com o status ATIVO; (RN_PENT_2_3) (RN_PENT_3_3) e
+      *  3. a unidade não possua plano de entrega com o status ATIVO no mesmo período do plano ao qual está sendo feita a adesão;
+   2. *(RN_PENT_4_2) ALTERAR
+      *  1. o plano precisa estar com o status INCLUINDO ou HOMOLOGANDO, e o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_EDT"; ou
+      *  2. o plano precisa ser válido, o usuário logado precisa possuir a capacidade "MOD_PENT_EDT_FLH", e ser gestor da unidade-pai do plano ou possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a unidade-pai do plano; (RN_PENT_1_3) ou
+      *  3. o plano precisa estar com o status ATIVO, a unidade do plano ser a unidade de lotação principal do usuário logado, e ele possuir a capacidade "MOD_PENT_EDT_ATV_HOMOL" ou "MOD_PENT_EDT_ATV_ATV";
+   3. *(RN_PENT_4_3) ARQUIVAR
+      *  1. o plano precisa estar com o status AVALIADO e o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_ARQ";
+   4. *(RN_PENT_4_4) AVALIAR
+      *  1. o plano precisa estar com o status CONCLUIDO e o usuário logado precisa ser gestor da unidade-pai do plano, ou possuir a atribuição de AVALIADOR DE PLANOS DE ENTREGAS para esta unidade; ou
+      *  2. o plano precisa estar com o status CONCLUIDO, o usuário logado precisa ser gestor de alguma unidade da linha hierárquica ascendente da unidade do plano, e possuir a capacidade "MOD_PENT_AVAL_SUBORD";
+   5. *(RN_PENT_4_5) CANCELAR AVALIAÇÃO
+      *  1. o plano precisa estar com o status AVALIADO e o usuário logado precisa ser gestor da unidade-pai do plano, ou possuir a atribuição de AVALIADOR DE PLANOS DE ENTREGAS para esta unidade;
+   6. *(RN_PENT_4_6) CANCELAR CONCLUSÃO
+      *  1. o plano precisa estar com o status CONCLUIDO e o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_CANC_CONCL";
+   7. *(RN_PENT_4_7) CANCELAR HOMOLOGAÇÃO
+      *  1. o plano precisa estar com o status ATIVO e o usuário logado precisa ser gestor da unidade-pai do plano, ou possuir a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para a unidade-pai do plano;
+   8. *(RN_PENT_4_8) CONCLUIR
+      *  1. o plano precisa estar com o status ATIVO e o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_CONCLUIR";
+   9. *(RN_PENT_4_9) CONSULTAR
+      *  1. todos os participantes podem visualizar todos os planos de entrega;
+   10. *(RN_PENT_4_10) EXCLUIR
+       * 1. o plano precisa estar com o status INCLUINDO ou HOMOLOGANDO; e
+       * 2. o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_EXCL";
+       * 3. se o plano não atender às condições acima, o usuário deve ser informado das razões pelas quais o plano não foi excluído;
+   11. *(RN_PENT_4_11) HOMOLOGAR
+       * 1. o plano precisa estar com o status HOMOLOGANDO e o usuário logado ser gestor da unidade-pai do plano, ou possuir a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para a unidade-pai; (RN_PENT_1_3)(RN_PENT_3_2)
+   12. *(RN_PENT_4_12) INSERIR (exclusivamente para planos próprios)
+       * 1. o usuário logado precisa ser gestor da unidade do plano, ou gestor da sua unidade-pai; ou
+       * 2. o usuário precisa possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a unidade-pai do plano e possuir a capacidade "MOD_PENT_EDT_FLH";
+   13. *(RN_PENT_4_13) LIBERAR PARA HOMOLOGAÇÃO
+       * 1. o plano precisa estar com o status INCLUINDO e o usuário logado precisa ser gestor da unidade do plano;
+   14. *(RN_PENT_4_14) RETIRAR DE HOMOLOGAÇÃO
+       * 1. o plano precisa estar com o status HOMOLOGANDO, e o usuário logado precisa ser gestor da unidade do plano;
+   15. *(RN_PENT_4_15) REATIVAR
+       * 1. o plano precisa estar com o status SUSPENSO e o usuário logado precisa ser gestor da unidade do plano, ou ser gestor de alguma unidade da linha hierarquica ascendente da unidade do plano;
    16. (RN_PENT_4_16) SUSPENDER
         1. o plano precisa estar com o status ATIVO e o usuário logado precisa ser gestor da unidade do plano, ou ser gestor de alguma unidade da linha hierarquica ascendente da unidade do plano;
 
 ## REGRAS DE INTERFACE APLICADAS ÀS VIEWS
 
-1. (RI_PENT_1) O botão Aderir, na toolbar, deverá ser exibido sempre, mas para ficar habilitado:
-    - o usuário logado precisa ser gestor da unidade selecionada ou da sua unidade-pai, ou uma destas ser sua unidade de lotação principal e ele
-      possuir a capacidade "MOD_PENT_ADERIR" (RN_PENT_2_4); e
-    - a unidade-pai da unidade selecionada precisa possuir plano de entrega com o status ATIVO, que já não tenha sido vinculado pela unidade selecionada;
-2. (RI_PENT_2) O botão Aderir, nas linhas do grid, deverá aparecer num plano somente se:
-    - a unidade do plano for a unidade-pai da unidade selecionada pelo usuário; e
-    - se o usuário for Gestor da unidade selecionada, ou ela for sua lotação principal e ele possuir a capacidade "MOD_PENT_ADERIR" ; e
-    - o plano precisa estar Ativo; e
-    - se a unidade selecionada não possuir plano de entrega Ativo no mesmo período do plano em questão;
+1. *(RI_PENT_1) O botão Aderir, na toolbar, deverá ser exibido sempre, mas para ficar habilitado:
+   * - o usuário logado precisa ser gestor da unidade selecionada ou da sua unidade-pai, ou uma destas ser sua unidade de lotação principal e ele
+   *   possuir a capacidade "MOD_PENT_ADERIR" (RN_PENT_2_4); e
+   * - a unidade-pai da unidade selecionada precisa possuir plano de entrega com o status ATIVO, que já não tenha sido vinculado pela unidade selecionada;
+2. *(RI_PENT_2) O botão Aderir, nas linhas do grid, deverá aparecer num plano somente se:
+   * - o plano estiver com o status Ativo; e
+   * - a unidade do plano for a unidade-pai da unidade selecionada pelo usuário; e
+   * - se o usuário for Gestor da unidade selecionada, ou ela for sua lotação principal e ele possuir a capacidade "MOD_PENT_ADERIR" ; e
+   * - se a unidade selecionada não possuir plano de entrega Ativo no mesmo período do plano em questão;
 3. (RI_PENT_3) Na janela de avaliar, já deixar o swith de arquivamento marcado, igual à janela de avaliação nas demandas;
-4. (RI_PENT_4) A consulta do grid retornará inicialmente os Planos de Entrega válidos das unidades onde o usuário logado possui lotação (ou seja, a opção "principais" já vem inicialmente marcada) e, se ele for gestor, os planos de entregas ativos das unidades-pai de onde ele é gestor;
-5. (RI_PENT_5) Por padrão, os planos de entregas retornados na listagem do grid são os que possuem data_arquivamento e data_cancelamento nulas.
-6. (RI_PENT_6) Na adesão a um plano de entregas, o input-search dos planos de entregas só exibirá aqueles que são da unidade-pai da unidade selecionada e que estejam com o status ATIVO; a listagem dos planos de entrega não exibirá as opções de filtro.
+4. *(RI_PENT_4) A consulta do grid retornará inicialmente os principais Planos de Entrega do usuário logado (a opção "principais" já vem marcada), que são:
+   * - os válidos das unidades onde ele possui lotação, e
+   * - se ele for gestor, os ativos das unidades-pai de onde ele é gestor;
+5. *(RI_PENT_5) Por padrão, os planos de entregas retornados na listagem do grid são os que possuem data_arquivamento e data_cancelamento nulas.
+6. *(RI_PENT_6) Na adesão a um plano de entregas:
+   * - o input-search dos planos de entregas exibirá apenas os ativos da unidade-pai da unidade selecionada; 
+   * - a listagem dos planos de entrega não exibirá as opções de filtro.
 
 ## REGRAS A SEREM MELHOR EXAMINADAS
 
@@ -142,6 +145,7 @@
 3. Arquivamento automático do plano de entregas após ser avaliado;
 4. MOD_PENT_CANC_CONCL_HOMOL/MOD_PENT_CANC_CONCL_ATV: o plano não deve retroagir mais de um passo de cada vez;
 5. Opções para o filtro: 'Incluir Unidades Superiores', 'Incluir Unidades Inferiores', 'Selecionar por Status'
+6. O plano de entregas pode ser desarquivado?
 
 ## FLUXO DOS PLANOS DE ENTREGAS  
 

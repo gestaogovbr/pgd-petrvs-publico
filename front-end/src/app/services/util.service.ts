@@ -672,4 +672,9 @@ export class UtilService {
     return result;
   }
 
+  public arrayUnique(array: Array<any>): Array<any> { 
+    return array.filter(function(x, i) {
+      return array.indexOf(x) === i;
+    });
+  }
 }
