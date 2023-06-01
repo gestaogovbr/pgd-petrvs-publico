@@ -6,8 +6,10 @@ use App\Models\Unidade;
 use App\Models\PlanoEntrega;
 use App\Traits\UseDataFim;
 use App\Exceptions\ServerException;
+use App\Models\Programa;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use DateTime;
 use Throwable;
 
 class PlanoEntregaService extends ServiceBase
@@ -228,7 +230,7 @@ class PlanoEntregaService extends ServiceBase
      * Um Plano de Entregas é válido se não foi deletado, nem cancelado, nem arquivado.
      * @param PlanoEntrega $planoEntrega  
      */
-    public function isPlanoEntregaValido($planoEntrega): bool {
+    public function isPlanoEntregaValido($planoEntrega): bool { 
         return !$planoEntrega->data_fim && !$planoEntrega->data_cancelamento && !$planoEntrega->data_arquivamento;
     }
 
@@ -323,8 +325,48 @@ class PlanoEntregaService extends ServiceBase
         return true;
     }
 
-    public function validateStore(){
-
+    /**
+    * Verifica se as  datas do plano de entrega se encaixam na duração do Programa de gestão
+    */
+    public function validateStore($planoEntrega)
+    {
+        return $this->verificaDuracaoPlano($planoEntrega) && $this->verificaDatasEntregas($planoEntrega);
     }
 
+    /**
+    * Verifica se as  datas do plano de entrega se encaixam na duração do Programa de gestão
+    */
+    public function verificaDuracaoPlano($planoEntrega)
+    {
+        $result = true;
+        $programa = Programa::find($planoEntrega["programa_id"]);
+        if ($programa->prazo_execucao > 0) {
+            $dataInicio = new DateTime($planoEntrega["inicio"]);
+            $dataFim = new DateTime($planoEntrega["fim"]);
+            $diff = $dataInicio->diff($dataFim);
+            if ($diff->days > $programa->prazo_execucao) {
+                $result = false;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Verifica se as datas de início e fim das entregas do plano de entrega se encaixam na duração do Programa de gestão (true para caso esteja tudo ok)
+     */
+    public function verificaDatasEntregas($planoEntrega)
+    {
+        $result = true;
+        $dataInicio = new DateTime($planoEntrega["inicio"]);
+        $dataFim = new DateTime($planoEntrega["fim"]);
+        if ($planoEntrega["entregas"]) {
+            foreach ($planoEntrega["entregas"] as $entrega) {
+                $entregaInicio = new DateTime($entrega->inicio);
+                $entregaFim = new DateTime($entrega->fim);
+                $result = $result && ($dataInicio <= $entregaInicio) && ($dataFim >= $entregaFim);
+            }
+        }
+        return $result;
+    }
+    
 }
