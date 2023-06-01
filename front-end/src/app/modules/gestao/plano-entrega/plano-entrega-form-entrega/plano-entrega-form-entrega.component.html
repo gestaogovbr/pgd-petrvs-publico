@@ -1,9 +1,9 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
     <tabs #tabs display right [title]="!isModal ? title : ''">
-        <tab key="ENTREGAS" label="Entregas">   
+        <tab key="ENTREGAS" label="Entregas">
             <div class="row">
                 <div class="row">
-                    <input-search [size]="12" [label]="'Entrega Superior'"></input-search>
+                    <input-search [size]="12" [label]="'Entrega Superior'" controlName="entrega_pai_id" [dao]="planoEntregaEntregaDao"></input-search>
                 </div>
                 <separator></separator>
                 <div class="row">
@@ -16,15 +16,16 @@
                     <input-datetime date [size]="6" label="Fim" controlName="fim" [labelInfo]="'Fim ' + lex.noun('Plano de Entregas',false,true) + '(Estimativa Inicial)'"></input-datetime>
                 </div>
                 <div class="row">
-                    <input-search [size]="6" label="Demandante" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+                    <input-search [size]="6" #demandante label="Demandante" controlName="unidade_id" [dao]="unidadeDao"></input-search>
                     <input-text [size]="6" label="Destinatário" controlName="destinatario"></input-text>
                 </div>
-                <div class="row">
-                    <input-number [size]="6" label="Meta" controlName="meta" sufix="%"></input-number>
+                <div *ngIf="this.entrega?.selectedItem?.entity" class="row">
                     <input-number *ngIf="checkTipoIndicador(['PORCENTAGEM'])" [size]="6" label="Meta" controlName="meta" sufix="%"></input-number>
                     <input-number *ngIf="checkTipoIndicador(['QUANTIDADE', 'VALOR'])" [size]="6" label="Meta" controlName="meta"></input-number>
                     <input-select *ngIf="checkTipoIndicador(['QUALITATIVO'])" [size]="6" label="Meta" controlName="meta"></input-select>
-                    <input-number [size]="6" label="Realizado" controlName="realizado"></input-number>
+                    <input-number *ngIf="checkTipoIndicador(['PORCENTAGEM'])" [size]="6" label="Realizado" controlName="realizado" sufix="%"></input-number>
+                    <input-number *ngIf="checkTipoIndicador(['QUANTIDADE', 'VALOR'])" [size]="6" label="Realizado" controlName="realizado"></input-number>
+                    <input-select *ngIf="checkTipoIndicador(['QUALITATIVO'])" [size]="6" label="Realizado" controlName="realizado"></input-select>
                 </div>
                 <div class="row">
                     <input-number [size]="6" label="Progresso Esperado" controlName="progresso_esperado" sufix="%"></input-number>
@@ -32,25 +33,43 @@
                 </div>
             </div>
         </tab>
-    <!-- *ngIf="checkFilled(['planejamento_id'])" -->
-        <tab  key="OBJETIVOS" label="Objetivos">
-            <div class="row">
-                <input-search #objetivos [size]="12" controlName="objeitvos" [dao]="planejamentoObjetivoDao"></input-search>
-            </div>
-            <div class="row">
-                <input-datetime date [size]="6" label="Início" controlName="dt_inicio_objetivos" [labelInfo]="'Início ' + lex.noun('Plano de Entregas',false,true)"></input-datetime>
-                <input-datetime date [size]="6" label="Fim" controlName="dt_fim_objetivos" [labelInfo]="'Fim ' + lex.noun('Plano de Entregas',false,true) + '(Estimativa Inicial)'"></input-datetime>
-            </div>
+        <!-- *ngIf="checkFilled(['planejamento_id'])" -->
+        <tab *ngIf="planejamentoId?.length" key="OBJETIVOS" label="Objetivos">
+            <input-search [size]="12" #planejamento controlName="planejamento_id" [dao]="planejamentoDao" disabled></input-search>
+            <grid [control]="form!.controls.objetivos" [form]="formObjetivos" #gridObjetivos editable [hasDelete]="false" [hasEdit]="false"
+                [add]="addObjetivo.bind(this)" [remove]="removeObjetivo.bind(this)" [save]="saveObjetivo.bind(this)">
+                <columns>
+                    <column title="Objetivo" [template]="columnObjetivo" [editTemplate]="editObjetivo">
+                        <ng-template let-row="row" #columnObjetivo>
+                            <span>{{row.objetivo.nome}}</span>
+                        </ng-template>
+                        <ng-template let-row="row" #editObjetivo>
+                            <input-search [size]="12" #inputObjetivo controlName="objetivo_id" label icon [where]="[['planejamento_id', '==', planejamentoId]]" [dao]="planejamentoObjetivoDao" [selectRoute]="{route: ['gestao', 'planejamento', 'objetivoList'], params: {filter: {planejamento_id: planejamentoId}}}"></input-search>
+                        </ng-template>
+                    </column>
+                    <!--column type="options" [dynamicButtons]="dynamicButtonsObjetivos.bind(this)" [dynamicOptions]="dynamicOptionsObjetivos.bind(this)"></!--column//-->
+                    <column type="options"></column>
+                </columns>
+            </grid>
+            <!-- <planejamento-list-objetivos-entregas [planejamentoId]="planejamentoId"></planejamento-list-objetivos-entregas> -->
         </tab>
         <!-- *ngIf="checkFilled(['cadeia_valor_id'])" -->
-        <tab  key="PROCESSOS" label="Processos">
-            <div class="row">
-                <input-search #processos [size]="12" controlName="processos" [dao]="cadeiaValorProcessoDao"></input-search>
-            </div>
-            <div class="row">
-                <input-datetime date [size]="6" label="Início" controlName="dt_inicio_processos" [labelInfo]="'Início ' + lex.noun('Plano de Entregas',false,true)"></input-datetime>
-                <input-datetime date [size]="6" label="Fim" controlName="dt_fim_processos" [labelInfo]="'Fim ' + lex.noun('Plano de Entregas',false,true) + '(Estimativa Inicial)'"></input-datetime>
-            </div>
+        <tab *ngIf="cadeiaValorId?.length" key="PROCESSOS" label="Processos">
+            <input-search [size]="12" #cadeiaValor controlName="cadeia_valor_id" [dao]="cadeiaValorDao" disabled></input-search>
+            <grid [control]="form!.controls.processos" [form]="formProcessos" #gridProcessos editable [hasDelete]="false" [hasEdit]="false"
+                [add]="addProcesso.bind(this)" [remove]="removeProcesso.bind(this)" [save]="saveProcesso.bind(this)">
+                <columns>
+                    <column title="Processos" [template]="processo" [editTemplate]="editProcesso">
+                        <ng-template let-row="row" #processo>
+                            <span>{{row.processo.nome}}</span>
+                        </ng-template>
+                        <ng-template let-row="row" #editProcesso>
+                            <input-search [size]="12" #inputProcesso controlName="processo_id" label [where]="[['cadeia_valor_id', '==', cadeiaValorId]]" [dao]="cadeiaValorProcessoDao"[selectRoute]="{route: ['gestao', 'cadeia-valor', 'processoList'], params: {filter: {cadeia_valor_id: cadeiaValorId}}}"></input-search>
+                        </ng-template>
+                    </column>
+                    <column type="options" [dynamicButtons]="dynamicButtonsProcessos.bind(this)"></column>
+                </columns>
+            </grid>
         </tab>
     </tabs>
 </editable-form>

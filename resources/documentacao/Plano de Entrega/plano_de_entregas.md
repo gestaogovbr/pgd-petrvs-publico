@@ -201,22 +201,29 @@
     inicio (*)
     fim
     descricao (*)
-    cliente (*)
     homologado (*)
     meta (*)
     realizado
+    progresso_esperado
+    progresso_realizado
+    destinatario
     (id/created_at/updated_at/data_inicio/data_fim)
         plano_entrega_id (*)
         entrega_id (*)
         entrega_pai_id
+        unidade_id (*)
 
     (*) campo obrigatório
 ~~~
 
 ## Regras de Negócio aplicadas às entregas de um Plano de Entregas
 
-- As entregas que compõem um Plano de Entregas pertencem todas à Unidade Executora do Plano;  
-- As entregas incluídas/alteradas na criação/edição de um Plano de Entregas precisam ser homologadas pelo gestor da unidade hierarquicamente superior;
+1. ENTREGAS DO PLANO DE ENTREGA
+    1. (RN_ENT_PENT_1_1) As entregas que compõem um Plano de Entregas pertencem todas à Unidade Executora do Plano;
+    2. (RN_ENT_PENT_1_2) As entregas incluídas/alteradas na criação/edição de um Plano de Entregas precisam ser homologadas pelo gestor da unidade hierarquicamente superior;
+    3. (RN_ENT_PENT_1_3) As entregas incluídas/alteradas na criação/edição de um Plano de Entregas precisam estar dentro do prazo de execução de um plano de entregas;
+    3. (RN_ENT_PENT_1_3) As entregas incluídas/alteradas na criação/edição de um Plano de Entregas precisam estar dentro do prazo de execução de um plano de entregas;
+    
 
 ## REGRAS DE NEGÓCIO A SEREM DISCUTIDAS
 

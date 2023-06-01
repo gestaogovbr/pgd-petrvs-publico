@@ -22,6 +22,7 @@ export class Programa extends Base {
     public template_tcr_id: string | null = null; /* Template do TCR */
     public termo_obrigatorio: boolean = false; /* tinyint; NOT NULL; */
     public tipo_documento_tcr_id: string | null = null; /* Tipo de documento do TCR */
+    public prazo_execucao: number = 0; /*Limite máximo de dias corridos para o plano de entregas (Zero para não limitar) */
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

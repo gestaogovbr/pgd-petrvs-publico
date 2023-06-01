@@ -9,7 +9,7 @@ class AlterPlanosEntregasEntregasAddProgresso extends Migration
     /**
      * Run the migrations.
      *
-     * @return void
+     * php @return void
      */
     public function up()
     {
@@ -31,7 +31,6 @@ class AlterPlanosEntregasEntregasAddProgresso extends Migration
         Schema::table('planos_entregas_entregas', function (Blueprint $table) {
             $table->dropColumn('progresso_esperado');
             $table->dropColumn('progresso_realizado');
-            $table->dropColumn('cliente');
             $table->dropColumn('destinatario');
             $table->dropForeign('unidade_id');
         });

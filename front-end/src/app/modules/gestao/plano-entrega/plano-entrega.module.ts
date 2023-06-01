@@ -8,6 +8,9 @@ import { PlanoEntregaListEntregaComponent } from './plano-entrega-list-entrega/p
 import { PlanoEntregaMapaEntregasComponent } from './plano-entrega-mapa-entregas/plano-entrega-mapa-entregas.component';
 import { PlanoEntregaFormAdesaoComponent } from './plano-entrega-form-adesao/plano-entrega-form-adesao.component';
 import { PlanoEntregaFormEntregaComponent } from './plano-entrega-form-entrega/plano-entrega-form-entrega.component';
+import { PlanejamentoModule } from '../planejamento-institucional/planejamento.module';
+import { CadeiaValorModule } from '../cadeia-valor/cadeia-valor.module';
+import { PlanoEntregaListEntregaListComponent } from './plano-entrega-list-entrega-list/plano-entrega-list-entrega-list.component';
 
 @NgModule({
   declarations: [
@@ -17,12 +20,15 @@ import { PlanoEntregaFormEntregaComponent } from './plano-entrega-form-entrega/p
     PlanoEntregaFormAdesaoComponent,
     PlanoEntregaMapaEntregasComponent,
     PlanoEntregaMapaEntregasComponent,
-    PlanoEntregaFormEntregaComponent
+    PlanoEntregaFormEntregaComponent,
+    PlanoEntregaListEntregaListComponent
   ],
   imports: [
     CommonModule,
     ComponentsModule,
-    PlanoEntregaRoutingModule
+    PlanoEntregaRoutingModule,
+    PlanejamentoModule,
+    CadeiaValorModule
   ]
 })
 export class PlanoEntregaModule { }

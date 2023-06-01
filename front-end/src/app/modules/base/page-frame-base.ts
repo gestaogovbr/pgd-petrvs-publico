@@ -29,7 +29,7 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
   public set entity(value: any) {
     if (this._entity != value) {
       this._entity = value;
-      this.fakeControl.setValue(value);
+      this.fakeControl.setValue(this.entityToControl(value));
       this.loadData(value, this.form!);
     }
   }
@@ -52,6 +52,7 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
   public join: string[] = [];
   public orderBy?: QueryOrderBy[];
   public groupBy?: GroupBy[];
+  public entityToControl = (value: any) => value;
 
   constructor(public injector: Injector) {
     super(injector);
