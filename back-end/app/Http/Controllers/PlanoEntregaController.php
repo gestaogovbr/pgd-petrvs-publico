@@ -112,7 +112,7 @@ class PlanoEntregaController extends ControllerBase {
                 if (!$usuario->hasPermissionTo('MOD_PENT_CONS') || !$service->canView($request->validate(['id' => ['required']])['id'])) throw new ServerException("CapacidadeSearchText", "Consulta não executada");
                 break;
                 //(RN_PENT_4_10)
-            case 'STORE':
+            /*case 'STORE':
                 $condicoes = $service->buscaCondicoes($request->validate(['entity' => ['required']])['entity']);
                 $canStore = false;
                 $data = $request->validate(['entity' => ['required'],'with' => ['array']]);
@@ -128,14 +128,14 @@ class PlanoEntregaController extends ControllerBase {
                             1. o plano precisa estar com o status INCLUINDO ou HOMOLOGANDO, e o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_EDT"; ou
                             2. o plano precisa estar com o status HOMOLOGANDO e o usuário logado ser gestor da unidade-pai do plano; (RN_PENT_1_3) ou
                             3. o plano precisa estar com o status ATIVO, a unidade do plano ser a unidade de lotação principal do usuário logado, e ele possuir a capacidade "MOD_PENT_EDT_ATV_HOMOL" ou "MOD_PENT_EDT_ATV_ATV";
-                        */ 
+                        * / 
                     case 'INSERT': 
                         if($condicoes['planoProprio']){
                             if($condicoes['gestorUnidadePlano'] || $condicoes['gestorUnidadePaiPlano'] || ($condicoes['unidadePlanoEhLotacaoPrincipal'] && $usuario->hasPermissionTo('MOD_PENT_INCL'))) $canStore = true;
                             /*  (RN_PENT_4_13)
                                 1. o usuário logado precisa ser gestor da unidade do plano, ou gestor da sua unidade-pai; ou
                                 2. a unidade do plano precisa ser a unidade de lotação principal do usuário logado e ele possuir a capacidade "MOD_PENT_INCL"; (RN_PENT_1_2)
-                            */
+                            * /
                         } else if($condicoes['planoVinculado']) {
                             $condition1 = $condicoes['gestorUnidadePlano'] || $condicoes['gestorUnidadePaiPlano'] || ($condicoes['unidadePaiPlanoEhLotacaoPrincipal'] && $usuario->hasPermissionTo('MOD_PENT_ADERIR'));
                             $condition2 = $condicoes['unidadePlanoPaiEhUnidadePaiDoPlano'] && $condicoes['planoPaiAtivo'];
@@ -145,11 +145,11 @@ class PlanoEntregaController extends ControllerBase {
                                 1. o usuário logado precisa ser gestor da unidade ou da sua unidade-pai, ou uma destas ser sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_ADERIR"; (RN_PENT_2_4) e
                                 2. a unidade do plano-pai precisa ser a unidade-pai da unidade do plano vinculado, e o plano-pai precisa estar com o status ATIVO; (RN_PENT_2_3) (RN_PENT_3_3) e
                                 3. a unidade não possua plano de entrega com o status ATIVO no mesmo período do plano ao qual está sendo feita a adesão;
-                            */
+                            * /
                         }
                         if (!$canStore) throw new ServerException("CapacidadeStore", "Inclusão não executada");                   
                 }
-                break;
+                break;*/
             case 'DESTROY':
                 //$condicoes = $service->buscaCondicoes($request->validate(['id' => ['required']]));
                 if (!$usuario->hasPermissionTo('MOD_PENT_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não executada");

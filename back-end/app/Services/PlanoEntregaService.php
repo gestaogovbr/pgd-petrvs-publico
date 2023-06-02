@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use DateTime;
 use Throwable;
+use Exception;
 
 class PlanoEntregaService extends ServiceBase
 {
@@ -60,9 +61,9 @@ class PlanoEntregaService extends ServiceBase
      * @return array
      */
     public function buscaCondicoes(array $entity): array {
-        $planoEntrega = PlanoEntrega::firstOrNew(['id' => $entity['id']], $entity);
-        $planoEntregaPai = $planoEntrega->plano_entrega_id ? PlanoEntrega::find($planoEntrega->plano_entrega_id) : null;
-        $planoEntrega->unidade = $planoEntrega->unidade ?? Unidade::find($planoEntrega->unidade_id);
+        $planoEntrega = !empty($entity['id']) ? PlanoEntrega::find($entity['id']) : (object) $entity;
+        $planoEntregaPai = !empty($planoEntrega?->plano_entrega_id) ? PlanoEntrega::find($planoEntrega->plano_entrega_id) : null;
+        if(!empty($planoEntrega)) $planoEntrega->unidade = $planoEntrega->unidade ?? Unidade::find($planoEntrega->unidade_id);
         return [
             "planoValido" => $this->isPlanoEntregaValido($planoEntrega),
             "planoAtivo" => $this->isPlano("ATIVO", $planoEntrega),
@@ -328,9 +329,9 @@ class PlanoEntregaService extends ServiceBase
     /**
     * Verifica se as  datas do plano de entrega se encaixam na duração do Programa de gestão
     */
-    public function validateStore($planoEntrega)
+    public function validateStore($planoEntrega, $unidade, $action)
     {
-        return $this->verificaDuracaoPlano($planoEntrega) && $this->verificaDatasEntregas($planoEntrega);
+        if(!$this->verificaDuracaoPlano($planoEntrega) || !$this->verificaDatasEntregas($planoEntrega)) throw new Exception("O prazo das datas não satisfaz a duração estipulada no programa.");
     }
 
     /**
@@ -361,8 +362,8 @@ class PlanoEntregaService extends ServiceBase
         $dataFim = new DateTime($planoEntrega["fim"]);
         if ($planoEntrega["entregas"]) {
             foreach ($planoEntrega["entregas"] as $entrega) {
-                $entregaInicio = new DateTime($entrega->inicio);
-                $entregaFim = new DateTime($entrega->fim);
+                $entregaInicio = new DateTime($entrega["inicio"]);
+                $entregaFim = new DateTime($entrega["fim"]);
                 $result = $result && ($dataInicio <= $entregaInicio) && ($dataFim >= $entregaFim);
             }
         }

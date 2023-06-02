@@ -13,6 +13,7 @@ import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
+import { Programa } from 'src/app/models/programa.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
@@ -26,7 +27,8 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoEntregaDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild(GridComponent, { static: true }) public grid?: GridComponent;
-
+  @ViewChild('programa', { static: true }) public programa?: InputSearchComponent;
+  
   public unidadeDao: UnidadeDaoService;
   public programaDao: ProgramaDaoService;
   public cadeiaValorDao: CadeiaValorDaoService;
@@ -57,7 +59,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if (['nome', 'unidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if (['nome', 'unidade_id', 'programa_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
     if(['inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
@@ -70,7 +72,20 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   }
 
   public formValidation = (form?: FormGroup) => {
-    if(this.form!.controls.fim.value && this.form!.controls.inicio.value > this.form!.controls.fim.value) return "A data do início não pode ser maior que a data do fim!";
+    const inicio = this.form?.controls.inicio.value;
+    const fim = this.form?.controls.fim.value;
+    const programa = this.programa?.selectedItem?.entity as Programa; 
+    if(!programa) {
+      return "Obrigatório selecionar o programa";
+    } else if(!this.dao?.validDateTime(inicio) || !this.dao?.validDateTime(fim)) {
+      return "Data de início ou fim inválidas";
+    } else if(inicio.toTime() > fim.toTime()) {
+      return "A data do início não pode ser maior que a data do fim!";
+    } else {
+      const diffTime = Math.abs(inicio - fim);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      if (programa.prazo_execucao > 0 && diffDays > programa.prazo_execucao) return "O prazo das datas não satisfaz a duração estipulada no programa.";
+    }
     return undefined;
   }
 
@@ -81,6 +96,9 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   }
 
   public async initializeData(form: FormGroup) {
+    this.entity = new PlanoEntrega();
+    this.entity.unidade_id = this.auth.unidade?.id || "";
+    this.entity.unidade = this.auth.unidade;
     this.loadData(this.entity!, this.form!);
   }
 

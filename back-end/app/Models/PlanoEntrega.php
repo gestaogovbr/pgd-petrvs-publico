@@ -4,6 +4,9 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\Unidade;
+use App\Models\Planejamento;
+use App\Models\CadeiaValor;
+use App\Models\PlanoEntregaEntrega;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasDataFim;
 use Illuminate\Support\Facades\DB;
@@ -47,7 +50,7 @@ class PlanoEntrega extends ModelBase
     }
 
     // Has
-    public function entregas() { return $this->hasMany(PlanoEntregaEntrega::class); }
+    public function entregas() { return $this->hasMany(PlanoEntregaEntrega::class, 'plano_entrega_id'); }
     // Belongs
     public function planejamento() { return $this->belongsTo(Planejamento::class, 'planejamento_id'); }
     public function cadeiaValor() { return $this->belongsTo(CadeiaValor::class, 'cadeia_valor_id'); }

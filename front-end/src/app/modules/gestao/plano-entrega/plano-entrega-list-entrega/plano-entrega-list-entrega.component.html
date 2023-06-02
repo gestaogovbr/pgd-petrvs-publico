@@ -24,13 +24,13 @@
                 </column>
                 <column [title]="'Data Início\nData Fim'" [template]="columnDatas">
                     <ng-template let-row="row" #columnDatas>
-                        <span> {{dao!.getDateFormatted(row.inicio)}}</span>
-                        <span> {{dao!.getDateFormatted(row.fim)}}</span>
+                        <span *ngIf="row.inicio"> {{dao!.getDateFormatted(row.inicio)}}</span>
+                        <span *ngIf="row.fim"> {{dao!.getDateFormatted(row.fim)}}</span>
                     </ng-template>
                 </column>
                 <column title="Entrega" [template]="columnEntrega">
                     <ng-template let-row="row" #columnEntrega>
-                        <span class="badge bg-light text-dark">
+                        <span *ngIf="row.entrega" class="badge bg-light text-dark">
                             <i class="bi bi-list-check"></i>
                             {{row.entrega?.nome}}
                         </span>
@@ -38,10 +38,10 @@
                 </column>
                 <column [title]="'Meta\nRealizado'" [template]="columnMetaRealizado">
                     <ng-template let-row="row" #columnMetaRealizado>
-                        <span class="badge bg-light text-dark">
+                        <span  *ngIf="row.meta" class="badge bg-light text-dark">
                             {{row.meta}}
                         </span>
-                        <span class="badge bg-light text-dark">
+                        <span *ngIf="row.realizado" class="badge bg-light text-dark">
                             {{row.realizado}}
                         </span>
 
