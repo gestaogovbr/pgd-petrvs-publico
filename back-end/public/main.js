@@ -4102,7 +4102,7 @@ class PageFormBase extends _page_base__WEBPACK_IMPORTED_MODULE_1__["PageBase"] {
             let error = undefined;
             if (this.formValidation) {
                 try {
-                    error = this.formValidation(this.form);
+                    error = yield this.formValidation(this.form);
                 }
                 catch (e) {
                     error = e;
