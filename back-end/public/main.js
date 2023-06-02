@@ -184,8 +184,6 @@ class PageListBase extends _page_base__WEBPACK_IMPORTED_MODULE_1__["PageBase"] {
                 if (confirm) {
                     this.dao.delete(doc).then(function () {
                         (self.grid.query || self.query).removeId(doc.id);
-                        //self.grid!.query!.refresh();
-                        //self.dialog.alert("Sucesso", "Registro excluído com sucesso!");
                         self.dialog.topAlert("Registro excluído com sucesso!", 5000);
                     }).catch((error) => {
                         self.dialog.alert("Erro", "Erro ao excluir: " + ((error === null || error === void 0 ? void 0 : error.message) ? error === null || error === void 0 ? void 0 : error.message : error));
@@ -203,8 +201,6 @@ class PageListBase extends _page_base__WEBPACK_IMPORTED_MODULE_1__["PageBase"] {
                 if (confirm) {
                     this.dao.delete(doc).then(function () {
                         (self.grid.query || self.query).removeId(doc.id);
-                        //self.grid!.query!.refresh();
-                        //self.dialog.alert("Sucesso", "Registro excluído com sucesso!");
                         self.dialog.topAlert("Registro cancelado com sucesso!", 5000);
                     }).catch((error) => {
                         self.dialog.alert("Erro", "Erro ao cancelar: " + ((error === null || error === void 0 ? void 0 : error.message) ? error === null || error === void 0 ? void 0 : error.message : error));
@@ -29145,18 +29141,6 @@ class PlanoEntregaDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_
             }, error => reject(error));
         });
     }
-    cancelar(plano_entrega_id) {
-        return new Promise((resolve, reject) => {
-            this.server.post('api/' + this.collection + '/cancelar', { id: plano_entrega_id }).subscribe(response => {
-                if (response.error) {
-                    reject(response.error);
-                }
-                else {
-                    resolve(!!(response === null || response === void 0 ? void 0 : response.success));
-                }
-            }, error => reject(error));
-        });
-    }
     cancelarAvaliacao(plano_entrega_id) {
         return new Promise((resolve, reject) => {
             this.server.post('api/' + this.collection + '/cancelar-avaliacao', { id: plano_entrega_id }).subscribe(response => {
@@ -29217,23 +29201,6 @@ class PlanoEntregaDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_
             }, error => reject(error));
         });
     }
-    /**
-     * Informa se o plano de entregas repassado como parâmetro está ativo, ou seja: é um plano válido (não foi deletado, não foi cancelado,
-     * não foi arquivado) e possui o status ATIVO.
-     * @param planoEntrega
-     * @returns
-     */
-    isAtivo(planoEntrega) {
-        return this.isValido(planoEntrega) && planoEntrega.status == 'ATIVO';
-    }
-    /**
-     * Informa se o plano de entregas repassado como parâmetro é válido, ou seja, não foi deletado, não foi cancelado nem foi arquivado.
-     * @param planoEntrega
-     * @returns
-     */
-    isValido(planoEntrega) {
-        return !planoEntrega.data_fim && !planoEntrega.data_cancelamento && !planoEntrega.data_arquivamento;
-    }
     liberarHomologacao(plano_entrega_id) {
         return new Promise((resolve, reject) => {
             this.server.post('api/' + this.collection + '/liberar-homologacao', { id: plano_entrega_id }).subscribe(response => {
@@ -29281,6 +29248,23 @@ class PlanoEntregaDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_
                 }
             }, error => reject(error));
         });
+    }
+    /**
+   * Informa se o plano de entregas repassado como parâmetro está ativo, ou seja: é um plano válido (não foi deletado, não foi cancelado,
+   * não foi arquivado) e possui o status ATIVO.
+   * @param planoEntrega
+   * @returns
+   */
+    isAtivo(planoEntrega) {
+        return this.isValido(planoEntrega) && planoEntrega.status == 'ATIVO';
+    }
+    /**
+     * Informa se o plano de entregas repassado como parâmetro é válido, ou seja, não foi deletado, não foi cancelado nem foi arquivado.
+     * @param planoEntrega
+     * @returns
+     */
+    isValido(planoEntrega) {
+        return !planoEntrega.data_fim && !planoEntrega.data_cancelamento && !planoEntrega.data_arquivamento;
     }
 }
 PlanoEntregaDaoService.ɵfac = function PlanoEntregaDaoService_Factory(t) { return new (t || PlanoEntregaDaoService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };

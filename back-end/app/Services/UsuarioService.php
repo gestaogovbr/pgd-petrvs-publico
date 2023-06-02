@@ -198,6 +198,16 @@ class UsuarioService extends ServiceBase
     }
 
     /**
+     * Informa se o usuário logado possui determinada atribuição para uma unidade específica.
+     * @param string $atribuicao 
+     * @param string $unidade_id 
+     */
+    public static function isIntegrante(string $atribuicao, string $unidade_id): bool {
+        $unidade = !empty($unidade_id) ? Unidade::find($unidade_id) : null;
+        return !empty($unidade) ? !!array_filter($unidade->integrantes->toArray(), fn($i) => $i->atribuicao == $atribuicao) : false; 
+    }
+
+    /**
      * Informa se a unidade repassada como parâmetro é a lotação principal do usuário logado.
      * @param string $unidade_id 
      */

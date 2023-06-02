@@ -20,6 +20,9 @@
         <div class="row mt-4">
             <separator title="Dados herdados do Plano de Entregas da Unidade-pai" [collapse]="'collapse'">
                 <div class="row">
+                    <input-search disabled [size]="12" label="Programa de Gestão" controlName="programa_id" [dao]="programaDao"></input-search>
+                </div>
+                <div class="row">
                     <input-search disabled [size]="9" label="Planejamento Institucional" controlName="planejamento_id" [dao]="planejamentoInstitucionalDao"></input-search>
                     <input-datetime disabled [size]="3" controlName="inicio" label="Início" [labelInfo]="'Início ' + lex.noun('Plano de Entrega', false, true)"></input-datetime>
                 </div>
