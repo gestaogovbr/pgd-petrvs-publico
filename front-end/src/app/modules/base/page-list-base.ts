@@ -207,8 +207,6 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
       if(confirm) {
         this.dao!.delete(doc).then(function () {
           (self.grid!.query || self.query!).removeId(doc.id);
-          //self.grid!.query!.refresh();
-          //self.dialog.alert("Sucesso", "Registro excluído com sucesso!");
           self.dialog.topAlert("Registro excluído com sucesso!", 5000);
         }).catch((error) => {
           self.dialog.alert("Erro", "Erro ao excluir: " + (error?.message ? error?.message : error));
@@ -236,8 +234,6 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
       if(confirm) {
         this.dao!.delete(doc).then(function () {
           (self.grid!.query || self.query!).removeId(doc.id);
-          //self.grid!.query!.refresh();
-          //self.dialog.alert("Sucesso", "Registro excluído com sucesso!");
           self.dialog.topAlert("Registro cancelado com sucesso!", 5000);
         }).catch((error) => {
           self.dialog.alert("Erro", "Erro ao cancelar: " + (error?.message ? error?.message : error));

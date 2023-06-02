@@ -343,6 +343,16 @@ export class AuthService {
   }
 
   /**
+   * Informa se o usuário logado possui determinada atribuição para uma unidade específica dentre as suas lotações/chefias.
+   * @param atribuicao 
+   * @param unidade_id 
+   */
+  public isIntegrante(atribuicao: string, unidade_id: string): boolean {
+    let unidades: Array<Unidade> = this.util.arrayUnique(this.unidades?.concat(...this.usuario?.chefias_titulares || [], ...this.usuario?.chefias_substitutas || []) || []);
+    return !!unidades.find(x => x.id == unidade_id)?.integrantes?.find(i => i.usuario_id == this.usuario!.id && i.atribuicao == atribuicao);
+  }
+
+  /**
    * Informa se o usuário logado tem como lotação alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
    * repassada como parâmetro.
    * @param unidade 

@@ -4,9 +4,9 @@
             <input-search #planoEntrega [size]="12" controlName="plano_entrega_id" label="Plano de Entregas da Unidade-pai" [dao]="planoEntregaDao" 
             [selectRoute]="{route: ['gestao', 'plano-entrega'], params: {showFilter: false, filter: {unidade_id: auth.unidade!.unidade_id, status: 'ATIVO'}}}"
             [where]="[['unidade_id', '=', auth.unidade!.unidade_id], ['status', '=', 'ATIVO']]" (change)="onPlanoEntregaChange($event)"></input-search>
-            <!--    (RI_PENT_6) 
-                    Na adesão a um plano de entregas, o input-search dos planos de entregas só exibirá aqueles que são da unidade-pai da unidade selecionada 
-                    e que estejam com o status ATIVO; a listagem dos planos de entrega não exibirá as opções de filtro.
+            <!--    (RI_PENT_6) Na adesão a um plano de entregas:
+                    - o input-search dos planos de entregas exibirá apenas os ativos da unidade-pai da unidade selecionada; 
+                    - a listagem dos planos de entrega não exibirá as opções de filtro.
             -->
             <separator></separator>
         </div>
@@ -19,6 +19,9 @@
         </div>
         <div class="row mt-4">
             <separator title="Dados herdados do Plano de Entregas da Unidade-pai" [collapse]="'collapse'">
+                <div class="row">
+                    <input-search disabled [size]="12" label="Programa de Gestão" controlName="programa_id" [dao]="programaDao"></input-search>
+                </div>
                 <div class="row">
                     <input-search disabled [size]="9" label="Planejamento Institucional" controlName="planejamento_id" [dao]="planejamentoInstitucionalDao"></input-search>
                     <input-datetime disabled [size]="3" controlName="inicio" label="Início" [labelInfo]="'Início ' + lex.noun('Plano de Entrega', false, true)"></input-datetime>
