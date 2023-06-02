@@ -21,7 +21,8 @@ class ServerException extends Exception
         "ValidatePlanejamentoInstitucional" => "Erro ao validar Planejamento Institucional",
         "ValidateUnidade" => "Erro ao validar Unidade",
         "ValidateLotacao" => "Erro ao validar Lotação do usuário",
-        "ValidateDocumento" => "Erro ao validar Documento"
+        "ValidateDocumento" => "Erro ao validar Documento",
+        "ValidatePlanoEntrega" => "Erro ao validar Documento"
     ];
 
     function __construct($code, $extra = "") {
