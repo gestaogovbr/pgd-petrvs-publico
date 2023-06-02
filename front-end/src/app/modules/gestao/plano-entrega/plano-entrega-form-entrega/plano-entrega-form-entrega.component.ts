@@ -23,6 +23,7 @@ import { PlanoEntregaObjetivo } from 'src/app/models/plano-entrega-objetivo.mode
 import { PlanoEntregaProcesso } from 'src/app/models/plano-entrega-processo.model';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { Entrega } from 'src/app/models/entrega.model';
+import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 
 @Component({
   selector: 'plano-entrega-form-entrega',
@@ -41,6 +42,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   @ViewChild('inputProcesso', { static: false }) public inputProcesso?: InputSearchComponent;
   @ViewChild('entrega', { static: false }) public entrega?: InputSearchComponent;
   @ViewChild('demandante', { static: false }) public demandante?: InputSearchComponent;
+  @ViewChild('tabs', { static: false }) public tabs?: TabsComponent;
   
   public planejamentoDao: PlanejamentoDaoService;
   public planejamentoId?: string;
@@ -113,35 +115,41 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     let result = null;
     if(['descricao'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    } else if (['progresso_realizado', 'progresso_esperado'].indexOf(controlName) >= 0 && !(control.value >= 0)){
+    } else if (['progresso_realizado', 'progresso_esperado', 'meta', 'realizado'].indexOf(controlName) >= 0 && !(control.value >= 0)){
       result = "Obrigatório";
     } else if (['unidade_id'].indexOf(controlName) >= 0&& !control.value?.length){
       result = "O demandante é obrigatório";
     } else if (['entrega_id'].indexOf(controlName) >= 0&& !control.value?.length){
       result = "A entrega é obrigatória";
-    }
-    if(['inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+    } else if(['inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
-    }
-    if(controlName == 'fim' && control.value && !this.dao?.validDateTime(control.value)){
+    } else if(['fim'].indexOf(controlName)  && control.value && !this.dao?.validDateTime(control.value)){
       result = "Inválido";
     }
     return result;
   }
 
   public formValidation = (form?: FormGroup) => {
+    if(this.gridObjetivos?.editing) {
+      this.tabs!.active = "OBJETIVOS" ;
+      return "Salve ou cancele o registro atual em edição";
+    }
+    if(this.gridProcessos?.editing) {
+      this.tabs!.active = "PROCESSOS" ;
+      return "Salve ou cancele o registro atual em edição";
+    }
     if(this.form!.controls.fim.value && this.form!.controls.inicio.value > this.form!.controls.fim.value) return "A data do início não pode ser maior que a data do fim!";
     return undefined;
   }
 
   public async loadData(entity: PlanoEntregaEntrega, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
+    this.calculaRealizado();
     form.patchValue(this.util.fillForm(formValue, entity));
-    //form.controls.planejamento_id.setValue(this.planejamentoId);
-    //form.controls.cadeia_valor_id.setValue(this.cadeiaValorId);
   }
 
   public async initializeData(form: FormGroup){
+  
     await this.loadData(this.entity!, form);
   }
 
@@ -157,6 +165,19 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       entrega.entrega = this.entrega?.selectedItem?.entity;
       resolve(new NavigateResult(entrega));
     });
+  }
+
+  public onRealizadoChange(event: Event) {
+    this.calculaRealizado();
+  }
+  
+  public calculaRealizado() {
+    const meta = this.form?.controls.meta.value;
+    const realizado = this.form?.controls.realizado.value;
+    if(meta && realizado) {
+      let totalRealizado = (realizado / meta) * 100; 
+      this.form?.controls.progresso_realizado.setValue(totalRealizado);
+    }
   }
 
   public checkTipoIndicador(tipos: string[]): boolean {

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use DateTime;
 use Throwable;
+use Exception;
 
 class PlanoEntregaService extends ServiceBase
 {
@@ -290,9 +291,9 @@ class PlanoEntregaService extends ServiceBase
     /**
     * Verifica se as  datas do plano de entrega se encaixam na duração do Programa de gestão
     */
-    public function validateStore($planoEntrega)
+    public function validateStore($planoEntrega, $unidade, $action)
     {
-        return $this->verificaDuracaoPlano($planoEntrega) && $this->verificaDatasEntregas($planoEntrega);
+        if(!$this->verificaDuracaoPlano($planoEntrega) || !$this->verificaDatasEntregas($planoEntrega)) throw new Exception("O prazo das datas não satisfaz a duração estipulada no programa.");
     }
 
     /**
@@ -323,8 +324,8 @@ class PlanoEntregaService extends ServiceBase
         $dataFim = new DateTime($planoEntrega["fim"]);
         if ($planoEntrega["entregas"]) {
             foreach ($planoEntrega["entregas"] as $entrega) {
-                $entregaInicio = new DateTime($entrega->inicio);
-                $entregaFim = new DateTime($entrega->fim);
+                $entregaInicio = new DateTime($entrega["inicio"]);
+                $entregaFim = new DateTime($entrega["fim"]);
                 $result = $result && ($dataInicio <= $entregaInicio) && ($dataFim >= $entregaFim);
             }
         }

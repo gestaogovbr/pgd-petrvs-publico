@@ -23,13 +23,13 @@
                     <input-number *ngIf="checkTipoIndicador(['PORCENTAGEM'])" [size]="6" label="Meta" controlName="meta" sufix="%"></input-number>
                     <input-number *ngIf="checkTipoIndicador(['QUANTIDADE', 'VALOR'])" [size]="6" label="Meta" controlName="meta"></input-number>
                     <input-select *ngIf="checkTipoIndicador(['QUALITATIVO'])" [size]="6" label="Meta" controlName="meta"></input-select>
-                    <input-number *ngIf="checkTipoIndicador(['PORCENTAGEM'])" [size]="6" label="Realizado" controlName="realizado" sufix="%"></input-number>
-                    <input-number *ngIf="checkTipoIndicador(['QUANTIDADE', 'VALOR'])" [size]="6" label="Realizado" controlName="realizado"></input-number>
-                    <input-select *ngIf="checkTipoIndicador(['QUALITATIVO'])" [size]="6" label="Realizado" controlName="realizado"></input-select>
+                    <input-number *ngIf="checkTipoIndicador(['PORCENTAGEM'])" [size]="6" label="Realizado" (change)="onRealizadoChange($event)" controlName="realizado" sufix="%"></input-number>
+                    <input-number *ngIf="checkTipoIndicador(['QUANTIDADE', 'VALOR'])" [size]="6" label="Realizado" (change)="onRealizadoChange($event)" controlName="realizado"></input-number>
+                    <input-select *ngIf="checkTipoIndicador(['QUALITATIVO'])" [size]="6" label="Realizado" (change)="onRealizadoChange($event)" controlName="realizado"></input-select>
                 </div>
                 <div class="row">
                     <input-number [size]="6" label="Progresso Esperado" controlName="progresso_esperado" sufix="%"></input-number>
-                    <input-number [size]="6" label="Progresso Realizado" controlName="progresso_realizado" sufix="%"></input-number>
+                    <input-number [size]="6" label="Progresso Realizado" [stepValue]="0.01" controlName="util.formatDecimal(progresso_realizado)" sufix="%" disabled></input-number>
                 </div>
             </div>
         </tab>

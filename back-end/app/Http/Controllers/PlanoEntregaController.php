@@ -140,12 +140,12 @@ class PlanoEntregaController extends ControllerBase {
                                 1. o usuário logado precisa ser gestor da unidade do plano ou da sua unidade-pai, ou uma destas ser sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_ADERIR"; (RN_PENT_2_4) e
                                 2. a unidade do plano-pai precisa ser a unidade-pai da unidade do plano vinculado, e o plano-pai precisa estar com o status ATIVO; (RN_PENT_2_3) (RN_PENT_3_3) e
                                 3. a unidade não possua plano de entrega com o status ATIVO no mesmo período do plano ao qual está sendo feita a adesão;
-                            */
+                            * /
                         }
                         if (!$canStore) throw new ServerException("CapacidadeStore", "Inserção não realizada"); 
                         break;                  
                 }
-                break;
+                break;*/
             case 'DESTROY':
                 $canDestroy = false;
                 $data = $request->validate(['id' => ['required']]);

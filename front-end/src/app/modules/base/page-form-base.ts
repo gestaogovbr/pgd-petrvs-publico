@@ -15,7 +15,7 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
   public entity?: M;
   public dao?: D;
   public action: string = "";
-  public formValidation?: (form?: FormGroup) => string | undefined | null;
+  public formValidation?: (form?: FormGroup) => string | undefined | null | Promise<string | undefined | null>;
   public titleEdit?: (entity: M) => string;
 
   /* Configurações */
@@ -83,7 +83,7 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
     let error: any = undefined;
     if(this.formValidation) {
       try {
-        error = this.formValidation(this.form!);
+        error = await this.formValidation(this.form!);
       } catch (e: any) {
         error = e; 
       }
