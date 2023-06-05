@@ -5,11 +5,15 @@ import { ComponentsModule } from 'src/app/components/components.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ChangeListComponent } from './change/change-list/change-list.component';
 import { ChangeFormComponent } from './change/change-form/change-form.component';
+import { ErrorFormComponent } from './error/error-form/error-form.component';
+import { ErrorListComponent } from './error/error-list/error-list.component';
 
 @NgModule({
   declarations: [
     ChangeListComponent,
-    ChangeFormComponent
+    ChangeFormComponent,
+    ErrorListComponent,
+    ErrorFormComponent
   ],
   imports: [
     CommonModule,

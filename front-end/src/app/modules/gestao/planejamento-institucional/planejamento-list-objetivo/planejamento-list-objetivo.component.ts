@@ -65,7 +65,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
     let result: ToolbarButton[] = [];
     let objetivo: PlanejamentoObjetivo = row as PlanejamentoObjetivo;
     if (this.auth.hasPermissionTo('MOD_PLAN_INST_EDT') && !this.disabled) {
-      result.push({ hint: "Editar", icon: "bi bi-pencil-square", color: "btn-outline-info", onClick: (objetivo: PlanejamentoObjetivo) => { this.editObjetivo(objetivo); } });
+      result.push({ hint: "Alterar", icon: "bi bi-pencil-square", color: "btn-outline-info", onClick: (objetivo: PlanejamentoObjetivo) => { this.editObjetivo(objetivo); } });
     }
     return result;
   }

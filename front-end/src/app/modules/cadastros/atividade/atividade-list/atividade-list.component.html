@@ -17,7 +17,6 @@
             (change)="onVinculadasToolbarChange($event)"></input-switch>
     </toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)"
-        [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed"
         [hidden]="filterHidden">
         <div class="row">
             <input-text [size]="7" label="Nome" controlName="nome" [control]="filter!.controls.nome"></input-text>

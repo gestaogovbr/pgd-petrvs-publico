@@ -5,13 +5,16 @@ import {ConfigResolver} from "../../../resolvies/config.resolver";
 import {CadeiaValorListComponent} from "./cadeia-valor-list/cadeia-valor-list.component";
 import {CadeiaValorFormComponent} from "./cadeia-valor-form/cadeia-valor-form.component";
 import {CadeiaValorListGridComponent} from "./cadeia-valor-list-grid/cadeia-valor-list-grid.component";
+import { CadeiaValorListProcessosComponent } from './cadeia-valor-list-processos/cadeia-valor-list-processos.component';
+import { CadeiaValorListProcessosEntregasComponent } from './cadeia-valor-list-processos-entregas/cadeia-valor-list-processos-entregas.component';
 
 const routes: Routes = [
   { path: '', component: CadeiaValorListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Cadeia de Valor" } },
   { path: 'grid', component: CadeiaValorListGridComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Cadeia de Valor" } },
   { path: 'new', component: CadeiaValorFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
   { path: ':id/edit', component: CadeiaValorFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
-  { path: ':id/consult', component: CadeiaValorFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } }
+  { path: ':id/consult', component: CadeiaValorFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } },
+  { path: 'processoList', component: CadeiaValorListProcessosEntregasComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Lista de Processos", modal: true } }
 ];
 
 @NgModule({

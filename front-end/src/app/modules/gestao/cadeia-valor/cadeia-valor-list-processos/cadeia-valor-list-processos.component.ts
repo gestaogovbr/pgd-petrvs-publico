@@ -200,6 +200,4 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
     return items;
   };
 
-
-
 }

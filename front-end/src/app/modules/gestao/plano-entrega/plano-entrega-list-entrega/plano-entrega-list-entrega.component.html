@@ -1,29 +1,62 @@
-<grid [dao]="dao" [title]="isModal ? '' : title" [selectable]="selectable" (select)="onSelect($event)">
-    <columns>
-        <column title="Início" [template]="columnInicio">
-            <ng-template let-row="row" #columnInicio>
-                <span> {{dao!.getDateFormatted(row.inicio)}}</span>
+<editable-form noButtons [form]="form!" [disabled]="formDisabled">
+    <div class="row">
+        <grid [items]="items" [form]="form!" editable [hasAdd]="true || auth.hasPermissionTo('')" [hasEdit]="true || auth.hasPermissionTo('')" [add]="add.bind(this)" [groupTemplate]="groupEntregas">
+            <ng-template let-separator="separator" #groupEntregas>
+                <strong class="grid-group-text">Entregas: </strong><span class="text-wrap">
+                    <badge color="primary" [label]="separator?.text"></badge>
+                </span>
             </ng-template>
-        </column>
-        <column title="Fim" [template]="columnFim">
-            <ng-template let-row="row" #columnFim>
-                <span> {{dao!.getDateFormatted(row.fim)}}</span>
-            </ng-template>
-        </column>
-        <column title="Descrição" [template]="columnDescricao">
-            <ng-template let-row="row" #columnDescricao>
-                <span> {{ row.descricao || ''}}</span>
-            </ng-template>
-        </column>
-        <column title="Cliente" [template]="columnCliente">
-            <ng-template let-row="row" #columnCliente>
-                <span> {{ row.cliente || '' }}</span>
-            </ng-template>
-        </column>
-    </columns>
-    <pagination [rows]="rowsLimit"></pagination>
-</grid>
+            <columns>
+                <column [title]="'Entrega\nDemandante\nDestinatário'" [template]="columnEntregaCliente">
+                    <ng-template let-row="row" #columnEntregaCliente>
+                        <span *ngIf="row.descricao" class="badge bg-light text-dark">
+                            <i class="bi bi-textarea-t"></i>
+                            {{row.descricao}}
+                        </span>
+                        <span *ngIf="row.unidade_id" class="badge bg-light text-dark">
+                            <i class="fa-unity fab"></i>
+                            {{row.unidade.nome}}
+                        </span>
+                        <span *ngIf="row.destinatario" class="badge bg-light text-dark">
+                            {{row.destinatario}}
+                        </span>
+                    </ng-template>
+                </column>
+                <column [title]="'Data Início\nData Fim'" [template]="columnDatas">
+                    <ng-template let-row="row" #columnDatas>
+                        <span *ngIf="row.inicio"> {{dao!.getDateFormatted(row.inicio)}}</span>
+                        <span *ngIf="row.fim"> {{dao!.getDateFormatted(row.fim)}}</span>
+                    </ng-template>
+                </column>
+                <column title="Entrega" [template]="columnEntrega">
+                    <ng-template let-row="row" #columnEntrega>
+                        <span *ngIf="row.entrega" class="badge bg-light text-dark">
+                            <i class="bi bi-list-check"></i>
+                            {{row.entrega?.nome}}
+                        </span>
+                    </ng-template>
+                </column>
+                <column [title]="'Meta\nRealizado'" [template]="columnMetaRealizado">
+                    <ng-template let-row="row" #columnMetaRealizado>
+                        <span  *ngIf="row.meta" class="badge bg-light text-dark">
+                            {{row.meta}}
+                        </span>
+                        <span *ngIf="row.realizado" class="badge bg-light text-dark">
+                            {{row.realizado}}
+                        </span>
 
+                    </ng-template>
+                </column>
+                <column title="Progresso" [template]="columnProgresso">
+                    <ng-template let-row="row" #columnProgresso>
+                        <progress-bar [value]="row.progresso_realizado" color="success"></progress-bar>
+                    </ng-template>
+                </column>
+                <column type="options" [onEdit]="edit.bind(this)" [options]="options"></column>
+            </columns>
+        </grid>
+    </div>
+</editable-form>
 
 <!-- Grid-List:
 
@@ -36,11 +69,6 @@
    Entrega       Indicador           Meta         Realizado
    -------------+-------------------+------------+------------- 
    XXXXXXXXXXXXX XXXXXXXXXXXXXXXXXX   9999999     99999999
-
-
-
-
-
 
 
    Plano de Entregas
