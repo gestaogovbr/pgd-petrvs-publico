@@ -175,7 +175,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     const meta = this.form?.controls.meta.value;
     const realizado = this.form?.controls.realizado.value;
     if(meta && realizado) {
-      let totalRealizado = ((realizado / meta) * 100).toFixed(2); 
+      let totalRealizado = (realizado / meta) * 100; 
       this.form?.controls.progresso_realizado.setValue(totalRealizado);
     }
   }
@@ -249,4 +249,8 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     }
     return undefined;
   }
+
+
+
+
 }
