@@ -2,7 +2,7 @@
 
 ## Visão geral do sistema
 
-- Planejamento Estratégico
+- Planejamento Institucional
   - Objetivos
 - Cadeia de Valor
   - Processos
@@ -14,14 +14,10 @@
       - Demandas
 - Projetos  
 
-* [Planejamento completo](./planejamento.md)
-
-
 ## Módulos
 
-* [Adesão](./adesao.md)
-* [Planejamento Institucional](./planejamento_institucional.md)
-* [Plano de Entregas](./plano_de_entregas.md)
+* [Planejamento Institucional](./Planejamento%20Institucional/Planejamento_institucional.md)
+* [Plano de Entregas](./Plano%20de%20Entrega/plano_de_entregas.md)
 
 ## Regra geral do sistema
 

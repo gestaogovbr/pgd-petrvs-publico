@@ -1,27 +1,34 @@
 <grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
     [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_PENT_INCL')"
     [hasEdit]="false">
-    <toolbar *ngIf="!selectable">
-        <input-switch [size]="4" labelPosition="left" label="Agrupar por Un." controlName="agrupar"
+    <toolbar *ngIf="!selectable" [buttons]="toolbarButtons">
+        <input-switch [size]="3" labelPosition="left" label="Agrupar por Un." controlName="agrupar"
             [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
+        <input-switch [size]="2" labelPosition="left" label="Principais" controlName="principais"
+        [control]="filter!.controls.principais" (change)="grid!.reloadFilter()"></input-switch>
     </toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)"
-        [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed" [visible]="showFilter">
         <div class="row">
-            <input-text [size]="6" label="Nome" controlName="nome" [control]="filter!.controls.nome"
-                [placeholder]="'Nome do '+lex.noun('plano de entrega')"></input-text>
-            <input-search #unidade [size]="6" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+            <input-text [size]="5" label="Nome" controlName="nome" [control]="filter!.controls.nome" [placeholder]="'Nome do '+lex.noun('plano de entrega')"></input-text>
+            <input-search #unidade [size]="4" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+            <input-select [size]="3" label="Status" controlName="status" [items]="lookup.PLANO_ENTREGA_STATUS" itemTodos="- Todos -" [valueTodos]="null"></input-select>
         </div>
         <div class="row">
             <input-search #planejamento [size]="4" controlName="planejamento_id" [dao]="planejamentoDao"></input-search>
             <input-search #cadeiaValor [size]="4" controlName="cadeia_valor_id" [dao]="cadeiaValorDao"></input-search>
-            <input-datetime [size]="2" date label="Início" controlName="inicio" [control]="filter!.controls.inicio"
-                [labelInfo]="'Data de início do '+ lex.noun('plano de entrega')"></input-datetime>
-            <input-datetime [size]="2" date label="Fim" controlName="fim" [control]="filter!.controls.fim"
-                [labelInfo]="'Data do fim do '+ lex.noun('plano de entrega')"></input-datetime>
+            <input-datetime [size]="2" date label="Início" controlName="inicio" [control]="filter!.controls.inicio" [labelInfo]="'Data de início do '+ lex.noun('plano de entrega')"></input-datetime>
+            <input-datetime [size]="2" date label="Fim" controlName="fim" [control]="filter!.controls.fim" [labelInfo]="'Data do fim do '+ lex.noun('plano de entrega')"></input-datetime>
         </div>
     </filter>
     <columns>
+        <column *ngIf="!selectable" type="expand" icon="bi bi-boxes" [align]="'center'" [hint]="lex.noun('Entregas', true)" [template]="columnEntregas" [expandTemplate]="columnExpandedEntregas">
+            <ng-template let-row="row" #columnEntregas>
+                <span *ngIf="row?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row?.length}}</span>
+            </ng-template>
+            <ng-template let-row="row" #columnExpandedEntregas>
+                <plano-entrega-list-entrega [entity]="row" [cdRef]="cdRef"></plano-entrega-list-entrega>
+            </ng-template>
+        </column>
         <column [titleTemplate]="titleIdNumeroStatus" [template]="columnNumero">
             <ng-template let-header="header" #titleIdNumeroStatus>
                 <order by="numero" [header]="header">#ID</order>
@@ -30,7 +37,11 @@
                 <small class="micro-text fw-ligh">#{{row.numero}}</small>
             </ng-template>
         </column>
-        <column title="Nome" field="nome" orderBy="nome"></column>
+        <column title="Nome" orderBy="nome" [template]="columnNome">
+            <ng-template let-row="row" #columnNome>
+                <span class="text-break text-wrap" [style.max-width.px]="400">{{row.nome}}</span>
+            </ng-template>
+        </column>
         <column title="Início" [template]="columnInicio" orderBy="inicio">
             <ng-template let-row="row" #columnInicio>
                 <span> {{dao!.getDateFormatted(row.inicio)}}</span>
@@ -47,19 +58,17 @@
                 Cadeia de Valor
             </ng-template>
             <ng-template let-row="row" #columnPlanoCadeia>
-                <badge *ngIf="row.planejamento" color="light" [icon]="entityService.getIcon('Planejamento')" [label]="row.planejamento?.nome"></badge>
-                <badge *ngIf="row.cadeiaValor" color="light" [icon]="entityService.getIcon('CadeiaValor')" [label]="row.cadeiaValor?.nome"></badge>
+                <badge *ngIf="row.planejamento" [maxWidth]="300" color="light" [icon]="entityService.getIcon('Planejamento')" [label]="row.planejamento?.nome"></badge>
+                <badge *ngIf="row.cadeiaValor" [maxWidth]="300" color="light" [icon]="entityService.getIcon('CadeiaValor')" [label]="row.cadeiaValor?.nome"></badge>
             </ng-template>
         </column>
         <column title="Status" [template]="columnStatus">
             <ng-template let-row="row" #columnStatus>
-                <badge  [color]="lookup.getColor(lookup.PLANO_ENTREGA_STATUS, row.status)" [icon]="lookup.getIcon(lookup.PLANO_ENTREGA_STATUS, row.status)" 
-                        [label]="lookup.getValue(lookup.PLANO_ENTREGA_STATUS, row.status)"></badge>
+                <badge [color]="lookup.getColor(lookup.PLANO_ENTREGA_STATUS, row.status)" [icon]="lookup.getIcon(lookup.PLANO_ENTREGA_STATUS, row.status)" [label]="lookup.getValue(lookup.PLANO_ENTREGA_STATUS, row.status)"></badge>
                 <badge *ngIf="row.data_cancelamento" color="danger" icon="bi bi-dash-circle" label="Cancelado"></badge>
             </ng-template>
         </column>
-        <column type="options" [dynamicOptions]="dynamicOptions.bind(this)"
-            [dynamicButtons]="dynamicButtons.bind(this)"></column>
+        <column type="options" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

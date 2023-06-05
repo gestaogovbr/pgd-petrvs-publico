@@ -21,18 +21,19 @@ class   PlanoEntregaEntrega extends ModelBase
         'inicio', /* datetime; NOT NULL; */// Data inicio
         'fim', /* datetime; */// Data fim
         'descricao', /* varchar(256); NOT NULL; */// Descrição da entrega
-        'cliente', /* text; NOT NULL; */// Cliente da entrega
         'homologado', /* tinyint; NOT NULL; */// Se a entrega foi homologada
         'meta', /* json; NOT NULL; */// Meta para a entrega
         'realizado', /* json; */// Valor realizado
-        'plano_entrega_id', /* char(36); NOT NULL; */
+        'plano_entrega_id', /* char(36); */
         'entrega_id', /* char(36); NOT NULL; */
         'entrega_pai_id', /* char(36); */
+        'progresso_esperado', /* decimal(5,2); DEFAULT: '0.00'; */// Percentual de progresso do Plano de Entregas esperado
+        'progresso_realizado', /* decimal(5,2); DEFAULT: '0.00'; */// Percentual de progresso do Plano de Entregas realizado
+        'unidade_id', /* char(36); NOT NULL; */
+        'destinatario', /* varchar(255); */// Destinatário da entrega
     ];
 
-    public $fillable_changes = [];
-
-    public $delete_cascade = [];
+    public $fillable_changes = ['objetivos', 'processos']; 
 
     // Casting
     protected $casts = [
@@ -46,6 +47,7 @@ class   PlanoEntregaEntrega extends ModelBase
     // Belongs
     public function planoEntrega() { return $this->belongsTo(PlanoEntrega::class, 'plano_entrega_id'); }
     public function entrega() { return $this->belongsTo(Entrega::class); }
+    public function unidade() { return $this->belongsTo(Unidade::class); }
     public function entregaPai() { return $this->belongsTo(PlanoEntregaEntrega::class, 'entrega_pai_id'); }
 
 }

@@ -165,12 +165,12 @@ export class AppComponent {
       RXVISUALIZA_ADM_OPORTUNIDADES: { name: this.lex.noun("Cadastro Pesquisa Oportunidades", true), permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-boxes" },
       /*PROJETOS*/
     };
-    
+
 
     this.menuPgd = [
       {
         name: "Cadastros", permition: "MENU_CAD_ACESSO", route: ['cadastros'], id: "navbarDropdownCadastros", menu: [
-         
+
           this.menuSchema.AFASTAMENTOS,
           this.menuSchema.CIDADES,
           this.menuSchema.EIXOS_TEMATICOS,
@@ -244,12 +244,12 @@ export class AppComponent {
       },
       {
         name: "Oportunidades", permition: "MOD_RX_VIS_DPE", route: ['raiox'], id: "navbarDropdownCadastros", menu: [
-          
+
         ]
       },
       {
         name: "Pesquisas", permition: "MOD_RX_VIS_DPE", route: ['raiox'], id: "navbarDropdownCadastros", menu: [
-          
+
         ]
       },
       {
@@ -262,7 +262,7 @@ export class AppComponent {
           this.menuSchema.RXCADASTRO_ADM_CT,
           this.menuSchema.RXCADASTRO_ADM_FUNCAO
         ],
-               
+
       }
 
     ];

@@ -4,16 +4,27 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
+use Illuminate\Http\Request;
+use Throwable;
 
 class ErrorController extends ControllerBase {
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
-            case 'UPDATE':
-                if (!$usuario->hasPermissionTo('MOD_LOGS_EDT')) throw new ServerException("CapacidadeStore", "Edição não executada");
+            case 'QUERY':
+                if (!$usuario->hasPermissionTo('DEV_MOD_LOGS')) throw new ServerException("CapacidadeSearchText", "Consulta não executada");
                 break;
-            case 'DESTROY':
-                if (!$usuario->hasPermissionTo('MOD_LOGS_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não executada");
+            case 'GETBYID':
+                if (!$usuario->hasPermissionTo('DEV_MOD_LOGS')) throw new ServerException("CapacidadeSearchText", "Consulta não executada");
                 break;
+        }
+    }
+
+    public function showResponsaveis(Request $request) {
+        try {
+            $this->checkPermissions("QUERY", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
+            return response()->json(['success' => true, 'responsaveis' => $this->service->showResponsaveis()]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
         }
     }
 }

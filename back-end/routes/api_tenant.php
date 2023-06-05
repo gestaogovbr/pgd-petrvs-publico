@@ -115,11 +115,14 @@ Route::middleware('auth:sanctum')->prefix('Calendario')->group(function () {
 
 /* Desenvolvedor */
 Route::middleware('auth:sanctum')->prefix('Change')->group(function () {
-    defaultRoutes(ChangeController::class);
+    Route::post('query', [ChangeController::class, 'query']);
+    Route::post('get-by-id', [ChangeController::class, 'getById']);
     Route::post('showResponsaveis', [ChangeController::class, 'showResponsaveis']);
 });
 Route::middleware('auth:sanctum')->prefix('Error')->group(function () {
-    defaultRoutes(ErrorController::class);
+    Route::post('query', [ErrorController::class, 'query']);
+    Route::post('get-by-id', [ErrorController::class, 'getById']);
+    Route::post('showResponsaveis', [ErrorController::class, 'showResponsaveis']);
 });
 Route::middleware('auth:sanctum')->prefix('Traffic')->group(function () {
 });

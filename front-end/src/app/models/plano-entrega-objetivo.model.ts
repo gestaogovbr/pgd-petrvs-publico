@@ -1,4 +1,3 @@
-import { LookupItem } from '../services/lookup.service';
 import { Base } from './base.model';
 import { PlanejamentoObjetivo } from './planejamento-objetivo.model';
 import { PlanoEntregaEntrega } from './plano-entrega-entrega.model';
@@ -8,7 +7,7 @@ export class PlanoEntregaObjetivo extends Base {
   public entrega?: PlanoEntregaEntrega;
 
   public data_inicio: Date = new Date();               
-  public data_fim: Date | null = null;                 
+  public data_fim: Date = new Date();                 
   public objetivo_id: string = '';
   public plano_entrega_entrega_id: string = '';                        
   

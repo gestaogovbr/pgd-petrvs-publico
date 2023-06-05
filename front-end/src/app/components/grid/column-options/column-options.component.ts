@@ -59,11 +59,11 @@ export class ColumnOptionsComponent extends ComponentBase implements OnInit {
     return this.upDownButtons != undefined;
   }
 
-  public onButtonClick(button: ToolbarButton) {
+  public async onButtonClick(button: ToolbarButton) {
     if(button.route) {
       this.go.navigate(button.route, button.metadata);
     } else if(button.onClick) {
-      button.onClick(this.row, this.grid!.getMetadata(this.row), this.index);
+      await button.onClick(this.row, this.grid!.getMetadata(this.row), this.index);
     }
   }
 
