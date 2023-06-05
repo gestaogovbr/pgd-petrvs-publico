@@ -96,6 +96,7 @@ class Unidade extends ModelBase
     public function demandas() { return $this->hasMany(Demanda::class); }
     public function lotacoes() { return $this->hasMany(Lotacao::class); }
     public function planos() { return $this->hasMany(Plano::class); }
+    public function planosEntregas() { return $this->hasMany(PlanoEntrega::class); }
     public function programas() { return $this->hasMany(Programa::class); }
     public function atividades() { return $this->hasMany(Atividade::class); }
     public function integrantes() { return $this->hasMany(UnidadeIntegrante::class); }

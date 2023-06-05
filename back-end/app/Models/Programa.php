@@ -31,6 +31,7 @@ class Programa extends ModelBase
         'termo_obrigatorio', /* tinyint; NOT NULL; */// Se o termo é obrigatório
         'tipo_documento_tcr_id', /* char(36); */
         //'data_fim', /* datetime; */// Data fim da vigência
+        'prazo_execucao', /* int; NOT NULL; */// Limite máximo de dias corridos para o plano de entregas (Zero para não limitar)
     ];
 
     public $delete_cascade = ['documento'];

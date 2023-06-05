@@ -20,13 +20,13 @@ class NomenclaturaSeeder extends Seeder
             "afastamento" => ['single' => "afastamento", 'plural' => "afastamentos", 'female' => false],
             "atividade" => ['single' => "atividade", 'plural' => "atividades", 'female' => true],
             "avaliação" => ['single' => "avaliação", 'plural' => "avaliações", 'female' => true],
-            "cadeia de valor" => ['single' => "cadeia de valor", 'plural' => "cadeias de valor", 'female' => true],
+            "cadeia de valor" => ['single' => "cadeia de valor", 'plural' => "cadeias de valor", 'female' => true],cd 
             "capacidade" => ['single' => "capacidade", 'plural' => "capacidades", 'female' => true],
             "cidade" => ['single' => "cidade", 'plural' => "cidades", 'female' => true],
             "data de distribuição" => ['single' => "data de distribuição", 'plural' => "datas de distribuição", 'female' => true],
             "demanda" => ['single' => "demanda", 'plural' => "demandas", 'female' => true],
             "documento" => ['single' => "documento", 'plural' => "documentos", 'female' => false],
-            "entidade" => ['single' => "entidade", 'plural' => "entidades", 'female' => true],
+            "entidade" => ['single' => "unidade instituidora", 'plural' => "unidades instituidoras", 'female' => true],
             "entrega" => ['single' => "entrega", 'plural' => "entregas", 'female' => true],
             "eixo temático" => ['single' => "eixo temático", 'plural' => "eixos temáticos", 'female' => false],
             "feriado" => ['single' => "feriado", 'plural' => "feriados", 'female' => false],
@@ -53,8 +53,8 @@ class NomenclaturaSeeder extends Seeder
             "tempo planejado" => ['single' => "tempo planejado", 'plural' => "tempos planejados", 'female' => false],
             "template" => ['single' => "template", 'plural' => "templates", 'female' => false],
             "termo" => ['single' => "termo", 'plural' => "termos", 'female' => false],
-            "unidade" => ['single' => "unidade", 'plural' => "unidades", 'female' => true],
-            "usuário" => ['single' => "usuário", 'plural' => "usuários", 'female' => false],
+            "unidade" => ['single' => "unidade executora", 'plural' => "unidades executoras", 'female' => true],
+            "usuario" => ['single' => "participante", 'plural' => "participantes", 'female' => false],
         ];
         $nomenclaturas = array_map(fn($index, $value) => [
             "id" => $index,
