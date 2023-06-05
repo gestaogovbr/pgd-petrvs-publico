@@ -17,8 +17,8 @@ export class PlanoEntregaEntrega extends Base {
   public realizado: EntregaValor = {};
   public plano_entrega_id: string | null = null;
   public entrega_id: string = '';
-  public progresso_esperado: string = '';                        
-  public progresso_realizado: string = '';                        
+  public progresso_esperado: number = 100;                        
+  public progresso_realizado: number = 0;                        
   public descricao_meta: string = '';                        
   public unidade_id: string = '';                        
   public destinatario: string = '';                        
