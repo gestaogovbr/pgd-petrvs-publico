@@ -123,7 +123,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       result = "A entrega é obrigatória";
     } else if(['inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
-    } else if(['fim'].indexOf(controlName)  && control.value && !this.dao?.validDateTime(control.value)){
+    } else if(['fim'].indexOf(controlName) >=0 && !this.dao?.validDateTime(control.value)){
       result = "Inválido";
     }
     return result;
@@ -175,7 +175,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     const meta = this.form?.controls.meta.value;
     const realizado = this.form?.controls.realizado.value;
     if(meta && realizado) {
-      let totalRealizado = (realizado / meta) * 100; 
+      let totalRealizado = ((realizado / meta) * 100).toFixed(2); 
       this.form?.controls.progresso_realizado.setValue(totalRealizado);
     }
   }
@@ -249,8 +249,4 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     }
     return undefined;
   }
-
-
-
-
 }
