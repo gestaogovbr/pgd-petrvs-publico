@@ -123,7 +123,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       result = "A entrega é obrigatória";
     } else if(['inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
-    } else if(['fim'].indexOf(controlName) >=0 && !this.dao?.validDateTime(control.value)){
+    } else if(['fim'].indexOf(controlName) >=0  && !this.dao?.validDateTime(control.value)){
       result = "Inválido";
     }
     return result;
