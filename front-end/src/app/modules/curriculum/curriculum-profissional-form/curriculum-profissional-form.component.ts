@@ -13,6 +13,8 @@ import { FuncaoDaoService } from 'src/app/dao/funcao-dao.service';
 import { CentroTreinamentoDaoService } from 'src/app/dao/centro-treinamento-dao.service';
 import { GrupoEspecializadoDaoService } from 'src/app/dao/grupo-epecializado-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
+import { controllers } from 'chart.js';
+import { InputRadioComponent } from 'src/app/components/input/input-radio/input-radio.component';
 
 @Component({
   selector: 'curriculum-profissional-form',
@@ -29,6 +31,12 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   @ViewChild('radioPG', { static: false }) public radioPG?: InputSwitchComponent;
   @ViewChild('radioInteressePG', { static: false }) public radioInteressePG?: InputSwitchComponent;
   @ViewChild('radioInteresseRemove', { static: false }) public radioInteresseRemove?: InputSwitchComponent;
+  @ViewChild('radioViajaN', { static: false }) public radioViajaN?: InputSwitchComponent;
+  @ViewChild('radioViajaI', { static: false }) public radioViajaI?: InputSwitchComponent;
+  @ViewChild('escolhaRadioPG', { static: false }) public escolhaRadioPG?: InputRadioComponent;
+  @ViewChild('escolhaInteressePG', { static: false }) public escolhaInteressePG?: InputRadioComponent;
+
+  
   
   public testeLookup: LookupItem[] = [{ 'key': 'key 1', 'value': 'value 1' }];
   public anos: LookupItem[] = [];
@@ -59,6 +67,8 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       radioInteressePG: { default: false },
       radioInteresseBNT: { default: false },
       radioInteresseRemove: { default: false },
+      radioViajaN: { default: false },
+      radioViajaI: { default: false },
       ano_ingresso: { default: false },
       centro_treinamento: { default: false },
       cargo: { default: false },
@@ -68,6 +78,9 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       selectLotacao: { default: "" },
       lotacaoAtual: { default: "" },
       grupo: { default: "" },
+      telefone: { default: "" },
+      escolhaInteressePG: { default: "" },
+      escolhaRadioPG: { default: "" },
      
 
     }, this.cdRef, this.validate)
@@ -113,6 +126,15 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       //resolve(this.util.fillForm(curriculum, this.form!.value));
     });
   };
+
+  public onChangeEscolhePG(){
+    this.escolhaRadioPG?.setValue("");
+  }
+
+
+  public onChangeEscolheInteressePG(){
+    this.escolhaInteressePG?.setValue("");
+  }
 
   public addItemFuncao(): LookupItem | undefined {
     return

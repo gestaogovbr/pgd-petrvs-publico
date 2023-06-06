@@ -148,54 +148,68 @@
         </tab>
         <tab key="DISPONIBILIDADE" class="fw-bold mb-3" label="Disponibilidade">
             <div class="row">
+            
                 <separator class="mb-3 mt-3" title="Viagens" [bold]="true"></separator>
-                <input-switch [size]="4" label="Já fez viagem nacional a trabalho?" icon="fas fa-user-graduate"
-                    controlName="radioViajaN" [control]="form!.controls.radioViajaN">
-                </input-switch>
-                <input-switch [size]="4" label="Já fez viagem internacional a trabalho?" icon="fas fa-user-graduate"
-                    controlName="radioViajaI" [control]="form!.controls.radioViajaI">
-                </input-switch>
-
-
+                <div class="col-lg-6">
+                    <label><i class="bi bi-flag-fill"></i> Já fez viagem nacional a trabalho?</label>
+                    <input-switch [size]="2" #radioViajaN [label]="radioViajaN.value ? 'Sim' : 'Não'" labelPosition="right" controlName="radioViajaN"
+                        [control]="form!.controls.radioViajaN">
+                    </input-switch>
+                </div>
+                <div class="col-lg-6">
+                    <label><i class="bi bi-globe-americas"></i> Já fez viagem internacional a trabalho?</label>
+                    <input-switch [size]="2" #radioViajaI [label]="radioViajaI.value ? 'Sim' : 'Não'" labelPosition="right" icon="fas fa-user-graduate" controlName="radioViajaI"
+                        [control]="form!.controls.radioViajaI">
+                    </input-switch>
+                </div>
+            
             </div>
             <div class="row">
                 <separator class="my-3"
                     title="Você tem interesse na participação do Banco Nacional de Talentos (BNT IN PRF Nº 58 de 27 de agosto de 2021) SEI 35010079?"
                     [bold]="true">
                 </separator>
-                <input-switch [size]="1" #radioInteresseBNT [label]="radioInteresseBNT.value ? 'Sim' : 'Não'" icon="fas fa-user-graduate" controlName="radioInteresseBNT"
-                    [control]="form!.controls.radioInteresseBNT">
+                <input-switch [size]="1" #radioInteresseBNT [label]="radioInteresseBNT.value ? 'Sim' : 'Não'"
+                    icon="bi bi-universal-access" controlName="radioInteresseBNT" [control]="form!.controls.radioInteresseBNT">
                 </input-switch>
-
+        
             </div>
             <div class="row">
                 <separator class="my-3" title="Você está inserido no programa de gestão da Instituição?" [bold]="true">
                 </separator>
-                <input-switch [size]="1" #radioPG [label]="radioPG.value ? 'Sim' : 'Não'" icon="fas fa-user-graduate" controlName="radioPG"
-                    [control]="form!.controls.radioPG">
+                <input-switch [size]="1" #radioPG [label]="radioPG.value ? 'Sim' : 'Não'" icon="bi bi-calendar2-check"
+                    controlName="radioPG" [control]="form!.controls.radioPG" (change)="onChangeEscolhePG()">
                 </input-switch>
-                <input-radio *ngIf="form!.controls.radioPG.value" [size]="4" label="Opções" [items]="lookup.PG_PRF"
-                    controlName="radioPG">
+                <input-radio #escolhaRadioPG *ngIf="form!.controls.radioPG.value" [size]="4" label="Opções"
+                    [items]="lookup.PG_PRF" controlName="escolhaRadioPG">
                 </input-radio>
-
+        
             </div>
             <div class="row">
-                <separator class="my-3" title="Você tem interesse em participar do programa de gestão da Instituição" [bold]="true">
+                <separator class="my-3" title="Você tem interesse em participar do programa de gestão da Instituição?"
+                    [bold]="true">
                 </separator>
-                <input-switch [size]="1" #radioInteressePG [label]="radioInteressePG.value ? 'Sim' : 'Não'" icon="fas fa-user-graduate" controlName="radioInteressePG"
-                    [control]="form!.controls.radioInteressePG">
+                <input-switch [size]="1" #radioInteressePG [label]="radioInteressePG.value ? 'Sim' : 'Não'"
+                    icon="bi bi-bookmark-check" controlName="radioInteressePG" [control]="form!.controls.radioInteressePG"
+                    (change)="onChangeEscolheInteressePG()">
                 </input-switch>
-                <input-radio *ngIf="form!.controls.radioInteressePG.value" [size]="4" label="Opções"
-                    [items]="lookup.PG_PRF" controlName="radioInteressePG">
-                </input-radio>
-
-            </div>
-            <div class="row">
-                <separator class="my-3" title="Você tem interesse em remoção?" [bold]="true">
-                </separator>
-                <input-switch [size]="1" #radioInteresseRemove [label]="radioInteresseRemove.value ? 'Sim' : 'Não'" icon="fas fa-user-graduate" controlName="radioInteresseRemove"
-                    [control]="form!.controls.radioInteresseRemove">
-                </input-switch>
+                
+                    <input-radio #escolhaInteressePG *ngIf="form!.controls.radioInteressePG.value" [size]="4" label="Opções"
+                        [items]="lookup.PG_PRF" controlName="escolhaInteressePG">
+                    </input-radio>
+                    <input-text *ngIf="form!.controls.radioInteressePG.value" [size]="4"
+                        label="Telefone de contato do Chefe Imediato" icon="fas fa-phone" controlName="telefone"
+                        [control]="form!.controls.telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'"></input-text>
+        
+               
+                <div class="row">
+                    <separator class="my-3" title="Você tem interesse em remoção?" [bold]="true">
+                    </separator>
+                    <input-switch [size]="1" #radioInteresseRemove [label]="radioInteresseRemove.value ? 'Sim' : 'Não'"
+                        icon="bi bi-house-door-fill" controlName="radioInteresseRemove"
+                        [control]="form!.controls.radioInteresseRemove">
+                    </input-switch>
+                </div>
             </div>
 
         </tab>

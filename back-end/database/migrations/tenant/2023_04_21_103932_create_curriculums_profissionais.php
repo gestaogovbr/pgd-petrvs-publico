@@ -19,20 +19,31 @@ class CreateCurriculumsProfissionais extends Migration
             $table->primary('id');
             $table->timestamps();
             // Campos:
-            
-            //$table->tinytext('titulo')->comment("Titulo do curso, Graduacão, Pós, Mestrado, etc");
-            $table->tinyInteger('ano_ingresso')->default('')->comment("Ano de ingresso na PRF");
-            $table->string('centro_treinamento')->default('')->comment("Centro de treinamento");
-            $table->string('cargo')->default('')->comment("Cargo Exercido");
-            $table->json('funcoes')->nullable()->comment("Funções exercidas na PRF");
-            $table->string('grupo_especializado')->default('')->comment("Grupo Especializado ao qual faz parte na PRF");
-            $table->json('unidades_lotado')->nullable()->comment("Unidades que ja foi lotado na PRF");
-            $table->string('lotacao_atual')->default('')->comment("Lotação atual na PRF");
-           
+            $table->tinyInteger('ano_ingresso')->default(0)->comment("Ano de ingresso");
+            $table->json('funcoes')->nullable()->comment("Funções exercidas e que exerce");
+            $table->json('unidades_lotado')->nullable()->comment("Unidades que ja foi lotado");
+            $table->string('lotacao_atual')->default('')->comment("Lotação atual");
+            $table->json('atividades_fora')->nullable()->comment("Quais atividades você desempenhou fora e que podem contribuir para a instituição");
+            $table->json('atividades_internas')->nullable()->comment("Quais atividades você desempenhou internamente que podem contribuir para a instituição");
+            $table->json('docencia_fora')->nullable()->comment("Você já realizou algum trabalho de docência fora da Instituição");
+            $table->json('docencia_interna')->nullable()->comment("Você é docente ou instrutor da Instituição");
+            $table->json('curso_fora')->nullable()->comment("Quais cursos você já fez e quais pretende fazer fora da Instituição");
+            $table->json('curso_interno')->nullable()->comment("Quais os principais cursos que você já fez e pretende fazer na Instituição");
+            $table->tinyInteger('viagem_nacional')->default(0)->comment("Já fez viagem nacional a trabalho");
+            $table->tinyInteger('viagem_internacional')->default(0)->comment("Já fez viagem internacional a trabalho");
+            $table->tinyInteger('interesse_bnt')->default(0)->comment("Você tem interesse na participação do Banco Nacional de Talentos");
+            $table->string('pgd_inserido')->default('')->comment("Você está inserido no programa de gestão da Instituição");
+            $table->string('pgd_interesse')->default('')->comment("Você tem interesse em participar do programa de gestão da Instituição");
+            $table->string('telefone',64)->nullable()->comment("Telefone do chefe imediato");
+            $table->tinyInteger('remocao')->default(0)->comment("Você tem interesse em remoção");
             // Chaves estrangeiras:
             $table->foreignUuid('curriculum_id')->constrained("curriculums")->onDelete('restrict')->onUpdate('cascade');
-            //$table->foreignUuid('area_conhecimento_id')->constrained("areas_conhecimentos")->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('curso_id')->constrained("cursos")->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('centro_treinamento_id')->constrained("centros_treinamentos")->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('cargo_id')->constrained("cargos")->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('grupo_especializado_id')->constrained("grupos_especializados")->onDelete('restrict')->onUpdate('cascade');
+            //$table->foreignUuid('materia_id')->constrained("materias")->onDelete('restrict')->onUpdate('cascade');
+            //$table->foreignUuid('curso_id')->constrained("cursos")->onDelete('restrict')->onUpdate('cascade');
+           
             
         });
     }
