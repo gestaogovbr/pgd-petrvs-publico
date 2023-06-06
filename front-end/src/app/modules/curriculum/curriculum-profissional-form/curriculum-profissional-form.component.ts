@@ -21,9 +21,14 @@ import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 })
 export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum, CurriculumDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  @ViewChild(InputSwitchComponent, { static: false }) public radioDocenciaFora?: InputSwitchComponent;
-  @ViewChild(InputSwitchComponent, { static: false }) public radioDocenciaPRF?: InputSwitchComponent;
-  @ViewChild(InputSwitchComponent, { static: false }) public radioCursos?: InputSwitchComponent;
+  @ViewChild('radioDocenciaFora', { static: false }) public radioDocenciaFora?: InputSwitchComponent;
+  @ViewChild('radioDocenciaPRF', { static: false }) public radioDocenciaPRF?: InputSwitchComponent;
+  @ViewChild('radioCursos', { static: false }) public radioCursos?: InputSwitchComponent;
+  @ViewChild('radioCursosFora', { static: false }) public radioCursosFora?: InputSwitchComponent;
+  @ViewChild('radioInteresseBNT', { static: false }) public radioInteresseBNT?: InputSwitchComponent;
+  @ViewChild('radioPG', { static: false }) public radioPG?: InputSwitchComponent;
+  @ViewChild('radioInteressePG', { static: false }) public radioInteressePG?: InputSwitchComponent;
+  @ViewChild('radioInteresseRemove', { static: false }) public radioInteresseRemove?: InputSwitchComponent;
   
   public testeLookup: LookupItem[] = [{ 'key': 'key 1', 'value': 'value 1' }];
   public anos: LookupItem[] = [];
@@ -35,7 +40,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   public funcaoDao?: FuncaoDaoService;
   public ctDao?: CentroTreinamentoDaoService;
   public grupoDao?: GrupoEspecializadoDaoService;
-  public unidadeDao?: UnidadeDaoService
+  public unidadeDao?: UnidadeDaoService;
  
   constructor(public injector: Injector) {
     super(injector, Curriculum, CurriculumDaoService);
@@ -52,6 +57,8 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       radioPretendoCursosFora: { default: false },
       radioPG: { default: false },
       radioInteressePG: { default: false },
+      radioInteresseBNT: { default: false },
+      radioInteresseRemove: { default: false },
       ano_ingresso: { default: false },
       centro_treinamento: { default: false },
       cargo: { default: false },
@@ -113,17 +120,5 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
 
   public onAddClick() { }
 
-  public onDocenciaForaChange() {
-      this.radioDocenciaFora!.value === true ? this.radioDocenciaFora!.label = 'Sim' : this.radioDocenciaFora!.label = 'Não';
-  }
-
-  public onDocenciaPRFChange(){
-    console.log('CHANGE',this.radioDocenciaPRF?.value);
-    //this.radioDocenciaPRF!.label='SIM';
-    //this.radioDocenciaPRF!.value == true ? this.radioDocenciaPRF!.label = 'Sim' : this.radioDocenciaPRF!.label = 'Não';
-  }
-
-  public onCursoInternoChange(){
-    console.log('CHANGE',this.radioCursos?.value);
-  }
+ 
 }

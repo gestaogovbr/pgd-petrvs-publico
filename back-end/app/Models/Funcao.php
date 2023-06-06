@@ -12,6 +12,9 @@ class Funcao extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'nome',
+        'nivel',
+        'descricao',
+        'codigo',
         'ativo',
     ];
 

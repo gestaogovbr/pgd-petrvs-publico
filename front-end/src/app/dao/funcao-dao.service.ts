@@ -10,7 +10,7 @@ export class FuncaoDaoService extends DaoBaseService<Funcao>{
  
   constructor(protected injector: Injector) { 
     super("Funcao", injector);
-    this.searchFields = ["nome", "ativo"];
+    this.searchFields = ["nome", "nivel", "descricao", "codigo", "ativo"];
   }  
 }
 

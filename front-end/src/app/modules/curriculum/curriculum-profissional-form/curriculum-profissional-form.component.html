@@ -91,8 +91,7 @@
             <div class="row">
                 <separator class="my-3" title="Você já realizou algum trabalho de docência fora da Instituição?" [bold]="true">
                 </separator>
-                <input-switch [size]="2" label="Não" icon="fas fa-chalkboard" controlName="radioDocenciaFora"
-                    [control]="form!.controls.radioDocenciaFora" (change)="onDocenciaForaChange()">
+                <input-switch [size]="2" #radioDocenciaFora [label]="radioDocenciaFora.value ? 'Sim' : 'Não'" icon="fas fa-chalkboard" controlName="radioDocenciaFora" [control]="form!.controls.radioDocenciaFora">
                 </input-switch>
                 <input-multiselect [hidden]="!(form!.controls.radioDocenciaFora.value)" [size]="8" label=""
                     [control]="form!.controls.docenciaFora" controlName="docenciaFora"
@@ -106,9 +105,7 @@
             </div>
             <div class="row">
                 <separator class="my-3" title="Você é docente ou instrutor da Instituição?" [bold]="true"></separator>
-                <input-switch [size]="2" label="Não" icon="fas fa-chalkboard" controlName="radioDocenciaPRF"
-                    [control]="form!.controls.radioDocenciaPRF" (change)="onDocenciaPRFChange()">
-                </input-switch>
+                <input-switch [size]="2" #radioDocenciaPRF [label]="radioDocenciaPRF.value ? 'Sim' : 'Não'" icon="fas fa-chalkboard" controlName="radioDocenciaPRF" [control]="form!.controls.radioDocenciaPRF"></input-switch>
                 <input-multiselect [hidden]="!((form!.controls.radioDocenciaPRF.value))" [size]="8"
                     label="Em qual/quais disciplinas?" icon="bi bi-mortarboard-fill"
                     [control]="form!.controls.docenciaFora" controlName="docenciaPRF"
@@ -123,26 +120,17 @@
         <tab key="CURSOS" class="fw-bold mb-3" label="Cursos">
 
             <div class="row">
-                <separator class="my-3" title="Quais os principais cursos que você já fez e pretende fazer na Instituição?" [bold]="true">
-                </separator>
-                <input-switch [size]="2" label="Pretendo" icon="fas fa-user-graduate"
-                    controlName="radioCursos" [control]="form!.controls.radioCursos" (change)="onCursoInternoChange()">
-                </input-switch>
-                <input-multiselect [hidden]="!(form!.controls.radioCursos.value)" [size]="8" label=""
-                    [control]="form!.controls.cursosPRF" controlName="cursosPRF"
-                    [addItemHandle]="addItemFuncao.bind(this)" noBox>
-                    <input-search #area [size]="4" label="Área" [control]="form!.controls.areaCursoPRF"
-                        controlName="areaCursoPRF"></input-search>
-                    <input-select [size]="8" label="Curso" icon="bi bi-mortarboard-fill" controlName="selectCursosPRF"
-                        liveSearch [control]="form!.controls.selectCursosPRF" [items]="testeLookup">
-                    </input-select>
-
+                <separator class="my-3" title="Quais os principais cursos que você já fez e pretende fazer na Instituição?" [bold]="true"></separator>
+                <input-switch [size]="2" #radioCursos [label]="radioCursos.value ? 'Pretendo' : 'Não Pretendo'" icon="fas fa-user-graduate" controlName="radioCursos" [control]="form!.controls.radioCursos"></input-switch>
+                <input-multiselect [hidden]="!(form!.controls.radioCursos.value)" [size]="8" label="" [control]="form!.controls.cursosPRF" controlName="cursosPRF" [addItemHandle]="addItemFuncao.bind(this)" noBox>
+                    <input-search #area [size]="4" label="Área" [control]="form!.controls.areaCursoPRF" controlName="areaCursoPRF"></input-search>
+                    <input-select [size]="8" label="Curso" icon="bi bi-mortarboard-fill" controlName="selectCursosPRF" liveSearch [control]="form!.controls.selectCursosPRF" [items]="testeLookup"></input-select>
                 </input-multiselect>
             </div>
            
             <div class="row mb-3">
                 <separator class="my-3" title="Quais cursos você já fez e quais pretende fazer fora da Instituição?" [bold]="true"></separator>
-                <input-switch [size]="2" label="Pretendo" icon="fas fa-user-graduate"
+                <input-switch [size]="2" #radioCursosFora [label]="radioCursosFora.value ? 'Pretendo' : 'Não Pretendo'" icon="fas fa-user-graduate"
                     controlName="radioCursosFora" [control]="form!.controls.radioCursosFora">
                 </input-switch>
                 <input-multiselect [hidden]="!(form!.controls.radioCursosFora.value)" [size]="8" label=""
@@ -175,7 +163,7 @@
                     title="Você tem interesse na participação do Banco Nacional de Talentos (BNT IN PRF Nº 58 de 27 de agosto de 2021) SEI 35010079?"
                     [bold]="true">
                 </separator>
-                <input-switch [size]="1" label="SIm/Não" icon="fas fa-user-graduate" controlName="radioInteresseBNT"
+                <input-switch [size]="1" #radioInteresseBNT [label]="radioInteresseBNT.value ? 'Sim' : 'Não'" icon="fas fa-user-graduate" controlName="radioInteresseBNT"
                     [control]="form!.controls.radioInteresseBNT">
                 </input-switch>
 
@@ -183,7 +171,7 @@
             <div class="row">
                 <separator class="my-3" title="Você está inserido no programa de gestão da Instituição?" [bold]="true">
                 </separator>
-                <input-switch [size]="1" label="SIm/Não" icon="fas fa-user-graduate" controlName="radioPG"
+                <input-switch [size]="1" #radioPG [label]="radioPG.value ? 'Sim' : 'Não'" icon="fas fa-user-graduate" controlName="radioPG"
                     [control]="form!.controls.radioPG">
                 </input-switch>
                 <input-radio *ngIf="form!.controls.radioPG.value" [size]="4" label="Opções" [items]="lookup.PG_PRF"
@@ -194,7 +182,7 @@
             <div class="row">
                 <separator class="my-3" title="Você tem interesse em participar do programa de gestão da Instituição" [bold]="true">
                 </separator>
-                <input-switch [size]="1" label="SIm/Não" icon="fas fa-user-graduate" controlName="radioInteressePG"
+                <input-switch [size]="1" #radioInteressePG [label]="radioInteressePG.value ? 'Sim' : 'Não'" icon="fas fa-user-graduate" controlName="radioInteressePG"
                     [control]="form!.controls.radioInteressePG">
                 </input-switch>
                 <input-radio *ngIf="form!.controls.radioInteressePG.value" [size]="4" label="Opções"
@@ -205,7 +193,7 @@
             <div class="row">
                 <separator class="my-3" title="Você tem interesse em remoção?" [bold]="true">
                 </separator>
-                <input-switch [size]="1" label="SIm/Não" icon="fas fa-user-graduate" controlName="radioInteresseRemove"
+                <input-switch [size]="1" #radioInteresseRemove [label]="radioInteresseRemove.value ? 'Sim' : 'Não'" icon="fas fa-user-graduate" controlName="radioInteresseRemove"
                     [control]="form!.controls.radioInteresseRemove">
                 </input-switch>
             </div>

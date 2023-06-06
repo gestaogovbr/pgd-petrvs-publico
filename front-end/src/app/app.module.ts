@@ -23,6 +23,7 @@ import { CadeiaValorModule } from './modules/gestao/cadeia-valor/cadeia-valor.mo
 import { CurriculumModule } from './modules/curriculum/curriculum.module';
 import { CurriculumListComponent } from './modules/cadastros/curriculum/curriculum-list/curriculum-list.component';
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -35,8 +36,7 @@ import { CurriculumListComponent } from './modules/cadastros/curriculum/curricul
     TesteFormComponent,
     CurriculumListComponent,
     
-    
-    
+        
   ],
   imports: [
     BrowserModule,

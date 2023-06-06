@@ -162,6 +162,7 @@ export class AppComponent {
       RXCADASTRO_ADM_FUNCAO: { name: this.lex.noun("Cadastro das Funções", true), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros','gerais','funcao'], icon: "bi bi-check-circle-fill" },
       RXCADASTRO_ADM_GRUPOS_ESPECIALIZADOS: { name: this.lex.noun("Cadastro de Grupos Especializados", true), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros','gerais','ge'], icon: "bi bi-check-circle" },
       RXCADASTRO_ADM_OPORTUNIDADES: { name: this.lex.noun("Cadastro das Oportunidades", true), permition: 'MOD_RX_EDT_OPO', route: ['raiox', 'apoadm'], icon: "bi bi-lightbulb" },
+      RXCADASTRO_ADM_MATERIAS: { name: this.lex.noun("Cadastro de Matérias", true), permition: 'MOD_RX_EDT_OPO', route: ['raiox', 'cadastros','gerais','materia'], icon: "bi bi-list-check" },
       RXVISUALIZA_ADM_OPORTUNIDADES: { name: this.lex.noun("Cadastro Pesquisa Oportunidades", true), permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-boxes" },
       /*PROJETOS*/
     };
@@ -257,10 +258,11 @@ export class AppComponent {
           this.menuSchema.RXCADASTRO_ADM_AREA_CONHECIMENTO,
           this.menuSchema.RXCADASTRO_ADM_CURSOS,
           this.menuSchema.RXCADASTRO_ADM_TIPOS_CURSOS,
-          this.menuSchema.RXCADASTRO_ADM_ATRIBUTOS,
+          //this.menuSchema.RXCADASTRO_ADM_ATRIBUTOS,
           this.menuSchema.RXCADASTRO_ADM_OPORTUNIDADES,
           this.menuSchema.RXCADASTRO_ADM_CT,
-          this.menuSchema.RXCADASTRO_ADM_FUNCAO
+          this.menuSchema.RXCADASTRO_ADM_FUNCAO,
+          this.menuSchema.RXCADASTRO_ADM_MATERIAS
         ],
 
       }

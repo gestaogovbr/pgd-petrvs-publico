@@ -21,10 +21,10 @@ class CreateCurriculumsProfissionais extends Migration
             // Campos:
             
             //$table->tinytext('titulo')->comment("Titulo do curso, Graduacão, Pós, Mestrado, etc");
-            $table->string('ano_ingresso')->default('')->comment("Ano de ingresso na PRF");
+            $table->tinyInteger('ano_ingresso')->default('')->comment("Ano de ingresso na PRF");
             $table->string('centro_treinamento')->default('')->comment("Centro de treinamento");
             $table->string('cargo')->default('')->comment("Cargo Exercido");
-            $table->string('funcoes')->default('')->comment("Funções exercidas na PRF");
+            $table->json('funcoes')->nullable()->comment("Funções exercidas na PRF");
             $table->string('grupo_especializado')->default('')->comment("Grupo Especializado ao qual faz parte na PRF");
             $table->json('unidades_lotado')->nullable()->comment("Unidades que ja foi lotado na PRF");
             $table->string('lotacao_atual')->default('')->comment("Lotação atual na PRF");

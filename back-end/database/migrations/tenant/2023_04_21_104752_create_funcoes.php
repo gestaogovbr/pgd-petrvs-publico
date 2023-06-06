@@ -19,7 +19,10 @@ class CreateFuncoes extends Migration
             $table->primary('id');
             $table->timestamps();
             // Campos:
-            $table->string('nome', 256)->comment("Nome da funcao exercendo/exercida");
+            $table->string('nome', 256)->comment("Nome da Função");
+            $table->string('nivel', 256)->nullable()->comment("Nível da Função");
+            $table->string('descricao', 256)->nullable()->comment("Descrição da Função");
+            $table->string('codigo', 256)->nullable()->comment("código SIAPE da Função");
             $table->tinyInteger('ativo')->default(1)->comment("Função ativo ou inativo");
             // Chaves estrangeiras:
            

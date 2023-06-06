@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
-//use App\Models\Curso;
 use App\Traits\AutoDataInicio;
 
 
@@ -13,8 +12,10 @@ class Cargo extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'nome',
-        'das',
+        'nivel',
+        'descricao',
         'codigo',
+        'efetivo',
         'ativo'
         
     ];

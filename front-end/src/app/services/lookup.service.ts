@@ -571,6 +571,16 @@ export class LookupService {
   ];
 
   public TITULOS_CURSOS: LookupItem[] = [
+    { 'key': 'GRAD_TEC', 'value': 'Tecnólogo' },
+    { 'key': 'GRAD_BAC', 'value': 'Bacharelado' },
+    { 'key': 'GRAD_LIC', 'value': 'Licenciatura' },
+    { 'key': 'ESPECIAL', 'value': 'Especialização' },
+    { 'key': 'MESTRADO', 'value': 'Mestrado' },
+    { 'key': 'DOUTORADO', 'value': 'Doutorado' },
+    { 'key': 'POS_DOUTORADO', 'value': 'Pós Doutorado' }
+  ];
+
+  public TITULOS_CURSOS_INST: LookupItem[] = [
     { 'key': 'INSTITUCIONAL', 'value': 'Institucional' },
     { 'key': 'GRAD_TEC', 'value': 'Tecnólogo' },
     { 'key': 'GRAD_BAC', 'value': 'Bacharelado' },

@@ -18,6 +18,11 @@ import { FuncaoFormComponent } from './funcao-form/funcao-form.component';
 import { FuncaoListComponent } from './funcao-list/funcao-list.component';
 import { GrupoEspecializadoListComponent } from './grupo-especializado-list/grupo-especializado-list.component';
 import { GrupoEspecializadoFormComponent } from './grupo-especializado-form/grupo-especializado-form.component';
+import { MateriaFormComponent } from './materia-form/materia-form.component';
+import { MateriaListComponent } from './materia-list/materia-list.component';
+import { CargoFormComponent } from './cargo-form/cargo-form.component';
+import { CargoListComponent } from './cargo-list/cargo-list.component';
+
 
 @NgModule({
   declarations: [
@@ -32,7 +37,11 @@ import { GrupoEspecializadoFormComponent } from './grupo-especializado-form/grup
     FuncaoFormComponent,
     FuncaoListComponent,
     GrupoEspecializadoFormComponent,
-    GrupoEspecializadoListComponent
+    GrupoEspecializadoListComponent,
+    MateriaFormComponent,
+    MateriaListComponent,
+    CargoFormComponent,
+    CargoListComponent
   
   ],
   imports: [

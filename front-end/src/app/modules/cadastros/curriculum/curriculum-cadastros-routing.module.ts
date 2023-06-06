@@ -15,6 +15,8 @@ import { FuncaoFormComponent } from './funcao-form/funcao-form.component';
 import { FuncaoListComponent } from './funcao-list/funcao-list.component';
 import { GrupoEspecializadoListComponent } from './grupo-especializado-list/grupo-especializado-list.component';
 import { GrupoEspecializadoFormComponent } from './grupo-especializado-form/grupo-especializado-form.component';
+import { MateriaListComponent } from './materia-list/materia-list.component';
+import { MateriaFormComponent } from './materia-form/materia-form.component';
 
 
 const routes: Routes = [
@@ -43,7 +45,10 @@ const routes: Routes = [
   { path: 'gerais/ge/new', component: GrupoEspecializadoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
   { path: 'gerais/ge/:id/edit', component: GrupoEspecializadoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
   { path: 'gerais/ge/:id/consult', component: GrupoEspecializadoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } },
-
+  { path: 'gerais/materia', component: MateriaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Lista", modal: false } },
+  { path: 'gerais/materia/new', component: MateriaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
+  { path: 'gerais/materia/:id/edit', component: MateriaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
+  { path: 'gerais/materia/:id/consult', component: MateriaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } },
 
 ];
 

@@ -56,6 +56,7 @@ import { FuncaoDaoService } from '../dao/funcao-dao.service';
 import { GrupoEspecializadoDaoService } from '../dao/grupo-epecializado-dao.service';
 import { PlanoEntregaObjetivoDaoService } from '../dao/plano-entrega-objetivo-dao.service';
 import { PlanoEntregaProcessoDaoService } from '../dao/plano-entrega-processo-dao.service';
+import { CursoDaoService } from '../dao/curso-dao.service';
 
 export type EntityItem = {
     collection: string,
@@ -101,7 +102,8 @@ export class EntityService {
             { collection: 'GrupoEspecializado', codigo: 'MOD_RX', table: 'grupos_especializados', campo: 'nome', icon: 'bi bi-check-circle', dao: injector.get<GrupoEspecializadoDaoService>(GrupoEspecializadoDaoService), label: "Grupos Especializados", selectRoute: { route: ['raiox', 'cadastros','gerais','ge'] } },
             { collection: 'Integracao', table: 'integracoes', campo: 'usuario_id', icon: 'bi bi-pencil-square', dao: injector.get<IntegracaoDaoService>(IntegracaoDaoService), label: "Integração" },
             { collection: 'Lotacao', codigo: 'MOD_LOT', table: 'lotacoes', campo: 'usuario_id', icon: '', dao: injector.get<LotacaoDaoService>(LotacaoDaoService), label: "Lotação" },
-            { collection: 'MaterialServico', codigo: 'MOD_MATSRV', table: 'materiais_servicos', campo: 'descricao', icon: 'bi bi-box-seam', dao: injector.get<MaterialServicoDaoService>(MaterialServicoDaoService), label: "Material/Serviço", selectRoute: { route: ['cadastros', 'material-servico'] } },
+            { collection: 'Materia', codigo: 'MOD_RX', table: 'materias', campo: 'nome', icon: 'bi bi-list-check', dao: injector.get<CursoDaoService>(CursoDaoService), label: "Matérias", selectRoute: { route: ['raiox', 'cadastros','gerais','materia'] } },
+            { collection: 'MaterialServico', codigo: 'MOD_MATSRV', table: 'materiais_servicos', campo: 'descricao', icon: 'bi bi-list-check', dao: injector.get<MaterialServicoDaoService>(MaterialServicoDaoService), label: "Material/Serviço", selectRoute: { route: ['cadastros', 'material-servico'] } },
             { collection: 'Perfil', codigo: 'MOD_PERF', table: 'perfis', campo: 'nome', icon: 'bi bi-fingerprint', dao: injector.get<PerfilDaoService>(PerfilDaoService), label: "Perfil", selectRoute: { route: ['configuracoes', 'perfil'] } },
             { collection: 'Planejamento', codigo: 'MOD_PLAN_INST', table: 'planejamentos', campo: 'nome', icon: 'bi bi-journals', dao: injector.get<PlanejamentoDaoService>(PlanejamentoDaoService), label: "Planejamento Institucional", selectRoute: { route: ['gestao', 'planejamento'] } },
             { collection: 'PlanejamentoObjetivo', table: 'planejamentos_objetivos', campo: 'nome', icon: 'bi bi-bullseye', dao: injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService), label: "Objetivo do Planejamento", selectRoute: { route: ['gestao', 'planejamento', 'objetivoList'] } },

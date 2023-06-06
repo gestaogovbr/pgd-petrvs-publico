@@ -19,5 +19,6 @@ class AreaConhecimento extends ModelBase
 
     // Has
     public function cursos() { return $this->hasMany(CursoGraduacao::class, 'area_curso_id'); }
+    public function materia() { return $this->hasMany(CursoGraduacao::class, 'area_materia_id'); }
     
 }

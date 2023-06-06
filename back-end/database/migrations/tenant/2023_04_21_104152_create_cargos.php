@@ -20,8 +20,10 @@ class CreateCargos extends Migration
             $table->timestamps();
             // Campos:
             $table->string('nome', 256)->comment("Nome do Cargo");
-            $table->string('das', 256)->nullable()->comment("DAS do Cargo");
-            $table->string('codigo', 256)->nullable()->comment("código do Cargo");
+            $table->string('nivel', 256)->nullable()->comment("Nível do Cargo");
+            $table->string('descricao', 256)->nullable()->comment("Descrição do Cargo");
+            $table->string('codigo', 256)->nullable()->comment("código SIAPE do Cargo");
+            $table->tinyInteger('efetivo')->default(1)->comment("Cargo efetivo ou comissionado");
             $table->tinyInteger('ativo')->default(1)->comment("Cargo ativo ou inativo");
             // Chaves estrangeiras:
            

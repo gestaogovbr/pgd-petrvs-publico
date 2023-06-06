@@ -267,6 +267,7 @@ Route::middleware(['auth:sanctum'])->prefix('Capacidade')->group(function () { d
 Route::middleware(['auth:sanctum'])->prefix('AreaConhecimento')->group(function () { defaultRoutes(AreaConhecimentoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Curso')->group(function () { defaultRoutes(CursoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('TipoCurso')->group(function () { defaultRoutes(TipoCursoController::class); });
+Route::middleware(['auth:sanctum'])->prefix('Materia')->group(function () { defaultRoutes(MateriaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Curriculum')->group(function () { defaultRoutes(CurriculumController::class); });
 Route::middleware(['auth:sanctum'])->prefix('CurriculumGraduacao')->group(function () { defaultRoutes(CurriculumGraduacaoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Funcao')->group(function () { defaultRoutes(FuncaoController::class); });

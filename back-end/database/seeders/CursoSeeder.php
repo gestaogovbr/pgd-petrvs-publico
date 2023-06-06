@@ -16,7 +16,7 @@ class CursoSeeder extends Seeder
     {
        $array_cursos =  [  
         /* Ciências exatas e da terra */
-    ['area'=>'4d4f25c4-af4e-4483-ab14-3751e8347532','nome'=>'Matemática','titulo'=>'GRAD_BAC','tipo'=>'fa5e96e5-a1ce-4f2d-b4b3-acd504fa8c9b','tipo'=>'fa5e96e5-a1ce-4f2d-b4b3-acd504fa8c9b'],
+    ['area'=>'4d4f25c4-af4e-4483-ab14-3751e8347532','nome'=>'Matemática','titulo'=>'GRAD_BAC','tipo'=>'fa5e96e5-a1ce-4f2d-b4b3-acd504fa8c9b'],
     ['area'=>'4d4f25c4-af4e-4483-ab14-3751e8347532','nome'=>'Estatística','titulo'=>'GRAD_BAC','tipo'=>'fa5e96e5-a1ce-4f2d-b4b3-acd504fa8c9b'],
     ['area'=>'4d4f25c4-af4e-4483-ab14-3751e8347532','nome'=>'Ciência Da Computação','titulo'=>'GRAD_BAC','tipo'=>'fa5e96e5-a1ce-4f2d-b4b3-acd504fa8c9b'],
     ['area'=>'4d4f25c4-af4e-4483-ab14-3751e8347532','nome'=>'Astronomia','titulo'=>'GRAD_BAC','tipo'=>'fa5e96e5-a1ce-4f2d-b4b3-acd504fa8c9b'],
@@ -135,7 +135,7 @@ class CursoSeeder extends Seeder
     ['area'=>'5bd2464b-6722-4f7f-afa3-bf70d33d46f5','nome'=>'MBA em Lingua Portuguesa e Linguistica','titulo'=>'ESPECIAL','tipo'=>'fa5e96e5-a1ce-4f2d-b4b3-acd504fa8c9b'],//MBA
 
     /*Intitucional Operacional*/
-    ['area'=>'b5cc2c7d-e50a-4212-acf9-d87e1f5a7f69','nome'=>'Curso Avançado em Gestão Operacional','titulo'=>'INSTITUCIONAL','tipo'=>'8b20225c-6333-442c-a175-32806000c89e','tipo'=>'8b20225c-6333-442c-a175-32806000c89e'],
+    ['area'=>'b5cc2c7d-e50a-4212-acf9-d87e1f5a7f69','nome'=>'Curso Avançado em Gestão Operacional','titulo'=>'INSTITUCIONAL','tipo'=>'8b20225c-6333-442c-a175-32806000c89e'],
     ['area'=>'b5cc2c7d-e50a-4212-acf9-d87e1f5a7f69','nome'=>'Curso de Operações Temáticas de Combate ao Crime','titulo'=>'INSTITUCIONAL','tipo'=>'8b20225c-6333-442c-a175-32806000c89e'],
     ['area'=>'b5cc2c7d-e50a-4212-acf9-d87e1f5a7f69','nome'=>'Curso de Combate às Infrações de Menor Potencial Ofensivo','titulo'=>'INSTITUCIONAL','tipo'=>'8b20225c-6333-442c-a175-32806000c89e'],
     ['area'=>'b5cc2c7d-e50a-4212-acf9-d87e1f5a7f69','nome'=>'Instrução em Cursos de Altos Estudos Policiais','titulo'=>'INSTITUCIONAL','tipo'=>'8b20225c-6333-442c-a175-32806000c89e'],
