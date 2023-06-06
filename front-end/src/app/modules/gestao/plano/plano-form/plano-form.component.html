@@ -37,7 +37,7 @@
                                 <span> {{row.atividade?.nome || ""}}</span>
                             </ng-template>
                             <ng-template let-row="row" #editAtividade>
-                                <input-search #atividade [size]="12" controlName="atividade_id" [control]="formAtividades!.controls.atividade_id" [dao]="atividadeDao"></input-search>
+                                <input-search #atividade [size]="12" label icon controlName="atividade_id" [control]="formAtividades!.controls.atividade_id" [dao]="atividadeDao"></input-search>
                             </ng-template>
                         </column>
                         <column type="options"></column>
