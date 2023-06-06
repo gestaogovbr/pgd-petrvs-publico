@@ -11,7 +11,7 @@
                     <small>{{row.unidade_origem?.codigo || ""}} - {{row.unidade_origem?.sigla || ""}}</small>
                 </ng-template>
                 <ng-template let-row="row" #editUnidadeOrigem>
-                    <input-search #unidade_origem [size]="12" controlName="unidade_origem_id" [dao]="dao" [where]="[['inativo', '!=', null]]" [selectRoute]="{route: ['configuracoes', 'unidade'], params: {filter: {inativos: true}}}"></input-search>
+                    <input-search #unidade_origem [size]="12" label icon controlName="unidade_origem_id" [dao]="dao" [where]="[['inativo', '!=', null]]" [selectRoute]="{route: ['configuracoes', 'unidade'], params: {filter: {inativos: true}}}"></input-search>
                 </ng-template>
             </column>
             <column [title]="lex.noun('Unidade') + ' destino'" titleHint="Unidade que sobrará após a unificação" [template]="columnUnidadeDestino" [editTemplate]="editUnidadeDestino">
@@ -20,7 +20,7 @@
                     <small>{{row.unidade_destino?.codigo || ""}} - {{row.unidade_destino?.sigla || ""}}</small>
                 </ng-template>
                 <ng-template let-row="row" #editUnidadeDestino>
-                    <input-search #unidade_destino [size]="12" controlName="unidade_destino_id" [dao]="dao" [where]="[['inativo', '==', null]]" [selectRoute]="{route: ['configuracoes', 'unidade'], params: {filter: {inativos: false}}}"></input-search>
+                    <input-search #unidade_destino [size]="12" label icon controlName="unidade_destino_id" [dao]="dao" [where]="[['inativo', '==', null]]" [selectRoute]="{route: ['configuracoes', 'unidade'], params: {filter: {inativos: false}}}"></input-search>
                 </ng-template>
             </column>
             <column type="options"></column>
