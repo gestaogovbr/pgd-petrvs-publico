@@ -106,12 +106,12 @@ class PlanoEntregaController extends ControllerBase {
                 break;
             case 'STORE':
                 $data = $request->validate(['entity' => ['required'],'with' => ['array']]);
+                $data['entity']['unidade'] = Unidade::find($data['entity']['unidade_id'])->toArray();
                 $condicoes = $service->buscaCondicoes($data['entity']);
                 $acao = UtilService::emptyEntry($data['entity'], "id") ? 'INSERT' : 'UPDATE';
                 switch ($acao) {
                     case 'UPDATE':
                         $canStore = false;
-                        $data['entity']['unidade'] = Unidade::find($data['entity']['unidade_id'])->toArray();
                         $condition1 = ($condicoes['planoIncluindo'] || $condicoes['planoHomologando']) && ($condicoes['gestorUnidadePlano'] || ($condicoes['unidadePlanoEhLotacaoPrincipal'] && $usuario->hasPermissionTo('MOD_PENT_EDT')));
                         $condition2 = $condicoes['planoValido'] && $usuario->hasPermissionTo("MOD_PENT_EDT_FLH") && ($condicoes['gestorUnidadePaiUnidadePlano'] || UsuarioService::isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $data['entity']['unidade']['unidade_id']));
                         $condition3 = $condicoes['planoAtivo'] && $condicoes['unidadePlanoEhLotacaoPrincipal'] && $usuario->hasPermissionTo(['MOD_PENT_EDT_ATV_HOMOL','MOD_PENT_EDT_ATV_ATV']);
