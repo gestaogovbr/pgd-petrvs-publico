@@ -11,6 +11,8 @@ import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { Usuario } from 'src/app/models/usuario.model';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { IIndexable } from 'src/app/models/base.model';
 
 @Component({
   selector: 'app-programa-participantes',
@@ -23,13 +25,16 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
 
   public unidadeDao: UnidadeDaoService;
   public usuarioDao: UsuarioDaoService;
+  public programaParticipanteService: ProgramaParticipanteDaoService;
   public programaId: string = "";
   public form: FormGroup;
+  public multiselectAllFields: string[] = ["usuario_id", "habilitado"];
 
   constructor(public injector: Injector) {
     super(injector, ProgramaParticipante, ProgramaParticipanteDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
+    this.programaParticipanteService = injector.get<ProgramaParticipanteDaoService>(ProgramaParticipanteDaoService);
     /* Inicializações */
     this.code = "MOD_PRGT_PART";
     this.filter = this.fh.FormBuilder({
@@ -112,6 +117,33 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
       this.cdRef.detectChanges();
     }
     return result;
+  }
+
+  public dynamicMultiselectMenu = (multiselected: IIndexable): ToolbarButton[] => {
+    let habilitar = !!Object.keys(multiselected).length;
+    let menu = [];
+      menu.push({label: "Habilitar", icon: "bi bi-person-check",  onClick: this.habilitar.bind(this)});
+    return menu;
+  }
+
+  public habilitar(row?: ProgramaParticipante) {
+    const participantesIds = row ? [row.id] : Object.keys(this.grid!.multiselected || {});
+    if(!participantesIds.length) {
+      this.dialog.alert("Selecione", "Nenhum plano seleciono");
+    } else {
+      
+      /*this.dialog.confirm("Assinar", "Deseja realmente assinar " + documentosIds.length + " documento" + (documentosIds.length > 1 ? "s" : "") + "?").then(response => {
+        if(response) {
+          this.loading = true;
+          this.documentoDao.assinar(documentosIds).then(response => {
+            if(response?.length) {
+              this.dialog.alert("Assinados", response.length > 1 ? "Foram assinados " + response.length + " documentos!" : "Documento assinado com sucesso!");
+              this.refresh();
+            }
+          }).catch((error) => this.error("Erro ao tentar assinar: " + error.toString())).finally(() => this.loading = false);
+        }
+      });*/
+    }
   }
 
 }
