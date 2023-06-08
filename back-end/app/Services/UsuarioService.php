@@ -202,7 +202,7 @@ class UsuarioService extends ServiceBase
      * @param string $atribuicao 
      * @param string $unidade_id 
      */
-    public static function isIntegrante(string $atribuicao, string $unidade_id): bool {
+    public static function isIntegrante(string $atribuicao, string | null $unidade_id): bool {
         $unidade = !empty($unidade_id) ? Unidade::find($unidade_id) : null;
         return !empty($unidade) ? !!array_filter($unidade->integrantes->toArray(), fn($i) => $i->atribuicao == $atribuicao) : false; 
     }

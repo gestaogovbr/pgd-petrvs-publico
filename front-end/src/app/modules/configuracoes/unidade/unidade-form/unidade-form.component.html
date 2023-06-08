@@ -65,7 +65,7 @@
                             <span> {{row.unidade_origem_atividade?.nome || ""}}</span>
                         </ng-template>
                         <ng-template let-row="row" #editUnidade>
-                            <input-search #unidade_origem_atividade [size]="12" controlName="unidade_origem_atividade_id" [control]="formUnidadesOrigemAtividades!.controls.unidade_origem_atividade_id" [dao]="unidadeDao"></input-search>
+                            <input-search #unidade_origem_atividade [size]="12" label icon controlName="unidade_origem_atividade_id" [control]="formUnidadesOrigemAtividades!.controls.unidade_origem_atividade_id" [dao]="unidadeDao"></input-search>
                         </ng-template>
                     </column>
                     <column type="options"></column>
