@@ -8,7 +8,7 @@
                 <separator></separator>
                 <div class="row">
                     <input-search #entrega [size]="6" controlName="entrega_id" [dao]="entregaDao"></input-search>
-                    <input-text [size]="6" label="Descrição da Entrega" controlName="descricao"></input-text>
+                    <input-text [size]="6" label="Detalhamento" controlName="descricao"></input-text>
                 </div>
                 <separator title="Especificação das Entregas"></separator>
                 <div class="row">
@@ -29,7 +29,7 @@
                 </div>
                 <div class="row">
                     <input-number [size]="6" label="Progresso Esperado" controlName="progresso_esperado" sufix="%"></input-number>
-                    <input-number [size]="6" label="Progresso Realizado" [stepValue]="0.01" controlName="util.formatDecimal(progresso_realizado)" sufix="%" disabled></input-number>
+                    <input-number [size]="6" label="Progresso Realizado" [stepValue]="0.01" controlName="progresso_realizado" sufix="%" disabled></input-number>
                 </div>
             </div>
         </tab>
@@ -44,7 +44,7 @@
                             <span>{{row.objetivo.nome}}</span>
                         </ng-template>
                         <ng-template let-row="row" #editObjetivo>
-                            <input-search [size]="12" #inputObjetivo controlName="objetivo_id" label icon [where]="[['planejamento_id', '==', planejamentoId]]" [dao]="planejamentoObjetivoDao" [selectRoute]="{route: ['gestao', 'planejamento', 'objetivoList'], params: {filter: {planejamento_id: planejamentoId}}}"></input-search>
+                            <input-search [size]="12" #inputObjetivo label icon controlName="objetivo_id" label icon [where]="[['planejamento_id', '==', planejamentoId]]" [dao]="planejamentoObjetivoDao" [selectRoute]="{route: ['gestao', 'planejamento', 'objetivoList'], params: {filter: {planejamento_id: planejamentoId}}}"></input-search>
                         </ng-template>
                     </column>
                     <!--column type="options" [dynamicButtons]="dynamicButtonsObjetivos.bind(this)" [dynamicOptions]="dynamicOptionsObjetivos.bind(this)"></!--column//-->
@@ -64,7 +64,7 @@
                             <span>{{row.processo.nome}}</span>
                         </ng-template>
                         <ng-template let-row="row" #editProcesso>
-                            <input-search [size]="12" #inputProcesso controlName="processo_id" label [where]="[['cadeia_valor_id', '==', cadeiaValorId]]" [dao]="cadeiaValorProcessoDao"[selectRoute]="{route: ['gestao', 'cadeia-valor', 'processoList'], params: {filter: {cadeia_valor_id: cadeiaValorId}}}"></input-search>
+                            <input-search [size]="12" #inputProcesso label icon controlName="processo_id" label [where]="[['cadeia_valor_id', '==', cadeiaValorId]]" [dao]="cadeiaValorProcessoDao"[selectRoute]="{route: ['gestao', 'cadeia-valor', 'processoList'], params: {filter: {cadeia_valor_id: cadeiaValorId}}}"></input-search>
                         </ng-template>
                     </column>
                     <column type="options" [dynamicButtons]="dynamicButtonsProcessos.bind(this)"></column>
