@@ -13,6 +13,7 @@ import { FullRoute, NavigateService } from './services/navigate.service';
 import { UtilService } from './services/util.service';
 import { LookupService } from './services/lookup.service';
 import { EntityService } from './services/entity.service';
+import { NotificacaoService } from './modules/uteis/notificacoes/notificacao.service';
 
 export let appInjector: Injector;
 
@@ -47,6 +48,7 @@ export class AppComponent {
   public utils: UtilService;
   public lookup: LookupService;
   public entity: EntityService;
+  public notificacao: NotificacaoService;
   public menuSchema: any;
   public menuToolbar: any[];
   public menuContexto: any[];
@@ -70,7 +72,9 @@ export class AppComponent {
     this.utils = injector.get<UtilService>(UtilService);
     this.lookup = injector.get<LookupService>(LookupService);
     this.entity = injector.get<EntityService>(EntityService);
+    this.notificacao = injector.get<NotificacaoService>(NotificacaoService);
     /* Inicializações */
+    this.notificacao.hartBeat();
     this.auth.success = (usuario: Usuario, redirectTo?: FullRoute) => {
       this.go.navigate(redirectTo || { route: this.globals.initialRoute });
     };
@@ -132,7 +136,7 @@ export class AppComponent {
       gestao: [
         { name: this.lex.noun("Adesao", true), permition: 'MOD_ADES', route: ['gestao', 'adesao'], icon: this.entity.getIcon('Adesao') },
         { name: this.lex.noun("Atividade", true), permition: 'MOD_ATV', route: ['gestao', 'atividade'], icon: this.entity.getIcon('Atividade') },
-        { name: this.lex.noun("Cadeia de valor", true), permition: 'MOD_EXTM', route: ['gestao', 'cadeia-valor'], icon: this.entity.getIcon('CadeiaValor') },
+        { name: this.lex.noun("Cadeia de valor", true), permition: 'MOD_CADV', route: ['gestao', 'cadeia-valor'], icon: this.entity.getIcon('CadeiaValor') },
         { name: this.lex.noun("Demanda", true), permition: '', route: ['gestao', 'demanda'], icon: this.entity.getIcon('Demanda') },
         { name: this.lex.noun("Planejamento Institucional", true), permition: 'MOD_PLAN_INST', route: ['gestao', 'planejamento'], icon: this.entity.getIcon('Planejamento') },
         { name: this.lex.noun("Plano de Entrega", true), permition: 'MOD_PENT', route: ['gestao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega') },
@@ -155,14 +159,14 @@ export class AppComponent {
         { name: "Sobre", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
       ],
       logs: [
-        { name: "Rotina de Integração", permition: '', route: ['rotinas', 'integracao'], icon: this.entity.getIcon('Integracao') },
+        { name: "Rotina de Integração", permition: '', route: ['rotinas', 'integracao'], icon: "bi bi-pencil-square" },
         "-",
-        { name: "Log das Alterações", permition: '', route: ['logs', 'change'], icon: this.entity.getIcon('Change') },
-        { name: "Log dos Erros", permition: '', route: ['logs', 'error'], icon: this.entity.getIcon('Error') },
-        { name: "Log do Tráfego", permition: '', route: ['logs', 'traffic'], icon: this.entity.getIcon('Traffic') },
+        { name: "Log das Alterações", permition: '', route: ['logs', 'change'], icon: "bi bi-pencil-square" },
+        { name: "Log dos Erros", permition: '', route: ['logs', 'error'], icon: "bi bi-bug" },
+        { name: "Log do Tráfego", permition: '', route: ['logs', 'traffic'], icon: "bi bi-stoplights" },
         "-",
-        { name: "Teste Expediente", permition: '', route: ['teste'], icon: this.entity.getIcon('Teste') },
-        { name: "Teste calculaDataTempo", permition: '', route: ['teste', 'calcula-tempo'], icon: this.entity.getIcon('Teste') }
+        { name: "Teste Expediente", permition: '', route: ['teste'], icon: "bi bi-check-all" },
+        { name: "Teste calculaDataTempo", permition: '', route: ['teste', 'calcula-tempo'], icon: "bi bi-check-all" }
       ],
     }
   }

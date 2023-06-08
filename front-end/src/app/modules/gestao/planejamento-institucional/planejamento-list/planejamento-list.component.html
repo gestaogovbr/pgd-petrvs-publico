@@ -1,7 +1,7 @@
 <tabs right [title]="isModal ? '' : title" [select]="onSelectTab.bind(this)">
     <tab key="TABELA" icon="bi bi-table" label="Lista" [template]="lista">
         <ng-template #lista>
-            <grid [dao]="dao" [add]="add" [orderBy]="orderBy" [join]="join"
+            <grid [dao]="dao" [add]="add" [orderBy]="orderBy" [join]="join" [init]="initGrid.bind(this)"
                 [selectable]="selectable" (select)="onSelect($event)" 
                 [hasAdd]="auth.hasPermissionTo('MOD_PLAN_INST_INCL')"
                 [hasEdit]="auth.hasPermissionTo('MOD_PLAN_INST_EDT')">
@@ -27,7 +27,11 @@
                             <planejamento-list-objetivo [entity]="row" [eixos]="eixos"></planejamento-list-objetivo>
                         </ng-template>
                     </column>
-                    <column title="Nome" field="nome" orderBy="nome"></column>
+                    <column title="Nome" orderBy="nome" [template]="columnNome">
+                        <ng-template let-row="row" #columnNome>
+                            <span class="text-break w-100">{{row.nome}}</span>
+                        </ng-template>            
+                    </column>
                     <column title="Início" [template]="columnInicio">
                         <ng-template let-row="row" #columnInicio>
                             <span> {{dao!.getDateFormatted(row.inicio)}}</span>

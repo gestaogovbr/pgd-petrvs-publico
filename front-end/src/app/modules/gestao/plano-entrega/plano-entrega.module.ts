@@ -5,18 +5,19 @@ import { PlanoEntregaRoutingModule } from './plano-entrega-routing.module';
 import { PlanoEntregaListComponent } from './plano-entrega-list/plano-entrega-list.component';
 import { PlanoEntregaFormComponent } from './plano-entrega-form/plano-entrega-form.component';
 import { PlanoEntregaListEntregaComponent } from './plano-entrega-list-entrega/plano-entrega-list-entrega.component';
-import { PlanoEntregaEntregaFormComponent } from './plano-entrega-entrega-form/plano-entrega-entrega-form.component';
-import { PlanoEntregaEntregaListComponent } from './plano-entrega-entrega-list/plano-entrega-entrega-list.component';
 import { PlanoEntregaMapaEntregasComponent } from './plano-entrega-mapa-entregas/plano-entrega-mapa-entregas.component';
+import { PlanoEntregaAdesaoComponent } from './plano-entrega-adesao/plano-entrega-adesao.component';
+import { PlanoEntregaFormEntregaComponent } from './plano-entrega-form-entrega/plano-entrega-form-entrega.component';
 
 @NgModule({
   declarations: [
     PlanoEntregaListComponent,
     PlanoEntregaFormComponent,
     PlanoEntregaListEntregaComponent,
-    PlanoEntregaEntregaFormComponent,
-    PlanoEntregaEntregaListComponent,
-    PlanoEntregaMapaEntregasComponent
+    PlanoEntregaAdesaoComponent,
+    PlanoEntregaMapaEntregasComponent,
+    PlanoEntregaMapaEntregasComponent,
+    PlanoEntregaFormEntregaComponent
   ],
   imports: [
     CommonModule,

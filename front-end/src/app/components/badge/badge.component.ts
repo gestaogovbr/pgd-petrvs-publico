@@ -12,6 +12,7 @@ export class BadgeComponent extends ComponentBase implements OnInit {
   @Input() data?: any = undefined;
   @Input() hint?: string = undefined;
   @Input() icon?: string = undefined;
+  @Input() img?: string = undefined;
   @Input() label?: string = undefined;
   @Input() color?: ComponentColor = undefined;
   @Input() rounded: boolean = true;

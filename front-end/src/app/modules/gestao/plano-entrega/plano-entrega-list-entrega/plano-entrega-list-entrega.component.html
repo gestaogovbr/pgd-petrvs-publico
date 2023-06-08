@@ -1,29 +1,43 @@
-<grid [dao]="dao" [title]="isModal ? '' : title" [selectable]="selectable" (select)="onSelect($event)">
-    <columns>
-        <column title="Início" [template]="columnInicio">
-            <ng-template let-row="row" #columnInicio>
-                <span> {{dao!.getDateFormatted(row.inicio)}}</span>
-            </ng-template>
-        </column>
-        <column title="Fim" [template]="columnFim">
-            <ng-template let-row="row" #columnFim>
-                <span> {{dao!.getDateFormatted(row.fim)}}</span>
-            </ng-template>
-        </column>
-        <column title="Descrição" [template]="columnDescricao">
-            <ng-template let-row="row" #columnDescricao>
-                <span> {{ row.descricao || ''}}</span>
-            </ng-template>
-        </column>
-        <column title="Cliente" [template]="columnCliente">
-            <ng-template let-row="row" #columnCliente>
-                <span> {{ row.cliente || '' }}</span>
-            </ng-template>
-        </column>
-    </columns>
-    <pagination [rows]="rowsLimit"></pagination>
-</grid>
-
+<editable-form noButtons [form]="form!" [disabled]="formDisabled">
+    <div class="row">
+        <grid [items]="items" [form]="form!" [hasEdit]="true" [hasDelete]="true" [add]="addEntrega.bind(this)" [save]="saveEntrega.bind(this)" [groupTemplate]="groupEntregas" editable >
+            <ng-template let-separator="separator" #groupEntregas>
+                <strong class="grid-group-text">Entregas: </strong><span class="text-wrap">
+                    <badge color="primary" [label]="separator?.text"></badge>
+                </span>
+            </ng-template> 
+            <columns>
+                <column [title]="'Entrega\nDemandante\nDestinatário'" [template]="columnEntregaCliente">
+                    <ng-template let-row="row" #columnEntregaCliente>
+                        <span>{{row.descricao+" / "+row.demandante +" / "+row.destinatario}}</span>
+                    </ng-template>
+                </column>
+                <column [title]="'Data Início\nData Fim'" [template]="columnDatas" >
+                    <ng-template let-row="row" #columnDatas>
+                        <span> {{dao!.getDateFormatted(row.inicio)+" até
+                            "+dao!.getDateFormatted(row.fim)}}</span>
+                    </ng-template>
+                </column>
+                <column title="Entrega" [template]="columnIndicador">
+                    <ng-template let-row="row" #columnIndicador>
+                        <span>{{row.entrega_id}}</span>
+                    </ng-template>
+                </column>
+                <column [title]="'Meta\nRealizado'" [template]="columnMetaRealizado">
+                    <ng-template let-row="row" #columnMetaRealizado>
+                        <span>{{row.meta+" / "+row.realizado}}</span>
+                    </ng-template>
+                </column>
+                <column title="Progresso" [template]="columnProgresso">
+                    <ng-template let-row="row" #columnProgresso>
+                        <progress-bar [value]="row.progresso_realizado" color="success"></progress-bar>
+                    </ng-template>
+                </column>
+                <column type="options"></column>
+            </columns>
+        </grid>
+    </div>
+</editable-form>
 
 <!-- Grid-List:
 

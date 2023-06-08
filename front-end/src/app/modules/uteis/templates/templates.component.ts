@@ -1,4 +1,4 @@
-import { Component, Injector, ViewChild } from '@angular/core';
+import { Component, Injector, Input, ViewChild } from '@angular/core';
 import { Template, TemplateEspecie } from "src/app/models/template.model";
 import { TemplateDaoService } from "src/app/dao/template-dao.service";
 import { GridComponent } from 'src/app/components/grid/grid.component';
@@ -15,10 +15,10 @@ import { TemplateDataset } from 'src/app/components/input/input-editor/input-edi
 })
 export class TemplatesComponent extends PageListBase<Template, TemplateDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
+  @Input() public especie?: TemplateEspecie;
+  @Input() public dataset?: TemplateDataset[];
 
   public form: FormGroup;
-  public especie: TemplateEspecie = "OUTRO";
-  public dataset: TemplateDataset[] = [];
   public templateService: TemplateService;
 
   constructor(public injector: Injector) {
@@ -28,6 +28,7 @@ export class TemplatesComponent extends PageListBase<Template, TemplateDaoServic
     this.modalWidth = 1200;
     this.filter = this.fh.FormBuilder({});
     this.form = this.fh.FormBuilder({
+      codigo: { default: "" },
       titulo: { default: "" },
       conteudo: { default: "" }
     });
@@ -35,8 +36,8 @@ export class TemplatesComponent extends PageListBase<Template, TemplateDaoServic
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.especie = this.urlParams?.has("especie") ? this.urlParams!.get("especie") : this.metadata?.especie || this.especie;
-    this.dataset = this.templateService.dataset(this.especie);
+    this.especie = this.urlParams?.has("especie") ? this.urlParams!.get("especie") : this.metadata?.especie || this.especie || "OUTRO";
+    this.dataset = this.dataset || this.templateService.dataset(this.especie!);
     this.title = this.lookup.getValue(this.lookup.TEMPLATE_ESPECIE, this.especie);
   }
 
@@ -47,6 +48,7 @@ export class TemplatesComponent extends PageListBase<Template, TemplateDaoServic
   public onTemplateSelect(row: Base | IIndexable | null) {
     const selected = row as Template || undefined;
     this.form.patchValue({
+      codigo: selected?.codigo || "",
       titulo: selected?.titulo || "",
       conteudo: selected?.conteudo || ""
     });
@@ -55,14 +57,16 @@ export class TemplatesComponent extends PageListBase<Template, TemplateDaoServic
 
   public async addTemplate() {
     return new Template({
+      codigo: "",
       conteudo: "",
       especie: this.especie, 
       dataset: this.dataset,
-      titulo: this.templateService.titulo(this.especie)
+      titulo: this.templateService.titulo(this.especie!)
     });
   }
 
   public async loadTemplate(form: FormGroup, row: any) {
+    form.controls.codigo.setValue(row.codigo);
     form.controls.titulo.setValue(row.titulo);
     form.controls.conteudo.setValue(row.conteudo);
     this.cdRef.detectChanges();
@@ -82,6 +86,7 @@ export class TemplatesComponent extends PageListBase<Template, TemplateDaoServic
     let result = undefined;
     this.form!.markAllAsTouched();
     if(this.form!.valid) {
+      row.codigo = form.controls.codigo.value;
       row.titulo = form.controls.titulo.value;
       row.conteudo = form.controls.conteudo.value;
       row.dataset = this.dataset;

@@ -13,8 +13,8 @@ import { Expediente } from 'src/app/models/expediente.model';
 import { UnidadeOrigemAtividade } from 'src/app/models/unidade-origem-atividade.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
+import { NotificacaoService } from 'src/app/modules/uteis/notificacoes/notificacao.service';
 import { LookupItem } from 'src/app/services/lookup.service';
-import { NotificacaoService } from 'src/app/services/notificacao.service';
 
 @Component({
   selector: 'app-unidade-form',

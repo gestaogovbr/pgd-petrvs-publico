@@ -8,6 +8,7 @@ import { UnidadeDaoService } from './unidade-dao.service';
 import { UsuarioDaoService } from './usuario-dao.service';
 import { ProgramaDaoService } from './programa-dao.service';
 import { LookupService } from '../services/lookup.service';
+import { PlanoEntrega } from '../models/plano-entrega.model';
 
 @Injectable({
   providedIn: 'root'

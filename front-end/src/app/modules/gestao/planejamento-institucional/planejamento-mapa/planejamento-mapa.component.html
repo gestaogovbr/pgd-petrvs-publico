@@ -87,7 +87,7 @@
                 dndType="objetivo" dndEffectAllowed="move">
                 <div class="objetivo shadow-sm d-flex flex-column align-content-between">
                     <div class="m-2">
-                        <div dndHandle class="card-text">{{objetivo.nome}}</div>
+                        <div dndHandle class="card-text text-break w-100">{{objetivo.nome}}</div>
                         <div class="subobjetivo" [dndDropzone]="['objetivo']" (dndDrop)="onObjetivoDrop($event, objetivo)">
                             <!-- Placehold -->
                             <div class="border mt-3 p-2" dndPlaceholderRef><span class="placeholder w-75"></span></div>
@@ -100,7 +100,7 @@
                             (dndMoved)="onObjetivoDragged(objetivo, pai, 'move')" (dndStart)="onObjetivoDragStart($event)"
                             dndType="objetivo" dndEffectAllowed="move">
                             <div class="d-flex justify-content-between">
-                                <div class="me-2 card-text">{{objetivo.nome}}</div>
+                                <div class="me-2 card-text text-break w-100">{{objetivo.nome}}</div>
                                 <action-button noArrow [button]="subObjetivosMenu" [data]="objetivo"></action-button>
                             </div>
                             <div class="subobjetivo" [dndDropzone]="['objetivo']" (dndDrop)="onObjetivoDrop($event, objetivo)">

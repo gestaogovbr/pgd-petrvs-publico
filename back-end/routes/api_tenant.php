@@ -50,7 +50,7 @@ use App\Http\Controllers\ProjetoController;
 use App\Http\Controllers\RotinaDiariaController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\AreaGraduacaoController;
-
+use App\Http\Controllers\NotificacaoController;
 use App\Http\Controllers\UnidadeIntegranteController;
 
 /*
@@ -105,14 +105,21 @@ Route::middleware('auth:sanctum')->prefix('Calendario')->group(function () {
     Route::post('feriados', [CalendarioController::class, 'feriados']);
     Route::post('feriados-cadastrados', [CalendarioController::class, 'feriadosCadastrados']);
 });
+Route::middleware('auth:sanctum')->prefix('Notificacao')->group(function () {
+    defaultRoutes(NotificacaoController::class);
+    Route::post('nao-lidas', [NotificacaoController::class, 'naoLidas']);
+});
 
 /* Desenvolvedor */
 Route::middleware('auth:sanctum')->prefix('Change')->group(function () {
-    defaultRoutes(ChangeController::class);
+    Route::post('query', [ChangeController::class, 'query']);
+    Route::post('get-by-id', [ChangeController::class, 'getById']);
     Route::post('showResponsaveis', [ChangeController::class, 'showResponsaveis']);
 });
 Route::middleware('auth:sanctum')->prefix('Error')->group(function () {
-    defaultRoutes(ErrorController::class);
+    Route::post('query', [ErrorController::class, 'query']);
+    Route::post('get-by-id', [ErrorController::class, 'getById']);
+    Route::post('showResponsaveis', [ErrorController::class, 'showResponsaveis']);
 });
 Route::middleware('auth:sanctum')->prefix('Traffic')->group(function () {
 });

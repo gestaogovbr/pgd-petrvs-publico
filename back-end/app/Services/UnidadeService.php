@@ -20,115 +20,6 @@ class UnidadeService extends ServiceBase
 {
     use UseDataFim;
 
-    public function hora($idOrUnidade) {
-        $unidade = gettype($idOrUnidade) == "string" ? Unidade::find($idOrUnidade) : $idOrUnidade;
-        $timeZone = $unidade->cidade->timezone;
-        $timezone_abbr = timezone_name_from_abbr("", -3600*abs($timeZone), 0);
-        $dateTime = new DateTime('now', new DateTimeZone($timezone_abbr));
-        
-        $dateTime->setTimestamp($dateTime->getTimestamp());
-        return ServiceBase::toIso8601($dateTime);
-    }
-
-    public function proxyStore($data, $unidade, $action) {
-        $unidade = Unidade::find($data["id"]);
-        $pai = Unidade::find($data["unidade_id"]);
-        $data["path"] = empty($pai) ? null : $pai->path . "/" . $pai->id;
-        if(!empty($unidade)) {
-            $oldPath = $unidade->path . "/" . $unidade->id . "/";
-            $newPath = $data["path"] . "/" . $unidade->id . "/";
-            Unidade::where('path', 'like', $oldPath . "%")
-                ->update(['path' => DB::raw(sprintf("CONCAT('%s', SUBSTR(path, %d))", $newPath, strlen($newPath)))]);
-        }
-        return $data;
-    }
-
-    public function proxySearch($query, &$data, &$text) {
-        $data["where"][] = ["subordinadas", "==", true];
-        return $this->proxyQuery($query, $data);
-    }
-
-    public function proxyQuery($query, &$data) {
-        $usuario = parent::loggedUser();
-        $where = [];
-        $subordinadas = true;
-        $inativos = !empty(array_filter($data["where"], fn($w) => $w[0] == "inativo"));
-        $unidadesPlanejamento = !empty(array_filter($data["where"], fn($w) => $w[0] == "unidades_planejamento"));
-        foreach($data["where"] as $condition) {
-            if(is_array($condition) && $condition[0] == "subordinadas") {
-                $subordinadas = $condition[2];
-            } else if(is_array($condition) && $condition[0] == "inativos" && !$inativos) {
-                $inativos = $condition[2];
-            } else {
-                array_push($where, $condition);
-            }
-        }
-        if(!$inativos) {
-            array_push($where, ["inativo", "==", null]);
-        }
-        if(!$usuario->hasPermissionTo("MOD_UND_TUDO") || ($unidadesPlanejamento && ($usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_SUBORD") || $usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_QQLOT")))) {
-            if($unidadesPlanejamento && $usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_QQLOT")) $subordinadas = false;
-            $lotacoesWhere = $this->usuarioService->lotacoesWhere($subordinadas, null, "unidades");
-            array_push($where, new RawWhere("($lotacoesWhere)", []));
-        }
-        $where = array_filter($where, fn($w) => ($w instanceof RawWhere) || ($w[0] != "unidades_planejamento"));
-        $data["where"] = $where;
-        return $data;
-    }
-
-    public function mesmaSigla($entidadeId) {
-        $repetidos = DB::table('unidades')->select(DB::raw('count(*) as qtd, sigla'))
-            ->where('entidade_id', $entidadeId)
-            ->whereNull('data_fim')
-            ->groupBy('sigla')
-            ->having('qtd', '>', 1)
-            ->get()->toArray();
-        $siglas = array_map(fn($row) => $row->sigla, $repetidos);
-        return Unidade::where("entidade_id", $entidadeId)->whereIn("sigla", $siglas)->get();
-    }
-
-    public function unificar($correspondencias, $exclui) {
-        DB::beginTransaction();
-        try {
-            $constraints = $this->foreigns("unidades");
-            foreach($correspondencias as $dePara) {
-                $de = $dePara["unidade_origem_id"];
-                $para = $dePara["unidade_destino_id"];
-                foreach($constraints as $contraint) {
-                    $changes = DB::select("SELECT id, {$contraint->COLUMN_NAME} FROM {$contraint->TABLE_NAME} WHERE {$contraint->COLUMN_NAME} = :de", [":de" => $de]);
-                    DB::update("UPDATE {$contraint->TABLE_NAME} SET {$contraint->COLUMN_NAME} = :para WHERE {$contraint->COLUMN_NAME} = :de", [":de" => $de, ":para" => $para]);
-                    /* Registra o log das mudanças */
-                    foreach($changes as $change) {
-                        $delta = [];
-                        $delta[$contraint->COLUMN_NAME] = $de;
-                        ModelBase::customLogChange($contraint->TABLE_NAME, $change->id, "EDIT", $delta);
-                    }
-                }
-                if($exclui) $this->destroy($de, false);
-            }
-            DB::commit();
-        } catch (Throwable $e) {
-            DB::rollback();
-            throw $e;
-        }
-        return true;
-    }
-
-    public function inativo($id, $inativo) {
-        DB::beginTransaction();
-        try {
-            $unidade = Unidade::find($id);
-            if(empty($unidade)) throw new Exception("Unidade não encontrada");
-            $unidade->inativo = $inativo ? date("Y-m-d H:i:s") : null;
-            $unidade->save();
-            DB::commit();
-        } catch (Throwable $e) {
-            DB::rollback();
-            throw $e;
-        }
-        return true;
-    }
-
     public function avaliadores($id) {
         $result = [];
         $unidade = Unidade::with("integrantes")->where("id", $id)->first();
@@ -150,6 +41,75 @@ class UnidadeService extends ServiceBase
             if(!$maxLevel) throw new ServerException("ValidateUnidade", "Referência circular na hierarquia da unidade");
         }
         return $result;
+    }
+
+    /** 
+     * Um array com os IDs de todas as Unidades pesquisadas, que possuem Planos de Trabalho ativos, e seus respectivos dashboards.
+     * 
+     * @param array     $idsUnidades    Um array com os ids das unidades das quais se deseja o dashboard
+     * @param string    $programa_id    O id do programa dentro do qual serão procurados os planos de trabalho
+     * @param boolean   $unidadesSubordinadas     Define se devem ser incluídas ou não as unidades subordinadas
+     * @return array|LogError   
+     */
+    public function dashboards($idsUnidades, $programa_id, $unidadesSubordinadas): array | LogError {
+        if (count($idsUnidades) > 0) {
+            $unidadesFilhas = [];
+            if ($unidadesSubordinadas) foreach ($idsUnidades as $unidade_id) {
+                $unidadesFilhas = array_merge($unidadesFilhas, $this->unidadesFilhas($unidade_id));
+            }
+
+            $idsUnidades = array_unique(array_merge($idsUnidades, $unidadesFilhas));
+            $result = [];
+            foreach ($idsUnidades as $unidade_id) {
+                $metadadosUnidade = $this->metadadosUnidade($unidade_id, $programa_id);
+                if ($metadadosUnidade['qdePlanosPrograma'] > 0) {
+                    array_push($result, [
+                        'sigla' => $metadadosUnidade['sigla'],
+                        'qdePTAtivos' => $metadadosUnidade['qdePlanosPrograma'],
+                        'horasUteisTotaisPTAtivos' => $metadadosUnidade['horasUteisTotais'],
+                        'qdeServidores' => $metadadosUnidade['nrServidoresPrograma'],
+                        'modalidadesPlanos' => $metadadosUnidade['modalidadesPlanos']
+                    ]);
+                }
+            }
+        } else return LogError::newError('Nenhuma Unidade foi fornecida!');
+        return $result;
+    }
+
+    public function hora($idOrUnidade) {
+        $unidade = gettype($idOrUnidade) == "string" ? Unidade::find($idOrUnidade) : $idOrUnidade;
+        $timeZone = $unidade->cidade->timezone;
+        $timezone_abbr = timezone_name_from_abbr("", -3600*abs($timeZone), 0);
+        $dateTime = new DateTime('now', new DateTimeZone($timezone_abbr));
+        
+        $dateTime->setTimestamp($dateTime->getTimestamp());
+        return ServiceBase::toIso8601($dateTime);
+    }
+
+    public function inativo($id, $inativo) {
+        DB::beginTransaction();
+        try {
+            $unidade = Unidade::find($id);
+            if(empty($unidade)) throw new Exception("Unidade não encontrada");
+            $unidade->inativo = $inativo ? date("Y-m-d H:i:s") : null;
+            $unidade->save();
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollback();
+            throw $e;
+        }
+        return true;
+    }
+
+    public function mesmaSigla($entidadeId) {
+        $repetidos = DB::table('unidades')->select(DB::raw('count(*) as qtd, sigla'))
+            ->where('entidade_id', $entidadeId)
+            ->whereNull('data_fim')
+            ->groupBy('sigla')
+            ->having('qtd', '>', 1)
+            ->get()->toArray();
+        $siglas = array_map(fn($row) => $row->sigla, $repetidos);
+        return Unidade::where("entidade_id", $entidadeId)->whereIn("sigla", $siglas)->get();
     }
 
     /**
@@ -283,6 +243,62 @@ class UnidadeService extends ServiceBase
         }, $metadadosPlanos));
 
         return $result;
+    } 
+
+    /**
+     * Retorna um array com os planos de entregas EM CURSO relativos à unidade repassada como parâmetro. 
+     * Um Plano de Entregas está EM CURSO quando não foi deletado, nem cancelado, nem arquivado e possui status ATIVO;
+     * @param string $unidade_id  
+     */
+    public function planosEntregasEmCurso(string $unidade_id): array {
+        $unidade = Unidade::where("id",$unidade_id)->with(["planos_entregas"])->get()->first();
+        return array_filter($unidade->planosEntregas, fn($x) => $this->planoEntrega->emCurso($x));
+    }
+
+    public function proxyQuery($query, &$data) {
+        $usuario = parent::loggedUser();
+        $where = [];
+        $subordinadas = true;
+        $inativos = !empty(array_filter($data["where"], fn($w) => $w[0] == "inativo"));
+        $unidadesPlanejamento = !empty(array_filter($data["where"], fn($w) => $w[0] == "unidades_planejamento"));
+        foreach($data["where"] as $condition) {
+            if(is_array($condition) && $condition[0] == "subordinadas") {
+                $subordinadas = $condition[2];
+            } else if(is_array($condition) && $condition[0] == "inativos" && !$inativos) {
+                $inativos = $condition[2];
+            } else {
+                array_push($where, $condition);
+            }
+        }
+        if(!$inativos) {
+            array_push($where, ["inativo", "==", null]);
+        }
+        if(!$usuario->hasPermissionTo("MOD_UND_TUDO") || ($unidadesPlanejamento && ($usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_SUBORD") || $usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_QQLOT")))) {
+            if($unidadesPlanejamento && $usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_QQLOT")) $subordinadas = false;
+            $lotacoesWhere = $this->usuarioService->lotacoesWhere($subordinadas, null, "unidades");
+            array_push($where, new RawWhere("($lotacoesWhere)", []));
+        }
+        $where = array_filter($where, fn($w) => ($w instanceof RawWhere) || ($w[0] != "unidades_planejamento"));
+        $data["where"] = $where;
+        return $data;
+    } 
+
+    public function proxySearch($query, &$data, &$text) {
+        $data["where"][] = ["subordinadas", "==", true];
+        return $this->proxyQuery($query, $data);
+    } 
+
+    public function proxyStore($data, $unidade, $action) {
+        $unidade = Unidade::find($data["id"]);
+        $pai = Unidade::find($data["unidade_id"]);
+        $data["path"] = empty($pai) ? null : $pai->path . "/" . $pai->id;
+        if(!empty($unidade)) {
+            $oldPath = $unidade->path . "/" . $unidade->id . "/";
+            $newPath = $data["path"] . "/" . $unidade->id . "/";
+            Unidade::where('path', 'like', $oldPath . "%")
+                ->update(['path' => DB::raw(sprintf("CONCAT('%s', SUBSTR(path, %d))", $newPath, strlen($newPath)))]);
+        }
+        return $data;
     }
 
     /** 
@@ -297,37 +313,43 @@ class UnidadeService extends ServiceBase
         return array_map(fn($x) => $x->id,DB::table('unidades')->select('id')->where('path', 'like', $path)->orWhere('path', 'like', $path . '/%')->get()->toArray());
     }
 
-    /** 
-     * Um array com os IDs de todas as Unidades pesquisadas, que possuem Planos de Trabalho ativos, e seus respectivos dashboards.
-     * 
-     * @param array     $idsUnidades    Um array com os ids das unidades das quais se deseja o dashboard
-     * @param string    $programa_id    O id do programa dentro do qual serão procurados os planos de trabalho
-     * @param boolean   $unidadesSubordinadas     Define se devem ser incluídas ou não as unidades subordinadas
-     * @return array|LogError   
-     */
-    public function dashboards($idsUnidades, $programa_id, $unidadesSubordinadas): array | LogError {
-        if (count($idsUnidades) > 0) {
-            $unidadesFilhas = [];
-            if ($unidadesSubordinadas) foreach ($idsUnidades as $unidade_id) {
-                $unidadesFilhas = array_merge($unidadesFilhas, $this->unidadesFilhas($unidade_id));
-            }
-
-            $idsUnidades = array_unique(array_merge($idsUnidades, $unidadesFilhas));
-            $result = [];
-            foreach ($idsUnidades as $unidade_id) {
-                $metadadosUnidade = $this->metadadosUnidade($unidade_id, $programa_id);
-                if ($metadadosUnidade['qdePlanosPrograma'] > 0) {
-                    array_push($result, [
-                        'sigla' => $metadadosUnidade['sigla'],
-                        'qdePTAtivos' => $metadadosUnidade['qdePlanosPrograma'],
-                        'horasUteisTotaisPTAtivos' => $metadadosUnidade['horasUteisTotais'],
-                        'qdeServidores' => $metadadosUnidade['nrServidoresPrograma'],
-                        'modalidadesPlanos' => $metadadosUnidade['modalidadesPlanos']
-                    ]);
+    public function unificar($correspondencias, $exclui) {
+        DB::beginTransaction();
+        try {
+            $constraints = $this->foreigns("unidades");
+            foreach($correspondencias as $dePara) {
+                $de = $dePara["unidade_origem_id"];
+                $para = $dePara["unidade_destino_id"];
+                foreach($constraints as $contraint) {
+                    $changes = DB::select("SELECT id, {$contraint->COLUMN_NAME} FROM {$contraint->TABLE_NAME} WHERE {$contraint->COLUMN_NAME} = :de", [":de" => $de]);
+                    DB::update("UPDATE {$contraint->TABLE_NAME} SET {$contraint->COLUMN_NAME} = :para WHERE {$contraint->COLUMN_NAME} = :de", [":de" => $de, ":para" => $para]);
+                    /* Registra o log das mudanças */
+                    foreach($changes as $change) {
+                        $delta = [];
+                        $delta[$contraint->COLUMN_NAME] = $de;
+                        ModelBase::customLogChange($contraint->TABLE_NAME, $change->id, "EDIT", $delta);
+                    }
                 }
+                if($exclui) $this->destroy($de, false);
             }
-        } else return LogError::newError('Nenhuma Unidade foi fornecida!');
-        return $result;
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollback();
+            throw $e;
+        }
+        return true;
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

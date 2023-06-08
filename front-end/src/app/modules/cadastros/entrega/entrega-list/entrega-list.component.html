@@ -11,6 +11,7 @@
     </filter>
     <columns>
         <column title="Nome" field="nome" orderBy="nome"></column>
+        <column title="Descrição" field="descricao" orderBy="descricao"></column>
         <column [title]="lex.noun('Tipo do indicador')" type="select" field="tipo_indicador" [items]="lookup.TIPO_INDICADOR"></column>
         <column title="Qualitativos" field="lista_qualitativos"></column>
         <column type="options" [onEdit]="edit" [options]="options"></column>

@@ -44,12 +44,12 @@ class Projeto extends ModelBase
         'usuario_id', /* char(36); */
         'tipo_projeto_id', /* char(36); */
         'fase_id', /* char(36); */
+        'custo', /* decimal(15,2); NOT NULL; */
+        'kanban_dockers', /* json; */
+        'expediente', /* json; */// Configuração de expediente
         //'numero', /* int; NOT NULL; */// Número do projeto (Gerado pelo sistema)
         //'data_inicio', /* datetime; NOT NULL; */// Data de criação
         //'data_fim', /* datetime; */// Data final do registro
-        //'custo', /* decimal(15,2); NOT NULL; */
-        //'kanban_dockers', /* json; */
-        //'expediente', /* json; */// Configuração de expediente
     ];
 
     public $fillable_changes = ["fases", "regras", "recursos", "alocacoes", "tarefas"];

@@ -6,6 +6,8 @@ import { CidadeDaoService } from './cidade-dao.service';
 import { DaoBaseService } from './dao-base.service';
 import { EntidadeDaoService } from './entidade-dao.service';
 import { UsuarioDaoService } from './usuario-dao.service';
+import { PlanoEntrega } from '../models/plano-entrega.model';
+import { PlanoEntregaDaoService } from './plano-entrega-dao.service';
 
 export type UnidadeDashboard = {
   sigla: string,                                    // nome da Unidade
@@ -23,12 +25,14 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
   public usuarioDao: UsuarioDaoService;
   public entidadeDao: EntidadeDaoService;
   public cidadeDao: CidadeDaoService;
+  public planoEntregaDao: PlanoEntregaDaoService;
 
   constructor(protected injector: Injector) {
     super("Unidade", injector);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.entidadeDao = injector.get<EntidadeDaoService>(EntidadeDaoService);
     this.cidadeDao = injector.get<CidadeDaoService>(CidadeDaoService);
+    this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
     this.searchFields = ["codigo", "sigla", "nome"];
   }
 
@@ -41,13 +45,13 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
       { field: "gestor_substituto", label: "Gestor substituto", fields: this.usuarioDao.dataset([]) },
       { field: "entidade", label: "Entidade", dao: this.entidadeDao },
       { field: "cidade", label: "Cidade", dao: this.cidadeDao },
-      { field: "texto_complementar_plano", label: "Mensagem do Plano de trabalho", type: "TEMPLATE"}
+      { field: "texto_complementar_plano", label: "Mensagem do Plano de trabalho", type: "TEMPLATE" }
     ], deeps);
   }
 
   public metadadosArea(unidade_id: String, programa_id: String): Promise<AreaRelatorio> {
     return new Promise<AreaRelatorio>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/metadados-area', {unidade_id, programa_id}).subscribe(response => {
+      this.server.post('api/' + this.collection + '/metadados-area', { unidade_id, programa_id }).subscribe(response => {
         resolve(response?.metadadosArea || []);
       }, error => reject(error));
     });
@@ -55,8 +59,8 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
 
   public dashboards(idsUnidades: string[], programa_id: String, unidadesSubordinadas: boolean): Promise<UnidadeDashboard[] | null> {
     return new Promise<UnidadeDashboard[] | null>((resolve, reject) => {
-      if(idsUnidades?.length && programa_id.length){
-        this.server.post('api/' + this.collection + '/dashboards', {idsUnidades, programa_id, unidadesSubordinadas}).subscribe(response => {
+      if (idsUnidades?.length && programa_id.length) {
+        this.server.post('api/' + this.collection + '/dashboards', { idsUnidades, programa_id, unidadesSubordinadas }).subscribe(response => {
           resolve(response?.dashboards as UnidadeDashboard[]);
         }, error => reject(error));
       } else {
@@ -74,9 +78,9 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
     });
   }
 
-  public unificar(correspondencias: {unidade_origem_id: string, unidade_destino_id: string}[], exclui: boolean) {
+  public unificar(correspondencias: { unidade_origem_id: string, unidade_destino_id: string }[], exclui: boolean) {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/unificar', {correspondencias, exclui}).subscribe(response => {
+      this.server.post('api/' + this.collection + '/unificar', { correspondencias, exclui }).subscribe(response => {
         resolve(!!response?.success);
       }, error => reject(error));
     });
@@ -84,19 +88,44 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
 
   public inativo(id: string, inativo: boolean) {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/inativo', {id, inativo}).subscribe(response => {
+      this.server.post('api/' + this.collection + '/inativo', { id, inativo }).subscribe(response => {
         resolve(!!response?.success);
       }, error => reject(error));
     });
   }
 
-  
   public subordinadas(unidade_id: string): Promise<Unidade[]> {
     return new Promise<Unidade[]>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/subordinadas', {unidade_id}).subscribe(response => {
+      this.server.post('api/' + this.collection + '/subordinadas', { unidade_id }).subscribe(response => {
         resolve(response?.subordinadas || []);
       }, error => reject(error));
     });
+  }
+
+  /**
+   * Retorna um array contendo os objetos das Unidades que compõem a linha hierárquica ascendente da unidade repassada como parâmetro.
+   * @param unidade_id 
+   * @returns 
+   */
+/*   public linhaAscendente(unidade_id: string): Promise<Unidade[]> {
+    return new Promise<Unidade[]>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/linha-ascendente', { unidade_id }).subscribe(response => {
+        resolve(response?.linhaAscendente || []);
+      }, error => reject(error));
+    });
+  } */
+
+  /**
+   * Retorna um array com os planos de entregas ativos relativos à unidade repassada como parâmetro (objeto Unidade ou apenas o ID de uma unidade);
+   * @param pUnidade Objeto Unidade a ser analisado;
+   * @returns 
+   */
+  public planosEntregasAtivos(pUnidade: Unidade | string | null): PlanoEntrega[] {
+    let unidade = pUnidade instanceof Unidade ? pUnidade : null;
+    if (!unidade || unidade.planos_entregas == undefined) this.getById(pUnidade as string, ['planos_entregas']).then(response => {
+      unidade = response as Unidade;
+    });
+    return unidade?.planos_entregas?.filter(x => this.planoEntregaDao.isAtivo(x)) || [];
   }
 
 }

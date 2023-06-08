@@ -1,4 +1,3 @@
-import { listLazyRoutes } from '@angular/compiler/src/aot/lazy_routes';
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
@@ -8,7 +7,6 @@ import { ChangeDaoService } from 'src/app/dao/change-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { EntityService } from 'src/app/services/entity.service';
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
-import { Base, IIndexable } from 'src/app/models/base.model';
 import { Change } from 'src/app/models/change.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { EntityItem } from 'src/app/services/entity.service';
@@ -31,8 +29,6 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
   public entityService: EntityService;
   public entity?: EntityItem;
   public responsaveis: LookupItem[] = [];
-  public opcoes_filtro: LookupItem[] = [
-    {'key': 0, 'value': 'ID do registro'},{'key': 1, 'value': ''}];
 
   constructor(public injector: Injector, dao: ChangeDaoService) {
     super(injector, Change, ChangeDaoService);
@@ -48,7 +44,8 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
       tabela: {default: ""},
       tipo: {default: ""},
       row_id: {default: ""},
-      opcao_filtro: {default: 0}
+      row_id_text: {default: ""},
+      row_id_search: {default: ""}
     });
     this.orderBy = [['id', 'desc']];
   }
@@ -89,9 +86,7 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
 
   public onTabelaChange(event: Event) {
     this.filter!.controls.row_id.setValue("");
-    this.filter!.controls.opcao_filtro.setValue(0);
     this.entity = this.entityService.list.find(x => x.table == this.filter?.controls.tabela.value);
-    if(this.entity) this.opcoes_filtro[1].value = this.entity!.label + ': ' + this.entity!.campo;
     this.cdRef.detectChanges();
   }
 
@@ -102,6 +97,8 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     filter.controls.tabela.setValue("");
     filter.controls.tipo.setValue("");
     filter.controls.row_id.setValue("");
+    filter.controls.row_id_text.setValue("");
+    filter.controls.row_id_search.setValue("");
     filter.controls.opcao_filtro.setValue("ID do registro");
     super.filterClear(filter);
   }
@@ -122,9 +119,12 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     if(form.tabela){
       result.push(["table_name", "==", form.tabela]);
     };
-    if(form.row_id){
-      result.push(["row_id", "==", form.row_id]);
+    if(form.row_id_text){
+      result.push(["row_id", "==", form.row_id_text]);
     };
+    if(form.row_id_search && !form.row_id_text){
+      result.push(["row_id", "==", form.row_id_search]);
+    };    
     if(form.tipo?.length){
       result.push(["type", "==", form.tipo]);
     };
@@ -134,7 +134,6 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
   public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     result.push({icon: "bi bi-info-circle", label: "Informações", onClick: this.onRowClick.bind(this)});
-    result.push({icon: "bi bi-trash", color: "btn-outline-danger", label: "Excluir", onClick: this.delete.bind(this)});
     return result;
   }
 

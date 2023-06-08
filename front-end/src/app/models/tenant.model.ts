@@ -15,6 +15,17 @@ export class Tenant extends Base {
     public log_port: string | null = null;
     public log_username: string | null = null;
     public log_password: string | null = null;
+    public notification_petrvs: boolean = true;
+    public notification_mail: boolean = false;
+    public notification_mail_signature: string = "";
+    public notification_mail_host: string = "";
+    public notification_mail_port: number = 465;
+    public notification_mail_username: string = "";
+    public notification_mail_password: string = "";
+    public notification_mail_encryption: string = "SSL";
+    public notification_whatsapp: boolean = false;
+    public notification_whatsapp_url: string = "";
+    public notification_whatsapp_token: string = "";
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

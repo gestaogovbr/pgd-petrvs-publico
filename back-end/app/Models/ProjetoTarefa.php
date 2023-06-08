@@ -9,6 +9,7 @@ use App\Models\Demanda;
 use App\Models\ProjetoAlocacao;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasDataFim;
+use App\Casts\AsJson;
 
 class ProjetoTarefa extends ModelBase
 {

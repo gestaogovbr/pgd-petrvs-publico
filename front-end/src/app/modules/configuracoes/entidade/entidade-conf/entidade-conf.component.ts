@@ -9,7 +9,7 @@ import { IIndexable } from 'src/app/models/base.model';
 import { Entidade, EntidadeNotificacoes } from 'src/app/models/entidade.model';
 import { Expediente } from 'src/app/models/expediente.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
-import { NotificacaoService } from 'src/app/services/notificacao.service';
+import { NotificacaoService } from 'src/app/modules/uteis/notificacoes/notificacao.service';
 
 @Component({
   selector: 'app-entidade-conf',

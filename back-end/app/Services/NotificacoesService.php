@@ -12,11 +12,84 @@ use Illuminate\Support\Facades\Mail as LaravelMail;
 class NotificacoesService 
 {
 
-    public function checkNotifica($usuario, $notifica) {
-        return !isset($usuario->notificacoes[$notifica]) || $usuario->notificacoes[$notifica];
+    public $notificacoes = [
+        "DMD_DISTRIBUICAO" => [
+            "descricao" => "Notificação de distribuição da demanda",
+            "destinatarios" => fn ($params) => [$params["demanda"]->usuario],
+            "unidade" => fn ($params) => $params["demanda"]->unidade,
+            "validacao" => fn ($params) => !empty($params["demanda"]->usuario_id),
+            "dataset" => [["field" => "demanda_numero", "label" => "Número da demanda"]],
+            "datasource" => fn ($params) => ["demanda_numero" => $params["demanda"]->numero],
+            "template" => "Uma nova demanda foi atribuída a você, acesse o PETRVS para visualizá-la! (ID: #{{demanda_numero}})"
+        ], 
+        "DMD_MODIFICACAO" => [
+            "descricao" => "Notificação de modificações na demanda",
+            "destinatarios" => fn ($params) => [$params["demanda"]->usuario, $params["demanda"]->demandante],
+            "unidade" => fn ($params) => $params["demanda"]->unidade,
+            "validacao" => fn ($params) => true,
+            "dataset" => [["field" => "demanda_numero", "label" => "Número da demanda"], ["field" => "demanda_responsavel", "label" => "Nome do responsável pela demanda"]],
+            "datasource" => fn ($params) => ["demanda_numero" => $params["demanda"]->numero, "demanda_responsavel" => $params["demanda"]->usuario->nome],
+            "template" => "A demanda #{{demanda_numero}}, atribuída à {{demanda_responsavel}}, foi atualizada, acesse o PETRVS para visualizá-la!"
+        ],         
+        "DMD_COMENTARIO" => [
+            "descricao" => "Notificação de comentário na demanda",
+            "destinatarios" => fn ($params) => [$params["demanda"]->usuario, $params["demanda"]->demandante],
+            "unidade" => fn ($params) => $params["demanda"]->unidade,
+            "validacao" => fn ($params) => true,
+            "dataset" => [["field" => "demanda_numero", "label" => "Número da demanda"], ["field" => "demanda_responsavel", "label" => "Nome do responsável pela demanda"]],
+            "datasource" => fn ($params) => ["demanda_numero" => $params["demanda"]->numero, "demanda_responsavel" => $params["demanda"]->usuario->nome],
+            "template" => "Foi inserido um comentário na demanda #{{demanda_numero}}, atribuída a {{demanda_responsavel}}, acesse o PETRVS para visualizá-la!"
+        ],         
+        "DMD_CONCLUSAO" => [
+            "descricao" => "Notificação de conclusão da demanda",
+            "destinatarios" => fn ($params) => [$params["demanda"]->demandante],
+            "unidade" => fn ($params) => $params["demanda"]->unidade,
+            "validacao" => fn ($params) => true,
+            "dataset" => [["field" => "demanda_numero", "label" => "Número da demanda"], ["field" => "demanda_responsavel", "label" => "Nome do responsável pela demanda"]],
+            "datasource" => fn ($params) => ["demanda_numero" => $params["demanda"]->numero, "demanda_responsavel" => $params["demanda"]->usuario->nome],
+            "template" => "A demanda #{{demanda_numero}}, atribuída à\ao {{demanda_responsavel}}, foi concluída, acesse o PETRVS para visualizá-la!"
+        ],         
+        "DMD_AVALIACAO" => [
+            "descricao" => "Notificação de avaliação da demanda",
+            "destinatarios" => fn ($params) => [$params["demanda"]->usuario],
+            "unidade" => fn ($params) => $params["demanda"]->unidade,
+            "validacao" => fn ($params) => true,
+            "dataset" => [["field" => "demanda_numero", "label" => "Número da demanda"]],
+            "datasource" => fn ($params) => ["demanda_numero" => $params["demanda"]->numero],
+            "template" => "Sua demanda #{{demanda_numero}} foi avaliada, acesse o PETRVS para avaliá-la!"
+        ],         
+    ];
+
+    public function checkValue($array, $key, $default = true) {
+        return !array_key_exists($key, $array) ? $default : $array[$key];
     }
 
-    public function send($usuario, $unidade, $mensagem, $notifica = null) {
+    public function send($code, $params, $unidade = null) {
+        $notificacao = $this->checkValue($code, $this->notificacoes, null);
+        if(!empty($notificacao)) {
+            $destinatarios = $notificacao["destinatarios"]($params);
+            $unidade = $unidade ?? $notificacao["unidade"]($params);
+            $entidade = $unidade?->entidade;
+            $notificacaoEntidade = $this->checkValue($code, $entidade?->notificacoes || [], ["enviar" => true, "template" => null]);
+            $notificacaoUnidade = $this->checkValue($code, $unidade?->notificacoes || [], ["enviar" => true, "template" => null]);
+            $template = $notificacaoUnidade["template"] ?? $notificacaoEntidade["template"] ?? $notificacao["template"];
+            $message = $this->applyParams($tempalte, $notificacao["datasource"]($params));
+            if(!empty($entidade) && $notificacaoEntidade["enviar"] && $notificacaoUnidade["enviar"]) {
+                $config = config("notificacoes");
+                foreach($destinatarios as $destinatario) {
+                    if($config["petrvs"]["enviar"] && $this->checkValue("enviar_petrvs", $destinatario->notificacoes)) {
+
+                    }
+                    if($config["email"]["enviar"] && $this->checkValue("enviar_email", $destinatario->notificacoes)) {
+                        
+                    }
+                    if($config["whatsapp"]["enviar"] && $this->checkValue("enviar_whatsapp", $destinatario->notificacoes)) {
+                        
+                    }
+                }
+            }
+        }
+        /*
         if(empty($notifica) || $this->checkNotifica($usuario, $notifica)) {
             $config = config("notificacoes");
             $entidade = $unidade->entidade;
@@ -34,7 +107,7 @@ class NotificacoesService
                     LogError::newError("Erro ao enviar mensagem Whatsapp de notificação", $e, ["usuario_id" => $usuario->id, "unidade_id" => $unidade->id, "telefone" => $usuario->telefone, "mensagem" => $mensagem], false);
                 }
             }
-        }
+        }*/
     }
 
     public function applyParams(&$text, $params) {
@@ -42,7 +115,7 @@ class NotificacoesService
         return $text;
     }
     
-    public function sendDemandaDistribuicao($demanda) {
+    /*public function sendDemandaDistribuicao($demanda) {
         try {
             $entidade_notificacoes = $demanda->unidade->entidade->notificacoes; 
             $unidade_notificacoes = $demanda->unidade->notificacoes;
@@ -112,6 +185,6 @@ class NotificacoesService
         } catch (\Throwable $e) {
             LogError::newError("Erro ao enviar notificação de comentario na demanda", $e, ["usuario_id" => $demanda->usuario_id, "unidade_id" => $demanda->unidade_id], false);
         }
-    }
+    }*/
 
 }

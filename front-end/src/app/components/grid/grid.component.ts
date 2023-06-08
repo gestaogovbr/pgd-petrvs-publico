@@ -58,6 +58,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   @Input() selectable: boolean = false;
   @Input() loadList?: (rows?: Base[]) => Promise<void> | void;
   @Input() multiselectChange?: (multiselected: IIndexable) => void;
+  @Input() init?: (grid: GridComponent) => void;
   @Input() add?: () => Promise<IIndexable | undefined | void>;
   @Input() load?: (form: FormGroup, row: any) => Promise<void>;
   @Input() remove?: (row: any) => Promise<boolean | undefined | void>;
@@ -310,6 +311,10 @@ export class GridComponent extends ComponentBase implements OnInit {
     this.loadPagination();
     /* Habilita muiltiselect caso multiselectEnabled esteja presente */
     if(this.isMultiselectEnabled) this.enableMultiselect(true);
+  }
+
+  ngAfterViewInit(): void {
+    if(this.init) this.init(this);
   }
 
   public reset() {

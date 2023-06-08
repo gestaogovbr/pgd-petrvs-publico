@@ -16,6 +16,8 @@ import { UtilService } from './util.service';
 import { UsuarioDaoService } from '../dao/usuario-dao.service';
 import { IIndexable } from '../models/base.model';
 import { Entidade } from '../models/entidade.model';
+import { UnidadeDaoService } from '../dao/unidade-dao.service';
+import { NotificacaoService } from '../modules/uteis/notificacoes/notificacao.service';
 
 export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION" | "SUPER";
 export type Permission = string | (string | string[])[];
@@ -78,8 +80,12 @@ export class AuthService {
   public get route(): ActivatedRoute { this._route = this._route || this.injector.get<ActivatedRoute>(ActivatedRoute); return this._route };
   private _calendar?: CalendarService;
   public get calendar(): CalendarService { this._calendar = this._calendar || this.injector.get<CalendarService>(CalendarService); return this._calendar };
-  private _usuarioDaoService?: UsuarioDaoService;
-  public get usuarioDaoService(): UsuarioDaoService { this._usuarioDaoService = this._usuarioDaoService || this.injector.get<UsuarioDaoService>(UsuarioDaoService); return this._usuarioDaoService };
+  private _usuarioDao?: UsuarioDaoService;
+  public get usuarioDao(): UsuarioDaoService { this._usuarioDao = this._usuarioDao || this.injector.get<UsuarioDaoService>(UsuarioDaoService); return this._usuarioDao };
+  private _unidadeDao?: UnidadeDaoService;
+  public get unidadeDao(): UnidadeDaoService { this._unidadeDao = this._unidadeDao || this.injector.get<UnidadeDaoService>(UnidadeDaoService); return this._unidadeDao };
+  private _notificacao?: NotificacaoService;
+  public get notificacao(): NotificacaoService { this._notificacao = this._notificacao || this.injector.get<NotificacaoService>(NotificacaoService); return this._notificacao };
 
   constructor(public injector: Injector) { }
 
@@ -98,17 +104,8 @@ export class AuthService {
   }
 
   public registerPopupLoginResultListener() {
-    /*
-    this.bc = new BroadcastChannel('petrvs_login_popup');
-    this.bc.onmessage = (event) => {
-      this.dialog.closeSppinerOverlay();
-      this.auth.authSession().then(success => {
-        if(success) this.auth.success!(this.auth.usuario!, {route: ["home"]});
-      });
-    };*/
     window.addEventListener("message", (event) => {
-      //const fromUrl = event?.origin || "";
-      if (event?.data == "COMPLETAR_LOGIN") { //fromUrl.includes("login-azure-callback")
+      if (event?.data == "COMPLETAR_LOGIN") {
         this.dialogs.closeSppinerOverlay();
         this.authSession().then(success => {
           if (success) this.success!(this.usuario!, { route: ["home"] });
@@ -123,12 +120,12 @@ export class AuthService {
 
   public updateUsuarioConfig(usuarioId: string, value: IIndexable) {
     if (this.usuario?.id == usuarioId) this.usuario!.config = this.util.assign(this.usuario!.config, value);
-    return this.usuarioDaoService.updateJson(usuarioId, 'config', value);
+    return this.usuarioDao.updateJson(usuarioId, 'config', value);
   }
 
   public updateUsuarioNotificacoes(usuarioId: string, value: IIndexable) {
     if (this.usuario?.id == usuarioId) this.usuario!.notificacoes = this.util.assign(this.usuario!.notificacoes, value);
-    return this.usuarioDaoService.updateJson(usuarioId, 'notificacoes', value);
+    return this.usuarioDao.updateJson(usuarioId, 'notificacoes', value);
   }
 
   public get usuarioConfig(): IIndexable {
@@ -156,6 +153,7 @@ export class AuthService {
       this.unidade = this.usuario?.lotacoes?.find(x => x.principal)?.unidade;
       if (this.unidade) this.calendar.loadFeriadosCadastrados(this.unidade.id);
       if (token?.length) localStorage.setItem("petrvs_api_token", token);
+      this.notificacao.updateNaoLidas();
     } else {
       this.usuario = undefined;
       this.kind = undefined;
@@ -313,6 +311,55 @@ export class AuthService {
 
   public hasLotacao(unidadeId: string) {
     return this.usuario!.lotacoes.find(x => x.unidade_id == unidadeId);
+  }
+
+  /**
+   * Informa se o usuário logado é gestor(titular ou substituto) da unidade repassada como parâmetro. Se nenhuma unidade for repassada, 
+   * será adotada a unidade selecionada pelo servidor na homepage.
+   * @param pUnidade 
+   * @returns 
+   */
+  public isGestorUnidade(pUnidade: Unidade | string | null = null): boolean {
+    /*       let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? this.unidades?.find(x => x.id == pUnidade) : pUnidade;
+          return !!unidade && [unidade.gestor_substituto_id, unidade.gestor_id].includes(this.usuario!.id);  */
+    let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? [...this.usuario!.chefias_titulares!, ...this.usuario!.chefias_substitutas!].find(x => x.id == pUnidade) : pUnidade;
+    return !!unidade && [unidade.gestor_substituto_id, unidade.gestor_id].includes(this.usuario!.id);
+  }
+
+  /**
+   * Informa se a unidade repassada como parâmetro é a lotação principal do usuário logado. Se nenhuma unidade for repassada, 
+   * será adotada a unidade selecionada pelo servidor na homepage.
+   * @param pUnidade 
+   * @returns 
+   */
+  public isLotacaoPrincipal(pUnidade: Unidade | null = null): boolean {
+    let unidade = pUnidade || this.unidade;
+    let lotacao = this.usuario!.lotacoes.find(x => x.unidade_id == unidade!.id && x.principal);
+    return lotacao != undefined;
+  }
+
+  /**
+   * Informa se o usuário logado tem como lotação alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
+   * repassada como parâmetro.
+   * @param unidade 
+   * @returns 
+   */
+  public isLotadoNaLinhaAscendente(unidade: Unidade): boolean {
+    let result = false;
+    this.usuario!.lotacoes.map(x => x.unidade_id).forEach(x => { if (unidade.path.split('/').slice(1).includes(x)) result = true; });
+    return result;
+  }
+
+  /**
+   * Informa se o usuário logado é gestor (titular ou substituto) de alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
+   * repassada como parâmetro.
+   * @param unidade 
+   * @returns 
+   */
+  public isGestorLinhaAscendente(unidade: Unidade): boolean {
+    let result = false;
+    [...this.usuario!.chefias_titulares!, ...this.usuario!.chefias_substitutas!].map(x => x.id).forEach(x => { if (unidade.path.split('/').slice(1).includes(x)) result = true; });
+    return result;
   }
 
 }
