@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Plano;
+use App\Models\PlanoEntrega;
 use App\Models\Usuario;
 use App\Models\Unidade;
 use App\Models\Afastamento;
@@ -108,11 +109,23 @@ class PlanoService extends ServiceBase
         throw new ServerException("ValidatePlano", "O plano de trabalho #" . $plano->numero . " (" . UtilService::getDateTimeFormatted($plano->data_inicio_vigencia) . " à " . UtilService::getDateTimeFormatted($plano->data_fim_vigencia) . ") possui período conflitante para a mesma modalidade (MOD_PTR_INTSC_DATA)");
       }
     }
+    if($action == "UPDATE") {
+      $plano = Plano::find($data["id"]);
+      if($data["unidade_id"] != $plano->unidade_id) throw new ServerException("ValidatePlano", "Depois de criado um Plano de Trabalho, não é possível alterar a sua Unidade.");
+      if($data["programa_id"] != $plano->programa_id) throw new ServerException("ValidatePlano", "Depois de criado um Plano de Trabalho, não é possível alterar o seu Programa.");
+      if($data["plano_entrega_id"] != $plano->plano_entrega_id) throw new ServerException("ValidatePlano", "Depois de criado um Plano de Trabalho, não é possível alterar o seu Plano de Entregas.");
+    }
   }
 
   public function proxyStore($plano, $unidade, $action) {
     $this->documentoId = $plano["documento_id"];
     $plano["documento_id"] = null;
+    if($action == "INSERT") {
+      if(empty($plano["plano_entrega_id"])) throw new ServerException("ValidatePlano", "A definição de um Plano de Entregas é obrigatória!");
+      $planoEntrega = PlanoEntrega::find($plano["plano_entrega_id"]);
+      $plano["programa_id"] = $planoEntrega->programa_id;
+      $plano["unidade_id"] = $planoEntrega->unidade_id;
+    }
     return $plano;
   }
 

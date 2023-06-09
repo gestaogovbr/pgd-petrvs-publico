@@ -2,17 +2,13 @@
     <tabs #tabs display right [hidden]="isTermos ? 'true' : undefined" [title]="!isModal ? title : ''">
         <tab key="DADOS" label="Dados">
             <div class="row">
-                <input-search #unidade [size]="6"   controlName="unidade_id" [join]="['entidade']" [dao]="unidadeDao" (select)="onUnidadeSelect($event)" ></input-search>
-                <input-search #usuario [size]="6"  controlName="usuario_id" [dao]="usuarioDao" [join]="['afastamentos']" (select)="onUsuarioSelect($event)"></input-search>
-            </div>
-            <div class="row">
-                <input-search #programa [size]="6"  controlName="programa_id"  [join]="['template_tcr']" [dao]="programaDao" (select)="onProgramaSelect($event)"></input-search>
-                <input-search #planoEntrega [size]="6"  controlName="plano_entrega_id" [join]="['entregas.entrega']" [dao]="planoEntregaDao" (select)="onPlanoEntregaSelect($event)" ></input-search>
+                <input-search #planoEntrega [size]="6" [disabled]="entity?.id ? 'disabled' : undefined" controlName="plano_entrega_id" [dao]="planoEntregaDao" [join]="['entregas.entrega']" (select)="onPlanoEntregaSelect($event)"></input-search>
+                <input-search #usuario [size]="6" controlName="usuario_id" [dao]="usuarioDao" [join]="['afastamentos']" (select)="onUsuarioSelect($event)"></input-search>
             </div>
             <div class="row">
                 <input-datetime [size]="3" label="Início" icon="bi bi-calendar-date" controlName="data_inicio_vigencia" [control]="form!.controls.data_inicio_vigencia" (change)="onDataInicioChange($event)" labelInfo="'Início da Vigência do '+ lex.noun('Plano de trabalho')"></input-datetime>
                 <input-datetime [size]="3" label="Final" icon="bi bi-calendar-date" controlName="data_fim_vigencia" [control]="form!.controls.data_fim_vigencia" (change)="onDataFimChange($event)" labelInfo="'Final da Vigência do ' +lex.noun('Plano de trabalho')"></input-datetime>
-                <input-search #tipoModalidade [size]="6" controlName="tipo_modalidade_id" [dao]="tipoModalidadeDao" (select)="onTipoModalidadeSelect($event)"></input-search>
+                <input-search #tipoModalidade [size]="6" [disabled]="form!.controls.plano_entrega_id.value ? undefined : 'disabled'" controlName="tipo_modalidade_id" [dao]="tipoModalidadeDao" (select)="onTipoModalidadeSelect($event)"></input-search>
             </div>
             <div class="row">
                 <input-workload [size]="3" [unit]="formaContagemCargaHoraria" label="Carga Horária" icon="bi bi-hourglass-split" controlName="carga_horaria" [control]="form!.controls.carga_horaria" [unitChange]="onFormaContagemCargaHorariaChange.bind(this)" (change)="onCargaHorariaChenge($event)" labelInfo="Carga horária do usuário (Máx.: diária 24 horas; semana 24*5=240 horas; mensal 24*20=480 horas)"></input-workload>
@@ -72,7 +68,7 @@
                 </grid>
             </div>
         </tab>
-        <tab *ngIf="checkFilled(['usuario_id', 'unidade_id'])" key="MENSAGENS" label="Texto Complementar">
+        <tab *ngIf="checkFilled(['usuario_id'])" key="MENSAGENS" label="Texto Complementar">
             <separator [title]="'Texto complementar da '+ lex.noun('unidade')">
                 <input-switch controlName="editar_texto_complementar_unidade" [size]="12" scale="small" labelPosition="right" [label]="'Editar texto complementar na '+ lex.noun('unidade')"></input-switch>
                 <input-editor controlName="unidade_texto_complementar" [disabled]="form!.controls.editar_texto_complementar_unidade.value ? undefined : 'true'" [dataset]="planoDataset"></input-editor>
@@ -82,7 +78,7 @@
                 <input-editor controlName="usuario_texto_complementar" [disabled]="form!.controls.editar_texto_complementar_usuario.value ? undefined : 'true'" [dataset]="planoDataset"></input-editor>
             </separator>
         </tab>
-        <tab *ngIf="checkFilled(['programa_id', 'usuario_id', 'unidade_id', 'tipo_modalidade_id'])" key="TERMO" label="Termo">
+        <tab *ngIf="checkFilled(['usuario_id', 'tipo_modalidade_id'])" key="TERMO" label="Termo">
             <!--top-alert *ngIf="!isTermos" type="warning" message="Para [INSERIR] ou [ASSINAR] termos escolha opção Termos de adesão na tela de listagem, ou utilize o Sei"></top-alert/-->
             <div clss="row">
                 <documentos #documentos [entity]="entityDocumentos" noPersist [cdRef]="cdRef" [needSign]="planoService.needSign" [extraTags]="planoService.extraTags" especie="TCR" [editingId]="documentoId" [datasource]="datasource" [template]="template"></documentos>

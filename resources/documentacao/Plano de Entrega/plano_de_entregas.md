@@ -73,6 +73,7 @@
     10. (DESENVOLVIMENTO FUTURO) Se o Plano de Entregas for integralmente sigiloso, só poderá ser visualizado pelo Chefe da sua unidade ou por quem tiver capacidade de acesso;
     11. (DESENVOLVIMENTO FUTURO) Se o Plano de Entregas for parcialmente sigiloso, as entregas não sigilosas poderão ser visualizadas por quem puder visualizar o plano de entregas, mas as sigilosas só poderão ser visualizadas pelo Chefe da sua unidade e pelos servidores que as possuirem em seus respectivos Planos de Trabalho;
     12. (DESENVOLVIMENTO FUTURO) Somente o Chefe da unidade do Plano de Entregas deve ser capaz de adicionar uma entrega sigilosa a um plano de trabalho;
+    13. Após criado um plano de entregas, os seguintes campos não poderão mais ser alterados: unidade_id, programa_id;
 4. VALIDAÇÕES NECESSÁRIAS PARA AS AÇÕES PREVISTAS NO FLUXO
    1. (RN_PENT_4_1) ADERIR (exclusivamente para planos vinculados)
         1. o usuário logado precisa ser gestor da unidade ou da sua unidade-pai, ou uma destas ser sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_ADERIR"; (RN_PENT_2_4) e

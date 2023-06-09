@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\Unidade;
+use App\Models\Programa;
 use App\Models\Planejamento;
 use App\Models\CadeiaValor;
 use App\Models\PlanoEntregaEntrega;
@@ -56,5 +57,6 @@ class PlanoEntrega extends ModelBase
     public function cadeiaValor() { return $this->belongsTo(CadeiaValor::class, 'cadeia_valor_id'); }
     public function unidade() { return $this->belongsTo(Unidade::class, 'unidade_id'); }
     public function usuario() { return $this->belongsTo(Usuario::class, 'criacao_usuario_id'); }
+    public function programa() { return $this->belongsTo(Programa::class, 'programa_id'); }
     public function planoEntregaSuperior() { return $this->belongsTo(PlanoEntrega::class, 'plano_entrega_id'); }
 }

@@ -2,6 +2,7 @@ import { Base } from './base.model';
 import { CadeiaValor } from './cadeia-valor.model';
 import { Planejamento } from './planejamento.model';
 import { PlanoEntregaEntrega } from './plano-entrega-entrega.model';
+import { Programa } from './programa.model';
 import { Unidade } from './unidade.model';
 
 export type PlanoEntregaMetadados = {
@@ -17,6 +18,7 @@ export class PlanoEntrega extends Base {
   public unidade?: Unidade;
   public planejamento?: Planejamento;
   public cadeia_valor?: CadeiaValor;
+  public programa?: Programa;
   public plano_entrega_superior?: PlanoEntrega;
 
   public data_fim: Date | null = null;                              // Data em que o registro foi deletado (soft-delete)
