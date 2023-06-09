@@ -298,7 +298,10 @@ class PlanoEntregaService extends ServiceBase
             $planoEntrega = PlanoEntrega::find($dataOrEntity["id"]);
             if($dataOrEntity["unidade_id"] != $planoEntrega->unidade_id) throw new ServerException("ValidatePlano", "Depois de criado um Plano de Entregas, não é possível alterar a sua Unidade.");
             if($dataOrEntity["programa_id"] != $planoEntrega->programa_id) throw new ServerException("ValidatePlano", "Depois de criado um Plano de Entregas, não é possível alterar o seu Programa.");
-          }
+             /* (RN_PENT_3_9)
+                Após criado um plano de entregas, os seguintes campos não poderão mais ser alterados: unidade_id, programa_id;
+             */
+        }
     }
 
     /**

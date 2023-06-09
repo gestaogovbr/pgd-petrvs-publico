@@ -114,6 +114,10 @@ class PlanoService extends ServiceBase
       if($data["unidade_id"] != $plano->unidade_id) throw new ServerException("ValidatePlano", "Depois de criado um Plano de Trabalho, não é possível alterar a sua Unidade.");
       if($data["programa_id"] != $plano->programa_id) throw new ServerException("ValidatePlano", "Depois de criado um Plano de Trabalho, não é possível alterar o seu Programa.");
       if($data["plano_entrega_id"] != $plano->plano_entrega_id) throw new ServerException("ValidatePlano", "Depois de criado um Plano de Trabalho, não é possível alterar o seu Plano de Entregas.");
+      /*  (RN_PTR_1)
+          Após criado um plano de trabalho, o seu plano de entregas não pode mais ser alterado. Em consequência dessa regra, os seguintes campos 
+          não poderão mais ser alterados: plano_entrega_id, unidade_id, programa_id;
+      */
     }
   }
 

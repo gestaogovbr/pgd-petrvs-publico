@@ -2,6 +2,7 @@
     <tabs #tabs display right [hidden]="isTermos ? 'true' : undefined" [title]="!isModal ? title : ''">
         <tab key="DADOS" label="Dados">
             <div class="row">
+                <!-- (RI_PTR_1) No formulário de inclusão/edição de um plano de trabalho, o input-search de plano de entregas deve ficar desabilitado nas edições e habilitado apenas nas inclusões; -->
                 <input-search #planoEntrega [size]="6" [disabled]="entity?.id ? 'disabled' : undefined" controlName="plano_entrega_id" [dao]="planoEntregaDao" [join]="['entregas.entrega']" (select)="onPlanoEntregaSelect($event)"></input-search>
                 <input-search #usuario [size]="6" controlName="usuario_id" [dao]="usuarioDao" [join]="['afastamentos']" (select)="onUsuarioSelect($event)"></input-search>
             </div>
