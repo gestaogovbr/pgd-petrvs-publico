@@ -1,100 +1,91 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()"
     (cancel)="onCancel()">
-    <tabs display right >
-        <tab key="DadosPessoais" class="fw-bold" label="Dados Pessoais">
-            <div class="row mt-3">
-                <input-textarea label="Apresente-se" [size]="12" [bold]="true" icon="bi-card-list"
-                    controlName="apresentacao"
-                    [control]="form!.controls.apresentacao"></input-textarea><!-- [control]="form!.controls.apresentese">-->
-            </div>
+    <div class="row mt-3">
+        <input-textarea label="Apresente-se" [size]="12" [bold]="true" icon="bi-card-list" controlName="apresentacao"
+            [control]="form!.controls.apresentacao"></input-textarea><!-- [control]="form!.controls.apresentese">-->
+    </div>
 
-            <div class="row mt-3">
-                <separator title="Dados Residenciais"></separator>
-            </div>
+    <div class="row mt-3">
+        <separator title="Dados Residenciais"></separator>
+    </div>
 
-            <div class="row mt-2">
-                <input-select [size]="4" label="Estado" icon="fas fa-flag" controlName="estados"
-                    [control]="form!.controls.estados" [items]="lookup.UF" (change)="onEstadosChange()">
-                </input-select>
-                <input-select [size]="4" label="Município" icon="far fa-flag" controlName="cidade_id"
-                    [control]="form!.controls.cidade_id" [items]="municipios">
-                </input-select>
-                <input-text [size]="4" label="Telefone de contato WhatsAPP" icon="fas fa-phone" controlName="telefone"
-                    [control]="form!.controls.telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'"></input-text>
-            </div>
+    <div class="row mt-2">
+        <input-select [size]="4" label="Estado" icon="fas fa-flag" controlName="estados"
+            [control]="form!.controls.estados" [items]="lookup.UF" (change)="onEstadosChange()">
+        </input-select>
+        <input-select [size]="4" label="Município" icon="far fa-flag" controlName="cidade_id"
+            [control]="form!.controls.cidade_id" [items]="municipios">
+        </input-select>
+        <input-text [size]="4" label="Telefone de contato WhatsAPP" icon="fas fa-phone" controlName="telefone"
+            [control]="form!.controls.telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'"></input-text>
+    </div>
 
 
-            <div class="row mt-3">
-                <separator title="Estado Civil"></separator>
-            </div>
-            <div class="row mt-2">
-                <input-select [size]="5" label="Estado Civil" icon="fas fa-ring" controlName="estado_civil"
-                    [control]="form!.controls.estado_civil" [items]="this.lookup.ESTADO_CIVIL">
-                </input-select>
-                <input-switch [size]="3" label="Possui Filhos?" icon="fas fa-child" controlName="filhos"
-                    [control]="form!.controls.filhos" labelInfo="Possui Filhos?"></input-switch>
-                <input-number [hidden]="form!.controls.filhos.value ? undefined : 'true'" [size]="4" label="Quantos?"
-                    icon="bi bi-arrow-up-right-circle" controlName="quantidade_filhos"
-                    [control]="form!.controls.quantidade_filhos" [minValue]="0"></input-number>
-            </div>
-            <div class="row mt-3">
-                <separator title="Idiomas"></separator>
-            </div>
-            <div class="row my-3">
-                <input-switch [size]="2" label="Fala outros idiomas?" icon="fas fa-language"
-                    controlName="radioFalaIdioma" [control]="form!.controls.radioFalaIdioma">
-                </input-switch>
-                <input-multiselect *ngIf="form!.controls.radioFalaIdioma.value" controlName="idiomasM" [size]="10"
-                    [control]="form!.controls.idiomasM" [addItemHandle]="addItemIdioma.bind(this)" noBox>
+    <div class="row mt-3">
+        <separator title="Estado Civil"></separator>
+    </div>
+    <div class="row mt-2">
+        <input-select [size]="5" label="Estado Civil" icon="fas fa-ring" controlName="estado_civil"
+            [control]="form!.controls.estado_civil" [items]="this.lookup.ESTADO_CIVIL">
+        </input-select>
+        <input-switch [size]="3" label="Possui Filhos?" icon="fas fa-child" controlName="filhos"
+            [control]="form!.controls.filhos" labelInfo="Possui Filhos?"></input-switch>
+        <input-number [hidden]="form!.controls.filhos.value ? undefined : 'true'" [size]="4" label="Quantos?"
+            icon="bi bi-arrow-up-right-circle" controlName="quantidade_filhos"
+            [control]="form!.controls.quantidade_filhos" [minValue]="0"></input-number>
+    </div>
+    <div class="row mt-3">
+        <separator title="Idiomas"></separator>
+    </div>
+    <div class="row my-3">
+        <input-switch [size]="2" label="Fala outros idiomas?" icon="fas fa-language" controlName="radioFalaIdioma"
+            [control]="form!.controls.radioFalaIdioma">
+        </input-switch>
+        <input-multiselect *ngIf="form!.controls.radioFalaIdioma.value" controlName="idiomasM" [size]="10"
+            [control]="form!.controls.idiomasM" [addItemHandle]="addItemIdioma.bind(this)" noBox>
 
-                    <input-select [size]="3" label="Idioma" icon="fas fa-sign-out-alt" controlName="idioma" liveSearch
-                        [control]="form!.controls.idioma" [items]="this.lookup.IDIOMAS">
+            <input-select [size]="3" label="Idioma" icon="fas fa-sign-out-alt" controlName="idioma" liveSearch
+                [control]="form!.controls.idioma" [items]="this.lookup.IDIOMAS">
 
-                    </input-select>
-                    <input-select [size]="3" label="Nível de fala?" icon="fas fa-sign-out-alt" controlName="idiomaFala"
-                        [control]="form!.controls.idiomaFala" [items]="this.lookup.NIVEL_IDIOMA">
-                    </input-select>
-                    <input-select [size]="3" label="Nível de escrita?" icon="fas fa-sign-out-alt"
-                        controlName="idiomaEscrita" [control]="form!.controls.idiomaEscrita"
-                        [items]="this.lookup.NIVEL_IDIOMA">
-                    </input-select>
-                    <input-select [size]="3" label="Nível de entendimento?" icon="fas fa-sign-out-alt"
-                        controlName="idiomaEntendimento" [control]="form!.controls.idiomaEntendimento"
-                        [items]="this.lookup.NIVEL_IDIOMA">
-                    </input-select>
+            </input-select>
+            <input-select [size]="3" label="Nível de fala?" icon="fas fa-sign-out-alt" controlName="idiomaFala"
+                [control]="form!.controls.idiomaFala" [items]="this.lookup.NIVEL_IDIOMA">
+            </input-select>
+            <input-select [size]="3" label="Nível de escrita?" icon="fas fa-sign-out-alt" controlName="idiomaEscrita"
+                [control]="form!.controls.idiomaEscrita" [items]="this.lookup.NIVEL_IDIOMA">
+            </input-select>
+            <input-select [size]="3" label="Nível de entendimento?" icon="fas fa-sign-out-alt"
+                controlName="idiomaEntendimento" [control]="form!.controls.idiomaEntendimento"
+                [items]="this.lookup.NIVEL_IDIOMA">
+            </input-select>
 
-                </input-multiselect>
-            </div>
-         
-            <div class="row mt-3 mb-5">
-                <input-multiselect label="Graduação e Pós-Graduação - Especialização, Mestrado, Doutorado e Pós Doutorado"
-                    [size]="12" controlName="graduacaopos" [control]="formGraduacao!.controls.graduacaopos"
-                    [addItemHandle]="addItemGraduacaoPos.bind(this)" [bold]="true" noBox>
-                    <input-switch [size]="2" label="Pretende Cursar?" icon="fas fa-user-graduate"
-                        controlName="pretensao"
-                        [control]="formGraduacao!.controls.pretensao" labelInfo="Pretendo Cursar">
-                    </input-switch>
-                    <input-search  #areaPos [size]="4" [dao]="areaDao" label="Área de conhecimento" 
-                        [control]="formGraduacao!.controls.areaPos" controlName="areaPos">
-                        <!--<button type="button" [id]="grid?.getId(index.toString()) + '_add_button'" class="btn btn-outline-primary" (click)="onAddClick()" [disabled]="grid?.editing">
+        </input-multiselect>
+    </div>
+
+    <div class="row mt-3 mb-5">
+        <input-multiselect label="Graduação e Pós-Graduação - Especialização, Mestrado, Doutorado e Pós Doutorado"
+            [size]="12" controlName="graduacaopos" [control]="formGraduacao!.controls.graduacaopos"
+            [addItemHandle]="addItemGraduacaoPos.bind(this)" [bold]="true" noBox>
+            <input-switch [size]="2" label="Pretende Cursar?" icon="fas fa-user-graduate" controlName="pretensao"
+                [control]="formGraduacao!.controls.pretensao" labelInfo="Pretendo Cursar">
+            </input-switch>
+            <input-search #areaPos [size]="4" [dao]="areaDao" label="Área de conhecimento"
+                [control]="formGraduacao!.controls.areaPos" controlName="areaPos">
+                <!--<button type="button" [id]="grid?.getId(index.toString()) + '_add_button'" class="btn btn-outline-primary" (click)="onAddClick()" [disabled]="grid?.editing">
                             <i class="bi bi-plus-circle"></i>
                         </button>-->
-                    </input-search>
-                    <input-select [size]="2" label="Titulo" icon="bi bi-mortarboard-fill" controlName="titulo"
-                        liveSearch [control]="formGraduacao!.controls.titulo" [items]="this.lookup.TITULOS_CURSOS" (change)="onAreaPosGraduacaoChange()">
-                    </input-select>
-                    <input-select [size]="4" label="Curso" icon="fas fa-graduation-cap" controlName="cursoPos"
-                        liveSearch [control]="formGraduacao!.controls.cursoPos" [items]="cursosGradPos">
-                    </input-select>
-                    
-                </input-multiselect>
-            </div>
-            <separator class="mb-1"></separator>
-        </tab>
-        <tab key="DADOSPROF" class="fw-bold" label="Dados Profissionais">
-            <curriculum-profissional-form></curriculum-profissional-form>
-        </tab>
-        <tab key="ATRIBUTOS" class="fw-bold" label="Atributos Comportamentais"></tab>
-        
-    </tabs>
+            </input-search>
+            <input-select [size]="2" label="Titulo" icon="bi bi-mortarboard-fill" controlName="titulo" liveSearch
+                [control]="formGraduacao!.controls.titulo" [items]="this.lookup.TITULOS_CURSOS"
+                (change)="onAreaPosGraduacaoChange()">
+            </input-select>
+            
+            <input-select [size]="4" label="Curso" icon="fas fa-graduation-cap" controlName="cursoPos" liveSearch
+                [control]="formGraduacao!.controls.cursoPos" [items]="cursosGradPos">
+            </input-select>
+
+        </input-multiselect>
+    </div>
+    <separator class="mb-1"></separator>
+
 </editable-form>

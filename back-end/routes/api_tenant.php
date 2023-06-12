@@ -59,6 +59,7 @@ use App\Http\Controllers\FuncaoController;
 use App\Http\Controllers\GrupoEspecializadoController;
 use App\Http\Controllers\CargoController;
 use App\Http\Controllers\UnidadeIntegranteController;
+use App\Http\Controllers\CurriculumProfissionalController;
 
 /*
 |--------------------------------------------------------------------------
@@ -270,6 +271,7 @@ Route::middleware(['auth:sanctum'])->prefix('TipoCurso')->group(function () { de
 Route::middleware(['auth:sanctum'])->prefix('Materia')->group(function () { defaultRoutes(MateriaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Curriculum')->group(function () { defaultRoutes(CurriculumController::class); });
 Route::middleware(['auth:sanctum'])->prefix('CurriculumGraduacao')->group(function () { defaultRoutes(CurriculumGraduacaoController::class); });
+Route::middleware(['auth:sanctum'])->prefix('CurriculumProfissional')->group(function () { defaultRoutes(CurriculumProfissionalController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Funcao')->group(function () { defaultRoutes(FuncaoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('CentroTreinamento')->group(function () { defaultRoutes(CentroTreinamentoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('GrupoEspecializado')->group(function () { defaultRoutes(GrupoEspecializadoController::class); });
