@@ -27262,7 +27262,7 @@ function DocumentosComponent_ng_template_3_Template(rf, ctx) { if (rf & 1) {
 } if (rf & 2) {
     const row_r7 = ctx.row;
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"]((row_r7 == null ? null : row_r7.titulo) || "Pre-view do template");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"]((row_r7 == null ? null : row_r7.titulo) || "Preview do template");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("html", row_r7 == null ? null : row_r7.conteudo);
 } }
