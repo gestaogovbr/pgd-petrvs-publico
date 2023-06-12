@@ -5,7 +5,7 @@
   [hasDelete]="false">
   <side-panel [size]="8" fullSizeOnEdit [noToolbar]="editingId ? 'true' : undefined" [template]="panelDocumento" [editTemplate]="panelDocumentoEdit">
     <ng-template let-row="row" #panelDocumento>
-      <h5>{{row?.titulo || "Pre-view do template"}}</h5>
+      <h5>{{row?.titulo || "Preview do template"}}</h5>
       <document-preview [html]="row?.conteudo" emptyDocumentMensage="Nenhum documento selecionado"></document-preview>
     </ng-template>
     <ng-template let-row="row" #panelDocumentoEdit>
