@@ -69,10 +69,11 @@
     6. (RN_PENT_3_6) Os planos de entregas vão gerar dados que serão enviados ao órgão central (aguardando a definição do formato);
     7. (RN_PENT_3_7) O participante poderá visualizar o Plano de Entregas de qualquer Unidade em que esteja lotado;
     8. (RN_PENT_3_8) Uma unidade de execução poderá ter mais de um Plano de Entregas com status 'HOMOLOGANDO' e 'ATIVO', desde que sejam para períodos diferentes;
-    9. (DESENVOLVIMENTO FUTURO) Um Plano de Entregas pode ser sigiloso, e nesse caso todas as suas entregas são automaticamente sigilosas, ou possuir apenas algumas de suas entregas como sigilosas (plano parcialmente sigiloso);
+    9. (RN_PENT_3_9) Após criado um plano de entregas, os seguintes campos não poderão mais ser alterados: unidade_id, programa_id;
     10. (DESENVOLVIMENTO FUTURO) Se o Plano de Entregas for integralmente sigiloso, só poderá ser visualizado pelo Chefe da sua unidade ou por quem tiver capacidade de acesso;
     11. (DESENVOLVIMENTO FUTURO) Se o Plano de Entregas for parcialmente sigiloso, as entregas não sigilosas poderão ser visualizadas por quem puder visualizar o plano de entregas, mas as sigilosas só poderão ser visualizadas pelo Chefe da sua unidade e pelos servidores que as possuirem em seus respectivos Planos de Trabalho;
     12. (DESENVOLVIMENTO FUTURO) Somente o Chefe da unidade do Plano de Entregas deve ser capaz de adicionar uma entrega sigilosa a um plano de trabalho;
+    13. (DESENVOLVIMENTO FUTURO) Um Plano de Entregas pode ser sigiloso, e nesse caso todas as suas entregas são automaticamente sigilosas, ou possuir apenas algumas de suas entregas como sigilosas (plano parcialmente sigiloso);
 4. VALIDAÇÕES NECESSÁRIAS PARA AS AÇÕES PREVISTAS NO FLUXO
    1. (RN_PENT_4_1) ADERIR (exclusivamente para planos vinculados)
         1. o usuário logado precisa ser gestor da unidade ou da sua unidade-pai, ou uma destas ser sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_ADERIR"; (RN_PENT_2_4) e
@@ -115,7 +116,7 @@
    16. (RN_PENT_4_16) SUSPENDER
         1. o plano precisa estar com o status ATIVO e o usuário logado precisa ser gestor da unidade do plano, ou ser gestor de alguma unidade da linha hierarquica ascendente da unidade do plano;
 
-## REGRAS DE INTERFACE APLICADAS ÀS VIEWS
+## REGRAS DE INTERFACE
 
 1. (RI_PENT_1) O botão Aderir, na toolbar, deverá ser exibido sempre, mas para ficar habilitado:
     - o usuário logado precisa ser gestor da unidade selecionada ou da sua unidade-pai, ou uma destas ser sua unidade de lotação principal e ele

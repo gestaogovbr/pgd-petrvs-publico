@@ -291,9 +291,17 @@ class PlanoEntregaService extends ServiceBase
     /**
     * Verifica se as  datas do plano de entrega se encaixam na duração do Programa de gestão
     */
-    public function validateStore($planoEntrega, $unidade, $action)
+    public function validateStore($dataOrEntity, $unidade, $action)
     {
-        if(!$this->verificaDuracaoPlano($planoEntrega) || !$this->verificaDatasEntregas($planoEntrega)) throw new Exception("O prazo das datas não satisfaz a duração estipulada no programa.");
+        if(!$this->verificaDuracaoPlano($dataOrEntity) || !$this->verificaDatasEntregas($dataOrEntity)) throw new Exception("O prazo das datas não satisfaz a duração estipulada no programa.");
+        if($action == "UPDATE") {
+            $planoEntrega = PlanoEntrega::find($dataOrEntity["id"]);
+            if($dataOrEntity["unidade_id"] != $planoEntrega->unidade_id) throw new ServerException("ValidatePlano", "Depois de criado um Plano de Entregas, não é possível alterar a sua Unidade.");
+            if($dataOrEntity["programa_id"] != $planoEntrega->programa_id) throw new ServerException("ValidatePlano", "Depois de criado um Plano de Entregas, não é possível alterar o seu Programa.");
+             /* (RN_PENT_3_9)
+                Após criado um plano de entregas, os seguintes campos não poderão mais ser alterados: unidade_id, programa_id;
+             */
+        }
     }
 
     /**
