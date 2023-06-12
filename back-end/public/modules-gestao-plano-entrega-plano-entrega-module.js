@@ -558,7 +558,7 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
         const meta = (_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.meta.value;
         const realizado = (_b = this.form) === null || _b === void 0 ? void 0 : _b.controls.realizado.value;
         if (meta && realizado) {
-            let totalRealizado = (realizado / meta) * 100;
+            let totalRealizado = ((realizado / meta) * 100).toFixed(2);
             (_c = this.form) === null || _c === void 0 ? void 0 : _c.controls.progresso_realizado.setValue(totalRealizado);
         }
     }
@@ -1152,7 +1152,7 @@ class PlanoEntregaFormComponent extends src_app_modules_base_page_form_base__WEB
             if (['inicio'].indexOf(controlName) >= 0 && !((_b = this.dao) === null || _b === void 0 ? void 0 : _b.validDateTime(control.value))) {
                 result = "Inválido";
             }
-            if (controlName == 'fim' && control.value && !((_c = this.dao) === null || _c === void 0 ? void 0 : _c.validDateTime(control.value))) {
+            if (['fim'].indexOf(controlName) >= 0 && !((_c = this.dao) === null || _c === void 0 ? void 0 : _c.validDateTime(control.value))) {
                 result = "Inválido";
             }
             return result;
@@ -1168,7 +1168,7 @@ class PlanoEntregaFormComponent extends src_app_modules_base_page_form_base__WEB
             else if (!((_e = this.dao) === null || _e === void 0 ? void 0 : _e.validDateTime(inicio)) || !((_f = this.dao) === null || _f === void 0 ? void 0 : _f.validDateTime(fim))) {
                 return "Data de início ou fim inválidas";
             }
-            else if (inicio.toTime() > fim.toTime()) {
+            else if (inicio > fim) {
                 return "A data do início não pode ser maior que a data do fim!";
             }
             else {
