@@ -57,6 +57,7 @@ import { GrupoEspecializadoDaoService } from '../dao/grupo-epecializado-dao.serv
 import { PlanoEntregaObjetivoDaoService } from '../dao/plano-entrega-objetivo-dao.service';
 import { PlanoEntregaProcessoDaoService } from '../dao/plano-entrega-processo-dao.service';
 import { CursoDaoService } from '../dao/curso-dao.service';
+import { CargoDaoService } from '../dao/cargo-dao.service';
 
 export type EntityItem = {
     collection: string,
@@ -87,6 +88,7 @@ export class EntityService {
             { collection: 'CadeiaValor', codigo: 'MOD_CADV', table: 'cadeias_valores', campo: 'nome', icon: 'bi bi-bar-chart-steps', dao: injector.get<CadeiaValorDaoService>(CadeiaValorDaoService), label: "Cadeia de Valor", selectRoute: { route: ['gestao', 'cadeia-valor'] } },
             { collection: 'CadeiaValorProcesso', table: 'cadeias_valores_processos', campo: 'nome', icon: '', dao: injector.get<CadeiaValorProcessoDaoService>(CadeiaValorProcessoDaoService), label: "Processo da Cadeia de Valor", selectRoute: { route: ['gestao', 'cadeia-valor', 'processoList'] } },
             { collection: 'Capacidade', table: 'capacidades', campo: 'tipo_capacidade_id', icon: '', dao: injector.get<CapacidadeDaoService>(CapacidadeDaoService), label: "Capacidade" },
+            { collection: 'Cargo', codigo: 'MOD_RX', table: 'cargos', campo: 'nome', icon: 'bi bi-person-badge', dao: injector.get<CargoDaoService>(CargoDaoService), label: "Cargo", selectRoute: { route: ['raiox', 'cadastros','gerais','cargo'] } },
             { collection: 'Change', table: 'changes', campo: 'row_id', icon: 'bi bi-filter-square', dao: injector.get<ChangeDaoService>(ChangeDaoService), label: "Log de Alteração", selectRoute: { route: ['logs', 'change'] } },
             { collection: 'CentroTreinamento', codigo: 'MOD_RX', table: 'centros_treinamentos', campo: 'nome', icon: 'bi bi-building-fill', dao: injector.get<CentroTreinamentoDaoService>(CentroTreinamentoDaoService), label: "Centro de Treinamento", selectRoute: { route: ['raiox', 'cadastros','gerais','centrotreinamento'] } },
             { collection: 'Cidade', codigo: 'MOD_CID', table: 'cidades', campo: 'nome', icon: 'bi bi-building', dao: injector.get<CidadeDaoService>(CidadeDaoService), label: "Cidade", selectRoute: { route: ['cadastros', 'cidade'] } },

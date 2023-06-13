@@ -10,7 +10,7 @@ export class CargoDaoService extends DaoBaseService<Cargo>{
  
   constructor(protected injector: Injector) { 
     super("Cargo", injector);
-    this.searchFields = ["nome", "nivel", "descricao", "codigo", "efetivo", "ativo"];
+    this.searchFields = ["nome", "nivel", "descricao", "siape", "cbo", "efetivo", "ativo"];
   }  
 }
 

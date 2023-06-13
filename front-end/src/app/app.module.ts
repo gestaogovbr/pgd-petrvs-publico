@@ -35,8 +35,7 @@ import { CurriculumListComponent } from './modules/cadastros/curriculum/curricul
     TesteComponent,
     TesteFormComponent,
     CurriculumListComponent,
-    
-        
+       
   ],
   imports: [
     BrowserModule,

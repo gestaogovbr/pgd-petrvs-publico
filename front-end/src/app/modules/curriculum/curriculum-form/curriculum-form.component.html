@@ -35,9 +35,14 @@
             [control]="form!.controls.quantidade_filhos" [minValue]="0"></input-number>
     </div>
     <div class="row mt-3">
-        <separator title="Idiomas"></separator>
+        <separator title="Idiomas" (click)="togglePopOver()"></separator>
+    </div>
+    <div id="divPop" [@popOverState]="stateName" hidden >
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <p>Hello! I'm a helpful message.</p>
     </div>
     <div class="row my-3">
+       
         <input-switch [size]="2" label="Fala outros idiomas?" icon="fas fa-language" controlName="radioFalaIdioma"
             [control]="form!.controls.radioFalaIdioma">
         </input-switch>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 
@@ -7,6 +7,7 @@ import { AuthService } from 'src/app/services/auth.service';
   templateUrl: './raioxhome.component.html',
   styleUrls: ['./raioxhome.component.scss']
 })
+
 export class RaioxhomeComponent implements OnInit {
 
   logoInicial:string;

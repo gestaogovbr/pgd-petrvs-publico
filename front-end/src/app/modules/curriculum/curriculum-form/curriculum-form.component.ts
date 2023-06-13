@@ -9,18 +9,32 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
 import { AreaConhecimentoDaoService } from 'src/app/dao/area-conhecimento-dao.service';
 import { CursoDaoService } from 'src/app/dao/curso-dao.service';
-
 import { CurriculumDaoService } from 'src/app/dao/curriculum-dao.service';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { InputSwitchComponent } from 'src/app/components/input/input-switch/input-switch.component';
 import { Curriculum } from 'src/app/models/currriculum.model';
+import { trigger,state,style,animate,transition } from '@angular/animations';
+import { BoundDirectivePropertyAst } from '@angular/compiler';
 
 
 @Component({
   selector: 'curriculum-pessoal-form',
   templateUrl: './curriculum-form.component.html',
-  styleUrls: ['./curriculum-form.component.scss']
+  styleUrls: ['./curriculum-form.component.scss'],
+  animations: [
+    trigger('popOverState', [
+      state('show', style({
+        opacity: 1
+      })),
+      state('hide',   style({
+        opacity: 0
+      })),
+      transition('show => hide', animate('600ms ease-out')),
+      transition('hide => show', animate('1000ms ease-in'))
+    ])
+  ]
 })
+
 
 export class CurriculumFormComponent extends PageFormBase<Curriculum, CurriculumDaoService>{
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
@@ -28,7 +42,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   @ViewChild(InputSearchComponent, { static: false }) public areaPos?: InputSearchComponent;
   @ViewChild(InputSelectComponent, { static: false }) public estados?: InputSelectComponent;
   @ViewChild(InputSelectComponent, { static: false }) public titulo?: InputSelectComponent;
-
+  
 
   public municipios: LookupItem[] = [];
   //public areasGraduacao: LookupItem[] = [];
@@ -42,6 +56,10 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   public cursoDao?: CursoDaoService;
   public areaDao?: AreaConhecimentoDaoService;
   public formGraduacao?: FormGroup;
+  
+  show = false;
+
+ 
 
   constructor(public injector: Injector) {
     super(injector, Curriculum, CurriculumDaoService);
@@ -50,6 +68,8 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     this.areaDao = injector.get<AreaConhecimentoDaoService>(AreaConhecimentoDaoService)
     this.cursoDao = injector.get<CursoDaoService>(CursoDaoService)
     this.join = ['graduacoes'];
+    
+
     this.form = this.fh.FormBuilder({
       id: { default: "" },
       usuario_id: { default: "" },
@@ -261,6 +281,25 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
 
   public onAddClick() {
 
+  }
+
+  get stateName() {
+    return this.show ? 'show' : 'hide'
+  }
+
+
+  public togglePopOver() {
+    
+    const pop = document.getElementById('divPop');
+    console.log(pop?.hidden)
+    if (pop?.hidden){
+      pop!.hidden=false;
+
+    }else{
+      pop!.hidden=true;
+    }
+    this.show = !this.show;
+    
   }
 
 }

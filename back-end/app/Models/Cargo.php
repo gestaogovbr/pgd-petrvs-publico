@@ -14,7 +14,8 @@ class Cargo extends ModelBase
         'nome',
         'nivel',
         'descricao',
-        'codigo',
+        'siape',
+        'cbo',
         'efetivo',
         'ativo'
         

@@ -13,3 +13,4 @@ export class Curso extends Base {
     
     public constructor(data?: any) { super(); this.initialization(data); }
 }
+

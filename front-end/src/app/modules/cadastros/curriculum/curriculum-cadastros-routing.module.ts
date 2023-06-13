@@ -17,6 +17,8 @@ import { GrupoEspecializadoListComponent } from './grupo-especializado-list/grup
 import { GrupoEspecializadoFormComponent } from './grupo-especializado-form/grupo-especializado-form.component';
 import { MateriaListComponent } from './materia-list/materia-list.component';
 import { MateriaFormComponent } from './materia-form/materia-form.component';
+import { CargoListComponent } from './cargo-list/cargo-list.component';
+import { CargoFormComponent } from './cargo-form/cargo-form.component';
 
 
 const routes: Routes = [
@@ -49,7 +51,14 @@ const routes: Routes = [
   { path: 'gerais/materia/new', component: MateriaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
   { path: 'gerais/materia/:id/edit', component: MateriaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
   { path: 'gerais/materia/:id/consult', component: MateriaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } },
-
+  { path: 'gerais/cargo', component: CargoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Lista", modal: false } },
+  { path: 'gerais/cargo/new', component: CargoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
+  { path: 'gerais/cargo/:id/edit', component: CargoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
+  { path: 'gerais/cargo/:id/consult', component: CargoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } },
+  { path: 'gerais/funcao', component: FuncaoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Lista", modal: false } },
+  { path: 'gerais/funcao/new', component: FuncaoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
+  { path: 'gerais/funcao/:id/edit', component: FuncaoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
+  { path: 'gerais/funcao/:id/consult', component: FuncaoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } },
 ];
 
 @NgModule({

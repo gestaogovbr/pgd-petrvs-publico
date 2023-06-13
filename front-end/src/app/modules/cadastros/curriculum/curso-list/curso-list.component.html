@@ -3,30 +3,24 @@
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="5" label="Nome da área de conhecimento" controlName="nome_area"
-                [control]="filter!.controls.nome_area" placeholder="Nome da área de conhecimento"></input-text>
-            <input-text [size]="3" label="Nome do curso" controlName="nome_curso" [control]="filter!.controls.nome_curso" placeholder="Nome do curso"></input-text>
-            <input-text [size]="2" label="Titulo" controlName="titulo" [control]="filter!.controls.titulo" placeholder=""></input-text>
-            <input-text [size]="2" label="Tipo do Curso" controlName="nome_tipo" [control]="filter!.controls.nome_tipo" placeholder=""></input-text>
+            <input-text [size]="3" label="Nome do Cargo" controlName="nome"
+                [control]="filter!.controls.nome" placeholder="Nome da área de conhecimento"></input-text>
+            <input-text [size]="3" label="Nível" controlName="nivel" [control]="filter!.controls.nivel" placeholder=""></input-text>
+            <input-text [size]="3" label="Descrição" controlName="descricao" [control]="filter!.controls.descricao" placeholder=""></input-text>
+            <input-text [size]="3" label="Código SIAPE" controlName="siape" [control]="filter!.controls.siape" placeholder=""></input-text>
+            <input-text [size]="3" label="Código CBO" controlName="cbo" [control]="filter!.controls.cbo" placeholder=""></input-text>
+            <input-switch [size]="3" label="Ativo" controlName="ativo" [control]="filter!.controls.ativo" placeholder=""></input-switch>
+           
         </div>
     </filter>
     <columns>
-        <column title="Curso" field="nome" orderBy="nome"></column>
-        <column title="Área do Conhecimento" [template]="columnNomeArea">
-            <ng-template let-row="row" #columnNomeArea>
-                <span>{{ row.area.nome }}</span>
-            </ng-template>
-        </column>
-        <column title="Título" [template]="columnTitulo">
-            <ng-template let-row="row" #columnTitulo>
-                <span>{{ lookup.getValue(lookup.TITULOS_CURSOS,row.titulo) }}</span>
-            </ng-template>
-        </column>
-        <column title="Tipo" [template]="columnTipo">
-            <ng-template let-row="row" #columnTipo>
-                <span>{{ row.tipo.nome }}</span>
-            </ng-template>
-        </column>
+        <column title="Cargos" field="nome" orderBy="nome"></column>
+        <column title="Nível" field="nivel"></column>
+        <column title="Descrição" field="descricao"></column>
+        <column title="SIAPE" field="siape"></column>
+        <column title="CBO" field="cbo"></column>
+        <column title="Ativo" field="ativo"></column>
+           
         <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
