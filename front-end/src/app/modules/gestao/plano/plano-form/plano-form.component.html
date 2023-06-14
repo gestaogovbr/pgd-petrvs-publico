@@ -3,13 +3,13 @@
         <tab key="DADOS" label="Dados">
             <div class="row">
                 <!-- (RI_PTR_1) No formulário de inclusão/edição de um plano de trabalho, o input-search de plano de entregas deve ficar desabilitado nas edições e habilitado apenas nas inclusões; -->
-                <input-search #planoEntrega [size]="6" [disabled]="entity?.id ? 'disabled' : undefined" controlName="plano_entrega_id" [dao]="planoEntregaDao" [join]="['entregas.entrega','unidade.entidade','programa']" (select)="onPlanoEntregaSelect($event)"></input-search>
+                <input-search #planoEntrega [size]="6" [disabled]="action == 'new' ? undefined : 'true'" controlName="plano_entrega_id" [dao]="planoEntregaDao" [join]="['entregas.entrega','unidade.entidade','programa']" (select)="onPlanoEntregaSelect($event)"></input-search>
                 <input-search #usuario [size]="6" controlName="usuario_id" [dao]="usuarioDao" [join]="['afastamentos']" (select)="onUsuarioSelect($event)"></input-search>
             </div>
             <div class="row">
                 <input-datetime [size]="3" label="Início" icon="bi bi-calendar-date" controlName="data_inicio_vigencia" [control]="form!.controls.data_inicio_vigencia" (change)="onDataInicioChange($event)" labelInfo="'Início da Vigência do '+ lex.noun('Plano de trabalho')"></input-datetime>
                 <input-datetime [size]="3" label="Final" icon="bi bi-calendar-date" controlName="data_fim_vigencia" [control]="form!.controls.data_fim_vigencia" (change)="onDataFimChange($event)" labelInfo="'Final da Vigência do ' +lex.noun('Plano de trabalho')"></input-datetime>
-                <input-search #tipoModalidade [size]="6" [disabled]="form!.controls.plano_entrega_id.value ? undefined : 'disabled'" controlName="tipo_modalidade_id" [dao]="tipoModalidadeDao" (select)="onTipoModalidadeSelect($event)"></input-search>
+                <input-search #tipoModalidade [size]="6" controlName="tipo_modalidade_id" [dao]="tipoModalidadeDao" (select)="onTipoModalidadeSelect($event)"></input-search>
             </div>
             <div class="row">
                 <input-workload [size]="3" [unit]="formaContagemCargaHoraria" label="Carga Horária" icon="bi bi-hourglass-split" controlName="carga_horaria" [control]="form!.controls.carga_horaria" [unitChange]="onFormaContagemCargaHorariaChange.bind(this)" (change)="onCargaHorariaChenge($event)" labelInfo="Carga horária do usuário (Máx.: diária 24 horas; semana 24*5=240 horas; mensal 24*20=480 horas)"></input-workload>
@@ -82,7 +82,8 @@
         <tab *ngIf="checkFilled(['usuario_id', 'tipo_modalidade_id'])" key="TERMO" label="Termo">
             <!--top-alert *ngIf="!isTermos" type="warning" message="Para [INSERIR] ou [ASSINAR] termos escolha opção Termos de adesão na tela de listagem, ou utilize o Sei"></top-alert/-->
             <div clss="row">
-                <documentos #documentos [entity]="entityDocumentos" noPersist [cdRef]="cdRef" [needSign]="planoService.needSign" [extraTags]="planoService.extraTags" especie="TCR" [editingId]="documentoId" [datasource]="datasource" [template]="template"></documentos>
+                <documentos #documentos [entity]="entityDocumentos" noPersist [cdRef]="cdRef" [needSign]="planoService.needSign" [extraTags]="planoService.extraTags" especie="TCR" 
+                [editingId]="documentoId" [datasource]="datasource" [template]="template"></documentos>
                 <!--grid [control]="form!.controls.documentos" #gridDocumentos [disabled]="undefined" #documentos [hasEdit]="false" [hasDelete]="false" [hasAdd]="isTermos" [add]="isTermos ? addDocumento.bind(this) : undefined" editable>
                     <columns>
                         <column title="Data" [template]="dataInicio">

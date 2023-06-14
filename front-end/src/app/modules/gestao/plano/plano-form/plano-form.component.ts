@@ -81,7 +81,7 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
 
   constructor(public injector: Injector) {
     super(injector, Plano, PlanoDaoService);
-    this.join = ["unidade.entidade", "entregas.entrega.entrega", "plano_entrega.entregas.entrega", "plano_entrega.unidade", "plano_entrega.programa", "usuario", "programa.template_tcr", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "atividades.atividade"];
+    this.join = ["unidade.entidade", "entregas.entrega.entrega", "plano_entrega.entregas.entrega", "plano_entrega.unidade.entidade", "plano_entrega.programa", "usuario", "programa.template_tcr", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "atividades.atividade"];
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
@@ -285,14 +285,14 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
   }
 
   public async loadData(entity: Plano, form: FormGroup) {
-    let formValue = Object.assign({}, form.value);
     this.updateEntregas(entity.plano_entrega);
-    await Promise.all ([
+    await Promise.all([
       this.calendar.loadFeriadosCadastrados(entity.unidade_id),
       this.usuario?.loadSearch(entity.usuario || entity.usuario_id),
       this.tipoModalidade?.loadSearch(entity.tipo_modalidade || entity.tipo_modalidade_id),
       this.planoEntrega?.loadSearch(entity.plano_entrega || entity.plano_entrega_id)
     ]);
+    let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
     let documento = entity.documentos.find(x => x.id == entity.documento_id);
     if(documento) this._datasource = documento.datasource;
@@ -308,7 +308,7 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
       this.entity.carga_horaria = this.auth.entidade?.carga_horaria_padrao || 8;
       this.entity.forma_contagem_carga_horaria = this.auth.entidade?.forma_contagem_carga_horaria || "DIA";
     }
-    this.loadData(this.entity, this.form!);
+    await this.loadData(this.entity, this.form!);
   }
 
   /* Atividades */  

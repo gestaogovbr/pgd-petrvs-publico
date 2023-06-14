@@ -31,9 +31,9 @@ export class DocumentosComponent extends PageFrameBase {
   @Input() canEditTemplate: boolean = false;
   @Input() template?: Template;
   @Input() set datasource(value: any) {
-    if(JSON.stringify(this._datasource) == this.JSON.stringify(value)) {
+    if(JSON.stringify(this._datasource) != this.JSON.stringify(value)) {
       this._datasource = value;
-      if(!(this.grid!.editing as Documento)?.assinaturas?.length) this.form!.controls.datasource.setValue(value);
+      if(!(this.grid?.editing as Documento)?.assinaturas?.length) this.form!.controls.datasource.setValue(value);
       this.cdRef.detectChanges();
     }
   }
