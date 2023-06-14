@@ -1,11 +1,11 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
     <div class="row">
         <input-text [size]="3" label="Nome do Cargo" controlName="nome"></input-text>
-        <input-text [size]="3" label="Nível do Cargo" controlName="nome"></input-text>
-        <input-text [size]="3" label="Código SIAPE do Cargo" controlName="nome"></input-text>
-        <input-text [size]="3" label="Código CBO do Cargo" controlName="nome"></input-text>
-        <input-text [size]="8" label="Descrição do Cargo" controlName="nome"></input-text>
-        <input-switch [size]="2" labelPosition="left" label="Efetivo" controlName="ativo"></input-switch>
+        <input-text [size]="3" label="Nível do Cargo" controlName="nivel"></input-text>
+        <input-text [size]="3" label="Código SIAPE do Cargo" controlName="siape"></input-text>
+        <input-text [size]="3" label="Código CBO do Cargo" controlName="cbo"></input-text>
+        <input-text [size]="8" label="Descrição do Cargo" controlName="descricao"></input-text>
+        <input-switch [size]="2" labelPosition="left" label="Efetivo" controlName="efetivo"></input-switch>
         <input-switch [size]="2" labelPosition="left" label="Ativo" controlName="ativo"></input-switch>
     </div>    
 </editable-form>

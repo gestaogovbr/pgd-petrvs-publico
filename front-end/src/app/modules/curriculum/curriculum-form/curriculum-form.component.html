@@ -10,7 +10,7 @@
     </div>
 
     <div class="row mt-2">
-        <input-select [size]="4" label="Estado" icon="fas fa-flag" controlName="estados"
+        <input-select [size]="4" #estados label="Estado" icon="fas fa-flag" controlName="estados"
             [control]="form!.controls.estados" [items]="lookup.UF" (change)="onEstadosChange()">
         </input-select>
         <input-select [size]="4" label="Município" icon="far fa-flag" controlName="cidade_id"
@@ -85,8 +85,8 @@
                 (change)="onAreaPosGraduacaoChange()">
             </input-select>
             
-            <input-select [size]="4" label="Curso" icon="fas fa-graduation-cap" controlName="cursoPos" liveSearch
-                [control]="formGraduacao!.controls.cursoPos" [items]="cursosGradPos">
+            <input-select [size]="4" #curso label="Curso" icon="fas fa-graduation-cap" controlName="cursoPos" liveSearch
+                [control]="formGraduacao!.controls.cursoPos" [dao]="cursoDao" [where]="cursoWhere" [addRoute]="{route: ['raiox','cadastros','gerais','curso','new']}">
             </input-select>
 
         </input-multiselect>

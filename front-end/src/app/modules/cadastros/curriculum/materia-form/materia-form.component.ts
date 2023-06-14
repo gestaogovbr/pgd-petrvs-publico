@@ -23,6 +23,7 @@ export class MateriaFormComponent extends PageFormBase<Materia, MateriaDaoServic
   public cursoDao ?: CursoDaoService;
 
   public cursos: LookupItem[] = [];
+  public titulo: LookupItem[] = [];
 
   constructor(public injector: Injector) {
     super(injector, Materia, MateriaDaoService);
@@ -32,6 +33,7 @@ export class MateriaFormComponent extends PageFormBase<Materia, MateriaDaoServic
       area_materia_id: {default: ""},
       curso_materia_id:{default: ""},
       nome: {default: ""},
+      titulo: {default: ""},
       horas_aula: {default:0},
       ativo: {default: true},
            
@@ -42,6 +44,20 @@ export class MateriaFormComponent extends PageFormBase<Materia, MateriaDaoServic
     let result = null;
 
     if(['nome'].indexOf(controlName) >= 0 && !control.value?.length) {
+      result = "Obrigatório";
+    }
+
+    if(['area_materia_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+      result = "Obrigatório";
+    }
+
+    if(['curso_materia_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+      result = "Obrigatório";
+    }
+    if(['horas_aula'].indexOf(controlName) >= 0 && !control.value?.length) {
+      result = "Obrigatório";
+    }
+    if(['titulo'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
 
@@ -71,11 +87,21 @@ export class MateriaFormComponent extends PageFormBase<Materia, MateriaDaoServic
   }
 
   public onAreaGraducaoChange() {
-    this.cursoDao?.query({ where: [['area_curso_id', '==', this.form!.controls.area_materia_id.value], ['titulo', 'like', 'GRAD%']] }).getAll().then((cursos2) => {
+   /* this.cursoDao?.query({ where: [['area_curso_id', '==', this.form!.controls.area_materia_id.value], ['titulo', 'like', 'GRAD%']] }).getAll().then((cursos2) => {
       this.cursos = cursos2.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
       this.cdRef.detectChanges();
-    });
+    });*/
   }
+
+  public onTituloChange(){
+    //console.log(this.form!.controls.titulo.value)
+    //const titulo = this.lookup.TITULOS_CURSOS_INST.find(x => x.key == this.form!.controls.titulo.value);
+    if(this.form!.controls.area_materia_id.value && this.form!.controls.titulo.value){
+        this.cursoDao?.query({ where: [['area_curso_id', '==', this.form!.controls.area_materia_id.value],['titulo', '==', this.form!.controls.titulo.value]] }).getAll().then((cursos2) => {
+          this.cursos = cursos2.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
+          this.cdRef.detectChanges();
+        });
+    }
+  }
+
 }
-
-

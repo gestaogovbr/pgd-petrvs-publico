@@ -15,6 +15,7 @@ import { InputSwitchComponent } from 'src/app/components/input/input-switch/inpu
 import { Curriculum } from 'src/app/models/currriculum.model';
 import { trigger,state,style,animate,transition } from '@angular/animations';
 import { BoundDirectivePropertyAst } from '@angular/compiler';
+import { Curso } from 'src/app/models/curso.model';
 
 
 @Component({
@@ -38,10 +39,11 @@ import { BoundDirectivePropertyAst } from '@angular/compiler';
 
 export class CurriculumFormComponent extends PageFormBase<Curriculum, CurriculumDaoService>{
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  @ViewChild(InputSearchComponent, { static: false }) public area?: InputSearchComponent;
-  @ViewChild(InputSearchComponent, { static: false }) public areaPos?: InputSearchComponent;
-  @ViewChild(InputSelectComponent, { static: false }) public estados?: InputSelectComponent;
-  @ViewChild(InputSelectComponent, { static: false }) public titulo?: InputSelectComponent;
+  //@ViewChild(InputSearchComponent, { static: false }) public area?: InputSearchComponent;
+  @ViewChild("areaPos", { static: false }) public areaPos?: InputSearchComponent;
+  @ViewChild("estados", { static: false }) public estados?: InputSelectComponent;
+  //@ViewChild(InputSelectComponent, { static: false }) public titulo?: InputSelectComponent;
+  @ViewChild("curso", { static: false }) public curso?: InputSelectComponent;
   
 
   public municipios: LookupItem[] = [];
@@ -56,10 +58,9 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   public cursoDao?: CursoDaoService;
   public areaDao?: AreaConhecimentoDaoService;
   public formGraduacao?: FormGroup;
+  public cursoWhere: any[] = [["id", "==", null]];
   
   show = false;
-
- 
 
   constructor(public injector: Injector) {
     super(injector, Curriculum, CurriculumDaoService);
@@ -69,7 +70,6 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     this.cursoDao = injector.get<CursoDaoService>(CursoDaoService)
     this.join = ['graduacoes'];
     
-
     this.form = this.fh.FormBuilder({
       id: { default: "" },
       usuario_id: { default: "" },
@@ -223,13 +223,12 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
 
     const area = { 'key': this.formGraduacao!.controls.areaPos.value, 'value': this.areaPos?.selectedItem?.text };
 
-    const curso = this.cursosGradPos.find(value => value.key == this.formGraduacao!.controls.cursoPos.value)
+    const curso = this.curso!.selectedItem;//this.cursosGradPos.find(value => value.key == this.formGraduacao!.controls.cursoPos.value)
     const titulo = this.lookup.TITULOS_CURSOS.find(x => x.key == this.formGraduacao!.controls.titulo.value);
-    const pretensao = this.opcoesEscolha.find(value => value.key == (this.formGraduacao!.controls.pretensao.value ? 1 : 0))//converte o value do switch
-    const key = this.util.textHash((area.key || "") + (curso?.key || "") + (titulo?.key || "") + (pretensao?.key || ""));
+    const pretensao = this.opcoesEscolha.find(value => value.key == (this.formGraduacao!.controls.pretensao.value ? 1 : 0));//converte o value do switch
+    const key = this.util.textHash((area.key || "") + (curso?.key || "") + (titulo?.key || ""));// + (pretensao?.key || ""));
     console.log('AREA', area, 'AREA', curso, 'AREA', titulo, 'AREA', pretensao)
     if (curso && area && titulo && pretensao && this.util.validateLookupItem(this.formGraduacao!.controls.graduacaopos.value, key)) {
-
       result = {
         key: key,
         value: area.value + ' - ' + curso.value + ' - ' + titulo?.value + ' - ' + pretensao?.value,
@@ -259,12 +258,14 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   }
 
   public onAreaPosGraduacaoChange() {
-    const titulo = this.lookup.TITULOS_CURSOS.find(x => x.key == this.formGraduacao!.controls.titulo.value);
+   const titulo = this.lookup.TITULOS_CURSOS.find(x => x.key == this.formGraduacao!.controls.titulo.value);
     // this.cursoDao?.query({where: [['area_curso_id', '==', this.formGraduacao!.controls.areaPos.value && 'titulo','==',titulo?.key], ['titulo', 'in', ["GRAD_TEC", "GRAD_BAC","GRAD_LIC","ESPECIAL","MESTRADO","DOUTORADO","POS_DOUTORADO"]]]}).getAll().then((cursos3) => {
-    this.cursoDao?.query({ where: [['area_curso_id', '==', this.formGraduacao!.controls.areaPos.value], ['titulo', '==', titulo?.key], ['titulo', 'in', ["GRAD_TEC", "GRAD_BAC", "GRAD_LIC", "ESPECIAL", "MESTRADO", "DOUTORADO", "POS_DOUTORADO"]]] }).getAll().then((cursos3) => {
+    this.cursoWhere = [['area_curso_id', '==', this.formGraduacao!.controls.areaPos.value], ['titulo', '==', titulo?.key], ['titulo', 'in', ["GRAD_TEC", "GRAD_BAC", "GRAD_LIC", "ESPECIAL", "MESTRADO", "DOUTORADO", "POS_DOUTORADO"]]];
+    this.cdRef.detectChanges();
+    /*this.cursoDao?.query({ where: [['area_curso_id', '==', this.formGraduacao!.controls.areaPos.value], ['titulo', '==', titulo?.key], ['titulo', 'in', ["GRAD_TEC", "GRAD_BAC", "GRAD_LIC", "ESPECIAL", "MESTRADO", "DOUTORADO", "POS_DOUTORADO"]]] }).getAll().then((cursos3) => {
       this.cursosGradPos = cursos3.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
       this.cdRef.detectChanges();
-    });
+    });*/
   }
 
   ngOnInit(): void {

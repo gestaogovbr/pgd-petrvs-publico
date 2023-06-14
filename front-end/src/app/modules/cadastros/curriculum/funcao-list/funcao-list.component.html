@@ -19,8 +19,11 @@
         <column title="Descrição" field="descricao"></column>
         <column title="SIAPE" field="siape"></column>
         <column title="CBO" field="cbo"></column>
-        <column title="Ativo" field="ativo"></column>
-           
+        <column title="Ativo" [template]="columnAtivo">
+            <ng-template let-row="row" #columnAtivo>
+                {{lookup.getValue(lookup.SIMNAO, row.ativo)}}
+            </ng-template>
+        </column> 
         <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>

@@ -10,7 +10,7 @@ export class CentroTreinamentoDaoService extends DaoBaseService<CentroTreinament
  
   constructor(protected injector: Injector) { 
     super("CentroTreinamento", injector);
-    this.searchFields = ["nome","ativo"];
+    this.searchFields = ["nome"];
   }  
 }
 

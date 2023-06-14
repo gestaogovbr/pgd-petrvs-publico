@@ -88,15 +88,13 @@ export class CargoListComponent extends PageListBase<Cargo, CargoDaoService> {
     if(form.cbo?.length) {
       result.push(["cbo", "like", "%" + form.cbo + "%"]);
     }
-    /*if(form.efetivo?.length) {
-      console.log(form.efetivo.value ? 1 : 0,form.efetivo.value)
-      result.push(["efetivo", "like", "%" + (form.efetivo.value ? 1 : 0) + "%"]);
-      //result.push(["efetivo", "like", "%" + form.titulo + "%"]);
-    }
-    if(form.ativo?.length) {
-      result.push(["ativo", "like", "%" + (form.ativo.value ? 1 : 0) + "%"]);
+    
+    if(form.ativo) {
+      result.push(["ativo", "==", 1 ]);
       //result.push(["ativo", "like", "%" + form.titulo + "%"]);
-    }*/
+    }
+
+    result.push(["efetivo", "==", form.efetivo ? 1 : 0]);
 
     return result;
   }

@@ -20,9 +20,15 @@
         <column title="Descrição" field="descricao"></column>
         <column title="SIAPE" field="siape"></column>
         <column title="CBO" field="cbo"></column>
-        <column title="Efetivo" field="efetivo"></column>
-        <column title="Ativo" field="ativo"></column>
-           
+        <column title="Efetivo" [template]="columnEfetivo"></column>
+            <ng-template let-row="row" #columnEfetivo>
+                {{lookup.getValue(lookup.SIMNAO, row.efetivo)}}
+            </ng-template>
+        <column title="Ativo" [template]="columnAtivo">
+            <ng-template let-row="row" #columnAtivo>
+                {{lookup.getValue(lookup.SIMNAO, row.ativo)}}
+            </ng-template>
+        </column>           
         <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>

@@ -25,7 +25,7 @@ class CreateMaterias extends Migration
             $table->tinyInteger('ativo')->default(1)->comment("Curso ativo ou inativo");
             // Chaves estrangeiras:
             $table->foreignUuid('area_materia_id')->constrained("areas_conhecimentos")->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('curso_materia_id')->constrained("tipos_cursos")->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('curso_materia_id')->constrained("cursos")->onDelete('restrict')->onUpdate('cascade');
         });
     }
 

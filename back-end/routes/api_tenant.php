@@ -59,6 +59,7 @@ use App\Http\Controllers\FuncaoController;
 use App\Http\Controllers\GrupoEspecializadoController;
 use App\Http\Controllers\CargoController;
 use App\Http\Controllers\UnidadeIntegranteController;
+use App\Http\Controllers\MateriaController;
 use App\Http\Controllers\CurriculumProfissionalController;
 
 /*

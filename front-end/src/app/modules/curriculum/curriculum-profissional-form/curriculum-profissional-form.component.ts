@@ -6,7 +6,6 @@ import { IIndexable } from 'src/app/models/base.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { Curriculum } from 'src/app/models/currriculum.model';
-import { CurriculumDaoService } from 'src/app/dao/curriculum-dao.service';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { InputSwitchComponent } from 'src/app/components/input/input-switch/input-switch.component';
 import { FuncaoDaoService } from 'src/app/dao/funcao-dao.service';
@@ -15,13 +14,15 @@ import { GrupoEspecializadoDaoService } from 'src/app/dao/grupo-epecializado-dao
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { controllers } from 'chart.js';
 import { InputRadioComponent } from 'src/app/components/input/input-radio/input-radio.component';
+import { CurriculumProfissional } from 'src/app/models/currriculum-profissional.model';
+import { CurriculumProfissionalDaoService } from 'src/app/dao/curriculum-profissional-dao.service';
 
 @Component({
   selector: 'curriculum-profissional-form',
   templateUrl: './curriculum-profissional-form.component.html',
   styleUrls: ['./curriculum-profissional-form.component.scss']
 })
-export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum, CurriculumDaoService> {
+export class CurriculumProfissionalFormComponent extends PageFormBase<CurriculumProfissional, CurriculumProfissionalDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('radioDocenciaFora', { static: false }) public radioDocenciaFora?: InputSwitchComponent;
   @ViewChild('radioDocenciaPRF', { static: false }) public radioDocenciaPRF?: InputSwitchComponent;
@@ -51,7 +52,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   public unidadeDao?: UnidadeDaoService;
  
   constructor(public injector: Injector) {
-    super(injector, Curriculum, CurriculumDaoService);
+    super(injector, CurriculumProfissional, CurriculumProfissionalDaoService);
     this.funcaoDao = injector.get<FuncaoDaoService>(FuncaoDaoService)
     this.ctDao = injector.get<CentroTreinamentoDaoService>(CentroTreinamentoDaoService)
     this.grupoDao = injector.get<GrupoEspecializadoDaoService>(GrupoEspecializadoDaoService)
@@ -107,15 +108,15 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     return result;
   }
 
-  public loadData(entity: Curriculum, form: FormGroup): void | Promise<void> {
+  public loadData(entity: CurriculumProfissional, form: FormGroup): void | Promise<void> {
     //throw new Error('Method not implemented.');
   }
   public initializeData(form: FormGroup): void | Promise<void> {
     //throw new Error('Method not implemented.');
   }
 
-  public saveData(form: IIndexable): Promise<Curriculum> {
-    return new Promise<Curriculum>((resolve, reject) => {
+  public saveData(form: IIndexable): Promise<CurriculumProfissional> {
+    return new Promise<CurriculumProfissional>((resolve, reject) => {
       // this.entity!.usuario_id=this.auth.usuario!.id;
       let curriculum = this.util.fill(new Curriculum(), this.entity!);
       //curriculum.usuario_id=this.auth.usuario?.id;

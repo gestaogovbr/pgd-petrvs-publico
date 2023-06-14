@@ -10,7 +10,7 @@ export class MateriaDaoService extends DaoBaseService<Materia>{
  
   constructor(protected injector: Injector) { 
     super("Materia", injector);
-    this.searchFields = ["nome", "titulo","ativo","area_curso_id"];
+    this.searchFields = ["nome", "titulo"];
   }  
 }
 

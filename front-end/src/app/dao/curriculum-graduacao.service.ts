@@ -10,7 +10,7 @@ export class CurriculumGraduacaoDaoService extends DaoBaseService<CurriculumGrad
  
   constructor(protected injector: Injector) { 
     super("CurriculumGraduacao", injector);
-    this.searchFields = ["pretensão", "curriculum_id","curso_id"];
+    this.searchFields = ["pretensão"];
   }  
 }
 
