@@ -1,0 +1,95 @@
+import { Component, Injector, ViewChild } from '@angular/core';
+import { AbstractControl, FormGroup } from '@angular/forms';
+import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
+import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
+import { PlanoTrabalhoEntregaDaoService } from 'src/app/dao/plano-trabalho-entrega-dao.service';
+import { IIndexable } from 'src/app/models/base.model';
+import { PlanoTrabalhoEntrega } from 'src/app/models/plano-trabalho-entrega.model';
+import { Plano } from 'src/app/models/plano.model';
+import { PageFormBase } from 'src/app/modules/base/page-form-base';
+import { LookupItem } from 'src/app/services/lookup.service';
+import { NavigateResult } from 'src/app/services/navigate.service';
+
+@Component({
+  selector: 'plano-form-entrega',
+  templateUrl: './plano-form-entrega.component.html',
+  styleUrls: ['./plano-form-entrega.component.scss']
+})
+export class PlanoFormEntregaComponent extends PageFormBase<PlanoTrabalhoEntrega, PlanoTrabalhoEntregaDaoService> {
+  @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
+  //@ViewChild('planejamentoSuperiorNome', {static: false}) public planejamentoSuperiorNome?: InputTextComponent;
+  //@ViewChild('eixoTematico', {static: false}) public eixoTematico?: InputSearchComponent;
+
+  public planoTrabalho?: Plano;
+  public entregas: LookupItem[] = [];
+  //public objetivos_superiores: LookupItem[] = [];
+  public planoDao?: PlanoDaoService;
+  //public eixoTematicoDao?: EixoTematicoDaoService;
+
+  constructor(public injector: Injector) {
+    super(injector, PlanoTrabalhoEntrega, PlanoTrabalhoEntregaDaoService);
+    this.planoDao = injector.get<PlanoDaoService>(PlanoDaoService);
+    //this.eixoTematicoDao = injector.get<EixoTematicoDaoService>(EixoTematicoDaoService);
+    this.form = this.fh.FormBuilder({
+      nome: {default: ""},
+      plano_id: {default: null},
+      entrega_id: {default: null},
+    }, this.cdRef, this.validate);
+  }
+
+  public validate = (control: AbstractControl, controlName: string) => {
+    let result = null;
+    if(['nome'].indexOf(controlName) >= 0 && !control.value?.length) {
+      result = "Obrigatório";
+    }
+    return result;
+  }
+
+  public formValidation = (form?: FormGroup) =>{
+    let result = null;
+
+/*     if(this.isPlanejamentoUNEX() && !this.form?.controls.objetivo_superior_id.value){
+      result = "Quando o Planejamento é de uma Unidade Executora é obrigatório associar cada objetivo a um objetivo do Planejamento Institucional superior!";
+    } */
+
+    return result;
+  }
+
+  public async loadData(entity: PlanoTrabalhoEntrega, form: FormGroup) {
+    let formValue = Object.assign({}, form.value);
+    form.patchValue(this.util.fillForm(formValue, entity));
+    //await this.eixoTematico?.loadSearch(entity.eixo_tematico || entity.eixo_tematico_id);
+    this.title = entity._status == 'ADD' ? 'Inclusão de Entrega' : 'Editando entrega...';
+    this.planoTrabalho = this.metadata?.plano as Plano;
+/*  if(this.planejamento) this.planejamento.planejamento_superior = this.metadata.planejamento_superior as Planejamento || null;
+    if(this.planejamento.planejamento_superior) this.planejamento.planejamento_superior.objetivos = this.metadata?.objetivos_superiores || null;  
+    this.form?.controls.planejamento_superior_nome.setValue(this.planejamento?.planejamento_superior?.nome || '');
+    this.objetivos_superiores = this.planejamento?.planejamento_superior?.objetivos?.map(x => Object.assign({}, { key: x.id, value: x.nome, data: x })) || [];*/
+  }
+
+  public async initializeData(form: FormGroup) {
+    this.entity = this.metadata?.entrega as PlanoTrabalhoEntrega;
+    this.entregas = (this.metadata?.entregas as PlanoTrabalhoEntrega[]).map(x => Object.assign({}, {
+      key: x.id,
+      value: x.nome,
+      data: x
+    }));
+    await this.loadData(this.entity!, form);
+  }
+
+  public saveData(form: IIndexable): Promise<NavigateResult> {
+    return new Promise<NavigateResult>((resolve, reject) => {
+      const entrega = this.util.fill(new PlanoTrabalhoEntrega(), this.entity!);
+      resolve(new NavigateResult(this.util.fillForm(entrega, this.form!.value)));
+    });
+  }
+
+/*   public isPlanejamentoUNEX(): boolean {
+    return this.planejamento?.unidade_id != null;
+  } */
+
+/*   public onObjetivoPaiChange(objetivoPai: InputSelectComponent) {
+    if(objetivoPai.selectedItem?.data?.eixo_tematico_id?.length) this.form!.controls.eixo_tematico_id.setValue(objetivoPai.selectedItem?.data.eixo_tematico_id); 
+  } */
+
+}

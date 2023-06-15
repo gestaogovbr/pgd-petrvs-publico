@@ -7,8 +7,6 @@ export class PlanoTrabalhoEntrega extends Base {
     public entrega?: PlanoEntregaEntrega;
 
     public nome: string = "";
-    public data_inicio: Date = new Date(); /* Data de início */
-    public data_fim: Date | null = null; /* Data do fim */
     public plano_id: string = "";
     public entrega_id: string = "";
 

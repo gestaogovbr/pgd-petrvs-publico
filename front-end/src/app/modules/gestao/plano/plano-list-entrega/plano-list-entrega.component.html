@@ -1,0 +1,30 @@
+<grid [items]="items" [form]="form!" #gridObjetivos editable [selectable]="false" [minHeight]="minHeight" 
+    [add]="addEntrega.bind(this)" [remove]="removeEntrega.bind(this)" 
+    [hasDelete]="false" [hasEdit]="false" [hasAdd]="!disabled" [join]="join" [groupBy]="groupBy">
+<!--     <ng-template let-separator="separator" #groupEixoTematico>
+        <span class="text-wrap"><badge [icon]="getEixo(separator?.text)?.icone || 'bi bi-gear'" [color]="getEixo(separator?.text)?.cor || 'primary'" [label]="getEixo(separator?.text)?.nome || 'Desconhecido'"></badge></span>
+    </ng-template> -->
+    <columns>
+        <column title="Origem" [template]="columnOrigem">
+            <ng-template let-row="row" #columnOrigem>
+                <span>{{ 'Mesma unidade' }}</span>
+            </ng-template>
+        </column>
+        <column title="Entrega" [template]="columnNome">
+            <ng-template let-row="row" #columnNome>
+                <span>{{ row.nome || 'Nome da entrega' }}</span>
+            </ng-template>
+        </column>
+        <column title="% Força Trab." [template]="columnForcaTrabalho">
+            <ng-template let-row="row" #columnForcaTrabalho>
+                <span>{{ '10%' }}</span>
+            </ng-template>
+        </column>
+        <column title="Descrição" [template]="columnDescricao">
+            <ng-template let-row="row" #columnDescricao>
+                <span>{{ 'Entrega da mesma unidade' }}</span>
+            </ng-template>
+        </column>
+        <column type="options" [dynamicButtons]="dynamicButtons.bind(this)" [dynamicOptions]="dynamicOptions.bind(this)"></column>
+    </columns>
+</grid>

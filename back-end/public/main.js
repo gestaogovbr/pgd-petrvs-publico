@@ -27402,10 +27402,10 @@ class DocumentosComponent extends src_app_modules_base_page_frame_base__WEBPACK_
     set noPersist(value) { super.noPersist = value; }
     get noPersist() { return super.noPersist; }
     set datasource(value) {
-        var _a, _b;
-        if (JSON.stringify(this._datasource) == this.JSON.stringify(value)) {
+        var _a, _b, _c;
+        if (JSON.stringify(this._datasource) != this.JSON.stringify(value)) {
             this._datasource = value;
-            if (!((_b = (_a = this.grid.editing) === null || _a === void 0 ? void 0 : _a.assinaturas) === null || _b === void 0 ? void 0 : _b.length))
+            if (!((_c = (_b = (_a = this.grid) === null || _a === void 0 ? void 0 : _a.editing) === null || _b === void 0 ? void 0 : _b.assinaturas) === null || _c === void 0 ? void 0 : _c.length))
                 this.form.controls.datasource.setValue(value);
             this.cdRef.detectChanges();
         }
@@ -36399,6 +36399,7 @@ class Unidade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.unidades_origem_atividades = [];
         this.expediente = null; // Expediente (Não nulo)
         this.avaliacao_hierarquica = false; // Se permite que unidades supeiores faça avaliação
+        this.texto_complementar_plano = ""; // Mensagem adicional para o plano de trabalho
         this.unidade_id = null; //Unidade superior (nó pai hierárquico)
         this.entidade_id = null; // Entidade referente
         this.gestor_id = null; // Usuário gestor da unidade
