@@ -15,7 +15,10 @@ class AlterPlanosTrabalhosEntregasAddCampos extends Migration
     {
         Schema::disableForeignKeyConstraints();
         Schema::table('planos_trabalhos_entregas', function (Blueprint $table) {
-            //$table->foreignUuid('plano_entrega_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment('Programa de gestão vinculado ao Plano de Entregas');
+            $table->dropForeign(['entrega_id']);
+            $table->dropColumn('entrega_id');
+            $table->foreignUuid('plano_entrega_entrega_id')->nullable()->constrained("planos_entregas_entregas")->onDelete('restrict')->onUpdate('cascade')->comment('Entrega do Plano de Entregas vinculada a esta entrega do Plano de Trabalho.');
+            $table->foreignUuid('entrega_id')->nullable()->constrained("entregas")->onDelete('restrict')->onUpdate('cascade')->comment('Entrega do Cadastro de Entregas vinculada a esta entrega do Plano de Trabalho.');
         });
         Schema::enableForeignKeyConstraints();
     }
@@ -27,6 +30,12 @@ class AlterPlanosTrabalhosEntregasAddCampos extends Migration
      */
     public function down()
     {
-        //
+        Schema::disableForeignKeyConstraints();
+        Schema::table('planos_entregas', function (Blueprint $table) {
+            $table->dropForeign(['entrega_id','plano_entrega_entrega_id']);
+            $table->dropColumn(['entrega_id','plano_entrega_entrega_id']);
+            $table->foreignUuid('entrega_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment('');
+        });
+        Schema::enableForeignKeyConstraints();
     }
 }
