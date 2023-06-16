@@ -7,7 +7,6 @@ use App\Models\Plano;
 use App\Models\PlanoEntregaEntrega;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasDataFim;
-use Illuminate\Support\Facades\DB;
 
 class PlanoTrabalhoEntrega extends ModelBase
 {
@@ -18,11 +17,13 @@ class PlanoTrabalhoEntrega extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'nome', /* varchar(256); NOT NULL; */// Nome da entrega
         'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência do registro
         'plano_id', /* char(36); NOT NULL; */
+        'plano_entrega_entrega_id', /* char(36); */
+        'entrega_id', /* char(36); */
+        'descricao', /* varchar(256); NOT NULL; */// Detalhamento da entrega
+        'forca_trabalho', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */// Percentual da força de trabalho
         //'data_fim', /* datetime; */// Data fim da vigência do registro
-        //'entrega_id', /* char(36); NOT NULL; */
     ];
 
     public $fillable_changes = [];

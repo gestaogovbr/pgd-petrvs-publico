@@ -18,6 +18,7 @@ class Plano extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.atividades = []; /* Entregas da demanda */
         this.documentos = []; /* Termos de adesão */
         this.demandas = []; /* Demandas vinculadas ao Plano */
+        this.entregas = []; /* Entregas vinculadas ao Plano de Trabalho*/
         this.carga_horaria = 0; //Carga horária diária do usuário
         this.tempo_total = 0; //Horas úteis de trabalho no período de data_inicio_vigencia à data_fim_vigencia considerando carga_horaria, feriados, fins de semana
         this.tempo_proporcional = 0; //tempo_total menos os afastamentos
@@ -490,7 +491,7 @@ class PlanoListComponent extends src_app_modules_base_page_list_base__WEBPACK_IM
             data_filtro_inicio: { default: new Date() },
             data_filtro_fim: { default: new Date() }
         }, this.cdRef, this.filterValidate);
-        this.join = ["unidade.entidade", "usuario", "programa", "documento.assinaturas.usuario:id,nome,url_foto", "tipo_modalidade"];
+        this.join = ["unidade.entidade", "usuario", "programa", "documento.assinaturas.usuario:id,nome,url_foto", "tipo_modalidade", "entregas.entregaPlanoEntrega.entrega", "entregas.entrega"];
         this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }];
     }
     dynamicOptions(row) {

@@ -8,7 +8,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { UteisModule } from '../../uteis/uteis.module';
 import { PlanoTermoAdesaoComponent } from './plano-termo-adesao/plano-termo-adesao.component';
 import { PlanoFormTermoComponent } from './plano-form-termo/plano-form-termo.component';
-import { PlanoFormEntregaComponent } from './plano-form-entrega/plano-form-entrega.component';
 import { PlanoListEntregaComponent } from './plano-list-entrega/plano-list-entrega.component';
 
 
@@ -18,8 +17,7 @@ import { PlanoListEntregaComponent } from './plano-list-entrega/plano-list-entre
     PlanoListComponent,
     PlanoListEntregaComponent,
     PlanoTermoAdesaoComponent,
-    PlanoFormTermoComponent,
-    PlanoFormEntregaComponent
+    PlanoFormTermoComponent
   ],
   imports: [
     CommonModule,

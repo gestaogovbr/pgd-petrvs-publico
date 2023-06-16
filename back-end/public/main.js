@@ -1050,6 +1050,7 @@ class GridColumn {
         this.items = [];
         this.editing = false;
         this.align = "none";
+        this.verticalAlign = "bottom";
         this.minWidth = undefined;
         this.maxWidth = undefined;
         this.width = undefined;
@@ -29738,7 +29739,7 @@ function GridComponent_thead_7_th_3_Template(rf, ctx) { if (rf & 1) {
     const idx_r11 = ctx.index;
     const ctx_r9 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵclassMap"](column_r10.cellClass || "");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵstyleProp"]("width", column_r10.width, "px")("min-width", column_r10.minWidth, "px")("max-width", column_r10.maxWidth, "px");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵstyleProp"]("width", column_r10.width, "px")("min-width", column_r10.minWidth, "px")("max-width", column_r10.maxWidth, "px")("vertical-align", column_r10.verticalAlign);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵclassProp"]("grid-editable-options", ctx_r9.isEditableGridOptions(column_r10));
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("column", column_r10)("index", idx_r11)("grid", ctx_r9.self);
@@ -29747,7 +29748,7 @@ function GridComponent_thead_7_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "thead");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](1, "tr");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](2, GridComponent_thead_7_th_2_Template, 2, 0, "th", 9);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](3, GridComponent_thead_7_th_3_Template, 2, 13, "th", 10);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](3, GridComponent_thead_7_th_3_Template, 2, 15, "th", 10);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
@@ -30676,7 +30677,7 @@ GridComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComp
                 },
                 deps: [GridComponent]
             }
-        ]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]], ngContentSelectors: _c6, decls: 15, vars: 19, consts: [["class", "alert alert-danger mt-2", "role", "alert", 4, "ngIf"], [1, "grid-list-container", 3, "formGroup"], [1, "row", "m-0", "p-0"], [1, "table"], [4, "ngIf"], [4, "ngFor", "ngForOf"], [3, "class", 4, "ngIf"], ["class", "invalid-feedback", 3, "d-block", 4, "ngIf"], ["role", "alert", 1, "alert", "alert-danger", "mt-2"], ["class", "grid-multiselect-header", 4, "ngIf"], ["scope", "col", 3, "class", "grid-editable-options", "width", "min-width", "max-width", 4, "ngFor", "ngForOf"], [1, "grid-multiselect-header"], [1, "bi", "bi-card-checklist"], ["scope", "col"], [3, "column", "index", "grid"], ["class", "grid-no-hover", 4, "ngIf"], [3, "d-none", "table-active", "click", 4, "ngIf"], [1, "grid-no-hover"], [1, "grid-no-hover", "px-0"], [3, "ngTemplateOutlet", "ngTemplateOutletContext", 4, "ngIf"], ["class", "grid-group-text", 4, "ngIf"], [3, "ngTemplateOutlet", "ngTemplateOutletContext"], [1, "grid-group-text"], [3, "click"], ["class", "grid-multiselect-column", 4, "ngIf"], [3, "class", "text-center", "text-end", "grid-column-expanded", "grid-column-editing-options", "width", "min-width", "max-width", 4, "ngFor", "ngForOf"], [1, "grid-multiselect-column"], ["class", "form-check-input", "type", "checkbox", "name", "gird_multiselect_ids[]", 3, "change", 4, "ngIf"], ["type", "checkbox", "name", "gird_multiselect_ids[]", 1, "form-check-input", 3, "change"], [3, "index", "column", "row", "grid", 4, "ngIf"], [3, "index", "column", "row", "grid", "options", "buttons", "dynamicOptions", "dynamicButtons", "upDownButtons", 4, "ngIf"], [3, "index", "column", "row", "grid"], [3, "index", "column", "row", "grid", "options", "buttons", "dynamicOptions", "dynamicButtons", "upDownButtons"], [1, "grid-expanded-background"], [1, "d-flex", "justify-content-center", "my-2"], ["role", "status", 1, "spinner-border"], [1, "visually-hidden"], [3, "title", "buttons", 4, "ngIf"], [3, "title", "buttons"], [1, "invalid-feedback"], [1, "bi", "bi-info-circle"]], template: function GridComponent_Template(rf, ctx) { if (rf & 1) {
+        ]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]], ngContentSelectors: _c6, decls: 15, vars: 19, consts: [["class", "alert alert-danger mt-2", "role", "alert", 4, "ngIf"], [1, "grid-list-container", 3, "formGroup"], [1, "row", "m-0", "p-0"], [1, "table"], [4, "ngIf"], [4, "ngFor", "ngForOf"], [3, "class", 4, "ngIf"], ["class", "invalid-feedback", 3, "d-block", 4, "ngIf"], ["role", "alert", 1, "alert", "alert-danger", "mt-2"], ["class", "grid-multiselect-header", 4, "ngIf"], ["scope", "col", 3, "class", "grid-editable-options", "width", "min-width", "max-width", "vertical-align", 4, "ngFor", "ngForOf"], [1, "grid-multiselect-header"], [1, "bi", "bi-card-checklist"], ["scope", "col"], [3, "column", "index", "grid"], ["class", "grid-no-hover", 4, "ngIf"], [3, "d-none", "table-active", "click", 4, "ngIf"], [1, "grid-no-hover"], [1, "grid-no-hover", "px-0"], [3, "ngTemplateOutlet", "ngTemplateOutletContext", 4, "ngIf"], ["class", "grid-group-text", 4, "ngIf"], [3, "ngTemplateOutlet", "ngTemplateOutletContext"], [1, "grid-group-text"], [3, "click"], ["class", "grid-multiselect-column", 4, "ngIf"], [3, "class", "text-center", "text-end", "grid-column-expanded", "grid-column-editing-options", "width", "min-width", "max-width", 4, "ngFor", "ngForOf"], [1, "grid-multiselect-column"], ["class", "form-check-input", "type", "checkbox", "name", "gird_multiselect_ids[]", 3, "change", 4, "ngIf"], ["type", "checkbox", "name", "gird_multiselect_ids[]", 1, "form-check-input", 3, "change"], [3, "index", "column", "row", "grid", 4, "ngIf"], [3, "index", "column", "row", "grid", "options", "buttons", "dynamicOptions", "dynamicButtons", "upDownButtons", 4, "ngIf"], [3, "index", "column", "row", "grid"], [3, "index", "column", "row", "grid", "options", "buttons", "dynamicOptions", "dynamicButtons", "upDownButtons"], [1, "grid-expanded-background"], [1, "d-flex", "justify-content-center", "my-2"], ["role", "status", 1, "spinner-border"], [1, "visually-hidden"], [3, "title", "buttons", 4, "ngIf"], [3, "title", "buttons"], [1, "invalid-feedback"], [1, "bi", "bi-info-circle"]], template: function GridComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵprojectionDef"](_c5);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div");
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](1, GridComponent_div_1_Template, 2, 1, "div", 0);
@@ -33145,6 +33146,7 @@ class ColumnComponent {
         this.orderBy = "";
         this.editable = true;
         this.align = "none";
+        this.verticalAlign = "bottom";
         this.minWidth = undefined;
         this.maxWidth = undefined;
         this.width = undefined;
@@ -33153,7 +33155,7 @@ class ColumnComponent {
     }
 }
 ColumnComponent.ɵfac = function ColumnComponent_Factory(t) { return new (t || ColumnComponent)(); };
-ColumnComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: ColumnComponent, selectors: [["column"]], inputs: { icon: "icon", hint: "hint", title: "title", titleHint: "titleHint", type: "type", field: "field", dao: "dao", orderBy: "orderBy", editable: "editable", template: "template", titleTemplate: "titleTemplate", editTemplate: "editTemplate", expandTemplate: "expandTemplate", items: "items", onlyHours: "onlyHours", onlyDays: "onlyDays", buttons: "buttons", dynamicButtons: "dynamicButtons", options: "options", save: "save", edit: "edit", dynamicOptions: "dynamicOptions", onEdit: "onEdit", onDelete: "onDelete", onChange: "onChange", upDownButtons: "upDownButtons", stepValue: "stepValue", align: "align", minWidth: "minWidth", maxWidth: "maxWidth", width: "width", cellClass: "cellClass", always: "always" }, decls: 0, vars: 0, template: function ColumnComponent_Template(rf, ctx) { }, styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJjb2x1bW4uY29tcG9uZW50LnNjc3MifQ== */"] });
+ColumnComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: ColumnComponent, selectors: [["column"]], inputs: { icon: "icon", hint: "hint", title: "title", titleHint: "titleHint", type: "type", field: "field", dao: "dao", orderBy: "orderBy", editable: "editable", template: "template", titleTemplate: "titleTemplate", editTemplate: "editTemplate", expandTemplate: "expandTemplate", items: "items", onlyHours: "onlyHours", onlyDays: "onlyDays", buttons: "buttons", dynamicButtons: "dynamicButtons", options: "options", save: "save", edit: "edit", dynamicOptions: "dynamicOptions", onEdit: "onEdit", onDelete: "onDelete", onChange: "onChange", upDownButtons: "upDownButtons", stepValue: "stepValue", align: "align", verticalAlign: "verticalAlign", minWidth: "minWidth", maxWidth: "maxWidth", width: "width", cellClass: "cellClass", always: "always" }, decls: 0, vars: 0, template: function ColumnComponent_Template(rf, ctx) { }, styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJjb2x1bW4uY29tcG9uZW50LnNjc3MifQ== */"] });
 
 
 /***/ }),
@@ -34310,7 +34312,7 @@ class PageFrameBase extends _page_base__WEBPACK_IMPORTED_MODULE_2__["PageBase"] 
                 this.editableForm.error = "";
         };
     }
-    /* Dever ser sobrescritos utilizando o @Input() */
+    /* Dever ser sobrescrito utilizando o @Input() */
     set control(value) {
         if (this._control != value) {
             this._control = value;

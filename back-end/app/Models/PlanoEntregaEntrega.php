@@ -6,6 +6,7 @@ use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasDataFim;
+use Illuminate\Support\Facades\DB;
 
 class   PlanoEntregaEntrega extends ModelBase
 {
@@ -31,6 +32,7 @@ class   PlanoEntregaEntrega extends ModelBase
         'progresso_realizado', /* decimal(5,2); DEFAULT: '0.00'; */// Percentual de progresso do Plano de Entregas realizado
         'unidade_id', /* char(36); NOT NULL; */
         'destinatario', /* varchar(255); */// Destinatário da entrega
+        //'cliente', /* text; */// Cliente da entrega
     ];
 
     public $fillable_changes = ['objetivos', 'processos']; 

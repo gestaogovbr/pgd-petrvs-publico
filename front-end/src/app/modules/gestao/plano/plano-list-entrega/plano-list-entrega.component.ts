@@ -21,7 +21,6 @@ export class PlanoListEntregaComponent extends PageFrameBase {
   @Input() set entity(value: Plano | undefined) { super.entity = value; } get entity(): Plano | undefined { return super.entity; }
   @Input() set disabled(value: boolean) { if (this._disabled != value) this._disabled = value; } get disabled(): boolean { return this._disabled; }
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
-  //@Input() eixos?: EixoTematico[];
 
   public get items(): PlanoTrabalhoEntrega[] {
     if (!this.gridControl.value) this.gridControl.setValue(new Plano());
@@ -31,30 +30,33 @@ export class PlanoListEntregaComponent extends PageFrameBase {
   public minHeight: number = 350;
   public options: ToolbarButton[] = [];
   public entregaDao?: PlanoTrabalhoEntregaDaoService;
-  //public eixoDao?: EixoTematicoDaoService;
   private _disabled: boolean = false;
+  public totalForcaTrabalho: number = 0;
 
   constructor(public injector: Injector) {
     super(injector);
     this.dao = injector.get<PlanoDaoService>(PlanoDaoService);
     this.entregaDao = injector.get<PlanoTrabalhoEntregaDaoService>(PlanoTrabalhoEntregaDaoService);
-    //this.eixoDao = injector.get<EixoTematicoDaoService>(EixoTematicoDaoService);
-    //this.groupBy = [{ field: "eixo_tematico_id", label: "Eixo Temático" }];
     this.form = this.fh.FormBuilder({
       nome: {default: ""},
+      descricao: {default: ""},
+      forca_trabalho: {default: 0},
       plano_id: {default: null},
       entrega_id: {default: null},
+      plano_entrega_entrega_id: {default: null}
     }, this.cdRef);
   }
 
   ngOnInit(): void {
     super.ngOnInit();
     this.entity = this.metadata?.entity || this.entity;
-    //this.eixos = this.metadata?.eixos || this.eixos;
-    //this.sortEntregas();
-/*     if (!this.eixos) this.eixoDao?.query().getAll().then(eixos => {
-      this.eixos = eixos;
-    }); */
+    this.totalForcaTrabalho = this.somaForcaTrabalho(this.entity?.entregas);
+    /* Se entity for passada como parâmetro na chamada do componente <plano-list-entrega> ela será recebida por this.entity, e se
+       ela for passada através de uma url, será recebida por this.metadata.entity */
+  }
+  
+  public somaForcaTrabalho(entregas: PlanoTrabalhoEntrega[] = []): number {
+    return entregas.map(x => parseFloat(x.forca_trabalho)).reduce((a,b) => a + b);
   }
 
   public dynamicButtons(row: any): ToolbarButton[] {
@@ -75,11 +77,6 @@ export class PlanoListEntregaComponent extends PageFrameBase {
     }
     return result;
   }
-
-/*   public marcador(row: PlanoTrabalhoEntrega): string {
-    let level = row._metadata?.level || 0;
-    return level < 1 ? "" : (level < 2 ? "• " : (level < 3 ? "- " : "+ "));
-  } */
 
   public async addEntrega() {
     // ************ 
@@ -108,35 +105,6 @@ export class PlanoListEntregaComponent extends PageFrameBase {
       }
     });
   }
-
-/*   public entregasPai(filhoId: string) {
-    let items: Planejamentoentrega[] = [];
-    let addItens = (list: Planejamentoentrega[]) => {
-      for(let item of list) {
-        if(item.id != filhoId) {
-          items.push(item);
-          addItens(this.items.filter(x => x.entrega_pai_id == item.id).sort((a,b) => a.sequencia - b.sequencia));
-        }
-      }
-    }
-    addItens(this.items.filter(x => !x.entrega_pai_id).sort((a,b) => a.sequencia - b.sequencia));
-    return items;
-  } */
-
-/*   public sortentregas() {
-    let items: Planejamentoentrega[] = [];
-    let addItens = (list: Planejamentoentrega[], level: number) => {
-      for(let item of list) {
-        item._metadata = Object.assign(item._metadata || {}, { level });
-        items.push(item);
-        if(item._status != "DELETE") addItens(this.items.filter(x => x.entrega_pai_id == item.id).sort((a,b) => a.sequencia - b.sequencia), level + 1);
-      }
-    }
-    addItens(this.items.filter(x => !x.entrega_pai_id).sort((a,b) => a.sequencia - b.sequencia), 0);
-    this.items.length = 0;
-    this.items.push(...items);
-    this.cdRef.detectChanges();
-  } */
 
   public async editEntrega(entrega: PlanoTrabalhoEntrega) {
     entrega._status = entrega._status == "ADD" ? "ADD" : "EDIT";
@@ -167,16 +135,11 @@ export class PlanoListEntregaComponent extends PageFrameBase {
         await this.entregaDao!.delete(entrega);
         this.grid?.items.splice(index, 1);
       };
-      //this.sortObjetivos();
       return true;
     } else {
       return false;
     }
   }
-
-/*   public getEixo(id: string): EixoTematico | undefined {
-    return this.eixos?.find(x => x.id == id);
-  } */
 
 }
 
