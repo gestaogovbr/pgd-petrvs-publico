@@ -8,12 +8,11 @@ export class PlanoTrabalhoEntrega extends Base {
     public entrega?: Entrega;
     public entregaPlanoEntrega?: PlanoEntregaEntrega;
 
-    public nome: string = "";
     public descricao: string = "";
     public forca_trabalho: string = "0.00";
     public plano_id: string = "";
-    public entrega_id: string = "";
-    public plano_entrega_entrega_id: string = "";
+    public entrega_id: string | null = null;
+    public plano_entrega_entrega_id: string | null = null;
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

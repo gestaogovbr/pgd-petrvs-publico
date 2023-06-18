@@ -1,8 +1,8 @@
-<grid [items]="items" [form]="form!" #gridEntregas editable [selectable]="false" [minHeight]="minHeight" 
-    [add]="addEntrega.bind(this)" [remove]="removeEntrega.bind(this)" [minHeight]="0"
-    [hasDelete]="false" [hasEdit]="false" [hasAdd]="!disabled" [join]="join" [groupBy]="groupBy">
+<grid [items]="items" [form]="form!" #gridEntregas editable [selectable]="false" [minHeight]="minHeight" [join]="join" [groupBy]="groupBy"
+    [add]="addEntrega.bind(this)" [remove]="removeEntrega.bind(this)" [save]="saveEntrega.bind(this)"
+    [hasDelete]="false" [hasEdit]="false" [hasAdd]="!disabled">
     <columns>
-        <column [titleTemplate]="titleOrigem" [template]="columnOrigem" [verticalAlign]="'middle'" [width]="125" [align]="'center'">
+        <column [titleTemplate]="titleOrigem" [template]="columnOrigem" [editTemplate]="editOrigem" [verticalAlign]="'middle'" [width]="125" [align]="'center'">
             <ng-template let-header="header" #titleOrigem><div class="text-center"><span><strong>Origem</strong></span></div></ng-template>
             <ng-template let-row="row" #columnOrigem>
                 <span><small>
@@ -11,14 +11,22 @@
                     <badge *ngIf="!row.plano_entrega_entrega_id?.length && row.entrega_id" color="secondary" label="Externa"></badge>
                 </small></span>
             </ng-template>
-        </column>
-        <column [titleTemplate]="titleNome" [template]="columnNome" [verticalAlign]="'middle'">
-            <ng-template let-header="header" #titleNome><span><strong>Entrega</strong></span></ng-template>
-            <ng-template let-row="row" #columnNome>
-                <div [style.max-width]="300"><span><small>{{ row.entrega_plano_entrega?.entrega?.nome || row.entrega?.nome || "Desconhecido" }}</small></span></div>
+            <ng-template let-row="row" #editOrigem>
+                <input-select controlName="origem" [control]="form!.controls.origem" [items]="lookup.ORIGENS_ENTREGAS_PLANO_TRABALHO" (change)="onOrigemChange($event)"></input-select>
             </ng-template>
         </column>
-        <column [titleTemplate]="titleForcaTrabalho" [template]="columnForcaTrabalho" [width]="110" [align]="'center'">
+        <column [titleTemplate]="titleEntrega" [template]="columnEntrega" [editTemplate]="editEntrega" [verticalAlign]="'middle'" [maxWidth]="300">
+            <ng-template let-header="header" #titleEntrega><span><strong>Entrega</strong></span></ng-template>
+            <ng-template let-row="row" #columnEntrega>
+                <div [style.max-width]="300"><span><small>{{ row.entrega_plano_entrega?.entrega?.nome || row.entrega?.nome || "Desconhecido" }}</small></span></div>
+            </ng-template>
+            <ng-template let-row="row" #editEntrega>
+                <input-select *ngIf="form!.controls.origem.value == 'MESMA_UNIDADE'" #entrega_mesma_unidade controlName="entrega_mesma_unidade_id" [control]="form!.controls.entrega_mesma_unidade_id" [items]="entregasMesmaUnidade" (change)="onEntregaMesmaUnidadeChange($event)"></input-select>
+                <!-- <input-search *ngIf="form!.controls.origem.value == 'OUTRA_UNIDADE'" #entrega_outra_unidade controlName="entrega_outra_unidade_id" [control]="form!.controls.entrega_outra_unidade_id" [dao]="" (select)="onEntregaOutraUnidadeChange($event)"></input-search> -->
+                <input-select *ngIf="form!.controls.origem.value == 'EXTERNA'" #entrega_externa controlName="entrega_externa_id" [control]="form!.controls.entrega_externa_id" [items]="entregasExternas" (change)="onEntregaExternaChange($event)"></input-select>
+            </ng-template>
+        </column>
+        <column [titleTemplate]="titleForcaTrabalho" [template]="columnForcaTrabalho" [editTemplate]="editForcaTrabalho" [width]="110" [align]="'center'">
             <ng-template let-header="header" #titleForcaTrabalho>
                 <div class="text-center">
                     <span><small><strong>% Força Trab.</strong></small></span><br>
@@ -28,11 +36,17 @@
             <ng-template let-row="row" #columnForcaTrabalho>
                 <span><small>{{ row.forca_trabalho + '%' }}</small></span>
             </ng-template>
+            <ng-template let-row="row" #editForcaTrabalho>
+                <input-text number sufix="%" controlName="forca_trabalho" [control]="form!.controls.forca_trabalho" (change)="onForcaTrabalhoChange($event)"></input-text>
+            </ng-template>
         </column>
-        <column [titleTemplate]="titleDescricao" [template]="columnDescricao" [verticalAlign]="'middle'">
+        <column [titleTemplate]="titleDescricao" [template]="columnDescricao" [editTemplate]="editDescricao" [verticalAlign]="'middle'" [maxWidth]="300">
             <ng-template let-header="header" #titleDescricao><div class="text-center"><span><strong>Detalhamento</strong></span></div></ng-template>
             <ng-template let-row="row" #columnDescricao>
                 <div [style.max-width]="300"><span><small>{{ row.descricao }}</small></span></div>
+            </ng-template>
+            <ng-template let-row="row" #editDescricao>
+                <input-text controlName="descricao" [control]="form!.controls.descricao"></input-text>
             </ng-template>
         </column>
         <column type="options" [dynamicButtons]="dynamicButtons.bind(this)" [dynamicOptions]="dynamicOptions.bind(this)"></column>

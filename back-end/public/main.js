@@ -453,6 +453,11 @@ class LookupService {
             { key: 'HORAS_UTEIS', value: "Horas Úteis" },
             { key: 'DIAS_UTEIS', value: "Dias Úteis" }
         ];
+        this.ORIGENS_ENTREGAS_PLANO_TRABALHO = [
+            { key: 'MESMA_UNIDADE', value: "Mesma Unidade" },
+            { key: 'OUTRA_UNIDADE', value: "Outra Unidade" },
+            { key: 'EXTERNA', value: "Externa" },
+        ];
         this.HORAS_CORRIDAS_OU_UTEIS = [
             { key: 'HORAS_CORRIDAS', value: "Horas Corridas" },
             { key: 'HORAS_UTEIS', value: "Horas Úteis" }
