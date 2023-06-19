@@ -26,7 +26,7 @@ class PlanoTrabalhoEntrega extends ModelBase
         //'data_fim', /* datetime; */// Data fim da vigência do registro
     ];
 
-    public $fillable_changes = [];
+    public $fillable_changes = ['entregaPlanoEntrega', 'entrega'];
 
     public $delete_cascade = [];
 

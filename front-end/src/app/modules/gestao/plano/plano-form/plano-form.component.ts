@@ -235,6 +235,7 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
   public onPlanoEntregaSelect(selected: SelectItem) {
     let planoEntrega = selected.entity as PlanoEntrega;
     this.updateEntregas(planoEntrega);
+    //ATUALIZAR O GRID DE ENTREGAS this.planoListEntrega
     this.form?.controls.data_inicio_vigencia.updateValueAndValidity();
     this.form?.controls.data_fim_vigencia.updateValueAndValidity();
     this.programa = planoEntrega?.programa as Programa;

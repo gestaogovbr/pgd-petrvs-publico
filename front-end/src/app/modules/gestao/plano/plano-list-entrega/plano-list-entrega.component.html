@@ -37,7 +37,7 @@
                 <span><small>{{ row.forca_trabalho + '%' }}</small></span>
             </ng-template>
             <ng-template let-row="row" #editForcaTrabalho>
-                <input-text number sufix="%" controlName="forca_trabalho" [control]="form!.controls.forca_trabalho" (change)="onForcaTrabalhoChange($event)"></input-text>
+                <input-text number sufix="%" controlName="forca_trabalho" [control]="form!.controls.forca_trabalho" (change)="onForcaTrabalhoChange.bind(this)"></input-text>
             </ng-template>
         </column>
         <column [titleTemplate]="titleDescricao" [template]="columnDescricao" [editTemplate]="editDescricao" [verticalAlign]="'middle'" [maxWidth]="300">
@@ -49,6 +49,6 @@
                 <input-text controlName="descricao" [control]="form!.controls.descricao"></input-text>
             </ng-template>
         </column>
-        <column type="options" [dynamicButtons]="dynamicButtons.bind(this)" [dynamicOptions]="dynamicOptions.bind(this)"></column>
+        <column type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
     </columns>
 </grid>
