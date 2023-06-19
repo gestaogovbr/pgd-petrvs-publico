@@ -63,6 +63,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   @Input() remove?: (row: any) => Promise<boolean | undefined | void>;
   @Input() save?: (form: FormGroup, row: any) => Promise<IIndexable | Base | undefined | void>;
   @Input() editEnd?: (id?: string) => void;
+  @Input() saveEnd?: (row: any) => void;
   @Input() addRoute?: FullRoute;
   @Input() addMetadata?: RouteMetadata;
   @Input() labelAdd: string = "Incluir";
@@ -618,6 +619,7 @@ export class GridComponent extends ComponentBase implements OnInit {
         if(index >= 0) {
           Object.assign(this.items[index], this.util.fillForm(this.items[index], entity));
           this.editing = this.items[index];
+          if(this.saveEnd) this.saveEnd(this.items[index]); //REFATORAR
         }
       }
       this.group(this.items);

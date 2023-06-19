@@ -13,7 +13,7 @@
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "importHelpers": true,
-    "target": "es2015",
+    "target": "es6",
     "module": "es2020",
     "skipLibCheck": true,
     "lib": [

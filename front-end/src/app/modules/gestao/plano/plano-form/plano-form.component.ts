@@ -81,7 +81,7 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
 
   constructor(public injector: Injector) {
     super(injector, Plano, PlanoDaoService);
-    this.join = ["unidade.entidade", "entregas.entrega.entrega", "plano_entrega.entregas.entrega", "usuario", "programa.template_tcr", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "atividades.atividade"];
+    this.join = ["unidade.entidade", "entregas.entrega.entrega", "plano_entrega.entregas.entrega", "plano_entrega.unidade.entidade", "plano_entrega.programa", "usuario", "programa.template_tcr", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "atividades.atividade"];
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
@@ -232,15 +232,16 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
     this.entregas = planoEntrega?.entregas?.map(x => Object.assign({}, { key: x.id, value: x.entrega?.nome || x.descricao, data: x })) || [];
   }
 
-  public async onPlanoEntregaSelect(selected: SelectItem) {
-    this.updateEntregas(selected.entity as PlanoEntrega);
+  public onPlanoEntregaSelect(selected: SelectItem) {
+    let planoEntrega = selected.entity as PlanoEntrega;
+    this.updateEntregas(planoEntrega);
+    //ATUALIZAR O GRID DE ENTREGAS this.planoListEntrega
     this.form?.controls.data_inicio_vigencia.updateValueAndValidity();
     this.form?.controls.data_fim_vigencia.updateValueAndValidity();
-    await this.planoEntregaDao.getById(selected.entity.id, ['programa', 'unidade']).then(planoEntrega => {
-      this.programa = planoEntrega?.programa;
-      this.unidade = planoEntrega?.unidade;
-      this.form!.controls.forma_contagem_carga_horaria.setValue(this.unidade?.entidade?.forma_contagem_carga_horaria || "DIA");
-    });
+    this.programa = planoEntrega?.programa as Programa;
+    this.unidade = planoEntrega?.unidade as Unidade;
+    this.form!.controls.forma_contagem_carga_horaria.setValue(this.unidade?.entidade?.forma_contagem_carga_horaria || "DIA");
+    this.form!.controls.unidade_texto_complementar.setValue(this.unidade?.texto_complementar_plano || "");
     this.calculaTempos();
     this.cdRef.detectChanges();
   }
@@ -285,14 +286,14 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
   }
 
   public async loadData(entity: Plano, form: FormGroup) {
-    let formValue = Object.assign({}, form.value);
     this.updateEntregas(entity.plano_entrega);
-    await Promise.all ([
+    await Promise.all([
       this.calendar.loadFeriadosCadastrados(entity.unidade_id),
       this.usuario?.loadSearch(entity.usuario || entity.usuario_id),
       this.tipoModalidade?.loadSearch(entity.tipo_modalidade || entity.tipo_modalidade_id),
       this.planoEntrega?.loadSearch(entity.plano_entrega || entity.plano_entrega_id)
     ]);
+    let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
     let documento = entity.documentos.find(x => x.id == entity.documento_id);
     if(documento) this._datasource = documento.datasource;
@@ -305,11 +306,10 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
       this.entity = (await this.dao!.getById(this.urlParams!.get("id")!, this.join))!;
     } else {
       this.entity = new Plano();
-      this.entity.unidade_id = this.auth.unidade!.id;
       this.entity.carga_horaria = this.auth.entidade?.carga_horaria_padrao || 8;
       this.entity.forma_contagem_carga_horaria = this.auth.entidade?.forma_contagem_carga_horaria || "DIA";
     }
-    this.loadData(this.entity, this.form!);
+    await this.loadData(this.entity, this.form!);
   }
 
   /* Atividades */  
@@ -381,8 +381,8 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
     let plano: Plano = this.util.fill(new Plano(), this.entity!);
     plano = this.util.fillForm(plano, this.form!.value);
     plano.usuario = this.usuario!.searchObj as Usuario;
-    plano.unidade = this.entity?.unidade as Unidade;
-    plano.programa = this.entity?.programa as Programa;
+    plano.unidade = (this.entity?.unidade || this.unidade) as Unidade;
+    plano.programa = (this.entity?.programa || this.programa) as Programa;
     plano.tipo_modalidade = this.tipoModalidade!.searchObj as TipoModalidade;
     return plano;
   }

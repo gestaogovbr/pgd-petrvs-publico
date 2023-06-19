@@ -46,3 +46,7 @@
 ## REGRAS DE INTERFACE
 
 1. (RI_PTR_1) No formulário de inclusão/edição de um plano de trabalho, o input-search de plano de entregas deve ficar desabilitado nas edições e habilitado apenas nas inclusões;
+
+Sequência de métodos para salvar um registro em um grid editável:
+1. Ao pressionar o botão de gravar da nova linha, o método private async saveItem(itemRow: Base | IIndexable) do GridComponent é chamado;
+2. 

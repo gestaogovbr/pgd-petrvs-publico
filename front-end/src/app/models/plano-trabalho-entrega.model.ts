@@ -1,16 +1,18 @@
 import { Base } from './base.model';
+import { Entrega } from './entrega.model';
 import { PlanoEntregaEntrega } from './plano-entrega-entrega.model';
 import { Plano } from './plano.model';
 
 export class PlanoTrabalhoEntrega extends Base {
     public plano?: Plano;
-    public entrega?: PlanoEntregaEntrega;
+    public entrega?: Entrega;
+    public entrega_plano_entrega?: PlanoEntregaEntrega;
 
-    public nome: string = "";
-    public data_inicio: Date = new Date(); /* Data de início */
-    public data_fim: Date | null = null; /* Data do fim */
+    public descricao: string = "";
+    public forca_trabalho: string = "0.00";
     public plano_id: string = "";
-    public entrega_id: string = "";
+    public entrega_id: string | null = null;
+    public plano_entrega_entrega_id: string | null = null;
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

@@ -7,6 +7,7 @@ import { ToolbarButton } from '../../toolbar/toolbar.component';
 import { ColumnType } from '../grid-column';
 
 export type ColumnAlign = "none" | "center" | "left" | "right";
+export type ColumnVerticalAlign = "bottom" | "top" | "middle";
 
 @Component({
   selector: 'column',
@@ -42,6 +43,7 @@ export class ColumnComponent implements OnInit {
   @Input() upDownButtons?: string;
   @Input() stepValue?: any;
   @Input() align: ColumnAlign = "none";
+  @Input() verticalAlign: ColumnVerticalAlign = "bottom";
   @Input() minWidth?: number = undefined;
   @Input() maxWidth?: number = undefined;
   @Input() width?: number = undefined;
