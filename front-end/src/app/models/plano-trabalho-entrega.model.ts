@@ -6,7 +6,7 @@ import { Plano } from './plano.model';
 export class PlanoTrabalhoEntrega extends Base {
     public plano?: Plano;
     public entrega?: Entrega;
-    public entregaPlanoEntrega?: PlanoEntregaEntrega;
+    public entrega_plano_entrega?: PlanoEntregaEntrega;
 
     public descricao: string = "";
     public forca_trabalho: string = "0.00";

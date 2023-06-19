@@ -492,7 +492,7 @@ class PlanoListComponent extends src_app_modules_base_page_list_base__WEBPACK_IM
             data_filtro_fim: { default: new Date() }
         }, this.cdRef, this.filterValidate);
         this.join = ["unidade.entidade", "usuario", "programa", "documento.assinaturas.usuario:id,nome,url_foto",
-            "tipo_modalidade", "entregas.entregaPlanoEntrega.entrega", "entregas.entrega", "planoEntrega.entregas"];
+            "tipo_modalidade", "entregas.entregaPlanoEntrega.entrega", "entregas.entrega", "planoEntrega.entregas.entrega"];
         this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }];
     }
     dynamicOptions(row) {

@@ -30538,6 +30538,8 @@ class GridComponent extends _component_base__WEBPACK_IMPORTED_MODULE_6__["Compon
                     if (index >= 0) {
                         Object.assign(this.items[index], this.util.fillForm(this.items[index], entity));
                         this.editing = this.items[index];
+                        if (this.saveEnd)
+                            this.saveEnd(this.items[index]); //REFATORAR
                     }
                 }
                 this.group(this.items);
@@ -30674,7 +30676,7 @@ GridComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComp
     } if (rf & 2) {
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵloadQuery"]()) && (ctx.formDirective = _t.first);
-    } }, inputs: { dao: "dao", icon: "icon", selectable: "selectable", loadList: "loadList", multiselectChange: "multiselectChange", add: "add", load: "load", remove: "remove", save: "save", editEnd: "editEnd", addRoute: "addRoute", addMetadata: "addMetadata", labelAdd: "labelAdd", orderBy: "orderBy", groupBy: "groupBy", join: "join", form: "form", noHeader: "noHeader", editable: "editable", hasEdit: "hasEdit", hasDelete: "hasDelete", hasReport: "hasReport", scrollable: "scrollable", controlName: "controlName", control: "control", minHeight: "minHeight", multiselect: "multiselect", multiselectEnabled: "multiselectEnabled", multiselectAllFields: "multiselectAllFields", canSelect: "canSelect", dynamicMultiselectMenu: "dynamicMultiselectMenu", multiselectMenu: "multiselectMenu", groupTemplate: "groupTemplate", title: "title", hasAdd: "hasAdd", disabled: "disabled", query: "query", list: "list", items: "items", visible: "visible", loading: "loading" }, outputs: { select: "select" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵProvidersFeature"]([
+    } }, inputs: { dao: "dao", icon: "icon", selectable: "selectable", loadList: "loadList", multiselectChange: "multiselectChange", add: "add", load: "load", remove: "remove", save: "save", editEnd: "editEnd", saveEnd: "saveEnd", addRoute: "addRoute", addMetadata: "addMetadata", labelAdd: "labelAdd", orderBy: "orderBy", groupBy: "groupBy", join: "join", form: "form", noHeader: "noHeader", editable: "editable", hasEdit: "hasEdit", hasDelete: "hasDelete", hasReport: "hasReport", scrollable: "scrollable", controlName: "controlName", control: "control", minHeight: "minHeight", multiselect: "multiselect", multiselectEnabled: "multiselectEnabled", multiselectAllFields: "multiselectAllFields", canSelect: "canSelect", dynamicMultiselectMenu: "dynamicMultiselectMenu", multiselectMenu: "multiselectMenu", groupTemplate: "groupTemplate", title: "title", hasAdd: "hasAdd", disabled: "disabled", query: "query", list: "list", items: "items", visible: "visible", loading: "loading" }, outputs: { select: "select" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵProvidersFeature"]([
             {
                 provide: _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormGroupDirective"],
                 useFactory: (self) => {
