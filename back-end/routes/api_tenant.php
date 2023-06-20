@@ -50,7 +50,7 @@ use App\Http\Controllers\ProjetoController;
 use App\Http\Controllers\RotinaDiariaController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\AreaGraduacaoController;
-
+use App\Http\Controllers\PlanoTrabalhoEntregaController;
 use App\Http\Controllers\UnidadeIntegranteController;
 
 /*
@@ -199,6 +199,9 @@ Route::middleware(['auth:sanctum'])->prefix('Plano')->group(function () {
     Route::post('cancelar-avaliacao', [PlanoController::class, 'cancelarAvaliacao']);
     Route::post('arquivar', [PlanoController::class, 'arquivar']);
     Route::post('metadadosPlano', [PlanoController::class, 'metadadosPlano']);
+});
+Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoEntrega')->group(function () {
+    defaultRoutes(PlanoTrabalhoEntregaController::class);
 });
 
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () { 

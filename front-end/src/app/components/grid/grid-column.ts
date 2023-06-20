@@ -4,7 +4,7 @@ import { DaoBaseService } from "src/app/dao/dao-base.service";
 import { Base, IIndexable } from "src/app/models/base.model";
 import { LookupItem } from "src/app/services/lookup.service";
 import { ToolbarButton } from "../toolbar/toolbar.component";
-import { ColumnAlign } from "./column/column.component";
+import { ColumnAlign, ColumnVerticalAlign } from "./column/column.component";
 
 export type ColumnType = "search" | "display" | "text" | "number" | "date" | "datetime" | "time" | "timer" | "radio" | "select" | "switch" | "options" | "expand" | "template";
 
@@ -38,6 +38,7 @@ export class GridColumn {
   public editing: boolean = false;
   public upDownButtons?: string;
   public align: ColumnAlign = "none";
+  public verticalAlign: ColumnVerticalAlign = "bottom";
   public minWidth?: number = undefined;
   public maxWidth?: number = undefined;
   public width?: number = undefined;
