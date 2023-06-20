@@ -58,6 +58,8 @@ use App\Http\Controllers\CentroTreinamentoController;
 use App\Http\Controllers\FuncaoController;
 use App\Http\Controllers\GrupoEspecializadoController;
 use App\Http\Controllers\CargoController;
+use App\Http\Controllers\AreaGraduacaoController;
+use App\Http\Controllers\PlanoTrabalhoEntregaController;
 use App\Http\Controllers\UnidadeIntegranteController;
 use App\Http\Controllers\MateriaController;
 use App\Http\Controllers\CurriculumProfissionalController;
@@ -208,6 +210,9 @@ Route::middleware(['auth:sanctum'])->prefix('Plano')->group(function () {
     Route::post('cancelar-avaliacao', [PlanoController::class, 'cancelarAvaliacao']);
     Route::post('arquivar', [PlanoController::class, 'arquivar']);
     Route::post('metadadosPlano', [PlanoController::class, 'metadadosPlano']);
+});
+Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoEntrega')->group(function () {
+    defaultRoutes(PlanoTrabalhoEntregaController::class);
 });
 
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
