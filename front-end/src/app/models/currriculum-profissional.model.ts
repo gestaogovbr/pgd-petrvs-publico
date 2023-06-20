@@ -21,6 +21,7 @@ export class CurriculumProfissional extends Base {
     public unidades_lotado: [] = [];// Unidades de lotação em toda carreira
     public atividades_fora: [] = [];//Atividades desempenhadas externamente que podem contribuir para intituição
     public atividades_internas: [] = [];//Atividades desempenhadas internamente que podem contribuir para intituição
+    public especifique_habilidades: [] = [];//Atividades desempenhadas internamente que podem contribuir para intituição
     public docencia_fora: [] = [];// Já foi docente fora da instituição
     public docencia_interna: [] = [];// Já foi docente na instituição
     public curso_fora: [] = [];//Quais cursos você já fez e quais pretende fazer fora da Instituição

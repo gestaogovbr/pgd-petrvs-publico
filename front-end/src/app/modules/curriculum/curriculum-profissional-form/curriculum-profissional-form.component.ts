@@ -16,6 +16,9 @@ import { controllers } from 'chart.js';
 import { InputRadioComponent } from 'src/app/components/input/input-radio/input-radio.component';
 import { CurriculumProfissional } from 'src/app/models/currriculum-profissional.model';
 import { CurriculumProfissionalDaoService } from 'src/app/dao/curriculum-profissional-dao.service';
+import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
+import { LotacaoDaoService } from 'src/app/dao/lotacao-dao.service';
+import { NavigateResult } from 'src/app/services/navigate.service';
 
 @Component({
   selector: 'curriculum-profissional-form',
@@ -23,6 +26,7 @@ import { CurriculumProfissionalDaoService } from 'src/app/dao/curriculum-profiss
   styleUrls: ['./curriculum-profissional-form.component.scss']
 })
 export class CurriculumProfissionalFormComponent extends PageFormBase<CurriculumProfissional, CurriculumProfissionalDaoService> {
+  
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('radioDocenciaFora', { static: false }) public radioDocenciaFora?: InputSwitchComponent;
   @ViewChild('radioDocenciaPRF', { static: false }) public radioDocenciaPRF?: InputSwitchComponent;
@@ -37,8 +41,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   @ViewChild('escolhaRadioPG', { static: false }) public escolhaRadioPG?: InputRadioComponent;
   @ViewChild('escolhaInteressePG', { static: false }) public escolhaInteressePG?: InputRadioComponent;
 
-  
-  
+   
   public testeLookup: LookupItem[] = [{ 'key': 'key 1', 'value': 'value 1' }];
   public anos: LookupItem[] = [];
   public ct: LookupItem[] = [];
@@ -46,17 +49,24 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   public funcao: LookupItem[] = [];
   public grupo: LookupItem[] = [];
   public unidade: LookupItem[] = [];
+  public usuarioUnidade: LookupItem[] = [];
+  public userDao?: UsuarioDaoService;
+  public lotacaoDao?: LotacaoDaoService;
+  public unidadeDao?: UnidadeDaoService;
   public funcaoDao?: FuncaoDaoService;
   public ctDao?: CentroTreinamentoDaoService;
   public grupoDao?: GrupoEspecializadoDaoService;
-  public unidadeDao?: UnidadeDaoService;
+  
+  
  
   constructor(public injector: Injector) {
     super(injector, CurriculumProfissional, CurriculumProfissionalDaoService);
-    this.funcaoDao = injector.get<FuncaoDaoService>(FuncaoDaoService)
-    this.ctDao = injector.get<CentroTreinamentoDaoService>(CentroTreinamentoDaoService)
-    this.grupoDao = injector.get<GrupoEspecializadoDaoService>(GrupoEspecializadoDaoService)
-    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService)
+    this.userDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
+    this.lotacaoDao = injector.get<LotacaoDaoService>(LotacaoDaoService);
+    this.ctDao = injector.get<CentroTreinamentoDaoService>(CentroTreinamentoDaoService);
+    this.funcaoDao = injector.get<FuncaoDaoService>(FuncaoDaoService);
+    this.grupoDao = injector.get<GrupoEspecializadoDaoService>(GrupoEspecializadoDaoService);
+    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.form = this.fh.FormBuilder({
       radioDocenciaFora: { default: false },
       radioDocenciaPRF: { default: false },
@@ -89,17 +99,20 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   }
 
   ngOnInit(): void {
-    for (let i = 1980; i <= (new Date()).getFullYear(); i++) {
-      this.anos.push(Object.assign({}, { key: i, value: (i.toString()) }));
-    }
-
-    /*this.unidadeDao?.query().getAll().then((unity) => {
-      console.log('UNIDADES',unity)
-      this.unidade = unity.map(x => Object.assign({}, { key: x.codigo, value: x.nome }) as LookupItem);
-      this.cdRef.detectChanges();
-      console.log('UNIDADES',this.unidade)
-    });*/
-
+      for (let i = 1980; i <= (new Date()).getFullYear(); i++) {
+        this.anos.push(Object.assign({}, { key: i, value: (i.toString()) }));
+      }
+      
+      const userUnidade=this.auth.unidade;
+      console.log(userUnidade)
+   /*   this.lotacaoDao?.query({ where: [['usuario_id', '==', userID],['principal', '==', 1 ]]}).getAll().then((user) => {
+          const unidadeID=user[0].unidade_id;
+          this.unidadeDao?.query({ where: [['id', '==', unidadeID]]}).getAll().then((unidade) => {
+              console.log('UNIDADES',unidade[0].sigla,unidade[0].nome)
+                //this.usuarioUnidade = user.map(x => Object.assign({}, { key: x.id, value: x.unidade_id }) as LookupItem);
+                //this.cdRef.detectChanges();
+          });
+      });*/
   }
 
   public validate = (control: AbstractControl, controlName: string) => {

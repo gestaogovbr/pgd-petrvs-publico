@@ -164,7 +164,13 @@ export class AppComponent {
       RXCADASTRO_ADM_GRUPOS_ESPECIALIZADOS: { name: this.lex.noun("de Grupos Especializados", true), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros','gerais','ge'], icon: "bi bi-check-circle" },
       RXCADASTRO_ADM_OPORTUNIDADES: { name: this.lex.noun("Oportunidades", true), permition: 'MOD_RX_EDT_OPO', route: ['raiox', 'apoadm'], icon: "bi bi-lightbulb" },
       RXCADASTRO_ADM_MATERIAS: { name: this.lex.noun("Matérias", true), permition: 'MOD_RX_EDT_OPO', route: ['raiox', 'cadastros','gerais','materia'], icon: "bi bi-list-check" },
-      RXVISUALIZA_ADM_OPORTUNIDADES: { name: this.lex.noun("Pesquisa Oportunidades", true), permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-boxes" },
+      RXVISUALIZA_ADM_OPORTUNIDADES: { name: this.lex.noun("Pesquisa Oportunidades", true), permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-emoji-smile-fill" },
+
+      RXCADASTRO_ADM_ATIVIDADESEXT: { name: this.lex.noun("Atividade Externa", true), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros','gerais','cargo'], icon: "bi bi-box-arrow-up-right" },
+      RXCADASTRO_ADM_AREASTEMATICAS: { name: this.lex.noun("Áreas Temáticas", true), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros','gerais','cargo'], icon: "bi bi-textarea" },
+
+      RXVISUALIZA_ADM_PESQUISA1: { name: this.lex.noun("Usuario", true), permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-search" },
+      RXVISUALIZA_ADM_PESQUISA2: { name: this.lex.noun("Administrador", true), permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-binoculars" },
       /*PROJETOS*/
     };
 
@@ -241,30 +247,36 @@ export class AppComponent {
           this.menuSchema.RXCADASTRO_PESSOAL,
           this.menuSchema.RXCADASTRO_PROFISSIONAL,
           this.menuSchema.RXCADASTRO_ATRIBUTOS,
-          this.menuSchema.RXCADASTRO_OPORTUNIDADES
+          //this.menuSchema.RXCADASTRO_OPORTUNIDADES
         ]
       },
       {
         name: "Oportunidades", permition: "MOD_RX_VIS_DPE", route: ['raiox'], id: "navbarDropdownCadastros", menu: [
-
+          this.menuSchema.RXCADASTRO_ADM_OPORTUNIDADES,
         ]
       },
       {
         name: "Pesquisas", permition: "MOD_RX_VIS_DPE", route: ['raiox'], id: "navbarDropdownCadastros", menu: [
-
+          this.menuSchema.RXVISUALIZA_ADM_PESQUISA1,
+          this.menuSchema.RXVISUALIZA_ADM_PESQUISA2,
         ]
       },
       {
         name: "Cadastros Gerais", permition: "MOD_RX_VIS_DPE", route: ['raiox/cadastros/gerais'], id: "navbarDropdownCadastros", menu: [
           this.menuSchema.RXCADASTRO_ADM_AREA_CONHECIMENTO,
-          this.menuSchema.RXCADASTRO_ADM_CURSOS,
           this.menuSchema.RXCADASTRO_ADM_TIPOS_CURSOS,
+          this.menuSchema.RXCADASTRO_ADM_CURSOS,
+          this.menuSchema.RXCADASTRO_ADM_MATERIAS,
+          "-",
           //this.menuSchema.RXCADASTRO_ADM_ATRIBUTOS,
-          this.menuSchema.RXCADASTRO_ADM_OPORTUNIDADES,
+          
           this.menuSchema.RXCADASTRO_ADM_CT,
           this.menuSchema.RXCADASTRO_ADM_CARGO,
           this.menuSchema.RXCADASTRO_ADM_FUNCAO,
-          this.menuSchema.RXCADASTRO_ADM_MATERIAS
+          "-",
+          this.menuSchema.RXCADASTRO_ADM_ATIVIDADESEXT,
+          this.menuSchema.RXCADASTRO_ADM_AREASTEMATICAS,
+          this.menuSchema.RXCADASTRO_ADM_OPORTUNIDADES,
         ],
 
       }

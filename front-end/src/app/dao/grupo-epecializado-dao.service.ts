@@ -10,7 +10,7 @@ export class GrupoEspecializadoDaoService extends DaoBaseService<GrupoEspecializ
  
   constructor(protected injector: Injector) { 
     super("GrupoEspecializado", injector);
-    this.searchFields = ["nome", "ativo"];
+    this.searchFields = ["nome"]//, "ativo"];
   }  
 }
 

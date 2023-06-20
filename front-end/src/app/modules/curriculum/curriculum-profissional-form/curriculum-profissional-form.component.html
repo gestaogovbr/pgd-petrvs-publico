@@ -31,7 +31,7 @@
                 </input-multiselect>
 
                 <input-select [size]="6" label="Você faz parte de algum grupo especializado?" icon="bi bi-check-circle"
-                    controlName="grupo" [control]="form!.controls.grupo" [dao]="grupoDao" id="testeID">
+                    controlName="grupo" [control]="form!.controls.grupo" [dao]="grupoDao" id="testeID" liveSearch>
                 </input-select>
 
             </div>
@@ -41,13 +41,12 @@
                     [addItemHandle]="addItemFuncao.bind(this)" noBox [bold]="true">
 
                     <input-select [size]="12" label="Selecione todas as unidades em que já foi lotado"
-                        icon="bi bi-check-circle-fill" controlName="selectLotacao" liveSearch
-                        [control]="form!.controls.selectLotacao" [dao]="unidadeDao">
+                        icon="bi bi-check-circle-fill" controlName="selectLotacao" [control]="form!.controls.selectLotacao" [dao]="unidadeDao" liveSearch>
                     </input-select>
                 </input-multiselect>
 
                 <input-select [size]="6" label="Lotação atual" icon="bi bi-check-circle" controlName="lotacaoAtual"
-                    [control]="form!.controls.lotacaoAtual" [dao]="unidadeDao">
+                    [control]="form!.controls.lotacaoAtual" [dao]="unidadeDao" liveSearch>
                 </input-select>
 
             </div>
@@ -56,7 +55,7 @@
 
             <div class="row mb-2 mt-3">
                 <separator class="mb-3"
-                    title="Quais atividades você desempenhou fora e que podem contribuir para a instituição?"
+                    title="Desempenhou atividades fora e que podem contribuir para a instituição? Informe a área:"
                     [bold]="true"></separator>
                 <input-multiselect [size]="10" [control]="form!.controls.atividades_fora" controlName="atividades_fora"
                     [addItemHandle]="addItemFuncao.bind(this)" noBox [bold]="true">
@@ -82,6 +81,19 @@
                         controlName="selectAtividade" liveSearch [control]="form!.controls.selectAtividade"
                         [items]="testeLookup">
                     </input-select>
+                </input-multiselect>
+            </div>
+            <div class="row mb-2 mt-3">
+                <separator class="mb-3"
+                    title="Informe as suas habilidades"
+                    [bold]="true"></separator>
+                <input-multiselect [size]="10" [control]="form!.controls.especifique_habilidades" controlName="especifique_habilidades"
+                    [addItemHandle]="addItemFuncao.bind(this)" noBox [bold]="true">
+
+                    <input-text [size]="12" label="Especifique" icon="bi bi-list-stars"
+                        controlName="inputEspecifique" liveSearch [control]="form!.controls.inputEspecifique">
+                    </input-text>
+
                 </input-multiselect>
             </div>
            

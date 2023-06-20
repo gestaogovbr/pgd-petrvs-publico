@@ -25,6 +25,7 @@ class CreateCurriculumsProfissionais extends Migration
             $table->string('lotacao_atual')->default('')->comment("Lotação atual");
             $table->json('atividades_fora')->nullable()->comment("Quais atividades você desempenhou fora e que podem contribuir para a instituição");
             $table->json('atividades_internas')->nullable()->comment("Quais atividades você desempenhou internamente que podem contribuir para a instituição");
+            $table->json('especifique_habilidades')->nullable()->comment("Especifique suas habilidades: (Ex: Desenvolvo em JavaScript)");
             $table->json('docencia_fora')->nullable()->comment("Você já realizou algum trabalho de docência fora da Instituição");
             $table->json('docencia_interna')->nullable()->comment("Você é docente ou instrutor da Instituição");
             $table->json('curso_fora')->nullable()->comment("Quais cursos você já fez e quais pretende fazer fora da Instituição");
