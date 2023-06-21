@@ -47,6 +47,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   public planejamentoDao: PlanejamentoDaoService;
   public planejamentoId?: string;
   public cadeiaValorId?: string;
+  public unidadeId: string = "";
   public formObjetivos: FormGroup;
   public formProcessos: FormGroup;
   public unidadeDao: UnidadeDaoService;
@@ -100,6 +101,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     super.ngOnInit();
     this.planejamentoId = this.metadata?.planejamento_id;
     this.cadeiaValorId = this.metadata?.cadeia_valor_id;
+    this.unidadeId = this.urlParams?.get('unidade_id') || "";
     this.entity = this.metadata?.entrega as PlanoEntregaEntrega;
   }
 

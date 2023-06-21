@@ -197,6 +197,11 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PTR_USERS_INCL", "Permite incluir planos de trabalho de usuários fora da lotação"],
         ["MOD_PTR_INCL_SEM_LOT", "Permite incluir planos de trabalho para usuários não lotado na unidade do plano"],
         ["MOD_PTR_INTSC_DATA", "Permite incluir planos de trabalho para usuários que já possuem planos no período de mesma modalidade"],
+        /* Capacidades do módulo PLANO DE TRABALHO - ENTREGAS*/
+        ["MOD_PTR_ENTR_CONS", "Permite consultar entregas de um plano de trabalho"],
+        ["MOD_PTR_ENTR_EDT", "Permite editar entregas de um plano de trabalho"],
+        ["MOD_PTR_ENTR_EXCL", "Permite excluir entregas de um plano de trabalho"],
+        ["MOD_PTR_ENTR_INCL", "Permite incluir entregas de um plano de trabalho"],        
         /* Capacidades do módulo PLANO DE ENTREGAS*/
         ["MOD_PENT", "Permite acessar item menu plano de entregas"],
         ["MOD_PENT_CONS", "Permite consultar planos de entrega"],
@@ -232,6 +237,9 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PRGT_INCL", "Permite incluir programas de gestão"],
         ["MOD_PROC_INCL", "Permite incluir tipos de processos"],
         ["MOD_PRGT_PART", "Participantes do programa"],
+        ["MOD_PRGT_PART_INCL", "Permite incluir participantes do programa"],
+        ["MOD_PRGT_PART_EDT", "Permite editar participantes do programa"],
+        ["MOD_PRGT_PART_EXCL", "Permite excluir participantes do programa"],
         /* Capacidades do módulo PROJETO*/
         ["MOD_PROJ", "Permite acessar módulo projetos"],
         ["MOD_PROJ_CONS", "Permite consultar projeto"],
@@ -315,6 +323,9 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_UND_TUDO", "Permite consultar qualquer unidade independente de subordinação"],
         ["MOD_UND_INATV", "Permite inativar uma unidade"],
         ["MOD_UND_INTG", "Permite gerenciar integrantes da unidade"],
+        ["MOD_UND_INTG_INCL", "Permite incluir integrantes da unidade"],
+        ["MOD_UND_INTG_EDT", "Permite editar integrantes da unidade"],
+        ["MOD_UND_INTG_EXCL", "Permite excluir integrantes da unidade"],
         /* Capacidades do módulo USUÁRIO*/
         ["MOD_USER_CONS", "Permite consultar dados de usuário"],
         ["MOD_USER_EDT", "Permite alterar dados de usuário"],

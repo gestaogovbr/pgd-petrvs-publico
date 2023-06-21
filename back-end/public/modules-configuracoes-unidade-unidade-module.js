@@ -932,6 +932,11 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
             yield this.loadData({}, this.form);
         }))();
     }
+    /**
+     * Método chamado na inicialização do componente para carregar todos os integrantes da entidade.
+     * @param entity
+     * @param form
+     */
     loadData(entity, form) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             this.grid.loading = true;
@@ -973,6 +978,11 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
         return result;
     }
     ;
+    /**
+     * Método chamado na edição de um integrante da Unidade.
+     * @param form
+     * @param row
+     */
     loadIntegrante(form, row) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             form.controls.usuario_id.setValue(row.usuario_id);

@@ -23,7 +23,8 @@ class ServerException extends Exception
         "ValidateLotacao" => "Erro ao validar Lotação do usuário",
         "ValidateDocumento" => "Erro ao validar Documento",
         "ValidatePainel" => "Erro ao validar Painel",
-        "ValidatePlanoEntrega" => "Erro ao validar Documento"
+        "ValidatePlanoEntrega" => "Erro ao validar Documento",
+        "ValidateProgramaParticipante" => "Erro ao validar o Participante"
     ];
 
     function __construct($code, $extra = "") {

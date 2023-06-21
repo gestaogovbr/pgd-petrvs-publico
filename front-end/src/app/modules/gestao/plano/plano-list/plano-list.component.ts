@@ -63,7 +63,8 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
       data_filtro_inicio: {default: new Date()},
       data_filtro_fim: {default: new Date()}
     }, this.cdRef, this.filterValidate);
-    this.join = ["unidade.entidade", "usuario", "programa", "documento.assinaturas.usuario:id,nome,url_foto", "tipo_modalidade"];
+    this.join = ["unidade.entidade", "usuario", "programa", "documento.assinaturas.usuario:id,nome,url_foto", 
+                "tipo_modalidade", "entregas.entrega_plano_entrega.entrega", "entregas.entrega", "plano_entrega.entregas.entrega"];
     this.groupBy = [{field: "unidade.sigla", label: "Unidade"}];
   }
 
@@ -71,7 +72,7 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
     let result: ToolbarButton[] = [];
     let plano: Plano = row as Plano;
     const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: this.consult.bind(this) };
-    const BOTAO_ALTERAR = { label: "Alterar", icon: "bi bi-pencil-square", onClick: this.edit.bind(this) };
+    const BOTAO_ALTERAR = { label: "Alterar", icon: "bi bi-pencil-square", color: "btn-outline-info", onClick: this.edit.bind(this) };
     const BOTAO_EXCLUIR = { label: "Excluir demanda", icon: "bi bi-trash", onClick: this.delete.bind(this) };
     const BOTAO_ASSINAR = { label: "Assinar", icon: "bi bi-pen", onClick: this.assinar.bind(this) };
     const BOTAO_TERMOS = { label: "Termos", icon: "bi bi-file-earmark-check", onClick: ((row: Plano) => this.go.navigate({ route: ['uteis', 'documentos', 'TCR', row.id ] }, { modalClose: (modalResult) => console.log(modalResult?.conteudo), metadata: this.planoService.metadados(row) })).bind(this) };
@@ -87,7 +88,7 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
     let result: ToolbarButton[] = [];
     let plano: Plano = row as Plano;
     const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: this.consult.bind(this) };
-    const BOTAO_ALTERAR = { label: "Alterar", icon: "bi bi-pencil-square", onClick: this.edit.bind(this) };
+    const BOTAO_ALTERAR = { label: "Alterar", icon: "bi bi-pencil-square", color: "btn-outline-info", onClick: this.edit.bind(this) };
     const BOTAO_ASSINAR = { hint: "Assinar", icon: "bi bi-pen", color: "btn-outline-dark", onClick: this.assinar.bind(this) };
     if(this.planoService.needSign(plano)) result.push(BOTAO_ASSINAR);
     else if(this.auth.hasPermissionTo('MOD_PTR_EDT')) result.push(BOTAO_ALTERAR);

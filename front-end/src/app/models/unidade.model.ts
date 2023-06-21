@@ -60,6 +60,7 @@ export class Unidade extends Base implements HasNotificacao {
     public unidades_origem_atividades: UnidadeOrigemAtividade[] = [];
     public expediente: Expediente | null = null; // Expediente (Não nulo)
     public avaliacao_hierarquica: boolean = false; // Se permite que unidades supeiores faça avaliação
+    public texto_complementar_plano: string | null = ""; // Mensagem adicional para o plano de trabalho
 
     public unidade_id: string | null = null; //Unidade superior (nó pai hierárquico)
     public entidade_id: string | null = null; // Entidade referente

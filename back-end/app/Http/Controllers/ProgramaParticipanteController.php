@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\ProgramaParticipante;
+use App\Models\Usuario;
 use App\Services\ProgramaParticipanteService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
+use Throwable;
 
 class ProgramaParticipanteController extends ControllerBase {
     
@@ -22,6 +24,24 @@ class ProgramaParticipanteController extends ControllerBase {
             case 'DESTROY':
                 if (!$usuario->hasPermissionTo('MOD_PRGT_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não executada");
                 break;
+        }
+    }
+
+    public function habilitar(Request $request) {
+        try {
+            $usuario = parent::loggedUser();
+            if (!$usuario->hasPermissionTo('MOD_PRGT_INCL')) throw new ServerException("ValidateProgramaParticipante", "Usuário não tem permissão para habilitar participantes");
+            $data = $request->validate([
+                'participantes_ids' => ['array'],
+                'habilitado' => ['integer'],
+                'programa_id' => ['string'],
+            ]);
+            return response()->json([
+                'success' => true,
+                'data' => $this->service->habilitar($data)
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
         }
     }
 }

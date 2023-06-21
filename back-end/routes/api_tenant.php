@@ -51,6 +51,7 @@ use App\Http\Controllers\RotinaDiariaController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\AreaGraduacaoController;
 use App\Http\Controllers\NotificacaoController;
+use App\Http\Controllers\PlanoTrabalhoEntregaController;
 use App\Http\Controllers\UnidadeIntegranteController;
 
 /*
@@ -158,7 +159,10 @@ Route::middleware(['auth:sanctum'])->prefix('Feriado')->group(function () { defa
 Route::middleware(['auth:sanctum'])->prefix('MaterialServico')->group(function () { defaultRoutes(MaterialServicoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('PlanejamentoObjetivo')->group(function () { defaultRoutes(PlanejamentoObjetivoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Programa')->group(function () { defaultRoutes(ProgramaController::class); });
-Route::middleware(['auth:sanctum'])->prefix('ProgramaParticipante')->group(function () { defaultRoutes(ProgramaParticipanteController::class); });
+Route::middleware(['auth:sanctum'])->prefix('ProgramaParticipante')->group(function () {
+     defaultRoutes(ProgramaParticipanteController::class); 
+     Route::post('habilitar', [ProgramaParticipanteController::class, 'habilitar']);
+});
 Route::middleware(['auth:sanctum'])->prefix('Tarefa')->group(function () { defaultRoutes(TarefaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Template')->group(function () { defaultRoutes(TemplateController::class); });
 Route::middleware(['auth:sanctum'])->prefix('CadeiaValor')->group(function () { defaultRoutes(CadeiaValorController::class); });
@@ -203,6 +207,9 @@ Route::middleware(['auth:sanctum'])->prefix('Plano')->group(function () {
     Route::post('cancelar-avaliacao', [PlanoController::class, 'cancelarAvaliacao']);
     Route::post('arquivar', [PlanoController::class, 'arquivar']);
     Route::post('metadadosPlano', [PlanoController::class, 'metadadosPlano']);
+});
+Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoEntrega')->group(function () {
+    defaultRoutes(PlanoTrabalhoEntregaController::class);
 });
 
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () { 
