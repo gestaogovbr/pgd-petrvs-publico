@@ -3,9 +3,10 @@
       [save]="saveParticipante.bind(this)" [selectable]="selectable" (select)="onSelect($event)" 
       [hasAdd]="auth.hasPermissionTo('MOD_PRGT_PART_INCL')" [hasEdit]="auth.hasPermissionTo('MOD_PRGT_PART_EDT')" 
       [hasDelete]="auth.hasPermissionTo('MOD_PRGT_PART_EXCL')"
-      [dynamicMultiselectMenu]="dynamicMultiselectMenu.bind(this)"
-      [multiselectAllFields]="multiselectAllFields">
-    <toolbar *ngIf="!selectable"></toolbar>
+      [multiselectMenu]="multiselectMenu">
+    <toolbar *ngIf="!selectable">
+        <input-switch [size]="3" labelPosition="left" label="Todos" controlName="todos" [control]="filter!.controls.todos" (change)="onTodosChange($event)"></input-switch>
+    </toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-text [size]="6" label="Nome" controlName="nome" [control]="filter!.controls.nome" [placeholder]="'Nome do '+ lex.noun('usuario')+'...'"></input-text>
@@ -23,8 +24,8 @@
         </column>
         <column title="Usuário" [template]="columnUsuario" [editTemplate]="editUsuario">
             <ng-template let-row="row" #columnUsuario>
-                <strong>{{row.usuario?.nome || ""}}</strong><br>
-                <small>{{row.usuario?.apelido || ""}}</small>
+                <strong>{{row.usuario?.nome }}</strong><br>
+                <small>{{row.usuario?.apelido }}</small>
                 <!-- Pensar na possibilidade de por as lotacoes -->
             </ng-template>
             <ng-template let-row="row" #editUsuario>

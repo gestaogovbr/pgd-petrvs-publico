@@ -18,11 +18,11 @@ export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoSer
     /* Inicializações */
     this.title = this.lex.noun("Programa de gestão", true);
     this.code = "MOD_PRGT";
-    this.join = ["unidade"];
+    this.join = ["unidade:id, nome"];
     this.filter = this.fh.FormBuilder({
       nome: {default: ""},
     });
-    // Testa se o usuário possui permissão para exibir dados do programa de gestão
+    // Testa se o usuário possui permissão para exibir dados do programa de  gestão
     if (this.auth.hasPermissionTo("MOD_PRGT_CONS")) {
       this.options.push({
         icon: "bi bi-info-circle",

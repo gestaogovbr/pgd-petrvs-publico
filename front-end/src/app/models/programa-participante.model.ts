@@ -7,6 +7,7 @@ export class ProgramaParticipante extends Base {
     public usuario?: Usuario;
     public programa?: Programa;
     public unidade?: Unidade;
+    public todos?: boolean = false;
 
     public habilitado: boolean = true; /* Se o participante está habilitado */
     public data_inicio: Date = new Date(); /* Data de início */
