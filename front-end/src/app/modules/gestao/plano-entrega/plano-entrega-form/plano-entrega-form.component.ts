@@ -8,10 +8,12 @@ import { CadeiaValorDaoService } from 'src/app/dao/cadeia-valor-dao.service';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
 import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
+import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
+import { Programa } from 'src/app/models/programa.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
@@ -25,9 +27,10 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoEntregaDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild(GridComponent, { static: true }) public grid?: GridComponent;
-
-  public entregas:PlanoEntregaEntregaDaoService;
+  @ViewChild('programa', { static: true }) public programa?: InputSearchComponent;
+  
   public unidadeDao: UnidadeDaoService;
+  public programaDao: ProgramaDaoService;
   public cadeiaValorDao: CadeiaValorDaoService;
   public planejamentoInstitucionalDao: PlanejamentoDaoService;
   public form: FormGroup;
@@ -35,10 +38,10 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   constructor(public injector: Injector) {
     super(injector, PlanoEntrega, PlanoEntregaDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
     this.planejamentoInstitucionalDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
-    this.entregas = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
-    this.join = [];
+    this.join = ["entregas.entrega", "unidade", "entregas.unidade"];
     this.modalWidth = 1200;
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
@@ -49,26 +52,40 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
       plano_entrega_id: { default: null },
       planejamento_id: { default: null },
       cadeia_valor_id: { default: null },
+      programa_id: { default: null },
       entregas: { default: [] },
     }, this.cdRef, this.validate);
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if (['nome', 'unidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if (['nome', 'unidade_id', 'programa_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
     if(['inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
     }
-    if(controlName == 'fim' && control.value && !this.dao?.validDateTime(control.value)){
+    if(['fim'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)){
       result = "Inválido";
     }
     return result;
   }
 
   public formValidation = (form?: FormGroup) => {
-    if(this.form!.controls.fim.value && this.form!.controls.inicio.value > this.form!.controls.fim.value) return "A data do início não pode ser maior que a data do fim!";
+    const inicio = this.form?.controls.inicio.value;
+    const fim = this.form?.controls.fim.value;
+    const programa = this.programa?.selectedItem?.entity as Programa; 
+    if(!programa) {
+      return "Obrigatório selecionar o programa";
+    } else if(!this.dao?.validDateTime(inicio) || !this.dao?.validDateTime(fim)) {
+      return "Data de início ou fim inválidas";
+    } else if(inicio > fim) {
+      return "A data do início não pode ser maior que a data do fim!";
+    } else {
+      const diffTime = Math.abs(inicio - fim);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      if (programa.prazo_execucao > 0 && diffDays > programa.prazo_execucao) return "O prazo das datas não satisfaz a duração estipulada no programa.";
+    }
     return undefined;
   }
 
@@ -79,15 +96,17 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   }
 
   public async initializeData(form: FormGroup) {
+    this.entity = new PlanoEntrega();
+    this.entity.unidade_id = this.auth.unidade?.id || "";
+    this.entity.unidade = this.auth.unidade;
     this.loadData(this.entity!, this.form!);
   }
 
   public async saveData(form: IIndexable): Promise<PlanoEntrega> {
     return new Promise<PlanoEntrega>((resolve, reject) => {
-      this.grid!.confirm();
-      let planoEntrega = this.util.fill(new PlanoEntrega(), this.entity!);
+      let planoEntrega: PlanoEntrega = this.util.fill(new PlanoEntrega(), this.entity!);
       planoEntrega = this.util.fillForm(planoEntrega, this.form!.value);
-      planoEntrega.entregas = this.entregas!;
+      planoEntrega.entregas = planoEntrega.entregas?.filter(x => x._status) || [];
       resolve(planoEntrega);
     });
   }
@@ -100,8 +119,5 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     let result: ToolbarButton[] = [];
     return result;
   }
-
- 
-
 }
 

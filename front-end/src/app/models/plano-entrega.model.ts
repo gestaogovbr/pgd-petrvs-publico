@@ -14,7 +14,6 @@ export type PlanoEntregaMetadados = {
   arquivado: boolean
 }
 export class PlanoEntrega extends Base {
-  public entregas?: PlanoEntregaEntrega[];
   public unidade?: Unidade;
   public planejamento?: Planejamento;
   public cadeia_valor?: CadeiaValor;
@@ -33,6 +32,8 @@ export class PlanoEntrega extends Base {
   public plano_entrega_id: string | null = null;
   public planejamento_id: string | null = null;
   public cadeia_valor_id: string | null = null;
+  public programa_id: string | null = null;
+  public entregas: PlanoEntregaEntrega[] = [];
   
   public constructor(data?: any) { super(); this.initialization(data); }
 }

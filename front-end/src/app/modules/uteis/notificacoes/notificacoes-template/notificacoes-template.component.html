@@ -1,0 +1,34 @@
+<grid [items]="items" [form]="form" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="true"
+  [load]="loadTemplate.bind(this)" [remove]="removeTemplate.bind(this)" [save]="saveTemplate.bind(this)" editable
+  [hasAdd]="false" [hasEdit]="false" [hasDelete]="false">
+  <side-panel [size]="8" fullSizeOnEdit [template]="panelTemplate" [editTemplate]="panelTemplateEdit">
+    <ng-template let-row="row" #panelTemplate>
+      <h5>{{row?.titulo || "Pre-view do template"}}</h5>
+      <document-preview [html]="row?.conteudo" emptyDocumentMensage="Nenhum template selecionado"></document-preview>
+    </ng-template>
+    <ng-template let-row="row" #panelTemplateEdit>
+      <div class="row">
+        <input-text [size]="2" label="Código" [control]="form!.controls.codigo"></input-text>
+        <input-text [size]="10" label="Título" [control]="form!.controls.titulo"></input-text>
+      </div>
+      <div>
+        <input-editor [size]="12" label="Pre-view do template" [dataset]="dataset" [control]="form!.controls.conteudo"></input-editor>
+      </div>
+    </ng-template>
+  </side-panel>
+  <columns>
+    <column title="Template" [template]="columnTemplate">
+      <ng-template let-row="row" #columnTemplate>
+        <div class="row">
+          <div class="col-md-2"><input-switch [size]="12" scale="small" [source]="row._metadata" path="notificar" (change)="onNotificarChange(row)"></input-switch></div>
+          <div class="col-md-10"><small>{{row.titulo}}</small></div>
+        </div>
+        <badge *ngIf="row.codigo?.length" color="light" icon="bi bi-tag" [label]="row.codigo"></badge>
+        <badge *ngIf="row.entidade_id?.length" color="primary" [icon]="entityService.getIcon('Entidade')" [label]="lex.noun('Entidade')"></badge>
+        <badge *ngIf="row.unidade_id?.length" color="success" [icon]="entityService.getIcon('Unidade')" [label]="lex.noun('Unidade')"></badge>
+      </ng-template>
+    </column>
+    <column type="options" always [dynamicButtons]="dynamicButtons.bind(this)"></column>
+  </columns>
+</grid>
+<!--toolbar *ngIf="selectable && !grid?.editing" [buttons]="selectButtons"></toolbar//-->

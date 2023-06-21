@@ -3,11 +3,14 @@ import { Base, IIndexable } from './base.model';
 import { Cidade } from './cidade.model';
 import { Entidade } from './entidade.model';
 import { Expediente } from './expediente.model';
+import { HasNotificacao, NotificacoesConfig } from './notificacao.model';
 import { PlanoEntrega } from './plano-entrega.model';
+import { Template } from './template.model';
+import { UnidadeIntegrante } from './unidade-integrante.model';
 import { UnidadeOrigemAtividade } from './unidade-origem-atividade.model';
 import { Usuario } from './usuario.model';
 
-export class UnidadeNotificacoes {
+/*export class UnidadeNotificacoes {
     enviar_email: boolean = true;
     enviar_whatsapp: boolean = true;
     notifica_demanda_distribuicao: boolean = true;
@@ -20,18 +23,19 @@ export class UnidadeNotificacoes {
     template_demanda_avaliacao: string = "";
     template_demanda_modificacao: string = "";
     template_demanda_comentario: string = "";
-}
+}*/
 
 export type DistribuicaoFormaContagemPrazos = "HORAS_CORRIDAS" | "DIAS_CORRIDOS" | "HORAS_UTEIS" | "DIAS_UTEIS";
 export type EntregaFormaContagemPrazos = "HORAS_CORRIDAS" | "HORAS_UTEIS";
 
-export class Unidade extends Base {
+export class Unidade extends Base implements HasNotificacao {
     public entidade?: Entidade; /* Objeto da entidade */
     public cidade?: Cidade; /* Objeto da cidade */
     public gestor?: Usuario; /* Objeto do ususario gestor */
     public gestor_substituto?: Usuario; /* Objeto do ususario gestor substituto */
     public unidade?: Unidade; /* Objeto da unidade pai */
     public planos_entregas?: PlanoEntrega[]; /* Array de objetos de Plano de Entrega */
+    public integrantes?: UnidadeIntegrante[]; /* Array de objetos do tipo UnidadeIntegrante */
 
     public codigo: string = ""; //Código da unidade
     public sigla: string = ""; //Sigla da unidade
@@ -46,7 +50,8 @@ export class Unidade extends Base {
     public horario_trabalho_intervalo: string = "00:00"; // Intervalo realizado dentro da jornada de trabalho (Ex.: horário de almoço). Para fins de computo de jornada de trabalho na ausência do plano de trabalho.
     public distribuicao_forma_contagem_prazos: DistribuicaoFormaContagemPrazos = "DIAS_UTEIS";// ["HORAS_CORRIDAS", "DIAS_CORRIDOS", "HORAS_UTEIS", "DIAS_UTEIS"]) //Forma da contagem de prazo na distribuição
     public entrega_forma_contagem_prazos: EntregaFormaContagemPrazos = "HORAS_UTEIS";// ["HORAS_CORRIDAS", "HORAS_UTEIS"]) //Forma da contagem de prazo na entrega
-    public notificacoes: UnidadeNotificacoes = new UnidadeNotificacoes(); // Mensagens
+    public notificacoes: NotificacoesConfig = new NotificacoesConfig(); // Mensagens
+    public notificacoes_templates?: Template[];
     public autoedicao_subordinadas: number = 0; //Permitir a autoedição de informações gerais pelas unidades subordinadas (nome, sigla, codigo_pai)
     public etiquetas: LookupItem[] = []; //Configuração das etiquetas que serão utilizadas nas demandas (comtém nome, icone e cor)
     public data_inicio: Date = new Date(); //Data inicio da vigência

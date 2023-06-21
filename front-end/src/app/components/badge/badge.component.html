@@ -1,4 +1,4 @@
-<span [class]="class" [style]="style" [id]="generatedId(label) + '_bedge'" [attr.role]="click ? 'button' : undefined" data-bs-toggle="tooltip" data-bs-placement="top" (click)="onBadgeClick($event)" [title]="hint">
+<span [class]="class" [style.max-width.px]="maxWidth" [style]="style" [id]="generatedId(label) + '_bedge'" [attr.role]="click ? 'button' : undefined" data-bs-toggle="tooltip" data-bs-placement="top" (click)="onBadgeClick($event)" [title]="hint">
     <img *ngIf="img?.length" [src]="img" width="15" height="15">
     <i *ngIf="icon?.length" [class]="icon"></i>
     {{label || ""}}

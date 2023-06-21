@@ -13,6 +13,7 @@ export class NotificacaoDestinatario extends Base {
 
     public tipo: NotificacaoDestinatarioTipo = "PETRVS"; // Tipo de envio da mensagem
     public data_leitura: Date | null = null; // Data e hora da leitura
+    public data_envio: Date | null = null; // Data e hora do envio
     public opcoes: NotificacaoDestinatarioOpcoes = {}; // Opções
     public notificacao_id: string = "";
     public usuario_id: string = "";

@@ -65,17 +65,19 @@
                             <span> {{row.unidade_origem_atividade?.nome || ""}}</span>
                         </ng-template>
                         <ng-template let-row="row" #editUnidade>
-                            <input-search #unidade_origem_atividade [size]="12" controlName="unidade_origem_atividade_id" [control]="formUnidadesOrigemAtividades!.controls.unidade_origem_atividade_id" [dao]="unidadeDao"></input-search>
+                            <input-search #unidade_origem_atividade [size]="12" label icon controlName="unidade_origem_atividade_id" [control]="formUnidadesOrigemAtividades!.controls.unidade_origem_atividade_id" [dao]="unidadeDao"></input-search>
                         </ng-template>
                     </column>
                     <column type="options"></column>
                 </columns>
             </grid>
         </tab>
-        <tab key="NOTIFICACOES" label="Notificações">
-            <div class="row">
+        <tab *ngIf="entity" key="NOTIFICACOES" label="Notificações">
+            <notificacoes-config #notificacoes [unidadeId]="entity?.id?.length ? entity!.id : 'ADD'" [entity]="entity!" [disabled]="formDisabled"></notificacoes-config>
+            <!--div class="row">
                 <div class="col-md-6">
                     <separator transparent title="Meios de notificação"></separator>
+                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar no Petrvs" controlName="enviar_petrvs"></input-switch>
                     <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar por e-mail" controlName="enviar_email"></input-switch>
                     <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar por Whatsapp" controlName="enviar_whatsapp"></input-switch>
                 </div>
@@ -103,7 +105,7 @@
             </div>
             <div class="row">
                 <input-textarea [size]="12" [rows]="3" [label]="'Texto na inclusão de comentário ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaComentario" controlName="template_demanda_comentario" placeholder="Caso em branco, será utilizado a configuração da Entidade..."></input-textarea>
-            </div>
+            </div/-->
         </tab>
     </tabs>
 </editable-form>

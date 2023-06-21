@@ -340,6 +340,15 @@ class UnidadeService extends ServiceBase
         return true;
     }
 
+    /**
+     * Retorna um array com os ids das unidades que compõem a linha hierárquica ascendente da unidade repassada como parâmetro.
+     * @param string $unidade_id
+     * @return array
+     */
+    public function linhaAscendente($unidade_id): array {
+        return array_filter(explode('/',Unidade::find($unidade_id)->path),fn($x) => $x != "");
+    }
+
 
 
 

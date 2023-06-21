@@ -1,7 +1,21 @@
 import { LookupItem } from '../services/lookup.service';
 import { Base } from './base.model';
+import { Template } from './template.model';
 
-export type NotificacaoCodigo = "UNKNOW" | "DMD_" | "PENT_";
+export class NotificacoesConfig {
+    enviar_petrvs: boolean = true;
+    enviar_email: boolean = true;
+    enviar_whatsapp: boolean = true;
+    nao_notificar: string[] = [];
+}
+
+export type NotificacaoCodigo = "UNKNOW" | "DMD_DISTRIBUICAO" | "DMD_MODIFICACAO" | "DMD_COMENTARIO" | "DMD_CONCLUSAO" | "DMD_AVALIACAO";
+
+export interface HasNotificacao {
+    id: string;
+    notificacoes: NotificacoesConfig
+    notificacoes_templates?: Template[];
+}
 
 export class Notificacao extends Base {
     public codigo: NotificacaoCodigo = "UNKNOW"; // Código da mensagem;

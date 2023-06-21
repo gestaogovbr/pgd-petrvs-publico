@@ -228,9 +228,9 @@ export class GridComponent extends ComponentBase implements OnInit {
     onClick: () => this.report()
   };
   public BUTTON_EDIT: ToolbarButton = {
-    label: "Editar",
+    label: "Alterar",
     icon: "bi bi-pencil-square",
-    hint: "Editar",
+    hint: "Alterar",
     color: "btn-outline-info",
   };
   public BUTTON_DELETE: ToolbarButton = {
@@ -267,14 +267,14 @@ export class GridComponent extends ComponentBase implements OnInit {
   };
   public panelButtons: ToolbarButton[] = [
     {
-      label: "Gravar",
+      label: "Concluir",
       icon: "bi-check-circle",
       color: "btn-outline-success",
       dynamicVisible: (() => this.form!.valid).bind(this),
       onClick: (() => this.onSaveItem(this.editing!)).bind(this)
     },
     {
-      label: "Gravar",
+      label: "Concluir",
       icon: "bi-exclamation-circle",
       color: "btn-outline-success",
       dynamicVisible: (() => !this.form!.valid).bind(this)

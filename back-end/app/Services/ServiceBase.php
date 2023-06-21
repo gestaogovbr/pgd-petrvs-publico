@@ -847,23 +847,6 @@ class ServiceBase extends DynamicMethods
         return static::loggedUser()->lotacoes->first(fn($l) => $l->principal == 1 && $l->data_fim == null)->unidade;
     }
 
-/*
-
-["tab_1.tab_2.tab_3:campo1,campo2", "tab_3:campo3,campo4", ]
-[
-    "tab1.tab2.tab3:campo1,campo2"
-    "tab1.tab2.tab3"  => where data_fim ...,
-    "tab1.tab2"  => where data_fim ...,
-    "tab1" => where data_fim ...,
-]
-
-
-
-
-*/
-
-
-
     /**
      * Este método filtra todos os relacionamentos q tenham sido apagados (Data_fim não nula)
      */

@@ -191,17 +191,28 @@ class UsuarioService extends ServiceBase
      * Informa se o usuário logado é gestor(titular ou substituto) da unidade repassada como parâmetro.
      * @param string $unidade_id 
      */
-    public function isGestorUnidade(string $unidade_id): bool {
+    public function isGestorUnidade(string | null $unidade_id): bool {
+        if($unidade_id == null) return false;
         $unidade = Unidade::find($unidade_id);
         return in_array(parent::loggedUser()->id, [$unidade->gestor_id, $unidade->gestor_substituto_id]);
+    }
+
+    /**
+     * Informa se o usuário logado possui determinada atribuição para uma unidade específica.
+     * @param string $atribuicao 
+     * @param string $unidade_id 
+     */
+    public static function isIntegrante(string $atribuicao, string | null $unidade_id): bool {
+        $unidade = !empty($unidade_id) ? Unidade::find($unidade_id) : null;
+        return !empty($unidade) ? !!array_filter($unidade->integrantes->toArray(), fn($i) => $i->atribuicao == $atribuicao) : false; 
     }
 
     /**
      * Informa se a unidade repassada como parâmetro é a lotação principal do usuário logado.
      * @param string $unidade_id 
      */
-    public function isLotacaoPrincipal(string $unidade_id): bool {
-        return !empty(Lotacao::where("usuario_id", parent::loggedUser()->id)->where("unidade_id",$unidade_id)->whereNull("data_fim")->where("principal", 1)->first());
+    public function isLotacaoPrincipal(string | null $unidade_id): bool {
+        return ($unidade_id != null) && !empty(Lotacao::where("usuario_id", parent::loggedUser()->id)->where("unidade_id",$unidade_id)->whereNull("data_fim")->where("principal", 1)->first());
     }
 
     /**
@@ -210,10 +221,11 @@ class UsuarioService extends ServiceBase
      * @param string $unidade_id 
      * @returns 
      */
-    public function isLotadoNaLinhaAscendente(string $unidade_id): bool {
+    public function isLotadoNaLinhaAscendente(string | null $unidade_id): bool {
         $result = false;
+        if($unidade_id == null) return $result;
         $linhaAscendente = $this->unidadeService->linhaAscendente($unidade_id);
-        foreach($linhaAscendente as $unidade) {
+        foreach($linhaAscendente as $unidade_id) {
             if($this->isLotacaoPrincipal($unidade_id)) $result = true;
         };
         return $result;

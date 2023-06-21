@@ -13,10 +13,12 @@
         <tab key="EXPEDIENTE" label="Expediente">
             <calendar-expediente #expediente [control]="form!.controls.expediente"></calendar-expediente>
         </tab>
-        <tab key="NOTIFICACOES" label="Notificações">
-            <div class="row">
+        <tab *ngIf="entity" key="NOTIFICACOES" label="Notificações">
+            <notificacoes-config #notificacoes [entity]="entity" [entidadeId]="entity.id" [disabled]="formDisabled"></notificacoes-config>
+            <!--div class="row">
                 <div class="col-md-6">
                     <separator transparent title="Meios de notificação"></separator>
+                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar no Petrvs" controlName="enviar_petrvs"></input-switch>
                     <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar por e-mail" controlName="enviar_email"></input-switch>
                     <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar por Whatsapp" controlName="enviar_whatsapp"></input-switch>
                 </div>
@@ -44,7 +46,7 @@
             </div>
             <div class="row">
                 <input-textarea [size]="12" [rows]="3" [label]="'Texto na inclusão de comentário ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaComentario" controlName="template_demanda_comentario"></input-textarea>
-            </div>
+            </div//-->
         </tab>
         <tab key="NOMENCLATURA" label="Nomenclatura">
             <div clss="row">

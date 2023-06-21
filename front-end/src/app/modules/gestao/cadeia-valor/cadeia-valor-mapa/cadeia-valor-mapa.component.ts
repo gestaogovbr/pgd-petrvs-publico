@@ -63,7 +63,7 @@ export class CadeiaValorMapaComponent extends PageFrameBase {
     },
     {
       icon: "bi bi-pencil-square",
-      label: "Editar",
+      label: "Alterar",
       onClick: this.editProcesso.bind(this)
     },
     { divider: true },

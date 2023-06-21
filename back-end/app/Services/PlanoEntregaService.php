@@ -6,9 +6,12 @@ use App\Models\Unidade;
 use App\Models\PlanoEntrega;
 use App\Traits\UseDataFim;
 use App\Exceptions\ServerException;
+use App\Models\Programa;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use DateTime;
 use Throwable;
+use Exception;
 
 class PlanoEntregaService extends ServiceBase
 {
@@ -52,21 +55,38 @@ class PlanoEntregaService extends ServiceBase
         return true;    
     }
 
-    public function cancelar($data, $unidade) {
-        try {
-            DB::beginTransaction();
-            $planoEntrega = PlanoEntrega::find($data["id"]);
-            $this->update([
-                "id" => $planoEntrega->id,
-                "data_cancelamento" => Carbon::now(),
-                "cancelamento_usuario_id" => parent::loggedUser()->id
-            ], $unidade, false);
-            DB::commit();
-        } catch (Throwable $e) {
-            DB::rollback();
-            throw $e;
-        }
-        return true;
+    /**
+     * Retorna um array com várias informações sobre o plano repassado como parâmetro que serão auxiliares na definição das permissões para as diversas operações possíveis com um Plano de Entregas.
+     * Se o plano recebido como parâmetro possuir ID, as informações devolvidas serão baseadas nos dados armazenados no banco. Caso contrário, as informações devolvidas serão baseadas nos dados
+     * recebidos na chamada do método. 
+     * @param array $entity     Um array com os dados de um plano já existente ou que esteja sendo criado.
+     * @return array
+     */
+    public function buscaCondicoes(array $entity): array {
+        $planoEntrega = !empty($entity['id']) ? PlanoEntrega::find($entity['id'])->toArray() : $entity;
+        $planoEntregaPai = !empty($planoEntrega['plano_entrega_id']) ? PlanoEntrega::find($planoEntrega['plano_entrega_id']) : null;
+        $planoEntrega['unidade'] = !empty($planoEntrega['unidade_id']) ? Unidade::find($planoEntrega['unidade_id'])->toArray() : null;
+        $planoEntrega['unidade']['planosEntregas'] = !empty($planoEntrega['unidade']) ? PlanoEntrega::where('unidade_id',$planoEntrega['unidade_id'])->get()->toArray() : null;
+        return [
+            "planoValido" => $this->isPlanoEntregaValido($planoEntrega),
+            "planoAtivo" => $this->isPlano("ATIVO", $planoEntrega),
+            "planoPaiAtivo" => $planoEntrega['plano_entrega_id'] ? $this->isPlano("ATIVO", $planoEntregaPai->toArray()) : false,
+            "planoHomologando" => $this->isPlano("HOMOLOGANDO", $planoEntrega),
+            "planoIncluindo" => $this->isPlano("INCLUINDO", $planoEntrega),
+            "planoProprio" => $planoEntrega['plano_entrega_id'] == null,
+            "planoVinculado" => $planoEntrega['plano_entrega_id'] != null,
+            "gestorUnidadePlano" => $this->usuario->isGestorUnidade($planoEntrega['unidade_id']),
+            "gestorUnidadePaiUnidadePlano" => $this->usuario->isGestorUnidade($planoEntrega['unidade']['unidade_id']),
+            "gestorLinhaAscendenteUnidadePlano" => !!array_filter($this->unidade->linhaAscendente($planoEntrega['unidade_id']), fn($u) => $this->usuario->isGestorUnidade($u)),
+            "unidadePlanoPaiEhUnidadePaiUnidadePlano" => $planoEntrega['plano_entrega_id'] ? $planoEntregaPai->unidade_id == $planoEntrega['unidade']['unidade_id'] : false,
+            "unidadePlanoEhLotacaoPrincipal" => $this->usuario->isLotacaoPrincipal($planoEntrega['unidade_id']),
+            "unidadePaiUnidadePlanoEhLotacaoPrincipal" => $this->usuario->isLotacaoPrincipal($planoEntrega['unidade']['unidade_id']),
+            "unidadePlanoEhLotacaoUsuario" => in_array($planoEntrega['unidade_id'], array_map(fn($lot) => $lot['unidade_id'], array_filter($this->usuario->loggedUser()->lotacoes->toArray(), fn($lot) => $lot['data_fim'] == null))),
+            "unidadePlanoEhPaiAlgumaLotacaoUsuario" => $this->usuario->loggedUser()->lotacoes->filter(fn($lot) => $lot->data_fim == null)->map(fn($lot) => $lot->unidade_id)->map(fn($ul) => Unidade::find($ul)->unidade_id)->contains($planoEntrega['unidade_id']),
+            "unidadePlanoPossuiPlanoAtivoMesmoPeriodoPlanoPai" => !!array_filter($planoEntrega['unidade']['planosEntregas'], fn($p) => $this->isPlano('ATIVO',$p) && UtilService::intersect($planoEntrega['inicio'], $planoEntrega['fim'], $planoEntregaPai->inicio, $planoEntregaPai->fim)),
+            "lotadoLinhaAscendenteUnidadePlano" => $this->usuario->isLotadoNaLinhaAscendente($planoEntrega['unidade_id']),
+            "unidadePlanoEstahLinhaAscendenteAlgumaLotacaoUsuario" => in_array($planoEntrega['unidade_id'], array_values(array_unique(array_reduce(array_map(fn($ul) => $this->unidade->linhaAscendente($ul), array_map(fn($lot) => $lot['unidade_id'], array_filter($this->usuario->loggedUser()->lotacoes->toArray(), fn($lot) => $lot['data_fim'] == null))), 'array_merge', array()))))
+        ];
     }
 
     public function cancelarAvaliacao($data, $unidade) {
@@ -159,12 +179,22 @@ class PlanoEntregaService extends ServiceBase
     }
 
     /**
+     * Informa o status do plano de entregas repassado como parâmetro.
+     * Um Plano de Entregas precisa ser VÁLIDO.
+     * @param string $status
+     * @param array $planoEntrega  
+     */
+    public function isPlano($status, $planoEntrega): bool {
+        return $this->isPlanoEntregaValido($planoEntrega) && $planoEntrega['status'] == $status;
+    }
+
+    /**
      * Informa se o plano de entregas repassado como parâmetro é um plano válido.
      * Um Plano de Entregas é válido se não foi deletado, nem cancelado, nem arquivado.
-     * @param PlanoEntrega $planoEntrega  
+     * @param array $planoEntrega  
      */
     public function isPlanoEntregaValido($planoEntrega): bool {
-        return !$planoEntrega->data_fim && !$planoEntrega->data_cancelamento && !$planoEntrega->data_arquivamento;
+        return empty($planoEntrega['id']) ? true : !$planoEntrega['data_fim'] && !$planoEntrega['data_cancelamento'] && !$planoEntrega['data_arquivamento'];
     }
 
     public function liberarHomologacao($data, $unidade) {
@@ -203,6 +233,11 @@ class PlanoEntregaService extends ServiceBase
     public function proxyRows($rows){
         foreach($rows as $row){ $row->metadados = $this->metadados($row); }
         return $rows;
+    }
+
+    public function proxyStore(&$data, $unidade, $action){
+        if($action == "INSERT") { $data["criacao_usuario_id"] = parent::loggedUser()->id; }
+        return $data;
     }
 
     public function reativar($data, $unidade) {
@@ -253,4 +288,47 @@ class PlanoEntregaService extends ServiceBase
         return true;
     }
 
+    /**
+    * Verifica se as  datas do plano de entrega se encaixam na duração do Programa de gestão
+    */
+    public function validateStore($planoEntrega, $unidade, $action)
+    {
+        if(!$this->verificaDuracaoPlano($planoEntrega) || !$this->verificaDatasEntregas($planoEntrega)) throw new Exception("O prazo das datas não satisfaz a duração estipulada no programa.");
+    }
+
+    /**
+    * Verifica se as  datas do plano de entrega se encaixam na duração do Programa de gestão
+    */
+    public function verificaDuracaoPlano($planoEntrega)
+    {
+        $result = true;
+        $programa = Programa::find($planoEntrega["programa_id"]);
+        if ($programa->prazo_execucao > 0) {
+            $dataInicio = new DateTime($planoEntrega["inicio"]);
+            $dataFim = new DateTime($planoEntrega["fim"]);
+            $diff = $dataInicio->diff($dataFim);
+            if ($diff->days > $programa->prazo_execucao) {
+                $result = false;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Verifica se as datas de início e fim das entregas do plano de entrega se encaixam na duração do Programa de gestão (true para caso esteja tudo ok)
+     */
+    public function verificaDatasEntregas($planoEntrega)
+    {
+        $result = true;
+        $dataInicio = new DateTime($planoEntrega["inicio"]);
+        $dataFim = new DateTime($planoEntrega["fim"]);
+        if ($planoEntrega["entregas"]) {
+            foreach ($planoEntrega["entregas"] as $entrega) {
+                $entregaInicio = new DateTime($entrega["inicio"]);
+                $entregaFim = new DateTime($entrega["fim"]);
+                $result = $result && ($dataInicio <= $entregaInicio) && ($dataFim >= $entregaFim);
+            }
+        }
+        return $result;
+    }
 }

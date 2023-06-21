@@ -18,6 +18,7 @@ export class CadeiaValorListGridComponent  extends PageListBase<CadeiaValor, Cad
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @Input() snapshot?: ActivatedRouteSnapshot;
   @Input() fixedFilter?: any[];
+  @Input() selectable: boolean = false;
   
   public entidadeDao: EntidadeDaoService;
 

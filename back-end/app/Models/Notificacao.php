@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\NotificacaoDestinatario;
 use App\Casts\AsJson;
+use Illuminate\Support\Facades\DB;
 
 class Notificacao extends ModelBase
 {
@@ -19,6 +20,13 @@ class Notificacao extends ModelBase
         //'mensagem', /* longtext; NOT NULL; */// Mensagem
         //'numero', /* int; NOT NULL; */// Número da mensagem (Gerado pelo sistema)
     ];
+
+    protected static function booted()
+    {
+        static::creating(function ($demanda) {
+            $demanda->numero = DB::select("CALL sequence_notificacao_numero()")[0]->number;
+        }); 
+    }
 
     protected $casts = [];
 

@@ -6,10 +6,13 @@ use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\Feriado;
 use App\Models\Usuario;
+use App\Models\Template;
+use App\Models\NotificacoesConfig;
 
-class EntidadeNotificacoes {
+/*class EntidadeNotificacoes {
     public $enviar_email = true;
     public $enviar_whatsapp = true;
+    public $nao_notificar = [];
     public $notifica_demanda_distribuicao = true;
     public $notifica_demanda_conclusao = true;
     public $notifica_demanda_avaliacao = true;
@@ -20,7 +23,7 @@ class EntidadeNotificacoes {
     public $template_demanda_avaliacao = "Sua demanda #{{demanda_numero}} foi avaliada, acesse o PETRVS para avaliá-la!";
     public $template_demanda_modificacao = "A demanda #{{demanda_numero}}, atribuída à {{demanda_responsavel}}, foi atualizada, acesse o PETRVS para visualizá-la!";
     public $template_demanda_comentario = "Foi inserido um comentário na demanda #{{demanda_numero}}, atribuída a {{demanda_responsavel}}, acesse o PETRVS para visualizá-la!";
-}
+}*/
 
 class Entidade extends ModelBase
 {
@@ -75,8 +78,13 @@ class Entidade extends ModelBase
         'expediente' => AsJson::class
     ];
 
+    public $fillable_changes = [
+        "notificacoes_templates"
+    ];
+
     // Has
     public function feriados() { return $this->hasMany(Feriado::class, 'entidade_id'); }        
+    public function notificacoesTemplates() { return $this->hasMany(Template::class, 'entidade_id'); }
     // Belongs
     public function cidade() { return $this->belongsTo(Cidade::class, 'cidade_id'); }   
     public function gestor() { return $this->belongsTo(Usuario::class); }
@@ -86,7 +94,7 @@ class Entidade extends ModelBase
     // Mutattors e Casts
     public function getNotificacoesAttribute($value)
     {
-        $notificacoes = new EntidadeNotificacoes();
+        $notificacoes = new NotificacoesConfig();
         return array_replace_recursive((array) $notificacoes, (array) json_decode(empty($value) ? "[]" : $value));
     }   
     public function setNotificacoesAttribute($value)

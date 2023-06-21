@@ -15,6 +15,7 @@ export class BadgeComponent extends ComponentBase implements OnInit {
   @Input() img?: string = undefined;
   @Input() label?: string = undefined;
   @Input() color?: ComponentColor = undefined;
+  @Input() maxWidth?: number;
   @Input() rounded: boolean = true;
   @Input() set class(value: string) {
     if(value != this._class) {
@@ -23,7 +24,7 @@ export class BadgeComponent extends ComponentBase implements OnInit {
     }
   }
   get class(): string {
-    return "badge " + (this.rounded ? "rounded-pill " : "") + this.getClassBgColor(this.color) + this._class;
+    return "badge " + (this.rounded ? "rounded-pill " : "") + (this.maxWidth ? "text-break text-wrap " : "") + this.getClassBgColor(this.color) + this._class;
   }
 
   private _class: string = "";

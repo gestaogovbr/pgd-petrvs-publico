@@ -16,10 +16,10 @@
     <ng-template let-row="row" #panelTemplateEdit>
       <div class="row">
         <input-text [size]="2" label="Código" [control]="form!.controls.codigo"></input-text>
-        <input-text [size]="8" label="Título" [control]="form!.controls.titulo"></input-text>
+        <input-text [size]="10" label="Título" [control]="form!.controls.titulo"></input-text>
       </div>
       <div>
-        <input-editor [size]="12" label="Pre-view do template" [control]="form!.controls.conteudo"></input-editor>
+        <input-editor [size]="12" label="Pre-view do template" [dataset]="dataset" [control]="form!.controls.conteudo"></input-editor>
       </div>
     </ng-template>
   </side-panel>

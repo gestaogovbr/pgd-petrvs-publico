@@ -7,84 +7,119 @@ use DateTime;
 use App\Services\WhatsappService;
 use App\Mails\NotificacaoMail;
 use App\Exceptions\LogError;
+use App\Jobs\ProcessEmails;
+use App\Models\Notificacao;
+use App\Models\NotificacaoDestinatario;
 use Illuminate\Support\Facades\Mail as LaravelMail;
 
 class NotificacoesService 
 {
 
-    public $notificacoes = [
-        "DMD_DISTRIBUICAO" => [
-            "descricao" => "Notificação de distribuição da demanda",
-            "destinatarios" => fn ($params) => [$params["demanda"]->usuario],
-            "unidade" => fn ($params) => $params["demanda"]->unidade,
-            "validacao" => fn ($params) => !empty($params["demanda"]->usuario_id),
-            "dataset" => [["field" => "demanda_numero", "label" => "Número da demanda"]],
-            "datasource" => fn ($params) => ["demanda_numero" => $params["demanda"]->numero],
-            "template" => "Uma nova demanda foi atribuída a você, acesse o PETRVS para visualizá-la! (ID: #{{demanda_numero}})"
-        ], 
-        "DMD_MODIFICACAO" => [
-            "descricao" => "Notificação de modificações na demanda",
-            "destinatarios" => fn ($params) => [$params["demanda"]->usuario, $params["demanda"]->demandante],
-            "unidade" => fn ($params) => $params["demanda"]->unidade,
-            "validacao" => fn ($params) => true,
-            "dataset" => [["field" => "demanda_numero", "label" => "Número da demanda"], ["field" => "demanda_responsavel", "label" => "Nome do responsável pela demanda"]],
-            "datasource" => fn ($params) => ["demanda_numero" => $params["demanda"]->numero, "demanda_responsavel" => $params["demanda"]->usuario->nome],
-            "template" => "A demanda #{{demanda_numero}}, atribuída à {{demanda_responsavel}}, foi atualizada, acesse o PETRVS para visualizá-la!"
-        ],         
-        "DMD_COMENTARIO" => [
-            "descricao" => "Notificação de comentário na demanda",
-            "destinatarios" => fn ($params) => [$params["demanda"]->usuario, $params["demanda"]->demandante],
-            "unidade" => fn ($params) => $params["demanda"]->unidade,
-            "validacao" => fn ($params) => true,
-            "dataset" => [["field" => "demanda_numero", "label" => "Número da demanda"], ["field" => "demanda_responsavel", "label" => "Nome do responsável pela demanda"]],
-            "datasource" => fn ($params) => ["demanda_numero" => $params["demanda"]->numero, "demanda_responsavel" => $params["demanda"]->usuario->nome],
-            "template" => "Foi inserido um comentário na demanda #{{demanda_numero}}, atribuída a {{demanda_responsavel}}, acesse o PETRVS para visualizá-la!"
-        ],         
-        "DMD_CONCLUSAO" => [
-            "descricao" => "Notificação de conclusão da demanda",
-            "destinatarios" => fn ($params) => [$params["demanda"]->demandante],
-            "unidade" => fn ($params) => $params["demanda"]->unidade,
-            "validacao" => fn ($params) => true,
-            "dataset" => [["field" => "demanda_numero", "label" => "Número da demanda"], ["field" => "demanda_responsavel", "label" => "Nome do responsável pela demanda"]],
-            "datasource" => fn ($params) => ["demanda_numero" => $params["demanda"]->numero, "demanda_responsavel" => $params["demanda"]->usuario->nome],
-            "template" => "A demanda #{{demanda_numero}}, atribuída à\ao {{demanda_responsavel}}, foi concluída, acesse o PETRVS para visualizá-la!"
-        ],         
-        "DMD_AVALIACAO" => [
-            "descricao" => "Notificação de avaliação da demanda",
-            "destinatarios" => fn ($params) => [$params["demanda"]->usuario],
-            "unidade" => fn ($params) => $params["demanda"]->unidade,
-            "validacao" => fn ($params) => true,
-            "dataset" => [["field" => "demanda_numero", "label" => "Número da demanda"]],
-            "datasource" => fn ($params) => ["demanda_numero" => $params["demanda"]->numero],
-            "template" => "Sua demanda #{{demanda_numero}} foi avaliada, acesse o PETRVS para avaliá-la!"
-        ],         
-    ];
+    public $notificacoes = [];
 
-    public function checkValue($array, $key, $default = true) {
+    public function __construct() {
+        /* Foi necessário inicializar a variável no construtor devido a um BUG do php */
+        $this->notificacoes = [
+            "DMD_DISTRIBUICAO" => [
+                "descricao" => "Notificação de distribuição da demanda",
+                "destinatarios" => (fn(&$params) => [$params["demanda"]->usuario]),
+                "unidade" => (fn(&$params) => $params["demanda"]->unidade),
+                "validacao" => (fn(&$params) => !empty($params["demanda"]->usuario_id)),
+                "dataset" => [["field" => "demanda_numero", "label" => "Número da demanda"]],
+                "datasource" => (fn(&$params) => ["demanda_numero" => $params["demanda"]->numero]),
+                "template" => "Uma nova demanda foi atribuída a você, acesse o PETRVS para visualizá-la! (ID: #{{demanda_numero}})"
+            ],
+            "DMD_MODIFICACAO" => [
+                "descricao" => "Notificação de modificações na demanda",
+                "destinatarios" => (fn(&$params) => [$params["demanda"]->usuario, $params["demanda"]->demandante]),
+                "unidade" => (fn(&$params) => $params["demanda"]->unidade),
+                "validacao" => (fn(&$params) => true),
+                "dataset" => [["field" => "demanda_numero", "label" => "Número da demanda"], ["field" => "demanda_responsavel", "label" => "Nome do responsável pela demanda"]],
+                "datasource" => (fn(&$params) => ["demanda_numero" => $params["demanda"]->numero, "demanda_responsavel" => $params["demanda"]->usuario->nome]),
+                "template" => "A demanda #{{demanda_numero}}, atribuída à {{demanda_responsavel}}, foi atualizada, acesse o PETRVS para visualizá-la!"
+            ],         
+            "DMD_COMENTARIO" => [
+                "descricao" => "Notificação de comentário na demanda",
+                "destinatarios" => (fn(&$params) => [$params["demanda"]->usuario, $params["demanda"]->demandante]),
+                "unidade" => (fn(&$params) => $params["demanda"]->unidade),
+                "validacao" => (fn(&$params) => true),
+                "dataset" => [["field" => "demanda_numero", "label" => "Número da demanda"], ["field" => "demanda_responsavel", "label" => "Nome do responsável pela demanda"]],
+                "datasource" => (fn(&$params) => ["demanda_numero" => $params["demanda"]->numero, "demanda_responsavel" => $params["demanda"]->usuario->nome]),
+                "template" => "Foi inserido um comentário na demanda #{{demanda_numero}}, atribuída a {{demanda_responsavel}}, acesse o PETRVS para visualizá-la!"
+            ],         
+            "DMD_CONCLUSAO" => [
+                "descricao" => "Notificação de conclusão da demanda",
+                "destinatarios" => (fn(&$params) => [$params["demanda"]->demandante]),
+                "unidade" => (fn(&$params) => $params["demanda"]->unidade),
+                "validacao" => (fn(&$params) => true),
+                "dataset" => [["field" => "demanda_numero", "label" => "Número da demanda"], ["field" => "demanda_responsavel", "label" => "Nome do responsável pela demanda"]],
+                "datasource" => (fn(&$params) => ["demanda_numero" => $params["demanda"]->numero, "demanda_responsavel" => $params["demanda"]->usuario->nome]),
+                "template" => "A demanda #{{demanda_numero}}, atribuída à\ao {{demanda_responsavel}}, foi concluída, acesse o PETRVS para visualizá-la!"
+            ],         
+            "DMD_AVALIACAO" => [
+                "descricao" => "Notificação de avaliação da demanda",
+                "destinatarios" => (fn(&$params) => [$params["demanda"]->usuario]),
+                "unidade" => (fn(&$params) => $params["demanda"]->unidade),
+                "validacao" => (fn(&$params) => true),
+                "dataset" => [["field" => "demanda_numero", "label" => "Número da demanda"]],
+                "datasource" => (fn(&$params) => ["demanda_numero" => $params["demanda"]->numero]),
+                "template" => "Sua demanda #{{demanda_numero}} foi avaliada, acesse o PETRVS para avaliá-la!"
+            ]
+        ];
+    }
+
+    public function getOrDefault($array, $key, $default = true) {
         return !array_key_exists($key, $array) ? $default : $array[$key];
     }
 
     public function send($code, $params, $unidade = null) {
-        $notificacao = $this->checkValue($code, $this->notificacoes, null);
-        if(!empty($notificacao)) {
-            $destinatarios = $notificacao["destinatarios"]($params);
-            $unidade = $unidade ?? $notificacao["unidade"]($params);
+        $notificacaoDef = $this->getOrDefault($code, $this->notificacoes, null);
+        if(!empty($notificacaoDef)) {
+            $destinatarios = $notificacaoDef["destinatarios"]($params);
+            $unidade = $unidade ?? $notificacaoDef["unidade"]($params);
             $entidade = $unidade?->entidade;
-            $notificacaoEntidade = $this->checkValue($code, $entidade?->notificacoes || [], ["enviar" => true, "template" => null]);
-            $notificacaoUnidade = $this->checkValue($code, $unidade?->notificacoes || [], ["enviar" => true, "template" => null]);
-            $template = $notificacaoUnidade["template"] ?? $notificacaoEntidade["template"] ?? $notificacao["template"];
-            $message = $this->applyParams($tempalte, $notificacao["datasource"]($params));
+            $notificacaoEntidade = $entidade?->notificacoesTemplates->where("codigo", $code)->first() ?? ["enviar" => true, "template" => null]; //$this->getOrDefault($code, $entidade?->notificacoes || [], ["enviar" => true, "template" => null]);
+            $notificacaoUnidade = $unidade?->notificacoesTemplates->where("codigo", $code)->first() ?? ["enviar" => true, "template" => null]; //$this->getOrDefault($code, $unidade?->notificacoes || [], ["enviar" => true, "template" => null]);
+            $template = $notificacaoUnidade["template"] ?? $notificacaoEntidade["template"] ?? $notificacaoDef["template"];
+            $message = $this->applyParams($template, $notificacaoDef["datasource"]($params));
             if(!empty($entidade) && $notificacaoEntidade["enviar"] && $notificacaoUnidade["enviar"]) {
                 $config = config("notificacoes");
+                $notificacao = new Notificacao([
+                    "codigo" => $code,
+                    "data_registro" => now(),
+                    "mensagem" => $message
+                ]);
+                $notificacao->save();
                 foreach($destinatarios as $destinatario) {
-                    if($config["petrvs"]["enviar"] && $this->checkValue("enviar_petrvs", $destinatario->notificacoes)) {
-
+                    if($config["petrvs"]["enviar"] && $this->getOrDefault("enviar_petrvs", $destinatario->notificacoes)) {
+                        NotificacaoDestinatario::create([
+                            "tipo" => "petrvs",
+                            "notificacao_id" => $notificacao->id,
+                            "usuario_id" => $destinatario->id
+                        ]);
                     }
-                    if($config["email"]["enviar"] && $this->checkValue("enviar_email", $destinatario->notificacoes)) {
-                        
+                    if($config["email"]["enviar"] && $this->getOrDefault("enviar_email", $destinatario->notificacoes)) {
+                        $email = NotificacaoDestinatario::create([
+                            "tipo" => "email",
+                            "notificacao_id" => $notificacao->id,
+                            "usuario_id" => $destinatario->id
+                        ]);
+                        $details = [
+                            "tenant" => tenant('id'),
+                            "email" => $destinatario->email,
+                            "message" => $message,
+                            "notificacao_destinatario_id" => $email->id,
+                            "signature" => config("notificacoes.email.signature") ?? ""
+                        ];
+                        ProcessEmails::dispatchSync($details);
                     }
-                    if($config["whatsapp"]["enviar"] && $this->checkValue("enviar_whatsapp", $destinatario->notificacoes)) {
-                        
+                    if($config["whatsapp"]["enviar"] && $this->getOrDefault("enviar_whatsapp", $destinatario->notificacoes)) {
+                        NotificacaoDestinatario::create([
+                            "tipo" => "whatsapp",
+                            "notificacao_id" => $notificacao->id,
+                            "usuario_id" => $destinatario->id
+                        ]);
+                        //strip_tags() -> Remove as TAGS html do texto
                     }
                 }
             }
@@ -114,7 +149,7 @@ class NotificacoesService
         foreach($params as $param => $value) $text = str_replace("{{" . $param . "}}", strval($value), $text);
         return $text;
     }
-    
+
     /*public function sendDemandaDistribuicao($demanda) {
         try {
             $entidade_notificacoes = $demanda->unidade->entidade->notificacoes; 

@@ -17,6 +17,7 @@ use App\Models\Favorito;
 use App\Models\Lotacao;
 use App\Models\Plano;
 use App\Models\Perfil;
+use App\Models\NotificacoesConfig;
 use App\Traits\MergeRelations;
 use App\Traits\LogChanges;
 use App\Traits\AutoDataInicio;
@@ -26,7 +27,7 @@ use Throwable;
 
 class UsuarioConfig {}
 
-class UsuarioNotificacoes {
+/*class UsuarioNotificacoes {
     public $enviar_email = true;
     public $enviar_whatsapp = true;
     public $notifica_demanda_distribuicao = true;
@@ -34,7 +35,7 @@ class UsuarioNotificacoes {
     public $notifica_demanda_avaliacao = true;
     public $notifica_demanda_modificacao = true;
     public $notifica_demanda_comentario = true;
-}
+}*/
 
 class Usuario extends Authenticatable
 {
@@ -140,7 +141,7 @@ class Usuario extends Authenticatable
     }
     public function getNotificacoesAttribute($value)
     {
-        $notificacoes = new UsuarioNotificacoes();
+        $notificacoes = new NotificacoesConfig();
         return array_replace_recursive((array) $notificacoes, (array) json_decode(empty($value) ? "[]" : $value));
     }
     public function setNotificacoesAttribute($value)

@@ -9,6 +9,8 @@ import { CadeiaValorFormComponent } from './cadeia-valor-form/cadeia-valor-form.
 import { CadeiaValorListGridComponent } from './cadeia-valor-list-grid/cadeia-valor-list-grid.component';
 import { CadeiaValorMapaComponent } from './cadeia-valor-mapa/cadeia-valor-mapa.component';
 import { CadeiaValorListProcessosComponent } from './cadeia-valor-list-processos/cadeia-valor-list-processos.component';
+import { CadeiaValorListProcessosEntregasComponent } from './cadeia-valor-list-processos-entregas/cadeia-valor-list-processos-entregas.component';
+
 
 
 @NgModule({
@@ -18,6 +20,7 @@ import { CadeiaValorListProcessosComponent } from './cadeia-valor-list-processos
     CadeiaValorListGridComponent,
     CadeiaValorListProcessosComponent,
     CadeiaValorMapaComponent,
+    CadeiaValorListProcessosEntregasComponent,
   ],
   imports: [
     CommonModule,
@@ -25,6 +28,10 @@ import { CadeiaValorListProcessosComponent } from './cadeia-valor-list-processos
     ReactiveFormsModule,
     DndModule,
     CadeiaValorRoutingModule
+  ],
+  exports: [
+    CadeiaValorListProcessosEntregasComponent
   ]
+
 })
 export class CadeiaValorModule { }

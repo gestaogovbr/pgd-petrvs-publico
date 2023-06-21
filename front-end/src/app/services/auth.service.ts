@@ -145,7 +145,6 @@ export class AuthService {
   public registerUser(user: any, token?: string) {
     if (user) {
       this.usuario = Object.assign(new Usuario(), user) as Usuario;
-      //this.usuario.config = Object.assign(new UsuarioConfig(), this.usuario.config || {});
       this.capacidades = this.usuario?.perfil?.capacidades?.filter(x => x.data_fim == null).map(x => x.tipo_capacidade?.codigo || "") || [];
       this.kind = this.kind;
       this.logged = true;
@@ -327,6 +326,14 @@ export class AuthService {
   }
 
   /**
+   * Informa se o usuário logado é gestor de alguma das suas lotações.
+   * @returns 
+   */
+  public isGestorAlgumaLotacao(): boolean {
+    return !!this.unidades?.filter(x => this.isGestorUnidade(x)).length;
+  }
+
+  /**
    * Informa se a unidade repassada como parâmetro é a lotação principal do usuário logado. Se nenhuma unidade for repassada, 
    * será adotada a unidade selecionada pelo servidor na homepage.
    * @param pUnidade 
@@ -334,8 +341,18 @@ export class AuthService {
    */
   public isLotacaoPrincipal(pUnidade: Unidade | null = null): boolean {
     let unidade = pUnidade || this.unidade;
-    let lotacao = this.usuario!.lotacoes.find(x => x.unidade_id == unidade!.id && x.principal);
+    let lotacao = this.usuario!.lotacoes.find(x => x.unidade_id == unidade?.id && x.principal);
     return lotacao != undefined;
+  }
+
+  /**
+   * Informa se o usuário logado possui determinada atribuição para uma unidade específica dentre as suas lotações/chefias.
+   * @param atribuicao 
+   * @param unidade_id 
+   */
+  public isIntegrante(atribuicao: string, unidade_id: string): boolean {
+    let unidades: Array<Unidade> = this.util.arrayUnique(this.unidades?.concat(...this.usuario?.chefias_titulares || [], ...this.usuario?.chefias_substitutas || []) || []);
+    return !!unidades.find(x => x.id == unidade_id)?.integrantes?.find(i => i.usuario_id == this.usuario!.id && i.atribuicao == atribuicao);
   }
 
   /**

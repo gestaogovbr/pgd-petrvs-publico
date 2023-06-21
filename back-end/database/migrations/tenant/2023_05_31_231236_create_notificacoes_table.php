@@ -23,6 +23,7 @@ class CreateNotificacoesTable extends Migration
             $table->dateTime('data_registro')->comment("Data e hora da inclusão da mensagem");
             $table->longText('mensagem')->comment("Mensagem");
             $table->integer('numero')->default(0)->comment("Número da mensagem (Gerado pelo sistema)");
+            $table->foreignUuid('remetente_id')->nullable()->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade');
         });
     }
 

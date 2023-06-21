@@ -41,7 +41,12 @@
                             <span><i *ngIf="row.principal" class="bi bi-bookmark-star"></i> {{row.unidade.nome}} </span>
                         </ng-template>
                         <ng-template let-row="row" #editUnidade>
-                            <input-search #unidade [size]="12" controlName="unidade_id" [control]="formLotacoes!.controls.unidade_id" [dao]="unidadeDao"></input-search>
+                            <input-search #unidade [size]="12" label icon controlName="unidade_id" [control]="formLotacoes!.controls.unidade_id" [dao]="unidadeDao"></input-search>
+                        </ng-template>
+                    </column>
+                    <column [title]="lex.noun('Gestor')" [template]="columnGestor">
+                        <ng-template let-row="row" #columnGestor>
+                            <span>{{ row.unidade.gestor_id == row.usuario_id ? 'Titular' : row.unidade.gestor_substituto_id == row.usuario_id ? 'Substituto' : '' }}</span>
                         </ng-template>
                     </column>
                     <column type="switch" title="Principal" field="principal"></column>

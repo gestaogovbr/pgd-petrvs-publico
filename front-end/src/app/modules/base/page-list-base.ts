@@ -182,7 +182,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
     }
   }
 
-  public consult = async (doc: M) => {
+  public  consult = async (doc: M) => {
     this.go.navigate({route: [...this.go.currentOrDefault.route, doc.id, "consult"]});
   }
 
@@ -207,8 +207,6 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
       if(confirm) {
         this.dao!.delete(doc).then(function () {
           (self.grid!.query || self.query!).removeId(doc.id);
-          //self.grid!.query!.refresh();
-          //self.dialog.alert("Sucesso", "Registro excluído com sucesso!");
           self.dialog.topAlert("Registro excluído com sucesso!", 5000);
         }).catch((error) => {
           self.dialog.alert("Erro", "Erro ao excluir: " + (error?.message ? error?.message : error));
@@ -222,7 +220,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
   }
 
   public onSelect(selected: Base | IIndexable | null) {
-    const routeId = this.modalRoute?.queryParams?.idroute;
+    const routeId = (this.modalRoute || this.snapshot)?.queryParams?.idroute;
     if(selected && routeId?.length) {
       this.go.setModalResult(routeId, selected);
       this.close();
@@ -236,8 +234,6 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
       if(confirm) {
         this.dao!.delete(doc).then(function () {
           (self.grid!.query || self.query!).removeId(doc.id);
-          //self.grid!.query!.refresh();
-          //self.dialog.alert("Sucesso", "Registro excluído com sucesso!");
           self.dialog.topAlert("Registro cancelado com sucesso!", 5000);
         }).catch((error) => {
           self.dialog.alert("Erro", "Erro ao cancelar: " + (error?.message ? error?.message : error));

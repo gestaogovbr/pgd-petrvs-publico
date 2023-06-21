@@ -185,6 +185,8 @@ export class UtilService {
           destination[key] = source[key];
         }
       });
+      /* caso exista o campo _status no source */
+      if(source && source["_status"]) destination["_status"] = source["_status"];
     }
     return destination;
   }
@@ -670,4 +672,9 @@ export class UtilService {
     return result;
   }
 
+  public arrayUnique(array: Array<any>): Array<any> { 
+    return array.filter(function(x, i) {
+      return array.indexOf(x) === i;
+    });
+  }
 }

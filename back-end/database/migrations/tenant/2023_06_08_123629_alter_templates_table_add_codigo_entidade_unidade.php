@@ -16,10 +16,10 @@ class AlterTemplatesTableAddCodigoEntidadeUnidade extends Migration
     {
         Schema::table('templates', function (Blueprint $table) {
             $table->string('codigo')->nullable()->comment("Código opcional para o template");
-            $table->foreignUuid('entidade_id')->constrained('entidades')->nullable()->onDelete('restrict')->onUpdate('cascade')->comment('Entidade');
-            $table->foreignUuid('unidade_id')->constrained('unidades')->nullable()->onDelete('restrict')->onUpdate('cascade')->comment('Unidade');
-            DB::statement("ALTER TABLE documentos MODIFY especie ENUM('TERMO_ADESAO', 'SEI', 'TCR', 'NOTIFICACAO') COMMENT 'Especificação da espécie do documento (interno do sistema)'");
+            $table->foreignUuid('entidade_id')->nullable()->constrained('entidades')->onDelete('restrict')->onUpdate('cascade')->comment('Entidade');
+            $table->foreignUuid('unidade_id')->nullable()->constrained('unidades')->onDelete('restrict')->onUpdate('cascade')->comment('Unidade');
         });
+        DB::statement("ALTER TABLE templates MODIFY especie ENUM('TERMO_ADESAO', 'SEI', 'TCR', 'NOTIFICACAO') COMMENT 'Especificação da espécie do documento (interno do sistema)'");
     }
 
     /**
@@ -35,7 +35,7 @@ class AlterTemplatesTableAddCodigoEntidadeUnidade extends Migration
             $table->dropColumn('entidade_id');
             $table->dropForeign('unidade_id');
             $table->dropColumn('unidade_id');
-            DB::statement("ALTER TABLE documentos MODIFY especie ENUM('TERMO_ADESAO', 'SEI', 'TCR') COMMENT 'Especificação da espécie do documento (interno do sistema)'");
         });
+        DB::statement("ALTER TABLE templates MODIFY especie ENUM('TERMO_ADESAO', 'SEI', 'TCR') COMMENT 'Especificação da espécie do documento (interno do sistema)'");
     }
 }

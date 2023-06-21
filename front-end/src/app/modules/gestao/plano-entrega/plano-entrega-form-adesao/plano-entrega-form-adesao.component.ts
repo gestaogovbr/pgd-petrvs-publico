@@ -8,70 +8,79 @@ import { CadeiaValorDaoService } from 'src/app/dao/cadeia-valor-dao.service';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
 import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
+import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
+import { NavigateResult } from 'src/app/services/navigate.service';
 
 
 @Component({
   selector: 'plano-entrega-adesao',
-  templateUrl: './plano-entrega-adesao.component.html',
-  styleUrls: ['./plano-entrega-adesao.component.scss']
+  templateUrl: './plano-entrega-form-adesao.component.html',
+  styleUrls: ['./plano-entrega-form-adesao.component.scss']
 })
 
-export class PlanoEntregaAdesaoComponent extends PageFormBase<PlanoEntrega, PlanoEntregaDaoService> {
+export class PlanoEntregaFormAdesaoComponent extends PageFormBase<PlanoEntrega, PlanoEntregaDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild(GridComponent, { static: true }) public grid?: GridComponent;
+  @ViewChild(InputSearchComponent, { static: true}) public planoEntrega?: InputSearchComponent;
 
   public unidadeDao: UnidadeDaoService;
+  public planoEntregaDao: PlanoEntregaDaoService;
+  public programaDao: ProgramaDaoService;
   public cadeiaValorDao: CadeiaValorDaoService;
   public planejamentoInstitucionalDao: PlanejamentoDaoService;
-  public planoEntregasEntregasDao: PlanoEntregaEntregaDaoService;
   public form: FormGroup;
 
   constructor(public injector: Injector) {
     super(injector, PlanoEntrega, PlanoEntregaDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
+    this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
     this.planejamentoInstitucionalDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
-    this.planoEntregasEntregasDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
     this.join = [];
-    this.modalWidth = 1200;
+    this.modalWidth = 1000;
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
-      inicio: { default: new Date() },
-      fim: { default: new Date() },
-      status: { default: 'INCLUINDO' },
-      unidade_id: { default: "" },
-      plano_entrega_id: { default: null },
+      inicio: { default: "" },
+      fim: { default: "" },
       planejamento_id: { default: null },
       cadeia_valor_id: { default: null },
-      entregas: { default: [] },
+      unidade_id: { default: this.auth.unidade?.id },
+      plano_entrega_id: { default: null },
+      programa_id: { default: null },
+      status: { default: "HOMOLOGANDO" }
     }, this.cdRef, this.validate);
+  }
 
-
+  ngOnInit(): void {
+    super.ngOnInit();
+    let planoEntrega = this.metadata?.planoEntrega ? this.metadata?.planoEntrega as PlanoEntrega : null;
+    if(planoEntrega){
+      this.form.controls.plano_entrega_id.setValue(planoEntrega.id);
+      this.form.controls.nome.setValue(planoEntrega.nome);
+      this.form.controls.inicio.setValue(planoEntrega.inicio);
+      this.form.controls.fim.setValue(planoEntrega.fim);
+      this.form.controls.planejamento_id.setValue(planoEntrega.planejamento_id);
+      this.form.controls.cadeia_valor_id.setValue(planoEntrega.cadeia_valor_id);
+    }
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if (['nome', 'unidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if (['nome', 'plano_entrega_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
-    if(['inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
-      result = "Inválido";
-    }
-    if(controlName == 'fim' && control.value && !this.dao?.validDateTime(control.value)){
-      result = "Inválido";
-    }
     return result;
-  }
-
-  public formValidation = (form?: FormGroup) => {
-    if(this.form!.controls.fim.value && this.form!.controls.inicio.value > this.form!.controls.fim.value) return "A data do início não pode ser maior que a data do fim!";
-    return undefined;
+    /*  (RN_PENT_2_7)
+        Em caso de adesão, os campos 'inicio', 'fim', 'planejamento_id', e 'cadeia_valor_id', deverão ser sempre iguais aos do plano-pai; 
+        portanto, quando um plano de entregas próprio sofrer alteração em um desses campos, todos os planos a ele vinculados deverão ser atualizados também;
+    */  
   }
 
   public async loadData(entity: PlanoEntrega, form: FormGroup) {
@@ -86,10 +95,9 @@ export class PlanoEntregaAdesaoComponent extends PageFormBase<PlanoEntrega, Plan
 
   public async saveData(form: IIndexable): Promise<PlanoEntrega> {
     return new Promise<PlanoEntrega>((resolve, reject) => {
-      this.grid!.confirm();
       let planoEntrega = this.util.fill(new PlanoEntrega(), this.entity!);
       planoEntrega = this.util.fillForm(planoEntrega, this.form!.value);
-      planoEntrega.entregas = this.grid!.items;
+      //resolve(new NavigateResult((await this.dao!.aderir()).id));
       resolve(planoEntrega);
     });
   }
@@ -98,7 +106,14 @@ export class PlanoEntregaAdesaoComponent extends PageFormBase<PlanoEntrega, Plan
     return "Editando ";
   }
 
- 
-
+  public onPlanoEntregaChange(event: Event){
+    if(this.form.controls.plano_entrega_id.value){
+      this.form.controls.nome.setValue(this.planoEntrega?.selectedItem?.entity.nome);
+      this.form.controls.inicio.setValue(this.planoEntrega?.selectedItem?.entity.inicio);
+      this.form.controls.fim.setValue(this.planoEntrega?.selectedItem?.entity.fim);
+      this.form.controls.planejamento_id.setValue(this.planoEntrega?.selectedItem?.entity.planejamento_id);
+      this.form.controls.cadeia_valor_id.setValue(this.planoEntrega?.selectedItem?.entity.cadeia_valor_id);
+      this.form.controls.programa_id.setValue(this.planoEntrega?.selectedItem?.entity.programa_id);
+    }
+  }
 }
-

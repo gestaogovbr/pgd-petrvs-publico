@@ -2,6 +2,8 @@ import { LookupItem } from '../services/lookup.service';
 import { Base } from './base.model';
 import { Cidade } from './cidade.model';
 import { Expediente } from './expediente.model';
+import { HasNotificacao, NotificacoesConfig } from './notificacao.model';
+import { Template } from './template.model';
 import { TipoModalidade } from './tipo-modalidade.model';
 import { Usuario } from './usuario.model';
 
@@ -15,9 +17,10 @@ export type Nomenclatura = {
 
 export type TipoCargaHoraria = "DIA" | "SEMANA" | "MES";
 
-export class EntidadeNotificacoes {
+/*export class EntidadeNotificacoes {
     enviar_email: boolean = true;
     enviar_whatsapp: boolean = true;
+    nao_notificar: string[] = [];
     notifica_demanda_distribuicao: boolean = true;
     notifica_demanda_conclusao: boolean = true;
     notifica_demanda_avaliacao: boolean = true;
@@ -28,9 +31,9 @@ export class EntidadeNotificacoes {
     template_demanda_avaliacao: string = "Sua demanda #{{demanda_numero}} foi avaliada, acesse o PETRVS para avaliá-la!";
     template_demanda_modificacao: string = "A demanda #{{demanda_numero}}, atribuída à {{demanda_responsavel}}, foi atualizada, acesse o PETRVS para visualizá-la!";
     template_demanda_comentario: string = "Foi inserido um comentário na demanda #{{demanda_numero}}, atribuída a {{demanda_responsavel}}, acesse o PETRVS para visualizá-la!";
-}
+}*/
 
-export class Entidade extends Base {
+export class Entidade extends Base implements HasNotificacao {
     public cidade?: Cidade;
     public tipo_modalidade?: TipoModalidade;
     public gestor?: Usuario; /* Objeto do ususario gestor */
@@ -46,7 +49,8 @@ export class Entidade extends Base {
     public campos_ocultos_demanda: LookupItem[] = []; //Campos que se deseja ocultar do formulário de demanda, com seu respectivo valor padrão, em caso de null será utilizado o valor default do banco"
     public uf: string | null = null; /* UF para abrangencia estadual */
     public nomenclatura: Nomenclatura[] = []; /* Nomenclatura da entidade */
-    public notificacoes: EntidadeNotificacoes = new EntidadeNotificacoes();
+    public notificacoes: NotificacoesConfig = new NotificacoesConfig();
+    public notificacoes_templates?: Template[];
     public url_sei: string = ""; /* Url base do sei */
     public forma_contagem_carga_horaria: TipoCargaHoraria = "DIA"; // Forma de contagem padrão da carga horária
     public expediente: Expediente = new Expediente(); // Expediente (Não nulo)

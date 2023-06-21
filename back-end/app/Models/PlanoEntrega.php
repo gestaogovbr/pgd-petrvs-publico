@@ -4,6 +4,9 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\Unidade;
+use App\Models\Planejamento;
+use App\Models\CadeiaValor;
+use App\Models\PlanoEntregaEntrega;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasDataFim;
 use Illuminate\Support\Facades\DB;
@@ -31,6 +34,8 @@ class PlanoEntrega extends ModelBase
         'data_arquivamento', /* datetime; */// Data de arquivamento do plano de entregas
         'data_cancelamento', /* datetime; */// Data de cancelamento do plano de entregas
         'cancelamento_usuario_id', /* char(36); */
+        'programa_id', /* char(36); NOT NULL; */
+        //'criacao_usuario_id', /* char(36); */
     ];
 
     public $fillable_changes = ["entregas"];
@@ -45,10 +50,11 @@ class PlanoEntrega extends ModelBase
     }
 
     // Has
-    public function entregas() { return $this->hasMany(PlanoEntregaEntrega::class); }
+    public function entregas() { return $this->hasMany(PlanoEntregaEntrega::class, 'plano_entrega_id'); }
     // Belongs
     public function planejamento() { return $this->belongsTo(Planejamento::class, 'planejamento_id'); }
     public function cadeiaValor() { return $this->belongsTo(CadeiaValor::class, 'cadeia_valor_id'); }
     public function unidade() { return $this->belongsTo(Unidade::class, 'unidade_id'); }
+    public function usuario() { return $this->belongsTo(Usuario::class, 'criacao_usuario_id'); }
     public function planoEntregaSuperior() { return $this->belongsTo(PlanoEntrega::class, 'plano_entrega_id'); }
 }

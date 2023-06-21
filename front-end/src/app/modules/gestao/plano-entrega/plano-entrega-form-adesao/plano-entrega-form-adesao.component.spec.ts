@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PlanoEntregaAdesaoComponent } from './plano-entrega-adesao.component';
+import { PlanoEntregaFormAdesaoComponent } from './plano-entrega-form-adesao.component';
 
 describe('PlanoFormComponent', () => {
-  let component: PlanoEntregaAdesaoComponent;
-  let fixture: ComponentFixture<PlanoEntregaAdesaoComponent>;
+  let component: PlanoEntregaFormAdesaoComponent;
+  let fixture: ComponentFixture<PlanoEntregaFormAdesaoComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PlanoEntregaAdesaoComponent ]
+      declarations: [ PlanoEntregaFormAdesaoComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PlanoEntregaAdesaoComponent);
+    fixture = TestBed.createComponent(PlanoEntregaFormAdesaoComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
