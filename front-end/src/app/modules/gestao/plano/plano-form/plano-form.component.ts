@@ -106,7 +106,6 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
       usuario_id: {default: ""},
       plano_entrega_id: {default: ""},
       documento_id: {default: null},
-      plano_entrega_id: {default: null},
       documentos: {default: []},
       atividades: {default: []},
       entregas: {default: []},
