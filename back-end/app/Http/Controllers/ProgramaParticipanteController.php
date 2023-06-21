@@ -8,6 +8,7 @@ use App\Services\ProgramaParticipanteService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
+use Throwable;
 
 class ProgramaParticipanteController extends ControllerBase {
     
@@ -26,42 +27,21 @@ class ProgramaParticipanteController extends ControllerBase {
         }
     }
 
-    public function teste(){
-        //if ($this->todos) {
-            /* Se for todos, obter a lista de usuários, 
-                 depois verificar quais desses usuários já fazem parte da lista de participantes,
-                  os que não fizerem parte instanciar um novo ProgramaParticipante com esse uusuário 
-                  e o ID iniciando 'NEW'+usuarioId e habilitado false */
-            $rows = Usuario::whereIn('cpf',['25941933304'])->get();
-            $usuarios = Usuario::all();
-            foreach($usuarios->reject(function($u) use ($rows) { return in_array($u, $rows); }) as $np){
-                $np = new ProgramaParticipante();
-                $np->usuario_id = 'VIRT_' . $usuario->id;
-                $np->habilitado = false;
-            };
-            $programaParticipantes = [];
-            $novoParticipante = [];
-
-            foreach ($rows as $row) {
-                $participanteEncontrado = false;
-                $usuarioId = $row->usuario_id;
-    
-
-                
-                foreach ($usuarios as $usuario) {
-                    if ($usuario->id == $usuarioId) {
-                        $participanteEncontrado = true;
-                        
-                        if (!$participanteEncontrado) {
-                            $np = new ProgramaParticipante();
-                            $np->usuario_id = 'VIRT_' . $usuario->id;
-                            $np->habilitado = false;
-                        }
-                        $programaParticipantes[] = $novoParticipante;
-                    }
-                }     
-            }
-            $rows = $programaParticipantes;
-       // }
+    public function habilitar(Request $request) {
+        try {
+            $usuario = parent::loggedUser();
+            if (!$usuario->hasPermissionTo('MOD_PRGT_INCL')) throw new ServerException("ValidateProgramaParticipante", "Usuário não tem permissão para habilitar participantes");
+            $data = $request->validate([
+                'participantes_ids' => ['array'],
+                'habilitado' => ['integer'],
+                'programa_id' => ['string'],
+            ]);
+            return response()->json([
+                'success' => true,
+                'data' => $this->service->habilitar($data)
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
     }
 }
