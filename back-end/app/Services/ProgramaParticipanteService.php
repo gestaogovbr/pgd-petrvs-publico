@@ -33,37 +33,26 @@ class ProgramaParticipanteService extends ServiceBase {
         return $data;
     }
 
-    public function proxyRows($rows, &$data){
+    public function proxyRows($rows){
 
         if ($this->todos) {
             /* Se for todos, obter a lista de usuários, 
                  depois verificar quais desses usuários já fazem parte da lista de participantes,
-                  os que não fizerem parte instanciar um novo ProgramaParticipante com esse uusuário 
-                  e o ID iniciando 'NEW'+usuarioId e habilitado false */
-            $usuarios = Usuario::select('usuarios.*')->get();
-            $programaParticipantes = [];
-            $novoParticipante = [];
-
-            foreach ($rows as $row) {
-                $participanteEncontrado = false;
-                $usuarioId = $row->usuario_id;
-    
-                foreach ($usuarios as $usuario) {
-                    if ($usuario->id !== $usuarioId) {
-                        $participanteEncontrado = false;
-                        
-                        if (!$participanteEncontrado) {
-                            $novoParticipante = new ProgramaParticipante();
-                            $novoParticipante->usuario_id = 'VIRT_' . $usuario->id;
-                            $novoParticipante->habilitado = false;
-                        }
-                        $programaParticipantes[] = $novoParticipante;
-                    }
-                }     
-            }
-            $rows = $programaParticipantes;
+            //       os que não fizerem parte instanciar um novo ProgramaParticipante com esse uusuário 
+            //       e o ID iniciando 'NEW'+usuarioId e habilitado false */
+            $usuarios = Usuario::all();
+            foreach ($usuarios->reject(function ($u) use ($rows) {
+                return in_array($u->id, array_map(fn ($x) => $x['usuario_id'], $rows->toArray()));
+            }) as $np) {
+                $novoParticipante = new ProgramaParticipante();
+                $novoParticipante->id = 'VIRT_' . $np->id;
+                $novoParticipante->usuario_id = $np->id;
+                $novoParticipante->usuario = $np;
+                $novoParticipante->habilitado = 0;
+                // $novoParticipante->_usuario_lotacao_unidade_sigla = $np->;
+                $rows->push($novoParticipante);
+            };
         }
-    
         return $rows; // Lista de PRogramaParticipantes, só que contendo registro REAIS  e registros VIRTUAIS iniciados com 'NEW'+usuarioId
     }
 

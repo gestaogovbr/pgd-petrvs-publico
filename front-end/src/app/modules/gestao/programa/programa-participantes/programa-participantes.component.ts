@@ -47,7 +47,7 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
       habilitado: { default: true },
       todos: { default: false },
     });
-    this.multiselectMenu = !this.auth.hasPermissionTo('MOD_PRGT_PART') ? [] : [
+    this.multiselectMenu = !this.auth.hasPermissionTo('MOD_PRGT_PART_INCL') ? [] : [
       {
         icon: "bi bi-check",
         label: "Habilitar",
@@ -77,7 +77,6 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
     result.push(["programa_id", "==", this.programaId]);
     if (form.nome?.length) result.push(["usuario.nome", "like", "%" + form.nome + "%"]);
     if (form.unidade_id?.length) result.push(["usuario.lotacao.unidade.id", "==", form.unidade_id]);
-    if (form.todos) result.push(["todos", "==", true]);
 
     return result;
   }
@@ -93,9 +92,8 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
   public async loadParticipante(form: FormGroup, row: any) {
     const selected: ProgramaParticipante = row;
     this.form!.patchValue({
-      usuario_id: selected?.usuario_id || selected?.id,
+      usuario_id: selected?.usuario_id,
       habilitado: !!selected?.habilitado,
-      todos: !!selected?.todos
     });
     this.cdRef.detectChanges();
   }
@@ -114,7 +112,7 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
     let result = undefined;
     this.form!.markAllAsTouched();
     if (this.form!.valid) {
-      item.usuario_id = form.controls.usuario_id.value || form.controls.id.value;
+      item.usuario_id = form.controls.usuario_id.value;
       item.habilitado = !!form.controls.habilitado.value;
       item.usuario = this.usuario?.searchObj as Usuario;
       item.programa_id = this.programaId;
@@ -136,40 +134,30 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
     if (!this.grid!.multiselectedCount) {
       this.dialog.alert("Selecione", "Nenhum participante selecionado para a habilitção");
     } else {
-        if (this.form!.valid) {
-          if (Object.keys(this.grid!.multiselected.habilitado !== 1)) {
-            this.submitting = true;
-            try {
-              let result = await this.dao?.habilitar(Object.keys(this.grid!.multiselected), this.programaId, 1);
-              if (result.error) throw new Error(result.error);
-              this.dialog.alert("Sucesso", "Foram habilitados " + result.data + " " + this.lex.noun("participantes", true));
-              this.grid!.enableMultiselect(false);
-              this.refresh();
-            } catch (error: any) {
-              this.error(error.message ? error.message : error);
-            } finally {
-              this.submitting = false;
-            }
-          }
-        } else {
-          try {
-            let result = await this.dao?.habilitar(Object.keys(this.grid!.multiselected), this.programaId, 0);
-            if (result.error) throw new Error(result.error);
-            this.dialog.alert("Sucesso", "Foram desabilitados " + result.data + " " + this.lex.noun("participantes", true));
-            this.grid!.enableMultiselect(false);
-            this.refresh();
-          } catch (error: any) {
-            this.error(error.message ? error.message : error);
-          } finally {
-            this.submitting = false;
-          }
+      if (this.form!.valid) {
+        this.submitting = true;
+        try {
+          let result = await this.dao?.habilitar(Object.keys(this.grid!.multiselected), this.programaId, 1);
+          if (result.error) throw new Error(result.error);
+          this.dialog.alert("Sucesso", "Foram habilitados " + result.data + " " + this.lex.noun("participantes", true));
+          this.grid!.enableMultiselect(false);
+          this.refresh();
+        } catch (error: any) {
+          this.error(error.message ? error.message : error);
+        } finally {
+          this.submitting = false;
         }
+      }
     }
   }
 
-  public onTodosChange(event: Event) {
-    
-  }
+    public onTodosChange(event: Event) {
+      // const todos = this.form!.controls.todos.value;
+      // if((todos && !this.result?.length) || (!todos && this.result?.length)) {
+      //   this.result = todos ? ["todos", '==', true] : [];
+      //   this.grid!.reloadFilter();
+      // }
+    }
 
 }
 
