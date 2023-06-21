@@ -30490,6 +30490,25 @@ class GridComponent extends _component_base__WEBPACK_IMPORTED_MODULE_6__["Compon
             }
         });
     }
+    onAddItem() {
+        if (!this.adding) {
+            this.adding = true; /* Previne multiplas chamadas para inserir */
+            (() => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+                this.form.reset(this.form.initialState);
+                let newItem = this.add ? yield this.add() : this.form.value;
+                if (newItem) {
+                    if (!(newItem["id"] || "").length && this.hasItems) {
+                        newItem["id"] = this.dao ? this.dao.generateUuid() : this.util.md5();
+                    }
+                    this.items.push(newItem);
+                    yield this.edit(newItem);
+                }
+                else {
+                    this.adding = false;
+                }
+            }))();
+        }
+    }
     onEditItem(row) {
         if (!this.editing) {
             this.editing = row; /* Previne multiplas chamadas para inserir */
@@ -30509,24 +30528,21 @@ class GridComponent extends _component_base__WEBPACK_IMPORTED_MODULE_6__["Compon
             this.cdRef.detectChanges();
         }))();
     }
-    onAddItem() {
-        if (!this.adding) {
-            this.adding = true; /* Previne multiplas chamadas para inserir */
-            (() => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-                this.form.reset(this.form.initialState);
-                let newItem = this.add ? yield this.add() : this.form.value;
-                if (newItem) {
-                    if (!(newItem["id"] || "").length && this.hasItems) {
-                        newItem["id"] = this.dao ? this.dao.generateUuid() : this.util.md5();
-                    }
-                    this.items.push(newItem);
-                    yield this.edit(newItem);
-                }
-                else {
-                    this.adding = false;
-                }
-            }))();
-        }
+    onCancelItem() {
+        (() => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            if (this.adding)
+                this.items.splice(this.items.findIndex(x => !(x instanceof GridGroupSeparator) && x["id"] == (this.editing || { id: undefined })["id"]), 1);
+            yield this.endEdit();
+        }))();
+    }
+    /**
+     * Método chamado no salvamento de um item que está sendo editado.
+     * @param itemRow
+     */
+    onSaveItem(itemRow) {
+        (() => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            yield this.saveItem(itemRow);
+        }))();
     }
     saveItem(itemRow) {
         var _a;
@@ -30551,34 +30567,6 @@ class GridComponent extends _component_base__WEBPACK_IMPORTED_MODULE_6__["Compon
                 this.form.markAllAsTouched();
             }
         });
-    }
-    onSaveItem(itemRow) {
-        (() => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            yield this.saveItem(itemRow);
-        }))();
-    }
-    onCancelItem() {
-        (() => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            if (this.adding)
-                this.items.splice(this.items.findIndex(x => !(x instanceof GridGroupSeparator) && x["id"] == (this.editing || { id: undefined })["id"]), 1);
-            yield this.endEdit();
-        }))();
-    }
-    getMetadata(row) {
-        if (row === null || row === void 0 ? void 0 : row.id) {
-            if (!this.metadatas[row.id])
-                this.metadatas[row.id] = {};
-            return this.metadatas[row.id];
-        }
-        return {};
-    }
-    setMetadata(row, value) {
-        if (row.id)
-            this.metadatas[row.id] = value;
-    }
-    clearMetadata() {
-        this.metadatas = {};
-        this.cdRef.detectChanges();
     }
     edit(itemRow) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
@@ -30633,6 +30621,22 @@ class GridComponent extends _component_base__WEBPACK_IMPORTED_MODULE_6__["Compon
         if (this.isSelectable && row)
             this.onRowClick(new Event("SelectById"), row);
         return row;
+    }
+    getMetadata(row) {
+        if (row === null || row === void 0 ? void 0 : row.id) {
+            if (!this.metadatas[row.id])
+                this.metadatas[row.id] = {};
+            return this.metadatas[row.id];
+        }
+        return {};
+    }
+    setMetadata(row, value) {
+        if (row.id)
+            this.metadatas[row.id] = value;
+    }
+    clearMetadata() {
+        this.metadatas = {};
+        this.cdRef.detectChanges();
     }
     /* Side panel ****************************************************************/
     get classColTable() {
@@ -34411,6 +34415,7 @@ class PageFrameBase extends _page_base__WEBPACK_IMPORTED_MODULE_2__["PageBase"] 
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             this.submitting = true;
             try {
+                //
                 let entity = yield this.saveData(this.form.value);
                 if (entity) {
                     const modalResult = this.isNoPersist ? this.entity :
