@@ -38,7 +38,7 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             $config = config('log');
-            if($config['log_errors']) {
+            if($config['errors']) {
                 $user = Auth::user();
                 $erro = new Error();
                 $erro->fill([

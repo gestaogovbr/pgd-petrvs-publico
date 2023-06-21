@@ -1,5 +1,5 @@
 import { Component, EventEmitter, HostBinding, Injector, Input, OnInit, Output, ViewChild, ElementRef } from '@angular/core';
-import { AbstractControl, ControlContainer, FormGroup, FormGroupDirective } from '@angular/forms';
+import { AbstractControl, ControlContainer, FormControl, FormGroup, FormGroupDirective } from '@angular/forms';
 import { DaoBaseService } from 'src/app/dao/dao-base.service';
 import { Base } from 'src/app/models/base.model';
 import { LookupItem } from 'src/app/services/lookup.service';
@@ -20,6 +20,7 @@ import { InputBase, LabelPosition, SelectItem } from '../input-base';
 export class InputSelectComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';
   @ViewChild('inputElement', {static: false}) inputElement?: ElementRef;
+  @ViewChild('dropdownButton', {static: false}) dropdownButton?: ElementRef;
   @Output() change = new EventEmitter<Event>();
   @Output() details = new EventEmitter<SelectItem>();
   @Input() hostClass: string = ""; 
@@ -34,8 +35,6 @@ export class InputSelectComponent extends InputBase implements OnInit {
   @Input() fields: string[] = [];
   @Input() dao?: DaoBaseService<Base> = undefined;
   @Input() itemNull: string = " - ";
-  @Input() itemTodos: string = "";
-  @Input() valueTodos: any = undefined;
   @Input() addRoute?: FullRoute;
   @Input() form?: FormGroup;
   @Input() source?: any;
@@ -46,37 +45,40 @@ export class InputSelectComponent extends InputBase implements OnInit {
   @Input() liveSearch?: string;
   @Input() detailsButton?: string;
   @Input() detailsButtonIcon?: string;
-  @Input()
-  public get where(): any[] | undefined {
-    return this._where;
-  }
-  public set where(value: any[] | undefined) {
+  @Input() listHeight: number = 200;
+  @Input() set where(value: any[] | undefined) {
     if(JSON.stringify(this._where) != JSON.stringify(value)) {
       this._where = value;
       this.loadItems();
     }
   }
-  @Input()
-  public get items(): LookupItem[] {
-    return this._items;
+  get where(): any[] | undefined {
+    return this._where;
   }
-  public set items(value: LookupItem[]) {
-    if(JSON.stringify(this._items) != JSON.stringify(value)) {
-      if(this.viewInit) {
-        const current = this.control ? this.control.value : this.value;
-        this._items = [];
-        this.selectPicker?.find('.input-select-dynamic-item').remove().end();
-        this.detectChanges();
-        this._items = value;
-        this.detectChanges();
-        this.selectPicker?.selectpicker('refresh');
-        this.selectedValue = undefined;
-        this.setValue(current);
-        this.inputElement?.nativeElement.dispatchEvent(new Event('change'));
-      } else {
-        this._items = value;
-      }
+  @Input() set itemTodos(value: string | undefined) {
+    if(this._itemTodos != value) {
+      this._itemTodos = value;
+      this.itemTodosButton.value = value || "";
     }
+  }
+  get itemTodos(): string | undefined {
+    return this._itemTodos;
+  }
+  @Input() set valueTodos(value: any) {
+    if(this.itemTodosButton.key != value) this.itemTodosButton.key = value;
+  }
+  get valueTodos(): any {
+    return this.itemTodosButton.key;
+  }
+  @Input() set items(value: LookupItem[]) {
+    if(JSON.stringify(this._items) != JSON.stringify(value)) {
+      this._items = value;
+      this.setValue(this.currentValue);
+      this.detectChanges();
+    }
+  }
+  get items(): LookupItem[] {
+    return this._items;
   }
   @Input() set control(value: AbstractControl | undefined) {
     this._control = value;
@@ -88,7 +90,6 @@ export class InputSelectComponent extends InputBase implements OnInit {
     if(this._loading != value) {
       this._loading = value;
       this.detectChanges();
-      this.selectPicker?.selectpicker('refresh');
     }
   }
   get loading(): boolean {
@@ -101,16 +102,25 @@ export class InputSelectComponent extends InputBase implements OnInit {
     return this.getSize(); 
   }
 
-  public CARREGANDO: string = "Carregando . . .";
-
   private _items: LookupItem[] = [];
-  private _options: LookupItem[] = [];
   private _loading: boolean = false;
   private _where: any[] | undefined = undefined;
-  public selectedValue?: string;
-  public selectedItem?: LookupItem;
+  private _itemTodos?: string = undefined; 
+
   public go: NavigateService;
-  private selectPicker: any;
+  public filterControl: FormControl = new FormControl("");
+  public itemNullButton: LookupItem = {
+    key: null,
+    value: " - "
+  };
+  public itemTodosButton: LookupItem = {
+    key: undefined,
+    value: ""
+  };
+  public itemDesconhecidoButton: LookupItem = {
+    key: "UNKNOW",
+    value: ""
+  };
 
   constructor(public injector: Injector) {
     super(injector);
@@ -124,20 +134,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
   ngAfterViewInit() {
     super.ngAfterViewInit();
     $(() => {
-      //@ts-ignore
-      this.selectPicker =  $('#' + this.generatedId(this.controlName));
-      this.selectPicker.selectpicker({
-        noneSelectedText: " - ",
-        noneResultsText: "Nenhum resultado {0}",
-        selectAllText: "Selecionar tudo"
-      });
-      //@ts-ignore
-      this.selectPicker.on('changed.bs.select', (e, clickedIndex, isSelected, previousValue) => {
-        this.onChange(e);
-      });
-      if(this.dao) {
-        this.loadItems();
-      }
+      if(this.dao) this.loadItems();
       if(this.control) {
         this.control.valueChanges.subscribe(newValue => this.setValue(newValue));
         this.setValue(this.control.value);
@@ -147,6 +144,10 @@ export class InputSelectComponent extends InputBase implements OnInit {
 
   public get isNullable(): boolean {
     return this.nullable != undefined;
+  }
+
+  public get isTodos(): boolean {
+    return this.itemTodos != undefined;
   }
 
   public get isNoIcon(): boolean {
@@ -161,26 +162,49 @@ export class InputSelectComponent extends InputBase implements OnInit {
     return this.liveSearch != undefined;
   }
 
-  public getStringValue(value: any) {
-    return JSON.stringify(value);
+  public get dropdownWidth(): number {
+    return this.dropdownButton?.nativeElement.offsetWidth || 10; 
   }
 
-  public get options(): LookupItem[] {
-    let result: LookupItem[] = [];
-    if(this.loading) {
-      result.push({code: "LOADING", key: this.value, value: this.CARREGANDO, icon: "bi bi-clock-history"});
+  public isActive(item: LookupItem): boolean {
+    return item.key == this.current.value;
+  }
+
+  public getStringId(value: any) {
+    return this.util.onlyAlphanumeric(JSON.stringify(value));
+  }
+
+  public get currentValue(): any {
+    return this.control ? this.control.value : this.value;
+  }
+
+  public get current(): LookupItem {
+    if(this.isNullable && this.currentValue == null) {
+      return this.itemNullButton;
+    } else if(this.isTodos && this.currentValue == this.valueTodos) {
+      return this.itemTodosButton;
+    } else if(!this.selectedItem) {
+      return this.itemDesconhecidoButton;
     } else {
-      if(this.isNullable) result.push({code: "NULL", key: null, value: this.itemNull});
-      if(this.itemTodos.length) result.push({code: "ALL", key: this.valueTodos, value: this.itemTodos});
-      if(this.selectedItem?.code == "UNKNOWN" && !this.items.find(x => x.key == this.selectedItem!.key)) result.push({code: "ALL", key: this.selectedItem.key, value: this.selectedItem.value || ' - Desconhecido - '});
-      result.push(...this.items);
+      return this.selectedItem!;
     }
-    if(JSON.stringify(result) != JSON.stringify(this._options)) this._options = result;
-    return this._options;
+  }
+
+  public get selectedItem(): LookupItem | undefined {
+    return this.items.find(x => x.key == this.currentValue);
+  }
+
+  public onFilterChange() {
+    this.cdRef.detectChanges();
+  }
+
+  public itemVisible(item: LookupItem): boolean {
+    return !this.filterControl.value?.length || (new RegExp(this.filterControl.value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), "i")).test(item.value);
   }
 
   private loadItems() {
     this.loading = true;
+    this.detectChanges();
     this.dao?.searchText("", this.fields.length ? this.fields : undefined, this.where).then(result => {
       this.loading = false;
       this.items = result.map(x => {
@@ -189,8 +213,6 @@ export class InputSelectComponent extends InputBase implements OnInit {
           value: x.text
         };
       }) || [];
-      this.cdRef.detectChanges();
-      this.selectPicker?.selectpicker('refresh');
     });
   }
 
@@ -198,40 +220,17 @@ export class InputSelectComponent extends InputBase implements OnInit {
     return this.detailsButton !== undefined;
   }
 
-  public itemSelected(item: LookupItem) {
-    return item.key == this.value ? true : undefined;
-  }
-
   public setValue(value: any) {
-    const stringValue = this.getStringValue(value);
-    const found = this.items.find(x => x.key == value);
-    if(this.selectedValue != stringValue || (this.selectedItem?.code == "UNKNOWN" && found)) {
+    if((this.control && this.control.value != value) || (this.value != value)) {
       this.value = value;
-      this.selectedValue = stringValue;
-      this.selectedItem = this.items.find(x => x.key == value);
-      if(value != null && !this.selectedItem && (!this.itemTodos.length || value != this.valueTodos)) {
-        this.selectedItem = {
-          key: value,
-          value: "- Desconhecido -",
-          code: "UNKNOWN"
-        };
-        //this.items.push(this.selectedItem);
-      }
-      this.control?.setValue(value, {emitEvent: false});
-      this.cdRef.detectChanges();
-      this.selectPicker?.selectpicker('refresh');
-      this.selectPicker?.selectpicker('val', stringValue);
+      if(this.control) this.control.setValue(value);
       if(this.change) this.change.emit(new Event("change"));
     }
   }
 
-  /*public get unknown(): boolean {
-    return this.selectedItem?.code == "UNKNOWN";
-  }*/
-
   public onDetailsClick(event: Event){
-    if(this.details && (this.isNullable || this.control?.value?.length)) {
-      const item = this.items.find(x => x.key == this.control?.value);
+    if(this.details && (this.isNullable || typeof this.currentValue != "undefined")) {
+      const item = this.items.find(x => x.key == this.currentValue);
       this.details.emit({
         value: item?.key,
         text: item?.value || "",
@@ -240,16 +239,8 @@ export class InputSelectComponent extends InputBase implements OnInit {
     }
   }
 
-  public onChange(event: Event){
-    const elmValue = (event.target as HTMLInputElement).value;
-    try {
-      if(elmValue.length && elmValue != this.CARREGANDO) {
-        const value =  JSON.parse(elmValue);
-        this.setValue(value);
-      }
-    } catch (error) {
-      console.log("PARSER ERROR", error, elmValue);
-    }
+  public onItemClick(item: LookupItem){
+    this.setValue(item.key);
   }
 
   public onAddClick(event: Event) {

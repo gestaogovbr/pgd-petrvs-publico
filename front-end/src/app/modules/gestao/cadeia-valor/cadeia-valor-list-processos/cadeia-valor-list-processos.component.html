@@ -13,7 +13,7 @@
                 </column>
                 <column title="Processos" [template]="processo" [editTemplate]="editProcesso">
                     <ng-template let-row="row" let-metadata="metadata" #processo>
-                        <strong class="d-block" [style.margin-left.px]="getNivelSequencia(metadata)">{{row.nome || ""}}</strong>
+                        <strong class="d-block text-break w-100" [style.margin-left.px]="getNivelSequencia(metadata)">{{row.nome || ""}}</strong>
                     </ng-template>
                     <ng-template let-row="row" #editProcesso>
                         <input-text [size]="6" controlName="nome" [control]="form!.controls.nome"></input-text>

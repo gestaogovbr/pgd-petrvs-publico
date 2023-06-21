@@ -20,6 +20,7 @@ export type queryEvents = {
 
 export class DaoBaseService<T extends Base> {
   public searchFields: string[] = [];
+  public PREFIX_URL: string = "api"; 
 
   private _gb?: GlobalsService;
   public get gb(): GlobalsService { this._gb = this._gb || this.injector.get<GlobalsService>(GlobalsService); return this._gb }
@@ -74,7 +75,7 @@ export class DaoBaseService<T extends Base> {
       try {
         let fields = fieldsToSearch || this.searchFields;
         let first = fields.length > 1 && query.indexOf(" - ") > 0 ? query.substr(0, query.indexOf(" - ")) : query;
-        let request = this.server.post('api/' + this.collection + '/search-text', {
+        let request = this.server.post(this.PREFIX_URL + '/' + this.collection + '/search-text', {
           collection: this.collection,
           query: first,
           fields: fields,
@@ -113,7 +114,7 @@ export class DaoBaseService<T extends Base> {
     return new Promise<SelectItem | null>((resolve, reject) => {
       try {
         let fields = fieldsToSearch || this.searchFields;
-        let request = this.server.post('api/' + this.collection + '/search-key', {
+        let request = this.server.post(this.PREFIX_URL + '/' + this.collection + '/search-key', {
           collection: this.collection,
           key: key,
           fields: fields,
@@ -131,7 +132,7 @@ export class DaoBaseService<T extends Base> {
     return new Promise<string>((resolve, reject) => {
       let formData: FormData = new FormData();
       formData.append('file', file);
-      this.server.post('api/' + this.collection + '/download-url', formData)
+      this.server.post(this.PREFIX_URL + '/' + this.collection + '/download-url', formData)
         .subscribe((response: IIndexable) => resolve(response.url), error => reject(error));
     });
   }
@@ -142,7 +143,7 @@ export class DaoBaseService<T extends Base> {
     formData.append('name', name);
     formData.append('path', path);
     return new Promise<any>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/upload', formData)
+      this.server.post(this.PREFIX_URL + '/' + this.collection + '/upload', formData)
         .subscribe(response => resolve(response), error => reject(error));
     });
   }
@@ -151,7 +152,7 @@ export class DaoBaseService<T extends Base> {
     let formData: FormData = new FormData();
     formData.append('file', filePath);
     return new Promise<any>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/delete-file', formData)
+      this.server.post(this.PREFIX_URL + '/' + this.collection + '/delete-file', formData)
         .subscribe(response => resolve(response), error => reject(error));
     });
   }
@@ -225,7 +226,7 @@ export class DaoBaseService<T extends Base> {
   public getById(id: string, join: string[] = []): Promise<T | null> {
     return new Promise<any>((resolve, reject) => {
       if(id?.length){
-        this.server.post('api/' + this.collection + '/get-by-id', {id: id, with: join})
+        this.server.post(this.PREFIX_URL + '/' + this.collection + '/get-by-id', {id: id, with: join})
         .subscribe(response => {
           resolve(response.data ? this.getRow(response.data) : null);
         }, error => {
@@ -261,7 +262,7 @@ export class DaoBaseService<T extends Base> {
   public getAllIds(options: QueryOptions = {}, extraFields: string[]): Promise<{rows: any[], extra: any}> {
     return new Promise<{rows: any[], extra: any}>((resolve, reject) => {
       try {
-        let request = this.server.post('api/' + this.collection + '/get-all-ids', {
+        let request = this.server.post(this.PREFIX_URL + '/' + this.collection + '/get-all-ids', {
           where: this.prepareWhere(options.where || []),
           with: options.join || [],
           fields: extraFields
@@ -329,7 +330,7 @@ export class DaoBaseService<T extends Base> {
     context.enablePrior = false;
     context.enableNext = false;
     if(!context.cumulate || context.page <= 1) context.subject.next();
-    const subscriber = this.server.post('api/' + context.collection + '/query', {
+    const subscriber = this.server.post(this.PREFIX_URL + '/' + context.collection + '/query', {
       where: this.prepareWhere(context.options.where || []),
       orderBy: context.options.orderBy || [],
       limit: context.options.limit || 0,
@@ -408,7 +409,7 @@ export class DaoBaseService<T extends Base> {
 
   public save(entity: T, join: string[] = []): Promise<T> {
     return new Promise<T>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/store', {
+      this.server.post(this.PREFIX_URL + '/' + this.collection + '/store', {
         entity: this.prepareToSave(entity),
         with: join
       }).subscribe(response => {
@@ -425,7 +426,7 @@ export class DaoBaseService<T extends Base> {
   public update(id: string, data: IIndexable, join: string[] = []): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       if(data.id) delete data.id;
-      this.server.post('api/' + this.collection + '/update', {
+      this.server.post(this.PREFIX_URL + '/' + this.collection + '/update', {
         id: id,
         data: this.prepareToSave(data),
         with: join
@@ -442,7 +443,7 @@ export class DaoBaseService<T extends Base> {
 
   public updateJson(id: string, field: string, data: IIndexable, join: string[] = []): Promise<T> {
     return new Promise<T>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/update-json', {
+      this.server.post(this.PREFIX_URL + '/' + this.collection + '/update-json', {
         id: id,
         field: field,
         data: data,
@@ -460,7 +461,7 @@ export class DaoBaseService<T extends Base> {
 
   public delete(entity: T | string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/destroy', {id: typeof entity == "string" ? entity : entity.id}).subscribe(response => {
+      this.server.post(this.PREFIX_URL + '/' + this.collection + '/destroy', {id: typeof entity == "string" ? entity : entity.id}).subscribe(response => {
         if(response.error){
           reject(response.error);
         } else {

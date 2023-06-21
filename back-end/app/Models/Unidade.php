@@ -13,10 +13,12 @@ use App\Models\Entidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeOrigemAtividade;
 use App\Models\Cidade;
+use App\Models\Template;
+use App\Models\NotificacoesConfig;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasDataFim;
 
-class UnidadeNotificacoes {
+/*class UnidadeNotificacoes {
     public $enviar_email = true;
     public $enviar_whatsapp = true;
     public $notifica_demanda_distribuicao = true;
@@ -29,7 +31,7 @@ class UnidadeNotificacoes {
     public $template_demanda_avaliacao = "";
     public $template_demanda_modificacao = "";
     public $template_demanda_comentario = "";
-}
+}*/
 
 class Unidade extends ModelBase
 {
@@ -74,6 +76,10 @@ class Unidade extends ModelBase
         "unidades_origem_atividades"
     ];
 
+    public $fillable_changes = [
+        "notificacoes_templates"
+    ];
+
     public $delete_cascade = ['unidadesOrigemAtividades', 'unidadesDestinoAtividades'];
 
     protected static function booted()
@@ -100,6 +106,7 @@ class Unidade extends ModelBase
     public function programas() { return $this->hasMany(Programa::class); }
     public function atividades() { return $this->hasMany(Atividade::class); }
     public function integrantes() { return $this->hasMany(UnidadeIntegrante::class); }
+    public function notificacoesTemplates() { return $this->hasMany(Template::class, 'unidade_id'); }
     public function unidadesOrigemAtividades() { return $this->hasMany(UnidadeOrigemAtividade::class); }
     public function unidadesDestinoAtividades() { return $this->hasMany(UnidadeOrigemAtividade::class, 'unidade_origem_atividade_id'); }
     // Belongs
@@ -111,7 +118,7 @@ class Unidade extends ModelBase
     // Mutattors e Casts
     public function getNotificacoesAttribute($value)
     {
-        $notificacoes = new UnidadeNotificacoes();
+        $notificacoes = new NotificacoesConfig();
         return array_replace_recursive((array) $notificacoes, (array) json_decode(empty($value) ? "[]" : $value));
     }
     public function setNotificacoesAttribute($value)

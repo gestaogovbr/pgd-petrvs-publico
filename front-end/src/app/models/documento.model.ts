@@ -6,7 +6,7 @@ import { Plano } from './plano.model';
 import { TipoDocumento } from './tipo-documento.model';
 import { TipoProcesso } from './tipo-processo.model';
 
-export type DocumentoEspecie = "TERMO_ADESAO" | "SEI" | "TCR" | "OUTRO";
+export type DocumentoEspecie = "TERMO_ADESAO" | "SEI" | "TCR" | "OUTRO" | "NOTIFICACAO";
 export type DocumentoStatus = "GERADO" | "AGUARDANDO_SEI";
 export interface HasDocumentos {
     documentos: Documento[];

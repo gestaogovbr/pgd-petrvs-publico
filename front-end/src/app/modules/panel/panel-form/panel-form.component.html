@@ -1,0 +1,68 @@
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+    <separator title="Banco de dados da aplicação"></separator>
+    <div class="row">
+        <input-text [size]="2" label="Id" controlName="id" [disabled]="action == 'new' ? undefined : 'true'"></input-text>
+        <input-text [size]="4" label="Host" controlName="tenancy_db_host"></input-text>
+        <input-text [size]="4" label="Banco de dados" controlName="tenancy_db_name"></input-text>
+        <input-number [size]="2" label="Porta" controlName="tenancy_db_port"></input-number>
+    </div>
+    <div class="row">
+        <input-text [size]="6" label="Usuário" controlName="tenancy_db_username"></input-text>
+        <input-text password [size]="6" label="Senha" controlName="tenancy_db_password"></input-text>
+    </div>
+    <separator title="Logs"></separator>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row">
+                <input-text [size]="6" label="Host" controlName="log_host"></input-text>
+                <input-text [size]="4" label="Banco de dados" controlName="log_database"></input-text>
+                <input-number [size]="2" label="Porta" controlName="log_port"></input-number>
+            </div>
+            <div class="row">
+                <input-text [size]="6" label="Usuário" controlName="log_username"></input-text>
+                <input-text password [size]="6" label="Senha" controlName="log_password"></input-text>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <separator title="Opções de log"></separator>
+            <div class="row">
+                <input-switch [size]="12" scale="small" labelPosition="right" label="Tráfego (traffic)" controlName="log_traffic"></input-switch>
+                <input-switch [size]="12" scale="small" labelPosition="right" label="Aditoria (changes)" controlName="log_changes"></input-switch>
+                <input-switch [size]="12" scale="small" labelPosition="right" label="Erros (errors)" controlName="log_errors"></input-switch>
+            </div>
+        </div>
+    </div>
+    <separator title="Notificações"></separator>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row">
+                <input-switch [size]="12" scale="small" labelPosition="right" label="Petrvs (Dentro do sistema)" controlName="notification_petrvs"></input-switch>
+                <input-switch [size]="12" scale="small" labelPosition="right" label="E-mail" controlName="notification_mail"></input-switch>
+                <input-switch [size]="12" scale="small" labelPosition="right" label="WhatsApp" controlName="notification_whatsapp"></input-switch>
+            </div>
+            <separator title="WhatsApp"></separator>
+            <div class="row">
+                <input-text [size]="12" label="URL" controlName="notification_whatsapp_url"></input-text>
+            </div>
+            <div class="row">
+                <input-text [size]="12" label="Token" controlName="notification_whatsapp_token"></input-text>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <separator title="E-mail"></separator>
+            <div class="row">
+                <input-text [size]="12" label="Imagem assinatura" controlName="notification_mail_signature"></input-text>
+            </div>
+            <div class="row">
+                <input-text [size]="6" label="Host" controlName="notification_mail_host"></input-text>
+                <input-number [size]="2" label="Porta" controlName="notification_mail_port"></input-number>
+                <input-select [size]="4" label="Protocolo" controlName="notification_mail_encryption" [items]="encryption"></input-select>
+            </div>
+            <div class="row">
+                <input-text [size]="6" label="Usuário" controlName="notification_mail_username"></input-text>
+                <input-text password [size]="6" label="Senha" controlName="notification_mail_password"></input-text>
+            </div>
+        </div>
+    </div>
+
+</editable-form>

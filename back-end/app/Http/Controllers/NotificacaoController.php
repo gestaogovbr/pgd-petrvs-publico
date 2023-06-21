@@ -7,12 +7,33 @@ use App\Models\Usuario;
 use App\Models\Lotacao;
 use App\Models\NotificacaoWhatsapp;
 use App\Exceptions\LogError;
+use App\Exceptions\ServerException;
 use App\Services\RawWhere;
 use DateTime;
 use Throwable;
 
-class NotificacaoController extends Controller
+class NotificacaoController extends ControllerBase
 {
+    public function checkPermissions($action, $request, $service, $unidade, $usuario) {
+        /* Bloqueia qualquer tentativa de inserir, alterar ou excluir registros*/
+        if($action != "QUERY") throw new ServerException("CapacidadeStore", "Ação não permitida");
+    }
+
+    /**
+     * Retorna a quantidade de mensagens não lidas do usuário
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function naoLidas(Request $request)
+    {
+        $data = $request->validate([]);
+        return response()->json([
+            "status" => "OK",
+            "nao_lidas" => $this->service->naoLidas()
+        ]);
+    }
+
     /**
      * Encontra usuário pelo número de telefone
      *

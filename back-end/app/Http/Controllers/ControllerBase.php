@@ -50,7 +50,7 @@ abstract class ControllerBase extends Controller
 
     public function getUnidade(Request $request) {
         $headers = $this->getPetrvsHeader($request);
-        $unidade_id = !empty($headers) && !empty($headers["unidade_id"]) ? $headers["unidade_id"] : $request->session()->get("unidade");
+        $unidade_id = !empty($headers) && !empty($headers["unidade_id"]) ? $headers["unidade_id"] : ($request->hasSession() ? $request->session()->get("unidade") : "");
         if(!empty($unidade_id)) {
             $usuario = Usuario::where("id", self::loggedUser()->id)->with(["lotacoes" => function ($query) use ($unidade_id) {
                 $query->whereNull("data_fim")->where("unidade_id", $unidade_id);
@@ -63,7 +63,7 @@ abstract class ControllerBase extends Controller
     }
 
     public function getUsuario(Request $request) {
-        return Usuario::where("id", self::loggedUser()->id)->with(["lotacoes" => function ($query) {
+        return Usuario::where("id", self::loggedUser()?->id)->with(["lotacoes" => function ($query) {
             $query->whereNull("data_fim");
         }, "lotacoes.unidade"])->first();
     }
