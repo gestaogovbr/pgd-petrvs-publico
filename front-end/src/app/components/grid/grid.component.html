@@ -13,7 +13,7 @@
                                 <i class="bi bi-card-checklist"></i>
                             </th>
                             <th *ngFor="let column of columns; let idx = index" [class]="column.cellClass || ''" [class.grid-editable-options]="isEditableGridOptions(column)" scope="col"
-                                [style.width.px]="column.width" [style.min-width.px]="column.minWidth" [style.max-width.px]="column.maxWidth">
+                                [style.width.px]="column.width" [style.min-width.px]="column.minWidth" [style.max-width.px]="column.maxWidth" [style.vertical-align]="column.verticalAlign">
                                 <column-header [column]="column" [index]="idx" [grid]="self"></column-header>
                             </th>
                         </tr>

@@ -15,7 +15,6 @@ import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
 import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
 import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 import { TipoModalidadeDaoService } from 'src/app/dao/tipo-modalidade-dao.service';
-import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
 import { Atividade } from 'src/app/models/atividade.model';
@@ -36,6 +35,7 @@ import { DocumentosComponent } from 'src/app/modules/uteis/documentos/documentos
 import { CalendarService, Efemerides } from 'src/app/services/calendar.service';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { PlanoService } from '../plano.service';
+import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 
 @Component({
   selector: 'app-plano-form',
@@ -49,8 +49,6 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
   @ViewChild('gridDocumentos', { static: false }) public gridDocumentos?: GridComponent;
   @ViewChild('tabs', { static: false }) public tabs?: TabsComponent;
   @ViewChild('usuario', { static: false }) public usuario?: InputSearchComponent;
-  @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
-  @ViewChild('programa', { static: false }) public programa?: InputSearchComponent;
   @ViewChild('tipoModalidade', { static: false }) public tipoModalidade?: InputSearchComponent;
   @ViewChild('planoEntrega', { static: false }) public planoEntrega?: InputSearchComponent;
   @ViewChild('atividade', { static: false }) public atividade?: InputSearchComponent;
@@ -59,9 +57,9 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
 
   public formAtividades: FormGroup;
   public formEntregas: FormGroup;
-  public unidadeDao: UnidadeDaoService;
   public programaDao: ProgramaDaoService;
   public usuarioDao: UsuarioDaoService;
+  public unidadeDao: UnidadeDaoService;
   public atividadeDao: AtividadeDaoService;
   public documentoDao: DocumentoDaoService;
   public documentoService: DocumentoService;
@@ -75,16 +73,18 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
   public planoDataset: TemplateDataset[];
   public documentoId?: string;
   public entregas: LookupItem[] = [];
+  public programa?: Programa;
+  public unidade?: Unidade;
 
   private _datasource: any;
   private _entityDocumentos: Plano = new Plano();
 
   constructor(public injector: Injector) {
     super(injector, Plano, PlanoDaoService);
-    this.join = ["unidade.entidade", "entregas.entrega.entrega", "plano_entrega.entregas.entrega", "usuario", "programa.template_tcr", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "atividades.atividade"];
-    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    this.join = ["unidade.entidade", "entregas.entrega.entrega", "plano_entrega.entregas.entrega", "plano_entrega.unidade.entidade", "plano_entrega.programa", "usuario", "programa.template_tcr", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "atividades.atividade"];
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
+    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.atividadeDao = injector.get<AtividadeDaoService>(AtividadeDaoService);
     this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
     this.documentoService = injector.get<DocumentoService>(DocumentoService);
@@ -103,11 +103,10 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
       data_inicio: {default: ""},
       data_fim: {default: ""},
       ganho_produtividade: {default: 0},
-      programa_id: {default: ""},
       usuario_id: {default: ""},
-      unidade_id: {default: ""},
       plano_entrega_id: {default: ""},
       documento_id: {default: null},
+      plano_entrega_id: {default: null},
       documentos: {default: []},
       atividades: {default: []},
       entregas: {default: []},
@@ -142,9 +141,8 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
     if(JSON.stringify(data) != this.JSON.stringify(this._datasource)) {
       this._datasource = data;
       /* Se o termo for um documento obrigatório, então será gerado um termo automaticamente */
-      let programa = this.programa?.searchObj as Programa;
       this.documentoId = undefined;
-      if(programa?.termo_obrigatorio) {
+      if(this.programa?.termo_obrigatorio) {
         this.documentoId = this.form!.controls.documento_id.value;
         let documentos: Documento[] = this.form!.controls.documentos.value || [];
         let documento = documentos?.find((x: Documento) => x.id == this.documentoId);
@@ -157,12 +155,12 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
             conteudo: "",
             status: "GERADO",
             _status: "ADD",
-            template: programa.template_tcr?.conteudo,
+            template: this.programa.template_tcr?.conteudo,
             dataset: this.dao!.dataset(),
             datasource: this.datasource,
             entidade_id: this.auth.entidade?.id,
             plano_id: this.entity?.id,
-            template_id: programa.template_tcr_id
+            template_id: this.programa.template_tcr_id
           }));
           this.form!.controls.documento_id.setValue(this.documentoId);
           this.form!.controls.documentos.setValue(documentos);
@@ -200,21 +198,21 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
 
-    if(['usuario_id', 'unidade_id', 'programa_id', 'tipo_modalidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if(['usuario_id', 'plano_entrega_id', 'tipo_modalidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    } else if(['carga_horaria'].indexOf(controlName) >= 0 && !control.value) {
+    }
+    if(['carga_horaria'].indexOf(controlName) >= 0 && !control.value) {
       result = "Valor não pode ser zero.";
-    } else if(['data_inicio_vigencia', 'data_fim_vigencia'].includes(controlName)) {
+    } 
+    if(['data_inicio_vigencia', 'data_fim_vigencia'].includes(controlName)) {
       if(!this.util.isDataValid(control.value)) {
         result = "Inválido";
-      } else if(!this.programa?.searchObj) {
-        result = "Selecionar programa";
-      } else if(controlName == 'data_inicio_vigencia' && (control.value as Date).getTime() < (this.programa!.searchObj! as Programa).data_inicio_vigencia.getTime()) {
-        result = "Menor que programa";
-      } else if(controlName == 'data_fim_vigencia' && (control.value as Date).getTime() > (this.programa!.searchObj! as Programa).data_fim_vigencia.getTime()) {
-        result = "Maior que programa";
       }
-    }
+    } else if(this.programa && controlName == 'data_inicio_vigencia' && (control.value as Date).getTime() < this.programa!.data_inicio_vigencia.getTime()) {
+        result = "Menor que programa";
+    } else if(this.programa && controlName == 'data_fim_vigencia' && (control.value as Date).getTime() > this.programa!.data_fim_vigencia.getTime()) {
+        result = "Maior que programa";
+    } 
 
     return result;
   }
@@ -231,19 +229,21 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
     return undefined;
   };
 
-  public onProgramaSelect(selected: SelectItem) {
-    this.form?.controls.data_inicio_vigencia.updateValueAndValidity();
-    this.form?.controls.data_fim_vigencia.updateValueAndValidity();
-    let programa = selected.entity as Programa;
-    this.cdRef.detectChanges();
-  }
-
   public updateEntregas(planoEntrega: PlanoEntrega | undefined) {
     this.entregas = planoEntrega?.entregas?.map(x => Object.assign({}, { key: x.id, value: x.entrega?.nome || x.descricao, data: x })) || [];
   }
 
   public onPlanoEntregaSelect(selected: SelectItem) {
-    this.updateEntregas(selected.entity as PlanoEntrega);
+    let planoEntrega = selected.entity as PlanoEntrega;
+    this.updateEntregas(planoEntrega);
+    //ATUALIZAR O GRID DE ENTREGAS this.planoListEntrega
+    this.form?.controls.data_inicio_vigencia.updateValueAndValidity();
+    this.form?.controls.data_fim_vigencia.updateValueAndValidity();
+    this.programa = planoEntrega?.programa as Programa;
+    this.unidade = planoEntrega?.unidade as Unidade;
+    this.form!.controls.forma_contagem_carga_horaria.setValue(this.unidade?.entidade?.forma_contagem_carga_horaria || "DIA");
+    this.form!.controls.unidade_texto_complementar.setValue(this.unidade?.texto_complementar_plano || "");
+    this.calculaTempos();
     this.cdRef.detectChanges();
   }
 
@@ -271,23 +271,15 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
     this.calculaTempos();
   }
 
-  public onUnidadeSelect(selected: SelectItem) {
-    //this.form!.controls.unidade_texto_complementar.setValue((selected.entity as Unidade)?.texto_complementar_plano || "");
-    this.form!.controls.forma_contagem_carga_horaria.setValue((selected.entity as Unidade)?.entidade?.forma_contagem_carga_horaria || "DIA");
-    this.calculaTempos();
-    this.cdRef.detectChanges();
-  }
-
   public calculaTempos() {
     const inicio = this.form?.controls.data_inicio_vigencia.value;
     const fim = this.form?.controls.data_fim_vigencia.value;
     const carga = this.form?.controls.carga_horaria.value || 8;
-    const unidade = this.unidade?.searchObj as Unidade;
     const usuario = this.usuario?.searchObj as Usuario;
-    if(usuario && unidade && this.util.isDataValid(inicio) && this.util.isDataValid(fim)) {
-      this.calendar.loadFeriadosCadastrados(unidade.id).then((feriados) => {
-        this.horasTotais = this.calendar.calculaDataTempoUnidade(inicio, fim, carga, unidade, "ENTREGA", [], []);
-        this.horasParciais = this.calendar.calculaDataTempoUnidade(inicio, fim, carga, unidade, "ENTREGA", [], usuario.afastamentos);
+    if(usuario && this.unidade && this.util.isDataValid(inicio) && this.util.isDataValid(fim)) {
+      this.calendar.loadFeriadosCadastrados(this.unidade.id).then((feriados) => {
+        this.horasTotais = this.calendar.calculaDataTempoUnidade(inicio, fim, carga, this.unidade!, "ENTREGA", [], []);
+        this.horasParciais = this.calendar.calculaDataTempoUnidade(inicio, fim, carga, this.unidade!, "ENTREGA", [], usuario.afastamentos);
         this.form?.controls.tempo_total.setValue(this.horasTotais.tempoUtil);
         this.form?.controls.tempo_proporcional.setValue(this.horasParciais.tempoUtil);
       });
@@ -295,16 +287,14 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
   }
 
   public async loadData(entity: Plano, form: FormGroup) {
-    let formValue = Object.assign({}, form.value);
     this.updateEntregas(entity.plano_entrega);
-    await Promise.all ([
+    await Promise.all([
       this.calendar.loadFeriadosCadastrados(entity.unidade_id),
-      this.unidade?.loadSearch(entity.unidade || entity.unidade_id),
       this.usuario?.loadSearch(entity.usuario || entity.usuario_id),
-      this.programa?.loadSearch(entity.programa || entity.programa_id),
       this.tipoModalidade?.loadSearch(entity.tipo_modalidade || entity.tipo_modalidade_id),
       this.planoEntrega?.loadSearch(entity.plano_entrega || entity.plano_entrega_id)
     ]);
+    let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
     let documento = entity.documentos.find(x => x.id == entity.documento_id);
     if(documento) this._datasource = documento.datasource;
@@ -317,11 +307,10 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
       this.entity = (await this.dao!.getById(this.urlParams!.get("id")!, this.join))!;
     } else {
       this.entity = new Plano();
-      this.entity.unidade_id = this.auth.unidade!.id;
       this.entity.carga_horaria = this.auth.entidade?.carga_horaria_padrao || 8;
       this.entity.forma_contagem_carga_horaria = this.auth.entidade?.forma_contagem_carga_horaria || "DIA";
     }
-    this.loadData(this.entity, this.form!);
+    await this.loadData(this.entity, this.form!);
   }
 
   /* Atividades */  
@@ -393,8 +382,8 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
     let plano: Plano = this.util.fill(new Plano(), this.entity!);
     plano = this.util.fillForm(plano, this.form!.value);
     plano.usuario = this.usuario!.searchObj as Usuario;
-    plano.unidade = this.unidade!.searchObj as Unidade;
-    plano.programa = this.programa!.searchObj as Programa;
+    plano.unidade = (this.entity?.unidade || this.unidade) as Unidade;
+    plano.programa = (this.entity?.programa || this.programa) as Programa;
     plano.tipo_modalidade = this.tipoModalidade!.searchObj as TipoModalidade;
     return plano;
   }

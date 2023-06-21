@@ -20,9 +20,20 @@
       </div>
     </filter>
     <columns>
-        <column [titleTemplate]="titleNumero" field="numero" [minWidth]="50">
+        <column *ngIf="!selectable" type="expand" icon="bi bi-list-check" [align]="'center'" [hint]="lex.noun('Entrega', true)" [template]="columnEntregas" [expandTemplate]="columnExpandedEntregas">
+            <ng-template let-row="row" #columnEntregas>
+                <span *ngIf="row.entregas?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-list-check"></i> {{row.entregas?.length}}</span>
+            </ng-template>
+            <ng-template let-row="row" #columnExpandedEntregas>
+                <plano-list-entrega [entity]="row"></plano-list-entrega>
+            </ng-template>
+        </column>
+        <column [titleTemplate]="titleNumero" [template]="columnNumero" [minWidth]="50">
             <ng-template let-header="header" #titleNumero>
                 <order by="numero" [header]="header">#ID</order>
+            </ng-template>
+            <ng-template let-row="row" #columnNumero>
+                <span> {{ '#' + row.numero}}</span>
             </ng-template>
         </column>
         <column [titleTemplate]="titleUsuario" [template]="columnUsuario">

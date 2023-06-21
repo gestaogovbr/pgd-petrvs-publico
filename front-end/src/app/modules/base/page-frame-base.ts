@@ -17,7 +17,7 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
   public formValidation?: (form?: FormGroup) => string | undefined | null;
   public dao?: DaoBaseService<Base>;
   public entity_id?: string; /* Se estiver preenchido, então veio por uma rota e é uma janela autocontida, com salvar e cancelar */
-  /* Dever ser sobrescritos utilizando o @Input() */
+  /* Dever ser sobrescrito utilizando o @Input() */
   public set control(value: AbstractControl | undefined) {
     if (this._control != value) {
       this._control = value;

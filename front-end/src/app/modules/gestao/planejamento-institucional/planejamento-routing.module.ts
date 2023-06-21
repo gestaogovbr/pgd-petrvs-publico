@@ -5,7 +5,6 @@ import { ConfigResolver } from 'src/app/resolvies/config.resolver';
 import { PlanejamentoFormComponent } from './planejamento-form/planejamento-form.component';
 import { PlanejamentoListComponent } from './planejamento-list/planejamento-list.component';
 import { PlanejamentoFormObjetivoComponent } from './planejamento-form-objetivo/planejamento-form-objetivo.component';
-import { PlanejamentoListObjetivoComponent } from './planejamento-list-objetivo/planejamento-list-objetivo.component';
 import { PlanejamentoListObjetivosEntregasComponent } from './planejamento-list-objetivos-entregas/planejamento-list-objetivos-entregas.component';
 
 const routes: Routes = [
