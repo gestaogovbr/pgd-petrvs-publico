@@ -355,7 +355,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_models_entidade_model__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/models/entidade.model */ "4IcU");
 /* harmony import */ var src_app_models_expediente_model__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/models/expediente.model */ "e8A4");
 /* harmony import */ var src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! src/app/modules/base/page-form-base */ "793T");
-/* harmony import */ var src_app_services_notificacao_service__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! src/app/services/notificacao.service */ "QUyP");
+/* harmony import */ var src_app_modules_uteis_notificacoes_notificacao_service__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! src/app/modules/uteis/notificacoes/notificacao.service */ "edjK");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/core */ "fXoL");
 /* harmony import */ var _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../../components/tabs/tabs.component */ "EkNo");
 /* harmony import */ var _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../../components/tabs/tab/tab.component */ "suJ1");
@@ -364,13 +364,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ "lYxd");
 /* harmony import */ var _components_input_input_button_input_button_component__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../../components/input/input-button/input-button.component */ "L+jc");
 /* harmony import */ var _uteis_calendar_expediente_calendar_expediente_component__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../../uteis/calendar-expediente/calendar-expediente.component */ "ODvL");
-/* harmony import */ var _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../../../components/separator/separator.component */ "FVj5");
-/* harmony import */ var _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../../../components/input/input-switch/input-switch.component */ "puzm");
-/* harmony import */ var _components_input_input_textarea_input_textarea_component__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../../../../components/input/input-textarea/input-textarea.component */ "S/J2");
-/* harmony import */ var _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../../../../components/grid/grid.component */ "m4bG");
-/* harmony import */ var _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ../../../../components/grid/columns/columns.component */ "d7UH");
-/* harmony import */ var _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ../../../../components/grid/column/column.component */ "pFmK");
-
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! @angular/common */ "ofXK");
+/* harmony import */ var _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../../../components/grid/grid.component */ "m4bG");
+/* harmony import */ var _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../../../../components/grid/columns/columns.component */ "d7UH");
+/* harmony import */ var _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../../../../components/grid/column/column.component */ "pFmK");
+/* harmony import */ var _uteis_notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ../../../uteis/notificacoes/notificacoes-config/notificacoes-config.component */ "MFW/");
 
 
 
@@ -395,6 +393,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const _c0 = ["cargaHoraria"];
+const _c1 = ["notificacoes"];
+function EntidadeConfComponent_tab_13_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "tab", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](1, "notificacoes-config", 22, 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const ctx_r2 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("entity", ctx_r2.entity)("entidadeId", ctx_r2.entity.id)("disabled", ctx_r2.formDisabled);
+} }
 class EntidadeConfComponent extends src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_7__["PageFormBase"] {
     constructor(injector) {
         super(injector, src_app_models_entidade_model__WEBPACK_IMPORTED_MODULE_5__["Entidade"], src_app_dao_entidade_dao_service__WEBPACK_IMPORTED_MODULE_2__["EntidadeDaoService"]);
@@ -419,23 +427,26 @@ class EntidadeConfComponent extends src_app_modules_base_page_form_base__WEBPACK
         };
         this.tipoModalidadeDao = injector.get(src_app_dao_tipo_modalidade_dao_service__WEBPACK_IMPORTED_MODULE_4__["TipoModalidadeDaoService"]);
         this.templateDao = injector.get(src_app_dao_template_dao_service__WEBPACK_IMPORTED_MODULE_3__["TemplateDaoService"]);
-        this.notificacao = injector.get(src_app_services_notificacao_service__WEBPACK_IMPORTED_MODULE_8__["NotificacaoService"]);
+        this.notificacao = injector.get(src_app_modules_uteis_notificacoes_notificacao_service__WEBPACK_IMPORTED_MODULE_8__["NotificacaoService"]);
         this.modalWidth = 1200;
+        this.join = ["notificacoes_templates"];
         this.form = this.fh.FormBuilder({
             url_sei: { default: "" },
             tipo_modalidade_id: { default: null },
-            notifica_demanda_distribuicao: { default: true },
-            notifica_demanda_conclusao: { default: true },
-            notifica_demanda_avaliacao: { default: true },
-            notifica_demanda_modificacao: { default: true },
-            notifica_demanda_comentario: { default: true },
-            template_demanda_distribuicao: { default: "" },
-            template_demanda_conclusao: { default: "" },
-            template_demanda_avaliacao: { default: "" },
-            template_demanda_modificacao: { default: "" },
-            template_demanda_comentario: { default: "" },
-            enviar_email: { default: true },
-            enviar_whatsapp: { default: true },
+            /*notifica_demanda_distribuicao: {default: true},
+            notifica_demanda_conclusao: {default: true},
+            notifica_demanda_avaliacao: {default: true},
+            notifica_demanda_modificacao: {default: true},
+            notifica_demanda_comentario: {default: true},
+            template_demanda_distribuicao: {default: ""},
+            template_demanda_conclusao: {default: ""},
+            template_demanda_avaliacao: {default: ""},
+            template_demanda_modificacao: {default: ""},
+            template_demanda_comentario: {default: ""},
+            enviar_petrvs: {default: true},
+            enviar_email: {default: true},
+            enviar_whatsapp: {default: true},*/
+            notificacoes: { default: [] },
             nomenclatura: { default: [] },
             expediente: { default: new src_app_models_expediente_model__WEBPACK_IMPORTED_MODULE_6__["Expediente"]() },
             carga_horaria_padrao: { default: 8 },
@@ -476,7 +487,6 @@ class EntidadeConfComponent extends src_app_modules_base_page_form_base__WEBPACK
         return forma == "DIA" ? "day" : forma == "SEMANA" ? "week" : "mouth";
     }
     loadData(entity, form) {
-        var _a, _b, _c, _d;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             let formValue = Object.assign({}, form.value);
             let nomenclatura = entity.nomenclatura || [];
@@ -493,39 +503,42 @@ class EntidadeConfComponent extends src_app_modules_base_page_form_base__WEBPACK
             });
             entity.nomenclatura = nomenclatura;
             //form.patchValue(this.util.fillForm(formValue, entity));
-            let notificacoes = this.util.fill(new src_app_models_entidade_model__WEBPACK_IMPORTED_MODULE_5__["EntidadeNotificacoes"](), entity.notificacoes);
-            form.patchValue(this.util.fillForm(formValue, Object.assign(Object.assign({}, entity), {
-                notifica_demanda_distribuicao: (notificacoes === null || notificacoes === void 0 ? void 0 : notificacoes.notifica_demanda_distribuicao) == undefined || (notificacoes === null || notificacoes === void 0 ? void 0 : notificacoes.notifica_demanda_distribuicao),
-                notifica_demanda_conclusao: (notificacoes === null || notificacoes === void 0 ? void 0 : notificacoes.notifica_demanda_conclusao) == undefined || (notificacoes === null || notificacoes === void 0 ? void 0 : notificacoes.notifica_demanda_conclusao),
-                notifica_demanda_avaliacao: (notificacoes === null || notificacoes === void 0 ? void 0 : notificacoes.notifica_demanda_avaliacao) == undefined || (notificacoes === null || notificacoes === void 0 ? void 0 : notificacoes.notifica_demanda_avaliacao),
-                notifica_demanda_modificacao: (notificacoes === null || notificacoes === void 0 ? void 0 : notificacoes.notifica_demanda_modificacao) == undefined || (notificacoes === null || notificacoes === void 0 ? void 0 : notificacoes.notifica_demanda_modificacao),
-                notifica_demanda_comentario: (notificacoes === null || notificacoes === void 0 ? void 0 : notificacoes.notifica_demanda_comentario) == undefined || (notificacoes === null || notificacoes === void 0 ? void 0 : notificacoes.notifica_demanda_comentario),
-                template_demanda_distribuicao: (notificacoes === null || notificacoes === void 0 ? void 0 : notificacoes.template_demanda_distribuicao) || "",
-                template_demanda_conclusao: (notificacoes === null || notificacoes === void 0 ? void 0 : notificacoes.template_demanda_conclusao) || "",
-                template_demanda_avaliacao: (notificacoes === null || notificacoes === void 0 ? void 0 : notificacoes.template_demanda_avaliacao) || "",
-                template_demanda_modificacao: (notificacoes === null || notificacoes === void 0 ? void 0 : notificacoes.template_demanda_modificacao) || "",
-                template_demanda_comentario: (notificacoes === null || notificacoes === void 0 ? void 0 : notificacoes.template_demanda_comentario) || "",
-                enviar_email: ((_a = entity.notificacoes) === null || _a === void 0 ? void 0 : _a.enviar_email) == undefined || ((_b = entity.notificacoes) === null || _b === void 0 ? void 0 : _b.enviar_email),
-                enviar_whatsapp: ((_c = entity.notificacoes) === null || _c === void 0 ? void 0 : _c.enviar_whatsapp) == undefined || ((_d = entity.notificacoes) === null || _d === void 0 ? void 0 : _d.enviar_whatsapp)
-            })));
+            //let notificacoes = this.util.fill(new EntidadeNotificacoes(), entity.notificacoes);
+            form.patchValue(this.util.fillForm(formValue, entity)); /*{...entity, ...{
+              notifica_demanda_distribuicao: notificacoes?.notifica_demanda_distribuicao == undefined || notificacoes?.notifica_demanda_distribuicao,
+              notifica_demanda_conclusao: notificacoes?.notifica_demanda_conclusao == undefined || notificacoes?.notifica_demanda_conclusao,
+              notifica_demanda_avaliacao: notificacoes?.notifica_demanda_avaliacao == undefined || notificacoes?.notifica_demanda_avaliacao,
+              notifica_demanda_modificacao: notificacoes?.notifica_demanda_modificacao == undefined || notificacoes?.notifica_demanda_modificacao,
+              notifica_demanda_comentario: notificacoes?.notifica_demanda_comentario == undefined || notificacoes?.notifica_demanda_comentario,
+              template_demanda_distribuicao: notificacoes?.template_demanda_distribuicao || "",
+              template_demanda_conclusao: notificacoes?.template_demanda_conclusao || "",
+              template_demanda_avaliacao: notificacoes?.template_demanda_avaliacao || "",
+              template_demanda_modificacao: notificacoes?.template_demanda_modificacao || "",
+              template_demanda_comentario: notificacoes?.template_demanda_comentario || "",
+              enviar_email: entity.notificacoes?.enviar_email == undefined || entity.notificacoes?.enviar_email,
+              enviar_whatsapp: entity.notificacoes?.enviar_whatsapp == undefined || entity.notificacoes?.enviar_whatsapp
+            }}));*/
         });
     }
     initializeData(form) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            this.entity = (yield this.dao.getById(this.urlParams.get("id")));
+            this.entity = (yield this.dao.getById(this.urlParams.get("id"), this.join));
             yield this.loadData(this.entity, form);
         });
     }
     saveData(form) {
         return new Promise((resolve, reject) => {
-            let notificacoes = this.util.fillForm(new src_app_models_entidade_model__WEBPACK_IMPORTED_MODULE_5__["EntidadeNotificacoes"](), this.form.value);
+            var _a;
+            //let notificacoes = this.util.fillForm(new EntidadeNotificacoes(), this.form.value);
+            (_a = this.notificacoes) === null || _a === void 0 ? void 0 : _a.saveData();
             let entidade = this.util.fill(new src_app_models_entidade_model__WEBPACK_IMPORTED_MODULE_5__["Entidade"](), this.entity);
             entidade = this.util.fillForm(entidade, this.form.value);
             this.dao.update(entidade.id, {
                 url_sei: entidade.url_sei,
                 tipo_modalidade_id: entidade.tipo_modalidade_id,
                 nomenclatura: entidade.nomenclatura,
-                notificacoes: notificacoes,
+                notificacoes: entidade.notificacoes,
+                notificacoes_templates: this.entity.notificacoes_templates,
                 expediente: entidade.expediente,
                 carga_horaria_padrao: entidade.carga_horaria_padrao,
                 forma_contagem_carga_horaria: entidade.forma_contagem_carga_horaria
@@ -537,11 +550,13 @@ EntidadeConfComponent.ɵfac = function EntidadeConfComponent_Factory(t) { return
 EntidadeConfComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefineComponent"]({ type: EntidadeConfComponent, selectors: [["app-entidade-conf"]], viewQuery: function EntidadeConfComponent_Query(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__["EditableFormComponent"], 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵviewQuery"](_c0, 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵviewQuery"](_c1, 1);
     } if (rf & 2) {
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵloadQuery"]()) && (ctx.cargaHoraria = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵInheritDefinitionFeature"]], decls: 46, vars: 49, consts: [[3, "form", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "GERAL", "label", "Geral"], [1, "row"], ["controlName", "tipo_modalidade_id", "labelInfo", "Tipo de modalidade padr\u00E3o utilizada ao criar plano de trabalho.", 3, "size", "dao"], ["label", "Carga Hor\u00E1ria", "icon", "bi bi-hourglass-split", "controlName", "carga_horaria_padrao", "labelInfo", "Carga hor\u00E1ria e forma de contagem (horas por dia, semana ou m\u00EAs) padr\u00E3o utilizada ao criar plano de trabalho.", 3, "size", "unit", "unitChange"], ["cargaHoraria", ""], ["label", "Url do Sei/SUPER", "icon", "bi bi-lin", "controlName", "url_sei", "labelInfo", "Url base do Sei/SUPER, deve ser semelhante a: https://sei.minha-entidade.gov.br/", 3, "size", "control"], ["label", "Chave de API", "icon", "bi bi-lin", "placeholder", "Vis\u00EDvel somente no momento em que foi gerado", "iconButton", "bi bi-arrow-clockwise", "controlName", "api_public_key", "labelInfo", "Chave publica para comunica\u00E7\u00E3o por API, o valor \u00E9 vis\u00EDvel somente no momento em que for gerado.", 3, "size", "buttonClick"], ["key", "EXPEDIENTE", "label", "Expediente"], [3, "control"], ["expediente", ""], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es"], [1, "col-md-6"], ["transparent", "", "title", "Meios de notifica\u00E7\u00E3o"], ["scale", "small", "labelPosition", "right", "label", "Notificar por e-mail", "controlName", "enviar_email", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "Notificar por Whatsapp", "controlName", "enviar_whatsapp", 3, "size"], ["transparent", "", "title", "Tipos de notifica\u00E7\u00E3o"], ["scale", "small", "labelPosition", "right", "controlName", "notifica_demanda_distribuicao", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "notifica_demanda_conclusao", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "notifica_demanda_avaliacao", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "notifica_demanda_modificacao", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "notifica_demanda_comentario", 3, "size", "label"], ["transparent", "", "title", "Templates das mensagens"], ["controlName", "template_demanda_distribuicao", 3, "size", "rows", "label", "labelInfo"], ["controlName", "template_demanda_conclusao", 3, "size", "rows", "label", "labelInfo"], ["controlName", "template_demanda_avaliacao", 3, "size", "rows", "label", "labelInfo"], ["controlName", "template_demanda_modificacao", 3, "size", "rows", "label", "labelInfo"], ["controlName", "template_demanda_comentario", 3, "size", "rows", "label", "labelInfo"], ["key", "NOMENCLATURA", "label", "Nomenclatura"], ["clss", "row"], ["editable", "", 3, "control", "form", "hasAdd"], ["type", "text", "title", "Nome", "field", "nome", 3, "editable"], ["type", "text", "title", "Singular", "field", "singular", 3, "onChange"], ["type", "text", "title", "Plural", "field", "plural", 3, "onChange"], ["type", "switch", "title", "Feminino", "field", "feminino"], ["type", "options"]], template: function EntidadeConfComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵloadQuery"]()) && (ctx.notificacoes = _t.first);
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵInheritDefinitionFeature"]], decls: 23, vars: 18, consts: [[3, "form", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "GERAL", "label", "Geral"], [1, "row"], ["controlName", "tipo_modalidade_id", "labelInfo", "Tipo de modalidade padr\u00E3o utilizada ao criar plano de trabalho.", 3, "size", "dao"], ["label", "Carga Hor\u00E1ria", "icon", "bi bi-hourglass-split", "controlName", "carga_horaria_padrao", "labelInfo", "Carga hor\u00E1ria e forma de contagem (horas por dia, semana ou m\u00EAs) padr\u00E3o utilizada ao criar plano de trabalho.", 3, "size", "unit", "unitChange"], ["cargaHoraria", ""], ["label", "Url do Sei/SUPER", "icon", "bi bi-lin", "controlName", "url_sei", "labelInfo", "Url base do Sei/SUPER, deve ser semelhante a: https://sei.minha-entidade.gov.br/", 3, "size", "control"], ["label", "Chave de API", "icon", "bi bi-lin", "placeholder", "Vis\u00EDvel somente no momento em que foi gerado", "iconButton", "bi bi-arrow-clockwise", "controlName", "api_public_key", "labelInfo", "Chave publica para comunica\u00E7\u00E3o por API, o valor \u00E9 vis\u00EDvel somente no momento em que for gerado.", 3, "size", "buttonClick"], ["key", "EXPEDIENTE", "label", "Expediente"], [3, "control"], ["expediente", ""], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es", 4, "ngIf"], ["key", "NOMENCLATURA", "label", "Nomenclatura"], ["clss", "row"], ["editable", "", 3, "control", "form", "hasAdd"], ["type", "text", "title", "Nome", "field", "nome", 3, "editable"], ["type", "text", "title", "Singular", "field", "singular", 3, "onChange"], ["type", "text", "title", "Plural", "field", "plural", 3, "onChange"], ["type", "switch", "title", "Feminino", "field", "feminino"], ["type", "options"], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es"], [3, "entity", "entidadeId", "disabled"], ["notificacoes", ""]], template: function EntidadeConfComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "editable-form", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("submit", function EntidadeConfComponent_Template_editable_form_submit_0_listener() { return ctx.onSaveData(); })("cancel", function EntidadeConfComponent_Template_editable_form_cancel_0_listener() { return ctx.onCancel(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](1, "tabs", 1);
@@ -560,48 +575,16 @@ EntidadeConfComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵde
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](10, "tab", 9);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](11, "calendar-expediente", 10, 11);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](13, "tab", 12);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](14, "div", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](15, "div", 13);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](16, "separator", 14);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](17, "input-switch", 15);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](18, "input-switch", 16);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](19, "div", 13);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](20, "separator", 17);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](21, "input-switch", 18);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](22, "input-switch", 19);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](23, "input-switch", 20);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](24, "input-switch", 21);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](25, "input-switch", 22);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](26, "separator", 23);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](27, "div", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](28, "input-textarea", 24);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](29, "div", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](30, "input-textarea", 25);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](31, "div", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](32, "input-textarea", 26);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](33, "div", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](34, "input-textarea", 27);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](35, "div", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](36, "input-textarea", 28);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](37, "tab", 29);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](38, "div", 30);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](39, "grid", 31);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](40, "columns");
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](41, "column", 32);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](42, "column", 33);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](43, "column", 34);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](44, "column", 35);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](45, "column", 36);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](13, EntidadeConfComponent_tab_13_Template, 3, 3, "tab", 12);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](14, "tab", 13);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](15, "div", 14);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](16, "grid", 15);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](17, "columns");
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](18, "column", 16);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](19, "column", 17);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](20, "column", 18);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](21, "column", 19);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](22, "column", 20);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
@@ -620,30 +603,8 @@ EntidadeConfComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵde
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 6);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("control", ctx.form.controls.expediente);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 12);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 12);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 12)("label", "Notificar distribui\u00E7\u00E3o " + ctx.lex.noun("demanda", false, true));
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 12)("label", "Notificar conclus\u00E3o " + ctx.lex.noun("demanda", false, true));
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 12)("label", "Notificar avalia\u00E7\u00E3o " + ctx.lex.noun("demanda", false, true));
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 12)("label", "Notificar modifica\u00E7\u00E3o " + ctx.lex.noun("demanda", false, true));
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 12)("label", "Notificar coment\u00E1rio " + ctx.lex.noun("demanda", false, true));
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 12)("rows", 3)("label", "Texto na cria\u00E7\u00E3o " + ctx.lex.noun("demanda", false, true))("labelInfo", ctx.notificacao.hintDemandaDistribuicao);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 12)("rows", 3)("label", "Texto na conclus\u00E3o " + ctx.lex.noun("demanda", false, true))("labelInfo", ctx.notificacao.hintDemandaConclusao);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 12)("rows", 3)("label", "Texto na avalia\u00E7\u00E3o " + ctx.lex.noun("demanda", false, true))("labelInfo", ctx.notificacao.hintDemandaAvaliacao);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 12)("rows", 3)("label", "Texto na modifica\u00E7\u00E3o " + ctx.lex.noun("demanda", false, true))("labelInfo", ctx.notificacao.hintDemandaModificacao);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 12)("rows", 3)("label", "Texto na inclus\u00E3o de coment\u00E1rio " + ctx.lex.noun("demanda", false, true))("labelInfo", ctx.notificacao.hintDemandaComentario);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("ngIf", ctx.entity);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("control", ctx.form.controls.nomenclatura)("form", ctx.formNomenclatura)("hasAdd", false);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
@@ -652,7 +613,7 @@ EntidadeConfComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵde
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("onChange", ctx.onSingularChange.bind(ctx));
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("onChange", ctx.onPluralChange.bind(ctx));
-    } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__["EditableFormComponent"], _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_10__["TabsComponent"], _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_11__["TabComponent"], _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_12__["InputSearchComponent"], _components_input_input_workload_input_workload_component__WEBPACK_IMPORTED_MODULE_13__["InputWorkloadComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_14__["InputTextComponent"], _components_input_input_button_input_button_component__WEBPACK_IMPORTED_MODULE_15__["InputButtonComponent"], _uteis_calendar_expediente_calendar_expediente_component__WEBPACK_IMPORTED_MODULE_16__["CalendarExpedienteComponent"], _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_17__["SeparatorComponent"], _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_18__["InputSwitchComponent"], _components_input_input_textarea_input_textarea_component__WEBPACK_IMPORTED_MODULE_19__["InputTextareaComponent"], _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_20__["GridComponent"], _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_21__["ColumnsComponent"], _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_22__["ColumnComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJlbnRpZGFkZS1jb25mLmNvbXBvbmVudC5zY3NzIn0= */"] });
+    } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__["EditableFormComponent"], _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_10__["TabsComponent"], _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_11__["TabComponent"], _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_12__["InputSearchComponent"], _components_input_input_workload_input_workload_component__WEBPACK_IMPORTED_MODULE_13__["InputWorkloadComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_14__["InputTextComponent"], _components_input_input_button_input_button_component__WEBPACK_IMPORTED_MODULE_15__["InputButtonComponent"], _uteis_calendar_expediente_calendar_expediente_component__WEBPACK_IMPORTED_MODULE_16__["CalendarExpedienteComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_17__["NgIf"], _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_18__["GridComponent"], _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_19__["ColumnsComponent"], _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_20__["ColumnComponent"], _uteis_notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_21__["NotificacoesConfigComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJlbnRpZGFkZS1jb25mLmNvbXBvbmVudC5zY3NzIn0= */"] });
 
 
 /***/ }),
