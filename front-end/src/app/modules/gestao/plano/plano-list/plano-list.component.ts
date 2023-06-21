@@ -64,7 +64,7 @@ export class PlanoListComponent extends PageListBase<Plano, PlanoDaoService> {
       data_filtro_fim: {default: new Date()}
     }, this.cdRef, this.filterValidate);
     this.join = ["unidade.entidade", "usuario", "programa", "documento.assinaturas.usuario:id,nome,url_foto", 
-                "tipo_modalidade", "entregas.entregaPlanoEntrega.entrega", "entregas.entrega", "planoEntrega.entregas.entrega"];
+                "tipo_modalidade", "entregas.entrega_plano_entrega.entrega", "entregas.entrega", "plano_entrega.entregas.entrega"];
     this.groupBy = [{field: "unidade.sigla", label: "Unidade"}];
   }
 

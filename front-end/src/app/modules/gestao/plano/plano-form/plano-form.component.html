@@ -68,7 +68,7 @@
                     </columns>
                 </grid> -->
                 <editable-form [form]="formEntregas!"  [noButtons]="'true'">
-                    <plano-list-entrega noPersist [entity]="entity" [entregas]="planoEntrega.selectedItem?.value.entregas"></plano-list-entrega>
+                    <plano-list-entrega noPersist [entity]="entity" [entregas]="entity?.entregas"></plano-list-entrega>
                 </editable-form>
             </div>
         </tab>
