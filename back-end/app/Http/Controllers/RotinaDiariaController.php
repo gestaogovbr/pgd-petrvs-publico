@@ -4,11 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Exceptions\LogError;
+use App\Exceptions\ServerException;
 use App\Services\RotinaDiariaService;
 use Throwable;
+use Exception;
 
-abstract class ControllerBase extends Controller
+abstract class RotinaDiariaController extends ControllerBase
 {
+    public function checkPermissions($action, $request, $service, $unidade, $usuario) {
+        /* Bloqueia qualquer tentativa de inserir, alterar ou excluir registros*/
+        throw new ServerException("CapacidadeStore", "Ação não permitida");
+    }
+    
      /**
      * Search for a given key
      *

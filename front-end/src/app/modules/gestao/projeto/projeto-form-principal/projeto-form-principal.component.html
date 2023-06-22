@@ -41,7 +41,7 @@
     <separator *ngIf="!form?.controls?.tempo_corrido?.value" title="Expediente" collapse transparent [collapsed]="true">
         <div class="row">
             <input-switch label="Usar do escritório:" labelPosition="right" icon="bi bi-check2" [size]="3" controlName="usar_escritorio" labelInfo="Aloca recursos no projeto"></input-switch>
-            <input-search [size]="9" #escritorio hostClass="p-0" disabled controlName="escritorio_id" [dao]="unidadeDao"></input-search>
+            <input-search [size]="9" #escritorio hostClass="p-0" label icon disabled controlName="escritorio_id" [dao]="unidadeDao"></input-search>
         </div>
         <calendar-expediente #expediente></calendar-expediente>
     </separator>

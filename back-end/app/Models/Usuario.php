@@ -17,6 +17,7 @@ use App\Models\Favorito;
 use App\Models\Lotacao;
 use App\Models\Plano;
 use App\Models\Perfil;
+use App\Models\NotificacoesConfig;
 use App\Traits\MergeRelations;
 use App\Traits\LogChanges;
 use App\Traits\AutoDataInicio;
@@ -26,7 +27,7 @@ use Throwable;
 
 class UsuarioConfig {}
 
-class UsuarioNotificacoes {
+/*class UsuarioNotificacoes {
     public $enviar_email = true;
     public $enviar_whatsapp = true;
     public $notifica_demanda_distribuicao = true;
@@ -34,7 +35,7 @@ class UsuarioNotificacoes {
     public $notifica_demanda_avaliacao = true;
     public $notifica_demanda_modificacao = true;
     public $notifica_demanda_comentario = true;
-}
+}*/
 
 class Usuario extends Authenticatable
 {
@@ -70,6 +71,8 @@ class Usuario extends Authenticatable
         //'foto_google', /* text; */// Foto do G-Suit (Google)
         //'foto_microsoft', /* text; */// Foto do Azure (Microsoft)
         //'foto_firebase', /* text; */// Foto do Firebase (Google, Facebook, Instagram, Twiter, etc...)
+        //'projeto_id', /* char(36); */
+        //'projeto_tarefa_id', /* char(36); */
         //'id_super', /* text; */// Id do usuário no SUPER
     ];
 
@@ -113,6 +116,7 @@ class Usuario extends Authenticatable
     public function integracoes() { return $this->hasMany(Integracao::class); }
     public function chefiasTitulares() { return $this->hasMany(Unidade::class, 'gestor_id'); }
     public function chefiasSubstitutas() { return $this->hasMany(Unidade::class, 'gestor_substituto_id'); }
+    public function lotacao() { return $this->hasOne(Lotacao::class)->where('principal', 1); }
     // Belongs
     public function perfil() { return $this->belongsTo(Perfil::class, 'perfil_id'); }
     // Mutattors e Casts
@@ -138,7 +142,7 @@ class Usuario extends Authenticatable
     }
     public function getNotificacoesAttribute($value)
     {
-        $notificacoes = new UsuarioNotificacoes();
+        $notificacoes = new NotificacoesConfig();
         return array_replace_recursive((array) $notificacoes, (array) json_decode(empty($value) ? "[]" : $value));
     }
     public function setNotificacoesAttribute($value)

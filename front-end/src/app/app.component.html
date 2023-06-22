@@ -17,7 +17,7 @@
                 </span>
             </a>
             <button *ngIf="!isConfig && !globals.isToolbar" class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                      data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div *ngIf="isMinimized" class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -83,6 +83,13 @@
                 </ul>
                 <button *ngIf="globals.SUPPORT_URL" type="button" class="btn btn-outline-warning ms-2 d-none d-md-block" (click)="go.openNewTab(globals.SUPPORT_URL)" data-bs-toggle="tooltip" data-bs-placement="top" title="Suporte Petrvs">
                     <i class="bi bi-headset"></i>
+                </button>
+                <button type="button" class="btn btn-info position-relative ms-2" (click)="go.navigate({route: ['uteis', 'notificacoes']})">
+                    <i class="bi bi-bell"></i>
+                    <span *ngIf="notificacao.naoLidas" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {{notificacao.naoLidas > 9 ? "9+" : notificacao.naoLidas}}
+                        <span class="visually-hidden">Mensagens não lidas</span>
+                    </span>
                 </button>
                 <div *ngIf="auth.logging" width="25" class="spinner-border spinner-border-sm m-0 ms-2" role="status">
                     <span class="visually-hidden"></span>

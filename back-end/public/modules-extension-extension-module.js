@@ -38,6 +38,7 @@ function OptionsComponent_div_7_Template(rf, ctx) { if (rf & 1) {
 class OptionsComponent {
     constructor(fh) {
         this.fh = fh;
+        //@ts-ignore
         this.webBrowser = (chrome || browser);
         this.form = this.fh.FormBuilder({
             desenvolvimento: { default: false },

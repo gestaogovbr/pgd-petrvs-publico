@@ -7,17 +7,18 @@
 - Cadeia de Valor
   - Processos
 - Programa
-  - Adesão
-    - Plano de Entregas
-      - Entregas
+  - Plano de Entregas
+    - Entregas
     - Plano de Trabalho
-      - Demandas
+	  - Atividades
+	    - Tarefas
 - Projetos  
 
 ## Módulos
 
-* [Planejamento Institucional](./Planejamento%20Institucional/Planejamento_institucional.md)
-* [Plano de Entregas](./Plano%20de%20Entrega/plano_de_entregas.md)
+* [Planejamento Institucional](./Gestao/planejamento_institucional.md)
+* [Plano de Entrega](./Gestao/plano_entrega.md)
+* [Plano de Trabalho](./Gestao/plano_trabalho.md)
 
 ## Regra geral do sistema
 

@@ -14,6 +14,7 @@ class EntidadeController extends ControllerBase {
         "nomenclatura", 
         "url_sei", 
         "notificacoes", 
+        "notificacoes_templates",
         "tipo_modalidade_id", 
         "forma_contagem_carga_horaria", 
         "carga_horaria_padrao",

@@ -19,7 +19,7 @@ class WhatsappService
                         "content" => $mensage
                     ]
                 ]);
-            } catch (Throwable $e) {
+            } catch (\Throwable $e) {
                 LogError::newError("Erro ao enviar mensagem Whatsapp", $e, ["number" => $number]);
             }
         }

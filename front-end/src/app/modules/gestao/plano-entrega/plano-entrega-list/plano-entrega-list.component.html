@@ -5,7 +5,7 @@
         <input-switch [size]="3" labelPosition="left" label="Agrupar por Un." controlName="agrupar"
             [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
         <input-switch [size]="2" labelPosition="left" label="Principais" controlName="principais"
-        [control]="filter!.controls.principais" (change)="grid!.reloadFilter()"></input-switch>
+            [control]="filter!.controls.principais" (change)="grid!.reloadFilter()"></input-switch>
     </toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed" [visible]="showFilter">
         <div class="row">

@@ -7,7 +7,7 @@
     <columns>
         <column title="Nome" [template]="columnNome">
             <ng-template let-row="row" #columnNome>
-                <span [style.margin-left.px]="(row._metadata?.level || 0) * 20">{{ marcador(row) + row.nome }}</span>
+                <span class="text-break w-100" [style.margin-left.px]="(row._metadata?.level || 0) * 20">{{ marcador(row) + row.nome }}</span>
             </ng-template>
         </column>
         <column title="Fundamentação" [template]="columnFundamentacao"><ng-template let-row="row" #columnFundamentacao><span>{{ row.fundamentacao }}</span></ng-template></column>

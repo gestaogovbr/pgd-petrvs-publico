@@ -68,8 +68,15 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
     this.tabs!.active = ["TABELA", "MAPA"].includes(this.usuarioConfig.active_tab) ? this.usuarioConfig.active_tab : "TABELA";
   }
 
+  /* override */
+  public onLoad() {}
+
+  public initGrid(grid: GridComponent) {
+    grid.queryInit();
+  }
+
   public async onSelectTab(tab: LookupItem) {
-    if(tab.key == "TABELA") this.grid?.reloadFilter();
+    //if(tab.key == "TABELA") this.onLoad();
     this.saveUsuarioConfig({active_tab: tab});
   }
 

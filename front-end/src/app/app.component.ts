@@ -13,6 +13,7 @@ import { FullRoute, NavigateService } from './services/navigate.service';
 import { UtilService } from './services/util.service';
 import { LookupService } from './services/lookup.service';
 import { EntityService } from './services/entity.service';
+import { NotificacaoService } from './modules/uteis/notificacoes/notificacao.service';
 
 export let appInjector: Injector;
 
@@ -47,6 +48,7 @@ export class AppComponent {
   public utils: UtilService;
   public lookup: LookupService;
   public entity: EntityService;
+  public notificacao: NotificacaoService;
   public menuSchema: any;
   public menuContexto: any[];
   public contexto: any;
@@ -74,7 +76,9 @@ export class AppComponent {
     this.utils = injector.get<UtilService>(UtilService);
     this.lookup = injector.get<LookupService>(LookupService);
     this.entity = injector.get<EntityService>(EntityService);
+    this.notificacao = injector.get<NotificacaoService>(NotificacaoService);
     /* Inicializações */
+    this.notificacao.hartBeat();
     this.auth.success = (usuario: Usuario, redirectTo?: FullRoute) => {
       this.go.navigate(redirectTo || { route: this.globals.initialRoute });
     };

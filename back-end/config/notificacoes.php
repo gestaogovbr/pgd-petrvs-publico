@@ -10,5 +10,8 @@ return [
         'authorization' => env('NOTIFICACOES_WHATSAPP_AUTHORIZATION', "SENHA_SECRETA"),
         'enviar' => env('NOTIFICACOES_WHATSAPP', false),
         'url' => env('NOTIFICACOES_WHATSAPP_URL', '')
+    ],
+    'petrvs' => [
+        'enviar' => true
     ]
 ];

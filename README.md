@@ -11,6 +11,13 @@ https://gitlab.com/petrvs.app/Petrvs.git
 - Para instalar a versão de desenvolvimento utilizando o Docker, utilize as instruções contidas [AQUI](resources/README.md)
 - Para instalar a versão produção sem utilizar o Docker, consultar documentação aqui (PAGINA EM DESENVOLVIMENTO) 
 
+## Check-list para ser realizado antes do deploy
+
+- Executar as migrations e o rollback da migration para verificar se está correto (analisar o código-fontes também)
+- Verificar se todas as models estão corretas (front-end e back-end). Devem conter todos os campos e os relacionamentos
+- Verificar se a documentação foi atualizada com o que foi desenvolvido
+- Atualizar/Criar os testes automatizados para a funcionalidade criada
+
 ## Procedimento para deploy:
 
 - Antes de iniciar o desenvolvimento, dar obrigatoriamente um pull (para cada funcionalidade implementada, cada ticket um commit)
@@ -30,7 +37,7 @@ https://gitlab.com/petrvs.app/Petrvs.git
 - A documentação do sistema é feita na pasta ./resources/documentacao e pode ser acessada [AQUI](./resources/documentacao/manual.md)
 - O dicionário de dados (apenas para os desenvolvedores) está localizado na sua respectiva pasta:
   - [Front-end](./front-end/README.md)
-  - [Back-end](./back-end/README.md)  
+  - [Back-end](./back-end/README.md)
 
 ## Extensões recomendadas para o VS Code
 

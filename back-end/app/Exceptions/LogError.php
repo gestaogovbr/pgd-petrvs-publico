@@ -11,7 +11,7 @@ class LogError extends Exception
 {
     public static function newError($message, $exception = null, $data = null, $throwWith = 200) {
         $config = config('log');
-        if(!empty($exception) && $config['log_errors']) {
+        if(!empty($exception) && $config['errors']) {
             $user = Auth::user();
             $erro = new Error();
             $erro->fill([

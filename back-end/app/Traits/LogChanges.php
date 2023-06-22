@@ -39,7 +39,7 @@ trait LogChanges
     {
         $config = config("log");
         $util = new UtilService();
-        if($config["log_changes"]) {
+        if($config["changes"]) {
             $valoresAtuais = []; $valoresAnteriores = []; $valoresAlterados = [];
             switch ($action) {
                 case 'ADD':
@@ -78,7 +78,7 @@ trait LogChanges
 
     public static function customLogChange($table, $id, $action, $delta) {
         $config = config("log");
-        if($config["log_changes"]) {
+        if($config["changes"]) {
             Change::create([
                 'user_id' => Auth::check() ? Auth::user()->id : null,
                 'table_name' => $table,

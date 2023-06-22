@@ -9,6 +9,9 @@ import { CalendarExpedienteComponent } from './calendar-expediente/calendar-expe
 import { DocumentosComponent } from './documentos/documentos.component';
 import { TemplatesComponent } from './templates/templates.component';
 import { AssinarComponent } from './documentos/assinar/assinar.component';
+import { NotificacoesComponent } from './notificacoes/notificacoes.component';
+import { NotificacoesConfigComponent } from './notificacoes/notificacoes-config/notificacoes-config.component';
+import { NotificacoesTemplateComponent } from './notificacoes/notificacoes-template/notificacoes-template.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +21,10 @@ import { AssinarComponent } from './documentos/assinar/assinar.component';
     CalendarExpedienteComponent,
     DocumentosComponent,
     TemplatesComponent,
-    AssinarComponent
+    AssinarComponent,
+    NotificacoesComponent,
+    NotificacoesConfigComponent,
+    NotificacoesTemplateComponent
   ],
   imports: [
     CommonModule,
@@ -31,7 +37,10 @@ import { AssinarComponent } from './documentos/assinar/assinar.component';
     ComentariosWidgetComponent,
     CalendarExpedienteComponent,
     DocumentosComponent,
-    TemplatesComponent
+    TemplatesComponent,
+    NotificacoesComponent,
+    NotificacoesConfigComponent,
+    NotificacoesTemplateComponent
   ]
 })
 export class UteisModule { }

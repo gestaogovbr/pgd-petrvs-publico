@@ -24,5 +24,13 @@ export class ProgramaParticipanteDaoService extends DaoBaseService<ProgramaParti
     ], deeps);
   }
 
+  public habilitar(participantesIds: string[], programaId: string, habilitado: number) {
+    return this.server.post('api/' + this.collection + '/habilitar', this.prepareToSave({
+      participantes_ids: participantesIds,
+      programa_id: programaId,
+      habilitado: habilitado
+    })).toPromise();
+  }
+
 }
 

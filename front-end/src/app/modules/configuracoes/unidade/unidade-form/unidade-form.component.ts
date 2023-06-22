@@ -13,8 +13,9 @@ import { Expediente } from 'src/app/models/expediente.model';
 import { UnidadeOrigemAtividade } from 'src/app/models/unidade-origem-atividade.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
+import { NotificacaoService } from 'src/app/modules/uteis/notificacoes/notificacao.service';
+import { NotificacoesConfigComponent } from 'src/app/modules/uteis/notificacoes/notificacoes-config/notificacoes-config.component';
 import { LookupItem } from 'src/app/services/lookup.service';
-import { NotificacaoService } from 'src/app/services/notificacao.service';
 
 @Component({
   selector: 'app-unidade-form',
@@ -31,6 +32,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
   @ViewChild('gestorSubstituto', { static: false }) public gestorSubstituto?: InputSearchComponent;
   @ViewChild('entidade', { static: false }) public entidade?: InputSearchComponent;
   @ViewChild('unidade_origem_atividade', { static: false }) public unidadeOrigemAtividade?: InputSearchComponent;
+  @ViewChild('notificacoes', { static: false }) public notificacoes?: NotificacoesConfigComponent;
 
   public form: FormGroup;
   public formUnidadesOrigemAtividades: FormGroup;
@@ -83,7 +85,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       unidades_origem_atividades: {default: []},
       gestor_id: {default: null},
       gestor_substituto_id: {default: null},
-      notifica_demanda_distribuicao: {default: true},
+      /*notifica_demanda_distribuicao: {default: true},
       notifica_demanda_conclusao: {default: true},
       notifica_demanda_avaliacao: {default: true},
       notifica_demanda_modificacao: {default: true},
@@ -93,8 +95,9 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       template_demanda_avaliacao: {default: ""},
       template_demanda_modificacao: {default: ""},
       template_demanda_comentario: {default: ""},
+      enviar_petrvs: {default: true},
       enviar_email: {default: true},
-      enviar_whatsapp: {default: true},
+      enviar_whatsapp: {default: true},*/
       expediente: {default: null},
       usar_expediente_entidade: {default: true},
       texto_complementar_plano: {default: ""}
@@ -102,7 +105,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     this.formUnidadesOrigemAtividades = this.fh.FormBuilder({
       unidade_origem_atividade_id: {default: ""}
     }, this.cdRef, this.validateUnidadesOrigemAtividades);
-    this.join =  ["cidade", "entidade", "unidades_origem_atividades.unidade_origem_atividade", "gestor", "gestor_substituto"];
+    this.join =  ["cidade", "entidade", "unidades_origem_atividades.unidade_origem_atividade", "gestor", "gestor_substituto", "notificacoes_templates"];
   }
 
   public validateUnidadesOrigemAtividades = (control: AbstractControl, controlName: string) => {
@@ -167,8 +170,8 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       this.unidadeOrigemAtividade!.loadSearch(entity.unidades_origem_atividades)*/
     ]);
     this.form.patchValue(this.util.fillForm(formValue, {...entity, ...{
-      expediente24: entity.horario_trabalho_fim.startsWith("24:00"),
-      notifica_demanda_distribuicao: entity.notificacoes?.notifica_demanda_distribuicao == undefined || entity.notificacoes?.notifica_demanda_distribuicao,
+      expediente24: entity.horario_trabalho_fim.startsWith("24:00")
+      /*notifica_demanda_distribuicao: entity.notificacoes?.notifica_demanda_distribuicao == undefined || entity.notificacoes?.notifica_demanda_distribuicao,
       notifica_demanda_conclusao: entity.notificacoes?.notifica_demanda_conclusao == undefined || entity.notificacoes?.notifica_demanda_conclusao,
       notifica_demanda_avaliacao: entity.notificacoes?.notifica_demanda_avaliacao == undefined || entity.notificacoes?.notifica_demanda_avaliacao,
       notifica_demanda_modificacao: entity.notificacoes?.notifica_demanda_modificacao == undefined || entity.notificacoes?.notifica_demanda_modificacao,
@@ -179,7 +182,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       template_demanda_modificacao: entity.notificacoes?.template_demanda_modificacao || "",
       template_demanda_comentario: entity.notificacoes?.template_demanda_comentario || "",
       enviar_email: entity.notificacoes?.enviar_email == undefined || entity.notificacoes?.enviar_email,
-      enviar_whatsapp: entity.notificacoes?.enviar_whatsapp == undefined || entity.notificacoes?.enviar_whatsapp
+      enviar_whatsapp: entity.notificacoes?.enviar_whatsapp == undefined || entity.notificacoes?.enviar_whatsapp*/
     }}));
   }
 
@@ -208,10 +211,13 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
 
   public saveData(form: IIndexable): Promise<Unidade> {
     return new Promise<Unidade>((resolve, reject) => {
+      this.notificacoes!.saveData();
       let unidade: Unidade = this.util.fill(new Unidade(), this.entity!);
       unidade = this.util.fillForm(unidade, this.form!.value);
       unidade.horario_trabalho_fim = this.form!.controls.expediente24.value ? "24:00" : unidade.horario_trabalho_fim;
-      unidade.notificacoes.notifica_demanda_distribuicao = form.notifica_demanda_distribuicao;
+      unidade.notificacoes = this.entity!.notificacoes;
+      unidade.notificacoes_templates = this.entity!.notificacoes_templates;
+      /*unidade.notificacoes.notifica_demanda_distribuicao = form.notifica_demanda_distribuicao;
       unidade.notificacoes.notifica_demanda_conclusao = form.notifica_demanda_conclusao;
       unidade.notificacoes.notifica_demanda_avaliacao = form.notifica_demanda_avaliacao;
       unidade.notificacoes.notifica_demanda_modificacao = form.notifica_demanda_modificacao;
@@ -222,7 +228,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       unidade.notificacoes.template_demanda_modificacao = form.template_demanda_modificacao;
       unidade.notificacoes.template_demanda_comentario = form.template_demanda_comentario;
       unidade.notificacoes.enviar_email = form.enviar_email;
-      unidade.notificacoes.enviar_whatsapp = form.enviar_whatsapp;
+      unidade.notificacoes.enviar_whatsapp = form.enviar_whatsapp;*/
       /* Remove os ids gerados para os novos unidades_origem_atividades, será gerado pelo servidor como UUID */
       unidade.unidades_origem_atividades.forEach(origem => {
         origem.id = origem.id.includes("-") ? origem.id : "";

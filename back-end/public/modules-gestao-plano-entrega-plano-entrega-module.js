@@ -436,6 +436,7 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
     constructor(injector) {
         super(injector, src_app_models_plano_entrega_entrega_model__WEBPACK_IMPORTED_MODULE_6__["PlanoEntregaEntrega"], src_app_dao_plano_entrega_entrega_dao_service__WEBPACK_IMPORTED_MODULE_4__["PlanoEntregaEntregaDaoService"]);
         this.injector = injector;
+        this.unidadeId = "";
         this.validate = (control, controlName) => {
             var _a, _b, _c, _d, _e;
             let result = null;
@@ -510,11 +511,12 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
         }, this.cdRef, this.validate);
     }
     ngOnInit() {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
         super.ngOnInit();
         this.planejamentoId = (_a = this.metadata) === null || _a === void 0 ? void 0 : _a.planejamento_id;
         this.cadeiaValorId = (_b = this.metadata) === null || _b === void 0 ? void 0 : _b.cadeia_valor_id;
-        this.entity = (_c = this.metadata) === null || _c === void 0 ? void 0 : _c.entrega;
+        this.unidadeId = ((_c = this.urlParams) === null || _c === void 0 ? void 0 : _c.get('unidade_id')) || "";
+        this.entity = (_d = this.metadata) === null || _d === void 0 ? void 0 : _d.entrega;
     }
     ngAfterViewInit() {
         super.ngAfterViewInit();

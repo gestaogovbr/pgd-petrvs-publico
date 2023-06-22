@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Listeners\TenantBootstrapped;
+use App\Listeners\TenantDatabaseMigrated;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -61,7 +63,7 @@ class TenancyServiceProvider extends ServiceProvider
 
             // Database events
             Events\DatabaseCreated::class => [],
-            Events\DatabaseMigrated::class => [],
+            Events\DatabaseMigrated::class => [TenantDatabaseMigrated::class],
             Events\DatabaseSeeded::class => [],
             Events\DatabaseRolledBack::class => [],
             Events\DatabaseDeleted::class => [],
@@ -78,7 +80,9 @@ class TenancyServiceProvider extends ServiceProvider
             ],
 
             Events\BootstrappingTenancy::class => [],
-            Events\TenancyBootstrapped::class => [],
+            Events\TenancyBootstrapped::class => [
+                TenantBootstrapped::class
+            ],
             Events\RevertingToCentralContext::class => [],
             Events\RevertedToCentralContext::class => [],
 
