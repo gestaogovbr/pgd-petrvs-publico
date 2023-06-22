@@ -1,0 +1,10 @@
+<editable-form [form]="form!" [disabled]="disabled" noButtons>
+    <separator transparent title="Formas de notificação">
+        <input-switch [size]="4" scale="small" icon="bi bi-bell" labelPosition="right" label="Notificar no Petrvs" controlName="enviar_petrvs" (change)="updateNotificacoes()"></input-switch>
+        <input-switch [size]="4" scale="small" icon="bi bi-envelope-at" labelPosition="right" label="Notificar por e-mail" controlName="enviar_email" (change)="updateNotificacoes()"></input-switch>
+        <input-switch [size]="4" scale="small" icon="bi bi-whatsapp" labelPosition="right" label="Notificar por Whatsapp" controlName="enviar_whatsapp" (change)="updateNotificacoes()"></input-switch>
+    </separator>
+    <separator *ngIf="viewInit" title="Templates e habilitação de notificações">
+        <notificacoes-template [entity]="entity" [source]="source" [unidadeId]="unidadeId" [entidadeId]="entidadeId" [cdRef]="cdRef"></notificacoes-template>
+    </separator>
+</editable-form>

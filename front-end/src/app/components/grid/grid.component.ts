@@ -58,6 +58,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   @Input() selectable: boolean = false;
   @Input() loadList?: (rows?: Base[]) => Promise<void> | void;
   @Input() multiselectChange?: (multiselected: IIndexable) => void;
+  @Input() init?: (grid: GridComponent) => void;
   @Input() add?: () => Promise<IIndexable | undefined | void>;
   @Input() load?: (form: FormGroup, row: any) => Promise<void>;
   @Input() remove?: (row: any) => Promise<boolean | undefined | void>;
@@ -267,14 +268,14 @@ export class GridComponent extends ComponentBase implements OnInit {
   };
   public panelButtons: ToolbarButton[] = [
     {
-      label: "Gravar",
+      label: "Concluir",
       icon: "bi-check-circle",
       color: "btn-outline-success",
       dynamicVisible: (() => this.form!.valid).bind(this),
       onClick: (() => this.onSaveItem(this.editing!)).bind(this)
     },
     {
-      label: "Gravar",
+      label: "Concluir",
       icon: "bi-exclamation-circle",
       color: "btn-outline-success",
       dynamicVisible: (() => !this.form!.valid).bind(this)
@@ -311,6 +312,10 @@ export class GridComponent extends ComponentBase implements OnInit {
     this.loadPagination();
     /* Habilita muiltiselect caso multiselectEnabled esteja presente */
     if(this.isMultiselectEnabled) this.enableMultiselect(true);
+  }
+
+  ngAfterViewInit(): void {
+    if(this.init) this.init(this);
   }
 
   public reset() {
@@ -572,6 +577,28 @@ export class GridComponent extends ComponentBase implements OnInit {
     });
   }
 
+  /**
+   * Método chamado para incluir um item em um grid persistente.
+   */
+  public onAddItem() {
+    if(!this.adding) {
+      this.adding = true; /* Previne multiplas chamadas para inserir */
+      (async () => {
+        this.form.reset((this.form as unknown as IFormGroupHelper).initialState);
+        let newItem = this.add ? await this.add() : this.form.value;
+        if(newItem) {
+          if(!(newItem["id"] || "").length && this.hasItems) {
+            newItem["id"] = this.dao ? this.dao.generateUuid() : this.util.md5();
+          }
+          this.items.push(newItem);
+          await this.edit(newItem);
+        } else {
+          this.adding = false;
+        }
+      })();
+    }
+  }  
+
   public onEditItem(row: any) {
     if(!this.editing) {
       this.editing = row; /* Previne multiplas chamadas para inserir */
@@ -592,23 +619,21 @@ export class GridComponent extends ComponentBase implements OnInit {
     })();
   }
 
-  public onAddItem() {
-    if(!this.adding) {
-      this.adding = true; /* Previne multiplas chamadas para inserir */
-      (async () => {
-        this.form.reset((this.form as unknown as IFormGroupHelper).initialState);
-        let newItem = this.add ? await this.add() : this.form.value;
-        if(newItem) {
-          if(!(newItem["id"] || "").length && this.hasItems) {
-            newItem["id"] = this.dao ? this.dao.generateUuid() : this.util.md5();
-          }
-          this.items.push(newItem);
-          await this.edit(newItem);
-        } else {
-          this.adding = false;
-        }
-      })();
-    }
+  public onCancelItem() {
+    (async () => {
+      if(this.adding) this.items.splice(this.items.findIndex(x => !(x instanceof GridGroupSeparator) && x["id"] == (this.editing || {id: undefined})["id"]), 1);
+      await this.endEdit();
+    })();
+  }
+
+  /**
+   * Método chamado no salvamento de um item em um grid editável.
+   * @param itemRow 
+   */
+  public onSaveItem(itemRow: Base | IIndexable) {
+    (async () => {
+      await this.saveItem(itemRow);
+    })();
   }
 
   private async saveItem(itemRow: Base | IIndexable) {
@@ -631,36 +656,6 @@ export class GridComponent extends ComponentBase implements OnInit {
     }
   }
 
-  public onSaveItem(itemRow: Base | IIndexable) {
-    (async () => {
-      await this.saveItem(itemRow);
-    })();
-  }
-
-  public onCancelItem() {
-    (async () => {
-      if(this.adding) this.items.splice(this.items.findIndex(x => !(x instanceof GridGroupSeparator) && x["id"] == (this.editing || {id: undefined})["id"]), 1);
-      await this.endEdit();
-    })();
-  }
-
-  public getMetadata(row: any): IIndexable {
-    if(row?.id) {
-      if(!this.metadatas[row.id]) this.metadatas[row.id] = {} as IIndexable;
-      return this.metadatas[row.id];
-    }
-    return {};
-  }
-
-  public setMetadata(row: any, value: any) {
-    if(row.id) this.metadatas[row.id] = value;
-  }
-
-  public clearMetadata() {
-    this.metadatas = {};
-    this.cdRef.detectChanges();
-  } 
-  
   public async edit(itemRow: Base | IIndexable) {
     if(this.isSelectable && itemRow) this.onRowClick(new Event("SelectByEdit"), itemRow);
     this.editing = itemRow;
@@ -701,6 +696,23 @@ export class GridComponent extends ComponentBase implements OnInit {
     if(this.isSelectable && row) this.onRowClick(new Event("SelectById"), row);
     return row;
   }
+
+  public getMetadata(row: any): IIndexable {
+    if(row?.id) {
+      if(!this.metadatas[row.id]) this.metadatas[row.id] = {} as IIndexable;
+      return this.metadatas[row.id];
+    }
+    return {};
+  }
+
+  public setMetadata(row: any, value: any) {
+    if(row.id) this.metadatas[row.id] = value;
+  }
+
+  public clearMetadata() {
+    this.metadatas = {};
+    this.cdRef.detectChanges();
+  } 
 
   /* Side panel ****************************************************************/
   public get classColTable(): string {

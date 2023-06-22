@@ -42,7 +42,7 @@ export class InputTextComponent extends InputBase implements OnInit {
   @Input() source?: any;
   @Input() path?: string;
   @Input() placeholder?: string;
-  @Input() maxLength?: number;
+  @Input() maxLength?: number = 250;
   @Input() maskFormat: string = "";
   @Input() right?: string;
   @Input() maskDropSpecialCharacters: boolean = false; 

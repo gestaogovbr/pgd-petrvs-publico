@@ -237,6 +237,9 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PRGT_INCL", "Permite incluir programas de gestão"],
         ["MOD_PROC_INCL", "Permite incluir tipos de processos"],
         ["MOD_PRGT_PART", "Participantes do programa"],
+        ["MOD_PRGT_PART_INCL", "Permite incluir participantes do programa"],
+        ["MOD_PRGT_PART_EDT", "Permite editar participantes do programa"],
+        ["MOD_PRGT_PART_EXCL", "Permite excluir participantes do programa"],
         /* Capacidades do módulo PROJETO*/
         ["MOD_PROJ", "Permite acessar módulo projetos"],
         ["MOD_PROJ_CONS", "Permite consultar projeto"],
@@ -320,6 +323,9 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_UND_TUDO", "Permite consultar qualquer unidade independente de subordinação"],
         ["MOD_UND_INATV", "Permite inativar uma unidade"],
         ["MOD_UND_INTG", "Permite gerenciar integrantes da unidade"],
+        ["MOD_UND_INTG_INCL", "Permite incluir integrantes da unidade"],
+        ["MOD_UND_INTG_EDT", "Permite editar integrantes da unidade"],
+        ["MOD_UND_INTG_EXCL", "Permite excluir integrantes da unidade"],
         /* Capacidades do módulo USUÁRIO*/
         ["MOD_USER_CONS", "Permite consultar dados de usuário"],
         ["MOD_USER_EDT", "Permite alterar dados de usuário"],

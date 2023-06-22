@@ -19,7 +19,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 */
 
 /* Rotas do Angular */
-Route::any('/{any}', [AngularController::class, 'index'])->where('any', '^(?!api|sanctum|web|download|environment-config).*$');
+Route::any('/{any}', [AngularController::class, 'index'])->where('any', '^(?!api|sanctum|config|web|download|environment-config).*$');
 
 /* Rotas diversas */
 Route::get('environment-config', [PetrvsController::class, 'environmentConfig']);

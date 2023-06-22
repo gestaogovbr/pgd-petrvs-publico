@@ -1,13 +1,45 @@
 <input-container [labelPosition]="labelPosition" [controlName]="controlName" [control]="control" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
-    <div class="input-group">
-        <select #inputElement class="selectpicker form-control select-config" [id]="generatedId(controlName)" [attr.data-live-search]="isLiveSearch ? 'true' : undefined"  [attr.disabled]="isDisabled ? true : undefined" [class.is-invalid]="isInvalid()" (change)="onChange($event)">
-            <option *ngFor="let option of options" value="{{getStringValue(option.key)}}" class="input-select-dynamic-item" [attr.data-icon]="isNoIcon ? undefined : option.icon" [style.color]="isNoColor ? undefined : (option.color || '#000000')">{{option.value}}</option>
-        </select>
-        <button *ngIf="addRoute && dao" [id]="generatedId(controlName) + '_route_button'" class="btn btn-outline-success" type="button" (click)="onAddClick($event)">
-            <i class="bi bi-plus-circle"></i>
+    <div class="input-group dropdown">
+        <button *ngIf="loading" class="btn btn-light w-100" disabled>
+            <div class="spinner-border spinner-border-sm" role="status">
+                <span class="visually-hidden"></span>
+            </div>
+            carregando . . .
         </button>
-        <button *ngIf="isDetails" [id]="generatedId(controlName) + '_details_button'" class="btn btn-outline-secondary" type="button" [disabled]="!selectedValue ? true : undefined" (click)="onDetailsClick($event)">
-            <i [class]="detailsButtonIcon || 'bi-info-circle'"></i>
-        </button>
+        <ng-container *ngIf="!loading">
+            <button #dropdownButton [id]="generatedId(controlName)" class="btn btn-light dropdown-toggle w-100" [style.color]="isNoColor ? undefined : (current.color || '#000000')" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i *ngIf="!isNoIcon && current.icon" [class]="current.icon"></i>
+                <span class="input-select-label ms-1" [class.input-select-label-icon]="!isNoIcon && current.icon">{{current.value}}</span>
+            </button>
+            <div class="dropdown-menu p-0" [style.width.px]="dropdownWidth" [attr.aria-labelledby]="generatedId(controlName)">
+                <input *ngIf="isLiveSearch" [formControl]="filterControl" [id]="generatedId(controlName) + '_live'" type="text" class="form-control" placeholder="Filtrar..." (change)="onFilterChange()">
+                <ul class="input-select-no-dots p-0 m-0 input-select-list" [style.max-height.px]="listHeight">
+                    <li *ngIf="isNullable">
+                        <a class="dropdown-item" [class.active]="isActive(itemNullButton)" [id]="generatedId(controlName) + '_item_null'" (click)="onItemClick(itemNullButton)">
+                            {{itemNullButton.value}}
+                        </a>
+                    </li>
+                    <li *ngIf="isTodos">
+                        <a class="dropdown-item" [class.active]="isActive(itemTodosButton)" [id]="generatedId(controlName) + '_item_todos'" (click)="onItemClick(itemTodosButton)">
+                            {{itemTodosButton.value}}
+                        </a>
+                    </li>
+                    <ng-container *ngFor="let option of items">
+                        <li *ngIf="itemVisible(option)">
+                            <a class="dropdown-item text-wrap text-break" [class.active]="isActive(itemTodosButton)" [style.color]="isNoColor ? undefined : (option.color || '#000000')" [id]="generatedId(controlName) + '_' + getStringId(option.key)" (click)="onItemClick(option)">
+                                <i *ngIf="!isNoIcon && option.icon" [class]="option.icon"></i>
+                                {{option.value}}
+                            </a>
+                        </li>
+                    </ng-container> 
+                </ul>
+            </div>
+            <button *ngIf="addRoute && dao" [id]="generatedId(controlName) + '_route_button'" class="btn btn-outline-success" type="button" (click)="onAddClick($event)">
+                <i class="bi bi-plus-circle"></i>
+            </button>
+            <button *ngIf="isDetails" [id]="generatedId(controlName) + '_details_button'" class="btn btn-outline-secondary" type="button" [disabled]="!selectedItem ? 'true' : undefined" (click)="onDetailsClick($event)">
+                <i [class]="detailsButtonIcon || 'bi-info-circle'"></i>
+            </button>
+        </ng-container>
     </div>
 </input-container>

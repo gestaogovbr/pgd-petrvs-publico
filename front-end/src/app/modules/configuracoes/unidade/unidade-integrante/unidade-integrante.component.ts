@@ -46,6 +46,11 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     })();
   }
 
+  /**
+   * Método chamado na inicialização do componente para carregar todos os integrantes da entidade.
+   * @param entity 
+   * @param form 
+   */
   public async loadData(entity: IIndexable, form?: FormGroup | undefined) {
     this.grid!.loading = true;
     try {
@@ -92,6 +97,11 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     return result;
   };
 
+  /**
+   * Método chamado na edição de um integrante da Unidade.
+   * @param form 
+   * @param row 
+   */
   public async loadIntegrante(form: FormGroup, row: any) {
     form.controls.usuario_id.setValue(row.usuario_id);
     form.controls.atribuicoes.setValue(row.atribuicoes.map((x: string) => Object.assign({}, {

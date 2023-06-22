@@ -342,15 +342,15 @@ class DemandaService extends ServiceBase
 
     public function afterStore($entity, $action) {
         if($action == ServiceBase::ACTION_INSERT) {
-            $this->notificacoesService->sendDemandaDistribuicao($entity);
+            $this->notificacoesService->send("DMD_DISTRIBUICAO", ["demanda" => $entity]);
         } else {
-            $this->notificacoesService->sendDemandaModificacao($entity);
+            $this->notificacoesService->send("DMD_MODIFICACAO", ["demanda" => $entity]);
         }
     }
 
     public function afterUpdate($entity, $data) {
         if(isset($data["comentarios"])) {
-            $this->notificacoesService->sendDemandaComentario($entity);
+            $this->notificacoesService->send("DMD_COMENTARIO", ["demanda" => $entity]);
         }
     }
 
@@ -452,7 +452,7 @@ class DemandaService extends ServiceBase
             DB::rollback();
             throw $e;
         }
-        $this->notificacoesService->sendDemandaConclusao(Demanda::find($conclusao["id"]));
+        $this->notificacoesService->send("DMD_CONCLUSAO", ["demanda" => Demanda::find($conclusao["id"])]);
         return true;
     }
 
@@ -543,7 +543,7 @@ class DemandaService extends ServiceBase
             DB::rollback();
             throw $e;
         }
-        $this->notificacoesService->sendDemandaAvaliacao(Demanda::find($avaliacao["demanda_id"]));
+        $this->notificacoesService->send("DMD_AVALIACAO", ["demanda" => Demanda::find($avaliacao["demanda_id"])]);
         return true;
     }
 

@@ -28,6 +28,7 @@ class ProgramaParticipante extends ModelBase
 
     // Belongs
     public function programa() { return $this->belongsTo(Programa::class); }    
-    public function usuario() { return $this->belongsTo(Usuario::class); }    
+    public function usuario() { return $this->belongsTo(Usuario::class); }     
+
 
 }

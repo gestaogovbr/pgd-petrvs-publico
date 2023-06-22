@@ -1,0 +1,31 @@
+<grid [dao]="dao" [hasAdd]="false" [hasEdit]="false" [hasDelete]="false">
+  <columns>
+    <column title="Mensagens" [template]="mensagemTemplate">
+      <ng-template let-row="row" #mensagemTemplate>
+        <div class="row">
+          <strong>#{{row.numero}}<small> • {{util.getDateTimeFormatted(row.data_registro)}}</small></strong>
+        </div>
+        <!--div class="row">
+          <small>{{row.titulo_documento}}</small>
+        </div//-->
+        <div class="row">
+          <div class="col-12 text-wrap">
+            {{row.messagem}}
+          </div>
+        </div>
+      </ng-template>
+    </column>
+    <column title="Envios" [template]="formatoTemplate">
+      <ng-template let-row="row" #formatoTemplate>
+        <div class="text-wrap">
+          <ng-container *ngFor="let destinatario of row.destinatarios">
+            <badge *ngIf="destinatario.tipo == 'PETRVS'" img="assets/images/logo-24x24.png" hint="PETRVS" [label]="destinatario.data_leitura ? 'Lido' : 'Não lido'"></badge>
+            <badge *ngIf="destinatario.tipo == 'EMAIL'" icon="bi bi-envelope-at" hint="E-mail" [label]="destinatario.data_leitura ? 'Lido' : 'Não lido'"></badge>
+            <badge *ngIf="destinatario.tipo == 'WHATSAPP'" icon="bi bi-whatsapp" hint="WhatsApp" [label]="destinatario.data_leitura ? 'Lido' : 'Não lido'"></badge>
+          </ng-container>
+        </div>
+        <!--badge [color]="lookup.getColor(lookup.DOCUMENTO_ESPECIE, row.especie)" icon="bi bi-hash" [label]="lookup.getValue(lookup.DOCUMENTO_ESPECIE, row.especie)"></badge//-->
+      </ng-template>
+    </column>
+  </columns>
+</grid>

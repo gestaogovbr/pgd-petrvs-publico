@@ -36,7 +36,7 @@
         dndEffectAllowed="move">
         <div class="nivel-1" [style]="'--border-color:' + macro.cor +';--bg:white;--color:black;'">
             <div class="d-flex justify-content-between">
-                <h3 class="texto">{{macro.level}}. {{macro.nome}}</h3>
+                <h3 class="texto text-break">{{macro.level}}. {{macro.nome}}</h3>
                 <div class="btn-group dropstart dropdown-menu-button ms-2">
                     <action-button noArrow icon="bi bi-wrench-adjustable-circle" [data]="macro" [items]="options" color="transparent-black p-1 py-0"></action-button>
                 </div>
@@ -61,7 +61,7 @@
                     dndType="processo"
                     dndEffectAllowed="move">
                     <div class="d-flex justify-content-between mb-2">
-                        <h4 class="texto">{{processo.level}}. {{processo.nome}}</h4>
+                        <h4 class="texto text-break">{{processo.level}}. {{processo.nome}}</h4>
                         <div class="btn-group dropstart dropdown-menu-button ms-2">
                             <action-button noArrow icon="bi bi-wrench-adjustable-circle" [data]="processo" [items]="options" color="transparent-black p-1 py-0"></action-button>
                         </div>
@@ -86,7 +86,7 @@
                                 dndType="processo"
                                 dndEffectAllowed="move">
                                 <div class="d-flex justify-content-between mb-2">
-                                    <h5 class="texto">{{subprocesso.level}}. {{subprocesso.nome}}</h5>
+                                    <h5 class="texto text-break">{{subprocesso.level}}. {{subprocesso.nome}}</h5>
                                     <div class="btn-group dropstart dropdown-menu-button ms-2 align-button">
                                         <action-button noArrow icon="bi bi-wrench-adjustable-circle" [data]="subprocesso" [items]="options"  color="transparent-black p-1 py-0"></action-button>
                                     </div>

@@ -20,22 +20,24 @@
                 <input-switch [size]="12" scale="small" labelPosition="right" label="Ocultar o container Petrvs" controlName="ocultar_container_petrvs"></input-switch>
             </div>
         </separator>
-        <separator transparent title="Preferências notificações">
-            <div class="row">
-                <div class="col-md-6">
-                    <separator transparent title="Meios de notificação"></separator>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar por e-mail" controlName="enviar_email"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar por Whatsapp" controlName="enviar_whatsapp"></input-switch>
-                </div>
-                <div class="col-md-6">
-                    <separator transparent title="Tipos de notificação"></separator>
-                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar distribuição ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_distribuicao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar conclusão ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_conclusao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar avaliação ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_avaliacao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar modificação ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_modificacao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar comentário ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_comentario"></input-switch>
-                </div>
-            </div>
+        <separator *ngIf="entity" transparent title="Notificações">
+            <notificacoes-config #notificacoes [entity]="entity!" [disabled]="formDisabled"></notificacoes-config>
         </separator>
+        <!--div class="row">
+            <div class="col-md-6">
+                <separator transparent title="Meios de notificação"></separator>
+                <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar no Petrvs" controlName="enviar_petrvs"></input-switch>
+                <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar por e-mail" controlName="enviar_email"></input-switch>
+                <input-switch [size]="12" scale="small" labelPosition="right" label="Notificar por Whatsapp" controlName="enviar_whatsapp"></input-switch>
+            </div>
+            <div class="col-md-6">
+                <separator transparent title="Tipos de notificação"></separator>
+                <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar distribuição ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_distribuicao"></input-switch>
+                <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar conclusão ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_conclusao"></input-switch>
+                <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar avaliação ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_avaliacao"></input-switch>
+                <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar modificação ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_modificacao"></input-switch>
+                <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar comentário ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_comentario"></input-switch>
+            </div>
+        </div//-->
     </editable-form>
 </div>
