@@ -8,7 +8,7 @@
                 <span><small>
                     <badge *ngIf="row.entrega_plano_entrega?.plano_entrega_id == entity?.plano_entrega_id" color="success" label="Mesma Unidade"></badge>
                     <badge *ngIf="row.entrega_plano_entrega?.plano_entrega_id != entity?.plano_entrega_id && row.plano_entrega_entrega_id?.length" color="primary" label="Outra Unidade"></badge>
-                    <badge *ngIf="!row.plano_entrega_entrega_id?.length && row.entrega_id" color="secondary" label="Externa"></badge>
+                    <badge *ngIf="row.entrega_id" color="secondary" label="Externa"></badge>
                 </small></span>
             </ng-template>
             <ng-template let-row="row" #editOrigem>
@@ -37,7 +37,7 @@
                 <span><small>{{  row.forca_trabalho + '%' }}</small></span>
             </ng-template>
             <ng-template let-row="row" #editForcaTrabalho>
-                <input-text number sufix="%" controlName="forca_trabalho" [control]="form!.controls.forca_trabalho" (change)="onForcaTrabalhoChange($event)"></input-text>
+                <input-text number sufix="%" controlName="forca_trabalho" [control]="form!.controls.forca_trabalho" (change)="onForcaTrabalhoChange(row)"></input-text>
             </ng-template>
         </column>
         <column [titleTemplate]="titleDescricao" [template]="columnDescricao" [editTemplate]="editDescricao" [verticalAlign]="'middle'" [maxWidth]="300">

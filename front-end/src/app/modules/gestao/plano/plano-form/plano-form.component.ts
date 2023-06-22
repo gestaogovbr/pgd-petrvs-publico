@@ -81,7 +81,7 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
 
   constructor(public injector: Injector) {
     super(injector, Plano, PlanoDaoService);
-    this.join = ["unidade.entidade", "entregas.entrega", "plano_entrega.entregas.entrega", "plano_entrega.unidade.entidade", "plano_entrega.programa", 
+    this.join = ["unidade.entidade", "entregas.entrega", "entregas.entrega_plano_entrega:id,plano_entrega_id", "plano_entrega.entregas.entrega", "plano_entrega.unidade.entidade", "plano_entrega.programa", 
                 "usuario", "programa.template_tcr", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "atividades.atividade"];
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);

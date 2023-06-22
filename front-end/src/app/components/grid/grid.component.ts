@@ -631,6 +631,10 @@ export class GridComponent extends ComponentBase implements OnInit {
     })();
   }
 
+  /**
+   * Método chamado pelo onSaveItem para o salvamento de um item de um grid editável.
+   * @param itemRow 
+   */
   private async saveItem(itemRow: Base | IIndexable) {
     if(this.form!.valid){
       const entity = this.save ? (await this.save(this.form!, itemRow)) as IIndexable : this.form.value;

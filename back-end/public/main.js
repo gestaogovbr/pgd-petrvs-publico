@@ -8866,6 +8866,13 @@ class ProgramaParticipanteDaoService extends _dao_base_service__WEBPACK_IMPORTED
             { field: "usuario", label: "Usuário", fields: this.usuarioDao.dataset(), type: "OBJECT" }
         ], deeps);
     }
+    habilitar(participantesIds, programaId, habilitado) {
+        return this.server.post('api/' + this.collection + '/habilitar', this.prepareToSave({
+            participantes_ids: participantesIds,
+            programa_id: programaId,
+            habilitado: habilitado
+        })).toPromise();
+    }
 }
 ProgramaParticipanteDaoService.ɵfac = function ProgramaParticipanteDaoService_Factory(t) { return new (t || ProgramaParticipanteDaoService)(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_2__["Injector"])); };
 ProgramaParticipanteDaoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineInjectable"]({ token: ProgramaParticipanteDaoService, factory: ProgramaParticipanteDaoService.ɵfac, providedIn: 'root' });
@@ -30490,6 +30497,9 @@ class GridComponent extends _component_base__WEBPACK_IMPORTED_MODULE_6__["Compon
             }
         });
     }
+    /**
+     * Método chamado para incluir um item em um grid persistente.
+     */
     onAddItem() {
         if (!this.adding) {
             this.adding = true; /* Previne multiplas chamadas para inserir */
@@ -30536,7 +30546,7 @@ class GridComponent extends _component_base__WEBPACK_IMPORTED_MODULE_6__["Compon
         }))();
     }
     /**
-     * Método chamado no salvamento de um item que está sendo editado.
+     * Método chamado no salvamento de um item em um grid editável.
      * @param itemRow
      */
     onSaveItem(itemRow) {
@@ -30544,6 +30554,10 @@ class GridComponent extends _component_base__WEBPACK_IMPORTED_MODULE_6__["Compon
             yield this.saveItem(itemRow);
         }))();
     }
+    /**
+     * Método chamado pelo onSaveItem para o salvamento de um item de um grid editável.
+     * @param itemRow
+     */
     saveItem(itemRow) {
         var _a;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {

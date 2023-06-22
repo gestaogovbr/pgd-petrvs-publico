@@ -26,7 +26,7 @@ export class PlanoListEntregaComponent extends PageFrameBase {
   @ViewChild('entrega_mesma_unidade', { static: false }) public entrega_mesma_unidade?: InputSelectComponent;
   @ViewChild('entrega_outra_unidade', { static: false }) public entrega_outra_unidade?: InputSearchComponent;
   @ViewChild('entrega_externa', { static: false }) public entrega_externa?: InputSelectComponent;
-  @Input() entregas?: PlanoTrabalhoEntrega[];
+  //@Input() entregas?: PlanoTrabalhoEntrega[];
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: Plano | undefined) { super.entity = value; } get entity(): Plano | undefined { return super.entity; }
   @Input() set disabled(value: boolean) { if (this._disabled != value) this._disabled = value; } get disabled(): boolean { return this._disabled; }
@@ -71,17 +71,22 @@ export class PlanoListEntregaComponent extends PageFrameBase {
 
                               PERSISTENTE               NÃO-PERSISTENTE
   Inclusão                        OK
-  Alteração
+  Alteração                       OK
   Cancelamento                    OK
   Exclusão                        OK
-  Validação na inclusão           OK
-  Validação na alteração
+  Validação na inclusão           NÃO
+  Validação na alteração          NÃO
   */
 
   /*
   PROBLEMAS:
 
   1. O evento de selecionar o conteúdo do input-text está desviando o fluxo para a homepage
+  2. Sequência:
+  -  Adicionar/editar uma entrega no grid persistente;
+  -  inserir dados errados, como deixar percentual igual a zero ou escolher uma entrega duplicada;
+  -  após surgir as mensagens de erro de validação, corrigir os valores;
+  -  não se consegue salvar a nova entrega;
 
   */
 
@@ -91,8 +96,8 @@ export class PlanoListEntregaComponent extends PageFrameBase {
       result = "Obrigatório";
     }
     if(['forca_trabalho'].indexOf(controlName) >= 0) {
-      let soma = this.entity?.entregas?.reduce((acc, e) => { return acc + parseFloat(e.forca_trabalho); }, 0) || 0;
-      if((soma + (this.grid?.adding ? parseFloat(this.form?.controls.forca_trabalho.value) : 0)) > 100) result = "Ultrapassa o total de 100%";
+/*       let soma = this.entity?.entregas?.reduce((acc, e) => { return acc + parseFloat(e.forca_trabalho); }, 0) || 0;
+      if((soma + (this.grid?.adding ? parseFloat(this.form?.controls.forca_trabalho.value) : 0)) > 100) result = "Ultrapassa o total de 100%"; */
       if(this.form?.controls.forca_trabalho.value < 1) result = "Não pode ser inferior a 1";
     }
     if(['entrega_externa_id'].indexOf(controlName) >= 0) {
@@ -208,7 +213,7 @@ export class PlanoListEntregaComponent extends PageFrameBase {
   public carregarEntregasMesmaUnidade(): LookupItem[] {
     let entregasPlanoEntrega = this.entity?.id.length ? this.entity?.plano_entrega?.entregas || [] : [];//this.entregas || []; //REFATORAR  carregando as entregas do plano de entregas, se este já foi informado
     //return entregasPlanoEntrega.filter(epe => !this.entity?.entregas.map(ept => ept.plano_entrega_entrega_id).includes(epe.id)).map(epe => Object.assign({}, {key: epe.id, value: epe.descricao, data: epe})) || [];
-    return entregasPlanoEntrega.map(epe => Object.assign({}, {key: epe.id, value: epe.descricao, data: epe})) || [];
+    return entregasPlanoEntrega.map(epe => Object.assign({}, {key: epe.id, value: epe.entrega?.nome || '', data: epe}));
   }
 
   public carregarEntregasOutraUnidade(): LookupItem[]{
@@ -218,14 +223,13 @@ export class PlanoListEntregaComponent extends PageFrameBase {
 
   public async carregarEntregasExternas(): Promise<LookupItem[]>{
     let result: LookupItem[] = [];
-    //result = (await this.entregaDao?.query().getAll())?.filter(ee => !this.entity?.entregas.map(ept => ept.entrega_id).includes(ee.id)).map(ee => Object.assign({}, {key: ee.id, value: ee.nome, data: ee})) || [];
     result = (await this.entregaDao?.query().getAll())?.map(ee => Object.assign({}, {key: ee.id, value: ee.nome, data: ee})) || [];
     return result;
   }
 
   public onEntregaMesmaUnidadeChange(event: Event){
-    this.form?.controls.descricao.setValue('');
-    if(this.entrega_mesma_unidade?.selectedItem?.key.length) this.form?.controls.descricao.setValue(this.entrega_mesma_unidade?.selectedItem?.value);
+    this.form?.controls.descricao.setValue(this.entrega_mesma_unidade?.selectedItem?.value || '');
+    this.form?.controls.entrega_id.setValue(this.entrega_mesma_unidade?.selectedItem?.key);
   }
 
   public onEntregaOutraUnidadeChange(event: Event){
@@ -234,12 +238,13 @@ export class PlanoListEntregaComponent extends PageFrameBase {
   }
 
   public onEntregaExternaChange(event: Event){
-    this.form?.controls.descricao.setValue('');
-    if(this.entrega_externa?.selectedItem?.key.length) this.form?.controls.descricao.setValue(this.entrega_externa?.selectedItem?.value);
+    this.form?.controls.descricao.setValue(this.entrega_externa?.selectedItem?.value || '');
+    this.form?.controls.entrega_id.setValue(this.entrega_externa?.selectedItem?.key);
   }
 
-  public onForcaTrabalhoChange(event: Event){
-    this.grid!.items[this.grid!.items.length-1].forca_trabalho = this.form?.controls.forca_trabalho.value;  //REFATORAR
+  public onForcaTrabalhoChange(row: any){
+    let index = this.items.findIndex(x => x["id"] == row["id"]);
+    this.items[index].forca_trabalho = this.form?.controls.forca_trabalho.value;
     this.totalForcaTrabalho = Math.round(this.somaForcaTrabalho(this.grid?.items as PlanoTrabalhoEntrega[]) * 100) / 100;
   }
 

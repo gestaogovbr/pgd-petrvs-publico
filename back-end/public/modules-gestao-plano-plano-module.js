@@ -1031,11 +1031,11 @@ function PlanoListEntregaComponent_ng_template_20_Template(rf, ctx) { if (rf & 1
 function PlanoListEntregaComponent_ng_template_22_Template(rf, ctx) { if (rf & 1) {
     const _r46 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "input-text", 33);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("change", function PlanoListEntregaComponent_ng_template_22_Template_input_text_change_0_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r46); const ctx_r45 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"](); return ctx_r45.onForcaTrabalhoChange($event); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("change", function PlanoListEntregaComponent_ng_template_22_Template_input_text_change_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r46); const ctx_r45 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"](); return ctx_r45.onForcaTrabalhoChange.bind(ctx_r45); });
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r18 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("minValue", 1)("maxValue", 100)("control", ctx_r18.form.controls.forca_trabalho);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("control", ctx_r18.form.controls.forca_trabalho);
 } }
 function PlanoListEntregaComponent_ng_template_25_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div", 18);
@@ -1077,29 +1077,53 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
         this.entregasMesmaUnidade = [];
         this.entregasOutraUnidade = [];
         this.entregasExternas = [];
+        /*
+        TESTES
+      
+                                    PERSISTENTE               NÃO-PERSISTENTE
+        Inclusão                        OK
+        Alteração
+        Cancelamento                    OK
+        Exclusão                        OK
+        Validação na inclusão           OK
+        Validação na alteração
+        */
+        /*
+        PROBLEMAS:
+      
+        1. O evento de selecionar o conteúdo do input-text está desviando o fluxo para a homepage
+        2. O evento onForcaTrabalhoChange() não é chamado na edição da entrega
+      
+        */
         this.validate = (control, controlName) => {
-            var _a, _b, _c, _d, _e, _f;
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
             let result = null;
             if (['descricao', 'forca_trabalho'].indexOf(controlName) >= 0 && !((_a = control.value) === null || _a === void 0 ? void 0 : _a.length)) {
                 result = "Obrigatório";
             }
-            if (['forca_trabalho'].indexOf(controlName) >= 0 && (this.totalForcaTrabalho + parseFloat((_b = this.form) === null || _b === void 0 ? void 0 : _b.controls.forca_trabalho.value)) > 100) {
-                result = "Ultrapassa o total de 100%";
+            if (['forca_trabalho'].indexOf(controlName) >= 0) {
+                let soma = ((_c = (_b = this.entity) === null || _b === void 0 ? void 0 : _b.entregas) === null || _c === void 0 ? void 0 : _c.reduce((acc, e) => { return acc + parseFloat(e.forca_trabalho); }, 0)) || 0;
+                //let soma = Math.round(this.somaForcaTrabalho(this.grid?.items as PlanoTrabalhoEntrega[]) * 100) / 100;
+                if ((soma + (((_d = this.grid) === null || _d === void 0 ? void 0 : _d.adding) ? parseFloat((_e = this.form) === null || _e === void 0 ? void 0 : _e.controls.forca_trabalho.value) : 0)) > 100)
+                    result = "Ultrapassa o total de 100%";
+                //if(soma > 100) result = "Ultrapassa o total de 100%";
+                if (((_f = this.form) === null || _f === void 0 ? void 0 : _f.controls.forca_trabalho.value) < 1)
+                    result = "Não pode ser inferior a 1";
             }
             if (['entrega_externa_id'].indexOf(controlName) >= 0) {
-                let cont = (_d = (_c = this.entity) === null || _c === void 0 ? void 0 : _c.entregas) === null || _d === void 0 ? void 0 : _d.filter(e => !!e.entrega_id).map(e => e.entrega_id).reduce((acc, id) => { if (id === control.value)
+                let cont = ((_h = (_g = this.entity) === null || _g === void 0 ? void 0 : _g.entregas) === null || _h === void 0 ? void 0 : _h.filter(e => !!e.entrega_id).map(e => e.entrega_id).reduce((acc, id) => { if (id === control.value)
                     return acc + 1;
                 else
-                    return acc; }, 0);
-                if (!cont || cont > 1)
+                    return acc; }, 0)) || 0;
+                if (cont > (((_j = this.grid) === null || _j === void 0 ? void 0 : _j.adding) ? 0 : 1))
                     result = "Esta entrega está em duplicidade!";
             }
             if (['entrega_mesma_unidade_id', 'entrega_outra_unidade_id'].indexOf(controlName) >= 0) {
-                let cont = (_f = (_e = this.entity) === null || _e === void 0 ? void 0 : _e.entregas) === null || _f === void 0 ? void 0 : _f.filter(e => !e.entrega_id).map(e => e.plano_entrega_entrega_id).reduce((acc, id) => { if (id === control.value)
+                let cont = ((_l = (_k = this.entity) === null || _k === void 0 ? void 0 : _k.entregas) === null || _l === void 0 ? void 0 : _l.filter(e => !e.entrega_id).map(e => e.plano_entrega_entrega_id).reduce((acc, id) => { if (id === control.value)
                     return acc + 1;
                 else
-                    return acc; }, 0);
-                if (!cont || cont > 1)
+                    return acc; }, 0)) || 0;
+                if (cont > (((_m = this.grid) === null || _m === void 0 ? void 0 : _m.adding) ? 0 : 1))
                     result = "Esta entrega está em duplicidade!";
             }
             return result;
@@ -1114,7 +1138,7 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
             entrega_outra_unidade_id: { default: null },
             entrega_externa_id: { default: null },
             descricao: { default: "" },
-            forca_trabalho: { default: 0 },
+            forca_trabalho: { default: 1 },
             plano_id: { default: null },
             entrega_id: { default: null },
             plano_entrega_entrega_id: { default: null }
@@ -1155,26 +1179,26 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
      * @param row
      */
     loadEntrega(form, row) {
-        var _a, _b;
+        var _a, _b, _c, _d, _e;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             form.controls.descricao.setValue(row.descricao);
             form.controls.forca_trabalho.setValue(row.forca_trabalho);
             if (!row.entrega_plano_entrega) {
                 form.controls.origem.setValue('EXTERNA');
                 this.entregasExternas = yield this.carregarEntregasExternas();
-                //this.entrega_externa?.setValue(row.entrega_id);
+                (_a = this.entrega_externa) === null || _a === void 0 ? void 0 : _a.setValue(row.entrega_id);
                 form.controls.entrega_id.setValue(row.entrega_id);
             }
-            else if (((_a = row.entrega_plano_entrega) === null || _a === void 0 ? void 0 : _a.plano_entrega_id) == ((_b = this.entity) === null || _b === void 0 ? void 0 : _b.plano_entrega_id)) {
+            else if (((_b = row.entrega_plano_entrega) === null || _b === void 0 ? void 0 : _b.plano_entrega_id) == ((_c = this.entity) === null || _c === void 0 ? void 0 : _c.plano_entrega_id)) {
                 form.controls.origem.setValue('MESMA_UNIDADE');
                 this.entregasMesmaUnidade = this.carregarEntregasMesmaUnidade();
-                //this.entrega_mesma_unidade?.setValue(row.plano_entrega_entrega_id);
+                (_d = this.entrega_mesma_unidade) === null || _d === void 0 ? void 0 : _d.setValue(row.plano_entrega_entrega_id);
                 form.controls.plano_entrega_entrega_id.setValue(row.plano_entrega_entrega_id);
             }
             else {
                 form.controls.origem.setValue('OUTRA_UNIDADE');
                 this.entregasOutraUnidade = this.carregarEntregasOutraUnidade();
-                //this.entrega_outra_unidade?.setValue(row.plano_entrega_entrega_id);
+                (_e = this.entrega_outra_unidade) === null || _e === void 0 ? void 0 : _e.setValue(row.plano_entrega_entrega_id);
                 form.controls.plano_entrega_entrega_id.setValue(row.plano_entrega_entrega_id);
             }
         });
@@ -1182,6 +1206,10 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
     somaForcaTrabalho(entregas = []) {
         return entregas.map(x => parseFloat(x.forca_trabalho)).reduce((a, b) => a + b, 0);
     }
+    /**
+     * Método chamado para inserir uma entrega em um grid persistente.
+     * @returns
+     */
     addEntrega() {
         var _a;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
@@ -1217,6 +1245,12 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
             }
         });
     }
+    /**
+     * Método chamado no salvamento de uma entrega, no caso do grid persistente.
+     * @param form
+     * @param row
+     * @returns
+     */
     saveEntrega(form, row) {
         var _a, _b, _c, _d, _e, _f, _g, _h;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
@@ -1276,13 +1310,15 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
     }
     onEntregaExternaChange(event) {
         var _a, _b, _c, _d, _e, _f;
-        (_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.descricao.setValue('');
-        if ((_c = (_b = this.entrega_externa) === null || _b === void 0 ? void 0 : _b.selectedItem) === null || _c === void 0 ? void 0 : _c.key.length)
-            (_d = this.form) === null || _d === void 0 ? void 0 : _d.controls.descricao.setValue((_f = (_e = this.entrega_externa) === null || _e === void 0 ? void 0 : _e.selectedItem) === null || _f === void 0 ? void 0 : _f.value);
+        /*     this.form?.controls.descricao.setValue('');
+            if(this.entrega_externa?.selectedItem?.key.length) this.form?.controls.descricao.setValue(this.entrega_externa?.selectedItem?.value); */
+        (_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.descricao.setValue(((_c = (_b = this.entrega_externa) === null || _b === void 0 ? void 0 : _b.selectedItem) === null || _c === void 0 ? void 0 : _c.value) || '');
+        (_d = this.form) === null || _d === void 0 ? void 0 : _d.controls.entrega_id.setValue((_f = (_e = this.entrega_externa) === null || _e === void 0 ? void 0 : _e.selectedItem) === null || _f === void 0 ? void 0 : _f.key);
     }
-    onForcaTrabalhoChange(event) {
+    onForcaTrabalhoChange(form, row) {
         var _a, _b;
-        this.grid.items[this.grid.items.length - 1].forca_trabalho = (_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.forca_trabalho.value; //REFATORAR
+        let index = this.items.findIndex(x => x["id"] == row["id"]);
+        this.items[index].forca_trabalho = (_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.forca_trabalho.value;
         this.totalForcaTrabalho = Math.round(this.somaForcaTrabalho((_b = this.grid) === null || _b === void 0 ? void 0 : _b.items) * 100) / 100;
     }
 }
@@ -1300,7 +1336,7 @@ PlanoListEntregaComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵ
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵloadQuery"]()) && (ctx.entrega_mesma_unidade = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵloadQuery"]()) && (ctx.entrega_outra_unidade = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵloadQuery"]()) && (ctx.entrega_externa = _t.first);
-    } }, inputs: { entregas: "entregas", control: "control", entity: "entity", disabled: "disabled", noPersist: "noPersist" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵInheritDefinitionFeature"]], decls: 32, vars: 35, consts: [["editable", "", 3, "items", "form", "selectable", "minHeight", "join", "groupBy", "add", "remove", "save", "saveEnd", "load", "hasDelete", "hasEdit", "hasAdd"], ["gridEntregas", ""], [3, "titleTemplate", "template", "editTemplate", "verticalAlign", "width", "align"], ["titleOrigem", ""], ["columnOrigem", ""], ["editOrigem", ""], [3, "titleTemplate", "template", "editTemplate", "verticalAlign", "maxWidth"], ["titleEntrega", ""], ["columnEntrega", ""], ["editEntrega", ""], [3, "titleTemplate", "template", "editTemplate", "width", "align"], ["titleForcaTrabalho", ""], ["columnForcaTrabalho", ""], ["editForcaTrabalho", ""], ["titleDescricao", ""], ["columnDescricao", ""], ["editDescricao", ""], ["type", "options"], [1, "text-center"], ["color", "success", "label", "Mesma Unidade", 4, "ngIf"], ["color", "primary", "label", "Outra Unidade", 4, "ngIf"], ["color", "secondary", "label", "Externa", 4, "ngIf"], ["color", "success", "label", "Mesma Unidade"], ["color", "primary", "label", "Outra Unidade"], ["color", "secondary", "label", "Externa"], ["controlName", "origem", 3, "control", "items"], ["controlName", "entrega_mesma_unidade_id", 3, "control", "items", "change", 4, "ngIf"], ["controlName", "entrega_externa_id", 3, "control", "items", "change", 4, "ngIf"], ["controlName", "entrega_mesma_unidade_id", 3, "control", "items", "change"], ["entrega_mesma_unidade", ""], ["controlName", "entrega_externa_id", 3, "control", "items", "change"], ["entrega_externa", ""], ["icon", "bi bi-calculator", 3, "color", "label"], ["number", "", "sufix", "%", "controlName", "forca_trabalho", 3, "minValue", "maxValue", "control", "change"], ["controlName", "descricao", 3, "control"]], template: function PlanoListEntregaComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, inputs: { entregas: "entregas", control: "control", entity: "entity", disabled: "disabled", noPersist: "noPersist" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵInheritDefinitionFeature"]], decls: 32, vars: 35, consts: [["editable", "", 3, "items", "form", "selectable", "minHeight", "join", "groupBy", "add", "remove", "save", "saveEnd", "load", "hasDelete", "hasEdit", "hasAdd"], ["gridEntregas", ""], [3, "titleTemplate", "template", "editTemplate", "verticalAlign", "width", "align"], ["titleOrigem", ""], ["columnOrigem", ""], ["editOrigem", ""], [3, "titleTemplate", "template", "editTemplate", "verticalAlign", "maxWidth"], ["titleEntrega", ""], ["columnEntrega", ""], ["editEntrega", ""], [3, "titleTemplate", "template", "editTemplate", "width", "align"], ["titleForcaTrabalho", ""], ["columnForcaTrabalho", ""], ["editForcaTrabalho", ""], ["titleDescricao", ""], ["columnDescricao", ""], ["editDescricao", ""], ["type", "options"], [1, "text-center"], ["color", "success", "label", "Mesma Unidade", 4, "ngIf"], ["color", "primary", "label", "Outra Unidade", 4, "ngIf"], ["color", "secondary", "label", "Externa", 4, "ngIf"], ["color", "success", "label", "Mesma Unidade"], ["color", "primary", "label", "Outra Unidade"], ["color", "secondary", "label", "Externa"], ["controlName", "origem", 3, "control", "items"], ["controlName", "entrega_mesma_unidade_id", 3, "control", "items", "change", 4, "ngIf"], ["controlName", "entrega_externa_id", 3, "control", "items", "change", 4, "ngIf"], ["controlName", "entrega_mesma_unidade_id", 3, "control", "items", "change"], ["entrega_mesma_unidade", ""], ["controlName", "entrega_externa_id", 3, "control", "items", "change"], ["entrega_externa", ""], ["icon", "bi bi-calculator", 3, "color", "label"], ["number", "", "sufix", "%", "controlName", "forca_trabalho", 3, "control", "change"], ["controlName", "descricao", 3, "control"]], template: function PlanoListEntregaComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "grid", 0, 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](2, "columns");
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](3, "column", 2);
@@ -1316,7 +1352,7 @@ PlanoListEntregaComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵ
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](17, "column", 10);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](18, PlanoListEntregaComponent_ng_template_18_Template, 9, 2, "ng-template", null, 11, _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](20, PlanoListEntregaComponent_ng_template_20_Template, 3, 1, "ng-template", null, 12, _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplateRefExtractor"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](22, PlanoListEntregaComponent_ng_template_22_Template, 1, 3, "ng-template", null, 13, _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](22, PlanoListEntregaComponent_ng_template_22_Template, 1, 1, "ng-template", null, 13, _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](24, "column", 6);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](25, PlanoListEntregaComponent_ng_template_25_Template, 4, 0, "ng-template", null, 14, _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplateRefExtractor"]);
@@ -1649,8 +1685,8 @@ class PlanoFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IM
             data_fim: { default: "" },
             ganho_produtividade: { default: 0 },
             usuario_id: { default: "" },
+            plano_entrega_id: { default: "" },
             documento_id: { default: null },
-            plano_entrega_id: { default: null },
             documentos: { default: [] },
             atividades: { default: [] },
             entregas: { default: [] },

@@ -60,6 +60,8 @@ export class InputTextComponent extends InputBase implements OnInit {
     return this.getSize(); 
   }
 
+  public buffer?: string;
+
   constructor(public injector: Injector) {
     super(injector);
   }
@@ -82,6 +84,14 @@ export class InputTextComponent extends InputBase implements OnInit {
 
   public onChange(event: Event) {
     if(this.change) this.change.emit(event); 
+  }
+
+  public onKeyUp(event: Event) {
+    let inputValue = this.inputElement!.nativeElement.value;
+    if(this.buffer != inputValue) {
+      this.buffer = inputValue;
+      if(this.change) this.change.emit(event); 
+    }
   }
 
 }
