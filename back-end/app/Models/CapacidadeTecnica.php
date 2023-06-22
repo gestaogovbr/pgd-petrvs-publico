@@ -15,7 +15,7 @@ class CapacidadeTecnica extends ModelBase
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'nome',
         'ativo',
-        'area_tematica_id '
+        'area_tematica_id'
     ];
 
     // Has

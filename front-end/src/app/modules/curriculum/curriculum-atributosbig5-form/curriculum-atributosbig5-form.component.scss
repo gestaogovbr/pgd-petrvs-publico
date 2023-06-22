@@ -155,6 +155,7 @@ input[type=range] {
 .lblRadio:hover{
   background-color:#223;
   color: #fec901;
+  border-color: #fec901;
 
 }
 
@@ -182,4 +183,14 @@ input[type=range] {
   color: #213;
   border-color: #213;
 
+}
+
+
+input[type="radio"]:checked+ .lblRadio{  
+  background-color: #fff; 
+}
+
+#imgBigIco,#imgBigIcoAmarelo{
+  max-width: 30px;
+  
 }

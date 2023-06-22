@@ -272,7 +272,10 @@ Route::middleware(['auth:sanctum'])->prefix('Capacidade')->group(function () { d
 
 /* Modulos: Curriculum */
 Route::middleware(['auth:sanctum'])->prefix('AreaConhecimento')->group(function () { defaultRoutes(AreaConhecimentoController::class); });
+Route::middleware(['auth:sanctum'])->prefix('AreaAtividadeExterna')->group(function () { defaultRoutes(AreaAtividadeExternaController::class); });
+Route::middleware(['auth:sanctum'])->prefix('AreaTematica')->group(function () { defaultRoutes(AreaTematicaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Curso')->group(function () { defaultRoutes(CursoController::class); });
+Route::middleware(['auth:sanctum'])->prefix('CapacidadeTecnica')->group(function () { defaultRoutes(CapacidadeTecnicaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('TipoCurso')->group(function () { defaultRoutes(TipoCursoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Materia')->group(function () { defaultRoutes(MateriaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Curriculum')->group(function () { defaultRoutes(CurriculumController::class); });
