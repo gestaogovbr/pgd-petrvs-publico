@@ -10,7 +10,7 @@
                         <span><small>
                             <badge *ngIf="row.entrega_plano_entrega?.plano_entrega_id == entity?.plano_entrega_id" color="success" label="Mesma Unidade"></badge>
                             <!-- <badge *ngIf="row.entrega_plano_entrega?.plano_entrega_id != entity?.plano_entrega_id && row.plano_entrega_entrega_id?.length" color="primary" label="Outra Unidade"></badge> -->
-                            <badge *ngIf="row.entrega_id?.length" color="secondary" label="Externa"></badge>
+                            <badge *ngIf="row.entrega_id?.length" color="secondary" label="Catálogo"></badge>
                         </small></span>
                     </ng-template>
                     <ng-template let-row="row" #editOrigem>
@@ -25,7 +25,7 @@
                     <ng-template let-row="row" #editEntrega>
                         <input-select *ngIf="origem?.value == 'MESMA_UNIDADE'" #entrega_mesma_unidade nullable itemNull="- Selecione -" controlName="plano_entrega_entrega_id" [control]="form!.controls.plano_entrega_entrega_id" [items]="entregasMesmaUnidade" (change)="onEntregaMesmaUnidadeChange($event)"></input-select>
                         <!-- <input-select *ngIf="origem?.value == 'OUTRA_UNIDADE'" #entrega_outra_unidade nullable controlName="plano_entrega_entrega_id" [control]="form!.controls.plano_entrega_entrega_id" [dao]="" (select)="onEntregaOutraUnidadeChange($event)"></input-select> -->
-                        <input-select *ngIf="origem?.value == 'EXTERNA'" #entrega_externa nullable itemNull="- Selecione -" controlName="entrega_id" [control]="form!.controls.entrega_id" [items]="entregasExternas" (change)="onEntregaExternaChange($event)"></input-select>
+                        <input-select *ngIf="origem?.value == 'CATALOGO'" #entrega_catalogo nullable itemNull="- Selecione -" controlName="entrega_id" [control]="form!.controls.entrega_id" [items]="entregasCatalogo" (change)="onEntregaCatalogoChange($event)"></input-select>
                     </ng-template>
                 </column>
                 <column [titleTemplate]="titleForcaTrabalho" [template]="columnForcaTrabalho" [editTemplate]="editForcaTrabalho" [width]="130" [align]="'center'">

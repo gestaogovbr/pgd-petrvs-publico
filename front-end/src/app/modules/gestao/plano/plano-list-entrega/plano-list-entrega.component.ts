@@ -26,7 +26,7 @@ export class PlanoListEntregaComponent extends PageFrameBase {
   @ViewChild('origem', { static: false }) public origem?: InputSelectComponent;
   @ViewChild('entrega_mesma_unidade', { static: false }) public entrega_mesma_unidade?: InputSelectComponent;
   @ViewChild('entrega_outra_unidade', { static: false }) public entrega_outra_unidade?: InputSelectComponent;
-  @ViewChild('entrega_externa', { static: false }) public entrega_externa?: InputSelectComponent;
+  @ViewChild('entrega_catalogo', { static: false }) public entrega_catalogo?: InputSelectComponent;
   @Input() cdRef: ChangeDetectorRef;
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: Plano | undefined) { super.entity = value; } get entity(): Plano | undefined { return super.entity; }
@@ -46,7 +46,7 @@ export class PlanoListEntregaComponent extends PageFrameBase {
   public totalForcaTrabalho: number = 0;
   public entregasMesmaUnidade: LookupItem[] = [];
   public entregasOutraUnidade: LookupItem[] = [];
-  public entregasExternas: LookupItem[] = [];
+  public entregasCatalogo: LookupItem[] = [];
 
   constructor(public injector: Injector) {
     super(injector);
@@ -59,7 +59,7 @@ export class PlanoListEntregaComponent extends PageFrameBase {
       origem: {default: null},
       entrega_mesma_unidade_id: {default: null},
       entrega_outra_unidade_id: {default: null},
-      entrega_externa_id: {default: null},
+      entrega_catalogo_id: {default: null},
       descricao: {default: ""},
       forca_trabalho: {default: 1},
       plano_id: {default: null},
@@ -99,16 +99,16 @@ export class PlanoListEntregaComponent extends PageFrameBase {
       if(control.value < 1) result = "Não pode ser inferior a 1";
     }
     if(['entrega_id'].indexOf(controlName) >= 0) {
-      if(this.form?.controls.origem.value == 'EXTERNA' && !control.value) result = "Este campo não pode ser nulo!";
+      if(this.form?.controls.origem.value == 'CATALOGO' && !control.value) result = "Este campo não pode ser nulo!";
       let cont = this.entity?.entregas?.filter(e => !!e.entrega_id && !e.plano_entrega_entrega_id).map(e => e.entrega_id).reduce((acc, id) => { if(id === control.value) return acc + 1; else return acc; }, 0) || 0;
       if(cont > (this.grid?.adding ? 0 : 1)) result = "Esta entrega está em duplicidade!";
     }
-    if(['plano_entrega_entrega_id'].indexOf(controlName) >= 0) {
+/*     if(['plano_entrega_entrega_id'].indexOf(controlName) >= 0) {
       //separar os casos de mesma unidade dos casos de outra unidade
       if(['MESMA_UNIDADE','OUTRA_UNIDADE'].includes(this.form?.controls.origem.value) && !control.value) result = "Este campo não pode ser nulo!";
       let cont = this.entity?.entregas?.filter(e => !e.entrega_id && !!e.plano_entrega_entrega_id).map(e => e.plano_entrega_entrega_id).reduce((acc, id) => { if(id === control.value) return acc + 1; else return acc; }, 0) || 0;
       if(cont > (this.grid?.adding ? 0 : 1)) result = "Esta entrega está em duplicidade!";
-    } 
+    }  */
     return result;
   }
 
@@ -116,7 +116,7 @@ export class PlanoListEntregaComponent extends PageFrameBase {
     super.ngOnInit();
     this.entity = this.metadata?.entity || this.entity;
     this.totalForcaTrabalho = Math.round(this.somaForcaTrabalho(this.entity?.entregas) * 100)/100;
-    this.entregasExternas = await this.carregarEntregasExternas();
+    this.entregasCatalogo = await this.carregarEntregasCatalogo();
     this.entregasMesmaUnidade = this.carregarEntregasMesmaUnidade();
   }
 
@@ -138,30 +138,30 @@ export class PlanoListEntregaComponent extends PageFrameBase {
     form.controls.descricao.setValue(row.descricao);
     form.controls.forca_trabalho.setValue(row.forca_trabalho)
     if(!row.plano_entrega_entrega_id?.length && row.entrega_id?.length){
-      // POR QUE OS 3 INPUTS ESTÃO UNDEFINED ? THIS.ENTREGA_EXTERNA, THIS.ENTREGA_MESMA_UNIDADE, THIS.ENTREGA_OUTRA_UNIDADE
-      this.entrega_externa?.setValue(row.entrega_id);
+      // POR QUE OS 3 INPUTS ESTÃO UNDEFINED ? THIS.ENTREGA_CATALOGO, THIS.ENTREGA_MESMA_UNIDADE, THIS.ENTREGA_OUTRA_UNIDADE
+      this.entrega_catalogo?.setValue(row.entrega_id);
       form.controls.entrega_id.setValue(row.entrega_id);
       this.entrega_mesma_unidade?.setValue(null);
       form.controls.plano_entrega_entrega_id.setValue(null);
-      this.origem?.setValue('EXTERNA');
+      this.origem?.setValue('CATALOGO');
     } else if(!row.entrega_id?.length && row.plano_entrega_entrega_id?.length && row.entrega_plano_entrega?.plano_entrega_id == this.entity?.plano_entrega_id) {
-      // POR QUE OS 3 INPUTS ESTÃO UNDEFINED ? THIS.ENTREGA_EXTERNA, THIS.ENTREGA_MESMA_UNIDADE, THIS.ENTREGA_OUTRA_UNIDADE
+      // POR QUE OS 3 INPUTS ESTÃO UNDEFINED ? THIS.ENTREGA_CATALOGO, THIS.ENTREGA_MESMA_UNIDADE, THIS.ENTREGA_OUTRA_UNIDADE
       this.entrega_mesma_unidade?.setValue(row.plano_entrega_entrega_id);
       form.controls.plano_entrega_entrega_id.setValue(row.plano_entrega_entrega_id);
-      this.entrega_externa?.setValue(null);
+      this.entrega_catalogo?.setValue(null);
       form.controls.entrega_id.setValue(null);      
       this.origem?.setValue('MESMA_UNIDADE');
     } else if(!row.entrega_id?.length && row.plano_entrega_entrega_id?.length && row.entrega_plano_entrega?.plano_entrega_id != this.entity?.plano_entrega_id) {
-      // POR QUE OS 3 INPUTS ESTÃO UNDEFINED ? THIS.ENTREGA_EXTERNA, THIS.ENTREGA_MESMA_UNIDADE, THIS.ENTREGA_OUTRA_UNIDADE
+      // POR QUE OS 3 INPUTS ESTÃO UNDEFINED ? THIS.ENTREGA_CATALOGO, THIS.ENTREGA_MESMA_UNIDADE, THIS.ENTREGA_OUTRA_UNIDADE
       this.entregasOutraUnidade = this.carregarEntregasOutraUnidade();
       this.entrega_outra_unidade?.setValue(row.plano_entrega_entrega_id);
       form.controls.plano_entrega_entrega_id.setValue(row.plano_entrega_entrega_id);
-      this.entrega_externa?.setValue(null);
+      this.entrega_catalogo?.setValue(null);
       form.controls.entrega_id.setValue(null);
       this.origem?.setValue('OUTRA_UNIDADE');
     } else {
       form.controls.entrega_id.setValue(null);
-      this.entrega_externa?.setValue(null);
+      this.entrega_catalogo?.setValue(null);
       form.controls.plano_entrega_entrega_id.setValue(null);
       this.entrega_mesma_unidade?.setValue(null);
       this.entrega_outra_unidade?.setValue(null);
@@ -232,7 +232,7 @@ export class PlanoListEntregaComponent extends PageFrameBase {
   }
 
   public afterSaveEntrega(novaEntrega: PlanoTrabalhoEntrega){
-    novaEntrega!.entrega = this.entrega_externa?.selectedItem?.data;
+    novaEntrega!.entrega = this.entrega_catalogo?.selectedItem?.data;
     novaEntrega!.entrega_plano_entrega = this.origem?.value == 'MESMA_UNIDADE' ? this.entrega_mesma_unidade?.selectedItem?.data : this.entrega_outra_unidade?.selectedItem;
     this.grid?.reloadFilter();
   }
@@ -248,7 +248,7 @@ export class PlanoListEntregaComponent extends PageFrameBase {
     return result;
   }
 
-  public async carregarEntregasExternas(): Promise<LookupItem[]>{
+  public async carregarEntregasCatalogo(): Promise<LookupItem[]>{
     let result: LookupItem[] = [];
     result = (await this.entregaDao?.query().getAll())?.map(ee => Object.assign({}, {key: ee.id, value: ee.nome, data: ee})) || [];
     return result;
@@ -257,7 +257,7 @@ export class PlanoListEntregaComponent extends PageFrameBase {
   public onOrigemChange(row: any){
     if(['MESMA_UNIDADE','OUTRA_UNIDADE'].includes(row["origem"])){
       this.form?.controls.entrega_id.setValue(null);
-    } else if(row["origem"] == "EXTERNA"){
+    } else if(row["origem"] == "CATALOGO"){
       this.form?.controls.plano_entrega_entrega_id.setValue(null);
     } else {
       this.form?.controls.entrega_id.setValue(null);
@@ -276,9 +276,9 @@ export class PlanoListEntregaComponent extends PageFrameBase {
     //if(this.entrega_outra_unidade?.selectedItem?.key.length) this.form?.controls.descricao.setValue(this.entrega_outra_unidade?.selectedItem?.value);
   }
 
-  public onEntregaExternaChange(event: Event){
-    this.form?.controls.descricao.setValue(this.entrega_externa?.selectedItem?.value || '');
-    this.form?.controls.entrega_id.setValue(this.entrega_externa?.selectedItem?.key);
+  public onEntregaCatalogoChange(event: Event){
+    this.form?.controls.descricao.setValue(this.entrega_catalogo?.selectedItem?.value || '');
+    this.form?.controls.entrega_id.setValue(this.entrega_catalogo?.selectedItem?.key);
     this.cdRef.detectChanges();
   }
 
