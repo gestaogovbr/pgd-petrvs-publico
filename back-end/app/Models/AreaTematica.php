@@ -16,7 +16,7 @@ class AreaTematica extends ModelBase
         'ativo' 
     ];
 
-    // Has
-    //public function cursos() { return $this->hasMany(CursoGraduacao::class, 'area_curso_id'); }
+    //Has
+    public function capacidadesTecnicas() { return $this->hasMany(CapacidadeTecnica::class, 'area_tematica_id'); }
     
 }

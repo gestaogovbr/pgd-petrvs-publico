@@ -67,7 +67,7 @@ class TenantListenerBase
         $config = [
             /* Logs */
             'host' => $tenant->log_host ?? env("LOG_HOST") ?? "",
-            'database' => $tenant->log_database ?? "log_" + $tenant->tenancy_db_name,
+            'database' => $tenant->log_database ?? "log_" . $tenant->tenancy_db_name,
             'port' => $tenant->log_port ?? env("LOG_PORT") ?? "3306",
             'username' => $tenant->log_username ?? env("LOG_USERNAME") ?? "root",
             'password' => $tenant->log_password ?? env("LOG_PASSWORD") ?? "PsEeTnRhVaS",

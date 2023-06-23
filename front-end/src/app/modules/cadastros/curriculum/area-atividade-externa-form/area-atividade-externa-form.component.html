@@ -1,1 +1,7 @@
-<p>area-atividade-externa-form works!</p>
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+    <div class="row">
+        <input-text [size]="10" label="Nome da Área da Atividade Externa" controlName="nome"></input-text>
+        <input-switch [size]="2" labelPosition="left" label="Ativo" controlName="ativo"></input-switch>
+    </div>
+    
+</editable-form>

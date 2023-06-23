@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
-use App\Models\CursoGraduacao;
+use App\Models\Curso;
 use App\Traits\AutoDataInicio;
 
 
@@ -18,7 +18,7 @@ class AreaConhecimento extends ModelBase
     ];
 
     // Has
-    public function cursos() { return $this->hasMany(CursoGraduacao::class, 'area_curso_id'); }
-    public function materia() { return $this->hasMany(CursoGraduacao::class, 'area_materia_id'); }
+    public function cursos() { return $this->hasMany(Curso::class, 'area_curso_id'); }
+    //public function materia() { return $this->hasMany(Materia::class, 'area_materia_id'); }
     
 }

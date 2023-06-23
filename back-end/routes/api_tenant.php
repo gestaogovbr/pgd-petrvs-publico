@@ -64,6 +64,10 @@ use App\Http\Controllers\PlanoTrabalhoEntregaController;
 use App\Http\Controllers\UnidadeIntegranteController;
 use App\Http\Controllers\MateriaController;
 use App\Http\Controllers\CurriculumProfissionalController;
+use App\Http\Controllers\AreaAtividadeExternaController;
+use App\Http\Controllers\AreaTematicaController;
+//use App\Http\Controllers\AtividadeExternaController;
+use App\Http\Controllers\CapacidadeTecnicaController;
 
 /*
 |--------------------------------------------------------------------------

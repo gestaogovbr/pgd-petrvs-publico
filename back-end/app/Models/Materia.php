@@ -16,12 +16,11 @@ class Materia extends ModelBase
         'nome',
         'horas_aula',
         'ativo',
-        'area_materia_id',
-        'curso_materia_id'
+        'curso_id'
     ];
 
     // Belongs
-    public function area() { return $this->belongsTo(AreaConhecimento::class,'area_materia_id'); }
-    public function curso() { return $this->belongsTo(TipoCurso::class,'curso_materia_id'); }
+    //public function area() { return $this->belongsTo(AreaConhecimento::class,'area_materia_id'); }
+    public function curso() { return $this->belongsTo(Curso::class,'curso_id'); }
     
 }

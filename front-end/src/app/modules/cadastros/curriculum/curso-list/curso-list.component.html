@@ -19,7 +19,7 @@
         </column>
         <column title="Título" [template]="columnTitulo">
             <ng-template let-row="row" #columnTitulo>
-                <span>{{ lookup.getValue(lookup.TITULOS_CURSOS,row.titulo) }}</span>
+                <span>{{ lookup.getValue(lookup.TITULOS_CURSOS_INST,row.titulo) }}</span>
             </ng-template>
         </column>
         <column title="Tipo" [template]="columnTipo">

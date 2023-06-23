@@ -5,15 +5,15 @@
         <div class="row">
             <input-text [size]="5" label="Nome da Matéria" controlName="nome"
                 [control]="filter!.controls.nome" placeholder="Nome da Matéria"></input-text>
-            <input-text [size]="5" label="Área" controlName="area_materia_id"
-                [control]="filter!.controls.area_materia_id" placeholder="Nome da Matéria"></input-text>
+            <input-text [size]="5" label="Área" controlName="area_id"
+                [control]="filter!.controls.area_id" placeholder="Nome da Área"></input-text>
         </div>
     </filter>
     <columns>
-        <column title="Nome da Matéria"field="nome"></column>
+        <column title="Nome da Matéria" field="nome"></column>
         <column title="Área do Conhecimento" [template]="columnNomeArea">
             <ng-template let-row="row" #columnNomeArea>
-                <span>{{ row.area.nome }}</span>
+                <span>{{ row.curso.area.nome }}</span>
             </ng-template>
         </column>
         <column title="Curso" [template]="columnCurso">

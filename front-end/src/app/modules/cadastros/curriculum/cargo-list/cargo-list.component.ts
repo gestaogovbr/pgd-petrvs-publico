@@ -23,6 +23,7 @@ export class CargoListComponent extends PageListBase<Cargo, CargoDaoService> {
        /* Inicializações */
     this.title = this.lex.noun("Cargos",true);
     this.code = "MOD_RX";
+    this.orderBy = [['nome','asc']];
     //this.join = ["area:nome","tipo:nome"];
   
     this.filter = this.fh.FormBuilder({

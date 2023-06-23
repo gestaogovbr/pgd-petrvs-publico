@@ -5,26 +5,32 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { Materia } from 'src/app/models/materia.model';
 import { MateriaDaoService } from 'src/app/dao/materia-dao.service';
+import { AreaConhecimentoDaoService } from 'src/app/dao/area-conhecimento-dao.service';
 
 @Component({
   selector: 'materia-list',
   templateUrl: './materia-list.component.html',
   styleUrls: ['./materia-list.component.scss']
 })
+
+
 export class MateriaListComponent extends PageListBase<Materia, MateriaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
-  
- 
 
+  public area?: AreaConhecimentoDaoService;
+  
   constructor(public injector: Injector) {
     super(injector, Materia, MateriaDaoService);
+    this.area = injector.get<AreaConhecimentoDaoService>(AreaConhecimentoDaoService)
+   
        /* Inicializações */
     this.title = this.lex.noun("Matérias",true);
     this.code = "MOD_RX";
-    this.join = ["area:nome","curso:nome"];
+    this.join = ["curso:id,nome"];
+    this.join = ["curso.area:id,nome"];
   
     this.filter = this.fh.FormBuilder({
-      area_materia_id:{default: ""},
+      area_id:{default: ""},
       nome: {default: ""},
       horas_aula: {default:0},
       ativo: {default: true},

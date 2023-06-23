@@ -33,6 +33,6 @@ class CreateAreasAtividadesExternas extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('temas');
+        Schema::dropIfExists('areas_atividades_externas');
     }
 }

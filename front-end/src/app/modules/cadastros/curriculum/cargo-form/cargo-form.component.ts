@@ -24,7 +24,12 @@ export class CargoFormComponent extends PageFormBase<Cargo, CargoDaoService> {
    
     this.form = this.fh.FormBuilder({
       nome: {default: ""},
+      nivel: {default: ""},
+      cbo: {default: ""},
+      siape: {default: ""},
+      descricao: {default: ""},
       ativo: {default: true},
+      efetivo: {default: true},
            
     }, this.cdRef, this.validate);
   }

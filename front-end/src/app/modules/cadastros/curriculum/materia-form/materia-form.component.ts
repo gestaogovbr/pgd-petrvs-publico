@@ -24,14 +24,16 @@ export class MateriaFormComponent extends PageFormBase<Materia, MateriaDaoServic
 
   public cursos: LookupItem[] = [];
   public titulo: LookupItem[] = [];
+  
+  public cursoWhere: any[] = [["id", "==", null]];
 
   constructor(public injector: Injector) {
     super(injector, Materia, MateriaDaoService);
     this.areaDao = injector.get<AreaConhecimentoDaoService>(AreaConhecimentoDaoService);
     this.cursoDao = injector.get<CursoDaoService>(CursoDaoService);
     this.form = this.fh.FormBuilder({
-      area_materia_id: {default: ""},
-      curso_materia_id:{default: ""},
+      area_id: {default: ""},
+      curso_id:{default: ""},
       nome: {default: ""},
       titulo: {default: ""},
       horas_aula: {default:0},
@@ -47,11 +49,11 @@ export class MateriaFormComponent extends PageFormBase<Materia, MateriaDaoServic
       result = "Obrigatório";
     }
 
-    if(['area_materia_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if(['area_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
 
-    if(['curso_materia_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if(['curso_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
     if(['horas_aula'].indexOf(controlName) >= 0 && !control.value?.length) {
@@ -96,11 +98,12 @@ export class MateriaFormComponent extends PageFormBase<Materia, MateriaDaoServic
   public onTituloChange(){
     //console.log(this.form!.controls.titulo.value)
     //const titulo = this.lookup.TITULOS_CURSOS_INST.find(x => x.key == this.form!.controls.titulo.value);
-    if(this.form!.controls.area_materia_id.value && this.form!.controls.titulo.value){
-        this.cursoDao?.query({ where: [['area_curso_id', '==', this.form!.controls.area_materia_id.value],['titulo', '==', this.form!.controls.titulo.value]] }).getAll().then((cursos2) => {
-          this.cursos = cursos2.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
+    if(this.form!.controls.area_id.value && this.form!.controls.titulo.value){
+        /*this.cursoDao?.query({ where: [['area_curso_id', '==', this.form!.controls.area_id.value],['titulo', '==', this.form!.controls.titulo.value]] }).getAll().then((cursos2) => {
+          this.cursos = cursos2.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);*/
+          this.cursoWhere =[['area_id', '==', this.form!.controls.area_id.value], ['titulo', '==', this.form!.controls.titulo.value]];
           this.cdRef.detectChanges();
-        });
+       // });
     }
   }
 

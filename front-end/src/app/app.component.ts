@@ -170,11 +170,11 @@ export class AppComponent {
       RXCADASTRO_ADM_MATERIAS: { name: this.lex.noun("Matérias", true), permition: 'MOD_RX_EDT_OPO', route: ['raiox', 'cadastros','gerais','materia'], icon: "bi bi-list-check" },
       RXVISUALIZA_ADM_OPORTUNIDADES: { name: this.lex.noun("Pesquisa Oportunidades", true), permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-emoji-smile-fill" },
 
-      RXCADASTRO_ADM_ATIVIDADESEXT: { name: this.lex.noun("Atividades Externas", true), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros','gerais','cargo'], icon: "bi bi-box-arrow-up-right" },
-      RXCADASTRO_ADM_AREASTEMATICAS: { name: this.lex.noun("Áreas Temáticas", true), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros','gerais','cargo'], icon: "bi bi-textarea" },
-      RXCADASTRO_ADM_CAPACIDADES_TECNICAS: { name: this.lex.noun("Capacidades Técnicas", true), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros','gerais','cargo'], icon: "bi bi-bookmark-check" },
-      RXCADASTRO_ADM_QUESTIONARIOS_PERGUNTAS: { name: this.lex.noun("Perguntas", true), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros','gerais','cargo'], icon: "bi bi-patch-question" },
-      RXCADASTRO_ADM_QUESTIONARIOS_RESPOSTAS: { name: this.lex.noun("Respostas", true), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros','gerais','cargo'], icon: "bi bi-list-task" },
+      RXCADASTRO_ADM_ATIVIDADESEXT: { name: this.lex.noun("Atividades Externas", true), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','areaatividadeexterna'], icon: "bi bi-arrows-fullscreen" },
+      RXCADASTRO_ADM_AREASTEMATICAS: { name: this.lex.noun("Áreas Temáticas", true), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','areatematica'], icon: "bi bi-box-arrow-in-down" },
+      RXCADASTRO_ADM_CAPACIDADES_TECNICAS: { name: this.lex.noun("Capacidades Técnicas", true), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','capacidadetecnica'], icon: "bi bi-arrows-angle-contract" },
+      RXCADASTRO_ADM_QUESTIONARIOS_PERGUNTAS: { name: this.lex.noun("Perguntas", true), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','cargo'], icon: "bi bi-patch-question" },
+      RXCADASTRO_ADM_QUESTIONARIOS_RESPOSTAS: { name: this.lex.noun("Respostas", true), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','cargo'], icon: "bi bi-list-task" },
       RXVISUALIZA_ADM_PESQUISA1: { name: this.lex.noun("Usuario", true), permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-search" },
       RXVISUALIZA_ADM_PESQUISA2: { name: this.lex.noun("Administrador", true), permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-binoculars" },
       /*PROJETOS*/

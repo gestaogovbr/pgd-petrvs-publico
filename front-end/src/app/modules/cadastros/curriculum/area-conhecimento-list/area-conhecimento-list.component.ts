@@ -22,6 +22,7 @@ export class AreaConhecimentoListComponent extends PageListBase<AreaConhecimento
   
     this.title = this.lex.noun("Área de conhecimento",true);
     this.code = "MOD_RX";
+    this.orderBy = [['nome','asc']];
 
     this.filter = this.fh.FormBuilder({
       nome_area: {default: ""}

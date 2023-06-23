@@ -22,6 +22,14 @@ import { MateriaFormComponent } from './materia-form/materia-form.component';
 import { MateriaListComponent } from './materia-list/materia-list.component';
 import { CargoFormComponent } from './cargo-form/cargo-form.component';
 import { CargoListComponent } from './cargo-list/cargo-list.component';
+import { AreaAtividadeExternaFormComponent } from './area-atividade-externa-form/area-atividade-externa-form.component';
+import { AreaAtividadeExternaListComponent } from './area-atividade-externa-list/area-atividade-externa-list.component';
+import { AreaTematicaFormComponent } from './area-tematica-form/area-tematica-form.component';
+import { AreaTematicaListComponent } from './area-tematica-list/area-tematica-list.component';
+import { CapacidadeTecnicaFormComponent } from './capacidade-tecnica-form/capacidade-tecnica-form.component';
+import { CapacidadeTecnicaListComponent } from './capacidade-tecnica-list/capacidade-tecnica-list.component';
+import { QuestionarioPerguntaFormComponent } from './questionario-pergunta-form/questionario-pergunta-form.component';
+import { QuestionarioPerguntaListComponent } from './questionario-pergunta-list/questionario-pergunta-list.component';
 
 
 @NgModule({
@@ -41,7 +49,15 @@ import { CargoListComponent } from './cargo-list/cargo-list.component';
     MateriaFormComponent,
     MateriaListComponent,
     CargoFormComponent,
-    CargoListComponent
+    CargoListComponent,
+    AreaAtividadeExternaFormComponent,
+    AreaAtividadeExternaListComponent,
+    AreaTematicaFormComponent,
+    AreaTematicaListComponent,
+    CapacidadeTecnicaFormComponent,
+    CapacidadeTecnicaListComponent,
+    QuestionarioPerguntaFormComponent,
+    QuestionarioPerguntaListComponent
   
   ],
   imports: [

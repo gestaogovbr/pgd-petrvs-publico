@@ -23,7 +23,9 @@ export class CursoListComponent extends PageListBase<Curso, CursoDaoService> {
        /* Inicializações */
     this.title = this.lex.noun("Cursos",true);
     this.code = "MOD_RX";
-    this.join = ["area:nome","tipo:nome"];
+    this.join = ["area:id,nome","tipo:id,nome"];
+    this.orderBy = [['nome','asc']];
+    //console.log('CURSO JOIN->>')
   
     this.filter = this.fh.FormBuilder({
       nome_area: {default: ""},
@@ -70,14 +72,14 @@ export class CursoListComponent extends PageListBase<Curso, CursoDaoService> {
     }
 
     if(form.nome_area?.length) {
-      result.push(["nome", "like", "%" + form.nome_area + "%"]);
+      result.push(["area_curso_id", "like", "%" + form.nome_area + "%"]);
     }
     
     if(form.titulo?.length) {
       result.push(["titulo", "like", "%" + form.titulo + "%"]);
     }
     if(form.nome_tipo?.length) {
-      result.push(["nome", "like", "%" + form.titulo + "%"]);
+      result.push(["tipo_curso_id", "like", "%" + form.tipo + "%"]);
     }
 
     return result;

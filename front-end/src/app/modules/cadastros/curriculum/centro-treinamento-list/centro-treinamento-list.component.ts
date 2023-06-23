@@ -21,6 +21,7 @@ export class CentroTreinamentoListComponent extends PageListBase<CentroTreinamen
   
     this.title = this.lex.noun("Centro de Treinamento",true);
     this.code = "MOD_RX";
+    this.orderBy = [['nome','asc']];
 
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AreaTematica;
-use App\Services\AreaTematica;
+use App\Services\AreaTematicaService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;

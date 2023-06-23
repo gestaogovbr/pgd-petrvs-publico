@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
-use App\Models\areaTematica;
+use App\Models\AreaTematica;
 use App\Traits\AutoDataInicio;
 
 
@@ -18,7 +18,7 @@ class CapacidadeTecnica extends ModelBase
         'area_tematica_id'
     ];
 
-    // Has
-    public function areaTematica() { return $this->hasMany(areaTematica::class, 'area_tematica_id'); }
+    // Belongs
+    public function areaTematica() { return $this->belongsTo(AreaTematica::class); }
     
 }

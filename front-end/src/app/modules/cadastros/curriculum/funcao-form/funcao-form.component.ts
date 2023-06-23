@@ -25,6 +25,10 @@ export class FuncaoFormComponent extends PageFormBase<Funcao, FuncaoDaoService> 
    
     this.form = this.fh.FormBuilder({
       nome: {default: ""},
+      nivel: {default: ""},
+      siape: {default: ""},
+      cbo: {default: ""},
+      descricao: {default: ""},
       ativo: {default: true},
            
     }, this.cdRef, this.validate);

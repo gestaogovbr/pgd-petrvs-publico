@@ -60,7 +60,7 @@
                 <input-multiselect [size]="10" [control]="form!.controls.atividades_fora" controlName="atividades_fora"
                     [addItemHandle]="addItemFuncao.bind(this)" noBox [bold]="true">
 
-                    <input-select [size]="12" label="Area" icon="fas fa-layer-group"
+                    <input-select [size]="12" label="Area" icon="bi bi-box-arrow-in-down"
                         controlName="selecAtividadeFora" liveSearch [control]="form!.controls.selecAtividadeFora"
                         [items]="testeLookup">
                     </input-select>
@@ -77,7 +77,7 @@
                     controlName="atividadeDesempenhou" [addItemHandle]="addItemFuncao.bind(this)" noBox>
                     <input-search #area [size]="4" label="Área" [control]="form!.controls.areaatividadeDesempenhou"
                         controlName="areaatividadeDesempenhou" icon="fas fa-layer-group"></input-search>
-                    <input-select [size]="8" label="Atividade" icon="bi bi-mortarboard-fill"
+                    <input-select [size]="8" label="Atividade" icon="bi bi-arrows-angle-contract"
                         controlName="selectAtividade" liveSearch [control]="form!.controls.selectAtividade"
                         [items]="testeLookup">
                     </input-select>
@@ -170,7 +170,7 @@
                 </div>
                 <div class="col-lg-6">
                     <label><i class="bi bi-globe-americas"></i> Já fez viagem internacional a trabalho?</label>
-                    <input-switch [size]="2" #radioViajaI [label]="radioViajaI.value ? 'Sim' : 'Não'" labelPosition="right" icon="fas fa-user-graduate" controlName="radioViajaI"
+                    <input-switch [size]="2" #radioViajaI [label]="radioViajaI.value ? 'Sim' : 'Não'" labelPosition="right" controlName="radioViajaI"
                         [control]="form!.controls.radioViajaI">
                     </input-switch>
                 </div>
