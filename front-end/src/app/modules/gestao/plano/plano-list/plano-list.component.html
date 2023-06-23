@@ -25,7 +25,7 @@
                 <span *ngIf="row.entregas?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-list-check"></i> {{row.entregas?.length}}</span>
             </ng-template>
             <ng-template let-row="row" #columnExpandedEntregas>
-                <plano-list-entrega [entity]="row"></plano-list-entrega>
+                <plano-list-entrega [entity]="row" [cdRef]="cdRef"></plano-list-entrega>
             </ng-template>
         </column>
         <column [titleTemplate]="titleNumero" [template]="columnNumero" [minWidth]="50">

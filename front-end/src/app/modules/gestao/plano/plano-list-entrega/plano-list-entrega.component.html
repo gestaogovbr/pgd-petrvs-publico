@@ -1,54 +1,58 @@
-<grid [items]="items" [form]="form!" #gridEntregas editable [selectable]="false" [minHeight]="minHeight" [join]="join" [groupBy]="groupBy"
-    [add]="addEntrega.bind(this)" [remove]="removeEntrega.bind(this)" [save]="saveEntrega.bind(this)" [saveEnd]="afterSaveEntrega.bind(this)" [load]="loadEntrega.bind(this)"
-    [hasDelete]="true" [hasEdit]="true" [hasAdd]="!disabled">
-    <columns>
-        <column [titleTemplate]="titleOrigem" [template]="columnOrigem" [editTemplate]="editOrigem" [verticalAlign]="'middle'" [width]="125" [align]="'center'">
-            <ng-template let-header="header" #titleOrigem><div class="text-center"><span><strong>Origem</strong></span></div></ng-template>
-            <ng-template let-row="row" #columnOrigem>
-                <span><small>
-                    <badge *ngIf="row.entrega_plano_entrega?.plano_entrega_id == entity?.plano_entrega_id" color="success" label="Mesma Unidade"></badge>
-                    <badge *ngIf="row.entrega_plano_entrega?.plano_entrega_id != entity?.plano_entrega_id && row.plano_entrega_entrega_id?.length" color="primary" label="Outra Unidade"></badge>
-                    <badge *ngIf="row.entrega_id" color="secondary" label="Externa"></badge>
-                </small></span>
-            </ng-template>
-            <ng-template let-row="row" #editOrigem>
-                <input-select controlName="origem" [control]="form!.controls.origem" [items]="lookup.ORIGENS_ENTREGAS_PLANO_TRABALHO"></input-select>
-            </ng-template>
-        </column>
-        <column [titleTemplate]="titleEntrega" [template]="columnEntrega" [editTemplate]="editEntrega" [verticalAlign]="'middle'" [maxWidth]="300">
-            <ng-template let-header="header" #titleEntrega><span><strong>Entrega</strong></span></ng-template>
-            <ng-template let-row="row" #columnEntrega>
-                <div [style.max-width]="290"><span><small>{{ row.entrega_plano_entrega?.entrega?.nome || row.entrega?.nome || "Desconhecido" }}</small></span></div>
-            </ng-template>
-            <ng-template let-row="row" #editEntrega>
-                <input-select *ngIf="form!.controls.origem.value == 'MESMA_UNIDADE'" #entrega_mesma_unidade controlName="entrega_mesma_unidade_id" [control]="form!.controls.entrega_mesma_unidade_id" [items]="entregasMesmaUnidade" (change)="onEntregaMesmaUnidadeChange($event)"></input-select>
-                <!-- <input-search *ngIf="form!.controls.origem.value == 'OUTRA_UNIDADE'" #entrega_outra_unidade controlName="entrega_outra_unidade_id" [control]="form!.controls.entrega_outra_unidade_id" [dao]="" (select)="onEntregaOutraUnidadeChange($event)"></input-search> -->
-                <input-select *ngIf="form!.controls.origem.value == 'EXTERNA'" #entrega_externa controlName="entrega_externa_id" [control]="form!.controls.entrega_externa_id" [items]="entregasExternas" (change)="onEntregaExternaChange($event)"></input-select>
-            </ng-template>
-        </column>
-        <column [titleTemplate]="titleForcaTrabalho" [template]="columnForcaTrabalho" [editTemplate]="editForcaTrabalho" [width]="130" [align]="'center'">
-            <ng-template let-header="header" #titleForcaTrabalho>
-                <div class="text-center">
-                    <span><small><strong>% Força Trab.</strong></small></span><br>
-                    <span><small><badge icon="bi bi-calculator" [color]="totalForcaTrabalho == 100 ? 'success' : totalForcaTrabalho < 100 ? 'warning' : 'danger'" [label]="totalForcaTrabalho + '%'"></badge></small></span>    
-                </div>
-            </ng-template>
-            <ng-template let-row="row" #columnForcaTrabalho>
-                <span><small>{{  row.forca_trabalho + '%' }}</small></span>
-            </ng-template>
-            <ng-template let-row="row" #editForcaTrabalho>
-                <input-text number sufix="%" controlName="forca_trabalho" [control]="form!.controls.forca_trabalho" (change)="onForcaTrabalhoChange(row)"></input-text>
-            </ng-template>
-        </column>
-        <column [titleTemplate]="titleDescricao" [template]="columnDescricao" [editTemplate]="editDescricao" [verticalAlign]="'middle'" [maxWidth]="300">
-            <ng-template let-header="header" #titleDescricao><div class="text-center"><span><strong>Detalhamento</strong></span></div></ng-template>
-            <ng-template let-row="row" #columnDescricao>
-                <div [style.max-width]="290"><span><small>{{ row.descricao }}</small></span></div>
-            </ng-template>
-            <ng-template let-row="row" #editDescricao>
-                <input-text controlName="descricao" [control]="form!.controls.descricao"></input-text>
-            </ng-template>
-        </column>
-        <column type="options"></column>
-    </columns>
-</grid>
+<editable-form noButtons [form]="form!" [disabled]="formDisabled">
+    <div class="row">
+        <grid [items]="items" [form]="form!" #gridEntregas editable [selectable]="false" [minHeight]="minHeight" [join]="join" [groupBy]="groupBy"
+            [add]="addEntrega.bind(this)" [remove]="removeEntrega.bind(this)" [save]="saveEntrega.bind(this)" [saveEnd]="afterSaveEntrega.bind(this)" [load]="loadEntrega.bind(this)"
+            [hasDelete]="true" [hasEdit]="true" [hasAdd]="!disabled">
+            <columns>
+                <column [titleTemplate]="titleOrigem" [template]="columnOrigem" [editTemplate]="editOrigem" [verticalAlign]="'middle'" [width]="125" [align]="'center'">
+                    <ng-template let-header="header" #titleOrigem><div class="text-center"><span><strong>Origem</strong></span></div></ng-template>
+                    <ng-template let-row="row" #columnOrigem>
+                        <span><small>
+                            <badge *ngIf="row.entrega_plano_entrega?.plano_entrega_id == entity?.plano_entrega_id" color="success" label="Mesma Unidade"></badge>
+                            <!-- <badge *ngIf="row.entrega_plano_entrega?.plano_entrega_id != entity?.plano_entrega_id && row.plano_entrega_entrega_id?.length" color="primary" label="Outra Unidade"></badge> -->
+                            <badge *ngIf="row.entrega_id?.length" color="secondary" label="Externa"></badge>
+                        </small></span>
+                    </ng-template>
+                    <ng-template let-row="row" #editOrigem>
+                        <input-select #origem controlName="origem" nullable itemNull="- Selecione -" controlName="origem" [control]="form!.controls.origem" [items]="lookup.ORIGENS_ENTREGAS_PLANO_TRABALHO" (change)="onOrigemChange.bind(row)"></input-select>
+                    </ng-template>
+                </column>
+                <column [titleTemplate]="titleEntrega" [template]="columnEntrega" [editTemplate]="editEntrega" [verticalAlign]="'middle'" [maxWidth]="300">
+                    <ng-template let-header="header" #titleEntrega><span><strong>Entrega</strong></span></ng-template>
+                    <ng-template let-row="row" #columnEntrega>
+                        <div [style.max-width]="290"><span><small>{{ row.entrega_plano_entrega?.entrega?.nome || row.entrega?.nome || "Desconhecido" }}</small></span></div>
+                    </ng-template>
+                    <ng-template let-row="row" #editEntrega>
+                        <input-select *ngIf="origem?.value == 'MESMA_UNIDADE'" #entrega_mesma_unidade nullable itemNull="- Selecione -" controlName="plano_entrega_entrega_id" [control]="form!.controls.plano_entrega_entrega_id" [items]="entregasMesmaUnidade" (change)="onEntregaMesmaUnidadeChange($event)"></input-select>
+                        <!-- <input-select *ngIf="origem?.value == 'OUTRA_UNIDADE'" #entrega_outra_unidade nullable controlName="plano_entrega_entrega_id" [control]="form!.controls.plano_entrega_entrega_id" [dao]="" (select)="onEntregaOutraUnidadeChange($event)"></input-select> -->
+                        <input-select *ngIf="origem?.value == 'EXTERNA'" #entrega_externa nullable itemNull="- Selecione -" controlName="entrega_id" [control]="form!.controls.entrega_id" [items]="entregasExternas" (change)="onEntregaExternaChange($event)"></input-select>
+                    </ng-template>
+                </column>
+                <column [titleTemplate]="titleForcaTrabalho" [template]="columnForcaTrabalho" [editTemplate]="editForcaTrabalho" [width]="130" [align]="'center'">
+                    <ng-template let-header="header" #titleForcaTrabalho>
+                        <div class="text-center">
+                            <span><small><strong>% Força Trab.</strong></small></span><br>
+                            <span><small><badge icon="bi bi-calculator" [color]="totalForcaTrabalho == 100 ? 'success' : 'warning'" [label]="totalForcaTrabalho + '%'"></badge></small></span>    
+                        </div>
+                    </ng-template>
+                    <ng-template let-row="row" #columnForcaTrabalho>
+                        <span><small>{{  row.forca_trabalho + '%' }}</small></span>
+                    </ng-template>
+                    <ng-template let-row="row" #editForcaTrabalho>
+                        <input-text number sufix="%" controlName="forca_trabalho" [control]="form!.controls.forca_trabalho" (change)="onForcaTrabalhoChange(row)"></input-text>
+                    </ng-template>
+                </column>
+                <column [titleTemplate]="titleDescricao" [template]="columnDescricao" [editTemplate]="editDescricao" [verticalAlign]="'middle'" [maxWidth]="300">
+                    <ng-template let-header="header" #titleDescricao><div class="text-center"><span><strong>Detalhamento</strong></span></div></ng-template>
+                    <ng-template let-row="row" #columnDescricao>
+                        <div [style.max-width]="290"><span><small>{{ row.descricao }}</small></span></div>
+                    </ng-template>
+                    <ng-template let-row="row" #editDescricao>
+                        <input-text controlName="descricao" [control]="form!.controls.descricao"></input-text>
+                    </ng-template>
+                </column>
+                <column type="options"></column>
+            </columns>
+        </grid>
+    </div>
+</editable-form>

@@ -29554,7 +29554,7 @@ function InputTextComponent_span_2_Template(rf, ctx) { if (rf & 1) {
 function InputTextComponent_input_3_Template(rf, ctx) { if (rf & 1) {
     const _r5 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "input", 5, 6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("change", function InputTextComponent_input_3_Template_input_change_0_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r5); const ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](); return ctx_r4.onChange($event); })("keydown.enter", function InputTextComponent_input_3_Template_input_keydown_enter_0_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r5); const ctx_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](); return ctx_r6.onEnterKeyDown($event); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("change", function InputTextComponent_input_3_Template_input_change_0_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r5); const ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](); return ctx_r4.onChange($event); })("keyup", function InputTextComponent_input_3_Template_input_keyup_0_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r5); const ctx_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](); return ctx_r6.onKeyUp($event); })("keydown.enter", function InputTextComponent_input_3_Template_input_keydown_enter_0_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r5); const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](); return ctx_r7.onEnterKeyDown($event); });
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
@@ -29619,6 +29619,14 @@ class InputTextComponent extends _input_base__WEBPACK_IMPORTED_MODULE_2__["Input
         if (this.change)
             this.change.emit(event);
     }
+    onKeyUp(event) {
+        let inputValue = this.inputElement.nativeElement.value;
+        if (this.buffer != inputValue) {
+            this.buffer = inputValue;
+            if (this.change)
+                this.change.emit(event);
+        }
+    }
 }
 InputTextComponent.ɵfac = function InputTextComponent_Factory(t) { return new (t || InputTextComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injector"])); };
 InputTextComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: InputTextComponent, selectors: [["input-text"]], viewQuery: function InputTextComponent_Query(rf, ctx) { if (rf & 1) {
@@ -29633,7 +29641,7 @@ InputTextComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefin
                 provide: _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ControlContainer"],
                 useExisting: _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormGroupDirective"]
             }
-        ]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵInheritDefinitionFeature"]], decls: 5, vars: 12, consts: [[3, "labelPosition", "controlName", "control", "loading", "disabled", "label", "labelInfo", "icon", "bold"], [1, "input-group"], ["class", "input-group-text", 4, "ngIf"], ["class", "form-control", 3, "type", "text-uppercase", "text-lowercase", "text-end", "formControl", "id", "is-invalid", "mask", "dropSpecialCharacters", "specialCharacters", "readonly", "change", "keydown.enter", 4, "ngIf"], [1, "input-group-text"], [1, "form-control", 3, "type", "formControl", "id", "mask", "dropSpecialCharacters", "specialCharacters", "readonly", "change", "keydown.enter"], ["inputElement", ""]], template: function InputTextComponent_Template(rf, ctx) { if (rf & 1) {
+        ]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵInheritDefinitionFeature"]], decls: 5, vars: 12, consts: [[3, "labelPosition", "controlName", "control", "loading", "disabled", "label", "labelInfo", "icon", "bold"], [1, "input-group"], ["class", "input-group-text", 4, "ngIf"], ["class", "form-control", 3, "type", "text-uppercase", "text-lowercase", "text-end", "formControl", "id", "is-invalid", "mask", "dropSpecialCharacters", "specialCharacters", "readonly", "change", "keyup", "keydown.enter", 4, "ngIf"], [1, "input-group-text"], [1, "form-control", 3, "type", "formControl", "id", "mask", "dropSpecialCharacters", "specialCharacters", "readonly", "change", "keyup", "keydown.enter"], ["inputElement", ""]], template: function InputTextComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "input-container", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "div", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](2, InputTextComponent_span_2_Template, 2, 1, "span", 2);
