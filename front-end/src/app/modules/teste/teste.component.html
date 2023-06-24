@@ -4,7 +4,23 @@
 
 <!--button type="button" class="btn btn-primary" (click)="openDocumentos()">Primary</button/-->
 
+
+
+
+
 <editable-form [form]="form">
+    <div class="d-flex">
+        <div class="flex-grow-1">
+            <input-select [size]="12" controlName="level" [items]="[]"></input-select>
+        </div>
+        <div class="btn-group">
+            <button *ngIf="true" type="button" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Adicionar"><i class="bi bi-arrow-bar-up"></i></button>
+            <button *ngIf="false" type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Salvar"><i class="bi bi-check-circle"></i></button>
+            <button *ngIf="false" type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Cancelar"><i class="bi bi bi-dash-circle"></i></button>
+        </div>
+    </div>
+    
+
     <div class="row">
         <input-level [size]="12" controlName="level" [validate]="validateLevel"></input-level>
     </div>

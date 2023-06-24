@@ -50,6 +50,7 @@ use App\Http\Controllers\ProjetoController;
 use App\Http\Controllers\RotinaDiariaController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\AreaGraduacaoController;
+use App\Http\Controllers\NotificacaoController;
 use App\Http\Controllers\PlanoTrabalhoEntregaController;
 use App\Http\Controllers\UnidadeIntegranteController;
 
@@ -104,6 +105,10 @@ Route::get('/integracao', [IntegracaoController::class, 'sincronizar']);
 Route::middleware('auth:sanctum')->prefix('Calendario')->group(function () {
     Route::post('feriados', [CalendarioController::class, 'feriados']);
     Route::post('feriados-cadastrados', [CalendarioController::class, 'feriadosCadastrados']);
+});
+Route::middleware('auth:sanctum')->prefix('Notificacao')->group(function () {
+    defaultRoutes(NotificacaoController::class);
+    Route::post('nao-lidas', [NotificacaoController::class, 'naoLidas']);
 });
 
 /* Desenvolvedor */

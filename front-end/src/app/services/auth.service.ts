@@ -17,6 +17,7 @@ import { UsuarioDaoService } from '../dao/usuario-dao.service';
 import { IIndexable } from '../models/base.model';
 import { Entidade } from '../models/entidade.model';
 import { UnidadeDaoService } from '../dao/unidade-dao.service';
+import { NotificacaoService } from '../modules/uteis/notificacoes/notificacao.service';
 
 export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION" | "SUPER";
 export type Permission = string | (string | string[])[];
@@ -83,6 +84,8 @@ export class AuthService {
   public get usuarioDao(): UsuarioDaoService { this._usuarioDao = this._usuarioDao || this.injector.get<UsuarioDaoService>(UsuarioDaoService); return this._usuarioDao };
   private _unidadeDao?: UnidadeDaoService;
   public get unidadeDao(): UnidadeDaoService { this._unidadeDao = this._unidadeDao || this.injector.get<UnidadeDaoService>(UnidadeDaoService); return this._unidadeDao };
+  private _notificacao?: NotificacaoService;
+  public get notificacao(): NotificacaoService { this._notificacao = this._notificacao || this.injector.get<NotificacaoService>(NotificacaoService); return this._notificacao };
 
   constructor(public injector: Injector) { }
 
@@ -102,8 +105,7 @@ export class AuthService {
 
   public registerPopupLoginResultListener() {
     window.addEventListener("message", (event) => {
-      //const fromUrl = event?.origin || "";
-      if (event?.data == "COMPLETAR_LOGIN") { //fromUrl.includes("login-azure-callback")
+      if (event?.data == "COMPLETAR_LOGIN") {
         this.dialogs.closeSppinerOverlay();
         this.authSession().then(success => {
           if (success) this.success!(this.usuario!, { route: ["home"] });
@@ -128,7 +130,7 @@ export class AuthService {
 
   public get usuarioConfig(): IIndexable {
     const defaults = new UsuarioConfig();
-    return this.util.assign(defaults, this.usuario!.config);
+    return this.util.assign(defaults, this.usuario?.config || {});
   }
 
   public registerEntity(entity: any) {
@@ -150,6 +152,7 @@ export class AuthService {
       this.unidade = this.usuario?.lotacoes?.find(x => x.principal)?.unidade;
       if (this.unidade) this.calendar.loadFeriadosCadastrados(this.unidade.id);
       if (token?.length) localStorage.setItem("petrvs_api_token", token);
+      this.notificacao.updateNaoLidas();
     } else {
       this.usuario = undefined;
       this.kind = undefined;

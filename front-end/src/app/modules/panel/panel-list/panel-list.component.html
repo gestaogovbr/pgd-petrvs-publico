@@ -1,0 +1,28 @@
+<!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
+<grid [dao]="dao" [add]="add" title="Painel de entidades (SaaS)" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+    [hasAdd]="true" [hasEdit]="true">
+    <toolbar></toolbar>
+    <filter hidden [form]="filter" [where]="filterWhere.bind(this)" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed"></filter>
+    <columns>
+        <column title="ID" [template]="columnId">
+            <ng-template let-row="row" #columnId>
+                <strong>{{row.id}}</strong>
+            </ng-template>
+        </column>
+        <column title="Banco de dados" [template]="columnDb">
+            <ng-template let-row="row" #columnDb>
+                <strong>Dados:</strong> {{row.tenancy_db_host || "[ENV_HOST]"}}:{{row.tenancy_db_port || "[ENV_PORT]"}}/{{row.tenancy_db_name}}<br>
+                <strong>Logs:</strong> {{row.log_host || "[LOG_HOST]"}}:{{row.log_port || "[LOG_PORT]"}}/{{row.log_database?.length ? row.log_database : "log_" + row.tenancy_db_name}}
+            </ng-template>
+        </column>
+        <column title="Logs" field="columnLogs">
+            <ng-template let-row="row" #columnLogs>
+                <badge *ngIf="row.log_changes" color="light" label="Auditoria (Changes)"></badge>
+                <badge *ngIf="row.log_traffic" color="light" label="Tráfego (Traffic)"></badge>
+                <badge *ngIf="row.log_errors" color="light" label="Erros (Errors)"></badge>
+            </ng-template>
+        </column>
+        <column type="options" [onEdit]="edit" [options]="options"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

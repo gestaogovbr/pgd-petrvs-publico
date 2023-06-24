@@ -5,13 +5,14 @@ import { Afastamento } from './afastamento.model';
 import { Base, IIndexable } from './base.model';
 import { Demanda } from './demanda.model';
 import { Lotacao } from './lotacao.model';
+import { HasNotificacao, NotificacoesConfig } from './notificacao.model';
 import { Perfil } from './perfil.model';
 import { Plano } from './plano.model';
 import { Unidade } from './unidade.model';
 
 export type UsuarioVinculacao = "SERVIDOR_EFETIVO" | "SERVIDOR_COMISSIONADO" | "EMPREGADO" | "CONTRATADO_TEMPORARIO";
 
-export class UsuarioNotificacoes {
+/*export class UsuarioNotificacoes {
     enviar_email: boolean = true;
     enviar_whatsapp: boolean = true;
     notifica_demanda_distribuicao: boolean = true;
@@ -19,7 +20,7 @@ export class UsuarioNotificacoes {
     notifica_demanda_avaliacao: boolean = true;
     notifica_demanda_modificacao: boolean = true;
     notifica_demanda_comentario: boolean = true;
-}
+}*/
 
 export class UsuarioConfig {
     etiquetas: LookupItem[] = [];
@@ -27,7 +28,7 @@ export class UsuarioConfig {
     ocultar_container_petrvs: boolean = false;
 }
 
-export class Usuario extends Base {
+export class Usuario extends Base implements HasNotificacao {
     public perfil?: Perfil; /* Objeto do perfil */
     public planos?: Plano[]; /* Lista de planos de trabalho */
     public afastamentos?: Afastamento[]; /* Lista de afastamentos */
@@ -46,7 +47,7 @@ export class Usuario extends Base {
     public sexo: string | null = null; /* Sexo */
     public lotacoes: Lotacao[] = [];
     public config: UsuarioConfig & IIndexable = new UsuarioConfig(); /*UsuarioConfig = new UsuarioConfig();*/ /* Configurações diversas */
-    public notificacoes: UsuarioNotificacoes = new UsuarioNotificacoes();
+    public notificacoes: NotificacoesConfig = new NotificacoesConfig();
     public data_inicio?: Date; /* Data de início */
     public data_fim?: Date; /* Data fim */
     public perfil_id: number = 0; /* ID do perfil - Setar o primeiro do list*/

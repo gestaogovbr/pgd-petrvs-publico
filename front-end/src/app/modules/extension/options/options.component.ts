@@ -13,6 +13,7 @@ export class OptionsComponent implements OnInit {
   private config: any;
 
   constructor(private fh: FormHelperService) {
+    //@ts-ignore
     this.webBrowser = (chrome || browser);
     this.form = this.fh.FormBuilder({
       desenvolvimento: {default: false},

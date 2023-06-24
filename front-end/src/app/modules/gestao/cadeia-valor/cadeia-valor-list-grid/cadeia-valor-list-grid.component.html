@@ -5,9 +5,9 @@
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-datetime date [size]="6" label="Início" icon="bi bi-calendar-date" controlName="inicio" [control]="filter!.controls.inicio" [labelInfo]="'Início da ' + lex.noun('cadeia de valor')"></input-datetime>
-            <input-datetime date [size]="3" label="Fim" icon="bi bi-calendar-date" controlName="fim" [control]="filter!.controls.fim" [labelInfo]="'Fim da ' + lex.noun('cadeia de valor')"></input-datetime>
-            <input-datetime [size]="3" date label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Data do fim do plano da Cadeia de Valor"></input-datetime>
+            <input-text [size]="6" label="Nome" icon="bi bi-textarea-t" controlName="nome" [control]="filter!.controls.nome" [labelInfo]="'Nome ' + lex.noun('cadeia de valor', false, true)"></input-text>
+            <input-datetime [size]="3" date label="Início" icon="bi bi-calendar-date" controlName="inicio" [control]="filter!.controls.inicio" [labelInfo]="'Início ' + lex.noun('cadeia de valor', false, true)"></input-datetime>
+            <input-datetime [size]="3" date label="Fim" icon="bi bi-calendar-date" controlName="fim" [control]="filter!.controls.fim" [labelInfo]="'Fim ' + lex.noun('cadeia de valor', false, true)"></input-datetime>
         </div>
     </filter>
     <columns>
@@ -19,15 +19,19 @@
                 <cadeia-valor-list-processos #processos [entity]="row" [cdRef]="cdRef"></cadeia-valor-list-processos>
             </ng-template>
         </column>
-        <column title="Nome" field="nome" orderBy="nome"></column>
+        <column title="Nome" orderBy="nome" [template]="columnNome">
+            <ng-template let-row="row" #columnNome>
+                <span class="text-break w-100">{{row.nome}}</span>
+            </ng-template>
+        </column>
         <column title="Início" [template]="columnInicio">
             <ng-template let-row="row" #columnInicio>
-                <span> {{dao!.getDateFormatted(row.inicio)}}</span>
+                <span>{{dao!.getDateFormatted(row.inicio)}}</span>
             </ng-template>
         </column>
         <column title="Fim" [template]="columnFim">
             <ng-template let-row="row" #columnFim>
-                <span> {{dao!.getDateFormatted(row.fim)}}</span>
+                <span>{{dao!.getDateFormatted(row.fim)}}</span>
             </ng-template>
         </column>
         <column *ngIf="!selectable" type="options" [onEdit]="edit" [options]="options"></column>

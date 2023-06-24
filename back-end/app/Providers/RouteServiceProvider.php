@@ -40,6 +40,7 @@ class RouteServiceProvider extends ServiceProvider
         $this->routes(function () {
             $this->mapApiRoutes();
             $this->mapWebRoutes();
+            $this->mapConfigRoutes();
         });
 
         /*$this->routes(function () {
@@ -79,6 +80,11 @@ class RouteServiceProvider extends ServiceProvider
                 ->namespace($this->namespace)
                 ->group(base_path('routes/web.php'));
         }
+    }
+
+    protected function mapConfigRoutes()
+    {
+        Route::prefix('config')->group(base_path('routes/config.php'));
     }
 
     protected function mapApiRoutes()
