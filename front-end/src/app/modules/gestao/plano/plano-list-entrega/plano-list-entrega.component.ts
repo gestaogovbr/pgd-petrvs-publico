@@ -16,6 +16,8 @@ import { InputSearchComponent } from 'src/app/components/input/input-search/inpu
 import { InputTextComponent } from 'src/app/components/input/input-text/input-text.component';
 import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
 import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
+import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
+import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
 
 @Component({
   selector: 'plano-list-entrega',
@@ -51,6 +53,7 @@ export class PlanoListEntregaComponent extends PageFrameBase {
   public entregasMesmaUnidade: LookupItem[] = [];
   public entregasOutraUnidade: LookupItem[] = [];
   public entregasCatalogo: LookupItem[] = [];
+  public planoEntregaOutraUnidade?: PlanoEntrega | null;
 
   constructor(public injector: Injector) {
     super(injector);
@@ -135,7 +138,7 @@ export class PlanoListEntregaComponent extends PageFrameBase {
       form.controls.origem.setValue('MESMA_UNIDADE');
       form.controls.entrega_id.setValue(null);      
     } else if(!row.entrega_id?.length && row.plano_entrega_entrega_id?.length && row.entrega_plano_entrega?.plano_entrega_id != this.entity?.plano_entrega_id) {
-      this.entregasOutraUnidade = await this.carregarEntregasOutraUnidade(row.entrega_plano_entrega?.plano_entrega_id);
+      await this.carregarEntregasOutraUnidade(row.entrega_plano_entrega?.plano_entrega_id);
       this.entrega_outra_unidade?.setValue(row.plano_entrega_entrega_id);
       form.controls.plano_entrega_entrega_id.setValue(row.plano_entrega_entrega_id);
       this.entrega_catalogo?.setValue(null);
@@ -233,14 +236,11 @@ export class PlanoListEntregaComponent extends PageFrameBase {
     return entregasPlanoEntrega.map(epe => Object.assign({}, {key: epe.id, value: epe.entrega?.nome || '', data: epe}));
   }
 
-  public async carregarEntregasOutraUnidade(plano_entrega_id: string): Promise<LookupItem[]>{
-    let result: LookupItem[] = [];
-    try {
-      this.peeDao?.query({where: ['plano_entrega_id','==',plano_entrega_id],orderBy: [['entrega.nome','asc']],join: ['entrega:id,nome']}).getAll().then(response => {
-        result = response.map(epe => Object.assign({}, {key: epe.id, value: epe.entrega?.nome || '', data: epe}));
-      });
-    } catch (error) {}
-    return result;
+  public async carregarEntregasOutraUnidade(idPlanoOuPlano: string | PlanoEntrega){
+    this.planoEntregaOutraUnidade = typeof idPlanoOuPlano == 'string' ? await this.planoEntregaDao!.getById(idPlanoOuPlano, ["entregas", "unidade"]) : idPlanoOuPlano;
+    // = PlanoEntregaEntrega[] = typeof idPlanoOuPlano == 'string' ? await this.peeDao?.query({where: ['plano_entrega_id','==', idPlanoOuPlano],orderBy: [['entrega.nome','asc']],join: ['entrega:id,nome']}).getAll() || [] : idPlanoOuPlano.entregas;
+    this.entregasOutraUnidade = this.planoEntregaOutraUnidade?.entregas.map(epe => Object.assign({}, {key: epe.id, value: epe.entrega?.nome || '', data: epe})) || [];
+    //this.cdRef.detectChanges();
   }
 
   public async carregarEntregasCatalogo(): Promise<LookupItem[]>{
@@ -252,10 +252,12 @@ export class PlanoListEntregaComponent extends PageFrameBase {
   /* ---------  TRATAMENTO DOS EVENTOS ----------- */
 
   public onOrigemChange(row: any){
-    if(['MESMA_UNIDADE','OUTRA_UNIDADE'].includes(this.form?.controls.origem.value)){
+    let value = this.form!.controls.origem.value;
+    if(['MESMA_UNIDADE','OUTRA_UNIDADE'].includes(value)){
       this.form?.controls.entrega_id.setValue(null);
-      //if(row["origem"] == "OUTRA_UNIDADE") Disparar o evento CLICK do input-select/button  
-    } else if(this.form?.controls.origem.value == 'CATALOGO'){
+      this.cdRef.detectChanges();
+      if(value == "OUTRA_UNIDADE") this.entrega_outra_unidade?.onSearchClick(this.entrega_outra_unidade?.searchRoute);
+    } else if(value == 'CATALOGO'){
       this.form?.controls.plano_entrega_entrega_id.setValue(null);
     }
     if(!this.form?.valid) console.log('Erro no campo descrição: ', this.form?.controls.descricao.errors);

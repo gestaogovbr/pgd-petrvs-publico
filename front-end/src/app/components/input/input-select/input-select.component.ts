@@ -49,6 +49,8 @@ export class InputSelectComponent extends InputBase implements OnInit {
   @Input() liveSearch?: string;
   @Input() detailsButton?: string;
   @Input() detailsButtonIcon?: string;
+  @Input() prefix?: string;
+  @Input() sufix?: string;
   @Input()
   public get where(): any[] | undefined {
     return this._where;
@@ -138,7 +140,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
       this.selectPicker.on('changed.bs.select', (e, clickedIndex, isSelected, previousValue) => {
         this.onChange(e);
       });
-      if (this.dao && !this.isSearchable) {
+      if (this.dao) {
         this.loadItems();
       }
       if (this.control) {
@@ -276,7 +278,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
     const modalRoute = searchRoute!;
     modalRoute.params = Object.assign(modalRoute?.params || {}, { modal: true });
     this.go.navigate(searchRoute!, {
-      metadata: {selectableGrid: true},
+      metadata: {selectable: true},
       modalClose: (result: any) => {
         if (result && this.afterSearch) this.afterSearch(result);    
       }
