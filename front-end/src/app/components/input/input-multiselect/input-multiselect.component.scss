@@ -19,6 +19,9 @@
         width: calc(100% - 28px);
         text-align: left;
     }
+    .multiselect-has-edit {
+        width: calc(100% - 58px) !important;
+    }
     .muiltiselect-text-icon {
         width: calc(100% - 45px) !important;
     }

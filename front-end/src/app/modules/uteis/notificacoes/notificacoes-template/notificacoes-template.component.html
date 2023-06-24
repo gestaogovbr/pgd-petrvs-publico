@@ -1,4 +1,4 @@
-<grid [items]="items" [form]="form" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="true"
+<grid *ngIf="viewInit" [items]="items" [form]="form" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="true"
   [load]="loadTemplate.bind(this)" [remove]="removeTemplate.bind(this)" [save]="saveTemplate.bind(this)" editable
   [hasAdd]="false" [hasEdit]="false" [hasDelete]="false">
   <side-panel [size]="8" fullSizeOnEdit [template]="panelTemplate" [editTemplate]="panelTemplateEdit">

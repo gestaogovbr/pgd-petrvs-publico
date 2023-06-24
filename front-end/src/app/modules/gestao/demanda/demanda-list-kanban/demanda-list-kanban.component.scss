@@ -4,6 +4,7 @@
         white-space: normal;
     }
     .comentario-text {
+        font-size: 12px;
         height: auto;
         display: block;
         max-width: 290px;
@@ -34,6 +35,7 @@
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
+        font-size: 12px;
     }
 }
 

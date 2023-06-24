@@ -15,11 +15,11 @@ class NotificacaoDestinatario extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        //'tipo', /* enum('petrvs','email','whatsapp'); NOT NULL; */// Tipo do envio
+        'tipo', /* enum('petrvs','email','whatsapp'); NOT NULL; */// Tipo do envio
         //'data_leitura', /* datetime; */// Data e hora da leitura
         //'opcoes', /* json; */// Opções
-        //'notificacao_id', /* char(36); NOT NULL; */
-        //'usuario_id', /* char(36); NOT NULL; */
+        'notificacao_id', /* char(36); NOT NULL; */
+        'usuario_id', /* char(36); NOT NULL; */
     ];
 
     protected $casts = [
