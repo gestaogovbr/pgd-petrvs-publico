@@ -94,7 +94,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   ngOnInit(): void {
     super.ngOnInit();
     this.showFilter = typeof this.queryParams?.showFilter != "undefined" ? (this.queryParams.showFilter == "true") : true;
-    this.selectableGrid = this.metadata.selectableGrid || this.selectableGrid;
+    this.selectableGrid = this.metadata?.selectableGrid || this.selectableGrid;
     this.checaBotaoAderirToolbar();
     this.toolbarButtons.push(this.BOTAO_ADERIR_TOOLBAR);
   }
