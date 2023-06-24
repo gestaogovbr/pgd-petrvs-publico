@@ -86,9 +86,9 @@ export class TemplateService {
 
   public buildItems(source: Template[], value?: Template[], naoNotificar?: string[]) {
     return this.notificacoes.map(x => {
-      let s = source.filter(y => y.codigo == x.codigo).reduce((a: Template | undefined, v: Template) => a = (!a ? v : (a.unidade_id?.length ? a : v)), undefined);
-      let v = value?.find(y => y.codigo == x.codigo && y._status != "DELETE");
-      return v || s || new Template({
+      let v = value?.find(y => y.codigo == x.codigo);
+      let s = source.filter(y => y.codigo == x.codigo && y.id != v?.id).reduce((a: Template | undefined, v: Template) => a = (!a ? v : (a.unidade_id?.length ? a : v)), undefined);
+      return (v?._status != "DELETE" ? v : undefined) || s || new Template({
         id: x.codigo,
         conteudo: x.template,
         especie: "NOTIFICACAO",

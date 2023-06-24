@@ -17,6 +17,7 @@ https://gitlab.com/petrvs.app/Petrvs.git
 - Verificar se todas as models estão corretas (front-end e back-end). Devem conter todos os campos e os relacionamentos
 - Verificar se a documentação foi atualizada com o que foi desenvolvido
 - Atualizar/Criar os testes automatizados para a funcionalidade criada
+- Lint
 
 ## Procedimento para deploy:
 

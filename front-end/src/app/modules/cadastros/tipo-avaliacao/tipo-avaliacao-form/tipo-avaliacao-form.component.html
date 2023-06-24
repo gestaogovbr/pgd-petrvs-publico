@@ -11,8 +11,8 @@
         <input-color [size]="3" label="Cor" controlName="cor"></input-color>
     </div>
     <div class="row">
-        <input-multiselect [size]="12" [addItemControl]="justificativa" controlName="justificativas" [label]="lex.noun('Justificativa',true)" [items]="justificativasLista">
-            <input-select [size]="12" #justificativa controlName="justificativa_id" [dao]="tipoJustificativaDao"></input-select>
+        <input-multiselect [size]="12" [canEdit]="true" [addItemControl]="justificativa" controlName="justificativas" [label]="lex.noun('Justificativa',true)" [items]="justificativasLista">
+            <input-select [size]="12" #justificativa controlName="justificativa_id" [dao]="tipoJustificativaDao" [addRoute]="{route: ['cadastros', 'tipo-justificativa', 'new']}"></input-select>
         </input-multiselect>
     </div>
 </editable-form>
