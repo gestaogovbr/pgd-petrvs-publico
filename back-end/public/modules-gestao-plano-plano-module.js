@@ -16,7 +16,7 @@ class PlanoTrabalhoEntrega extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Bas
     constructor(data) {
         super();
         this.descricao = "";
-        this.forca_trabalho = 1;
+        this.forca_trabalho = "1";
         this.plano_id = "";
         this.entrega_id = null;
         this.plano_entrega_entrega_id = null;
@@ -880,12 +880,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_dao_plano_trabalho_entrega_dao_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! src/app/dao/plano-trabalho-entrega-dao.service */ "qedA");
 /* harmony import */ var src_app_dao_plano_dao_service__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! src/app/dao/plano-dao.service */ "eHo6");
 /* harmony import */ var src_app_dao_entrega_dao_service__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! src/app/dao/entrega-dao.service */ "724m");
-/* harmony import */ var _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../../components/grid/columns/columns.component */ "d7UH");
-/* harmony import */ var _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../../components/grid/column/column.component */ "pFmK");
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/common */ "ofXK");
-/* harmony import */ var _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../../../components/badge/badge.component */ "jKVP");
-/* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../../../components/input/input-select/input-select.component */ "txHH");
-/* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ "lYxd");
+/* harmony import */ var src_app_dao_plano_entrega_dao_service__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! src/app/dao/plano-entrega-dao.service */ "lKXT");
+/* harmony import */ var src_app_dao_plano_entrega_entrega_dao_service__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! src/app/dao/plano-entrega-entrega-dao.service */ "DqQh");
+/* harmony import */ var _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../../../components/grid/columns/columns.component */ "d7UH");
+/* harmony import */ var _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../../../components/grid/column/column.component */ "pFmK");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @angular/common */ "ofXK");
+/* harmony import */ var _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../../components/badge/badge.component */ "jKVP");
+/* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../../../components/input/input-select/input-select.component */ "txHH");
+/* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ "lYxd");
+
+
 
 
 
@@ -908,7 +912,7 @@ __webpack_require__.r(__webpack_exports__);
 const _c0 = ["origem"];
 const _c1 = ["entrega_mesma_unidade"];
 const _c2 = ["entrega_outra_unidade"];
-const _c3 = ["entrega_externa"];
+const _c3 = ["entrega_catalogo"];
 function PlanoListEntregaComponent_ng_template_6_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 20);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](1, "span");
@@ -942,7 +946,7 @@ function PlanoListEntregaComponent_ng_template_8_Template(rf, ctx) { if (rf & 1)
 function PlanoListEntregaComponent_ng_template_10_Template(rf, ctx) { if (rf & 1) {
     const _r32 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "input-select", 25, 26);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("change", function PlanoListEntregaComponent_ng_template_10_Template_input_select_change_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r32); const row_r29 = ctx.row; const ctx_r31 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](); return ctx_r31.onOrigemChange.bind(row_r29); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("change", function PlanoListEntregaComponent_ng_template_10_Template_input_select_change_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r32); const row_r29 = ctx.row; const ctx_r31 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](); return ctx_r31.onOrigemChange(row_r29); });
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
@@ -970,31 +974,45 @@ function PlanoListEntregaComponent_ng_template_15_Template(rf, ctx) { if (rf & 1
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"]((row_r34.entrega_plano_entrega == null ? null : row_r34.entrega_plano_entrega.entrega == null ? null : row_r34.entrega_plano_entrega.entrega.nome) || (row_r34.entrega == null ? null : row_r34.entrega.nome) || "Desconhecido");
 } }
 function PlanoListEntregaComponent_ng_template_17_input_select_0_Template(rf, ctx) { if (rf & 1) {
-    const _r40 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "input-select", 29, 30);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("change", function PlanoListEntregaComponent_ng_template_17_input_select_0_Template_input_select_change_0_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r40); const ctx_r39 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](2); return ctx_r39.onEntregaMesmaUnidadeChange($event); });
+    const _r41 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "input-select", 30, 31);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("change", function PlanoListEntregaComponent_ng_template_17_input_select_0_Template_input_select_change_0_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r41); const ctx_r40 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](2); return ctx_r40.onEntregaMesmaUnidadeChange($event); });
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r36 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("control", ctx_r36.form.controls.plano_entrega_entrega_id)("items", ctx_r36.entregasMesmaUnidade);
 } }
+const _c4 = function () { return ["gestao", "plano-entrega"]; };
+const _c5 = function (a0) { return { route: a0 }; };
 function PlanoListEntregaComponent_ng_template_17_input_select_1_Template(rf, ctx) { if (rf & 1) {
-    const _r43 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "input-select", 31, 32);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("change", function PlanoListEntregaComponent_ng_template_17_input_select_1_Template_input_select_change_0_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r43); const ctx_r42 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](2); return ctx_r42.onEntregaExternaChange($event); });
+    const _r44 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "input-select", 32, 33);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("change", function PlanoListEntregaComponent_ng_template_17_input_select_1_Template_input_select_change_0_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r44); const ctx_r43 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](2); return ctx_r43.onEntregaOutraUnidadeChange($event); });
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r37 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("control", ctx_r37.form.controls.entrega_id)("items", ctx_r37.entregasExternas);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("control", ctx_r37.form.controls.plano_entrega_entrega_id)("items", ctx_r37.entregasOutraUnidade)("searchRoute", _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpureFunction1"](4, _c5, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpureFunction0"](3, _c4)));
+} }
+function PlanoListEntregaComponent_ng_template_17_input_select_2_Template(rf, ctx) { if (rf & 1) {
+    const _r47 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "input-select", 34, 35);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("change", function PlanoListEntregaComponent_ng_template_17_input_select_2_Template_input_select_change_0_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r47); const ctx_r46 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](2); return ctx_r46.onEntregaCatalogoChange($event); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const ctx_r38 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("control", ctx_r38.form.controls.entrega_id)("items", ctx_r38.entregasCatalogo);
 } }
 function PlanoListEntregaComponent_ng_template_17_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](0, PlanoListEntregaComponent_ng_template_17_input_select_0_Template, 2, 2, "input-select", 27);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](1, PlanoListEntregaComponent_ng_template_17_input_select_1_Template, 2, 2, "input-select", 28);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](1, PlanoListEntregaComponent_ng_template_17_input_select_1_Template, 2, 6, "input-select", 28);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](2, PlanoListEntregaComponent_ng_template_17_input_select_2_Template, 2, 2, "input-select", 29);
 } if (rf & 2) {
     const ctx_r12 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", (ctx_r12.origem == null ? null : ctx_r12.origem.value) == "MESMA_UNIDADE");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", (ctx_r12.origem == null ? null : ctx_r12.origem.value) == "EXTERNA");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", (ctx_r12.origem == null ? null : ctx_r12.origem.value) == "OUTRA_UNIDADE");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", (ctx_r12.origem == null ? null : ctx_r12.origem.value) == "CATALOGO");
 } }
 function PlanoListEntregaComponent_ng_template_20_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 20);
@@ -1008,14 +1026,14 @@ function PlanoListEntregaComponent_ng_template_20_Template(rf, ctx) { if (rf & 1
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](5, "br");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](6, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](7, "small");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](8, "badge", 33);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](8, "badge", 36);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r14 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](8);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("color", ctx_r14.totalForcaTrabalho == 100 ? "success" : ctx_r14.totalForcaTrabalho < 100 ? "warning" : "danger")("label", ctx_r14.totalForcaTrabalho + "%");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("color", ctx_r14.totalForcaTrabalho == 100 ? "success" : "warning")("label", ctx_r14.totalForcaTrabalho + "%");
 } }
 function PlanoListEntregaComponent_ng_template_22_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "span");
@@ -1024,14 +1042,14 @@ function PlanoListEntregaComponent_ng_template_22_Template(rf, ctx) { if (rf & 1
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    const row_r45 = ctx.row;
+    const row_r49 = ctx.row;
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"](row_r45.forca_trabalho + "%");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"](row_r49.forca_trabalho + "%");
 } }
 function PlanoListEntregaComponent_ng_template_24_Template(rf, ctx) { if (rf & 1) {
-    const _r48 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "input-text", 34);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("change", function PlanoListEntregaComponent_ng_template_24_Template_input_text_change_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r48); const row_r46 = ctx.row; const ctx_r47 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](); return ctx_r47.onForcaTrabalhoChange(row_r46); });
+    const _r52 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "input-text", 37);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("change", function PlanoListEntregaComponent_ng_template_24_Template_input_text_change_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r52); const row_r50 = ctx.row; const ctx_r51 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](); return ctx_r51.onForcaTrabalhoChange(row_r50); });
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r18 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
@@ -1055,13 +1073,13 @@ function PlanoListEntregaComponent_ng_template_29_Template(rf, ctx) { if (rf & 1
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    const row_r50 = ctx.row;
+    const row_r54 = ctx.row;
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵstyleProp"]("max-width", 290);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"](row_r50.descricao);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"](row_r54.descricao);
 } }
 function PlanoListEntregaComponent_ng_template_31_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](0, "input-text", 35);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](0, "input-text", 38);
 } if (rf & 2) {
     const ctx_r24 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("control", ctx_r24.form.controls.descricao);
@@ -1076,39 +1094,16 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
         this.totalForcaTrabalho = 0;
         this.entregasMesmaUnidade = [];
         this.entregasOutraUnidade = [];
-        this.entregasExternas = [];
-        /*
-        TESTES
-      
-                                    PERSISTENTE               NÃO-PERSISTENTE
-        Inclusão                        OK
-        Alteração                       OK
-        Cancelamento                    OK
-        Exclusão                        OK
-        Validação na inclusão           NÃO
-        Validação na alteração          NÃO
-        */
-        /*
-        PROBLEMAS:
-      
-        1. O evento de selecionar o conteúdo do input-text está desviando o fluxo para a homepage;
-        2. Durante a edição de uma entrega, os campos não são validados à medida que são preenchidos;
-      
-        */
+        this.entregasCatalogo = [];
         this.validate = (control, controlName) => {
-            var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
             let result = null;
-            if (['descricao'].indexOf(controlName) >= 0 && !((_a = control.value) === null || _a === void 0 ? void 0 : _a.length)) {
+            if (['descricao'].indexOf(controlName) >= 0 && !((_a = control.value) === null || _a === void 0 ? void 0 : _a.length))
                 result = "Obrigatório!";
-            }
-            if (['forca_trabalho'].indexOf(controlName) >= 0) {
-                //let soma = this.entity?.entregas?.reduce((acc, e) => { return acc + parseFloat(e.forca_trabalho); }, 0) || 0;
-                //if((soma + (this.grid?.adding ? parseFloat(this.form?.controls.forca_trabalho.value) : 0)) > 100) result = "Ultrapassa o total de 100%";
-                if (control.value < 1)
-                    result = "Não pode ser inferior a 1";
-            }
+            if (['forca_trabalho'].indexOf(controlName) >= 0 && control.value < 1)
+                result = "Não pode ser inferior a 1";
             if (['entrega_id'].indexOf(controlName) >= 0) {
-                if (((_b = this.form) === null || _b === void 0 ? void 0 : _b.controls.origem.value) == 'EXTERNA' && !control.value)
+                if (((_b = this.form) === null || _b === void 0 ? void 0 : _b.controls.origem.value) == 'CATALOGO' && !control.value)
                     result = "Este campo não pode ser nulo!";
                 let cont = ((_d = (_c = this.entity) === null || _c === void 0 ? void 0 : _c.entregas) === null || _d === void 0 ? void 0 : _d.filter(e => !!e.entrega_id && !e.plano_entrega_entrega_id).map(e => e.entrega_id).reduce((acc, id) => { if (id === control.value)
                     return acc + 1;
@@ -1121,25 +1116,30 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
                 //separar os casos de mesma unidade dos casos de outra unidade
                 if (['MESMA_UNIDADE', 'OUTRA_UNIDADE'].includes((_f = this.form) === null || _f === void 0 ? void 0 : _f.controls.origem.value) && !control.value)
                     result = "Este campo não pode ser nulo!";
-                let cont = ((_h = (_g = this.entity) === null || _g === void 0 ? void 0 : _g.entregas) === null || _h === void 0 ? void 0 : _h.filter(e => !e.entrega_id && !!e.plano_entrega_entrega_id).map(e => e.plano_entrega_entrega_id).reduce((acc, id) => { if (id === control.value)
-                    return acc + 1;
-                else
-                    return acc; }, 0)) || 0;
-                if (cont > (((_j = this.grid) === null || _j === void 0 ? void 0 : _j.adding) ? 0 : 1))
-                    result = "Esta entrega está em duplicidade!";
+                /*       let cont = this.entity?.entregas?.filter(e => !e.entrega_id && !!e.plano_entrega_entrega_id).map(e => e.plano_entrega_entrega_id).reduce((acc, id) => { if(id === control.value) return acc + 1; else return acc; }, 0) || 0;
+                      if(cont > 0) result = "Esta entrega está em duplicidade!"; */
             }
+            if ((_g = this.form) === null || _g === void 0 ? void 0 : _g.errors)
+                console.log('Erro no campo descrição: ', (_h = this.form) === null || _h === void 0 ? void 0 : _h.controls.descricao.errors);
+            if ((_j = this.form) === null || _j === void 0 ? void 0 : _j.errors)
+                console.log('Erro no campo entrega_id: ', (_k = this.form) === null || _k === void 0 ? void 0 : _k.controls.entrega_id.errors);
+            console.log('Final do Validate - FORM: ', (_l = this.form) === null || _l === void 0 ? void 0 : _l.valid);
+            if ((_m = this.form) === null || _m === void 0 ? void 0 : _m.errors)
+                console.log('Erros: ', (_o = this.form) === null || _o === void 0 ? void 0 : _o.errors);
             return result;
         };
         this.dao = injector.get(src_app_dao_plano_trabalho_entrega_dao_service__WEBPACK_IMPORTED_MODULE_7__["PlanoTrabalhoEntregaDaoService"]);
         this.cdRef = injector.get(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ChangeDetectorRef"]);
         this.entregaDao = injector.get(src_app_dao_entrega_dao_service__WEBPACK_IMPORTED_MODULE_9__["EntregaDaoService"]);
         this.planoTrabalhoDao = injector.get(src_app_dao_plano_dao_service__WEBPACK_IMPORTED_MODULE_8__["PlanoDaoService"]);
+        this.planoEntregaDao = injector.get(src_app_dao_plano_entrega_dao_service__WEBPACK_IMPORTED_MODULE_10__["PlanoEntregaDaoService"]);
+        this.peeDao = injector.get(src_app_dao_plano_entrega_entrega_dao_service__WEBPACK_IMPORTED_MODULE_11__["PlanoEntregaEntregaDaoService"]);
         this.join = ["entrega", "entrega_plano_entrega.entrega"];
         this.form = this.fh.FormBuilder({
             origem: { default: null },
             entrega_mesma_unidade_id: { default: null },
             entrega_outra_unidade_id: { default: null },
-            entrega_externa_id: { default: null },
+            entrega_catalogo_id: { default: null },
             descricao: { default: "" },
             forca_trabalho: { default: 1 },
             plano_id: { default: null },
@@ -1172,7 +1172,7 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
             _super.ngOnInit.call(this);
             this.entity = ((_a = this.metadata) === null || _a === void 0 ? void 0 : _a.entity) || this.entity;
             this.totalForcaTrabalho = Math.round(this.somaForcaTrabalho((_b = this.entity) === null || _b === void 0 ? void 0 : _b.entregas) * 100) / 100;
-            this.entregasExternas = yield this.carregarEntregasExternas();
+            this.entregasCatalogo = yield this.carregarEntregasCatalogo();
             this.entregasMesmaUnidade = this.carregarEntregasMesmaUnidade();
         });
     }
@@ -1185,53 +1185,63 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
         super.loadData(entity, form);
     }
     /**
-     * Método utilizado durante a inclusão/alteração de um item no grid persistente de entregas de plano de trabalho
+     * Método utilizado durante a inclusão/alteração de uma entrega de plano de trabalho no grid persistente
      * @param form
      * @param row
      */
     loadEntrega(form, row) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             form.controls.descricao.setValue(row.descricao);
             form.controls.forca_trabalho.setValue(row.forca_trabalho);
             if (!((_a = row.plano_entrega_entrega_id) === null || _a === void 0 ? void 0 : _a.length) && ((_b = row.entrega_id) === null || _b === void 0 ? void 0 : _b.length)) {
-                //this.entregasExternas = await this.carregarEntregasExternas();
-                (_c = this.entrega_externa) === null || _c === void 0 ? void 0 : _c.setValue(row.entrega_id);
+                // POR QUE OS 3 INPUTS ESTÃO UNDEFINED ? THIS.ENTREGA_CATALOGO, THIS.ENTREGA_MESMA_UNIDADE, THIS.ENTREGA_OUTRA_UNIDADE
+                (_c = this.entrega_catalogo) === null || _c === void 0 ? void 0 : _c.setValue(row.entrega_id);
                 form.controls.entrega_id.setValue(row.entrega_id);
                 (_d = this.entrega_mesma_unidade) === null || _d === void 0 ? void 0 : _d.setValue(null);
+                (_e = this.entrega_outra_unidade) === null || _e === void 0 ? void 0 : _e.setValue(null);
+                form.controls.origem.setValue('CATALOGO');
                 form.controls.plano_entrega_entrega_id.setValue(null);
-                (_e = this.origem) === null || _e === void 0 ? void 0 : _e.setValue('EXTERNA');
             }
             else if (!((_f = row.entrega_id) === null || _f === void 0 ? void 0 : _f.length) && ((_g = row.plano_entrega_entrega_id) === null || _g === void 0 ? void 0 : _g.length) && ((_h = row.entrega_plano_entrega) === null || _h === void 0 ? void 0 : _h.plano_entrega_id) == ((_j = this.entity) === null || _j === void 0 ? void 0 : _j.plano_entrega_id)) {
-                //this.entregasMesmaUnidade = this.carregarEntregasMesmaUnidade();
+                // POR QUE OS 3 INPUTS ESTÃO UNDEFINED ? THIS.ENTREGA_CATALOGO, THIS.ENTREGA_MESMA_UNIDADE, THIS.ENTREGA_OUTRA_UNIDADE
                 (_k = this.entrega_mesma_unidade) === null || _k === void 0 ? void 0 : _k.setValue(row.plano_entrega_entrega_id);
                 form.controls.plano_entrega_entrega_id.setValue(row.plano_entrega_entrega_id);
-                (_l = this.entrega_externa) === null || _l === void 0 ? void 0 : _l.setValue(null);
+                (_l = this.entrega_catalogo) === null || _l === void 0 ? void 0 : _l.setValue(null);
+                (_m = this.entrega_outra_unidade) === null || _m === void 0 ? void 0 : _m.setValue(null);
+                form.controls.origem.setValue('MESMA_UNIDADE');
                 form.controls.entrega_id.setValue(null);
-                (_m = this.origem) === null || _m === void 0 ? void 0 : _m.setValue('MESMA_UNIDADE');
             }
             else if (!((_o = row.entrega_id) === null || _o === void 0 ? void 0 : _o.length) && ((_p = row.plano_entrega_entrega_id) === null || _p === void 0 ? void 0 : _p.length) && ((_q = row.entrega_plano_entrega) === null || _q === void 0 ? void 0 : _q.plano_entrega_id) != ((_r = this.entity) === null || _r === void 0 ? void 0 : _r.plano_entrega_id)) {
-                // antes de carregar as entregas é preciso escolher o plano de entregas da unidade desejada
-                this.entregasOutraUnidade = this.carregarEntregasOutraUnidade();
-                (_s = this.entrega_outra_unidade) === null || _s === void 0 ? void 0 : _s.setValue(row.plano_entrega_entrega_id);
+                // POR QUE OS 3 INPUTS ESTÃO UNDEFINED ? THIS.ENTREGA_CATALOGO, THIS.ENTREGA_MESMA_UNIDADE, THIS.ENTREGA_OUTRA_UNIDADE
+                this.entregasOutraUnidade = yield this.carregarEntregasOutraUnidade((_s = row.entrega_plano_entrega) === null || _s === void 0 ? void 0 : _s.plano_entrega_id);
+                (_t = this.entrega_outra_unidade) === null || _t === void 0 ? void 0 : _t.setValue(row.plano_entrega_entrega_id);
                 form.controls.plano_entrega_entrega_id.setValue(row.plano_entrega_entrega_id);
-                (_t = this.entrega_externa) === null || _t === void 0 ? void 0 : _t.setValue(null);
+                (_u = this.entrega_catalogo) === null || _u === void 0 ? void 0 : _u.setValue(null);
+                (_v = this.entrega_mesma_unidade) === null || _v === void 0 ? void 0 : _v.setValue(null);
+                form.controls.origem.setValue('OUTRA_UNIDADE');
                 form.controls.entrega_id.setValue(null);
-                (_u = this.origem) === null || _u === void 0 ? void 0 : _u.setValue('OUTRA_UNIDADE');
             }
-            else {
+            else { // inclusão de uma nova entrega
                 form.controls.entrega_id.setValue(null);
-                (_v = this.entrega_externa) === null || _v === void 0 ? void 0 : _v.setValue(null);
                 form.controls.plano_entrega_entrega_id.setValue(null);
-                (_w = this.entrega_mesma_unidade) === null || _w === void 0 ? void 0 : _w.setValue(null);
-                (_x = this.entrega_outra_unidade) === null || _x === void 0 ? void 0 : _x.setValue(null);
-                (_y = this.origem) === null || _y === void 0 ? void 0 : _y.setValue(null);
+                (_w = this.entrega_catalogo) === null || _w === void 0 ? void 0 : _w.setValue(null);
+                (_x = this.entrega_mesma_unidade) === null || _x === void 0 ? void 0 : _x.setValue(null);
+                (_y = this.entrega_outra_unidade) === null || _y === void 0 ? void 0 : _y.setValue(null);
+                form.controls.origem.setValue(null);
             }
             this.cdRef.detectChanges();
+            if ((_z = this.form) === null || _z === void 0 ? void 0 : _z.errors)
+                console.log('Erro no campo descrição: ', (_0 = this.form) === null || _0 === void 0 ? void 0 : _0.controls.descricao.errors);
+            if ((_1 = this.form) === null || _1 === void 0 ? void 0 : _1.errors)
+                console.log('Erro no campo entrega_id: ', (_2 = this.form) === null || _2 === void 0 ? void 0 : _2.controls.entrega_id.errors);
+            console.log('Final do LoadEntrega - FORM: ', (_3 = this.form) === null || _3 === void 0 ? void 0 : _3.valid);
+            if ((_4 = this.form) === null || _4 === void 0 ? void 0 : _4.errors)
+                console.log('Erros: ', (_5 = this.form) === null || _5 === void 0 ? void 0 : _5.errors);
         });
     }
     somaForcaTrabalho(entregas = []) {
-        return entregas.map(x => x.forca_trabalho).reduce((a, b) => a + b, 0);
+        return entregas.map(x => parseFloat(x.forca_trabalho)).reduce((a, b) => a + b, 0);
     }
     /**
      * Método chamado para inserir uma entrega de plano de trabalho no grid.
@@ -1250,6 +1260,11 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
         entrega._status = entrega._status == "ADD" ? "ADD" : "EDIT";
         let index = this.items.indexOf(entrega);
       } */
+    /**
+     * Método chamado para a exclusão de uma entrega de plano de trabalho.
+     * @param row
+     * @returns
+     */
     removeEntrega(row) {
         var _a;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
@@ -1262,7 +1277,7 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
                 finally {
                     this.loading = false;
                 }
-                this.totalForcaTrabalho = Math.round((this.totalForcaTrabalho - row.forca_trabalho) * 100) / 100;
+                this.totalForcaTrabalho = Math.round((this.totalForcaTrabalho - parseFloat(row.forca_trabalho)) * 100) / 100;
                 return true;
             }
             else {
@@ -1301,21 +1316,29 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
     }
     afterSaveEntrega(novaEntrega) {
         var _a, _b, _c, _d, _e, _f, _g;
-        novaEntrega.entrega = (_b = (_a = this.entrega_externa) === null || _a === void 0 ? void 0 : _a.selectedItem) === null || _b === void 0 ? void 0 : _b.data;
+        novaEntrega.entrega = (_b = (_a = this.entrega_catalogo) === null || _a === void 0 ? void 0 : _a.selectedItem) === null || _b === void 0 ? void 0 : _b.data;
         novaEntrega.entrega_plano_entrega = ((_c = this.origem) === null || _c === void 0 ? void 0 : _c.value) == 'MESMA_UNIDADE' ? (_e = (_d = this.entrega_mesma_unidade) === null || _d === void 0 ? void 0 : _d.selectedItem) === null || _e === void 0 ? void 0 : _e.data : (_f = this.entrega_outra_unidade) === null || _f === void 0 ? void 0 : _f.selectedItem;
         (_g = this.grid) === null || _g === void 0 ? void 0 : _g.reloadFilter();
     }
     carregarEntregasMesmaUnidade() {
-        var _a, _b, _c;
-        let entregasPlanoEntrega = ((_a = this.entity) === null || _a === void 0 ? void 0 : _a.id.length) ? ((_c = (_b = this.entity) === null || _b === void 0 ? void 0 : _b.plano_entrega) === null || _c === void 0 ? void 0 : _c.entregas) || [] : []; //this.entregas || []; //REFATORAR  carregando as entregas do plano de entregas, se este já foi informado
-        //return entregasPlanoEntrega.filter(epe => !this.entity?.entregas.map(ept => ept.plano_entrega_entrega_id).includes(epe.id)).map(epe => Object.assign({}, {key: epe.id, value: epe.descricao, data: epe})) || [];
+        var _a, _b;
+        let entregasPlanoEntrega = ((_b = (_a = this.entity) === null || _a === void 0 ? void 0 : _a.plano_entrega) === null || _b === void 0 ? void 0 : _b.entregas) || [];
         return entregasPlanoEntrega.map(epe => { var _a; return Object.assign({}, { key: epe.id, value: ((_a = epe.entrega) === null || _a === void 0 ? void 0 : _a.nome) || '', data: epe }); });
     }
-    carregarEntregasOutraUnidade() {
-        let result = [];
-        return result;
+    carregarEntregasOutraUnidade(plano_entrega_id) {
+        var _a;
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            let result = [];
+            try {
+                (_a = this.peeDao) === null || _a === void 0 ? void 0 : _a.query({ where: ['plano_entrega_id', '==', plano_entrega_id], orderBy: [['entrega.nome', 'asc']], join: ['entrega:id,nome'] }).getAll().then(response => {
+                    result = response.map(epe => { var _a; return Object.assign({}, { key: epe.id, value: ((_a = epe.entrega) === null || _a === void 0 ? void 0 : _a.nome) || '', data: epe }); });
+                });
+            }
+            catch (error) { }
+            return result;
+        });
     }
-    carregarEntregasExternas() {
+    carregarEntregasCatalogo() {
         var _a, _b;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             let result = [];
@@ -1323,18 +1346,23 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
             return result;
         });
     }
+    /* ---------  TRATAMENTO DOS EVENTOS ----------- */
     onOrigemChange(row) {
-        var _a, _b, _c, _d;
-        if (['MESMA_UNIDADE', 'OUTRA_UNIDADE'].includes(row["origem"])) {
-            (_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.entrega_id.setValue(null);
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
+        if (['MESMA_UNIDADE', 'OUTRA_UNIDADE'].includes((_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.origem.value)) {
+            (_b = this.form) === null || _b === void 0 ? void 0 : _b.controls.entrega_id.setValue(null);
+            //if(row["origem"] == "OUTRA_UNIDADE") Disparar o evento CLICK do input-select/button  
         }
-        else if (row["origem"] == "EXTERNA") {
-            (_b = this.form) === null || _b === void 0 ? void 0 : _b.controls.plano_entrega_entrega_id.setValue(null);
-        }
-        else {
-            (_c = this.form) === null || _c === void 0 ? void 0 : _c.controls.entrega_id.setValue(null);
+        else if (((_c = this.form) === null || _c === void 0 ? void 0 : _c.controls.origem.value) == 'CATALOGO') {
             (_d = this.form) === null || _d === void 0 ? void 0 : _d.controls.plano_entrega_entrega_id.setValue(null);
         }
+        if ((_e = this.form) === null || _e === void 0 ? void 0 : _e.errors)
+            console.log('Erro no campo descrição: ', (_f = this.form) === null || _f === void 0 ? void 0 : _f.controls.descricao.errors);
+        if ((_g = this.form) === null || _g === void 0 ? void 0 : _g.errors)
+            console.log('Erro no campo entrega_id: ', (_h = this.form) === null || _h === void 0 ? void 0 : _h.controls.entrega_id.errors);
+        console.log('Final do onOrigemChange - FORM: ', (_j = this.form) === null || _j === void 0 ? void 0 : _j.valid);
+        if ((_k = this.form) === null || _k === void 0 ? void 0 : _k.errors)
+            console.log('Erros: ', (_l = this.form) === null || _l === void 0 ? void 0 : _l.errors);
     }
     onEntregaMesmaUnidadeChange(event) {
         var _a, _b, _c, _d, _e, _f;
@@ -1347,10 +1375,10 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
         (_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.descricao.setValue('');
         //if(this.entrega_outra_unidade?.selectedItem?.key.length) this.form?.controls.descricao.setValue(this.entrega_outra_unidade?.selectedItem?.value);
     }
-    onEntregaExternaChange(event) {
+    onEntregaCatalogoChange(event) {
         var _a, _b, _c, _d, _e, _f;
-        (_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.descricao.setValue(((_c = (_b = this.entrega_externa) === null || _b === void 0 ? void 0 : _b.selectedItem) === null || _c === void 0 ? void 0 : _c.value) || '');
-        (_d = this.form) === null || _d === void 0 ? void 0 : _d.controls.entrega_id.setValue((_f = (_e = this.entrega_externa) === null || _e === void 0 ? void 0 : _e.selectedItem) === null || _f === void 0 ? void 0 : _f.key);
+        (_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.descricao.setValue(((_c = (_b = this.entrega_catalogo) === null || _b === void 0 ? void 0 : _b.selectedItem) === null || _c === void 0 ? void 0 : _c.value) || '');
+        (_d = this.form) === null || _d === void 0 ? void 0 : _d.controls.entrega_id.setValue((_f = (_e = this.entrega_catalogo) === null || _e === void 0 ? void 0 : _e.selectedItem) === null || _f === void 0 ? void 0 : _f.key);
         this.cdRef.detectChanges();
     }
     onForcaTrabalhoChange(row) {
@@ -1375,8 +1403,8 @@ PlanoListEntregaComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵ
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵloadQuery"]()) && (ctx.origem = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵloadQuery"]()) && (ctx.entrega_mesma_unidade = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵloadQuery"]()) && (ctx.entrega_outra_unidade = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵloadQuery"]()) && (ctx.entrega_externa = _t.first);
-    } }, inputs: { cdRef: "cdRef", control: "control", entity: "entity", disabled: "disabled", noPersist: "noPersist" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]], decls: 34, vars: 37, consts: [["noButtons", "", 3, "form", "disabled"], [1, "row"], ["editable", "", 3, "items", "form", "selectable", "minHeight", "join", "groupBy", "add", "remove", "save", "saveEnd", "load", "hasDelete", "hasEdit", "hasAdd"], ["gridEntregas", ""], [3, "titleTemplate", "template", "editTemplate", "verticalAlign", "width", "align"], ["titleOrigem", ""], ["columnOrigem", ""], ["editOrigem", ""], [3, "titleTemplate", "template", "editTemplate", "verticalAlign", "maxWidth"], ["titleEntrega", ""], ["columnEntrega", ""], ["editEntrega", ""], [3, "titleTemplate", "template", "editTemplate", "width", "align"], ["titleForcaTrabalho", ""], ["columnForcaTrabalho", ""], ["editForcaTrabalho", ""], ["titleDescricao", ""], ["columnDescricao", ""], ["editDescricao", ""], ["type", "options"], [1, "text-center"], ["color", "success", "label", "Mesma Unidade", 4, "ngIf"], ["color", "secondary", "label", "Externa", 4, "ngIf"], ["color", "success", "label", "Mesma Unidade"], ["color", "secondary", "label", "Externa"], ["controlName", "origem", "nullable", "", "itemNull", "- Selecione -", "controlName", "origem", 3, "control", "items", "change"], ["origem", ""], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", 3, "control", "items", "change", 4, "ngIf"], ["nullable", "", "itemNull", "- Selecione -", "controlName", "entrega_id", 3, "control", "items", "change", 4, "ngIf"], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", 3, "control", "items", "change"], ["entrega_mesma_unidade", ""], ["nullable", "", "itemNull", "- Selecione -", "controlName", "entrega_id", 3, "control", "items", "change"], ["entrega_externa", ""], ["icon", "bi bi-calculator", 3, "color", "label"], ["number", "", "sufix", "%", "controlName", "forca_trabalho", 3, "control", "change"], ["controlName", "descricao", 3, "control"]], template: function PlanoListEntregaComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵloadQuery"]()) && (ctx.entrega_catalogo = _t.first);
+    } }, inputs: { cdRef: "cdRef", control: "control", entity: "entity", disabled: "disabled", noPersist: "noPersist" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]], decls: 34, vars: 37, consts: [["noButtons", "", 3, "form", "disabled"], [1, "row"], ["editable", "", 3, "items", "form", "selectable", "minHeight", "join", "groupBy", "add", "remove", "save", "saveEnd", "load", "hasDelete", "hasEdit", "hasAdd"], ["gridEntregas", ""], [3, "titleTemplate", "template", "editTemplate", "verticalAlign", "width", "align"], ["titleOrigem", ""], ["columnOrigem", ""], ["editOrigem", ""], [3, "titleTemplate", "template", "editTemplate", "verticalAlign", "maxWidth"], ["titleEntrega", ""], ["columnEntrega", ""], ["editEntrega", ""], [3, "titleTemplate", "template", "editTemplate", "width", "align"], ["titleForcaTrabalho", ""], ["columnForcaTrabalho", ""], ["editForcaTrabalho", ""], ["titleDescricao", ""], ["columnDescricao", ""], ["editDescricao", ""], ["type", "options"], [1, "text-center"], ["color", "success", "label", "Mesma Unidade", 4, "ngIf"], ["color", "secondary", "label", "Cat\u00E1logo", 4, "ngIf"], ["color", "success", "label", "Mesma Unidade"], ["color", "secondary", "label", "Cat\u00E1logo"], ["controlName", "origem", "controlName", "origem", 3, "control", "items", "change"], ["origem", ""], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", 3, "control", "items", "change", 4, "ngIf"], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", "searchable", "", 3, "control", "items", "searchRoute", "change", 4, "ngIf"], ["nullable", "", "itemNull", "- Selecione -", "controlName", "entrega_id", 3, "control", "items", "change", 4, "ngIf"], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", 3, "control", "items", "change"], ["entrega_mesma_unidade", ""], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", "searchable", "", 3, "control", "items", "searchRoute", "change"], ["entrega_outra_unidade", ""], ["nullable", "", "itemNull", "- Selecione -", "controlName", "entrega_id", 3, "control", "items", "change"], ["entrega_catalogo", ""], ["icon", "bi bi-calculator", 3, "color", "label"], ["number", "", "sufix", "%", "controlName", "forca_trabalho", 3, "control", "change"], ["controlName", "descricao", 3, "control"]], template: function PlanoListEntregaComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "editable-form", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](1, "div", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](2, "grid", 2, 3);
@@ -1389,7 +1417,7 @@ PlanoListEntregaComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵ
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](12, "column", 8);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](13, PlanoListEntregaComponent_ng_template_13_Template, 3, 0, "ng-template", null, 9, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](15, PlanoListEntregaComponent_ng_template_15_Template, 4, 3, "ng-template", null, 10, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplateRefExtractor"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](17, PlanoListEntregaComponent_ng_template_17_Template, 2, 2, "ng-template", null, 11, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](17, PlanoListEntregaComponent_ng_template_17_Template, 3, 3, "ng-template", null, 11, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](19, "column", 12);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](20, PlanoListEntregaComponent_ng_template_20_Template, 9, 2, "ng-template", null, 13, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplateRefExtractor"]);
@@ -1430,7 +1458,7 @@ PlanoListEntregaComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵ
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("titleTemplate", _r13)("template", _r15)("editTemplate", _r17)("width", 130)("align", "center");
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](7);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("titleTemplate", _r19)("template", _r21)("editTemplate", _r23)("verticalAlign", "middle")("maxWidth", 300);
-    } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_2__["EditableFormComponent"], src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_3__["GridComponent"], _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_10__["ColumnsComponent"], _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_11__["ColumnComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_12__["NgIf"], _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_13__["BadgeComponent"], _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_14__["InputSelectComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_15__["InputTextComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwbGFuby1saXN0LWVudHJlZ2EuY29tcG9uZW50LnNjc3MifQ== */"] });
+    } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_2__["EditableFormComponent"], src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_3__["GridComponent"], _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_12__["ColumnsComponent"], _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_13__["ColumnComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_14__["NgIf"], _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_15__["BadgeComponent"], _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_16__["InputSelectComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_17__["InputTextComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwbGFuby1saXN0LWVudHJlZ2EuY29tcG9uZW50LnNjc3MifQ== */"] });
 
 
 /***/ }),

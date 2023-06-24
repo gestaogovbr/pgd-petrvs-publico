@@ -19,10 +19,10 @@ import { InputBase, LabelPosition, SelectItem } from '../input-base';
 })
 export class InputSelectComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';
-  @ViewChild('inputElement', {static: false}) inputElement?: ElementRef;
+  @ViewChild('inputElement', { static: false }) inputElement?: ElementRef;
   @Output() change = new EventEmitter<Event>();
   @Output() details = new EventEmitter<SelectItem>();
-  @Input() hostClass: string = ""; 
+  @Input() hostClass: string = "";
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
   @Input() disabled?: string;
@@ -37,10 +37,13 @@ export class InputSelectComponent extends InputBase implements OnInit {
   @Input() itemTodos: string = "";
   @Input() valueTodos: any = undefined;
   @Input() addRoute?: FullRoute;
+  @Input() searchRoute?: FullRoute;
+  @Input() afterSearch?: (result: any) => void;
   @Input() form?: FormGroup;
   @Input() source?: any;
   @Input() path?: string;
   @Input() nullable?: string;
+  @Input() searchable?: string;
   @Input() noIcon?: string;
   @Input() noColor?: string;
   @Input() liveSearch?: string;
@@ -51,7 +54,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
     return this._where;
   }
   public set where(value: any[] | undefined) {
-    if(JSON.stringify(this._where) != JSON.stringify(value)) {
+    if (JSON.stringify(this._where) != JSON.stringify(value)) {
       this._where = value;
       this.loadItems();
     }
@@ -61,8 +64,8 @@ export class InputSelectComponent extends InputBase implements OnInit {
     return this._items;
   }
   public set items(value: LookupItem[]) {
-    if(JSON.stringify(this._items) != JSON.stringify(value)) {
-      if(this.viewInit) {
+    if (JSON.stringify(this._items) != JSON.stringify(value)) {
+      if (this.viewInit) {
         const current = this.control ? this.control.value : this.value;
         this._items = [];
         this.selectPicker?.find('.input-select-dynamic-item').remove().end();
@@ -85,7 +88,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
     return this.getControl();
   }
   @Input() set loading(value: boolean) {
-    if(this._loading != value) {
+    if (this._loading != value) {
       this._loading = value;
       this.detectChanges();
       this.selectPicker?.selectpicker('refresh');
@@ -95,10 +98,10 @@ export class InputSelectComponent extends InputBase implements OnInit {
     return this._loading;
   }
   @Input() set size(value: number) {
-    this.setSize(value); 
+    this.setSize(value);
   }
   get size(): number {
-    return this.getSize(); 
+    return this.getSize();
   }
 
   public CARREGANDO: string = "Carregando . . .";
@@ -125,7 +128,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
     super.ngAfterViewInit();
     $(() => {
       //@ts-ignore
-      this.selectPicker =  $('#' + this.generatedId(this.controlName));
+      this.selectPicker = $('#' + this.generatedId(this.controlName));
       this.selectPicker.selectpicker({
         noneSelectedText: " - ",
         noneResultsText: "Nenhum resultado {0}",
@@ -135,10 +138,10 @@ export class InputSelectComponent extends InputBase implements OnInit {
       this.selectPicker.on('changed.bs.select', (e, clickedIndex, isSelected, previousValue) => {
         this.onChange(e);
       });
-      if(this.dao) {
+      if (this.dao && !this.isSearchable) {
         this.loadItems();
       }
-      if(this.control) {
+      if (this.control) {
         this.control.valueChanges.subscribe(newValue => this.setValue(newValue));
         this.setValue(this.control.value);
       }
@@ -147,6 +150,10 @@ export class InputSelectComponent extends InputBase implements OnInit {
 
   public get isNullable(): boolean {
     return this.nullable != undefined;
+  }
+
+  public get isSearchable(): boolean {
+    return this.searchable != undefined;
   }
 
   public get isNoIcon(): boolean {
@@ -167,15 +174,15 @@ export class InputSelectComponent extends InputBase implements OnInit {
 
   public get options(): LookupItem[] {
     let result: LookupItem[] = [];
-    if(this.loading) {
-      result.push({code: "LOADING", key: this.value, value: this.CARREGANDO, icon: "bi bi-clock-history"});
+    if (this.loading) {
+      result.push({ code: "LOADING", key: this.value, value: this.CARREGANDO, icon: "bi bi-clock-history" });
     } else {
-      if(this.isNullable) result.push({code: "NULL", key: null, value: this.itemNull});
-      if(this.itemTodos.length) result.push({code: "ALL", key: this.valueTodos, value: this.itemTodos});
-      if(this.selectedItem?.code == "UNKNOWN" && !this.items.find(x => x.key == this.selectedItem!.key)) result.push({code: "ALL", key: this.selectedItem.key, value: this.selectedItem.value || ' - Desconhecido - '});
+      if (this.isNullable) result.push({ code: "NULL", key: null, value: this.itemNull });
+      if (this.itemTodos.length) result.push({ code: "ALL", key: this.valueTodos, value: this.itemTodos });
+      if (this.selectedItem?.code == "UNKNOWN" && !this.items.find(x => x.key == this.selectedItem!.key)) result.push({ code: "ALL", key: this.selectedItem.key, value: this.selectedItem.value || ' - Desconhecido - ' });
       result.push(...this.items);
     }
-    if(JSON.stringify(result) != JSON.stringify(this._options)) this._options = result;
+    if (JSON.stringify(result) != JSON.stringify(this._options)) this._options = result;
     return this._options;
   }
 
@@ -205,11 +212,11 @@ export class InputSelectComponent extends InputBase implements OnInit {
   public setValue(value: any) {
     const stringValue = this.getStringValue(value);
     const found = this.items.find(x => x.key == value);
-    if(this.selectedValue != stringValue || (this.selectedItem?.code == "UNKNOWN" && found)) {
+    if (this.selectedValue != stringValue || (this.selectedItem?.code == "UNKNOWN" && found)) {
       this.value = value;
       this.selectedValue = stringValue;
       this.selectedItem = this.items.find(x => x.key == value);
-      if(value != null && !this.selectedItem && (!this.itemTodos.length || value != this.valueTodos)) {
+      if (value != null && !this.selectedItem && (!this.itemTodos.length || value != this.valueTodos)) {
         this.selectedItem = {
           key: value,
           value: "- Desconhecido -",
@@ -217,11 +224,11 @@ export class InputSelectComponent extends InputBase implements OnInit {
         };
         //this.items.push(this.selectedItem);
       }
-      this.control?.setValue(value, {emitEvent: false});
+      this.control?.setValue(value, { emitEvent: false });
       this.cdRef.detectChanges();
       this.selectPicker?.selectpicker('refresh');
       this.selectPicker?.selectpicker('val', stringValue);
-      if(this.change) this.change.emit(new Event("change"));
+      if (this.change) this.change.emit(new Event("change"));
     }
   }
 
@@ -229,8 +236,8 @@ export class InputSelectComponent extends InputBase implements OnInit {
     return this.selectedItem?.code == "UNKNOWN";
   }*/
 
-  public onDetailsClick(event: Event){
-    if(this.details && (this.isNullable || this.control?.value?.length)) {
+  public onDetailsClick(event: Event) {
+    if (this.details && (this.isNullable || this.control?.value?.length)) {
       const item = this.items.find(x => x.key == this.control?.value);
       this.details.emit({
         value: item?.key,
@@ -240,11 +247,11 @@ export class InputSelectComponent extends InputBase implements OnInit {
     }
   }
 
-  public onChange(event: Event){
+  public onChange(event: Event) {
     const elmValue = (event.target as HTMLInputElement).value;
     try {
-      if(elmValue.length && elmValue != this.CARREGANDO) {
-        const value =  JSON.parse(elmValue);
+      if (elmValue.length && elmValue != this.CARREGANDO) {
+        const value = JSON.parse(elmValue);
         this.setValue(value);
       }
     } catch (error) {
@@ -255,11 +262,24 @@ export class InputSelectComponent extends InputBase implements OnInit {
   public onAddClick(event: Event) {
     const modalRoute = this.addRoute!;
     modalRoute.params = Object.assign(modalRoute.params || {}, { modal: true });
-    this.go.navigate(this.addRoute!, {modalClose: (result) => {
-      if(result?.length) {
-        this.control?.setValue(result);
-        this.loadItems();
+    this.go.navigate(this.addRoute!, {
+      modalClose: (result) => {
+        if (result?.length) {
+          this.control?.setValue(result);
+          this.loadItems();
+        }
       }
-    }});
+    });
+  }
+
+  public onSearchClick(searchRoute?: FullRoute) {
+    const modalRoute = searchRoute!;
+    modalRoute.params = Object.assign(modalRoute?.params || {}, { modal: true });
+    this.go.navigate(searchRoute!, {
+      metadata: {selectableGrid: true},
+      modalClose: (result: any) => {
+        if (result && this.afterSearch) this.afterSearch(result);    
+      }
+    });
   }
 }
