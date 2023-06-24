@@ -2246,9 +2246,10 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
             this.BOTAO_REATIVAR, this.BOTAO_RETIRAR_HOMOLOGACAO, this.BOTAO_SUSPENDER];
     }
     ngOnInit() {
-        var _a;
+        var _a, _b;
         super.ngOnInit();
         this.showFilter = typeof ((_a = this.queryParams) === null || _a === void 0 ? void 0 : _a.showFilter) != "undefined" ? (this.queryParams.showFilter == "true") : true;
+        this.selectable = ((_b = this.metadata) === null || _b === void 0 ? void 0 : _b.selectable) || this.selectable;
         this.checaBotaoAderirToolbar();
         this.toolbarButtons.push(this.BOTAO_ADERIR_TOOLBAR);
     }
