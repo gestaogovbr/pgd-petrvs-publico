@@ -30,6 +30,8 @@ class ProjetoTarefa extends ModelBase
         'numero_documento', /* varchar(50); */// Numero do documento SEI
         'inicio', /* datetime; */// Inicio da tarefa
         'termino', /* datetime; */// Termino da tarefa
+        'inicio_baseline', /* datetime; */// Inicio da tarefa
+        'termino_baseline', /* datetime; */// Termino da tarefa
         'duracao', /* double(8,2); NOT NULL; */// Duração da atividade. Se a duração for 0 e sintéfico for falso então irá se comportar apenas como um grupo
         'progresso', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */// Percentual de progresso da tarefa
         'inicio_marco', /* tinyint; NOT NULL; */// Se o inicio é um marco

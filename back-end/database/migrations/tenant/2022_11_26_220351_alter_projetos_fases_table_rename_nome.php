@@ -14,7 +14,7 @@ class AlterProjetosFasesTableRenameNome extends Migration
      */
     public function up()
     {
-        DB::statement("ALTER TABLE `projetos_fases` RENAME COLUMN `Nome` to `nome`");
+        DB::statement("ALTER TABLE `projetos_fases` RENAME COLUMN `Nome` TO `nome`");
     }
 
     /**
@@ -24,6 +24,6 @@ class AlterProjetosFasesTableRenameNome extends Migration
      */
     public function down()
     {
-        DB::statement("ALTER TABLE `projetos_fases` RENAME COLUMN `nome` to `Nome`");
+        DB::statement("ALTER TABLE `projetos_fases` RENAME COLUMN `nome` TO `Nome`");
     }
 }
