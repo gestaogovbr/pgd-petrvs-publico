@@ -18,6 +18,7 @@ class AlterPlanosEntregasEntregasAddProgresso extends Migration
             $table->decimal('progresso_realizado', 5, 2)->nullable()->default(0)->comment("Percentual de progresso do Plano de Entregas realizado");
             $table->foreignUuid('unidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment('Demandante da entrega');
             $table->string('destinatario')->nullable()->comment("Destinatário da entrega");
+            $table->dropColumn('cliente');
         });
     }
 
@@ -33,6 +34,7 @@ class AlterPlanosEntregasEntregasAddProgresso extends Migration
             $table->dropColumn('progresso_realizado');
             $table->dropColumn('destinatario');
             $table->dropForeign('unidade_id');
+            $table->text("cliente")->default("")->comment("Cliente da entrega");
         });
     }
 }

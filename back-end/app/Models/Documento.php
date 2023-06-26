@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\Plano;
 use App\Models\Entidade;

@@ -11,13 +11,13 @@ import { ConfigResolver } from './resolvies/config.resolver';
 
 
 const routes: Routes = [
+  { path: 'panel', loadChildren: () => import('./modules/panel/panel.module').then(m => m.PanelModule) },
   { path: 'teste', component: TesteComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Teste" } },
   { path: 'teste/calcula-tempo', component: TesteFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Teste - CalculaTempo" } },
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard], data: { title: "Home" } },
   { path: 'login', component: LoginComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Login Petrvs", login: true } },
   { path: 'login-retorno', component: LoginRetornoComponent, data: { title: "Retorno de login", login: true } },
   { path: 'config', component: ConfigComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Configurações", modal: true } },
-  { path: 'panel', loadChildren: () => import('./modules/panel/panel.module').then(m => m.PanelModule) },
   { path: 'uteis', loadChildren: () => import('./modules/uteis/uteis.module').then(m => m.UteisModule), canActivate: [AuthGuard] },
   { path: 'cadastros/afastamento', loadChildren: () => import('./modules/cadastros/afastamento/afastamento.module').then(m => m.AfastamentoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/cidade', loadChildren: () => import('./modules/cadastros/cidade/cidade.module').then(m => m.CidadeModule), canActivate: [AuthGuard] },

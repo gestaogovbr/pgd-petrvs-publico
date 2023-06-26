@@ -15,9 +15,9 @@ class Notificacao extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        //'codigo', /* varchar(255); NOT NULL; */// Código da mensagem
-        //'data_registro', /* datetime; NOT NULL; */// Data e hora da inclusão da mensagem
-        //'mensagem', /* longtext; NOT NULL; */// Mensagem
+        'codigo', /* varchar(255); NOT NULL; */// Código da mensagem
+        'data_registro', /* datetime; NOT NULL; */// Data e hora da inclusão da mensagem
+        'mensagem', /* longtext; NOT NULL; */// Mensagem
         //'numero', /* int; NOT NULL; */// Número da mensagem (Gerado pelo sistema)
     ];
 

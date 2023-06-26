@@ -58,6 +58,7 @@ class TenantListenerBase
         Config::set('mail.mailers.smtp.username', $config["mail_username"]);
         Config::set('mail.mailers.smtp.password', $config["mail_password"]);
         Config::set('mail.mailers.smtp.encryption', $config["mail_encryption"]);
+        Config::set('mail.from.address', $config["mail_username"]);
         Config::set('notificacoes.whatsapp.enviar', $config["whatsapp"]);
         Config::set('notificacoes.whatsapp.authorization', $config["whatsapp_url"]);
         Config::set('notificacoes.whatsapp.url', $config["whatsapp_token"]);
