@@ -68,7 +68,7 @@ class NotificacoesService
         ];
     }
 
-    public function getOrDefault($array, $key, $default = true) {
+    public function getOrDefault($key, $array, $default = true) {
         return !array_key_exists($key, $array) ? $default : $array[$key];
     }
 
@@ -104,6 +104,7 @@ class NotificacoesService
                             "notificacao_id" => $notificacao->id,
                             "usuario_id" => $destinatario->id
                         ]);
+                        $email->save();
                         $details = [
                             "tenant" => tenant('id'),
                             "email" => $destinatario->email,
