@@ -51,10 +51,13 @@ export class Projeto extends Base implements HasComentarios, HasAlocacoes, HasTa
     public data_fim: Date | null = null;  /* Data final do registro */
     public inicio?: Date = new Date();  /* Inicio do projeto */
     public termino?: Date = new Date();  /* Fim do projeto */
+    public inicio_baseline: Date | null = null;  /* Inicio do projeto (Baseline) */
+    public termino_baseline: Date | null = null;  /* Fim do projeto (Baseline) */
     public custo: number = 0;  /* Custo do projeto */
     public calcula_custos: boolean = true; /* Se o projeto calcula custos */
     public tempo_corrido: boolean = false; /* Se o tempo é corrido ou usa a configuração de fins de semana, feriados e horário do expediente (quando usar horas) */
-    public usar_horas: boolean = true; /* Se usa horas nas datas */
+    public usa_horas: boolean = false; /* Se usa horas nas datas */
+    public usa_baseline: boolean = true; /* Se usa baseline */
     public calcula_intervalo: boolean = true; /* Se o termino é calculado automaticamente pelas tarefas */
     public agrupador: boolean = false; /* Se é apenas um registro para agrupar tarefas filhas (somente se tem_filhos e não possui progresso) */
     public soma_progresso_filhos: boolean = true; /* Se o progresso é calculado pela média do progresso dos filhos ou lançado manual (somente se tem_filhos) */

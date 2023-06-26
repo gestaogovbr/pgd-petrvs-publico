@@ -8,3 +8,8 @@
 .search-group-text {
     margin-left: 5px;
 }
+
+input[type="text"]:read-only, 
+input[type="text"]:disabled { 
+    background-color:#e9ecef;
+}
