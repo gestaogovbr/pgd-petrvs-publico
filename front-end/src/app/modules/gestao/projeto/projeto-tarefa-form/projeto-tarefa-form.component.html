@@ -1,7 +1,7 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title">
     <tabs display right>
         <tab key="PRINCIPAL" label="Principal">
-            <projeto-tarefa-form-principal></projeto-tarefa-form-principal>
+            <projeto-tarefa-form-principal [projeto]="projeto"></projeto-tarefa-form-principal>
         </tab>
         <tab key="ALOCACOES" label="Alocações">
             <projeto-form-alocacoes></projeto-form-alocacoes>

@@ -3,11 +3,13 @@
         <label *ngIf="labelPosition == 'left'" class="form-check-label" [class.me-3]="scale == 'small'" [class.me-5]="scale == 'medium'" for="{{generatedId(controlName)}}">
             <i *ngIf="icon.length" [class]="icon"></i>
             {{label}}
+            <i *ngIf="labelInfo.length" class="bi bi-info-circle label-info text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="{{labelInfo}}"></i>
         </label>
         <input *ngIf="viewInit" [class]="'form-check-input ' + scaleClass" type="checkbox" #checkbox [id]="generatedId(controlName)" (change)="onChange($event)" [attr.disabled]="!isDisabled ? undefined : true">
         <label *ngIf="labelPosition == 'right'" class="form-check-label ms-2" for="{{generatedId(controlName)}}">
             <i *ngIf="icon.length" [class]="icon"></i>
             {{label}}
+            <i *ngIf="labelInfo.length" class="bi bi-info-circle label-info text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="{{labelInfo}}"></i>
         </label>
     </div>
     <ng-container *ngIf="isButton">

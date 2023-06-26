@@ -42,20 +42,23 @@ export class ProjetoFormPrincipalComponent extends PageFrameBase {
       status: {default: "PLANEJADO"},
       descricao: {default: ""},
       finalidade: {default: ""},
-      inicio_projeto: {default: new Date()},
-      termino_projeto: {default: new Date()},
-      duracao: {default: ""},
+      inicio: {default: new Date()},
+      termino: {default: new Date()},
+      duracao: {default: 0},
+      inicio_baseline: {default: new Date()},
+      termino_baseline: {default: new Date()},
       progresso: {default: 0},
       tempo_corrido: {default: false},
       usa_horas: {default: false},
-      intervalo_automatico: {default: false},
-      progresso_automatico: {default: true},
+      usa_baseline: {default: true},
+      calcula_intervalo: {default: false},
+      soma_progresso_filhos: {default: true},
       agrupador: {default: false},
-      usa_custo: {default: true},
-      aloca_recursos_projeto: {default: true},
-      soma_alocacoes_automatico: {default: true},
-      possui_custos_projeto: {default: true},
-      soma_custos_automatico: {default: true},
+      calcula_custos: {default: true},
+      aloca_proprios_recursos: {default: true},
+      soma_recusos_alocados_filhos: {default: true},
+      custos_proprios: {default: true},
+      soma_custos_filhos: {default: true},
       fase_id: {default: ""},
       usar_escritorio: {default: true},
       escritorio_id: {default: ""}
@@ -121,7 +124,15 @@ export class ProjetoFormPrincipalComponent extends PageFrameBase {
   }
 
   public get intervaloAutomatico(): string | undefined {
-    return this.form?.controls.intervalo_automatico.value ? "true" : undefined;
+    return this.form?.controls.calcula_intervalo.value ? "true" : undefined;
+  }
+
+  public get usaBaseline(): string | undefined {
+    return this.form!.controls.usa_baseline.value ? undefined : "true";
+  }
+
+  public get progressoAutomatico(): string | undefined {
+    return this.form!.controls.soma_progresso_filhos.value ? "true" : undefined;
   }
 
 }
