@@ -6,6 +6,7 @@ import { EditableFormComponent } from 'src/app/components/editable-form/editable
 import { ProjetoTarefa } from 'src/app/models/projeto-tarefa.model';
 import { DemandaDaoService } from 'src/app/dao/demanda-dao.service';
 import { LookupItem } from 'src/app/services/lookup.service';
+import { Projeto } from 'src/app/models/projeto.model';
 
 @Component({
   selector: 'projeto-tarefa-form-principal',
@@ -17,6 +18,7 @@ export class ProjetoTarefaFormPrincipalComponent extends PageFrameBase {
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: ProjetoTarefa | undefined) { super.entity = value; } get entity(): ProjetoTarefa | undefined { return super.entity; }
   @Input() cdRef: ChangeDetectorRef;
+  @Input() projeto?: Projeto;
 
   public form: FormGroup;
   public demandaDao!: DemandaDaoService;

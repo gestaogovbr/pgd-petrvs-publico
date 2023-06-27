@@ -26,6 +26,8 @@ export class ProjetoTarefa extends Base implements HasComentarios, HasAlocacoes,
     public numero_documento: string | null = null; /* Numero do documento SEI */
     public inicio: Date = new Date(); /* Inicio da tarefa */
     public termino: Date = new Date(); /* Fim da tarefa */
+    public inicio_baseline: Date | null = null;  /* Inicio do projeto (Baseline) */
+    public termino_baseline: Date | null = null;  /* Fim do projeto (Baseline) */
     public duracao: number = 0.00; /* Duração da atividade. Se a duração for 0 e sintéfico for falso então irá se comportar apenas como um grupo */
     public progresso: number = 0.00; /* Percentual de progresso da tarefa */
     public inicio_marco: boolean = false; /* Se o inicio é um marco */
