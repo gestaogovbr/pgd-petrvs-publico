@@ -8,6 +8,8 @@ use App\Models\Usuario;
 use App\Services\ServiceBase;
 use App\Traits\UseDataFim;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class ProgramaParticipanteService extends ServiceBase {
     use UseDataFim;
@@ -23,7 +25,7 @@ class ProgramaParticipanteService extends ServiceBase {
                     $query->where('unidade_id', $condition[2]);
                 });
                 $this->unidadeId =  $condition[2];
-            } else if (is_array($condition) && $condition[0] == "todos"){
+            } else if (is_array($condition) && $condition[0][0] == "todos"){
                 $this->todos = true;
             } else {
                 array_push($where, $condition);
@@ -60,20 +62,27 @@ class ProgramaParticipanteService extends ServiceBase {
 
     public function habilitar($data)
     {
-        $programaParticipantes = ProgramaParticipante::whereIn("usuario_id", $data["participantes_ids"])->get();
-        $count = 0;
-        foreach ($programaParticipantes as $programaParticipante) {
-            $usuarioId = $programaParticipante->usuario_id;
-            if (strpos($usuarioId, 'VIRT_') === 0) {
-                $usuarioId = substr($usuarioId, 5);
+        try {
+            DB::beginTransaction();
+            $programaParticipantes = ProgramaParticipante::whereIn("usuario_id", $data["participantes_ids"])->get();
+            $count = 0;
+            foreach ($programaParticipantes as $programaParticipante) {
+                $usuarioId = $programaParticipante->usuario_id;
+                if (strpos($usuarioId, 'VIRT_') === 0) {
+                    $usuarioId = substr($usuarioId, 5);
+                }
+                $programaParticipante->usuario_id = $usuarioId;
+                $programaParticipante->habilitado = $data['habilitado'];
+                $programaParticipante->programa_id = $data['programa_id'];
+                $programaParticipante->save();
+                $count++;
             }
-            $programaParticipante->usuario_id = $usuarioId;
-            $programaParticipante->habilitado = $data['habilitado'];
-            $programaParticipante->programa_id = $data['programa_id'];
-            $programaParticipante->save();
-            $count++;
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollback();
+            throw $e;
         }
-        return $count;
+        return true;
     }
 }
 
