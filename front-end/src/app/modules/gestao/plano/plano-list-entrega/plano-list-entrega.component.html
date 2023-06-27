@@ -1,8 +1,8 @@
 <editable-form noButtons [form]="form!" [disabled]="formDisabled">
     <div class="row">
-        <grid [items]="items" [form]="form!" #gridEntregas editable [selectable]="false" [minHeight]="minHeight" [join]="join" [groupBy]="groupBy"
+        <grid [items]="items" [form]="form!" #gridEntregas editable [selectable]="false" [minHeight]="0" [join]="join" [groupBy]="groupBy"
             [add]="addEntrega.bind(this)" [remove]="removeEntrega.bind(this)" [save]="saveEntrega.bind(this)" [saveEnd]="afterSaveEntrega.bind(this)" [load]="loadEntrega.bind(this)"
-            [hasDelete]="true" [hasEdit]="true" [hasAdd]="!disabled" [minHeight]="0">
+            [hasDelete]="true" [hasEdit]="true" [hasAdd]="!disabled">
             <columns>
                 <column [titleTemplate]="titleOrigem" [template]="columnOrigem" [editTemplate]="editOrigem" [verticalAlign]="'middle'" [width]="125" [align]="'center'">
                     <ng-template let-header="header" #titleOrigem><div class="text-center"><span><strong>Origem</strong></span></div></ng-template>
@@ -17,18 +17,18 @@
                         <input-select #origem controlName="origem" controlName="origem" [control]="form!.controls.origem" [items]="lookup.ORIGENS_ENTREGAS_PLANO_TRABALHO" (change)="onOrigemChange(row)"></input-select>
                     </ng-template>
                 </column>
-                <column [titleTemplate]="titleEntrega" [template]="columnEntrega" [editTemplate]="editEntrega" [verticalAlign]="'middle'" [maxWidth]="300">
+                <column [maxWidth]="350" [titleTemplate]="titleEntrega" [template]="columnEntrega" [editTemplate]="editEntrega" [verticalAlign]="'middle'">
                     <ng-template let-header="header" #titleEntrega><span><strong>Entrega</strong></span></ng-template>
-                    <ng-template let-row="row" #columnEntrega>
-                        <div [style.max-width]="290"><span><small>{{ row.entrega_plano_entrega?.entrega?.nome || row.entrega?.nome || "Desconhecido" }}</small></span></div>
+                    <ng-template let-row="row" #columnEntrega >
+                        <div><span><small>{{ row.entrega_plano_entrega?.entrega?.nome || row.entrega?.nome || "Desconhecido" }}</small></span></div>
                     </ng-template>
                     <ng-template let-row="row" #editEntrega>
-                        <input-select *ngIf="origem?.value == 'MESMA_UNIDADE'" #entrega_mesma_unidade nullable itemNull="- Selecione -" controlName="plano_entrega_entrega_id" [control]="form!.controls.plano_entrega_entrega_id" [items]="entregasMesmaUnidade" (change)="onEntregaMesmaUnidadeChange($event)"></input-select>
-                        <input-select *ngIf="origem?.value == 'OUTRA_UNIDADE'" #entrega_outra_unidade nullable itemNull="- Selecione -" controlName="plano_entrega_entrega_id" [control]="form!.controls.plano_entrega_entrega_id" [items]="entregasOutraUnidade" (change)="onEntregaOutraUnidadeChange($event)" searchable [sufix]="planoEntregaOutraUnidade?.unidade?.sigla" [searchRoute]="{route: ['gestao', 'plano-entrega']}" [afterSearch]="carregarEntregasOutraUnidade"></input-select>
-                        <input-select *ngIf="origem?.value == 'CATALOGO'" #entrega_catalogo nullable itemNull="- Selecione -" controlName="entrega_id" [control]="form!.controls.entrega_id" [items]="entregasCatalogo" (change)="onEntregaCatalogoChange($event)"></input-select>
+                        <input-select *ngIf="origem?.value == 'MESMA_UNIDADE'" #entregaMesmaUnidade nullable itemNull="- Selecione -" controlName="plano_entrega_entrega_id" [control]="form!.controls.plano_entrega_entrega_id" [items]="entregasMesmaUnidade" (change)="onEntregaMesmaUnidadeChange($event)"></input-select>
+                        <input-select *ngIf="origem?.value == 'OUTRA_UNIDADE'" #entregaOutraUnidade nullable itemNull="- Selecione -" controlName="plano_entrega_entrega_id" [control]="form!.controls.plano_entrega_entrega_id" [items]="entregasOutraUnidade" (change)="onEntregaOutraUnidadeChange($event)" searchable [sufix]="planoEntregaOutraUnidade?.unidade?.sigla" [searchRoute]="{route: ['gestao', 'plano-entrega']}" [afterSearch]="carregarEntregasOutraUnidade"></input-select>
+                        <input-select *ngIf="origem?.value == 'CATALOGO'" #entregaCatalogo nullable itemNull="- Selecione -" controlName="entrega_id" [control]="form!.controls.entrega_id" [items]="entregasCatalogo" (change)="onEntregaCatalogoChange($event)"></input-select>
                     </ng-template>
                 </column>
-                <column [titleTemplate]="titleForcaTrabalho" [template]="columnForcaTrabalho" [editTemplate]="editForcaTrabalho" [width]="130" [align]="'center'">
+                <column [titleTemplate]="titleForcaTrabalho" [template]="columnForcaTrabalho" [editTemplate]="editForcaTrabalho" [width]="125" [align]="'center'">
                     <ng-template let-header="header" #titleForcaTrabalho>
                         <div class="text-center">
                             <span><small><strong>% Força Trab.</strong></small></span><br>
@@ -42,10 +42,10 @@
                         <input-text number sufix="%" controlName="forca_trabalho" [control]="form!.controls.forca_trabalho" (change)="onForcaTrabalhoChange(row)"></input-text>
                     </ng-template>
                 </column>
-                <column [titleTemplate]="titleDescricao" [template]="columnDescricao" [editTemplate]="editDescricao" [verticalAlign]="'middle'" [maxWidth]="300">
+                <column [maxWidth]="250" [titleTemplate]="titleDescricao" [template]="columnDescricao" [editTemplate]="editDescricao" [verticalAlign]="'middle'">
                     <ng-template let-header="header" #titleDescricao><div class="text-center"><span><strong>Detalhamento</strong></span></div></ng-template>
                     <ng-template let-row="row" #columnDescricao>
-                        <div [style.max-width]="290"><span><small>{{ row.descricao }}</small></span></div>
+                        <div><span><small>{{ row.descricao }}</small></span></div>
                     </ng-template>
                     <ng-template let-row="row" #editDescricao>
                         <input-text controlName="descricao" [control]="form!.controls.descricao"></input-text>

@@ -910,9 +910,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const _c0 = ["origem"];
-const _c1 = ["entrega_mesma_unidade"];
-const _c2 = ["entrega_outra_unidade"];
-const _c3 = ["entrega_catalogo"];
+const _c1 = ["entregaMesmaUnidade"];
+const _c2 = ["entregaOutraUnidade"];
+const _c3 = ["entregaCatalogo"];
 function PlanoListEntregaComponent_ng_template_6_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 20);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](1, "span");
@@ -975,7 +975,6 @@ function PlanoListEntregaComponent_ng_template_15_Template(rf, ctx) { if (rf & 1
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const row_r35 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵstyleProp"]("max-width", 290);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"]((row_r35.entrega_plano_entrega == null ? null : row_r35.entrega_plano_entrega.entrega == null ? null : row_r35.entrega_plano_entrega.entrega.nome) || (row_r35.entrega == null ? null : row_r35.entrega.nome) || "Desconhecido");
 } }
@@ -1080,7 +1079,6 @@ function PlanoListEntregaComponent_ng_template_29_Template(rf, ctx) { if (rf & 1
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const row_r55 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵstyleProp"]("max-width", 290);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"](row_r55.descricao);
 } }
@@ -1094,7 +1092,6 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
     constructor(injector) {
         super(injector);
         this.injector = injector;
-        this.minHeight = 350;
         this.options = [];
         this._disabled = false;
         this.totalForcaTrabalho = 0;
@@ -1102,39 +1099,26 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
         this.entregasOutraUnidade = [];
         this.entregasCatalogo = [];
         this.validate = (control, controlName) => {
-            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
+            var _a, _b, _c;
             let result = null;
-            if (['descricao'].indexOf(controlName) >= 0 && !((_a = control.value) === null || _a === void 0 ? void 0 : _a.length))
-                result = "Obrigatório!";
+            /* if(['descricao'].indexOf(controlName) >= 0 && !control.value?.length) result = "Obrigatório!"; */
             if (['forca_trabalho'].indexOf(controlName) >= 0 && control.value < 1)
                 result = "Não pode ser inferior a 1";
-            if (['entrega_id'].indexOf(controlName) >= 0) {
-                if (((_b = this.form) === null || _b === void 0 ? void 0 : _b.controls.origem.value) == 'CATALOGO' && !control.value)
-                    result = "Este campo não pode ser nulo!";
-                let cont = ((_d = (_c = this.entity) === null || _c === void 0 ? void 0 : _c.entregas) === null || _d === void 0 ? void 0 : _d.filter(e => { var _a, _b; return !!e.entrega_id && !e.plano_entrega_entrega_id && e.id != ((_b = (_a = this.grid) === null || _a === void 0 ? void 0 : _a.editing) === null || _b === void 0 ? void 0 : _b.id); }).map(e => e.entrega_id).reduce((acc, id) => { if (id === control.value)
-                    return acc + 1;
-                else
-                    return acc; }, 0)) || 0;
-                if (cont > 0)
-                    result = "Esta entrega está em duplicidade!";
-            }
+            /*     if(['entrega_id'].indexOf(controlName) >= 0) {
+                  if(this.form?.controls.origem.value == 'CATALOGO' && !control.value) result = "Este campo não pode ser nulo!";
+                  let cont = this.entity?.entregas?.filter(e => !!e.entrega_id && !e.plano_entrega_entrega_id && e.id != this.grid?.editing?.id).map(e => e.entrega_id).reduce((acc, id) => { if(id === control.value) return acc + 1; else return acc; }, 0) || 0;
+                  if(cont > 0) result = "Esta entrega está em duplicidade!";
+                } */
             if (['plano_entrega_entrega_id'].indexOf(controlName) >= 0) {
-                if (['MESMA_UNIDADE', 'OUTRA_UNIDADE'].includes((_e = this.form) === null || _e === void 0 ? void 0 : _e.controls.origem.value) && !control.value)
+                if (['MESMA_UNIDADE', 'OUTRA_UNIDADE'].includes((_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.origem.value) && !control.value)
                     result = "Este campo não pode ser nulo!";
-                let cont = ((_g = (_f = this.entity) === null || _f === void 0 ? void 0 : _f.entregas) === null || _g === void 0 ? void 0 : _g.filter(e => { var _a, _b; return !e.entrega_id && !!e.plano_entrega_entrega_id && e.id != ((_b = (_a = this.grid) === null || _a === void 0 ? void 0 : _a.editing) === null || _b === void 0 ? void 0 : _b.id); }).map(e => e.plano_entrega_entrega_id).reduce((acc, id) => { if (id === control.value)
+                let cont = ((_c = (_b = this.entity) === null || _b === void 0 ? void 0 : _b.entregas) === null || _c === void 0 ? void 0 : _c.filter(e => { var _a, _b; return !e.entrega_id && !!e.plano_entrega_entrega_id && e.id != ((_b = (_a = this.grid) === null || _a === void 0 ? void 0 : _a.editing) === null || _b === void 0 ? void 0 : _b.id); }).map(e => e.plano_entrega_entrega_id).reduce((acc, id) => { if (id === control.value)
                     return acc + 1;
                 else
                     return acc; }, 0)) || 0;
                 if (cont > 0)
                     result = "Esta entrega está em duplicidade!";
             }
-            if (!((_h = this.form) === null || _h === void 0 ? void 0 : _h.valid))
-                console.log('Erro no campo descrição: ', (_j = this.form) === null || _j === void 0 ? void 0 : _j.controls.descricao.errors);
-            if (!((_k = this.form) === null || _k === void 0 ? void 0 : _k.valid))
-                console.log('Erro no campo plano_entrega_entrega_id: ', (_l = this.form) === null || _l === void 0 ? void 0 : _l.controls.plano_entrega_entrega_id.errors);
-            console.log('Final do Validate - FORM: ', (_m = this.form) === null || _m === void 0 ? void 0 : _m.valid);
-            if (!((_o = this.form) === null || _o === void 0 ? void 0 : _o.valid))
-                console.log('Erros: ', (_p = this.form) === null || _p === void 0 ? void 0 : _p.errors);
             return result;
         };
         this.dao = injector.get(src_app_dao_plano_trabalho_entrega_dao_service__WEBPACK_IMPORTED_MODULE_7__["PlanoTrabalhoEntregaDaoService"]);
@@ -1146,9 +1130,9 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
         this.join = ["entrega", "entrega_plano_entrega.entrega"];
         this.form = this.fh.FormBuilder({
             origem: { default: null },
-            entrega_mesma_unidade_id: { default: null },
-            entrega_outra_unidade_id: { default: null },
-            entrega_catalogo_id: { default: null },
+            entregaMesmaUnidade: { default: null },
+            entregaOutraUnidade: { default: null },
+            entregaCatalogo: { default: null },
             descricao: { default: "" },
             forca_trabalho: { default: 1 },
             plano_id: { default: null },
@@ -1163,8 +1147,6 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
     set disabled(value) { if (this._disabled != value)
         this._disabled = value; }
     get disabled() { return this._disabled; }
-    set noPersist(value) { super.noPersist = value; }
-    get noPersist() { return super.noPersist; }
     get items() {
         if (!this.gridControl.value)
             this.gridControl.setValue(new src_app_models_plano_model__WEBPACK_IMPORTED_MODULE_5__["Plano"]());
@@ -1199,53 +1181,39 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
      * @param row
      */
     loadEntrega(form, row) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             form.controls.descricao.setValue(row.descricao);
             form.controls.forca_trabalho.setValue(row.forca_trabalho);
+            form.controls.plano_id.setValue(row.plano_id);
             if (!((_a = row.plano_entrega_entrega_id) === null || _a === void 0 ? void 0 : _a.length) && ((_b = row.entrega_id) === null || _b === void 0 ? void 0 : _b.length)) {
-                (_c = this.entrega_catalogo) === null || _c === void 0 ? void 0 : _c.setValue(row.entrega_id);
-                form.controls.entrega_id.setValue(row.entrega_id);
-                (_d = this.entrega_mesma_unidade) === null || _d === void 0 ? void 0 : _d.setValue(null);
-                (_e = this.entrega_outra_unidade) === null || _e === void 0 ? void 0 : _e.setValue(null);
                 form.controls.origem.setValue('CATALOGO');
+                form.controls.entrega_id.setValue(row.entrega_id);
                 form.controls.plano_entrega_entrega_id.setValue(null);
             }
-            else if (!((_f = row.entrega_id) === null || _f === void 0 ? void 0 : _f.length) && ((_g = row.plano_entrega_entrega_id) === null || _g === void 0 ? void 0 : _g.length) && ((_h = row.entrega_plano_entrega) === null || _h === void 0 ? void 0 : _h.plano_entrega_id) == ((_j = this.entity) === null || _j === void 0 ? void 0 : _j.plano_entrega_id)) {
-                (_k = this.entrega_mesma_unidade) === null || _k === void 0 ? void 0 : _k.setValue(row.plano_entrega_entrega_id);
-                form.controls.plano_entrega_entrega_id.setValue(row.plano_entrega_entrega_id);
-                (_l = this.entrega_catalogo) === null || _l === void 0 ? void 0 : _l.setValue(null);
-                (_m = this.entrega_outra_unidade) === null || _m === void 0 ? void 0 : _m.setValue(null);
+            else if (!((_c = row.entrega_id) === null || _c === void 0 ? void 0 : _c.length) && ((_d = row.plano_entrega_entrega_id) === null || _d === void 0 ? void 0 : _d.length) && ((_e = row.entrega_plano_entrega) === null || _e === void 0 ? void 0 : _e.plano_entrega_id) == ((_f = this.entity) === null || _f === void 0 ? void 0 : _f.plano_entrega_id)) {
                 form.controls.origem.setValue('MESMA_UNIDADE');
                 form.controls.entrega_id.setValue(null);
-            }
-            else if (!((_o = row.entrega_id) === null || _o === void 0 ? void 0 : _o.length) && ((_p = row.plano_entrega_entrega_id) === null || _p === void 0 ? void 0 : _p.length) && ((_q = row.entrega_plano_entrega) === null || _q === void 0 ? void 0 : _q.plano_entrega_id) != ((_r = this.entity) === null || _r === void 0 ? void 0 : _r.plano_entrega_id)) {
-                yield this.carregarEntregasOutraUnidade((_s = row.entrega_plano_entrega) === null || _s === void 0 ? void 0 : _s.plano_entrega_id);
-                (_t = this.entrega_outra_unidade) === null || _t === void 0 ? void 0 : _t.setValue(row.plano_entrega_entrega_id);
                 form.controls.plano_entrega_entrega_id.setValue(row.plano_entrega_entrega_id);
-                (_u = this.entrega_catalogo) === null || _u === void 0 ? void 0 : _u.setValue(null);
-                (_v = this.entrega_mesma_unidade) === null || _v === void 0 ? void 0 : _v.setValue(null);
+            }
+            else if (!((_g = row.entrega_id) === null || _g === void 0 ? void 0 : _g.length) && ((_h = row.plano_entrega_entrega_id) === null || _h === void 0 ? void 0 : _h.length) && ((_j = row.entrega_plano_entrega) === null || _j === void 0 ? void 0 : _j.plano_entrega_id) != ((_k = this.entity) === null || _k === void 0 ? void 0 : _k.plano_entrega_id)) {
                 form.controls.origem.setValue('OUTRA_UNIDADE');
                 form.controls.entrega_id.setValue(null);
+                yield this.carregarEntregasOutraUnidade((_l = row.entrega_plano_entrega) === null || _l === void 0 ? void 0 : _l.plano_entrega_id);
+                form.controls.plano_entrega_entrega_id.setValue(row.plano_entrega_entrega_id);
             }
             else { // inclusão de uma nova entrega
+                form.controls.origem.setValue('MESMA_UNIDADE');
                 form.controls.entrega_id.setValue(null);
                 form.controls.plano_entrega_entrega_id.setValue(null);
-                (_w = this.entrega_catalogo) === null || _w === void 0 ? void 0 : _w.setValue(null);
-                (_x = this.entrega_mesma_unidade) === null || _x === void 0 ? void 0 : _x.setValue(null);
-                (_y = this.entrega_outra_unidade) === null || _y === void 0 ? void 0 : _y.setValue(null);
-                form.controls.origem.setValue(null);
             }
-            this.cdRef.detectChanges();
-            if (!((_z = this.form) === null || _z === void 0 ? void 0 : _z.valid))
-                console.log('Erro no campo descrição: ', (_0 = this.form) === null || _0 === void 0 ? void 0 : _0.controls.descricao.errors);
-            if (!((_1 = this.form) === null || _1 === void 0 ? void 0 : _1.valid))
-                console.log('Erro no campo plano_entrega_entrega_id: ', (_2 = this.form) === null || _2 === void 0 ? void 0 : _2.controls.plano_entrega_entrega_id.errors);
-            console.log('Final do LoadEntrega - FORM: ', (_3 = this.form) === null || _3 === void 0 ? void 0 : _3.valid);
-            if (!((_4 = this.form) === null || _4 === void 0 ? void 0 : _4.valid))
-                console.log('Erros: ', (_5 = this.form) === null || _5 === void 0 ? void 0 : _5.errors);
         });
     }
+    /**
+     * Método chamado para somar os percentuais das forças de trabalho do array de entregas passado como parâmetro.
+     * @param entregas Array de entregas do plano de trabalho
+     * @returns
+     */
     somaForcaTrabalho(entregas = []) {
         return entregas.map(x => parseFloat(x.forca_trabalho)).reduce((a, b) => a + b, 0);
     }
@@ -1300,6 +1268,7 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
     saveEntrega(form, row) {
         var _a, _b, _c, _d, _e;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            //*********************** */
             delete row['entrega'];
             delete row['entrega_plano_entrega'];
             let novaEntrega = row;
@@ -1313,16 +1282,23 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
                     novaEntrega = yield this.dao.save(novaEntrega, this.join);
                 this.grid.items[this.grid.items.length - 1].id = '';
             }
+            catch (e) {
+                this.error(e.message ? e.message : e.toString() || e);
+            }
             finally {
                 this.loading = false;
             }
             return novaEntrega;
         });
     }
+    /**
+     * Método chamado após o salvamento de uma entrega do plano de trabalho.
+     * @param novaEntrega Entrega do plano de trabalho recentemente salva.
+     */
     afterSaveEntrega(novaEntrega) {
         var _a, _b, _c, _d, _e, _f, _g;
-        novaEntrega.entrega = (_b = (_a = this.entrega_catalogo) === null || _a === void 0 ? void 0 : _a.selectedItem) === null || _b === void 0 ? void 0 : _b.data;
-        novaEntrega.entrega_plano_entrega = ((_c = this.origem) === null || _c === void 0 ? void 0 : _c.value) == 'MESMA_UNIDADE' ? (_e = (_d = this.entrega_mesma_unidade) === null || _d === void 0 ? void 0 : _d.selectedItem) === null || _e === void 0 ? void 0 : _e.data : (_f = this.entrega_outra_unidade) === null || _f === void 0 ? void 0 : _f.selectedItem;
+        novaEntrega.entrega = (_b = (_a = this.entregaCatalogo) === null || _a === void 0 ? void 0 : _a.selectedItem) === null || _b === void 0 ? void 0 : _b.data;
+        novaEntrega.entrega_plano_entrega = ((_c = this.origem) === null || _c === void 0 ? void 0 : _c.value) == 'MESMA_UNIDADE' ? (_e = (_d = this.entregaMesmaUnidade) === null || _d === void 0 ? void 0 : _d.selectedItem) === null || _e === void 0 ? void 0 : _e.data : (_f = this.entregaOutraUnidade) === null || _f === void 0 ? void 0 : _f.selectedItem;
         (_g = this.grid) === null || _g === void 0 ? void 0 : _g.reloadFilter();
     }
     carregarEntregasMesmaUnidade() {
@@ -1334,8 +1310,8 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
         var _a;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             this.planoEntregaOutraUnidade = typeof idPlanoOuPlano == 'string' ? yield this.planoEntregaDao.getById(idPlanoOuPlano, ["entregas", "unidade"]) : idPlanoOuPlano;
-            // = PlanoEntregaEntrega[] = typeof idPlanoOuPlano == 'string' ? await this.peeDao?.query({where: ['plano_entrega_id','==', idPlanoOuPlano],orderBy: [['entrega.nome','asc']],join: ['entrega:id,nome']}).getAll() || [] : idPlanoOuPlano.entregas;
             this.entregasOutraUnidade = ((_a = this.planoEntregaOutraUnidade) === null || _a === void 0 ? void 0 : _a.entregas.map(epe => { var _a; return Object.assign({}, { key: epe.id, value: ((_a = epe.entrega) === null || _a === void 0 ? void 0 : _a.nome) || '', data: epe }); })) || [];
+            this.cdRef.detectChanges();
         });
     }
     carregarEntregasCatalogo() {
@@ -1348,41 +1324,36 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
     }
     /* ---------  TRATAMENTO DOS EVENTOS ----------- */
     onOrigemChange(row) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
+        var _a, _b, _c, _d;
         let value = this.form.controls.origem.value;
         if (['MESMA_UNIDADE', 'OUTRA_UNIDADE'].includes(value)) {
             (_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.entrega_id.setValue(null);
             this.cdRef.detectChanges();
             if (value == "OUTRA_UNIDADE")
-                (_b = this.entrega_outra_unidade) === null || _b === void 0 ? void 0 : _b.onSearchClick((_c = this.entrega_outra_unidade) === null || _c === void 0 ? void 0 : _c.searchRoute);
+                (_b = this.entregaOutraUnidade) === null || _b === void 0 ? void 0 : _b.onSearchClick((_c = this.entregaOutraUnidade) === null || _c === void 0 ? void 0 : _c.searchRoute);
         }
         else if (value == 'CATALOGO') {
             (_d = this.form) === null || _d === void 0 ? void 0 : _d.controls.plano_entrega_entrega_id.setValue(null);
         }
-        if (!((_e = this.form) === null || _e === void 0 ? void 0 : _e.valid))
-            console.log('Erro no campo descrição: ', (_f = this.form) === null || _f === void 0 ? void 0 : _f.controls.descricao.errors);
-        if (!((_g = this.form) === null || _g === void 0 ? void 0 : _g.valid))
-            console.log('Erro no campo plano_entrega_entrega_id: ', (_h = this.form) === null || _h === void 0 ? void 0 : _h.controls.plano_entrega_entrega_id.errors);
-        console.log('Final do onOrigemChange - FORM: ', (_j = this.form) === null || _j === void 0 ? void 0 : _j.valid);
-        if (!((_k = this.form) === null || _k === void 0 ? void 0 : _k.valid))
-            console.log('Erros: ', (_l = this.form) === null || _l === void 0 ? void 0 : _l.errors);
     }
     onEntregaMesmaUnidadeChange(event) {
         var _a, _b, _c, _d, _e, _f;
-        (_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.descricao.setValue(((_c = (_b = this.entrega_mesma_unidade) === null || _b === void 0 ? void 0 : _b.selectedItem) === null || _c === void 0 ? void 0 : _c.value) || '');
-        (_d = this.form) === null || _d === void 0 ? void 0 : _d.controls.plano_entrega_entrega_id.setValue((_f = (_e = this.entrega_mesma_unidade) === null || _e === void 0 ? void 0 : _e.selectedItem) === null || _f === void 0 ? void 0 : _f.key);
+        (_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.descricao.setValue(((_c = (_b = this.entregaMesmaUnidade) === null || _b === void 0 ? void 0 : _b.selectedItem) === null || _c === void 0 ? void 0 : _c.value) || '');
+        (_d = this.form) === null || _d === void 0 ? void 0 : _d.controls.plano_entrega_entrega_id.setValue((_f = (_e = this.entregaMesmaUnidade) === null || _e === void 0 ? void 0 : _e.selectedItem) === null || _f === void 0 ? void 0 : _f.key);
         this.cdRef.detectChanges();
     }
     onEntregaOutraUnidadeChange(event) {
         var _a;
         (_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.descricao.setValue('');
-        //if(this.entrega_outra_unidade?.selectedItem?.key.length) this.form?.controls.descricao.setValue(this.entrega_outra_unidade?.selectedItem?.value);
+        //**************** if(this.entregaOutraUnidade?.selectedItem?.key.length) this.form?.controls.descricao.setValue(this.entregaOutraUnidade?.selectedItem?.value);
     }
     onEntregaCatalogoChange(event) {
-        var _a, _b, _c, _d, _e, _f;
-        (_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.descricao.setValue(((_c = (_b = this.entrega_catalogo) === null || _b === void 0 ? void 0 : _b.selectedItem) === null || _c === void 0 ? void 0 : _c.value) || '');
-        (_d = this.form) === null || _d === void 0 ? void 0 : _d.controls.entrega_id.setValue((_f = (_e = this.entrega_catalogo) === null || _e === void 0 ? void 0 : _e.selectedItem) === null || _f === void 0 ? void 0 : _f.key);
-        this.cdRef.detectChanges();
+        var _a, _b, _c, _d, _e, _f, _g;
+        if ((_a = this.entregaCatalogo) === null || _a === void 0 ? void 0 : _a.selectedItem) {
+            (_b = this.form) === null || _b === void 0 ? void 0 : _b.controls.descricao.setValue(((_d = (_c = this.entregaCatalogo) === null || _c === void 0 ? void 0 : _c.selectedItem) === null || _d === void 0 ? void 0 : _d.value) || '');
+            (_e = this.form) === null || _e === void 0 ? void 0 : _e.controls.entrega_id.setValue((_g = (_f = this.entregaCatalogo) === null || _f === void 0 ? void 0 : _f.selectedItem) === null || _g === void 0 ? void 0 : _g.key);
+            this.cdRef.detectChanges();
+        }
     }
     onForcaTrabalhoChange(row) {
         var _a, _b;
@@ -1404,10 +1375,10 @@ PlanoListEntregaComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵ
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵloadQuery"]()) && (ctx.grid = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵloadQuery"]()) && (ctx.origem = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵloadQuery"]()) && (ctx.entrega_mesma_unidade = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵloadQuery"]()) && (ctx.entrega_outra_unidade = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵloadQuery"]()) && (ctx.entrega_catalogo = _t.first);
-    } }, inputs: { cdRef: "cdRef", control: "control", entity: "entity", disabled: "disabled", noPersist: "noPersist" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]], decls: 34, vars: 38, consts: [["noButtons", "", 3, "form", "disabled"], [1, "row"], ["editable", "", 3, "items", "form", "selectable", "minHeight", "join", "groupBy", "add", "remove", "save", "saveEnd", "load", "hasDelete", "hasEdit", "hasAdd"], ["gridEntregas", ""], [3, "titleTemplate", "template", "editTemplate", "verticalAlign", "width", "align"], ["titleOrigem", ""], ["columnOrigem", ""], ["editOrigem", ""], [3, "titleTemplate", "template", "editTemplate", "verticalAlign", "maxWidth"], ["titleEntrega", ""], ["columnEntrega", ""], ["editEntrega", ""], [3, "titleTemplate", "template", "editTemplate", "width", "align"], ["titleForcaTrabalho", ""], ["columnForcaTrabalho", ""], ["editForcaTrabalho", ""], ["titleDescricao", ""], ["columnDescricao", ""], ["editDescricao", ""], ["type", "options"], [1, "text-center"], ["color", "success", "label", "Mesma Unidade", 4, "ngIf"], ["color", "primary", "label", "Outra Unidade", 4, "ngIf"], ["color", "secondary", "label", "Cat\u00E1logo", 4, "ngIf"], ["color", "success", "label", "Mesma Unidade"], ["color", "primary", "label", "Outra Unidade"], ["color", "secondary", "label", "Cat\u00E1logo"], ["controlName", "origem", "controlName", "origem", 3, "control", "items", "change"], ["origem", ""], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", 3, "control", "items", "change", 4, "ngIf"], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", "searchable", "", 3, "control", "items", "sufix", "searchRoute", "afterSearch", "change", 4, "ngIf"], ["nullable", "", "itemNull", "- Selecione -", "controlName", "entrega_id", 3, "control", "items", "change", 4, "ngIf"], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", 3, "control", "items", "change"], ["entrega_mesma_unidade", ""], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", "searchable", "", 3, "control", "items", "sufix", "searchRoute", "afterSearch", "change"], ["entrega_outra_unidade", ""], ["nullable", "", "itemNull", "- Selecione -", "controlName", "entrega_id", 3, "control", "items", "change"], ["entrega_catalogo", ""], ["icon", "bi bi-calculator", 3, "color", "label"], ["number", "", "sufix", "%", "controlName", "forca_trabalho", 3, "control", "change"], ["controlName", "descricao", 3, "control"]], template: function PlanoListEntregaComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵloadQuery"]()) && (ctx.entregaMesmaUnidade = _t.first);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵloadQuery"]()) && (ctx.entregaOutraUnidade = _t.first);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵloadQuery"]()) && (ctx.entregaCatalogo = _t.first);
+    } }, inputs: { cdRef: "cdRef", control: "control", entity: "entity", disabled: "disabled" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]], decls: 34, vars: 37, consts: [["noButtons", "", 3, "form", "disabled"], [1, "row"], ["editable", "", 3, "items", "form", "selectable", "minHeight", "join", "groupBy", "add", "remove", "save", "saveEnd", "load", "hasDelete", "hasEdit", "hasAdd"], ["gridEntregas", ""], [3, "titleTemplate", "template", "editTemplate", "verticalAlign", "width", "align"], ["titleOrigem", ""], ["columnOrigem", ""], ["editOrigem", ""], [3, "maxWidth", "titleTemplate", "template", "editTemplate", "verticalAlign"], ["titleEntrega", ""], ["columnEntrega", ""], ["editEntrega", ""], [3, "titleTemplate", "template", "editTemplate", "width", "align"], ["titleForcaTrabalho", ""], ["columnForcaTrabalho", ""], ["editForcaTrabalho", ""], ["titleDescricao", ""], ["columnDescricao", ""], ["editDescricao", ""], ["type", "options"], [1, "text-center"], ["color", "success", "label", "Mesma Unidade", 4, "ngIf"], ["color", "primary", "label", "Outra Unidade", 4, "ngIf"], ["color", "secondary", "label", "Cat\u00E1logo", 4, "ngIf"], ["color", "success", "label", "Mesma Unidade"], ["color", "primary", "label", "Outra Unidade"], ["color", "secondary", "label", "Cat\u00E1logo"], ["controlName", "origem", "controlName", "origem", 3, "control", "items", "change"], ["origem", ""], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", 3, "control", "items", "change", 4, "ngIf"], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", "searchable", "", 3, "control", "items", "sufix", "searchRoute", "afterSearch", "change", 4, "ngIf"], ["nullable", "", "itemNull", "- Selecione -", "controlName", "entrega_id", 3, "control", "items", "change", 4, "ngIf"], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", 3, "control", "items", "change"], ["entregaMesmaUnidade", ""], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", "searchable", "", 3, "control", "items", "sufix", "searchRoute", "afterSearch", "change"], ["entregaOutraUnidade", ""], ["nullable", "", "itemNull", "- Selecione -", "controlName", "entrega_id", 3, "control", "items", "change"], ["entregaCatalogo", ""], ["icon", "bi bi-calculator", 3, "color", "label"], ["number", "", "sufix", "%", "controlName", "forca_trabalho", 3, "control", "change"], ["controlName", "descricao", 3, "control"]], template: function PlanoListEntregaComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "editable-form", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](1, "div", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](2, "grid", 2, 3);
@@ -1419,7 +1390,7 @@ PlanoListEntregaComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵ
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](12, "column", 8);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](13, PlanoListEntregaComponent_ng_template_13_Template, 3, 0, "ng-template", null, 9, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplateRefExtractor"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](15, PlanoListEntregaComponent_ng_template_15_Template, 4, 3, "ng-template", null, 10, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](15, PlanoListEntregaComponent_ng_template_15_Template, 4, 1, "ng-template", null, 10, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](17, PlanoListEntregaComponent_ng_template_17_Template, 3, 3, "ng-template", null, 11, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](19, "column", 12);
@@ -1429,7 +1400,7 @@ PlanoListEntregaComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵ
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](26, "column", 8);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](27, PlanoListEntregaComponent_ng_template_27_Template, 4, 0, "ng-template", null, 16, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplateRefExtractor"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](29, PlanoListEntregaComponent_ng_template_29_Template, 4, 3, "ng-template", null, 17, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](29, PlanoListEntregaComponent_ng_template_29_Template, 4, 1, "ng-template", null, 17, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](31, PlanoListEntregaComponent_ng_template_31_Template, 1, 1, "ng-template", null, 18, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](33, "column", 19);
@@ -1452,15 +1423,15 @@ PlanoListEntregaComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵ
         const _r23 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵreference"](32);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("items", ctx.items)("form", ctx.form)("selectable", false)("minHeight", ctx.minHeight)("join", ctx.join)("groupBy", ctx.groupBy)("add", ctx.addEntrega.bind(ctx))("remove", ctx.removeEntrega.bind(ctx))("save", ctx.saveEntrega.bind(ctx))("saveEnd", ctx.afterSaveEntrega.bind(ctx))("load", ctx.loadEntrega.bind(ctx))("hasDelete", true)("hasEdit", true)("hasAdd", !ctx.disabled)("minHeight", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("items", ctx.items)("form", ctx.form)("selectable", false)("minHeight", 0)("join", ctx.join)("groupBy", ctx.groupBy)("add", ctx.addEntrega.bind(ctx))("remove", ctx.removeEntrega.bind(ctx))("save", ctx.saveEntrega.bind(ctx))("saveEnd", ctx.afterSaveEntrega.bind(ctx))("load", ctx.loadEntrega.bind(ctx))("hasDelete", true)("hasEdit", true)("hasAdd", !ctx.disabled);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("titleTemplate", _r1)("template", _r3)("editTemplate", _r5)("verticalAlign", "middle")("width", 125)("align", "center");
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("titleTemplate", _r7)("template", _r9)("editTemplate", _r11)("verticalAlign", "middle")("maxWidth", 300);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("maxWidth", 350)("titleTemplate", _r7)("template", _r9)("editTemplate", _r11)("verticalAlign", "middle");
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("titleTemplate", _r13)("template", _r15)("editTemplate", _r17)("width", 130)("align", "center");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("titleTemplate", _r13)("template", _r15)("editTemplate", _r17)("width", 125)("align", "center");
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("titleTemplate", _r19)("template", _r21)("editTemplate", _r23)("verticalAlign", "middle")("maxWidth", 300);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("maxWidth", 250)("titleTemplate", _r19)("template", _r21)("editTemplate", _r23)("verticalAlign", "middle");
     } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_2__["EditableFormComponent"], src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_3__["GridComponent"], _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_12__["ColumnsComponent"], _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_13__["ColumnComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_14__["NgIf"], _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_15__["BadgeComponent"], _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_16__["InputSelectComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_17__["InputTextComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwbGFuby1saXN0LWVudHJlZ2EuY29tcG9uZW50LnNjc3MifQ== */"] });
 
 

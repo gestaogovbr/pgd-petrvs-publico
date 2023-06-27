@@ -34,7 +34,6 @@ export class InputSelectComponent extends InputBase implements OnInit {
   @Input() bold: boolean = false;
   @Input() fields: string[] = [];
   @Input() dao?: DaoBaseService<Base> = undefined;
-  @Input() itemNull: string = " - ";
   @Input() addRoute?: FullRoute;
   @Input() searchRoute?: FullRoute;
   @Input() afterSearch?: (result: any) => void;
@@ -60,14 +59,17 @@ export class InputSelectComponent extends InputBase implements OnInit {
   get where(): any[] | undefined {
     return this._where;
   }
-  @Input() set itemTodos(value: string | undefined) {
-    if(this._itemTodos != value) {
-      this._itemTodos = value;
-      this.itemTodosButton.value = value || "";
-    }
+  @Input() set itemTodos(value: string) {
+    if(this.itemTodosButton.value != value) this.itemTodosButton.value = value;
   }
-  get itemTodos(): string | undefined {
-    return this._itemTodos;
+  get itemTodos(): string {
+    return this.itemTodosButton.value;
+  }
+  @Input() set itemNull(value: string) {
+    if(this.itemNullButton.value != value) this.itemNullButton.value = value;
+  }
+  get itemNull(): string  {
+    return this.itemNullButton.value;
   }
   @Input() set valueTodos(value: any) {
     if(this.itemTodosButton.key != value) this.itemTodosButton.key = value;
@@ -110,7 +112,6 @@ export class InputSelectComponent extends InputBase implements OnInit {
   private _items: LookupItem[] = [];
   private _loading: boolean = false;
   private _where: any[] | undefined = undefined;
-  private _itemTodos?: string = undefined; 
 
   public go: NavigateService;
   public filterControl: FormControl = new FormControl("");
@@ -156,7 +157,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
   }
   
   public get isTodos(): boolean {
-    return this.itemTodos != undefined;
+    return !!this.itemTodos?.length;
   }
 
   public get isNoIcon(): boolean {
@@ -174,20 +175,6 @@ export class InputSelectComponent extends InputBase implements OnInit {
   public get dropdownWidth(): number {
     return this.dropdownButton?.nativeElement.offsetWidth || 10; 
   }
-
-/*   public get options(): LookupItem[] {
-    let result: LookupItem[] = [];
-    if (this.loading) {
-      result.push({ code: "LOADING", key: this.value, value: this.CARREGANDO, icon: "bi bi-clock-history" });
-    } else {
-      if (this.isNullable) result.push({ code: "NULL", key: null, value: this.itemNull });
-      if (this.itemTodos.length) result.push({ code: "ALL", key: this.valueTodos, value: this.itemTodos });
-      if (this.selectedItem?.code == "UNKNOWN" && !this.items.find(x => x.key == this.selectedItem!.key)) result.push({ code: "ALL", key: this.selectedItem.key, value: this.selectedItem.value || ' - Desconhecido - ' });
-      result.push(...this.items);
-    }
-    if (JSON.stringify(result) != JSON.stringify(this._options)) this._options = result;
-    return this._options;
-  } */
 
   public isActive(item: LookupItem): boolean {
     return item.key == this.current.value;

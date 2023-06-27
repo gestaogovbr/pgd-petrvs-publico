@@ -463,6 +463,36 @@ class UtilService
         return $diferenca;
     }
 
+    /**
+     * Método utilizado para validar os campos obrigatórios de uma entidade. 
+     * @param array $entity             Array com os dados a serem analisados.
+     * @param array $requiredAttributes Array com os campos obrigatórios.
+     * @return string                   Uma string vazia se todos os campos de $entity foram validados, ou uma string com o nome do campo que não passou na validação.
+     */
+    public static function validateRequired($entity, $requiredAttributes): string {
+        foreach($entity as $key => $value) if(in_array($key, $requiredAttributes) && !$value) return $key;
+        return '';
+    }
+
+    /**
+     * Método utilizado para validar os campos de uma entidade cujos valores precisam estar dentro de uma faixa.
+     * @param array $entity             Array com os dados a serem analisados.
+     * @param array $rangeAttributes    Array com os campos e as suas respectivas faixas de valores, no seguinte formato: 
+     *                                  [campo: string, valorMinimo: number, valorMaximo: number, incluiValorMinimo: bool, incluiValorMaximo: bool]. Por padrão, os valores mínimo e máximo
+     *                                  da escala são incluídos na faixa. Dois exemplos equivalentes: [['idade',1,100]['salario',1200.50,4.500.00]] e [['idade',1,100,true,true],['salario',1200.50,4.500.00,true,true]],
+     * @return string                   Uma string vazia se todos os campos de $entity foram validados, ou uma string com o nome do campo que não passou na validação.
+     */
+    public static function validateRange($entity, $rangeAttributes): string {
+
+/*         foreach ($entity as [$k, $v, $includeMinValue = true, $includeMaxValue = true]) {
+            $value = floatVal($v);
+            foreach($rangeAttributes as $condition){ 
+                $condition1 = $includeMinValue ? $valor < $condition[1] : $valor <= $condition[1]; 
+                if($key == $condition[0] && ($valor < $condition[1] || $valor > $condition[2])) return [] . $key . " deve estar entre " . $condition[1] . " e " . $condition[2]; 
+            }
+        } */
+        return '';
+    }
 }
 
 /* EXEMPLO:

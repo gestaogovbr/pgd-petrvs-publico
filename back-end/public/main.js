@@ -36077,12 +36077,10 @@ class InputSelectComponent extends _input_base__WEBPACK_IMPORTED_MODULE_3__["Inp
         this.bold = false;
         this.fields = [];
         this.dao = undefined;
-        this.itemNull = " - ";
         this.listHeight = 200;
         this._items = [];
         this._loading = false;
         this._where = undefined;
-        this._itemTodos = undefined;
         this.filterControl = new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]("");
         this.itemNullButton = {
             key: null,
@@ -36108,13 +36106,18 @@ class InputSelectComponent extends _input_base__WEBPACK_IMPORTED_MODULE_3__["Inp
         return this._where;
     }
     set itemTodos(value) {
-        if (this._itemTodos != value) {
-            this._itemTodos = value;
-            this.itemTodosButton.value = value || "";
-        }
+        if (this.itemTodosButton.value != value)
+            this.itemTodosButton.value = value;
     }
     get itemTodos() {
-        return this._itemTodos;
+        return this.itemTodosButton.value;
+    }
+    set itemNull(value) {
+        if (this.itemNullButton.value != value)
+            this.itemNullButton.value = value;
+    }
+    get itemNull() {
+        return this.itemNullButton.value;
     }
     set valueTodos(value) {
         if (this.itemTodosButton.key != value)
@@ -36175,7 +36178,8 @@ class InputSelectComponent extends _input_base__WEBPACK_IMPORTED_MODULE_3__["Inp
         return this.searchable != undefined;
     }
     get isTodos() {
-        return this.itemTodos != undefined;
+        var _a;
+        return !!((_a = this.itemTodos) === null || _a === void 0 ? void 0 : _a.length);
     }
     get isNoIcon() {
         return this.noIcon != undefined;
@@ -36190,19 +36194,6 @@ class InputSelectComponent extends _input_base__WEBPACK_IMPORTED_MODULE_3__["Inp
         var _a;
         return ((_a = this.dropdownButton) === null || _a === void 0 ? void 0 : _a.nativeElement.offsetWidth) || 10;
     }
-    /*   public get options(): LookupItem[] {
-        let result: LookupItem[] = [];
-        if (this.loading) {
-          result.push({ code: "LOADING", key: this.value, value: this.CARREGANDO, icon: "bi bi-clock-history" });
-        } else {
-          if (this.isNullable) result.push({ code: "NULL", key: null, value: this.itemNull });
-          if (this.itemTodos.length) result.push({ code: "ALL", key: this.valueTodos, value: this.itemTodos });
-          if (this.selectedItem?.code == "UNKNOWN" && !this.items.find(x => x.key == this.selectedItem!.key)) result.push({ code: "ALL", key: this.selectedItem.key, value: this.selectedItem.value || ' - Desconhecido - ' });
-          result.push(...this.items);
-        }
-        if (JSON.stringify(result) != JSON.stringify(this._options)) this._options = result;
-        return this._options;
-      } */
     isActive(item) {
         return item.key == this.current.value;
     }
@@ -36310,7 +36301,7 @@ InputSelectComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdef
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵloadQuery"]()) && (ctx.dropdownButton = _t.first);
     } }, hostVars: 2, hostBindings: function InputSelectComponent_HostBindings(rf, ctx) { if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassMap"](ctx.class);
-    } }, inputs: { hostClass: "hostClass", labelPosition: "labelPosition", controlName: "controlName", disabled: "disabled", value: "value", icon: "icon", label: "label", labelInfo: "labelInfo", bold: "bold", fields: "fields", dao: "dao", itemNull: "itemNull", addRoute: "addRoute", searchRoute: "searchRoute", afterSearch: "afterSearch", form: "form", source: "source", path: "path", nullable: "nullable", searchable: "searchable", noIcon: "noIcon", noColor: "noColor", liveSearch: "liveSearch", detailsButton: "detailsButton", detailsButtonIcon: "detailsButtonIcon", listHeight: "listHeight", prefix: "prefix", sufix: "sufix", where: "where", itemTodos: "itemTodos", valueTodos: "valueTodos", items: "items", control: "control", loading: "loading", size: "size" }, outputs: { change: "change", details: "details" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵProvidersFeature"]([], [
+    } }, inputs: { hostClass: "hostClass", labelPosition: "labelPosition", controlName: "controlName", disabled: "disabled", value: "value", icon: "icon", label: "label", labelInfo: "labelInfo", bold: "bold", fields: "fields", dao: "dao", addRoute: "addRoute", searchRoute: "searchRoute", afterSearch: "afterSearch", form: "form", source: "source", path: "path", nullable: "nullable", searchable: "searchable", noIcon: "noIcon", noColor: "noColor", liveSearch: "liveSearch", detailsButton: "detailsButton", detailsButtonIcon: "detailsButtonIcon", listHeight: "listHeight", prefix: "prefix", sufix: "sufix", where: "where", itemTodos: "itemTodos", itemNull: "itemNull", valueTodos: "valueTodos", items: "items", control: "control", loading: "loading", size: "size" }, outputs: { change: "change", details: "details" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵProvidersFeature"]([], [
             {
                 provide: _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ControlContainer"],
                 useExisting: _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormGroupDirective"]
