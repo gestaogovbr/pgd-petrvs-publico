@@ -32,7 +32,7 @@ class ProgramaParticipanteController extends ControllerBase {
             if (!$usuario->hasPermissionTo('MOD_PRGT_INCL')) throw new ServerException("ValidateProgramaParticipante", "Usuário não tem permissão para habilitar participantes");
             $data = $request->validate([
                 'participantes_ids' => ['array'],
-                'habilitado' => ['integer'],
+                'habilitado' => ['required'],
                 'programa_id' => ['string'],
             ]);
             return response()->json([

@@ -1,18 +1,14 @@
-import { Component, Injector, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
-import { Cidade } from 'src/app/models/cidade.model';
-import { PageListBase } from 'src/app/modules/base/page-list-base';
-import { DaoBaseService } from 'src/app/dao/dao-base.service';
-import { ProgramaParticipante } from 'src/app/models/programa-participante.model';
+import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { ProgramaParticipanteDaoService } from 'src/app/dao/programa-participante-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
-import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
+import { ProgramaParticipante } from 'src/app/models/programa-participante.model';
 import { Usuario } from 'src/app/models/usuario.model';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
-import { IIndexable } from 'src/app/models/base.model';
+import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
   selector: 'app-programa-participantes',
@@ -41,11 +37,12 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
     this.filter = this.fh.FormBuilder({
       unidade_id: { default: undefined },
       nome: { default: "" },
+      todos: { default: false },
     });
     this.form = this.fh.FormBuilder({
       usuario_id: { default: undefined },
       habilitado: { default: true },
-      todos: { default: false },
+
     });
     this.multiselectMenu = !this.auth.hasPermissionTo('MOD_PRGT_PART_INCL') ? [] : [
       {
@@ -54,8 +51,7 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
         onClick: this.habilitarParticipantes.bind(this)
       }
     ];
-    this.join = ["usuario:id,nome,apelido,url_foto", "usuario.lotacao:id,nome,unidade_id", ];
-    this.groupBy = [{field: "usuario.lotacao.unidade.sigla", label: "Unidade"}];
+    this.join = ["usuario:id,nome,apelido,url_foto", "usuario.lotacao:id,nome,unidade_id",];
   }
 
   public ngOnInit(): void {
@@ -74,9 +70,13 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
     let result: any[] = [];
     let form: any = filter.value;
 
-    result.push(["programa_id", "==", this.programaId]);
-    if (form.nome?.length) result.push(["usuario.nome", "like", "%" + form.nome + "%"]);
-    if (form.unidade_id?.length) result.push(["usuario.lotacao.unidade.id", "==", form.unidade_id]);
+    if (this.filter?.controls.todos.value) {
+      result.push([["todos", '==', true]]);
+    } else {
+      result.push(["programa_id", "==", this.programaId]);
+      if (form.nome?.length) result.push(["usuario.nome", "like", "%" + form.nome + "%"]);
+      if (form.unidade_id?.length) result.push(["usuario.lotacao.unidade.id", "==", form.unidade_id]);
+    }
 
     return result;
   }
@@ -130,34 +130,22 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
     return result;
   }
 
-  public async habilitarParticipantes() {
+  public habilitarParticipantes() {
     if (!this.grid!.multiselectedCount) {
       this.dialog.alert("Selecione", "Nenhum participante selecionado para a habilitção");
     } else {
-      if (this.form!.valid) {
-        this.submitting = true;
-        try {
-          let result = await this.dao?.habilitar(Object.keys(this.grid!.multiselected), this.programaId, 1);
-          if (result.error) throw new Error(result.error);
-          this.dialog.alert("Sucesso", "Foram habilitados " + result.data + " " + this.lex.noun("participantes", true));
-          this.grid!.enableMultiselect(false);
-          this.refresh();
-        } catch (error: any) {
-          this.error(error.message ? error.message : error);
-        } finally {
-          this.submitting = false;
+      const self = this;
+      this.dialog.confirm("Habilitar Participantes ?", "Deseja realmente habilitar os participantes?").then(confirm => {
+        if (confirm) {
+          this.dao!.habilitar(Object.keys(this.grid!.multiselected), this.programaId, 1).then(function () {
+            self.dialog.alert("Sucesso", "Habilitado com sucesso!");
+          }).catch(function (error) {
+            self.dialog.alert("Erro", "Erro ao habilitar os participantes: " + error?.message ? error?.message : error);
+          });
         }
-      }
+      });
     }
   }
-
-    public onTodosChange(event: Event) {
-      // const todos = this.form!.controls.todos.value;
-      // if((todos && !this.result?.length) || (!todos && this.result?.length)) {
-      //   this.result = todos ? ["todos", '==', true] : [];
-      //   this.grid!.reloadFilter();
-      // }
-    }
 
 }
 
