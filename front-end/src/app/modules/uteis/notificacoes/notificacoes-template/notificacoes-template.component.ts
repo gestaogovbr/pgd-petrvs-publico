@@ -59,7 +59,6 @@ export class NotificacoesTemplateComponent extends PageFrameBase {
     let canDelete = (this.unidadeId?.length && this.unidadeId == row.unidade_id) || (this.entidadeId?.length && this.entidadeId == row.entidade_id);
     if(this.unidadeId?.length || this.entidadeId?.length) result.push({ hint: "Alterar", icon: "bi bi-pencil-square", color: "btn-outline-info", onClick: this.grid?.onEditItem.bind(this.grid) });
     if(canDelete) result.push({ hint: "Limpar", icon: "bi bi-x-circle", color: "btn-outline-danger", onClick: this.grid?.onDeleteItem.bind(this.grid) });
-    console.log(this.grid);
     return result;
   }
 

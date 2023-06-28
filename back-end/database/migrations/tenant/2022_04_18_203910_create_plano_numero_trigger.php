@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\ServiceBase;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,12 +15,15 @@ class CreatePlanoNumeroTrigger extends Migration
      */
     public function up()
     {
-        DB::unprepared('
-            CREATE PROCEDURE sequence_plano_numero() BEGIN
-                UPDATE sequence SET plano_numero = plano_numero + 1;
-                SELECT plano_numero AS number FROM sequence;
-            END
-        ');
+        $database = new ServiceBase();
+        if(!$database->hasStoredProcedure("sequence_plano_numero")) {
+            DB::unprepared('
+                CREATE PROCEDURE sequence_plano_numero() BEGIN
+                    UPDATE sequence SET plano_numero = plano_numero + 1;
+                    SELECT plano_numero AS number FROM sequence;
+                END
+            ');
+        }
     }
 
     /**

@@ -19,11 +19,17 @@ export class NotificacoesComponent extends PageListBase<Notificacao, Notificacao
     this.modalWidth = 700;
     this.join = ["destinatarios"];
     this.title = this.lex.noun('Notificação', true);
-    this.filter = this.fh.FormBuilder({});
+    this.filter = this.fh.FormBuilder({
+      todas: {default: false},
+      inicio: {default: undefined},
+      fim: {default: undefined}
+    });
   }
 
   public filterClear(filter: FormGroup) {
-    filter.controls.nome.setValue("");
+    filter.controls.todas.setValue(false);
+    filter.controls.inicio.setValue(undefined);
+    filter.controls.fim.setValue(undefined);
     super.filterClear(filter);
   }
 
@@ -31,6 +37,9 @@ export class NotificacoesComponent extends PageListBase<Notificacao, Notificacao
     let result: any[] = [];
     let form: any = filter.value;
     result.push(["usuario_id", "==", this.auth.usuario!.id]);
+    if(form.todas) result.push(["todas", "==", true]);
+    if(this.util.isDataValid(form.inicio)) result.push(["data_registro", ">=", form.inicio]);
+    if(this.util.isDataValid(form.fim)) result.push(["data_registro", "<=", form.fim]);
     return result;
   }
 }
