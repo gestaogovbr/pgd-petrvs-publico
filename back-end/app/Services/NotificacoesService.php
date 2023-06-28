@@ -2,15 +2,11 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\DB;
-use DateTime;
-use App\Services\WhatsappService;
-use App\Mails\NotificacaoMail;
-use App\Exceptions\LogError;
+
 use App\Jobs\ProcessEmails;
 use App\Models\Notificacao;
 use App\Models\NotificacaoDestinatario;
-use Illuminate\Support\Facades\Mail as LaravelMail;
+
 
 class NotificacoesService 
 {
@@ -64,6 +60,15 @@ class NotificacoesService
                 "dataset" => [["field" => "demanda_numero", "label" => "Número da demanda"]],
                 "datasource" => (fn(&$params) => ["demanda_numero" => $params["demanda"]->numero]),
                 "template" => "Sua demanda #{{demanda_numero}} foi avaliada, acesse o PETRVS para avaliá-la!"
+            ],
+            "PRG_PART_HABILITACAO" => [
+                "descricao" => "Notificação de habilitação do participante",
+                "destinatarios" => (fn(&$params) => [$params["programa_participante"]->usuario]),
+                "unidade" => (fn(&$params) => $params["programa"]->unidade),
+                "validacao" => (fn(&$params) => true),
+                "dataset" => [["field" => "programa_nome", "label" => "Nome do Programa"]],
+                "datasource" => (fn(&$params) => ["programa_nome" => $params["programa"]->nome]),
+                "template" => "Você foi habilitado no programa {{programa_nome}}, acesse o PETRVS para continuar o seu trabalho!"
             ]
         ];
     }

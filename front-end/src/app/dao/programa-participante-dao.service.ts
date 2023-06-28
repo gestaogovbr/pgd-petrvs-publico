@@ -40,5 +40,21 @@ export class ProgramaParticipanteDaoService extends DaoBaseService<ProgramaParti
     });
   }
 
+  public notificar(item: ProgramaParticipante) {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/notificar', { 
+        participantes_ids: item.id,
+        programa_id: item.programa_id,
+        habilitado: item.habilitado 
+      }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }
+      }, error => reject(error));
+    });
+  }
+
 }
 
