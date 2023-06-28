@@ -1,4 +1,12 @@
-<grid [dao]="dao" [hasAdd]="false" [hasEdit]="false" [hasDelete]="false">
+<grid [dao]="dao" [hasAdd]="false" [hasEdit]="false" [hasDelete]="false" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join">
+  <toolbar></toolbar>
+  <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
+      <div class="row">
+        <input-switch [size]="2" label="Todas" controlName="todas" [control]="filter!.controls.todas" labelInfo="Todas as notificações incluindo as já lidas"></input-switch>
+        <input-datetime [size]="5" label="Início" controlName="inicio" [control]="filter!.controls.inicio" labelInfo="Data início"></input-datetime>
+        <input-datetime [size]="5" label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Data fim"></input-datetime>
+      </div>
+  </filter>
   <columns>
     <column title="Mensagens" [template]="mensagemTemplate">
       <ng-template let-row="row" #mensagemTemplate>
@@ -10,7 +18,7 @@
         </div//-->
         <div class="row">
           <div class="col-12 text-wrap">
-            {{row.messagem}}
+            {{row.mensagem}}
           </div>
         </div>
       </ng-template>
