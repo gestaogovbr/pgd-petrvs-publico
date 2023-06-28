@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\ServiceBase;
 use Google\Service\Sheets\ManualRule;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -52,12 +53,15 @@ class CreateProjetosTable extends Migration
         Schema::table('sequence', function (Blueprint $table) {
             $table->integer('projeto_numero')->default(1)->comment("Sequência numerica do Projeto");
         });
-        DB::unprepared('
-            CREATE PROCEDURE sequence_projeto_numero() BEGIN
-                UPDATE sequence SET projeto_numero = GREATEST(IFNULL((SELECT MAX(numero) FROM projetos), 1), projeto_numero + 1);
-                SELECT projeto_numero AS number FROM sequence;
-            END
-        ');
+        $database = new ServiceBase();
+        if(!$database->hasStoredProcedure("sequence_projeto_numero")) {
+            DB::unprepared('
+                CREATE PROCEDURE sequence_projeto_numero() BEGIN
+                    UPDATE sequence SET projeto_numero = GREATEST(IFNULL((SELECT MAX(numero) FROM projetos), 1), projeto_numero + 1);
+                    SELECT projeto_numero AS number FROM sequence;
+                END
+            ');
+        }
     }
 
     /**

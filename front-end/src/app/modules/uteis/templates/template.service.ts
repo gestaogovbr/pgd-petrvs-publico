@@ -23,6 +23,7 @@ export type TemplateNotificacao = {
 export class TemplateService {
   
   public notificacoes: TemplateNotificacao[] = [];
+  public notifica = { petrvs: false, email: false, whatsapp: false };
 
   constructor(
     public planoDao: PlanoDaoService,
@@ -80,6 +81,7 @@ export class TemplateService {
       });
       result = await query.asPromise();
       this.notificacoes = (query.extra?.notificacoes as TemplateNotificacao[])?.sort((a, b) => a.codigo < b.codigo ? -1 : 1) || [];
+      this.notifica = Object.assign(this.notifica, query.extra?.notifica_enviroment || {});
     }
     return result;
   }
@@ -88,7 +90,7 @@ export class TemplateService {
     return this.notificacoes.map(x => {
       let v = value?.find(y => y.codigo == x.codigo);
       let s = source.filter(y => y.codigo == x.codigo && y.id != v?.id).reduce((a: Template | undefined, v: Template) => a = (!a ? v : (a.unidade_id?.length ? a : v)), undefined);
-      return (v?._status != "DELETE" ? v : undefined) || s || new Template({
+      let result = (v?._status != "DELETE" ? v : undefined) || s || new Template({
         id: x.codigo,
         conteudo: x.template,
         especie: "NOTIFICACAO",
@@ -97,8 +99,8 @@ export class TemplateService {
         dataset: x.dataset,
         entidade_id: null,
         unidade_id: null,
-        _metadata: { notificar: !(naoNotificar || []).includes(x.codigo) }
       });
+      return Object.assign(result, {_metadata: {notificar: !(naoNotificar || []).includes(x.codigo)}});
     });
   }
 
