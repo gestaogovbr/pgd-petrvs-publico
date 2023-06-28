@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-class AlterPlanosTrabalhosEntregasAddCampos extends Migration
+class AlterProjetosAddPlanejado extends Migration
 {
     /**
      * Run the migrations.
@@ -15,7 +15,7 @@ class AlterPlanosTrabalhosEntregasAddCampos extends Migration
     public function up()
     {
         Schema::table('projetos', function (Blueprint $table) {
-            $table->dateTime('usa_baseline')->default(1)->comment("Se o projeto utiliza baseline");
+            $table->integer('usa_baseline')->default(1)->comment("Se o projeto utiliza baseline");
             $table->dateTime('inicio_baseline')->nullable()->comment("Inicio do projeto (Baseline)");
             $table->dateTime('termino_baseline')->nullable()->comment("Fim do projeto (Baseline)");
         });

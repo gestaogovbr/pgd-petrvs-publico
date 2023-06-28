@@ -151,6 +151,28 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       let w1 = ["unidade_id", "in", this.auth.unidades?.map(u => u.id)];
       let w2 = ["unidade_id", "in", this.auth.unidades?.map(u => u.unidade?.id)];
       if (this.auth.isGestorAlgumaLotacao()) result.push(["or", w1, w2]); else result.push(w1);
+
+      if (form.nome?.length) {
+        result.push(["nome", "like", "%" + form.nome + "%"]);
+      }
+      if (form.inicio) {
+        result.push(["inicio", ">=", form.inicio]);
+      }
+      if (form.fim) {
+        result.push(["fim", "<=", form.fim]);
+      }
+      if (form.unidade_id) {
+        result.push(["unidade_id", "==", form.unidade_id]);
+      }
+      if (form.planejamento_id) {
+        result.push(["planejamento_id", "==", form.planejamento_id]);
+      }
+      if (form.cadeia_valor_id) {
+        result.push(["cadeia_valor_id", "==", form.cadeia_valor_id]);
+      }
+      if (form.status) {
+        result.push(["status", "==", form.status]);
+      }
     } else {
       if (form.nome?.length) {
         result.push(["nome", "like", "%" + form.nome + "%"]);

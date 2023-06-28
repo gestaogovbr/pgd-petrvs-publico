@@ -5,7 +5,7 @@
       [hasDelete]="auth.hasPermissionTo('MOD_PRGT_PART_EXCL')"
       [multiselectMenu]="multiselectMenu">
     <toolbar *ngIf="!selectable">
-        <input-switch [size]="3" labelPosition="left" label="Todos" controlName="todos" [control]="filter!.controls.todos" (change)="onTodosChange($event)"></input-switch>
+        <input-switch [size]="3" labelPosition="left" label="Todos" controlName="todos" [control]="filter!.controls.todos" (change)="grid!.reloadFilter()"></input-switch>
     </toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
@@ -29,7 +29,7 @@
                 <!-- Pensar na possibilidade de por as lotacoes -->
             </ng-template>
             <ng-template let-row="row" #editUsuario>
-                <input-search #usuario [size]="12" label icon controlName="usuario_id" [dao]="usuarioDao"></input-search>
+                <input-search #usuario [size]="12" label icon [control]="form!.controls.usuario_id" [dao]="usuarioDao"></input-search>
             </ng-template>
         </column>
         <column title="Habilitado" [template]="columnHabilitado" [editTemplate]="editHabilitado">

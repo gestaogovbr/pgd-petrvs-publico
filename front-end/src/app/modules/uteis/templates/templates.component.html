@@ -10,7 +10,7 @@
   <filter hidden [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed"></filter>
   <side-panel [size]="8" fullSizeOnEdit [template]="panelTemplate" [editTemplate]="panelTemplateEdit">
     <ng-template let-row="row" #panelTemplate>
-      <h5>{{row?.titulo || "Pre-view do template"}}</h5>
+      <h5>{{row?.titulo || "Preview do template"}}</h5>
       <document-preview [html]="row?.conteudo" emptyDocumentMensage="Nenhum template selecionado"></document-preview>
     </ng-template>
     <ng-template let-row="row" #panelTemplateEdit>
@@ -19,7 +19,7 @@
         <input-text [size]="10" label="Título" [control]="form!.controls.titulo"></input-text>
       </div>
       <div>
-        <input-editor [size]="12" label="Pre-view do template" [dataset]="dataset" [control]="form!.controls.conteudo"></input-editor>
+        <input-editor [size]="12" label="Preview do template" [dataset]="dataset" [control]="form!.controls.conteudo"></input-editor>
       </div>
     </ng-template>
   </side-panel>
