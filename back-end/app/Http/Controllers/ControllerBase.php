@@ -63,9 +63,9 @@ abstract class ControllerBase extends Controller
     }
 
     public function getUsuario(Request $request) {
-        return Usuario::where("id", self::loggedUser()?->id)->with(["lotacoes" => function ($query) {
+        return !empty(self::loggedUser()) ? Usuario::where("id", self::loggedUser()?->id)->with(["lotacoes" => function ($query) {
             $query->whereNull("data_fim");
-        }, "lotacoes.unidade"])->first();
+        }, "lotacoes.unidade"])->first() : null;
     }
 
     /**

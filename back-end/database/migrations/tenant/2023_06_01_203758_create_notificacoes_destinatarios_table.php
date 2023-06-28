@@ -19,7 +19,7 @@ class CreateNotificacoesDestinatariosTable extends Migration
             $table->primary('id');
             $table->timestamps();
             // Campos:
-            $table->enum('tipo', ["petrvs", "email", "whatsapp"])->comment("Tipo do envio");
+            $table->enum('tipo', ["petrvs", "email", "whatsapp"])->default("petrvs")->comment("Tipo do envio");
             $table->dateTime('data_leitura')->nullable()->comment("Data e hora da leitura");
             $table->dateTime('data_envio')->nullable()->comment("Data e hora do envio, utilizado quando realmente a mensagem foi despachada");
             $table->json("opcoes")->nullable()->comment("Opções");

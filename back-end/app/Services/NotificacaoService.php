@@ -17,22 +17,18 @@ use Illuminate\Support\Facades\Mail as LaravelMail;
 
 class NotificacaoService extends ServiceBase
 {
-
     public function proxyQuery(&$query, &$data) {
-        $with = [];
-        foreach($data["with"] as $join) {
-            if($join[0] == "destinatarios") {
-                $query->with(["destinatarios" => function($query) { 
-                    $query->where('usuario_id', '=', Auth::user()->id);
-                }]);
-            } else {
-                array_push($with, $join);
-            }
+        if(!empty($this->extractWith($data, "destinatarios"))) {
+            $query->with(["destinatarios" => function($query) { 
+                $query->where('usuario_id', '=', Auth::user()->id);
+            }]);
         }
-        $query->whereHas('destinatarios', function (Builder $query) {
-            $query->where("usuario_id", Auth::user()->id)->whereNull('data_leitura');
+        $todas = $this->extractWhere($data, "todas");
+        $usuarioId = $this->extractWhere($data, "usuario_id");
+        $query->whereHas('destinatarios', function (Builder $query) use ($todas) {
+            $destinatarios = $query->where("usuario_id", Auth::user()->id);
+            if(empty($todas)) $destinatarios->whereNull('data_leitura');
         });
-        $data["with"] = $with;
     }
 
     public function findByPhone($data) {

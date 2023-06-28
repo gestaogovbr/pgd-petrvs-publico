@@ -32,3 +32,4 @@ back-end/local_files/*
 front-end/src/environments/environment.prod.ts
 front-end/src/proxy.conf.json
 front-end/tsconfig.json
+*.bak
