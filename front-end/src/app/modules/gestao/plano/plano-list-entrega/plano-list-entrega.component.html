@@ -1,7 +1,7 @@
 <editable-form noButtons [form]="form!" [disabled]="formDisabled">
     <div class="row">
-        <grid [items]="items" [form]="form!" #gridEntregas editable [selectable]="false" [minHeight]="0" [join]="join" [groupBy]="groupBy"
-            [add]="addEntrega.bind(this)" [remove]="removeEntrega.bind(this)" [save]="saveEntrega.bind(this)" [saveEnd]="afterSaveEntrega.bind(this)" [load]="loadEntrega.bind(this)"
+        <grid [items]="items" [form]="form!" #gridEntregas editable [selectable]="false" [minHeight]="items.length > 2 ? 0 : 220" [join]="join" [groupBy]="groupBy"
+            [add]="addEntrega.bind(this)" [remove]="removeEntrega.bind(this)" [save]="saveEntrega.bind(this)" [load]="loadEntrega.bind(this)"
             [hasDelete]="true" [hasEdit]="true" [hasAdd]="!disabled">
             <columns>
                 <column [titleTemplate]="titleOrigem" [template]="columnOrigem" [editTemplate]="editOrigem" [verticalAlign]="'middle'" [width]="125" [align]="'center'">
@@ -20,23 +20,23 @@
                 <column [maxWidth]="350" [titleTemplate]="titleEntrega" [template]="columnEntrega" [editTemplate]="editEntrega" [verticalAlign]="'middle'">
                     <ng-template let-header="header" #titleEntrega><span><strong>Entrega</strong></span></ng-template>
                     <ng-template let-row="row" #columnEntrega >
-                        <div><span><small>{{ row.entrega_plano_entrega?.entrega?.nome || row.entrega?.nome || "Desconhecido" }}</small></span></div>
+                        <small>{{ row.entrega_plano_entrega?.entrega?.nome || row.entrega?.nome || "Desconhecido" }}</small>
                     </ng-template>
                     <ng-template let-row="row" #editEntrega>
                         <input-select *ngIf="origem?.value == 'MESMA_UNIDADE'" #entregaMesmaUnidade nullable itemNull="- Selecione -" controlName="plano_entrega_entrega_id" [control]="form!.controls.plano_entrega_entrega_id" [items]="entregasMesmaUnidade" (change)="onEntregaMesmaUnidadeChange($event)"></input-select>
-                        <input-select *ngIf="origem?.value == 'OUTRA_UNIDADE'" #entregaOutraUnidade nullable itemNull="- Selecione -" controlName="plano_entrega_entrega_id" [control]="form!.controls.plano_entrega_entrega_id" [items]="entregasOutraUnidade" (change)="onEntregaOutraUnidadeChange($event)" searchable [sufix]="planoEntregaOutraUnidade?.unidade?.sigla" [searchRoute]="{route: ['gestao', 'plano-entrega']}" [afterSearch]="carregarEntregasOutraUnidade"></input-select>
+                        <input-select *ngIf="origem?.value == 'OUTRA_UNIDADE'" #entregaOutraUnidade nullable itemNull="- Selecione -" controlName="plano_entrega_entrega_id" [control]="form!.controls.plano_entrega_entrega_id" [items]="entregasOutraUnidade" (change)="onEntregaOutraUnidadeChange($event)" searchButton [sufix]="planoEntregaOutraUnidade?.unidade?.sigla" [searchRoute]="{route: ['gestao', 'plano-entrega']}" [afterSearch]="carregarEntregasOutraUnidade.bind(this)"></input-select>
                         <input-select *ngIf="origem?.value == 'CATALOGO'" #entregaCatalogo nullable itemNull="- Selecione -" controlName="entrega_id" [control]="form!.controls.entrega_id" [items]="entregasCatalogo" (change)="onEntregaCatalogoChange($event)"></input-select>
                     </ng-template>
                 </column>
                 <column [titleTemplate]="titleForcaTrabalho" [template]="columnForcaTrabalho" [editTemplate]="editForcaTrabalho" [width]="125" [align]="'center'">
                     <ng-template let-header="header" #titleForcaTrabalho>
                         <div class="text-center">
-                            <span><small><strong>% Força Trab.</strong></small></span><br>
-                            <span><small><badge icon="bi bi-calculator" [color]="totalForcaTrabalho == 100 ? 'success' : 'warning'" [label]="totalForcaTrabalho + '%'"></badge></small></span>    
+                            <small><strong>% Força Trab.</strong></small><br>
+                            <small><badge icon="bi bi-calculator" [color]="totalForcaTrabalho == 100 ? 'success' : 'warning'" [label]="totalForcaTrabalho + '%'"></badge></small>
                         </div>
                     </ng-template>
                     <ng-template let-row="row" #columnForcaTrabalho>
-                        <span><small>{{  row.forca_trabalho + '%' }}</small></span>
+                        <small>{{  row.forca_trabalho + '%' }}</small>
                     </ng-template>
                     <ng-template let-row="row" #editForcaTrabalho>
                         <input-text number sufix="%" controlName="forca_trabalho" [control]="form!.controls.forca_trabalho" (change)="onForcaTrabalhoChange(row)"></input-text>
@@ -45,7 +45,7 @@
                 <column [maxWidth]="250" [titleTemplate]="titleDescricao" [template]="columnDescricao" [editTemplate]="editDescricao" [verticalAlign]="'middle'">
                     <ng-template let-header="header" #titleDescricao><div class="text-center"><span><strong>Detalhamento</strong></span></div></ng-template>
                     <ng-template let-row="row" #columnDescricao>
-                        <div><span><small>{{ row.descricao }}</small></span></div>
+                        <small>{{ row.descricao }}</small>
                     </ng-template>
                     <ng-template let-row="row" #editDescricao>
                         <input-text controlName="descricao" [control]="form!.controls.descricao"></input-text>

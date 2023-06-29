@@ -41,12 +41,13 @@ export class InputSelectComponent extends InputBase implements OnInit {
   @Input() source?: any;
   @Input() path?: string;
   @Input() nullable?: string;
-  @Input() searchable?: string;
   @Input() noIcon?: string;
   @Input() noColor?: string;
   @Input() liveSearch?: string;
   @Input() detailsButton?: string;
   @Input() detailsButtonIcon?: string;
+  @Input() searchButton?: string;
+  @Input() searchButtonIcon?: string;
   @Input() listHeight: number = 200;
   @Input() prefix?: string;
   @Input() sufix?: string;
@@ -151,10 +152,6 @@ export class InputSelectComponent extends InputBase implements OnInit {
   public get isNullable(): boolean {
     return this.nullable != undefined;
   }
-
-  public get isSearchable(): boolean {
-    return this.searchable != undefined;
-  }
   
   public get isTodos(): boolean {
     return !!this.itemTodos?.length;
@@ -228,6 +225,10 @@ export class InputSelectComponent extends InputBase implements OnInit {
 
   public get isDetails(): boolean {
     return this.detailsButton !== undefined;
+  }
+
+  public get isSearch(): boolean {
+    return this.searchButton !== undefined;
   }
 
   public setValue(value: any) {

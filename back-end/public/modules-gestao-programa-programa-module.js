@@ -54,11 +54,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProgramaParticipantesComponent", function() { return ProgramaParticipantesComponent; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
 /* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/components/grid/grid.component */ "m4bG");
-/* harmony import */ var src_app_modules_base_page_list_base__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/modules/base/page-list-base */ "+vn/");
-/* harmony import */ var src_app_models_programa_participante_model__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/models/programa-participante.model */ "UUwt");
-/* harmony import */ var src_app_dao_programa_participante_dao_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/dao/programa-participante-dao.service */ "Exic");
-/* harmony import */ var src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/dao/unidade-dao.service */ "Ufbc");
-/* harmony import */ var src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/dao/usuario-dao.service */ "w5Sy");
+/* harmony import */ var src_app_dao_programa_participante_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/programa-participante-dao.service */ "Exic");
+/* harmony import */ var src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/unidade-dao.service */ "Ufbc");
+/* harmony import */ var src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/dao/usuario-dao.service */ "w5Sy");
+/* harmony import */ var src_app_models_programa_participante_model__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/models/programa-participante.model */ "UUwt");
+/* harmony import */ var src_app_modules_base_page_list_base__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/modules/base/page-list-base */ "+vn/");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/core */ "fXoL");
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/common */ "ofXK");
 /* harmony import */ var _components_grid_filter_filter_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/grid/filter/filter.component */ "kHdc");
@@ -94,7 +94,7 @@ function ProgramaParticipantesComponent_toolbar_1_Template(rf, ctx) { if (rf & 1
     const _r15 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "toolbar");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](1, "input-switch", 18);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("change", function ProgramaParticipantesComponent_toolbar_1_Template_input_switch_change_1_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵrestoreView"](_r15); const ctx_r14 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"](); return ctx_r14.onTodosChange($event); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("change", function ProgramaParticipantesComponent_toolbar_1_Template_input_switch_change_1_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵrestoreView"](_r15); const ctx_r14 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"](); return ctx_r14.grid.reloadFilter(); });
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
 } if (rf & 2) {
@@ -133,7 +133,7 @@ function ProgramaParticipantesComponent_ng_template_16_Template(rf, ctx) { if (r
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](0, "input-search", 21, 22);
 } if (rf & 2) {
     const ctx_r9 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 12)("dao", ctx_r9.usuarioDao);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 12)("control", ctx_r9.form.controls.usuario_id)("dao", ctx_r9.usuarioDao);
 } }
 function ProgramaParticipantesComponent_ng_template_19_i_0_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](0, "i", 24);
@@ -150,36 +150,41 @@ function ProgramaParticipantesComponent_ng_template_21_Template(rf, ctx) { if (r
     const ctx_r13 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 12)("control", ctx_r13.form.controls.habilitado);
 } }
-class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base__WEBPACK_IMPORTED_MODULE_2__["PageListBase"] {
+class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base__WEBPACK_IMPORTED_MODULE_6__["PageListBase"] {
     constructor(injector) {
-        super(injector, src_app_models_programa_participante_model__WEBPACK_IMPORTED_MODULE_3__["ProgramaParticipante"], src_app_dao_programa_participante_dao_service__WEBPACK_IMPORTED_MODULE_4__["ProgramaParticipanteDaoService"]);
+        super(injector, src_app_models_programa_participante_model__WEBPACK_IMPORTED_MODULE_5__["ProgramaParticipante"], src_app_dao_programa_participante_dao_service__WEBPACK_IMPORTED_MODULE_2__["ProgramaParticipanteDaoService"]);
         this.injector = injector;
         this.programaId = "";
         this.multiselectAllFields = ["usuario_id", "habilitado"];
         this.filterWhere = (filter) => {
-            var _a, _b;
+            var _a, _b, _c;
             let result = [];
             let form = filter.value;
-            result.push(["programa_id", "==", this.programaId]);
-            if ((_a = form.nome) === null || _a === void 0 ? void 0 : _a.length)
-                result.push(["usuario.nome", "like", "%" + form.nome + "%"]);
-            if ((_b = form.unidade_id) === null || _b === void 0 ? void 0 : _b.length)
-                result.push(["usuario.lotacao.unidade.id", "==", form.unidade_id]);
+            if ((_a = this.filter) === null || _a === void 0 ? void 0 : _a.controls.todos.value) {
+                result.push([["todos", '==', true]]);
+            }
+            else {
+                result.push(["programa_id", "==", this.programaId]);
+                if ((_b = form.nome) === null || _b === void 0 ? void 0 : _b.length)
+                    result.push(["usuario.nome", "like", "%" + form.nome + "%"]);
+                if ((_c = form.unidade_id) === null || _c === void 0 ? void 0 : _c.length)
+                    result.push(["usuario.lotacao.unidade.id", "==", form.unidade_id]);
+            }
             return result;
         };
-        this.unidadeDao = injector.get(src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_5__["UnidadeDaoService"]);
-        this.usuarioDao = injector.get(src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_6__["UsuarioDaoService"]);
-        this.programaParticipanteService = injector.get(src_app_dao_programa_participante_dao_service__WEBPACK_IMPORTED_MODULE_4__["ProgramaParticipanteDaoService"]);
+        this.unidadeDao = injector.get(src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_3__["UnidadeDaoService"]);
+        this.usuarioDao = injector.get(src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_4__["UsuarioDaoService"]);
+        this.programaParticipanteService = injector.get(src_app_dao_programa_participante_dao_service__WEBPACK_IMPORTED_MODULE_2__["ProgramaParticipanteDaoService"]);
         /* Inicializações */
         this.code = "MOD_PRGT_PART";
         this.filter = this.fh.FormBuilder({
             unidade_id: { default: undefined },
             nome: { default: "" },
+            todos: { default: false },
         });
         this.form = this.fh.FormBuilder({
             usuario_id: { default: undefined },
             habilitado: { default: true },
-            todos: { default: false },
         });
         this.multiselectMenu = !this.auth.hasPermissionTo('MOD_PRGT_PART_INCL') ? [] : [
             {
@@ -189,7 +194,6 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
             }
         ];
         this.join = ["usuario:id,nome,apelido,url_foto", "usuario.lotacao:id,nome,unidade_id",];
-        this.groupBy = [{ field: "usuario.lotacao.unidade.sigla", label: "Unidade" }];
     }
     ngOnInit() {
         var _a;
@@ -204,7 +208,7 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
     }
     addParticipante() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            return new src_app_models_programa_participante_model__WEBPACK_IMPORTED_MODULE_3__["ProgramaParticipante"]({
+            return new src_app_models_programa_participante_model__WEBPACK_IMPORTED_MODULE_5__["ProgramaParticipante"]({
                 id: this.dao.generateUuid(),
                 usuario_id: "",
                 _status: "ADD"
@@ -260,38 +264,21 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
         });
     }
     habilitarParticipantes() {
-        var _a;
-        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            if (!this.grid.multiselectedCount) {
-                this.dialog.alert("Selecione", "Nenhum participante selecionado para a habilitção");
-            }
-            else {
-                if (this.form.valid) {
-                    this.submitting = true;
-                    try {
-                        let result = yield ((_a = this.dao) === null || _a === void 0 ? void 0 : _a.habilitar(Object.keys(this.grid.multiselected), this.programaId, 1));
-                        if (result.error)
-                            throw new Error(result.error);
-                        this.dialog.alert("Sucesso", "Foram habilitados " + result.data + " " + this.lex.noun("participantes", true));
-                        this.grid.enableMultiselect(false);
-                        this.refresh();
-                    }
-                    catch (error) {
-                        this.error(error.message ? error.message : error);
-                    }
-                    finally {
-                        this.submitting = false;
-                    }
+        if (!this.grid.multiselectedCount) {
+            this.dialog.alert("Selecione", "Nenhum participante selecionado para a habilitção");
+        }
+        else {
+            const self = this;
+            this.dialog.confirm("Habilitar Participantes ?", "Deseja realmente habilitar os participantes?").then(confirm => {
+                if (confirm) {
+                    this.dao.habilitar(Object.keys(this.grid.multiselected), this.programaId, 1).then(function () {
+                        self.dialog.alert("Sucesso", "Habilitado com sucesso!");
+                    }).catch(function (error) {
+                        self.dialog.alert("Erro",  true ? error === null || error === void 0 ? void 0 : error.message : undefined);
+                    });
                 }
-            }
-        });
-    }
-    onTodosChange(event) {
-        // const todos = this.form!.controls.todos.value;
-        // if((todos && !this.result?.length) || (!todos && this.result?.length)) {
-        //   this.result = todos ? ["todos", '==', true] : [];
-        //   this.grid!.reloadFilter();
-        // }
+            });
+        }
     }
 }
 ProgramaParticipantesComponent.ɵfac = function ProgramaParticipantesComponent_Factory(t) { return new (t || ProgramaParticipantesComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_7__["Injector"])); };
@@ -302,7 +289,7 @@ ProgramaParticipantesComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_7_
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵloadQuery"]()) && (ctx.grid = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵloadQuery"]()) && (ctx.usuario = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵInheritDefinitionFeature"]], decls: 25, vars: 35, consts: [["multiselect", "", "editable", "", 3, "dao", "form", "title", "orderBy", "groupBy", "join", "add", "load", "remove", "save", "selectable", "hasAdd", "hasEdit", "hasDelete", "multiselectMenu", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome", "controlName", "nome", 3, "size", "control", "placeholder"], ["controlName", "unidade_id", 3, "size", "dao"], ["unidade", ""], ["icon", "bi-person", 3, "align", "template", "editTemplate"], ["columnFoto", ""], ["editFoto", ""], ["title", "Usu\u00E1rio", 3, "template", "editTemplate"], ["columnUsuario", ""], ["editUsuario", ""], ["title", "Habilitado", 3, "template", "editTemplate"], ["columnHabilitado", ""], ["editHabilitado", ""], ["type", "options"], [3, "rows"], ["labelPosition", "left", "label", "Todos", "controlName", "todos", 3, "size", "control", "change"], [3, "url", "size", "hint"], [3, "url", "size"], ["label", "", "icon", "", "controlName", "usuario_id", 3, "size", "dao"], ["usuario", ""], ["class", "bi bi-person-check", 4, "ngIf"], [1, "bi", "bi-person-check"], ["controlName", "habilitado", 3, "size", "control"]], template: function ProgramaParticipantesComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵInheritDefinitionFeature"]], decls: 25, vars: 35, consts: [["multiselect", "", "editable", "", 3, "dao", "form", "title", "orderBy", "groupBy", "join", "add", "load", "remove", "save", "selectable", "hasAdd", "hasEdit", "hasDelete", "multiselectMenu", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome", "controlName", "nome", 3, "size", "control", "placeholder"], ["controlName", "unidade_id", 3, "size", "dao"], ["unidade", ""], ["icon", "bi-person", 3, "align", "template", "editTemplate"], ["columnFoto", ""], ["editFoto", ""], ["title", "Usu\u00E1rio", 3, "template", "editTemplate"], ["columnUsuario", ""], ["editUsuario", ""], ["title", "Habilitado", 3, "template", "editTemplate"], ["columnHabilitado", ""], ["editHabilitado", ""], ["type", "options"], [3, "rows"], ["labelPosition", "left", "label", "Todos", "controlName", "todos", 3, "size", "control", "change"], [3, "url", "size", "hint"], [3, "url", "size"], ["label", "", "icon", "", 3, "size", "control", "dao"], ["usuario", ""], ["class", "bi bi-person-check", 4, "ngIf"], [1, "bi", "bi-person-check"], ["controlName", "habilitado", 3, "size", "control"]], template: function ProgramaParticipantesComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "grid", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("select", function ProgramaParticipantesComponent_Template_grid_select_0_listener($event) { return ctx.onSelect($event); });
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](1, ProgramaParticipantesComponent_toolbar_1_Template, 2, 2, "toolbar", 1);
@@ -319,7 +306,7 @@ ProgramaParticipantesComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_7_
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](13, "column", 10);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](14, ProgramaParticipantesComponent_ng_template_14_Template, 5, 2, "ng-template", null, 11, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplateRefExtractor"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](16, ProgramaParticipantesComponent_ng_template_16_Template, 2, 2, "ng-template", null, 12, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](16, ProgramaParticipantesComponent_ng_template_16_Template, 2, 3, "ng-template", null, 12, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](18, "column", 13);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](19, ProgramaParticipantesComponent_ng_template_19_Template, 1, 1, "ng-template", null, 14, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplateRefExtractor"]);

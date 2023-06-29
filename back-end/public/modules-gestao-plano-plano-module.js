@@ -966,16 +966,12 @@ function PlanoListEntregaComponent_ng_template_13_Template(rf, ctx) { if (rf & 1
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } }
 function PlanoListEntregaComponent_ng_template_15_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](1, "span");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](2, "small");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "small");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const row_r35 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"]((row_r35.entrega_plano_entrega == null ? null : row_r35.entrega_plano_entrega.entrega == null ? null : row_r35.entrega_plano_entrega.entrega.nome) || (row_r35.entrega == null ? null : row_r35.entrega.nome) || "Desconhecido");
 } }
 function PlanoListEntregaComponent_ng_template_17_input_select_0_Template(rf, ctx) { if (rf & 1) {
@@ -996,7 +992,7 @@ function PlanoListEntregaComponent_ng_template_17_input_select_1_Template(rf, ct
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r38 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("control", ctx_r38.form.controls.plano_entrega_entrega_id)("items", ctx_r38.entregasOutraUnidade)("sufix", ctx_r38.planoEntregaOutraUnidade == null ? null : ctx_r38.planoEntregaOutraUnidade.unidade == null ? null : ctx_r38.planoEntregaOutraUnidade.unidade.sigla)("searchRoute", _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpureFunction1"](6, _c5, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpureFunction0"](5, _c4)))("afterSearch", ctx_r38.carregarEntregasOutraUnidade);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("control", ctx_r38.form.controls.plano_entrega_entrega_id)("items", ctx_r38.entregasOutraUnidade)("sufix", ctx_r38.planoEntregaOutraUnidade == null ? null : ctx_r38.planoEntregaOutraUnidade.unidade == null ? null : ctx_r38.planoEntregaOutraUnidade.unidade.sigla)("searchRoute", _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpureFunction1"](5, _c5, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpureFunction0"](4, _c4)));
 } }
 function PlanoListEntregaComponent_ng_template_17_input_select_2_Template(rf, ctx) { if (rf & 1) {
     const _r48 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
@@ -1009,7 +1005,7 @@ function PlanoListEntregaComponent_ng_template_17_input_select_2_Template(rf, ct
 } }
 function PlanoListEntregaComponent_ng_template_17_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](0, PlanoListEntregaComponent_ng_template_17_input_select_0_Template, 2, 2, "input-select", 29);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](1, PlanoListEntregaComponent_ng_template_17_input_select_1_Template, 2, 8, "input-select", 30);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](1, PlanoListEntregaComponent_ng_template_17_input_select_1_Template, 2, 7, "input-select", 30);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](2, PlanoListEntregaComponent_ng_template_17_input_select_2_Template, 2, 2, "input-select", 31);
 } if (rf & 2) {
     const ctx_r12 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
@@ -1098,24 +1094,36 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
         this.entregasMesmaUnidade = [];
         this.entregasOutraUnidade = [];
         this.entregasCatalogo = [];
+        /**
+         * Método chamado para a validação dos campos do formulário, por ocasião da edição ou inserção de itens.
+         * @param control
+         * @param controlName
+         * @returns
+         */
         this.validate = (control, controlName) => {
-            var _a, _b, _c;
+            var _a, _b, _c, _d, _e, _f, _g;
             let result = null;
-            /* if(['descricao'].indexOf(controlName) >= 0 && !control.value?.length) result = "Obrigatório!"; */
-            if (['forca_trabalho'].indexOf(controlName) >= 0 && control.value < 1)
-                result = "Não pode ser inferior a 1";
-            /*     if(['entrega_id'].indexOf(controlName) >= 0) {
-                  if(this.form?.controls.origem.value == 'CATALOGO' && !control.value) result = "Este campo não pode ser nulo!";
-                  let cont = this.entity?.entregas?.filter(e => !!e.entrega_id && !e.plano_entrega_entrega_id && e.id != this.grid?.editing?.id).map(e => e.entrega_id).reduce((acc, id) => { if(id === control.value) return acc + 1; else return acc; }, 0) || 0;
-                  if(cont > 0) result = "Esta entrega está em duplicidade!";
-                } */
-            if (['plano_entrega_entrega_id'].indexOf(controlName) >= 0) {
-                if (['MESMA_UNIDADE', 'OUTRA_UNIDADE'].includes((_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.origem.value) && !control.value)
+            if (['descricao', 'forca_trabalho'].indexOf(controlName) >= 0 && !((_a = control.value) === null || _a === void 0 ? void 0 : _a.length))
+                result = "Obrigatório!";
+            if (['forca_trabalho'].indexOf(controlName) >= 0 && (control.value < 1 || control.value > 100))
+                result = "Deve estar entre 1 e 100";
+            if (['entrega_id'].indexOf(controlName) >= 0) {
+                if (((_b = this.form) === null || _b === void 0 ? void 0 : _b.controls.origem.value) == 'CATALOGO' && !control.value)
                     result = "Este campo não pode ser nulo!";
-                let cont = ((_c = (_b = this.entity) === null || _b === void 0 ? void 0 : _b.entregas) === null || _c === void 0 ? void 0 : _c.filter(e => { var _a, _b; return !e.entrega_id && !!e.plano_entrega_entrega_id && e.id != ((_b = (_a = this.grid) === null || _a === void 0 ? void 0 : _a.editing) === null || _b === void 0 ? void 0 : _b.id); }).map(e => e.plano_entrega_entrega_id).reduce((acc, id) => { if (id === control.value)
+                let cont = ((_d = (_c = this.entity) === null || _c === void 0 ? void 0 : _c.entregas) === null || _d === void 0 ? void 0 : _d.filter(e => { var _a, _b; return !!e.entrega_id && !e.plano_entrega_entrega_id && e.id != ((_b = (_a = this.grid) === null || _a === void 0 ? void 0 : _a.editing) === null || _b === void 0 ? void 0 : _b.id); }).map(e => e.entrega_id).reduce((acc, id) => { if (id === control.value)
                     return acc + 1;
                 else
-                    return acc; }, 0)) || 0;
+                    return acc; }, 0)) || 0; // (*1)
+                if (cont > 0)
+                    result = "Esta entrega está em duplicidade!";
+            }
+            if (['plano_entrega_entrega_id'].indexOf(controlName) >= 0) {
+                if (['MESMA_UNIDADE', 'OUTRA_UNIDADE'].includes((_e = this.form) === null || _e === void 0 ? void 0 : _e.controls.origem.value) && !control.value)
+                    result = "Este campo não pode ser nulo!";
+                let cont = ((_g = (_f = this.entity) === null || _f === void 0 ? void 0 : _f.entregas) === null || _g === void 0 ? void 0 : _g.filter(e => { var _a, _b; return !e.entrega_id && !!e.plano_entrega_entrega_id && e.id != ((_b = (_a = this.grid) === null || _a === void 0 ? void 0 : _a.editing) === null || _b === void 0 ? void 0 : _b.id); }).map(e => e.plano_entrega_entrega_id).reduce((acc, id) => { if (id === control.value)
+                    return acc + 1;
+                else
+                    return acc; }, 0)) || 0; // (*2)
                 if (cont > 0)
                     result = "Esta entrega está em duplicidade!";
             }
@@ -1147,6 +1155,9 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
     set disabled(value) { if (this._disabled != value)
         this._disabled = value; }
     get disabled() { return this._disabled; }
+    set noPersist(value) { super.noPersist = value; }
+    get noPersist() { return super.noPersist; }
+    //@Input() set planoEntregaId(value: Plano | undefined) { super.entity = value; } get entity(): Plano | undefined { return super.entity; }
     get items() {
         if (!this.gridControl.value)
             this.gridControl.setValue(new src_app_models_plano_model__WEBPACK_IMPORTED_MODULE_5__["Plano"]());
@@ -1154,6 +1165,10 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
             this.gridControl.value.entregas = [];
         return this.gridControl.value.entregas;
     }
+    /**
+     * Método chamado na inicialização do componente. Neste momento são carregadas as entregas do catálogo e as entregas da mesma unidade do plano de trabalho,
+     * visto que esses itens não se alteram durante a vida do componente e poderão ser utilizados durante sua utilização.
+     */
     ngOnInit() {
         const _super = Object.create(null, {
             ngOnInit: { get: () => super.ngOnInit }
@@ -1168,15 +1183,7 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
         });
     }
     /**
-     * Método chamado na inicialização do componente
-     * @param entity
-     * @param form
-     */
-    loadData(entity, form) {
-        super.loadData(entity, form);
-    }
-    /**
-     * Método utilizado durante a inclusão/alteração de uma entrega de plano de trabalho no grid persistente
+     * Método utilizado durante a inclusão/alteração de uma entrega de plano de trabalho no grid, seja ele persistente ou não
      * @param form
      * @param row
      */
@@ -1218,7 +1225,7 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
         return entregas.map(x => parseFloat(x.forca_trabalho)).reduce((a, b) => a + b, 0);
     }
     /**
-     * Método chamado para inserir uma entrega de plano de trabalho no grid.
+     * Método chamado para inserir uma entrega de plano de trabalho no grid, seja este persistente ou não.
      * @returns
      */
     addEntrega() {
@@ -1226,16 +1233,13 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             return Object.assign(new src_app_models_plano_trabalho_entrega_model__WEBPACK_IMPORTED_MODULE_6__["PlanoTrabalhoEntrega"](), {
                 _status: "ADD",
+                id: this.dao.generateUuid(),
                 plano_id: (_a = this.entity) === null || _a === void 0 ? void 0 : _a.id
             });
         });
     }
-    /*   public editEntrega(entrega: PlanoTrabalhoEntrega) {
-        entrega._status = entrega._status == "ADD" ? "ADD" : "EDIT";
-        let index = this.items.indexOf(entrega);
-      } */
     /**
-     * Método chamado para a exclusão de uma entrega de plano de trabalho.
+     * Método chamado para a exclusão de uma entrega de plano de trabalho do grid, seja este persistente ou não.
      * @param row
      * @returns
      */
@@ -1246,13 +1250,13 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
             if (confirm) {
                 this.loading = true;
                 try {
-                    yield ((_a = this.dao) === null || _a === void 0 ? void 0 : _a.delete(row.id));
+                    this.isNoPersist ? Object.assign(row, { _status: "DELETE" }) : yield ((_a = this.dao) === null || _a === void 0 ? void 0 : _a.delete(row.id));
                 }
                 finally {
                     this.loading = false;
                 }
                 this.totalForcaTrabalho = Math.round((this.totalForcaTrabalho - parseFloat(row.forca_trabalho)) * 100) / 100;
-                return true;
+                return this.isNoPersist ? false : true; // (*3)
             }
             else {
                 return false;
@@ -1260,18 +1264,16 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
         });
     }
     /**
-     * Método chamado no salvamento de uma entrega do plano de trabalho do grid.
+     * Método chamado no salvamento de uma entrega do plano de trabalho do grid, seja este persistente ou não.
      * @param form
      * @param row
      * @returns
      */
     saveEntrega(form, row) {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d, _e, _f, _g;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            //*********************** */
-            delete row['entrega'];
-            delete row['entrega_plano_entrega'];
             let novaEntrega = row;
+            novaEntrega.id = row.id;
             novaEntrega.entrega_id = (_b = (_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.entrega_id.value) !== null && _b !== void 0 ? _b : null;
             novaEntrega.plano_entrega_entrega_id = (_c = this.form) === null || _c === void 0 ? void 0 : _c.controls.plano_entrega_entrega_id.value;
             novaEntrega.descricao = (_d = this.form) === null || _d === void 0 ? void 0 : _d.controls.descricao.value;
@@ -1280,7 +1282,8 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
             try {
                 if (!this.isNoPersist)
                     novaEntrega = yield this.dao.save(novaEntrega, this.join);
-                this.grid.items[this.grid.items.length - 1].id = '';
+                if (((_f = this.grid) === null || _f === void 0 ? void 0 : _f.editing) && !((_g = this.grid) === null || _g === void 0 ? void 0 : _g.adding))
+                    Object.assign(novaEntrega, { _status: novaEntrega._status == "ADD" ? "ADD" : "EDIT" });
             }
             catch (e) {
                 this.error(e.message ? e.message : e.toString() || e);
@@ -1292,28 +1295,30 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
         });
     }
     /**
-     * Método chamado após o salvamento de uma entrega do plano de trabalho.
-     * @param novaEntrega Entrega do plano de trabalho recentemente salva.
+     * Método chamado na inicialização do componente para armazenas as entregas da mesma unidade do plano de trabalho.
+     * @returns
      */
-    afterSaveEntrega(novaEntrega) {
-        var _a, _b, _c, _d, _e, _f, _g;
-        novaEntrega.entrega = (_b = (_a = this.entregaCatalogo) === null || _a === void 0 ? void 0 : _a.selectedItem) === null || _b === void 0 ? void 0 : _b.data;
-        novaEntrega.entrega_plano_entrega = ((_c = this.origem) === null || _c === void 0 ? void 0 : _c.value) == 'MESMA_UNIDADE' ? (_e = (_d = this.entregaMesmaUnidade) === null || _d === void 0 ? void 0 : _d.selectedItem) === null || _e === void 0 ? void 0 : _e.data : (_f = this.entregaOutraUnidade) === null || _f === void 0 ? void 0 : _f.selectedItem;
-        (_g = this.grid) === null || _g === void 0 ? void 0 : _g.reloadFilter();
-    }
     carregarEntregasMesmaUnidade() {
         var _a, _b;
         let entregasPlanoEntrega = ((_b = (_a = this.entity) === null || _a === void 0 ? void 0 : _a.plano_entrega) === null || _b === void 0 ? void 0 : _b.entregas) || [];
         return entregasPlanoEntrega.map(epe => { var _a; return Object.assign({}, { key: epe.id, value: ((_a = epe.entrega) === null || _a === void 0 ? void 0 : _a.nome) || '', data: epe }); });
     }
+    /**
+     * Método chamado para carregar as entregas de uma outra unidade, com base no seu plano de entregas passado como parâmetro.
+     * @param idPlanoOuPlano ID do plano de entregas ou o seu objeto completo.
+     */
     carregarEntregasOutraUnidade(idPlanoOuPlano) {
         var _a;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            this.planoEntregaOutraUnidade = typeof idPlanoOuPlano == 'string' ? yield this.planoEntregaDao.getById(idPlanoOuPlano, ["entregas", "unidade"]) : idPlanoOuPlano;
-            this.entregasOutraUnidade = ((_a = this.planoEntregaOutraUnidade) === null || _a === void 0 ? void 0 : _a.entregas.map(epe => { var _a; return Object.assign({}, { key: epe.id, value: ((_a = epe.entrega) === null || _a === void 0 ? void 0 : _a.nome) || '', data: epe }); })) || [];
             this.cdRef.detectChanges();
+            this.planoEntregaOutraUnidade = typeof idPlanoOuPlano == 'string' ? yield this.planoEntregaDao.getById(idPlanoOuPlano, ["entregas.entrega", "unidade"]) : idPlanoOuPlano;
+            this.entregasOutraUnidade = ((_a = this.planoEntregaOutraUnidade) === null || _a === void 0 ? void 0 : _a.entregas.map(epe => { var _a; return Object.assign({}, { key: epe.id, value: ((_a = epe.entrega) === null || _a === void 0 ? void 0 : _a.nome) || '', data: epe }); })) || [];
         });
     }
+    /**
+     * Método chamado para carregar as entregas existentes no Catálogo de Entregas.
+     * @returns
+     */
     carregarEntregasCatalogo() {
         var _a, _b;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
@@ -1337,15 +1342,20 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
         }
     }
     onEntregaMesmaUnidadeChange(event) {
-        var _a, _b, _c, _d, _e, _f;
-        (_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.descricao.setValue(((_c = (_b = this.entregaMesmaUnidade) === null || _b === void 0 ? void 0 : _b.selectedItem) === null || _c === void 0 ? void 0 : _c.value) || '');
-        (_d = this.form) === null || _d === void 0 ? void 0 : _d.controls.plano_entrega_entrega_id.setValue((_f = (_e = this.entregaMesmaUnidade) === null || _e === void 0 ? void 0 : _e.selectedItem) === null || _f === void 0 ? void 0 : _f.key);
-        this.cdRef.detectChanges();
+        var _a, _b, _c, _d, _e, _f, _g;
+        if ((_a = this.entregaMesmaUnidade) === null || _a === void 0 ? void 0 : _a.selectedItem) {
+            (_b = this.form) === null || _b === void 0 ? void 0 : _b.controls.descricao.setValue(((_d = (_c = this.entregaMesmaUnidade) === null || _c === void 0 ? void 0 : _c.selectedItem) === null || _d === void 0 ? void 0 : _d.value) || '');
+            (_e = this.form) === null || _e === void 0 ? void 0 : _e.controls.plano_entrega_entrega_id.setValue((_g = (_f = this.entregaMesmaUnidade) === null || _f === void 0 ? void 0 : _f.selectedItem) === null || _g === void 0 ? void 0 : _g.key);
+            this.cdRef.detectChanges();
+        }
     }
     onEntregaOutraUnidadeChange(event) {
-        var _a;
-        (_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.descricao.setValue('');
-        //**************** if(this.entregaOutraUnidade?.selectedItem?.key.length) this.form?.controls.descricao.setValue(this.entregaOutraUnidade?.selectedItem?.value);
+        var _a, _b, _c, _d, _e, _f, _g;
+        if ((_a = this.entregaOutraUnidade) === null || _a === void 0 ? void 0 : _a.selectedItem) {
+            (_b = this.form) === null || _b === void 0 ? void 0 : _b.controls.descricao.setValue(((_d = (_c = this.entregaOutraUnidade) === null || _c === void 0 ? void 0 : _c.selectedItem) === null || _d === void 0 ? void 0 : _d.value) || '');
+            (_e = this.form) === null || _e === void 0 ? void 0 : _e.controls.plano_entrega_entrega_id.setValue((_g = (_f = this.entregaOutraUnidade) === null || _f === void 0 ? void 0 : _f.selectedItem) === null || _g === void 0 ? void 0 : _g.key);
+            this.cdRef.detectChanges();
+        }
     }
     onEntregaCatalogoChange(event) {
         var _a, _b, _c, _d, _e, _f, _g;
@@ -1358,8 +1368,7 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
     onForcaTrabalhoChange(row) {
         var _a, _b;
         let index = this.items.findIndex(x => x["id"] == row["id"]);
-        this.items[index].forca_trabalho = (_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.forca_trabalho.value;
-        this.totalForcaTrabalho = Math.round(this.somaForcaTrabalho((_b = this.grid) === null || _b === void 0 ? void 0 : _b.items) * 100) / 100;
+        this.totalForcaTrabalho = Math.round((this.somaForcaTrabalho((_a = this.grid) === null || _a === void 0 ? void 0 : _a.items) - parseFloat(this.items[index].forca_trabalho) + parseFloat((_b = this.form) === null || _b === void 0 ? void 0 : _b.controls.forca_trabalho.value)) * 100) / 100;
     }
 }
 PlanoListEntregaComponent.ɵfac = function PlanoListEntregaComponent_Factory(t) { return new (t || PlanoListEntregaComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
@@ -1378,7 +1387,7 @@ PlanoListEntregaComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵ
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵloadQuery"]()) && (ctx.entregaMesmaUnidade = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵloadQuery"]()) && (ctx.entregaOutraUnidade = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵloadQuery"]()) && (ctx.entregaCatalogo = _t.first);
-    } }, inputs: { cdRef: "cdRef", control: "control", entity: "entity", disabled: "disabled" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]], decls: 34, vars: 37, consts: [["noButtons", "", 3, "form", "disabled"], [1, "row"], ["editable", "", 3, "items", "form", "selectable", "minHeight", "join", "groupBy", "add", "remove", "save", "saveEnd", "load", "hasDelete", "hasEdit", "hasAdd"], ["gridEntregas", ""], [3, "titleTemplate", "template", "editTemplate", "verticalAlign", "width", "align"], ["titleOrigem", ""], ["columnOrigem", ""], ["editOrigem", ""], [3, "maxWidth", "titleTemplate", "template", "editTemplate", "verticalAlign"], ["titleEntrega", ""], ["columnEntrega", ""], ["editEntrega", ""], [3, "titleTemplate", "template", "editTemplate", "width", "align"], ["titleForcaTrabalho", ""], ["columnForcaTrabalho", ""], ["editForcaTrabalho", ""], ["titleDescricao", ""], ["columnDescricao", ""], ["editDescricao", ""], ["type", "options"], [1, "text-center"], ["color", "success", "label", "Mesma Unidade", 4, "ngIf"], ["color", "primary", "label", "Outra Unidade", 4, "ngIf"], ["color", "secondary", "label", "Cat\u00E1logo", 4, "ngIf"], ["color", "success", "label", "Mesma Unidade"], ["color", "primary", "label", "Outra Unidade"], ["color", "secondary", "label", "Cat\u00E1logo"], ["controlName", "origem", "controlName", "origem", 3, "control", "items", "change"], ["origem", ""], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", 3, "control", "items", "change", 4, "ngIf"], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", "searchable", "", 3, "control", "items", "sufix", "searchRoute", "afterSearch", "change", 4, "ngIf"], ["nullable", "", "itemNull", "- Selecione -", "controlName", "entrega_id", 3, "control", "items", "change", 4, "ngIf"], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", 3, "control", "items", "change"], ["entregaMesmaUnidade", ""], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", "searchable", "", 3, "control", "items", "sufix", "searchRoute", "afterSearch", "change"], ["entregaOutraUnidade", ""], ["nullable", "", "itemNull", "- Selecione -", "controlName", "entrega_id", 3, "control", "items", "change"], ["entregaCatalogo", ""], ["icon", "bi bi-calculator", 3, "color", "label"], ["number", "", "sufix", "%", "controlName", "forca_trabalho", 3, "control", "change"], ["controlName", "descricao", 3, "control"]], template: function PlanoListEntregaComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, inputs: { control: "control", entity: "entity", disabled: "disabled", noPersist: "noPersist", cdRef: "cdRef" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]], decls: 34, vars: 36, consts: [["noButtons", "", 3, "form", "disabled"], [1, "row"], ["editable", "", 3, "items", "form", "selectable", "minHeight", "join", "groupBy", "add", "remove", "save", "load", "hasDelete", "hasEdit", "hasAdd"], ["gridEntregas", ""], [3, "titleTemplate", "template", "editTemplate", "verticalAlign", "width", "align"], ["titleOrigem", ""], ["columnOrigem", ""], ["editOrigem", ""], [3, "maxWidth", "titleTemplate", "template", "editTemplate", "verticalAlign"], ["titleEntrega", ""], ["columnEntrega", ""], ["editEntrega", ""], [3, "titleTemplate", "template", "editTemplate", "width", "align"], ["titleForcaTrabalho", ""], ["columnForcaTrabalho", ""], ["editForcaTrabalho", ""], ["titleDescricao", ""], ["columnDescricao", ""], ["editDescricao", ""], ["type", "options"], [1, "text-center"], ["color", "success", "label", "Mesma Unidade", 4, "ngIf"], ["color", "primary", "label", "Outra Unidade", 4, "ngIf"], ["color", "secondary", "label", "Cat\u00E1logo", 4, "ngIf"], ["color", "success", "label", "Mesma Unidade"], ["color", "primary", "label", "Outra Unidade"], ["color", "secondary", "label", "Cat\u00E1logo"], ["controlName", "origem", "controlName", "origem", 3, "control", "items", "change"], ["origem", ""], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", 3, "control", "items", "change", 4, "ngIf"], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", "searchButton", "", 3, "control", "items", "sufix", "searchRoute", "change", 4, "ngIf"], ["nullable", "", "itemNull", "- Selecione -", "controlName", "entrega_id", 3, "control", "items", "change", 4, "ngIf"], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", 3, "control", "items", "change"], ["entregaMesmaUnidade", ""], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", "searchButton", "", 3, "control", "items", "sufix", "searchRoute", "change"], ["entregaOutraUnidade", ""], ["nullable", "", "itemNull", "- Selecione -", "controlName", "entrega_id", 3, "control", "items", "change"], ["entregaCatalogo", ""], ["icon", "bi bi-calculator", 3, "color", "label"], ["number", "", "sufix", "%", "controlName", "forca_trabalho", 3, "control", "change"], ["controlName", "descricao", 3, "control"]], template: function PlanoListEntregaComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "editable-form", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](1, "div", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](2, "grid", 2, 3);
@@ -1390,7 +1399,7 @@ PlanoListEntregaComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵ
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](12, "column", 8);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](13, PlanoListEntregaComponent_ng_template_13_Template, 3, 0, "ng-template", null, 9, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplateRefExtractor"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](15, PlanoListEntregaComponent_ng_template_15_Template, 4, 1, "ng-template", null, 10, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](15, PlanoListEntregaComponent_ng_template_15_Template, 2, 1, "ng-template", null, 10, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](17, PlanoListEntregaComponent_ng_template_17_Template, 3, 3, "ng-template", null, 11, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](19, "column", 12);
@@ -1423,7 +1432,7 @@ PlanoListEntregaComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵ
         const _r23 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵreference"](32);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("items", ctx.items)("form", ctx.form)("selectable", false)("minHeight", 0)("join", ctx.join)("groupBy", ctx.groupBy)("add", ctx.addEntrega.bind(ctx))("remove", ctx.removeEntrega.bind(ctx))("save", ctx.saveEntrega.bind(ctx))("saveEnd", ctx.afterSaveEntrega.bind(ctx))("load", ctx.loadEntrega.bind(ctx))("hasDelete", true)("hasEdit", true)("hasAdd", !ctx.disabled);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("items", ctx.items)("form", ctx.form)("selectable", false)("minHeight", 0)("join", ctx.join)("groupBy", ctx.groupBy)("add", ctx.addEntrega.bind(ctx))("remove", ctx.removeEntrega.bind(ctx))("save", ctx.saveEntrega.bind(ctx))("load", ctx.loadEntrega.bind(ctx))("hasDelete", true)("hasEdit", true)("hasAdd", !ctx.disabled);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("titleTemplate", _r1)("template", _r3)("editTemplate", _r5)("verticalAlign", "middle")("width", 125)("align", "center");
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](7);
@@ -1710,7 +1719,7 @@ class PlanoFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IM
             return "Editando "; //+ (entity?.nome || "");
         };
         this.join = ["unidade.entidade", "entregas.entrega", "entregas.entrega_plano_entrega:id,plano_entrega_id", "plano_entrega.entregas.entrega", "plano_entrega.unidade.entidade", "plano_entrega.programa",
-            "usuario", "programa.template_tcr", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "atividades.atividade"];
+            "usuario", "programa.template_tcr", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "atividades.atividade", "entregas.entrega_plano_entrega.entrega"];
         this.programaDao = injector.get(src_app_dao_programa_dao_service__WEBPACK_IMPORTED_MODULE_6__["ProgramaDaoService"]);
         this.usuarioDao = injector.get(src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_8__["UsuarioDaoService"]);
         this.unidadeDao = injector.get(src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_18__["UnidadeDaoService"]);

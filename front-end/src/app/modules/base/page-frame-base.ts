@@ -101,7 +101,7 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
   }
 
   private onInitializeData() {
-    if (this.entity_id?.length && !this.isNoPersist) { /* Janela autocontida */
+    if (this.entity_id?.length && !this.isNoPersist) { /* entity possui ID e o componente é persistente (Janela autocontida) */
       (async () => {
         this.loading = true;
         try {

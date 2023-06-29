@@ -1170,8 +1170,8 @@ class PlanoEntregaFormComponent extends src_app_modules_base_page_form_base__WEB
             else if (!((_e = this.dao) === null || _e === void 0 ? void 0 : _e.validDateTime(inicio)) || !((_f = this.dao) === null || _f === void 0 ? void 0 : _f.validDateTime(fim))) {
                 return "Data de início ou fim inválidas";
             }
-            else if (inicio > fim) {
-                return "A data do início não pode ser maior que a data do fim!";
+            else if (this.form.controls.fim.value && this.form.controls.inicio.value < this.form.controls.fim.value) {
+                return "A data do fim não pode ser menor que a data do início!";
             }
             else {
                 const diffTime = Math.abs(inicio - fim);
@@ -2160,7 +2160,7 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
         this.toolbarButtons = [];
         this.botoes = [];
         this.filterWhere = (filter) => {
-            var _a, _b, _c, _d;
+            var _a, _b, _c, _d, _e;
             let result = [];
             let form = filter.value;
             /*
@@ -2175,9 +2175,30 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
                     result.push(["or", w1, w2]);
                 else
                     result.push(w1);
+                if ((_d = form.nome) === null || _d === void 0 ? void 0 : _d.length) {
+                    result.push(["nome", "like", "%" + form.nome + "%"]);
+                }
+                if (form.inicio) {
+                    result.push(["inicio", ">=", form.inicio]);
+                }
+                if (form.fim) {
+                    result.push(["fim", "<=", form.fim]);
+                }
+                if (form.unidade_id) {
+                    result.push(["unidade_id", "==", form.unidade_id]);
+                }
+                if (form.planejamento_id) {
+                    result.push(["planejamento_id", "==", form.planejamento_id]);
+                }
+                if (form.cadeia_valor_id) {
+                    result.push(["cadeia_valor_id", "==", form.cadeia_valor_id]);
+                }
+                if (form.status) {
+                    result.push(["status", "==", form.status]);
+                }
             }
             else {
-                if ((_d = form.nome) === null || _d === void 0 ? void 0 : _d.length) {
+                if ((_e = form.nome) === null || _e === void 0 ? void 0 : _e.length) {
                     result.push(["nome", "like", "%" + form.nome + "%"]);
                 }
                 if (form.inicio) {

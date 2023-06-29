@@ -46,7 +46,7 @@
             <top-alert *ngIf="!form!.controls.plano_entrega_id.value?.length" type="warning" [message]="'Antes de incluir ' + lex.noun('entrega',true) + ' neste ' + lex.noun('Plano de Trabalho') + ', é necessário selecionar um ' + lex.noun('Plano de Entregas') + '!'"></top-alert>
             <div *ngIf="form!.controls.plano_entrega_id.value?.length">
                 <editable-form [form]="formEntregas!"  [noButtons]="'true'">
-                    <plano-list-entrega noPersist [entity]="entity"></plano-list-entrega>
+                    <plano-list-entrega noPersist [entity]="entity" [entregasPlanoEntrega]="entregas"></plano-list-entrega>
                 </editable-form>
             </div>
         </tab>
