@@ -210,6 +210,34 @@ class ServiceBase extends DynamicMethods
         return Carbon::instance($fromData)->format(ServiceBase::ISO8601_FORMAT);
     }
 
+    function extractWhere(&$data, $field) {
+        $result = null;
+        $where = [];
+        foreach($data["where"] as $condition) {
+            if(is_array($condition) && $condition[0] == $field) {
+                $result = $condition;
+            } else {
+                $where[] = $condition;
+            }
+        }
+        if(!empty($result)) $data["where"] = $where;
+        return $result;
+    }
+
+    function extractWith(&$data, $field) {
+        $result = null;
+        $with = [];
+        foreach($data["with"] as $join) {
+            if($join[0] == $field) {
+                $result = $join;
+            } else {
+                $with[] = $join;
+            }
+        }
+        if(!empty($result)) $data["with"] = $with;
+        return $result;
+    }
+
     public function getModel() {
         return empty($this->collection) ? null : App($this->collection);
     }

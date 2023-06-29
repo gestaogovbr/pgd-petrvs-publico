@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\ServiceBase;
 use Google\Service\Sheets\ManualRule;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -33,7 +34,7 @@ class CreateProjetosTable extends Migration
             $table->decimal('custo', 15, 2)->comment("Custo: Será a soma dos recursos, ou a soma dos filhos caso tem_filhos e soma_custos_filhos");
             $table->tinyInteger('calcula_custos')->default(1)->comment("Se o projeto calcula custos");
             $table->tinyInteger('tempo_corrido')->default(0)->comment("Se o tempo é corrido ou usa a configuração de fins de semana, feriados e horário do expediente (quando usar horas)");
-            $table->tinyInteger('usa_horas')->default(1)->comment("Se usa horas nas datas");
+            $table->tinyInteger('usar_horas')->default(1)->comment("Se usa horas nas datas");
             $table->tinyInteger('calcula_intervalo')->default(1)->comment("Se calcula o inicio e termino automaticamente pelos filhos");
             $table->tinyInteger('agrupador')->default(0)->comment("Se é apenas um registro para agrupar tarefas filhas (somente se tem_filhos e não possui progresso)");
             $table->tinyInteger('soma_progresso_filhos')->default(1)->comment("Se o progresso é calculado pela média do progresso dos filhos ou lançado manual (somente se tem_filhos)");
@@ -52,12 +53,15 @@ class CreateProjetosTable extends Migration
         Schema::table('sequence', function (Blueprint $table) {
             $table->integer('projeto_numero')->default(1)->comment("Sequência numerica do Projeto");
         });
-        DB::unprepared('
-            CREATE PROCEDURE sequence_projeto_numero() BEGIN
-                UPDATE sequence SET projeto_numero = GREATEST(IFNULL((SELECT MAX(numero) FROM projetos), 1), projeto_numero + 1);
-                SELECT projeto_numero AS number FROM sequence;
-            END
-        ');
+        $database = new ServiceBase();
+        if(!$database->hasStoredProcedure("sequence_projeto_numero")) {
+            DB::unprepared('
+                CREATE PROCEDURE sequence_projeto_numero() BEGIN
+                    UPDATE sequence SET projeto_numero = GREATEST(IFNULL((SELECT MAX(numero) FROM projetos), 1), projeto_numero + 1);
+                    SELECT projeto_numero AS number FROM sequence;
+                END
+            ');
+        }
     }
 
     /**

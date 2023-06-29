@@ -30,7 +30,16 @@ class TenantDatabaseMigrated extends TenantListenerBase
     public function handle(Events\DatabaseMigrated $event)
     {
         if($this->loadLogConfig($event->tenant)) {
-            Artisan::call("migrate --database=log --path=database/migrations/log");
+            $database = config("database.connections.log.database");
+            if(!empty($database)) {
+                Config::set('database.connections.log.database', null);
+                DB::purge('log');
+                DB::connection('mysql')->getPdo()->exec("CREATE DATABASE IF NOT EXISTS `{$database}`");
+                Config::set('database.connections.log.database', $database);
+                DB::purge('log');
+                Artisan::call("migrate --database=log --path=database/migrations/log");
+                dd(Artisan::output());
+            }
         }
     }
 }
