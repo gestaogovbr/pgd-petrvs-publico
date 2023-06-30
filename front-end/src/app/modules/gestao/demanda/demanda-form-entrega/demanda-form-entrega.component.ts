@@ -57,7 +57,7 @@ export class DemandaFormEntregaComponent extends PageFormBase<DemandaEntrega, De
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.comentario = injector.get<ComentarioService>(ComentarioService);
     //this.comentarioTipos = this.lookup.COMENTARIO_TIPO.filter(x => ["COMENTARIO", "TECNICO"].includes(x.key));
-    this.title = this.lex.noun("Entrega");
+    this.title = this.lex.noun("Entrega da demanda");
     this.form = this.fh.FormBuilder({
       descricao: {default: ""},
       tarefa_id: {default: null},
