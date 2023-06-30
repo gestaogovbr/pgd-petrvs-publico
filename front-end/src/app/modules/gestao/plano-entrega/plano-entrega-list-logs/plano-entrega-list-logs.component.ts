@@ -38,13 +38,9 @@ export class PlanoEntregaListLogsComponent extends PageListBase<Change,ChangeDao
     this.orderBy = [['id', 'desc']];
   }
 
-  ngOnInit(){
-    super.ngOnInit();
-    this.filter.controls.row_id.setValue();
-  }
-
   async ngAfterViewInit() {
     super.ngAfterViewInit();
+    this.filter!.controls.row_id.setValue(this.urlParams?.get("id"));
     this.selectResponsaveis!.loading = true;
     let result = await Promise.all ([
       this.dao?.showResponsaveis(),
