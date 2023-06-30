@@ -27,7 +27,7 @@ export class DemandaDaoService extends DaoBaseService<Demanda> {
   }
 
   public getDemanda(id: string): Promise<Demanda | null> {
-    return this.getById(id, ["pausas", "unidade", "atividade", "comentarios.usuario", "plano.tipo_modalidade", "plano.documento:id,metadados", "avaliacao", "avaliacoes", "usuario", "usuario.afastamentos", "usuario.planos.tipo_modalidade", "entregas.tarefa", "entregas.comentarios.usuario"]); 
+    return this.getById(id, ["pausas", "unidade", "atividade", "comentarios.usuario", "plano.entregas.entrega:id,nome", "plano.tipo_modalidade", "plano.documento:id,metadados", "avaliacao", "avaliacoes", "usuario", "usuario.afastamentos", "usuario.planos.tipo_modalidade", "entregas.tarefa", "entregas.comentarios.usuario"]); 
   }
 
   public iniciadas(usuario_id: string): Promise<string[]> {

@@ -40,12 +40,12 @@
                 </span>
             </ng-template>
         </column>
-        <column title="Homologado" [template]="columnHomologado">
+        <!--column title="Homologado" [template]="columnHomologado">
             <ng-template let-row="row" #columnHomologado>
                 <span> {{row.homologado == 1 ? "Sim"+" ("+dao!.getDateFormatted(row.data_homologacao)+")" :
                     "Não"}}</span>
             </ng-template>
-        </column>
+        </column//-->
         <column [title]="lex.noun('Unidade')" [template]="columnUnidade">
             <ng-template let-row="row" #columnUnidade>
                 <span> {{row.unidade.nome}}</span>
