@@ -12,25 +12,27 @@
                 </div>
             </separator>
             <div class="row">
-                <input-textarea label="Assunto/Resumo" [size]="12" [rows]="2" controlName="assunto" [control]="form!.controls.assunto"></input-textarea>
+                <input-textarea label="Descrição/Assunto" [size]="12" [rows]="2" controlName="assunto" [control]="form!.controls.assunto"></input-textarea>
             </div>
             <div class="row">
-                <input-search label="Responsável" [size]="4" [emptyValue]="null" #usuario controlName="usuario_id"  [dao]="usuarioDao" [join]="['planos.tipo_modalidade:id,nome']"  labelInfo="Responsável por executar a demanda" (select)="onUsuarioSelect($event)" (change)="onUsuarioChange($event)"></input-search>
+                <input-search [label]="lex.noun('Unidade')" [size]="6" #unidade controlName="unidade_id" [dao]="unidadeDao"  (change)="onUnidadeChange($event)"></input-search>
+                <input-search [label]="lex.noun('Atividade')" #atividade [emptyValue]="null" [size]="6" controlName="atividade_id"  [dao]="atividadeDao" [groupBy]="[{field: 'unidade.sigla', label: 'Unidade'}]" [where]="[['unidade_id', '=', form!.controls.unidade_id.value], ['vinculadas', '=', true]]"  (select)="onAtividadeSelect($event)" (change)="onAtividadeChange($event)" [labelInfo]="lex.noun('Atividade') + ' utilizado para classificar a atividade'"></input-search>
+            </div>
+            <div class="row">
+                <input-search label="Responsável" [size]="4" [emptyValue]="null" #usuario controlName="usuario_id"  [dao]="usuarioDao" [join]="['planos.entregas.entrega:id,nome', 'planos.tipo_modalidade:id,nome', 'planos.documento:id,metadados']" labelInfo="Responsável pela execução" (select)="onUsuarioSelect($event)" (change)="onUsuarioChange($event)"></input-search>
                 <input-select [label]="lex.noun('Plano de trabalho')" [size]="4" controlName="plano_id" #plano [control]="form!.controls.plano_id" [items]="planos" (change)="onPlanoChange($event)" [labelInfo]="lex.noun('Plano de trabalho')"></input-select>
-                <input-search [label]="lex.noun('Unidade')" [size]="4" #unidade controlName="unidade_id" [dao]="unidadeDao"  (change)="onUnidadeChange($event)"></input-search>
+                <input-select [label]="lex.noun('Entrega do plano')" [size]="4" controlName="entrega_id" #entrega [control]="form!.controls.entrega_id" [items]="entregas" [labelInfo]="lex.noun('Entrega') + ' do ' + lex.noun('plano de trabalho') + ' que a ' + lex.noun('demanda') + ' é referente'"></input-select>
+                <!--input-select label="Complexidade" [size]="4" controlName="fator_complexidade" [control]="form!.controls.fator_complexidade" [items]="complexidades" (change)="onComplexidadeChange($event)" labelInfo="Multiplicador do tempo da atividade"></input-select//-->
             </div>
             <div class="row">
-                <input-search [label]="lex.noun('Atividade')" #atividade [emptyValue]="null" [size]="8" controlName="atividade_id"  [dao]="atividadeDao" [groupBy]="[{field: 'unidade.sigla', label: 'Unidade'}]" [where]="[['unidade_id', '=', form!.controls.unidade_id.value], ['vinculadas', '=', true]]"  (select)="onAtividadeSelect($event)" (change)="onAtividadeChange($event)" labelInfo="Atividade que será executado pela demanda, não é obrigatório nesse momento."></input-search>
-                <input-select label="Complexidade" [size]="4" controlName="fator_complexidade" [control]="form!.controls.fator_complexidade" [items]="complexidades" (change)="onComplexidadeChange($event)" labelInfo="Multiplicador do tempo da atividade"></input-select>
-            </div>
-            <div class="row">
-                <input-datetime noIcon [size]="3" [label]="lex.noun('Data de distribuição')" controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" (change)="onDataDistribuicaoChange($event)" labelInfo="Data de cadastro da demanda"></input-datetime>
-                <input-timer [label]="lex.noun('Tempo pactuado')" onlyHours [size]="3" controlName="tempo_pactuado" disabled [control]="form!.controls.tempo_pactuado" labelInfo="Tempo calculado a partir da atividade e utilizando o fator_complexidade"></input-timer>
+                <input-datetime noIcon [size]="3" [label]="lex.noun('Data de distribuição')" controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" (change)="onDataDistribuicaoChange($event)" labelInfo="Data de inclusão/distribuição/lançamento"></input-datetime>
+                <input-timer [size]="3" [label]="lex.noun('Tempo pactuado')" icon="bi bi-stopwatch" onlyHours controlName="tempo_pactuado" [control]="form!.controls.tempo_pactuado" labelInfo="Tempo estimado de execução"></input-timer>
+                <input-number [size]="3" [decimals]="2" label="Progresso" disabled sufix="%" icon="bi bi-clock" controlName="progresso" labelInfo="Progresso de execução (% Concluído)"></input-number>
+                <!--input-timer [onlyDays]="prazoEmDias" [onlyHours]="prazoEmHoras" [size]="3" [label]="lex.noun('Tempo planejado')" #planejado controlName="tempo_planejado" [control]="form!.controls.tempo_planejado" (change)="onTempoPlanejadoChange($event)" labelInfo="Diferença entre data_distribuicao e prazo_entrega em horas (úteis ou corridas, configurada na unidade)"></input-timer//-->
                 <input-datetime noIcon  [size]="3" [label]="lex.noun('Prazo de entrega')" controlName="prazo_entrega" [control]="form!.controls.prazo_entrega" (change)="onPrazoEntregaChange($event)" labelInfo="Data estipulada para entrega da demanda"></input-datetime>
-                <input-timer [onlyDays]="prazoEmDias" [onlyHours]="prazoEmHoras" [size]="3" [label]="lex.noun('Tempo planejado')" #planejado controlName="tempo_planejado" [control]="form!.controls.tempo_planejado" (change)="onTempoPlanejadoChange($event)" labelInfo="Diferença entre data_distribuicao e prazo_entrega em horas (úteis ou corridas, configurada na unidade)"></input-timer>
             </div>
         </tab>
-        <tab key="ENTREGAS" [label]="lex.noun('Entrega', true)">
+        <tab key="ENTREGAS" [label]="lex.noun('Entrega da demanda', true)">
             <demanda-list-entrega [control]="form!.controls.entregas" [demanda]="entity" [disabled]="formDisabled"></demanda-list-entrega>
         </tab>
         <tab key="CARACTERIZACAO" label="Caracterização">

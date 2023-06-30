@@ -210,7 +210,8 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
 
   public onSelect(selected: Base | IIndexable | null) {
     const routeId = (this.modalRoute || this.snapshot)?.queryParams?.idroute;
-    if(selected && routeId?.length) {
+    /* Evento disparado automaticamente quando selecionava texto dentro de inputs, então é feito a checagem se o selected não é um Event */
+    if(selected && !(selected instanceof Event) && routeId?.length) {
       this.go.setModalResult(routeId, selected);
       this.close();
     }

@@ -4,14 +4,15 @@
         <input-text label="Título do documento" [size]="8" controlName="titulo_documento_entrega" [control]="form!.controls.titulo_documento_entrega" disabled labelInfo="Título do documento entregue"></input-text>
     </separator>
     <div class="row">
-        <input-search label="Atividade" #atividade [size]="6" controlName="atividade_id" [dao]="atividadeDao" (select)="onAtividadeSelect($event)" [groupBy]="[{field: 'unidade.sigla', label: 'Unidade'}]" [where]="[['unidade_id', '=', entity?.unidade_id], ['vinculadas', '=', true]]" ></input-search>
-        <input-select label="Complexidade" [size]="4" controlName="fator_complexidade" [control]="form!.controls.fator_complexidade" [items]="complexidades" (change)="onComplexidadeChange($event)" labelInfo="Multiplicador do tempo da atividade"></input-select>
-        <input-switch label="Arquivar" [size]="2" [disabled]="entity?.plano?.tipo_modalidade?.dispensa_avaliacao ? undefined : 'true'" controlName="arquivar" [control]="form!.controls.arquivar" labelInfo="Arquivar automaticamente após a conclusão (Somente se o plano dispensar avaliação)"></input-switch>
+        <input-search [label]="lex.noun('Atividade')" #atividade [emptyValue]="null" [size]="5" controlName="atividade_id" [dao]="atividadeDao" [groupBy]="[{field: 'unidade.sigla', label: 'Unidade'}]" [where]="[['unidade_id', '=', entity?.unidade_id], ['vinculadas', '=', true]]" (select)="onAtividadeSelect($event)"></input-search>
+        <input-select [label]="lex.noun('Entrega do plano')" [size]="5" controlName="entrega_id" #entrega [control]="form!.controls.entrega_id" [items]="entregas" [labelInfo]="lex.noun('Entrega') + ' do ' + lex.noun('plano de trabalho') + ' que a ' + lex.noun('demanda') + ' é referente'"></input-select>
+        <!--input-select label="Complexidade" [size]="4" controlName="fator_complexidade" [control]="form!.controls.fator_complexidade" [items]="complexidades" (change)="onComplexidadeChange($event)" labelInfo="Multiplicador do tempo da atividade"></input-select/-->
+        <input-switch label="Arquivar" [size]="2" controlName="arquivar" [control]="form!.controls.arquivar" labelInfo="Arquivar automaticamente após a conclusão (Somente se o plano dispensar avaliação)"></input-switch> <!-- [disabled]="entity?.plano?.tipo_modalidade?.dispensa_avaliacao ? undefined : 'true'" -->
     </div>
     <div class="row">
         <input-textarea [size]="12" [rows]="2" label="Descrição técnica" controlName="descricao_tecnica" [control]="form!.controls.descricao_tecnica"></input-textarea>
     </div>
-    <separator [title]="lex.noun('Entrega', true)" collapse [collapsed]="false">
+    <separator [title]="lex.noun('Entrega da demanda', true)" collapse [collapsed]="false">
         <demanda-list-entrega persist [demanda]="entity"></demanda-list-entrega>
     </separator>
     <div *ngIf="!entity?.plano?.tipo_modalidade?.calcula_tempo_despendido; else comTempoDespendido" class="row">
@@ -23,7 +24,7 @@
     <ng-template #comTempoDespendido>
         <div class="row">
             <input-datetime noIcon [size]="4" [label]="lex.noun('Data de distribuição')" disabled controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" labelInfo="Data de cadastro da demanda"></input-datetime>
-            <input-timer [label]="lex.noun('Tempo pactuado')" onlyHours [size]="4" disabled controlName="tempo_pactuado" [control]="form!.controls.tempo_pactuado" labelInfo="Tempo calculado a partir da atividade e utilizando o fator_complexidade"></input-timer>
+            <input-timer [label]="lex.noun('Tempo pactuado')" icon="bi bi-stopwatch" onlyHours [size]="4" controlName="tempo_pactuado" [control]="form!.controls.tempo_pactuado" labelInfo="Tempo estimado de execução"></input-timer>
             <input-datetime noIcon [size]="4" [label]="lex.noun('Prazo de entrega')" disabled controlName="prazo_entrega" [control]="form!.controls.prazo_entrega" labelInfo="Data estipulada para entrega da demanda"></input-datetime>
         </div>
         <div class="row">

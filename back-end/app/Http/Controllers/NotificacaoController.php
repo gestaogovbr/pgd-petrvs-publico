@@ -35,6 +35,23 @@ class NotificacaoController extends ControllerBase
     }
 
     /**
+     * Marca os destinatários da notificação como lidas
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function marcarComoLido(Request $request)
+    {
+        $data = $request->validate([
+            'destinatarios_ids' => ['required']
+        ]);
+        return response()->json([
+            "status" => "OK",
+            "marcadas_como_lido" => $this->service->marcarComoLido($data["destinatarios_ids"])
+        ]);
+    }
+
+    /**
      * Encontra usuário pelo número de telefone
      *
      * @param  \Illuminate\Http\Request  $request

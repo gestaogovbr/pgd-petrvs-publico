@@ -44,9 +44,11 @@ class DemandaService extends ServiceBase
         "entregas.tarefa",
         "entregas.comentarios.usuario:id,nome,apelido,email,url_foto",
         "plano.tipo_modalidade",
+        "plano.entregas.entrega:id,nome",
         "avaliacao",
         "avaliacoes",
         "usuario.afastamentos",
+        "usuario.planos.entregas.entrega:id,nome",
         "usuario.planos.tipo_modalidade:id,nome"
     ];
 
@@ -421,13 +423,13 @@ class DemandaService extends ServiceBase
                     throw new ServerException("ValidateDemanda", "Não é permitido concluir demanda de outro usuário!");
                 }
             }
-            /*Testa permissão para incluir atividades que estão fora do plano de trabalho*/
+            /*Testa permissão para incluir atividades que estão fora do plano de trabalho*
             $plano = $demanda->plano;
             if(isset($plano->documento?->metadados?->atividades_termo_adesao) && !parent::loggedUser()->hasPermissionTo('MOD_DMD_ATV_FORA_PL_TRB') &&
                 !in_array(UtilService::removeAcentos(strtolower($demanda->atividade->nome)), $plano->documento?->metadados?->atividades_termo_adesao)) {
                 throw new ServerException("ValidateDemanda", "Atividade não consta na lista permitida pelo plano de trabalho selecionado");
-            }
-            $dispensaAvaliacao = !empty($demanda->plano->tipoModalidade) && $demanda->plano->tipoModalidade->dispensa_avaliacao;
+            }*/
+            $dispensaAvaliacao = true; //!empty($demanda->plano->tipoModalidade) && $demanda->plano->tipoModalidade->dispensa_avaliacao;
             $conclusao["tempo_homologado"] = $dispensaAvaliacao ? $conclusao["tempo_pactuado"] : null;
             $conclusao["data_arquivamento"] = $arquivar ? Carbon::now() : null;
             $this->update($conclusao, $unidade, false);
