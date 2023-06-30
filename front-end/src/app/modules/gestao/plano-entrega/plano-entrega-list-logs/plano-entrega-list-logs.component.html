@@ -34,15 +34,17 @@
                 </div>
             </ng-template>
             <ng-template #columnDiferenca let-row="row">
-                <table>
-                    <tbody> 
-                        <tr *ngFor="let dif of preparaDelta(row)">
-                            <td width="150">{{ dif[0] }}</td>
-                            <td width="250">{{ (action == 'EDIT' || action == 'ADD') ? dif[1] : '' }}</td>
-                            <td width="250">{{ action == 'EDIT' ? dif[2] : (action == 'ADD' ? '' : dif[1]) }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <separator title="(ver detalhes)" [collapse]="'collapse'" [collapsed]="true">
+                    <table>
+                        <tbody> 
+                            <tr *ngFor="let dif of preparaDelta(row)">
+                                <td width="150">{{ dif[0] }}</td>
+                                <td width="250">{{ (action == 'EDIT' || action == 'ADD') ? dif[1] : '' }}</td>
+                                <td width="250">{{ action == 'EDIT' ? dif[2] : (action == 'ADD' ? '' : dif[1]) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>                   
+                </separator>
             </ng-template>
           </column>
         <column title="Tipo de Operação" field="type"></column>
