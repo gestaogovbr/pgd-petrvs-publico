@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Programa;
 use App\Models\ProgramaParticipante;
 use App\Models\Unidade;
 use App\Models\Usuario;
@@ -58,13 +59,12 @@ class ProgramaParticipanteService extends ServiceBase {
         return $rows; // Lista de PRogramaParticipantes, só que contendo registro REAIS  e registros VIRTUAIS iniciados com 'NEW'+usuarioId
     }
 
-    
 
     public function habilitar($data)
     {
         try {
             DB::beginTransaction();
-            $programaParticipantes = ProgramaParticipante::whereIn("usuario_id", $data["participantes_ids"])->get();
+            $programaParticipantes = ProgramaParticipante::whereIn("id", $data["participantes_ids"])->get();
             $count = 0;
             foreach ($programaParticipantes as $programaParticipante) {
                 $usuarioId = $programaParticipante->usuario_id;
@@ -82,7 +82,23 @@ class ProgramaParticipanteService extends ServiceBase {
             DB::rollback();
             throw $e;
         }
+    
+        $this->notificar($data);
+        
         return true;
     }
+
+    public function notificar($data)
+    {
+        $data;
+        $this->notificacoesService->send("PRG_PART_HABILITACAO", 
+        [
+            "programa" => Programa::find($data['programa_id']), 
+            "programa_participante"  => ProgramaParticipante::find($data['participantes_ids'] )
+        ]);
+        
+    }
+
+
 }
 
