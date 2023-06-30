@@ -251,6 +251,7 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
                 try {
                     result = yield this.dao.save(item);
                     item.id = result.id;
+                    yield this.dao.notificar(item);
                 }
                 catch (error) {
                     this.error(error.message ? error.message : error);
