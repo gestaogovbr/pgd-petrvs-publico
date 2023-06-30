@@ -8902,6 +8902,22 @@ class ProgramaParticipanteDaoService extends _dao_base_service__WEBPACK_IMPORTED
             }, error => reject(error));
         });
     }
+    notificar(item) {
+        return new Promise((resolve, reject) => {
+            this.server.post('api/' + this.collection + '/notificar', {
+                participantes_ids: item.id,
+                programa_id: item.programa_id,
+                habilitado: item.habilitado
+            }).subscribe(response => {
+                if (response.error) {
+                    reject(response.error);
+                }
+                else {
+                    resolve(!!(response === null || response === void 0 ? void 0 : response.success));
+                }
+            }, error => reject(error));
+        });
+    }
 }
 ProgramaParticipanteDaoService.ɵfac = function ProgramaParticipanteDaoService_Factory(t) { return new (t || ProgramaParticipanteDaoService)(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_2__["Injector"])); };
 ProgramaParticipanteDaoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineInjectable"]({ token: ProgramaParticipanteDaoService, factory: ProgramaParticipanteDaoService.ɵfac, providedIn: 'root' });
@@ -17705,9 +17721,6 @@ function DemandaListKanbanComponent_kanban_23_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](9, "swimlane");
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](10, "docker", 69, 70);
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](12, "swimlane");
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](13, "docker", 71, 72);
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r9 = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵnextContext"]();
@@ -17722,11 +17735,9 @@ function DemandaListKanbanComponent_kanban_23_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("collapse", ctx_r9.cardsConfig.iniciado)("toggle", ctx_r9.onDockerCollapse.bind(ctx_r9))("dragged", ctx_r9.onDragged.bind(ctx_r9))("drop", ctx_r9.onDrop.bind(ctx_r9))("dropIf", ctx_r9.canDrop(ctx_r9.DOCKERS[ctx_r9.INICIADO]))("cards", ctx_r9.cards[ctx_r9.INICIADO]);
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("collapse", ctx_r9.cardsConfig.concluido)("toggle", ctx_r9.onDockerCollapse.bind(ctx_r9))("dragged", ctx_r9.onDragged.bind(ctx_r9))("drop", ctx_r9.onDrop.bind(ctx_r9))("dropIf", ctx_r9.canDrop(ctx_r9.DOCKERS[ctx_r9.CONCLUIDO]))("cards", ctx_r9.cards[ctx_r9.CONCLUIDO]);
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("collapse", ctx_r9.cardsConfig.avaliado)("toggle", ctx_r9.onDockerCollapse.bind(ctx_r9))("dragged", ctx_r9.onDragged.bind(ctx_r9))("drop", ctx_r9.onDrop.bind(ctx_r9))("dropIf", ctx_r9.canDrop(ctx_r9.DOCKERS[ctx_r9.AVALIADO]))("cards", ctx_r9.cards[ctx_r9.AVALIADO]);
 } }
 function DemandaListKanbanComponent_kanban_24_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](0, "kanban", 73, 74);
+    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](0, "kanban", 71, 72);
 } if (rf & 2) {
     const ctx_r10 = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵnextContext"]();
     const _r3 = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵreference"](18);
@@ -18246,7 +18257,7 @@ DemandaListKanbanComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_2__["�
         _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵloadQuery"]()) && (ctx.dockerIniciado = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵloadQuery"]()) && (ctx.dockerConcluido = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵloadQuery"]()) && (ctx.dockerAvaliado = _t.first);
-    } }, inputs: { snapshot: "snapshot", fixedFilter: "fixedFilter" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵInheritDefinitionFeature"]], decls: 25, vars: 39, consts: [[3, "buttons"], ["labelPosition", "left", "label", "Resumido", "controlName", "resumido", 3, "size", "control", "change"], ["labelPosition", "left", "label", "Usar etiquetas", "controlName", "usarEtiquetas", 1, "me-2", 3, "size", "control", "change"], [3, "form", "where", "query", "submit", "clear", "collapseChange", "collapsed"], ["filterRef", ""], [1, "row"], ["label", "Minhas", "controlName", "atribuidas_para_mim", 3, "size", "control", "change"], ["controlName", "usuario_id", 3, "size", "label", "disabled", "dao"], ["usuario", ""], ["label", "Atual", "controlName", "somente_unidade_atual", "labelInfo", "Somente as demandas da unidade selecionada", 3, "size", "control", "change"], ["controlName", "unidade_id", 3, "size", "label", "disabled", "dao"], ["unidade", ""], ["label", "Sub.", "controlName", "unidades_subordinadas", "labelInfo", "Incluir as unidades subordinadas", 3, "size", "control"], ["maskFormat", "00000.000000/0000-00", "controlName", "numero_processo", 3, "size", "label", "control", "labelInfo"], ["label", "Status", "itemTodos", "- Todos -", "controlName", "status", 3, "size", "valueTodos", "disabled", "control", "items"], ["noForm", "", "noBox", "", "label", "Etiquetas", "controlName", "etiquetas", 3, "size", "control"], ["ticket", ""], ["editDocker", ""], ["placeholder", ""], ["useCardData", "", 3, "template", "placeholderTemplate", "loading", "dragSwimlanes", 4, "ngIf"], ["useCardData", "", 3, "dockers", "template", "placeholderTemplate", "loading", "swimlaneDrop", "dockerDragged", "dockerDrop", "dockerEditTemplate", "dockerToggle", "dockerEdit", "dockerSave", "dockerDelete", "dockerCancel", "dockerColorStyle", 4, "ngIf"], [1, "d-flex", "w-100"], [1, "flex-fill"], [1, "text-nowrap"], [1, "badge", "bg-light", "text-dark"], [1, "bi", "bi-briefcase"], ["data-bs-toggle", "tooltip", "data-bs-placement", "top", 1, "badge", "bg-light", "text-dark", 3, "title"], ["data-bs-toggle", "tooltip", "data-bs-placement", "top", 1, "badge", "bg-light", "text-dark", "fw-light", 3, "title"], [1, "bi", "bi-cursor"], [4, "ngIf"], [3, "url", "hint"], [1, "card-status-container"], ["color", "light", "icon", "bi-folder-symlink", 3, "label", "data", "click", "hint", 4, "ngIf"], ["color", "none", 3, "class", "label", "icon", "data", "click", 4, "ngFor", "ngForOf"], ["class", "ms-1", "color", "none", 3, "color", "label", "icon", "data", "click", 4, "ngFor", "ngForOf"], ["small", "", "title", "Checklist", 4, "ngIf"], ["title", "Coment\u00E1rios", "small", "", 3, "button", "buttonClick"], ["class", "badge bg-light text-dark comentario-badge", "role", "button", "data-expanded", "false", "data-bs-toggle", "tooltip", "data-bs-placement", "top", 3, "title", "click", 4, "ngFor", "ngForOf"], ["color", "light", "icon", "bi-folder-symlink", 3, "label", "data", "click", "hint"], ["color", "none", 3, "label", "icon", "data", "click"], ["color", "none", 1, "ms-1", 3, "color", "label", "icon", "data", "click"], ["small", "", "title", "Checklist"], [4, "ngFor", "ngForOf"], ["class", "bi bi-check-circle", 4, "ngIf"], [1, "micro-text", "fw-ligh"], [1, "bi", "bi-check-circle"], ["role", "button", "data-expanded", "false", "data-bs-toggle", "tooltip", "data-bs-placement", "top", 1, "badge", "bg-light", "text-dark", "comentario-badge", 3, "title", "click"], ["badge", ""], [1, "comentario-title"], [1, "comentario-text"], ["controlName", "etiqueta", 3, "size", "control", "items"], [1, "card-body"], [1, "card-title", "placeholder-glow"], [1, "placeholder", "col-6"], ["role", "group", "aria-label", "Basic outlined example", 1, "btn-group"], ["type", "button", 1, "btn", "btn-sm", "btn-outline-secondary", "disabled", "placeholder"], [1, "bi", "bi-question"], [1, "card-subtitle", "mb-2", "text-muted", "placeholder-glow"], [1, "placeholder", "col-8"], [1, "card-text", "placeholder-glow"], [1, "placeholder", "col-7"], [1, "placeholder", "col-4"], ["useCardData", "", 3, "template", "placeholderTemplate", "loading", "dragSwimlanes"], ["icon", "bi bi-hourglass-split", "title", "N\u00E3o iniciado", "color", "border-warning", 3, "collapse", "toggle", "menu", "dragged", "drop", "dropIf", "cards"], ["dockerNaoIniciado", ""], ["icon", "bi bi-pause-circle", "title", "Pausadas", "color", "border-danger", 3, "collapse", "toggle", "dragged", "drop", "dropIf", "cards"], ["dockerPausado", ""], ["icon", "bi bi-play-circle", "title", "Iniciadas", "color", "border-info", 3, "collapse", "toggle", "dragged", "drop", "dropIf", "cards"], ["dockerIniciado", ""], ["icon", "bi bi-check-circle", "title", "Conclu\u00EDdas", "color", "border-primary", 3, "collapse", "toggle", "dragged", "drop", "dropIf", "cards"], ["dockerConcluido", ""], ["icon", "bi bi-star-half", "title", "Avaliadas", "color", "border-success", 3, "collapse", "toggle", "dragged", "drop", "dropIf", "cards"], ["dockerAvaliado", ""], ["useCardData", "", 3, "dockers", "template", "placeholderTemplate", "loading", "swimlaneDrop", "dockerDragged", "dockerDrop", "dockerEditTemplate", "dockerToggle", "dockerEdit", "dockerSave", "dockerDelete", "dockerCancel", "dockerColorStyle"], ["kanbanEtiquetas", ""]], template: function DemandaListKanbanComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, inputs: { snapshot: "snapshot", fixedFilter: "fixedFilter" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵInheritDefinitionFeature"]], decls: 25, vars: 39, consts: [[3, "buttons"], ["labelPosition", "left", "label", "Resumido", "controlName", "resumido", 3, "size", "control", "change"], ["labelPosition", "left", "label", "Usar etiquetas", "controlName", "usarEtiquetas", 1, "me-2", 3, "size", "control", "change"], [3, "form", "where", "query", "submit", "clear", "collapseChange", "collapsed"], ["filterRef", ""], [1, "row"], ["label", "Minhas", "controlName", "atribuidas_para_mim", 3, "size", "control", "change"], ["controlName", "usuario_id", 3, "size", "label", "disabled", "dao"], ["usuario", ""], ["label", "Atual", "controlName", "somente_unidade_atual", "labelInfo", "Somente as demandas da unidade selecionada", 3, "size", "control", "change"], ["controlName", "unidade_id", 3, "size", "label", "disabled", "dao"], ["unidade", ""], ["label", "Sub.", "controlName", "unidades_subordinadas", "labelInfo", "Incluir as unidades subordinadas", 3, "size", "control"], ["maskFormat", "00000.000000/0000-00", "controlName", "numero_processo", 3, "size", "label", "control", "labelInfo"], ["label", "Status", "itemTodos", "- Todos -", "controlName", "status", 3, "size", "valueTodos", "disabled", "control", "items"], ["noForm", "", "noBox", "", "label", "Etiquetas", "controlName", "etiquetas", 3, "size", "control"], ["ticket", ""], ["editDocker", ""], ["placeholder", ""], ["useCardData", "", 3, "template", "placeholderTemplate", "loading", "dragSwimlanes", 4, "ngIf"], ["useCardData", "", 3, "dockers", "template", "placeholderTemplate", "loading", "swimlaneDrop", "dockerDragged", "dockerDrop", "dockerEditTemplate", "dockerToggle", "dockerEdit", "dockerSave", "dockerDelete", "dockerCancel", "dockerColorStyle", 4, "ngIf"], [1, "d-flex", "w-100"], [1, "flex-fill"], [1, "text-nowrap"], [1, "badge", "bg-light", "text-dark"], [1, "bi", "bi-briefcase"], ["data-bs-toggle", "tooltip", "data-bs-placement", "top", 1, "badge", "bg-light", "text-dark", 3, "title"], ["data-bs-toggle", "tooltip", "data-bs-placement", "top", 1, "badge", "bg-light", "text-dark", "fw-light", 3, "title"], [1, "bi", "bi-cursor"], [4, "ngIf"], [3, "url", "hint"], [1, "card-status-container"], ["color", "light", "icon", "bi-folder-symlink", 3, "label", "data", "click", "hint", 4, "ngIf"], ["color", "none", 3, "class", "label", "icon", "data", "click", 4, "ngFor", "ngForOf"], ["class", "ms-1", "color", "none", 3, "color", "label", "icon", "data", "click", 4, "ngFor", "ngForOf"], ["small", "", "title", "Checklist", 4, "ngIf"], ["title", "Coment\u00E1rios", "small", "", 3, "button", "buttonClick"], ["class", "badge bg-light text-dark comentario-badge", "role", "button", "data-expanded", "false", "data-bs-toggle", "tooltip", "data-bs-placement", "top", 3, "title", "click", 4, "ngFor", "ngForOf"], ["color", "light", "icon", "bi-folder-symlink", 3, "label", "data", "click", "hint"], ["color", "none", 3, "label", "icon", "data", "click"], ["color", "none", 1, "ms-1", 3, "color", "label", "icon", "data", "click"], ["small", "", "title", "Checklist"], [4, "ngFor", "ngForOf"], ["class", "bi bi-check-circle", 4, "ngIf"], [1, "micro-text", "fw-ligh"], [1, "bi", "bi-check-circle"], ["role", "button", "data-expanded", "false", "data-bs-toggle", "tooltip", "data-bs-placement", "top", 1, "badge", "bg-light", "text-dark", "comentario-badge", 3, "title", "click"], ["badge", ""], [1, "comentario-title"], [1, "comentario-text"], ["controlName", "etiqueta", 3, "size", "control", "items"], [1, "card-body"], [1, "card-title", "placeholder-glow"], [1, "placeholder", "col-6"], ["role", "group", "aria-label", "Basic outlined example", 1, "btn-group"], ["type", "button", 1, "btn", "btn-sm", "btn-outline-secondary", "disabled", "placeholder"], [1, "bi", "bi-question"], [1, "card-subtitle", "mb-2", "text-muted", "placeholder-glow"], [1, "placeholder", "col-8"], [1, "card-text", "placeholder-glow"], [1, "placeholder", "col-7"], [1, "placeholder", "col-4"], ["useCardData", "", 3, "template", "placeholderTemplate", "loading", "dragSwimlanes"], ["icon", "bi bi-hourglass-split", "title", "N\u00E3o iniciado", "color", "border-warning", 3, "collapse", "toggle", "menu", "dragged", "drop", "dropIf", "cards"], ["dockerNaoIniciado", ""], ["icon", "bi bi-pause-circle", "title", "Pausadas", "color", "border-danger", 3, "collapse", "toggle", "dragged", "drop", "dropIf", "cards"], ["dockerPausado", ""], ["icon", "bi bi-play-circle", "title", "Iniciadas", "color", "border-info", 3, "collapse", "toggle", "dragged", "drop", "dropIf", "cards"], ["dockerIniciado", ""], ["icon", "bi bi-check-circle", "title", "Conclu\u00EDdas", "color", "border-primary", 3, "collapse", "toggle", "dragged", "drop", "dropIf", "cards"], ["dockerConcluido", ""], ["useCardData", "", 3, "dockers", "template", "placeholderTemplate", "loading", "swimlaneDrop", "dockerDragged", "dockerDrop", "dockerEditTemplate", "dockerToggle", "dockerEdit", "dockerSave", "dockerDelete", "dockerCancel", "dockerColorStyle"], ["kanbanEtiquetas", ""]], template: function DemandaListKanbanComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](0, "toolbar", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](1, "input-switch", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵlistener"]("change", function DemandaListKanbanComponent_Template_input_switch_change_1_listener($event) { return ctx.onResumidoChange($event); });
@@ -18276,7 +18287,7 @@ DemandaListKanbanComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_2__["�
         _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtemplate"](17, DemandaListKanbanComponent_ng_template_17_Template, 16, 10, "ng-template", null, 16, _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtemplate"](19, DemandaListKanbanComponent_ng_template_19_Template, 1, 3, "ng-template", null, 17, _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtemplate"](21, DemandaListKanbanComponent_ng_template_21_Template, 16, 0, "ng-template", null, 18, _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtemplateRefExtractor"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtemplate"](23, DemandaListKanbanComponent_kanban_23_Template, 15, 35, "kanban", 19);
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtemplate"](23, DemandaListKanbanComponent_kanban_23_Template, 12, 29, "kanban", 19);
         _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtemplate"](24, DemandaListKanbanComponent_kanban_24_Template, 2, 14, "kanban", 20);
     } if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("buttons", ctx.toolbarButtons);
@@ -21511,7 +21522,7 @@ InputTextareaComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵd
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("labelPosition", ctx.labelPosition)("controlName", ctx.controlName)("control", ctx.control)("loading", ctx.loading)("disabled", ctx.disabled)("label", ctx.label)("labelInfo", ctx.labelInfo)("icon", ctx.icon)("bold", ctx.bold);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.viewInit);
-    } }, styles: ["textarea[_ngcontent-%COMP%]:read-only, textarea[_ngcontent-%COMP%]:disabled {\n  background-color: #e9ecef;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uLy4uL2lucHV0LXRleHRhcmVhLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBOztFQUVJLHlCQUFBO0FBQ0oiLCJmaWxlIjoiaW5wdXQtdGV4dGFyZWEuY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyJ0ZXh0YXJlYTpyZWFkLW9ubHksIFxyXG50ZXh0YXJlYTpkaXNhYmxlZCB7IFxyXG4gICAgYmFja2dyb3VuZC1jb2xvcjojZTllY2VmO1xyXG59Il19 */"] });
+    } }, styles: ["textarea[_ngcontent-%COMP%]:read-only, textarea[_ngcontent-%COMP%]:disabled {\n  background-color: #e9ecef;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uLy4uL2lucHV0LXRleHRhcmVhLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBOztFQUVJLHlCQUFBO0FBQ0oiLCJmaWxlIjoiaW5wdXQtdGV4dGFyZWEuY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyJ0ZXh0YXJlYTpyZWFkLW9ubHksIFxudGV4dGFyZWE6ZGlzYWJsZWQgeyBcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiNlOWVjZWY7XG59Il19 */"] });
 
 
 /***/ }),
@@ -21602,6 +21613,8 @@ class LexicalService {
             } : value;
         });
         this.vocabulary = result;
+        if (this.update)
+            this.update();
         (_a = this.cdRef) === null || _a === void 0 ? void 0 : _a.detectChanges();
     }
     /**
@@ -22139,6 +22152,8 @@ class AppComponent {
         this.title = 'petrvs';
         this.error = '';
         this.unidadeHora = "";
+        this.menuToolbar = [];
+        this.menuContexto = [];
         /* Injector */
         appInjector = injector;
         this.globals = injector.get(_services_globals_service__WEBPACK_IMPORTED_MODULE_6__["GlobalsService"]);
@@ -22165,6 +22180,9 @@ class AppComponent {
         this.auth.leave = () => {
             this.go.navigate({ route: ['login'] });
         };
+        this.lex.update = (() => {
+            this.setMenuVars();
+        }).bind(this);
         this.globals.refresh = () => {
             this.cdRef.detectChanges();
         };
@@ -22181,6 +22199,9 @@ class AppComponent {
         this.lex.cdRef = this.cdRef;
         //this.auth.loadGapi();
         /* Definição do menu do sistema */
+        this.setMenuVars();
+    }
+    setMenuVars() {
         this.menuContexto = [
             { name: "PGD" },
             { name: "Projetos" },
@@ -22205,7 +22226,7 @@ class AppComponent {
                 { name: this.lex.noun("Material e Serviço", true), permition: '', route: ['cadastros', 'material-servico'], icon: this.entity.getIcon('MaterialServico') },
                 { name: this.lex.noun("Tarefa", true), permition: 'MOD_DMD', route: ['cadastros', 'tarefa'], icon: this.entity.getIcon('Tarefa') },
                 { name: this.lex.noun("Template", true), permition: 'MOD_TEMP', route: ['cadastros', 'template'], icon: this.entity.getIcon('Template') },
-                { name: this.lex.noun("Tipos de Atividade", true), permition: 'MOD_TIPO_ATV', route: ['cadastros', 'tipo-atividade'], icon: this.entity.getIcon('TipoAtividade') },
+                { name: this.lex.noun("Tipo de Atividade", true), permition: 'MOD_TIPO_ATV', route: ['cadastros', 'tipo-atividade'], icon: this.entity.getIcon('TipoAtividade') },
                 "-",
                 { name: this.lex.noun("Atividade", true), permition: 'MOD_ATV', route: ['cadastros', 'atividade'], icon: this.entity.getIcon('Atividade') },
                 { name: this.lex.noun("Tipos de Avaliação", true), permition: 'MOD_TIPO_AVAL', route: ['cadastros', 'tipo-avaliacao'], icon: this.entity.getIcon('TipoAvaliacao') },
@@ -27408,7 +27429,7 @@ InputNumberComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdef
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.viewInit);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.sufix);
-    } }, directives: [_input_container_input_container_component__WEBPACK_IMPORTED_MODULE_3__["InputContainerComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_4__["NgIf"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["DefaultValueAccessor"], ngx_mask__WEBPACK_IMPORTED_MODULE_5__["MaskDirective"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgControlStatus"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControlDirective"]], styles: ["input[type=text][_ngcontent-%COMP%]:read-only, input[type=number][_ngcontent-%COMP%]:read-only, input[type=text][_ngcontent-%COMP%]:disabled, input[type=number][_ngcontent-%COMP%]:disabled {\n  background-color: #e9ecef;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uLy4uL2lucHV0LW51bWJlci5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTs7OztFQUlJLHlCQUFBO0FBQ0oiLCJmaWxlIjoiaW5wdXQtbnVtYmVyLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiaW5wdXRbdHlwZT1cInRleHRcIl06cmVhZC1vbmx5LCBcclxuaW5wdXRbdHlwZT1cIm51bWJlclwiXTpyZWFkLW9ubHksXHJcbmlucHV0W3R5cGU9XCJ0ZXh0XCJdOmRpc2FibGVkLCBcclxuaW5wdXRbdHlwZT1cIm51bWJlclwiXTpkaXNhYmxlZCB7XHJcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiNlOWVjZWY7XHJcbn0iXX0= */"] });
+    } }, directives: [_input_container_input_container_component__WEBPACK_IMPORTED_MODULE_3__["InputContainerComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_4__["NgIf"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["DefaultValueAccessor"], ngx_mask__WEBPACK_IMPORTED_MODULE_5__["MaskDirective"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgControlStatus"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControlDirective"]], styles: ["input[type=text][_ngcontent-%COMP%]:read-only, input[type=number][_ngcontent-%COMP%]:read-only, input[type=text][_ngcontent-%COMP%]:disabled, input[type=number][_ngcontent-%COMP%]:disabled {\n  background-color: #e9ecef;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uLy4uL2lucHV0LW51bWJlci5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTs7OztFQUlJLHlCQUFBO0FBQ0oiLCJmaWxlIjoiaW5wdXQtbnVtYmVyLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiaW5wdXRbdHlwZT1cInRleHRcIl06cmVhZC1vbmx5LCBcbmlucHV0W3R5cGU9XCJudW1iZXJcIl06cmVhZC1vbmx5LFxuaW5wdXRbdHlwZT1cInRleHRcIl06ZGlzYWJsZWQsIFxuaW5wdXRbdHlwZT1cIm51bWJlclwiXTpkaXNhYmxlZCB7XG4gICAgYmFja2dyb3VuZC1jb2xvcjojZTllY2VmO1xufSJdfQ== */"] });
 
 
 /***/ }),
@@ -30477,7 +30498,7 @@ InputTextComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefin
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.viewInit);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.sufix);
-    } }, styles: ["input[type=text][_ngcontent-%COMP%]:read-only, input[type=text][_ngcontent-%COMP%]:disabled {\n  background-color: #e9ecef;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uLy4uL2lucHV0LXRleHQuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7O0VBRUkseUJBQUE7QUFDSiIsImZpbGUiOiJpbnB1dC10ZXh0LmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiaW5wdXRbdHlwZT1cInRleHRcIl06cmVhZC1vbmx5LCBcclxuaW5wdXRbdHlwZT1cInRleHRcIl06ZGlzYWJsZWQgeyBcclxuICAgIGJhY2tncm91bmQtY29sb3I6I2U5ZWNlZjtcclxufSJdfQ== */"] });
+    } }, styles: ["input[type=text][_ngcontent-%COMP%]:read-only, input[type=text][_ngcontent-%COMP%]:disabled {\n  background-color: #e9ecef;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uLy4uL2lucHV0LXRleHQuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7O0VBRUkseUJBQUE7QUFDSiIsImZpbGUiOiJpbnB1dC10ZXh0LmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiaW5wdXRbdHlwZT1cInRleHRcIl06cmVhZC1vbmx5LCBcbmlucHV0W3R5cGU9XCJ0ZXh0XCJdOmRpc2FibGVkIHsgXG4gICAgYmFja2dyb3VuZC1jb2xvcjojZTllY2VmO1xufSJdfQ== */"] });
 
 
 /***/ }),
@@ -31692,7 +31713,7 @@ class DemandaFormEntregaComponent extends src_app_modules_base_page_form_base__W
         this.allPages = injector.get(src_app_listeners_listener_all_pages_service__WEBPACK_IMPORTED_MODULE_3__["ListenerAllPagesService"]);
         this.comentario = injector.get(src_app_services_comentario_service__WEBPACK_IMPORTED_MODULE_10__["ComentarioService"]);
         //this.comentarioTipos = this.lookup.COMENTARIO_TIPO.filter(x => ["COMENTARIO", "TECNICO"].includes(x.key));
-        this.title = this.lex.noun("Entrega");
+        this.title = this.lex.noun("Entrega da demanda");
         this.form = this.fh.FormBuilder({
             descricao: { default: "" },
             tarefa_id: { default: null },
@@ -35697,7 +35718,7 @@ InputWorkloadComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵd
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassMap"](ctx.iconWork);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", ctx.unitWork, " ");
-    } }, directives: [_input_container_input_container_component__WEBPACK_IMPORTED_MODULE_3__["InputContainerComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_4__["NgIf"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NumberValueAccessor"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["DefaultValueAccessor"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgControlStatus"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControlDirective"]], styles: ["input[type=number][_ngcontent-%COMP%]:read-only, input[type=number][_ngcontent-%COMP%]:disabled {\n  background-color: #e9ecef;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uLy4uL2lucHV0LXdvcmtsb2FkLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBOztFQUVJLHlCQUFBO0FBQ0oiLCJmaWxlIjoiaW5wdXQtd29ya2xvYWQuY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyJpbnB1dFt0eXBlPVwibnVtYmVyXCJdOnJlYWQtb25seSwgXHJcbmlucHV0W3R5cGU9XCJudW1iZXJcIl06ZGlzYWJsZWQgeyBcclxuICAgIGJhY2tncm91bmQtY29sb3I6I2U5ZWNlZjtcclxufSJdfQ== */"] });
+    } }, directives: [_input_container_input_container_component__WEBPACK_IMPORTED_MODULE_3__["InputContainerComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_4__["NgIf"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NumberValueAccessor"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["DefaultValueAccessor"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgControlStatus"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControlDirective"]], styles: ["input[type=number][_ngcontent-%COMP%]:read-only, input[type=number][_ngcontent-%COMP%]:disabled {\n  background-color: #e9ecef;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uLy4uL2lucHV0LXdvcmtsb2FkLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBOztFQUVJLHlCQUFBO0FBQ0oiLCJmaWxlIjoiaW5wdXQtd29ya2xvYWQuY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyJpbnB1dFt0eXBlPVwibnVtYmVyXCJdOnJlYWQtb25seSwgXG5pbnB1dFt0eXBlPVwibnVtYmVyXCJdOmRpc2FibGVkIHsgXG4gICAgYmFja2dyb3VuZC1jb2xvcjojZTllY2VmO1xufSJdfQ== */"] });
 
 
 /***/ }),
