@@ -5,11 +5,12 @@
     </div>
     <hr>
     <div class="row">
-        <input-search label="Responsável" #usuario [size]="12" controlName="usuario_id" [dao]="usuarioDao" [join]="['planos.tipo_modalidade:id,nome']" labelInfo="Responsável por executar a demanda" (select)="onUsuarioSelect($event)"></input-search>
+        <input-search label="Responsável" #usuario [size]="12" controlName="usuario_id" [dao]="usuarioDao" [join]="['planos.tipo_modalidade:id,nome', 'planos.entregas.entrega:id,nome']" labelInfo="Responsável por executar a demanda" (select)="onUsuarioSelect($event)"></input-search>
     </div>
     <div class="row">
-        <input-select [label]="lex.noun('Plano de trabalho')" [size]="8" controlName="plano_id" #plano [control]="form!.controls.plano_id" [items]="planos" (change)="onPlanoChange($event)" [labelInfo]="lex.noun('Plano de trabalho')"></input-select>
-        <input-timer [onlyDays]="prazoEmDias" [onlyHours]="prazoEmHoras" [size]="4" label="Planejado" #planejado disabled controlName="tempo_planejado" [control]="form!.controls.tempo_planejado" labelInfo="Diferença entre data_distribuicao e prazo_entrega em horas (úteis ou corridas, configurada na unidade)"></input-timer>
+        <input-select [label]="lex.noun('Plano de trabalho')" [size]="7" controlName="plano_id" #plano [control]="form!.controls.plano_id" [items]="planos" (change)="onPlanoChange($event)" [labelInfo]="lex.noun('Plano de trabalho')"></input-select>
+        <input-select [label]="lex.noun('Entrega do plano')" [size]="5" controlName="entrega_id" #entrega [control]="form!.controls.entrega_id" [items]="entregas" [labelInfo]="lex.noun('Entrega') + ' do ' + lex.noun('plano de trabalho') + ' que a ' + lex.noun('demanda') + ' é referente'"></input-select>
+        <!--input-timer [onlyDays]="prazoEmDias" [onlyHours]="prazoEmHoras" [size]="4" label="Planejado" #planejado disabled controlName="tempo_planejado" [control]="form!.controls.tempo_planejado" labelInfo="Diferença entre data_distribuicao e prazo_entrega em horas (úteis ou corridas, configurada na unidade)"></input-timer/-->
     </div>
     <hr>
     <div class="row">

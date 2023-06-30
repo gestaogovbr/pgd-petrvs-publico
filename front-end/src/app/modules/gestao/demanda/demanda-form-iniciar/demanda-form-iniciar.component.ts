@@ -32,6 +32,7 @@ export class DemandaFormIniciarComponent extends PageFormBase<Demanda, DemandaDa
   public modalWidth: number = 600;
   public iniciadas: string[] = []; 
   public planos: LookupItem[] = [];
+  public entregas: LookupItem[] = [];
   public get labelInfoSuspender(): string {
     const n = this.lex.noun("tarefa", this.iniciadas.length > 1);
     const s = this.iniciadas.length == 1 ? "" : "s";
@@ -46,6 +47,7 @@ export class DemandaFormIniciarComponent extends PageFormBase<Demanda, DemandaDa
     this.form = this.fh.FormBuilder({
       usuario_id: {default: undefined},
       plano_id: {default: undefined},
+      entrega_id: {default: undefined},
       data_distribuicao: {default: new Date()},
       prazo_entrega: {default: new Date()},
       carga_horaria: {default: 0},
@@ -55,7 +57,7 @@ export class DemandaFormIniciarComponent extends PageFormBase<Demanda, DemandaDa
       data_inicio: {default: null},
       suspender: {default: false}
     }, this.cdRef, this.validate);
-    this.join = ["unidade", "atividade", "usuario.planos.tipo_modalidade"];
+    this.join = ["unidade", "atividade", "usuario.planos.tipo_modalidade", "usuario.planos.entregas.entrega:id,nome"];
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -109,6 +111,7 @@ export class DemandaFormIniciarComponent extends PageFormBase<Demanda, DemandaDa
     (async () => {
       if(this.entity) {
         const plano = this.plano?.selectedItem?.data as Plano;
+        const entrega_id = this.form.controls.entrega_id.value;
         /*if(plano && this.form!.controls.unidade_id.value != plano.unidade_id) {
           const unidade = await this.unidadeDao.getById(plano.unidade_id);
           if(unidade) {
@@ -120,10 +123,18 @@ export class DemandaFormIniciarComponent extends PageFormBase<Demanda, DemandaDa
         const tempo_planejado = this.calendar.horasUteis(this.form.controls.data_distribuicao.value, this.form.controls.prazo_entrega.value, cargaHoraria, this.entity!.unidade!, "DISTRIBUICAO");
         const fator = this.form.controls.fator_complexidade.value || 1;
         const fator_ganho_produtivade = 1 - ((plano?.ganho_produtividade || 0) / 100);
-        this.planejado!.hoursPerDay = cargaHoraria;
+        if(this.planejado) this.planejado!.hoursPerDay = cargaHoraria;
         this.form.controls.carga_horaria.setValue(cargaHoraria);
         this.form.controls.tempo_planejado.setValue(tempo_planejado);
         this.form.controls.tempo_pactuado.setValue((this.entity?.atividade?.tempo_pactuado || 0) * fator * fator_ganho_produtivade || 0);
+        /* Carrega entregas */
+        this.entregas = plano.entregas?.map(x => Object.assign({}, {
+          key: x.id,
+          value: x.entrega?.nome || "DESCONHECIDO",
+          data: x
+        })) || [];
+        this.cdRef.detectChanges();
+        this.form.controls.entrega_id.setValue(!entrega_id?.length && this.planos.length > 0 ? this.planos[0].key : entrega_id);
       }
     })();
   }

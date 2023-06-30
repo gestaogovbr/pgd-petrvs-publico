@@ -85,6 +85,7 @@ class DemandaController extends ControllerBase
                 'id' => ['required'],
                 'usuario_id' => ['required'],
                 'plano_id' => ['required'],
+                'entrega_id' => ['required'],
                 'carga_horaria' => ['required'],
                 'tempo_planejado' => ['required'],
                 //'fator_complexidade' => ['required'],
@@ -119,7 +120,7 @@ class DemandaController extends ControllerBase
         try {
             $data = $request->validate([
                 'id' => ['required'],
-                'atividade_id' => ['required'],
+                'atividade_id' => ['nullable'],
                 'fator_complexidade' => ['required'],
                 'tempo_pactuado' => ['required'],
                 'tempo_despendido' => ['required'],

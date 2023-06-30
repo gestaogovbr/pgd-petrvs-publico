@@ -219,7 +219,7 @@ export abstract class DemandaListBase extends PageListBase<Demanda, DemandaDaoSe
     if (isResponsavel || isGestor || isDemandante) result.push(BOTAO_COMENTARIOS);
     result.push(BOTAO_CLONAR);
     if (demanda.metadados?.arquivado) { /* Arquivado*/
-      result.push(BOTAO_DESARQUIVAR);
+      if (isGestor || isResponsavel) result.push(BOTAO_DESARQUIVAR);
     } else if (!demanda.metadados?.iniciado) {
       if (isResponsavel || (demanda.usuario_id == null) || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) { /* Não iniciado */
         result.push(BOTAO_INICIAR);
@@ -236,9 +236,10 @@ export abstract class DemandaListBase extends PageListBase<Demanda, DemandaDaoSe
         result.push(BOTAO_ALTERAR_AVALIACAO, { divider: true }, BOTAO_ARQUIVAR, BOTAO_CANCELAR_AVALIACAO);
       }
     } else if (demanda.metadados?.concluido) { /* Concluído -> Gestor ou substituto pode avaliar */
-      if (isAvaliador || this.auth.hasPermissionTo('MOD_DMD_USERS_AVAL')) {
+      /*if (isAvaliador || this.auth.hasPermissionTo('MOD_DMD_USERS_AVAL')) {
         result.push(BOTAO_AVALIAR);
-      }
+      }*/
+      if (isGestor || isResponsavel) result.push(BOTAO_ARQUIVAR);
       if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT_CONCL')) {
         result.push(BOTAO_ALTERAR_CONCLUSAO);
       }
@@ -319,20 +320,28 @@ export abstract class DemandaListBase extends PageListBase<Demanda, DemandaDaoSe
     const BOTAO_AVALIAR = { hint: "Avaliar", icon: "bi bi-star-half", color: "btn-outline-success", onClick: (demanda: Demanda) => this.go.navigate({ route: ['gestao', 'demanda', demanda.id, 'avaliar'] }, this.modalRefreshId(demanda)) };
     const BOTAO_REINICIAR = { hint: "Reiniciar", icon: "bi bi-play-circle", color: "btn-outline-secondary", onClick: (demanda: Demanda) => this.go.navigate({ route: ['gestao', 'demanda', demanda.id, 'pausar'], params: { reiniciar: true } }, this.modalRefreshId(demanda)) };
     const BOTAO_CONCLUIR = { hint: "Concluir", icon: "bi bi-check", color: "btn-outline-success", onClick: (demanda: Demanda) => this.go.navigate({ route: ['gestao', 'demanda', demanda.id, 'concluir'] }, this.modalRefreshId(demanda)) };
+    const BOTAO_ARQUIVAR = { hint: "Arquivar", icon: "bi bi-inboxes", onClick: this.arquivar.bind(this) };
+    const BOTAO_DESARQUIVAR = { hint: "Desarquivar", icon: "bi bi-reply", onClick: this.desarquivar.bind(this) };
+    const BOTAO_ALTERAR_CONCLUSAO = { hint: "Alterar conclusão", icon: "bi bi-check-circle", onClick: (demanda: Demanda) => this.go.navigate({ route: ['gestao', 'demanda', demanda.id, 'concluir'] }, this.modalRefreshId(demanda)) };
 
     if (demanda.metadados?.avaliado) { /* Arquivado */
       if (isAvaliador || this.auth.hasPermissionTo('MOD_DMD_USERS_AVAL')) { /* Usuário logado é gestor da Unidade ou substituto*/
         result.push(BOTAO_ALTERAR_AVALIACAO);
-      } else if (demanda.metadados?.arquivado && isGestor) { //Somente se gestor ou com capacidade para essa operação
-        result.push({ hint: "Desarquivar", icon: "bi bi-reply", onClick: this.desarquivar.bind(this) });
+      } else if (demanda.metadados?.arquivado && (isGestor || isResponsavel)) { //Somente se gestor ou com capacidade para essa operação
+        result.push(BOTAO_DESARQUIVAR);
       }
     } else if (!demanda.metadados?.iniciado) { /* Não iniciado */
       if (isResponsavel || (demanda.usuario_id == null) || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) { /* Usuário da demanda é o mesmo logado */
         result.push(BOTAO_INICIAR);
       }
     } else if (demanda.metadados?.concluido) { /* Concluído */
-      if (isAvaliador || this.auth.hasPermissionTo('MOD_DMD_USERS_AVAL')) { /* Usuário logado é gestor da Unidade ou substituto */
+      /*if (isAvaliador || this.auth.hasPermissionTo('MOD_DMD_USERS_AVAL')) { /* Usuário logado é gestor da Unidade ou substituto * /
           result.push(BOTAO_AVALIAR);
+      }*/
+      if (isGestor || isResponsavel) {
+        result.push(demanda.metadados?.arquivado ? BOTAO_DESARQUIVAR : BOTAO_ARQUIVAR);
+      } else if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT_CONCL')) {
+        result.push(BOTAO_ALTERAR_CONCLUSAO);
       }
     } else if (demanda.metadados?.avaliado) { /* Avaliado */
       if (isGestor) { /* Usuário logado é gestor da Unidade ou substituto */
