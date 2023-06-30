@@ -11,15 +11,6 @@ import { appInjector } from 'src/app/app.component';
 import { QueryOptions } from 'src/app/dao/query-options';
 
 
-/* export type LogEntity = {
-  table: string,
-  campo: string,
-  dao: any,
-  label: string,
-  selectRoute: FullRoute
-} */
-
-//@Component({ template: '' })
 @Injectable()
 export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> extends PageBase implements OnInit {
   /* Poderá utilizar o componente Grid ou ser genérico, mas precisa fornecer o QueryContext */
@@ -46,8 +37,6 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
   public afterEdit?: (modalResult: any) => void;
   public storeFilter?: (filter?: FormGroup) => any;
   public loadFilterParams?: (params: any, filter?: FormGroup) => void;
-  //public entities: LogEntity[] = [];
-  //public entity?: LogEntity;
   public selectButtons: ToolbarButton[] = [
     {
       color: "btn-outline-success",

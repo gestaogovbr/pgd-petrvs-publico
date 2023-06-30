@@ -4,7 +4,6 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
 import { Cidade } from 'src/app/models/cidade.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
-import { DaoBaseService } from 'src/app/dao/dao-base.service';
 
 @Component({
   selector: 'app-cidade-list',
@@ -14,14 +13,11 @@ import { DaoBaseService } from 'src/app/dao/dao-base.service';
 export class CidadeListComponent extends PageListBase<Cidade, CidadeDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
-
   constructor(public injector: Injector) {
     super(injector, Cidade, CidadeDaoService);
     /* Inicializações */
-    //this.title = "Cidades";
     this.title = this.lex.noun("Cidade",true);
     this.code = "MOD_CID";
-
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}
      });

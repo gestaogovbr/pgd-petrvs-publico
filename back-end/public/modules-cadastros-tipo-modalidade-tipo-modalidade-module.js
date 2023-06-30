@@ -17,7 +17,7 @@ class TipoModalidade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         super();
         this.nome = ""; /* Nome da modalidade */
         this.atividades_homologadas = 1; /* Permitir apenas atividades homologadas */
-        this.dispensa_avaliacao = 0; /* Dispensa a avaliação */
+        this.dispensa_avaliacao = 1; /* Dispensa a avaliação */
         this.exige_adesao = 1; /* Exigir adesao */
         this.exige_assinatura = 1; /* Exigir assinatura */
         this.calcula_tempo_despendido = 1; /* Calcula tempo despendido */

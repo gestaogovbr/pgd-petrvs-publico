@@ -39,6 +39,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+const _c0 = function () { return ["cadastros", "tipo-justificativa", "new"]; };
+const _c1 = function (a0) { return { route: a0 }; };
 class TipoAvaliacaoFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_3__["PageFormBase"] {
     constructor(injector) {
         super(injector, src_app_models_tipo_avaliacao_model__WEBPACK_IMPORTED_MODULE_2__["TipoAvaliacao"], src_app_dao_tipo_avaliacao_dao_service__WEBPACK_IMPORTED_MODULE_1__["TipoAvaliacaoDaoService"]);
@@ -123,7 +125,7 @@ TipoAvaliacaoFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_7__["�
     } if (rf & 2) {
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵInheritDefinitionFeature"]], decls: 13, vars: 18, consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "T\u00EDtulo", "controlName", "nome", 3, "size"], ["label", "Nota", "icon", "bi bi-question-octagon", "controlName", "nota_atribuida", 3, "size"], ["icon", "bi bi-hexagon", "controlName", "aceita_entrega", 3, "size", "label", "items"], ["label", "Pergunta Motivacional", "controlName", "pergunta", 3, "size"], ["label", "\u00CDcone", "icon", "fas fa-sign-out-alt", "controlName", "icone", 3, "size", "items"], ["label", "Cor", "controlName", "cor", 3, "size"], ["controlName", "justificativas", 3, "size", "addItemControl", "label", "items"], ["controlName", "justificativa_id", 3, "size", "dao"], ["justificativa", ""]], template: function TipoAvaliacaoFormComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵInheritDefinitionFeature"]], decls: 13, vars: 23, consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "T\u00EDtulo", "controlName", "nome", 3, "size"], ["label", "Nota", "icon", "bi bi-question-octagon", "controlName", "nota_atribuida", 3, "size"], ["icon", "bi bi-hexagon", "controlName", "aceita_entrega", 3, "size", "label", "items"], ["label", "Pergunta Motivacional", "controlName", "pergunta", 3, "size"], ["label", "\u00CDcone", "icon", "fas fa-sign-out-alt", "controlName", "icone", 3, "size", "items"], ["label", "Cor", "controlName", "cor", 3, "size"], ["controlName", "justificativas", 3, "size", "canEdit", "addItemControl", "label", "items"], ["controlName", "justificativa_id", 3, "size", "dao", "addRoute"], ["justificativa", ""]], template: function TipoAvaliacaoFormComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "editable-form", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("submit", function TipoAvaliacaoFormComponent_Template_editable_form_submit_0_listener() { return ctx.onSaveData(); })("cancel", function TipoAvaliacaoFormComponent_Template_editable_form_cancel_0_listener() { return ctx.onCancel(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](1, "div", 1);
@@ -158,9 +160,9 @@ TipoAvaliacaoFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_7__["�
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 3);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 12)("addItemControl", _r0)("label", ctx.lex.noun("Justificativa", true))("items", ctx.justificativasLista);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 12)("canEdit", true)("addItemControl", _r0)("label", ctx.lex.noun("Justificativa", true))("items", ctx.justificativasLista);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 12)("dao", ctx.tipoJustificativaDao);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 12)("dao", ctx.tipoJustificativaDao)("addRoute", _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpureFunction1"](21, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpureFunction0"](20, _c0)));
     } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_0__["EditableFormComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_8__["InputTextComponent"], _components_input_input_rate_input_rate_component__WEBPACK_IMPORTED_MODULE_9__["InputRateComponent"], _components_input_input_radio_input_radio_component__WEBPACK_IMPORTED_MODULE_10__["InputRadioComponent"], _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_11__["InputSelectComponent"], _components_input_input_color_input_color_component__WEBPACK_IMPORTED_MODULE_12__["InputColorComponent"], _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_13__["InputMultiselectComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJ0aXBvLWF2YWxpYWNhby1mb3JtLmNvbXBvbmVudC5zY3NzIn0= */"] });
 
 

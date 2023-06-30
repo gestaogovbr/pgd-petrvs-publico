@@ -645,7 +645,7 @@ class UnidadeListComponent extends src_app_modules_base_page_list_base__WEBPACK_
         super.filterClear(filter);
     }
     consultAtividades(unidade) {
-        this.go.navigate({ route: ['gestao', 'atividade'] }, { metadata: { unidade_id: unidade.id, filterHidden: 'true', exibir_vinculadas_toolbar: true, minhas: true }, modal: true });
+        this.go.navigate({ route: ['cadastros', 'atividade'] }, { metadata: { unidade_id: unidade.id, filterHidden: 'true', exibir_vinculadas_toolbar: true, minhas: true }, modal: true });
     }
 }
 UnidadeListComponent.ɵfac = function UnidadeListComponent_Factory(t) { return new (t || UnidadeListComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_7__["Injector"])); };

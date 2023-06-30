@@ -56,7 +56,7 @@ class LoginController extends Controller
         }
         return $usuario;
     }
-
+    
     /**
      * Retorna o usuário logado
      *

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\Plano;
+use App\Models\Entrega;
 use App\Models\PlanoEntregaEntrega;
 use App\Traits\AutoDataInicio;
 use App\Traits\HasDataFim;
@@ -25,8 +26,6 @@ class PlanoTrabalhoEntrega extends ModelBase
         'forca_trabalho', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */// Percentual da força de trabalho
         //'data_fim', /* datetime; */// Data fim da vigência do registro
     ];
-
-    public $fillable_changes = ['entregaPlanoEntrega', 'entrega'];
 
     public $delete_cascade = [];
 

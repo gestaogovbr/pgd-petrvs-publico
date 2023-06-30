@@ -20,7 +20,7 @@ class NomenclaturaSeeder extends Seeder
             "afastamento" => ['single' => "afastamento", 'plural' => "afastamentos", 'female' => false],
             "atividade" => ['single' => "tipo de atividade", 'plural' => "tipos de atividade", 'female' => false],
             "avaliação" => ['single' => "avaliação", 'plural' => "avaliações", 'female' => true],
-            "cadeia de valor" => ['single' => "cadeia de valor", 'plural' => "cadeias de valor", 'female' => true],
+            "cadeia de valor" => ['single' => "cadeia de valor", 'plural' => "cadeias de valor", 'female' => true], 
             "capacidade" => ['single' => "capacidade", 'plural' => "capacidades", 'female' => true],
             "cidade" => ['single' => "cidade", 'plural' => "cidades", 'female' => true],
             "data de distribuição" => ['single' => "data de distribuição", 'plural' => "datas de distribuição", 'female' => true],

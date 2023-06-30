@@ -41,6 +41,9 @@
                     <button *ngIf="addRoute && dao" [id]="generatedId(controlName) + '_route_button'" class="btn btn-outline-success" type="button" (click)="onAddClick($event)">
                         <i class="bi bi-plus-circle"></i>
                     </button>
+                    <button *ngIf="isSearch" [id]="generatedId(controlName) + '_search_button'" class="btn btn-outline-secondary" type="button" (click)="onSearchClick(searchRoute)">
+                        <i [class]="searchButtonIcon || 'bi bi-search'"></i>
+                    </button>                    
                     <button *ngIf="isDetails" [id]="generatedId(controlName) + '_details_button'" class="btn btn-outline-secondary" type="button" [disabled]="!selectedItem ? 'true' : undefined" (click)="onDetailsClick($event)">
                         <i [class]="detailsButtonIcon || 'bi-info-circle'"></i>
                     </button>

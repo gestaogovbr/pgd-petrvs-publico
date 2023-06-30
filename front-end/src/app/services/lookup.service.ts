@@ -130,7 +130,7 @@ export class LookupService {
   public ORIGENS_ENTREGAS_PLANO_TRABALHO: LookupItem[] = [
     { key: 'MESMA_UNIDADE', value: "Mesma Unidade" },
     { key: 'OUTRA_UNIDADE', value: "Outra Unidade" },
-    { key: 'EXTERNA', value: "Externa" },
+    { key: 'CATALOGO', value: "Catálogo" },
   ];
 
   public HORAS_CORRIDAS_OU_UTEIS: LookupItem[] = [
