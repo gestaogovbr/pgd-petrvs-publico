@@ -1,6 +1,6 @@
 <editable-form noButtons [form]="form!" [disabled]="formDisabled">
     <div class="row">
-        <grid [items]="items" [form]="form!" editable [hasAdd]="true || auth.hasPermissionTo('')" [hasEdit]="true || auth.hasPermissionTo('')" [add]="add.bind(this)" [groupTemplate]="groupEntregas">
+        <grid [items]="items" [form]="form!" editable [hasAdd]="true || auth.hasPermissionTo('')" [hasEdit]="true || auth.hasPermissionTo('')" [add]="add.bind(this)" [groupTemplate]="groupEntregas" [minHeight]="0">
             <ng-template let-separator="separator" #groupEntregas>
                 <strong class="grid-group-text">Entregas: </strong><span class="text-wrap">
                     <badge color="primary" [label]="separator?.text"></badge>

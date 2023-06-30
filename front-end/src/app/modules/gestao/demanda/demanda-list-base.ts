@@ -148,7 +148,7 @@ export abstract class DemandaListBase extends PageListBase<Demanda, DemandaDaoSe
       let tempos: StatusDemanda[] = [
         { class: "badge bg-light text-dark", title: this.lex.noun("Data de distribuição"), icon: "bi bi-file-earmark-plus", text: this.dao!.getDateTimeFormatted(row.data_distribuicao) },
         { class: "badge bg-light text-dark", title: this.lex.noun("Prazo de entrega"), icon: "bi bi-calendar-check", text: this.dao!.getDateTimeFormatted(row.prazo_entrega) },
-        { class: "badge bg-light text-dark", title: this.lex.noun("Tempo pactuado"), icon: "fas fa-handshake", text: (row.tempo_pactuado ? this.util.decimalToTimerFormated(row.tempo_pactuado, true) : "Não") + " pactuado" }
+        { class: "badge bg-light text-dark", title: this.lex.noun("Tempo pactuado"), icon: "bi bi-stopwatch", text: (row.tempo_pactuado ? this.util.decimalToTimerFormated(row.tempo_pactuado, true) + " " + this.lex.noun("tempo pactuado") : this.lex.noun("Tempo pactuado") + " vazio")}
       ];
       if (row.metadados.concluido) tempos.push({ class: "badge bg-light text-dark", title: "Data de entrega realizada", icon: "bi bi-check-circle", text: this.dao!.getDateTimeFormatted(row.data_entrega) });
       if (row.metadados.iniciado && !!this.extra?.planos[row.plano_id!]?.tipo_modalidade?.calcula_tempo_despendido) {

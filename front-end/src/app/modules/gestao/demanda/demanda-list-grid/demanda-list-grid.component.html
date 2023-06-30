@@ -29,7 +29,7 @@
         </div>
     </filter>
     <columns>
-        <column *ngIf="!selectable" type="expand" icon="bi bi-boxes" [align]="'center'" [hint]="lex.noun('Entrega', true)" [template]="columnEntregas" [expandTemplate]="columnExpandedEntregas">
+        <column *ngIf="!selectable" type="expand" icon="bi bi-boxes" [align]="'center'" [hint]="lex.noun('Entrega da demanda', true)" [template]="columnEntregas" [expandTemplate]="columnExpandedEntregas">
             <ng-template let-row="row" #columnEntregas>
                 <span *ngIf="row.entregas?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row.entregas?.length}}</span>
             </ng-template>

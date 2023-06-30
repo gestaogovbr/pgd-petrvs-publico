@@ -12,7 +12,7 @@ use Throwable;
 
 class DemandaController extends ControllerBase
 {
-    public $updatable = ["etiquetas", "checklist", "comentarios"];
+    public $updatable = ["etiquetas", "checklist", "comentarios", "progresso"];
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {

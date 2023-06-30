@@ -69,6 +69,11 @@ class NotificacoesService
     public function send($code, $params, $unidade = null) {
         $notificacaoDef = $this->getOrDefault($code, $this->notificacoes, null);
         if(!empty($notificacaoDef)) {
+            $enviados = [
+                "petrvs" => [],
+                "email" => [],
+                "whatsapp" => []
+            ];
             $destinatarios = $notificacaoDef["destinatarios"]($params);
             $unidade = $unidade ?? $notificacaoDef["unidade"]($params);
             $entidade = $unidade?->entidade;
@@ -85,14 +90,15 @@ class NotificacoesService
                 ]);
                 $notificacao->save();
                 foreach($destinatarios as $destinatario) {
-                    if($config["petrvs"]["enviar"] && $this->getOrDefault("enviar_petrvs", $destinatario->notificacoes)) {
+                    if($config["petrvs"]["enviar"] && $this->getOrDefault("enviar_petrvs", $destinatario->notificacoes) && !in_array($destinatario->id, $enviados["petrvs"])) {
                         NotificacaoDestinatario::create([
                             "tipo" => "PETRVS",
                             "notificacao_id" => $notificacao->id,
                             "usuario_id" => $destinatario->id
                         ])->save();
+                        $enviados["petrvs"][] = $destinatario->id;
                     }
-                    if($config["email"]["enviar"] && $this->getOrDefault("enviar_email", $destinatario->notificacoes)) {
+                    if($config["email"]["enviar"] && $this->getOrDefault("enviar_email", $destinatario->notificacoes) && !in_array($destinatario->email, $enviados["email"])) {
                         $email = NotificacaoDestinatario::create([
                             "tipo" => "EMAIL",
                             "notificacao_id" => $notificacao->id,
@@ -106,14 +112,16 @@ class NotificacoesService
                             "notificacao_destinatario_id" => $email->id,
                             "signature" => config("notificacoes.email.signature") ?? ""
                         ];
+                        $enviados["email"][] = $destinatario->email;
                         ProcessEmails::dispatch($details);
                     }
-                    if($config["whatsapp"]["enviar"] && $this->getOrDefault("enviar_whatsapp", $destinatario->notificacoes)) {
+                    if($config["whatsapp"]["enviar"] && $this->getOrDefault("enviar_whatsapp", $destinatario->notificacoes) && !in_array($destinatario->telefone, $enviados["whatsapp"])) {
                         NotificacaoDestinatario::create([
                             "tipo" => "WHATSAPP",
                             "notificacao_id" => $notificacao->id,
                             "usuario_id" => $destinatario->id
                         ])->save();
+                        $enviados["whatsapp"][] = $destinatario->telefone;
                         //strip_tags() -> Remove as TAGS html do texto
                     }
                 }

@@ -16,7 +16,7 @@
                 <input-search [size]="6" #unidade controlName="unidade_id"  [dao]="unidadeDao"></input-search>
             </div>
         </tab>
-        <tab key="VARIACOES" label="Variação e Produtividade">
+        <!-- tab key="VARIACOES" label="Variação e Produtividade">
             <div clss="row">
                 <grid [control]="form!.controls.complexidade" [form]="formComplexidade" [save]="saveComplexidade.bind(this)" editable>
                     <columns>
@@ -28,13 +28,13 @@
                     </columns>
                 </grid>
             </div>
-        </tab>
-        <tab key="PREDEFINIDAS" label="Configurações Pré-definidas">
-            <div class="row">
+        </tab/-->
+        <tab key="PREDEFINIDAS" label="Etiquetas/Check-list">
+            <!--div class="row">
                 <input-multiselect [label]="'Tipos de ' + lex.noun('Processo') + ' (SEI)'" controlName="tipos_processo" [size]="12" [addItemHandle]="addItemHandleTiposProcesso.bind(this)">
                     <input-text [size]="12" label="Descrição" icon="far fa-edit" controlName="tipos_processo_texto"></input-text>
                 </input-multiselect>
-            </div>
+            </div//-->
             <div class="row">
                 <input-multiselect label="Etiquetas" controlName="etiquetas_predefinidas" [size]="8" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
                     <input-text [size]="5" label="Texto" controlName="etiqueta_texto"></input-text>
@@ -46,10 +46,10 @@
                 </input-multiselect>
             </div>
             <div class="row">
-                <input-textarea [size]="12" [rows]="3" label="Comentários" controlName="comentario_predefinido"></input-textarea>
+                <input-textarea [size]="12" [rows]="3" label="Comentários" controlName="comentario_predefinido" labelInfo="Comentário que será adicionado automaticamente"></input-textarea>
             </div>
         </tab>
-        <tab key="PARAMETROS" label="Parâmetros e Entregas">
+        <!--tab key="PARAMETROS" label="Parâmetros e Entregas">
             <div class="row">
                 <input-multiselect label="Parâmetros" controlName="parametros_adotados" [size]="12" [addItemHandle]="addItemHandleParametros.bind(this)">
                     <input-text [size]="12" label="Descrição" icon="far fa-edit" controlName="parametro_texto"></input-text>
@@ -60,8 +60,8 @@
                     <input-text [size]="12" label="Descrição" icon="far fa-edit" controlName="entrega_texto"></input-text>
                 </input-multiselect>
             </div>
-        </tab>
-        <tab key="OUTRAS" label="Outras Opções">
+        </tab/-->
+        <!--tab key="OUTRAS" label="Outras Opções">
             <div class="row">
                 <input-radio [disabled]="!auth.hasPermissionTo('MOD_ATV_EDT_OTR_OP_HOM') ? 'true' : undefined" [size]="6" [label]="'Homologado ' + lex.noun('pela Unidade Gestora')" icon="bi bi-check2" controlName="homologado" [items]="lookup.SIMNAO" labelInfo="Se a atividade foi homologada pela unidade gestora do teletrabalho"></input-radio>
                 <input-datetime [disabled]="!auth.hasPermissionTo('MOD_ATV_EDT_OTR_OP_HOM') ? 'true' : undefined" date [size]="6" [label]="lex.noun('Data da Homologação')" controlName="data_homologacao"></input-datetime>
@@ -70,6 +70,6 @@
                 <input-radio [size]="6" [label]="lex.noun('Prazo Recalculado') + ' (se ao menos iniciada)'" icon="fas fa-hourglass-start" controlName="recalcula_prazo" [items]="lookup.SIMNAO" labelInfo="Caso acabe o prazo, mas já estiver iniciado, o prazo recalcula-se automaticamente."></input-radio>
                 <input-radio [disabled]="!auth.hasPermissionTo('MOD_ATV_EDT_OTR_OP_PROD') ? 'true' : undefined" [size]="6" [label]="lex.noun('Produtividade') + ' Desativada'" icon="fas fa-chart-line" controlName="desativa_produtividade" [items]="lookup.SIMNAO" labelInfo="Desativar o cálculo de produtividade e controle de tempo de execução (para atividades do tipo monitoramento)"></input-radio>
             </div>
-        </tab>
+        </tab/-->
     </tabs>
 </editable-form>
