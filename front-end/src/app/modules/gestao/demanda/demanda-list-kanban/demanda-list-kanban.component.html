@@ -120,9 +120,9 @@
     <swimlane>
         <docker #dockerConcluido icon="bi bi-check-circle" title="Concluídas" color="border-primary" [collapse]="cardsConfig.concluido" [toggle]="onDockerCollapse.bind(this)" [dragged]="onDragged.bind(this)" [drop]="onDrop.bind(this)" [dropIf]="canDrop(DOCKERS[CONCLUIDO])" [cards]="cards[CONCLUIDO]"></docker>
     </swimlane>
-    <swimlane>
+    <!--swimlane>
         <docker #dockerAvaliado icon="bi bi-star-half" title="Avaliadas" color="border-success" [collapse]="cardsConfig.avaliado" [toggle]="onDockerCollapse.bind(this)" [dragged]="onDragged.bind(this)" [drop]="onDrop.bind(this)" [dropIf]="canDrop(DOCKERS[AVALIADO])" [cards]="cards[AVALIADO]"></docker>
-    </swimlane>
+    </swimlane//-->
 </kanban>
 
 <!-- Kanban por label (definido polo usuário) -->
