@@ -1,36 +1,51 @@
-<grid [items]="logs" [hasEdit]="false" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join">
+<grid [dao]="dao" [hasEdit]="false" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join">
+    <span><strong>{{ planoEntrega?.numero + ' - ' + planoEntrega?.nome }}</strong></span>
     <toolbar></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-select #selectResponsaveis label="Responsável pelo registro" [size]="10" controlName="responsavel_id" [control]="filter!.controls.responsavel_id" 
+            <input-select #selectResponsaveis label="Responsável pelo registro" controlName="responsavel_id" [control]="filter!.controls.responsavel_id" 
             [items]="responsaveis"></input-select>
-            <input-select [size]="2" label="Tipo" icon="bi bi-arrow-up-right-circle" controlName="tipo" [control]="filter!.controls.tipo" [items]="lookup.TIPO_LOG_CHANGE" itemTodos="Todos" valueTodos=""></input-select>
         </div>
         <div class="row">
-            <input-datetime [size]="3" datetime label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" labelInfo="Início dos registros"></input-datetime>
-            <input-datetime [size]="3" datetime label="Fim" controlName="data_fim" [control]="filter!.controls.data_fim" labelInfo="Fim dos registros"></input-datetime>
-            <input-text [size]="6" label="ID do registro" controlName="row_id_text" [control]="filter!.controls.row_id_text"></input-text>
+            <input-datetime [size]="4" datetime label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" labelInfo="Início dos registros"></input-datetime>
+            <input-datetime [size]="4" datetime label="Fim" controlName="data_fim" [control]="filter!.controls.data_fim" labelInfo="Fim dos registros"></input-datetime>
+            <input-select [size]="4" label="Tipo" icon="bi bi-arrow-up-right-circle" controlName="tipo" [control]="filter!.controls.tipo" [items]="lookup.TIPO_LOG_CHANGE" itemTodos="Todos" valueTodos=""></input-select>
         </div>
     </filter>
     <columns>
-        <column title="Responsável" [template]="columnResponsavel">
+        <column [titleTemplate]="titleResponsavel" [template]="columnResponsavel">
+            <ng-template #titleResponsavel let-header="header"><strong>Responsável</strong></ng-template>
             <ng-template let-row="row" #columnResponsavel>
                 <span> {{row.responsavel}} </span>
             </ng-template>
         </column>
-        <column title="Criado em" field="date_time" [template]="columnDataCriacao">
+        <column [titleTemplate]="titleDataCriacao" [template]="columnDataCriacao">
+            <ng-template #titleDataCriacao let-header="header"><strong>Criado em</strong></ng-template>
             <ng-template let-row="row" #columnDataCriacao>
                 <span>{{ util.getDateTimeFormatted(row.date_time) }}</span>
             </ng-template>
         </column>
-        <column title="ID" field="row_id"></column>
+        <column [titleTemplate]="titleDiferenca" [template]="columnDiferenca">
+            <ng-template #titleDiferenca let-header="header">
+                <div class="row">
+                    <div class="col align-bottom" width="150"><strong>Atributos</strong></div>
+                    <div class="col" width="250"><strong>Valores<br>Atuais</strong></div>
+                    <div class="col" width="250"><strong>Valores<br>Anteriores</strong></div>
+                </div>
+            </ng-template>
+            <ng-template #columnDiferenca let-row="row">
+                <table>
+                    <tbody> 
+                        <tr *ngFor="let dif of preparaDelta(row)">
+                            <td width="150">{{ dif[0] }}</td>
+                            <td width="250">{{ (action == 'EDIT' || action == 'ADD') ? dif[1] : '' }}</td>
+                            <td width="250">{{ action == 'EDIT' ? dif[2] : (action == 'ADD' ? '' : dif[1]) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </ng-template>
+          </column>
         <column title="Tipo de Operação" field="type"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>
-
-<!-- 
-
-
-
--->

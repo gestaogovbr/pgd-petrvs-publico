@@ -2,10 +2,10 @@ import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { ChangeDaoService } from 'src/app/dao/change-dao.service';
-import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
+import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
 import { Change } from 'src/app/models/change.model';
+import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 
@@ -14,22 +14,22 @@ import { LookupItem } from 'src/app/services/lookup.service';
   templateUrl: './plano-entrega-list-logs.component.html',
   styleUrls: ['./plano-entrega-list-logs.component.scss']
 })
-export class PlanoEntregaListLogsComponent extends PageListBase<Change,ChangeDaoService> {
+export class PlanoEntregaListLogsComponent extends PageListBase<Change, ChangeDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @ViewChild('selectResponsaveis', { static: false }) public selectResponsaveis?: InputSelectComponent;
 
-  public toolbarButtons: ToolbarButton[] = [];
-  public allPages: ListenerAllPagesService;
   public responsaveis: LookupItem[] = [];
-  public logs: Change[] = [];
+  public planoEntregaDao: PlanoEntregaDaoService;
+  public planoEntrega?: PlanoEntrega;
+  public planoId: string = "";
+  public action: string = "";
 
   constructor(public injector: Injector, dao: ChangeDaoService) {
     super(injector, Change, ChangeDaoService);
     /* Inicializações */
-    this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
+    this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
     this.title = "Logs de Planos de Entregas";
     this.filter = this.fh.FormBuilder({
-      row_id: {default: ""},
       responsavel_id: {default: ""},
       data_inicio: {default: ""},
       data_fim: {default: ""},
@@ -38,18 +38,19 @@ export class PlanoEntregaListLogsComponent extends PageListBase<Change,ChangeDao
     this.orderBy = [['id', 'desc']];
   }
 
-  async ngAfterViewInit() {
+  ngOnInit(): void {
+    super.ngOnInit();
+    this.planoId = this.urlParams?.get("id") || "";
+    this.planoEntregaDao.getById(this.planoId).then(plano => this.planoEntrega = plano!);
+  }
+
+  ngAfterViewInit() {
     super.ngAfterViewInit();
-    this.filter!.controls.row_id.setValue(this.urlParams?.get("id"));
     this.selectResponsaveis!.loading = true;
-    let result = await Promise.all ([
-      this.dao?.showResponsaveis(),
-      this.dao!.query({where: [["table_name", "==", "planos_entregas"],["row_id", "==", this.filter?.controls.row_id.value]]}).asPromise()
-    ]);
-    this.responsaveis = result[0] || [];
-    this.logs = result[1] || [];
-    this.cdRef.detectChanges();
-    this.selectResponsaveis!.loading = false;
+    this.dao?.showResponsaveis().then(responsaveis => {
+      this.responsaveis = responsaveis || [];
+      this.selectResponsaveis!.loading = false;
+    });
   }
   
   public filterClear(filter: FormGroup) {
@@ -64,6 +65,8 @@ export class PlanoEntregaListLogsComponent extends PageListBase<Change,ChangeDao
     let result: any[] = [];
     let form: any = filter.value;
 
+    result.push(["table_name", "==", "planos_entregas"]);
+    result.push(["row_id", "==", this.planoId]);
     if(form.responsavel_id?.length){
       result.push(["user_id", "==", form.responsavel_id == "null" ? null : form.responsavel_id]);
     };
@@ -77,6 +80,16 @@ export class PlanoEntregaListLogsComponent extends PageListBase<Change,ChangeDao
       result.push(["type", "==", form.tipo]);
     };
     return result;
+  }
+
+  public preparaDelta(row: any): any[] {
+    this.action = row.type;
+    let novoDelta = row.delta instanceof Array ? row.delta : Object.entries(row.delta);
+    novoDelta.forEach((element: any[]) => {
+      if(element[1] instanceof Date) element[1] = new Date(element[1]).toUTCString();
+      if(element.length > 2 && element[2] instanceof Date) element[2] = new Date(element[2]).toUTCString();
+    });
+    return novoDelta;
   }
 
 }
