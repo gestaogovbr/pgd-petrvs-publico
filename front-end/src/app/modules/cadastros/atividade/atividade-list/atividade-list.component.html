@@ -8,9 +8,10 @@
         </div>
     </editable-form>
 </ng-template>
-<grid multiselect [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy"
-    [join]="join" [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_ATV_INCL')"
-    [hasEdit]="false" [multiselectMenu]="multiselectMenu">
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy"
+    [join]="join" [selectable]="selectable" (select)="onSelect($event)" 
+    [hasAdd]="auth.hasPermissionTo('MOD_ATV_INCL')"
+    [hasEdit]="auth.hasPermissionTo('MOD_ATV_EDT')"> <!-- multiselect [multiselectMenu]="multiselectMenu" -->
     <toolbar *ngIf="!selectable">
         <input-switch *ngIf="exibir_vinculadas_toolbar" [size]="4" labelPosition="left" label="Exibir Vinc."
             controlName="vinculadas_toolbar" [control]="filter!.controls.vinculadas_toolbar"
@@ -50,7 +51,8 @@
                 <span> {{row.unidade.nome}}</span>
             </ng-template>
         </column>
-        <column type="options" [options]="[]" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+        <!--column type="options" [options]="[]" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column/-->
+        <column type="options" [onEdit]="edit" [options]="options"></column>        
     </columns>
     <report>
         <column title="Nome" [template]="reportNome"><ng-template let-row="row" #reportNome>{{row.nome}}</ng-template>

@@ -28,6 +28,7 @@ export class LexicalService {
     "documento": {single: "documento", plural: "documentos", female: false},
     "entidade": {single: "entidade", plural: "entidades", female: true},
     "entrega": {single: "entrega", plural: "entregas", female: true},
+    "entrega da demanda": {single: "entrega da demanda", plural: "entrega da demanda", female: true},
     "eixo temático": {single: "eixo temático", plural: "eixos temáticos", female: false},
     "feriado": {single: "feriado", plural: "feriados", female: false},
     "justificativa": {single: "justificativa", plural: "justificativas", female: true},

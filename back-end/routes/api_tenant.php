@@ -109,6 +109,7 @@ Route::middleware('auth:sanctum')->prefix('Calendario')->group(function () {
 Route::middleware('auth:sanctum')->prefix('Notificacao')->group(function () {
     defaultRoutes(NotificacaoController::class);
     Route::post('nao-lidas', [NotificacaoController::class, 'naoLidas']);
+    Route::post('marcar-como-lido', [NotificacaoController::class, 'marcarComoLido']);
 });
 
 /* Desenvolvedor */

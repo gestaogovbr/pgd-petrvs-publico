@@ -69,8 +69,9 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
   public checklist: LookupItem[] = [];
   public complexidades: LookupItem[] = [];
   public planos: LookupItem[] = [];
-  public planoJoin: string[] = ["documento:id,metadados"];
+  public planoJoin: string[] = ["documento:id,metadados", "entregas.entrega:id,nome", "tipo_modalidade:id,nome"];
   public planoSelecionado?: Plano | null = null;
+  public entregas: LookupItem[] = [];
   //public comentarioTipos: LookupItem[];
 
   /* Variável utilizada para detectar as alterações feitas pelo usuário e recalcular os prazos */
@@ -135,7 +136,9 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
       plano_id: {default: null},
       avaliacao_id: {default: null},
       entregas: {default: []},
-      tipo_processo_id: {default: null}
+      tipo_processo_id: {default: null},
+      entrega_id: {default: null},
+      progresso: {default: 0}
     }, this.cdRef, this.validate);
     this.formChecklist = this.fh.FormBuilder({
       id: {default: ""},
@@ -147,7 +150,7 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
       tipo: {default: "COMENTARIO"},
       privacidade: {default: "PUBLICO"}
     }, this.cdRef, this.validateComentario);*/
-    this.join = ["usuario.planos.tipo_modalidade:id,nome", "pausas", "atividade", "unidade", "comentarios.usuario", "entregas.tarefa", "entregas.comentarios.usuario", "plano.documento:id,metadados"];
+    this.join = ["usuario.planos.entregas.entrega:id,nome", "usuario.planos.tipo_modalidade:id,nome", "pausas", "atividade", "unidade", "comentarios.usuario", "entregas.tarefa", "entregas.comentarios.usuario", "plano.documento:id,metadados"];
   }
 
   public ngOnInit() {
@@ -204,15 +207,24 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
     } else if(controlName == "atividade_id" && !control?.value?.length && !this.auth.hasPermissionTo("MOD_DMD_ATV_VAZIO")) {
       result = "Obrigatório";
     } else if(["data_distribuicao", "prazo_entrega"].includes(controlName)) {
+      let prazoEntrega = this.form?.controls.prazo_entrega?.value;
+      let dataDistribuicao = this.form?.controls.data_distribuicao?.value;
       if (!this.util.isDataValid(control.value)) {
         result = "Data inválida";
-      } else if(controlName == "data_distribuicao" && control.value && control.value.getTime() > this.form?.controls.prazo_entrega.value.getTime()) {
+      } else if(controlName == "data_distribuicao" && control.value && this.util.isDataValid(prazoEntrega) && control.value.getTime() > prazoEntrega.getTime()) {
         result = "Maior que entrega";
-      } else if(controlName == "prazo_entrega" && control.value && control.value.getTime() < this.form?.controls.data_distribuicao.value.getTime()) {
+      } else if(controlName == "prazo_entrega" && control.value && this.util.isDataValid(dataDistribuicao) && control.value.getTime() < dataDistribuicao.getTime()) {
         result = "Menor que distribuição";
       }
     } else if(controlName == "plano_id" && !control.value?.length && this.form?.controls?.usuario_id.value?.length) {
       result = "Obrigatório";
+
+    } else if(controlName == "entrega_id") {
+      if(this.form?.controls?.plano_id.value?.length && !control.value?.length) {
+        result = "Obrigatório";
+      } else if(control.value?.length && !this.entregas.find(x => x.key == control.value)) {
+        result = "Selecione";
+      }
     } else if(controlName == "fator_complexidade" && !control.value && this.form?.controls?.atividade_id.value?.length) {
       result = "Obrigatório";
     }
@@ -317,7 +329,7 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
           const entrega = this.calendar.prazo(this.form.controls.data_distribuicao.value, this.form.controls.tempo_planejado.value, cargaHoraria, unidade, "DISTRIBUICAO");
           this.setControlPreventChange("prazo_entrega", entrega);
         } else if(source == "PLANO") {
-          this.planejado!.hoursPerDay = cargaHoraria;
+          if(this.planejado) this.planejado.hoursPerDay = cargaHoraria;
           this.form.controls.carga_horaria.setValue(cargaHoraria);
           const tempo = this.calendar.horasUteis(this.form.controls.data_distribuicao.value, this.form.controls.prazo_entrega.value, cargaHoraria, unidade, "DISTRIBUICAO");
           this.setControlPreventChange("tempo_planejado", tempo);
@@ -356,6 +368,7 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
     (async () => {
       if(this.entity) {
         const plano = (this.usuario?.searchObj as Usuario)?.planos?.find(x => x.id == this.form!.controls.plano_id.value);
+        const entrega_id = this.form.controls.entrega_id.value;
         if(plano) {
           if(this.planoSelecionado?.id != plano.id) {
             this.planoSelecionado = await this.planoDao.getById(plano.id, this.planoJoin);
@@ -367,6 +380,16 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
               await this.auth.selecionaUnidade(unidade.id);
             }
           }
+          this.entregas = plano.entregas?.map(x => Object.assign({}, {
+            key: x.id,
+            value: x.entrega?.nome || "DESCONHECIDO",
+            data: x
+          })) || [];
+          this.cdRef.detectChanges();
+          this.form.controls.entrega_id.setValue(!entrega_id?.length && this.planos.length > 0 ? this.planos[0].key : entrega_id);
+        } else {
+          this.entregas = [];
+          this.form.controls.entrega_id.setValue(null);
         }
         this.calcularPrazo("PACTUADO");
         this.calcularPrazo("PLANO");
@@ -668,6 +691,8 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
         checklist: source.checklist,
         tipo_documento_requisicao_id: source.tipo_documento_requisicao_id,
         tipo_processo_id: source.tipo_processo_id,
+        entrega_id: source.entrega_id,
+        progresso: source.progresso,
         entregas: (source.entregas || []).map((entrega: DemandaEntrega) => {
           const novo = new DemandaEntrega();
           novo.id = this.dao!.generateUuid();

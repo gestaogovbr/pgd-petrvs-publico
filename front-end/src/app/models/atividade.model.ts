@@ -13,17 +13,17 @@ export class Atividade extends Base {
     public unidade?: Unidade;
 
     public nome: string = "";  //Nome da classe de atividade
-    public tempo_pactuado: number = 48; //Tempo previsto para a execução da atividade
+    public tempo_pactuado: number = 8; //Tempo previsto para a execução da atividade
     public dias_planejado: number = 0; //Tempo em dias previsto para a atividade
     public tempo_minimo: number = 20; //Tempo despendido mínimo aceitável para a atividade (% do tempo pactuado)
     public recalcula_prazo: number = 0; //Recalcular o prazo de entrega depois de iniciada a demanda
     public desativa_produtividade: number = 0; //Desativar o cálculo de produtividade e controle de tempo de execução (para atividades do tipo monitoramento)
     public complexidade: Complexidade[] = [
-      {id: Md5.hashStr(Math.random().toString()), grau: "Muito baixo", fator: 0.25, tempo: 2, padrao: false},
-      {id: Md5.hashStr(Math.random().toString()), grau: "Baixo", fator: 0.5, tempo: 4, padrao: false},
-      {id: Md5.hashStr(Math.random().toString()), grau: "Médio", fator: 1, tempo: 8, padrao: true},
+      /*{id: Md5.hashStr(Math.random().toString()), grau: "Muito baixo", fator: 0.25, tempo: 2, padrao: false},
+      {id: Md5.hashStr(Math.random().toString()), grau: "Baixo", fator: 0.5, tempo: 4, padrao: false},*/
+      {id: Md5.hashStr(Math.random().toString()), grau: "Médio", fator: 1, tempo: 8, padrao: true}/*,
       {id: Md5.hashStr(Math.random().toString()), grau: "Alto", fator: 2, tempo: 16, padrao: false},
-      {id: Md5.hashStr(Math.random().toString()), grau: "Muito alto", fator: 4, tempo: 32, padrao: false}
+      {id: Md5.hashStr(Math.random().toString()), grau: "Muito alto", fator: 4, tempo: 32, padrao: false}*/
     ]; //Graus de complexidade da atividade (complexidade, fator, tempo_pactuado, default)
     //public tipo_processo_id: string = ""; //Configuração predefinidos de tipos associados de processos do Sei
     public tipos_processo: LookupItem[] = []; //Configuração predefinidos de tipos associados de processos do Sei

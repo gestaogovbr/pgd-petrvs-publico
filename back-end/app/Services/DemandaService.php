@@ -47,6 +47,7 @@ class DemandaService extends ServiceBase
         "avaliacao",
         "avaliacoes",
         "usuario.afastamentos",
+        "usuario.planos.entregas.entrega:id,nome",
         "usuario.planos.tipo_modalidade:id,nome"
     ];
 

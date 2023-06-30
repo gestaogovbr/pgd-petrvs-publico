@@ -4,6 +4,8 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import { PageListBase } from '../../base/page-list-base';
 import { Notificacao } from 'src/app/models/notificacao.model';
 import { NotificacaoDaoService } from 'src/app/dao/notificacao-dao.service';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { IIndexable } from 'src/app/models/base.model';
 
 @Component({
   selector: 'notificacoes',
@@ -12,6 +14,16 @@ import { NotificacaoDaoService } from 'src/app/dao/notificacao-dao.service';
 })
 export class NotificacoesComponent extends PageListBase<Notificacao, NotificacaoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
+
+  public toolbarButtons: ToolbarButton[] = [
+    {
+      icon: "bi bi-check-all",
+      label: "Lido",
+      color: "btn-outline-success",
+      hint: "Marcar todas as notificações como lido",
+      onClick: this.onLidoClick.bind(this)
+    }
+  ];
 
   constructor(public injector: Injector) {
     super(injector, Notificacao, NotificacaoDaoService);
@@ -42,5 +54,14 @@ export class NotificacoesComponent extends PageListBase<Notificacao, Notificacao
     if(this.util.isDataValid(form.fim)) result.push(["data_registro", "<=", form.fim]);
     return result;
   }
+
+  public onLidoClick() {
+    let destinatariosIds = (this.grid?.items || []).reduce((a: string[], v: IIndexable) => {
+      a.push(...(v as Notificacao).destinatarios.filter(x => !x.data_leitura).map(x => x.id));
+      return a;
+    }, []);
+    this.dao!.marcarComoLido(destinatariosIds).then(qtd => this.grid!.reloadFilter());
+  }
+
 }
 

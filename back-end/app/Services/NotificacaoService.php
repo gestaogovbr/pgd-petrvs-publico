@@ -8,6 +8,7 @@ use App\Services\WhatsappService;
 use App\Mails\NotificacaoMail;
 use App\Exceptions\LogError;
 use App\Models\Notificacao;
+use App\Models\NotificacaoDestinatario;
 use App\Models\Usuario;
 use App\Models\NotificacaoWhatsapp;
 use Exception;
@@ -64,6 +65,26 @@ class NotificacaoService extends ServiceBase
         return Notificacao::whereHas('destinatarios', function (Builder $query) {
             $query->where("usuario_id", Auth::user()->id)->whereNull('data_leitura');
         })->count();
+    }
+
+    public function marcarComoLido($idsDestinatarios) {
+        DB::beginTransaction();
+        $marcadas = 0;
+        try {
+            foreach($idsDestinatarios as $id) {
+                $notificacao = NotificacaoDestinatario::find($id);
+                if(!empty($notificacao) && $notificacao->usuario_id == Auth::user()->id) {
+                    $notificacao->data_leitura = now();
+                    $notificacao->save();
+                    $marcadas++;
+                }
+            }
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollback();
+            throw $e;
+        }
+        return $marcadas;
     }
 
 }

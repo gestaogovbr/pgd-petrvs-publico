@@ -79,7 +79,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
       return "Obrigatório selecionar o programa";
     } else if(!this.dao?.validDateTime(inicio) || !this.dao?.validDateTime(fim)) {
       return "Data de início ou fim inválidas";
-    } else if (this.form!.controls.fim.value && this.form!.controls.inicio.value < this.form!.controls.fim.value) {
+    } else if (this.form!.controls.fim.value && this.form!.controls.inicio.value > this.form!.controls.fim.value) {
       return "A data do fim não pode ser menor que a data do início!";
     } else {
       const diffTime = Math.abs(inicio - fim);
