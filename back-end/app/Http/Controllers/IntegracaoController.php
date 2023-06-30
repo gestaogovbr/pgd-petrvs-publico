@@ -12,19 +12,19 @@ class IntegracaoController extends ControllerBase {
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
             case 'STORE':
-                if (!$usuario->hasPermissionTo('DEV_MOD_LOGS')) throw new ServerException("CapacidadeStore", "Inserção não executada");
+                if (!$usuario->hasPermissionTo('MOD_LOGS')) throw new ServerException("CapacidadeStore", "Inserção não executada");
                 break;
             case 'UPDATE':
-                if (!$usuario->hasPermissionTo('DEV_MOD_LOGS')) throw new ServerException("CapacidadeStore", "Edição não executada");
+                if (!$usuario->hasPermissionTo('MOD_LOGS')) throw new ServerException("CapacidadeStore", "Edição não executada");
                 break;
             case 'DESTROY':
-                if (!$usuario->hasPermissionTo('DEV_MOD_LOGS')) throw new ServerException("CapacidadeStore", "Exclusão não executada");
+                if (!$usuario->hasPermissionTo('MOD_LOGS')) throw new ServerException("CapacidadeStore", "Exclusão não executada");
                 break;
             case 'QUERY':
-                if (!$usuario->hasPermissionTo('DEV_MOD_LOGS')) throw new ServerException("CapacidadeStore", "Consulta não executada");
+                if (!$usuario->hasPermissionTo('MOD_LOGS')) throw new ServerException("CapacidadeStore", "Consulta não executada");
                 break;   
             case 'GETBYID':
-                if (!$usuario->hasPermissionTo('DEV_MOD_LOGS')) throw new ServerException("CapacidadeStore", "Consulta não executada");
+                if (!$usuario->hasPermissionTo('MOD_LOGS')) throw new ServerException("CapacidadeStore", "Consulta não executada");
                 break;  
         }
     }

@@ -6,43 +6,40 @@
       </div>
       <div class="row">
           <input-text [size]="4" label="Tabela" icon="bi bi-textarea-t" controlName="table_name" [control]="form!.controls.table_name"></input-text>
-          <input-text [size]="5" [label]="objeto ? objeto.label : 'ID do registro alterado'" icon="bi bi-upc" controlName="row_id" [control]="form!.controls.row_id"></input-text>
+          <input-text [size]="5" [label]="'ID do registro alterado'" icon="bi bi-upc" controlName="row_id" [control]="form!.controls.row_id"></input-text>
           <input-text [size]="3" label="Tipo de alteração" icon="bi bi-upc" controlName="type" [control]="form!.controls.type"></input-text>
       </div>
-      <div *ngIf="delta.versao == '2.0'" class="row">
-        <separator title="VALORES ATUAIS" [collapse]="'collapse'">
-          <div *ngFor="let item of valoresAtuais" class="row">
-            <div *ngIf="item[1] == null" class="row" style="margin-left: {{((item[2] > 5 ? 5 : item[2])-1)*15}}px;"><strong>{{ item[0] }}</strong></div>
-            <div *ngIf="item[1] != null" class="row" style="margin-left: {{(item[2] > 5 ? 5 : item[2])*15}}px;">{{ (item[0] + ': ' + item[1]) }}</div>
-          </div>
-        </separator>
-        <separator title="VALORES ANTERIORES" [collapse]="'collapse'">
-          <div *ngFor="let item of valoresAnteriores" class="row">
-            <div *ngIf="item[1] == null" class="row" style="margin-left: {{((item[2] > 5 ? 5 : item[2])-1)*15}}px;"><strong>{{ item[0] }}</strong></div>
-            <div *ngIf="item[1] != null" class="row" style="margin-left: {{(item[2] > 5 ? 5 : item[2])*15}}px;">{{ (item[0] + ': ' + item[1]) }}</div>
-          </div>
-        </separator> 
+      <div class="row">
         <separator title="VALORES ALTERADOS" [collapse]="'collapse'" [collapsed]="false" transparent>
+<!--           <grid [items]="entity?.delta || []" [form]="form!">
+            <columns>
+              <column [titleTemplate]="titleAtributo" [template]="columnAtributo">
+                <ng-template #titleAtributo let-header="header"><strong>Atributos</strong></ng-template>
+                <ng-template #columnAtributo let-row="row">{{ row[0] }}</ng-template>
+              </column>
+              <column [titleTemplate]="titleAtual" [template]="columnAtual">
+                <ng-template #titleAtual let-header="header"><strong>Valores Atuais</strong></ng-template>
+                <ng-template #columnAtual let-row="row">{{ row[1] }}</ng-template>
+              </column>
+              <column [titleTemplate]="titleAnterior" [template]="columnAnterior">
+                <ng-template #titleAnterior let-header="header"><strong>Valores Anteriores</strong></ng-template>
+                <ng-template #columnAnterior let-row="row">{{ row[2] }}</ng-template>
+              </column>
+            </columns>
+          </grid> -->
           <div class="row" style="padding-left: 15px;">
             <div class="col-md-4"><strong>Atributos</strong></div>
             <div class="col-md-4"><strong>Valores atuais</strong></div>
             <div class="col-md-4"><strong>Valores anteriores</strong></div>
           </div>
-          <div *ngFor="let item of valoresAlterados">
+          <div *ngFor="let item of diferencas">
             <div class="row" style="padding-left: 15px;">
-              <div *ngIf="item[4] == 'grupo'" class="col-md-4" style="padding-left: {{ ((item[0])) }}px;"><u>{{ item[1] }}</u></div>
-              <div *ngIf="item[4] != 'grupo'" class="col-md-4" style="padding-left: {{ ((item[0])) }}px;">{{ item[1] }}</div>
+              <div class="col-md-4">{{ item[0] }}</div>
+              <div class="col-md-4">{{ item[1] }}</div>
               <div class="col-md-4">{{ item[2] }}</div>
-              <div class="col-md-4">{{ item[3] }}</div>
             </div>
           </div>
         </separator>                       
-      </div>
-      <div *ngIf="!delta.versao" class="row">
-        <div *ngFor="let item of resultado" class="row">
-          <div *ngIf="item[1] == null" class="row" style="margin-left: {{((item[2] > 5 ? 5 : item[2])-1)*15}}px;"><strong>{{ item[0] }}</strong></div>
-          <div *ngIf="item[1] != null" class="row" style="margin-left: {{(item[2] > 5 ? 5 : item[2])*15}}px;">{{ (item[0] + ': ' + item[1]) }}</div>
-        </div>
       </div>
   </div>
 </editable-form>

@@ -127,7 +127,7 @@
     - a unidade do plano for a unidade-pai da unidade selecionada pelo usuário; e
     - se o usuário for Gestor da unidade selecionada, ou ela for sua lotação principal e ele possuir a capacidade "MOD_PENT_ADERIR" ; e
     - se a unidade selecionada não possuir plano de entrega Ativo no mesmo período do plano em questão;
-3. *****************(RI_PENT_3) Na janela de avaliar, já deixar o switch de arquivamento marcado, igual à janela de avaliação nas demandas;
+3. (RI_PENT_3) Na janela de avaliar, já deixar o switch de arquivamento marcado, igual à janela de avaliação nas demandas;
 4. (RI_PENT_4) A consulta do grid retornará inicialmente os principais Planos de Entrega do usuário logado (a opção "principais" já vem marcada), que são:
     - os válidos das unidades onde ele possui lotação, e
     - se ele for gestor, os ativos das unidades-pai de onde ele é gestor;
@@ -196,44 +196,7 @@
                 - se o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_ARQ", exibir o botão 'Arquivar';
 ~~~~
 
-## Entregas do Plano de Entregas
-
-- Tabela: planos_entregas_entregas
-
-~~~text
-    inicio (*)
-    fim
-    descricao (*)
-    homologado (*)
-    meta (*)
-    realizado
-    progresso_esperado
-    progresso_realizado
-    destinatario
-    (id/created_at/updated_at/data_inicio/data_fim)
-        plano_entrega_id (*)
-        entrega_id (*)
-        entrega_pai_id
-        unidade_id (*)
-
-    (*) campo obrigatório
-~~~
-
-## Regras de Negócio aplicadas às entregas de um Plano de Entregas
-
-1. ENTREGAS DO PLANO DE ENTREGA
-    1. (RN_ENT_PENT_1_1) As entregas que compõem um Plano de Entregas pertencem todas à Unidade Executora do Plano;
-    2. (RN_ENT_PENT_1_2) As entregas incluídas/alteradas na criação/edição de um Plano de Entregas precisam ser homologadas pelo gestor da unidade hierarquicamente superior;
-    3. (RN_ENT_PENT_1_3) As entregas incluídas/alteradas na criação/edição de um Plano de Entregas precisam estar dentro do prazo de execução de um plano de entregas;
-    
-## REGRAS DE INTERFACE APLICADAS ÀS VIEWS
-
-1. (RI_ENT_PENT_1) O botão Aderir, na toolbar, deverá ser exibido sempre, mas para ficar habilitado:
-    - as abas de objetivos e processos na tela de inserção das entregas apenas serão exibidas se o usuário selecionar o planejamento e/ou a cadeia de valor na tela anterior ;
-    
-## REGRAS DE NEGÓCIO A SEREM DISCUTIDAS
-
-- O gestor da unidade de execução **deverá também cadastrar, quando da elaboração do Plano de Entregas,** os tipos de "ocorrência" (ocorrências tradicionais, férias, cursos, etc) que não possuem meta, prazo ou cliente. Essas ocorrências poderão ser selecionadas pelos participantes quando da elaboração do plano de trabalho, com respectiva alocação, ao selecionar a opção: Não vinculada a entrega.
+[ACESSAR ENTREGAS DO PLANO DE ENTREGAS](plano_entrega_entrega.md)
 
 ## Exemplos de grids
 

@@ -797,7 +797,7 @@ class CapacidadeService extends ServiceBase {
         ["MOD_FER_EXCL", 'Administrador', 'Desenvolvedor'],
         ["MOD_FER_INCL", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
 
-        ["DEV_MOD_LOGS", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_LOGS", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
 
         ["MOD_LOT_CONS", 'Administrador', 'Desenvolvedor'],
         ["MOD_LOT_EDT", 'Administrador', 'Desenvolvedor'],

@@ -1,0 +1,36 @@
+<grid [items]="logs" [hasEdit]="false" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join">
+    <toolbar></toolbar>
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-select #selectResponsaveis label="Responsável pelo registro" [size]="10" controlName="responsavel_id" [control]="filter!.controls.responsavel_id" 
+            [items]="responsaveis"></input-select>
+            <input-select [size]="2" label="Tipo" icon="bi bi-arrow-up-right-circle" controlName="tipo" [control]="filter!.controls.tipo" [items]="lookup.TIPO_LOG_CHANGE" itemTodos="Todos" valueTodos=""></input-select>
+        </div>
+        <div class="row">
+            <input-datetime [size]="3" datetime label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" labelInfo="Início dos registros"></input-datetime>
+            <input-datetime [size]="3" datetime label="Fim" controlName="data_fim" [control]="filter!.controls.data_fim" labelInfo="Fim dos registros"></input-datetime>
+            <input-text [size]="6" label="ID do registro" controlName="row_id_text" [control]="filter!.controls.row_id_text"></input-text>
+        </div>
+    </filter>
+    <columns>
+        <column title="Responsável" [template]="columnResponsavel">
+            <ng-template let-row="row" #columnResponsavel>
+                <span> {{row.responsavel}} </span>
+            </ng-template>
+        </column>
+        <column title="Criado em" field="date_time" [template]="columnDataCriacao">
+            <ng-template let-row="row" #columnDataCriacao>
+                <span>{{ util.getDateTimeFormatted(row.date_time) }}</span>
+            </ng-template>
+        </column>
+        <column title="ID" field="row_id"></column>
+        <column title="Tipo de Operação" field="type"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>
+
+<!-- 
+
+
+
+-->
