@@ -33,6 +33,7 @@ export class DemandaFormConcluirComponent extends PageFormBase<Demanda, DemandaD
   public modalWidth: number = 800;
   public complexidades: LookupItem[] = [];
   public calendar: CalendarService;
+  public entregas: LookupItem[] = [];
 
   constructor(public injector: Injector) {
     super(injector, Demanda, DemandaDaoService);
@@ -55,17 +56,18 @@ export class DemandaFormConcluirComponent extends PageFormBase<Demanda, DemandaD
       data_inicio: {default: null},
       tempo_despendido: {default: 0},
       data_entrega: {default: null},
-      arquivar: {default: false},
-      descricao_tecnica: {default: ""}
+      arquivar: {default: true},
+      descricao_tecnica: {default: ""},
+      entrega_id: {default: null}
     }, this.cdRef, this.validate);
-    this.join = ["plano.tipo_modalidade", "unidade"];
+    this.join = ["plano.tipo_modalidade", "unidade", "plano.entregas.entrega:id,nome"];
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
 
-    if((controlName == "atividade_id" && !control.value?.length) || 
-      (controlName == "fator_complexidade" && !(control.value > 0)) ||
+    if((controlName == "entrega_id" && !control.value?.length) || 
+      //(controlName == "fator_complexidade" && !(control.value > 0)) ||
       (controlName == "data_entrega" && !this.util.isDataValid(control.value))) {
       result = "Obrigatório";
     }
@@ -100,7 +102,12 @@ export class DemandaFormConcluirComponent extends PageFormBase<Demanda, DemandaD
     if(entity.unidade_id != this.auth.unidade!.id) {
       await this.auth.selecionaUnidade(entity.unidade_id);
     }
-    formValue.arquivar = !!this.entity?.plano?.tipo_modalidade?.dispensa_avaliacao; 
+    this.entregas = entity.plano?.entregas?.map(x => Object.assign({}, {
+      key: x.id,
+      value: x.entrega?.nome || "DESCONHECIDO",
+      data: x
+    })) || [];
+    formValue.arquivar = true; //!!this.entity?.plano?.tipo_modalidade?.dispensa_avaliacao; 
     form.patchValue(formValue);
     this.onDataEntregaChange();
   }

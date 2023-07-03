@@ -578,7 +578,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   }
 
   /**
-   * Método chamado para incluir um item em um grid persistente.
+   * Método chamado para incluir um item no grid.
    */
   public onAddItem() {
     if(!this.adding) {
@@ -599,6 +599,9 @@ export class GridComponent extends ComponentBase implements OnInit {
     }
   }  
 
+  /**
+   * Método chamado durante a edição ou inclusão de um item no grid.
+   */
   public onEditItem(row: any) {
     if(!this.editing) {
       this.editing = row; /* Previne multiplas chamadas para inserir */
@@ -608,6 +611,10 @@ export class GridComponent extends ComponentBase implements OnInit {
     }
   }
 
+  /**
+   * Método chamado durante a exclusão de um item do grid.
+   * @param row 
+   */
   public onDeleteItem(row: any) {
     (async () => {
       const remove = this.remove ? !!(await this.remove(row)) : this.hasItems;
@@ -636,6 +643,10 @@ export class GridComponent extends ComponentBase implements OnInit {
     })();
   }
 
+  /**
+   * Método chamado pelo onSaveItem para o salvamento de um item de um grid editável.
+   * @param itemRow 
+   */
   private async saveItem(itemRow: Base | IIndexable) {
     if(this.form!.valid){
       const entity = this.save ? (await this.save(this.form!, itemRow)) as IIndexable : this.form.value;
@@ -644,7 +655,7 @@ export class GridComponent extends ComponentBase implements OnInit {
         if(index >= 0) {
           Object.assign(this.items[index], this.util.fillForm(this.items[index], entity));
           this.editing = this.items[index];
-          if(this.saveEnd) this.saveEnd(this.items[index]); //REFATORAR
+          if(this.saveEnd) this.saveEnd(this.items[index]);
         }
       }
       this.group(this.items);

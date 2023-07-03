@@ -1,5 +1,5 @@
 <grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [labelAdd]="labelAdd"
-      [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('DEV_MOD_LOGS')" [hasEdit]="false">
+      [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_LOGS')" [hasEdit]="false">
     <toolbar></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">

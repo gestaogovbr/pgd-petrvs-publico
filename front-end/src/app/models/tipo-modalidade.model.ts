@@ -3,7 +3,7 @@ import { Base } from './base.model';
 export class TipoModalidade extends Base {
     public nome: string = ""; /* Nome da modalidade */
     public atividades_homologadas: number = 1; /* Permitir apenas atividades homologadas */
-    public dispensa_avaliacao: number = 0; /* Dispensa a avaliação */
+    public dispensa_avaliacao: number = 1; /* Dispensa a avaliação */
     public exige_adesao: number = 1; /* Exigir adesao */
     public exige_assinatura: number = 1; /* Exigir assinatura */
     public calcula_tempo_despendido: number = 1; /* Calcula tempo despendido */

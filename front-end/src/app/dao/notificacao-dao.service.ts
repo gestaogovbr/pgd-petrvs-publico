@@ -18,4 +18,12 @@ export class NotificacaoDaoService extends DaoBaseService<Notificacao>{
     });
   }
 
+  public marcarComoLido(destinatariosIds: string[]): Promise<number> {
+    return new Promise<number>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/marcar-como-lido', {'destinatarios_ids': destinatariosIds}).subscribe(response => {
+        resolve(response?.marcadas_como_lido || 0);
+      }, error => reject(error));
+    });
+  } 
+
 }

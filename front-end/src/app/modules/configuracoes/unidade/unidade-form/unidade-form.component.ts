@@ -120,7 +120,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     let result = null;
     if(['codigo', 'sigla', 'nome', 'cidade_id', 'entidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    }  else if(['planos_prazo_comparecimento'].indexOf(controlName) >= 0 && !control.value) {
+    } else if(['planos_prazo_comparecimento'].indexOf(controlName) >= 0 && !control.value) {
     result = "Não pode ser zero.";
     }
     return result;
