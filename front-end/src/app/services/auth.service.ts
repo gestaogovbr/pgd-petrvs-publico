@@ -18,6 +18,7 @@ import { IIndexable } from '../models/base.model';
 import { Entidade } from '../models/entidade.model';
 import { UnidadeDaoService } from '../dao/unidade-dao.service';
 import { NotificacaoService } from '../modules/uteis/notificacoes/notificacao.service';
+import { AppComponent } from '../app.component';
 
 export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION" | "SUPER";
 export type Permission = string | (string | string[])[];
@@ -36,6 +37,7 @@ export class AuthService {
   public entidade?: Entidade;
   public unidade?: Unidade;
   public unidades?: Unidade[];
+  public app?: AppComponent;
 
   private _apiToken: string | undefined = undefined;
   private _logging: boolean = false;

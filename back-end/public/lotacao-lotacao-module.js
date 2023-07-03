@@ -283,7 +283,7 @@ class LotacaoListComponent extends src_app_modules_base_page_list_base__WEBPACK_
         const usuarioId = this.urlParams.get("usuario_id");
         this.addParams = { usuario_id: usuarioId };
         this.usuarioDao.getById(usuarioId).then(usuario => {
-            this.title = this.lex.noun("Lotação", true) + this.lex.noun("usuário", false, true) + " " + this.util.apelidoOuNome(usuario);
+            this.title = this.lex.noun("Lotação", true) + " " + this.lex.noun("usuário", false, true) + " " + this.util.apelidoOuNome(usuario);
             this.cdRef.detectChanges();
         });
     }

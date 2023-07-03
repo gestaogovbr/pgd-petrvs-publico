@@ -120,6 +120,7 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
       try {
         result = await this.dao!.save(item);
         item.id = result.id;
+        await this.dao!.notificar(item);
       } catch (error: any) {
         this.error(error.message ? error.message : error);
       } finally {

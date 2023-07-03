@@ -50,7 +50,8 @@ export class AppComponent {
   public entity: EntityService;
   public notificacao: NotificacaoService;
   public menuSchema: any;
-  public menuContexto: any[];
+  public menuToolbar: any[] = [];
+  public menuContexto: any[] = [];
   public contexto: any;
   public menuPgd: any;
   public menuProjeto: any;
@@ -88,6 +89,9 @@ export class AppComponent {
     this.auth.leave = () => {
       this.go.navigate({ route: ['login'] });
     };
+    this.lex.update = (() => {
+      this.setMenuVars();
+    }).bind(this);
     this.globals.refresh = () => {
       this.cdRef.detectChanges();
     };
@@ -281,7 +285,7 @@ export class AppComponent {
           this.menuSchema.RXCADASTRO_ADM_MATERIAS,
           "-",
           //this.menuSchema.RXCADASTRO_ADM_ATRIBUTOS,
-          
+
           this.menuSchema.RXCADASTRO_ADM_CT,
           this.menuSchema.RXCADASTRO_ADM_CARGO,
           this.menuSchema.RXCADASTRO_ADM_FUNCAO,

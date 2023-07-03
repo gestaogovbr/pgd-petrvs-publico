@@ -52,7 +52,6 @@ class CidadeListComponent extends src_app_modules_base_page_list_base__WEBPACK_I
             return result;
         };
         /* Inicializações */
-        //this.title = "Cidades";
         this.title = this.lex.noun("Cidade", true);
         this.code = "MOD_CID";
         this.filter = this.fh.FormBuilder({

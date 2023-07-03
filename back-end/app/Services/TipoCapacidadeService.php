@@ -159,7 +159,7 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_FER_EXCL", "Permite excluir feriado"],
         ["MOD_FER_INCL", "Permite incluir feriados"],
         /* Capacidades do módulo LOGS*/
-        ["DEV_MOD_LOGS", "Permite manter registros de logs"],
+        ["MOD_LOGS", "Permite manter registros de logs"],
         /* Capacidades do módulo LOTAÇÃO*/
         ["MOD_LOT_CONS", "Permite consultar lotação"],
         ["MOD_LOT_EDT", "Permite editar lotação"],

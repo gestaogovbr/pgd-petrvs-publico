@@ -4,9 +4,9 @@ namespace App\Traits;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-use App\Services\UtilService;
 use App\Models\Change;
 use DateTime;
+use App\Services\UtilService;
 
 trait LogChanges
 {
@@ -19,11 +19,7 @@ trait LogChanges
                 if ($model->wasRecentlyCreated) {
                     static::logChange($model, 'ADD');
                 } elseif ($model->getChanges()) {
-                    if(!empty($model->attributes['data_fim'])){
-                        static::logChange($model, 'SOFT_DELETE');
-                    }else{
-                        static::logChange($model, 'EDIT');
-                    }
+                    !empty($model->attributes['data_fim']) ? static::logChange($model, 'SOFT_DELETE') : static::logChange($model, 'EDIT');
                 } else {
                     static::logChange($model, 'EDIT');
                 }
@@ -37,41 +33,17 @@ trait LogChanges
 
     public static function logChange(Model $model, string $action)
     {
-        $config = config("log");
         $util = new UtilService();
+        $config = config("log");
         if($config["changes"]) {
-            $valoresAtuais = []; $valoresAnteriores = []; $valoresAlterados = [];
-            switch ($action) {
-                case 'ADD':
-                    $valoresAtuais = $model->getAttributes();
-                    break;
-
-                case 'EDIT':
-                    $valoresAtuais = $model->getAttributes();     // strings json e '[]'
-                    $valoresAnteriores = $model->getOriginal();   // objetos json e arrays
-                    $valoresAlterados = $util->differentAttributes($valoresAtuais,$valoresAnteriores);
-                    break;
-                case 'SOFT_DELETE':
-                    $valoresAtuais = $model->getAttributes();
-                    $valoresAnteriores = $model->getOriginal();
-                    $valoresAlterados = $util->differentAttributes($valoresAtuais,$valoresAnteriores);
-                    break;
-
-                case 'DELETE':
-                    $valoresAnteriores = $model->getOriginal();
-                    break;
-            }
+            $delta = $action == "ADD" ? $model->getAttributes() : ($action == "DELETE" || $action == "SOFT_DELETE" ? $model->getOriginal() : $util->differentAttributes($model->getAttributes(),$model->getOriginal()));
             Change::create([
                 'date_time' => new DateTime(),
                 'user_id' => Auth::check() ? Auth::user()->id : null,
                 'table_name' => $model->getTable(),
                 'row_id' => $model->attributesToArray()["id"],
                 'type' => $action,
-                'delta' => json_encode([
-                    'versao' => '2.0',
-                    'Valores anteriores' => $valoresAnteriores, 
-                    'Valores atuais' => $valoresAtuais,
-                    'Valores alterados' => $valoresAlterados])
+                'delta' => $delta
             ]);
         }
     }
@@ -89,3 +61,19 @@ trait LogChanges
         }
     }
 }
+
+/* 
+Erro ao salvar registro do traffic:
+Incorrect integer value: 'ec6660df-09f6-4814-97a9-16dc5c1a4a17' for column 'id' at row 1 (SQL: insert into `traffic` (`user_id`, `url`, `request`, `response`, `id`) 
+values (9465b95b-bc67-46a4-a2a5-4c81effdfb2d, http://localhost/web/login-google-token, {}, {}, ec6660df-09f6-4814-97a9-16dc5c1a4a17))",
+
+*/
+
+
+/*
+ OBSERVAÇÕES:
+
+ - O método getChanges() está trazendo campos que não foram alterados, e traz apenas o valor atual, não traz o valor anterior.
+ - O método getDirty() está com o mesmo comportamento do getChanges().
+  
+*/

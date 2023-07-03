@@ -142,7 +142,7 @@ class AlterTiposCapacidadesChangeIds extends Migration
         ["a925169b-e112-11ec-a5bb-0050569c64a0", "MOD_FER_EXCL", "Permite excluir feriado"],
         ["58524ff3-ba5e-11ec-a5bb-0050569c64a0", "MOD_FER_INCL", "Permite incluir feriados"],
         /* Capacidades do módulo LOGS*/
-        ["5a5254fe-d27c-11ec-a5bb-0050569c64a0", "DEV_MOD_LOGS", "Permite manter registros de logs"],
+        ["5a5254fe-d27c-11ec-a5bb-0050569c64a0", "MOD_LOGS", "Permite manter registros de logs"],
         /* Capacidades do módulo LOTAÇÃO*/
         ["593ebdb2-e1d0-11ec-a5bb-0050569c64a0", "MOD_LOT_CONS", "Permite consultar lotação"],
         ["592a7d9f-e1d0-11ec-a5bb-0050569c64a0", "MOD_LOT_EDT", "Permite editar lotação"],

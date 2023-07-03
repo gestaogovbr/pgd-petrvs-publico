@@ -81,8 +81,8 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
 
   constructor(public injector: Injector) {
     super(injector, Plano, PlanoDaoService);
-    this.join = ["unidade.entidade", "entregas.entrega", "plano_entrega.entregas.entrega", "plano_entrega.unidade.entidade", "plano_entrega.programa", 
-                "usuario", "programa.template_tcr", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "atividades.atividade"];
+    this.join = ["unidade.entidade", "entregas.entrega", "entregas.entrega_plano_entrega:id,plano_entrega_id", "plano_entrega.entregas.entrega", "plano_entrega.unidade.entidade", "plano_entrega.programa", 
+                "usuario", "programa.template_tcr", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "atividades.atividade", "entregas.entrega_plano_entrega.entrega"];
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
@@ -94,6 +94,7 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
     this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
     this.documentoDao = injector.get<DocumentoDaoService>(DocumentoDaoService);
     this.planoService = injector.get<PlanoService>(PlanoService);
+    this.modalWidth = 1200;
     this.planoDataset = this.dao!.dataset();
     this.form = this.fh.FormBuilder({
       carga_horaria: {default: ""},
@@ -236,7 +237,6 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
   public onPlanoEntregaSelect(selected: SelectItem) {
     let planoEntrega = selected.entity as PlanoEntrega;
     this.updateEntregas(planoEntrega);
-    //ATUALIZAR O GRID DE ENTREGAS this.planoListEntrega
     this.form?.controls.data_inicio_vigencia.updateValueAndValidity();
     this.form?.controls.data_fim_vigencia.updateValueAndValidity();
     this.programa = planoEntrega?.programa as Programa;

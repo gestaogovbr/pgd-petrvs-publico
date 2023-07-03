@@ -6,6 +6,7 @@ import { Comentario, HasComentarios } from './comentario';
 import { DemandaAvaliacao } from './demanda-avaliacao.model';
 import { DemandaEntrega } from './demanda-entrega.model';
 import { DemandaPausa } from './demanda-pausa.model';
+import { PlanoTrabalhoEntrega } from './plano-trabalho-entrega.model';
 import { Plano } from './plano.model';
 import { TipoProcesso } from './tipo-processo.model';
 import { Unidade } from './unidade.model';
@@ -41,6 +42,7 @@ export class Demanda extends Base implements HasComentarios {
     public avaliacao?: DemandaAvaliacao;
     public plano?: Plano;
     public tipo_processo?: TipoProcesso;
+    public entrega?: PlanoTrabalhoEntrega;
 
     public numero: number = 0; /* Numero da demanda */
     public id_requisicao: number | null = null; /* ID da requisição do sistema integrado, caso seja o Sei será o ID_Documento */
@@ -70,12 +72,14 @@ export class Demanda extends Base implements HasComentarios {
     public etiquetas: LookupItem[] = []; /* Etiquetas */
     public checklist: DemandaChecklist[] = []; /* Checklist */
     public prioridade: number | null = null; /* Nível de prioridade */
+    public progresso: number = 0; /* Progresso a execução da atividade */
     public recalcula_prazo: boolean = false; /* Recalcula data de entrega baseado nos dias planejado */
     public metadados: DemandaMetadados | undefined = undefined; /* Campo virtual contendo informações calculadas pelo servidor */
     public comentarios: Comentario[] = []; /* Comentarios da demanda */
     public pausas: DemandaPausa[] = []; /* Pausas da demanda */
     public entregas: DemandaEntrega[] = []; /* Entregas da demanda */
 
+    public entrega_id: string | null = null;
     public atividade_id: string | null = null;
     public demandante_id: string = "";
     public usuario_id: string | null = null;

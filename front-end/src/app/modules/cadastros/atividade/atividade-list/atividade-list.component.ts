@@ -46,6 +46,23 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
     this.formHomologacao = this.fh.FormBuilder({
       data_homologacao: { default: new Date() }
     }, this.cdRef, this.validateHomologacao);
+    // Testa se o usuário possui permissão para exibir dados do tipo de atividade
+    if (this.auth.hasPermissionTo("MOD_ATV_CONS")) {
+      this.options.push({
+        icon: "bi bi-info-circle",
+        label: "Informações",
+        onClick: this.consult.bind(this)
+      });
+    }
+    // Testa se o usuário possui permissão para excluir o tipo de atividade
+    if (this.auth.hasPermissionTo("MOD_ATV_EXCL")) {
+      this.options.push({
+        icon: "bi bi-trash",
+        label: "Excluir",
+        onClick: this.delete.bind(this)
+      });
+    }
+    // Testa se o usuário tem permissão de homologar
     this.multiselectMenu = !this.auth.hasPermissionTo('MOD_ATV_EDT_OTR_OP_HOM') ? [] : [
       {
         icon: "bi bi-check",
@@ -74,7 +91,7 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
     // Testa se o usuário possui permissão para exibir dados de atividade
     if (this.auth.hasPermissionTo("MOD_ATV_CONS")) result.push({ icon: "bi bi-info-circle", label: "Informações", onClick: this.consult.bind(this) });
     // Testa se o usuário possui permissão para homologar a atividade
-    if (this.auth.hasPermissionTo('MOD_ATV_EDT_OTR_OP_HOM')) result.push(Object.assign({}, this.grid?.BUTTON_EDIT, { onClick: this.edit.bind(this) }));
+    //if (this.auth.hasPermissionTo('MOD_ATV_EDT_OTR_OP_HOM')) result.push(Object.assign({}, this.grid?.BUTTON_EDIT, { onClick: this.edit.bind(this) }));
     // Testa se o usuário possui permissão para excluir a atividade
     if (this.auth.hasPermissionTo("MOD_ATV_EXCL")) result.push({ icon: "bi bi-trash", label: "Excluir", onClick: this.delete.bind(this) });
     return result;
@@ -86,8 +103,9 @@ export class AtividadeListComponent extends PageListBase<Atividade, AtividadeDao
 
     if (atividade.homologado || !this.auth.hasPermissionTo('MOD_ATV_EDT_OTR_OP_HOM')) {
       result.push(Object.assign({}, this.grid?.BUTTON_EDIT, { onClick: this.edit.bind(this) }));
-    } else {
-      result.push({ hint: "Homologar", icon: "bi bi-hand-thumbs-up", onClick: this.homologar.bind(this) });
+    } else if(this.auth.hasPermissionTo("MOD_ATV_CONS")) {
+      result.push({ icon: "bi bi-info-circle", hint: "Informações", onClick: this.consult.bind(this) });
+      //result.push({ hint: "Homologar", icon: "bi bi-hand-thumbs-up", onClick: this.homologar.bind(this) });*/
     }
     return result;
   }

@@ -22,7 +22,7 @@ class CreateChangesTable extends Migration
             $table->enum('type', ["ADD", "EDIT", "DELETE"])->comment('Qual operação o log está registrando');
             $table->json('delta')->comment('Alterações');
         });
-    }//CRIAR INDICE PARA OS CAMPOS DE TABLE_NAME + ROW_ID, USER_ID
+    }
 
     /**
      * Reverse the migrations.

@@ -23,7 +23,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
   @ViewChild('dropdownButton', {static: false}) dropdownButton?: ElementRef;
   @Output() change = new EventEmitter<Event>();
   @Output() details = new EventEmitter<SelectItem>();
-  @Input() hostClass: string = ""; 
+  @Input() hostClass: string = "";
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
   @Input() disabled?: string;
@@ -34,8 +34,9 @@ export class InputSelectComponent extends InputBase implements OnInit {
   @Input() bold: boolean = false;
   @Input() fields: string[] = [];
   @Input() dao?: DaoBaseService<Base> = undefined;
-  @Input() itemNull: string = " - ";
   @Input() addRoute?: FullRoute;
+  @Input() searchRoute?: FullRoute;
+  @Input() afterSearch?: (result: any) => void;
   @Input() form?: FormGroup;
   @Input() source?: any;
   @Input() path?: string;
@@ -45,7 +46,11 @@ export class InputSelectComponent extends InputBase implements OnInit {
   @Input() liveSearch?: string;
   @Input() detailsButton?: string;
   @Input() detailsButtonIcon?: string;
+  @Input() searchButton?: string;
+  @Input() searchButtonIcon?: string;
   @Input() listHeight: number = 200;
+  @Input() prefix?: string;
+  @Input() sufix?: string;
   @Input() set where(value: any[] | undefined) {
     if(JSON.stringify(this._where) != JSON.stringify(value)) {
       this._where = value;
@@ -55,14 +60,17 @@ export class InputSelectComponent extends InputBase implements OnInit {
   get where(): any[] | undefined {
     return this._where;
   }
-  @Input() set itemTodos(value: string | undefined) {
-    if(this._itemTodos != value) {
-      this._itemTodos = value;
-      this.itemTodosButton.value = value || "";
-    }
+  @Input() set itemTodos(value: string) {
+    if(this.itemTodosButton.value != value) this.itemTodosButton.value = value;
   }
-  get itemTodos(): string | undefined {
-    return this._itemTodos;
+  get itemTodos(): string {
+    return this.itemTodosButton.value;
+  }
+  @Input() set itemNull(value: string) {
+    if(this.itemNullButton.value != value) this.itemNullButton.value = value;
+  }
+  get itemNull(): string  {
+    return this.itemNullButton.value;
   }
   @Input() set valueTodos(value: any) {
     if(this.itemTodosButton.key != value) this.itemTodosButton.key = value;
@@ -87,7 +95,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
     return this.getControl();
   }
   @Input() set loading(value: boolean) {
-    if(this._loading != value) {
+    if (this._loading != value) {
       this._loading = value;
       this.detectChanges();
     }
@@ -96,16 +104,15 @@ export class InputSelectComponent extends InputBase implements OnInit {
     return this._loading;
   }
   @Input() set size(value: number) {
-    this.setSize(value); 
+    this.setSize(value);
   }
   get size(): number {
-    return this.getSize(); 
+    return this.getSize();
   }
 
   private _items: LookupItem[] = [];
   private _loading: boolean = false;
   private _where: any[] | undefined = undefined;
-  private _itemTodos?: string = undefined; 
 
   public go: NavigateService;
   public filterControl: FormControl = new FormControl("");
@@ -145,9 +152,9 @@ export class InputSelectComponent extends InputBase implements OnInit {
   public get isNullable(): boolean {
     return this.nullable != undefined;
   }
-
+  
   public get isTodos(): boolean {
-    return this.itemTodos != undefined;
+    return !!this.itemTodos?.length;
   }
 
   public get isNoIcon(): boolean {
@@ -220,6 +227,10 @@ export class InputSelectComponent extends InputBase implements OnInit {
     return this.detailsButton !== undefined;
   }
 
+  public get isSearch(): boolean {
+    return this.searchButton !== undefined;
+  }
+
   public setValue(value: any) {
     if((this.control && this.control.value != value) || (this.value != value)) {
       this.value = value;
@@ -246,11 +257,24 @@ export class InputSelectComponent extends InputBase implements OnInit {
   public onAddClick(event: Event) {
     const modalRoute = this.addRoute!;
     modalRoute.params = Object.assign(modalRoute.params || {}, { modal: true });
-    this.go.navigate(this.addRoute!, {modalClose: (result) => {
-      if(result?.length) {
-        this.control?.setValue(result);
-        this.loadItems();
+    this.go.navigate(this.addRoute!, {
+      modalClose: (result) => {
+        if (result?.length) {
+          this.control?.setValue(result);
+          this.loadItems();
+        }
       }
-    }});
+    });
+  }
+
+  public onSearchClick(searchRoute?: FullRoute) {
+    const modalRoute = searchRoute!;
+    modalRoute.params = Object.assign(modalRoute?.params || {}, { modal: true });
+    this.go.navigate(searchRoute!, {
+      metadata: {selectable: true},
+      modalClose: (result: any) => {
+        if (result && this.afterSearch) this.afterSearch(result);    
+      }
+    });
   }
 }

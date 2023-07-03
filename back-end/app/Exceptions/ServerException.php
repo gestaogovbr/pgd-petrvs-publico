@@ -24,6 +24,7 @@ class ServerException extends Exception
         "ValidateDocumento" => "Erro ao validar Documento",
         "ValidatePainel" => "Erro ao validar Painel",
         "ValidatePlanoEntrega" => "Erro ao validar Documento",
+        "ValidatePlanoTrabalhoEntrega" => "Erro ao validar Entrega do Plano de Trabalho",
         "ValidateProgramaParticipante" => "Erro ao validar o Participante"
     ];
 

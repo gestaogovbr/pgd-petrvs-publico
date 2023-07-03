@@ -45,30 +45,8 @@
         <tab key="ENTREGAS" [label]="lex.noun('Entrega', true)">
             <top-alert *ngIf="!form!.controls.plano_entrega_id.value?.length" type="warning" [message]="'Antes de incluir ' + lex.noun('entrega',true) + ' neste ' + lex.noun('Plano de Trabalho') + ', é necessário selecionar um ' + lex.noun('Plano de Entregas') + '!'"></top-alert>
             <div *ngIf="form!.controls.plano_entrega_id.value?.length">
-<!--                 <grid #gridEntregas [control]="form!.controls.entregas" [form]="formEntregas" [add]="addEntregas.bind(this)" [load]="loadEntregas.bind(this)" [hasDelete]="true" [remove]="removeEntregas.bind(this)" [save]="saveEntregas.bind(this)" editable>
-                    <columns>
-                        <column [title]="lex.noun('Entrega', true)" titleHint="lex.noun('Entrega')+ ' do '+ lex.noun('plano de entrega')+ 'da' +lex.noun('unidade')" [template]="columnEntrega" [editTemplate]="editEntrega">
-                            <ng-template let-row="row" #columnEntrega>
-                                <strong>{{row.entrega?.entrega?.nome || ""}}</strong><br>
-                                <small>{{row.entrega?.descricao}}</small>
-                            </ng-template>
-                            <ng-template let-row="row" #editEntrega>
-                                <input-select [size]="12" #entrega controlName="entrega_id" [control]="formEntregas!.controls.entrega_id" [items]="entregas"></input-select>
-                            </ng-template>
-                        </column>
-                        <column title="Detalhamento" titleHint="'Detalhamento da ' + lex.noun('Entrega')" [template]="columnDetalhamento" [editTemplate]="editDetalhamento">
-                            <ng-template let-row="row" #columnDetalhamento>
-                                <span> {{row.nome || ""}}</span>
-                            </ng-template>
-                            <ng-template let-row="row" #editDetalhamento>
-                                <input-text [size]="12" controlName="nome" [control]="formEntregas!.controls.nome"></input-text>
-                            </ng-template>
-                        </column>
-                        <column type="options"></column>
-                    </columns>
-                </grid> -->
                 <editable-form [form]="formEntregas!"  [noButtons]="'true'">
-                    <plano-list-entrega noPersist [entity]="entity" [entregas]="entity?.entregas"></plano-list-entrega>
+                    <plano-list-entrega noPersist [entity]="entity" [entregasPlanoEntrega]="entregas"></plano-list-entrega>
                 </editable-form>
             </div>
         </tab>

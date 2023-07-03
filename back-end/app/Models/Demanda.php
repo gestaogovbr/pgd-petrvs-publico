@@ -62,6 +62,8 @@ class Demanda extends ModelBase
         'avaliacao_id', /* char(36); */
         'plano_id', /* char(36); */
         'tipo_processo_id', /* char(36); */
+        'progresso', /* char(36); */
+        'entrega_id', /* char(36); */
     ];
 
     public $fillable_changes = [
