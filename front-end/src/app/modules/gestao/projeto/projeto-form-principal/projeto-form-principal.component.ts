@@ -68,13 +68,12 @@ export class ProjetoFormPrincipalComponent extends PageFrameBase {
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-
-    if((controlName == "nome" && !control.value?.length) || 
-      (controlName == "fator_complexidade" && !(control.value > 0)) ||
-      (controlName == "data_entrega" && !this.util.isDataValid(control.value))) {
+    let form = this.form?.value || {};
+    if((controlName == "nome" && !control.value?.length) ||
+      (form.usa_baseline && ["inicio_baseline", "termino_baseline"].includes(controlName) && !this.util.isDataValid(control.value)) || 
+      (["inicio", "termino"].includes(controlName) && !this.util.isDataValid(control.value))) {
       result = "Obrigatório";
     }
-    
     return result;
   }
   
@@ -123,12 +122,26 @@ export class ProjetoFormPrincipalComponent extends PageFrameBase {
     this.cdRef.detectChanges();
   }
 
+  public onUsaBaselineChange() {
+    if(this.form!.controls.usa_baseline.value) {
+      if(!this.util.isDataValid(this.form!.controls.inicio_baseline.value)) this.form!.controls.inicio_baseline.setValue(this.form!.controls.inicio.value);
+      if(!this.util.isDataValid(this.form!.controls.termino_baseline.value)) this.form!.controls.inicio_baseline.setValue(this.form!.controls.termino.value);
+    } else {
+      this.form!.controls.inicio_baseline.setValue(null);
+      this.form!.controls.termino_baseline.setValue(null);
+    }
+  }
+
   public get intervaloAutomatico(): string | undefined {
     return this.form?.controls.calcula_intervalo.value ? "true" : undefined;
   }
 
   public get usaBaseline(): string | undefined {
     return this.form!.controls.usa_baseline.value ? undefined : "true";
+  }
+
+  public get usaHoras(): string | undefined {
+    return this.form!.controls.usa_horas.value ? undefined : "true";
   }
 
   public get progressoAutomatico(): string | undefined {
