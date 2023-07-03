@@ -33,8 +33,6 @@ export class InputDatetimeComponent extends InputBase implements OnInit {
   @Input() loading: boolean = false;
   @Input() prefix?: string;
   @Input() sufix?: string;
-  @Input() date?: string;
-  @Input() time?: string;
   @Input() time24hours?: string;
   @Input() noIcon?: string;
   @Input() noIndicator?: string;
@@ -54,8 +52,30 @@ export class InputDatetimeComponent extends InputBase implements OnInit {
   get size(): number {
     return this.getSize(); 
   }
+  @Input() set date(value: string | undefined) {
+    if(this._date != value) {
+      this._date = value;
+      this.detectChanges()
+      this.updateInputs();
+    }
+  }
+  get date(): string | undefined {
+    return this._date;
+  }
+  @Input() set time(value: string | undefined) {
+    if(this._time != value) {
+      this._time = value;
+      this.detectChanges()
+      this.updateInputs();
+    }
+  }
+  get time(): string | undefined {
+    return this._time;
+  }
 
   public util: UtilService;
+  private _date?: string;
+  private _time?: string;
 
   constructor(public injector: Injector) {
     super(injector);
@@ -87,12 +107,14 @@ export class InputDatetimeComponent extends InputBase implements OnInit {
   }
 
   public updateInputs() {
-    if(this.dateInput) this.dateInput.nativeElement.value = this.getDateValue();
-    if(this.hasTimeInput) {
-      this.timeInput!.nativeElement.value = this.getTimeValue();
-      this.timeInput!.nativeElement.dispatchEvent(new Event("input"));
+    if(this.viewInit) {
+      if(this.dateInput) this.dateInput.nativeElement.value = this.getDateValue();
+      if(this.hasTimeInput && this.timeInput) {
+        this.timeInput!.nativeElement.value = this.getTimeValue();
+        this.timeInput!.nativeElement.dispatchEvent(new Event("input"));
+      }
+      this.cdRef.detectChanges();
     }
-    this.cdRef.detectChanges();
   }
 
   public get hasTimeInput(): boolean {
