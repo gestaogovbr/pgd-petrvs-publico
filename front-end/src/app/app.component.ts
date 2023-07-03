@@ -89,9 +89,9 @@ export class AppComponent {
     this.auth.leave = () => {
       this.go.navigate({ route: ['login'] });
     };
-    this.lex.update = (() => {
+   /* this.lex.update = (() => {
       this.setMenuVars();
-    }).bind(this);
+    }).bind(this);*/
     this.globals.refresh = () => {
       this.cdRef.detectChanges();
     };
@@ -108,6 +108,9 @@ export class AppComponent {
     this.lex.cdRef = this.cdRef;
     //this.auth.loadGapi();
     /* Definição do menu do sistema */
+   
+  
+
 
     this.menuSchema = {
       /* Cadastros */
