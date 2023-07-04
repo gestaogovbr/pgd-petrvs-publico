@@ -13,6 +13,9 @@ export type Translate = {
   providedIn: 'root'
 })
 export class LexicalService {
+
+  public update?: () => void;
+
   /* Colocar single e plural em minúsculo (Sempre seguir a ordem Alfabética)*/
   public defaults: Translate = {
     "adesao": {single: "adesão", plural: "adesões", female: true},
@@ -89,6 +92,7 @@ export class LexicalService {
       } : value;
     });
     this.vocabulary = result;
+    if(this.update) this.update();
     this.cdRef?.detectChanges();
   }
 

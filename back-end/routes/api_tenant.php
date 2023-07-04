@@ -163,6 +163,7 @@ Route::middleware(['auth:sanctum'])->prefix('Programa')->group(function () { def
 Route::middleware(['auth:sanctum'])->prefix('ProgramaParticipante')->group(function () {
      defaultRoutes(ProgramaParticipanteController::class); 
      Route::post('habilitar', [ProgramaParticipanteController::class, 'habilitar']);
+     Route::post('notificar', [ProgramaParticipanteController::class, 'notificar']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Tarefa')->group(function () { defaultRoutes(TarefaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Template')->group(function () { defaultRoutes(TemplateController::class); });

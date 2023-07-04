@@ -44,4 +44,20 @@ class ProgramaParticipanteController extends ControllerBase {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
+
+    public function notificar(Request $request) {
+        try {
+            $data = $request->validate([
+                'participantes_ids' => ['string'],
+                'habilitado' => ['required'],
+                'programa_id' => ['string'],
+            ]);
+            return response()->json([
+                'success' => true,
+                'data' => $this->service->notificar($data)
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
 }
