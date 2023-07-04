@@ -1167,36 +1167,50 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
         });
     }
     /**
+     * Método chamado para inserir uma entrega de plano de trabalho no grid, seja este persistente ou não.
+     * @returns
+     */
+    addEntrega() {
+        var _a;
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            return Object.assign(new src_app_models_plano_trabalho_entrega_model__WEBPACK_IMPORTED_MODULE_6__["PlanoTrabalhoEntrega"](), {
+                _status: this.isNoPersist ? "ADD" : "",
+                id: this.dao.generateUuid(),
+                plano_id: (_a = this.entity) === null || _a === void 0 ? void 0 : _a.id
+            });
+        });
+    }
+    /**
      * Método utilizado durante a inclusão/alteração de uma entrega de plano de trabalho no grid, seja ele persistente ou não
      * @param form
      * @param row
      */
     loadEntrega(form, row) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             form.controls.descricao.setValue(row.descricao);
             form.controls.forca_trabalho.setValue(row.forca_trabalho);
             form.controls.plano_id.setValue(row.plano_id);
-            if (!((_a = row.plano_entrega_entrega_id) === null || _a === void 0 ? void 0 : _a.length) && ((_b = row.entrega_id) === null || _b === void 0 ? void 0 : _b.length)) {
+            if (!((_a = row.entrega_id) === null || _a === void 0 ? void 0 : _a.length) && !((_b = row.plano_entrega_entrega_id) === null || _b === void 0 ? void 0 : _b.length)) { // É uma nova entrega
+                form.controls.origem.setValue('MESMA_UNIDADE');
+                form.controls.entrega_id.setValue(null);
+                form.controls.plano_entrega_entrega_id.setValue(null);
+            }
+            else if (!((_c = row.plano_entrega_entrega_id) === null || _c === void 0 ? void 0 : _c.length) && !!((_d = row.entrega_id) === null || _d === void 0 ? void 0 : _d.length)) { // É uma entrega do tipo catálogo
                 form.controls.origem.setValue('CATALOGO');
                 form.controls.entrega_id.setValue(row.entrega_id);
                 form.controls.plano_entrega_entrega_id.setValue(null);
             }
-            else if (!((_c = row.entrega_id) === null || _c === void 0 ? void 0 : _c.length) && ((_d = row.plano_entrega_entrega_id) === null || _d === void 0 ? void 0 : _d.length) && ((_e = row.plano_entrega_entrega) === null || _e === void 0 ? void 0 : _e.plano_entrega_id) == ((_f = this.entity) === null || _f === void 0 ? void 0 : _f.plano_entrega_id)) {
+            else if (!((_e = row.entrega_id) === null || _e === void 0 ? void 0 : _e.length) && !!((_f = row.plano_entrega_entrega_id) === null || _f === void 0 ? void 0 : _f.length) && (((_g = row.objeto) === null || _g === void 0 ? void 0 : _g.plano_entrega_id) || ((_h = row.plano_entrega_entrega) === null || _h === void 0 ? void 0 : _h.plano_entrega_id)) == ((_j = this.entity) === null || _j === void 0 ? void 0 : _j.plano_entrega_id)) {
                 form.controls.origem.setValue('MESMA_UNIDADE');
                 form.controls.entrega_id.setValue(null);
                 form.controls.plano_entrega_entrega_id.setValue(row.plano_entrega_entrega_id);
             }
-            else if (!((_g = row.entrega_id) === null || _g === void 0 ? void 0 : _g.length) && ((_h = row.plano_entrega_entrega_id) === null || _h === void 0 ? void 0 : _h.length) && ((_j = row.plano_entrega_entrega) === null || _j === void 0 ? void 0 : _j.plano_entrega_id) != ((_k = this.entity) === null || _k === void 0 ? void 0 : _k.plano_entrega_id)) {
+            else if (!((_k = row.entrega_id) === null || _k === void 0 ? void 0 : _k.length) && !!((_l = row.plano_entrega_entrega_id) === null || _l === void 0 ? void 0 : _l.length) && (((_m = row.objeto) === null || _m === void 0 ? void 0 : _m.plano_entrega_id) || ((_o = row.plano_entrega_entrega) === null || _o === void 0 ? void 0 : _o.plano_entrega_id)) != ((_p = this.entity) === null || _p === void 0 ? void 0 : _p.plano_entrega_id)) {
                 form.controls.origem.setValue('OUTRA_UNIDADE');
                 form.controls.entrega_id.setValue(null);
-                yield this.carregarEntregasOutraUnidade((_l = row.plano_entrega_entrega) === null || _l === void 0 ? void 0 : _l.plano_entrega_id);
+                yield this.carregarEntregasOutraUnidade((_q = row.plano_entrega_entrega) === null || _q === void 0 ? void 0 : _q.plano_entrega_id);
                 form.controls.plano_entrega_entrega_id.setValue(row.plano_entrega_entrega_id);
-            }
-            else { // inclusão de uma nova entrega
-                form.controls.origem.setValue('MESMA_UNIDADE');
-                form.controls.entrega_id.setValue(null);
-                form.controls.plano_entrega_entrega_id.setValue(null);
             }
         });
     }
@@ -1207,20 +1221,6 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
      */
     somaForcaTrabalho(entregas = []) {
         return entregas.map(x => parseFloat(x.forca_trabalho)).reduce((a, b) => a + b, 0);
-    }
-    /**
-     * Método chamado para inserir uma entrega de plano de trabalho no grid, seja este persistente ou não.
-     * @returns
-     */
-    addEntrega() {
-        var _a;
-        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            return Object.assign(new src_app_models_plano_trabalho_entrega_model__WEBPACK_IMPORTED_MODULE_6__["PlanoTrabalhoEntrega"](), {
-                _status: "ADD",
-                id: this.dao.generateUuid(),
-                plano_id: (_a = this.entity) === null || _a === void 0 ? void 0 : _a.id
-            });
-        });
     }
     /**
      * Método chamado para a exclusão de uma entrega de plano de trabalho do grid, seja este persistente ou não.
@@ -1325,19 +1325,6 @@ class PlanoListEntregaComponent extends src_app_modules_base_page_frame_base__WE
         IdDoPlanoEntregaDaEntrega = !!((_h = row.objeto) === null || _h === void 0 ? void 0 : _h.id.length) ? ((_j = row.objeto) === null || _j === void 0 ? void 0 : _j.plano_entrega_id) || "Desconhecido3" : row.plano_entrega_entrega.plano_entrega_id || "Desconhecido4";
         [badge, cor] = IdDoPlanoEntregaDoPlanoTrabalho == IdDoPlanoEntregaDaEntrega ? ['Mesma unidade', 'success'] : ['Outra unidade', 'primary'];
         nome = !!((_k = row.objeto) === null || _k === void 0 ? void 0 : _k.id.length) ? ((_l = row.objeto) === null || _l === void 0 ? void 0 : _l.entrega.nome) || "Desconhecido5" : ((_m = row.plano_entrega_entrega) === null || _m === void 0 ? void 0 : _m.entrega.nome) || "Desconhecido6";
-        /*     console.log(entrega.id);
-        if(entrega.entrega_id?.length) return ['Catálogo', 'secondary', entrega.entrega?.nome || (this.novaEntrega?.id.length && this.novaEntrega?.id == entrega.id ? this.novaEntrega?.entrega?.nome || "Desconhecido" : 'Desconhecido1')];
-        let IdDoPlanoEntregaDoPlanoTrabalho:string, ItemSelecionado:PlanoEntregaEntrega, nomeEntregaItemSelecionado:string, IdDoPlanoEntregaDaEntrega:string, badge:string, nome:string, cor:string;
-        IdDoPlanoEntregaDoPlanoTrabalho = this.entity?.plano_entrega_id || this.entregasPlanoEntrega[0].data.plano_entrega_id;
-        console.log('Id do Plano de Entrega do Plano de Trabalho: ',IdDoPlanoEntregaDoPlanoTrabalho);
-        ItemSelecionado = this.entregaMesmaUnidade?.selectedItem?.data || this.entregaOutraUnidade?.selectedItem?.data;
-        nomeEntregaItemSelecionado = ItemSelecionado?.entrega?.nome || "Desconhecido2";
-        console.log('Nome da Entrega do Item Selecionado: ', nomeEntregaItemSelecionado);
-        IdDoPlanoEntregaDaEntrega = !this.entity?.id.length ? ItemSelecionado.plano_entrega_id! : ( (this.novaEntrega?.id.length && this.novaEntrega.id == entrega.id) ? this.novaEntrega?.plano_entrega_entrega?.plano_entrega_id || "Desconhecido3": entrega.plano_entrega_entrega?.plano_entrega_id || "Desconhecido4");
-        console.log('Id do Plano de Entrega da Entrega: ', IdDoPlanoEntregaDaEntrega);
-        [badge,cor] = IdDoPlanoEntregaDoPlanoTrabalho == IdDoPlanoEntregaDaEntrega ? ['Mesma unidade', 'success'] : ['Outra unidade','primary'];
-            nome = !this.entity?.id.length ? nomeEntregaItemSelecionado : ( (this.novaEntrega?.id.length && this.novaEntrega.id == entrega.id) ? this.novaEntrega?.plano_entrega_entrega?.entrega?.nome || "Desconhecido5" : entrega.plano_entrega_entrega?.entrega?.nome || "entrega.id: "+entrega.id+" - plano_entrega_entrega.id: "+entrega.plano_entrega_entrega?.id || "Desconhecido6");
-        console.log('badge, cor, nome',[badge,cor,nome]); */
         return { label: badge, cor: cor, nome: nome };
     }
     /* ---------  TRATAMENTO DOS EVENTOS ----------- */

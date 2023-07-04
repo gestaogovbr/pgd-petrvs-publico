@@ -46,7 +46,7 @@ class AlterTiposCapacidadesChangeIds extends Migration
         ["57c060e3-ba5e-11ec-a5bb-0050569c64a0", "MOD_ATV_INCL_UND", "Permite incluir unidade associada à atividade"],
         ["57c70921-ba5e-11ec-a5bb-0050569c64a0", "MOD_ATV_INCL_VAR_P", "Permite incluir dados guia variação e produtividade"],
         ["57b2bae5-ba5e-11ec-a5bb-0050569c64a0", "MOD_ATV_PCPL", "Permite incluir atividades na guia principal"],
-        /* Capacidades do módulo CONFIGURAÇÂO*/
+        /* Capacidades do módulo CONFIGURAÇÃO*/
         ["72d68e2e-ca46-11ec-a5bb-0050569c64a0", "MOD_CFG_ENTD", "Permite acessar Entidade no menu configurações"],
         ["59d38d3d-ba5e-11ec-a5bb-0050569c64a0", "MOD_CFG_PERFS", "Permite configuração de perfis no petrvs"],
         ["59a42d8c-ba5e-11ec-a5bb-0050569c64a0", "MOD_CFG_PREF", "Permite configurar preferências"],

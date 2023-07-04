@@ -24,7 +24,7 @@ class CreateAdesaoNumeroTrigger extends Migration
                 END
             ');
         }
-        /* Solução para reolver programa com a migration (rollback excluindo sequence_demanda_numero ao invés do correto) */
+        /* Solução para resolver programa com a migration (rollback excluindo sequence_demanda_numero ao invés do correto) */
         if(!$database->hasStoredProcedure("sequence_demanda_numero")) {
             DB::unprepared('
                 CREATE PROCEDURE sequence_demanda_numero() BEGIN

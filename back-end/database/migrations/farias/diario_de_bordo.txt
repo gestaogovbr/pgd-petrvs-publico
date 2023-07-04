@@ -1,0 +1,7 @@
+Diario de bordo:
+
+tabela              campos removidos                    campos renomeados
+-------------------------------------------------------------------------------
+entidades
+                                                        layout_formulario_demanda->layout_formulario_atividade
+                                                        campos_ocultos_demanda->campos_ocultos_atividade
