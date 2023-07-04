@@ -10,16 +10,16 @@
     </div>
     <div class="row">
         <div class="col-md-4">
-            <separator title="Usa Baseline (planejado)?" [control]="form!.controls.usa_baseline" labelInfo="Se o utiliza baseline no projeto (planejamento inicial)">
-                <input-datetime [date]="form!.controls.usa_horas.value ? undefined : 'true'" [size]="6" noIcon label="Início planejado" [disabled]="usaBaseline" icon="bi bi-calendar-date" controlName="inicio"></input-datetime>
-                <input-datetime [date]="form!.controls.usa_horas.value ? undefined : 'true'" [size]="6" noIcon label="Término planejado" [disabled]="usaBaseline" icon="bi bi-calendar-date" controlName="termino"></input-datetime>
+            <separator title="Usa Baseline (planejado)?" [control]="form!.controls.usa_baseline" (change)="onUsaBaselineChange()" labelInfo="Se o utiliza baseline no projeto (planejamento inicial)">
+                <input-datetime [date]="usaHoras" [size]="6" noIcon label="Início planejado" [disabled]="usaBaseline" icon="bi bi-calendar-date" controlName="inicio_baseline"></input-datetime>
+                <input-datetime [date]="usaHoras" [size]="6" noIcon label="Término planejado" [disabled]="usaBaseline" icon="bi bi-calendar-date" controlName="termino_baseline"></input-datetime>
             </separator>
         </div>
         <div class="col-md-6">
             <!--input-switch label="Auto" [size]="1" controlName="calcula_intervalo"  ></input-switch//-->
             <separator title="Cronograma automático?" transparent [control]="form!.controls.calcula_intervalo" (change)="onIntervaloAutomaticoChange($event)" labelInfo="Se o período do projeto será calculado automaticamente pelas tarefas">
-                <input-datetime [date]="form!.controls.usa_horas.value ? undefined : 'true'" [size]="4" noIcon label="Início real" [disabled]="intervaloAutomatico" icon="bi bi-calendar-date" controlName="inicio"></input-datetime>
-                <input-datetime [date]="form!.controls.usa_horas.value ? undefined : 'true'" [size]="4" noIcon label="Término real" [disabled]="intervaloAutomatico" icon="bi bi-calendar-date" controlName="termino"></input-datetime>
+                <input-datetime [date]="usaHoras" [size]="4" noIcon label="Início real" [disabled]="intervaloAutomatico" icon="bi bi-calendar-date" controlName="inicio"></input-datetime>
+                <input-datetime [date]="usaHoras" [size]="4" noIcon label="Término real" [disabled]="intervaloAutomatico" icon="bi bi-calendar-date" controlName="termino"></input-datetime>
                 <input-workload daysOrHours [size]="4" [unit]="unitDuracao" [disabled]="intervaloAutomatico" label="Duração" controlName="duracao" [control]="form!.controls.carga_horaria" [unitChange]="onUnitDuracaoChange.bind(this)" labelInfo="Se o projeto será calculado em horas ou dias"></input-workload>
             </separator>
         </div>

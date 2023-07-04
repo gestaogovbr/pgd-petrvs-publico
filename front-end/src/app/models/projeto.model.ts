@@ -51,8 +51,8 @@ export class Projeto extends Base implements HasComentarios, HasAlocacoes, HasTa
     public data_fim: Date | null = null;  /* Data final do registro */
     public inicio?: Date = new Date();  /* Inicio do projeto */
     public termino?: Date = new Date();  /* Fim do projeto */
-    public inicio_baseline: Date | null = null;  /* Inicio do projeto (Baseline) */
-    public termino_baseline: Date | null = null;  /* Fim do projeto (Baseline) */
+    public inicio_baseline: Date | null = new Date();  /* Inicio do projeto (Baseline) */
+    public termino_baseline: Date | null = new Date();  /* Fim do projeto (Baseline) */
     public custo: number = 0;  /* Custo do projeto */
     public calcula_custos: boolean = true; /* Se o projeto calcula custos */
     public tempo_corrido: boolean = false; /* Se o tempo é corrido ou usa a configuração de fins de semana, feriados e horário do expediente (quando usar horas) */

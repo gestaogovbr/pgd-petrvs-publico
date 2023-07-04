@@ -26,7 +26,7 @@ export class NotificacaoService {
     if(this.auth.usuario) this.notificacaoService.naoLidas().then((naoLidas) => this.naoLidas = naoLidas);
   }
 
-  public hartBeat() {
+  public heartbeat() {
     this.updateNaoLidas();
     if(!this.intervalId) this.intervalId = setInterval(this.updateNaoLidas.bind(this), 60 * 1000);
   }

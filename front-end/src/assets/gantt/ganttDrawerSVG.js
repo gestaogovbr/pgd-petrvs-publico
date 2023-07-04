@@ -38,15 +38,15 @@ function Ganttalendar(startMillis, endMillis, master, minGanttSize) {
 
   this.initZoomlevels(); // initialite the zoom level definitions
 
-  this.originalStartMillis=startMillis;
-  this.originalEndMillis=endMillis;
-  this.gridChanged=true; //witness for boundaries changed. Force to redraw gantt grid
+  this.originalStartMillis = startMillis;
+  this.originalEndMillis = endMillis;
+  this.gridChanged = true; //witness for boundaries changed. Force to redraw gantt grid
   this.element = this.createGanttGrid(); // fake
 
   this.linkOnProgress = false; //set to true when creating a new link
 
-  this.taskHeight=20;
-  this.resizeZoneWidth=5;
+  this.taskHeight = 20;
+  this.resizeZoneWidth = 5;
   this.taskVertOffset = (this.master.rowHeight - this.taskHeight) / 2;
 }
 
@@ -55,7 +55,7 @@ Ganttalendar.prototype.zoomGantt = function (isPlus) {
   var curLevel = this.zoom;
   var pos = this.zoomLevels.indexOf(curLevel + "");
 
-  var centerMillis=this.getCenterMillis();
+  var centerMillis = this.getCenterMillis();
   var newPos = pos;
   if (isPlus) {
     newPos = pos <= 0 ? 0 : pos - 1;
@@ -64,7 +64,7 @@ Ganttalendar.prototype.zoomGantt = function (isPlus) {
   }
   if (newPos != pos) {
     curLevel = this.zoomLevels[newPos];
-    this.gridChanged=true;
+    this.gridChanged = true;
     this.zoom = curLevel;
 
     this.storeZoomLevel();
@@ -92,16 +92,16 @@ Ganttalendar.prototype.storeZoomLevel = function () {
     else
       savedZooms = localStorage.getObject("TWPGanttSavedZooms");
 
-    savedZooms[this.master.tasks[0].id]=this.zoom;
+    savedZooms[this.master.tasks[0].id] = this.zoom;
 
     localStorage.setObject("TWPGanttSavedZooms", savedZooms);
   }
 };
 
-Ganttalendar.prototype.createHeadCell=function(level,zoomDrawer,rowCtx,lbl, span, additionalClass,start, end) {
-  var x = (start.getTime() - self.startMillis)* zoomDrawer.computedScaleX;
+Ganttalendar.prototype.createHeadCell = function (level, zoomDrawer, rowCtx, lbl, span, additionalClass, start, end) {
+  var x = (start.getTime() - self.startMillis) * zoomDrawer.computedScaleX;
   var th = $("<th>").html(lbl).attr("colSpan", span);
-  if (level>1) { //set width on second level only
+  if (level > 1) { //set width on second level only
     var w = (end.getTime() - start.getTime()) * zoomDrawer.computedScaleX;
     th.width(w);
   }
@@ -110,7 +110,7 @@ Ganttalendar.prototype.createHeadCell=function(level,zoomDrawer,rowCtx,lbl, span
   rowCtx.append(th);
 };
 
-Ganttalendar.prototype.createBodyCell=function(zoomDrawer,tr,span, isEnd, additionalClass) {
+Ganttalendar.prototype.createBodyCell = function (zoomDrawer, tr, span, isEnd, additionalClass) {
   var ret = $("<td>").html("").attr("colSpan", span).addClass("ganttBodyCell");
   if (isEnd)
     ret.addClass("end");
@@ -127,106 +127,107 @@ Ganttalendar.prototype.createGanttGrid = function () {
 
   // get the zoomDrawer
   // if the desired level is not there uses the largest one (last one)
-  var zoomDrawer=self.zoomDrawers[self.zoom] || self.zoomDrawers[self.zoomLevels[self.zoomLevels.length-1]];
+  var zoomDrawer = self.zoomDrawers[self.zoom] || self.zoomDrawers[self.zoomLevels[self.zoomLevels.length - 1]];
 
   //get best dimension for gantt
-  var adjustedStartDate= new Date(this.originalStartMillis);
-  var adjustedEndDate=new Date(this.originalEndMillis);
-  zoomDrawer.adjustDates(adjustedStartDate,adjustedEndDate);
+  var adjustedStartDate = new Date(this.originalStartMillis);
+  var adjustedEndDate = new Date(this.originalEndMillis);
+  zoomDrawer.adjustDates(adjustedStartDate, adjustedEndDate);
 
   self.startMillis = adjustedStartDate.getTime(); //real dimension of gantt
   self.endMillis = adjustedEndDate.getTime();
 
-    //this is computed by hand in order to optimize cell size
-  var computedTableWidth= (self.endMillis - self.startMillis) * zoomDrawer.computedScaleX;
+  //this is computed by hand in order to optimize cell size
+  var computedTableWidth = (self.endMillis - self.startMillis) * zoomDrawer.computedScaleX;
 
-    //set a minimal width
-    computedTableWidth = Math.max(computedTableWidth, self.minGanttSize);
+  //set a minimal width
+  computedTableWidth = Math.max(computedTableWidth, self.minGanttSize);
 
-    var table = $("<table cellspacing=0 cellpadding=0>");
+  var table = $("<table cellspacing=0 cellpadding=0>");
 
-    //loop for header1
+  //loop for header1
   var start = new Date(self.startMillis);
-    var tr1 = $("<tr>").addClass("ganttHead1");
+  var tr1 = $("<tr>").addClass("ganttHead1");
   while (start.getTime() <= self.endMillis) {
-      zoomDrawer.row1(start,tr1);
-      }
+    zoomDrawer.row1(start, tr1);
+  }
 
-    //loop for header2  e tbody
+  //loop for header2  e tbody
   start = new Date(self.startMillis);
-    var tr2 = $("<tr>").addClass("ganttHead2");
-    var trBody = $("<tr>").addClass("ganttBody");
+  var tr2 = $("<tr>").addClass("ganttHead2");
+  var trBody = $("<tr>").addClass("ganttBody");
   while (start.getTime() <= self.endMillis) {
-    zoomDrawer.row2(start,tr2,trBody);
-    }
+    zoomDrawer.row2(start, tr2, trBody);
+  }
 
   table.append(tr1).append(tr2);   // removed as on FF there are rounding issues  //.css({width:computedTableWidth});
 
-    var head = table.clone().addClass("ganttFixHead");
+  var head = table.clone().addClass("ganttFixHead");
 
-    table.append(trBody).addClass("ganttTable");
+  table.append(trBody).addClass("ganttTable");
 
 
-    var height = self.master.editor.element.height();
-    table.height(height);
+  var height = self.master.editor.element.height();
+  table.height(height);
 
-    var box = $("<div>");
-    box.addClass("gantt unselectable").attr("unselectable", "true").css({position:"relative", width:computedTableWidth});
-    box.append(table);
-    box.append(head);
+  var box = $("<div>");
+  box.addClass("gantt unselectable").attr("unselectable", "true").css({ position: "relative", width: computedTableWidth });
+  box.append(table);
+  box.append(head);
 
-    //create the svg
-    box.svg({settings:{class:"ganttSVGBox"},
-      onLoad:         function (svg) {
-        //console.debug("svg loaded", svg);
+  //create the svg
+  box.svg({
+    settings: { class: "ganttSVGBox" },
+    onLoad: function (svg) {
+      //console.debug("svg loaded", svg);
 
-        //creates gradient and definitions
-        var defs = svg.defs('myDefs');
+      //creates gradient and definitions
+      var defs = svg.defs('myDefs');
 
-        //create backgound
-        var extDep = svg.pattern(defs, "extDep", 0, 0, 10, 10, 0, 0, 10, 10, {patternUnits:'userSpaceOnUse'});
-        var img=svg.image(extDep, 0, 0, 10, 10, self.master.resourceUrl +"hasExternalDeps.png",{opacity:.3});
+      //create backgound
+      var extDep = svg.pattern(defs, "extDep", 0, 0, 10, 10, 0, 0, 10, 10, { patternUnits: 'userSpaceOnUse' });
+      var img = svg.image(extDep, 0, 0, 10, 10, self.master.resourceUrl + "hasExternalDeps.png", { opacity: .3 });
 
-        self.svg = svg;
-        $(svg).addClass("ganttSVGBox");
+      self.svg = svg;
+      $(svg).addClass("ganttSVGBox");
 
-        //creates grid group
-        var gridGroup = svg.group("gridGroup");
+      //creates grid group
+      var gridGroup = svg.group("gridGroup");
 
-        //creates links group
-        self.linksGroup = svg.group("linksGroup");
+      //creates links group
+      self.linksGroup = svg.group("linksGroup");
 
-        //creates tasks group
-        self.tasksGroup = svg.group("tasksGroup");
+      //creates tasks group
+      self.tasksGroup = svg.group("tasksGroup");
 
-        //compute scalefactor fx
-        //self.fx = computedTableWidth / (endPeriod - startPeriod);
-        self.fx = zoomDrawer.computedScaleX;
+      //compute scalefactor fx
+      //self.fx = computedTableWidth / (endPeriod - startPeriod);
+      self.fx = zoomDrawer.computedScaleX;
 
-      }
-    });
+    }
+  });
 
-    return box;
+  return box;
 };
 
 
 //<%-------------------------------------- GANT TASK GRAPHIC ELEMENT --------------------------------------%>
 Ganttalendar.prototype.drawTask = function (task) {
-	//console.debug("drawTask", task.name,this.master.showBaselines,this.taskHeight);
+  //console.debug("drawTask", task.name,this.master.showBaselines,this.taskHeight);
   var self = this;
   //var prof = new Profiler("ganttDrawTask");
 
-	if (self.master.showBaselines) {
-		var baseline = self.master.baselines[task.id];
-		if (baseline) {
-			//console.debug("baseLine",baseline)
-			var baseTask = $(_createBaselineSVG(task, baseline));
-			baseTask.css("opacity", .5);
-			task.ganttBaselineElement = baseTask;
-		}
-	}
+  if (self.master.showBaselines) {
+    var baseline = self.master.baselines[task.id];
+    if (baseline) {
+      //console.debug("baseLine",baseline)
+      var baseTask = $(_createBaselineSVG(task, baseline));
+      baseTask.css("opacity", .5);
+      task.ganttBaselineElement = baseTask;
+    }
+  }
 
-	var taskBox = $(_createTaskSVG(task));
+  var taskBox = $(_createTaskSVG(task));
   task.ganttElement = taskBox;
 
 
@@ -252,7 +253,7 @@ Ganttalendar.prototype.drawTask = function (task) {
 
       }).dblclick(function () {
         if (self.master.permissions.canSeePopEdit)
-          self.master.editor.openFullEditor(task,false);
+          self.master.editor.openFullEditor(task, false);
       }).mouseenter(function () {
         //bring to top
         var el = $(this);
@@ -264,7 +265,7 @@ Ganttalendar.prototype.drawTask = function (task) {
         }
       }).mouseleave(function () {
         var el = $(this);
-        el.removeClass("linkOver").find("[class*=linkHandleSVG]").oneTime(500,"hideLink",function(){$(this).hide()});
+        el.removeClass("linkOver").find("[class*=linkHandleSVG]").oneTime(500, "hideLink", function () { $(this).hide() });
 
       }).mouseup(function (e) {
         $(":focus").blur(); // in order to save grid field when moving task
@@ -272,16 +273,16 @@ Ganttalendar.prototype.drawTask = function (task) {
         var task = self.master.getTask($(this).attr("taskid"));
         task.rowElement.click();
       }).dragExtedSVG($(self.svg.root()), {
-        canResize:  this.master.permissions.canWrite || task.canWrite,
-        canDrag:    !task.depends && (this.master.permissions.canWrite || task.canWrite),
-        resizeZoneWidth:self.resizeZoneWidth,
-        startDrag:  function (e) {
+        canResize: this.master.permissions.canWrite || task.canWrite,
+        canDrag: !task.depends && (this.master.permissions.canWrite || task.canWrite),
+        resizeZoneWidth: self.resizeZoneWidth,
+        startDrag: function (e) {
           $(".ganttSVGBox .focused").removeClass("focused");
         },
-        drag:       function (e) {
+        drag: function (e) {
           $("[from=" + task.id + "],[to=" + task.id + "]").trigger("update");
         },
-        drop:       function (e) {
+        drop: function (e) {
           self.resDrop = true; //hack to avoid select
           var taskbox = $(this);
           var task = self.master.getTask(taskbox.attr("taskid"));
@@ -290,13 +291,13 @@ Ganttalendar.prototype.drawTask = function (task) {
           self.master.moveTask(task, new Date(s));
           self.master.endTransaction();
         },
-        startResize:function (e) {
+        startResize: function (e) {
           $(".ganttSVGBox .focused").removeClass("focused");
           var taskbox = $(this);
-          var text = $(self.svg.text(parseInt(taskbox.attr("x")) + parseInt(taskbox.attr("width") + 8), parseInt(taskbox.attr("y")), "", {"font-size":"10px", "fill":"red"}));
+          var text = $(self.svg.text(parseInt(taskbox.attr("x")) + parseInt(taskbox.attr("width") + 8), parseInt(taskbox.attr("y")), "", { "font-size": "10px", "fill": "red" }));
           taskBox.data("textDur", text);
         },
-        resize:     function (e) {
+        resize: function (e) {
           //find and update links from, to
           var taskbox = $(this);
           /* Petrvs */
@@ -304,7 +305,7 @@ Ganttalendar.prototype.drawTask = function (task) {
           var st = Math.round((parseFloat(taskbox.attr("x")) / self.fx) + self.startMillis);
           var en = Math.round(((parseFloat(taskbox.attr("x")) + parseFloat(taskbox.attr("width"))) / self.fx) + self.startMillis);
           /* Petrvs */
-  				var d =  task.computeDuration(task.computeStart(st), task.computeEnd(en));
+          var d = task.computeDuration(task.computeStart(st), task.computeEnd(en));
           var text = taskBox.data("textDur");
           text.attr("x", parseInt(taskbox.attr("x")) + parseInt(taskbox.attr("width")) + 8).html(task.durationToString(d));
 
@@ -321,10 +322,10 @@ Ganttalendar.prototype.drawTask = function (task) {
           var en = Math.round(((parseFloat(taskbox.attr("x")) + parseFloat(taskbox.attr("width"))) / self.fx) + self.startMillis);
 
           //in order to avoid rounding issue if the movement is less than 1px we keep the same start and end dates
-          if (Math.abs(st-task.start)<1/self.fx) {
+          if (Math.abs(st - task.start) < 1 / self.fx) {
             st = task.start;
           }
-          if (Math.abs(en-task.end)<1/self.fx) {
+          if (Math.abs(en - task.end) < 1 / self.fx) {
             en = task.end;
           }
 
@@ -348,8 +349,8 @@ Ganttalendar.prototype.drawTask = function (task) {
       // create the line
       var startX = parseFloat(taskBox.attr("x")) + (self.linkFromEnd ? parseFloat(taskBox.attr("width")) : 0);
       var startY = parseFloat(taskBox.attr("y")) + parseFloat(taskBox.attr("height")) / 2;
-      var line = self.svg.line(startX, startY, e.pageX - offs.left - 5, e.pageY - offs.top - 5, {class:"linkLineSVG"});
-      var circle = self.svg.circle(startX, startY, 5, {class:"linkLineSVG"});
+      var line = self.svg.line(startX, startY, e.pageX - offs.left - 5, e.pageY - offs.top - 5, { class: "linkLineSVG" });
+      var circle = self.svg.circle(startX, startY, 5, { class: "linkLineSVG" });
 
       //bind mousemove to draw a line
       svg.bind("mousemove.linkSVG", function (e) {
@@ -359,8 +360,8 @@ Ganttalendar.prototype.drawTask = function (task) {
         var c = Math.sqrt(Math.pow(nx - startX, 2) + Math.pow(ny - startY, 2));
         nx = nx - (nx - startX) * 10 / c;
         ny = ny - (ny - startY) * 10 / c;
-        self.svg.change(line, { x2:nx, y2:ny});
-        self.svg.change(circle, { cx:nx, cy:ny});
+        self.svg.change(line, { x2: nx, y2: ny });
+        self.svg.change(circle, { cx: nx, cy: ny });
       });
 
       //bind mouseup un body to stop
@@ -401,118 +402,118 @@ Ganttalendar.prototype.drawTask = function (task) {
   //prof.stop();
 
 
-	function _createTaskSVG(task) {
+  function _createTaskSVG(task) {
     var svg = self.svg;
 
-		var dimensions = {
-			x     : Math.round((task.start - self.startMillis) * self.fx),
-			y     : task.rowElement.position().top + task.rowElement.offsetParent().scrollTop() + self.taskVertOffset,
-			width : Math.max(Math.round((task.end - task.start) * self.fx), 1),
-			height: (self.master.showBaselines ? self.taskHeight / 1.3 : self.taskHeight)
-		};
-    var taskSvg = svg.svg(self.tasksGroup, dimensions.x, dimensions.y, dimensions.width, dimensions.height, {class:"taskBox taskBoxSVG taskStatusSVG", status:task.status, taskid:task.id,fill:task.color||"#eee" });
+    var dimensions = {
+      x: Math.round((task.start - self.startMillis) * self.fx),
+      y: task.rowElement.position().top + task.rowElement.offsetParent().scrollTop() + self.taskVertOffset,
+      width: Math.max(Math.round((task.end - task.start) * self.fx), 1),
+      height: (self.master.showBaselines ? self.taskHeight / 1.3 : self.taskHeight)
+    };
+    var taskSvg = svg.svg(self.tasksGroup, dimensions.x, dimensions.y, dimensions.width, dimensions.height, { class: "taskBox taskBoxSVG taskStatusSVG", status: task.status, taskid: task.id, fill: task.color || "#eee" });
 
     //svg.title(taskSvg, task.name);
     //external box
-    var layout = svg.rect(taskSvg, 0, 0, "100%", "100%", {class:"taskLayout", rx:"2", ry:"2"});
+    var layout = svg.rect(taskSvg, 0, 0, "100%", "100%", { class: "taskLayout", rx: "2", ry: "2" });
     //external dep
     if (task.hasExternalDep)
-      svg.rect(taskSvg, 0, 0, "100%", "100%", {fill:"url(#extDep)"});
+      svg.rect(taskSvg, 0, 0, "100%", "100%", { fill: "url(#extDep)" });
 
     //progress
     if (task.progress > 0) {
-      var progress = svg.rect(taskSvg, 0, "20%", (task.progress > 100 ? 100 : task.progress) + "%", "60%", {rx:"2", ry:"2",fill:"rgba(0,0,0,.4)"});
+      var progress = svg.rect(taskSvg, 0, "20%", (task.progress > 100 ? 100 : task.progress) + "%", "60%", { rx: "2", ry: "2", fill: "rgba(0,0,0,.4)" });
       if (dimensions.width > 50) {
-        var textStyle = {fill:"#888", "font-size":"10px",class:"textPerc teamworkIcons",transform:"translate(5)"};
+        var textStyle = { fill: "#888", "font-size": "10px", class: "textPerc teamworkIcons", transform: "translate(5)" };
         if (task.progress > 100)
-          textStyle["font-weight"]="bold";
+          textStyle["font-weight"] = "bold";
         if (task.progress > 90)
           textStyle.transform = "translate(-40)";
         svg.text(taskSvg, (task.progress > 90 ? 100 : task.progress) + "%", (self.master.rowHeight - 5) / 2, (task.progress > 100 ? "!!! " : "") + task.progress + "%", textStyle);
       }
     }
 
-		if (task.isParent()) {
-      svg.rect(taskSvg, 0, 0, "100%", 3, {fill:"#000"});
-      svg.polygon(taskSvg, [[0, 0], [0, 10], [10, 0]], {fill:"#000"});
-      svg.polygon(taskSvg, [[dimensions.width-10, 0], [dimensions.width, 10], [dimensions.width, 0]], {fill:"#000"});
+    if (task.isParent()) {
+      svg.rect(taskSvg, 0, 0, "100%", 3, { fill: "#000" });
+      svg.polygon(taskSvg, [[0, 0], [0, 10], [10, 0]], { fill: "#000" });
+      svg.polygon(taskSvg, [[dimensions.width - 10, 0], [dimensions.width, 10], [dimensions.width, 0]], { fill: "#000" });
     }
 
     if (task.startIsMilestone) {
-      svg.image(taskSvg, -9, dimensions.height/2-9, 18, 18, self.master.resourceUrl +"milestone.png")
+      svg.image(taskSvg, -9, dimensions.height / 2 - 9, 18, 18, self.master.resourceUrl + "milestone.png")
     }
 
     if (task.endIsMilestone) {
-      svg.image(taskSvg, "100%",dimensions.height/2-9, 18, 18, self.master.resourceUrl +"milestone.png", {transform:"translate(-9)"})
+      svg.image(taskSvg, "100%", dimensions.height / 2 - 9, 18, 18, self.master.resourceUrl + "milestone.png", { transform: "translate(-9)" })
     }
 
     //task label
-    svg.text(taskSvg, "100%", 18, task.name, {class:"taskLabelSVG", transform:"translate(20,-5)"});
+    svg.text(taskSvg, "100%", 18, task.name, { class: "taskLabelSVG", transform: "translate(20,-5)" });
 
     //link tool
-    if (task.level>0){
-      svg.circle(taskSvg, -self.resizeZoneWidth,  dimensions.height/2,dimensions.height/3, {class:"taskLinkStartSVG linkHandleSVG", transform:"translate("+(-dimensions.height/3+1)+")"});
-      svg.circle(taskSvg, dimensions.width+self.resizeZoneWidth,dimensions.height/2,dimensions.height/3, {class:"taskLinkEndSVG linkHandleSVG", transform:"translate("+(dimensions.height/3-1)+")"});
+    if (task.level > 0) {
+      svg.circle(taskSvg, -self.resizeZoneWidth, dimensions.height / 2, dimensions.height / 3, { class: "taskLinkStartSVG linkHandleSVG", transform: "translate(" + (-dimensions.height / 3 + 1) + ")" });
+      svg.circle(taskSvg, dimensions.width + self.resizeZoneWidth, dimensions.height / 2, dimensions.height / 3, { class: "taskLinkEndSVG linkHandleSVG", transform: "translate(" + (dimensions.height / 3 - 1) + ")" });
     }
     return taskSvg
   }
 
 
-	function _createBaselineSVG(task, baseline) {
-		var svg = self.svg;
+  function _createBaselineSVG(task, baseline) {
+    var svg = self.svg;
 
-		var dimensions = {
-			x     : Math.round((baseline.startDate - self.startMillis) * self.fx),
-			y     : task.rowElement.position().top + task.rowElement.offsetParent().scrollTop() + self.taskVertOffset + self.taskHeight / 2,
-			width : Math.max(Math.round((baseline.endDate - baseline.startDate) * self.fx), 1),
-			height: (self.master.showBaselines ? self.taskHeight / 1.5 : self.taskHeight)
-		};
-		var taskSvg = svg.svg(self.tasksGroup, dimensions.x, dimensions.y, dimensions.width, dimensions.height, {class: "taskBox taskBoxSVG taskStatusSVG baseline", status: baseline.status, taskid: task.id, fill: task.color || "#eee" });
+    var dimensions = {
+      x: Math.round((baseline.startDate - self.startMillis) * self.fx),
+      y: task.rowElement.position().top + task.rowElement.offsetParent().scrollTop() + self.taskVertOffset + self.taskHeight / 2,
+      width: Math.max(Math.round((baseline.endDate - baseline.startDate) * self.fx), 1),
+      height: (self.master.showBaselines ? self.taskHeight / 1.5 : self.taskHeight)
+    };
+    var taskSvg = svg.svg(self.tasksGroup, dimensions.x, dimensions.y, dimensions.width, dimensions.height, { class: "taskBox taskBoxSVG taskStatusSVG baseline", status: baseline.status, taskid: task.id, fill: task.color || "#eee" });
 
-		//tooltip
-		var label = "<b>" + task.name + "</b>";
-		label += "<br>";
-		label += "@" + new Date(self.master.baselineMillis).format();
-		label += "<br><br>";
-		label += "<b>Status:</b> " + baseline.status;
-		label += "<br><br>";
-		label += "<b>Start:</b> " + new Date(baseline.startDate).format();
-		label += "<br>";
-		label += "<b>End:</b> " + new Date(baseline.endDate).format();
-		label += "<br>";
-		label += "<b>Duration:</b> " + baseline.duration;
-		label += "<br>";
-		label += "<b>Progress:</b> " + baseline.progress + "%";
+    //tooltip
+    var label = "<b>" + task.name + "</b>";
+    label += "<br>";
+    label += "@" + new Date(self.master.baselineMillis).format();
+    label += "<br><br>";
+    label += "<b>Status:</b> " + baseline.status;
+    label += "<br><br>";
+    label += "<b>Start:</b> " + new Date(baseline.startDate).format();
+    label += "<br>";
+    label += "<b>End:</b> " + new Date(baseline.endDate).format();
+    label += "<br>";
+    label += "<b>Duration:</b> " + baseline.duration;
+    label += "<br>";
+    label += "<b>Progress:</b> " + baseline.progress + "%";
 
-		$(taskSvg).attr("data-label", label).on("click", function (event) {
-			showBaselineInfo(event, this);
-			//bind hide
-		});
+    $(taskSvg).attr("data-label", label).on("click", function (event) {
+      showBaselineInfo(event, this);
+      //bind hide
+    });
 
-		//external box
-		var layout = svg.rect(taskSvg, 0, 0, "100%", "100%", {class: "taskLayout", rx: "2", ry: "2"});
+    //external box
+    var layout = svg.rect(taskSvg, 0, 0, "100%", "100%", { class: "taskLayout", rx: "2", ry: "2" });
 
 
-		//progress
+    //progress
 
-		if (baseline.progress > 0) {
-			var progress = svg.rect(taskSvg, 0, "20%", (baseline.progress > 100 ? 100 : baseline.progress) + "%", "60%", {rx: "2", ry: "2", fill: "rgba(0,0,0,.4)"});
-			/*if (dimensions.width > 50) {
-			 var textStyle = {fill:"#888", "font-size":"10px",class:"textPerc teamworkIcons",transform:"translate(5)"};
-			 if (baseline.progress > 100)
-			 textStyle["font-weight"]="bold";
-			 if (baseline.progress > 90)
-			 textStyle.transform = "translate(-40)";
-			 svg.text(taskSvg, (baseline.progress > 90 ? 100 : baseline.progress) + "%", (self.master.rowHeight - 5) / 2, (baseline.progress > 100 ? "!!! " : "") + baseline.progress + "%", textStyle);
-			 }*/
+    if (baseline.progress > 0) {
+      var progress = svg.rect(taskSvg, 0, "20%", (baseline.progress > 100 ? 100 : baseline.progress) + "%", "60%", { rx: "2", ry: "2", fill: "rgba(0,0,0,.4)" });
+      /*if (dimensions.width > 50) {
+       var textStyle = {fill:"#888", "font-size":"10px",class:"textPerc teamworkIcons",transform:"translate(5)"};
+       if (baseline.progress > 100)
+       textStyle["font-weight"]="bold";
+       if (baseline.progress > 90)
+       textStyle.transform = "translate(-40)";
+       svg.text(taskSvg, (baseline.progress > 90 ? 100 : baseline.progress) + "%", (self.master.rowHeight - 5) / 2, (baseline.progress > 100 ? "!!! " : "") + baseline.progress + "%", textStyle);
+       }*/
     }
 
-		//if (task.isParent())
-		//  svg.rect(taskSvg, 0, 0, "100%", 3, {fill:"#000"});
+    //if (task.isParent())
+    //  svg.rect(taskSvg, 0, 0, "100%", 3, {fill:"#000"});
 
 
-		//task label
-		//svg.text(taskSvg, "100%", 18, task.name, {class:"taskLabelSVG", transform:"translate(20,-5)"});
+    //task label
+    //svg.text(taskSvg, "100%", 18, task.name, {class:"taskLabelSVG", transform:"translate(20,-5)"});
 
 
     return taskSvg
@@ -538,11 +539,11 @@ Ganttalendar.prototype.drawLink = function (from, to, type) {
    * width and height into a structure.
    */
   function buildRectFromTask(task) {
-    var self=task.master.gantt;
+    var self = task.master.gantt;
     var editorRow = task.rowElement;
     var top = editorRow.position().top + editorRow.offsetParent().scrollTop();
     var x = Math.round((task.start - self.startMillis) * self.fx);
-    var rect = {left: x, top: top + self.taskVertOffset, width: Math.max(Math.round((task.end - task.start) * self.fx),1), height: self.taskHeight};
+    var rect = { left: x, top: top + self.taskVertOffset, width: Math.max(Math.round((task.end - task.start) * self.fx), 1), height: self.taskHeight };
     return rect;
   }
 
@@ -594,7 +595,7 @@ Ganttalendar.prototype.drawLink = function (from, to, type) {
           .line(0, (Math.abs(ty - fy) - 4 * r - Math.abs(firstLine)) * fup - arrowOffset, true)
           .arc(r, r, 90, false, up, r, fup * r, true)
           .line(ps, 0, true);
-        image.attr({x:tx1 - 5, y:ty - 5 - arrowOffset});
+        image.attr({ x: tx1 - 5, y: ty - 5 - arrowOffset });
 
       } else {
         p.move(fx2, fy)
@@ -603,10 +604,10 @@ Ganttalendar.prototype.drawLink = function (from, to, type) {
           .line(0, ty - fy - fup * 2 * r + arrowOffset, true)
           .arc(r, r, 90, false, up, r, fup * r, true)
           .line((tx1 - fx2) / 2 - r, 0, true);
-        image.attr({x:tx1 - 5, y:ty - 5 + arrowOffset});
+        image.attr({ x: tx1 - 5, y: ty - 5 + arrowOffset });
       }
 
-      group.find("path").attr({d:p.path()});
+      group.find("path").attr({ d: p.path() });
     }
 
 
@@ -617,12 +618,12 @@ Ganttalendar.prototype.drawLink = function (from, to, type) {
     var p = svg.createPath();
 
     //add the arrow
-    svg.image(group, 0, 0, 5, 10, self.master.resourceUrl +"linkArrow.png");
+    svg.image(group, 0, 0, 5, 10, self.master.resourceUrl + "linkArrow.png");
     //create empty path
-    svg.path(group, p, {class:"taskLinkPathSVG"});
+    svg.path(group, p, { class: "taskLinkPathSVG" });
 
     //set "from" and "to" to the group, bind "update" and trigger it
-    var jqGroup = $(group).data({from:from, to:to }).attr({from:from.id, to:to.id}).on("update", update).trigger("update");
+    var jqGroup = $(group).data({ from: from, to: to }).attr({ from: from.id, to: to.id }).on("update", update).trigger("update");
 
     if (self.showCriticalPath && from.isCritical && to.isCritical)
       jqGroup.addClass("critical");
@@ -650,7 +651,7 @@ Ganttalendar.prototype.drawLink = function (from, to, type) {
   }
 
   // in order to create a dependency you will need permissions on both tasks
-  if (this.master.permissions.canWrite || ( from.canWrite && to.canWrite)) {
+  if (this.master.permissions.canWrite || (from.canWrite && to.canWrite)) {
     link.click(function (e) {
       var el = $(this);
       e.stopPropagation();// to avoid body remove focused
@@ -691,11 +692,11 @@ Ganttalendar.prototype.redrawLinks = function () {
 
       if (collapsedDescendant.indexOf(link.from) >= 0 || collapsedDescendant.indexOf(link.to) >= 0) continue;
 
-      var rowA=link.from.getRow();
-      var rowB=link.to.getRow();
+      var rowA = link.from.getRow();
+      var rowB = link.to.getRow();
 
       //if link is out of visible screen continue
-      if(Math.max(rowA,rowB)<self.master.firstVisibleTaskIndex || Math.min(rowA,rowB)>self.master.lastVisibleTaskIndex) continue;
+      if (Math.max(rowA, rowB) < self.master.firstVisibleTaskIndex || Math.min(rowA, rowB) > self.master.lastVisibleTaskIndex) continue;
 
       self.drawLink(link.from, link.to);
     }
@@ -714,30 +715,30 @@ Ganttalendar.prototype.reset = function () {
 
 Ganttalendar.prototype.redrawTasks = function (drawAll) {
   //console.debug("redrawTasks ");
-  var self=this;
+  var self = this;
   //var prof = new Profiler("ganttRedrawTasks");
 
   self.element.find("table.ganttTable").height(self.master.editor.element.height());
 
   var collapsedDescendant = this.master.getCollapsedDescendant();
 
-  var startRowAdd=self.master.firstScreenLine-self.master.rowBufferSize;
-  var endRowAdd =self.master.firstScreenLine+self.master.numOfVisibleRows+self.master.rowBufferSize;
+  var startRowAdd = self.master.firstScreenLine - self.master.rowBufferSize;
+  var endRowAdd = self.master.firstScreenLine + self.master.numOfVisibleRows + self.master.rowBufferSize;
 
   $("#linksGroup,#tasksGroup").empty();
-  var gridGroup=$("#gridGroup").empty().get(0);
+  var gridGroup = $("#gridGroup").empty().get(0);
 
   //add missing ones
-  var row=0;
-  self.master.firstVisibleTaskIndex=-1;
-  for (var i=0;i<self.master.tasks.length;i++){
-    var task=self.master.tasks[i];
-    if (collapsedDescendant.indexOf(task)>=0){
+  var row = 0;
+  self.master.firstVisibleTaskIndex = -1;
+  for (var i = 0; i < self.master.tasks.length; i++) {
+    var task = self.master.tasks[i];
+    if (collapsedDescendant.indexOf(task) >= 0) {
       continue;
     }
-    if (drawAll || (row>=startRowAdd && row<endRowAdd)) {
-    this.drawTask(task);
-      self.master.firstVisibleTaskIndex=self.master.firstVisibleTaskIndex==-1?i:self.master.firstVisibleTaskIndex;
+    if (drawAll || (row >= startRowAdd && row < endRowAdd)) {
+      this.drawTask(task);
+      self.master.firstVisibleTaskIndex = self.master.firstVisibleTaskIndex == -1 ? i : self.master.firstVisibleTaskIndex;
       self.master.lastVisibleTaskIndex = i;
     }
     row++
@@ -745,12 +746,12 @@ Ganttalendar.prototype.redrawTasks = function (drawAll) {
 
   //creates rows grid
   for (var i = 40; i <= self.master.editor.element.height(); i += self.master.rowHeight)
-    self.svg.rect(gridGroup, 0, i, "100%", self.master.rowHeight, {class: "ganttLinesSVG"});
+    self.svg.rect(gridGroup, 0, i, "100%", self.master.rowHeight, { class: "ganttLinesSVG" });
 
   // drawTodayLine
   if (new Date().getTime() > self.startMillis && new Date().getTime() < self.endMillis) {
     var x = Math.round(((new Date().getTime()) - self.startMillis) * self.fx);
-    self.svg.line(gridGroup, x, 0, x, "100%", {class: "ganttTodaySVG"});
+    self.svg.line(gridGroup, x, 0, x, "100%", { class: "ganttTodaySVG" });
   }
 
 
@@ -761,7 +762,7 @@ Ganttalendar.prototype.redrawTasks = function (drawAll) {
 Ganttalendar.prototype.shrinkBoundaries = function () {
   //console.debug("shrinkBoundaries")
   var start = Infinity;
-  var end =  -Infinity;
+  var end = -Infinity;
   for (var i = 0; i < this.master.tasks.length; i++) {
     var task = this.master.tasks[i];
     if (start > task.start)
@@ -774,14 +775,14 @@ Ganttalendar.prototype.shrinkBoundaries = function () {
   if (this.includeToday) {
     var today = new Date().getTime();
     start = start > today ? today : start;
-    end = end< today ? today : end;
+    end = end < today ? today : end;
   }
 
   //mark boundaries as changed
-  this.gridChanged=this.gridChanged || this.originalStartMillis!=start || this.originalEndMillis!=end;
+  this.gridChanged = this.gridChanged || this.originalStartMillis != start || this.originalEndMillis != end;
 
-  this.originalStartMillis=start;
-  this.originalEndMillis=end;
+  this.originalStartMillis = start;
+  this.originalEndMillis = end;
 };
 
 Ganttalendar.prototype.setBestFittingZoom = function () {
@@ -794,7 +795,7 @@ Ganttalendar.prototype.setBestFittingZoom = function () {
 
 
   //if zoom is not defined get the best fitting one
-  var dur = this.originalEndMillis -this.originalStartMillis;
+  var dur = this.originalEndMillis - this.originalStartMillis;
   var minDist = Number.MAX_VALUE;
   var i = 0;
   for (; i < this.zoomLevels.length; i++) {
@@ -807,7 +808,7 @@ Ganttalendar.prototype.setBestFittingZoom = function () {
     this.zoom = this.zoomLevels[i];
   }
 
-  this.zoom=this.zoom||this.zoomLevels[this.zoomLevels.length-1];
+  this.zoom = this.zoom || this.zoomLevels[this.zoomLevels.length - 1];
 
 };
 
@@ -820,23 +821,23 @@ Ganttalendar.prototype.redraw = function () {
   }
 
   if (this.gridChanged) {
-    this.gridChanged=false;
-  var par = this.element.parent();
+    this.gridChanged = false;
+    var par = this.element.parent();
 
-  //try to maintain last scroll
-  var scrollY = par.scrollTop();
-  var scrollX = par.scrollLeft();
+    //try to maintain last scroll
+    var scrollY = par.scrollTop();
+    var scrollX = par.scrollLeft();
 
-  this.element.remove();
+    this.element.remove();
 
     var domEl = this.createGanttGrid();
-  this.element = domEl;
-  par.append(domEl);
-  this.redrawTasks();
+    this.element = domEl;
+    par.append(domEl);
+    this.redrawTasks();
 
-  //set old scroll  
-  par.scrollTop(scrollY);
-  par.scrollLeft(scrollX);
+    //set old scroll  
+    par.scrollTop(scrollY);
+    par.scrollLeft(scrollX);
 
   } else {
     this.redrawTasks();
@@ -860,9 +861,9 @@ Ganttalendar.prototype.fitGantt = function () {
 
 Ganttalendar.prototype.synchHighlight = function () {
   //console.debug("synchHighlight",this.master.currentTask);
-  if (this.master.currentTask ){
+  if (this.master.currentTask) {
     // take care of collapsed rows
-    var ganttHighLighterPosition=this.master.editor.element.find(".taskEditRow:visible").index(this.master.currentTask.rowElement);
+    var ganttHighLighterPosition = this.master.editor.element.find(".taskEditRow:visible").index(this.master.currentTask.rowElement);
     this.master.gantt.element.find(".ganttLinesSVG").removeClass("rowSelected").eq(ganttHighLighterPosition).addClass("rowSelected");
   } else {
     $(".rowSelected").removeClass("rowSelected"); // todo non c'era
@@ -870,12 +871,12 @@ Ganttalendar.prototype.synchHighlight = function () {
 };
 
 
-Ganttalendar.prototype.getCenterMillis= function () {
-  return parseInt((this.element.parent().scrollLeft()+this.element.parent().width()/2)/this.fx+this.startMillis);
+Ganttalendar.prototype.getCenterMillis = function () {
+  return parseInt((this.element.parent().scrollLeft() + this.element.parent().width() / 2) / this.fx + this.startMillis);
 };
 
-Ganttalendar.prototype.goToMillis= function (millis) {
-  var x = Math.round(((millis) - this.startMillis) * this.fx) -this.element.parent().width()/2;
+Ganttalendar.prototype.goToMillis = function (millis) {
+  var x = Math.round(((millis) - this.startMillis) * this.fx) - this.element.parent().width() / 2;
   this.element.parent().scrollLeft(x);
 };
 
@@ -897,16 +898,16 @@ $.fn.dragExtedSVG = function (svg, opt) {
   var offsetMouseRect;
 
   var options = {
-    canDrag:        true,
-    canResize:      true,
-    resizeZoneWidth:5,
-    minSize:        10,
-    startDrag:      function (e) {},
-    drag:           function (e) {},
-    drop:           function (e) {},
-    startResize:    function (e) {},
-    resize:         function (e) {},
-    stopResize:     function (e) {}
+    canDrag: true,
+    canResize: true,
+    resizeZoneWidth: 5,
+    minSize: 10,
+    startDrag: function (e) { },
+    drag: function (e) { },
+    drop: function (e) { },
+    startResize: function (e) { },
+    resize: function (e) { },
+    stopResize: function (e) { }
   };
 
   $.extend(options, opt);
@@ -918,111 +919,111 @@ $.fn.dragExtedSVG = function (svg, opt) {
       el.addClass("deSVGdrag");
 
     if (options.canResize || options.canDrag) {
-      el.bind("mousedown.deSVG",function (e) {
-          //console.debug("mousedown.deSVG");
-          if ($(e.target).is("image")) {
-            e.preventDefault();
-          }
+      el.bind("mousedown.deSVG", function (e) {
+        //console.debug("mousedown.deSVG");
+        if ($(e.target).is("image")) {
+          e.preventDefault();
+        }
 
-          target = $(this);
-          var x1 = parseFloat(el.find("[class*=taskLayout]").offset().left);
-          var x2 = x1 + parseFloat(el.attr("width"));
-          var posx = e.pageX;
+        target = $(this);
+        var x1 = parseFloat(el.find("[class*=taskLayout]").offset().left);
+        var x2 = x1 + parseFloat(el.attr("width"));
+        var posx = e.pageX;
 
-          $("body").unselectable();
+        $("body").unselectable();
 
-          //start resize end
-          if (options.canResize && Math.abs(posx-x2)<=options.resizeZoneWidth) {
-            //store offset mouse x2
-            offsetMouseRect = x2 - e.pageX;
-            target.attr("oldw", target.attr("width"));
-            var one = true;
+        //start resize end
+        if (options.canResize && Math.abs(posx - x2) <= options.resizeZoneWidth) {
+          //store offset mouse x2
+          offsetMouseRect = x2 - e.pageX;
+          target.attr("oldw", target.attr("width"));
+          var one = true;
 
-            //bind event for start resizing
-            $(svg).bind("mousemove.deSVG", function (e) {
-              //hide link circle
-              $("[class*=linkHandleSVG]").hide();
+          //bind event for start resizing
+          $(svg).bind("mousemove.deSVG", function (e) {
+            //hide link circle
+            $("[class*=linkHandleSVG]").hide();
 
-              if (one) {
-                //trigger startResize
-                options.startResize.call(target.get(0), e);
-                one = false;
-              }
+            if (one) {
+              //trigger startResize
+              options.startResize.call(target.get(0), e);
+              one = false;
+            }
 
-              //manage resizing
-              var nW =  e.pageX - x1 + offsetMouseRect;
+            //manage resizing
+            var nW = e.pageX - x1 + offsetMouseRect;
 
-              target.attr("width", nW < options.minSize ? options.minSize : nW);
-              //callback
-              options.resize.call(target.get(0), e);
-            });
+            target.attr("width", nW < options.minSize ? options.minSize : nW);
+            //callback
+            options.resize.call(target.get(0), e);
+          });
 
-            //bind mouse up on body to stop resizing
-            $("body").one("mouseup.deSVG", stopResize);
+          //bind mouse up on body to stop resizing
+          $("body").one("mouseup.deSVG", stopResize);
 
 
           //start resize start
-          } else  if (options.canResize && Math.abs(posx-x1)<=options.resizeZoneWidth) {
-            //store offset mouse x1
-            offsetMouseRect = parseFloat(target.attr("x"));
-            target.attr("oldw", target.attr("width")); //todo controllare se è ancora usato oldw
+        } else if (options.canResize && Math.abs(posx - x1) <= options.resizeZoneWidth) {
+          //store offset mouse x1
+          offsetMouseRect = parseFloat(target.attr("x"));
+          target.attr("oldw", target.attr("width")); //todo controllare se è ancora usato oldw
 
-            var one = true;
+          var one = true;
 
-            //bind event for start resizing
-            $(svg).bind("mousemove.deSVG", function (e) {
-              //hide link circle
-              $("[class*=linkHandleSVG]").hide();
+          //bind event for start resizing
+          $(svg).bind("mousemove.deSVG", function (e) {
+            //hide link circle
+            $("[class*=linkHandleSVG]").hide();
 
-              if (one) {
-                //trigger startResize
-                options.startResize.call(target.get(0), e);
-                one = false;
-              }
+            if (one) {
+              //trigger startResize
+              options.startResize.call(target.get(0), e);
+              one = false;
+            }
 
-              //manage resizing
-              var nx1= offsetMouseRect-(posx-e.pageX);
-              var nW = (x2-x1) + (posx-e.pageX);
-              nW=nW < options.minSize ? options.minSize : nW;
-              target.attr("x",nx1);
-              target.attr("width", nW);
-              //callback
-              options.resize.call(target.get(0), e);
-            });
+            //manage resizing
+            var nx1 = offsetMouseRect - (posx - e.pageX);
+            var nW = (x2 - x1) + (posx - e.pageX);
+            nW = nW < options.minSize ? options.minSize : nW;
+            target.attr("x", nx1);
+            target.attr("width", nW);
+            //callback
+            options.resize.call(target.get(0), e);
+          });
 
-            //bind mouse up on body to stop resizing
-            $("body").one("mouseup.deSVG", stopResize);
+          //bind mouse up on body to stop resizing
+          $("body").one("mouseup.deSVG", stopResize);
 
 
-            // start drag
-          } else if (options.canDrag) {
-            //store offset mouse x1
-            offsetMouseRect = parseFloat(target.attr("x")) - e.pageX;
-            target.attr("oldx", target.attr("x"));
+          // start drag
+        } else if (options.canDrag) {
+          //store offset mouse x1
+          offsetMouseRect = parseFloat(target.attr("x")) - e.pageX;
+          target.attr("oldx", target.attr("x"));
 
-            var one = true;
-            //bind event for start dragging
-            $(svg).bind("mousemove.deSVG",function (e) {
-              //hide link circle
-              $("[class*=linkHandleSVG]").hide();
-              if (one) {
-                //trigger startDrag
-                options.startDrag.call(target.get(0), e);
-                one = false;
-              }
+          var one = true;
+          //bind event for start dragging
+          $(svg).bind("mousemove.deSVG", function (e) {
+            //hide link circle
+            $("[class*=linkHandleSVG]").hide();
+            if (one) {
+              //trigger startDrag
+              options.startDrag.call(target.get(0), e);
+              one = false;
+            }
 
-              //manage resizing
-              target.attr("x", offsetMouseRect + e.pageX);
-              //callback
-              options.drag.call(target.get(0), e);
+            //manage resizing
+            target.attr("x", offsetMouseRect + e.pageX);
+            //callback
+            options.drag.call(target.get(0), e);
 
-            }).bind("mouseleave.deSVG", drop);
+          }).bind("mouseleave.deSVG", drop);
 
-            //bind mouse up on body to stop resizing
-            $("body").one("mouseup.deSVG", drop);
+          //bind mouse up on body to stop resizing
+          $("body").one("mouseup.deSVG", drop);
 
-          }
         }
+      }
       ).bind("mousemove.deSVG",
         function (e) {
           var el = $(this);
@@ -1032,7 +1033,7 @@ $.fn.dragExtedSVG = function (svg, opt) {
 
           //set cursor handle
           //if (options.canResize && (x2-x1)>3*options.resizeZoneWidth &&((posx<=x2 &&  posx >= x2- options.resizeZoneWidth) || (posx>=x1 && posx<=x1+options.resizeZoneWidth))) {
-          if (options.canResize && (Math.abs(posx-x1)<=options.resizeZoneWidth || Math.abs(posx-x2)<=options.resizeZoneWidth)) {
+          if (options.canResize && (Math.abs(posx - x1) <= options.resizeZoneWidth || Math.abs(posx - x2) <= options.resizeZoneWidth)) {
             el.addClass("deSVGhand");
           } else {
             el.removeClass("deSVGhand");
@@ -1046,7 +1047,7 @@ $.fn.dragExtedSVG = function (svg, opt) {
 
   function stopResize(e) {
     $(svg).unbind("mousemove.deSVG").unbind("mouseup.deSVG").unbind("mouseleave.deSVG");
-    if (target && target.attr("oldw")!=target.attr("width"))
+    if (target && target.attr("oldw") != target.attr("width"))
       options.stopResize.call(target.get(0), e); //callback
     target = undefined;
     $("body").clearUnselectable();
