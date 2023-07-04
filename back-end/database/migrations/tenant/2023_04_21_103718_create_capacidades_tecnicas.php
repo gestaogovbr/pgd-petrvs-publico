@@ -19,8 +19,8 @@ class CreateCapacidadesTecnicas extends Migration
             $table->primary('id');
             $table->timestamps();
             // Campos:
-            $table->string('nome', 256)->comment("Nome da área");
-            $table->tinyInteger('ativo')->default(1)->comment("area ativo ou inativo");
+            $table->string('nome', 256)->comment("Nome da capacidade técnica");
+            $table->tinyInteger('ativo')->default(1)->comment("capacidade ativo ou inativo");
             // Chaves estrangeiras:
             $table->foreignUuid('area_tematica_id')->constrained("areas_tematicas")->onDelete('restrict')->onUpdate('cascade');           
             

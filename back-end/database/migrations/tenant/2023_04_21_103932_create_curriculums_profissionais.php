@@ -20,16 +20,16 @@ class CreateCurriculumsProfissionais extends Migration
             $table->timestamps();
             // Campos:
             $table->tinyInteger('ano_ingresso')->default(0)->comment("Ano de ingresso");
-            $table->json('funcoes')->nullable()->comment("Funções exercidas e que exerce");
-            $table->json('unidades_lotado')->nullable()->comment("Unidades que ja foi lotado");
+           // $table->json('funcoes')->nullable()->comment("Funções exercidas e que exerce");
+           // $table->json('unidades_lotado')->nullable()->comment("Unidades que ja foi lotado");
             $table->string('lotacao_atual')->default('')->comment("Lotação atual");
-            $table->json('atividades_fora')->nullable()->comment("Quais atividades você desempenhou fora e que podem contribuir para a instituição");
-            $table->json('atividades_internas')->nullable()->comment("Quais atividades você desempenhou internamente que podem contribuir para a instituição");
+            //$table->json('atividades_fora')->nullable()->comment("Quais atividades você desempenhou fora e que podem contribuir para a instituição");
+            //$table->json('atividades_internas')->nullable()->comment("Quais atividades você desempenhou internamente que podem contribuir para a instituição");
             $table->json('especifique_habilidades')->nullable()->comment("Especifique suas habilidades: (Ex: Desenvolvo em JavaScript)");
-            $table->json('docencia_fora')->nullable()->comment("Você já realizou algum trabalho de docência fora da Instituição");
-            $table->json('docencia_interna')->nullable()->comment("Você é docente ou instrutor da Instituição");
-            $table->json('curso_fora')->nullable()->comment("Quais cursos você já fez e quais pretende fazer fora da Instituição");
-            $table->json('curso_interno')->nullable()->comment("Quais os principais cursos que você já fez e pretende fazer na Instituição");
+            //$table->json('docencia_fora')->nullable()->comment("Você já realizou algum trabalho de docência fora da Instituição");
+            //$table->json('docencia_interna')->nullable()->comment("Você é docente ou instrutor da Instituição");
+            //$table->json('curso_fora')->nullable()->comment("Quais cursos você já fez e quais pretende fazer fora da Instituição");
+            //$table->json('curso_interno')->nullable()->comment("Quais os principais cursos que você já fez e pretende fazer na Instituição");
             $table->tinyInteger('viagem_nacional')->default(0)->comment("Já fez viagem nacional a trabalho");
             $table->tinyInteger('viagem_internacional')->default(0)->comment("Já fez viagem internacional a trabalho");
             $table->tinyInteger('interesse_bnt')->default(0)->comment("Você tem interesse na participação do Banco Nacional de Talentos");

@@ -16,16 +16,8 @@ class CurriculumProfissional extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'ano_ingresso',
-        'funcoes',
-        'unidades_lotado',
-        'lotacao_atual',
-        'atividades_fora',
-        'atividades_internas',
         'especifique_habilidades',
-        'docencia_fora',
-        'docencia_interna',
-        'curso_fora',
-        'curso_interno',
+        'lotacao_atual',
         'viagem_nacional',
         'viagem_internacional',
         'interesse_bnt',
@@ -41,15 +33,8 @@ class CurriculumProfissional extends ModelBase
     ];
 
     protected $casts = [
-        'funcoes' => AsJson::class,
-        'unidades_lotado' => AsJson::class,
-        'atividades_fora' => AsJson::class,
-        'atividades_internas' => AsJson::class,
-        'especifique_habilidades' => AsJson::class,
-        'docencia_fora' => AsJson::class,
-        'docencia_interna' => AsJson::class,
-        'curso_fora' => AsJson::class,
-        'curso_interno' => AsJson::class,
+
+       
     ];
 
     //public $fillable_changes = ['graduacoes'];
