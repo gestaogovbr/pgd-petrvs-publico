@@ -6,22 +6,12 @@
             <columns>
                 <column [titleTemplate]="titleOrigem" [template]="columnOrigem" [editTemplate]="editOrigem" [verticalAlign]="'middle'" [width]="125" [align]="'center'">
                     <ng-template let-header="header" #titleOrigem><div class="text-center"><span><strong>Origem</strong></span></div></ng-template>
-                    <ng-template let-row="row" #columnOrigem>
-                        <span><small>
-                            <badge *ngIf="row.entrega_plano_entrega?.plano_entrega_id == entity?.plano_entrega_id" color="success" label="Mesma Unidade"></badge>
-                            <badge *ngIf="row.entrega_plano_entrega?.plano_entrega_id != entity?.plano_entrega_id && row.plano_entrega_entrega_id?.length" color="primary" label="Outra Unidade"></badge>
-                            <badge *ngIf="row.entrega_id?.length" color="secondary" label="Catálogo"></badge>
-                        </small></span>
-                    </ng-template>
-                    <ng-template let-row="row" #editOrigem>
-                        <input-select #origem controlName="origem" controlName="origem" [control]="form!.controls.origem" [items]="lookup.ORIGENS_ENTREGAS_PLANO_TRABALHO" (change)="onOrigemChange(row)"></input-select>
-                    </ng-template>
+                    <ng-template let-row="row" #columnOrigem><span><small><badge [label]="tipoEntrega(row).label" [color]="tipoEntrega(row).cor"></badge></small></span></ng-template>
+                    <ng-template let-row="row" #editOrigem><input-select #origem controlName="origem" controlName="origem" [control]="form!.controls.origem" [items]="lookup.ORIGENS_ENTREGAS_PLANO_TRABALHO" (change)="onOrigemChange(row)"></input-select></ng-template>
                 </column>
                 <column [maxWidth]="350" [titleTemplate]="titleEntrega" [template]="columnEntrega" [editTemplate]="editEntrega" [verticalAlign]="'middle'">
                     <ng-template let-header="header" #titleEntrega><span><strong>Entrega</strong></span></ng-template>
-                    <ng-template let-row="row" #columnEntrega >
-                        <small>{{ row.entrega_plano_entrega?.entrega?.nome || row.entrega?.nome || "Desconhecido" }}</small>
-                    </ng-template>
+                    <ng-template let-row="row" #columnEntrega><small>{{ tipoEntrega(row).nome }}</small></ng-template>
                     <ng-template let-row="row" #editEntrega>
                         <input-select *ngIf="origem?.value == 'MESMA_UNIDADE'" #entregaMesmaUnidade nullable itemNull="- Selecione -" controlName="plano_entrega_entrega_id" [control]="form!.controls.plano_entrega_entrega_id" [items]="entregasMesmaUnidade" (change)="onEntregaMesmaUnidadeChange($event)"></input-select>
                         <input-select *ngIf="origem?.value == 'OUTRA_UNIDADE'" #entregaOutraUnidade nullable itemNull="- Selecione -" controlName="plano_entrega_entrega_id" [control]="form!.controls.plano_entrega_entrega_id" [items]="entregasOutraUnidade" (change)="onEntregaOutraUnidadeChange($event)" searchButton [sufix]="planoEntregaOutraUnidade?.unidade?.sigla" [searchRoute]="{route: ['gestao', 'plano-entrega']}" [afterSearch]="carregarEntregasOutraUnidade.bind(this)"></input-select>
@@ -35,21 +25,13 @@
                             <small><badge icon="bi bi-calculator" [color]="totalForcaTrabalho == 100 ? 'success' : 'warning'" [label]="totalForcaTrabalho + '%'"></badge></small>
                         </div>
                     </ng-template>
-                    <ng-template let-row="row" #columnForcaTrabalho>
-                        <small>{{  row.forca_trabalho + '%' }}</small>
-                    </ng-template>
-                    <ng-template let-row="row" #editForcaTrabalho>
-                        <input-text number sufix="%" controlName="forca_trabalho" [control]="form!.controls.forca_trabalho" (change)="onForcaTrabalhoChange(row)"></input-text>
-                    </ng-template>
+                    <ng-template let-row="row" #columnForcaTrabalho><small>{{  row.forca_trabalho + '%' }}</small></ng-template>
+                    <ng-template let-row="row" #editForcaTrabalho><input-text number sufix="%" controlName="forca_trabalho" [control]="form!.controls.forca_trabalho" (change)="onForcaTrabalhoChange(row)"></input-text></ng-template>
                 </column>
                 <column [maxWidth]="250" [titleTemplate]="titleDescricao" [template]="columnDescricao" [editTemplate]="editDescricao" [verticalAlign]="'middle'">
                     <ng-template let-header="header" #titleDescricao><div class="text-center"><span><strong>Detalhamento</strong></span></div></ng-template>
-                    <ng-template let-row="row" #columnDescricao>
-                        <small>{{ row.descricao }}</small>
-                    </ng-template>
-                    <ng-template let-row="row" #editDescricao>
-                        <input-text controlName="descricao" [control]="form!.controls.descricao"></input-text>
-                    </ng-template>
+                    <ng-template let-row="row" #columnDescricao><small>{{ row.descricao }}</small></ng-template>
+                    <ng-template let-row="row" #editDescricao><input-text controlName="descricao" [control]="form!.controls.descricao"></input-text></ng-template>
                 </column>
                 <column type="options"></column>
             </columns>
