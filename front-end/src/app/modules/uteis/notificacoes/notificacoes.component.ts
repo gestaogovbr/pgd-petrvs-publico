@@ -6,6 +6,7 @@ import { Notificacao } from 'src/app/models/notificacao.model';
 import { NotificacaoDaoService } from 'src/app/dao/notificacao-dao.service';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { IIndexable } from 'src/app/models/base.model';
+import { NotificacaoService } from './notificacao.service';
 
 @Component({
   selector: 'notificacoes',
@@ -24,9 +25,11 @@ export class NotificacoesComponent extends PageListBase<Notificacao, Notificacao
       onClick: this.onLidoClick.bind(this)
     }
   ];
+  public notificacaoService: NotificacaoService;
 
   constructor(public injector: Injector) {
     super(injector, Notificacao, NotificacaoDaoService);
+    this.notificacaoService = injector.get<NotificacaoService>(NotificacaoService);
     /* Inicializações */
     this.modalWidth = 700;
     this.join = ["destinatarios"];
@@ -60,7 +63,10 @@ export class NotificacoesComponent extends PageListBase<Notificacao, Notificacao
       a.push(...(v as Notificacao).destinatarios.filter(x => !x.data_leitura).map(x => x.id));
       return a;
     }, []);
-    this.dao!.marcarComoLido(destinatariosIds).then(qtd => this.grid!.reloadFilter());
+    this.dao!.marcarComoLido(destinatariosIds).then(qtd => {
+      this.grid!.reloadFilter();
+      this.notificacaoService.updateNaoLidas();
+    });
   }
 
 }

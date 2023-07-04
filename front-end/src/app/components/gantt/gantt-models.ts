@@ -94,6 +94,8 @@ export class GanttTask {
     public isGroup?: boolean = false;
     public tasks?: GanttTask[] = [];
     public dependencies_ids?: string[] = [];
+    public startBaseline?: Date = undefined;
+    public endBaseline?: Date = undefined;
     
     public constructor(data?: any) { if(data) Object.assign(this, data); }
 }

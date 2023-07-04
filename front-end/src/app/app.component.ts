@@ -74,7 +74,7 @@ export class AppComponent {
     this.entity = injector.get<EntityService>(EntityService);
     this.notificacao = injector.get<NotificacaoService>(NotificacaoService);
     /* Inicializações */
-    this.notificacao.hartBeat();
+    this.notificacao.heartbeat();
     this.auth.success = (usuario: Usuario, redirectTo?: FullRoute) => {
       this.go.navigate(redirectTo || { route: this.globals.initialRoute });
     };

@@ -139,12 +139,12 @@ export class ProjetoFormComponent extends PageFormBase<Projeto, ProjetoDaoServic
 
   public async saveData(form: IIndexable): Promise<Projeto> {
     await Promise.all([
-      this.principal!.saveData(),
-      this.fases!.saveData(),
-      this.recursos!.saveData(),
-      this.alocacoes!.saveData(),
-      this.regras!.saveData(),
-      this.comentarios!.saveData()
+      this.principal?.saveData(),
+      this.fases?.saveData(),
+      this.recursos?.saveData(),
+      this.alocacoes?.saveData(),
+      this.regras?.saveData(),
+      this.comentarios?.saveData()
     ]);
     return this.entity! as Projeto;
   }
