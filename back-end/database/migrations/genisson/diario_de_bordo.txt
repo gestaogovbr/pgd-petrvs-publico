@@ -1,0 +1,3 @@
+Diario de bordo:
+
+- Removi tipos_atividades

@@ -18,6 +18,7 @@ class CreateTiposAvaliacoesTable extends Migration
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
+            $table->softDeletes();
             // Campos:
             $table->integer('nota_atribuida')->nullable()->comment("Nota atribuida de 0 a 10");
             $table->string('nome', 256)->comment("Descrição da nota atribuida");
@@ -25,8 +26,6 @@ class CreateTiposAvaliacoesTable extends Migration
             $table->text('pergunta')->comment("Pergunta motivacional, o porque você selecionou essa nota");
             $table->string('icone', 100)->comment("Classe do icone relacionado a avaliação");
             $table->string('cor', 100)->comment("Código da cor em hex");
-            $table->dateTime('data_inicio')->comment("Data inicio da vigência");
-            $table->dateTime('data_fim')->nullable()->comment("Data final da vigência");
         });
     }
 
