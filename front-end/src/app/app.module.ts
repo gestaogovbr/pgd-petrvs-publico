@@ -20,6 +20,8 @@ import { UteisModule } from './modules/uteis/uteis.module';
 import { RotinaModule } from './modules/rotinas/rotina.module';
 import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
 import { CadeiaValorModule } from './modules/gestao/cadeia-valor/cadeia-valor.module';
+import { CurriculumModule } from './modules/curriculum/curriculum.module';
+import { CurriculumListComponent } from './modules/cadastros/curriculum/curriculum-list/curriculum-list.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,9 @@ import { CadeiaValorModule } from './modules/gestao/cadeia-valor/cadeia-valor.mo
     DialogComponent,
     SpinnerOverlayComponent,
     TesteComponent,
-    TesteFormComponent
+    TesteFormComponent,
+    CurriculumListComponent,
+
   ],
   imports: [
     BrowserModule,
@@ -45,7 +49,8 @@ import { CadeiaValorModule } from './modules/gestao/cadeia-valor/cadeia-valor.mo
     UteisModule,
     LogModule,
     RotinaModule,
-    CadeiaValorModule
+    CadeiaValorModule,
+    CurriculumModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,0 +1,10 @@
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+    <div class="row">
+        <input-text [size]="3" label="Nome da Função" controlName="nome"></input-text>
+        <input-text [size]="3" label="Nível da Função" controlName="nivel"></input-text>
+        <input-text [size]="3" label="Código SIAPE da Função" controlName="siape"></input-text>
+        <input-text [size]="3" label="Código CBO da Função" controlName="cbo"></input-text>
+        <input-text [size]="8" label="Descrição da Função" controlName="descricao"></input-text>
+        <input-switch [size]="2" labelPosition="left" label="Ativo" controlName="ativo"></input-switch>
+    </div>    
+</editable-form>

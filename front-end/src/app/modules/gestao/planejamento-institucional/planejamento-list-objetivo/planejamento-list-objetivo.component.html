@@ -1,5 +1,5 @@
-<grid [items]="items" [form]="form!" #gridObjetivos editable [selectable]="false" [minHeight]="minHeight" 
-    [add]="addObjetivo.bind(this)" [remove]="removeObjetivo.bind(this)" 
+<grid [items]="items" [form]="form!" #gridObjetivos editable [selectable]="false" [minHeight]="minHeight"
+    [add]="addObjetivo.bind(this)" [remove]="removeObjetivo.bind(this)"
     [hasDelete]="false" [hasEdit]="false" [hasAdd]="!disabled" [join]="join" [groupBy]="groupBy" [groupTemplate]="groupEixoTematico">
     <ng-template let-separator="separator" #groupEixoTematico>
         <span class="text-wrap"><badge [icon]="getEixo(separator?.text)?.icone || 'bi bi-gear'" [color]="getEixo(separator?.text)?.cor || 'primary'" [label]="getEixo(separator?.text)?.nome || 'Desconhecido'"></badge></span>

@@ -10,8 +10,8 @@
                         # {{contexto!.name}}
                     </small>
                     <ul class="dropdown-menu" aria-labelledby="petrvs-context">
-                        <li *ngFor="let item of menuContexto" (click)="onContextoSelect(item)">
-                            <a class="dropdown-item" role="button"><i class="bi bi-hash"></i>{{item.name}}</a>
+                        <li *ngFor="let itemContexto2 of menuContexto" (click)="onContextoSelect(itemContexto2)">
+                            <a class="dropdown-item" role="button"><i class="bi bi-hash"></i>{{itemContexto2.name}}</a>
                         </li>
                     </ul>
                 </span>
@@ -55,23 +55,28 @@
                 <!--button class="btn btn-outline-success me-2" type="button">Main button</button/ -->
                 <ul *ngIf="!globals.isToolbar && auth.logged" class="navbar-nav me-auto mb-2 mb-lg-0"> <!-- Lista do Menu Principal -->
                     <li class="nav-item">
-                        <a [class]="menuItemClass('nav-link', ['home'])" aria-current="page" role="button" (click)="go.navigate({route: ['home']})">Home</a>
+                        <a [class]="menuItemClass('nav-link', ['home'])" aria-current="page" role="button" (click)="goHome()">Home</a>
                     </li>
-                    <ng-container *ngFor="let item of menuToolbar">
+                    <ng-container *ngFor="let item of menu">
                         <li *ngIf="!item.permition?.length || auth.hasPermissionTo(item.permition)" class="nav-item dropdown">
                             <a [class]="menuItemClass('nav-link dropdown-toggle', item.route)" role="button" [attr.id]="item.id" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
                                 {{item.name}}
                             </a>
                             <ul class="dropdown-menu" [attr.aria-labelledby]="item.id">
-                                <li *ngFor="let menu of getMenuItems(item.menu)">
-                                    <a *ngIf="menu != '-'; else divider" [class]="menuItemClass('dropdown-item', menu.route)" role="button" (click)="go.navigate({route: menu.route}, menu.metadata || {root: true})">
-                                        <i [class]="menu.icon"></i> {{menu.name}}
-                                    </a>
-                                    <ng-template #divider>
-                                        <hr class="dropdown-divider">
-                                    </ng-template>
-                                </li>
+                                <ng-container *ngFor="let itemMenu of item.menu">
+                                    
+                                    <li *ngIf="!itemMenu.permition?.length || auth.hasPermissionTo(itemMenu.permition)">
+                                    
+                                        <a *ngIf="itemMenu != '-'; else divider" [class]="menuItemClass('dropdown-item', itemMenu.route)" role="button" (click)="go.navigate({route: itemMenu.route}, itemMenu.metadata || {root: true})">
+                                           
+                                            <i [class]="itemMenu.icon"></i> {{itemMenu.name}}
+                                        </a>
+                                        <ng-template #divider>
+                                            <hr class="dropdown-divider">
+                                        </ng-template>
+                                    </li>
+                                </ng-container>
                             </ul>
                         </li>
                     </ng-container>

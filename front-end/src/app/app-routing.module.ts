@@ -9,6 +9,7 @@ import { TesteFormComponent } from './modules/teste/teste-form/teste-form.compon
 import { TesteComponent } from './modules/teste/teste.component';
 import { ConfigResolver } from './resolvies/config.resolver';
 
+
 const routes: Routes = [
   { path: 'panel', loadChildren: () => import('./modules/panel/panel.module').then(m => m.PanelModule) },
   { path: 'teste', component: TesteComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Teste" } },
@@ -50,6 +51,10 @@ const routes: Routes = [
   { path: 'relatorios', loadChildren: () => import('./modules/relatorios/relatorio.module').then(m => m.RelatorioModule), canActivate: [AuthGuard] },
   { path: 'logs', loadChildren: () => import('./modules/logs/log.module').then(m => m.LogModule), canActivate: [AuthGuard] },
   { path: 'rotinas', loadChildren: () => import('./modules/rotinas/rotina.module').then(m => m.RotinaModule), canActivate: [AuthGuard] },
+  { path: 'raiox',loadChildren: () => import('./modules/curriculum/curriculum.module').then(m => m.CurriculumModule), canActivate: [AuthGuard] },
+  { path: 'raiox/cadastros',loadChildren: () => import('./modules/cadastros/curriculum/curriculum-cadastros.module').then(m => m.CurriculumCadastrosModule), canActivate: [AuthGuard] },
+  //{ path: 'raiox/cadastros/gerais',loadChildren: () => import('./modules/cadastros/curriculum/curriculum-cadastros.module').then(m => m.CurriculumCadastrosModule), canActivate: [AuthGuard] },
+ 
   { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];
 

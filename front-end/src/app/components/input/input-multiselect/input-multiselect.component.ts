@@ -4,6 +4,7 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { InputBase, LabelPosition, MultiselectStyle } from '../input-base';
 import { InputSearchComponent } from '../input-search/input-search.component';
 import { InputSelectComponent } from '../input-select/input-select.component';
+import { ToolbarButton } from '../../toolbar/toolbar.component';
 
 type ItemHandleResult = LookupItem | undefined;
 
@@ -170,5 +171,5 @@ export class InputMultiselectComponent extends InputBase implements OnInit {
       this.cdRef.detectChanges();
       if(this.change) this.change();
     }
-  }  
+  } 
 }

@@ -19,13 +19,15 @@ class CreateCurriculums extends Migration
             $table->primary('id');
             $table->timestamps();
             // Campos:
-            $table->longText('apresentação')->comment("Nome da área da graduação");
-            $table->string('telefone',64)->comment("Nome da área da graduação");
-            $table->json('idiomas')->nullable()->comment("Nome da área da graduação");
+            $table->longText('apresentacao')->comment("Apresentação");
+            $table->string('telefone',64)->comment("Telefone");
+            $table->json('idiomas')->nullable()->comment("Idiomas que fala");
+            $table->string('estado_civil',64)->nullable()->comment("Estado Civil");
+            $table->tinyInteger('quantidade_filhos')->default(0)->comment("Qtde de filhos");
             $table->tinyInteger('ativo')->default(1)->comment("Curriculum ativa ou inativa");
            
             // Chaves estrangeiras:
-            $table->foreignUuid('usuario_id')->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('usuario_id')->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->unique();
             $table->foreignUuid('cidade_id')->constrained("cidades")->onDelete('restrict')->onUpdate('cascade');
         });
     }

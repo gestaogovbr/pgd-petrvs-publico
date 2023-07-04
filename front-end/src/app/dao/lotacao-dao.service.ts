@@ -9,7 +9,7 @@ export class LotacaoDaoService extends DaoBaseService<Lotacao> {
 
   constructor(protected injector: Injector) { 
     super("Lotacao", injector);
-    //this.searchFields = ["nome"];
+    this.searchFields = ["nome"];
   }
 
 }
