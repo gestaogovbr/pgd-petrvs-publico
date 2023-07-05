@@ -19,11 +19,17 @@ class CreateHistoricoDocenciasExternasCurriculumProfissionalTable extends Migrat
             $table->primary('id');
             $table->timestamps();
             $table->softDeletes();
+            
+            $table->uuid('curriculum_profissional_id');
+            $table->uuid('curso_id');
+            $table->uuid('area_atividade_externa_id');
 
             // Chaves estrangeiras:
-            $table->foreignUuid('curriculum_profissional_id')->constrained("curriculums_profissionais")->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('curso_id')->constrained("cursos")->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('area_atividade_externa_id')->constrained("areas_atvidades_externas")->onDelete('restrict')->onUpdate('cascade');
+            $table->foreign('curriculum_profissional_id', 'fk_hist_docen_ext_id_curriculum_prof_id')->references('id')->on('curriculums_profissionais')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreign('curso_id', 'fk_hist_docen_ext_id_curso_id')->references('id')->on('cursos')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreign('area_atividade_externa_id', 'fk_hist_docen_ext_id_area_ativ_ext_id')->references('id')->on('areas_atividades_externas')->onDelete('restrict')->onUpdate('cascade');
+         
+
         });
     }
 

@@ -22,9 +22,13 @@ class CreateHistoricoCursosInternosCurriculumProfissionalTable extends Migration
 
             $table->tinyInteger('pretensao')->default(0)->comment("Pretende ou não fazer o curso");
 
+            $table->uuid('curriculum_profissional_id');
+            $table->uuid('curso_id');
+
             // Chaves estrangeiras:
-            $table->foreignUuid('curriculum_profissional_id')->constrained("curriculums_profissionais")->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('curso_id')->constrained("cursos")->onDelete('restrict')->onUpdate('cascade');
+            $table->foreign('curriculum_profissional_id', 'fk_hist_cur_int_id_curriculum_prof_id')->references('id')->on('curriculums_profissionais')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreign('curso_id', 'fk_hist_cur_int_id_curso_id')->references('id')->on('cursos')->onDelete('restrict')->onUpdate('cascade');
+
         });
     }
 

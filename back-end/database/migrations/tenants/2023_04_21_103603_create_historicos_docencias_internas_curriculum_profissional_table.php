@@ -19,10 +19,14 @@ class CreateHistoricoDocenciasInternasCurriculumProfissionalTable extends Migrat
             $table->primary('id');
             $table->timestamps();
             $table->softDeletes();
+            
+            $table->uuid('curriculum_profissional_id');
+            $table->uuid('curso_id');
 
             // Chaves estrangeiras:
-            $table->foreignUuid('curriculum_profissional_id')->constrained("curriculums_profissionais")->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('curso_id')->constrained("cursos")->onDelete('restrict')->onUpdate('cascade');
+            $table->foreign('curriculum_profissional_id', 'fk_hist_docen_int_id_curriculum_prof_id')->references('id')->on('curriculums_profissionais')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreign('curso_id', 'fk_hist_docen_int_id_curso_id')->references('id')->on('cursos')->onDelete('restrict')->onUpdate('cascade');
+
         });
     }
 

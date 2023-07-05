@@ -22,10 +22,14 @@ class CreateHistoricoCursosExternosCurriculumProfissionalTable extends Migration
 
             $table->string('nome',128)->comment("Nome do curso externo");
             $table->tinyInteger('pretensao')->default(0)->comment("Pretende ou não fazer o curso");
+           
+            $table->uuid('curriculum_profissional_id');
+            $table->uuid('area_atividade_externa_id');
 
             // Chaves estrangeiras:
-            $table->foreignUuid('curriculum_profissional_id')->constrained("curriculums_profissionais")->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('area_atividade_externa_id')->constrained("areas_atividades_externas")->onDelete('restrict')->onUpdate('cascade');
+            $table->foreign('curriculum_profissional_id', 'fk_hist_cur_ext_id_curriculum_prof_id')->references('id')->on('curriculums_profissionais')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreign('area_atividade_externa_id', 'fk_hist_cur_ext_id_area_ativ_id')->references('id')->on('areas_atividades_externas')->onDelete('restrict')->onUpdate('cascade');
+
         });
     }
 
