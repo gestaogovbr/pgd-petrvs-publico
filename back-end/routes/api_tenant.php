@@ -68,6 +68,14 @@ use App\Http\Controllers\AreaAtividadeExternaController;
 use App\Http\Controllers\AreaTematicaController;
 //use App\Http\Controllers\AtividadeExternaController;
 use App\Http\Controllers\CapacidadeTecnicaController;
+use App\Http\Controllers\HistoricoAtividadeExternaCurriculumController;
+use App\Http\Controllers\HistoricoAtividadeInternaCurriculumController;
+use App\Http\Controllers\HistoricoCursoExternoCurriculumController;
+use App\Http\Controllers\HistoricoCursoInternoCurriculumController;
+use App\Http\Controllers\HistoricoDocenciaExternaCurriculumController;
+use App\Http\Controllers\HistoricoDocenciaInternaCurriculumController;
+use App\Http\Controllers\HistoricoFuncaoCurriculumController;
+use App\Http\Controllers\HistoricoLotacaoCurriculumController;
 
 /*
 |--------------------------------------------------------------------------
@@ -301,3 +309,11 @@ Route::middleware(['auth:sanctum'])->prefix('GrupoEspecializado')->group(functio
 Route::middleware(['auth:sanctum'])->prefix('Cargo')->group(function () { defaultRoutes(CargoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Questionario')->group(function () { defaultRoutes(QuestionarioController::class); });
 Route::middleware(['auth:sanctum'])->prefix('RespostaQuestionario')->group(function () { defaultRoutes(RespostaQuestionarioController::class); });
+Route::middleware(['auth:sanctum'])->prefix('HistoricoAtividadeExternaCurriculumProfissional')->group(function () { defaultRoutes(HistoricoAtividadeExternaCurriculumController::class); });
+Route::middleware(['auth:sanctum'])->prefix('HistoricoAtividadeInternaCurriculumProfissional')->group(function () { defaultRoutes(HistoricoAtividadeInternaCurriculumController::class); });
+Route::middleware(['auth:sanctum'])->prefix('HistoricoCursoExternoCurriculumProfissional')->group(function () { defaultRoutes(HistoricoCursoExternoCurriculumController::class); });
+Route::middleware(['auth:sanctum'])->prefix('HistoricoCursoInternoCurriculumProfissional')->group(function () { defaultRoutes(HistoricoCursoInternoCurriculumController::class); });
+Route::middleware(['auth:sanctum'])->prefix('HistoricoDocenciaExternaCurriculumProfissional')->group(function () { defaultRoutes(HistoricoDocenciaExternaCurriculumController::class); });
+Route::middleware(['auth:sanctum'])->prefix('HistoricoDocenciaInternaCurriculumProfissional')->group(function () { defaultRoutes(HistoricoDocenciaInternaCurriculumController::class); });
+Route::middleware(['auth:sanctum'])->prefix('HistoricoFuncaoCurriculumProfissional')->group(function () { defaultRoutes(HistoricoFuncaoCurriculumController::class); });
+Route::middleware(['auth:sanctum'])->prefix('HistoricoLotacaoCurriculumProfissional')->group(function () { defaultRoutes(HistoricoLotacaoCurriculumController::class); });
