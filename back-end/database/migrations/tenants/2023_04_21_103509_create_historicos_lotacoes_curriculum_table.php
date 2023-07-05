@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateHistoricoLotacoesCurriculumProfissionalTable extends Migration
+class CreateHistoricoLotacoesCurriculumTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateHistoricoLotacoesCurriculumProfissionalTable extends Migration
      */
     public function up()
     {
-        Schema::create('historicos_lotacoes_curriculum_profissional', function (Blueprint $table) {
+        Schema::create('historicos_lotacoes_curriculum', function (Blueprint $table) {
             // Configurações:
             $table->uuid('id');
             $table->primary('id');
@@ -36,6 +36,6 @@ class CreateHistoricoLotacoesCurriculumProfissionalTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('historicos_funcoes_curriculum_profissional');
+        Schema::dropIfExists('historicos_funcoes_curriculum');
     }
 }
