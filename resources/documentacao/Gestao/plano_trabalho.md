@@ -42,6 +42,7 @@
 ## REGRAS DE NEGÓCIO APLICADAS AOS PLANOS DE TRABALHO
 
 1. (RN_PTR_1) Após criado um plano de trabalho, o seu plano de entregas não pode mais ser alterado. Em consequência dessa regra, os seguintes campos não poderão mais ser alterados: plano_entrega_id, unidade_id, programa_id;
+2. Os planos de trabalho dos participantes afetados por exclusão de entregas deverão ser repactuados.
 
 ## REGRAS DE INTERFACE
 

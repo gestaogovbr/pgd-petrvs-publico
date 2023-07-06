@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateLotacoesTable extends Migration
+class CreatePlanosTrabalhosAtividadesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,18 +13,16 @@ class CreateLotacoesTable extends Migration
      */
     public function up()
     {
-        Schema::create('lotacoes', function (Blueprint $table) {
-            // Configurações:
+        Schema::create('planos_trabalhos_atividades', function (Blueprint $table) {
+            // Configurações
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
+            $table->softDeletes();   
             // Campos:
-            $table->dateTime('data_inicio');
-            $table->dateTime('data_fim')->nullable();
-            $table->tinyInteger('principal')->comment("Se é a lotação principal do usuário");
             // Chaves estrangeiras:
-            $table->foreignUuid('unidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('plano_trabalho_id')->constrained("planos_trabalhos")->onDelete('restrict')->onUpdate('cascade')->comment("Plano de trabalho da atividade");
+            $table->foreignUuid('atividade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Atividade do plano de trabalho");
         });
     }
 
@@ -36,7 +34,7 @@ class CreateLotacoesTable extends Migration
     public function down()
     {
         Schema::disableForeignKeyConstraints();
-        Schema::dropIfExists('lotacoes');
+        Schema::dropIfExists('planos_trabalhos_atividades');
         Schema::enableForeignKeyConstraints();
     }
 }
