@@ -145,6 +145,8 @@
 5. Opções para o filtro: 'Incluir Unidades Superiores', 'Incluir Unidades Inferiores', 'Selecionar por Status'
 6. O plano de entregas pode ser desarquivado?
 7. Em que situações o plano de entregas sofrerá a ação UPDATE no back-end?
+8. Verificar se isso já foi implementado: O plano de entregas deverá ser aprovado por nível hierárquico superior ao da chefia da unidade de execução, o qual deverá ser informado sobre eventuais ajustes.
+9. A aprovação do plano de entregas e a comunicação sobre eventuais ajustes, de que trata o §1º, não se aplicam à unidade instituidora.
 
 ## FLUXO DOS PLANOS DE ENTREGAS  
 
@@ -208,7 +210,7 @@ Plano de Entregas
    Planejamento_estrategico_id
    Cadeia_valor_id
    Entregas
-            Inicio     Fim        Indicador (vem do cadastro entrega) Metal geral Realizado Objetivos* Processos*    Atividades*          Cliente      Hmg
+            Inicio     Fim        Indicador (vem do cadastro entrega) Meta geral Realizado Objetivos* Processos*    Atividades*          Cliente      Hmg
       Ent1: 01/01/2022 -          Quantidade                          1000        200       Ob1, Ob1   Proc1, Proc2  Tip.Ativ1, Tip.Atv2  uOrg1, uOrg2 S
       Ent2: 01/01/2022 30/12/2022 %                                   100         70        Ob2                                                        S
       Ent3: 01/01/2022 30/12/2024 Qualitativo                         Excelente   Bom                                                                  S      Ent4: 09/12/2022 30/12/2022 ...                                                                                                                  N

@@ -45,6 +45,8 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
     }, this.cdRef, this.validate);
   }
 
+// NA TABELA HÁ APENAS O OBJETIVO_PAI_ID. PORTANTO, EXCLUIR DAQUI O OBJETIVO_PAI_ID E RENOMEAR OBJETIVO_SUPERIOR_ID PARA OBJETIVO_PAI_ID
+
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
     if(['nome','fundamentacao','eixo_tematico_id'].indexOf(controlName) >= 0 && !control.value?.length) {
@@ -57,7 +59,7 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
     let result = null;
 
     if(this.isPlanejamentoUNEX() && !this.form?.controls.objetivo_superior_id.value){
-      result = "Quando o Planejamento é de uma Unidade Executora é obrigatório associar cada objetivo a um objetivo do Planejamento Institucional superior!";
+      result = "Quando o Planejamento é de uma Unidade Executora é obrigatório associar cada um dos seus objetivos a um objetivo do Planejamento Institucional superior!";
     }
 
     return result;

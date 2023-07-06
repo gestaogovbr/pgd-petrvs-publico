@@ -22,9 +22,9 @@ class CreateTiposAtividadesTable extends Migration
             // Campos:
             $table->string('nome', 256)->comment("Nome do tipo de atividade");
             $table->float('esforco')->comment("Tempo previsto para a execução da atividade (Horas decimais)");
-            $table->float('dias_planejado')->comment("Sugestão de dias para conclusão da atividade independente de quando iniciado (influencia no prazo da demanda)");
-            $table->json('etiquetas')->nullable()->comment("Nome das etiquetas predefinidas para a atividade");
-            $table->json('checklist')->nullable()->comment("Nome dos checklist predefinidas para a atividade");
+            $table->float('dias_planejado')->comment("Sugestão de dias para conclusão da atividade independente de quando iniciado (influência no prazo da atividade)");
+            $table->json('etiquetas')->nullable()->comment("Nome das etiquetas para a atividade");
+            $table->json('checklist')->nullable()->comment("Nome dos checklist para a atividade");
             $table->text('comentario')->nullable()->comment("Comentário predefinido para a atividade");
         });
     }
@@ -36,6 +36,8 @@ class CreateTiposAtividadesTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('tipos_atividades');
+        Schema::enableForeignKeyConstraints();
     }
 }

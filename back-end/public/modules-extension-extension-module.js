@@ -155,7 +155,7 @@ ExtensionModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineIn
             _angular_common__WEBPACK_IMPORTED_MODULE_0__["CommonModule"],
             src_app_components_components_module__WEBPACK_IMPORTED_MODULE_4__["ComponentsModule"],
             _angular_forms__WEBPACK_IMPORTED_MODULE_5__["ReactiveFormsModule"],
-            _extension_routing_module__WEBPACK_IMPORTED_MODULE_1__["ExtensionRoutingModule"]
+            _extension_routing_module__WEBPACK_IMPORTED_MODULE_1__["ExtensionRoutingModule"],
         ]] });
 (function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵsetNgModuleScope"](ExtensionModule, { declarations: [_popup_popup_component__WEBPACK_IMPORTED_MODULE_2__["PopupComponent"],
         _options_options_component__WEBPACK_IMPORTED_MODULE_3__["OptionsComponent"]], imports: [_angular_common__WEBPACK_IMPORTED_MODULE_0__["CommonModule"],

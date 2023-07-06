@@ -18,8 +18,7 @@ class RespostaQuestionario extends ModelBase
     ];
 
     protected $casts = [
-        'respostas' => AsJson::class,
-       
+        'respostas' => AsJson::class
     ];
  
     
