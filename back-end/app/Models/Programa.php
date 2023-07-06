@@ -6,13 +6,9 @@ use App\Models\ModelBase;
 use App\Models\Unidade;
 use App\Models\Documento;
 use App\Models\ProgramaParticipante;
-use App\Traits\AutoDataInicio;
-use App\Traits\HasDataFim;
 
 class Programa extends ModelBase
 {
-    use AutoDataInicio, HasDataFim;
-
     protected $table = 'programas';
 
     protected $with = [];
@@ -45,5 +41,4 @@ class Programa extends ModelBase
     public function templateTcr() { return $this->belongsTo(Template::class, 'template_tcr_id'); }   
     public function unidade() { return $this->belongsTo(Unidade::class); }    
     public function documento() { return $this->belongsTo(Documento::class, 'documento_id'); }    
-
 }

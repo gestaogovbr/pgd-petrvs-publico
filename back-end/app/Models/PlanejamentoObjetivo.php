@@ -3,15 +3,11 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
-use App\Traits\AutoDataInicio;
-use App\Traits\HasDataFim;
 use App\Models\Planejamento;
 use App\Models\EixoTematico;
 
 class PlanejamentoObjetivo extends ModelBase
 {
-    use AutoDataInicio, HasDataFim;
-
     protected $table = 'planejamentos_objetivos';
 
     protected $with = [];
@@ -36,6 +32,5 @@ class PlanejamentoObjetivo extends ModelBase
     // Belongs
     public function planejamento() { return $this->belongsTo(Planejamento::class, 'planejamento_id'); }
     public function eixoTematico() { return $this->belongsTo(EixoTematico::class, 'eixo_tematico_id'); }
-    public function objetivoSuperior() { return $this->belongsTo(PlanejamentoObjetivo::class, 'objetivo_superior_id'); }
-    public function objetivo() { return $this->belongsTo(PlanejamentoObjetivo::class, 'objetivo_pai_id'); }
+    public function objetivoPai() { return $this->belongsTo(PlanejamentoObjetivo::class, 'objetivo_pai_id'); }
 }

@@ -10,16 +10,11 @@ use App\Models\Documento;
 use App\Models\PlanoEntrega;
 use App\Models\PlanoTrabalhoEntrega;
 use App\Models\TipoModalidade;
-use App\Models\PlanoAtividade;
-use App\Traits\AutoDataInicio;
-use App\Traits\HasDataFim;
 use Illuminate\Support\Facades\DB;
 
-class Plano extends ModelBase
+class PlanoTrabalho extends ModelBase
 {
-    use AutoDataInicio, HasDataFim;
-
-    protected $table = 'planos';
+    protected $table = 'planos_trabalhos';
 
     protected $with = [];
 
@@ -42,22 +37,21 @@ class Plano extends ModelBase
         //'data_fim', /* datetime; */// Data fim da vigência
     ];
 
-    public $fillable_changes = ['atividades', 'entregas', 'documentos'];
+    public $fillable_changes = ['entregas', 'documentos'];
 
-    public $delete_cascade = ['atividades', 'documentos'];
+    public $delete_cascade = ['documentos'];
 
     protected static function booted()
     {
         static::creating(function ($plano) {
-            $plano->numero = DB::select("CALL sequence_plano_numero()")[0]->number;
+            $plano->numero = DB::select("CALL sequence_plano_trabalho_numero()")[0]->number;
         });
     }
 
     // Has
-    public function atividades() { return $this->hasMany(PlanoAtividade::class); }
     public function entregas() { return $this->hasMany(PlanoTrabalhoEntrega::class); }
     public function documentos() { return $this->hasMany(Documento::class); }
-    public function demandas() { return $this->hasMany(Demanda::class); }
+    public function atividades() { return $this->hasMany(Atividade::class); }
     // Belongs
     public function usuario() { return $this->belongsTo(Usuario::class, 'usuario_id'); }
     public function programa() { return $this->belongsTo(Programa::class, 'programa_id'); }

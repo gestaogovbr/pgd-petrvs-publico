@@ -6,9 +6,9 @@ use App\Models\ModelBase;
 use App\Models\Unidade;
 use App\Models\Entidade;
 
-class Tarefa extends ModelBase
+class TipoTarefa extends ModelBase
 {
-    protected $table = 'tarefas';
+    protected $table = 'tipos_tarefas';
 
     protected $with = [];
 

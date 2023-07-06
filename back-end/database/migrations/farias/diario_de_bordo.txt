@@ -13,19 +13,19 @@ planos
 ->planos_trabalhos    
                                                                                             plano_entrega_id not null
 -------------------------------------------------------------------------------------------------------------------------
-planos_atividades
-->planos_trabalhos_atividades
--------------------------------------------------------------------------------------------------------------------------
 tarefas
 ->tipos_tarefas
 -------------------------------------------------------------------------------------------------------------------------
+planejamentos_objetivos
+                    objetivo_superior_id
+-------------------------------------------------------------------------------------------------------------------------                    
 programas_participantes
                                                                                             usuario_id not null
 -------------------------------------------------------------------------------------------------------------------------
 planos_pontos_controles
-->planos_trabalhos_consolidacoes
+->planos_trabalhos_consolidacoes                FALAR COM O GENISSON (não existe no front-end nem os models no back-end)
 -------------------------------------------------------------------------------------------------------------------------
-planos_pontos_controles_entregas
+planos_pontos_controles_entregas                FALAR COM O GENISSON (não existe no front-end nem os models no back-end)
 ->planos_trabalhos_consolidacoes_entregas
 -------------------------------------------------------------------------------------------------------------------------
 planos_entregas_objetivos
@@ -34,16 +34,17 @@ planos_entregas_objetivos
 planos_entregas_processos
 ->planos_entregas_entregas_processos
 -------------------------------------------------------------------------------------------------------------------------
-planos_entregas_atividades foi apagada
--------------------------------------------------------------------------------------------------------------------------
 
 
 
-DÚVIDAS
-=======
+TABELAS APAGADAS
+================
+planos_atividades
+planos_avaliacoes
+planos_entregas_atividades
+planos_entregas_pontos_controles
+planos_entregas_pontos_controles_entregas
+tipos_avaliacoes
+tipos_processos_cadeias
+unidades_origem_atividades
 
-1. Na tabela *planos_trabalhos*, o campo *ganho_produtividade* continua? Ou isso saíu na IN nova?
-
-2. A tabela *planos_atividades* deve ser renomeada para *planos_trabalhos_atividades* ou *planos_trabalhos_tipos_atividades*, ou não existe mais?
-
-3. A sequência *sequence_adesao_numero* nunca é utilizada. Acredito que ela era associada à tabela *adesoes*, que não existe mais. Certo?

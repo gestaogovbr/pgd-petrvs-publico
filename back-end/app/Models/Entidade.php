@@ -9,22 +9,6 @@ use App\Models\Usuario;
 use App\Models\Template;
 use App\Models\NotificacoesConfig;
 
-/*class EntidadeNotificacoes {
-    public $enviar_email = true;
-    public $enviar_whatsapp = true;
-    public $nao_notificar = [];
-    public $notifica_demanda_distribuicao = true;
-    public $notifica_demanda_conclusao = true;
-    public $notifica_demanda_avaliacao = true;
-    public $notifica_demanda_modificacao = true;
-    public $notifica_demanda_comentario = true;
-    public $template_demanda_distribuicao = "Uma nova demanda foi atribuída a você, acesse o PETRVS para visualizá-la! (ID: #{{demanda_numero}})";
-    public $template_demanda_conclusao = "A demanda #{{demanda_numero}}, atribuída à\ao {{demanda_responsavel}}, foi concluída, acesse o PETRVS para visualizá-la!";
-    public $template_demanda_avaliacao = "Sua demanda #{{demanda_numero}} foi avaliada, acesse o PETRVS para avaliá-la!";
-    public $template_demanda_modificacao = "A demanda #{{demanda_numero}}, atribuída à {{demanda_responsavel}}, foi atualizada, acesse o PETRVS para visualizá-la!";
-    public $template_demanda_comentario = "Foi inserido um comentário na demanda #{{demanda_numero}}, atribuída a {{demanda_responsavel}}, acesse o PETRVS para visualizá-la!";
-}*/
-
 class Entidade extends ModelBase
 {
     protected $table = "entidades";
@@ -39,8 +23,8 @@ class Entidade extends ModelBase
         'codigo_ibge', /* varchar(8); */// Código da UF ou do município (IBGE)
         'carga_horaria_padrao', /* int; NOT NULL; DEFAULT: '8'; */// Carga horária utilizada ao criar plano de trabalho
         'gravar_historico_processo', /* tinyint; NOT NULL; */// Se grava andamento da demanda dentro do processo vinculado (Caso seja o Sei, será em Consultar Andamento)
-        'layout_formulario_demanda', /* enum('COMPLETO','SIMPLIFICADO'); NOT NULL; DEFAULT: 'COMPLETO'; */// Layout para a tela do formulário de demandas (cadastro simplificado ou completo)
-        'campos_ocultos_demanda', /* json; */// Campos que se deseja ocultar do formulário de daemanda, com seu respectivo valor padrão, em caso de null será utilizado o valor default do banco
+        'layout_formulario_atividade', /* enum('COMPLETO','SIMPLIFICADO'); NOT NULL; DEFAULT: 'COMPLETO'; */// Layout para a tela do formulário de demandas (cadastro simplificado ou completo)
+        'campos_ocultos_atividade', /* json; */// Campos que se deseja ocultar do formulário de daemanda, com seu respectivo valor padrão, em caso de null será utilizado o valor default do banco
         'tipo_modalidade_id', /* char(36); */// Tipo de modalidade utilizada ao criar plano de trabalho
         'cidade_id', /* char(36); */
         'uf', /* varchar(2); */// UF para feriados estaduais
@@ -67,13 +51,13 @@ class Entidade extends ModelBase
     protected static function booted()
     {
         static::creating(function ($entidade) {
-            $entidade->campos_ocultos_demanda = json_decode("{'codigo': 'null'}");
+            $entidade->campos_ocultos_atividade = json_decode("{'codigo': 'null'}");
         });
     }
 
     // Casting
     protected $casts = [
-        'campos_ocultos_demanda' => AsJson::class,
+        'campos_ocultos_atividade' => AsJson::class,
         'nomenclatura' => AsJson::class,
         'expediente' => AsJson::class
     ];
