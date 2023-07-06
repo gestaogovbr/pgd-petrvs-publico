@@ -44,7 +44,6 @@ planos_avaliacoes
 planos_entregas_atividades
 planos_entregas_pontos_controles
 planos_entregas_pontos_controles_entregas
-tipos_avaliacoes
 tipos_processos_cadeias
 unidades_origem_atividades
 
