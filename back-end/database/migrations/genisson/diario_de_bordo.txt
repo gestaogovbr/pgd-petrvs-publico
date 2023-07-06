@@ -1,3 +1,81 @@
 Diario de bordo:
 
 - Removi tipos_atividades
+- Atividades renomeado para Tipos_Atividades
+  * Campo tempo_pactuado renomeado para esforco
+  * Remove tempo_minimo
+  * Remove recalcula_prazo
+  * Remove desativa_produtividade
+  * Remove complexidade
+  * Remove tipos_processo
+  * Campo etiquetas_predefinidas renomeado para etiquetas
+  * Campo checklist_predefinidos renomeado para checklist
+  * Campo comentario_predefinido renomeado para comentario
+  * Remove parametros_adotados
+  * Remove entregas_esperadas
+  * Remove homologado
+  * Remove data_homologacao
+  * Remove tipo_atividade_id
+- tipos_avaliacoes:
+  * Remove nota_atribuida
+  * Cria tipo
+  * Cria notas [{nota, aprova, pergunta, icone, cor}]
+  * Remove aceita_entrega
+  * Remove pergunta
+  * Remove icon
+  * Remove cor
+- Demandas renomeado para Atividades
+  * Remove id_requisicao
+  * Remove numero_requisicao
+  * Remove id_processo
+  * Remvoe numero_processo
+  * Campo tempo_pactuado renomeado para esforco
+  * Remove fator_complexidade
+  * Remove id_processo_entrega
+  * Remove numero_processo_entrega
+  * Remove id_documento_entrega
+  * Remove numero_documento_entrega
+  * Remove titulo_documento_entrega
+  * Remove tempo_homologado
+  * Remove produtividade
+  * Remove recalcula_prazo
+  * Remove tipo_processo_id
+  * Cria documento_requisicao_id
+  * Cria documento_entrega_id
+  * Criar plano_trabalho_id
+  * Criar entrega_id
+  * Remove avaliacao_id
+
+- demandas_avaliacoes Renomeado para avaliacoes
+- Remover tabela avaliacoes_justificativas
+- demandas_pausas Renomeado para atividades_pausas
+- documentos
+  * Remove id_processo
+  * Remove numero_processo
+  * Remove id_documento
+  * Remove numero_documento
+  * Remove titulo_documento
+  * Campo plano_id renomeado para plano_trabalho_id
+  * Criar link: {tipo, url, id_processo, numero_processo, id_documento, numero_documento, titulo_documento}
+
+- Tipos_modalidades
+  * Remover documento_id
+- Remover demandas_vinculos
+- Comentarios
+  * Remover 
+
+
+
+*************************************************
+Lembrar Farias de remover distribuicao_notificacao da unidade
+avaliacao_plano dentro de tipos_modalidades tambem não será necessário
+todo campo numero é unique()
+
+
+
+
+            $table->integer('id_requisicao')->nullable()->comment("ID da requisição do sistema integrado, caso seja o Sei será o ID_Documento");
+            $table->string('numero_requisicao', 11)->nullable()->comment("Numero do documento de requisição, caso seja o Sei é o numero Sei");
+            $table->integer('id_processo')->nullable()->comment("ID do processo, caso seja Sei será o ID do procedimento");
+            $table->string('numero_processo', 50)->nullable()->comment("Número do processo, com a formatação de origem");
+

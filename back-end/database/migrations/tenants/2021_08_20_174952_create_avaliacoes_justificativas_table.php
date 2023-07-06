@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTiposAvaliacoesTable extends Migration
+class CreateAvaliacoesJustificativasTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,15 @@ class CreateTiposAvaliacoesTable extends Migration
      */
     public function up()
     {
-        Schema::create('tipos_avaliacoes', function (Blueprint $table) {
+        Schema::create('avaliacoes_justificativas', function (Blueprint $table) {
             // Configurações:
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
             $table->softDeletes();
-            // Campos:
-            $table->string('nome', 256)->comment("Nome do tipo de avaliação");
-            $table->set('tipo', ['QUALITATIVO', 'QUANTITATIVO'])->comment("Se a nota será um número ou um conceito");
-            $table->json('notas')->comment("Notas");
+            // Chaves estrangeiras:
+            $table->foreignUuid('avaliacao_id')->constrained("demandas_avaliacoes")->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('tipo_justificativa_id')->constrained('tipos_justificativas')->onDelete('restrict')->onUpdate('cascade');
         });
     }
 
@@ -33,6 +32,6 @@ class CreateTiposAvaliacoesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tipos_avaliacoes');
+        Schema::dropIfExists('avaliacoes_justificativas');
     }
 }

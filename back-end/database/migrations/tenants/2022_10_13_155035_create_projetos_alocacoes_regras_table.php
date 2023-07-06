@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTiposAvaliacoesTable extends Migration
+class CreateProjetosAlocacoesRegrasTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,16 @@ class CreateTiposAvaliacoesTable extends Migration
      */
     public function up()
     {
-        Schema::create('tipos_avaliacoes', function (Blueprint $table) {
+        Schema::create('projetos_alocacoes_regras', function (Blueprint $table) {
             // Configurações:
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
             $table->softDeletes();
             // Campos:
-            $table->string('nome', 256)->comment("Nome do tipo de avaliação");
-            $table->set('tipo', ['QUALITATIVO', 'QUANTITATIVO'])->comment("Se a nota será um número ou um conceito");
-            $table->json('notas')->comment("Notas");
+            // Chaves estrangeiras:
+            $table->foreignUuid('projeto_alocacao_id')->constrained("projetos_alocacoes")->onDelete('restrict')->onUpdate('cascade')->comment("Alocação");
+            $table->foreignUuid('regra_id')->constrained("projetos_regras")->onDelete('restrict')->onUpdate('cascade')->comment("Regra");
         });
     }
 
@@ -33,6 +33,6 @@ class CreateTiposAvaliacoesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tipos_avaliacoes');
+        Schema::dropIfExists('projetos_alocacoes_regras');
     }
 }

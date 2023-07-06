@@ -7,8 +7,10 @@ use App\Services\TipoAtividadeService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
+use Throwable;
 
-class TipoAtividadeController extends ControllerBase {
+class TipoAtividadeController extends ControllerBase
+{
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
             case 'STORE':
@@ -20,6 +22,20 @@ class TipoAtividadeController extends ControllerBase {
             case 'DESTROY':
                 if (!$usuario->hasPermissionTo('MOD_TIPO_ATV_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não executada");
                 break;
+        }
+    }
+
+    public function atividadeDashboard(Request $request) {
+        try {
+            $data = $request->validate([
+                'unidade_id' => ['required']
+            ]);
+            return response()->json([
+                'success' => true,
+                'data' => $this->service->atividadeDashboard($data['unidade_id'])
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
         }
     }
 }
