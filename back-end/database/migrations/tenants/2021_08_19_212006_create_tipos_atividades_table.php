@@ -26,8 +26,6 @@ class CreateTiposAtividadesTable extends Migration
             $table->json('etiquetas')->nullable()->comment("Nome das etiquetas para a atividade");
             $table->json('checklist')->nullable()->comment("Nome dos checklist para a atividade");
             $table->text('comentario')->nullable()->comment("Comentário predefinido para a atividade");
-            // Chaves estrangeiras:
-            $table->foreignUuid('unidade_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Unidade, opcional");
         });
     }
 

@@ -10,8 +10,6 @@ use App\Traits\HasDataFim;
 
 class TipoAvaliacao extends ModelBase
 {
-    use AutoDataInicio, HasDataFim;
-
     protected $table = 'tipos_avaliacoes';
 
     protected $with = [];
@@ -31,7 +29,9 @@ class TipoAvaliacao extends ModelBase
         'tipos_avaliacoes_justificativas'
     ];
     
-    public $delete_cascade = ['tiposAvaliacoesJustificativas'];
+    public $delete_cascade = [
+        'tiposAvaliacoesJustificativas'
+    ];
     
     // Has
     public function avaliacoes() { return $this->hasMany(DemadaAvaliacao::class, 'tipo_avaliacao_id'); }    

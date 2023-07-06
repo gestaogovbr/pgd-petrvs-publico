@@ -11,10 +11,12 @@ use App\Traits\MergeRelations;
 use App\Traits\LogChanges;
 use ReflectionObject;
 use Exception;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ModelBase extends Model
 {
-    use HasFactory, AutoUuid, MergeRelations, LogChanges;
+    use HasFactory, AutoUuid, MergeRelations, LogChanges, SoftDeletes;
+
     protected $keyType = 'string';
     public $incrementing = false;
 
@@ -53,17 +55,17 @@ class ModelBase extends Model
         
             }            
         }
-        if(property_exists($this, 'has_data_fim')) {
+        /*if(property_exists($this, 'has_data_fim')) {
             $this->data_fim = date("Y-m-d H:i:s");
             $this->save();
-        } else {
-            $this->delete();
-        }
+        } else {*/
+        $this->delete();
+        //}
     }
 
-        // Escopos
+    // Escopos
 
-        public function scopeDoUsuario($query, $usuario_id){
-            return $query->where("usuario_id", $usuario_id);
-        }
+    public function scopeDoUsuario($query, $usuario_id){
+        return $query->where("usuario_id", $usuario_id);
+    }
 }

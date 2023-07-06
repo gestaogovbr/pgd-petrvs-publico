@@ -8,7 +8,6 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\IntegracaoController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\PerfilController;
-use App\Http\Controllers\AtividadeController;
 use App\Http\Controllers\ControllerBase;
 use App\Http\Controllers\EntidadeController;
 use App\Http\Controllers\LotacaoController;
@@ -18,7 +17,6 @@ use App\Http\Controllers\ChangeController;
 use App\Http\Controllers\EntregaController;
 use App\Http\Controllers\EixoTematicoController;
 use App\Http\Controllers\ErrorController;
-use App\Http\Controllers\TrafficController;
 use App\Http\Controllers\ProgramaController;
 use App\Http\Controllers\ProgramaParticipanteController;
 use App\Http\Controllers\PlanejamentoController;
@@ -163,10 +161,9 @@ Route::middleware('auth:sanctum')->post('/Teste/calculaDataTempoUnidade', [Usuar
 
 /* Modulos: Cadastros */
 Route::middleware(['auth:sanctum'])->prefix('Afastamento')->group(function () { defaultRoutes(AfastamentoController::class); });
-Route::middleware(['auth:sanctum'])->prefix('Atividade')->group(function () {
-    defaultRoutes(AtividadeController::class);
-    Route::post('atividade-dashboard', [AtividadeController::class, 'atividadeDashboard']);
-    Route::post('homologar', [AtividadeController::class, 'homologar']);
+Route::middleware(['auth:sanctum'])->prefix('TipoAtividade')->group(function () {
+    defaultRoutes(TipoAtividadeController::class);
+    Route::post('atividade-dashboard', [TipoAtividadeController::class, 'atividadeDashboard']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Cidade')->group(function () { defaultRoutes(CidadeController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Documento')->group(function () {
@@ -191,8 +188,7 @@ Route::middleware(['auth:sanctum'])->prefix('Template')->group(function () { def
 Route::middleware(['auth:sanctum'])->prefix('CadeiaValor')->group(function () { defaultRoutes(CadeiaValorController::class); });
 Route::middleware(['auth:sanctum'])->prefix('CadeiaValorProcesso')->group(function () { defaultRoutes(CadeiaValorProcessoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('TipoJustificativa')->group(function () { defaultRoutes(TipoJustificativaController::class); });
-Route::middleware(['auth:sanctum'])->prefix('TipoAtividade')->group(function () { defaultRoutes(TipoAtividadeController::class); });
-//Route::middleware(['auth:sanctum'])->prefix('TipoAvaliacao')->group(function () { defaultRoutes(TipoAvaliacaoController::class); });
+Route::middleware(['auth:sanctum'])->prefix('TipoAvaliacao')->group(function () { defaultRoutes(TipoAvaliacaoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('TipoModalidade')->group(function () { defaultRoutes(TipoModalidadeController::class); });
 Route::middleware(['auth:sanctum'])->prefix('TipoMotivoAfastamento')->group(function () { defaultRoutes(TipoMotivoAfastamentoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('TipoCapacidade')->group(function () { defaultRoutes(TipoCapacidadeController::class); });
