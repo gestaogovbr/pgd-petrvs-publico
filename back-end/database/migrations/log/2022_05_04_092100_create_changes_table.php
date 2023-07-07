@@ -19,8 +19,10 @@ class CreateChangesTable extends Migration
             $table->dateTime('date_time')->useCurrent()->comment('Data e hora do registro');
             $table->string('table_name', 100)->comment('Nome da tabela');
             $table->uuid('row_id')->comment('Id do registro');
-            $table->enum('type', ["ADD", "EDIT", "DELETE"])->comment('Qual operação o log está registrando');
+            $table->enum('type', ["ADD", "EDIT", 'SOFT_DELETE', "DELETE"])->comment('Qual operação o log está registrando');
             $table->json('delta')->comment('Alterações');
+            $table->index(['date_time']);
+            $table->index(['table_name','row_id']);
         });
     }
 
