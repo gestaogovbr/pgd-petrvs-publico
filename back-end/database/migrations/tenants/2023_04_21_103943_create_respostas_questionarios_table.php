@@ -39,6 +39,8 @@ class CreateRespostasQuestionariosTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('respostas_questionarios');
+        Schema::enableForeignKeyConstraints();
     }
 }

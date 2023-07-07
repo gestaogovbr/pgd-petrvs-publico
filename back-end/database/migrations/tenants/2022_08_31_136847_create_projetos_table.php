@@ -53,6 +53,10 @@ class CreateProjetosTable extends Migration
             $table->foreignUuid('tipo_projeto_id')->nullable()->constrained("tipos_projetos")->onDelete('restrict')->onUpdate('cascade');
             $table->foreignUuid('fase_id')->nullable()->constrained("projetos_fases")->onDelete('restrict')->onUpdate('cascade');
         });
+        // Cria a chave estrangeira na tabela 'projetos_fases' devido à referência cruzada com 'projetos'
+        Schema::table('projetos_fases', function (Blueprint $table) {
+            $table->foreignUuid('projeto_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Projeto");
+        });
         // Cria sequencia projeto_numero
         Schema::table('sequence', function (Blueprint $table) {
             $table->integer('projeto_numero')->default(1)->comment("Sequência numerica do Projeto");

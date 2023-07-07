@@ -20,7 +20,7 @@ class CreateAvaliacoesJustificativasTable extends Migration
             $table->timestamps();
             $table->softDeletes();
             // Chaves estrangeiras:
-            $table->foreignUuid('avaliacao_id')->constrained("demandas_avaliacoes")->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('avaliacao_id')->constrained("avaliacoes")->onDelete('restrict')->onUpdate('cascade');
             $table->foreignUuid('tipo_justificativa_id')->constrained('tipos_justificativas')->onDelete('restrict')->onUpdate('cascade');
         });
     }

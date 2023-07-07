@@ -39,6 +39,8 @@ class CreateCurriculumsGraduacoesTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('curriculums_graduacoes');
+        Schema::enableForeignKeyConstraints();
     }
 }

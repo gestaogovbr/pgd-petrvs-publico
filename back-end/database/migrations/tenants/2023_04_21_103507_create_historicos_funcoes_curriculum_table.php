@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateHistoricoFuncoesCurriculumTable extends Migration
+class CreateHistoricosFuncoesCurriculumTable extends Migration
 {
     /**
      * Run the migrations.
@@ -36,6 +36,8 @@ class CreateHistoricoFuncoesCurriculumTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('historicos_funcoes_curriculum');
+        Schema::enableForeignKeyConstraints();
     }
 }
