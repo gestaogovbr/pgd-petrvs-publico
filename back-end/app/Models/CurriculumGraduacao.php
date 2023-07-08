@@ -12,9 +12,10 @@ class CurriculumGraduacao extends ModelBase
     protected $table = 'curriculums_graduacoes';
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'pretensao',
-        'curriculum_id',
-        'curso_id'
+        'pretensao', /* tinyint; NOT NULL; */// Pretende fazer o curso
+        'curriculum_id', /* char(36); NOT NULL; */
+        'curso_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
     ];
 
     //Has

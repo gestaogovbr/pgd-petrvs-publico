@@ -65,6 +65,7 @@ class PlanejamentoFormObjetivoComponent extends src_app_modules_base_page_form_b
         this.injector = injector;
         this.objetivos = [];
         this.objetivos_superiores = [];
+        // NA TABELA HÁ APENAS O OBJETIVO_PAI_ID. PORTANTO, EXCLUIR DAQUI O OBJETIVO_PAI_ID E RENOMEAR OBJETIVO_SUPERIOR_ID PARA OBJETIVO_PAI_ID
         this.validate = (control, controlName) => {
             var _a;
             let result = null;
@@ -77,7 +78,7 @@ class PlanejamentoFormObjetivoComponent extends src_app_modules_base_page_form_b
             var _a;
             let result = null;
             if (this.isPlanejamentoUNEX() && !((_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.objetivo_superior_id.value)) {
-                result = "Quando o Planejamento é de uma Unidade Executora é obrigatório associar cada objetivo a um objetivo do Planejamento Institucional superior!";
+                result = "Quando o Planejamento é de uma Unidade Executora é obrigatório associar cada um dos seus objetivos a um objetivo do Planejamento Institucional superior!";
             }
             return result;
         };

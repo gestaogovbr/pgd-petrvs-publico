@@ -13,14 +13,15 @@ class Curriculum extends ModelBase
     protected $table = 'curriculums';
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'apresentacao',
-        'telefone',
-        'idiomas',
-        'estado_civil',
-        'quantidade_filhos',
-        'ativo',
-        'usuario_id',
-        'cidade_id'
+        'apresentacao', /* longtext; NOT NULL; */// Apresentação
+        'telefone', /* varchar(64); NOT NULL; */// Telefone
+        'idiomas', /* json; */// Idiomas que fala
+        'estado_civil', /* varchar(64); */// Estado Civil
+        'quantidade_filhos', /* tinyint; NOT NULL; */// Qtde de filhos
+        'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */// Curriculum ativa ou inativa
+        'usuario_id', /* char(36); NOT NULL; */
+        'cidade_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
     ];
 
     protected $casts = [

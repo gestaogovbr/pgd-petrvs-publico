@@ -14,9 +14,10 @@ class Cidade extends ModelBase
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'codigo_ibge', /* varchar(20); NOT NULL; */// Código IBGE
         'nome', /* varchar(256); NOT NULL; */// Nome
-        'tipo', /* set('MUNICIPIO','DISTRITO','CAPITAL'); NOT NULL; */// Data e horário que foi feito o comentário
+        'tipo', /* set('MUNICIPIO','DISTRITO','CAPITAL'); NOT NULL; */// Tipo da cidade
         'uf', /* varchar(2); NOT NULL; */// Unidade Federativa
         'timezone', /* int; NOT NULL; */// Timezone UTC da cidade
+        //'deleted_at', /* timestamp; */
     ];
 
     // Has

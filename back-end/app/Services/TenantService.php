@@ -16,7 +16,7 @@ class TenantService extends ServiceBase {
             $entity->fill($dataOrEntity);
             $entity->save();
         } catch (\Stancl\Tenancy\Exceptions\TenantDatabaseAlreadyExistsException $e) {}
-        \Illuminate\Support\Facades\Artisan::call('tenants:migrate', ['--tenants' => [$entity->id]]);
+            \Illuminate\Support\Facades\Artisan::call('tenants:migrate', ['--tenants' => [$entity->id]]);
         return $entity;
     }
 

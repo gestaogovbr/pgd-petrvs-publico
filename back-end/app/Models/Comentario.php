@@ -22,10 +22,13 @@ class Comentario extends ModelBase
         'privacidade', /* enum('PUBLICO','PRIVADO'); NOT NULL; DEFAULT: 'PUBLICO'; */// Nível de acesso ao comentário
         'usuario_id', /* char(36); NOT NULL; */
         'comentario_id', /* char(36); */
-        'demanda_id', /* char(36); */
-        'demanda_entrega_id', /* char(36); */
         'projeto_id', /* char(36); */
         'projeto_tarefa_id', /* char(36); */
+        //'deleted_at', /* timestamp; */
+        //'atividade_id', /* char(36); */
+        //'atividade_tarefa_id', /* char(36); */
+        /*'demanda_id',*/// REMOVED
+        /*'demanda_entrega_id',*/// REMOVED
     ];
 
     public $delete_cascade = ['comentarios'];

@@ -21,6 +21,7 @@ class Capacidade extends ModelBase
         'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
         'perfil_id', /* char(36); */
         'tipo_capacidade_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
         //'data_fim', /* datetime; */// Data final da vigência
     ];
 

@@ -13,9 +13,10 @@ class CapacidadeTecnica extends ModelBase
     protected $table = 'capacidades_tecnicas';
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'nome',
-        'ativo',
-        'area_tematica_id'
+        'nome', /* varchar(256); NOT NULL; */// Nome da capacidade técnica
+        'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */// capacidade ativo ou inativo
+        'area_tematica_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
     ];
 
     // Belongs

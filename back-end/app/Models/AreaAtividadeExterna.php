@@ -12,8 +12,9 @@ class AreaAtividadeExterna extends ModelBase
     protected $table = 'areas_atividades_externas';
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'nome',
-        'ativo' 
+        'nome', /* varchar(256); NOT NULL; */// Nome da área
+        'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */// area ativo ou inativo
+        //'deleted_at', /* timestamp; */
     ];
 
     // Has
