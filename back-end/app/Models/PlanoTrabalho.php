@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\Usuario;
 use App\Models\Unidade;
+use App\Models\Atividade;
 use App\Models\Programa;
 use App\Models\Documento;
 use App\Models\PlanoEntrega;
@@ -19,7 +20,22 @@ class PlanoTrabalho extends ModelBase
     protected $with = [];
 
     public $fillable = [ // TYPE; NULL?; DEFAULT?; // COMMENT
-
+        'numero', // int; NOT NULL; // Número do plano (Gerado pelo sistema)
+        'carga_horaria', // double; // Carga horária diária do usuário
+        'tempo_total', // double; // Horas úteis de trabalho no período de data_inicio_vigencia à data_fim_vigencia considerando carga_horaria, feriados, fins de semana
+        'tempo_proporcional', // double; // tempo_total menos os afastamentos
+        'data_inicio_vigencia', // datetime; NOT NULL; // Inicio do plano
+        'data_fim_vigencia', // datetime; NOT NULL; // Fim do plano
+        'data_inicio', // datetime; NOT NULL; // Data inicio da vigência
+        'ganho_produtividade', // int; NOT NULL; // Ganho de produtividade
+        'programa_id', // char(36); NOT NULL; 
+        'usuario_id', // char(36); NOT NULL; 
+        'unidade_id', // char(36); NOT NULL; 
+        'documento_id', // char(36); 
+        'tipo_modalidade_id', // char(36); NOT NULL; 
+        'forma_contagem_carga_horaria', // enum('DIA','SEMANA','MES'); NOT NULL; DEFAULT: 'DIA'; // Forma de contagem padrão da carga horária
+        'plano_entrega_id', // char(36); 
+        //'data_fim', // datetime; // Data fim da vigência
     ];
 
     public $fillable_changes = ['entregas', 'documentos'];
@@ -45,22 +61,3 @@ class PlanoTrabalho extends ModelBase
     public function planoEntrega() { return $this->belongsTo(PlanoEntrega::class); }
     public function documento() { return $this->belongsTo(Documento::class); }
 }
-
-/*
-        'numero', // int; NOT NULL; // Número do plano (Gerado pelo sistema)
-        'carga_horaria', // double; // Carga horária diária do usuário
-        'tempo_total', // double; // Horas úteis de trabalho no período de data_inicio_vigencia à data_fim_vigencia considerando carga_horaria, feriados, fins de semana
-        'tempo_proporcional', // double; // tempo_total menos os afastamentos
-        'data_inicio_vigencia', // datetime; NOT NULL; // Inicio do plano
-        'data_fim_vigencia', // datetime; NOT NULL; // Fim do plano
-        'data_inicio', // datetime; NOT NULL; // Data inicio da vigência
-        'ganho_produtividade', // int; NOT NULL; // Ganho de produtividade
-        'programa_id', // char(36); NOT NULL; 
-        'usuario_id', // char(36); NOT NULL; 
-        'unidade_id', // char(36); NOT NULL; 
-        'documento_id', // char(36); 
-        'tipo_modalidade_id', // char(36); NOT NULL; 
-        'forma_contagem_carga_horaria', // enum('DIA','SEMANA','MES'); NOT NULL; DEFAULT: 'DIA'; // Forma de contagem padrão da carga horária
-        'plano_entrega_id', // char(36); 
-        //'data_fim', // datetime; // Data fim da vigência
-*/

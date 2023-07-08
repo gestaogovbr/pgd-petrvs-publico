@@ -1839,7 +1839,7 @@ class Usuario extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.sexo = null; /* Sexo */
         this.lotacoes = [];
         this.config = new UsuarioConfig(); /*UsuarioConfig = new UsuarioConfig();*/ /* Configurações diversas */
-        this.notificacoes = new _notificacao_model__WEBPACK_IMPORTED_MODULE_1__["NotificacoesConfig"]();
+        this.notificacoes = new _notificacao_model__WEBPACK_IMPORTED_MODULE_1__["NotificacaoConfig"]();
         this.perfil_id = 0; /* ID do perfil - Setar o primeiro do list*/
         this.id_google = null; /* ID do usuário google */
         this.url_foto = null; /* URL da foto do usuário (temporário) */
@@ -3519,16 +3519,16 @@ InputDisplayComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵde
 /*!*********************************************!*\
   !*** ./src/app/models/notificacao.model.ts ***!
   \*********************************************/
-/*! exports provided: NotificacoesConfig, Notificacao */
+/*! exports provided: NotificacaoConfig, Notificacao */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NotificacoesConfig", function() { return NotificacoesConfig; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NotificacaoConfig", function() { return NotificacaoConfig; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Notificacao", function() { return Notificacao; });
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
-class NotificacoesConfig {
+class NotificacaoConfig {
     constructor() {
         this.enviar_petrvs = true;
         this.enviar_email = true;
@@ -3595,7 +3595,7 @@ class Entidade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.campos_ocultos_demanda = []; //Campos que se deseja ocultar do formulário de demanda, com seu respectivo valor padrão, em caso de null será utilizado o valor default do banco"
         this.uf = null; /* UF para abrangencia estadual */
         this.nomenclatura = []; /* Nomenclatura da entidade */
-        this.notificacoes = new _notificacao_model__WEBPACK_IMPORTED_MODULE_2__["NotificacoesConfig"]();
+        this.notificacoes = new _notificacao_model__WEBPACK_IMPORTED_MODULE_2__["NotificacaoConfig"]();
         this.url_sei = ""; /* Url base do sei */
         this.forma_contagem_carga_horaria = "DIA"; // Forma de contagem padrão da carga horária
         this.expediente = new _expediente_model__WEBPACK_IMPORTED_MODULE_1__["Expediente"](); // Expediente (Não nulo)
@@ -14793,13 +14793,13 @@ EixoTematicoDaoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵ
 /*!*************************************************************************************************!*\
   !*** ./src/app/modules/uteis/notificacoes/notificacoes-config/notificacoes-config.component.ts ***!
   \*************************************************************************************************/
-/*! exports provided: Notificar, NotificacoesConfigComponent */
+/*! exports provided: Notificar, NotificacaoConfigComponent */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Notificar", function() { return Notificar; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NotificacoesConfigComponent", function() { return NotificacoesConfigComponent; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NotificacaoConfigComponent", function() { return NotificacaoConfigComponent; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
 /* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/components/grid/grid.component */ "m4bG");
@@ -14813,31 +14813,31 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function NotificacoesConfigComponent_input_switch_2_Template(rf, ctx) { if (rf & 1) {
+function NotificacaoConfigComponent_input_switch_2_Template(rf, ctx) { if (rf & 1) {
     const _r5 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "input-switch", 6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("change", function NotificacoesConfigComponent_input_switch_2_Template_input_switch_change_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r5); const ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](); return ctx_r4.updateNotificacoes(); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("change", function NotificacaoConfigComponent_input_switch_2_Template_input_switch_change_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r5); const ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](); return ctx_r4.updateNotificacoes(); });
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 4);
 } }
-function NotificacoesConfigComponent_input_switch_3_Template(rf, ctx) { if (rf & 1) {
+function NotificacaoConfigComponent_input_switch_3_Template(rf, ctx) { if (rf & 1) {
     const _r7 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "input-switch", 7);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("change", function NotificacoesConfigComponent_input_switch_3_Template_input_switch_change_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r7); const ctx_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](); return ctx_r6.updateNotificacoes(); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("change", function NotificacaoConfigComponent_input_switch_3_Template_input_switch_change_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r7); const ctx_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](); return ctx_r6.updateNotificacoes(); });
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 4);
 } }
-function NotificacoesConfigComponent_input_switch_4_Template(rf, ctx) { if (rf & 1) {
+function NotificacaoConfigComponent_input_switch_4_Template(rf, ctx) { if (rf & 1) {
     const _r9 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "input-switch", 8);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("change", function NotificacoesConfigComponent_input_switch_4_Template_input_switch_change_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r9); const ctx_r8 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](); return ctx_r8.updateNotificacoes(); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("change", function NotificacaoConfigComponent_input_switch_4_Template_input_switch_change_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r9); const ctx_r8 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](); return ctx_r8.updateNotificacoes(); });
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("size", 4);
 } }
-function NotificacoesConfigComponent_separator_5_Template(rf, ctx) { if (rf & 1) {
+function NotificacaoConfigComponent_separator_5_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "separator", 9);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](1, "notificacoes-template", 10);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
@@ -14854,7 +14854,7 @@ class Notificar {
         Object.assign(this, data || {});
     }
 }
-class NotificacoesConfigComponent extends src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_3__["PageFrameBase"] {
+class NotificacaoConfigComponent extends src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_3__["PageFrameBase"] {
     constructor(injector) {
         super(injector);
         this.injector = injector;
@@ -14893,7 +14893,7 @@ class NotificacoesConfigComponent extends src_app_modules_base_page_frame_base__
             this.cdRef.detectChanges();
             try {
                 this.source = yield this.templateService.loadNotificacoes(this.entidadeId, this.unidadeId);
-                this.notificar = this.templateService.buildNotificar(((_a = this.entity) === null || _a === void 0 ? void 0 : _a.notificacoes) || new src_app_models_notificacao_model__WEBPACK_IMPORTED_MODULE_5__["NotificacoesConfig"]());
+                this.notificar = this.templateService.buildNotificar(((_a = this.entity) === null || _a === void 0 ? void 0 : _a.notificacoes) || new src_app_models_notificacao_model__WEBPACK_IMPORTED_MODULE_5__["NotificacaoConfig"]());
                 let formValue = Object.assign({}, this.form.value);
                 this.form.patchValue(this.util.fillForm(formValue, entity.notificacoes));
             }
@@ -14918,20 +14918,20 @@ class NotificacoesConfigComponent extends src_app_modules_base_page_frame_base__
         this.entity.notificacoes.nao_notificar = this.notificar.filter(x => !x.notifica).map(x => x.codigo);
     }
 }
-NotificacoesConfigComponent.ɵfac = function NotificacoesConfigComponent_Factory(t) { return new (t || NotificacoesConfigComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
-NotificacoesConfigComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: NotificacoesConfigComponent, selectors: [["notificacoes-config"]], viewQuery: function NotificacoesConfigComponent_Query(rf, ctx) { if (rf & 1) {
+NotificacaoConfigComponent.ɵfac = function NotificacaoConfigComponent_Factory(t) { return new (t || NotificacaoConfigComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
+NotificacaoConfigComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: NotificacaoConfigComponent, selectors: [["notificacoes-config"]], viewQuery: function NotificacaoConfigComponent_Query(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵviewQuery"](src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_2__["GridComponent"], 1);
     } if (rf & 2) {
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵloadQuery"]()) && (ctx.grid = _t.first);
-    } }, inputs: { cdRef: "cdRef", entity: "entity", entidadeId: "entidadeId", unidadeId: "unidadeId", disabled: "disabled" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]], decls: 6, vars: 6, consts: [["noButtons", "", 3, "form", "disabled"], ["transparent", "", "title", "Formas de notifica\u00E7\u00E3o"], ["scale", "small", "icon", "bi bi-bell", "labelPosition", "right", "label", "Notificar no Petrvs", "controlName", "enviar_petrvs", 3, "size", "change", 4, "ngIf"], ["scale", "small", "icon", "bi bi-envelope-at", "labelPosition", "right", "label", "Notificar por e-mail", "controlName", "enviar_email", 3, "size", "change", 4, "ngIf"], ["scale", "small", "icon", "bi bi-whatsapp", "labelPosition", "right", "label", "Notificar por Whatsapp", "controlName", "enviar_whatsapp", 3, "size", "change", 4, "ngIf"], ["title", "Templates e habilita\u00E7\u00E3o de notifica\u00E7\u00F5es", 4, "ngIf"], ["scale", "small", "icon", "bi bi-bell", "labelPosition", "right", "label", "Notificar no Petrvs", "controlName", "enviar_petrvs", 3, "size", "change"], ["scale", "small", "icon", "bi bi-envelope-at", "labelPosition", "right", "label", "Notificar por e-mail", "controlName", "enviar_email", 3, "size", "change"], ["scale", "small", "icon", "bi bi-whatsapp", "labelPosition", "right", "label", "Notificar por Whatsapp", "controlName", "enviar_whatsapp", 3, "size", "change"], ["title", "Templates e habilita\u00E7\u00E3o de notifica\u00E7\u00F5es"], [3, "entity", "source", "unidadeId", "entidadeId", "cdRef"]], template: function NotificacoesConfigComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, inputs: { cdRef: "cdRef", entity: "entity", entidadeId: "entidadeId", unidadeId: "unidadeId", disabled: "disabled" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]], decls: 6, vars: 6, consts: [["noButtons", "", 3, "form", "disabled"], ["transparent", "", "title", "Formas de notifica\u00E7\u00E3o"], ["scale", "small", "icon", "bi bi-bell", "labelPosition", "right", "label", "Notificar no Petrvs", "controlName", "enviar_petrvs", 3, "size", "change", 4, "ngIf"], ["scale", "small", "icon", "bi bi-envelope-at", "labelPosition", "right", "label", "Notificar por e-mail", "controlName", "enviar_email", 3, "size", "change", 4, "ngIf"], ["scale", "small", "icon", "bi bi-whatsapp", "labelPosition", "right", "label", "Notificar por Whatsapp", "controlName", "enviar_whatsapp", 3, "size", "change", 4, "ngIf"], ["title", "Templates e habilita\u00E7\u00E3o de notifica\u00E7\u00F5es", 4, "ngIf"], ["scale", "small", "icon", "bi bi-bell", "labelPosition", "right", "label", "Notificar no Petrvs", "controlName", "enviar_petrvs", 3, "size", "change"], ["scale", "small", "icon", "bi bi-envelope-at", "labelPosition", "right", "label", "Notificar por e-mail", "controlName", "enviar_email", 3, "size", "change"], ["scale", "small", "icon", "bi bi-whatsapp", "labelPosition", "right", "label", "Notificar por Whatsapp", "controlName", "enviar_whatsapp", 3, "size", "change"], ["title", "Templates e habilita\u00E7\u00E3o de notifica\u00E7\u00F5es"], [3, "entity", "source", "unidadeId", "entidadeId", "cdRef"]], template: function NotificacaoConfigComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "editable-form", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](1, "separator", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](2, NotificacoesConfigComponent_input_switch_2_Template, 1, 1, "input-switch", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](3, NotificacoesConfigComponent_input_switch_3_Template, 1, 1, "input-switch", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](4, NotificacoesConfigComponent_input_switch_4_Template, 1, 1, "input-switch", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](2, NotificacaoConfigComponent_input_switch_2_Template, 1, 1, "input-switch", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](3, NotificacaoConfigComponent_input_switch_3_Template, 1, 1, "input-switch", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](4, NotificacaoConfigComponent_input_switch_4_Template, 1, 1, "input-switch", 4);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](5, NotificacoesConfigComponent_separator_5_Template, 2, 5, "separator", 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](5, NotificacaoConfigComponent_separator_5_Template, 2, 5, "separator", 5);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     } if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.disabled);
@@ -28505,7 +28505,7 @@ UteisModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdefineInjec
         _templates_templates_component__WEBPACK_IMPORTED_MODULE_8__["TemplatesComponent"],
         _documentos_assinar_assinar_component__WEBPACK_IMPORTED_MODULE_9__["AssinarComponent"],
         _notificacoes_notificacoes_component__WEBPACK_IMPORTED_MODULE_10__["NotificacoesComponent"],
-        _notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_11__["NotificacoesConfigComponent"],
+        _notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_11__["NotificacaoConfigComponent"],
         _notificacoes_notificacoes_template_notificacoes_template_component__WEBPACK_IMPORTED_MODULE_12__["NotificacoesTemplateComponent"]], imports: [_angular_common__WEBPACK_IMPORTED_MODULE_0__["CommonModule"],
         src_app_components_components_module__WEBPACK_IMPORTED_MODULE_3__["ComponentsModule"],
         _uteis_routing_module__WEBPACK_IMPORTED_MODULE_5__["UteisRoutingModule"]], exports: [_calendar_efemerides_calendar_efemerides_component__WEBPACK_IMPORTED_MODULE_1__["CalendarEfemeridesComponent"],
@@ -28515,9 +28515,9 @@ UteisModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdefineInjec
         _documentos_documentos_component__WEBPACK_IMPORTED_MODULE_7__["DocumentosComponent"],
         _templates_templates_component__WEBPACK_IMPORTED_MODULE_8__["TemplatesComponent"],
         _notificacoes_notificacoes_component__WEBPACK_IMPORTED_MODULE_10__["NotificacoesComponent"],
-        _notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_11__["NotificacoesConfigComponent"],
+        _notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_11__["NotificacaoConfigComponent"],
         _notificacoes_notificacoes_template_notificacoes_template_component__WEBPACK_IMPORTED_MODULE_12__["NotificacoesTemplateComponent"]] }); })();
-_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵsetComponentScope"](_notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_11__["NotificacoesConfigComponent"], [_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_14__["EditableFormComponent"], _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_15__["SeparatorComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgIf"], _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_16__["InputSwitchComponent"], _notificacoes_notificacoes_template_notificacoes_template_component__WEBPACK_IMPORTED_MODULE_12__["NotificacoesTemplateComponent"]], []);
+_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵsetComponentScope"](_notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_11__["NotificacaoConfigComponent"], [_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_14__["EditableFormComponent"], _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_15__["SeparatorComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_0__["NgIf"], _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_16__["InputSwitchComponent"], _notificacoes_notificacoes_template_notificacoes_template_component__WEBPACK_IMPORTED_MODULE_12__["NotificacoesTemplateComponent"]], []);
 
 
 /***/ }),
@@ -39756,7 +39756,7 @@ class Unidade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.horario_trabalho_intervalo = "00:00"; // Intervalo realizado dentro da jornada de trabalho (Ex.: horário de almoço). Para fins de computo de jornada de trabalho na ausência do plano de trabalho.
         this.distribuicao_forma_contagem_prazos = "DIAS_UTEIS"; // ["HORAS_CORRIDAS", "DIAS_CORRIDOS", "HORAS_UTEIS", "DIAS_UTEIS"]) //Forma da contagem de prazo na distribuição
         this.entrega_forma_contagem_prazos = "HORAS_UTEIS"; // ["HORAS_CORRIDAS", "HORAS_UTEIS"]) //Forma da contagem de prazo na entrega
-        this.notificacoes = new _notificacao_model__WEBPACK_IMPORTED_MODULE_1__["NotificacoesConfig"](); // Mensagens
+        this.notificacoes = new _notificacao_model__WEBPACK_IMPORTED_MODULE_1__["NotificacaoConfig"](); // Mensagens
         this.autoedicao_subordinadas = 0; //Permitir a autoedição de informações gerais pelas unidades subordinadas (nome, sigla, codigo_pai)
         this.etiquetas = []; //Configuração das etiquetas que serão utilizadas nas demandas (comtém nome, icone e cor)
         this.data_inicio = new Date(); //Data inicio da vigência

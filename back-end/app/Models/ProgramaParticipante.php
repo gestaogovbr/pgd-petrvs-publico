@@ -5,13 +5,9 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\Usuario;
 use App\Models\Programa;
-use App\Traits\AutoDataInicio;
-use App\Traits\HasDataFim;
 
 class ProgramaParticipante extends ModelBase
 {
-    use AutoDataInicio, HasDataFim;
-
     protected $table = 'programas_participantes';
 
     protected $with = [];

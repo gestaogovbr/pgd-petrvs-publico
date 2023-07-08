@@ -12,21 +12,6 @@ class CadeiaValorProcesso extends ModelBase
     protected $with = [];
 
     public $fillable = [ // TYPE; NULL?; DEFAULT?; // COMMENT
-
-    ];
-
-    public $fillable_changes = [];
-
-    public $fillable_relations = [];
-
-    public $delete_cascade = [];
-
-    // Belongs
-    public function cadeiaValor() { return $this->belongsTo(CadeiaValor::class); }
-    public function processoPai() { return $this->belongsTo(CadeiaValorProcesso::class); }
-}
-
-/*
         'sequencia', // int; NOT NULL; // Sequência do processo dentro do grupo
         'path', // text; // Path dos nós pais separados por /, ou NULL caso sejam nós raiz
         'nome', // varchar(256); NOT NULL; // Nome do processo
@@ -34,4 +19,16 @@ class CadeiaValorProcesso extends ModelBase
         'processo_pai_id', // char(36); 
         //'deleted_at', // timestamp; 
         //'data_inicio',// REMOVED
-*/
+    ];
+
+    public $fillable_changes = [];
+
+    public $fillable_relations = [];
+
+    public $delete_cascade = [];
+    // Has
+    public function entregasProcessos() { return $this->hasMany(PlanoEntregaEntregaProcesso::class, 'processo_id'); }
+    // Belongs
+    public function cadeiaValor() { return $this->belongsTo(CadeiaValor::class); }
+    public function processoPai() { return $this->belongsTo(CadeiaValorProcesso::class); }
+}

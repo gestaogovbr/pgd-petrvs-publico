@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\Planejamento;
 use App\Models\EixoTematico;
+use App\Models\PlanoEntregaEntregaObjetivo;
 
 class PlanejamentoObjetivo extends ModelBase
 {
@@ -13,21 +14,6 @@ class PlanejamentoObjetivo extends ModelBase
     protected $with = [];
 
     public $fillable = [ // TYPE; NULL?; DEFAULT?; // COMMENT
-
-    ];
-
-    public $delete_cascade = ["objetivos"];
-
-    // Has
-    public function objetivos() { return $this->hasMany(PlanejamentoObjetivo::class, 'objetivo_pai_id'); }
-    // Belongs
-    public function planejamento() { return $this->belongsTo(Planejamento::class); }
-    public function eixoTematico() { return $this->belongsTo(EixoTematico::class); }
-    public function objetivoPai() { return $this->belongsTo(PlanejamentoObjetivo::class); }
-}
-
-
-/*
         'nome', // varchar(256); NOT NULL; // Nome do objetivo
         'fundamentacao', // varchar(256); NOT NULL; // Fundamentação
         'planejamento_id', // char(36); NOT NULL; 
@@ -38,4 +24,15 @@ class PlanejamentoObjetivo extends ModelBase
         'objetivo_pai_id', // char(36); 
         //'data_inicio', // datetime; NOT NULL; // Data inicio da vigência
         //'data_fim', // datetime; // Data fim da vigência
-*/
+    ];
+
+    public $delete_cascade = ["objetivos"];
+
+    // Has
+    public function objetivos() { return $this->hasMany(PlanejamentoObjetivo::class, 'objetivo_pai_id'); }
+    public function entregasObjetivos() { return $this->hasMany(PlanoEntregaEntregaObjetivo::class, 'objetivo_id'); }
+    // Belongs
+    public function planejamento() { return $this->belongsTo(Planejamento::class); }
+    public function eixoTematico() { return $this->belongsTo(EixoTematico::class); }
+    public function objetivoPai() { return $this->belongsTo(PlanejamentoObjetivo::class); }
+}

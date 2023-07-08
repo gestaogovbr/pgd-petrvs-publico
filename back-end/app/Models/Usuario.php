@@ -2,22 +2,22 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use App\Traits\AutoUuid;
 use App\Models\Afastamento;
-use App\Models\DemandaAvaliacao;
 use App\Models\Atividade;
+use App\Models\Unidade;
 use App\Models\Change;
 use App\Models\Favorito;
+use App\Models\UsuarioHash;
+use App\Models\Integracao;
 use App\Models\Lotacao;
 use App\Models\PlanoTrabalho;
 use App\Models\Perfil;
-use App\Models\NotificacoesConfig;
+use App\Models\NotificacaoConfig;
 use App\Traits\MergeRelations;
 use App\Traits\LogChanges;
 use App\Traits\HasPermissions;
@@ -35,6 +35,34 @@ class Usuario extends Authenticatable
     protected $with = ['perfil'];
 
     public $fillable = [ // TYPE; NULL?; DEFAULT?; // COMMENT
+        'nome', // varchar(256); NOT NULL; // Nome do usuário
+        'email', // varchar(100); NOT NULL; // Email do usuário
+        'email_verified_at', // timestamp; 
+        'cpf', // varchar(14); NOT NULL; // CPF do usuário
+        'matricula', // varchar(10); // Matrícula funcional do usuário
+        'apelido', // varchar(100); NOT NULL; // Apelido/Nome de guerra/Nome social
+        'telefone', // varchar(50); // Telefone do usuário
+        'sexo', // enum('MASCULINO','FEMININO'); 
+        'config', // json; 
+        'notificacoes', // json; // Configurações das notificações (Se envia email, whatsapp, tipos, templates)
+        'data_inicio', // datetime; NOT NULL; 
+        'id_google', // varchar(50); // Id associado com o usuário do login do google
+        'vinculacao', // enum('SERVIDOR_EFETIVO','SERVIDOR_COMISSIONADO','EMPREGADO','CONTRATADO_TEMPORARIO'); NOT NULL; DEFAULT: 'SERVIDOR_EFETIVO'; // Vinculo do usuário com a administração
+        'perfil_id', // char(36); 
+        'uf', // char(2); // UF do usuário
+        'texto_complementar_plano', // longtext; // Campo de mensagem adicional do plano de trabalho
+        //'remember_token', // varchar(100); 
+        //'password', // varchar(255); 
+        //'data_fim', // datetime; 
+        //'url_foto', // varchar(255); // Url da foto do usuário (temporário)
+        //'metadados', // json; // Metadados
+        //'foto_perfil', // text; // Foto padrão do perfil
+        //'foto_google', // text; // Foto do G-Suit (Google)
+        //'foto_microsoft', // text; // Foto do Azure (Microsoft)
+        //'foto_firebase', // text; // Foto do Firebase (Google, Facebook, Instagram, Twiter, etc...)
+        //'projeto_id', // char(36); 
+        //'projeto_tarefa_id', // char(36); 
+        //'id_super', // text; // Id do usuário no SUPER        
     ];
 
     public $fillable_changes = [
@@ -103,7 +131,7 @@ class Usuario extends Authenticatable
     }
     public function getNotificacoesAttribute($value)
     {
-        $notificacoes = new NotificacoesConfig();
+        $notificacoes = new NotificacaoConfig();
         return array_replace_recursive((array) $notificacoes, (array) json_decode(empty($value) ? "[]" : $value));
     }
     public function setNotificacoesAttribute($value)
@@ -116,35 +144,3 @@ class Usuario extends Authenticatable
         return Change::where('user_id', $this->id)->get()->toArray() ?? [];
     } */
 }
-
-/*
-        'nome', // varchar(256); NOT NULL; // Nome do usuário
-        'email', // varchar(100); NOT NULL; // Email do usuário
-        'email_verified_at', // timestamp; 
-        'cpf', // varchar(14); NOT NULL; // CPF do usuário
-        'matricula', // varchar(10); // Matrícula funcional do usuário
-        'apelido', // varchar(100); NOT NULL; // Apelido/Nome de guerra/Nome social
-        'telefone', // varchar(50); // Telefone do usuário
-        'sexo', // enum('MASCULINO','FEMININO'); 
-        'config', // json; 
-        'notificacoes', // json; // Configurações das notificações (Se envia email, whatsapp, tipos, templates)
-        'data_inicio', // datetime; NOT NULL; 
-        'id_google', // varchar(50); // Id associado com o usuário do login do google
-        'vinculacao', // enum('SERVIDOR_EFETIVO','SERVIDOR_COMISSIONADO','EMPREGADO','CONTRATADO_TEMPORARIO'); NOT NULL; DEFAULT: 'SERVIDOR_EFETIVO'; // Vinculo do usuário com a administração
-        'perfil_id', // char(36); 
-        'uf', // char(2); // UF do usuário
-        'texto_complementar_plano', // longtext; // Campo de mensagem adicional do plano de trabalho
-        //'remember_token', // varchar(100); 
-        //'password', // varchar(255); 
-        //'data_fim', // datetime; 
-        //'url_foto', // varchar(255); // Url da foto do usuário (temporário)
-        //'metadados', // json; // Metadados
-        //'foto_perfil', // text; // Foto padrão do perfil
-        //'foto_google', // text; // Foto do G-Suit (Google)
-        //'foto_microsoft', // text; // Foto do Azure (Microsoft)
-        //'foto_firebase', // text; // Foto do Firebase (Google, Facebook, Instagram, Twiter, etc...)
-        //'projeto_id', // char(36); 
-        //'projeto_tarefa_id', // char(36); 
-        //'id_super', // text; // Id do usuário no SUPER
-
-*/
