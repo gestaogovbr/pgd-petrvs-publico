@@ -35,8 +35,6 @@ class CreateCapacidadesTecnicasTable extends Migration
      */
     public function down()
     {
-        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('capacidades_tecnicas');
-        Schema::enableForeignKeyConstraints();
     }
 }

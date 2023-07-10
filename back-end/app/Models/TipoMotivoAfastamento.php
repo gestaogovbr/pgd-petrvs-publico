@@ -22,8 +22,8 @@ class TipoMotivoAfastamento extends ModelBase
         'cor', /* varchar(100); NOT NULL; */// Código da cor em formato hex
         'horas', /* tinyint; NOT NULL; */// Se o afastamento é medido em horas
         'integracao', /* tinyint; NOT NULL; */// Se o tipo de motivo de afastamento é integrado a outro sistema
-        'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
-        //'data_fim', /* datetime; */// Data final da vigência
+        //'deleted_at', /* timestamp; */
+        /*'data_inicio',*/// REMOVED
     ];
 
     // Has

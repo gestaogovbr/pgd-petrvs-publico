@@ -16,6 +16,7 @@ class TipoProcesso extends ModelBase
         'codigo', /* varchar(50); */// Código do tipo de Processo
         'etiquetas', /* json; NOT NULL; */// Nome das etiquetas predefinidas
         'checklist', /* json; NOT NULL; */// Nome dos checklist predefinidas
+        //'deleted_at', /* timestamp; */
     ];
 
     protected static function booted()

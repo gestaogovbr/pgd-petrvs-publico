@@ -38,9 +38,7 @@ class CreatePlanejamentosObjetivosTable extends Migration
      */
     public function down()
     {
-        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('planejamentos_objetivos');
-        Schema::enableForeignKeyConstraints();
 
     }
 }

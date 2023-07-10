@@ -13,9 +13,10 @@ class TipoAvaliacao extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'nome', /* varchar(256); NOT NULL; */// Descrição da nota atribuida
-        'tipo', /* int; */// Nota atribuida de 0 a 10
-        'notas', /* int; */// Nota atribuida de 0 a 10
+        'nome', /* varchar(256); NOT NULL; */// Nome do tipo de avaliação
+        'tipo', /* set('QUALITATIVO','QUANTITATIVO'); NOT NULL; */// Se a nota será um número ou um conceito
+        'notas', /* json; NOT NULL; */// Notas
+        //'deleted_at', /* timestamp; */
     ];
 
     public $fillable_relations = [

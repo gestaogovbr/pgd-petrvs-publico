@@ -34,35 +34,33 @@ class Usuario extends Authenticatable
 
     protected $with = ['perfil'];
 
-    public $fillable = [ // TYPE; NULL?; DEFAULT?; // COMMENT
-        'nome', // varchar(256); NOT NULL; // Nome do usuário
-        'email', // varchar(100); NOT NULL; // Email do usuário
-        'email_verified_at', // timestamp; 
-        'cpf', // varchar(14); NOT NULL; // CPF do usuário
-        'matricula', // varchar(10); // Matrícula funcional do usuário
-        'apelido', // varchar(100); NOT NULL; // Apelido/Nome de guerra/Nome social
-        'telefone', // varchar(50); // Telefone do usuário
-        'sexo', // enum('MASCULINO','FEMININO'); 
-        'config', // json; 
-        'notificacoes', // json; // Configurações das notificações (Se envia email, whatsapp, tipos, templates)
-        'data_inicio', // datetime; NOT NULL; 
-        'id_google', // varchar(50); // Id associado com o usuário do login do google
-        'vinculacao', // enum('SERVIDOR_EFETIVO','SERVIDOR_COMISSIONADO','EMPREGADO','CONTRATADO_TEMPORARIO'); NOT NULL; DEFAULT: 'SERVIDOR_EFETIVO'; // Vinculo do usuário com a administração
-        'perfil_id', // char(36); 
-        'uf', // char(2); // UF do usuário
-        'texto_complementar_plano', // longtext; // Campo de mensagem adicional do plano de trabalho
-        //'remember_token', // varchar(100); 
-        //'password', // varchar(255); 
-        //'data_fim', // datetime; 
-        //'url_foto', // varchar(255); // Url da foto do usuário (temporário)
-        //'metadados', // json; // Metadados
-        //'foto_perfil', // text; // Foto padrão do perfil
-        //'foto_google', // text; // Foto do G-Suit (Google)
-        //'foto_microsoft', // text; // Foto do Azure (Microsoft)
-        //'foto_firebase', // text; // Foto do Firebase (Google, Facebook, Instagram, Twiter, etc...)
-        //'projeto_id', // char(36); 
-        //'projeto_tarefa_id', // char(36); 
-        //'id_super', // text; // Id do usuário no SUPER        
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'nome', /* varchar(256); NOT NULL; */// Nome do usuário
+        'email', /* varchar(100); NOT NULL; */// E-mail do usuário
+        'email_verified_at', /* timestamp; */// Data de verificação do e-mail do usuário
+        'cpf', /* varchar(14); NOT NULL; */// CPF do usuário
+        'matricula', /* varchar(10); */// Matrícula funcional do usuário
+        'apelido', /* varchar(100); NOT NULL; */// Apelido/Nome de guerra/Nome social
+        'telefone', /* varchar(50); */// Telefone do usuário
+        'sexo', /* enum('MASCULINO','FEMININO'); */// Sexo do usuário
+        'config', /* json; */// Configurações do usuário
+        'notificacoes', /* json; */// Configurações das notificações (Se envia e-mail, whatsapp, tipos, templates)
+        'id_google', /* varchar(50); */// Id associado com o usuário do login do google
+        'vinculacao', /* enum('SERVIDOR_EFETIVO','SERVIDOR_COMISSIONADO','EMPREGADO','CONTRATADO_TEMPORARIO'); NOT NULL; DEFAULT: 'SERVIDOR_EFETIVO'; */// Vínculo do usuário com a administração
+        'perfil_id', /* char(36); */
+        'uf', /* char(2); */// UF do usuário
+        'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho
+        //'deleted_at', /* timestamp; */
+        //'remember_token', /* varchar(100); */
+        //'password', /* varchar(255); */// Senha do usuário
+        //'url_foto', /* varchar(255); */// URL da foto do usuário (temporário)
+        //'foto_perfil', /* text; */// Foto padrão do perfil
+        //'foto_google', /* text; */// Foto do G-Suit (Google)
+        //'foto_microsoft', /* text; */// Foto do Azure (Microsoft)
+        //'foto_firebase', /* text; */// Foto do Firebase (Google, Facebook, Instagram, Twiter, etc...)
+        //'id_super', /* text; */// Id do usuário no SUPER
+        //'metadados', /* json; */// Metadados do usuário
+        /*'data_inicio',*/// REMOVED
     ];
 
     public $fillable_changes = [

@@ -16,23 +16,23 @@ class PlanoEntregaEntrega extends ModelBase
 
     protected $with = [];
 
-    public $fillable = [ // TYPE; NULL?; DEFAULT?; // COMMENT
-        'data_inicio', // datetime; NOT NULL; // Data inicio da vigência
-        'data_fim', // datetime; // Data fim da vigência
-        'inicio', // datetime; NOT NULL; // Data inicio
-        'fim', // datetime; // Data fim
-        'descricao', // varchar(256); NOT NULL; // Descrição da entrega
-        'homologado', // tinyint; NOT NULL; // Se a entrega foi homologada
-        'meta', // json; NOT NULL; // Meta para a entrega
-        'realizado', // json; // Valor realizado
-        'plano_entrega_id', // char(36); 
-        'entrega_id', // char(36); NOT NULL; 
-        'entrega_pai_id', // char(36); 
-        'progresso_esperado', // decimal(5,2); DEFAULT: '0.00'; // Percentual de progresso do Plano de Entregas esperado
-        'progresso_realizado', // decimal(5,2); DEFAULT: '0.00'; // Percentual de progresso do Plano de Entregas realizado
-        'unidade_id', // char(36); NOT NULL; 
-        'destinatario', // varchar(255); // Destinatário da entrega
-        //'cliente', // text; // Cliente da entrega        
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'inicio', /* datetime; NOT NULL; */// Data inicial da entrega
+        'fim', /* datetime; */// Data final da entrega
+        'descricao', /* varchar(256); NOT NULL; */// Descrição da entrega
+        'homologado', /* tinyint; NOT NULL; */// Se a entrega foi ou não homologada
+        'meta', /* json; NOT NULL; */// Meta para a entrega
+        'realizado', /* json; */// Valor realizado da entrega
+        'plano_entrega_id', /* char(36); NOT NULL; */
+        'entrega_id', /* char(36); NOT NULL; */
+        'entrega_pai_id', /* char(36); */
+        'progresso_esperado', /* decimal(5,2); DEFAULT: '0.00'; */// Percentual esperado de progresso do Plano de Entregas
+        'progresso_realizado', /* decimal(5,2); DEFAULT: '0.00'; */// Percentual realizado de progresso do Plano de Entregas
+        'unidade_id', /* char(36); NOT NULL; */
+        'destinatario', /* varchar(255); */// Destinatário da entrega
+        //'deleted_at', /* timestamp; */
+        /*'data_inicio',*/// REMOVED
+        /*'data_fim',*/// REMOVED
     ];
 
     public $fillable_changes = ['objetivos', 'processos']; 

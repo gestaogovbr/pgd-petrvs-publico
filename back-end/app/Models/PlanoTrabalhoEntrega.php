@@ -14,13 +14,14 @@ class PlanoTrabalhoEntrega extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência do registro
-        'plano_id', /* char(36); NOT NULL; */
         'plano_entrega_entrega_id', /* char(36); */
         'entrega_id', /* char(36); */
         'descricao', /* varchar(256); NOT NULL; */// Detalhamento da entrega
-        'forca_trabalho', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */// Percentual da força de trabalho
-        //'data_fim', /* datetime; */// Data fim da vigência do registro
+        'forca_trabalho', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */// Percentual da força de trabalho associado a esta entrega
+        //'deleted_at', /* timestamp; */
+        //'plano_trabalho_id', /* char(36); NOT NULL; */
+        /*'data_inicio',*/// REMOVED
+        /*'plano_id',*/// REMOVED
     ];
 
     public $delete_cascade = [];

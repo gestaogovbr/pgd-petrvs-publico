@@ -16,11 +16,11 @@ class Documento extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'numero', /* int; NOT NULL; */// Número do documento (Gerado pelo sistema)
-        'tipo', /* enum('TERMO_ADESAO','SEI','TCR'); */// Especificação da espécie do documento (interno do sistema)
-        'especie', /* enum('TERMO_ADESAO','SEI','TCR'); */// Especificação da espécie do documento (interno do sistema)
+        'tipo', /* enum('HTML','PDF','LINK'); NOT NULL; */// Tipo do documento
+        'especie', /* enum('TERMO_ADESAO','SEI','TCR'); NOT NULL; */// Especificação da espécie do documento (interno do sistema)
         'conteudo', /* longtext; */// Conteúdo do arquivo
         'metadados', /* json; */// Metadados
-        'link', /* json; */// Metadados
+        'link', /* json; */// Informações sobre o link, caso o tipo seja LINK
         'status', /* enum('GERADO','AGUARDANDO_SEI'); NOT NULL; DEFAULT: 'GERADO'; */// Status do documento: GERADO (documento gerado); AGUARDANDO_SEI (Aguardando abrir o documento no sei para colar o conteúdo dentro)
         'template', /* text; */// Campo de Template
         'datasource', /* json; */// Conjunto de dados do template
@@ -30,9 +30,9 @@ class Documento extends ModelBase
         'tipo_processo_id', /* char(36); */
         'atividade_id', /* char(36); */
         'atividade_tarefa_id', /* char(36); */
-        'plano_id', /* char(36); */
         'template_id', /* char(36); */
-        //'data_fim', /* datetime; */// Data fim
+        //'deleted_at', /* timestamp; */
+        //'plano_trabalho_id', /* char(36); */
     ];
 
     public $delete_cascade = ['assinaturas'];

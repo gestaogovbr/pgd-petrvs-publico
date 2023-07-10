@@ -14,10 +14,10 @@ class HistoricoDocenciaExternaCurriculum extends ModelBase
     protected $table = 'historicos_docencias_externas_curriculum';
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'curriculum_profissional_id',
-        'area_atividade_externa_id',
-        'curso_id',
-                
+        'curriculum_profissional_id', /* char(36); NOT NULL; */
+        'area_atividade_externa_id', /* char(36); NOT NULL; */
+        'curso_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
     ];
 
      // Belongs

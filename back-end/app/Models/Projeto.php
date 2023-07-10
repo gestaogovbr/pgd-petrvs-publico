@@ -25,30 +25,29 @@ class Projeto extends ModelBase
         'status', /* enum('PLANEJADO','INICIADO','CONCLUIDO','SUSPENSO','CANCELADO'); NOT NULL; */// Status do projeto
         'inicio', /* datetime; NOT NULL; */// Inicio do projeto
         'termino', /* datetime; NOT NULL; */// Fim do projeto
-        'inicio_baseline', /* datetime; NOT NULL; */// Inicio do projeto
-        'termino_baseline', /* datetime; NOT NULL; */// Fim do projeto
+        'inicio_baseline', /* datetime; */// Inicio do projeto (Baseline)
+        'termino_baseline', /* datetime; */// Fim do projeto (Baseline)
         'calcula_custos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se o projeto calcula custos
         'tempo_corrido', /* tinyint; NOT NULL; */// Se o tempo é corrido ou usa a configuração de fins de semana, feriados e horário do expediente (quando usar horas)
         'usa_horas', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se usa horas nas datas
-        'usa_baseline', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se usa horas nas datas
+        'usa_baseline', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se o projeto utiliza baseline
         'calcula_intervalo', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se calcula o inicio e termino automaticamente pelos filhos
         'agrupador', /* tinyint; NOT NULL; */// Se é apenas um registro para agrupar tarefas filhas (somente se tem_filhos e não possui progresso)
         'soma_progresso_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se o progresso é calculado pela média do progresso dos filhos ou lançado manual (somente se tem_filhos)
         'aloca_proprios_recursos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui recursos próprios
         'soma_recusos_alocados_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Mostra o somatório dos recursos filhos
         'custos_proprios', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui custos próprios
-        'soma_custos_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui custos filhos
+        'soma_custos_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Mostra o somatório dos custos filhos
         'duracao', /* double(8,2); NOT NULL; */// Duração do projeto
         'progresso', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */// Percentual de progresso do projeto
         'usuario_id', /* char(36); */
         'tipo_projeto_id', /* char(36); */
         'fase_id', /* char(36); */
-        'custo', /* decimal(15,2); NOT NULL; */
-        'kanban_dockers', /* json; */
+        'custo', /* decimal(15,2); NOT NULL; */// Custo: Será a soma dos recursos, ou a soma dos filhos caso tem_filhos e soma_custos_filhos
+        'kanban_dockers', /* json; */// Configuração das Labels das swimlanes do quadro Kanban
         'expediente', /* json; */// Configuração de expediente
+        //'deleted_at', /* timestamp; */
         //'numero', /* int; NOT NULL; */// Número do projeto (Gerado pelo sistema)
-        //'data_inicio', /* datetime; NOT NULL; */// Data de criação
-        //'data_fim', /* datetime; */// Data final do registro
     ];
 
     public $fillable_changes = ["fases", "regras", "recursos", "alocacoes", "tarefas"];

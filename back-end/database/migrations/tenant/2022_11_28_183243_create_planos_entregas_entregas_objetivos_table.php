@@ -33,8 +33,6 @@ class CreatePlanosEntregasEntregasObjetivosTable extends Migration
      */
     public function down()
     {
-        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('planos_entregas_entregas_objetivos');
-        Schema::enableForeignKeyConstraints();
     }
 }

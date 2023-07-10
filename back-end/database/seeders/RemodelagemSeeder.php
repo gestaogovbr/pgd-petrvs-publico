@@ -18,8 +18,7 @@ class RemodelagemSeeder extends Seeder
     public function run()
     {
         try {
-                Schema::disableForeignKeyConstraints();
-                $tabelas_apagar = ['entregas', 'eixos_tematicos', 'planejamentos', 'planejamentos_objetivos',
+                        $tabelas_apagar = ['entregas', 'eixos_tematicos', 'planejamentos', 'planejamentos_objetivos',
                                     'planejamentos_entregas', 'planejamentos_entregas_objetivos', 'planejamentos_pontos_controles',
                                     'planejamentos_pontos_controles_entregas', 'planos_pontos_controles',
                                     'planos_pontos_controles_entregas'];

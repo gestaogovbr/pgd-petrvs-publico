@@ -13,17 +13,16 @@ class PlanejamentoObjetivo extends ModelBase
 
     protected $with = [];
 
-    public $fillable = [ // TYPE; NULL?; DEFAULT?; // COMMENT
-        'nome', // varchar(256); NOT NULL; // Nome do objetivo
-        'fundamentacao', // varchar(256); NOT NULL; // Fundamentação
-        'planejamento_id', // char(36); NOT NULL; 
-        'sequencia', // int; NOT NULL; // Sequencia utilizada para ordenar
-        'eixo_tematico_id', // char(36); NOT NULL; 
-        'objetivo_superior_id', // char(36); 
-        'path', // text; // Path dos nós pais separados por /, ou null caso sejam nós raiz
-        'objetivo_pai_id', // char(36); 
-        //'data_inicio', // datetime; NOT NULL; // Data inicio da vigência
-        //'data_fim', // datetime; // Data fim da vigência
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'nome', /* varchar(256); NOT NULL; */// Nome do objetivo
+        'fundamentacao', /* varchar(256); NOT NULL; */// Fundamentação do objetivo
+        'planejamento_id', /* char(36); NOT NULL; */
+        'sequencia', /* int; NOT NULL; */// Sequência utilizada para ordenar os objetivos
+        'eixo_tematico_id', /* char(36); NOT NULL; */
+        'path', /* text; */// Path dos nós pais separados por /, ou NULL caso sejam nós raiz
+        'objetivo_pai_id', /* char(36); */
+        //'deleted_at', /* timestamp; */
+        /*'objetivo_superior_id',*/// REMOVED
     ];
 
     public $delete_cascade = ["objetivos"];

@@ -14,9 +14,9 @@ class PlanoEntregaEntregaProcesso extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'processo_id', /* char(36); NOT NULL; */
-        'plano_entrega_entrega_id', /* char(36); NOT NULL; */
-        //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
-        //'data_fim', /* datetime; */// Data fim da vigência
+        //'deleted_at', /* timestamp; */
+        //'entrega_id', /* char(36); NOT NULL; */
+        /*'plano_entrega_entrega_id',*/// REMOVED
     ];
 
     public $fillable_changes = [];

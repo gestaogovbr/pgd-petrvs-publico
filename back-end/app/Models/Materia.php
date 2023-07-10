@@ -13,10 +13,11 @@ class Materia extends ModelBase
     protected $table = 'materias';
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'nome',
-        'horas_aula',
-        'ativo',
-        'curso_id'
+        'nome', /* varchar(256); NOT NULL; */// Nome do curso
+        'horas_aula', /* tinyint; */// Horas aula da matéria
+        'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */// Curso ativo ou inativo
+        'curso_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
     ];
 
     // Belongs

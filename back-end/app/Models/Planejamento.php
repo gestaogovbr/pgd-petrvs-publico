@@ -14,19 +14,18 @@ class Planejamento extends ModelBase
 
     protected $with = [];
 
-    public $fillable = [ // TYPE; NULL?; DEFAULT?; // COMMENT
-        'inicio', // datetime; NOT NULL; // Data inicio do planejamento
-        'fim', // datetime; // Data fim do planejamento
-        'nome', // varchar(256); NOT NULL; // Nome do planejamento estratégico
-        'unidade_id', // char(36); 
-        'missao', // text; NOT NULL; // Missão
-        'visao', // text; NOT NULL; // Visão
-        'valores', // json; NOT NULL; // Valores
-        'entidade_id', // char(36); NOT NULL; 
-        'data_arquivamento', // datetime; // Data de arquivamento da demanda
-        'planejamento_superior_id', // char(36); 
-        //'data_inicio', // datetime; NOT NULL; // Data inicio da vigência do registro
-        //'data_fim', // datetime; // Data fim da vigência do registro
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'inicio', /* datetime; NOT NULL; */// Data de inicio do planejamento institucional
+        'fim', /* datetime; */// Data do fim do planejamento institucional
+        'nome', /* varchar(256); NOT NULL; */// Nome do planejamento institucional
+        'unidade_id', /* char(36); */
+        'missao', /* text; NOT NULL; */// Missão da entidade/unidade
+        'visao', /* text; NOT NULL; */// Visão da entidade/unidade
+        'valores', /* json; NOT NULL; */// Valores da entidade/unidade
+        'entidade_id', /* char(36); NOT NULL; */
+        'data_arquivamento', /* datetime; */// Data de arquivamento do planejamento institucional
+        'planejamento_superior_id', /* char(36); */
+        //'deleted_at', /* timestamp; */
     ];
 
     // Casting

@@ -37,8 +37,6 @@ class CreateQuestionariosTable extends Migration
      */
     public function down()
     {
-        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('questionarios');
-        Schema::enableForeignKeyConstraints();
     }
 }

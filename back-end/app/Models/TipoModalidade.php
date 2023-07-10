@@ -19,12 +19,13 @@ class TipoModalidade extends ModelBase
         'atividades_homologadas', /* tinyint; NOT NULL; */// Permitir apenas atividades homologadas
         'dispensa_avaliacao', /* tinyint; NOT NULL; */// Dispensa a avaliação
         'exige_assinatura', /* tinyint; NOT NULL; */// Exigir assinatura
-        'exige_adesao', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se será necessário o participante realiza a adesão
-        'exige_assinatura_gestor_unidade', /* tinyint; NOT NULL; */// Exigir assinatura do gestor da unidade do plano
-        'exige_assinatura_gestor_entidade', /* tinyint; NOT NULL; */// Exigir assinatura do gestor da entidade
-        'calcula_tempo_despendido', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se calcula tempo despendido
-        'comparecer_presencialmente', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se será necessário comparecer presencialmente quando convocado
-        'ganho_produtividade', /* int; NOT NULL; */// Ganho de produtividade
+        //'deleted_at', /* timestamp; */
+        /*'exige_adesao',*/// REMOVED
+        /*'exige_assinatura_gestor_unidade',*/// REMOVED
+        /*'exige_assinatura_gestor_entidade',*/// REMOVED
+        /*'calcula_tempo_despendido',*/// REMOVED
+        /*'comparecer_presencialmente',*/// REMOVED
+        /*'ganho_produtividade',*/// REMOVED
     ];
 
     public $delete_cascade = ['documento'];

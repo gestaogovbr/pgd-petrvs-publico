@@ -21,8 +21,7 @@ class ProjetoAlocacao extends ModelBase
         'projeto_id', /* char(36); NOT NULL; */
         'tarefa_id', /* char(36); */
         'recurso_id', /* char(36); NOT NULL; */
-        //'data_inicio', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data inicio da vigência
-        //'data_fim', /* datetime; */// Data fim da vigência
+        //'deleted_at', /* timestamp; */
     ];
 
     public $fillable_changes = ["regras"];

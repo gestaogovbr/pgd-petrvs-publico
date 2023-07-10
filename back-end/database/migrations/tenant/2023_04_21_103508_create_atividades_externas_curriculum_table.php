@@ -36,8 +36,6 @@ class CreateAtividadesExternasCurriculumTable extends Migration
      */
     public function down()
     {
-        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('atividades_externas_curriculum');
-        Schema::enableForeignKeyConstraints();
     }
 }

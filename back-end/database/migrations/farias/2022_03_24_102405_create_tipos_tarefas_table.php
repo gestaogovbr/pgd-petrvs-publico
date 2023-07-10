@@ -37,8 +37,6 @@ class CreateTiposTarefasTable extends Migration
      */
     public function down()
     {
-        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('tipos_tarefas');
-        Schema::enableForeignKeyConstraints();
     }
 }

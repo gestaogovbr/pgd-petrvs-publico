@@ -19,12 +19,12 @@ class ProjetoRecurso extends ModelBase
         'tipo', /* enum('HUMANO','MATERIAL','SERVICO','CUSTO','DEPARTAMENTO'); NOT NULL; */// Tipo do recurso
         'unidade_medida', /* enum('UNIDADE','CAIXA','METRO','KILO','LITRO','DUZIA','MONETARIO','HORAS','DIAS','PACOTE'); NOT NULL; */// Unidade do recurso
         'valor', /* decimal(15,2); NOT NULL; */// Valor
-        'data_inicio', /* datetime; NOT NULL; */// Data de criação
         'projeto_id', /* char(36); NOT NULL; */
         'usuario_id', /* char(36); */
         'unidade_id', /* char(36); */
         'material_servico_id', /* char(36); */
-        //'data_fim', /* datetime; */// Data final do registro
+        //'deleted_at', /* timestamp; */
+        /*'data_inicio',*/// REMOVED
     ];
 
     /*public $fillable_changes = [

@@ -43,7 +43,6 @@ class DropAdesaoTable extends Migration
         Schema::dropIfExists("programas_adesoes_unidades");
         Schema::dropIfExists("programas_adesoes_usuarios");
         Schema::dropIfExists("programas_adesoes"); */
-        Schema::enableForeignKeyConstraints();
     }
 
     /**

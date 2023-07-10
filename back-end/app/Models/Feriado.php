@@ -25,11 +25,10 @@ class Feriado extends ModelBase
         'recorrente', /* tinyint; NOT NULL; */// Se é uma data única ou repete todos os anos
         'abrangencia', /* enum('NACIONAL','ESTADUAL','MUNICIPAL'); NOT NULL; */// Abrangência do feriado
         'codigo_ibge', /* varchar(8); */// Código da UF ou do município (IBGE)
-        'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
         'entidade_id', /* char(36); */
         'cidade_id', /* char(36); */
         'uf', /* varchar(2); */// UF para feriados estaduais
-        //'data_fim', /* datetime; */// Data final da vigência
+        //'deleted_at', /* timestamp; */
     ];
 
     // Belongs

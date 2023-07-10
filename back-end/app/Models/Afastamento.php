@@ -18,7 +18,6 @@ class Afastamento extends ModelBase
         'fim_afastamento', /* datetime; NOT NULL; */// Fim do afastamento
         'usuario_id', /* char(36); NOT NULL; */
         'tipo_motivo_afastamento_id', /* char(36); */
-        //'deleted_at', /* timestamp; */
     ];
 
     // Belongs

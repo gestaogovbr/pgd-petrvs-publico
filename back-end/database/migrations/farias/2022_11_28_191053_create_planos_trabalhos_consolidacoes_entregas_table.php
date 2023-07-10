@@ -35,8 +35,6 @@ class CreatePlanosTrabalhosConsolidacoesEntregasTable extends Migration
      */
     public function down()
     {
-        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('planos_trabalhos_consolidacoes_entregas');
-        Schema::enableForeignKeyConstraints();
     }
 }

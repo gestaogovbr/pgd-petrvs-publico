@@ -17,8 +17,7 @@ class MaterialServico extends ModelBase
         'referencia', /* varchar(100); */// Referência
         'descricao', /* varchar(256); NOT NULL; */// Descrição
         'unidade_medida', /* enum('UNIDADE','CAIXA','METRO','KILO','LITRO','DUZIA','MONETARIO','HORAS','DIAS','PACOTE'); NOT NULL; */// Unidade
-        //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
-        //'data_fim', /* datetime; */// Data final da vigência
+        //'deleted_at', /* timestamp; */
     ];
 
     /*public $fillable_changes = [

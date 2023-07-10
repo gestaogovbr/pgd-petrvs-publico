@@ -45,8 +45,6 @@ class CreateCurriculumsProfissionaisTable extends Migration
      */
     public function down()
     {
-        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('curriculums_profissionais');
-        Schema::enableForeignKeyConstraints();
     }
 }

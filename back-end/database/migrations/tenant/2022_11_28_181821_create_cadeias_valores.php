@@ -37,9 +37,7 @@ class CreateCadeiasValores extends Migration
      */
     public function down()
     {
-        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('cadeias_valores');
-        Schema::enableForeignKeyConstraints();
 
     }
 }

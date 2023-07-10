@@ -20,14 +20,10 @@ class ProjetoTarefa extends ModelBase
         'path', /* text; NOT NULL; */// Path dos nós pais
         'nome', /* varchar(256); NOT NULL; */// Nome da tarefa
         'descricao', /* varchar(256); NOT NULL; */// Descricao da tarefa
-        'id_processo', /* int; */// ID do processo SEI
-        'numero_processo', /* varchar(50); */// Número do processo SEI
-        'id_documento', /* int; */// ID do documento SEI
-        'numero_documento', /* varchar(50); */// Numero do documento SEI
         'inicio', /* datetime; */// Inicio da tarefa
-        'termino', /* datetime; */// Termino da tarefa
-        'inicio_baseline', /* datetime; */// Inicio da tarefa
-        'termino_baseline', /* datetime; */// Termino da tarefa
+        'termino', /* datetime; */// Fim da tarefa
+        'inicio_baseline', /* datetime; */// Inicio do projeto (Baseline)
+        'termino_baseline', /* datetime; */// Fim do projeto (Baseline)
         'duracao', /* double(8,2); NOT NULL; */// Duração da atividade. Se a duração for 0 e sintéfico for falso então irá se comportar apenas como um grupo
         'progresso', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */// Percentual de progresso da tarefa
         'inicio_marco', /* tinyint; NOT NULL; */// Se o inicio é um marco
@@ -42,15 +38,20 @@ class ProjetoTarefa extends ModelBase
         'aloca_proprios_recursos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui recursos próprios (somente se tem_filhos)
         'soma_recusos_alocados_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Mostra o somatório dos recursos filhos (somente se tem_filhos)
         'custos_proprios', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui custos próprios (somente se tem_filhos), se não tem filhos sempre será true
-        'soma_custos_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui custos filhos (somente se tem_filhos)
+        'soma_custos_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Mostra o somatório dos custos filhos (somente se tem_filhos)
         'projeto_id', /* char(36); NOT NULL; */
         'tarefa_pai_id', /* char(36); */
-        'demanda_id', /* char(36); */
         'usuario_id', /* char(36); */
+        //'deleted_at', /* timestamp; */
+        //'etiquetas', /* json; */// Etiquetas
+        //'documento_id', /* char(36); */
         //'tarefa_projeto_id', /* char(36); */
-        //'etiquetas', /* json; */
-        //'data_inicio', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data inicio da vigência
-        //'data_fim', /* datetime; */// Data fim da vigência
+        //'atividade_id', /* char(36); */
+        /*'id_processo',*/// REMOVED
+        /*'numero_processo',*/// REMOVED
+        /*'id_documento',*/// REMOVED
+        /*'numero_documento',*/// REMOVED
+        /*'demanda_id',*/// REMOVED
     ];
 
     public $fillable_changes = ["alocacoes"];

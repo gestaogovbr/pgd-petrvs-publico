@@ -17,8 +17,8 @@ class TipoJustificativa extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'nome', /* varchar(256); NOT NULL; */// Tipo da justificativa da avaliação
-        'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
-        //'data_fim', /* datetime; */// Data final da vigência
+        //'deleted_at', /* timestamp; */
+        /*'data_inicio',*/// REMOVED
     ];
 
     public $delete_cascade = ['tipos_avaliacoes_justificativas'];

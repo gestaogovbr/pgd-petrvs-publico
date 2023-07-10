@@ -19,23 +19,23 @@ class PlanoTrabalho extends ModelBase
 
     protected $with = [];
 
-    public $fillable = [ // TYPE; NULL?; DEFAULT?; // COMMENT
-        'numero', // int; NOT NULL; // Número do plano (Gerado pelo sistema)
-        'carga_horaria', // double; // Carga horária diária do usuário
-        'tempo_total', // double; // Horas úteis de trabalho no período de data_inicio_vigencia à data_fim_vigencia considerando carga_horaria, feriados, fins de semana
-        'tempo_proporcional', // double; // tempo_total menos os afastamentos
-        'data_inicio_vigencia', // datetime; NOT NULL; // Inicio do plano
-        'data_fim_vigencia', // datetime; NOT NULL; // Fim do plano
-        'data_inicio', // datetime; NOT NULL; // Data inicio da vigência
-        'ganho_produtividade', // int; NOT NULL; // Ganho de produtividade
-        'programa_id', // char(36); NOT NULL; 
-        'usuario_id', // char(36); NOT NULL; 
-        'unidade_id', // char(36); NOT NULL; 
-        'documento_id', // char(36); 
-        'tipo_modalidade_id', // char(36); NOT NULL; 
-        'forma_contagem_carga_horaria', // enum('DIA','SEMANA','MES'); NOT NULL; DEFAULT: 'DIA'; // Forma de contagem padrão da carga horária
-        'plano_entrega_id', // char(36); 
-        //'data_fim', // datetime; // Data fim da vigência
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'numero', /* int; NOT NULL; */// Número do plano de trabalho (Gerado pelo sistema)
+        'carga_horaria', /* double(8,2); NOT NULL; DEFAULT: '0.00'; */// Carga horária diária do usuário
+        'tempo_total', /* double(8,2); NOT NULL; DEFAULT: '0.00'; */// Horas úteis de trabalho no período de data_inicio_vigencia à data_fim_vigencia considerando carga_horaria, feriados, fins de semana
+        'tempo_proporcional', /* double(8,2); NOT NULL; DEFAULT: '0.00'; */// tempo_total menos os afastamentos
+        'data_inicio_vigencia', /* datetime; NOT NULL; */// Inicio do plano de trabalho
+        'data_fim_vigencia', /* datetime; NOT NULL; */// Fim do plano de trabalho
+        'programa_id', /* char(36); NOT NULL; */
+        'usuario_id', /* char(36); NOT NULL; */
+        'unidade_id', /* char(36); NOT NULL; */
+        'documento_id', /* char(36); */
+        'tipo_modalidade_id', /* char(36); NOT NULL; */
+        'forma_contagem_carga_horaria', /* enum('DIA','SEMANA','MES'); NOT NULL; DEFAULT: 'DIA'; */// Forma de contagem padrão da carga horária
+        'plano_entrega_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
+        /*'data_inicio',*/// REMOVED
+        /*'ganho_produtividade',*/// REMOVED
     ];
 
     public $fillable_changes = ['entregas', 'documentos'];

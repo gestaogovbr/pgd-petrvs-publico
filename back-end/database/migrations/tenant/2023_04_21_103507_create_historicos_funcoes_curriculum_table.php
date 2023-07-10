@@ -36,8 +36,6 @@ class CreateHistoricosFuncoesCurriculumTable extends Migration
      */
     public function down()
     {
-        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('historicos_funcoes_curriculum');
-        Schema::enableForeignKeyConstraints();
     }
 }

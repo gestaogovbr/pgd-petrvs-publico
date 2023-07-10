@@ -13,14 +13,14 @@ class CadeiaValor extends ModelBase
 
     protected $with = [];
 
-    public $fillable = [ // TYPE; NULL?; DEFAULT?; // COMMENT
-        'inicio', // datetime; NOT NULL; // Data de inicio da cadeia de valores
-        'fim', // datetime; // Data do fim da cadeia de valores
-        'nome', // varchar(256); NOT NULL; // Nome da cadeia de valores
-        'unidade_id', // char(36); 
-        'entidade_id', // char(36); NOT NULL; 
-        'data_arquivamento', // datetime; // Data de arquivamento da cadeia de valores
-        //'deleted_at', // timestamp;
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'inicio', /* datetime; NOT NULL; */// Data de inicio da cadeia de valores
+        'fim', /* datetime; */// Data do fim da cadeia de valores
+        'nome', /* varchar(256); NOT NULL; */// Nome da cadeia de valores
+        'unidade_id', /* char(36); */
+        'entidade_id', /* char(36); NOT NULL; */
+        'data_arquivamento', /* datetime; */// Data de arquivamento da cadeia de valores
+        //'deleted_at', /* timestamp; */
     ];
 
     public $fillable_changes = [];

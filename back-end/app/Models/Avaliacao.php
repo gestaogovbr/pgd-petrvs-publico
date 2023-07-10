@@ -14,10 +14,11 @@ class Avaliacao extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'nota', /* int; NOT NULL; */// Nota da avaliação 0 - 10
+        'nota', /* json; NOT NULL; */// Nota da avaliação
         'usuario_id', /* char(36); NOT NULL; */
-        'justificativas', /* json; NOT NULL; */// Justificativas da avaliação
+        'justificativas', /* json; NOT NULL; DEFAULT: 'json_array()'; */// Justificativas
         'tipo_avaliacao_id', /* char(36); */
+        //'deleted_at', /* timestamp; */
     ];
 
     public $delete_cascade = [];

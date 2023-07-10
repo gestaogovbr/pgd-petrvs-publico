@@ -27,7 +27,12 @@ class UpdateModels extends Command
     ];
 
     protected $ignoreFiles = [
-        "ModelBase.php"
+        "ModelBase.php",
+        "DocumentoLink.php",
+        "HistoricoAtividadeExternaCurriculum.php",
+        "HistoricoFuncaoCurriculum.php",
+        "HistoricoLotacaoCurriculum.php",
+        "NotificacaoConfig.php"
     ];
 
     /**

@@ -17,12 +17,11 @@ class AtividadeTarefa extends ModelBase
         'data_hora', /* datetime; NOT NULL; */// Data hora do lançamento da tarefa
         'tempo_estimado', /* double(8,2); NOT NULL; */// Tempo estimado para a execução da tarefa (Horas decimais)
         'concluido', /* tinyint; NOT NULL; */// Se a tarefa foi concluída
-        'documento_id', /* char(36); NOT NULL; */
-        'atividate_id', /* char(36); NOT NULL; */
+        'documento_id', /* char(36); */
         'usuario_id', /* char(36); NOT NULL; */
         'tipo_tarefa_id', /* char(36); */
-        'tipo_documento_id', /* char(36); */
-        'tipo_processo_id', /* char(36); */
+        //'deleted_at', /* timestamp; */
+        //'atividade_id', /* char(36); NOT NULL; */
     ];
     
     public $fillable_changes = [

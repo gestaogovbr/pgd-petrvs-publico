@@ -56,8 +56,6 @@ class CreatePlanosEntregas extends Migration
      */
     public function down()
     {
-        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('planos_entregas');
-        Schema::enableForeignKeyConstraints();
     }
 }

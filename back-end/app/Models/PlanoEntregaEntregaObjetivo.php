@@ -12,11 +12,11 @@ class PlanoEntregaObjetivo extends ModelBase
 
     protected $with = [];
 
-    public $fillable = [ // TYPE; NULL?; DEFAULT?; // COMMENT
-        'plano_entrega_entrega_id', // char(36); NOT NULL; 
-        'objetivo_id', // char(36); NOT NULL; 
-        //'data_inicio', // datetime; NOT NULL; // Data inicio da vigência
-        //'data_fim', // datetime; // Data fim da vigência
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'objetivo_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
+        //'entrega_id', /* char(36); NOT NULL; */
+        /*'plano_entrega_entrega_id',*/// REMOVED
     ];
 
     public $fillable_changes = [];

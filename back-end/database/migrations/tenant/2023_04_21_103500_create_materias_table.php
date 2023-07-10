@@ -38,8 +38,6 @@ class CreateMateriasTable extends Migration
      */
     public function down()
     {
-        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('materias');
-        Schema::enableForeignKeyConstraints();
     }
 }

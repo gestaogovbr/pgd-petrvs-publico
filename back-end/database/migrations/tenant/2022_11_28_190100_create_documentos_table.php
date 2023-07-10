@@ -37,8 +37,6 @@ class CreateDocumentosTable extends Migration
             $table->foreignUuid('plano_trabalho_id')->nullable()->constrained('planos_trabalhos')->onDelete('restrict')->onUpdate('cascade')->comment("Plano de trabalho");
             $table->foreignUuid('tipo_documento_id')->nullable()->constrained('tipos_documentos')->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de documento");
             $table->foreignUuid('tipo_processo_id')->nullable()->constrained('tipos_processos')->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de processo");
-            $table->foreignUuid('atividade_id')->nullable()->constrained('atividades')->onDelete('restrict')->onUpdate('cascade')->comment("Atividade");
-            $table->foreignUuid('atividade_tarefa_id')->nullable()->constrained('atividades_tarefas')->onDelete('restrict')->onUpdate('cascade')->comment("Tarefa da Atividade");
         });
         // Cria sequencia documento_numero
         Schema::table('sequence', function (Blueprint $table) {
@@ -69,15 +67,15 @@ class CreateDocumentosTable extends Migration
     {
         // Apaga o campo documento_id devido a referência cruzada
         Schema::table('programas', function (Blueprint $table) {
-           // $table->dropConstrainedForeignId('documento_id');
+            $table->dropConstrainedForeignId('documento_id');
         });
         // Apaga o campo documento_id devido a referência cruzada
         Schema::table('planos_trabalhos', function (Blueprint $table) {
-          //  $table->dropConstrainedForeignId('documento_id');
+            $table->dropConstrainedForeignId('documento_id');
         });
         DB::unprepared('DROP PROCEDURE IF EXISTS sequence_documento_numero');
         Schema::table('sequence', function (Blueprint $table) {
-          //  $table->dropColumn('documento_numero');
+            $table->dropColumn('documento_numero');
         });
         Schema::dropIfExists('documentos');
     }

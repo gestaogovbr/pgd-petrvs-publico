@@ -36,8 +36,6 @@ class CreateCadeiasValoresProcessos extends Migration
      */
     public function down()
     {
-        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('cadeias_valores_processos');
-        Schema::enableForeignKeyConstraints();
     }
 }

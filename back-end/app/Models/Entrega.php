@@ -11,13 +11,12 @@ class Entrega extends ModelBase
 
     protected $with = [];
 
-    public $fillable = [ // TYPE; NULL?; DEFAULT?; // COMMENT
-        'nome', // varchar(256); NOT NULL; // Nome
-        'descricao', // varchar(255); NOT NULL; // Descrição da entrega.
-        'tipo_indicador', // enum('QUANTIDADE','VALOR','PORCENTAGEM','QUALITATIVO'); NOT NULL; // Tipo do indicador
-        'lista_qualitativos', // json; // valores do qualitativo
-        //'data_inicio', // datetime; NOT NULL; // Data inicio da vigência
-        //'data_fim', // datetime; // Data fim da vigência
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'nome', /* varchar(256); NOT NULL; */// Nome da entrega
+        'descricao', /* varchar(255); NOT NULL; */// Descrição da entrega
+        'tipo_indicador', /* enum('QUANTIDADE','VALOR','PORCENTAGEM','QUALITATIVO'); NOT NULL; */// Tipo do indicador da entrega
+        'lista_qualitativos', /* json; */// Lista de valores para entrega do tipo qualitativo
+        //'deleted_at', /* timestamp; */
     ];
 
     protected $casts = [

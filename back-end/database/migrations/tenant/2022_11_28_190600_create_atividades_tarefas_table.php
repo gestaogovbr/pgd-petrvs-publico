@@ -30,6 +30,10 @@ class CreateAtividadesTarefasTable extends Migration
             $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Usuário");
             $table->foreignUuid('tipo_tarefa_id')->nullable()->constrained("tipos_tarefas")->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de tarefa");
         });
+        // Cria a chave estrangeira na tabela 'documentos' devido à referência cruzada com 'atividades_tarefas'
+        Schema::table('documentos', function (Blueprint $table) {
+            $table->foreignUuid('atividade_tarefa_id')->nullable()->constrained('atividades_tarefas')->onDelete('restrict')->onUpdate('cascade')->comment("Tarefa da Atividade");
+        });
     }
 
     /**
@@ -39,6 +43,9 @@ class CreateAtividadesTarefasTable extends Migration
      */
     public function down()
     {
+        Schema::table('documentos', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('atividade_tarefa_id');
+        });
         Schema::dropIfExists('atividades_tarefas');
     }
 }

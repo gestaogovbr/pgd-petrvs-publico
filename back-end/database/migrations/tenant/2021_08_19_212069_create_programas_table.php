@@ -45,8 +45,6 @@ class CreateProgramasTable extends Migration
      */
     public function down()
     {
-        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('programas');
-        Schema::enableForeignKeyConstraints();
     }
 }
