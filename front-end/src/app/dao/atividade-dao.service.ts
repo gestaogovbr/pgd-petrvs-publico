@@ -2,10 +2,6 @@ import { Injectable, Injector } from '@angular/core';
 import { Atividade } from '../models/atividade.model';
 import { DaoBaseService } from './dao-base.service';
 
-export type AtividadeDashboard = {
-  total_atividades: number
-};
-
 @Injectable({
   providedIn: 'root'
 })
@@ -16,6 +12,7 @@ export class AtividadeDaoService extends DaoBaseService<Atividade> {
     this.searchFields = ["nome"];
   }
 
+  /* REFECTORING
   public atividadedashboard(unidade_id: string): Promise<AtividadeDashboard | null> {
     return new Promise<AtividadeDashboard | null>((resolve, reject) => {
 
@@ -38,5 +35,5 @@ export class AtividadeDaoService extends DaoBaseService<Atividade> {
       atividades_ids: atividadesIds,
       data_homologacao: dataHomologacao
     })).toPromise();
-  }
+  } */
 }

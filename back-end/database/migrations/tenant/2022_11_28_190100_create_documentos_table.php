@@ -25,7 +25,6 @@ class CreateDocumentosTable extends Migration
             $table->enum('tipo', ["HTML", "PDF", "LINK"])->comment("Tipo do documento");
             $table->enum('especie', ["TERMO_ADESAO", "SEI", "TCR"])->comment("Especificação da espécie do documento (interno do sistema)");
             $table->longText('conteudo')->nullable()->comment("Conteúdo do arquivo");
-            $table->json('assinatura')->nullable()->comment("Dados da assinatura, se nulo não está assinado");
             $table->json('metadados')->nullable()->comment("Metadados");
             $table->json('link')->nullable()->comment("Informações sobre o link, caso o tipo seja LINK");
             $table->enum('status', ["GERADO", "AGUARDANDO_SEI"])->default("GERADO")->comment("Status do documento: GERADO (documento gerado); AGUARDANDO_SEI (Aguardando abrir o documento no sei para colar o conteúdo dentro)");
@@ -38,7 +37,8 @@ class CreateDocumentosTable extends Migration
             $table->foreignUuid('plano_trabalho_id')->nullable()->constrained('planos_trabalhos')->onDelete('restrict')->onUpdate('cascade')->comment("Plano de trabalho");
             $table->foreignUuid('tipo_documento_id')->nullable()->constrained('tipos_documentos')->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de documento");
             $table->foreignUuid('tipo_processo_id')->nullable()->constrained('tipos_processos')->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de processo");
-
+            $table->foreignUuid('atividade_id')->nullable()->constrained('atividades')->onDelete('restrict')->onUpdate('cascade')->comment("Atividade");
+            $table->foreignUuid('atividade_tarefa_id')->nullable()->constrained('atividades_tarefas')->onDelete('restrict')->onUpdate('cascade')->comment("Tarefa da Atividade");
         });
         // Cria sequencia documento_numero
         Schema::table('sequence', function (Blueprint $table) {

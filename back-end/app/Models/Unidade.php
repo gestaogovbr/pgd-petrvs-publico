@@ -30,7 +30,7 @@ class Unidade extends ModelBase
         "notificacoes_templates"
     ];
 
-    public $delete_cascade = ['unidadesOrigemAtividades', 'unidadesDestinoAtividades'];
+    public $delete_cascade = ['unidades_origem_atividades', 'unidades_destino_atividades'];
 
     protected static function booted()
     {

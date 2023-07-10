@@ -161,10 +161,7 @@ Route::middleware('auth:sanctum')->post('/Teste/calculaDataTempoUnidade', [Usuar
 
 /* Modulos: Cadastros */
 Route::middleware(['auth:sanctum'])->prefix('Afastamento')->group(function () { defaultRoutes(AfastamentoController::class); });
-Route::middleware(['auth:sanctum'])->prefix('TipoAtividade')->group(function () {
-    defaultRoutes(TipoAtividadeController::class);
-    Route::post('atividade-dashboard', [TipoAtividadeController::class, 'atividadeDashboard']);
-});
+Route::middleware(['auth:sanctum'])->prefix('TipoAtividade')->group(function () { defaultRoutes(TipoAtividadeController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Cidade')->group(function () { defaultRoutes(CidadeController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Documento')->group(function () {
     defaultRoutes(DocumentoController::class);

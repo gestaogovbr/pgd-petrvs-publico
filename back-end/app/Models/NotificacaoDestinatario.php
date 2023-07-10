@@ -9,7 +9,6 @@ use App\Casts\AsJson;
 
 class NotificacaoDestinatario extends ModelBase
 {
-
     protected $table = 'notificacoes_destinatarios';
 
     protected $with = [];

@@ -3,10 +3,8 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
-use App\Models\DemandaAvaliacao;
+use App\Models\Avaliacao;
 use App\Models\TipoAvaliacaoJustificativa;
-use App\Traits\AutoDataInicio;
-use App\Traits\HasDataFim;
 
 class TipoAvaliacao extends ModelBase
 {
@@ -15,14 +13,9 @@ class TipoAvaliacao extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'nota_atribuida', /* int; */// Nota atribuida de 0 a 10
         'nome', /* varchar(256); NOT NULL; */// Descrição da nota atribuida
-        'aceita_entrega', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se a entrega vai ser aceita e as horas pactuadas serão homologadas
-        'pergunta', /* text; NOT NULL; */// Pergunta motivacional, o porque você selecionou essa nota
-        'icone', /* varchar(100); NOT NULL; */// Classe do icone relacionado a avaliação
-        'cor', /* varchar(100); NOT NULL; */// Código da cor em hex
-        'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
-        //'data_fim', /* datetime; */// Data final da vigência
+        'tipo', /* int; */// Nota atribuida de 0 a 10
+        'notas', /* int; */// Nota atribuida de 0 a 10
     ];
 
     public $fillable_relations = [
@@ -30,10 +23,10 @@ class TipoAvaliacao extends ModelBase
     ];
     
     public $delete_cascade = [
-        'tiposAvaliacoesJustificativas'
+        'tipos_avaliacoes_justificativas'
     ];
     
     // Has
-    public function avaliacoes() { return $this->hasMany(DemadaAvaliacao::class, 'tipo_avaliacao_id'); }    
+    public function avaliacoes() { return $this->hasMany(Avaliacao::class, 'tipo_avaliacao_id'); }    
     public function tiposAvaliacoesJustificativas() { return $this->hasMany(TipoAvaliacaoJustificativa::class, 'tipo_avaliacao_id'); }    
 }

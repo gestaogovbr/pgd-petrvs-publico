@@ -10,14 +10,10 @@ use App\Models\ProjetoRegra;
 use App\Models\TipoProjeto;
 use App\Models\ProjetoRecurso;
 use App\Models\ProjetoFase;
-use App\Traits\AutoDataInicio;
-use App\Traits\HasDataFim;
 use Illuminate\Support\Facades\DB;
 
 class Projeto extends ModelBase
 {
-    use AutoDataInicio, HasDataFim;
-
     protected $table = 'projetos';
 
     protected $with = [];

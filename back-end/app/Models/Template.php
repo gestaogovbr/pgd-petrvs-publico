@@ -6,13 +6,10 @@ use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\Unidade;
 use App\Models\Entidade;
-use App\Traits\HasDataFim;
 use Illuminate\Support\Facades\DB;
 
 class Template extends ModelBase
 {
-    use HasDataFim;
-
     protected $table = 'templates';
 
     protected $with = [];

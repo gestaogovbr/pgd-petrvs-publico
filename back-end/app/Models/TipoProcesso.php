@@ -7,7 +7,6 @@ use App\Models\Unidade;
 
 class TipoProcesso extends ModelBase
 {
-    
     protected $table = 'tipos_processos';
 
     protected $with = [];

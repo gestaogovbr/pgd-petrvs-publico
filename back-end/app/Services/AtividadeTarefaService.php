@@ -4,5 +4,5 @@ namespace App\Services;
 
 use App\Services\ServiceBase;
 
-class DemandaEntregaService extends ServiceBase {
+class AtividadeTarefaService extends ServiceBase {
 }

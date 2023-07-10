@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\DB;
 
 class Notificacao extends ModelBase
 {
-
     protected $table = 'notificacoes';
 
     protected $with = [];

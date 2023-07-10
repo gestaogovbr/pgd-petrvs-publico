@@ -21,7 +21,7 @@ class TipoJustificativa extends ModelBase
         //'data_fim', /* datetime; */// Data final da vigência
     ];
 
-    public $delete_cascade = ['tiposAvaliacoesJustificativas'];
+    public $delete_cascade = ['tipos_avaliacoes_justificativas'];
 
     // Has
     public function tiposAvaliacoesJustificativas() { return $this->hasMany(TipoAvaliacaoJustificativa::class, 'tipo_justificativa_id'); }    

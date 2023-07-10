@@ -24,19 +24,6 @@ class CurriculumProfissional extends ModelBase
         //'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */// Curriculum ativa ou inativa
         //'usuario_id', /* char(36); NOT NULL; */
         //'cidade_id', /* char(36); NOT NULL; */
-        /*'ano_ingresso',*/// REMOVED
-        /*'especifique_habilidades',*/// REMOVED
-        /*'lotacao_atual',*/// REMOVED
-        /*'viagem_nacional',*/// REMOVED
-        /*'viagem_internacional',*/// REMOVED
-        /*'interesse_bnt',*/// REMOVED
-        /*'pgd_inserido',*/// REMOVED
-        /*'pgd_interesse',*/// REMOVED
-        /*'remocao',*/// REMOVED
-        /*'curriculum_id',*/// REMOVED
-        /*'centro_treinamento_id',*/// REMOVED
-        /*'cargo_id',*/// REMOVED
-        /*'grupo_especializado_id',*/// REMOVED
     ];
 
     protected $casts = [

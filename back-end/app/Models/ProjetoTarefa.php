@@ -7,14 +7,10 @@ use App\Models\Projeto;
 use App\Models\Usuario;
 use App\Models\Demanda;
 use App\Models\ProjetoAlocacao;
-use App\Traits\AutoDataInicio;
-use App\Traits\HasDataFim;
 use App\Casts\AsJson;
 
 class ProjetoTarefa extends ModelBase
 {
-    use AutoDataInicio, HasDataFim;
-
     protected $table = 'projetos_tarefas';
 
     protected $with = [];

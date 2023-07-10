@@ -12,16 +12,11 @@ class UpdateModels extends Command
         "changes",
         "sequence",
         "migrations",
+        "traffic",
         "errors",
         "logs",
         "failed_jobs",
-        "traffic",
         "api_siape_uorgs",
-        "programas_adesoes",
-        "programas_adesoes_unidades",
-        "programas_adesoes_usuarios",
-        "tipos_modalidades_config",
-        "integracoes",
         "tenants"
     ];
 

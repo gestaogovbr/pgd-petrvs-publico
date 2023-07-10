@@ -11,8 +11,13 @@ class CadeiaValorProcesso extends ModelBase
 
     protected $with = [];
 
-    public $fillable = [ // TYPE; NULL?; DEFAULT?; // COMMENT
-
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        //'deleted_at', /* timestamp; */
+        //'sequencia', /* int; NOT NULL; */// Sequência do processo dentro do grupo
+        //'path', /* text; */// Path dos nós pais separados por /, ou NULL caso sejam nós raiz
+        //'nome', /* varchar(256); NOT NULL; */// Nome do processo
+        //'cadeia_valor_id', /* char(36); NOT NULL; */
+        //'processo_pai_id', /* char(36); */
     ];
 
     public $fillable_changes = [];

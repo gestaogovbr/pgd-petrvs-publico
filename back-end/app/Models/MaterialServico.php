@@ -2,15 +2,11 @@
 
 namespace App\Models;
 
-use App\Traits\AutoDataInicio;
 use App\Models\ModelBase;
 use App\Models\ProjetoRecurso;
-use App\Traits\HasDataFim;
 
 class MaterialServico extends ModelBase
 {
-    use AutoDataInicio, HasDataFim;
-
     protected $table = 'materiais_servicos';
 
     protected $with = [];

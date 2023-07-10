@@ -4,11 +4,10 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\Demanda;
-use App\Traits\AutoDataInicio;
 
-class DemandaPausa extends ModelBase
+class AtividadePausa extends ModelBase
 {
-    protected $table = 'demandas_pausas';
+    protected $table = 'atividades_pausas';
 
     protected $with = [];
 
