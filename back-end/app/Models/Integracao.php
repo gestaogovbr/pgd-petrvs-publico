@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
+use App\Models\Entidade;
+use App\Models\Usuario;
 
 class Integracao extends ModelBase
 {

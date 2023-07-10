@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\Unidade;
+use App\Models\Usuario;
 use App\Models\Programa;
 use App\Models\Planejamento;
 use App\Models\CadeiaValor;
@@ -17,7 +18,22 @@ class PlanoEntrega extends ModelBase
     protected $with = [];
 
     public $fillable = [ // TYPE; NULL?; DEFAULT?; // COMMENT
- 
+        'data_inicio', // datetime; NOT NULL; // Data inicio da vigência do registro
+        'data_fim', // datetime; // Data fim da vigência do registro
+        'inicio', // datetime; NOT NULL; // Data inicio do planejamento
+        'fim', // datetime; // Data fim do planejamento
+        'nome', // varchar(256); NOT NULL; // Nome do plano estratégico/entregas
+        'planejamento_id', // char(36); 
+        'cadeia_valor_id', // char(36); 
+        'unidade_id', // char(36); NOT NULL; 
+        'status', // enum('INCLUINDO','HOMOLOGANDO','ATIVO','CONCLUIDO','AVALIADO','SUSPENSO'); NOT NULL; // Status do plano de entrega
+        'plano_entrega_id', // char(36); 
+        'numero', // int; NOT NULL; // Número do plano de entrega (Gerado pelo sistema)
+        'data_arquivamento', // datetime; // Data de arquivamento do plano de entregas
+        'data_cancelamento', // datetime; // Data de cancelamento do plano de entregas
+        'cancelamento_usuario_id', // char(36); 
+        'programa_id', // char(36); NOT NULL; 
+        //'criacao_usuario_id', // char(36);
     ];
 
     public $fillable_changes = ["entregas"];
@@ -41,21 +57,3 @@ class PlanoEntrega extends ModelBase
     public function programa() { return $this->belongsTo(Programa::class); }
     public function planoEntregaSuperior() { return $this->belongsTo(PlanoEntrega::class, 'plano_entrega_id'); }
 }
-  /*
-        'data_inicio', // datetime; NOT NULL; // Data inicio da vigência do registro
-        'data_fim', // datetime; // Data fim da vigência do registro
-        'inicio', // datetime; NOT NULL; // Data inicio do planejamento
-        'fim', // datetime; // Data fim do planejamento
-        'nome', // varchar(256); NOT NULL; // Nome do plano estratégico/entregas
-        'planejamento_id', // char(36); 
-        'cadeia_valor_id', // char(36); 
-        'unidade_id', // char(36); NOT NULL; 
-        'status', // enum('INCLUINDO','HOMOLOGANDO','ATIVO','CONCLUIDO','AVALIADO','SUSPENSO'); NOT NULL; // Status do plano de entrega
-        'plano_entrega_id', // char(36); 
-        'numero', // int; NOT NULL; // Número do plano de entrega (Gerado pelo sistema)
-        'data_arquivamento', // datetime; // Data de arquivamento do plano de entregas
-        'data_cancelamento', // datetime; // Data de cancelamento do plano de entregas
-        'cancelamento_usuario_id', // char(36); 
-        'programa_id', // char(36); NOT NULL; 
-        //'criacao_usuario_id', // char(36);
-  */

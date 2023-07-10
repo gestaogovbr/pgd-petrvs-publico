@@ -4,7 +4,9 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\Unidade;
+use App\Models\Template;
 use App\Models\Documento;
+use App\Models\TipoDocumento;
 use App\Models\ProgramaParticipante;
 
 class Programa extends ModelBase
@@ -14,23 +16,6 @@ class Programa extends ModelBase
     protected $with = [];
 
     public $fillable = [ // TYPE; NULL?; DEFAULT?; // COMMENT
-
-    ];
-
-    public $delete_cascade = ['documento'];
-
-    public $fillable_changes = ['participantes'];
-    
-    // Has
-    public function participantes() { return $this->hasMany(ProgramaParticipante::class); }
-    // Belongs
-    public function tipoDocumentoTcr() { return $this->belongsTo(TipoDocumento::class, 'tipo_documento_tcr_id'); }
-    public function templateTcr() { return $this->belongsTo(Template::class, 'template_tcr_id'); }   
-    public function unidade() { return $this->belongsTo(Unidade::class); }    
-    public function documento() { return $this->belongsTo(Documento::class, 'documento_id'); }    
-}
-
-/*
         'nome', // varchar(255); NOT NULL; // Nome do programa de gestão
         'normativa', // varchar(255); NOT NULL; // Normativa que regula o programa de gestão
         'config', // json; 
@@ -45,4 +30,17 @@ class Programa extends ModelBase
         'tipo_documento_tcr_id', // char(36); 
         'prazo_execucao', // int; NOT NULL; // Limite máximo de dias corridos para o plano de entregas (Zero para não limitar)
         //'data_fim', // datetime; // Data fim da vigência
-*/
+    ];
+
+    public $delete_cascade = ['documento'];
+
+    public $fillable_changes = ['participantes'];
+    
+    // Has
+    public function participantes() { return $this->hasMany(ProgramaParticipante::class); }
+    // Belongs
+    public function tipoDocumentoTcr() { return $this->belongsTo(TipoDocumento::class, 'tipo_documento_tcr_id'); }
+    public function templateTcr() { return $this->belongsTo(Template::class, 'template_tcr_id'); }   
+    public function unidade() { return $this->belongsTo(Unidade::class); }    
+    public function documento() { return $this->belongsTo(Documento::class, 'documento_id'); }    
+}

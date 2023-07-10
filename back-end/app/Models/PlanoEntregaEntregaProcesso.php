@@ -3,21 +3,12 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
-use App\Models\Usuario;
-use App\Models\Unidade;
-use App\Models\Programa;
-use App\Models\Documento;
-use App\Models\TipoModalidade;
-use App\Models\PlanoAtividade;
-use App\Traits\AutoDataInicio;
-use App\Traits\HasDataFim;
-use Illuminate\Support\Facades\DB;
+use App\Models\CadeiaValorProcesso;
+use App\Models\PlanoEntregaEntrega;
 
-class PlanoEntregaProcesso extends ModelBase
+class PlanoEntregaEntregaProcesso extends ModelBase
 {
-    use AutoDataInicio, HasDataFim;
-
-    protected $table = 'planos_entregas_processos';
+    protected $table = 'planos_entregas_entregas_processos';
 
     protected $with = [];
 
@@ -36,5 +27,5 @@ class PlanoEntregaProcesso extends ModelBase
     // public function atividades() { return $this->hasMany(PlanoAtividade::class); }
     // Belongs
     public function processo() { return $this->belongsTo(CadeiaValorProcesso::class, 'processo_id'); }
-    public function entrega() { return $this->belongsTo(PlanoEntregaEntrega::class, 'plano_entrega_entrega_id'); }
+    public function entrega() { return $this->belongsTo(PlanoEntregaEntrega::class, 'entrega_id'); }
 }

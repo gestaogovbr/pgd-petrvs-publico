@@ -3,13 +3,8 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
-use App\Models\Usuario;
-use App\Models\Unidade;
-use App\Models\Programa;
-use App\Models\Documento;
-use App\Models\TipoModalidade;
-use App\Models\PlanoAtividade;
-use Illuminate\Support\Facades\DB;
+use App\Models\PlanejamentoObjetivo;
+use App\Models\PlanoEntregaEntrega;
 
 class PlanoEntregaObjetivo extends ModelBase
 {
@@ -18,7 +13,10 @@ class PlanoEntregaObjetivo extends ModelBase
     protected $with = [];
 
     public $fillable = [ // TYPE; NULL?; DEFAULT?; // COMMENT
-
+        'plano_entrega_entrega_id', // char(36); NOT NULL; 
+        'objetivo_id', // char(36); NOT NULL; 
+        //'data_inicio', // datetime; NOT NULL; // Data inicio da vigência
+        //'data_fim', // datetime; // Data fim da vigência
     ];
 
     public $fillable_changes = [];
@@ -28,13 +26,6 @@ class PlanoEntregaObjetivo extends ModelBase
     // Has
     // public function atividades() { return $this->hasMany(PlanoAtividade::class); }
     // Belongs
-    public function objetivo() { return $this->belongsTo(PlanejamentoObjetivo::class); }
-    public function entrega() { return $this->belongsTo(PlanoEntregaEntrega::class, 'plano_entrega_entrega_id'); }
+    public function objetivo() { return $this->belongsTo(PlanejamentoObjetivo::class, 'objetivo_id'); }
+    public function entrega() { return $this->belongsTo(PlanoEntregaEntrega::class, 'entrega_id'); }
 }
-
-/*
-        'plano_entrega_entrega_id', // char(36); NOT NULL; 
-        'objetivo_id', // char(36); NOT NULL; 
-        //'data_inicio', // datetime; NOT NULL; // Data inicio da vigência
-        //'data_fim', // datetime; // Data fim da vigência
-*/

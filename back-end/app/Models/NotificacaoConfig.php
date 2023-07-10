@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class NotificacoesConfig {
+class NotificacaoConfig {
     public $enviar_petrvs = true;
     public $enviar_email = true;
     public $enviar_whatsapp = true;

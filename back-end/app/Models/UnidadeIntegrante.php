@@ -5,13 +5,9 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\Unidade;
 use App\Models\Usuario;
-use App\Traits\AutoDataInicio;
-use App\Traits\HasDataFim;
 
 class UnidadeIntegrante extends ModelBase
 {
-    use AutoDataInicio, HasDataFim;
-
     protected $table = 'unidades_integrantes';
 
     protected $with = [];

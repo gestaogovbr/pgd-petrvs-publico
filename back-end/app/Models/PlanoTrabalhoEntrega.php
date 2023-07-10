@@ -3,16 +3,12 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
-use App\Models\Plano;
+use App\Models\PlanoTrabalho;
 use App\Models\Entrega;
 use App\Models\PlanoEntregaEntrega;
-use App\Traits\AutoDataInicio;
-use App\Traits\HasDataFim;
 
 class PlanoTrabalhoEntrega extends ModelBase
 {
-    use AutoDataInicio, HasDataFim;
-
     protected $table = 'planos_trabalhos_entregas';
 
     protected $with = [];
@@ -31,8 +27,7 @@ class PlanoTrabalhoEntrega extends ModelBase
 
     // Has
     // Belongs
-    public function planoTrabalho() { return $this->belongsTo(Plano::class, 'plano_id'); }
-    //public function entregaPlanoEntrega() { return $this->belongsTo(PlanoEntregaEntrega::class, 'plano_entrega_entrega_id'); }
-    public function planoEntregaEntrega() { return $this->belongsTo(PlanoEntregaEntrega::class, 'plano_entrega_entrega_id'); }
-    public function entrega() { return $this->belongsTo(Entrega::class, 'entrega_id'); }
+    public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class); }
+    public function planoEntregaEntrega() { return $this->belongsTo(PlanoEntregaEntrega::class); }
+    public function entrega() { return $this->belongsTo(Entrega::class); }
 }
