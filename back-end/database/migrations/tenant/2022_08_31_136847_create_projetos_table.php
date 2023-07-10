@@ -76,6 +76,10 @@ class CreateProjetosTable extends Migration
      */
     public function down()
     {
+        // Apaga a chave estrangeira na tabela 'projetos_fases' devido à referência cruzada com 'projetos'
+        Schema::table('projetos_fases', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('projeto_id');
+        });
         DB::unprepared('DROP PROCEDURE IF EXISTS sequence_projeto_numero');
         Schema::table('sequence', function (Blueprint $table) {
             $table->dropColumn('projeto_numero');

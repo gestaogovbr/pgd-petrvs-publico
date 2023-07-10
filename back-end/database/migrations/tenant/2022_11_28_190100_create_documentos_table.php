@@ -67,9 +67,17 @@ class CreateDocumentosTable extends Migration
      */
     public function down()
     {
+        // Apaga o campo documento_id devido a referência cruzada
+        Schema::table('programas', function (Blueprint $table) {
+           // $table->dropConstrainedForeignId('documento_id');
+        });
+        // Apaga o campo documento_id devido a referência cruzada
+        Schema::table('planos_trabalhos', function (Blueprint $table) {
+          //  $table->dropConstrainedForeignId('documento_id');
+        });
         DB::unprepared('DROP PROCEDURE IF EXISTS sequence_documento_numero');
         Schema::table('sequence', function (Blueprint $table) {
-            $table->dropColumn('documento_numero');
+          //  $table->dropColumn('documento_numero');
         });
         Schema::dropIfExists('documentos');
     }

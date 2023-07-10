@@ -24,18 +24,17 @@ class DropAdesaoTable extends Migration
 
             Schema::table('entidades', function (Blueprint $table) {
             if(Schema::hasColumn('entidades', 'template_adesao_id')) {
-                $table->dropForeign(['template_adesao_id']);
+                $table->dropConstrainedForeignId(['template_adesao_id']);
                 $table->dropColumn('template_adesao_id');
             }
             if(Schema::hasColumn('entidades', 'template_adesao_cancelamento_id')) {
-                $table->dropForeign(['template_adesao_cancelamento_id']);
+                $table->dropConstrainedForeignId(['template_adesao_cancelamento_id']);
                 $table->dropColumn('template_adesao_cancelamento_id');
             }
         }); */
         if(Schema::hasColumn('documentos', 'programa_adesao_id')) {
             Schema::table('documentos', function (Blueprint $table) {
-                $table->dropForeign(['programa_adesao_id']);
-                $table->dropColumn('programa_adesao_id');
+                $table->dropConstrainedForeignId('programa_adesao_id');
             });
         }
         Schema::disableForeignKeyConstraints();
