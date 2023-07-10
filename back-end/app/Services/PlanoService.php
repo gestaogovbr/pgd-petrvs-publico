@@ -12,7 +12,6 @@ use App\Services\CalendarioService;
 use App\Services\UtilService;
 use App\Exceptions\ServerException;
 use DateTime;
-use App\Traits\UseDataFim;
 use Illuminate\Database\Eloquent\Collection;
 
 class PlanoService extends ServiceBase

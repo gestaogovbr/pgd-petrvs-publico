@@ -4,9 +4,7 @@ namespace App\Models;
 
 use App\Models\Usuario;
 use App\Models\ModelBase;
-use App\Traits\AutoDataInicio;
 use App\Casts\AsJson;
-
 
 class Curriculum extends ModelBase
 {
@@ -21,7 +19,6 @@ class Curriculum extends ModelBase
         'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */// Curriculum ativa ou inativa
         'usuario_id', /* char(36); NOT NULL; */
         'cidade_id', /* char(36); NOT NULL; */
-        //'deleted_at', /* timestamp; */
     ];
 
     protected $casts = [

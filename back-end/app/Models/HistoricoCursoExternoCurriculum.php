@@ -4,9 +4,6 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\CurriculumProfissional;
-use App\Models\Curso;
-use App\Traits\AutoDataInicio;
-
 
 class HistoricoCursoExternoCurriculum extends ModelBase
 {
@@ -17,7 +14,6 @@ class HistoricoCursoExternoCurriculum extends ModelBase
         'pretensao', /* tinyint; NOT NULL; */// Pretende ou não fazer o curso
         'curriculum_profissional_id', /* char(36); NOT NULL; */
         'area_atividade_externa_id', /* char(36); NOT NULL; */
-        //'deleted_at', /* timestamp; */
     ];
     /*
     protected $casts = [

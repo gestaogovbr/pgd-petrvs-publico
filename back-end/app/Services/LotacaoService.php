@@ -6,13 +6,10 @@ use App\Exceptions\ServerException;
 use App\Models\Lotacao;
 use App\Models\Usuario;
 use App\Services\ServiceBase;
-use App\Traits\UseDataFim;
 use App\Services\UtilService;
 
 class LotacaoService extends ServiceBase
 {
-    use UseDataFim;
-
     /*public function proxyStore($data, $unidade, $action)
     {
         $lotacoes = Lotacao::where('usuario_id', $data["usuario_id"])->whereNull("data_fim")->get();

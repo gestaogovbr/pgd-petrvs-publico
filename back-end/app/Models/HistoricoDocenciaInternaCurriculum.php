@@ -5,8 +5,6 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\CurriculumProfissional;
 use App\Models\Curso;
-use App\Traits\AutoDataInicio;
-
 
 class HistoricoDocenciaInternaCurriculum extends ModelBase
 {
@@ -16,7 +14,6 @@ class HistoricoDocenciaInternaCurriculum extends ModelBase
         'pretensao', /* tinyint; NOT NULL; */// Pretende ou não fazer o curso
         'curriculum_profissional_id', /* char(36); NOT NULL; */
         'curso_id', /* char(36); NOT NULL; */
-        //'deleted_at', /* timestamp; */
     ];
 
      // Belongs

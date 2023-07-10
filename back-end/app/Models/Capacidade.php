@@ -3,15 +3,11 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
-use App\Traits\AutoDataInicio;
 use App\Models\Perfil;
 use App\Models\TipoCapacidade;
-use App\Traits\HasDataFim;
 
 class Capacidade extends ModelBase
 {
-    use AutoDataInicio, HasDataFim;
-
     protected $table = 'capacidades';
 
     protected $with = [];
@@ -20,7 +16,6 @@ class Capacidade extends ModelBase
         'id', /* char(36); NOT NULL; */
         'perfil_id', /* char(36); */
         'tipo_capacidade_id', /* char(36); NOT NULL; */
-        //'deleted_at', /* timestamp; */
     ];
 
     // Belongs

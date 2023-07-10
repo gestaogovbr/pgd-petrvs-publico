@@ -3,8 +3,6 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
-use App\Traits\AutoDataInicio;
-
 
 class Funcao extends ModelBase
 {
@@ -15,9 +13,6 @@ class Funcao extends ModelBase
         'nivel', /* varchar(256); */// Nível da Função
         'descricao', /* varchar(256); */// Descrição da Função
         'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */// Função ativo ou inativo
-        //'deleted_at', /* timestamp; */
-        //'siape', /* varchar(256); */// código SIAPE da Função
-        //'cbo', /* varchar(256); */// código CBO da Função
     ];
 
     // Belongs

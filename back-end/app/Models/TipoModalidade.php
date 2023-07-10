@@ -1,11 +1,8 @@
 <?php
 
 namespace App\Models;
-
 use App\Models\ModelBase;
 use App\Models\Plano;
-use App\Models\Documento;
-use App\Models\TipoModalidadeConfig;
 
 class TipoModalidade extends ModelBase
 {
@@ -19,13 +16,6 @@ class TipoModalidade extends ModelBase
         'atividades_homologadas', /* tinyint; NOT NULL; */// Permitir apenas atividades homologadas
         'dispensa_avaliacao', /* tinyint; NOT NULL; */// Dispensa a avaliação
         'exige_assinatura', /* tinyint; NOT NULL; */// Exigir assinatura
-        //'deleted_at', /* timestamp; */
-        /*'exige_adesao',*/// REMOVED
-        /*'exige_assinatura_gestor_unidade',*/// REMOVED
-        /*'exige_assinatura_gestor_entidade',*/// REMOVED
-        /*'calcula_tempo_despendido',*/// REMOVED
-        /*'comparecer_presencialmente',*/// REMOVED
-        /*'ganho_produtividade',*/// REMOVED
     ];
 
     public $delete_cascade = ['documento'];

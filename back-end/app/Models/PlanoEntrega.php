@@ -31,10 +31,6 @@ class PlanoEntrega extends ModelBase
         'data_cancelamento', /* datetime; */// Data de cancelamento do plano de entregas
         'cancelamento_usuario_id', /* char(36); */
         'programa_id', /* char(36); NOT NULL; */
-        //'deleted_at', /* timestamp; */
-        //'criacao_usuario_id', /* char(36); */
-        /*'data_inicio',*/// REMOVED
-        /*'data_fim',*/// REMOVED
     ];
 
     public $fillable_changes = ["entregas"];

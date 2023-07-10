@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Models;
-
 use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\Unidade;
@@ -29,10 +28,6 @@ class Template extends ModelBase
         'conteudo', /* text; */// Comentário predefinida para a tarefa
         'entidade_id', /* char(36); */
         'unidade_id', /* char(36); */
-        //'deleted_at', /* timestamp; */
-        //'dataset', /* json; */// Dados da parametrização
-        /*'data_inicio',*/// REMOVED
-        /*'data_fim',*/// REMOVED
     ];
 
     // Casting

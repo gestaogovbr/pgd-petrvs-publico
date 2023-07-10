@@ -17,7 +17,6 @@ use App\Services\DemandaService;
 use App\Services\LotacaoService;
 use App\Services\RawWhere;
 use App\Services\UtilService;
-use App\Traits\UseDataFim;
 use Database\Seeders\UsuarioSeeder;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -28,8 +27,6 @@ use Throwable;
 
 class UsuarioService extends ServiceBase
 {
-    use UseDataFim;
-
     const LOGIN_GOOGLE = "GOOGLE";
     const LOGIN_MICROSOFT = "AZURE";
     const LOGIN_FIREBASE = "FIREBASE";

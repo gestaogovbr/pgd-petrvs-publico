@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Models;
-
 use App\Models\ModelBase;
 use App\Models\Capacidade;
 
@@ -15,7 +14,6 @@ class TipoCapacidade extends ModelBase
         'id', /* char(36); NOT NULL; */
         'codigo', /* varchar(256); NOT NULL; */// Código da rotina no sistema (acesso)
         'descricao', /* text; NOT NULL; */// Descrição da capacidade (acesso)
-        //'deleted_at', /* timestamp; */
     ];
 
     // Has

@@ -1,11 +1,7 @@
 <?php
 
 namespace App\Models;
-
 use App\Models\ModelBase;
-//use App\Models\Curso;
-use App\Traits\AutoDataInicio;
-
 
 class TipoCurso extends ModelBase
 {
@@ -14,7 +10,6 @@ class TipoCurso extends ModelBase
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'nome', /* varchar(256); NOT NULL; */// Nome do tipo do curso
         'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */// Nome ativo ou inativo
-        //'deleted_at', /* timestamp; */
     ];
 
     //Belongs

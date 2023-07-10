@@ -18,7 +18,6 @@ class Avaliacao extends ModelBase
         'usuario_id', /* char(36); NOT NULL; */
         'justificativas', /* json; NOT NULL; DEFAULT: 'json_array()'; */// Justificativas
         'tipo_avaliacao_id', /* char(36); */
-        //'deleted_at', /* timestamp; */
     ];
 
     public $delete_cascade = [];

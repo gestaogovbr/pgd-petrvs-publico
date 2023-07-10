@@ -8,13 +8,10 @@ use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\Usuario;
 use App\Services\ServiceBase;
-use App\Traits\UseDataFim;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class UnidadeIntegranteService extends ServiceBase {
-    use UseDataFim;
-
     public function loadIntegrantes($unidadeId) {
         $result = [];
         $unidade = Unidade::with(["lotacoes" => function($query){

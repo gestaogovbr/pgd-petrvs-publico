@@ -30,9 +30,6 @@ class PlanoEntregaEntrega extends ModelBase
         'progresso_realizado', /* decimal(5,2); DEFAULT: '0.00'; */// Percentual realizado de progresso do Plano de Entregas
         'unidade_id', /* char(36); NOT NULL; */
         'destinatario', /* varchar(255); */// Destinatário da entrega
-        //'deleted_at', /* timestamp; */
-        /*'data_inicio',*/// REMOVED
-        /*'data_fim',*/// REMOVED
     ];
 
     public $fillable_changes = ['objetivos', 'processos']; 

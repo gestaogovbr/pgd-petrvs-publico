@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Models;
-
 use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\Atividade;
@@ -44,14 +43,6 @@ class Unidade extends ModelBase
         'cidade_id', /* char(36); */
         'expediente', /* json; */// Configuração de expediente da unidade
         'avaliacao_hierarquica', /* tinyint; NOT NULL; */// Se permite que unidades superiores façam avaliação
-        //'deleted_at', /* timestamp; */
-        //'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho
-        //'inativo', /* datetime; */// Se a unidade está ou não inativa
-        //'checklist', /* json; */// Nome dos checklist
-        /*'horario_trabalho_inicio',*/// REMOVED
-        /*'horario_trabalho_fim',*/// REMOVED
-        /*'horario_trabalho_intervalo',*/// REMOVED
-        /*'data_inicio',*/// REMOVED
     ];
 
     public $fillable_relations = [];

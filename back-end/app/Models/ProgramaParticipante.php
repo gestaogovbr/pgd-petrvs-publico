@@ -16,8 +16,6 @@ class ProgramaParticipante extends ModelBase
         'habilitado', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se o participante está habilitado ou não para o programa
         'programa_id', /* char(36); NOT NULL; */
         'usuario_id', /* char(36); NOT NULL; */
-        //'deleted_at', /* timestamp; */
-        /*'data_inicio',*/// REMOVED
     ];
 
     public $delete_cascade = [];

@@ -17,9 +17,6 @@ class ProjetoRegra extends ModelBase
         'projeto_id', /* char(36); NOT NULL; */
         'tipo_recurso', /* enum('HUMANO','MATERIAL','SERVICO','CUSTO','DEPARTAMENTO'); NOT NULL; DEFAULT: 'MATERIAL'; */// Tipo do recurso que se aplica a regra
         'perfis', /* json; */// Perfis de capacidade aplicáveis a quem possuir a regra
-        //'deleted_at', /* timestamp; */
-        //'finalidade', /* enum('OUTRA','ESCRITORIO_PROJETO','GERENTE_PROJETO','GERENTE_RISCO','GERENTE_COMUNICACAO','GERENTE_RECURSO','PATROCINADOR','GESTOR_NEGOCIAL','MEMBRO'); NOT NULL; */// Finalidade/Papel
-        /*'data_inicio',*/// REMOVED
     ];
 
     /*public $fillable_changes = [

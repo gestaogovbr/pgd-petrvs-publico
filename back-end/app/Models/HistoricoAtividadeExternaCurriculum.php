@@ -5,8 +5,6 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\CurriculumProfissional;
 use App\Models\AreaAtividadeExterna;
-use App\Traits\AutoDataInicio;
-
 
 class HistoricoAtividadeExternaCurriculum extends ModelBase
 {
@@ -15,7 +13,6 @@ class HistoricoAtividadeExternaCurriculum extends ModelBase
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'curriculum_profissional_id',
         'area_atividade_externa_id',
-                
     ];
 
      // Belongs

@@ -1,12 +1,8 @@
 <?php
 
 namespace App\Models;
-
 use App\Casts\AsJson;
 use App\Models\ModelBase;
-use App\Models\Demanda;
-use App\Models\Unidade;
-use App\Models\TipoProcesso;
 
 class TipoAtividade extends ModelBase
 {
@@ -21,7 +17,6 @@ class TipoAtividade extends ModelBase
         'etiquetas', /* json; */// Nome das etiquetas para a atividade
         'checklist', /* json; */// Nome dos checklist para a atividade
         'comentario', /* text; */// Comentário predefinido para a atividade
-        //'deleted_at', /* timestamp; */
     ];
 
     protected static function booted()

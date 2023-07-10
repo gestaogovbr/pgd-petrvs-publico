@@ -42,16 +42,6 @@ class ProjetoTarefa extends ModelBase
         'projeto_id', /* char(36); NOT NULL; */
         'tarefa_pai_id', /* char(36); */
         'usuario_id', /* char(36); */
-        //'deleted_at', /* timestamp; */
-        //'etiquetas', /* json; */// Etiquetas
-        //'documento_id', /* char(36); */
-        //'tarefa_projeto_id', /* char(36); */
-        //'atividade_id', /* char(36); */
-        /*'id_processo',*/// REMOVED
-        /*'numero_processo',*/// REMOVED
-        /*'id_documento',*/// REMOVED
-        /*'numero_documento',*/// REMOVED
-        /*'demanda_id',*/// REMOVED
     ];
 
     public $fillable_changes = ["alocacoes"];

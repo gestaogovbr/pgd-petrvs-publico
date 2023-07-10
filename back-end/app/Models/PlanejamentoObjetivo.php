@@ -21,8 +21,6 @@ class PlanejamentoObjetivo extends ModelBase
         'eixo_tematico_id', /* char(36); NOT NULL; */
         'path', /* text; */// Path dos nós pais separados por /, ou NULL caso sejam nós raiz
         'objetivo_pai_id', /* char(36); */
-        //'deleted_at', /* timestamp; */
-        /*'objetivo_superior_id',*/// REMOVED
     ];
 
     public $delete_cascade = ["objetivos"];

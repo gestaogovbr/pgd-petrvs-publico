@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -50,17 +49,6 @@ class Usuario extends Authenticatable
         'perfil_id', /* char(36); */
         'uf', /* char(2); */// UF do usuário
         'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho
-        //'deleted_at', /* timestamp; */
-        //'remember_token', /* varchar(100); */
-        //'password', /* varchar(255); */// Senha do usuário
-        //'url_foto', /* varchar(255); */// URL da foto do usuário (temporário)
-        //'foto_perfil', /* text; */// Foto padrão do perfil
-        //'foto_google', /* text; */// Foto do G-Suit (Google)
-        //'foto_microsoft', /* text; */// Foto do Azure (Microsoft)
-        //'foto_firebase', /* text; */// Foto do Firebase (Google, Facebook, Instagram, Twiter, etc...)
-        //'id_super', /* text; */// Id do usuário no SUPER
-        //'metadados', /* json; */// Metadados do usuário
-        /*'data_inicio',*/// REMOVED
     ];
 
     public $fillable_changes = [

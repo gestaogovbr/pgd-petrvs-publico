@@ -6,8 +6,6 @@ use App\Models\ModelBase;
 use App\Models\CurriculumProfissional;
 use App\Models\AreaAtividadeExterna;
 use App\Models\Curso;
-use App\Traits\AutoDataInicio;
-
 
 class HistoricoDocenciaExternaCurriculum extends ModelBase
 {
@@ -17,7 +15,6 @@ class HistoricoDocenciaExternaCurriculum extends ModelBase
         'curriculum_profissional_id', /* char(36); NOT NULL; */
         'area_atividade_externa_id', /* char(36); NOT NULL; */
         'curso_id', /* char(36); NOT NULL; */
-        //'deleted_at', /* timestamp; */
     ];
 
      // Belongs

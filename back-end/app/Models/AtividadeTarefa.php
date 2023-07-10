@@ -20,8 +20,6 @@ class AtividadeTarefa extends ModelBase
         'documento_id', /* char(36); */
         'usuario_id', /* char(36); NOT NULL; */
         'tipo_tarefa_id', /* char(36); */
-        //'deleted_at', /* timestamp; */
-        //'atividade_id', /* char(36); NOT NULL; */
     ];
     
     public $fillable_changes = [

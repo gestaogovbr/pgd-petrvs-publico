@@ -4,12 +4,9 @@ namespace App\Services;
 
 use App\Models\CadeiaValorProcesso;
 use App\Models\Planejamento;
-use App\Traits\UseDataFim;
 
 class CadeiaValorService extends ServiceBase
 {
-    use UseDataFim;
-
     public function buildSequencia($id) {
         $recursivo = function($processos) use ($id, &$recursivo) {
             $sequencia = 1;

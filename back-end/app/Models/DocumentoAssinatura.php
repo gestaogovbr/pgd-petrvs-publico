@@ -16,7 +16,6 @@ class DocumentoAssinatura extends ModelBase
         'assinatura', /* text; NOT NULL; */// Hash da assinatura
         'documento_id', /* char(36); NOT NULL; */
         'usuario_id', /* char(36); NOT NULL; */
-        //'deleted_at', /* timestamp; */
     ];
 
     // Has

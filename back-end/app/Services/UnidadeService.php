@@ -12,14 +12,11 @@ use App\Models\Programa;
 use App\Services\ServiceBase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use App\Traits\UseDataFim;
 use Exception;
 use Throwable;
 
 class UnidadeService extends ServiceBase
 {
-    use UseDataFim;
-
     public function avaliadores($id) {
         $result = [];
         $unidade = Unidade::with("integrantes")->where("id", $id)->first();

@@ -5,8 +5,6 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\CurriculumProfissional;
 use App\Models\Unidade;
-use App\Traits\AutoDataInicio;
-
 
 class HistoricoLotacaoCurriculum extends ModelBase
 {
@@ -15,7 +13,6 @@ class HistoricoLotacaoCurriculum extends ModelBase
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'curriculum_profissional_id',
         'unidade_id',
-                
     ];
 
      // Belongs

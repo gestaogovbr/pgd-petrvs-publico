@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Unidade;
 use App\Models\PlanoEntrega;
-use App\Traits\UseDataFim;
 use App\Exceptions\ServerException;
 use App\Models\Programa;
 use Illuminate\Support\Facades\DB;
@@ -15,8 +14,6 @@ use Exception;
 
 class PlanoEntregaService extends ServiceBase
 {
-    use UseDataFim;
-
     public $unidades = []; /* Buffer de unidades para funções que fazem consulta frequentes em unidades */
 
     public function arquivar($data, $unidade) {

@@ -3,8 +3,6 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
-use App\Traits\AutoDataInicio;
-
 
 class AreaAtividadeExterna extends ModelBase
 {
@@ -14,7 +12,6 @@ class AreaAtividadeExterna extends ModelBase
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'nome', /* varchar(256); NOT NULL; */// Nome da área
         'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */// area ativo ou inativo
-        //'deleted_at', /* timestamp; */
     ];
 
     // Has

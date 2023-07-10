@@ -17,7 +17,6 @@ class Cidade extends ModelBase
         'tipo', /* set('MUNICIPIO','DISTRITO','CAPITAL'); NOT NULL; */// Tipo da cidade
         'uf', /* varchar(2); NOT NULL; */// Unidade Federativa
         'timezone', /* int; NOT NULL; */// Timezone UTC da cidade
-        //'deleted_at', /* timestamp; */
     ];
 
     // Has

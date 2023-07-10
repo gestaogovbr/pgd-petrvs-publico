@@ -41,7 +41,6 @@ class Atividade extends ModelBase
         'unidade_id', /* char(36); NOT NULL; */
         'documento_requisicao_id', /* char(36); */
         'documento_entrega_id', /* char(36); */
-        //'deleted_at', /* timestamp; */
     ];
 
     public $fillable_changes = [

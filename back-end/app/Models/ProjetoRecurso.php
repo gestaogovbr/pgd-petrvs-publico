@@ -23,8 +23,6 @@ class ProjetoRecurso extends ModelBase
         'usuario_id', /* char(36); */
         'unidade_id', /* char(36); */
         'material_servico_id', /* char(36); */
-        //'deleted_at', /* timestamp; */
-        /*'data_inicio',*/// REMOVED
     ];
 
     /*public $fillable_changes = [

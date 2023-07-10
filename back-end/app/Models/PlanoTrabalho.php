@@ -33,9 +33,6 @@ class PlanoTrabalho extends ModelBase
         'tipo_modalidade_id', /* char(36); NOT NULL; */
         'forma_contagem_carga_horaria', /* enum('DIA','SEMANA','MES'); NOT NULL; DEFAULT: 'DIA'; */// Forma de contagem padrão da carga horária
         'plano_entrega_id', /* char(36); NOT NULL; */
-        //'deleted_at', /* timestamp; */
-        /*'data_inicio',*/// REMOVED
-        /*'ganho_produtividade',*/// REMOVED
     ];
 
     public $fillable_changes = ['entregas', 'documentos'];

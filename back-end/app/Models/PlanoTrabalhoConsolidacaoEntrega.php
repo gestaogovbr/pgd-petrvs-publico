@@ -14,11 +14,6 @@ class PlanoTrabalhoConsolidacaoEntrega extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        //'deleted_at', /* timestamp; */
-        //'meta', /* json; NOT NULL; */// Meta para a entrega
-        //'realizado', /* json; */// Valor realizado da meta
-        //'consolidacao_id', /* char(36); NOT NULL; */
-        //'entrega_id', /* char(36); NOT NULL; */
     ];
 
     public $fillable_changes = [];

@@ -22,7 +22,6 @@ class Integracao extends ModelBase
         'usar_arquivos_locais', /* tinyint(1); NOT NULL; */// Define se a rotina deve importar os dados de um arquivo local em formato XML
         'gravar_arquivos_locais', /* tinyint(1); NOT NULL; */// Define se a rotina deve salvar os dados importados do SIAPE em um arquivo local em formato XML
         'resultado', /* json; NOT NULL; */// Resultado da execução da rotina de integração
-        //'deleted_at', /* timestamp; */
     ];
 
     protected $casts = [

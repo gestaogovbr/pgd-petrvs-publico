@@ -15,6 +15,5 @@ class EixoTematico extends ModelBase
         'icone', /* varchar(100); NOT NULL; */// Classe CSS do icone relacionado ao eixo temático
         'cor', /* varchar(100); NOT NULL; */// Código HEX da cor relacionada ao eixo temático
         'descricao', /* varchar(256); NOT NULL; */// Descrição do eixo temático
-        //'deleted_at', /* timestamp; */
     ];
 }

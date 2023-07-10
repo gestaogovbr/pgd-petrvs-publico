@@ -7,13 +7,10 @@ use App\Models\Planejamento;
 use App\Models\EixoTematico;
 use App\Models\PlanejamentoObjetivo;
 use App\Models\Unidade;
-use App\Traits\UseDataFim;
 use Illuminate\Support\Facades\DB;
 
 class PlanejamentoService extends ServiceBase
 {
-    use UseDataFim;
-
     /**
      * Este método verifica se a consulta provém da manutenção de planejamentos institucionais de unidades executoras e, em caso positivo, filtra apenas os planejamentos
      * não deletados e que são da Unidade Instituidora ou das Unidades Executoras hierarquicamente superiores à Unidade Executora cujo plano está sendo mantido (criado/editado).

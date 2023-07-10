@@ -1,16 +1,11 @@
 <?php
 
 namespace App\Models;
-
 use App\Models\ModelBase;
 use App\Models\Demanda;
-use App\Traits\AutoDataInicio;
-use App\Traits\HasDataFim;
 
 class TipoDocumento extends ModelBase
 {
-    use AutoDataInicio, HasDataFim;
-
     protected $table = 'tipos_documentos';
 
     protected $with = [];
@@ -19,8 +14,6 @@ class TipoDocumento extends ModelBase
         'codigo', /* varchar(50); */// Código do tipo de documento
         'nome', /* varchar(256); NOT NULL; */// Tipo do documento da requisição ou da entrega
         'entregavel', /* tinyint; NOT NULL; */// Se é um documento de entrega
-        //'deleted_at', /* timestamp; */
-        /*'data_inicio',*/// REMOVED
     ];
 
     // Has

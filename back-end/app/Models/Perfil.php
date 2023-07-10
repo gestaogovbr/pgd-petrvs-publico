@@ -5,13 +5,9 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\Usuario;
 use App\Models\Capacidade;
-use App\Traits\AutoDataInicio;
-use App\Traits\HasDataFim;
 
 class Perfil extends ModelBase
 {
-    use AutoDataInicio, HasDataFim;
-
     protected $table = 'perfis';
 
     protected $with = [];
@@ -21,7 +17,6 @@ class Perfil extends ModelBase
         'nivel', /* int; NOT NULL; */// Evita que usuários de nível inferior atribuam perfis de nível superior
         'nome', /* varchar(256); NOT NULL; */// Nome do perfil
         'descricao', /* text; NOT NULL; */// Descrição do perfil
-        //'deleted_at', /* timestamp; */
     ];
 
     public $fillable_changes = [

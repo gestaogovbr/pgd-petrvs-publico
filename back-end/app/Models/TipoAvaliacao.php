@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Models;
-
 use App\Models\ModelBase;
 use App\Models\Avaliacao;
 use App\Models\TipoAvaliacaoJustificativa;
@@ -16,7 +15,6 @@ class TipoAvaliacao extends ModelBase
         'nome', /* varchar(256); NOT NULL; */// Nome do tipo de avaliação
         'tipo', /* set('QUALITATIVO','QUANTITATIVO'); NOT NULL; */// Se a nota será um número ou um conceito
         'notas', /* json; NOT NULL; */// Notas
-        //'deleted_at', /* timestamp; */
     ];
 
     public $fillable_relations = [

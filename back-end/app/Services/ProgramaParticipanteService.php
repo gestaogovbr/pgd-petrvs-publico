@@ -7,7 +7,6 @@ use App\Models\ProgramaParticipante;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Services\ServiceBase;
-use App\Traits\UseDataFim;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Throwable;

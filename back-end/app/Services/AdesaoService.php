@@ -13,12 +13,9 @@ use App\Exceptions\ServerException;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Support\Facades\Auth;
-use App\Traits\UseDataFim;
 
 class AdesaoService extends ServiceBase
 {
-    use UseDataFim;
-
     public function proxyQuery($query, &$data) {
         $where = [];
         foreach($data["where"] as $condition) {

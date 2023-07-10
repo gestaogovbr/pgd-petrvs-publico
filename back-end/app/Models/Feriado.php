@@ -5,13 +5,9 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\Entidade;
 use App\Models\Cidade;
-use App\Traits\AutoDataInicio;
-use App\Traits\HasDataFim;
 
 class Feriado extends ModelBase
 {
-    use AutoDataInicio, HasDataFim;
-
     protected $table = 'feriados';
 
     protected $with = [];
@@ -28,7 +24,6 @@ class Feriado extends ModelBase
         'entidade_id', /* char(36); */
         'cidade_id', /* char(36); */
         'uf', /* varchar(2); */// UF para feriados estaduais
-        //'deleted_at', /* timestamp; */
     ];
 
     // Belongs

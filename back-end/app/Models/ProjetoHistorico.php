@@ -18,7 +18,6 @@ class ProjetoHistorico extends ModelBase
         'delta', /* json; NOT NULL; */// Delta do objeto (ou objeto completo)
         'projeto_id', /* char(36); NOT NULL; */
         'usuario_id', /* char(36); NOT NULL; */
-        //'deleted_at', /* timestamp; */
     ];
 
     /*public $fillable_changes = [
