@@ -1,10 +1,16 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+    <separator title="Entidade"></separator>
+    <div class="row">
+        <input-text [size]="2" label="SIGLA" controlName="id" [disabled]="action == 'new' ? undefined : 'true'"></input-text>
+        <input-text [size]="4" label="Nome" controlName="nome_entidade"></input-text>
+        <input-text [size]="3" label="Abrangência" controlName="abrangencia"></input-text>
+        <input-number [size]="3" label="Cod. IBGE" controlName="codigo_cidade"></input-number>
+    </div>
     <separator title="Banco de dados da aplicação"></separator>
     <div class="row">
-        <input-text [size]="2" label="Id" controlName="id" [disabled]="action == 'new' ? undefined : 'true'"></input-text>
         <input-text [size]="4" label="Host" controlName="tenancy_db_host"></input-text>
         <input-text [size]="4" label="Banco de dados" controlName="tenancy_db_name"></input-text>
-        <input-number [size]="2" label="Porta" controlName="tenancy_db_port"></input-number>
+        <input-number [size]="4" label="Porta" controlName="tenancy_db_port"></input-number>
     </div>
     <div class="row">
         <input-text [size]="6" label="Usuário" controlName="tenancy_db_username"></input-text>
@@ -27,7 +33,7 @@
             <separator title="Opções de log"></separator>
             <div class="row">
                 <input-switch [size]="12" scale="small" labelPosition="right" label="Tráfego (traffic)" controlName="log_traffic"></input-switch>
-                <input-switch [size]="12" scale="small" labelPosition="right" label="Aditoria (changes)" controlName="log_changes"></input-switch>
+                <input-switch [size]="12" scale="small" labelPosition="right" label="Auditoria (changes)" controlName="log_changes"></input-switch>
                 <input-switch [size]="12" scale="small" labelPosition="right" label="Erros (errors)" controlName="log_errors"></input-switch>
             </div>
         </div>
@@ -64,5 +70,16 @@
             </div>
         </div>
     </div>
+    <separator title="Super Usuário"></separator>
+    <div class="row">
+        <input-text [size]="6" label="Email" controlName="email"></input-text>
+        <input-text [size]="6" label="Nome" controlName="nome_usuario"></input-text>
+    </div>
+    <div class="row">
+        <input-text [size]="4" label="CPF" controlName="cpf"></input-text>
+        <input-text [size]="4" label="Apelido" controlName="apelido"></input-text>
+        <input-text [size]="4" label="Perfil" controlName="perfil"></input-text>
+    </div>
+   
 
 </editable-form>

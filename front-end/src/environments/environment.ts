@@ -39,6 +39,7 @@ export const environment = {
         azure: true,
         institucional: false,
         firebase: false,
-        user_password: false
+        user_password: false,
+        login_unico: true
     }
 };

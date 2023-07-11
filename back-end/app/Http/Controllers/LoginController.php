@@ -16,6 +16,7 @@ use App\Models\Entidade;
 use App\Services\UnidadeService;
 use App\Services\ServiceBase;
 use App\Services\CalendarioService;
+use App\Services\LoginUnicoService;
 use App\Services\UsuarioService;
 use Database\Seeders\UsuarioSeeder;
 use Illuminate\Validation\ValidationException;
@@ -329,6 +330,39 @@ class LoginController extends Controller
     }
 
     /**
+
+     * Handle an authentication attempt.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function authenticateLoginUnicoToken(Request $request, LoginUnicoService $auth)
+    {
+        $credentials = $request->validate([
+            'entidade' => ['required'],
+            'token' => ['required']
+        ]);
+        $tokenData = $auth->verifyToken($credentials['token']);
+        if(!isset($tokenData['error'])) {
+            $entidade = $this->registrarEntidade($request);
+            $usuario = $this->registrarUsuario($request, Usuario::where('email', $tokenData['email'])->where("data_fim", null)->first());
+            if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
+                $usuarioService = new UsuarioService();
+                $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
+                $request->session()->regenerate();
+                $request->session()->put("kind", "GOOGLE");
+                return response()->json([
+                    'success' => true,
+                    "entidade" => $entidade,
+                    "usuario" => $usuario,
+                    "horario_servidor" => CalendarioService::horarioServidor()
+                ]);
+            }
+        }
+        return LogError::newError('As credenciais fornecidas são inválidas.');
+    }
+
+    /**
      * Handle an authentication attempt.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -557,6 +591,48 @@ class LoginController extends Controller
                 $lotacao = new Lotacao();
                 $service = new IntegracaoService();
                 $service->salvaUsuarioLotacaoDprf($usuario, $lotacao, $profile, $auth);
+            }
+            if (isset($usuario)) {
+                $request->session()->put("kind", "DPRFSEGURANCA");
+                $usuario->save();
+                $entidade = $this->registrarEntidade($request);
+                $usuario = $this->registrarUsuario($request, $usuario);
+                return response()->json([
+                    'token' => $usuario->createToken($credentials['device_name'])->plainTextToken,
+                    'entidade' => $entidade,
+                    'usuario' => $usuario,
+                    "horario_servidor" => CalendarioService::horarioServidor()
+                ]);
+            }
+        }
+        return LogError::newError('As credenciais fornecidas são inválidas.');
+    }
+
+    /**
+     * Handle an authentication attempt.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function authenticateApiLoginUnico(Request $request, LoginUnicoService $auth)
+    {
+        $credentials = $request->validate([
+            'entidade' => ['required'],
+            'cpf' => ['regex:/^\d{11}$/'],
+            'senha' => ['required'],
+            'token' => ['required'],
+            'device_name' => ['required']
+        ]);
+        /* Usando temporariamente o loginCpf(), mas o correto é login()  */
+        $profile = $auth->loginToken($credentials['cpf'], $credentials['senha'], $credentials['token']);
+        if(!isset($profile['error'])) {
+            $email = str_contains($profile["email"], "@") ? $profile["email"] : $profile["email"] . "@prf.gov.br";
+            $usuario = Usuario::where('email', $email)->where("data_fim", null)->first();
+            if(!isset($usuario) && $auth->autoIncluir) {
+                $usuario = new Usuario();
+                $lotacao = new Lotacao();
+                $service = new IntegracaoService();
+                $service->salvaUsuarioLotacaoLoginUnico($usuario, $lotacao, $profile, $auth);
             }
             if (isset($usuario)) {
                 $request->session()->put("kind", "DPRFSEGURANCA");

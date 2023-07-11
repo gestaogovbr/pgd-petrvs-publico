@@ -25,10 +25,21 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
       onClick: this.consult.bind(this)
     });
     this.options.push({
+      icon: "bi bi-building",
+      label: "Executar Cidades",
+      onClick: this.delete.bind(this)
+    });
+    this.options.push({
+      icon: "bi bi-list-check",
+      label: "Executar Tipos Capacidades",
+      onClick: this.delete.bind(this)
+    });
+    this.options.push({
       icon: "bi bi-trash",
       label: "Excluir",
       onClick: this.delete.bind(this)
     });
+   
   }
 
   public filterWhere = (filter: FormGroup) => {
