@@ -7,16 +7,12 @@
         <div class="row">
             <input-select [size]="6" [label]="lex.noun('Tipo de indicador')" icon="bi bi-arrow-up-right-circle" controlName="tipo_indicador" [items]="lookup.TIPO_INDICADOR"></input-select>
             <div *ngIf="form?.controls!.tipo_indicador.value == 'QUALITATIVO' || null" class="row col-6">
-                <div class="row">
-                    <div class="row mb-3">
-                        <div class="col-12">
-                          <label for="itemQualitativo" class="radio control-label">&nbsp;</label>
-                          <input-multiselect controlName="qualitativo" [addItemHandle]="addItemHandleItemQualitativo.bind(this)">
-                            <input-text [size]="12" icon="far fa-edit" controlName="itemQualitativo"></input-text>
-                          </input-multiselect>
-                        </div>
-                    </div>
-                 </div>
+                <div class="col-12">
+                    <label for="itemQualitativo" class="radio control-label">&nbsp;</label>
+                    <input-multiselect label="Itens Qualitativos" controlName="lista_qualitativos" [addItemHandle]="addItemHandleItemQualitativo.bind(this)">
+                        <input-text icon="far fa-edit" controlName="itemQualitativo"></input-text>
+                    </input-multiselect>
+                </div>
             </div>
         </div>
     </div>
