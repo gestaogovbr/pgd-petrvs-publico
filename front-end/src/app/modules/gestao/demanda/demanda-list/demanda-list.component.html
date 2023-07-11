@@ -9,16 +9,16 @@
             <demanda-list-kanban [snapshot]="snapshot || modalRoute || route.snapshot"></demanda-list-kanban>
         </ng-template>
     </tab>
-    <tab [hidden]="!auth.hasPermissionTo('DASH_PRG') ? 'true' : undefined" key="DASHBOARD" icon="bi bi-file-earmark-bar-graph" label="Dashboard">
+    <!-- <tab [hidden]="!auth.hasPermissionTo('DASH_PRG') ? 'true' : undefined" key="DASHBOARD" icon="bi bi-file-earmark-bar-graph" label="Dashboard">
       <filter [form]="filter" noButtons [where]="filterWhere" [collapsed]="false">
           <div class="row justify-content-md-center">
               <input-search #programa [size]="9" [label]="lex.noun('Programa')" controlName="programa_id"  [dao]="programaDao" placeholder="Selecione um Programa..." (change)="onChange($event)"></input-search>
               <input-switch [size]="1" label="Sub." controlName="unidades_subordinadas" [control]="filter!.controls.unidades_subordinadas" (change)="onChange($event)" labelInfo="Incluir as unidades subordinadas"></input-switch>
           </div>
-      </filter>
+      </filter> -->
 
       <!-- Tabela de Informações sobre o Programa -->
-      <div *ngIf="programaSelecionado" class="row justify-content-md-center">
+      <!-- <div *ngIf="programaSelecionado" class="row justify-content-md-center">
         <div class="col-md-8">
           <table class="table table-striped table-bordered table-hover my-4 align-middle">
             <thead>
@@ -41,39 +41,39 @@
               </tr>
               <tr>
                 <td>{{ 'Nr. de ' + lex.noun('Servidor',true) }}</td><td>{{ totalServidores + (totalServidores == 1 ? ' ' + lex.noun('Servidor') : ' ' + lex.noun('Servidor',true)) + ' (sem repetições)' }}</td>
-              </tr>
+              </tr> -->
   <!--                 <tr>
                 <td>Unidades Subordinadas incluídas?</td><td>{{ unidadesSubordinadas ? 'SIM' : 'NÃO' }}</td>
               </tr> -->
-            </tbody>
+            <!-- </tbody>
           </table>
         </div>
 
-      </div>
+      </div> -->
 
       <!-- Gráfico das Áreas com Planos de Trabalho ativos -->
-      <div *ngIf="totalPlanosAtivos" class="my-4 text-center">
+      <!-- <div *ngIf="totalPlanosAtivos" class="my-4 text-center">
         <div class="mx-4 d-inline-block container" style="position: relative; width: 400px; min-height: 200px;" [style.height.px]="height">
-          <!-- <h5>PT ativos (por Área)</h5> -->
-            <bar-chart
+          <h5>PT ativos (por Área)</h5> -->
+            <!-- <bar-chart
               [tipoGrafico] = "'horizontalBar'"
               [dadosGrafico]="dadosGraficoNrPlanos"
               [opcoesGrafico]="opcoesGraficoNrPlanos">
             </bar-chart>
-        </div>
+        </div> -->
         <!-- Gráfico dos Servidores participantes -->
-        <div id="teste" class="mx-4 d-inline-block container" style="position: relative;  width: 400px; min-height: 200px;" [style.height.px]="height">
+        <!-- <div id="teste" class="mx-4 d-inline-block container" style="position: relative;  width: 400px; min-height: 200px;" [style.height.px]="height"> -->
           <!-- <h5>Servidores (por Área)</h5> -->
-            <bar-chart
+            <!-- <bar-chart
               [tipoGrafico] = "'horizontalBar'"
               [dadosGrafico]="dadosGraficoServidores"
               [opcoesGrafico]="opcoesGraficoServidores">
             </bar-chart>
         </div>
-      </div>
+      </div> -->
 
       <!-- Gráfico dos Servidores por Modalidade de Plano -->
-      <div *ngIf="totalPlanosAtivos" class="my-4 text-center">
+      <!-- <div *ngIf="totalPlanosAtivos" class="my-4 text-center">
         <div class="mx-4 d-inline-block container" style="position: relative;  width: 600px; min-height: 400px;">
             <bar-chart
               [tipoGrafico] = "'bar'"
@@ -83,5 +83,5 @@
             </bar-chart>
         </div>
       </div>
-  </tab>
+  </tab> -->
 </tabs>

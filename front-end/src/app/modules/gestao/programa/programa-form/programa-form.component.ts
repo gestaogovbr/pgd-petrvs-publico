@@ -59,6 +59,13 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
 
     return result;
   }
+  public formValidation = (form?: FormGroup) => {
+    let result = null;
+    if(this.form!.controls.fim.value && this.form!.controls.inicio.value < this.form!.controls.fim.value) {
+      result = "A data do fim não pode ser anterior à data do inicio!";
+    }
+    return result;
+  }
 
   public async loadData(entity: Programa, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
