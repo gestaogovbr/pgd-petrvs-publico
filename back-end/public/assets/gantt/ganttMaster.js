@@ -1043,7 +1043,7 @@ GanttMaster.prototype.addBelowCurrentTask = function () {
       return;
 
 
-    ch = factory.build("tmp_" + new Date().getTime(), "", "", self.currentTask.level + (addNewBrother ? 0 : 1), self.currentTask.start, 1);
+    ch = factory.build("tmp_" + new Date().getTime(), "", "", self.currentTask.level + (addNewBrother ? 0 : 1), self.currentTask.start, 1, null, null);
     row = self.currentTask.getRow() + 1;
 
     if (row > 0) {
@@ -1075,7 +1075,7 @@ GanttMaster.prototype.addAboveCurrentTask = function () {
     if (self.currentTask.level <= 0)
       return;
 
-    ch = factory.build("tmp_" + new Date().getTime(), "", "", self.currentTask.level, self.currentTask.start, 1);
+    ch = factory.build("tmp_" + new Date().getTime(), "", "", self.currentTask.level, self.currentTask.start, 1, null, null);
     row = self.currentTask.getRow();
 
     if (row > 0) {
