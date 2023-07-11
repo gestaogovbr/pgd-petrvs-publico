@@ -471,7 +471,7 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
                 return "Salve ou cancele o registro atual em edição";
             }
             if (this.form.controls.fim.value && this.form.controls.inicio.value > this.form.controls.fim.value)
-                return "A data do início não pode ser maior que a data do fim!";
+                return "A data do fim não pode ser anterior à data do fim!";
             return undefined;
         };
         this.planejamentoDao = injector.get(src_app_dao_planejamento_dao_service__WEBPACK_IMPORTED_MODULE_3__["PlanejamentoDaoService"]);
