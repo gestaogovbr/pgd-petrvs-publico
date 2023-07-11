@@ -16,6 +16,7 @@ class TipoModalidade extends ModelBase
         'atividades_homologadas', /* tinyint; NOT NULL; */// Permitir apenas atividades homologadas
         'dispensa_avaliacao', /* tinyint; NOT NULL; */// Dispensa a avaliação
         'exige_assinatura', /* tinyint; NOT NULL; */// Exigir assinatura
+        //'deleted_at', /* timestamp; */
     ];
 
     public $delete_cascade = ['documento'];

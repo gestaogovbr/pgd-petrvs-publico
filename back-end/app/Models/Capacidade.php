@@ -16,6 +16,7 @@ class Capacidade extends ModelBase
         'id', /* char(36); NOT NULL; */
         'perfil_id', /* char(36); */
         'tipo_capacidade_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
     ];
 
     // Belongs

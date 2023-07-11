@@ -20,6 +20,7 @@ class CadeiaValor extends ModelBase
         'unidade_id', /* char(36); */
         'entidade_id', /* char(36); NOT NULL; */
         'data_arquivamento', /* datetime; */// Data de arquivamento da cadeia de valores
+        //'deleted_at', /* timestamp; */
     ];
 
     public $fillable_changes = [];

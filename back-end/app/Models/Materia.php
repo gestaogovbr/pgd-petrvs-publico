@@ -14,6 +14,7 @@ class Materia extends ModelBase
         'horas_aula', /* tinyint; */// Horas aula da matéria
         'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */// Curso ativo ou inativo
         'curso_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
     ];
 
     // Belongs

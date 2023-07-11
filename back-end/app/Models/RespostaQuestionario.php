@@ -14,6 +14,10 @@ class RespostaQuestionario extends ModelBase
         'data_hora', /* datetime; NOT NULL; */// Data e hora das respostas
         'editavel', /* tinyint; NOT NULL; DEFAULT: '1'; */// Possibilidade de editar as respostas
         'respostas', /* json; */// Respostas do questionário
+        //'deleted_at', /* timestamp; */
+        //'usuario_id', /* char(36); */
+        //'curriculum_id', /* char(36); */
+        //'questionario_id', /* char(36); NOT NULL; */
     ];
 
     protected $casts = [

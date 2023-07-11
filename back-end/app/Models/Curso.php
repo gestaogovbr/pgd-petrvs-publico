@@ -17,6 +17,7 @@ class Curso extends ModelBase
         'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */// Curso ativo ou inativo
         'area_id', /* char(36); NOT NULL; */
         'tipo_curso_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
     ];
 
     // Belongs

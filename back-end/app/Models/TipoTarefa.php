@@ -18,6 +18,7 @@ class TipoTarefa extends ModelBase
         'comentario_predefinido', /* text; */// Comentário predefinida para o tipo de tarefa
         'entidade_id', /* char(36); */
         'unidade_id', /* char(36); */
+        //'deleted_at', /* timestamp; */
     ];
     
     // Belongs

@@ -12,6 +12,7 @@ class AreaTematica extends ModelBase
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'nome', /* varchar(256); NOT NULL; */// Nome da área temática
         'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */// Área ativa ou inativa
+        //'deleted_at', /* timestamp; */
     ];
 
     //Has

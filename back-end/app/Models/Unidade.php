@@ -43,6 +43,10 @@ class Unidade extends ModelBase
         'cidade_id', /* char(36); */
         'expediente', /* json; */// Configuração de expediente da unidade
         'avaliacao_hierarquica', /* tinyint; NOT NULL; */// Se permite que unidades superiores façam avaliação
+        //'deleted_at', /* timestamp; */
+        //'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho
+        //'inativo', /* datetime; */// Se a unidade está ou não inativa
+        //'checklist', /* json; */// Nome dos checklist
     ];
 
     public $fillable_relations = [];

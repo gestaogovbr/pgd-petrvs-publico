@@ -17,6 +17,7 @@ class TipoAtividade extends ModelBase
         'etiquetas', /* json; */// Nome das etiquetas para a atividade
         'checklist', /* json; */// Nome dos checklist para a atividade
         'comentario', /* text; */// Comentário predefinido para a atividade
+        //'deleted_at', /* timestamp; */
     ];
 
     protected static function booted()

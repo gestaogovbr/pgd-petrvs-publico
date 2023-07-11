@@ -20,6 +20,7 @@ class Anexo extends ModelBase
         'base64', /* text; */// Arquivo em formato base64
         'usuario_id', /* char(36); */
         'comentario_id', /* char(36); */
+        //'deleted_at', /* timestamp; */
     ];
    
     // Belongs

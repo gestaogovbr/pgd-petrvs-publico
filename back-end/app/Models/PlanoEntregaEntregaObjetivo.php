@@ -14,6 +14,8 @@ class PlanoEntregaObjetivo extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'objetivo_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
+        //'entrega_id', /* char(36); NOT NULL; */
     ];
 
     public $fillable_changes = [];

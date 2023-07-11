@@ -13,6 +13,7 @@ class HistoricoAtividadeInternaCurriculum extends ModelBase
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'curriculum_profissional_id', /* char(36); NOT NULL; */
         'capacidade_tecnica_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
     ];
 
      // Belongs

@@ -16,6 +16,7 @@ class Lotacao extends ModelBase
         'principal', /* tinyint; NOT NULL; */// Se é a lotação principal do usuário
         'usuario_id', /* char(36); NOT NULL; */
         'unidade_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
     ];    
 
     // Has

@@ -18,6 +18,8 @@ class PlanoTrabalhoEntrega extends ModelBase
         'entrega_id', /* char(36); */
         'descricao', /* varchar(256); NOT NULL; */// Detalhamento da entrega
         'forca_trabalho', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */// Percentual da força de trabalho associado a esta entrega
+        //'deleted_at', /* timestamp; */
+        //'plano_trabalho_id', /* char(36); NOT NULL; */
     ];
 
     public $delete_cascade = [];

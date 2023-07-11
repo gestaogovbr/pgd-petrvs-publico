@@ -14,6 +14,7 @@ class TipoAvaliacaoJustificativa extends ModelBase
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'tipo_avaliacao_id', /* char(36); NOT NULL; */
         'tipo_justificativa_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
     ];
 
     // Belongs

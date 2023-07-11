@@ -24,6 +24,7 @@ class Feriado extends ModelBase
         'entidade_id', /* char(36); */
         'cidade_id', /* char(36); */
         'uf', /* varchar(2); */// UF para feriados estaduais
+        //'deleted_at', /* timestamp; */
     ];
 
     // Belongs

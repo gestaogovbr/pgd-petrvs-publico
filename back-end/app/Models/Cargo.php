@@ -16,6 +16,7 @@ class Cargo extends ModelBase
         'cbo', /* varchar(256); */// código CBO do Cargo
         'efetivo', /* tinyint; NOT NULL; DEFAULT: '1'; */// Cargo efetivo ou comissionado
         'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */// Cargo ativo ou inativo
+        //'deleted_at', /* timestamp; */
     ];
 
     // Belongs

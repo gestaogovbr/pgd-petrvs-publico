@@ -33,8 +33,6 @@ export class Documento extends Base {
     public id_documento: number | null = null; /* ID da entrega, caso seja o Sei será o ID_Documento */
     public numero_documento: string | null = null; /* Numero do documento de entrega, caso seja o Sei é o numero Sei */
     public titulo_documento: string | null = null; /* Numeração do tipo de documento no sistema integrado */
-    public data_inicio: Date = new Date(); /* Data de início */
-    public data_fim: Date | null = null; /* Data do fim */
     public status: DocumentoStatus = "GERADO";
     public assinaturas: DocumentoAssinatura[] = [];
     public template: string | null = null; /* Campo de Template */

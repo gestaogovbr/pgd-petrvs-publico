@@ -25,6 +25,7 @@ class Comentario extends ModelBase
         'projeto_tarefa_id', /* char(36); */
         'atividade_id', /* char(36); */
         'atividade_tarefa_id', /* char(36); */
+        //'deleted_at', /* timestamp; */
     ];
 
     public $delete_cascade = ['comentarios'];

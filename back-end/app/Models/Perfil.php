@@ -17,6 +17,7 @@ class Perfil extends ModelBase
         'nivel', /* int; NOT NULL; */// Evita que usuários de nível inferior atribuam perfis de nível superior
         'nome', /* varchar(256); NOT NULL; */// Nome do perfil
         'descricao', /* text; NOT NULL; */// Descrição do perfil
+        //'deleted_at', /* timestamp; */
     ];
 
     public $fillable_changes = [

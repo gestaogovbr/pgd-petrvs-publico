@@ -14,6 +14,14 @@ class CurriculumProfissional extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'telefone', /* varchar(64); NOT NULL; */// Telefone
+        //'deleted_at', /* timestamp; */
+        //'apresentacao', /* longtext; NOT NULL; */// Apresentação
+        //'idiomas', /* json; */// Idiomas que fala
+        //'estado_civil', /* varchar(64); */// Estado Civil
+        //'quantidade_filhos', /* tinyint; NOT NULL; */// Qtde de filhos
+        //'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */// Curriculum ativa ou inativa
+        //'usuario_id', /* char(36); NOT NULL; */
+        //'cidade_id', /* char(36); NOT NULL; */
     ];
 
     protected $casts = [

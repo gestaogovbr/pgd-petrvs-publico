@@ -46,6 +46,8 @@ class Projeto extends ModelBase
         'custo', /* decimal(15,2); NOT NULL; */// Custo: Será a soma dos recursos, ou a soma dos filhos caso tem_filhos e soma_custos_filhos
         'kanban_dockers', /* json; */// Configuração das Labels das swimlanes do quadro Kanban
         'expediente', /* json; */// Configuração de expediente
+        //'deleted_at', /* timestamp; */
+        //'numero', /* int; NOT NULL; */// Número do projeto (Gerado pelo sistema)
     ];
 
     public $fillable_changes = ["fases", "regras", "recursos", "alocacoes", "tarefas"];

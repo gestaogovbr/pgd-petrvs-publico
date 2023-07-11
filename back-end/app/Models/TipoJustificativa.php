@@ -12,6 +12,7 @@ class TipoJustificativa extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'nome', /* varchar(256); NOT NULL; */// Tipo da justificativa da avaliação
+        //'deleted_at', /* timestamp; */
     ];
 
     public $delete_cascade = ['tipos_avaliacoes_justificativas'];

@@ -13,6 +13,7 @@ class AreaConhecimento extends ModelBase
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'nome', /* varchar(256); NOT NULL; */// Nome da área da graduação
         'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */// Área ativa ou inativa
+        //'deleted_at', /* timestamp; */
     ];
 
     // Has

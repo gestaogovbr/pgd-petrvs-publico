@@ -25,6 +25,7 @@ class Planejamento extends ModelBase
         'entidade_id', /* char(36); NOT NULL; */
         'data_arquivamento', /* datetime; */// Data de arquivamento do planejamento institucional
         'planejamento_superior_id', /* char(36); */
+        //'deleted_at', /* timestamp; */
     ];
 
     // Casting

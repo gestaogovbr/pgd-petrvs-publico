@@ -18,6 +18,7 @@ class ProjetoFase extends ModelBase
         'nome', /* varchar(100); NOT NULL; */// Nome
         'descricao', /* varchar(256); NOT NULL; */// Descrição
         'projeto_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
     ];
 
     /*public $fillable_changes = [

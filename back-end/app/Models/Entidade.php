@@ -37,6 +37,9 @@ class Entidade extends ModelBase
         'notificacoes', /* json; */// Configurações das notificações (Se envia e-mail, whatsapp, tipos, templates)
         'forma_contagem_carga_horaria', /* enum('DIA','SEMANA','MES'); NOT NULL; DEFAULT: 'DIA'; */// Forma de contagem padrão da carga horária
         'expediente', /* json; NOT NULL; DEFAULT: '_utf8mb4\'{"domingo":[],"segunda":[],"terca":[],"quarta":[],"quinta":[],"sexta":[],"sabado":[],"especial":[]}\''; */// Configuração de expediente
+        //'deleted_at', /* timestamp; */
+        //'api_public_key', /* text; */// Chave pública de API
+        //'api_private_key', /* text; */// Chave privada de API
     ];
 
     public $delete_cascade = ['feriados'];

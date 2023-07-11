@@ -16,6 +16,7 @@ class UnidadeIntegrante extends ModelBase
         'atribuicao', /* enum('AVALIADOR_ATIVIDADE','AVALIADOR_PLANO_ENTREGA','AVALIADOR_PLANO_TRABALHO','HOMOLOGADOR_PLANO_ENTREGA'); NOT NULL; */// Vínculo que o servidor tem com a unidade
         'unidade_id', /* char(36); NOT NULL; */// Unidade participante do vínculo
         'usuario_id', /* char(36); NOT NULL; */// Servidor participante do vínculo
+        //'deleted_at', /* timestamp; */
     ];
 
     // Has

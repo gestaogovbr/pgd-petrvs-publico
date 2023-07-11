@@ -17,6 +17,7 @@ class CadeiaValorProcesso extends ModelBase
         'nome', /* varchar(256); NOT NULL; */// Nome do processo
         'cadeia_valor_id', /* char(36); NOT NULL; */
         'processo_pai_id', /* char(36); */
+        //'deleted_at', /* timestamp; */
     ];
 
     public $fillable_changes = [];

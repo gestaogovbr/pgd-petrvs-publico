@@ -12,6 +12,7 @@ class CurriculumGraduacao extends ModelBase
         'pretensao', /* tinyint; NOT NULL; */// Pretende fazer o curso
         'curriculum_id', /* char(36); NOT NULL; */
         'curso_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
     ];
 
     //Has
