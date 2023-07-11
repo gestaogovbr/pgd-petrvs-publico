@@ -23,8 +23,8 @@ class CreateHistoricosFuncoesCurriculumTable extends Migration
             $table->uuid('curriculum_profissional_id');
             $table->uuid('funcao_id');
             // Chaves estrangeiras:
-            $table->foreign('curriculum_profissional_id', 'fk_hist_func_id_curriculum_prof_id')->references('id')->on('curriculums_profissionais')->onDelete('restrict')->onUpdate('cascade');
-            $table->foreign('funcao_id', 'fk_hist_func_id_funcao_id')->references('id')->on('funcoes')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreign('curriculum_profissional_id', 'fk_hist_func_id_curriculum_prof_id')->references('id')->on('curriculums_profissionais')->onDelete('restrict')->onUpdate('cascade')->comment("FK Curriculum Profissional ID");
+            $table->foreign('funcao_id', 'fk_hist_func_id_funcao_id')->references('id')->on('funcoes')->onDelete('restrict')->onUpdate('cascade')->comment("FK Funcoes ID");
         });
     }
 
