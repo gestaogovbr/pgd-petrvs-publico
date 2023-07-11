@@ -26,10 +26,9 @@ class CreateCurriculumsTable extends Migration
             $table->string('estado_civil',64)->nullable()->comment("Estado Civil");
             $table->tinyInteger('quantidade_filhos')->default(0)->comment("Qtde de filhos");
             $table->tinyInteger('ativo')->default(1)->comment("Curriculum ativa ou inativa");
-           
             // Chaves estrangeiras:
-            $table->foreignUuid('usuario_id')->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->unique();
-            $table->foreignUuid('cidade_id')->constrained("cidades")->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('usuario_id')->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->unique()->comment('Usuário');
+            $table->foreignUuid('cidade_id')->constrained("cidades")->onDelete('restrict')->onUpdate('cascade')->comment('Cidade');
         });
     }
 

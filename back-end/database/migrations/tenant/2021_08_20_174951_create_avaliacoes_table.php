@@ -24,8 +24,8 @@ class CreateAvaliacoesTable extends Migration
             $table->json('nota')->comment("Nota da avaliação");
             $table->json('justificativas')->default(new Expression('(JSON_ARRAY())'))->comment("Justificativas");
             // Chaves estrangeiras:
-            $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('tipo_avaliacao_id')->nullable()->constrained('tipos_avaliacoes')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment('Usuário');
+            $table->foreignUuid('tipo_avaliacao_id')->nullable()->constrained('tipos_avaliacoes')->onDelete('restrict')->onUpdate('cascade')->comment('Tipo de avaliação');
         });
     }
 

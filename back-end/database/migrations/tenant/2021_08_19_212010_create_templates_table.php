@@ -31,9 +31,6 @@ class CreateTemplatesTable extends Migration
             $table->foreignUuid('entidade_id')->nullable()->constrained('entidades')->onDelete('restrict')->onUpdate('cascade')->comment('Entidade');
             $table->foreignUuid('unidade_id')->nullable()->constrained('unidades')->onDelete('restrict')->onUpdate('cascade')->comment('Unidade');
         });
-
-
-
         // Cria sequencia template_numero
         Schema::table('sequence', function (Blueprint $table) {
             $table->integer('template_numero')->default(1)->comment("Sequencia numeria do número do template");

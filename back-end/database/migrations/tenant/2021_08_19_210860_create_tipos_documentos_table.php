@@ -19,7 +19,6 @@ class CreateTiposDocumentosTable extends Migration
             $table->primary('id');
             $table->timestamps();
             $table->softDeletes();
-           
             // Campos:
             $table->string('codigo', 50)->nullable()->comment("Código do tipo de documento");
             $table->string('nome', 256)->comment("Tipo do documento da requisição ou da entrega");

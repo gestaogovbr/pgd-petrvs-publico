@@ -23,7 +23,6 @@ class CreatePerfisTable extends Migration
             $table->integer('nivel')->comment("Evita que usuários de nível inferior atribuam perfis de nível superior");
             $table->string('nome', 256)->comment("Nome do perfil");
             $table->text('descricao')->comment("Descrição do perfil");
-           
         }); 
     }
 

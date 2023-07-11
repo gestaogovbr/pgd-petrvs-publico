@@ -21,8 +21,8 @@ class CreateCapacidadesTable extends Migration
             $table->softDeletes();
             // Campos:
             // Chaves estrangeiras:
-            $table->foreignUuid('perfil_id')->nullable()->constrained('perfis')->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('tipo_capacidade_id')->constrained('tipos_capacidades')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('perfil_id')->nullable()->constrained('perfis')->onDelete('restrict')->onUpdate('cascade')->comment("Perfis");
+            $table->foreignUuid('tipo_capacidade_id')->constrained('tipos_capacidades')->onDelete('restrict')->onUpdate('cascade')->comment("Tipos capacidades");
         });
     }
 

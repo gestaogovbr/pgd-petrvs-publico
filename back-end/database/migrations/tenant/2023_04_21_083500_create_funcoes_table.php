@@ -27,7 +27,6 @@ class CreateFuncoesTable extends Migration
             $table->string('cbo', 256)->nullable()->comment("código CBO da Função");
             $table->tinyInteger('ativo')->default(1)->comment("Função ativo ou inativo");
             // Chaves estrangeiras:
-           
             //$table->foreignUuid('entrega_id')->constrained("planos_entregas_entregas")->onDelete('restrict')->onUpdate('cascade');
         });
     }

@@ -22,8 +22,8 @@ class CreateLotacoesTable extends Migration
             // Campos:
             $table->tinyInteger('principal')->comment("Se é a lotação principal do usuário");
             // Chaves estrangeiras:
-            $table->foreignUuid('unidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('unidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment('Unidade');
+            $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment('Usuário');
         });
     }
 

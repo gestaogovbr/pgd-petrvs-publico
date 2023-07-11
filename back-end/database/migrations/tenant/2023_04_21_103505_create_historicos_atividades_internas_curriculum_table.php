@@ -19,13 +19,12 @@ class CreateHistoricosAtividadesInternasCurriculumTable extends Migration
             $table->primary('id');
             $table->timestamps();
             $table->softDeletes();
+            // Campos:
             $table->uuid('curriculum_profissional_id');
             $table->uuid('capacidade_tecnica_id');
-                        
             // Chaves estrangeiras:
             $table->foreign('curriculum_profissional_id', 'fk_hist_ativ_int_id_curriculum_prof_id')->references('id')->on('curriculums_profissionais')->onDelete('restrict')->onUpdate('cascade');
             $table->foreign('capacidade_tecnica_id', 'fk_capac_tec_id_curriculum_prof_id')->references('id')->on('capacidades_tecnicas')->onDelete('restrict')->onUpdate('cascade');
-
         });
     }
 

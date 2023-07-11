@@ -34,7 +34,6 @@ class CreatePlanosTrabalhosTable extends Migration
             $table->foreignUuid('unidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Unidade do plano de trabalho");
             $table->foreignUuid('tipo_modalidade_id')->constrained('tipos_modalidades')->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de modalidade do plano de trabalho");
             $table->foreignUuid('plano_entrega_id')->constrained("planos_entregas")->onDelete('restrict')->onUpdate('cascade')->comment("Plano de entrega do plano de trabalho");
-            // Índices
         });
         // Cria na tabela 'sequence' o campo plano_trabalho_numero
         Schema::table('sequence', function (Blueprint $table) {

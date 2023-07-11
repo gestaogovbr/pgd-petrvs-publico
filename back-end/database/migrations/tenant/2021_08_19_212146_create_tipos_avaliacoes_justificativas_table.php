@@ -20,8 +20,8 @@ class CreateTiposAvaliacoesJustificativasTable extends Migration
             $table->timestamps();
             $table->softDeletes();
             // Chaves estrangeiras:
-            $table->foreignUuid('tipo_avaliacao_id')->constrained('tipos_avaliacoes')->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('tipo_justificativa_id')->constrained('tipos_justificativas')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('tipo_avaliacao_id')->constrained('tipos_avaliacoes')->onDelete('restrict')->onUpdate('cascade')->comment("Tipo avaliação");
+            $table->foreignUuid('tipo_justificativa_id')->constrained('tipos_justificativas')->onDelete('restrict')->onUpdate('cascade')->comment("Tipos justificativas");
         });
     }
 

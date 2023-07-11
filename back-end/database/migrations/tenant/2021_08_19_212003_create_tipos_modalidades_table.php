@@ -25,7 +25,6 @@ class CreateTiposModalidadesTable extends Migration
             $table->tinyInteger('atividades_homologadas')->default(0)->comment("Permitir apenas atividades homologadas");
             $table->tinyInteger('dispensa_avaliacao')->default(0)->comment("Dispensa a avaliação");
             $table->tinyInteger('exige_assinatura')->default(0)->comment("Exigir assinatura");
-           
             // Chaves estrangeiras:
             /* OBS:
             - document_id criado em 2021_10_19_211130_create_documentos_table

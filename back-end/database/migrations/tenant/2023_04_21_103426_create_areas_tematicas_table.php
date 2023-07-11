@@ -22,9 +22,7 @@ class CreateAreasTematicasTable extends Migration
             // Campos:
             $table->string('nome', 256)->comment("Nome da área temática");
             $table->tinyInteger('ativo')->default(1)->comment("Área ativa ou inativa");
-           
             // Chaves estrangeiras:
-          
         });
     }
 
