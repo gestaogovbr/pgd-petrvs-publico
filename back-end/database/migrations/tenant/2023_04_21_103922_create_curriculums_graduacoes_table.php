@@ -20,14 +20,10 @@ class CreateCurriculumsGraduacoesTable extends Migration
             $table->timestamps();
             $table->softDeletes();
             // Campos:
-            
-            //$table->tinytext('titulo')->comment("Titulo do curso, Graduacão, Pós, Mestrado, etc");
             $table->tinyInteger('pretensao')->default(0)->comment("Pretende fazer o curso");
-           
             // Chaves estrangeiras:
-            $table->foreignUuid('curriculum_id')->constrained("curriculums")->onDelete('restrict')->onUpdate('cascade');
-            //$table->foreignUuid('area_conhecimento_id')->constrained("areas_conhecimentos")->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('curso_id')->constrained("cursos")->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('curriculum_id')->constrained("curriculums")->onDelete('restrict')->onUpdate('cascade')->comment("FK Curriculum ID");
+            $table->foreignUuid('curso_id')->constrained("cursos")->onDelete('restrict')->onUpdate('cascade')->comment("FK Cursos ID");
             
         });
     }

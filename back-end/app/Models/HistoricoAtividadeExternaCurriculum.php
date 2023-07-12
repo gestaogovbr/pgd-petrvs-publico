@@ -8,7 +8,7 @@ use App\Models\AreaAtividadeExterna;
 
 class HistoricoAtividadeExternaCurriculum extends ModelBase
 {
-    protected $table = 'historicos_atividades_externa_curriculum';
+    protected $table = 'historicos_atividades_externas_curriculum';
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'curriculum_profissional_id',
@@ -16,8 +16,8 @@ class HistoricoAtividadeExternaCurriculum extends ModelBase
     ];
 
      // Belongs
-    public function curriculumProfissional() { return $this->belongsTo(CurriculumProfissional::class); }
-    public function areaAtividadeExterna() { return $this->belongsTo(AreaAtividadeExterna::class); }
+    public function curriculumProfissional() { return $this->HasMany(CurriculumProfissional::class); }
+    public function areaAtividadeExterna() { return $this->HasMany(AreaAtividadeExterna::class); }
   
     
 }

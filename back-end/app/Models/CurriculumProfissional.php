@@ -10,23 +10,26 @@ use App\Models\GrupoEspecializado;
 
 class CurriculumProfissional extends ModelBase
 {
-    protected $table = 'curriculums';
+    protected $table = 'curriculums_profissionais';
 
-    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'telefone', /* varchar(64); NOT NULL; */// Telefone
-        //'deleted_at', /* timestamp; */
-        //'apresentacao', /* longtext; NOT NULL; */// Apresentação
-        //'idiomas', /* json; */// Idiomas que fala
-        //'estado_civil', /* varchar(64); */// Estado Civil
-        //'quantidade_filhos', /* tinyint; NOT NULL; */// Qtde de filhos
-        //'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */// Curriculum ativa ou inativa
-        //'usuario_id', /* char(36); NOT NULL; */
-        //'cidade_id', /* char(36); NOT NULL; */
+    public $fillable = [ 
+        'lotacao_atual',
+        'especifique_habilidades',
+        'viagem_nacional',
+        'viagem_internacional',
+        'interesse_bnt',
+        'pgd_inserido',
+        'pgd_interesse',
+        'telefone',
+        'remocao',
+        'curriculum_id',
+        'centro_treinamento_id',
+        'cargo_id',
+        'grupo_especializado_id',
     ];
 
     protected $casts = [
-
-       
+        'especifique_habilidades' => AsJson::class,
     ];
 
     //public $fillable_changes = ['graduacoes'];
@@ -37,10 +40,10 @@ class CurriculumProfissional extends ModelBase
    // public function graduacoes() { return $this->hasMany(CurriculumGraduacao::class,'curriculum_id'); }
 
     // Belongs
-    public function curriculum() { return $this->belongsTo(Curriculum::class,'curriculum_id'); }
-    public function centroTreinamento() { return $this->belongsTo(CentroTreinamento::class,'centro_treinamento_id'); }
-    public function cargo() { return $this->belongsTo(Cargo::class,'cargo_id'); }
-    public function grupoEspecializado() { return $this->belongsTo(GrupoEspecializado::class,'grupo_especializado_id'); }
-        
+    public function curriculum() { return $this->belongsTo(Curriculum::class); }
+    public function centroTreinamento() { return $this->belongsTo(CentroTreinamento::class); }
+    public function cargo() { return $this->belongsTo(Cargo::class); }
+    public function grupoEspecializado() { return $this->belongsTo(GrupoEspecializado::class); }
+    public function historicoAtividadeExterna() { return $this->hasMany(HistoricoAtividadeExterna::class); }
 }
 

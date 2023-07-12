@@ -8,7 +8,7 @@ use App\Models\Funcao;
 
 class HistoricoFuncaoCurriculum extends ModelBase
 {
-    protected $table = 'atividades_fora_curriculum';
+    protected $table = 'historicos_funcoes_curriculum';
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'curriculum_profissional_id',

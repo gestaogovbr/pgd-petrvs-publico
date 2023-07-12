@@ -31,10 +31,10 @@ class CreateCurriculumsProfissionaisTable extends Migration
             $table->string('telefone',64)->nullable()->comment("Telefone do chefe imediato");
             $table->tinyInteger('remocao')->default(0)->comment("Você tem interesse em remoção");
             // Chaves estrangeiras:
-            $table->foreignUuid('curriculum_id')->constrained("curriculums")->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('centro_treinamento_id')->constrained("centros_treinamentos")->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('cargo_id')->constrained("cargos")->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('grupo_especializado_id')->constrained("grupos_especializados")->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('curriculum_id')->constrained("curriculums")->onDelete('restrict')->onUpdate('cascade')->comment("FK Curriculum ID");
+            $table->foreignUuid('centro_treinamento_id')->constrained("centros_treinamentos")->onDelete('restrict')->onUpdate('cascade')->comment("FK Centro de Treinamento ID");
+            $table->foreignUuid('cargo_id')->constrained("cargos")->onDelete('restrict')->onUpdate('cascade')->comment("FK Cargos");
+            $table->foreignUuid('grupo_especializado_id')->constrained("grupos_especializados")->onDelete('restrict')->onUpdate('cascade')->comment("FK Grupo Especializado ID");
         });
     }
 
