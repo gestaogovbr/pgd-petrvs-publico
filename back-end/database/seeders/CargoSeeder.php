@@ -14,26 +14,19 @@ class CargoSeeder extends Seeder
      */
     public function run()
     {
-
-        $array_cargos = [
+        $cargos = [
             ['nome'=> 'PRF','nivel'=> '','descricao'=>'','codigo'=>''],
             ['nome'=> 'Agente Administrativo','nivel'=> '','descricao'=>'','codigo'=>''],
-           ];
-        
-    
-    foreach($array_cargos as $cargo) {
-
-        $cargoI = new Cargo();
-        $cargoI->fill([
-            //'id' => uuid(),
-            'nome'=> $cargo['nome'],
-            'nivel'=>  $cargo['nivel'],
-            'descricao'=> $cargo['descricao'],
-            'codigo'=>  $cargo['codigo'],
-        ]);
-        $cargoI->save();
-        
-    }
-        //
+        ];
+        foreach($cargos as $c) {
+            $cargo = new Cargo();
+            $cargo->fill([
+                'nome'=> $c['nome'],
+                'nivel'=>  $c['nivel'],
+                'descricao'=> $c['descricao'],
+                'codigo'=>  $c['codigo'],
+            ]);
+            $cargo->save();
+        }
     }
 }

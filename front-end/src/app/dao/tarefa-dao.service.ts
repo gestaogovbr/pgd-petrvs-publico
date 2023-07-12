@@ -1,5 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
-import { Tarefa } from '../models/tarefa.model';
+import { Tarefa } from '../models/tipo-tarefa.model';
 import { DaoBaseService } from './dao-base.service';
 
 @Injectable({

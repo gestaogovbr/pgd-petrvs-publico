@@ -4,7 +4,7 @@ import { EditableFormComponent } from 'src/app/components/editable-form/editable
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
-import { Plano } from 'src/app/models/plano.model';
+import { Plano } from 'src/app/models/plano-trabalho.model';
 import { PlanoTrabalhoEntrega } from 'src/app/models/plano-trabalho-entrega.model';
 import { PlanoTrabalhoEntregaDaoService } from 'src/app/dao/plano-trabalho-entrega-dao.service';
 import { PlanoDaoService } from 'src/app/dao/plano-dao.service';

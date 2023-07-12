@@ -17,7 +17,7 @@ import { Atividade } from 'src/app/models/atividade.model';
 import { Usuario } from 'src/app/models/usuario.model';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { CalendarService } from 'src/app/services/calendar.service';
-import { Plano } from 'src/app/models/plano.model';
+import { Plano } from 'src/app/models/plano-trabalho.model';
 import { InputTimerComponent } from 'src/app/components/input/input-timer/input-timer.component';
 import { Unidade } from 'src/app/models/unidade.model';
 import { InputButtonComponent } from 'src/app/components/input/input-button/input-button.component';

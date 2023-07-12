@@ -2,7 +2,7 @@ import { Component, Injector } from '@angular/core';
 import { MetadadosPlano, PageReportBase, PlanoExtendido } from 'src/app/modules/base/page-report-base';
 import { Usuario } from 'src/app/models/usuario.model';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
-import { Plano } from 'src/app/models/plano.model';
+import { Plano } from 'src/app/models/plano-trabalho.model';
 import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
 import { ChartData, ChartOptions } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';

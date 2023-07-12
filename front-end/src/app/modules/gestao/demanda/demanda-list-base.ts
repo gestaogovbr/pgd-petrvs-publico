@@ -12,7 +12,7 @@ import { Afastamento } from 'src/app/models/afastamento.model';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { RouteMetadata } from 'src/app/services/navigate.service';
-import { Plano } from 'src/app/models/plano.model';
+import { Plano } from 'src/app/models/plano-trabalho.model';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { TipoProcessoDaoService } from 'src/app/dao/tipo-processo-dao.service';
 import { identifierModuleUrl } from '@angular/compiler';

@@ -1,6 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { DaoBaseService } from './dao-base.service';
-import { PlanoEntregaProcesso } from '../models/plano-entrega-processo.model';
+import { PlanoEntregaProcesso } from '../models/plano-entrega-entrega-processo.model';
 
 @Injectable({
   providedIn: 'root'

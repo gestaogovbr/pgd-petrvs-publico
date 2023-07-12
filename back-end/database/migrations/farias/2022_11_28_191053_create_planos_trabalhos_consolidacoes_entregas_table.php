@@ -24,7 +24,7 @@ class CreatePlanosTrabalhosConsolidacoesEntregasTable extends Migration
             $table->json("realizado")->nullable()->comment("Valor realizado da meta");
             // Chaves estrangeiras:
             $table->foreignUuid('consolidacao_id')->constrained("planos_trabalhos_consolidacoes")->onDelete('restrict')->onUpdate('cascade')->comment("Consolidação do Plano de Trabalho à qual está associada esta entrega");
-            $table->foreignUuid('plano_trabalho_entrega_id')->constrained("planos_trabalhos_entregas")->onDelete('restrict')->onUpdate('cascade')->comment("Entrega do Plano de Trabalho à qual está associada esta entrega");
+            $table->foreignUuid('entrega_id')->constrained("planos_trabalhos_entregas")->onDelete('restrict')->onUpdate('cascade')->comment("Entrega do Plano de Trabalho à qual está associada esta entrega");
         });
     }
 

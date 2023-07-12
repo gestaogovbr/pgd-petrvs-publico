@@ -18,13 +18,12 @@ class CreateLotacoesTable extends Migration
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
+            $table->softDeletes();
             // Campos:
-            $table->dateTime('data_inicio');
-            $table->dateTime('data_fim')->nullable();
             $table->tinyInteger('principal')->comment("Se é a lotação principal do usuário");
             // Chaves estrangeiras:
-            $table->foreignUuid('unidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('unidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment('Unidade');
+            $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment('Usuário');
         });
     }
 

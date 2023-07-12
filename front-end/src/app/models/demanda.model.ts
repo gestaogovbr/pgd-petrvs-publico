@@ -7,7 +7,7 @@ import { DemandaAvaliacao } from './demanda-avaliacao.model';
 import { DemandaEntrega } from './demanda-entrega.model';
 import { DemandaPausa } from './demanda-pausa.model';
 import { PlanoTrabalhoEntrega } from './plano-trabalho-entrega.model';
-import { Plano } from './plano.model';
+import { Plano } from './plano-trabalho.model';
 import { TipoProcesso } from './tipo-processo.model';
 import { Unidade } from './unidade.model';
 import { Usuario } from './usuario.model';

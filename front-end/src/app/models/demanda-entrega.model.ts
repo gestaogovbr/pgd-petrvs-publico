@@ -2,7 +2,7 @@ import { Base } from './base.model';
 import { Comentario, HasComentarios } from './comentario';
 import { Demanda } from './demanda.model';
 import { Entidade } from './entidade.model';
-import { Tarefa } from './tarefa.model';
+import { Tarefa } from './tipo-tarefa.model';
 import { TipoDocumento } from './tipo-documento.model';
 import { TipoProcesso } from './tipo-processo.model';
 import { Unidade } from './unidade.model';

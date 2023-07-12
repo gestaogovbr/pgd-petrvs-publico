@@ -4,7 +4,7 @@ import { ChartDataSets, ChartOptions } from 'chart.js';
 import { TemplateDataset } from '../components/input/input-editor/input-editor.component';
 import { Afastamento } from '../models/afastamento.model';
 import { DemandaPausa } from '../models/demanda-pausa.model';
-import { Plano } from '../models/plano.model';
+import { Plano } from '../models/plano-trabalho.model';
 import { Unidade } from '../models/unidade.model';
 import { Usuario } from '../models/usuario.model';
 import { Efemerides, TipoContagem } from '../services/calendar.service';

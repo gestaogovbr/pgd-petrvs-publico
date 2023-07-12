@@ -11,7 +11,7 @@ import { SelectItem } from 'src/app/components/input/input-base';
 import { Usuario } from 'src/app/models/usuario.model';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
-import { Plano } from 'src/app/models/plano.model';
+import { Plano } from 'src/app/models/plano-trabalho.model';
 import { CalendarService } from 'src/app/services/calendar.service';
 import { InputTimerComponent } from 'src/app/components/input/input-timer/input-timer.component';
 

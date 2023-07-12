@@ -56,6 +56,10 @@ class CreatePlanosEntregas extends Migration
      */
     public function down()
     {
+        DB::unprepared('DROP PROCEDURE IF EXISTS sequence_plano_entrega_numero');
+        Schema::table('sequence', function (Blueprint $table) {
+            $table->dropColumn('plano_entrega_numero');
+        });
         Schema::dropIfExists('planos_entregas');
     }
 }

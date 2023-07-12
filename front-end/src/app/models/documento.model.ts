@@ -2,7 +2,7 @@ import { TemplateDataset } from '../components/input/input-editor/input-editor.c
 import { Base } from './base.model';
 import { DocumentoAssinatura } from './documento-assinatura.model';
 import { Entidade } from './entidade.model';
-import { Plano } from './plano.model';
+import { Plano } from './plano-trabalho.model';
 import { TipoDocumento } from './tipo-documento.model';
 import { TipoProcesso } from './tipo-processo.model';
 

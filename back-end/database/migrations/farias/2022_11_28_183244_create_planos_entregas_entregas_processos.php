@@ -22,7 +22,7 @@ class CreatePlanosEntregasEntregasProcessos extends Migration
             // Campos:
             // Chaves estrangeiras:
             $table->foreignUuid('processo_id')->constrained("cadeias_valores_processos")->onDelete('restrict')->onUpdate('cascade')->comment("Processo da Cadeia de Valores ao qual está vinculado este processo");
-            $table->foreignUuid('plano_entrega_entrega_id')->constrained("planos_entregas_entregas")->onDelete('restrict')->onUpdate('cascade')->comment("Entrega do Plano de Entregas à qual está vinculado este processo");
+            $table->foreignUuid('entrega_id')->constrained("planos_entregas_entregas")->onDelete('restrict')->onUpdate('cascade')->comment("Entrega do Plano de Entregas à qual está vinculado este processo");
         });
     }
 

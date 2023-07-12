@@ -14,8 +14,7 @@ class TipoCursoSeeder extends Seeder
      */
     public function run()
     {
-       $array_cursos =  [  
-       
+       $tipos_cursos =  [  
             ['nome'=>'Acadêmico'],
             ['nome'=>'Institucional'],
             ['nome'=>'Operacional'],
@@ -26,15 +25,12 @@ class TipoCursoSeeder extends Seeder
             ['nome'=>'Administração e Logística'],
             ['nome'=>'Executiva'],
         ];
-    
-        foreach($array_cursos as $curso){
-            $cursoI = new TipoCurso();
-            $cursoI->fill([
-                'nome'=> $curso['nome'],
-              
+        foreach($tipos_cursos as $tc){
+            $tipo_curso = new TipoCurso();
+            $tipo_curso->fill([
+                'nome'=> $tc['nome'],
             ]);
-            $cursoI->save();
-            
+            $tipo_curso->save();
         }
     }
 }

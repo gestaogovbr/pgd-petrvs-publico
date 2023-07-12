@@ -18,7 +18,7 @@ import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { NavigateResult } from 'src/app/services/navigate.service';
 import { SelectItem } from 'src/app/components/input/input-base';
-import { Tarefa } from 'src/app/models/tarefa.model';
+import { Tarefa } from 'src/app/models/tipo-tarefa.model';
 import { SeiKeys } from 'src/app/listeners/procedimento-trabalhar/procedimento-trabalhar.component';
 import { ComentarioService } from 'src/app/services/comentario.service';
 import { ComentariosComponent } from 'src/app/modules/uteis/comentarios/comentarios.component';

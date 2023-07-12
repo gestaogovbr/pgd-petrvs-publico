@@ -4,7 +4,7 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { SelectItem } from 'src/app/components/input/input-base';
 import { Usuario } from 'src/app/models/usuario.model';
-import { Plano } from 'src/app/models/plano.model';
+import { Plano } from 'src/app/models/plano-trabalho.model';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { PageReportFilterBase } from 'src/app/modules/base/page-report-filter-base';

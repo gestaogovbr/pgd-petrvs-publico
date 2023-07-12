@@ -5,7 +5,7 @@ import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
 import { TarefaDaoService } from 'src/app/dao/tarefa-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
-import { Tarefa } from 'src/app/models/tarefa.model';
+import { Tarefa } from 'src/app/models/tipo-tarefa.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
 @Component({

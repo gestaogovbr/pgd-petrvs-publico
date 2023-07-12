@@ -37,6 +37,5 @@ class CreateCadeiasValoresProcessos extends Migration
     public function down()
     {
         Schema::dropIfExists('cadeias_valores_processos');
-
     }
 }

@@ -29,5 +29,4 @@ class TenantService extends ServiceBase {
         Artisan::call('tenants:migrate' . (empty($id) ? '' : ' --tenants=' . $id));
         return Artisan::output();
     }
-
 }

@@ -1,5 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
-import { Plano } from '../models/plano.model';
+import { Plano } from '../models/plano-trabalho.model';
 import { MetadadosPlano } from 'src/app/modules/base/page-report-base';
 import { DaoBaseService } from './dao-base.service';
 import { TemplateDataset } from '../components/input/input-editor/input-editor.component';

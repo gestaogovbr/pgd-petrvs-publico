@@ -23,7 +23,7 @@ import { Documento } from 'src/app/models/documento.model';
 import { PlanoAtividade } from 'src/app/models/plano-atividade.model';
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { PlanoTrabalhoEntrega } from 'src/app/models/plano-trabalho-entrega.model';
-import { Plano } from 'src/app/models/plano.model';
+import { Plano } from 'src/app/models/plano-trabalho.model';
 import { Programa } from 'src/app/models/programa.model';
 import { Template } from 'src/app/models/template.model';
 import { TipoModalidade } from 'src/app/models/tipo-modalidade.model';

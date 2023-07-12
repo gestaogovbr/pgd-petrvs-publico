@@ -1,6 +1,6 @@
 import { Base } from './base.model';
 import { Atividade } from './atividade.model';
-import { Plano } from './plano.model';
+import { Plano } from './plano-trabalho.model';
 
 export class PlanoAtividade extends Base {
     public plano?: Plano;

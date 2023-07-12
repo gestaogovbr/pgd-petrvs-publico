@@ -16,7 +16,7 @@ import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.se
 import { SeiKeys } from 'src/app/listeners/procedimento-trabalhar/procedimento-trabalhar.component';
 import { IIndexable } from 'src/app/models/base.model';
 import { Documento } from 'src/app/models/documento.model';
-import { Plano } from 'src/app/models/plano.model';
+import { Plano } from 'src/app/models/plano-trabalho.model';
 import { Programa } from 'src/app/models/programa.model';
 import { TipoDocumento } from 'src/app/models/tipo-documento.model';
 import { Unidade } from 'src/app/models/unidade.model';

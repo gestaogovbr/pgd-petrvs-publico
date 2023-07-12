@@ -6,18 +6,6 @@ use App\Models\Capacidade;
 use App\Services\ServiceBase;
 
 class CapacidadeService extends ServiceBase {
-    /*
-        Perfis Ids:
-        Administrador   = UtilService->uuid("Administrador")
-        Desenvolvedor   = UtilService->uuid("Desenvolvedor")
-        Usuário Nível 5 = UtilService->uuid("Usuário Nível 5")
-        Usuário Nível 4 = UtilService->uuid("Usuário Nível 4")
-        Usuário Nível 3 = UtilService->uuid("Usuário Nível 3")
-        Usuário Nível 2 = UtilService->uuid("Usuário Nível 2")
-        Usuário Nível 1 = UtilService->uuid("Usuário Nível 1")
-        [id, data_inicio, ?, perfil_id, tipo_capacidade_id]
-        [this.util.uuid("Desenvolvedor"."MOD_CFG_USER_APELIDO"), this.util.uuid("Desenvolvedor"), this.util.uuid("MOD_CFG_USER_APELIDO")]
-    */
 
     public $antigasCapacidades = [
         ["09898bf3-d779-11ec-a5bb-0050569c64a0","2022-05-19 10:38:59","74051a4a-6e25-4aab-9abc-8872c6c1029a","6ac04dbf-d773-11ec-a5bb-0050569c64a0"],

@@ -1,7 +1,7 @@
 import { Component, ContentChild, ElementRef, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { Atividade } from 'src/app/models/atividade.model';
-import { Plano } from 'src/app/models/plano.model';
+import { Plano } from 'src/app/models/plano-trabalho.model';
 import { PageBase } from 'src/app/modules/base/page-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 

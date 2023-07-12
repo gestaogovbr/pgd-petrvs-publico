@@ -11,7 +11,7 @@ import { ProjetoRecurso, ProjetoRecursoTipo } from 'src/app/models/projeto-recur
 import { ProjetoRegra } from 'src/app/models/projeto-regra.model';
 import { ProjetoTarefa, ProjetoTarefaStatus } from 'src/app/models/projeto-tarefa.model';
 import { HasAlocacoes, HasTarefas, Projeto, ProjetoStatus } from 'src/app/models/projeto.model';
-import { Tarefa } from 'src/app/models/tarefa.model';
+import { Tarefa } from 'src/app/models/tipo-tarefa.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import * as moment from 'moment';
 import { LookupItem } from 'src/app/services/lookup.service';

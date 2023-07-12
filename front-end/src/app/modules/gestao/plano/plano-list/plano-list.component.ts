@@ -12,7 +12,7 @@ import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Documento } from 'src/app/models/documento.model';
-import { Plano } from 'src/app/models/plano.model';
+import { Plano } from 'src/app/models/plano-trabalho.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { FullRoute } from 'src/app/services/navigate.service';
 import { PlanoService } from '../plano.service';
