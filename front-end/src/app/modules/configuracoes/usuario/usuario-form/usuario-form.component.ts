@@ -3,7 +3,7 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
 import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
-import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
+import { PlanoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';

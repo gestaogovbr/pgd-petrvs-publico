@@ -8,7 +8,7 @@ import { InputSearchComponent } from 'src/app/components/input/input-search/inpu
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
 import { InputButtonComponent } from 'src/app/components/input/input-button/input-button.component';
 import { TipoDocumentoDaoService } from 'src/app/dao/tipo-documento-dao.service';
-import { TarefaDaoService } from 'src/app/dao/tarefa-dao.service';
+import { TarefaDaoService } from 'src/app/dao/tipo-tarefa-dao.service';
 import { DemandaEntregaDaoService } from 'src/app/dao/demanda-entrega-dao.service';
 import { DemandaEntrega } from 'src/app/models/demanda-entrega.model';
 import { Comentario } from 'src/app/models/comentario';

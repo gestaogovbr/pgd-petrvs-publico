@@ -5,7 +5,7 @@ import { TemplateDataset } from 'src/app/components/input/input-editor/input-edi
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
-import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
+import { PlanoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';

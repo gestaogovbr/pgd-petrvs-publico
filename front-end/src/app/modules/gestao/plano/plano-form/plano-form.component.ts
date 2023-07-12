@@ -11,7 +11,7 @@ import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { DocumentoDaoService } from 'src/app/dao/documento-dao-service';
-import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
+import { PlanoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
 import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 import { TipoModalidadeDaoService } from 'src/app/dao/tipo-modalidade-dao.service';

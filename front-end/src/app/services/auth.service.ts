@@ -147,7 +147,7 @@ export class AuthService {
   public registerUser(user: any, token?: string) {
     if (user) {
       this.usuario = Object.assign(new Usuario(), user) as Usuario;
-      this.capacidades = this.usuario?.perfil?.capacidades?.filter(x => x.data_fim == null).map(x => x.tipo_capacidade?.codigo || "") || [];
+      this.capacidades = this.usuario?.perfil?.capacidades?.filter(x => x.deleted_at == null).map(x => x.tipo_capacidade?.codigo || "") || [];
       this.kind = this.kind;
       this.logged = true;
       this.unidades = this.usuario?.lotacoes?.map(x => x.unidade!) || [];

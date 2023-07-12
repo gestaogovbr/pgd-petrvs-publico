@@ -4,7 +4,7 @@ import { DemandaDaoService } from 'src/app/dao/demanda-dao.service';
 import { DemandaEntregaDaoService } from 'src/app/dao/demanda-entrega-dao.service';
 import { DocumentoDaoService } from 'src/app/dao/documento-dao-service';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
-import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
+import { PlanoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { TipoDocumentoDaoService } from 'src/app/dao/tipo-documento-dao.service';
 import { Base } from 'src/app/models/base.model';
 import { DemandaEntrega } from 'src/app/models/demanda-entrega.model';

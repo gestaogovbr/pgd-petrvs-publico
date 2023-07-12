@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
+import { PlanoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { Documento, HasDocumentos } from 'src/app/models/documento.model';
 import { Plano } from 'src/app/models/plano-trabalho.model';
 import { Template } from 'src/app/models/template.model';

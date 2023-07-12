@@ -1,4 +1,3 @@
-import { Base, IIndexable } from '../models/base.model';
 import { Injectable, Injector } from '@angular/core';
 import { Programa } from '../models/programa.model';
 import { DaoBaseService } from './dao-base.service';

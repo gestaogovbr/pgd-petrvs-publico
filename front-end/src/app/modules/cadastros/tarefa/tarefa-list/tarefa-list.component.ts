@@ -1,7 +1,7 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { TarefaDaoService } from 'src/app/dao/tarefa-dao.service';
+import { TarefaDaoService } from 'src/app/dao/tipo-tarefa-dao.service';
 import { Tarefa } from 'src/app/models/tipo-tarefa.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { DaoBaseService } from 'src/app/dao/dao-base.service';

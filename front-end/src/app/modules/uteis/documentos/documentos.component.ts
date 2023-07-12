@@ -4,7 +4,7 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { DocumentoDaoService } from 'src/app/dao/documento-dao-service';
-import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
+import { PlanoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Documento, DocumentoEspecie, HasDocumentos } from 'src/app/models/documento.model';
 import { Template } from 'src/app/models/template.model';

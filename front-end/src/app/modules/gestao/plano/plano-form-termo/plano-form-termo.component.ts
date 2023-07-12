@@ -6,7 +6,7 @@ import { InputSearchComponent } from 'src/app/components/input/input-search/inpu
 import { UnitWorkload } from 'src/app/components/input/input-workload/input-workload.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { DocumentoDaoService } from 'src/app/dao/documento-dao-service';
-import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
+import { PlanoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 import { TipoDocumentoDaoService } from 'src/app/dao/tipo-documento-dao.service';
 import { TipoModalidadeDaoService } from 'src/app/dao/tipo-modalidade-dao.service';

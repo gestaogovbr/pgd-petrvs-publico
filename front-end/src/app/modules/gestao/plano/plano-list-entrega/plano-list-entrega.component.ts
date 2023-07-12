@@ -7,7 +7,7 @@ import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { Plano } from 'src/app/models/plano-trabalho.model';
 import { PlanoTrabalhoEntrega } from 'src/app/models/plano-trabalho-entrega.model';
 import { PlanoTrabalhoEntregaDaoService } from 'src/app/dao/plano-trabalho-entrega-dao.service';
-import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
+import { PlanoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { EntregaDaoService } from 'src/app/dao/entrega-dao.service';

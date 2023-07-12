@@ -17,7 +17,7 @@ import { Atividade } from 'src/app/models/atividade.model';
 import { Usuario } from 'src/app/models/usuario.model';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { CalendarService } from 'src/app/services/calendar.service';
-import { Plano } from 'src/app/models/plano-trabalho.model';
+import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { InputTimerComponent } from 'src/app/components/input/input-timer/input-timer.component';
 import { Unidade } from 'src/app/models/unidade.model';
 import { InputButtonComponent } from 'src/app/components/input/input-button/input-button.component';
@@ -28,7 +28,7 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import { TipoProcessoDaoService } from 'src/app/dao/tipo-processo-dao.service';
 import { DemandaEntrega } from 'src/app/models/demanda-entrega.model';
 import { DemandaPausa } from 'src/app/models/demanda-pausa.model';
-import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
+import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { ComentarioService } from 'src/app/services/comentario.service';
 import { ComentariosComponent } from 'src/app/modules/uteis/comentarios/comentarios.component';
 
@@ -58,7 +58,7 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
   //public formComentarios: FormGroup;
   public tipoDocumentoDao: TipoDocumentoDaoService;
   public tipoProcessoDao: TipoProcessoDaoService;
-  public planoDao: PlanoDaoService;
+  public planoTrabalhoDao: PlanoTrabalhoDaoService;
   public atividadeDao: AtividadeDaoService;
   public unidadeDao: UnidadeDaoService;
   public usuarioDao: UsuarioDaoService;
@@ -70,7 +70,7 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
   public complexidades: LookupItem[] = [];
   public planos: LookupItem[] = [];
   public planoJoin: string[] = ["documento:id,metadados", "entregas.entrega:id,nome", "tipo_modalidade:id,nome"];
-  public planoSelecionado?: Plano | null = null;
+  public planoSelecionado?: PlanoTrabalho | null = null;
   public entregas: LookupItem[] = [];
   //public comentarioTipos: LookupItem[];
 
@@ -91,7 +91,7 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
     this.atividadeDao = injector.get<AtividadeDaoService>(AtividadeDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
-    this.planoDao = injector.get<PlanoDaoService>(PlanoDaoService);
+    this.planoTrabalhoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
     this.calendar = injector.get<CalendarService>(CalendarService);
     this.comentario = injector.get<ComentarioService>(ComentarioService);
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
@@ -150,7 +150,7 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
       tipo: {default: "COMENTARIO"},
       privacidade: {default: "PUBLICO"}
     }, this.cdRef, this.validateComentario);*/
-    this.join = ["usuario.planos.entregas.entrega:id,nome", "usuario.planos.tipo_modalidade:id,nome", "pausas", "atividade", "unidade", "comentarios.usuario", "entregas.tarefa", "entregas.comentarios.usuario", "plano.documento:id,metadados"];
+    this.join = ["usuario.planos_trabalho.entregas.entrega:id,nome", "usuario.planos_trabalho.tipo_modalidade:id,nome", "pausas", "atividade", "unidade", "comentarios.usuario", "entregas.tarefa", "entregas.comentarios.usuario", "plano.documento:id,metadados"];
   }
 
   public ngOnInit() {
@@ -246,15 +246,15 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
     if(checklst) result = "Checklist " + checklst.texto + "não pode ser utilizado!";
     /* Validações pelo plano */
     if(this.form.controls.plano_id.value?.length) {
-      /* Verifica se a atividade seleciona está na lista de atividades permitidas no plano de trabalho */
+      /* Verifica se a atividade selecionada está na lista de atividades permitidas no plano de trabalho */
       if(this.form.controls.atividade_id.value?.length && !this.auth.hasPermissionTo('MOD_DMD_ATV_FORA_PL_TRB')) {
-        const atividades_termo_adesao = this.planoSelecionado?.documento?.metadados?.atividades_termo_adesao;
+        //const atividades_termo_adesao = this.planoSelecionado?.documento?.metadados?.atividades_termo_adesao;
         const atividade = this.atividade!.searchObj as Atividade;
         if(!this.planoSelecionado || this.planoSelecionado?.id != this.form.controls.plano_id.value) {
           result = "Erro ao ler " + this.lex.noun("plano de trabalho") + ". Selecione-o novamente!";
-        } else if(atividades_termo_adesao && atividade && atividades_termo_adesao.indexOf(this.util.removeAcentos(atividade.nome.toLowerCase())) < 0){
-          result = this.lex.noun("Atividade") + " não consta na lista permitida pelo " + this.lex.noun("plano de trabalho") + " selecionado.";
-        }
+        } //else if(atividades_termo_adesao && atividade && atividades_termo_adesao.indexOf(this.util.removeAcentos(atividade.nome.toLowerCase())) < 0){
+          //result = this.lex.noun("Atividade") + " não consta na lista permitida pelo " + this.lex.noun("plano de trabalho") + " selecionado.";
+        //}
       }
     }
     //}
@@ -313,11 +313,11 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
   private calcularPrazo(source: "PACTUADO" | "COMPLEXIDADE" | "PLANO" | "PLANEJADO" | "ENTREGA") {
     if(this.action != "consult"){
       const atividade = this.atividade?.searchObj as Atividade;
-      const plano = (this.plano?.selectedItem?.data || this.planos.find(x => x.key == this.plano?.selectedItem?.key)?.data) as Plano;
+      const plano = (this.plano?.selectedItem?.data || this.planos.find(x => x.key == this.plano?.selectedItem?.key)?.data) as PlanoTrabalho;
       if(source == "PACTUADO") {
         const fator = this.form.controls.fator_complexidade.value || 1;
-        const fator_ganho_produtivade = 1 - ((plano?.ganho_produtividade || 0) / 100);
-        this.form.controls.tempo_pactuado.setValue((atividade?.tempo_pactuado || 0) * fator * fator_ganho_produtivade || 0);
+        //const fator_ganho_produtivade = 1 - ((plano?.ganho_produtividade || 0) / 100);
+        this.form.controls.tempo_pactuado.setValue((atividade?.tempo_pactuado || 0) * fator || 0);
         this.cdRef.detectChanges();
       } else if(this.deltaChanged()) {
         const unidade = this.unidade?.searchObj as Unidade;
@@ -367,11 +367,11 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
   public onPlanoChange(event: Event) {
     (async () => {
       if(this.entity) {
-        const plano = (this.usuario?.searchObj as Usuario)?.planos?.find(x => x.id == this.form!.controls.plano_id.value);
+        const plano: PlanoTrabalho = (this.usuario?.searchObj as Usuario)?.planos_trabalho?.find(x => x.id == this.form!.controls.plano_id.value);
         const entrega_id = this.form.controls.entrega_id.value;
         if(plano) {
           if(this.planoSelecionado?.id != plano.id) {
-            this.planoSelecionado = await this.planoDao.getById(plano.id, this.planoJoin);
+            this.planoSelecionado = await this.planoTrabalhoDao.getById(plano.id, this.planoJoin);
           }
           if(this.form!.controls.unidade_id.value != plano.unidade_id) {
             const unidade = await this.unidadeDao.getById(plano.unidade_id);
@@ -528,7 +528,7 @@ export class DemandaFormComponent extends PageFormBase<Demanda, DemandaDaoServic
   }
 
   public getPlanos(usuario: Usuario, data_distribuicao: Date, plano_id: string | null): LookupItem[] {
-    return usuario.planos?.filter(x => x.id == plano_id || (!x.data_fim && this.util.between(data_distribuicao, {start: x.data_inicio_vigencia, end: x.data_fim_vigencia}))).map(x => Object.assign({
+    return usuario.planos_trabalho?.filter(x => x.id == plano_id || (!x.deleted_at && this.util.between(data_distribuicao, {start: x.data_inicio_vigencia, end: x.data_fim_vigencia}))).map(x => Object.assign({
       key: x.id, 
       value: (x.tipo_modalidade?.nome || "") + " - " + this.usuarioDao.getDateFormatted(x.data_inicio_vigencia)+ " a " + this.usuarioDao.getDateFormatted(x.data_fim_vigencia), data: x
     })) || [];

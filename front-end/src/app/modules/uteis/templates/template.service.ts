@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
-import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
+import { PlanoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { TemplateDaoService } from 'src/app/dao/template-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { NotificacoesConfig } from 'src/app/models/notificacao.model';

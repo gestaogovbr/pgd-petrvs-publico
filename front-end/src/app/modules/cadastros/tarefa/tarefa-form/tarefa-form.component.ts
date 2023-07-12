@@ -2,7 +2,7 @@ import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
-import { TarefaDaoService } from 'src/app/dao/tarefa-dao.service';
+import { TarefaDaoService } from 'src/app/dao/tipo-tarefa-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Tarefa } from 'src/app/models/tipo-tarefa.model';

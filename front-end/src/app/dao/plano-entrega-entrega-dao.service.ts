@@ -10,10 +10,5 @@ export class PlanoEntregaEntregaDaoService extends DaoBaseService<PlanoEntregaEn
   constructor(protected injector: Injector) {
     super("PlanoEntregaEntrega", injector);
   }
-
-  public needHomologate(plano: PlanoEntregaEntrega){
-
-  }
-
 }
 

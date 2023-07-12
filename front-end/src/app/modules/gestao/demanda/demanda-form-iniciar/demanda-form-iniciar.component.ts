@@ -11,7 +11,7 @@ import { SelectItem } from 'src/app/components/input/input-base';
 import { Usuario } from 'src/app/models/usuario.model';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
-import { Plano } from 'src/app/models/plano-trabalho.model';
+import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { CalendarService } from 'src/app/services/calendar.service';
 import { InputTimerComponent } from 'src/app/components/input/input-timer/input-timer.component';
 
@@ -57,7 +57,7 @@ export class DemandaFormIniciarComponent extends PageFormBase<Demanda, DemandaDa
       data_inicio: {default: null},
       suspender: {default: false}
     }, this.cdRef, this.validate);
-    this.join = ["unidade", "atividade", "usuario.planos.tipo_modalidade", "usuario.planos.entregas.entrega:id,nome"];
+    this.join = ["unidade", "atividade", "usuario.planos_trabalho.tipo_modalidade", "usuario.planos_trabalho.entregas.entrega:id,nome"];
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -92,7 +92,7 @@ export class DemandaFormIniciarComponent extends PageFormBase<Demanda, DemandaDa
 
   public onUsuarioSelect(item: SelectItem) {
     const usuario: Usuario | undefined = item.entity as Usuario;
-    const planos = usuario?.planos || [];
+    const planos = usuario?.planos_trabalho || [];
     this.planos = planos.filter(x => x.unidade_id == this.entity!.unidade_id).map(x => {
       return {
         key: x.id,
@@ -110,7 +110,7 @@ export class DemandaFormIniciarComponent extends PageFormBase<Demanda, DemandaDa
   public onPlanoChange(event: Event) {
     (async () => {
       if(this.entity) {
-        const plano = this.plano?.selectedItem?.data as Plano;
+        const plano = this.plano?.selectedItem?.data as PlanoTrabalho;
         const entrega_id = this.form.controls.entrega_id.value;
         /*if(plano && this.form!.controls.unidade_id.value != plano.unidade_id) {
           const unidade = await this.unidadeDao.getById(plano.unidade_id);
@@ -122,11 +122,11 @@ export class DemandaFormIniciarComponent extends PageFormBase<Demanda, DemandaDa
         const cargaHoraria = plano?.carga_horaria || this.calendar.expedienteMedio(this.entity!.unidade);
         const tempo_planejado = this.calendar.horasUteis(this.form.controls.data_distribuicao.value, this.form.controls.prazo_entrega.value, cargaHoraria, this.entity!.unidade!, "DISTRIBUICAO");
         const fator = this.form.controls.fator_complexidade.value || 1;
-        const fator_ganho_produtivade = 1 - ((plano?.ganho_produtividade || 0) / 100);
+        //const fator_ganho_produtivade = 1 - ((plano?.ganho_produtividade || 0) / 100);
         if(this.planejado) this.planejado!.hoursPerDay = cargaHoraria;
         this.form.controls.carga_horaria.setValue(cargaHoraria);
         this.form.controls.tempo_planejado.setValue(tempo_planejado);
-        this.form.controls.tempo_pactuado.setValue((this.entity?.atividade?.tempo_pactuado || 0) * fator * fator_ganho_produtivade || 0);
+        this.form.controls.tempo_pactuado.setValue((this.entity?.atividade?.tempo_pactuado || 0) * fator || 0);
         /* Carrega entregas */
         this.entregas = plano.entregas?.map(x => Object.assign({}, {
           key: x.id,
