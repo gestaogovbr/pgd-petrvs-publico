@@ -33,8 +33,7 @@ import { CurriculumListComponent } from './modules/cadastros/curriculum/curricul
     SpinnerOverlayComponent,
     TesteComponent,
     TesteFormComponent,
-    CurriculumListComponent,
-
+    CurriculumListComponent
   ],
   imports: [
     BrowserModule,

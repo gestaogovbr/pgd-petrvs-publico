@@ -7,12 +7,13 @@ import { TipoCargaHoraria } from './entidade.model';
 import { PlanoEntrega } from './plano-entrega.model';
 import { PlanoTrabalhoEntrega } from './plano-trabalho-entrega.model';
 import { Atividade } from './atividade.model';
+import { Documento, HasDocumentos } from './documento.model';
 
 export type PlanoMetadados = {
   concluido: boolean
 }
 
-export class PlanoTrabalho extends Base {
+export class PlanoTrabalho extends Base implements HasDocumentos {
     public tipo_modalidade?: TipoModalidade;
     public plano_entrega?: PlanoEntrega;
     public unidade?: Unidade;
@@ -20,6 +21,8 @@ export class PlanoTrabalho extends Base {
     public programa?: Programa;
     public atividades: Atividade[] = []; /* Atividades vinculadas ao Plano */
     public entregas: PlanoTrabalhoEntrega[] = []; /* Entregas vinculadas ao Plano de Trabalho*/
+    public documento?: Documento;
+    public documentos: Documento[] = [];
 
     public carga_horaria: number = 0; //Carga horária diária do usuário
     public tempo_total: number = 0; //Horas úteis de trabalho no período de data_inicio_vigencia à data_fim_vigencia considerando carga_horaria, feriados, fins de semana
@@ -34,6 +37,7 @@ export class PlanoTrabalho extends Base {
     public unidade_id: string = "";
     public tipo_modalidade_id: string = "";
     public plano_entrega_id: string = "";
+    public documento_id: string = "";
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

@@ -9,7 +9,6 @@ import { TesteFormComponent } from './modules/teste/teste-form/teste-form.compon
 import { TesteComponent } from './modules/teste/teste.component';
 import { ConfigResolver } from './resolvies/config.resolver';
 
-
 const routes: Routes = [
   { path: 'panel', loadChildren: () => import('./modules/panel/panel.module').then(m => m.PanelModule) },
   { path: 'teste', component: TesteComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Teste" } },
@@ -26,7 +25,7 @@ const routes: Routes = [
   { path: 'cadastros/eixo-tematico', loadChildren: () => import('./modules/cadastros/eixo-tematico/eixo-tematico.module').then(m => m.EixoTematicoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/feriado', loadChildren: () => import('./modules/cadastros/feriado/feriado.module').then(m => m.FeriadoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/material-servico', loadChildren: () => import('./modules/cadastros/material-servico/material-servico.module').then(m => m.MaterialServicoModule), canActivate: [AuthGuard] },
-  { path: 'cadastros/tarefa', loadChildren: () => import('./modules/cadastros/tarefa/tarefa.module').then(m => m.TarefaModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/tarefa', loadChildren: () => import('./modules/cadastros/tipo-tarefa/tipo-tarefa.module').then(m => m.TipoTarefaModule), canActivate: [AuthGuard] },
   { path: 'cadastros/tipo-atividade', loadChildren: () => import('./modules/cadastros/tipo-atividade/tipo-atividade.module').then(m => m.TipoAtividadeModule), canActivate: [AuthGuard] },
   { path: 'cadastros/tipo-avaliacao', loadChildren: () => import('./modules/cadastros/tipo-avaliacao/tipo-avaliacao.module').then(m => m.TipoAvaliacaoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/tipo-documento', loadChildren: () => import('./modules/cadastros/tipo-documento/tipo-documento.module').then(m => m.TipoDocumentoModule), canActivate: [AuthGuard] },
@@ -38,7 +37,7 @@ const routes: Routes = [
   { path: 'gestao/cadeia-valor', loadChildren: () => import('./modules/gestao/cadeia-valor/cadeia-valor.module').then(m => m.CadeiaValorModule), canActivate: [AuthGuard] },
   { path: 'gestao/demanda', loadChildren: () => import('./modules/gestao/demanda/demanda.module').then(m => m.DemandaModule), canActivate: [AuthGuard] },
   { path: 'gestao/planejamento', loadChildren: () => import('./modules/gestao/planejamento-institucional/planejamento.module').then(m => m.PlanejamentoModule), canActivate: [AuthGuard] },
-  { path: 'gestao/plano-trabalho', loadChildren: () => import('./modules/gestao/plano/plano.module').then(m => m.PlanoModule), canActivate: [AuthGuard] },
+  { path: 'gestao/plano-trabalho', loadChildren: () => import('./modules/gestao/plano-trabalho/plano-trabalho.module').then(m => m.PlanoTrabalhoModule), canActivate: [AuthGuard] },
   { path: 'gestao/plano-entrega', loadChildren: () => import('./modules/gestao/plano-entrega/plano-entrega.module').then(m => m.PlanoEntregaModule), canActivate: [AuthGuard] },
   { path: 'gestao/projeto', loadChildren: () => import('./modules/gestao/projeto/projeto.module').then(m => m.ProjetoModule), canActivate: [AuthGuard] },
   { path: 'configuracoes/preferencia', loadChildren: () => import('./modules/configuracoes/preferencia/preferencia.module').then(m => m.PreferenciaModule), canActivate: [AuthGuard] },

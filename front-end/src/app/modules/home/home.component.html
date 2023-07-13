@@ -128,13 +128,13 @@
                 <profile-picture [url]="usuario.foto"></profile-picture>
                 <h3>{{usuario.nome}}</h3>
                 <div class="flex-shrink-1 w-30 ms-auto">
-                    <div *ngFor="let plano of usuario.planos_trabalho" class="mb-2 d-flex align-items-center">
+                    <div *ngFor="let plano of usuario.planos" class="mb-2 d-flex align-items-center">
                         <div class="w-100">
                             <progress-bar [value]="plano.progresso" noPercentage="Sim"></progress-bar>
                         </div>
                         <span class="text-gray-400 fw-bolder ms-2">{{plano.progresso}}%</span>
                     </div>
-                    <div *ngIf="!usuario.planos_trabalho.length">
+                    <div *ngIf="!usuario.planos.length">
                         <p>{{ 'Sem ' + lex.noun('plano de trabalho',true) }}</p>
                     </div>
                 </div>

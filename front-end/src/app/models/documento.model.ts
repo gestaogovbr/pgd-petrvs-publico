@@ -2,7 +2,7 @@ import { TemplateDataset } from '../components/input/input-editor/input-editor.c
 import { Base } from './base.model';
 import { DocumentoAssinatura } from './documento-assinatura.model';
 import { Entidade } from './entidade.model';
-import { Plano } from './plano-trabalho.model';
+import { PlanoTrabalho } from './plano-trabalho.model';
 import { TipoDocumento } from './tipo-documento.model';
 import { TipoProcesso } from './tipo-processo.model';
 
@@ -19,7 +19,7 @@ export class Documento extends Base {
     public static STATUS_AGUARDANDO_SEI = "GERADO";
 
     public entidade?: Entidade;
-    public plano?: Plano;
+    public plano_trabalho?: PlanoTrabalho;
     public tipo_documento?: TipoDocumento;
     public tipo_processo?: TipoProcesso;
 
@@ -40,7 +40,7 @@ export class Documento extends Base {
     public datasource: any = null; /* DataSource do template (Dados disponíveis para interpolação) */
 
     public entidade_id: string | null = null; /* Entidade */
-    public plano_id: string | null = null; /* Plano */
+    public plano_trabalho_id: string | null = null; /* Plano de Trabalho */
     public tipo_documento_id: string | null = null; /* Tipo documento */
     public tipo_processo_id: string | null = null; /* Tipo processo */
     public template_id: string | null = null; /* Template */

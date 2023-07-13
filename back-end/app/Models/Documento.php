@@ -32,7 +32,7 @@ class Documento extends ModelBase
         'atividade_tarefa_id', /* char(36); */
         'template_id', /* char(36); */
         //'deleted_at', /* timestamp; */
-        //'plano_trabalho_id', /* char(36); */
+        'plano_trabalho_id', /* char(36); */
     ];
 
     public $delete_cascade = ['assinaturas'];

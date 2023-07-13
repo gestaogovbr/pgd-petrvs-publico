@@ -1,0 +1,230 @@
+<div #termo>
+    <table>
+        <tbody>
+            <tr>
+                <td style="padding:15px;" colspan="2">
+                    <h3 style="text-align:center;">{{ lex.noun('PLANO DE TRABALHO') }}</h3>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:8px;">
+                    <p><b>Nome do participante:</b></p>
+                    <p>{{plano?.usuario?.nome}}</p>
+                </td>
+                <td>
+                    <p><b>Nome da unidade responsável:</b></p>
+                    <p>{{plano?.unidade?.nome}}</p>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:8px;">
+                    <p><b>Matrícula Siape:</b></p>
+                    <p>{{plano?.usuario?.matricula}}</p>
+                </td>
+                <td rowspan="2">
+                    <p><b>Vinculação do participante:</b></p>
+                    <p>{{lookup.getValue(lookup.USUARIO_VINCULACAO, plano?.usuario?.vinculacao)}}</p>
+                    <!--ul class="todo-list">
+                        <li><label class="todo-list__label"><input type="checkbox" disabled="disabled"><span class="todo-list__label__description">Servidor público ocupante de cargo efetivo</span></label></li>
+                        <li><label class="todo-list__label"><input type="checkbox" disabled="disabled"><span class="todo-list__label__description">Servidor público ocupante de cargo em comissão</span></label></li>
+                        <li><label class="todo-list__label"><input type="checkbox" disabled="disabled"><span class="todo-list__label__description">Empregado público</span></label></li>
+                        <li><label class="todo-list__label"><input type="checkbox" disabled="disabled"><span class="todo-list__label__description">Contratado temporário, regido pela Lei nº 8.745, de 9 de dezembro de 1993.</span></label></li>
+                    </ul//-->
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:8px;">
+                    <p><b>Período de adesão:</b></p>
+                    <p>{{util.getDateFormatted(plano?.data_inicio_vigencia)}} à {{util.getDateFormatted(plano?.data_fim_vigencia)}}</p>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:8px;">
+                    <p><b>Regime de execução:</b></p>
+                    <p>{{plano?.tipo_modalidade?.nome}}</p>
+                </td>
+                <td style="padding:8px;">
+                    <p><b>{{ 'Ganho percentual de ' + lex.noun('produtividade') + ':' }}</b></p>
+                    <p>{{ganhoProdutividade}} </p>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:8px;">
+                    <p><b>{{cargaHorariaTitulo}}</b></p>
+                    <p>{{cargaHoraria}} horas</p>
+                </td>
+                <td style="padding:8px;">
+                    <p><b>{{ lex.noun('Tempo pactuado') + ' ' + lex.noun('plano',false,true) + ':' }}</b></p>
+                    <p>{{plano?.tempo_total}} horas</p>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:15px;" colspan="2">
+                    <h3 style="text-align:center;">
+                        <strong>
+                            <br/><br/>TERMO DE CIÊNCIA E RESPONSABILIDADE
+                        </strong>
+                    </h3>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:8px;" colspan="2">
+                    <p style="text-align:justify;">&nbsp;</p>
+                    <p style="text-align:justify;">Pelo presente termo de ciência e responsabilidade, em razão da solicitação de adesão ao Programa de Gestão por Resultados da {{auth.entidade?.nome}},</p>
+                    <ul>
+                        <li style="text-align:justify;">{{ 'DECLARO estar ciente que a aferição ' + lex.noun('entrega',true,true) + ' será realizada mediante análise fundamentada da chefia responsável pelo ' + lex.noun('plano de trabalho') + ', em até quarenta dias, quanto ao atingimento ou não das metas estipuladas.' }}</li>
+                        <li style="text-align:justify;">{{ 'DECLARO estar ciente que a chefia responsável pelo ' + lex.noun('plano de trabalho') + ' poderá redefinir as metas do participante por necessidade do serviço, na hipótese de surgimento de ' + lex.noun('demanda') + ' prioritária cujas atividades não tenham sido previamente acordadas.' }}</li>
+                        <li style="text-align:justify;">{{ 'DECLARO que atendo às condições para participação no ' + lex.noun('PROGRAMA DE GESTÃO') + ';' }}</li>
+                        <li style="text-align:justify;">{{ 'DECLARO que estou ciente do dever, como participante, de manter, às minhas expensas, a infraestrutura necessária para o exercício de minhas atribuições, inclusive aquelas relacionadas à segurança da informação, quando executar o ' + lex.noun('programa de gestão') + ' na modalidade teletrabalho;' }}</li>
+                        <li style="text-align:justify;">{{ 'DECLARO que estou ciente que minha participação no ' + lex.noun('programa de gestão') + ' não constitui direito adquirido, podendo ser desligado nas condições estabelecidas nesta Instrução Normativa;' }}</li>
+                        <li style="text-align:justify;">{{ 'DECLARO que estou ciente quanto à vedação de pagamento das vantagens descritas nesta normativa;' }}</li>
+                        <li style="text-align:justify;">{{ 'DECLARO que estou ciente quanto à vedação de utilização de terceiros para a execução dos trabalhos acordados como parte das metas;' }}</li>
+                        <li style="text-align:justify;">{{ 'DECLARO que estou ciente quanto ao dever de observar as disposições constantes da Lei nº 13.709, de 14 de agosto de 2018;' }}</li>
+                        <li style="text-align:justify;">{{ 'DECLARO que estou ciente quanto ao dever de observar as disposições constantes da Lei Geral de Proteção de Dados Pessoais (LGPD), no que couber;' }}</li>
+                        <li style="text-align:justify;">{{ 'DECLARO que estou ciente quanto ao dever de observar as disposições constantes da Portaria nº 15.543/SEDGG/ME, de 2 de julho de 2020 (Manual de Conduta do Agente Público Civil do Poder Executivo Federal); e' }}</li>
+                        <li style="text-align:justify;">{{ 'DECLARO que estou ciente quanto ao dever de manter os dados pessoais, inclusive de contato para acionamento, atualizados em sistema indicado pela Diretoria de Gestão de Pessoas.' }}</li>
+                        <li style="text-align:justify;">{{ 'DECLARO estar ciente quanto ao dever de manter meus dados pessoais, inclusive de contato para acionamento, atualizados na base de dados indicada pela DGP.' }}</li>
+                        <li style="text-align:justify;">{{ 'DECLARO estar ciente que o prazo de antecedência mínima para o comparecimento presencial à ' + lex.noun('unidade') + ', sempre que a presença física do participante for necessária e houver interesse da Administração Pública, deverá seguir o disposto na INSTRUÇÃO NORMATIVA PRF Nº 88, DE 15 DE JUNHO DE 2022 (SEI nº 41976568).' }}</li>
+                    </ul>
+                </td>
+            </tr>
+            <!--tr>
+                <td style="padding:8px;" colspan="3">
+                <p>&nbsp;</p>
+                <p>{only_semipresencial}</p>
+                <p>No caso de participação no regime de execução parcial, indique no campo abaixo os dias ou turnos em que o participante deverá comparecer presencialmente à unidade:</p>
+                <p>&nbsp;</p>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:8px;">
+                <p>{only_semipresencial}</p>
+                <p>Segunda-feira</p>
+                </td>
+                <td style="width:25%;">
+                <p>Início</p>
+                <div class="raw-html-embed"><input type="time" class="form-field" data-key="parcial_0_inicio"></div>
+                </td>
+                <td style="width:25%;">
+                <p>Término</p>
+                <div class="raw-html-embed"><input type="time" class="form-field" data-key="parcial_0_fim"></div>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:8px;">
+                <p>{only_semipresencial}</p>
+                <p>Terça-feira</p>
+                </td>
+                <td>
+                <p>Início</p>
+                <div class="raw-html-embed"><input type="time" class="form-field" data-key="parcial_1_inicio"></div>
+                </td>
+                <td>
+                <p>Término</p>
+                <div class="raw-html-embed"><input type="time" class="form-field" data-key="parcial_1_fim"></div>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:8px;">
+                <p>{only_semipresencial}</p>
+                <p>Quarta-feira</p>
+                </td>
+                <td>
+                <p>Início</p>
+                <div class="raw-html-embed"><input type="time" class="form-field" data-key="parcial_2_inicio"></div>
+                </td>
+                <td>
+                <p>Término</p>
+                <div class="raw-html-embed"><input type="time" class="form-field" data-key="parcial_2_fim"></div>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:8px;">
+                <p>{only_semipresencial}</p>
+                <p>Quinta-feira</p>
+                </td>
+                <td>
+                <p>Início</p>
+                <div class="raw-html-embed"><input type="time" class="form-field" data-key="parcial_3_inicio"></div>
+                </td>
+                <td>
+                <p>Término</p>
+                <div class="raw-html-embed"><input type="time" class="form-field" data-key="parcial_3_fim"></div>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:8px;">
+                <p>{only_semipresencial}</p>
+                <p>Sexta-feira</p>
+                </td>
+                <td>
+                <p>Início</p>
+                <div class="raw-html-embed"><input type="time" class="form-field" data-key="parcial_4_inicio"></div>
+                </td>
+                <td>
+                <p>Término</p>
+                <div class="raw-html-embed"><input type="time" class="form-field" data-key="parcial_4_fim"></div>
+                </td>
+            </tr//-->
+            <tr>
+                <td style="padding:8px;" colspan="2">
+                    <h3 style="text-align:center;">{{ lex.noun('ATIVIDADE',true) }}</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>{{ 'Descrição ' + lex.noun('atividade',false,true) }}</th>
+                                <!--th>Faixa de Complexidade da Atividade</th>
+                                <th>Parâmetros adotados para definição da faixa de complexidade</th//-->
+                                <th>{{ 'Tempo de execução ' + lex.noun('atividade',false,true) + ' em regime presencial' }}</th>
+                                <th>{{ 'Tempo de execução ' + lex.noun('atividade',false,true) + ' em teletrabalho' }}</th>
+                                <th>{{ 'Ganho percentual de ' + lex.noun('produtividade') + ' estabelecido, quando aplicável' }}</th>
+                                <!--th>Entregas esperadas</th//-->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let atividade of atividades">
+                                <td>{{atividade.nome}}</td>
+                                <!--td>{{getFaixaComplexidade(atividade)}}</td>
+                                <td>{{getParametros(atividade.parametros_adotados)}}</td//-->
+                                <td>{{util.decimalToTimerFormated(atividade.tempo_pactuado, true)}}</td>
+                                <td>{{getTempoTeletrabalho(atividade)}}</td>
+                                <td>{{ganhoProdutividade}}</td>
+                                <!--td>{{getEntregas(atividade.entregas_esperadas)}}</td//-->
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <!--tr>
+                <td style="padding:8px;" colspan="3">
+                    <p>&nbsp;</p>
+                    <p>Com a assinatura deste termo, o participante:</p>
+                    <p>&nbsp;</p>
+                    <ol>
+                        <li>autoriza o fornecimento do número de telefone pessoal a pessoas que façam chamadas telefônicas para a sua unidade de exercício na {{auth.unidade?.entidade?.sigla}}, sem necessidade de avaliação, pelo atendente, a respeito da pertinência do fornecimento; e</li>
+                        <li>autoriza o fornecimento do número de telefone pessoal a servidores em exercício na {{auth.unidade?.entidade?.sigla}} que indiquem necessidade de contato telefônico relacionado às suas atividades profissionais.</li>
+                    </ol>
+                    <p>&nbsp;</p>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:8px;">
+                    <p><b>Telefone Celular:</b></p>
+                    <div class="raw-html-embed">{{plano?.usuario?.telefone}}</div>
+                </td>
+                <td style="padding:8px;">
+                    <p><b>Telefone Residencial (opcional):</b></p>
+                    <div class="raw-html-embed">{{plano?.usuario?.telefone}}</div>
+                </td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td style="padding:8px;" colspan="3">
+                    <p>&nbsp;</p>
+                    <p>DECLARO que os números de telefone listados neste formulário estão ativos e atualizados.</p>
+                    <p>&nbsp;</p>
+                </td>
+            </tr-->
+        </tbody>
+    </table>
+</div>

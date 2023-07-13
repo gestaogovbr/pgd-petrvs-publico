@@ -9,7 +9,7 @@ import { TipoDocumentoDaoService } from 'src/app/dao/tipo-documento-dao.service'
 import { Base } from 'src/app/models/base.model';
 import { DemandaEntrega } from 'src/app/models/demanda-entrega.model';
 import { Documento } from 'src/app/models/documento.model';
-import { PlanoListComponent } from 'src/app/modules/gestao/plano/plano-list/plano-list.component';
+import { PlanoListComponent } from 'src/app/modules/gestao/plano-trabalho/plano-trabalho-list/plano-trabalho-list.component';
 import { DemandaListGridComponent } from 'src/app/modules/gestao/demanda/demanda-list-grid/demanda-list-grid.component';
 import { DemandaListComponent } from 'src/app/modules/gestao/demanda/demanda-list/demanda-list.component';
 import { ListenerBase } from '../listener-base';

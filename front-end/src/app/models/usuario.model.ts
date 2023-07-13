@@ -5,7 +5,7 @@ import { Base, IIndexable } from './base.model';
 import { Lotacao } from './lotacao.model';
 import { HasNotificacao, NotificacoesConfig } from './notificacao.model';
 import { Perfil } from './perfil.model';
-import { Plano } from './plano-trabalho.model';
+import { PlanoTrabalho } from './plano-trabalho.model';
 import { Unidade } from './unidade.model';
 
 export type UsuarioVinculacao = "SERVIDOR_EFETIVO" | "SERVIDOR_COMISSIONADO" | "EMPREGADO" | "CONTRATADO_TEMPORARIO";
@@ -18,7 +18,7 @@ export class UsuarioConfig {
 
 export class Usuario extends Base implements HasNotificacao {
     public perfil?: Perfil; /* Objeto do perfil */
-    public planos_trabalho?: Plano[]; /* Lista de planos de trabalho */
+    public planos_trabalho?: PlanoTrabalho[]; /* Lista de planos de trabalho */
     public afastamentos?: Afastamento[]; /* Lista de afastamentos */
     public atividades?: Atividade[];
     public chefias_titulares?: Unidade[];

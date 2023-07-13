@@ -9,7 +9,7 @@ export type Complexidade = {id: string, grau: string, fator: number, tempo: numb
 export class Atividade extends Base {
     public observacoes: string | null = null; /* Observação sobre o afastamento */
     public inicio_afastamento: Date = new Date(); /* Inicio do afastamento  */
-    public tipoAtividade?: TipoAtividade;
+    public tipo_atividade?: TipoAtividade;
     public unidade?: Unidade;
 
     public nome: string = "";  //Nome da classe de atividade
@@ -38,6 +38,7 @@ export class Atividade extends Base {
     public data_fim: Date | null = null; //Data final da vigência
     public unidade_id: string = "";
     public tipo_atividade_id: string | null = null;
+    public assunto: string = "";
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

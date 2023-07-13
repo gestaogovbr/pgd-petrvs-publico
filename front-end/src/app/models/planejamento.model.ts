@@ -8,7 +8,7 @@ export class Planejamento extends Base {
     public unidade?: Unidade;
     public entidade?: Entidade;
     public objetivos?: PlanejamentoObjetivo[];
-    public planejamento_superior?: Planejamento;
+    public planejamento_pai?: Planejamento;
     
     public data_arquivamento: Date | null = null;  /* Data de arquivamento */
     public inicio: Date = new Date(); /* Data de início do planejamento */
@@ -20,7 +20,7 @@ export class Planejamento extends Base {
     
     public unidade_id: string | null = null; /* Unidade à qual está vinculado o planejamento institucional */
     public entidade_id: string | null = null; /* Entidade à qual está vinculado o planejamento institucional */
-    public planejamento_superior_id: string | null = null; /* Planejamento hierarquicamente superior ao qual o atual planejamento está vinculado */
+    public planejamento_pai_id: string | null = null; /* Planejamento hierarquicamente superior ao qual o atual planejamento está vinculado */
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

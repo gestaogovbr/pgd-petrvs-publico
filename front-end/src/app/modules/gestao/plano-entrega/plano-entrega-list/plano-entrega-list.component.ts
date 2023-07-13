@@ -551,7 +551,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   }
 
   public situacaoPlano(planoEntrega: PlanoEntrega): string {
-    if (planoEntrega.data_fim) return "EXCLUIDO";
+    if (planoEntrega.deleted_at) return "EXCLUIDO";
     else if (planoEntrega.data_cancelamento) return "CANCELADO";
     else if (planoEntrega.data_arquivamento) return "ARQUIVADO";
     else return planoEntrega.status;

@@ -9,9 +9,9 @@ import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
 import { ProjetoDaoService } from 'src/app/dao/projeto-dao.service';
-import { PlanoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
+import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { DemandaDaoService } from 'src/app/dao/demanda-dao.service';
-import { TarefaDaoService } from 'src/app/dao/tipo-tarefa-dao.service';
+import { TipoTarefaDaoService } from 'src/app/dao/tipo-tarefa-dao.service';
 import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 import { FeriadoDaoService } from 'src/app/dao/feriado-dao.service';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
@@ -54,8 +54,8 @@ import { TipoCursoDaoService } from '../dao/tipo-curso-dao.service';
 import { CentroTreinamentoDaoService } from '../dao/centro-treinamento-dao.service';
 import { FuncaoDaoService } from '../dao/funcao-dao.service';
 import { GrupoEspecializadoDaoService } from '../dao/grupo-epecializado-dao.service';
-import { PlanoEntregaObjetivoDaoService } from '../dao/plano-entrega-entrega-objetivo-dao.service';
-import { PlanoEntregaProcessoDaoService } from '../dao/plano-entrega-entrega-processo-dao.service';
+import { PlanoEntregaEntregaObjetivoDaoService } from '../dao/plano-entrega-entrega-objetivo-dao.service';
+import { PlanoEntregaEntregaProcessoDaoService } from '../dao/plano-entrega-entrega-processo-dao.service';
 import { CursoDaoService } from '../dao/curso-dao.service';
 import { CargoDaoService } from '../dao/cargo-dao.service';
 import { AreaAtividadeExternaDaoService } from '../dao/area-atividade-externa-dao.service';
@@ -114,11 +114,11 @@ export class EntityService {
             { collection: 'Perfil', codigo: 'MOD_PERF', table: 'perfis', campo: 'nome', icon: 'bi bi-fingerprint', dao: injector.get<PerfilDaoService>(PerfilDaoService), label: "Perfil", selectRoute: { route: ['configuracoes', 'perfil'] } },
             { collection: 'Planejamento', codigo: 'MOD_PLAN_INST', table: 'planejamentos', campo: 'nome', icon: 'bi bi-journals', dao: injector.get<PlanejamentoDaoService>(PlanejamentoDaoService), label: "Planejamento Institucional", selectRoute: { route: ['gestao', 'planejamento'] } },
             { collection: 'PlanejamentoObjetivo', table: 'planejamentos_objetivos', campo: 'nome', icon: 'bi bi-bullseye', dao: injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService), label: "Objetivo do Planejamento", selectRoute: { route: ['gestao', 'planejamento', 'objetivoList'] } },
-            { collection: 'Plano', codigo: 'MOD_PTR', table: 'planos', campo: 'numero', icon: 'bi bi-list-stars', dao: injector.get<PlanoDaoService>(PlanoDaoService), label: "Plano de Trabalho", selectRoute: { route: ['gestao', 'plano-trabalho'] } },
+            { collection: 'Plano', codigo: 'MOD_PTR', table: 'planos', campo: 'numero', icon: 'bi bi-list-stars', dao: injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService), label: "Plano de Trabalho", selectRoute: { route: ['gestao', 'plano-trabalho'] } },
             { collection: 'PlanoEntrega', codigo: 'MOD_PENT', table: 'planos_entregas', campo: 'nome', icon: 'bi bi-list-columns-reverse', dao: injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService), label: "Plano de Entrega", selectRoute: { route: ['gestao', 'plano-entrega'] } },
             { collection: 'PlanoEntregaEntrega', codigo: 'MOD_PENT_ENTR', table: 'planos_entregas_entregas', campo: 'descricao', icon: '', dao: injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService), label: "Entrega do Plano de Entrega", selectRoute: { route: ['gestao', 'plano-entrega', 'entregaList'] } },
-            { collection: 'PlanoEntregaObjetivo', codigo: 'MOD_PENT_OBJ', table: 'planos_entregas_objetivos', campo: 'descricao', icon: '', dao: injector.get<PlanoEntregaObjetivoDaoService>(PlanoEntregaObjetivoDaoService), label: "Objetivo do Plano de Entrega" },
-            { collection: 'PlanoEntregaProcesso', codigo: 'MOD_PENT_PRO', table: 'planos_entregas_entregas', campo: 'descricao', icon: '', dao: injector.get<PlanoEntregaProcessoDaoService>(PlanoEntregaProcessoDaoService), label: "Processo do Plano de Entrega" },
+            { collection: 'PlanoEntregaObjetivo', codigo: 'MOD_PENT_OBJ', table: 'planos_entregas_objetivos', campo: 'descricao', icon: '', dao: injector.get<PlanoEntregaEntregaObjetivoDaoService>(PlanoEntregaEntregaObjetivoDaoService), label: "Objetivo do Plano de Entrega" },
+            { collection: 'PlanoEntregaProcesso', codigo: 'MOD_PENT_PRO', table: 'planos_entregas_entregas', campo: 'descricao', icon: '', dao: injector.get<PlanoEntregaEntregaProcessoDaoService>(PlanoEntregaEntregaProcessoDaoService), label: "Processo do Plano de Entrega" },
             { collection: 'Preferencia', icon: 'bi bi-person-fill-gear', label: "Preferência" },
             { collection: 'Programa', codigo: 'MOD_PRGT', table: 'programas', campo: 'nome', icon: 'bi bi-graph-up-arrow', dao: injector.get<ProgramaDaoService>(ProgramaDaoService), label: "Programa de Gestão", selectRoute: { route: ['gestao', 'programa'] } },
             { collection: 'ProgramaParticipante', table: 'programas_participantes', campo: 'usuario_id', icon: '', dao: injector.get<ProgramaParticipanteDaoService>(ProgramaParticipanteDaoService), label: "Participante do Programa" },
@@ -129,7 +129,7 @@ export class EntityService {
             { collection: 'ProjetoTarefa', table: 'projetos_tarefas', campo: 'nome', icon: '', dao: injector.get<ProjetoTarefaDaoService>(ProjetoTarefaDaoService), label: "Tarefa do Projeto" },
             { collection: 'RelatorioArea', icon: 'bi bi-diagram-3-fill', label: "Área" },
             { collection: 'RelatorioServidor', icon: 'bi bi-file-person', label: "Servidor" },
-            { collection: 'Tarefa', table: 'tarefas', campo: 'nome', icon: 'bi bi-boxes', dao: injector.get<TarefaDaoService>(TarefaDaoService), label: "Tarefa", selectRoute: { route: ['cadastros', 'tarefa'] } },
+            { collection: 'Tarefa', table: 'tarefas', campo: 'nome', icon: 'bi bi-boxes', dao: injector.get<TipoTarefaDaoService>(TipoTarefaDaoService), label: "Tarefa", selectRoute: { route: ['cadastros', 'tarefa'] } },
             { collection: 'Template', codigo: 'MOD_TEMP', table: 'templates', campo: 'titulo', icon: 'bi bi-archive', dao: injector.get<TemplateDaoService>(TemplateDaoService), label: "Template", selectRoute: { route: ['cadastros', 'template'] } },
             { collection: 'Teste', icon: 'bi bi-clipboard-check', label: "Teste" },
             { collection: 'TipoAtividade', codigo: 'MOD_TIPO_ATV', table: 'tipos_atividades', campo: 'nome', icon: 'bi bi-check-all', dao: injector.get<TipoAtividadeDaoService>(TipoAtividadeDaoService), label: "Tipo de Atividade", selectRoute: { route: ['cadastros', 'tipo-atividade'] } },

@@ -73,8 +73,8 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
     this.planejamento = this.metadata?.planejamento as Planejamento;
 /*  if(this.planejamento) this.planejamento.planejamento_superior = this.metadata.planejamento_superior as Planejamento || null;
     if(this.planejamento.planejamento_superior) this.planejamento.planejamento_superior.objetivos = this.metadata?.objetivos_superiores || null;  */
-    this.form?.controls.planejamento_superior_nome.setValue(this.planejamento?.planejamento_superior?.nome || '');
-    this.objetivos_superiores = this.planejamento?.planejamento_superior?.objetivos?.map(x => Object.assign({}, { key: x.id, value: x.nome, data: x })) || [];
+    this.form?.controls.planejamento_superior_nome.setValue(this.planejamento?.planejamento_pai?.nome || '');
+    this.objetivos_superiores = this.planejamento?.planejamento_pai?.objetivos?.map(x => Object.assign({}, { key: x.id, value: x.nome, data: x })) || [];
   }
 
   public async initializeData(form: FormGroup) {
