@@ -31,6 +31,6 @@ class Avaliacao extends ModelBase
     // Has
     //public function avaliacoesJustificativas() { return $this->hasMany(AvaliacaoJustificativa::class, 'avaliacao_id'); }
     // Belongs
-    public function usuario() { return $this->belongsTo(Usuario::class); }    
-    public function tipoAvaliacao() { return $this->belongsTo(TipoAvaliacao::class, 'tipo_avaliacao_id'); }
+    public function usuario() { return $this->belongsTo(Usuario::class); }    //OK//
+    public function tipoAvaliacao() { return $this->belongsTo(TipoAvaliacao::class, 'tipo_avaliacao_id'); }//OK//
 }

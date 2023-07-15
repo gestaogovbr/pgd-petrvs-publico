@@ -31,9 +31,9 @@ class ProjetoAlocacao extends ModelBase
     public $delete_cascade = ["regras"];
 
     // Has
-    public function regras() { return $this->hasMany(ProjetoAlocacaoRegra::class); }    
+    public function regras() { return $this->hasMany(ProjetoAlocacaoRegra::class); }    //OK//
     // Belongs
-    public function projeto() { return $this->belongsTo(Projeto::class); }    
-    public function tarefa() { return $this->belongsTo(ProjetoTarefa::class); }    
-    public function recurso() { return $this->belongsTo(ProjetoRecurso::class); }    
+    public function projeto() { return $this->belongsTo(Projeto::class); }    //OK//
+    public function tarefa() { return $this->belongsTo(ProjetoTarefa::class); }    //OK//   //nullable
+    public function recurso() { return $this->belongsTo(ProjetoRecurso::class); }    //OK//
 }

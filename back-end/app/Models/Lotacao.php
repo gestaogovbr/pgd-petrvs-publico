@@ -21,6 +21,6 @@ class Lotacao extends ModelBase
 
     // Has
     // Belongs
-    public function usuario() { return $this->belongsTo(Usuario::class); }    
-    public function unidade() { return $this->belongsTo(Unidade::class); }    
+    public function usuario() { return $this->belongsTo(Usuario::class); }    //OK//
+    public function unidade() { return $this->belongsTo(Unidade::class); }    //OK//
 }

@@ -35,8 +35,8 @@ class ProjetoRegra extends ModelBase
     ];
     
     // Has
-    //public function () { return $this->hasMany(::class); }    
+    public function regrasAlocacao() { return $this->hasMany(ProjetoAlocacaoRegra::class, 'regra_id'); }    //OK//
     // Belongs
-    public function projeto() { return $this->belongsTo(Projeto::class); }    
+    public function projeto() { return $this->belongsTo(Projeto::class); }    //OK//
 
 }

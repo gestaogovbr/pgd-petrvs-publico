@@ -38,8 +38,10 @@ class Template extends ModelBase
     ];
     
     // Has
+    public function programas() { return $this->hasMany(Programa::class); }//OK//
+    public function documentos() { return $this->hasMany(Documento::class); }//OK//
     // Belongs
-    public function entidade() { return $this->belongsTo(Entidade::class); }    
-    public function unidade() { return $this->belongsTo(Unidade::class); }    
+    public function entidade() { return $this->belongsTo(Entidade::class); }    //OK//  //nullable
+    public function unidade() { return $this->belongsTo(Unidade::class); }    //OK//    //nullable
     
 }

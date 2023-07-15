@@ -27,6 +27,6 @@ class PlanoTrabalhoConsolidacaoEntrega extends ModelBase
 
     // Has
     // Belongs
-    public function consolidacao() { return $this->belongsTo(PlanoTrabalhoConsolidacao::class); }
-    public function entrega() { return $this->belongsTo(PlanoTrabalhoEntrega::class, 'entrega_id'); }
+    public function consolidacao() { return $this->belongsTo(PlanoTrabalhoConsolidacao::class); }//OK//
+    public function entrega() { return $this->belongsTo(PlanoTrabalhoEntrega::class); } //OK//
 }

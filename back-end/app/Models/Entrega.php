@@ -22,4 +22,9 @@ class Entrega extends ModelBase
     protected $casts = [
         'lista_qualitativos' => AsJson::class,
     ];
+
+    //Has
+    public function entregasPlanoEntrega() { return $this->hasMany(PlanoEntregaEntrega::class, 'entrega_id'); }//OK//     
+    public function entregasPlanoTrabalho() { return $this->hasMany(PlanoTrabalhoEntrega::class, 'entrega_id'); }//OK//   
+
 }

@@ -29,8 +29,8 @@ class NotificacaoDestinatario extends ModelBase
 
     // Has
     // Belongs
-    public function notificacao() { return $this->belongsTo(Notificacao::class); }
-    public function usuario() { return $this->belongsTo(Usuario::class); }
+    public function notificacao() { return $this->belongsTo(Notificacao::class); }//OK//
+    public function usuario() { return $this->belongsTo(Usuario::class); }//OK//
     
 }
    

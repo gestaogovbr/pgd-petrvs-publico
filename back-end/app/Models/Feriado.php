@@ -28,6 +28,6 @@ class Feriado extends ModelBase
     ];
 
     // Belongs
-    public function entidade() { return $this->belongsTo(Entidade::class, 'entidade_id'); }   
-    public function cidade() { return $this->belongsTo(Cidade::class, 'cidade_id'); }   
+    public function entidade() { return $this->belongsTo(Entidade::class, 'entidade_id'); }   //OK//    //nullable
+    public function cidade() { return $this->belongsTo(Cidade::class, 'cidade_id'); }   //OK//  //nullable
 }

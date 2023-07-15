@@ -32,6 +32,6 @@ class ProjetoHistorico extends ModelBase
     // Has
     //public function () { return $this->hasMany(::class); }    
     // Belongs
-    public function projeto() { return $this->belongsTo(Projeto::class); }    
-    public function usuario() { return $this->belongsTo(Usuario::class); }    
+    public function projeto() { return $this->belongsTo(Projeto::class); }  //OK//  
+    public function usuario() { return $this->belongsTo(Usuario::class); }    //OK//
 }

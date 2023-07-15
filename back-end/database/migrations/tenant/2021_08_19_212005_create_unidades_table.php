@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
 class CreateUnidadesTable extends Migration
 {
@@ -40,7 +39,7 @@ class CreateUnidadesTable extends Migration
             $table->json('notificacoes')->nullable()->comment("Configurações das notificações (Se envia e-mail, whatsapp, tipos, templates)");
             $table->json('expediente')->nullable()->comment("Configuração de expediente da unidade");
             // Chaves estrangeiras:
-            $table->foreignUuid('cidade_id')->nullable()->constrained("cidades")->onDelete('restrict')->onUpdate('cascade')->comment('Cidade da unidade');
+            $table->foreignUuid('cidade_id')->constrained("cidades")->onDelete('restrict')->onUpdate('cascade')->comment('Cidade da unidade');
             $table->foreignUuid('unidade_id')->nullable()->constrained("unidades")->onDelete('restrict')->onUpdate('cascade')->comment('Unidade superior (nó pai hierárquico)');
             $table->foreignUuid('entidade_id')->constrained("entidades")->onDelete('restrict')->onUpdate('cascade')->comment('Entidade da unidade');
             $table->foreignUuid('gestor_id')->nullable()->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->comment('Usuário gestor da unidade');

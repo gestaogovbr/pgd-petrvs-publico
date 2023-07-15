@@ -91,19 +91,38 @@ class Usuario extends Authenticatable
     public $delete_cascade = ['favoritos', 'lotacoes'];
 
     // Has
-    public function afastamentos() { return $this->hasMany(Afastamento::class); }
-    public function atividades() { return $this->hasMany(Atividade::class); }
-    public function favoritos() { return $this->hasMany(Favorito::class); }
-    public function lotacoes() { return $this->hasMany(Lotacao::class); }
-    public function planosTrabalhos() { return $this->hasMany(PlanoTrabalho::class); }
-    public function usuariosHashes() { return $this->hasMany(UsuarioHash::class); }
-    public function integracoes() { return $this->hasMany(Integracao::class); }
-    public function chefiasTitulares() { return $this->hasMany(Unidade::class, 'gestor_id'); }
-    public function chefiasSubstitutas() { return $this->hasMany(Unidade::class, 'gestor_substituto_id'); }
+    public function afastamentos() { return $this->hasMany(Afastamento::class); }//OK//
+    public function anexos() { return $this->hasMany(Anexo::class); }//OK//
+    public function consolidacoes() { return $this->hasMany(PlanoTrabalhoConsolidacao::class, 'avaliador_id'); }//OK//
+    public function assinaturas() { return $this->hasMany(DocumentoAssinatura::class); }//OK//
+    public function avaliacoes() { return $this->hasMany(Avaliacao::class); }//OK//
+    public function atividades() { return $this->hasMany(Atividade::class); } //OK//
+    public function atividadesDemandadas() { return $this->hasMany(Atividade::class, 'demandante_id'); } //OK//
+    public function tarefasAtividade() { return $this->hasMany(AtividadeTarefa::class); } //OK//
+    public function tarefasProjeto() { return $this->hasMany(ProjetoTarefa::class); } //OK//
+    public function favoritos() { return $this->hasMany(Favorito::class); }//OK//
+    public function comentarios() { return $this->hasMany(Comentario::class); }//OK//
+    public function lotacoes() { return $this->hasMany(Lotacao::class); }//OK//
+    public function projetos() { return $this->hasMany(Projeto::class); }//OK//
+    public function recursosProjeto() { return $this->hasMany(ProjetoRecurso::class); }//OK//
+    public function historicosProjeto() { return $this->hasMany(ProjetoHistorico::class); }//OK//
+    public function notificacoes() { return $this->hasMany(Notificacao::class, 'remetente_id'); }//OK//
+    public function notificacoesWhatsapp() { return $this->hasMany(NotificacaoWhatsapp::class); }//OK//
+    public function notificacoesDestinatario() { return $this->hasMany(NotificacaoDestinatario::class); }//OK//
+    public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }//OK//
+    public function participantesPrograma() { return $this->hasMany(ProgramaParticipante::class); }//OK//
+    public function usuariosHash() { return $this->hasMany(UsuarioHash::class); }
+    public function integracoes() { return $this->hasMany(Integracao::class); }//OK//
+    public function chefiasTitular() { return $this->hasMany(Unidade::class, 'gestor_id'); }//OK//
+    public function chefiasSubstituto() { return $this->hasMany(Unidade::class, 'gestor_substituto_id'); }//OK//
     public function lotacao() { return $this->hasOne(Lotacao::class)->where('principal', 1); }
+    public function chefiaEntidade() { return $this->hasOne(Entidade::class, 'gestor_id'); } //OK//
+    public function chefiaSubstitutoEntidade() { return $this->hasOne(Entidade::class, 'gestor_substituto_id'); } //OK//
     public function changes() { return $this->hasMany(Change::class, 'user_id'); }
+    public function planosEntregaCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }//OK//  
+    public function planosEntregaCancelados() { return $this->hasMany(PlanoEntrega::class, 'cancelamento_usuario_id'); }//OK//  
     // Belongs
-    public function perfil() { return $this->belongsTo(Perfil::class, 'perfil_id'); }
+    public function perfil() { return $this->belongsTo(Perfil::class, 'perfil_id'); }//OK//     //nullable
     // Mutattors e Casts
     public function getUrlFotoAttribute($value) 
     {

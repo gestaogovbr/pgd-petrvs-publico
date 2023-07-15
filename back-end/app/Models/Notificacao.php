@@ -31,8 +31,9 @@ class Notificacao extends ModelBase
     protected $casts = [];
 
     // Has
-    public function destinatarios() { return $this->hasMany(NotificacaoDestinatario::class); }    
+    public function destinatarios() { return $this->hasMany(NotificacaoDestinatario::class); }  //OK//  
     // Belongs
+    public function remetente() { return $this->belongsTo(Usuario::class); }//OK//  //nullable
     
 }
    

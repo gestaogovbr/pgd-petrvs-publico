@@ -61,10 +61,14 @@ class ProjetoTarefa extends ModelBase
     ];
 
     // Has
-    public function alocacoes() { return $this->hasMany(ProjetoAlocacao::class, "tarefa_id"); }    
+    public function alocacoes() { return $this->hasMany(ProjetoAlocacao::class, "tarefa_id"); }   //OK// 
+    public function tarefas() { return $this->hasMany(ProjetoTarefa::class, "tarefa_pai_id"); }   //OK// 
+    public function comentarios() { return $this->hasMany(Comentario::class); }   //OK// 
     // Belongs
-    public function projeto() { return $this->belongsTo(Projeto::class); }    
-    public function demanda() { return $this->belongsTo(Demanda::class); }    
-    public function usuario() { return $this->belongsTo(Usuario::class); }    
-    
+    public function projeto() { return $this->belongsTo(Projeto::class); }   //OK// 
+    public function tarefaProjeto() { return $this->belongsTo(Projeto::class, 'tarefa_projeto_id'); }   //OK//  //nullable
+    public function documento() { return $this->belongsTo(Documento::class); }    //OK//    //nullable
+    public function atividade() { return $this->belongsTo(Atividade::class); }    //OK//    //nullable
+    public function usuario() { return $this->belongsTo(Usuario::class); }    //OK//    //nullable
+    public function tarefaPai() { return $this->belongsTo(ProjetoTarefa::class); }    //OK//   //nullable
 }

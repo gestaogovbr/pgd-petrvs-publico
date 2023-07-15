@@ -45,10 +45,12 @@ class Planejamento extends ModelBase
     }
 
     // Has
-    public function objetivos() { return $this->hasMany(PlanejamentoObjetivo::class); }    
+    public function objetivos() { return $this->hasMany(PlanejamentoObjetivo::class); }    //OK//
+    public function planejamentos() { return $this->hasMany(Planejamento::class, 'planejamento_pai_id'); }    //OK//
+    public function planosEntrega() { return $this->hasMany(PlanoEntrega::class); }    //OK//   
     // Belongs
-    public function unidade() { return $this->belongsTo(Unidade::class); }
-    public function entidade() { return $this->belongsTo(Entidade::class); }
-    public function planejamentoSuperior() { return $this->belongsTo(Planejamento::class); }
+    public function unidade() { return $this->belongsTo(Unidade::class); }//OK//    //nullable
+    public function entidade() { return $this->belongsTo(Entidade::class); }//OK//
+    public function planejamentoPai() { return $this->belongsTo(Planejamento::class, 'planejamento_pai_id'); }//OK//   //nullable
 
 }

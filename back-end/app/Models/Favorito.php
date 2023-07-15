@@ -24,6 +24,6 @@ class Favorito extends ModelBase
     ];
     
     // Belongs
-    public function usuario() { return $this->belongsTo(Usuario::class); }    
+    public function usuario() { return $this->belongsTo(Usuario::class); }    //OK//
 
 }

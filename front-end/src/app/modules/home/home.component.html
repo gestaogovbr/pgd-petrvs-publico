@@ -25,7 +25,7 @@
                             <th class="min-w-125px">Horas</th>
                             <th class="min-w-125px">Progresso</th>
                         </tr>
-                        <tr *ngFor="let plano of dashUsuario.planos_trabalho">
+                        <tr *ngFor="let plano of dashUsuario.planos">
                             <td class="p-0">
                                 <span class="text-black-50 fw-semibold d-block">{{plano.data_inicio_vigencia | date: 'dd/MM/yyyy' }}</span>
                                 <span class="text-black-50 fw-semibold">{{plano.data_fim_vigencia | date: 'dd/MM/yyyy'}}</span>

@@ -47,12 +47,15 @@ class PlanoEntrega extends ModelBase
     }
 
     // Has
-    public function entregas() { return $this->hasMany(PlanoEntregaEntrega::class); }
+    public function entregas() { return $this->hasMany(PlanoEntregaEntrega::class); }//OK//
+    public function planosEntrega() { return $this->hasMany(PlanoEntrega::class); }//OK//   
+    public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }//OK//   
     // Belongs
-    public function planejamento() { return $this->belongsTo(Planejamento::class); }
-    public function cadeiaValor() { return $this->belongsTo(CadeiaValor::class); }
-    public function unidade() { return $this->belongsTo(Unidade::class); }
-    public function usuario() { return $this->belongsTo(Usuario::class, 'criacao_usuario_id'); }
-    public function programa() { return $this->belongsTo(Programa::class); }
-    public function planoEntregaSuperior() { return $this->belongsTo(PlanoEntrega::class, 'plano_entrega_id'); }
+    public function planejamento() { return $this->belongsTo(Planejamento::class); }//OK//  //nullable
+    public function cadeiaValor() { return $this->belongsTo(CadeiaValor::class); }//OK//    //nullable
+    public function unidade() { return $this->belongsTo(Unidade::class); }//OK//
+    public function criador() { return $this->belongsTo(Usuario::class, 'criacao_usuario_id'); }
+    public function cancelador() { return $this->belongsTo(Usuario::class, 'cancelamento_usuario_id'); }//OK//  //nullable
+    public function programa() { return $this->belongsTo(Programa::class); }//OK//
+    public function planoEntregaSuperior() { return $this->belongsTo(PlanoEntrega::class, 'plano_entrega_id'); }//OK// //nullable
 }

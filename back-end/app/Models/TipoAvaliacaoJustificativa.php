@@ -18,6 +18,6 @@ class TipoAvaliacaoJustificativa extends ModelBase
     ];
 
     // Belongs
-    public function tipoAvaliacao() { return $this->belongsTo(TipoAvaliacao::class, 'tipo_avaliacao_id'); }    
-    public function tipoJustificativa() { return $this->belongsTo(TipoJustificativa::class, 'tipo_justificativa_id'); }    
+    public function tipoAvaliacao() { return $this->belongsTo(TipoAvaliacao::class, 'tipo_avaliacao_id'); }   //OK// 
+    public function tipoJustificativa() { return $this->belongsTo(TipoJustificativa::class, 'tipo_justificativa_id'); }  //OK//  
 }

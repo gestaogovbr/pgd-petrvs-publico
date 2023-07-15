@@ -73,20 +73,26 @@ class Unidade extends ModelBase
     ];
 
     // Has
-    public function atividades() { return $this->hasMany(Atividade::class); }
-    public function lotacoes() { return $this->hasMany(Lotacao::class); }
-    public function planosTrabalhos() { return $this->hasMany(PlanoTrabalho::class); }
-    public function planosEntregas() { return $this->hasMany(PlanoEntrega::class); }
-    public function programas() { return $this->hasMany(Programa::class); }
-    public function tiposAtividades() { return $this->hasMany(TipoAtividade::class); }
+    public function atividades() { return $this->hasMany(Atividade::class); }//OK//
+    public function lotacoes() { return $this->hasMany(Lotacao::class); }//OK//
+    public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }//OK//
+    public function planosEntrega() { return $this->hasMany(PlanoEntrega::class); }//OK//
+    public function entregasPlanoEntrega() { return $this->hasMany(PlanoEntregaEntrega::class); }//OK//
+    public function programas() { return $this->hasMany(Programa::class); }//OK//
+    public function recursosProjeto() { return $this->hasMany(ProjetoRecurso::class); }//OK//
+    public function tiposAtividade() { return $this->hasMany(TipoAtividade::class); }
+    public function tiposTarefa() { return $this->hasMany(TipoTarefa::class); }//OK//
     public function integrantes() { return $this->hasMany(UnidadeIntegrante::class); }
-    public function notificacoesTemplates() { return $this->hasMany(Template::class, 'unidade_id'); }
+    public function notificacoesTemplate() { return $this->hasMany(Template::class, 'unidade_id'); }//OK//
+    public function unidades() { return $this->hasMany(Unidade::class); }//OK//
+    public function planejamentos() { return $this->hasMany(Planejamento::class); }//OK//
+    public function cadeiasValor() { return $this->hasMany(CadeiaValor::class); }//OK//
     // Belongs
-    public function gestor() { return $this->belongsTo(Usuario::class); }
-    public function gestorSubstituto() { return $this->belongsTo(Usuario::class); }
-    public function entidade() { return $this->belongsTo(Entidade::class); }
-    public function cidade() { return $this->belongsTo(Cidade::class); }
-    public function unidade() { return $this->belongsTo(Unidade::class); }
+    public function gestor() { return $this->belongsTo(Usuario::class); }//OK//     //nullable
+    public function gestorSubstituto() { return $this->belongsTo(Usuario::class); }//OK//   //nullable
+    public function entidade() { return $this->belongsTo(Entidade::class); }//OK//
+    public function cidade() { return $this->belongsTo(Cidade::class); }//OK//
+    public function unidade() { return $this->belongsTo(Unidade::class); }//OK//    //nullable
     // Mutattors e Casts
     public function getNotificacoesAttribute($value)
     {

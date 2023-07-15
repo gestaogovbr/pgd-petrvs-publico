@@ -27,6 +27,6 @@ class Perfil extends ModelBase
     public $delete_cascade = ['capacidades'];
 
     // Has
-    public function usuarios() { return $this->hasMany(Usuario::class, 'perfil_id'); }
-    public function capacidades() { return $this->hasMany(Capacidade::class, 'perfil_id'); }
+    public function usuarios() { return $this->hasMany(Usuario::class, 'perfil_id'); }//OK//
+    public function capacidades() { return $this->hasMany(Capacidade::class, 'perfil_id'); }//OK//
 }

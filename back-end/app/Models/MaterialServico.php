@@ -29,7 +29,7 @@ class MaterialServico extends ModelBase
     //public $delete_cascade = [];
 
     // Has
-    public function projetosRecursos() { return $this->hasMany(ProjetoRecurso::class); }    
+    public function projetosRecursos() { return $this->hasMany(ProjetoRecurso::class); }    //OK//
     // Belongs
     //public function () { return $this->belongsTo(::class); }    
 }

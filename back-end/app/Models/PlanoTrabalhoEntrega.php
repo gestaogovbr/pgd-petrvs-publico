@@ -25,8 +25,10 @@ class PlanoTrabalhoEntrega extends ModelBase
     public $delete_cascade = [];
 
     // Has
+    public function atividades() { return $this->hasMany(Atividade::class); } //OK//
+    public function entregasConsolidacao() { return $this->hasMany(PlanoTrabalhoConsolidacaoEntrega::class, 'entrega_id'); } //OK//
     // Belongs
-    public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class); }
-    public function planoEntregaEntrega() { return $this->belongsTo(PlanoEntregaEntrega::class); }
-    public function entrega() { return $this->belongsTo(Entrega::class); }
+    public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class); }//OK//
+    public function planoEntregaEntrega() { return $this->belongsTo(PlanoEntregaEntrega::class); }//OK//    //nullable
+    public function entrega() { return $this->belongsTo(Entrega::class); }//OK//    //nullable
 }

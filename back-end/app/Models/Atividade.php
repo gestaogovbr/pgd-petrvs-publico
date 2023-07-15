@@ -65,18 +65,19 @@ class Atividade extends ModelBase
     ];
 
     // Has
-    public function tarefas() { return $this->hasMany(AtividadeTarefa::class); }    
-    public function pausas() { return $this->hasMany(AtividadePausa::class); }
-    public function comentarios() { return $this->hasMany(Comentario::class); }
+    public function tarefasAtividade() { return $this->hasMany(AtividadeTarefa::class); }    //OK//
+    public function tarefasProjeto() { return $this->hasMany(ProjetoTarefa::class); }    //OK//
+    public function pausas() { return $this->hasMany(AtividadePausa::class); }//OK//
+    public function comentarios() { return $this->hasMany(Comentario::class); }//OK//
     // Belongs
-    public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class); }    
-    public function planoTrabalhoEntrega() { return $this->belongsTo(PlanoTrabalhoEntrega::class); }    
-    public function tipoAtividade() { return $this->belongsTo(TipoAtividade::class); }
-    public function demandante() { return $this->belongsTo(Usuario::class); }    
-    public function usuario() { return $this->belongsTo(Usuario::class); }    
-    public function unidade() { return $this->belongsTo(Unidade::class); }    
-    public function documentoRequisicao() { return $this->belongsTo(Documento::class); }
-    public function documentoEntrega() { return $this->belongsTo(Documento::class); }
+    public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class); }    //OK//    //nullable
+    public function planoTrabalhoEntrega() { return $this->belongsTo(PlanoTrabalhoEntrega::class); }    //OK//  //nullable
+    public function tipoAtividade() { return $this->belongsTo(TipoAtividade::class); }//OK//    //nullable
+    public function demandante() { return $this->belongsTo(Usuario::class); }    //OK//
+    public function usuario() { return $this->belongsTo(Usuario::class); }    //OK//    //nullable
+    public function unidade() { return $this->belongsTo(Unidade::class); }    //OK//
+    public function documentoRequisicao() { return $this->belongsTo(Documento::class); }    //OK//  //nullable
+    public function documentoEntrega() { return $this->belongsTo(Documento::class); }   //OK//      //nullable
 
     // Escopos
     public function scopeDoUsuario($query, $usuario_id) { return $query->where("usuario_id", $usuario_id); }

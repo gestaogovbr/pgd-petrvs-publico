@@ -19,5 +19,5 @@ class AtividadePausa extends ModelBase
     ];
     
     // Belongs
-    public function demanda() { return $this->belongsTo(Demanda::class); }    
+    public function atividade() { return $this->belongsTo(Atividade::class); }    //OK//
 }

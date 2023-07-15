@@ -31,12 +31,12 @@ class AtividadeTarefa extends ModelBase
     public $delete_cascade = ['comentarios'];
 
     // Has
-    public function comentarios() { return $this->hasMany(Comentario::class); }    
+    public function comentarios() { return $this->hasMany(Comentario::class); }   //OK// 
     // Belongs
-    public function documento() { return $this->belongsTo(Documento::class); }    
-    public function atividade() { return $this->belongsTo(Atividade::class); }    
-    public function tipoTarefa() { return $this->belongsTo(TipoTarefa::class); }    
+    public function documento() { return $this->belongsTo(Documento::class); }  //OK//  //nullable  
+    public function atividade() { return $this->belongsTo(Atividade::class); }    //OK//
+    public function tipoTarefa() { return $this->belongsTo(TipoTarefa::class); }    //OK//  //nullable
     public function tipoDocumento() { return $this->belongsTo(TipoDocumento::class); }    
     public function tipoProcesso() { return $this->belongsTo(TipoProcesso::class); }    
-    public function usuario() { return $this->belongsTo(Usuario::class); }    
+    public function usuario() { return $this->belongsTo(Usuario::class); }    //OK//
 }

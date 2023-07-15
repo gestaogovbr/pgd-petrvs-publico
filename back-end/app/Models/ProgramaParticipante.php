@@ -22,8 +22,8 @@ class ProgramaParticipante extends ModelBase
     public $delete_cascade = [];
 
     // Belongs
-    public function programa() { return $this->belongsTo(Programa::class); }    
-    public function usuario() { return $this->belongsTo(Usuario::class); }     
+    public function programa() { return $this->belongsTo(Programa::class); }  //OK//  
+    public function usuario() { return $this->belongsTo(Usuario::class); }     //OK//
 
 
 }

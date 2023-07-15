@@ -48,14 +48,15 @@ class PlanoTrabalho extends ModelBase
     }
 
     // Has
-    public function entregas() { return $this->hasMany(PlanoTrabalhoEntrega::class); }
-    public function documentos() { return $this->hasMany(Documento::class); }
-    public function atividades() { return $this->hasMany(Atividade::class); }
+    public function entregas() { return $this->hasMany(PlanoTrabalhoEntrega::class); }//OK//
+    public function documentos() { return $this->hasMany(Documento::class); }//OK//
+    public function atividades() { return $this->hasMany(Atividade::class); }//OK//
+    public function consolidacoes() { return $this->hasMany(PlanoTrabalhoConsolidacao::class); }//OK//
     // Belongs
-    public function usuario() { return $this->belongsTo(Usuario::class); }
-    public function programa() { return $this->belongsTo(Programa::class); }
-    public function unidade() { return $this->belongsTo(Unidade::class); }
-    public function tipoModalidade() { return $this->belongsTo(TipoModalidade::class); }
-    public function planoEntrega() { return $this->belongsTo(PlanoEntrega::class); }
-    public function documento() { return $this->belongsTo(Documento::class); }
+    public function usuario() { return $this->belongsTo(Usuario::class); }//OK//
+    public function programa() { return $this->belongsTo(Programa::class); }//OK//
+    public function unidade() { return $this->belongsTo(Unidade::class); }//OK//
+    public function tipoModalidade() { return $this->belongsTo(TipoModalidade::class); }//OK//
+    public function planoEntrega() { return $this->belongsTo(PlanoEntrega::class); }//OK//
+    public function documento() { return $this->belongsTo(Documento::class); }//OK//    //nullable
 }

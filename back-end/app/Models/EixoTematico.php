@@ -17,4 +17,8 @@ class EixoTematico extends ModelBase
         'descricao', /* varchar(256); NOT NULL; */// Descrição do eixo temático
         //'deleted_at', /* timestamp; */
     ];
+
+    //Has
+    public function objetivos() { return $this->hasMany(PlanejamentoObjetivo::class); }//OK//
+
 }

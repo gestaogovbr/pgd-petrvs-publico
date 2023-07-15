@@ -21,7 +21,7 @@ class DocumentoAssinatura extends ModelBase
 
     // Has
     // Belongs
-    public function documento() { return $this->belongsTo(Documento::class); }
-    public function usuario() { return $this->belongsTo(Usuario::class); }    
+    public function documento() { return $this->belongsTo(Documento::class); }//OK//
+    public function usuario() { return $this->belongsTo(Usuario::class); }    //OK//
     // Mutattors e Casts
 }

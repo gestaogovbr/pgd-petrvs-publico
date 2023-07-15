@@ -34,5 +34,6 @@ class TipoProcesso extends ModelBase
 
     // Has
     public function unidade() { return $this->hasMany(Unidade::class, 'tipo_processo_id'); }        
+    public function documentos() { return $this->hasMany(Documento::class); }        //OK//     //nullable
 
 }

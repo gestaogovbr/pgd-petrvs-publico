@@ -25,7 +25,7 @@ class CreateAfastamentosTable extends Migration
             $table->dateTime('fim_afastamento')->comment('Fim do afastamento');
             // Chaves estrangeiras:
             $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment('Usuário');
-            $table->foreignUuid('tipo_motivo_afastamento_id')->nullable()->constrained('tipos_motivos_afastamentos')->onDelete('restrict')->onUpdate('cascade')->comment('Tipo do motivo de afastamento');
+            $table->foreignUuid('tipo_motivo_afastamento_id')->constrained('tipos_motivos_afastamentos')->onDelete('restrict')->onUpdate('cascade')->comment('Tipo do motivo de afastamento');
         });
     }
 

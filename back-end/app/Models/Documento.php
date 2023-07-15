@@ -53,13 +53,19 @@ class Documento extends ModelBase
     ];
 
     // Has
-    public function assinaturas() { return $this->hasMany(DocumentoAssinatura::class); }    
+    public function assinaturas() { return $this->hasMany(DocumentoAssinatura::class); }    //OK//
+    public function tarefasAtividade() { return $this->hasMany(AtividadeTarefa::class); }    //OK//
+    public function tarefasProjeto() { return $this->hasMany(ProjetoTarefa::class); }    //OK//
+    public function programas() { return $this->hasMany(Programa::class); }    //OK//
+    public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }    //OK//
+    public function atividadesRequisitadas() { return $this->hasMany(Atividade::class, 'documento_requisicao_id'); }    //OK//
+    public function atividadesEntregues() { return $this->hasMany(Atividade::class, 'documento_entrega_id'); }    //OK//
     // Belongs
-    public function template() { return $this->belongsTo(Template::class); }
-    public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class); }
-    public function tipoDocumento() { return $this->belongsTo(TipoDocumento::class); }
-    public function tipoProcesso() { return $this->belongsTo(TipoProcesso::class); }
-    public function entidade() { return $this->belongsTo(Entidade::class); }    
+    public function template() { return $this->belongsTo(Template::class); }//OK//  //nullable
+    public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class); }//OK//    //nullable
+    public function tipoDocumento() { return $this->belongsTo(TipoDocumento::class); }//OK//    //nullable
+    public function tipoProcesso() { return $this->belongsTo(TipoProcesso::class); }//OK//      //nullable
+    public function entidade() { return $this->belongsTo(Entidade::class); }    //OK//  //nullable
     public function atividade() { return $this->belongsTo(Atividade::class); }    
     public function atividadeTarefa() { return $this->belongsTo(AtividadeTarefa::class); }    
     

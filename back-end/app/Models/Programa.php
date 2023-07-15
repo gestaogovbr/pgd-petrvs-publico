@@ -36,10 +36,12 @@ class Programa extends ModelBase
     public $fillable_changes = ['participantes'];
     
     // Has
-    public function participantes() { return $this->hasMany(ProgramaParticipante::class); }
+    public function participantes() { return $this->hasMany(ProgramaParticipante::class); }//OK//
+    public function planosEntrega() { return $this->hasMany(PlanoEntrega::class); }//OK//
+    public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }//OK//
     // Belongs
-    public function tipoDocumentoTcr() { return $this->belongsTo(TipoDocumento::class, 'tipo_documento_tcr_id'); }
-    public function templateTcr() { return $this->belongsTo(Template::class, 'template_tcr_id'); }   
-    public function unidade() { return $this->belongsTo(Unidade::class); }    
-    public function documento() { return $this->belongsTo(Documento::class, 'documento_id'); }    
+    public function tipoDocumentoTcr() { return $this->belongsTo(TipoDocumento::class, 'tipo_documento_tcr_id'); }//OK//    //nullable
+    public function templateTcr() { return $this->belongsTo(Template::class, 'template_tcr_id'); }  //OK//  //nullable
+    public function unidade() { return $this->belongsTo(Unidade::class); }    //OK//
+    public function documento() { return $this->belongsTo(Documento::class); }   //OK//     //nullable 
 }

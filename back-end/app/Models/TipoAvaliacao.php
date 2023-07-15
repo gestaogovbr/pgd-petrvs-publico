@@ -27,6 +27,7 @@ class TipoAvaliacao extends ModelBase
     ];
     
     // Has
-    public function avaliacoes() { return $this->hasMany(Avaliacao::class, 'tipo_avaliacao_id'); }    
-    public function tiposAvaliacoesJustificativas() { return $this->hasMany(TipoAvaliacaoJustificativa::class, 'tipo_avaliacao_id'); }    
+    public function avaliacoes() { return $this->hasMany(Avaliacao::class); }   //OK// 
+    public function consolidacoes() { return $this->hasMany(PlanoTrabalhoConsolidacao::class); }   //OK// 
+    public function tiposAvaliacoesJustificativas() { return $this->hasMany(TipoAvaliacaoJustificativa::class); } //OK//   
 }

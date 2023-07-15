@@ -31,12 +31,13 @@ class Comentario extends ModelBase
     public $delete_cascade = ['comentarios'];
 
     // Has
-    public function comentarios() { return $this->hasMany(Comentario::class); }
+    public function anexos() { return $this->hasMany(Anexo::class); }//OK//
+    public function comentarios() { return $this->hasMany(Comentario::class, 'comentario_pai_id'); }//OK//
     // Belongs
-    public function usuario() { return $this->belongsTo(Usuario::class, 'usuario_id'); }    
-    public function comentario() { return $this->belongsTo(Comentario::class, 'comentario_id'); } 
-    public function atividade() { return $this->belongsTo(Atividade::class, 'atividade_id'); } 
-    public function atividadeTarefa() { return $this->belongsTo(AtividadeTarefa::class, 'atividade_tarefa_id'); } 
-    public function projeto() { return $this->belongsTo(Projeto::class, 'projeto_id'); } 
-    public function projetoTarefa() { return $this->belongsTo(ProjetoTarefa::class, 'projeto_tarefa_id'); } 
+    public function usuario() { return $this->belongsTo(Usuario::class); }    //OK//
+    public function comentarioPai() { return $this->belongsTo(Comentario::class); } //OK//  //nullable
+    public function atividade() { return $this->belongsTo(Atividade::class); } //OK//   //nullable
+    public function atividadeTarefa() { return $this->belongsTo(AtividadeTarefa::class); } //OK//   //nullable
+    public function projeto() { return $this->belongsTo(Projeto::class); } //OK//   //nullable
+    public function projetoTarefa() { return $this->belongsTo(ProjetoTarefa::class); } //OK//   //nullable
 }

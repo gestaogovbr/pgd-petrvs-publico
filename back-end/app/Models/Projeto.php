@@ -71,15 +71,17 @@ class Projeto extends ModelBase
     ];
     
     // Has
-    public function fases() { return $this->hasMany(ProjetoFase::class); }    
-    public function tarefas() { return $this->hasMany(ProjetoTarefa::class); }    
-    public function regras() { return $this->hasMany(ProjetoRegra::class); }    
-    public function alocacoes() { return $this->hasMany(ProjetoAlocacao::class); }    
-    public function recursos() { return $this->hasMany(ProjetoRecurso::class); }    
-    public function historicos() { return $this->hasMany(ProjetoHistorico::class); }
+    public function fases() { return $this->hasMany(ProjetoFase::class); }    //OK//
+    public function tarefas() { return $this->hasMany(ProjetoTarefa::class); }    //OK//
+    public function tarefasProjeto() { return $this->hasMany(ProjetoTarefa::class, 'tarefa_projeto_id'); }    //OK//
+    public function regras() { return $this->hasMany(ProjetoRegra::class); }    //OK//
+    public function alocacoes() { return $this->hasMany(ProjetoAlocacao::class); }    //OK//
+    public function recursos() { return $this->hasMany(ProjetoRecurso::class); }    //OK//
+    public function historicos() { return $this->hasMany(ProjetoHistorico::class); }//OK//
+    public function comentarios() { return $this->hasMany(Comentario::class); }//OK//
     // Belongs
-    public function fase() { return $this->belongsTo(ProjetoFase::class); }    
-    public function tipoProjeto() { return $this->belongsTo(TipoProjeto::class); }    
-    public function usuario() { return $this->belongsTo(Usuario::class); }    
+    public function fase() { return $this->belongsTo(ProjetoFase::class); }    //OK//   //nullable
+    public function tipoProjeto() { return $this->belongsTo(TipoProjeto::class); }    //OK//    //nullable
+    public function usuario() { return $this->belongsTo(Usuario::class); }    //OK//    //nullable
 
 }

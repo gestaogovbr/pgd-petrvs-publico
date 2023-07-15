@@ -68,13 +68,19 @@ class Entidade extends ModelBase
     ];
 
     // Has
-    public function feriados() { return $this->hasMany(Feriado::class, 'entidade_id'); }        
-    public function notificacoesTemplates() { return $this->hasMany(Template::class, 'entidade_id'); }
+    public function feriados() { return $this->hasMany(Feriado::class); }    //OK//    
+    public function documentos() { return $this->hasMany(Documento::class); }    //OK//    
+    public function planejamentos() { return $this->hasMany(Planejamento::class); }    //OK//    
+    public function cadeiasValores() { return $this->hasMany(CadeiaValor::class); }    //OK//    
+    public function integracoes() { return $this->hasMany(Integracao::class); }      //OK//  
+    public function notificacoesTemplates() { return $this->hasMany(Template::class); }//OK//
+    public function unidades() { return $this->hasMany(Unidade::class); }//OK//
+    public function tiposTarefas() { return $this->hasMany(TipoTarefa::class); }//OK//
     // Belongs
-    public function cidade() { return $this->belongsTo(Cidade::class, 'cidade_id'); }   
-    public function gestor() { return $this->belongsTo(Usuario::class); }
-    public function gestorSubstituto() { return $this->belongsTo(Usuario::class); }
-    public function tipoModalidade() { return $this->belongsTo(TipoModalidade::class); }
+    public function cidade() { return $this->belongsTo(Cidade::class); }  //OK// 
+    public function gestor() { return $this->belongsTo(Usuario::class); }//OK//     //nullable
+    public function gestorSubstituto() { return $this->belongsTo(Usuario::class); }//OK//   //nullable
+    public function tipoModalidade() { return $this->belongsTo(TipoModalidade::class); }//OK//  //nullable
     
     // Mutattors e Casts
     public function getNotificacoesAttribute($value)

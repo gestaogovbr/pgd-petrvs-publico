@@ -22,8 +22,8 @@ class TipoModalidade extends ModelBase
     public $delete_cascade = ['documento'];
 
     // Has
-    public function planos() { return $this->hasMany(Plano::class, 'tipo_modalidade_id'); }
-    public function entidades() { return $this->hasMany(Entidade::class, 'tipo_modalidade_id'); }
+    public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); } //OK//
+    public function entidades() { return $this->hasMany(Entidade::class); }//OK//
     // Belongs
     //public function documento() { return $this->belongsTo(Documento::class, 'documento_id'); }
 }

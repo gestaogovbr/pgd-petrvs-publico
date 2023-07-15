@@ -46,7 +46,7 @@
             <top-alert *ngIf="!form!.controls.plano_entrega_id.value?.length" type="warning" [message]="'Antes de incluir ' + lex.noun('entrega',true) + ' neste ' + lex.noun('Plano de Trabalho') + ', é necessário selecionar um ' + lex.noun('Plano de Entregas') + '!'"></top-alert>
             <div *ngIf="form!.controls.plano_entrega_id.value?.length">
                 <editable-form [form]="formEntregas!"  [noButtons]="'true'">
-                    <plano-list-entrega noPersist [entity]="entity" [entregasDoPlanoEntrega]="entregas"></plano-list-entrega>
+                    <plano-trabalho-list-entrega noPersist [entity]="entity" [entregasDoPlanoEntrega]="entregas"></plano-trabalho-list-entrega>
                 </editable-form>
             </div>
         </tab>
@@ -63,7 +63,7 @@
         <tab *ngIf="checkFilled(['usuario_id', 'tipo_modalidade_id'])" key="TERMO" label="Termo">
             <!--top-alert *ngIf="!isTermos" type="warning" message="Para [INSERIR] ou [ASSINAR] termos escolha opção Termos de adesão na tela de listagem, ou utilize o Sei"></top-alert/-->
             <div clss="row">
-                <documentos #documentos [entity]="entityDocumentos" noPersist [cdRef]="cdRef" [needSign]="planoService.needSign" [extraTags]="planoService.extraTags" especie="TCR" 
+                <documentos #documentos [entity]="entityDocumentos" noPersist [cdRef]="cdRef" [needSign]="planoTrabalhoService.needSign" [extraTags]="planoTrabalhoService.extraTags" especie="TCR" 
                 [editingId]="documentoId" [datasource]="datasource" [template]="template"></documentos>
                 <!--grid [control]="form!.controls.documentos" #gridDocumentos [disabled]="undefined" #documentos [hasEdit]="false" [hasDelete]="false" [hasAdd]="isTermos" [add]="isTermos ? addDocumento.bind(this) : undefined" editable>
                     <columns>
