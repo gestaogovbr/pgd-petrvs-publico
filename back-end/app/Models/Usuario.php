@@ -7,19 +7,35 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Traits\AutoUuid;
 use App\Models\Afastamento;
+use App\Models\Anexo;
 use App\Models\Atividade;
-use App\Models\Unidade;
+use App\Models\AtividadeTarefa;
+use App\Models\Avaliacao;
 use App\Models\Change;
+use App\Models\Comentario;
+use App\Models\DocumentoAssinatura;
+use App\Models\Entidade;
 use App\Models\Favorito;
-use App\Models\UsuarioHash;
 use App\Models\Integracao;
 use App\Models\Lotacao;
+use App\Models\Notificacao;
+use App\Models\NotificacaoDestinatario;
+use App\Models\NotificacaoWhatsapp;
+use App\Models\PlanoEntrega;
 use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\Perfil;
+use App\Models\ProgramaParticipante;
+use App\Models\Projeto;
+use App\Models\ProjetoHistorico;
+use App\Models\ProjetoRecurso;
+use App\Models\ProjetoTarefa;
 use App\Models\NotificacaoConfig;
 use App\Traits\MergeRelations;
 use App\Traits\LogChanges;
 use App\Traits\HasPermissions;
+use App\Models\Unidade;
+use App\Models\UnidadeIntegrante;
 use App\Services\UsuarioService;
 use Throwable;
 
@@ -103,6 +119,7 @@ class Usuario extends Authenticatable
     public function favoritos() { return $this->hasMany(Favorito::class); }//OK//
     public function comentarios() { return $this->hasMany(Comentario::class); }//OK//
     public function lotacoes() { return $this->hasMany(Lotacao::class); }//OK//
+    public function lotacao() { return $this->hasOne(Lotacao::class)->where('principal', 1); }//OK//
     public function projetos() { return $this->hasMany(Projeto::class); }//OK//
     public function recursosProjeto() { return $this->hasMany(ProjetoRecurso::class); }//OK//
     public function historicosProjeto() { return $this->hasMany(ProjetoHistorico::class); }//OK//
@@ -111,14 +128,12 @@ class Usuario extends Authenticatable
     public function notificacoesDestinatario() { return $this->hasMany(NotificacaoDestinatario::class); }//OK//
     public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }//OK//
     public function participantesPrograma() { return $this->hasMany(ProgramaParticipante::class); }//OK//
-    public function usuariosHash() { return $this->hasMany(UsuarioHash::class); }
     public function integracoes() { return $this->hasMany(Integracao::class); }//OK//
+    public function vinculos() { return $this->hasMany(UnidadeIntegrante::class); }//OK//
     public function chefiasTitular() { return $this->hasMany(Unidade::class, 'gestor_id'); }//OK//
     public function chefiasSubstituto() { return $this->hasMany(Unidade::class, 'gestor_substituto_id'); }//OK//
-    public function lotacao() { return $this->hasOne(Lotacao::class)->where('principal', 1); }
     public function chefiaEntidade() { return $this->hasOne(Entidade::class, 'gestor_id'); } //OK//
     public function chefiaSubstitutoEntidade() { return $this->hasOne(Entidade::class, 'gestor_substituto_id'); } //OK//
-    public function changes() { return $this->hasMany(Change::class, 'user_id'); }
     public function planosEntregaCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }//OK//  
     public function planosEntregaCancelados() { return $this->hasMany(PlanoEntrega::class, 'cancelamento_usuario_id'); }//OK//  
     // Belongs
@@ -155,7 +170,7 @@ class Usuario extends Authenticatable
     }
 
     // Outros métodos
-/*     public function changes(): array {
-        return Change::where('user_id', $this->id)->get()->toArray() ?? [];
-    } */
+    public function changes(): array {
+        return Change::where('user_id', $this->id)->get()->toArray() ?? []; //Não pode ser usado um relacionamento do Laravel porque as tabelas estão em bancos distintos
+    }
 }

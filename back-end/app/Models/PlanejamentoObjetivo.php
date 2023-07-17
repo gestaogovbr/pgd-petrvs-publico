@@ -16,11 +16,11 @@ class PlanejamentoObjetivo extends ModelBase
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'nome', /* varchar(256); NOT NULL; */// Nome do objetivo
         'fundamentacao', /* varchar(256); NOT NULL; */// Fundamentação do objetivo
-        'planejamento_id', /* char(36); NOT NULL; */
         'sequencia', /* int; NOT NULL; */// Sequência utilizada para ordenar os objetivos
-        'eixo_tematico_id', /* char(36); NOT NULL; */
         'path', /* text; */// Path dos nós pais separados por /, ou NULL caso sejam nós raiz
+        'eixo_tematico_id', /* char(36); NOT NULL; */
         'objetivo_pai_id', /* char(36); */
+        'planejamento_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */
     ];
 

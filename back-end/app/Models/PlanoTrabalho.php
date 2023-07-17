@@ -10,6 +10,7 @@ use App\Models\Programa;
 use App\Models\Documento;
 use App\Models\PlanoEntrega;
 use App\Models\PlanoTrabalhoEntrega;
+use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\TipoModalidade;
 use Illuminate\Support\Facades\DB;
 
@@ -26,12 +27,12 @@ class PlanoTrabalho extends ModelBase
         'tempo_proporcional', /* double(8,2); NOT NULL; DEFAULT: '0.00'; */// tempo_total menos os afastamentos
         'data_inicio_vigencia', /* datetime; NOT NULL; */// Inicio do plano de trabalho
         'data_fim_vigencia', /* datetime; NOT NULL; */// Fim do plano de trabalho
+        'forma_contagem_carga_horaria', /* enum('DIA','SEMANA','MES'); NOT NULL; DEFAULT: 'DIA'; */// Forma de contagem padrão da carga horária
         'programa_id', /* char(36); NOT NULL; */
         'usuario_id', /* char(36); NOT NULL; */
         'unidade_id', /* char(36); NOT NULL; */
         'documento_id', /* char(36); */
         'tipo_modalidade_id', /* char(36); NOT NULL; */
-        'forma_contagem_carga_horaria', /* enum('DIA','SEMANA','MES'); NOT NULL; DEFAULT: 'DIA'; */// Forma de contagem padrão da carga horária
         'plano_entrega_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */
     ];

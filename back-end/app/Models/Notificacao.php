@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\NotificacaoDestinatario;
+use App\Models\Usuario;
 use Illuminate\Support\Facades\DB;
 
 class Notificacao extends ModelBase
@@ -17,14 +18,14 @@ class Notificacao extends ModelBase
         'data_registro', /* datetime; NOT NULL; */// Data e hora da inclusão da mensagem
         'mensagem', /* longtext; NOT NULL; */// Mensagem
         //'deleted_at', /* timestamp; */
-        //'numero', /* int; NOT NULL; */// Número da mensagem (Gerado pelo sistema)
-        //'remetente_id', /* char(36); */
+        'numero', /* int; NOT NULL; */// Número da mensagem (Gerado pelo sistema)
+        'remetente_id', /* char(36); */
     ];
 
     protected static function booted()
     {
-        static::creating(function ($demanda) {
-            $demanda->numero = DB::select("CALL sequence_notificacao_numero()")[0]->number;
+        static::creating(function ($atividade) {
+            $atividade->numero = DB::select("CALL sequence_notificacao_numero()")[0]->number;
         }); 
     }
 

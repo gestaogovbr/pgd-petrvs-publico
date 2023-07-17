@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\Unidade;
+use App\Models\PlanoEntrega;
+use App\Models\PlanoTrabalho;
 use App\Models\Template;
 use App\Models\Documento;
 use App\Models\TipoDocumento;
@@ -21,13 +23,13 @@ class Programa extends ModelBase
         'config', /* json; */// Configurações do programa
         'data_inicio_vigencia', /* datetime; NOT NULL; */// Inicio da vigência do programa
         'data_fim_vigencia', /* datetime; NOT NULL; */// Fim da vigência do programa
-        'documento_id', /* char(36); */
-        'unidade_id', /* char(36); NOT NULL; */
-        'template_tcr_id', /* char(36); */
+        'prazo_execucao', /* int; NOT NULL; */// Limite máximo de dias corridos para o plano de entregas (Zero para não limitar)
         'periodo_avaliacao', /* enum('SEMANAL','QUINZENAL','MENSAL','BIMESTRAL','TRIMESTRAL','SEMESTRAL'); NOT NULL; DEFAULT: 'MENSAL'; */// Período para avaliação do plano de trabalho
         'termo_obrigatorio', /* tinyint; NOT NULL; */// Se o termo é ou não obrigatório
         'tipo_documento_tcr_id', /* char(36); */
-        'prazo_execucao', /* int; NOT NULL; */// Limite máximo de dias corridos para o plano de entregas (Zero para não limitar)
+        'documento_id', /* char(36); */
+        'unidade_id', /* char(36); NOT NULL; */
+        'template_tcr_id', /* char(36); */        
         //'deleted_at', /* timestamp; */
     ];
 
@@ -40,8 +42,8 @@ class Programa extends ModelBase
     public function planosEntrega() { return $this->hasMany(PlanoEntrega::class); }//OK//
     public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }//OK//
     // Belongs
-    public function tipoDocumentoTcr() { return $this->belongsTo(TipoDocumento::class, 'tipo_documento_tcr_id'); }//OK//    //nullable
-    public function templateTcr() { return $this->belongsTo(Template::class, 'template_tcr_id'); }  //OK//  //nullable
+    public function tipoDocumentoTcr() { return $this->belongsTo(TipoDocumento::class); }//OK//    //nullable
+    public function templateTcr() { return $this->belongsTo(Template::class); }  //OK//  //nullable
     public function unidade() { return $this->belongsTo(Unidade::class); }    //OK//
     public function documento() { return $this->belongsTo(Documento::class); }   //OK//     //nullable 
 }

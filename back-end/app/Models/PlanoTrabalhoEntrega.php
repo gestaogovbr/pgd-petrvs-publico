@@ -4,7 +4,9 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalhoConsolidacaoEntrega;
 use App\Models\Entrega;
+use App\Models\Atividade;
 use App\Models\PlanoEntregaEntrega;
 
 class PlanoTrabalhoEntrega extends ModelBase
@@ -19,7 +21,7 @@ class PlanoTrabalhoEntrega extends ModelBase
         'descricao', /* varchar(256); NOT NULL; */// Detalhamento da entrega
         'forca_trabalho', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */// Percentual da força de trabalho associado a esta entrega
         //'deleted_at', /* timestamp; */
-        //'plano_trabalho_id', /* char(36); NOT NULL; */
+        'plano_trabalho_id', /* char(36); NOT NULL; */
     ];
 
     public $delete_cascade = [];

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\Unidade;
 use App\Models\Usuario;
+use App\Models\PlanoTrabalho;
 use App\Models\Programa;
 use App\Models\Planejamento;
 use App\Models\CadeiaValor;
@@ -32,7 +33,7 @@ class PlanoEntrega extends ModelBase
         'cancelamento_usuario_id', /* char(36); */
         'programa_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */
-        //'criacao_usuario_id', /* char(36); */
+        'criacao_usuario_id', /* char(36); */
     ];
 
     public $fillable_changes = ["entregas"];
@@ -54,7 +55,7 @@ class PlanoEntrega extends ModelBase
     public function planejamento() { return $this->belongsTo(Planejamento::class); }//OK//  //nullable
     public function cadeiaValor() { return $this->belongsTo(CadeiaValor::class); }//OK//    //nullable
     public function unidade() { return $this->belongsTo(Unidade::class); }//OK//
-    public function criador() { return $this->belongsTo(Usuario::class, 'criacao_usuario_id'); }
+    public function criador() { return $this->belongsTo(Usuario::class, 'criacao_usuario_id'); }//OK//
     public function cancelador() { return $this->belongsTo(Usuario::class, 'cancelamento_usuario_id'); }//OK//  //nullable
     public function programa() { return $this->belongsTo(Programa::class); }//OK//
     public function planoEntregaSuperior() { return $this->belongsTo(PlanoEntrega::class, 'plano_entrega_id'); }//OK// //nullable

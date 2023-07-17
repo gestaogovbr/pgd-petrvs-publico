@@ -20,5 +20,5 @@ class TipoProjeto extends ModelBase
     //public $delete_cascade = [];
     
     // Has
-    public function projetos() { return $this->hasMany(Projeto::class, 'tipo_projeto_id'); }   //OK// 
+    public function projetos() { return $this->hasMany(Projeto::class); }   //OK// 
 }

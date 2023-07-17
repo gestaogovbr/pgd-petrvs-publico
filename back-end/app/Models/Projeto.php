@@ -4,11 +4,14 @@ namespace App\Models;
 
 use App\Casts\AsJson;
 use App\Models\ModelBase;
+use App\Models\Usuario;
 use App\Models\ProjetoTarefa;
 use App\Models\ProjetoAlocacao;
 use App\Models\ProjetoRegra;
 use App\Models\TipoProjeto;
 use App\Models\ProjetoRecurso;
+use App\Models\ProjetoHistorico;
+use App\Models\Comentario;
 use App\Models\ProjetoFase;
 use Illuminate\Support\Facades\DB;
 

@@ -2,7 +2,8 @@
 
 namespace App\Models;
 use App\Models\ModelBase;
-use App\Models\Plano;
+use App\Models\PlanoTrabalho;
+use App\Models\Entidade;
 
 class TipoModalidade extends ModelBase
 {
@@ -25,5 +26,4 @@ class TipoModalidade extends ModelBase
     public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); } //OK//
     public function entidades() { return $this->hasMany(Entidade::class); }//OK//
     // Belongs
-    //public function documento() { return $this->belongsTo(Documento::class, 'documento_id'); }
 }

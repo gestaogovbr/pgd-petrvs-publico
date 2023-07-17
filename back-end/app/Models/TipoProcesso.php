@@ -2,7 +2,7 @@
 
 namespace App\Models;
 use App\Models\ModelBase;
-use App\Models\Unidade;
+use App\Models\Documento;
 
 class TipoProcesso extends ModelBase
 {
@@ -33,7 +33,6 @@ class TipoProcesso extends ModelBase
     ];
 
     // Has
-    public function unidade() { return $this->hasMany(Unidade::class, 'tipo_processo_id'); }        
     public function documentos() { return $this->hasMany(Documento::class); }        //OK//     //nullable
 
 }

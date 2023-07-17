@@ -26,11 +26,9 @@ class ProjetoRecurso extends ModelBase
         //'deleted_at', /* timestamp; */
     ];
 
-    /*public $fillable_changes = [
-    ];
+    public $fillable_changes = [];
 
-    public $fillable_relations = [
-    ];*/
+    public $fillable_relations = [];
 
     public $delete_cascade = [];
 

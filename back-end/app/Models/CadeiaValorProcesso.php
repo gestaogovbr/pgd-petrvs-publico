@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\CadeiaValor;
+use App\Models\PlanoEntregaEntregaProcesso;
 
 class CadeiaValorProcesso extends ModelBase
 {

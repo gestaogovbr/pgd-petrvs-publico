@@ -20,16 +20,13 @@ class MaterialServico extends ModelBase
         //'deleted_at', /* timestamp; */
     ];
 
-    /*public $fillable_changes = [
-    ];
+    public $fillable_changes = [];
 
-    public $fillable_relations = [
-    ];*/
+    public $fillable_relations = [];
 
-    //public $delete_cascade = [];
+    public $delete_cascade = [];
 
     // Has
     public function projetosRecursos() { return $this->hasMany(ProjetoRecurso::class); }    //OK//
     // Belongs
-    //public function () { return $this->belongsTo(::class); }    
 }

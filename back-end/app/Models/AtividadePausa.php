@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
-use App\Models\Demanda;
+use App\Models\Atividade;
 
 class AtividadePausa extends ModelBase
 {
@@ -15,7 +15,7 @@ class AtividadePausa extends ModelBase
         'data_inicio', /* datetime; NOT NULL; */// Data inicio da pausa
         'data_fim', /* datetime; */// Data de retorno
         //'deleted_at', /* timestamp; */
-        //'atividade_id', /* char(36); NOT NULL; */
+        'atividade_id', /* char(36); NOT NULL; */
     ];
     
     // Belongs

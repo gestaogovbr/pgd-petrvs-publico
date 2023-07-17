@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Models;
+
 use App\Models\ModelBase;
 use App\Models\Avaliacao;
+use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\TipoAvaliacaoJustificativa;
 
 class TipoAvaliacao extends ModelBase

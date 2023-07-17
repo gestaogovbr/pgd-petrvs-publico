@@ -5,6 +5,14 @@ namespace App\Models;
 use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\PlanoTrabalho;
+use App\Models\DocumentoAssinatura;
+use App\Models\Atividade;
+use App\Models\AtividadeTarefa;
+use App\Models\ProjetoTarefa;
+use App\Models\Programa;
+use App\Models\Template;
+use App\Models\TipoDocumento;
+use App\Models\TipoProcesso;
 use App\Models\Entidade;
 use Illuminate\Support\Facades\DB;
 
@@ -31,8 +39,8 @@ class Documento extends ModelBase
         'atividade_id', /* char(36); */
         'atividade_tarefa_id', /* char(36); */
         'template_id', /* char(36); */
-        //'deleted_at', /* timestamp; */
         'plano_trabalho_id', /* char(36); */
+        //'deleted_at', /* timestamp; */
     ];
 
     public $delete_cascade = ['assinaturas'];
@@ -66,7 +74,7 @@ class Documento extends ModelBase
     public function tipoDocumento() { return $this->belongsTo(TipoDocumento::class); }//OK//    //nullable
     public function tipoProcesso() { return $this->belongsTo(TipoProcesso::class); }//OK//      //nullable
     public function entidade() { return $this->belongsTo(Entidade::class); }    //OK//  //nullable
-    public function atividade() { return $this->belongsTo(Atividade::class); }    
-    public function atividadeTarefa() { return $this->belongsTo(AtividadeTarefa::class); }    
+    public function atividade() { return $this->belongsTo(Atividade::class); }  //OK//  //nullable  
+    public function atividadeTarefa() { return $this->belongsTo(AtividadeTarefa::class); }  //OK//  //nullable  
     
 }

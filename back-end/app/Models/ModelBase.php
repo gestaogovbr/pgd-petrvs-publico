@@ -63,8 +63,5 @@ class ModelBase extends Model
     }
 
     // Escopos
-
-    public function scopeDoUsuario($query, $usuario_id){
-        return $query->where("usuario_id", $usuario_id);
-    }
+    public function scopeDoUsuario($query, $usuario_id){ return $query->where("usuario_id", $usuario_id); }
 }

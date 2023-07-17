@@ -21,16 +21,13 @@ class ProjetoHistorico extends ModelBase
         //'deleted_at', /* timestamp; */
     ];
 
-    /*public $fillable_changes = [
-    ];
+    public $fillable_changes = [];
 
-    public $fillable_relations = [
-    ];*/
+    public $fillable_relations = [];
 
     public $delete_cascade = [];
 
     // Has
-    //public function () { return $this->hasMany(::class); }    
     // Belongs
     public function projeto() { return $this->belongsTo(Projeto::class); }  //OK//  
     public function usuario() { return $this->belongsTo(Usuario::class); }    //OK//

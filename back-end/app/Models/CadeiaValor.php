@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
+use App\Models\PlanoEntrega;
 use App\Models\Entidade;
 use App\Models\Unidade;
 use App\Models\CadeiaValorProcesso;

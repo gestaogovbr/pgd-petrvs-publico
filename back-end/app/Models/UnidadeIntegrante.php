@@ -21,6 +21,6 @@ class UnidadeIntegrante extends ModelBase
 
     // Has
     // Belongs
-    public function unidade() { return $this->belongsTo(Unidade::class); }
-    public function usuario() { return $this->belongsTo(Usuario::class); }
+    public function unidade() { return $this->belongsTo(Unidade::class); }//OK//
+    public function usuario() { return $this->belongsTo(Usuario::class); }//OK//
 }

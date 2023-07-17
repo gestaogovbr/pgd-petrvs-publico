@@ -69,6 +69,7 @@ class CreateAtividadesTable extends Migration
      */
     public function down()
     {
+        // Apaga a chave estrangeira na tabela 'documentos' devido à referência cruzada com 'atividades'
         Schema::table('documentos', function (Blueprint $table) {
             $table->dropConstrainedForeignId('atividade_id');
         });

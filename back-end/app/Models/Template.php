@@ -1,9 +1,12 @@
 <?php
 
 namespace App\Models;
+
 use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\Unidade;
+use App\Models\Programa;
+use App\Models\Documento;
 use App\Models\Entidade;
 use Illuminate\Support\Facades\DB;
 

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
+use App\Models\PlanejamentoObjetivo;
 
 class EixoTematico extends ModelBase
 {

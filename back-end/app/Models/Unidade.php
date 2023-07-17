@@ -6,10 +6,14 @@ use App\Models\ModelBase;
 use App\Models\Atividade;
 use App\Models\Usuario;
 use App\Models\Lotacao;
+use App\Models\Planejamento;
+use App\Models\CadeiaValor;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoEntrega;
+use App\Models\PlanoEntregaEntrega;
 use App\Models\Programa;
-use App\Models\TipoAtividade;
+use App\Models\ProjetoRecurso;
+use App\Models\TipoTarefa;
 use App\Models\Entidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\Cidade;
@@ -36,17 +40,17 @@ class Unidade extends ModelBase
         'autoedicao_subordinadas', /* tinyint; NOT NULL; DEFAULT: '1'; */// Permitir a autoedição de informações gerais pelas unidades subordinadas (nome, sigla, codigo_pai)
         'etiquetas', /* json; */// Configuração das etiquetas que serão utilizadas nas atividades (contém nome, icone e cor)
         'notificacoes', /* json; */// Configurações das notificações (Se envia e-mail, whatsapp, tipos, templates)
+        'expediente', /* json; */// Configuração de expediente da unidade
+        'avaliacao_hierarquica', /* tinyint; NOT NULL; */// Se permite que unidades superiores façam avaliação
+        //'deleted_at', /* timestamp; */
+        'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho
+        'inativo', /* datetime; */// Se a unidade está ou não inativa
+        'checklist', /* json; */// Nome dos checklist
         'unidade_id', /* char(36); */
         'gestor_id', /* char(36); */
         'gestor_substituto_id', /* char(36); */
         'entidade_id', /* char(36); NOT NULL; */
         'cidade_id', /* char(36); */
-        'expediente', /* json; */// Configuração de expediente da unidade
-        'avaliacao_hierarquica', /* tinyint; NOT NULL; */// Se permite que unidades superiores façam avaliação
-        //'deleted_at', /* timestamp; */
-        //'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho
-        //'inativo', /* datetime; */// Se a unidade está ou não inativa
-        //'checklist', /* json; */// Nome dos checklist
     ];
 
     public $fillable_relations = [];
@@ -80,10 +84,9 @@ class Unidade extends ModelBase
     public function entregasPlanoEntrega() { return $this->hasMany(PlanoEntregaEntrega::class); }//OK//
     public function programas() { return $this->hasMany(Programa::class); }//OK//
     public function recursosProjeto() { return $this->hasMany(ProjetoRecurso::class); }//OK//
-    public function tiposAtividade() { return $this->hasMany(TipoAtividade::class); }
     public function tiposTarefa() { return $this->hasMany(TipoTarefa::class); }//OK//
-    public function integrantes() { return $this->hasMany(UnidadeIntegrante::class); }
-    public function notificacoesTemplate() { return $this->hasMany(Template::class, 'unidade_id'); }//OK//
+    public function vinculos() { return $this->hasMany(UnidadeIntegrante::class); }//OK//
+    public function notificacoesTemplate() { return $this->hasMany(Template::class); }//OK//
     public function unidades() { return $this->hasMany(Unidade::class); }//OK//
     public function planejamentos() { return $this->hasMany(Planejamento::class); }//OK//
     public function cadeiasValor() { return $this->hasMany(CadeiaValor::class); }//OK//

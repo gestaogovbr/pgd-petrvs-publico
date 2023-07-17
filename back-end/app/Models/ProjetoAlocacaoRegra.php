@@ -18,16 +18,13 @@ class ProjetoAlocacaoRegra extends ModelBase
         //'deleted_at', /* timestamp; */
     ];
 
-    /*public $fillable_changes = [
-    ];
+    public $fillable_changes = [];
 
-    public $fillable_relations = [
-    ];*/
+    public $fillable_relations = [];
 
     public $delete_cascade = [];
 
     // Has
-    //public function () { return $this->hasMany(::class); }    
     // Belongs
     public function projetoAlocacao() { return $this->belongsTo(ProjetoAlocacao::class); }  //OK//  
     public function regra() { return $this->belongsTo(ProjetoRegra::class); }  //OK//  

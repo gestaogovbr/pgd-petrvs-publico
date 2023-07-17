@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
+use App\Models\Documento;
 use App\Models\Usuario;
 
 class DocumentoAssinatura extends ModelBase

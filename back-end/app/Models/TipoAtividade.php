@@ -3,6 +3,7 @@
 namespace App\Models;
 use App\Casts\AsJson;
 use App\Models\ModelBase;
+use App\Models\Atividade;
 
 class TipoAtividade extends ModelBase
 {

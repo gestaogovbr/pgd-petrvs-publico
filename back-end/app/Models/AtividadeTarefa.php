@@ -4,7 +4,10 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\Atividade;
+use App\Models\Documento;
+use App\Models\TipoTarefa;
 use App\Models\Usuario;
+use App\Models\Comentario;
 
 class AtividadeTarefa extends ModelBase
 {
@@ -20,8 +23,9 @@ class AtividadeTarefa extends ModelBase
         'documento_id', /* char(36); */
         'usuario_id', /* char(36); NOT NULL; */
         'tipo_tarefa_id', /* char(36); */
+        'atividade_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */
-        //'atividade_id', /* char(36); NOT NULL; */
+        
     ];
     
     public $fillable_changes = [
@@ -32,11 +36,10 @@ class AtividadeTarefa extends ModelBase
 
     // Has
     public function comentarios() { return $this->hasMany(Comentario::class); }   //OK// 
+    public function documentos() { return $this->hasMany(Documento::class); }   //OK// 
     // Belongs
     public function documento() { return $this->belongsTo(Documento::class); }  //OK//  //nullable  
-    public function atividade() { return $this->belongsTo(Atividade::class); }    //OK//
-    public function tipoTarefa() { return $this->belongsTo(TipoTarefa::class); }    //OK//  //nullable
-    public function tipoDocumento() { return $this->belongsTo(TipoDocumento::class); }    
-    public function tipoProcesso() { return $this->belongsTo(TipoProcesso::class); }    
     public function usuario() { return $this->belongsTo(Usuario::class); }    //OK//
+    public function tipoTarefa() { return $this->belongsTo(TipoTarefa::class); }    //OK//  //nullable
+    public function atividade() { return $this->belongsTo(Atividade::class); }    //OK//
 }

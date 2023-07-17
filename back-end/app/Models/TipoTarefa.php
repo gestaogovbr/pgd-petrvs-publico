@@ -4,6 +4,7 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\Unidade;
 use App\Models\Entidade;
+use App\Models\AtividadeTarefa;
 
 class TipoTarefa extends ModelBase
 {

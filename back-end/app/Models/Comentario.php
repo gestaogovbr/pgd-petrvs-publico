@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
+use App\Models\Anexo;
 use App\Models\Usuario;
 use App\Models\Projeto;
+use App\Models\Atividade;
 use App\Models\ProjetoTarefa;
+use App\Models\AtividadeTarefa;
 
 class Comentario extends ModelBase
 {

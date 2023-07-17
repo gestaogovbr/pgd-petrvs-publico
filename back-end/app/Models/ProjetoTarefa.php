@@ -4,9 +4,11 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\Projeto;
+use App\Models\Documento;
+use App\Models\Atividade;
 use App\Models\Usuario;
-use App\Models\Demanda;
 use App\Models\ProjetoAlocacao;
+use App\Models\Comentario;
 use App\Casts\AsJson;
 
 class ProjetoTarefa extends ModelBase
@@ -39,14 +41,14 @@ class ProjetoTarefa extends ModelBase
         'soma_recusos_alocados_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Mostra o somatório dos recursos filhos (somente se tem_filhos)
         'custos_proprios', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui custos próprios (somente se tem_filhos), se não tem filhos sempre será true
         'soma_custos_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Mostra o somatório dos custos filhos (somente se tem_filhos)
+        //'deleted_at', /* timestamp; */
+        'etiquetas', /* json; */// Etiquetas
+        'documento_id', /* char(36); */
+        'tarefa_projeto_id', /* char(36); */
         'projeto_id', /* char(36); NOT NULL; */
         'tarefa_pai_id', /* char(36); */
         'usuario_id', /* char(36); */
-        //'deleted_at', /* timestamp; */
-        //'etiquetas', /* json; */// Etiquetas
-        //'documento_id', /* char(36); */
-        //'tarefa_projeto_id', /* char(36); */
-        //'atividade_id', /* char(36); */
+        'atividade_id', /* char(36); */
     ];
 
     public $fillable_changes = ["alocacoes"];
@@ -66,7 +68,7 @@ class ProjetoTarefa extends ModelBase
     public function comentarios() { return $this->hasMany(Comentario::class); }   //OK// 
     // Belongs
     public function projeto() { return $this->belongsTo(Projeto::class); }   //OK// 
-    public function tarefaProjeto() { return $this->belongsTo(Projeto::class, 'tarefa_projeto_id'); }   //OK//  //nullable
+    public function tarefaProjeto() { return $this->belongsTo(Projeto::class); }   //OK//  //nullable
     public function documento() { return $this->belongsTo(Documento::class); }    //OK//    //nullable
     public function atividade() { return $this->belongsTo(Atividade::class); }    //OK//    //nullable
     public function usuario() { return $this->belongsTo(Usuario::class); }    //OK//    //nullable

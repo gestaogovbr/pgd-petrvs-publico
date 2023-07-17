@@ -22,6 +22,6 @@ class Afastamento extends ModelBase
     ];
 
     // Belongs
-    public function usuario() { return $this->belongsTo(Usuario::class, 'usuario_id'); }    //OK//
-    public function tipoMotivoAfastamento() { return $this->belongsTo(TipoMotivoAfastamento::class, 'tipo_motivo_afastamento_id'); }    //OK//
+    public function usuario() { return $this->belongsTo(Usuario::class); }    //OK//
+    public function tipoMotivoAfastamento() { return $this->belongsTo(TipoMotivoAfastamento::class); }    //OK//
 }
