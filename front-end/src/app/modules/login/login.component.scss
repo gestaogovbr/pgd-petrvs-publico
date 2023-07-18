@@ -54,8 +54,7 @@
     transition: all ease-in .3s
 }
 
-.br-sign-in,
-.br-button.sign-in {
+.br-button {
   --button-radius: 100em;
   --button-xsmall: 24px;
   --button-small: 32px;
@@ -80,197 +79,122 @@
   vertical-align: middle;
   white-space: nowrap;
   width: auto;
-  --background: var(--gray-2);
-  --sign-in-img: 20px;
-  background-color: var(--background);
-  padding: 0 var(--spacing-scale-2x);
 }
-.br-sign-in.block,
-.br-button.sign-in.block {
+.br-button.block {
   width: 100%;
 }
 @media (min-width: 576px) {
-  .br-sign-in.block-sm,
-  .br-button.sign-in.block-sm {
+  .br-button.block-sm {
     width: 100%;
   }
-  .br-sign-in.auto-sm,
-  .br-button.sign-in.auto-sm {
+  .br-button.auto-sm {
     width: auto;
   }
 }
 @media (min-width: 992px) {
-  .br-sign-in.block-md,
-  .br-button.sign-in.block-md {
+  .br-button.block-md {
     width: 100%;
   }
-  .br-sign-in.auto-md,
-  .br-button.sign-in.auto-md {
+  .br-button.auto-md {
     width: auto;
   }
 }
 @media (min-width: 1280px) {
-  .br-sign-in.block-lg,
-  .br-button.sign-in.block-lg {
+  .br-button.block-lg {
     width: 100%;
   }
-  .br-sign-in.auto-lg,
-  .br-button.sign-in.auto-lg {
+  .br-button.auto-lg {
     width: auto;
   }
 }
 @media (min-width: 1600px) {
-  .br-sign-in.block-xl,
-  .br-button.sign-in.block-xl {
+  .br-button.block-xl {
     width: 100%;
   }
-  .br-sign-in.auto-xl,
-  .br-button.sign-in.auto-xl {
+  .br-button.auto-xl {
     width: auto;
   }
 }
-.br-sign-in.circle, .br-sign-in[circle], .br-sign-in.is-circle,
-.br-button.sign-in.circle,
-.br-button.sign-in[circle],
-.br-button.sign-in.is-circle {
+.br-button.circle, .br-button[circle], .br-button.is-circle {
   border-radius: 50%;
   padding: 0;
   width: var(--button-size);
 }
-.br-sign-in.xsmall, .br-sign-in[xsmall], .br-sign-in.is-xsmall,
-.br-button.sign-in.xsmall,
-.br-button.sign-in[xsmall],
-.br-button.sign-in.is-xsmall {
+.br-button.xsmall, .br-button[xsmall], .br-button.is-xsmall {
   --button-size: var(--button-xsmall);
 }
-.br-sign-in.small, .br-sign-in[small], .br-sign-in.is-small,
-.br-button.sign-in.small,
-.br-button.sign-in[small],
-.br-button.sign-in.is-small {
+.br-button.small, .br-button[small], .br-button.is-small {
   --button-size: var(--button-small);
 }
-.br-sign-in.medium, .br-sign-in[medium], .br-sign-in.is-medium,
-.br-button.sign-in.medium,
-.br-button.sign-in[medium],
-.br-button.sign-in.is-medium {
+.br-button.medium, .br-button[medium], .br-button.is-medium {
   --button-size: var(--button-medium);
 }
-.br-sign-in.large, .br-sign-in[large], .br-sign-in.is-large,
-.br-button.sign-in.large,
-.br-button.sign-in[large],
-.br-button.sign-in.is-large {
+.br-button.large, .br-button[large], .br-button.is-large {
   --button-size: var(--button-large);
 }
-.br-sign-in.primary, .br-sign-in[primary], .br-sign-in.is-primary,
-.br-button.sign-in.primary,
-.br-button.sign-in[primary],
-.br-button.sign-in.is-primary {
+.br-button.primary, .br-button[primary], .br-button.is-primary {
   --interactive-rgb: var(--color-dark-rgb);
   background-color: var(--interactive-light);
   color: var(--color-dark);
 }
-.br-sign-in.secondary, .br-sign-in[secondary], .br-sign-in.is-secondary,
-.br-button.sign-in.secondary,
-.br-button.sign-in[secondary],
-.br-button.sign-in.is-secondary {
+.br-button.secondary, .br-button[secondary], .br-button.is-secondary {
   background-color: var(--background-light);
   border: 1px solid var(--interactive);
 }
-.br-sign-in.danger, .br-sign-in[danger], .br-sign-in.is-danger,
-.br-button.sign-in.danger,
-.br-button.sign-in[danger],
-.br-button.sign-in.is-danger {
+.br-button.danger, .br-button[danger], .br-button.is-danger {
   background-color: var(--danger);
   --interactive-rgb: var(--color-dark-rgb);
   color: var(--color-dark);
 }
-.br-sign-in.success, .br-sign-in[success], .br-sign-in.is-success,
-.br-button.sign-in.success,
-.br-button.sign-in[success],
-.br-button.sign-in.is-success {
+.br-button.success, .br-button[success], .br-button.is-success {
   background-color: var(--success);
   --interactive-rgb: var(--color-dark-rgb);
   color: var(--color-dark);
 }
-.br-sign-in.warning, .br-sign-in[warning], .br-sign-in.is-warning,
-.br-button.sign-in.warning,
-.br-button.sign-in[warning],
-.br-button.sign-in.is-warning {
+.br-button.warning, .br-button[warning], .br-button.is-warning {
   background-color: var(--warning);
   --interactive-rgb: var(--color-light-rgb);
   color: var(--color-light);
 }
-.br-sign-in.info, .br-sign-in[info], .br-sign-in.is-info,
-.br-button.sign-in.info,
-.br-button.sign-in[info],
-.br-button.sign-in.is-info {
+.br-button.info, .br-button[info], .br-button.is-info {
   background-color: var(--info);
   --interactive-rgb: var(--color-dark-rgb);
   color: var(--color-dark);
 }
-.br-sign-in:disabled,
-.br-button.sign-in:disabled {
+.br-button:disabled {
   cursor: not-allowed;
 }
-.br-sign-in:not(:disabled),
-.br-button.sign-in:not(:disabled) {
+.br-button:not(:disabled) {
   --focus-offset: var(--spacing-scale-half);
 }
-.br-sign-in:not(:disabled):focus,
-.br-button.sign-in:not(:disabled):focus {
+.br-button:not(:disabled):focus {
   outline: none;
 }
-.br-sign-in:not(:disabled).focus-visible, .br-sign-in:not(:disabled):focus-visible,
-.br-button.sign-in:not(:disabled).focus-visible,
-.br-button.sign-in:not(:disabled):focus-visible {
+.br-button:not(:disabled).focus-visible, .br-button:not(:disabled):focus-visible {
   outline-color: var(--focus);
   outline-offset: var(--focus-offset);
   outline-style: var(--focus-style);
   outline-width: var(--focus-width);
 }
-.br-sign-in:not(:disabled):not(:disabled):hover,
-.br-button.sign-in:not(:disabled):not(:disabled):hover {
+.br-button:not(:disabled):not(:disabled):hover {
   background-image: linear-gradient(rgba(var(--interactive-rgb), var(--hover)), rgba(var(--interactive-rgb), var(--hover)));
 }
-.br-sign-in:not(:disabled):not(:disabled):active,
-.br-button.sign-in:not(:disabled):not(:disabled):active {
+.br-button:not(:disabled):not(:disabled):active {
   background-image: linear-gradient(rgba(var(--interactive-rgb), var(--pressed)), rgba(var(--interactive-rgb), var(--pressed)));
 }
-.br-sign-in.active, .br-sign-in.is-active, .br-sign-in[active],
-.br-button.sign-in.active,
-.br-button.sign-in.is-active,
-.br-button.sign-in[active] {
+.br-button.active, .br-button.is-active, .br-button[active] {
   --hover: var(--hover-dark);
   background-color: var(--active);
   color: var(--color-dark);
 }
-.br-sign-in.loading::after, .br-sign-in[loading]::after, .br-sign-in.is-loading::after,
-.br-button.sign-in.loading::after,
-.br-button.sign-in[loading]::after,
-.br-button.sign-in.is-loading::after {
+.br-button.loading::after, .br-button[loading]::after, .br-button.is-loading::after {
   border-color: var(--interactive) var(--interactive) transparent;
   border-style: solid;
 }
-.br-sign-in.loading.primary::after, .br-sign-in.loading.danger::after, .br-sign-in.loading.success::after, .br-sign-in.loading.info::after, .br-sign-in[loading].primary::after, .br-sign-in[loading].danger::after, .br-sign-in[loading].success::after, .br-sign-in[loading].info::after, .br-sign-in.is-loading.primary::after, .br-sign-in.is-loading.danger::after, .br-sign-in.is-loading.success::after, .br-sign-in.is-loading.info::after,
-.br-button.sign-in.loading.primary::after,
-.br-button.sign-in.loading.danger::after,
-.br-button.sign-in.loading.success::after,
-.br-button.sign-in.loading.info::after,
-.br-button.sign-in[loading].primary::after,
-.br-button.sign-in[loading].danger::after,
-.br-button.sign-in[loading].success::after,
-.br-button.sign-in[loading].info::after,
-.br-button.sign-in.is-loading.primary::after,
-.br-button.sign-in.is-loading.danger::after,
-.br-button.sign-in.is-loading.success::after,
-.br-button.sign-in.is-loading.info::after {
+.br-button.loading.primary::after, .br-button.loading.danger::after, .br-button.loading.success::after, .br-button.loading.info::after, .br-button[loading].primary::after, .br-button[loading].danger::after, .br-button[loading].success::after, .br-button[loading].info::after, .br-button.is-loading.primary::after, .br-button.is-loading.danger::after, .br-button.is-loading.success::after, .br-button.is-loading.info::after {
   border-color: var(--background) var(--background) transparent;
 }
-.br-sign-in.inverted, .br-sign-in.is-inverted, .br-sign-in[inverted], .br-sign-in.dark-mode,
-.br-button.sign-in.inverted,
-.br-button.sign-in.is-inverted,
-.br-button.sign-in[inverted],
-.br-button.sign-in.dark-mode {
+.br-button.inverted, .br-button.is-inverted, .br-button[inverted], .br-button.dark-mode {
   --color: var(--color-dark);
   --color-rgb: var(--color-dark-rgb);
   --text-color: var(--color);
@@ -283,58 +207,24 @@
   --focus: var(--focus-color);
   color: var(--interactive-dark);
 }
-.br-sign-in.inverted.primary, .br-sign-in.inverted[primary], .br-sign-in.inverted.is-primary, .br-sign-in.is-inverted.primary, .br-sign-in.is-inverted[primary], .br-sign-in.is-inverted.is-primary, .br-sign-in[inverted].primary, .br-sign-in[inverted][primary], .br-sign-in[inverted].is-primary, .br-sign-in.dark-mode.primary, .br-sign-in.dark-mode[primary], .br-sign-in.dark-mode.is-primary,
-.br-button.sign-in.inverted.primary,
-.br-button.sign-in.inverted[primary],
-.br-button.sign-in.inverted.is-primary,
-.br-button.sign-in.is-inverted.primary,
-.br-button.sign-in.is-inverted[primary],
-.br-button.sign-in.is-inverted.is-primary,
-.br-button.sign-in[inverted].primary,
-.br-button.sign-in[inverted][primary],
-.br-button.sign-in[inverted].is-primary,
-.br-button.sign-in.dark-mode.primary,
-.br-button.sign-in.dark-mode[primary],
-.br-button.sign-in.dark-mode.is-primary {
+.br-button.inverted.primary, .br-button.inverted[primary], .br-button.inverted.is-primary, .br-button.is-inverted.primary, .br-button.is-inverted[primary], .br-button.is-inverted.is-primary, .br-button[inverted].primary, .br-button[inverted][primary], .br-button[inverted].is-primary, .br-button.dark-mode.primary, .br-button.dark-mode[primary], .br-button.dark-mode.is-primary {
   --interactive-rgb: var(--background-dark-rgb);
   background-color: var(--interactive-dark);
   color: var(--background-dark);
 }
-.br-sign-in.inverted.secondary, .br-sign-in.inverted[secondary], .br-sign-in.inverted.is-secondary, .br-sign-in.is-inverted.secondary, .br-sign-in.is-inverted[secondary], .br-sign-in.is-inverted.is-secondary, .br-sign-in[inverted].secondary, .br-sign-in[inverted][secondary], .br-sign-in[inverted].is-secondary, .br-sign-in.dark-mode.secondary, .br-sign-in.dark-mode[secondary], .br-sign-in.dark-mode.is-secondary,
-.br-button.sign-in.inverted.secondary,
-.br-button.sign-in.inverted[secondary],
-.br-button.sign-in.inverted.is-secondary,
-.br-button.sign-in.is-inverted.secondary,
-.br-button.sign-in.is-inverted[secondary],
-.br-button.sign-in.is-inverted.is-secondary,
-.br-button.sign-in[inverted].secondary,
-.br-button.sign-in[inverted][secondary],
-.br-button.sign-in[inverted].is-secondary,
-.br-button.sign-in.dark-mode.secondary,
-.br-button.sign-in.dark-mode[secondary],
-.br-button.sign-in.dark-mode.is-secondary {
+.br-button.inverted.secondary, .br-button.inverted[secondary], .br-button.inverted.is-secondary, .br-button.is-inverted.secondary, .br-button.is-inverted[secondary], .br-button.is-inverted.is-secondary, .br-button[inverted].secondary, .br-button[inverted][secondary], .br-button[inverted].is-secondary, .br-button.dark-mode.secondary, .br-button.dark-mode[secondary], .br-button.dark-mode.is-secondary {
   background-color: var(--background-dark);
 }
-.br-sign-in.inverted.active, .br-sign-in.is-inverted.active, .br-sign-in[inverted].active, .br-sign-in.dark-mode.active,
-.br-button.sign-in.inverted.active,
-.br-button.sign-in.is-inverted.active,
-.br-button.sign-in[inverted].active,
-.br-button.sign-in.dark-mode.active {
+.br-button.inverted.active, .br-button.is-inverted.active, .br-button[inverted].active, .br-button.dark-mode.active {
   --hover: var(--hover-light);
   --interactive-rgb: var(--active-rgb);
   background-color: var(--background-light);
   color: var(--active);
 }
-.br-sign-in img,
-.br-button.sign-in img {
-  max-height: var(--sign-in-img);
-}
-.br-sign-in.inverted, .br-sign-in.is-inverted, .br-sign-in[inverted], .br-sign-in.dark-mode,
-.br-button.sign-in.inverted,
-.br-button.sign-in.is-inverted,
-.br-button.sign-in[inverted],
-.br-button.sign-in.dark-mode {
-  --background: var(--background-dark);
+
+a.br-button {
+  font-weight: var(--font-weight-semi-bold);
+  text-decoration: none !important;
 }
 
-/*# sourceMappingURL=signin.css.map*/
+/*# sourceMappingURL=button.css.map*/

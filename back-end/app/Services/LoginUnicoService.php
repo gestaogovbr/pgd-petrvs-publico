@@ -14,11 +14,12 @@ use Laravel\Socialite\Two\User;
 class LoginUnicoService
 {
     private $client_id;
+    private $client_secret;
 
     function __construct($config = null) {
         $loginUnicoApi_config = $config ?: config('login_unico');
         $this->client_id = $loginUnicoApi_config['client_id'];
-        $this->clientSecret = $loginUnicoApi_config['client_secret'];
+        $this->client_secret = $loginUnicoApi_config['client_secret'];
     }
 
 
@@ -27,7 +28,7 @@ class LoginUnicoService
      */
     protected function getAuthUrl($state)
     {
-        return $this->buildAuthUrlFromBase('https://accounts.spotify.com/authorize', $state);
+        return $this->buildAuthUrlFromBase('https://sso.staging.acesso.gov.br/authorize', $state);
     }
 
     /**
@@ -35,7 +36,7 @@ class LoginUnicoService
      */
     protected function getTokenUrl()
     {
-        return 'https://accounts.spotify.com/api/token';
+        return 'https://sso.staging.acesso.gov.br/token';
     }
 
     /**
@@ -44,7 +45,7 @@ class LoginUnicoService
     public function getAccessToken($code)
     {
         $response = $this->getHttpClient()->post($this->getTokenUrl(), [
-            'headers' => ['Authorization' => 'Basic ' . base64_encode($this->clientId . ':' . $this->clientSecret)],
+            'headers' => ['Authorization' => 'Basic ' . base64_encode($this->client_id . ':' . $this->client_secret)],
             'body'    => $this->getTokenFields($code),
         ]);
 

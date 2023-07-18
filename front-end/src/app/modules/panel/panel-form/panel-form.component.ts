@@ -52,7 +52,6 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       nome_usuario: {default: ""},
       cpf: {default: ""},
       apelido: {default: ""},
-      perfil: {default: ""},
       sigla: {default: ""},
       nome_entidade: {default: ""},
       abrangencia: {default: ""},
