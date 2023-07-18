@@ -47,7 +47,15 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       notification_mail_encryption: {default: "SSL"},
       notification_whatsapp: {default: false},
       notification_whatsapp_url: {default: ""},
-      notification_whatsapp_token: {default: ""}
+      notification_whatsapp_token: {default: ""},
+      email: {default: ""},
+      nome_usuario: {default: ""},
+      cpf: {default: ""},
+      apelido: {default: ""},
+      sigla: {default: ""},
+      nome_entidade: {default: ""},
+      abrangencia: {default: ""},
+      codigo_cidade: {default: null}
     }, this.cdRef, this.validate);
   }
 

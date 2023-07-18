@@ -125,4 +125,7 @@ export class GlobalsService {
     return environment.login.institucional == true;
   }
 
+  public get hasLoginUnicoLogin(): boolean {
+    return environment.login.login_unico == true;
+  }
 }

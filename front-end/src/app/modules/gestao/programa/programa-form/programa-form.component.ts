@@ -61,7 +61,7 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
   }
   public formValidation = (form?: FormGroup) => {
     let result = null;
-    if(this.form!.controls.fim.value && this.form!.controls.inicio.value < this.form!.controls.fim.value) {
+    if(this.form!.controls.data_fim_vigencia.value && this.form!.controls.data_inicio_vigencia.value > this.form!.controls.data_fim_vigencia.value) {
       result = "A data do fim não pode ser anterior à data do inicio!";
     }
     return result;

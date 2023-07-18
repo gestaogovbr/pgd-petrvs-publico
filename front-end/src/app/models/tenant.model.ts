@@ -26,6 +26,14 @@ export class Tenant extends Base {
     public notification_whatsapp: boolean = false;
     public notification_whatsapp_url: string = "";
     public notification_whatsapp_token: string = "";
+    public email: string = "";
+    public nome_usuario: string = "";
+    public cpf: string = "";
+    public apelido: string = "";
+    public sigla: string = "";
+    public nome_entidade:string = "" ;
+    public abrangencia: string = "";
+    public codigo_cidade: string | null = null
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

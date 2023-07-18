@@ -23,6 +23,8 @@
                         <div class="or-label">ou</div>
                         <div class="line-separator"></div>
                     </div>
+
+                  
                     <div class="row" *ngIf="buttonDprfSeguranca; else dprfSeguranca">
                         <div class="col-md-12"><a class="btn btn-lg btn-google btn-block btn-full text-uppercase btn-outline" (click)="showDprfSeguranca()"><img [src]="globals.getResourcePath('assets/images/prf.ico')" width="20" height="20"> DPRF-Segurança</a></div>
                     </div>
@@ -38,30 +40,39 @@
                     </ng-template>
                 </div>
                 <ng-template #naoPRF>
-                  <div *ngIf="globals.hasGoogleLogin" class="card-body">
-                    <p class="card-text">Faça login com seu e-mail institucional</p>
-                    <div class="row mt-2">
+                    <div *ngIf="globals.hasGoogleLogin" class="card-body">
+                        <p class="card-text">Faça login com seu e-mail institucional</p>
                         <div id="gbtn"></div>
-                        <!-- <div *ngIf="!!googleApi.gapiAuth2" class="col-md-12 d-flex justify-content-center">
+                        <!-- <div class="row mt-2">
+                              <div *ngIf="!!googleApi.gapiAuth2" class="col-md-12 d-flex justify-content-center">
                             <a *ngIf="!auth.logging" class="btn btn-lg btn-google btn-block btn-full text-uppercase btn-outline" (click)="signInGoogle()"><img [src]="globals.getResourcePath('assets/images/google-logo.png')"> E-mail Institucional</a>
-                            <div *ngIf="auth.logging" class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden"></span></div>
-                        </div> -->
+                            <div *ngIf="auth.logging" class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden"></span></div> -->
+                        <!-- </div>  -->
                     </div>
-                  </div>
-                  <div *ngIf="globals.hasAzureLogin && globals.hasGoogleLogin" class="or-container">
-                      <div class="line-separator"></div>
-                      <div class="or-label">ou</div>
-                      <div class="line-separator"></div>
-                  </div>
-                  <div *ngIf="globals.hasAzureLogin" class="card-body">
-                      <p *ngIf="!globals.hasGoogleLogin" class="card-text">Faça login com seu e-mail institucional</p>
-                      <div class="row mt-2">
-                          <div class="col-md-12 d-flex justify-content-center">
-                              <a *ngIf="!auth.logging" class="btn btn-lg btn-google btn-block btn-full text-uppercase btn-outline" (click)="signInAzure()"><img [src]="globals.getResourcePath('assets/images/microsoft-logo.png')"> E-mail Institucional</a>
-                              <div *ngIf="auth.logging" class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden"></span></div>
-                          </div>
-                      </div>
-                  </div>
+                    <!-- </div> -->
+                    
+                    <div *ngIf="globals.hasAzureLogin && globals.hasGoogleLogin" class="or-container">
+                        <div class="line-separator"></div>
+                        <div class="or-label">ou</div>
+                        <div class="line-separator"></div>
+                    </div>
+                    <div class="row" class="card-body">
+                        <button class="btn-primary" type="button">Entrar com&nbsp;<span class="text-black">gov.br</span></button>
+                    </div>
+                    <div class="or-container">
+                        <div class="line-separator"></div>
+                        <div class="or-label">ou</div>
+                        <div class="line-separator"></div>
+                    </div>
+                    <div *ngIf="globals.hasAzureLogin" class="card-body">
+                        <p *ngIf="!globals.hasGoogleLogin" class="card-text">Faça login com seu e-mail institucional</p>
+                        <div class="row mt-2">
+                            <div class="col-md-12 d-flex justify-content-center">
+                                <a *ngIf="!auth.logging" class="btn btn-lg btn-google btn-block btn-full text-uppercase btn-outline" (click)="signInAzure()"><img [src]="globals.getResourcePath('assets/images/microsoft-logo.png')"> E-mail Institucional</a>
+                                <div *ngIf="auth.logging" class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden"></span></div>
+                            </div>
+                        </div>
+                    </div>
                 </ng-template>
             </div>
         </div>
