@@ -4,8 +4,6 @@ namespace App\Models;
 use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\Atividade;
-use App\Models\Usuario;
-use App\Models\Lotacao;
 use App\Models\Planejamento;
 use App\Models\CadeiaValor;
 use App\Models\PlanoTrabalho;
@@ -42,15 +40,15 @@ class Unidade extends ModelBase
         'notificacoes', /* json; */// Configurações das notificações (Se envia e-mail, whatsapp, tipos, templates)
         'expediente', /* json; */// Configuração de expediente da unidade
         'avaliacao_hierarquica', /* tinyint; NOT NULL; */// Se permite que unidades superiores façam avaliação
-        //'deleted_at', /* timestamp; */
         'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho
         'inativo', /* datetime; */// Se a unidade está ou não inativa
         'checklist', /* json; */// Nome dos checklist
         'unidade_id', /* char(36); */
-        'gestor_id', /* char(36); */
-        'gestor_substituto_id', /* char(36); */
         'entidade_id', /* char(36); NOT NULL; */
         'cidade_id', /* char(36); */
+        //'deleted_at', /* timestamp; */
+        'gestor_id', /* char(36); */
+        'gestor_substituto_id', /* char(36); */
     ];
 
     public $fillable_relations = [];
@@ -59,7 +57,7 @@ class Unidade extends ModelBase
         "notificacoes_templates"
     ];
 
-    public $delete_cascade = ['unidades_origem_atividades', 'unidades_destino_atividades'];
+    public $delete_cascade = [];
 
     protected static function booted()
     {
@@ -75,27 +73,24 @@ class Unidade extends ModelBase
         'checklist' => AsJson::class,
         'expediente' => AsJson::class
     ];
-
     // Has
     public function atividades() { return $this->hasMany(Atividade::class); }//OK//
-    public function lotacoes() { return $this->hasMany(Lotacao::class); }//OK//
     public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }//OK//
     public function planosEntrega() { return $this->hasMany(PlanoEntrega::class); }//OK//
     public function entregasPlanoEntrega() { return $this->hasMany(PlanoEntregaEntrega::class); }//OK//
     public function programas() { return $this->hasMany(Programa::class); }//OK//
     public function recursosProjeto() { return $this->hasMany(ProjetoRecurso::class); }//OK//
     public function tiposTarefa() { return $this->hasMany(TipoTarefa::class); }//OK//
-    public function vinculos() { return $this->hasMany(UnidadeIntegrante::class); }//OK//
     public function notificacoesTemplate() { return $this->hasMany(Template::class); }//OK//
     public function unidades() { return $this->hasMany(Unidade::class); }//OK//
     public function planejamentos() { return $this->hasMany(Planejamento::class); }//OK//
     public function cadeiasValor() { return $this->hasMany(CadeiaValor::class); }//OK//
+    public function vinculosUsuario() { return $this->hasMany(UnidadeIntegrante::class); }//OK//
     // Belongs
-    public function gestor() { return $this->belongsTo(Usuario::class); }//OK//     //nullable
-    public function gestorSubstituto() { return $this->belongsTo(Usuario::class); }//OK//   //nullable
     public function entidade() { return $this->belongsTo(Entidade::class); }//OK//
-    public function cidade() { return $this->belongsTo(Cidade::class); }//OK//
+    public function cidade() { return $this->belongsTo(Cidade::class); }//OK//  //nullable
     public function unidade() { return $this->belongsTo(Unidade::class); }//OK//    //nullable
+    public function integrantes() { return $this->belongsToMany(Usuario::class, 'unidades_integrantes'); }//OK//
     // Mutattors e Casts
     public function getNotificacoesAttribute($value)
     {
@@ -106,5 +101,46 @@ class Unidade extends ModelBase
     {
         $this->attributes['notificacoes'] = json_encode($value);
     }
-
+    public function getGestorAttribute()
+    {
+        $result = null;
+        foreach ($this->vinculosUsuario as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'GESTOR' && $a['deleted_at'] == null)) > 0) $result = $vinculo->usuario; }
+        return $result;
+    }
+    public function getGestorSubstitutoAttribute()
+    {
+        $result = null;
+        foreach ($this->vinculosUsuario as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'GESTOR_SUBSTITUTO' && $a['deleted_at'] == null)) > 0) $result = $vinculo->usuario; }
+        return $result;
+    }
+    public function getLotadosAttribute()
+    {
+        $result = [];
+        foreach ($this->vinculosUsuario as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'LOTADO' && $a['deleted_at'] == null)) > 0) array_push($result, $vinculo->usuario); }
+        return $result;
+    }
+    public function getColaboradoresAttribute()
+    {
+        $result = [];
+        foreach ($this->vinculosUsuario as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'COLABORADOR' && $a['deleted_at'] == null)) > 0) array_push($result, $vinculo->usuario); }
+        return $result;
+    }
+    public function getAvaliadoresPlanoEntregaAttribute()
+    {
+        $result = [];
+        foreach ($this->vinculosUsuario as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'AVALIADOR_PLANO_ENTREGA' && $a['deleted_at'] == null)) > 0) array_push($result, $vinculo->usuario); }
+        return $result;
+    }
+    public function getAvaliadoresPlanoTrabalhoAttribute()
+    {
+        $result = [];
+        foreach ($this->vinculosUsuario as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'AVALIADOR_PLANO_TRABALHO' && $a['deleted_at'] == null)) > 0) array_push($result, $vinculo->usuario); }
+        return $result;
+    }
+    public function getHomologadoresPlanoEntregaAttribute()
+    {
+        $result = [];
+        foreach ($this->vinculosUsuario as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'HOMOLOGADOR_PLANO_ENTREGA' && $a['deleted_at'] == null)) > 0) array_push($result, $vinculo->usuario); }
+        return $result;
+    } 
 }

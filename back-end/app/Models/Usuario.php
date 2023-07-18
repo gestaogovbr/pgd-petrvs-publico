@@ -17,7 +17,6 @@ use App\Models\DocumentoAssinatura;
 use App\Models\Entidade;
 use App\Models\Favorito;
 use App\Models\Integracao;
-use App\Models\Lotacao;
 use App\Models\Notificacao;
 use App\Models\NotificacaoDestinatario;
 use App\Models\NotificacaoWhatsapp;
@@ -34,7 +33,6 @@ use App\Models\NotificacaoConfig;
 use App\Traits\MergeRelations;
 use App\Traits\LogChanges;
 use App\Traits\HasPermissions;
-use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Services\UsuarioService;
 use Throwable;
@@ -118,8 +116,6 @@ class Usuario extends Authenticatable
     public function tarefasProjeto() { return $this->hasMany(ProjetoTarefa::class); } //OK//
     public function favoritos() { return $this->hasMany(Favorito::class); }//OK//
     public function comentarios() { return $this->hasMany(Comentario::class); }//OK//
-    public function lotacoes() { return $this->hasMany(Lotacao::class); }//OK//
-    public function lotacao() { return $this->hasOne(Lotacao::class)->where('principal', 1); }//OK//
     public function projetos() { return $this->hasMany(Projeto::class); }//OK//
     public function recursosProjeto() { return $this->hasMany(ProjetoRecurso::class); }//OK//
     public function historicosProjeto() { return $this->hasMany(ProjetoHistorico::class); }//OK//
@@ -129,15 +125,14 @@ class Usuario extends Authenticatable
     public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }//OK//
     public function participantesPrograma() { return $this->hasMany(ProgramaParticipante::class); }//OK//
     public function integracoes() { return $this->hasMany(Integracao::class); }//OK//
-    public function vinculos() { return $this->hasMany(UnidadeIntegrante::class); }//OK//
-    public function chefiasTitular() { return $this->hasMany(Unidade::class, 'gestor_id'); }//OK//
-    public function chefiasSubstituto() { return $this->hasMany(Unidade::class, 'gestor_substituto_id'); }//OK//
+    public function vinculosUnidade() { return $this->hasMany(UnidadeIntegrante::class); }//OK//
     public function chefiaEntidade() { return $this->hasOne(Entidade::class, 'gestor_id'); } //OK//
     public function chefiaSubstitutoEntidade() { return $this->hasOne(Entidade::class, 'gestor_substituto_id'); } //OK//
     public function planosEntregaCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }//OK//  
-    public function planosEntregaCancelados() { return $this->hasMany(PlanoEntrega::class, 'cancelamento_usuario_id'); }//OK//  
+    public function planosTrabalhoCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }//OK//  
     // Belongs
-    public function perfil() { return $this->belongsTo(Perfil::class, 'perfil_id'); }//OK//     //nullable
+    public function perfil() { return $this->belongsTo(Perfil::class); }//OK//     //nullable
+    public function unidades() { return $this->belongsToMany(Unidade::class, 'unidades_integrantes'); }//OK//
     // Mutattors e Casts
     public function getUrlFotoAttribute($value) 
     {
@@ -168,9 +163,39 @@ class Usuario extends Authenticatable
     {
         $this->attributes['notificacoes'] = json_encode($value);
     }
-
-    // Outros métodos
-    public function changes(): array {
-        return Change::where('user_id', $this->id)->get()->toArray() ?? []; //Não pode ser usado um relacionamento do Laravel porque as tabelas estão em bancos distintos
+    public function getChangesAttribute() 
+    {
+        return Change::where('user_id', $this->id)->get()->toArray() ?? []; 
+        //Não pode ser usado um relacionamento do Laravel porque as tabelas estão em bancos distintos
+    }
+    public function getChefiaTitularAttribute()
+    {
+        $result = null;
+        foreach ($this->vinculosUnidade as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'GESTOR' && $a['deleted_at'] == null)) > 0) $result = $vinculo->unidade; }
+        return $result;
+    }
+    public function getChefiasSubstitutasAttribute()
+    {
+        $result = [];
+        foreach ($this->vinculosUnidade as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'GESTOR_SUBSTITUTO' && $a['deleted_at'] == null)) > 0) array_push($result, $vinculo->unidade); }
+        return $result;
+    }
+    public function getLotacaoAttribute()
+    {
+        $result = null;
+        foreach ($this->vinculosUnidade as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'LOTADO' && $a['deleted_at'] == null)) > 0) $result = $vinculo->unidade; }
+        return $result;
+    }
+    public function getColaboracoesAttribute()
+    {
+        $result = [];
+        foreach ($this->vinculosUnidade as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'COLABORADOR' && $a['deleted_at'] == null)) > 0) array_push($result, $vinculo->unidade); }
+        return $result;
+    }
+    public function getLotacoesAttribute()
+    {
+        $result = [];
+        foreach ($this->vinculosUnidade as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => ($a['atribuicao'] == 'LOTADO' || $a['atribuicao'] == 'COLABORADOR') && $a['deleted_at'] == null)) > 0) array_push($result, $vinculo->unidade); }
+        return $result;
     }
 }

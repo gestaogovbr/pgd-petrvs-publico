@@ -20,7 +20,6 @@ class CreateUnidadesIntegrantesTable extends Migration
             $table->timestamps();
             $table->softDeletes();
             // Campos:
-            $table->set("atribuicao", ["AVALIADOR_PLANO_ENTREGA","AVALIADOR_PLANO_TRABALHO","HOMOLOGADOR_PLANO_ENTREGA","LOTADO","COLABORADOR","GESTOR","GESTOR_SUBSTITUTO"])->comment("Vínculo que o servidor tem com a unidade");
             // Chaves estrangeiras:
             $table->foreignUuid('unidade_id')->onDelete('restrict')->onUpdate('cascade')->comment("Unidade participante do vínculo");
             $table->foreignUuid('usuario_id')->onDelete('restrict')->onUpdate('cascade')->comment("Servidor participante do vínculo");

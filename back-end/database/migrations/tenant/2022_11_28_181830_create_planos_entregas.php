@@ -22,8 +22,8 @@ class CreatePlanosEntregas extends Migration
             $table->softDeletes();
             // Campos:
             $table->integer('numero')->unique()->default(0)->comment("Número do plano de entrega (Gerado pelo sistema)");
-            $table->dateTime('inicio')->comment("Data inicial do plano de entregas");
-            $table->dateTime('fim')->nullable()->comment("Data final do plano de entregas");
+            $table->dateTime('data_inicio')->comment("Data inicial do plano de entregas");
+            $table->dateTime('data_fim')->nullable()->comment("Data final do plano de entregas");
             $table->dateTime('data_arquivamento')->nullable()->comment("Data de arquivamento do plano de entregas");
             $table->dateTime('data_cancelamento')->nullable()->comment("Data de cancelamento do plano de entregas");
             $table->string('nome', 256)->comment("Nome do plano de entregas");
@@ -33,7 +33,6 @@ class CreatePlanosEntregas extends Migration
             $table->foreignUuid('cadeia_valor_id')->nullable()->constrained("cadeias_valores")->onDelete('restrict')->onUpdate('cascade')->comment("Cadeia de valores à qual está ligado o plano de entregas");
             $table->foreignUuid('unidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Unidade à qual está ligado o plano de entregas");
             $table->foreignUuid('plano_entrega_id')->nullable()->constrained("planos_entregas")->onDelete('restrict')->onUpdate('cascade')->comment("Plano de Entrega superior ao qual este aderiu");
-            $table->foreignUuid('cancelamento_usuario_id')->nullable()->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->comment("Usuário responsável pelo cancelamento do plano de entregas");
             $table->foreignUuid('programa_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment('Programa de gestão ao qual está vinculado o plano de entregas');
             $table->foreignUuid('criacao_usuario_id')->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->comment("Usuário responsável pela criação do plano de entregas");
         });
