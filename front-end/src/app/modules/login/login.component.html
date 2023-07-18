@@ -23,16 +23,8 @@
                         <div class="or-label">ou</div>
                         <div class="line-separator"></div>
                     </div>
-                    <!-- *ngIf="globals.hasLoginUnicoLogin" -->
-                    <div class="row" class="card-body">
-                        <button class="btn-primary" type="button">Entrar com&nbsp;<span class="text-black">gov.br</span>
-                        </button>
-                    </div>
-                    <div class="or-container">
-                        <div class="line-separator"></div>
-                        <div class="or-label">ou</div>
-                        <div class="line-separator"></div>
-                    </div>
+
+                  
                     <div class="row" *ngIf="buttonDprfSeguranca; else dprfSeguranca">
                         <div class="col-md-12"><a class="btn btn-lg btn-google btn-block btn-full text-uppercase btn-outline" (click)="showDprfSeguranca()"><img [src]="globals.getResourcePath('assets/images/prf.ico')" width="20" height="20"> DPRF-Segurança</a></div>
                     </div>
