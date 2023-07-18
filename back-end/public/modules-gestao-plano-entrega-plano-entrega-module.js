@@ -2055,6 +2055,7 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
             meta: { default: "" },
             realizado: { default: null },
             entrega_id: { default: null },
+            unidade_id: { default: null },
             progresso_esperado: { default: null },
             progresso_realizado: { default: null },
             destinatario: { default: null },
@@ -2230,7 +2231,7 @@ PlanoEntregaListEntregaComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("items", ctx.items)("form", ctx.form)("hasAdd",  true || false)("hasEdit",  true || false)("add", ctx.add.bind(ctx))("groupTemplate", _r0)("minHeight", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("title", "Entrega\nDemandante\nDestinat\u00E1rio")("template", _r2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("title", "EntregaDemandanteDestinat\u00E1rio")("template", _r2);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("title", "Data In\u00EDcio\nData Fim")("template", _r4);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
