@@ -409,7 +409,7 @@ class ProgramaFormComponent extends src_app_modules_base_page_form_base__WEBPACK
         };
         this.formValidation = (form) => {
             let result = null;
-            if (this.form.controls.fim.value && this.form.controls.inicio.value < this.form.controls.fim.value) {
+            if (this.form.controls.data_fim_vigencia.value && this.form.controls.data_inicio_vigencia.value > this.form.controls.data_fim_vigencia.value) {
                 result = "A data do fim não pode ser anterior à data do inicio!";
             }
             return result;
