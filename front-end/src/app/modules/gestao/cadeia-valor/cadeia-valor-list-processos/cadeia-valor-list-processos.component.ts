@@ -151,6 +151,8 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
       this.items.filter(x => x.processo_pai_id == parentId && x.sequencia >= sequencia).forEach(x => x.sequencia++);
       row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
       row.sequencia = sequencia;
+      row.cadeia_valor_id = this.entity?.id;
+      row.sequencia = sequencia;
       row.processo_pai_id = parentId;
       row.nome = form.controls.nome.value;
       result = row;
