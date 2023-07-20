@@ -12,7 +12,7 @@ class LotacaoService extends ServiceBase
 {
     /*public function proxyStore($data, $unidade, $action)
     {
-        $lotacoes = Lotacao::where('usuario_id', $data["usuario_id"])->whereNull("data_fim")->get();
+        $lotacoes = Lotacao::where('usuario_id', $data["usuario_id"])->get();
         if(count($lotacoes) == 0) {
             $data["principal"] = 1;
         } else {
@@ -39,12 +39,12 @@ class LotacaoService extends ServiceBase
         $this->checksLotacoes($entity->usuario_id);
     }
 
-    public function extraDestoy($entity) {
+    public function extraDestroy($entity) {
         $this->checksLotacoes($entity->usuario_id);
     }
 
     public function checksLotacoes($usuarioId) {
-        $lotacoes = Lotacao::where('usuario_id', $usuarioId)->whereNull("data_fim")->orderByDesc("updated_at")->get();
+        $lotacoes = Lotacao::where('usuario_id', $usuarioId)->orderByDesc("updated_at")->get();
         if(count($lotacoes) == 0) throw new ServerException("ValidateLotacao", "Usuário não possui nenhuma lotação");
         $principal = null;
         foreach ($lotacoes as $lotacao) {
@@ -61,14 +61,14 @@ class LotacaoService extends ServiceBase
         }
     }
 
-    public function removerLotacoesUsuario(&$usuario) {
+/*     public function removerLotacoesUsuario(&$usuario) {
         if(!empty($usuario)) {
-            foreach($usuario->lotacoes as $lotacao) { /* Garante que as lotações antigas sejam apagadas */
+            foreach($usuario->lotacoes as $lotacao) { // Garante que as lotações antigas sejam apagadas 
                 if(empty($lotacao->data_fim)) $this->destroy($lotacao->id, false);
             }
             $usuario->fresh();
         }
-    }
+    } */
     
 }
 

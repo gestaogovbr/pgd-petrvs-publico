@@ -21,5 +21,5 @@ class TipoMotivoAfastamento extends ModelBase
     ];
 
     // Has
-    public function afastamentos() { return $this->hasMany(Afastamento::class); }    //OK//
+    public function afastamentos() { return $this->hasMany(Afastamento::class); }    
 }

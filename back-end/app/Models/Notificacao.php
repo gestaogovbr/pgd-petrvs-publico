@@ -17,9 +17,9 @@ class Notificacao extends ModelBase
         'codigo', /* varchar(255); NOT NULL; */// Código da mensagem
         'data_registro', /* datetime; NOT NULL; */// Data e hora da inclusão da mensagem
         'mensagem', /* longtext; NOT NULL; */// Mensagem
-        //'deleted_at', /* timestamp; */
         'numero', /* int; NOT NULL; */// Número da mensagem (Gerado pelo sistema)
         'remetente_id', /* char(36); */
+        //'deleted_at', /* timestamp; */
     ];
 
     protected static function booted()
@@ -32,9 +32,9 @@ class Notificacao extends ModelBase
     protected $casts = [];
 
     // Has
-    public function destinatarios() { return $this->hasMany(NotificacaoDestinatario::class); }  //OK//  
+    public function destinatarios() { return $this->hasMany(NotificacaoDestinatario::class); }    
     // Belongs
-    public function remetente() { return $this->belongsTo(Usuario::class); }//OK//  //nullable
+    public function remetente() { return $this->belongsTo(Usuario::class); }  //nullable
     
 }
    

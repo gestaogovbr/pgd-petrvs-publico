@@ -17,10 +17,10 @@ class NotificacaoDestinatario extends ModelBase
         'tipo', /* enum('PETRVS','EMAIL','WHATSAPP'); NOT NULL; DEFAULT: 'PETRVS'; */// Tipo do envio
         'notificacao_id', /* char(36); NOT NULL; */
         'usuario_id', /* char(36); NOT NULL; */
-        //'deleted_at', /* timestamp; */
         'data_leitura', /* datetime; */// Data e hora da leitura
         'data_envio', /* datetime; */// Data e hora do envio, utilizado quando realmente a mensagem foi despachada
         'opcoes', /* json; */// Opções
+        //'deleted_at', /* timestamp; */
     ];
 
     protected $casts = [
@@ -29,8 +29,8 @@ class NotificacaoDestinatario extends ModelBase
 
     // Has
     // Belongs
-    public function notificacao() { return $this->belongsTo(Notificacao::class); }//OK//
-    public function usuario() { return $this->belongsTo(Usuario::class); }//OK//
+    public function notificacao() { return $this->belongsTo(Notificacao::class); }
+    public function usuario() { return $this->belongsTo(Usuario::class); }
     
 }
    

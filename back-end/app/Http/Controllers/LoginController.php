@@ -80,7 +80,7 @@ class LoginController extends Controller
         if(Auth::check()) {
             $usuario = Auth::user();
             $usuario = Usuario::where("id", $usuario->id)->with(["lotacoes" => function ($query) use ($data) {
-                $query->whereNull("data_fim")->where("unidade_id", $data["unidade_id"]);
+                $query->where("unidade_id", $data["unidade_id"]);
             }, "lotacoes.unidade.entidade", "lotacoes.unidade.planosEntregas", "lotacoes.unidade.integrantes", "lotacoes.unidade.unidade.planosEntregas", "perfil.capacidades.tipoCapacidade"])->first();
             if(isset($usuario->lotacoes[0]) && !empty($usuario->lotacoes[0]->unidade_id)) {
                 $request->session()->put("unidade_id", $usuario->lotacoes[0]->unidade_id);

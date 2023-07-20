@@ -2,27 +2,16 @@
 
 namespace App\Services;
 
-use App\Exceptions\ServerException;
 use App\Models\Usuario;
-use App\Models\Demanda;
-use App\Models\Plano;
 use App\Models\Unidade;
-use App\Models\Lotacao;
+use App\Models\Atividade;
+use App\Models\PlanoTrabalho;
 use App\Models\TipoAvaliacao;
-use App\Models\DemandaEntrega;
 use App\Services\ServiceBase;
-use App\Services\PlanoService;
-use App\Services\Util;
-use App\Services\DemandaService;
-use App\Services\LotacaoService;
 use App\Services\RawWhere;
 use App\Services\UtilService;
-use Database\Seeders\UsuarioSeeder;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Auth;
-use Iterator;
 use Exception;
-use Illuminate\Database\Eloquent\Collection;
 use Throwable;
 
 class UsuarioService extends ServiceBase
@@ -51,39 +40,37 @@ class UsuarioService extends ServiceBase
 
     public function dashboard($data_inicial, $data_final, $usuario_id) {
         $result = [];
-        $planosAtivos = $this->PlanoService->planosAtivosPorData($data_inicial, $data_final, $usuario_id);
-        $planos_ids = $planosAtivos->map(function($plano){return $plano->id;});
+        $planosTrabalhoAtivos = $this->planoTrabalhoService->planosAtivosPorData($data_inicial, $data_final, $usuario_id);
+        $planos_ids = $planosTrabalhoAtivos->map(function($plano){return $plano->id;});
         $notas_validas = TipoAvaliacao::where('aceita_entrega', true)->get()->pluck('nota_atribuida');
   
-        $media_avaliacao = Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->avaliadas()->with(['avaliacao'])->get()->avg(function($demanda){
+        /*         $media_avaliacao = Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->avaliadas()->with(['avaliacao'])->get()->avg(function($demanda){
             return $demanda["avaliacao"]["nota_atribuida"];
-        });
+        }); */
         
-        foreach ($planosAtivos as $plano) {
-            $total_consolidadas = Demanda::doUsuario($usuario_id)->dosPlanos([$plano->id])->avaliadas()->with(['avaliacao'])->get()->sum(function($demanda) use ($notas_validas){
+        foreach ($planosTrabalhoAtivos as $plano) {
+        /*             $total_consolidadas = Demanda::doUsuario($usuario_id)->dosPlanosTrabalho([$plano->id])->avaliadas()->with(['avaliacao'])->get()->sum(function($demanda) use ($notas_validas){
                 return in_array($demanda["avaliacao"]["nota_atribuida"], $notas_validas->all()) ? $demanda['tempo_pactuado'] : 0;
-            });
+            }); */
 
-            $horas_alocadas = $plano->demandas->sum('tempo_pactuado');
+            //$horas_alocadas = $plano->demandas->sum('tempo_pactuado');
             $result['planos'][] = [
                 'data_inicio_vigencia' => $plano['data_inicio_vigencia'],
                 'data_fim_vigencia' => $plano['data_fim_vigencia'],
                 'total_horas' => $plano['tempo_total'],
-                'horas_alocadas' => $horas_alocadas,
+        /*                 'horas_alocadas' => $horas_alocadas,
                 'horas_consolidadas' => $total_consolidadas,
-                'progresso' => $total_consolidadas > 0 ? round((float)(($total_consolidadas / $plano['tempo_total']) * 100), 2) : 0
+                'progresso' => $total_consolidadas > 0 ? round((float)(($total_consolidadas / $plano['tempo_total']) * 100), 2) : 0 */
             ];           
         }
 
-        $avaliadas = Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->avaliadas()->get();
-        $nao_iniciadas = Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->naoIniciadas()->get();
-        $concluidas = Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->concluidas()->get();
-        $nao_concluidas = Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->naoConcluidas()->get();
-        $atrasadas = Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->atrasadas()->get();
+        //$avaliadas = Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->avaliadas()->get();
+        $nao_iniciadas = Atividade::doUsuario($usuario_id)->dosPlanos($planos_ids)->naoIniciadas()->get();
+        $concluidas = Atividade::doUsuario($usuario_id)->dosPlanos($planos_ids)->concluidas()->get();
+        $nao_concluidas = Atividade::doUsuario($usuario_id)->dosPlanos($planos_ids)->naoConcluidas()->get();
+        $atrasadas = Atividade::doUsuario($usuario_id)->dosPlanos($planos_ids)->atrasadas()->get();
 
-        $result['demandas'] = [
-            'avaliadas' => $avaliadas->count(),
-            'horas_avalidas' => $avaliadas->sum('tempo_pactuado'),
+        $result['atividades'] = [
             'nao_iniciadas' => $nao_iniciadas->count(),
             'horas_nao_iniciadas' => $nao_iniciadas->sum('tempo_pactuado'),
             'concluidas' => $concluidas->count(),
@@ -92,8 +79,7 @@ class UsuarioService extends ServiceBase
             'horas_nao_concluidas' => $nao_concluidas->sum('tempo_pactuado'),
             'atrasadas' => $atrasadas->count(),
             'horas_atrasadas' => $atrasadas->sum('tempo_pactuado'),
-            'media_avaliacoes' => $media_avaliacao,
-            'total_demandas' => Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->get()->count()
+            'total_atividades' => Atividade::doUsuario($usuario_id)->dosPlanosTrabalho($planos_ids)->get()->count()
         ];
         $result['horas_afastamentos'] = 0;
 
@@ -112,48 +98,45 @@ class UsuarioService extends ServiceBase
         $result = [];
         // $lotacoes = Lotacao::whereIn("unidade_id", $unidade_ids)->with(['usuario'])->get();
 
-        $usuarios = Usuario::select('usuarios.*')
+        /*         $usuarios = Usuario::select('usuarios.*')
                     ->distinct()
                     ->join('lotacoes', 'lotacoes.usuario_id', '=', 'usuarios.id')
-                    ->whereIn('lotacoes.unidade_id', $unidade_ids)->get();
-
+                    ->whereIn('lotacoes.unidade_id', $unidade_ids)->get(); */
+        //$usuarios = Usuario::with(["lotacoes" => function ($query) use ($unidade_ids) { $query->whereIn("unidade_id", $unidade_ids); }])->get();
+        $usuarios = [];
+        foreach(Unidade::whereIn('id',$unidade_ids)->get() as $u) { array_push($usuarios, ...$u->lotados, ...$u->colaboradores); }
         foreach ($usuarios as $usuario) {
-            $planosAtivos = $this->PlanoService->planosAtivosPorData($data_inicial, $data_final, $usuario->id);
-            $planos_ids = $planosAtivos->map(function($plano){return $plano->id;});
-            $notas_validas = TipoAvaliacao::where('aceita_entrega', true)->get()->pluck('nota_atribuida');
+            $planosTrabalhoAtivos = $this->planoTrabalhoService->planosAtivosPorData($data_inicial, $data_final, $usuario->id);
+            //$planos_ids = $planosTrabalhoAtivos->map(function($plano){return $plano->id;});
+            //$notas_validas = TipoAvaliacao::where('aceita_entrega', true)->get()->pluck('nota_atribuida');
     
-            $total_consolidadas = Demanda::doUsuario($usuario->id)->dosPlanos($planos_ids)->avaliadas()->with(['avaliacao'])->get()->sum(function($demanda) use ($notas_validas){
+        /*             $total_consolidadas = Demanda::doUsuario($usuario->id)->dosPlanos($planos_ids)->avaliadas()->with(['avaliacao'])->get()->sum(function($demanda) use ($notas_validas){
                 return in_array($demanda["avaliacao"]["nota_atribuida"], $notas_validas->all()) ? $demanda['tempo_pactuado'] : 0;
-            });
+            }); */
 
-            $media_avaliacao = Demanda::doUsuario($usuario->id)->dosPlanos($planos_ids)->avaliadas()->with(['avaliacao'])->get()->avg(function($demanda){
+        /*             $media_avaliacao = Demanda::doUsuario($usuario->id)->dosPlanos($planos_ids)->avaliadas()->with(['avaliacao'])->get()->avg(function($demanda){
                 return $demanda["avaliacao"]["nota_atribuida"];
-            });
+            }); */
 
             $planos = [];
 
-            foreach ($planosAtivos as $plano) {
-                $horas_alocadas = $plano->demandas->sum('tempo_pactuado');
+            foreach ($planosTrabalhoAtivos as $plano) {
+                //$horas_alocadas = $plano->atividades->sum('tempo_pactuado');
                 $planos[] = [
                     'data_inicio_vigencia' => $plano['data_inicio_vigencia'],
                     'data_fim_vigencia' => $plano['data_fim_vigencia'],
                     'total_horas' => $plano['tempo_total'],
-                    'horas_alocadas' => $horas_alocadas,
-                    'horas_consolidadas' => $total_consolidadas,
-                    'progresso' => $total_consolidadas > 0 ? round((float)(($total_consolidadas / $plano['tempo_total']) * 100), 2) : 0
+                    //'horas_alocadas' => $horas_alocadas,
+                    //'horas_consolidadas' => $total_consolidadas,
+                    //'progresso' => $total_consolidadas > 0 ? round((float)(($total_consolidadas / $plano['tempo_total']) * 100), 2) : 0
                 ];           
             }
-
-            
             $result['usuarios'][] = [
                 'nome' => $usuario->nome,
                 'foto' => $usuario->foto_perfil,
                 'planos' => $planos
             ];
-
-            
         }
-
         return $result;
     }
 
@@ -174,7 +157,7 @@ class UsuarioService extends ServiceBase
     }
 
     public function extraStore($entity, $unidade, $action) {
-        $this->LotacaoService->checksLotacoes($entity->id);
+        $this->unidadeUsuarioService->checkLotacoes($entity->id);
     }
 
     public function hasLotacao($id, $usuario = null, $subordinadas = true, $dataRef = null) {
@@ -188,32 +171,35 @@ class UsuarioService extends ServiceBase
      * Informa se o usuário logado é gestor(titular ou substituto) da unidade repassada como parâmetro.
      * @param string $unidade_id 
      */
-    public function isGestorUnidade(string | null $unidade_id): bool {
-        if($unidade_id == null) return false;
-        $unidade = Unidade::find($unidade_id);
-        return in_array(parent::loggedUser()->id, [$unidade->gestor_id, $unidade->gestor_substituto_id]);
+    public function isGestorUnidade(string $unidade_id): bool {
+        return $this->isIntegrante('GESTOR',$unidade_id) || $this->isIntegrante('GESTOR_SUBSTITUTO',$unidade_id);
     }
 
     /**
-     * Informa se o usuário logado possui determinada atribuição para uma unidade específica.
+     * Informa se existe determinada atribuição entre o usuário e a unidade informados. Caso não seja informado um usuário, a
+     * verificação será feita com base no usuário logado.
      * @param string $atribuicao 
      * @param string $unidade_id 
+     * @param string $usuario_id
      */
-    public static function isIntegrante(string $atribuicao, string | null $unidade_id): bool {
-        $unidade = !empty($unidade_id) ? Unidade::find($unidade_id) : null;
-        return !empty($unidade) ? !!array_filter($unidade->integrantes->toArray(), fn($i) => $i->atribuicao == $atribuicao) : false; 
+    public static function isIntegrante(string $atribuicao, string $unidade_id, string | null $usuario_id = null): bool {
+        $unidade = Unidade::find($unidade_id) ?? null;
+        $usuario = isset($usuario_id) ? Usuario::find($usuario_id) : parent::loggedUser();
+        $atribuicoes = array_shift(array_filter($unidade->integrantes, fn($i) => $i[0]->id == $usuario->id))[1];
+        return empty($atribuicoes) ? false : !!array_filter($atribuicoes, fn($x) => $x['atribuicao'] == $atribuicao); 
     }
 
     /**
-     * Informa se a unidade repassada como parâmetro é a lotação principal do usuário logado.
+     * Informa se a unidade repassada como parâmetro é a lotação do usuário logado.
      * @param string $unidade_id 
      */
-    public function isLotacaoPrincipal(string | null $unidade_id): bool {
-        return ($unidade_id != null) && !empty(Lotacao::where("usuario_id", parent::loggedUser()->id)->where("unidade_id",$unidade_id)->whereNull("data_fim")->where("principal", 1)->first());
+    public function isLotacao(string $unidade_id): bool {
+        //return ($unidade_id != null) && !empty(Lotacao::where("usuario_id", parent::loggedUser()->id)->where("unidade_id",$unidade_id)->where("principal", 1)->first());
+        return parent::loggedUser()->lotacao->id == $unidade_id;
     }
 
     /**
-     * Informa se o usuário logado tem como lotação principal alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
+     * Informa se o usuário logado tem como lotação alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
      * repassada como parâmetro.
      * @param string $unidade_id 
      * @returns 
@@ -223,7 +209,7 @@ class UsuarioService extends ServiceBase
         if($unidade_id == null) return $result;
         $linhaAscendente = $this->unidadeService->linhaAscendente($unidade_id);
         foreach($linhaAscendente as $unidade_id) {
-            if($this->isLotacaoPrincipal($unidade_id)) $result = true;
+            if($this->isIntegrante('LOTADO',$unidade_id)) $result = true;
         };
         return $result;
     }
@@ -232,10 +218,13 @@ class UsuarioService extends ServiceBase
         $where = [];
         $prefix = empty($prefix) ? "" : $prefix . ".";
         $usuario = $usuario ?? parent::loggedUser();
-        foreach($usuario->lotacoes as $lotacao) {
-            if(($deleted || empty($lotacao->data_fim)) && !UtilService::greaterThanOrIqual($dataRef, $lotacao->data_fim)) {
-                $where[] = $prefix . "id = '" . $lotacao->unidade_id . "'";
-                if($subordinadas) $where[] = $prefix . "path like '%" . $lotacao->unidade_id . "%'";
+        foreach($usuario->vinculosUnidades as $vinculo) {
+            $lotacoes = $deleted ? $vinculo->withTrashed()->atribuicoes->whereIn('atribuicao', ['LOTADO','COLABORADOR']) : $vinculo->atribuicoes->whereIn('atribuicao', ['LOTADO','COLABORADOR']);
+            foreach($lotacoes as $lotacao){
+                if(!UtilService::greaterThanOrIqual($dataRef, $lotacao->deleted_at)) {
+                    $where[] = $prefix . "id = '" . $vinculo->unidade_id . "'";
+                    if($subordinadas) $where[] = $prefix . "path like '%" . $vinculo->unidade_id . "%'";
+                }
             }
         }
         $result = implode(" OR ", $where);
@@ -250,11 +239,9 @@ class UsuarioService extends ServiceBase
      * @param  mixed $unidade_ids: Unidades que o usuário gerencia
      * @return array: array contendo todas as informações dos planos de trabalho de cada usuário da unidade (front-end do gestor)
      */
-
-
     public function planosPorPeriodo($usuario_id, $inicioPeriodo = null, $fimPeriodo = null){
         $result = [];
-        $planos = Plano::where("usuario_id", $usuario_id)->with(['demandas', 'unidade', 'tipoModalidade'])->get();
+        $planos = PlanoTrabalho::where("usuario_id", $usuario_id)->with(['atividades', 'unidade', 'tipoModalidade'])->get();
         if ($inicioPeriodo == null || $fimPeriodo == null) {
             $result = $planos;
         } else {
@@ -266,7 +253,7 @@ class UsuarioService extends ServiceBase
     }
 
     public function proxyQuery($query, &$data) {
-        $usuario = parent::loggedUser();
+        /*         $usuario = parent::loggedUser();
         $where = [];
         $subordinadas = true;
         foreach($data["where"] as $condition) {
@@ -283,7 +270,7 @@ class UsuarioService extends ServiceBase
             array_push($where, new RawWhere("EXISTS(SELECT where_lotacoes.id FROM lotacoes where_lotacoes LEFT JOIN unidades where_unidades ON (where_unidades.id = where_lotacoes.unidade_id) WHERE where_lotacoes.usuario_id = usuarios.id AND ($lotacoesWhere))", []));
         }
         $data["where"] = $where;
-        return $data;
+        return $data; */
     }
 
     public function proxySearch($query, &$data, &$text) {
@@ -357,15 +344,22 @@ class UsuarioService extends ServiceBase
             if(empty($data["cpf"])) throw new Exception("O campo de CPF é obrigatório");
             $alreadyHas = Usuario::where("id", "!=", $data["id"])->where("email", $data["email"])->orWhere("cpf", $data["cpf"])->first();
             if(!empty($alreadyHas)) {
-                if(!empty($alreadyHas->data_fim)) { /* Caso o usuário exista, mas esteja excluído, reabilita o usuário */
-                    $this->LotacaoService->removerLotacoesUsuario($alreadyHas);
-                    $alreadyHas->data_fim = null;
+                if($alreadyHas->trashed()) { /* Caso o usuário exista, mas esteja excluído, reabilita o usuário */
+                    $this->removervinculosUsuarios($alreadyHas);
+                    $alreadyHas->restore();
                     return $alreadyHas;
                 } else {
                     throw new Exception("Já existe um usuário com mesmo e-mail ou CPF no sistema");
                 }
             }
-            if(($data["perfil_id"] == $this->developerId) && (!$this->isLoggedUserADeveloper())) throw new Exception("Tentativa de inserir um usuário com o perfil de Desenvolvedor");
+            if($data["perfil_id"] == $this->developerId && !$this->isLoggedUserADeveloper()) throw new Exception("Tentativa de inserir um usuário com o perfil de Desenvolvedor");
+        }
+    }
+
+    public function removervinculosUsuarios(&$usuario) {
+        if(!empty($usuario)) {
+            foreach($usuario->vinculosUnidades as $vinculo){ $vinculo->deleteCascade(); }
+            $usuario->fresh();
         }
     }
 }

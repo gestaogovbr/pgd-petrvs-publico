@@ -19,6 +19,6 @@ class TipoDocumento extends ModelBase
     ];
 
     // Has
-    public function programas() { return $this->hasMany(Programa::class); }        //OK//
-    public function documentos() { return $this->hasMany(Documento::class); }        //OK//     //nullable
+    public function programas() { return $this->hasMany(Programa::class); }        
+    public function documentos() { return $this->hasMany(Documento::class); }             //nullable
 }

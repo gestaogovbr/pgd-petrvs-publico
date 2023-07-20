@@ -2,15 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Unidade;
-use App\Services\UnidadeService;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
-use App\Exceptions\ServerException;
 use Throwable;
 
-class UnidadeIntegranteController extends ControllerBase {
+class UnidadeUsuarioController extends ControllerBase {
     
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         /* Revisar as permissoes necessarias

@@ -55,7 +55,7 @@ export class ProcedimentoTrabalharComponent extends ListenerBase implements OnIn
         menu.push({
           icon: "bi bi-check-circle",
           color: "btn-outline-primary",
-          label: "Concluir " + this.lex.noun("entrega"),
+          label: "Concluir " + this.lex.translate("entrega"),
           onClick: this.concluirEntrega.bind(this) 
         });
       }

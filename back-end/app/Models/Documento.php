@@ -61,20 +61,20 @@ class Documento extends ModelBase
     ];
 
     // Has
-    public function assinaturas() { return $this->hasMany(DocumentoAssinatura::class); }    //OK//
-    public function tarefasAtividade() { return $this->hasMany(AtividadeTarefa::class); }    //OK//
-    public function tarefasProjeto() { return $this->hasMany(ProjetoTarefa::class); }    //OK//
-    public function programas() { return $this->hasMany(Programa::class); }    //OK//
-    public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }    //OK//
-    public function atividadesRequisitadas() { return $this->hasMany(Atividade::class, 'documento_requisicao_id'); }    //OK//
-    public function atividadesEntregues() { return $this->hasMany(Atividade::class, 'documento_entrega_id'); }    //OK//
+    public function assinaturas() { return $this->hasMany(DocumentoAssinatura::class); }    
+    public function tarefasAtividade() { return $this->hasMany(AtividadeTarefa::class); }    
+    public function tarefasProjeto() { return $this->hasMany(ProjetoTarefa::class); }    
+    public function programas() { return $this->hasMany(Programa::class); }    
+    public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }    
+    public function atividadesRequisitadas() { return $this->hasMany(Atividade::class, 'documento_requisicao_id'); }    
+    public function atividadesEntregues() { return $this->hasMany(Atividade::class, 'documento_entrega_id'); }    
     // Belongs
-    public function template() { return $this->belongsTo(Template::class); }//OK//  //nullable
-    public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class); }//OK//    //nullable
-    public function tipoDocumento() { return $this->belongsTo(TipoDocumento::class); }//OK//    //nullable
-    public function tipoProcesso() { return $this->belongsTo(TipoProcesso::class); }//OK//      //nullable
-    public function entidade() { return $this->belongsTo(Entidade::class); }    //OK//  //nullable
-    public function atividade() { return $this->belongsTo(Atividade::class); }  //OK//  //nullable  
-    public function atividadeTarefa() { return $this->belongsTo(AtividadeTarefa::class); }  //OK//  //nullable  
+    public function template() { return $this->belongsTo(Template::class); }  //nullable
+    public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class); }    //nullable
+    public function tipoDocumento() { return $this->belongsTo(TipoDocumento::class); }    //nullable
+    public function tipoProcesso() { return $this->belongsTo(TipoProcesso::class); }      //nullable
+    public function entidade() { return $this->belongsTo(Entidade::class); }      //nullable
+    public function atividade() { return $this->belongsTo(Atividade::class); }    //nullable  
+    public function atividadeTarefa() { return $this->belongsTo(AtividadeTarefa::class); }    //nullable  
     
 }

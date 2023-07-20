@@ -29,8 +29,8 @@ class PlanoEntregaEntrega extends ModelBase
         'progresso_realizado', /* decimal(5,2); DEFAULT: '0.00'; */// Percentual realizado de progresso do Plano de Entregas
         'unidade_id', /* char(36); NOT NULL; */
         'plano_entrega_id', /* char(36); NOT NULL; */
-        'entrega_id', /* char(36); NOT NULL; */
-        'entrega_pai_id', /* char(36); */        
+        'entrega_id', /* char(36); */
+        'entrega_pai_id', /* char(36); */
         //'deleted_at', /* timestamp; */
     ];
 
@@ -43,12 +43,12 @@ class PlanoEntregaEntrega extends ModelBase
     ];
 
     // HasMany
-    public function objetivos() { return $this->hasMany(PlanoEntregaEntregaObjetivo::class); }  //OK//
-    public function processos() { return $this->hasMany(PlanoEntregaEntregaProcesso::class); }  //OK//
-    public function entregasPlanoTrabalho() { return $this->hasMany(PlanoTrabalhoEntrega::class); }     //OK//
+    public function objetivos() { return $this->hasMany(PlanoEntregaEntregaObjetivo::class); }  
+    public function processos() { return $this->hasMany(PlanoEntregaEntregaProcesso::class); }  
+    public function entregasPlanoTrabalho() { return $this->hasMany(PlanoTrabalhoEntrega::class); }     
     // Belongs
-    public function planoEntrega() { return $this->belongsTo(PlanoEntrega::class); }    //OK//
-    public function entrega() { return $this->belongsTo(Entrega::class); }  //OK//    //nullable
-    public function unidade() { return $this->belongsTo(Unidade::class); }  //OK//
-    public function entregaPai() { return $this->belongsTo(PlanoEntregaEntrega::class); }   //OK//     //nullable
+    public function planoEntrega() { return $this->belongsTo(PlanoEntrega::class); }    
+    public function entrega() { return $this->belongsTo(Entrega::class); }      //nullable
+    public function unidade() { return $this->belongsTo(Unidade::class); }  
+    public function entregaPai() { return $this->belongsTo(PlanoEntregaEntrega::class); }        //nullable
 }

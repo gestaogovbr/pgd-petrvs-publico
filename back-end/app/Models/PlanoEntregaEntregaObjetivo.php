@@ -14,8 +14,8 @@ class PlanoEntregaObjetivo extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'objetivo_id', /* char(36); NOT NULL; */
-        //'deleted_at', /* timestamp; */
         'entrega_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
     ];
 
     public $fillable_changes = [];
@@ -23,8 +23,7 @@ class PlanoEntregaObjetivo extends ModelBase
     public $delete_cascade = [];
 
     // Has
-    // public function atividades() { return $this->hasMany(PlanoAtividade::class); }
     // Belongs
-    public function objetivo() { return $this->belongsTo(PlanejamentoObjetivo::class); }//OK//
-    public function entrega() { return $this->belongsTo(PlanoEntregaEntrega::class); }//OK//
+    public function objetivo() { return $this->belongsTo(PlanejamentoObjetivo::class); }
+    public function entrega() { return $this->belongsTo(PlanoEntregaEntrega::class); }
 }

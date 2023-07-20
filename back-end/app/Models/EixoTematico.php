@@ -20,6 +20,6 @@ class EixoTematico extends ModelBase
     ];
 
     //Has
-    public function objetivos() { return $this->hasMany(PlanejamentoObjetivo::class); }//OK//
+    public function objetivos() { return $this->hasMany(PlanejamentoObjetivo::class); }
 
 }

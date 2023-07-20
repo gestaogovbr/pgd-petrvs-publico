@@ -20,17 +20,17 @@ class PlanoTrabalhoEntrega extends ModelBase
         'entrega_id', /* char(36); */
         'descricao', /* varchar(256); NOT NULL; */// Detalhamento da entrega
         'forca_trabalho', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */// Percentual da força de trabalho associado a esta entrega
-        //'deleted_at', /* timestamp; */
         'plano_trabalho_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
     ];
 
     public $delete_cascade = [];
 
     // Has
-    public function atividades() { return $this->hasMany(Atividade::class); } //OK//
-    public function entregasConsolidacao() { return $this->hasMany(PlanoTrabalhoConsolidacaoEntrega::class, 'entrega_id'); } //OK//
+    public function atividades() { return $this->hasMany(Atividade::class); } 
+    public function entregasConsolidacao() { return $this->hasMany(PlanoTrabalhoConsolidacaoEntrega::class, 'entrega_id'); } 
     // Belongs
-    public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class); }//OK//
-    public function planoEntregaEntrega() { return $this->belongsTo(PlanoEntregaEntrega::class); }//OK//    //nullable
-    public function entrega() { return $this->belongsTo(Entrega::class); }//OK//    //nullable
+    public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class); }
+    public function planoEntregaEntrega() { return $this->belongsTo(PlanoEntregaEntrega::class); }    //nullable
+    public function entrega() { return $this->belongsTo(Entrega::class); }    //nullable
 }

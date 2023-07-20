@@ -34,13 +34,11 @@ class PlanoTrabalho extends ModelBase
         'tipo_modalidade_id', /* char(36); NOT NULL; */
         'plano_entrega_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */
-        //'data_inicio', /* datetime; NOT NULL; */// Inicio do plano de trabalho
-        //'data_fim', /* datetime; NOT NULL; */// Fim do plano de trabalho
-        //'data_arquivamento', /* datetime; */// Data de arquivamento do plano de trabalho
-        //'data_cancelamento', /* datetime; */// Data de cancelamento do plano de trabalho
-        //'status', /* enum('INCLUINDO','HOMOLOGANDO','ATIVO','CONCLUIDO','AVALIADO','SUSPENSO'); NOT NULL; */// Status do plano de trabalho
-        /*'data_inicio_vigencia',*/// REMOVED
-        /*'data_fim_vigencia',*/// REMOVED
+        'data_inicio_vigencia', /* datetime; NOT NULL; */// Inicio do plano de trabalho
+        'data_fim_vigencia', /* datetime; NOT NULL; */// Fim do plano de trabalho
+        'data_arquivamento', /* datetime; */// Data de arquivamento do plano de trabalho
+        'data_cancelamento', /* datetime; */// Data de cancelamento do plano de trabalho
+        'status', /* enum('INCLUINDO','HOMOLOGANDO','ATIVO','CONCLUIDO','AVALIADO','SUSPENSO'); NOT NULL; */// Status do plano de trabalho
     ];
 
     public $fillable_changes = ['entregas', 'documentos'];
@@ -55,16 +53,16 @@ class PlanoTrabalho extends ModelBase
     }
 
     // Has
-    public function entregas() { return $this->hasMany(PlanoTrabalhoEntrega::class); }//OK//
-    public function documentos() { return $this->hasMany(Documento::class); }//OK//
-    public function atividades() { return $this->hasMany(Atividade::class); }//OK//
-    public function consolidacoes() { return $this->hasMany(PlanoTrabalhoConsolidacao::class); }//OK//
+    public function entregas() { return $this->hasMany(PlanoTrabalhoEntrega::class); }
+    public function documentos() { return $this->hasMany(Documento::class); }
+    public function atividades() { return $this->hasMany(Atividade::class); }
+    public function consolidacoes() { return $this->hasMany(PlanoTrabalhoConsolidacao::class); }
     // Belongs
-    public function usuario() { return $this->belongsTo(Usuario::class); }//OK//
-    public function criador() { return $this->belongsTo(Usuario::class, 'criacao_usuario_id'); }//OK//
-    public function programa() { return $this->belongsTo(Programa::class); }//OK//
-    public function unidade() { return $this->belongsTo(Unidade::class); }//OK//
-    public function tipoModalidade() { return $this->belongsTo(TipoModalidade::class); }//OK//
-    public function planoEntrega() { return $this->belongsTo(PlanoEntrega::class); }//OK//
-    public function documento() { return $this->belongsTo(Documento::class); }//OK//    //nullable
+    public function usuario() { return $this->belongsTo(Usuario::class); }
+    public function criador() { return $this->belongsTo(Usuario::class, 'criacao_usuario_id'); }
+    public function programa() { return $this->belongsTo(Programa::class); }
+    public function unidade() { return $this->belongsTo(Unidade::class); }
+    public function tipoModalidade() { return $this->belongsTo(TipoModalidade::class); }
+    public function planoEntrega() { return $this->belongsTo(PlanoEntrega::class); }
+    public function documento() { return $this->belongsTo(Documento::class); }    //nullable
 }

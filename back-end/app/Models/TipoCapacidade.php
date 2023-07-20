@@ -18,5 +18,5 @@ class TipoCapacidade extends ModelBase
     ];
 
     // Has
-    public function capacidades() { return $this->hasMany(Capacidade::class); }//OK//
+    public function capacidades() { return $this->hasMany(Capacidade::class); }
 }

@@ -33,6 +33,6 @@ class TipoProcesso extends ModelBase
     ];
 
     // Has
-    public function documentos() { return $this->hasMany(Documento::class); }        //OK//     //nullable
+    public function documentos() { return $this->hasMany(Documento::class); }             //nullable
 
 }

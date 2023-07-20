@@ -27,10 +27,10 @@ class PlanejamentoObjetivo extends ModelBase
     public $delete_cascade = ["objetivos"];
 
     // Has
-    public function objetivos() { return $this->hasMany(PlanejamentoObjetivo::class, 'objetivo_pai_id'); }//OK//
-    public function objetivosEntrega() { return $this->hasMany(PlanoEntregaEntregaObjetivo::class, 'objetivo_id'); }//OK//
+    public function objetivos() { return $this->hasMany(PlanejamentoObjetivo::class, 'objetivo_pai_id'); }
+    public function objetivosEntrega() { return $this->hasMany(PlanoEntregaEntregaObjetivo::class, 'objetivo_id'); }
     // Belongs
-    public function planejamento() { return $this->belongsTo(Planejamento::class); }//OK//
-    public function eixoTematico() { return $this->belongsTo(EixoTematico::class); }//OK//
-    public function objetivoPai() { return $this->belongsTo(PlanejamentoObjetivo::class, 'objetivo_pai_id'); }//OK//    //nullable
+    public function planejamento() { return $this->belongsTo(Planejamento::class); }
+    public function eixoTematico() { return $this->belongsTo(EixoTematico::class); }
+    public function objetivoPai() { return $this->belongsTo(PlanejamentoObjetivo::class, 'objetivo_pai_id'); }    //nullable
 }

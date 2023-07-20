@@ -31,9 +31,9 @@ class CadeiaValor extends ModelBase
     public $delete_cascade = ["processos"];
 
     // Has
-    public function processos() { return $this->hasMany(CadeiaValorProcesso::class); }   //OK// 
-    public function planosEntrega() { return $this->hasMany(PlanoEntrega::class); }   //OK//
+    public function processos() { return $this->hasMany(CadeiaValorProcesso::class); }    
+    public function planosEntrega() { return $this->hasMany(PlanoEntrega::class); }   
     // Belongs
-    public function unidade() { return $this->belongsTo(Unidade::class); }//OK//    //nullable
-    public function entidade() { return $this->belongsTo(Entidade::class); }//OK//  
+    public function unidade() { return $this->belongsTo(Unidade::class); }    //nullable
+    public function entidade() { return $this->belongsTo(Entidade::class); }  
 }

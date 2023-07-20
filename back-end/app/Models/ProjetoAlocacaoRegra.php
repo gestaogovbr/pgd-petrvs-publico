@@ -26,6 +26,6 @@ class ProjetoAlocacaoRegra extends ModelBase
 
     // Has
     // Belongs
-    public function projetoAlocacao() { return $this->belongsTo(ProjetoAlocacao::class); }  //OK//  
-    public function regra() { return $this->belongsTo(ProjetoRegra::class); }  //OK//  
+    public function projetoAlocacao() { return $this->belongsTo(ProjetoAlocacao::class); }    
+    public function regra() { return $this->belongsTo(ProjetoRegra::class); }    
 }

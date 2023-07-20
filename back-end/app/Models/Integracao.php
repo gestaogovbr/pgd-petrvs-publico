@@ -30,7 +30,7 @@ class Integracao extends ModelBase
     ];
 
     // Belongs
-    public function entidade() { return $this->belongsTo(Entidade::class); }   //OK//
-    public function usuario() { return $this->belongsTo(Usuario::class); }   //OK//     //nullable
+    public function entidade() { return $this->belongsTo(Entidade::class); }   
+    public function usuario() { return $this->belongsTo(Usuario::class); }        //nullable
 
 }

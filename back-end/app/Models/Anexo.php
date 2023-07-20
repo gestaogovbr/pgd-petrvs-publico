@@ -24,6 +24,6 @@ class Anexo extends ModelBase
     ];
    
     // Belongs
-    public function usuario() { return $this->belongsTo(Usuario::class); } //OK// //nullable   
-    public function comentario() { return $this->belongsTo(Comentario::class); }    //OK//  //nullable
+    public function usuario() { return $this->belongsTo(Usuario::class); }  //nullable   
+    public function comentario() { return $this->belongsTo(Comentario::class); }      //nullable
 }

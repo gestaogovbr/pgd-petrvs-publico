@@ -41,7 +41,6 @@ class ProjetoTarefa extends ModelBase
         'soma_recusos_alocados_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Mostra o somatório dos recursos filhos (somente se tem_filhos)
         'custos_proprios', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui custos próprios (somente se tem_filhos), se não tem filhos sempre será true
         'soma_custos_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Mostra o somatório dos custos filhos (somente se tem_filhos)
-        //'deleted_at', /* timestamp; */
         'etiquetas', /* json; */// Etiquetas
         'documento_id', /* char(36); */
         'tarefa_projeto_id', /* char(36); */
@@ -49,6 +48,7 @@ class ProjetoTarefa extends ModelBase
         'tarefa_pai_id', /* char(36); */
         'usuario_id', /* char(36); */
         'atividade_id', /* char(36); */
+        //'deleted_at', /* timestamp; */
     ];
 
     public $fillable_changes = ["alocacoes"];
@@ -63,14 +63,14 @@ class ProjetoTarefa extends ModelBase
     ];
 
     // Has
-    public function alocacoes() { return $this->hasMany(ProjetoAlocacao::class, "tarefa_id"); }   //OK// 
-    public function tarefas() { return $this->hasMany(ProjetoTarefa::class, "tarefa_pai_id"); }   //OK// 
-    public function comentarios() { return $this->hasMany(Comentario::class); }   //OK// 
+    public function alocacoes() { return $this->hasMany(ProjetoAlocacao::class, "tarefa_id"); }    
+    public function tarefas() { return $this->hasMany(ProjetoTarefa::class, "tarefa_pai_id"); }    
+    public function comentarios() { return $this->hasMany(Comentario::class); }    
     // Belongs
-    public function projeto() { return $this->belongsTo(Projeto::class); }   //OK// 
-    public function tarefaProjeto() { return $this->belongsTo(Projeto::class); }   //OK//  //nullable
-    public function documento() { return $this->belongsTo(Documento::class); }    //OK//    //nullable
-    public function atividade() { return $this->belongsTo(Atividade::class); }    //OK//    //nullable
-    public function usuario() { return $this->belongsTo(Usuario::class); }    //OK//    //nullable
-    public function tarefaPai() { return $this->belongsTo(ProjetoTarefa::class); }    //OK//   //nullable
+    public function projeto() { return $this->belongsTo(Projeto::class); }    
+    public function tarefaProjeto() { return $this->belongsTo(Projeto::class); }     //nullable
+    public function documento() { return $this->belongsTo(Documento::class); }        //nullable
+    public function atividade() { return $this->belongsTo(Atividade::class); }        //nullable
+    public function usuario() { return $this->belongsTo(Usuario::class); }        //nullable
+    public function tarefaPai() { return $this->belongsTo(ProjetoTarefa::class); }       //nullable
 }

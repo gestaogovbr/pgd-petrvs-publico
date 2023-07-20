@@ -33,7 +33,7 @@ use App\Models\NotificacaoConfig;
 use App\Traits\MergeRelations;
 use App\Traits\LogChanges;
 use App\Traits\HasPermissions;
-use App\Models\UnidadeIntegrante;
+use App\Models\UnidadeUsuario;
 use App\Services\UsuarioService;
 use Throwable;
 
@@ -75,9 +75,7 @@ class Usuario extends Authenticatable
         //'metadados', /* json; */// Metadados do usuário
     ];
 
-    public $fillable_changes = [
-        'lotacoes'
-    ];
+    public $fillable_changes = [];
 
     protected $keyType = 'string';
 
@@ -102,37 +100,37 @@ class Usuario extends Authenticatable
         'email_verified_at' => 'datetime'
     ];
 
-    public $delete_cascade = ['favoritos', 'lotacoes'];
+    public $delete_cascade = ['favoritos','vinculosUnidades'];
 
     // Has
-    public function afastamentos() { return $this->hasMany(Afastamento::class); }//OK//
-    public function anexos() { return $this->hasMany(Anexo::class); }//OK//
-    public function consolidacoes() { return $this->hasMany(PlanoTrabalhoConsolidacao::class, 'avaliador_id'); }//OK//
-    public function assinaturas() { return $this->hasMany(DocumentoAssinatura::class); }//OK//
-    public function avaliacoes() { return $this->hasMany(Avaliacao::class); }//OK//
-    public function atividades() { return $this->hasMany(Atividade::class); } //OK//
-    public function atividadesDemandadas() { return $this->hasMany(Atividade::class, 'demandante_id'); } //OK//
-    public function tarefasAtividade() { return $this->hasMany(AtividadeTarefa::class); } //OK//
-    public function tarefasProjeto() { return $this->hasMany(ProjetoTarefa::class); } //OK//
-    public function favoritos() { return $this->hasMany(Favorito::class); }//OK//
-    public function comentarios() { return $this->hasMany(Comentario::class); }//OK//
-    public function projetos() { return $this->hasMany(Projeto::class); }//OK//
-    public function recursosProjeto() { return $this->hasMany(ProjetoRecurso::class); }//OK//
-    public function historicosProjeto() { return $this->hasMany(ProjetoHistorico::class); }//OK//
-    public function notificacoes() { return $this->hasMany(Notificacao::class, 'remetente_id'); }//OK//
-    public function notificacoesWhatsapp() { return $this->hasMany(NotificacaoWhatsapp::class); }//OK//
-    public function notificacoesDestinatario() { return $this->hasMany(NotificacaoDestinatario::class); }//OK//
-    public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }//OK//
-    public function participantesPrograma() { return $this->hasMany(ProgramaParticipante::class); }//OK//
-    public function integracoes() { return $this->hasMany(Integracao::class); }//OK//
-    public function vinculosUnidade() { return $this->hasMany(UnidadeIntegrante::class); }//OK//
-    public function chefiaEntidade() { return $this->hasOne(Entidade::class, 'gestor_id'); } //OK//
-    public function chefiaSubstitutoEntidade() { return $this->hasOne(Entidade::class, 'gestor_substituto_id'); } //OK//
-    public function planosEntregaCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }//OK//  
-    public function planosTrabalhoCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }//OK//  
+    public function afastamentos() { return $this->hasMany(Afastamento::class); }
+    public function anexos() { return $this->hasMany(Anexo::class); }
+    public function consolidacoes() { return $this->hasMany(PlanoTrabalhoConsolidacao::class, 'avaliador_id'); }
+    public function assinaturas() { return $this->hasMany(DocumentoAssinatura::class); }
+    public function avaliacoes() { return $this->hasMany(Avaliacao::class); }
+    public function atividades() { return $this->hasMany(Atividade::class); } 
+    public function atividadesDemandadas() { return $this->hasMany(Atividade::class, 'demandante_id'); } 
+    public function tarefasAtividade() { return $this->hasMany(AtividadeTarefa::class); } 
+    public function tarefasProjeto() { return $this->hasMany(ProjetoTarefa::class); } 
+    public function favoritos() { return $this->hasMany(Favorito::class); }
+    public function comentarios() { return $this->hasMany(Comentario::class); }
+    public function projetos() { return $this->hasMany(Projeto::class); }
+    public function recursosProjeto() { return $this->hasMany(ProjetoRecurso::class); }
+    public function historicosProjeto() { return $this->hasMany(ProjetoHistorico::class); }
+    public function notificacoes() { return $this->hasMany(Notificacao::class, 'remetente_id'); }
+    public function notificacoesWhatsapp() { return $this->hasMany(NotificacaoWhatsapp::class); }
+    public function notificacoesDestinatario() { return $this->hasMany(NotificacaoDestinatario::class); }
+    public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }
+    public function participantesPrograma() { return $this->hasMany(ProgramaParticipante::class); }
+    public function integracoes() { return $this->hasMany(Integracao::class); }
+    public function vinculosUnidades() { return $this->hasMany(UnidadeUsuario::class); }
+    public function gerenciaEntidade() { return $this->hasOne(Entidade::class, 'gestor_id'); } 
+    public function gerenciaSubstitutaEntidade() { return $this->hasOne(Entidade::class, 'gestor_substituto_id'); } 
+    public function planosEntregaCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }  
+    public function planosTrabalhoCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }  
     // Belongs
-    public function perfil() { return $this->belongsTo(Perfil::class); }//OK//     //nullable
-    public function unidades() { return $this->belongsToMany(Unidade::class, 'unidades_integrantes'); }//OK//
+    public function perfil() { return $this->belongsTo(Perfil::class); }     //nullable
+    public function unidades() { return $this->belongsToMany(Unidade::class); }
     // Mutattors e Casts
     public function getUrlFotoAttribute($value) 
     {
@@ -168,34 +166,46 @@ class Usuario extends Authenticatable
         return Change::where('user_id', $this->id)->get()->toArray() ?? []; 
         //Não pode ser usado um relacionamento do Laravel porque as tabelas estão em bancos distintos
     }
-    public function getChefiaTitularAttribute()
+    public function getGerenciaTitularAttribute()
     {
         $result = null;
-        foreach ($this->vinculosUnidade as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'GESTOR' && $a['deleted_at'] == null)) > 0) $result = $vinculo->unidade; }
+        foreach ($this->vinculosUnidades as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'GESTOR')) > 0) $result = $vinculo->unidade; }
         return $result;
     }
-    public function getChefiasSubstitutasAttribute()
+    public function getGerenciasSubstitutasAttribute()
     {
         $result = [];
-        foreach ($this->vinculosUnidade as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'GESTOR_SUBSTITUTO' && $a['deleted_at'] == null)) > 0) array_push($result, $vinculo->unidade); }
+        foreach ($this->vinculosUnidades as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'GESTOR_SUBSTITUTO')) > 0) array_push($result, $vinculo->unidade); }
         return $result;
     }
     public function getLotacaoAttribute()
     {
         $result = null;
-        foreach ($this->vinculosUnidade as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'LOTADO' && $a['deleted_at'] == null)) > 0) $result = $vinculo->unidade; }
+        foreach ($this->vinculosUnidades as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'LOTADO' && $a['deleted_at'] == null)) > 0) $result = $vinculo->unidade; }
         return $result;
     }
     public function getColaboracoesAttribute()
     {
         $result = [];
-        foreach ($this->vinculosUnidade as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'COLABORADOR' && $a['deleted_at'] == null)) > 0) array_push($result, $vinculo->unidade); }
+        foreach ($this->vinculosUnidades as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'COLABORADOR')) > 0) array_push($result, $vinculo->unidade); }
         return $result;
     }
     public function getLotacoesAttribute()
     {
         $result = [];
-        foreach ($this->vinculosUnidade as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => ($a['atribuicao'] == 'LOTADO' || $a['atribuicao'] == 'COLABORADOR') && $a['deleted_at'] == null)) > 0) array_push($result, $vinculo->unidade); }
+        foreach ($this->vinculosUnidades as $vinculo){ 
+            $atribuicoes = $vinculo->atribuicoes;
+            if(count(array_filter($atribuicoes->toArray(), fn($a) => ($a['atribuicao'] == 'LOTADO' || $a['atribuicao'] == 'COLABORADOR'))) > 0) array_push($result, $vinculo->unidade); 
+        }
+        return $result;
+    }
+    public function getAtribuicoesAttribute()
+    { 
+        $result = [];
+        foreach($this->unidades as $unidade){
+            $atribuicoes = Atribuicao::where('unidade_usuario_id', $unidade->pivot->id)->get();
+            if(count($atribuicoes) > 0) array_push($result, [$unidade,$atribuicoes->toArray()]);
+        }
         return $result;
     }
 }

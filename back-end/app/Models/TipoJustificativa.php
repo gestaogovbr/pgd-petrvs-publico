@@ -18,5 +18,5 @@ class TipoJustificativa extends ModelBase
     public $delete_cascade = ['tipos_avaliacoes_justificativas'];
 
     // Has
-    public function tiposAvaliacoesJustificativas() { return $this->hasMany(TipoAvaliacaoJustificativa::class); }  //OK//  
+    public function tiposAvaliacoesJustificativas() { return $this->hasMany(TipoAvaliacaoJustificativa::class); }    
 }

@@ -74,19 +74,19 @@ class Entidade extends ModelBase
     ];
 
     // Has
-    public function feriados() { return $this->hasMany(Feriado::class); }    //OK//    
-    public function documentos() { return $this->hasMany(Documento::class); }    //OK//    
-    public function planejamentos() { return $this->hasMany(Planejamento::class); }    //OK//    
-    public function cadeiasValores() { return $this->hasMany(CadeiaValor::class); }    //OK//    
-    public function integracoes() { return $this->hasMany(Integracao::class); }      //OK//  
-    public function notificacoesTemplates() { return $this->hasMany(Template::class); }//OK//
-    public function unidades() { return $this->hasMany(Unidade::class); }//OK//
-    public function tiposTarefas() { return $this->hasMany(TipoTarefa::class); }//OK//
+    public function feriados() { return $this->hasMany(Feriado::class); }        
+    public function documentos() { return $this->hasMany(Documento::class); }        
+    public function planejamentos() { return $this->hasMany(Planejamento::class); }        
+    public function cadeiasValores() { return $this->hasMany(CadeiaValor::class); }        
+    public function integracoes() { return $this->hasMany(Integracao::class); }        
+    public function notificacoesTemplates() { return $this->hasMany(Template::class); }
+    public function unidades() { return $this->hasMany(Unidade::class); }
+    public function tiposTarefas() { return $this->hasMany(TipoTarefa::class); }
     // Belongs
-    public function cidade() { return $this->belongsTo(Cidade::class); }  //OK// 
-    public function gestor() { return $this->belongsTo(Usuario::class); }//OK//     //nullable
-    public function gestorSubstituto() { return $this->belongsTo(Usuario::class); }//OK//   //nullable
-    public function tipoModalidade() { return $this->belongsTo(TipoModalidade::class); }//OK//  //nullable
+    public function cidade() { return $this->belongsTo(Cidade::class); }      //nullable
+    public function gestor() { return $this->belongsTo(Usuario::class); }     //nullable
+    public function gestorSubstituto() { return $this->belongsTo(Usuario::class); }   //nullable
+    public function tipoModalidade() { return $this->belongsTo(TipoModalidade::class); }  //nullable
     
     // Mutattors e Casts
     public function getNotificacoesAttribute($value)

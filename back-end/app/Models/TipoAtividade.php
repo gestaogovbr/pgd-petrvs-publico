@@ -36,6 +36,6 @@ class TipoAtividade extends ModelBase
     ];
 
     // Has
-    public function atividades() { return $this->hasMany(Atividade::class); } //OK//
+    public function atividades() { return $this->hasMany(Atividade::class); } 
     // Belongs
 }

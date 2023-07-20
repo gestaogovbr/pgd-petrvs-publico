@@ -29,7 +29,7 @@ class Programa extends ModelBase
         'tipo_documento_tcr_id', /* char(36); */
         'documento_id', /* char(36); */
         'unidade_id', /* char(36); NOT NULL; */
-        'template_tcr_id', /* char(36); */        
+        'template_tcr_id', /* char(36); */
         //'deleted_at', /* timestamp; */
     ];
 
@@ -38,12 +38,12 @@ class Programa extends ModelBase
     public $fillable_changes = ['participantes'];
     
     // Has
-    public function participantes() { return $this->hasMany(ProgramaParticipante::class); }//OK//
-    public function planosEntrega() { return $this->hasMany(PlanoEntrega::class); }//OK//
-    public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }//OK//
+    public function participantes() { return $this->hasMany(ProgramaParticipante::class); }
+    public function planosEntrega() { return $this->hasMany(PlanoEntrega::class); }
+    public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }
     // Belongs
-    public function tipoDocumentoTcr() { return $this->belongsTo(TipoDocumento::class); }//OK//    //nullable
-    public function templateTcr() { return $this->belongsTo(Template::class); }  //OK//  //nullable
-    public function unidade() { return $this->belongsTo(Unidade::class); }    //OK//
-    public function documento() { return $this->belongsTo(Documento::class); }   //OK//     //nullable 
+    public function tipoDocumentoTcr() { return $this->belongsTo(TipoDocumento::class); }    //nullable
+    public function templateTcr() { return $this->belongsTo(Template::class); }    //nullable
+    public function unidade() { return $this->belongsTo(Unidade::class); }    
+    public function documento() { return $this->belongsTo(Documento::class); }        //nullable 
 }

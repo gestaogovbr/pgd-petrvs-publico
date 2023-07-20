@@ -13,9 +13,9 @@ class Favorito extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        //'deleted_at', /* timestamp; */
         'config', /* json; */// Configurações do favoritos
         'usuario_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
     ];
 
     // Casting
@@ -24,6 +24,6 @@ class Favorito extends ModelBase
     ];
     
     // Belongs
-    public function usuario() { return $this->belongsTo(Usuario::class); }    //OK//
+    public function usuario() { return $this->belongsTo(Usuario::class); }    
 
 }

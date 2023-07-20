@@ -33,10 +33,10 @@ class ProjetoRecurso extends ModelBase
     public $delete_cascade = [];
 
     // Has
-    public function alocacoes() { return $this->hasMany(ProjetoAlocacao::class, 'recurso_id'); }   //OK// 
+    public function alocacoes() { return $this->hasMany(ProjetoAlocacao::class, 'recurso_id'); }    
     // Belongs
-    public function projeto() { return $this->belongsTo(Projeto::class); }  //OK//  
-    public function usuario() { return $this->belongsTo(Usuario::class); }   //OK//     //nullable
-    public function unidade() { return $this->belongsTo(Unidade::class); }    //OK//    //nullable
-    public function materialServico() { return $this->belongsTo(MaterialServico::class); }    //OK//    //nullable
+    public function projeto() { return $this->belongsTo(Projeto::class); }    
+    public function usuario() { return $this->belongsTo(Usuario::class); }        //nullable
+    public function unidade() { return $this->belongsTo(Unidade::class); }        //nullable
+    public function materialServico() { return $this->belongsTo(MaterialServico::class); }        //nullable
 }

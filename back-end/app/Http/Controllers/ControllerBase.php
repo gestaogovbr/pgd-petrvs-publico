@@ -53,7 +53,7 @@ abstract class ControllerBase extends Controller
         $unidade_id = !empty($headers) && !empty($headers["unidade_id"]) ? $headers["unidade_id"] : ($request->hasSession() ? $request->session()->get("unidade") : "");
         if(!empty($unidade_id)) {
             $usuario = Usuario::where("id", self::loggedUser()->id)->with(["lotacoes" => function ($query) use ($unidade_id) {
-                $query->whereNull("data_fim")->where("unidade_id", $unidade_id);
+                $query->where("unidade_id", $unidade_id);
             }, "lotacoes.unidade"])->first();
             if(isset($usuario->lotacoes[0]) && !empty($usuario->lotacoes[0]->unidade_id)) {
                 return $usuario->lotacoes[0]->unidade;

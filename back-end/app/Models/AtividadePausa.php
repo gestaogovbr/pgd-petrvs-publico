@@ -12,12 +12,13 @@ class AtividadePausa extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'data_inicio', /* datetime; NOT NULL; */// Data inicio da pausa
-        'data_fim', /* datetime; */// Data de retorno
-        //'deleted_at', /* timestamp; */
         'atividade_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
+        'inicio', /* datetime; NOT NULL; */// Data inicio da pausa
+        'fim', /* datetime; */// Data de retorno
+
     ];
     
     // Belongs
-    public function atividade() { return $this->belongsTo(Atividade::class); }    //OK//
+    public function atividade() { return $this->belongsTo(Atividade::class); }    
 }

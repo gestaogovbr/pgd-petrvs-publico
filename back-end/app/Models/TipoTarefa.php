@@ -22,8 +22,8 @@ class TipoTarefa extends ModelBase
         //'deleted_at', /* timestamp; */
     ];
     //Has
-    public function tarefas() { return $this->hasMany(AtividadeTarefa::class); }   //OK//
+    public function tarefas() { return $this->hasMany(AtividadeTarefa::class); }   
     // Belongs
-    public function unidade() { return $this->belongsTo(Unidade::class); }    //OK//    //nullable
-    public function entidade() { return $this->belongsTo(Entidade::class); }    //OK//  //nullable
+    public function unidade() { return $this->belongsTo(Unidade::class); }        //nullable
+    public function entidade() { return $this->belongsTo(Entidade::class); }      //nullable
 }

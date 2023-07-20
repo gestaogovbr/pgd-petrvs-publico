@@ -17,11 +17,11 @@ class Afastamento extends ModelBase
         'inicio_afastamento', /* datetime; NOT NULL; */// Inicio do afastamento
         'fim_afastamento', /* datetime; NOT NULL; */// Fim do afastamento
         'usuario_id', /* char(36); NOT NULL; */
-        'tipo_motivo_afastamento_id', /* char(36); */
+        'tipo_motivo_afastamento_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */
     ];
 
     // Belongs
-    public function usuario() { return $this->belongsTo(Usuario::class); }    //OK//
-    public function tipoMotivoAfastamento() { return $this->belongsTo(TipoMotivoAfastamento::class); }    //OK//
+    public function usuario() { return $this->belongsTo(Usuario::class); }    
+    public function tipoMotivoAfastamento() { return $this->belongsTo(TipoMotivoAfastamento::class); }    
 }

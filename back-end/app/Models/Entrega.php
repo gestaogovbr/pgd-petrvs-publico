@@ -26,7 +26,7 @@ class Entrega extends ModelBase
     ];
 
     //Has
-    public function entregasPlanoEntrega() { return $this->hasMany(PlanoEntregaEntrega::class); }//OK//     
-    public function entregasPlanoTrabalho() { return $this->hasMany(PlanoTrabalhoEntrega::class); }//OK//   
+    public function entregasPlanoEntrega() { return $this->hasMany(PlanoEntregaEntrega::class); }     
+    public function entregasPlanoTrabalho() { return $this->hasMany(PlanoTrabalhoEntrega::class); }   
 
 }

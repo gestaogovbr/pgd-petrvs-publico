@@ -17,9 +17,9 @@ class ProjetoRegra extends ModelBase
         'nome', /* varchar(256); NOT NULL; */// Nome da regra
         'tipo_recurso', /* enum('HUMANO','MATERIAL','SERVICO','CUSTO','DEPARTAMENTO'); NOT NULL; DEFAULT: 'MATERIAL'; */// Tipo do recurso que se aplica a regra
         'perfis', /* json; */// Perfis de capacidade aplicáveis a quem possuir a regra
-        //'deleted_at', /* timestamp; */
         'finalidade', /* enum('OUTRA','ESCRITORIO_PROJETO','GERENTE_PROJETO','GERENTE_RISCO','GERENTE_COMUNICACAO','GERENTE_RECURSO','PATROCINADOR','GESTOR_NEGOCIAL','MEMBRO'); NOT NULL; */// Finalidade/Papel
         'projeto_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
     ];
 
     public $fillable_changes = [];
@@ -34,8 +34,8 @@ class ProjetoRegra extends ModelBase
     ];
     
     // Has
-    public function regrasAlocacao() { return $this->hasMany(ProjetoAlocacaoRegra::class, 'regra_id'); }    //OK//
+    public function regrasAlocacao() { return $this->hasMany(ProjetoAlocacaoRegra::class, 'regra_id'); }    
     // Belongs
-    public function projeto() { return $this->belongsTo(Projeto::class); }    //OK//
+    public function projeto() { return $this->belongsTo(Projeto::class); }    
 
 }

@@ -39,7 +39,7 @@ class CreateEntidadesTable extends Migration
             $table->json('expediente')->default(new Expression("('{\"domingo\":[],\"segunda\":[],\"terca\":[],\"quarta\":[],\"quinta\":[],\"sexta\":[],\"sabado\":[],\"especial\":[]}')"))->comment("Configuração de expediente");
             // Chaves estrangeiras:
             $table->foreignUuid('tipo_modalidade_id')->nullable()->constrained('tipos_modalidades')->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de modalidade utilizada ao criar plano de trabalho");
-            $table->foreignUuid('cidade_id')->constrained('cidades')->onDelete('restrict')->onUpdate('cascade')->comment("Cidade onde está estabelecida a sede da entidade");
+            $table->foreignUuid('cidade_id')->nullable()->constrained('cidades')->onDelete('restrict')->onUpdate('cascade')->comment("Cidade onde está estabelecida a sede da entidade");
             $table->foreignUuid('gestor_id')->nullable()->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->comment('Usuário gestor da entidade');
             $table->foreignUuid('gestor_substituto_id')->nullable()->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->comment('Usuário gestor substituto da entidade');
         });

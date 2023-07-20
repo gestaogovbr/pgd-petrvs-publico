@@ -30,7 +30,7 @@ class ProjetoFase extends ModelBase
     public $delete_cascade = [];
 
     // Has
-    public function projetos() { return $this->hasMany(Projeto::class, 'fase_id'); }   //OK//
+    public function projetos() { return $this->hasMany(Projeto::class, 'fase_id'); }   
     // Belongs
-    public function projeto() { return $this->belongsTo(Projeto::class); }//OK//
+    public function projeto() { return $this->belongsTo(Projeto::class); }
 }

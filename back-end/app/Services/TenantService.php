@@ -39,7 +39,7 @@ class TenantService extends ServiceBase {
             $entidade->fill([
                 "sigla" => $entity->id,
                 "nome" => $entity->nome,
-                "abrangencia" => $entity->abrangencia,
+                "abrangencia" => $entity->abrangencia
             ]);
             $entidade->save();
             $entidade->refresh();
