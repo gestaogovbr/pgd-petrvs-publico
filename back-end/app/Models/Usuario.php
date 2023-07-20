@@ -102,6 +102,7 @@ class Usuario extends Authenticatable
     public function chefiasSubstitutas() { return $this->hasMany(Unidade::class, 'gestor_substituto_id'); }
     public function lotacao() { return $this->hasOne(Lotacao::class)->where('principal', 1); }
     public function changes() { return $this->hasMany(Change::class, 'user_id'); }
+    public function curriculum() { return $this->hasOne(Curriculum::class); }
     // Belongs
     public function perfil() { return $this->belongsTo(Perfil::class, 'perfil_id'); }
     // Mutattors e Casts

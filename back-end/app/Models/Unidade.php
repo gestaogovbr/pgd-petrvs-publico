@@ -81,6 +81,7 @@ class Unidade extends ModelBase
     public function tiposAtividades() { return $this->hasMany(TipoAtividade::class); }
     public function integrantes() { return $this->hasMany(UnidadeIntegrante::class); }
     public function notificacoesTemplates() { return $this->hasMany(Template::class, 'unidade_id'); }
+    public function historicoLotacoes() { return $this->hasMany(HistoricoLotacaoCurriculum::class); }
     // Belongs
     public function gestor() { return $this->belongsTo(Usuario::class); }
     public function gestorSubstituto() { return $this->belongsTo(Usuario::class); }
