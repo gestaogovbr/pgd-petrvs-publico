@@ -32,6 +32,7 @@ class Curriculum extends ModelBase
 
     //Has
     public function graduacoes() { return $this->hasMany(CurriculumGraduacao::class,'curriculum_id'); }
+    public function curriculumProfissional() { return $this->hasOne(CurriculumProfissional::class); }
 
     // Belongs
     public function usuario() { return $this->belongsTo(Usuario::class); }
