@@ -11,34 +11,19 @@ use App\Services\ServiceBase;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class UnidadeUsuarioService extends ServiceBase {
+class UnidadeUsuarioService extends ServiceBase 
+{
     public function loadIntegrantes($unidadeId) {
         $result = [];
-        $unidade = Unidade::with(["lotacoes" => function($query){
-            $query->whereNull('data_fim');
-        }])->where("id", $unidadeId)->first();
+        $unidade = Unidade::find($unidadeId);
         if(empty($unidade)) throw new ServerException("ValidateUnidade", "Unidade não encontrada no banco");
-        $adicionar = function($usuario, $atribuicao) use (&$result) {
-            $consolidado = $result[$usuario->id] ?? [
-                "id" => $usuario->id,
-                "usuario" => $usuario,
-                "usuario_id" => $usuario->id,
-                "atribuicoes" => []
-            ];
-            $consolidado["atribuicoes"] = array_merge($consolidado["atribuicoes"] ?? [], [$atribuicao]);
-            $result[$usuario->id] = $consolidado;
-        };
-        /* Integrantes do banco de dados */
-        $integrantes = UnidadeUsuario::with("usuario")->where("unidade_id", $unidadeId)->get();
-        foreach ($integrantes as $integrante) {
-            $adicionar($integrante->usuario, $integrante->atribuicao);
-        }
-        /* Chefias */
-        if(!empty($unidade->gestor)) $adicionar($unidade->gestor, "GESTOR");
-        if(!empty($unidade->gestorSubstituto)) $adicionar($unidade->gestorSubstituto, "GESTOR_SUBSTITUTO");
-        /* Lotações */
-        foreach ($unidade->lotacoes as $lotacao) {
-            $adicionar($lotacao->usuario, "LOTADO");
+        foreach($unidade->integrantes as $id_usuario => $atribuicoes){
+            $result[$id_usuario] = [
+                "id" => $id_usuario,
+                "usuario" => Usuario::find($id_usuario),
+                "usuario_id" => $id_usuario,
+                "atribuicoes" => array_map(fn($x) => $x->atribuicao, $atribuicoes->toArray())
+            ];                
         }
         return ['rows' => array_values($result), 'unidade' => $unidade];
     }
@@ -46,44 +31,23 @@ class UnidadeUsuarioService extends ServiceBase {
     public function saveIntegrante($unidadeId, $integrante) {
         DB::beginTransaction();
         try {
-/*             $lotacao = Lotacao::where("unidade_id", $unidadeId)->where("usuario_id", $integrante["usuario_id"])->first();
-            $unidade = Unidade::find($unidadeId);
-            $atribuicoes = $integrante["atribuicoes"];
-            $lotado = in_array("LOTADO", $atribuicoes);
-            // Lotacao
-            if($lotado && empty($lotacao)) {
-                $this->lotacaoService->store([
-                    "usuario_id" => $integrante["usuario_id"],
-                    "unidade_id" => $unidadeId,
-                    "principal" => false
-                ], $unidade);
-            } else if(!$lotado && !empty($lotacao)) {
-                $this->lotacaoService->destroy($lotacao->id);
-            } */
-            $usuario = Usuario::find($integrante["usuario_id"])->with("lotacao");
+            $usuario = Usuario::find($integrante["usuario_id"]);
             $lotacao = $usuario->lotacao;
             $unidade = Unidade::find($unidadeId);
+            if(empty($unidade) || empty($usuario)) throw new ServerException("ValidateUnidade", "Unidade/Usuário não existe no banco");
             $atribuicoes = $integrante["atribuicoes"];
-            $vinculoNovo = UnidadeUsuario::firstOrCreate(['unidade_id' => $unidadeId, 'usuario_id' => $integrante["usuario_id"]]);
-            //...........checar inconsistências entre as atribuições LOTADO/COLABORADOR, GESTOR/GESTOR_SUBSTITUTO
-            /* Lotação */
-            $lotado = in_array("LOTADO", $atribuicoes);
-            if($lotado){
+            if(count(array_intersect(['GESTOR','GESTOR_SUBSTITUTO'],$atribuicoes)) == 2 || count(array_intersect(['LOTADO','COLABORADOR'],$atribuicoes)) == 2) throw new ServerException("ValidateAtribuicao", "Há inconsistência nas atribuições: GESTOR/GESTOR_SUBSTITUTO ou LOTADO/COLABORADOR");
+            $lotar = function($vinculoNovo) use ($lotacao,$unidadeId,$integrante) {
                 if(!empty($lotacao) && $lotacao->id != $unidadeId) {
                     $vinculoAntigo = UnidadeUsuario::where(['unidade_id' => $lotacao->id, 'usuario_id' => $integrante["usuario_id"]])->first();
                     Atribuicao::where('unidade_usuario_id',$vinculoAntigo->id)->where('atribuicao', 'LOTADO')->first()->delete();
                 }
-                if(empty($lotacao) || $lotacao->id != $unidadeId) {
-                    $this->atribuicaoService->store([
-                        "atribuicao" => "LOTADO",
-                        "unidade_usuario_id" => $vinculoNovo->id
-                    ], $unidade);
-                }
-            }
-/*             // Chefias 
-            $unidade->gestor_id = in_array("GESTOR", $atribuicoes) ? $integrante["usuario_id"] : ($unidade->gestor_id == $integrante["usuario_id"] ? null : $unidade->gestor_id);
-            $unidade->gestor_substituto_id = in_array("GESTOR_SUBSTITUTO", $atribuicoes) ? $integrante["usuario_id"] : ($unidade->gestor_substituto_id == $integrante["usuario_id"] ? null : $unidade->gestor_substituto_id);
-            $unidade->save(); */
+                if(empty($lotacao) || $lotacao->id != $unidadeId) Atribuicao::create(["atribuicao" => "LOTADO","unidade_usuario_id" => $vinculoNovo->id]);
+            };
+            $vinculoNovo = UnidadeUsuario::firstOrCreate(['unidade_id' => $unidadeId, 'usuario_id' => $integrante["usuario_id"]]);
+            /* Lotação */
+            $lotado = in_array("LOTADO", $atribuicoes);
+            if($lotado) $lotar($vinculoNovo);
             /* Gerência titular */
             $gestor = in_array("GESTOR", $atribuicoes);
             if($gestor){
@@ -98,36 +62,11 @@ class UnidadeUsuarioService extends ServiceBase {
                         "unidade_usuario_id" => $vinculoNovo->id
                     ], $unidade);
                 }
+                if(!$lotado) $lotar($vinculoNovo);
             }
-            /* Gerência substituta */
-            $gestorSubstituto = in_array("GESTOR_SUBSTITUTO", $atribuicoes);
-            if($gestorSubstituto && !in_array($unidadeId, array_map(fn($u) => $u->id, $usuario->gerenciasSubstitutas))) {
-                $this->atribuicaoService->store([
-                    "atribuicao" => "GESTOR_SUBSTITUTO",
-                    "unidade_usuario_id" => $vinculoNovo->id
-                ], $unidade);
-            }
-/*             // Integrantes
-            $integrantes = UnidadeUsuario::where("unidade_id", $unidadeId)->where("usuario_id", $integrante["usuario_id"])->get(); 
-            $atribuicoesDb = [];
-            foreach($integrantes as $atribuicao) {
-                if(!in_array($atribuicao->atribuicao, $atribuicoes)) {
-                    $atribuicao->delete();
-                }
-                $atribuicoesDb[] = $atribuicao->atribuicao;
-            }
-            foreach($atribuicoes as $atribuicao) {
-                if(!in_array($atribuicao, array_merge(["LOTADO", "GESTOR", "GESTOR_SUBSTITUTO"], $atribuicoesDb))) {
-                    $unidadeIntegrente = new UnidadeUsuario([
-                        "usuario_id" => $integrante["usuario_id"],
-                        "unidade_id" => $unidadeId,
-                        "atribuicao" => $atribuicao
-                    ]);
-                    $unidadeIntegrente->save();
-                }
-            } */
-            /* Demais atribuições */
-            'AVALIADOR_PLANO_ENTREGA','AVALIADOR_PLANO_TRABALHO','HOMOLOGADOR_PLANO_ENTREGA','COLABORADOR'
+            /* Outras atribuições */
+            $outrasAtribuicoes = array_diff($atribuicoes, ['LOTADO','GESTOR']);
+            foreach($outrasAtribuicoes as $x) { Atribuicao::updateOrCreate(['atribuicao' => $x, 'unidade_usuario_id' => $vinculoNovo->id],[]); }
             DB::commit();
         } catch (Throwable $e) {
             DB::rollback();
@@ -135,6 +74,5 @@ class UnidadeUsuarioService extends ServiceBase {
         }
         return true;
     }
-
 }
 

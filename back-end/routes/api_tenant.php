@@ -10,7 +10,6 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\ControllerBase;
 use App\Http\Controllers\EntidadeController;
-use App\Http\Controllers\LotacaoController;
 use App\Http\Controllers\UnidadeController;
 use App\Http\Controllers\CidadeController;
 use App\Http\Controllers\ChangeController;
@@ -263,7 +262,6 @@ Route::middleware(['auth:sanctum'])->prefix('Entidade')->group(function () {
     defaultRoutes(EntidadeController::class);
     Route::post('generate-api-key', [EntidadeController::class, 'generateApiKey']);
 });
-Route::middleware(['auth:sanctum'])->prefix('Lotacao')->group(function () { defaultRoutes(LotacaoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
     defaultRoutes(UnidadeController::class);
     Route::post('metadados-area', [UnidadeController::class, 'metadadosArea']);

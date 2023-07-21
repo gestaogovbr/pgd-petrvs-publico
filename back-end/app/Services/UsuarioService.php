@@ -6,7 +6,6 @@ use App\Models\Usuario;
 use App\Models\Unidade;
 use App\Models\Atividade;
 use App\Models\PlanoTrabalho;
-use App\Models\TipoAvaliacao;
 use App\Services\ServiceBase;
 use App\Services\RawWhere;
 use App\Services\UtilService;
@@ -42,7 +41,7 @@ class UsuarioService extends ServiceBase
         $result = [];
         $planosTrabalhoAtivos = $this->planoTrabalhoService->planosAtivosPorData($data_inicial, $data_final, $usuario_id);
         $planos_ids = $planosTrabalhoAtivos->map(function($plano){return $plano->id;});
-        $notas_validas = TipoAvaliacao::where('aceita_entrega', true)->get()->pluck('nota_atribuida');
+        //$notas_validas = TipoAvaliacao::where('aceita_entrega', true)->get()->pluck('nota_atribuida');
   
         /*         $media_avaliacao = Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->avaliadas()->with(['avaliacao'])->get()->avg(function($demanda){
             return $demanda["avaliacao"]["nota_atribuida"];
@@ -107,12 +106,13 @@ class UsuarioService extends ServiceBase
         foreach(Unidade::whereIn('id',$unidade_ids)->get() as $u) { array_push($usuarios, ...$u->lotados, ...$u->colaboradores); }
         foreach ($usuarios as $usuario) {
             $planosTrabalhoAtivos = $this->planoTrabalhoService->planosAtivosPorData($data_inicial, $data_final, $usuario->id);
-            //$planos_ids = $planosTrabalhoAtivos->map(function($plano){return $plano->id;});
+            $planos_ids = $planosTrabalhoAtivos->map(function($plano){return $plano->id;});
             //$notas_validas = TipoAvaliacao::where('aceita_entrega', true)->get()->pluck('nota_atribuida');
     
         /*             $total_consolidadas = Demanda::doUsuario($usuario->id)->dosPlanos($planos_ids)->avaliadas()->with(['avaliacao'])->get()->sum(function($demanda) use ($notas_validas){
                 return in_array($demanda["avaliacao"]["nota_atribuida"], $notas_validas->all()) ? $demanda['tempo_pactuado'] : 0;
             }); */
+            $total_consolidadas = Atividade::doUsuario($usuario->id)->dosPlanos($planos_ids)->concluidas()->get()->sum(['tempo_planejado']);
 
         /*             $media_avaliacao = Demanda::doUsuario($usuario->id)->dosPlanos($planos_ids)->avaliadas()->with(['avaliacao'])->get()->avg(function($demanda){
                 return $demanda["avaliacao"]["nota_atribuida"];
@@ -128,7 +128,7 @@ class UsuarioService extends ServiceBase
                     'total_horas' => $plano['tempo_total'],
                     //'horas_alocadas' => $horas_alocadas,
                     //'horas_consolidadas' => $total_consolidadas,
-                    //'progresso' => $total_consolidadas > 0 ? round((float)(($total_consolidadas / $plano['tempo_total']) * 100), 2) : 0
+                    'progresso' => $total_consolidadas > 0 ? round((float)(($total_consolidadas / $plano['tempo_total']) * 100), 2) : 0
                 ];           
             }
             $result['usuarios'][] = [
@@ -157,12 +157,14 @@ class UsuarioService extends ServiceBase
     }
 
     public function extraStore($entity, $unidade, $action) {
-        $this->unidadeUsuarioService->checkLotacoes($entity->id);
+        $this->atribuicaoService->checkLotacoes($entity->id);
     }
 
     public function hasLotacao($id, $usuario = null, $subordinadas = true, $dataRef = null) {
         return Unidade::where("id", $id)->whereRaw($this->lotacoesWhere($subordinadas, $usuario, "", false, $dataRef))->count() > 0;
-        /*Usuario::where("id", $usuario->id)->whereHas('lotacoes', function (Builder $query) use ($id) {
+        /*
+        CONFERIR ESTE TRECHO ...
+        Usuario::where("id", $usuario->id)->whereHas('lotacoes', function (Builder $query) use ($id) {
             $query->where('id', $id);
         })->count() > 0;*/
     }
@@ -185,7 +187,7 @@ class UsuarioService extends ServiceBase
     public static function isIntegrante(string $atribuicao, string $unidade_id, string | null $usuario_id = null): bool {
         $unidade = Unidade::find($unidade_id) ?? null;
         $usuario = isset($usuario_id) ? Usuario::find($usuario_id) : parent::loggedUser();
-        $atribuicoes = array_shift(array_filter($unidade->integrantes, fn($i) => $i[0]->id == $usuario->id))[1];
+        $atribuicoes = array_key_exists($usuario->id, $unidade->integrantes) ? $unidade->integrantes[$usuario->id]->toArray() : null;
         return empty($atribuicoes) ? false : !!array_filter($atribuicoes, fn($x) => $x['atribuicao'] == $atribuicao); 
     }
 
@@ -194,7 +196,6 @@ class UsuarioService extends ServiceBase
      * @param string $unidade_id 
      */
     public function isLotacao(string $unidade_id): bool {
-        //return ($unidade_id != null) && !empty(Lotacao::where("usuario_id", parent::loggedUser()->id)->where("unidade_id",$unidade_id)->where("principal", 1)->first());
         return parent::loggedUser()->lotacao->id == $unidade_id;
     }
 
@@ -215,6 +216,15 @@ class UsuarioService extends ServiceBase
     }
 
     public function lotacoesWhere($subordinadas, $usuario = null, $prefix = "", $deleted = false, $dataRef = null) {
+        /*
+        CONFERIR ESTE TRECHO....
+        foreach($usuario->lotacoes as $lotacao) {
+            if(($deleted || empty($lotacao->data_fim)) && !UtilService::greaterThanOrIqual($dataRef, $lotacao->data_fim)) {
+                $where[] = $prefix . "id = '" . $lotacao->unidade_id . "'";
+                if($subordinadas) $where[] = $prefix . "path like '%" . $lotacao->unidade_id . "%'";
+            }
+        }
+        */
         $where = [];
         $prefix = empty($prefix) ? "" : $prefix . ".";
         $usuario = $usuario ?? parent::loggedUser();
@@ -252,12 +262,13 @@ class UsuarioService extends ServiceBase
         return $result;
     }
 
-    public function proxyQuery($query, &$data) {
-        /*         $usuario = parent::loggedUser();
+    public function proxyQuery($query, &$data) {    //VER COM O GENISSON
+        $usuario = parent::loggedUser();
         $where = [];
         $subordinadas = true;
         foreach($data["where"] as $condition) {
             if(is_array($condition) && $condition[0] == "lotacao") {
+                //array_push($where, new RawWhere("EXISTS(SELECT id FROM lotacoes where_lotacoes WHERE where_lotacoes.usuario_id = usuarios.id AND where_lotacoes.unidade_id = ?)", [$condition[2]]));
                 array_push($where, new RawWhere("EXISTS(SELECT id FROM lotacoes where_lotacoes WHERE where_lotacoes.usuario_id = usuarios.id AND where_lotacoes.unidade_id = ?)", [$condition[2]]));
             } else if(is_array($condition) && $condition[0] == "subordinadas") {
                 $subordinadas = $condition[2];
@@ -267,61 +278,21 @@ class UsuarioService extends ServiceBase
         }
         if(!$usuario->hasPermissionTo("MOD_USER_TUDO")) {
             $lotacoesWhere = $this->lotacoesWhere($subordinadas, null, "where_unidades");
+            //array_push($where, new RawWhere("EXISTS(SELECT where_lotacoes.id FROM lotacoes where_lotacoes LEFT JOIN unidades where_unidades ON (where_unidades.id = where_lotacoes.unidade_id) WHERE where_lotacoes.usuario_id = usuarios.id AND ($lotacoesWhere))", []));
             array_push($where, new RawWhere("EXISTS(SELECT where_lotacoes.id FROM lotacoes where_lotacoes LEFT JOIN unidades where_unidades ON (where_unidades.id = where_lotacoes.unidade_id) WHERE where_lotacoes.usuario_id = usuarios.id AND ($lotacoesWhere))", []));
         }
         $data["where"] = $where;
-        return $data; */
+        return $data;
     }
 
     public function proxySearch($query, &$data, &$text) {
         $data["where"][] = ["subordinadas", "==", true];
         return $this->proxyQuery($query, $data);
-        /*        $where = [];
-        $unidade_id = null;
-        $vinculadas = false;
-        foreach($data["where"] as $condition) {
-            if(is_array($condition) && $condition[0] == "unidade_id") {
-                $unidade_id = $condition[2];
-            } else if(is_array($condition) && $condition[0] == "subordinadas") {
-                $vinculadas = $condition[2];
-            } else {
-                array_push($where, $condition);
-            }
-        }
-        $unidades_ids = [];
-        if(!empty($unidade_id)) {
-            array_push($unidades_ids, $unidade_id);
-        } else {
-            $usuario = parent::loggedUser();
-            foreach($usuario->lotacoes as $lotacao) {
-                array_push($unidades_ids, $lotacao->unidade_id);
-            }
-        }
-        if($vinculadas) {
-            $origens = UnidadeOrigemAtividade::whereIn("unidade_id", $unidades_ids)->whereNotIn("unidade_origem_atividade_id", $unidades_ids)->get();
-            $unidades_ids = array_merge($unidades_ids, array_map(fn($origem) => $origem->unidade_origem_atividade_id, $origens->all()));
-        }
-        array_push($where, ["unidade_id", "in", $unidades_ids]);
-        $data["where"] = $where;
-        return $data;*/
     }
     
     public function proxyStore(&$data, $unidade, $action) {
         $data['cpf'] = $this->UtilService->onlyNumbers($data['cpf']);
         $data['telefone'] = $this->UtilService->onlyNumbers($data['telefone']);
-        /* Faz as atualizações das lotações de forma segura 
-        if($action != ServiceBase::ACTION_INSERT) {
-            foreach($data['lotacoes'] as $lotacao) {
-                if($lotacao["status"] == "DELETE") {
-                    $this->LotacaoService->destroy($lotacao["id"], false);
-                } else {
-                    $this->LotacaoService->save($lotacao);
-                }
-            }
-            $data['lotacoes'] = []; /* avoid fillablechanges
-        } else if(empty($data['lotacoes'])) {
-            throw new ServerException("ValidateUsuario", "Obrigatório existir ao menos uma lotação para o usuário");
-        }*/
         return $data;
     }
 
@@ -344,8 +315,8 @@ class UsuarioService extends ServiceBase
             if(empty($data["cpf"])) throw new Exception("O campo de CPF é obrigatório");
             $alreadyHas = Usuario::where("id", "!=", $data["id"])->where("email", $data["email"])->orWhere("cpf", $data["cpf"])->first();
             if(!empty($alreadyHas)) {
-                if($alreadyHas->trashed()) { /* Caso o usuário exista, mas esteja excluído, reabilita o usuário */
-                    $this->removervinculosUsuarios($alreadyHas);
+                if($alreadyHas->trashed()) { /* Caso o usuário exista, mas esteja excluído, reabilita o usuário deletando todos os seus vínculos anteriores */
+                    $this->removerVinculosUsuario($alreadyHas);
                     $alreadyHas->restore();
                     return $alreadyHas;
                 } else {
@@ -356,7 +327,7 @@ class UsuarioService extends ServiceBase
         }
     }
 
-    public function removervinculosUsuarios(&$usuario) {
+    public function removerVinculosUsuario(&$usuario) {
         if(!empty($usuario)) {
             foreach($usuario->vinculosUnidades as $vinculo){ $vinculo->deleteCascade(); }
             $usuario->fresh();

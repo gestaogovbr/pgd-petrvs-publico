@@ -150,7 +150,7 @@ class Unidade extends ModelBase
         $result = [];
         foreach($this->usuarios as $usuario){
             $atribuicoes = Atribuicao::where('unidade_usuario_id', $usuario->pivot->id)->get();
-            if(count($atribuicoes) > 0) array_push($result, [$usuario,$atribuicoes->toArray()]);
+            if(count($atribuicoes) > 0) $result[$usuario->id] = $atribuicoes;
         }
         return $result;
     }

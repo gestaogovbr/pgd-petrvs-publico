@@ -134,19 +134,6 @@ class PlanoTrabalhoService extends ServiceBase
   public function extraStore($plano, $unidade, $action)
   {
     /* Adiciona a Lotação automaticamente caso o usuário não tenha */
-        /*     $usuario = Usuario::with(["lotacoes" => function ($query) {
-              $query->whereNull("data_fim");
-            }])->find($plano->usuario_id);
-            $usuario_lotacoes_ids = $usuario->lotacoes->map(function ($item, $key) {
-              return $item->unidade_id;
-            })->all();
-            if (!in_array($plano->unidade_id, $usuario_lotacoes_ids)) {
-              $this->lotacaoService->store([
-                'usuario_id' => $plano->usuario_id,
-                'unidade_id' => $plano->unidade_id,
-                'principal' => false
-              ], $unidade);
-            } */
     $usuario_lotacoes_ids = array_map(fn($u) => $u->id, Usuario::find($plano->usuario_id)->lotacoes);
     if (!in_array($plano->unidade_id, $usuario_lotacoes_ids)) {
       $this->atribuicaoService->store([

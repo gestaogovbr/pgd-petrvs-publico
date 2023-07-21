@@ -17,10 +17,11 @@ use Throwable;
 
 class UnidadeService extends ServiceBase
 {
-    public function avaliadores($id) {
-        $unidade = Unidade::find($id);
-        return array_unique(array_map(fn($usuario) => $usuario->id, [...$unidade->avaliadoresPlanoEntrega, ...$unidade->avaliadoresPlanoTrabalho, $unidade->gestor, $unidade->gestorSubstituto]));
-        /*          $result = [];   
+/*     public function avaliadores($id) {
+        //$unidade = Unidade::find($id);
+        //return array_unique(array_map(fn($usuario) => $usuario->id, [...$unidade->avaliadoresPlanoEntrega, ...$unidade->avaliadoresPlanoTrabalho, $unidade->gestor, $unidade->gestorSubstituto]));
+        
+        $result = [];   
         $unidade = Unidade::with("integrantes")->where("id", $id)->first();
         if(!empty($unidade->gestor_id)) $result[] = $unidade->gestor_id;
         if(!empty($unidade->gestor_substituto_id)) $result[] = $unidade->gestor_substituto_id;
@@ -39,8 +40,8 @@ class UnidadeService extends ServiceBase
             }
             if(!$maxLevel) throw new ServerException("ValidateUnidade", "Referência circular na hierarquia da unidade");
         } 
-        return $result;*/
-    }
+        return $result;
+    } */
 
     /** 
      * Um array com os IDs de todas as Unidades pesquisadas, que possuem Planos de Trabalho ativos, e seus respectivos dashboards.
@@ -80,7 +81,6 @@ class UnidadeService extends ServiceBase
         $timeZone = $unidade->cidade->timezone;
         $timezone_abbr = timezone_name_from_abbr("", -3600*abs($timeZone), 0);
         $dateTime = new DateTime('now', new DateTimeZone($timezone_abbr));
-        
         $dateTime->setTimestamp($dateTime->getTimestamp());
         return ServiceBase::toIso8601($dateTime);
     }
@@ -128,15 +128,15 @@ class UnidadeService extends ServiceBase
             'nrServidoresPrograma' => 0,
             'horasUteisTotais' => 0,
             'horasUteisDecorridas' => 0,
-            'horasDemandasNaoIniciadas' => 0,
-            'horasDemandasEmAndamento' => 0,
-            'horasDemandasConcluidas' => 0,
-            'horasDemandasAvaliadas' => 0,
+            'horasAtividadesNaoIniciadas' => 0,
+            'horasAtividadesEmAndamento' => 0,
+            'horasAtividadesConcluidas' => 0,
+            //'horasAtividadesAvaliadas' => 0,
             'horasTotaisAlocadas' => 0,
-            'mediaAvaliacoes' => null
+            //'mediaAvaliacoes' => null
         ];
         $idsServidoresPrograma = [];
-        $dadosUnidades = [];        // array que armazenará os dados das Unidades-filhas da Área (id, nome, sigla e media de todas as avaliações) que possuírem ao menos 1 Plano de Trabalho vinculado ao Programa escolhido
+        $dadosUnidades = [];        // array que armazenará os dados das Unidades-filhas da Área (id, nome, sigla) que possuírem ao menos 1 Plano de Trabalho vinculado ao Programa escolhido
         $unidadePrincipal = Unidade::find($unidade_id);
         $unidades_ids = [$unidade_id];
         $unidades_ids = array_merge($unidades_ids, $this->unidadesFilhas($unidade_id));
@@ -148,18 +148,18 @@ class UnidadeService extends ServiceBase
                     'id' => $temp['id'],
                     'nome' => $temp['nome'],
                     'sigla' => $temp['sigla'],
-                    'mediaAvaliacoes' => $temp['mediaAvaliacoes'],
+                    //'mediaAvaliacoes' => $temp['mediaAvaliacoes'],
                     'nrServidoresPrograma' => $temp['nrServidoresPrograma']
                 ]);
                 $idsServidoresPrograma = array_merge($idsServidoresPrograma, $temp['idsServidoresPrograma']);
                 $dadosArea['qdePlanosPrograma'] += $temp['qdePlanosPrograma'];
                 $dadosArea['horasUteisTotais'] += $temp['horasUteisTotais'];
                 $dadosArea['horasUteisDecorridas'] += $temp['horasUteisDecorridas'];
-                $dadosArea['qdeDemandasAvaliadas'] += $temp['qdeDemandasAvaliadas'];
-                $dadosArea['horasDemandasNaoIniciadas'] += $temp['horasDemandasNaoIniciadas'];
-                $dadosArea['horasDemandasEmAndamento'] += $temp['horasDemandasEmAndamento'];
-                $dadosArea['horasDemandasConcluidas'] += $temp['horasDemandasConcluidas'];
-                $dadosArea['horasDemandasAvaliadas'] += $temp['horasDemandasAvaliadas'];
+                //$dadosArea['qdeDemandasAvaliadas'] += $temp['qdeDemandasAvaliadas'];
+                $dadosArea['horasAtividadesNaoIniciadas'] += $temp['horasAtividadesNaoIniciadas'];
+                $dadosArea['horasAtividadesEmAndamento'] += $temp['horasAtividadesEmAndamento'];
+                $dadosArea['horasAtividadesConcluidas'] += $temp['horasAtividadesConcluidas'];
+                //$dadosArea['horasAtividadesAvaliadas'] += $temp['horasAtividadesAvaliadas'];
                 $dadosArea['horasTotaisAlocadas'] += $temp['horasTotaisAlocadas'];
             };
             $dadosArea['nrServidoresPrograma'] = count(array_unique($idsServidoresPrograma));
@@ -170,15 +170,15 @@ class UnidadeService extends ServiceBase
          *  os valores válidos das médias das avaliações das Unidades, que será enviado à função avg para o cálculo da média aritmética.
          *  Se a Área não possuir nenhuma Unidade-filha, a métrica 'mediaAvaliacoes' será preenchida com null e não será enviada para o cálculo da média.
          */
-        if ((count(array_filter($dadosUnidades, fn($p) => $p['mediaAvaliacoes'] != null)) == 0)) {
+        /*         if ((count(array_filter($dadosUnidades, fn($p) => $p['mediaAvaliacoes'] != null)) == 0)) {
             $dadosArea['mediaAvaliacoes'] = null;
         } else {
             $dadosArea['mediaAvaliacoes'] = $this->utilService->avg(array_map(fn($u) => $u['mediaAvaliacoes'],array_filter($dadosUnidades, fn($u) => $u['mediaAvaliacoes'] != null)));
-        }
-        $dadosArea['percentualHorasNaoIniciadas'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasDemandasNaoIniciadas'] / $dadosArea['horasUteisTotais'];
-        $dadosArea['percentualHorasEmAndamento'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasDemandasEmAndamento'] / $dadosArea['horasUteisTotais'];
-        $dadosArea['percentualHorasConcluidas'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasDemandasConcluidas'] / $dadosArea['horasUteisTotais'];
-        $dadosArea['percentualHorasAvaliadas'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasDemandasAvaliadas'] / $dadosArea['horasUteisTotais'];
+        } */
+        $dadosArea['percentualHorasNaoIniciadas'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasAtividadesNaoIniciadas'] / $dadosArea['horasUteisTotais'];
+        $dadosArea['percentualHorasEmAndamento'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasAtividadesEmAndamento'] / $dadosArea['horasUteisTotais'];
+        $dadosArea['percentualHorasConcluidas'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasAtividadesConcluidas'] / $dadosArea['horasUteisTotais'];
+        //$dadosArea['percentualHorasAvaliadas'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasAtividadesAvaliadas'] / $dadosArea['horasUteisTotais'];
         $dadosArea['percentualHorasTotaisAlocadas'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasTotaisAlocadas'] / $dadosArea['horasUteisTotais'];
         $dadosArea['percentualPlanoDecorrido'] = $dadosArea['horasUteisTotais'] == 0 ? 0 : $dadosArea['horasUteisDecorridas'] / $dadosArea['horasUteisTotais'];
         $result = [
@@ -231,7 +231,7 @@ class UnidadeService extends ServiceBase
          *  de Trabalho (null) não será utilizada no cálculo da média da Unidade, caso contrário a média seria indevidamente afetada. A função array_map prepara o array com
          * os valores válidos das médias das avaliações dos Planos, que será enviado à função avg para o cálculo da média aritmética.
          */
-/*         $result['mediaAvaliacoes'] = (count(array_filter($metadadosPlanosTrabalho, fn($p) => $p['mediaAvaliacoes'] != null)) == 0) ? null : $this->utilService->avg(array_map(function($p) {
+        /*         $result['mediaAvaliacoes'] = (count(array_filter($metadadosPlanosTrabalho, fn($p) => $p['mediaAvaliacoes'] != null)) == 0) ? null : $this->utilService->avg(array_map(function($p) {
             if ($p['mediaAvaliacoes'] != null) return $p['mediaAvaliacoes'];
         }, $metadadosPlanosTrabalho)); */
 
@@ -243,9 +243,9 @@ class UnidadeService extends ServiceBase
      * Um Plano de Entregas está EM CURSO quando não foi deletado, nem cancelado, nem arquivado e possui status ATIVO;
      * @param string $unidade_id  
      */
-    public function planosEntregasEmCurso(string $unidade_id): array {
-        $unidade = Unidade::where("id",$unidade_id)->with(["planos_entregas"])->get()->first();
-        return array_filter($unidade->planosEntregas, fn($x) => $this->planoEntrega->emCurso($x));
+    public function planosEntregaEmCurso(string $unidade_id): array {
+        $unidade = Unidade::where("id",$unidade_id)->with(["planos_entrega"])->get()->first();
+        return array_filter($unidade->planosEntrega, fn($x) => $this->planoEntrega->emCurso($x));
     }
 
     public function proxyQuery($query, &$data) {
