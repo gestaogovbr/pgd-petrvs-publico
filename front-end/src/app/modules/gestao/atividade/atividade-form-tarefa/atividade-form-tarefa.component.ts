@@ -6,7 +6,6 @@ import { Atividade } from 'src/app/models/atividade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
-import { InputButtonComponent } from 'src/app/components/input/input-button/input-button.component';
 import { TipoDocumentoDaoService } from 'src/app/dao/tipo-documento-dao.service';
 import { TipoTarefaDaoService } from 'src/app/dao/tipo-tarefa-dao.service';
 import { AtividadeTarefaDaoService } from 'src/app/dao/atividade-tarefa-dao.service';

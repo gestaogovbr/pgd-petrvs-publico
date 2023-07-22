@@ -39,8 +39,8 @@ class AtividadeService extends ServiceBase
         "plano_trabalho.tipo_modalidade",
         "plano_trabalho.entregas.entrega:id,nome",
         "usuario.afastamentos",
-        "usuario.planos_trabalhos.entregas.entrega:id,nome",
-        "usuario.planos_trabalhos.tipo_modalidade:id,nome"
+        "usuario.planos_trabalho.entregas.entrega:id,nome",
+        "usuario.planos_trabalho.tipo_modalidade:id,nome"
     ];
 
     public function validateIniciar($data) {
@@ -188,7 +188,7 @@ class AtividadeService extends ServiceBase
         $afastamentos = [];
         $planosTrabalhos = [];
         $result = [
-            'planos_trabalhos' => [],
+            'planos_trabalho' => [],
             'afastamentos' => [],
             'feriados' => []
         ];
@@ -209,7 +209,7 @@ class AtividadeService extends ServiceBase
         }
         if(count($planosTrabalhos) > 0) {
             $list = PlanoTrabalho::with("tipoModalidade")->whereIn("id", array_keys($planosTrabalhos))->get();
-            foreach($list as $planoTrabalho) $result['planos_trabalhos'][$planoTrabalho->id] = $planoTrabalho;
+            foreach($list as $planoTrabalho) $result['planos_trabalho'][$planoTrabalho->id] = $planoTrabalho;
         }
         if(count($afastamentos) > 0) {
             $afastamentosQuery = Afastamento::query();

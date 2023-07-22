@@ -13,7 +13,6 @@ import { SelectItem } from 'src/app/components/input/input-base';
 import { Usuario } from 'src/app/models/usuario.model';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { CalendarService } from 'src/app/services/calendar.service';
-import { Plano } from 'src/app/models/plano.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { Comentario } from 'src/app/models/comentario';
 import { AtividadeTarefa } from 'src/app/models/atividade-tarefa.model';
@@ -24,6 +23,8 @@ import { Documento } from 'src/app/models/documento.model';
 import { AtividadePausa } from 'src/app/models/atividade-pausa.model';
 import { TipoAtividade } from 'src/app/models/tipo-atividade.model';
 import { SeiKeys } from 'src/app/listeners/procedimento-trabalhar/procedimento-trabalhar.component';
+import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
+import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 
 export type Checklist = {id: string, texto: string, checked: boolean};
 
@@ -54,8 +55,8 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
   public checklist: LookupItem[] = [];
   public planosTrabalhos: LookupItem[] = [];
   public planoTrabalhoJoin: string[] = ["entregas.entrega:id,nome", "tipo_modalidade:id,nome"];
-  public planoTrabalhoSelecionado?: Plano | null = null;
-  public usuarioJoin: string[] = ['planos_trabalhos.entregas.entrega:id,nome', 'planos_trabalhos.tipo_modalidade:id,nome'];
+  public planoTrabalhoSelecionado?: PlanoTrabalho | null = null;
+  public usuarioJoin: string[] = ['planos_trabalho.entregas.entrega:id,nome', 'planos_trabalho.tipo_modalidade:id,nome'];
   public entregas: LookupItem[] = [];
 
   constructor(public injector: Injector) {
@@ -262,7 +263,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
   public onPlanoChange(event: Event) {
     (async () => {
       if(this.entity) {
-        const planoTrabalho = (this.usuario?.searchObj as Usuario)?.planos_trabalhos?.find(x => x.id == this.form!.controls.plano_trabalho_id.value);
+        const planoTrabalho = (this.usuario?.searchObj as Usuario)?.planos_trabalho?.find(x => x.id == this.form!.controls.plano_trabalho_id.value);
         const planoTrabalhoEntregaId = this.form.controls.plano_trabalho_entrega_id.value;
         if(planoTrabalho) {
           if(this.planoTrabalhoSelecionado?.id != planoTrabalho.id) {
@@ -328,8 +329,8 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     this.cdRef.detectChanges();
   }
 
-  public getPlanos(usuario: Usuario, data_distribuicao: Date, plano_id: string | null): LookupItem[] {
-    return usuario.planos_trabalhos?.filter(x => x.id == plano_id || (!x.data_fim && this.util.between(data_distribuicao, {start: x.data_inicio_vigencia, end: x.data_fim_vigencia}))).map(x => Object.assign({
+  public getPlanosTrabalhos(usuario: Usuario, data_distribuicao: Date, plano_trabalho_id: string | null): LookupItem[] {
+    return usuario.planos_trabalho?.filter(x => x.id == plano_trabalho_id || (this.util.between(data_distribuicao, {start: x.data_inicio_vigencia, end: x.data_fim_vigencia}))).map(x => Object.assign({
       key: x.id, 
       value: (x.tipo_modalidade?.nome || "") + " - " + this.usuarioDao.getDateFormatted(x.data_inicio_vigencia)+ " a " + this.usuarioDao.getDateFormatted(x.data_fim_vigencia), data: x
     })) || [];
@@ -337,9 +338,9 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
 
   public loadUsuario(usuario: Usuario | undefined) {
     if(usuario) {
-      const planoTrabalhoId = this.form.controls.plano_id.value;
+      const planoTrabalhoId = this.form.controls.plano_trabalho_id.value;
       const dataDistribuicao = this.form.controls.data_distribuicao.value || new Date();
-      this.planosTrabalhos = this.getPlanos(usuario, dataDistribuicao, planoTrabalhoId); //usuario?.planos?.map(x => Object.assign({key: x.id, value: (x.tipo_modalidade?.nome || "") + " - " + this.usuarioDao.getDateFormatted(x.data_inicio_vigencia)+ " a " + this.usuarioDao.getDateFormatted(x.data_fim_vigencia), data: x})) || [];
+      this.planosTrabalhos = this.getPlanosTrabalhos(usuario, dataDistribuicao, planoTrabalhoId); //usuario?.planos?.map(x => Object.assign({key: x.id, value: (x.tipo_modalidade?.nome || "") + " - " + this.usuarioDao.getDateFormatted(x.data_inicio_vigencia)+ " a " + this.usuarioDao.getDateFormatted(x.data_fim_vigencia), data: x})) || [];
       this.cdRef.detectChanges();
       this.form.controls.plano_trabalho_id.setValue(!planoTrabalhoId?.length && this.planosTrabalhos.length > 0 ? this.planosTrabalhos[0].key : planoTrabalhoId);
     } else {

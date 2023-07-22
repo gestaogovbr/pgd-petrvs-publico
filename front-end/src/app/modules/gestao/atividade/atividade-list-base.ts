@@ -8,15 +8,15 @@ import { CalendarService, Efemerides, FeriadoList } from 'src/app/services/calen
 import { Afastamento } from 'src/app/models/afastamento.model';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
-import { Plano } from 'src/app/models/plano.model';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { TipoProcessoDaoService } from 'src/app/dao/tipo-processo-dao.service';
 import { ComentarioService } from 'src/app/services/comentario.service';
 import { BadgeButton } from 'src/app/components/badge/badge.component';
 import { TipoAtividadeDaoService } from 'src/app/dao/tipo-atividade-dao.service';
+import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 
 export type ExtraAtividade = {
-  planos_trabalhos: { [plano_id: string]: Plano },
+  planos_trabalho: { [plano_id: string]: PlanoTrabalho },
   afastamentos: { [usuario_id: string]: Afastamento[] },
   feriados?: { [unidade_id: string]: FeriadoList }
 }
@@ -56,7 +56,7 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
     this.comentario = injector.get<ComentarioService>(ComentarioService);
     this.join = ["tipo_atividade", "demandante", "pausas", "usuario", "unidade", "comentarios.usuario", "tarefas.tarefa", "tarefas.comentarios.usuario"];
     /* Inicializações */
-    this.extra = { planos_trabalhos: {}, afastamentos: {} };
+    this.extra = { planos_trabalho: {}, afastamentos: {} };
   }
 
   /*public orderComentarios(comentarios?: Comentario[]) {
@@ -84,7 +84,7 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
     const extra = (this.grid?.query || this.query!).extra;
     if (extra) {
       //this.extra.avaliadores = Object.assign(this.extra.avaliadores, extra.avaliadores || {});
-      this.extra.planos_trabalhos = Object.assign(this.extra.planos_trabalhos, extra.planos || {});
+      this.extra.planos_trabalho = Object.assign(this.extra.planos_trabalho, extra.planos || {});
       for (let [key, value] of Object.entries(extra.afastamentos || {})) {
         this.extra.afastamentos[key] = (value as Array<Afastamento>).reduce((a, v) => {
           if (!a.find(x => x.id == v.id)) a.push(v);
@@ -116,7 +116,7 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
 
   public onDespendidoClick(row: Atividade) {
     if (row.metadados && !row.metadados.concluido) {
-      const cargaHoraria = this.extra?.planos_trabalhos[row.plano_trabalho_id!]?.carga_horaria || 0;
+      const cargaHoraria = this.extra?.planos_trabalho[row.plano_trabalho_id!]?.carga_horaria || 0;
       const afastamentos = this.extra?.afastamentos[row.usuario_id!] || [];
       this.efemerides = this.calendar.calculaDataTempoUnidade(row.data_inicio!, this.auth.hora, cargaHoraria, row.unidade!, "ENTREGA", row.pausas, afastamentos);
       this.dialog.template({ title: "Cálculos do tempo despendido" }, this.calendarEfemerides!, []);
@@ -126,7 +126,7 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
   public temposAtividade(row: Atividade): BadgeButton[] {
     /* Atualiza somente a cada mudança de minuto da unidade atual */
     if (row.metadados && row.metadados.extra?.lastUpdate != this.auth.unidadeHora) {
-      let planoTrabalho = this.extra?.planos_trabalhos[row.plano_trabalho_id!];
+      let planoTrabalho = this.extra?.planos_trabalho[row.plano_trabalho_id!];
       let tempos: BadgeButton[] = [
         { color: "light", hint: this.lex.noun("Data de distribuição"), icon: "bi bi-file-earmark-plus", label: this.dao!.getDateTimeFormatted(row.data_distribuicao) },
         { color: "light", hint: this.lex.noun("Prazo de entrega"), icon: "bi bi-calendar-check", label: this.dao!.getDateTimeFormatted(row.prazo_entrega) }

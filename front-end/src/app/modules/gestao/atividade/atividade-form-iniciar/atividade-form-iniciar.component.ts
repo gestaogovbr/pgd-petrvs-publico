@@ -13,6 +13,7 @@ import { InputSearchComponent } from 'src/app/components/input/input-search/inpu
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { CalendarService } from 'src/app/services/calendar.service';
 import { InputTimerComponent } from 'src/app/components/input/input-timer/input-timer.component';
+import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 
 @Component({
   selector: 'app-atividade-form-iniciar',
@@ -55,7 +56,7 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
       data_inicio: {default: null},
       suspender: {default: false}
     }, this.cdRef, this.validate);
-    this.join = ["unidade", "atividade", "usuario.planos_trabalhos.tipo_modalidade", "usuario.planos_trabalhos.entregas.entrega:id,nome"];
+    this.join = ["unidade", "atividade", "usuario.planos_trabalho.tipo_modalidade", "usuario.plano_trabalhos.entregas.entrega:id,nome"];
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -82,7 +83,7 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
 
   public onUsuarioSelect(item: SelectItem) {
     const usuario: Usuario | undefined = item.entity as Usuario;
-    const planosTrabalhos = usuario?.planos_trabalhos || [];
+    const planosTrabalhos = usuario?.planos_trabalho || [];
     this.planosTrabalhos = planosTrabalhos.filter(x => x.unidade_id == this.entity!.unidade_id).map(x => {
       return {
         key: x.id,
