@@ -1,6 +1,4 @@
 import { Base } from './base.model';
-import { Entidade } from './entidade.model';
-import { Unidade } from './unidade.model';
 
 export class TipoTarefa extends Base {
     public nome: string = ""; /* Nome da tarefa */

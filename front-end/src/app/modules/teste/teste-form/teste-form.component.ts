@@ -162,7 +162,7 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
   public async onUsuarioSelect(){
     await this.dao!.getById(this.form.controls.usuario_id.value, this.join).then(usuario => {
       this.usuario = usuario!;
-      usuario?.demandas?.forEach(demanda => {
+      usuario?.atividades?.forEach(atividade => {
         this.demandas_usuario.push({
           key: demanda.id,
           value: demanda.descricao || ''

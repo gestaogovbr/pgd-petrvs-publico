@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\Unidade;
+use App\Models\Entidade;
+use App\Models\Feriado;
 
 class Cidade extends ModelBase
 {
@@ -23,5 +25,6 @@ class Cidade extends ModelBase
     // Has
     public function unidades() { return $this->hasMany(Unidade::class); }
     public function entidades() { return $this->hasMany(Entidade::class); }
+    public function feriados() { return $this->hasMany(Feriado::class); }
     
 }

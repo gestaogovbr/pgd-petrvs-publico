@@ -14,8 +14,7 @@ class AreaConhecimentoSeeder extends Seeder
      */
     public function run()
     {
-
-        $array_areas = [
+        $areas = [
             ['nome'=>'Ciências Humanas'],
             ['nome'=>'Ciências Exatas e da Terra'],
             ['nome'=>'Linguística, Letras e Artes'],
@@ -24,20 +23,15 @@ class AreaConhecimentoSeeder extends Seeder
             ['nome'=>'Engenharias'],
             ['nome'=>'Ciências Sociais Aplicadas'],
             ['nome'=>'Institucional'],
-            ['nome'=>'Ciências Humanas'],
-              
+            ['nome'=>'Ciências Humanas'],   
          ];
-              
-        foreach($array_areas as $area) {
-
-            $areaI = new AreaConhecimento();
-            $areaI->fill([
-                'nome'=> $area['nome']
+        foreach($areas as $a) {
+            $area = new AreaConhecimento();
+            $area->fill([
+                'nome'=> $a['nome']
             ]);
-            $areaI->save();
-            
+            $area->save();
         }
-        //
     }
 }
 

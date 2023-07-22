@@ -4,14 +4,17 @@ namespace App\Models;
 use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\Atividade;
-use App\Models\Usuario;
-use App\Models\Lotacao;
+use App\Models\Atribuicao;
+use App\Models\Planejamento;
+use App\Models\CadeiaValor;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoEntrega;
+use App\Models\PlanoEntregaEntrega;
 use App\Models\Programa;
-use App\Models\TipoAtividade;
+use App\Models\ProjetoRecurso;
+use App\Models\TipoTarefa;
 use App\Models\Entidade;
-use App\Models\UnidadeIntegrante;
+use App\Models\UnidadeUsuario;
 use App\Models\Cidade;
 use App\Models\Template;
 use App\Models\NotificacaoConfig;
@@ -36,17 +39,15 @@ class Unidade extends ModelBase
         'autoedicao_subordinadas', /* tinyint; NOT NULL; DEFAULT: '1'; */// Permitir a autoedição de informações gerais pelas unidades subordinadas (nome, sigla, codigo_pai)
         'etiquetas', /* json; */// Configuração das etiquetas que serão utilizadas nas atividades (contém nome, icone e cor)
         'notificacoes', /* json; */// Configurações das notificações (Se envia e-mail, whatsapp, tipos, templates)
-        'unidade_id', /* char(36); */
-        'gestor_id', /* char(36); */
-        'gestor_substituto_id', /* char(36); */
-        'entidade_id', /* char(36); NOT NULL; */
-        'cidade_id', /* char(36); */
         'expediente', /* json; */// Configuração de expediente da unidade
         'avaliacao_hierarquica', /* tinyint; NOT NULL; */// Se permite que unidades superiores façam avaliação
+        'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho
+        'inativo', /* datetime; */// Se a unidade está ou não inativa
+        'checklist', /* json; */// Nome dos checklist
+        'unidade_id', /* char(36); */
+        'entidade_id', /* char(36); NOT NULL; */
+        'cidade_id', /* char(36); */
         //'deleted_at', /* timestamp; */
-        //'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho
-        //'inativo', /* datetime; */// Se a unidade está ou não inativa
-        //'checklist', /* json; */// Nome dos checklist
     ];
 
     public $fillable_relations = [];
@@ -55,7 +56,7 @@ class Unidade extends ModelBase
         "notificacoes_templates"
     ];
 
-    public $delete_cascade = ['unidades_origem_atividades', 'unidades_destino_atividades'];
+    public $delete_cascade = [];
 
     protected static function booted()
     {
@@ -71,22 +72,24 @@ class Unidade extends ModelBase
         'checklist' => AsJson::class,
         'expediente' => AsJson::class
     ];
-
     // Has
     public function atividades() { return $this->hasMany(Atividade::class); }
-    public function lotacoes() { return $this->hasMany(Lotacao::class); }
-    public function planosTrabalhos() { return $this->hasMany(PlanoTrabalho::class); }
-    public function planosEntregas() { return $this->hasMany(PlanoEntrega::class); }
+    public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }
+    public function planosEntrega() { return $this->hasMany(PlanoEntrega::class); }
+    public function entregasPlanoEntrega() { return $this->hasMany(PlanoEntregaEntrega::class); }
     public function programas() { return $this->hasMany(Programa::class); }
-    public function tiposAtividades() { return $this->hasMany(TipoAtividade::class); }
-    public function integrantes() { return $this->hasMany(UnidadeIntegrante::class); }
-    public function notificacoesTemplates() { return $this->hasMany(Template::class, 'unidade_id'); }
+    public function recursosProjeto() { return $this->hasMany(ProjetoRecurso::class); }
+    public function tiposTarefa() { return $this->hasMany(TipoTarefa::class); }
+    public function notificacoesTemplate() { return $this->hasMany(Template::class); }
+    public function unidades() { return $this->hasMany(Unidade::class); }
+    public function planejamentos() { return $this->hasMany(Planejamento::class); }
+    public function cadeiasValor() { return $this->hasMany(CadeiaValor::class); }
+    public function vinculosUsuarios() { return $this->hasMany(UnidadeUsuario::class); }
     // Belongs
-    public function gestor() { return $this->belongsTo(Usuario::class); }
-    public function gestorSubstituto() { return $this->belongsTo(Usuario::class); }
     public function entidade() { return $this->belongsTo(Entidade::class); }
-    public function cidade() { return $this->belongsTo(Cidade::class); }
-    public function unidade() { return $this->belongsTo(Unidade::class); }
+    public function cidade() { return $this->belongsTo(Cidade::class); }  //nullable
+    public function unidade() { return $this->belongsTo(Unidade::class); }    //nullable
+    public function usuarios() { return $this->belongsToMany(Usuario::class)->withTimestamps()->withPivot('id'); }
     // Mutattors e Casts
     public function getNotificacoesAttribute($value)
     {
@@ -97,5 +100,58 @@ class Unidade extends ModelBase
     {
         $this->attributes['notificacoes'] = json_encode($value);
     }
-
+    public function getGestorAttribute()
+    {
+        $result = null;
+        foreach ($this->vinculosUsuarios as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'GESTOR')) > 0) $result = $vinculo->usuario; }
+        return $result;
+    }
+    public function getGestorSubstitutoAttribute()
+    {
+        $result = null;
+        foreach ($this->vinculosUsuarios as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'GESTOR_SUBSTITUTO')) > 0) $result = $vinculo->usuario; }
+        return $result;
+    }
+    public function getLotadosAttribute()
+    { 
+        $result = [];
+        foreach ($this->vinculosUsuarios as $vinculo){ 
+            $atribuicoes = $vinculo->atribuicoes;
+            if(count(array_filter($atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'LOTADO')) > 0) array_push($result, $vinculo->usuario); 
+        }
+        return $result;
+    }
+    public function getColaboradoresAttribute()
+    {
+        $result = [];
+        foreach ($this->vinculosUsuarios as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'COLABORADOR')) > 0) array_push($result, $vinculo->usuario); }
+        return $result;
+    }
+    public function getAvaliadoresPlanoEntregaAttribute()
+    {
+        $result = [];
+        foreach ($this->vinculosUsuarios as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'AVALIADOR_PLANO_ENTREGA')) > 0) array_push($result, $vinculo->usuario); }
+        return $result;
+    }
+    public function getAvaliadoresPlanoTrabalhoAttribute()
+    {
+        $result = [];
+        foreach ($this->vinculosUsuarios as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'AVALIADOR_PLANO_TRABALHO')) > 0) array_push($result, $vinculo->usuario); }
+        return $result;
+    }
+    public function getHomologadoresPlanoEntregaAttribute()
+    {
+        $result = [];
+        foreach ($this->vinculosUsuarios as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'HOMOLOGADOR_PLANO_ENTREGA')) > 0) array_push($result, $vinculo->usuario); }
+        return $result;
+    } 
+    public function getIntegrantesAttribute()
+    { 
+        $result = [];
+        foreach($this->usuarios as $usuario){
+            $atribuicoes = Atribuicao::where('unidade_usuario_id', $usuario->pivot->id)->get()->toArray();
+            if(count($atribuicoes) > 0) $result[$usuario->id] = array_map(fn($a) => $a["atribuicao"],$atribuicoes);
+        }
+        return $result;
+    }
 }

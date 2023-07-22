@@ -4,12 +4,12 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { SelectItem } from 'src/app/components/input/input-base';
 import { Usuario } from 'src/app/models/usuario.model';
-import { Plano } from 'src/app/models/plano.model';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { PageReportFilterBase } from 'src/app/modules/base/page-report-filter-base';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import * as moment from 'moment';
+import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 
 @Component({
   selector: 'app-forcadetrabalho-filter-servidor',
@@ -24,7 +24,7 @@ export class ForcaDeTrabalhoFilterServidorComponent extends PageReportFilterBase
   public usuarioDao: UsuarioDaoService;
   public reportRoute: FullRoute;
   public planos: LookupItem[] = [];
-  public planoSelecionado?: Plano;
+  public planoSelecionado?: PlanoTrabalho;
 
   constructor(public injector: Injector) {
     super(injector);
@@ -59,7 +59,7 @@ export class ForcaDeTrabalhoFilterServidorComponent extends PageReportFilterBase
 
   public onUsuarioSelect(item: SelectItem) {
     const usuario: Usuario | undefined = item.entity as Usuario;
-    const planos = usuario?.planos || [];
+    const planos = usuario?.planos_trabalho || [];
     this.planos = planos.map(x => {
       return {
         key: x.id,

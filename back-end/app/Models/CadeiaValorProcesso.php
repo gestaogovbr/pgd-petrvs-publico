@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\CadeiaValor;
+use App\Models\PlanoEntregaEntregaProcesso;
 
 class CadeiaValorProcesso extends ModelBase
 {
@@ -26,8 +27,9 @@ class CadeiaValorProcesso extends ModelBase
 
     public $delete_cascade = [];
     // Has
-    public function entregasProcessos() { return $this->hasMany(PlanoEntregaEntregaProcesso::class, 'processo_id'); }
+    public function processosEntrega() { return $this->hasMany(PlanoEntregaEntregaProcesso::class, 'processo_id'); }
+    public function processos() { return $this->hasMany(CadeiaValorProcesso::class, 'processo_pai_id'); }
     // Belongs
     public function cadeiaValor() { return $this->belongsTo(CadeiaValor::class); }
-    public function processoPai() { return $this->belongsTo(CadeiaValorProcesso::class); }
+    public function processoPai() { return $this->belongsTo(CadeiaValorProcesso::class); }    //nullable
 }

@@ -6,7 +6,6 @@ import { CidadeDaoService } from './cidade-dao.service';
 import { DaoBaseService } from './dao-base.service';
 import { EntidadeDaoService } from './entidade-dao.service';
 import { UsuarioDaoService } from './usuario-dao.service';
-import { PlanoEntrega } from '../models/plano-entrega.model';
 import { PlanoEntregaDaoService } from './plano-entrega-dao.service';
 
 export type UnidadeDashboard = {

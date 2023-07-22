@@ -10,7 +10,6 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\ControllerBase;
 use App\Http\Controllers\EntidadeController;
-use App\Http\Controllers\LotacaoController;
 use App\Http\Controllers\UnidadeController;
 use App\Http\Controllers\CidadeController;
 use App\Http\Controllers\ChangeController;
@@ -57,7 +56,7 @@ use App\Http\Controllers\CargoController;
 use App\Http\Controllers\AreaGraduacaoController;
 use App\Http\Controllers\NotificacaoController;
 use App\Http\Controllers\PlanoTrabalhoEntregaController;
-use App\Http\Controllers\UnidadeIntegranteController;
+use App\Http\Controllers\UnidadeUsuarioController;
 use App\Http\Controllers\MateriaController;
 use App\Http\Controllers\CurriculumProfissionalController;
 use App\Http\Controllers\AreaAtividadeExternaController;
@@ -263,7 +262,6 @@ Route::middleware(['auth:sanctum'])->prefix('Entidade')->group(function () {
     defaultRoutes(EntidadeController::class);
     Route::post('generate-api-key', [EntidadeController::class, 'generateApiKey']);
 });
-Route::middleware(['auth:sanctum'])->prefix('Lotacao')->group(function () { defaultRoutes(LotacaoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
     defaultRoutes(UnidadeController::class);
     Route::post('metadados-area', [UnidadeController::class, 'metadadosArea']);
@@ -272,9 +270,9 @@ Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
     Route::post('dashboards', [UnidadeController::class, 'dashboards']);
     Route::post('inativo', [UnidadeController::class, 'inativo']);
 });
-Route::middleware(['auth:sanctum'])->prefix('UnidadeIntegrante')->group(function () {
-    Route::post('load-integrantes', [UnidadeIntegranteController::class, 'loadIntegrantes']);
-    Route::post('save-integrante', [UnidadeIntegranteController::class, 'saveIntegrante']);
+Route::middleware(['auth:sanctum'])->prefix('UnidadeUsuario')->group(function () {
+    Route::post('load-integrantes', [UnidadeUsuarioController::class, 'loadIntegrantes']);
+    Route::post('save-integrante', [UnidadeUsuarioController::class, 'saveIntegrante']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Capacidade')->group(function () { defaultRoutes(CapacidadeController::class); });
 

@@ -1,26 +1,14 @@
-import { KanbanDocker } from '../components/kanban/kanban.component';
-import { StatusDockerConfig } from '../modules/gestao/atividade/atividade-list-kanban/atividade-list-kanban.component';
 import { LookupItem } from '../services/lookup.service';
 import { Afastamento } from './afastamento.model';
+import { Atividade } from './atividade.model';
 import { Base, IIndexable } from './base.model';
-import { Demanda } from './atividade.model';
 import { Lotacao } from './lotacao.model';
 import { HasNotificacao, NotificacoesConfig } from './notificacao.model';
 import { Perfil } from './perfil.model';
-import { Plano } from './plano.model';
+import { PlanoTrabalho } from './plano-trabalho.model';
 import { Unidade } from './unidade.model';
 
 export type UsuarioVinculacao = "SERVIDOR_EFETIVO" | "SERVIDOR_COMISSIONADO" | "EMPREGADO" | "CONTRATADO_TEMPORARIO";
-
-/*export class UsuarioNotificacoes {
-    enviar_email: boolean = true;
-    enviar_whatsapp: boolean = true;
-    notifica_demanda_distribuicao: boolean = true;
-    notifica_demanda_conclusao: boolean = true;
-    notifica_demanda_avaliacao: boolean = true;
-    notifica_demanda_modificacao: boolean = true;
-    notifica_demanda_comentario: boolean = true;
-}*/
 
 export class UsuarioConfig {
     etiquetas: LookupItem[] = [];
@@ -30,11 +18,12 @@ export class UsuarioConfig {
 
 export class Usuario extends Base implements HasNotificacao {
     public perfil?: Perfil; /* Objeto do perfil */
-    public planos_trabalhos?: PlanoTrabalho[]; /* Lista de planos de trabalho */
+    public planos_trabalho?: PlanoTrabalho[]; /* Lista de planos de trabalho */
     public afastamentos?: Afastamento[]; /* Lista de afastamentos */
-    public demandas?: Demanda[];
+    public atividades?: Atividade[];
     public chefias_titulares?: Unidade[];
     public chefias_substitutas?: Unidade[];
+    public lotacoes: Lotacao[] = [];
 
     public nome: string = ""; /* Nome do Usuário */
     public email: string = ""; /* Email do Usuário */
@@ -45,11 +34,8 @@ export class Usuario extends Base implements HasNotificacao {
     public telefone: string | null = null; /* Telefone */
     public uf: string = "AC"; /* UF - Setar a primeira do LIST */
     public sexo: string | null = null; /* Sexo */
-    public lotacoes: Lotacao[] = [];
     public config: UsuarioConfig & IIndexable = new UsuarioConfig(); /*UsuarioConfig = new UsuarioConfig();*/ /* Configurações diversas */
     public notificacoes: NotificacoesConfig = new NotificacoesConfig();
-    public data_inicio?: Date; /* Data de início */
-    public data_fim?: Date; /* Data fim */
     public perfil_id: number = 0; /* ID do perfil - Setar o primeiro do list*/
     public id_google: string | null = null; /* ID do usuário google */
     public url_foto: string | null = null; /* URL da foto do usuário (temporário) */

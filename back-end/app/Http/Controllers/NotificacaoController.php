@@ -4,12 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Usuario;
-use App\Models\Lotacao;
-use App\Models\NotificacaoWhatsapp;
 use App\Exceptions\LogError;
 use App\Exceptions\ServerException;
-use App\Services\RawWhere;
-use DateTime;
 use Throwable;
 
 class NotificacaoController extends ControllerBase

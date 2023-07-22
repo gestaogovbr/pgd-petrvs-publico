@@ -14,8 +14,7 @@ class FuncaoSeeder extends Seeder
      */
     public function run()
     {
-
-        $array_funcoes = [
+        $funcoes = [
                 ['nome'=> 'Chefe de Delegacia','nivel'=> '','descricao'=>'','codigo'=>''],
                 ['nome'=> 'Chefe de Divisão','nivel'=> '','descricao'=>'','codigo'=>''],
                 ['nome'=> 'Chefe de Núcleo','nivel'=> '','descricao'=>'','codigo'=>''],
@@ -27,22 +26,16 @@ class FuncaoSeeder extends Seeder
                 ['nome'=> 'Coordenador Geral','nivel'=> '','descricao'=>'','codigo'=>''],
                 ['nome'=> 'Diretor','nivel'=> '','descricao'=>'','codigo'=>''],
                 ['nome'=> 'Diretor Geral','nivel'=> '','descricao'=>'','codigo'=>''],
-            
-            ];        
-    
-    foreach($array_funcoes as $funcao) {
-
-        $funcaoI = new Funcao();
-        $funcaoI->fill([
-            //'id' => uuid(),
-            'nome'=> $funcao['nome'],
-            'nivel'=>  $funcao['nivel'],
-            'descricao'=> $funcao['descricao'],
-            'codigo'=>  $funcao['codigo'],
-        ]);
-        $funcaoI->save();
-        
-    }
-        //
+        ];        
+        foreach($funcoes as $f) {
+            $funcao = new Funcao();
+            $funcao->fill([
+                'nome'=> $f['nome'],
+                'nivel'=>  $f['nivel'],
+                'descricao'=> $f['descricao'],
+                'codigo'=>  $f['codigo'],
+            ]);
+            $funcao->save();
+        }
     }
 }

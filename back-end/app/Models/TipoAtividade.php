@@ -3,6 +3,7 @@
 namespace App\Models;
 use App\Casts\AsJson;
 use App\Models\ModelBase;
+use App\Models\Atividade;
 
 class TipoAtividade extends ModelBase
 {
@@ -35,5 +36,6 @@ class TipoAtividade extends ModelBase
     ];
 
     // Has
+    public function atividades() { return $this->hasMany(Atividade::class); } 
     // Belongs
 }

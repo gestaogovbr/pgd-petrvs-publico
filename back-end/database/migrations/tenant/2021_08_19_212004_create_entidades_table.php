@@ -33,8 +33,6 @@ class CreateEntidadesTable extends Migration
             $table->json("nomenclatura")->nullable()->comment("Nomenclatura utilizada no sistema");
             $table->string("url_sei", 100)->nullable()->comment("URL base do SEI da entidade");
             $table->json('notificacoes')->nullable()->comment("Configurações das notificações (Se envia e-mail, whatsapp, tipos, templates)");
-            $table->foreignUuid('gestor_id')->nullable()->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->comment('Usuário gestor da entidade');
-            $table->foreignUuid('gestor_substituto_id')->nullable()->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->comment('Usuário gestor substituto da entidade');
             $table->enum('forma_contagem_carga_horaria', ["DIA", "SEMANA", "MES"])->default("DIA")->comment("Forma de contagem padrão da carga horária");
             $table->text('api_public_key')->nullable()->comment("Chave pública de API");
             $table->text('api_private_key')->nullable()->comment("Chave privada de API");
@@ -42,6 +40,8 @@ class CreateEntidadesTable extends Migration
             // Chaves estrangeiras:
             $table->foreignUuid('tipo_modalidade_id')->nullable()->constrained('tipos_modalidades')->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de modalidade utilizada ao criar plano de trabalho");
             $table->foreignUuid('cidade_id')->nullable()->constrained('cidades')->onDelete('restrict')->onUpdate('cascade')->comment("Cidade onde está estabelecida a sede da entidade");
+            $table->foreignUuid('gestor_id')->nullable()->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->comment('Usuário gestor da entidade');
+            $table->foreignUuid('gestor_substituto_id')->nullable()->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->comment('Usuário gestor substituto da entidade');
         });
     }
 

@@ -34,6 +34,6 @@ class ProjetoAlocacao extends ModelBase
     public function regras() { return $this->hasMany(ProjetoAlocacaoRegra::class); }    
     // Belongs
     public function projeto() { return $this->belongsTo(Projeto::class); }    
-    public function tarefa() { return $this->belongsTo(ProjetoTarefa::class); }    
+    public function tarefa() { return $this->belongsTo(ProjetoTarefa::class); }       //nullable
     public function recurso() { return $this->belongsTo(ProjetoRecurso::class); }    
 }

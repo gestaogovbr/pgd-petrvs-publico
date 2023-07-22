@@ -157,7 +157,7 @@ class AtividadeService extends ServiceBase
             array_push($unidades_ids, $unidade_id);
         } else {
             foreach($usuario->lotacoes as $lotacao) {
-                array_push($unidades_ids, $lotacao->unidade_id);
+                array_push($unidades_ids, $lotacao->id);
             }
         }
         $where = [];
@@ -479,7 +479,7 @@ class AtividadeService extends ServiceBase
             DB::beginTransaction();
             $tipoAvaliacao = TipoAvaliacao::find($avaliacao["tipo_avaliacao_id"]);
             DemandaAvaliacao::where("demanda_id", $avaliacao["demanda_id"])->
-                whereNull("data_fim")->update(["data_fim" => Carbon::now()]);
+                update(["data_fim" => Carbon::now()]);
             $demandaAvaliacao = $demandaAvaliacaoService->store([
                 "usuario_id" => parent::loggedUser()->id,
                 "demanda_id" => $avaliacao["demanda_id"],
@@ -534,7 +534,7 @@ class AtividadeService extends ServiceBase
             if(!$dispensaAvaliacao) $update["tempo_homologado"] = null;
             $this->update($update, $unidade, false);
             DemandaAvaliacao::where("demanda_id", $data["id"])->
-                whereNull("data_fim")->update(["data_fim" => Carbon::now()]);
+                update(["data_fim" => Carbon::now()]);
             $comentarioAvaliacao = Comentario::where("demanda_id", $data["id"])->where("tipo", "AVALIACAO")->first();
             if(!empty($comentarioAvaliacao)) {
                 $comentarioService->destroy($comentarioAvaliacao->id);
@@ -569,7 +569,7 @@ class AtividadeService extends ServiceBase
                     throw new ServerException("ValidateAtividade", "Já existe uma pausa no período informado");
                 }
             }
-            //$demandaPausa = DemandaPausa::where("demanda_id", $pausa["demanda_id"])->whereNull("data_fim")->first();
+            //$demandaPausa = DemandaPausa::where("demanda_id", $pausa["demanda_id"])->first();
             //if(empty($demandaPausa)) {
             $atividadePausa = $atividadePausaService->store([
                 "atividade_id" => $pausa["atividade_id"],
@@ -590,7 +590,7 @@ class AtividadeService extends ServiceBase
         $atividadePausaService = new AtividadePausaService();
         try {
             DB::beginTransaction();
-            $atividadePausa = AtividadePausa::where("atividade_id", $pausa["atividade_id"])->whereNull("data_fim")->first();
+            $atividadePausa = AtividadePausa::where("atividade_id", $pausa["atividade_id"])->first();
             if(!empty($atividadePausa)) {
                 if(CalendarioService::getTimestamp($pausa["data"]) < CalendarioService::getTimestamp($atividadePausa->data_inicio)) {
                     throw new ServerException("ValidateAtividade", "Data de reinício menor que a de início da pausa");

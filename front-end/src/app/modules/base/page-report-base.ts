@@ -4,7 +4,7 @@ import { DaoBaseService } from 'src/app/dao/dao-base.service';
 import { CalendarService } from 'src/app/services/calendar.service';
 import { Base } from 'src/app/models/base.model';
 import { PageBase } from './page-base';
-import { Plano } from 'src/app/models/plano.model';
+import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 
 export type MetadadosPlano = {    
   concluido: Boolean,                       // define se o Plano é concluído, ou seja, se todas as suas demandas foram cumpridas.
@@ -66,7 +66,7 @@ export type AreaRelatorio = {
 };
 
 export type PlanoExtendido = {
-  plano: Plano,
+  plano: PlanoTrabalho,
   descricaoPlano: string,
   statusPlano: string,
   extras: MetadadosPlano,

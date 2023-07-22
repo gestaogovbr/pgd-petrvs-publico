@@ -33,7 +33,7 @@ export class HomeComponent implements OnInit {
       progresso: 0,
       total_horas: 0
     }],
-    demandas: {
+    atividades: {
       atrasadas: 0,
       avaliadas: 0,
       concluidas: 0,
@@ -245,25 +245,25 @@ export class HomeComponent implements OnInit {
     this.dadosDemandas.datasets = [
       {
         label: 'Demandas Não-iniciadas',
-        data: [this.dashUsuario.demandas.horas_nao_iniciadas],
+        data: [this.dashUsuario.atividades.horas_nao_iniciadas],
         backgroundColor: '#0dcaf0',
         stack: 'Demandas'
       },
       {
         label: 'Demandas Não Concluídas',
-        data: [this.dashUsuario.demandas.horas_nao_concluidas],
+        data: [this.dashUsuario.atividades.horas_nao_concluidas],
         backgroundColor: '#ffc107',
         stack: 'Demandas'
       },
       {
         label: 'Demandas Concluídas',
-        data: [this.dashUsuario.demandas.horas_concluidas],
+        data: [this.dashUsuario.atividades.horas_concluidas],
         backgroundColor: '#239c24',
         stack: 'Demandas'
       },
       {
         label: 'Demandas Atrasadas',
-        data: [this.dashUsuario.demandas.horas_atrasadas],
+        data: [this.dashUsuario.atividades.horas_atrasadas],
         backgroundColor: '#af4201',
         stack: 'Demandas'
       },

@@ -1,6 +1,6 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
-import { CalendarOptions, EventInput, Identity } from '@fullcalendar/angular';
+import { CalendarOptions, EventInput } from '@fullcalendar/angular';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GanttTaskStatus, GanttResourceUnity, GanttResourceType, GanttProject, GanttAssignment, GanttTask, GanttResource, GanttRole } from 'src/app/components/gantt/gantt-models';
 import { ProjetoDaoService } from 'src/app/dao/projeto-dao.service';

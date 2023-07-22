@@ -8,6 +8,7 @@ use App\Models\Usuario;
 use App\Models\Unidade;
 use App\Models\TipoAtividade;
 use App\Models\Comentario;
+use App\Models\Documento;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -51,8 +52,8 @@ class Atividade extends ModelBase
 
     protected static function booted()
     {
-        static::creating(function ($demanda) {
-            $demanda->numero = DB::select("CALL sequence_atividade_numero()")[0]->number;
+        static::creating(function ($atividade) {
+            $atividade->numero = DB::select("CALL sequence_atividade_numero()")[0]->number;
         }); 
     }
 
@@ -65,22 +66,24 @@ class Atividade extends ModelBase
     ];
 
     // Has
-    public function tarefas() { return $this->hasMany(AtividadeTarefa::class); }    
+    public function tarefasAtividade() { return $this->hasMany(AtividadeTarefa::class); }    
+    public function tarefasProjeto() { return $this->hasMany(ProjetoTarefa::class); }    
     public function pausas() { return $this->hasMany(AtividadePausa::class); }
     public function comentarios() { return $this->hasMany(Comentario::class); }
+    public function documentos() { return $this->hasMany(Documento::class); }
     // Belongs
-    public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class); }    
-    public function planoTrabalhoEntrega() { return $this->belongsTo(PlanoTrabalhoEntrega::class); }    
-    public function tipoAtividade() { return $this->belongsTo(TipoAtividade::class); }
+    public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class); }        //nullable
+    public function planoTrabalhoEntrega() { return $this->belongsTo(PlanoTrabalhoEntrega::class); }      //nullable
+    public function tipoAtividade() { return $this->belongsTo(TipoAtividade::class); }    //nullable
     public function demandante() { return $this->belongsTo(Usuario::class); }    
-    public function usuario() { return $this->belongsTo(Usuario::class); }    
+    public function usuario() { return $this->belongsTo(Usuario::class); }        //nullable
     public function unidade() { return $this->belongsTo(Unidade::class); }    
-    public function documentoRequisicao() { return $this->belongsTo(Documento::class); }
-    public function documentoEntrega() { return $this->belongsTo(Documento::class); }
+    public function documentoRequisicao() { return $this->belongsTo(Documento::class); }      //nullable
+    public function documentoEntrega() { return $this->belongsTo(Documento::class); }         //nullable
 
     // Escopos
-    public function scopeDoUsuario($query, $usuario_id) { return $query->where("usuario_id", $usuario_id); }
-    public function scopeDosPlanosTrabalhos($query, $planos_trabalhos_ids) { return $query->whereIn("plano_trabalho_id", $planos_trabalhos_ids); }
+    //public function scopeDoUsuario($query, $usuario_id) { return $query->where("usuario_id", $usuario_id); }
+    public function scopeDosPlanosTrabalho($query, $planos_trabalho_ids) { return $query->whereIn("plano_trabalho_id", $planos_trabalho_ids); }
     public function scopeNaoIniciadas($query) { return $query->whereNull('data_inicio'); }
     public function scopeConcluidas($query) { return $query->whereNotNull('data_entrega'); }
     public function scopeNaoConcluidas($query) { return $query->whereNotNull('data_inicio')->whereNull('data_entrega'); }
@@ -88,5 +91,4 @@ class Atividade extends ModelBase
     public function scopeDistribuidas($query) { return $query->whereNotNull('data_distribuicao'); }
     public function scopeIniciadas($query) { return $query->whereNotNull('data_inicio'); }
     public function scopeEmAndamento($query) { return $query->whereNotNull('data_inicio')->whereNull('data_entrega'); }
-    public function scopeNaoAvaliadas($query) { return $query->whereNull("avaliacao_id"); }
 }

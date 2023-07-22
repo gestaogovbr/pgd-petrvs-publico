@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\Unidade;
 use App\Models\Usuario;
+use App\Models\PlanoTrabalho;
 use App\Models\Programa;
 use App\Models\Planejamento;
 use App\Models\CadeiaValor;
@@ -18,8 +19,6 @@ class PlanoEntrega extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'inicio', /* datetime; NOT NULL; */// Data inicial do plano de entregas
-        'fim', /* datetime; */// Data final do plano de entregas
         'nome', /* varchar(256); NOT NULL; */// Nome do plano de entregas
         'planejamento_id', /* char(36); */
         'cadeia_valor_id', /* char(36); */
@@ -29,10 +28,11 @@ class PlanoEntrega extends ModelBase
         'numero', /* int; NOT NULL; */// Número do plano de entrega (Gerado pelo sistema)
         'data_arquivamento', /* datetime; */// Data de arquivamento do plano de entregas
         'data_cancelamento', /* datetime; */// Data de cancelamento do plano de entregas
-        'cancelamento_usuario_id', /* char(36); */
         'programa_id', /* char(36); NOT NULL; */
+        'criacao_usuario_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */
-        //'criacao_usuario_id', /* char(36); */
+        'data_inicio', /* datetime; NOT NULL; */// Data inicial do plano de entregas
+        'data_fim', /* datetime; */// Data final do plano de entregas
     ];
 
     public $fillable_changes = ["entregas"];
@@ -48,11 +48,13 @@ class PlanoEntrega extends ModelBase
 
     // Has
     public function entregas() { return $this->hasMany(PlanoEntregaEntrega::class); }
+    public function planosEntrega() { return $this->hasMany(PlanoEntrega::class); }   
+    public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }   
     // Belongs
-    public function planejamento() { return $this->belongsTo(Planejamento::class); }
-    public function cadeiaValor() { return $this->belongsTo(CadeiaValor::class); }
+    public function planejamento() { return $this->belongsTo(Planejamento::class); }  //nullable
+    public function cadeiaValor() { return $this->belongsTo(CadeiaValor::class); }    //nullable
     public function unidade() { return $this->belongsTo(Unidade::class); }
-    public function usuario() { return $this->belongsTo(Usuario::class, 'criacao_usuario_id'); }
+    public function criador() { return $this->belongsTo(Usuario::class, 'criacao_usuario_id'); }
     public function programa() { return $this->belongsTo(Programa::class); }
-    public function planoEntregaSuperior() { return $this->belongsTo(PlanoEntrega::class, 'plano_entrega_id'); }
+    public function planoEntregaSuperior() { return $this->belongsTo(PlanoEntrega::class, 'plano_entrega_id'); } //nullable
 }

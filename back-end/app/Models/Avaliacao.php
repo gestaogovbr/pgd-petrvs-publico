@@ -17,7 +17,7 @@ class Avaliacao extends ModelBase
         'nota', /* json; NOT NULL; */// Nota da avaliação
         'usuario_id', /* char(36); NOT NULL; */
         'justificativas', /* json; NOT NULL; DEFAULT: 'json_array()'; */// Justificativas
-        'tipo_avaliacao_id', /* char(36); */
+        'tipo_avaliacao_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */
     ];
 
@@ -29,8 +29,7 @@ class Avaliacao extends ModelBase
     ];
     
     // Has
-    //public function avaliacoesJustificativas() { return $this->hasMany(AvaliacaoJustificativa::class, 'avaliacao_id'); }
     // Belongs
     public function usuario() { return $this->belongsTo(Usuario::class); }    
-    public function tipoAvaliacao() { return $this->belongsTo(TipoAvaliacao::class, 'tipo_avaliacao_id'); }
+    public function tipoAvaliacao() { return $this->belongsTo(TipoAvaliacao::class); }
 }

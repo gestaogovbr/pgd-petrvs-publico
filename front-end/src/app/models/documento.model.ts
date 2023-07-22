@@ -4,8 +4,7 @@ import { Atividade } from './atividade.model';
 import { Base } from './base.model';
 import { DocumentoAssinatura } from './documento-assinatura.model';
 import { Entidade } from './entidade.model';
-import { Plano } from './plano.model';
-import { Template } from './template.model';
+import { PlanoTrabalho } from './plano-trabalho.model';
 import { TipoDocumento } from './tipo-documento.model';
 import { TipoProcesso } from './tipo-processo.model';
 
@@ -33,9 +32,9 @@ export class Documento extends Base {
     public static STATUS_AGUARDANDO_SEI = "GERADO";
 
     public entidade?: Entidade;
-    public plano_trabalho?: Plano;
     public atividade?: Atividade;
     public atividade_tarefa?: AtividadeTarefa;
+    public plano_trabalho?: PlanoTrabalho;
     public tipo_documento?: TipoDocumento;
     public tipo_processo?: TipoProcesso;
     public assinaturas?: DocumentoAssinatura[] = [];

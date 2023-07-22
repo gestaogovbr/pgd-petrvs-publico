@@ -2,7 +2,8 @@
 
 namespace App\Models;
 use App\Models\ModelBase;
-use App\Models\Demanda;
+use App\Models\Programa;
+use App\Models\Documento;
 
 class TipoDocumento extends ModelBase
 {
@@ -18,5 +19,6 @@ class TipoDocumento extends ModelBase
     ];
 
     // Has
-    public function demandas() { return $this->hasMany(Demanda::class, 'tipo_documento_id'); }        
+    public function programas() { return $this->hasMany(Programa::class); }        
+    public function documentos() { return $this->hasMany(Documento::class); }             //nullable
 }

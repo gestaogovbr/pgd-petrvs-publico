@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
-use App\Models\Demanda;
+use App\Models\Atividade;
 
 class AtividadePausa extends ModelBase
 {
@@ -12,12 +12,13 @@ class AtividadePausa extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'data_inicio', /* datetime; NOT NULL; */// Data inicio da pausa
-        'data_fim', /* datetime; */// Data de retorno
+        'atividade_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */
-        //'atividade_id', /* char(36); NOT NULL; */
+        'inicio', /* datetime; NOT NULL; */// Data inicio da pausa
+        'fim', /* datetime; */// Data de retorno
+
     ];
     
     // Belongs
-    public function demanda() { return $this->belongsTo(Demanda::class); }    
+    public function atividade() { return $this->belongsTo(Atividade::class); }    
 }

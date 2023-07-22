@@ -24,9 +24,7 @@ class CreateQuestionariosTable extends Migration
             $table->string('nome',256)->comment("Nome do questionário");
             $table->string('codigo',256)->comment("Código do questionario");
             $table->json('perguntas')->nullable()->comment("Perguntas do questionário");
-            
             // Chaves estrangeiras:
-            
         });
     }
 

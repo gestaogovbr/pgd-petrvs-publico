@@ -32,9 +32,9 @@ class CreateProgramasTable extends Migration
             $table->foreignUuid('unidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Unidade do programa");
             $table->foreignUuid('template_tcr_id')->nullable()->constrained("templates")->onDelete('restrict')->onUpdate('cascade')->comment("Template para o TCR do programa");
             $table->foreignUuid('tipo_documento_tcr_id')->nullable()->constrained("tipos_documentos")->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de documento para o TCR do programa");
-            /* OBS:
-            - documento_id será criado em 2022_11_28_190100_create_documentos_table
-            */            
+            // Criada na tabela 'documentos' devido à referência cruzada
+            //$table->foreignUuid('documento_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Documento relacionado ao programa");
+                        
         });
     }
 

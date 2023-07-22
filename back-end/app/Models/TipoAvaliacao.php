@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Models;
+
 use App\Models\ModelBase;
 use App\Models\Avaliacao;
+use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\TipoAvaliacaoJustificativa;
 
 class TipoAvaliacao extends ModelBase
@@ -27,6 +29,7 @@ class TipoAvaliacao extends ModelBase
     ];
     
     // Has
-    public function avaliacoes() { return $this->hasMany(Avaliacao::class, 'tipo_avaliacao_id'); }    
-    public function tiposAvaliacoesJustificativas() { return $this->hasMany(TipoAvaliacaoJustificativa::class, 'tipo_avaliacao_id'); }    
+    public function avaliacoes() { return $this->hasMany(Avaliacao::class); }    
+    public function consolidacoes() { return $this->hasMany(PlanoTrabalhoConsolidacao::class); }    
+    public function tiposAvaliacoesJustificativas() { return $this->hasMany(TipoAvaliacaoJustificativa::class); }    
 }

@@ -25,6 +25,7 @@ class CreateNotificacoesTable extends Migration
             $table->string('codigo')->comment("Código da mensagem");
             $table->dateTime('data_registro')->comment("Data e hora da inclusão da mensagem");
             $table->longText('mensagem')->comment("Mensagem");
+            //Chaves estrangeiras
             $table->foreignUuid('remetente_id')->nullable()->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->comment("Rementente, caso a notificação permita");
         });
         // Cria sequencia notificacao_numero

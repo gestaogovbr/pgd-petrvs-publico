@@ -26,19 +26,17 @@ class ProjetoRecurso extends ModelBase
         //'deleted_at', /* timestamp; */
     ];
 
-    /*public $fillable_changes = [
-    ];
+    public $fillable_changes = [];
 
-    public $fillable_relations = [
-    ];*/
+    public $fillable_relations = [];
 
     public $delete_cascade = [];
 
     // Has
-    //public function () { return $this->hasMany(::class); }    
+    public function alocacoes() { return $this->hasMany(ProjetoAlocacao::class, 'recurso_id'); }    
     // Belongs
     public function projeto() { return $this->belongsTo(Projeto::class); }    
-    public function usuario() { return $this->belongsTo(Usuario::class); }    
-    public function unidade() { return $this->belongsTo(Unidade::class); }    
-    public function materialServico() { return $this->belongsTo(MaterialServico::class); }    
+    public function usuario() { return $this->belongsTo(Usuario::class); }        //nullable
+    public function unidade() { return $this->belongsTo(Unidade::class); }        //nullable
+    public function materialServico() { return $this->belongsTo(MaterialServico::class); }        //nullable
 }

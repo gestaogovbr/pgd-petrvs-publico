@@ -64,7 +64,7 @@ export class EntidadeFormComponent extends PageFormBase<Entidade, EntidadeDaoSer
 
   public async loadData(entity: Entidade, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
-    this.campos = entity.campos_ocultos_demanda || [];
+    this.campos = entity.campos_ocultos_atividade || [];
     await Promise.all ([
       this.cidade?.loadSearch(entity.cidade || entity.cidade_id),
       this.gestor!.loadSearch(entity.gestor || entity.gestor_id),

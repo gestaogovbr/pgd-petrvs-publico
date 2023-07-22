@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Usuario;
-use App\Services\UsuarioService;
 use App\Services\CalendarioService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;

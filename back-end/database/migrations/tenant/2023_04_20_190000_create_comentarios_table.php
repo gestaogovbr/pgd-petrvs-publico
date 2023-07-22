@@ -27,7 +27,7 @@ class CreateComentariosTable extends Migration
             $table->enum('privacidade', ["PUBLICO", "PRIVADO"])->default("PUBLICO")->comment("Nível de acesso ao comentário");
             // Chaves estrangeiras:
             $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Usuário do comentário");
-            $table->foreignUuid('comentario_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Comentário pai");
+            $table->foreignUuid('comentario_pai_id')->nullable()->constrained("comentarios")->onDelete('restrict')->onUpdate('cascade')->comment("Comentário pai");
             $table->foreignUuid('atividade_id')->nullable()->constrained("atividades")->onDelete('restrict')->onUpdate('cascade')->comment("Atividade onde estão os comentários");
             $table->foreignUuid('atividade_tarefa_id')->nullable()->constrained("atividades_tarefas")->onDelete('cascade')->onUpdate('cascade')->comment("Comentário da tarefa da atividade");
             $table->foreignUuid('projeto_id')->nullable()->constrained("projetos")->onDelete('restrict')->onUpdate('cascade')->comment("Projeto onde estão os comentários");

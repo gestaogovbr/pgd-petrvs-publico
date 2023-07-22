@@ -20,6 +20,6 @@ class Capacidade extends ModelBase
     ];
 
     // Belongs
-    public function perfil() { return $this->belongsTo(Perfil::class, 'perfil_id'); }
-    public function tipoCapacidade() { return $this->belongsTo(TipoCapacidade::class, 'tipo_capacidade_id'); }
+    public function perfil() { return $this->belongsTo(Perfil::class); }      //nullable
+    public function tipoCapacidade() { return $this->belongsTo(TipoCapacidade::class); }
 }

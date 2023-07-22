@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
+use App\Models\Anexo;
 use App\Models\Usuario;
 use App\Models\Projeto;
+use App\Models\Atividade;
 use App\Models\ProjetoTarefa;
+use App\Models\AtividadeTarefa;
 
 class Comentario extends ModelBase
 {
@@ -20,23 +23,24 @@ class Comentario extends ModelBase
         'tipo', /* enum('COMENTARIO','TECNICO','GERENCIAL','AVALIACAO','TAREFA','ATIVIDADE'); NOT NULL; DEFAULT: 'COMENTARIO'; */// Tipo do comentário
         'privacidade', /* enum('PUBLICO','PRIVADO'); NOT NULL; DEFAULT: 'PUBLICO'; */// Nível de acesso ao comentário
         'usuario_id', /* char(36); NOT NULL; */
-        'comentario_id', /* char(36); */
         'projeto_id', /* char(36); */
         'projeto_tarefa_id', /* char(36); */
         'atividade_id', /* char(36); */
         'atividade_tarefa_id', /* char(36); */
         //'deleted_at', /* timestamp; */
+        'comentario_pai_id', /* char(36); */
     ];
 
     public $delete_cascade = ['comentarios'];
 
     // Has
-    public function comentarios() { return $this->hasMany(Comentario::class); }
+    public function anexos() { return $this->hasMany(Anexo::class); }
+    public function comentarios() { return $this->hasMany(Comentario::class, 'comentario_pai_id'); }
     // Belongs
-    public function usuario() { return $this->belongsTo(Usuario::class, 'usuario_id'); }    
-    public function comentario() { return $this->belongsTo(Comentario::class, 'comentario_id'); } 
-    public function atividade() { return $this->belongsTo(Atividade::class, 'atividade_id'); } 
-    public function atividadeTarefa() { return $this->belongsTo(AtividadeTarefa::class, 'atividade_tarefa_id'); } 
-    public function projeto() { return $this->belongsTo(Projeto::class, 'projeto_id'); } 
-    public function projetoTarefa() { return $this->belongsTo(ProjetoTarefa::class, 'projeto_tarefa_id'); } 
+    public function usuario() { return $this->belongsTo(Usuario::class); }    
+    public function comentarioPai() { return $this->belongsTo(Comentario::class); }   //nullable
+    public function atividade() { return $this->belongsTo(Atividade::class); }    //nullable
+    public function atividadeTarefa() { return $this->belongsTo(AtividadeTarefa::class); }    //nullable
+    public function projeto() { return $this->belongsTo(Projeto::class); }    //nullable
+    public function projetoTarefa() { return $this->belongsTo(ProjetoTarefa::class); }    //nullable
 }

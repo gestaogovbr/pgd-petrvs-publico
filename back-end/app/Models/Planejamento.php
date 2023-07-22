@@ -6,6 +6,7 @@ use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\Unidade;
 use App\Models\Entidade;
+use App\Models\PlanoEntrega;
 use App\Models\PlanejamentoObjetivo;
 
 class Planejamento extends ModelBase
@@ -18,13 +19,13 @@ class Planejamento extends ModelBase
         'inicio', /* datetime; NOT NULL; */// Data de inicio do planejamento institucional
         'fim', /* datetime; */// Data do fim do planejamento institucional
         'nome', /* varchar(256); NOT NULL; */// Nome do planejamento institucional
-        'unidade_id', /* char(36); */
         'missao', /* text; NOT NULL; */// Missão da entidade/unidade
         'visao', /* text; NOT NULL; */// Visão da entidade/unidade
         'valores', /* json; NOT NULL; */// Valores da entidade/unidade
-        'entidade_id', /* char(36); NOT NULL; */
         'data_arquivamento', /* datetime; */// Data de arquivamento do planejamento institucional
-        'planejamento_superior_id', /* char(36); */
+        'entidade_id', /* char(36); NOT NULL; */
+        'unidade_id', /* char(36); */
+        'planejamento_pai_id', /* char(36); */
         //'deleted_at', /* timestamp; */
     ];
 
@@ -46,9 +47,11 @@ class Planejamento extends ModelBase
 
     // Has
     public function objetivos() { return $this->hasMany(PlanejamentoObjetivo::class); }    
+    public function planejamentos() { return $this->hasMany(Planejamento::class, 'planejamento_pai_id'); }    
+    public function planosEntrega() { return $this->hasMany(PlanoEntrega::class); }       
     // Belongs
-    public function unidade() { return $this->belongsTo(Unidade::class); }
+    public function unidade() { return $this->belongsTo(Unidade::class); }    //nullable
     public function entidade() { return $this->belongsTo(Entidade::class); }
-    public function planejamentoSuperior() { return $this->belongsTo(Planejamento::class); }
+    public function planejamentoPai() { return $this->belongsTo(Planejamento::class, 'planejamento_pai_id'); }   //nullable
 
 }

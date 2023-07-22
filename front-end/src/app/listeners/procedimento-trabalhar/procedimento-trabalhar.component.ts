@@ -4,14 +4,15 @@ import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { AtividadeTarefaDaoService } from 'src/app/dao/atividade-tarefa-dao.service';
 import { DocumentoDaoService } from 'src/app/dao/documento-dao-service';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
-import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
+import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { TipoDocumentoDaoService } from 'src/app/dao/tipo-documento-dao.service';
 import { Base } from 'src/app/models/base.model';
 import { AtividadeTarefa } from 'src/app/models/atividade-tarefa.model';
 import { Documento } from 'src/app/models/documento.model';
-import { PlanoListComponent } from 'src/app/modules/gestao/plano/plano-list/plano-list.component';
-import { ListenerBase } from '../listener-base';
+import { PlanoTrabalhoListComponent } from 'src/app/modules/gestao/plano-trabalho/plano-trabalho-list/plano-trabalho-list.component';
 import { AtividadeListGridComponent } from 'src/app/modules/gestao/atividade/atividade-list-grid/atividade-list-grid.component';
+import { AtividadeListComponent } from 'src/app/modules/gestao/atividade/atividade-list/atividade-list.component';
+import { ListenerBase } from '../listener-base';
 
 export type TipoDocumentoSei = {codigo: string, nome: string};
 export type InclusaoDocumentoSei = {id_processo: number, id_documento: number, numero_processo: string, urlEditor: string, idUser: string, urlReload: string};
@@ -54,7 +55,7 @@ export class ProcedimentoTrabalharComponent extends ListenerBase implements OnIn
         menu.push({
           icon: "bi bi-check-circle",
           color: "btn-outline-primary",
-          label: "Concluir " + this.lex.noun("entrega"),
+          label: "Concluir " + this.lex.translate("entrega"),
           onClick: this.concluirEntrega.bind(this) 
         });
       }

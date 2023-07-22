@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
+use App\Models\PlanoEntrega;
 use App\Models\Entidade;
 use App\Models\Unidade;
 use App\Models\CadeiaValorProcesso;
@@ -31,7 +32,8 @@ class CadeiaValor extends ModelBase
 
     // Has
     public function processos() { return $this->hasMany(CadeiaValorProcesso::class); }    
+    public function planosEntrega() { return $this->hasMany(PlanoEntrega::class); }   
     // Belongs
-    public function unidade() { return $this->belongsTo(Unidade::class); }
-    public function entidade() { return $this->belongsTo(Entidade::class); }
+    public function unidade() { return $this->belongsTo(Unidade::class); }    //nullable
+    public function entidade() { return $this->belongsTo(Entidade::class); }  
 }

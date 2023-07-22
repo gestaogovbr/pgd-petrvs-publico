@@ -14,11 +14,11 @@ class PlanoTrabalhoConsolidacaoEntrega extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'meta', /* json; NOT NULL; */// Meta para a entrega
+        'realizado', /* json; */// Valor realizado da meta
+        'consolidacao_id', /* char(36); NOT NULL; */
+        'entrega_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */
-        //'meta', /* json; NOT NULL; */// Meta para a entrega
-        //'realizado', /* json; */// Valor realizado da meta
-        //'consolidacao_id', /* char(36); NOT NULL; */
-        //'entrega_id', /* char(36); NOT NULL; */
     ];
 
     public $fillable_changes = [];
@@ -28,5 +28,5 @@ class PlanoTrabalhoConsolidacaoEntrega extends ModelBase
     // Has
     // Belongs
     public function consolidacao() { return $this->belongsTo(PlanoTrabalhoConsolidacao::class); }
-    public function entrega() { return $this->belongsTo(PlanoTrabalhoEntrega::class, 'entrega_id'); }
+    public function entrega() { return $this->belongsTo(PlanoTrabalhoEntrega::class); } 
 }

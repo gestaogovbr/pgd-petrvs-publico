@@ -1,0 +1,29 @@
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
+    <separator [title]="lex.noun('Plano de trabalho')" collapse [collapsed]="false">
+        <div class="row">
+            <input-search #programa [size]="6" disabled controlName="programa_id" [dao]="programaDao"></input-search>
+            <input-search #usuario [size]="6" disabled  controlName="usuario_id" [dao]="usuarioDao"></input-search>
+        </div>
+        <div class="row">
+            <input-search #unidade [size]="5" disabled controlName="unidade_id" [dao]="unidadeDao" ></input-search>
+            <input-search #tipo_modalidade disabled [size]="3" controlName="tipo_modalidade_id" [dao]="tipoModalidadeDao"></input-search>
+            <input-text numbers disabled [size]="2" label="% prod." icon="bi bi-hourglass-split" controlName="ganho_produtividade" [control]="form!.controls.ganho_produtividade" [labelInfo]="'Percentual de ganho de produtividade (Será descontado do ' + lex.noun('tempo pactuado')+')'"></input-text>
+            <input-display [size]="2" label="H. Parciais" icon="bi bi-clock" controlName="tempo_proporcional" [control]="form!.controls.tempo_proporcional" labelInfo="Total de horas menos os afastamentos."></input-display>
+        </div>
+        <div class="row">
+            <input-datetime [size]="3" disabled label="Início" icon="bi bi-calendar-date" controlName="data_inicio_vigencia" [control]="form!.controls.data_inicio_vigencia" labelInfo="Início da Vigência do Programa"></input-datetime>
+            <input-datetime [size]="3" disabled label="Final" icon="bi bi-calendar-date" controlName="data_fim_vigencia" [control]="form!.controls.data_fim_vigencia" labelInfo="Final da Vigência do Programa"></input-datetime>
+            <input-workload [size]="3" disabled [unit]="formaContagemCargaHoraria" label="C. Horária" icon="bi bi-hourglass-split" controlName="carga_horaria" [control]="form!.controls.carga_horaria" labelInfo="Carga horária do usuário"></input-workload>
+            <input-display [size]="3" label="H. Totais" icon="bi bi-clock" controlName="tempo_total" [control]="form!.controls.tempo_total" labelInfo="Horas úteis de trabalho no período de vigência considerando a carga horária, feriados e fins de semana"></input-display>
+        </div>
+    </separator>
+    <div class="row">
+        <input-datetime [size]="3" disabled label="Data e hora" controlName="data_inicio" [control]="form!.controls.data_inicio" labelInfo="Data de cadastro do termo"></input-datetime>
+        <input-text [label]="'Número ' + lex.noun('Processo')" [size]="3" controlName="numero_processo" [control]="form!.controls.numero_processo" disabled labelInfo="Número do processo, com a formatação de origem"></input-text>
+        <input-search [size]="4" #tipoDocumento [disabled]="!form!.controls.numero_processo.value?.length ? 'true' : undefined" controlName="tipo_documento_id" [dao]="tipoDocumentoDao"></input-search>
+        <input-switch label="Vinculadas" [disabled]="entity?.atividades?.length ? 'true' : undefined" [size]="2" controlName="vinculadas" [control]="form!.controls.vinculadas" (change)="onVinculadasChange($event)" labelInfo="Se inclui as atividades das unidades vinculadas a unidade do plano"></input-switch>
+    </div>
+    <separator title="Pré-visualização do termo de adesão" collapse [collapsed]="true">
+        <plano-termo-adesao #termo [plano]="entity" [vinculadas]="!!form?.controls?.vinculadas?.value"></plano-termo-adesao>
+    </separator>
+</editable-form>

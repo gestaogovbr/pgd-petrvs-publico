@@ -16,8 +16,7 @@ class ServerException extends Exception
         "CapacidadeSearchText" => "Usuário não tem permissão para pesquisar nessa tabela",
         "CapacidadeStore" => "Usuário não tem permissão para gravar nessa tabela",
         "ValidateAtividade" => "Erro ao validar atividade",
-        "ValidateDemanda" => "Erro ao validar demanda",
-        "ValidatePlano" => "Erro ao validar Plano",
+        "ValidatePlanoTrabalho" => "Erro ao validar Plano de Trabalho",
         "ValidatePlanejamentoInstitucional" => "Erro ao validar Planejamento Institucional",
         "ValidateUnidade" => "Erro ao validar Unidade",
         "ValidateLotacao" => "Erro ao validar Lotação do usuário",
@@ -25,7 +24,8 @@ class ServerException extends Exception
         "ValidatePainel" => "Erro ao validar Painel",
         "ValidatePlanoEntrega" => "Erro ao validar Documento",
         "ValidatePlanoTrabalhoEntrega" => "Erro ao validar Entrega do Plano de Trabalho",
-        "ValidateProgramaParticipante" => "Erro ao validar o Participante"
+        "ValidateProgramaParticipante" => "Erro ao validar o Participante",
+        "ValidateAtribuicao" => "Erro ao validar as atribuições"
     ];
 
     function __construct($code, $extra = "") {

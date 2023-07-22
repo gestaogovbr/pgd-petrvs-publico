@@ -19,5 +19,4 @@ class CapacidadeTecnica extends ModelBase
 
     // Belongs
     public function areaTematica() { return $this->belongsTo(AreaTematica::class); }
-    
 }

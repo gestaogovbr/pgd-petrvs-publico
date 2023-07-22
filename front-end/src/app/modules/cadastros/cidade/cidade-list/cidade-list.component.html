@@ -6,7 +6,7 @@
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-text [size]="12" [label]="lex.noun('Cidade')" controlName="nome"
-                [control]="filter!.controls.nome" [placeholder]="'Nome ' + lex.noun('cidade',false,true) + '...'"></input-text>
+                [control]="filter!.controls.nome" [placeholder]="'Nome ' + lex.translate('da cidade') + '...'"></input-text>
         </div>
     </filter>
     <columns>

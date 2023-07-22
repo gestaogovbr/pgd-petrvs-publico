@@ -49,7 +49,7 @@ class DynamicMethods {
  * @method afterUpdate($entity, $data)
  * @method proxyUpdateJson($data, $unidade)
  * @method proxyDestroy($entity)
- * @method extraDestoy($entity)
+ * @method extraDestroy($entity)
  */
 class ServiceBase extends DynamicMethods
 {
@@ -72,7 +72,8 @@ class ServiceBase extends DynamicMethods
 
     public function __construct($collection = null)
     {
-        $this->developerId = ((config('petrvs') ?: [])['ids-fixos'] ?: [])['developer-id'] ?: $this->UtilService->uuid("Desenvolvedor");
+        //$this->developerId = ((config('petrvs') ?: [])['ids-fixos'] ?: [])['developer-id'] ?: $this->UtilService->uuid("Desenvolvedor");
+        $this->developerId = $this->UtilService->uuid("Desenvolvedor");
         $this->collection = $collection ?? $this->collection;
         if(empty($this->collection)) {
             $this->collection = str_replace("Service", "", str_replace("App\\Services", "App\\Models", get_class($this)));
@@ -837,7 +838,7 @@ class ServiceBase extends DynamicMethods
                 if(method_exists($this, "proxyDestroy") ? $this->proxyDestroy($entity) : true) {
                     if(method_exists($entity, 'deleteCascade')) $entity->deleteCascade();
                 }
-                if(method_exists($this, "extraDestoy")) $this->extraDestoy($entity);
+                if(method_exists($this, "extraDestroy")) $this->extraDestroy($entity);
                 if($transaction) DB::commit();
                 return true;
             } catch (Throwable $e) {

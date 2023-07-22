@@ -28,8 +28,7 @@ class CreateCargosTable extends Migration
             $table->tinyInteger('efetivo')->default(1)->comment("Cargo efetivo ou comissionado");
             $table->tinyInteger('ativo')->default(1)->comment("Cargo ativo ou inativo");
             // Chaves estrangeiras:
-           
-            //$table->foreignUuid('entrega_id')->constrained("planos_entregas_entregas")->onDelete('restrict')->onUpdate('cascade');
+                      
         });
     }
 

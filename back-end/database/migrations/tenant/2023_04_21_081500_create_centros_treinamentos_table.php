@@ -23,8 +23,6 @@ class CreateCentrosTreinamentosTable extends Migration
             $table->string('nome', 256)->comment("Nome do centro de treinamento");
             $table->tinyInteger('ativo')->default(1)->comment("Curso ativo ou inativo");
             // Chaves estrangeiras:
-           
-            //$table->foreignUuid('entrega_id')->constrained("planos_entregas_entregas")->onDelete('restrict')->onUpdate('cascade');
         });
     }
 

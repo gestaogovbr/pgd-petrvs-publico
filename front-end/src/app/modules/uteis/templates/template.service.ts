@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
-import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
+import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { TemplateDaoService } from 'src/app/dao/template-dao.service';
-import { IIndexable } from 'src/app/models/base.model';
 import { NotificacoesConfig } from 'src/app/models/notificacao.model';
 import { Template, TemplateEspecie } from 'src/app/models/template.model';
 import { AuthService } from 'src/app/services/auth.service';
@@ -26,7 +25,7 @@ export class TemplateService {
   public notifica = { petrvs: false, email: false, whatsapp: false };
 
   constructor(
-    public planoDao: PlanoDaoService,
+    public planoDao: PlanoTrabalhoDaoService,
     public templateDao: TemplateDaoService,
     public auth: AuthService,
     public dialog: DialogService

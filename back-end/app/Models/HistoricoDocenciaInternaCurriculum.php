@@ -8,10 +8,9 @@ use App\Models\Curso;
 
 class HistoricoDocenciaInternaCurriculum extends ModelBase
 {
-    protected $table = 'historicos_cursos_internos_curriculum';
+    protected $table = 'historicos_docencias_internas_curriculum';
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'pretensao', /* tinyint; NOT NULL; */// Pretende ou não fazer o curso
         'curriculum_profissional_id', /* char(36); NOT NULL; */
         'curso_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */

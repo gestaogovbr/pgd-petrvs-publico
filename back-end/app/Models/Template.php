@@ -1,9 +1,12 @@
 <?php
 
 namespace App\Models;
+
 use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\Unidade;
+use App\Models\Programa;
+use App\Models\Documento;
 use App\Models\Entidade;
 use Illuminate\Support\Facades\DB;
 
@@ -38,8 +41,10 @@ class Template extends ModelBase
     ];
     
     // Has
+    public function programas() { return $this->hasMany(Programa::class); }
+    public function documentos() { return $this->hasMany(Documento::class); }
     // Belongs
-    public function entidade() { return $this->belongsTo(Entidade::class); }    
-    public function unidade() { return $this->belongsTo(Unidade::class); }    
+    public function entidade() { return $this->belongsTo(Entidade::class); }      //nullable
+    public function unidade() { return $this->belongsTo(Unidade::class); }        //nullable
     
 }

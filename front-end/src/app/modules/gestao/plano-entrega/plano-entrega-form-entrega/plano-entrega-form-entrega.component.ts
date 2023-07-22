@@ -8,7 +8,6 @@ import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model';
-import { Planejamento } from 'src/app/models/planejamento.model';
 import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { EntregaFormComponent } from 'src/app/modules/cadastros/entrega/entrega-form/entrega-form.component';
@@ -18,9 +17,8 @@ import { CadeiaValorProcessoDaoService } from 'src/app/dao/cadeia-valor-processo
 import { NavigateResult } from 'src/app/services/navigate.service';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { CadeiaValorProcesso } from 'src/app/models/cadeia-valor-processo.model';
-import { PlanejamentoListObjetivosEntregasComponent } from '../../planejamento-institucional/planejamento-list-objetivos-entregas/planejamento-list-objetivos-entregas.component';
-import { PlanoEntregaObjetivo } from 'src/app/models/plano-entrega-objetivo.model';
-import { PlanoEntregaProcesso } from 'src/app/models/plano-entrega-processo.model';
+import { PlanoEntregaEntregaObjetivo } from 'src/app/models/plano-entrega-entrega-objetivo.model';
+import { PlanoEntregaEntregaProcesso } from 'src/app/models/plano-entrega-entrega-processo.model';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { Entrega } from 'src/app/models/entrega.model';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
@@ -32,7 +30,6 @@ import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 })
 export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaEntrega, PlanoEntregaEntregaDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  // @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @ViewChild('gridProcessos', { static: false }) public gridProcessos?: GridComponent;
   @ViewChild('gridObjetivos', { static: false }) public gridObjetivos?: GridComponent;
   @ViewChild('entregas', { static: false }) public entregas?: EntregaFormComponent;
@@ -219,7 +216,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   }
 
   public async saveObjetivo(form: FormGroup, row: any) {
-    let consolidado = row as PlanoEntregaObjetivo;
+    let consolidado = row as PlanoEntregaEntregaObjetivo;
     if(form!.controls.objetivo_id.value.length && this.inputObjetivo!.selectedItem) {
       consolidado.objetivo_id = form!.controls.objetivo_id.value;
       consolidado.objetivo = this.inputObjetivo!.selectedItem!.entity;
@@ -243,7 +240,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   }
 
   public async saveProcesso(form: FormGroup, row: any) {
-    let consolidado = row as PlanoEntregaProcesso;
+    let consolidado = row as PlanoEntregaEntregaProcesso;
     if(form!.controls.processo_id.value.length && this.inputProcesso!.selectedItem) {
       consolidado.processo_id = form!.controls.processo_id.value;
       consolidado.processo = this.inputProcesso!.selectedItem!.entity;
@@ -251,8 +248,4 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     }
     return undefined;
   }
-
-
-
-
 }

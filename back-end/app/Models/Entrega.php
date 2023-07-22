@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
+use App\Models\PlanoTrabalhoEntrega;
+use App\Models\PlanoEntregaEntrega;
 use App\Casts\AsJson;
 
 class Entrega extends ModelBase
@@ -22,4 +24,9 @@ class Entrega extends ModelBase
     protected $casts = [
         'lista_qualitativos' => AsJson::class,
     ];
+
+    //Has
+    public function entregasPlanoEntrega() { return $this->hasMany(PlanoEntregaEntrega::class); }     
+    public function entregasPlanoTrabalho() { return $this->hasMany(PlanoTrabalhoEntrega::class); }   
+
 }

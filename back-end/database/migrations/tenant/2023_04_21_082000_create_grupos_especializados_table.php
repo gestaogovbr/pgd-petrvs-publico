@@ -23,8 +23,7 @@ class CreateGruposEspecializadosTable extends Migration
             $table->string('nome', 256)->comment("Nome do grupo especializado");
             $table->tinyInteger('ativo')->default(1)->comment("Nome ativo ou inativo");
             // Chaves estrangeiras:
-           
-            //$table->foreignUuid('entrega_id')->constrained("planos_entregas_entregas")->onDelete('restrict')->onUpdate('cascade');
+       
         });
     }
 

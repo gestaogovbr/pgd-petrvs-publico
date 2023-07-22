@@ -16,6 +16,6 @@ class AreaAtividadeExterna extends ModelBase
     ];
 
     // Has
-    //public function cursos() { return $this->hasMany(CursoGraduacao::class, 'area_curso_id'); }
+    public function historicoAtividadeExterna() { return $this->hasMany(HistoricoAtividadeExterna::class); }
     
 }

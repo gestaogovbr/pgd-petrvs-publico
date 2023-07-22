@@ -18,8 +18,6 @@ import { LogModule } from './modules/logs/log.module';
 import { UteisModule } from './modules/uteis/uteis.module';
 import { RotinaModule } from './modules/rotinas/rotina.module';
 import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
-import { CadeiaValorModule } from './modules/gestao/cadeia-valor/cadeia-valor.module';
-import { CurriculumModule } from './modules/curriculum/curriculum.module';
 import { CurriculumListComponent } from './modules/cadastros/curriculum/curriculum-list/curriculum-list.component';
 import { AtividadeModule } from './modules/gestao/atividade/atividade.module';
 
@@ -33,8 +31,7 @@ import { AtividadeModule } from './modules/gestao/atividade/atividade.module';
     SpinnerOverlayComponent,
     TesteComponent,
     TesteFormComponent,
-    CurriculumListComponent,
-
+    CurriculumListComponent
   ],
   imports: [
     BrowserModule,
@@ -45,12 +42,12 @@ import { AtividadeModule } from './modules/gestao/atividade/atividade.module';
     AppRoutingModule,
     AtividadeModule,
     ChartsModule,
-    RelatorioModule,
+    //RelatorioModule,
     UteisModule,
     LogModule,
     RotinaModule,
-    CadeiaValorModule,
-    CurriculumModule
+    //CadeiaValorModule,
+    //CurriculumModule
   ],
   providers: [],
   bootstrap: [AppComponent]

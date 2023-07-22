@@ -2,8 +2,8 @@ import { Component, Injector } from '@angular/core';
 import { MetadadosPlano, PageReportBase, PlanoExtendido } from 'src/app/modules/base/page-report-base';
 import { Usuario } from 'src/app/models/usuario.model';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
-import { Plano } from 'src/app/models/plano.model';
-import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
+import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
+import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { ChartData, ChartOptions } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
@@ -14,10 +14,10 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 })
 
 export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuario, UsuarioDaoService> {
-  public planoDao: PlanoDaoService;
+  public planoDao: PlanoTrabalhoDaoService;
   public parametros?: any;
   public usuario?: Usuario | null;
-  public plano?: Plano | null;
+  public plano?: PlanoTrabalho | null;
   public row?: any;
   public planoRelatorio?: PlanoExtendido;
   public buscaPorPeriodo: boolean = false;
@@ -225,7 +225,7 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
 
   constructor(public injector: Injector) {
     super(injector, UsuarioDaoService);
-    this.planoDao = injector.get<PlanoDaoService>(PlanoDaoService);
+    this.planoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
   }
 
   public async report(filter: any) {
@@ -243,7 +243,7 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
     return [this.planoRelatorio];
   }
 
-  public async prepararParaRelatorio(plano: Plano){
+  public async prepararParaRelatorio(plano: PlanoTrabalho){
       if(this.buscaPorPeriodo){
         this.parametros.data_inicio = this.parametros.data_inicio || this.plano?.data_inicio_vigencia; 
         this.parametros.data_fim = this.parametros.data_fim || this.util.minDate(new Date(), this.plano?.data_fim_vigencia); 
@@ -264,7 +264,7 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
           'plano': plano!,
           'extras': $metadados,
           'descricaoPlano': (plano!.tipo_modalidade!.nome || "") + " - " + this.dao!.getDateFormatted(plano!.data_inicio_vigencia) + " a " + this.dao!.getDateFormatted(plano!.data_fim_vigencia) + " (" + plano!.unidade!.sigla + ")",
-          'statusPlano': $metadados.concluido ? (plano.demandas.length ? 'CONCLUÍDO - estatísticas CONCLUSIVAS' : 'VAZIO - nenhuma demanda foi cadastrada neste Plano') : 'EM ANDAMENTO - estatísticas sujeitas a alterações',
+          'statusPlano': $metadados.concluido ? (plano.atividades.length ? 'CONCLUÍDO - estatísticas CONCLUSIVAS' : 'VAZIO - nenhuma demanda foi cadastrada neste Plano') : 'EM ANDAMENTO - estatísticas sujeitas a alterações',
           'horasDisponiveisPlano': $horasUteisLiquidasPlano - $metadados.horasUteisDecorridas,
           'horasUteisLiquidasPlano': $horasUteisLiquidasPlano,
           'horasAfastamentoTranscorrer': $metadados.horasUteisAfastamento - $metadados.horasAfastamentoDecorridas,

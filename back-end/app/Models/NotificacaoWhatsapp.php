@@ -37,5 +37,5 @@ class NotificacaoWhatsapp extends ModelBase
 
     // Has
     // Belongs
-    public function usuario() { return $this->belongsTo(Usuario::class); }
+    public function usuario() { return $this->belongsTo(Usuario::class); }    //nullable
 }

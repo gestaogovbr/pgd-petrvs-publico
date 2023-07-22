@@ -5,6 +5,14 @@ namespace App\Models;
 use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\PlanoTrabalho;
+use App\Models\DocumentoAssinatura;
+use App\Models\Atividade;
+use App\Models\AtividadeTarefa;
+use App\Models\ProjetoTarefa;
+use App\Models\Programa;
+use App\Models\Template;
+use App\Models\TipoDocumento;
+use App\Models\TipoProcesso;
 use App\Models\Entidade;
 use Illuminate\Support\Facades\DB;
 
@@ -33,6 +41,7 @@ class Documento extends ModelBase
         'atividade_tarefa_id', /* char(36); */
         'plano_trabalho_id', /* char(36); */
         'template_id', /* char(36); */
+        'plano_trabalho_id', /* char(36); */
         //'deleted_at', /* timestamp; */
     ];
 
@@ -55,13 +64,19 @@ class Documento extends ModelBase
 
     // Has
     public function assinaturas() { return $this->hasMany(DocumentoAssinatura::class); }    
+    public function tarefasAtividade() { return $this->hasMany(AtividadeTarefa::class); }    
+    public function tarefasProjeto() { return $this->hasMany(ProjetoTarefa::class); }    
+    public function programas() { return $this->hasMany(Programa::class); }    
+    public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }    
+    public function atividadesRequisitadas() { return $this->hasMany(Atividade::class, 'documento_requisicao_id'); }    
+    public function atividadesEntregues() { return $this->hasMany(Atividade::class, 'documento_entrega_id'); }    
     // Belongs
-    public function template() { return $this->belongsTo(Template::class); }
-    public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class); }
-    public function tipoDocumento() { return $this->belongsTo(TipoDocumento::class); }
-    public function tipoProcesso() { return $this->belongsTo(TipoProcesso::class); }
-    public function entidade() { return $this->belongsTo(Entidade::class); }    
-    public function atividade() { return $this->belongsTo(Atividade::class); }    
-    public function atividadeTarefa() { return $this->belongsTo(AtividadeTarefa::class); }    
+    public function template() { return $this->belongsTo(Template::class); }  //nullable
+    public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class); }    //nullable
+    public function tipoDocumento() { return $this->belongsTo(TipoDocumento::class); }    //nullable
+    public function tipoProcesso() { return $this->belongsTo(TipoProcesso::class); }      //nullable
+    public function entidade() { return $this->belongsTo(Entidade::class); }      //nullable
+    public function atividade() { return $this->belongsTo(Atividade::class); }    //nullable  
+    public function atividadeTarefa() { return $this->belongsTo(AtividadeTarefa::class); }    //nullable  
     
 }

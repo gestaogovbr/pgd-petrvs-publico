@@ -2,12 +2,12 @@
 import { Injectable, Injector } from '@angular/core';
 import { TemplateDataset } from '../components/input/input-editor/input-editor.component';
 import { Afastamento } from '../models/afastamento.model';
-import { Plano } from '../models/plano.model';
 import { Usuario } from '../models/usuario.model';
 import { Efemerides, TipoContagem } from '../services/calendar.service';
 import { LookupService } from '../services/lookup.service';
 import { DaoBaseService } from './dao-base.service';
 import { AtividadePausa } from '../models/atividade-pausa.model';
+import { PlanoTrabalho } from '../models/plano-trabalho.model';
 
 export type UsuarioDashboard = {
   planos: [
@@ -115,12 +115,12 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
     });
   }
 
-  public planosPorPeriodo(usuario_id: string, inicioPeriodo: string | null, fimPeriodo: string | null): Promise<Plano[] | null> {
-    return new Promise<Plano[] | null>((resolve, reject) => {
+  public planosPorPeriodo(usuario_id: string, inicioPeriodo: string | null, fimPeriodo: string | null): Promise<PlanoTrabalho[] | null> {
+    return new Promise<PlanoTrabalho[] | null>((resolve, reject) => {
       if (usuario_id?.length) {
         this.server.post('api/Relatorio/planosPorPeriodo', { usuario_id: usuario_id, inicioPeriodo: inicioPeriodo != null ? this.util.getTimeFormattedUSA(inicioPeriodo) : null, fimPeriodo: fimPeriodo != null ? this.util.getTimeFormattedUSA(fimPeriodo) : null })
           .subscribe(response => {
-            resolve(response.data as Plano[]);
+            resolve(response.data as PlanoTrabalho[]);
           }, error => {
             console.log("Erro nas datas de início/fim do período, ou ao buscar no servidor os planos do usuário!", error);
             resolve(null);

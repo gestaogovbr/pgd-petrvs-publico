@@ -4,6 +4,7 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\Unidade;
 use App\Models\Entidade;
+use App\Models\AtividadeTarefa;
 
 class TipoTarefa extends ModelBase
 {
@@ -20,8 +21,9 @@ class TipoTarefa extends ModelBase
         'unidade_id', /* char(36); */
         //'deleted_at', /* timestamp; */
     ];
-    
+    //Has
+    public function tarefas() { return $this->hasMany(AtividadeTarefa::class); }   
     // Belongs
-    public function unidade() { return $this->belongsTo(Unidade::class); }    
-    public function entidade() { return $this->belongsTo(Entidade::class); }    
+    public function unidade() { return $this->belongsTo(Unidade::class); }        //nullable
+    public function entidade() { return $this->belongsTo(Entidade::class); }      //nullable
 }

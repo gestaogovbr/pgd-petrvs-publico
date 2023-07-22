@@ -3,7 +3,7 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
 import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
-import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
+import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
@@ -21,7 +21,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
 
   public perfilDao: PerfilDaoService;
   public unidadeDao: UnidadeDaoService;
-  public planoDao: PlanoDaoService;
+  public planoTrabalhoDao: PlanoTrabalhoDaoService;
   public formLotacoes: FormGroup;
   public planoDataset: TemplateDataset[]; 
 
@@ -29,7 +29,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     super(injector, Usuario, UsuarioDaoService);
     this.perfilDao = injector.get<PerfilDaoService>(PerfilDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
-    this.planoDao = injector.get<PlanoDaoService>(PlanoDaoService);
+    this.planoTrabalhoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
     this.form = this.fh.FormBuilder({
       email: {default: ""},
       nome: {default: ""},
@@ -48,7 +48,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
       principal: {default: ""},
       unidade_id: {default: ""},
     }, this.cdRef, this.validateLotacoes);
-    this.planoDataset = this.planoDao.dataset();
+    this.planoDataset = this.planoTrabalhoDao.dataset();
     this.join = ["lotacoes.unidade"];
   }
 

@@ -4,11 +4,14 @@ namespace App\Models;
 
 use App\Casts\AsJson;
 use App\Models\ModelBase;
+use App\Models\Usuario;
 use App\Models\ProjetoTarefa;
 use App\Models\ProjetoAlocacao;
 use App\Models\ProjetoRegra;
 use App\Models\TipoProjeto;
 use App\Models\ProjetoRecurso;
+use App\Models\ProjetoHistorico;
+use App\Models\Comentario;
 use App\Models\ProjetoFase;
 use Illuminate\Support\Facades\DB;
 
@@ -73,13 +76,15 @@ class Projeto extends ModelBase
     // Has
     public function fases() { return $this->hasMany(ProjetoFase::class); }    
     public function tarefas() { return $this->hasMany(ProjetoTarefa::class); }    
+    public function tarefasProjeto() { return $this->hasMany(ProjetoTarefa::class, 'tarefa_projeto_id'); }    
     public function regras() { return $this->hasMany(ProjetoRegra::class); }    
     public function alocacoes() { return $this->hasMany(ProjetoAlocacao::class); }    
     public function recursos() { return $this->hasMany(ProjetoRecurso::class); }    
     public function historicos() { return $this->hasMany(ProjetoHistorico::class); }
+    public function comentarios() { return $this->hasMany(Comentario::class); }
     // Belongs
-    public function fase() { return $this->belongsTo(ProjetoFase::class); }    
-    public function tipoProjeto() { return $this->belongsTo(TipoProjeto::class); }    
-    public function usuario() { return $this->belongsTo(Usuario::class); }    
+    public function fase() { return $this->belongsTo(ProjetoFase::class); }       //nullable
+    public function tipoProjeto() { return $this->belongsTo(TipoProjeto::class); }        //nullable
+    public function usuario() { return $this->belongsTo(Usuario::class); }        //nullable
 
 }

@@ -5,7 +5,7 @@ import { TemplateDataset } from 'src/app/components/input/input-editor/input-edi
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
-import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
+import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
@@ -25,7 +25,6 @@ import { LookupItem } from 'src/app/services/lookup.service';
 
 export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  //@ViewChild('pai', { static: false }) public pai?: InputSearchComponent;
   @ViewChild('unidade_pai', { static: false }) public unidadePai?: InputSearchComponent;
   @ViewChild('cidade', { static: false }) public cidade?: InputSearchComponent;
   @ViewChild('gestor', { static: false }) public gestor?: InputSearchComponent;
@@ -40,7 +39,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
   public cidadeDao: CidadeDaoService;
   public usuarioDao: UsuarioDaoService;
   public unidadeDao: UnidadeDaoService;
-  public planoDao: PlanoDaoService;
+  public planoTrabalhoDao: PlanoTrabalhoDaoService;
   public notificacao: NotificacaoService;
   public planoDataset: TemplateDataset[];
 
@@ -50,10 +49,10 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     this.cidadeDao = injector.get<CidadeDaoService>(CidadeDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
-    this.planoDao = injector.get<PlanoDaoService>(PlanoDaoService);
+    this.planoTrabalhoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
     this.notificacao = injector.get<NotificacaoService>(NotificacaoService);
     this.modalWidth = 1200;
-    this.planoDataset = this.planoDao.dataset();
+    this.planoDataset = this.planoTrabalhoDao.dataset();
     this.form = this.fh.FormBuilder({
       codigo: {default: ""},
       sigla: {default: ""},
@@ -66,16 +65,11 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       atividades_avaliacao_automatico: {default: 0},
       planos_prazo_comparecimento: {default: ""},
       planos_tipo_prazo_comparecimento: {default: ""},
-      horario_trabalho_inicio: {default: "00:00"},
-      horario_trabalho_fim: {default: "23:59"},
-      horario_trabalho_intervalo: {default: "00:00"},
       distribuicao_forma_contagem_prazos: {default: "DIAS_UTEIS"},
       entrega_forma_contagem_prazos: {default: "HORAS_UTEIS"},
       notificacoes: {default: {}},
       autoedicao_subordinadas: {default: 0},
       etiquetas: {default: []},
-      data_inicio: {default: ""},
-      data_fim: {default: ""},
       unidade_id: {default: ""},
       entidade_id: {default: ""},
       etiqueta_texto: {default: ""},
@@ -104,16 +98,8 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     }, this.cdRef, this.validate);
     this.formUnidadesOrigemAtividades = this.fh.FormBuilder({
       unidade_origem_atividade_id: {default: ""}
-    }, this.cdRef, this.validateUnidadesOrigemAtividades);
+    }, this.cdRef);
     this.join =  ["cidade", "entidade", "unidades_origem_atividades.unidade_origem_atividade", "gestor", "gestor_substituto", "notificacoes_templates"];
-  }
-
-  public validateUnidadesOrigemAtividades = (control: AbstractControl, controlName: string) => {
-    let result = null;
-    if(controlName == 'unidade_origem_atividade_id' && !control.value?.length) {
-      result = "Obrigatório";
-    }
-    return result;
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -128,13 +114,6 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
 
   public get is24hrs(): string | undefined {
     return this.form?.controls.expediente24.value ? "" : undefined;
-  }
-
-  public onExpediente24Change(event: Event) {
-    if(this.form.controls.expediente24.value) {
-      this.form.controls.horario_trabalho_inicio.setValue("00:00");
-      this.form.controls.horario_trabalho_fim.setValue("24:00");
-    }
   }
 
   public onUsarExpedienteEntidadeChange() {
@@ -166,11 +145,10 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       this.cidade!.loadSearch(entity.cidade || entity.cidade_id),
       this.gestor!.loadSearch(entity.gestor || entity.gestor_id),
       this.gestorSubstituto!.loadSearch(entity.gestor_substituto || entity.gestor_substituto_id),
-      this.entidade!.loadSearch(entity.entidade || entity.entidade_id)/*,
-      this.unidadeOrigemAtividade!.loadSearch(entity.unidades_origem_atividades)*/
+      this.entidade!.loadSearch(entity.entidade || entity.entidade_id)
     ]);
     this.form.patchValue(this.util.fillForm(formValue, {...entity, ...{
-      expediente24: entity.horario_trabalho_fim.startsWith("24:00")
+      //expediente24: entity.horario_trabalho_fim.startsWith("24:00")
       /*notifica_demanda_distribuicao: entity.notificacoes?.notifica_demanda_distribuicao == undefined || entity.notificacoes?.notifica_demanda_distribuicao,
       notifica_demanda_conclusao: entity.notificacoes?.notifica_demanda_conclusao == undefined || entity.notificacoes?.notifica_demanda_conclusao,
       notifica_demanda_avaliacao: entity.notificacoes?.notifica_demanda_avaliacao == undefined || entity.notificacoes?.notifica_demanda_avaliacao,
@@ -214,9 +192,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       this.notificacoes!.saveData();
       let unidade: Unidade = this.util.fill(new Unidade(), this.entity!);
       unidade = this.util.fillForm(unidade, this.form!.value);
-      unidade.horario_trabalho_fim = this.form!.controls.expediente24.value ? "24:00" : unidade.horario_trabalho_fim;
       unidade.notificacoes = this.entity!.notificacoes;
-      unidade.notificacoes_templates = this.entity!.notificacoes_templates;
       /*unidade.notificacoes.notifica_demanda_distribuicao = form.notifica_demanda_distribuicao;
       unidade.notificacoes.notifica_demanda_conclusao = form.notifica_demanda_conclusao;
       unidade.notificacoes.notifica_demanda_avaliacao = form.notifica_demanda_avaliacao;
@@ -230,9 +206,6 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       unidade.notificacoes.enviar_email = form.enviar_email;
       unidade.notificacoes.enviar_whatsapp = form.enviar_whatsapp;*/
       /* Remove os ids gerados para os novos unidades_origem_atividades, será gerado pelo servidor como UUID */
-      unidade.unidades_origem_atividades.forEach(origem => {
-        origem.id = origem.id.includes("-") ? origem.id : "";
-      });
       /* O pai vai ser resolvido do lado do servidor
       if(!this.form.controls.unidade_id.value?.length) { //Então, selecionou o Pai.
         unidade.unidade_id = (this.pai?.searchObj as Unidade).id;

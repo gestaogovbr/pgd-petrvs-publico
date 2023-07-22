@@ -23,8 +23,7 @@ class CreateAreasConhecimentosTable extends Migration
             $table->string('nome', 256)->comment("Nome da área da graduação");
             $table->tinyInteger('ativo')->default(1)->comment("Área ativa ou inativa");
             // Chaves estrangeiras:
-            //$table->foreignUuid('plano_id')->constrained("planos")->onDelete('restrict')->onUpdate('cascade');
-            //$table->foreignUuid('entrega_id')->constrained("planos_entregas_entregas")->onDelete('restrict')->onUpdate('cascade');
+ 
         });
     }
 

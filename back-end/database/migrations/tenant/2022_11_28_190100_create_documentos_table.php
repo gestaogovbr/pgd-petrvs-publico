@@ -38,6 +38,10 @@ class CreateDocumentosTable extends Migration
             $table->foreignUuid('plano_trabalho_id')->nullable()->constrained('planos_trabalhos')->onDelete('restrict')->onUpdate('cascade')->comment("Plano de trabalho");
             $table->foreignUuid('tipo_documento_id')->nullable()->constrained('tipos_documentos')->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de documento");
             $table->foreignUuid('tipo_processo_id')->nullable()->constrained('tipos_processos')->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de processo");
+            // Criada na tabela 'atividades' devido à referência cruzada
+            //$table->foreignUuid('atividade_id')->nullable()->constrained('atividades')->onDelete('restrict')->onUpdate('cascade')->comment("Atividade");
+            // Criada na tabela 'atividades_tarefas' devido à referência cruzada
+            //$table->foreignUuid('atividade_tarefa_id')->nullable()->constrained('atividades_tarefas')->onDelete('restrict')->onUpdate('cascade')->comment("Tarefa da Atividade");
         });
         // Cria sequencia documento_numero
         Schema::table('sequence', function (Blueprint $table) {

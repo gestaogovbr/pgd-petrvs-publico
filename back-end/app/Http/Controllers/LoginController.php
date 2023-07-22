@@ -10,15 +10,11 @@ use App\Services\DprfSegurancaAuthService;
 use App\Services\IntegracaoService;
 use App\Services\ApiService;
 use App\Models\Usuario;
-use App\Models\Lotacao;
 use App\Exceptions\LogError;
 use App\Models\Entidade;
 use App\Services\UnidadeService;
-use App\Services\ServiceBase;
 use App\Services\CalendarioService;
 use App\Services\UsuarioService;
-use Database\Seeders\UsuarioSeeder;
-use Illuminate\Validation\ValidationException;
 use SocialiteProviders\Azure\Provider;
 use DateTime;
 use Laravel\Socialite\Facades\Socialite;
@@ -43,16 +39,25 @@ class LoginController extends Controller
                 $usuario->fresh();
             }
             $entidadeId = $request->session()->has("entidade_id") ? $request->session()->get("entidade_id") : null;
-            $usuario = Usuario::where("id", $usuario->id)->with(["lotacoes" => function ($query) use ($entidadeId) {
+         /* $usuario = Usuario::where("id", $usuario->id)->with(["lotacoes" => function ($query) use ($entidadeId) {
                 $query->with(["unidade"])->whereHas('unidade', function ($query) use ($entidadeId) {
                     return $query->where('entidade_id', '=', $entidadeId);
                 })->whereNull("data_fim");
-            }, "lotacoes.unidade.planosEntregas", "lotacoes.unidade.integrantes", "lotacoes.unidade.unidade.planosEntregas", "perfil.capacidades.tipoCapacidade", "chefiasTitulares", "chefiasTitulares.integrantes", "chefiasSubstitutas", "chefiasSubstitutas.integrantes"])->first();
-            foreach ($usuario->lotacoes as $lotacao) {
-                if($lotacao->principal) {
-                    $request->session()->put("unidade_id", $lotacao->unidade_id);
-                }
-            }
+            }, "lotacoes.unidade.planosEntrega", "lotacoes.unidade.integrantes", "lotacoes.unidade.unidade.planosEntrega", 
+               "perfil.capacidades.tipoCapacidade", "chefiasTitulares", "chefiasTitulares.integrantes", "chefiasSubstitutas", "chefiasSubstitutas.integrantes"])->first(); */            
+            /* 
+                select * 
+                from usuarios 
+                
+            */
+            $usuario = Usuario::where("id", $usuario->id)->with(["perfil.capacidades.tipoCapacidade"])->first();
+            $usuario["lotacao"] = $usuario->lotacao;
+            $usuario["colaboracoes"] = $usuario->colaboracoes;
+            $usuario["atribuicoes"] = $usuario->atribuicoes;
+                            /* foreach ($usuario->lotacoes as $lotacao) {
+                                    if($lotacao->principal) { $request->session()->put("unidade_id", $lotacao->unidade_id); }
+                                } */
+            if($usuario->lotacao) $request->session()->put("unidade_id", $usuario->lotacao->id);
         }
         return $usuario;
     }
@@ -80,8 +85,8 @@ class LoginController extends Controller
         if(Auth::check()) {
             $usuario = Auth::user();
             $usuario = Usuario::where("id", $usuario->id)->with(["lotacoes" => function ($query) use ($data) {
-                $query->whereNull("data_fim")->where("unidade_id", $data["unidade_id"]);
-            }, "lotacoes.unidade.entidade", "lotacoes.unidade.planosEntregas", "lotacoes.unidade.integrantes", "lotacoes.unidade.unidade.planosEntregas", "perfil.capacidades.tipoCapacidade"])->first();
+                $query->where("unidade_id", $data["unidade_id"]);
+            }, "lotacoes.unidade.entidade", "lotacoes.unidade.planosEntrega", "lotacoes.unidade.integrantes", "lotacoes.unidade.unidade.planosEntrega", "perfil.capacidades.tipoCapacidade"])->first();
             if(isset($usuario->lotacoes[0]) && !empty($usuario->lotacoes[0]->unidade_id)) {
                 $request->session()->put("unidade_id", $usuario->lotacoes[0]->unidade_id);
                 return response()->json([
