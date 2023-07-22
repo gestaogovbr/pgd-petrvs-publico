@@ -8,7 +8,8 @@ import { UteisRoutingModule } from './uteis-routing.module';
 import { CalendarExpedienteComponent } from './calendar-expediente/calendar-expediente.component';
 import { DocumentosComponent } from './documentos/documentos.component';
 import { TemplatesComponent } from './templates/templates.component';
-import { AssinarComponent } from './documentos/assinar/assinar.component';
+import { DocumentosAssinarComponent } from './documentos/documentos-assinar/documentos-assinar.component';
+import { DocumentosLinkComponent } from './documentos/documentos-link/documentos-link.component';
 import { NotificacoesComponent } from './notificacoes/notificacoes.component';
 import { NotificacoesConfigComponent } from './notificacoes/notificacoes-config/notificacoes-config.component';
 import { NotificacoesTemplateComponent } from './notificacoes/notificacoes-template/notificacoes-template.component';
@@ -21,7 +22,8 @@ import { NotificacoesTemplateComponent } from './notificacoes/notificacoes-templ
     CalendarExpedienteComponent,
     DocumentosComponent,
     TemplatesComponent,
-    AssinarComponent,
+    DocumentosAssinarComponent,
+    DocumentosLinkComponent,
     NotificacoesComponent,
     NotificacoesConfigComponent,
     NotificacoesTemplateComponent

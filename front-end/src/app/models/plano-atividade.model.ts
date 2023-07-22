@@ -1,5 +1,5 @@
 import { Base } from './base.model';
-import { Atividade } from './atividade.model';
+import { Atividade } from './tipo-atividade.model';
 import { Plano } from './plano.model';
 
 export class PlanoAtividade extends Base {

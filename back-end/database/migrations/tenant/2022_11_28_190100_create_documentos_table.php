@@ -22,6 +22,7 @@ class CreateDocumentosTable extends Migration
             $table->softDeletes();
             // Campos
             $table->integer('numero')->unique()->default(0)->comment("Número do documento (Gerado pelo sistema)");
+            $table->string('titulo', 256)->comment("Titulo do documento");
             $table->enum('tipo', ["HTML", "PDF", "LINK"])->comment("Tipo do documento");
             $table->enum('especie', ["TERMO_ADESAO", "SEI", "TCR"])->comment("Especificação da espécie do documento (interno do sistema)");
             $table->longText('conteudo')->nullable()->comment("Conteúdo do arquivo");

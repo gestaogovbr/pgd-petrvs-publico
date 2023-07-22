@@ -21,10 +21,11 @@ class CreateTiposModalidadesTable extends Migration
             $table->softDeletes();
             // Campos:
             $table->string('nome', 256)->comment("Nome da modalidade");
-            $table->json('config')->nullable();
-            $table->tinyInteger('atividades_homologadas')->default(0)->comment("Permitir apenas atividades homologadas");
-            $table->tinyInteger('dispensa_avaliacao')->default(0)->comment("Dispensa a avaliação");
-            $table->tinyInteger('exige_assinatura')->default(0)->comment("Exigir assinatura");
+            $table->tinyInteger('plano_trabalho_assinatura_participante')->default(1)->comment("Exigir assinatura do usuário no plano de trabalho");
+            $table->tinyInteger('plano_trabalho_assinatura_gestor_unidade')->default(0)->comment("Exigir assinatura do gestor da unidade do plano de trabalho");
+            $table->tinyInteger('plano_trabalho_assinatura_gestor_entidade')->default(0)->comment("Exigir assinatura do gestor da entidade do plano de trabalho");
+            $table->tinyInteger('atividade_tempo_despendido')->default(0)->comment("Se calcula tempo despendido na atividade");
+            $table->tinyInteger('atividade_esforco')->default(0)->comment("Se utiliza esforço (tempo para execução) na atividade");
             // Chaves estrangeiras:
             /* OBS:
             - document_id criado em 2021_10_19_211130_create_documentos_table

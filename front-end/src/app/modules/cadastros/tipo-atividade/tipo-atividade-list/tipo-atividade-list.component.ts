@@ -16,12 +16,10 @@ export class TipoAtividadeListComponent extends PageListBase<TipoAtividade, Tipo
   constructor(public injector: Injector) {
     super(injector, TipoAtividade, TipoAtividadeDaoService);
     /* Inicializações */
-    this.title = "Tipos de " + this.lex.noun("Atividade",true);
-    this.code="MOD_TIPO_ATV";
+    this.title = this.lex.noun("Tipo de atividade", true);
+    this.code = "MOD_TIPO_ATV";
     this.filter = this.fh.FormBuilder({
-      nome: {default: ""},
-      icone: {default: ""},
-      cor: {default: ""}
+      nome: { default: "" }
     });
     // Testa se o usuário possui permissão para exibir dados do tipo de atividade
     if (this.auth.hasPermissionTo("MOD_TIPO_ATV_CONS")) {
@@ -32,7 +30,7 @@ export class TipoAtividadeListComponent extends PageListBase<TipoAtividade, Tipo
       });
     }
     // Testa se o usuário possui permissão para excluir o tipo de atividade
-    if (this.auth.hasPermissionTo("MOD_TIPO_ATV_EXCL")) {
+    if (this.auth.hasPermissionTo("MOD_ATV_EXCL")) {
       this.options.push({
         icon: "bi bi-trash",
         label: "Excluir",
@@ -47,15 +45,27 @@ export class TipoAtividadeListComponent extends PageListBase<TipoAtividade, Tipo
   }
 
   public filterWhere = (filter: FormGroup) => {
-    let result: any[] = [];
     let form: any = filter.value;
-
-    if(form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome + "%"]);
-    }
-
+    let result: any[] = [];
+    if (form.nome?.length) result.push(["nome", "like", "%" + form.nome.replace(" ", "%") + "%"]);
     return result;
   }
-}
 
+  public getReportEtiquetas(row: TipoAtividade): string {
+    let result = "";
+    row.etiquetas_predefinidas.forEach(element => {
+      result += element.value + ";\n";
+    });
+    return result;
+  }
+
+  public getReportChecklist(row: TipoAtividade): string {
+    let result = "";
+    row.checklist_predefinidos.forEach(element => {
+      result += element.value + ";\n";
+    });
+    return result;
+  }
+
+}
 

@@ -21,7 +21,6 @@ class CreateTiposJustificativasTable extends Migration
             $table->softDeletes();
             // Campos:
             $table->string('nome', 256)->comment("Tipo da justificativa da avaliação");
-           
         });
     }
 

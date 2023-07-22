@@ -16,6 +16,7 @@ class Documento extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'numero', /* int; NOT NULL; */// Número do documento (Gerado pelo sistema)
+        'titulo', /* varchar(256); NOT NULL; */// Titulo do documento
         'tipo', /* enum('HTML','PDF','LINK'); NOT NULL; */// Tipo do documento
         'especie', /* enum('TERMO_ADESAO','SEI','TCR'); NOT NULL; */// Especificação da espécie do documento (interno do sistema)
         'conteudo', /* longtext; */// Conteúdo do arquivo
@@ -30,9 +31,9 @@ class Documento extends ModelBase
         'tipo_processo_id', /* char(36); */
         'atividade_id', /* char(36); */
         'atividade_tarefa_id', /* char(36); */
+        'plano_trabalho_id', /* char(36); */
         'template_id', /* char(36); */
         //'deleted_at', /* timestamp; */
-        //'plano_trabalho_id', /* char(36); */
     ];
 
     public $delete_cascade = ['assinaturas'];

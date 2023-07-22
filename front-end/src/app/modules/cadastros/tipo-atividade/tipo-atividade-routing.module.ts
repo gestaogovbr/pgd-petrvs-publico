@@ -6,10 +6,10 @@ import { TipoAtividadeFormComponent } from './tipo-atividade-form/tipo-atividade
 import { TipoAtividadeListComponent } from './tipo-atividade-list/tipo-atividade-list.component';
 
 const routes: Routes = [
-  { path: '', component: TipoAtividadeListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Tipos de Atividade" } },
-  { path: 'new', component: TipoAtividadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
-  { path: ':id/edit', component: TipoAtividadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
-  { path: ':id/consult', component: TipoAtividadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } }
+  { path: '', component: TipoAtividadeListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Atividade" } },
+  { path: 'new', component: TipoAtividadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Inclusão", modal: true } },
+  { path: ':id/edit', component: TipoAtividadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Edição", modal: true } },
+  { path: ':id/consult', component: TipoAtividadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Consultar", modal: true } }
 ];
 
 @NgModule({

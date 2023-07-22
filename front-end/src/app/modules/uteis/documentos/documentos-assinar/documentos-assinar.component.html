@@ -1,0 +1,14 @@
+
+<editable-form [form]="form!" confirmLabel="Assinar" (submit)="onAssinarClick()" (cancel)="onCancel()">
+    <div class="row">
+        <div class="row">
+            <input-radio [size]="12" controlName="tipo" [control]="form!.controls.tipo" [items]="TIPO_ASSINATURA"></input-radio>
+        </div>            
+        <div *ngIf="form!.controls.tipo.value == 'ELETRONICA'" class="row">
+            <input-text [size]="12" label="Digite a palavra CONFIRMO para prosseguir" icon="bi bi-hand-thumbs-up" controlName="confirmacao" [control]="form!.controls.confirmacao"></input-text>
+        </div>
+        <div *ngIf="form!.controls.tipo.value == 'DIGITAL'" class="row">
+            <h5>Em desenvolvimento</h5>
+        </div>
+    </div>
+</editable-form>

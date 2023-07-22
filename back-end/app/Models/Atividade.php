@@ -19,7 +19,7 @@ class Atividade extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'numero', /* int; NOT NULL; */// Número da atividade (Gerado pelo sistema)
-        'assunto', /* text; */// Assunto da atividade
+        'descricao', /* text; */// Assunto da atividade
         'data_distribuicao', /* datetime; NOT NULL; */// Data de cadastro da atividade
         'carga_horaria', /* double(8,2); */// Carga horária que será utilizada para todos os cálculos (vinda do plano de trabalho)
         'tempo_planejado', /* double(8,2); NOT NULL; */// Diferença entre data_distribuicao e prazo_entrega em horas (úteis ou corridas, configurada na unidade)

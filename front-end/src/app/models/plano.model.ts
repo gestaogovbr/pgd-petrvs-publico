@@ -5,7 +5,7 @@ import { Usuario } from './usuario.model';
 import { Programa } from './programa.model';
 import { Documento, HasDocumentos } from './documento.model';
 import { PlanoAtividade } from './plano-atividade.model';
-import { Demanda } from './demanda.model';
+import { Demanda } from './atividade.model';
 import { TipoCargaHoraria } from './entidade.model';
 import { PlanoEntrega } from './plano-entrega.model';
 import { PlanoTrabalhoEntrega } from './plano-trabalho-entrega.model';

@@ -1,7 +1,7 @@
 import { Base } from './base.model';
 import { Usuario } from './usuario.model';
 import { HasAlocacoes, HasTarefas, Projeto } from './projeto.model';
-import { Demanda } from './demanda.model';
+import { Atividade } from './atividade.model';
 import { ProjetoAlocacao } from './projeto-alocacao.model';
 import { LookupItem } from '../services/lookup.service';
 import { Comentario, HasComentarios } from './comentario';
@@ -12,7 +12,7 @@ export class ProjetoTarefa extends Base implements HasComentarios, HasAlocacoes,
     public projeto?: Projeto;
     public tarefa_pai?: ProjetoTarefa;
     public terefa_projeto?: Projeto;
-    public demanda?: Demanda;
+    public atividade?: Atividade;
     public usuario?: Usuario;
     public alocacoes?: ProjetoAlocacao[];
 
@@ -49,7 +49,7 @@ export class ProjetoTarefa extends Base implements HasComentarios, HasAlocacoes,
     public projeto_id: string = "";
     public tarefa_pai_id: string | null = null;
     public terefa_projeto_id: string | null = null; /* Projeto que será incorporado como uma tarefa */
-    public demanda_id: string = "";
+    public atividade_id: string = "";
     public usuario_id: string | null = null;
 
     public constructor(data?: any) { super(); this.initialization(data); }

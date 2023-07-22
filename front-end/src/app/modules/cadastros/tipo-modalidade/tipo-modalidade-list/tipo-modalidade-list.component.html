@@ -12,27 +12,19 @@
     </filter>
     <columns>
         <column title="Descrição" field="nome"></column>
-        <column [title]="'Somente ' + lex.noun('atividade',true) + ' homologadas'" [template]="columnAtividades_homologadas">
-            <ng-template let-row="row" #columnAtividades_homologadas>
-                <span>{{ row.atividades_homologadas ? 'Sim' : 'Não'}}</span>
+        <column [title]="lex.noun('Plano de trabalho')" [template]="columnPlanoTrabalho">
+            <ng-template let-row="row" #columnPlanoTrabalho>
+                <badge *ngIf="row.plano_trabalho_assinatura_participante" icon="bi bi-pen" label="Assinatura do participante"></badge>
+                <badge *ngIf="row.plano_trabalho_assinatura_gestor_unidade" icon="bi bi-pen" label="Assinatura do gestor da unidade"></badge>
+                <badge *ngIf="row.plano_trabalho_assinatura_gestor_entidade" icon="bi bi-pen" label="Assinatura do gestor da entidade"></badge>
             </ng-template>
         </column>
-        <column [title]="'Dispensa ' + lex.noun('Avaliação',true)" [template]="columnDispensa_avaliacao">
-            <ng-template let-row="row" #columnDispensa_avaliacao>
-                <span>{{ row.dispensa_avaliacao ? 'Sim' : 'Não'}}</span>
+        <column [title]="lex.noun('Atividade')" [template]="columnAtividade">
+            <ng-template let-row="row" #columnAtividade>
+                <badge *ngIf="row.atividade_tempo_despendido" icon="bi bi-hourglass-bottom" label="Assinatura do participante"></badge>
+                <badge *ngIf="row.atividade_esforco" icon="bi bi-stopwatch" label="Assinatura do gestor da unidade"></badge>
             </ng-template>
         </column>
-        <column [title]="'Exige ' + lex.noun('Adesão')" [template]="columnExige_assinatura">
-            <ng-template let-row="row" #columnExige_assinatura>
-                <span>{{ row.exige_adesao ? 'Sim' : 'Não'}}</span>
-            </ng-template>
-        </column>
-        <column title="Exige Assinatura" [template]="columnExige_assinatura">
-            <ng-template let-row="row" #columnExige_assinatura>
-                <span>{{ row.exige_assinatura ? 'Sim' : 'Não'}}</span>
-            </ng-template>
-        </column>
-        <column [title]="'% Ganho ' + lex.noun('produtividade')" field="ganho_produtividade"></column>
         <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>

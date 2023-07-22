@@ -3,7 +3,7 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
-import { DemandaDaoService } from 'src/app/dao/demanda-dao.service';
+import { DemandaDaoService } from 'src/app/dao/atividade-dao.service';
 import { TipoMotivoAfastamentoDaoService } from 'src/app/dao/tipo-motivo-afastamento-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
@@ -165,7 +165,7 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
       usuario?.demandas?.forEach(demanda => {
         this.demandas_usuario.push({
           key: demanda.id,
-          value: demanda.assunto || ''
+          value: demanda.descricao || ''
         });
       });
       this.demandas!.items = this.demandas_usuario;

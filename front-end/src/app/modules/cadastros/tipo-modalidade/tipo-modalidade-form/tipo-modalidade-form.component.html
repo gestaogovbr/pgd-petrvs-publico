@@ -1,17 +1,15 @@
 <!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form> (submit)="onSaveData()" (cancel)="onCancel()">-->
     <div class="row">
-        <input-text [size]="9" label="Título" controlName="nome"></input-text>
-        <input-text numbers [size]="3" [label]="'% Ganho ' + lex.noun('produtividade')" icon="bi bi-hourglass-split" controlName="ganho_produtividade" labelInfo="Percentual de ganho de produtividade (Será descontado do tempo pactuado)"></input-text>
+        <input-text [size]="12" label="Título" controlName="nome"></input-text>
     </div>
-    <separator transparent [title]="'Configurações ' + lex.noun('plano',false,true)">
-        <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Calcula ' + lex.noun('tempo despendido')" controlName="calcula_tempo_despendido"></input-switch>
-        <input-switch [size]="12" scale="small" labelPosition="right" [label]="lex.noun('Atividade',true) + ' Homologadas'" controlName="atividades_homologadas"></input-switch>
-        <input-switch [size]="12" scale="small" labelPosition="right" [label]="lex.noun('Avaliação') + ' Dispensável'" controlName="dispensa_avaliacao"></input-switch>
-        <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Exige ' + lex.noun('adesão') + lex.noun('usuario',false,true)" controlName="exige_adesao"></input-switch>
-        <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Exige assinatura ' + lex.noun('usuário',false,true)" controlName="exige_assinatura"></input-switch>
-        <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Exige assinatura do gestor ' + lex.noun('unidade',false,true)" controlName="exige_assinatura_gestor_unidade"></input-switch>
-        <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Exige assinatura do gestor ' + lex.noun('entidade',false,true)" controlName="exige_assinatura_gestor_entidade"></input-switch>
-        <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Exige comparecimento quando convocado (prazo configurado na ' + lex.noun('Unidade') + ')'" controlName="comparecer_presencialmente"></input-switch>
+    <separator transparent [title]="'Configurações ' + lex.noun('plano de trabalho', false, true)">
+        <input-switch [size]="12" scale="small" labelPosition="right" controlName="plano_trabalho_assinatura_participante" [label]="'Exige assinatura ' + lex.noun('usuário', false, true) + lex.noun('plano de trabalho', false, true)"></input-switch>
+        <input-switch [size]="12" scale="small" labelPosition="right" controlName="plano_trabalho_assinatura_gestor_unidade" [label]="'Exige assinatura do gestor ' + lex.noun('unidade',false,true)"></input-switch>
+        <input-switch [size]="12" scale="small" labelPosition="right" controlName="plano_trabalho_assinatura_gestor_entidade" [label]="'Exige assinatura do gestor ' + lex.noun('entidade',false,true)"></input-switch>
+    </separator>
+    <separator transparent [title]="'Configurações ' + lex.noun('atividade', false, true)">
+        <input-switch [size]="12" scale="small" labelPosition="right" controlName="atividade_tempo_despendido" [label]="'Calcula ' + lex.noun('tempo despendido') + lex.noun('atividade', false, true)"></input-switch>
+        <input-switch [size]="12" scale="small" labelPosition="right" controlName="atividade_esforco" [label]="'Usa ' + lex.noun('esforço') + ' (tempo para execução)' + lex.noun('atividade', false, true)"></input-switch>
     </separator>
 </editable-form>

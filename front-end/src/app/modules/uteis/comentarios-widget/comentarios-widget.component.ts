@@ -24,6 +24,7 @@ export class ComentariosWidgetComponent implements OnInit {
   @Input() origem: ComentarioOrigem = undefined;
   @Input() save?: (modalResult: any) => void;
   @Input() grid?: GridComponent;
+  @Input() query?: QueryContext<Base>;
   @Input() set entity(value: HasComentarios | undefined) {
     if(this._entity != value) {
       this._entity = value;
@@ -82,7 +83,7 @@ export class ComentariosWidgetComponent implements OnInit {
     this.go.navigate({ route: ['uteis', 'comentarios', this.origem, this.isNoPersist ? 'NOPERSIST' : entity.id , 'new'], params: {comentario_id} }, { modal: true, metadata: {entity}, modalClose: modalResult => { 
       if (modalResult) {
         if(this.save) this.save(modalResult);
-        if(!this.isNoPersist) this.grid?.query?.refreshId(entity.id);
+        if(!this.isNoPersist) (this.grid?.query || this.query)?.refreshId(entity.id);
       }
     }});
   }

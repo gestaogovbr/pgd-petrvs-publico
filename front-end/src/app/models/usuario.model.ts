@@ -1,9 +1,9 @@
 import { KanbanDocker } from '../components/kanban/kanban.component';
-import { StatusDockerConfig } from '../modules/gestao/demanda/demanda-list-kanban/demanda-list-kanban.component';
+import { StatusDockerConfig } from '../modules/gestao/atividade/atividade-list-kanban/atividade-list-kanban.component';
 import { LookupItem } from '../services/lookup.service';
 import { Afastamento } from './afastamento.model';
 import { Base, IIndexable } from './base.model';
-import { Demanda } from './demanda.model';
+import { Demanda } from './atividade.model';
 import { Lotacao } from './lotacao.model';
 import { HasNotificacao, NotificacoesConfig } from './notificacao.model';
 import { Perfil } from './perfil.model';
@@ -30,7 +30,7 @@ export class UsuarioConfig {
 
 export class Usuario extends Base implements HasNotificacao {
     public perfil?: Perfil; /* Objeto do perfil */
-    public planos?: Plano[]; /* Lista de planos de trabalho */
+    public planos_trabalhos?: PlanoTrabalho[]; /* Lista de planos de trabalho */
     public afastamentos?: Afastamento[]; /* Lista de afastamentos */
     public demandas?: Demanda[];
     public chefias_titulares?: Unidade[];

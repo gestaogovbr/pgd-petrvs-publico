@@ -10,12 +10,10 @@ import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
 import { ProjetoDaoService } from 'src/app/dao/projeto-dao.service';
 import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
-import { DemandaDaoService } from 'src/app/dao/demanda-dao.service';
-import { TarefaDaoService } from 'src/app/dao/tarefa-dao.service';
+import { TarefaDaoService } from 'src/app/dao/tipo-tarefa-dao.service';
 import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 import { FeriadoDaoService } from 'src/app/dao/feriado-dao.service';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
-import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { MaterialServicoDaoService } from 'src/app/dao/material-servico-dao.service';
 import { TipoAtividadeDaoService } from 'src/app/dao/tipo-atividade-dao.service';
 import { TipoAvaliacaoDaoService } from 'src/app/dao/tipo-avaliacao-dao.service';
@@ -27,7 +25,7 @@ import { TipoProcessoDaoService } from 'src/app/dao/tipo-processo-dao.service';
 import { TemplateDaoService } from "src/app/dao/template-dao.service";
 import { CadeiaValorDaoService } from '../dao/cadeia-valor-dao.service';
 import { CapacidadeDaoService } from '../dao/capacidade-dao.service';
-import { DemandaEntregaDaoService } from '../dao/demanda-entrega-dao.service';
+import { AtividadeTarefaDaoService } from '../dao/atividade-tarefa-dao.service';
 import { DocumentoDaoService } from '../dao/documento-dao-service';
 import { EixoTematicoDaoService } from '../dao/eixo-tematico-dao.service';
 import { EntregaDaoService } from '../dao/entrega-dao.service';
@@ -61,6 +59,7 @@ import { CargoDaoService } from '../dao/cargo-dao.service';
 import { AreaAtividadeExternaDaoService } from '../dao/area-atividade-externa-dao.service';
 import { AreaTematicaDaoService } from '../dao/area-tematica-dao.service';
 import { CapacidadeTecnicaDaoService } from '../dao/capacidade-tecnica-dao.service';
+import { AtividadeDaoService } from '../dao/atividade-dao.service';
 
 export type EntityItem = {
     collection: string,
@@ -88,7 +87,8 @@ export class EntityService {
             { collection: 'AreaAtividadeExterna', codigo: 'MOD_RX', table: 'areas_atividades_externas', campo: 'nome', icon: 'bi bi-box-arrow-in-down', dao: injector.get<AreaAtividadeExternaDaoService>(AreaAtividadeExternaDaoService), label: "Área Atividade Externa ", selectRoute: { route: ['raiox','cadastros', 'gerais','areaatividadeexterna'] } },
             { collection: 'AreaConhecimento', codigo: 'MOD_RX', table: 'areas_conhecimentos', campo: 'nome_area', icon: 'bi bi-mortarboard', dao: injector.get<AreaConhecimentoDaoService>(AreaConhecimentoDaoService), label: "Area do Conhecimento", selectRoute: { route: ['raiox', 'cadastros','gerais','areaconhecimento'] } },
             { collection: 'AreaTematica', codigo: 'MOD_RX', table: 'areas_tematicas', campo: 'nome', icon: 'bi bi-mortarboard', dao: injector.get<AreaTematicaDaoService>(AreaTematicaDaoService), label: "Area do Conhecimento", selectRoute: { route: ['raiox', 'cadastros','gerais','areatematica'] } },
-            { collection: 'Atividade', codigo: 'MOD_ATV', table: 'atividades', campo: 'nome', icon: 'bi bi-clipboard-pulse', dao: injector.get<AtividadeDaoService>(AtividadeDaoService), label: "Atividade", selectRoute: { route: ['cadastros', 'atividade'] } },
+            { collection: 'Atividade', codigo: 'MOD_ATV', table: 'atividades', campo: 'descricao', icon: 'bi bi-activity', dao: injector.get<AtividadeDaoService>(AtividadeDaoService), label: "Atividade", selectRoute: { route: ['gestao', 'atividade'] } },
+            { collection: 'AtividadeTarefa', table: 'atividades_tarefas', campo: 'atividade_id', icon: '', dao: injector.get<AtividadeTarefaDaoService>(AtividadeTarefaDaoService), label: "Tarefa da Atividade" },
             { collection: 'CadeiaValor', codigo: 'MOD_CADV', table: 'cadeias_valores', campo: 'nome', icon: 'bi bi-bar-chart-steps', dao: injector.get<CadeiaValorDaoService>(CadeiaValorDaoService), label: "Cadeia de Valor", selectRoute: { route: ['gestao', 'cadeia-valor'] } },
             { collection: 'CadeiaValorProcesso', table: 'cadeias_valores_processos', campo: 'nome', icon: '', dao: injector.get<CadeiaValorProcessoDaoService>(CadeiaValorProcessoDaoService), label: "Processo da Cadeia de Valor", selectRoute: { route: ['gestao', 'cadeia-valor', 'processoList'] } },
             { collection: 'Capacidade', table: 'capacidades', campo: 'tipo_capacidade_id', icon: '', dao: injector.get<CapacidadeDaoService>(CapacidadeDaoService), label: "Capacidade" },
@@ -97,8 +97,6 @@ export class EntityService {
             { collection: 'Change', table: 'changes', campo: 'row_id', icon: 'bi bi-filter-square', dao: injector.get<ChangeDaoService>(ChangeDaoService), label: "Log de Alteração", selectRoute: { route: ['logs', 'change'] } },
             { collection: 'CentroTreinamento', codigo: 'MOD_RX', table: 'centros_treinamentos', campo: 'nome', icon: 'bi bi-building-fill', dao: injector.get<CentroTreinamentoDaoService>(CentroTreinamentoDaoService), label: "Centro de Treinamento", selectRoute: { route: ['raiox', 'cadastros','gerais','centrotreinamento'] } },
             { collection: 'Cidade', codigo: 'MOD_CID', table: 'cidades', campo: 'nome', icon: 'bi bi-building', dao: injector.get<CidadeDaoService>(CidadeDaoService), label: "Cidade", selectRoute: { route: ['cadastros', 'cidade'] } },
-            { collection: 'Demanda', codigo: 'MOD_DMD', table: 'demandas', campo: 'assunto', icon: 'bi bi-activity', dao: injector.get<DemandaDaoService>(DemandaDaoService), label: "Demanda", selectRoute: { route: ['gestao', 'demanda'] } },
-            { collection: 'DemandaEntrega', table: 'demandas_entregas', campo: 'demanda_id', icon: '', dao: injector.get<DemandaEntregaDaoService>(DemandaEntregaDaoService), label: "Entrega da Demanda" },
             { collection: 'Documento', table: 'documentos', campo: 'numero', icon: '', dao: injector.get<DocumentoDaoService>(DocumentoDaoService), label: "Documento" },
             { collection: 'EixoTematico', codigo: 'MOD_EXTM', table: 'eixos_tematicos', campo: 'nome', icon: 'bi bi-gear', dao: injector.get<EixoTematicoDaoService>(EixoTematicoDaoService), label: "Eixo Temático", selectRoute: { route: ['cadastros', 'eixo-tematico'] } },
             { collection: 'Entidade', codigo: 'MOD_ENTD', table: 'entidades', campo: 'nome', icon: 'bi bi-bookmark-heart', dao: injector.get<EntidadeDaoService>(EntidadeDaoService), label: "Entidade", selectRoute: { route: ['configuracoes', 'entidade'] } },
@@ -132,7 +130,7 @@ export class EntityService {
             { collection: 'Tarefa', table: 'tarefas', campo: 'nome', icon: 'bi bi-boxes', dao: injector.get<TarefaDaoService>(TarefaDaoService), label: "Tarefa", selectRoute: { route: ['cadastros', 'tarefa'] } },
             { collection: 'Template', codigo: 'MOD_TEMP', table: 'templates', campo: 'titulo', icon: 'bi bi-archive', dao: injector.get<TemplateDaoService>(TemplateDaoService), label: "Template", selectRoute: { route: ['cadastros', 'template'] } },
             { collection: 'Teste', icon: 'bi bi-clipboard-check', label: "Teste" },
-            { collection: 'TipoAtividade', codigo: 'MOD_TIPO_ATV', table: 'tipos_atividades', campo: 'nome', icon: 'bi bi-check-all', dao: injector.get<TipoAtividadeDaoService>(TipoAtividadeDaoService), label: "Tipo de Atividade", selectRoute: { route: ['cadastros', 'tipo-atividade'] } },
+            { collection: 'TipoAtividade', codigo: 'MOD_TIPO_ATV', table: 'tipos_atividades', campo: 'nome', icon: 'bi bi-clipboard-pulse', dao: injector.get<TipoAtividadeDaoService>(TipoAtividadeDaoService), label: "Tipo de Atividade", selectRoute: { route: ['cadastros', 'tipo-atividade'] } },
             { collection: 'TipoAvaliacao', codigo: 'MOD_TIPO_AVAL', table: 'tipos_avaliacoes', campo: 'nome', icon: 'bi bi-question-square', dao: injector.get<TipoAvaliacaoDaoService>(TipoAvaliacaoDaoService), label: "Tipo de Avaliação", selectRoute: { route: ['cadastros', 'tipo-avaliacao'] } },
             { collection: 'TipoAvaliacaoJustificativa', table: 'tipos_avaliacoes_justificativas', campo: 'tipo_avaliacao_id', icon: '', dao: injector.get<TipoAvaliacaoJustificativaDaoService>(TipoAvaliacaoJustificativaDaoService), label: "Justificativa do Tipo de Avaliação" },
             { collection: 'TipoCapacidade', codigo: 'MOD_TIPO_CAP', table: 'tipos_capacidades', campo: 'descricao', icon: '', dao: injector.get<TipoCapacidadeDaoService>(TipoCapacidadeDaoService), label: "Tipo de Capacidade" },

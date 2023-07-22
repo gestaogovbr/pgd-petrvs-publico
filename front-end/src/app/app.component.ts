@@ -123,9 +123,8 @@ export class AppComponent {
       MATERIAIS_SERVICOS: { name: this.lex.noun("Material e Serviço", true), permition: '', route: ['cadastros', 'material-servico'], icon: this.entity.getIcon('MaterialServico') },
       TAREFAS: { name: this.lex.noun("Tarefa", true), permition: 'MOD_DMD', route: ['cadastros', 'tarefa'], icon: this.entity.getIcon('Tarefa') },
       TEMPLATES: { name: this.lex.noun("Template", true), permition: 'MOD_TEMP', route: ['cadastros', 'template'], icon: this.entity.getIcon('Template') },
+      /* Cadastros (Tipos) */
       TIPOS_ATIVIDADES: { name: this.lex.noun("Tipo de Atividade", true), permition: 'MOD_TIPO_ATV', route: ['cadastros', 'tipo-atividade'], icon: this.entity.getIcon('TipoAtividade') },
-      /*Gestão*/
-      ATIVIDADES: { name: this.lex.noun("Atividade", true), permition: 'MOD_ATV', route: ['cadastros', 'atividade'], icon: this.entity.getIcon('Atividade') },
       TIPOS_AVALIACOES: { name: this.lex.noun("Tipos de Avaliação", true), permition: 'MOD_TIPO_AVAL', route: ['cadastros', 'tipo-avaliacao'], icon: this.entity.getIcon('TipoAvaliacao') },
       TIPOS_DOCUMENTOS: { name: this.lex.noun("Tipos de Documento", true), permition: 'MOD_TIPO_DOC', route: ['cadastros', 'tipo-documento'], icon: this.entity.getIcon('TipoDocumento') },
       TIPOS_JUSTIFICATIVAS: { name: this.lex.noun("Tipos de Justificativa", true), permition: 'MOD_TIPO_JUST', route: ['cadastros', 'tipo-justificativa'], icon: this.entity.getIcon('TipoJustificativa') },
@@ -135,7 +134,7 @@ export class AppComponent {
       /*Gestão*/
       ADESAO: { name: this.lex.noun("Adesao", true), permition: 'MOD_ADES', route: ['gestao', 'adesao'], icon: this.entity.getIcon('Adesao') },
       CADEIAS_VALORES: { name: this.lex.noun("Cadeia de valor", true), permition: 'MOD_CADV', route: ['gestao', 'cadeia-valor'], icon: this.entity.getIcon('CadeiaValor') },
-      DEMANDAS: { name: this.lex.noun("Demanda", true), permition: '', route: ['gestao', 'demanda'], icon: this.entity.getIcon('Demanda') },
+      ATIVIDADES: { name: this.lex.noun("Atividades", true), permition: 'MOD_ATV', route: ['gestao', 'atividade'], icon: this.entity.getIcon('Atividade') },
       PLANEJAMENTOS_INSTITUCIONAIS: { name: this.lex.noun("Planejamento Institucional", true), permition: 'MOD_PLAN_INST', route: ['gestao', 'planejamento'], icon: this.entity.getIcon('Planejamento') },
       PLANOS_ENTREGAS: { name: this.lex.noun("Plano de Entrega", true), permition: 'MOD_PENT', route: ['gestao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega') },
       PLANOS_TRABALHOS: { name: this.lex.noun("Plano de Trabalho", true), permition: 'MOD_PTR', route: ['gestao', 'plano-trabalho'], icon: this.entity.getIcon('Plano') },
@@ -202,9 +201,8 @@ export class AppComponent {
           this.menuSchema.MATERIAIS_SERVICOS,
           this.menuSchema.TAREFAS,
           this.menuSchema.TEMPLATES,
-          this.menuSchema.TIPOS_ATIVIDADES,
           "-",
-          this.menuSchema.ATIVIDADES,
+          this.menuSchema.TIPOS_ATIVIDADES,
           this.menuSchema.TIPOS_AVALIACOES,
           this.menuSchema.TIPOS_DOCUMENTOS,
           this.menuSchema.TIPOS_JUSTIFICATIVAS,
@@ -220,7 +218,7 @@ export class AppComponent {
         menu: [
           this.menuSchema.ADESAO,
           this.menuSchema.CADEIAS_VALORES,
-          this.menuSchema.DEMANDAS,
+          this.menuSchema.ATIVIDADES,
           this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
           this.menuSchema.PLANOS_ENTREGAS,
           this.menuSchema.PLANOS_TRABALHOS,

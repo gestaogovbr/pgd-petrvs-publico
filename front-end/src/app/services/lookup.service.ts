@@ -79,21 +79,21 @@ export class LookupService {
     { key: "CONTRATADO_TEMPORARIO", value: "Contratado temporário" }
   ];
 
-  public DEMANDA_STATUS: LookupItem[] = [
-    { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star-half", color: "badge rounded-pill bg-success" },
-    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi bi-check-circle", color: "badge rounded-pill bg-primary" },
-    { key: "NAOCONCLUIDO", value: "Não concluído", icon: "bi bi-play-circle", color: "badge rounded-pill bg-info text-dark" },
-    { key: "INICIADO", value: "Iniciado", icon: "bi bi-play-circle", color: "badge rounded-pill bg-info text-dark" },
-    { key: "LANCADO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "badge rounded-pill bg-warning text-dark" }
+  public ATIVIDADE_STATUS: LookupItem[] = [
+    { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star-half", color: "success" },
+    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi bi-check-circle", color: "primary" },
+    { key: "NAOCONCLUIDO", value: "Não concluído", icon: "bi bi-play-circle", color: "info" },
+    { key: "INICIADO", value: "Iniciado", icon: "bi bi-play-circle", color: "info" },
+    { key: "LANCADO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" }
   ];
 
-  public DEMANDA_STATUS_COM_ARQUIVADAS: LookupItem[] = [
-    { key: "LANCADO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "badge rounded-pill bg-warning text-dark" },
-    { key: "INICIADO", value: "Iniciado", icon: "bi bi-play-circle", color: "badge rounded-pill bg-info text-dark" },
-    { key: "NAOCONCLUIDO", value: "Não concluído", icon: "bi bi-play-circle", color: "badge rounded-pill bg-info text-dark" },
-    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi bi-check-circle", color: "badge rounded-pill bg-primary" },
-    { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star-half", color: "badge rounded-pill bg-success" },
-    { key: "ARQUIVADO", value: "Arquivado", icon: "bi bi-inboxes", color: "badge rounded-pill bg-secondary" }
+  public ATIVIDADE_STATUS_COM_ARQUIVADAS: LookupItem[] = [
+    { key: "LANCADO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" },
+    { key: "INICIADO", value: "Iniciado", icon: "bi bi-play-circle", color: "info" },
+    { key: "NAOCONCLUIDO", value: "Não concluído", icon: "bi bi-play-circle", color: "info" },
+    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi bi-check-circle", color: "primary" },
+    { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star-half", color: "success" },
+    { key: "ARQUIVADO", value: "Arquivado", icon: "bi bi-inboxes", color: "secondary" }
   ];
 
   public DOCUMENTO_STATUS: LookupItem[] = [
@@ -434,11 +434,6 @@ export class LookupService {
     { key: 10, value: "Outubro" },
     { key: 11, value: "Novembro" },
     { key: 12, value: "Dezembro" }
-  ];
-
-  public CAMPOS_OCULTOS_DEMANDA: LookupItem[] = [
-    { key: 'nometeste', value: "Nome Teste" },
-    { key: 'observacaoteste', value: "Observação Teste" }
   ];
 
   public TIPO_CARGA_HORARIA: LookupItem[] = [

@@ -1,0 +1,19 @@
+<editable-form [form]="form!" [disabled]="formDisabled" (submit)="onSaveData()" (cancel)="onCancel()">
+    <div class="row">
+        <input-datetime [size]="6" [label]="lex.noun('Data de distribuição')" controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" disabled labelInfo="Data de cadastro da atividade"></input-datetime>
+        <input-datetime [size]="6" [label]="lex.noun('Prazo de entrega')" controlName="prazo_entrega" [control]="form!.controls.prazo_entrega" disabled labelInfo="Data estipulada para entrega da atividade"></input-datetime>
+    </div>
+    <separator></separator>
+    <div class="row">
+        <input-search label="Responsável" #usuario [size]="12" controlName="usuario_id" [dao]="usuarioDao" [join]="['planos.tipo_modalidade:id,nome', 'planos.entregas.entrega:id,nome']" labelInfo="Responsável por executar a atividade" (select)="onUsuarioSelect($event)"></input-search>
+    </div>
+    <div class="row">
+        <input-select [label]="lex.noun('Plano de trabalho')" [size]="7" controlName="plano_trabalho_id" #planoTrabalho [control]="form!.controls.plano_trabalho_id" [items]="planosTrabalhos" (change)="onPlanoChange($event)" [labelInfo]="lex.noun('Plano de trabalho')"></input-select>
+        <input-select [label]="lex.noun('Entrega do plano')" [size]="5" controlName="plano_trabalho_entrega_id" #entrega [control]="form!.controls.plano_trabalho_entrega_id" [items]="planosTrabalhosEntregas" [labelInfo]="lex.noun('Entrega') + ' do ' + lex.noun('plano de trabalho') + ' que a ' + lex.noun('atividade') + ' é referente'"></input-select>
+    </div>
+    <separator></separator>
+    <div class="row">
+        <input-datetime [size]="6" label="Inicio" controlName="data_inicio" [control]="form!.controls.data_inicio" labelInfo="Data em que o usuário iniciou a atividade"></input-datetime>
+        <input-switch label="Suspender as demais" [size]="6" controlName="suspender" [control]="form!.controls.suspender" [disabled]="!iniciadas.length ? '' : undefined" [labelInfo]="labelInfoSuspender"></input-switch>
+    </div>
+</editable-form>

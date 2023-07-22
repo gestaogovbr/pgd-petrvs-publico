@@ -1,7 +1,6 @@
 import { Base } from './base.model';
 import { Usuario } from './usuario.model';
 import { Projeto } from './projeto.model';
-import { Demanda } from './demanda.model';
 import { Unidade } from './unidade.model';
 import { MaterialServico, MaterialServicoUnidade } from './material-servico.model';
 

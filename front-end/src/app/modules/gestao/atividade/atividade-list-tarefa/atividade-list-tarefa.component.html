@@ -1,0 +1,47 @@
+<grid [control]="control" [add]="addEntrega.bind(this)" [disabled]="disabled ? 'true' : undefined" [minHeight]="isPersist ? 50 : 300" [hasDelete]="true" [editable]="editable ? 'true' : undefined">
+    <columns>
+        <column [title]="lex.noun('Tipo de Tarefa') + ' e Descrição'" [template]="tipoTarefaDescricao">
+            <ng-template let-row="row" #tipoTarefaDescricao>
+                <strong *ngIf="row.tipo_tarefa?.nome?.length" class="d-block">{{row.tipo_tarefa?.nome || ""}}</strong>
+                {{row.descricao}}
+            </ng-template>
+        </column>
+        <column type="timer" title="Tempo estimado" onlyHours field="tempo_estimado"></column>
+        <column title="Documento" [template]="documento">
+            <ng-template let-row="row" #documento>
+                <documentos-bedge [documento]="row.documento"></documentos-bedge>
+                <!--span class="badge bg-light text-dark" [attr.role]="row.numero_processo?.length ? 'button' : undefined" data-bs-toggle="tooltip" data-bs-placement="top" (click)="documentoService.onProcessoClick(row)" [title]="allPages.getButtonTitle(row.numero_processo, row.numero_documento)">
+                    <i [class]="'bi ' + (row.numero_processo?.length ? 'bi bi-folder-symlink' : 'bi bi-x-lg')"></i>
+                    {{row.numero_processo?.length ? row.numero_processo : "Não atribuído"}}
+                    <small *ngIf="row.numero_documento?.length"><br>Sei nº {{row.numero_documento}}</small>
+                </span/-->
+            </ng-template>
+        </column>
+        <column title="Concluído" [align]="'center'" [template]="concluido" [editTemplate]="editConcluido" [edit]="editable ? onColumnConcluidoEdit.bind(this) : undefined" [save]="editable ? onColumnConcluidoSave.bind(this) : undefined">
+            <ng-template let-row="row" #concluido>
+                <div class="text-center"><i *ngIf="row.concluido" class="bi bi-check-circle"></i></div>
+            </ng-template>
+            <ng-template let-row="row" #editConcluido>
+                <input-switch [size]="12" controlName="concluido" [control]="formEdit!.controls.concluido"></input-switch>
+            </ng-template>
+        </column>
+        <column title="Informações adicionais" [template]="tarefaComentarios">
+            <ng-template let-row="row" #tarefaComentarios>
+                <comentarios-widget [entity]="row" [noPersist]="isPersist ? undefined : 'true'" [selectable]="selectable" origem="ATIVIDADE_TAREFA" [grid]="grid" [save]="addComentarioResult.bind(this)"></comentarios-widget>
+                <!--separator title="Comentários" small [button]="!selectable ? addComentarioButton : undefined" (buttonClick)="addComentarioClick(row)"></separator>
+                <span *ngFor="let comentario of row.comentarios" #badge class="badge bg-light text-dark comentario-badge" role="button" (click)="comentarioClick(badge)" data-expanded="false" data-bs-toggle="tooltip" data-bs-placement="top" [title]="lookup.getValue(lookup.COMENTARIO_TIPO, comentario.tipo)">
+                    {{"• ".repeat(comentario.path?.includes("/") ? comentario.path.split("/").length-1 : 0)}}
+                    <i [class]="'me-1 ' + lookup.getIcon(lookup.COMENTARIO_TIPO, comentario.tipo)"></i>
+                    <span class="comentario-title">
+                        <strong>{{util.shortName(util.apelidoOuNome(comentario.usuario)!)}}</strong>
+                        • {{util.getDateTimeFormatted(comentario.data_hora)}}<br>
+                    </span>
+                    <span class="comentario-text">
+                        {{comentario.texto}}
+                    </span>
+                </span//-->
+            </ng-template>
+        </column>
+        <column *ngIf="editable && !selectable && !id_processo" type="options" [onEdit]="editEntrega.bind(this)" [onDelete]="deleteEntrega.bind(this)"></column>
+    </columns>
+</grid>

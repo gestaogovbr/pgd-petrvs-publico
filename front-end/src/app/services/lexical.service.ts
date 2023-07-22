@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Injectable, Injector } from '@angular/core';
 import { Nomenclatura } from '../models/entidade.model';
+import { IIndexable } from '../models/base.model';
 
 export type Translate = {
   [index: string]: {
@@ -14,6 +15,8 @@ export type Translate = {
 })
 export class LexicalService {
 
+  public PREPOSITIONS_MALE = ["o", "os", "ao", "aos", "do", "dos", "dum", "duns", "no", "nos", "um", "num", "uns", "nuns", "pelo", "pelos"];
+  public PREPOSITIONS_FEMALE = ["a", "as", "à", "às", "da", "das", "duma", "dumas", "na", "nas", "uma", "numa", "umas", "numas", "pela", "pelas"];
   public update?: () => void;
 
   /* Colocar single e plural em minúsculo (Sempre seguir a ordem Alfabética)*/
@@ -42,7 +45,7 @@ export class LexicalService {
     "motivo de afastamento": {single: "motivo de afastamento", plural: "motivos de afastamento", female: false},
     "notificação": {single: "notificação", plural: "notificações", female: true},
     "objetivo": {single: "objetivo", plural: "objetivos", female: false},
-    "pela Unidade Gestora": {single: "pela Unidade Gestora", plural: "pelas Unidades Gestoras", female: true},
+    "pela unidade gestora": {single: "pela Unidade Gestora", plural: "pelas Unidades Gestoras", female: true},
     "perfil": {single: "perfil", plural: "perfis", female: false},
     "planejamento institucional": {single: "planejamento institucional", plural: "planejamentos institucionais", female: false},
     "plano": {single: "plano", plural: "planos", female: false},
@@ -74,16 +77,17 @@ export class LexicalService {
     "usuario": {single: "usuário", plural: "usuários", female: false}
   };
 
+  public plurals: IIndexable = {}; // Vetor reverso, contendo os plurais para permitir encontrar a key do vetor defaults pelo plural (melhorar performance)
   public vocabulary: Translate = {};
   public cdRef?: ChangeDetectorRef;
 
   constructor(public injector: Injector) {
     this.vocabulary = this.defaults;
+    Object.entries(this.defaults).forEach(x => this.plurals[x[1].plural] = x[0]);
   }
 
   public loadVocabulary(nomenclatura?: Nomenclatura[]) {
     let result: Translate = {};
-
     Object.entries(this.defaults).forEach(([key, value]) => {
       const nome = nomenclatura?.find(x => x.nome == key);
       result[key] = nome ? {
@@ -98,12 +102,12 @@ export class LexicalService {
   }
 
   /**
-   * @param {string} name           A expressão que se deseja traduzir. Deve estar sempre no singular. A expressão deve conter, no máximo, 3 termos.
-   * @param {boolean} plural        Informa se a tradução deve vir no plural ou não. O padrão é false.
-   * @param {boolean} preposition   Informa se a tradução deve vir antecedida da preposição do/da/dos/das, conforme o caso. O padrão é false.
+   * @param string name           A expressão que se deseja traduzir. Deve estar sempre no singular. A expressão deve conter, no máximo, 3 termos.
+   * @param boolean plural        Informa se a tradução deve vir no plural ou não. O padrão é false.
+   * @param boolean preposition   Informa se a tradução deve vir antecedida da preposição, o padrão é false, sem preprosição.
    * @returns Retorna uma string que corresponde à tradução do parâmetro 'name'. O retorno poderá ser em um dos três formatos: lowercase,
    *          uppercase ou camelcase, a depender do formato recebido no parâmetro 'name'.
-   */
+  */
   public noun(name: string, plural: boolean = false, preposition: boolean = false): string {
     const index = name.toLowerCase();
     var camelCase_noum = "";
@@ -122,4 +126,45 @@ export class LexicalService {
       return name;
     }
   }
+
+  /**
+   * @param string phrase  A expressão que se deseja traduzir. Pode incluir preposição e/ou espaços no início. Irá respeitar o case da entrada.
+   * A tabela das preposições aceitas estão listadas abaixo (incluindo a primeira linha e a primeira coluna):
+   *       o    a    os    as    um  uma  uns  umas
+   *     +------------------------------------------
+   * a   | ao   à    aos   às 
+   * de  | do   da   dos   das   dum duma duns dumas
+   * em  | no   na   nos   nas   num numa nuns numas
+   * por | pelo pela pelos pelas
+   * @returns Retorna uma string que corresponde à tradução. O retorno irá respeitar o case da entrada, mas caso seja detectado camelcase, a inicial de cada palavra será maiúscula.
+   Pré-posições: 
+  */
+    public translate(phrase: string) {
+    /* Inicializa variáveis */
+    const regex = /^(\s*)(o\s|a\s|os\s|as\s|um\s|uma\s|uns\s|umas\s|ao\s|à\s|aos\s|às\s|do\s|da\s|dos\s|das\s|dum\s|duma\s|duns\s|dumas\s|no\s|na\s|nos\s|nas\s|num\s|numa\s|nuns\s|numas\s|pelo\s|pela\s|pelos\s|pelas|)(.*)$/i;
+    let groups = regex.exec(phrase);
+    let spaces = groups ? groups[1] : "";
+    let preposition = groups ? groups[2].trim() : "";
+    let noun = groups ? groups[3] : "";
+    let plural = this.plurals[noun];
+    let key = plural || noun;
+    let native = this.defaults[key];
+    let database = this.vocabulary[key];
+    /* Verifica se é necessário fazer a transformação */
+    if(native.single != database.single || native.plural != database.plural) {
+      /* Tem preposição */
+      if(preposition?.length && !["de", "em", "por"].includes(preposition.toLowerCase()) && native.female !== database.female) {
+        preposition = this.keepCase(preposition, native.female ? this.PREPOSITIONS_MALE[this.PREPOSITIONS_FEMALE.indexOf(preposition.toLowerCase())] : this.PREPOSITIONS_FEMALE[this.PREPOSITIONS_MALE.indexOf(preposition.toLowerCase())]);
+      }
+      noun = this.keepCase(noun, plural ? database.plural : database.single);
+    }
+    return spaces + (preposition?.length ? preposition + " " : "") + noun;
+  }
+
+  public keepCase(source: string, destination: string) {
+    const isCamelCase = (source[0] == source[0].toUpperCase() && source.length > 1 && source[1] != source[1].toUpperCase());
+    const isAllUpperCase = source == source.toUpperCase();
+    return isAllUpperCase ? destination.toUpperCase() : isCamelCase ? destination.split(" ").map(x => !this.PREPOSITIONS_MALE.includes(x) && !this.PREPOSITIONS_FEMALE.includes(x) ? x[0].toUpperCase() + x.substring(1) : x).join(" ") : destination;
+  }
+
 }

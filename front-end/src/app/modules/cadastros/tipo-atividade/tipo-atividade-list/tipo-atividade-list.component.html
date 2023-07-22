@@ -1,22 +1,43 @@
-<!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
-<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
-    [selectable]="selectable" (select)="onSelect($event)"
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy"
+    [join]="join" [selectable]="selectable" (select)="onSelect($event)" 
     [hasAdd]="auth.hasPermissionTo('MOD_TIPO_ATV_INCL')"
     [hasEdit]="auth.hasPermissionTo('MOD_TIPO_ATV_EDT')">
     <toolbar *ngIf="!selectable"></toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [hidden]="filterHidden">
         <div class="row">
-            <input-text [size]="12" [label]="'Nome ' + lex.noun('tipo de atividade',false,true)" controlName="nome"
-                [control]="filter!.controls.nome" placeholder="Nome..."></input-text>
+            <input-text [size]="12" label="Nome" controlName="nome" [control]="filter!.controls.nome"></input-text>
         </div>
     </filter>
     <columns>
-        <column title="Descrição" [template]="columnDescricao">
-            <ng-template let-row="row" #columnDescricao>
-                <i [class]="row.icone" [style.color]="row.cor"></i><span [style.color]="row.cor"> {{row.nome}}</span>
+        <column title="Nome" [template]="columnNome">
+            <ng-template let-row="row" #columnNome>
+                <span class="d-block">{{row.nome}}</span>
+                <span *ngIf="row.tipo_atividade" class="badge bg-light text-dark">
+                    <i class="bi bi-check-all"></i>
+                    {{row.tipo_atividade.nome}}
+                </span>
             </ng-template>
         </column>
-        <column type="options" [onEdit]="edit" [options]="options"></column>
+        <column [title]="lex.noun('Unidade')" [template]="columnUnidade">
+            <ng-template let-row="row" #columnUnidade>
+                <span> {{row.unidade.nome}}</span>
+            </ng-template>
+        </column>
+        <column type="options" [onEdit]="edit" [options]="options"></column>        
     </columns>
+    <report>
+        <column title="Nome" [template]="reportNome"><ng-template let-row="row" #reportNome>{{row.nome}}</ng-template>
+        </column>
+        <column [title]="lex.noun('Esforço')" [template]="reportEsforco"><ng-template let-row="row"
+                #reportEsforco>{{row.esforco}}</ng-template></column>
+        <column title="Dias planejamento" [template]="reportDiasPlanejado"><ng-template let-row="row"
+                #reportDiasPlanejado>{{row.dias_planejado}}</ng-template></column>
+        <column title="Etiquetas" [template]="reportEtiquetas"><ng-template let-row="row"
+                #reportEtiquetas>{{getReportEtiquetas(row)}}</ng-template></column>
+        <column title="Check-list" [template]="reportChecklist"><ng-template let-row="row"
+                #reportChecklist>{{getReportChecklist(row)}}</ng-template></column>
+        <column title="Comentário" [template]="reportComentario"><ng-template let-row="row"
+                #reportComentario>{{row.comentario_predefinido}}</ng-template></column>
+    </report>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

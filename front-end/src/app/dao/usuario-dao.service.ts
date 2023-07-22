@@ -1,15 +1,13 @@
 
 import { Injectable, Injector } from '@angular/core';
-import { ChartDataSets, ChartOptions } from 'chart.js';
 import { TemplateDataset } from '../components/input/input-editor/input-editor.component';
 import { Afastamento } from '../models/afastamento.model';
-import { DemandaPausa } from '../models/demanda-pausa.model';
 import { Plano } from '../models/plano.model';
-import { Unidade } from '../models/unidade.model';
 import { Usuario } from '../models/usuario.model';
 import { Efemerides, TipoContagem } from '../services/calendar.service';
 import { LookupService } from '../services/lookup.service';
 import { DaoBaseService } from './dao-base.service';
+import { AtividadePausa } from '../models/atividade-pausa.model';
 
 export type UsuarioDashboard = {
   planos: [
@@ -22,14 +20,14 @@ export type UsuarioDashboard = {
       total_horas: number
     }
   ],
-  demandas: {
+  atividades: {
     atrasadas: number,
     avaliadas: number,
     concluidas: number,
     media_avaliacoes: number,
     nao_concluidas: number,
     nao_iniciadas: number,
-    total_demandas: number,
+    total_atividades: number,
     horas_atrasadas: number,
     horas_avaliadas: number,
     horas_concluidas: number,
@@ -134,7 +132,7 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
     });
   }
   
-  public calculaDataTempoUnidade(inicio: string, fimOuTempo: string | number, cargaHoraria: number, unidade_id: string, tipo: TipoContagem, pausas?: DemandaPausa[], afastamentos?: Afastamento[]): Promise<Efemerides | undefined> {
+  public calculaDataTempoUnidade(inicio: string, fimOuTempo: string | number, cargaHoraria: number, unidade_id: string, tipo: TipoContagem, pausas?: AtividadePausa[], afastamentos?: Afastamento[]): Promise<Efemerides | undefined> {
     return new Promise<Efemerides | undefined>((resolve, reject) => {
       this.server.post('api/Teste/calculaDataTempoUnidade', { inicio: inicio, fimOuTempo: fimOuTempo, cargaHoraria: cargaHoraria, unidade_id: unidade_id, tipo: tipo, pausas: pausas, afastamentos: afastamentos })
         .subscribe(response => {

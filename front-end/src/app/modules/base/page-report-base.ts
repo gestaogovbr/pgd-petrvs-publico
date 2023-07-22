@@ -3,7 +3,6 @@ import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { DaoBaseService } from 'src/app/dao/dao-base.service';
 import { CalendarService } from 'src/app/services/calendar.service';
 import { Base } from 'src/app/models/base.model';
-import { Demanda } from 'src/app/models/demanda.model';
 import { PageBase } from './page-base';
 import { Plano } from 'src/app/models/plano.model';
 

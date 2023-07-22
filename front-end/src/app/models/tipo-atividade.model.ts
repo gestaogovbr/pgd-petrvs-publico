@@ -1,14 +1,22 @@
-import { Base } from './base.model';
+import { LookupItem } from '../services/lookup.service';
+import { Base, IIndexable } from './base.model';
+import { Md5 } from 'ts-md5/dist/md5';
+import { Unidade } from './unidade.model';
+
+export type Complexidade = {id: string, grau: string, fator: number, tempo: number, padrao: boolean};
 
 export class TipoAtividade extends Base {
-    public nome: string ="";     //Descrição do tipo/categoria da atividade
-    public icone: string = "";      //Classe do icone
-    public cor: string ="";      //Código da cor em hex
-    public data_inicio: Date = new Date(); /* Data de início */
-    public data_fim: Date | null = null; /* Data do fim */
+    public observacoes: string | null = null; /* Observação sobre o afastamento */
+    public inicio_afastamento: Date = new Date(); /* Inicio do afastamento  */
+    public tipoAtividade?: TipoAtividade;
+    public unidade?: Unidade;
+
+    public nome: string = "";  //Nome da classe de atividade
+    public esforco: number = 8; //Tempo previsto para a execução da atividade (Horas decimais)
+    public dias_planejado: number = 0; //Sugestão de dias para conclusão da atividade independente de quando iniciado (influência no prazo da atividade)
+    public etiquetas: LookupItem[] = []; //Nome das etiquetas predefinidas para a atividade
+    public checklist: LookupItem[] = []; //Nome dos checklist predefinidas para a atividade
+    public comentario: string = ""; //Comentário predefinido para a atividade
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }
-
-
- 

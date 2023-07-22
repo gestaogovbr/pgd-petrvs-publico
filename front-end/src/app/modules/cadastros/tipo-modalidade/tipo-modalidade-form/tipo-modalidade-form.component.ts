@@ -18,17 +18,11 @@ export class TipoModalidadeFormComponent extends PageFormBase<TipoModalidade, Ti
     super(injector, TipoModalidade, TipoModalidadeDaoService);
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
-      atividades_homologadas: { default: "" },
-      dispensa_avaliacao: { default: "" },
-      exige_adesao: { default: true },
-      exige_assinatura: { default: true },
-      exige_assinatura_gestor_unidade: { default: false },
-      exige_assinatura_gestor_entidade: { default: false },
-      ganho_produtividade: { default: 0 },
-      calcula_tempo_despendido: { default: true },
-      data_inicio: { default: "" },
-      data_fim: { default: "" },
-      comparecer_presencialmente: { default: true }
+      plano_trabalho_assinatura_participante: { default: true },
+      plano_trabalho_assinatura_gestor_unidade: { default: false },
+      plano_trabalho_assinatura_gestor_entidade: { default: false },
+      atividade_tempo_despendido: { default: false },
+      atividade_esforco: { default: false },
     }, this.cdRef, this.validate);
   }
 

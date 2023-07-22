@@ -515,9 +515,5 @@ export class PlanoFormComponent extends PageFormBase<Plano, PlanoDaoService> {
     return this.form!.controls.documento_id.value == documento.id;
   }
 
-  public onProcessoClick(row: any) {
-    this.allPages.openDocumentoSei(row.id_processo, row.id_documento);
-  }
-
 }
 

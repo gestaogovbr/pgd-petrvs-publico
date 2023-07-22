@@ -22,7 +22,7 @@ class CreateAtividadesTable extends Migration
             $table->softDeletes();
             // Campos:
             $table->integer('numero')->unique()->comment("Número da atividade (Gerado pelo sistema)");
-            $table->text('assunto')->nullable()->comment("Assunto da atividade");
+            $table->text('descricao')->nullable()->comment("Assunto da atividade");
             $table->dateTime('data_distribuicao')->comment("Data de cadastro da atividade");
             $table->float('carga_horaria')->nullable()->comment("Carga horária que será utilizada para todos os cálculos (vinda do plano de trabalho)");
             $table->float('tempo_planejado')->comment("Diferença entre data_distribuicao e prazo_entrega em horas (úteis ou corridas, configurada na unidade)");

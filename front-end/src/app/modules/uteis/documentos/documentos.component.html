@@ -29,10 +29,11 @@
         <div class="row">
           <div class="col-12 text-wrap">
             <badge [color]="lookup.getColor(lookup.DOCUMENTO_ESPECIE, row.especie)" icon="bi bi-hash" [label]="lookup.getValue(lookup.DOCUMENTO_ESPECIE, row.especie)"></badge>
-            <badge *ngIf="row.numero_processo?.length" icon="bi bi-folder-symlink" [click]="documentoService.onProcessoClick.bind(this)" [hint]="documentoService.processoHint(row)">
+            <documentos-badge [documento]="row"></documentos-badge>
+            <!--badge *ngIf="row.numero_processo?.length" icon="bi bi-folder-symlink" [click]="documentoService.onProcessoClick.bind(this)" [hint]="documentoService.processoHint(row)">
               {{row.numero_processo || "Não atribuído"}}<br>
               <small>Sei nº {{row.numero_documento}}</small>
-            </badge>
+            </badge/-->
             <badge [color]="lookup.getColor(lookup.DOCUMENTO_STATUS, row.status)" [icon]="lookup.getIcon(lookup.DOCUMENTO_STATUS, row.status)" [label]="lookup.getValue(lookup.DOCUMENTO_STATUS, row.status)"></badge>
             <badge *ngFor="let tag of extraTags(entity!, row, metadata)" [color]="tag.color" [icon]="tag.icon" [label]="tag.value"></badge>
             <separator *ngIf="row.assinaturas?.length" title="Assinaturas" small transparent>

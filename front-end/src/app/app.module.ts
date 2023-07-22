@@ -12,7 +12,6 @@ import { DialogComponent } from './services/dialog/dialog.component';
 import { SpinnerOverlayComponent } from './services/spinner-overlay/spinner-overlay.component';
 import { ComponentsModule } from './components/components.module';
 import { TesteComponent } from './modules/teste/teste.component';
-import { DemandaModule } from './modules/gestao/demanda/demanda.module';
 import { RelatorioModule } from './modules/relatorios/relatorio.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LogModule } from './modules/logs/log.module';
@@ -22,6 +21,7 @@ import { TesteFormComponent } from './modules/teste/teste-form/teste-form.compon
 import { CadeiaValorModule } from './modules/gestao/cadeia-valor/cadeia-valor.module';
 import { CurriculumModule } from './modules/curriculum/curriculum.module';
 import { CurriculumListComponent } from './modules/cadastros/curriculum/curriculum-list/curriculum-list.component';
+import { AtividadeModule } from './modules/gestao/atividade/atividade.module';
 
 @NgModule({
   declarations: [
@@ -43,7 +43,7 @@ import { CurriculumListComponent } from './modules/cadastros/curriculum/curricul
     ReactiveFormsModule,
     ComponentsModule,
     AppRoutingModule,
-    DemandaModule,
+    AtividadeModule,
     ChartsModule,
     RelatorioModule,
     UteisModule,

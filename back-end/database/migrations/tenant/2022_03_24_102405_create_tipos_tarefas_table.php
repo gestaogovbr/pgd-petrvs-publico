@@ -23,10 +23,7 @@ class CreateTiposTarefasTable extends Migration
             $table->string('nome', 256)->comment("Nome do tipo de tarefa");
             $table->float('tempo_estimado')->comment("Tempo estimado para a execução do tipo de tarefa (Horas decimais)");
             $table->tinyInteger('documental')->comment("Se o tipo de tarefa requer obrigatoriamente um documento");
-            $table->text('comentario_predefinido')->nullable()->comment("Comentário predefinida para o tipo de tarefa");
-            // Chaves estrangeiras:
-            $table->foreignUuid('unidade_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Unidade do tipo de tarefa");
-            $table->foreignUuid('entidade_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Entidade do tipo de tarefa");
+            $table->text('comentario')->nullable()->comment("Comentário predefinida para o tipo de tarefa");
         });
     }
 

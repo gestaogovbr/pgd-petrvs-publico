@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DemandaModule } from './../gestao/demanda/demanda.module';
+import { DemandaModule } from '../gestao/atividade/atividade.module';
 import { RelatorioRoutingModule } from 'src/app/modules/relatorios/relatorio-routing.module';
 import { ComponentsModule } from 'src/app/components/components.module';
 import { ReactiveFormsModule } from '@angular/forms';
