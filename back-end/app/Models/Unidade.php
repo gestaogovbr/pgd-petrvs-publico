@@ -149,8 +149,8 @@ class Unidade extends ModelBase
     { 
         $result = [];
         foreach($this->usuarios as $usuario){
-            $atribuicoes = Atribuicao::where('unidade_usuario_id', $usuario->pivot->id)->get();
-            if(count($atribuicoes) > 0) $result[$usuario->id] = $atribuicoes;
+            $atribuicoes = Atribuicao::where('unidade_usuario_id', $usuario->pivot->id)->get()->toArray();
+            if(count($atribuicoes) > 0) $result[$usuario->id] = array_map(fn($a) => $a["atribuicao"],$atribuicoes);
         }
         return $result;
     }

@@ -157,7 +157,7 @@ class AtividadeService extends ServiceBase
             array_push($unidades_ids, $unidade_id);
         } else {
             foreach($usuario->lotacoes as $lotacao) {
-                array_push($unidades_ids, $lotacao->unidade_id);
+                array_push($unidades_ids, $lotacao->id);
             }
         }
         $where = [];

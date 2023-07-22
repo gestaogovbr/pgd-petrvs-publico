@@ -51,7 +51,6 @@ class ProgramaParticipanteService extends ServiceBase {
                 $novoParticipante->usuario_id = $np->id;
                 $novoParticipante->usuario = $np;
                 $novoParticipante->habilitado = 0;
-                // $novoParticipante->_usuario_lotacao_unidade_sigla = $np->;
                 $rows->push($novoParticipante);
             };
         }

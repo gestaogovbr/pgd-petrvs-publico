@@ -102,7 +102,10 @@ class Usuario extends Authenticatable
 
     public $delete_cascade = ['favoritos','vinculosUnidades'];
 
-    // Has
+    // hasOne
+    public function gerenciaEntidade() { return $this->hasOne(Entidade::class, 'gestor_id'); } 
+    public function gerenciaSubstitutaEntidade() { return $this->hasOne(Entidade::class, 'gestor_substituto_id'); }
+    // hasMany
     public function afastamentos() { return $this->hasMany(Afastamento::class); }
     public function anexos() { return $this->hasMany(Anexo::class); }
     public function consolidacoes() { return $this->hasMany(PlanoTrabalhoConsolidacao::class, 'avaliador_id'); }
@@ -124,13 +127,15 @@ class Usuario extends Authenticatable
     public function participantesPrograma() { return $this->hasMany(ProgramaParticipante::class); }
     public function integracoes() { return $this->hasMany(Integracao::class); }
     public function vinculosUnidades() { return $this->hasMany(UnidadeUsuario::class); }
-    public function gerenciaEntidade() { return $this->hasOne(Entidade::class, 'gestor_id'); } 
-    public function gerenciaSubstitutaEntidade() { return $this->hasOne(Entidade::class, 'gestor_substituto_id'); } 
     public function planosEntregaCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }  
     public function planosTrabalhoCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }  
-    // Belongs
+    // belongsTo
     public function perfil() { return $this->belongsTo(Perfil::class); }     //nullable
-    public function unidades() { return $this->belongsToMany(Unidade::class); }
+    // belongsToMany
+    public function unidades() { return $this->belongsToMany(Unidade::class)->withTimestamps()->withPivot('id'); }
+    // Others relationships
+    public function gerenciaTitular() { return $this->vinculosUnidades()->has('gestor')->first()->unidade; }
+    public function gerenciasSubstitutas() { return $this->vinculosUnidades()->has('gestorSubstituto')->with('unidade')->get(); }
     // Mutattors e Casts
     public function getUrlFotoAttribute($value) 
     {
@@ -166,12 +171,16 @@ class Usuario extends Authenticatable
         return Change::where('user_id', $this->id)->get()->toArray() ?? []; 
         //Não pode ser usado um relacionamento do Laravel porque as tabelas estão em bancos distintos
     }
-    public function getGerenciaTitularAttribute()
+
+
+
+
+/*     public function getGerenciaTitularAttribute()
     {
         $result = null;
         foreach ($this->vinculosUnidades as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'GESTOR')) > 0) $result = $vinculo->unidade; }
         return $result;
-    }
+    } */
     public function getGerenciasSubstitutasAttribute()
     {
         $result = [];
@@ -203,8 +212,8 @@ class Usuario extends Authenticatable
     { 
         $result = [];
         foreach($this->unidades as $unidade){
-            $atribuicoes = Atribuicao::where('unidade_usuario_id', $unidade->pivot->id)->get();
-            if(count($atribuicoes) > 0) array_push($result, [$unidade,$atribuicoes->toArray()]);
+            $atribuicoes = Atribuicao::where('unidade_usuario_id', $unidade->pivot->id)->get()->toArray();
+            if(count($atribuicoes) > 0) $result[$unidade->id] = array_map(fn($a) => $a["atribuicao"],$atribuicoes); 
         }
         return $result;
     }

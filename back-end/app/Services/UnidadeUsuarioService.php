@@ -22,7 +22,7 @@ class UnidadeUsuarioService extends ServiceBase
                 "id" => $id_usuario,
                 "usuario" => Usuario::find($id_usuario),
                 "usuario_id" => $id_usuario,
-                "atribuicoes" => array_map(fn($x) => $x->atribuicao, $atribuicoes->toArray())
+                "atribuicoes" => $atribuicoes
             ];                
         }
         return ['rows' => array_values($result), 'unidade' => $unidade];

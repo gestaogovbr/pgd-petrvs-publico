@@ -19,10 +19,18 @@ class UnidadeUsuario extends ModelBase
         'usuario_id', /* char(36); NOT NULL; */// Servidor participante do vínculo
         //'deleted_at', /* timestamp; */
     ];
-    // Has
+    // hasOne
+    public function lotado() { return $this->hasOne(Atribuicao::class)->where('atribuicao','LOTADO'); } 
+    public function gestor() { return $this->hasOne(Atribuicao::class)->where('atribuicao','GESTOR'); } 
+    public function gestorSubstituto() { return $this->hasOne(Atribuicao::class)->where('atribuicao','GESTOR_SUBSTITUTO'); } 
+    public function colaborador() { return $this->hasOne(Atribuicao::class)->where('atribuicao','COLABORADOR'); } 
+    public function homologadorPlanoEntrega() { return $this->hasOne(Atribuicao::class)->where('atribuicao','HOMOLOGADOR_PLANO_ENTREGA'); } 
+    public function avaliadorPlanoEntrega() { return $this->hasOne(Atribuicao::class)->where('atribuicao','AVALIADOR_PLANO_ENTREGA'); } 
+    public function avaliadorPlanoTrabalho() { return $this->hasOne(Atribuicao::class)->where('atribuicao','AVALIADOR_PLANO_TRABALHO'); } 
+    // hasMany
     public function atribuicoes() { return $this->hasMany(Atribuicao::class); } 
     // Belongs
     public function unidade() { return $this->belongsTo(Unidade::class); }
     public function usuario() { return $this->belongsTo(Usuario::class); }
-    //Mutator e casts
+    //Mutators and casts
 }
