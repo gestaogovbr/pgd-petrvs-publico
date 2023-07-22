@@ -102,10 +102,9 @@ export class LookupService {
   ];
 
   public DOCUMENTO_ESPECIE: LookupItem[] = [
-    { key: 'TERMO_ADESAO', value: "Termo de adesão (OBSOLETO)", icon: "bi bi-file-earmark-excel", color: "danger" },
     { key: 'SEI', value: "Documento SEI", icon: "bi bi-exclamation", color: "primary"},
     { key: 'TCR', value: "TCR", icon: "bi bi-file-medical-fill", color: "success"},
-    { key: 'TCR_CANCELAMENTO', value: "Cancelamento TCR", icon: "bi bi-file-earmark-x", color: "danger" },
+    //{ key: 'TCR_CANCELAMENTO', value: "Cancelamento TCR", icon: "bi bi-file-earmark-x", color: "danger" },
     { key: 'OUTRO', value: "Outro", icon: "bi bi-question-circle", color: "danger" },
     { key: 'NOTIFICACAO', value: "Notificação", icon: "bi bi-bell", color: "info" }
   ]

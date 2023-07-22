@@ -6,7 +6,6 @@ import { PlanoTrabalhoListComponent } from './plano-trabalho-list/plano-trabalho
 import { ComponentsModule } from 'src/app/components/components.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UteisModule } from '../../uteis/uteis.module';
-import { PlanoTrabalhoTermoAdesaoComponent } from './plano-trabalho-termo-adesao/plano-trabalho-termo-adesao.component';
 import { PlanoTrabalhoFormTermoComponent } from './plano-trabalho-form-termo/plano-trabalho-form-termo.component';
 import { PlanoTrabalhoListEntregaComponent } from './plano-trabalho-list-entrega/plano-trabalho-list-entrega.component';
 
@@ -16,7 +15,6 @@ import { PlanoTrabalhoListEntregaComponent } from './plano-trabalho-list-entrega
     PlanoTrabalhoFormComponent,
     PlanoTrabalhoListComponent,
     PlanoTrabalhoListEntregaComponent,
-    PlanoTrabalhoTermoAdesaoComponent,
     PlanoTrabalhoFormTermoComponent
   ],
   imports: [

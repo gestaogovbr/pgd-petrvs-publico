@@ -6,11 +6,6 @@ import { Unidade } from './unidade.model';
 export type Complexidade = {id: string, grau: string, fator: number, tempo: number, padrao: boolean};
 
 export class TipoAtividade extends Base {
-    public observacoes: string | null = null; /* Observação sobre o afastamento */
-    public inicio_afastamento: Date = new Date(); /* Inicio do afastamento  */
-    public tipoAtividade?: TipoAtividade;
-    public unidade?: Unidade;
-
     public nome: string = "";  //Nome da classe de atividade
     public esforco: number = 8; //Tempo previsto para a execução da atividade (Horas decimais)
     public dias_planejado: number = 0; //Sugestão de dias para conclusão da atividade independente de quando iniciado (influência no prazo da atividade)

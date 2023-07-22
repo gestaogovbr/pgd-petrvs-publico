@@ -12,18 +12,6 @@
         <column title="Nome" field="nome" orderBy="nome"></column>
         <column [title]="lex.noun('Tempo estimado') + ' /(h)'" field="tempo_estimado"></column>
         <column title="Documental?" type="select" field="documental" [items]="lookup.SIMNAO"></column>
-        <column [title]="lex.noun('Entidade')+'/'+lex.noun('Unidade')" [template]="columnEntidadeUnidade">
-            <ng-template let-row="row" #columnEntidadeUnidade>
-                <span *ngIf="row.entidade" class="badge bg-light text-dark">
-                    <i class="fas fa-university"></i>
-                    {{row.entidade.sigla}}
-                </span>
-                <span *ngIf="row.unidade" class="badge bg-light text-dark">
-                    <i class="bi bi-briefcase"></i>
-                    {{row.unidade.sigla}}
-                </span>
-            </ng-template>
-        </column>
         <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>

@@ -1,24 +1,23 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { TarefaDaoService } from 'src/app/dao/tipo-tarefa-dao.service';
-import { Tarefa } from 'src/app/models/tipo-tarefa.model';
+import { TipoTarefaDaoService } from 'src/app/dao/tipo-tarefa-dao.service';
+import { TipoTarefa } from 'src/app/models/tipo-tarefa.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
-import { DaoBaseService } from 'src/app/dao/dao-base.service';
 
 @Component({
   selector: 'app-tarefa-list',
   templateUrl: './tarefa-list.component.html',
   styleUrls: ['./tarefa-list.component.scss']
 })
-export class TarefaListComponent extends PageListBase<Tarefa, TarefaDaoService> {
+export class TipoTarefaListComponent extends PageListBase<TipoTarefa, TipoTarefaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
   constructor(public injector: Injector) {
-    super(injector, Tarefa, TarefaDaoService);
+    super(injector, TipoTarefa, TipoTarefaDaoService);
     /* Inicializações */
-    this.title = this.lex.noun("Tarefa", true);
-    this.code="MOD_TRF";
+    this.title = this.lex.noun("Tipo de Tarefa", true);
+    this.code = "MOD_TRF";
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}
      });

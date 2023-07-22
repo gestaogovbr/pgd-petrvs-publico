@@ -16,8 +16,6 @@ export class ProjetoRecurso extends Base {
     public tipo: ProjetoRecursoTipo = "MATERIAL"; /* Tipo do recurso */
     public unidade_medida: MaterialServicoUnidade = "UNIDADE"; /* Unidade do recurso */
     public valor: number = 0; /* Valor de cursto do recurso */
-    public data_inicio: Date = new Date(); /* Data de criação */
-    public data_fim: Date | null = null; /* Data fonal do registro */
 
     public projeto_id: string = "";
     public usuario_id: string | null = null;

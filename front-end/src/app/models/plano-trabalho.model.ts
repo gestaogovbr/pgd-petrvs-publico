@@ -7,6 +7,7 @@ import { TipoCargaHoraria } from './entidade.model';
 import { PlanoEntrega } from './plano-entrega.model';
 import { PlanoTrabalhoEntrega } from './plano-trabalho-entrega.model';
 import { Documento, HasDocumentos } from './documento.model';
+import { Atividade } from './atividade.model';
 
 export type PlanoMetadados = {
   concluido: boolean
@@ -29,6 +30,7 @@ export class PlanoTrabalho extends Base implements HasDocumentos {
     public metadados: PlanoMetadados | undefined = undefined; /* Campo virtual contendo informações calculadas pelo servidor */
     public entregas: PlanoTrabalhoEntrega[] = []; /* Entregas vinculadas ao Plano de Trabalho*/
     public documentos: Documento[] = [];
+    public atividades: Atividade[] = [];
     
     public programa_id: string = "";
     public usuario_id: string = "";

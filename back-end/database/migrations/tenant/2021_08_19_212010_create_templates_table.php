@@ -23,7 +23,7 @@ class CreateTemplatesTable extends Migration
             // Campos:
             $table->string('codigo')->nullable()->comment("Código opcional para o template");
             $table->integer('numero')->unique()->default(0)->comment("Número do template (Gerado pelo sistema)");
-            $table->enum('especie', ['TERMO_ADESAO', 'SEI', 'TCR', 'NOTIFICACAO'])->comment("Especificação da espécie do template (interno do sistema)");
+            $table->enum('especie', ["SEI", "TCR", "OUTRO", "NOTIFICACAO"])->comment("Especificação da espécie do template (interno do sistema)");
             $table->string('titulo', 256)->comment("Título do template");
             $table->text('conteudo')->nullable()->comment("Comentário predefinida para a tarefa");
             $table->json("dataset")->nullable()->comment("Dados da parametrização");

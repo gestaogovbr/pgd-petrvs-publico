@@ -9,7 +9,7 @@ import { TipoDocumento } from './tipo-documento.model';
 import { TipoProcesso } from './tipo-processo.model';
 
 export type DocumentoTipo = "HTML" | "PDF" | "LINK";
-export type DocumentoEspecie = "TERMO_ADESAO" | "SEI" | "TCR" | "OUTRO" | "NOTIFICACAO";
+export type DocumentoEspecie = "SEI" | "TCR" | "OUTRO" | "NOTIFICACAO";
 export type DocumentoStatus = "GERADO" | "AGUARDANDO_SEI";
 export type DocumentoLinkTipo = "SEI" | "URL";
 export type DocumentoLink = {
@@ -42,7 +42,7 @@ export class Documento extends Base {
     public numero: number = 0; /* Numero do documento (gerado pelo sistema) */
     public titulo: string = ""; /* Título do documento */
     public tipo: DocumentoTipo = "HTML"; /* Especificação da espécie do documento (interno do sistema) */
-    public especie: DocumentoEspecie = "TERMO_ADESAO"; /* Especificação da espécie do documento (interno do sistema) */
+    public especie: DocumentoEspecie = "OUTRO"; /* Especificação da espécie do documento (interno do sistema) */
     public conteudo: string | null = null; /* "Conteúdo do arquivo */
     public metadados: any = null; /* Metadados */
     public link: DocumentoLink | null = null;

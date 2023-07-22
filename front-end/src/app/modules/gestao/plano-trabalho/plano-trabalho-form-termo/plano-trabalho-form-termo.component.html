@@ -6,7 +6,7 @@
         </div>
         <div class="row">
             <input-search #unidade [size]="5" disabled controlName="unidade_id" [dao]="unidadeDao" ></input-search>
-            <input-search #tipo_modalidade disabled [size]="3" controlName="tipo_modalidade_id" [dao]="tipoModalidadeDao"></input-search>
+            <input-search #tipoModalidade disabled [size]="3" controlName="tipo_modalidade_id" [dao]="tipoModalidadeDao"></input-search>
             <input-text numbers disabled [size]="2" label="% prod." icon="bi bi-hourglass-split" controlName="ganho_produtividade" [control]="form!.controls.ganho_produtividade" [labelInfo]="'Percentual de ganho de produtividade (Será descontado do ' + lex.noun('tempo pactuado')+')'"></input-text>
             <input-display [size]="2" label="H. Parciais" icon="bi bi-clock" controlName="tempo_proporcional" [control]="form!.controls.tempo_proporcional" labelInfo="Total de horas menos os afastamentos."></input-display>
         </div>
@@ -23,7 +23,7 @@
         <input-search [size]="4" #tipoDocumento [disabled]="!form!.controls.numero_processo.value?.length ? 'true' : undefined" controlName="tipo_documento_id" [dao]="tipoDocumentoDao"></input-search>
         <input-switch label="Vinculadas" [disabled]="entity?.atividades?.length ? 'true' : undefined" [size]="2" controlName="vinculadas" [control]="form!.controls.vinculadas" (change)="onVinculadasChange($event)" labelInfo="Se inclui as atividades das unidades vinculadas a unidade do plano"></input-switch>
     </div>
-    <separator title="Pré-visualização do termo de adesão" collapse [collapsed]="true">
+    <!--separator title="Pré-visualização do termo de adesão" collapse [collapsed]="true">
         <plano-termo-adesao #termo [plano]="entity" [vinculadas]="!!form?.controls?.vinculadas?.value"></plano-termo-adesao>
-    </separator>
+    </separator/-->
 </editable-form>

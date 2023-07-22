@@ -81,7 +81,7 @@ export class ForcaDeTrabalhoReportAreaComponent extends PageReportBase<Usuario, 
     //events: ['click'],
     responsive: true
   };
-  public opcoesGraficoBarrasDemandas: ChartOptions = {
+  public opcoesGraficoBarrasAtividades: ChartOptions = {
     scales: {
       xAxes: [{
         stacked: true,
@@ -90,7 +90,7 @@ export class ForcaDeTrabalhoReportAreaComponent extends PageReportBase<Usuario, 
         }
       }],
       yAxes: [{
-        labels: ['Total de ' + this.lex.noun('Demanda',true) + this.lex.noun('Unidade',false,true)],
+        labels: ['Total de ' + this.lex.noun('Atividade',true) + this.lex.noun('Unidade',false,true)],
         display: false,
         stacked: true,
         ticks: {
@@ -190,34 +190,34 @@ export class ForcaDeTrabalhoReportAreaComponent extends PageReportBase<Usuario, 
     ];
     let dadosGraficoDetalhado: ChartDataSets[] = [
       {
-        label: this.lex.noun('Demanda',true) + ' Não-iniciadas',
-        data: [metadados.horasDemandasNaoIniciadas],
+        label: this.lex.noun('Atividade',true) + ' Não-iniciadas',
+        data: [metadados.horasAtividadesNaoIniciadas],
         backgroundColor: '#0dcaf0',
-        stack: this.lex.noun('Demanda',true)
+        stack: this.lex.noun('Atividade',true)
       },
       {
-        label: this.lex.noun('Demanda',true) + ' Iniciadas',
-        data: [metadados.horasDemandasEmAndamento],
+        label: this.lex.noun('Atividade',true) + ' Iniciadas',
+        data: [metadados.horasAtividadesEmAndamento],
         backgroundColor: '#ffc107',
-        stack: this.lex.noun('Demanda',true)
+        stack: this.lex.noun('Atividade',true)
       },
       {
-        label: this.lex.noun('Demanda',true) + ' Concluídas',
-        data: [metadados.horasDemandasConcluidas],
+        label: this.lex.noun('Atividade',true) + ' Concluídas',
+        data: [metadados.horasAtividadesConcluidas],
         backgroundColor: '#af4201',
-        stack: this.lex.noun('Demanda',true)
+        stack: this.lex.noun('Atividade',true)
       },
       {
-        label: this.lex.noun('Demanda',true) + ' Avaliadas',
-        data: [metadados.horasDemandasAvaliadas],
+        label: this.lex.noun('Atividade',true) + ' Avaliadas',
+        data: [metadados.horasAtividadesAvaliadas],
         backgroundColor: '#af4af0',
-        stack: this.lex.noun('Demanda',true)
+        stack: this.lex.noun('Atividade',true)
       },
       {
         label: 'Disponível no Plano',
         data: [metadados.horasUteisTotais - metadados.horasTotaisAlocadas],
         backgroundColor: '#6c757d',
-        stack: this.lex.noun('Demanda',true)
+        stack: this.lex.noun('Atividade',true)
       }
     ];
     let dadosGraficoAvaliacao: ChartDataSets[] = [
@@ -248,13 +248,13 @@ export class ForcaDeTrabalhoReportAreaComponent extends PageReportBase<Usuario, 
     //let $dados: any = null;
     let dadosGraficoPizzaGeral: ChartDataSets[] = [
       {
-        label: this.lex.noun('Demanda',true) + ' Não-iniciadas',
-        data: [metadados.horasDemandasNaoIniciadas],
+        label: this.lex.noun('Atividade',true) + ' Não-iniciadas',
+        data: [metadados.horasAtividadesNaoIniciadas],
         backgroundColor: '#0dcaf0'
       },
       {
-        label: this.lex.noun('Demanda',true) + ' Iniciadas',
-        data: [metadados.horasDemandasEmAndamento],
+        label: this.lex.noun('Atividade',true) + ' Iniciadas',
+        data: [metadados.horasAtividadesEmAndamento],
         backgroundColor: '#ffc107'
       }];
 /*     let dadosGraficoPizzaGeral: ChartData = {
@@ -272,23 +272,23 @@ export class ForcaDeTrabalhoReportAreaComponent extends PageReportBase<Usuario, 
 
     let dadosGraficoPizzaDetalhado: ChartDataSets[] = [
       {
-        label: this.lex.noun('Demanda',true) + ' Não-iniciadas',
-        data: [metadados.horasDemandasNaoIniciadas],
+        label: this.lex.noun('Atividade',true) + ' Não-iniciadas',
+        data: [metadados.horasAtividadesNaoIniciadas],
         backgroundColor: '#0dcaf0'
       },
       {
-        label: this.lex.noun('Demanda',true) + ' Iniciadas',
-        data: [metadados.horasDemandasEmAndamento],
+        label: this.lex.noun('Atividade',true) + ' Iniciadas',
+        data: [metadados.horasAtividadesEmAndamento],
         backgroundColor: '#ffc107'
       },
 /*       {
-        label: 'Demandas Concluídas',
-        data: [metadados.horasDemandasConcluidas],
+        label: 'Atividades Concluídas',
+        data: [metadados.horasAtividadesConcluidas],
         backgroundColor: '#af4201'
       },
       {
-        label: 'Demandas Avaliadas',
-        data: [metadados.horasDemandasAvaliadas],
+        label: 'Atividades Avaliadas',
+        data: [metadados.horasAtividadesAvaliadas],
         backgroundColor: '#af4af0'
       },
       {

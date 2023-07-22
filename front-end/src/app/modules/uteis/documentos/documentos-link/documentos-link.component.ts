@@ -14,8 +14,8 @@ import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
   selector: 'documento-link',
-  templateUrl: './assinar.component.html',
-  styleUrls: ['./assinar.component.scss']
+  templateUrl: './documentos-link.component.html',
+  styleUrls: ['./documentos-link.component.scss']
 })
 export class DocumentosLinkComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

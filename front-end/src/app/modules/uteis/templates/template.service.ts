@@ -25,7 +25,7 @@ export class TemplateService {
   public notifica = { petrvs: false, email: false, whatsapp: false };
 
   constructor(
-    public planoDao: PlanoTrabalhoDaoService,
+    public planoTrabalhoDao: PlanoTrabalhoDaoService,
     public templateDao: TemplateDaoService,
     public auth: AuthService,
     public dialog: DialogService
@@ -42,8 +42,8 @@ export class TemplateService {
 
   public dataset(especie: TemplateEspecie, codigo?: string): TemplateDataset[] {
     let result: TemplateDataset[] = [];
-    if(["TCR", "TERMO_ADESAO"].includes(especie)) {
-      result = this.planoDao.dataset();
+    if(["TCR"].includes(especie)) {
+      result = this.planoTrabalhoDao.dataset();
     } else if(especie == "NOTIFICACAO") {
       result = this.notificacoes.find(x => x.codigo == codigo)?.dataset || [];
     }
