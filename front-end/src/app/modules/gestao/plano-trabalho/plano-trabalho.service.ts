@@ -36,13 +36,13 @@ export class PlanoTrabalhoService {
   public needSign(parent?: HasDocumentos, item?: Documento): boolean {
     const plano = parent as PlanoTrabalho;
     const documento = item || (plano?.documentos || []).find(x => plano?.documento_id?.length && x.id == plano?.documento_id) || plano?.documento;
-    if(parent && documento && !documento.assinaturas.find(x => x.usuario_id == this.auth.usuario!.id)) {
+    if(parent && documento && !documento.assinaturas?.find(x => x.usuario_id == this.auth.usuario!.id)) {
       const tipoModalidade = plano.tipo_modalidade; 
       const entidade = this.auth.entidade!;
       let ids: string[] = [];
-      if (tipoModalidade?.exige_assinatura) ids.push(plano.usuario_id);
-      if (tipoModalidade?.exige_assinatura_gestor_unidade) ids.push(plano.unidade?.gestor_id || "", plano.unidade?.gestor_substituto_id || "");
-      if (tipoModalidade?.exige_assinatura_gestor_entidade) ids.push(entidade.gestor_id || "", entidade.gestor_substituto_id || "");
+      if (tipoModalidade?.plano_trabalho_assinatura_participante) ids.push(plano.usuario_id);
+      if (tipoModalidade?.plano_trabalho_assinatura_gestor_unidade) ids.push(plano.unidade?.gestor_id || "", plano.unidade?.gestor_substituto_id || "");
+      if (tipoModalidade?.plano_trabalho_assinatura_gestor_entidade) ids.push(entidade.gestor_id || "", entidade.gestor_substituto_id || "");
       return !!tipoModalidade && ids.includes(this.auth.usuario!.id);
     }
     return false;

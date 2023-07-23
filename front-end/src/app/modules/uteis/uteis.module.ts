@@ -13,6 +13,7 @@ import { DocumentosLinkComponent } from './documentos/documentos-link/documentos
 import { NotificacoesComponent } from './notificacoes/notificacoes.component';
 import { NotificacoesConfigComponent } from './notificacoes/notificacoes-config/notificacoes-config.component';
 import { NotificacoesTemplateComponent } from './notificacoes/notificacoes-template/notificacoes-template.component';
+import { DocumentosBadgeComponent } from './documentos/documentos-badge/documentos-badge.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { NotificacoesTemplateComponent } from './notificacoes/notificacoes-templ
     TemplatesComponent,
     DocumentosAssinarComponent,
     DocumentosLinkComponent,
+    DocumentosBadgeComponent,
     NotificacoesComponent,
     NotificacoesConfigComponent,
     NotificacoesTemplateComponent
@@ -39,6 +41,8 @@ import { NotificacoesTemplateComponent } from './notificacoes/notificacoes-templ
     ComentariosWidgetComponent,
     CalendarExpedienteComponent,
     DocumentosComponent,
+    DocumentosLinkComponent,
+    DocumentosBadgeComponent,
     TemplatesComponent,
     NotificacoesComponent,
     NotificacoesConfigComponent,

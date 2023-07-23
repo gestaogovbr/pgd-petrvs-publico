@@ -65,7 +65,7 @@ export class ProjetoTarefaFormPrincipalComponent extends PageFrameBase {
       aloca_recursos_proprios: {default: true},
       calcula_intervalo: {default: true},
     }, this.cdRef, this.validate);
-    this.join = ["alocacoes", "demanda"];
+    this.join = ["alocacoes", "atividade"];
   }
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
