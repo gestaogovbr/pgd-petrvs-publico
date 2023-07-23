@@ -47,8 +47,6 @@ export class Projeto extends Base implements HasComentarios, HasAlocacoes, HasTa
     public descricao: string = "";  /* Descrição do projeto */
     public finalidade: string = "";  /* Descrição do projeto */
     public status: ProjetoStatus = 'PLANEJADO';  /* Status do projeto */
-    public data_inicio: Date = new Date();  /* Data de criação */
-    public data_fim: Date | null = null;  /* Data final do registro */
     public inicio?: Date = new Date();  /* Inicio do projeto */
     public termino?: Date = new Date();  /* Fim do projeto */
     public inicio_baseline: Date | null = new Date();  /* Inicio do projeto (Baseline) */

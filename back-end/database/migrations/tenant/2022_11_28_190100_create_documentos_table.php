@@ -24,7 +24,7 @@ class CreateDocumentosTable extends Migration
             $table->integer('numero')->unique()->default(0)->comment("Número do documento (Gerado pelo sistema)");
             $table->string('titulo', 256)->comment("Titulo do documento");
             $table->enum('tipo', ["HTML", "PDF", "LINK"])->comment("Tipo do documento");
-            $table->enum('especie', ["TERMO_ADESAO", "SEI", "TCR"])->comment("Especificação da espécie do documento (interno do sistema)");
+            $table->enum('especie', ["SEI", "TCR", "OUTRO", "NOTIFICACAO"])->comment("Especificação da espécie do documento (interno do sistema)");
             $table->longText('conteudo')->nullable()->comment("Conteúdo do arquivo");
             $table->json('metadados')->nullable()->comment("Metadados");
             $table->json('link')->nullable()->comment("Informações sobre o link, caso o tipo seja LINK");

@@ -177,7 +177,7 @@ export class ProcedimentoTrabalharComponent extends ListenerBase implements OnIn
 
   public async gerarTermoAdesao() {
     //const plano = new PlanoListComponent(this.injector, new PlanoDaoService(this.injector));
-    const selected = await PlanoListComponent.modalSelect();
+    const selected = await PlanoTrabalhoListComponent.modalSelect();
     if(selected) {
       let processo = await this.execute<SeiKeys>("getProcessoKeys", []);
       this.go.navigate({route: ['gestao', 'plano', 'termo']}, {metadata: {plano: selected, processo: processo}, modalClose: (modalResult) => {
@@ -189,13 +189,12 @@ export class ProcedimentoTrabalharComponent extends ListenerBase implements OnIn
               if(documentoSei) {
                 const dao = this.injector.get<DocumentoDaoService>(DocumentoDaoService);
                 const documento = Object.assign(new Documento(), {
-                  especie: "TERMO_ADESAO",
+                  especie: "TCR",
                   conteudo: modalResult?.termo,
                   id_processo: processo.id_processo,
                   id_documento: documentoSei.id_documento,
                   numero_processo: documentoSei.numero_processo,
-                  plano_id: selected.id,
-                  metadados: {atividades_termo_adesao: modalResult.atividades_termo_adesao},
+                  plano_trabalho_id: selected.id,
                   tipo_documento_id: modalResult.tipo_documento_id,
                   status: "AGUARDANDO_SEI"
                 });

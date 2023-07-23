@@ -86,31 +86,6 @@ export class ComentariosComponent extends PageFrameBase {
     }
   }
 
-  /*ngAfterViewInit() {
-    super.ngAfterViewInit();
-    if(this.entity_id?.length && !this.isNoPersist) { /* Janela autocontida * /
-      (async () => {
-        this.loading = true;
-        try {
-          switch(this.origem) {
-            case 'DEMANDA': this.dao = this.injector.get<DemandaDaoService>(DemandaDaoService); break;
-            case 'ENTREGA': this.dao = this.injector.get<DemandaEntregaDaoService>(DemandaEntregaDaoService); break;
-            case 'PROJETO': this.dao = this.injector.get<DemandaEntregaDaoService>(DemandaEntregaDaoService); break;
-          }
-          this.entity = await this.dao?.getById(this.entity_id!, this.join) as HasComentarios | undefined;
-          const comentario = this.comentario_id?.length ? (this.gridControl.value || []).find((x: Comentario) => x.id == this.comentario_id) : undefined;
-          this.comentario.newComentario(this.gridControl, this.comentarios!, comentario);
-          this.cdRef.detectChanges();
-          this.texto!.focus();
-        } catch (erro) {
-          this.error("Erro ao carregar dados: " + erro);
-        } finally {
-          this.loading = false;
-        }
-      })();
-    }
-  }*/
-
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
     if(controlName == "texto" && !control.value?.length) {

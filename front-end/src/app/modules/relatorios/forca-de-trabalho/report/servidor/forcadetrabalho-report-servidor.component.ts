@@ -83,7 +83,7 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
         stacked: true
       }],
       yAxes: [{
-        labels: ['Horas ' + this.lex.noun('Demanda',true,true)],
+        labels: ['Horas ' + this.lex.noun('Atividade',true,true)],
         display: false,
         stacked: true
       }]
@@ -107,7 +107,7 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
 /*     title: {
       // namespace para a configuração do título do gráfico
       display: true,
-      text: 'Composição das Demandas',
+      text: 'Composição das Atividades',
       position: "bottom"
     }, */
     scales: {
@@ -174,7 +174,7 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
     //events: ['click'],
     responsive: true
   };
-  public opcoesGraficoDemandas: ChartOptions = {
+  public opcoesGraficoAtividades: ChartOptions = {
     scales: {
       xAxes: [{
         display: true,
@@ -234,7 +234,7 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
     this.parametros.data_fim = this.parametros.data_fim ? new Date(this.parametros.data_fim) : null;
     let result = await Promise.all([
       this.dao?.getById(this.parametros.usuario_id),
-      this.planoDao?.getById(this.parametros.plano_id, ["demandas", "demandas.avaliacao", "unidade", "tipoModalidade"])
+      this.planoDao?.getById(this.parametros.plano_id, ["atividades", "atividades.avaliacao", "unidade", "tipoModalidade"])
     ]);
     this.usuario = result[0];
     this.plano = result[1];
@@ -249,22 +249,22 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
         this.parametros.data_fim = this.parametros.data_fim || this.util.minDate(new Date(), this.plano?.data_fim_vigencia); 
       }
       let $metadados: MetadadosPlano = await this.planoDao.metadadosPlano(plano!.id, this.buscaPorPeriodo ? this.parametros.data_inicio : null, this.buscaPorPeriodo ? this.parametros.data_fim : null);
-      if (!Array.isArray($metadados.demandasNaoIniciadas)) $metadados.demandasNaoIniciadas = [$metadados.demandasNaoIniciadas];
-      if (!Array.isArray($metadados.demandasEmAndamento)) $metadados.demandasEmAndamento = [$metadados.demandasEmAndamento];
+      if (!Array.isArray($metadados.atividadesNaoIniciadas)) $metadados.atividadesNaoIniciadas = [$metadados.atividadesNaoIniciadas];
+      if (!Array.isArray($metadados.atividadesEmAndamento)) $metadados.atividadesEmAndamento = [$metadados.atividadesEmAndamento];
       let $horasUteisLiquidasPlano = $metadados.horasUteisTotais - $metadados.horasUteisAfastamento;
       let $percentualAfastamento = $metadados.horasUteisTotais ? Math.round($metadados.horasUteisAfastamento / $metadados.horasUteisTotais * 10000)/100 : 0;
       let $percentualDecorridoPlano = $metadados.horasUteisTotais ? Math.round($metadados.horasUteisDecorridas / $metadados.horasUteisTotais * 10000)/100 : 0;
       let $percentualDecorridoAfastamentos = $metadados.horasUteisAfastamento ? Math.round($metadados.horasAfastamentoDecorridas / $metadados.horasUteisAfastamento * 10000)/100 : 0;
-      let $percentualHorasAvaliadas = $metadados.horasUteisTotais ? Math.round($metadados.horasDemandasAvaliadas / $metadados.horasUteisTotais * 10000)/100 : 0;
-      let $percentualHorasConcluidas = $metadados.horasUteisTotais ? Math.round($metadados.horasDemandasConcluidas / $metadados.horasUteisTotais * 10000)/100 : 0;
-      let $percentualHorasEmAndamento = $metadados.horasUteisTotais ? Math.round($metadados.horasDemandasEmAndamento / $metadados.horasUteisTotais * 10000)/100 : 0;
-      let $percentualHorasNaoIniciadas = $metadados.horasUteisTotais ? Math.round($metadados.horasDemandasNaoIniciadas / $metadados.horasUteisTotais * 10000)/100 : 0;
+      let $percentualHorasAvaliadas = $metadados.horasUteisTotais ? Math.round($metadados.horasAtividadesAvaliadas / $metadados.horasUteisTotais * 10000)/100 : 0;
+      let $percentualHorasConcluidas = $metadados.horasUteisTotais ? Math.round($metadados.horasAtividadesConcluidas / $metadados.horasUteisTotais * 10000)/100 : 0;
+      let $percentualHorasEmAndamento = $metadados.horasUteisTotais ? Math.round($metadados.horasAtividadesEmAndamento / $metadados.horasUteisTotais * 10000)/100 : 0;
+      let $percentualHorasNaoIniciadas = $metadados.horasUteisTotais ? Math.round($metadados.horasAtividadesNaoIniciadas / $metadados.horasUteisTotais * 10000)/100 : 0;
       let $percentualHorasTotaisAlocadas = $metadados.horasUteisTotais ? Math.round($metadados.horasTotaisAlocadas / $metadados.horasUteisTotais * 10000)/100 : 0;
       this.planoRelatorio = {
           'plano': plano!,
           'extras': $metadados,
           'descricaoPlano': (plano!.tipo_modalidade!.nome || "") + " - " + this.dao!.getDateFormatted(plano!.data_inicio_vigencia) + " a " + this.dao!.getDateFormatted(plano!.data_fim_vigencia) + " (" + plano!.unidade!.sigla + ")",
-          'statusPlano': $metadados.concluido ? (plano.atividades.length ? 'CONCLUÍDO - estatísticas CONCLUSIVAS' : 'VAZIO - nenhuma demanda foi cadastrada neste Plano') : 'EM ANDAMENTO - estatísticas sujeitas a alterações',
+          'statusPlano': $metadados.concluido ? (plano.atividades.length ? 'CONCLUÍDO - estatísticas CONCLUSIVAS' : 'VAZIO - nenhuma atividade foi cadastrada neste Plano') : 'EM ANDAMENTO - estatísticas sujeitas a alterações',
           'horasDisponiveisPlano': $horasUteisLiquidasPlano - $metadados.horasUteisDecorridas,
           'horasUteisLiquidasPlano': $horasUteisLiquidasPlano,
           'horasAfastamentoTranscorrer': $metadados.horasUteisAfastamento - $metadados.horasAfastamentoDecorridas,
@@ -280,7 +280,7 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
           'percentualHorasAvaliadas': $percentualHorasAvaliadas,
           'percentualHorasUteisLiquidasPlano': Math.round(100 - $percentualAfastamento),
           'dadosGraficoPlano': this.obterDadosGrafico($metadados, 'GERAL'),
-          'dadosGraficoDemandas': this.obterDadosGrafico($metadados, 'DETALHADO'),
+          'dadosGraficoAtividades': this.obterDadosGrafico($metadados, 'DETALHADO'),
           'dadosGraficoPeriodoComparativo': this.obterDadosGrafico($metadados, 'PERIODO_COMPARATIVO'),
           'dadosGraficoPeriodoPizza': this.obterDadosGrafico($metadados, 'PERIODO_PIZZA'),
           'dadosGraficoPeriodoDetalhado': this.obterDadosGrafico($metadados, 'PERIODO_DETALHADO'),
@@ -303,37 +303,37 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
           }
         ]
       };
-      let dadosDemandas: ChartData = {
+      let dadosAtividades: ChartData = {
         datasets: [
           {
             label: 'NÃO INIC',
-            data: [metadados.horasDemandasNaoIniciadas],
+            data: [metadados.horasAtividadesNaoIniciadas],
             backgroundColor: '#0dcaf0',
-            stack: this.lex.noun('Demanda',true)
+            stack: this.lex.noun('Atividade',true)
           },
           {
             label: 'EM ANDAM',
-            data: [metadados.horasDemandasEmAndamento],
+            data: [metadados.horasAtividadesEmAndamento],
             backgroundColor: '#ffc107',
-            stack: this.lex.noun('Demanda',true)
+            stack: this.lex.noun('Atividade',true)
           },
           {
             label: 'CONCL',
-            data: [metadados.horasDemandasConcluidas],
+            data: [metadados.horasAtividadesConcluidas],
             backgroundColor: '#af4201',
-            stack: this.lex.noun('Demanda',true)
+            stack: this.lex.noun('Atividade',true)
           },
-          {
+          /*{
             label: 'AVAL',
-            data: [metadados.horasDemandasAvaliadas],
+            data: [metadados.horasAtividadesAvaliadas],
             backgroundColor: '#af4af0',
-            stack: this.lex.noun('Demanda',true)
-          },
+            stack: this.lex.noun('Atividade',true)
+          },*/
           {
             label: 'DISP',
             data: [metadados.horasUteisTotais - metadados.horasUteisAfastamento - metadados.horasUteisDecorridas],
             backgroundColor: '#6c757d',
-            stack: this.lex.noun('Demanda',true)
+            stack: this.lex.noun('Atividade',true)
           }
         ]
       };
@@ -371,33 +371,33 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
         datasets: [
           {
             label: 'NÃO INIC',
-            data: [Math.round(metadados.horasDemandasNaoIniciadas * 100)/100],
+            data: [Math.round(metadados.horasAtividadesNaoIniciadas * 100)/100],
             backgroundColor: '#0dcaf0',
-            stack: this.lex.noun('Demanda',true)
+            stack: this.lex.noun('Atividade',true)
           },
           {
             label: 'EM ANDAM',
-            data: [Math.round(metadados.horasDemandasEmAndamento * 100)/100],
+            data: [Math.round(metadados.horasAtividadesEmAndamento * 100)/100],
             backgroundColor: '#ffc107',
-            stack: this.lex.noun('Demanda',true)
+            stack: this.lex.noun('Atividade',true)
           },
           {
             label: 'CONCL',
-            data: [Math.round(metadados.horasDemandasConcluidas * 100)/100],
+            data: [Math.round(metadados.horasAtividadesConcluidas * 100)/100],
             backgroundColor: '#af4201',
-            stack: this.lex.noun('Demanda',true)
+            stack: this.lex.noun('Atividade',true)
           },
           {
             label: 'AVAL',
-            data: [Math.round(metadados.horasDemandasAvaliadas * 100)/100],
+            data: [Math.round(metadados.horasAtividadesAvaliadas * 100)/100],
             backgroundColor: '#af4af0',
-            stack: this.lex.noun('Demanda',true)
+            stack: this.lex.noun('Atividade',true)
           },
           {
             label: 'DISP',
             data: [Math.round((metadados.horasUteisTotais - metadados.horasUteisAfastamento - metadados.horasUteisDecorridas) * 100)/100],
             backgroundColor: '#6c757d',
-            stack: this.lex.noun('Demanda',true)
+            stack: this.lex.noun('Atividade',true)
           }
         ]
       };
@@ -407,25 +407,25 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
             label: 'Aprov',
             data: [metadados.noPeriodo.tempoTrabalhadoHomologado.toFixed(2)],
             backgroundColor: '#0dcaf0',
-            stack: this.lex.noun('Demanda',true)
+            stack: this.lex.noun('Atividade',true)
           },
           {
             label: 'Reprov',
             data: [metadados.noPeriodo.tempoTrabalhadoNaoHomologado.toFixed(2)],
             backgroundColor: '#f44336',
-            stack: this.lex.noun('Demanda',true)
+            stack: this.lex.noun('Atividade',true)
           },
           {
             label: 'Concl',
             data: [metadados.noPeriodo.tempoDespendidoSoConcluidas.toFixed(2)],
             backgroundColor: '#af4201',
-            stack: this.lex.noun('Demanda',true)
+            stack: this.lex.noun('Atividade',true)
           }
         ]
       };
       switch (tipo) {
         case 'GERAL': result = dadosPlano; break;
-        case 'DETALHADO': result = dadosDemandas; break;
+        case 'DETALHADO': result = dadosAtividades; break;
         case 'AVALIACAO': result = dadosAvaliacao; break;
         case 'PERIODO_COMPARATIVO': result = dadosPeriodoComparativo; break;
         case 'PERIODO_PIZZA': result = dadosPeriodoPizza; break;

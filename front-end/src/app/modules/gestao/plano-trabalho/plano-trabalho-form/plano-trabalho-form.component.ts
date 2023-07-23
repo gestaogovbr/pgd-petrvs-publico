@@ -144,10 +144,11 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
         this.documentoId = this.form!.controls.documento_id.value;
         let documentos: Documento[] = this.form!.controls.documentos.value || [];
         let documento = documentos?.find((x: Documento) => x.id == this.documentoId);
-        if(!this.documentoId?.length || !documento || documento.assinaturas.length || documento.id_documento) {
+        if(!this.documentoId?.length || !documento || documento.assinaturas?.length || documento.tipo == "LINK") {
           this.documentoId = this.dao?.generateUuid(),
           documentos.push(new Documento({
             id: this.documentoId, 
+            tipo: "HTML",
             especie: "TCR",
             titulo_documento: "Termo de Ciência e Responsabilidade",
             conteudo: "",
@@ -157,7 +158,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
             dataset: this.dao!.dataset(),
             datasource: this.datasource,
             entidade_id: this.auth.entidade?.id,
-            plano_id: this.entity?.id,
+            plano_trabalho_id: this.entity?.id,
             template_id: this.programa.template_tcr_id
           }));
           this.form!.controls.documento_id.setValue(this.documentoId);
@@ -241,12 +242,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.form!.controls.forma_contagem_carga_horaria.setValue(this.unidade?.entidade?.forma_contagem_carga_horaria || "DIA");
     this.form!.controls.unidade_texto_complementar.setValue(this.unidade?.texto_complementar_plano || "");
     this.calculaTempos();
-    this.cdRef.detectChanges();
-  }
-
-  public onTipoModalidadeSelect(selected: SelectItem) {
-    const tipoModalidade = this.tipoModalidade?.searchObj as TipoModalidade;
-    if(tipoModalidade) this.form?.controls.ganho_produtividade.setValue(tipoModalidade.ganho_produtividade);
     this.cdRef.detectChanges();
   }
 
@@ -471,8 +466,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     const documento = new Documento();
     documento.id = this.dao!.generateUuid();
     documento.plano_trabalho_id = this.entity!.id;
+    documento.especie = "TCR";
     documento._status = "ADD";
-    this.go.navigate({route: ['gestao', 'plano', 'termo']}, {metadata: {documento: documento, plano: this.entity}, modalClose: (modalResult) => {
+    this.go.navigate({route: ['gestao', 'plano', 'termo']}, {metadata: {documento: documento, plano_trabalho: this.entity}, modalClose: (modalResult) => {
       if(modalResult) {
         (async () => {
           let documentos = (this.form!.controls.documentos.value || []) as Documento[];
@@ -481,9 +477,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
             this.dialog.showSppinerOverlay("Salvando dados do formulário");
             try {
               modalResult = await this.documentoDao.save(Object.assign(new Documento(), {
-                especie: "TERMO_ADESAO",
+                especie: "TCR",
                 conteudo: modalResult?.termo,
-                metadados: {atividades_termo_adesao: modalResult.atividades_termo_adesao},
                 plano_id: this.entity!.id,
                 status: "GERADO"
               }), ["assinaturas.usuario:id,nome,apelido"]);

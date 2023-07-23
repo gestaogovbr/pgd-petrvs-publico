@@ -17,7 +17,6 @@ import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { TipoDocumento } from 'src/app/models/tipo-documento.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { NavigateResult } from 'src/app/services/navigate.service';
-import { PlanoTrabalhoTermoAdesaoComponent } from '../plano-trabalho-termo-adesao/plano-trabalho-termo-adesao.component';
 
 @Component({
   selector: 'plano-trabalho-form-termo',
@@ -31,8 +30,7 @@ export class PlanoTrabalhoFormTermoComponent extends PageFormBase<PlanoTrabalho,
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
   @ViewChild('programa', { static: false }) public programa?: InputSearchComponent;
   @ViewChild('tipoDocumento', { static: false }) public tipoDocumento?: InputSearchComponent;
-  @ViewChild('tipo_modalidade', { static: false }) public tipoModalidade?: InputSearchComponent;
-  @ViewChild('termo', { static: false }) public termo?: PlanoTrabalhoTermoAdesaoComponent;
+  @ViewChild('tipoModalidade', { static: false }) public tipoModalidade?: InputSearchComponent;
 
   public unidadeDao: UnidadeDaoService;
   public programaDao: ProgramaDaoService;
@@ -45,7 +43,7 @@ export class PlanoTrabalhoFormTermoComponent extends PageFormBase<PlanoTrabalho,
 
   constructor(public injector: Injector) {
     super(injector, PlanoTrabalho, PlanoTrabalhoDaoService);
-    this.join = ["unidade", "usuario", "programa", "tipo_modalidade", "documento", "documentos", "atividades.atividade"];
+    this.join = ["unidade", "usuario", "programa.template_tcr", "tipo_modalidade", "documento", "documentos", "atividades.atividade"];
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
@@ -110,7 +108,7 @@ export class PlanoTrabalhoFormTermoComponent extends PageFormBase<PlanoTrabalho,
   }
 
   public async initializeData(form: FormGroup) {
-    this.entity = (await this.dao!.getById(this.metadata.plano.id, this.join))!;
+    this.entity = (await this.dao!.getById(this.metadata.plano_trabalho.id, this.join))!;
     this.processo = this.metadata?.processo;
     await this.loadData(this.entity!, form);
   }
@@ -119,8 +117,9 @@ export class PlanoTrabalhoFormTermoComponent extends PageFormBase<PlanoTrabalho,
     return new Promise<NavigateResult | undefined>((resolve, reject) => {
       //if(this.processo) {
       resolve(new NavigateResult(Object.assign(this.form!.value, {
+        /* TODO Gerar documento do TCR
         termo: this.termo!.conteudo,
-        atividades_termo_adesao: this.termo!.atividades.map((x: { nome: string; }) => this.util.removeAcentos(x.nome.toLowerCase())),
+        atividades_termo_adesao: this.termo!.atividades.map((x: { nome: string; }) => this.util.removeAcentos(x.nome.toLowerCase())),*/
         codigo_tipo_documento: (this.tipoDocumento?.searchObj as TipoDocumento)?.codigo
       })));
       /*} else {

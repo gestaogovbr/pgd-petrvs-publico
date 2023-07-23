@@ -12,14 +12,12 @@ import { DialogComponent } from './services/dialog/dialog.component';
 import { SpinnerOverlayComponent } from './services/spinner-overlay/spinner-overlay.component';
 import { ComponentsModule } from './components/components.module';
 import { TesteComponent } from './modules/teste/teste.component';
-import { RelatorioModule } from './modules/relatorios/relatorio.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LogModule } from './modules/logs/log.module';
 import { UteisModule } from './modules/uteis/uteis.module';
 import { RotinaModule } from './modules/rotinas/rotina.module';
 import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
 import { CurriculumListComponent } from './modules/cadastros/curriculum/curriculum-list/curriculum-list.component';
-import { AtividadeModule } from './modules/gestao/atividade/atividade.module';
 
 @NgModule({
   declarations: [
@@ -40,7 +38,7 @@ import { AtividadeModule } from './modules/gestao/atividade/atividade.module';
     ReactiveFormsModule,
     ComponentsModule,
     AppRoutingModule,
-    AtividadeModule,
+    //AtividadeModule,
     ChartsModule,
     //RelatorioModule,
     UteisModule,
