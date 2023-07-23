@@ -249,7 +249,7 @@ class UsuarioService extends ServiceBase
      * @param  mixed $unidade_ids: Unidades que o usuário gerencia
      * @return array: array contendo todas as informações dos planos de trabalho de cada usuário da unidade (front-end do gestor)
      */
-    public function planosPorPeriodo($usuario_id, $inicioPeriodo = null, $fimPeriodo = null){
+    public function planosTrabalhoPorPeriodo($usuario_id, $inicioPeriodo = null, $fimPeriodo = null){
         $result = [];
         $planos = PlanoTrabalho::where("usuario_id", $usuario_id)->with(['atividades', 'unidade', 'tipoModalidade'])->get();
         if ($inicioPeriodo == null || $fimPeriodo == null) {

@@ -19,7 +19,7 @@ trait LogChanges
                 if ($model->wasRecentlyCreated) {
                     static::logChange($model, 'ADD');
                 } elseif ($model->getChanges()) {
-                    !empty($model->attributes['data_fim']) ? static::logChange($model, 'SOFT_DELETE') : static::logChange($model, 'EDIT');
+                    !empty($model->attributes['deleted_at']) ? static::logChange($model, 'SOFT_DELETE') : static::logChange($model, 'EDIT');
                 } else {
                     static::logChange($model, 'EDIT');
                 }

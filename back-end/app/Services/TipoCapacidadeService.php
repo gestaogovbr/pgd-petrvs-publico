@@ -294,6 +294,12 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_TIPO_PROC_EXCL", "Permite excluir tipos de processos"],
         ["MOD_TIPO_PROC_INCL", "Permite incluir tipos de processos"],
         ["MOD_TPMAF_INCL", "Permite incluir tipos de motivos de afastamentos"],
+        /* Capacidades do módulo TIPO TAREFA*/
+        ["MOD_TIPO_TRF", "Permite acessar item de menu cadastro->tipo de tarefa"],
+        ["MOD_TIPO_TRF_CONS", "Permite consultar tipos de tarefas"],
+        ["MOD_TIPO_TRF_EDT", "Permite editar tipos de tarefas"],
+        ["MOD_TIPO_TRF_EXCL", "Permite excluir tipos de tarefas"],
+        ["MOD_TIPO_TRF_INCL", "Permite incluir tipos de tarefas"],        
         /* Capacidades do módulo TAREFAS*/
         ["MOD_TRF", "Permite acessar módulo/item de menu tarefas"],
         ["MOD_TRF_CONS", "Permite consultar tarefa"],

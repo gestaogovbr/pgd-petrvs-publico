@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ProgramaParticipante;
-use App\Models\Usuario;
-use App\Services\ProgramaParticipanteService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;

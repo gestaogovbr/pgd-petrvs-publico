@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Plano;
-use App\Services\PlanoService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
 use Throwable;
 
-class PlanoController extends ControllerBase {
+class PlanoTrabalhoController extends ControllerBase {
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
@@ -32,13 +30,13 @@ class PlanoController extends ControllerBase {
         try {
             $this->checkPermissions('QUERY', $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
-                'plano_id' => ['required'],
+                'plano_trabalho_id' => ['required'],
                 'inicioPeriodo' => ['Present'],
                 'fimPeriodo' => ['Present'],
             ]);
             return response()->json([
                 'success' => true,
-                'metadadosPlano' => $this->service->metadadosPlano($data["plano_id"],$data["inicioPeriodo"],$data["fimPeriodo"])
+                'metadadosPlano' => $this->service->metadadosPlano($data["plano_trabalho_id"],$data["inicioPeriodo"],$data["fimPeriodo"])
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
@@ -48,7 +46,7 @@ class PlanoController extends ControllerBase {
     public function avaliar(Request $request) {
         try {
             $data = $request->validate([
-                'plano_id' => ['required'],
+                'plano_trabalho_id' => ['required'],
                 'tipo_avaliacao_id' => ['required'],
                 'nota_atribuida' => ['required'],
                 'arquivar' => ['required'],                 // Oferecer a possibilidade de arquivar o plano, quando for a sua ultima avaliação
