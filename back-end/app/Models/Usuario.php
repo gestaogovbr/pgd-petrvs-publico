@@ -132,10 +132,13 @@ class Usuario extends Authenticatable
     // belongsTo
     public function perfil() { return $this->belongsTo(Perfil::class); }     //nullable
     // belongsToMany
-    public function unidades() { return $this->belongsToMany(Unidade::class)->withTimestamps()->withPivot('id'); }
+    public function unidades() { return $this->belongsToMany(Unidade::class)->withPivot('id'); }
     // Others relationships
-    public function gerenciaTitular() { return $this->vinculosUnidades()->has('gestor')->first()->unidade; }
-    public function gerenciasSubstitutas() { return $this->vinculosUnidades()->has('gestorSubstituto')->with('unidade')->get(); }
+    public function gerenciaTitular() { return $this->hasOne(UnidadeUsuario::class)->has('gestor'); }
+    public function gerenciasSubstitutas() { return $this->hasMany(UnidadeUsuario::class)->has('gestorSubstituto'); }
+    public function lotacao() { return $this->hasOne(UnidadeUsuario::class)->has('lotado'); }
+    public function lotacoes() { return $this->hasMany(UnidadeUsuario::class)->has('lotado')->orHas('colaborador'); }
+    public function colaboracoes() { return $this->hasMany(UnidadeUsuario::class)->has('colaborador'); }
     // Mutattors e Casts
     public function getUrlFotoAttribute($value) 
     {
@@ -171,49 +174,16 @@ class Usuario extends Authenticatable
         return Change::where('user_id', $this->id)->get()->toArray() ?? []; 
         //Não pode ser usado um relacionamento do Laravel porque as tabelas estão em bancos distintos
     }
-
-
-
-
-/*     public function getGerenciaTitularAttribute()
-    {
-        $result = null;
-        foreach ($this->vinculosUnidades as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'GESTOR')) > 0) $result = $vinculo->unidade; }
-        return $result;
-    } */
-    public function getGerenciasSubstitutasAttribute()
-    {
-        $result = [];
-        foreach ($this->vinculosUnidades as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'GESTOR_SUBSTITUTO')) > 0) array_push($result, $vinculo->unidade); }
-        return $result;
-    }
-    public function getLotacaoAttribute()
-    {
-        $result = null;
-        foreach ($this->vinculosUnidades as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'LOTADO' && $a['deleted_at'] == null)) > 0) $result = $vinculo->unidade; }
-        return $result;
-    }
-    public function getColaboracoesAttribute()
-    {
-        $result = [];
-        foreach ($this->vinculosUnidades as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'COLABORADOR')) > 0) array_push($result, $vinculo->unidade); }
-        return $result;
-    }
-    public function getLotacoesAttribute()
-    {
-        $result = [];
-        foreach ($this->vinculosUnidades as $vinculo){ 
-            $atribuicoes = $vinculo->atribuicoes;
-            if(count(array_filter($atribuicoes->toArray(), fn($a) => ($a['atribuicao'] == 'LOTADO' || $a['atribuicao'] == 'COLABORADOR'))) > 0) array_push($result, $vinculo->unidade); 
-        }
-        return $result;
-    }
     public function getAtribuicoesAttribute()
     { 
         $result = [];
-        foreach($this->unidades as $unidade){
+        /*  foreach($this->unidades as $unidade){
             $atribuicoes = Atribuicao::where('unidade_usuario_id', $unidade->pivot->id)->get()->toArray();
             if(count($atribuicoes) > 0) $result[$unidade->id] = array_map(fn($a) => $a["atribuicao"],$atribuicoes); 
+        } */
+        foreach($this->lotacoes as $vinculo){
+            $atribuicoes = $vinculo->atribuicoes->toArray();
+            if(count($atribuicoes) > 0) $result[$vinculo->unidade_id] = array_map(fn($a) => $a["atribuicao"],$atribuicoes); 
         }
         return $result;
     }

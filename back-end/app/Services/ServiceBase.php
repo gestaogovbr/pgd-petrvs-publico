@@ -867,16 +867,16 @@ class ServiceBase extends DynamicMethods
     }
 
     /**
-     * @return Unidade Retorna a Unidade de lotação principal do usuário logado
+     * @return Unidade Retorna a Unidade de lotação do usuário logado
      */
-    public static function unidadePrincipalUsuarioLogado(): Unidade {
-        return static::loggedUser()->lotacoes->first(fn($l) => $l->principal == 1 && $l->data_fim == null)->unidade;
+    public static function unidadeLotacaoUsuarioLogado(): Unidade {
+        return static::loggedUser()->lotacao->unidade;
     }
 
     /**
      * Este método filtra todos os relacionamentos q tenham sido apagados (Data_fim não nula)
      */
-    public function applyWith(&$entity,&$data) {
+/*     public function applyWith(&$entity,&$data) {
         $data['with'] = $this->getCamelWith($data['with']);
         $model = $this->getModel();
         foreach($data['with'] as $key => $with) {
@@ -899,7 +899,7 @@ class ServiceBase extends DynamicMethods
                 array_pop($withs);
             }
         }
-    }
+    } */
 
     public function getNestedModel($model, $nested) {
         $relations = explode('.', explode(':', $nested)[0]);

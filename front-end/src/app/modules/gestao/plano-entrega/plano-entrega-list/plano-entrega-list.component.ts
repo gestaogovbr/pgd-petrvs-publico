@@ -147,7 +147,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     let form: any = filter.value;
     /*
         (RI_PENT_4) A consulta do grid retornará inicialmente os principais Planos de Entrega do usuário logado (a opção "principais" já vem marcada), que são:
-        - os válidos das unidades onde ele possui lotação, e
+        - os válidos das unidades onde ele possui lotação (REFACTORING: ou seja, ele é 'lotado' ou 'colaborador'), e
         - se ele for gestor, os ativos das unidades-pai de onde ele é gestor;
     */
     if (this.filter?.controls.principais.value) {

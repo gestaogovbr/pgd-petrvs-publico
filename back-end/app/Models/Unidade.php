@@ -89,7 +89,15 @@ class Unidade extends ModelBase
     public function entidade() { return $this->belongsTo(Entidade::class); }
     public function cidade() { return $this->belongsTo(Cidade::class); }  //nullable
     public function unidade() { return $this->belongsTo(Unidade::class); }    //nullable
-    public function usuarios() { return $this->belongsToMany(Usuario::class)->withTimestamps()->withPivot('id'); }
+    public function usuarios() { return $this->belongsToMany(Usuario::class)->withPivot('id'); }
+    // Others relationships
+    public function gestor() { return $this->hasOne(UnidadeUsuario::class)->has('gestor'); } 
+    public function gestorSubstituto() { return $this->hasMany(UnidadeUsuario::class)->has('gestorSubstituto'); }
+    public function lotados() { return $this->hasMany(UnidadeUsuario::class)->has('lotado'); }
+    public function colaboradores() { return $this->hasMany(UnidadeUsuario::class)->has('colaborador'); }       
+    public function homologadoresPlanoEntrega() { return $this->hasMany(UnidadeUsuario::class)->has('homologadorPlanoEntrega'); }       
+    public function avaliadoresPlanoEntrega() { return $this->hasMany(UnidadeUsuario::class)->has('avaliadorPlanoEntrega'); }       
+    public function avaliadoresPlanoTrabalho() { return $this->hasMany(UnidadeUsuario::class)->has('avaliadorPlanoTrabalho'); }       
     // Mutattors e Casts
     public function getNotificacoesAttribute($value)
     {
@@ -100,51 +108,6 @@ class Unidade extends ModelBase
     {
         $this->attributes['notificacoes'] = json_encode($value);
     }
-    public function getGestorAttribute()
-    {
-        $result = null;
-        foreach ($this->vinculosUsuarios as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'GESTOR')) > 0) $result = $vinculo->usuario; }
-        return $result;
-    }
-    public function getGestorSubstitutoAttribute()
-    {
-        $result = null;
-        foreach ($this->vinculosUsuarios as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'GESTOR_SUBSTITUTO')) > 0) $result = $vinculo->usuario; }
-        return $result;
-    }
-    public function getLotadosAttribute()
-    { 
-        $result = [];
-        foreach ($this->vinculosUsuarios as $vinculo){ 
-            $atribuicoes = $vinculo->atribuicoes;
-            if(count(array_filter($atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'LOTADO')) > 0) array_push($result, $vinculo->usuario); 
-        }
-        return $result;
-    }
-    public function getColaboradoresAttribute()
-    {
-        $result = [];
-        foreach ($this->vinculosUsuarios as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'COLABORADOR')) > 0) array_push($result, $vinculo->usuario); }
-        return $result;
-    }
-    public function getAvaliadoresPlanoEntregaAttribute()
-    {
-        $result = [];
-        foreach ($this->vinculosUsuarios as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'AVALIADOR_PLANO_ENTREGA')) > 0) array_push($result, $vinculo->usuario); }
-        return $result;
-    }
-    public function getAvaliadoresPlanoTrabalhoAttribute()
-    {
-        $result = [];
-        foreach ($this->vinculosUsuarios as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'AVALIADOR_PLANO_TRABALHO')) > 0) array_push($result, $vinculo->usuario); }
-        return $result;
-    }
-    public function getHomologadoresPlanoEntregaAttribute()
-    {
-        $result = [];
-        foreach ($this->vinculosUsuarios as $vinculo){ if(count(array_filter($vinculo->atribuicoes->toArray(), fn($a) => $a['atribuicao'] == 'HOMOLOGADOR_PLANO_ENTREGA')) > 0) array_push($result, $vinculo->usuario); }
-        return $result;
-    } 
     public function getIntegrantesAttribute()
     { 
         $result = [];

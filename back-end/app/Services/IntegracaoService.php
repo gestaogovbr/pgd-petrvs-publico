@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Http;
 use App\Exceptions\LogError;
 use App\Services\ServiceBase;
 use App\Models\Usuario;
+use App\Models\Atribuicao;
 use App\Models\Perfil;
 use Illuminate\Support\Facades\Auth;
 use Ramsey\Uuid\Uuid;
@@ -63,7 +64,7 @@ class IntegracaoService extends ServiceBase {
             $usuario->apelido = $servidor->nomeguerra;
             if(!empty($servidor->unidade_servidor)) {               //cria uma lotação para o novo servidor apenas se ela já estiver definida no SIAPE
                 $lotacao->unidade_id = $servidor->unidade_servidor;
-                $lotacao->principal = 1;
+                //$lotacao->principal = 1;
             }
             $resultado = true;
         }
@@ -691,13 +692,15 @@ class IntegracaoService extends ServiceBase {
      */
     public function salvarUsuarioLotacao(&$usuario, &$lotacao){
         if ($this->fillUsuarioWithSiape($usuario, $lotacao)) { //se quem está logado existe na tabela integracao_servidores
-            $perfil_nivel_5 = Perfil::where('nivel', '5')->first()->id;
-            $usuario->perfil_id = $perfil_nivel_5;
+            $perfil_nivel_5_id = Perfil::where('nivel', '5')->first()->id;
+            $usuario->perfil_id = $perfil_nivel_5_id;
             $usuario->save();
             $usuario->fresh();
             if(!empty($lotacao->unidade_id)) { // se sua Unidade estiver cadastrada, insere-se uma lotação principal pra ele
                 $lotacao->usuario_id = $usuario->id;
                 $lotacao->save();
+                $lotacao->refresh();
+                Atribuicao::create(['unidade_usuario_id' => $lotacao->id, 'atribuicao' => 'LOTADO']);
             }
         } else {
             $usuario = null; // se quem está logando não existe na tabela integracao_servidores

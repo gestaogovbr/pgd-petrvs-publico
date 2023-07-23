@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Unidade;
-use App\Services\UnidadeService;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;

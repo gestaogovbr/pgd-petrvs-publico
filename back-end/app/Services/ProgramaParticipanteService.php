@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class ProgramaParticipanteService extends ServiceBase {
-    use UseDataFim;
     public $participantes = []; /* Buffer de unidades para funções que fazem consulta frequentes em unidades */
     public $todos = false; 
     public $unidadeId = null; 

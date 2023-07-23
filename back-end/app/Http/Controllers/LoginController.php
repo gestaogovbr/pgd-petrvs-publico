@@ -10,6 +10,7 @@ use App\Services\DprfSegurancaAuthService;
 use App\Services\IntegracaoService;
 use App\Services\ApiService;
 use App\Models\Usuario;
+use App\Models\UnidadeUsuario;
 use App\Exceptions\LogError;
 use App\Models\Entidade;
 use App\Services\UnidadeService;
@@ -39,29 +40,25 @@ class LoginController extends Controller
                 $usuario->fresh();
             }
             $entidadeId = $request->session()->has("entidade_id") ? $request->session()->get("entidade_id") : null;
-         /* $usuario = Usuario::where("id", $usuario->id)->with(["lotacoes" => function ($query) use ($entidadeId) {
-                $query->with(["unidade"])->whereHas('unidade', function ($query) use ($entidadeId) {
-                    return $query->where('entidade_id', '=', $entidadeId);
-                })->whereNull("data_fim");
-            }, "lotacoes.unidade.planosEntrega", "lotacoes.unidade.integrantes", "lotacoes.unidade.unidade.planosEntrega", 
-               "perfil.capacidades.tipoCapacidade", "chefiasTitulares", "chefiasTitulares.integrantes", "chefiasSubstitutas", "chefiasSubstitutas.integrantes"])->first(); */            
-            /* 
-                select * 
-                from usuarios 
-                
-            */
-            $usuario = Usuario::where("id", $usuario->id)->with(["perfil.capacidades.tipoCapacidade"])->first();
-            $usuario["lotacao"] = $usuario->lotacao;
-            $usuario["colaboracoes"] = $usuario->colaboracoes;
-            $usuario["atribuicoes"] = $usuario->atribuicoes;
-                            /* foreach ($usuario->lotacoes as $lotacao) {
-                                    if($lotacao->principal) { $request->session()->put("unidade_id", $lotacao->unidade_id); }
-                                } */
-            if($usuario->lotacao) $request->session()->put("unidade_id", $usuario->lotacao->id);
+                        /*             $usuario = Usuario::where("id", $usuario->id)->with(["vinculosUnidades" => function($query) use ($entidadeId) {
+                            $query->with(['unidade'])->whereHas('unidade', function ($query) use ($entidadeId) {
+                                return $query->where('entidade_id', '=', $entidadeId); });
+                        },"perfil.capacidades.tipoCapacidade", "unidades.usuarios.atribuicoes", "gerenciaTitular.usuarios.atribuicoes", "gerenciasSubstitutas.usuarios.atribuicoes",
+                            "vinculosUnidades.unidade" => function($query) {
+                                $query->with(["planosEntrega","unidade.planosEntrega"]);
+                        }])->first(); */
+            $usuario = Usuario::where("id", $usuario->id)->with(["lotacoes" => function($query) use ($entidadeId) {
+                            $query->whereHas('unidade', function ($query) use ($entidadeId) {
+                                return  $query->where('entidade_id', '=', $entidadeId); });             // Acredito que seja possível reduzir a qde de relacionamentos solicitados
+                        },"perfil.capacidades.tipoCapacidade", "unidades.usuarios.atribuicoes", "gerenciaTitular.usuarios.atribuicoes", "gerenciasSubstitutas.usuarios.atribuicoes",
+                            "vinculosUnidades.unidade" => function($query) {
+                                        $query->with(["planosEntrega","unidade.planosEntrega"]);
+                        }])->first();
+            $request->session()->put("unidade_id", $usuario->lotacao->id);
         }
         return $usuario;
     }
-    
+
     /**
      * Retorna o usuário logado
      *
@@ -84,14 +81,14 @@ class LoginController extends Controller
         ]);
         if(Auth::check()) {
             $usuario = Auth::user();
-            $usuario = Usuario::where("id", $usuario->id)->with(["lotacoes" => function ($query) use ($data) {
-                $query->where("unidade_id", $data["unidade_id"]);
-            }, "lotacoes.unidade.entidade", "lotacoes.unidade.planosEntrega", "lotacoes.unidade.integrantes", "lotacoes.unidade.unidade.planosEntrega", "perfil.capacidades.tipoCapacidade"])->first();
-            if(isset($usuario->lotacoes[0]) && !empty($usuario->lotacoes[0]->unidade_id)) {
-                $request->session()->put("unidade_id", $usuario->lotacoes[0]->unidade_id);
+            $usuario = Usuario::where("id", $usuario->id)->with(["lotacoes" => function($query) use ($data) {
+                            $query->where('id',$data["unidade_id"]);
+                        }])->first();
+            if(isset($usuario->lotacoes[0]) && !empty($usuario->lotacoes[0]->id)) {
+                $request->session()->put("unidade_id", $usuario->lotacoes[0]->id);
                 return response()->json([
                     "status" => "OK",
-                    "unidade" => $usuario->lotacoes[0]->unidade
+                    "unidade" => $usuario->lotacoes[0]
                 ]);
             } else {
                 return LogError::newError('Unidade não encontrada no usuário');
@@ -204,7 +201,7 @@ class LoginController extends Controller
         $tokenData = $auth->verifyFirebaseToken($credentials['token']);
         if(!isset($tokenData['error'])) {
             $entidade = $this->registrarEntidade($request);
-            $usuario = $this->registrarUsuario($request, Usuario::where('email', $tokenData['email'])->where("data_fim", null)->first());
+            $usuario = $this->registrarUsuario($request, Usuario::where('email', $tokenData['email'])->first());
             if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
                 $usuarioService = new UsuarioService();
                 $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_FIREBASE, $usuario, $tokenData["picture"]);
@@ -236,7 +233,7 @@ class LoginController extends Controller
         $tokenData = $auth->verifyToken($credentials['token']);
         if(!isset($tokenData['error'])) {
             $entidade = $this->registrarEntidade($request);
-            $usuario = $this->registrarUsuario($request, Usuario::where('email', $tokenData['email'])->where("data_fim", null)->first());
+            $usuario = $this->registrarUsuario($request, Usuario::where('email', $tokenData['email'])->first());
             if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
                 $usuarioService = new UsuarioService();
                 $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
@@ -267,10 +264,10 @@ class LoginController extends Controller
         ]);
         $tokenData = $auth->verifyToken($credentials['token']);
         if(!isset($tokenData['error'])) {
-            $usuario = Usuario::where('email', $tokenData['email'])->where("data_fim", null)->first();
+            $usuario = Usuario::where('email', $tokenData['email'])->first();
             if(!isset($usuario) && $integracao->autoIncluir) {
                 $usuario = new Usuario();
-                $lotacao = new Lotacao();
+                $lotacao = new UnidadeUsuario();
                 $service = new IntegracaoService();
                 $service->salvaUsuarioLotacaoGoogle($usuario, $lotacao, $tokenData, $auth);
             }
@@ -310,10 +307,10 @@ class LoginController extends Controller
         $profile = $auth->loginToken($credentials['cpf'], $credentials['senha'], $credentials['token']);
         if(!isset($profile['error'])) {
             $email = str_contains($profile['email'], "@") ? $profile['email'] : $profile["email"] . "@prf.gov.br";
-            $usuario = Usuario::where('email', $email)->where("data_fim", null)->first();
+            $usuario = Usuario::where('email', $email)->first();
             if(!isset($usuario) && $auth->autoIncluir) {
                 $usuario = new Usuario();
-                $lotacao = new Lotacao();
+                $lotacao = new UnidadeUsuario();
                 $service = new IntegracaoService();
                 $service->salvaUsuarioLotacaoDprf($usuario, $lotacao, $profile, $auth);
             }
@@ -345,7 +342,7 @@ class LoginController extends Controller
             $entidade = $this->registrarEntidade($request, true);
             $usuario = $this->registrarUsuario($request, $user);
             return response()->json([
-                "token" => $user->currentAccessToken()->plainTextToken ?? $request->bearerToken(), // ?? $user->createToken($credentials['device_name'])->plainTextToken,
+                "token" => $user->currentAccessToken()->plainTextToken ?? $request->bearerToken(), 
                 "kind" => $request->session()->get("kind"),
                 "entidade" => $entidade,
                 "usuario" => $usuario,
@@ -369,7 +366,7 @@ class LoginController extends Controller
             'password' => ['required'],
             'device_name' => ['required'],
         ]);
-        $usuario = Usuario::where('email', $credentials['email'])->where("data_fim", null)->first();
+        $usuario = Usuario::where('email', $credentials['email'])->first();
         if (isset($usuario)) {
             $request->session()->put("kind", "USERPASSWORD");
             $user = self::loggedUser();
@@ -400,7 +397,7 @@ class LoginController extends Controller
         ]);
         $tokenData = $auth->verifyFirebaseToken($credentials['token']);
         if(!isset($tokenData['error'])) {
-            $usuario = Usuario::where('email', $tokenData['email'])->where("data_fim", null)->first();
+            $usuario = Usuario::where('email', $tokenData['email'])->first();
             if (isset($usuario)) { // && Hash::check($request->password, $user->password)
                 $usuarioService = new UsuarioService();
                 $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_FIREBASE, $usuario, $tokenData["picture"]);
@@ -433,7 +430,7 @@ class LoginController extends Controller
         ]);
         $tokenData = $auth->verifyToken($credentials['token']);
         if(!isset($tokenData['error'])) {
-            $usuario = Usuario::where('email', $tokenData['email'])->where("data_fim", null)->first();
+            $usuario = Usuario::where('email', $tokenData['email'])->first();
             if (isset($usuario)) { // && Hash::check($request->password, $user->password)
                 $usuarioService = new UsuarioService();
                 $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
@@ -467,10 +464,10 @@ class LoginController extends Controller
         ]);
         $tokenData = $auth->verifyToken($credentials['token']);
         if(!isset($tokenData['error'])) {
-            $usuario = Usuario::where('email', $tokenData['email'])->where("data_fim", null)->first();
+            $usuario = Usuario::where('email', $tokenData['email'])->first();
             if(!isset($usuario) && $integracao->autoIncluir) {
                 $usuario = new Usuario();
-                $lotacao = new Lotacao();
+                $lotacao = new UnidadeUsuario();
                 $service = new IntegracaoService();
                 $service->salvaUsuarioLotacaoGoogle($usuario, $lotacao, $tokenData, $auth);
             }
@@ -507,14 +504,14 @@ class LoginController extends Controller
             'entidade' => ['required']
         ]);
         $entidade = Entidade::where("sigla", $credentials["entidade"])->first();
-        if(empty($entidade) || empty($entidade->api_private_key)) return LogError::newError('Entidade inválidas.');
+        if(empty($entidade) || empty($entidade->api_private_key)) return LogError::newError('Entidade inválida.');
         $tokenData = $api->verifyToken($credentials['token'], $entidade->api_private_key, $entidade->sigla);
         if(!isset($tokenData['error'])) {
-            $usuario = !empty($tokenData['email']) ? Usuario::where('email', $tokenData['email'])->where("data_fim", null)->first() :
-                Usuario::where('cpf', $tokenData['cpf'])->where("data_fim", null)->first();
+            $usuario = !empty($tokenData['email']) ? Usuario::where('email', $tokenData['email'])->first() :
+                Usuario::where('cpf', $tokenData['cpf'])->first();
             if(!isset($usuario) && $integracao->autoIncluir) {
                 $usuario = new Usuario();
-                $lotacao = new Lotacao();
+                $lotacao = new UnidadeUsuario();
                 $service = new IntegracaoService();
                 $service->salvaUsuarioLotacaoApi($usuario, $lotacao, $tokenData, $api);
             }
@@ -556,10 +553,10 @@ class LoginController extends Controller
         $profile = $auth->loginToken($credentials['cpf'], $credentials['senha'], $credentials['token']);
         if(!isset($profile['error'])) {
             $email = str_contains($profile["email"], "@") ? $profile["email"] : $profile["email"] . "@prf.gov.br";
-            $usuario = Usuario::where('email', $email)->where("data_fim", null)->first();
+            $usuario = Usuario::where('email', $email)->first();
             if(!isset($usuario) && $auth->autoIncluir) {
                 $usuario = new Usuario();
-                $lotacao = new Lotacao();
+                $lotacao = new UnidadeUsuario();
                 $service = new IntegracaoService();
                 $service->salvaUsuarioLotacaoDprf($usuario, $lotacao, $profile, $auth);
             }
@@ -626,7 +623,7 @@ class LoginController extends Controller
             $email = explode("#", $email);
             $email = $email[0];
             $email = str_replace("_", "@", $email);
-            $usuario = $this->registrarUsuario($request, Usuario::where('email', $email)->where("data_fim", null)->first());
+            $usuario = $this->registrarUsuario($request, Usuario::where('email', $email)->first());
             if (($usuario)) {
                 Auth::loginUsingId($usuario->id);
                 $request->session()->regenerate();
