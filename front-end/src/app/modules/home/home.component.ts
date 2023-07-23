@@ -40,7 +40,7 @@ export class HomeComponent implements OnInit {
       media_avaliacoes: 0,
       nao_concluidas: 0,
       nao_iniciadas: 0,
-      total_demandas: 0,
+      total_atividades: 0,
       horas_atrasadas: 0,
       horas_avaliadas: 0,
       horas_concluidas: 0,
