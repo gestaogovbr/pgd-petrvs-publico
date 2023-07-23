@@ -141,8 +141,8 @@ export class AppComponent {
       PROGRAMAS_GESTAO: { name: this.lex.noun("Programa de Gestão", true), permition: 'MOD_PRGT', route: ['gestao', 'programa'], icon: this.entity.getIcon('Programa') },
       PROJETOS: { name: this.lex.noun("Projeto", true), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: this.entity.getIcon('Projeto') },
       /* Relatórios */
-      FORCAS_TRABALHOS_SERVIDORES: { name: "Força de Trabalho - Servidor", permition: 'MOD_PTR_CONS', route: ['relatorios', 'forca-de-trabalho', 'servidor'], icon: this.entity.getIcon('RelatorioServidor') },
-      FORCAS_TRABALHOS_AREAS: { name: "Força de Trabalho - Área", permition: 'MOD_PTR_CONS', route: ['relatorios', 'forca-de-trabalho', 'area'], icon: this.entity.getIcon('RelatorioArea') },
+      //FORCAS_TRABALHOS_SERVIDORES: { name: "Força de Trabalho - Servidor", permition: 'MOD_PTR_CONS', route: ['relatorios', 'forca-de-trabalho', 'servidor'], icon: this.entity.getIcon('RelatorioServidor') },
+      //FORCAS_TRABALHOS_AREAS: { name: "Força de Trabalho - Área", permition: 'MOD_PTR_CONS', route: ['relatorios', 'forca-de-trabalho', 'area'], icon: this.entity.getIcon('RelatorioArea') },
       /* CONFIGURAÇÕES */
       PREFERENCIAS: { name: "Preferências", permition: '', route: ['configuracoes', 'preferencia'], metadata: { root: true, modal: true }, icon: this.entity.getIcon('Preferencia') },
       ENTIDADES: { name: this.lex.noun("Entidade", true), permition: 'MOD_CFG_ENTD', route: ['configuracoes', 'entidade'], icon: this.entity.getIcon('Entidade') },
@@ -225,7 +225,7 @@ export class AppComponent {
           this.menuSchema.PROGRAMAS_GESTAO,
           this.menuSchema.PROJETOS,
         ]
-      }, {
+      }, /* {
         name: "Relatórios", 
         permition: "MENU_REL_ACESSO", 
         route: ['relatorios'], 
@@ -234,7 +234,7 @@ export class AppComponent {
           this.menuSchema.FORCAS_TRABALHOS_SERVIDORES,
           this.menuSchema.FORCAS_TRABALHOS_AREAS,
         ]
-      }, {
+      }, */ {
         name: "Configurações", 
         permition: "MENU_CONFIG_ACESSO", 
         route: ['configuracoes'], 

@@ -16,7 +16,7 @@ import { AtividadeModule } from '../gestao/atividade/atividade.module';
     CommonModule,
     ComponentsModule,
     ReactiveFormsModule,
-    RelatorioRoutingModule,
+    //RelatorioRoutingModule,
     AtividadeModule
   ]
 })
