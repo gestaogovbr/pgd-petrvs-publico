@@ -1,5 +1,4 @@
 import { ChangeDetectorRef, Injectable, Injector } from '@angular/core';
-import { DaoBaseService } from '../dao/dao-base.service';
 import { Unidade } from '../models/unidade.model';
 import { Usuario, UsuarioConfig } from '../models/usuario.model';
 import { DialogService } from './dialog.service';
@@ -10,7 +9,6 @@ import { ServerService } from './server.service';
 import * as moment from 'moment';
 import { ActivatedRoute } from '@angular/router';
 import { CalendarService } from './calendar.service';
-import { Subject } from 'rxjs';
 import { LexicalService } from './lexical.service';
 import { UtilService } from './util.service';
 import { UsuarioDaoService } from '../dao/usuario-dao.service';
@@ -356,14 +354,13 @@ export class AuthService {
   }
 
   /**
-   * Informa se o usuário logado possui determinada atribuição para uma unidade específica dentre as suas lotações/chefias.
+   * Informa se o usuário logado possui determinada atribuição para uma unidade específica dentre as suas unidades-integrante.
    * @param atribuicao 
    * @param unidade_id 
    */
   public isIntegrante(atribuicao: string, unidade_id: string): boolean {
-    //let unidades: Array<Unidade> = this.util.arrayUnique(this.unidades?.concat(...this.usuario?.chefias_titulares || [], ...this.usuario?.chefias_substitutas || []) || []);
-    //!!unidades.find(x => x.id == unidade_id)?.integrantes?.find(i => i.usuario_id == this.usuario!.id && i.atribuicao == atribuicao);
-    return false;
+    let $vinculo = this.usuario?.unidades_integrante?.find(x => x.unidade_id == unidade_id);
+    return !!$vinculo && $vinculo.atribuicoes.map(a => a.atribuicao).includes(atribuicao);
   }
 
   /**
@@ -386,7 +383,9 @@ export class AuthService {
    */
   public isGestorLinhaAscendente(unidade: Unidade): boolean {
     let result = false;
-    //[...this.usuario!.chefias_titulares!, ...this.usuario!.chefias_substitutas!].map(x => x.id).forEach(x => { if (unidade.path.split('/').slice(1).includes(x)) result = true; });
+    let $ids_unidades = this.usuario?.gerencias_substitutas?.map(x => x.unidade_id) || [];
+    if(this.usuario?.gerencia_titular?.unidade?.id) $ids_unidades.push(this.usuario?.gerencia_titular!.unidade_id);
+    $ids_unidades.forEach(x => { if (unidade.path.split('/').slice(1).includes(x)) result = true; });
     return false;
   }
 

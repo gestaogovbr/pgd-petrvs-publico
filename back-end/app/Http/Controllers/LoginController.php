@@ -50,7 +50,7 @@ class LoginController extends Controller
                         }])->first(); */
             $usuario = Usuario::where("id", $usuario->id)->with([
                 "areasTrabalho" => function($query) use ($entidadeId) {
-                    $query->with("unidade.cidade")->with("unidade.planosEntrega")->with("unidade.unidade.planosEntrega")->with("atribuicoes")->whereHas('unidade', function ($query) use ($entidadeId) {
+                    $query->with("unidade.cidade")->with("unidade.planosEntrega")->with("unidade.unidadePai.planosEntrega")->with("atribuicoes")->whereHas('unidade', function ($query) use ($entidadeId) {
                         return  $query->where('entidade_id', '=', $entidadeId); 
                     });             // Acredito que seja possível reduzir a qde de relacionamentos solicitados
                 },
@@ -638,7 +638,7 @@ class LoginController extends Controller
             $usuario = Usuario::where('email', $email)->where("data_fim", null)->first();
             if(!isset($usuario) && $auth->autoIncluir) {
                 $usuario = new Usuario();
-                $lotacao = new Lotacao();
+                $lotacao = new UnidadeIntegrante();
                 $service = new IntegracaoService();
                 $service->salvaUsuarioLotacaoLoginUnico($usuario, $lotacao, $profile, $auth);
             }
