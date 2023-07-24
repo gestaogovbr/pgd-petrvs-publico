@@ -268,6 +268,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   };
   public panelButtons: ToolbarButton[] = [
     {
+      id: "concluir_valid",
       label: "Concluir",
       icon: "bi-check-circle",
       color: "btn-outline-success",
@@ -275,12 +276,15 @@ export class GridComponent extends ComponentBase implements OnInit {
       onClick: (() => this.onSaveItem(this.editing!)).bind(this)
     },
     {
+      id: "concluir_invalid",
       label: "Concluir",
       icon: "bi-exclamation-circle",
       color: "btn-outline-success",
-      dynamicVisible: (() => !this.form!.valid).bind(this)
+      dynamicVisible: (() => !this.form!.valid).bind(this),
+      onClick: (() => console.log(this.form.errors)).bind(this)
     },
     {
+      id: "cancelar",
       label: "Cancelar",
       icon: "bi-dash-circle",
       color: "btn-outline-danger",
@@ -652,11 +656,16 @@ export class GridComponent extends ComponentBase implements OnInit {
       const entity = this.save ? (await this.save(this.form!, itemRow)) as IIndexable : this.form.value;
       if(entity) {
         const index = this.items.findIndex(x => !(x["id"] || "").length || x["id"] == entity["id"]);
+        let item: IIndexable | undefined = undefined;
         if(index >= 0) {
-          Object.assign(this.items[index], this.util.fillForm(this.items[index], entity));
-          this.editing = this.items[index];
-          if(this.saveEnd) this.saveEnd(this.items[index]);
+          item = this.items[index];
+          Object.assign(this.items[index], this.util.fillForm(item, entity));
+        } else if(entity["id"]?.length) {
+          item = entity;
+          this.items.push(entity);
         }
+        this.editing = item;
+        if(this.saveEnd) this.saveEnd(item);
       }
       this.group(this.items);
       this.control?.setValue(this.items);

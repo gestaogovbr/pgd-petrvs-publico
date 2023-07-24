@@ -7,7 +7,7 @@
                 </span>
             </ng-template>
             <columns>
-                <column [title]="'Entrega\nDemandante\nDestinatário'" [template]="columnEntregaCliente">
+                <column [title]="'Entrega\Demandante\Destinatário'" [template]="columnEntregaCliente">
                     <ng-template let-row="row" #columnEntregaCliente>
                         <span *ngIf="row.descricao" class="badge bg-light text-dark">
                             <i class="bi bi-textarea-t"></i>

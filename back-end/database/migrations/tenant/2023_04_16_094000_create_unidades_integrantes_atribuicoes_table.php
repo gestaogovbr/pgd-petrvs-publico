@@ -22,7 +22,7 @@ class CreateUnidadesIntegrantesAtribuicoesTable extends Migration
             // Campos:
             $table->set("atribuicao", ["AVALIADOR_PLANO_ENTREGA","AVALIADOR_PLANO_TRABALHO","HOMOLOGADOR_PLANO_ENTREGA","LOTADO","COLABORADOR","GESTOR","GESTOR_SUBSTITUTO"])->default("COLABORADOR")->comment("Vínculo que o servidor tem com a unidade");
             // Chaves estrangeiras:
-            $table->foreignUuid('unidade_usuario_id')->onDelete('restrict')->onUpdate('cascade')->comment("Vínculo entre unidade/usuário ao qual se refere a atribuição");
+            $table->foreignUuid('unidade_integrante_id')->onDelete('restrict')->onUpdate('cascade')->comment("Vínculo entre unidade/usuário ao qual se refere a atribuição");
         });
     }
 

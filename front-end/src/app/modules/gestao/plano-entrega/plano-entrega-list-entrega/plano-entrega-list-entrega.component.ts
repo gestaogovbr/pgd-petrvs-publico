@@ -67,6 +67,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
       meta: { default: "" },
       realizado: { default: null },
       entrega_id: { default: null },
+      unidade_id: { default: null },
       progresso_esperado: { default: null },
       progresso_realizado: { default: null },
       destinatario: { default: null },

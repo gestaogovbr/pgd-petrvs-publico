@@ -45,12 +45,12 @@ class CreateProjetosTarefasTable extends Migration
             $table->tinyInteger('soma_custos_filhos')->default(1)->comment("Mostra o somatório dos custos filhos (somente se tem_filhos)");
             $table->json('etiquetas')->nullable()->comment("Etiquetas");
             // Chaves estrangeiras:
-            $table->foreignUuid('documento_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Documento vinculado a tarefa");
-            $table->foreignUuid('projeto_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Projeto");
+            $table->foreignUuid('documento_id')->nullable()->onDelete('restrict')->onUpdate('cascade')->comment("Documento vinculado a tarefa");
+            $table->foreignUuid('projeto_id')->onDelete('restrict')->onUpdate('cascade')->comment("Projeto");
             $table->foreignUuid('tarefa_pai_id')->nullable()->constrained('projetos_tarefas')->onDelete('restrict')->onUpdate('cascade')->comment("Tarefa pai");
             $table->foreignUuid('tarefa_projeto_id')->nullable()->constrained("projetos")->onDelete('restrict')->onUpdate('cascade')->comment("Projeto que será vinculado a tarefa");
-            $table->foreignUuid('atividade_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('usuario_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('atividade_id')->nullable()->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('usuario_id')->nullable()->onDelete('restrict')->onUpdate('cascade');
         });
     }
 

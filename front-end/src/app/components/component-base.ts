@@ -57,7 +57,7 @@ export abstract class ComponentBase {
     }
 
     public generatedButtonId(button: ToolbarButton, relativeId?: string) {
-        return this.generatedId((button.label || button.hint || button.icon || "_button") + (relativeId || ""));
+        return this.generatedId((button.id || button.label || button.hint || button.icon || "_button") + (relativeId || ""));
     }
 
     public detectChanges() {

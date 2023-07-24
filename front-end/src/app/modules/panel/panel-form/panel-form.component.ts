@@ -47,14 +47,23 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       notification_mail_encryption: {default: "SSL"},
       notification_whatsapp: {default: false},
       notification_whatsapp_url: {default: ""},
-      notification_whatsapp_token: {default: ""}
+      notification_whatsapp_token: {default: ""},
+      email: {default: ""},
+      nome_usuario: {default: ""},
+      cpf: {default: ""},
+      apelido: {default: ""},
+      nome_entidade: {default: ""},
+      abrangencia: {default: ""},
+      codigo_cidade: {default: null}
     }, this.cdRef, this.validate);
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if(['id', 'tenancy_db_name'].indexOf(controlName) >= 0 && !control.value?.length) {
+      if(['id', 'tenancy_db_name', 'nome_entidade', 'codigo_cidade', 'abrangencia', 'email', 'cpf', 'nome_usuario', 'apelido' ].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
+    } else if (controlName == "cpf" && !this.util.validarCPF(control.value)) {
+      result = "Inválido";
     }
     if((this.form?.controls.log_traffic.value || this.form?.controls.log_changes.value || this.form?.controls.log_errors.value) && 
       ['log_host', 'log_database'].indexOf(controlName) >= 0 && !control.value?.length) {

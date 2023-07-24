@@ -23,8 +23,8 @@ class CreateDocumentosAssinaturasTable extends Migration
             $table->dateTime('data_hora')->useCurrent()->comment("Data hora da assinatura");
             $table->text('assinatura')->comment("Hash da assinatura");
             // Chaves estrangeiras:
-            $table->foreignUuid('documento_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Documento");
-            $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Usuário");
+            $table->foreignUuid('documento_id')->onDelete('restrict')->onUpdate('cascade')->comment("Documento");
+            $table->foreignUuid('usuario_id')->onDelete('restrict')->onUpdate('cascade')->comment("Usuário");
         });
     }
 
