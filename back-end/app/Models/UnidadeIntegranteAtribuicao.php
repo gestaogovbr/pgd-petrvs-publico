@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\UnidadeIntegrante;
 
-class Atribuicao extends ModelBase
+class UnidadeIntegranteAtribuicao extends ModelBase
 {
     protected $table = 'atribuicoes';
 

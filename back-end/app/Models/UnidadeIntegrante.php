@@ -6,9 +6,9 @@ use App\Models\ModelBase;
 use App\Models\Unidade;
 use App\Models\Usuario;
 
-class UnidadeUsuario extends ModelBase
+class UnidadeIntegrante extends ModelBase
 {
-    protected $table = 'unidade_usuario';
+    protected $table = 'unidades_integrantes';
 
     protected $with = [];
 
