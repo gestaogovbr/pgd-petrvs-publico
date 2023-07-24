@@ -86,7 +86,7 @@ class Unidade extends ModelBase
     // Belongs
     public function entidade() { return $this->belongsTo(Entidade::class); }
     public function cidade() { return $this->belongsTo(Cidade::class); }  //nullable
-    public function unidade() { return $this->belongsTo(Unidade::class); }    //nullable
+    public function unidadePai() { return $this->belongsTo(Unidade::class); }    //nullable
     //public function usuarios() { return $this->belongsToMany(Usuario::class)->withPivot('id'); } // verificar necessidade?
     // Others relationships
     public function gestor() { return $this->hasOne(UnidadeIntegrante::class)->has('gestor'); } 
