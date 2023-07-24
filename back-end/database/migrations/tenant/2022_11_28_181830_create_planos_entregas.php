@@ -29,11 +29,11 @@ class CreatePlanosEntregas extends Migration
             $table->string('nome', 256)->comment("Nome do plano de entregas");
             $table->enum('status', ['INCLUINDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO', 'AVALIADO', 'SUSPENSO'])->comment("Status do plano de entrega");
             // Chaves estrangeiras:
-            $table->foreignUuid('planejamento_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Planejamento institucional ao qual está ligado o plano de entregas");
+            $table->foreignUuid('planejamento_id')->nullable()->onDelete('restrict')->onUpdate('cascade')->comment("Planejamento institucional ao qual está ligado o plano de entregas");
             $table->foreignUuid('cadeia_valor_id')->nullable()->constrained("cadeias_valores")->onDelete('restrict')->onUpdate('cascade')->comment("Cadeia de valores à qual está ligado o plano de entregas");
-            $table->foreignUuid('unidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Unidade à qual está ligado o plano de entregas");
+            $table->foreignUuid('unidade_id')->onDelete('restrict')->onUpdate('cascade')->comment("Unidade à qual está ligado o plano de entregas");
             $table->foreignUuid('plano_entrega_id')->nullable()->constrained("planos_entregas")->onDelete('restrict')->onUpdate('cascade')->comment("Plano de Entrega superior ao qual este aderiu");
-            $table->foreignUuid('programa_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment('Programa de gestão ao qual está vinculado o plano de entregas');
+            $table->foreignUuid('programa_id')->onDelete('restrict')->onUpdate('cascade')->comment('Programa de gestão ao qual está vinculado o plano de entregas');
             $table->foreignUuid('criacao_usuario_id')->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->comment("Usuário responsável pela criação do plano de entregas");
         });
         // Cria na tabela 'sequence' o campo plano_entrega_numero

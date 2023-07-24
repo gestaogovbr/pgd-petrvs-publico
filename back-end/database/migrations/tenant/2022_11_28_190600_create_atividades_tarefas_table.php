@@ -26,8 +26,8 @@ class CreateAtividadesTarefasTable extends Migration
             $table->tinyInteger('concluido')->default(0)->comment("Se a tarefa foi concluída");
             // Chaves estrangeiras:
             $table->foreignUuid('documento_id')->nullable()->constrained('documentos')->onDelete('restrict')->onUpdate('cascade')->comment("Documento");
-            $table->foreignUuid('atividade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Atividade");
-            $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Usuário");
+            $table->foreignUuid('atividade_id')->onDelete('restrict')->onUpdate('cascade')->comment("Atividade");
+            $table->foreignUuid('usuario_id')->onDelete('restrict')->onUpdate('cascade')->comment("Usuário");
             $table->foreignUuid('tipo_tarefa_id')->nullable()->constrained("tipos_tarefas")->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de tarefa");
         });
         // Cria a chave estrangeira na tabela 'documentos' devido à referência cruzada com 'atividades_tarefas'

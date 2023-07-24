@@ -25,7 +25,7 @@ class CreateProjetosRegrasTable extends Migration
             $table->enum('finalidade', ['OUTRA', 'ESCRITORIO_PROJETO', 'GERENTE_PROJETO', 'GERENTE_RISCO', 'GERENTE_COMUNICACAO', 'GERENTE_RECURSO', 'PATROCINADOR', 'GESTOR_NEGOCIAL', 'MEMBRO'])->comment("Finalidade/Papel");
             $table->json('perfis')->nullable()->comment("Perfis de capacidade aplicáveis a quem possuir a regra");
             // Chaves estrangeiras:
-            $table->foreignUuid('projeto_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Projeto");
+            $table->foreignUuid('projeto_id')->onDelete('restrict')->onUpdate('cascade')->comment("Projeto");
         });
     }
 

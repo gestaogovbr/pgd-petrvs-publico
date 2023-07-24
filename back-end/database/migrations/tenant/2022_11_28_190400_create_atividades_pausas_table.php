@@ -23,7 +23,7 @@ class CreateAtividadesPausasTable extends Migration
             $table->dateTime('inicio')->comment("Data inicio da pausa");
             $table->dateTime('fim')->nullable()->comment("Data de retorno");
             // Chaves estrangeiras:
-            $table->foreignUuid('atividade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Atividade");
+            $table->foreignUuid('atividade_id')->onDelete('restrict')->onUpdate('cascade')->comment("Atividade");
         });
     }
 

@@ -100,7 +100,7 @@ class UsuarioSeeder extends Seeder
             $integrante->save();
             $lotacao = new UnidadeIntegranteAtribuicao([
                 'atribuicao' => "LOTADO",
-                'unidade_usuario_id' => $integrante->id
+                'unidade_integrante_id' => $integrante->id
             ]);
             $lotacao->save();
         }

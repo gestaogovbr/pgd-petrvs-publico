@@ -22,7 +22,7 @@ class CreateFavoritosTable extends Migration
             // Campos:
             $table->json('config')->nullable()->comment("Configurações do favoritos");
             // Chaves estrangeiras:
-            $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment('Usuário');
+            $table->foreignUuid('usuario_id')->onDelete('restrict')->onUpdate('cascade')->comment('Usuário');
             // Indices
             $table->unique('usuario_id');
         });
