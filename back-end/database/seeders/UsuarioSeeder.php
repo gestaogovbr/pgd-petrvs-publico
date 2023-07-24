@@ -4,6 +4,9 @@ namespace Database\Seeders;
 
 use App\Models\Usuario;
 use App\Models\Perfil;
+use App\Models\Unidade;
+use App\Models\UnidadeIntegrante;
+use App\Models\UnidadeIntegranteAtribuicao;
 use Illuminate\Database\Seeder;
 use Carbon\Carbon;
 
@@ -77,6 +80,8 @@ class UsuarioSeeder extends Seeder
             ]
         ];
 
+        $unidade_pai = Unidade::first();
+
         foreach($usuarios as $usuario)
         {
             $user = Usuario::where('cpf', $usuario['cpf'])->first() ?? new Usuario();
@@ -88,6 +93,16 @@ class UsuarioSeeder extends Seeder
                 'perfil_id' => $usuario['perfil_id']
             ]);
             $user->save();
+            $integrante = new UnidadeIntegrante([
+                'unidade_id' => $unidade_pai->id,
+                'usuario_id' => $user->id
+            ]);
+            $integrante->save();
+            $lotacao = new UnidadeIntegranteAtribuicao([
+                'atribuicao' => "LOTADO",
+                'unidade_usuario_id' => $integrante->id
+            ]);
+            $lotacao->save();
         }
     }
 }
