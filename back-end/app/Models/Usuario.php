@@ -75,7 +75,7 @@ class Usuario extends Authenticatable
         //'metadados', /* json; */// Metadados do usuário
     ];
 
-    public $fillable_changes = [];
+    public $fillable_changes = ["unidades_integrante"];
 
     protected $keyType = 'string';
 
@@ -101,7 +101,7 @@ class Usuario extends Authenticatable
         'notificacoes' => AsJson::class
     ];
 
-    public $delete_cascade = ['favoritos','vinculosUnidades'];
+    public $delete_cascade = ['favoritos', 'vinculosUnidades'];
 
     // hasOne
     public function gerenciaEntidade() { return $this->hasOne(Entidade::class, 'gestor_id'); } 

@@ -22,8 +22,8 @@ class CreateProgramasParticipantesTable extends Migration
             // campos
             $table->tinyInteger('habilitado')->default(1)->comment("Se o participante está habilitado ou não para o programa");
             // Chaves estrangeiras:
-            $table->foreignUuid('programa_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Programa relacionado ao participante");
-            $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Participante relacionado ao programa");
+            $table->foreignUuid('programa_id')->onDelete('restrict')->onUpdate('cascade')->comment("Programa relacionado ao participante");
+            $table->foreignUuid('usuario_id')->onDelete('restrict')->onUpdate('cascade')->comment("Participante relacionado ao programa");
         });
     }
 

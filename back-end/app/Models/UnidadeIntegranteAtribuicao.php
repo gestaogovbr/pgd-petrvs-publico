@@ -7,7 +7,7 @@ use App\Models\UnidadeIntegrante;
 
 class UnidadeIntegranteAtribuicao extends ModelBase
 {
-    protected $table = 'atribuicoes';
+    protected $table = 'unidades_integrantes_atribuicoes';
 
     protected $with = [];
 

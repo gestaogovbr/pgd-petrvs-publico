@@ -49,19 +49,17 @@ class LoginController extends Controller
                                 $query->with(["planosEntrega","unidade.planosEntrega"]);
                         }])->first(); */
             $usuario = Usuario::where("id", $usuario->id)->with([
-                "lotacoes" => function($query) use ($entidadeId) {
-                    $query->with("unidade.cidade")->with("atribuicoes")->whereHas('unidade', function ($query) use ($entidadeId) {
+                "areasTrabalho" => function($query) use ($entidadeId) {
+                    $query->with("unidade.cidade")->with("unidade.planosEntrega")->with("unidade.unidade.planosEntrega")->with("atribuicoes")->whereHas('unidade', function ($query) use ($entidadeId) {
                         return  $query->where('entidade_id', '=', $entidadeId); 
                     });             // Acredito que seja possível reduzir a qde de relacionamentos solicitados
                 },
                 "perfil.capacidades.tipoCapacidade", 
-                //"unidades.usuarios.atribuicoes", 
-                "unidadesUsuarios.atribuicoes", 
                 "gerenciaTitular.atribuicoes", 
                 "gerenciasSubstitutas.atribuicoes",
-                "vinculosUnidades.unidade" => function($query) {
+                /*"vinculosUnidades.unidade" => function($query) {
                     $query->with(["planosEntrega","unidade.planosEntrega"]);
-                }
+                }*/
             ])->first();
             $request->session()->put("unidade_id", $usuario->lotacao?->id);
         }
