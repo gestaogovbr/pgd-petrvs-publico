@@ -3,7 +3,7 @@
     [hasAdd]="auth.hasPermissionTo('MOD_TIPO_ATV_INCL')"
     [hasEdit]="auth.hasPermissionTo('MOD_TIPO_ATV_EDT')">
     <toolbar *ngIf="!selectable"></toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [hidden]="filterHidden">
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)">
         <div class="row">
             <input-text [size]="12" label="Nome" controlName="nome" [control]="filter!.controls.nome"></input-text>
         </div>
@@ -12,32 +12,40 @@
         <column title="Nome" [template]="columnNome">
             <ng-template let-row="row" #columnNome>
                 <span class="d-block">{{row.nome}}</span>
-                <span *ngIf="row.tipo_atividade" class="badge bg-light text-dark">
-                    <i class="bi bi-check-all"></i>
-                    {{row.tipo_atividade.nome}}
-                </span>
+                <small *ngIf="row.comentario">{{row.comentario}}</small>
             </ng-template>
         </column>
-        <column [title]="lex.noun('Unidade')" [template]="columnUnidade">
-            <ng-template let-row="row" #columnUnidade>
-                <span> {{row.unidade.nome}}</span>
+        <column title="Tempos" [template]="columnTempos">
+            <ng-template let-row="row" #columnTempos>
+                <div class="one-per-line">
+                    <badge icon="bi bi-stopwatch" [hint]="lex.noun('Esforço')" color="light" [label]="util.decimalToTimerFormated(row.esforco, true)"></badge>
+                    <badge icon="bi bi-calendar2-check" [hint]="lex.noun('Tempo planejado') + ' em dias'" color="light" [label]="row.dias_planejado + ' dias'"></badge>
+                </div>
+            </ng-template>
+        </column>
+        <column title="Etiquetas" [template]="columnEtiquetas">
+            <ng-template let-row="row" #columnEtiquetas>
+                <div class="one-per-line">
+                    <badge *ngFor="let etiqueta of row.etiquetas" [icon]="etiqueta.icon" [label]="etiqueta.value" [color]="etiqueta.color"></badge>
+                </div>                
+            </ng-template>
+        </column>
+        <column title="Checklist" [template]="columnChecklist">
+            <ng-template let-row="row" #columnChecklist>
+                <div class="one-per-line">
+                    <badge *ngFor="let check of row.checklist" color="light" icon="bi bi-check2-square" [label]="check.value"></badge>
+                </div>                
             </ng-template>
         </column>
         <column type="options" [onEdit]="edit" [options]="options"></column>        
     </columns>
     <report>
-        <column title="Nome" [template]="reportNome"><ng-template let-row="row" #reportNome>{{row.nome}}</ng-template>
-        </column>
-        <column [title]="lex.noun('Esforço')" [template]="reportEsforco"><ng-template let-row="row"
-                #reportEsforco>{{row.esforco}}</ng-template></column>
-        <column title="Dias planejamento" [template]="reportDiasPlanejado"><ng-template let-row="row"
-                #reportDiasPlanejado>{{row.dias_planejado}}</ng-template></column>
-        <column title="Etiquetas" [template]="reportEtiquetas"><ng-template let-row="row"
-                #reportEtiquetas>{{getReportEtiquetas(row)}}</ng-template></column>
-        <column title="Check-list" [template]="reportChecklist"><ng-template let-row="row"
-                #reportChecklist>{{getReportChecklist(row)}}</ng-template></column>
-        <column title="Comentário" [template]="reportComentario"><ng-template let-row="row"
-                #reportComentario>{{row.comentario_predefinido}}</ng-template></column>
+        <column title="Nome" [template]="reportNome"><ng-template let-row="row" #reportNome>{{row.nome}}</ng-template></column>
+        <column [title]="lex.noun('Esforço')" [template]="reportEsforco"><ng-template let-row="row" #reportEsforco>{{row.esforco}}</ng-template></column>
+        <column title="Dias planejamento" [template]="reportDiasPlanejado"><ng-template let-row="row" #reportDiasPlanejado>{{row.dias_planejado}}</ng-template></column>
+        <column title="Etiquetas" [template]="reportEtiquetas"><ng-template let-row="row" #reportEtiquetas>{{getReportEtiquetas(row)}}</ng-template></column>
+        <column title="Check-list" [template]="reportChecklist"><ng-template let-row="row" #reportChecklist>{{getReportChecklist(row)}}</ng-template></column>
+        <column title="Comentário" [template]="reportComentario"><ng-template let-row="row" #reportComentario>{{row.comentario_predefinido}}</ng-template></column>
     </report>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

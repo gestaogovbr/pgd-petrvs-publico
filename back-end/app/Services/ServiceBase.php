@@ -874,9 +874,9 @@ class ServiceBase extends DynamicMethods
     }
 
     /**
-     * Este método filtra todos os relacionamentos q tenham sido apagados (Data_fim não nula)
+     * Este método aplica os relacionamentos
      */
-/*     public function applyWith(&$entity,&$data) {
+    public function applyWith(&$entity, &$data) {
         $data['with'] = $this->getCamelWith($data['with']);
         $model = $this->getModel();
         foreach($data['with'] as $key => $with) {
@@ -886,20 +886,20 @@ class ServiceBase extends DynamicMethods
                 $entity->with(gettype($key) == "string" ? [$key => $with] : $with);  // aplica o método 'with' normalmente nele...
                 array_splice($withs, -1, 1, explode(':', $last)[0]);   // depois retira os : e os campos
             }
-            while (count($withs)>0) {
-                $relation = $this->getNestedModel($model, implode('.',$withs));
+            while (count($withs) > 0) {
+                /*$relation = $this->getNestedModel($model, implode('.', $withs));
                 if(!empty($relation) && !empty((new $relation)->has_data_fim)) {
                     $entity->with([implode('.',$withs) => function($query) {$query->whereNull('data_fim');}]);
                     $entity->with(gettype($key) == "string"
                             ? [$key => [implode('.',$withs) => function($query) {$query->whereNull('data_fim');}]]
                             : [implode('.',$withs) => function($query) {$query->whereNull('data_fim');}]);
-                } else {
-                    $entity->with(implode('.',$withs));
-                }
+                } else {*/
+                $entity->with(implode('.', $withs));
+                //}
                 array_pop($withs);
             }
         }
-    } */
+    }
 
     public function getNestedModel($model, $nested) {
         $relations = explode('.', explode(':', $nested)[0]);

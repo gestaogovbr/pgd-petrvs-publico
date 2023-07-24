@@ -123,7 +123,8 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
 
   public async saveLotacao(form: FormGroup, row: any) {
     const lotacoes = (this.form?.controls.lotacoes?.value || []).filter((x: Lotacao) => x.id != row.id);
-    const principal = lotacoes.find((x: Lotacao) => x.principal);
+    //const principal = lotacoes.find((x: Lotacao) => x.principal);
+    const principal = lotacoes.find((x: Lotacao) => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"));
     row.unidade_id = form.controls.unidade_id.value;
     row.principal = form.controls.principal.value;
     row._status = row._status == "ADD" ? "ADD" : "EDIT";

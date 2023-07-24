@@ -21,7 +21,6 @@ class PlanoTrabalho extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'numero', /* int; NOT NULL; */// Número do plano de trabalho (Gerado pelo sistema)
         'carga_horaria', /* double(8,2); NOT NULL; DEFAULT: '0.00'; */// Carga horária diária do usuário
         'tempo_total', /* double(8,2); NOT NULL; DEFAULT: '0.00'; */// Horas úteis de trabalho no período de data_inicio_vigencia à data_fim_vigencia considerando carga_horaria, feriados, fins de semana
         'tempo_proporcional', /* double(8,2); NOT NULL; DEFAULT: '0.00'; */// tempo_total menos os afastamentos
@@ -33,12 +32,13 @@ class PlanoTrabalho extends ModelBase
         'documento_id', /* char(36); */
         'tipo_modalidade_id', /* char(36); NOT NULL; */
         'plano_entrega_id', /* char(36); NOT NULL; */
-        //'deleted_at', /* timestamp; */
         'data_inicio_vigencia', /* datetime; NOT NULL; */// Inicio do plano de trabalho
         'data_fim_vigencia', /* datetime; NOT NULL; */// Fim do plano de trabalho
         'data_arquivamento', /* datetime; */// Data de arquivamento do plano de trabalho
         'data_cancelamento', /* datetime; */// Data de cancelamento do plano de trabalho
         'status', /* enum('INCLUINDO','HOMOLOGANDO','ATIVO','CONCLUIDO','AVALIADO','SUSPENSO'); NOT NULL; */// Status do plano de trabalho
+        //'numero', /* int; NOT NULL; */// Número do plano de trabalho (Gerado pelo sistema)
+        //'deleted_at', /* timestamp; */
     ];
 
     public $fillable_changes = ['entregas', 'documentos'];

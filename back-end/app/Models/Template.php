@@ -24,15 +24,15 @@ class Template extends ModelBase
     }
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'numero', /* int; NOT NULL; */// Número do template (Gerado pelo sistema)
-        'especie', /* enum('TERMO_ADESAO','SEI','TCR','NOTIFICACAO'); NOT NULL; */// Especificação da espécie do template (interno do sistema)
+        'especie', /* enum('SEI','TCR','OUTRO','NOTIFICACAO'); NOT NULL; */// Especificação da espécie do template (interno do sistema)
         'codigo', /* varchar(255); */// Código opcional para o template
-        'titulo', /* varchar(256); NOT NULL; */// Nome da tarefa
+        'titulo', /* varchar(256); NOT NULL; */// Título do template
         'conteudo', /* text; */// Comentário predefinida para a tarefa
         'entidade_id', /* char(36); */
         'unidade_id', /* char(36); */
+        'dataset', /* json; */// Dados da parametrização
+        //'numero', /* int; NOT NULL; */// Número do template (Gerado pelo sistema)
         //'deleted_at', /* timestamp; */
-        //'dataset', /* json; */// Dados da parametrização
     ];
 
     // Casting

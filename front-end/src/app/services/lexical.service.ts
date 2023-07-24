@@ -139,7 +139,7 @@ export class LexicalService {
    * @returns Retorna uma string que corresponde à tradução. O retorno irá respeitar o case da entrada, mas caso seja detectado camelcase, a inicial de cada palavra será maiúscula.
    Pré-posições: 
   */
-    public translate(phrase: string) {
+  public translate(phrase: string) {
     /* Inicializa variáveis */
     const regex = /^(\s*)(o\s|a\s|os\s|as\s|um\s|uma\s|uns\s|umas\s|ao\s|à\s|aos\s|às\s|do\s|da\s|dos\s|das\s|dum\s|duma\s|duns\s|dumas\s|no\s|na\s|nos\s|nas\s|num\s|numa\s|nuns\s|numas\s|pelo\s|pela\s|pelos\s|pelas|)(.*)$/i;
     let groups = regex.exec(phrase);
@@ -151,7 +151,7 @@ export class LexicalService {
     let native = this.defaults[key];
     let database = this.vocabulary[key];
     /* Verifica se é necessário fazer a transformação */
-    if(native.single != database.single || native.plural != database.plural) {
+    if(native && (native.single != database.single || native.plural != database.plural)) {
       /* Tem preposição */
       if(preposition?.length && !["de", "em", "por"].includes(preposition.toLowerCase()) && native.female !== database.female) {
         preposition = this.keepCase(preposition, native.female ? this.PREPOSITIONS_MALE[this.PREPOSITIONS_FEMALE.indexOf(preposition.toLowerCase())] : this.PREPOSITIONS_FEMALE[this.PREPOSITIONS_MALE.indexOf(preposition.toLowerCase())]);

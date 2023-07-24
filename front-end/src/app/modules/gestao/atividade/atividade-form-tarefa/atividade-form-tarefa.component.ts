@@ -107,7 +107,7 @@ export class AtividadeFormTarefaComponent extends PageFormBase<AtividadeTarefa, 
     return new NavigateResult(this.entity);
   }
 
-  public onTarefaSelect(item: SelectItem) {
+  public onTipoTarefaSelect(item: SelectItem) {
     const tipoTarefa: TipoTarefa | undefined = item.entity as TipoTarefa;
     this.form!.controls.tempo_estimado.setValue(tipoTarefa?.tempo_estimado || 0);
   }

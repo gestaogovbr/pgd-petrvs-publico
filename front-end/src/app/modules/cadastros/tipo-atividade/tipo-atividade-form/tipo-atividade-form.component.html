@@ -1,8 +1,8 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
     <div class="row">
         <input-text [size]="6" label="Nome" controlName="nome"></input-text>
-        <input-timer onlyHours [label]="lex.noun('Esforço')" [size]="3" controlName="esforco" labelInfo="Tempo em horas correntes previsto para a execução da atividade"></input-timer>
-        <input-text numbers [label]="lex.noun('Tempo planejado')" sufix="dias" [size]="3" icon="bi bi-calendar-date" controlName="dias_planejado" [control]="form!.controls.dias_planejado" labelInfo="Tempo em dias previsto para realizar a atividade"></input-text>
+        <input-timer onlyHours icon="bi bi-stopwatch" [label]="lex.noun('Esforço')" [size]="3" controlName="esforco" labelInfo="Tempo em horas correntes previsto para a execução da atividade"></input-timer>
+        <input-text numbers icon="bi bi-calendar2-check" [label]="lex.noun('Tempo planejado')" sufix="dias" [size]="3" icon="bi bi-calendar-date" controlName="dias_planejado" [control]="form!.controls.dias_planejado" labelInfo="Tempo em dias previsto para realizar a atividade"></input-text>
     </div>
     <separator title="Etiquetas/Check-list/Comentário"></separator>
     <div class="row">
@@ -16,6 +16,6 @@
         </input-multiselect>
     </div>
     <div class="row">
-        <input-textarea [size]="12" [rows]="3" label="Comentários" controlName="comentario_predefinido" labelInfo="Comentário que será adicionado automaticamente"></input-textarea>
+        <input-textarea [size]="12" [rows]="3" label="Comentários" controlName="comentario" labelInfo="Comentário que será adicionado automaticamente"></input-textarea>
     </div>
 </editable-form>

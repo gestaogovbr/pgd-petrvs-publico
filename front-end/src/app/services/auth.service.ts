@@ -89,6 +89,14 @@ export class AuthService {
   private _notificacao?: NotificacaoService;
   public get notificacao(): NotificacaoService { this._notificacao = this._notificacao || this.injector.get<NotificacaoService>(NotificacaoService); return this._notificacao };
 
+  public set usuarioConfig(value: IIndexable) {
+    this.updateUsuarioConfig(this.usuario!.id, value);
+  }
+  public get usuarioConfig(): IIndexable {
+    const defaults = new UsuarioConfig();
+    return this.util.assign(defaults, this.usuario?.config || {});
+  }
+
   constructor(public injector: Injector) { }
 
   public get unidadeHora(): string {
@@ -116,10 +124,6 @@ export class AuthService {
     }, false);
   }
 
-  public set usuarioConfig(value: IIndexable) {
-    this.updateUsuarioConfig(this.usuario!.id, value);
-  }
-
   public updateUsuarioConfig(usuarioId: string, value: IIndexable) {
     if (this.usuario?.id == usuarioId) this.usuario!.config = this.util.assign(this.usuario!.config, value);
     return this.usuarioDao.updateJson(usuarioId, 'config', value);
@@ -128,11 +132,6 @@ export class AuthService {
   public updateUsuarioNotificacoes(usuarioId: string, value: IIndexable) {
     if (this.usuario?.id == usuarioId) this.usuario!.notificacoes = this.util.assign(this.usuario!.notificacoes, value);
     return this.usuarioDao.updateJson(usuarioId, 'notificacoes', value);
-  }
-
-  public get usuarioConfig(): IIndexable {
-    const defaults = new UsuarioConfig();
-    return this.util.assign(defaults, this.usuario?.config || {});
   }
 
   public registerEntity(entity: any) {
@@ -151,7 +150,7 @@ export class AuthService {
       this.kind = this.kind;
       this.logged = true;
       this.unidades = this.usuario?.lotacoes?.map(x => x.unidade!) || [];
-      this.unidade = this.usuario?.lotacoes?.find(x => x.principal)?.unidade;
+      this.unidade = this.usuario?.lotacoes?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade; //this.usuario?.lotacoes?.find(x => x.principal)?.unidade;
       if (this.unidade) this.calendar.loadFeriadosCadastrados(this.unidade.id);
       if (token?.length) localStorage.setItem("petrvs_api_token", token);
       this.notificacao.updateNaoLidas();
@@ -343,7 +342,7 @@ export class AuthService {
    */
   public isLotacaoPrincipal(pUnidade: Unidade | null = null): boolean {
     let unidade = pUnidade || this.unidade;
-    let lotacao = this.usuario!.lotacoes.find(x => x.unidade_id == unidade?.id && x.principal);
+    let lotacao = this.usuario!.lotacoes.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"));
     return lotacao != undefined;
   }
 

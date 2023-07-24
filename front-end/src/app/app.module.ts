@@ -17,7 +17,6 @@ import { LogModule } from './modules/logs/log.module';
 import { UteisModule } from './modules/uteis/uteis.module';
 import { RotinaModule } from './modules/rotinas/rotina.module';
 import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
-import { CurriculumListComponent } from './modules/cadastros/curriculum/curriculum-list/curriculum-list.component';
 
 @NgModule({
   declarations: [
@@ -28,8 +27,7 @@ import { CurriculumListComponent } from './modules/cadastros/curriculum/curricul
     DialogComponent,
     SpinnerOverlayComponent,
     TesteComponent,
-    TesteFormComponent,
-    CurriculumListComponent
+    TesteFormComponent
   ],
   imports: [
     BrowserModule,
@@ -38,14 +36,10 @@ import { CurriculumListComponent } from './modules/cadastros/curriculum/curricul
     ReactiveFormsModule,
     ComponentsModule,
     AppRoutingModule,
-    //AtividadeModule,
     ChartsModule,
-    //RelatorioModule,
     UteisModule,
     LogModule,
     RotinaModule,
-    //CadeiaValorModule,
-    //CurriculumModule
   ],
   providers: [],
   bootstrap: [AppComponent]

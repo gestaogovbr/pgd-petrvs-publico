@@ -43,7 +43,7 @@ class UsuarioService extends ServiceBase
         $planos_ids = $planosTrabalhoAtivos->map(function($plano){return $plano->id;});
         //$notas_validas = TipoAvaliacao::where('aceita_entrega', true)->get()->pluck('nota_atribuida');
   
-        /*         $media_avaliacao = Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->avaliadas()->with(['avaliacao'])->get()->avg(function($demanda){
+        /*         $media_avaliacao = Demanda::doUsuario($usuario_id)->dosPlanosTrabalho($planos_ids)->avaliadas()->with(['avaliacao'])->get()->avg(function($demanda){
             return $demanda["avaliacao"]["nota_atribuida"];
         }); */
         
@@ -63,11 +63,11 @@ class UsuarioService extends ServiceBase
             ];           
         }
 
-        //$avaliadas = Demanda::doUsuario($usuario_id)->dosPlanos($planos_ids)->avaliadas()->get();
-        $nao_iniciadas = Atividade::doUsuario($usuario_id)->dosPlanos($planos_ids)->naoIniciadas()->get();
-        $concluidas = Atividade::doUsuario($usuario_id)->dosPlanos($planos_ids)->concluidas()->get();
-        $nao_concluidas = Atividade::doUsuario($usuario_id)->dosPlanos($planos_ids)->naoConcluidas()->get();
-        $atrasadas = Atividade::doUsuario($usuario_id)->dosPlanos($planos_ids)->atrasadas()->get();
+        //$avaliadas = Demanda::doUsuario($usuario_id)->dosPlanosTrabalho($planos_ids)->avaliadas()->get();
+        $nao_iniciadas = Atividade::doUsuario($usuario_id)->dosPlanosTrabalho($planos_ids)->naoIniciadas()->get();
+        $concluidas = Atividade::doUsuario($usuario_id)->dosPlanosTrabalho($planos_ids)->concluidas()->get();
+        $nao_concluidas = Atividade::doUsuario($usuario_id)->dosPlanosTrabalho($planos_ids)->naoConcluidas()->get();
+        $atrasadas = Atividade::doUsuario($usuario_id)->dosPlanosTrabalho($planos_ids)->atrasadas()->get();
 
         $result['atividades'] = [
             'nao_iniciadas' => $nao_iniciadas->count(),
@@ -109,12 +109,12 @@ class UsuarioService extends ServiceBase
             $planos_ids = $planosTrabalhoAtivos->map(function($plano){return $plano->id;});
             //$notas_validas = TipoAvaliacao::where('aceita_entrega', true)->get()->pluck('nota_atribuida');
     
-        /*             $total_consolidadas = Demanda::doUsuario($usuario->id)->dosPlanos($planos_ids)->avaliadas()->with(['avaliacao'])->get()->sum(function($demanda) use ($notas_validas){
+        /*             $total_consolidadas = Demanda::doUsuario($usuario->id)->dosPlanosTrabalho($planos_ids)->avaliadas()->with(['avaliacao'])->get()->sum(function($demanda) use ($notas_validas){
                 return in_array($demanda["avaliacao"]["nota_atribuida"], $notas_validas->all()) ? $demanda['tempo_pactuado'] : 0;
             }); */
-            $total_consolidadas = Atividade::doUsuario($usuario->id)->dosPlanos($planos_ids)->concluidas()->get()->sum(['tempo_planejado']);
+            $total_consolidadas = Atividade::doUsuario($usuario->id)->dosPlanosTrabalho($planos_ids)->concluidas()->get()->sum(['tempo_planejado']);
 
-        /*             $media_avaliacao = Demanda::doUsuario($usuario->id)->dosPlanos($planos_ids)->avaliadas()->with(['avaliacao'])->get()->avg(function($demanda){
+        /*             $media_avaliacao = Demanda::doUsuario($usuario->id)->dosPlanosTrabalho($planos_ids)->avaliadas()->with(['avaliacao'])->get()->avg(function($demanda){
                 return $demanda["avaliacao"]["nota_atribuida"];
             }); */
 

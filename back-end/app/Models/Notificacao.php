@@ -17,8 +17,8 @@ class Notificacao extends ModelBase
         'codigo', /* varchar(255); NOT NULL; */// Código da mensagem
         'data_registro', /* datetime; NOT NULL; */// Data e hora da inclusão da mensagem
         'mensagem', /* longtext; NOT NULL; */// Mensagem
-        'numero', /* int; NOT NULL; */// Número da mensagem (Gerado pelo sistema)
         'remetente_id', /* char(36); */
+        //'numero', /* int; NOT NULL; */// Número da mensagem (Gerado pelo sistema)
         //'deleted_at', /* timestamp; */
     ];
 

@@ -17,8 +17,6 @@ class TipoTarefa extends ModelBase
         'tempo_estimado', /* double(8,2); NOT NULL; */// Tempo estimado para a execução do tipo de tarefa (Horas decimais)
         'documental', /* tinyint; NOT NULL; */// Se o tipo de tarefa requer obrigatoriamente um documento
         'comentario', /* text; */// Comentário predefinida para o tipo de tarefa
-        'entidade_id', /* char(36); */
-        'unidade_id', /* char(36); */
         //'deleted_at', /* timestamp; */
     ];
     //Has

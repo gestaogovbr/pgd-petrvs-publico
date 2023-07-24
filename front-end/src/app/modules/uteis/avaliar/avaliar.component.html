@@ -30,7 +30,7 @@
         </div>
     </ng-template>
     <separator [title]="lex.noun('Entrega', true)" collapse [collapsed]="!entity?.entregas?.length">
-        <atividade-list-entrega persist [atividade]="entity"></atividade-list-entrega>
+        <atividade-list-tarefa persist [atividade]="entity"></atividade-list-tarefa>
     </separator>    
     <div class="row">
         <input-rate [size]="12" [label]="'Como foi a entrega de ' + util.apelidoOuNome(entity?.usuario) + '?'" (change)="onNotaChange($event)" controlName="nota_atribuida" [control]="form!.controls.nota_atribuida" controlName="rate"></input-rate>

@@ -6,7 +6,7 @@ use App\Models\Tenant;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
-class UpdateModels extends Command
+class UpdateModelCommand extends Command
 {
     protected $ignoreTables = [
         "changes",

@@ -35,7 +35,7 @@ trait LogChanges
     {
         $util = new UtilService();
         $config = config("log");
-        if($config["changes"]) {
+        if(!empty($config["changes"])) {
             $delta = $action == "ADD" ? $model->getAttributes() : ($action == "DELETE" || $action == "SOFT_DELETE" ? $model->getOriginal() : $util->differentAttributes($model->getAttributes(),$model->getOriginal()));
             Change::create([
                 'date_time' => new DateTime(),
@@ -50,7 +50,7 @@ trait LogChanges
 
     public static function customLogChange($table, $id, $action, $delta) {
         $config = config("log");
-        if($config["changes"]) {
+        if(!empty($config["changes"])) {
             Change::create([
                 'user_id' => Auth::check() ? Auth::user()->id : null,
                 'table_name' => $table,

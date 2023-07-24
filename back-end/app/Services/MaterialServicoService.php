@@ -4,6 +4,4 @@ namespace App\Services;
 
 use App\Services\ServiceBase;
 
-class MaterialServicoService extends ServiceBase {
-    use UseDataFim;
-}
+class MaterialServicoService extends ServiceBase {}

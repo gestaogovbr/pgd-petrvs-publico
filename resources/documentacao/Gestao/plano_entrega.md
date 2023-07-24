@@ -107,6 +107,7 @@
    12. (RN_PENT_4_12) INSERIR (exclusivamente para planos próprios)
         1. o usuário logado precisa ser gestor da unidade do plano, ou gestor da sua unidade-pai; ou
         2. o usuário precisa possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a unidade-pai da unidade do plano e possuir a capacidade "MOD_PENT_EDT_FLH";
+        3. possuir a capacidade "MOD_PENT_INCL_QQR_UND";
    13. (RN_PENT_4_13) LIBERAR PARA HOMOLOGAÇÃO
         1. o plano precisa estar com o status INCLUINDO e o usuário logado precisa ser gestor da unidade do plano;
    14. (RN_PENT_4_14) RETIRAR DE HOMOLOGAÇÃO

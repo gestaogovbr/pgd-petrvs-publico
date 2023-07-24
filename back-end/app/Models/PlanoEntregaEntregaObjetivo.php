@@ -6,7 +6,7 @@ use App\Models\ModelBase;
 use App\Models\PlanejamentoObjetivo;
 use App\Models\PlanoEntregaEntrega;
 
-class PlanoEntregaObjetivo extends ModelBase
+class PlanoEntregaEntregaObjetivo extends ModelBase
 {
     protected $table = 'planos_entregas_entregas_objetivos';
 

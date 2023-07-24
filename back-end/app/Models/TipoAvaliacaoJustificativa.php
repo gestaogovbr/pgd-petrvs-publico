@@ -15,6 +15,7 @@ class TipoAvaliacaoJustificativa extends ModelBase
         'tipo_avaliacao_id', /* char(36); NOT NULL; */
         'tipo_justificativa_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */
+        //'nota', /* json; NOT NULL; */// Nota da avaliação
     ];
 
     // Belongs

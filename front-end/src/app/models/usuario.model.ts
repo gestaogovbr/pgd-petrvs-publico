@@ -12,6 +12,7 @@ export type UsuarioVinculacao = "SERVIDOR_EFETIVO" | "SERVIDOR_COMISSIONADO" | "
 
 export class UsuarioConfig {
     etiquetas: LookupItem[] = [];
+    menu_contexto: string = "";
     ocultar_menu_sei: boolean = true;
     ocultar_container_petrvs: boolean = false;
 }

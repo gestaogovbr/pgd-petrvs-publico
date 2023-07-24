@@ -19,7 +19,6 @@ class Atividade extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'numero', /* int; NOT NULL; */// Número da atividade (Gerado pelo sistema)
         'descricao', /* text; */// Assunto da atividade
         'data_distribuicao', /* datetime; NOT NULL; */// Data de cadastro da atividade
         'carga_horaria', /* double(8,2); */// Carga horária que será utilizada para todos os cálculos (vinda do plano de trabalho)
@@ -42,6 +41,7 @@ class Atividade extends ModelBase
         'unidade_id', /* char(36); NOT NULL; */
         'documento_requisicao_id', /* char(36); */
         'documento_entrega_id', /* char(36); */
+        //'numero', /* int; NOT NULL; */// Número da atividade (Gerado pelo sistema)
         //'deleted_at', /* timestamp; */
     ];
 
@@ -82,7 +82,7 @@ class Atividade extends ModelBase
     public function documentoEntrega() { return $this->belongsTo(Documento::class); }         //nullable
 
     // Escopos
-    //public function scopeDoUsuario($query, $usuario_id) { return $query->where("usuario_id", $usuario_id); }
+    public function scopeDoUsuario($query, $usuario_id) { return $query->where("usuario_id", $usuario_id); }
     public function scopeDosPlanosTrabalho($query, $planos_trabalho_ids) { return $query->whereIn("plano_trabalho_id", $planos_trabalho_ids); }
     public function scopeNaoIniciadas($query) { return $query->whereNull('data_inicio'); }
     public function scopeConcluidas($query) { return $query->whereNotNull('data_entrega'); }

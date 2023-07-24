@@ -5,6 +5,4 @@ namespace App\Services;
 use App\Models\Feriado;
 use App\Services\ServiceBase;
 
-class FeriadoService extends ServiceBase {
-    use UseDataFim;
-}
+class FeriadoService extends ServiceBase {}

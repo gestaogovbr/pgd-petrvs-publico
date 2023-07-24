@@ -128,7 +128,8 @@ class Usuario extends Authenticatable
     public function integracoes() { return $this->hasMany(Integracao::class); }
     public function vinculosUnidades() { return $this->hasMany(UnidadeUsuario::class); }
     public function planosEntregaCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }  
-    public function planosTrabalhoCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }  
+    public function planosTrabalhoCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); } 
+    public function unidadesUsuarios() { return $this->hasMany(UnidadeUsuario::class); }
     // belongsTo
     public function perfil() { return $this->belongsTo(Perfil::class); }     //nullable
     // belongsToMany

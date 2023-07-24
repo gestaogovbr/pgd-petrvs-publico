@@ -260,7 +260,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     this.form?.controls.data_distribuicao.updateValueAndValidity();
   }
 
-  public onPlanoChange(event: Event) {
+  public onPlanoTrabalhoChange(event: Event) {
     (async () => {
       if(this.entity) {
         const planoTrabalho = (this.usuario?.searchObj as Usuario)?.planos_trabalho?.find(x => x.id == this.form!.controls.plano_trabalho_id.value);

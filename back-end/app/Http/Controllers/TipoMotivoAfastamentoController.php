@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ServerException;
 use App\Models\TipoMotivoAfastamento;
 use App\Services\TipoMotivoAfastamentoService;
 use Illuminate\Http\Request;

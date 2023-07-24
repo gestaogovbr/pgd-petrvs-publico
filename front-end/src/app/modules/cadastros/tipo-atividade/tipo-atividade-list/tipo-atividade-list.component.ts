@@ -53,7 +53,7 @@ export class TipoAtividadeListComponent extends PageListBase<TipoAtividade, Tipo
 
   public getReportEtiquetas(row: TipoAtividade): string {
     let result = "";
-    row.etiquetas_predefinidas.forEach(element => {
+    row.etiquetas.forEach(element => {
       result += element.value + ";\n";
     });
     return result;
@@ -61,7 +61,7 @@ export class TipoAtividadeListComponent extends PageListBase<TipoAtividade, Tipo
 
   public getReportChecklist(row: TipoAtividade): string {
     let result = "";
-    row.checklist_predefinidos.forEach(element => {
+    row.checklist.forEach(element => {
       result += element.value + ";\n";
     });
     return result;

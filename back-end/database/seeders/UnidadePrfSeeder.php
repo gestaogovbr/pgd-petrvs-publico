@@ -21,7 +21,6 @@ class UnidadePrfSeeder extends Seeder
             'codigo' => '1',
             'sigla' => 'PRF',
             'nome' => 'POLÍCIA RODOVIÁRIA FEDERAL',
-            'data_inicio' => Carbon::now(),
             'entidade_id' => '52d78c7d-e0c1-422b-b094-2ca5958d5ac1'
         ]);
         $prf->save();

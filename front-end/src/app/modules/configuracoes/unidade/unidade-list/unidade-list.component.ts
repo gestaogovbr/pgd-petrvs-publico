@@ -49,8 +49,8 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
   public dynamicOptions(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let unidade: Unidade = row as Unidade;
-    // Testa se o usuário possui permissão para exibir dados da unidade
-    if (this.auth.hasPermissionTo("MOD_UND_CONS")) result.push({ icon: "bi bi-activity", label: "Ver Atividades", onClick: this.consultAtividades.bind(this) });
+    /* Testa se o usuário possui permissão para exibir dados da unidade
+    if (this.auth.hasPermissionTo("MOD_UND_CONS")) result.push({ icon: "bi bi-activity", label: "Ver Atividades", onClick: this.consultAtividades.bind(this) });*/
     // Testa se o usuário possui permissão para exibir dados da unidade
     if (this.auth.hasPermissionTo("MOD_UND_CONS")) result.push({ icon: "bi bi-info-circle", label: "Informações", onClick: this.consult.bind(this) });
     // Testa se o usuário possui permissão de inativar a unidade
@@ -92,7 +92,7 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
     return result;
   }
 
-  public consultAtividades(unidade: Unidade) {
+  /*public consultAtividades(unidade: Unidade) {
     this.go.navigate({ route: ['cadastros', 'atividade'] }, { metadata: { unidade_id: unidade.id, filterHidden: 'true', exibir_vinculadas_toolbar: true, minhas: true }, modal: true });
-  }
+  }*/
 }

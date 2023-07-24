@@ -64,7 +64,7 @@ export class TipoAtividadeFormComponent extends PageFormBase<TipoAtividade, Tipo
     let result = undefined;
     const value = this.form.controls.etiqueta_texto.value;
     const key = this.util.textHash(value);
-    if(value?.length && this.util.validateLookupItem(this.form.controls.etiquetas_predefinidas.value, key)) {
+    if(value?.length && this.util.validateLookupItem(this.form.controls.etiquetas.value, key)) {
       result = {
         key: key,
         value: this.form.controls.etiqueta_texto.value,

@@ -47,14 +47,22 @@ class LoginController extends Controller
                             "vinculosUnidades.unidade" => function($query) {
                                 $query->with(["planosEntrega","unidade.planosEntrega"]);
                         }])->first(); */
-            $usuario = Usuario::where("id", $usuario->id)->with(["lotacoes" => function($query) use ($entidadeId) {
-                            $query->whereHas('unidade', function ($query) use ($entidadeId) {
-                                return  $query->where('entidade_id', '=', $entidadeId); });             // Acredito que seja possível reduzir a qde de relacionamentos solicitados
-                        },"perfil.capacidades.tipoCapacidade", "unidades.usuarios.atribuicoes", "gerenciaTitular.usuarios.atribuicoes", "gerenciasSubstitutas.usuarios.atribuicoes",
-                            "vinculosUnidades.unidade" => function($query) {
-                                        $query->with(["planosEntrega","unidade.planosEntrega"]);
-                        }])->first();
-            $request->session()->put("unidade_id", $usuario->lotacao->id);
+            $usuario = Usuario::where("id", $usuario->id)->with([
+                "lotacoes" => function($query) use ($entidadeId) {
+                    $query->with("unidade.cidade")->with("atribuicoes")->whereHas('unidade', function ($query) use ($entidadeId) {
+                        return  $query->where('entidade_id', '=', $entidadeId); 
+                    });             // Acredito que seja possível reduzir a qde de relacionamentos solicitados
+                },
+                "perfil.capacidades.tipoCapacidade", 
+                //"unidades.usuarios.atribuicoes", 
+                "unidadesUsuarios.atribuicoes", 
+                "gerenciaTitular.atribuicoes", 
+                "gerenciasSubstitutas.atribuicoes",
+                "vinculosUnidades.unidade" => function($query) {
+                    $query->with(["planosEntrega","unidade.planosEntrega"]);
+                }
+            ])->first();
+            $request->session()->put("unidade_id", $usuario->lotacao?->id);
         }
         return $usuario;
     }

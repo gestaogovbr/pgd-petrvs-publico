@@ -4,7 +4,5 @@ namespace App\Services;
 
 use App\Services\ServiceBase;
 
-class TarefaService extends ServiceBase {
-    use UseDataFim;
-}
+class TarefaService extends ServiceBase {}
 

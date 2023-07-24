@@ -7,8 +7,8 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
   selector: 'app-tarefa-list',
-  templateUrl: './tarefa-list.component.html',
-  styleUrls: ['./tarefa-list.component.scss']
+  templateUrl: './tipo-tarefa-list.component.html',
+  styleUrls: ['./tipo-tarefa-list.component.scss']
 })
 export class TipoTarefaListComponent extends PageListBase<TipoTarefa, TipoTarefaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

@@ -347,7 +347,6 @@ export class AppComponent {
 
   public onContextoSelect(item: any) {
     this.contexto = item;
-    console.log('onContexto',item)
     this.goHome();
   }
 
@@ -356,7 +355,6 @@ export class AppComponent {
   }
 
   public get menu(): any {
-    console.log('GET MENU',this.contexto)
 
     switch (this.contexto.key) {
 

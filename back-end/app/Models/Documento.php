@@ -23,10 +23,9 @@ class Documento extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'numero', /* int; NOT NULL; */// Número do documento (Gerado pelo sistema)
         'titulo', /* varchar(256); NOT NULL; */// Titulo do documento
         'tipo', /* enum('HTML','PDF','LINK'); NOT NULL; */// Tipo do documento
-        'especie', /* enum('TERMO_ADESAO','SEI','TCR'); NOT NULL; */// Especificação da espécie do documento (interno do sistema)
+        'especie', /* enum('SEI','TCR','OUTRO','NOTIFICACAO'); NOT NULL; */// Especificação da espécie do documento (interno do sistema)
         'conteudo', /* longtext; */// Conteúdo do arquivo
         'metadados', /* json; */// Metadados
         'link', /* json; */// Informações sobre o link, caso o tipo seja LINK
@@ -42,6 +41,7 @@ class Documento extends ModelBase
         'plano_trabalho_id', /* char(36); */
         'template_id', /* char(36); */
         'plano_trabalho_id', /* char(36); */
+        //'numero', /* int; NOT NULL; */// Número do documento (Gerado pelo sistema)
         //'deleted_at', /* timestamp; */
     ];
 
