@@ -158,8 +158,8 @@ export class AuthService {
       this.capacidades = this.usuario?.perfil?.capacidades?.filter(x => x.deleted_at == null).map(x => x.tipo_capacidade?.codigo || "") || [];
       this.kind = this.kind;
       this.logged = true;
-      this.unidades = this.usuario?.lotacoes?.map(x => x.unidade!) || []; // unidadeIntegrante.unidade
-      this.unidade = this.usuario?.lotacoes?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade; //this.usuario?.lotacoes?.find(x => x.principal)?.unidade;
+      this.unidades = this.usuario?.areas_trabalho?.map(x => x.unidade!) || [];
+      this.unidade = this.usuario?.lotacao?.unidade;
       if (this.unidade) this.calendar.loadFeriadosCadastrados(this.unidade.id);
       if (token?.length) localStorage.setItem("petrvs_api_token", token);
       this.notificacao.updateNaoLidas();
@@ -319,7 +319,7 @@ export class AuthService {
   }
 
   public hasLotacao(unidadeId: string) {
-    return this.usuario!.lotacoes.find(x => x.unidade_id == unidadeId);
+    return this.usuario!.areas_trabalho?.find(x => x.unidade_id == unidadeId);
   }
 
   /**
@@ -331,8 +331,8 @@ export class AuthService {
   public isGestorUnidade(pUnidade: Unidade | string | null = null): boolean {
     /*       let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? this.unidades?.find(x => x.id == pUnidade) : pUnidade;
           return !!unidade && [unidade.gestor_substituto_id, unidade.gestor_id].includes(this.usuario!.id);  */
-    let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? [...this.usuario!.chefias_titulares!, ...this.usuario!.chefias_substitutas!].find(x => x.id == pUnidade) : pUnidade;
-    return !!unidade && [unidade.gestor_substituto_id, unidade.gestor_id].includes(this.usuario!.id);
+    let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? [this.usuario!.gerencia_titular?.unidade, ...(this.usuario!.gerencias_substitutas!.map(x => x.unidade))].find(x => x && x.id == pUnidade) : pUnidade;
+    return !!unidade && [unidade.gestor_substituto?.id, unidade.gestor?.id].includes(this.usuario!.id);
   }
 
   /**
@@ -350,9 +350,9 @@ export class AuthService {
    * @returns 
    */
   public isLotacaoPrincipal(pUnidade: Unidade | null = null): boolean {
-    let unidade = pUnidade || this.unidade;
-    let lotacao = this.usuario!.lotacoes.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"));
-    return lotacao != undefined;
+    let unidade = pUnidade || this.unidade!;
+    let lotacao = this.usuario!.lotacao!.unidade!;
+    return lotacao.id == unidade.id;
   }
 
   /**
@@ -361,19 +361,20 @@ export class AuthService {
    * @param unidade_id 
    */
   public isIntegrante(atribuicao: string, unidade_id: string): boolean {
-    let unidades: Array<Unidade> = this.util.arrayUnique(this.unidades?.concat(...this.usuario?.chefias_titulares || [], ...this.usuario?.chefias_substitutas || []) || []);
-    return !!unidades.find(x => x.id == unidade_id)?.integrantes?.find(i => i.usuario_id == this.usuario!.id && i.atribuicao == atribuicao);
+    //let unidades: Array<Unidade> = this.util.arrayUnique(this.unidades?.concat(...this.usuario?.chefias_titulares || [], ...this.usuario?.chefias_substitutas || []) || []);
+    //!!unidades.find(x => x.id == unidade_id)?.integrantes?.find(i => i.usuario_id == this.usuario!.id && i.atribuicao == atribuicao);
+    return false;
   }
 
   /**
-   * Informa se o usuário logado tem como lotação alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
+   * Informa se o usuário logado tem como área de trabalho alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
    * repassada como parâmetro.
    * @param unidade 
    * @returns 
    */
   public isLotadoNaLinhaAscendente(unidade: Unidade): boolean {
     let result = false;
-    this.usuario!.lotacoes.map(x => x.unidade_id).forEach(x => { if (unidade.path.split('/').slice(1).includes(x)) result = true; });
+    this.usuario!.areas_trabalho?.map(x => x.unidade_id).forEach(x => { if (unidade.path.split('/').slice(1).includes(x)) result = true; });
     return result;
   }
 
@@ -385,8 +386,8 @@ export class AuthService {
    */
   public isGestorLinhaAscendente(unidade: Unidade): boolean {
     let result = false;
-    [...this.usuario!.chefias_titulares!, ...this.usuario!.chefias_substitutas!].map(x => x.id).forEach(x => { if (unidade.path.split('/').slice(1).includes(x)) result = true; });
-    return result;
+    //[...this.usuario!.chefias_titulares!, ...this.usuario!.chefias_substitutas!].map(x => x.id).forEach(x => { if (unidade.path.split('/').slice(1).includes(x)) result = true; });
+    return false;
   }
 
 }

@@ -2,8 +2,8 @@
     <div>
         <div class="row mb-4">
             <input-search #planoEntrega [size]="12" controlName="plano_entrega_id" label="Plano de Entregas da Unidade-pai" [dao]="planoEntregaDao" 
-            [selectRoute]="{route: ['gestao', 'plano-entrega'], params: {showFilter: false, filter: {unidade_id: auth.unidade!.unidade_id, status: 'ATIVO'}}}"
-            [where]="[['unidade_id', '=', auth.unidade!.unidade_id], ['status', '=', 'ATIVO']]" (change)="onPlanoEntregaChange($event)"></input-search>
+            [selectRoute]="{route: ['gestao', 'plano-entrega'], params: {showFilter: false, filter: {unidade_id: auth.unidade!.unidade_pai_id, status: 'ATIVO'}}}"
+            [where]="[['unidade_id', '=', auth.unidade!.unidade_pai_id], ['status', '=', 'ATIVO']]" (change)="onPlanoEntregaChange($event)"></input-search>
             <!--    (RI_PENT_6) Na adesão a um plano de entregas:
                     - o input-search dos planos de entregas exibirá apenas os ativos da unidade-pai da unidade selecionada; 
                     - a listagem dos planos de entrega não exibirá as opções de filtro.

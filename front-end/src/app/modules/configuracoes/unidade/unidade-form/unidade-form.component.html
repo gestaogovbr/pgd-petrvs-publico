@@ -57,21 +57,6 @@
             </div>
             <calendar-expediente #expediente [disabled]="form!.controls.usar_expediente_entidade.value ? 'true' : undefined" [expedienteDisabled]="entity?.entidade?.expediente" [control]="form!.controls.expediente"></calendar-expediente>
         </tab>
-        <tab key="UNIDADES_VINCULADAS" [label]="lex.noun('Unidade',true) + ' Vinculadas'">
-            <grid [control]="form!.controls.unidades_origem_atividades" [form]="formUnidadesOrigemAtividades" [add]="addUnidadesOrigemAtividades.bind(this)" [load]="loadUnidadesOrigemAtividades.bind(this)" [remove]="removeUnidadesOrigemAtividades.bind(this)" [save]="saveUnidadesOrigemAtividades.bind(this)" editable>
-                <columns>
-                    <column [title]="lex.noun('Unidade',true)" titleHint="Unidades auxiliares para origem de atividades" [template]="columnUnidade" [editTemplate]="editUnidade">
-                        <ng-template let-row="row" #columnUnidade>
-                            <span> {{row.unidade_origem_atividade?.nome || ""}}</span>
-                        </ng-template>
-                        <ng-template let-row="row" #editUnidade>
-                            <input-search #unidade_origem_atividade [size]="12" label icon controlName="unidade_origem_atividade_id" [control]="formUnidadesOrigemAtividades!.controls.unidade_origem_atividade_id" [dao]="unidadeDao"></input-search>
-                        </ng-template>
-                    </column>
-                    <column type="options"></column>
-                </columns>
-            </grid>
-        </tab>
         <tab *ngIf="entity" key="NOTIFICACOES" label="Notificações">
             <notificacoes-config #notificacoes [unidadeId]="entity?.id?.length ? entity!.id : 'ADD'" [entity]="entity!" [disabled]="formDisabled"></notificacoes-config>
             <!--div class="row">

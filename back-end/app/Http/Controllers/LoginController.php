@@ -10,7 +10,7 @@ use App\Services\DprfSegurancaAuthService;
 use App\Services\IntegracaoService;
 use App\Services\ApiService;
 use App\Models\Usuario;
-use App\Models\UnidadeUsuario;
+use App\Models\UnidadeIntegrante;
 use App\Exceptions\LogError;
 use App\Models\Entidade;
 use App\Services\UnidadeService;
@@ -275,7 +275,7 @@ class LoginController extends Controller
             $usuario = Usuario::where('email', $tokenData['email'])->first();
             if(!isset($usuario) && $integracao->autoIncluir) {
                 $usuario = new Usuario();
-                $lotacao = new UnidadeUsuario();
+                $lotacao = new UnidadeIntegrante();
                 $service = new IntegracaoService();
                 $service->salvaUsuarioLotacaoGoogle($usuario, $lotacao, $tokenData, $auth);
             }
@@ -318,7 +318,7 @@ class LoginController extends Controller
             $usuario = Usuario::where('email', $email)->first();
             if(!isset($usuario) && $auth->autoIncluir) {
                 $usuario = new Usuario();
-                $lotacao = new UnidadeUsuario();
+                $lotacao = new UnidadeIntegrante();
                 $service = new IntegracaoService();
                 $service->salvaUsuarioLotacaoDprf($usuario, $lotacao, $profile, $auth);
             }
@@ -475,7 +475,7 @@ class LoginController extends Controller
             $usuario = Usuario::where('email', $tokenData['email'])->first();
             if(!isset($usuario) && $integracao->autoIncluir) {
                 $usuario = new Usuario();
-                $lotacao = new UnidadeUsuario();
+                $lotacao = new UnidadeIntegrante();
                 $service = new IntegracaoService();
                 $service->salvaUsuarioLotacaoGoogle($usuario, $lotacao, $tokenData, $auth);
             }
@@ -519,7 +519,7 @@ class LoginController extends Controller
                 Usuario::where('cpf', $tokenData['cpf'])->first();
             if(!isset($usuario) && $integracao->autoIncluir) {
                 $usuario = new Usuario();
-                $lotacao = new UnidadeUsuario();
+                $lotacao = new UnidadeIntegrante();
                 $service = new IntegracaoService();
                 $service->salvaUsuarioLotacaoApi($usuario, $lotacao, $tokenData, $api);
             }
@@ -564,7 +564,7 @@ class LoginController extends Controller
             $usuario = Usuario::where('email', $email)->first();
             if(!isset($usuario) && $auth->autoIncluir) {
                 $usuario = new Usuario();
-                $lotacao = new UnidadeUsuario();
+                $lotacao = new UnidadeIntegrante();
                 $service = new IntegracaoService();
                 $service->salvaUsuarioLotacaoDprf($usuario, $lotacao, $profile, $auth);
             }

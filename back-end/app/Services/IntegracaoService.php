@@ -7,8 +7,10 @@ use Illuminate\Support\Facades\Http;
 use App\Exceptions\LogError;
 use App\Services\ServiceBase;
 use App\Models\Usuario;
-use App\Models\Atribuicao;
+use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Perfil;
+use App\Models\IntegracaoUnidade;
+use App\Models\IntegracaoServidor;
 use Illuminate\Support\Facades\Auth;
 use Ramsey\Uuid\Uuid;
 use Carbon\Carbon;
@@ -221,7 +223,8 @@ class IntegracaoService extends ServiceBase {
     }
 
     /**
-     * Método usado quando a rotina de Integração é chamada direto na linha de comando
+     * Método usado quando a rotina de Integração é chamada direto na linha de comando: 
+     * curl -G 'http://localhost/api/integracao' -d servidores=true -d unidades=true -d entidade=?
      */
     public function sincronizar($inputs){
         $inputs['entidade_id'] = $inputs['entidade'];
@@ -283,11 +286,13 @@ class IntegracaoService extends ServiceBase {
                 /* Apaga a tabela integracao_unidades e cria novamente com as unidades ATIVAS obtidas pelo webservice */
                 DB::transaction(function () use (&$uos, &$self, &$sql_log_changes) {
                     /* Remove toda a lista da tabela temporária integracao_unidades */
-                    DB::delete('DELETE FROM integracao_unidades');
+                    //DB::delete('DELETE FROM integracao_unidades');
+                    IntegracaoUnidade::truncate();
                     /* Itera as UOs */
                     foreach($uos as $uo) {
                         if(!empty($self->UtilService->valueOrDefault($uo["id_servo"])) && $self->UtilService->valueOrDefault($uo["ativa"]) == 'true') {
-                            DB::table('integracao_unidades')->insert([
+                            //DB::table('integracao_unidades')->insert([
+                            IntegracaoUnidade::create([
                                 'id_servo' => $self->UtilService->valueOrDefault($uo["id_servo"]),
                                 'pai_servo' => $self->UtilService->valueOrDefault($uo["pai_servo"]),
                                 'codigo_siape' => $self->UtilService->valueOrDefault($uo["codigo_siape"]),
@@ -700,7 +705,7 @@ class IntegracaoService extends ServiceBase {
                 $lotacao->usuario_id = $usuario->id;
                 $lotacao->save();
                 $lotacao->refresh();
-                Atribuicao::create(['unidade_usuario_id' => $lotacao->id, 'atribuicao' => 'LOTADO']);
+                UnidadeIntegranteAtribuicao::create(['unidade_usuario_id' => $lotacao->id, 'atribuicao' => 'LOTADO']);
             }
         } else {
             $usuario = null; // se quem está logando não existe na tabela integracao_servidores

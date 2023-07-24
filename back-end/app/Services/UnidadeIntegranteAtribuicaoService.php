@@ -4,18 +4,18 @@ namespace App\Services;
 
 use App\Services\ServiceBase;
 use App\Models\Usuario;
-use App\Models\Atribuicao;
-use App\Models\UnidadeUsuario;
+use App\Models\UnidadeIntegranteAtribuicao;
+use App\Models\UnidadeIntegrante;
 use App\Exceptions\ServerException;
 
-class AtribuicaoService extends ServiceBase {
+class UnidadeIntegranteAtribuicaoService extends ServiceBase {
 
     public function proxyStore($data, $unidade, $action) {
         if($action == ServiceBase::ACTION_INSERT && $data["atribuicao"] == "LOTADO"){
-            $vinculo = UnidadeUsuario::find($data["unidade_usuario_id"]);
+            $vinculo = UnidadeIntegrante::find($data["unidade_usuario_id"]);
             $lotacao = $vinculo->usuario->lotacao;
             if(!empty($lotacao) && $lotacao->id != $unidade->id) {
-                Atribuicao::where('unidade_usuario_id',$vinculo->id)->where('atribuicao', 'LOTADO')->first()->delete();
+                UnidadeIntegranteAtribuicao::where('unidade_usuario_id',$vinculo->id)->where('atribuicao', 'LOTADO')->first()->delete();
             } else if (!empty($lotacao) && $lotacao->id == $unidade->id) throw new ServerException("ValidateLotacao", "Usuário já é lotado nessa Unidade");
         }
         return $data;

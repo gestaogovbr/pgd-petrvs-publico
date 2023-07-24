@@ -6,7 +6,7 @@ use App\Models\PlanoTrabalho;
 use App\Models\PlanoEntrega;
 use App\Models\Usuario;
 use App\Models\Unidade;
-use App\Models\UnidadeUsuario;
+use App\Models\UnidadeIntegrante;
 use App\Models\Afastamento;
 use App\Services\ServiceBase;
 use App\Services\CalendarioService;
@@ -133,7 +133,7 @@ class PlanoTrabalhoService extends ServiceBase
     $usuario_lotacoes_ids = array_map(fn($u) => $u->id, Usuario::find($plano->usuario_id)->lotacoes);
     if (!in_array($plano->unidade_id, $usuario_lotacoes_ids)) {
       $this->atribuicaoService->store([
-        'unidade_usuario_id' => UnidadeUsuario::firstOrCreate(['unidade_id' => $plano->unidade_id, 'usuario_id' => $plano->usuario_id])->id,
+        'unidade_usuario_id' => UnidadeIntegrante::firstOrCreate(['unidade_id' => $plano->unidade_id, 'usuario_id' => $plano->usuario_id])->id,
         'atribuicao' => 'COLABORADOR'
       ], $unidade);
     }

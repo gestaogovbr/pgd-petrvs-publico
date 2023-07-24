@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
-use App\Models\UnidadeUsuario;
+use App\Models\UnidadeIntegrante;
 
 class Atribuicao extends ModelBase
 {
@@ -19,5 +19,5 @@ class Atribuicao extends ModelBase
 
     // Has
     // Belongs
-    public function vinculo() { return $this->belongsTo(UnidadeUsuario::class, 'unidade_usuario_id'); }
+    public function vinculo() { return $this->belongsTo(UnidadeIntegrante::class, 'unidade_usuario_id'); }
 }

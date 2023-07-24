@@ -1,10 +1,18 @@
 import { LookupItem } from '../services/lookup.service';
+import { Atividade } from './atividade.model';
 import { Base } from './base.model';
+import { CadeiaValor } from './cadeia-valor.model';
 import { Cidade } from './cidade.model';
 import { Entidade } from './entidade.model';
 import { Expediente } from './expediente.model';
 import { HasNotificacao, NotificacoesConfig } from './notificacao.model';
+import { Planejamento } from './planejamento.model';
+import { PlanoEntregaEntrega } from './plano-entrega-entrega.model';
 import { PlanoEntrega } from './plano-entrega.model';
+import { PlanoTrabalho } from './plano-trabalho.model';
+import { Programa } from './programa.model';
+import { ProjetoRecurso } from './projeto-recurso.model';
+import { Template } from './template.model';
 import { UnidadeIntegrante } from './unidade-integrante.model';
 import { Usuario } from './usuario.model';
 
@@ -14,35 +22,37 @@ export type EntregaFormaContagemPrazos = "HORAS_CORRIDAS" | "HORAS_UTEIS";
 export class Unidade extends Base implements HasNotificacao {
     public entidade?: Entidade; /* Objeto da entidade */
     public cidade?: Cidade; /* Objeto da cidade */
+    public unidade?: Unidade; /* Objeto da unidade pai */
     public gestor?: Usuario; /* Objeto do ususario gestor */
     public gestor_substituto?: Usuario; /* Objeto do ususario gestor substituto */
-    public unidade?: Unidade; /* Objeto da unidade pai */
-    public planos_entregas?: PlanoEntrega[]; /* Array de objetos de Plano de Entrega */
-    public integrantes?: UnidadeIntegrante[]; /* Array de objetos do tipo UnidadeIntegrante */
+    public atividades?: Atividade[]; /* Lista de atividades */
+    public planos_trabalho?: PlanoTrabalho[]; /* Lista de planos de trabalho */
+    public planos_entrega?: PlanoEntrega[]; /* Lista de planos de entrega */
+    public entregas_plano_entrega?: PlanoEntregaEntrega[]; /* Lista de entregas de plano de entrega */
+    public programas?: Programa[]; /* Lista de programas */
+    public recursos_projeto?: ProjetoRecurso[]; /* Lista de recursos de projeto */
+    public notificacoes_template?: Template[]; /* Lista de templates */
+    public unidades?: Unidade[]; /* Lista de unidades */
+    public planejamentos?: Planejamento[]; /* Lista de planejamentos institucionais */
+    public cadeias_valor?: CadeiaValor[]; /* Lista de cadeias de valor */
+    public integrantes?: UnidadeIntegrante[]; /* Lista de vínculos unidade-integrante */
 
     public codigo: string = ""; //Código da unidade
     public sigla: string = ""; //Sigla da unidade
     public nome: string = ""; //Nome da unidade
     public path: string = ""; //Path dos nós pais separados por /
     public atividades_arquivamento_automatico: number = 0; //Se arquiva automaticamente após avaliação
-    public atividades_avaliacao_automatico: number = 0; //Se avalia automaticamente ao final do prazo para avaliação com nota 10 (pela IN65/2020-ME é 45 dias após a entrega)
-    public planos_prazo_comparecimento: number = 1; //Prazo de antecedência para comunicar o usuário de seu comparecimento na unidade
-    public planos_tipo_prazo_comparecimento: string = "DIAS"; //["HORAS", "DIAS"] //Unidade de medida para contagem do planos_prazo_comparecimento
     public distribuicao_forma_contagem_prazos: DistribuicaoFormaContagemPrazos = "DIAS_UTEIS";// ["HORAS_CORRIDAS", "DIAS_CORRIDOS", "HORAS_UTEIS", "DIAS_UTEIS"]) //Forma da contagem de prazo na distribuição
     public entrega_forma_contagem_prazos: EntregaFormaContagemPrazos = "HORAS_UTEIS";// ["HORAS_CORRIDAS", "HORAS_UTEIS"]) //Forma da contagem de prazo na entrega
     public notificacoes: NotificacoesConfig = new NotificacoesConfig(); // Mensagens
-    public autoedicao_subordinadas: number = 0; //Permitir a autoedição de informações gerais pelas unidades subordinadas (nome, sigla, codigo_pai)
     public etiquetas: LookupItem[] = []; //Configuração das etiquetas que serão utilizadas nas atividades (contém nome, icone e cor)
     public checklist: LookupItem[] = []; //Nome dos checklist
     public inativo: Date | null = null; //Se a unidade está inativa
     public expediente: Expediente | null = null; // Expediente (Não nulo)
-    public avaliacao_hierarquica: boolean = false; // Se permite que unidades superiores façam avaliação
     public texto_complementar_plano: string | null = ""; // Mensagem adicional para o plano de trabalho
 
-    public unidade_id: string | null = null; //Unidade superior (nó pai hierárquico)
+    public unidade_pai_id: string | null = null; //Unidade superior (nó pai hierárquico)
     public entidade_id: string | null = null; // Entidade referente
-    public gestor_id: string | null = null; // Usuário gestor da unidade
-    public gestor_substituto_id: string | null = null; // Usuário gestor substituto da unidade
     public cidade_id: string = ""; // Cidade;
 
     public constructor(data?: any) { super(); this.initialization(data); }

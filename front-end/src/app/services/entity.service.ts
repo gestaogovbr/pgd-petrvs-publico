@@ -30,7 +30,6 @@ import { DocumentoDaoService } from '../dao/documento-dao-service';
 import { EixoTematicoDaoService } from '../dao/eixo-tematico-dao.service';
 import { EntregaDaoService } from '../dao/entrega-dao.service';
 import { IntegracaoDaoService } from '../dao/integracao-dao.service';
-import { LotacaoDaoService } from '../dao/lotacao-dao.service';
 import { PlanejamentoDaoService } from '../dao/planejamento-dao.service';
 import { PlanejamentoObjetivoDaoService } from '../dao/planejamento-objetivo-dao.service';
 import { PlanoEntregaDaoService } from '../dao/plano-entrega-dao.service';
@@ -106,7 +105,7 @@ export class EntityService {
             { collection: 'Funcao', codigo: 'MOD_RX', table: 'funcoes', campo: 'nome', icon: 'bi bi-check-circle-fill', dao: injector.get<FuncaoDaoService>(FuncaoDaoService), label: "Função", selectRoute: { route: ['raiox', 'cadastros','gerais','funcao'] } },
             { collection: 'GrupoEspecializado', codigo: 'MOD_RX', table: 'grupos_especializados', campo: 'nome', icon: 'bi bi-check-circle', dao: injector.get<GrupoEspecializadoDaoService>(GrupoEspecializadoDaoService), label: "Grupos Especializados", selectRoute: { route: ['raiox', 'cadastros','gerais','ge'] } },
             { collection: 'Integracao', table: 'integracoes', campo: 'usuario_id', icon: 'bi bi-pencil-square', dao: injector.get<IntegracaoDaoService>(IntegracaoDaoService), label: "Integração" },
-            { collection: 'Lotacao', codigo: 'MOD_LOT', table: 'lotacoes', campo: 'usuario_id', icon: '', dao: injector.get<LotacaoDaoService>(LotacaoDaoService), label: "Lotação" },
+           // { collection: 'Lotacao', codigo: 'MOD_LOT', table: 'lotacoes', campo: 'usuario_id', icon: '', dao: injector.get<LotacaoDaoService>(LotacaoDaoService), label: "Lotação" },
             { collection: 'Materia', codigo: 'MOD_RX', table: 'materias', campo: 'nome', icon: 'bi bi-list-check', dao: injector.get<CursoDaoService>(CursoDaoService), label: "Matérias", selectRoute: { route: ['raiox', 'cadastros','gerais','materia'] } },
             { collection: 'MaterialServico', codigo: 'MOD_MATSRV', table: 'materiais_servicos', campo: 'descricao', icon: 'bi bi-list-check', dao: injector.get<MaterialServicoDaoService>(MaterialServicoDaoService), label: "Material/Serviço", selectRoute: { route: ['cadastros', 'material-servico'] } },
             { collection: 'Perfil', codigo: 'MOD_PERF', table: 'perfis', campo: 'nome', icon: 'bi bi-fingerprint', dao: injector.get<PerfilDaoService>(PerfilDaoService), label: "Perfil", selectRoute: { route: ['configuracoes', 'perfil'] } },

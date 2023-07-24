@@ -174,7 +174,7 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
     let result: ToolbarButton[] = [];
     let atividade: Atividade = row as Atividade;
     //const isAvaliador = isGestor || (this.extra.avaliadores[atividade.unidade_id] || []).includes(this.auth.usuario?.id || ""); //|| atividade.unidade
-    const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor_id || this.auth.usuario?.id == atividade.unidade?.gestor_substituto_id;
+    const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || this.auth.usuario?.id == atividade.unidade?.gestor_substituto?.id;
     const isDemandante = this.auth.usuario?.id == atividade.demandante_id;
     const isResponsavel = this.auth.usuario?.id == atividade.usuario_id;
     const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'consult'] }, { modal: true }) };
@@ -285,7 +285,7 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
   public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let atividade: Atividade = row as Atividade;
-    const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor_id || this.auth.usuario?.id == atividade.unidade?.gestor_substituto_id;
+    const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || this.auth.usuario?.id == atividade.unidade?.gestor_substituto?.id;
     //const isAvaliador = isGestor || (this.extra.avaliadores[atividade.unidade_id] || []).includes(this.auth.usuario?.id || ""); //|| atividade.unidade
     //const isDemandante = this.auth.usuario?.id == atividade.demandante_id;
     const isResponsavel = this.auth.usuario?.id == atividade.usuario_id;
