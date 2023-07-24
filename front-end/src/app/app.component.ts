@@ -208,6 +208,7 @@ export class AppComponent {
       menu: [
         this.menuSchema.PLANOS_TRABALHOS,
         this.menuSchema.ATIVIDADES,
+        this.menuSchema.CONSOLIDA,
         this.menuSchema.AFASTAMENTOS,
       ].sort(this.orderMenu)
     }, {
