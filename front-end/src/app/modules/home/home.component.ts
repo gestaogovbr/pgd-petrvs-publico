@@ -174,9 +174,10 @@ export class HomeComponent implements OnInit {
   }
 
   async ngAfterViewInit() {
-    const unidades_gerenciadas = this.auth.usuario?.lotacoes.filter(lotacao => {
-      return lotacao.unidade?.gestor_id == this.auth.usuario?.id
-    }).map(lotacoes => { return lotacoes.unidade?.id }).filter((item): item is string => !!item)
+/*     const unidades_gerenciadas = this.auth.usuario?.lotacoes.filter(lotacao => {
+      return lotacao.unidade?.gestor?.id == this.auth.usuario?.id
+    }).map(lotacoes => { return lotacoes.unidade?.id }).filter((item): item is string => !!item) */
+    const unidades_gerenciadas = this.auth.usuario?.gerencia_titular ? [this.auth.usuario?.gerencia_titular!.id] : [];
 
     if (unidades_gerenciadas?.length) {
       this.filtrarAtividadesGerenciadas(unidades_gerenciadas);

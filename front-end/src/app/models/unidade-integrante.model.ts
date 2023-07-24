@@ -1,15 +1,16 @@
 import { Base } from './base.model';
+import { UnidadeIntegranteAtribuicao } from './unidade-integrante-atribuicao.model';
 import { Unidade } from './unidade.model';
 import { Usuario } from './usuario.model';
 
 //export type UnidadeIntegranteTipo = "AVALIADOR_ATIVIDADE" | "AVALIADOR_PLANO_ENTREGA" | "AVALIADOR_PLANO_TRABALHO" | "HOMOLOGADOR_PLANO_ENTREGA" | "LOTADO" | "GESTOR" | "GESTOR_SUBSTITUTO";
 
-/*export class UnidadeIntegranteConsolidado {
+export class UnidadeIntegranteConsolidado {
     public usuario?: Usuario;
-    public id: string = ""; /* Utilizado somente para garantir o funcionamento do grid * /
+    public id: string = ""; /* Utilizado somente para garantir o funcionamento do grid */
     public usuario_id: string = "";
     public atribuicoes: string[] = [];
-};*/
+};
 
 export class UnidadeIntegrante extends Base {
     public unidade?: Unidade;

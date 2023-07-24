@@ -187,7 +187,7 @@ class UsuarioService extends ServiceBase
     public static function isIntegrante(string $atribuicao, string $unidade_id, string | null $usuario_id = null): bool {
         $unidade = Unidade::find($unidade_id) ?? null;
         $usuario = isset($usuario_id) ? Usuario::find($usuario_id) : parent::loggedUser();
-        $atribuicoes = array_key_exists($usuario->id, $unidade->integrantes) ? $unidade->integrantes[$usuario->id] : null;
+        $atribuicoes = array_key_exists($usuario->id, $unidade->integrantesAtribuicoes) ? $unidade->integrantesAtribuicoes[$usuario->id] : null;
         return empty($atribuicoes) ? false : in_array($atribuicao, $atribuicoes); 
     }
 

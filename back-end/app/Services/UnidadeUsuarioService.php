@@ -3,9 +3,9 @@
 namespace App\Services;
 
 use App\Exceptions\ServerException;
-use App\Models\Atribuicao;
+use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Unidade;
-use App\Models\UnidadeUsuario;
+use App\Models\UnidadeIntegrante;
 use App\Models\Usuario;
 use App\Services\ServiceBase;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +17,7 @@ class UnidadeUsuarioService extends ServiceBase
         $result = [];
         $unidade = Unidade::find($unidadeId);
         if(empty($unidade)) throw new ServerException("ValidateUnidade", "Unidade não encontrada no banco");
-        foreach($unidade->integrantes as $id_usuario => $atribuicoes){
+        foreach($unidade->integrantesAtribuicoes as $id_usuario => $atribuicoes){
             $result[$id_usuario] = [
                 "id" => $id_usuario,
                 "usuario" => Usuario::find($id_usuario),
@@ -39,12 +39,12 @@ class UnidadeUsuarioService extends ServiceBase
             if(count(array_intersect(['GESTOR','GESTOR_SUBSTITUTO'],$atribuicoes)) == 2 || count(array_intersect(['LOTADO','COLABORADOR'],$atribuicoes)) == 2) throw new ServerException("ValidateAtribuicao", "Há inconsistência nas atribuições: GESTOR/GESTOR_SUBSTITUTO ou LOTADO/COLABORADOR");
             $lotar = function($vinculoNovo) use ($lotacao,$unidadeId,$integrante) {
                 if(!empty($lotacao) && $lotacao->id != $unidadeId) {
-                    $vinculoAntigo = UnidadeUsuario::where(['unidade_id' => $lotacao->id, 'usuario_id' => $integrante["usuario_id"]])->first();
-                    Atribuicao::where('unidade_usuario_id',$vinculoAntigo->id)->where('atribuicao', 'LOTADO')->first()->delete();
+                    $vinculoAntigo = UnidadeIntegrante::where(['unidade_id' => $lotacao->id, 'usuario_id' => $integrante["usuario_id"]])->first();
+                    UnidadeIntegranteAtribuicao::where('unidade_usuario_id',$vinculoAntigo->id)->where('atribuicao', 'LOTADO')->first()->delete();
                 }
-                if(empty($lotacao) || $lotacao->id != $unidadeId) Atribuicao::create(["atribuicao" => "LOTADO","unidade_usuario_id" => $vinculoNovo->id]);
+                if(empty($lotacao) || $lotacao->id != $unidadeId) UnidadeIntegranteAtribuicao::create(["atribuicao" => "LOTADO","unidade_usuario_id" => $vinculoNovo->id]);
             };
-            $vinculoNovo = UnidadeUsuario::firstOrCreate(['unidade_id' => $unidadeId, 'usuario_id' => $integrante["usuario_id"]]);
+            $vinculoNovo = UnidadeIntegrante::firstOrCreate(['unidade_id' => $unidadeId, 'usuario_id' => $integrante["usuario_id"]]);
             /* Lotação */
             $lotado = in_array("LOTADO", $atribuicoes);
             if($lotado) $lotar($vinculoNovo);
@@ -53,8 +53,8 @@ class UnidadeUsuarioService extends ServiceBase
             if($gestor){
                 $gerenciaTitular = $usuario->gerenciaTitular;
                 if(!empty($gerenciaTitular) && $gerenciaTitular->id != $unidadeId) {
-                    $vinculoAntigo = UnidadeUsuario::where(['unidade_id' => $gerenciaTitular->id, 'usuario_id' => $integrante["usuario_id"]])->first();
-                    Atribuicao::where('unidade_usuario_id',$vinculoAntigo->id)->where('atribuicao', 'GESTOR')->first()->delete();
+                    $vinculoAntigo = UnidadeIntegrante::where(['unidade_id' => $gerenciaTitular->id, 'usuario_id' => $integrante["usuario_id"]])->first();
+                    UnidadeIntegranteAtribuicao::where('unidade_usuario_id',$vinculoAntigo->id)->where('atribuicao', 'GESTOR')->first()->delete();
                 }
                 if(empty($gerenciaTitular) || $gerenciaTitular->id != $unidadeId) {
                     $this->atribuicaoService->store([
@@ -66,7 +66,7 @@ class UnidadeUsuarioService extends ServiceBase
             }
             /* Outras atribuições */
             $outrasAtribuicoes = array_diff($atribuicoes, ['LOTADO','GESTOR']);
-            foreach($outrasAtribuicoes as $x) { Atribuicao::updateOrCreate(['atribuicao' => $x, 'unidade_usuario_id' => $vinculoNovo->id],[]); }
+            foreach($outrasAtribuicoes as $x) { UnidadeIntegranteAtribuicao::updateOrCreate(['atribuicao' => $x, 'unidade_usuario_id' => $vinculoNovo->id],[]); }
             DB::commit();
         } catch (Throwable $e) {
             DB::rollback();

@@ -7,7 +7,7 @@ import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service'
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
-import { Lotacao } from 'src/app/models/lotacao.model';
+import { UnidadeIntegrante } from 'src/app/models/unidade-integrante.model';
 import { Usuario } from 'src/app/models/usuario.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
@@ -68,7 +68,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
       return "Obrigatório ao menos uma lotação";
     } else {
       const erros_lotacao = []
-      form?.controls.lotacoes.value?.forEach((lotacao: Lotacao) => {
+      form?.controls.lotacoes.value?.forEach((lotacao: UnidadeIntegrante) => {
         if(lotacao.unidade_id == '') erros_lotacao.push({ lotacao: lotacao, erro: 'Falta unidade_id'})
       });
       if (erros_lotacao.length) return "Salve a lotação antes de salvar o usuário"
@@ -98,7 +98,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     return new Promise<Usuario>((resolve, reject) => {
       let usuario = this.util.fill(new Usuario(), this.entity!);
       usuario = this.util.fillForm(usuario, this.form!.value);
-      usuario.lotacoes = usuario.lotacoes.filter((x: Lotacao) => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.unidade_id?.length);
+      usuario.lotacoes = usuario.lotacoes.filter((x: UnidadeIntegrante) => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.unidade_id?.length);
       resolve(usuario);
     });
   }
@@ -108,7 +108,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
   }
 
   public async addLotacao() {
-    return Object.assign(new Lotacao(), {usuario_id: this.entity?.id, _status: "ADD"}) as IIndexable;
+    return Object.assign(new UnidadeIntegrante(), {usuario_id: this.entity?.id, _status: "ADD"}) as IIndexable;
   }
 
   public async loadLotacao(form: FormGroup, row: any) {
@@ -122,9 +122,9 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
   }
 
   public async saveLotacao(form: FormGroup, row: any) {
-    const lotacoes = (this.form?.controls.lotacoes?.value || []).filter((x: Lotacao) => x.id != row.id);
+    const lotacoes = (this.form?.controls.lotacoes?.value || []).filter((x: UnidadeIntegrante) => x.id != row.id);
     //const principal = lotacoes.find((x: Lotacao) => x.principal);
-    const principal = lotacoes.find((x: Lotacao) => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"));
+    const principal = lotacoes.find((x: UnidadeIntegrante) => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"));
     row.unidade_id = form.controls.unidade_id.value;
     row.principal = form.controls.principal.value;
     row._status = row._status == "ADD" ? "ADD" : "EDIT";

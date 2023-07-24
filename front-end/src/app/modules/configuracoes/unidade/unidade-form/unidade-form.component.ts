@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
@@ -10,7 +10,6 @@ import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Expediente } from 'src/app/models/expediente.model';
-import { UnidadeOrigemAtividade } from 'src/app/models/unidade-origem-atividade.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { NotificacaoService } from 'src/app/modules/uteis/notificacoes/notificacao.service';
@@ -30,11 +29,9 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
   @ViewChild('gestor', { static: false }) public gestor?: InputSearchComponent;
   @ViewChild('gestorSubstituto', { static: false }) public gestorSubstituto?: InputSearchComponent;
   @ViewChild('entidade', { static: false }) public entidade?: InputSearchComponent;
-  @ViewChild('unidade_origem_atividade', { static: false }) public unidadeOrigemAtividade?: InputSearchComponent;
   @ViewChild('notificacoes', { static: false }) public notificacoes?: NotificacoesConfigComponent;
 
   public form: FormGroup;
-  public formUnidadesOrigemAtividades: FormGroup;
   public entidadeDao: EntidadeDaoService;
   public cidadeDao: CidadeDaoService;
   public usuarioDao: UsuarioDaoService;
@@ -61,24 +58,16 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       cidade_id: {default: ""},
       uf: {default: ""},
       atividades_arquivamento_automatico: {default: 1},
-      avaliacao_hierarquica: {default: 0},
-      atividades_avaliacao_automatico: {default: 0},
-      planos_prazo_comparecimento: {default: ""},
-      planos_tipo_prazo_comparecimento: {default: ""},
       distribuicao_forma_contagem_prazos: {default: "DIAS_UTEIS"},
       entrega_forma_contagem_prazos: {default: "HORAS_UTEIS"},
       notificacoes: {default: {}},
-      autoedicao_subordinadas: {default: 0},
       etiquetas: {default: []},
-      unidade_id: {default: ""},
+      unidade_pai_id: {default: ""},
       entidade_id: {default: ""},
       etiqueta_texto: {default: ""},
       etiqueta_icone: {default: null},
       etiqueta_cor: {default: null},
       expediente24: {default: true},
-      unidades_origem_atividades: {default: []},
-      gestor_id: {default: null},
-      gestor_substituto_id: {default: null},
       /*notifica_demanda_distribuicao: {default: true},
       notifica_demanda_conclusao: {default: true},
       notifica_demanda_avaliacao: {default: true},
@@ -96,18 +85,13 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       usar_expediente_entidade: {default: true},
       texto_complementar_plano: {default: ""}
     }, this.cdRef, this.validate);
-    this.formUnidadesOrigemAtividades = this.fh.FormBuilder({
-      unidade_origem_atividade_id: {default: ""}
-    }, this.cdRef);
-    this.join =  ["cidade", "entidade", "unidades_origem_atividades.unidade_origem_atividade", "gestor", "gestor_substituto", "notificacoes_templates"];
+    this.join =  ["cidade", "entidade", "gestor", "gestor_substituto", "notificacoes_template"];
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
     if(['codigo', 'sigla', 'nome', 'cidade_id', 'entidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    } else if(['planos_prazo_comparecimento'].indexOf(controlName) >= 0 && !control.value) {
-    result = "Não pode ser zero.";
     }
     return result;
   }
@@ -141,10 +125,10 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
   public async loadData(entity: Unidade, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
     await Promise.all ([
-      this.unidadePai!.loadSearch(entity.unidade || entity.unidade_id),
+      this.unidadePai!.loadSearch(entity.unidade || entity.unidade_pai_id),
       this.cidade!.loadSearch(entity.cidade || entity.cidade_id),
-      this.gestor!.loadSearch(entity.gestor || entity.gestor_id),
-      this.gestorSubstituto!.loadSearch(entity.gestor_substituto || entity.gestor_substituto_id),
+      this.gestor!.loadSearch(entity.gestor || entity.gestor!.id),
+      this.gestorSubstituto!.loadSearch(entity.gestor_substituto || entity.gestor_substituto!.id),
       this.entidade!.loadSearch(entity.entidade || entity.entidade_id)
     ]);
     this.form.patchValue(this.util.fillForm(formValue, {...entity, ...{
@@ -167,24 +151,6 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
   public initializeData(form: FormGroup): void {
     this.entity = new Unidade();
     this.loadData(this.entity, form);
-  }
-
-  public async addUnidadesOrigemAtividades() {
-    return Object.assign(new UnidadeOrigemAtividade(), {unidade_id: this.entity?.id}) as IIndexable;
-  }
-
-  public async loadUnidadesOrigemAtividades(form: FormGroup, row: any) {
-    form.controls.unidade_origem_atividade_id.setValue(row.unidade_origem_atividade_id);
-  }
-
-  public async removeUnidadesOrigemAtividades(row: any) {
-    return true;
-  }
-
-  public async saveUnidadesOrigemAtividades(form: FormGroup, row: any) {
-    row.unidade_origem_atividade_id = form.controls.unidade_origem_atividade_id.value;
-    row.unidade_origem_atividade = await this.dao?.getById(row.unidade_origem_atividade_id)!;
-    return row;
   }
 
   public saveData(form: IIndexable): Promise<Unidade> {

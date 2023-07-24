@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+use App\Casts\AsJson;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -33,7 +34,6 @@ use App\Models\NotificacaoConfig;
 use App\Traits\MergeRelations;
 use App\Traits\LogChanges;
 use App\Traits\HasPermissions;
-use App\Models\UnidadeUsuario;
 use App\Services\UsuarioService;
 use Throwable;
 
@@ -97,7 +97,8 @@ class Usuario extends Authenticatable
      * @var array
      */
     protected $casts = [
-        'email_verified_at' => 'datetime'
+        'email_verified_at' => 'datetime',
+        'notificacoes' => AsJson::class
     ];
 
     public $delete_cascade = ['favoritos','vinculosUnidades'];
@@ -120,7 +121,7 @@ class Usuario extends Authenticatable
     public function projetos() { return $this->hasMany(Projeto::class); }
     public function recursosProjeto() { return $this->hasMany(ProjetoRecurso::class); }
     public function historicosProjeto() { return $this->hasMany(ProjetoHistorico::class); }
-    public function notificacoes() { return $this->hasMany(Notificacao::class, 'remetente_id'); }
+    public function notificacoesEnviadas() { return $this->hasMany(Notificacao::class, 'remetente_id'); }
     public function notificacoesWhatsapp() { return $this->hasMany(NotificacaoWhatsapp::class); }
     public function notificacoesDestinatario() { return $this->hasMany(NotificacaoDestinatario::class); }
     public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }
@@ -178,7 +179,7 @@ class Usuario extends Authenticatable
     { 
         $result = [];
         /*  foreach($this->unidades as $unidade){
-            $atribuicoes = Atribuicao::where('unidade_usuario_id', $unidade->pivot->id)->get()->toArray();
+            $atribuicoes = UnidadeIntegranteAtribuicao::where('unidade_usuario_id', $unidade->pivot->id)->get()->toArray();
             if(count($atribuicoes) > 0) $result[$unidade->id] = array_map(fn($a) => $a["atribuicao"],$atribuicoes); 
         } */
         foreach($this->lotacoes as $vinculo){

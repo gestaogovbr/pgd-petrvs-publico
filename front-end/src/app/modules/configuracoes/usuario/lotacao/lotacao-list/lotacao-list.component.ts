@@ -1,10 +1,10 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { LotacaoDaoService } from 'src/app/dao/lotacao-dao.service';
+import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
-import { Lotacao } from 'src/app/models/lotacao.model';
+import { UnidadeIntegrante } from 'src/app/models/unidade-integrante.model';
 import { Usuario } from 'src/app/models/usuario.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
@@ -13,14 +13,14 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
   templateUrl: './lotacao-list.component.html',
   styleUrls: ['./lotacao-list.component.scss']
 })
-export class LotacaoListComponent extends PageListBase<Lotacao, LotacaoDaoService> {
+export class LotacaoListComponent extends PageListBase<UnidadeIntegrante, UnidadeIntegranteDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
   public usuarioDao: UsuarioDaoService;
   public unidadeDao: UnidadeDaoService;
 
   constructor(public injector: Injector) {
-    super(injector, Lotacao, LotacaoDaoService);
+    super(injector, UnidadeIntegrante, UnidadeIntegranteDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
 

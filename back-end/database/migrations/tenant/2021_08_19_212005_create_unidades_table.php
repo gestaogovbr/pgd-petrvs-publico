@@ -35,7 +35,7 @@ class CreateUnidadesTable extends Migration
             $table->json('expediente')->nullable()->comment("Configuração de expediente da unidade");
             // Chaves estrangeiras:
             $table->foreignUuid('cidade_id')->nullable()->constrained("cidades")->onDelete('restrict')->onUpdate('cascade')->comment('Cidade da unidade');
-            $table->foreignUuid('unidade_id')->nullable()->constrained("unidades")->onDelete('restrict')->onUpdate('cascade')->comment('Unidade superior (nó pai hierárquico)');
+            $table->foreignUuid('unidade_pai_id')->nullable()->constrained("unidades")->onDelete('restrict')->onUpdate('cascade')->comment('Unidade superior (nó pai hierárquico)');
             $table->foreignUuid('entidade_id')->constrained("entidades")->onDelete('restrict')->onUpdate('cascade')->comment('Entidade da unidade');
             // Indices
             $table->index('codigo');

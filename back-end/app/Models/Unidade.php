@@ -4,7 +4,7 @@ namespace App\Models;
 use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\Atividade;
-use App\Models\Atribuicao;
+use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Planejamento;
 use App\Models\CadeiaValor;
 use App\Models\PlanoTrabalho;
@@ -12,9 +12,8 @@ use App\Models\PlanoEntrega;
 use App\Models\PlanoEntregaEntrega;
 use App\Models\Programa;
 use App\Models\ProjetoRecurso;
-use App\Models\TipoTarefa;
 use App\Models\Entidade;
-use App\Models\UnidadeUsuario;
+use App\Models\UnidadeIntegrante;
 use App\Models\Cidade;
 use App\Models\Template;
 use App\Models\NotificacaoConfig;
@@ -91,7 +90,7 @@ class Unidade extends ModelBase
     //public function usuarios() { return $this->belongsToMany(Usuario::class)->withPivot('id'); } // verificar necessidade?
     // Others relationships
     public function gestor() { return $this->hasOne(UnidadeIntegrante::class)->has('gestor'); } 
-    public function gestorSubstituto() { return $this->hasMany(UnidadeIntegrante::class)->has('gestorSubstituto'); }
+    public function gestorSubstituto() { return $this->hasOne(UnidadeIntegrante::class)->has('gestorSubstituto'); }
     public function lotados() { return $this->hasMany(UnidadeIntegrante::class)->has('lotado'); }
     public function colaboradores() { return $this->hasMany(UnidadeIntegrantes::class)->has('colaborador'); }       
     public function homologadoresPlanoEntrega() { return $this->hasMany(UnidadeIntegrante::class)->has('homologadorPlanoEntrega'); }       
@@ -111,7 +110,7 @@ class Unidade extends ModelBase
     { 
         $result = [];
         foreach($this->usuarios as $usuario){
-            $atribuicoes = Atribuicao::where('unidade_usuario_id', $usuario->pivot->id)->get()->toArray();
+            $atribuicoes = UnidadeIntegranteAtribuicao::where('unidade_usuario_id', $usuario->pivot->id)->get()->toArray();
             if(count($atribuicoes) > 0) $result[$usuario->id] = array_map(fn($a) => $a["atribuicao"],$atribuicoes);
         }
         return $result;

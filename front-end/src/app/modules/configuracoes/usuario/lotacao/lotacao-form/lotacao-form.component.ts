@@ -3,9 +3,9 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
-import { LotacaoDaoService } from 'src/app/dao/lotacao-dao.service';
+import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
-import { Lotacao } from 'src/app/models/lotacao.model';
+import { UnidadeIntegrante } from 'src/app/models/unidade-integrante.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
@@ -18,7 +18,7 @@ import { Usuario } from 'src/app/models/usuario.model';
 })
 
 
-export class LotacaoFormComponent extends PageFormBase<Lotacao, LotacaoDaoService> {
+export class LotacaoFormComponent extends PageFormBase<UnidadeIntegrante, UnidadeIntegranteDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('usuario', { static: false }) public usuario?: InputSearchComponent;
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
@@ -27,7 +27,7 @@ export class LotacaoFormComponent extends PageFormBase<Lotacao, LotacaoDaoServic
   public usuarioDao: UsuarioDaoService;
 
   constructor(public injector: Injector) {
-    super(injector, Lotacao, LotacaoDaoService);
+    super(injector, UnidadeIntegrante, UnidadeIntegranteDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.modalWidth = 700;
@@ -49,7 +49,7 @@ export class LotacaoFormComponent extends PageFormBase<Lotacao, LotacaoDaoServic
     return result;
   }
 
-  public async loadData(entity: Lotacao, form: FormGroup) {
+  public async loadData(entity: UnidadeIntegrante, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
     await Promise.all ([
       this.usuario?.loadSearch(entity.usuario || entity.usuario_id),
@@ -59,19 +59,19 @@ export class LotacaoFormComponent extends PageFormBase<Lotacao, LotacaoDaoServic
   }
 
   public initializeData(form: FormGroup): void {
-    this.entity = new Lotacao();
+    this.entity = new UnidadeIntegrante();
     this.entity.usuario_id = this.urlParams!.get("usuario_id")!;
     this.loadData(this.entity, form);
   }
 
-  public saveData(form: IIndexable): Promise<Lotacao> {
-    return new Promise<Lotacao>((resolve, reject) => {
-      const lotacao = this.util.fill(new Lotacao(), this.entity!);
+  public saveData(form: IIndexable): Promise<UnidadeIntegrante> {
+    return new Promise<UnidadeIntegrante>((resolve, reject) => {
+      const lotacao = this.util.fill(new UnidadeIntegrante(), this.entity!);
       resolve(this.util.fillForm(lotacao, this.form!.value));
     });
   }
 
-  public titleEdit = (entity: Lotacao): string => {
+  public titleEdit = (entity: UnidadeIntegrante): string => {
     return "Editando ";// + (entity?.usuario_id || "");
   }
 }

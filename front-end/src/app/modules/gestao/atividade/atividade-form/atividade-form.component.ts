@@ -104,7 +104,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
       texto: {default: ""},
       checked: {default: false}
     }, this.cdRef, this.validateChecklist);
-    this.join = ["usuario.planos_entregas.entregas.entrega:id,nome", "usuario.planos_entregas.tipo_modalidade:id,nome", "pausas", "tipo_atividade", "unidade", "comentarios.usuario", "tarefas.tipo_tarefa", "tarefas.comentarios.usuario", "documento_requisicao", "documento_entrega"];
+    this.join = ["usuario.planos_entrega.entregas.entrega:id,nome", "usuario.planos_entrega.tipo_modalidade:id,nome", "pausas", "tipo_atividade", "unidade", "comentarios.usuario", "tarefas.tipo_tarefa", "tarefas.comentarios.usuario", "documento_requisicao", "documento_entrega"];
   }
 
   public ngOnInit() {

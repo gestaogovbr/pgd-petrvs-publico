@@ -653,6 +653,7 @@ class CapacidadeService extends ServiceBase {
     ];
 
     public $capacidades = [
+/*        
         ["MENU_CAD_ACESSO", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
         ["MENU_CONFIG_ACESSO", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
         ["MENU_GESTAO_ACESSO", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
@@ -908,7 +909,7 @@ class CapacidadeService extends ServiceBase {
         ["MOD_PLAN_ENTR_EXCL", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
         ["MOD_PLAN_ENTR_INCL", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
         ["MOD_PLAN_ENTR_TUDO", 'Administrador', 'Desenvolvedor'],
-/*
+
         ["MOD_RX_CAD", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
         ["MOD_RX_EDITA", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
         ["MOD_RX_OPO", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
@@ -919,7 +920,7 @@ class CapacidadeService extends ServiceBase {
         ["MOD_RX_N4", 'Usuário Nível 4'],
         ["MOD_RX_N5", 'Usuário Nível 5'],
         ["MOD_RX_ADM", 'Administrador'],
-        ["MOD_RX_DESENVOLVEDOR", 'Desenvolvedor']*/,
+        ["MOD_RX_DESENVOLVEDOR", 'Desenvolvedor'],*/
     ];
 
 }
