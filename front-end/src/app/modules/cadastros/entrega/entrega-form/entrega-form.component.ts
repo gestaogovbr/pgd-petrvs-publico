@@ -41,7 +41,7 @@ export class EntregaFormComponent extends PageFormBase<Entrega, EntregaDaoServic
 
   public formValidation = (form?: FormGroup) =>{
     let result = null;
-    if(this.form?.controls.tipo_indicador.value == 'QUALITATIVO' && !this.listaQualitativos.length){
+    if(this.form?.controls.tipo_indicador.value == 'QUALITATIVO' && !this.form?.controls.lista_qualitativos.value.length){
       result = "Quando o tipo da entrega for Qualitativo, é necessária a inclusão de ao menos um item de qualitativo!";
     }
     return result;
@@ -99,9 +99,9 @@ export class EntregaFormComponent extends PageFormBase<Entrega, EntregaDaoServic
     if(value?.length && this.util.validateLookupItem(this.form!.controls.lista_qualitativos.value, key)) {
       result = {
         key: key,
-        value: this.form!.controls.lista_qualitativos.value
+        value: this.form!.controls.itemQualitativo.value
       };
-      this.form!.controls.lista_qualitativos.setValue("");
+      this.form!.controls.itemQualitativo.setValue("");
     }
     return result;
   };

@@ -25,15 +25,70 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
       onClick: this.consult.bind(this)
     });
     this.options.push({
+      icon: "bi bi-info-circle",
+      label: "Executar Migrations",
+      onClick: this.consult.bind(this)
+    });
+    this.options.push({
+      icon: "bi bi-building",
+      label: "Executar Cidades",
+      onClick: this.cidadeSeeder.bind(this)
+    });
+    this.options.push({
+      icon: "bi bi-list-check",
+      label: "Executar Tipos Capacidades",
+      onClick: this.tipoCapacidadeSeeder.bind(this)
+    });
+    this.options.push({
       icon: "bi bi-trash",
       label: "Excluir",
       onClick: this.delete.bind(this)
     });
+   
   }
 
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     return result;
+  }
+
+  public executaMigrationTenant(row: any) {
+    const self = this;
+    this.dialog.confirm("Executar Seeder?", "Deseja realmente executar as migrations?").then(confirm => {
+      if (confirm) {
+        this.dao!.tiposCapacidadesSeeder(row).then(function () {
+          self.dialog.alert("Sucesso", "Migration executada com sucesso!");
+        }).catch(function (error) {
+          self.dialog.alert("Erro", "Erro ao executar a migration: " + error?.message ? error?.message : error);
+        });
+      }
+    });
+  }
+
+  public tipoCapacidadeSeeder(row: any) {
+    const self = this;
+    this.dialog.confirm("Executar Seeder?", "Deseja realmente atualizar as capacidades?").then(confirm => {
+      if (confirm) {
+        this.dao!.tiposCapacidadesSeeder(row).then(function () {
+          self.dialog.alert("Sucesso", "Seeder executada com sucesso!");
+        }).catch(function (error) {
+          self.dialog.alert("Erro", "Erro ao executar a seeder: " + error?.message ? error?.message : error);
+        });
+      }
+    });
+  }
+
+  public cidadeSeeder(row: any) {
+    const self = this;
+    this.dialog.confirm("Executar Seeder?", "Deseja realmente executar a seeder de cidades?").then(confirm => {
+      if (confirm) {
+        this.dao!.cidadesSeeder(row).then(function () {
+          self.dialog.alert("Sucesso", "Seeder executada com sucesso!");
+        }).catch(function (error) {
+          self.dialog.alert("Erro", "Erro ao executar a seeder: " + error?.message ? error?.message : error);
+        });
+      }
+    });
   }
 }
 

@@ -137,7 +137,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       this.tabs!.active = "PROCESSOS" ;
       return "Salve ou cancele o registro atual em edição";
     }
-    if(this.form!.controls.fim.value && this.form!.controls.inicio.value > this.form!.controls.fim.value) return "A data do início não pode ser maior que a data do fim!";
+    if(this.form!.controls.fim.value && this.form!.controls.inicio.value > this.form!.controls.fim.value) return "A data do fim não pode ser anterior à data do fim!";
     return undefined;
   }
 

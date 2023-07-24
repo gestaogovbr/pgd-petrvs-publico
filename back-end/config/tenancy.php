@@ -10,7 +10,7 @@ return [
     'id_generator' => Stancl\Tenancy\UUIDGenerator::class,
 
     'domain_model' => Domain::class,
-
+    'migrate_after_creation' => true,
     /**
      * The list of domains hosting your central app.
      *
@@ -197,4 +197,5 @@ return [
         '--class' => 'DatabaseSeeder', // root seeder class
         // '--force' => true,
     ],
+
 ];

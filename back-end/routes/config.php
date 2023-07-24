@@ -10,4 +10,6 @@ Route::middleware(['panel'])->prefix('Tenant')->group(function () {
     Route::post('destroy', [TenantController::class, 'destroy']);
     Route::post('get-by-id', [TenantController::class, 'getById']);
     Route::post('query', [TenantController::class, 'query']);
+    Route::post('cidades', [TenantController::class, 'cidades']);
+    Route::post('tipo-capacidade', [TenantController::class, 'tiposCapacidades']);
 });

@@ -43,7 +43,7 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
       termo_obrigatorio: {default: false},
       template_tcr_id: {default: null},
       tipo_documento_tcr_id: {default: null},
-      prazo_execucao: {default: 0}
+      prazo_execucao: {default: 365}
     }, this.cdRef, this.validate);
     this.join = ["unidade"];
   }
@@ -57,6 +57,13 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
       result = "Inválido";
     }
 
+    return result;
+  }
+  public formValidation = (form?: FormGroup) => {
+    let result = null;
+    if(this.form!.controls.data_fim_vigencia.value && this.form!.controls.data_inicio_vigencia.value > this.form!.controls.data_fim_vigencia.value) {
+      result = "A data do fim não pode ser anterior à data do inicio!";
+    }
     return result;
   }
 

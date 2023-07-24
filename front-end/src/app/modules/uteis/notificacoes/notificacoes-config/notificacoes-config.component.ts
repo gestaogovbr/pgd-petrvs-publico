@@ -55,7 +55,7 @@ export class NotificacoesConfigComponent extends PageFrameBase {
     this.entidadeId = this.entidadeId || this.queryParams?.entidadeId;
     this.unidadeId = this.unidadeId || this.queryParams?.unidadeId;
   }
-
+ 
   ngAfterViewInit() {
     super.ngAfterViewInit();
     this.loadNotificacoes(this.entity);
