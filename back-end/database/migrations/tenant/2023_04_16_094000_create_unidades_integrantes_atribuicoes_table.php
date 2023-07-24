@@ -13,7 +13,7 @@ class CreateAtribuicoesTable extends Migration
      */
     public function up()
     {
-        Schema::create('atribuicoes', function (Blueprint $table) {
+        Schema::create('unidades_integrantes_atribuicoes', function (Blueprint $table) {
             // Configurações:
             $table->uuid('id');
             $table->primary('id');
@@ -33,6 +33,6 @@ class CreateAtribuicoesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('atribuicoes');
+        Schema::dropIfExists('unidades_integrantes_atribuicoes');
     }
 }
