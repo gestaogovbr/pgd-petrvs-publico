@@ -79,25 +79,24 @@ class Unidade extends ModelBase
     public function entregasPlanoEntrega() { return $this->hasMany(PlanoEntregaEntrega::class); }
     public function programas() { return $this->hasMany(Programa::class); }
     public function recursosProjeto() { return $this->hasMany(ProjetoRecurso::class); }
-    public function tiposTarefa() { return $this->hasMany(TipoTarefa::class); }
     public function notificacoesTemplate() { return $this->hasMany(Template::class); }
     public function unidades() { return $this->hasMany(Unidade::class); }
     public function planejamentos() { return $this->hasMany(Planejamento::class); }
     public function cadeiasValor() { return $this->hasMany(CadeiaValor::class); }
-    public function vinculosUsuarios() { return $this->hasMany(UnidadeUsuario::class); }
+    public function integrantes() { return $this->hasMany(UnidadeIntegrante::class); }
     // Belongs
     public function entidade() { return $this->belongsTo(Entidade::class); }
     public function cidade() { return $this->belongsTo(Cidade::class); }  //nullable
     public function unidade() { return $this->belongsTo(Unidade::class); }    //nullable
-    public function usuarios() { return $this->belongsToMany(Usuario::class)->withPivot('id'); }
+    //public function usuarios() { return $this->belongsToMany(Usuario::class)->withPivot('id'); } // verificar necessidade?
     // Others relationships
-    public function gestor() { return $this->hasOne(UnidadeUsuario::class)->has('gestor'); } 
-    public function gestorSubstituto() { return $this->hasMany(UnidadeUsuario::class)->has('gestorSubstituto'); }
-    public function lotados() { return $this->hasMany(UnidadeUsuario::class)->has('lotado'); }
-    public function colaboradores() { return $this->hasMany(UnidadeUsuario::class)->has('colaborador'); }       
-    public function homologadoresPlanoEntrega() { return $this->hasMany(UnidadeUsuario::class)->has('homologadorPlanoEntrega'); }       
-    public function avaliadoresPlanoEntrega() { return $this->hasMany(UnidadeUsuario::class)->has('avaliadorPlanoEntrega'); }       
-    public function avaliadoresPlanoTrabalho() { return $this->hasMany(UnidadeUsuario::class)->has('avaliadorPlanoTrabalho'); }       
+    public function gestor() { return $this->hasOne(UnidadeIntegrante::class)->has('gestor'); } 
+    public function gestorSubstituto() { return $this->hasMany(UnidadeIntegrante::class)->has('gestorSubstituto'); }
+    public function lotados() { return $this->hasMany(UnidadeIntegrante::class)->has('lotado'); }
+    public function colaboradores() { return $this->hasMany(UnidadeIntegrantes::class)->has('colaborador'); }       
+    public function homologadoresPlanoEntrega() { return $this->hasMany(UnidadeIntegrante::class)->has('homologadorPlanoEntrega'); }       
+    public function avaliadoresPlanoEntrega() { return $this->hasMany(UnidadeIntegrante::class)->has('avaliadorPlanoEntrega'); }       
+    public function avaliadoresPlanoTrabalho() { return $this->hasMany(UnidadeIntegrante::class)->has('avaliadorPlanoTrabalho'); }       
     // Mutattors e Casts
     public function getNotificacoesAttribute($value)
     {
@@ -108,7 +107,7 @@ class Unidade extends ModelBase
     {
         $this->attributes['notificacoes'] = json_encode($value);
     }
-    public function getIntegrantesAttribute()
+    public function getIntegrantesAtribuicoesAttribute()
     { 
         $result = [];
         foreach($this->usuarios as $usuario){

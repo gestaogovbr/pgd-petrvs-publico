@@ -27,9 +27,6 @@ export type Permission = string | (string | string[])[];
   providedIn: 'root'
 })
 export class AuthService {
-  public success?: (usuario: Usuario, redirectTo?: FullRoute) => void;
-  public fail?: (error: string) => void;
-  public leave?: () => void;
   public kind?: AuthKind;
   public logged: boolean = false;
   public usuario?: Usuario;
@@ -99,6 +96,18 @@ export class AuthService {
 
   constructor(public injector: Injector) { }
 
+  public success(usuario: Usuario, redirectTo?: FullRoute) {
+    this.app!.go.navigate(redirectTo || { route: this.app!.globals.initialRoute });
+  };
+
+  public fail(error: any) {
+    this.app!.go.navigate({ route: ['login'], params: { error: error?.error || error?.message || error } });
+  };
+
+  public leave() {
+    this.app!.go.navigate({ route: ['login'] });
+  };
+
   public get unidadeHora(): string {
     return moment(this.hora).format("HH:mm");
   }
@@ -149,7 +158,7 @@ export class AuthService {
       this.capacidades = this.usuario?.perfil?.capacidades?.filter(x => x.deleted_at == null).map(x => x.tipo_capacidade?.codigo || "") || [];
       this.kind = this.kind;
       this.logged = true;
-      this.unidades = this.usuario?.lotacoes?.map(x => x.unidade!) || [];
+      this.unidades = this.usuario?.lotacoes?.map(x => x.unidade!) || []; // unidadeIntegrante.unidade
       this.unidade = this.usuario?.lotacoes?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade; //this.usuario?.lotacoes?.find(x => x.principal)?.unidade;
       if (this.unidade) this.calendar.loadFeriadosCadastrados(this.unidade.id);
       if (token?.length) localStorage.setItem("petrvs_api_token", token);

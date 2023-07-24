@@ -80,15 +80,7 @@ export class AppComponent {
     this.notificacao = injector.get<NotificacaoService>(NotificacaoService);
     /* Inicializações */
     this.notificacao.heartbeat();
-    this.auth.success = (usuario: Usuario, redirectTo?: FullRoute) => {
-      this.go.navigate(redirectTo || { route: this.globals.initialRoute });
-    };
-    this.auth.fail = (error: any) => {
-      this.go.navigate({ route: ['login'], params: { error: error?.error || error?.message || error } });
-    };
-    this.auth.leave = () => {
-      this.go.navigate({ route: ['login'] });
-    };
+    this.auth.app = this;
     this.lex.update = (() => {
       this.setMenuVars();
     }).bind(this);

@@ -126,20 +126,19 @@ class Usuario extends Authenticatable
     public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }
     public function participantesPrograma() { return $this->hasMany(ProgramaParticipante::class); }
     public function integracoes() { return $this->hasMany(Integracao::class); }
-    public function vinculosUnidades() { return $this->hasMany(UnidadeUsuario::class); }
     public function planosEntregaCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }  
     public function planosTrabalhoCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); } 
-    public function unidadesUsuarios() { return $this->hasMany(UnidadeUsuario::class); }
+    public function unidadesIntegrante() { return $this->hasMany(UnidadeIntegrante::class); }
     // belongsTo
     public function perfil() { return $this->belongsTo(Perfil::class); }     //nullable
     // belongsToMany
-    public function unidades() { return $this->belongsToMany(Unidade::class)->withPivot('id'); }
+    // public function unidades() { return $this->belongsToMany(Unidade::class)->withPivot('id'); }
     // Others relationships
-    public function gerenciaTitular() { return $this->hasOne(UnidadeUsuario::class)->has('gestor'); }
-    public function gerenciasSubstitutas() { return $this->hasMany(UnidadeUsuario::class)->has('gestorSubstituto'); }
-    public function lotacao() { return $this->hasOne(UnidadeUsuario::class)->has('lotado'); }
-    public function lotacoes() { return $this->hasMany(UnidadeUsuario::class)->has('lotado')->orHas('colaborador'); }
-    public function colaboracoes() { return $this->hasMany(UnidadeUsuario::class)->has('colaborador'); }
+    public function gerenciaTitular() { return $this->hasOne(UnidadeIntegrante::class)->has('gestor'); }
+    public function gerenciasSubstitutas() { return $this->hasMany(UnidadeIntegrante::class)->has('gestorSubstituto'); }
+    public function lotacao() { return $this->hasOne(UnidadeIntegrante::class)->has('lotado'); }
+    public function areasTrabalho() { return $this->hasMany(UnidadeIntegrante::class)->has('lotado')->orHas('colaborador'); }
+    public function colaboracoes() { return $this->hasMany(UnidadeIntegrante::class)->has('colaborador'); }
     // Mutattors e Casts
     public function getUrlFotoAttribute($value) 
     {
@@ -184,7 +183,7 @@ class Usuario extends Authenticatable
         } */
         foreach($this->lotacoes as $vinculo){
             $atribuicoes = $vinculo->atribuicoes->toArray();
-            if(count($atribuicoes) > 0) $result[$vinculo->unidade_id] = array_map(fn($a) => $a["atribuicao"],$atribuicoes); 
+            if(count($atribuicoes) > 0) $result[$vinculo->unidade_id] = array_map(fn($a) => $a["atribuicao"], $atribuicoes); 
         }
         return $result;
     }
