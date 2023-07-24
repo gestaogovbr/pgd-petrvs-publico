@@ -41,7 +41,7 @@ export class EntregaFormComponent extends PageFormBase<Entrega, EntregaDaoServic
 
   public formValidation = (form?: FormGroup) =>{
     let result = null;
-    if(this.form?.controls.tipo_indicador.value == 'QUALITATIVO' && !this.listaQualitativos.length){
+    if(this.form?.controls.tipo_indicador.value == 'QUALITATIVO' && !this.form?.controls.lista_qualitativos.value.length){
       result = "Quando o tipo da entrega for Qualitativo, é necessária a inclusão de ao menos um item de qualitativo!";
     }
     return result;

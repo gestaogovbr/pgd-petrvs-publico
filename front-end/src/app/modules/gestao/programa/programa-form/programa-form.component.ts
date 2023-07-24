@@ -43,7 +43,7 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
       termo_obrigatorio: {default: false},
       template_tcr_id: {default: null},
       tipo_documento_tcr_id: {default: null},
-      prazo_execucao: {default: 0}
+      prazo_execucao: {default: 365}
     }, this.cdRef, this.validate);
     this.join = ["unidade"];
   }
