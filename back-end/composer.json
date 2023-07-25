@@ -20,7 +20,7 @@
         "ricorocks-digital-agency/soap": "^1.6",
         "socialiteproviders/microsoft-azure": "^5.1",
         "spatie/array-to-xml": "^3.1",
-        "stancl/tenancy": "^3.6.1"
+        "stancl/tenancy": "^3.6"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
