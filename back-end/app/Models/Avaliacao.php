@@ -15,7 +15,7 @@ class Avaliacao extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'nota', /* json; NOT NULL; */// Nota da avaliação
-        'usuario_id', /* char(36); NOT NULL; */
+        'usuario_id', /* char(36); NOT NULL; */// Usuário
         'justificativas', /* json; NOT NULL; DEFAULT: 'json_array()'; */// Justificativas
         'tipo_avaliacao_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */

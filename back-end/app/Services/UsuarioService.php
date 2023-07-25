@@ -101,7 +101,7 @@ class UsuarioService extends ServiceBase
                     ->distinct()
                     ->join('lotacoes', 'lotacoes.usuario_id', '=', 'usuarios.id')
                     ->whereIn('lotacoes.unidade_id', $unidade_ids)->get(); */
-        //$usuarios = Usuario::with(["lotacoes" => function ($query) use ($unidade_ids) { $query->whereIn("unidade_id", $unidade_ids); }])->get();
+        //$usuarios = Usuario::with(["areasTrabalho" => function ($query) use ($unidade_ids) { $query->whereIn("unidade_id", $unidade_ids); }])->get();
         $usuarios = [];
         foreach(Unidade::whereIn('id',$unidade_ids)->get() as $u) { array_push($usuarios, ...$u->lotados, ...$u->colaboradores); }
         foreach ($usuarios as $usuario) {
@@ -218,7 +218,7 @@ class UsuarioService extends ServiceBase
     public function lotacoesWhere($subordinadas, $usuario = null, $prefix = "", $deleted = false, $dataRef = null) {
         /*
         CONFERIR ESTE TRECHO....
-        foreach($usuario->lotacoes as $lotacao) {
+        foreach($usuario->areasTrabalho as $lotacao) {
             if(($deleted || empty($lotacao->data_fim)) && !UtilService::greaterThanOrIqual($dataRef, $lotacao->data_fim)) {
                 $where[] = $prefix . "id = '" . $lotacao->unidade_id . "'";
                 if($subordinadas) $where[] = $prefix . "path like '%" . $lotacao->unidade_id . "%'";

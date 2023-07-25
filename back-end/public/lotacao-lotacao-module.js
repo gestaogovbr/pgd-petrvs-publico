@@ -12,8 +12,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LotacaoFormComponent", function() { return LotacaoFormComponent; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/components/editable-form/editable-form.component */ "RKEd");
-/* harmony import */ var src_app_dao_lotacao_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/lotacao-dao.service */ "TTgI");
-/* harmony import */ var src_app_models_lotacao_model__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/models/lotacao.model */ "nHcL");
+/* harmony import */ var src_app_dao_unidade_integrante_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/unidade-integrante-dao.service */ "Tlc2");
+/* harmony import */ var src_app_models_unidade_integrante_model__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/models/unidade-integrante.model */ "FZjA");
 /* harmony import */ var src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/modules/base/page-form-base */ "793T");
 /* harmony import */ var src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/dao/unidade-dao.service */ "Ufbc");
 /* harmony import */ var src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/dao/usuario-dao.service */ "w5Sy");
@@ -35,7 +35,7 @@ const _c0 = ["usuario"];
 const _c1 = ["unidade"];
 class LotacaoFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_4__["PageFormBase"] {
     constructor(injector) {
-        super(injector, src_app_models_lotacao_model__WEBPACK_IMPORTED_MODULE_3__["Lotacao"], src_app_dao_lotacao_dao_service__WEBPACK_IMPORTED_MODULE_2__["LotacaoDaoService"]);
+        super(injector, src_app_models_unidade_integrante_model__WEBPACK_IMPORTED_MODULE_3__["UnidadeIntegrante"], src_app_dao_unidade_integrante_dao_service__WEBPACK_IMPORTED_MODULE_2__["UnidadeIntegranteDaoService"]);
         this.injector = injector;
         this.validate = (control, controlName) => {
             var _a;
@@ -71,13 +71,13 @@ class LotacaoFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
         });
     }
     initializeData(form) {
-        this.entity = new src_app_models_lotacao_model__WEBPACK_IMPORTED_MODULE_3__["Lotacao"]();
+        this.entity = new src_app_models_unidade_integrante_model__WEBPACK_IMPORTED_MODULE_3__["UnidadeIntegrante"]();
         this.entity.usuario_id = this.urlParams.get("usuario_id");
         this.loadData(this.entity, form);
     }
     saveData(form) {
         return new Promise((resolve, reject) => {
-            const lotacao = this.util.fill(new src_app_models_lotacao_model__WEBPACK_IMPORTED_MODULE_3__["Lotacao"](), this.entity);
+            const lotacao = this.util.fill(new src_app_models_unidade_integrante_model__WEBPACK_IMPORTED_MODULE_3__["UnidadeIntegrante"](), this.entity);
             resolve(this.util.fillForm(lotacao, this.form.value));
         });
     }
@@ -208,10 +208,10 @@ LotacaoModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineInje
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LotacaoListComponent", function() { return LotacaoListComponent; });
 /* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/components/grid/grid.component */ "m4bG");
-/* harmony import */ var src_app_dao_lotacao_dao_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/dao/lotacao-dao.service */ "TTgI");
+/* harmony import */ var src_app_dao_unidade_integrante_dao_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/dao/unidade-integrante-dao.service */ "Tlc2");
 /* harmony import */ var src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/unidade-dao.service */ "Ufbc");
 /* harmony import */ var src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/usuario-dao.service */ "w5Sy");
-/* harmony import */ var src_app_models_lotacao_model__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/models/lotacao.model */ "nHcL");
+/* harmony import */ var src_app_models_unidade_integrante_model__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/models/unidade-integrante.model */ "FZjA");
 /* harmony import */ var src_app_modules_base_page_list_base__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/modules/base/page-list-base */ "+vn/");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ "fXoL");
 /* harmony import */ var _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../../components/toolbar/toolbar.component */ "np0s");
@@ -257,7 +257,7 @@ function LotacaoListComponent_ng_template_5_Template(rf, ctx) { if (rf & 1) {
 } }
 class LotacaoListComponent extends src_app_modules_base_page_list_base__WEBPACK_IMPORTED_MODULE_5__["PageListBase"] {
     constructor(injector) {
-        super(injector, src_app_models_lotacao_model__WEBPACK_IMPORTED_MODULE_4__["Lotacao"], src_app_dao_lotacao_dao_service__WEBPACK_IMPORTED_MODULE_1__["LotacaoDaoService"]);
+        super(injector, src_app_models_unidade_integrante_model__WEBPACK_IMPORTED_MODULE_4__["UnidadeIntegrante"], src_app_dao_unidade_integrante_dao_service__WEBPACK_IMPORTED_MODULE_1__["UnidadeIntegranteDaoService"]);
         this.injector = injector;
         this.filterWhere = (filter) => {
             var _a;

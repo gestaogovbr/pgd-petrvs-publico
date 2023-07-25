@@ -37,12 +37,12 @@ class Atividade extends ModelBase
         'plano_trabalho_entrega_id', /* char(36); */
         'tipo_atividade_id', /* char(36); */
         'demandante_id', /* char(36); NOT NULL; */
-        'usuario_id', /* char(36); */
-        'unidade_id', /* char(36); NOT NULL; */
+        'usuario_id', /* char(36); */// Usuário responsável pela atividade
+        'unidade_id', /* char(36); NOT NULL; */// Unidade responsável pela atividade
         'documento_requisicao_id', /* char(36); */
         'documento_entrega_id', /* char(36); */
-        //'numero', /* int; NOT NULL; */// Número da atividade (Gerado pelo sistema)
         //'deleted_at', /* timestamp; */
+        //'numero', /* int; NOT NULL; */// Número da atividade (Gerado pelo sistema)
     ];
 
     public $fillable_changes = [

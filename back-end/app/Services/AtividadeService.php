@@ -32,7 +32,7 @@ class AtividadeService extends ServiceBase
         "demandante:id,nome,apelido,email,url_foto",
         "pausas",
         "usuario:id,nome,matricula,apelido,email,url_foto",
-        "unidade:id,nome,sigla,codigo,path,atividades_arquivamento_automatico,atividades_avaliacao_automatico,autoedicao_subordinadas,checklist,etiquetas,distribuicao_forma_contagem_prazos,cidade_id,entidade_id,gestor_id,gestor_substituto_id,entrega_forma_contagem_prazos,horario_trabalho_fim,horario_trabalho_inicio,horario_trabalho_intervalo,planos_prazo_comparecimento,planos_tipo_prazo_comparecimento",
+        "unidade:id,nome,sigla,codigo,path,atividades_arquivamento_automatico,checklist,etiquetas,distribuicao_forma_contagem_prazos,cidade_id,entidade_id,entrega_forma_contagem_prazos",
         "comentarios.usuario:id,nome,apelido,email,url_foto",
         "tarefas.tarefa",
         "tarefas.comentarios.usuario:id,nome,apelido,email,url_foto",
@@ -156,7 +156,7 @@ class AtividadeService extends ServiceBase
         if(!empty($unidade_id)) {
             array_push($unidades_ids, $unidade_id);
         } else {
-            foreach($usuario->lotacoes as $lotacao) {
+            foreach($usuario->areasTrabalho as $lotacao) {
                 array_push($unidades_ids, $lotacao->id);
             }
         }

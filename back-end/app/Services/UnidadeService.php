@@ -283,7 +283,7 @@ class UnidadeService extends ServiceBase
 
     public function proxyStore($data, $unidade, $action) {
         $unidade = Unidade::find($data["id"]);
-        $pai = Unidade::find($data["unidade_id"]);
+        $pai = Unidade::find($data["unidade_pai_id"]);
         $data["path"] = empty($pai) ? null : $pai->path . "/" . $pai->id;
         if(!empty($unidade)) {
             $oldPath = $unidade->path . "/" . $unidade->id . "/";

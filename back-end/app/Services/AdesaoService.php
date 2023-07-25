@@ -49,16 +49,16 @@ class AdesaoService extends ServiceBase
     public function validateStore($data, $unidade, $action) {
         // TODO: fazer as validações da adesão
         /*$unidade_id = $data["unidade_id"];
-        $usuario = Usuario::with(["lotacoes" => function ($query){
+        $usuario = Usuario::with(["areasTrabalho" => function ($query){
             $query->whereNull("data_fim");
         }])->find($data["usuario_id"]);
-        $criador = Usuario::with(["lotacoes" => function ($query){
+        $criador = Usuario::with(["areasTrabalho" => function ($query){
             $query->whereNull("data_fim");
         }])->find(parent::loggedUser()->id);*/
         /*if(!$this->usuarioService->hasLotacao($unidade_id, $usuario, false) && !parent::loggedUser()->hasPermissionTo('MOD_USER_TUDO')) {
             throw new ServerException("ValidatePlano", $unidade->sigla . " não é uma unidade (lotação) do usuário");
         }*/
-        /* $usuario_lotacoes_ids = $usuario->lotacoes->map(function ($item, $key) { return $item->unidade_id; })->all();
+        /* $usuario_lotacoes_ids = $usuario->areasTrabalho->map(function ($item, $key) { return $item->unidade_id; })->all();
         $criador_lotacoes_ids = $criador->lotacoes->map(function ($item, $key) { return $item->unidade_id; })->all();
         if(!count(array_intersect($usuario_lotacoes_ids, $criador_lotacoes_ids)) && !parent::loggedUser()->hasPermissionTo('MOD_PTR_USERS_INCL')) {
             throw new ServerException("ValidatePlano", "Usuário do plano fora das lotações de quem está lançando o plano (MOD_PTR_USERS_INCL)");

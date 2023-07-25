@@ -23,8 +23,8 @@ class Planejamento extends ModelBase
         'visao', /* text; NOT NULL; */// Visão da entidade/unidade
         'valores', /* json; NOT NULL; */// Valores da entidade/unidade
         'data_arquivamento', /* datetime; */// Data de arquivamento do planejamento institucional
-        'entidade_id', /* char(36); NOT NULL; */
-        'unidade_id', /* char(36); */
+        'entidade_id', /* char(36); NOT NULL; */// Entidade do planejamento institucional
+        'unidade_id', /* char(36); */// Unidade do planejamento institucional (opcional)
         'planejamento_pai_id', /* char(36); */
         //'deleted_at', /* timestamp; */
     ];

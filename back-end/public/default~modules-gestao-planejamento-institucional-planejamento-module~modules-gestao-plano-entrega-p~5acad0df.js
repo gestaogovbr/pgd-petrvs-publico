@@ -104,8 +104,8 @@ class PlanejamentoFormObjetivoComponent extends src_app_modules_base_page_form_b
             this.planejamento = (_b = this.metadata) === null || _b === void 0 ? void 0 : _b.planejamento;
             /*  if(this.planejamento) this.planejamento.planejamento_superior = this.metadata.planejamento_superior as Planejamento || null;
                 if(this.planejamento.planejamento_superior) this.planejamento.planejamento_superior.objetivos = this.metadata?.objetivos_superiores || null;  */
-            (_c = this.form) === null || _c === void 0 ? void 0 : _c.controls.planejamento_superior_nome.setValue(((_e = (_d = this.planejamento) === null || _d === void 0 ? void 0 : _d.planejamento_superior) === null || _e === void 0 ? void 0 : _e.nome) || '');
-            this.objetivos_superiores = ((_h = (_g = (_f = this.planejamento) === null || _f === void 0 ? void 0 : _f.planejamento_superior) === null || _g === void 0 ? void 0 : _g.objetivos) === null || _h === void 0 ? void 0 : _h.map(x => Object.assign({}, { key: x.id, value: x.nome, data: x }))) || [];
+            (_c = this.form) === null || _c === void 0 ? void 0 : _c.controls.planejamento_superior_nome.setValue(((_e = (_d = this.planejamento) === null || _d === void 0 ? void 0 : _d.planejamento_pai) === null || _e === void 0 ? void 0 : _e.nome) || '');
+            this.objetivos_superiores = ((_h = (_g = (_f = this.planejamento) === null || _f === void 0 ? void 0 : _f.planejamento_pai) === null || _g === void 0 ? void 0 : _g.objetivos) === null || _h === void 0 ? void 0 : _h.map(x => Object.assign({}, { key: x.id, value: x.nome, data: x }))) || [];
         });
     }
     initializeData(form) {
@@ -1092,15 +1092,12 @@ __webpack_require__.r(__webpack_exports__);
 class PlanejamentoObjetivo extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
     constructor(data) {
         super();
-        this.data_inicio = new Date(); /* Data de criação */
-        this.data_fim = null; /* Data final do registro */
         this.nome = ""; /* Nome do objetivo */
         this.fundamentacao = ""; /* Fundamentação para a definição do objetivo */
         this.sequencia = 0;
         this.path = null;
         this.planejamento_id = null;
         this.eixo_tematico_id = null;
-        this.objetivo_superior_id = null;
         this.objetivo_pai_id = null;
         this.initialization(data);
     }
@@ -1212,7 +1209,7 @@ class PlanejamentoFormComponent extends src_app_modules_base_page_form_base__WEB
         this.hasPermissionToUNEX = this.auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_LOTPRI') || this.auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_QQLOT') || this.auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_SUBORD') || this.auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_QUALQUER');
         this.join = [
             'objetivos',
-            'objetivos.objetivo_superior:id,nome',
+            'objetivos.objetivo_pai:id,nome',
             'objetivos.eixo_tematico:id,nome',
             'planejamento_superior:id,nome',
             'planejamento_superior.objetivos'
@@ -1283,14 +1280,14 @@ class PlanejamentoFormComponent extends src_app_modules_base_page_form_base__WEB
     onPlanejamentoChange(event) {
         var _a, _b, _c, _d, _e, _f;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            if (this.form.controls.planejamento_superior_id.value != ((_a = this.entity) === null || _a === void 0 ? void 0 : _a.planejamento_superior_id) && ((_c = (_b = this.entity) === null || _b === void 0 ? void 0 : _b.objetivos) === null || _c === void 0 ? void 0 : _c.length)) {
+            if (this.form.controls.planejamento_superior_id.value != ((_a = this.entity) === null || _a === void 0 ? void 0 : _a.planejamento_pai_id) && ((_c = (_b = this.entity) === null || _b === void 0 ? void 0 : _b.objetivos) === null || _c === void 0 ? void 0 : _c.length)) {
                 let confirm = yield this.dialog.confirm("Alteração de Planejamento superior", "Como já existem objetivos neste Planejamento, eles serão desvinculados dos objetivos do Planejamento anterior, para que novos objetivos sejam selecionados! Deseja continuar?");
                 if (confirm) {
-                    (_e = (_d = this.entity) === null || _d === void 0 ? void 0 : _d.objetivos) === null || _e === void 0 ? void 0 : _e.forEach(obj => obj.objetivo_superior_id = null);
+                    (_e = (_d = this.entity) === null || _d === void 0 ? void 0 : _d.objetivos) === null || _e === void 0 ? void 0 : _e.forEach(obj => obj.objetivo_pai_id = null);
                     //atualizar a lista de objetivos superiores
                 }
                 else {
-                    this.form.controls.planejamento_superior_id.setValue((_f = this.entity) === null || _f === void 0 ? void 0 : _f.planejamento_superior_id);
+                    this.form.controls.planejamento_superior_id.setValue((_f = this.entity) === null || _f === void 0 ? void 0 : _f.planejamento_pai_id);
                 }
                 ;
             }
@@ -1862,8 +1859,6 @@ __webpack_require__.r(__webpack_exports__);
 class Planejamento extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
     constructor(data) {
         super();
-        this.data_inicio = new Date(); /* Data de criação */
-        this.data_fim = null; /* Data final do registro */
         this.data_arquivamento = null; /* Data de arquivamento */
         this.inicio = new Date(); /* Data de início do planejamento */
         this.fim = null; /* Data do fim do planejamento */
@@ -1873,7 +1868,7 @@ class Planejamento extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.valores = []; /* Valores da Instituição/Unidade */
         this.unidade_id = null; /* Unidade à qual está vinculado o planejamento institucional */
         this.entidade_id = null; /* Entidade à qual está vinculado o planejamento institucional */
-        this.planejamento_superior_id = null; /* Planejamento hierarquicamente superior ao qual o atual planejamento está vinculado */
+        this.planejamento_pai_id = null; /* Planejamento hierarquicamente superior ao qual o atual planejamento está vinculado */
         this.initialization(data);
     }
 }

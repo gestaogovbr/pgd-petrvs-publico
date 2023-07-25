@@ -16,8 +16,8 @@ class ProjetoHistorico extends ModelBase
         'data_hora', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data e hora da modificação
         'completo', /* tinyint; NOT NULL; */// Se o delta corresponde ao objeto completo
         'delta', /* json; NOT NULL; */// Delta do objeto (ou objeto completo)
-        'projeto_id', /* char(36); NOT NULL; */
-        'usuario_id', /* char(36); NOT NULL; */
+        'projeto_id', /* char(36); NOT NULL; */// Projeto
+        'usuario_id', /* char(36); NOT NULL; */// Usuário
         //'deleted_at', /* timestamp; */
     ];
 

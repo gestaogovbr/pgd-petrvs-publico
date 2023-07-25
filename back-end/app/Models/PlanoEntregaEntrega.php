@@ -27,9 +27,9 @@ class PlanoEntregaEntrega extends ModelBase
         'destinatario', /* varchar(255); */// Destinatário da entrega
         'progresso_esperado', /* decimal(5,2); DEFAULT: '0.00'; */// Percentual esperado de progresso do Plano de Entregas
         'progresso_realizado', /* decimal(5,2); DEFAULT: '0.00'; */// Percentual realizado de progresso do Plano de Entregas
-        'unidade_id', /* char(36); NOT NULL; */
+        'unidade_id', /* char(36); NOT NULL; */// Unidade demandante da entrega
         'plano_entrega_id', /* char(36); NOT NULL; */
-        'entrega_id', /* char(36); */
+        'entrega_id', /* char(36); */// Entrega do Catálogo ao qual está associada esta entrega (opcional)
         'entrega_pai_id', /* char(36); */
         //'deleted_at', /* timestamp; */
     ];

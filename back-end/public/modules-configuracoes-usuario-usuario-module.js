@@ -43,6 +43,42 @@ UsuarioModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineInje
 
 /***/ }),
 
+/***/ "FZjA":
+/*!****************************************************!*\
+  !*** ./src/app/models/unidade-integrante.model.ts ***!
+  \****************************************************/
+/*! exports provided: UnidadeIntegranteConsolidado, UnidadeIntegrante */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UnidadeIntegranteConsolidado", function() { return UnidadeIntegranteConsolidado; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UnidadeIntegrante", function() { return UnidadeIntegrante; });
+/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
+
+//export type UnidadeIntegranteTipo = "AVALIADOR_ATIVIDADE" | "AVALIADOR_PLANO_ENTREGA" | "AVALIADOR_PLANO_TRABALHO" | "HOMOLOGADOR_PLANO_ENTREGA" | "LOTADO" | "GESTOR" | "GESTOR_SUBSTITUTO";
+class UnidadeIntegranteConsolidado {
+    constructor() {
+        this.id = ""; /* Utilizado somente para garantir o funcionamento do grid */
+        this.usuario_id = "";
+        this.atribuicoes = [];
+    }
+}
+;
+class UnidadeIntegrante extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
+    constructor(data) {
+        super();
+        //public principal: boolean = false; /* Se é a lotação principal */
+        this.usuario_id = ""; /* Usuário vinculado */
+        this.unidade_id = ""; /* Unidade Vinculada */
+        this.atribuicoes = [];
+        this.initialization(data);
+    }
+}
+
+
+/***/ }),
+
 /***/ "IIPB":
 /*!*************************************************************************!*\
   !*** ./src/app/modules/configuracoes/usuario/usuario-routing.module.ts ***!
@@ -280,33 +316,6 @@ UsuarioListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdef
 
 /***/ }),
 
-/***/ "nHcL":
-/*!*****************************************!*\
-  !*** ./src/app/models/lotacao.model.ts ***!
-  \*****************************************/
-/*! exports provided: Lotacao */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Lotacao", function() { return Lotacao; });
-/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
-
-class Lotacao extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor(data) {
-        super();
-        this.principal = false; /* Se é a lotação principal */
-        this.usuario_id = ""; /* Usuário vinculado */
-        this.unidade_id = ""; /* Unidade Vinculada */
-        this.data_inicio = new Date(); /* Data de início */
-        this.data_fim = null; /* Data do fim */
-        this.initialization(data);
-    }
-}
-
-
-/***/ }),
-
 /***/ "x3jR":
 /*!**************************************************************************************!*\
   !*** ./src/app/modules/configuracoes/usuario/usuario-form/usuario-form.component.ts ***!
@@ -320,10 +329,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/components/editable-form/editable-form.component */ "RKEd");
 /* harmony import */ var src_app_dao_perfil_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/perfil-dao.service */ "pWMB");
-/* harmony import */ var src_app_dao_plano_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/plano-dao.service */ "eHo6");
+/* harmony import */ var src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/plano-trabalho-dao.service */ "RHdA");
 /* harmony import */ var src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/dao/unidade-dao.service */ "Ufbc");
 /* harmony import */ var src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/dao/usuario-dao.service */ "w5Sy");
-/* harmony import */ var src_app_models_lotacao_model__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/models/lotacao.model */ "nHcL");
+/* harmony import */ var src_app_models_unidade_integrante_model__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/models/unidade-integrante.model */ "FZjA");
 /* harmony import */ var src_app_models_usuario_model__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! src/app/models/usuario.model */ "11oC");
 /* harmony import */ var src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! src/app/modules/base/page-form-base */ "793T");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/core */ "fXoL");
@@ -447,7 +456,7 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
         };
         this.perfilDao = injector.get(src_app_dao_perfil_dao_service__WEBPACK_IMPORTED_MODULE_2__["PerfilDaoService"]);
         this.unidadeDao = injector.get(src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_4__["UnidadeDaoService"]);
-        this.planoDao = injector.get(src_app_dao_plano_dao_service__WEBPACK_IMPORTED_MODULE_3__["PlanoDaoService"]);
+        this.planoTrabalhoDao = injector.get(src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_3__["PlanoTrabalhoDaoService"]);
         this.form = this.fh.FormBuilder({
             email: { default: "" },
             nome: { default: "" },
@@ -466,7 +475,7 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
             principal: { default: "" },
             unidade_id: { default: "" },
         }, this.cdRef, this.validateLotacoes);
-        this.planoDataset = this.planoDao.dataset();
+        this.planoDataset = this.planoTrabalhoDao.dataset();
         this.join = ["lotacoes.unidade"];
     }
     loadData(entity, form) {
@@ -487,7 +496,7 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
     addLotacao() {
         var _a;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            return Object.assign(new src_app_models_lotacao_model__WEBPACK_IMPORTED_MODULE_6__["Lotacao"](), { usuario_id: (_a = this.entity) === null || _a === void 0 ? void 0 : _a.id, _status: "ADD" });
+            return Object.assign(new src_app_models_unidade_integrante_model__WEBPACK_IMPORTED_MODULE_6__["UnidadeIntegrante"](), { usuario_id: (_a = this.entity) === null || _a === void 0 ? void 0 : _a.id, _status: "ADD" });
         });
     }
     loadLotacao(form, row) {
@@ -506,7 +515,8 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
         var _a, _b, _c;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             const lotacoes = (((_b = (_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.lotacoes) === null || _b === void 0 ? void 0 : _b.value) || []).filter((x) => x.id != row.id);
-            const principal = lotacoes.find((x) => x.principal);
+            //const principal = lotacoes.find((x: Lotacao) => x.principal);
+            const principal = lotacoes.find((x) => { var _a; return (_a = x.atribuicoes) === null || _a === void 0 ? void 0 : _a.find(y => y.atribuicao == "LOTADO"); });
             row.unidade_id = form.controls.unidade_id.value;
             row.principal = form.controls.principal.value;
             row._status = row._status == "ADD" ? "ADD" : "EDIT";
@@ -531,7 +541,7 @@ UsuarioFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdef
     } if (rf & 2) {
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵInheritDefinitionFeature"]], decls: 36, vars: 38, consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], [1, "form-group", "col-md-3", "text-center"], [1, "mt-5", 3, "url", "size"], [1, "form-group", "col-md-9"], ["label", "CPF", "controlName", "cpf", 3, "disabled", "size", "maskFormat"], ["label", "Matr\u00EDcula", "controlName", "matricula", 3, "disabled", "size"], ["label", "E-mail", "controlName", "email", "textCase", "lower", 3, "disabled", "size"], ["label", "Nome", "controlName", "nome", 3, "size"], ["label", "Apelido", "controlName", "apelido", 3, "size"], ["label", "Perfil", "controlName", "perfil_id", 3, "disabled", "size", "dao"], ["label", "UF", "icon", "bi bi-flag", "controlName", "uf", 3, "size", "items"], ["label", "Sexo", "controlName", "sexo", 3, "size", "items"], ["label", "Telefone", "controlName", "telefone", 3, "size", "maskFormat"], ["key", "CONFIGURACOES", "label", "Configura\u00E7\u00F5es"], ["controlName", "texto_complementar_plano", 3, "label", "dataset"], ["key", "LOTACOES", 3, "label"], ["editable", "", 3, "control", "form", "add", "load", "hasDelete", "remove", "save"], [3, "title", "template", "editTemplate"], ["columnUnidade", ""], ["editUnidade", ""], [3, "title", "template"], ["columnGestor", ""], ["type", "switch", "title", "Principal", "field", "principal"], ["type", "options"], ["class", "bi bi-bookmark-star", 4, "ngIf"], [1, "bi", "bi-bookmark-star"], ["label", "", "icon", "", "controlName", "unidade_id", 3, "size", "control", "dao"], ["unidade", ""]], template: function UsuarioFormComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵInheritDefinitionFeature"]], decls: 36, vars: 38, consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], [1, "form-group", "col-md-3", "text-center"], [1, "mt-5", 3, "url", "size"], [1, "form-group", "col-md-9"], ["label", "CPF", "controlName", "cpf", 3, "disabled", "size", "maskFormat"], ["label", "Matr\u00EDcula", "controlName", "matricula", 3, "disabled", "size"], ["label", "E-mail", "controlName", "email", "textCase", "lower", 3, "disabled", "size"], ["label", "Nome", "controlName", "nome", 3, "size"], ["label", "Apelido", "controlName", "apelido", 3, "size"], ["label", "Perfil", "controlName", "perfil_id", 3, "disabled", "size", "dao"], ["label", "UF", "icon", "bi bi-flag", "controlName", "uf", 3, "size", "items"], ["label", "Sexo", "controlName", "sexo", 3, "size", "items"], ["label", "Telefone", "controlName", "telefone", 3, "size", "maskFormat"], ["key", "CONFIGURACOES", "label", "Configura\u00E7\u00F5es"], ["controlName", "texto_complementar_plano", 3, "label", "dataset"], ["key", "AREAS_TRABALHO", 3, "label"], ["editable", "", 3, "control", "form", "add", "load", "hasDelete", "remove", "save"], [3, "title", "template", "editTemplate"], ["columnUnidade", ""], ["editUnidade", ""], [3, "title", "template"], ["columnGestor", ""], ["type", "switch", "title", "Principal", "field", "principal"], ["type", "options"], ["class", "bi bi-bookmark-star", 4, "ngIf"], [1, "bi", "bi-bookmark-star"], ["label", "", "icon", "", "controlName", "unidade_id", 3, "size", "control", "dao"], ["unidade", ""]], template: function UsuarioFormComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "editable-form", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("submit", function UsuarioFormComponent_Template_editable_form_submit_0_listener() { return ctx.onSaveData(); })("cancel", function UsuarioFormComponent_Template_editable_form_cancel_0_listener() { return ctx.onCancel(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](1, "tabs", 1);
@@ -611,7 +621,7 @@ UsuarioFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdef
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("label", "Texto complementar " + ctx.lex.noun("Plano de Trabalho", false, true))("dataset", ctx.planoDataset);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("label", ctx.lex.noun("Lota\u00E7\u00E3o", true));
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("label", ctx.lex.translate("\u00C1reas de Trabalho"));
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("control", ctx.form.controls.lotacoes)("form", ctx.formLotacoes)("add", ctx.addLotacao.bind(ctx))("load", ctx.loadLotacao.bind(ctx))("hasDelete", true)("remove", ctx.removeLotacao.bind(ctx))("save", ctx.saveLotacao.bind(ctx));
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);

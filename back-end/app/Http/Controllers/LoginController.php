@@ -88,14 +88,14 @@ class LoginController extends Controller
         ]);
         if(Auth::check()) {
             $usuario = Auth::user();
-            $usuario = Usuario::where("id", $usuario->id)->with(["lotacoes" => function($query) use ($data) {
+            $usuario = Usuario::where("id", $usuario->id)->with(["areasTrabalho" => function($query) use ($data) {
                             $query->where('id',$data["unidade_id"]);
                         }])->first();
-            if(isset($usuario->lotacoes[0]) && !empty($usuario->lotacoes[0]->id)) {
-                $request->session()->put("unidade_id", $usuario->lotacoes[0]->id);
+            if(isset($usuario->areasTrabalho[0]) && !empty($usuario->areasTrabalho[0]->id)) {
+                $request->session()->put("unidade_id", $usuario->areasTrabalho[0]->id);
                 return response()->json([
                     "status" => "OK",
-                    "unidade" => $usuario->lotacoes[0]
+                    "unidade" => $usuario->areasTrabalho[0]
                 ]);
             } else {
                 return LogError::newError('Unidade não encontrada no usuário');

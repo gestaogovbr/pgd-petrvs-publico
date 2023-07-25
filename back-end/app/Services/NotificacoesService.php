@@ -15,49 +15,49 @@ class NotificacoesService
         /* Foi necessário inicializar a variável no construtor devido a um BUG do php */
         $this->notificacoes = [
             "DMD_DISTRIBUICAO" => [
-                "descricao" => "Notificação de distribuição da demanda",
-                "destinatarios" => (fn(&$params) => [$params["demanda"]->usuario]),
-                "unidade" => (fn(&$params) => $params["demanda"]->unidade),
-                "validacao" => (fn(&$params) => !empty($params["demanda"]->usuario_id)),
-                "dataset" => [["field" => "demanda_numero", "label" => "Número da demanda"]],
-                "datasource" => (fn(&$params) => ["demanda_numero" => $params["demanda"]->numero]),
-                "template" => "Uma nova demanda foi atribuída a você, acesse o PETRVS para visualizá-la! (ID: #{{demanda_numero}})"
+                "descricao" => "Notificação de distribuição da atividade",
+                "destinatarios" => (fn(&$params) => [$params["atividade"]->usuario]),
+                "unidade" => (fn(&$params) => $params["atividade"]->unidade),
+                "validacao" => (fn(&$params) => !empty($params["atividade"]->usuario_id)),
+                "dataset" => [["field" => "atividade_numero", "label" => "Número da atividade"]],
+                "datasource" => (fn(&$params) => ["atividade_numero" => $params["atividade"]->numero]),
+                "template" => "Uma nova atividade foi atribuída a você, acesse o PETRVS para visualizá-la! (ID: #{{atividade_numero}})"
             ],
             "DMD_MODIFICACAO" => [
-                "descricao" => "Notificação de modificações na demanda",
-                "destinatarios" => (fn(&$params) => [$params["demanda"]->usuario, $params["demanda"]->demandante]),
-                "unidade" => (fn(&$params) => $params["demanda"]->unidade),
+                "descricao" => "Notificação de modificações na atividade",
+                "destinatarios" => (fn(&$params) => [$params["atividade"]->usuario, $params["atividade"]->atividadente]),
+                "unidade" => (fn(&$params) => $params["atividade"]->unidade),
                 "validacao" => (fn(&$params) => true),
-                "dataset" => [["field" => "demanda_numero", "label" => "Número da demanda"], ["field" => "demanda_responsavel", "label" => "Nome do responsável pela demanda"]],
-                "datasource" => (fn(&$params) => ["demanda_numero" => $params["demanda"]->numero, "demanda_responsavel" => $params["demanda"]->usuario->nome]),
-                "template" => "A demanda #{{demanda_numero}}, atribuída à {{demanda_responsavel}}, foi atualizada, acesse o PETRVS para visualizá-la!"
+                "dataset" => [["field" => "atividade_numero", "label" => "Número da atividade"], ["field" => "atividade_responsavel", "label" => "Nome do responsável pela atividade"]],
+                "datasource" => (fn(&$params) => ["atividade_numero" => $params["atividade"]->numero, "atividade_responsavel" => $params["atividade"]->usuario->nome]),
+                "template" => "A atividade #{{atividade_numero}}, atribuída à {{atividade_responsavel}}, foi atualizada, acesse o PETRVS para visualizá-la!"
             ],         
             "DMD_COMENTARIO" => [
-                "descricao" => "Notificação de comentário na demanda",
-                "destinatarios" => (fn(&$params) => [$params["demanda"]->usuario, $params["demanda"]->demandante]),
-                "unidade" => (fn(&$params) => $params["demanda"]->unidade),
+                "descricao" => "Notificação de comentário na atividade",
+                "destinatarios" => (fn(&$params) => [$params["atividade"]->usuario, $params["atividade"]->atividadente]),
+                "unidade" => (fn(&$params) => $params["atividade"]->unidade),
                 "validacao" => (fn(&$params) => true),
-                "dataset" => [["field" => "demanda_numero", "label" => "Número da demanda"], ["field" => "demanda_responsavel", "label" => "Nome do responsável pela demanda"]],
-                "datasource" => (fn(&$params) => ["demanda_numero" => $params["demanda"]->numero, "demanda_responsavel" => $params["demanda"]->usuario->nome]),
-                "template" => "Foi inserido um comentário na demanda #{{demanda_numero}}, atribuída a {{demanda_responsavel}}, acesse o PETRVS para visualizá-la!"
+                "dataset" => [["field" => "atividade_numero", "label" => "Número da atividade"], ["field" => "atividade_responsavel", "label" => "Nome do responsável pela atividade"]],
+                "datasource" => (fn(&$params) => ["atividade_numero" => $params["atividade"]->numero, "atividade_responsavel" => $params["atividade"]->usuario->nome]),
+                "template" => "Foi inserido um comentário na atividade #{{atividade_numero}}, atribuída a {{atividade_responsavel}}, acesse o PETRVS para visualizá-la!"
             ],         
             "DMD_CONCLUSAO" => [
-                "descricao" => "Notificação de conclusão da demanda",
-                "destinatarios" => (fn(&$params) => [$params["demanda"]->demandante]),
-                "unidade" => (fn(&$params) => $params["demanda"]->unidade),
+                "descricao" => "Notificação de conclusão da atividade",
+                "destinatarios" => (fn(&$params) => [$params["atividade"]->atividadente]),
+                "unidade" => (fn(&$params) => $params["atividade"]->unidade),
                 "validacao" => (fn(&$params) => true),
-                "dataset" => [["field" => "demanda_numero", "label" => "Número da demanda"], ["field" => "demanda_responsavel", "label" => "Nome do responsável pela demanda"]],
-                "datasource" => (fn(&$params) => ["demanda_numero" => $params["demanda"]->numero, "demanda_responsavel" => $params["demanda"]->usuario->nome]),
-                "template" => "A demanda #{{demanda_numero}}, atribuída à\ao {{demanda_responsavel}}, foi concluída, acesse o PETRVS para visualizá-la!"
+                "dataset" => [["field" => "atividade_numero", "label" => "Número da atividade"], ["field" => "atividade_responsavel", "label" => "Nome do responsável pela atividade"]],
+                "datasource" => (fn(&$params) => ["atividade_numero" => $params["atividade"]->numero, "atividade_responsavel" => $params["atividade"]->usuario->nome]),
+                "template" => "A atividade #{{atividade_numero}}, atribuída à\ao {{atividade_responsavel}}, foi concluída, acesse o PETRVS para visualizá-la!"
             ],         
             "DMD_AVALIACAO" => [
-                "descricao" => "Notificação de avaliação da demanda",
-                "destinatarios" => (fn(&$params) => [$params["demanda"]->usuario]),
-                "unidade" => (fn(&$params) => $params["demanda"]->unidade),
+                "descricao" => "Notificação de avaliação da atividade",
+                "destinatarios" => (fn(&$params) => [$params["atividade"]->usuario]),
+                "unidade" => (fn(&$params) => $params["atividade"]->unidade),
                 "validacao" => (fn(&$params) => true),
-                "dataset" => [["field" => "demanda_numero", "label" => "Número da demanda"]],
-                "datasource" => (fn(&$params) => ["demanda_numero" => $params["demanda"]->numero]),
-                "template" => "Sua demanda #{{demanda_numero}} foi avaliada, acesse o PETRVS para avaliá-la!"
+                "dataset" => [["field" => "atividade_numero", "label" => "Número da atividade"]],
+                "datasource" => (fn(&$params) => ["atividade_numero" => $params["atividade"]->numero]),
+                "template" => "Sua atividade #{{atividade_numero}} foi avaliada, acesse o PETRVS para avaliá-la!"
             ],
             "PRG_PART_HABILITACAO" => [
                 "descricao" => "Notificação de habilitação do participante",

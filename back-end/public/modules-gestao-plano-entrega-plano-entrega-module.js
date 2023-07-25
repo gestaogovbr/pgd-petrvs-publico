@@ -182,7 +182,7 @@ PlanoEntregaFormAdesaoComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1
     } if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 12)("dao", ctx.planoEntregaDao)("selectRoute", _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵpureFunction2"](28, _c3, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵpureFunction0"](23, _c0), _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵpureFunction1"](26, _c2, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵpureFunction1"](24, _c1, ctx.auth.unidade.unidade_id))))("where", _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵpureFunction2"](34, _c6, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵpureFunction1"](31, _c4, ctx.auth.unidade.unidade_id), _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵpureFunction0"](33, _c5)));
+        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 12)("dao", ctx.planoEntregaDao)("selectRoute", _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵpureFunction2"](28, _c3, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵpureFunction0"](23, _c0), _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵpureFunction1"](26, _c2, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵpureFunction1"](24, _c1, ctx.auth.unidade.unidade_pai_id))))("where", _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵpureFunction2"](34, _c6, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵpureFunction1"](31, _c4, ctx.auth.unidade.unidade_pai_id), _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵpureFunction0"](33, _c5)));
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](4);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 12);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
@@ -471,7 +471,7 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
                 return "Salve ou cancele o registro atual em edição";
             }
             if (this.form.controls.fim.value && this.form.controls.inicio.value > this.form.controls.fim.value)
-                return "A data do início não pode ser maior que a data do fim!";
+                return "A data do fim não pode ser anterior à data do fim!";
             return undefined;
         };
         this.planejamentoDao = injector.get(src_app_dao_planejamento_dao_service__WEBPACK_IMPORTED_MODULE_3__["PlanejamentoDaoService"]);
@@ -803,7 +803,7 @@ __webpack_require__.r(__webpack_exports__);
 class PlanoEntrega extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
     constructor(data) {
         super();
-        this.data_fim = null; // Data em que o registro foi deletado (soft-delete)
+        this.entregas = []; // Entregas que compõem o plano de entregas
         this.inicio = new Date(); // Data inicio do plano de entrega
         this.fim = null; // Data fim do plano de entrega
         this.nome = ""; // Nome do plano de entrega
@@ -814,7 +814,6 @@ class PlanoEntrega extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.planejamento_id = null;
         this.cadeia_valor_id = null;
         this.programa_id = null;
-        this.entregas = [];
         this.initialization(data);
     }
 }
@@ -1547,22 +1546,21 @@ __webpack_require__.r(__webpack_exports__);
 class PlanoEntregaEntrega extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
     constructor(data) {
         super();
+        this.objetivos = [];
+        this.processos = [];
         this.inicio = new Date();
         this.fim = null;
         this.descricao = "";
         this.homologado = false;
         this.meta = {};
         this.realizado = {};
-        this.plano_entrega_id = null;
-        this.entrega_id = '';
         this.progresso_esperado = 100;
         this.progresso_realizado = 0;
-        this.descricao_meta = '';
-        this.unidade_id = '';
         this.destinatario = '';
+        this.entrega_id = '';
+        this.unidade_id = '';
         this.entrega_pai_id = null;
-        this.objetivos = [];
-        this.processos = [];
+        this.plano_entrega_id = null;
         this.initialization(data);
     }
 }
@@ -2055,6 +2053,7 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
             meta: { default: "" },
             realizado: { default: null },
             entrega_id: { default: null },
+            unidade_id: { default: null },
             progresso_esperado: { default: null },
             progresso_realizado: { default: null },
             destinatario: { default: null },
@@ -2230,7 +2229,7 @@ PlanoEntregaListEntregaComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("items", ctx.items)("form", ctx.form)("hasAdd",  true || false)("hasEdit",  true || false)("add", ctx.add.bind(ctx))("groupTemplate", _r0)("minHeight", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("title", "Entrega\nDemandante\nDestinat\u00E1rio")("template", _r2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("title", "EntregaDemandanteDestinat\u00E1rio")("template", _r2);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("title", "Data In\u00EDcio\nData Fim")("template", _r4);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
@@ -2455,7 +2454,7 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
             let form = filter.value;
             /*
                 (RI_PENT_4) A consulta do grid retornará inicialmente os principais Planos de Entrega do usuário logado (a opção "principais" já vem marcada), que são:
-                - os válidos das unidades onde ele possui lotação, e
+                - os válidos das unidades onde ele possui lotação (REFACTORING: ou seja, ele é 'lotado' ou 'colaborador'), e
                 - se ele for gestor, os ativos das unidades-pai de onde ele é gestor;
             */
             if ((_a = this.filter) === null || _a === void 0 ? void 0 : _a.controls.principais.value) {
@@ -2576,7 +2575,7 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
         var _a;
         let planos_ativos_unidade_pai = this.planosEntregasAtivosUnidadePai().map(x => x.id);
         let planos_superiores_vinculados_pela_unidade_selecionada = this.planosEntregasAtivosUnidadeSelecionada().map(x => x.plano_entrega_id).filter(x => x != null);
-        let condition1 = this.auth.isGestorUnidade() || this.auth.isGestorUnidade((_a = this.auth.unidade) === null || _a === void 0 ? void 0 : _a.unidade_id) || (this.auth.isLotacaoPrincipal(this.auth.unidade) && this.auth.hasPermissionTo("MOD_PENT_ADERIR"));
+        let condition1 = this.auth.isGestorUnidade() || this.auth.isGestorUnidade((_a = this.auth.unidade) === null || _a === void 0 ? void 0 : _a.unidade_pai_id) || (this.auth.isLotacaoPrincipal(this.auth.unidade) && this.auth.hasPermissionTo("MOD_PENT_ADERIR"));
         let condition2 = !!planos_ativos_unidade_pai.filter(x => !planos_superiores_vinculados_pela_unidade_selecionada.includes(x)).length;
         this.habilitarAdesaoToolbar = condition1 && condition2;
         this.BOTAO_ADERIR_TOOLBAR.disabled = !this.habilitarAdesaoToolbar;
@@ -2589,11 +2588,11 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
     }
     planosEntregasAtivosUnidadePai() {
         var _a, _b, _c;
-        return ((_c = (_b = (_a = this.auth.unidade) === null || _a === void 0 ? void 0 : _a.unidade) === null || _b === void 0 ? void 0 : _b.planos_entregas) === null || _c === void 0 ? void 0 : _c.filter(x => this.planoEntregaDao.isAtivo(x))) || [];
+        return ((_c = (_b = (_a = this.auth.unidade) === null || _a === void 0 ? void 0 : _a.unidade) === null || _b === void 0 ? void 0 : _b.planos_entrega) === null || _c === void 0 ? void 0 : _c.filter(x => this.planoEntregaDao.isAtivo(x))) || [];
     }
     planosEntregasAtivosUnidadeSelecionada() {
         var _a, _b, _c;
-        return ((_c = (_b = (_a = this.auth) === null || _a === void 0 ? void 0 : _a.unidade) === null || _b === void 0 ? void 0 : _b.planos_entregas) === null || _c === void 0 ? void 0 : _c.filter(x => this.planoEntregaDao.isAtivo(x))) || [];
+        return ((_c = (_b = (_a = this.auth) === null || _a === void 0 ? void 0 : _a.unidade) === null || _b === void 0 ? void 0 : _b.planos_entrega) === null || _c === void 0 ? void 0 : _c.filter(x => this.planoEntregaDao.isAtivo(x))) || [];
     }
     filterClear(filter) {
         filter.controls.nome.setValue("");
@@ -2676,7 +2675,7 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
                   - se o usuário for Gestor da unidade selecionada, ou ela for sua lotação principal e ele possuir a capacidade "MOD_PENT_ADERIR" ; e
                   - se a unidade selecionada não possuir plano de entrega Ativo no mesmo período do plano em questão;
                 */
-                return (this.situacaoPlano(planoEntrega) == 'ATIVO' && (planoEntrega.unidade_id == ((_a = this.auth.unidade) === null || _a === void 0 ? void 0 : _a.unidade_id)) && (this.auth.isGestorUnidade() || (this.auth.isLotacaoPrincipal(this.auth.unidade) && this.auth.hasPermissionTo("MOD_PENT_ADERIR"))) &&
+                return (this.situacaoPlano(planoEntrega) == 'ATIVO' && (planoEntrega.unidade_id == ((_a = this.auth.unidade) === null || _a === void 0 ? void 0 : _a.unidade_pai_id)) && (this.auth.isGestorUnidade() || (this.auth.isLotacaoPrincipal(this.auth.unidade) && this.auth.hasPermissionTo("MOD_PENT_ADERIR"))) &&
                     (this.planosEntregasAtivosUnidadeSelecionada().filter(x => this.util.intersection([{ start: x.inicio, end: x.fim }, { start: planoEntrega.inicio, end: planoEntrega.fim }])).length == 0));
             case this.BOTAO_ALTERAR:
                 /*
@@ -2686,7 +2685,7 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
                   - o plano precisa estar com o status ATIVO, a unidade do plano precisa ser a unidade de lotação principal do usuário logado, e ele possuir a capacidade "MOD_PENT_EDT_ATV_HOMOL" ou "MOD_PENT_EDT_ATV_ATV";
                  */
                 let b_alt1 = ['INCLUINDO', 'HOMOLOGANDO'].includes(this.situacaoPlano(planoEntrega)) && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoPrincipal(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_EDT")));
-                let b_alt2 = this.planoEntregaDao.isValido(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_EDT_FLH") && (this.auth.isGestorUnidade((_b = planoEntrega.unidade) === null || _b === void 0 ? void 0 : _b.unidade_id) || this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', planoEntrega.unidade.unidade_id));
+                let b_alt2 = this.planoEntregaDao.isValido(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_EDT_FLH") && (this.auth.isGestorUnidade((_b = planoEntrega.unidade) === null || _b === void 0 ? void 0 : _b.unidade_pai_id) || this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', planoEntrega.unidade.unidade_pai_id));
                 let b_alt3 = this.situacaoPlano(planoEntrega) == 'ATIVO' && this.auth.isLotacaoPrincipal(planoEntrega.unidade) && this.auth.hasPermissionTo(["MOD_PENT_EDT_ATV_HOMOL", "MOD_PENT_EDT_ATV_ATV"]);
                 return b_alt1 || b_alt2 || b_alt3;
             case this.BOTAO_ARQUIVAR:
@@ -2701,7 +2700,7 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
                   - o plano precisa estar com o status CONCLUIDO e o usuário logado precisa ser gestor da unidade-pai da unidade do plano, ou possuir a atribuição de AVALIADOR DE PLANOS DE ENTREGAS para esta unidade; ou
                   - o plano precisa estar com o status CONCLUIDO, o usuário logado precisa ser gestor de alguma unidade da linha hierárquica ascendente da unidade do plano, e possuir a capacidade "MOD_PENT_AVAL_SUBORD";
                 */
-                let b_av1 = this.situacaoPlano(planoEntrega) == 'CONCLUIDO' && (this.auth.isGestorUnidade((_c = planoEntrega.unidade) === null || _c === void 0 ? void 0 : _c.unidade_id) || this.auth.isIntegrante('AVALIADOR_PLANOS_ENTREGAS', planoEntrega.unidade.unidade_id));
+                let b_av1 = this.situacaoPlano(planoEntrega) == 'CONCLUIDO' && (this.auth.isGestorUnidade((_c = planoEntrega.unidade) === null || _c === void 0 ? void 0 : _c.unidade_pai_id) || this.auth.isIntegrante('AVALIADOR_planos_entrega', planoEntrega.unidade.unidade_pai_id));
                 let b_av2 = this.situacaoPlano(planoEntrega) == 'CONCLUIDO' && this.auth.isGestorLinhaAscendente(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_AVAL_SUBORD");
                 return b_av1 || b_av2;
             case this.BOTAO_CANCELAR_AVALIACAO:
@@ -2709,7 +2708,7 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
                   (RN_PENT_4_5) Para CANCELAR a AVALIAÇÃO de um plano de entregas:
                   - o plano precisa estar com o status AVALIADO e o usuário logado precisa ser gestor da unidade-pai da unidade do plano, ou possuir a atribuição de AVALIADOR DE PLANOS DE ENTREGAS para esta unidade;
                 */
-                return this.situacaoPlano(planoEntrega) == 'AVALIADO' && (this.auth.isGestorUnidade((_d = planoEntrega.unidade) === null || _d === void 0 ? void 0 : _d.unidade_id) || this.auth.isIntegrante('AVALIADOR_PLANOS_ENTREGAS', planoEntrega.unidade.unidade_id));
+                return this.situacaoPlano(planoEntrega) == 'AVALIADO' && (this.auth.isGestorUnidade((_d = planoEntrega.unidade) === null || _d === void 0 ? void 0 : _d.unidade_pai_id) || this.auth.isIntegrante('AVALIADOR_planos_entrega', planoEntrega.unidade.unidade_pai_id));
             case this.BOTAO_CANCELAR_CONCLUSAO:
                 /*
                   (RN_PENT_4_6) Para CANCELAR a CONCLUSÃO de um plano de entregas:
@@ -2721,7 +2720,7 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
                   (RN_PENT_4_7) Para CANCELAR a HOMOLOGAÇÃO de um plano de entregas:
                   - o plano precisa estar com o status ATIVO e o usuário logado precisa ser gestor da unidade-pai da unidade do plano, ou possuir a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para a unidade-pai da unidade do plano;
                 */
-                return this.situacaoPlano(planoEntrega) == 'ATIVO' && (this.auth.isGestorUnidade((_e = planoEntrega.unidade) === null || _e === void 0 ? void 0 : _e.unidade_id) || this.auth.isIntegrante('HOMOLOGADOR_PLANOS_ENTREGAS', planoEntrega.unidade.unidade_id));
+                return this.situacaoPlano(planoEntrega) == 'ATIVO' && (this.auth.isGestorUnidade((_e = planoEntrega.unidade) === null || _e === void 0 ? void 0 : _e.unidade_pai_id) || this.auth.isIntegrante('HOMOLOGADOR_planos_entrega', planoEntrega.unidade.unidade_pai_id));
             case this.BOTAO_CONCLUIR:
                 /*
                   (RN_PENT_4_8) Para CONCLUIR um plano de entregas:
@@ -2753,7 +2752,7 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
                   (RN_PENT_4_11) Para HOMOLOGAR um plano de entregas:
                   - o plano precisa estar com o status HOMOLOGANDO e o usuário logado ser gestor da unidade-pai da unidade do plano, ou possuir a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para a unidade-pai; (RN_PENT_1_3)(RN_PENT_3_2)
                 */
-                return this.situacaoPlano(planoEntrega) == 'HOMOLOGANDO' && (this.auth.isGestorUnidade((_f = planoEntrega.unidade) === null || _f === void 0 ? void 0 : _f.unidade_id) || this.auth.isIntegrante('HOMOLOGADOR_PLANOS_ENTREGAS', planoEntrega.unidade.unidade_id));
+                return this.situacaoPlano(planoEntrega) == 'HOMOLOGANDO' && (this.auth.isGestorUnidade((_f = planoEntrega.unidade) === null || _f === void 0 ? void 0 : _f.unidade_pai_id) || this.auth.isIntegrante('HOMOLOGADOR_planos_entrega', planoEntrega.unidade.unidade_pai_id));
             case this.BOTAO_LIBERAR_HOMOLOGACAO:
                 /*
                   (RN_PENT_4_13) Para LIBERAR PARA HOMOLOGAÇÃO um plano de entregas:
@@ -2969,7 +2968,7 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
         this.checaBotaoAderirToolbar();
     }
     situacaoPlano(planoEntrega) {
-        if (planoEntrega.data_fim)
+        if (planoEntrega.deleted_at)
             return "EXCLUIDO";
         else if (planoEntrega.data_cancelamento)
             return "CANCELADO";

@@ -18,17 +18,9 @@
         </tab>
         <tab key="CONFIGURACOES" label="Configurações">
             <div class="row">
-                <input-radio [size]="3" [label]="lex.noun('Avaliação') + ' hierárquica'" controlName="avaliacao_hierarquica" [items]="lookup.SIMNAO" labelInfo="Se permite que unidades supeiores faça avaliação."></input-radio>
-                <input-radio [size]="3" [label]="lex.noun('Avaliação') + ' automática'" controlName="atividades_avaliacao_automatico" [items]="lookup.SIMNAO" labelInfo="Se ao final do prazo de avaliação do gestor, avaliará como 10 a atividade."></input-radio>
-                <input-radio [size]="3" label="Arquivamento automático" controlName="atividades_arquivamento_automatico" [items]="lookup.SIMNAO" labelInfo="Se após a avaliação, arquivará automaticamente a atividade."></input-radio>
-                <input-radio [size]="3" label="Auto-edição (Subordinadas)" controlName="autoedicao_subordinadas" [items]="lookup.SIMNAO" labelInfo="Se as Unidades Subordinadas podem editar suas próprias Informações Gerais"></input-radio>
-            </div>
-            <separator></separator>
-            <div class="row">
                 <input-select [size]="4" [label]="'Contagem ' + lex.noun('Prazo de Distribuição')" controlName="distribuicao_forma_contagem_prazos" [items]="lookup.DIA_HORA_CORRIDOS_OU_UTEIS" labelInfo="A forma da contagem dos prazos para a distribuição (lançamento da demanda)."></input-select>
                 <input-select [size]="4" [label]="'Contagem ' + lex.noun('Prazo de Entrega')" controlName="entrega_forma_contagem_prazos" [items]="lookup.HORAS_CORRIDAS_OU_UTEIS" labelInfo="A forma da contagem dos prazos na entrega da demanda (data da entrega e tempo despendido)"></input-select>
-                <input-select [size]="2" label="Comparecer" controlName="planos_tipo_prazo_comparecimento" [items]="lookup.DIA_OU_HORA" labelInfo="Formato de Prazo de Comparecimento a Unidade"></input-select>
-                <input-text numbers [size]="2" label="Prazo" controlName="planos_prazo_comparecimento" labelInfo="Prazo de Comparecimento a Unidade"></input-text>
+                <input-radio [size]="4" label="Arquivamento automático" controlName="atividades_arquivamento_automatico" [items]="lookup.SIMNAO" labelInfo="Se após a avaliação, arquivará automaticamente a atividade."></input-radio>
             </div>
             <!--separator title="Expediente">
                 <div class="row">
