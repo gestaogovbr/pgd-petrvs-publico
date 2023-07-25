@@ -16,6 +16,7 @@ class AreaConhecimentoSeeder extends Seeder
     {
         $areas = [
             ['nome'=>'Ciências Humanas'],
+            ['nome'=>'Ciências Biológicas'],
             ['nome'=>'Ciências Exatas e da Terra'],
             ['nome'=>'Linguística, Letras e Artes'],
             ['nome'=>'Ciências Agrárias'],

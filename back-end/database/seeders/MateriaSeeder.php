@@ -67,7 +67,7 @@ class MateriaSeeder extends Seeder
             $curso_materia_id = Curso::where('nome',$m['curso'])->first()?->id;
             $materia->fill([
                 'nome'=> $m['nome'],
-                'curso_materia_id'=> $curso_materia_id
+                'curso_id'=> $curso_materia_id
             ]);
             $materia->save();
         }

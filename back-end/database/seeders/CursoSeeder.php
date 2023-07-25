@@ -29,18 +29,18 @@ class CursoSeeder extends Seeder
             ['area'=>'Ciências Exatas e da Terra','nome'=>'Full Stack Developer','titulo'=>'ESPECIAL','tipo'=>'Acadêmico'],//Especialização
             ['area'=>'Ciências Exatas e da Terra','nome'=>'MBA em Engenharia de Software','titulo'=>'ESPECIAL','tipo'=>'Acadêmico'],//MBA
             /* Ciências Biologicas */
-            ['area'=>'Ciências Biologicas','nome'=>'Biologia','titulo'=>'GRAD_BAC','tipo'=>'Acadêmico'],
-            ['area'=>'Ciências Biologicas','nome'=>'Bioquímica','titulo'=>'GRAD_BAC','tipo'=>'Acadêmico'],
-            ['area'=>'Ciências Biologicas','nome'=>'Biofísica','titulo'=>'GRAD_BAC','tipo'=>'Acadêmico'],
-            ['area'=>'Ciências Biologicas','nome'=>'Genética','titulo'=>'GRAD_BAC','tipo'=>'Acadêmico'],
-            ['area'=>'Ciências Biologicas','nome'=>'Farmacologia','titulo'=>'GRAD_BAC','tipo'=>'Acadêmico'],
-            ['area'=>'Ciências Biologicas','nome'=>'Botânica','titulo'=>'GRAD_BAC','tipo'=>'Acadêmico'],
-            ['area'=>'Ciências Biologicas','nome'=>'Zoologia','titulo'=>'GRAD_BAC','tipo'=>'Acadêmico'],
-            ['area'=>'Ciências Biologicas','nome'=>'Ecologia','titulo'=>'GRAD_BAC','tipo'=>'Acadêmico'],
-            ['area'=>'Ciências Biologicas','nome'=>'Fisiologia','titulo'=>'GRAD_BAC','tipo'=>'Acadêmico'],
-            ['area'=>'Ciências Biologicas','nome'=>'Imunologia','titulo'=>'GRAD_BAC','tipo'=>'Acadêmico'],
-            ['area'=>'Ciências Biologicas','nome'=>'Anatomia Humana','titulo'=>'ESPECIAL','tipo'=>'Acadêmico'],//Especialização
-            ['area'=>'Ciências Biologicas','nome'=>'Citologia','titulo'=>'ESPECIAL','tipo'=>'Acadêmico'],//Especialização
+            ['area'=>'Ciências Biológicas','nome'=>'Biologia','titulo'=>'GRAD_BAC','tipo'=>'Acadêmico'],
+            ['area'=>'Ciências Biológicas','nome'=>'Bioquímica','titulo'=>'GRAD_BAC','tipo'=>'Acadêmico'],
+            ['area'=>'Ciências Biológicas','nome'=>'Biofísica','titulo'=>'GRAD_BAC','tipo'=>'Acadêmico'],
+            ['area'=>'Ciências Biológicas','nome'=>'Genética','titulo'=>'GRAD_BAC','tipo'=>'Acadêmico'],
+            ['area'=>'Ciências Biológicas','nome'=>'Farmacologia','titulo'=>'GRAD_BAC','tipo'=>'Acadêmico'],
+            ['area'=>'Ciências Biológicas','nome'=>'Botânica','titulo'=>'GRAD_BAC','tipo'=>'Acadêmico'],
+            ['area'=>'Ciências Biológicas','nome'=>'Zoologia','titulo'=>'GRAD_BAC','tipo'=>'Acadêmico'],
+            ['area'=>'Ciências Biológicas','nome'=>'Ecologia','titulo'=>'GRAD_BAC','tipo'=>'Acadêmico'],
+            ['area'=>'Ciências Biológicas','nome'=>'Fisiologia','titulo'=>'GRAD_BAC','tipo'=>'Acadêmico'],
+            ['area'=>'Ciências Biológicas','nome'=>'Imunologia','titulo'=>'GRAD_BAC','tipo'=>'Acadêmico'],
+            ['area'=>'Ciências Biológicas','nome'=>'Anatomia Humana','titulo'=>'ESPECIAL','tipo'=>'Acadêmico'],//Especialização
+            ['area'=>'Ciências Biológicas','nome'=>'Citologia','titulo'=>'ESPECIAL','tipo'=>'Acadêmico'],//Especialização
             /* Engenharias */
             ['area'=>'Engenharias','nome'=>'Civil','titulo'=>'GRAD_BAC','tipo'=>'Acadêmico'],
             ['area'=>'Engenharias','nome'=>'Elétrica','titulo'=>'GRAD_BAC','tipo'=>'Acadêmico'],
@@ -222,13 +222,15 @@ class CursoSeeder extends Seeder
             ['area'=>'Institucional','nome'=>'Curso de Segurança de Autoridades','titulo'=>'INSTITUCIONAL','tipo'=>'Executiva'],
             ['area'=>'Institucional','nome'=>'Curso de Cerimonial e Organização de Evento','titulo'=>'INSTITUCIONAL','tipo'=>'Executiva'],
             ['area'=>'Institucional','nome'=>'Curso de Oratória e Comportamento de Executivos Públicos','titulo'=>'INSTITUCIONAL','tipo'=>'Executiva'],
+            /*Institucional Geral*/
+            ['area'=>'Institucional','nome'=>'Curso Institucional','titulo'=>'INSTITUCIONAL','tipo'=>'Institucional'],
         ];
         foreach($cursos as $c){
             $curso = new Curso();
             $curso->fill([
                 'nome'=> $c['nome'],
                 'titulo'=> $c['titulo'],
-                'area_curso_id'=> AreaConhecimento::where('nome', $c['area'])->first()?->id,
+                'area_id'=> AreaConhecimento::where('nome', $c['area'])->first()?->id,
                 'tipo_curso_id'=> TipoCurso::where('nome',$c['tipo'])->first()?->id,
             ]);
             $curso->save();

@@ -27,14 +27,14 @@ class DatabaseSeeder extends Seeder
             //TipoAvaliacaoSeeder::class,
             //TipoJustificativaSeeder::class,
             //TipoAvaliacaoJustificativaSeeder::class,
-/*             AreaConhecimentoSeeder::class,
+            AreaConhecimentoSeeder::class,
             TipoCursoSeeder::class,
             CursoSeeder::class,
             MateriaSeeder::class,
             CargoSeeder::class,
             FuncaoSeeder::class,
             CentroTreinamentoSeeder::class,
-            GrupoEspecializadoSeeder::class, */
+            GrupoEspecializadoSeeder::class,
             
 
             /*Após a execução das Seeds acima, executar a rotina de integração com o comando

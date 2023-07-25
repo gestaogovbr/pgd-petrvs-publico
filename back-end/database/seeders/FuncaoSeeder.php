@@ -15,17 +15,17 @@ class FuncaoSeeder extends Seeder
     public function run()
     {
         $funcoes = [
-                ['nome'=> 'Chefe de Delegacia','nivel'=> '','descricao'=>'','codigo'=>''],
-                ['nome'=> 'Chefe de Divisão','nivel'=> '','descricao'=>'','codigo'=>''],
-                ['nome'=> 'Chefe de Núcleo','nivel'=> '','descricao'=>'','codigo'=>''],
-                ['nome'=> 'NPF','nivel'=> '','descricao'=>'','codigo'=>''],
-                ['nome'=> 'Chefe de Seção','nivel'=> '','descricao'=>'','codigo'=>''],
-                ['nome'=> 'Chefe de Setor','nivel'=> '','descricao'=>'','codigo'=>''],
-                ['nome'=> 'Superintendente','nivel'=> '','descricao'=>'','codigo'=>''],
-                ['nome'=> 'Coordenador','nivel'=> '','descricao'=>'','codigo'=>''],
-                ['nome'=> 'Coordenador Geral','nivel'=> '','descricao'=>'','codigo'=>''],
-                ['nome'=> 'Diretor','nivel'=> '','descricao'=>'','codigo'=>''],
-                ['nome'=> 'Diretor Geral','nivel'=> '','descricao'=>'','codigo'=>''],
+                ['nome'=> 'Chefe de Delegacia','nivel'=> '','descricao'=>'','siape'=>'','cbo'=>'','ativo'=>1],
+                ['nome'=> 'Chefe de Divisão','nivel'=> '','descricao'=>'','siape'=>'','cbo'=>'','ativo'=>1],
+                ['nome'=> 'Chefe de Núcleo','nivel'=> '','descricao'=>'','siape'=>'','cbo'=>'','ativo'=>1],
+                ['nome'=> 'NPF','nivel'=> '','descricao'=>'','siape'=>'','cbo'=>'','ativo'=>1],
+                ['nome'=> 'Chefe de Seção','nivel'=> '','descricao'=>'','siape'=>'','cbo'=>'','ativo'=>1],
+                ['nome'=> 'Chefe de Setor','nivel'=> '','descricao'=>'','siape'=>'','cbo'=>'','ativo'=>1],
+                ['nome'=> 'Superintendente','nivel'=> '','descricao'=>'','siape'=>'','cbo'=>'','ativo'=>1],
+                ['nome'=> 'Coordenador','nivel'=> '','descricao'=>'','siape'=>'','cbo'=>'','ativo'=>1],
+                ['nome'=> 'Coordenador Geral','nivel'=> '','descricao'=>'','siape'=>'','cbo'=>'','ativo'=>1],
+                ['nome'=> 'Diretor','nivel'=> '','descricao'=>'','siape'=>'','cbo'=>'','ativo'=>1],
+                ['nome'=> 'Diretor Geral','nivel'=> '','descricao'=>'','siape'=>'','cbo'=>'','ativo'=>1],
         ];        
         foreach($funcoes as $f) {
             $funcao = new Funcao();
@@ -33,7 +33,9 @@ class FuncaoSeeder extends Seeder
                 'nome'=> $f['nome'],
                 'nivel'=>  $f['nivel'],
                 'descricao'=> $f['descricao'],
-                'codigo'=>  $f['codigo'],
+                'siape'=>  $f['siape'],
+                'cbo'=>  $f['cbo'],
+                'ativo'=>  $f['ativo'],
             ]);
             $funcao->save();
         }
