@@ -20,13 +20,13 @@ class UnidadeIntegrante extends ModelBase
         //'deleted_at', /* timestamp; */
     ];
     // hasOne
-    public function lotado() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao','LOTADO'); } 
-    public function gestor() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao','GESTOR'); } 
-    public function gestorSubstituto() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao','GESTOR_SUBSTITUTO'); } 
-    public function colaborador() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao','COLABORADOR'); } 
-    public function homologadorPlanoEntrega() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao','HOMOLOGADOR_PLANO_ENTREGA'); } 
-    public function avaliadorPlanoEntrega() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao','AVALIADOR_PLANO_ENTREGA'); } 
-    public function avaliadorPlanoTrabalho() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao','AVALIADOR_PLANO_TRABALHO'); } 
+    public function lotado() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'LOTADO'); } 
+    public function gestor() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'GESTOR'); } 
+    public function gestorSubstituto() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'GESTOR_SUBSTITUTO'); } 
+    public function colaborador() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'COLABORADOR'); } 
+    public function homologadorPlanoEntrega() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'HOMOLOGADOR_PLANO_ENTREGA'); } 
+    public function avaliadorPlanoEntrega() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'AVALIADOR_PLANO_ENTREGA'); } 
+    public function avaliadorPlanoTrabalho() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'AVALIADOR_PLANO_TRABALHO'); } 
     // hasMany
     public function atribuicoes() { return $this->hasMany(UnidadeIntegranteAtribuicao::class); } 
     // Belongs

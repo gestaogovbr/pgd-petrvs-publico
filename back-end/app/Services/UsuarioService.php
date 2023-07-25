@@ -160,8 +160,8 @@ class UsuarioService extends ServiceBase
         $this->atribuicaoService->checkLotacoes($entity->id);
     }
 
-    public function hasLotacao($id, $usuario = null, $subordinadas = true, $dataRef = null) {
-        return Unidade::where("id", $id)->whereRaw($this->lotacoesWhere($subordinadas, $usuario, "", false, $dataRef))->count() > 0;
+    public function hasLotacao($id, $usuario = null, $subordinadas = true) {
+        return Unidade::where("id", $id)->whereRaw($this->areasTrabalhoWhere($subordinadas, $usuario, ""))->count() > 0;
         /*
         CONFERIR ESTE TRECHO ...
         Usuario::where("id", $usuario->id)->whereHas('lotacoes', function (Builder $query) use ($id) {
@@ -215,7 +215,7 @@ class UsuarioService extends ServiceBase
         return $result;
     }
 
-    public function lotacoesWhere($subordinadas, $usuario = null, $prefix = "", $deleted = false, $dataRef = null) {
+    public function areasTrabalhoWhere($subordinadas, $usuario = null, $prefix = "") {
         /*
         CONFERIR ESTE TRECHO....
         foreach($usuario->lotacoes as $lotacao) {
@@ -228,14 +228,16 @@ class UsuarioService extends ServiceBase
         $where = [];
         $prefix = empty($prefix) ? "" : $prefix . ".";
         $usuario = $usuario ?? parent::loggedUser();
-        foreach($usuario->vinculosUnidades as $vinculo) {
-            $lotacoes = $deleted ? $vinculo->withTrashed()->atribuicoes->whereIn('atribuicao', ['LOTADO','COLABORADOR']) : $vinculo->atribuicoes->whereIn('atribuicao', ['LOTADO','COLABORADOR']);
+        foreach($usuario->areasTrabalho as $lotacao) {
+            $where[] = $prefix . "id = '" . $lotacao->unidade_id . "'";
+            if($subordinadas) $where[] = $prefix . "path like '%" . $lotacao->unidade_id . "%'";
+            /*$lotacoes = $deleted ? $vinculo->withTrashed()->atribuicoes->whereIn('atribuicao', ['LOTADO','COLABORADOR']) : $vinculo->atribuicoes->whereIn('atribuicao', ['LOTADO','COLABORADOR']);
             foreach($lotacoes as $lotacao){
                 if(!UtilService::greaterThanOrIqual($dataRef, $lotacao->deleted_at)) {
                     $where[] = $prefix . "id = '" . $vinculo->unidade_id . "'";
                     if($subordinadas) $where[] = $prefix . "path like '%" . $vinculo->unidade_id . "%'";
                 }
-            }
+            }*/
         }
         $result = implode(" OR ", $where);
         return empty($result) ? "false" : "(" . $result . ")";
@@ -277,9 +279,8 @@ class UsuarioService extends ServiceBase
             }
         }
         if(!$usuario->hasPermissionTo("MOD_USER_TUDO")) {
-            $lotacoesWhere = $this->lotacoesWhere($subordinadas, null, "where_unidades");
-            //array_push($where, new RawWhere("EXISTS(SELECT where_lotacoes.id FROM lotacoes where_lotacoes LEFT JOIN unidades where_unidades ON (where_unidades.id = where_lotacoes.unidade_id) WHERE where_lotacoes.usuario_id = usuarios.id AND ($lotacoesWhere))", []));
-            array_push($where, new RawWhere("EXISTS(SELECT where_lotacoes.id FROM lotacoes where_lotacoes LEFT JOIN unidades where_unidades ON (where_unidades.id = where_lotacoes.unidade_id) WHERE where_lotacoes.usuario_id = usuarios.id AND ($lotacoesWhere))", []));
+            $areasTrabalhoWhere = $this->areasTrabalhoWhere($subordinadas, null, "where_unidades");
+            array_push($where, new RawWhere("EXISTS(SELECT where_lotacoes.id FROM lotacoes where_lotacoes LEFT JOIN unidades where_unidades ON (where_unidades.id = where_lotacoes.unidade_id) WHERE where_lotacoes.usuario_id = usuarios.id AND ($areasTrabalhoWhere))", []));
         }
         $data["where"] = $where;
         return $data;

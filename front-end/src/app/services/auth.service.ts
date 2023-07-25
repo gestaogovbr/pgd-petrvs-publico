@@ -17,6 +17,7 @@ import { Entidade } from '../models/entidade.model';
 import { UnidadeDaoService } from '../dao/unidade-dao.service';
 import { NotificacaoService } from '../modules/uteis/notificacoes/notificacao.service';
 import { AppComponent } from '../app.component';
+import { IntegranteAtribuicao } from '../models/unidade-integrante-atribuicao.model';
 
 export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION" | "SUPER";
 export type Permission = string | (string | string[])[];
@@ -157,7 +158,7 @@ export class AuthService {
       this.kind = this.kind;
       this.logged = true;
       this.unidades = this.usuario?.areas_trabalho?.map(x => x.unidade!) || [];
-      this.unidade = this.usuario?.lotacao?.unidade;
+      this.unidade = this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade;
       if (this.unidade) this.calendar.loadFeriadosCadastrados(this.unidade.id);
       if (token?.length) localStorage.setItem("petrvs_api_token", token);
       this.notificacao.updateNaoLidas();
@@ -358,7 +359,7 @@ export class AuthService {
    * @param atribuicao 
    * @param unidade_id 
    */
-  public isIntegrante(atribuicao: string, unidade_id: string): boolean {
+  public isIntegrante(atribuicao: IntegranteAtribuicao, unidade_id: string): boolean {
     let $vinculo = this.usuario?.unidades_integrante?.find(x => x.unidade_id == unidade_id);
     return !!$vinculo && $vinculo.atribuicoes.map(a => a.atribuicao).includes(atribuicao);
   }

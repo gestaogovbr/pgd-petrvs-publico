@@ -34,8 +34,8 @@ class PlanejamentoService extends ServiceBase
     public function validateStore($data, $unidade, $action) {
         $unidade_id = $data["unidade_id"];
         $lotacao_principal_id = parent::unidadeLotacaoUsuarioLogado()->id;
-        $lotacoes_ids = array_map(fn($s) => $s->id, DB::select("SELECT id FROM unidades WHERE " . $this->usuarioService->lotacoesWhere(false)));
-        $subordinadas_ids = array_map(fn($s) => $s->id, DB::select("SELECT id FROM unidades WHERE " . $this->usuarioService->lotacoesWhere(true)));
+        $lotacoes_ids = array_map(fn($s) => $s->id, DB::select("SELECT id FROM unidades WHERE " . $this->usuarioService->areasTrabalhoWhere(false)));
+        $subordinadas_ids = array_map(fn($s) => $s->id, DB::select("SELECT id FROM unidades WHERE " . $this->usuarioService->areasTrabalhoWhere(true)));
 
         // se a unidade_id é nula, verificar se o usuário tem permissão para criar/editar planejamentos para unidades instituidoras
         if(empty($data["unidade_id"]) && !parent::loggedUser()->hasPermissionTo('MOD_PLAN_INST_INCL_UNID_INST')) {

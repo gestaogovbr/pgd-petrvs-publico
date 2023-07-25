@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Injectable, Injector } from '@angular/core';
 import { Nomenclatura } from '../models/entidade.model';
 import { IIndexable } from '../models/base.model';
+import { AppComponent } from '../app.component';
 
 export type Translate = {
   [index: string]: {
@@ -17,7 +18,7 @@ export class LexicalService {
 
   public PREPOSITIONS_MALE = ["o", "os", "ao", "aos", "do", "dos", "dum", "duns", "no", "nos", "um", "num", "uns", "nuns", "pelo", "pelos"];
   public PREPOSITIONS_FEMALE = ["a", "as", "à", "às", "da", "das", "duma", "dumas", "na", "nas", "uma", "numa", "umas", "numas", "pela", "pelas"];
-  public update?: () => void;
+  public app?: AppComponent;
 
   /* Colocar single e plural em minúsculo (Sempre seguir a ordem Alfabética)*/
   public defaults: Translate = {
@@ -100,6 +101,10 @@ export class LexicalService {
     this.vocabulary = result;
     if(this.update) this.update();
     this.cdRef?.detectChanges();
+  }
+
+  public update() {
+    this.app!.setMenuVars();
   }
 
   /**

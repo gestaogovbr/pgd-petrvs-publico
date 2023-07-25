@@ -182,7 +182,7 @@ class Usuario extends Authenticatable
             $atribuicoes = UnidadeIntegranteAtribuicao::where('unidade_usuario_id', $unidade->pivot->id)->get()->toArray();
             if(count($atribuicoes) > 0) $result[$unidade->id] = array_map(fn($a) => $a["atribuicao"],$atribuicoes); 
         } */
-        foreach($this->lotacoes as $vinculo){
+        foreach($this->areas_trabalho as $vinculo){
             $atribuicoes = $vinculo->atribuicoes->toArray();
             if(count($atribuicoes) > 0) $result[$vinculo->unidade_id] = array_map(fn($a) => $a["atribuicao"], $atribuicoes); 
         }

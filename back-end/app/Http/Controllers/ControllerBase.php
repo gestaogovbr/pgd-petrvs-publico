@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Usuario;
 use App\Exceptions\LogError;
+use App\Models\UnidadeIntegrante;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Database\Eloquent\Builder;
 use Throwable;
 
 abstract class ControllerBase extends Controller
@@ -49,21 +51,26 @@ abstract class ControllerBase extends Controller
     }
 
     public function getUnidade(Request $request) {
+        $result = null;
         $headers = $this->getPetrvsHeader($request);
         $unidade_id = !empty($headers) && !empty($headers["unidade_id"]) ? $headers["unidade_id"] : ($request->hasSession() ? $request->session()->get("unidade") : "");
         if(!empty($unidade_id)) {
-            $usuario = Usuario::where("id", self::loggedUser()->id)->with(["lotacoes" => function ($query) use ($unidade_id) {
+            $integrante = UnidadeIntegrante::with('unidade')->where("unidade_id", $unidade_id)->where("usuario_id", self::loggedUser()->id)->whereHas('atribuicoes', function (Builder $query) {
+                $query->where('atribuicao', 'LOTADO')->orWhere('atribuicao', 'COLABORADOR');
+            })->first();
+            if(!empty($integrante?->unidade)) $result = $integrante->unidade;
+            /*$usuario = Usuario::where("id", self::loggedUser()->id)->with(["areasTrabalho" => function ($query) use ($unidade_id) {
                 $query->where("unidade_id", $unidade_id);
-            }, "lotacoes.unidade"])->first();
-            if(isset($usuario->lotacoes[0]) && !empty($usuario->lotacoes[0]->unidade_id)) {
-                return $usuario->lotacoes[0]->unidade;
-            }
+            }, "areasTrabalho.unidade"])->first();
+            if(isset($usuario->areas_trabalho[0]) && !empty($usuario->areas_trabalho[0]->unidade_id)) {
+                return $usuario->areas_trabalho[0]->unidade;
+            }*/
         }
-        return null;
+        return $result;
     }
 
     public function getUsuario(Request $request) {
-        return !empty(self::loggedUser()) ? Usuario::where("id", self::loggedUser()?->id)->with("lotacoes.unidade")->first() : null;
+        return !empty(self::loggedUser()) ? Usuario::where("id", self::loggedUser()?->id)->with("areasTrabalho.unidade")->first() : null;
     }
 
     /**

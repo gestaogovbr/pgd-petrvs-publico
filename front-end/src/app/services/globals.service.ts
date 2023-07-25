@@ -2,6 +2,7 @@ import { Injectable, Injector } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { environment } from 'src/environments/environment';
 import { ToolbarButton } from '../components/toolbar/toolbar.component';
+import { AppComponent } from '../app.component';
 
 export type EntidadePetrvs = "ANTAQ" | "PRF" | "";
 
@@ -14,7 +15,7 @@ export class GlobalsService {
   public IMAGES = environment.images;
   public ENTIDADE = environment.entidade || "";
   public SUPPORT_URL = environment.suporte || "";
-  public refresh?: () => void;
+  public app?: AppComponent;
   public set toolbarButtons(value: ToolbarButton[]) {
     this._toolbarButtons = value;
     if(this.refresh) this.refresh();
@@ -30,6 +31,10 @@ export class GlobalsService {
     servidor: new Date(),
     local: new Date()
   };
+
+  public refresh() {
+    this.app!.cdRef.detectChanges();
+  }
 
   public get isEmbedded(): boolean {
     return this.isExtension || this.isSuperModule;

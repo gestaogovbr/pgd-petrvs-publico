@@ -81,21 +81,9 @@ export class AppComponent {
     this.notificacao = injector.get<NotificacaoService>(NotificacaoService);
     /* Inicializações */
     this.notificacao.heartbeat();
-    this.auth.success = (usuario: Usuario, redirectTo?: FullRoute) => {
-      this.go.navigate(redirectTo || { route: this.globals.initialRoute });
-    };
-    this.auth.fail = (error: any) => {
-      this.go.navigate({ route: ['login'], params: { error: error?.error || error?.message || error } });
-    };
-    this.auth.leave = () => {
-      this.go.navigate({ route: ['login'] });
-    };
-    this.lex.update = (() => {
-      this.setMenuVars();
-    }).bind(this);
-    this.globals.refresh = () => {
-      this.cdRef.detectChanges();
-    };
+    this.auth.app = this;
+    this.lex.app = this;
+    this.globals.app = this;
     if (this.globals.isEmbedded && this.globals.initialRoute?.length) {
       this.go.navigate({ route: this.globals.initialRoute });
     }
@@ -385,13 +373,13 @@ export class AppComponent {
 
 
   this.menuContexto = [
-      { key: "GESTAO", name: "Gestão (PGD)", menu: this.menuGestao },
-      { key: "EXECUCAO", name: "Execução (PGD)", menu: this.menuExecucao },
-      { key: "ADMINISTRADOR", name: "Administrador", menu: this.menuAdministrador },
-      { key: "DEV", name: "Desenvolvedor", menu: this.menuDev },
-      { key: "PONTO", name: "Ponto eletrônico", menu: this.menuPonto },
-      { key: "PROJETO", name: "Projetos", menu: this.menuProjeto },
-      { key: "RAIOX", name: "Raio X", menu: this.menuRaioX }
+      { key: "GESTAO", icon: "bi bi-people-fill", name: "Gestão (PGD)", menu: this.menuGestao },
+      { key: "EXECUCAO", icon: "bi bi-person-check", name: "Execução (PGD)", menu: this.menuExecucao },
+      { key: "ADMINISTRADOR", icon: "bi bi-emoji-sunglasses", name: "Administrador", menu: this.menuAdministrador },
+      { key: "DEV", icon: "bi bi-braces", name: "Desenvolvedor", menu: this.menuDev },
+      { key: "PONTO", icon: "bi bi-stopwatch", name: "Ponto eletrônico", menu: this.menuPonto },
+      { key: "PROJETO", icon: "bi bi-graph-up-arrow", name: "Projetos", menu: this.menuProjeto },
+      { key: "RAIOX", icon: "bi bi-camera", name: "Raio X", menu: this.menuRaioX }
     ];
    // this.contexto.key = "PGD"
   }

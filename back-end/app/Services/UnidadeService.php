@@ -268,8 +268,8 @@ class UnidadeService extends ServiceBase
         }
         if(!$usuario->hasPermissionTo("MOD_UND_TUDO") || ($unidadesPlanejamento && ($usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_SUBORD") || $usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_QQLOT")))) {
             if($unidadesPlanejamento && $usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_QQLOT")) $subordinadas = false;
-            $lotacoesWhere = $this->usuarioService->lotacoesWhere($subordinadas, null, "unidades");
-            array_push($where, new RawWhere("($lotacoesWhere)", []));
+            $areasTrabalhoWhere = $this->usuarioService->areasTrabalhoWhere($subordinadas, null, "unidades");
+            array_push($where, new RawWhere("($areasTrabalhoWhere)", []));
         }
         $where = array_filter($where, fn($w) => ($w instanceof RawWhere) || ($w[0] != "unidades_planejamento"));
         $data["where"] = $where;
