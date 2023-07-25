@@ -24337,7 +24337,7 @@ class ComponentBase {
         return this._generatedId;
     }
     generatedButtonId(button, relativeId) {
-        return this.generatedId((button.label || button.hint || button.icon || "_button") + (relativeId || ""));
+        return this.generatedId((button.id || button.label || button.hint || button.icon || "_button") + (relativeId || ""));
     }
     detectChanges() {
         this.viewInit ? this.cdRef.detectChanges() : this.cdRef.markForCheck();
@@ -32826,6 +32826,7 @@ class GridComponent extends _component_base__WEBPACK_IMPORTED_MODULE_6__["Compon
         };
         this.panelButtons = [
             {
+                id: "concluir_valid",
                 label: "Concluir",
                 icon: "bi-check-circle",
                 color: "btn-outline-success",
@@ -32833,12 +32834,15 @@ class GridComponent extends _component_base__WEBPACK_IMPORTED_MODULE_6__["Compon
                 onClick: (() => this.onSaveItem(this.editing)).bind(this)
             },
             {
+                id: "concluir_invalid",
                 label: "Concluir",
                 icon: "bi-exclamation-circle",
                 color: "btn-outline-success",
-                dynamicVisible: (() => !this.form.valid).bind(this)
+                dynamicVisible: (() => !this.form.valid).bind(this),
+                onClick: (() => console.log(this.form.errors)).bind(this)
             },
             {
+                id: "cancelar",
                 label: "Cancelar",
                 icon: "bi-dash-circle",
                 color: "btn-outline-danger",
@@ -33292,21 +33296,27 @@ class GridComponent extends _component_base__WEBPACK_IMPORTED_MODULE_6__["Compon
      * @param itemRow
      */
     saveItem(itemRow) {
-        var _a;
+        var _a, _b;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             if (this.form.valid) {
                 const entity = this.save ? (yield this.save(this.form, itemRow)) : this.form.value;
                 if (entity) {
                     const index = this.items.findIndex(x => !(x["id"] || "").length || x["id"] == entity["id"]);
+                    let item = undefined;
                     if (index >= 0) {
-                        Object.assign(this.items[index], this.util.fillForm(this.items[index], entity));
-                        this.editing = this.items[index];
-                        if (this.saveEnd)
-                            this.saveEnd(this.items[index]);
+                        item = this.items[index];
+                        Object.assign(this.items[index], this.util.fillForm(item, entity));
                     }
+                    else if ((_a = entity["id"]) === null || _a === void 0 ? void 0 : _a.length) {
+                        item = entity;
+                        this.items.push(entity);
+                    }
+                    this.editing = item;
+                    if (this.saveEnd)
+                        this.saveEnd(item);
                 }
                 this.group(this.items);
-                (_a = this.control) === null || _a === void 0 ? void 0 : _a.setValue(this.items);
+                (_b = this.control) === null || _b === void 0 ? void 0 : _b.setValue(this.items);
                 this.cdRef.detectChanges();
                 yield this.endEdit();
             }
