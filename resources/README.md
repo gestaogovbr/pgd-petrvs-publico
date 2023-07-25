@@ -89,9 +89,9 @@ https://curl.se/docs/caextract.html
 docker run --rm -it --entrypoint bash php:8.1-apache
 ```
 
-#### USANDO A BRANCH REFACTORING
+## USANDO A BRANCH REFACTORING
 
-## BACK
+#### BACK
 - Clonar em uma nova pasta e inserir o .env na pasta back com a configuração correta
 
 - Abrir o projeto back-end no vscode. No terminal, executar os comandos (somente na primeira vez, depois o back-end continuará rodando na porta 80): 
@@ -104,7 +104,7 @@ docker run --rm -it --entrypoint bash php:8.1-apache
 
 nenhum erro acontecendo ir para os procedimentos do front
 ```
-## FRONT
+#### FRONT
 
 - Abrir o projeto front-end no vscode. No terminal, executar os seguintes comandos: 
 *(Obs.: Após a primeira execução, será necessário somente executar* ***.\node_sh.bat*** e depois ***npm start*** *toda vez que iniciar o docker. O Angular rodará na porta 4200)*:
