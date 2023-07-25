@@ -28,9 +28,9 @@ class CreatePlanejamentosTable extends Migration
             $table->dateTime('data_arquivamento')->nullable()->comment("Data de arquivamento do planejamento institucional");
             $table->json('valores')->comment("Valores da entidade/unidade");
             // Chaves estrangeiras:
-            $table->foreignUuid('entidade_id')->onDelete('restrict')->onUpdate('cascade')->comment("Entidade do planejamento institucional");
-            $table->foreignUuid('unidade_id')->nullable()->onDelete('restrict')->onUpdate('cascade')->comment("Unidade do planejamento institucional (opcional)");
-            $table->foreignUuid('planejamento_pai_id')->nullable()->constrained("planejamentos")->onDelete('restrict')->onUpdate('cascade')->comment("Planejamento institucional superior (obrigatório, se o planejamento for de uma unidade)");
+            $table->foreignUuid('entidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Entidade do planejamento institucional");
+            $table->foreignUuid('unidade_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Unidade do planejamento institucional (opcional)");
+            $table->foreignUuid('planejamento_superior_id')->nullable()->constrained("planejamentos")->onDelete('restrict')->onUpdate('cascade')->comment("Planejamento institucional superior (obrigatório, se o planejamento for de uma unidade)");
         });
     }
 

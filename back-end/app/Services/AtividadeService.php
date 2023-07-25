@@ -343,7 +343,7 @@ class AtividadeService extends ServiceBase
         try {
             DB::beginTransaction();
             $atividade = Atividade::find($data["id"]);
-            $this->validateStore(["unidade_id" => $atividade->unidade_id, "plano_trabalho_id" => $data["plano_trabalho_id"], "usuario_id" => $data["usuario_id"]], $unidade, ServiceBase::ACTION_UPDATE);
+            $this->validateStore(["unidade_id" => $atividade->unidade_id, "plano_trabalho_id" => $data["plano_trabalho_id"], "usuario_id" => $data["usuario_id"]], $unidade, ServiceBase::ACTION_EDIT);
             /*if(CalendarioService::getTimestemp($data["data_inicio"]) < CalendarioService::getTimestemp($demanda->data_distribuicao)) {
                 throw new ServerException("ValidateDemanda", "Data de início menor que a data de distribuição.");
             }*/

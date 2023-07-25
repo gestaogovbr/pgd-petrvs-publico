@@ -29,11 +29,11 @@ class CreateProgramasTable extends Migration
             $table->dateTime('data_fim_vigencia')->comment("Fim da vigência do programa");
             $table->enum('periodo_avaliacao', ["SEMANAL", "QUINZENAL", "MENSAL", "BIMESTRAL", "TRIMESTRAL", "SEMESTRAL"])->default("MENSAL")->comment("Período para avaliação do plano de trabalho");
             // Chaves estrangeiras:
-            $table->foreignUuid('unidade_id')->onDelete('restrict')->onUpdate('cascade')->comment("Unidade do programa");
+            $table->foreignUuid('unidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Unidade do programa");
             $table->foreignUuid('template_tcr_id')->nullable()->constrained("templates")->onDelete('restrict')->onUpdate('cascade')->comment("Template para o TCR do programa");
             $table->foreignUuid('tipo_documento_tcr_id')->nullable()->constrained("tipos_documentos")->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de documento para o TCR do programa");
             // Criada na tabela 'documentos' devido à referência cruzada
-            //$table->foreignUuid('documento_id')->nullable()->onDelete('restrict')->onUpdate('cascade')->comment("Documento relacionado ao programa");
+            //$table->foreignUuid('documento_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Documento relacionado ao programa");
                         
         });
     }

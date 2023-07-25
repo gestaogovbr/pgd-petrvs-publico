@@ -28,7 +28,7 @@
     numero (*)
     ganho_produtividade (*)
     forma_contagem_carga_horaria (*)
-    (id/created_at/updated_at/data_inicio/data_fim)
+    (id/created_at/updated_at/deleted_at)
         programa_id (*)
         usuario_id (*)
         unidade_id (*)

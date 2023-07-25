@@ -15,8 +15,8 @@ class DocumentoAssinatura extends ModelBase
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'data_hora', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data hora da assinatura
         'assinatura', /* text; NOT NULL; */// Hash da assinatura
-        'documento_id', /* char(36); NOT NULL; */// Documento
-        'usuario_id', /* char(36); NOT NULL; */// Usuário
+        'documento_id', /* char(36); NOT NULL; */
+        'usuario_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */
     ];
 

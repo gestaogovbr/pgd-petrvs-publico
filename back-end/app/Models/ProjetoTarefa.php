@@ -42,9 +42,9 @@ class ProjetoTarefa extends ModelBase
         'custos_proprios', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se possui custos próprios (somente se tem_filhos), se não tem filhos sempre será true
         'soma_custos_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Mostra o somatório dos custos filhos (somente se tem_filhos)
         'etiquetas', /* json; */// Etiquetas
-        'documento_id', /* char(36); */// Documento vinculado a tarefa
+        'documento_id', /* char(36); */
         'tarefa_projeto_id', /* char(36); */
-        'projeto_id', /* char(36); NOT NULL; */// Projeto
+        'projeto_id', /* char(36); NOT NULL; */
         'tarefa_pai_id', /* char(36); */
         'usuario_id', /* char(36); */
         'atividade_id', /* char(36); */

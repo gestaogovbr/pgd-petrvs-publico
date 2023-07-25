@@ -26,8 +26,8 @@ class CreateAnexosTable extends Migration
             $table->string('path', 256)->nullable()->comment("Path relativo do arquivo");
             $table->text('base64')->nullable()->comment("Arquivo em formato base64");
             // Chaves estrangeiras:
-            $table->foreignUuid('usuario_id')->nullable()->onDelete('restrict')->onUpdate('cascade')->comment('Referente ao Usuário');
-            $table->foreignUuid('comentario_id')->nullable()->onDelete('restrict')->onUpdate('cascade')->comment('Referente ao Comentário');
+            $table->foreignUuid('usuario_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment('Referente ao Usuário');
+            $table->foreignUuid('comentario_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment('Referente ao Comentário');
         });
     }
 

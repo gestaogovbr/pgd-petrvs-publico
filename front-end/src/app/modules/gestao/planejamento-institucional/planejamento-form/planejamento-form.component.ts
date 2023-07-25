@@ -126,13 +126,13 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
      * para que novos objetivos superiores sejam selecionados.
      */
     public async onPlanejamentoChange(event: Event){
-      if(this.form.controls.planejamento_superior_id.value != this.entity?.planejamento_pai_id && this.entity?.objetivos?.length) {
+      if(this.form.controls.planejamento_superior_id.value != this.entity?.planejamento_superior_id && this.entity?.objetivos?.length) {
         let confirm = await this.dialog.confirm("Alteração de Planejamento superior", "Como já existem objetivos neste Planejamento, eles serão desvinculados dos objetivos do Planejamento anterior, para que novos objetivos sejam selecionados! Deseja continuar?");
         if(confirm) {
           this.entity?.objetivos?.forEach(obj => obj.objetivo_pai_id = null); 
           //atualizar a lista de objetivos superiores
         } else {
-          this.form.controls.planejamento_superior_id.setValue(this.entity?.planejamento_pai_id);
+          this.form.controls.planejamento_superior_id.setValue(this.entity?.planejamento_superior_id);
         };
       };
     }

@@ -103,7 +103,7 @@ class PlanoTrabalhoService extends ServiceBase
         throw new ServerException("ValidatePlano", "O plano de trabalho #" . $plano->numero . " (" . UtilService::getDateTimeFormatted($plano->data_inicio_vigencia) . " à " . UtilService::getDateTimeFormatted($plano->data_fim_vigencia) . ") possui período conflitante para a mesma modalidade (MOD_PTR_INTSC_DATA)");
       }
     }
-    if($action == "UPDATE") {
+    if($action == "EDIT") {
       $plano = PlanoTrabalho::find($data["id"]);
       if($data["unidade_id"] != $plano->unidade_id) throw new ServerException("ValidatePlano", "Depois de criado um Plano de Trabalho, não é possível alterar a sua Unidade.");
       if($data["programa_id"] != $plano->programa_id) throw new ServerException("ValidatePlano", "Depois de criado um Plano de Trabalho, não é possível alterar o seu Programa.");

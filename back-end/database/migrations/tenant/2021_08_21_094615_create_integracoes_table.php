@@ -28,8 +28,8 @@ class CreateIntegracoesTable extends Migration
             $table->boolean('gravar_arquivos_locais')->comment("Define se a rotina deve salvar os dados importados do SIAPE em um arquivo local em formato XML");
             $table->json('resultado')->comment("Resultado da execução da rotina de integração");
             // Chaves estrangeiras:
-            $table->foreignUuid('entidade_id')->onDelete('restrict')->onUpdate('cascade')->comment("Entidade que executou a rotina de integração");
-            $table->foreignUuid('usuario_id')->nullable()->onDelete('restrict')->onUpdate('cascade')->comment("Usuário que executou a rotina de integração (opcional, porque pode ser executada por terminal)");
+            $table->foreignUuid('entidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Entidade que executou a rotina de integração");
+            $table->foreignUuid('usuario_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Usuário que executou a rotina de integração (opcional, porque pode ser executada por terminal)");
         });
     }
 

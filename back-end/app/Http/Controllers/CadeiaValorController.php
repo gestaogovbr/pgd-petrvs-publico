@@ -16,7 +16,7 @@ class CadeiaValorController extends ControllerBase {
             case 'STORE':
                 if (!$usuario->hasPermissionTo('MOD_CADV_INCL')) throw new ServerException("CapacidadeStore", "Inserção não executada");
                 break;
-            case 'UPDATE':
+            case 'EDIT':
                 if (!$usuario->hasPermissionTo('MOD_CADV_EDT')) throw new ServerException("CapacidadeStore", "Edição não executada");
                 break;
             case 'DESTROY':

@@ -26,7 +26,7 @@
 > Icone (\*)  
 > Cor (\*)  
 > Descrição (\*)  
-> (id/created_at/updated_at/data_inicio/data_fim)  
+> (id/created_at/updated_at/deleted_at)  
 >  
 > (*) campo obrigatório
 
@@ -40,7 +40,7 @@
 > Valores (\**)  
 > inicio (\*)  
 > fim  
-> (id/created_at/updated_at/data_inicio/data_fim)  
+> (id/created_at/updated_at/deleted_at)  
 > &ensp;&ensp;&ensp;&ensp;entidade_id (\*)  
 > &ensp;&ensp;&ensp;&ensp;unidade_id (\***)  
 > &ensp;&ensp;&ensp;&ensp;planejamento_superior_id (***)  
@@ -63,18 +63,28 @@
 
 - Tabela: planejamentos_objetivos
 
-> nome (\*)  
-> fundamentação (\*)  
-> (id/created_at/updated_at/data_inicio/data_fim)
-> planejamento_id (\*)  
-> &ensp;&ensp;&ensp;&ensp;eixo_tematico_id (\*)  
-> &ensp;&ensp;&ensp;&ensp;objetivo_superior_id  
->
-> (\*) campo obrigatório
+~~~text
+    nome (*)                                    // nome do objetivo
+    fundamentação (*)                           // justificativa para a existência do objetivo
+    path                                        // IDs dos nós ascendentes separados por /, ou NULL caso seja um nó raiz
+    sequencia (*)                               // Sequência utilizada para ordenar os objetivos
+    (id/created_at/updated_at/deleted_at)
+        planejamento_id (*)                     // Planejamento ao qual se refere o objetivo
+        eixo_tematico_id (*)                    // Eixo temático ao qual se refere o objetivo
+        objetivo_superior_id (**)               // Objetivo do planejamento superior ao qual está vinculado este objetivo, se for o caso
+        objetivo_pai_id                         // Objetivo pai do objetivo (se for um nós raiz, este campo será NULL)
+
+    (*) campo obrigatório
+    (**) campo obrigatório somente se o planejamento for de uma Unidade Executora
+~~~
 
 ### VALIDAÇÕES
 
-- Quando o Planejamento é de uma Unidade Executora é obrigatório associar cada um dos seus objetivos a um objetivo do Planejamento Institucional superior!  
+***** REVERF ESSA REGRA: Quando o Planejamento é de uma Unidade Executora é obrigatório associar cada um dos seus objetivos a um objetivo do Planejamento Institucional superior!  Se for assim, em um planejamento de unidade executora, não precisa ser exibido o campo eixo tematico
+***** As datas de início e fim do planejamento da Unidade executora devem estar dentro do período do planejamento superior?
+***** Quais unidades executoras devem aparecer na hora de escolher a unidade executora do planejamento?
+***** Verificar: Na edição de um planejamento de uma unidade executora, o campo SELECIONE O PLANEJAMENTO SUPERIOR VINCULADO deve/não deve mais ser exibido, já que ele não pode ser alterado
+***** No form de objetivos de planejamento não está aparecendo o nome do planejamento superior vinculado
 
 # Exemplo de grid
 

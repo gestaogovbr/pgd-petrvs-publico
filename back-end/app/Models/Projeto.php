@@ -43,7 +43,7 @@ class Projeto extends ModelBase
         'soma_custos_filhos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Mostra o somatório dos custos filhos
         'duracao', /* double(8,2); NOT NULL; */// Duração do projeto
         'progresso', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */// Percentual de progresso do projeto
-        'usuario_id', /* char(36); */// Usuário que incluiu o projeto
+        'usuario_id', /* char(36); */
         'tipo_projeto_id', /* char(36); */
         'fase_id', /* char(36); */
         'custo', /* decimal(15,2); NOT NULL; */// Custo: Será a soma dos recursos, ou a soma dos filhos caso tem_filhos e soma_custos_filhos

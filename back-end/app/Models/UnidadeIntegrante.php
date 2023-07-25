@@ -15,8 +15,8 @@ class UnidadeIntegrante extends ModelBase
     protected $delete_cascade = ["atribuicoes"];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'unidade_id', /* char(36); NOT NULL; */// Unidade participante do vínculo
-        'usuario_id', /* char(36); NOT NULL; */// Servidor participante do vínculo
+        'unidade_id', /* char(36); NOT NULL; */
+        'usuario_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */
     ];
     // hasOne

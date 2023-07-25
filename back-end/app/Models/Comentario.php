@@ -22,7 +22,7 @@ class Comentario extends ModelBase
         'data_hora', /* datetime; NOT NULL; */// Data e horário que foi feito o comentário
         'tipo', /* enum('COMENTARIO','TECNICO','GERENCIAL','AVALIACAO','TAREFA','ATIVIDADE'); NOT NULL; DEFAULT: 'COMENTARIO'; */// Tipo do comentário
         'privacidade', /* enum('PUBLICO','PRIVADO'); NOT NULL; DEFAULT: 'PUBLICO'; */// Nível de acesso ao comentário
-        'usuario_id', /* char(36); NOT NULL; */// Usuário do comentário
+        'usuario_id', /* char(36); NOT NULL; */
         'projeto_id', /* char(36); */
         'projeto_tarefa_id', /* char(36); */
         'atividade_id', /* char(36); */

@@ -16,7 +16,7 @@ class Afastamento extends ModelBase
         'observacoes', /* text; */// Observação sobre o afastamento
         'inicio_afastamento', /* datetime; NOT NULL; */// Inicio do afastamento
         'fim_afastamento', /* datetime; NOT NULL; */// Fim do afastamento
-        'usuario_id', /* char(36); NOT NULL; */// Usuário
+        'usuario_id', /* char(36); NOT NULL; */
         'tipo_motivo_afastamento_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */
     ];

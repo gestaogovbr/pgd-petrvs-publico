@@ -18,7 +18,7 @@ class ProjetoAlocacao extends ModelBase
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'descricao', /* varchar(256); NOT NULL; */// Descrição
         'quantidade', /* double(8,2); NOT NULL; */// Quantidade do recurso
-        'projeto_id', /* char(36); NOT NULL; */// Projeto
+        'projeto_id', /* char(36); NOT NULL; */
         'tarefa_id', /* char(36); */
         'recurso_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */

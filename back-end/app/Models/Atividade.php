@@ -37,8 +37,8 @@ class Atividade extends ModelBase
         'plano_trabalho_entrega_id', /* char(36); */
         'tipo_atividade_id', /* char(36); */
         'demandante_id', /* char(36); NOT NULL; */
-        'usuario_id', /* char(36); */// Usuário responsável pela atividade
-        'unidade_id', /* char(36); NOT NULL; */// Unidade responsável pela atividade
+        'usuario_id', /* char(36); */
+        'unidade_id', /* char(36); NOT NULL; */
         'documento_requisicao_id', /* char(36); */
         'documento_entrega_id', /* char(36); */
         //'deleted_at', /* timestamp; */

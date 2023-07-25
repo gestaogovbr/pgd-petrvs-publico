@@ -21,9 +21,9 @@ class AtividadeTarefa extends ModelBase
         'tempo_estimado', /* double(8,2); NOT NULL; */// Tempo estimado para a execução da tarefa (Horas decimais)
         'concluido', /* tinyint; NOT NULL; */// Se a tarefa foi concluída
         'documento_id', /* char(36); */
-        'usuario_id', /* char(36); NOT NULL; */// Usuário
+        'usuario_id', /* char(36); NOT NULL; */
         'tipo_tarefa_id', /* char(36); */
-        'atividade_id', /* char(36); NOT NULL; */// Atividade
+        'atividade_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */
     ];
     

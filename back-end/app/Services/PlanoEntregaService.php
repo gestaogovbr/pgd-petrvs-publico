@@ -286,12 +286,15 @@ class PlanoEntregaService extends ServiceBase
     }
 
     /**
-    * Verifica se as  datas do plano de entrega se encaixam na duração do Programa de gestão
+    *  Verifica se algumas condições estão atendidas, antes de realizar a inserção/alteração do Plano de Entregas: 
+    *  - as datas do Plano de Entregas devem se encaixar na duração do Programa de Gestão;
+    *  - as datas das entregas do Plano de Entregas devem se encaixar na duração do Programa de Gestão;
+    *  - após criado um Plano de Entregas, os seguintes campos não poderão mais ser alterados: unidade_id, programa_id; (RN_PENT_3_9)
     */
     public function validateStore($dataOrEntity, $unidade, $action)
     {
         if(!$this->verificaDuracaoPlano($dataOrEntity) || !$this->verificaDatasEntregas($dataOrEntity)) throw new Exception("O prazo das datas não satisfaz a duração estipulada no programa.");
-        if($action == "UPDATE") {
+        if($action == "EDIT") {
             $planoEntrega = PlanoEntrega::find($dataOrEntity["id"]);
             if($dataOrEntity["unidade_id"] != $planoEntrega->unidade_id) throw new ServerException("ValidatePlano", "Depois de criado um Plano de Entregas, não é possível alterar a sua Unidade.");
             if($dataOrEntity["programa_id"] != $planoEntrega->programa_id) throw new ServerException("ValidatePlano", "Depois de criado um Plano de Entregas, não é possível alterar o seu Programa.");
@@ -302,7 +305,7 @@ class PlanoEntregaService extends ServiceBase
     }
 
     /**
-    * Verifica se as  datas do plano de entrega se encaixam na duração do Programa de gestão
+    * Verifica se as datas do plano de entrega se encaixam na duração do Programa de gestão
     */
     public function verificaDuracaoPlano($planoEntrega)
     {
@@ -336,4 +339,51 @@ class PlanoEntregaService extends ServiceBase
         }
         return $result;
     }
+
+    /**
+     *                  MAPA DE COBERTURA DAS REGRAS DE NEGÓCIO - PLANO DE ENTREGAS
+     *                  
+     *   REGRAS NÃO     REGRAS TOTALMENTE        OUTRAS REGRAS       OUTRAS REGRAS
+     *   IMPLEMENTADAS  IMPLEMENTADAS            100% COBERTAS       PARCIALMENTE COBERTAS
+     *                  ----------------------------------------------------------------------
+     *   RN_PENT_1_1
+     *   RN_PENT_1_2
+     *                  RN_PENT_1_3
+     *   RN_PENT_1_4
+     *   RN_PENT_2_1
+     *   RN_PENT_2_2
+     *                  RN_PENT_2_3
+     *                  RN_PENT_2_4
+     *   RN_PENT_2_5
+     *   RN_PENT_2_6
+     *   RN_PENT_2_7
+     *   RN_PENT_3_1
+     *                  RN_PENT_3_2
+     *                  RN_PENT_3_3
+     *   RN_PENT_3_4
+     *   RN_PENT_3_5
+     *   RN_PENT_3_6
+     *   RN_PENT_3_7
+     *   RN_PENT_3_8
+     *                  RN_PENT_3_9
+     *                  RN_PENT_4_1
+     *                  RN_PENT_4_2
+     *                  RN_PENT_4_3
+     *                  RN_PENT_4_4
+     *                  RN_PENT_4_5
+     *                  RN_PENT_4_6
+     *                  RN_PENT_4_7
+     *                  RN_PENT_4_8
+     *                  RN_PENT_4_9
+     *                  RN_PENT_4_10
+     *                  RN_PENT_4_11
+     *                  RN_PENT_4_12
+     *                  RN_PENT_4_13
+     *                  RN_PENT_4_14
+     *                  RN_PENT_4_15
+     *                  RN_PENT_4_16
+     * 
+     * 
+     * 
+     */
 }

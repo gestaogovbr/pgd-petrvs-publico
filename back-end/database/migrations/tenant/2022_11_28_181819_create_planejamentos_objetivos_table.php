@@ -23,11 +23,12 @@ class CreatePlanejamentosObjetivosTable extends Migration
             $table->integer('sequencia')->default(0)->comment("Sequência utilizada para ordenar os objetivos");
             $table->string('fundamentacao', 256)->comment("Fundamentação do objetivo");
             $table->string('nome', 256)->comment("Nome do objetivo");
-            $table->text('path')->nullable()->comment('Path dos nós pais separados por /, ou NULL caso sejam nós raiz');
+            $table->text('path')->nullable()->comment('IDs dos nós ascendentes separados por /, ou NULL caso seja um nó raiz');
             // Chaves estrangeiras:
-            $table->foreignUuid('planejamento_id')->onDelete('restrict')->onUpdate('cascade')->comment("Planejamento ao qual se refere o objetivo");
+            $table->foreignUuid('planejamento_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Planejamento ao qual se refere o objetivo");
             $table->foreignUuid('eixo_tematico_id')->constrained("eixos_tematicos")->onDelete('restrict')->onUpdate('cascade')->comment("Eixo temático ao qual se refere o objetivo");
-            $table->foreignUuid('objetivo_pai_id')->nullable()->constrained("planejamentos_objetivos")->onDelete('restrict')->onUpdate('cascade')->comment("Objetivo pai ao qual se refere o objetivo");
+            $table->foreignUuid('objetivo_pai_id')->nullable()->constrained("planejamentos_objetivos")->onDelete('restrict')->onUpdate('cascade')->comment("Objetivo pai do objetivo");
+            $table->foreignUuid('objetivo_superior_id')->nullable()->constrained("planejamentos_objetivos")->onDelete('restrict')->onUpdate('cascade')->comment("Objetivo do planejamento superior ao qual está vinculado este objetivo, se for o caso");
         });
     }
 

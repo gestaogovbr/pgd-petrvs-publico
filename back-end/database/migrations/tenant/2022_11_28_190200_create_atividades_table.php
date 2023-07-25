@@ -41,8 +41,8 @@ class CreateAtividadesTable extends Migration
             $table->foreignUuid('plano_trabalho_entrega_id')->nullable()->constrained("planos_trabalhos_entregas")->onDelete('restrict')->onUpdate('cascade')->comment("Entrega que a atividade está vinculada");
             $table->foreignUuid('tipo_atividade_id')->nullable()->constrained("tipos_atividades")->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de atividade");
             $table->foreignUuid('demandante_id')->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->comment("Usuário demandante");
-            $table->foreignUuid('usuario_id')->nullable()->onDelete('restrict')->onUpdate('cascade')->comment("Usuário responsável pela atividade");
-            $table->foreignUuid('unidade_id')->onDelete('restrict')->onUpdate('cascade')->comment("Unidade responsável pela atividade");
+            $table->foreignUuid('usuario_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Usuário responsável pela atividade");
+            $table->foreignUuid('unidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Unidade responsável pela atividade");
             $table->foreignUuid('documento_requisicao_id')->nullable()->constrained('documentos')->onDelete('restrict')->onUpdate('cascade')->comment("Documento de requisição");
             $table->foreignUuid('documento_entrega_id')->nullable()->constrained('documentos')->onDelete('restrict')->onUpdate('cascade')->comment("Documento de entrega");
         });

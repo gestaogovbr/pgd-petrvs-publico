@@ -19,8 +19,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/modules/base/page-form-base */ "793T");
 /* harmony import */ var src_app_services_navigate_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! src/app/services/navigate.service */ "RANn");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/input/input-search/input-search.component */ "8OLq");
-/* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../../components/input/input-select/input-select.component */ "txHH");
+/* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/input/input-select/input-select.component */ "txHH");
+/* harmony import */ var _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../../components/input/input-search/input-search.component */ "8OLq");
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/common */ "ofXK");
 /* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ "lYxd");
 /* harmony import */ var _components_input_input_textarea_input_textarea_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../../../components/input/input-textarea/input-textarea.component */ "S/J2");
@@ -65,7 +65,6 @@ class PlanejamentoFormObjetivoComponent extends src_app_modules_base_page_form_b
         this.injector = injector;
         this.objetivos = [];
         this.objetivos_superiores = [];
-        // NA TABELA HÁ APENAS O OBJETIVO_PAI_ID. PORTANTO, EXCLUIR DAQUI O OBJETIVO_PAI_ID E RENOMEAR OBJETIVO_SUPERIOR_ID PARA OBJETIVO_PAI_ID
         this.validate = (control, controlName) => {
             var _a;
             let result = null;
@@ -95,17 +94,19 @@ class PlanejamentoFormObjetivoComponent extends src_app_modules_base_page_form_b
         }, this.cdRef, this.validate);
     }
     loadData(entity, form) {
-        var _a, _b, _c, _d, _e, _f, _g, _h;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             let formValue = Object.assign({}, form.value);
             form.patchValue(this.util.fillForm(formValue, entity));
             yield ((_a = this.eixoTematico) === null || _a === void 0 ? void 0 : _a.loadSearch(entity.eixo_tematico || entity.eixo_tematico_id));
             this.title = entity._status == 'ADD' ? 'Inclusão de Objetivo' : 'Editando objetivo...';
             this.planejamento = (_b = this.metadata) === null || _b === void 0 ? void 0 : _b.planejamento;
-            /*  if(this.planejamento) this.planejamento.planejamento_superior = this.metadata.planejamento_superior as Planejamento || null;
-                if(this.planejamento.planejamento_superior) this.planejamento.planejamento_superior.objetivos = this.metadata?.objetivos_superiores || null;  */
-            (_c = this.form) === null || _c === void 0 ? void 0 : _c.controls.planejamento_superior_nome.setValue(((_e = (_d = this.planejamento) === null || _d === void 0 ? void 0 : _d.planejamento_pai) === null || _e === void 0 ? void 0 : _e.nome) || '');
-            this.objetivos_superiores = ((_h = (_g = (_f = this.planejamento) === null || _f === void 0 ? void 0 : _f.planejamento_pai) === null || _g === void 0 ? void 0 : _g.objetivos) === null || _h === void 0 ? void 0 : _h.map(x => Object.assign({}, { key: x.id, value: x.nome, data: x }))) || [];
+            if (this.planejamento)
+                this.planejamento.planejamento_superior = this.metadata.planejamento_superior || null;
+            if (this.planejamento.planejamento_superior)
+                this.planejamento.planejamento_superior.objetivos = ((_c = this.metadata) === null || _c === void 0 ? void 0 : _c.objetivos_superiores) || null;
+            (_d = this.form) === null || _d === void 0 ? void 0 : _d.controls.planejamento_superior_nome.setValue(((_f = (_e = this.planejamento) === null || _e === void 0 ? void 0 : _e.planejamento_superior) === null || _f === void 0 ? void 0 : _f.nome) || '');
+            this.objetivos_superiores = ((_j = (_h = (_g = this.planejamento) === null || _g === void 0 ? void 0 : _g.planejamento_superior) === null || _h === void 0 ? void 0 : _h.objetivos) === null || _j === void 0 ? void 0 : _j.map(x => Object.assign({}, { key: x.id, value: x.nome, data: x }))) || [];
         });
     }
     initializeData(form) {
@@ -146,16 +147,16 @@ PlanejamentoFormObjetivoComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵloadQuery"]()) && (ctx.planejamentoSuperiorNome = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵloadQuery"]()) && (ctx.eixoTematico = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵInheritDefinitionFeature"]], decls: 13, vars: 15, consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "eixo_tematico_id", 3, "size", "disabled", "dao"], ["eixoTematico", ""], ["nullable", "", "label", "Objetivo", "icon", "fab fa-unity", "controlName", "objetivo_pai_id", 3, "size", "items", "change"], ["objetivoPai", ""], ["class", "row", 4, "ngIf"], ["icon", "bi bi-textarea-t", "label", "Nome", "controlName", "nome", 3, "size", "control"], ["icon", "bi bi-textarea-t", "label", "Fundamenta\u00E7\u00E3o", "controlName", "fundamentacao", 3, "size", "rows", "control"], ["disabled", "true", "label", "Planejamento superior vinculado", "controlName", "planejamento_superior_nome", 1, "disabled", 3, "size", "icon"], ["planejamento_superior_nome", ""], ["label", "Objetivo de planejamento superior (Vinculado)", "icon", "fab fa-unity", "controlName", "objetivo_superior_id", 3, "items", "size", "control"]], template: function PlanejamentoFormObjetivoComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵInheritDefinitionFeature"]], decls: 13, vars: 15, consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["nullable", "", "label", "Objetivo", "icon", "fab fa-unity", "controlName", "objetivo_pai_id", 3, "size", "items", "change"], ["objetivoPai", ""], ["controlName", "eixo_tematico_id", 3, "size", "disabled", "dao"], ["eixoTematico", ""], ["class", "row", 4, "ngIf"], ["icon", "bi bi-textarea-t", "label", "Nome", "controlName", "nome", 3, "size", "control"], ["icon", "bi bi-textarea-t", "label", "Fundamenta\u00E7\u00E3o", "controlName", "fundamentacao", 3, "size", "rows", "control"], ["disabled", "true", "label", "Planejamento superior vinculado", "controlName", "planejamento_superior_nome", 1, "disabled", 3, "size", "icon"], ["planejamento_superior_nome", ""], ["label", "Objetivo de planejamento superior (Vinculado)", "icon", "fab fa-unity", "controlName", "objetivo_superior_id", 3, "items", "size", "control"]], template: function PlanejamentoFormObjetivoComponent_Template(rf, ctx) { if (rf & 1) {
         const _r5 = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵgetCurrentView"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](0, "editable-form", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵlistener"]("submit", function PlanejamentoFormObjetivoComponent_Template_editable_form_submit_0_listener() { return ctx.onSaveData(); })("cancel", function PlanejamentoFormObjetivoComponent_Template_editable_form_cancel_0_listener() { return ctx.onCancel(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](1, "div", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](2, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelement"](3, "input-search", 2, 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](5, "input-select", 4, 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵlistener"]("change", function PlanejamentoFormObjetivoComponent_Template_input_select_change_5_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵrestoreView"](_r5); const _r1 = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵreference"](6); return ctx.onObjetivoPaiChange(_r1); });
+        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](3, "input-select", 2, 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵlistener"]("change", function PlanejamentoFormObjetivoComponent_Template_input_select_change_3_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵrestoreView"](_r5); const _r0 = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵreference"](4); return ctx.onObjetivoPaiChange(_r0); });
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelement"](5, "input-search", 4, 5);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtemplate"](7, PlanejamentoFormObjetivoComponent_div_7_Template, 3, 2, "div", 6);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](8, "div", 1);
@@ -170,9 +171,9 @@ PlanejamentoFormObjetivoComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE
     } if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("size", 6)("disabled", (ctx.form == null ? null : ctx.form.controls == null ? null : ctx.form.controls.objetivo_pai_id == null ? null : ctx.form.controls.objetivo_pai_id.value) ? "true" : undefined)("dao", ctx.eixoTematicoDao);
-        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("size", 6)("items", ctx.objetivos);
+        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("size", 6)("disabled", (ctx.form == null ? null : ctx.form.controls == null ? null : ctx.form.controls.objetivo_pai_id == null ? null : ctx.form.controls.objetivo_pai_id.value) ? "true" : undefined)("dao", ctx.eixoTematicoDao);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("ngIf", ctx.planejamento == null ? null : ctx.planejamento.unidade_id);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](2);
@@ -181,7 +182,7 @@ PlanejamentoFormObjetivoComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("size", 12)("rows", 4)("control", ctx.form.controls.fundamentacao);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("ngIf", ctx.planejamento == null ? null : ctx.planejamento.unidade_id);
-    } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__["EditableFormComponent"], _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_9__["InputSearchComponent"], _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_10__["InputSelectComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_11__["NgIf"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_12__["InputTextComponent"], _components_input_input_textarea_input_textarea_component__WEBPACK_IMPORTED_MODULE_13__["InputTextareaComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwbGFuZWphbWVudG8tZm9ybS1vYmpldGl2by5jb21wb25lbnQuc2NzcyJ9 */"] });
+    } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__["EditableFormComponent"], _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_9__["InputSelectComponent"], _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_10__["InputSearchComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_11__["NgIf"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_12__["InputTextComponent"], _components_input_input_textarea_input_textarea_component__WEBPACK_IMPORTED_MODULE_13__["InputTextareaComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJwbGFuZWphbWVudG8tZm9ybS1vYmpldGl2by5jb21wb25lbnQuc2NzcyJ9 */"] });
 
 
 /***/ }),
@@ -1280,14 +1281,14 @@ class PlanejamentoFormComponent extends src_app_modules_base_page_form_base__WEB
     onPlanejamentoChange(event) {
         var _a, _b, _c, _d, _e, _f;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            if (this.form.controls.planejamento_superior_id.value != ((_a = this.entity) === null || _a === void 0 ? void 0 : _a.planejamento_pai_id) && ((_c = (_b = this.entity) === null || _b === void 0 ? void 0 : _b.objetivos) === null || _c === void 0 ? void 0 : _c.length)) {
+            if (this.form.controls.planejamento_superior_id.value != ((_a = this.entity) === null || _a === void 0 ? void 0 : _a.planejamento_superior_id) && ((_c = (_b = this.entity) === null || _b === void 0 ? void 0 : _b.objetivos) === null || _c === void 0 ? void 0 : _c.length)) {
                 let confirm = yield this.dialog.confirm("Alteração de Planejamento superior", "Como já existem objetivos neste Planejamento, eles serão desvinculados dos objetivos do Planejamento anterior, para que novos objetivos sejam selecionados! Deseja continuar?");
                 if (confirm) {
                     (_e = (_d = this.entity) === null || _d === void 0 ? void 0 : _d.objetivos) === null || _e === void 0 ? void 0 : _e.forEach(obj => obj.objetivo_pai_id = null);
                     //atualizar a lista de objetivos superiores
                 }
                 else {
-                    this.form.controls.planejamento_superior_id.setValue((_f = this.entity) === null || _f === void 0 ? void 0 : _f.planejamento_pai_id);
+                    this.form.controls.planejamento_superior_id.setValue((_f = this.entity) === null || _f === void 0 ? void 0 : _f.planejamento_superior_id);
                 }
                 ;
             }
@@ -1868,7 +1869,7 @@ class Planejamento extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.valores = []; /* Valores da Instituição/Unidade */
         this.unidade_id = null; /* Unidade à qual está vinculado o planejamento institucional */
         this.entidade_id = null; /* Entidade à qual está vinculado o planejamento institucional */
-        this.planejamento_pai_id = null; /* Planejamento hierarquicamente superior ao qual o atual planejamento está vinculado */
+        this.planejamento_superior_id = null; /* Planejamento hierarquicamente superior ao qual o atual planejamento está vinculado */
         this.initialization(data);
     }
 }

@@ -23,10 +23,11 @@ class Planejamento extends ModelBase
         'visao', /* text; NOT NULL; */// Visão da entidade/unidade
         'valores', /* json; NOT NULL; */// Valores da entidade/unidade
         'data_arquivamento', /* datetime; */// Data de arquivamento do planejamento institucional
-        'entidade_id', /* char(36); NOT NULL; */// Entidade do planejamento institucional
-        'unidade_id', /* char(36); */// Unidade do planejamento institucional (opcional)
-        'planejamento_pai_id', /* char(36); */
+        'entidade_id', /* char(36); NOT NULL; */
+        'unidade_id', /* char(36); */
         //'deleted_at', /* timestamp; */
+        'planejamento_superior_id', /* char(36); */
+        /*'planejamento_pai_id',*/// REMOVED
     ];
 
     // Casting
@@ -47,11 +48,11 @@ class Planejamento extends ModelBase
 
     // Has
     public function objetivos() { return $this->hasMany(PlanejamentoObjetivo::class); }    
-    public function planejamentos() { return $this->hasMany(Planejamento::class, 'planejamento_pai_id'); }    
+    public function planejamentos() { return $this->hasMany(Planejamento::class, 'planejamento_superior_id'); }    
     public function planosEntrega() { return $this->hasMany(PlanoEntrega::class); }       
     // Belongs
     public function unidade() { return $this->belongsTo(Unidade::class); }    //nullable
     public function entidade() { return $this->belongsTo(Entidade::class); }
-    public function planejamentoPai() { return $this->belongsTo(Planejamento::class, 'planejamento_pai_id'); }   //nullable
+    public function planejamentoSuperior() { return $this->belongsTo(Planejamento::class, 'planejamento_superior_id'); }   //nullable
 
 }

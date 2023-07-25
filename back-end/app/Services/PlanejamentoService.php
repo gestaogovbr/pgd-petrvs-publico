@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Exceptions\ServerException;
-use App\Models\Planejamento;
 use App\Models\EixoTematico;
 use App\Models\PlanejamentoObjetivo;
 use App\Models\Unidade;
@@ -12,8 +11,8 @@ use Illuminate\Support\Facades\DB;
 class PlanejamentoService extends ServiceBase
 {
     /**
-     * Este método verifica se a consulta provém da manutenção de planejamentos institucionais de unidades executoras e, em caso positivo, filtra apenas os planejamentos
-     * não deletados e que são da Unidade Instituidora ou das Unidades Executoras hierarquicamente superiores à Unidade Executora cujo plano está sendo mantido (criado/editado).
+     * Este método verifica se a consulta provém da manutenção de planejamentos institucionais de unidades executoras. Em caso positivo, filtra apenas os planejamentos
+     * não deletados e que: a) são da Unidade Instituidora, ou b) são das Unidades Executoras hierarquicamente superiores à Unidade Executora do plano que stá sendo criado/editado.
      */
     public function proxyQuery($query, &$data) {
         if(!empty(array_filter($data["where"], fn($w) => $w[0] == "manut_planej_unidades_executoras"))){
@@ -49,9 +48,9 @@ class PlanejamentoService extends ServiceBase
             if(in_array($unidade_id, $subordinadas_ids) && !in_array($unidade_id, $lotacoes_ids) && !in_array($unidade_id, $lotacoes_ids) && !parent::loggedUser()->hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_SUBORD'))
                 throw new ServerException("ValidatePlanejamentoInstitucional", "Usuário não tem permissão para criar/editar Planejamentos para Unidades executoras subordinadas (MOD_PLAN_INST_INCL_UNEX_SUBORD)");
             if(in_array($unidade_id, $lotacoes_ids) && $unidade_id != $lotacao_principal_id && !parent::loggedUser()->hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_QQLOT'))
-                throw new ServerException("ValidatePlanejamentoInstitucional", "Usuário não tem permissão para criar/editar Planejamentos para qualquer Unidade executora das suas lotações (MOD_PLAN_INST_INCL_UNEX_QQLOT)");
+                throw new ServerException("ValidatePlanejamentoInstitucional", "Usuário não tem permissão para criar/editar Planejamentos para qualquer Unidade executora das suas áreas de trabalho (MOD_PLAN_INST_INCL_UNEX_QQLOT)");
             if($unidade_id == $lotacao_principal_id && !parent::loggedUser()->hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_LOTPRI'))
-                throw new ServerException("ValidatePlanejamentoInstitucional", "Usuário não tem permissão para criar/editar Planejamentos para a Unidade executora de sua lotação principal (MOD_PLAN_INST_INCL_UNEX_LOTPRI)");
+                throw new ServerException("ValidatePlanejamentoInstitucional", "Usuário não tem permissão para criar/editar Planejamentos para a Unidade executora de sua lotação (MOD_PLAN_INST_INCL_UNEX_LOTPRI)");
         }
 
     }
