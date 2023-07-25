@@ -22,7 +22,11 @@ class TenantService extends ServiceBase {
      * @return Object
      */
     public function store($dataOrEntity, $unidade, $transaction = true) {
-        parent::store($dataOrEntity, $unidade, false);
+        try{
+            parent::store($dataOrEntity, $unidade, false);
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
 
@@ -34,7 +38,11 @@ class TenantService extends ServiceBase {
             $entity->fill($dataOrEntity);
             $entity->save();
         } catch (\Stancl\Tenancy\Exceptions\TenantDatabaseAlreadyExistsException $e) {}
-        \Illuminate\Support\Facades\Artisan::call('tenants:migrate', ['--tenants' => [$entity->id]]);
+        try {
+            \Illuminate\Support\Facades\Artisan::call('tenants:migrate', ['--tenants' => [$entity->id]]);
+        } catch (\Exception $e) {
+            throw $e;
+        }
         Artisan::call('tenants:seed --class=CidadeSeeder' . (empty($id) ? '' : ' --tenants=' . $id));
         Artisan::call('tenants:seed --class=PerfilSeeder' . (empty($id) ? '' : ' --tenants=' . $id));
         return $entity;

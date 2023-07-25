@@ -14,28 +14,23 @@ class IntegracaoSiapeService extends ServiceBase {
 
     public $siape = '';
     private $siapeUpag = '';
-    private $siapeUrl = '';
-    private $siapeSiglaSistema = '';
-    private $siapeNomeSistema = '';
-    private $siapeSenha= '';
-    private $siapeCpf= '';
+    private $siapeDsvHost = '';
+    private $siapeDsvPort = '';
+    private $siapeDsvDatabase = '';
+    private $siapeDsvUsername= '';
+    private $siapeDsvPassword= '';
     private $siapeCodOrgao = '';
     private $siapeCodUorg = '';
     private $siapeParmExistPag = '';
     private $siapeParmTipoVinculo = '';
 
     function __construct($config = null) {
-        $config = $config ?: config("integracao")["siape"];
-        $this->siapeUpag = strval(intval($config['upag']));
-        $this->siapeUrl = $config['url'];
-        $this->siapeSiglaSistema = $config['siglaSistema'];
-        $this->siapeNomeSistema = $config['nomeSistema'];
-        $this->siapeSenha = $config['senha'];
-        $this->siapeCpf = $config['cpf'];
-        $this->siapeCodOrgao = strval(intval($config['codOrgao']));
-        $this->siapeCodUorg = strval(intval($config['codUorg']));
-        $this->siapeParmExistPag = $config['parmExistPag'];
-        $this->siapeParmTipoVinculo = $config['parmTipoVinculo'];
+        $config = $config ?: config("integracaoDSV")["siape"];
+        $this->siapeDsvHost = strval(intval($config['host']));
+        $this->siapeDsvPort = $config['port'];
+        $this->siapeDsvDatabase = $config['databse'];
+        $this->siapeDsvUsername = $config['username'];
+        $this->siapeDsvPassword = $config['password'];
         /* Instancia o Soap (API Siape) */
         $this->siape = new SoapClient($this->siapeUrl);
     }
@@ -110,7 +105,7 @@ class IntegracaoSiapeService extends ServiceBase {
                                 'logradouro' => $this->UtilService->valueOrNull($uorgWsdl, "logradouro") ?: "",
                                 'bairro' => $this->UtilService->valueOrNull($uorgWsdl, "bairro") ?: "",
                                 'cep' => $this->UtilService->valueOrNull($uorgWsdl, "cep") ?: "",
-                                'ptn_ge_coordenada' => $this->UtilService->valueOrNull($uorgWsdl, "ptn_ge_coordenada") ?: "", 
+                                'ptn_ge_coordenada' => $this->UtilService->valueOrNull($uorgWsdl, "ptn_ge_coordenada") ?: "",
                                 'municipio_siafi_siape' => $this->UtilService->valueOrNull($uorgWsdl, "codMunicipio") ?: "",
                                 'municipio_siscom' => $this->UtilService->valueOrNull($uorgWsdl, "codMunicipio") ?: "",
                                 'municipio_ibge' => $this->UtilService->valueOrNull($uorgWsdl, "codMunicipio") ?: "",
