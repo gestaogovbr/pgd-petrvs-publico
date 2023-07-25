@@ -14,7 +14,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/modules/base/page-frame-base */ "rvJe");
 /* harmony import */ var src_app_dao_projeto_tarefa_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/projeto-tarefa-dao.service */ "omxD");
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/components/editable-form/editable-form.component */ "RKEd");
-/* harmony import */ var src_app_dao_demanda_dao_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/dao/demanda-dao.service */ "pFvM");
+/* harmony import */ var src_app_dao_atividade_dao_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/dao/atividade-dao.service */ "hmA2");
 /* harmony import */ var _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../components/input/input-switch/input-switch.component */ "puzm");
 /* harmony import */ var _components_input_input_radio_input_radio_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../components/input/input-radio/input-radio.component */ "q/rX");
 /* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../components/input/input-select/input-select.component */ "txHH");
@@ -51,8 +51,8 @@ class ProjetoTarefaFormPrincipalComponent extends src_app_modules_base_page_fram
                 key: "TAREFA",
                 value: "Tarefa"
             }, {
-                key: "DEMANDA",
-                value: "Demanda"
+                key: "ATIVIDADE",
+                value: "Atividade"
             }, {
                 key: "DOCUMENTO",
                 value: "Doc. SUPER/SEI"
@@ -71,7 +71,7 @@ class ProjetoTarefaFormPrincipalComponent extends src_app_modules_base_page_fram
             return result;
         };
         this.dao = injector.get(src_app_dao_projeto_tarefa_dao_service__WEBPACK_IMPORTED_MODULE_2__["ProjetoTarefaDaoService"]);
-        this.demandaDao = injector.get(src_app_dao_demanda_dao_service__WEBPACK_IMPORTED_MODULE_4__["DemandaDaoService"]);
+        this.atividadeDao = injector.get(src_app_dao_atividade_dao_service__WEBPACK_IMPORTED_MODULE_4__["AtividadeDaoService"]);
         this.cdRef = injector.get(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ChangeDetectorRef"]);
         this.form = this.fh.FormBuilder({
             tipo: { default: "TAREFA" },
@@ -97,7 +97,7 @@ class ProjetoTarefaFormPrincipalComponent extends src_app_modules_base_page_fram
             aloca_recursos_proprios: { default: true },
             calcula_intervalo: { default: true },
         }, this.cdRef, this.validate);
-        this.join = ["alocacoes", "demanda"];
+        this.join = ["alocacoes", "atividade"];
     }
     set control(value) { super.control = value; }
     get control() { return super.control; }
@@ -114,7 +114,7 @@ ProjetoTarefaFormPrincipalComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODU
     } if (rf & 2) {
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-    } }, inputs: { control: "control", entity: "entity", cdRef: "cdRef", projeto: "projeto" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵInheritDefinitionFeature"]], decls: 43, vars: 47, consts: [[3, "form", "noButtons", "disabled", "submit", "cancel"], [1, "row"], ["label", "Pai", "controlName", "tem_filhos", "labelInfo", "Se possui filhos, se \u00E9 uma tarefa sint\u00E9tica (resumo)", 3, "size"], ["controlName", "tipo", 3, "size", "label", "control", "items"], ["icon", "bi bi-arrow-up-right-circle", "controlName", "status_tarefa", 3, "size", "label", "items"], ["label", "Nome", "controlName", "nome", "labelInfo", "Nome da tarefa", 3, "size"], ["displayOnlySelected", "", "controlName", "demanda_id", 3, "size", "dao", "displayTemplate"], ["demanda", ""], ["displayDemanda", ""], ["controlName", "numero_processo", "labelInfo", "N\u00FAmero do processo, com a formata\u00E7\u00E3o de origem", 3, "label", "size", "control", "disabled"], ["procRequisicao", ""], ["controlName", "numero_documento", "labelInfo", "Numero do documento de requisi\u00E7\u00E3o, caso seja o Sei \u00E9 o numero Sei", 3, "label", "size", "control", "disabled"], ["docRequisicao", ""], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", 3, "size", "rows"], ["title", "Cronograma e progresso"], ["label", "Marco", "controlName", "marco_inicio", "labelInfo", "Marco in\u00EDcio", 3, "size"], ["label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "inicio", 3, "date", "size"], ["label", "Marco", "controlName", "marco_termino", "labelInfo", "Marco t\u00E9rmino", 3, "size"], ["label", "T\u00E9rmino", "icon", "bi bi-calendar-date", "controlName", "termino", 3, "date", "size"], ["date", "", "label", "In\u00EDcio realizado", "icon", "bi bi-calendar-date", "controlName", "inicio_realizado", 3, "size"], ["date", "", "label", "T\u00E9rmino realizado", "icon", "bi bi-calendar-date", "controlName", "termino_relizado", 3, "size"], ["number", "", "prefix", "R$", "icon", "bi bi-clock", "controlName", "custo", "labelInfo", "Custo associado \u00E0 tarefa", 3, "label", "size"], ["number", "", "label", "Progresso", "sufix", "%", "icon", "bi bi-clock", "controlName", "progresso", "labelInfo", "Progresso do projeto (% Conclu\u00EDdo)", 3, "size"], ["title", "Configura\u00E7\u00F5es"], ["label", "Possui custos pr\u00F3prios", "scale", "small", "labelPosition", "right", "controlName", "ten_filhos", "labelInfo", "Define se a tarefa tem custos pr[oprios associados", 3, "size"], ["label", "Aloca recursos no projeto", "scale", "small", "labelPosition", "right", "controlName", "aloca_recursos_proprios", "labelInfo", "Aloca recursos pr\u00F3prios da tarefa", 3, "size"], ["scale", "small", "labelPosition", "right", "controlName", "possui_custos_proprios", "labelInfo", "Define se a tarefa tem custos pr[oprios associados", 3, "label", "size"], ["scale", "small", "labelPosition", "right", "controlName", "calcula_intervalo", "labelInfo", "Calculo intervalo de execu\u00E7\u00E3o da tarefa", 3, "label", "size"], ["label", "Contra\u00EDda", "scale", "small", "labelPosition", "right", "controlName", "contraido", "labelInfo", "Define se a tarefa tem custos pr[oprios associados", 3, "size"], ["label", "Agrupadora", "scale", "small", "labelPosition", "right", "controlName", "agrupador", "labelInfo", "A tarefa tem fun\u00E7\u00E3o agrupadora", 3, "size"], ["label", "Soma progresso das filhas", "scale", "small", "labelPosition", "right", "controlName", "soma_progresso_filhos", "labelInfo", "Calcula o progresso das tarefas filhas", 3, "size"], ["scale", "small", "labelPosition", "right", "controlName", "soma_recursos_alocados_filhos", "labelInfo", "Soma recursos das tarefas filhas", 3, "label", "size"]], template: function ProjetoTarefaFormPrincipalComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, inputs: { control: "control", entity: "entity", cdRef: "cdRef", projeto: "projeto" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵInheritDefinitionFeature"]], decls: 43, vars: 47, consts: [[3, "form", "noButtons", "disabled", "submit", "cancel"], [1, "row"], ["label", "Pai", "controlName", "tem_filhos", "labelInfo", "Se possui filhos, se \u00E9 uma tarefa sint\u00E9tica (resumo)", 3, "size"], ["controlName", "tipo", 3, "size", "label", "control", "items"], ["icon", "bi bi-arrow-up-right-circle", "controlName", "status_tarefa", 3, "size", "label", "items"], ["label", "Nome", "controlName", "nome", "labelInfo", "Nome da tarefa", 3, "size"], ["displayOnlySelected", "", "controlName", "atividade_id", 3, "size", "dao", "displayTemplate"], ["atividade", ""], ["displayAtividade", ""], ["controlName", "numero_processo", "labelInfo", "N\u00FAmero do processo, com a formata\u00E7\u00E3o de origem", 3, "label", "size", "control", "disabled"], ["procRequisicao", ""], ["controlName", "numero_documento", "labelInfo", "Numero do documento de requisi\u00E7\u00E3o, caso seja o Sei \u00E9 o numero Sei", 3, "label", "size", "control", "disabled"], ["docRequisicao", ""], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", 3, "size", "rows"], ["title", "Cronograma e progresso"], ["label", "Marco", "controlName", "marco_inicio", "labelInfo", "Marco in\u00EDcio", 3, "size"], ["label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "inicio", 3, "date", "size"], ["label", "Marco", "controlName", "marco_termino", "labelInfo", "Marco t\u00E9rmino", 3, "size"], ["label", "T\u00E9rmino", "icon", "bi bi-calendar-date", "controlName", "termino", 3, "date", "size"], ["date", "", "label", "In\u00EDcio realizado", "icon", "bi bi-calendar-date", "controlName", "inicio_realizado", 3, "size"], ["date", "", "label", "T\u00E9rmino realizado", "icon", "bi bi-calendar-date", "controlName", "termino_relizado", 3, "size"], ["number", "", "prefix", "R$", "icon", "bi bi-clock", "controlName", "custo", "labelInfo", "Custo associado \u00E0 tarefa", 3, "label", "size"], ["number", "", "label", "Progresso", "sufix", "%", "icon", "bi bi-clock", "controlName", "progresso", "labelInfo", "Progresso do projeto (% Conclu\u00EDdo)", 3, "size"], ["title", "Configura\u00E7\u00F5es"], ["label", "Possui custos pr\u00F3prios", "scale", "small", "labelPosition", "right", "controlName", "ten_filhos", "labelInfo", "Define se a tarefa tem custos pr[oprios associados", 3, "size"], ["label", "Aloca recursos no projeto", "scale", "small", "labelPosition", "right", "controlName", "aloca_recursos_proprios", "labelInfo", "Aloca recursos pr\u00F3prios da tarefa", 3, "size"], ["scale", "small", "labelPosition", "right", "controlName", "possui_custos_proprios", "labelInfo", "Define se a tarefa tem custos pr[oprios associados", 3, "label", "size"], ["scale", "small", "labelPosition", "right", "controlName", "calcula_intervalo", "labelInfo", "Calculo intervalo de execu\u00E7\u00E3o da tarefa", 3, "label", "size"], ["label", "Contra\u00EDda", "scale", "small", "labelPosition", "right", "controlName", "contraido", "labelInfo", "Define se a tarefa tem custos pr[oprios associados", 3, "size"], ["label", "Agrupadora", "scale", "small", "labelPosition", "right", "controlName", "agrupador", "labelInfo", "A tarefa tem fun\u00E7\u00E3o agrupadora", 3, "size"], ["label", "Soma progresso das filhas", "scale", "small", "labelPosition", "right", "controlName", "soma_progresso_filhos", "labelInfo", "Calcula o progresso das tarefas filhas", 3, "size"], ["scale", "small", "labelPosition", "right", "controlName", "soma_recursos_alocados_filhos", "labelInfo", "Soma recursos das tarefas filhas", 3, "label", "size"]], template: function ProjetoTarefaFormPrincipalComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "editable-form", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("submit", function ProjetoTarefaFormPrincipalComponent_Template_editable_form_submit_0_listener() { return ctx.onSaveData(); })("cancel", function ProjetoTarefaFormPrincipalComponent_Template_editable_form_cancel_0_listener() { return ctx.onCancel(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "div", 1);
@@ -181,7 +181,7 @@ ProjetoTarefaFormPrincipalComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODU
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("size", 12);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("size", 12)("dao", ctx.demandaDao)("displayTemplate", _r1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("size", 12)("dao", ctx.atividadeDao)("displayTemplate", _r1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](5);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("label", ctx.lex.noun("Processo"))("size", 3)("control", ctx.form.controls.numero_processo)("disabled", !ctx.gb.isEmbedded || (ctx.form.controls.numero_requisicao.value == null ? null : ctx.form.controls.numero_requisicao.value.length) ? "true" : undefined);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
@@ -678,7 +678,7 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
     }
     loadEtiquetas() {
         var _a;
-        //this.etiquetas = this.util.merge(row.atividade?.etiquetas_predefinidas, row.unidade?.etiquetas, (a, b) => a.key == b.key); 
+        //this.etiquetas = this.util.merge(row.atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key); 
         this.etiquetas = this.util.merge(this.etiquetas, (_a = this.auth.usuario.config) === null || _a === void 0 ? void 0 : _a.etiquetas, (a, b) => a.key == b.key);
     }
     loadData(entity, form) {
@@ -1037,10 +1037,8 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
                         path: path,
                         nome: src.name,
                         descricao: src.description,
-                        id_processo: origem.id_processo,
-                        numero_processo: origem.numero_processo,
-                        id_documento: origem.id_documento,
-                        numero_documento: origem.numero_documento,
+                        documento_id: origem.documento_id,
+                        documento: origem.documento,
                         inicio: src.start,
                         termino: src.end,
                         duracao: src.duration,
@@ -11927,8 +11925,6 @@ class ProjetoRegra extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.nome = ""; /* Nome da regra */
         this.tipo_recurso = "MATERIAL"; /* Tipo do recurso */
         this.perfis = []; /* Lista de perfis da regra */
-        this.data_inicio = new Date(); /* Data de criação */
-        this.data_fim = null; /* Data final do registro */
         this.projeto_id = "";
         this.initialization(data);
     }
@@ -12635,8 +12631,6 @@ class Projeto extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.descricao = ""; /* Descrição do projeto */
         this.finalidade = ""; /* Descrição do projeto */
         this.status = 'PLANEJADO'; /* Status do projeto */
-        this.data_inicio = new Date(); /* Data de criação */
-        this.data_fim = null; /* Data final do registro */
         this.inicio = new Date(); /* Inicio do projeto */
         this.termino = new Date(); /* Fim do projeto */
         this.inicio_baseline = new Date(); /* Inicio do projeto (Baseline) */
@@ -15842,10 +15836,6 @@ class ProjetoTarefa extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.path = ""; /* Path dos nós pais */
         this.nome = ""; /* Nome da tarefa */
         this.descricao = ""; /* Descricao da tarefa */
-        this.id_processo = null; /* ID do processo SEI */
-        this.numero_processo = null; /* Número do processo SEI */
-        this.id_documento = null; /* ID do documento SEI */
-        this.numero_documento = null; /* Numero do documento SEI */
         this.inicio = new Date(); /* Inicio da tarefa */
         this.termino = new Date(); /* Fim da tarefa */
         this.inicio_baseline = null; /* Inicio do projeto (Baseline) */
@@ -15870,8 +15860,9 @@ class ProjetoTarefa extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.projeto_id = "";
         this.tarefa_pai_id = null;
         this.terefa_projeto_id = null; /* Projeto que será incorporado como uma tarefa */
-        this.demanda_id = "";
+        this.atividade_id = "";
         this.usuario_id = null;
+        this.documento_id = null;
         this.initialization(data);
     }
 }
@@ -19054,8 +19045,6 @@ class ProjetoRecurso extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.tipo = "MATERIAL"; /* Tipo do recurso */
         this.unidade_medida = "UNIDADE"; /* Unidade do recurso */
         this.valor = 0; /* Valor de cursto do recurso */
-        this.data_inicio = new Date(); /* Data de criação */
-        this.data_fim = null; /* Data fonal do registro */
         this.projeto_id = "";
         this.usuario_id = null;
         this.unidade_id = null;

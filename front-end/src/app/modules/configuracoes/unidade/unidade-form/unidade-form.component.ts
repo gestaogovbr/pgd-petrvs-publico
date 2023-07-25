@@ -85,7 +85,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       usar_expediente_entidade: {default: true},
       texto_complementar_plano: {default: ""}
     }, this.cdRef, this.validate);
-    this.join =  ["cidade", "entidade", "gestor", "gestor_substituto", "notificacoes_template"];
+    this.join =  ["cidade", "entidade", "gestor", "gestor_substituto", "notificacoes_templates"];
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -127,8 +127,8 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     await Promise.all ([
       this.unidadePai!.loadSearch(entity.unidade || entity.unidade_pai_id),
       this.cidade!.loadSearch(entity.cidade || entity.cidade_id),
-      this.gestor!.loadSearch(entity.gestor || entity.gestor!.id),
-      this.gestorSubstituto!.loadSearch(entity.gestor_substituto || entity.gestor_substituto!.id),
+      this.gestor!.loadSearch(entity.gestor),// || entity.gestor!.id),
+      this.gestorSubstituto!.loadSearch(entity.gestor_substituto),// || entity.gestor_substituto!.id),
       this.entidade!.loadSearch(entity.entidade || entity.entidade_id)
     ]);
     this.form.patchValue(this.util.fillForm(formValue, {...entity, ...{

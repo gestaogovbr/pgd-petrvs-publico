@@ -17,7 +17,7 @@ class ProjetoFase extends ModelBase
         'cor', /* varchar(100); NOT NULL; */// Código da cor em formato hex
         'nome', /* varchar(100); NOT NULL; */// Nome
         'descricao', /* varchar(256); NOT NULL; */// Descrição
-        'projeto_id', /* char(36); NOT NULL; */
+        'projeto_id', /* char(36); NOT NULL; */// Projeto
         //'deleted_at', /* timestamp; */
     ];
 

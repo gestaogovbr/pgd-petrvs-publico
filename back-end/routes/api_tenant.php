@@ -95,7 +95,6 @@ function defaultRoutes($controllerClass, $capacidades = []) {
     Route::post('download-url', [$controllerClass, 'downloadUrl']);
     Route::post('delete-file', [$controllerClass, 'deleteFile']);
 }
-
 $actions = config('petrvs')['actions']['api'];
 
 /* Testes */

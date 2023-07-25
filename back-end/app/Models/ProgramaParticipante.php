@@ -14,8 +14,8 @@ class ProgramaParticipante extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'habilitado', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se o participante está habilitado ou não para o programa
-        'programa_id', /* char(36); NOT NULL; */
-        'usuario_id', /* char(36); NOT NULL; */
+        'programa_id', /* char(36); NOT NULL; */// Programa relacionado ao participante
+        'usuario_id', /* char(36); NOT NULL; */// Participante relacionado ao programa
         //'deleted_at', /* timestamp; */
     ];
 

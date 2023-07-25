@@ -23,15 +23,15 @@ export class Unidade extends Base implements HasNotificacao {
     public entidade?: Entidade; /* Objeto da entidade */
     public cidade?: Cidade; /* Objeto da cidade */
     public unidade?: Unidade; /* Objeto da unidade pai */
-    public gestor?: Usuario; /* Objeto do ususario gestor */
-    public gestor_substituto?: Usuario; /* Objeto do ususario gestor substituto */
+    public gestor: Usuario | null = null; /* Objeto do ususario gestor */
+    public gestor_substituto: Usuario | null = null; /* Objeto do ususario gestor substituto */
     public atividades?: Atividade[]; /* Lista de atividades */
     public planos_trabalho?: PlanoTrabalho[]; /* Lista de planos de trabalho */
     public planos_entrega?: PlanoEntrega[]; /* Lista de planos de entrega */
     public entregas_plano_entrega?: PlanoEntregaEntrega[]; /* Lista de entregas de plano de entrega */
     public programas?: Programa[]; /* Lista de programas */
     public recursos_projeto?: ProjetoRecurso[]; /* Lista de recursos de projeto */
-    public notificacoes_template?: Template[]; /* Lista de templates */
+    public notificacoes_templates?: Template[]; /* Lista de templates */
     public unidades?: Unidade[]; /* Lista de unidades */
     public planejamentos?: Planejamento[]; /* Lista de planejamentos institucionais */
     public cadeias_valor?: CadeiaValor[]; /* Lista de cadeias de valor */

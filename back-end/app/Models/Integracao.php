@@ -14,8 +14,8 @@ class Integracao extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'data_execucao', /* datetime; NOT NULL; */// Data em que a rotina de integração foi executada
-        'usuario_id', /* char(36); */
-        'entidade_id', /* char(36); NOT NULL; */
+        'usuario_id', /* char(36); */// Usuário que executou a rotina de integração (opcional, porque pode ser executada por terminal)
+        'entidade_id', /* char(36); NOT NULL; */// Entidade que executou a rotina de integração
         'atualizar_unidades', /* tinyint(1); NOT NULL; */// Define se a rotina deve atualizar as unidades
         'atualizar_servidores', /* tinyint(1); NOT NULL; */// Define se a rotina deve atualizar os servidores
         'atualizar_gestores', /* tinyint(1); NOT NULL; */// Define se a rotina deve atualizar os gestores

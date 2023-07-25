@@ -80,9 +80,9 @@ class PlanoTrabalhoService extends ServiceBase
   public function validateStore($data, $unidade, $action)
   {
     $unidade_id = $data["unidade_id"];
-    $usuario = Usuario::with("lotacoes")->find($data["usuario_id"]);
-    $criador = Usuario::with("lotacoes")->find(parent::loggedUser()->id);
-    $usuario_lotacoes_ids = $usuario->lotacoes->map(function ($item, $key) {
+    $usuario = Usuario::with("areasTrabalho")->find($data["usuario_id"]);
+    $criador = Usuario::with("areasTrabalho")->find(parent::loggedUser()->id);
+    $usuario_lotacoes_ids = $usuario->areasTrabalho->map(function ($item, $key) {
       return $item->unidade_id;
     })->all();
     $criador_lotacoes_ids = $criador->lotacoes->map(function ($item, $key) {

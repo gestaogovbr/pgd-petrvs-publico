@@ -407,6 +407,13 @@ class ProgramaFormComponent extends src_app_modules_base_page_form_base__WEBPACK
             }
             return result;
         };
+        this.formValidation = (form) => {
+            let result = null;
+            if (this.form.controls.data_fim_vigencia.value && this.form.controls.data_inicio_vigencia.value > this.form.controls.data_fim_vigencia.value) {
+                result = "A data do fim não pode ser anterior à data do inicio!";
+            }
+            return result;
+        };
         this.titleEdit = (entity) => {
             return "Editando " + ((entity === null || entity === void 0 ? void 0 : entity.nome) || "");
         };
@@ -425,7 +432,7 @@ class ProgramaFormComponent extends src_app_modules_base_page_form_base__WEBPACK
             termo_obrigatorio: { default: false },
             template_tcr_id: { default: null },
             tipo_documento_tcr_id: { default: null },
-            prazo_execucao: { default: 0 }
+            prazo_execucao: { default: 365 }
         }, this.cdRef, this.validate);
         this.join = ["unidade"];
     }
@@ -456,7 +463,7 @@ ProgramaFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵde
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵloadQuery"]()) && (ctx.unidade = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵInheritDefinitionFeature"]], decls: 16, vars: 27, consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "unidade_id", 3, "size", "dao"], ["unidade", ""], ["date", "", "label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio_vigencia", "labelInfo", "In\u00EDcio da Vig\u00EAncia do Programa", 3, "size", "control"], ["date", "", "label", "Final", "icon", "bi bi-calendar-date", "controlName", "data_fim_vigencia", "labelInfo", "Final da Vig\u00EAncia do Programa", 3, "size", "control"], ["label", "Dura\u00E7\u00E3o P.E.", "icon", "bi bi-blockquote-left", "controlName", "prazo_execucao", "labelInfo", "Limite m\u00E1ximo de dias corridos para o plano de entregas (Zero para n\u00E3o limitar)", 3, "size", "control"], ["label", "T\u00EDtulo", "icon", "bi bi-textarea-t", "controlName", "nome", 3, "size", "control"], ["label", "Normativa", "icon", "bi bi-blockquote-left", "controlName", "normativa", "labelInfo", "Normativa que regula o Programa", 3, "size", "control"], ["title", "Configura\u00E7\u00F5es"], ["label", "Se o termo \u00E9 obrigat\u00F3rio", "controlName", "termo_obrigatorio", "scale", "small", "labelPosition", "right", 3, "size"], ["detailsButton", "", "labelInfo", "Template do termo utilizado no plano de trabalho", "controlName", "template_tcr_id", 3, "label", "size", "dao", "where", "selectRoute", "details"], ["controlName", "tipo_documento_tcr_id", "labelInfo", "Tipo de documento utilizado para exportar o termo para o SEI/SUPER", 3, "label", "size", "dao"], ["tipoDocumento", ""]], template: function ProgramaFormComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵInheritDefinitionFeature"]], decls: 16, vars: 27, consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "unidade_id", 3, "size", "dao"], ["unidade", ""], ["date", "", "label", "Data de In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio_vigencia", "labelInfo", "Data de in\u00EDcio da vig\u00EAncia do programa de gest\u00E3o na unidade instituidora", 3, "size", "control"], ["date", "", "label", "Data de Fim", "icon", "bi bi-calendar-date", "controlName", "data_fim_vigencia", "labelInfo", "Data de fim da vig\u00EAncia do programa de gest\u00E3o na unidade instituidora", 3, "size", "control"], ["label", "Vig\u00EAncia M\u00E1x P.E.", "icon", "bi bi-blockquote-left", "controlName", "prazo_execucao", "labelInfo", "Limite m\u00E1ximo de dias corridos para a dura\u00E7\u00E3o do plano de entregas a partir da sua data de cria\u00E7\u00E3o (Zero para n\u00E3o limitar)", 3, "size", "control"], ["label", "T\u00EDtulo", "icon", "bi bi-textarea-t", "controlName", "nome", 3, "size", "control"], ["label", "Normativa", "icon", "bi bi-blockquote-left", "controlName", "normativa", "labelInfo", "Normativa que regula o Programa", 3, "size", "control"], ["title", "Configura\u00E7\u00F5es"], ["label", "Se o termo \u00E9 obrigat\u00F3rio", "controlName", "termo_obrigatorio", "scale", "small", "labelPosition", "right", 3, "size"], ["detailsButton", "", "labelInfo", "Template do termo utilizado no plano de trabalho", "controlName", "template_tcr_id", 3, "label", "size", "dao", "where", "selectRoute", "details"], ["controlName", "tipo_documento_tcr_id", "labelInfo", "Tipo de documento utilizado para exportar o termo para o SEI/SUPER", 3, "label", "size", "dao"], ["tipoDocumento", ""]], template: function ProgramaFormComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "editable-form", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("submit", function ProgramaFormComponent_Template_editable_form_submit_0_listener() { return ctx.onSaveData(); })("cancel", function ProgramaFormComponent_Template_editable_form_cancel_0_listener() { return ctx.onCancel(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](1, "div", 1);
@@ -521,8 +528,6 @@ class ProgramaParticipante extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Bas
         super();
         this.todos = false;
         this.habilitado = true; /* Se o participante está habilitado */
-        this.data_inicio = new Date(); /* Data de início */
-        this.data_fim = null; /* Data do fim */
         this.programa_id = ""; /* Programa */
         this.usuario_id = ""; /* Usuario */
         this.initialization(data);
@@ -797,16 +802,14 @@ class Programa extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.nome = ""; /* Nome do programa */
         this.normativa = ""; /* Normativa que regula o programa */
         this.config = null; /* Configuração extra de programa */
-        this.unidade_id = ""; /* Unidade vinculada ao programa */
         this.data_inicio_vigencia = new Date(); /* Data de início vigencia */
         this.data_fim_vigencia = new Date(); /* Data de fim vigencia */
-        this.data_inicio = new Date(); /* Data de início */
-        this.data_fim = null; /* Data do fim */
         this.periodo_avaliacao = 'MENSAL'; /* Período para avaliação do plano */
-        this.template_tcr_id = null; /* Template do TCR */
         this.termo_obrigatorio = false; /* tinyint; NOT NULL; */
+        this.prazo_execucao = 365; /*Limite máximo de dias corridos para o plano de entregas (Zero para não limitar) */
+        this.unidade_id = ""; /* Unidade vinculada ao programa */
+        this.template_tcr_id = null; /* Template do TCR */
         this.tipo_documento_tcr_id = null; /* Tipo de documento do TCR */
-        this.prazo_execucao = 0; /*Limite máximo de dias corridos para o plano de entregas (Zero para não limitar) */
         this.initialization(data);
     }
 }

@@ -25,11 +25,11 @@ class PlanoTrabalho extends ModelBase
         'tempo_total', /* double(8,2); NOT NULL; DEFAULT: '0.00'; */// Horas úteis de trabalho no período de data_inicio_vigencia à data_fim_vigencia considerando carga_horaria, feriados, fins de semana
         'tempo_proporcional', /* double(8,2); NOT NULL; DEFAULT: '0.00'; */// tempo_total menos os afastamentos
         'forma_contagem_carga_horaria', /* enum('DIA','SEMANA','MES'); NOT NULL; DEFAULT: 'DIA'; */// Forma de contagem padrão da carga horária
-        'programa_id', /* char(36); NOT NULL; */
-        'usuario_id', /* char(36); NOT NULL; */
+        'programa_id', /* char(36); NOT NULL; */// Programa do plano de trabalho
+        'usuario_id', /* char(36); NOT NULL; */// Usuário do plano de trabalho
         'criacao_usuario_id', /* char(36); */
-        'unidade_id', /* char(36); NOT NULL; */
-        'documento_id', /* char(36); */
+        'unidade_id', /* char(36); NOT NULL; */// Unidade do plano de trabalho
+        'documento_id', /* char(36); */// Termo do plano de trabalho
         'tipo_modalidade_id', /* char(36); NOT NULL; */
         'plano_entrega_id', /* char(36); NOT NULL; */
         'data_inicio_vigencia', /* datetime; NOT NULL; */// Inicio do plano de trabalho
@@ -37,8 +37,8 @@ class PlanoTrabalho extends ModelBase
         'data_arquivamento', /* datetime; */// Data de arquivamento do plano de trabalho
         'data_cancelamento', /* datetime; */// Data de cancelamento do plano de trabalho
         'status', /* enum('INCLUINDO','HOMOLOGANDO','ATIVO','CONCLUIDO','AVALIADO','SUSPENSO'); NOT NULL; */// Status do plano de trabalho
-        //'numero', /* int; NOT NULL; */// Número do plano de trabalho (Gerado pelo sistema)
         //'deleted_at', /* timestamp; */
+        //'numero', /* int; NOT NULL; */// Número do plano de trabalho (Gerado pelo sistema)
     ];
 
     public $fillable_changes = ['entregas', 'documentos'];

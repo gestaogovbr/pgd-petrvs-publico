@@ -31,8 +31,8 @@ class Template extends ModelBase
         'entidade_id', /* char(36); */
         'unidade_id', /* char(36); */
         'dataset', /* json; */// Dados da parametrização
-        //'numero', /* int; NOT NULL; */// Número do template (Gerado pelo sistema)
         //'deleted_at', /* timestamp; */
+        //'numero', /* int; NOT NULL; */// Número do template (Gerado pelo sistema)
     ];
 
     // Casting

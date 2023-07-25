@@ -20,7 +20,7 @@ class PlanejamentoObjetivo extends ModelBase
         'path', /* text; */// Path dos nós pais separados por /, ou NULL caso sejam nós raiz
         'eixo_tematico_id', /* char(36); NOT NULL; */
         'objetivo_pai_id', /* char(36); */
-        'planejamento_id', /* char(36); NOT NULL; */
+        'planejamento_id', /* char(36); NOT NULL; */// Planejamento ao qual se refere o objetivo
         //'deleted_at', /* timestamp; */
     ];
 

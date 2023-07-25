@@ -41,8 +41,8 @@ class Documento extends ModelBase
         'plano_trabalho_id', /* char(36); */
         'template_id', /* char(36); */
         'plano_trabalho_id', /* char(36); */
-        //'numero', /* int; NOT NULL; */// Número do documento (Gerado pelo sistema)
         //'deleted_at', /* timestamp; */
+        //'numero', /* int; NOT NULL; */// Número do documento (Gerado pelo sistema)
     ];
 
     public $delete_cascade = ['assinaturas'];

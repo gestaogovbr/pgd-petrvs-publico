@@ -246,7 +246,7 @@ class EntidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK
         var _a, _b;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             let formValue = Object.assign({}, form.value);
-            this.campos = entity.campos_ocultos_demanda || [];
+            this.campos = entity.campos_ocultos_atividade || [];
             yield Promise.all([
                 (_a = this.cidade) === null || _a === void 0 ? void 0 : _a.loadSearch(entity.cidade || entity.cidade_id),
                 this.gestor.loadSearch(entity.gestor || entity.gestor_id),
@@ -538,7 +538,6 @@ class EntidadeConfComponent extends src_app_modules_base_page_form_base__WEBPACK
                 tipo_modalidade_id: entidade.tipo_modalidade_id,
                 nomenclatura: entidade.nomenclatura,
                 notificacoes: entidade.notificacoes,
-                notificacoes_templates: this.entity.notificacoes_templates,
                 expediente: entidade.expediente,
                 carga_horaria_padrao: entidade.carga_horaria_padrao,
                 forma_contagem_carga_horaria: entidade.forma_contagem_carga_horaria
@@ -613,7 +612,7 @@ EntidadeConfComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵde
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("onChange", ctx.onSingularChange.bind(ctx));
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("onChange", ctx.onPluralChange.bind(ctx));
-    } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__["EditableFormComponent"], _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_10__["TabsComponent"], _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_11__["TabComponent"], _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_12__["InputSearchComponent"], _components_input_input_workload_input_workload_component__WEBPACK_IMPORTED_MODULE_13__["InputWorkloadComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_14__["InputTextComponent"], _components_input_input_button_input_button_component__WEBPACK_IMPORTED_MODULE_15__["InputButtonComponent"], _uteis_calendar_expediente_calendar_expediente_component__WEBPACK_IMPORTED_MODULE_16__["CalendarExpedienteComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_17__["NgIf"], _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_18__["GridComponent"], _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_19__["ColumnsComponent"], _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_20__["ColumnComponent"], _uteis_notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_21__["NotificacaoConfigComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJlbnRpZGFkZS1jb25mLmNvbXBvbmVudC5zY3NzIn0= */"] });
+    } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__["EditableFormComponent"], _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_10__["TabsComponent"], _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_11__["TabComponent"], _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_12__["InputSearchComponent"], _components_input_input_workload_input_workload_component__WEBPACK_IMPORTED_MODULE_13__["InputWorkloadComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_14__["InputTextComponent"], _components_input_input_button_input_button_component__WEBPACK_IMPORTED_MODULE_15__["InputButtonComponent"], _uteis_calendar_expediente_calendar_expediente_component__WEBPACK_IMPORTED_MODULE_16__["CalendarExpedienteComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_17__["NgIf"], _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_18__["GridComponent"], _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_19__["ColumnsComponent"], _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_20__["ColumnComponent"], _uteis_notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_21__["NotificacoesConfigComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJlbnRpZGFkZS1jb25mLmNvbXBvbmVudC5zY3NzIn0= */"] });
 
 
 /***/ }),

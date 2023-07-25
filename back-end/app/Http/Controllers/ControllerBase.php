@@ -55,16 +55,12 @@ abstract class ControllerBase extends Controller
         $headers = $this->getPetrvsHeader($request);
         $unidade_id = !empty($headers) && !empty($headers["unidade_id"]) ? $headers["unidade_id"] : ($request->hasSession() ? $request->session()->get("unidade") : "");
         if(!empty($unidade_id)) {
-            $integrante = UnidadeIntegrante::with('unidade')->where("unidade_id", $unidade_id)->where("usuario_id", self::loggedUser()->id)->whereHas('atribuicoes', function (Builder $query) {
-                $query->where('atribuicao', 'LOTADO')->orWhere('atribuicao', 'COLABORADOR');
-            })->first();
-            if(!empty($integrante?->unidade)) $result = $integrante->unidade;
-            /*$usuario = Usuario::where("id", self::loggedUser()->id)->with(["areasTrabalho" => function ($query) use ($unidade_id) {
+            $usuario = Usuario::where("id", self::loggedUser()->id)->with(["areasTrabalho" => function ($query) use ($unidade_id) {
                 $query->where("unidade_id", $unidade_id);
             }, "areasTrabalho.unidade"])->first();
-            if(isset($usuario->areas_trabalho[0]) && !empty($usuario->areas_trabalho[0]->unidade_id)) {
-                return $usuario->areas_trabalho[0]->unidade;
-            }*/
+            if(isset($usuario->areasTrabalho[0]) && !empty($usuario->areasTrabalho[0]->unidade_id)) {
+                return $usuario->areasTrabalho[0]->unidade;
+            }
         }
         return $result;
     }
