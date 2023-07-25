@@ -166,7 +166,7 @@ EntregaListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdef
     } if (rf & 2) {
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵloadQuery"]()) && (ctx.grid = _t.first);
-    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵInheritDefinitionFeature"]], decls: 12, vars: 25, consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["controlName", "nome", 3, "size", "label", "control", "placeholder"], ["title", "Nome", "field", "nome", "orderBy", "nome"], ["title", "Descri\u00E7\u00E3o", "field", "descricao", "orderBy", "descricao"], ["type", "select", "field", "tipo_indicador", 3, "title", "items"], ["title", "Qualitativos", "field", "lista_qualitativos"], ["type", "options", 3, "onEdit", "options"], [3, "rows"]], template: function EntregaListComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵInheritDefinitionFeature"]], decls: 12, vars: 25, consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["controlName", "nome", 3, "size", "label", "control", "placeholder"], ["title", "Nome", "field", "nome", "orderBy", "nome"], ["title", "Descri\u00E7\u00E3o", "field", "descricao", "orderBy", "descricao"], ["type", "select", "field", "tipo_indicador", 3, "title", "items"], ["title", "Qualitativos", "field", "form!.controls.lista_qualitativos.key"], ["type", "options", 3, "onEdit", "options"], [3, "rows"]], template: function EntregaListComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "grid", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("select", function EntregaListComponent_Template_grid_select_0_listener($event) { return ctx.onSelect($event); });
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](1, EntregaListComponent_toolbar_1_Template, 1, 0, "toolbar", 1);
@@ -291,9 +291,9 @@ class EntregaFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
             return result;
         };
         this.formValidation = (form) => {
-            var _a;
+            var _a, _b;
             let result = null;
-            if (((_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.tipo_indicador.value) == 'QUALITATIVO' && !this.listaQualitativos.length) {
+            if (((_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.tipo_indicador.value) == 'QUALITATIVO' && !((_b = this.form) === null || _b === void 0 ? void 0 : _b.controls.lista_qualitativos.value.length)) {
                 result = "Quando o tipo da entrega for Qualitativo, é necessária a inclusão de ao menos um item de qualitativo!";
             }
             return result;
