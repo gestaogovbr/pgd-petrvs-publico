@@ -12,11 +12,13 @@ class UnidadeIntegranteAtribuicaoService extends ServiceBase {
 
     public function proxyStore($data, $unidade, $action) {
         if($action == ServiceBase::ACTION_INSERT && $data["atribuicao"] == "LOTADO"){
-            $vinculo = UnidadeIntegrante::find($data["unidade_usuario_id"]);
+            $vinculo = UnidadeIntegrante::find($data["unidade_integrante_id"]);
             $lotacao = $vinculo->usuario->lotacao;
             if(!empty($lotacao) && $lotacao->id != $unidade->id) {
-                UnidadeIntegranteAtribuicao::where('unidade_usuario_id',$vinculo->id)->where('atribuicao', 'LOTADO')->first()->delete();
-            } else if (!empty($lotacao) && $lotacao->id == $unidade->id) throw new ServerException("ValidateLotacao", "Usuário já é lotado nessa Unidade");
+                UnidadeIntegranteAtribuicao::where('unidade_integrante_id', $vinculo->id)->where('atribuicao', 'LOTADO')->first()->delete();
+            } /*else if (!empty($lotacao) && $lotacao->id == $unidade->id) {
+                throw new ServerException("ValidateLotacao", "Usuário já é lotado nessa Unidade");
+            }*/
         }
         return $data;
     }

@@ -20,7 +20,7 @@ class ProgramaParticipanteService extends ServiceBase {
         $where = [];
         foreach($data["where"] as $condition) {
             if(is_array($condition) && $condition[0] == "usuario.lotacoes.unidade.id") { 
-                $query->whereHas('lotacoes', function (Builder $query) use ($condition) {
+                $query->whereHas('areasTrabalho', function (Builder $query) use ($condition) {
                     $query->where('unidade_id', $condition[2]);
                 });
                 $this->unidadeId =  $condition[2];

@@ -11,7 +11,7 @@ use App\Services\ServiceBase;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class UnidadeUsuarioService extends ServiceBase 
+class UnidadeIntegranteService extends ServiceBase 
 {
     public function loadIntegrantes($unidadeId) {
         $result = [];
@@ -40,9 +40,9 @@ class UnidadeUsuarioService extends ServiceBase
             $lotar = function($vinculoNovo) use ($lotacao,$unidadeId,$integrante) {
                 if(!empty($lotacao) && $lotacao->id != $unidadeId) {
                     $vinculoAntigo = UnidadeIntegrante::where(['unidade_id' => $lotacao->id, 'usuario_id' => $integrante["usuario_id"]])->first();
-                    UnidadeIntegranteAtribuicao::where('unidade_usuario_id',$vinculoAntigo->id)->where('atribuicao', 'LOTADO')->first()->delete();
+                    UnidadeIntegranteAtribuicao::where('unidade_integrante_id',$vinculoAntigo->id)->where('atribuicao', 'LOTADO')->first()->delete();
                 }
-                if(empty($lotacao) || $lotacao->id != $unidadeId) UnidadeIntegranteAtribuicao::create(["atribuicao" => "LOTADO","unidade_usuario_id" => $vinculoNovo->id]);
+                if(empty($lotacao) || $lotacao->id != $unidadeId) UnidadeIntegranteAtribuicao::create(["atribuicao" => "LOTADO", "unidade_integrante_id" => $vinculoNovo->id]);
             };
             $vinculoNovo = UnidadeIntegrante::firstOrCreate(['unidade_id' => $unidadeId, 'usuario_id' => $integrante["usuario_id"]]);
             /* Lotação */
@@ -54,19 +54,19 @@ class UnidadeUsuarioService extends ServiceBase
                 $gerenciaTitular = $usuario->gerenciaTitular;
                 if(!empty($gerenciaTitular) && $gerenciaTitular->id != $unidadeId) {
                     $vinculoAntigo = UnidadeIntegrante::where(['unidade_id' => $gerenciaTitular->id, 'usuario_id' => $integrante["usuario_id"]])->first();
-                    UnidadeIntegranteAtribuicao::where('unidade_usuario_id',$vinculoAntigo->id)->where('atribuicao', 'GESTOR')->first()->delete();
+                    UnidadeIntegranteAtribuicao::where('unidade_integrante_id',$vinculoAntigo->id)->where('atribuicao', 'GESTOR')->first()->delete();
                 }
                 if(empty($gerenciaTitular) || $gerenciaTitular->id != $unidadeId) {
-                    $this->atribuicaoService->store([
+                    $this->unidadeIntegranteAtribuicaoService->store([
                         "atribuicao" => "GESTOR",
-                        "unidade_usuario_id" => $vinculoNovo->id
+                        "unidade_integrante_id" => $vinculoNovo->id
                     ], $unidade);
                 }
                 if(!$lotado) $lotar($vinculoNovo);
             }
             /* Outras atribuições */
             $outrasAtribuicoes = array_diff($atribuicoes, ['LOTADO','GESTOR']);
-            foreach($outrasAtribuicoes as $x) { UnidadeIntegranteAtribuicao::updateOrCreate(['atribuicao' => $x, 'unidade_usuario_id' => $vinculoNovo->id],[]); }
+            foreach($outrasAtribuicoes as $x) { UnidadeIntegranteAtribuicao::updateOrCreate(['atribuicao' => $x, 'unidade_integrante_id' => $vinculoNovo->id],[]); }
             DB::commit();
         } catch (Throwable $e) {
             DB::rollback();

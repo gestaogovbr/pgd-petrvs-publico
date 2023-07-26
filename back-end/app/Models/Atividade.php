@@ -66,7 +66,7 @@ class Atividade extends ModelBase
     ];
 
     // Has
-    public function tarefasAtividade() { return $this->hasMany(AtividadeTarefa::class); }    
+    public function tarefas() { return $this->hasMany(AtividadeTarefa::class); }    
     public function tarefasProjeto() { return $this->hasMany(ProjetoTarefa::class); }    
     public function pausas() { return $this->hasMany(AtividadePausa::class); }
     public function comentarios() { return $this->hasMany(Comentario::class); }

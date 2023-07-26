@@ -1,6 +1,7 @@
 
-<editable-form noButtons *ngIf="isSei || gb.isEmbedded" [form]="form!" confirmLabel="Assinar">
-    <separator transparent bottom title="Sei/Super">
+<editable-form *ngIf="isSei || gb.isEmbedded" noButtons [form]="form!" confirmLabel="Assinar">
+    <separator title="Sei/Super"></separator>
+    <separator transparent bottom>
         <div class="row">
             <input-button label="Número Processo" [size]="4" #numeroProcesso controlName="numero_processo" [control]="form!.controls.numero_processo" [disabled]="!gb.isEmbedded || form!.controls.numero_requisicao.value?.length ? 'true' : undefined" (buttonClick)="onNumeroProcessoClick($event)" labelInfo="Número do processo, com a formatação de origem"></input-button>
             <input-search [label]="lex.noun('Tipo de Processo')" [size]="8" #tipoProcesso controlName="tipo_processo_id"  disabled [dao]="tipoProcessoDao"></input-search>

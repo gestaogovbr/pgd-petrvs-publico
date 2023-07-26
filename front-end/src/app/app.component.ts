@@ -113,7 +113,6 @@ export class AppComponent {
       TAREFAS: { name: this.lex.translate("Tarefas"), permition: 'MOD_DMD', route: ['cadastros', 'tarefa'], icon: this.entity.getIcon('Tarefa') },
       TEMPLATES: { name: this.lex.translate("Templates"), permition: 'MOD_TEMP', route: ['cadastros', 'template'], icon: this.entity.getIcon('Template') },
       TIPOS_ATIVIDADES: { name: this.lex.translate("Tipos de Atividade"), permition: 'MOD_TIPO_ATV', route: ['cadastros', 'tipo-atividade'], icon: this.entity.getIcon('TipoAtividade') },
-      ATIVIDADES: { name: this.lex.translate("Atividades"), permition: 'MOD_ATV', route: ['cadastros', 'atividade'], icon: this.entity.getIcon('Atividade') },
       TIPOS_AVALIACOES: { name: this.lex.translate("Tipos de Avaliação"), permition: 'MOD_TIPO_AVAL', route: ['cadastros', 'tipo-avaliacao'], icon: this.entity.getIcon('TipoAvaliacao') },
       TIPOS_DOCUMENTOS: { name: this.lex.translate("Tipos de Documento"), permition: 'MOD_TIPO_DOC', route: ['cadastros', 'tipo-documento'], icon: this.entity.getIcon('TipoDocumento') },
       TIPOS_JUSTIFICATIVAS: { name: this.lex.translate("Tipos de Justificativa"), permition: 'MOD_TIPO_JUST', route: ['cadastros', 'tipo-justificativa'], icon: this.entity.getIcon('TipoJustificativa') },
@@ -123,7 +122,7 @@ export class AppComponent {
       /*Gestão*/
       //ADESAO: { name: this.lex.translate("Adesao", true), permition: 'MOD_ADES', route: ['gestao', 'adesao'], icon: this.entity.getIcon('Adesao') },
       CADEIAS_VALORES: { name: this.lex.translate("Cadeias de valor"), permition: 'MOD_CADV', route: ['gestao', 'cadeia-valor'], icon: this.entity.getIcon('CadeiaValor') },
-      DEMANDAS: { name: this.lex.translate("Demandas"), permition: '', route: ['gestao', 'demanda'], icon: this.entity.getIcon('Demanda') },
+      ATIVIDADES: { name: this.lex.translate("Atividades"), permition: 'MOD_ATV', route: ['gestao', 'atividade'], icon: this.entity.getIcon('Atividade') },
       PLANEJAMENTOS_INSTITUCIONAIS: { name: this.lex.translate("Planejamentos Institucional"), permition: 'MOD_PLAN_INST', route: ['gestao', 'planejamento'], icon: this.entity.getIcon('Planejamento') },
       PLANOS_ENTREGAS: { name: this.lex.translate("Planos de Entrega"), permition: 'MOD_PENT', route: ['gestao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega') },
       PLANOS_TRABALHOS: { name: this.lex.translate("Planos de Trabalho"), permition: 'MOD_PTR', route: ['gestao', 'plano-trabalho'], icon: this.entity.getIcon('Plano') },
@@ -175,9 +174,8 @@ export class AppComponent {
       RXVISUALIZA_ADM_PESQUISA2: { name:"Administrador", permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-binoculars" },
       /*PROJETOS*/
 
-      CONSOLIDA: { name: "Consolidação", permition: '', route: ['configuracoes', 'sobre'], icon: "" },
       PAINEL: { name: "Painel", permition: '', route: ['configuracoes', 'sobre'], icon: "" },
-      AUDITORIA: { name: "Auditoria", permition: '', route: ['configuracoes', 'sobre'], icon: "" },
+      AUDITORIA: { name: "Auditoria", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
     };
 
     this.menuGestao = [{
@@ -188,6 +186,7 @@ export class AppComponent {
         this.menuSchema.CADEIAS_VALORES,
         this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
         this.menuSchema.PLANOS_ENTREGAS,
+        this.menuSchema.PROGRAMAS_GESTAO
       ].sort(this.orderMenu)
     }, {
       name: "Execução",
@@ -196,8 +195,7 @@ export class AppComponent {
       menu: [
         this.menuSchema.PLANOS_TRABALHOS,
         this.menuSchema.ATIVIDADES,
-        this.menuSchema.CONSOLIDA,
-        this.menuSchema.AFASTAMENTOS,
+        this.menuSchema.AFASTAMENTOS
       ].sort(this.orderMenu)
     }, {
       name: "Gerenciamento",
@@ -207,7 +205,7 @@ export class AppComponent {
         this.menuSchema.ENTIDADES,
         this.menuSchema.UNIDADES,
         this.menuSchema.USUARIOS,
-        this.menuSchema.PERFIS,
+        this.menuSchema.PERFIS
       ].sort(this.orderMenu)
     }, {
       name: "Cadastros",
@@ -216,10 +214,11 @@ export class AppComponent {
       menu: [
         this.menuSchema.EIXOS_TEMATICOS,
         this.menuSchema.ENTREGAS,
-        this.menuSchema.TIPOS_ATIVIDADES,
-        this.menuSchema.TIPOS_MOTIVOS_AFASTAMENTOS,
         this.menuSchema.TIPOS_AVALIACOES,
+        this.menuSchema.TIPOS_ATIVIDADES,
         this.menuSchema.TIPOS_JUSTIFICATIVAS,
+        this.menuSchema.TIPOS_MOTIVOS_AFASTAMENTOS,
+        this.menuSchema.TIPOS_TAREFAS
       ].sort(this.orderMenu)
     }];
 
@@ -227,8 +226,7 @@ export class AppComponent {
       this.menuSchema.PLANOS_TRABALHOS,
       this.menuSchema.ATIVIDADES,
       this.menuSchema.CONSOLIDA,
-      this.menuSchema.AFASTAMENTOS,
-
+      this.menuSchema.AFASTAMENTOS
     ];
 
     this.menuAdministrador = [{
@@ -245,8 +243,6 @@ export class AppComponent {
         this.menuSchema.TAREFAS,
         this.menuSchema.TEMPLATES,
         this.menuSchema.TIPOS_ATIVIDADES,
-        "-",
-        this.menuSchema.ATIVIDADES,
         this.menuSchema.TIPOS_AVALIACOES,
         this.menuSchema.TIPOS_DOCUMENTOS,
         this.menuSchema.TIPOS_JUSTIFICATIVAS,
@@ -262,10 +258,9 @@ export class AppComponent {
         this.menuSchema.ENTIDADES,
         this.menuSchema.UNIDADES,
         this.menuSchema.USUARIOS,
-        this.menuSchema.PERFIS,
+        this.menuSchema.PERFIS
       ].sort(this.orderMenu)
-    }
-    ];
+    }];
 
     this.menuDev = [{
       name: "Manutenção",
@@ -273,7 +268,7 @@ export class AppComponent {
       id: "navbarDropdownDevManutencao",
       menu: [
         this.menuSchema.ROTINAS_INTEGRACAO,
-        this.menuSchema.PAINEL,
+        this.menuSchema.PAINEL
       ]
     }, {
       name: "Logs e Auditoria",
@@ -282,7 +277,7 @@ export class AppComponent {
       menu: [
         this.menuSchema.LOGS_ALTERACOES,
         this.menuSchema.LOGS_ERROS,
-        this.menuSchema.LOGS_TRAFEGOS,
+        this.menuSchema.LOGS_TRAFEGOS
       ]
     }, {
       name: "Testes",
@@ -290,10 +285,9 @@ export class AppComponent {
       id: "navbarDropdownDevTestes",
       menu: [
         this.menuSchema.LOGS_TESTES_EXPEDIENTES,
-        this.menuSchema.TESTE_CALCULA_DATATEMPO,
+        this.menuSchema.TESTE_CALCULA_DATATEMPO
       ]
-    },
-    ];
+    }];
 
     this.menuPonto = [];
 
@@ -302,7 +296,7 @@ export class AppComponent {
       permition: "MENU_CAD_ACESSO",
       id: "navbarDropdownProjetoCadastros",
       menu: [
-        this.menuSchema.MATERIAIS_SERVICOS,
+        this.menuSchema.MATERIAIS_SERVICOS
       ]
     }, {
       name: "Gerencial",
@@ -310,7 +304,7 @@ export class AppComponent {
       id: "navbarDropdownProjetoGerencial",
       menu: [
         this.menuSchema.UNIDADES,
-        this.menuSchema.USUARIOS,
+        this.menuSchema.USUARIOS
       ]
     }, 
     this.menuSchema.PORTIFOLIO,
@@ -323,7 +317,7 @@ export class AppComponent {
       menu: [
         this.menuSchema.RXCADASTRO_PESSOAL,
         this.menuSchema.RXCADASTRO_PROFISSIONAL,
-        this.menuSchema.RXCADASTRO_ATRIBUTOS,
+        this.menuSchema.RXCADASTRO_ATRIBUTOS
         //this.menuSchema.RXCADASTRO_OPORTUNIDADES
       ]
     }, {
@@ -331,7 +325,7 @@ export class AppComponent {
       permition: "MOD_RX_VIS_DPE",
       id: "navbarDropdownRXOportunidades",
       menu: [
-        this.menuSchema.RXCADASTRO_ADM_OPORTUNIDADES,
+        this.menuSchema.RXCADASTRO_ADM_OPORTUNIDADES
       ]
     }, {
       name: "Pesquisas",
@@ -339,7 +333,7 @@ export class AppComponent {
       id: "navbarDropdownRXPesquisas",
       menu: [
         this.menuSchema.RXVISUALIZA_ADM_PESQUISA1,
-        this.menuSchema.RXVISUALIZA_ADM_PESQUISA2,
+        this.menuSchema.RXVISUALIZA_ADM_PESQUISA2
       ]
     }, {
       name: "Questionários Dinâmicos",
@@ -347,7 +341,7 @@ export class AppComponent {
       id: "navbarDropdownRXQD",
       menu: [
         this.menuSchema.RXCADASTRO_ADM_QUESTIONARIOS_PERGUNTAS,
-        this.menuSchema.RXCADASTRO_ADM_QUESTIONARIOS_RESPOSTAS,
+        this.menuSchema.RXCADASTRO_ADM_QUESTIONARIOS_RESPOSTAS
       ]
     }, {
       name: "Cadastros Gerais",
@@ -367,14 +361,14 @@ export class AppComponent {
         this.menuSchema.RXCADASTRO_ADM_AREASTEMATICAS,
         this.menuSchema.RXCADASTRO_ADM_CAPACIDADES_TECNICAS,
         "-",
-        this.menuSchema.RXCADASTRO_ADM_OPORTUNIDADES,
-      ],
+        this.menuSchema.RXCADASTRO_ADM_OPORTUNIDADES
+      ]
     }];
 
 
   this.menuContexto = [
-      { key: "GESTAO", icon: "bi bi-people-fill", name: "Gestão (PGD)", menu: this.menuGestao },
       { key: "EXECUCAO", icon: "bi bi-person-check", name: "Execução (PGD)", menu: this.menuExecucao },
+      { key: "GESTAO", icon: "bi bi-people-fill", name: "Gestão (PGD)", menu: this.menuGestao },
       { key: "ADMINISTRADOR", icon: "bi bi-emoji-sunglasses", name: "Administrador", menu: this.menuAdministrador },
       { key: "DEV", icon: "bi bi-braces", name: "Desenvolvedor", menu: this.menuDev },
       { key: "PONTO", icon: "bi bi-stopwatch", name: "Ponto eletrônico", menu: this.menuPonto },
@@ -386,6 +380,7 @@ export class AppComponent {
 
   public onContextoSelect(item: any) {
     this.contexto = item;
+    this.auth.usuarioConfig = {menu_contexto: item.key};
     this.goHome();
   }
 
@@ -403,25 +398,15 @@ export class AppComponent {
 
   public get menu(): any {
     switch (this.contexto.key) {
-      case "GESTAO":
-        return this.menuGestao;
-      case "EXECUCAO":
-        return this.menuExecucao;
-      case "ADMINISTRADOR":
-        return this.menuAdministrador;
-      case "DEV":
-        return this.menuDev;
-      case "PONTO":
-        return this.menuPonto;
-      case "PROJETO":
-        return this.menuProjeto;
-      case "RAIOX":
-        return this.menuRaioX;
-      default:
-        return [];
+      case "GESTAO": return this.menuGestao;
+      case "EXECUCAO": return this.menuExecucao;
+      case "ADMINISTRADOR": return this.menuAdministrador;
+      case "DEV": return this.menuDev;
+      case "PONTO": return this.menuPonto;
+      case "PROJETO": return this.menuProjeto;
+      case "RAIOX": return this.menuRaioX;
+      default: return [];
     }
-
-
   }
 
   public ngAfterViewInit() {
@@ -434,13 +419,13 @@ export class AppComponent {
     this.go.navigate({ route: ["login"] }, { modal: true });
   }
 
-  public menuItemClass(baseClass: string, activeRoute?: string[], menu?: any[]) {
-    console.log(this.go.getRouteUrl())
-    //let activeUrl = this.go.getRouteUrl().replace(/^\//, "");
-    //console.log(activeUrl)
-    //return baseClass + (((!!activeRoute && activeRoute.join("/") == activeUrl) || (!!menu && !!menu.find(x => x.route.join("/") == activeUrl)) ? " fw-bold" : ""));
-    return baseClass + (((!!activeRoute && activeRoute.join("/") ) || (!!menu && !!menu.find(x => x.route.join("/") )) ? "" : " fw-bold"));
-    //return baseClass + (this.go.isActivePath(activeRoute) ? " fw-bold" : "");
+  public menuItemClass(baseClass: string, item: any) {
+    let routeUrl = this.go.getRouteUrl().replace(/^\//, "");
+
+    if(item.menu?.find((x: any) => !x)) console.log(item);
+
+
+    return baseClass + (item.route?.join("/") == routeUrl || item.menu?.find((x: any) => x?.route?.join("/") == routeUrl) ? " fw-bold" : "");
   }
 
   public isButtonRunning(btn: ToolbarButton): boolean {
@@ -449,6 +434,10 @@ export class AppComponent {
 
   public buttonId(button: ToolbarButton) {
     return "button_" + this.utils.md5((button.icon || "") + (button.hint || "") + (button.label || ""));
+  }
+
+  public openModule(item: any) {
+    if(item.route) this.go.navigate({route: item.route}, item.metadata || {root: true});
   }
 
   public get unidades(): any[] {

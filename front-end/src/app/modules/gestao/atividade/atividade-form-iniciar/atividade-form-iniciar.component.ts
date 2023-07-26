@@ -92,8 +92,8 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
       };
     });
     this.cdRef.detectChanges();
-    if(!this.form.controls.plano_id.value?.length && this.planosTrabalhos.length == 1) {
-      this.form.controls.plano_id.setValue(this.planosTrabalhos[0].key);
+    if(!this.form.controls.plano_trabalho_id.value?.length && this.planosTrabalhos.length == 1) {
+      this.form.controls.plano_trabalho_id.setValue(this.planosTrabalhos[0].key);
     }
     this.cdRef.detectChanges();
   }

@@ -89,7 +89,7 @@ export class TemplatesComponent extends PageListBase<Template, TemplateDaoServic
       row.codigo = form.controls.codigo.value;
       row.titulo = form.controls.titulo.value;
       row.conteudo = form.controls.conteudo.value;
-      row.dataset = this.dataset;
+      row.dataset = this.templateService.prepareDatasetToSave(this.dataset || []);
       this.submitting = true;
       try {
         result = await this.dao!.save(row, this.join);

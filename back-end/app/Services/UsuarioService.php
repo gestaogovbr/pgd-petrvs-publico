@@ -157,7 +157,7 @@ class UsuarioService extends ServiceBase
     }
 
     public function extraStore($entity, $unidade, $action) {
-        $this->atribuicaoService->checkLotacoes($entity->id);
+        $this->unidadeIntegranteAtribuicaoService->checkLotacoes($entity->id);
     }
 
     public function hasLotacao($id, $usuario = null, $subordinadas = true) {

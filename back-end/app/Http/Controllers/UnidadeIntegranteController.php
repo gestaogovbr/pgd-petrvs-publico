@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use Throwable;
 
-class UnidadeUsuarioController extends ControllerBase {
+class UnidadeIntegranteController extends ControllerBase {
     
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {}
 

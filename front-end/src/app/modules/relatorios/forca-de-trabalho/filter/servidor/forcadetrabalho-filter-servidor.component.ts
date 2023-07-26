@@ -30,7 +30,7 @@ export class ForcaDeTrabalhoFilterServidorComponent extends PageReportFilterBase
     super(injector);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.form = this.fh.FormBuilder({
-      plano_id: {default: null},
+      plano_trabalho_id: {default: null},
       usuario_id: {default: null},
       data_inicio: {default: null},
       data_fim: {default: null},
@@ -40,7 +40,7 @@ export class ForcaDeTrabalhoFilterServidorComponent extends PageReportFilterBase
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if(['usuario_id','plano_id'].indexOf(controlName) >= 0 && !control.value?.length) result = "Obrigatório";
+    if(['usuario_id','plano_trabalho_id'].indexOf(controlName) >= 0 && !control.value?.length) result = "Obrigatório";
     if(['data_inicio', 'data_fim'].indexOf(controlName) >= 0 && control.value && !this.usuarioDao?.validDateTime(control.value)) result = "Data inválida";
     return result;
   }
@@ -68,15 +68,15 @@ export class ForcaDeTrabalhoFilterServidorComponent extends PageReportFilterBase
       };
     });
     this.cdRef.detectChanges();
-    if(!this.form.controls.plano_id.value?.length && this.planos.length == 1) { //se o controle PLANO está em branco e o usuário só possui 1 plano, preenche o controle com este plano
-      this.form.controls.plano_id.setValue(this.planos[0].key);
+    if(!this.form.controls.plano_trabalho_id.value?.length && this.planos.length == 1) { //se o controle PLANO está em branco e o usuário só possui 1 plano, preenche o controle com este plano
+      this.form.controls.plano_trabalho_id.setValue(this.planos[0].key);
     } else { // caso contrário deixa o controle em branco para que o usuário selecione o valor desejado
-      this.form.controls.plano_id.setValue(null);
+      this.form.controls.plano_trabalho_id.setValue(null);
     }
   }
 
   public onPlanoChange(event: Event) {
-    this.planoSelecionado = this.planos.find(x => x.key == this.form.controls.plano_id.value)?.data;
+    this.planoSelecionado = this.planos.find(x => x.key == this.form.controls.plano_trabalho_id.value)?.data;
   }
 
 }

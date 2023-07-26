@@ -18,7 +18,6 @@ const routes: Routes = [
   { path: 'login-retorno', component: LoginRetornoComponent, data: { title: "Retorno de login", login: true } },
   { path: 'config', component: ConfigComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Configurações", modal: true } },
   { path: 'uteis', loadChildren: () => import('./modules/uteis/uteis.module').then(m => m.UteisModule), canActivate: [AuthGuard] },
-  { path: 'cadastros/atividade', loadChildren: () => import('./modules/cadastros/tipo-atividade/tipo-atividade.module').then(m => m.TipoAtividadeModule), canActivate: [AuthGuard] },
   { path: 'cadastros/afastamento', loadChildren: () => import('./modules/cadastros/afastamento/afastamento.module').then(m => m.AfastamentoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/cidade', loadChildren: () => import('./modules/cadastros/cidade/cidade.module').then(m => m.CidadeModule), canActivate: [AuthGuard] },
   { path: 'cadastros/entrega', loadChildren: () => import('./modules/cadastros/entrega/entrega.module').then(m => m.EntregaModule), canActivate: [AuthGuard] },

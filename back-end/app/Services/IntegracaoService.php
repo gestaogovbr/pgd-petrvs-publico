@@ -705,7 +705,7 @@ class IntegracaoService extends ServiceBase {
                 $lotacao->usuario_id = $usuario->id;
                 $lotacao->save();
                 $lotacao->refresh();
-                UnidadeIntegranteAtribuicao::create(['unidade_usuario_id' => $lotacao->id, 'atribuicao' => 'LOTADO']);
+                UnidadeIntegranteAtribuicao::create(['unidadeintegrante_id' => $lotacao->id, 'atribuicao' => 'LOTADO']);
             }
         } else {
             $usuario = null; // se quem está logando não existe na tabela integracao_servidores

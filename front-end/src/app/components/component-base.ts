@@ -51,9 +51,9 @@ export abstract class ComponentBase {
 
     public generatedId(relativeId?: string | null): string {
         if(!this._generatedId) {
-            this._generatedId = "ID_" + this.ID_GENERATOR_BASE + "_" + this.util.onlyAlphanumeric(relativeId?.length ? relativeId : this.util.md5());
+            this._generatedId = "ID_" + this.ID_GENERATOR_BASE;
         }
-        return this._generatedId;
+        return this._generatedId + (relativeId?.length ? "_" + this.util.onlyAlphanumeric(relativeId) : ""); //this.util.md5()
     }
 
     public generatedButtonId(button: ToolbarButton, relativeId?: string) {

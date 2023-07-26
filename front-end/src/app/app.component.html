@@ -55,18 +55,17 @@
                 <!--button class="btn btn-outline-success me-2" type="button">Main button</button/ -->
                 <ul *ngIf="!globals.isToolbar && auth.logged" class="navbar-nav me-auto mb-2 mb-lg-0"> <!-- Lista do Menu Principal -->
                     <li class="nav-item">
-                        <a [class]="menuItemClass('nav-link', ['home'])" aria-current="page" role="button" (click)="goHome()">Home</a>
+                        <a [class]="menuItemClass('nav-link', {route: ['home']})" aria-current="page" role="button" (click)="goHome()">Home</a>
                     </li>
                     <ng-container *ngFor="let item of menu">
-                        <li *ngIf="!item.permition?.length || auth.hasPermissionTo(item.permition)" class="nav-item dropdown">
-                            <a [class]="menuItemClass('nav-link dropdown-toggle', item.route)" role="button" [attr.id]="item.id" role="button"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                {{item.name}}
+                        <li *ngIf="item && (!item.permition?.length || auth.hasPermissionTo(item.permition))" class="nav-item dropdown">
+                            <a [class]="menuItemClass('nav-link' + (!item.route ? ' dropdown-toggle' : ''), item)" role="button" [attr.id]="item.id" role="button" data-bs-toggle="dropdown" aria-expanded="false" (click)="openModule(item)">
+                                <!--i *ngIf="item?.icon" [class]="item!.icon"></i//--> {{item.name}}
                             </a>
-                            <ul class="dropdown-menu" [attr.aria-labelledby]="item.id">
+                            <ul *ngIf="!item.route" class="dropdown-menu" [attr.aria-labelledby]="item.id">
                                 <ng-container *ngFor="let itemMenu of item.menu">
-                                    <li *ngIf="!itemMenu.permition?.length || auth.hasPermissionTo(itemMenu.permition)">
-                                        <a *ngIf="itemMenu != '-'; else divider" [class]="menuItemClass('dropdown-item', itemMenu.route)" role="button" (click)="go.navigate({route: itemMenu.route}, itemMenu.metadata || {root: true})">
+                                    <li *ngIf="itemMenu && (!itemMenu.permition?.length || auth.hasPermissionTo(itemMenu.permition))">
+                                        <a *ngIf="itemMenu != '-'; else divider" [class]="menuItemClass('dropdown-item', itemMenu)" role="button" (click)="openModule(itemMenu)">
                                             <i [class]="itemMenu.icon"></i> {{itemMenu.name}}
                                         </a>
                                         <ng-template #divider>
