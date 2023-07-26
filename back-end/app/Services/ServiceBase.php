@@ -58,6 +58,7 @@ class ServiceBase extends DynamicMethods
     const ISO8601_FORMAT = "Y-m-d\TH:i:s";
     const ACTION_INSERT = "INSERT";
     const ACTION_UPDATE = "UPDATE";
+    const ACTION_EDIT = "EDIT";
 
     public string $collection = "";
     public string $developerId = "";
@@ -731,7 +732,7 @@ class ServiceBase extends DynamicMethods
     {
         $model = $this->getModel();
         $entity = UtilService::emptyEntry($dataOrEntity, "id") ? null : $model::find($dataOrEntity["id"]);
-        $action = empty($entity) ? ServiceBase::ACTION_INSERT : ServiceBase::ACTION_UPDATE;
+        $action = empty($entity) ? ServiceBase::ACTION_INSERT : ServiceBase::ACTION_EDIT;
         $entity = isset($entity) ? $entity : new $model();
         try {
             if($transaction) DB::beginTransaction();
@@ -745,7 +746,7 @@ class ServiceBase extends DynamicMethods
             if($transaction) DB::rollback();
             throw $e;
         }
-        $action = $entity->wasRecentlyCreated ? ServiceBase::ACTION_INSERT : ServiceBase::ACTION_UPDATE;
+        $action = $entity->wasRecentlyCreated ? ServiceBase::ACTION_INSERT : ServiceBase::ACTION_EDIT;
         $entity->fresh();
         if(method_exists($this, "afterStore")) $this->afterStore($entity, $action);
         return $entity;
@@ -766,7 +767,7 @@ class ServiceBase extends DynamicMethods
             try {
                 if($transaction) DB::beginTransaction();
                 $data = method_exists($this, "proxyUpdate") ? $this->proxyUpdate($data, $unidade) : $data;
-                $data = method_exists($entity, "proxyFill") ? $entity->proxyFill($data, $unidade, ServiceBase::ACTION_UPDATE) : $data;
+                $data = method_exists($entity, "proxyFill") ? $entity->proxyFill($data, $unidade, ServiceBase::ACTION_EDIT) : $data;
                 $keys = $entity->toArray();
                 $fillable = array_merge($entity->fillable_relations ?? [], $entity->fillable_changes ?? []);
                 $relations = [];

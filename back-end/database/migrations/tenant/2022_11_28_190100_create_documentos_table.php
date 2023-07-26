@@ -55,11 +55,11 @@ class CreateDocumentosTable extends Migration
         ');
         // Cria o campo documento_id devido a referência cruzada
         Schema::table('programas', function (Blueprint $table) {
-            $table->foreignUuid('documento_id')->nullable()->onDelete('restrict')->onUpdate('cascade')->comment("Documento relacionado ao programa");
+            $table->foreignUuid('documento_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Documento relacionado ao programa");
         });
         // Cria o campo documento_id devido a referência cruzada
         Schema::table('planos_trabalhos', function (Blueprint $table) {
-            $table->foreignUuid('documento_id')->nullable()->onDelete('restrict')->onUpdate('cascade')->comment("Termo do plano de trabalho");
+            $table->foreignUuid('documento_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Termo do plano de trabalho");
         });
     }
     

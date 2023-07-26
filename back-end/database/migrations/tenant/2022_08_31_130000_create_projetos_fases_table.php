@@ -26,7 +26,7 @@ class CreateProjetosFasesTable extends Migration
             $table->string('nome', 100)->comment("Nome");
             $table->string('descricao', 256)->comment("Descrição");
             // Chaves estrangeira criada na tabela 'projetos' devido à referência cruzada:
-            //$table->foreignUuid('projeto_id')->onDelete('restrict')->onUpdate('cascade')->comment("Projeto");
+            //$table->foreignUuid('projeto_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Projeto");
         });
     }
 

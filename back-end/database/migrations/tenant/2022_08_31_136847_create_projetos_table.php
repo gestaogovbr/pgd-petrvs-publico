@@ -49,13 +49,13 @@ class CreateProjetosTable extends Migration
             $table->json('kanban_dockers')->nullable()->comment("Configuração das Labels das swimlanes do quadro Kanban");
             $table->json('expediente')->nullable()->comment("Configuração de expediente");
             // Chaves estrangeiras:
-            $table->foreignUuid('usuario_id')->nullable()->onDelete('restrict')->onUpdate('cascade')->comment("Usuário que incluiu o projeto");
+            $table->foreignUuid('usuario_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Usuário que incluiu o projeto");
             $table->foreignUuid('tipo_projeto_id')->nullable()->constrained("tipos_projetos")->onDelete('restrict')->onUpdate('cascade');
             $table->foreignUuid('fase_id')->nullable()->constrained("projetos_fases")->onDelete('restrict')->onUpdate('cascade');
         });
         // Cria a chave estrangeira na tabela 'projetos_fases' devido à referência cruzada com 'projetos'
         Schema::table('projetos_fases', function (Blueprint $table) {
-            $table->foreignUuid('projeto_id')->onDelete('restrict')->onUpdate('cascade')->comment("Projeto");
+            $table->foreignUuid('projeto_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Projeto");
         });
         // Cria sequencia projeto_numero
         Schema::table('sequence', function (Blueprint $table) {

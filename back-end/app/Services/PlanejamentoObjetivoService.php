@@ -2,8 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Planejamento;
-
 class PlanejamentoObjetivoService extends ServiceBase
 {
     public function extraStore($planejamentoObjetivo, $unidade, $action) {

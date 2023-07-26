@@ -42,11 +42,6 @@ class Unidade extends ModelBase
         'entidade_id', /* char(36); NOT NULL; */
         'cidade_id', /* char(36); */
         //'deleted_at', /* timestamp; */
-        /*'atividades_avaliacao_automatico',*/// REMOVED
-        /*'planos_prazo_comparecimento',*/// REMOVED
-        /*'planos_tipo_prazo_comparecimento',*/// REMOVED
-        /*'autoedicao_subordinadas',*/// REMOVED
-        /*'avaliacao_hierarquica',*/// REMOVED
     ];
 
     public $fillable_relations = [];

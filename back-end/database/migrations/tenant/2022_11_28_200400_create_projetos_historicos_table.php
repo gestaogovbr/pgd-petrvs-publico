@@ -24,8 +24,8 @@ class CreateProjetosHistoricosTable extends Migration
             $table->tinyInteger('completo')->default(0)->comment("Se o delta corresponde ao objeto completo");
             $table->json('delta')->comment("Delta do objeto (ou objeto completo)");
             // Chaves estrangeiras:
-            $table->foreignUuid('projeto_id')->onDelete('restrict')->onUpdate('cascade')->comment("Projeto");
-            $table->foreignUuid('usuario_id')->onDelete('restrict')->onUpdate('cascade')->comment("Usuário");
+            $table->foreignUuid('projeto_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Projeto");
+            $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Usuário");
         });
     }
 

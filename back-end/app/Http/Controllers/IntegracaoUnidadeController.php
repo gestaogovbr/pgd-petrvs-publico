@@ -11,8 +11,8 @@ class IntegracaoUnidadeController extends ControllerBase {
             case 'STORE':
                 if (!$usuario->hasPermissionTo('MOD_LOGS')) throw new ServerException("CapacidadeStore");
                 break;
-            case 'UPDATE':
-                if (!$usuario->hasPermissionTo('MOD_LOGS')) throw new ServerException("CapacidadeUpdate");
+            case 'EDIT':
+                if (!$usuario->hasPermissionTo('MOD_LOGS')) throw new ServerException("CapacidadeEdit");
                 break;
             case 'DESTROY':
                 if (!$usuario->hasPermissionTo('MOD_LOGS')) throw new ServerException("CapacidadeDestroy");

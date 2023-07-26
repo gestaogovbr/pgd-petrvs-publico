@@ -14,7 +14,7 @@ class Favorito extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'config', /* json; */// Configurações do favoritos
-        'usuario_id', /* char(36); NOT NULL; */// Usuário
+        'usuario_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */
     ];
 

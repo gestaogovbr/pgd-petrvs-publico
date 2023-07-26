@@ -12,7 +12,7 @@
     progresso_esperado
     progresso_realizado
     destinatario
-    (id/created_at/updated_at/data_inicio/data_fim)
+    (id/created_at/updated_at/deleted_at)
         plano_entrega_id (*)
         entrega_id (*)
         entrega_pai_id

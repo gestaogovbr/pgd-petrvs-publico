@@ -21,8 +21,8 @@ class CreateUnidadesIntegrantesTable extends Migration
             $table->softDeletes();
             // Campos:
             // Chaves estrangeiras:
-            $table->foreignUuid('unidade_id')->onDelete('restrict')->onUpdate('cascade')->comment("Unidade participante do vínculo");
-            $table->foreignUuid('usuario_id')->onDelete('restrict')->onUpdate('cascade')->comment("Servidor participante do vínculo");
+            $table->foreignUuid('unidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Unidade participante do vínculo");
+            $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Servidor participante do vínculo");
         });
     }
 

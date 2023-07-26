@@ -6,9 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Usuario;
 use App\Exceptions\LogError;
-use App\Models\UnidadeIntegrante;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Database\Eloquent\Builder;
 use Throwable;
 
 abstract class ControllerBase extends Controller

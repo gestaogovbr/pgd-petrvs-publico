@@ -27,7 +27,7 @@ class CreateNotificacoesWhatsappTable extends Migration
             $table->json('interacoes')->default(new Expression('(JSON_ARRAY())'))->comment("Interações (histórico do campo atual)");
             $table->tinyInteger('atual')->default(0)->comment("Informações da posição atual no menu");
             // Chaves estrangeiras:
-            $table->foreignUuid('usuario_id')->nullable()->onDelete('restrict')->onUpdate('cascade')->comment("Usuário");
+            $table->foreignUuid('usuario_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Usuário");
         });
     }
 

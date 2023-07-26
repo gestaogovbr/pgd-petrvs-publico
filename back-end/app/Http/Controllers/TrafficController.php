@@ -8,7 +8,7 @@ use App\Exceptions\ServerException;
 class TrafficController extends ControllerBase {
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
-            case 'UPDATE':
+            case 'EDIT':
                 if (!$usuario->hasPermissionTo('MOD_LOGS_EDT')) throw new ServerException("CapacidadeStore", "Edição não executada");
                 break;
             case 'DESTROY':

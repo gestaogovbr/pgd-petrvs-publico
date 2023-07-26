@@ -18,8 +18,8 @@ class Anexo extends ModelBase
         'data_hora', /* datetime; NOT NULL; */// Data e horário que foi feito o comentário
         'path', /* varchar(256); */// Path relativo do arquivo
         'base64', /* text; */// Arquivo em formato base64
-        'usuario_id', /* char(36); */// Referente ao Usuário
-        'comentario_id', /* char(36); */// Referente ao Comentário
+        'usuario_id', /* char(36); */
+        'comentario_id', /* char(36); */
         //'deleted_at', /* timestamp; */
     ];
    

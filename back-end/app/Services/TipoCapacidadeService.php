@@ -183,7 +183,7 @@ class TipoCapacidadeService extends ServiceBase {
         ["MOD_PTR_ENTR_INCL", "Permite incluir entregas de um plano de trabalho"],        
         /* Capacidades do módulo PLANO DE ENTREGAS*/
         ["MOD_PENT", "Permite acessar item menu plano de entregas"],
-        ["MOD_PENT_QQR_UND", "Permite Incluir/Editar planos de entrega de qualquer unidade (independente de ser gestor da unidade)"],
+        ["MOD_PENT_QQR_UND", "Permite Incluir/Editar planos de entrega de qualquer unidade, desde que possua também as respectivas MOD_PENT_INCL/MOD_PENT_EDT (independente de qualquer outra condição)"],
         ["MOD_PENT_CONS", "Permite consultar planos de entrega"],
         ["MOD_PENT_INCL", "Permite incluir planos de entrega"],
         ["MOD_PENT_EDT", "Permite editar planos de entrega"],

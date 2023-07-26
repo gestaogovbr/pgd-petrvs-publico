@@ -18,7 +18,7 @@ class NotificacaoWhatsapp extends ModelBase
         'ultima_interacao', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data hora utilizada para fazer o controle do tempo de sessão
         'interacoes', /* json; NOT NULL; DEFAULT: 'json_array()'; */// Interações (histórico do campo atual)
         'atual', /* tinyint; NOT NULL; */// Informações da posição atual no menu
-        'usuario_id', /* char(36); */// Usuário
+        'usuario_id', /* char(36); */
         //'deleted_at', /* timestamp; */
     ];
 

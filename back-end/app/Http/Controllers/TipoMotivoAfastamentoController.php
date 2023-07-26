@@ -14,7 +14,7 @@ class TipoMotivoAfastamentoController extends ControllerBase {
             case 'STORE':
                 if (!$usuario->hasPermissionTo('MOD_TIPO_MTV_AFT_INCL')) throw new ServerException("CapacidadeStore", "Inserção não executada");
                 break;
-            case 'UPDATE':
+            case 'EDIT':
                 if (!$usuario->hasPermissionTo('MOD_TIPO_MTV_AFT_EDT')) throw new ServerException("CapacidadeStore", "Edição não executada");
                 break;
             case 'DESTROY':

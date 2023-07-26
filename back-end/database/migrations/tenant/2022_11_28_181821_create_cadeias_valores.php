@@ -25,8 +25,8 @@ class CreateCadeiasValores extends Migration
             $table->dateTime('data_arquivamento')->nullable()->comment("Data de arquivamento da cadeia de valores");
             $table->string('nome', 256)->comment("Nome da cadeia de valores");
             // Chaves estrangeiras:
-            $table->foreignUuid('entidade_id')->onDelete('restrict')->onUpdate('cascade')->comment("Entidade da cadeia de valores");
-            $table->foreignUuid('unidade_id')->nullable()->onDelete('restrict')->onUpdate('cascade')->comment("Unidade da cadeia de valores (opcional)");
+            $table->foreignUuid('entidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Entidade da cadeia de valores");
+            $table->foreignUuid('unidade_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Unidade da cadeia de valores (opcional)");
         });
     }
 

@@ -15,6 +15,7 @@ class ServerException extends Exception
         "DprfSegurancaAuthService_Invalid_User_Or_Password" => "Usuário ou senha inválidos",
         "CapacidadeSearchText" => "Usuário não tem permissão para pesquisar nessa tabela",
         "CapacidadeStore" => "Usuário não tem permissão para gravar nessa tabela",
+        "CapacidadeUpdate" => "Usuário não tem permissão para realizar esta alteração",
         "ValidateAtividade" => "Erro ao validar atividade",
         "ValidatePlanoTrabalho" => "Erro ao validar Plano de Trabalho",
         "ValidatePlanejamentoInstitucional" => "Erro ao validar Planejamento Institucional",

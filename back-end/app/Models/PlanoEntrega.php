@@ -20,14 +20,14 @@ class PlanoEntrega extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'nome', /* varchar(256); NOT NULL; */// Nome do plano de entregas
-        'planejamento_id', /* char(36); */// Planejamento institucional ao qual está ligado o plano de entregas
+        'planejamento_id', /* char(36); */
         'cadeia_valor_id', /* char(36); */
-        'unidade_id', /* char(36); NOT NULL; */// Unidade à qual está ligado o plano de entregas
+        'unidade_id', /* char(36); NOT NULL; */
         'status', /* enum('INCLUINDO','HOMOLOGANDO','ATIVO','CONCLUIDO','AVALIADO','SUSPENSO'); NOT NULL; */// Status do plano de entrega
         'plano_entrega_id', /* char(36); */
         'data_arquivamento', /* datetime; */// Data de arquivamento do plano de entregas
         'data_cancelamento', /* datetime; */// Data de cancelamento do plano de entregas
-        'programa_id', /* char(36); NOT NULL; */// Programa de gestão ao qual está vinculado o plano de entregas
+        'programa_id', /* char(36); NOT NULL; */
         'criacao_usuario_id', /* char(36); NOT NULL; */
         'inicio', /* datetime; NOT NULL; */// Data inicial do plano de entregas
         'fim', /* datetime; */// Data final do plano de entregas
