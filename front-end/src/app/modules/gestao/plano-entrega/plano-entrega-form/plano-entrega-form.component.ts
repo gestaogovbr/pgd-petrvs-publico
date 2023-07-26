@@ -84,7 +84,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     } else {
       const diffTime = Math.abs(inicio - fim);
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      if (programa.prazo_execucao > 0 && diffDays > programa.prazo_execucao) return "O prazo das datas não satisfaz a duração estipulada no programa.";
+      if (programa.prazo_execucao > 0 && diffDays > programa.prazo_execucao) return "A data de início e término" + this.lex.noun("Plano de Entrega", false, true) + " deve respeitar o período previsto no " + this.lex.noun("Programa");
     }
     return undefined;
   }
