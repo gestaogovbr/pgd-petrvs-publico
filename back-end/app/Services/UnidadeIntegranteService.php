@@ -32,7 +32,7 @@ class UnidadeIntegranteService extends ServiceBase
         DB::beginTransaction();
         try {
             $usuario = Usuario::find($integrante["usuario_id"]);
-            $lotacao = $usuario->lotacao;
+            $lotacao = $usuario->lotacao->unidade;
             $unidade = Unidade::find($unidadeId);
             if(empty($unidade) || empty($usuario)) throw new ServerException("ValidateUnidade", "Unidade/Usuário não existe no banco");
             $atribuicoes = $integrante["atribuicoes"];
@@ -40,9 +40,9 @@ class UnidadeIntegranteService extends ServiceBase
                 UnidadeIntegrante::where('usuario_id',$usuario->id)->where('unidade_id',$unidade->id)->first()->deleteCascade();
             } else {
                 $this->validateIntegrante($unidadeId, $integrante);
-                $lotar = function($vinculoNovo) use ($lotacao,$unidadeId,$integrante) {
+                $lotar = function($vinculoNovo) use ($lotacao,$unidadeId,$usuario) {
                     if(!empty($lotacao) && $lotacao->id != $unidadeId) {
-                        $vinculoAntigo = UnidadeIntegrante::where(['unidade_id' => $lotacao->id, 'usuario_id' => $integrante["usuario_id"]])->first();
+                        $vinculoAntigo = UnidadeIntegrante::where(['unidade_id' => $lotacao->id, 'usuario_id' => $usuario->id])->first();
                         UnidadeIntegranteAtribuicao::where('unidade_integrante_id',$vinculoAntigo->id)->where('atribuicao', 'LOTADO')->first()->delete();
                     }
                     if(empty($lotacao) || $lotacao->id != $unidadeId) UnidadeIntegranteAtribuicao::create(["atribuicao" => "LOTADO","unidade_integrante_id" => $vinculoNovo->id]);
@@ -60,7 +60,7 @@ class UnidadeIntegranteService extends ServiceBase
                         UnidadeIntegranteAtribuicao::where('unidade_integrante_id',$vinculoAntigo->id)->where('atribuicao', 'GESTOR')->first()->delete();
                     }
                     if(empty($gerenciaTitular) || $gerenciaTitular->id != $unidadeId) {
-                        $this->atribuicaoService->store([
+                        $this->unidadeIntegranteAtribuicaoService->store([
                             "atribuicao" => "GESTOR",
                             "unidade_integrante_id" => $vinculoNovo->id
                         ], $unidade);

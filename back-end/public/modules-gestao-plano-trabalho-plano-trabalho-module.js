@@ -780,7 +780,7 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
     addAtividades() {
         var _a;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            return new src_app_models_plano_trabalho_atividade_model__WEBPACK_IMPORTED_MODULE_11__["PlanoTrabalhoAtividade"]({ plano_id: (_a = this.entity) === null || _a === void 0 ? void 0 : _a.id, _status: "ADD" });
+            return new src_app_models_plano_trabalho_atividade_model__WEBPACK_IMPORTED_MODULE_11__["PlanoTrabalhoAtividade"]({ plano_trabalho_id: (_a = this.entity) === null || _a === void 0 ? void 0 : _a.id, _status: "ADD" });
         });
     }
     loadAtividades(form, row) {
@@ -813,7 +813,7 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
     addEntregas() {
         var _a;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            return new src_app_models_plano_trabalho_entrega_model__WEBPACK_IMPORTED_MODULE_12__["PlanoTrabalhoEntrega"]({ plano_id: (_a = this.entity) === null || _a === void 0 ? void 0 : _a.id, _status: "ADD" });
+            return new src_app_models_plano_trabalho_entrega_model__WEBPACK_IMPORTED_MODULE_12__["PlanoTrabalhoEntrega"]({ plano_trabalho_id: (_a = this.entity) === null || _a === void 0 ? void 0 : _a.id, _status: "ADD" });
         });
     }
     loadEntregas(form, row) {
@@ -956,7 +956,7 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
                                     modalResult = yield this.documentoDao.save(Object.assign(new src_app_models_documento_model__WEBPACK_IMPORTED_MODULE_10__["Documento"](), {
                                         especie: "TCR",
                                         conteudo: modalResult === null || modalResult === void 0 ? void 0 : modalResult.termo,
-                                        plano_id: this.entity.id,
+                                        plano_trabalho_id: this.entity.id,
                                         status: "GERADO"
                                     }), ["assinaturas.usuario:id,nome,apelido"]);
                                 }
@@ -1425,7 +1425,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
             entregaCatalogo: { default: null },
             descricao: { default: "" },
             forca_trabalho: { default: 1 },
-            plano_id: { default: null },
+            plano_trabalho_id: { default: null },
             entrega_id: { default: null },
             plano_entrega_entrega_id: { default: null }
         }, this.cdRef, this.validate);
@@ -1481,7 +1481,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
             return Object.assign(new src_app_models_plano_trabalho_entrega_model__WEBPACK_IMPORTED_MODULE_6__["PlanoTrabalhoEntrega"](), {
                 _status: this.isNoPersist ? "ADD" : "",
                 id: this.dao.generateUuid(),
-                plano_id: (_a = this.entity) === null || _a === void 0 ? void 0 : _a.id
+                plano_trabalho_id: (_a = this.entity) === null || _a === void 0 ? void 0 : _a.id
             });
         });
     }
@@ -1495,7 +1495,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             form.controls.descricao.setValue(row.descricao);
             form.controls.forca_trabalho.setValue(row.forca_trabalho);
-            form.controls.plano_id.setValue(row.plano_id);
+            form.controls.plano_trabalho_id.setValue(row.plano_trabalho_id);
             if (!((_a = row.entrega_id) === null || _a === void 0 ? void 0 : _a.length) && !((_b = row.plano_entrega_entrega_id) === null || _b === void 0 ? void 0 : _b.length)) { // É uma nova entrega
                 form.controls.origem.setValue('MESMA_UNIDADE');
                 form.controls.entrega_id.setValue(null);
