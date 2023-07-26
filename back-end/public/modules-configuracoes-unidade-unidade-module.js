@@ -764,7 +764,7 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
         }))();
     }
     /**
-     * Método chamado na inicialização do componente para carregar todos os integrantes da entidade.
+     * Método chamado na inicialização do componente para carregar todos os integrantes da unidade.
      * @param entity
      * @param form
      */

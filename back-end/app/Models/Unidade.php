@@ -82,7 +82,7 @@ class Unidade extends ModelBase
     public function entidade() { return $this->belongsTo(Entidade::class); }
     public function cidade() { return $this->belongsTo(Cidade::class); }  //nullable
     public function unidadePai() { return $this->belongsTo(Unidade::class, 'unidade_pai_id'); }    //nullable
-    //public function usuarios() { return $this->belongsToMany(Usuario::class)->withPivot('id'); } // verificar necessidade?
+    public function usuarios() { return $this->belongsToMany(Usuario::class, 'unidades_integrantes')->withPivot('id'); }
     // Others relationships
     public function gestor() { return $this->hasOne(UnidadeIntegrante::class)->has('gestor'); } 
     public function gestorSubstituto() { return $this->hasOne(UnidadeIntegrante::class)->has('gestorSubstituto'); }
@@ -105,7 +105,7 @@ class Unidade extends ModelBase
     { 
         $result = [];
         foreach($this->usuarios as $usuario){
-            $atribuicoes = UnidadeIntegranteAtribuicao::where('unidade_usuario_id', $usuario->pivot->id)->get()->toArray();
+            $atribuicoes = UnidadeIntegranteAtribuicao::where('unidade_integrante_id', $usuario->pivot->id)->get()->toArray();
             if(count($atribuicoes) > 0) $result[$usuario->id] = array_map(fn($a) => $a["atribuicao"],$atribuicoes);
         }
         return $result;

@@ -49,7 +49,7 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
       });
     }
     // Testa se o usuário possui permissão para consultar as lotações do usuario
-    if (this.auth.hasPermissionTo("MOD_LOT_CONS")) {
+/*     if (this.auth.hasPermissionTo("MOD_LOT_CONS")) {
       this.options.push({
       icon: "bi bi-pin-map",
       label: "Lotações",
@@ -57,7 +57,7 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
         this.go.navigate({route: ['configuracoes', 'usuario', usuario.id, 'lotacao']}, {modal: true});
         }
       });
-    }
+    } */
   }
 
   public filterClear(filter: FormGroup) {

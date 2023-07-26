@@ -47,16 +47,16 @@ UsuarioModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineInje
 /*!****************************************************!*\
   !*** ./src/app/models/unidade-integrante.model.ts ***!
   \****************************************************/
-/*! exports provided: UnidadeIntegranteConsolidado, UnidadeIntegrante */
+/*! exports provided: UnidadeIntegranteConsolidado, UsuarioIntegranteConsolidado, UnidadeIntegrante */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UnidadeIntegranteConsolidado", function() { return UnidadeIntegranteConsolidado; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UsuarioIntegranteConsolidado", function() { return UsuarioIntegranteConsolidado; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UnidadeIntegrante", function() { return UnidadeIntegrante; });
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
-//export type UnidadeIntegranteTipo = "AVALIADOR_ATIVIDADE" | "AVALIADOR_PLANO_ENTREGA" | "AVALIADOR_PLANO_TRABALHO" | "HOMOLOGADOR_PLANO_ENTREGA" | "LOTADO" | "GESTOR" | "GESTOR_SUBSTITUTO";
 class UnidadeIntegranteConsolidado {
     constructor() {
         this.id = ""; /* Utilizado somente para garantir o funcionamento do grid */
@@ -65,10 +65,17 @@ class UnidadeIntegranteConsolidado {
     }
 }
 ;
+class UsuarioIntegranteConsolidado {
+    constructor() {
+        this.id = ""; /* Utilizado somente para garantir o funcionamento do grid */
+        this.unidade_id = "";
+        this.atribuicoes = [];
+    }
+}
+;
 class UnidadeIntegrante extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
     constructor(data) {
         super();
-        //public principal: boolean = false; /* Se é a lotação principal */
         this.usuario_id = ""; /* Usuário vinculado */
         this.unidade_id = ""; /* Unidade Vinculada */
         this.atribuicoes = [];

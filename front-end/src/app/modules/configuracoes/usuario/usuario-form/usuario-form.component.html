@@ -32,7 +32,7 @@
                 <input-editor [label]="'Texto complementar ' + lex.noun('Plano de Trabalho',false,true)" controlName="texto_complementar_plano" [dataset]="planoDataset"></input-editor>
             </div>
         </tab>
-        <tab key="AREAS_TRABALHO" [label]="lex.translate('Áreas de Trabalho')">
+        <tab *ngIf="false" key="AREAS_TRABALHO" [label]="lex.translate('Áreas de Trabalho')">
             <grid [control]="form!.controls.lotacoes" [form]="formLotacoes" [add]="addLotacao.bind(this)" [load]="loadLotacao.bind(this)" [hasDelete]="true" [remove]="removeLotacao.bind(this)" [save]="saveLotacao.bind(this)" editable>
                 <columns>
                     <column [title]="lex.noun('Unidade')" [template]="columnUnidade" [editTemplate]="editUnidade">

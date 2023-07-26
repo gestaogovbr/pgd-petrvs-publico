@@ -56,7 +56,7 @@ use App\Http\Controllers\CargoController;
 use App\Http\Controllers\AreaGraduacaoController;
 use App\Http\Controllers\NotificacaoController;
 use App\Http\Controllers\PlanoTrabalhoEntregaController;
-use App\Http\Controllers\UnidadeUsuarioController;
+use App\Http\Controllers\UnidadeIntegranteController;
 use App\Http\Controllers\MateriaController;
 use App\Http\Controllers\CurriculumProfissionalController;
 use App\Http\Controllers\AreaAtividadeExternaController;
@@ -265,9 +265,9 @@ Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
     Route::post('dashboards', [UnidadeController::class, 'dashboards']);
     Route::post('inativo', [UnidadeController::class, 'inativo']);
 });
-Route::middleware(['auth:sanctum'])->prefix('UnidadeUsuario')->group(function () {
-    Route::post('load-integrantes', [UnidadeUsuarioController::class, 'loadIntegrantes']);
-    Route::post('save-integrante', [UnidadeUsuarioController::class, 'saveIntegrante']);
+Route::middleware(['auth:sanctum'])->prefix('UnidadeIntegrante')->group(function () {
+    Route::post('load-integrantes', [UnidadeIntegranteController::class, 'loadIntegrantes']);
+    Route::post('save-integrante', [UnidadeIntegranteController::class, 'saveIntegrante']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Capacidade')->group(function () { defaultRoutes(CapacidadeController::class); });
 

@@ -133,7 +133,7 @@ class PlanoTrabalhoService extends ServiceBase
     $usuario_lotacoes_ids = array_map(fn($u) => $u->id, Usuario::find($plano->usuario_id)->lotacoes);
     if (!in_array($plano->unidade_id, $usuario_lotacoes_ids)) {
       $this->atribuicaoService->store([
-        'unidade_usuario_id' => UnidadeIntegrante::firstOrCreate(['unidade_id' => $plano->unidade_id, 'usuario_id' => $plano->usuario_id])->id,
+        'unidade_integrante_id' => UnidadeIntegrante::firstOrCreate(['unidade_id' => $plano->unidade_id, 'usuario_id' => $plano->usuario_id])->id,
         'atribuicao' => 'COLABORADOR'
       ], $unidade);
     }

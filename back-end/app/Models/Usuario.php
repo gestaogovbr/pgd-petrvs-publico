@@ -133,7 +133,7 @@ class Usuario extends Authenticatable
     // belongsTo
     public function perfil() { return $this->belongsTo(Perfil::class); }     //nullable
     // belongsToMany
-    // public function unidades() { return $this->belongsToMany(Unidade::class)->withPivot('id'); }
+    public function unidades() { return $this->belongsToMany(Unidade::class, 'unidades_integrantes')->withPivot('id'); }
     // Others relationships
     public function gerenciaTitular() { return $this->hasOne(UnidadeIntegrante::class)->has('gestor'); }
     public function gerenciasSubstitutas() { return $this->hasMany(UnidadeIntegrante::class)->has('gestorSubstituto'); }
@@ -179,7 +179,7 @@ class Usuario extends Authenticatable
     { 
         $result = [];
         /*  foreach($this->unidades as $unidade){
-            $atribuicoes = UnidadeIntegranteAtribuicao::where('unidade_usuario_id', $unidade->pivot->id)->get()->toArray();
+            $atribuicoes = UnidadeIntegranteAtribuicao::where('unidade_integrante_id', $unidade->pivot->id)->get()->toArray();
             if(count($atribuicoes) > 0) $result[$unidade->id] = array_map(fn($a) => $a["atribuicao"],$atribuicoes); 
         } */
         foreach($this->areas_trabalho as $vinculo){

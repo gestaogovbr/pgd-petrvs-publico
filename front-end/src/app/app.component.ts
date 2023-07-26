@@ -435,7 +435,7 @@ export class AppComponent {
   }
 
   public menuItemClass(baseClass: string, activeRoute?: string[], menu?: any[]) {
-    console.log(this.go.getRouteUrl())
+    //console.log(this.go.getRouteUrl())
     //let activeUrl = this.go.getRouteUrl().replace(/^\//, "");
     //console.log(activeUrl)
     //return baseClass + (((!!activeRoute && activeRoute.join("/") == activeUrl) || (!!menu && !!menu.find(x => x.route.join("/") == activeUrl)) ? " fw-bold" : ""));

@@ -47,7 +47,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
   }
 
   /**
-   * Método chamado na inicialização do componente para carregar todos os integrantes da entidade.
+   * Método chamado na inicialização do componente para carregar todos os integrantes da unidade.
    * @param entity 
    * @param form 
    */
