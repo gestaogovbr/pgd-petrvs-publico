@@ -12,10 +12,9 @@
                 <input-search #tipoModalidade [size]="6" controlName="tipo_modalidade_id" [dao]="tipoModalidadeDao"></input-search>
             </div>
             <div class="row">
-                <input-workload [size]="3" [unit]="formaContagemCargaHoraria" label="Carga Horária" icon="bi bi-hourglass-split" controlName="carga_horaria" [control]="form!.controls.carga_horaria" [unitChange]="onFormaContagemCargaHorariaChange.bind(this)" (change)="onCargaHorariaChenge($event)" labelInfo="Carga horária do usuário (Máx.: diária 24 horas; semana 24*5=240 horas; mensal 24*20=480 horas)"></input-workload>
-                <input-timer onlyHours disabled [size]="3" label="Horas Totais" icon="bi bi-clock" controlName="tempo_total" [control]="form!.controls.tempo_total" labelInfo="Horas úteis de trabalho no período de vigência considerando a carga horária, feriados e fins de semana"></input-timer>
-                <input-timer onlyHours disabled [size]="3" label="Horas Parciais" icon="bi bi-clock" controlName="tempo_proporcional" [control]="form!.controls.tempo_proporcional" labelInfo="Total de horas menos os afastamentos."></input-timer>
-                <input-text numbers [size]="3" label="% Ganho produtividade" icon="bi bi-hourglass-split" controlName="ganho_produtividade" [control]="form!.controls.ganho_produtividade" [labelInfo]="'Percentual de ganho de produtividade (Será descontado do '+ lex.noun('tempo pactuado')+')'"></input-text>
+                <input-workload [size]="4" [unit]="formaContagemCargaHoraria" label="Carga Horária" icon="bi bi-hourglass-split" controlName="carga_horaria" [control]="form!.controls.carga_horaria" [unitChange]="onFormaContagemCargaHorariaChange.bind(this)" (change)="onCargaHorariaChenge($event)" labelInfo="Carga horária do usuário (Máx.: diária 24 horas; semana 24*5=240 horas; mensal 24*20=480 horas)"></input-workload>
+                <input-timer onlyHours disabled [size]="4" label="Horas Totais" icon="bi bi-clock" controlName="tempo_total" [control]="form!.controls.tempo_total" labelInfo="Horas úteis de trabalho no período de vigência considerando a carga horária, feriados e fins de semana"></input-timer>
+                <input-timer onlyHours disabled [size]="4" label="Horas Parciais" icon="bi bi-clock" controlName="tempo_proporcional" [control]="form!.controls.tempo_proporcional" labelInfo="Total de horas menos os afastamentos."></input-timer>
             </div>
             <separator *ngIf="horasTotais" title="Cálculos das horas totais" collapse>
                 <calendar-efemerides [efemerides]="horasTotais" [partial]="false"></calendar-efemerides>
@@ -23,24 +22,6 @@
             <separator *ngIf="horasParciais" title="Cálculos das horas parciais" collapse>
                 <calendar-efemerides [efemerides]="horasParciais"></calendar-efemerides>
             </separator>
-        </tab>
-        <tab key="ATIVIDADES" label="Atividades">
-            <top-alert type="warning" message="Caso a lista fique vazia, será considerado as atividades da unidade (e subordinadas)"></top-alert>
-            <div clss="row">
-                <grid #gridAtividades [control]="form!.controls.atividades" [form]="formAtividades" [add]="addAtividades.bind(this)" [load]="loadAtividades.bind(this)" [hasDelete]="true" [remove]="removeAtividades.bind(this)" [save]="saveAtividades.bind(this)" editable>
-                    <columns>
-                        <column [title]="lex.noun('Atividade')" [titleHint]="lex.noun('Atividade') + ' autorizada para o ' + lex.noun('Plano de trabalho')" [template]="columnAtividade" [editTemplate]="editAtividade">
-                            <ng-template let-row="row" #columnAtividade>
-                                <span> {{row.atividade?.nome || ""}}</span>
-                            </ng-template>
-                            <ng-template let-row="row" #editAtividade>
-                                <input-search #atividade [size]="12" label icon controlName="atividade_id" [control]="formAtividades!.controls.atividade_id" [dao]="atividadeDao"></input-search>
-                            </ng-template>
-                        </column>
-                        <column type="options"></column>
-                    </columns>
-                </grid>
-            </div>
         </tab>
         <tab key="ENTREGAS" [label]="lex.noun('Entrega', true)">
             <top-alert *ngIf="!form!.controls.plano_entrega_id.value?.length" type="warning" [message]="'Antes de incluir ' + lex.noun('entrega',true) + ' neste ' + lex.noun('Plano de Trabalho') + ', é necessário selecionar um ' + lex.noun('Plano de Entregas') + '!'"></top-alert>
