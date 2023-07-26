@@ -13,8 +13,8 @@ class UnidadeIntegranteAtribuicao extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'atribuicao', /* set('AVALIADOR_PLANO_ENTREGA','AVALIADOR_PLANO_TRABALHO','HOMOLOGADOR_PLANO_ENTREGA','LOTADO','COLABORADOR','GESTOR','GESTOR_SUBSTITUTO'); NOT NULL; DEFAULT: 'COLABORADOR'; */// Vínculo que o servidor tem com a unidade
+        'unidade_integrante_id', /* char(36); NOT NULL; */// Vínculo entre unidade/usuário ao qual se refere a atribuição
         //'deleted_at', /* timestamp; */
-        'unidade_integrante_id', /* char(36); NOT NULL; */
     ];
 
     // Has

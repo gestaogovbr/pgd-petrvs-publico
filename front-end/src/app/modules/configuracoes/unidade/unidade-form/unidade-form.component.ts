@@ -63,7 +63,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       notificacoes: {default: {}},
       etiquetas: {default: []},
       unidade_pai_id: {default: ""},
-      entidade_id: {default: ""},
+      entidade_id: {default: this.auth.unidade?.entidade_id},
       etiqueta_texto: {default: ""},
       etiqueta_icone: {default: null},
       etiqueta_cor: {default: null},
@@ -149,7 +149,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
   }
 
   public initializeData(form: FormGroup): void {
-    this.entity = new Unidade();
+    this.entity = new Unidade({ entidade_id: this.auth.unidade?.entidade_id, entidade: this.auth.unidade?.entidade });
     this.loadData(this.entity, form);
   }
 

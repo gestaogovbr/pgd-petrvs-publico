@@ -24,7 +24,7 @@ export type UsuarioVinculacao = "SERVIDOR_EFETIVO" | "SERVIDOR_COMISSIONADO" | "
 
 export class UsuarioConfig {
     etiquetas: LookupItem[] = [];
-    menu_contexto: string = "";
+    menu_contexto: string = "EXECUCAO";
     ocultar_menu_sei: boolean = true;
     ocultar_container_petrvs: boolean = false;
 }

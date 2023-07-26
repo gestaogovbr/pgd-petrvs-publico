@@ -40,8 +40,8 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
       { field: "codigo", label: "Código" },
       { field: "sigla", label: "Sigla" },
       { field: "nome", label: "Nome" },
-      { field: "gestor", label: "Gestor", fields: this.usuarioDao.dataset([]) },
-      { field: "gestor_substituto", label: "Gestor substituto", fields: this.usuarioDao.dataset([]) },
+      { field: "gestor", label: "Gestor", fields: this.usuarioDao.dataset([]), type: "OBJECT"},
+      { field: "gestor_substituto", label: "Gestor substituto", fields: this.usuarioDao.dataset([]), type: "OBJECT"},
       { field: "entidade", label: "Entidade", dao: this.entidadeDao },
       { field: "cidade", label: "Cidade", dao: this.cidadeDao },
       { field: "texto_complementar_plano", label: "Mensagem do Plano de trabalho", type: "TEMPLATE" }

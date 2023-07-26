@@ -222,7 +222,7 @@ export class DocumentosComponent extends PageFrameBase {
       datasource: this.datasource || null,
       template: this.metadata?.template.conteudo,
       template_id: this.metadata?.template.id,
-      plano_id: ["TCR"].includes(this.especie) ? this.entity!.id : null
+      plano_trabalho_id: ["TCR"].includes(this.especie) ? this.entity!.id : null
     });
     //this.onSelect(documento);
     //return documento;

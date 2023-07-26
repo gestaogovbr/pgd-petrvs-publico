@@ -278,7 +278,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
           }
           this.entregas = planoTrabalho.entregas?.map(x => Object.assign({}, {
             key: x.id,
-            value: x.entrega?.nome || "DESCONHECIDO",
+            value: x.descricao + (x.entrega ? " (" + x.entrega!.nome + ")" : ""),
             data: x
           })) || [];
           this.cdRef.detectChanges();
@@ -494,7 +494,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
         })))
       });
     } else {
-      this.sei = this.metadata.sei;
+      this.sei = this.metadata?.sei;
       this.entity = new Atividade();
       this.entity.data_distribuicao = this.auth.hora;
       this.entity.prazo_entrega = this.entity.data_distribuicao;

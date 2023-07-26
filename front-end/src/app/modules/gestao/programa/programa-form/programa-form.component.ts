@@ -53,7 +53,9 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
 
     if(['nome', 'unidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    }else if(['data_inicio_vigencia', 'data_fim_vigencia'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+    } else if(controlName == "prazo_execucao" && parseInt(control.value || 0) > 99999) {
+      result = "Inválido";
+    } else if(['data_inicio_vigencia', 'data_fim_vigencia'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
     }
 

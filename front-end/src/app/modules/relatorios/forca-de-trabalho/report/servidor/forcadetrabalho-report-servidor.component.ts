@@ -234,7 +234,7 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
     this.parametros.data_fim = this.parametros.data_fim ? new Date(this.parametros.data_fim) : null;
     let result = await Promise.all([
       this.dao?.getById(this.parametros.usuario_id),
-      this.planoDao?.getById(this.parametros.plano_id, ["atividades", "atividades.avaliacao", "unidade", "tipoModalidade"])
+      this.planoDao?.getById(this.parametros.plano_trabalho_id, ["atividades", "atividades.avaliacao", "unidade", "tipoModalidade"])
     ]);
     this.usuario = result[0];
     this.plano = result[1];

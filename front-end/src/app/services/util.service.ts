@@ -59,7 +59,10 @@ export class UtilService {
         return source.map(x => this.clone(x));
       } else if(source instanceof Date) {
         return new Date(source.getTime());
-      } else {
+      } else if(typeof source == "undefined") { 
+        return undefined;
+      } else { /* Object */
+        if(source == null) return null;
         let result: IIndexable = {};
         for (let [key, value] of Object.entries(source)) {
           result[key] = this.clone(value);

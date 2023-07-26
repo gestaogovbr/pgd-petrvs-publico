@@ -94,7 +94,7 @@ export class DocumentosLinkComponent extends PageFrameBase {
     this.util.fillForm(this._entity!.link, data);
   }
 
-  public isSei(): boolean {
+  public get isSei(): boolean {
     return this._entity?.tipo == "SEI";
   }
 

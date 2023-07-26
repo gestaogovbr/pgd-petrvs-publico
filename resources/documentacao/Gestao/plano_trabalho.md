@@ -51,3 +51,9 @@
 Sequência de métodos para salvar um registro em um grid editável:
 1. Ao pressionar o botão de gravar da nova linha, o método private async saveItem(itemRow: Base | IIndexable) do GridComponent é chamado;
 2. 
+
+
+********************* OBSERVACOES *********************
+- Ao entrar na tela de incluir o plano, pesquisar se a unidade (lotacao) do usuário tem apenas um plano de entrega ativo e já selecionar ele na tela
+- Se o usuário não for o gestor da unidade, já selecionar o próprio usuário automaticamente
+- Data fim deve ser maior que data inicio (não pode nem ser igual)

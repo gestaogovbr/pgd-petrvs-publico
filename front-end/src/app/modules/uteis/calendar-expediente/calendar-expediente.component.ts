@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { Expediente, Turno } from 'src/app/models/expediente.model';
 import { FormHelperService } from 'src/app/services/form-helper.service';
@@ -46,10 +46,12 @@ export class CalendarExpedienteComponent implements OnInit {
   private _expediente?: Expediente | null;
   private _disabled?: string;
   private _control?: AbstractControl;
+  public diasSemana: string[] = ["domingo", "segunda", "terca", "quarta", "quinta", "sexta", "sabado"];
   public form: FormGroup;
 
   constructor(
     public fh: FormHelperService,
+    public cdRef: ChangeDetectorRef,
     public util: UtilService
   ) {
     this.form = fh.FormBuilder({
@@ -79,10 +81,23 @@ export class CalendarExpedienteComponent implements OnInit {
       especial_fim: {default: ""},
       especial_data: {default: null},
       especial_sem: {default: false}
-    });
+    }, this.cdRef, this.validate);
   }
 
   ngOnInit(): void {
+  }
+
+  public validate = (control: AbstractControl, controlName: string) => {
+    let result = null;
+    for(let dia of this.diasSemana) {
+      if(controlName.startsWith(dia) && controlName.endsWith("_fim") && control?.value?.length) {
+        let inicio = this.form?.controls[dia + "_inicio"]?.value;
+        if(!this.util.isTimeValid(inicio) || !this.util.isTimeValid(control.value) || (this.util.getStrTimeHours(inicio) > this.util.getStrTimeHours(control.value))) {
+          return "Inválido";
+        }
+      }
+    }
+    return result;
   }
 
   public get isDisabled(): boolean {
@@ -174,7 +189,7 @@ export class CalendarExpedienteComponent implements OnInit {
     const data = this.form.controls.especial_data.value;
     const sem = this.form.controls.especial_sem.value;
     const key = this.util.textHash((dia == "especial" ? this.util.getDateFormatted(data) : "") + dia + inicio + fim);
-    if(this.util.isTimeValid(inicio) && this.util.isTimeValid(fim) && (dia != "especial" || data) && this.util.validateLookupItem(this.form.controls[dia].value, key)) {
+    if(this.util.isTimeValid(inicio) && this.util.isTimeValid(fim) && (this.util.getStrTimeHours(inicio) < this.util.getStrTimeHours(fim)) && (dia != "especial" || data) && this.util.validateLookupItem(this.form.controls[dia].value, key)) {
       result = {
         key: key,
         value: (dia == "especial" ? this.util.getDateFormatted(data) + " - " : "") + inicio + " até " + fim,

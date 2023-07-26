@@ -85,7 +85,7 @@ class PlanoTrabalhoService extends ServiceBase
     $usuario_lotacoes_ids = $usuario->areasTrabalho->map(function ($item, $key) {
       return $item->unidade_id;
     })->all();
-    $criador_lotacoes_ids = $criador->lotacoes->map(function ($item, $key) {
+    $criador_lotacoes_ids = $criador->areasTrabalho->map(function ($item, $key) {
       return $item->unidade_id;
     })->all();
     if (!count(array_intersect($usuario_lotacoes_ids, $criador_lotacoes_ids)) && !parent::loggedUser()->hasPermissionTo('MOD_PTR_USERS_INCL')) {
@@ -130,12 +130,12 @@ class PlanoTrabalhoService extends ServiceBase
   public function extraStore($plano, $unidade, $action)
   {
     /* Adiciona a Lotação automaticamente caso o usuário não tenha */
-    $usuario_lotacoes_ids = array_map(fn($u) => $u->id, Usuario::find($plano->usuario_id)->lotacoes);
+    $usuario_lotacoes_ids = array_map(fn($u) => $u["unidade_id"], Usuario::find($plano->usuario_id)->areasTrabalho?->toArray() ?? []);
     if (!in_array($plano->unidade_id, $usuario_lotacoes_ids)) {
-      $this->atribuicaoService->store([
+      $this->unidadeIntegranteAtribuicaoService->store([
         'unidade_integrante_id' => UnidadeIntegrante::firstOrCreate(['unidade_id' => $plano->unidade_id, 'usuario_id' => $plano->usuario_id])->id,
         'atribuicao' => 'COLABORADOR'
-      ], $unidade);
+      ], $unidade, false);
     }
   }
 

@@ -56,7 +56,7 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
       data_inicio: {default: null},
       suspender: {default: false}
     }, this.cdRef, this.validate);
-    this.join = ["unidade", "atividade", "usuario.planos_trabalho.tipo_modalidade", "usuario.plano_trabalhos.entregas.entrega:id,nome"];
+    this.join = ["unidade", "atividade", "usuario.planos_trabalho.tipo_modalidade", "usuario.planos_trabalho.entregas.entrega:id,nome"];
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -92,8 +92,8 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
       };
     });
     this.cdRef.detectChanges();
-    if(!this.form.controls.plano_id.value?.length && this.planosTrabalhos.length == 1) {
-      this.form.controls.plano_id.setValue(this.planosTrabalhos[0].key);
+    if(!this.form.controls.plano_trabalho_id.value?.length && this.planosTrabalhos.length == 1) {
+      this.form.controls.plano_trabalho_id.setValue(this.planosTrabalhos[0].key);
     }
     this.cdRef.detectChanges();
   }
@@ -118,7 +118,7 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
         /* Carrega entregas */
         this.planosTrabalhosEntregas = planoTrabalho.entregas?.map(x => Object.assign({}, {
           key: x.id,
-          value: x.entrega?.nome || "DESCONHECIDO",
+          value: x.descricao + (x.entrega ? " (" + x.entrega!.nome + ")" : ""),
           data: x
         })) || [];
         this.cdRef.detectChanges();

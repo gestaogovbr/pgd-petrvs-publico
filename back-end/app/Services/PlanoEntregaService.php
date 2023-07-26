@@ -64,26 +64,26 @@ class PlanoEntregaService extends ServiceBase
         $planoEntregaPai = !empty($planoEntrega['plano_entrega_id']) ? PlanoEntrega::find($planoEntrega['plano_entrega_id']) : null;
         $planoEntrega['unidade'] = !empty($planoEntrega['unidade_id']) ? Unidade::find($planoEntrega['unidade_id'])->toArray() : null;
         $planoEntrega['unidade']['planosEntrega'] = !empty($planoEntrega['unidade']) ? PlanoEntrega::where('unidade_id',$planoEntrega['unidade_id'])->get()->toArray() : null;
-        return [
-            "planoValido" => $this->isPlanoEntregaValido($planoEntrega),
-            "planoAtivo" => $this->isPlano("ATIVO", $planoEntrega),
-            "planoPaiAtivo" => $planoEntrega['plano_entrega_id'] ? $this->isPlano("ATIVO", $planoEntregaPai->toArray()) : false,
-            "planoHomologando" => $this->isPlano("HOMOLOGANDO", $planoEntrega),
-            "planoIncluindo" => $this->isPlano("INCLUINDO", $planoEntrega),
-            "planoProprio" => $planoEntrega['plano_entrega_id'] == null,
-            "planoVinculado" => $planoEntrega['plano_entrega_id'] != null,
-            "gestorUnidadePlano" => $this->usuario->isGestorUnidade($planoEntrega['unidade_id']),
-            "gestorUnidadePaiUnidadePlano" => !empty($planoEntrega['unidade']['unidade_id']) && $this->usuario->isGestorUnidade($planoEntrega['unidade']['unidade_id']),
-            "gestorLinhaAscendenteUnidadePlano" => !!array_filter($this->unidade->linhaAscendente($planoEntrega['unidade_id']), fn($u) => $this->usuario->isGestorUnidade($u)),
-            "unidadePlanoPaiEhUnidadePaiUnidadePlano" => $planoEntrega['plano_entrega_id'] ? $planoEntregaPai->unidade_id == $planoEntrega['unidade']['unidade_id'] : false,
-            "unidadePlanoEhLotacao" => $this->usuario->isLotacao($planoEntrega['unidade_id']),
-            "unidadePaiUnidadePlanoEhLotacao" => !empty($planoEntrega['unidade']['unidade_id']) && $this->usuario->isLotacao($planoEntrega['unidade']['unidade_id']),
-            "unidadePlanoEhAlgumaLotacaoUsuario" => in_array($planoEntrega['unidade_id'], array_map(fn($u) => $u['id'], $this->usuario->loggedUser()->unidades->toArray())),
-            "unidadePlanoEhPaiAlgumaLotacaoUsuario" => $this->usuario->loggedUser()->unidades->map(fn($u) => $u->id)->map(fn($ul) => Unidade::find($ul)->unidade_id)->contains($planoEntrega['unidade_id']),            
-            "unidadePlanoPossuiPlanoAtivoMesmoPeriodoPlanoPai" => !!array_filter($planoEntrega['unidade']['planosEntrega'], fn($p) => $this->isPlano('ATIVO',$p) && UtilService::intersect($planoEntrega['inicio'], $planoEntrega['fim'], $planoEntregaPai->inicio, $planoEntregaPai->fim)),
-            "lotadoLinhaAscendenteUnidadePlano" => $this->usuario->isLotadoNaLinhaAscendente($planoEntrega['unidade_id']),
-            "unidadePlanoEstahLinhaAscendenteAlgumaLotacaoUsuario" => in_array($planoEntrega['unidade_id'], array_values(array_unique(array_reduce(array_map(fn($ul) => $this->unidade->linhaAscendente($ul), array_map(fn($u) => $u['id'], $this->usuario->loggedUser()->unidades->toArray())), 'array_merge', array()))))
-        ];
+        $result = [];
+        $result["planoValido"] = $this->isPlanoEntregaValido($planoEntrega);
+        $result["planoAtivo"] = $this->isPlano("ATIVO", $planoEntrega);
+        $result["planoPaiAtivo"] = $planoEntrega['plano_entrega_id'] ? $this->isPlano("ATIVO", $planoEntregaPai->toArray()) : false;
+        $result["planoHomologando"] = $this->isPlano("HOMOLOGANDO", $planoEntrega);
+        $result["planoIncluindo"] = $this->isPlano("INCLUINDO", $planoEntrega);
+        $result["planoProprio"] = $planoEntrega['plano_entrega_id'] == null;
+        $result["planoVinculado"] = $planoEntrega['plano_entrega_id'] != null;
+        $result["gestorUnidadePlano"] = $this->usuario->isGestorUnidade($planoEntrega['unidade_id']);
+        $result["gestorUnidadePaiUnidadePlano"] = !empty($planoEntrega['unidade']['unidade_id']) && $this->usuario->isGestorUnidade($planoEntrega['unidade']['unidade_id']);
+        $result["gestorLinhaAscendenteUnidadePlano"] = !!array_filter($this->unidade->linhaAscendente($planoEntrega['unidade_id']), fn($u) => $this->usuario->isGestorUnidade($u));
+        $result["unidadePlanoPaiEhUnidadePaiUnidadePlano"] = $planoEntrega['plano_entrega_id'] ? $planoEntregaPai->unidade_id == $planoEntrega['unidade']['unidade_id'] : false;
+        $result["unidadePlanoEhLotacao"] = $this->usuario->isLotacao($planoEntrega['unidade_id']);
+        $result["unidadePaiUnidadePlanoEhLotacao"] = !empty($planoEntrega['unidade']['unidade_id']) && $this->usuario->isLotacao($planoEntrega['unidade']['unidade_id']);
+        $result["unidadePlanoEhAlgumaLotacaoUsuario"] = in_array($planoEntrega['unidade_id'], array_map(fn($u) => $u['id'], $this->usuario->loggedUser()->unidades->toArray()));
+        $result["unidadePlanoEhPaiAlgumaLotacaoUsuario"] = $this->usuario->loggedUser()->unidades->map(fn($u) => $u->id)->map(fn($ul) => Unidade::find($ul)->unidade_id)->contains($planoEntrega['unidade_id']);
+        $result["unidadePlanoPossuiPlanoAtivoMesmoPeriodoPlanoPai"] = !!array_filter($planoEntrega['unidade']['planosEntrega'], fn($p) => $this->isPlano('ATIVO',$p) && UtilService::intersect($planoEntrega['inicio'], $planoEntrega['fim'], $planoEntregaPai->inicio, $planoEntregaPai->fim));
+        $result["lotadoLinhaAscendenteUnidadePlano"] = $this->usuario->isLotadoNaLinhaAscendente($planoEntrega['unidade_id']);
+        $result["unidadePlanoEstahLinhaAscendenteAlgumaLotacaoUsuario"] = in_array($planoEntrega['unidade_id'], array_values(array_unique(array_reduce(array_map(fn($ul) => $this->unidade->linhaAscendente($ul), array_map(fn($u) => $u['id'], $this->usuario->loggedUser()->unidades->toArray())), 'array_merge', array()))));
+        return $result;
     }
 
     public function cancelarAvaliacao($data, $unidade) {

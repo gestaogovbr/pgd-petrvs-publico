@@ -307,7 +307,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
   /* Atividades */  
   public async addAtividades() {
-    return new PlanoTrabalhoAtividade({ plano_id: this.entity?.id, _status: "ADD" }) as IIndexable;
+    return new PlanoTrabalhoAtividade({ plano_trabalho_id: this.entity?.id, _status: "ADD" }) as IIndexable;
   }
 
   public async loadAtividades(form: FormGroup, row: any) {
@@ -334,7 +334,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
   /* Entregas */
   public async addEntregas() {
-    return new PlanoTrabalhoEntrega({ plano_id: this.entity?.id, _status: "ADD" }) as IIndexable;
+    return new PlanoTrabalhoEntrega({ plano_trabalho_id: this.entity?.id, _status: "ADD" }) as IIndexable;
   }
 
   public async loadEntregas(form: FormGroup, row: any) {
@@ -479,7 +479,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
               modalResult = await this.documentoDao.save(Object.assign(new Documento(), {
                 especie: "TCR",
                 conteudo: modalResult?.termo,
-                plano_id: this.entity!.id,
+                plano_trabalho_id: this.entity!.id,
                 status: "GERADO"
               }), ["assinaturas.usuario:id,nome,apelido"]);
             } catch (error: any) {

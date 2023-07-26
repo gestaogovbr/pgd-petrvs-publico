@@ -9,7 +9,7 @@
             <atividade-list-kanban [snapshot]="snapshot || modalRoute || route.snapshot"></atividade-list-kanban>
         </ng-template>
     </tab>
-    <tab *ngIf="auth.hasPermissionTo('DASH_PRG')" key="DASHBOARD" icon="bi bi-file-earmark-bar-graph" label="Dashboard" [template]="dashboard">
+    <tab *ngIf="false && auth.hasPermissionTo('DASH_PRG')" key="DASHBOARD" icon="bi bi-file-earmark-bar-graph" label="Dashboard" [template]="dashboard">
         <ng-template #dashboard>
             <atividade-dashboard [snapshot]="snapshot || modalRoute || route.snapshot"></atividade-dashboard>
         </ng-template>

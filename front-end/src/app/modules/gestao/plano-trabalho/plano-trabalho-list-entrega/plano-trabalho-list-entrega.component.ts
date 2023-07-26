@@ -84,7 +84,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
       entregaCatalogo: {default: null},
       descricao: {default: ""},
       forca_trabalho: {default: 1},
-      plano_id: {default: null},
+      plano_trabalho_id: {default: null},
       entrega_id: {default: null},
       plano_entrega_entrega_id: {default: null}
     }, this.cdRef, this.validate);
@@ -133,7 +133,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     return Object.assign(new PlanoTrabalhoEntrega(), { 
       _status: this.isNoPersist ? "ADD" : "",
       id: this.dao!.generateUuid(),
-      plano_id: this.entity?.id
+      plano_trabalho_id: this.entity?.id
     }) as IIndexable;
   }
 
@@ -145,7 +145,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   public async loadEntrega(form: FormGroup, row: any) {
     form.controls.descricao.setValue(row.descricao);
     form.controls.forca_trabalho.setValue(row.forca_trabalho);
-    form.controls.plano_id.setValue(row.plano_id);
+    form.controls.plano_trabalho_id.setValue(row.plano_trabalho_id);
     if(!row.entrega_id?.length && !row.plano_entrega_entrega_id?.length){ // É uma nova entrega
       form.controls.origem.setValue('MESMA_UNIDADE');
       form.controls.entrega_id.setValue(null);

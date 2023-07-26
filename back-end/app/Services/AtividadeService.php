@@ -130,8 +130,6 @@ class AtividadeService extends ServiceBase
                     array_push($where, ["data_entrega", "==", null]);
                 } else if($condition[2] == "CONCLUIDO") {
                     array_push($where, ["data_entrega", "!=", null]);
-                } else if($condition[2] == "AVALIADO") {
-                    array_push($where, ["avaliacao_id", "!=", null]);
                 } else if($condition[2] == "LANCADO") {
                     array_push($where, ["data_inicio", "==", null]);
                 } else if($condition[2] == "ARQUIVADO") {
@@ -157,7 +155,7 @@ class AtividadeService extends ServiceBase
             array_push($unidades_ids, $unidade_id);
         } else {
             foreach($usuario->areasTrabalho as $lotacao) {
-                array_push($unidades_ids, $lotacao->id);
+                array_push($unidades_ids, $lotacao->unidade_id);
             }
         }
         $where = [];
@@ -250,9 +248,7 @@ class AtividadeService extends ServiceBase
         $result["suspenso"] = $suspenso;
         $result["atrasado"] = !$result["concluido"] && strtotime($atividade->prazo_entrega) < strtotime($hora);
         $result["tempo_atraso"] = $result["atrasado"] ? $this->calendarioService->tempoAtraso($atividade->prazo_entrega, $hora, $atividade->carga_horaria) : 0;
-        $result["status"] = $result["avaliado"] ? "AVALIADO" :
-            ($result["concluido"] ? "CONCLUIDO" :
-            ($result["iniciado"] ? "INICIADO" : "LANCADO"));
+        $result["status"] = ($result["concluido"] ? "CONCLUIDO" : ($result["iniciado"] ? "INICIADO" : "LANCADO"));
         return $result;
     }
 
