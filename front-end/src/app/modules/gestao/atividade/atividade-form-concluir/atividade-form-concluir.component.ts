@@ -13,6 +13,7 @@ import { InputButtonComponent } from 'src/app/components/input/input-button/inpu
 import { TipoDocumentoDaoService } from 'src/app/dao/tipo-documento-dao.service';
 import { TipoAtividadeDaoService } from 'src/app/dao/tipo-atividade-dao.service';
 import { TipoAtividade } from 'src/app/models/tipo-atividade.model';
+import { Documento } from 'src/app/models/documento.model';
 
 @Component({
   selector: 'app-atividade-form-concluir',
@@ -48,9 +49,11 @@ export class AtividadeFormConcluirComponent extends PageFormBase<Atividade, Ativ
       data_entrega: {default: null},
       arquivar: {default: true},
       descricao_tecnica: {default: ""},
+      documento_entrega: {default: new Documento()},
+      documento_entrega_id: {default: null},
       plano_trabalho_entrega_id: {default: null}
     }, this.cdRef, this.validate);
-    this.join = ["plano.tipo_modalidade", "unidade", "plano_trabalho.entregas.entrega:id,nome"];
+    this.join = ["plano_trabalho.tipo_modalidade", "unidade", "plano_trabalho.entregas.entrega:id,nome"];
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -75,7 +78,7 @@ export class AtividadeFormConcluirComponent extends PageFormBase<Atividade, Ativ
     }
     this.entregas = entity.plano_trabalho?.entregas?.map(x => Object.assign({}, {
       key: x.id,
-      value: x.entrega?.nome || "DESCONHECIDO",
+      value: x.descricao + (x.entrega ? " (" + x.entrega!.nome + ")" : ""),
       data: x
     })) || [];
     formValue.arquivar = true; //!!this.entity?.plano?.tipo_modalidade?.dispensa_avaliacao; 
@@ -115,6 +118,7 @@ export class AtividadeFormConcluirComponent extends PageFormBase<Atividade, Ativ
       atividade.id = this.entity!.id;
       atividade.descricao_tecnica = this.form!.controls.descricao_tecnica.value;
       atividade.data_arquivamento = this.form!.controls.arquivar.value ? new Date() : null;
+      atividade.progresso = this.form!.controls.progresso.value;
       atividade.produtividade = this.entity?.plano_trabalho?.tipo_modalidade?.atividade_tempo_despendido ? this.calendar.produtividade(atividade.esforco, atividade.tempo_despendido) : null;
       this.dao!.concluir(atividade).then(saved => resolve(saved)).catch(reject);
     });

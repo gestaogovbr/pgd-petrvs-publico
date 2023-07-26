@@ -53,7 +53,7 @@
                     </span//-->
                 </span>
                 <div class="one-per-line">
-                    <badge *ngFor="let status of getStatus(row)" [data]="status" [color]="status.class" [icon]="status.icon" [label]="status.label" [click]="status.data?.filter ? onStatusClick.bind(this) : undefined"></badge>
+                    <badge *ngFor="let status of getStatus(row)" [data]="status" [color]="status.color" [icon]="status.icon" [label]="status.label" [click]="status.data?.filter ? onStatusClick.bind(this) : undefined"></badge>
                     <!--span *ngFor="let status of getStatus(row)" [class]="status.class" [attr.role]="status.filter ? 'button' : undefined" (click)="onStatusClick(status)">
                         <i [class]="status.icon"></i>
                         {{status.text}}
@@ -87,8 +87,9 @@
                 </div>
             </ng-template>
         </column>
-        <column [title]="'Etiquetas\nChecklist'" [editTemplate]="selectable ? undefined : columnEtiquetasChecklistEdit" [template]="columnEtiquetasChecklist" [edit]="selectable ? undefined : onColumnEtiquetasChecklistEdit.bind(this)" [save]="selectable ? undefined : onColumnEtiquetasChecklistSave.bind(this)">
-            <ng-template let-row="row" #columnEtiquetasChecklist>
+        <column [title]="'Progresso\nEtiquetas/Checklist'" [editTemplate]="selectable ? undefined : columnProgressoEtiquetasChecklistEdit" [template]="columnProgressoEtiquetasChecklist" [edit]="selectable ? undefined : onColumnProgressoEtiquetasChecklistEdit.bind(this)" [save]="selectable ? undefined : onColumnProgressoEtiquetasChecklistSave.bind(this)">
+            <ng-template let-row="row" #columnProgressoEtiquetasChecklist>
+                <progress-bar [value]="row.progresso" color="success"></progress-bar>
                 <badge *ngFor="let etiqueta of row.etiquetas" [lookup]="etiqueta" [click]="onEtiquetaClick.bind(this)"></badge>
                 <separator *ngIf="row.checklist?.length" small title="Checklist"></separator>
                 <table *ngIf="row.checklist?.length">
@@ -98,7 +99,8 @@
                     </tr>
                 </table>
             </ng-template>
-            <ng-template let-row="row" #columnEtiquetasChecklistEdit>
+            <ng-template let-row="row" #columnProgressoEtiquetasChecklistEdit>
+                <input-number [size]="12" [decimals]="2" label="Progresso" sufix="%" icon="bi bi-clock" controlName="progresso" [control]="formEdit.controls.progresso" labelInfo="Progresso de execução (% Concluído)"></input-number>
                 <input-multiselect controlName="etiquetas" [size]="12" [control]="formEdit.controls.etiquetas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
                     <input-select [size]="12" #etiqueta controlName="etiqueta" nullable itemNull="- Selecione -" detailsButton detailsButtonIcon="bi bi-tools" (details)="onEtiquetaConfigClick()" [control]="formEdit.controls.etiqueta" [items]="etiquetas"></input-select>
                 </input-multiselect>

@@ -115,6 +115,7 @@ class AtividadeController extends ControllerBase
                 'id' => ['required'],
                 'tipo_atividade_id' => ['nullable'],
                 'esforco' => ['required'],
+                'progresso' => ['required'],
                 'tempo_despendido' => ['required'],
                 'data_entrega' => ['required'],
                 'data_arquivamento' => ['nullable'],

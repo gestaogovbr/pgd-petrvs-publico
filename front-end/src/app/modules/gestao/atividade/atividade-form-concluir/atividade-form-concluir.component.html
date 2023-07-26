@@ -11,16 +11,16 @@
     <separator [title]="lex.noun('Tarefa da atividade', true)" collapse [collapsed]="false">
         <atividade-list-tarefa persist [atividade]="entity"></atividade-list-tarefa>
     </separator>
-    <div *ngIf="!!entity?.plano_trabalho?.tipo_modalidade?.atividade_esforco; else comEsforco" class="row">
-        <input-datetime noIcon [size]="4" [label]="lex.noun('Data de distribuição')" controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" labelInfo="Data de inclusão/distribuição/lançamento"></input-datetime>
-        <input-number [size]="4" [decimals]="2" label="Progresso" disabled sufix="%" icon="bi bi-clock" controlName="progresso" labelInfo="Progresso de execução (% Concluído)"></input-number>
+    <div *ngIf="!entity?.plano_trabalho?.tipo_modalidade?.atividade_esforco; else comEsforco" class="row">
+        <input-datetime noIcon [size]="4" [label]="lex.noun('Distribuição')" controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" labelInfo="Data de inclusão/distribuição/lançamento"></input-datetime>
+        <input-number [size]="4" [decimals]="2" label="Progresso" disabled sufix="%" icon="bi bi-clock" controlName="progresso" labelInfo="Progresso de execução (% Concluído). Sempre será 100% na conclusão!"></input-number>
         <input-datetime noIcon  [size]="4" [label]="lex.noun('Prazo de entrega')" controlName="prazo_entrega" [control]="form!.controls.prazo_entrega" labelInfo="Data estipulada para entrega da atividade"></input-datetime>
     </div>
     <ng-template #comEsforco>
         <div class="row">
-            <input-datetime noIcon [size]="3" disabled [label]="lex.noun('Data de distribuição')" controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" labelInfo="Data de inclusão/distribuição/lançamento"></input-datetime>
+            <input-datetime noIcon [size]="3" disabled [label]="lex.noun('Distribuição')" controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" labelInfo="Data de inclusão/distribuição/lançamento"></input-datetime>
             <input-timer [size]="3" [label]="lex.noun('Esforço')" icon="bi bi-stopwatch" onlyHours controlName="esforco" [control]="form!.controls.esforco" labelInfo="Tempo estimado de execução"></input-timer>
-            <input-number [size]="3" [decimals]="2" label="Progresso" disabled sufix="%" icon="bi bi-clock" controlName="progresso" labelInfo="Progresso de execução (% Concluído)"></input-number>
+            <input-number [size]="3" [decimals]="2" label="Progresso" disabled sufix="%" icon="bi bi-clock" controlName="progresso" labelInfo="Progresso de execução (% Concluído). Sempre será 100% na conclusão!"></input-number>
             <input-datetime noIcon  [size]="3" disabled [label]="lex.noun('Prazo de entrega')" controlName="prazo_entrega" [control]="form!.controls.prazo_entrega" labelInfo="Data estipulada para entrega da atividade"></input-datetime>
         </div>
     </ng-template>
