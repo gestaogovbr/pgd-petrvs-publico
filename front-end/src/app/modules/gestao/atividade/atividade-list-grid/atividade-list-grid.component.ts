@@ -52,6 +52,7 @@ export class AtividadeListGridComponent extends AtividadeListBase {
       data_fim: { default: null }
     });
     this.formEdit = this.fh.FormBuilder({
+      progresso: { default: 0 },
       etiquetas: { default: [] },
       etiqueta: { default: null }
     });
@@ -99,7 +100,8 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     this.grid!.reloadFilter();
   }
 
-  public async onColumnEtiquetasChecklistEdit(row: any) {
+  public async onColumnProgressoEtiquetasChecklistEdit(row: any) {
+    this.formEdit.controls.progresso.setValue(row.progresso);
     this.formEdit.controls.etiquetas.setValue(row.etiquetas);
     this.formEdit.controls.etiqueta.setValue(null);
     this.etiquetas = this.util.merge(row.atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key);
@@ -107,12 +109,14 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     this.checklist = this.util.clone(row.checklist);
   }
 
-  public async onColumnEtiquetasChecklistSave(row: any) {
+  public async onColumnProgressoEtiquetasChecklistSave(row: any) {
     try {
       const saved = await this.dao!.update(row.id, {
+        progresso: this.formEdit.controls.progresso.value,
         etiquetas: this.formEdit.controls.etiquetas.value,
         checklist: this.checklist
       });
+      row.progresso = this.formEdit.controls.progresso.value;
       row.checklist = this.checklist;
       return !!saved;
     } catch (error) {

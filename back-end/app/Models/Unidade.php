@@ -105,7 +105,7 @@ class Unidade extends ModelBase
     { 
         $result = [];
         foreach($this->integrantes as $integrante){
-            $result[$integrante->usuario_id] = array_map(fn($a) => $a["atribuicao"], $integrante->atribuicoes?->toArray() ?? []);
+            if(count($integrante->atribuicoes) > 0) $result[$integrante->usuario_id] = array_map(fn($a) => $a["atribuicao"], $integrante->atribuicoes?->toArray() ?? []);
         }
         return $result;
     }

@@ -47,14 +47,14 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
   }
 
   /**
-   * Método chamado na inicialização do componente para carregar todos os integrantes da entidade.
+   * Método chamado na inicialização do componente para carregar todos os integrantes da unidade.
    * @param entity 
    * @param form 
    */
   public async loadData(entity: IIndexable, form?: FormGroup | undefined) {
     this.grid!.loading = true;
     try {
-      let result = await this.integranteDao!.loadIntegrantes(this.unidadeId);
+      let result = await this.integranteDao!.loadUsuariosIntegrantes(this.unidadeId);
       this.items = result.integrantes;
       this.unidade = result.unidade;
     } finally {
@@ -118,7 +118,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     if(confirm) {
       this.loading = true;
       try {
-        await this.integranteDao.saveIntegrante(this.unidade!.id, Object.assign(row, { atribuicoes: [] }));
+        await this.integranteDao.saveUsuarioIntegrante(this.unidade!.id, Object.assign(row, { atribuicoes: [] }));
         await this.loadData({}, this.form);
       } finally {
         this.loading = false;
@@ -129,14 +129,14 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     }
   }
 
-  public async saveIntegrante(form: FormGroup, row: any) {
+  public async saveUsuarioIntegrante(form: FormGroup, row: any) {
     let consolidado = row as UnidadeIntegranteConsolidado;
     if(form!.controls.atribuicoes.value.length) {
       consolidado.usuario_id = form!.controls.usuario_id.value;
       consolidado.atribuicoes = form!.controls.atribuicoes.value.map((x: LookupItem) => x.key);
       this.loading = true;
       try {
-        await this.integranteDao.saveIntegrante(this.unidade!.id, consolidado);
+        await this.integranteDao.saveUsuarioIntegrante(this.unidade!.id, consolidado);
         await this.loadData({}, this.form);
       } finally {
         this.loading = false;

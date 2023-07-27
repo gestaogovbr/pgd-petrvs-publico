@@ -2,12 +2,12 @@ import { Injectable, Injector } from '@angular/core';
 import { PlanoTrabalho } from '../models/plano-trabalho.model';
 import { MetadadosPlano } from 'src/app/modules/base/page-report-base';
 import { DaoBaseService } from './dao-base.service';
-import { TemplateDataset } from '../components/input/input-editor/input-editor.component';
 import { TipoModalidadeDaoService } from './tipo-modalidade-dao.service';
 import { UnidadeDaoService } from './unidade-dao.service';
 import { UsuarioDaoService } from './usuario-dao.service';
 import { ProgramaDaoService } from './programa-dao.service';
 import { LookupService } from '../services/lookup.service';
+import { TemplateDataset } from '../modules/uteis/templates/template.service';
 
 @Injectable({
   providedIn: 'root'

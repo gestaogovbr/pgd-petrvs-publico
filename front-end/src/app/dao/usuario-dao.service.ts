@@ -1,6 +1,5 @@
 
 import { Injectable, Injector } from '@angular/core';
-import { TemplateDataset } from '../components/input/input-editor/input-editor.component';
 import { Afastamento } from '../models/afastamento.model';
 import { Usuario } from '../models/usuario.model';
 import { Efemerides, TipoContagem } from '../services/calendar.service';
@@ -8,6 +7,7 @@ import { LookupService } from '../services/lookup.service';
 import { DaoBaseService } from './dao-base.service';
 import { AtividadePausa } from '../models/atividade-pausa.model';
 import { PlanoTrabalho } from '../models/plano-trabalho.model';
+import { TemplateDataset } from '../modules/uteis/templates/template.service';
 
 export type UsuarioDashboard = {
   planos: [

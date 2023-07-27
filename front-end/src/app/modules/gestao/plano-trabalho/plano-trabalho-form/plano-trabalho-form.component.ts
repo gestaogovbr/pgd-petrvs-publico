@@ -3,7 +3,6 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { SelectItem } from 'src/app/components/input/input-base';
-import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { UnitWorkload } from 'src/app/components/input/input-workload/input-workload.component';
@@ -36,6 +35,7 @@ import { CalendarService, Efemerides } from 'src/app/services/calendar.service';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { PlanoTrabalhoService } from '../plano-trabalho.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
+import { TemplateDataset, TemplateService } from 'src/app/modules/uteis/templates/template.service';
 
 @Component({
   selector: 'plano-trabalho-form',
@@ -63,6 +63,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   public atividadeDao: AtividadeDaoService;
   public documentoDao: DocumentoDaoService;
   public documentoService: DocumentoService;
+  public templateService: TemplateService;
   public allPages: ListenerAllPagesService;
   public calendar: CalendarService;
   public tipoModalidadeDao: TipoModalidadeDaoService;
@@ -89,6 +90,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.atividadeDao = injector.get<AtividadeDaoService>(AtividadeDaoService);
     this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
     this.documentoService = injector.get<DocumentoService>(DocumentoService);
+    this.templateService = injector.get<TemplateService>(TemplateService);
     this.calendar = injector.get<CalendarService>(CalendarService);
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
@@ -150,13 +152,13 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
             id: this.documentoId, 
             tipo: "HTML",
             especie: "TCR",
-            titulo_documento: "Termo de Ciência e Responsabilidade",
-            conteudo: "",
+            titulo: "Termo de Ciência e Responsabilidade",
+            conteudo: this.templateService.renderTemplate(this.programa.template_tcr?.conteudo || "", this._datasource),
             status: "GERADO",
             _status: "ADD",
             template: this.programa.template_tcr?.conteudo,
             dataset: this.dao!.dataset(),
-            datasource: this.datasource,
+            datasource: this._datasource,
             entidade_id: this.auth.entidade?.id,
             plano_trabalho_id: this.entity?.id,
             template_id: this.programa.template_tcr_id
@@ -393,12 +395,17 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       return ["ADD", "EDIT", "DELETE"].includes(documento._status || "")
     });
     /* Salva separadamente as informações do plano */
-    this.entity = await this.dao!.save(plano);
-    if(this.form!.controls.editar_texto_complementar_unidade.value) {
-      await this.unidadeDao.update(plano.unidade_id, {texto_complementar_plano: this.form!.controls.unidade_texto_complementar.value});
-    }
-    if(this.form!.controls.editar_texto_complementar_usuario.value) {
-      await this.usuarioDao.update(plano.unidade_id, {texto_complementar_plano: this.form!.controls.usuario_texto_complementar.value});
+    this.submitting = true;
+    try {
+      this.entity = await this.dao!.save(plano);
+      if(this.form!.controls.editar_texto_complementar_unidade.value) {
+        await this.unidadeDao.update(plano.unidade_id, {texto_complementar_plano: this.form!.controls.unidade_texto_complementar.value});
+      }
+      if(this.form!.controls.editar_texto_complementar_usuario.value) {
+        await this.usuarioDao.update(plano.unidade_id, {texto_complementar_plano: this.form!.controls.usuario_texto_complementar.value});
+      }
+    } finally {
+      this.submitting = false;
     }
     return true;
   }

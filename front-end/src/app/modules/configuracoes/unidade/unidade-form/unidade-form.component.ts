@@ -1,7 +1,6 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
-import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
@@ -14,6 +13,7 @@ import { Unidade } from 'src/app/models/unidade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { NotificacaoService } from 'src/app/modules/uteis/notificacoes/notificacao.service';
 import { NotificacoesConfigComponent } from 'src/app/modules/uteis/notificacoes/notificacoes-config/notificacoes-config.component';
+import { TemplateDataset } from 'src/app/modules/uteis/templates/template.service';
 import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
@@ -32,6 +32,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
   @ViewChild('notificacoes', { static: false }) public notificacoes?: NotificacoesConfigComponent;
 
   public form: FormGroup;
+  public formGestor: FormGroup;
   public entidadeDao: EntidadeDaoService;
   public cidadeDao: CidadeDaoService;
   public usuarioDao: UsuarioDaoService;
@@ -63,7 +64,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       notificacoes: {default: {}},
       etiquetas: {default: []},
       unidade_pai_id: {default: ""},
-      entidade_id: {default: ""},
+      entidade_id: {default: this.auth.unidade?.entidade_id},
       etiqueta_texto: {default: ""},
       etiqueta_icone: {default: null},
       etiqueta_cor: {default: null},
@@ -85,7 +86,11 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       usar_expediente_entidade: {default: true},
       texto_complementar_plano: {default: ""}
     }, this.cdRef, this.validate);
-    this.join =  ["cidade", "entidade", "gestor", "gestor_substituto", "notificacoes_templates"];
+    this.formGestor = this.fh.FormBuilder({
+      gestor_id: {default: ""},
+      gestor_substituto_id: {default: ""}
+    }, this.cdRef);
+    this.join =  ["cidade", "entidade", "gestor.usuario", "gestor_substituto.usuario", "notificacoes_templates"];
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -127,8 +132,8 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     await Promise.all ([
       this.unidadePai!.loadSearch(entity.unidade || entity.unidade_pai_id),
       this.cidade!.loadSearch(entity.cidade || entity.cidade_id),
-      this.gestor!.loadSearch(entity.gestor),// || entity.gestor!.id),
-      this.gestorSubstituto!.loadSearch(entity.gestor_substituto),// || entity.gestor_substituto!.id),
+      this.gestor!.loadSearch(entity?.gestor?.usuario || entity.gestor?.usuario!.id),
+      this.gestorSubstituto!.loadSearch(entity?.gestor_substituto?.usuario || entity.gestor_substituto?.usuario!.id),
       this.entidade!.loadSearch(entity.entidade || entity.entidade_id)
     ]);
     this.form.patchValue(this.util.fillForm(formValue, {...entity, ...{
@@ -149,7 +154,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
   }
 
   public initializeData(form: FormGroup): void {
-    this.entity = new Unidade();
+    this.entity = new Unidade({ entidade_id: this.auth.unidade?.entidade_id, entidade: this.auth.unidade?.entidade });
     this.loadData(this.entity, form);
   }
 

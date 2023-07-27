@@ -168,7 +168,7 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
                 if ((_b = form.nome) === null || _b === void 0 ? void 0 : _b.length)
                     result.push(["usuario.nome", "like", "%" + form.nome + "%"]);
                 if ((_c = form.unidade_id) === null || _c === void 0 ? void 0 : _c.length)
-                    result.push(["usuario.lotacao.unidade.id", "==", form.unidade_id]);
+                    result.push(["usuario.areas_trabalho.unidade.id", "==", form.unidade_id]);
             }
             return result;
         };
@@ -401,6 +401,9 @@ class ProgramaFormComponent extends src_app_modules_base_page_form_base__WEBPACK
             let result = null;
             if (['nome', 'unidade_id'].indexOf(controlName) >= 0 && !((_a = control.value) === null || _a === void 0 ? void 0 : _a.length)) {
                 result = "Obrigatório";
+            }
+            else if (controlName == "prazo_execucao" && parseInt(control.value || 0) > 99999) {
+                result = "Inválido";
             }
             else if (['data_inicio_vigencia', 'data_fim_vigencia'].indexOf(controlName) >= 0 && !((_b = this.dao) === null || _b === void 0 ? void 0 : _b.validDateTime(control.value))) {
                 result = "Inválido";

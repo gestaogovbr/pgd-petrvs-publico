@@ -49,8 +49,8 @@
             <!--badge *ngIf="card.data.numero_processo?.length" [label]="card.data.numero_processo" color="light" icon="bi-folder-symlink" [data]="card.data" [click]="documentoService.onProcessoClick.bind(this)" [hint]="documentoService.processoHint(card.data)">
                 <small *ngIf="card.data.numero_requisicao?.length"><br>Sei nº {{card.data.numero_requisicao}}</small>
             </badge/-->
-            <badge *ngFor="let status of getStatus(card.data)" [class]="status.class + ' ms-1'" [label]="status.label" color="none" [icon]="status.icon" [data]="status" [click]="status.data.filter ? onStatusClick.bind(this) : undefined"></badge>
-            <badge *ngFor="let etiqueta of card.data.etiquetas" class="ms-1" [color]="etiqueta.color" [label]="etiqueta.value" color="none" [icon]="etiqueta.icon" [data]="etiqueta" [click]="onEtiquetaClick.bind(this)"></badge>
+            <badge *ngFor="let status of getStatus(card.data)" class="ms-1" [color]="status.color" [label]="status.label" [icon]="status.icon" [data]="status" [click]="status.data.filter ? onStatusClick.bind(this) : undefined"></badge>
+            <badge *ngFor="let etiqueta of card.data.etiquetas" class="ms-1" [color]="etiqueta.color" [label]="etiqueta.value" [icon]="etiqueta.icon" [data]="etiqueta" [click]="onEtiquetaClick.bind(this)"></badge>
         </div>
         <separator *ngIf="card.data.checklist?.length" small title="Checklist"></separator>
         <table *ngIf="card.data.checklist?.length">

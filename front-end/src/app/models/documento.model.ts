@@ -1,4 +1,4 @@
-import { TemplateDataset } from '../components/input/input-editor/input-editor.component';
+import { TemplateDataset } from '../modules/uteis/templates/template.service';
 import { AtividadeTarefa } from './atividade-tarefa.model';
 import { Atividade } from './atividade.model';
 import { Base } from './base.model';

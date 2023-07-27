@@ -30,7 +30,7 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
     this.title = this.lex.noun("Unidade", true);
     this.code = "MOD_CFG_UND";
     this.filter = this.fh.FormBuilder({
-      entidade_id: { default: null },
+      entidade_id: { default: this.auth.unidade?.entidade_id },
       inativos: { default: false },
       nome: { default: "" }
     });

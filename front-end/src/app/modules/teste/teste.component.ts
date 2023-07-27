@@ -21,10 +21,10 @@ import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { Planejamento } from 'src/app/models/planejamento.model';
 import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model';
 import { EixoTematico } from 'src/app/models/eixo-tematico.model';
-import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
 import { NavigateService } from 'src/app/services/navigate.service';
 import { Documento, HasDocumentos } from 'src/app/models/documento.model';
 import { InputLevelItem } from 'src/app/components/input/input-level/input-level.component';
+import { TemplateDataset } from '../uteis/templates/template.service';
 
 @Component({
   selector: 'app-teste',

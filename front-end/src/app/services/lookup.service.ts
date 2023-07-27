@@ -81,7 +81,7 @@ export class LookupService {
 
   public ATIVIDADE_STATUS: LookupItem[] = [
     { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star-half", color: "success" },
-    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi bi-check-circle", color: "primary" },
+    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-check-circle", color: "primary" },
     { key: "NAOCONCLUIDO", value: "Não concluído", icon: "bi bi-play-circle", color: "info" },
     { key: "INICIADO", value: "Iniciado", icon: "bi bi-play-circle", color: "info" },
     { key: "LANCADO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" }
@@ -91,7 +91,7 @@ export class LookupService {
     { key: "LANCADO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" },
     { key: "INICIADO", value: "Iniciado", icon: "bi bi-play-circle", color: "info" },
     { key: "NAOCONCLUIDO", value: "Não concluído", icon: "bi bi-play-circle", color: "info" },
-    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi bi-check-circle", color: "primary" },
+    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-check-circle", color: "primary" },
     { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star-half", color: "success" },
     { key: "ARQUIVADO", value: "Arquivado", icon: "bi bi-inboxes", color: "secondary" }
   ];
@@ -107,15 +107,17 @@ export class LookupService {
     //{ key: 'TCR_CANCELAMENTO', value: "Cancelamento TCR", icon: "bi bi-file-earmark-x", color: "danger" },
     { key: 'OUTRO', value: "Outro", icon: "bi bi-question-circle", color: "danger" },
     { key: 'NOTIFICACAO', value: "Notificação", icon: "bi bi-bell", color: "info" }
-  ]
-
-  public UNIDADE_INTEGRANTE_TIPO: LookupItem[] = [
-    { key: 'GESTOR', value: "Chefe", icon: "bi bi-star-fill", color: "warning" },
-    { key: 'GESTOR_SUBSTITUTO', value: "Chefe substituto", icon: "bi bi-star-half", color: "warning" },
-    { key: 'AVALIADOR_DEMANDAS', value: "Avaliador (demandas)", icon: "bi bi-check-all", color: "success" },
-    { key: 'LOTADO', value: "Lotado", icon: "bi bi-geo-alt", color: "secondary" }
   ];
 
+  public UNIDADE_INTEGRANTE_TIPO: LookupItem[] = [
+    { key: 'AVALIADOR_PLANO_ENTREGA', value: "Avaliador (Planos de Entrega)", icon: "bi bi-check-all", color: "warning" },
+    { key: 'AVALIADOR_PLANO_TRABALHO', value: "Avaliador (Planos de Trabalho)", icon: "bi bi-check-circle", color: "info" },
+    { key: 'COLABORADOR', value: "Colaborador", icon: "bi bi-person-fill-add", color: "secondary" },
+    { key: 'GESTOR', value: "Gestor", icon: "bi bi-star-fill", color: "primary" },
+    { key: 'GESTOR_SUBSTITUTO', value: "Gestor Substituto", icon: "bi bi-star-half", color: "primary" },
+    { key: 'HOMOLOGADOR_PLANO_ENTREGA', value: "Homologador (Planos de Entrega)", icon: "bi bi-check2-square", color: "warning" },
+    { key: 'LOTADO', value: "Lotado", icon: "bi bi-file-person", color: "secondary" }
+  ];
 
   public TEMPLATE_ESPECIE: LookupItem[] = this.DOCUMENTO_ESPECIE;
 

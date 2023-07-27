@@ -27,7 +27,6 @@ class Planejamento extends ModelBase
         'unidade_id', /* char(36); */
         //'deleted_at', /* timestamp; */
         'planejamento_superior_id', /* char(36); */
-        /*'planejamento_pai_id',*/// REMOVED
     ];
 
     // Casting

@@ -434,7 +434,7 @@ class LookupService {
         ];
         this.ATIVIDADE_STATUS = [
             { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star-half", color: "success" },
-            { key: "CONCLUIDO", value: "Concluído", icon: "bi bi bi-check-circle", color: "primary" },
+            { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-check-circle", color: "primary" },
             { key: "NAOCONCLUIDO", value: "Não concluído", icon: "bi bi-play-circle", color: "info" },
             { key: "INICIADO", value: "Iniciado", icon: "bi bi-play-circle", color: "info" },
             { key: "LANCADO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" }
@@ -443,7 +443,7 @@ class LookupService {
             { key: "LANCADO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" },
             { key: "INICIADO", value: "Iniciado", icon: "bi bi-play-circle", color: "info" },
             { key: "NAOCONCLUIDO", value: "Não concluído", icon: "bi bi-play-circle", color: "info" },
-            { key: "CONCLUIDO", value: "Concluído", icon: "bi bi bi-check-circle", color: "primary" },
+            { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-check-circle", color: "primary" },
             { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star-half", color: "success" },
             { key: "ARQUIVADO", value: "Arquivado", icon: "bi bi-inboxes", color: "secondary" }
         ];
@@ -459,10 +459,13 @@ class LookupService {
             { key: 'NOTIFICACAO', value: "Notificação", icon: "bi bi-bell", color: "info" }
         ];
         this.UNIDADE_INTEGRANTE_TIPO = [
-            { key: 'GESTOR', value: "Chefe", icon: "bi bi-star-fill", color: "warning" },
-            { key: 'GESTOR_SUBSTITUTO', value: "Chefe substituto", icon: "bi bi-star-half", color: "warning" },
-            { key: 'AVALIADOR_DEMANDAS', value: "Avaliador (demandas)", icon: "bi bi-check-all", color: "success" },
-            { key: 'LOTADO', value: "Lotado", icon: "bi bi-geo-alt", color: "secondary" }
+            { key: 'AVALIADOR_PLANO_ENTREGA', value: "Avaliador (Planos de Entrega)", icon: "bi bi-check-all", color: "warning" },
+            { key: 'AVALIADOR_PLANO_TRABALHO', value: "Avaliador (Planos de Trabalho)", icon: "bi bi-check-circle", color: "info" },
+            { key: 'COLABORADOR', value: "Colaborador", icon: "bi bi-person-fill-add", color: "secondary" },
+            { key: 'GESTOR', value: "Gestor", icon: "bi bi-star-fill", color: "primary" },
+            { key: 'GESTOR_SUBSTITUTO', value: "Gestor Substituto", icon: "bi bi-star-half", color: "primary" },
+            { key: 'HOMOLOGADOR_PLANO_ENTREGA', value: "Homologador (Planos de Entrega)", icon: "bi bi-check2-square", color: "warning" },
+            { key: 'LOTADO', value: "Lotado", icon: "bi bi-file-person", color: "secondary" }
         ];
         this.TEMPLATE_ESPECIE = this.DOCUMENTO_ESPECIE;
         this.DIA_HORA_CORRIDOS_OU_UTEIS = [
@@ -1784,7 +1787,7 @@ __webpack_require__.r(__webpack_exports__);
 class UsuarioConfig {
     constructor() {
         this.etiquetas = [];
-        this.menu_contexto = "";
+        this.menu_contexto = "EXECUCAO";
         this.ocultar_menu_sei = true;
         this.ocultar_container_petrvs = false;
     }
@@ -2162,7 +2165,12 @@ class UtilService {
             else if (source instanceof Date) {
                 return new Date(source.getTime());
             }
-            else {
+            else if (typeof source == "undefined") {
+                return undefined;
+            }
+            else { /* Object */
+                if (source == null)
+                    return null;
                 let result = {};
                 for (let [key, value] of Object.entries(source)) {
                     result[key] = this.clone(value);
@@ -3711,148 +3719,6 @@ TipoAvaliacaoDaoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵ�
 
 /***/ }),
 
-/***/ "6jT7":
-/*!**********************************************************************************!*\
-  !*** ./src/app/modules/uteis/comentarios-widget/comentarios-widget.component.ts ***!
-  \**********************************************************************************/
-/*! exports provided: ComentariosWidgetComponent */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ComentariosWidgetComponent", function() { return ComentariosWidgetComponent; });
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var src_app_services_comentario_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/services/comentario.service */ "GCzM");
-/* harmony import */ var src_app_services_form_helper_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/services/form-helper.service */ "mp9f");
-/* harmony import */ var src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/services/lookup.service */ "/MTl");
-/* harmony import */ var src_app_services_navigate_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/services/navigate.service */ "RANn");
-/* harmony import */ var src_app_services_util_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/services/util.service */ "2Rin");
-/* harmony import */ var _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../components/separator/separator.component */ "FVj5");
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common */ "ofXK");
-
-
-
-
-
-
-
-
-
-function ComentariosWidgetComponent_span_1_i_9_Template(rf, ctx) { if (rf & 1) {
-    const _r5 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "i", 7);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function ComentariosWidgetComponent_span_1_i_9_Template_i_click_0_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r5); const comentario_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]().$implicit; const ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](); return ctx_r4.addComentarioClick($event, ctx_r4.entity, comentario_r1.id); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-} }
-function ComentariosWidgetComponent_span_1_Template(rf, ctx) { if (rf & 1) {
-    const _r8 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "span", 2, 3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function ComentariosWidgetComponent_span_1_Template_span_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r8); const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵreference"](1); const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](); return ctx_r7.comentarioClick(_r2); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](3, "i");
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "span", 4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](5, "strong");
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](7);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](8, "br");
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](9, ComentariosWidgetComponent_span_1_i_9_Template, 1, 0, "i", 5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](10, "span", 6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](11);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-} if (rf & 2) {
-    const comentario_r1 = ctx.$implicit;
-    const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("title", ctx_r0.lookup.getValue(ctx_r0.lookup.COMENTARIO_TIPO, comentario_r1.tipo));
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", "\u2022 ".repeat((comentario_r1.path == null ? null : comentario_r1.path.includes("/")) ? comentario_r1.path.split("/").length - 1 : 0), " ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassMap"]("me-1 " + ctx_r0.lookup.getIcon(ctx_r0.lookup.COMENTARIO_TIPO, comentario_r1.tipo));
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](ctx_r0.util.shortName(ctx_r0.util.apelidoOuNome(comentario_r1.usuario)));
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" \u2022 ", ctx_r0.util.getDateTimeFormatted(comentario_r1.data_hora), "");
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", !ctx_r0.selectable);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", comentario_r1.texto, " ");
-} }
-const _c0 = function () { return []; };
-class ComentariosWidgetComponent {
-    constructor(injector) {
-        this.injector = injector;
-        this.selectable = false;
-        //@Input() dao?: DaoBaseService<Base>;
-        this.noPersist = undefined;
-        this.origem = undefined;
-        this.addComentarioButton = {
-            icon: "bi bi-plus-circle",
-            hint: "Incluir comentário"
-        };
-        this._entity = undefined;
-        this.validate = (control, controlName) => {
-            let result = null;
-            return result;
-        };
-        this.fh = injector.get(src_app_services_form_helper_service__WEBPACK_IMPORTED_MODULE_2__["FormHelperService"]);
-        this.cdRef = injector.get(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ChangeDetectorRef"]);
-        this.go = injector.get(src_app_services_navigate_service__WEBPACK_IMPORTED_MODULE_4__["NavigateService"]);
-        this.util = injector.get(src_app_services_util_service__WEBPACK_IMPORTED_MODULE_5__["UtilService"]);
-        this.lookup = injector.get(src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_3__["LookupService"]);
-        this.comentario = injector.get(src_app_services_comentario_service__WEBPACK_IMPORTED_MODULE_1__["ComentarioService"]);
-        this.form = this.fh.FormBuilder({
-            comentarios: { default: [] }
-        }, this.cdRef, this.validate);
-    }
-    set entity(value) {
-        if (this._entity != value) {
-            this._entity = value;
-            if (value && this.comentario)
-                value.comentarios = this.comentario.orderComentarios(value.comentarios || []);
-        }
-    }
-    get entity() {
-        return this._entity;
-    }
-    ngOnInit() {
-    }
-    get isNoPersist() {
-        return this.noPersist != undefined;
-    }
-    comentarioClick(element) {
-        const value = element.getAttribute("data-expanded");
-        element.setAttribute("data-expanded", value == "true" ? "false" : "true");
-    }
-    addComentarioClick(event, entity, comentario_id) {
-        event === null || event === void 0 ? void 0 : event.stopPropagation();
-        this.go.navigate({ route: ['uteis', 'comentarios', this.origem, this.isNoPersist ? 'NOPERSIST' : entity.id, 'new'], params: { comentario_id } }, { modal: true, metadata: { entity }, modalClose: modalResult => {
-                var _a, _b;
-                if (modalResult) {
-                    if (this.save)
-                        this.save(modalResult);
-                    if (!this.isNoPersist)
-                        (_b = (((_a = this.grid) === null || _a === void 0 ? void 0 : _a.query) || this.query)) === null || _b === void 0 ? void 0 : _b.refreshId(entity.id);
-                }
-            } });
-    }
-}
-ComentariosWidgetComponent.ɵfac = function ComentariosWidgetComponent_Factory(t) { return new (t || ComentariosWidgetComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injector"])); };
-ComentariosWidgetComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: ComentariosWidgetComponent, selectors: [["comentarios-widget"]], inputs: { selectable: "selectable", noPersist: "noPersist", origem: "origem", save: "save", grid: "grid", query: "query", entity: "entity" }, decls: 2, vars: 3, consts: [["title", "Coment\u00E1rios", "small", "", 3, "button", "buttonClick"], ["class", "badge bg-light text-dark comentario-badge", "role", "button", "data-expanded", "false", "data-bs-toggle", "tooltip", "data-bs-placement", "top", 3, "title", "click", 4, "ngFor", "ngForOf"], ["role", "button", "data-expanded", "false", "data-bs-toggle", "tooltip", "data-bs-placement", "top", 1, "badge", "bg-light", "text-dark", "comentario-badge", 3, "title", "click"], ["badge", ""], [1, "comentario-title"], ["class", "bi bi-reply comentario-responder", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Responder", 3, "click", 4, "ngIf"], [1, "comentario-text"], ["data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Responder", 1, "bi", "bi-reply", "comentario-responder", 3, "click"]], template: function ComentariosWidgetComponent_Template(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "separator", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("buttonClick", function ComentariosWidgetComponent_Template_separator_buttonClick_0_listener($event) { return ctx.addComentarioClick($event, ctx.entity); });
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, ComentariosWidgetComponent_span_1_Template, 12, 8, "span", 1);
-    } if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("button", !ctx.selectable ? ctx.addComentarioButton : undefined);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngForOf", (ctx.entity == null ? null : ctx.entity.comentarios) || _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction0"](2, _c0));
-    } }, directives: [_components_separator_separator_component__WEBPACK_IMPORTED_MODULE_6__["SeparatorComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_7__["NgForOf"], _angular_common__WEBPACK_IMPORTED_MODULE_7__["NgIf"]], styles: [".comentario-badge[data-expanded=true][_ngcontent-%COMP%]   .comentario-title[_ngcontent-%COMP%] {\n  display: initial;\n  white-space: normal;\n  font-size: 12px;\n}\n.comentario-badge[data-expanded=true][_ngcontent-%COMP%]   .comentario-text[_ngcontent-%COMP%] {\n  font-size: 12px;\n  height: auto;\n  display: block;\n  max-width: 180px;\n  white-space: initial;\n}\n.comentario-badge[_ngcontent-%COMP%] {\n  white-space: nowrap;\n  display: block;\n  position: relative;\n  background-color: #ffe69c !important;\n  margin-bottom: 1px;\n  text-align: left;\n}\n.comentario-badge[_ngcontent-%COMP%]   .comentario-title[_ngcontent-%COMP%] {\n  display: none;\n}\n.comentario-badge[_ngcontent-%COMP%]   .comentario-text[_ngcontent-%COMP%] {\n  display: inline-block;\n  max-width: 180px;\n  white-space: nowrap;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  font-size: 12px;\n}\n.comentario-badge[_ngcontent-%COMP%]:hover   .comentario-responder[_ngcontent-%COMP%] {\n  display: block;\n}\n.comentario-responder[_ngcontent-%COMP%] {\n  display: none;\n  position: absolute;\n  right: 5px;\n  top: 5px;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uLy4uL2NvbWVudGFyaW9zLXdpZGdldC5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFDSTtFQUNJLGdCQUFBO0VBQ0EsbUJBQUE7RUFDQSxlQUFBO0FBQVI7QUFFSTtFQUNJLGVBQUE7RUFDQSxZQUFBO0VBQ0EsY0FBQTtFQUNBLGdCQUFBO0VBQ0Esb0JBQUE7QUFBUjtBQUlBO0VBQ0ksbUJBQUE7RUFDQSxjQUFBO0VBQ0Esa0JBQUE7RUFFQSxvQ0FBQTtFQUNBLGtCQUFBO0VBQ0EsZ0JBQUE7QUFGSjtBQUdJO0VBQ0ksYUFBQTtBQURSO0FBR0k7RUFDSSxxQkFBQTtFQUNBLGdCQUFBO0VBQ0EsbUJBQUE7RUFDQSx1QkFBQTtFQUNBLGdCQUFBO0VBQ0EsZUFBQTtBQURSO0FBS0E7RUFDSSxjQUFBO0FBRko7QUFLQTtFQUNJLGFBQUE7RUFDQSxrQkFBQTtFQUNBLFVBQUE7RUFDQSxRQUFBO0FBRkoiLCJmaWxlIjoiY29tZW50YXJpb3Mtd2lkZ2V0LmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLmNvbWVudGFyaW8tYmFkZ2VbZGF0YS1leHBhbmRlZD10cnVlXSB7XHJcbiAgICAuY29tZW50YXJpby10aXRsZSB7XHJcbiAgICAgICAgZGlzcGxheTogaW5pdGlhbDtcclxuICAgICAgICB3aGl0ZS1zcGFjZTogbm9ybWFsO1xyXG4gICAgICAgIGZvbnQtc2l6ZTogMTJweDtcclxuICAgIH1cclxuICAgIC5jb21lbnRhcmlvLXRleHQge1xyXG4gICAgICAgIGZvbnQtc2l6ZTogMTJweDtcclxuICAgICAgICBoZWlnaHQ6IGF1dG87XHJcbiAgICAgICAgZGlzcGxheTogYmxvY2s7XHJcbiAgICAgICAgbWF4LXdpZHRoOiAxODBweDtcclxuICAgICAgICB3aGl0ZS1zcGFjZTogaW5pdGlhbDtcclxuICAgIH1cclxufVxyXG5cclxuLmNvbWVudGFyaW8tYmFkZ2Uge1xyXG4gICAgd2hpdGUtc3BhY2U6IG5vd3JhcDtcclxuICAgIGRpc3BsYXk6IGJsb2NrO1xyXG4gICAgcG9zaXRpb246IHJlbGF0aXZlO1xyXG4gICAgLy93aWR0aDogMjAwcHg7XHJcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjZmZlNjljICFpbXBvcnRhbnQ7XHJcbiAgICBtYXJnaW4tYm90dG9tOiAxcHg7XHJcbiAgICB0ZXh0LWFsaWduOiBsZWZ0O1xyXG4gICAgLmNvbWVudGFyaW8tdGl0bGUge1xyXG4gICAgICAgIGRpc3BsYXk6IG5vbmU7XHJcbiAgICB9XHJcbiAgICAuY29tZW50YXJpby10ZXh0IHtcclxuICAgICAgICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XHJcbiAgICAgICAgbWF4LXdpZHRoOiAxODBweDtcclxuICAgICAgICB3aGl0ZS1zcGFjZTogbm93cmFwO1xyXG4gICAgICAgIHRleHQtb3ZlcmZsb3c6IGVsbGlwc2lzO1xyXG4gICAgICAgIG92ZXJmbG93OiBoaWRkZW47XHJcbiAgICAgICAgZm9udC1zaXplOiAxMnB4O1xyXG4gICAgfVxyXG59XHJcblxyXG4uY29tZW50YXJpby1iYWRnZTpob3ZlciAuY29tZW50YXJpby1yZXNwb25kZXIge1xyXG4gICAgZGlzcGxheTogYmxvY2s7XHJcbn1cclxuXHJcbi5jb21lbnRhcmlvLXJlc3BvbmRlciB7XHJcbiAgICBkaXNwbGF5OiBub25lO1xyXG4gICAgcG9zaXRpb246IGFic29sdXRlO1xyXG4gICAgcmlnaHQ6IDVweDtcclxuICAgIHRvcDogNXB4O1xyXG59XHJcblxyXG5cclxuIl19 */"] });
-
-
-/***/ }),
-
 /***/ "724m":
 /*!********************************************!*\
   !*** ./src/app/dao/entrega-dao.service.ts ***!
@@ -4035,6 +3901,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/forms */ "3Pt+");
 /* harmony import */ var src_app_services_dialog_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/services/dialog.service */ "CzQJ");
 /* harmony import */ var _input_base__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../input-base */ "d1P8");
+/* harmony import */ var src_app_modules_uteis_templates_template_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/modules/uteis/templates/template.service */ "G6YU");
+
 
 
 
@@ -4432,6 +4300,7 @@ class InputEditorComponent extends _input_base__WEBPACK_IMPORTED_MODULE_4__["Inp
         };
         this._variables = [];
         this.dialog = injector.get(src_app_services_dialog_service__WEBPACK_IMPORTED_MODULE_3__["DialogService"]);
+        this.templateService = injector.get(src_app_modules_uteis_templates_template_service__WEBPACK_IMPORTED_MODULE_5__["TemplateService"]);
         this._value = "";
     }
     set template(value) {
@@ -4564,183 +4433,9 @@ class InputEditorComponent extends _input_base__WEBPACK_IMPORTED_MODULE_4__["Inp
     }
     updateEditor() {
         if (this.template != undefined && this.datasource != undefined) {
-            this.value = this.renderTemplate(this.template, this.datasource);
+            this.value = this.templateService.renderTemplate(this.template, this.datasource);
             this.cdRef.detectChanges();
         }
-    }
-    getStrRegEx(expression) {
-        return !expression ? "" : typeof expression == "string" ?
-            expression.split("").map(c => "<>/\\{}[]()-?*.!~".includes(c) ? "\\" + c : c).join("") :
-            expression.toString().replace(/^\//, "").replace(/\/.*?$/, "");
-    }
-    /* Monta as RegExp start e end de modo a obter: /^(BEFORE)(START)(TAG)(END)(AFTER)$/ */
-    tagSplit(template, startTag, endTag) {
-        var _a, _b;
-        let beforeAfterRegEx = (tag) => "^(?<BEFORE>[\\s\\S]*?)(?<START>" + this.getStrRegEx(tag.before) + "[\\s\\t\\n]*)(?<TAG>" + this.getStrRegEx(tag.tag) + ")(?<END>[\\s\\t\\n]*" + this.getStrRegEx(tag.after) + ")(?<AFTER>[\\s\\S]*?)$";
-        let startRegEx = beforeAfterRegEx(typeof startTag == "string" ? { tag: startTag } : startTag);
-        let endRegEx = beforeAfterRegEx(typeof endTag == "string" ? { tag: endTag } : endTag);
-        let start = (_a = template.match(new RegExp(startRegEx))) === null || _a === void 0 ? void 0 : _a.groups;
-        if (start) {
-            let end = (_b = start.AFTER.match(new RegExp(endRegEx))) === null || _b === void 0 ? void 0 : _b.groups;
-            if (end) {
-                return {
-                    before: start.BEFORE,
-                    start: { before: start.START, tag: start.TAG, after: start.END },
-                    content: end.BEFORE,
-                    end: { before: end.STERT, tag: end.TAG, after: end.END },
-                    after: end.AFTER
-                };
-            }
-        }
-        return undefined;
-    }
-    getExpressionValue(expression, context) {
-        var _a;
-        expression = expression.replace("[+]", ".length");
-        (_a = expression.match(/\[\w+\]/g)) === null || _a === void 0 ? void 0 : _a.map(x => x.replace(/^\[/, "").replace(/\]$/, "")).forEach(x => expression = expression.replace("[" + x + "]", "[" + this.getExpressionValue(x, context).toString() + "]"));
-        if (expression.toLowerCase().match(InputEditorComponent.EXPRESSION_BOOLEAN))
-            return expression.toLowerCase() == "true";
-        if (expression.match(InputEditorComponent.EXPRESSION_STRING))
-            return expression.replace(/^\"/, "").replace(/\"$/, "");
-        if (expression.match(InputEditorComponent.EXPRESSION_NUMBER))
-            return +expression;
-        if (expression.match(InputEditorComponent.EXPRESSION_VAR))
-            return this.util.getNested(context, expression);
-        return undefined;
-    }
-    bondaryTag(tag, regStrBefore, regStrAfter) {
-        var _a, _b, _c, _d;
-        let start = tag.before.match(new RegExp("(?<BEFORE>[\\s\\S]*)(?<CONTENT>" + regStrBefore + ")"));
-        let end = tag.after.match(new RegExp("(?<CONTENT>" + regStrAfter + ")(?<AFTER>[\\s\\S]*)"));
-        tag.start.before = ((_a = start === null || start === void 0 ? void 0 : start.groups) === null || _a === void 0 ? void 0 : _a.CONTENT) || "";
-        tag.before = ((_b = start === null || start === void 0 ? void 0 : start.groups) === null || _b === void 0 ? void 0 : _b.BEFORE) || "";
-        tag.after = ((_c = end === null || end === void 0 ? void 0 : end.groups) === null || _c === void 0 ? void 0 : _c.AFTER) || "";
-        tag.end.after = ((_d = end === null || end === void 0 ? void 0 : end.groups) === null || _d === void 0 ? void 0 : _d.CONTENT) || "";
-    }
-    evaluateOperator(a, operator, b) {
-        switch (operator) {
-            case "==":
-            case "=": return a == b;
-            case "<>":
-            case "!=": return a != b;
-            case ">": return a > b;
-            case ">=": return a >= b;
-            case "<": return a < b;
-            case "<=": return a <= b;
-        }
-        return false;
-    }
-    splitEndTag(after, startTag, endTag) {
-        let before = "";
-        let level = 1;
-        let next = undefined;
-        while (next = this.tagSplit(after, { tag: new RegExp(this.getStrRegEx(InputEditorComponent.OPEN_TAG) + "((" + startTag + ")|(" + endTag + "))") }, InputEditorComponent.CLOSE_TAG)) {
-            level += next.start.tag.toString().indexOf(endTag) >= 0 ? -1 : 1;
-            if (!level) { /* Level = 0; significa que o end-for é do respectivo for */
-                next.before = before + next.before;
-                return next;
-            }
-            after = next.after;
-            before += next.before + next.start.tag + next.content + next.end.tag;
-        }
-        return undefined;
-    }
-    renderTemplate(template, context) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
-        let tag = undefined;
-        let statement = null;
-        let next = template;
-        let result = "";
-        let processParamDrop = (tag, params) => {
-            let parameter = []; /* Usado penas para iterar os parametros */
-            let parameters = ((params === null || params === void 0 ? void 0 : params.replace(/^;/, "")) || "").split(";").reduce((a, v) => (parameter = v.split("="), a[parameter[0]] = parameter[1], a), {});
-            if (tag && parameters.drop && parameters.drop.match(/^\w+$/)) {
-                this.bondaryTag(tag, "<" + parameters.drop + ">[\\s\\S]*?$", "^[\\s\\S]*?<\\/" + parameters.drop + ">");
-                tag.start.before = "";
-                tag.end.after = "";
-            }
-        };
-        while (tag = this.tagSplit(next, InputEditorComponent.OPEN_TAG, InputEditorComponent.CLOSE_TAG)) {
-            try {
-                if (tag.content.match(InputEditorComponent.EXPRESSION_VAR)) {
-                    let content = (this.getExpressionValue(tag.content, context) + "").replace(/^undefined$/, "");
-                    tag.content = this.renderTemplate(content, context);
-                }
-                else if (tag.content.match(InputEditorComponent.EXPRESSION_IF)) {
-                    statement = tag.content.match(InputEditorComponent.STATEMENT_IF); /* if:OPER1=OPER2;par=0;par=0... */
-                    let aValue = this.getExpressionValue(((_a = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _a === void 0 ? void 0 : _a.EXP_A) || "", context);
-                    let bValue = this.getExpressionValue(((_b = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _b === void 0 ? void 0 : _b.EXP_B) || "", context);
-                    let ifThen = this.evaluateOperator(aValue, ((_c = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _c === void 0 ? void 0 : _c.OPER) || "", bValue);
-                    /* Processa o parametro drop caso ele exista, removendo a HTML-tag (definida pelo drop=TAG) onde o comando está dentro */
-                    processParamDrop(tag, (_d = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _d === void 0 ? void 0 : _d.PARS);
-                    /* Encontra o end-if */
-                    let endIfTag = this.splitEndTag(tag.after, "if:", "end-if");
-                    if (endIfTag) {
-                        /* Processa o parametro drop caso ele exista na tag de fechamento, removendo a HTML-tag (definida pelo drop=TAG) onde o comando está dentro */
-                        processParamDrop(endIfTag, (_e = endIfTag.content) === null || _e === void 0 ? void 0 : _e.replace(/^;/, ""));
-                        /* O content da tag só será renderizado caso ifThen seja true */
-                        tag.content = ifThen ? this.renderTemplate(endIfTag.before, context) : "";
-                        tag.after = endIfTag.after;
-                    }
-                    else {
-                        throw new Error("o if não possui um repectivo end-if");
-                    }
-                }
-                else if (tag.content.match(InputEditorComponent.EXPRESSION_FOR)) {
-                    statement = tag.content.match(InputEditorComponent.STATEMENT_FOR); /* for:EXP[(t..)x..0|0..x(..t)|EACH];par=0;par=0... */
-                    /* Processa o parametro drop caso ele exista, removendo a HTML-tag (definida pelo drop=TAG) onde o comando está dentro */
-                    processParamDrop(tag, (_f = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _f === void 0 ? void 0 : _f.PARS);
-                    /* Encontra o end-for */
-                    let endForTag = this.splitEndTag(tag.after, "for:", "end-for");
-                    if (endForTag) {
-                        /* Processa o parametro drop caso ele exista na tag de fechamento, removendo a HTML-tag (definida pelo drop=TAG) onde o comando está dentro */
-                        processParamDrop(endForTag, (_g = endForTag.content) === null || _g === void 0 ? void 0 : _g.replace(/^;/, ""));
-                        /* O content da tag será todo o conteúdo repetível do for e o after será o after do end-for */
-                        tag.content = "";
-                        tag.after = endForTag.after;
-                        /* Verifica se a variável de iteração já existe no contexto */
-                        if (context[((_h = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _h === void 0 ? void 0 : _h.EACH) || ((_j = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _j === void 0 ? void 0 : _j.INDEX) || ""])
-                            throw new Error("Variável de contexto já existe no contexto atual");
-                        /* Itera os elementos do for */
-                        let elements = this.getExpressionValue(((_k = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _k === void 0 ? void 0 : _k.EXP) || "", context);
-                        let each = !!((_m = (_l = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _l === void 0 ? void 0 : _l.EACH) === null || _m === void 0 ? void 0 : _m.match(/^[a-zA-Z]\w+$/));
-                        let asc = each || !!((_p = (_o = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _o === void 0 ? void 0 : _o.START) === null || _p === void 0 ? void 0 : _p.match(/^\d+$/));
-                        let startFor = each ? 0 : asc ? +statement.groups.START : elements.length;
-                        let endFor = each ? elements.length : asc ? elements.length : +statement.groups.END;
-                        for (let index = startFor; asc ? index < endFor : index > endFor; asc ? index++ : index--) {
-                            let current = elements[index];
-                            let forContext = Object.assign({}, context);
-                            /* Alimenta contexto com variaveis do for */
-                            if (each) {
-                                forContext[statement.groups.EACH] = current;
-                            }
-                            else {
-                                let total = asc && ((_q = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _q === void 0 ? void 0 : _q.END) ? statement.groups.END : !asc && ((_r = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _r === void 0 ? void 0 : _r.START) ? statement.groups.START : undefined;
-                                if (total)
-                                    forContext[total] = elements.length;
-                                forContext[statement.groups.INDEX] = index;
-                            }
-                            tag.content += this.renderTemplate(endForTag.before, forContext);
-                        }
-                    }
-                    else {
-                        throw new Error("o for não possui um repectivo end-for");
-                    }
-                }
-            }
-            catch (error) {
-                tag.content = "(ERRO)";
-            }
-            finally {
-                tag.start.tag = "";
-                tag.end.tag = "";
-            }
-            /* Incrementa o result e prepara o next */
-            result += tag.before + (tag.start.before || "") + tag.start.tag + (tag.start.after || "") + tag.content + (tag.end.before || "") + tag.end.tag + (tag.end.after || "");
-            next = tag.after;
-        }
-        result += next;
-        return result;
     }
     ngOnInit() {
         super.ngOnInit();
@@ -4759,18 +4454,6 @@ class InputEditorComponent extends _input_base__WEBPACK_IMPORTED_MODULE_4__["Inp
         this.updateEditor();
     }
 }
-InputEditorComponent.OPEN_TAG = "{{";
-InputEditorComponent.CLOSE_TAG = "}}";
-InputEditorComponent.EXPRESSION_BOOLEAN = /^(true|false)$/;
-InputEditorComponent.EXPRESSION_NUMBER = /^[0-9,\.]+$/;
-InputEditorComponent.EXPRESSION_STRING = /^".*"$/;
-InputEditorComponent.EXPRESSION_VAR = /^[a-zA-z]\w*?((\.\w+?)|(\[\+\])|(\[(\d+?|[a-zA-z]\w*?)\]))*$/;
-InputEditorComponent.EXPRESSION_IF = /^if:(".*"|true|false|([0-9,\.]+)|([a-zA-z]\w*?((\.\w+?)|(\[\+\])|(\[(\d+?|[a-zA-z]\w*?)\]))*))(\s*)(=|==|\>|\>=|\<|\<=|\<\>|\!=)(\s*)(".*"|true|false|([0-9,\.]+)|([a-zA-z]\w*?((\.\w+?)|(\[\+\])|(\[(\d+?|[a-zA-z]\w*?)\]))*))(;.+?\=.+?)*$/;
-InputEditorComponent.EXPRESSION_FOR = /^for:([a-zA-z]\w*?((\.\w+?)|(\[(\d+?|[a-zA-z]\w*?)\]))*)\[((\d+\.\.[a-zA-Z]\w*?(\.\.[a-zA-Z]\w*?)?)|(([a-zA-Z]\w*?\.\.)?[a-zA-Z]\w*?\.\.\d+)|([a-zA-Z]\w*?))\](;.+?\=.+?)*$/;
-InputEditorComponent.STATEMENT_FOR = /^for:(?<EXP>([a-zA-z]\w*?((\.\w+?)|(\[(\d+?|[a-zA-z]\w*?)\]))*))\[(((?<START>\w+?)\.\.(?<INDEX>\w*?)(\.\.(?<END>\w+?))?)|(%(?<EACH>\w+?)%))\](?<PARS>(;.+?\=.+?)*)$/;
-InputEditorComponent.STATEMENT_IF = /^if:(?<EXP_A>.+?)(\s*)(?<OPER>=|==|\>|\>=|\<|\<=|\<\>|\!=)(\s*)(?<EXP_B>.+?)(?<PARS>(;.+?\=.+?)*)$/;
-InputEditorComponent.STATEMENT_FOR_WITHOUT_PARS = /^(?<STATMENT>for:\w+\[.+\])/;
-InputEditorComponent.PARAMETER_DROP = "drop";
 InputEditorComponent.ɵfac = function InputEditorComponent_Factory(t) { return new (t || InputEditorComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
 InputEditorComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: InputEditorComponent, selectors: [["input-editor"]], viewQuery: function InputEditorComponent_Query(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵviewQuery"](_c0, 1);
@@ -4852,28 +4535,29 @@ const _c3 = ["tipoDocumento"];
 function DocumentosLinkComponent_editable_form_0_Template(rf, ctx) { if (rf & 1) {
     const _r6 = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](0, "editable-form", 1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](1, "separator", 2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](2, "div", 3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](3, "input-button", 4, 5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵlistener"]("buttonClick", function DocumentosLinkComponent_editable_form_0_Template_input_button_buttonClick_3_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵrestoreView"](_r6); const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵnextContext"](); return ctx_r5.onNumeroProcessoClick($event); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelement"](1, "separator", 2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](2, "separator", 3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](3, "div", 4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](4, "input-button", 5, 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵlistener"]("buttonClick", function DocumentosLinkComponent_editable_form_0_Template_input_button_buttonClick_4_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵrestoreView"](_r6); const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵnextContext"](); return ctx_r5.onNumeroProcessoClick($event); });
     _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelement"](5, "input-search", 6, 7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelement"](6, "input-search", 7, 8);
     _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](7, "div", 3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](8, "input-button", 8, 9);
-    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵlistener"]("buttonClick", function DocumentosLinkComponent_editable_form_0_Template_input_button_buttonClick_8_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵrestoreView"](_r6); const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵnextContext"](); return ctx_r7.onNumeroDocumentoClick($event); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](8, "div", 4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](9, "input-button", 9, 10);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵlistener"]("buttonClick", function DocumentosLinkComponent_editable_form_0_Template_input_button_buttonClick_9_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵrestoreView"](_r6); const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵnextContext"](); return ctx_r7.onNumeroDocumentoClick($event); });
     _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelement"](10, "input-search", 10, 11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelement"](11, "input-search", 11, 12);
     _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](12, "div", 3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelement"](13, "input-text", 12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](13, "div", 4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelement"](14, "input-text", 13);
     _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("form", ctx_r0.form);
-    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](4);
     _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("size", 4)("control", ctx_r0.form.controls.numero_processo)("disabled", !ctx_r0.gb.isEmbedded || (ctx_r0.form.controls.numero_requisicao.value == null ? null : ctx_r0.form.controls.numero_requisicao.value.length) ? "true" : undefined);
     _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("label", ctx_r0.lex.noun("Tipo de Processo"))("size", 8)("dao", ctx_r0.tipoProcessoDao);
@@ -4947,7 +4631,7 @@ class DocumentosLinkComponent extends src_app_modules_base_page_frame_base__WEBP
     loadEntity(data) {
         this.util.fillForm(this._entity.link, data);
     }
-    isSei() {
+    get isSei() {
         var _a;
         return ((_a = this._entity) === null || _a === void 0 ? void 0 : _a.tipo) == "SEI";
     }
@@ -5061,8 +4745,8 @@ DocumentosLinkComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵ
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵloadQuery"]()) && (ctx.numeroDocumento = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵloadQuery"]()) && (ctx.tipoProcesso = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵloadQuery"]()) && (ctx.tipoDocumento = _t.first);
-    } }, inputs: { documento: "documento", sei: "sei" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵInheritDefinitionFeature"]], decls: 1, vars: 1, consts: [["noButtons", "", "confirmLabel", "Assinar", 3, "form", 4, "ngIf"], ["noButtons", "", "confirmLabel", "Assinar", 3, "form"], ["transparent", "", "bottom", "", "title", "Sei/Super"], [1, "row"], ["label", "N\u00FAmero Processo", "controlName", "numero_processo", "labelInfo", "N\u00FAmero do processo, com a formata\u00E7\u00E3o de origem", 3, "size", "control", "disabled", "buttonClick"], ["numeroProcesso", ""], ["controlName", "tipo_processo_id", "disabled", "", 3, "label", "size", "dao"], ["tipoProcesso", ""], ["label", "'N\u00FAmero Documento", "controlName", "numero_documento", "labelInfo", "Numero do documento, caso seja o Sei \u00E9 o numero Sei", 3, "size", "control", "disabled", "buttonClick"], ["numeroDocumento", ""], ["controlName", "tipo_documento_id", "disabled", "", 3, "label", "size", "dao"], ["tipoDocumento", ""], ["label", "T\u00EDtulo do documento", "controlName", "titulo_documento", "disabled", "", "labelInfo", "T\u00EDtulo do documento no Sei/SUPER", 3, "size", "control"]], template: function DocumentosLinkComponent_Template(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtemplate"](0, DocumentosLinkComponent_editable_form_0_Template, 14, 15, "editable-form", 0);
+    } }, inputs: { documento: "documento", sei: "sei" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵInheritDefinitionFeature"]], decls: 1, vars: 1, consts: [["noButtons", "", "confirmLabel", "Assinar", 3, "form", 4, "ngIf"], ["noButtons", "", "confirmLabel", "Assinar", 3, "form"], ["title", "Sei/Super"], ["transparent", "", "bottom", ""], [1, "row"], ["label", "N\u00FAmero Processo", "controlName", "numero_processo", "labelInfo", "N\u00FAmero do processo, com a formata\u00E7\u00E3o de origem", 3, "size", "control", "disabled", "buttonClick"], ["numeroProcesso", ""], ["controlName", "tipo_processo_id", "disabled", "", 3, "label", "size", "dao"], ["tipoProcesso", ""], ["label", "'N\u00FAmero Documento", "controlName", "numero_documento", "labelInfo", "Numero do documento, caso seja o Sei \u00E9 o numero Sei", 3, "size", "control", "disabled", "buttonClick"], ["numeroDocumento", ""], ["controlName", "tipo_documento_id", "disabled", "", 3, "label", "size", "dao"], ["tipoDocumento", ""], ["label", "T\u00EDtulo do documento", "controlName", "titulo_documento", "disabled", "", "labelInfo", "T\u00EDtulo do documento no Sei/SUPER", 3, "size", "control"]], template: function DocumentosLinkComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtemplate"](0, DocumentosLinkComponent_editable_form_0_Template, 15, 15, "editable-form", 0);
     } if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("ngIf", ctx.isSei || ctx.gb.isEmbedded);
     } }, directives: [_angular_common__WEBPACK_IMPORTED_MODULE_9__["NgIf"], src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__["EditableFormComponent"], _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_10__["SeparatorComponent"], _components_input_input_button_input_button_component__WEBPACK_IMPORTED_MODULE_11__["InputButtonComponent"], _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_12__["InputSearchComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_13__["InputTextComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJkb2N1bWVudG9zLWxpbmsuY29tcG9uZW50LnNjc3MifQ== */"] });
@@ -7833,6 +7517,148 @@ ChangeFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefi
 
 /***/ }),
 
+/***/ "FCDt":
+/*!**********************************************************************************************!*\
+  !*** ./src/app/modules/uteis/comentarios/comentarios-widget/comentarios-widget.component.ts ***!
+  \**********************************************************************************************/
+/*! exports provided: ComentariosWidgetComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ComentariosWidgetComponent", function() { return ComentariosWidgetComponent; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var src_app_services_comentario_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/services/comentario.service */ "GCzM");
+/* harmony import */ var src_app_services_form_helper_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/services/form-helper.service */ "mp9f");
+/* harmony import */ var src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/services/lookup.service */ "/MTl");
+/* harmony import */ var src_app_services_navigate_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/services/navigate.service */ "RANn");
+/* harmony import */ var src_app_services_util_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/services/util.service */ "2Rin");
+/* harmony import */ var _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../components/separator/separator.component */ "FVj5");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common */ "ofXK");
+
+
+
+
+
+
+
+
+
+function ComentariosWidgetComponent_span_1_i_9_Template(rf, ctx) { if (rf & 1) {
+    const _r5 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "i", 7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function ComentariosWidgetComponent_span_1_i_9_Template_i_click_0_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r5); const comentario_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]().$implicit; const ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](); return ctx_r4.addComentarioClick($event, ctx_r4.entity, comentario_r1.id); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+} }
+function ComentariosWidgetComponent_span_1_Template(rf, ctx) { if (rf & 1) {
+    const _r8 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "span", 2, 3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function ComentariosWidgetComponent_span_1_Template_span_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r8); const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵreference"](1); const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](); return ctx_r7.comentarioClick(_r2); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](3, "i");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "span", 4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](5, "strong");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](8, "br");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](9, ComentariosWidgetComponent_span_1_i_9_Template, 1, 0, "i", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](10, "span", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const comentario_r1 = ctx.$implicit;
+    const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("title", ctx_r0.lookup.getValue(ctx_r0.lookup.COMENTARIO_TIPO, comentario_r1.tipo));
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", "\u2022 ".repeat((comentario_r1.path == null ? null : comentario_r1.path.includes("/")) ? comentario_r1.path.split("/").length - 1 : 0), " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassMap"]("me-1 " + ctx_r0.lookup.getIcon(ctx_r0.lookup.COMENTARIO_TIPO, comentario_r1.tipo));
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](ctx_r0.util.shortName(ctx_r0.util.apelidoOuNome(comentario_r1.usuario)));
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" \u2022 ", ctx_r0.util.getDateTimeFormatted(comentario_r1.data_hora), "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", !ctx_r0.selectable);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", comentario_r1.texto, " ");
+} }
+const _c0 = function () { return []; };
+class ComentariosWidgetComponent {
+    constructor(injector) {
+        this.injector = injector;
+        this.selectable = false;
+        //@Input() dao?: DaoBaseService<Base>;
+        this.noPersist = undefined;
+        this.origem = undefined;
+        this.addComentarioButton = {
+            icon: "bi bi-plus-circle",
+            hint: "Incluir comentário"
+        };
+        this._entity = undefined;
+        this.validate = (control, controlName) => {
+            let result = null;
+            return result;
+        };
+        this.fh = injector.get(src_app_services_form_helper_service__WEBPACK_IMPORTED_MODULE_2__["FormHelperService"]);
+        this.cdRef = injector.get(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ChangeDetectorRef"]);
+        this.go = injector.get(src_app_services_navigate_service__WEBPACK_IMPORTED_MODULE_4__["NavigateService"]);
+        this.util = injector.get(src_app_services_util_service__WEBPACK_IMPORTED_MODULE_5__["UtilService"]);
+        this.lookup = injector.get(src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_3__["LookupService"]);
+        this.comentario = injector.get(src_app_services_comentario_service__WEBPACK_IMPORTED_MODULE_1__["ComentarioService"]);
+        this.form = this.fh.FormBuilder({
+            comentarios: { default: [] }
+        }, this.cdRef, this.validate);
+    }
+    set entity(value) {
+        if (this._entity != value) {
+            this._entity = value;
+            if (value && this.comentario)
+                value.comentarios = this.comentario.orderComentarios(value.comentarios || []);
+        }
+    }
+    get entity() {
+        return this._entity;
+    }
+    ngOnInit() {
+    }
+    get isNoPersist() {
+        return this.noPersist != undefined;
+    }
+    comentarioClick(element) {
+        const value = element.getAttribute("data-expanded");
+        element.setAttribute("data-expanded", value == "true" ? "false" : "true");
+    }
+    addComentarioClick(event, entity, comentario_id) {
+        event === null || event === void 0 ? void 0 : event.stopPropagation();
+        this.go.navigate({ route: ['uteis', 'comentarios', this.origem, this.isNoPersist ? 'NOPERSIST' : entity.id, 'new'], params: { comentario_id } }, { modal: true, metadata: { entity }, modalClose: modalResult => {
+                var _a, _b;
+                if (modalResult) {
+                    if (this.save)
+                        this.save(modalResult);
+                    if (!this.isNoPersist)
+                        (_b = (((_a = this.grid) === null || _a === void 0 ? void 0 : _a.query) || this.query)) === null || _b === void 0 ? void 0 : _b.refreshId(entity.id);
+                }
+            } });
+    }
+}
+ComentariosWidgetComponent.ɵfac = function ComentariosWidgetComponent_Factory(t) { return new (t || ComentariosWidgetComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injector"])); };
+ComentariosWidgetComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: ComentariosWidgetComponent, selectors: [["comentarios-widget"]], inputs: { selectable: "selectable", noPersist: "noPersist", origem: "origem", save: "save", grid: "grid", query: "query", entity: "entity" }, decls: 2, vars: 3, consts: [["title", "Coment\u00E1rios", "small", "", 3, "button", "buttonClick"], ["class", "badge bg-light text-dark comentario-badge", "role", "button", "data-expanded", "false", "data-bs-toggle", "tooltip", "data-bs-placement", "top", 3, "title", "click", 4, "ngFor", "ngForOf"], ["role", "button", "data-expanded", "false", "data-bs-toggle", "tooltip", "data-bs-placement", "top", 1, "badge", "bg-light", "text-dark", "comentario-badge", 3, "title", "click"], ["badge", ""], [1, "comentario-title"], ["class", "bi bi-reply comentario-responder", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Responder", 3, "click", 4, "ngIf"], [1, "comentario-text"], ["data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Responder", 1, "bi", "bi-reply", "comentario-responder", 3, "click"]], template: function ComentariosWidgetComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "separator", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("buttonClick", function ComentariosWidgetComponent_Template_separator_buttonClick_0_listener($event) { return ctx.addComentarioClick($event, ctx.entity); });
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, ComentariosWidgetComponent_span_1_Template, 12, 8, "span", 1);
+    } if (rf & 2) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("button", !ctx.selectable ? ctx.addComentarioButton : undefined);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngForOf", (ctx.entity == null ? null : ctx.entity.comentarios) || _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction0"](2, _c0));
+    } }, directives: [_components_separator_separator_component__WEBPACK_IMPORTED_MODULE_6__["SeparatorComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_7__["NgForOf"], _angular_common__WEBPACK_IMPORTED_MODULE_7__["NgIf"]], styles: [".comentario-badge[data-expanded=true][_ngcontent-%COMP%]   .comentario-title[_ngcontent-%COMP%] {\n  display: initial;\n  white-space: normal;\n  font-size: 12px;\n}\n.comentario-badge[data-expanded=true][_ngcontent-%COMP%]   .comentario-text[_ngcontent-%COMP%] {\n  font-size: 12px;\n  height: auto;\n  display: block;\n  max-width: 180px;\n  white-space: initial;\n}\n.comentario-badge[_ngcontent-%COMP%] {\n  white-space: nowrap;\n  display: block;\n  position: relative;\n  background-color: #ffe69c !important;\n  margin-bottom: 1px;\n  text-align: left;\n}\n.comentario-badge[_ngcontent-%COMP%]   .comentario-title[_ngcontent-%COMP%] {\n  display: none;\n}\n.comentario-badge[_ngcontent-%COMP%]   .comentario-text[_ngcontent-%COMP%] {\n  display: inline-block;\n  max-width: 180px;\n  white-space: nowrap;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  font-size: 12px;\n}\n.comentario-badge[_ngcontent-%COMP%]:hover   .comentario-responder[_ngcontent-%COMP%] {\n  display: block;\n}\n.comentario-responder[_ngcontent-%COMP%] {\n  display: none;\n  position: absolute;\n  right: 5px;\n  top: 5px;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uLy4uLy4uL2NvbWVudGFyaW9zLXdpZGdldC5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFDSTtFQUNJLGdCQUFBO0VBQ0EsbUJBQUE7RUFDQSxlQUFBO0FBQVI7QUFFSTtFQUNJLGVBQUE7RUFDQSxZQUFBO0VBQ0EsY0FBQTtFQUNBLGdCQUFBO0VBQ0Esb0JBQUE7QUFBUjtBQUlBO0VBQ0ksbUJBQUE7RUFDQSxjQUFBO0VBQ0Esa0JBQUE7RUFFQSxvQ0FBQTtFQUNBLGtCQUFBO0VBQ0EsZ0JBQUE7QUFGSjtBQUdJO0VBQ0ksYUFBQTtBQURSO0FBR0k7RUFDSSxxQkFBQTtFQUNBLGdCQUFBO0VBQ0EsbUJBQUE7RUFDQSx1QkFBQTtFQUNBLGdCQUFBO0VBQ0EsZUFBQTtBQURSO0FBS0E7RUFDSSxjQUFBO0FBRko7QUFLQTtFQUNJLGFBQUE7RUFDQSxrQkFBQTtFQUNBLFVBQUE7RUFDQSxRQUFBO0FBRkoiLCJmaWxlIjoiY29tZW50YXJpb3Mtd2lkZ2V0LmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLmNvbWVudGFyaW8tYmFkZ2VbZGF0YS1leHBhbmRlZD10cnVlXSB7XHJcbiAgICAuY29tZW50YXJpby10aXRsZSB7XHJcbiAgICAgICAgZGlzcGxheTogaW5pdGlhbDtcclxuICAgICAgICB3aGl0ZS1zcGFjZTogbm9ybWFsO1xyXG4gICAgICAgIGZvbnQtc2l6ZTogMTJweDtcclxuICAgIH1cclxuICAgIC5jb21lbnRhcmlvLXRleHQge1xyXG4gICAgICAgIGZvbnQtc2l6ZTogMTJweDtcclxuICAgICAgICBoZWlnaHQ6IGF1dG87XHJcbiAgICAgICAgZGlzcGxheTogYmxvY2s7XHJcbiAgICAgICAgbWF4LXdpZHRoOiAxODBweDtcclxuICAgICAgICB3aGl0ZS1zcGFjZTogaW5pdGlhbDtcclxuICAgIH1cclxufVxyXG5cclxuLmNvbWVudGFyaW8tYmFkZ2Uge1xyXG4gICAgd2hpdGUtc3BhY2U6IG5vd3JhcDtcclxuICAgIGRpc3BsYXk6IGJsb2NrO1xyXG4gICAgcG9zaXRpb246IHJlbGF0aXZlO1xyXG4gICAgLy93aWR0aDogMjAwcHg7XHJcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjZmZlNjljICFpbXBvcnRhbnQ7XHJcbiAgICBtYXJnaW4tYm90dG9tOiAxcHg7XHJcbiAgICB0ZXh0LWFsaWduOiBsZWZ0O1xyXG4gICAgLmNvbWVudGFyaW8tdGl0bGUge1xyXG4gICAgICAgIGRpc3BsYXk6IG5vbmU7XHJcbiAgICB9XHJcbiAgICAuY29tZW50YXJpby10ZXh0IHtcclxuICAgICAgICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XHJcbiAgICAgICAgbWF4LXdpZHRoOiAxODBweDtcclxuICAgICAgICB3aGl0ZS1zcGFjZTogbm93cmFwO1xyXG4gICAgICAgIHRleHQtb3ZlcmZsb3c6IGVsbGlwc2lzO1xyXG4gICAgICAgIG92ZXJmbG93OiBoaWRkZW47XHJcbiAgICAgICAgZm9udC1zaXplOiAxMnB4O1xyXG4gICAgfVxyXG59XHJcblxyXG4uY29tZW50YXJpby1iYWRnZTpob3ZlciAuY29tZW50YXJpby1yZXNwb25kZXIge1xyXG4gICAgZGlzcGxheTogYmxvY2s7XHJcbn1cclxuXHJcbi5jb21lbnRhcmlvLXJlc3BvbmRlciB7XHJcbiAgICBkaXNwbGF5OiBub25lO1xyXG4gICAgcG9zaXRpb246IGFic29sdXRlO1xyXG4gICAgcmlnaHQ6IDVweDtcclxuICAgIHRvcDogNXB4O1xyXG59XHJcblxyXG5cclxuIl19 */"] });
+
+
+/***/ }),
+
 /***/ "FVj5":
 /*!*************************************************************!*\
   !*** ./src/app/components/separator/separator.component.ts ***!
@@ -8117,6 +7943,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_dao_template_dao_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/dao/template-dao.service */ "1DpL");
 /* harmony import */ var src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/services/auth.service */ "lGQG");
 /* harmony import */ var src_app_services_dialog_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! src/app/services/dialog.service */ "CzQJ");
+/* harmony import */ var src_app_services_util_service__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! src/app/services/util.service */ "2Rin");
+
 
 
 
@@ -8126,11 +7954,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class TemplateService {
-    constructor(planoTrabalhoDao, templateDao, auth, dialog) {
+    constructor(planoTrabalhoDao, templateDao, auth, dialog, util) {
         this.planoTrabalhoDao = planoTrabalhoDao;
         this.templateDao = templateDao;
         this.auth = auth;
         this.dialog = dialog;
+        this.util = util;
         this.notificacoes = [];
         this.notifica = { petrvs: false, email: false, whatsapp: false };
     }
@@ -8160,12 +7989,15 @@ class TemplateService {
         /* Continuar aqui */
     }
     prepareDatasetToSave(dataset) {
+        var _a;
+        let result = [];
         for (let item of dataset) {
-            item.dao = undefined;
-            if (["OBJECT", "ARRAY"].includes(item.type || ""))
-                this.prepareDatasetToSave(item.fields || []);
+            let { dao: _ } = item, newItem = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__rest"])(item, ["dao"]); // equivalente a newItem.dao = undefined;
+            if (["OBJECT", "ARRAY"].includes(newItem.type || "") || ((_a = newItem.fields) === null || _a === void 0 ? void 0 : _a.length))
+                newItem.fields = this.prepareDatasetToSave(newItem.fields || []);
+            result.push(newItem);
         }
-        return dataset;
+        return result;
     }
     loadNotificacoes(entidadeId, unidadeId) {
         var _a, _b, _c, _d;
@@ -8212,8 +8044,197 @@ class TemplateService {
             notifica: !(config.nao_notificar || []).includes(x.codigo)
         })); //.reduce((a: IIndexable, v: TemplateNotificacao) => Object.assign(a, {[v.codigo]: config.nao_notificar.includes(v.codigo)}), {} as IIndexable)
     }
+    /**************************************************************************************
+     * Funções para renderizar template
+     **************************************************************************************/
+    getStrRegEx(expression) {
+        return !expression ? "" : typeof expression == "string" ?
+            expression.split("").map(c => "<>/\\{}[]()-?*.!~".includes(c) ? "\\" + c : c).join("") :
+            expression.toString().replace(/^\//, "").replace(/\/.*?$/, "");
+    }
+    /* Monta as RegExp start e end de modo a obter: /^(BEFORE)(START)(TAG)(END)(AFTER)$/ */
+    tagSplit(template, startTag, endTag) {
+        var _a, _b;
+        let beforeAfterRegEx = (tag) => "^(?<BEFORE>[\\s\\S]*?)(?<START>" + this.getStrRegEx(tag.before) + "[\\s\\t\\n]*)(?<TAG>" + this.getStrRegEx(tag.tag) + ")(?<END>[\\s\\t\\n]*" + this.getStrRegEx(tag.after) + ")(?<AFTER>[\\s\\S]*?)$";
+        let startRegEx = beforeAfterRegEx(typeof startTag == "string" ? { tag: startTag } : startTag);
+        let endRegEx = beforeAfterRegEx(typeof endTag == "string" ? { tag: endTag } : endTag);
+        let start = (_a = template.match(new RegExp(startRegEx))) === null || _a === void 0 ? void 0 : _a.groups;
+        if (start) {
+            let end = (_b = start.AFTER.match(new RegExp(endRegEx))) === null || _b === void 0 ? void 0 : _b.groups;
+            if (end) {
+                return {
+                    before: start.BEFORE,
+                    start: { before: start.START, tag: start.TAG, after: start.END },
+                    content: end.BEFORE,
+                    end: { before: end.STERT, tag: end.TAG, after: end.END },
+                    after: end.AFTER
+                };
+            }
+        }
+        return undefined;
+    }
+    getExpressionValue(expression, context) {
+        var _a;
+        expression = expression.replace("[+]", ".length");
+        (_a = expression.match(/\[\w+\]/g)) === null || _a === void 0 ? void 0 : _a.map(x => x.replace(/^\[/, "").replace(/\]$/, "")).forEach(x => expression = expression.replace("[" + x + "]", "[" + this.getExpressionValue(x, context).toString() + "]"));
+        if (expression.toLowerCase().match(TemplateService.EXPRESSION_BOOLEAN))
+            return expression.toLowerCase() == "true";
+        if (expression.match(TemplateService.EXPRESSION_STRING))
+            return expression.replace(/^\"/, "").replace(/\"$/, "");
+        if (expression.match(TemplateService.EXPRESSION_NUMBER))
+            return +expression;
+        if (expression.match(TemplateService.EXPRESSION_VAR))
+            return this.util.getNested(context, expression);
+        return undefined;
+    }
+    bondaryTag(tag, regStrBefore, regStrAfter) {
+        var _a, _b, _c, _d;
+        let start = tag.before.match(new RegExp("(?<BEFORE>[\\s\\S]*)(?<CONTENT>" + regStrBefore + ")"));
+        let end = tag.after.match(new RegExp("(?<CONTENT>" + regStrAfter + ")(?<AFTER>[\\s\\S]*)"));
+        tag.start.before = ((_a = start === null || start === void 0 ? void 0 : start.groups) === null || _a === void 0 ? void 0 : _a.CONTENT) || "";
+        tag.before = ((_b = start === null || start === void 0 ? void 0 : start.groups) === null || _b === void 0 ? void 0 : _b.BEFORE) || "";
+        tag.after = ((_c = end === null || end === void 0 ? void 0 : end.groups) === null || _c === void 0 ? void 0 : _c.AFTER) || "";
+        tag.end.after = ((_d = end === null || end === void 0 ? void 0 : end.groups) === null || _d === void 0 ? void 0 : _d.CONTENT) || "";
+    }
+    evaluateOperator(a, operator, b) {
+        switch (operator) {
+            case "==":
+            case "=": return a == b;
+            case "<>":
+            case "!=": return a != b;
+            case ">": return a > b;
+            case ">=": return a >= b;
+            case "<": return a < b;
+            case "<=": return a <= b;
+        }
+        return false;
+    }
+    splitEndTag(after, startTag, endTag) {
+        let before = "";
+        let level = 1;
+        let next = undefined;
+        while (next = this.tagSplit(after, { tag: new RegExp(this.getStrRegEx(TemplateService.OPEN_TAG) + "((" + startTag + ")|(" + endTag + "))") }, TemplateService.CLOSE_TAG)) {
+            level += next.start.tag.toString().indexOf(endTag) >= 0 ? -1 : 1;
+            if (!level) { /* Level = 0; significa que o end-for é do respectivo for */
+                next.before = before + next.before;
+                return next;
+            }
+            after = next.after;
+            before += next.before + next.start.tag + next.content + next.end.tag;
+        }
+        return undefined;
+    }
+    renderTemplate(template, context) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
+        let tag = undefined;
+        let statement = null;
+        let next = template;
+        let result = "";
+        let processParamDrop = (tag, params) => {
+            let parameter = []; /* Usado penas para iterar os parametros */
+            let parameters = ((params === null || params === void 0 ? void 0 : params.replace(/^;/, "")) || "").split(";").reduce((a, v) => (parameter = v.split("="), a[parameter[0]] = parameter[1], a), {});
+            if (tag && parameters.drop && parameters.drop.match(/^\w+$/)) {
+                this.bondaryTag(tag, "<" + parameters.drop + ">[\\s\\S]*?$", "^[\\s\\S]*?<\\/" + parameters.drop + ">");
+                tag.start.before = "";
+                tag.end.after = "";
+            }
+        };
+        while (tag = this.tagSplit(next, TemplateService.OPEN_TAG, TemplateService.CLOSE_TAG)) {
+            try {
+                if (tag.content.match(TemplateService.EXPRESSION_VAR)) {
+                    let content = (this.getExpressionValue(tag.content, context) + "").replace(/^undefined$/, "");
+                    tag.content = this.renderTemplate(content, context);
+                }
+                else if (tag.content.match(TemplateService.EXPRESSION_IF)) {
+                    statement = tag.content.match(TemplateService.STATEMENT_IF); /* if:OPER1=OPER2;par=0;par=0... */
+                    let aValue = this.getExpressionValue(((_a = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _a === void 0 ? void 0 : _a.EXP_A) || "", context);
+                    let bValue = this.getExpressionValue(((_b = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _b === void 0 ? void 0 : _b.EXP_B) || "", context);
+                    let ifThen = this.evaluateOperator(aValue, ((_c = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _c === void 0 ? void 0 : _c.OPER) || "", bValue);
+                    /* Processa o parametro drop caso ele exista, removendo a HTML-tag (definida pelo drop=TAG) onde o comando está dentro */
+                    processParamDrop(tag, (_d = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _d === void 0 ? void 0 : _d.PARS);
+                    /* Encontra o end-if */
+                    let endIfTag = this.splitEndTag(tag.after, "if:", "end-if");
+                    if (endIfTag) {
+                        /* Processa o parametro drop caso ele exista na tag de fechamento, removendo a HTML-tag (definida pelo drop=TAG) onde o comando está dentro */
+                        processParamDrop(endIfTag, (_e = endIfTag.content) === null || _e === void 0 ? void 0 : _e.replace(/^;/, ""));
+                        /* O content da tag só será renderizado caso ifThen seja true */
+                        tag.content = ifThen ? this.renderTemplate(endIfTag.before, context) : "";
+                        tag.after = endIfTag.after;
+                    }
+                    else {
+                        throw new Error("o if não possui um repectivo end-if");
+                    }
+                }
+                else if (tag.content.match(TemplateService.EXPRESSION_FOR)) {
+                    statement = tag.content.match(TemplateService.STATEMENT_FOR); /* for:EXP[(t..)x..0|0..x(..t)|EACH];par=0;par=0... */
+                    /* Processa o parametro drop caso ele exista, removendo a HTML-tag (definida pelo drop=TAG) onde o comando está dentro */
+                    processParamDrop(tag, (_f = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _f === void 0 ? void 0 : _f.PARS);
+                    /* Encontra o end-for */
+                    let endForTag = this.splitEndTag(tag.after, "for:", "end-for");
+                    if (endForTag) {
+                        /* Processa o parametro drop caso ele exista na tag de fechamento, removendo a HTML-tag (definida pelo drop=TAG) onde o comando está dentro */
+                        processParamDrop(endForTag, (_g = endForTag.content) === null || _g === void 0 ? void 0 : _g.replace(/^;/, ""));
+                        /* O content da tag será todo o conteúdo repetível do for e o after será o after do end-for */
+                        tag.content = "";
+                        tag.after = endForTag.after;
+                        /* Verifica se a variável de iteração já existe no contexto */
+                        if (context[((_h = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _h === void 0 ? void 0 : _h.EACH) || ((_j = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _j === void 0 ? void 0 : _j.INDEX) || ""])
+                            throw new Error("Variável de contexto já existe no contexto atual");
+                        /* Itera os elementos do for */
+                        let elements = this.getExpressionValue(((_k = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _k === void 0 ? void 0 : _k.EXP) || "", context);
+                        let each = !!((_m = (_l = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _l === void 0 ? void 0 : _l.EACH) === null || _m === void 0 ? void 0 : _m.match(/^[a-zA-Z]\w+$/));
+                        let asc = each || !!((_p = (_o = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _o === void 0 ? void 0 : _o.START) === null || _p === void 0 ? void 0 : _p.match(/^\d+$/));
+                        let startFor = each ? 0 : asc ? +statement.groups.START : elements.length;
+                        let endFor = each ? elements.length : asc ? elements.length : +statement.groups.END;
+                        for (let index = startFor; asc ? index < endFor : index > endFor; asc ? index++ : index--) {
+                            let current = elements[index];
+                            let forContext = Object.assign({}, context);
+                            /* Alimenta contexto com variaveis do for */
+                            if (each) {
+                                forContext[statement.groups.EACH] = current;
+                            }
+                            else {
+                                let total = asc && ((_q = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _q === void 0 ? void 0 : _q.END) ? statement.groups.END : !asc && ((_r = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _r === void 0 ? void 0 : _r.START) ? statement.groups.START : undefined;
+                                if (total)
+                                    forContext[total] = elements.length;
+                                forContext[statement.groups.INDEX] = index;
+                            }
+                            tag.content += this.renderTemplate(endForTag.before, forContext);
+                        }
+                    }
+                    else {
+                        throw new Error("o for não possui um repectivo end-for");
+                    }
+                }
+            }
+            catch (error) {
+                tag.content = "(ERRO)";
+            }
+            finally {
+                tag.start.tag = "";
+                tag.end.tag = "";
+            }
+            /* Incrementa o result e prepara o next */
+            result += tag.before + (tag.start.before || "") + tag.start.tag + (tag.start.after || "") + tag.content + (tag.end.before || "") + tag.end.tag + (tag.end.after || "");
+            next = tag.after;
+        }
+        result += next;
+        return result;
+    }
 }
-TemplateService.ɵfac = function TemplateService_Factory(t) { return new (t || TemplateService)(_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_4__["PlanoTrabalhoDaoService"]), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](src_app_dao_template_dao_service__WEBPACK_IMPORTED_MODULE_5__["TemplateDaoService"]), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_6__["AuthService"]), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](src_app_services_dialog_service__WEBPACK_IMPORTED_MODULE_7__["DialogService"])); };
+TemplateService.OPEN_TAG = "{{";
+TemplateService.CLOSE_TAG = "}}";
+TemplateService.EXPRESSION_BOOLEAN = /^(true|false)$/;
+TemplateService.EXPRESSION_NUMBER = /^[0-9,\.]+$/;
+TemplateService.EXPRESSION_STRING = /^".*"$/;
+TemplateService.EXPRESSION_VAR = /^[a-zA-z]\w*?((\.\w+?)|(\[\+\])|(\[(\d+?|[a-zA-z]\w*?)\]))*$/;
+TemplateService.EXPRESSION_IF = /^if:(".*"|true|false|([0-9,\.]+)|([a-zA-z]\w*?((\.\w+?)|(\[\+\])|(\[(\d+?|[a-zA-z]\w*?)\]))*))(\s*)(=|==|\>|\>=|\<|\<=|\<\>|\!=)(\s*)(".*"|true|false|([0-9,\.]+)|([a-zA-z]\w*?((\.\w+?)|(\[\+\])|(\[(\d+?|[a-zA-z]\w*?)\]))*))(;.+?\=.+?)*$/;
+TemplateService.EXPRESSION_FOR = /^for:([a-zA-z]\w*?((\.\w+?)|(\[(\d+?|[a-zA-z]\w*?)\]))*)\[((\d+\.\.[a-zA-Z]\w*?(\.\.[a-zA-Z]\w*?)?)|(([a-zA-Z]\w*?\.\.)?[a-zA-Z]\w*?\.\.\d+)|([a-zA-Z]\w*?))\](;.+?\=.+?)*$/;
+TemplateService.STATEMENT_FOR = /^for:(?<EXP>([a-zA-z]\w*?((\.\w+?)|(\[(\d+?|[a-zA-z]\w*?)\]))*))\[(((?<START>\w+?)\.\.(?<INDEX>\w*?)(\.\.(?<END>\w+?))?)|(%(?<EACH>\w+?)%))\](?<PARS>(;.+?\=.+?)*)$/;
+TemplateService.STATEMENT_IF = /^if:(?<EXP_A>.+?)(\s*)(?<OPER>=|==|\>|\>=|\<|\<=|\<\>|\!=)(\s*)(?<EXP_B>.+?)(?<PARS>(;.+?\=.+?)*)$/;
+TemplateService.STATEMENT_FOR_WITHOUT_PARS = /^(?<STATMENT>for:\w+\[.+\])/;
+TemplateService.PARAMETER_DROP = "drop";
+TemplateService.ɵfac = function TemplateService_Factory(t) { return new (t || TemplateService)(_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_4__["PlanoTrabalhoDaoService"]), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](src_app_dao_template_dao_service__WEBPACK_IMPORTED_MODULE_5__["TemplateDaoService"]), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_6__["AuthService"]), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](src_app_services_dialog_service__WEBPACK_IMPORTED_MODULE_7__["DialogService"]), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_8__["UtilService"])); };
 TemplateService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineInjectable"]({ token: TemplateService, factory: TemplateService.ɵfac, providedIn: 'root' });
 
 
@@ -11619,9 +11640,24 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class CalendarExpedienteComponent {
-    constructor(fh, util) {
+    constructor(fh, cdRef, util) {
         this.fh = fh;
+        this.cdRef = cdRef;
         this.util = util;
+        this.diasSemana = ["domingo", "segunda", "terca", "quarta", "quinta", "sexta", "sabado"];
+        this.validate = (control, controlName) => {
+            var _a, _b, _c;
+            let result = null;
+            for (let dia of this.diasSemana) {
+                if (controlName.startsWith(dia) && controlName.endsWith("_fim") && ((_a = control === null || control === void 0 ? void 0 : control.value) === null || _a === void 0 ? void 0 : _a.length)) {
+                    let inicio = (_c = (_b = this.form) === null || _b === void 0 ? void 0 : _b.controls[dia + "_inicio"]) === null || _c === void 0 ? void 0 : _c.value;
+                    if (!this.util.isTimeValid(inicio) || !this.util.isTimeValid(control.value) || (this.util.getStrTimeHours(inicio) > this.util.getStrTimeHours(control.value))) {
+                        return "Inválido";
+                    }
+                }
+            }
+            return result;
+        };
         this.form = fh.FormBuilder({
             domingo: { default: [] },
             segunda: { default: [] },
@@ -11649,7 +11685,7 @@ class CalendarExpedienteComponent {
             especial_fim: { default: "" },
             especial_data: { default: null },
             especial_sem: { default: false }
-        });
+        }, this.cdRef, this.validate);
     }
     set disabled(value) {
         if (this._disabled != value) {
@@ -11762,7 +11798,7 @@ class CalendarExpedienteComponent {
         const data = this.form.controls.especial_data.value;
         const sem = this.form.controls.especial_sem.value;
         const key = this.util.textHash((dia == "especial" ? this.util.getDateFormatted(data) : "") + dia + inicio + fim);
-        if (this.util.isTimeValid(inicio) && this.util.isTimeValid(fim) && (dia != "especial" || data) && this.util.validateLookupItem(this.form.controls[dia].value, key)) {
+        if (this.util.isTimeValid(inicio) && this.util.isTimeValid(fim) && (this.util.getStrTimeHours(inicio) < this.util.getStrTimeHours(fim)) && (dia != "especial" || data) && this.util.validateLookupItem(this.form.controls[dia].value, key)) {
             result = {
                 key: key,
                 value: (dia == "especial" ? this.util.getDateFormatted(data) + " - " : "") + inicio + " até " + fim,
@@ -11784,7 +11820,7 @@ class CalendarExpedienteComponent {
     }
     ;
 }
-CalendarExpedienteComponent.ɵfac = function CalendarExpedienteComponent_Factory(t) { return new (t || CalendarExpedienteComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](src_app_services_form_helper_service__WEBPACK_IMPORTED_MODULE_3__["FormHelperService"]), _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_4__["UtilService"])); };
+CalendarExpedienteComponent.ɵfac = function CalendarExpedienteComponent_Factory(t) { return new (t || CalendarExpedienteComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](src_app_services_form_helper_service__WEBPACK_IMPORTED_MODULE_3__["FormHelperService"]), _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_2__["ChangeDetectorRef"]), _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_4__["UtilService"])); };
 CalendarExpedienteComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineComponent"]({ type: CalendarExpedienteComponent, selectors: [["calendar-expediente"]], inputs: { expedienteDisabled: "expedienteDisabled", disabled: "disabled", control: "control", expediente: "expediente" }, decls: 28, vars: 76, consts: [[1, "row"], ["label", "Domingo", "hostClass", "p-0", 3, "disabled", "control", "size", "addItemHandle", "change"], ["noIcon", "", "noIndicator", "", "time", "", "time24hours", "", "label", "In\u00EDcio", "hostClass", "pe-0", "controlName", "domingo_inicio", 3, "size", "control"], ["noIcon", "", "noIndicator", "", "time", "", "time24hours", "", "label", "Fim", "hostClass", "ps-0", "controlName", "domingo_fim", 3, "size", "control"], ["label", "Segunda", "hostClass", "p-0", 3, "disabled", "control", "size", "addItemHandle", "change"], ["noIcon", "", "noIndicator", "", "time", "", "time24hours", "", "label", "In\u00EDcio", "hostClass", "pe-0", "controlName", "segunda_inicio", 3, "size", "control"], ["noIcon", "", "noIndicator", "", "time", "", "time24hours", "", "label", "Fim", "hostClass", "ps-0", "controlName", "segunda_fim", 3, "size", "control"], ["label", "Ter\u00E7a", "hostClass", "p-0", 3, "disabled", "control", "size", "addItemHandle", "change"], ["noIcon", "", "noIndicator", "", "time", "", "time24hours", "", "label", "In\u00EDcio", "hostClass", "pe-0", "controlName", "terca_inicio", 3, "size", "control"], ["noIcon", "", "noIndicator", "", "time", "", "time24hours", "", "label", "Fim", "hostClass", "ps-0", "controlName", "terca_fim", 3, "size", "control"], ["label", "Quarta", "hostClass", "p-0", 3, "disabled", "control", "size", "addItemHandle", "change"], ["noIcon", "", "noIndicator", "", "time", "", "time24hours", "", "label", "In\u00EDcio", "hostClass", "pe-0", "controlName", "quarta_inicio", 3, "size", "control"], ["noIcon", "", "noIndicator", "", "time", "", "time24hours", "", "label", "Fim", "hostClass", "ps-0", "controlName", "quarta_fim", 3, "size", "control"], ["label", "Quinta", "hostClass", "p-0", 3, "disabled", "control", "size", "addItemHandle", "change"], ["noIcon", "", "noIndicator", "", "time", "", "time24hours", "", "label", "In\u00EDcio", "hostClass", "pe-0", "controlName", "quinta_inicio", 3, "size", "control"], ["noIcon", "", "noIndicator", "", "time", "", "time24hours", "", "label", "Fim", "hostClass", "ps-0", "controlName", "quinta_fim", 3, "size", "control"], ["label", "Sexta", "hostClass", "p-0", 3, "disabled", "control", "size", "addItemHandle", "change"], ["noIcon", "", "noIndicator", "", "time", "", "time24hours", "", "label", "In\u00EDcio", "hostClass", "pe-0", "controlName", "sexta_inicio", 3, "size", "control"], ["noIcon", "", "noIndicator", "", "time", "", "time24hours", "", "label", "Fim", "hostClass", "ps-0", "controlName", "sexta_fim", 3, "size", "control"], ["label", "Sabado", "hostClass", "p-0", 3, "disabled", "control", "size", "addItemHandle", "change"], ["noIcon", "", "noIndicator", "", "time", "", "time24hours", "", "label", "In\u00EDcio", "hostClass", "pe-0", "controlName", "sabado_inicio", 3, "size", "control"], ["noIcon", "", "noIndicator", "", "time", "", "time24hours", "", "label", "Fim", "hostClass", "ps-0", "controlName", "sabado_fim", 3, "size", "control"], ["label", "Especial", "hostClass", "p-0", 3, "disabled", "control", "size", "addItemHandle", "change"], ["noIcon", "", "date", "", "label", "Dia", "controlName", "especial_data", 3, "size", "control"], ["label", "Sem", "controlName", "especial_sem", "labelInfo", "Sem expediente. Se o hor\u00E1rio ir\u00E1 representar um per\u00EDodo que n\u00E1o haver\u00E1 expediente.", 3, "size", "control"], ["noIcon", "", "noIndicator", "", "time", "", "time24hours", "", "label", "In\u00EDcio", "hostClass", "pe-0", "controlName", "especial_inicio", 3, "size", "control"], ["noIcon", "", "noIndicator", "", "time", "", "time24hours", "", "label", "Fim", "hostClass", "ps-0", "controlName", "especial_fim", 3, "size", "control"]], template: function CalendarExpedienteComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](0, "div", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](1, "input-multiselect", 1);
@@ -12352,7 +12388,7 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
     }
 }
 TesteComponent.ɵfac = function TesteComponent_Factory(t) { return new (t || TesteComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdirectiveInject"](src_app_services_form_helper_service__WEBPACK_IMPORTED_MODULE_7__["FormHelperService"]), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdirectiveInject"](src_app_dao_planejamento_dao_service__WEBPACK_IMPORTED_MODULE_8__["PlanejamentoDaoService"]), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdirectiveInject"](src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_9__["UsuarioDaoService"]), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdirectiveInject"](src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_10__["LookupService"]), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdirectiveInject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_0__["UtilService"]), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdirectiveInject"](src_app_services_navigate_service__WEBPACK_IMPORTED_MODULE_11__["NavigateService"]), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdirectiveInject"](src_app_services_calendar_service__WEBPACK_IMPORTED_MODULE_12__["CalendarService"]), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdirectiveInject"]('ID_GENERATOR_BASE')); };
-TesteComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineComponent"]({ type: TesteComponent, selectors: [["app-teste"]], decls: 13, vars: 10, consts: [[3, "form"], [1, "d-flex"], [1, "flex-grow-1"], ["controlName", "level", 3, "size", "items"], [1, "btn-group"], ["type", "button", "class", "btn btn-success", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Adicionar", 4, "ngIf"], ["type", "button", "class", "btn btn-primary", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Salvar", 4, "ngIf"], ["type", "button", "class", "btn btn-danger", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Cancelar", 4, "ngIf"], [1, "row"], ["controlName", "level", 3, "size", "validate"], ["type", "button", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Adicionar", 1, "btn", "btn-success"], [1, "bi", "bi-arrow-bar-up"], ["type", "button", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Salvar", 1, "btn", "btn-primary"], [1, "bi", "bi-check-circle"], ["type", "button", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Cancelar", 1, "btn", "btn-danger"], [1, "bi", "bi", "bi-dash-circle"]], template: function TesteComponent_Template(rf, ctx) { if (rf & 1) {
+TesteComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineComponent"]({ type: TesteComponent, selectors: [["app-teste"]], decls: 13, vars: 10, consts: [[3, "form"], [1, "d-flex"], [1, "flex-grow-1"], ["controlName", "level", 3, "size", "items"], [1, "btn-group"], ["type", "button", "class", "btn btn-success", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Adicionar", 4, "ngIf"], ["type", "button", "class", "btn btn-primary", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Salvar", 4, "ngIf"], ["type", "button", "class", "btn btn-danger", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Cancelar", 4, "ngIf"], [1, "row"], ["controlName", "level", 3, "size", "validate"], ["type", "button", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Adicionar", 1, "btn", "btn-success"], [1, "bi", "bi-arrow-bar-up"], ["type", "button", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Salvar", 1, "btn", "btn-primary"], [1, "bi", "bi-check-circle"], ["type", "button", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Cancelar", 1, "btn", "btn-danger"], [1, "bi", "bi-dash-circle"]], template: function TesteComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "editable-form", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](1, "div", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](2, "div", 2);
@@ -13650,6 +13686,7 @@ class LexicalService {
             "área de trabalho": { single: "área de trabalho", plural: "áreas de trabalho", female: true },
             "area do conhecimento": { single: "area do conhecimento", plural: "areas dos conhecimentos", female: true },
             "atividade": { single: "atividade", plural: "atividades", female: true },
+            "atribuição": { single: "atribuição", plural: "atribuições", female: true },
             "avaliação": { single: "avaliação", plural: "avaliações", female: true },
             "cadeiaValor": { single: "cadeia de valor", plural: "cadeias de valor", female: true },
             "capacidade": { single: "capacidade", plural: "capacidades", female: true },
@@ -13980,85 +14017,94 @@ function AppComponent_nav_3_div_13_div_2_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngForOf", ctx_r17.globals.toolbarButtons);
 } }
-function AppComponent_nav_3_div_13_ul_3_ng_container_4_li_1_ng_container_4_li_1_a_1_Template(rf, ctx) { if (rf & 1) {
-    const _r50 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "a", 57);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AppComponent_nav_3_div_13_ul_3_ng_container_4_li_1_ng_container_4_li_1_a_1_Template_a_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r50); const itemMenu_r43 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](2).$implicit; const ctx_r48 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](6); return ctx_r48.go.navigate({ route: itemMenu_r43.route }, itemMenu_r43.metadata || { root: true }); });
+function AppComponent_nav_3_div_13_ul_3_ng_container_4_li_1_ul_3_ng_container_1_li_1_a_1_Template(rf, ctx) { if (rf & 1) {
+    const _r51 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "a", 58);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AppComponent_nav_3_div_13_ul_3_ng_container_4_li_1_ul_3_ng_container_1_li_1_a_1_Template_a_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r51); const itemMenu_r44 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](2).$implicit; const ctx_r49 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](7); return ctx_r49.openModule(itemMenu_r44); });
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](1, "i");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    const itemMenu_r43 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](2).$implicit;
-    const ctx_r45 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵclassMap"](ctx_r45.menuItemClass("dropdown-item", itemMenu_r43.route));
+    const itemMenu_r44 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](2).$implicit;
+    const ctx_r46 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵclassMap"](ctx_r46.menuItemClass("dropdown-item", itemMenu_r44));
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵclassMap"](itemMenu_r43.icon);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵclassMap"](itemMenu_r44.icon);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate1"](" ", itemMenu_r43.name, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate1"](" ", itemMenu_r44.name, " ");
 } }
-function AppComponent_nav_3_div_13_ul_3_ng_container_4_li_1_ng_container_4_li_1_ng_template_2_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](0, "hr", 58);
+function AppComponent_nav_3_div_13_ul_3_ng_container_4_li_1_ul_3_ng_container_1_li_1_ng_template_2_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](0, "hr", 59);
 } }
-function AppComponent_nav_3_div_13_ul_3_ng_container_4_li_1_ng_container_4_li_1_Template(rf, ctx) { if (rf & 1) {
+function AppComponent_nav_3_div_13_ul_3_ng_container_4_li_1_ul_3_ng_container_1_li_1_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "li");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](1, AppComponent_nav_3_div_13_ul_3_ng_container_4_li_1_ng_container_4_li_1_a_1_Template, 3, 5, "a", 55);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](2, AppComponent_nav_3_div_13_ul_3_ng_container_4_li_1_ng_container_4_li_1_ng_template_2_Template, 1, 0, "ng-template", null, 56, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplateRefExtractor"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](1, AppComponent_nav_3_div_13_ul_3_ng_container_4_li_1_ul_3_ng_container_1_li_1_a_1_Template, 3, 5, "a", 56);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](2, AppComponent_nav_3_div_13_ul_3_ng_container_4_li_1_ul_3_ng_container_1_li_1_ng_template_2_Template, 1, 0, "ng-template", null, 57, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplateRefExtractor"]);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    const _r46 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵreference"](3);
-    const itemMenu_r43 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]().$implicit;
+    const _r47 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵreference"](3);
+    const itemMenu_r44 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]().$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", itemMenu_r43 != "-")("ngIfElse", _r46);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", itemMenu_r44 != "-")("ngIfElse", _r47);
 } }
-function AppComponent_nav_3_div_13_ul_3_ng_container_4_li_1_ng_container_4_Template(rf, ctx) { if (rf & 1) {
+function AppComponent_nav_3_div_13_ul_3_ng_container_4_li_1_ul_3_ng_container_1_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementContainerStart"](0);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](1, AppComponent_nav_3_div_13_ul_3_ng_container_4_li_1_ng_container_4_li_1_Template, 4, 2, "li", 54);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](1, AppComponent_nav_3_div_13_ul_3_ng_container_4_li_1_ul_3_ng_container_1_li_1_Template, 4, 2, "li", 55);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementContainerEnd"]();
 } if (rf & 2) {
-    const itemMenu_r43 = ctx.$implicit;
-    const ctx_r42 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](6);
+    const itemMenu_r44 = ctx.$implicit;
+    const ctx_r43 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](7);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", !(itemMenu_r43.permition == null ? null : itemMenu_r43.permition.length) || ctx_r42.auth.hasPermissionTo(itemMenu_r43.permition));
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", itemMenu_r44 && (!(itemMenu_r44.permition == null ? null : itemMenu_r44.permition.length) || ctx_r43.auth.hasPermissionTo(itemMenu_r44.permition)));
+} }
+function AppComponent_nav_3_div_13_ul_3_ng_container_4_li_1_ul_3_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "ul", 44);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](1, AppComponent_nav_3_div_13_ul_3_ng_container_4_li_1_ul_3_ng_container_1_Template, 2, 1, "ng-container", 45);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const item_r40 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](2).$implicit;
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵattribute"]("aria-labelledby", item_r40.id);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngForOf", item_r40.menu);
 } }
 function AppComponent_nav_3_div_13_ul_3_ng_container_4_li_1_Template(rf, ctx) { if (rf & 1) {
+    const _r57 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "li", 52);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](1, "a", 53);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AppComponent_nav_3_div_13_ul_3_ng_container_4_li_1_Template_a_click_1_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r57); const item_r40 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]().$implicit; const ctx_r55 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](4); return ctx_r55.openModule(item_r40); });
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](3, "ul", 44);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](4, AppComponent_nav_3_div_13_ul_3_ng_container_4_li_1_ng_container_4_Template, 2, 1, "ng-container", 45);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](3, AppComponent_nav_3_div_13_ul_3_ng_container_4_li_1_ul_3_Template, 2, 2, "ul", 54);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const item_r40 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]().$implicit;
     const ctx_r41 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](4);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵclassMap"](ctx_r41.menuItemClass("nav-link dropdown-toggle", item_r40.route));
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵclassMap"](ctx_r41.menuItemClass("nav-link" + (!item_r40.route ? " dropdown-toggle" : ""), item_r40));
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵattribute"]("id", item_r40.id);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate1"](" ", item_r40.name, " ");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵattribute"]("aria-labelledby", item_r40.id);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngForOf", item_r40.menu);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", !item_r40.route);
 } }
 function AppComponent_nav_3_div_13_ul_3_ng_container_4_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementContainerStart"](0);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](1, AppComponent_nav_3_div_13_ul_3_ng_container_4_li_1_Template, 5, 6, "li", 51);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](1, AppComponent_nav_3_div_13_ul_3_ng_container_4_li_1_Template, 4, 5, "li", 51);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementContainerEnd"]();
 } if (rf & 2) {
     const item_r40 = ctx.$implicit;
     const ctx_r39 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](4);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", !(item_r40.permition == null ? null : item_r40.permition.length) || ctx_r39.auth.hasPermissionTo(item_r40.permition));
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", item_r40 && (!(item_r40.permition == null ? null : item_r40.permition.length) || ctx_r39.auth.hasPermissionTo(item_r40.permition)));
 } }
 const _c1 = function () { return ["home"]; };
+const _c2 = function (a0) { return { route: a0 }; };
 function AppComponent_nav_3_div_13_ul_3_Template(rf, ctx) { if (rf & 1) {
-    const _r55 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
+    const _r60 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "ul", 48);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](1, "li", 49);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](2, "a", 50);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AppComponent_nav_3_div_13_ul_3_Template_a_click_2_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r55); const ctx_r54 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](3); return ctx_r54.goHome(); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AppComponent_nav_3_div_13_ul_3_Template_a_click_2_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r60); const ctx_r59 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](3); return ctx_r59.goHome(); });
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](3, "Home");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
@@ -14067,19 +14113,19 @@ function AppComponent_nav_3_div_13_ul_3_Template(rf, ctx) { if (rf & 1) {
 } if (rf & 2) {
     const ctx_r18 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵclassMap"](ctx_r18.menuItemClass("nav-link", _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpureFunction0"](3, _c1)));
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵclassMap"](ctx_r18.menuItemClass("nav-link", _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpureFunction1"](4, _c2, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpureFunction0"](3, _c1))));
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngForOf", ctx_r18.menu);
 } }
 function AppComponent_nav_3_div_13_button_4_Template(rf, ctx) { if (rf & 1) {
-    const _r57 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "button", 59);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AppComponent_nav_3_div_13_button_4_Template_button_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r57); const ctx_r56 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](3); return ctx_r56.go.openNewTab(ctx_r56.globals.SUPPORT_URL); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](1, "i", 60);
+    const _r62 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "button", 60);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AppComponent_nav_3_div_13_button_4_Template_button_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r62); const ctx_r61 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](3); return ctx_r61.go.openNewTab(ctx_r61.globals.SUPPORT_URL); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](1, "i", 61);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } }
 function AppComponent_nav_3_div_13_span_7_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "span", 61);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "span", 62);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](2, "span", 43);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](3, "Mensagens n\u00E3o lidas");
@@ -14091,125 +14137,125 @@ function AppComponent_nav_3_div_13_span_7_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate1"](" ", ctx_r20.notificacao.naoLidas > 9 ? "9+" : ctx_r20.notificacao.naoLidas, " ");
 } }
 function AppComponent_nav_3_div_13_div_8_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 62);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 63);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](1, "span", 43);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } }
 function AppComponent_nav_3_div_13_form_9_div_1_i_2_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](0, "i", 79);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](0, "i", 80);
 } }
 function AppComponent_nav_3_div_13_form_9_div_1_div_3_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 80);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 81);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](1, "span", 43);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } }
 function AppComponent_nav_3_div_13_form_9_div_1_input_5_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](0, "input", 81);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](0, "input", 82);
 } }
 function AppComponent_nav_3_div_13_form_9_div_1_select_6_option_1_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "option");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    const unidade_r66 = ctx.$implicit;
-    const ctx_r65 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵattribute"]("value", unidade_r66.id)("selected", unidade_r66.id == (ctx_r65.auth.unidade == null ? null : ctx_r65.auth.unidade.id) ? "true" : undefined);
+    const unidade_r71 = ctx.$implicit;
+    const ctx_r70 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵattribute"]("value", unidade_r71.id)("selected", unidade_r71.id == (ctx_r70.auth.unidade == null ? null : ctx_r70.auth.unidade.id) ? "true" : undefined);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"](unidade_r66.sigla);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"](unidade_r71.sigla);
 } }
 function AppComponent_nav_3_div_13_form_9_div_1_select_6_Template(rf, ctx) { if (rf & 1) {
-    const _r68 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "select", 82);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("change", function AppComponent_nav_3_div_13_form_9_div_1_select_6_Template_select_change_0_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r68); const ctx_r67 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](5); return ctx_r67.selecionaUnidade($event); });
+    const _r73 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "select", 83);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("change", function AppComponent_nav_3_div_13_form_9_div_1_select_6_Template_select_change_0_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r73); const ctx_r72 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](5); return ctx_r72.selecionaUnidade($event); });
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](1, AppComponent_nav_3_div_13_form_9_div_1_select_6_option_1_Template, 2, 3, "option", 45);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    const ctx_r64 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](5);
+    const ctx_r69 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](5);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngForOf", ctx_r64.unidades);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngForOf", ctx_r69.unidades);
 } }
 function AppComponent_nav_3_div_13_form_9_div_1_Template(rf, ctx) { if (rf & 1) {
-    const _r70 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 67);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](1, "span", 68);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](2, AppComponent_nav_3_div_13_form_9_div_1_i_2_Template, 1, 0, "i", 69);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](3, AppComponent_nav_3_div_13_form_9_div_1_div_3_Template, 2, 0, "div", 70);
+    const _r75 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 68);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](1, "span", 69);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](2, AppComponent_nav_3_div_13_form_9_div_1_i_2_Template, 1, 0, "i", 70);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](3, AppComponent_nav_3_div_13_form_9_div_1_div_3_Template, 2, 0, "div", 71);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](4);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](5, AppComponent_nav_3_div_13_form_9_div_1_input_5_Template, 1, 0, "input", 71);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](6, AppComponent_nav_3_div_13_form_9_div_1_select_6_Template, 2, 1, "select", 72);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](7, "button", 73);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](5, AppComponent_nav_3_div_13_form_9_div_1_input_5_Template, 1, 0, "input", 72);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](6, AppComponent_nav_3_div_13_form_9_div_1_select_6_Template, 2, 1, "select", 73);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](7, "button", 74);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](8);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](9, "profile-picture", 74);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](9, "profile-picture", 75);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](10, "ul", 75);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](10, "ul", 76);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](11, "li");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](12, "a", 46);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AppComponent_nav_3_div_13_form_9_div_1_Template_a_click_12_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r70); const ctx_r69 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](4); return ctx_r69.go.navigate({ route: ["configuracoes", "usuario", ctx_r69.auth.usuario.id, "edit"] }, { root: true, modal: true }); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](13, "i", 76);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AppComponent_nav_3_div_13_form_9_div_1_Template_a_click_12_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r75); const ctx_r74 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](4); return ctx_r74.go.navigate({ route: ["configuracoes", "usuario", ctx_r74.auth.usuario.id, "edit"] }, { root: true, modal: true }); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](13, "i", 77);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](14, " Perfil");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](15, "li");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](16, "a", 46);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AppComponent_nav_3_div_13_form_9_div_1_Template_a_click_16_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r70); const ctx_r71 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](4); return ctx_r71.go.navigate({ route: ["configuracoes", "preferencia", "usuario", ctx_r71.auth.usuario.id] }, { root: true, modal: true }); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](17, "i", 77);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AppComponent_nav_3_div_13_form_9_div_1_Template_a_click_16_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r75); const ctx_r76 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](4); return ctx_r76.go.navigate({ route: ["configuracoes", "preferencia", "usuario", ctx_r76.auth.usuario.id] }, { root: true, modal: true }); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](17, "i", 78);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](18, " Prefer\u00EAncias");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](19, "li");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](20, "hr", 58);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](20, "hr", 59);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](21, "li");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](22, "a", 46);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AppComponent_nav_3_div_13_form_9_div_1_Template_a_click_22_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r70); const ctx_r72 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](4); return ctx_r72.logout(); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](23, "i", 78);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AppComponent_nav_3_div_13_form_9_div_1_Template_a_click_22_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r75); const ctx_r77 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](4); return ctx_r77.logout(); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](23, "i", 79);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](24, " Sair");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    const ctx_r58 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](4);
+    const ctx_r63 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](4);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", ctx_r58.auth.unidade);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", ctx_r63.auth.unidade);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", (ctx_r58.unidades == null ? null : ctx_r58.unidades.length) && !ctx_r58.auth.unidade);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", (ctx_r63.unidades == null ? null : ctx_r63.unidades.length) && !ctx_r63.auth.unidade);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate1"](" ", ctx_r58.unidadeHora, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate1"](" ", ctx_r63.unidadeHora, " ");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", (ctx_r58.unidades == null ? null : ctx_r58.unidades.length) == 0);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", (ctx_r63.unidades == null ? null : ctx_r63.unidades.length) == 0);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", ctx_r58.unidades == null ? null : ctx_r58.unidades.length);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", ctx_r63.unidades == null ? null : ctx_r63.unidades.length);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate1"](" ", ctx_r58.usuarioNome, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate1"](" ", ctx_r63.usuarioNome, " ");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("url", ctx_r58.usuarioFoto)("hint", (ctx_r58.auth.usuario == null ? null : ctx_r58.auth.usuario.nome) || "Usu\u00E1rio desconhecido");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("url", ctx_r63.usuarioFoto)("hint", (ctx_r63.auth.usuario == null ? null : ctx_r63.auth.usuario.nome) || "Usu\u00E1rio desconhecido");
 } }
 function AppComponent_nav_3_div_13_form_9_button_2_Template(rf, ctx) { if (rf & 1) {
-    const _r74 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "button", 83);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AppComponent_nav_3_div_13_form_9_button_2_Template_button_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r74); const ctx_r73 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](4); return ctx_r73.toolbarLogin(); });
+    const _r79 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "button", 84);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AppComponent_nav_3_div_13_form_9_button_2_Template_button_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r79); const ctx_r78 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](4); return ctx_r78.toolbarLogin(); });
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](1, "Login");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } }
 function AppComponent_nav_3_div_13_form_9_button_3_Template(rf, ctx) { if (rf & 1) {
-    const _r76 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
+    const _r81 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "button", 25);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AppComponent_nav_3_div_13_form_9_button_3_Template_button_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r76); const ctx_r75 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](4); return ctx_r75.onCollapseContainerClick(); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AppComponent_nav_3_div_13_form_9_button_3_Template_button_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r81); const ctx_r80 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](4); return ctx_r80.onCollapseContainerClick(); });
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](1, "i", 41);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    const ctx_r60 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](4);
+    const ctx_r65 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](4);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵclassMap"]("bi " + (ctx_r60.collapseContainer ? "bi bi-plus" : "bi bi-dash"));
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("title", ctx_r60.collapseContainer ? "Expandir Petrvs" : "Contrair Petrvs");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵclassMap"]("bi " + (ctx_r65.collapseContainer ? "bi bi-plus" : "bi bi-dash"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("title", ctx_r65.collapseContainer ? "Expandir Petrvs" : "Contrair Petrvs");
 } }
 function AppComponent_nav_3_div_13_form_9_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "form", 63);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](1, AppComponent_nav_3_div_13_form_9_div_1_Template, 25, 8, "div", 64);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](2, AppComponent_nav_3_div_13_form_9_button_2_Template, 2, 0, "button", 65);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](3, AppComponent_nav_3_div_13_form_9_button_3_Template, 2, 3, "button", 66);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "form", 64);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](1, AppComponent_nav_3_div_13_form_9_div_1_Template, 25, 8, "div", 65);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](2, AppComponent_nav_3_div_13_form_9_button_2_Template, 2, 0, "button", 66);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](3, AppComponent_nav_3_div_13_form_9_button_3_Template, 2, 3, "button", 67);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r22 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](3);
@@ -14221,14 +14267,14 @@ function AppComponent_nav_3_div_13_form_9_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", ctx_r22.globals.isEmbedded && ctx_r22.auth.logged && !ctx_r22.globals.isToolbar);
 } }
 function AppComponent_nav_3_div_13_Template(rf, ctx) { if (rf & 1) {
-    const _r78 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
+    const _r83 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 20);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](1, AppComponent_nav_3_div_13_div_1_Template, 1, 0, "div", 27);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](2, AppComponent_nav_3_div_13_div_2_Template, 2, 1, "div", 28);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](3, AppComponent_nav_3_div_13_ul_3_Template, 5, 4, "ul", 29);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](3, AppComponent_nav_3_div_13_ul_3_Template, 5, 6, "ul", 29);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](4, AppComponent_nav_3_div_13_button_4_Template, 2, 0, "button", 30);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](5, "button", 31);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AppComponent_nav_3_div_13_Template_button_click_5_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r78); const ctx_r77 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](2); return ctx_r77.go.navigate({ route: ["uteis", "notificacoes"] }); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AppComponent_nav_3_div_13_Template_button_click_5_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r83); const ctx_r82 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](2); return ctx_r82.go.navigate({ route: ["uteis", "notificacoes"] }); });
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](6, "i", 32);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](7, AppComponent_nav_3_div_13_span_7_Template, 4, 1, "span", 33);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
@@ -14291,7 +14337,7 @@ function AppComponent_nav_3_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", !ctx_r2.isConfig && !ctx_r2.isMinimized);
 } }
 function AppComponent_div_4_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 84);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 85);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
@@ -14300,10 +14346,10 @@ function AppComponent_div_4_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate1"](" ", ctx_r3.error, " ");
 } }
 function AppComponent_top_alert_6_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](0, "top-alert", 85);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](0, "top-alert", 86);
 } if (rf & 2) {
-    const topAlert_r79 = ctx.$implicit;
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("id", topAlert_r79.id)("close", topAlert_r79.close)("message", topAlert_r79.message)("closable", topAlert_r79.closable);
+    const topAlert_r84 = ctx.$implicit;
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("id", topAlert_r84.id)("close", topAlert_r84.close)("message", topAlert_r84.message)("closable", topAlert_r84.closable);
 } }
 let appInjector;
 class AppComponent {
@@ -14362,7 +14408,6 @@ class AppComponent {
             TAREFAS: { name: this.lex.translate("Tarefas"), permition: 'MOD_DMD', route: ['cadastros', 'tarefa'], icon: this.entity.getIcon('Tarefa') },
             TEMPLATES: { name: this.lex.translate("Templates"), permition: 'MOD_TEMP', route: ['cadastros', 'template'], icon: this.entity.getIcon('Template') },
             TIPOS_ATIVIDADES: { name: this.lex.translate("Tipos de Atividade"), permition: 'MOD_TIPO_ATV', route: ['cadastros', 'tipo-atividade'], icon: this.entity.getIcon('TipoAtividade') },
-            ATIVIDADES: { name: this.lex.translate("Atividades"), permition: 'MOD_ATV', route: ['cadastros', 'atividade'], icon: this.entity.getIcon('Atividade') },
             TIPOS_AVALIACOES: { name: this.lex.translate("Tipos de Avaliação"), permition: 'MOD_TIPO_AVAL', route: ['cadastros', 'tipo-avaliacao'], icon: this.entity.getIcon('TipoAvaliacao') },
             TIPOS_DOCUMENTOS: { name: this.lex.translate("Tipos de Documento"), permition: 'MOD_TIPO_DOC', route: ['cadastros', 'tipo-documento'], icon: this.entity.getIcon('TipoDocumento') },
             TIPOS_JUSTIFICATIVAS: { name: this.lex.translate("Tipos de Justificativa"), permition: 'MOD_TIPO_JUST', route: ['cadastros', 'tipo-justificativa'], icon: this.entity.getIcon('TipoJustificativa') },
@@ -14372,7 +14417,7 @@ class AppComponent {
             /*Gestão*/
             //ADESAO: { name: this.lex.translate("Adesao", true), permition: 'MOD_ADES', route: ['gestao', 'adesao'], icon: this.entity.getIcon('Adesao') },
             CADEIAS_VALORES: { name: this.lex.translate("Cadeias de valor"), permition: 'MOD_CADV', route: ['gestao', 'cadeia-valor'], icon: this.entity.getIcon('CadeiaValor') },
-            DEMANDAS: { name: this.lex.translate("Demandas"), permition: '', route: ['gestao', 'demanda'], icon: this.entity.getIcon('Demanda') },
+            ATIVIDADES: { name: this.lex.translate("Atividades"), permition: 'MOD_ATV', route: ['gestao', 'atividade'], icon: this.entity.getIcon('Atividade') },
             PLANEJAMENTOS_INSTITUCIONAIS: { name: this.lex.translate("Planejamentos Institucional"), permition: 'MOD_PLAN_INST', route: ['gestao', 'planejamento'], icon: this.entity.getIcon('Planejamento') },
             PLANOS_ENTREGAS: { name: this.lex.translate("Planos de Entrega"), permition: 'MOD_PENT', route: ['gestao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega') },
             PLANOS_TRABALHOS: { name: this.lex.translate("Planos de Trabalho"), permition: 'MOD_PTR', route: ['gestao', 'plano-trabalho'], icon: this.entity.getIcon('Plano') },
@@ -14422,9 +14467,8 @@ class AppComponent {
             RXVISUALIZA_ADM_PESQUISA1: { name: "Usuario", permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-search" },
             RXVISUALIZA_ADM_PESQUISA2: { name: "Administrador", permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-binoculars" },
             /*PROJETOS*/
-            CONSOLIDA: { name: "Consolidação", permition: '', route: ['configuracoes', 'sobre'], icon: "" },
             PAINEL: { name: "Painel", permition: '', route: ['configuracoes', 'sobre'], icon: "" },
-            AUDITORIA: { name: "Auditoria", permition: '', route: ['configuracoes', 'sobre'], icon: "" },
+            AUDITORIA: { name: "Auditoria", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
         };
         this.menuGestao = [{
                 name: "Planejamento",
@@ -14434,16 +14478,16 @@ class AppComponent {
                     this.menuSchema.CADEIAS_VALORES,
                     this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
                     this.menuSchema.PLANOS_ENTREGAS,
+                    this.menuSchema.PLANOS_TRABALHOS,
+                    this.menuSchema.PROGRAMAS_GESTAO
                 ].sort(this.orderMenu)
             }, {
                 name: "Execução",
                 permition: "MENU_GESTAO_ACESSO",
                 id: "navbarDropdownGestaoExecucao",
                 menu: [
-                    this.menuSchema.PLANOS_TRABALHOS,
                     this.menuSchema.ATIVIDADES,
-                    this.menuSchema.CONSOLIDA,
-                    this.menuSchema.AFASTAMENTOS,
+                    this.menuSchema.AFASTAMENTOS
                 ].sort(this.orderMenu)
             }, {
                 name: "Gerenciamento",
@@ -14453,7 +14497,7 @@ class AppComponent {
                     this.menuSchema.ENTIDADES,
                     this.menuSchema.UNIDADES,
                     this.menuSchema.USUARIOS,
-                    this.menuSchema.PERFIS,
+                    this.menuSchema.PERFIS
                 ].sort(this.orderMenu)
             }, {
                 name: "Cadastros",
@@ -14462,17 +14506,18 @@ class AppComponent {
                 menu: [
                     this.menuSchema.EIXOS_TEMATICOS,
                     this.menuSchema.ENTREGAS,
-                    this.menuSchema.TIPOS_ATIVIDADES,
-                    this.menuSchema.TIPOS_MOTIVOS_AFASTAMENTOS,
                     this.menuSchema.TIPOS_AVALIACOES,
+                    this.menuSchema.TIPOS_ATIVIDADES,
                     this.menuSchema.TIPOS_JUSTIFICATIVAS,
+                    this.menuSchema.TIPOS_MOTIVOS_AFASTAMENTOS,
+                    this.menuSchema.TIPOS_TAREFAS
                 ].sort(this.orderMenu)
             }];
         this.menuExecucao = [
             this.menuSchema.PLANOS_TRABALHOS,
             this.menuSchema.ATIVIDADES,
             this.menuSchema.CONSOLIDA,
-            this.menuSchema.AFASTAMENTOS,
+            this.menuSchema.AFASTAMENTOS
         ];
         this.menuAdministrador = [{
                 name: "Cadastros",
@@ -14488,8 +14533,6 @@ class AppComponent {
                     this.menuSchema.TAREFAS,
                     this.menuSchema.TEMPLATES,
                     this.menuSchema.TIPOS_ATIVIDADES,
-                    "-",
-                    this.menuSchema.ATIVIDADES,
                     this.menuSchema.TIPOS_AVALIACOES,
                     this.menuSchema.TIPOS_DOCUMENTOS,
                     this.menuSchema.TIPOS_JUSTIFICATIVAS,
@@ -14505,17 +14548,16 @@ class AppComponent {
                     this.menuSchema.ENTIDADES,
                     this.menuSchema.UNIDADES,
                     this.menuSchema.USUARIOS,
-                    this.menuSchema.PERFIS,
+                    this.menuSchema.PERFIS
                 ].sort(this.orderMenu)
-            }
-        ];
+            }];
         this.menuDev = [{
                 name: "Manutenção",
                 permition: "DEV_MENU_LOGS_ACESSO",
                 id: "navbarDropdownDevManutencao",
                 menu: [
                     this.menuSchema.ROTINAS_INTEGRACAO,
-                    this.menuSchema.PAINEL,
+                    this.menuSchema.PAINEL
                 ]
             }, {
                 name: "Logs e Auditoria",
@@ -14524,7 +14566,7 @@ class AppComponent {
                 menu: [
                     this.menuSchema.LOGS_ALTERACOES,
                     this.menuSchema.LOGS_ERROS,
-                    this.menuSchema.LOGS_TRAFEGOS,
+                    this.menuSchema.LOGS_TRAFEGOS
                 ]
             }, {
                 name: "Testes",
@@ -14532,17 +14574,16 @@ class AppComponent {
                 id: "navbarDropdownDevTestes",
                 menu: [
                     this.menuSchema.LOGS_TESTES_EXPEDIENTES,
-                    this.menuSchema.TESTE_CALCULA_DATATEMPO,
+                    this.menuSchema.TESTE_CALCULA_DATATEMPO
                 ]
-            },
-        ];
+            }];
         this.menuPonto = [];
         this.menuProjeto = [{
                 name: "Cadastros",
                 permition: "MENU_CAD_ACESSO",
                 id: "navbarDropdownProjetoCadastros",
                 menu: [
-                    this.menuSchema.MATERIAIS_SERVICOS,
+                    this.menuSchema.MATERIAIS_SERVICOS
                 ]
             }, {
                 name: "Gerencial",
@@ -14550,7 +14591,7 @@ class AppComponent {
                 id: "navbarDropdownProjetoGerencial",
                 menu: [
                     this.menuSchema.UNIDADES,
-                    this.menuSchema.USUARIOS,
+                    this.menuSchema.USUARIOS
                 ]
             },
             this.menuSchema.PORTIFOLIO,
@@ -14562,14 +14603,15 @@ class AppComponent {
                 menu: [
                     this.menuSchema.RXCADASTRO_PESSOAL,
                     this.menuSchema.RXCADASTRO_PROFISSIONAL,
-                    this.menuSchema.RXCADASTRO_ATRIBUTOS,
+                    this.menuSchema.RXCADASTRO_ATRIBUTOS
+                    //this.menuSchema.RXCADASTRO_OPORTUNIDADES
                 ]
             }, {
                 name: "Oportunidades",
                 permition: "MOD_RX_VIS_DPE",
                 id: "navbarDropdownRXOportunidades",
                 menu: [
-                    this.menuSchema.RXCADASTRO_ADM_OPORTUNIDADES,
+                    this.menuSchema.RXCADASTRO_ADM_OPORTUNIDADES
                 ]
             }, {
                 name: "Pesquisas",
@@ -14577,7 +14619,7 @@ class AppComponent {
                 id: "navbarDropdownRXPesquisas",
                 menu: [
                     this.menuSchema.RXVISUALIZA_ADM_PESQUISA1,
-                    this.menuSchema.RXVISUALIZA_ADM_PESQUISA2,
+                    this.menuSchema.RXVISUALIZA_ADM_PESQUISA2
                 ]
             }, {
                 name: "Questionários Dinâmicos",
@@ -14585,7 +14627,7 @@ class AppComponent {
                 id: "navbarDropdownRXQD",
                 menu: [
                     this.menuSchema.RXCADASTRO_ADM_QUESTIONARIOS_PERGUNTAS,
-                    this.menuSchema.RXCADASTRO_ADM_QUESTIONARIOS_RESPOSTAS,
+                    this.menuSchema.RXCADASTRO_ADM_QUESTIONARIOS_RESPOSTAS
                 ]
             }, {
                 name: "Cadastros Gerais",
@@ -14605,12 +14647,12 @@ class AppComponent {
                     this.menuSchema.RXCADASTRO_ADM_AREASTEMATICAS,
                     this.menuSchema.RXCADASTRO_ADM_CAPACIDADES_TECNICAS,
                     "-",
-                    this.menuSchema.RXCADASTRO_ADM_OPORTUNIDADES,
-                ],
+                    this.menuSchema.RXCADASTRO_ADM_OPORTUNIDADES
+                ]
             }];
         this.menuContexto = [
-            { key: "GESTAO", icon: "bi bi-people-fill", name: "Gestão (PGD)", menu: this.menuGestao },
             { key: "EXECUCAO", icon: "bi bi-person-check", name: "Execução (PGD)", menu: this.menuExecucao },
+            { key: "GESTAO", icon: "bi bi-people-fill", name: "Gestão (PGD)", menu: this.menuGestao },
             { key: "ADMINISTRADOR", icon: "bi bi-emoji-sunglasses", name: "Administrador", menu: this.menuAdministrador },
             { key: "DEV", icon: "bi bi-braces", name: "Desenvolvedor", menu: this.menuDev },
             { key: "PONTO", icon: "bi bi-stopwatch", name: "Ponto eletrônico", menu: this.menuPonto },
@@ -14621,6 +14663,7 @@ class AppComponent {
     }
     onContextoSelect(item) {
         this.contexto = item;
+        this.auth.usuarioConfig = { menu_contexto: item.key };
         this.goHome();
     }
     goHome() {
@@ -14637,22 +14680,14 @@ class AppComponent {
     }
     get menu() {
         switch (this.contexto.key) {
-            case "GESTAO":
-                return this.menuGestao;
-            case "EXECUCAO":
-                return this.menuExecucao;
-            case "ADMINISTRADOR":
-                return this.menuAdministrador;
-            case "DEV":
-                return this.menuDev;
-            case "PONTO":
-                return this.menuPonto;
-            case "PROJETO":
-                return this.menuProjeto;
-            case "RAIOX":
-                return this.menuRaioX;
-            default:
-                return [];
+            case "GESTAO": return this.menuGestao;
+            case "EXECUCAO": return this.menuExecucao;
+            case "ADMINISTRADOR": return this.menuAdministrador;
+            case "DEV": return this.menuDev;
+            case "PONTO": return this.menuPonto;
+            case "PROJETO": return this.menuProjeto;
+            case "RAIOX": return this.menuRaioX;
+            default: return [];
         }
     }
     ngAfterViewInit() {
@@ -14663,13 +14698,12 @@ class AppComponent {
     toolbarLogin() {
         this.go.navigate({ route: ["login"] }, { modal: true });
     }
-    menuItemClass(baseClass, activeRoute, menu) {
-        console.log(this.go.getRouteUrl());
-        //let activeUrl = this.go.getRouteUrl().replace(/^\//, "");
-        //console.log(activeUrl)
-        //return baseClass + (((!!activeRoute && activeRoute.join("/") == activeUrl) || (!!menu && !!menu.find(x => x.route.join("/") == activeUrl)) ? " fw-bold" : ""));
-        return baseClass + (((!!activeRoute && activeRoute.join("/")) || (!!menu && !!menu.find(x => x.route.join("/"))) ? "" : " fw-bold"));
-        //return baseClass + (this.go.isActivePath(activeRoute) ? " fw-bold" : "");
+    menuItemClass(baseClass, item) {
+        var _a, _b, _c;
+        let routeUrl = this.go.getRouteUrl().replace(/^\//, "");
+        if ((_a = item.menu) === null || _a === void 0 ? void 0 : _a.find((x) => !x))
+            console.log(item);
+        return baseClass + (((_b = item.route) === null || _b === void 0 ? void 0 : _b.join("/")) == routeUrl || ((_c = item.menu) === null || _c === void 0 ? void 0 : _c.find((x) => { var _a; return ((_a = x === null || x === void 0 ? void 0 : x.route) === null || _a === void 0 ? void 0 : _a.join("/")) == routeUrl; })) ? " fw-bold" : "");
     }
     isButtonRunning(btn) {
         var _a;
@@ -14677,6 +14711,10 @@ class AppComponent {
     }
     buttonId(button) {
         return "button_" + this.utils.md5((button.icon || "") + (button.hint || "") + (button.label || ""));
+    }
+    openModule(item) {
+        if (item.route)
+            this.go.navigate({ route: item.route }, item.metadata || { root: true });
     }
     get unidades() {
         return this.auth.unidades || [];
@@ -14742,7 +14780,7 @@ AppComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineCompo
                     return util.onlyAlphanumeric(go.getRouteUrl());
                 },
                 deps: [AppComponent, _services_navigate_service__WEBPACK_IMPORTED_MODULE_8__["NavigateService"], _services_util_service__WEBPACK_IMPORTED_MODULE_9__["UtilService"]]
-            }])], decls: 8, vars: 5, consts: [[1, "petrvs"], ["dialogs", ""], ["class", "navbar navbar-expand-lg navbar-light bg-light", 4, "ngIf"], ["class", "alert alert-danger mt-2", "role", "alert", 4, "ngIf"], [1, "container", "app-container", "mt-2"], ["type", "alert", 3, "id", "close", "message", "closable", 4, "ngFor", "ngForOf"], [1, "navbar", "navbar-expand-lg", "navbar-light", "bg-light"], [1, "container-fluid"], ["role", "button", 1, "navbar-brand"], ["alt", "", "width", "30", "height", "24", 1, "d-inline-block", "align-text-top", 3, "src"], [1, "dropdown"], ["id", "petrvs-context", "data-bs-toggle", "dropdown", "aria-expanded", "false", "data-bs-reference", "parent", 1, "text-secondary"], ["aria-labelledby", "petrvs-context", 1, "dropdown-menu"], [3, "click", 4, "ngFor", "ngForOf"], ["class", "navbar-toggler", "type", "button", "data-bs-toggle", "collapse", "data-bs-target", "#navbarSupportedContent", "aria-controls", "navbarSupportedContent", "aria-expanded", "false", "aria-label", "Toggle navigation", 4, "ngIf"], ["class", "collapse navbar-collapse", "id", "navbarSupportedContent", 4, "ngIf"], [3, "click"], ["role", "button", 1, "dropdown-item"], ["type", "button", "data-bs-toggle", "collapse", "data-bs-target", "#navbarSupportedContent", "aria-controls", "navbarSupportedContent", "aria-expanded", "false", "aria-label", "Toggle navigation", 1, "navbar-toggler"], [1, "navbar-toggler-icon"], ["id", "navbarSupportedContent", 1, "collapse", "navbar-collapse"], [1, "d-flex"], ["role", "group", "aria-label", "Janelas", 1, "btn-group"], ["class", "btn-group", "role", "group", 4, "ngFor", "ngForOf"], ["role", "group", 1, "btn-group"], ["type", "button", 1, "btn", "btn-outline-secondary", 3, "click"], [1, "d-inline-block", "text-truncate", 2, "max-width", "150px"], ["class", "d-flex", 4, "ngIf"], ["class", "btn-group", "role", "group", "aria-label", "Op\u00E7\u00F5es", 4, "ngIf"], ["class", "navbar-nav me-auto mb-2 mb-lg-0", 4, "ngIf"], ["type", "button", "class", "btn btn-outline-warning ms-2 d-none d-md-block", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Suporte Petrvs", 3, "click", 4, "ngIf"], ["type", "button", 1, "btn", "btn-info", "position-relative", "ms-2", 3, "click"], [1, "bi", "bi-bell"], ["class", "position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger", 4, "ngIf"], ["width", "25", "class", "spinner-border spinner-border-sm m-0 ms-2", "role", "status", 4, "ngIf"], ["class", "d-flex m-0", 4, "ngIf"], ["role", "group", "aria-label", "Op\u00E7\u00F5es", 1, "btn-group"], ["type", "button", "aria-expanded", "false", 3, "click"], ["data-bs-toggle", "tooltip", "data-bs-placement", "top", 3, "class", "title", 4, "ngIf"], ["type", "button", "data-bs-toggle", "dropdown", "aria-expanded", "false", "data-bs-reference", "parent", 3, "disabled", "class", 4, "ngIf"], ["class", "dropdown-menu", 3, "dropdown-menu-end", 4, "ngIf"], ["data-bs-toggle", "tooltip", "data-bs-placement", "top", 3, "title"], ["type", "button", "data-bs-toggle", "dropdown", "aria-expanded", "false", "data-bs-reference", "parent"], [1, "visually-hidden"], [1, "dropdown-menu"], [4, "ngFor", "ngForOf"], ["role", "button", 1, "dropdown-item", 3, "click"], [3, "class", 4, "ngIf"], [1, "navbar-nav", "me-auto", "mb-2", "mb-lg-0"], [1, "nav-item"], ["aria-current", "page", "role", "button", 3, "click"], ["class", "nav-item dropdown", 4, "ngIf"], [1, "nav-item", "dropdown"], ["role", "button", "role", "button", "data-bs-toggle", "dropdown", "aria-expanded", "false"], [4, "ngIf"], ["role", "button", 3, "class", "click", 4, "ngIf", "ngIfElse"], ["divider", ""], ["role", "button", 3, "click"], [1, "dropdown-divider"], ["type", "button", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Suporte Petrvs", 1, "btn", "btn-outline-warning", "ms-2", "d-none", "d-md-block", 3, "click"], [1, "bi", "bi-headset"], [1, "position-absolute", "top-0", "start-100", "translate-middle", "badge", "rounded-pill", "bg-danger"], ["width", "25", "role", "status", 1, "spinner-border", "spinner-border-sm", "m-0", "ms-2"], [1, "d-flex", "m-0"], ["class", "input-group mx-3", 4, "ngIf"], ["type", "button", "class", "btn btn-outline-danger", "role", "button", 3, "click", 4, "ngIf"], ["class", "btn btn-outline-secondary", "type", "button", 3, "click", 4, "ngIf"], [1, "input-group", "mx-3"], ["id", "basic-addon1", 1, "input-group-text"], ["class", "bi bi-clock me-2", 4, "ngIf"], ["class", "spinner-border spinner-border-sm  me-2", "role", "status", 4, "ngIf"], ["type", "text", "class", "form-control", "value", "- Sem unidade -", "disabled", "", 4, "ngIf"], ["class", "form-select", 3, "change", 4, "ngIf"], ["type", "button", "data-bs-toggle", "dropdown", "aria-expanded", "false", 1, "btn", "btn-outline-secondary"], [3, "url", "hint"], [1, "dropdown-menu", "dropdown-menu-end"], [1, "bi", "bi-person-circle"], [1, "bi", "bi-gear"], [1, "bi", "bi-arrow-bar-right"], [1, "bi", "bi-clock", "me-2"], ["role", "status", 1, "spinner-border", "spinner-border-sm", "me-2"], ["type", "text", "value", "- Sem unidade -", "disabled", "", 1, "form-control"], [1, "form-select", 3, "change"], ["type", "button", "role", "button", 1, "btn", "btn-outline-danger", 3, "click"], ["role", "alert", 1, "alert", "alert-danger", "mt-2"], ["type", "alert", 3, "id", "close", "message", "closable"]], template: function AppComponent_Template(rf, ctx) { if (rf & 1) {
+            }])], decls: 8, vars: 5, consts: [[1, "petrvs"], ["dialogs", ""], ["class", "navbar navbar-expand-lg navbar-light bg-light", 4, "ngIf"], ["class", "alert alert-danger mt-2", "role", "alert", 4, "ngIf"], [1, "container", "app-container", "mt-2"], ["type", "alert", 3, "id", "close", "message", "closable", 4, "ngFor", "ngForOf"], [1, "navbar", "navbar-expand-lg", "navbar-light", "bg-light"], [1, "container-fluid"], ["role", "button", 1, "navbar-brand"], ["alt", "", "width", "30", "height", "24", 1, "d-inline-block", "align-text-top", 3, "src"], [1, "dropdown"], ["id", "petrvs-context", "data-bs-toggle", "dropdown", "aria-expanded", "false", "data-bs-reference", "parent", 1, "text-secondary"], ["aria-labelledby", "petrvs-context", 1, "dropdown-menu"], [3, "click", 4, "ngFor", "ngForOf"], ["class", "navbar-toggler", "type", "button", "data-bs-toggle", "collapse", "data-bs-target", "#navbarSupportedContent", "aria-controls", "navbarSupportedContent", "aria-expanded", "false", "aria-label", "Toggle navigation", 4, "ngIf"], ["class", "collapse navbar-collapse", "id", "navbarSupportedContent", 4, "ngIf"], [3, "click"], ["role", "button", 1, "dropdown-item"], ["type", "button", "data-bs-toggle", "collapse", "data-bs-target", "#navbarSupportedContent", "aria-controls", "navbarSupportedContent", "aria-expanded", "false", "aria-label", "Toggle navigation", 1, "navbar-toggler"], [1, "navbar-toggler-icon"], ["id", "navbarSupportedContent", 1, "collapse", "navbar-collapse"], [1, "d-flex"], ["role", "group", "aria-label", "Janelas", 1, "btn-group"], ["class", "btn-group", "role", "group", 4, "ngFor", "ngForOf"], ["role", "group", 1, "btn-group"], ["type", "button", 1, "btn", "btn-outline-secondary", 3, "click"], [1, "d-inline-block", "text-truncate", 2, "max-width", "150px"], ["class", "d-flex", 4, "ngIf"], ["class", "btn-group", "role", "group", "aria-label", "Op\u00E7\u00F5es", 4, "ngIf"], ["class", "navbar-nav me-auto mb-2 mb-lg-0", 4, "ngIf"], ["type", "button", "class", "btn btn-outline-warning ms-2 d-none d-md-block", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Suporte Petrvs", 3, "click", 4, "ngIf"], ["type", "button", 1, "btn", "btn-info", "position-relative", "ms-2", 3, "click"], [1, "bi", "bi-bell"], ["class", "position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger", 4, "ngIf"], ["width", "25", "class", "spinner-border spinner-border-sm m-0 ms-2", "role", "status", 4, "ngIf"], ["class", "d-flex m-0", 4, "ngIf"], ["role", "group", "aria-label", "Op\u00E7\u00F5es", 1, "btn-group"], ["type", "button", "aria-expanded", "false", 3, "click"], ["data-bs-toggle", "tooltip", "data-bs-placement", "top", 3, "class", "title", 4, "ngIf"], ["type", "button", "data-bs-toggle", "dropdown", "aria-expanded", "false", "data-bs-reference", "parent", 3, "disabled", "class", 4, "ngIf"], ["class", "dropdown-menu", 3, "dropdown-menu-end", 4, "ngIf"], ["data-bs-toggle", "tooltip", "data-bs-placement", "top", 3, "title"], ["type", "button", "data-bs-toggle", "dropdown", "aria-expanded", "false", "data-bs-reference", "parent"], [1, "visually-hidden"], [1, "dropdown-menu"], [4, "ngFor", "ngForOf"], ["role", "button", 1, "dropdown-item", 3, "click"], [3, "class", 4, "ngIf"], [1, "navbar-nav", "me-auto", "mb-2", "mb-lg-0"], [1, "nav-item"], ["aria-current", "page", "role", "button", 3, "click"], ["class", "nav-item dropdown", 4, "ngIf"], [1, "nav-item", "dropdown"], ["role", "button", "role", "button", "data-bs-toggle", "dropdown", "aria-expanded", "false", 3, "click"], ["class", "dropdown-menu", 4, "ngIf"], [4, "ngIf"], ["role", "button", 3, "class", "click", 4, "ngIf", "ngIfElse"], ["divider", ""], ["role", "button", 3, "click"], [1, "dropdown-divider"], ["type", "button", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Suporte Petrvs", 1, "btn", "btn-outline-warning", "ms-2", "d-none", "d-md-block", 3, "click"], [1, "bi", "bi-headset"], [1, "position-absolute", "top-0", "start-100", "translate-middle", "badge", "rounded-pill", "bg-danger"], ["width", "25", "role", "status", 1, "spinner-border", "spinner-border-sm", "m-0", "ms-2"], [1, "d-flex", "m-0"], ["class", "input-group mx-3", 4, "ngIf"], ["type", "button", "class", "btn btn-outline-danger", "role", "button", 3, "click", 4, "ngIf"], ["class", "btn btn-outline-secondary", "type", "button", 3, "click", 4, "ngIf"], [1, "input-group", "mx-3"], ["id", "basic-addon1", 1, "input-group-text"], ["class", "bi bi-clock me-2", 4, "ngIf"], ["class", "spinner-border spinner-border-sm  me-2", "role", "status", 4, "ngIf"], ["type", "text", "class", "form-control", "value", "- Sem unidade -", "disabled", "", 4, "ngIf"], ["class", "form-select", 3, "change", 4, "ngIf"], ["type", "button", "data-bs-toggle", "dropdown", "aria-expanded", "false", 1, "btn", "btn-outline-secondary"], [3, "url", "hint"], [1, "dropdown-menu", "dropdown-menu-end"], [1, "bi", "bi-person-circle"], [1, "bi", "bi-gear"], [1, "bi", "bi-arrow-bar-right"], [1, "bi", "bi-clock", "me-2"], ["role", "status", 1, "spinner-border", "spinner-border-sm", "me-2"], ["type", "text", "value", "- Sem unidade -", "disabled", "", 1, "form-control"], [1, "form-select", 3, "change"], ["type", "button", "role", "button", 1, "btn", "btn-outline-danger", 3, "click"], ["role", "alert", 1, "alert", "alert-danger", "mt-2"], ["type", "alert", 3, "id", "close", "message", "closable"]], template: function AppComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](1, AppComponent_ng_template_1_Template, 0, 0, "ng-template", null, 1, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](3, AppComponent_nav_3_Template, 14, 8, "nav", 2);
@@ -14812,9 +14850,9 @@ class UnidadeIntegranteDaoService extends _dao_base_service__WEBPACK_IMPORTED_MO
         this.injector = injector;
         this.searchFields = [];
     }
-    loadIntegrantes(unidade_id) {
+    loadUsuariosIntegrantes(unidade_id) {
         return new Promise((resolve, reject) => {
-            this.server.post('api/' + this.collection + '/load-integrantes', { unidade_id }).subscribe(response => {
+            this.server.post('api/' + this.collection + '/load-usuarios-integrantes', { unidade_id }).subscribe(response => {
                 resolve({
                     integrantes: (response === null || response === void 0 ? void 0 : response.rows) || [],
                     unidade: response === null || response === void 0 ? void 0 : response.unidade
@@ -14822,9 +14860,26 @@ class UnidadeIntegranteDaoService extends _dao_base_service__WEBPACK_IMPORTED_MO
             }, error => reject(error));
         });
     }
-    saveIntegrante(unidade_id, integrante) {
+    loadUnidadesIntegrantes(usuario_id) {
         return new Promise((resolve, reject) => {
-            this.server.post('api/' + this.collection + '/save-integrante', { unidade_id, integrante }).subscribe(response => {
+            this.server.post('api/' + this.collection + '/load-unidades-integrantes', { usuario_id }).subscribe(response => {
+                resolve({
+                    integrantes: (response === null || response === void 0 ? void 0 : response.rows) || [],
+                    usuario: response === null || response === void 0 ? void 0 : response.usuario
+                });
+            }, error => reject(error));
+        });
+    }
+    saveUsuarioIntegrante(unidade_id, integrante) {
+        return new Promise((resolve, reject) => {
+            this.server.post('api/' + this.collection + '/save-usuario-integrante', { unidade_id, integrante }).subscribe(response => {
+                resolve((response === null || response === void 0 ? void 0 : response.data) || null);
+            }, error => reject(error));
+        });
+    }
+    saveUnidadeIntegrante(usuario_id, integrante) {
+        return new Promise((resolve, reject) => {
+            this.server.post('api/' + this.collection + '/save-unidade-integrante', { usuario_id, integrante }).subscribe(response => {
                 resolve((response === null || response === void 0 ? void 0 : response.data) || null);
             }, error => reject(error));
         });
@@ -15065,8 +15120,8 @@ class UnidadeDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_1__["
             { field: "codigo", label: "Código" },
             { field: "sigla", label: "Sigla" },
             { field: "nome", label: "Nome" },
-            { field: "gestor", label: "Gestor", fields: this.usuarioDao.dataset([]) },
-            { field: "gestor_substituto", label: "Gestor substituto", fields: this.usuarioDao.dataset([]) },
+            { field: "gestor", label: "Gestor", fields: this.usuarioDao.dataset([]), type: "OBJECT" },
+            { field: "gestor_substituto", label: "Gestor substituto", fields: this.usuarioDao.dataset([]), type: "OBJECT" },
             { field: "entidade", label: "Entidade", dao: this.entidadeDao },
             { field: "cidade", label: "Cidade", dao: this.cidadeDao },
             { field: "texto_complementar_plano", label: "Mensagem do Plano de trabalho", type: "TEMPLATE" }
@@ -15606,7 +15661,7 @@ class DaoBaseService {
             else {
                 Object.entries(data).forEach(([key, value]) => {
                     try {
-                        data[key] = this.prepareToSave(value);
+                        data[key] = typeof value == "object" && value instanceof DaoBaseService ? undefined : this.prepareToSave(value);
                     }
                     catch (erro) {
                         console.log("Erro ao tentar atribuir valor a " + key);
@@ -15746,9 +15801,9 @@ class ComponentBase {
     }
     generatedId(relativeId) {
         if (!this._generatedId) {
-            this._generatedId = "ID_" + this.ID_GENERATOR_BASE + "_" + this.util.onlyAlphanumeric((relativeId === null || relativeId === void 0 ? void 0 : relativeId.length) ? relativeId : this.util.md5());
+            this._generatedId = "ID_" + this.ID_GENERATOR_BASE;
         }
-        return this._generatedId;
+        return this._generatedId + ((relativeId === null || relativeId === void 0 ? void 0 : relativeId.length) ? "_" + this.util.onlyAlphanumeric(relativeId) : ""); //this.util.md5()
     }
     generatedButtonId(button, relativeId) {
         return this.generatedId((button.id || button.label || button.hint || button.icon || "_button") + (relativeId || ""));
@@ -18625,7 +18680,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _calendar_efemerides_calendar_efemerides_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./calendar-efemerides/calendar-efemerides.component */ "A5xB");
 /* harmony import */ var _comentarios_comentarios_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./comentarios/comentarios.component */ "KuoT");
 /* harmony import */ var src_app_components_components_module__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/components/components.module */ "j1ZV");
-/* harmony import */ var _comentarios_widget_comentarios_widget_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./comentarios-widget/comentarios-widget.component */ "6jT7");
+/* harmony import */ var _comentarios_comentarios_widget_comentarios_widget_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./comentarios/comentarios-widget/comentarios-widget.component */ "FCDt");
 /* harmony import */ var _uteis_routing_module__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./uteis-routing.module */ "Vxcx");
 /* harmony import */ var _calendar_expediente_calendar_expediente_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./calendar-expediente/calendar-expediente.component */ "ODvL");
 /* harmony import */ var _documentos_documentos_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./documentos/documentos.component */ "jO9R");
@@ -18671,7 +18726,7 @@ UteisModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵdefineInjec
         ]] });
 (function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵsetNgModuleScope"](UteisModule, { declarations: [_calendar_efemerides_calendar_efemerides_component__WEBPACK_IMPORTED_MODULE_1__["CalendarEfemeridesComponent"],
         _comentarios_comentarios_component__WEBPACK_IMPORTED_MODULE_2__["ComentariosComponent"],
-        _comentarios_widget_comentarios_widget_component__WEBPACK_IMPORTED_MODULE_4__["ComentariosWidgetComponent"],
+        _comentarios_comentarios_widget_comentarios_widget_component__WEBPACK_IMPORTED_MODULE_4__["ComentariosWidgetComponent"],
         _calendar_expediente_calendar_expediente_component__WEBPACK_IMPORTED_MODULE_6__["CalendarExpedienteComponent"],
         _documentos_documentos_component__WEBPACK_IMPORTED_MODULE_7__["DocumentosComponent"],
         _templates_templates_component__WEBPACK_IMPORTED_MODULE_8__["TemplatesComponent"],
@@ -18684,7 +18739,7 @@ UteisModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵdefineInjec
         src_app_components_components_module__WEBPACK_IMPORTED_MODULE_3__["ComponentsModule"],
         _uteis_routing_module__WEBPACK_IMPORTED_MODULE_5__["UteisRoutingModule"]], exports: [_calendar_efemerides_calendar_efemerides_component__WEBPACK_IMPORTED_MODULE_1__["CalendarEfemeridesComponent"],
         _comentarios_comentarios_component__WEBPACK_IMPORTED_MODULE_2__["ComentariosComponent"],
-        _comentarios_widget_comentarios_widget_component__WEBPACK_IMPORTED_MODULE_4__["ComentariosWidgetComponent"],
+        _comentarios_comentarios_widget_comentarios_widget_component__WEBPACK_IMPORTED_MODULE_4__["ComentariosWidgetComponent"],
         _calendar_expediente_calendar_expediente_component__WEBPACK_IMPORTED_MODULE_6__["CalendarExpedienteComponent"],
         _documentos_documentos_component__WEBPACK_IMPORTED_MODULE_7__["DocumentosComponent"],
         _documentos_documentos_link_documentos_link_component__WEBPACK_IMPORTED_MODULE_10__["DocumentosLinkComponent"],
@@ -20143,7 +20198,7 @@ function DocumentosComponent_ng_template_9_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate1"](" \u2022 ", ctx_r6.util.getDateTimeFormatted(row_r9.data_inicio), "");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"](row_r9.titulo_documento);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"](row_r9.titulo);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("color", ctx_r6.lookup.getColor(ctx_r6.lookup.DOCUMENTO_ESPECIE, row_r9.especie))("label", ctx_r6.lookup.getValue(ctx_r6.lookup.DOCUMENTO_ESPECIE, row_r9.especie));
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
@@ -20233,12 +20288,12 @@ class DocumentosComponent extends src_app_modules_base_page_frame_base__WEBPACK_
         this.needSign = ((_a = this.metadata) === null || _a === void 0 ? void 0 : _a.needSign) || this.needSign;
         this.extraTags = ((_b = this.metadata) === null || _b === void 0 ? void 0 : _b.extraTags) || this.extraTags;
         this.especie = ((_c = this.urlParams) === null || _c === void 0 ? void 0 : _c.has("especie")) ? this.urlParams.get("especie") : ((_d = this.metadata) === null || _d === void 0 ? void 0 : _d.especie) || this.especie;
-        this.action = ((_e = this.urlParams) === null || _e === void 0 ? void 0 : _e.has("action")) ? this.urlParams.get("action") || "" : "";
-        this.documentoId = ((_f = this.urlParams) === null || _f === void 0 ? void 0 : _f.has("documentoId")) ? this.urlParams.get("documentoId") || undefined : undefined;
+        this.action = ((_e = this.urlParams) === null || _e === void 0 ? void 0 : _e.has("action")) ? this.urlParams.get("action") || "" : this.action;
+        this.documentoId = ((_f = this.urlParams) === null || _f === void 0 ? void 0 : _f.has("documentoId")) ? this.urlParams.get("documentoId") || undefined : this.documentoId;
         this.dataset = ((_g = this.metadata) === null || _g === void 0 ? void 0 : _g.dataset) || this.dataset;
         this.datasource = ((_h = this.metadata) === null || _h === void 0 ? void 0 : _h.datasource) || this.datasource;
         this.template = ((_j = this.metadata) === null || _j === void 0 ? void 0 : _j.template) || this.template;
-        this.tituloDefault = ((_k = this.metadata) === null || _k === void 0 ? void 0 : _k.titulo_documento) || this.tituloDefault;
+        this.tituloDefault = ((_k = this.metadata) === null || _k === void 0 ? void 0 : _k.titulo) || this.tituloDefault;
         /* Obrigatório instanciar o DAO correto a depender da espécie */
         this.dao = ["TCR"].includes(this.especie) ? this.injector.get(src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_4__["PlanoTrabalhoDaoService"]) : undefined;
     }
@@ -20301,7 +20356,7 @@ class DocumentosComponent extends src_app_modules_base_page_frame_base__WEBPACK_
         if (!this.isNoPersist && this.entity && this.needSign(this.entity, documento)) {
             result.push({ hint: "Assinar", icon: "bi bi-pen", onClick: this.signDocumento.bind(this) });
         }
-        result.push({ hint: "Preview", icon: "bi bi-zoom-in", onClick: this.documentoService.onDocumentoClick.bind(this) });
+        result.push({ hint: "Preview", icon: "bi bi-zoom-in", onClick: this.documentoService.onDocumentoClick.bind(this.documentoService.onDocumentoClick) });
         return result;
     }
     /*public needSign(documento: Documento): boolean {
@@ -20351,7 +20406,7 @@ class DocumentosComponent extends src_app_modules_base_page_frame_base__WEBPACK_
                 datasource: this.datasource || null,
                 template: (_b = this.metadata) === null || _b === void 0 ? void 0 : _b.template.conteudo,
                 template_id: (_c = this.metadata) === null || _c === void 0 ? void 0 : _c.template.id,
-                plano_id: ["TCR"].includes(this.especie) ? this.entity.id : null
+                plano_trabalho_id: ["TCR"].includes(this.especie) ? this.entity.id : null
             });
         });
     }
@@ -20777,6 +20832,7 @@ class AuthService {
                 this.calendar.loadFeriadosCadastrados(this.unidade.id);
             if (token === null || token === void 0 ? void 0 : token.length)
                 localStorage.setItem("petrvs_api_token", token);
+            this.app.onContextoSelect(this.app.menuContexto.find(x => x.key == this.usuarioConfig.menu_contexto) || this.app.menuContexto[0]);
             this.notificacao.updateNaoLidas();
         }
         else {
@@ -20969,9 +21025,10 @@ class AuthService {
      * @returns
      */
     isLotacaoPrincipal(pUnidade = null) {
+        var _a, _b, _c;
         let unidade = pUnidade || this.unidade;
-        let lotacao = this.usuario.lotacao.unidade;
-        return lotacao.id == unidade.id;
+        let lotacao = (_c = (_b = (_a = this.usuario) === null || _a === void 0 ? void 0 : _a.areas_trabalho) === null || _b === void 0 ? void 0 : _b.find(x => { var _a; return (_a = x.atribuicoes) === null || _a === void 0 ? void 0 : _a.find(y => y.atribuicao == "LOTADO"); })) === null || _c === void 0 ? void 0 : _c.unidade; //this.usuario!.lotacao?.unidade;
+        return (lotacao === null || lotacao === void 0 ? void 0 : lotacao.id) == unidade.id;
     }
     /**
      * Informa se o usuário logado possui determinada atribuição para uma unidade específica dentre as suas unidades-integrante.
@@ -22764,7 +22821,7 @@ class TemplatesComponent extends src_app_modules_base_page_list_base__WEBPACK_IM
                 row.codigo = form.controls.codigo.value;
                 row.titulo = form.controls.titulo.value;
                 row.conteudo = form.controls.conteudo.value;
-                row.dataset = this.dataset;
+                row.dataset = this.templateService.prepareDatasetToSave(this.dataset || []);
                 this.submitting = true;
                 try {
                     result = yield this.dao.save(row, this.join);
@@ -23960,7 +24017,7 @@ InputMultiselectComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵ
                 provide: _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ControlContainer"],
                 useExisting: _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormGroupDirective"]
             }
-        ]), _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵInheritDefinitionFeature"]], ngContentSelectors: _c0, decls: 8, vars: 18, consts: [["errorMessageIcon", "bi-info-circle", 3, "labelPosition", "loading", "disabled", "controlName", "control", "label", "labelInfo", "icon", "bold"], ["class", "card-header", 4, "ngIf"], [1, "multiselect"], [1, "container-fluid", "border", "rounded", "multiselect-list", "px-1"], [4, "ngFor", "ngForOf"], ["class", "multiselect-container d-flex", 4, "ngIf"], [1, "card-header"], [3, "class", 4, "ngIf"], ["type", "button", "class", "btn btn-light m-1 multiselect-item d-flex", "data-bs-toggle", "tooltip", 3, "id", "multiselect-item-row", "max-width", 4, "ngIf"], ["type", "button", "data-bs-toggle", "tooltip", 1, "btn", "btn-light", "m-1", "multiselect-item", "d-flex", 3, "id"], [1, "flex-grow-1"], [1, "text-truncate", "text-start"], [1, "text-nowrap"], ["class", "badge bg-primary ms-1 multiselect-delete-button", "role", "button", 3, "click", 4, "ngIf"], ["class", "badge bg-danger ms-1 multiselect-delete-button", "role", "button", 3, "click", 4, "ngIf"], ["role", "button", 1, "badge", "bg-primary", "ms-1", "multiselect-delete-button", 3, "click"], [1, "bi", "bi-pencil-square"], ["role", "button", 1, "badge", "bg-danger", "ms-1", "multiselect-delete-button", 3, "click"], [1, "multiselect-container", "d-flex"], [1, "flex-grow-1", "row"], [1, "btn-group"], ["type", "button", "class", "btn btn-success", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Adicionar", 3, "id", "click", 4, "ngIf"], ["type", "button", "class", "btn btn-primary", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Salvar", 3, "id", "click", 4, "ngIf"], ["type", "button", "class", "btn btn-danger", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Cancelar", 3, "id", "click", 4, "ngIf"], ["type", "button", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Adicionar", 1, "btn", "btn-success", 3, "id", "click"], [1, "bi", "bi-arrow-bar-up"], ["type", "button", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Salvar", 1, "btn", "btn-primary", 3, "id", "click"], [1, "bi", "bi-check-circle"], ["type", "button", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Cancelar", 1, "btn", "btn-danger", 3, "id", "click"], [1, "bi", "bi", "bi-dash-circle"]], template: function InputMultiselectComponent_Template(rf, ctx) { if (rf & 1) {
+        ]), _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵInheritDefinitionFeature"]], ngContentSelectors: _c0, decls: 8, vars: 18, consts: [["errorMessageIcon", "bi-info-circle", 3, "labelPosition", "loading", "disabled", "controlName", "control", "label", "labelInfo", "icon", "bold"], ["class", "card-header", 4, "ngIf"], [1, "multiselect"], [1, "container-fluid", "border", "rounded", "multiselect-list", "px-1"], [4, "ngFor", "ngForOf"], ["class", "multiselect-container d-flex", 4, "ngIf"], [1, "card-header"], [3, "class", 4, "ngIf"], ["type", "button", "class", "btn btn-light m-1 multiselect-item d-flex", "data-bs-toggle", "tooltip", 3, "id", "multiselect-item-row", "max-width", 4, "ngIf"], ["type", "button", "data-bs-toggle", "tooltip", 1, "btn", "btn-light", "m-1", "multiselect-item", "d-flex", 3, "id"], [1, "flex-grow-1"], [1, "text-truncate", "text-start"], [1, "text-nowrap"], ["class", "badge bg-primary ms-1 multiselect-delete-button", "role", "button", 3, "click", 4, "ngIf"], ["class", "badge bg-danger ms-1 multiselect-delete-button", "role", "button", 3, "click", 4, "ngIf"], ["role", "button", 1, "badge", "bg-primary", "ms-1", "multiselect-delete-button", 3, "click"], [1, "bi", "bi-pencil-square"], ["role", "button", 1, "badge", "bg-danger", "ms-1", "multiselect-delete-button", 3, "click"], [1, "multiselect-container", "d-flex"], [1, "flex-grow-1", "row"], [1, "btn-group"], ["type", "button", "class", "btn btn-success", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Adicionar", 3, "id", "click", 4, "ngIf"], ["type", "button", "class", "btn btn-primary", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Salvar", 3, "id", "click", 4, "ngIf"], ["type", "button", "class", "btn btn-danger", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Cancelar", 3, "id", "click", 4, "ngIf"], ["type", "button", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Adicionar", 1, "btn", "btn-success", 3, "id", "click"], [1, "bi", "bi-arrow-bar-up"], ["type", "button", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Salvar", 1, "btn", "btn-primary", 3, "id", "click"], [1, "bi", "bi-check-circle"], ["type", "button", "data-bs-toggle", "tooltip", "data-bs-placement", "top", "title", "Cancelar", 1, "btn", "btn-danger", 3, "id", "click"], [1, "bi", "bi-dash-circle"]], template: function InputMultiselectComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵprojectionDef"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "input-container", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](1, "div");
@@ -27137,7 +27194,6 @@ const routes = [
     { path: 'login-retorno', component: _modules_login_login_retorno_login_retorno_component__WEBPACK_IMPORTED_MODULE_4__["LoginRetornoComponent"], data: { title: "Retorno de login", login: true } },
     { path: 'config', component: _modules_config_config_component__WEBPACK_IMPORTED_MODULE_2__["ConfigComponent"], canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: _resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_8__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Configurações", modal: true } },
     { path: 'uteis', loadChildren: () => Promise.resolve(/*! import() */).then(__webpack_require__.bind(null, /*! ./modules/uteis/uteis.module */ "hA/d")).then(m => m.UteisModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
-    { path: 'cadastros/atividade', loadChildren: () => __webpack_require__.e(/*! import() | modules-cadastros-tipo-atividade-tipo-atividade-module */ "modules-cadastros-tipo-atividade-tipo-atividade-module").then(__webpack_require__.bind(null, /*! ./modules/cadastros/tipo-atividade/tipo-atividade.module */ "FfqU")).then(m => m.TipoAtividadeModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'cadastros/afastamento', loadChildren: () => __webpack_require__.e(/*! import() | modules-cadastros-afastamento-afastamento-module */ "modules-cadastros-afastamento-afastamento-module").then(__webpack_require__.bind(null, /*! ./modules/cadastros/afastamento/afastamento.module */ "jaz9")).then(m => m.AfastamentoModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'cadastros/cidade', loadChildren: () => __webpack_require__.e(/*! import() | modules-cadastros-cidade-cidade-module */ "modules-cadastros-cidade-cidade-module").then(__webpack_require__.bind(null, /*! ./modules/cadastros/cidade/cidade.module */ "5p2+")).then(m => m.CidadeModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
     { path: 'cadastros/entrega', loadChildren: () => __webpack_require__.e(/*! import() | modules-cadastros-entrega-entrega-module */ "modules-cadastros-entrega-entrega-module").then(__webpack_require__.bind(null, /*! ./modules/cadastros/entrega/entrega.module */ "9Nu7")).then(m => m.EntregaModule), canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]] },
@@ -27663,7 +27719,7 @@ function DocumentosBadgeComponent_badge_0_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("icon", ctx_r0.icon)("color", ctx_r0.color)("rounded", !ctx_r0.isNoRounded)("data", ctx_r0.documento)("click", ctx_r0.documentoService.onDocumentoClick.bind(ctx_r0))("hint", ctx_r0.documentoService.documentoHint(ctx_r0.documento));
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("icon", ctx_r0.icon)("color", ctx_r0.color)("rounded", !ctx_r0.isNoRounded)("data", ctx_r0.documento)("click", ctx_r0.documentoService.onDocumentoClick.bind(ctx_r0.documentoService))("hint", ctx_r0.documentoService.documentoHint(ctx_r0.documento));
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx_r0.isLinkSei);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
@@ -27799,8 +27855,8 @@ __webpack_require__.r(__webpack_exports__);
 class Unidade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
     constructor(data) {
         super();
-        this.gestor = null; /* Objeto do ususario gestor */
-        this.gestor_substituto = null; /* Objeto do ususario gestor substituto */
+        this.gestor = null; /* Objeto do vinculo entre unidade/usuario que possui a atribuição de gestor */
+        this.gestor_substituto = null; /* Objeto do vinculo entre unidade/usuario que possui a atribuição de gestor_substituto */
         this.codigo = ""; //Código da unidade
         this.sigla = ""; //Sigla da unidade
         this.nome = ""; //Nome da unidade

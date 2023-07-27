@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
 import { NotificacaoDaoService } from 'src/app/dao/notificacao-dao.service';
 import { Template } from 'src/app/models/template.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { DialogService } from 'src/app/services/dialog.service';
 import { NavigateService } from 'src/app/services/navigate.service';
+import { TemplateDataset } from '../templates/template.service';
 
 @Injectable({
   providedIn: 'root'
