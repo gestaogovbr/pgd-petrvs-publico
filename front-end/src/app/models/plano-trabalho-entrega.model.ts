@@ -9,7 +9,7 @@ export class PlanoTrabalhoEntrega extends Base {
     public plano_entrega_entrega?: PlanoEntregaEntrega;
 
     public descricao: string = "";
-    public forca_trabalho: string = "1";
+    public forca_trabalho: number = 1;
 
     public plano_trabalho_id: string = "";
     public entrega_id: string | null = null;
