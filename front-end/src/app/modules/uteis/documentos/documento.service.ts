@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DocumentoDaoService } from 'src/app/dao/documento-dao-service';
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
-import { Documento } from 'src/app/models/documento.model';
+import { Documento, DocumentoLink } from 'src/app/models/documento.model';
 import { DialogService } from 'src/app/services/dialog.service';
 import { NavigateService } from 'src/app/services/navigate.service';
 import { TemplateService } from '../templates/template.service';
@@ -28,12 +28,24 @@ export class DocumentoService {
     this.dialog.html({ title: "Pre-visualização do documento", modalWidth: 1000 }, documento.conteudo!, []);
   }
 
-  public onProcessoClick(row: any) {
-    this.allPages.openDocumentoSei(row.documento.id_processo, row.documento.id_documento);
+  public onLinkClick(link: DocumentoLink) {
+    if(link?.tipo == "SEI") {
+      this.allPages.openDocumentoSei(link?.id_processo || 0, link?.id_documento || 0);
+    } else if(link?.tipo == "URL") {
+      this.go.openNewTab(link?.url || "#");
+    }
   }
 
-  public processoHint(row: any): string {
-    return this.allPages.getButtonTitle(row.documento?.numero_processo, row.documento?.numero_documento);
+  public onDocumentoClick(documento: Documento) {
+    if(documento.tipo == "LINK" && documento.link) {
+      this.onLinkClick(documento.link);
+    } else if(documento.tipo == "HTML") {
+      this.preview(documento);
+    }
+  }
+
+  public documentoHint(documento: Documento): string {
+    return this.allPages.getButtonTitle(documento.link?.numero_processo, documento.link?.numero_documento);
   }
 
   public sign(documentos: Documento[]): Promise<Documento[] | undefined> {

@@ -4,15 +4,12 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Auth;
 use App\Services\ServiceBase;
-use App\Traits\UseDataFim;
 use App\Models\Projeto;
 use App\Models\ProjetoHistorico;
 use Exception;
 use stdClass;
 
 class ProjetoService extends ServiceBase {
-    use UseDataFim;
-
     /* Utilizado para armazenar o objeto Projeto antes da gravação para ser gerado o delta do ProjetoHistorico */
     public $projectBeforeStore = null;
     public $faseIdBuffer = null;

@@ -18,13 +18,11 @@ class CreateUnidadesIntegrantesTable extends Migration
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
+            $table->softDeletes();
             // Campos:
-            $table->dateTime('data_inicio')->comment("Data inicio da vigência");
-            $table->dateTime('data_fim')->nullable()->comment("Data fim da vigência");
-            $table->enum("atribuicao", ["AVALIADOR_DEMANDAS"])->comment("Tipo do vinculo");
             // Chaves estrangeiras:
-            $table->foreignUuid('unidade_id')->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('usuario_id')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('unidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Unidade participante do vínculo");
+            $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Servidor participante do vínculo");
         });
     }
 

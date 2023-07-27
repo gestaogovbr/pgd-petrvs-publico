@@ -3,37 +3,33 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
-use App\Models\DemandaAvaliacao;
+use App\Models\Avaliacao;
+use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\TipoAvaliacaoJustificativa;
-use App\Traits\AutoDataInicio;
-use App\Traits\HasDataFim;
 
 class TipoAvaliacao extends ModelBase
 {
-    use AutoDataInicio, HasDataFim;
-
     protected $table = 'tipos_avaliacoes';
 
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'nota_atribuida', /* int; */// Nota atribuida de 0 a 10
-        'nome', /* varchar(256); NOT NULL; */// Descrição da nota atribuida
-        'aceita_entrega', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se a entrega vai ser aceita e as horas pactuadas serão homologadas
-        'pergunta', /* text; NOT NULL; */// Pergunta motivacional, o porque você selecionou essa nota
-        'icone', /* varchar(100); NOT NULL; */// Classe do icone relacionado a avaliação
-        'cor', /* varchar(100); NOT NULL; */// Código da cor em hex
-        'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
-        //'data_fim', /* datetime; */// Data final da vigência
+        'nome', /* varchar(256); NOT NULL; */// Nome do tipo de avaliação
+        'tipo', /* set('QUALITATIVO','QUANTITATIVO'); NOT NULL; */// Se a nota será um número ou um conceito
+        'notas', /* json; NOT NULL; */// Notas
+        //'deleted_at', /* timestamp; */
     ];
 
     public $fillable_relations = [
         'tipos_avaliacoes_justificativas'
     ];
     
-    public $delete_cascade = ['tiposAvaliacoesJustificativas'];
+    public $delete_cascade = [
+        'tipos_avaliacoes_justificativas'
+    ];
     
     // Has
-    public function avaliacoes() { return $this->hasMany(DemadaAvaliacao::class, 'tipo_avaliacao_id'); }    
-    public function tiposAvaliacoesJustificativas() { return $this->hasMany(TipoAvaliacaoJustificativa::class, 'tipo_avaliacao_id'); }    
+    public function avaliacoes() { return $this->hasMany(Avaliacao::class); }    
+    public function consolidacoes() { return $this->hasMany(PlanoTrabalhoConsolidacao::class); }    
+    public function tiposAvaliacoesJustificativas() { return $this->hasMany(TipoAvaliacaoJustificativa::class); }    
 }

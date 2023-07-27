@@ -5,13 +5,9 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\Entidade;
 use App\Models\Cidade;
-use App\Traits\AutoDataInicio;
-use App\Traits\HasDataFim;
 
 class Feriado extends ModelBase
 {
-    use AutoDataInicio, HasDataFim;
-
     protected $table = 'feriados';
 
     protected $with = [];
@@ -25,14 +21,13 @@ class Feriado extends ModelBase
         'recorrente', /* tinyint; NOT NULL; */// Se é uma data única ou repete todos os anos
         'abrangencia', /* enum('NACIONAL','ESTADUAL','MUNICIPAL'); NOT NULL; */// Abrangência do feriado
         'codigo_ibge', /* varchar(8); */// Código da UF ou do município (IBGE)
-        'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
         'entidade_id', /* char(36); */
         'cidade_id', /* char(36); */
         'uf', /* varchar(2); */// UF para feriados estaduais
-        //'data_fim', /* datetime; */// Data final da vigência
+        //'deleted_at', /* timestamp; */
     ];
 
     // Belongs
-    public function entidade() { return $this->belongsTo(Entidade::class, 'entidade_id'); }   
-    public function cidade() { return $this->belongsTo(Cidade::class, 'cidade_id'); }   
+    public function entidade() { return $this->belongsTo(Entidade::class); }       //nullable
+    public function cidade() { return $this->belongsTo(Cidade::class); }     //nullable
 }

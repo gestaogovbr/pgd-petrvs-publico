@@ -31,7 +31,7 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
       this.hasPermissionToUNEX = this.auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_LOTPRI') || this.auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_QQLOT') || this.auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_SUBORD') || this.auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_QUALQUER');
       this.join = [
         'objetivos',
-        'objetivos.objetivo_superior:id,nome',
+        'objetivos.objetivo_pai:id,nome',
         'objetivos.eixo_tematico:id,nome',
         'planejamento_superior:id,nome',
         'planejamento_superior.objetivos'
@@ -129,7 +129,7 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
       if(this.form.controls.planejamento_superior_id.value != this.entity?.planejamento_superior_id && this.entity?.objetivos?.length) {
         let confirm = await this.dialog.confirm("Alteração de Planejamento superior", "Como já existem objetivos neste Planejamento, eles serão desvinculados dos objetivos do Planejamento anterior, para que novos objetivos sejam selecionados! Deseja continuar?");
         if(confirm) {
-          this.entity?.objetivos?.forEach(obj => obj.objetivo_superior_id = null); 
+          this.entity?.objetivos?.forEach(obj => obj.objetivo_pai_id = null); 
           //atualizar a lista de objetivos superiores
         } else {
           this.form.controls.planejamento_superior_id.setValue(this.entity?.planejamento_superior_id);

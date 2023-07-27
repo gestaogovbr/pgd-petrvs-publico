@@ -1,15 +1,13 @@
 
 import { Injectable, Injector } from '@angular/core';
-import { ChartDataSets, ChartOptions } from 'chart.js';
-import { TemplateDataset } from '../components/input/input-editor/input-editor.component';
 import { Afastamento } from '../models/afastamento.model';
-import { DemandaPausa } from '../models/demanda-pausa.model';
-import { Plano } from '../models/plano.model';
-import { Unidade } from '../models/unidade.model';
 import { Usuario } from '../models/usuario.model';
 import { Efemerides, TipoContagem } from '../services/calendar.service';
 import { LookupService } from '../services/lookup.service';
 import { DaoBaseService } from './dao-base.service';
+import { AtividadePausa } from '../models/atividade-pausa.model';
+import { PlanoTrabalho } from '../models/plano-trabalho.model';
+import { TemplateDataset } from '../modules/uteis/templates/template.service';
 
 export type UsuarioDashboard = {
   planos: [
@@ -22,14 +20,14 @@ export type UsuarioDashboard = {
       total_horas: number
     }
   ],
-  demandas: {
+  atividades: {
     atrasadas: number,
     avaliadas: number,
     concluidas: number,
     media_avaliacoes: number,
     nao_concluidas: number,
     nao_iniciadas: number,
-    total_demandas: number,
+    total_atividades: number,
     horas_atrasadas: number,
     horas_avaliadas: number,
     horas_concluidas: number,
@@ -117,12 +115,12 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
     });
   }
 
-  public planosPorPeriodo(usuario_id: string, inicioPeriodo: string | null, fimPeriodo: string | null): Promise<Plano[] | null> {
-    return new Promise<Plano[] | null>((resolve, reject) => {
+  public planosPorPeriodo(usuario_id: string, inicioPeriodo: string | null, fimPeriodo: string | null): Promise<PlanoTrabalho[] | null> {
+    return new Promise<PlanoTrabalho[] | null>((resolve, reject) => {
       if (usuario_id?.length) {
         this.server.post('api/Relatorio/planosPorPeriodo', { usuario_id: usuario_id, inicioPeriodo: inicioPeriodo != null ? this.util.getTimeFormattedUSA(inicioPeriodo) : null, fimPeriodo: fimPeriodo != null ? this.util.getTimeFormattedUSA(fimPeriodo) : null })
           .subscribe(response => {
-            resolve(response.data as Plano[]);
+            resolve(response.data as PlanoTrabalho[]);
           }, error => {
             console.log("Erro nas datas de início/fim do período, ou ao buscar no servidor os planos do usuário!", error);
             resolve(null);
@@ -134,7 +132,7 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
     });
   }
   
-  public calculaDataTempoUnidade(inicio: string, fimOuTempo: string | number, cargaHoraria: number, unidade_id: string, tipo: TipoContagem, pausas?: DemandaPausa[], afastamentos?: Afastamento[]): Promise<Efemerides | undefined> {
+  public calculaDataTempoUnidade(inicio: string, fimOuTempo: string | number, cargaHoraria: number, unidade_id: string, tipo: TipoContagem, pausas?: AtividadePausa[], afastamentos?: Afastamento[]): Promise<Efemerides | undefined> {
     return new Promise<Efemerides | undefined>((resolve, reject) => {
       this.server.post('api/Teste/calculaDataTempoUnidade', { inicio: inicio, fimOuTempo: fimOuTempo, cargaHoraria: cargaHoraria, unidade_id: unidade_id, tipo: tipo, pausas: pausas, afastamentos: afastamentos })
         .subscribe(response => {

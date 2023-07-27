@@ -14,7 +14,7 @@ class FeriadoController extends ControllerBase {
             case 'STORE':
                 if (!$usuario->hasPermissionTo('MOD_FER_INCL')) throw new ServerException("CapacidadeStore", "Inserção não executada");
                 break;
-            case 'UPDATE':
+            case 'EDIT':
                 if (!$usuario->hasPermissionTo('MOD_FER_EDT')) throw new ServerException("CapacidadeStore", "Edição não executada");
                 break;
             case 'DESTROY':

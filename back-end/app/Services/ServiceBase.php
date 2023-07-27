@@ -49,7 +49,7 @@ class DynamicMethods {
  * @method afterUpdate($entity, $data)
  * @method proxyUpdateJson($data, $unidade)
  * @method proxyDestroy($entity)
- * @method extraDestoy($entity)
+ * @method extraDestroy($entity)
  */
 class ServiceBase extends DynamicMethods
 {
@@ -58,6 +58,7 @@ class ServiceBase extends DynamicMethods
     const ISO8601_FORMAT = "Y-m-d\TH:i:s";
     const ACTION_INSERT = "INSERT";
     const ACTION_UPDATE = "UPDATE";
+    const ACTION_EDIT = "EDIT";
 
     public string $collection = "";
     public string $developerId = "";
@@ -72,7 +73,8 @@ class ServiceBase extends DynamicMethods
 
     public function __construct($collection = null)
     {
-        $this->developerId = ((config('petrvs') ?: [])['ids-fixos'] ?: [])['developer-id'] ?: $this->UtilService->uuid("Desenvolvedor");
+        //$this->developerId = ((config('petrvs') ?: [])['ids-fixos'] ?: [])['developer-id'] ?: $this->UtilService->uuid("Desenvolvedor");
+        $this->developerId = $this->UtilService->uuid("Desenvolvedor");
         $this->collection = $collection ?? $this->collection;
         if(empty($this->collection)) {
             $this->collection = str_replace("Service", "", str_replace("App\\Services", "App\\Models", get_class($this)));
@@ -730,7 +732,7 @@ class ServiceBase extends DynamicMethods
     {
         $model = $this->getModel();
         $entity = UtilService::emptyEntry($dataOrEntity, "id") ? null : $model::find($dataOrEntity["id"]);
-        $action = empty($entity) ? ServiceBase::ACTION_INSERT : ServiceBase::ACTION_UPDATE;
+        $action = empty($entity) ? ServiceBase::ACTION_INSERT : ServiceBase::ACTION_EDIT;
         $entity = isset($entity) ? $entity : new $model();
         try {
             if($transaction) DB::beginTransaction();
@@ -744,7 +746,7 @@ class ServiceBase extends DynamicMethods
             if($transaction) DB::rollback();
             throw $e;
         }
-        $action = $entity->wasRecentlyCreated ? ServiceBase::ACTION_INSERT : ServiceBase::ACTION_UPDATE;
+        $action = $entity->wasRecentlyCreated ? ServiceBase::ACTION_INSERT : ServiceBase::ACTION_EDIT;
         $entity->fresh();
         if(method_exists($this, "afterStore")) $this->afterStore($entity, $action);
         return $entity;
@@ -765,7 +767,7 @@ class ServiceBase extends DynamicMethods
             try {
                 if($transaction) DB::beginTransaction();
                 $data = method_exists($this, "proxyUpdate") ? $this->proxyUpdate($data, $unidade) : $data;
-                $data = method_exists($entity, "proxyFill") ? $entity->proxyFill($data, $unidade, ServiceBase::ACTION_UPDATE) : $data;
+                $data = method_exists($entity, "proxyFill") ? $entity->proxyFill($data, $unidade, ServiceBase::ACTION_EDIT) : $data;
                 $keys = $entity->toArray();
                 $fillable = array_merge($entity->fillable_relations ?? [], $entity->fillable_changes ?? []);
                 $relations = [];
@@ -837,7 +839,7 @@ class ServiceBase extends DynamicMethods
                 if(method_exists($this, "proxyDestroy") ? $this->proxyDestroy($entity) : true) {
                     if(method_exists($entity, 'deleteCascade')) $entity->deleteCascade();
                 }
-                if(method_exists($this, "extraDestoy")) $this->extraDestoy($entity);
+                if(method_exists($this, "extraDestroy")) $this->extraDestroy($entity);
                 if($transaction) DB::commit();
                 return true;
             } catch (Throwable $e) {
@@ -866,16 +868,16 @@ class ServiceBase extends DynamicMethods
     }
 
     /**
-     * @return Unidade Retorna a Unidade de lotação principal do usuário logado
+     * @return Unidade Retorna a Unidade de lotação do usuário logado
      */
-    public static function unidadePrincipalUsuarioLogado(): Unidade {
-        return static::loggedUser()->lotacoes->first(fn($l) => $l->principal == 1 && $l->data_fim == null)->unidade;
+    public static function unidadeLotacaoUsuarioLogado(): Unidade {
+        return static::loggedUser()->lotacao->unidade;
     }
 
     /**
-     * Este método filtra todos os relacionamentos q tenham sido apagados (Data_fim não nula)
+     * Este método aplica os relacionamentos
      */
-    public function applyWith(&$entity,&$data) {
+    public function applyWith(&$entity, &$data) {
         $data['with'] = $this->getCamelWith($data['with']);
         $model = $this->getModel();
         foreach($data['with'] as $key => $with) {
@@ -885,16 +887,16 @@ class ServiceBase extends DynamicMethods
                 $entity->with(gettype($key) == "string" ? [$key => $with] : $with);  // aplica o método 'with' normalmente nele...
                 array_splice($withs, -1, 1, explode(':', $last)[0]);   // depois retira os : e os campos
             }
-            while (count($withs)>0) {
-                $relation = $this->getNestedModel($model, implode('.',$withs));
+            while (count($withs) > 0) {
+                /*$relation = $this->getNestedModel($model, implode('.', $withs));
                 if(!empty($relation) && !empty((new $relation)->has_data_fim)) {
                     $entity->with([implode('.',$withs) => function($query) {$query->whereNull('data_fim');}]);
                     $entity->with(gettype($key) == "string"
                             ? [$key => [implode('.',$withs) => function($query) {$query->whereNull('data_fim');}]]
                             : [implode('.',$withs) => function($query) {$query->whereNull('data_fim');}]);
-                } else {
-                    $entity->with(implode('.',$withs));
-                }
+                } else {*/
+                $entity->with(implode('.', $withs));
+                //}
                 array_pop($withs);
             }
         }

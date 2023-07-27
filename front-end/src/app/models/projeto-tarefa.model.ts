@@ -1,10 +1,11 @@
 import { Base } from './base.model';
 import { Usuario } from './usuario.model';
 import { HasAlocacoes, HasTarefas, Projeto } from './projeto.model';
-import { Demanda } from './demanda.model';
+import { Atividade } from './atividade.model';
 import { ProjetoAlocacao } from './projeto-alocacao.model';
 import { LookupItem } from '../services/lookup.service';
 import { Comentario, HasComentarios } from './comentario';
+import { Documento } from './documento.model';
 
 export type ProjetoTarefaStatus = "PLANEJADO" | "INICIADO" | "CONCLUIDO" | "FALHO" | "SUSPENSO" | "CANCELADO" | "AGUARDANDO";
 
@@ -12,18 +13,15 @@ export class ProjetoTarefa extends Base implements HasComentarios, HasAlocacoes,
     public projeto?: Projeto;
     public tarefa_pai?: ProjetoTarefa;
     public terefa_projeto?: Projeto;
-    public demanda?: Demanda;
+    public atividade?: Atividade;
     public usuario?: Usuario;
+    public documento?: Documento;
     public alocacoes?: ProjetoAlocacao[];
 
     public indice: number = 0; /* Indice da sequencia da tarefa */
     public path: string = ""; /* Path dos nós pais */
     public nome: string = ""; /* Nome da tarefa */
     public descricao: string = ""; /* Descricao da tarefa */
-    public id_processo: number | null = null; /* ID do processo SEI */
-    public numero_processo: string | null = null; /* Número do processo SEI */
-    public id_documento: number | null = null; /* ID do documento SEI */
-    public numero_documento: string | null = null; /* Numero do documento SEI */
     public inicio: Date = new Date(); /* Inicio da tarefa */
     public termino: Date = new Date(); /* Fim da tarefa */
     public inicio_baseline: Date | null = null;  /* Inicio do projeto (Baseline) */
@@ -49,8 +47,9 @@ export class ProjetoTarefa extends Base implements HasComentarios, HasAlocacoes,
     public projeto_id: string = "";
     public tarefa_pai_id: string | null = null;
     public terefa_projeto_id: string | null = null; /* Projeto que será incorporado como uma tarefa */
-    public demanda_id: string = "";
+    public atividade_id: string = "";
     public usuario_id: string | null = null;
+    public documento_id: string | null = null;
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

@@ -45,6 +45,7 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
     }, this.cdRef, this.validate);
   }
 
+
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
     if(['nome','fundamentacao','eixo_tematico_id'].indexOf(controlName) >= 0 && !control.value?.length) {
@@ -57,7 +58,7 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
     let result = null;
 
     if(this.isPlanejamentoUNEX() && !this.form?.controls.objetivo_superior_id.value){
-      result = "Quando o Planejamento é de uma Unidade Executora é obrigatório associar cada objetivo a um objetivo do Planejamento Institucional superior!";
+      result = "Quando o Planejamento é de uma Unidade Executora é obrigatório associar cada um dos seus objetivos a um objetivo do Planejamento Institucional superior!";
     }
 
     return result;
@@ -69,8 +70,8 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
     await this.eixoTematico?.loadSearch(entity.eixo_tematico || entity.eixo_tematico_id);
     this.title = entity._status == 'ADD' ? 'Inclusão de Objetivo' : 'Editando objetivo...';
     this.planejamento = this.metadata?.planejamento as Planejamento;
-/*  if(this.planejamento) this.planejamento.planejamento_superior = this.metadata.planejamento_superior as Planejamento || null;
-    if(this.planejamento.planejamento_superior) this.planejamento.planejamento_superior.objetivos = this.metadata?.objetivos_superiores || null;  */
+    if(this.planejamento) this.planejamento.planejamento_superior = this.metadata.planejamento_superior as Planejamento || null;
+    if(this.planejamento.planejamento_superior) this.planejamento.planejamento_superior.objetivos = this.metadata?.objetivos_superiores || null; 
     this.form?.controls.planejamento_superior_nome.setValue(this.planejamento?.planejamento_superior?.nome || '');
     this.objetivos_superiores = this.planejamento?.planejamento_superior?.objetivos?.map(x => Object.assign({}, { key: x.id, value: x.nome, data: x })) || [];
   }

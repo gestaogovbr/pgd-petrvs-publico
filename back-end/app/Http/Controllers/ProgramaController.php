@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Programa;
-use App\Services\ProgramaService;
-use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
 
@@ -17,7 +14,7 @@ class ProgramaController extends ControllerBase {
             case 'STORE':
                 if (!$usuario->hasPermissionTo('MOD_PRGT_INCL')) throw new ServerException("CapacidadeStore", "Inserção não executada");
                 break;
-            case 'UPDATE':
+            case 'EDIT':
                 if (!$usuario->hasPermissionTo('MOD_PRGT_EDT')) throw new ServerException("CapacidadeStore", "Edição não executada");
                 break;
             case 'DESTROY':

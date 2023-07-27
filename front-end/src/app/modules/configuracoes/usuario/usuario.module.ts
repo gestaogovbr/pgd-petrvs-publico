@@ -6,12 +6,14 @@ import { UsuarioListComponent } from './usuario-list/usuario-list.component';
 import { ComponentsModule } from 'src/app/components/components.module';
 import { UsuarioFormComponent } from './usuario-form/usuario-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { UsuarioIntegranteComponent } from './usuario-integrante/usuario-integrante.component';
 
 
 @NgModule({
   declarations: [
     UsuarioListComponent,
-    UsuarioFormComponent
+    UsuarioFormComponent,
+    UsuarioIntegranteComponent
   ],
   imports: [
     CommonModule,

@@ -23,6 +23,7 @@ export class Notificacao extends Base {
     public data_registro: Date = new Date(); // Data e hora da inclusão da mensgaem
     public mensagem: string = ""; // Mensagem
     public numero: number = 0; // Número da mensagem (Gerado pelo sistema)
+    public remetente_id: string | null = null;
     public destinatarios: NotificacaoDestinatario[] = [];
 
     public constructor(data?: any) { super(); this.initialization(data); }

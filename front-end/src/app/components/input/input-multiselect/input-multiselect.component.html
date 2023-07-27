@@ -33,12 +33,12 @@
                     <div class="multiselect-container-buttons">
                         <button *ngIf="!editing" type="button" [id]="generatedId(controlName) + '_add_button'" class="btn btn-success multiselect-container-form-button" (click)="onAddItemClick()" data-bs-toggle="tooltip" data-bs-placement="top" title="Adicionar"><i class="bi bi-arrow-bar-up"></i></button>
                         <button *ngIf="editing" type="button" [id]="generatedId(controlName) + '_save_button'" class="btn btn-primary multiselect-container-form-button" (click)="onSaveItemClick()" data-bs-toggle="tooltip" data-bs-placement="top" title="Salvar"><i class="bi bi-check-circle"></i></button>
-                        <button *ngIf="editing" type="button" [id]="generatedId(controlName) + '_cancel_button'" class="btn btn-danger multiselect-container-form-button" (click)="onCancelItemClick()" data-bs-toggle="tooltip" data-bs-placement="top" title="Cancelar"><i class="bi bi bi-dash-circle"></i></button>
+                        <button *ngIf="editing" type="button" [id]="generatedId(controlName) + '_cancel_button'" class="btn btn-danger multiselect-container-form-button" (click)="onCancelItemClick()" data-bs-toggle="tooltip" data-bs-placement="top" title="Cancelar"><i class="bi bi-dash-circle"></i></button>
                     </div>
                     <div class="multiselect-container-buttons">
                         <button *ngIf="!editing" type="button" [id]="generatedId(controlName) + '_add_button'" class="btn btn-success multiselect-container-form-button" (click)="onAddItemClick()" data-bs-toggle="tooltip" data-bs-placement="top" title="Adicionar"><i class="bi bi-arrow-bar-up"></i></button>
                         <button *ngIf="editing" type="button" [id]="generatedId(controlName) + '_save_button'" class="btn btn-primary multiselect-container-form-button" (click)="onSaveItemClick()" data-bs-toggle="tooltip" data-bs-placement="top" title="Salvar"><i class="bi bi-check-circle"></i></button>
-                        <button *ngIf="editing" type="button" [id]="generatedId(controlName) + '_cancel_button'" class="btn btn-danger multiselect-container-form-button" (click)="onCancelItemClick()" data-bs-toggle="tooltip" data-bs-placement="top" title="Cancelar"><i class="bi bi bi-dash-circle"></i></button>
+                        <button *ngIf="editing" type="button" [id]="generatedId(controlName) + '_cancel_button'" class="btn btn-danger multiselect-container-form-button" (click)="onCancelItemClick()" data-bs-toggle="tooltip" data-bs-placement="top" title="Cancelar"><i class="bi bi-dash-circle"></i></button>
                     </div>
                 </div/-->
                 <div *ngIf="!isDisabled && !isNoForm" class="multiselect-container d-flex">
@@ -48,7 +48,7 @@
                     <div class="btn-group">
                         <button *ngIf="!editing" type="button" [id]="generatedId(controlName) + '_add_button'" class="btn btn-success" (click)="onAddItemClick()" data-bs-toggle="tooltip" data-bs-placement="top" title="Adicionar"><i class="bi bi-arrow-bar-up"></i></button>
                         <button *ngIf="editing" type="button" [id]="generatedId(controlName) + '_save_button'" class="btn btn-primary" (click)="onSaveItemClick()" data-bs-toggle="tooltip" data-bs-placement="top" title="Salvar"><i class="bi bi-check-circle"></i></button>
-                        <button *ngIf="editing" type="button" [id]="generatedId(controlName) + '_cancel_button'" class="btn btn-danger" (click)="onCancelItemClick()" data-bs-toggle="tooltip" data-bs-placement="top" title="Cancelar"><i class="bi bi bi-dash-circle"></i></button>
+                        <button *ngIf="editing" type="button" [id]="generatedId(controlName) + '_cancel_button'" class="btn btn-danger" (click)="onCancelItemClick()" data-bs-toggle="tooltip" data-bs-placement="top" title="Cancelar"><i class="bi bi-dash-circle"></i></button>
                     </div>
                 </div>
             </div>

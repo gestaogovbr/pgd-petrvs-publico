@@ -1,7 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
-import { EixoTematico } from '../models/eixo-tematico.model';
 import { DaoBaseService } from './dao-base.service';
-import {CadeiaValor} from "../models/cadeia-valor.model";
+import { CadeiaValor } from "../models/cadeia-valor.model";
 
 @Injectable({
   providedIn: 'root'

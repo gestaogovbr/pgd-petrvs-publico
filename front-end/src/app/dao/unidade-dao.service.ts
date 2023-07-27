@@ -1,13 +1,12 @@
 import { Injectable, Injector } from '@angular/core';
-import { TemplateDataset } from '../components/input/input-editor/input-editor.component';
 import { Unidade } from '../models/unidade.model';
 import { AreaRelatorio } from '../modules/base/page-report-base';
 import { CidadeDaoService } from './cidade-dao.service';
 import { DaoBaseService } from './dao-base.service';
 import { EntidadeDaoService } from './entidade-dao.service';
 import { UsuarioDaoService } from './usuario-dao.service';
-import { PlanoEntrega } from '../models/plano-entrega.model';
 import { PlanoEntregaDaoService } from './plano-entrega-dao.service';
+import { TemplateDataset } from '../modules/uteis/templates/template.service';
 
 export type UnidadeDashboard = {
   sigla: string,                                    // nome da Unidade
@@ -41,8 +40,8 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
       { field: "codigo", label: "Código" },
       { field: "sigla", label: "Sigla" },
       { field: "nome", label: "Nome" },
-      { field: "gestor", label: "Gestor", fields: this.usuarioDao.dataset([]) },
-      { field: "gestor_substituto", label: "Gestor substituto", fields: this.usuarioDao.dataset([]) },
+      { field: "gestor", label: "Gestor", fields: this.usuarioDao.dataset([]), type: "OBJECT"},
+      { field: "gestor_substituto", label: "Gestor substituto", fields: this.usuarioDao.dataset([]), type: "OBJECT"},
       { field: "entidade", label: "Entidade", dao: this.entidadeDao },
       { field: "cidade", label: "Cidade", dao: this.cidadeDao },
       { field: "texto_complementar_plano", label: "Mensagem do Plano de trabalho", type: "TEMPLATE" }

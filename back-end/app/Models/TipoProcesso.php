@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
+use App\Casts\AsJson;
 use App\Models\ModelBase;
-use App\Models\Unidade;
+use App\Models\Documento;
 
 class TipoProcesso extends ModelBase
 {
-    
     protected $table = 'tipos_processos';
 
     protected $with = [];
@@ -17,6 +17,7 @@ class TipoProcesso extends ModelBase
         'codigo', /* varchar(50); */// Código do tipo de Processo
         'etiquetas', /* json; NOT NULL; */// Nome das etiquetas predefinidas
         'checklist', /* json; NOT NULL; */// Nome dos checklist predefinidas
+        //'deleted_at', /* timestamp; */
     ];
 
     protected static function booted()
@@ -34,6 +35,6 @@ class TipoProcesso extends ModelBase
     ];
 
     // Has
-    public function unidade() { return $this->hasMany(Unidade::class, 'tipo_processo_id'); }        
+    public function documentos() { return $this->hasMany(Documento::class); }             //nullable
 
 }

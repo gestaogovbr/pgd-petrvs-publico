@@ -18,6 +18,7 @@ class CreateTiposCapacidadesTable extends Migration
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
+            $table->softDeletes();
             // Campos:
             $table->string('codigo', 256)->comment("Código da rotina no sistema (acesso)"); 
             $table->text('descricao')->comment("Descrição da capacidade (acesso)");

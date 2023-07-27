@@ -164,7 +164,6 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
         tipo_modalidade_id: entidade.tipo_modalidade_id,
         nomenclatura: entidade.nomenclatura,
         notificacoes: entidade.notificacoes,
-        notificacoes_templates: this.entity!.notificacoes_templates,
         expediente: entidade.expediente,
         carga_horaria_padrao: entidade.carga_horaria_padrao,
         forma_contagem_carga_horaria: entidade.forma_contagem_carga_horaria  

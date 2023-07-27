@@ -6,18 +6,6 @@ use App\Models\Capacidade;
 use App\Services\ServiceBase;
 
 class CapacidadeService extends ServiceBase {
-    /*
-        Perfis Ids:
-        Administrador   = UtilService->uuid("Administrador")
-        Desenvolvedor   = UtilService->uuid("Desenvolvedor")
-        Usuário Nível 5 = UtilService->uuid("Usuário Nível 5")
-        Usuário Nível 4 = UtilService->uuid("Usuário Nível 4")
-        Usuário Nível 3 = UtilService->uuid("Usuário Nível 3")
-        Usuário Nível 2 = UtilService->uuid("Usuário Nível 2")
-        Usuário Nível 1 = UtilService->uuid("Usuário Nível 1")
-        [id, data_inicio, ?, perfil_id, tipo_capacidade_id]
-        [this.util.uuid("Desenvolvedor"."MOD_CFG_USER_APELIDO"), this.util.uuid("Desenvolvedor"), this.util.uuid("MOD_CFG_USER_APELIDO")]
-    */
 
     public $antigasCapacidades = [
         ["09898bf3-d779-11ec-a5bb-0050569c64a0","2022-05-19 10:38:59","74051a4a-6e25-4aab-9abc-8872c6c1029a","6ac04dbf-d773-11ec-a5bb-0050569c64a0"],
@@ -665,6 +653,7 @@ class CapacidadeService extends ServiceBase {
     ];
 
     public $capacidades = [
+/*        
         ["MENU_CAD_ACESSO", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
         ["MENU_CONFIG_ACESSO", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
         ["MENU_GESTAO_ACESSO", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
@@ -920,6 +909,18 @@ class CapacidadeService extends ServiceBase {
         ["MOD_PLAN_ENTR_EXCL", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
         ["MOD_PLAN_ENTR_INCL", 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
         ["MOD_PLAN_ENTR_TUDO", 'Administrador', 'Desenvolvedor'],
+
+        ["MOD_RX_CAD", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_RX_EDITA", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_RX_OPO", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_RX_PESQ", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
+        ["MOD_RX_N1", 'Usuário Nível 1'],
+        ["MOD_RX_N2", 'Usuário Nível 2'],
+        ["MOD_RX_N3", 'Usuário Nível 3'],
+        ["MOD_RX_N4", 'Usuário Nível 4'],
+        ["MOD_RX_N5", 'Usuário Nível 5'],
+        ["MOD_RX_ADM", 'Administrador'],
+        ["MOD_RX_DESENVOLVEDOR", 'Desenvolvedor'],*/
     ];
 
 }

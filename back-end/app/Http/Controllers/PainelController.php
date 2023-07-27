@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
 
-class AfastamentoController extends ControllerBase {
+class PainelController extends ControllerBase {
     
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         throw new ServerException("ValidatePainel");

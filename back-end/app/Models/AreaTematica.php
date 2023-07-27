@@ -3,8 +3,6 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
-use App\Traits\AutoDataInicio;
-
 
 class AreaTematica extends ModelBase
 {
@@ -12,8 +10,9 @@ class AreaTematica extends ModelBase
     protected $table = 'areas_tematicas';
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'nome',
-        'ativo' 
+        'nome', /* varchar(256); NOT NULL; */// Nome da área temática
+        'ativo', /* tinyint; NOT NULL; DEFAULT: '1'; */// Área ativa ou inativa
+        //'deleted_at', /* timestamp; */
     ];
 
     //Has

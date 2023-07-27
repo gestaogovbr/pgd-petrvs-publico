@@ -18,12 +18,11 @@ class CreatePerfisTable extends Migration
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
+            $table->softDeletes();
             // Campos:
             $table->integer('nivel')->comment("Evita que usuários de nível inferior atribuam perfis de nível superior");
             $table->string('nome', 256)->comment("Nome do perfil");
             $table->text('descricao')->comment("Descrição do perfil");
-            $table->dateTime('data_inicio')->comment("Data inicio da vigência");
-            $table->dateTime('data_fim')->nullable()->comment("Data final da vigência");
         }); 
     }
 

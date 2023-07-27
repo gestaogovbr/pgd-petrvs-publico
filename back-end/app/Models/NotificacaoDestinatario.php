@@ -9,17 +9,18 @@ use App\Casts\AsJson;
 
 class NotificacaoDestinatario extends ModelBase
 {
-
     protected $table = 'notificacoes_destinatarios';
 
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'tipo', /* enum('petrvs','email','whatsapp'); NOT NULL; */// Tipo do envio
-        //'data_leitura', /* datetime; */// Data e hora da leitura
-        //'opcoes', /* json; */// Opções
+        'tipo', /* enum('PETRVS','EMAIL','WHATSAPP'); NOT NULL; DEFAULT: 'PETRVS'; */// Tipo do envio
         'notificacao_id', /* char(36); NOT NULL; */
         'usuario_id', /* char(36); NOT NULL; */
+        'data_leitura', /* datetime; */// Data e hora da leitura
+        'data_envio', /* datetime; */// Data e hora do envio, utilizado quando realmente a mensagem foi despachada
+        'opcoes', /* json; */// Opções
+        //'deleted_at', /* timestamp; */
     ];
 
     protected $casts = [

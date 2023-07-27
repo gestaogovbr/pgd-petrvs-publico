@@ -6,6 +6,7 @@ use App\Models\Cidade;
 use App\Models\Entidade;
 use App\Models\Perfil;
 use App\Models\Usuario;
+use App\Models\Unidade;
 use App\Services\ServiceBase;
 use Illuminate\Support\Facades\Artisan;
 use Carbon\Carbon;
@@ -97,5 +98,6 @@ class TenantService extends ServiceBase {
         Artisan::call('tenants:migrate' . (empty($id) ? '' : ' --tenants=' . $id));
         return Artisan::output();
     }
+
 
 }

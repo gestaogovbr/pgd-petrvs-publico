@@ -4,12 +4,9 @@ namespace App\Services;
 
 use App\Models\Entidade;
 use App\Services\ServiceBase;
-use App\Traits\UseDataFim;
 use Exception;
 
 class EntidadeService extends ServiceBase {
-    use UseDataFim;
-
     public function generateApiKey($entidade_id) {
         $entidade = Entidade::find($entidade_id);
         if(!empty($entidade)) {

@@ -23,6 +23,7 @@ export class TipoAvaliacaoFormComponent extends PageFormBase<TipoAvaliacao, Tipo
   public tipoJustificativaDao: TipoJustificativaDaoService;
   public justificativasLista: LookupItem[] = [];
   public form: FormGroup;
+  public formNota: FormGroup;
   public tipoJustificativa: TipoJustificativa = new TipoJustificativa();
 
   constructor(public injector: Injector) {
@@ -31,16 +32,15 @@ export class TipoAvaliacaoFormComponent extends PageFormBase<TipoAvaliacao, Tipo
     this.join = ["tipos_avaliacoes_justificativas", "tipos_avaliacoes_justificativas.tipo_justificativa"];
     this.form = this.fh.FormBuilder({
       nome: {default: ""},
-      nota_atribuida: {default: 0}, 
+      tipo: {default: "QUANTITATIVO"},
+      notas: {default: []}
+    }, this.cdRef, this.validate);
+    this.formNota = this.fh.FormBuilder({
       aceita_entrega: {default: ""},
       pergunta: {default: ""},
       icone: {default: ""},
-      cor: {default: ""},
-      justificativa_id: {default: ""},
-      justificativas: {default: ""},
-      data_inicio: {default: ""},
-      data_fim: {default: null},
-    }, this.cdRef, this.validate);
+      cor: {default: ""}
+    }, this.cdRef, this.validateNota);
   }
   
   public addItemHandle(): LookupItem | undefined {
@@ -59,17 +59,23 @@ export class TipoAvaliacaoFormComponent extends PageFormBase<TipoAvaliacao, Tipo
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-
-    if(['nome', 'pergunta'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if(['nome'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
+    return result;
+  }
 
+  public validateNota = (control: AbstractControl, controlName: string) => {
+    let result = null;
+    if(['pergunta'].indexOf(controlName) >= 0 && !control.value?.length) {
+      result = "Obrigatório";
+    }
     return result;
   }
 
   public loadData(entity: TipoAvaliacao, form: FormGroup): void {
     let formValue = Object.assign({}, form.value);
-    if(entity.tipos_avaliacoes_justificativas?.length) {
+    /*if(entity.tipos_avaliacoes_justificativas?.length) {
       entity.tipos_avaliacoes_justificativas!.forEach(t => {
         this.justificativasLista.push({
           key: t.tipo_justificativa_id,
@@ -77,7 +83,7 @@ export class TipoAvaliacaoFormComponent extends PageFormBase<TipoAvaliacao, Tipo
           data: t
         });
       });      
-    }
+    }*/
     form.patchValue(this.util.fillForm(formValue, entity));
   }
 
@@ -90,11 +96,11 @@ export class TipoAvaliacaoFormComponent extends PageFormBase<TipoAvaliacao, Tipo
     return new Promise<TipoAvaliacao>((resolve, reject) => {
       let tipoAvaliacao = this.util.fill(new TipoAvaliacao(), this.entity!);
       tipoAvaliacao = this.util.fillForm(tipoAvaliacao, this.form!.value);
-      tipoAvaliacao.tipos_avaliacoes_justificativas = this.justificativasLista.map(j => {
+      /*tipoAvaliacao.tipos_avaliacoes_justificativas = this.justificativasLista.map(j => {
         return j.data ? j.data : Object.assign(new TipoAvaliacaoJustificativa(), {
           tipo_justificativa_id: j.key
         });
-      });
+      });*/
       resolve(tipoAvaliacao);
     });
   }

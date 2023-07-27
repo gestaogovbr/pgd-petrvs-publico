@@ -386,8 +386,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
 
 class TipoMotivoAfastamento extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    //public data_inicio: Date = new Date(0); /* Data de início */
-    //public data_fim: Date = new Date(0); /* Data fim */
     constructor(data) {
         super();
         this.codigo = null; /* Código do afastamento */

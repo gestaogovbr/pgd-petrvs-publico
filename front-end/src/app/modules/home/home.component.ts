@@ -33,14 +33,14 @@ export class HomeComponent implements OnInit {
       progresso: 0,
       total_horas: 0
     }],
-    demandas: {
+    atividades: {
       atrasadas: 0,
       avaliadas: 0,
       concluidas: 0,
       media_avaliacoes: 0,
       nao_concluidas: 0,
       nao_iniciadas: 0,
-      total_demandas: 0,
+      total_atividades: 0,
       horas_atrasadas: 0,
       horas_avaliadas: 0,
       horas_concluidas: 0,
@@ -103,10 +103,10 @@ export class HomeComponent implements OnInit {
     responsive: true
   };
 
-  public opcoesGraficoDemandas: ChartOptions = {
+  public opcoesGraficoAtividades: ChartOptions = {
     scales: {
       xAxes: [{
-        labels: ['Total de horas demandas'],
+        labels: ['Total de horas atividades'],
         display: true,
         ticks: {
           beginAtZero: true
@@ -136,7 +136,7 @@ export class HomeComponent implements OnInit {
   };
 
   public dadosPlanos: ChartData = {};
-  public dadosDemandas: ChartData = {};
+  public dadosAtividades: ChartData = {};
 
   constructor(
     public auth: AuthService,
@@ -174,18 +174,19 @@ export class HomeComponent implements OnInit {
   }
 
   async ngAfterViewInit() {
-    const unidades_gerenciadas = this.auth.usuario?.lotacoes.filter(lotacao => {
-      return lotacao.unidade?.gestor_id == this.auth.usuario?.id
-    }).map(lotacoes => { return lotacoes.unidade?.id }).filter((item): item is string => !!item)
+/*     const unidades_gerenciadas = this.auth.usuario?.lotacoes.filter(lotacao => {
+      return lotacao.unidade?.gestor?.id == this.auth.usuario?.id
+    }).map(lotacoes => { return lotacoes.unidade?.id }).filter((item): item is string => !!item) */
+    const unidades_gerenciadas = this.auth.usuario?.gerencia_titular ? [this.auth.usuario?.gerencia_titular!.id] : [];
 
     if (unidades_gerenciadas?.length) {
-      this.filtrarDemandasGerenciadas(unidades_gerenciadas);
+      this.filtrarAtividadesGerenciadas(unidades_gerenciadas);
     }
 
-    this.filtrarDemandas();
+    this.filtrarAtividades();
   }
 
-  async filtrarDemandasGerenciadas(unidades_gerenciadas: string[]) {
+  async filtrarAtividadesGerenciadas(unidades_gerenciadas: string[]) {
     this.data_inicial = this.formSearch.controls['data_inicial'].value;
     this.data_final = this.formSearch.controls['data_final'].value;
 
@@ -193,7 +194,7 @@ export class HomeComponent implements OnInit {
     if (dadosGestor) this.dashGestor = dadosGestor;
   }
 
-  async filtrarDemandas() {
+  async filtrarAtividades() {
     this.data_inicial = this.formSearch.controls['data_inicial'].value;
     this.data_final = this.formSearch.controls['data_final'].value;
 
@@ -201,7 +202,7 @@ export class HomeComponent implements OnInit {
     if (dadosUsuario) {
       this.dashUsuario = dadosUsuario;
       this.construirGraficoPlanos();
-      this.construirGraficoDemandas();
+      this.construirGraficoAtividades();
     }
   }
 
@@ -241,31 +242,31 @@ export class HomeComponent implements OnInit {
     ];
   }
 
-  public construirGraficoDemandas() {
-    this.dadosDemandas.datasets = [
+  public construirGraficoAtividades() {
+    this.dadosAtividades.datasets = [
       {
-        label: 'Demandas Não-iniciadas',
-        data: [this.dashUsuario.demandas.horas_nao_iniciadas],
+        label: 'Atividades Não-iniciadas',
+        data: [this.dashUsuario.atividades.horas_nao_iniciadas],
         backgroundColor: '#0dcaf0',
-        stack: 'Demandas'
+        stack: 'Atividades'
       },
       {
-        label: 'Demandas Não Concluídas',
-        data: [this.dashUsuario.demandas.horas_nao_concluidas],
+        label: 'Atividades Não Concluídas',
+        data: [this.dashUsuario.atividades.horas_nao_concluidas],
         backgroundColor: '#ffc107',
-        stack: 'Demandas'
+        stack: 'Atividades'
       },
       {
-        label: 'Demandas Concluídas',
-        data: [this.dashUsuario.demandas.horas_concluidas],
+        label: 'Atividades Concluídas',
+        data: [this.dashUsuario.atividades.horas_concluidas],
         backgroundColor: '#239c24',
-        stack: 'Demandas'
+        stack: 'Atividades'
       },
       {
-        label: 'Demandas Atrasadas',
-        data: [this.dashUsuario.demandas.horas_atrasadas],
+        label: 'Atividades Atrasadas',
+        data: [this.dashUsuario.atividades.horas_atrasadas],
         backgroundColor: '#af4201',
-        stack: 'Demandas'
+        stack: 'Atividades'
       },
 
     ];

@@ -1,5 +1,4 @@
 import { ChangeDetectorRef, Injectable, Injector } from '@angular/core';
-import { DaoBaseService } from '../dao/dao-base.service';
 import { Unidade } from '../models/unidade.model';
 import { Usuario, UsuarioConfig } from '../models/usuario.model';
 import { DialogService } from './dialog.service';
@@ -10,7 +9,6 @@ import { ServerService } from './server.service';
 import * as moment from 'moment';
 import { ActivatedRoute } from '@angular/router';
 import { CalendarService } from './calendar.service';
-import { Subject } from 'rxjs';
 import { LexicalService } from './lexical.service';
 import { UtilService } from './util.service';
 import { UsuarioDaoService } from '../dao/usuario-dao.service';
@@ -19,6 +17,7 @@ import { Entidade } from '../models/entidade.model';
 import { UnidadeDaoService } from '../dao/unidade-dao.service';
 import { NotificacaoService } from '../modules/uteis/notificacoes/notificacao.service';
 import { AppComponent } from '../app.component';
+import { IntegranteAtribuicao } from '../models/unidade-integrante-atribuicao.model';
 
 export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION" | "SUPER";
 export type Permission = string | (string | string[])[];
@@ -27,9 +26,6 @@ export type Permission = string | (string | string[])[];
   providedIn: 'root'
 })
 export class AuthService {
-  public success?: (usuario: Usuario, redirectTo?: FullRoute) => void;
-  public fail?: (error: string) => void;
-  public leave?: () => void;
   public kind?: AuthKind;
   public logged: boolean = false;
   public usuario?: Usuario;
@@ -89,7 +85,27 @@ export class AuthService {
   private _notificacao?: NotificacaoService;
   public get notificacao(): NotificacaoService { this._notificacao = this._notificacao || this.injector.get<NotificacaoService>(NotificacaoService); return this._notificacao };
 
+  public set usuarioConfig(value: IIndexable) {
+    this.updateUsuarioConfig(this.usuario!.id, value);
+  }
+  public get usuarioConfig(): IIndexable {
+    const defaults = new UsuarioConfig();
+    return this.util.assign(defaults, this.usuario?.config || {});
+  }
+
   constructor(public injector: Injector) { }
+
+  public success(usuario: Usuario, redirectTo?: FullRoute) {
+    this.app!.go.navigate(redirectTo || { route: this.app!.globals.initialRoute });
+  };
+
+  public fail(error: any) {
+    this.app!.go.navigate({ route: ['login'], params: { error: error?.error || error?.message || error } });
+  };
+
+  public leave() {
+    this.app!.go.navigate({ route: ['login'] });
+  };
 
   public get unidadeHora(): string {
     return moment(this.hora).format("HH:mm");
@@ -116,10 +132,6 @@ export class AuthService {
     }, false);
   }
 
-  public set usuarioConfig(value: IIndexable) {
-    this.updateUsuarioConfig(this.usuario!.id, value);
-  }
-
   public updateUsuarioConfig(usuarioId: string, value: IIndexable) {
     if (this.usuario?.id == usuarioId) this.usuario!.config = this.util.assign(this.usuario!.config, value);
     return this.usuarioDao.updateJson(usuarioId, 'config', value);
@@ -128,11 +140,6 @@ export class AuthService {
   public updateUsuarioNotificacoes(usuarioId: string, value: IIndexable) {
     if (this.usuario?.id == usuarioId) this.usuario!.notificacoes = this.util.assign(this.usuario!.notificacoes, value);
     return this.usuarioDao.updateJson(usuarioId, 'notificacoes', value);
-  }
-
-  public get usuarioConfig(): IIndexable {
-    const defaults = new UsuarioConfig();
-    return this.util.assign(defaults, this.usuario?.config || {});
   }
 
   public registerEntity(entity: any) {
@@ -147,13 +154,14 @@ export class AuthService {
   public registerUser(user: any, token?: string) {
     if (user) {
       this.usuario = Object.assign(new Usuario(), user) as Usuario;
-      this.capacidades = this.usuario?.perfil?.capacidades?.filter(x => x.data_fim == null).map(x => x.tipo_capacidade?.codigo || "") || [];
+      this.capacidades = this.usuario?.perfil?.capacidades?.filter(x => x.deleted_at == null).map(x => x.tipo_capacidade?.codigo || "") || [];
       this.kind = this.kind;
       this.logged = true;
-      this.unidades = this.usuario?.lotacoes?.map(x => x.unidade!) || [];
-      this.unidade = this.usuario?.lotacoes?.find(x => x.principal)?.unidade;
+      this.unidades = this.usuario?.areas_trabalho?.map(x => x.unidade!) || [];
+      this.unidade = this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade;
       if (this.unidade) this.calendar.loadFeriadosCadastrados(this.unidade.id);
       if (token?.length) localStorage.setItem("petrvs_api_token", token);
+      this.app!.onContextoSelect(this.app!.menuContexto.find(x => x.key == this.usuarioConfig.menu_contexto) || this.app!.menuContexto[0]);
       this.notificacao.updateNaoLidas();
     } else {
       this.usuario = undefined;
@@ -311,7 +319,7 @@ export class AuthService {
   }
 
   public hasLotacao(unidadeId: string) {
-    return this.usuario!.lotacoes.find(x => x.unidade_id == unidadeId);
+    return this.usuario!.areas_trabalho?.find(x => x.unidade_id == unidadeId);
   }
 
   /**
@@ -323,8 +331,8 @@ export class AuthService {
   public isGestorUnidade(pUnidade: Unidade | string | null = null): boolean {
     /*       let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? this.unidades?.find(x => x.id == pUnidade) : pUnidade;
           return !!unidade && [unidade.gestor_substituto_id, unidade.gestor_id].includes(this.usuario!.id);  */
-    let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? [...this.usuario!.chefias_titulares!, ...this.usuario!.chefias_substitutas!].find(x => x.id == pUnidade) : pUnidade;
-    return !!unidade && [unidade.gestor_substituto_id, unidade.gestor_id].includes(this.usuario!.id);
+    let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? [this.usuario!.gerencia_titular?.unidade, ...(this.usuario!.gerencias_substitutas!.map(x => x.unidade))].find(x => x && x.id == pUnidade) : pUnidade;
+    return !!unidade && [unidade.gestor_substituto?.id, unidade.gestor?.id].includes(this.usuario!.id);
   }
 
   /**
@@ -342,30 +350,30 @@ export class AuthService {
    * @returns 
    */
   public isLotacaoPrincipal(pUnidade: Unidade | null = null): boolean {
-    let unidade = pUnidade || this.unidade;
-    let lotacao = this.usuario!.lotacoes.find(x => x.unidade_id == unidade?.id && x.principal);
-    return lotacao != undefined;
+    let unidade = pUnidade || this.unidade!;
+    let lotacao = this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade; //this.usuario!.lotacao?.unidade;
+    return lotacao?.id == unidade.id;
   }
 
   /**
-   * Informa se o usuário logado possui determinada atribuição para uma unidade específica dentre as suas lotações/chefias.
+   * Informa se o usuário logado possui determinada atribuição para uma unidade específica dentre as suas unidades-integrante.
    * @param atribuicao 
    * @param unidade_id 
    */
-  public isIntegrante(atribuicao: string, unidade_id: string): boolean {
-    let unidades: Array<Unidade> = this.util.arrayUnique(this.unidades?.concat(...this.usuario?.chefias_titulares || [], ...this.usuario?.chefias_substitutas || []) || []);
-    return !!unidades.find(x => x.id == unidade_id)?.integrantes?.find(i => i.usuario_id == this.usuario!.id && i.atribuicao == atribuicao);
+  public isIntegrante(atribuicao: IntegranteAtribuicao, unidade_id: string): boolean {
+    let $vinculo = this.usuario?.unidades_integrante?.find(x => x.unidade_id == unidade_id);
+    return !!$vinculo && $vinculo.atribuicoes.map(a => a.atribuicao).includes(atribuicao);
   }
 
   /**
-   * Informa se o usuário logado tem como lotação alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
+   * Informa se o usuário logado tem como área de trabalho alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
    * repassada como parâmetro.
    * @param unidade 
    * @returns 
    */
   public isLotadoNaLinhaAscendente(unidade: Unidade): boolean {
     let result = false;
-    this.usuario!.lotacoes.map(x => x.unidade_id).forEach(x => { if (unidade.path.split('/').slice(1).includes(x)) result = true; });
+    this.usuario!.areas_trabalho?.map(x => x.unidade_id).forEach(x => { if (unidade.path.split('/').slice(1).includes(x)) result = true; });
     return result;
   }
 
@@ -377,8 +385,10 @@ export class AuthService {
    */
   public isGestorLinhaAscendente(unidade: Unidade): boolean {
     let result = false;
-    [...this.usuario!.chefias_titulares!, ...this.usuario!.chefias_substitutas!].map(x => x.id).forEach(x => { if (unidade.path.split('/').slice(1).includes(x)) result = true; });
-    return result;
+    let $ids_unidades = this.usuario?.gerencias_substitutas?.map(x => x.unidade_id) || [];
+    if(this.usuario?.gerencia_titular?.unidade?.id) $ids_unidades.push(this.usuario?.gerencia_titular!.unidade_id);
+    $ids_unidades.forEach(x => { if (unidade.path.split('/').slice(1).includes(x)) result = true; });
+    return false;
   }
 
 }

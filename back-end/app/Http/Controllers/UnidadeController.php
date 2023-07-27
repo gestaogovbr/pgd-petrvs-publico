@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Unidade;
-use App\Services\UnidadeService;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
@@ -19,7 +16,7 @@ class UnidadeController extends ControllerBase {
             case 'STORE':
                 if (!$usuario->hasPermissionTo('MOD_UND_INCL')) throw new ServerException("CapacidadeStore", "Inserção não executada");
                 break;
-            case 'UPDATE':
+            case 'EDIT':
                 if (!$usuario->hasPermissionTo('MOD_UND_EDT')) throw new ServerException("CapacidadeStore", "Edição não executada");
                 break;
             case 'DESTROY':

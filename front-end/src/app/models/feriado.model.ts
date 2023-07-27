@@ -13,8 +13,6 @@ export class Feriado extends Base {
     public recorrente: number = 1; // Se é uma data única ou repete todos os anos");
     public abrangencia: string = "NACIONAL"; // "NACIONAL", "ESTADUAL", "MUNICIPAL" Abrangência do feriado");
     public codigo_ibge: string | null = null; // Código da UF ou do município (IBGE)")
-    public data_inicio: Date = new Date(); /* Data de início */
-    public data_fim: Date | null = null; /* Data do fim */
     public entidade_id: string | null = null;
     public cidade_id: string | null = null;
     public uf: string | null = null; /* UF para abrangencia estadual */

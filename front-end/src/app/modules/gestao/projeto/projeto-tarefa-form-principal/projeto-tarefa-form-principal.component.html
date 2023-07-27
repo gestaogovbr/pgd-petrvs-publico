@@ -8,8 +8,8 @@
         <input-text [size]="12" label="Nome" controlName="nome" labelInfo="Nome da tarefa"></input-text>
     </div>
     <div class="row">
-        <input-search [size]="12" displayOnlySelected #demanda controlName="demanda_id" [dao]="demandaDao" [displayTemplate]="displayDemanda">
-            <ng-template #displayDemanda let-selected="selcted">
+        <input-search [size]="12" displayOnlySelected #atividade controlName="atividade_id" [dao]="atividadeDao" [displayTemplate]="displayAtividade">
+            <ng-template #displayAtividade let-selected="selcted">
                 Mostrar dados quando selecionar
             </ng-template>
         </input-search>

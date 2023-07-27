@@ -8,7 +8,7 @@ import { QueryContext } from './query-context';
 import { v4 as uuid } from 'uuid';
 import { SelectItem } from '../components/input/input-base';
 import { UtilService } from '../services/util.service';
-import { TemplateDataset } from '../components/input/input-editor/input-editor.component';
+import { TemplateDataset } from '../modules/uteis/templates/template.service';
 
 export type QueryOrderBy = [string, "desc" | "asc" | undefined];
 export type queryEvents = {
@@ -395,7 +395,7 @@ export class DaoBaseService<T extends Base> {
       } else {
         Object.entries(data).forEach(([key, value]) => {
           try { 
-            (data as IIndexable)[key] = this.prepareToSave(value);
+              (data as IIndexable)[key] = typeof value == "object" && value instanceof DaoBaseService ? undefined : this.prepareToSave(value);
           } catch (erro) {
             console.log("Erro ao tentar atribuir valor a " + key);
           }

@@ -3,89 +3,93 @@
 namespace App\Services;
 
 use App\Exceptions\ServerException;
-use App\Models\Lotacao;
+use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\Usuario;
 use App\Services\ServiceBase;
-use App\Traits\UseDataFim;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class UnidadeIntegranteService extends ServiceBase {
-    use UseDataFim;
-
-    public function loadIntegrantes($unidadeId) {
+class UnidadeIntegranteService extends ServiceBase 
+{
+    public function loadIntegrantes($unidadeId, $usuarioId) {
         $result = [];
-        $unidade = Unidade::with(["lotacoes" => function($query){
-            $query->whereNull('data_fim');
-        }])->where("id", $unidadeId)->first();
-        if(empty($unidade)) throw new ServerException("ValidateUnidade", "Unidade não encontrada no banco");
-        $adicionar = function($usuario, $atribuicao) use (&$result) {
-            $consolidado = $result[$usuario->id] ?? [
-                "id" => $usuario->id,
-                "usuario" => $usuario,
-                "usuario_id" => $usuario->id,
-                "atribuicoes" => []
-            ];
-            $consolidado["atribuicoes"] = array_merge($consolidado["atribuicoes"] ?? [], [$atribuicao]);
-            $result[$usuario->id] = $consolidado;
-        };
-        /* Integrantes do banco de dados */
-        $integrantes = UnidadeIntegrante::with("usuario")->where("unidade_id", $unidadeId)->whereNull("data_fim")->get();
-        foreach ($integrantes as $integrante) {
-            $adicionar($integrante->usuario, $integrante->atribuicao);
+        $unidade = empty($unidadeId) ? null : Unidade::find($unidadeId);
+        $usuario = empty($usuarioId) ? null : Usuario::find($usuarioId);
+        if(!empty($unidadeId) && empty($unidade)) throw new ServerException("ValidateIntegrante", "Unidade não encontrada no banco");
+        if(!empty($usuarioId) && empty($usuario)) throw new ServerException("ValidateIntegrante", "Usuário não encontrado no banco");
+        foreach(($unidade ? $unidade->integrantes : $usuario->unidadesIntegrante) as $vinculo){
+            $result[$unidade ? $vinculo->usuario->id : $vinculo->unidade->id] = [
+                "id" => $unidade ? $vinculo->usuario->id : $vinculo->unidade->id,
+                "usuario_nome" => $unidade ? $vinculo->usuario->nome : null,
+                "usuario_apelido" => $unidade ? $vinculo->usuario->apelido : null,
+                "usuario_url_foto" => $unidade ? $vinculo->usuario->url_foto : null,
+                "unidade_nome" => $usuario ? $vinculo->unidade->nome : null,
+                "unidade_sigla" => $usuario ? $vinculo->unidade->sigla : null,
+                "unidade_codigo" => $usuario ? $vinculo->unidade->codigo : null,
+                "atribuicoes" => $vinculo->atribuicoes->map(fn($a) => $a->atribuicao)
+            ];                
         }
-        /* Chefias */
-        if(!empty($unidade->gestor)) $adicionar($unidade->gestor, "GESTOR");
-        if(!empty($unidade->gestorSubstituto)) $adicionar($unidade->gestorSubstituto, "GESTOR_SUBSTITUTO");
-        /* Lotações */
-        foreach ($unidade->lotacoes as $lotacao) {
-            $adicionar($lotacao->usuario, "LOTADO");
-        }
-        return ['rows' => array_values($result), 'unidade' => $unidade];
+        return ['rows' => array_values($result), 'unidade' => $unidade, 'usuario' => $usuario];
     }
 
-    public function saveIntegrante($unidadeId, $integrante) {
+    public function saveIntegrante($unidadeId, $usuarioId, $atribuicoes) {
         DB::beginTransaction();
         try {
-            $lotacao = Lotacao::where("unidade_id", $unidadeId)->where("usuario_id", $integrante["usuario_id"])->whereNull("data_fim")->first();
+            $usuario = Usuario::find($usuarioId);
             $unidade = Unidade::find($unidadeId);
-            //$usuario = Usuario::find($integrante["usuario_id"]);
-            $atribuicoes = $integrante["atribuicoes"];
-            $lotado = in_array("LOTADO", $atribuicoes);
-            /* Lotacao */
-            if($lotado && empty($lotacao)) {
-                $this->lotacaoService->store([
-                    "usuario_id" => $integrante["usuario_id"],
-                    "unidade_id" => $unidadeId,
-                    "principal" => false
-                ], $unidade);
-            } else if(!$lotado && !empty($lotacao)) {
-                $this->lotacaoService->destroy($lotacao->id);
-            }
-            /* Chefias */
-            $unidade->gestor_id = in_array("GESTOR", $atribuicoes) ? $integrante["usuario_id"] : ($unidade->gestor_id == $integrante["usuario_id"] ? null : $unidade->gestor_id);
-            $unidade->gestor_substituto_id = in_array("GESTOR_SUBSTITUTO", $atribuicoes) ? $integrante["usuario_id"] : ($unidade->gestor_substituto_id == $integrante["usuario_id"] ? null : $unidade->gestor_substituto_id);
-            $unidade->save();
-            /* Integrantes */
-            $integrantes = UnidadeIntegrante::where("unidade_id", $unidadeId)->where("usuario_id", $integrante["usuario_id"])->whereNull("data_fim")->get(); 
-            $atribuicoesDb = [];
-            foreach($integrantes as $atribuicao) {
-                if(!in_array($atribuicao->atribuicao, $atribuicoes)) {
-                    $atribuicao->delete();
+            if(empty($unidade) || empty($usuario)) throw new ServerException("ValidateIntegrante", "Unidade/Usuário não existe no banco");
+            $novasAtribuicoes = $atribuicoes;
+            $atribuicoesFinais = [];
+            $vinculoNovo = UnidadeIntegrante::firstOrCreate(['unidade_id' => $unidadeId, 'usuario_id' => $usuarioId]);
+            if($usuario && !$novasAtribuicoes) {     // excluir o vínculo e suas atribuições
+                $vinculo = UnidadeIntegrante::where('usuario_id',$usuario->id)->where('unidade_id',$unidade->id)->first();
+                if($usuario->lotacao->id == $vinculo->id) {     // o vínculo de lotação não pode ser excluído, apenas através da definição da lotação em outra unidade
+                    $vinculo->atribuicoes->each(function($a) { if($a->atribuicao != 'LOTADO') $a->delete(); });
+                    array_push($atribuicoesFinais,"LOTADO");
+                } else {
+                    $vinculo->deleteCascade();
+                };
+            } else {
+                $this->validateIntegrante($atribuicoes);
+                $unidadeLotacao = $usuario->lotacao ? $usuario->lotacao->unidade : null;
+                $unidadeGerenciaTitular = $usuario->gerenciaTitular ? $usuario->gerenciaTitular->unidade : null;
+                $definirLotacao = function($vinculoNovo) use ($unidadeLotacao,$unidadeId,$usuario,&$atribuicoesFinais) {
+                    if(empty($unidadeLotacao)) {
+                        UnidadeIntegranteAtribuicao::create(["atribuicao" => "LOTADO","unidade_integrante_id" => $vinculoNovo->id]);
+                    } else {
+                        if($unidadeLotacao->id != $unidadeId) {
+                            $usuario->lotacao->lotado->delete();
+                            UnidadeIntegranteAtribuicao::create(["atribuicao" => "LOTADO","unidade_integrante_id" => $vinculoNovo->id]);
+                        }
+                    } 
+                    array_push($atribuicoesFinais,"LOTADO");
+                };
+                $definirGerenciaTitular = function($vinculoNovo) use ($unidadeGerenciaTitular,$unidadeId,$usuario,$definirLotacao,&$atribuicoesFinais) {
+                    $definirLotacao($vinculoNovo);
+                    if(empty($unidadeGerenciaTitular)) {
+                            $x = new UnidadeIntegranteAtribuicao(["atribuicao" => "GESTOR","unidade_integrante_id" => $vinculoNovo->id]);
+                            //$x->fill(["atribuicao" => "GESTOR","unidade_integrante_id" => $vinculoNovo->id]);
+                            $x->save();
+                     } else {
+                        if($unidadeGerenciaTitular->id != $unidadeId) {
+                            $usuario->gerenciaTitular->gestor->delete();
+                            UnidadeIntegranteAtribuicao::create(["atribuicao" => "GESTOR","unidade_integrante_id" => $vinculoNovo->id]);
+                        }
+                    }
+                    array_push($atribuicoesFinais,"GESTOR");
+                };
+                if(in_array("LOTADO", $novasAtribuicoes)) $definirLotacao($vinculoNovo);
+                if(in_array("GESTOR", $novasAtribuicoes)) $definirGerenciaTitular($vinculoNovo);
+                foreach(array_diff($novasAtribuicoes, ['LOTADO','GESTOR']) as $x) { 
+                    UnidadeIntegranteAtribuicao::updateOrCreate(['atribuicao' => $x, 'unidade_integrante_id' => $vinculoNovo->id],[]); 
+                    array_push($atribuicoesFinais,$x);
                 }
-                $atribuicoesDb[] = $atribuicao->atribuicao;
             }
-            foreach($atribuicoes as $atribuicao) {
-                if(!in_array($atribuicao, array_merge(["LOTADO", "GESTOR", "GESTOR_SUBSTITUTO"], $atribuicoesDb))) {
-                    $unidadeIntegrente = new UnidadeIntegrante([
-                        "usuario_id" => $integrante["usuario_id"],
-                        "unidade_id" => $unidadeId,
-                        "atribuicao" => $atribuicao
-                    ]);
-                    $unidadeIntegrente->save();
-                }
+            /* Excluir as atribuições remanescentes */
+            foreach($vinculoNovo->atribuicoes as $atribuicao) { 
+                if(!in_array($atribuicao->atribuicao, $atribuicoesFinais)) $atribuicao->delete(); 
             }
             DB::commit();
         } catch (Throwable $e) {
@@ -95,5 +99,8 @@ class UnidadeIntegranteService extends ServiceBase {
         return true;
     }
 
+    public function validateIntegrante($atribuicoes){
+        if(count(array_intersect(['GESTOR','GESTOR_SUBSTITUTO'],$atribuicoes)) == 2 || count(array_intersect(['LOTADO','COLABORADOR'],$atribuicoes)) == 2) throw new ServerException("ValidateIntegrante", "Há inconsistência nas atribuições: GESTOR/GESTOR_SUBSTITUTO ou LOTADO/COLABORADOR");
+    }
 }
 

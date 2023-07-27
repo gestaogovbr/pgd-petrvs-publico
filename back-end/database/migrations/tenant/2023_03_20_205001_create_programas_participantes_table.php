@@ -18,12 +18,12 @@ class CreateProgramasParticipantesTable extends Migration
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
-            $table->dateTime('data_inicio')->comment("Data inicio da vigência do registro");
-            $table->dateTime('data_fim')->nullable()->comment("Data fim da vigência do registro");
-            $table->tinyInteger('habilitado')->default(1)->comment("Se o perticipantes está habilitado para o programa");
+            $table->softDeletes();
+            // campos
+            $table->tinyInteger('habilitado')->default(1)->comment("Se o participante está habilitado ou não para o programa");
             // Chaves estrangeiras:
-            $table->foreignUuid('programa_id')->constrained("programas")->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('usuario_id')->nullable()->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('programa_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Programa relacionado ao participante");
+            $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Participante relacionado ao programa");
         });
     }
 

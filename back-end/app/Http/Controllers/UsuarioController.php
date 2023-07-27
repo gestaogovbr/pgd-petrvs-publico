@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Usuario;
-use App\Services\UsuarioService;
 use App\Services\CalendarioService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
@@ -19,7 +17,7 @@ class UsuarioController extends ControllerBase
             case 'STORE':
                 if (!$usuario->hasPermissionTo('MOD_USER_INCL')) throw new ServerException("CapacidadeStore", "Inserção não executada");
                 break;
-            case 'UPDATE':
+            case 'EDIT':
                 if (!$usuario->hasPermissionTo('MOD_USER_EDT')) throw new ServerException("CapacidadeStore", "Edição não executada");
                 break;
             case 'DESTROY':
@@ -61,7 +59,7 @@ class UsuarioController extends ControllerBase
         }
     }
 
-    public function planosPorPeriodo(Request $request) {
+    public function planosTrabalhoPorPeriodo(Request $request) {
         try {
             $data = $request->validate([
                 'usuario_id' => ['required'],
@@ -70,7 +68,7 @@ class UsuarioController extends ControllerBase
             ]);
             return response()->json([
                 'success' => true,
-                'data' => $this->service->planosPorPeriodo($data['usuario_id'], $data['inicioPeriodo'], $data['fimPeriodo'])
+                'data' => $this->service->planosTrabalhoPorPeriodo($data['usuario_id'], $data['inicioPeriodo'], $data['fimPeriodo'])
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);

@@ -53,13 +53,14 @@ export class AppComponent {
   public menuToolbar: any[] = [];
   public menuContexto: any[] = [];
   public contexto: any;
-  public menuPgd: any;
   public menuProjeto: any;
   public menuGestao: any;
   public menuOperacional: any;
   public menuPonto: any;
   public menuRaioX: any;
-
+  public menuExecucao: any;
+  public menuAdministrador: any;
+  public menuDev: any;
   private _menu: any;
   private _menuDetectChanges: any;
 
@@ -80,21 +81,9 @@ export class AppComponent {
     this.notificacao = injector.get<NotificacaoService>(NotificacaoService);
     /* Inicializações */
     this.notificacao.heartbeat();
-    this.auth.success = (usuario: Usuario, redirectTo?: FullRoute) => {
-      this.go.navigate(redirectTo || { route: this.globals.initialRoute });
-    };
-    this.auth.fail = (error: any) => {
-      this.go.navigate({ route: ['login'], params: { error: error?.error || error?.message || error } });
-    };
-    this.auth.leave = () => {
-      this.go.navigate({ route: ['login'] });
-    };
-    this.lex.update = (() => {
-      this.setMenuVars();
-    }).bind(this);
-    this.globals.refresh = () => {
-      this.cdRef.detectChanges();
-    };
+    this.auth.app = this;
+    this.lex.app = this;
+    this.globals.app = this;
     if (this.globals.isEmbedded && this.globals.initialRoute?.length) {
       this.go.navigate({ route: this.globals.initialRoute });
     }
@@ -115,40 +104,39 @@ export class AppComponent {
   public setMenuVars() {
     this.menuSchema = {
       /* Cadastros */
-      AFASTAMENTOS: { name: this.lex.noun("Afastamento", true), permition: 'MOD_AFT', route: ['cadastros', 'afastamento'], icon: this.entity.getIcon('Afastamento') },
-      CIDADES:  { name: this.lex.noun("Cidade", true), permition: 'MOD_CID', route: ['cadastros', 'cidade'], icon: this.entity.getIcon('Cidade') },
-      EIXOS_TEMATICOS: { name: this.lex.noun("Eixo Temático", true), permition: 'MOD_EXTM', route: ['cadastros', 'eixo-tematico'], icon: this.entity.getIcon('EixoTematico') },
-      ENTREGAS: { name: this.lex.noun("Entrega", true), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: this.entity.getIcon('Entrega') },
-      FERIADOS: { name: this.lex.noun("Feriado", true), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: this.entity.getIcon('Feriado') },
-      MATERIAIS_SERVICOS: { name: this.lex.noun("Material e Serviço", true), permition: '', route: ['cadastros', 'material-servico'], icon: this.entity.getIcon('MaterialServico') },
-      TAREFAS: { name: this.lex.noun("Tarefa", true), permition: 'MOD_DMD', route: ['cadastros', 'tarefa'], icon: this.entity.getIcon('Tarefa') },
-      TEMPLATES: { name: this.lex.noun("Template", true), permition: 'MOD_TEMP', route: ['cadastros', 'template'], icon: this.entity.getIcon('Template') },
-      TIPOS_ATIVIDADES: { name: this.lex.noun("Tipo de Atividade", true), permition: 'MOD_TIPO_ATV', route: ['cadastros', 'tipo-atividade'], icon: this.entity.getIcon('TipoAtividade') },
+      AFASTAMENTOS: { name: this.lex.translate("Afastamentos"), permition: 'MOD_AFT', route: ['cadastros', 'afastamento'], icon: this.entity.getIcon('Afastamento') },
+      CIDADES:  { name: this.lex.translate("Cidades"), permition: 'MOD_CID', route: ['cadastros', 'cidade'], icon: this.entity.getIcon('Cidade') },
+      EIXOS_TEMATICOS: { name: this.lex.translate("Eixos Temáticos"), permition: 'MOD_EXTM', route: ['cadastros', 'eixo-tematico'], icon: this.entity.getIcon('EixoTematico') },
+      ENTREGAS: { name: this.lex.translate("Entregas"), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: this.entity.getIcon('Entrega') },
+      FERIADOS: { name: this.lex.translate("Feriados"), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: this.entity.getIcon('Feriado') },
+      MATERIAIS_SERVICOS: { name: this.lex.translate("Materiis e Serviços"), permition: '', route: ['cadastros', 'material-servico'], icon: this.entity.getIcon('MaterialServico') },
+      TAREFAS: { name: this.lex.translate("Tarefas"), permition: 'MOD_DMD', route: ['cadastros', 'tarefa'], icon: this.entity.getIcon('Tarefa') },
+      TEMPLATES: { name: this.lex.translate("Templates"), permition: 'MOD_TEMP', route: ['cadastros', 'template'], icon: this.entity.getIcon('Template') },
+      TIPOS_ATIVIDADES: { name: this.lex.translate("Tipos de Atividade"), permition: 'MOD_TIPO_ATV', route: ['cadastros', 'tipo-atividade'], icon: this.entity.getIcon('TipoAtividade') },
+      TIPOS_AVALIACOES: { name: this.lex.translate("Tipos de Avaliação"), permition: 'MOD_TIPO_AVAL', route: ['cadastros', 'tipo-avaliacao'], icon: this.entity.getIcon('TipoAvaliacao') },
+      TIPOS_DOCUMENTOS: { name: this.lex.translate("Tipos de Documento"), permition: 'MOD_TIPO_DOC', route: ['cadastros', 'tipo-documento'], icon: this.entity.getIcon('TipoDocumento') },
+      TIPOS_JUSTIFICATIVAS: { name: this.lex.translate("Tipos de Justificativa"), permition: 'MOD_TIPO_JUST', route: ['cadastros', 'tipo-justificativa'], icon: this.entity.getIcon('TipoJustificativa') },
+      TIPOS_MODALIDADES: { name: this.lex.translate("Tipos de Modalidade"), permition: 'MOD_TIPO_MDL', route: ['cadastros', 'tipo-modalidade'], icon: this.entity.getIcon('TipoModalidade') },
+      TIPOS_MOTIVOS_AFASTAMENTOS: { name: this.lex.translate("Tipos de Motivo de Afastamento"), permition: 'MOD_TIPO_MTV_AFT', route: ['cadastros', 'tipo-motivo-afastamento'], icon: this.entity.getIcon('TipoMotivoAfastamento') },
+      TIPOS_PROCESSOS: { name: this.lex.translate("Tipos de Processo"), permition: 'MOD_TIPO_PROC', route: ['cadastros', 'tipo-processo'], icon: this.entity.getIcon('TipoProcesso') },
       /*Gestão*/
-      ATIVIDADES: { name: this.lex.noun("Atividade", true), permition: 'MOD_ATV', route: ['cadastros', 'atividade'], icon: this.entity.getIcon('Atividade') },
-      TIPOS_AVALIACOES: { name: this.lex.noun("Tipos de Avaliação", true), permition: 'MOD_TIPO_AVAL', route: ['cadastros', 'tipo-avaliacao'], icon: this.entity.getIcon('TipoAvaliacao') },
-      TIPOS_DOCUMENTOS: { name: this.lex.noun("Tipos de Documento", true), permition: 'MOD_TIPO_DOC', route: ['cadastros', 'tipo-documento'], icon: this.entity.getIcon('TipoDocumento') },
-      TIPOS_JUSTIFICATIVAS: { name: this.lex.noun("Tipos de Justificativa", true), permition: 'MOD_TIPO_JUST', route: ['cadastros', 'tipo-justificativa'], icon: this.entity.getIcon('TipoJustificativa') },
-      TIPOS_MODALIDADES: { name: this.lex.noun("Tipos de Modalidade", true), permition: 'MOD_TIPO_MDL', route: ['cadastros', 'tipo-modalidade'], icon: this.entity.getIcon('TipoModalidade') },
-      TIPOS_MOTIVOS_AFASTAMENTOS: { name: this.lex.noun("Tipos de Motivo de Afastamento", true), permition: 'MOD_TIPO_MTV_AFT', route: ['cadastros', 'tipo-motivo-afastamento'], icon: this.entity.getIcon('TipoMotivoAfastamento') },
-      TIPOS_PROCESSOS: { name: this.lex.noun("Tipos de Processo", true), permition: 'MOD_TIPO_PROC', route: ['cadastros', 'tipo-processo'], icon: this.entity.getIcon('TipoProcesso') },
-      /*Gestão*/
-      ADESAO: { name: this.lex.noun("Adesao", true), permition: 'MOD_ADES', route: ['gestao', 'adesao'], icon: this.entity.getIcon('Adesao') },
-      CADEIAS_VALORES: { name: this.lex.noun("Cadeia de valor", true), permition: 'MOD_CADV', route: ['gestao', 'cadeia-valor'], icon: this.entity.getIcon('CadeiaValor') },
-      DEMANDAS: { name: this.lex.noun("Demanda", true), permition: '', route: ['gestao', 'demanda'], icon: this.entity.getIcon('Demanda') },
-      PLANEJAMENTOS_INSTITUCIONAIS: { name: this.lex.noun("Planejamento Institucional", true), permition: 'MOD_PLAN_INST', route: ['gestao', 'planejamento'], icon: this.entity.getIcon('Planejamento') },
-      PLANOS_ENTREGAS: { name: this.lex.noun("Plano de Entrega", true), permition: 'MOD_PENT', route: ['gestao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega') },
-      PLANOS_TRABALHOS: { name: this.lex.noun("Plano de Trabalho", true), permition: 'MOD_PTR', route: ['gestao', 'plano-trabalho'], icon: this.entity.getIcon('Plano') },
-      PROGRAMAS_GESTAO: { name: this.lex.noun("Programa de Gestão", true), permition: 'MOD_PRGT', route: ['gestao', 'programa'], icon: this.entity.getIcon('Programa') },
-      PROJETOS: { name: this.lex.noun("Projeto", true), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: this.entity.getIcon('Projeto') },
+      //ADESAO: { name: this.lex.translate("Adesao", true), permition: 'MOD_ADES', route: ['gestao', 'adesao'], icon: this.entity.getIcon('Adesao') },
+      CADEIAS_VALORES: { name: this.lex.translate("Cadeias de valor"), permition: 'MOD_CADV', route: ['gestao', 'cadeia-valor'], icon: this.entity.getIcon('CadeiaValor') },
+      ATIVIDADES: { name: this.lex.translate("Atividades"), permition: 'MOD_ATV', route: ['gestao', 'atividade'], icon: this.entity.getIcon('Atividade') },
+      PLANEJAMENTOS_INSTITUCIONAIS: { name: this.lex.translate("Planejamentos Institucional"), permition: 'MOD_PLAN_INST', route: ['gestao', 'planejamento'], icon: this.entity.getIcon('Planejamento') },
+      PLANOS_ENTREGAS: { name: this.lex.translate("Planos de Entrega"), permition: 'MOD_PENT', route: ['gestao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega') },
+      PLANOS_TRABALHOS: { name: this.lex.translate("Planos de Trabalho"), permition: 'MOD_PTR', route: ['gestao', 'plano-trabalho'], icon: this.entity.getIcon('Plano') },
+      PROGRAMAS_GESTAO: { name: this.lex.translate("Programas de Gestão"), permition: 'MOD_PRGT', route: ['gestao', 'programa'], icon: this.entity.getIcon('Programa') },
+      PORTIFOLIOS: { name: this.lex.translate("Portifólios"), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: this.entity.getIcon('Projeto') },
+      PROJETOS: { name: this.lex.translate("Projetos"), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: this.entity.getIcon('Projeto') },
       /* Relatórios */
       FORCAS_TRABALHOS_SERVIDORES: { name: "Força de Trabalho - Servidor", permition: 'MOD_PTR_CONS', route: ['relatorios', 'forca-de-trabalho', 'servidor'], icon: this.entity.getIcon('RelatorioServidor') },
       FORCAS_TRABALHOS_AREAS: { name: "Força de Trabalho - Área", permition: 'MOD_PTR_CONS', route: ['relatorios', 'forca-de-trabalho', 'area'], icon: this.entity.getIcon('RelatorioArea') },
       /* CONFIGURAÇÕES */
       PREFERENCIAS: { name: "Preferências", permition: '', route: ['configuracoes', 'preferencia'], metadata: { root: true, modal: true }, icon: this.entity.getIcon('Preferencia') },
-      ENTIDADES: { name: this.lex.noun("Entidade", true), permition: 'MOD_CFG_ENTD', route: ['configuracoes', 'entidade'], icon: this.entity.getIcon('Entidade') },
-      UNIDADES: { name: this.lex.noun("Unidade", true), permition: 'MOD_CFG_UND', route: ['configuracoes', 'unidade'], icon: this.entity.getIcon('Unidade') },
-      USUARIOS: { name: this.lex.noun("Usuário", true), permition: 'MOD_CFG_USER', route: ['configuracoes', 'usuario'], icon: this.entity.getIcon('Usuario') },
+      ENTIDADES: { name: this.lex.translate("Entidades"), permition: 'MOD_CFG_ENTD', route: ['configuracoes', 'entidade'], icon: this.entity.getIcon('Entidade') },
+      UNIDADES: { name: this.lex.translate("Unidades"), permition: 'MOD_CFG_UND', route: ['configuracoes', 'unidade'], icon: this.entity.getIcon('Unidade') },
+      USUARIOS: { name: this.lex.translate("Usuários"), permition: 'MOD_CFG_USER', route: ['configuracoes', 'usuario'], icon: this.entity.getIcon('Usuario') },
       PERFIS: { name: "Perfis", permition: 'MOD_CFG_PERFS', route: ['configuracoes', 'perfil'], icon: this.entity.getIcon('Perfil') },
       SOBRE: { name: "Sobre", permition: '', route: ['configuracoes', 'sobre'], icon: "" },
       /* LOGS */
@@ -156,199 +144,243 @@ export class AppComponent {
       LOGS_ALTERACOES: { name: "Log das Alterações", permition: '', route: ['logs', 'change'], icon: this.entity.getIcon('Change') },
       LOGS_ERROS: { name: "Log dos Erros", permition: '', route: ['logs', 'error'], icon: this.entity.getIcon('Error') },
       LOGS_TRAFEGOS: { name: "Log do Tráfego", permition: '', route: ['logs', 'traffic'], icon: this.entity.getIcon('Traffic') },
-      //"-",
       LOGS_TESTES_EXPEDIENTES: { name: "Teste Expediente", permition: '', route: ['teste'], icon: this.entity.getIcon('Teste') },
       TESTE_CALCULA_DATATEMPO: { name: "Teste calculaDataTempo", permition: '', route: ['teste', 'calcula-tempo'], icon: this.entity.getIcon('Teste') },
       /* RAIO X */
-      RXHOME: { name: this.lex.noun("Home RX", true), permition: 'RX', route: ['raiox', 'home'], icon: "bi bi-toggle-off" },
-      RXCADASTRO_PESSOAL: { name: this.lex.noun("Dados Pessoais", true), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'pessoal'], icon: "bi bi-file-person" },
-      RXCADASTRO_PROFISSIONAL: { name: this.lex.noun("Dados Profissionais", true), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'profissional'], icon: "fa fa-briefcase"},
-      RXCADASTRO_ATRIBUTOS: { name: this.lex.noun("Atributos Comportamentais", true), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
-      RXVISUALIZA_OPORTUNIDADES: { name: this.lex.noun("Pesquisa Oportunidades", true), permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pessoal'], icon: "bi bi-lightbulb-fill" },
-      RXCADASTRO_OPORTUNIDADES: { name: this.lex.noun("Oportunidades", true), permition: 'MOD_RX_EDT_OPO', route: ['raiox', 'pessoal'], icon: "bi bi-lightbulb-fill" },
-      RXCADASTRO_ADM_AREA_CONHECIMENTO: { name: this.lex.noun("Áreas de Conhecimento", true), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','areaconhecimento'], icon: "bi bi-mortarboard" },
-      RXCADASTRO_ADM_CURSOS: { name: this.lex.noun("Cursos", true), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'cadastros','gerais','curso'], icon: "bi bi-mortarboard-fill" },
-      RXCADASTRO_ADM_TIPOS_CURSOS: { name: this.lex.noun("Tipos de Cursos", true), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'cadastros','gerais','tipocurso'], icon: "bi bi-box-seam" },
-      RXCADASTRO_ADM_ATRIBUTOS: { name: this.lex.noun("Atributos Comportamentais", true), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'atribadm'], icon: "fa fa-brain" },
-      RXCADASTRO_ADM_CT: { name: this.lex.noun("Centros de Treinamentos", true), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros','gerais','centrotreinamento'], icon: "bi bi-building-fill" },
-      RXCADASTRO_ADM_FUNCAO: { name: this.lex.noun("Funções", true), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros','gerais','funcao'], icon: "bi bi-check-circle-fill" },
-      RXCADASTRO_ADM_CARGO: { name: this.lex.noun("Cargos", true), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros','gerais','cargo'], icon: "bi bi-person-badge" },
-      RXCADASTRO_ADM_GRUPOS_ESPECIALIZADOS: { name: this.lex.noun("de Grupos Especializados", true), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros','gerais','ge'], icon: "bi bi-check-circle" },
-      RXCADASTRO_ADM_OPORTUNIDADES: { name: this.lex.noun("Oportunidades", true), permition: 'MOD_RX_EDT_OPO', route: ['raiox', 'apoadm'], icon: "bi bi-lightbulb" },
-      RXCADASTRO_ADM_MATERIAS: { name: this.lex.noun("Matérias", true), permition: 'MOD_RX_EDT_OPO', route: ['raiox', 'cadastros','gerais','materia'], icon: "bi bi-list-check" },
-      RXVISUALIZA_ADM_OPORTUNIDADES: { name: this.lex.noun("Pesquisa Oportunidades", true), permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-emoji-smile-fill" },
+      RXHOME: { name: "Home RX", permition: 'RX', route: ['raiox', 'home'], icon: "bi bi-toggle-off" },
+      RXCADASTRO_PESSOAL: { name: this.lex.translate("Dados Pessoais"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'pessoal'], icon: "bi bi-file-person" },
+      RXCADASTRO_PROFISSIONAL: { name: this.lex.translate("Dados Profissionais"), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'profissional'], icon: "fa fa-briefcase"},
+      RXCADASTRO_ATRIBUTOS: { name: this.lex.translate("Atributos Comportamentais"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
+      RXVISUALIZA_OPORTUNIDADES: { name: this.lex.translate("Pesquisa Oportunidades"), permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pessoal'], icon: "bi bi-lightbulb-fill" },
+      RXCADASTRO_OPORTUNIDADES: { name: this.lex.translate("Oportunidades"), permition: 'MOD_RX_EDT_OPO', route: ['raiox', 'pessoal'], icon: "bi bi-lightbulb-fill" },
+      RXCADASTRO_ADM_AREA_CONHECIMENTO: { name: this.lex.translate("Áreas de Conhecimento"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','areaconhecimento'], icon: "bi bi-mortarboard" },
+      RXCADASTRO_ADM_CURSOS: { name: this.lex.translate("Cursos"), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'cadastros','gerais','curso'], icon: "bi bi-mortarboard-fill" },
+      RXCADASTRO_ADM_TIPOS_CURSOS: { name: this.lex.translate("Tipos de Cursos"), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'cadastros','gerais','tipocurso'], icon: "bi bi-box-seam" },
+      RXCADASTRO_ADM_ATRIBUTOS: { name: this.lex.translate("Atributos Comportamentais"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'atribadm'], icon: "fa fa-brain" },
+      RXCADASTRO_ADM_CT: { name: this.lex.translate("Centros de Treinamentos"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros','gerais','centrotreinamento'], icon: "bi bi-building-fill" },
+      RXCADASTRO_ADM_FUNCAO: { name: this.lex.translate("Funções"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros','gerais','funcao'], icon: "bi bi-check-circle-fill" },
+      RXCADASTRO_ADM_CARGO: { name: this.lex.translate("Cargos"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros','gerais','cargo'], icon: "bi bi-person-badge" },
+      RXCADASTRO_ADM_GRUPOS_ESPECIALIZADOS: { name: this.lex.translate("de Grupos Especializados"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros','gerais','ge'], icon: "bi bi-check-circle" },
+      RXCADASTRO_ADM_OPORTUNIDADES: { name: this.lex.translate("Oportunidades"), permition: 'MOD_RX_EDT_OPO', route: ['raiox', 'apoadm'], icon: "bi bi-lightbulb" },
+      RXCADASTRO_ADM_MATERIAS: { name: this.lex.translate("Matérias"), permition: 'MOD_RX_EDT_OPO', route: ['raiox', 'cadastros','gerais','materia'], icon: "bi bi-list-check" },
+      RXVISUALIZA_ADM_OPORTUNIDADES: { name: this.lex.translate("Pesquisa Oportunidades"), permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-emoji-smile-fill" },
 
-      RXCADASTRO_ADM_ATIVIDADESEXT: { name: this.lex.noun("Atividades Externas", true), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','areaatividadeexterna'], icon: "bi bi-arrows-fullscreen" },
-      RXCADASTRO_ADM_AREASTEMATICAS: { name: this.lex.noun("Áreas Temáticas", true), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','areatematica'], icon: "bi bi-box-arrow-in-down" },
-      RXCADASTRO_ADM_CAPACIDADES_TECNICAS: { name: this.lex.noun("Capacidades Técnicas", true), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','capacidadetecnica'], icon: "bi bi-arrows-angle-contract" },
-      RXCADASTRO_ADM_QUESTIONARIOS_PERGUNTAS: { name: this.lex.noun("Perguntas", true), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','cargo'], icon: "bi bi-patch-question" },
-      RXCADASTRO_ADM_QUESTIONARIOS_RESPOSTAS: { name: this.lex.noun("Respostas", true), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','cargo'], icon: "bi bi-list-task" },
-      RXVISUALIZA_ADM_PESQUISA1: { name: this.lex.noun("Usuario", true), permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-search" },
-      RXVISUALIZA_ADM_PESQUISA2: { name: this.lex.noun("Administrador", true), permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-binoculars" },
+      RXCADASTRO_ADM_ATIVIDADESEXT: { name: this.lex.translate("Atividades Externas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','areaatividadeexterna'], icon: "bi bi-arrows-fullscreen" },
+      RXCADASTRO_ADM_AREASTEMATICAS: { name: this.lex.translate("Áreas Temáticas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','areatematica'], icon: "bi bi-box-arrow-in-down" },
+      RXCADASTRO_ADM_CAPACIDADES_TECNICAS: { name: this.lex.translate("Capacidades Técnicas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','capacidadetecnica'], icon: "bi bi-arrows-angle-contract" },
+      RXCADASTRO_ADM_QUESTIONARIOS_PERGUNTAS: { name: this.lex.translate("Perguntas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','cargo'], icon: "bi bi-patch-question" },
+      RXCADASTRO_ADM_QUESTIONARIOS_RESPOSTAS: { name: this.lex.translate("Respostas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','cargo'], icon: "bi bi-list-task" },
+      RXVISUALIZA_ADM_PESQUISA1: { name:"Usuario", permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-search" },
+      RXVISUALIZA_ADM_PESQUISA2: { name:"Administrador", permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-binoculars" },
       /*PROJETOS*/
+
+      PAINEL: { name: "Painel", permition: '', route: ['configuracoes', 'sobre'], icon: "" },
+      AUDITORIA: { name: "Auditoria", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
     };
 
-    this.menuPgd = [{
-        name: "Cadastros", 
-        permition: "MENU_CAD_ACESSO", 
-        route: ['cadastros'], 
-        id: "navbarDropdownCadastros", 
-        menu: [
-          this.menuSchema.AFASTAMENTOS,
-          this.menuSchema.CIDADES,
-          this.menuSchema.EIXOS_TEMATICOS,
-          this.menuSchema.ENTREGAS,
-          this.menuSchema.FERIADOS,
-          this.menuSchema.MATERIAIS_SERVICOS,
-          this.menuSchema.TAREFAS,
-          this.menuSchema.TEMPLATES,
-          this.menuSchema.TIPOS_ATIVIDADES,
-          "-",
-          this.menuSchema.ATIVIDADES,
-          this.menuSchema.TIPOS_AVALIACOES,
-          this.menuSchema.TIPOS_DOCUMENTOS,
-          this.menuSchema.TIPOS_JUSTIFICATIVAS,
-          this.menuSchema.TIPOS_MODALIDADES,
-          this.menuSchema.TIPOS_MOTIVOS_AFASTAMENTOS,
-          this.menuSchema.TIPOS_PROCESSOS
-        ]
-      }, {
-        name: "Gestão", 
-        permition: "MENU_GESTAO_ACESSO", 
-        route: ['gestao'], 
-        id: "navbarDropdownGestao", 
-        menu: [
-          this.menuSchema.ADESAO,
-          this.menuSchema.CADEIAS_VALORES,
-          this.menuSchema.DEMANDAS,
-          this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
-          this.menuSchema.PLANOS_ENTREGAS,
-          this.menuSchema.PLANOS_TRABALHOS,
-          this.menuSchema.PROGRAMAS_GESTAO,
-          this.menuSchema.PROJETOS,
-        ]
-      }, {
-        name: "Relatórios", 
-        permition: "MENU_REL_ACESSO", 
-        route: ['relatorios'], 
-        id: "navbarDropdownRelatorios", 
-        menu: [
-          this.menuSchema.FORCAS_TRABALHOS_SERVIDORES,
-          this.menuSchema.FORCAS_TRABALHOS_AREAS,
-        ]
-      }, {
-        name: "Configurações", 
-        permition: "MENU_CONFIG_ACESSO", 
-        route: ['configuracoes'], 
-        id: "navbarDropdownConfiguracoes", 
-        menu: [
-          this.menuSchema.PREFERENCIAS,
-          '-',
-          this.menuSchema.ENTIDADES,
-          this.menuSchema.UNIDADES,
-          this.menuSchema.USUARIOS,
-          this.menuSchema.PERFIS,
-          '-',
-          this.menuSchema.SOBRE,
-        ]
-      }, {
-        name: "Desenvolvedor", 
-        permition: "DEV_MENU_LOGS_ACESSO", 
-        route: ['logs'], 
-        id: "navbarDropdownLogs", 
-        menu: [
-          this.menuSchema.ROTINAS_INTEGRACAO,
-          '-',
-          this.menuSchema.LOGS_ALTERACOES,
-          this.menuSchema.LOGS_ERROS,
-          this.menuSchema.LOGS_TRAFEGOS,
-          '-',
-          this.menuSchema.LOGS_TESTES_EXPEDIENTES,
-          this.menuSchema.TESTE_CALCULA_DATATEMPO,
-        ]
-      }
+    this.menuGestao = [{
+      name: "Planejamento",
+      permition: "MENU_GESTAO_ACESSO",
+      id: "navbarDropdownGestaoPlanejamento",
+      menu: [
+        this.menuSchema.CADEIAS_VALORES,
+        this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
+        this.menuSchema.PLANOS_ENTREGAS,
+        this.menuSchema.PLANOS_TRABALHOS,
+        this.menuSchema.PROGRAMAS_GESTAO
+      ].sort(this.orderMenu)
+    }, {
+      name: "Execução",
+      permition: "MENU_GESTAO_ACESSO",
+      id: "navbarDropdownGestaoExecucao",
+      menu: [
+        this.menuSchema.ATIVIDADES,
+        this.menuSchema.AFASTAMENTOS
+      ].sort(this.orderMenu)
+    }, {
+      name: "Gerenciamento",
+      permition: "MENU_CONFIG_ACESSO",
+      id: "navbarDropdownGestaoGerencial",
+      menu: [
+        this.menuSchema.ENTIDADES,
+        this.menuSchema.UNIDADES,
+        this.menuSchema.USUARIOS,
+        this.menuSchema.PERFIS
+      ].sort(this.orderMenu)
+    }, {
+      name: "Cadastros",
+      permition: "MENU_CAD_ACESSO",
+      id: "navbarDropdownGestaoCadastros",
+      menu: [
+        this.menuSchema.EIXOS_TEMATICOS,
+        this.menuSchema.ENTREGAS,
+        this.menuSchema.TIPOS_AVALIACOES,
+        this.menuSchema.TIPOS_ATIVIDADES,
+        this.menuSchema.TIPOS_JUSTIFICATIVAS,
+        this.menuSchema.TIPOS_MOTIVOS_AFASTAMENTOS,
+        this.menuSchema.TIPOS_TAREFAS
+      ].sort(this.orderMenu)
+    }];
+
+    this.menuExecucao = [
+      this.menuSchema.PLANOS_TRABALHOS,
+      this.menuSchema.ATIVIDADES,
+      this.menuSchema.CONSOLIDA,
+      this.menuSchema.AFASTAMENTOS
     ];
+
+    this.menuAdministrador = [{
+      name: "Cadastros",
+      permition: "MENU_CAD_ACESSO",
+      id: "navbarDropdownCadastrosAdm",
+      menu: [
+        this.menuSchema.AFASTAMENTOS,
+        this.menuSchema.CIDADES,
+        this.menuSchema.EIXOS_TEMATICOS,
+        this.menuSchema.ENTREGAS,
+        this.menuSchema.FERIADOS,
+        this.menuSchema.MATERIAIS_SERVICOS,
+        this.menuSchema.TAREFAS,
+        this.menuSchema.TEMPLATES,
+        this.menuSchema.TIPOS_ATIVIDADES,
+        this.menuSchema.TIPOS_AVALIACOES,
+        this.menuSchema.TIPOS_DOCUMENTOS,
+        this.menuSchema.TIPOS_JUSTIFICATIVAS,
+        this.menuSchema.TIPOS_MODALIDADES,
+        this.menuSchema.TIPOS_MOTIVOS_AFASTAMENTOS,
+        this.menuSchema.TIPOS_PROCESSOS
+      ].sort(this.orderMenu)
+    },{
+      name: "Gerenciamento",
+      permition: "MENU_CONFIG_ACESSO",
+      id: "navbarDropdownGerencialAdm",
+      menu: [
+        this.menuSchema.ENTIDADES,
+        this.menuSchema.UNIDADES,
+        this.menuSchema.USUARIOS,
+        this.menuSchema.PERFIS
+      ].sort(this.orderMenu)
+    }];
+
+    this.menuDev = [{
+      name: "Manutenção",
+      permition: "DEV_MENU_LOGS_ACESSO",
+      id: "navbarDropdownDevManutencao",
+      menu: [
+        this.menuSchema.ROTINAS_INTEGRACAO,
+        this.menuSchema.PAINEL
+      ]
+    }, {
+      name: "Logs e Auditoria",
+      permition: "DEV_MENU_LOGS_ACESSO",
+      id: "navbarDropdownDevLogs",
+      menu: [
+        this.menuSchema.LOGS_ALTERACOES,
+        this.menuSchema.LOGS_ERROS,
+        this.menuSchema.LOGS_TRAFEGOS
+      ]
+    }, {
+      name: "Testes",
+      permition: "DEV_MENU_LOGS_ACESSO",
+      id: "navbarDropdownDevTestes",
+      menu: [
+        this.menuSchema.LOGS_TESTES_EXPEDIENTES,
+        this.menuSchema.TESTE_CALCULA_DATATEMPO
+      ]
+    }];
+
+    this.menuPonto = [];
+
+    this.menuProjeto = [{
+      name: "Cadastros",
+      permition: "MENU_CAD_ACESSO",
+      id: "navbarDropdownProjetoCadastros",
+      menu: [
+        this.menuSchema.MATERIAIS_SERVICOS
+      ]
+    }, {
+      name: "Gerencial",
+      permition: "MENU_CAD_ACESSO",
+      id: "navbarDropdownProjetoGerencial",
+      menu: [
+        this.menuSchema.UNIDADES,
+        this.menuSchema.USUARIOS
+      ]
+    }, 
+    this.menuSchema.PORTIFOLIO,
+    this.menuSchema.PROJETOS];
 
     this.menuRaioX = [{
-        name: "Cadastros", 
-        permition: "MOD_RX_VIS_DPE", 
-        route: ['raiox'], 
-        id: "navbarDropdownCadastros", 
-        menu: [
-          this.menuSchema.RXCADASTRO_PESSOAL,
-          this.menuSchema.RXCADASTRO_PROFISSIONAL,
-          this.menuSchema.RXCADASTRO_ATRIBUTOS,
-          //this.menuSchema.RXCADASTRO_OPORTUNIDADES
-        ]
-      }, {
-        name: "Oportunidades", 
-        permition: "MOD_RX_VIS_DPE", 
-        route: ['raiox'], 
-        id: "navbarDropdownCadastros", 
-        menu: [
-          this.menuSchema.RXCADASTRO_ADM_OPORTUNIDADES,
-        ]
-      }, {
-        name: "Pesquisas", 
-        permition: "MOD_RX_VIS_DPE", 
-        route: ['raiox'], 
-        id: "navbarDropdownCadastros", 
-        menu: [
-          this.menuSchema.RXVISUALIZA_ADM_PESQUISA1,
-          this.menuSchema.RXVISUALIZA_ADM_PESQUISA2,
-        ]
-      }, {
-        name: "Questionários Dinâmicos", 
-        permition: "MOD_RX_VIS_DPE", 
-        route: ['raiox'], 
-        id: "navbarDropdownCadastros", 
-        menu: [
-          this.menuSchema.RXCADASTRO_ADM_QUESTIONARIOS_PERGUNTAS,
-          this.menuSchema.RXCADASTRO_ADM_QUESTIONARIOS_RESPOSTAS,
-        ]
-      }, {
-        name: "Cadastros Gerais", 
-        permition: "MOD_RX_VIS_DPE", 
-        route: ['raiox/cadastros/gerais'], 
-        id: "navbarDropdownCadastros", 
-        menu: [
-          this.menuSchema.RXCADASTRO_ADM_AREA_CONHECIMENTO,
-          this.menuSchema.RXCADASTRO_ADM_TIPOS_CURSOS,
-          this.menuSchema.RXCADASTRO_ADM_CURSOS,
-          this.menuSchema.RXCADASTRO_ADM_MATERIAS,
-          "-",
-          //this.menuSchema.RXCADASTRO_ADM_ATRIBUTOS,
-          this.menuSchema.RXCADASTRO_ADM_CT,
-          this.menuSchema.RXCADASTRO_ADM_CARGO,
-          this.menuSchema.RXCADASTRO_ADM_FUNCAO,
-          "-",
-          this.menuSchema.RXCADASTRO_ADM_ATIVIDADESEXT,
-          this.menuSchema.RXCADASTRO_ADM_AREASTEMATICAS,
-          this.menuSchema.RXCADASTRO_ADM_CAPACIDADES_TECNICAS,
-          "-",
-          this.menuSchema.RXCADASTRO_ADM_OPORTUNIDADES,
-        ],
-      }
-    ];
+      name: "Cadastros",
+      permition: "MOD_RX_VIS_DPE",
+      id: "navbarDropdownRXCadastros",
+      menu: [
+        this.menuSchema.RXCADASTRO_PESSOAL,
+        this.menuSchema.RXCADASTRO_PROFISSIONAL,
+        this.menuSchema.RXCADASTRO_ATRIBUTOS
+        //this.menuSchema.RXCADASTRO_OPORTUNIDADES
+      ]
+    }, {
+      name: "Oportunidades",
+      permition: "MOD_RX_VIS_DPE",
+      id: "navbarDropdownRXOportunidades",
+      menu: [
+        this.menuSchema.RXCADASTRO_ADM_OPORTUNIDADES
+      ]
+    }, {
+      name: "Pesquisas",
+      permition: "MOD_RX_VIS_DPE",
+      id: "navbarDropdownRXPesquisas",
+      menu: [
+        this.menuSchema.RXVISUALIZA_ADM_PESQUISA1,
+        this.menuSchema.RXVISUALIZA_ADM_PESQUISA2
+      ]
+    }, {
+      name: "Questionários Dinâmicos",
+      permition: "MOD_RX_VIS_DPE",
+      id: "navbarDropdownRXQD",
+      menu: [
+        this.menuSchema.RXCADASTRO_ADM_QUESTIONARIOS_PERGUNTAS,
+        this.menuSchema.RXCADASTRO_ADM_QUESTIONARIOS_RESPOSTAS
+      ]
+    }, {
+      name: "Cadastros Gerais",
+      permition: "MOD_RX_VIS_DPE",
+      id: "navbarDropdownRXCadastrosGerais",
+      menu: [
+        this.menuSchema.RXCADASTRO_ADM_AREA_CONHECIMENTO,
+        this.menuSchema.RXCADASTRO_ADM_TIPOS_CURSOS,
+        this.menuSchema.RXCADASTRO_ADM_CURSOS,
+        this.menuSchema.RXCADASTRO_ADM_MATERIAS,
+        "-",
+        this.menuSchema.RXCADASTRO_ADM_CT,
+        this.menuSchema.RXCADASTRO_ADM_CARGO,
+        this.menuSchema.RXCADASTRO_ADM_FUNCAO,
+        "-",
+        this.menuSchema.RXCADASTRO_ADM_ATIVIDADESEXT,
+        this.menuSchema.RXCADASTRO_ADM_AREASTEMATICAS,
+        this.menuSchema.RXCADASTRO_ADM_CAPACIDADES_TECNICAS,
+        "-",
+        this.menuSchema.RXCADASTRO_ADM_OPORTUNIDADES
+      ]
+    }];
 
-    this.menuPonto= [
-      {
-      }
-    ];
 
-    this.menuContexto = [
-      { key: "PGD", name: "PGD", menu: this.menuPgd },
-      { key: "PROJETO", name: "Projetos", menu: this.menuProjeto },
-      { key: "GESTAO", name: "Gestão", menu: this.menuGestao },
-      { key: "OPERACIONAL", name: "Operacional", menu: this.menuOperacional },
-      { key: "PONTO", name: "Ponto eletrônico", menu: this.menuPonto },
-      { key: "RAIOX", name: "Raio X", menu: this.menuRaioX }
+  this.menuContexto = [
+      { key: "EXECUCAO", icon: "bi bi-person-check", name: "Execução (PGD)", menu: this.menuExecucao },
+      { key: "GESTAO", icon: "bi bi-people-fill", name: "Gestão (PGD)", menu: this.menuGestao },
+      { key: "ADMINISTRADOR", icon: "bi bi-emoji-sunglasses", name: "Administrador", menu: this.menuAdministrador },
+      { key: "DEV", icon: "bi bi-braces", name: "Desenvolvedor", menu: this.menuDev },
+      { key: "PONTO", icon: "bi bi-stopwatch", name: "Ponto eletrônico", menu: this.menuPonto },
+      { key: "PROJETO", icon: "bi bi-graph-up-arrow", name: "Projetos", menu: this.menuProjeto },
+      { key: "RAIOX", icon: "bi bi-camera", name: "Raio X", menu: this.menuRaioX }
     ];
    // this.contexto.key = "PGD"
   }
 
   public onContextoSelect(item: any) {
     this.contexto = item;
+    this.auth.usuarioConfig = {menu_contexto: item.key};
     this.goHome();
   }
 
@@ -356,23 +388,25 @@ export class AppComponent {
     this.go.navigate({ route: this.contexto?.key == 'RAIOX' ? ['raiox/home'] : ['home'] });
   }
 
+  public orderMenu(a: any, b: any) {
+    return a.nome < b.nome ? -1 : 1;
+  }
+
+  public rootMenuClick(item: any) {
+    if(!item.menu?.length) this.go.navigate({route: item.route}, item.metadata || {root: true});
+  }
+
   public get menu(): any {
     switch (this.contexto.key) {
-
-      case "PGD":
-        return this.menuPgd;
-
-      case "RAIOX":
-        return this.menuRaioX;
-
-      case "PONTO":
-        return this.menuPonto;
-
-      default:
-        return [];
+      case "GESTAO": return this.menuGestao;
+      case "EXECUCAO": return this.menuExecucao;
+      case "ADMINISTRADOR": return this.menuAdministrador;
+      case "DEV": return this.menuDev;
+      case "PONTO": return this.menuPonto;
+      case "PROJETO": return this.menuProjeto;
+      case "RAIOX": return this.menuRaioX;
+      default: return [];
     }
-
-
   }
 
   public ngAfterViewInit() {
@@ -385,8 +419,13 @@ export class AppComponent {
     this.go.navigate({ route: ["login"] }, { modal: true });
   }
 
-  public menuItemClass(baseClass: string, activeRoute: string[]) {
-    return baseClass + (this.go.isActivePath(activeRoute) ? " fw-bold" : "");
+  public menuItemClass(baseClass: string, item: any) {
+    let routeUrl = this.go.getRouteUrl().replace(/^\//, "");
+
+    if(item.menu?.find((x: any) => !x)) console.log(item);
+
+
+    return baseClass + (item.route?.join("/") == routeUrl || item.menu?.find((x: any) => x?.route?.join("/") == routeUrl) ? " fw-bold" : "");
   }
 
   public isButtonRunning(btn: ToolbarButton): boolean {
@@ -395,6 +434,10 @@ export class AppComponent {
 
   public buttonId(button: ToolbarButton) {
     return "button_" + this.utils.md5((button.icon || "") + (button.hint || "") + (button.label || ""));
+  }
+
+  public openModule(item: any) {
+    if(item.route) this.go.navigate({route: item.route}, item.metadata || {root: true});
   }
 
   public get unidades(): any[] {
@@ -451,3 +494,4 @@ export class AppComponent {
     return this.router.url.indexOf("/extension/options") >= 0;
   }
 }
+

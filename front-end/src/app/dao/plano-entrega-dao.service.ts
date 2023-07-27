@@ -160,7 +160,7 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
    * @returns 
    */
   public isValido(planoEntrega: PlanoEntrega): boolean {
-    return !planoEntrega.data_fim && !planoEntrega.data_cancelamento && !planoEntrega.data_arquivamento;
+    return !planoEntrega.deleted_at && !planoEntrega.data_cancelamento && !planoEntrega.data_arquivamento;
   }
 }
 

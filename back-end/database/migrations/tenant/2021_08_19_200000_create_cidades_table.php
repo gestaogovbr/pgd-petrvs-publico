@@ -18,10 +18,11 @@ class CreateCidadesTable extends Migration
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
+            $table->softDeletes();
             // Campos:
             $table->string('codigo_ibge', 20)->comment("Código IBGE");
             $table->string('nome', 256)->comment("Nome");
-            $table->set('tipo', ["MUNICIPIO", "DISTRITO", "CAPITAL"])->comment("Data e horário que foi feito o comentário");
+            $table->set('tipo', ["MUNICIPIO", "DISTRITO", "CAPITAL"])->comment("Tipo da cidade");
             $table->string('uf', 2)->comment("Unidade Federativa");
             $table->integer('timezone')->comment("Timezone UTC da cidade");
             // Chaves estrangeiras:

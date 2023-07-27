@@ -7,14 +7,9 @@ use App\Models\Projeto;
 use App\Models\ProjetoTarefa;
 use App\Models\ProjetoRecurso;
 use App\Models\ProjetoAlocacaoRegra;
-use App\Models\ProjetoRegra;
-use App\Models\MaterialServico;
-use App\Traits\AutoDataInicio;
-use App\Traits\HasDataFim;
 
 class ProjetoAlocacao extends ModelBase
 {
-    use AutoDataInicio, HasDataFim;
 
     protected $table = 'projetos_alocacoes';
 
@@ -26,8 +21,7 @@ class ProjetoAlocacao extends ModelBase
         'projeto_id', /* char(36); NOT NULL; */
         'tarefa_id', /* char(36); */
         'recurso_id', /* char(36); NOT NULL; */
-        //'data_inicio', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data inicio da vigência
-        //'data_fim', /* datetime; */// Data fim da vigência
+        //'deleted_at', /* timestamp; */
     ];
 
     public $fillable_changes = ["regras"];
@@ -40,6 +34,6 @@ class ProjetoAlocacao extends ModelBase
     public function regras() { return $this->hasMany(ProjetoAlocacaoRegra::class); }    
     // Belongs
     public function projeto() { return $this->belongsTo(Projeto::class); }    
-    public function tarefa() { return $this->belongsTo(ProjetoTarefa::class); }    
+    public function tarefa() { return $this->belongsTo(ProjetoTarefa::class); }       //nullable
     public function recurso() { return $this->belongsTo(ProjetoRecurso::class); }    
 }

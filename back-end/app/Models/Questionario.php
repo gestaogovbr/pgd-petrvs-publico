@@ -3,19 +3,18 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
-use App\Traits\AutoDataInicio;
 use App\Casts\AsJson;
-
 
 class Questionario extends ModelBase
 {
     protected $table = 'questionarios';
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'tipo',
-        'nome',
-        'codigo',
-        'perguntas'       
+        'tipo', /* varchar(256); NOT NULL; */// Tipo interno | personalizado
+        'nome', /* varchar(256); NOT NULL; */// Nome do questionário
+        'codigo', /* varchar(256); NOT NULL; */// Código do questionario
+        'perguntas', /* json; */// Perguntas do questionário
+        //'deleted_at', /* timestamp; */
     ];
 
     protected $casts = [

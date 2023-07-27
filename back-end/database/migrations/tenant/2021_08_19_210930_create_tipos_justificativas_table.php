@@ -18,10 +18,9 @@ class CreateTiposJustificativasTable extends Migration
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
+            $table->softDeletes();
             // Campos:
             $table->string('nome', 256)->comment("Tipo da justificativa da avaliação");
-            $table->dateTime('data_inicio')->comment("Data inicio da vigência");
-            $table->dateTime('data_fim')->nullable()->comment("Data final da vigência");
         });
     }
 

@@ -16,8 +16,6 @@ class TipoJustificativa extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"]
     constructor(data) {
         super();
         this.nome = ""; /* Descrição do tipo da justificativa */
-        this.data_inicio = new Date(); /* Data de início */
-        this.data_fim = null; /* Data do fim */
         this.initialization(data);
     }
 }

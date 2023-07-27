@@ -1,7 +1,7 @@
 import { Injectable, Injector } from '@angular/core';
 import * as moment from 'moment';
 import { Afastamento } from '../models/afastamento.model';
-import { DemandaPausa } from '../models/demanda-pausa.model';
+import { AtividadePausa } from '../models/atividade-pausa.model';
 import { Expediente, Turno } from '../models/expediente.model';
 import { Unidade } from '../models/unidade.model';
 import { AuthService } from './auth.service';
@@ -27,7 +27,7 @@ export type Efemerides = {
   cargaHoraria: number, /* Carga horária para os cálculos (Será utilizado inclusive para o cálculo em dias) */
   expediente: Expediente, /* Expediente da unidade/entidade */
   afastamentos: Afastamento[], /* Afastamentos válidos no período */
-  pausas: DemandaPausa[], /* Pausas */
+  pausas: AtividadePausa[], /* Pausas */
   diasNaoUteis: FeriadoList, /* Dias sem expediente (ex.: Fins de semana) */
   feriados: FeriadoList, /* Feriados cadastrados e religiosos no período */
   diasDetalhes: ExpedienteDia[]
@@ -169,7 +169,7 @@ export class CalendarService {
     return this.calculaDataTempo(inicio, horas, forma, cargaHoraria, expediente, feriados).fim;
   }
 
-  public horasUteis(inicio: Date, fim: Date, cargaHoraria: number, unidade: Unidade, tipo: TipoContagem, pausas?: DemandaPausa[], afastamentos?: Afastamento[]): number {
+  public horasUteis(inicio: Date, fim: Date, cargaHoraria: number, unidade: Unidade, tipo: TipoContagem, pausas?: AtividadePausa[], afastamentos?: Afastamento[]): number {
     const feriados = this.feriadosCadastrados[unidade.id] || [];
     const forma = tipo == 'DISTRIBUICAO' ? unidade.distribuicao_forma_contagem_prazos : unidade.entrega_forma_contagem_prazos;
     const expediente = this.nestedExpediente(unidade);
@@ -185,7 +185,7 @@ export class CalendarService {
     return this.util.round(this.calculaDataTempo(data_entrega, prazo_entrega, unidade.entrega_forma_contagem_prazos, cargaHoraria, expediente).tempoUtil, 2);
   }
 
-  public calculaDataTempoUnidade(inicio: Date, fimOuTempo: Date | number, cargaHoraria: number, unidade: Unidade, tipo: TipoContagem, pausas?: DemandaPausa[], afastamentos?: Afastamento[]) {
+  public calculaDataTempoUnidade(inicio: Date, fimOuTempo: Date | number, cargaHoraria: number, unidade: Unidade, tipo: TipoContagem, pausas?: AtividadePausa[], afastamentos?: Afastamento[]) {
     let feriados = this.feriadosCadastrados[unidade.id] || [];
     if(!feriados.length) {
       this.loadFeriadosCadastrados(unidade.id);
@@ -205,20 +205,20 @@ export class CalendarService {
   - u: Unidade de dia, é um formato semelhante ao timestamp, porem contado em dias
   - s: Hora em formato string (hh:mm(:ss)?)
 
-  @param Date          inicio       Data e hora de inicio
-  @param Date|number   fimOuTempo   Se a intenção for calcular a dataFim então será passado o tempo,
+  @param Date            inicio       Data e hora de inicio
+  @param Date|number     fimOuTempo   Se a intenção for calcular a dataFim então será passado o tempo,
     caso passe uma dataFim será calculado o tempo. O tempo é calculado da seguinte form:
     1) Se forma for DIAS, então será sempre um mútiplo de cargaHoraria (dias = fimOuTempo / cargaHoraria)
     2) Se forma for HORAS, será as horas em forma decimal
-  @param FormaContagem forma        Forma de contagem dos prazos (dias/horas úteis/corridos)
-  @param number        cargaHoraria Carga horária que será considerada para os cálculos
-  @param Expediente    expediente   Expediente que será utilizado para os cálculos. Não obrigatório caso seja dias/horas corridas.
-  @param FeriadoList?  feriados
-  @param DemandaPausa? pausas       Lista das pausas, quando aplicável
-  @param Afastamento?  afastamentos Lista dos afastamento a partir da data Inicio para o usuario, quando aplicável
+  @param FormaContagem   forma        Forma de contagem dos prazos (dias/horas úteis/corridos)
+  @param number          cargaHoraria Carga horária que será considerada para os cálculos
+  @param Expediente      expediente   Expediente que será utilizado para os cálculos. Não obrigatório caso seja dias/horas corridas.
+  @param FeriadoList?    feriados
+  @param AtividadePausa? pausas       Lista das pausas, quando aplicável
+  @param Afastamento?    afastamentos Lista dos afastamento a partir da data Inicio para o usuario, quando aplicável
   @return Efemerides Retorna todas as informações do cálculo com as horas ou a data fim calculados
   */
-  public calculaDataTempo(inicio: Date, fimOuTempo: Date | number, forma: FormaContagem, cargaHoraria?: number, expediente?: Expediente, feriados?: FeriadoList, pausas?: DemandaPausa[], afastamentos?: Afastamento[]): Efemerides {
+  public calculaDataTempo(inicio: Date, fimOuTempo: Date | number, forma: FormaContagem, cargaHoraria?: number, expediente?: Expediente, feriados?: FeriadoList, pausas?: AtividadePausa[], afastamentos?: Afastamento[]): Efemerides {
     const useCorridos = forma == "DIAS_CORRIDOS" || forma == "HORAS_CORRIDAS";
     const useDias = forma == "DIAS_CORRIDOS" || forma == "DIAS_UTEIS";
     const useTempo = typeof fimOuTempo == "number"; /* Se o parametro fimOuTempo é DataFim ou Horas/Dias */

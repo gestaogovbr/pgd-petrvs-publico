@@ -5,8 +5,7 @@ import {TemplateDaoService} from "../../../../dao/template-dao.service";
 import {EditableFormComponent} from "../../../../components/editable-form/editable-form.component";
 import {AbstractControl, FormGroup} from "@angular/forms";
 import {IIndexable} from "../../../../models/base.model";
-import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
-import { TemplateService } from '../template.service';
+import { TemplateDataset, TemplateService } from '../template.service';
 
 @Component({
   selector: 'app-template-form',

@@ -18,10 +18,11 @@ class CreateFavoritosTable extends Migration
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
+            $table->softDeletes();
             // Campos:
             $table->json('config')->nullable()->comment("Configurações do favoritos");
             // Chaves estrangeiras:
-            $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment('Usuário');
             // Indices
             $table->unique('usuario_id');
         });

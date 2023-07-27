@@ -18,12 +18,11 @@ class CreateCapacidadesTable extends Migration
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
+            $table->softDeletes();
             // Campos:
-            $table->dateTime('data_inicio')->comment("Data inicio da vigência");
-            $table->dateTime('data_fim')->nullable()->comment("Data final da vigência");
             // Chaves estrangeiras:
-            $table->foreignUuid('perfil_id')->nullable()->constrained('perfis')->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('tipo_capacidade_id')->constrained('tipos_capacidades')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('perfil_id')->nullable()->constrained('perfis')->onDelete('restrict')->onUpdate('cascade')->comment("Perfis");
+            $table->foreignUuid('tipo_capacidade_id')->constrained('tipos_capacidades')->onDelete('restrict')->onUpdate('cascade')->comment("Tipos capacidades");
         });
     }
 

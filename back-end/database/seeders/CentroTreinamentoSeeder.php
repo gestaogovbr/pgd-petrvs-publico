@@ -14,28 +14,14 @@ class CentroTreinamentoSeeder extends Seeder
      */
     public function run()
     {
-
-        $array_centros = [
-            'ANP', 
-            'CTCO',
-            'CTNE',
-            'CTRJ',
-            'CTSUL',
-            'UniPRF',
-            'Não se aplica' ];
-        
-    
-    foreach($array_centros as $centros) {
-
-        $centrosI = new CentroTreinamento();
-        $centrosI->fill([
-            //'id' => uuid(),
-            'nome'=> $centros
-        ]);
-        $centrosI->save();
-        
-    }
-        //
+        $centros = ['ANP','CTCO','CTNE','CTRJ','CTSUL','UniPRF','Não se aplica'];
+        foreach($centros as $c) {
+            $centro = new CentroTreinamento();
+            $centro->fill([
+                'nome'=> $c
+            ]);
+            $centro->save();
+        }
     }
 }
 

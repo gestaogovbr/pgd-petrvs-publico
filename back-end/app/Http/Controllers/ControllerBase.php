@@ -49,23 +49,22 @@ abstract class ControllerBase extends Controller
     }
 
     public function getUnidade(Request $request) {
+        $result = null;
         $headers = $this->getPetrvsHeader($request);
         $unidade_id = !empty($headers) && !empty($headers["unidade_id"]) ? $headers["unidade_id"] : ($request->hasSession() ? $request->session()->get("unidade") : "");
         if(!empty($unidade_id)) {
-            $usuario = Usuario::where("id", self::loggedUser()->id)->with(["lotacoes" => function ($query) use ($unidade_id) {
-                $query->whereNull("data_fim")->where("unidade_id", $unidade_id);
-            }, "lotacoes.unidade"])->first();
-            if(isset($usuario->lotacoes[0]) && !empty($usuario->lotacoes[0]->unidade_id)) {
-                return $usuario->lotacoes[0]->unidade;
+            $usuario = Usuario::where("id", self::loggedUser()->id)->with(["areasTrabalho" => function ($query) use ($unidade_id) {
+                $query->where("unidade_id", $unidade_id);
+            }, "areasTrabalho.unidade"])->first();
+            if(isset($usuario->areasTrabalho[0]) && !empty($usuario->areasTrabalho[0]->unidade_id)) {
+                return $usuario->areasTrabalho[0]->unidade;
             }
         }
-        return null;
+        return $result;
     }
 
     public function getUsuario(Request $request) {
-        return !empty(self::loggedUser()) ? Usuario::where("id", self::loggedUser()?->id)->with(["lotacoes" => function ($query) {
-            $query->whereNull("data_fim");
-        }, "lotacoes.unidade"])->first() : null;
+        return !empty(self::loggedUser()) ? Usuario::where("id", self::loggedUser()?->id)->with("areasTrabalho.unidade")->first() : null;
     }
 
     /**

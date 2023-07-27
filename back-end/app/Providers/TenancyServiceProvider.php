@@ -71,7 +71,7 @@ class TenancyServiceProvider extends ServiceProvider
             // Tenancy events
             Events\InitializingTenancy::class => [],
             Events\TenancyInitialized::class => [
-                Listeners\BootstrapTenancy::class,
+                Listeners\BootstrapTenancy::class
             ],
 
             Events\EndingTenancy::class => [],

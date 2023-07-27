@@ -13,3 +13,7 @@ input[type="text"]:read-only,
 input[type="text"]:disabled { 
     background-color:#e9ecef;
 }
+
+.search-text-invalid, .search-text-invalid:focus {
+    color: red;
+}

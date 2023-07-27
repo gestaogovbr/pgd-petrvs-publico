@@ -1,0 +1,28 @@
+<grid #grid [items]="items" [minHeight]="500" [form]="form!" [hasDelete]="true" 
+[add]="addAtribuicao.bind(this)" 
+[load]="loadAtribuicao.bind(this)" 
+[remove]="removeAtribuicao.bind(this)" 
+[save]="saveAtribuicao.bind(this)" editable>
+    <columns>
+        <column [title]="lex.translate('Unidade')" [template]="columnUnidade" [editTemplate]="editUnidade">
+            <ng-template let-row="row" #columnUnidade>
+                <strong>{{ row.unidade_sigla || '' }}</strong><span> (IdServo: {{ row.unidade_codigo || '' }})</span><br>
+                <span>{{ row.unidade_nome || '' }} </span>                                
+            </ng-template>
+            <ng-template let-row="row" #editUnidade>
+                <input-search #unidade [size]="12" label icon controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao"></input-search>
+            </ng-template>
+        </column>
+        <column [title]="lex.translate('Atribuição')" [template]="columnAtribuicao" [editTemplate]="editAtribuicao">
+            <ng-template let-row="row" #columnAtribuicao>
+                <div *ngFor="let a of row.atribuicoes"><badge [color]="lookup.getColor(lookup.UNIDADE_INTEGRANTE_TIPO, a || '')" [icon]="lookup.getIcon(lookup.UNIDADE_INTEGRANTE_TIPO, a || '')" [label]="lookup.getValue(lookup.UNIDADE_INTEGRANTE_TIPO, a || '')"></badge><br></div>
+            </ng-template>
+            <ng-template let-row="row" #editAtribuicao>
+                <input-multiselect controlName="atribuicoes" [size]="8" [addItemHandle]="addItemHandle.bind(this)">
+                    <input-select [size]="12" label="" icon="fas fa-sign-out-alt" controlName="atribuicao" [items]="lookup.UNIDADE_INTEGRANTE_TIPO"></input-select>
+                </input-multiselect>
+            </ng-template>
+        </column>
+        <column type="options"></column>
+    </columns>
+</grid>

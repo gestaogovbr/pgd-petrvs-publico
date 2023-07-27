@@ -1,11 +1,13 @@
 import { Injectable, Injector } from '@angular/core';
 import { DaoBaseService } from './dao-base.service';
-import { UnidadeIntegrante, UnidadeIntegranteConsolidado } from '../models/unidade-integrante.model';
+import { UnidadeIntegrante, IntegranteConsolidado } from '../models/unidade-integrante.model';
 import { Unidade } from '../models/unidade.model';
+import { Usuario } from '../models/usuario.model';
 
 export type LoadIntegrantesResult = {
-  integrantes: UnidadeIntegranteConsolidado[],
-  unidade?: Unidade
+  integrantes: IntegranteConsolidado[],
+  unidade?: Unidade,
+  usuario?: Usuario
 }
 
 @Injectable({
@@ -18,22 +20,24 @@ export class UnidadeIntegranteDaoService extends DaoBaseService<UnidadeIntegrant
     this.searchFields = [];
   }  
 
-  public loadIntegrantes(unidade_id: String): Promise<LoadIntegrantesResult> {
+  public loadIntegrantes(unidade_id: string, usuario_id: string): Promise<LoadIntegrantesResult> {
     return new Promise<LoadIntegrantesResult>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/load-integrantes', {unidade_id}).subscribe(response => {
+      this.server.post('api/' + this.collection + '/load-integrantes', {unidade_id, usuario_id}).subscribe(response => {
         resolve({
           integrantes: response?.rows || [],
-          unidade: response?.unidade
+          unidade: response?.unidade,
+          usuario: response?.usuario
         });
       }, error => reject(error));
     });
   }
 
-  public saveIntegrante(unidade_id: String, integrante: UnidadeIntegranteConsolidado): Promise<UnidadeIntegranteConsolidado | null> {
-    return new Promise<UnidadeIntegranteConsolidado | null>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/save-integrante', {unidade_id, integrante}).subscribe(response => {
+  public saveIntegrante(unidade_id: string, usuario_id: string, atribuicoes: string[]): Promise<IntegranteConsolidado | null> {
+    return new Promise<IntegranteConsolidado | null>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/save-integrante', {unidade_id, usuario_id, atribuicoes}).subscribe(response => {
         resolve(response?.data || null);
-      }, error => reject(error));
+      }, 
+      error => reject(error));
     });
   }
 

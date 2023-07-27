@@ -12,16 +12,11 @@ import { DialogComponent } from './services/dialog/dialog.component';
 import { SpinnerOverlayComponent } from './services/spinner-overlay/spinner-overlay.component';
 import { ComponentsModule } from './components/components.module';
 import { TesteComponent } from './modules/teste/teste.component';
-import { DemandaModule } from './modules/gestao/demanda/demanda.module';
-import { RelatorioModule } from './modules/relatorios/relatorio.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LogModule } from './modules/logs/log.module';
 import { UteisModule } from './modules/uteis/uteis.module';
 import { RotinaModule } from './modules/rotinas/rotina.module';
 import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
-import { CadeiaValorModule } from './modules/gestao/cadeia-valor/cadeia-valor.module';
-import { CurriculumModule } from './modules/curriculum/curriculum.module';
-import { CurriculumListComponent } from './modules/cadastros/curriculum/curriculum-list/curriculum-list.component';
 
 @NgModule({
   declarations: [
@@ -32,9 +27,7 @@ import { CurriculumListComponent } from './modules/cadastros/curriculum/curricul
     DialogComponent,
     SpinnerOverlayComponent,
     TesteComponent,
-    TesteFormComponent,
-    CurriculumListComponent,
-
+    TesteFormComponent
   ],
   imports: [
     BrowserModule,
@@ -43,14 +36,10 @@ import { CurriculumListComponent } from './modules/cadastros/curriculum/curricul
     ReactiveFormsModule,
     ComponentsModule,
     AppRoutingModule,
-    DemandaModule,
     ChartsModule,
-    RelatorioModule,
     UteisModule,
     LogModule,
     RotinaModule,
-    CadeiaValorModule,
-    CurriculumModule
   ],
   providers: [],
   bootstrap: [AppComponent]

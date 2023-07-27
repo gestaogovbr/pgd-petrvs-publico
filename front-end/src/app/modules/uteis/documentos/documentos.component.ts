@@ -1,16 +1,15 @@
 import { ChangeDetectorRef, Component, Injector, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { DocumentoDaoService } from 'src/app/dao/documento-dao-service';
-import { PlanoDaoService } from 'src/app/dao/plano-dao.service';
+import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Documento, DocumentoEspecie, HasDocumentos } from 'src/app/models/documento.model';
 import { Template } from 'src/app/models/template.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { LookupItem } from 'src/app/services/lookup.service';
-import { TemplateService } from '../templates/template.service';
+import { TemplateDataset, TemplateService } from '../templates/template.service';
 import { DocumentoService } from './documento.service';
 
 @Component({
@@ -79,8 +78,10 @@ export class DocumentosComponent extends PageFrameBase {
     this.modalWidth = 1200;
     this.form = this.fh.FormBuilder({
       id: {default: ""},
+      tipo: {default: "HTML"},
       titulo: {default: ""},
       conteudo: {default: ""},
+      link: {default: null},
       dataset: {default: undefined},
       datasource: {default: undefined},
       template: {default: undefined},
@@ -94,14 +95,14 @@ export class DocumentosComponent extends PageFrameBase {
     this.needSign = this.metadata?.needSign || this.needSign;
     this.extraTags = this.metadata?.extraTags || this.extraTags;
     this.especie = this.urlParams?.has("especie") ? this.urlParams!.get("especie") : this.metadata?.especie || this.especie;
-    this.action = this.urlParams?.has("action") ? this.urlParams!.get("action") || "" : "";
-    this.documentoId = this.urlParams?.has("documentoId") ? this.urlParams!.get("documentoId") || undefined : undefined;
+    this.action = this.urlParams?.has("action") ? this.urlParams!.get("action") || "" : this.action;
+    this.documentoId = this.urlParams?.has("documentoId") ? this.urlParams!.get("documentoId") || undefined : this.documentoId;
     this.dataset = this.metadata?.dataset || this.dataset;
     this.datasource = this.metadata?.datasource || this.datasource;
     this.template = this.metadata?.template || this.template;
-    this.tituloDefault = this.metadata?.titulo_documento || this.tituloDefault;
+    this.tituloDefault = this.metadata?.titulo || this.tituloDefault;
     /* Obrigatório instanciar o DAO correto a depender da espécie */
-    this.dao = ["TCR", "TERMO_ADESAO"].includes(this.especie) ? this.injector.get<PlanoDaoService>(PlanoDaoService) : undefined;
+    this.dao = ["TCR"].includes(this.especie) ? this.injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService) : undefined;
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -147,7 +148,7 @@ export class DocumentosComponent extends PageFrameBase {
 
   public get canEdit(): boolean {
     const selected: Documento | undefined = this.grid!.selected as Documento;
-    return this.canEditTemplate && !selected?.assinaturas.length && !selected?.id_documento;
+    return this.canEditTemplate && !selected?.assinaturas?.length && selected?.tipo != "LINK";
   }
 
   /*public gravarEdicao() {
@@ -171,7 +172,7 @@ export class DocumentosComponent extends PageFrameBase {
     if(!this.isNoPersist && this.entity && this.needSign(this.entity, documento)) {
       result.push({hint: "Assinar", icon: "bi bi-pen", onClick: this.signDocumento.bind(this) });
     }
-    result.push({hint: "Preview", icon: "bi bi-zoom-in", onClick: this.documentoService.preview.bind(this) });
+    result.push({hint: "Preview", icon: "bi bi-zoom-in", onClick: this.documentoService.onDocumentoClick.bind(this.documentoService.onDocumentoClick) });
     return result;
   }
 
@@ -211,14 +212,16 @@ export class DocumentosComponent extends PageFrameBase {
     return new Documento({
       id: this.dao!.generateUuid(),
       entidade_id: this.auth.unidade?.entidade_id || null,
+      tipo: "HTML",
       especie: this.especie,
+      link: null,
       _status: "ADD",
-      titulo_documento: this.tituloDefault || "",
+      titulo: this.tituloDefault || "",
       dataset: this.dataset || null,
       datasource: this.datasource || null,
       template: this.metadata?.template.conteudo,
       template_id: this.metadata?.template.id,
-      plano_id: ["TCR", "TERMO_ADESAO"].includes(this.especie) ? this.entity!.id : null
+      plano_trabalho_id: ["TCR"].includes(this.especie) ? this.entity!.id : null
     });
     //this.onSelect(documento);
     //return documento;
@@ -273,8 +276,10 @@ export class DocumentosComponent extends PageFrameBase {
     const selected: Documento = row;
     this.form!.patchValue({
       id: selected?.id || "",
-      titulo: selected?.titulo_documento || "",
+      tipo: selected?.tipo || "HTML",
+      titulo: selected?.titulo || "",
       conteudo: selected?.conteudo || "",
+      link: selected?.link,
       dataset: selected?.dataset,
       datasource: selected?.datasource,
       template: selected?.template,
@@ -298,7 +303,7 @@ export class DocumentosComponent extends PageFrameBase {
     let result = undefined;
     this.form!.markAllAsTouched();
     if(this.form!.valid) {
-      item.titulo_documento = form.controls.titulo.value;
+      item.titulo = form.controls.titulo.value;
       item.conteudo = form.controls.conteudo.value;
       item.dataset = this.templateService.prepareDatasetToSave(item.dataset || []);
       this.submitting = true;

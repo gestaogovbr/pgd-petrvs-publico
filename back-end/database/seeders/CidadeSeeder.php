@@ -25,14 +25,11 @@ class CidadeSeeder extends Seeder
             $cidade->fill([
                 'codigo_ibge' => $registro[0],
                 'uf' => $registro[1],
-                'nome' => utf8_encode($registro[2]),
+                'nome' => mb_convert_encoding($registro[2], "UTF-8", "ISO-8859-1"),
                 'tipo' => $registro[3],
                 'timezone' => $registro[4]
             ]);
             $cidade->save();
-   
         }
-        
     }
-
 }

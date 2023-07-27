@@ -4,6 +4,9 @@ namespace Database\Seeders;
 
 use App\Models\Usuario;
 use App\Models\Perfil;
+use App\Models\Unidade;
+use App\Models\UnidadeIntegrante;
+use App\Models\UnidadeIntegranteAtribuicao;
 use Illuminate\Database\Seeder;
 use Carbon\Carbon;
 
@@ -25,7 +28,6 @@ class UsuarioSeeder extends Seeder
                 'cpf' => '26751043880',
                 'apelido' => 'Carlos III',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
-                'data_inicio' => Carbon::now()
             ],
             [
                 'email' => 'edson.marian@prf.gov.br',
@@ -33,7 +35,6 @@ class UsuarioSeeder extends Seeder
                 'cpf' => '67703011053',
                 'apelido' => 'Marian',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
-                'data_inicio' => Carbon::now()
             ],
             [
                 'email' => 'genisson.albuquerque@prf.gov.br',
@@ -41,7 +42,6 @@ class UsuarioSeeder extends Seeder
                 'cpf' => '07408707425',
                 'apelido' => 'Genisson',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
-                'data_inicio' => Carbon::now()
             ],
             [
                 'email' => 'ricardo.farias@prf.gov.br',
@@ -49,7 +49,6 @@ class UsuarioSeeder extends Seeder
                 'cpf' => '25941933304',
                 'apelido' => 'Ricardo',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
-                'data_inicio' => Carbon::now()
             ],
             [
                 'email' => 'caroline.ribeiro@prf.gov.br',
@@ -57,7 +56,6 @@ class UsuarioSeeder extends Seeder
                 'cpf' => '01492368164',
                 'apelido' => 'Caroline',
                 'perfil_id' => $perfis->where('nome', 'Administrador')->first()->id,
-                'data_inicio' => Carbon::now()
             ],
             [
                 'email' => 'edson.franca@mj.gov.br',
@@ -65,7 +63,6 @@ class UsuarioSeeder extends Seeder
                 'cpf' => '01380127416',
                 'apelido' => 'Edson',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
-                'data_inicio' => Carbon::now()
             ],
             [
                 'email' => 'geisimar.rech87@gmail.com',
@@ -73,7 +70,6 @@ class UsuarioSeeder extends Seeder
                 'cpf' => '01798651106',
                 'apelido' => 'Geisimar',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
-                'data_inicio' => Carbon::now()
             ],
             [
                 'email' => 'pablorgds@gmail.com',
@@ -81,9 +77,10 @@ class UsuarioSeeder extends Seeder
                 'cpf' => '05178506138',
                 'apelido' => 'Pablorgds',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
-                'data_inicio' => Carbon::now()
             ]
         ];
+
+        $unidade_pai = Unidade::first();
 
         foreach($usuarios as $usuario)
         {
@@ -93,10 +90,19 @@ class UsuarioSeeder extends Seeder
                 'nome' => $usuario['nome'],
                 'cpf' => $usuario['cpf'],
                 'apelido' => $usuario['apelido'],
-                'data_inicio' => Carbon::now(),
                 'perfil_id' => $usuario['perfil_id']
             ]);
             $user->save();
+            $integrante = new UnidadeIntegrante([
+                'unidade_id' => $unidade_pai->id,
+                'usuario_id' => $user->id
+            ]);
+            $integrante->save();
+            $lotacao = new UnidadeIntegranteAtribuicao([
+                'atribuicao' => "LOTADO",
+                'unidade_integrante_id' => $integrante->id
+            ]);
+            $lotacao->save();
         }
     }
 }

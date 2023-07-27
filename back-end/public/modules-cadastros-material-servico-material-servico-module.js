@@ -336,8 +336,6 @@ class MaterialServico extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.referencia = null; /* Referência */
         this.descricao = ""; /* Descrição */
         this.unidade_medida = "UNIDADE"; /* Unidade */
-        this.data_inicio = new Date(); /* Data de início */
-        this.data_fim = null; /* Data do fim */
         this.initialization(data);
     }
 }

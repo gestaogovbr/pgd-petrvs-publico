@@ -2,11 +2,9 @@ import { ChangeDetectorRef, Component, Injector, Input, ViewChild } from '@angul
 import { Template, TemplateEspecie } from "src/app/models/template.model";
 import { TemplateDaoService } from "src/app/dao/template-dao.service";
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { AbstractControl, FormGroup } from "@angular/forms";
-import { Base, IIndexable } from 'src/app/models/base.model';
-import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
+import { FormGroup } from "@angular/forms";
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
-import { TemplateService } from '../../templates/template.service';
+import { TemplateDataset, TemplateService } from '../../templates/template.service';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { HasNotificacao } from 'src/app/models/notificacao.model';
 

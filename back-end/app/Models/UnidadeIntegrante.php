@@ -5,27 +5,32 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\Unidade;
 use App\Models\Usuario;
-use App\Traits\AutoDataInicio;
-use App\Traits\HasDataFim;
 
 class UnidadeIntegrante extends ModelBase
 {
-    use AutoDataInicio, HasDataFim;
-
     protected $table = 'unidades_integrantes';
 
     protected $with = [];
 
+    protected $delete_cascade = ["atribuicoes"];
+
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
-        'atribuicao', /* enum('AVALIADOR_DEMANDAS'); NOT NULL; */// Tipo do vinculo
         'unidade_id', /* char(36); NOT NULL; */
         'usuario_id', /* char(36); NOT NULL; */
-        //'data_fim', /* datetime; */// Data fim da vigência
+        //'deleted_at', /* timestamp; */
     ];
-
-    // Has
+    // hasOne
+    public function lotado() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'LOTADO'); } 
+    public function gestor() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'GESTOR'); } 
+    public function gestorSubstituto() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'GESTOR_SUBSTITUTO'); } 
+    public function colaborador() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'COLABORADOR'); } 
+    public function homologadorPlanoEntrega() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'HOMOLOGADOR_PLANO_ENTREGA'); } 
+    public function avaliadorPlanoEntrega() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'AVALIADOR_PLANO_ENTREGA'); } 
+    public function avaliadorPlanoTrabalho() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'AVALIADOR_PLANO_TRABALHO'); } 
+    // hasMany
+    public function atribuicoes() { return $this->hasMany(UnidadeIntegranteAtribuicao::class); } 
     // Belongs
     public function unidade() { return $this->belongsTo(Unidade::class); }
     public function usuario() { return $this->belongsTo(Usuario::class); }
+    //Mutators and casts
 }

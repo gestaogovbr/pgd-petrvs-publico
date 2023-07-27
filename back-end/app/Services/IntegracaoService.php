@@ -6,19 +6,17 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use App\Exceptions\LogError;
 use App\Services\ServiceBase;
-use App\Services\UtilService;
-use App\Models\Unidade;
 use App\Models\Usuario;
+use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Perfil;
-use App\Models\UnidadeOrigemAtividade;
+use App\Models\IntegracaoUnidade;
+use App\Models\IntegracaoServidor;
 use Illuminate\Support\Facades\Auth;
 use Ramsey\Uuid\Uuid;
 use Carbon\Carbon;
 use DateTime;
 use Exception;
 use Throwable;
-
-use function PHPUnit\Framework\throwException;
 
 class IntegracaoService extends ServiceBase {
     public $autoIncluir = false;
@@ -35,7 +33,6 @@ class IntegracaoService extends ServiceBase {
     public $echo = false;
     public $integracao_config = "";
     public $unidadeRaiz = null;
-    public $codigoUnidadeRaiz = "";     // eventual alteração deve ser feita no arquivo .env
     public $validaCertificado = "";     // eventual alteração deve ser feita no arquivo .env
     public $useLocalFiles = "";         // eventual alteração deve ser feita no arquivo .env
     public $storeLocalFiles = "";       // eventual alteração deve ser feita no arquivo .env
@@ -47,7 +44,6 @@ class IntegracaoService extends ServiceBase {
         ini_set('max_execution_time', 1200); /* 20 minutos */
         $this->integracao_config = $config ?: config('integracao');
         $this->autoIncluir = $this->integracao_config['auto_incluir'];
-        $this->codigoUnidadeRaiz = $this->integracao_config['codigoUnidadeRaiz'];
         $this->validaCertificado = $this->integracao_config['validaCertificado'];
         $this->useLocalFiles = $this->integracao_config['useLocalFiles'];
         $this->storeLocalFiles = $this->integracao_config['storeLocalFiles'];
@@ -69,9 +65,8 @@ class IntegracaoService extends ServiceBase {
             $usuario->matricula = $servidor->matriculasiape;
             $usuario->apelido = $servidor->nomeguerra;
             if(!empty($servidor->unidade_servidor)) {               //cria uma lotação para o novo servidor apenas se ela já estiver definida no SIAPE
-                $lotacao->data_inicio = new \DateTime();
                 $lotacao->unidade_id = $servidor->unidade_servidor;
-                $lotacao->principal = 1;
+                //$lotacao->principal = 1;
             }
             $resultado = true;
         }
@@ -88,25 +83,6 @@ class IntegracaoService extends ServiceBase {
         } else if ($pai = current(array_filter($this->unidadesSelecionadas, fn($element) => $element->id_servo == $unidade->pai_servo))) {
             return $this->deepReplaceUnidades($pai, $entidade_id);
         }
-    }
-
-    public function insereVinculoRaiz($unidade_id) {
-		if(!empty($unidade_id)) {
-			$id = DB::table('unidades_origem_atividades')->insert([
-                'id' => Uuid::uuid4(),
-	            'unidade_id' => $unidade_id,
-	            'unidade_origem_atividade_id' => $this->unidadeRaiz->id
-	        ]);
-            $this->atualizaLogs($this->logged_user_id, 'unidades_origem_atividades', $id, 'ADD', ['Rotina' => 'Integração', 'Observação' => 'Criação do vínculo entre a unidade ' . $unidade_id . 'e a unidade ' . $this->unidadeRaiz]);
-        }
-    }
-
-    public function verificaVinculoRaiz($unidade_id) {
-        $existeVinculo = UnidadeOrigemAtividade::where([
-            ['unidade_id', '=', $unidade_id],
-            ['unidade_origem_atividade_id', '=', $this->unidadeRaiz->id]
-        ])->first();
-        if (empty($existeVinculo)) $this->insereVinculoRaiz($unidade_id);
     }
 
     public function deepReplaceUnidades($unidade, $entidade_id) {
@@ -136,25 +112,18 @@ class IntegracaoService extends ServiceBase {
                         'unidade_id' => !empty($dados_path_pai) ? $dados_path_pai["unidade_id"] : null,
                         'notificacoes' => '{}',
                         'etiquetas' => '[]',
-                        'data_inicio' => Carbon::now(),
                         'atividades_arquivamento_automatico' => 0,
                         'atividades_avaliacao_automatico' => 0,
                         'planos_prazo_comparecimento' => 10,
                         'planos_tipo_prazo_comparecimento' => 'DIAS',
-                        'horario_trabalho_inicio' => '00:00',
-                        'horario_trabalho_fim' => '23:59',
                         'distribuicao_forma_contagem_prazos' => 'HORAS_UTEIS',
                         'autoedicao_subordinadas' => 1,
-                        'data_fim' => null,
                         'checklist' => '[]'
                     ]);
                     $this->atualizaLogs($this->logged_user_id, 'unidades', $id, 'ADD', ['Rotina' => 'Integração', 'Observação' => 'Unidade nova inserida informada pelo SIAPE: ' . $values[':nome'], 'Valores inseridos' => DB::table('unidades')->where('id', $id)->first()]);
                 } catch (Throwable $e) {
                     LogError::newWarn("Erro ao inserir Unidade", $values);
                 }
-
-                // INSERE AQUI O VINCULO COM A UNIDADE RAIZ DAS ATIVIDADES
-                $this->verificaVinculoRaiz($values[':id']);
                 return $this->unidadesInseridas[$unidade->id_servo];
             }
         }
@@ -175,9 +144,6 @@ class IntegracaoService extends ServiceBase {
                 'Valores atuais' => $values
             ]);
             array_push($this->paisAlterados, $unidade);
-
-            // Se necessário, insere o vínculo com a Unidade Raiz das Atividades
-            $this->verificaVinculoRaiz($values[':id']);
 
             /* Atualiza os paths dos filhos */
             $antes = $unidade->path_antigo."/".$unidade->id;
@@ -213,9 +179,6 @@ class IntegracaoService extends ServiceBase {
                 'Valores atuais' => ['codigo' => $values[':codigo'], ':nome' => $values[':nome'], ':sigla' => $values[':sigla'], 'cidade_id' => $values[':cidade_id']]
             ]);
             array_push($this->unidadesAlteradas, $unidade);
-
-            // Se necessário, insere o vínculo com a Unidade Raiz das Atividades
-            $this->verificaVinculoRaiz($values[':id']);
 
             return ["unidade_id" => $values[':id'], "path" => $unidade->path_antigo];
         }
@@ -260,7 +223,8 @@ class IntegracaoService extends ServiceBase {
     }
 
     /**
-     * Método usado quando a rotina de Integração é chamada direto na linha de comando
+     * Método usado quando a rotina de Integração é chamada direto na linha de comando: 
+     * curl -G 'http://localhost/api/integracao' -d servidores=true -d unidades=true -d entidade=?
      */
     public function sincronizar($inputs){
         $inputs['entidade_id'] = $inputs['entidade'];
@@ -322,11 +286,13 @@ class IntegracaoService extends ServiceBase {
                 /* Apaga a tabela integracao_unidades e cria novamente com as unidades ATIVAS obtidas pelo webservice */
                 DB::transaction(function () use (&$uos, &$self, &$sql_log_changes) {
                     /* Remove toda a lista da tabela temporária integracao_unidades */
-                    DB::delete('DELETE FROM integracao_unidades');
+                    //DB::delete('DELETE FROM integracao_unidades');
+                    IntegracaoUnidade::truncate();
                     /* Itera as UOs */
                     foreach($uos as $uo) {
                         if(!empty($self->UtilService->valueOrDefault($uo["id_servo"])) && $self->UtilService->valueOrDefault($uo["ativa"]) == 'true') {
-                            DB::table('integracao_unidades')->insert([
+                            //DB::table('integracao_unidades')->insert([
+                            IntegracaoUnidade::create([
                                 'id_servo' => $self->UtilService->valueOrDefault($uo["id_servo"]),
                                 'pai_servo' => $self->UtilService->valueOrDefault($uo["pai_servo"]),
                                 'codigo_siape' => $self->UtilService->valueOrDefault($uo["codigo_siape"]),
@@ -383,10 +349,7 @@ class IntegracaoService extends ServiceBase {
                     "LEFT JOIN cidades c ON (iu.municipio_ibge = c.codigo_ibge) ".
                     "WHERE (u.id is null OR iu.nomeuorg != u.nome OR iu.siglauorg != u.sigla OR iu.pai_servo != un.codigo) AND iu.ativa = 'true'";
                 $this->unidadesSelecionadas = DB::select($consulta_sql);
-                //OBS.: não seria interessante incluir o e-mail na tabela UNIDADES?
                 DB::transaction(function () use (&$self, $entidade_id) {
-                    // identifica a Unidade Raiz para cadastro de Atividades.
-                    $this->unidadeRaiz = Unidade::where('codigo', $this->codigoUnidadeRaiz)->first();
                     foreach($self->unidadesSelecionadas as $unidade) {
                         $self->deepReplaceUnidades($unidade, $entidade_id);
                     }
@@ -607,7 +570,6 @@ class IntegracaoService extends ServiceBase {
                                 $x++;
                                 $id = DB::table('lotacoes')->insertGetId([
                                     'id'            => Uuid::uuid4(),
-                                    'data_inicio'   => Carbon::now(),
                                     'principal'     => 1,
                                     'unidade_id'    => $lotacao->id_unidade_atual,
                                     'usuario_id'    => $lotacao->id_usuario
@@ -735,13 +697,15 @@ class IntegracaoService extends ServiceBase {
      */
     public function salvarUsuarioLotacao(&$usuario, &$lotacao){
         if ($this->fillUsuarioWithSiape($usuario, $lotacao)) { //se quem está logado existe na tabela integracao_servidores
-            $perfil_nivel_5 = Perfil::where('nivel', '5')->first()->id;
-            $usuario->perfil_id = $perfil_nivel_5;
+            $perfil_nivel_5_id = Perfil::where('nivel', '5')->first()->id;
+            $usuario->perfil_id = $perfil_nivel_5_id;
             $usuario->save();
             $usuario->fresh();
             if(!empty($lotacao->unidade_id)) { // se sua Unidade estiver cadastrada, insere-se uma lotação principal pra ele
                 $lotacao->usuario_id = $usuario->id;
                 $lotacao->save();
+                $lotacao->refresh();
+                UnidadeIntegranteAtribuicao::create(['unidade_integrante_id' => $lotacao->id, 'atribuicao' => 'LOTADO']);
             }
         } else {
             $usuario = null; // se quem está logando não existe na tabela integracao_servidores

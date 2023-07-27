@@ -18,14 +18,13 @@ class CreateMateriaisServicosTable extends Migration
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
+            $table->softDeletes();
             // Campos:
             $table->enum('tipo', ["MATERIAL", "SERVICO"])->default("MATERIAL")->comment("Tipo");
             $table->string('codigo', 100)->nullable()->comment("Código");
             $table->string('referencia', 100)->nullable()->comment("Referência");
             $table->string('descricao', 256)->comment("Descrição");
             $table->enum('unidade_medida', ['UNIDADE', 'CAIXA', 'METRO', 'KILO', 'LITRO', 'DUZIA', 'MONETARIO', 'HORAS', 'DIAS', 'PACOTE'])->comment("Unidade");
-            $table->dateTime('data_inicio')->comment("Data inicio da vigência");
-            $table->dateTime('data_fim')->nullable()->comment("Data final da vigência");
         });
     }
 

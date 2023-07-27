@@ -18,15 +18,11 @@ class CreateTiposAvaliacoesTable extends Migration
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
+            $table->softDeletes();
             // Campos:
-            $table->integer('nota_atribuida')->nullable()->comment("Nota atribuida de 0 a 10");
-            $table->string('nome', 256)->comment("Descrição da nota atribuida");
-            $table->tinyInteger('aceita_entrega')->default('1')->comment("Se a entrega vai ser aceita e as horas pactuadas serão homologadas");
-            $table->text('pergunta')->comment("Pergunta motivacional, o porque você selecionou essa nota");
-            $table->string('icone', 100)->comment("Classe do icone relacionado a avaliação");
-            $table->string('cor', 100)->comment("Código da cor em hex");
-            $table->dateTime('data_inicio')->comment("Data inicio da vigência");
-            $table->dateTime('data_fim')->nullable()->comment("Data final da vigência");
+            $table->string('nome', 256)->comment("Nome do tipo de avaliação");
+            $table->set('tipo', ['QUALITATIVO', 'QUANTITATIVO'])->comment("Se a nota será um número ou um conceito");
+            $table->json('notas')->comment("Notas");
         });
     }
 

@@ -6,12 +6,9 @@ use App\Models\TipoDocumento;
 use App\Services\ServiceBase;
 use Illuminate\Support\Facades\DB;
 use Throwable;
-use App\Traits\UseDataFim;
 
 class TipoDocumentoService extends ServiceBase
 {
-    use UseDataFim;
-
     public function atualizar($lista, $unidade) {
         try {
             DB::beginTransaction();

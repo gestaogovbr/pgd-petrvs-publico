@@ -18,14 +18,15 @@ class CreateNotificacoesDestinatariosTable extends Migration
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
+            $table->softDeletes();
             // Campos:
-            $table->enum('tipo', ["petrvs", "email", "whatsapp"])->default("petrvs")->comment("Tipo do envio");
+            $table->enum('tipo', ['PETRVS', 'EMAIL', 'WHATSAPP'])->default("PETRVS")->comment("Tipo do envio");
             $table->dateTime('data_leitura')->nullable()->comment("Data e hora da leitura");
             $table->dateTime('data_envio')->nullable()->comment("Data e hora do envio, utilizado quando realmente a mensagem foi despachada");
             $table->json("opcoes")->nullable()->comment("Opções");
             // Chaves estrangeiras:
-            $table->foreignUuid('notificacao_id')->constrained('notificacoes')->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('usuario_id')->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('notificacao_id')->constrained('notificacoes')->onDelete('restrict')->onUpdate('cascade')->comment("Notificação");
+            $table->foreignUuid('usuario_id')->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->comment("Usuário");
         });
     }
 
