@@ -1,7 +1,6 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
-import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
@@ -14,6 +13,7 @@ import { Unidade } from 'src/app/models/unidade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { NotificacaoService } from 'src/app/modules/uteis/notificacoes/notificacao.service';
 import { NotificacoesConfigComponent } from 'src/app/modules/uteis/notificacoes/notificacoes-config/notificacoes-config.component';
+import { TemplateDataset } from 'src/app/modules/uteis/templates/template.service';
 import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({

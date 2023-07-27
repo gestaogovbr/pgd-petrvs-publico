@@ -1,4 +1,4 @@
-<badge *ngIf="documento && show" [icon]="icon" [color]="color" [rounded]="!isNoRounded" [data]="documento" [click]="documentoService.onDocumentoClick.bind(this)" [hint]="documentoService.documentoHint(documento)">
+<badge *ngIf="documento && show" [icon]="icon" [color]="color" [rounded]="!isNoRounded" [data]="documento" [click]="documentoService.onDocumentoClick.bind(documentoService)" [hint]="documentoService.documentoHint(documento)">
     <ng-container *ngIf="isLinkSei">
         {{documento?.link?.numero_processo || emptyMessage}}<br>
         <small *ngIf="documento?.link?.numero_documento?.length">Sei nº {{documento?.link?.numero_documento}}</small>

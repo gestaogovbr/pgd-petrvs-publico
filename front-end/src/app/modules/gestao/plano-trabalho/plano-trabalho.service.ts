@@ -25,7 +25,7 @@ export class PlanoTrabalhoService {
       needSign: this.needSign.bind(this),
       extraTags: this.extraTags.bind(this),
       especie: "TCR",
-      titulo_documento: "Termo de Ciência e Responsabilidade",
+      titulo: "Termo de Ciência e Responsabilidade",
       dataset: this.planoTrabalhoDao.dataset(),
       datasource: this.planoTrabalhoDao.datasource(plano),
       template: plano.programa?.template_tcr,

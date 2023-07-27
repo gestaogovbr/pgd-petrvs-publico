@@ -22,6 +22,7 @@ import { PlanoEntregaEntregaProcesso } from 'src/app/models/plano-entrega-entreg
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { Entrega } from 'src/app/models/entrega.model';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
+import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 
 @Component({
   selector: 'plano-entrega-form-entrega',
@@ -41,6 +42,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   @ViewChild('demandante', { static: false }) public demandante?: InputSearchComponent;
   @ViewChild('tabs', { static: false }) public tabs?: TabsComponent;
   
+  public planoEntrega?: PlanoEntrega;
   public planejamentoDao: PlanejamentoDaoService;
   public planejamentoId?: string;
   public cadeiaValorId?: string;
@@ -96,6 +98,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
 
   public ngOnInit() {
     super.ngOnInit();
+    this.planoEntrega = this.metadata?.plano_entrega;
     this.planejamentoId = this.metadata?.planejamento_id;
     this.cadeiaValorId = this.metadata?.cadeia_valor_id;
     this.unidadeId = this.urlParams?.get('unidade_id') || "";
@@ -129,6 +132,8 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   }
 
   public formValidation = (form?: FormGroup) => {
+    let inicio = this.form?.controls.inicio.value;
+    let fim = this.form?.controls.fim.value;
     if(this.gridObjetivos?.editing) {
       this.tabs!.active = "OBJETIVOS" ;
       return "Salve ou cancele o registro atual em edição";
@@ -137,7 +142,17 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       this.tabs!.active = "PROCESSOS" ;
       return "Salve ou cancele o registro atual em edição";
     }
-    if(this.form!.controls.fim.value && this.form!.controls.inicio.value > this.form!.controls.fim.value) return "A data do fim não pode ser anterior à data do fim!";
+    if(!this.dao?.validDateTime(inicio)) {
+      return "Data de início inválida";
+    } else if(!this.dao?.validDateTime(fim)) {
+      return "Data de fim inválida";
+    } else if(inicio > fim) {
+      return "A data do fim não pode ser anterior à data do fim!";
+    } else if(this.planoEntrega && inicio < this.planoEntrega.inicio) {
+      return "Data de inicio menor que a data de inicio" + this.lex.noun("plano de entrega", false, true) + ": " + this.util.getDateFormatted(this.planoEntrega.inicio);
+    } else if(this.planoEntrega && this.planoEntrega.fim && fim > this.planoEntrega.fim) {
+      return "Data de fim maior que a data de fim" + this.lex.noun("plano de entrega", false, true) + ": " + this.util.getDateFormatted(this.planoEntrega.fim);
+    }
     return undefined;
   }
 

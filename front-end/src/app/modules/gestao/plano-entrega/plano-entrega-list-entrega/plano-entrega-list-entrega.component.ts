@@ -118,7 +118,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     });
     this.go.navigate({ route: ['gestao', 'plano-entrega', 'entrega'] }, {
       metadata: {
-        plano_entrega_id: this.entity!,
+        plano_entrega: this.entity!,
         planejamento_id: this.planejamentoId,
         cadeia_valor_id: this.cadeiaValorId,
         entrega: entrega,
@@ -141,10 +141,10 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     let index = this.items.indexOf(entrega);
     this.go.navigate({ route: ['gestao', 'plano-entrega', 'entrega'] }, {
       metadata: { 
-        plano_entrega_id: this.entity!,
+        plano_entrega: this.entity!,
         planejamento_id: this.planejamentoId,
         cadeia_valor_id: this.cadeiaValorId,
-        entrega: entrega, 
+        entrega: entrega,
       },
       modalClose: async (modalResult) => {
         if (modalResult) {

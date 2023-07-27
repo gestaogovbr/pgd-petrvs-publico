@@ -1,8 +1,8 @@
 import { Injectable, Injector } from '@angular/core';
 import { DaoBaseService } from './dao-base.service';
-import { TemplateDataset } from '../components/input/input-editor/input-editor.component';
 import { ProgramaParticipante } from '../models/programa-participante.model';
 import { UsuarioDaoService } from './usuario-dao.service';
+import { TemplateDataset } from '../modules/uteis/templates/template.service';
 
 @Injectable({
   providedIn: 'root'

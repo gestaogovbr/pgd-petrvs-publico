@@ -71,7 +71,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     let plano: PlanoTrabalho = row as PlanoTrabalho;
     const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: this.consult.bind(this) };
     const BOTAO_ALTERAR = { label: "Alterar", icon: "bi bi-pencil-square", color: "btn-outline-info", onClick: this.edit.bind(this) };
-    const BOTAO_EXCLUIR = { label: "Excluir demanda", icon: "bi bi-trash", onClick: this.delete.bind(this) };
+    const BOTAO_EXCLUIR = { label: "Excluir", icon: "bi bi-trash", onClick: this.delete.bind(this) };
     const BOTAO_ASSINAR = { label: "Assinar", icon: "bi bi-pen", onClick: this.assinar.bind(this) };
     const BOTAO_TERMOS = { label: "Termos", icon: "bi bi-file-earmark-check", onClick: ((row: PlanoTrabalho) => this.go.navigate({ route: ['uteis', 'documentos', 'TCR', row.id ] }, { modalClose: (modalResult) => console.log(modalResult?.conteudo), metadata: this.planoService.metadados(row) })).bind(this) };
     if(this.auth.hasPermissionTo("MOD_PTR_CONS")) result.push(BOTAO_INFORMACOES);

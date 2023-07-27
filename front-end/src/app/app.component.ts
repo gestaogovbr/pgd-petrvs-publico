@@ -186,6 +186,7 @@ export class AppComponent {
         this.menuSchema.CADEIAS_VALORES,
         this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
         this.menuSchema.PLANOS_ENTREGAS,
+        this.menuSchema.PLANOS_TRABALHOS,
         this.menuSchema.PROGRAMAS_GESTAO
       ].sort(this.orderMenu)
     }, {
@@ -193,7 +194,6 @@ export class AppComponent {
       permition: "MENU_GESTAO_ACESSO",
       id: "navbarDropdownGestaoExecucao",
       menu: [
-        this.menuSchema.PLANOS_TRABALHOS,
         this.menuSchema.ATIVIDADES,
         this.menuSchema.AFASTAMENTOS
       ].sort(this.orderMenu)

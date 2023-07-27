@@ -1,5 +1,4 @@
 import { Injectable, Injector } from '@angular/core';
-import { TemplateDataset } from '../components/input/input-editor/input-editor.component';
 import { Unidade } from '../models/unidade.model';
 import { AreaRelatorio } from '../modules/base/page-report-base';
 import { CidadeDaoService } from './cidade-dao.service';
@@ -7,6 +6,7 @@ import { DaoBaseService } from './dao-base.service';
 import { EntidadeDaoService } from './entidade-dao.service';
 import { UsuarioDaoService } from './usuario-dao.service';
 import { PlanoEntregaDaoService } from './plano-entrega-dao.service';
+import { TemplateDataset } from '../modules/uteis/templates/template.service';
 
 export type UnidadeDashboard = {
   sigla: string,                                    // nome da Unidade
