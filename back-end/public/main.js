@@ -462,7 +462,7 @@ class LookupService {
             { key: 'AVALIADOR_PLANO_ENTREGA', value: "Avaliador (Planos de Entrega)", icon: "bi bi-check-all", color: "warning" },
             { key: 'AVALIADOR_PLANO_TRABALHO', value: "Avaliador (Planos de Trabalho)", icon: "bi bi-check-circle", color: "info" },
             { key: 'COLABORADOR', value: "Colaborador", icon: "bi bi-person-fill-add", color: "secondary" },
-            { key: 'GESTOR', value: "Gestor Titular", icon: "bi bi-star-fill", color: "primary" },
+            { key: 'GESTOR', value: "Gestor", icon: "bi bi-star-fill", color: "primary" },
             { key: 'GESTOR_SUBSTITUTO', value: "Gestor Substituto", icon: "bi bi-star-half", color: "primary" },
             { key: 'HOMOLOGADOR_PLANO_ENTREGA', value: "Homologador (Planos de Entrega)", icon: "bi bi-check2-square", color: "warning" },
             { key: 'LOTADO', value: "Lotado", icon: "bi bi-file-person", color: "secondary" }
@@ -13677,6 +13677,7 @@ class LexicalService {
             "área de trabalho": { single: "área de trabalho", plural: "áreas de trabalho", female: true },
             "area do conhecimento": { single: "area do conhecimento", plural: "areas dos conhecimentos", female: true },
             "atividade": { single: "atividade", plural: "atividades", female: true },
+            "atribuição": { single: "atribuição", plural: "atribuições", female: true },
             "avaliação": { single: "avaliação", plural: "avaliações", female: true },
             "cadeiaValor": { single: "cadeia de valor", plural: "cadeias de valor", female: true },
             "capacidade": { single: "capacidade", plural: "capacidades", female: true },
@@ -14840,9 +14841,9 @@ class UnidadeIntegranteDaoService extends _dao_base_service__WEBPACK_IMPORTED_MO
         this.injector = injector;
         this.searchFields = [];
     }
-    loadIntegrantes(unidade_id) {
+    loadUsuariosIntegrantes(unidade_id) {
         return new Promise((resolve, reject) => {
-            this.server.post('api/' + this.collection + '/load-integrantes', { unidade_id }).subscribe(response => {
+            this.server.post('api/' + this.collection + '/load-usuarios-integrantes', { unidade_id }).subscribe(response => {
                 resolve({
                     integrantes: (response === null || response === void 0 ? void 0 : response.rows) || [],
                     unidade: response === null || response === void 0 ? void 0 : response.unidade
@@ -14850,9 +14851,19 @@ class UnidadeIntegranteDaoService extends _dao_base_service__WEBPACK_IMPORTED_MO
             }, error => reject(error));
         });
     }
-    saveIntegrante(unidade_id, integrante) {
+    loadUnidadesIntegrantes(usuario_id) {
         return new Promise((resolve, reject) => {
-            this.server.post('api/' + this.collection + '/save-integrante', { unidade_id, integrante }).subscribe(response => {
+            this.server.post('api/' + this.collection + '/load-unidades-integrantes', { usuario_id }).subscribe(response => {
+                resolve({
+                    integrantes: (response === null || response === void 0 ? void 0 : response.rows) || [],
+                    usuario: response === null || response === void 0 ? void 0 : response.usuario
+                });
+            }, error => reject(error));
+        });
+    }
+    saveUsuarioIntegrante(unidade_id, integrante) {
+        return new Promise((resolve, reject) => {
+            this.server.post('api/' + this.collection + '/save-usuario-integrante', { unidade_id, integrante }).subscribe(response => {
                 resolve((response === null || response === void 0 ? void 0 : response.data) || null);
             }, error => reject(error));
         });
@@ -27828,8 +27839,8 @@ __webpack_require__.r(__webpack_exports__);
 class Unidade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
     constructor(data) {
         super();
-        this.gestor = null; /* Objeto do ususario gestor */
-        this.gestor_substituto = null; /* Objeto do ususario gestor substituto */
+        this.gestor = null; /* Objeto do vinculo entre unidade/usuario que possui a atribuição de gestor */
+        this.gestor_substituto = null; /* Objeto do vinculo entre unidade/usuario que possui a atribuição de gestor_substituto */
         this.codigo = ""; //Código da unidade
         this.sigla = ""; //Sigla da unidade
         this.nome = ""; //Nome da unidade

@@ -175,14 +175,10 @@ class Usuario extends Authenticatable
         return Change::where('user_id', $this->id)->get()->toArray() ?? []; 
         //Não pode ser usado um relacionamento do Laravel porque as tabelas estão em bancos distintos
     }
-    public function getAtribuicoesAttribute()
+    public function getUnidadesAtribuicoesAttribute()
     { 
         $result = [];
-        /*  foreach($this->unidades as $unidade){
-            $atribuicoes = UnidadeIntegranteAtribuicao::where('unidade_integrante_id', $unidade->pivot->id)->get()->toArray();
-            if(count($atribuicoes) > 0) $result[$unidade->id] = array_map(fn($a) => $a["atribuicao"],$atribuicoes); 
-        } */
-        foreach($this->areasTrabalho as $vinculo){
+        foreach($this->unidadesIntegrante as $vinculo){
             $atribuicoes = $vinculo->atribuicoes->toArray();
             if(count($atribuicoes) > 0) $result[$vinculo->unidade_id] = array_map(fn($a) => $a["atribuicao"], $atribuicoes); 
         }
