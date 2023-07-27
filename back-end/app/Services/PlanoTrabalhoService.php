@@ -12,6 +12,7 @@ use App\Services\ServiceBase;
 use App\Services\CalendarioService;
 use App\Services\UtilService;
 use App\Exceptions\ServerException;
+use App\Models\Documento;
 use DateTime;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -129,6 +130,11 @@ class PlanoTrabalhoService extends ServiceBase
 
   public function extraStore($plano, $unidade, $action)
   {
+    /* Restaura o documento_id */
+    if(!empty($this->documentoId) && !empty(Documento::find($this->documentoId))) {
+      $plano->documento_id = $this->documentoId;
+      $plano->save();
+    }
     /* Adiciona a Lotação automaticamente caso o usuário não tenha */
     $usuario_lotacoes_ids = array_map(fn($u) => $u["unidade_id"], Usuario::find($plano->usuario_id)->areasTrabalho?->toArray() ?? []);
     if (!in_array($plano->unidade_id, $usuario_lotacoes_ids)) {

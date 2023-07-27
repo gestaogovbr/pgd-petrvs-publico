@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, Injector, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { DocumentoDaoService } from 'src/app/dao/documento-dao-service';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
@@ -10,7 +9,7 @@ import { Documento, DocumentoEspecie, HasDocumentos } from 'src/app/models/docum
 import { Template } from 'src/app/models/template.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { LookupItem } from 'src/app/services/lookup.service';
-import { TemplateService } from '../templates/template.service';
+import { TemplateDataset, TemplateService } from '../templates/template.service';
 import { DocumentoService } from './documento.service';
 
 @Component({
@@ -96,12 +95,12 @@ export class DocumentosComponent extends PageFrameBase {
     this.needSign = this.metadata?.needSign || this.needSign;
     this.extraTags = this.metadata?.extraTags || this.extraTags;
     this.especie = this.urlParams?.has("especie") ? this.urlParams!.get("especie") : this.metadata?.especie || this.especie;
-    this.action = this.urlParams?.has("action") ? this.urlParams!.get("action") || "" : "";
-    this.documentoId = this.urlParams?.has("documentoId") ? this.urlParams!.get("documentoId") || undefined : undefined;
+    this.action = this.urlParams?.has("action") ? this.urlParams!.get("action") || "" : this.action;
+    this.documentoId = this.urlParams?.has("documentoId") ? this.urlParams!.get("documentoId") || undefined : this.documentoId;
     this.dataset = this.metadata?.dataset || this.dataset;
     this.datasource = this.metadata?.datasource || this.datasource;
     this.template = this.metadata?.template || this.template;
-    this.tituloDefault = this.metadata?.titulo_documento || this.tituloDefault;
+    this.tituloDefault = this.metadata?.titulo || this.tituloDefault;
     /* Obrigatório instanciar o DAO correto a depender da espécie */
     this.dao = ["TCR"].includes(this.especie) ? this.injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService) : undefined;
   }
@@ -173,7 +172,7 @@ export class DocumentosComponent extends PageFrameBase {
     if(!this.isNoPersist && this.entity && this.needSign(this.entity, documento)) {
       result.push({hint: "Assinar", icon: "bi bi-pen", onClick: this.signDocumento.bind(this) });
     }
-    result.push({hint: "Preview", icon: "bi bi-zoom-in", onClick: this.documentoService.onDocumentoClick.bind(this) });
+    result.push({hint: "Preview", icon: "bi bi-zoom-in", onClick: this.documentoService.onDocumentoClick.bind(this.documentoService.onDocumentoClick) });
     return result;
   }
 

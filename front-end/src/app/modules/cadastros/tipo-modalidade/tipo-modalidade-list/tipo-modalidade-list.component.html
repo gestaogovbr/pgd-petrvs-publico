@@ -18,6 +18,7 @@
                     <badge *ngIf="row.plano_trabalho_assinatura_participante" color="light" icon="bi bi-pen" label="Assinatura do participante"></badge>
                     <badge *ngIf="row.plano_trabalho_assinatura_gestor_unidade" color="light" icon="bi bi-pen" label="Assinatura do gestor da unidade"></badge>
                     <badge *ngIf="row.plano_trabalho_assinatura_gestor_entidade" color="light" icon="bi bi-pen" label="Assinatura do gestor da entidade"></badge>
+                    <badge *ngIf="row.plano_trabalho_calcula_horas" color="light" icon="bi bi-clock" [label]="'Usa horas no ' + lex.noun('plano de trabalho')"></badge>
                 </div>
             </ng-template>
         </column>

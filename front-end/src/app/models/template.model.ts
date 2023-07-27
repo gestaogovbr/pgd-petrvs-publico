@@ -1,9 +1,8 @@
 import { Base } from './base.model';
 import { Entidade } from './entidade.model';
 import { Unidade } from './unidade.model';
-import { Documento, DocumentoEspecie } from "./documento.model";
-import { Usuario } from "./usuario.model";
-import { TemplateDataset } from '../components/input/input-editor/input-editor.component';
+import { DocumentoEspecie } from "./documento.model";
+import { TemplateDataset } from '../modules/uteis/templates/template.service';
 
 export type TemplateEspecie = DocumentoEspecie;
 

@@ -1,7 +1,7 @@
 import { Injectable, Injector } from '@angular/core';
-import { TemplateDataset } from '../components/input/input-editor/input-editor.component';
 import { Cidade } from '../models/cidade.model';
 import { DaoBaseService } from './dao-base.service';
+import { TemplateDataset } from '../modules/uteis/templates/template.service';
 
 @Injectable({
   providedIn: 'root'

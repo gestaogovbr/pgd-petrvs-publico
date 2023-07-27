@@ -21,6 +21,7 @@ export class TipoModalidadeFormComponent extends PageFormBase<TipoModalidade, Ti
       plano_trabalho_assinatura_participante: { default: true },
       plano_trabalho_assinatura_gestor_unidade: { default: false },
       plano_trabalho_assinatura_gestor_entidade: { default: false },
+      plano_trabalho_calcula_horas: { default: false },
       atividade_tempo_despendido: { default: false },
       atividade_esforco: { default: false },
     }, this.cdRef, this.validate);

@@ -1,7 +1,6 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
-import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
 import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
@@ -10,6 +9,7 @@ import { IIndexable } from 'src/app/models/base.model';
 import { UnidadeIntegrante } from 'src/app/models/unidade-integrante.model';
 import { Usuario } from 'src/app/models/usuario.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
+import { TemplateDataset } from 'src/app/modules/uteis/templates/template.service';
 
 @Component({
   selector: 'app-usuario-form',
