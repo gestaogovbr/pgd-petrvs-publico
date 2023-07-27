@@ -813,7 +813,6 @@ class Programa extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.unidade_id = ""; /* Unidade vinculada ao programa */
         this.template_tcr_id = null; /* Template do TCR */
         this.tipo_documento_tcr_id = null; /* Tipo de documento do TCR */
-        this.prazo_execucao = 365; /*Limite máximo de dias corridos para o plano de entregas (Zero para não limitar) */
         this.initialization(data);
     }
 }
