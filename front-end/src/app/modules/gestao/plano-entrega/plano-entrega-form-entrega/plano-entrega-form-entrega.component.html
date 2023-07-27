@@ -7,7 +7,7 @@
                 </div>
                 <separator></separator>
                 <div class="row">
-                    <input-search #entrega [size]="6" controlName="entrega_id" [dao]="entregaDao"></input-search>
+                    <input-search #entrega [size]="6" controlName="entrega_id" [dao]="entregaDao" (change)="onEntregaChange($event)"></input-search>
                     <input-text [size]="6" label="Detalhamento" controlName="descricao"></input-text>
                 </div>
                 <separator title="Especificação das Entregas"></separator>
@@ -16,8 +16,8 @@
                     <input-datetime date [size]="6" label="Fim" controlName="fim" [labelInfo]="'Fim ' + lex.noun('Plano de Entregas',false,true) + '(Estimativa Inicial)'"></input-datetime>
                 </div>
                 <div class="row">
-                    <input-search [size]="6" #demandante label="Demandante" controlName="unidade_id" [dao]="unidadeDao"></input-search>
-                    <input-text [size]="6" label="Destinatário" icon="bi bi-mailbox" controlName="destinatario"></input-text>
+                    <input-search [size]="6" #unidade label="Demandante" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+                    <input-text [size]="6" label="Destinatário" controlName="destinatario"></input-text>
                 </div>
                 <div *ngIf="this.entrega?.selectedItem?.entity" class="row">
                     <input-number *ngIf="checkTipoIndicador(['PORCENTAGEM'])" [size]="6" label="Meta" controlName="meta" sufix="%"></input-number>

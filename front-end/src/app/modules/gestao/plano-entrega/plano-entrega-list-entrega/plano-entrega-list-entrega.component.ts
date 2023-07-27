@@ -39,6 +39,15 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   } get cadeiaValorId(): string | undefined {
     return this._cadeiaValorId;
   }
+  @Input() set unidadeId(value: string | undefined) {
+    if(this._unidadeId != value) {
+      this._unidadeId = value;
+      // verificar nas entregas quais objetivos não são desse planjemaneot e remove-los
+      // será remvido somente da lista de itens (em memória), independente de persistente ou não, MAS NO BACKEND HAVERÀ ESSA VALIDAÇÂO!
+    }
+  } get unidadeId(): string | undefined {
+    return this._unidadeId;
+  }
 
   public get items(): PlanoEntregaEntrega[] {
     if (!this.gridControl.value) this.gridControl.setValue([]);
@@ -47,6 +56,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
 
   private _cadeiaValorId?: string;
   private _planejamentoId?: string;
+  private _unidadeId?: string;
   
   public entityToControl = (value: any) => (value as PlanoEntrega).entregas || [];
   public options: ToolbarButton[] = [];
@@ -83,7 +93,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     // Testa se o usuário possui permissão para excluir o feriado
     if (true || this.auth.hasPermissionTo("MOD_FER_EXCL")) {
       this.options.push({
-        icon: "bi bi-trash",
+        icon: "bi bi-trash", 
         label: "Excluir",
         onClick: this.delete.bind(this)
       });
@@ -121,6 +131,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
         plano_entrega: this.entity!,
         planejamento_id: this.planejamentoId,
         cadeia_valor_id: this.cadeiaValorId,
+        unidade_id: this.unidadeId,
         entrega: entrega,
       },
       modalClose: async (modalResult) => {
@@ -144,7 +155,8 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
         plano_entrega: this.entity!,
         planejamento_id: this.planejamentoId,
         cadeia_valor_id: this.cadeiaValorId,
-        entrega: entrega,
+        unidade_id: this.unidadeId,
+        entrega: entrega, 
       },
       modalClose: async (modalResult) => {
         if (modalResult) {
@@ -152,7 +164,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
           this.items[index] = modalResult;
         };
       }
-    });
+    }); 
   }
 
   public async delete(entrega: PlanoEntregaEntrega) {
