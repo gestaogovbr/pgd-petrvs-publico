@@ -21,6 +21,7 @@ export class EntregaFormComponent extends PageFormBase<Entrega, EntregaDaoServic
 
   constructor(public injector: Injector) {
     super(injector, Entrega, EntregaDaoService);
+    this.modalWidth = 600;
     this.form = this.fh.FormBuilder({
       nome: {default: ""},
       descricao: {default: ""},
@@ -95,7 +96,7 @@ export class EntregaFormComponent extends PageFormBase<Entrega, EntregaDaoServic
   public addItemHandleItemQualitativo(): LookupItem | undefined {
     let result = undefined;
     const value = this.form!.controls.itemQualitativo.value;
-    const key = this.util.textHash(value);
+    const key = this.util.onlyAlphanumeric(value).toUpperCase();
     if(value?.length && this.util.validateLookupItem(this.form!.controls.lista_qualitativos.value, key)) {
       result = {
         key: key,

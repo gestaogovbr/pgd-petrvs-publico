@@ -8,6 +8,7 @@ import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model
 import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
+import { PlanoEntregaService } from '../plano-entrega.service';
 
 @Component({
   selector: 'plano-entrega-list-entrega',
@@ -62,14 +63,16 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   public options: ToolbarButton[] = [];
   public planoEntregaId: string = "";
   public dao: PlanoEntregaEntregaDaoService;
+  public planoEntregaService: PlanoEntregaService;
 
   constructor(public injector: Injector) {
     super(injector);
     this.title = this.lex.noun("Entrega");
-    this.join = ["unidade", "entidade"];
+    this.join = ["unidade", "entidade", "entrega"];
     this.code = "MOD_PENT_CONS";
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
     this.dao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
+    this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
     this.form = this.fh.FormBuilder({
       descricao: { default: "" },
       inicio: { default: new Date() },

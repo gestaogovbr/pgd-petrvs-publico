@@ -23,6 +23,8 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import { Entrega } from 'src/app/models/entrega.model';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
+import { LookupItem } from 'src/app/services/lookup.service';
+import { PlanoEntregaService } from '../plano-entrega.service';
 
 @Component({
   selector: 'plano-entrega-form-entrega',
@@ -51,11 +53,13 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   public formProcessos: FormGroup;
   public unidadeDao: UnidadeDaoService;
   public entregaDao: EntregaDaoService;
+  public itensQualitativo: LookupItem[] = [];
   public planejamentoInstitucionalDao: PlanejamentoDaoService;
   public planoEntregaEntregaDao: PlanoEntregaEntregaDaoService;
   public cadeiaValorDao: CadeiaValorDaoService;
   public cadeiaValorProcessoDao: CadeiaValorProcessoDaoService;
   public planejamentoObjetivoDao: PlanejamentoObjetivoDaoService;
+  public planoEntregaService: PlanoEntregaService;
 
   constructor(public injector: Injector) {
     super(injector, PlanoEntregaEntrega, PlanoEntregaEntregaDaoService);
@@ -67,7 +71,9 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
     this.cadeiaValorProcessoDao = injector.get<CadeiaValorProcessoDaoService>(CadeiaValorProcessoDaoService);
     this.planejamentoObjetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
+    this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
     this.join = ['objetivos', 'processos', 'unidade'];
+    this.modalWidth = 600;
     this.form = this.fh.FormBuilder({
       descricao: { default: "" },
       inicio: { default: new Date() },
@@ -119,7 +125,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     let result = null;
     if (['descricao'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    } else if (['progresso_realizado', 'progresso_esperado', 'meta', 'realizado'].indexOf(controlName) >= 0 && !(control.value >= 0)) {
+    } else if (['progresso_realizado', 'progresso_esperado', 'meta', 'realizado'].indexOf(controlName) >= 0 && !(control.value >= 0 || control.value?.length > 0)) {
       result = "Obrigatório";
     } else if (['unidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "O demandante é obrigatório";
@@ -161,7 +167,10 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   public async loadData(entity: PlanoEntregaEntrega, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
     this.onEntregaChange(form.value);
-    form.patchValue(this.util.fillForm(formValue, entity));
+    let {meta, realizado, ...entityWithout} = entity;
+    form.patchValue(this.util.fillForm(formValue, entityWithout));
+    form.controls.meta.setValue(this.planoEntregaService.getValor(entity.meta));
+    form.controls.realizado.setValue(this.planoEntregaService.getValor(entity.realizado));
   }
 
   public async initializeData(form: FormGroup) {
@@ -173,11 +182,14 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       let entrega: PlanoEntregaEntrega = this.util.fill(new PlanoEntregaEntrega(), this.entity!);
       this.gridObjetivos?.confirm();
       this.gridProcessos?.confirm();
-      entrega = this.util.fillForm(entrega, this.form!.value);
+      let {meta, realizado, ...valueWithout} = this.form!.value;
+      entrega = this.util.fillForm(entrega, valueWithout);
       entrega.objetivos = entrega.objetivos.filter(x => ["ADD", "DELETE"].includes(x._status || ""));
       entrega.processos = entrega.processos.filter(x => ["ADD", "DELETE"].includes(x._status || ""));
       entrega.unidade = this.unidade?.selectedItem?.entity;
       entrega.entrega = this.entrega?.selectedItem?.entity;
+      entrega.meta = this.planoEntregaService.getEntregaValor(entrega.entrega!, meta);
+      entrega.realizado = this.planoEntregaService.getEntregaValor(entrega.entrega!, realizado);
       resolve(new NavigateResult(entrega));
     });
   }
@@ -190,8 +202,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     const meta = this.form?.controls.meta.value;
     const realizado = this.form?.controls.realizado.value;
     if (meta && realizado) {
-      let totalRealizado = ((realizado / meta) * 100).toFixed(2) || 0;
-      console.log(totalRealizado);
+      let totalRealizado = !isNaN(realizado) ? ((realizado / meta) * 100).toFixed(2) || 0 : 0;
       this.form?.controls.progresso_realizado.setValue(totalRealizado);
     }
   }
@@ -272,7 +283,9 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       const tipoIndicador = entregaItem.tipo_indicador;
         switch (tipoIndicador) {
           case 'QUALITATIVO':
-            this.popularCamposQualitativo(row);
+            this.itensQualitativo = entregaItem.lista_qualitativos || [];
+            this.form?.controls.meta.setValue(this.itensQualitativo.length ? this.itensQualitativo[0].key : null);
+            this.form?.controls.realizado.setValue(this.itensQualitativo.length ? this.itensQualitativo[0].key : null);
             break;
           case 'VALOR':
             this.form?.controls.meta.setValue(100);
@@ -292,12 +305,5 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       this.calculaRealizado();
     }
   }
-
-  private popularCamposQualitativo(row: any) {
-    let listaQualitativo = (this.entrega?.selectedItem?.entity as Entrega).lista_qualitativos
-    this.form?.controls.meta.setValue(listaQualitativo);
-    this.form?.controls.realizado.setValue(listaQualitativo);
-  }
-
-  
+ 
 }
