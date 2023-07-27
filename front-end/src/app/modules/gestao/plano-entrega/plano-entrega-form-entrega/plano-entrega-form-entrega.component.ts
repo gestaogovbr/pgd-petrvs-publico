@@ -38,24 +38,24 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   @ViewChild('inputObjetivo', { static: false }) public inputObjetivo?: InputSearchComponent;
   @ViewChild('inputProcesso', { static: false }) public inputProcesso?: InputSearchComponent;
   @ViewChild('entrega', { static: false }) public entrega?: InputSearchComponent;
-  @ViewChild('demandante', { static: false }) public demandante?: InputSearchComponent;
+  @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
   @ViewChild('tabs', { static: false }) public tabs?: TabsComponent;
-  
+
   public planejamentoDao: PlanejamentoDaoService;
   public planejamentoId?: string;
   public cadeiaValorId?: string;
-  public unidadeId: string = "";
+  public unidadeId?: string;
   public formObjetivos: FormGroup;
   public formProcessos: FormGroup;
   public unidadeDao: UnidadeDaoService;
-  public entregaDao: EntregaDaoService;  
-  public planejamentoInstitucionalDao: PlanejamentoDaoService;  
-  public planoEntregaEntregaDao: PlanoEntregaEntregaDaoService;  
-  public cadeiaValorDao: CadeiaValorDaoService;  
+  public entregaDao: EntregaDaoService;
+  public planejamentoInstitucionalDao: PlanejamentoDaoService;
+  public planoEntregaEntregaDao: PlanoEntregaEntregaDaoService;
+  public cadeiaValorDao: CadeiaValorDaoService;
   public cadeiaValorProcessoDao: CadeiaValorProcessoDaoService;
   public planejamentoObjetivoDao: PlanejamentoObjetivoDaoService;
 
-  constructor(public injector: Injector) { 
+  constructor(public injector: Injector) {
     super(injector, PlanoEntregaEntrega, PlanoEntregaEntregaDaoService);
     this.planejamentoDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
@@ -67,30 +67,31 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.planejamentoObjetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
     this.join = ['objetivos', 'processos', 'unidade'];
     this.form = this.fh.FormBuilder({
-      descricao: {default: ""},
+      descricao: { default: "" },
       inicio: { default: new Date() },
       fim: { default: new Date() },
-      meta: {default: 100},
-      realizado: {default: null},
-      plano_entrega_id: {default: ""},
-      entrega_pai_id: {default: null},
-      entrega_id: {default: null},
-      progresso_esperado: {default: 100},
-      progresso_realizado: {default: null},
-      unidade_id: {default: null},
-      destinatario: {default: null},
-      objetivos: {default: []},
-      processos: {default: []},
-      planejamento_id: {default: null},
-      cadeia_valor_id: {default: null},
-      objetivo_id: {default: null},
-      objetivo: {default: null},
+      meta: { default: 100 },
+      realizado: { default: null },
+      plano_entrega_id: { default: "" },
+      entrega_pai_id: { default: null },
+      entrega_id: { default: null },
+      progresso_esperado: { default: 100 },
+      progresso_realizado: { default: null },
+      unidade_id: { default: null },
+      destinatario: { default: null },
+      objetivos: { default: [] },
+      processos: { default: [] },
+      listaQualitativo: { default: [] },
+      planejamento_id: { default: null },
+      cadeia_valor_id: { default: null },
+      objetivo_id: { default: null },
+      objetivo: { default: null },
     }, this.cdRef, this.validate);
     this.formObjetivos = this.fh.FormBuilder({
-      objetivo_id: {default: null},
+      objetivo_id: { default: null },
     }, this.cdRef, this.validate);
     this.formProcessos = this.fh.FormBuilder({
-      processo_id: {default: null},
+      processo_id: { default: null },
     }, this.cdRef, this.validate);
   }
 
@@ -98,57 +99,57 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     super.ngOnInit();
     this.planejamentoId = this.metadata?.planejamento_id;
     this.cadeiaValorId = this.metadata?.cadeia_valor_id;
-    this.unidadeId = this.urlParams?.get('unidade_id') || "";
+    this.unidadeId = this.metadata?.unidade_id;
     this.entity = this.metadata?.entrega as PlanoEntregaEntrega;
   }
 
   ngAfterViewInit() {
     super.ngAfterViewInit();
     (async () => {
+      await this.unidade?.loadSearch(this.unidadeId);
       await this.planejamento?.loadSearch(this.planejamentoId);
       await this.cadeiaValor?.loadSearch(this.cadeiaValorId);
-    })();    
+    })();
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if(['descricao'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if (['descricao'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    } else if (['progresso_realizado', 'progresso_esperado', 'meta', 'realizado'].indexOf(controlName) >= 0 && !(control.value >= 0)){
+    } else if (['progresso_realizado', 'progresso_esperado', 'meta', 'realizado'].indexOf(controlName) >= 0 && !(control.value >= 0)) {
       result = "Obrigatório";
-    } else if (['unidade_id'].indexOf(controlName) >= 0&& !control.value?.length){
+    } else if (['unidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "O demandante é obrigatório";
-    } else if (['entrega_id'].indexOf(controlName) >= 0&& !control.value?.length){
+    } else if (['entrega_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "A entrega é obrigatória";
-    } else if(['inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+    } else if (['inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
-    } else if(['fim'].indexOf(controlName) >=0  && !this.dao?.validDateTime(control.value)){
+    } else if (['fim'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
     }
     return result;
   }
 
   public formValidation = (form?: FormGroup) => {
-    if(this.gridObjetivos?.editing) {
-      this.tabs!.active = "OBJETIVOS" ;
+    if (this.gridObjetivos?.editing) {
+      this.tabs!.active = "OBJETIVOS";
       return "Salve ou cancele o registro atual em edição";
     }
-    if(this.gridProcessos?.editing) {
-      this.tabs!.active = "PROCESSOS" ;
+    if (this.gridProcessos?.editing) {
+      this.tabs!.active = "PROCESSOS";
       return "Salve ou cancele o registro atual em edição";
     }
-    if(this.form!.controls.fim.value && this.form!.controls.inicio.value > this.form!.controls.fim.value) return "A data do fim não pode ser anterior à data do fim!";
+    if (this.form!.controls.fim.value && this.form!.controls.inicio.value > this.form!.controls.fim.value) return "A data do fim não pode ser anterior à data do fim!";
     return undefined;
   }
 
   public async loadData(entity: PlanoEntregaEntrega, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
-    this.calculaRealizado();
+    this.onEntregaChange(form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
   }
 
-  public async initializeData(form: FormGroup){
-  
+  public async initializeData(form: FormGroup) {
     await this.loadData(this.entity!, form);
   }
 
@@ -160,7 +161,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       entrega = this.util.fillForm(entrega, this.form!.value);
       entrega.objetivos = entrega.objetivos.filter(x => ["ADD", "DELETE"].includes(x._status || ""));
       entrega.processos = entrega.processos.filter(x => ["ADD", "DELETE"].includes(x._status || ""));
-      entrega.unidade = this.demandante?.selectedItem?.entity;
+      entrega.unidade = this.unidade?.selectedItem?.entity;
       entrega.entrega = this.entrega?.selectedItem?.entity;
       resolve(new NavigateResult(entrega));
     });
@@ -169,12 +170,13 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   public onRealizadoChange(event: Event) {
     this.calculaRealizado();
   }
-  
+
   public calculaRealizado() {
     const meta = this.form?.controls.meta.value;
     const realizado = this.form?.controls.realizado.value;
-    if(meta && realizado) {
-      let totalRealizado = ((realizado / meta) * 100).toFixed(2); 
+    if (meta && realizado) {
+      let totalRealizado = ((realizado / meta) * 100).toFixed(2) || 0;
+      console.log(totalRealizado);
       this.form?.controls.progresso_realizado.setValue(totalRealizado);
     }
   }
@@ -211,13 +213,13 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
 
   public async removeObjetivo(row: any) {
     let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
-    if(confirm) row._status = "DELETE";
+    if (confirm) row._status = "DELETE";
     return false;
   }
 
   public async saveObjetivo(form: FormGroup, row: any) {
     let consolidado = row as PlanoEntregaEntregaObjetivo;
-    if(form!.controls.objetivo_id.value.length && this.inputObjetivo!.selectedItem) {
+    if (form!.controls.objetivo_id.value.length && this.inputObjetivo!.selectedItem) {
       consolidado.objetivo_id = form!.controls.objetivo_id.value;
       consolidado.objetivo = this.inputObjetivo!.selectedItem!.entity;
       return consolidado;
@@ -235,17 +237,52 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
 
   public async removeProcesso(row: any) {
     let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
-    if(confirm) row._status = "DELETE";
+    if (confirm) row._status = "DELETE";
     return false;
   }
 
   public async saveProcesso(form: FormGroup, row: any) {
     let consolidado = row as PlanoEntregaEntregaProcesso;
-    if(form!.controls.processo_id.value.length && this.inputProcesso!.selectedItem) {
+    if (form!.controls.processo_id.value.length && this.inputProcesso!.selectedItem) {
       consolidado.processo_id = form!.controls.processo_id.value;
       consolidado.processo = this.inputProcesso!.selectedItem!.entity;
       return consolidado;
     }
     return undefined;
   }
+
+  public async onEntregaChange(row: any) {
+    if (this.entrega && this.entrega.selectedItem) {
+      const entregaItem = this.entrega?.selectedItem?.entity as Entrega;
+      const tipoIndicador = entregaItem.tipo_indicador;
+        switch (tipoIndicador) {
+          case 'QUALITATIVO':
+            this.popularCamposQualitativo(row);
+            break;
+          case 'VALOR':
+            this.form?.controls.meta.setValue(100);
+            this.form?.controls.realizado.setValue(0);
+            break;
+          case 'QUANTIDADE':
+            this.form?.controls.meta.setValue(100);
+            this.form?.controls.realizado.setValue(0);
+            break;
+          case 'PORCENTAGEM':
+            this.form?.controls.meta.setValue(100);
+            this.form?.controls.realizado.setValue(100);
+            break;
+          default:
+            break;
+        }
+      this.calculaRealizado();
+    }
+  }
+
+  private popularCamposQualitativo(row: any) {
+    let listaQualitativo = (this.entrega?.selectedItem?.entity as Entrega).lista_qualitativos
+    this.form?.controls.meta.setValue(listaQualitativo);
+    this.form?.controls.realizado.setValue(listaQualitativo);
+  }
+
+  
 }
