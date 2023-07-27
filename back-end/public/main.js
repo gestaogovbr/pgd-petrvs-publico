@@ -3901,6 +3901,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/forms */ "3Pt+");
 /* harmony import */ var src_app_services_dialog_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/services/dialog.service */ "CzQJ");
 /* harmony import */ var _input_base__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../input-base */ "d1P8");
+/* harmony import */ var src_app_modules_uteis_templates_template_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/modules/uteis/templates/template.service */ "G6YU");
+
 
 
 
@@ -4298,6 +4300,7 @@ class InputEditorComponent extends _input_base__WEBPACK_IMPORTED_MODULE_4__["Inp
         };
         this._variables = [];
         this.dialog = injector.get(src_app_services_dialog_service__WEBPACK_IMPORTED_MODULE_3__["DialogService"]);
+        this.templateService = injector.get(src_app_modules_uteis_templates_template_service__WEBPACK_IMPORTED_MODULE_5__["TemplateService"]);
         this._value = "";
     }
     set template(value) {
@@ -4430,183 +4433,9 @@ class InputEditorComponent extends _input_base__WEBPACK_IMPORTED_MODULE_4__["Inp
     }
     updateEditor() {
         if (this.template != undefined && this.datasource != undefined) {
-            this.value = this.renderTemplate(this.template, this.datasource);
+            this.value = this.templateService.renderTemplate(this.template, this.datasource);
             this.cdRef.detectChanges();
         }
-    }
-    getStrRegEx(expression) {
-        return !expression ? "" : typeof expression == "string" ?
-            expression.split("").map(c => "<>/\\{}[]()-?*.!~".includes(c) ? "\\" + c : c).join("") :
-            expression.toString().replace(/^\//, "").replace(/\/.*?$/, "");
-    }
-    /* Monta as RegExp start e end de modo a obter: /^(BEFORE)(START)(TAG)(END)(AFTER)$/ */
-    tagSplit(template, startTag, endTag) {
-        var _a, _b;
-        let beforeAfterRegEx = (tag) => "^(?<BEFORE>[\\s\\S]*?)(?<START>" + this.getStrRegEx(tag.before) + "[\\s\\t\\n]*)(?<TAG>" + this.getStrRegEx(tag.tag) + ")(?<END>[\\s\\t\\n]*" + this.getStrRegEx(tag.after) + ")(?<AFTER>[\\s\\S]*?)$";
-        let startRegEx = beforeAfterRegEx(typeof startTag == "string" ? { tag: startTag } : startTag);
-        let endRegEx = beforeAfterRegEx(typeof endTag == "string" ? { tag: endTag } : endTag);
-        let start = (_a = template.match(new RegExp(startRegEx))) === null || _a === void 0 ? void 0 : _a.groups;
-        if (start) {
-            let end = (_b = start.AFTER.match(new RegExp(endRegEx))) === null || _b === void 0 ? void 0 : _b.groups;
-            if (end) {
-                return {
-                    before: start.BEFORE,
-                    start: { before: start.START, tag: start.TAG, after: start.END },
-                    content: end.BEFORE,
-                    end: { before: end.STERT, tag: end.TAG, after: end.END },
-                    after: end.AFTER
-                };
-            }
-        }
-        return undefined;
-    }
-    getExpressionValue(expression, context) {
-        var _a;
-        expression = expression.replace("[+]", ".length");
-        (_a = expression.match(/\[\w+\]/g)) === null || _a === void 0 ? void 0 : _a.map(x => x.replace(/^\[/, "").replace(/\]$/, "")).forEach(x => expression = expression.replace("[" + x + "]", "[" + this.getExpressionValue(x, context).toString() + "]"));
-        if (expression.toLowerCase().match(InputEditorComponent.EXPRESSION_BOOLEAN))
-            return expression.toLowerCase() == "true";
-        if (expression.match(InputEditorComponent.EXPRESSION_STRING))
-            return expression.replace(/^\"/, "").replace(/\"$/, "");
-        if (expression.match(InputEditorComponent.EXPRESSION_NUMBER))
-            return +expression;
-        if (expression.match(InputEditorComponent.EXPRESSION_VAR))
-            return this.util.getNested(context, expression);
-        return undefined;
-    }
-    bondaryTag(tag, regStrBefore, regStrAfter) {
-        var _a, _b, _c, _d;
-        let start = tag.before.match(new RegExp("(?<BEFORE>[\\s\\S]*)(?<CONTENT>" + regStrBefore + ")"));
-        let end = tag.after.match(new RegExp("(?<CONTENT>" + regStrAfter + ")(?<AFTER>[\\s\\S]*)"));
-        tag.start.before = ((_a = start === null || start === void 0 ? void 0 : start.groups) === null || _a === void 0 ? void 0 : _a.CONTENT) || "";
-        tag.before = ((_b = start === null || start === void 0 ? void 0 : start.groups) === null || _b === void 0 ? void 0 : _b.BEFORE) || "";
-        tag.after = ((_c = end === null || end === void 0 ? void 0 : end.groups) === null || _c === void 0 ? void 0 : _c.AFTER) || "";
-        tag.end.after = ((_d = end === null || end === void 0 ? void 0 : end.groups) === null || _d === void 0 ? void 0 : _d.CONTENT) || "";
-    }
-    evaluateOperator(a, operator, b) {
-        switch (operator) {
-            case "==":
-            case "=": return a == b;
-            case "<>":
-            case "!=": return a != b;
-            case ">": return a > b;
-            case ">=": return a >= b;
-            case "<": return a < b;
-            case "<=": return a <= b;
-        }
-        return false;
-    }
-    splitEndTag(after, startTag, endTag) {
-        let before = "";
-        let level = 1;
-        let next = undefined;
-        while (next = this.tagSplit(after, { tag: new RegExp(this.getStrRegEx(InputEditorComponent.OPEN_TAG) + "((" + startTag + ")|(" + endTag + "))") }, InputEditorComponent.CLOSE_TAG)) {
-            level += next.start.tag.toString().indexOf(endTag) >= 0 ? -1 : 1;
-            if (!level) { /* Level = 0; significa que o end-for é do respectivo for */
-                next.before = before + next.before;
-                return next;
-            }
-            after = next.after;
-            before += next.before + next.start.tag + next.content + next.end.tag;
-        }
-        return undefined;
-    }
-    renderTemplate(template, context) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
-        let tag = undefined;
-        let statement = null;
-        let next = template;
-        let result = "";
-        let processParamDrop = (tag, params) => {
-            let parameter = []; /* Usado penas para iterar os parametros */
-            let parameters = ((params === null || params === void 0 ? void 0 : params.replace(/^;/, "")) || "").split(";").reduce((a, v) => (parameter = v.split("="), a[parameter[0]] = parameter[1], a), {});
-            if (tag && parameters.drop && parameters.drop.match(/^\w+$/)) {
-                this.bondaryTag(tag, "<" + parameters.drop + ">[\\s\\S]*?$", "^[\\s\\S]*?<\\/" + parameters.drop + ">");
-                tag.start.before = "";
-                tag.end.after = "";
-            }
-        };
-        while (tag = this.tagSplit(next, InputEditorComponent.OPEN_TAG, InputEditorComponent.CLOSE_TAG)) {
-            try {
-                if (tag.content.match(InputEditorComponent.EXPRESSION_VAR)) {
-                    let content = (this.getExpressionValue(tag.content, context) + "").replace(/^undefined$/, "");
-                    tag.content = this.renderTemplate(content, context);
-                }
-                else if (tag.content.match(InputEditorComponent.EXPRESSION_IF)) {
-                    statement = tag.content.match(InputEditorComponent.STATEMENT_IF); /* if:OPER1=OPER2;par=0;par=0... */
-                    let aValue = this.getExpressionValue(((_a = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _a === void 0 ? void 0 : _a.EXP_A) || "", context);
-                    let bValue = this.getExpressionValue(((_b = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _b === void 0 ? void 0 : _b.EXP_B) || "", context);
-                    let ifThen = this.evaluateOperator(aValue, ((_c = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _c === void 0 ? void 0 : _c.OPER) || "", bValue);
-                    /* Processa o parametro drop caso ele exista, removendo a HTML-tag (definida pelo drop=TAG) onde o comando está dentro */
-                    processParamDrop(tag, (_d = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _d === void 0 ? void 0 : _d.PARS);
-                    /* Encontra o end-if */
-                    let endIfTag = this.splitEndTag(tag.after, "if:", "end-if");
-                    if (endIfTag) {
-                        /* Processa o parametro drop caso ele exista na tag de fechamento, removendo a HTML-tag (definida pelo drop=TAG) onde o comando está dentro */
-                        processParamDrop(endIfTag, (_e = endIfTag.content) === null || _e === void 0 ? void 0 : _e.replace(/^;/, ""));
-                        /* O content da tag só será renderizado caso ifThen seja true */
-                        tag.content = ifThen ? this.renderTemplate(endIfTag.before, context) : "";
-                        tag.after = endIfTag.after;
-                    }
-                    else {
-                        throw new Error("o if não possui um repectivo end-if");
-                    }
-                }
-                else if (tag.content.match(InputEditorComponent.EXPRESSION_FOR)) {
-                    statement = tag.content.match(InputEditorComponent.STATEMENT_FOR); /* for:EXP[(t..)x..0|0..x(..t)|EACH];par=0;par=0... */
-                    /* Processa o parametro drop caso ele exista, removendo a HTML-tag (definida pelo drop=TAG) onde o comando está dentro */
-                    processParamDrop(tag, (_f = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _f === void 0 ? void 0 : _f.PARS);
-                    /* Encontra o end-for */
-                    let endForTag = this.splitEndTag(tag.after, "for:", "end-for");
-                    if (endForTag) {
-                        /* Processa o parametro drop caso ele exista na tag de fechamento, removendo a HTML-tag (definida pelo drop=TAG) onde o comando está dentro */
-                        processParamDrop(endForTag, (_g = endForTag.content) === null || _g === void 0 ? void 0 : _g.replace(/^;/, ""));
-                        /* O content da tag será todo o conteúdo repetível do for e o after será o after do end-for */
-                        tag.content = "";
-                        tag.after = endForTag.after;
-                        /* Verifica se a variável de iteração já existe no contexto */
-                        if (context[((_h = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _h === void 0 ? void 0 : _h.EACH) || ((_j = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _j === void 0 ? void 0 : _j.INDEX) || ""])
-                            throw new Error("Variável de contexto já existe no contexto atual");
-                        /* Itera os elementos do for */
-                        let elements = this.getExpressionValue(((_k = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _k === void 0 ? void 0 : _k.EXP) || "", context);
-                        let each = !!((_m = (_l = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _l === void 0 ? void 0 : _l.EACH) === null || _m === void 0 ? void 0 : _m.match(/^[a-zA-Z]\w+$/));
-                        let asc = each || !!((_p = (_o = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _o === void 0 ? void 0 : _o.START) === null || _p === void 0 ? void 0 : _p.match(/^\d+$/));
-                        let startFor = each ? 0 : asc ? +statement.groups.START : elements.length;
-                        let endFor = each ? elements.length : asc ? elements.length : +statement.groups.END;
-                        for (let index = startFor; asc ? index < endFor : index > endFor; asc ? index++ : index--) {
-                            let current = elements[index];
-                            let forContext = Object.assign({}, context);
-                            /* Alimenta contexto com variaveis do for */
-                            if (each) {
-                                forContext[statement.groups.EACH] = current;
-                            }
-                            else {
-                                let total = asc && ((_q = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _q === void 0 ? void 0 : _q.END) ? statement.groups.END : !asc && ((_r = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _r === void 0 ? void 0 : _r.START) ? statement.groups.START : undefined;
-                                if (total)
-                                    forContext[total] = elements.length;
-                                forContext[statement.groups.INDEX] = index;
-                            }
-                            tag.content += this.renderTemplate(endForTag.before, forContext);
-                        }
-                    }
-                    else {
-                        throw new Error("o for não possui um repectivo end-for");
-                    }
-                }
-            }
-            catch (error) {
-                tag.content = "(ERRO)";
-            }
-            finally {
-                tag.start.tag = "";
-                tag.end.tag = "";
-            }
-            /* Incrementa o result e prepara o next */
-            result += tag.before + (tag.start.before || "") + tag.start.tag + (tag.start.after || "") + tag.content + (tag.end.before || "") + tag.end.tag + (tag.end.after || "");
-            next = tag.after;
-        }
-        result += next;
-        return result;
     }
     ngOnInit() {
         super.ngOnInit();
@@ -4625,18 +4454,6 @@ class InputEditorComponent extends _input_base__WEBPACK_IMPORTED_MODULE_4__["Inp
         this.updateEditor();
     }
 }
-InputEditorComponent.OPEN_TAG = "{{";
-InputEditorComponent.CLOSE_TAG = "}}";
-InputEditorComponent.EXPRESSION_BOOLEAN = /^(true|false)$/;
-InputEditorComponent.EXPRESSION_NUMBER = /^[0-9,\.]+$/;
-InputEditorComponent.EXPRESSION_STRING = /^".*"$/;
-InputEditorComponent.EXPRESSION_VAR = /^[a-zA-z]\w*?((\.\w+?)|(\[\+\])|(\[(\d+?|[a-zA-z]\w*?)\]))*$/;
-InputEditorComponent.EXPRESSION_IF = /^if:(".*"|true|false|([0-9,\.]+)|([a-zA-z]\w*?((\.\w+?)|(\[\+\])|(\[(\d+?|[a-zA-z]\w*?)\]))*))(\s*)(=|==|\>|\>=|\<|\<=|\<\>|\!=)(\s*)(".*"|true|false|([0-9,\.]+)|([a-zA-z]\w*?((\.\w+?)|(\[\+\])|(\[(\d+?|[a-zA-z]\w*?)\]))*))(;.+?\=.+?)*$/;
-InputEditorComponent.EXPRESSION_FOR = /^for:([a-zA-z]\w*?((\.\w+?)|(\[(\d+?|[a-zA-z]\w*?)\]))*)\[((\d+\.\.[a-zA-Z]\w*?(\.\.[a-zA-Z]\w*?)?)|(([a-zA-Z]\w*?\.\.)?[a-zA-Z]\w*?\.\.\d+)|([a-zA-Z]\w*?))\](;.+?\=.+?)*$/;
-InputEditorComponent.STATEMENT_FOR = /^for:(?<EXP>([a-zA-z]\w*?((\.\w+?)|(\[(\d+?|[a-zA-z]\w*?)\]))*))\[(((?<START>\w+?)\.\.(?<INDEX>\w*?)(\.\.(?<END>\w+?))?)|(%(?<EACH>\w+?)%))\](?<PARS>(;.+?\=.+?)*)$/;
-InputEditorComponent.STATEMENT_IF = /^if:(?<EXP_A>.+?)(\s*)(?<OPER>=|==|\>|\>=|\<|\<=|\<\>|\!=)(\s*)(?<EXP_B>.+?)(?<PARS>(;.+?\=.+?)*)$/;
-InputEditorComponent.STATEMENT_FOR_WITHOUT_PARS = /^(?<STATMENT>for:\w+\[.+\])/;
-InputEditorComponent.PARAMETER_DROP = "drop";
 InputEditorComponent.ɵfac = function InputEditorComponent_Factory(t) { return new (t || InputEditorComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
 InputEditorComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: InputEditorComponent, selectors: [["input-editor"]], viewQuery: function InputEditorComponent_Query(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵviewQuery"](_c0, 1);
@@ -8126,6 +7943,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_dao_template_dao_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/dao/template-dao.service */ "1DpL");
 /* harmony import */ var src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/services/auth.service */ "lGQG");
 /* harmony import */ var src_app_services_dialog_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! src/app/services/dialog.service */ "CzQJ");
+/* harmony import */ var src_app_services_util_service__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! src/app/services/util.service */ "2Rin");
+
 
 
 
@@ -8135,11 +7954,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class TemplateService {
-    constructor(planoTrabalhoDao, templateDao, auth, dialog) {
+    constructor(planoTrabalhoDao, templateDao, auth, dialog, util) {
         this.planoTrabalhoDao = planoTrabalhoDao;
         this.templateDao = templateDao;
         this.auth = auth;
         this.dialog = dialog;
+        this.util = util;
         this.notificacoes = [];
         this.notifica = { petrvs: false, email: false, whatsapp: false };
     }
@@ -8224,8 +8044,197 @@ class TemplateService {
             notifica: !(config.nao_notificar || []).includes(x.codigo)
         })); //.reduce((a: IIndexable, v: TemplateNotificacao) => Object.assign(a, {[v.codigo]: config.nao_notificar.includes(v.codigo)}), {} as IIndexable)
     }
+    /**************************************************************************************
+     * Funções para renderizar template
+     **************************************************************************************/
+    getStrRegEx(expression) {
+        return !expression ? "" : typeof expression == "string" ?
+            expression.split("").map(c => "<>/\\{}[]()-?*.!~".includes(c) ? "\\" + c : c).join("") :
+            expression.toString().replace(/^\//, "").replace(/\/.*?$/, "");
+    }
+    /* Monta as RegExp start e end de modo a obter: /^(BEFORE)(START)(TAG)(END)(AFTER)$/ */
+    tagSplit(template, startTag, endTag) {
+        var _a, _b;
+        let beforeAfterRegEx = (tag) => "^(?<BEFORE>[\\s\\S]*?)(?<START>" + this.getStrRegEx(tag.before) + "[\\s\\t\\n]*)(?<TAG>" + this.getStrRegEx(tag.tag) + ")(?<END>[\\s\\t\\n]*" + this.getStrRegEx(tag.after) + ")(?<AFTER>[\\s\\S]*?)$";
+        let startRegEx = beforeAfterRegEx(typeof startTag == "string" ? { tag: startTag } : startTag);
+        let endRegEx = beforeAfterRegEx(typeof endTag == "string" ? { tag: endTag } : endTag);
+        let start = (_a = template.match(new RegExp(startRegEx))) === null || _a === void 0 ? void 0 : _a.groups;
+        if (start) {
+            let end = (_b = start.AFTER.match(new RegExp(endRegEx))) === null || _b === void 0 ? void 0 : _b.groups;
+            if (end) {
+                return {
+                    before: start.BEFORE,
+                    start: { before: start.START, tag: start.TAG, after: start.END },
+                    content: end.BEFORE,
+                    end: { before: end.STERT, tag: end.TAG, after: end.END },
+                    after: end.AFTER
+                };
+            }
+        }
+        return undefined;
+    }
+    getExpressionValue(expression, context) {
+        var _a;
+        expression = expression.replace("[+]", ".length");
+        (_a = expression.match(/\[\w+\]/g)) === null || _a === void 0 ? void 0 : _a.map(x => x.replace(/^\[/, "").replace(/\]$/, "")).forEach(x => expression = expression.replace("[" + x + "]", "[" + this.getExpressionValue(x, context).toString() + "]"));
+        if (expression.toLowerCase().match(TemplateService.EXPRESSION_BOOLEAN))
+            return expression.toLowerCase() == "true";
+        if (expression.match(TemplateService.EXPRESSION_STRING))
+            return expression.replace(/^\"/, "").replace(/\"$/, "");
+        if (expression.match(TemplateService.EXPRESSION_NUMBER))
+            return +expression;
+        if (expression.match(TemplateService.EXPRESSION_VAR))
+            return this.util.getNested(context, expression);
+        return undefined;
+    }
+    bondaryTag(tag, regStrBefore, regStrAfter) {
+        var _a, _b, _c, _d;
+        let start = tag.before.match(new RegExp("(?<BEFORE>[\\s\\S]*)(?<CONTENT>" + regStrBefore + ")"));
+        let end = tag.after.match(new RegExp("(?<CONTENT>" + regStrAfter + ")(?<AFTER>[\\s\\S]*)"));
+        tag.start.before = ((_a = start === null || start === void 0 ? void 0 : start.groups) === null || _a === void 0 ? void 0 : _a.CONTENT) || "";
+        tag.before = ((_b = start === null || start === void 0 ? void 0 : start.groups) === null || _b === void 0 ? void 0 : _b.BEFORE) || "";
+        tag.after = ((_c = end === null || end === void 0 ? void 0 : end.groups) === null || _c === void 0 ? void 0 : _c.AFTER) || "";
+        tag.end.after = ((_d = end === null || end === void 0 ? void 0 : end.groups) === null || _d === void 0 ? void 0 : _d.CONTENT) || "";
+    }
+    evaluateOperator(a, operator, b) {
+        switch (operator) {
+            case "==":
+            case "=": return a == b;
+            case "<>":
+            case "!=": return a != b;
+            case ">": return a > b;
+            case ">=": return a >= b;
+            case "<": return a < b;
+            case "<=": return a <= b;
+        }
+        return false;
+    }
+    splitEndTag(after, startTag, endTag) {
+        let before = "";
+        let level = 1;
+        let next = undefined;
+        while (next = this.tagSplit(after, { tag: new RegExp(this.getStrRegEx(TemplateService.OPEN_TAG) + "((" + startTag + ")|(" + endTag + "))") }, TemplateService.CLOSE_TAG)) {
+            level += next.start.tag.toString().indexOf(endTag) >= 0 ? -1 : 1;
+            if (!level) { /* Level = 0; significa que o end-for é do respectivo for */
+                next.before = before + next.before;
+                return next;
+            }
+            after = next.after;
+            before += next.before + next.start.tag + next.content + next.end.tag;
+        }
+        return undefined;
+    }
+    renderTemplate(template, context) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
+        let tag = undefined;
+        let statement = null;
+        let next = template;
+        let result = "";
+        let processParamDrop = (tag, params) => {
+            let parameter = []; /* Usado penas para iterar os parametros */
+            let parameters = ((params === null || params === void 0 ? void 0 : params.replace(/^;/, "")) || "").split(";").reduce((a, v) => (parameter = v.split("="), a[parameter[0]] = parameter[1], a), {});
+            if (tag && parameters.drop && parameters.drop.match(/^\w+$/)) {
+                this.bondaryTag(tag, "<" + parameters.drop + ">[\\s\\S]*?$", "^[\\s\\S]*?<\\/" + parameters.drop + ">");
+                tag.start.before = "";
+                tag.end.after = "";
+            }
+        };
+        while (tag = this.tagSplit(next, TemplateService.OPEN_TAG, TemplateService.CLOSE_TAG)) {
+            try {
+                if (tag.content.match(TemplateService.EXPRESSION_VAR)) {
+                    let content = (this.getExpressionValue(tag.content, context) + "").replace(/^undefined$/, "");
+                    tag.content = this.renderTemplate(content, context);
+                }
+                else if (tag.content.match(TemplateService.EXPRESSION_IF)) {
+                    statement = tag.content.match(TemplateService.STATEMENT_IF); /* if:OPER1=OPER2;par=0;par=0... */
+                    let aValue = this.getExpressionValue(((_a = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _a === void 0 ? void 0 : _a.EXP_A) || "", context);
+                    let bValue = this.getExpressionValue(((_b = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _b === void 0 ? void 0 : _b.EXP_B) || "", context);
+                    let ifThen = this.evaluateOperator(aValue, ((_c = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _c === void 0 ? void 0 : _c.OPER) || "", bValue);
+                    /* Processa o parametro drop caso ele exista, removendo a HTML-tag (definida pelo drop=TAG) onde o comando está dentro */
+                    processParamDrop(tag, (_d = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _d === void 0 ? void 0 : _d.PARS);
+                    /* Encontra o end-if */
+                    let endIfTag = this.splitEndTag(tag.after, "if:", "end-if");
+                    if (endIfTag) {
+                        /* Processa o parametro drop caso ele exista na tag de fechamento, removendo a HTML-tag (definida pelo drop=TAG) onde o comando está dentro */
+                        processParamDrop(endIfTag, (_e = endIfTag.content) === null || _e === void 0 ? void 0 : _e.replace(/^;/, ""));
+                        /* O content da tag só será renderizado caso ifThen seja true */
+                        tag.content = ifThen ? this.renderTemplate(endIfTag.before, context) : "";
+                        tag.after = endIfTag.after;
+                    }
+                    else {
+                        throw new Error("o if não possui um repectivo end-if");
+                    }
+                }
+                else if (tag.content.match(TemplateService.EXPRESSION_FOR)) {
+                    statement = tag.content.match(TemplateService.STATEMENT_FOR); /* for:EXP[(t..)x..0|0..x(..t)|EACH];par=0;par=0... */
+                    /* Processa o parametro drop caso ele exista, removendo a HTML-tag (definida pelo drop=TAG) onde o comando está dentro */
+                    processParamDrop(tag, (_f = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _f === void 0 ? void 0 : _f.PARS);
+                    /* Encontra o end-for */
+                    let endForTag = this.splitEndTag(tag.after, "for:", "end-for");
+                    if (endForTag) {
+                        /* Processa o parametro drop caso ele exista na tag de fechamento, removendo a HTML-tag (definida pelo drop=TAG) onde o comando está dentro */
+                        processParamDrop(endForTag, (_g = endForTag.content) === null || _g === void 0 ? void 0 : _g.replace(/^;/, ""));
+                        /* O content da tag será todo o conteúdo repetível do for e o after será o after do end-for */
+                        tag.content = "";
+                        tag.after = endForTag.after;
+                        /* Verifica se a variável de iteração já existe no contexto */
+                        if (context[((_h = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _h === void 0 ? void 0 : _h.EACH) || ((_j = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _j === void 0 ? void 0 : _j.INDEX) || ""])
+                            throw new Error("Variável de contexto já existe no contexto atual");
+                        /* Itera os elementos do for */
+                        let elements = this.getExpressionValue(((_k = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _k === void 0 ? void 0 : _k.EXP) || "", context);
+                        let each = !!((_m = (_l = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _l === void 0 ? void 0 : _l.EACH) === null || _m === void 0 ? void 0 : _m.match(/^[a-zA-Z]\w+$/));
+                        let asc = each || !!((_p = (_o = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _o === void 0 ? void 0 : _o.START) === null || _p === void 0 ? void 0 : _p.match(/^\d+$/));
+                        let startFor = each ? 0 : asc ? +statement.groups.START : elements.length;
+                        let endFor = each ? elements.length : asc ? elements.length : +statement.groups.END;
+                        for (let index = startFor; asc ? index < endFor : index > endFor; asc ? index++ : index--) {
+                            let current = elements[index];
+                            let forContext = Object.assign({}, context);
+                            /* Alimenta contexto com variaveis do for */
+                            if (each) {
+                                forContext[statement.groups.EACH] = current;
+                            }
+                            else {
+                                let total = asc && ((_q = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _q === void 0 ? void 0 : _q.END) ? statement.groups.END : !asc && ((_r = statement === null || statement === void 0 ? void 0 : statement.groups) === null || _r === void 0 ? void 0 : _r.START) ? statement.groups.START : undefined;
+                                if (total)
+                                    forContext[total] = elements.length;
+                                forContext[statement.groups.INDEX] = index;
+                            }
+                            tag.content += this.renderTemplate(endForTag.before, forContext);
+                        }
+                    }
+                    else {
+                        throw new Error("o for não possui um repectivo end-for");
+                    }
+                }
+            }
+            catch (error) {
+                tag.content = "(ERRO)";
+            }
+            finally {
+                tag.start.tag = "";
+                tag.end.tag = "";
+            }
+            /* Incrementa o result e prepara o next */
+            result += tag.before + (tag.start.before || "") + tag.start.tag + (tag.start.after || "") + tag.content + (tag.end.before || "") + tag.end.tag + (tag.end.after || "");
+            next = tag.after;
+        }
+        result += next;
+        return result;
+    }
 }
-TemplateService.ɵfac = function TemplateService_Factory(t) { return new (t || TemplateService)(_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_4__["PlanoTrabalhoDaoService"]), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](src_app_dao_template_dao_service__WEBPACK_IMPORTED_MODULE_5__["TemplateDaoService"]), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_6__["AuthService"]), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](src_app_services_dialog_service__WEBPACK_IMPORTED_MODULE_7__["DialogService"])); };
+TemplateService.OPEN_TAG = "{{";
+TemplateService.CLOSE_TAG = "}}";
+TemplateService.EXPRESSION_BOOLEAN = /^(true|false)$/;
+TemplateService.EXPRESSION_NUMBER = /^[0-9,\.]+$/;
+TemplateService.EXPRESSION_STRING = /^".*"$/;
+TemplateService.EXPRESSION_VAR = /^[a-zA-z]\w*?((\.\w+?)|(\[\+\])|(\[(\d+?|[a-zA-z]\w*?)\]))*$/;
+TemplateService.EXPRESSION_IF = /^if:(".*"|true|false|([0-9,\.]+)|([a-zA-z]\w*?((\.\w+?)|(\[\+\])|(\[(\d+?|[a-zA-z]\w*?)\]))*))(\s*)(=|==|\>|\>=|\<|\<=|\<\>|\!=)(\s*)(".*"|true|false|([0-9,\.]+)|([a-zA-z]\w*?((\.\w+?)|(\[\+\])|(\[(\d+?|[a-zA-z]\w*?)\]))*))(;.+?\=.+?)*$/;
+TemplateService.EXPRESSION_FOR = /^for:([a-zA-z]\w*?((\.\w+?)|(\[(\d+?|[a-zA-z]\w*?)\]))*)\[((\d+\.\.[a-zA-Z]\w*?(\.\.[a-zA-Z]\w*?)?)|(([a-zA-Z]\w*?\.\.)?[a-zA-Z]\w*?\.\.\d+)|([a-zA-Z]\w*?))\](;.+?\=.+?)*$/;
+TemplateService.STATEMENT_FOR = /^for:(?<EXP>([a-zA-z]\w*?((\.\w+?)|(\[(\d+?|[a-zA-z]\w*?)\]))*))\[(((?<START>\w+?)\.\.(?<INDEX>\w*?)(\.\.(?<END>\w+?))?)|(%(?<EACH>\w+?)%))\](?<PARS>(;.+?\=.+?)*)$/;
+TemplateService.STATEMENT_IF = /^if:(?<EXP_A>.+?)(\s*)(?<OPER>=|==|\>|\>=|\<|\<=|\<\>|\!=)(\s*)(?<EXP_B>.+?)(?<PARS>(;.+?\=.+?)*)$/;
+TemplateService.STATEMENT_FOR_WITHOUT_PARS = /^(?<STATMENT>for:\w+\[.+\])/;
+TemplateService.PARAMETER_DROP = "drop";
+TemplateService.ɵfac = function TemplateService_Factory(t) { return new (t || TemplateService)(_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_4__["PlanoTrabalhoDaoService"]), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](src_app_dao_template_dao_service__WEBPACK_IMPORTED_MODULE_5__["TemplateDaoService"]), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_6__["AuthService"]), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](src_app_services_dialog_service__WEBPACK_IMPORTED_MODULE_7__["DialogService"]), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_8__["UtilService"])); };
 TemplateService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineInjectable"]({ token: TemplateService, factory: TemplateService.ɵfac, providedIn: 'root' });
 
 
@@ -14469,6 +14478,7 @@ class AppComponent {
                     this.menuSchema.CADEIAS_VALORES,
                     this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
                     this.menuSchema.PLANOS_ENTREGAS,
+                    this.menuSchema.PLANOS_TRABALHOS,
                     this.menuSchema.PROGRAMAS_GESTAO
                 ].sort(this.orderMenu)
             }, {
@@ -14476,7 +14486,6 @@ class AppComponent {
                 permition: "MENU_GESTAO_ACESSO",
                 id: "navbarDropdownGestaoExecucao",
                 menu: [
-                    this.menuSchema.PLANOS_TRABALHOS,
                     this.menuSchema.ATIVIDADES,
                     this.menuSchema.AFASTAMENTOS
                 ].sort(this.orderMenu)
@@ -14864,6 +14873,13 @@ class UnidadeIntegranteDaoService extends _dao_base_service__WEBPACK_IMPORTED_MO
     saveUsuarioIntegrante(unidade_id, integrante) {
         return new Promise((resolve, reject) => {
             this.server.post('api/' + this.collection + '/save-usuario-integrante', { unidade_id, integrante }).subscribe(response => {
+                resolve((response === null || response === void 0 ? void 0 : response.data) || null);
+            }, error => reject(error));
+        });
+    }
+    saveUnidadeIntegrante(usuario_id, integrante) {
+        return new Promise((resolve, reject) => {
+            this.server.post('api/' + this.collection + '/save-unidade-integrante', { usuario_id, integrante }).subscribe(response => {
                 resolve((response === null || response === void 0 ? void 0 : response.data) || null);
             }, error => reject(error));
         });
@@ -15645,7 +15661,7 @@ class DaoBaseService {
             else {
                 Object.entries(data).forEach(([key, value]) => {
                     try {
-                        data[key] = this.prepareToSave(value);
+                        data[key] = typeof value == "object" && value instanceof DaoBaseService ? undefined : this.prepareToSave(value);
                     }
                     catch (erro) {
                         console.log("Erro ao tentar atribuir valor a " + key);
@@ -20182,7 +20198,7 @@ function DocumentosComponent_ng_template_9_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate1"](" \u2022 ", ctx_r6.util.getDateTimeFormatted(row_r9.data_inicio), "");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"](row_r9.titulo_documento);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"](row_r9.titulo);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("color", ctx_r6.lookup.getColor(ctx_r6.lookup.DOCUMENTO_ESPECIE, row_r9.especie))("label", ctx_r6.lookup.getValue(ctx_r6.lookup.DOCUMENTO_ESPECIE, row_r9.especie));
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
@@ -20272,12 +20288,12 @@ class DocumentosComponent extends src_app_modules_base_page_frame_base__WEBPACK_
         this.needSign = ((_a = this.metadata) === null || _a === void 0 ? void 0 : _a.needSign) || this.needSign;
         this.extraTags = ((_b = this.metadata) === null || _b === void 0 ? void 0 : _b.extraTags) || this.extraTags;
         this.especie = ((_c = this.urlParams) === null || _c === void 0 ? void 0 : _c.has("especie")) ? this.urlParams.get("especie") : ((_d = this.metadata) === null || _d === void 0 ? void 0 : _d.especie) || this.especie;
-        this.action = ((_e = this.urlParams) === null || _e === void 0 ? void 0 : _e.has("action")) ? this.urlParams.get("action") || "" : "";
-        this.documentoId = ((_f = this.urlParams) === null || _f === void 0 ? void 0 : _f.has("documentoId")) ? this.urlParams.get("documentoId") || undefined : undefined;
+        this.action = ((_e = this.urlParams) === null || _e === void 0 ? void 0 : _e.has("action")) ? this.urlParams.get("action") || "" : this.action;
+        this.documentoId = ((_f = this.urlParams) === null || _f === void 0 ? void 0 : _f.has("documentoId")) ? this.urlParams.get("documentoId") || undefined : this.documentoId;
         this.dataset = ((_g = this.metadata) === null || _g === void 0 ? void 0 : _g.dataset) || this.dataset;
         this.datasource = ((_h = this.metadata) === null || _h === void 0 ? void 0 : _h.datasource) || this.datasource;
         this.template = ((_j = this.metadata) === null || _j === void 0 ? void 0 : _j.template) || this.template;
-        this.tituloDefault = ((_k = this.metadata) === null || _k === void 0 ? void 0 : _k.titulo_documento) || this.tituloDefault;
+        this.tituloDefault = ((_k = this.metadata) === null || _k === void 0 ? void 0 : _k.titulo) || this.tituloDefault;
         /* Obrigatório instanciar o DAO correto a depender da espécie */
         this.dao = ["TCR"].includes(this.especie) ? this.injector.get(src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_4__["PlanoTrabalhoDaoService"]) : undefined;
     }
@@ -20340,7 +20356,7 @@ class DocumentosComponent extends src_app_modules_base_page_frame_base__WEBPACK_
         if (!this.isNoPersist && this.entity && this.needSign(this.entity, documento)) {
             result.push({ hint: "Assinar", icon: "bi bi-pen", onClick: this.signDocumento.bind(this) });
         }
-        result.push({ hint: "Preview", icon: "bi bi-zoom-in", onClick: this.documentoService.onDocumentoClick.bind(this) });
+        result.push({ hint: "Preview", icon: "bi bi-zoom-in", onClick: this.documentoService.onDocumentoClick.bind(this.documentoService.onDocumentoClick) });
         return result;
     }
     /*public needSign(documento: Documento): boolean {
@@ -27703,7 +27719,7 @@ function DocumentosBadgeComponent_badge_0_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("icon", ctx_r0.icon)("color", ctx_r0.color)("rounded", !ctx_r0.isNoRounded)("data", ctx_r0.documento)("click", ctx_r0.documentoService.onDocumentoClick.bind(ctx_r0))("hint", ctx_r0.documentoService.documentoHint(ctx_r0.documento));
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("icon", ctx_r0.icon)("color", ctx_r0.color)("rounded", !ctx_r0.isNoRounded)("data", ctx_r0.documento)("click", ctx_r0.documentoService.onDocumentoClick.bind(ctx_r0.documentoService))("hint", ctx_r0.documentoService.documentoHint(ctx_r0.documento));
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx_r0.isLinkSei);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);

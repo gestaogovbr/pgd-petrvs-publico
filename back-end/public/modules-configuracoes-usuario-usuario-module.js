@@ -293,7 +293,7 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
                 consolidado.atribuicoes = form.controls.atribuicoes.value.map((x) => x.key);
                 this.loading = true;
                 try {
-                    //await this.integranteDao.saveIntegrante(this.unidade!.id, consolidado);
+                    yield this.integranteDao.saveUnidadeIntegrante(this.usuario.id, consolidado);
                     this.items;
                     yield this.loadData({}, this.form);
                 }
