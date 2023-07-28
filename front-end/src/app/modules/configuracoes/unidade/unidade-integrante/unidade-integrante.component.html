@@ -1,5 +1,5 @@
 <grid [items]="items" [minHeight]="500" [form]="form!" [hasDelete]="true"
-    [add]="addIntegrante.bind(this)" [load]="loadIntegrante.bind(this)" [remove]="removeIntegrante.bind(this)" [save]="saveUsuarioIntegrante.bind(this)" 
+    [add]="addIntegrante.bind(this)" [load]="loadIntegrante.bind(this)" [remove]="removeIntegrante.bind(this)" [save]="saveIntegrante.bind(this)" 
     editable [hasAdd]="auth.hasPermissionTo('MOD_PRGT_PART_INCL')"
     [hasEdit]="auth.hasPermissionTo('MOD_PRGT_PART_EDT')"
     [hasDelete]="auth.hasPermissionTo('MOD_PRGT_PART_EXCL')">
@@ -8,11 +8,11 @@
             <ng-template let-row="row" #columnUsuario>
                 <div class="row">
                     <div class="col-2">
-                        <profile-picture [url]="row.usuario?.url_foto" [size]="40" [hint]="row.usuario?.nome"></profile-picture>
+                        <profile-picture [url]="row.usuario_url_foto || ''" [size]="40" [hint]="row.usuario_nome || ''"></profile-picture>
                     </div>
                     <div class="col-10">
-                        <strong>{{row.usuario?.nome || ""}}</strong><br>
-                        <small>{{row.usuario?.apelido || ""}}</small>
+                        <strong>{{row.usuario_nome || ""}}</strong><br>
+                        <small>{{row.usuario_apelido || ""}}</small>
                     </div>
                 </div>
             </ng-template>
@@ -23,11 +23,11 @@
         <column title="Atribuições" titleHint="Atribuições do usuário nesta unidade" [template]="columnUnidadeDestino" [editTemplate]="editUnidadeDestino">
             <ng-template let-row="row" #columnUnidadeDestino>
                 <div class="text-wrap width-min-content">
-                    <badge *ngFor="let atribuicao of row.atribuicoes" [color]="lookup.getColor(lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao)" [icon]="lookup.getIcon(lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao)" [label]="lookup.getValue(lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao)"></badge>
+                    <badge *ngFor="let atribuicao of row.atribuicoes" [color]="lookup.getColor(lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao || '')" [icon]="lookup.getIcon(lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao || '')" [label]="lookup.getValue(lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao || '')"></badge>
                 </div>
             </ng-template>
             <ng-template let-row="row" #editUnidadeDestino>
-                <input-multiselect controlName="atribuicoes" [size]="8" [addItemHandle]="addItemHandleAtribuicoes.bind(this)">
+                <input-multiselect controlName="atribuicoes" [size]="8" [addItemHandle]="addItemHandle.bind(this)">
                     <input-select [size]="12" label="" icon="fas fa-sign-out-alt" controlName="atribuicao" [items]="lookup.UNIDADE_INTEGRANTE_TIPO"></input-select>
                 </input-multiselect>
             </ng-template>

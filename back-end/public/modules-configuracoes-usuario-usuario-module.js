@@ -140,11 +140,11 @@ function UsuarioIntegranteComponent_ng_template_4_Template(rf, ctx) { if (rf & 1
 } if (rf & 2) {
     const row_r9 = ctx.row;
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](row_r9.unidade.sigla);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](row_r9.unidade_sigla || "");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"](" (IdServo: ", row_r9.unidade.codigo, ")");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"](" (IdServo: ", row_r9.unidade_codigo || "", ")");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("", row_r9.unidade.nome, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate1"]("", row_r9.unidade_nome || "", " ");
 } }
 function UsuarioIntegranteComponent_ng_template_6_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](0, "input-search", 8, 9);
@@ -161,7 +161,7 @@ function UsuarioIntegranteComponent_ng_template_9_div_0_Template(rf, ctx) { if (
     const a_r14 = ctx.$implicit;
     const ctx_r13 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("color", ctx_r13.lookup.getColor(ctx_r13.lookup.UNIDADE_INTEGRANTE_TIPO, a_r14))("icon", ctx_r13.lookup.getIcon(ctx_r13.lookup.UNIDADE_INTEGRANTE_TIPO, a_r14))("label", ctx_r13.lookup.getValue(ctx_r13.lookup.UNIDADE_INTEGRANTE_TIPO, a_r14));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("color", ctx_r13.lookup.getColor(ctx_r13.lookup.UNIDADE_INTEGRANTE_TIPO, a_r14 || ""))("icon", ctx_r13.lookup.getIcon(ctx_r13.lookup.UNIDADE_INTEGRANTE_TIPO, a_r14 || ""))("label", ctx_r13.lookup.getValue(ctx_r13.lookup.UNIDADE_INTEGRANTE_TIPO, a_r14 || ""));
 } }
 function UsuarioIntegranteComponent_ng_template_9_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](0, UsuarioIntegranteComponent_ng_template_9_div_0_Template, 3, 3, "div", 10);
@@ -206,7 +206,7 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
     ngOnInit() {
         var _a, _b;
         super.ngOnInit();
-        this.usuarioId = ((_a = this.urlParams) === null || _a === void 0 ? void 0 : _a.has("usuarioId")) ? this.urlParams.get("usuarioId") : ((_b = this.metadata) === null || _b === void 0 ? void 0 : _b.usuario) || this.usuarioId || "10c6685a-c68f-4ae7-ab11-1288c4492f0d";
+        this.usuarioId = ((_a = this.urlParams) === null || _a === void 0 ? void 0 : _a.has("idUsuario")) ? this.urlParams.get("idUsuario") : ((_b = this.metadata) === null || _b === void 0 ? void 0 : _b.idUsuario) || this.usuarioId;
     }
     ngAfterViewInit() {
         (() => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
@@ -222,7 +222,7 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             this.grid.loading = true;
             try {
-                let result = yield this.integranteDao.loadUnidadesIntegrantes(this.usuarioId);
+                let result = yield this.integranteDao.loadIntegrantes("", this.usuarioId);
                 this.items = result.integrantes;
                 this.usuario = result.usuario;
             }
@@ -257,27 +257,28 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
     }
     loadAtribuicao(form, row) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            /*     form.controls.usuario_id.setValue(row.usuario_id);
-                form.controls.atribuicoes.setValue(row.atribuicoes.map((x: string) => Object.assign({}, {
-                  key: x,
-                  value: this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, x),
-                  icon: this.lookup.getIcon(this.lookup.UNIDADE_INTEGRANTE_TIPO, x),
-                  color: this.lookup.getColor(this.lookup.UNIDADE_INTEGRANTE_TIPO, x)
-                })));
-                form.controls.atribuicao.setValue(""); */
+            form.controls.unidade_id.setValue(row.id);
+            form.controls.atribuicoes.setValue(row.atribuicoes.map((x) => Object.assign({}, {
+                key: x,
+                value: this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, x),
+                icon: this.lookup.getIcon(this.lookup.UNIDADE_INTEGRANTE_TIPO, x),
+                color: this.lookup.getColor(this.lookup.UNIDADE_INTEGRANTE_TIPO, x)
+            })));
+            form.controls.atribuicao.setValue("");
         });
     }
     removeAtribuicao(row) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             let confirm = yield this.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
             if (confirm) {
-                /*       this.loading = true;
-                      try {
-                        await this.integranteDao.saveIntegrante(this.unidade!.id, Object.assign(row, { atribuicoes: [] }));
-                        await this.loadData({}, this.form);
-                      } finally {
-                        this.loading = false;
-                      } */
+                this.loading = true;
+                try {
+                    yield this.integranteDao.saveIntegrante(row.id, this.usuario.id, []);
+                    yield this.loadData({}, this.form);
+                }
+                finally {
+                    this.loading = false;
+                }
                 return true;
             }
             else {
@@ -287,13 +288,10 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
     }
     saveAtribuicao(form, row) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            let consolidado = row;
             if (form.controls.atribuicoes.value.length) {
-                consolidado.unidade_id = form.controls.unidade_id.value;
-                consolidado.atribuicoes = form.controls.atribuicoes.value.map((x) => x.key);
                 this.loading = true;
                 try {
-                    yield this.integranteDao.saveUnidadeIntegrante(this.usuario.id, consolidado);
+                    yield this.integranteDao.saveIntegrante(form.controls.unidade_id.value, this.usuario.id, form.controls.atribuicoes.value.map((x) => x.key));
                     this.items;
                     yield this.loadData({}, this.form);
                 }
@@ -460,7 +458,7 @@ class UsuarioListComponent extends src_app_modules_base_page_list_base__WEBPACK_
         // Testa se o usuário possui permissão para gerenciar as suas unidades-integrantes
         if (this.auth.hasPermissionTo("MOD_UND_INTG")) {
             this.options.push({
-                icon: "bi bi-pin-map",
+                icon: "bi bi-houses",
                 label: "Unidades",
                 onClick: (usuario) => {
                     this.go.navigate({ route: ['configuracoes', 'usuario', '', usuario.id, 'integrante'] });

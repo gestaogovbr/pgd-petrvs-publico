@@ -52,7 +52,7 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
   // Testa se o usuário possui permissão para gerenciar as suas unidades-integrantes
   if (this.auth.hasPermissionTo("MOD_UND_INTG")) {
       this.options.push({
-      icon: "bi bi-pin-map",
+      icon: "bi bi-houses",
       label: "Unidades",
       onClick: (usuario: Usuario) => {
         this.go.navigate({ route: ['configuracoes', 'usuario', '', usuario.id, 'integrante'] });

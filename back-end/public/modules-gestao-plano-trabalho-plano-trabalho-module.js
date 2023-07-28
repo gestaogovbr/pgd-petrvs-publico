@@ -16,7 +16,7 @@ class PlanoTrabalhoEntrega extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Bas
     constructor(data) {
         super();
         this.descricao = "";
-        this.forca_trabalho = "1";
+        this.forca_trabalho = 1;
         this.plano_trabalho_id = "";
         this.entrega_id = null;
         this.plano_entrega_entrega_id = null;
@@ -1113,32 +1113,6 @@ class PlanoTrabalhoAtividade extends _base_model__WEBPACK_IMPORTED_MODULE_0__["B
 
 /***/ }),
 
-/***/ "qedA":
-/*!***********************************************************!*\
-  !*** ./src/app/dao/plano-trabalho-entrega-dao.service.ts ***!
-  \***********************************************************/
-/*! exports provided: PlanoTrabalhoEntregaDaoService */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanoTrabalhoEntregaDaoService", function() { return PlanoTrabalhoEntregaDaoService; });
-/* harmony import */ var _dao_base_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./dao-base.service */ "WScx");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
-
-
-class PlanoTrabalhoEntregaDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0__["DaoBaseService"] {
-    constructor(injector) {
-        super("PlanoTrabalhoEntrega", injector);
-        this.injector = injector;
-    }
-}
-PlanoTrabalhoEntregaDaoService.ɵfac = function PlanoTrabalhoEntregaDaoService_Factory(t) { return new (t || PlanoTrabalhoEntregaDaoService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
-PlanoTrabalhoEntregaDaoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: PlanoTrabalhoEntregaDaoService, factory: PlanoTrabalhoEntregaDaoService.ɵfac, providedIn: 'root' });
-
-
-/***/ }),
-
 /***/ "rmC2":
 /*!********************************************************************************************************************!*\
   !*** ./src/app/modules/gestao/plano-trabalho/plano-trabalho-list-entrega/plano-trabalho-list-entrega.component.ts ***!
@@ -1499,7 +1473,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
      * @returns
      */
     somaForcaTrabalho(entregas = []) {
-        return entregas.map(x => parseFloat(x.forca_trabalho)).reduce((a, b) => a + b, 0);
+        return entregas.map(x => x.forca_trabalho * 1).reduce((a, b) => a + b, 0);
     }
     /**
      * Método chamado para a exclusão de uma entrega de plano de trabalho do grid, seja este persistente ou não.
@@ -1518,7 +1492,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
                 finally {
                     this.loading = false;
                 }
-                this.totalForcaTrabalho = Math.round((this.totalForcaTrabalho - parseFloat(row.forca_trabalho)) * 100) / 100;
+                this.totalForcaTrabalho = Math.round((this.totalForcaTrabalho - (row.forca_trabalho * 1)) * 100) / 100;
                 return this.isNoPersist ? false : true; // (*3)
             }
             else {
@@ -1533,7 +1507,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
      * @returns
      */
     saveEntrega(form, row) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             this.novaEntrega = row;
             this.novaEntrega.entrega_id = (_b = (_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.entrega_id.value) !== null && _b !== void 0 ? _b : null;
@@ -1552,8 +1526,10 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
                 this.error(e.message ? e.message : e.toString() || e);
             }
             finally {
-                this.totalForcaTrabalho = Math.round((this.totalForcaTrabalho + parseFloat(row.forca_trabalho)) * 100) / 100;
+                //this.totalForcaTrabalho = Math.round((this.totalForcaTrabalho + ((row as PlanoTrabalhoEntrega).forca_trabalho * 1)) * 100) / 100;
                 row.objeto = ((_h = (_g = this.entregaCatalogo) === null || _g === void 0 ? void 0 : _g.selectedItem) === null || _h === void 0 ? void 0 : _h.data) || ((_k = (_j = this.entregaMesmaUnidade) === null || _j === void 0 ? void 0 : _j.selectedItem) === null || _k === void 0 ? void 0 : _k.data) || ((_m = (_l = this.entregaOutraUnidade) === null || _l === void 0 ? void 0 : _l.selectedItem) === null || _m === void 0 ? void 0 : _m.data); // (*)
+                row.forca_trabalho = ((_o = this.form) === null || _o === void 0 ? void 0 : _o.controls.forca_trabalho.value) * 1;
+                this.totalForcaTrabalho = Math.round(this.somaForcaTrabalho((_p = this.entity) === null || _p === void 0 ? void 0 : _p.entregas) * 100) / 100;
                 this.loading = false;
             }
             return this.novaEntrega;
@@ -1596,14 +1572,14 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
         });
     }
     tipoEntrega(row) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
         if (!!((_a = row.entrega_id) === null || _a === void 0 ? void 0 : _a.length))
             return { label: 'Catálogo', cor: 'secondary', nome: !!((_c = (_b = row.objeto) === null || _b === void 0 ? void 0 : _b.id) === null || _c === void 0 ? void 0 : _c.length) ? ((_d = row.objeto) === null || _d === void 0 ? void 0 : _d.nome) || "Desconhecido" : ((_e = row.entrega) === null || _e === void 0 ? void 0 : _e.nome) || "Desconhecido1" };
         let IdDoPlanoEntregaDoPlanoTrabalho, IdDoPlanoEntregaDaEntrega, badge, nome, cor;
         IdDoPlanoEntregaDoPlanoTrabalho = ((_f = this.entity) === null || _f === void 0 ? void 0 : _f.plano_entrega_id) || ((_g = this.entregasDoPlanoEntrega[0]) === null || _g === void 0 ? void 0 : _g.data.plano_entrega_id) || 'Desconhecido2';
-        IdDoPlanoEntregaDaEntrega = !!((_h = row.objeto) === null || _h === void 0 ? void 0 : _h.id.length) ? ((_j = row.objeto) === null || _j === void 0 ? void 0 : _j.plano_entrega_id) || "Desconhecido3" : row.plano_entrega_entrega.plano_entrega_id || "Desconhecido4";
+        IdDoPlanoEntregaDaEntrega = !!((_h = row.objeto) === null || _h === void 0 ? void 0 : _h.id.length) ? ((_j = row.objeto) === null || _j === void 0 ? void 0 : _j.plano_entrega_id) || "Desconhecido3" : ((_k = row.plano_entrega_entrega) === null || _k === void 0 ? void 0 : _k.plano_entrega_id) || "Desconhecido4";
         [badge, cor] = IdDoPlanoEntregaDoPlanoTrabalho == IdDoPlanoEntregaDaEntrega ? ['Mesma unidade', 'success'] : ['Outra unidade', 'primary'];
-        nome = !!((_k = row.objeto) === null || _k === void 0 ? void 0 : _k.id.length) ? ((_l = row.objeto) === null || _l === void 0 ? void 0 : _l.entrega.nome) || "Desconhecido5" : ((_m = row.plano_entrega_entrega) === null || _m === void 0 ? void 0 : _m.entrega.nome) || "Desconhecido6";
+        nome = !!((_l = row.objeto) === null || _l === void 0 ? void 0 : _l.id.length) ? ((_m = row.objeto) === null || _m === void 0 ? void 0 : _m.entrega.nome) || "Desconhecido5" : ((_o = row.plano_entrega_entrega) === null || _o === void 0 ? void 0 : _o.entrega.nome) || "Desconhecido6";
         return { label: badge, cor: cor, nome: nome };
     }
     /* ---------  TRATAMENTO DOS EVENTOS ----------- */
@@ -1647,7 +1623,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
     onForcaTrabalhoChange(row) {
         var _a, _b;
         let index = this.items.findIndex(x => x["id"] == row["id"]);
-        this.totalForcaTrabalho = Math.round((this.somaForcaTrabalho((_a = this.grid) === null || _a === void 0 ? void 0 : _a.items) - parseFloat(this.items[index].forca_trabalho) + parseFloat((_b = this.form) === null || _b === void 0 ? void 0 : _b.controls.forca_trabalho.value)) * 100) / 100;
+        this.totalForcaTrabalho = Math.round((this.somaForcaTrabalho((_a = this.grid) === null || _a === void 0 ? void 0 : _a.items) - (this.items[index].forca_trabalho * 1) + (((_b = this.form) === null || _b === void 0 ? void 0 : _b.controls.forca_trabalho.value) * 1)) * 100) / 100;
     }
 }
 PlanoTrabalhoListEntregaComponent.ɵfac = function PlanoTrabalhoListEntregaComponent_Factory(t) { return new (t || PlanoTrabalhoListEntregaComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };

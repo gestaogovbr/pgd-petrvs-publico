@@ -704,11 +704,11 @@ function UnidadeIntegranteComponent_ng_template_3_Template(rf, ctx) { if (rf & 1
 } if (rf & 2) {
     const row_r8 = ctx.row;
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("url", row_r8.usuario == null ? null : row_r8.usuario.url_foto)("size", 40)("hint", row_r8.usuario == null ? null : row_r8.usuario.nome);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("url", row_r8.usuario_url_foto || "")("size", 40)("hint", row_r8.usuario_nome || "");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]((row_r8.usuario == null ? null : row_r8.usuario.nome) || "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](row_r8.usuario_nome || "");
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"]((row_r8.usuario == null ? null : row_r8.usuario.apelido) || "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](row_r8.usuario_apelido || "");
 } }
 function UnidadeIntegranteComponent_ng_template_5_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](0, "input-search", 12, 13);
@@ -721,7 +721,7 @@ function UnidadeIntegranteComponent_ng_template_8_badge_1_Template(rf, ctx) { if
 } if (rf & 2) {
     const atribuicao_r13 = ctx.$implicit;
     const ctx_r12 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("color", ctx_r12.lookup.getColor(ctx_r12.lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao_r13))("icon", ctx_r12.lookup.getIcon(ctx_r12.lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao_r13))("label", ctx_r12.lookup.getValue(ctx_r12.lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao_r13));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("color", ctx_r12.lookup.getColor(ctx_r12.lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao_r13 || ""))("icon", ctx_r12.lookup.getIcon(ctx_r12.lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao_r13 || ""))("label", ctx_r12.lookup.getValue(ctx_r12.lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao_r13 || ""));
 } }
 function UnidadeIntegranteComponent_ng_template_8_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "div", 14);
@@ -738,7 +738,7 @@ function UnidadeIntegranteComponent_ng_template_10_Template(rf, ctx) { if (rf & 
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 8)("addItemHandle", ctx_r7.addItemHandleAtribuicoes.bind(ctx_r7));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 8)("addItemHandle", ctx_r7.addItemHandle.bind(ctx_r7));
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 12)("items", ctx_r7.lookup.UNIDADE_INTEGRANTE_TIPO);
 } }
@@ -782,7 +782,7 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             this.grid.loading = true;
             try {
-                let result = yield this.integranteDao.loadUsuariosIntegrantes(this.unidadeId);
+                let result = yield this.integranteDao.loadIntegrantes(this.unidadeId, "");
                 this.items = result.integrantes;
                 this.unidade = result.unidade;
             }
@@ -801,7 +801,7 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
             };
         });
     }
-    addItemHandleAtribuicoes() {
+    addItemHandle() {
         let result = undefined;
         const value = this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, this.form.controls.atribuicao.value);
         const key = this.form.controls.atribuicao.value;
@@ -826,7 +826,7 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
      */
     loadIntegrante(form, row) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            form.controls.usuario_id.setValue(row.usuario_id);
+            form.controls.usuario_id.setValue(row.id);
             form.controls.atribuicoes.setValue(row.atribuicoes.map((x) => Object.assign({}, {
                 key: x,
                 value: this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, x),
@@ -842,7 +842,7 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
             if (confirm) {
                 this.loading = true;
                 try {
-                    yield this.integranteDao.saveUsuarioIntegrante(this.unidade.id, Object.assign(row, { atribuicoes: [] }));
+                    yield this.integranteDao.saveIntegrante(this.unidade.id, row.id, []);
                     yield this.loadData({}, this.form);
                 }
                 finally {
@@ -855,15 +855,12 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
             }
         });
     }
-    saveUsuarioIntegrante(form, row) {
+    saveIntegrante(form, row) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            let consolidado = row;
             if (form.controls.atribuicoes.value.length) {
-                consolidado.usuario_id = form.controls.usuario_id.value;
-                consolidado.atribuicoes = form.controls.atribuicoes.value.map((x) => x.key);
                 this.loading = true;
                 try {
-                    yield this.integranteDao.saveUsuarioIntegrante(this.unidade.id, consolidado);
+                    yield this.integranteDao.saveIntegrante(this.unidade.id, form.controls.usuario_id.value, form.controls.atribuicoes.value.map((x) => x.key));
                     yield this.loadData({}, this.form);
                 }
                 finally {
@@ -899,7 +896,7 @@ UnidadeIntegranteComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_5__["�
         const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵreference"](6);
         const _r4 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵreference"](9);
         const _r6 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵreference"](11);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("items", ctx.items)("minHeight", 500)("form", ctx.form)("hasDelete", true)("add", ctx.addIntegrante.bind(ctx))("load", ctx.loadIntegrante.bind(ctx))("remove", ctx.removeIntegrante.bind(ctx))("save", ctx.saveUsuarioIntegrante.bind(ctx))("hasAdd", ctx.auth.hasPermissionTo("MOD_PRGT_PART_INCL"))("hasEdit", ctx.auth.hasPermissionTo("MOD_PRGT_PART_EDT"))("hasDelete", ctx.auth.hasPermissionTo("MOD_PRGT_PART_EXCL"));
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("items", ctx.items)("minHeight", 500)("form", ctx.form)("hasDelete", true)("add", ctx.addIntegrante.bind(ctx))("load", ctx.loadIntegrante.bind(ctx))("remove", ctx.removeIntegrante.bind(ctx))("save", ctx.saveIntegrante.bind(ctx))("hasAdd", ctx.auth.hasPermissionTo("MOD_PRGT_PART_INCL"))("hasEdit", ctx.auth.hasPermissionTo("MOD_PRGT_PART_EDT"))("hasDelete", ctx.auth.hasPermissionTo("MOD_PRGT_PART_EXCL"));
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("title", ctx.lex.noun("Usu\u00E1rio"))("template", _r0)("editTemplate", _r2);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](5);

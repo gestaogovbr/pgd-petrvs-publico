@@ -1679,6 +1679,7 @@ class PlanejamentoMapaComponent extends src_app_modules_base_page_frame_base__WE
                     value: x.nome,
                     data: x
                 }));
+                this.cdRef.detectChanges();
                 this.form.controls.planejamento_id.setValue(this.planejamentos.length ? this.planejamentos[0].key : null);
             });
         });
@@ -1717,17 +1718,19 @@ class PlanejamentoMapaComponent extends src_app_modules_base_page_frame_base__WE
     }
     onPlanejamentoChange() {
         var _a;
-        this.dao.getById((_a = this.planejamentoInstitucional.selectedItem) === null || _a === void 0 ? void 0 : _a.key, this.join).then(planejamento => {
-            var _a, _b;
-            this.planejamento = planejamento;
-            this.objetivos = this.planejamento.objetivos || [];
-            this.eixos = ((_b = (_a = this.query.extra) === null || _a === void 0 ? void 0 : _a.eixos) === null || _b === void 0 ? void 0 : _b.filter((x) => { var _a, _b, _c; return ((_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.todos.value) || ((_c = (_b = this.planejamento) === null || _b === void 0 ? void 0 : _b.objetivos) === null || _c === void 0 ? void 0 : _c.find(y => y.eixo_tematico_id == x.id)); }).map((x) => Object.assign({}, {
-                eixo: x,
-                eixo_tematico_id: x.id,
-                objetivos: this.objetivosEixo(x.id)
-            }))) || [];
-            this.cdRef.detectChanges();
-        });
+        if (this.planejamentoInstitucional.selectedItem) {
+            this.dao.getById((_a = this.planejamentoInstitucional.selectedItem) === null || _a === void 0 ? void 0 : _a.key, this.join).then(planejamento => {
+                var _a, _b;
+                this.planejamento = planejamento;
+                this.objetivos = this.planejamento.objetivos || [];
+                this.eixos = ((_b = (_a = this.query.extra) === null || _a === void 0 ? void 0 : _a.eixos) === null || _b === void 0 ? void 0 : _b.filter((x) => { var _a, _b, _c; return ((_a = this.form) === null || _a === void 0 ? void 0 : _a.controls.todos.value) || ((_c = (_b = this.planejamento) === null || _b === void 0 ? void 0 : _b.objetivos) === null || _c === void 0 ? void 0 : _c.find(y => y.eixo_tematico_id == x.id)); }).map((x) => Object.assign({}, {
+                    eixo: x,
+                    eixo_tematico_id: x.id,
+                    objetivos: this.objetivosEixo(x.id)
+                }))) || [];
+                this.cdRef.detectChanges();
+            });
+        }
     }
     onTodosChange() {
         this.onPlanejamentoChange();

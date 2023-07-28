@@ -3,17 +3,14 @@ import { UnidadeIntegranteAtribuicao } from './unidade-integrante-atribuicao.mod
 import { Unidade } from './unidade.model';
 import { Usuario } from './usuario.model';
 
-export class UnidadeIntegranteConsolidado {
-    public usuario?: Usuario;
+export class IntegranteConsolidado {
     public id: string = ""; /* Utilizado somente para garantir o funcionamento do grid */
-    public usuario_id: string = "";
-    public atribuicoes: string[] = [];
-};
-
-export class UsuarioIntegranteConsolidado {
-    public unidade?: Unidade;
-    public id: string = ""; /* Utilizado somente para garantir o funcionamento do grid */
-    public unidade_id: string = "";
+    public usuario_nome?: string;
+    public usuario_apelido?: string;
+    public usuario_url_foto?: string;
+    public unidade_nome?: string;
+    public unidade_sigla?: string;
+    public unidade_codigo?: string;
     public atribuicoes: string[] = [];
 };
 
