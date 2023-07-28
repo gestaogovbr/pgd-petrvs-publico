@@ -318,7 +318,7 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
         let plano = row;
         const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: this.consult.bind(this) };
         const BOTAO_ALTERAR = { label: "Alterar", icon: "bi bi-pencil-square", color: "btn-outline-info", onClick: this.edit.bind(this) };
-        const BOTAO_EXCLUIR = { label: "Excluir demanda", icon: "bi bi-trash", onClick: this.delete.bind(this) };
+        const BOTAO_EXCLUIR = { label: "Excluir", icon: "bi bi-trash", onClick: this.delete.bind(this) };
         const BOTAO_ASSINAR = { label: "Assinar", icon: "bi bi-pen", onClick: this.assinar.bind(this) };
         const BOTAO_TERMOS = { label: "Termos", icon: "bi bi-file-earmark-check", onClick: ((row) => this.go.navigate({ route: ['uteis', 'documentos', 'TCR', row.id] }, { modalClose: (modalResult) => console.log(modalResult === null || modalResult === void 0 ? void 0 : modalResult.conteudo), metadata: this.planoService.metadados(row) })).bind(this) };
         if (this.auth.hasPermissionTo("MOD_PTR_CONS"))
@@ -572,7 +572,7 @@ class PlanoTrabalhoService {
             needSign: this.needSign.bind(this),
             extraTags: this.extraTags.bind(this),
             especie: "TCR",
-            titulo_documento: "Termo de Ciência e Responsabilidade",
+            titulo: "Termo de Ciência e Responsabilidade",
             dataset: this.planoTrabalhoDao.dataset(),
             datasource: this.planoTrabalhoDao.datasource(plano),
             template: (_a = plano.programa) === null || _a === void 0 ? void 0 : _a.template_tcr,
