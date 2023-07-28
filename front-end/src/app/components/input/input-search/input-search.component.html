@@ -21,7 +21,7 @@
                 </li>
             </ul>
             <input type="text" #inputElement class="form-control" autocomplete="off" [id]="generatedId(controlName)" aria-expanded="false" [attr.readonly]="isOnlySelect ? 'true' : undefined"
-                [attr.placeholder]="placeholder" (keydown)="onKeyDown($event)" (keyup)="onKeyUp($event)">
+                [attr.placeholder]="placeholder" [class.search-text-invalid]="!isTextValid" (keydown)="onKeyDown($event)" (keyup)="onKeyUp($event)">
             <button *ngIf="isDetails" [id]="generatedId(controlName) + '_details_button'" class="btn btn-outline-secondary" type="button" [disabled]="!searchObj ? true : undefined" (click)="onDetailsClick($event)">
                 <i class="bi bi-info-circle"></i>
             </button>

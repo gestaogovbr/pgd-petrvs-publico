@@ -5,14 +5,19 @@
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="12" [label]="lex.translate('Entrega')" controlName="nome"
-                [control]="filter!.controls.nome" [placeholder]="'Nome ' + lex.translate('entrega') + '...'"></input-text>
+            <input-text [size]="6" [label]="lex.noun('Entrega')" controlName="nome" [control]="filter!.controls.nome" [placeholder]="'Nome ' + lex.noun('entrega',false,true) + '...'"></input-text>
+            <input-search [size]="6" [emptyValue]="null" controlName="unidade_id" [control]="filter!.controls.unidade_id" [dao]="unidadeDao"></input-search>
         </div>
     </filter>
     <columns>
         <column title="Nome" field="nome" orderBy="nome"></column>
         <column title="Descrição" field="descricao" orderBy="descricao"></column>
-        <column [title]="lex.translate('Tipo do indicador')" type="select" field="tipo_indicador" [items]="lookup.TIPO_INDICADOR"></column>
+        <column title="Unidade" [template]="columnUnidade">
+            <ng-template let-row="row" #columnUnidade>
+                <badge *ngIf="row.unidade" [icon]="entityService.getIcon('Unidade')" [label]="row.unidade.sigla" color="light" [hint]="row.unidade.nome"></badge>
+            </ng-template>
+        </column>
+        <column [title]="lex.noun('Tipo do indicador')" type="select" field="tipo_indicador" [items]="lookup.TIPO_INDICADOR"></column>
         <column  title="Qualitativos" field="form!.controls.lista_qualitativos.key"></column>
         <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>

@@ -5,6 +5,7 @@ import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
+import { Unidade } from 'src/app/models/unidade.model';
 import { Usuario } from 'src/app/models/usuario.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
@@ -48,16 +49,16 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
         onClick: this.delete.bind(this)
       });
     }
-    // Testa se o usuário possui permissão para consultar as lotações do usuario
-/*     if (this.auth.hasPermissionTo("MOD_LOT_CONS")) {
+  // Testa se o usuário possui permissão para gerenciar as suas unidades-integrantes
+  if (this.auth.hasPermissionTo("MOD_UND_INTG")) {
       this.options.push({
-      icon: "bi bi-pin-map",
-      label: "Lotações",
+      icon: "bi bi-houses",
+      label: "Unidades",
       onClick: (usuario: Usuario) => {
-        this.go.navigate({route: ['configuracoes', 'usuario', usuario.id, 'lotacao']}, {modal: true});
+        this.go.navigate({ route: ['configuracoes', 'usuario', '', usuario.id, 'integrante'] });
         }
       });
-    } */
+    }
   }
 
   public filterClear(filter: FormGroup) {

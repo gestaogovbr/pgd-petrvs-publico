@@ -20,6 +20,7 @@ import { InputTextareaComponent } from '../input/input-textarea/input-textarea.c
 import { InputTimerComponent } from '../input/input-timer/input-timer.component';
 import { ComponentBase } from '../component-base';
 import { InputEditorComponent } from '../input/input-editor/input-editor.component';
+import { InputNumberComponent } from '../input/input-number/input-number.component';
 
 @Component({
   selector: 'editable-form',
@@ -46,6 +47,7 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
   @ContentChildren(InputSearchComponent, { descendants: true }) inputSearchs!: QueryList<InputSearchComponent>;
   @ContentChildren(InputButtonComponent, { descendants: true }) inputButtons!: QueryList<InputButtonComponent>;
   @ContentChildren(InputTextComponent, { descendants: true }) inputTexts!: QueryList<InputTextComponent>;
+  @ContentChildren(InputNumberComponent, { descendants: true }) inputNumbers!: QueryList<InputNumberComponent>;
   @ContentChildren(InputTextareaComponent, { descendants: true }) inputTextareas!: QueryList<InputTextareaComponent>;
   @ContentChildren(InputDatetimeComponent, { descendants: true }) inputDatetimes!: QueryList<InputDatetimeComponent>;
   @ContentChildren(InputRadioComponent, { descendants: true }) inputRadios!: QueryList<InputRadioComponent>;
@@ -132,6 +134,7 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
       ...(this.inputSearchs?.toArray() || []),
       ...(this.inputButtons?.toArray() || []),
       ...(this.inputTexts?.toArray() || []),
+      ...(this.inputNumbers?.toArray() || []),
       ...(this.inputTextareas?.toArray() || []),
       ...(this.inputDatetimes?.toArray() || []),
       ...(this.inputRadios?.toArray() || []),

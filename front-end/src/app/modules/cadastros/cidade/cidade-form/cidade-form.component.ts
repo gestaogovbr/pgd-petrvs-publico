@@ -27,7 +27,6 @@ export class CidadeFormComponent extends PageFormBase<Cidade, CidadeDaoService> 
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-
     if(['codigo_ibge', 'nome', 'uf'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }  else if(['timezone'].indexOf(controlName) >= 0 && !control.value) {

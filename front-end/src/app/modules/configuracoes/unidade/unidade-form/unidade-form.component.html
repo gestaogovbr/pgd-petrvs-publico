@@ -7,8 +7,8 @@
                 <input-text [size]="8" label="Nome" controlName="nome"></input-text>
             </div>
             <div class="row">
-                <input-search #gestor label="Gestor" [size]="6" [emptyValue]="null" controlName="gestor_id" [dao]="usuarioDao" labelInfo="Responsável pela unidade"></input-search>
-                <input-search #gestorSubstituto label="Gestor Substituto" [size]="6" [emptyValue]="null" controlName="gestor_substituto_id" [dao]="usuarioDao" labelInfo="Responsável substituto pela unidade"></input-search>
+                <input-search #gestor label="Gestor" [size]="6" [emptyValue]="null" [control]="formGestor!.controls.gestor_id" controlName="gestor_id" [dao]="usuarioDao" labelInfo="Responsável pela unidade"></input-search>
+                <input-search #gestorSubstituto label="Gestor Substituto" [size]="6" [emptyValue]="null" [control]="formGestor!.controls.gestor_substituto_id" controlName="gestor_substituto_id" [dao]="usuarioDao" labelInfo="Responsável substituto pela unidade"></input-search>
             </div>
             <div class="row">
                 <input-search #cidade [size]="4" controlName="cidade_id" [dao]="cidadeDao"></input-search>
