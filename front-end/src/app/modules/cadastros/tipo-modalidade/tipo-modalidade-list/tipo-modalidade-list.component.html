@@ -6,23 +6,23 @@
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="12" [label]="'Nome ' + lex.noun('tipo de Modalidade',false,true)" controlName="nome"
+            <input-text [size]="12" [label]="'Nome ' + lex.translate('tipo de Modalidade')" controlName="nome"
                 [control]="filter!.controls.nome" placeholder="Nome..."></input-text>
         </div>
     </filter>
     <columns>
         <column title="Descrição" field="nome"></column>
-        <column [title]="lex.noun('Plano de trabalho')" [template]="columnPlanoTrabalho">
+        <column [title]="lex.translate('Plano de trabalho')" [template]="columnPlanoTrabalho">
             <ng-template let-row="row" #columnPlanoTrabalho>
                 <div class="one-per-line">
                     <badge *ngIf="row.plano_trabalho_assinatura_participante" color="light" icon="bi bi-pen" label="Assinatura do participante"></badge>
                     <badge *ngIf="row.plano_trabalho_assinatura_gestor_unidade" color="light" icon="bi bi-pen" label="Assinatura do gestor da unidade"></badge>
                     <badge *ngIf="row.plano_trabalho_assinatura_gestor_entidade" color="light" icon="bi bi-pen" label="Assinatura do gestor da entidade"></badge>
-                    <badge *ngIf="row.plano_trabalho_calcula_horas" color="light" icon="bi bi-clock" [label]="'Usa horas no ' + lex.noun('plano de trabalho')"></badge>
+                    <badge *ngIf="row.plano_trabalho_calcula_horas" color="light" icon="bi bi-clock" [label]="'Usa horas no ' + lex.translate('plano de trabalho')"></badge>
                 </div>
             </ng-template>
         </column>
-        <column [title]="lex.noun('Atividade')" [template]="columnAtividade">
+        <column [title]="lex.translate('Atividade')" [template]="columnAtividade">
             <ng-template let-row="row" #columnAtividade>
                 <div class="one-per-line">
                     <badge *ngIf="row.atividade_tempo_despendido" color="light" icon="bi bi-hourglass-bottom" label="Assinatura do participante"></badge>

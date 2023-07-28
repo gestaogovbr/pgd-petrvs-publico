@@ -51,7 +51,7 @@ export class ForcaDeTrabalhoReportAreaComponent extends PageReportBase<Usuario, 
   public opcoesGraficoBarrasHoras: ChartOptions = {
     scales: {
       xAxes: [{
-        labels: ['Total de Horas ' + this.lex.noun('Unidade',false,true)],
+        labels: ['Total de Horas ' + this.lex.translate('Unidade')],
         display: false,
         //stacked: true,
         ticks: {
@@ -90,7 +90,7 @@ export class ForcaDeTrabalhoReportAreaComponent extends PageReportBase<Usuario, 
         }
       }],
       yAxes: [{
-        labels: ['Total de ' + this.lex.noun('Atividade',true) + this.lex.noun('Unidade',false,true)],
+        labels: ['Total de ' + this.lex.translate('Atividade') + this.lex.translate('Unidade')],
         display: false,
         stacked: true,
         ticks: {
@@ -190,34 +190,34 @@ export class ForcaDeTrabalhoReportAreaComponent extends PageReportBase<Usuario, 
     ];
     let dadosGraficoDetalhado: ChartDataSets[] = [
       {
-        label: this.lex.noun('Atividade',true) + ' Não-iniciadas',
+        label: this.lex.translate('Atividade') + ' Não-iniciadas',
         data: [metadados.horasAtividadesNaoIniciadas],
         backgroundColor: '#0dcaf0',
-        stack: this.lex.noun('Atividade',true)
+        stack: this.lex.translate('Atividade')
       },
       {
-        label: this.lex.noun('Atividade',true) + ' Iniciadas',
+        label: this.lex.translate('Atividade') + ' Iniciadas',
         data: [metadados.horasAtividadesEmAndamento],
         backgroundColor: '#ffc107',
-        stack: this.lex.noun('Atividade',true)
+        stack: this.lex.translate('Atividade')
       },
       {
-        label: this.lex.noun('Atividade',true) + ' Concluídas',
+        label: this.lex.translate('Atividade') + ' Concluídas',
         data: [metadados.horasAtividadesConcluidas],
         backgroundColor: '#af4201',
-        stack: this.lex.noun('Atividade',true)
+        stack: this.lex.translate('Atividade')
       },
       {
-        label: this.lex.noun('Atividade',true) + ' Avaliadas',
+        label: this.lex.translate('Atividade') + ' Avaliadas',
         data: [metadados.horasAtividadesAvaliadas],
         backgroundColor: '#af4af0',
-        stack: this.lex.noun('Atividade',true)
+        stack: this.lex.translate('Atividade')
       },
       {
         label: 'Disponível no Plano',
         data: [metadados.horasUteisTotais - metadados.horasTotaisAlocadas],
         backgroundColor: '#6c757d',
-        stack: this.lex.noun('Atividade',true)
+        stack: this.lex.translate('Atividade')
       }
     ];
     let dadosGraficoAvaliacao: ChartDataSets[] = [
@@ -248,12 +248,12 @@ export class ForcaDeTrabalhoReportAreaComponent extends PageReportBase<Usuario, 
     //let $dados: any = null;
     let dadosGraficoPizzaGeral: ChartDataSets[] = [
       {
-        label: this.lex.noun('Atividade',true) + ' Não-iniciadas',
+        label: this.lex.translate('Atividade') + ' Não-iniciadas',
         data: [metadados.horasAtividadesNaoIniciadas],
         backgroundColor: '#0dcaf0'
       },
       {
-        label: this.lex.noun('Atividade',true) + ' Iniciadas',
+        label: this.lex.translate('Atividade') + ' Iniciadas',
         data: [metadados.horasAtividadesEmAndamento],
         backgroundColor: '#ffc107'
       }];
@@ -272,12 +272,12 @@ export class ForcaDeTrabalhoReportAreaComponent extends PageReportBase<Usuario, 
 
     let dadosGraficoPizzaDetalhado: ChartDataSets[] = [
       {
-        label: this.lex.noun('Atividade',true) + ' Não-iniciadas',
+        label: this.lex.translate('Atividade') + ' Não-iniciadas',
         data: [metadados.horasAtividadesNaoIniciadas],
         backgroundColor: '#0dcaf0'
       },
       {
-        label: this.lex.noun('Atividade',true) + ' Iniciadas',
+        label: this.lex.translate('Atividade') + ' Iniciadas',
         data: [metadados.horasAtividadesEmAndamento],
         backgroundColor: '#ffc107'
       },

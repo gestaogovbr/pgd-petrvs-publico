@@ -50,7 +50,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     this.planoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
     this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
     /* Inicializações */
-    this.title = this.lex.noun("Plano de trabalho",true);
+    this.title = this.lex.translate("Plano de trabalho");
     this.code = "MOD_PTR";
     this.filter = this.fh.FormBuilder({
       agrupar: {default: true},

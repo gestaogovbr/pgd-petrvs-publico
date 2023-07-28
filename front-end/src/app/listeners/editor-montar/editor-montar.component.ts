@@ -40,7 +40,7 @@ export class EditorMontarComponent extends ListenerBase implements OnInit {
       this.gb.toolbarButtons.push({
         icon: "bi bi-activity",
         color: "btn-outline-success",
-        hint: "Incluir " + this.lex.noun("demanda"),
+        hint: "Incluir " + this.lex.translate("demanda"),
         onClick: this.incluirDemanda.bind(this) 
       });
     } */       

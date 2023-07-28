@@ -24,7 +24,7 @@ export class PlanejamentoListObjetivosEntregasComponent extends PageListBase<Pla
     this.join = ['objetivos']
     this.planejamentoDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.planejamentoObjetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
-    this.title = this.lex.noun("Objetivos", true);
+    this.title = this.lex.translate("Objetivos");
     this.filter = this.fh.FormBuilder({
       nome: { default: "" },
       planejamento_id: { default: null}

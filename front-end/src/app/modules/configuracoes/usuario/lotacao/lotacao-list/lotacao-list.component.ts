@@ -25,7 +25,7 @@ export class LotacaoListComponent extends PageListBase<UnidadeIntegrante, Unidad
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
 
     /* Inicializações */
-    this.title = this.lex.noun("Lotação",true);
+    this.title = this.lex.translate("Lotação");
     this.join = ["usuario", "unidade"];
     this.modalWidth = 500;
     this.filter = this.fh.FormBuilder({
@@ -40,7 +40,7 @@ export class LotacaoListComponent extends PageListBase<UnidadeIntegrante, Unidad
     const usuarioId = this.urlParams!.get("usuario_id")!;
     this.addParams = {usuario_id: usuarioId};
     this.usuarioDao.getById(usuarioId).then(usuario => {
-      this.title = this.lex.noun("Lotação", true) + " " + this.lex.noun("usuário", false, true) + " " + this.util.apelidoOuNome(usuario!);
+      this.title = this.lex.translate("Lotação") + " " + this.lex.translate("usuário") + " " + this.util.apelidoOuNome(usuario!);
       this.cdRef.detectChanges();
     });
   }

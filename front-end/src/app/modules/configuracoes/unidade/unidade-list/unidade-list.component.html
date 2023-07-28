@@ -23,7 +23,7 @@
             </ng-template>
         </column>
         <column title="Código" field="codigo"></column>
-        <column [title]="lex.noun('Cidade')" [template]="columnCidade">
+        <column [title]="lex.translate('Cidade')" [template]="columnCidade">
             <ng-template let-row="row" #columnCidade>
                 <span>{{(row.cidade?.nome || "") + "/" + (row.cidade?.uf || "")}}</span>
             </ng-template>

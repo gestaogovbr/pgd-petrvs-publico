@@ -23,7 +23,7 @@ export class PlanejamentoObjetivoListComponent extends PageListBase<Planejamento
     /* Inicializações */
     this.eixoTematicoDao = injector.get<EixoTematicoDaoService>(EixoTematicoDaoService);
     this.planejamentoDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
-    this.title = this.lex.noun('Objetivo',true) + this.lex.noun("Planejamento Institucional", false, true);
+    this.title = this.lex.translate('Objetivos') + this.lex.translate("Planejamento Institucional");
     this.join = ['planejamento:nome'];
     this.orderBy = [['nome', 'asc']];
     this.filter = this.fh.FormBuilder({

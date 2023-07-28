@@ -16,7 +16,7 @@ export class EixoTematicoListComponent extends PageListBase<EixoTematico, EixoTe
   constructor(public injector: Injector) {
     super(injector, EixoTematico, EixoTematicoDaoService);
     /* Inicializações */
-    this.title = this.lex.noun('Eixo Temático', true);
+    this.title = this.lex.translate('Eixos Temáticos');
     this.orderBy = [['nome', 'asc']];
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}

@@ -16,7 +16,7 @@ export class EntregaListComponent extends PageListBase<Entrega, EntregaDaoServic
   constructor(public injector: Injector) {
     super(injector, Entrega, EntregaDaoService);
     /* Inicializações */
-    this.title = this.lex.noun('Entrega',true);
+    this.title = this.lex.translate('Entrega');
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}
      });

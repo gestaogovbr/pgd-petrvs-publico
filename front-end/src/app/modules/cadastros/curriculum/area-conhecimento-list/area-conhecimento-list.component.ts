@@ -20,7 +20,7 @@ export class AreaConhecimentoListComponent extends PageListBase<AreaConhecimento
     super(injector, AreaConhecimento, AreaConhecimentoDaoService);
     /* Inicializações */
   
-    this.title = this.lex.noun("Área de conhecimento",true);
+    this.title = this.lex.translate("Áreas de Conhecimento");
     this.code = "MOD_RX";
     this.orderBy = [['nome','asc']];
 

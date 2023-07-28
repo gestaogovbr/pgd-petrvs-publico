@@ -10,7 +10,7 @@
                 <input-text [size]="12" label="Descrição" controlName="descricao"></input-text>
             </div>
         </tab>
-        <tab key="CAPACIDADES" *ngIf="auth.hasPermissionTo('MOD_TIPO_CAP_CONS')" [label]="lex.noun('Capacidade',true)">
+        <tab key="CAPACIDADES" *ngIf="auth.hasPermissionTo('MOD_TIPO_CAP_CONS')" [label]="lex.translate('Capacidade')">
             <grid [control]="form!.controls.capacidades" [scrollable]="true">
                 <columns>
                     <column title="Código" [template]="columnCodCapacidade">
@@ -18,7 +18,7 @@
                             <span> {{row.tipo_capacidade.codigo}}</span>
                         </ng-template>
                     </column>
-                    <column [title]="lex.noun('Capacidade')" [template]="columnTipoCapacidade">
+                    <column [title]="lex.translate('Capacidade')" [template]="columnTipoCapacidade">
                         <ng-template let-row="row" #columnTipoCapacidade>
                             <span> {{row.tipo_capacidade.descricao}}</span>
                         </ng-template>

@@ -16,7 +16,7 @@ export class TipoTarefaListComponent extends PageListBase<TipoTarefa, TipoTarefa
   constructor(public injector: Injector) {
     super(injector, TipoTarefa, TipoTarefaDaoService);
     /* Inicializações */
-    this.title = this.lex.noun("Tipo de Tarefa", true);
+    this.title = this.lex.translate("Tipo de Tarefa");
     this.code = "MOD_TRF";
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}

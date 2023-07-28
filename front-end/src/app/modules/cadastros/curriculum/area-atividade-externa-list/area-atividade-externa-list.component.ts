@@ -18,7 +18,7 @@ export class AreaAtividadeExternaListComponent extends PageListBase<AreaAtividad
     super(injector, AreaAtividadeExterna, AreaAtividadeExternaDaoService);
     /* Inicializações */
   
-    this.title = this.lex.noun("Área da Atividade Externa",true);
+    this.title = this.lex.translate("Áreas da Atividade Externa");
     this.code = "MOD_RX";
     this.orderBy = [['nome','asc']];
 

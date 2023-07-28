@@ -4,7 +4,7 @@
     [hasEdit]="auth.hasPermissionTo('MOD_PRGT_PART_EDT')"
     [hasDelete]="auth.hasPermissionTo('MOD_PRGT_PART_EXCL')">
     <columns>
-        <column [title]="lex.noun('Usuário')" [template]="columnUsuario" [editTemplate]="editUsuario">
+        <column [title]="lex.translate('Usuário')" [template]="columnUsuario" [editTemplate]="editUsuario">
             <ng-template let-row="row" #columnUsuario>
                 <div class="row">
                     <div class="col-2">

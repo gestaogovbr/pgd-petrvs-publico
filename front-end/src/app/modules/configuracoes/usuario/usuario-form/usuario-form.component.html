@@ -29,13 +29,13 @@
         </tab>
         <tab key="CONFIGURACOES" label="Configurações">
             <div class="row">
-                <input-editor [label]="'Texto complementar ' + lex.noun('Plano de Trabalho',false,true)" controlName="texto_complementar_plano" [dataset]="planoDataset"></input-editor>
+                <input-editor [label]="'Texto complementar ' + lex.translate('Plano de Trabalho')" controlName="texto_complementar_plano" [dataset]="planoDataset"></input-editor>
             </div>
         </tab>
         <tab *ngIf="false" key="AREAS_TRABALHO" [label]="lex.translate('Áreas de Trabalho')">
             <grid [control]="form!.controls.lotacoes" [form]="formLotacoes" [add]="addLotacao.bind(this)" [load]="loadLotacao.bind(this)" [hasDelete]="true" [remove]="removeLotacao.bind(this)" [save]="saveLotacao.bind(this)" editable>
                 <columns>
-                    <column [title]="lex.noun('Unidade')" [template]="columnUnidade" [editTemplate]="editUnidade">
+                    <column [title]="lex.translate('Unidade')" [template]="columnUnidade" [editTemplate]="editUnidade">
                         <ng-template let-row="row" #columnUnidade>
                             <strong>{{row.unidade.sigla}}</strong><span> (IdServo: {{row.unidade.codigo}})</span><br>
                             <span><i *ngIf="row.principal" class="bi bi-bookmark-star"></i> {{row.unidade.nome}} </span>
@@ -44,7 +44,7 @@
                             <input-search #unidade [size]="12" label icon controlName="unidade_id" [control]="formLotacoes!.controls.unidade_id" [dao]="unidadeDao"></input-search>
                         </ng-template>
                     </column>
-                    <column [title]="lex.noun('Gestor')" [template]="columnGestor">
+                    <column [title]="lex.translate('Gestor')" [template]="columnGestor">
                         <ng-template let-row="row" #columnGestor>
                             <span>{{ row.unidade.gestor_id == row.usuario_id ? 'Titular' : row.unidade.gestor_substituto_id == row.usuario_id ? 'Substituto' : '' }}</span>
                         </ng-template>

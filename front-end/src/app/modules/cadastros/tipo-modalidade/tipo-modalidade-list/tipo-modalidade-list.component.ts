@@ -16,7 +16,7 @@ export class TipoModalidadeListComponent extends PageListBase<TipoModalidade, Ti
   constructor(public injector: Injector) {
     super(injector, TipoModalidade, TipoModalidadeDaoService);
     /* Inicializações */
-    this.title = "Tipos de " + this.lex.noun("Modalidade",true);
+    this.title = "Tipos de " + this.lex.translate("Modalidade");
     this.code="MOD_TIPO_MDL";
     this.filter = this.fh.FormBuilder({
       nome: {default: ""},

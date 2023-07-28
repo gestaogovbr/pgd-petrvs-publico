@@ -7,8 +7,8 @@
                 <input-search #usuario [size]="6" controlName="usuario_id" [dao]="usuarioDao" [join]="['afastamentos']" (select)="onUsuarioSelect($event)"></input-search>
             </div>
             <div class="row">
-                <input-datetime [size]="3" label="Início" icon="bi bi-calendar-date" controlName="data_inicio_vigencia" [control]="form!.controls.data_inicio_vigencia" (change)="onDataInicioChange($event)" labelInfo="'Início da Vigência do '+ lex.noun('Plano de trabalho')"></input-datetime>
-                <input-datetime [size]="3" label="Final" icon="bi bi-calendar-date" controlName="data_fim_vigencia" [control]="form!.controls.data_fim_vigencia" (change)="onDataFimChange($event)" labelInfo="'Final da Vigência do ' +lex.noun('Plano de trabalho')"></input-datetime>
+                <input-datetime [size]="3" label="Início" icon="bi bi-calendar-date" controlName="data_inicio_vigencia" [control]="form!.controls.data_inicio_vigencia" (change)="onDataInicioChange($event)" labelInfo="'Início da Vigência do '+ lex.translate('Plano de trabalho')"></input-datetime>
+                <input-datetime [size]="3" label="Final" icon="bi bi-calendar-date" controlName="data_fim_vigencia" [control]="form!.controls.data_fim_vigencia" (change)="onDataFimChange($event)" labelInfo="'Final da Vigência do ' +lex.translate('Plano de trabalho')"></input-datetime>
                 <input-search #tipoModalidade [size]="6" controlName="tipo_modalidade_id" [dao]="tipoModalidadeDao"></input-search>
             </div>
             <ng-container *ngIf="tipoModalidade!.selectedItem?.entity?.plano_trabalho_calcula_horas">
@@ -24,8 +24,8 @@
                     <calendar-efemerides [efemerides]="horasParciais"></calendar-efemerides>
                 </separator>
             </ng-container>
-            <separator [title]="lex.noun('Entrega', true) + lex.noun('plano de trabalho', false, true)">
-                <top-alert *ngIf="!form!.controls.plano_entrega_id.value?.length" type="warning" [message]="'Antes de incluir ' + lex.noun('entrega',true) + ' neste ' + lex.noun('Plano de Trabalho') + ', é necessário selecionar um ' + lex.noun('Plano de Entregas') + '!'"></top-alert>
+            <separator [title]="lex.translate('Entrega') + lex.translate('plano de trabalho')">
+                <top-alert *ngIf="!form!.controls.plano_entrega_id.value?.length" type="warning" [message]="'Antes de incluir ' + lex.translate('entrega') + ' neste ' + lex.translate('Plano de Trabalho') + ', é necessário selecionar um ' + lex.translate('Plano de Entregas') + '!'"></top-alert>
                 <div *ngIf="form!.controls.plano_entrega_id.value?.length">
                     <editable-form [form]="formEntregas!"  [noButtons]="'true'">
                         <plano-trabalho-list-entrega noPersist [entity]="entity" [entregasDoPlanoEntrega]="entregas"></plano-trabalho-list-entrega>
@@ -33,8 +33,8 @@
                 </div>
             </separator>
         </tab>
-        <!--tab key="ENTREGAS" [label]="lex.noun('Entrega', true)">
-            <top-alert *ngIf="!form!.controls.plano_entrega_id.value?.length" type="warning" [message]="'Antes de incluir ' + lex.noun('entrega',true) + ' neste ' + lex.noun('Plano de Trabalho') + ', é necessário selecionar um ' + lex.noun('Plano de Entregas') + '!'"></top-alert>
+        <!--tab key="ENTREGAS" [label]="lex.translate('Entrega', true)">
+            <top-alert *ngIf="!form!.controls.plano_entrega_id.value?.length" type="warning" [message]="'Antes de incluir ' + lex.translate('entrega',true) + ' neste ' + lex.translate('Plano de Trabalho') + ', é necessário selecionar um ' + lex.translate('Plano de Entregas') + '!'"></top-alert>
             <div *ngIf="form!.controls.plano_entrega_id.value?.length">
                 <editable-form [form]="formEntregas!"  [noButtons]="'true'">
                     <plano-trabalho-list-entrega noPersist [entity]="entity" [entregasDoPlanoEntrega]="entregas"></plano-trabalho-list-entrega>
@@ -42,12 +42,12 @@
             </div>
         </tab//-->
         <tab *ngIf="checkFilled(['usuario_id'])" key="MENSAGENS" label="Texto Complementar">
-            <separator [title]="'Texto complementar da '+ lex.noun('unidade')">
-                <input-switch controlName="editar_texto_complementar_unidade" [size]="12" scale="small" labelPosition="right" [label]="'Editar texto complementar na '+ lex.noun('unidade')"></input-switch>
+            <separator [title]="'Texto complementar da '+ lex.translate('unidade')">
+                <input-switch controlName="editar_texto_complementar_unidade" [size]="12" scale="small" labelPosition="right" [label]="'Editar texto complementar na '+ lex.translate('unidade')"></input-switch>
                 <input-editor controlName="unidade_texto_complementar" [disabled]="form!.controls.editar_texto_complementar_unidade.value ? undefined : 'true'" [dataset]="planoDataset"></input-editor>
             </separator>
             <separator title="Texto complementar do usuario">
-                <input-switch controlName="editar_texto_complementar_usuario" [size]="12" scale="small" labelPosition="right" [label]="'Editar texto complementar do '+ lex.noun('usuário')"></input-switch>
+                <input-switch controlName="editar_texto_complementar_usuario" [size]="12" scale="small" labelPosition="right" [label]="'Editar texto complementar do '+ lex.translate('usuário')"></input-switch>
                 <input-editor controlName="usuario_texto_complementar" [disabled]="form!.controls.editar_texto_complementar_usuario.value ? undefined : 'true'" [dataset]="planoDataset"></input-editor>
             </separator>
         </tab>

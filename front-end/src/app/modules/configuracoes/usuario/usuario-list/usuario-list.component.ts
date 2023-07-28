@@ -24,7 +24,7 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.perfilDao = injector.get<PerfilDaoService>(PerfilDaoService);
     /* Inicializações */
-    this.title = this.lex.noun("Usuário",true);
+    this.title = this.lex.translate("Usuário");
     this.code = "MOD_CFG_USER";
     this.join = ["perfil:id,nome"];
     this.filter = this.fh.FormBuilder({
