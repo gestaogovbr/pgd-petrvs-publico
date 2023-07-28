@@ -7,6 +7,7 @@ import { IIndexable } from 'src/app/models/base.model';
 import { Entrega } from 'src/app/models/entrega.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import {LookupItem} from "../../../../services/lookup.service";
+import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 
 @Component({
   selector: 'app-entrega-form',
@@ -18,17 +19,21 @@ export class EntregaFormComponent extends PageFormBase<Entrega, EntregaDaoServic
   @ViewChild('itemQualitativo', { static: false }) public itemQualitativo?: InputTextComponent;
 
   public listaQualitativos: string[] = [];
+  public unidadeDao: UnidadeDaoService;
 
   constructor(public injector: Injector) {
     super(injector, Entrega, EntregaDaoService);
+    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.modalWidth = 600;
+    this.join = ["unidade"];
     this.form = this.fh.FormBuilder({
       nome: {default: ""},
       descricao: {default: ""},
       tipo_indicador: {default: ""},
       qualitativo: {default: ""},
       lista_qualitativos: {default: []},
-      itemQualitativo: {default: ""}
+      item_qualitativo: {default: ""},
+      unidade_id: {default: null}
     }, this.cdRef, this.validate);
   }
 
@@ -95,14 +100,14 @@ export class EntregaFormComponent extends PageFormBase<Entrega, EntregaDaoServic
 
   public addItemHandleItemQualitativo(): LookupItem | undefined {
     let result = undefined;
-    const value = this.form!.controls.itemQualitativo.value;
+    const value = this.form!.controls.item_qualitativo.value;
     const key = this.util.onlyAlphanumeric(value).toUpperCase();
     if(value?.length && this.util.validateLookupItem(this.form!.controls.lista_qualitativos.value, key)) {
       result = {
         key: key,
-        value: this.form!.controls.itemQualitativo.value
+        value: this.form!.controls.item_qualitativo.value
       };
-      this.form!.controls.itemQualitativo.setValue("");
+      this.form!.controls.item_qualitativo.setValue("");
     }
     return result;
   };

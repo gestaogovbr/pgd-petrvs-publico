@@ -14,12 +14,13 @@ export class DocumentosBadgeComponent {
   @Input() maxWidth?: number;
   @Input() noRounded?: string;
   @Input() withLink?: string;
+  @Input() onlyLink?: string;
   @Input() color: string = "light";
 
   constructor(public documentoService: DocumentoService) {}
 
   public get show(): boolean {
-    return !!this.documento || !!this.emptyMessage?.length;
+    return (this.isOnlyLink && (this.isLinkSei || this.isLinkUrl)) || (!this.isOnlyLink && (!!this.documento || !!this.emptyMessage?.length));
   }
 
   public get icon(): string {
@@ -62,6 +63,10 @@ export class DocumentosBadgeComponent {
 
   public get isWithLink(): boolean {
     return this.withLink != undefined;
+  }
+
+  public get isOnlyLink(): boolean {
+    return this.onlyLink != undefined;
   }
 }
 

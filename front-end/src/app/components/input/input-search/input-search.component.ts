@@ -177,6 +177,20 @@ export class InputSearchComponent extends InputBase implements OnInit {
     this.cdRef.detectChanges();
   }
 
+  public get isTextValid(): boolean {
+    let valid = !!this.selectedItem || !this.inputElement?.nativeElement.value?.length;
+    if(this.control) {
+      if(valid && this.control.errors?.incorrect) {
+        let {incorrect, ...others} = this.control.errors;
+        this.control.setErrors(Object.entries(this.control.errors).length == 1 ? null : others);
+      } else if(!valid && !this.control.errors?.incorrect) {
+        let incorrect = Object.assign(this.control.errors || {}, {incorrect: true});
+        this.control.setErrors(incorrect);
+      }
+    }
+    return valid;
+  }
+
   public onItemClick(item: SelectItem | SearchGroupSeparator) {
     this.selectItem((item as SelectItem).value);
   }
