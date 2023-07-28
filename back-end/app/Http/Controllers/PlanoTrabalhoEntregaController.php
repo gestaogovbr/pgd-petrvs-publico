@@ -21,7 +21,7 @@ class PlanoTrabalhoEntregaController extends ControllerBase {
                 ]);
                 if($data->fails()) throw new ServerException("ValidatePlanoTrabalhoEntrega",$data->errors());  */               
                 break;
-            case 'UPDATE':
+            case 'EDIT':
                 if (!$usuario->hasPermissionTo('MOD_PTR_ENTR_EDT')) throw new ServerException("CapacidadeStore", "Edição não executada");
 /*                 $data = Validator::make($request->all(), [
                     'entrega.descricao' => 'required|max:255',

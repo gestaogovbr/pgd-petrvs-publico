@@ -27,23 +27,20 @@ class EntidadeSeeder extends Seeder
             'id' => "52d78c7d-e0c1-422b-b094-2ca5958d5ac1",
             'sigla' => 'PRF',
             'nome' => 'Polícia Rodoviária Federal',
+            'codigo_ibge' => '5300108',
+            'uf' => 'DF',
             'abrangencia' => 'NACIONAL',
-            'layout_formulario_demanda' => 'COMPLETO',
-            'campos_ocultos_demanda' => [],
-            'nomenclatura' => [],
             'cidade_id' => $brasilia->id
         ]);
-
-        $tipo1 = new TipoModalidade();
+        $ent1->save();
+        /*$tipo1 = new TipoModalidade();
         $tipo1->fill([
             'nome' => 'Modalidade 1',
-            'config' => null,
-            'data_inicio' => Carbon::now()
         ]);
         $tipo1->save();
         $tipo1->entidades()->save($ent1);
 
-        //cria a entidade ANTAQ
+        /cria a entidade ANTAQ
         $ent2 = new Entidade();
         $ent2->fill([
             'sigla' => 'ANTAQ',
@@ -58,8 +55,6 @@ class EntidadeSeeder extends Seeder
         $tipo2 = new TipoModalidade();
         $tipo2->fill([
             'nome' => 'Modalidade 2',
-            'config' => null,
-            'data_inicio' => Carbon::now()
         ]);
         $tipo2->save();
         $tipo2->entidades()->save($ent2);
@@ -92,8 +87,6 @@ class EntidadeSeeder extends Seeder
         $tipo4 = new TipoModalidade();
         $tipo4->fill([
             'nome' => 'Modalidade 1',
-            'config' => null,
-            'data_inicio' => Carbon::now()
         ]);
         $tipo4->save();
         $tipo4->entidades()->save($ent4);
@@ -114,8 +107,6 @@ class EntidadeSeeder extends Seeder
         $tipo5 = new TipoModalidade();
         $tipo5->fill([
             'nome' => 'Modalidade 2',
-            'config' => null,
-            'data_inicio' => Carbon::now()
         ]);
         $tipo5->save();
         $tipo5->entidades()->save($ent5);
@@ -135,10 +126,8 @@ class EntidadeSeeder extends Seeder
         $tipo6 = new TipoModalidade();
         $tipo6->fill([
             'nome' => 'Modalidade 2',
-            'config' => null,
-            'data_inicio' => Carbon::now()
         ]);
         $tipo6->save();
-        $tipo6->entidades()->save($ent6);
+        $tipo6->entidades()->save($ent6);*/
     }
 }

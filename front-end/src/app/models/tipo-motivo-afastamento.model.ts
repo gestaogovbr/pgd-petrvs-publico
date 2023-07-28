@@ -7,8 +7,6 @@ export class TipoMotivoAfastamento extends Base {
     public cor: string = ""; /* Código da cor em formato hex // style="color: #AABBCC00" */
     public horas: number = 0; /* Se o afastamento é medido em horas */
     public integracao: number = 0; /* Se o tipo de motivo de afastamento é integrado a outro sistema */
-    //public data_inicio: Date = new Date(0); /* Data de início */
-    //public data_fim: Date = new Date(0); /* Data fim */
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

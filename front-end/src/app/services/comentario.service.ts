@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { GridComponent } from '../components/grid/grid.component';
 import { DaoBaseService } from '../dao/dao-base.service';
-import { DemandaDaoService } from '../dao/demanda-dao.service';
+import { AtividadeDaoService } from '../dao/atividade-dao.service';
 import { Base } from '../models/base.model';
 import { Comentario } from '../models/comentario';
 import { AuthService } from './auth.service';
@@ -16,7 +16,7 @@ export class ComentarioService {
   constructor(
     public util: UtilService,
     public auth: AuthService,
-    public dao: DemandaDaoService
+    public dao: AtividadeDaoService
   ) { }
 
   public comentarioLevel(comentario: Comentario): string[] {

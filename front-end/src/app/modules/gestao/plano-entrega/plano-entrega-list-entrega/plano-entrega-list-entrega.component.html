@@ -7,18 +7,12 @@
                 </span>
             </ng-template>
             <columns>
-                <column [title]="'Entrega\Demandante\Destinatário'" [template]="columnEntregaCliente">
+                <column [title]="'Entrega\nDemandante/Destinatário'" [template]="columnEntregaCliente">
                     <ng-template let-row="row" #columnEntregaCliente>
-                        <span *ngIf="row.descricao" class="badge bg-light text-dark">
-                            <i class="bi bi-textarea-t"></i>
-                            {{row.descricao}}
-                        </span>
-                        <span *ngIf="row.unidade_id" class="badge bg-light text-dark">
-                            <i class="fa-unity fab"></i>
-                            {{row.unidade.nome}}
-                        </span>
-                        <span *ngIf="row.destinatario" class="badge bg-light text-dark">
-                            {{row.destinatario}}
+                        <badge *ngIf="row.descricao" color="light" icon="bi bi-textarea-t" [label]="row.descricao"></badge>
+                        <span class="d-block">
+                            <badge *ngIf="row.unidade" color="light" [icon]="entityService.getIcon('Unidade')" [label]="row.unidade.sigla"></badge>
+                            <badge *ngIf="row.destinatario?.length" color="light" icon="bi bi-mailbox" [label]="row.destinatario"></badge>
                         </span>
                     </ng-template>
                 </column>
@@ -38,13 +32,8 @@
                 </column>
                 <column [title]="'Meta\nRealizado'" [template]="columnMetaRealizado">
                     <ng-template let-row="row" #columnMetaRealizado>
-                        <span  *ngIf="row.meta" class="badge bg-light text-dark">
-                            {{row.meta}}
-                        </span>
-                        <span *ngIf="row.realizado" class="badge bg-light text-dark">
-                            {{row.realizado}}
-                        </span>
-
+                        <badge [label]="planoEntregaService.getValorMeta(row)" color="light"></badge>
+                        <badge [label]="planoEntregaService.getValorRealizado(row)" color="light"></badge>
                     </ng-template>
                 </column>
                 <column title="Progresso" [template]="columnProgresso">

@@ -19,6 +19,7 @@ class NotificacaoWhatsapp extends ModelBase
         'interacoes', /* json; NOT NULL; DEFAULT: 'json_array()'; */// Interações (histórico do campo atual)
         'atual', /* tinyint; NOT NULL; */// Informações da posição atual no menu
         'usuario_id', /* char(36); */
+        //'deleted_at', /* timestamp; */
     ];
 
     protected static function booted()
@@ -36,5 +37,5 @@ class NotificacaoWhatsapp extends ModelBase
 
     // Has
     // Belongs
-    public function usuario() { return $this->belongsTo(Usuario::class); }
+    public function usuario() { return $this->belongsTo(Usuario::class); }    //nullable
 }

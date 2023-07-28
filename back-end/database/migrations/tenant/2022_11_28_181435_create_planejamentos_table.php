@@ -18,15 +18,19 @@ class CreatePlanejamentosTable extends Migration
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
+            $table->softDeletes();
             // Campos:
-            $table->dateTime('data_inicio')->comment("Data inicio da vigência do registro");
-            $table->dateTime('data_fim')->nullable()->comment("Data fim da vigência do registro");
-            $table->dateTime('inicio')->comment("Data inicio do planejamento");
-            $table->dateTime('fim')->nullable()->comment("Data fim do planejamento");
-            $table->string('nome', 256)->comment("Nome do planejamento estratégico");
+            $table->string('nome', 256)->comment("Nome do planejamento institucional");
+            $table->text('missao')->comment("Missão da entidade/unidade");
+            $table->text('visao')->comment("Visão da entidade/unidade");
+            $table->dateTime('inicio')->comment("Data de inicio do planejamento institucional");
+            $table->dateTime('fim')->nullable()->comment("Data do fim do planejamento institucional");
+            $table->dateTime('data_arquivamento')->nullable()->comment("Data de arquivamento do planejamento institucional");
+            $table->json('valores')->comment("Valores da entidade/unidade");
             // Chaves estrangeiras:
-            $table->foreignUuid('entidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('unidade_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('entidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Entidade do planejamento institucional");
+            $table->foreignUuid('unidade_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Unidade do planejamento institucional (opcional)");
+            $table->foreignUuid('planejamento_superior_id')->nullable()->constrained("planejamentos")->onDelete('restrict')->onUpdate('cascade')->comment("Planejamento institucional superior (obrigatório, se o planejamento for de uma unidade)");
         });
     }
 
@@ -38,5 +42,6 @@ class CreatePlanejamentosTable extends Migration
     public function down()
     {
         Schema::dropIfExists('planejamentos');
+
     }
 }

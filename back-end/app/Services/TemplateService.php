@@ -4,11 +4,8 @@ namespace App\Services;
 
 use App\Models\Unidade;
 use App\Services\ServiceBase;
-use App\Traits\UseDataFim;
 
 class TemplateService extends ServiceBase {
-
-    use UseDataFim;
 
     public function proxyQuery($query, &$data) {
         if(!empty(array_filter($data["where"], fn($v) => $v[0] == 'especie' && $v[2] == 'NOTIFICACAO'))) {

@@ -29,7 +29,8 @@ class TenantDatabaseMigrated extends TenantListenerBase
      */
     public function handle(Events\DatabaseMigrated $event)
     {
-        if($this->loadLogConfig($event->tenant)) {
+        $this->loadConfig($event->tenant);
+        if($this->hasLogConfig($event->tenant)) {
             $database = config("database.connections.log.database");
             if(!empty($database)) {
                 Config::set('database.connections.log.database', null);

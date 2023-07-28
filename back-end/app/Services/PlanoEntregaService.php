@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Unidade;
 use App\Models\PlanoEntrega;
-use App\Traits\UseDataFim;
 use App\Exceptions\ServerException;
 use App\Models\Programa;
 use Illuminate\Support\Facades\DB;
@@ -15,8 +14,6 @@ use Exception;
 
 class PlanoEntregaService extends ServiceBase
 {
-    use UseDataFim;
-
     public $unidades = []; /* Buffer de unidades para funções que fazem consulta frequentes em unidades */
 
     public function arquivar($data, $unidade) {
@@ -66,27 +63,27 @@ class PlanoEntregaService extends ServiceBase
         $planoEntrega = !empty($entity['id']) ? PlanoEntrega::find($entity['id'])->toArray() : $entity;
         $planoEntregaPai = !empty($planoEntrega['plano_entrega_id']) ? PlanoEntrega::find($planoEntrega['plano_entrega_id']) : null;
         $planoEntrega['unidade'] = !empty($planoEntrega['unidade_id']) ? Unidade::find($planoEntrega['unidade_id'])->toArray() : null;
-        $planoEntrega['unidade']['planosEntregas'] = !empty($planoEntrega['unidade']) ? PlanoEntrega::where('unidade_id',$planoEntrega['unidade_id'])->get()->toArray() : null;
-        return [
-            "planoValido" => $this->isPlanoEntregaValido($planoEntrega),
-            "planoAtivo" => $this->isPlano("ATIVO", $planoEntrega),
-            "planoPaiAtivo" => $planoEntrega['plano_entrega_id'] ? $this->isPlano("ATIVO", $planoEntregaPai->toArray()) : false,
-            "planoHomologando" => $this->isPlano("HOMOLOGANDO", $planoEntrega),
-            "planoIncluindo" => $this->isPlano("INCLUINDO", $planoEntrega),
-            "planoProprio" => $planoEntrega['plano_entrega_id'] == null,
-            "planoVinculado" => $planoEntrega['plano_entrega_id'] != null,
-            "gestorUnidadePlano" => $this->usuario->isGestorUnidade($planoEntrega['unidade_id']),
-            "gestorUnidadePaiUnidadePlano" => $this->usuario->isGestorUnidade($planoEntrega['unidade']['unidade_id']),
-            "gestorLinhaAscendenteUnidadePlano" => !!array_filter($this->unidade->linhaAscendente($planoEntrega['unidade_id']), fn($u) => $this->usuario->isGestorUnidade($u)),
-            "unidadePlanoPaiEhUnidadePaiUnidadePlano" => $planoEntrega['plano_entrega_id'] ? $planoEntregaPai->unidade_id == $planoEntrega['unidade']['unidade_id'] : false,
-            "unidadePlanoEhLotacaoPrincipal" => $this->usuario->isLotacaoPrincipal($planoEntrega['unidade_id']),
-            "unidadePaiUnidadePlanoEhLotacaoPrincipal" => $this->usuario->isLotacaoPrincipal($planoEntrega['unidade']['unidade_id']),
-            "unidadePlanoEhLotacaoUsuario" => in_array($planoEntrega['unidade_id'], array_map(fn($lot) => $lot['unidade_id'], array_filter($this->usuario->loggedUser()->lotacoes->toArray(), fn($lot) => $lot['data_fim'] == null))),
-            "unidadePlanoEhPaiAlgumaLotacaoUsuario" => $this->usuario->loggedUser()->lotacoes->filter(fn($lot) => $lot->data_fim == null)->map(fn($lot) => $lot->unidade_id)->map(fn($ul) => Unidade::find($ul)->unidade_id)->contains($planoEntrega['unidade_id']),
-            "unidadePlanoPossuiPlanoAtivoMesmoPeriodoPlanoPai" => !!array_filter($planoEntrega['unidade']['planosEntregas'], fn($p) => $this->isPlano('ATIVO',$p) && UtilService::intersect($planoEntrega['inicio'], $planoEntrega['fim'], $planoEntregaPai->inicio, $planoEntregaPai->fim)),
-            "lotadoLinhaAscendenteUnidadePlano" => $this->usuario->isLotadoNaLinhaAscendente($planoEntrega['unidade_id']),
-            "unidadePlanoEstahLinhaAscendenteAlgumaLotacaoUsuario" => in_array($planoEntrega['unidade_id'], array_values(array_unique(array_reduce(array_map(fn($ul) => $this->unidade->linhaAscendente($ul), array_map(fn($lot) => $lot['unidade_id'], array_filter($this->usuario->loggedUser()->lotacoes->toArray(), fn($lot) => $lot['data_fim'] == null))), 'array_merge', array()))))
-        ];
+        $planoEntrega['unidade']['planosEntrega'] = !empty($planoEntrega['unidade']) ? PlanoEntrega::where('unidade_id',$planoEntrega['unidade_id'])->get()->toArray() : null;
+        $result = [];
+        $result["planoValido"] = $this->isPlanoEntregaValido($planoEntrega);
+        $result["planoAtivo"] = $this->isPlano("ATIVO", $planoEntrega);
+        $result["planoPaiAtivo"] = $planoEntrega['plano_entrega_id'] ? $this->isPlano("ATIVO", $planoEntregaPai->toArray()) : false;
+        $result["planoHomologando"] = $this->isPlano("HOMOLOGANDO", $planoEntrega);
+        $result["planoIncluindo"] = $this->isPlano("INCLUINDO", $planoEntrega);
+        $result["planoProprio"] = $planoEntrega['plano_entrega_id'] == null;
+        $result["planoVinculado"] = $planoEntrega['plano_entrega_id'] != null;
+        $result["gestorUnidadePlano"] = $this->usuario->isGestorUnidade($planoEntrega['unidade_id']);
+        $result["gestorUnidadePaiUnidadePlano"] = !empty($planoEntrega['unidade']['unidade_id']) && $this->usuario->isGestorUnidade($planoEntrega['unidade']['unidade_id']);
+        $result["gestorLinhaAscendenteUnidadePlano"] = !!array_filter($this->unidade->linhaAscendente($planoEntrega['unidade_id']), fn($u) => $this->usuario->isGestorUnidade($u));
+        $result["unidadePlanoPaiEhUnidadePaiUnidadePlano"] = $planoEntrega['plano_entrega_id'] ? $planoEntregaPai->unidade_id == $planoEntrega['unidade']['unidade_id'] : false;
+        $result["unidadePlanoEhLotacao"] = $this->usuario->isLotacao($planoEntrega['unidade_id']);
+        $result["unidadePaiUnidadePlanoEhLotacao"] = !empty($planoEntrega['unidade']['unidade_id']) && $this->usuario->isLotacao($planoEntrega['unidade']['unidade_id']);
+        $result["unidadePlanoEhAlgumaLotacaoUsuario"] = in_array($planoEntrega['unidade_id'], array_map(fn($u) => $u['id'], $this->usuario->loggedUser()->unidades->toArray()));
+        $result["unidadePlanoEhPaiAlgumaLotacaoUsuario"] = $this->usuario->loggedUser()->unidades->map(fn($u) => $u->id)->map(fn($ul) => Unidade::find($ul)->unidade_id)->contains($planoEntrega['unidade_id']);
+        $result["unidadePlanoPossuiPlanoAtivoMesmoPeriodoPlanoPai"] = !!array_filter($planoEntrega['unidade']['planosEntrega'], fn($p) => $this->isPlano('ATIVO',$p) && UtilService::intersect($planoEntrega['inicio'], $planoEntrega['fim'], $planoEntregaPai->inicio, $planoEntregaPai->fim));
+        $result["lotadoLinhaAscendenteUnidadePlano"] = $this->usuario->isLotadoNaLinhaAscendente($planoEntrega['unidade_id']);
+        $result["unidadePlanoEstahLinhaAscendenteAlgumaLotacaoUsuario"] = in_array($planoEntrega['unidade_id'], array_values(array_unique(array_reduce(array_map(fn($ul) => $this->unidade->linhaAscendente($ul), array_map(fn($u) => $u['id'], $this->usuario->loggedUser()->unidades->toArray())), 'array_merge', array()))));
+        return $result;
     }
 
     public function cancelarAvaliacao($data, $unidade) {
@@ -194,7 +191,7 @@ class PlanoEntregaService extends ServiceBase
      * @param array $planoEntrega  
      */
     public function isPlanoEntregaValido($planoEntrega): bool {
-        return empty($planoEntrega['id']) ? true : !$planoEntrega['data_fim'] && !$planoEntrega['data_cancelamento'] && !$planoEntrega['data_arquivamento'];
+        return empty($planoEntrega['id']) ? false : !$planoEntrega['deleted_at'] && !$planoEntrega['data_cancelamento'] && !$planoEntrega['data_arquivamento'];
     }
 
     public function liberarHomologacao($data, $unidade) {
@@ -289,12 +286,15 @@ class PlanoEntregaService extends ServiceBase
     }
 
     /**
-    * Verifica se as  datas do plano de entrega se encaixam na duração do Programa de gestão
+    *  Verifica se algumas condições estão atendidas, antes de realizar a inserção/alteração do Plano de Entregas: 
+    *  - as datas do Plano de Entregas devem se encaixar na duração do Programa de Gestão;
+    *  - as datas das entregas do Plano de Entregas devem se encaixar na duração do Programa de Gestão;
+    *  - após criado um Plano de Entregas, os seguintes campos não poderão mais ser alterados: unidade_id, programa_id; (RN_PENT_3_9)
     */
     public function validateStore($dataOrEntity, $unidade, $action)
     {
         if(!$this->verificaDuracaoPlano($dataOrEntity) || !$this->verificaDatasEntregas($dataOrEntity)) throw new Exception("O prazo das datas não satisfaz a duração estipulada no programa.");
-        if($action == "UPDATE") {
+        if($action == "EDIT") {
             $planoEntrega = PlanoEntrega::find($dataOrEntity["id"]);
             if($dataOrEntity["unidade_id"] != $planoEntrega->unidade_id) throw new ServerException("ValidatePlano", "Depois de criado um Plano de Entregas, não é possível alterar a sua Unidade.");
             if($dataOrEntity["programa_id"] != $planoEntrega->programa_id) throw new ServerException("ValidatePlano", "Depois de criado um Plano de Entregas, não é possível alterar o seu Programa.");
@@ -305,7 +305,7 @@ class PlanoEntregaService extends ServiceBase
     }
 
     /**
-    * Verifica se as  datas do plano de entrega se encaixam na duração do Programa de gestão
+    * Verifica se as datas do plano de entrega se encaixam na duração do Programa de gestão
     */
     public function verificaDuracaoPlano($planoEntrega)
     {
@@ -339,4 +339,51 @@ class PlanoEntregaService extends ServiceBase
         }
         return $result;
     }
+
+    /**
+     *                  MAPA DE COBERTURA DAS REGRAS DE NEGÓCIO - PLANO DE ENTREGAS
+     *                  
+     *   REGRAS NÃO     REGRAS TOTALMENTE        OUTRAS REGRAS       OUTRAS REGRAS
+     *   IMPLEMENTADAS  IMPLEMENTADAS            100% COBERTAS       PARCIALMENTE COBERTAS
+     *                  ----------------------------------------------------------------------
+     *   RN_PENT_1_1
+     *   RN_PENT_1_2
+     *                  RN_PENT_1_3
+     *   RN_PENT_1_4
+     *   RN_PENT_2_1
+     *   RN_PENT_2_2
+     *                  RN_PENT_2_3
+     *                  RN_PENT_2_4
+     *   RN_PENT_2_5
+     *   RN_PENT_2_6
+     *   RN_PENT_2_7
+     *   RN_PENT_3_1
+     *                  RN_PENT_3_2
+     *                  RN_PENT_3_3
+     *   RN_PENT_3_4
+     *   RN_PENT_3_5
+     *   RN_PENT_3_6
+     *   RN_PENT_3_7
+     *   RN_PENT_3_8
+     *                  RN_PENT_3_9
+     *                  RN_PENT_4_1
+     *                  RN_PENT_4_2
+     *                  RN_PENT_4_3
+     *                  RN_PENT_4_4
+     *                  RN_PENT_4_5
+     *                  RN_PENT_4_6
+     *                  RN_PENT_4_7
+     *                  RN_PENT_4_8
+     *                  RN_PENT_4_9
+     *                  RN_PENT_4_10
+     *                  RN_PENT_4_11
+     *                  RN_PENT_4_12
+     *                  RN_PENT_4_13
+     *                  RN_PENT_4_14
+     *                  RN_PENT_4_15
+     *                  RN_PENT_4_16
+     * 
+     * 
+     * 
+     */
 }

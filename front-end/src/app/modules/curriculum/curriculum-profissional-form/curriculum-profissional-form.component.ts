@@ -17,7 +17,7 @@ import { InputRadioComponent } from 'src/app/components/input/input-radio/input-
 import { CurriculumProfissional } from 'src/app/models/currriculum-profissional.model';
 import { CurriculumProfissionalDaoService } from 'src/app/dao/curriculum-profissional-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
-import { LotacaoDaoService } from 'src/app/dao/lotacao-dao.service';
+import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
 import { NavigateResult } from 'src/app/services/navigate.service';
 
 @Component({
@@ -51,7 +51,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   public unidade: LookupItem[] = [];
   public usuarioUnidade: LookupItem[] = [];
   public userDao?: UsuarioDaoService;
-  public lotacaoDao?: LotacaoDaoService;
+  public lotacaoDao?: UnidadeIntegranteDaoService;
   public unidadeDao?: UnidadeDaoService;
   public funcaoDao?: FuncaoDaoService;
   public ctDao?: CentroTreinamentoDaoService;
@@ -62,7 +62,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   constructor(public injector: Injector) {
     super(injector, CurriculumProfissional, CurriculumProfissionalDaoService);
     this.userDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
-    this.lotacaoDao = injector.get<LotacaoDaoService>(LotacaoDaoService);
+    this.lotacaoDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
     this.ctDao = injector.get<CentroTreinamentoDaoService>(CentroTreinamentoDaoService);
     this.funcaoDao = injector.get<FuncaoDaoService>(FuncaoDaoService);
     this.grupoDao = injector.get<GrupoEspecializadoDaoService>(GrupoEspecializadoDaoService);

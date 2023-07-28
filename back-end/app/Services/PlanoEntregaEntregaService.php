@@ -3,13 +3,10 @@
 namespace App\Services;
 
 use App\Models\PlanoEntregaEntrega;
-use App\Traits\UseDataFim;
 use Illuminate\Database\Eloquent\Builder;
 
 class PlanoEntregaEntregaService extends ServiceBase
 {
-    use UseDataFim;
-
     public function proxyQuery($query, &$data) {
         $where = [];
         foreach($data["where"] as $condition) {

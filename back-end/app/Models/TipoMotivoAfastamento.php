@@ -1,16 +1,11 @@
 <?php
 
 namespace App\Models;
-
-use App\Traits\AutoDataInicio;
-use App\Traits\HasDataFim;
 use App\Models\ModelBase;
 use App\Models\Afastamento;
 
 class TipoMotivoAfastamento extends ModelBase
 {
-    use AutoDataInicio, HasDataFim;
-
     protected $table = 'tipos_motivos_afastamentos';
 
     protected $with = [];
@@ -22,10 +17,9 @@ class TipoMotivoAfastamento extends ModelBase
         'cor', /* varchar(100); NOT NULL; */// Código da cor em formato hex
         'horas', /* tinyint; NOT NULL; */// Se o afastamento é medido em horas
         'integracao', /* tinyint; NOT NULL; */// Se o tipo de motivo de afastamento é integrado a outro sistema
-        'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
-        //'data_fim', /* datetime; */// Data final da vigência
+        //'deleted_at', /* timestamp; */
     ];
 
     // Has
-    public function afastamentos() { return $this->hasMany(Afastamento::class, 'tipo_motivo_afastamento_id'); }    
+    public function afastamentos() { return $this->hasMany(Afastamento::class); }    
 }

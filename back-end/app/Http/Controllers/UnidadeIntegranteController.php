@@ -2,41 +2,58 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Unidade;
-use App\Services\UnidadeService;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
-use App\Exceptions\ServerException;
 use Throwable;
 
 class UnidadeIntegranteController extends ControllerBase {
     
-    public function checkPermissions($action, $request, $service, $unidade, $usuario) {
-        /* Revisar as permissoes necessarias
-        switch ($action) {
-            case 'STORE':
-                if (!$usuario->hasPermissionTo('MOD_UND_INCL')) throw new ServerException("CapacidadeStore", "Inserção não executada");
-                break;
-            case 'UPDATE':
-                if (!$usuario->hasPermissionTo('MOD_UND_EDT')) throw new ServerException("CapacidadeStore", "Edição não executada");
-                break;
-            case 'DESTROY':
-                if (!$usuario->hasPermissionTo('MOD_UND_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não executada");
-                break;
-        }*/
-    }
+    public function checkPermissions($action, $request, $service, $unidade, $usuario) {}
 
-    public function loadIntegrantes(Request $request) {
+/*     public function loadUsuariosIntegrantes(Request $request) {
         try {
             $data = $request->validate([
                 'unidade_id' => ['required']
             ]);
-            $result = $this->service->loadIntegrantes($data["unidade_id"]);
+            $result = $this->service->loadUsuariosIntegrantes($data["unidade_id"]);
             return response()->json([
                 'success' => true,
                 'rows' => $result['rows'],
                 'unidade' => $result['unidade']
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    } */
+
+/*     public function loadUnidadesIntegrantes(Request $request) {
+        try {
+            $data = $request->validate([
+                'usuario_id' => ['required']
+            ]);
+            $result = $this->service->loadUnidadesIntegrantes($data["usuario_id"]);
+            return response()->json([
+                'success' => true,
+                'rows' => $result['rows'],
+                'usuario' => $result['usuario']
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    } */
+
+    public function loadIntegrantes(Request $request) {
+        try {
+            $data = $request->validate([
+                'unidade_id' => ['present','required_if:usuario_id,null'],
+                'usuario_id' => ['present','required_if:unidade_id,null']
+            ]);
+            $result = $this->service->loadIntegrantes($data["unidade_id"],$data["usuario_id"]);
+            return response()->json([
+                'success' => true,
+                'rows' => $result['rows'],
+                'unidade' => $result['unidade'],
+                'usuario' => $result['usuario'],
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
@@ -46,12 +63,13 @@ class UnidadeIntegranteController extends ControllerBase {
     public function saveIntegrante(Request $request) {
         try {
             $data = $request->validate([
-                'unidade_id' => ['required'],
-                'integrante' => ['required']
+                'unidade_id' => ['string','required'],
+                'usuario_id' => ['string','required'],
+                'atribuicoes' => ['array','nullable']
             ]);
             return response()->json([
                 'success' => true,
-                'data' => $this->service->saveIntegrante($data["unidade_id"], $data["integrante"])
+                'data' => $this->service->saveIntegrante($data["unidade_id"], $data["usuario_id"], $data["atribuicoes"])
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);

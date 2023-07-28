@@ -6,7 +6,6 @@ use Illuminate\Database\Seeder;
 use App\Models\Capacidade;
 use App\Services\CapacidadeService;
 use App\Services\UtilService;
-use DateTime;
 
 class CapacidadeSeeder extends Seeder
 {
@@ -27,15 +26,12 @@ class CapacidadeSeeder extends Seeder
                 $capacidade = Capacidade::where('id', $id)->first() ?? new Capacidade();
                 $capacidade->fill([
                     'id' => $id,
-                    'data_inicio' => new DateTime('2022/1/1'),
-                    'data_fim' => null,
                     'perfil_id' => $util->uuid($registro[$i]),
                     'tipo_capacidade_id' => $util->uuid($registro[0])
                 ]);
                 $capacidade->save();
                 array_push($ids_perfis, $util->uuid($registro[$i]));
             }
-            //Capacidade::where('tipo_capacidade_id',$util->uuid($registro[0]))->whereNotIn('perfil_id', $ids_perfis)->delete();
         }
     }
 }

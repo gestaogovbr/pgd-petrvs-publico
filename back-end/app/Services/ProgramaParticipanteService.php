@@ -7,13 +7,11 @@ use App\Models\ProgramaParticipante;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Services\ServiceBase;
-use App\Traits\UseDataFim;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class ProgramaParticipanteService extends ServiceBase {
-    use UseDataFim;
     public $participantes = []; /* Buffer de unidades para funções que fazem consulta frequentes em unidades */
     public $todos = false; 
     public $unidadeId = null; 
@@ -22,7 +20,7 @@ class ProgramaParticipanteService extends ServiceBase {
         $where = [];
         foreach($data["where"] as $condition) {
             if(is_array($condition) && $condition[0] == "usuario.lotacoes.unidade.id") { 
-                $query->whereHas('lotacoes', function (Builder $query) use ($condition) {
+                $query->whereHas('areasTrabalho', function (Builder $query) use ($condition) {
                     $query->where('unidade_id', $condition[2]);
                 });
                 $this->unidadeId =  $condition[2];
@@ -52,7 +50,6 @@ class ProgramaParticipanteService extends ServiceBase {
                 $novoParticipante->usuario_id = $np->id;
                 $novoParticipante->usuario = $np;
                 $novoParticipante->habilitado = 0;
-                // $novoParticipante->_usuario_lotacao_unidade_sigla = $np->;
                 $rows->push($novoParticipante);
             };
         }

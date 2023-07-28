@@ -1,28 +1,29 @@
 import { Base } from './base.model';
+import { UnidadeIntegranteAtribuicao } from './unidade-integrante-atribuicao.model';
 import { Unidade } from './unidade.model';
 import { Usuario } from './usuario.model';
 
-export type UnidadeIntegranteTipo = "AVALIADOR_DEMANDAS" | "LOTADO" | "GESTOR" | "GESTOR_SUBSTITUTO";
-
-export class UnidadeIntegranteConsolidado {
-    public usuario?: Usuario;
-
+export class IntegranteConsolidado {
     public id: string = ""; /* Utilizado somente para garantir o funcionamento do grid */
-    public usuario_id: string = "";
+    public usuario_nome?: string;
+    public usuario_apelido?: string;
+    public usuario_url_foto?: string;
+    public unidade_nome?: string;
+    public unidade_sigla?: string;
+    public unidade_codigo?: string;
     public atribuicoes: string[] = [];
 };
 
 export class UnidadeIntegrante extends Base {
     public unidade?: Unidade;
     public usuario?: Usuario;
-
-    public data_inicio: Date = new Date(); /* Data de início */
-    public data_fim: Date | null = null; /* Data do fim */
-    public atribuicao: UnidadeIntegranteTipo = "LOTADO"; //Tipo do vinculo
-    public unidade_id: string = "";
-    public usuario_id: string = "";
+    
+    public usuario_id: string = ""; /* Usuário vinculado */
+    public unidade_id: string = ""; /* Unidade Vinculada */
+    public atribuicoes: UnidadeIntegranteAtribuicao[] = [];
 
     public constructor(data?: any) { super(); this.initialization(data); }
+
 }
 
 

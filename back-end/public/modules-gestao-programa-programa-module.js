@@ -168,7 +168,7 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
                 if ((_b = form.nome) === null || _b === void 0 ? void 0 : _b.length)
                     result.push(["usuario.nome", "like", "%" + form.nome + "%"]);
                 if ((_c = form.unidade_id) === null || _c === void 0 ? void 0 : _c.length)
-                    result.push(["usuario.lotacao.unidade.id", "==", form.unidade_id]);
+                    result.push(["usuario.areas_trabalho.unidade.id", "==", form.unidade_id]);
             }
             return result;
         };
@@ -402,6 +402,9 @@ class ProgramaFormComponent extends src_app_modules_base_page_form_base__WEBPACK
             if (['nome', 'unidade_id'].indexOf(controlName) >= 0 && !((_a = control.value) === null || _a === void 0 ? void 0 : _a.length)) {
                 result = "Obrigatório";
             }
+            else if (controlName == "prazo_execucao" && parseInt(control.value || 0) > 99999) {
+                result = "Inválido";
+            }
             else if (['data_inicio_vigencia', 'data_fim_vigencia'].indexOf(controlName) >= 0 && !((_b = this.dao) === null || _b === void 0 ? void 0 : _b.validDateTime(control.value))) {
                 result = "Inválido";
             }
@@ -528,8 +531,6 @@ class ProgramaParticipante extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Bas
         super();
         this.todos = false;
         this.habilitado = true; /* Se o participante está habilitado */
-        this.data_inicio = new Date(); /* Data de início */
-        this.data_fim = null; /* Data do fim */
         this.programa_id = ""; /* Programa */
         this.usuario_id = ""; /* Usuario */
         this.initialization(data);
@@ -804,16 +805,14 @@ class Programa extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.nome = ""; /* Nome do programa */
         this.normativa = ""; /* Normativa que regula o programa */
         this.config = null; /* Configuração extra de programa */
-        this.unidade_id = ""; /* Unidade vinculada ao programa */
         this.data_inicio_vigencia = new Date(); /* Data de início vigencia */
         this.data_fim_vigencia = new Date(); /* Data de fim vigencia */
-        this.data_inicio = new Date(); /* Data de início */
-        this.data_fim = null; /* Data do fim */
         this.periodo_avaliacao = 'MENSAL'; /* Período para avaliação do plano */
-        this.template_tcr_id = null; /* Template do TCR */
         this.termo_obrigatorio = false; /* tinyint; NOT NULL; */
-        this.tipo_documento_tcr_id = null; /* Tipo de documento do TCR */
         this.prazo_execucao = 365; /*Limite máximo de dias corridos para o plano de entregas (Zero para não limitar) */
+        this.unidade_id = ""; /* Unidade vinculada ao programa */
+        this.template_tcr_id = null; /* Template do TCR */
+        this.tipo_documento_tcr_id = null; /* Tipo de documento do TCR */
         this.initialization(data);
     }
 }

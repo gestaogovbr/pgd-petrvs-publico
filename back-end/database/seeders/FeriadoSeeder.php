@@ -22,7 +22,7 @@ class FeriadoSeeder extends Seeder
             $registro = str_getcsv($linha[0], ';');
             $feriado = new Feriado();
             $feriado->fill([
-                'nome' => utf8_encode($registro[0]),
+                'nome' => mb_convert_encoding($registro[0], "UTF-8", "ISO-8859-1"),
                 'dia' => $registro[1],
                 'mes' => $registro[2],
                 'tipoDia' => $registro[3],

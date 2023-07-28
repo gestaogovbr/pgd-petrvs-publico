@@ -14,7 +14,7 @@ class CapacidadeController extends ControllerBase {
             case 'STORE':
                 if (!$usuario->hasPermissionTo('MOD_ATV_INCLUI')) throw new ServerException("CapacidadeStore", "Inserção não executada");
                 break;
-            case 'UPDATE':
+            case 'EDIT':
                 if (!$usuario->hasPermissionTo('MOD_ATV_EDTA')) throw new ServerException("CapacidadeStore", "Edição não executada");
                 break;
             case 'DESTROY':

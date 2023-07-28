@@ -14,38 +14,17 @@ class GrupoEspecializadoSeeder extends Seeder
      */
     public function run()
     {
-
-        $array_grupos = [
-            'COE', 
-            'GECAM',
-            'GECGH',
-            'GECDH',
-            'GEFRAV',
-            'GETRAN',
-            'GFIS', 
-            'GFT',
-            'GIAT',
-            'GMD',
-            'GMR',
-            'GNARC',
-            'GOC', 
-            'GPAT',
-            'GPT',
-            'GTARM',
-            'NOE'];
-        
-    
-    foreach($array_grupos as $grupo) {
-
-        $grupoI = new GrupoEspecializado();
-        $grupoI->fill([
-            //'id' => uuid(),
-            'nome'=> $grupo
-        ]);
-        $grupoI->save();
-        
-    }
-        //
+        $grupos = [
+            'COE','GECAM','GECGH','GECDH','GEFRAV','GETRAN','GFIS','GFT','GIAT','GMD','GMR','GNARC',
+            'GOC', 'GPAT','GPT','GTARM','NOE'
+        ];
+        foreach($grupos as $g) {
+            $grupo = new GrupoEspecializado();
+            $grupo->fill([
+                'nome'=> $g
+            ]);
+            $grupo->save();
+        }
     }
 }
 

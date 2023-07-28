@@ -20,6 +20,7 @@ class CreateTrafficTable extends Migration
             $table->text('url')->comment('Url solicitada na requisição');
             $table->json('request')->comment('Dados da requisição');
             $table->json('response')->comment('Dados da resposta');
+            $table->index(['date_time']);
         });
     }
 

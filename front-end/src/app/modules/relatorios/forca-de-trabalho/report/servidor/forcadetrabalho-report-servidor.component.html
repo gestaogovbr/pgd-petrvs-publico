@@ -71,7 +71,7 @@
         <table class="table table-bordered table-hover align-middle text-center" style="width: 700px; margin:auto">
             <thead class="table-active">
                 <tr>
-                    <th colspan="5"><strong>{{ lex.noun('DEMANDA',true) }}</strong></th>
+                    <th colspan="5"><strong>{{ lex.noun('ATIVIDADE',true) }}</strong></th>
                 </tr>
                 <tr style="vertical-align: middle;">
                     <th><strong>CATEGORIAS</strong></th>
@@ -400,7 +400,7 @@
             <thead class="align-middle">
                 <tr class="table-active">
                     <th scope="col">#ID/nº Processo</th>
-                    <th scope="col">Assunto</th>
+                    <th scope="col">Descrição</th>
                     <th scope="col">{{ 'Nota ' + lex.noun('Avaliação',false,true) }}</th>
                     <!-- <th scope="col">Gráfico</th> -->
                 </tr>
@@ -416,14 +416,14 @@
                         <span class="text-wrap">
                             <small class="micro-text fw-light">#{{ da.numero }}</small>
                             <span class="badge bg-light text-dark">
-                                <i [class]="'bi bi bi-x-lg'"></i>
+                                <i [class]="'bi bi-x-lg'"></i>
                                 {{ da.numero_processo?.length ? da.numero_processo : "Não processual" }}
                             </span>
                         </span>
                     </td>
                     <td>
                         <div>
-                            <span class="badge bg-light text-dark text-wrap">{{ da.assunto }}</span>
+                            <span class="badge bg-light text-dark text-wrap">{{ da.descricao }}</span>
                         </div>
                     </td>
                     <td>

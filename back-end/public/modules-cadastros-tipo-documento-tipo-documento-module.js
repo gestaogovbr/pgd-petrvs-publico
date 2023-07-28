@@ -61,8 +61,6 @@ class TipoDocumento extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
         this.nome = ""; /* Descrição do tipo de documento */
         this.codigo = null; /* Codigo do tipo de documento */
         this.entregavel = 0; /* Se o documento é entregável ou não */
-        this.data_inicio = new Date(); /* Data de início */
-        this.data_fim = null; /* Data do fim */
         this.initialization(data);
     }
 }

@@ -18,6 +18,7 @@ class CreateTiposMotivosAfastamentosTable extends Migration
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
+            $table->softDeletes();
             // Campos:
             $table->string('codigo', 50)->nullable()->comment("Código do afastamento");
             $table->string('nome', 256)->comment("Nome do motivo de afastamento");
@@ -25,8 +26,7 @@ class CreateTiposMotivosAfastamentosTable extends Migration
             $table->string('cor', 100)->comment("Código da cor em formato hex"); // style="color: #AABBCC00"
             $table->tinyInteger('horas')->comment("Se o afastamento é medido em horas");
             $table->tinyInteger('integracao')->comment("Se o tipo de motivo de afastamento é integrado a outro sistema");
-            $table->dateTime('data_inicio')->comment("Data inicio da vigência");
-            $table->dateTime('data_fim')->nullable()->comment("Data final da vigência");
+           
         });
     }
 

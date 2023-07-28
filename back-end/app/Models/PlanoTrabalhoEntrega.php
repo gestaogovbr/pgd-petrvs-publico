@@ -3,36 +3,34 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
-use App\Models\Plano;
+use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalhoConsolidacaoEntrega;
 use App\Models\Entrega;
+use App\Models\Atividade;
 use App\Models\PlanoEntregaEntrega;
-use App\Traits\AutoDataInicio;
-use App\Traits\HasDataFim;
 
 class PlanoTrabalhoEntrega extends ModelBase
 {
-    use AutoDataInicio, HasDataFim;
-
     protected $table = 'planos_trabalhos_entregas';
 
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência do registro
-        'plano_id', /* char(36); NOT NULL; */
         'plano_entrega_entrega_id', /* char(36); */
         'entrega_id', /* char(36); */
         'descricao', /* varchar(256); NOT NULL; */// Detalhamento da entrega
-        'forca_trabalho', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */// Percentual da força de trabalho
-        //'data_fim', /* datetime; */// Data fim da vigência do registro
+        'forca_trabalho', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */// Percentual da força de trabalho associado a esta entrega
+        'plano_trabalho_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
     ];
 
     public $delete_cascade = [];
 
     // Has
+    public function atividades() { return $this->hasMany(Atividade::class); } 
+    public function entregasConsolidacao() { return $this->hasMany(PlanoTrabalhoConsolidacaoEntrega::class, 'entrega_id'); } 
     // Belongs
-    public function planoTrabalho() { return $this->belongsTo(Plano::class, 'plano_id'); }
-    //public function entregaPlanoEntrega() { return $this->belongsTo(PlanoEntregaEntrega::class, 'plano_entrega_entrega_id'); }
-    public function planoEntregaEntrega() { return $this->belongsTo(PlanoEntregaEntrega::class, 'plano_entrega_entrega_id'); }
-    public function entrega() { return $this->belongsTo(Entrega::class, 'entrega_id'); }
+    public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class); }
+    public function planoEntregaEntrega() { return $this->belongsTo(PlanoEntregaEntrega::class); }    //nullable
+    public function entrega() { return $this->belongsTo(Entrega::class); }    //nullable
 }

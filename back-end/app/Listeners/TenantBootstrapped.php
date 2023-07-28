@@ -28,6 +28,6 @@ class TenantBootstrapped extends TenantListenerBase
      */
     public function handle(Events\TenancyBootstrapped $event)
     {
-        $this->loadLogConfig($event->tenancy->tenant);
+        $this->loadConfig($event->tenancy->tenant);
     }
 }

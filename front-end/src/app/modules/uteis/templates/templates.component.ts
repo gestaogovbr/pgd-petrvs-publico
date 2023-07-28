@@ -5,8 +5,7 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import { FormGroup } from "@angular/forms";
 import { PageListBase } from "src/app/modules/base/page-list-base";
 import { Base, IIndexable } from 'src/app/models/base.model';
-import { TemplateService } from './template.service';
-import { TemplateDataset } from 'src/app/components/input/input-editor/input-editor.component';
+import { TemplateDataset, TemplateService } from './template.service';
 
 @Component({
   selector: 'app-templates',
@@ -89,7 +88,7 @@ export class TemplatesComponent extends PageListBase<Template, TemplateDaoServic
       row.codigo = form.controls.codigo.value;
       row.titulo = form.controls.titulo.value;
       row.conteudo = form.controls.conteudo.value;
-      row.dataset = this.dataset;
+      row.dataset = this.templateService.prepareDatasetToSave(this.dataset || []);
       this.submitting = true;
       try {
         result = await this.dao!.save(row, this.join);

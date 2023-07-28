@@ -18,16 +18,14 @@ class CreateCadeiasValoresProcessos extends Migration
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
+            $table->softDeletes();
             // Campos:
-            $table->dateTime('data_inicio')->comment("Data inicio da vigência do registro");
-            $table->dateTime('data_fim')->nullable()->comment("Data fim da vigência do registro");
-            $table->integer('sequencia')->default(0)->comment("Sequencia dentro do grupo");
-            $table->text('path')->nullable()->comment('Path dos nós pais separados por /, ou null caso sejam nós raiz');
-            $table->string('nome', 256)->comment("Nome");
+            $table->integer('sequencia')->default(0)->comment("Sequência do processo dentro do grupo");
+            $table->text('path')->nullable()->comment('Path dos nós pais separados por /, ou NULL caso sejam nós raiz');
+            $table->string('nome', 256)->comment("Nome do processo");
             // Chaves estrangeiras:
-            $table->foreignUuid('cadeia_valor_id')->constrained("cadeias_valores")->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('tipo_processo_id')->constrained("tipos_processos_cadeias")->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('processo_pai_id')->nullable()->constrained("cadeias_valores_processos")->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('cadeia_valor_id')->constrained("cadeias_valores")->onDelete('restrict')->onUpdate('cascade')->comment("Cadeia de valores à qual se refere o processo");
+            $table->foreignUuid('processo_pai_id')->nullable()->constrained("cadeias_valores_processos")->onDelete('restrict')->onUpdate('cascade')->comment("Processo pai ao qual se refere o processo");
         });
     }
 

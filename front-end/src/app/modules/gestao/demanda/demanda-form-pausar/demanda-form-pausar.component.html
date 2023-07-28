@@ -1,9 +1,0 @@
-<top-alert *ngIf="!reiniciar" type="warning" message="Dica: Não é necessário suspender a tarefa entre as jornadas de trabalho!"></top-alert>
-<editable-form [form]="form!" [disabled]="formDisabled" (submit)="onSaveData()" (cancel)="onCancel()">
-    <div *ngIf="reiniciar" class="row">
-        <input-datetime [size]="12" label="Início da pausa" controlName="inicio" [control]="form!.controls.inicio" disabled labelInfo="Data de inicio da última pausa"></input-datetime>
-    </div>
-    <div class="row">
-        <input-datetime [size]="12" [label]="reiniciar ? 'Data de reinício' : 'Data da pausa'" controlName="data" [control]="form!.controls.data" [labelInfo]="reiniciar ? 'Data e hora do reinício da demanda' : 'Data e hora do início da pausa/suspensão'"></input-datetime>
-    </div>
-</editable-form>

@@ -15,9 +15,9 @@ class ServerException extends Exception
         "DprfSegurancaAuthService_Invalid_User_Or_Password" => "Usuário ou senha inválidos",
         "CapacidadeSearchText" => "Usuário não tem permissão para pesquisar nessa tabela",
         "CapacidadeStore" => "Usuário não tem permissão para gravar nessa tabela",
+        "CapacidadeUpdate" => "Usuário não tem permissão para realizar esta alteração",
         "ValidateAtividade" => "Erro ao validar atividade",
-        "ValidateDemanda" => "Erro ao validar demanda",
-        "ValidatePlano" => "Erro ao validar Plano",
+        "ValidatePlanoTrabalho" => "Erro ao validar Plano de Trabalho",
         "ValidatePlanejamentoInstitucional" => "Erro ao validar Planejamento Institucional",
         "ValidateUnidade" => "Erro ao validar Unidade",
         "ValidateLotacao" => "Erro ao validar Lotação do usuário",
@@ -25,7 +25,8 @@ class ServerException extends Exception
         "ValidatePainel" => "Erro ao validar Painel",
         "ValidatePlanoEntrega" => "Erro ao validar Documento",
         "ValidatePlanoTrabalhoEntrega" => "Erro ao validar Entrega do Plano de Trabalho",
-        "ValidateProgramaParticipante" => "Erro ao validar o Participante"
+        "ValidateProgramaParticipante" => "Erro ao validar o Participante",
+        "ValidateIntegrante" => "Erro ao validar vínculos/atribuições entre Unidade e Usuário"
     ];
 
     function __construct($code, $extra = "") {

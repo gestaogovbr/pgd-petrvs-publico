@@ -246,7 +246,7 @@ class EntidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK
         var _a, _b;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             let formValue = Object.assign({}, form.value);
-            this.campos = entity.campos_ocultos_demanda || [];
+            this.campos = entity.campos_ocultos_atividade || [];
             yield Promise.all([
                 (_a = this.cidade) === null || _a === void 0 ? void 0 : _a.loadSearch(entity.cidade || entity.cidade_id),
                 this.gestor.loadSearch(entity.gestor || entity.gestor_id),
@@ -538,7 +538,6 @@ class EntidadeConfComponent extends src_app_modules_base_page_form_base__WEBPACK
                 tipo_modalidade_id: entidade.tipo_modalidade_id,
                 nomenclatura: entidade.nomenclatura,
                 notificacoes: entidade.notificacoes,
-                notificacoes_templates: this.entity.notificacoes_templates,
                 expediente: entidade.expediente,
                 carga_horaria_padrao: entidade.carga_horaria_padrao,
                 forma_contagem_carga_horaria: entidade.forma_contagem_carga_horaria

@@ -8,6 +8,7 @@ export abstract class Base implements IIndexable {
     public id: string = "";
     public created_at: Date = new Date();
     public updated_at: Date = new Date();
+    public deleted_at: Date | null = null;
     public _status?: EntityStatus; /* Usado somente pelos componentes da UX */ 
     public _metadata?: any; /* Usado exclusivamente para armazenar dados adicionar */ 
 

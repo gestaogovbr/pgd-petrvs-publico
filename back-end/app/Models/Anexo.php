@@ -20,9 +20,10 @@ class Anexo extends ModelBase
         'base64', /* text; */// Arquivo em formato base64
         'usuario_id', /* char(36); */
         'comentario_id', /* char(36); */
+        //'deleted_at', /* timestamp; */
     ];
    
     // Belongs
-    public function usuario() { return $this->belongsTo(Usuario::class, 'usuario_id'); }    
-    public function comentario() { return $this->belongsTo(Comentario::class, 'comentario_id'); }    
+    public function usuario() { return $this->belongsTo(Usuario::class); }  //nullable   
+    public function comentario() { return $this->belongsTo(Comentario::class); }      //nullable
 }

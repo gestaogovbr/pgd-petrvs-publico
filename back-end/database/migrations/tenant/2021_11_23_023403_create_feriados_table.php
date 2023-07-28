@@ -18,6 +18,7 @@ class CreateFeriadosTable extends Migration
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
+            $table->softDeletes();
             // Campos:
             $table->string("nome", 250)->comment("Descrição do feriado");
             $table->integer("dia")->comment("Dia do mês (1~31) ou dia da semana (1-7)");
@@ -28,11 +29,9 @@ class CreateFeriadosTable extends Migration
             $table->enum("abrangencia", ["NACIONAL", "ESTADUAL", "MUNICIPAL"])->comment("Abrangência do feriado");
             $table->string("codigo_ibge", 8)->nullable()->comment("Código da UF ou do município (IBGE)");
             $table->string("uf", 2)->nullable()->comment("UF para feriados estaduais");
-            $table->dateTime('data_inicio')->comment("Data inicio da vigência");
-            $table->dateTime('data_fim')->nullable()->comment("Data final da vigência");
             // Chaves estrangeiras:
-            $table->foreignUuid('entidade_id')->nullable()->constrained('entidades')->onDelete('restrict')->onUpdate('cascade');
-            $table->foreignUuid('cidade_id')->nullable()->constrained('cidades')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('entidade_id')->nullable()->constrained('entidades')->onDelete('restrict')->onUpdate('cascade')->comment('Entidade');
+            $table->foreignUuid('cidade_id')->nullable()->constrained('cidades')->onDelete('restrict')->onUpdate('cascade')->comment('Cidade');
         });
     }
 

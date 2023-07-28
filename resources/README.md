@@ -88,3 +88,35 @@ https://curl.se/docs/caextract.html
 ```
 docker run --rm -it --entrypoint bash php:8.1-apache
 ```
+
+## USANDO A BRANCH REFACTORING
+
+#### BACK
+- Clonar em uma nova pasta e inserir o .env na pasta back com a configuração correta
+
+- Abrir o projeto back-end no vscode. No terminal, executar os comandos (somente na primeira vez, depois o back-end continuará rodando na porta 80): 
+```
+1) .\php_sh.bat
+2) composer install
+3) chown -R www-data:root ./storage
+4) php artisan make:database, caso apareça o erro de artisan make:database isnt defined será necessário instalar o stancl/tenancy com o comando composer require stancl/tenancy ou php artisan tenancy:install e novamente tentar o comando php artisan make:database
+5) php artisan migrate, irá criar as tabelas base do tenancy
+
+nenhum erro acontecendo ir para os procedimentos do front
+```
+#### FRONT
+
+- Abrir o projeto front-end no vscode. No terminal, executar os seguintes comandos: 
+*(Obs.: Após a primeira execução, será necessário somente executar* ***.\node_sh.bat*** e depois ***npm start*** *toda vez que iniciar o docker. O Angular rodará na porta 4200)*:
+```
+1) .\node_sh.bat
+2) npm install --force
+3) npm start
+4) http://localhost:4200/#/panel, preencher os dados corretamente e clicar em gravar e aguardar
+
+---ACESSAR O CONTAINER DO BACK
+1) .\php_sh.bat ou bash php_sh.bat
+2) Seeders a serem executados php artisan tenants:run db:seed --option="class=SEEDER_AQUI",seeders a serem executadas-> EntidadeSeeder, CidadeSeeder, FeriadoSeeder, UnidadePrfSeeder, UsuarioSeeder, TipoCapacidadeSeeder e CapacidadeSeeder.
+3) ou executar o comando tenants:run db:seed --option="class=DatabaseSeeder" para todas as seeders.
+
+```

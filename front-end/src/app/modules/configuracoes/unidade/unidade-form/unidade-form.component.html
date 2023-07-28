@@ -7,28 +7,20 @@
                 <input-text [size]="8" label="Nome" controlName="nome"></input-text>
             </div>
             <div class="row">
-                <input-search #gestor label="Gestor" [size]="6" [emptyValue]="null" controlName="gestor_id" [dao]="usuarioDao" labelInfo="Responsável pela unidade"></input-search>
-                <input-search #gestorSubstituto label="Gestor Substituto" [size]="6" [emptyValue]="null" controlName="gestor_substituto_id" [dao]="usuarioDao" labelInfo="Responsável substituto pela unidade"></input-search>
+                <input-search #gestor label="Gestor" [size]="6" [emptyValue]="null" [control]="formGestor!.controls.gestor_id" controlName="gestor_id" [dao]="usuarioDao" labelInfo="Responsável pela unidade"></input-search>
+                <input-search #gestorSubstituto label="Gestor Substituto" [size]="6" [emptyValue]="null" [control]="formGestor!.controls.gestor_substituto_id" controlName="gestor_substituto_id" [dao]="usuarioDao" labelInfo="Responsável substituto pela unidade"></input-search>
             </div>
             <div class="row">
                 <input-search #cidade [size]="4" controlName="cidade_id" [dao]="cidadeDao"></input-search>
-                <input-search #unidade_pai [size]="4" [label]="lex.noun('Unidade') + ' pai'" controlName="unidade_id" [dao]="dao!"></input-search>
-                <input-search #entidade [size]="4" controlName="entidade_id" [dao]="entidadeDao"></input-search>
+                <input-search #unidade_pai [size]="4" [label]="lex.noun('Unidade') + ' pai'" controlName="unidade_pai_id" [where]="[['entidade_id', '==', form.controls.entidade_id.value]]" [dao]="dao!"></input-search>
+                <input-search #entidade [size]="4" [disabled] controlName="entidade_id" [dao]="entidadeDao"></input-search>
             </div>
         </tab>
         <tab key="CONFIGURACOES" label="Configurações">
             <div class="row">
-                <input-radio [size]="3" [label]="lex.noun('Avaliação') + ' hierárquica'" controlName="avaliacao_hierarquica" [items]="lookup.SIMNAO" labelInfo="Se permite que unidades supeiores faça avaliação."></input-radio>
-                <input-radio [size]="3" [label]="lex.noun('Avaliação') + ' automática'" controlName="atividades_avaliacao_automatico" [items]="lookup.SIMNAO" labelInfo="Se ao final do prazo de avaliação do gestor, avaliará como 10 a atividade."></input-radio>
-                <input-radio [size]="3" label="Arquivamento automático" controlName="atividades_arquivamento_automatico" [items]="lookup.SIMNAO" labelInfo="Se após a avaliação, arquivará automaticamente a atividade."></input-radio>
-                <input-radio [size]="3" label="Auto-edição (Subordinadas)" controlName="autoedicao_subordinadas" [items]="lookup.SIMNAO" labelInfo="Se as Unidades Subordinadas podem editar suas próprias Informações Gerais"></input-radio>
-            </div>
-            <separator></separator>
-            <div class="row">
                 <input-select [size]="4" [label]="'Contagem ' + lex.noun('Prazo de Distribuição')" controlName="distribuicao_forma_contagem_prazos" [items]="lookup.DIA_HORA_CORRIDOS_OU_UTEIS" labelInfo="A forma da contagem dos prazos para a distribuição (lançamento da demanda)."></input-select>
                 <input-select [size]="4" [label]="'Contagem ' + lex.noun('Prazo de Entrega')" controlName="entrega_forma_contagem_prazos" [items]="lookup.HORAS_CORRIDAS_OU_UTEIS" labelInfo="A forma da contagem dos prazos na entrega da demanda (data da entrega e tempo despendido)"></input-select>
-                <input-select [size]="2" label="Comparecer" controlName="planos_tipo_prazo_comparecimento" [items]="lookup.DIA_OU_HORA" labelInfo="Formato de Prazo de Comparecimento a Unidade"></input-select>
-                <input-text numbers [size]="2" label="Prazo" controlName="planos_prazo_comparecimento" labelInfo="Prazo de Comparecimento a Unidade"></input-text>
+                <input-radio [size]="4" label="Arquivamento automático" controlName="atividades_arquivamento_automatico" [items]="lookup.SIMNAO" labelInfo="Se após a avaliação, arquivará automaticamente a atividade."></input-radio>
             </div>
             <!--separator title="Expediente">
                 <div class="row">
@@ -56,21 +48,6 @@
                 <input-switch #usarExpedienteEntidade [label]="'Usar o calendário ' + lex.noun('entidade',false,true)" labelPosition="right" icon="bi bi-check2" [size]="12" (change)="onUsarExpedienteEntidadeChange()" controlName="usar_expediente_entidade" labelInfo="Se utiliza o expediente configurado na entidade ao invés de especificar na unidade"></input-switch>
             </div>
             <calendar-expediente #expediente [disabled]="form!.controls.usar_expediente_entidade.value ? 'true' : undefined" [expedienteDisabled]="entity?.entidade?.expediente" [control]="form!.controls.expediente"></calendar-expediente>
-        </tab>
-        <tab key="UNIDADES_VINCULADAS" [label]="lex.noun('Unidade',true) + ' Vinculadas'">
-            <grid [control]="form!.controls.unidades_origem_atividades" [form]="formUnidadesOrigemAtividades" [add]="addUnidadesOrigemAtividades.bind(this)" [load]="loadUnidadesOrigemAtividades.bind(this)" [remove]="removeUnidadesOrigemAtividades.bind(this)" [save]="saveUnidadesOrigemAtividades.bind(this)" editable>
-                <columns>
-                    <column [title]="lex.noun('Unidade',true)" titleHint="Unidades auxiliares para origem de atividades" [template]="columnUnidade" [editTemplate]="editUnidade">
-                        <ng-template let-row="row" #columnUnidade>
-                            <span> {{row.unidade_origem_atividade?.nome || ""}}</span>
-                        </ng-template>
-                        <ng-template let-row="row" #editUnidade>
-                            <input-search #unidade_origem_atividade [size]="12" label icon controlName="unidade_origem_atividade_id" [control]="formUnidadesOrigemAtividades!.controls.unidade_origem_atividade_id" [dao]="unidadeDao"></input-search>
-                        </ng-template>
-                    </column>
-                    <column type="options"></column>
-                </columns>
-            </grid>
         </tab>
         <tab *ngIf="entity" key="NOTIFICACOES" label="Notificações">
             <notificacoes-config #notificacoes [unidadeId]="entity?.id?.length ? entity!.id : 'ADD'" [entity]="entity!" [disabled]="formDisabled"></notificacoes-config>

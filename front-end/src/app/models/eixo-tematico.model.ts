@@ -1,5 +1,4 @@
 import { Base } from './base.model';
-
 export class EixoTematico extends Base {
     public nome: string = ""; //Nome do eixo temático;
     public icone: string = ""; /* Classe do icone relacionado ao eixo temático */

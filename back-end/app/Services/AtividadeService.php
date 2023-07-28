@@ -2,88 +2,655 @@
 
 namespace App\Services;
 
-use App\Models\Atividade;
-use App\Models\UnidadeOrigemAtividade;
+use App\Models\Unidade;
+use App\Models\Usuario;
+use App\Models\AtividadePausa;
+use App\Models\Comentario;
+use App\Models\Afastamento;
 use App\Services\ServiceBase;
-use Illuminate\Support\Facades\Auth;
-use App\Traits\UseDataFim;
+use App\Services\UnidadeService;
+use App\Services\CalendarioService;
+use App\Services\ComentarioService;
+use App\Services\RawWhere;
+use App\Services\UtilService;
+use App\Services\AtividadePausaService;
+use App\Exceptions\ServerException;
+use App\Models\Atividade;
+use App\Models\Documento;
+use App\Models\PlanoTrabalho;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use Throwable;
 
 class AtividadeService extends ServiceBase
 {
-    use UseDataFim;
+    public $unidades = []; /* Buffer de unidades para funções que fazem consulta frequentes em unidades */
 
-    public function atividadeDashboard($unidade_id)
-    {
-        $atividadeService = new AtividadeService();
-        $qtdeAtividades = $atividadeService->atividadesUnidade($unidade_id);
-        $atividades_ids = [];
-        $result = [
-            "total_atividades" => 0
-        ];
-        foreach ($qtdeAtividades as $qtdeAtividade) {
-            array_push($atividades_ids, $atividadeService->id);
-            $result["total_atividades"]++;
-        }
-        return $result;
-    }
+    public $joinable = [
+        "tipo_atividade",
+        "demandante:id,nome,apelido,email,url_foto",
+        "pausas",
+        "usuario:id,nome,matricula,apelido,email,url_foto",
+        "unidade:id,nome,sigla,codigo,path,atividades_arquivamento_automatico,checklist,etiquetas,distribuicao_forma_contagem_prazos,cidade_id,entidade_id,entrega_forma_contagem_prazos",
+        "comentarios.usuario:id,nome,apelido,email,url_foto",
+        "tarefas.tarefa",
+        "tarefas.comentarios.usuario:id,nome,apelido,email,url_foto",
+        "plano_trabalho.tipo_modalidade",
+        "plano_trabalho.entregas.entrega:id,nome",
+        "usuario.afastamentos",
+        "usuario.planos_trabalho.entregas.entrega:id,nome",
+        "usuario.planos_trabalho.tipo_modalidade:id,nome"
+    ];
 
-    public function atividadesUnidade($unidade_id)
-    {
-        return Atividade::where("unidade_id", $unidade_id)->get();
-    }
-
-    public function proxySearch($query, &$data, &$text)
-    {
-        return $this->proxyQuery($query, $data);
-    }
-
-    public function proxyQuery($query, &$data)
-    {
-        $where = [];
-        $unidade_id = null;
-        $vinculadas = false;
-        $soMinhas = false;
+    public function validateIniciar($data) {
+        /*Testa permissão para iniciar atividade de outros usuarios */
         $usuario = parent::loggedUser();
-        foreach ($data["where"] as $condition) {
-            if (is_array($condition) && $condition[0] == "unidade_id") {
+        if ($data["usuario_id"] != $usuario->id){
+            if (!$usuario->hasPermissionTo('MOD_ATV_USERS_INICIAR')){
+                throw new ServerException("ValidateAtividade", "Não é permitido iniciar atividade de outro usuário!");
+            }
+        }
+    }
+    public function validateStore($data, $unidade, $action) {
+        $unidade = Unidade::find($data["unidade_id"]);
+        if(!$this->usuarioService->hasLotacao($data["unidade_id"])) {
+            throw new ServerException("ValidateAtividade", $unidade->sigla . " não é uma unidade do usuário logado nem subordinada a ele.");
+        }
+        if(!empty($data["plano_trabalho_id"])) {
+            $planoTrabalho = PlanoTrabalho::find($data["plano_trabalho_id"]);
+            if($planoTrabalho->unidade_id != $data["unidade_id"]) {
+                throw new ServerException("ValidateAtividade", "Unidade do plano diverge da unidade da atividade");
+            }
+            /* REFECTORING
+            if(!empty($data["tipo_atividade_id"])) {
+                $atividade = TipoAtividade::find($data["tipo_atividade_id"]);
+                if(isset($planoTrabalho->documento?->metadados?->atividades_termo_adesao) && !parent::loggedUser()->hasPermissionTo('MOD_DMD_ATV_FORA_PL_TRB') &&
+                    !in_array(UtilService::removeAcentos(strtolower($atividade->nome)), $plano->documento?->metadados?->atividades_termo_adesao)) {
+                    throw new ServerException("ValidateDemanda", "Atividade não consta na lista permitida pelo plano de trabalho selecionado");
+                }
+            }*/
+        }
+        if(!empty($data["usuario_id"])) {
+            $usuario = Usuario::find($data["usuario_id"]);
+            if(!$this->usuarioService->hasLotacao($data["unidade_id"], $usuario, false)) {
+                if (!parent::loggedUser()->hasPermissionTo('MOD_ATV_EXT') && !parent::loggedUser()->hasPermissionTo('MOD_ATV_USERS_ATRIB')){
+                    throw new ServerException("ValidateAtividade", $unidade->sigla . " não é uma unidade (lotação) para o responsável, ou você não tem permissão para incluir para qualquer usuário");
+                }
+            }
+        }
+    }
+
+    public function proxyStore($data, $unidade, $action) {
+        if(empty($data["id"])) {
+            $usuario = parent::loggedUser();
+            $data["demandante_id"] = $usuario->id;
+        }
+        //$this->validateStore($data, $unidade);
+        return $data;
+    }
+
+    public function proxyQuery($query, &$data) {
+        //LogError::newWarn("PROXY: Iniciou", $data);
+        $where = [];
+        $with = [];
+        $unidade_id = null;
+        $subordinadas = false;
+        $usuario = parent::loggedUser();
+        foreach($data["where"] as $condition) {
+            if(is_array($condition) && $condition[0] == "unidade_id") {
                 $unidade_id = $condition[2];
-            } else if (is_array($condition) && $condition[0] == "vinculadas") {
-                $vinculadas = $condition[2];
-            } else if(is_array($condition) && $condition[0] == "minhas") { 
-                $soMinhas = $condition[2];
+            } else if(is_array($condition) && $condition[0] == "unidades_subordinadas") {
+                $subordinadas = $condition[2];
+            } else if(is_array($condition) && $condition[0] == "numero_processo") {
+                $ids = [];
+                $documentos = Documento::where(function ($query) {
+                    $query->whereNotNull('atividade_id')->orWhereNotNull('atividade_tarefa_id');
+                })->whereRaw("JSON_CONTAINS(link, ?, '$.numero_processo')", [$condition[2]])->get();
+                foreach($documentos as $documento) {
+                    $ids[] = $documento->atividade?->id ?? $documento->atividade_tarefa?->id;
+                }
+                //$sql = "(demandas.numero_processo = ? OR demandas.numero_processo_entrega = ? OR EXISTS(SELECT where_demandas_entregas.id FROM demandas_entregas where_demandas_entregas WHERE where_demandas_entregas.demanda_id = demandas.id and where_demandas_entregas.numero_processo = ?))";
+                array_push($where, ["id", "in", $ids]);
+            } else if(is_array($condition) && $condition[0] == "etiquetas") {
+                $sql = "";
+                $or = "";
+                $values = [];
+                foreach($condition[2] as $etiqueta) {
+                    $sql .= $or . "(JSON_SEARCH(atividades.etiquetas, 'all', ?) is not null)";
+                    $values[] = $etiqueta;
+                    $or = " OR ";
+                }
+                array_push($where, RawWhere::raw("(" . $sql . ")", $values));
+            } else if(is_array($condition) && $condition[0] == "status") {
+                if($condition[2] == "INICIADO") {
+                    array_push($where, ["data_inicio", "!=", null]);
+                    array_push($where, ["data_entrega", "==", null]);
+                } else if($condition[2] == "NAOCONCLUIDO") {
+                    array_push($where, ["data_entrega", "==", null]);
+                } else if($condition[2] == "CONCLUIDO") {
+                    array_push($where, ["data_entrega", "!=", null]);
+                } else if($condition[2] == "LANCADO") {
+                    array_push($where, ["data_inicio", "==", null]);
+                } else if($condition[2] == "ARQUIVADO") {
+                    array_push($where, ["data_arquivamento", "!=", null]);
+                }
             } else {
                 array_push($where, $condition);
             }
         }
-        if ($soMinhas || !$usuario->hasPermissionTo('MOD_UND_TUDO')) {
-            $unidades_ids = [];
-            if (!empty($unidade_id)) {
-                array_push($unidades_ids, $unidade_id);
+        $data["where"] = $this->prefixWhere($where, "Atividade");
+        foreach($data["with"] as $join) {
+            if($join == "comentarios") {
+                $with[$join] = function ($query) use ($usuario) {
+                    $query->where('privacidade', '!=', 'PRIVADO');
+                    $query->orWhere('usuario_id', '=', $usuario->id);
+                };
             } else {
-                foreach ($usuario->lotacoes as $lotacao) {
-                    array_push($unidades_ids, $lotacao->unidade_id);
-                }
+                array_push($with, $join);
             }
-            if ($vinculadas) {
-                $origens = UnidadeOrigemAtividade::whereIn("unidade_id", $unidades_ids)->whereNotIn("unidade_origem_atividade_id", $unidades_ids)->get();
-                $unidades_ids = array_merge($unidades_ids, array_map(fn ($origem) => $origem->unidade_origem_atividade_id, $origens->all()));
-            }
-            array_push($where, ["unidade_id", "in", $unidades_ids]);
         }
-        $data["where"] = $where;
+        $unidades_ids = [];
+        if(!empty($unidade_id)) {
+            array_push($unidades_ids, $unidade_id);
+        } else {
+            foreach($usuario->areasTrabalho as $lotacao) {
+                array_push($unidades_ids, $lotacao->unidade_id);
+            }
+        }
+        $where = [];
+        $params = [];
+        foreach($unidades_ids as $unidade) {
+            array_push($where, "(id = ?" . ($subordinadas ? " OR path LIKE CONCAT('%', ?, '%')" : "") . ")");
+            array_push($params, $unidade);
+            if($subordinadas) array_push($params, $unidade);
+        }
+        array_push($data["where"], RawWhere::raw("atividades.unidade_id IN (
+            SELECT * FROM (
+                SELECT id
+                FROM unidades
+                WHERE " . (count($where) > 0 ? join(" OR ", $where) : "FALSE") . "
+            ) AS subquery
+        )", $params));
         return $data;
     }
 
-    public function homologar($data)
-    {
-        $atividades = Atividade::whereIn("id", $data["atividades_ids"])->get();
-        $count = 0;
-        foreach ($atividades as $atividade) {
-            $atividade->homologado = true;
-            $atividade->data_homologacao = $data["data_homologacao"]; //$this->unidadeService->hora($atividade->unidade_id);
-            $atividade->save();
-            $count++;
+    public function proxyRows($rows) {
+        foreach($rows as $row) {
+            $row->metadados = $this->metadados($row);
         }
-        return $count;
+        return $rows;
     }
+
+    public function proxyExtra($rows, $data) {
+        $afastamentos = [];
+        $planosTrabalhos = [];
+        $result = [
+            'planos_trabalho' => [],
+            'afastamentos' => [],
+            'feriados' => []
+        ];
+        foreach($rows as $row) {
+            /*if(!array_key_exists($row->unidade_id, $result['avaliadores'])) {
+                $result['avaliadores'][$row->unidade_id] = $this->unidadeService->avaliadores($row->unidade_id);
+            }*/
+            if(empty($row->data_entrega)) { /* Somente as que não estiverem concluídas */
+                if(!empty($row->plano_trabalho_id)) $planosTrabalhos[$row->plano_trabalho_id] = true;
+                $tomorrow = Carbon::now()->add(1, "days")->format(ServiceBase::ISO8601_FORMAT);
+                $afastamentos[$row->usuario_id] = empty($afastamentos[$row->usuario_id]) ? [$row->data_distribuicao, $row->prazo_entrega] : $afastamentos[$row->usuario_id];
+                $afastamentos[$row->usuario_id] = [
+                    UtilService::minDate($afastamentos[$row->usuario_id][0], $row->data_distribuicao),
+                    UtilService::maxDate($afastamentos[$row->usuario_id][1], $row->prazo_entrega, $tomorrow),
+                ];
+            }
+            if(empty($result['feriados'][$row->unidade_id])) $result['feriados'][$row->unidade_id] = $this->calendarioService->feriadosCadastrados($row->unidade_id);
+        }
+        if(count($planosTrabalhos) > 0) {
+            $list = PlanoTrabalho::with("tipoModalidade")->whereIn("id", array_keys($planosTrabalhos))->get();
+            foreach($list as $planoTrabalho) $result['planos_trabalho'][$planoTrabalho->id] = $planoTrabalho;
+        }
+        if(count($afastamentos) > 0) {
+            $afastamentosQuery = Afastamento::query();
+            $afastamentosQuery->where("id", null); // Where false;
+            foreach($afastamentos as $usuario_id => $periodo) {
+                $afastamentosQuery->orWhere(function($query) use ($usuario_id, $periodo) {
+                    $query->where("usuario_id", $usuario_id);
+                    $query->where("inicio_afastamento", "<=", $periodo[1]);
+                    $query->where("fim_afastamento", ">=", $periodo[0]);
+                });
+            }
+            $list = $afastamentosQuery->get();
+            foreach($list as $afastamento) {
+                if(empty($result['afastamentos'][$afastamento->usuario_id])) $result['afastamentos'][$afastamento->usuario_id] = [];
+                array_push($result['afastamentos'][$afastamento->usuario_id], $afastamento);
+            }
+        }
+        return $result;
+    }
+
+    public function metadados($atividade) {
+        if(empty($this->unidades[$atividade->unidade_id])) {
+            $this->unidades[$atividade->unidade_id] = Unidade::find($atividade->unidade_id);
+        }
+        $hora = $this->unidadeService->hora($this->unidades[$atividade->unidade_id]);
+        $result = [
+            "horario_servidor" => CalendarioService::horarioServidor(),
+            "tempo_despendido" => 0,
+            "concluido" => !empty($atividade->data_entrega),
+            "iniciado" => !empty($atividade->data_inicio),
+            "arquivado" => !empty($atividade->data_arquivamento),
+            "produtividade" => 0,
+        ];
+        $suspenso = false;
+        foreach($atividade->pausas as $pausa) {
+            $suspenso = $suspenso || empty($pausa->data_fim);
+        }
+        $result["suspenso"] = $suspenso;
+        $result["atrasado"] = !$result["concluido"] && strtotime($atividade->prazo_entrega) < strtotime($hora);
+        $result["tempo_atraso"] = $result["atrasado"] ? $this->calendarioService->tempoAtraso($atividade->prazo_entrega, $hora, $atividade->carga_horaria) : 0;
+        $result["status"] = ($result["concluido"] ? "CONCLUIDO" : ($result["iniciado"] ? "INICIADO" : "LANCADO"));
+        return $result;
+    }
+
+    public function iniciadas($usuario_id) {
+        $result = [];
+        $atividades = Atividade::select("id")->where("usuario_id", $usuario_id)->whereNotNull("data_inicio")->whereNull("data_entrega")->whereDoesntHave('pausas', function (Builder $query) {
+            $query->whereNull('data_fim');
+        })->get();
+        foreach ($atividades as $atividade) {
+            array_push($result, $atividade->id);
+        }
+        return $result;
+    }
+
+    public function avaliadas($usuario_id) {
+        $result = [];
+        $atividades = Atividade::select("id")->where("usuario_id", $usuario_id)->whereNotNull("avaliacao_id")->where(["tempo_homologado",">",0])->get();
+        foreach ($atividades as $atividade) {
+            array_push($result, $atividade->id);
+        }
+        return $result;
+    }
+
+    public function isConcluida($atividade) {
+        return !empty($atividade['data_entrega']);
+    }
+
+    public function isIniciada($atividade) {
+        return !empty($atividade['data_inicio']);
+    }
+
+    public function withinPeriodo($atividade, $inicioPeriodo, $fimPeriodo) {
+        if ($inicioPeriodo == null && $fimPeriodo == null) return true;
+        if(UtilService::intersection([
+                    new Interval(['start' => strtotime($inicioPeriodo), 'end' => strtotime($fimPeriodo)]),
+                    new Interval(['start' => strtotime($atividade['data_distribuicao']), 'end' => $atividade['data_entrega'] ? UtilService::maxDate(strtotime($atividade['prazo_entrega']),strtotime($atividade['data_entrega'])) : strtotime($atividade['prazo_entrega'])])
+            ])) return true;
+        return false;
+    }
+
+    /* @override */
+    public function getById($data)
+    {
+        $atividade = Atividade::find($data["id"]);
+        if(!empty($atividade)) {
+            $join = [];
+            $util = $this->utilService;
+            $data["with"] = isset($this->joinable) ? $this->getJoinable($data["with"] ?? []) : $data["with"];
+            if(count($data['with']) > 0) {
+                $data['with'] = $this->getCamelWith($data['with']);
+                foreach($data['with'] as $with) {
+                    if(strtolower($with) == "usuario.afastamentos") {
+                        $join["usuario.afastamentos"] = function ($query) use ($atividade, $util) {
+                            $tomorrow = Carbon::now()->add(1, "days")->format(ServiceBase::ISO8601_FORMAT);
+                            $query->where("fim_afastamento", ">=", $atividade->data_distribuicao);
+                            $query->where("inicio_afastamento", "<=", UtilService::maxDate($atividade->prazo_entrega, $atividade->data_entrega, $tomorrow));
+                        };
+                    } else {
+                        array_push($join, $with);
+                    }
+                }
+            }
+            $atividade = Atividade::with($join)->where("id", $atividade->id)->first();
+            $atividade->metadados = $this->metadados($atividade);
+            return $atividade;
+        } else {
+            throw new ServerException("ValidateAtividade", "Id não encontrado");
+        }
+    }
+
+    public function afterStore($entity, $action) {
+        if($action == ServiceBase::ACTION_INSERT) {
+            $this->notificacoesService->send("ATV_DISTRIBUICAO", ["atividade" => $entity]);
+        } else {
+            $this->notificacoesService->send("ATV_MODIFICACAO", ["atividade" => $entity]);
+        }
+    }
+
+    public function afterUpdate($entity, $data) {
+        if(isset($data["comentarios"])) {
+            $this->notificacoesService->send("ATV_COMENTARIO", ["atividade" => $entity]);
+        }
+    }
+
+    public function iniciar($data, $unidade) {
+        $suspender = $data["suspender"];
+        unset($data["suspender"]);
+        try {
+            DB::beginTransaction();
+            $atividade = Atividade::find($data["id"]);
+            $this->validateStore(["unidade_id" => $atividade->unidade_id, "plano_trabalho_id" => $data["plano_trabalho_id"], "usuario_id" => $data["usuario_id"]], $unidade, ServiceBase::ACTION_EDIT);
+            /*if(CalendarioService::getTimestemp($data["data_inicio"]) < CalendarioService::getTimestemp($demanda->data_distribuicao)) {
+                throw new ServerException("ValidateDemanda", "Data de início menor que a data de distribuição.");
+            }*/
+            $this->validateIniciar($data);
+            $this->update($data, $unidade, false);
+            if($suspender) {
+                $unidadeService = new UnidadeService();
+                $dataHora = $unidadeService->hora($unidade->id);
+                $iniciadas = $this->iniciadas($data["usuario_id"]);
+                foreach ($iniciadas as $atividade_id) {
+                    // Pausar todas, exceto a atividade que está iniciando
+                    if ($data["id"] != $atividade_id) {
+                        $pausa = new AtividadePausa([
+                            "data_inicio" => $dataHora,
+                            "atividade_id" => $atividade_id
+                        ]);
+                        $pausa->save();
+                    }
+                }
+            }
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollback();
+            throw $e;
+        }
+        return true;
+    }
+
+    public function cancelarInicio($data, $unidade) {
+        try {
+            DB::beginTransaction();
+            $atividade = Atividade::find($data["id"]);
+            $this->update([
+                "id" => $atividade->id,
+                "data_arquivamento" => null,
+                "data_inicio" => null
+            ], $unidade, false);
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollback();
+            throw $e;
+        }
+        return true;
+    }
+
+    public function concluir($conclusao, $unidade) {
+        $descricaoTecnica = $conclusao["descricao_tecnica"];
+        $arquivar = !empty($conclusao["data_arquivamento"]);
+        $comentarioService = new ComentarioService();
+        unset($conclusao["descricao_tecnica"]);
+        unset($conclusao["arquivar"]);
+        try {
+            DB::beginTransaction();
+            $atividade = Atividade::with(["planoTrabalho.tipoModalidade"])->where("id", $conclusao["id"])->first();
+            /*Testa permissão para iniciar atividade de outros usuarios*/
+            if ($atividade->usuario_id != parent::loggedUser()->id){
+                if (!parent::loggedUser()->hasPermissionTo('MOD_ATV_USERS_CONCL')){
+                    throw new ServerException("ValidateAtividade", "Não é permitido concluir atividade de outro usuário!");
+                }
+            }
+            /*Testa permissão para incluir atividades que estão fora do plano de trabalho*
+            $plano = $demanda->plano;
+            if(isset($plano->documento?->metadados?->atividades_termo_adesao) && !parent::loggedUser()->hasPermissionTo('MOD_DMD_ATV_FORA_PL_TRB') &&
+                !in_array(UtilService::removeAcentos(strtolower($demanda->atividade->nome)), $plano->documento?->metadados?->atividades_termo_adesao)) {
+                throw new ServerException("ValidateDemanda", "Atividade não consta na lista permitida pelo plano de trabalho selecionado");
+            }*/
+            $conclusao["data_arquivamento"] = $arquivar ? Carbon::now() : null;
+            $this->update($conclusao, $unidade, false);
+            $comentarioTecnico = Comentario::where("atividade_id", $conclusao["id"])->where("tipo", "TECNICO")->first();
+            if(!empty($comentarioTecnico)) {
+                $comentarioService->destroy($comentarioTecnico->id);
+            }
+            if(!empty($descricaoTecnica)) {
+                $unidadeService = new UnidadeService();
+                $comentarioService->store([
+                    "texto" => $descricaoTecnica,
+                    "path" => null,
+                    "data_hora" => $unidadeService->hora($unidade->id),
+                    "tipo" => "TECNICO",
+                    "privacidade" => "PUBLICO",
+                    "usuario_id" => parent::loggedUser()->id,
+                    "atividade_id" => $conclusao["id"]
+                ], $unidade, false);
+            }
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollback();
+            throw $e;
+        }
+        $this->notificacoesService->send("ATV_CONCLUSAO", ["atividade" => Atividade::find($conclusao["id"])]);
+        return true;
+    }
+
+    public function cancelarConclusao($data, $unidade) {
+        $comentarioService = new ComentarioService();
+        try {
+            DB::beginTransaction();
+            $atividade = Atividade::find($data["id"]);
+            $this->update([
+                "id" => $atividade->id,
+                "data_entrega" => null,
+                "data_arquivamento" => null,
+                "tempo_despendido" => null,
+                "documento_entrega_id" => null
+            ], $unidade, false);
+            $comentarioTecnico = Comentario::where("atividade_id", $atividade->id)->where("tipo", "TECNICO")->first();
+            if(!empty($comentarioTecnico)) {
+                $comentarioService->destroy($comentarioTecnico->id);
+            }
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollback();
+            throw $e;
+        }
+        return true;
+    }
+
+    /*public function avaliar($avaliacao, $unidade) {
+        $comentarioService = new ComentarioService();
+        $demandaAvaliacaoService = new DemandaAvaliacaoService();
+        $comentario = $avaliacao["comentario_avaliacao"];
+        $demanda = Demanda::with("plano.tipoModalidade")->where("id", $avaliacao["demanda_id"])->first();
+        $dispensaAvaliacao = !empty($demanda->plano->tipo_modalidade) && $demanda->plano->tipo_modalidade->dispensa_avaliacao;
+        try {
+            /*Testa permissão para avaliar demanda de outros usuarios,
+            prevista para o Gestor ou Gestor substituto da Unidade da Demanda*
+            if (($demanda->unidade->gestor_id != parent::loggedUser()->id) && ($demanda->unidade->gestor_substituto_id != parent::loggedUser()->id)) {
+                throw new ServerException("ValidateDemanda", "Não é permitido avaliar demanda da qual usuário logado não é Gestor!");
+            }* /
+            if(!in_array(parent::loggedUser()->id, $this->unidadeService->avaliadores($demanda->unidade_id))) {
+                throw new ServerException("ValidateDemanda", "O avaliador deve ser gestor ou delegado como avaliador da unidade.");
+            }
+            DB::beginTransaction();
+            $tipoAvaliacao = TipoAvaliacao::find($avaliacao["tipo_avaliacao_id"]);
+            DemandaAvaliacao::where("demanda_id", $avaliacao["demanda_id"])->
+                update(["data_fim" => Carbon::now()]);
+            $demandaAvaliacao = $demandaAvaliacaoService->store([
+                "usuario_id" => parent::loggedUser()->id,
+                "demanda_id" => $avaliacao["demanda_id"],
+                "justificativas" => $avaliacao["justificativas"],
+                "tipo_avaliacao_id" => $avaliacao["tipo_avaliacao_id"],
+                "nota_atribuida" => $avaliacao["nota_atribuida"]
+            ], $unidade, false);
+            $update = [
+                "id" => $avaliacao["demanda_id"],
+                "atividade_id" => $avaliacao["atividade_id"],
+                "fator_complexidade" => $avaliacao["fator_complexidade"],
+                "tempo_pactuado" => $avaliacao["tempo_pactuado"],
+                "produtividade" => $avaliacao["produtividade"],
+                "avaliacao_id" => $demandaAvaliacao->id,
+                "data_arquivamento" => $avaliacao["arquivar"] ? Carbon::now() : null
+            ];
+            if(!$dispensaAvaliacao) $update["tempo_homologado"] = $tipoAvaliacao->aceita_entrega ? $avaliacao["tempo_pactuado"] : 0;
+            $this->update($update, $unidade, false);
+            $comentarioAvaliacao = Comentario::where("demanda_id", $avaliacao["demanda_id"])->where("tipo", "AVALIACAO")->first();
+            if(!empty($comentarioAvaliacao)) {
+                $comentarioService->destroy($comentarioAvaliacao->id);
+            }
+            if(!empty($comentario)) {
+                $unidadeService = new UnidadeService();
+                $comentarioService->store([
+                    "texto" => $comentario,
+                    "path" => null,
+                    "data_hora" => $unidadeService->hora($unidade->id),
+                    "tipo" => "AVALIACAO",
+                    "privacidade" => "PUBLICO",
+                    "usuario_id" => parent::loggedUser()->id,
+                    "demanda_id" => $avaliacao["demanda_id"]
+                ], $unidade, false);
+            }
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollback();
+            throw $e;
+        }
+        $this->notificacoesService->send("DMD_AVALIACAO", ["demanda" => Demanda::find($avaliacao["demanda_id"])]);
+        return true;
+    }*
+
+    public function cancelarAvaliacao($data, $unidade) {
+        $comentarioService = new ComentarioService();
+        try {
+            DB::beginTransaction();
+            //$demanda = Demanda::find($data["id"]);
+            $demanda = Demanda::with("plano.tipoModalidade")->where("id", $data["id"])->first();
+            $dispensaAvaliacao = !empty($demanda->plano->tipo_modalidade) && $demanda->plano->tipo_modalidade->dispensa_avaliacao;
+            $update = ["id" => $demanda->id, "avaliacao_id" => null, "data_arquivamento" => null];
+            if(!$dispensaAvaliacao) $update["tempo_homologado"] = null;
+            $this->update($update, $unidade, false);
+            DemandaAvaliacao::where("demanda_id", $data["id"])->
+                update(["data_fim" => Carbon::now()]);
+            $comentarioAvaliacao = Comentario::where("demanda_id", $data["id"])->where("tipo", "AVALIACAO")->first();
+            if(!empty($comentarioAvaliacao)) {
+                $comentarioService->destroy($comentarioAvaliacao->id);
+            }
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollback();
+            throw $e;
+        }
+        return true;
+    }*/
+
+    public function pausar($pausa, $unidade) {
+        $atividadePausaService = new AtividadePausaService();
+        try {
+            DB::beginTransaction();
+            $atividade = Atividade::find($pausa["atividade_id"]);
+            if(empty($atividade)) {
+                throw new ServerException("ValidateAtividade", "Atividade não encontrada");
+            }
+            if(empty($atividade->data_inicio)) {
+                throw new ServerException("ValidateAtividade", "Atividade não iniciada ainda");
+            }
+            if(CalendarioService::getTimestamp($pausa["data"]) < CalendarioService::getTimestamp($atividade->data_inicio)) {
+                throw new ServerException("ValidateAtividade", "Data menor que a do início da atividade");
+            }
+            foreach($atividade->pausas as $suspensao) {
+                if(empty($suspensao->data_fim)) {
+                    throw new ServerException("ValidateAtividade", "Atividade já pausada");
+                }
+                if(CalendarioService::between($pausa["data"], $suspensao->data_inicio, $suspensao->data_fim)) {
+                    throw new ServerException("ValidateAtividade", "Já existe uma pausa no período informado");
+                }
+            }
+            //$demandaPausa = DemandaPausa::where("demanda_id", $pausa["demanda_id"])->first();
+            //if(empty($demandaPausa)) {
+            $atividadePausa = $atividadePausaService->store([
+                "atividade_id" => $pausa["atividade_id"],
+                "data_inicio" => $pausa["data"]
+            ], $unidade, false);
+            //} else {
+            //    throw new Exception("Demanda já pausada");
+            //}
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollback();
+            throw $e;
+        }
+        return true;
+    }
+
+    public function reiniciar($pausa, $unidade) {
+        $atividadePausaService = new AtividadePausaService();
+        try {
+            DB::beginTransaction();
+            $atividadePausa = AtividadePausa::where("atividade_id", $pausa["atividade_id"])->first();
+            if(!empty($atividadePausa)) {
+                if(CalendarioService::getTimestamp($pausa["data"]) < CalendarioService::getTimestamp($atividadePausa->data_inicio)) {
+                    throw new ServerException("ValidateAtividade", "Data de reinício menor que a de início da pausa");
+                }
+                $pausas = AtividadePausa::where("atividade_id", $pausa["atividade_id"])->where("id", "!=", $atividadePausa->id)->get();
+                foreach($pausas as $suspensao) {
+                    if(CalendarioService::between($pausa["data"], $suspensao->data_inicio, $suspensao->data_fim)) {
+                        throw new ServerException("ValidateAtividade", "Já existe uma pausa no período informado");
+                    }
+                }
+                $atividadePausaService->update([
+                    "id" => $atividadePausa->id,
+                    "data_arquivamento" => null,
+                    "data_fim" => $pausa["data"]
+                ], $unidade, false);
+            } else {
+                throw new ServerException("ValidateAtividade", "Não há pausa para reiniciar");
+            }
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollback();
+            throw $e;
+        }
+        return true;
+    }
+
+    public function prorrogar($data, $unidade) {
+        try {
+            DB::beginTransaction();
+            $atividade = Atividade::find($data["id"]);
+            if(!empty($atividade)) {
+                $this->update([
+                    "id" => $atividade->id,
+                    "prazo_entrega" => $data["prazo_entrega"]
+                ], $unidade, false);
+            } else {
+                throw new ServerException("ValidateAtividade", "Atividade não encontrada!");
+            }
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollback();
+            throw $e;
+        }
+        return true;
+    }
+
+    public function arquivar($data, $unidade) {
+        try {
+            DB::beginTransaction();
+            $atividade = Atividade::find($data["id"]);
+            if(!empty($atividade)) {
+                $this->update([
+                    "id" => $atividade->id,
+                    "data_arquivamento" => $data["arquivar"] ? Carbon::now() : null
+                ], $unidade, false);
+            } else {
+                throw new ServerException("ValidateAtividade", "Atividade não encontrada!");
+            }
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollback();
+            throw $e;
+        }
+        return true;
+    }
+
 }

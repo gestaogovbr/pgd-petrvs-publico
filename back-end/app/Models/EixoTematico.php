@@ -3,23 +3,23 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
-use App\Traits\AutoDataInicio;
-use App\Traits\HasDataFim;
+use App\Models\PlanejamentoObjetivo;
 
 class EixoTematico extends ModelBase
 {
-    use AutoDataInicio, HasDataFim;
-
     protected $table = 'eixos_tematicos';
 
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'nome', /* varchar(256); NOT NULL; */// Nome
-        'icone', /* varchar(100); NOT NULL; */// Class do icone relacionado ao afastamento
-        'cor', /* varchar(100); NOT NULL; */// Código da cor em formato hex
-        'descricao', /* varchar(256); NOT NULL; */// Descrição
-        //'data_inicio', /* datetime; NOT NULL; */// Data inicio da vigência
-        //'data_fim', /* datetime; */// Data fim da vigência
+        'nome', /* varchar(256); NOT NULL; */// Nome do eixo temático
+        'icone', /* varchar(100); NOT NULL; */// Classe CSS do icone relacionado ao eixo temático
+        'cor', /* varchar(100); NOT NULL; */// Código HEX da cor relacionada ao eixo temático
+        'descricao', /* varchar(256); NOT NULL; */// Descrição do eixo temático
+        //'deleted_at', /* timestamp; */
     ];
+
+    //Has
+    public function objetivos() { return $this->hasMany(PlanejamentoObjetivo::class); }
+
 }

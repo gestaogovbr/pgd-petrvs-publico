@@ -19,6 +19,7 @@ class CreateNotificacoesWhatsappTable extends Migration
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
+            $table->softDeletes();
             // Campos:
             $table->dateTime('data_hora')->useCurrent()->comment("Data hora do início da sessão");
             $table->dateTime('finalizacao')->nullable()->comment("Data hora da finalizacao da sessão (utilizado posteriormente para alertar o usuário que seu atendimento acabou)");
@@ -26,7 +27,7 @@ class CreateNotificacoesWhatsappTable extends Migration
             $table->json('interacoes')->default(new Expression('(JSON_ARRAY())'))->comment("Interações (histórico do campo atual)");
             $table->tinyInteger('atual')->default(0)->comment("Informações da posição atual no menu");
             // Chaves estrangeiras:
-            $table->foreignUuid('usuario_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignUuid('usuario_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Usuário");
         });
     }
 

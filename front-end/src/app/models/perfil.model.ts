@@ -7,8 +7,6 @@ export class Perfil extends Base {
     public nivel: number = 0; /* Nível de permissões */
     public nome: string = ""; /* Nome do perfil */
     public descricao: string = ""; /* Descrição sobre o perfil */
-    public data_inicio: Date = new Date(); /* Data de início */
-    public data_fim: Date | null = null; /* Data fim */
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

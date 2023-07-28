@@ -1,6 +1,6 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
-import { CalendarOptions, EventInput, Identity } from '@fullcalendar/angular';
+import { CalendarOptions, EventInput } from '@fullcalendar/angular';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GanttTaskStatus, GanttResourceUnity, GanttResourceType, GanttProject, GanttAssignment, GanttTask, GanttResource, GanttRole } from 'src/app/components/gantt/gantt-models';
 import { ProjetoDaoService } from 'src/app/dao/projeto-dao.service';
@@ -11,9 +11,7 @@ import { ProjetoRecurso, ProjetoRecursoTipo } from 'src/app/models/projeto-recur
 import { ProjetoRegra } from 'src/app/models/projeto-regra.model';
 import { ProjetoTarefa, ProjetoTarefaStatus } from 'src/app/models/projeto-tarefa.model';
 import { HasAlocacoes, HasTarefas, Projeto, ProjetoStatus } from 'src/app/models/projeto.model';
-import { Tarefa } from 'src/app/models/tarefa.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
-import * as moment from 'moment';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { KanbanComponent, KanbanDocker } from 'src/app/components/kanban/kanban.component';
 import { CardItem, DockerComponent } from 'src/app/components/kanban/docker/docker.component';
@@ -294,7 +292,7 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
   }
 
   public loadEtiquetas() {
-    //this.etiquetas = this.util.merge(row.atividade?.etiquetas_predefinidas, row.unidade?.etiquetas, (a, b) => a.key == b.key); 
+    //this.etiquetas = this.util.merge(row.atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key); 
     this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key); 
   }
 
@@ -642,10 +640,8 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
             path: path,
             nome: src.name,
             descricao: src.description,
-            id_processo: origem.id_processo,
-            numero_processo: origem.numero_processo,
-            id_documento: origem.id_documento,
-            numero_documento: origem.numero_documento,
+            documento_id: origem.documento_id,
+            documento: origem.documento,
             inicio: src.start,
             termino: src.end,
             duracao: src.duration,

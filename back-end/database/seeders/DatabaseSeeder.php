@@ -16,16 +16,17 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             CidadeSeeder::class,
-            EntidadeSeeder::class,
             FeriadoSeeder::class,
             PerfilSeeder::class,
             TipoCapacidadeSeeder::class,
-            CapacidadeSeeder::class,
-            UsuarioSeeder::class,
-            TipoAvaliacaoSeeder::class,
-            TipoJustificativaSeeder::class,
-            TipoAvaliacaoJustificativaSeeder::class,
+            EntidadeSeeder::class,
             UnidadePrfSeeder::class,
+            UsuarioSeeder::class,
+            TipoCapacidadeSeeder::class,
+            CapacidadeSeeder::class,
+            //TipoAvaliacaoSeeder::class,
+            //TipoJustificativaSeeder::class,
+            //TipoAvaliacaoJustificativaSeeder::class,
             AreaConhecimentoSeeder::class,
             TipoCursoSeeder::class,
             CursoSeeder::class,
@@ -37,8 +38,8 @@ class DatabaseSeeder extends Seeder
             
 
             /*Após a execução das Seeds acima, executar a rotina de integração com o comando
-            http://localhost[:porta]/api/integracao?servidores=true&unidades=true&entidade=52d78c7d-e0c1-422b-b094-2ca5958d5ac1
-            ou sudo curl -G 'http://localhost/api/integracao' -d servidores=true -d unidades=true -d entidade=52d78c7d-e0c1-422b-b094-2ca5958d5ac1
+            http://localhost[:porta]/api/integracao?servidores=true&unidades=true&entidade=[ID da entidade]
+            ou sudo curl -G 'http://localhost/api/integracao' -d servidores=true -d unidades=true -d entidade=[ID da entidade]
             */
 
         ]);

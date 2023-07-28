@@ -28,7 +28,7 @@
     numero (*)
     ganho_produtividade (*)
     forma_contagem_carga_horaria (*)
-    (id/created_at/updated_at/data_inicio/data_fim)
+    (id/created_at/updated_at/deleted_at)
         programa_id (*)
         usuario_id (*)
         unidade_id (*)
@@ -42,6 +42,7 @@
 ## REGRAS DE NEGÓCIO APLICADAS AOS PLANOS DE TRABALHO
 
 1. (RN_PTR_1) Após criado um plano de trabalho, o seu plano de entregas não pode mais ser alterado. Em consequência dessa regra, os seguintes campos não poderão mais ser alterados: plano_entrega_id, unidade_id, programa_id;
+2. Os planos de trabalho dos participantes afetados por exclusão de entregas deverão ser repactuados.
 
 ## REGRAS DE INTERFACE
 
@@ -50,3 +51,9 @@
 Sequência de métodos para salvar um registro em um grid editável:
 1. Ao pressionar o botão de gravar da nova linha, o método private async saveItem(itemRow: Base | IIndexable) do GridComponent é chamado;
 2. 
+
+
+********************* OBSERVACOES *********************
+- Ao entrar na tela de incluir o plano, pesquisar se a unidade (lotacao) do usuário tem apenas um plano de entrega ativo e já selecionar ele na tela
+- Se o usuário não for o gestor da unidade, já selecionar o próprio usuário automaticamente
+- Data fim deve ser maior que data inicio (não pode nem ser igual)
