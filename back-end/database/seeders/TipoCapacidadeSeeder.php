@@ -65,8 +65,6 @@ class TipoCapacidadeSeeder extends Seeder
                     $capacidade = new Capacidade();
                     $capacidade->fill([
                         'id' => $utilService->uuid(),
-                        'data_inicio' => date("Y-m-d H:i:s"),
-                        'data_fim' => null,
                         'perfil_id' => $developerId,
                         'tipo_capacidade_id' => $registroFilha[0]
                     ]);
@@ -78,8 +76,6 @@ class TipoCapacidadeSeeder extends Seeder
                 $capacidade = new Capacidade();
                 $capacidade->fill([
                     'id' => $utilService->uuid(),
-                    'data_inicio' => date("Y-m-d H:i:s"),
-                    'data_fim' => null,
                     'perfil_id' => $developerId,
                     'tipo_capacidade_id' => $registro[0]
                 ]);
