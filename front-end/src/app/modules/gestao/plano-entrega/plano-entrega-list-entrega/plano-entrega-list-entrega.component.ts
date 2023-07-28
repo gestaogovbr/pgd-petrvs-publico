@@ -8,6 +8,7 @@ import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model
 import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
+import { PlanoEntregaService } from '../plano-entrega.service';
 
 @Component({
   selector: 'plano-entrega-list-entrega',
@@ -39,6 +40,15 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   } get cadeiaValorId(): string | undefined {
     return this._cadeiaValorId;
   }
+  @Input() set unidadeId(value: string | undefined) {
+    if(this._unidadeId != value) {
+      this._unidadeId = value;
+      // verificar nas entregas quais objetivos não são desse planjemaneot e remove-los
+      // será remvido somente da lista de itens (em memória), independente de persistente ou não, MAS NO BACKEND HAVERÀ ESSA VALIDAÇÂO!
+    }
+  } get unidadeId(): string | undefined {
+    return this._unidadeId;
+  }
 
   public get items(): PlanoEntregaEntrega[] {
     if (!this.gridControl.value) this.gridControl.setValue([]);
@@ -47,19 +57,22 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
 
   private _cadeiaValorId?: string;
   private _planejamentoId?: string;
-  
+  private _unidadeId?: string;
+
   public entityToControl = (value: any) => (value as PlanoEntrega).entregas || [];
   public options: ToolbarButton[] = [];
   public planoEntregaId: string = "";
   public dao: PlanoEntregaEntregaDaoService;
+  public planoEntregaService: PlanoEntregaService;
 
   constructor(public injector: Injector) {
     super(injector);
-    this.title = this.lex.noun("Entrega");
-    this.join = ["unidade", "entidade"];
+    this.title = this.lex.translate("Entrega");
+    this.join = ["unidade", "entidade", "entrega"];
     this.code = "MOD_PENT_CONS";
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
     this.dao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
+    this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
     this.form = this.fh.FormBuilder({
       descricao: { default: "" },
       inicio: { default: new Date() },
@@ -121,6 +134,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
         plano_entrega: this.entity!,
         planejamento_id: this.planejamentoId,
         cadeia_valor_id: this.cadeiaValorId,
+        unidade_id: this.unidadeId,
         entrega: entrega,
       },
       modalClose: async (modalResult) => {
@@ -140,10 +154,11 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     entrega._status = entrega._status == "ADD" ? "ADD" : "EDIT";
     let index = this.items.indexOf(entrega);
     this.go.navigate({ route: ['gestao', 'plano-entrega', 'entrega'] }, {
-      metadata: { 
+      metadata: {
         plano_entrega: this.entity!,
         planejamento_id: this.planejamentoId,
         cadeia_valor_id: this.cadeiaValorId,
+        unidade_id: this.unidadeId,
         entrega: entrega,
       },
       modalClose: async (modalResult) => {
@@ -166,9 +181,9 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
       };
     }
   }
-  
+
   public async consult(entrega: PlanoEntregaEntrega) {
     this.go.navigate({route: ['', entrega.id, "consult"]});
   }
-  
+
 }

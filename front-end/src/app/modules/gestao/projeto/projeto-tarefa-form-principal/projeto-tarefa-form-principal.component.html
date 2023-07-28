@@ -1,8 +1,8 @@
 <editable-form [form]="form!" [noButtons]="!entity_id ? 'true' : undefined" [disabled]="formDisabled" (submit)="onSaveData()" (cancel)="onCancel()">
     <div class="row">
         <input-switch [size]="1" label="Pai" controlName="tem_filhos" labelInfo="Se possui filhos, se é uma tarefa sintética (resumo)"></input-switch>
-        <input-radio [size]="8" [label]="'Tipo da '+ lex.noun('tarefa')" controlName="tipo" [control]="form!.controls.tipo" [items]="tipos"></input-radio>
-        <input-select [size]="3" [label]="'Status da '+ lex.noun('tarefa')" icon="bi bi-arrow-up-right-circle" controlName="status_tarefa" [items]="lookup.PROJETO_TAREFA_STATUS"></input-select>
+        <input-radio [size]="8" [label]="'Tipo da '+ lex.translate('tarefa')" controlName="tipo" [control]="form!.controls.tipo" [items]="tipos"></input-radio>
+        <input-select [size]="3" [label]="'Status da '+ lex.translate('tarefa')" icon="bi bi-arrow-up-right-circle" controlName="status_tarefa" [items]="lookup.PROJETO_TAREFA_STATUS"></input-select>
     </div>
     <div class="row">
         <input-text [size]="12" label="Nome" controlName="nome" labelInfo="Nome da tarefa"></input-text>
@@ -15,8 +15,8 @@
         </input-search>
     </div>
     <div class="row">
-        <input-button [label]="lex.noun('Processo')" [size]="3" #procRequisicao controlName="numero_processo" [control]="form!.controls.numero_processo" [disabled]="!gb.isEmbedded || form!.controls.numero_requisicao.value?.length ? 'true' : undefined" labelInfo="Número do processo, com a formatação de origem"></input-button>
-        <input-button [label]="lex.noun('Documento')" [size]="1" #docRequisicao controlName="numero_documento" [control]="form!.controls.numero_requisicao" [disabled]="!gb.isEmbedded ? 'true' : undefined" labelInfo="Numero do documento de requisição, caso seja o Sei é o numero Sei"></input-button>
+        <input-button [label]="lex.translate('Processo')" [size]="3" #procRequisicao controlName="numero_processo" [control]="form!.controls.numero_processo" [disabled]="!gb.isEmbedded || form!.controls.numero_requisicao.value?.length ? 'true' : undefined" labelInfo="Número do processo, com a formatação de origem"></input-button>
+        <input-button [label]="lex.translate('Documento')" [size]="1" #docRequisicao controlName="numero_documento" [control]="form!.controls.numero_requisicao" [disabled]="!gb.isEmbedded ? 'true' : undefined" labelInfo="Numero do documento de requisição, caso seja o Sei é o numero Sei"></input-button>
         <!--input-search label="Tipo processo" [size]="4" #tipoProcesso controlName="tipo_processo_id" [control]="form!.controls.tipo_processo_id" disabled [dao]="tipoProcessoDao"></input-search/-->
         <!--input-search label="Tipo documento" [size]="4" #tipoDocumento controlName="tipo_documento_id" [control]="form!.controls.tipo_documento_id" disabled [dao]="tipoDocumentoDao"></input-search/-->
     </div>
@@ -35,7 +35,7 @@
         <input-datetime date [size]="4" label="Início realizado" icon="bi bi-calendar-date" controlName="inicio_realizado"></input-datetime>
         <input-datetime date [size]="4" label="Término realizado" icon="bi bi-calendar-date" controlName="termino_relizado"></input-datetime>
         <!--input-workload daysOrHours [size]="3" [unit]="unitDuracao" [disabled]="" label="Duração" controlName="duracao_realizado" [unitChange]="onUnitDuracaoChange.bind(this)" labelInfo="Se o projeto será calculado em horas ou dias"></input-workload/-->
-        <input-text number [label]="'Custo da '+ lex.noun('tarefa')" prefix="R$" [size]="4" icon="bi bi-clock" controlName="custo" labelInfo="Custo associado à tarefa"></input-text>
+        <input-text number [label]="'Custo da '+ lex.translate('tarefa')" prefix="R$" [size]="4" icon="bi bi-clock" controlName="custo" labelInfo="Custo associado à tarefa"></input-text>
         <input-text number label="Progresso" sufix="%" [size]="4" icon="bi bi-clock" controlName="progresso" labelInfo="Progresso do projeto (% Concluído)"></input-text>
     </div>
 
@@ -58,8 +58,8 @@ __/__/____ __:__ __/__/____ __:__  ____(Dias) _______  ____ %
             <input-switch label="Aloca recursos no projeto" scale="small" labelPosition="right" [size]="6" controlName="aloca_recursos_proprios" labelInfo="Aloca recursos próprios da tarefa"></input-switch>
         </div>
         <div class="row">
-            <input-switch [label]="'Possui '+ lex.noun('tarefa', true) +' filhas'" scale="small" labelPosition="right" [size]="6" controlName="possui_custos_proprios" labelInfo="Define se a tarefa tem custos pr[oprios associados"></input-switch>
-            <input-switch [label]="'Calcula intervalo da ' + lex.noun('tarefa')" scale="small" labelPosition="right" [size]="6" controlName="calcula_intervalo" labelInfo="Calculo intervalo de execução da tarefa"></input-switch>
+            <input-switch [label]="'Possui '+ lex.translate('tarefa') +' filhas'" scale="small" labelPosition="right" [size]="6" controlName="possui_custos_proprios" labelInfo="Define se a tarefa tem custos pr[oprios associados"></input-switch>
+            <input-switch [label]="'Calcula intervalo da ' + lex.translate('tarefa')" scale="small" labelPosition="right" [size]="6" controlName="calcula_intervalo" labelInfo="Calculo intervalo de execução da tarefa"></input-switch>
         </div>
         <div class="row">
             <input-switch label="Contraída" scale="small" labelPosition="right" [size]="6" controlName="contraido" labelInfo="Define se a tarefa tem custos pr[oprios associados"></input-switch>
@@ -67,7 +67,7 @@ __/__/____ __:__ __/__/____ __:__  ____(Dias) _______  ____ %
         </div>
         <div class="row">
             <input-switch label="Soma progresso das filhas" scale="small" labelPosition="right" [size]="6" controlName="soma_progresso_filhos" labelInfo="Calcula o progresso das tarefas filhas"></input-switch>
-            <input-switch [label]="'Soma recursos' + lex.noun('tarefa', true) +' filhas'" scale="small" labelPosition="right" [size]="6" controlName="soma_recursos_alocados_filhos" labelInfo="Soma recursos das tarefas filhas"></input-switch>
+            <input-switch [label]="'Soma recursos' + lex.translate('tarefa') +' filhas'" scale="small" labelPosition="right" [size]="6" controlName="soma_recursos_alocados_filhos" labelInfo="Soma recursos das tarefas filhas"></input-switch>
         </div>
     </separator>
 </editable-form>

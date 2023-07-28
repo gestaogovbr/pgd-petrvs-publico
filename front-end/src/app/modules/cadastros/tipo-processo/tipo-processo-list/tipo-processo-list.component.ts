@@ -22,7 +22,7 @@ export class TipoProcessoListComponent extends PageListBase<TipoProcesso, TipoPr
     super(injector, TipoProcesso, TipoProcessoDaoService);
     /* Inicializações */
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
-    this.title = "Tipos de " + this.lex.noun("Processo",true);
+    this.title = "Tipos de " + this.lex.translate("Processo");
     this.code="MOD_TIPO_PROC";
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}

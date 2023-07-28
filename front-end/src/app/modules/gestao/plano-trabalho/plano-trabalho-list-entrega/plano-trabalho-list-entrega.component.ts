@@ -39,8 +39,8 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   @Input() set disabled(value: boolean) { if (this._disabled != value) this._disabled = value; } get disabled(): boolean { return this._disabled; }
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
   @Input() cdRef: ChangeDetectorRef;
-  @Input() set entregasDoPlanoEntrega(value: LookupItem[]) { 
-    if(JSON.stringify(value) != JSON.stringify(this._entregasDoPlanoEntrega)) {
+  @Input() set entregasDoPlanoEntrega(value: LookupItem[]) {
+    if (JSON.stringify(value) != JSON.stringify(this._entregasDoPlanoEntrega)) {
       this._entregasDoPlanoEntrega = value;
       this.entregasMesmaUnidade = this.carregarEntregasMesmaUnidade();
       this.cdRef.detectChanges();
@@ -78,15 +78,15 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     this.peeDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
     this.join = ["entrega", "plano_entrega_entrega.entrega"];
     this.form = this.fh.FormBuilder({
-      origem: {default: null},
-      entregaMesmaUnidade: {default: null},
-      entregaOutraUnidade: {default: null},
-      entregaCatalogo: {default: null},
-      descricao: {default: ""},
-      forca_trabalho: {default: 1},
-      plano_trabalho_id: {default: null},
-      entrega_id: {default: null},
-      plano_entrega_entrega_id: {default: null}
+      origem: { default: null },
+      entregaMesmaUnidade: { default: null },
+      entregaOutraUnidade: { default: null },
+      entregaCatalogo: { default: null },
+      descricao: { default: "" },
+      forca_trabalho: { default: 1 },
+      plano_trabalho_id: { default: null },
+      entrega_id: { default: null },
+      plano_entrega_entrega_id: { default: null }
     }, this.cdRef, this.validate);
   }
 
@@ -98,17 +98,17 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
    */
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if(['descricao','forca_trabalho'].indexOf(controlName) >= 0 && !control.value?.length) result = "Obrigatório!";
-    if(['forca_trabalho'].indexOf(controlName) >= 0 && (control.value < 1 || control.value > 100)) result = "Deve estar entre 1 e 100";
-    if(['entrega_id'].indexOf(controlName) >= 0) {
-      if(this.form?.controls.origem.value == 'CATALOGO' && !control.value) result = "Este campo não pode ser nulo!";
-      let cont = this.entity?.entregas?.filter(e => !!e.entrega_id && !e.plano_entrega_entrega_id && e.id != this.grid?.editing?.id).map(e => e.entrega_id).reduce((acc, id) => { if(id === control.value) return acc + 1; else return acc; }, 0) || 0; // (*1)
-      if(cont > 0) result = "Esta entrega está em duplicidade!";
+    if (['descricao', 'forca_trabalho'].indexOf(controlName) >= 0 && !control.value?.length) result = "Obrigatório!";
+    if (['forca_trabalho'].indexOf(controlName) >= 0 && (control.value < 1 || control.value > 100)) result = "Deve estar entre 1 e 100";
+    if (['entrega_id'].indexOf(controlName) >= 0) {
+      if (this.form?.controls.origem.value == 'CATALOGO' && !control.value) result = "Este campo não pode ser nulo!";
+      let cont = this.entity?.entregas?.filter(e => !!e.entrega_id && !e.plano_entrega_entrega_id && e.id != this.grid?.editing?.id).map(e => e.entrega_id).reduce((acc, id) => { if (id === control.value) return acc + 1; else return acc; }, 0) || 0; // (*1)
+      if (cont > 0) result = "Esta entrega está em duplicidade!";
     }
-    if(['plano_entrega_entrega_id'].indexOf(controlName) >= 0) {
-      if(['MESMA_UNIDADE','OUTRA_UNIDADE'].includes(this.form?.controls.origem.value) && !control.value) result = "Este campo não pode ser nulo!";
-      let cont = this.entity?.entregas?.filter(e => !e.entrega_id && !!e.plano_entrega_entrega_id && e.id != this.grid?.editing?.id).map(e => e.plano_entrega_entrega_id).reduce((acc, id) => { if(id === control.value) return acc + 1; else return acc; }, 0) || 0; // (*2)
-      if(cont > 0) result = "Esta entrega está em duplicidade!";
+    if (['plano_entrega_entrega_id'].indexOf(controlName) >= 0) {
+      if (['MESMA_UNIDADE', 'OUTRA_UNIDADE'].includes(this.form?.controls.origem.value) && !control.value) result = "Este campo não pode ser nulo!";
+      let cont = this.entity?.entregas?.filter(e => !e.entrega_id && !!e.plano_entrega_entrega_id && e.id != this.grid?.editing?.id).map(e => e.plano_entrega_entrega_id).reduce((acc, id) => { if (id === control.value) return acc + 1; else return acc; }, 0) || 0; // (*2)
+      if (cont > 0) result = "Esta entrega está em duplicidade!";
     }
     return result;
   }
@@ -120,7 +120,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   async ngOnInit() {
     super.ngOnInit();
     this.entity = this.metadata?.entity || this.entity;
-    this.totalForcaTrabalho = Math.round(this.somaForcaTrabalho(this.entity?.entregas) * 100)/100;
+    this.totalForcaTrabalho = Math.round(this.somaForcaTrabalho(this.entity?.entregas) * 100) / 100;
     this.entregasCatalogo = await this.carregarEntregasCatalogo();
     this.entregasMesmaUnidade = this.carregarEntregasMesmaUnidade();
   }
@@ -130,7 +130,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
    * @returns 
    */
   public async addEntrega() {
-    return Object.assign(new PlanoTrabalhoEntrega(), { 
+    return Object.assign(new PlanoTrabalhoEntrega(), {
       _status: this.isNoPersist ? "ADD" : "",
       id: this.dao!.generateUuid(),
       plano_trabalho_id: this.entity?.id
@@ -146,33 +146,33 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     form.controls.descricao.setValue(row.descricao);
     form.controls.forca_trabalho.setValue(row.forca_trabalho);
     form.controls.plano_trabalho_id.setValue(row.plano_trabalho_id);
-    if(!row.entrega_id?.length && !row.plano_entrega_entrega_id?.length){ // É uma nova entrega
+    if (!row.entrega_id?.length && !row.plano_entrega_entrega_id?.length) { // É uma nova entrega
       form.controls.origem.setValue('MESMA_UNIDADE');
       form.controls.entrega_id.setValue(null);
       form.controls.plano_entrega_entrega_id.setValue(null);
-    } else if(!row.plano_entrega_entrega_id?.length && !!row.entrega_id?.length){ // É uma entrega do tipo catálogo
+    } else if (!row.plano_entrega_entrega_id?.length && !!row.entrega_id?.length) { // É uma entrega do tipo catálogo
       form.controls.origem.setValue('CATALOGO');
       form.controls.entrega_id.setValue(row.entrega_id);
       form.controls.plano_entrega_entrega_id.setValue(null);
-    } else if(!row.entrega_id?.length && !!row.plano_entrega_entrega_id?.length && (row.objeto?.plano_entrega_id || row.plano_entrega_entrega?.plano_entrega_id) == this.entity?.plano_entrega_id) {
+    } else if (!row.entrega_id?.length && !!row.plano_entrega_entrega_id?.length && (row.objeto?.plano_entrega_id || row.plano_entrega_entrega?.plano_entrega_id) == this.entity?.plano_entrega_id) {
       form.controls.origem.setValue('MESMA_UNIDADE');
-      form.controls.entrega_id.setValue(null);      
+      form.controls.entrega_id.setValue(null);
       form.controls.plano_entrega_entrega_id.setValue(row.plano_entrega_entrega_id);
-    } else if(!row.entrega_id?.length && !!row.plano_entrega_entrega_id?.length && (row.objeto?.plano_entrega_id || row.plano_entrega_entrega?.plano_entrega_id) != this.entity?.plano_entrega_id) {
+    } else if (!row.entrega_id?.length && !!row.plano_entrega_entrega_id?.length && (row.objeto?.plano_entrega_id || row.plano_entrega_entrega?.plano_entrega_id) != this.entity?.plano_entrega_id) {
       form.controls.origem.setValue('OUTRA_UNIDADE');
       form.controls.entrega_id.setValue(null);
       await this.carregarEntregasOutraUnidade(row.plano_entrega_entrega?.plano_entrega_id);
       form.controls.plano_entrega_entrega_id.setValue(row.plano_entrega_entrega_id);
     }
   }
-  
+
   /**
    * Método chamado para somar os percentuais das forças de trabalho do array de entregas passado como parâmetro.
    * @param entregas Array de entregas do plano de trabalho
    * @returns 
    */
   public somaForcaTrabalho(entregas: PlanoTrabalhoEntrega[] = []): number {
-    return entregas.map(x => parseFloat(x.forca_trabalho)).reduce((a,b) => a + b, 0);
+    return entregas.map(x => x.forca_trabalho * 1).reduce((a, b) => a + b, 0);
   }
 
   /**
@@ -182,14 +182,14 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
    */
   public async removeEntrega(row: any) {
     let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
-    if(confirm) {
+    if (confirm) {
       this.loading = true;
       try {
         this.isNoPersist ? Object.assign(row, { _status: "DELETE" }) : await this.dao?.delete(row.id);
       } finally {
         this.loading = false;
       }
-      this.totalForcaTrabalho = Math.round((this.totalForcaTrabalho - parseFloat((row as PlanoTrabalhoEntrega).forca_trabalho)) * 100) / 100;
+      this.totalForcaTrabalho = Math.round((this.totalForcaTrabalho - ((row as PlanoTrabalhoEntrega).forca_trabalho * 1)) * 100) / 100;
       return this.isNoPersist ? false : true; // (*3)
     } else {
       return false;
@@ -210,15 +210,17 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     this.novaEntrega.forca_trabalho = this.form?.controls.forca_trabalho.value;
     this.loading = true;
     try {
-      if(!this.isNoPersist) {
-        this.novaEntrega = await (this.dao as PlanoTrabalhoEntregaDaoService).save(this.novaEntrega, this.join); 
-        if(this.grid?.adding) this.grid!.items[this.grid!.items.length-1].id = '';  // (*4)
+      if (!this.isNoPersist) {
+        this.novaEntrega = await (this.dao as PlanoTrabalhoEntregaDaoService).save(this.novaEntrega, this.join);
+        if (this.grid?.adding) this.grid!.items[this.grid!.items.length - 1].id = '';  // (*4)
       }
     } catch (e: any) {
       this.error(e.message ? e.message : e.toString() || e);
     } finally {
-      this.totalForcaTrabalho = Math.round((this.totalForcaTrabalho + parseFloat((row as PlanoTrabalhoEntrega).forca_trabalho)) * 100) / 100;
+      //this.totalForcaTrabalho = Math.round((this.totalForcaTrabalho + ((row as PlanoTrabalhoEntrega).forca_trabalho * 1)) * 100) / 100;
       row.objeto = this.entregaCatalogo?.selectedItem?.data || this.entregaMesmaUnidade?.selectedItem?.data || this.entregaOutraUnidade?.selectedItem?.data; // (*)
+      row.forca_trabalho = this.form?.controls.forca_trabalho.value * 1;
+      this.totalForcaTrabalho = Math.round(this.somaForcaTrabalho(this.entity?.entregas) * 100) / 100;
       this.loading = false;
     }
     return this.novaEntrega;
@@ -229,9 +231,9 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
    * @returns 
    */
   public carregarEntregasMesmaUnidade(): LookupItem[] {
-    if(!this.entity?.id?.length) return this.entregasDoPlanoEntrega; // (*5)
+    if (!this.entity?.id?.length) return this.entregasDoPlanoEntrega; // (*5)
     let entregasPlanoEntrega = this.entity?.plano_entrega?.entregas || [];
-    let result = entregasPlanoEntrega.map(epe => Object.assign({}, {key: epe.id, value: epe.entrega?.nome || epe.descricao, data: epe}));
+    let result = entregasPlanoEntrega.map(epe => Object.assign({}, { key: epe.id, value: epe.entrega?.nome || epe.descricao, data: epe }));
     return result;
   }
 
@@ -242,113 +244,113 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   public async carregarEntregasOutraUnidade(idPlanoOuPlano: string | PlanoEntrega): Promise<void> {
     this.cdRef.detectChanges();
     this.planoEntregaOutraUnidade = typeof idPlanoOuPlano == 'string' ? await this.planoEntregaDao!.getById(idPlanoOuPlano, ["entregas.entrega", "unidade"]) : idPlanoOuPlano;
-    this.entregasOutraUnidade = this.planoEntregaOutraUnidade?.entregas.map(epe => Object.assign({}, {key: epe.id, value: epe.entrega?.nome || epe.descricao, data: epe})) || [];
+    this.entregasOutraUnidade = this.planoEntregaOutraUnidade?.entregas.map(epe => Object.assign({}, { key: epe.id, value: epe.entrega?.nome || epe.descricao, data: epe })) || [];
   }
 
   /**
    * Método chamado para carregar as entregas existentes no Catálogo de Entregas.
    * @returns 
    */
-  public async carregarEntregasCatalogo(): Promise<LookupItem[]>{
+  public async carregarEntregasCatalogo(): Promise<LookupItem[]> {
     let result: LookupItem[] = [];
-    result = (await this.entregaDao?.query().getAll())?.map(ee => Object.assign({}, {key: ee.id, value: ee.nome, data: ee})) || [];
+    result = (await this.entregaDao?.query().getAll())?.map(ee => Object.assign({}, { key: ee.id, value: ee.nome, data: ee })) || [];
     return result;
   }
 
   public tipoEntrega(row: any): badgeEntrega {
-    if(!!row.entrega_id?.length) return {label: 'Catálogo', cor: 'secondary', nome: !!row.objeto?.id?.length ? row.objeto?.nome || "Desconhecido" : row.entrega?.nome || "Desconhecido1"};
-    let IdDoPlanoEntregaDoPlanoTrabalho:string, IdDoPlanoEntregaDaEntrega:string, badge:string, nome:string, cor:string;
+    if (!!row.entrega_id?.length) return { label: 'Catálogo', cor: 'secondary', nome: !!row.objeto?.id?.length ? row.objeto?.nome || "Desconhecido" : row.entrega?.nome || "Desconhecido1" };
+    let IdDoPlanoEntregaDoPlanoTrabalho: string, IdDoPlanoEntregaDaEntrega: string, badge: string, nome: string, cor: string;
     IdDoPlanoEntregaDoPlanoTrabalho = this.entity?.plano_entrega_id || this.entregasDoPlanoEntrega[0]?.data.plano_entrega_id || 'Desconhecido2';
-    IdDoPlanoEntregaDaEntrega = !!row.objeto?.id.length ? row.objeto?.plano_entrega_id || "Desconhecido3" : row.plano_entrega_entrega.plano_entrega_id || "Desconhecido4";   
-    [badge,cor] = IdDoPlanoEntregaDoPlanoTrabalho == IdDoPlanoEntregaDaEntrega ? ['Mesma unidade', 'success'] : ['Outra unidade','primary'];
-    nome = !!row.objeto?.id.length ? row.objeto?.entrega.nome || "Desconhecido5" : row.plano_entrega_entrega?.entrega.nome || "Desconhecido6";   
-    return {label: badge, cor: cor, nome: nome};
+    IdDoPlanoEntregaDaEntrega = !!row.objeto?.id.length ? row.objeto?.plano_entrega_id || "Desconhecido3" : row.plano_entrega_entrega?.plano_entrega_id || "Desconhecido4";
+    [badge, cor] = IdDoPlanoEntregaDoPlanoTrabalho == IdDoPlanoEntregaDaEntrega ? ['Mesma unidade', 'success'] : ['Outra unidade', 'primary'];
+    nome = !!row.objeto?.id.length ? row.objeto?.entrega.nome || "Desconhecido5" : row.plano_entrega_entrega?.entrega.nome || "Desconhecido6";
+    return { label: badge, cor: cor, nome: nome };
   }
 
   /* ---------  TRATAMENTO DOS EVENTOS ----------- */
 
-  public onOrigemChange(row: any){
+  public onOrigemChange(row: any) {
     let value = this.form!.controls.origem.value;
-    if(['MESMA_UNIDADE','OUTRA_UNIDADE'].includes(value)){
+    if (['MESMA_UNIDADE', 'OUTRA_UNIDADE'].includes(value)) {
       this.form?.controls.entrega_id.setValue(null);
       this.cdRef.detectChanges();
-      if(value == "OUTRA_UNIDADE") this.entregaOutraUnidade?.onSearchClick(this.entregaOutraUnidade?.searchRoute);
-    } else if(value == 'CATALOGO'){
+      if (value == "OUTRA_UNIDADE") this.entregaOutraUnidade?.onSearchClick(this.entregaOutraUnidade?.searchRoute);
+    } else if (value == 'CATALOGO') {
       this.form?.controls.plano_entrega_entrega_id.setValue(null);
     }
   }
 
-  public onEntregaMesmaUnidadeChange(event: Event){
-    if(this.entregaMesmaUnidade?.selectedItem) {
+  public onEntregaMesmaUnidadeChange(event: Event) {
+    if (this.entregaMesmaUnidade?.selectedItem) {
       this.form?.controls.descricao.setValue(this.entregaMesmaUnidade?.selectedItem?.value || '');
       this.form?.controls.plano_entrega_entrega_id.setValue(this.entregaMesmaUnidade?.selectedItem?.key);
-      this.cdRef.detectChanges();    
+      this.cdRef.detectChanges();
     }
   }
 
-  public onEntregaOutraUnidadeChange(event: Event){
-    if(this.entregaOutraUnidade?.selectedItem) {
+  public onEntregaOutraUnidadeChange(event: Event) {
+    if (this.entregaOutraUnidade?.selectedItem) {
       this.form?.controls.descricao.setValue(this.entregaOutraUnidade?.selectedItem?.value || '');
       this.form?.controls.plano_entrega_entrega_id.setValue(this.entregaOutraUnidade?.selectedItem?.key);
-      this.cdRef.detectChanges();    
+      this.cdRef.detectChanges();
     }
   }
-  
-  public onEntregaCatalogoChange(event: Event){
-    if(this.entregaCatalogo?.selectedItem) {
+
+  public onEntregaCatalogoChange(event: Event) {
+    if (this.entregaCatalogo?.selectedItem) {
       this.form?.controls.descricao.setValue(this.entregaCatalogo?.selectedItem?.value || '');
       this.form?.controls.entrega_id.setValue(this.entregaCatalogo?.selectedItem?.key);
       this.cdRef.detectChanges();
     }
   }
 
-  public onForcaTrabalhoChange(row: any){
+  public onForcaTrabalhoChange(row: any) {
     let index = this.items.findIndex(x => x["id"] == row["id"]);
-    this.totalForcaTrabalho = Math.round((this.somaForcaTrabalho(this.grid?.items as PlanoTrabalhoEntrega[]) - parseFloat(this.items[index].forca_trabalho) + parseFloat(this.form?.controls.forca_trabalho.value)) * 100) / 100;
+    this.totalForcaTrabalho = Math.round((this.somaForcaTrabalho(this.grid?.items as PlanoTrabalhoEntrega[]) - (this.items[index].forca_trabalho * 1) + (this.form?.controls.forca_trabalho.value * 1)) * 100) / 100;
   }
 }
 
-  /*
-  PROBLEMAS:
+/*
+PROBLEMAS:
 
-  - O evento de selecionar o conteúdo do input-text ou pressionar TAB está desviando o fluxo para a homepage;
-  - O maxWidth da coluna "Entrega" funciona para a exibição mas não para a edição, seja o grid persistente ou não
-  - Na chamada do input-search de planos de entreda de outra unidade não pode vir o plano de entrega da própria unidade
-  - Ao editar uma entrega de outra unidade, que acabou de ser salva, no grid persistente, o inputSelect de nome da entrega não se atualiza
+- O evento de selecionar o conteúdo do input-text ou pressionar TAB está desviando o fluxo para a homepage;
+- O maxWidth da coluna "Entrega" funciona para a exibição mas não para a edição, seja o grid persistente ou não
+- Na chamada do input-search de planos de entreda de outra unidade não pode vir o plano de entrega da própria unidade
+- Ao editar uma entrega de outra unidade, que acabou de ser salva, no grid persistente, o inputSelect de nome da entrega não se atualiza
 
 
-  plano_trabalho.id: 3ddb0d3d-7e51-4091-ac01-9f312b8c70b3
-  entregas_plano_trabalho.id                plano_entrega_entrega_id                  entrega_id
-  7f396cc7-b09f-4b92-bd46-909cc2a8b8fb      54a584f7-0b89-11ee-975a-0242ac120002      NULL
-  ba43a0e6-6255-4f99-b09a-e06ccf6c997c      NULL                                      6f76cc53-7088-463f-b854-0c2c826f0317
-  dcce5d96-bd78-477c-bc81-a1252ac2de76      9281a3f6-5c61-4ca5-9a84-194eba161c99      NULL
-  de955a65-7d01-4a3d-8c29-33a062648db6      5d3546cf-0b89-11ee-975a-0242ac120002      NULL
-  fb9cc220-5198-48c4-a7ff-2566cf3f191d      NULL                                      9675f1c5-c4fa-44cc-b8d8-5dda4a550382
-  
-  Soluções:
-  $pt = Plano::find("3ddb0d3d-7e51-4091-ac01-9f312b8c70b3")->with('entregas.entrega:id','entregas.planoEntregaEntrega:id')->get(): o obj planoEntregaEntrega associado à entrega 
-  $x = PlanoTrabalhoEntrega::where("id","=","e738e620-0177-445c-a26b-a05a787b3cc1")->with('entrega','planoEntregaEntrega')->get()
-  */
+plano_trabalho.id: 3ddb0d3d-7e51-4091-ac01-9f312b8c70b3
+entregas_plano_trabalho.id                plano_entrega_entrega_id                  entrega_id
+7f396cc7-b09f-4b92-bd46-909cc2a8b8fb      54a584f7-0b89-11ee-975a-0242ac120002      NULL
+ba43a0e6-6255-4f99-b09a-e06ccf6c997c      NULL                                      6f76cc53-7088-463f-b854-0c2c826f0317
+dcce5d96-bd78-477c-bc81-a1252ac2de76      9281a3f6-5c61-4ca5-9a84-194eba161c99      NULL
+de955a65-7d01-4a3d-8c29-33a062648db6      5d3546cf-0b89-11ee-975a-0242ac120002      NULL
+fb9cc220-5198-48c4-a7ff-2566cf3f191d      NULL                                      9675f1c5-c4fa-44cc-b8d8-5dda4a550382
+ 
+Soluções:
+$pt = Plano::find("3ddb0d3d-7e51-4091-ac01-9f312b8c70b3")->with('entregas.entrega:id','entregas.planoEntregaEntrega:id')->get(): o obj planoEntregaEntrega associado à entrega 
+$x = PlanoTrabalhoEntrega::where("id","=","e738e620-0177-445c-a26b-a05a787b3cc1")->with('entrega','planoEntregaEntrega')->get()
+*/
 
-  /*
-  TESTES
+/*
+TESTES
 
-                                                    GRID PERSISTENTE                      GRID NÃO-PERSISTENTE
-                                                Fluxo Feliz    Validações                Fluxo Feliz    Validações
-  Inclusão Entrega Catálogo                          
-  Inclusão Entrega Mesma Unidade                     
-  Inclusão Entrega Outra Unidade                     
-  Alteração Entrega Catálogo                         
-  Alteração Entrega Mesma Unidade                    
-  Alteração Entrega Outra Unidade                    
-  Cancelamento Entrega Catálogo                      
-  Cancelamento Entrega Mesma Unidade                 
-  Cancelamento Entrega Outra Unidade                 
-  Exclusão Entrega Catálogo                          
-  Exclusão Entrega Mesma Unidade                     
-  Exclusão Entrega Outra Unidade                     
+                                                  GRID PERSISTENTE                      GRID NÃO-PERSISTENTE
+                                              Fluxo Feliz    Validações                Fluxo Feliz    Validações
+Inclusão Entrega Catálogo                          
+Inclusão Entrega Mesma Unidade                     
+Inclusão Entrega Outra Unidade                     
+Alteração Entrega Catálogo                         
+Alteração Entrega Mesma Unidade                    
+Alteração Entrega Outra Unidade                    
+Cancelamento Entrega Catálogo                      
+Cancelamento Entrega Mesma Unidade                 
+Cancelamento Entrega Outra Unidade                 
+Exclusão Entrega Catálogo                          
+Exclusão Entrega Mesma Unidade                     
+Exclusão Entrega Outra Unidade                     
 
-  */
+*/
 
 /*
 OBSERVAÇÕES:

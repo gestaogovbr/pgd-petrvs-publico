@@ -64,7 +64,7 @@ export class PlanejamentoMapaComponent extends PageFrameBase {
     this.dao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.objetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
     this.join = ['objetivos'];
-    this.title = "Objetivos do " + this.lex.noun('planejamento Institucional', true);
+    this.title = "Objetivos do " + this.lex.translate('planejamento Institucional');
     this.form = this.fh.FormBuilder({
       planejamento_id: {default: null},
       todos: {default: false}
@@ -89,6 +89,7 @@ export class PlanejamentoMapaComponent extends PageFrameBase {
         value: x.nome,
         data: x
       }));
+      this.cdRef.detectChanges();
       this.form!.controls.planejamento_id.setValue(this.planejamentos.length ? this.planejamentos[0].key : null);
     });
   }
@@ -126,16 +127,18 @@ export class PlanejamentoMapaComponent extends PageFrameBase {
   }
 
   public onPlanejamentoChange() {
-    this.dao!.getById(this.planejamentoInstitucional!.selectedItem?.key, this.join).then(planejamento => {
-      this.planejamento = planejamento as Planejamento;
-      this.objetivos = this.planejamento.objetivos || [];
-      this.eixos = this.query!.extra?.eixos?.filter((x: EixoTematico) => this.form?.controls.todos.value || this.planejamento?.objetivos?.find(y => y.eixo_tematico_id == x.id)).map((x: EixoTematico) => Object.assign({} as EixoPlanejamento, {
-        eixo: x,
-        eixo_tematico_id: x.id,
-        objetivos: this.objetivosEixo(x.id)
-      })) || [];
-      this.cdRef.detectChanges();
-    });
+    if(this.planejamentoInstitucional!.selectedItem) {
+      this.dao!.getById(this.planejamentoInstitucional!.selectedItem?.key, this.join).then(planejamento => {
+        this.planejamento = planejamento as Planejamento;
+        this.objetivos = this.planejamento.objetivos || [];
+        this.eixos = this.query!.extra?.eixos?.filter((x: EixoTematico) => this.form?.controls.todos.value || this.planejamento?.objetivos?.find(y => y.eixo_tematico_id == x.id)).map((x: EixoTematico) => Object.assign({} as EixoPlanejamento, {
+          eixo: x,
+          eixo_tematico_id: x.id,
+          objetivos: this.objetivosEixo(x.id)
+        })) || [];
+        this.cdRef.detectChanges();
+      });
+    }
   }
 
   public onTodosChange() {

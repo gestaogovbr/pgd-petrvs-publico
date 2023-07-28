@@ -62,7 +62,7 @@ export class ProcedimentoTrabalharComponent extends ListenerBase implements OnIn
       toolbarButtons.push({
         icon: "bi bi-boxes",
         color: "btn-outline-secondary",
-        hint: "Incluir " + this.lex.noun("entrega"),
+        hint: "Incluir " + this.lex.translate("entrega"),
         onClick: this.incluirEntrega.bind(this),
         items: menu.length ? menu : undefined
       });
@@ -81,7 +81,7 @@ export class ProcedimentoTrabalharComponent extends ListenerBase implements OnIn
         menu.push({
           icon: "bi bi-plus-circle",
           color: "btn-outline-primary",
-          label: "Incluir " + this.lex.noun("atividade"),
+          label: "Incluir " + this.lex.translate("atividade"),
           onClick: this.incluirAtividade.bind(this) 
         });
       }        
@@ -89,14 +89,14 @@ export class ProcedimentoTrabalharComponent extends ListenerBase implements OnIn
         menu.push({
           icon: "bi bi-check-circle",
           color: "btn-outline-primary",
-          label: "Concluir " + this.lex.noun("atividade"),
+          label: "Concluir " + this.lex.translate("atividade"),
           onClick: this.concluirAtividade.bind(this) 
         });
       }
       toolbarButtons.push({
         icon: "bi bi-activity",
         color: "btn-outline-success",
-        hint: this.lex.noun("atividade"),
+        hint: this.lex.translate("atividade"),
         onClick: this.atividades.bind(this),
         items: menu.length ? menu : undefined
       });

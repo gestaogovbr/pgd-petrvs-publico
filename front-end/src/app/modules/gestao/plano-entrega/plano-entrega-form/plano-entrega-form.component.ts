@@ -87,10 +87,10 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
       const diffTime = Math.abs(inicio - fim);
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       const entregas = this.form!.controls.entregas.value || [];
-      if (programa.prazo_execucao > 0 && diffDays > programa.prazo_execucao) return "A data de início e término" + this.lex.noun("Plano de Entrega", false, true) + " deve respeitar o período previsto no " + this.lex.noun("Programa");
+      if (programa.prazo_execucao > 0 && diffDays > programa.prazo_execucao) return "A data de início e término" + this.lex.translate("Plano de Entrega") + " deve respeitar o período previsto no " + this.lex.translate("Programa");
       for(let entrega of entregas) {
-        if(entrega.inicio < inicio) return "A " + this.lex.noun("entrega") + " '" + entrega.descricao + "' possui data inicial anterior a" + this.lex.noun("plano de entrega", false, true) + ": " + this.util.getDateFormatted(inicio);
-        if(entrega.fim > fim) return "A " + this.lex.noun("entrega") + " '" + entrega.descricao + "' possui data fim posterior a" + this.lex.noun("plano de entrega", false, true) + ": " + this.util.getDateFormatted(fim);
+        if(entrega.inicio < inicio) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data inicial anterior a" + this.lex.translate("plano de entrega") + ": " + this.util.getDateFormatted(inicio);
+        if(entrega.fim > fim) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data fim posterior a" + this.lex.translate("plano de entrega") + ": " + this.util.getDateFormatted(fim);
       }
     }
     return undefined;

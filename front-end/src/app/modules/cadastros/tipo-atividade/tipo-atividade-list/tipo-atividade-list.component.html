@@ -18,8 +18,8 @@
         <column title="Tempos" [template]="columnTempos">
             <ng-template let-row="row" #columnTempos>
                 <div class="one-per-line">
-                    <badge icon="bi bi-stopwatch" [hint]="lex.noun('Esforço')" color="light" [label]="util.decimalToTimerFormated(row.esforco, true)"></badge>
-                    <badge icon="bi bi-calendar2-check" [hint]="lex.noun('Tempo planejado') + ' em dias'" color="light" [label]="row.dias_planejado + ' dias'"></badge>
+                    <badge icon="bi bi-stopwatch" [hint]="lex.translate('Esforço')" color="light" [label]="util.decimalToTimerFormated(row.esforco, true)"></badge>
+                    <badge icon="bi bi-calendar2-check" [hint]="lex.translate('Tempo planejado') + ' em dias'" color="light" [label]="row.dias_planejado + ' dias'"></badge>
                 </div>
             </ng-template>
         </column>
@@ -41,7 +41,7 @@
     </columns>
     <report>
         <column title="Nome" [template]="reportNome"><ng-template let-row="row" #reportNome>{{row.nome}}</ng-template></column>
-        <column [title]="lex.noun('Esforço')" [template]="reportEsforco"><ng-template let-row="row" #reportEsforco>{{row.esforco}}</ng-template></column>
+        <column [title]="lex.translate('Esforço')" [template]="reportEsforco"><ng-template let-row="row" #reportEsforco>{{row.esforco}}</ng-template></column>
         <column title="Dias planejamento" [template]="reportDiasPlanejado"><ng-template let-row="row" #reportDiasPlanejado>{{row.dias_planejado}}</ng-template></column>
         <column title="Etiquetas" [template]="reportEtiquetas"><ng-template let-row="row" #reportEtiquetas>{{getReportEtiquetas(row)}}</ng-template></column>
         <column title="Check-list" [template]="reportChecklist"><ng-template let-row="row" #reportChecklist>{{getReportChecklist(row)}}</ng-template></column>

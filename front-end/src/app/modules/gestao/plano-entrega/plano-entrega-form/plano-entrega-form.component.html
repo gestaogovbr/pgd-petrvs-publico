@@ -3,8 +3,8 @@
         <div class="row">
             <input-text #nome [size]="4" label="Nome" controlName="nome"></input-text>
             <input-search [size]="4" #programa [disabled]="entity?.id ? 'disabled' : undefined" controlName="programa_id" [dao]="programaDao"></input-search>
-            <input-datetime date [size]="2" label="Início" controlName="inicio" [labelInfo]="'Início ' + lex.noun('Planejamento Institucional',false,true)"></input-datetime>
-            <input-datetime date [size]="2" label="Fim" controlName="fim" [labelInfo]="'Fim ' + lex.noun('Planejamento Institucional',false,true)"></input-datetime>
+            <input-datetime date [size]="2" label="Início" controlName="inicio" [labelInfo]="'Início ' + lex.translate('Planejamento Institucional')"></input-datetime>
+            <input-datetime date [size]="2" label="Fim" controlName="fim" [labelInfo]="'Fim ' + lex.translate('Planejamento Institucional')"></input-datetime>
         </div>
         <div class="row">
             <input-search #unidade [size]="4" [disabled]="entity?.id ? 'disabled' : undefined" controlName="unidade_id" [dao]="unidadeDao"></input-search>
@@ -12,6 +12,6 @@
             <input-search #cadeiaValor [size]="4" [emptyValue]="null" controlName="cadeia_valor_id" label="Cadeia de Valor" [dao]="cadeiaValorDao"></input-search>
         </div>
         <separator title="Entregas"></separator>
-        <plano-entrega-list-entrega #entregas noPersist [control]="form!.controls.entregas" [planejamentoId]="form!.controls.planejamento_id.value" [cadeiaValorId]="form!.controls.cadeia_valor_id.value" ></plano-entrega-list-entrega>
+        <plano-entrega-list-entrega #entregas noPersist [control]="form!.controls.entregas" [planejamentoId]="form!.controls.planejamento_id.value" [cadeiaValorId]="form!.controls.cadeia_valor_id.value" [unidadeId]="form!.controls.unidade_id.value" ></plano-entrega-list-entrega>
     </div>
 </editable-form>

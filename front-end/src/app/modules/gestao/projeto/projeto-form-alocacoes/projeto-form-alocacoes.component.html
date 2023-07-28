@@ -22,7 +22,7 @@
                 <column title="Regras" cellClass="px-1" [template]="alocacaoRegra" [editTemplate]="editAlocacaoRegra">
                     <ng-template let-row="row" #alocacaoRegra>
                         <span class="text-wrap multilines-badges">
-                            <badge *ngIf="isAcessivel(row)" icon="bi bi-unlock" [label]="'Acessar o '+lex.noun('projeto')"></badge>
+                            <badge *ngIf="isAcessivel(row)" icon="bi bi-unlock" [label]="'Acessar o '+lex.translate('projeto')"></badge>
                             <badge *ngFor="let regra of row.regras" [label]="regra.regra.nome" [icon]="lookup.getIcon(lookup.PROJETO_TIPO_RECURSOS, regra.regra.tipo_recurso)" [color]="lookup.getColor(lookup.PROJETO_TIPO_RECURSOS, regra.regra.tipo_recurso)"></badge>
                         </span>
                     </ng-template>

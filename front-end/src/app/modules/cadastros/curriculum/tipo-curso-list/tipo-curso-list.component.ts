@@ -18,7 +18,7 @@ export class TipoCursoListComponent extends PageListBase<TipoCurso, TipoCursoDao
   constructor(public injector: Injector) {
     super(injector, TipoCurso, TipoCursoDaoService);
        /* Inicializações */
-    this.title = this.lex.noun("Tipo Curso",true);
+    this.title = this.lex.translate("Tipos de Curso");
     this.code = "MOD_RX";
     //this.join = ["area:nome","tipo:nome"];
   

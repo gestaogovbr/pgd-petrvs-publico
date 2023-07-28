@@ -5,12 +5,12 @@
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="12" [label]="lex.noun('Tarefa')" controlName="nome" [control]="filter!.controls.nome" placeholder="Nome ..."></input-text>
+            <input-text [size]="12" [label]="lex.translate('Tarefa')" controlName="nome" [control]="filter!.controls.nome" placeholder="Nome ..."></input-text>
         </div>
     </filter>
     <columns>
         <column title="Nome" field="nome" orderBy="nome"></column>
-        <column [title]="lex.noun('Tempo estimado') + ' /(h)'" field="tempo_estimado"></column>
+        <column [title]="lex.translate('Tempo estimado') + ' /(h)'" field="tempo_estimado"></column>
         <column title="Documental?" type="select" field="documental" [items]="lookup.SIMNAO"></column>
         <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>

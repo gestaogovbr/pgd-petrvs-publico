@@ -25,7 +25,7 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.perfilDao = injector.get<PerfilDaoService>(PerfilDaoService);
     /* Inicializações */
-    this.title = this.lex.noun("Usuário",true);
+    this.title = this.lex.translate("Usuário");
     this.code = "MOD_CFG_USER";
     this.join = ["perfil:id,nome"];
     this.filter = this.fh.FormBuilder({
@@ -52,7 +52,7 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
   // Testa se o usuário possui permissão para gerenciar as suas unidades-integrantes
   if (this.auth.hasPermissionTo("MOD_UND_INTG")) {
       this.options.push({
-      icon: "bi bi-pin-map",
+      icon: "bi bi-houses",
       label: "Unidades",
       onClick: (usuario: Usuario) => {
         this.go.navigate({ route: ['configuracoes', 'usuario', '', usuario.id, 'integrante'] });

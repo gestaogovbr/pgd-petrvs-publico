@@ -19,7 +19,7 @@ export class CentroTreinamentoListComponent extends PageListBase<CentroTreinamen
     super(injector, CentroTreinamento, CentroTreinamentoDaoService);
     /* Inicializações */
   
-    this.title = this.lex.noun("Centro de Treinamento",true);
+    this.title = this.lex.translate("Centros de Treinamento");
     this.code = "MOD_RX";
     this.orderBy = [['nome','asc']];
 

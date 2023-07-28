@@ -16,7 +16,7 @@ export class TipoDocumentoListComponent extends PageListBase<TipoDocumento, Tipo
   constructor(public injector: Injector) {
     super(injector, TipoDocumento, TipoDocumentoDaoService);
     /* Inicializações */
-    this.title = "Tipos de " + this.lex.noun("Documento",true);
+    this.title = "Tipos de " + this.lex.translate("Documento");
     this.code="MOD_TIPO_DOC";
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}

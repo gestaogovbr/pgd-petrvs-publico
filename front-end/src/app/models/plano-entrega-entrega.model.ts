@@ -13,15 +13,15 @@ export class PlanoEntregaEntrega extends Base {
   public objetivos: PlanoEntregaEntregaObjetivo[] = [];
   public processos: PlanoEntregaEntregaProcesso[] = [];
 
-  public inicio: Date = new Date();               
-  public fim: Date | null = null;                               
-  public descricao: string = "";                                      
-  public homologado: boolean = false;                 
-  public meta: EntregaValor = {}; 
+  public inicio: Date = new Date();
+  public fim: Date | null = null;
+  public descricao: string = "";
+  public homologado: boolean = false;
+  public meta: EntregaValor = {};
   public realizado: EntregaValor = {};
-  public progresso_esperado: number = 100;                        
-  public progresso_realizado: number = 0;                        
-  public destinatario: string = '';                        
+  public progresso_esperado: number = 100;
+  public progresso_realizado: number = 0;
+  public destinatario: string = '';
 
   public entrega_id: string = '';
   public unidade_id: string = '';                        

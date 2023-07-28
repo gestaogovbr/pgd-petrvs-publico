@@ -8,6 +8,7 @@ import { UsuarioDaoService } from './usuario-dao.service';
 import { ProgramaDaoService } from './programa-dao.service';
 import { LookupService } from '../services/lookup.service';
 import { TemplateDataset } from '../modules/uteis/templates/template.service';
+import { PlanoTrabalhoEntregaDaoService } from './plano-trabalho-entrega-dao.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,7 @@ export class PlanoTrabalhoDaoService extends DaoBaseService<PlanoTrabalho> {
   public unidadeDao: UnidadeDaoService;
   public usuarioDao: UsuarioDaoService;
   public programaDao: ProgramaDaoService;
+  public planoTrabalhoEntregaDao: PlanoTrabalhoEntregaDaoService;
   public lookup: LookupService;
 
   constructor(protected injector: Injector) {
@@ -26,6 +28,7 @@ export class PlanoTrabalhoDaoService extends DaoBaseService<PlanoTrabalho> {
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
+    this.planoTrabalhoEntregaDao = injector.get<PlanoTrabalhoEntregaDaoService>(PlanoTrabalhoEntregaDaoService);
     this.lookup = injector.get<LookupService>(LookupService);
   }
 
@@ -39,7 +42,8 @@ export class PlanoTrabalhoDaoService extends DaoBaseService<PlanoTrabalho> {
       { field: "tipo_modalidade", label: "tipo_modalidade", fields: this.tipoModalidadeDao.dataset(), type: "OBJECT" },
       { field: "unidade", label: "unidade", fields: this.unidadeDao.dataset(), type: "OBJECT" },
       { field: "usuario", label: "usuario", fields: this.usuarioDao.dataset(), type: "OBJECT" },
-      { field: "programa", label: "programa", fields: this.programaDao.dataset(), type: "OBJECT" }
+      { field: "programa", label: "programa", fields: this.programaDao.dataset(), type: "OBJECT" },
+      { field: "entregas", label: "entregas", fields: this.planoTrabalhoEntregaDao.dataset(), type: "ARRAY" }
     ], deeps);
   }
 

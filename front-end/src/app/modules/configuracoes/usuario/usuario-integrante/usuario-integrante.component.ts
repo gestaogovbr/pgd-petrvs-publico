@@ -1,12 +1,10 @@
-import { Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, Input, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
-import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
-import { UsuarioIntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
-import { Unidade } from 'src/app/models/unidade.model';
+import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
 import { Usuario } from 'src/app/models/usuario.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { LookupItem } from 'src/app/services/lookup.service';
@@ -23,7 +21,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   public integranteDao: UnidadeIntegranteDaoService;
   public unidadeDao: UnidadeDaoService;
   public usuario?: Usuario;
-  public items: UsuarioIntegranteConsolidado[] = [];
+  public items: IntegranteConsolidado[] = [];
 
   constructor(public injector: Injector) {
     super(injector);
@@ -38,7 +36,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
 
   ngOnInit() {
     super.ngOnInit();
-    this.usuarioId = this.urlParams?.has("usuarioId") ? this.urlParams!.get("usuarioId") : this.metadata?.usuario || this.usuarioId || "10c6685a-c68f-4ae7-ab11-1288c4492f0d";
+    this.usuarioId = this.urlParams?.has("idUsuario") ? this.urlParams!.get("idUsuario") : this.metadata?.idUsuario || this.usuarioId;
   }
 
   ngAfterViewInit() {
@@ -55,7 +53,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   public async loadData(entity: IIndexable, form?: FormGroup | undefined) {
     this.grid!.loading = true;
     try {
-      let result = await this.integranteDao!.loadUnidadesIntegrantes(this.usuarioId!);
+      let result = await this.integranteDao!.loadIntegrantes("", this.usuarioId!);
       this.items = result.integrantes;
       this.usuario = result.usuario;
     } finally {
@@ -98,26 +96,26 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   }
 
   public async loadAtribuicao(form: FormGroup, row: any) {
-/*     form.controls.usuario_id.setValue(row.usuario_id);
+    form.controls.unidade_id.setValue(row.id);
     form.controls.atribuicoes.setValue(row.atribuicoes.map((x: string) => Object.assign({}, {
       key: x,
       value: this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, x),
       icon: this.lookup.getIcon(this.lookup.UNIDADE_INTEGRANTE_TIPO, x),
       color: this.lookup.getColor(this.lookup.UNIDADE_INTEGRANTE_TIPO, x)
     })));
-    form.controls.atribuicao.setValue(""); */
+    form.controls.atribuicao.setValue("");
   }
 
   public async removeAtribuicao(row: any) {
     let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
     if(confirm) {
-/*       this.loading = true;
+      this.loading = true;
       try {
-        await this.integranteDao.saveIntegrante(this.unidade!.id, Object.assign(row, { atribuicoes: [] }));
+        await this.integranteDao.saveIntegrante(row.id, this.usuario!.id, []);
         await this.loadData({}, this.form);
       } finally {
         this.loading = false;
-      } */
+      }
       return true;
     } else {
       return false;
@@ -125,13 +123,10 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   }
 
   public async saveAtribuicao(form: FormGroup, row: any) {
-    let consolidado = row as UsuarioIntegranteConsolidado;
     if(form!.controls.atribuicoes.value.length) {
-      consolidado.unidade_id = form!.controls.unidade_id.value;
-      consolidado.atribuicoes = form!.controls.atribuicoes.value.map((x: LookupItem) => x.key);
       this.loading = true;
       try {
-        await this.integranteDao.saveUnidadeIntegrante(this.usuario!.id, consolidado);
+        await this.integranteDao.saveIntegrante(form!.controls.unidade_id.value, this.usuario!.id, form!.controls.atribuicoes.value.map((x: LookupItem) => x.key));
         this.items
         await this.loadData({}, this.form);
       } finally {

@@ -16,7 +16,7 @@ export class TipoAtividadeListComponent extends PageListBase<TipoAtividade, Tipo
   constructor(public injector: Injector) {
     super(injector, TipoAtividade, TipoAtividadeDaoService);
     /* Inicializações */
-    this.title = this.lex.noun("Tipo de atividade", true);
+    this.title = this.lex.translate("Tipo de atividade");
     this.code = "MOD_TIPO_ATV";
     this.filter = this.fh.FormBuilder({
       nome: { default: "" }
