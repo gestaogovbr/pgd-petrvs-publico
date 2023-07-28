@@ -18,6 +18,7 @@ class Entrega extends ModelBase
         'descricao', /* varchar(255); NOT NULL; */// Descrição da entrega
         'tipo_indicador', /* enum('QUANTIDADE','VALOR','PORCENTAGEM','QUALITATIVO'); NOT NULL; */// Tipo do indicador da entrega
         'lista_qualitativos', /* json; */// Lista de valores para entrega do tipo qualitativo
+        'unidade_id',
         //'deleted_at', /* timestamp; */
     ];
 
@@ -28,5 +29,7 @@ class Entrega extends ModelBase
     //Has
     public function entregasPlanoEntrega() { return $this->hasMany(PlanoEntregaEntrega::class); }     
     public function entregasPlanoTrabalho() { return $this->hasMany(PlanoTrabalhoEntrega::class); }   
-
+    // Belongs
+    public function unidade() { return $this->belongsTo(Unidade::class); }
+    
 }

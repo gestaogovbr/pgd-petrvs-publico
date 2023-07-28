@@ -26,7 +26,7 @@ class ServerException extends Exception
         "ValidatePlanoEntrega" => "Erro ao validar Documento",
         "ValidatePlanoTrabalhoEntrega" => "Erro ao validar Entrega do Plano de Trabalho",
         "ValidateProgramaParticipante" => "Erro ao validar o Participante",
-        "ValidateAtribuicao" => "Erro ao validar as atribuições"
+        "ValidateIntegrante" => "Erro ao validar vínculos/atribuições entre Unidade e Usuário"
     ];
 
     function __construct($code, $extra = "") {
