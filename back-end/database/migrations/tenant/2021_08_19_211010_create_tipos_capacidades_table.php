@@ -22,6 +22,7 @@ class CreateTiposCapacidadesTable extends Migration
             // Campos:
             $table->string('codigo', 256)->comment("Código da rotina no sistema (acesso)"); 
             $table->text('descricao')->comment("Descrição da capacidade (acesso)");
+            $table->foreignUuid('grupo_id')->nullable()->constrained('tipos_capacidades')->onDelete('restrict')->onUpdate('cascade')->comment('Capacidade módulo superior (nó pai hierárquico)');
         });
     }
 

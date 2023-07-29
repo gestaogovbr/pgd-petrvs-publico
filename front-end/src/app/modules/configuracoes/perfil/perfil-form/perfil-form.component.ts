@@ -1,7 +1,9 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
+import { GridComponent } from 'src/app/components/grid/grid.component';
 import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
+import { QueryOptions } from 'src/app/dao/query-options';
 import { TipoCapacidadeDaoService } from 'src/app/dao/tipo-capacidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Capacidade } from 'src/app/models/capacidade.model';
@@ -16,8 +18,8 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 })
 export class PerfilFormComponent extends PageFormBase<Perfil, PerfilDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
+  @ViewChild(GridComponent, { static: false }) public gridPai?: GridComponent;  
 
-  public capacidades: IIndexable = {};
   public tiposCapacidades: TipoCapacidade[] = [];
   public tipoCapacidadeDao: TipoCapacidadeDaoService;
 
@@ -29,8 +31,7 @@ export class PerfilFormComponent extends PageFormBase<Perfil, PerfilDaoService> 
       descricao: {default: ""},
       nivel: {default: ""},
       data_inicio: {default: ""},
-      data_fim: {default: ""},
-      capacidades: {default: []}
+      data_fim: {default: ""}
     }, this.cdRef, this.validate);
     this.join = ["capacidades.tipo_capacidade"];
   }
@@ -41,58 +42,95 @@ export class PerfilFormComponent extends PageFormBase<Perfil, PerfilDaoService> 
     if(['nome', 'descricao'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
-/*       else if(['nivel'].indexOf(controlName) >= 0 && !control.value) {
-    result = "Não pode ser zero.";
-    }  */
 
     return result;
   }
 
   public async loadData(entity: Perfil, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
-    let capacidades: Capacidade[] = [];
-    this.tiposCapacidades = await this.tipoCapacidadeDao.query().asPromise();
+    this.entity = entity;
+    var queryOptions: QueryOptions = new QueryOptions({
+      where: [["grupo_id", "==", null]],
+      orderBy: [["codigo", "asc"]],
+      join: ["grupos"]
+    });
+    this.tiposCapacidades = await this.tipoCapacidadeDao.query(queryOptions).asPromise();
     formValue = this.util.fillForm(formValue, entity);
     for(let tipoCapacidade of this.tiposCapacidades) {
       const capacidade = entity.capacidades?.find(x => (x.tipo_capacidade?.codigo == tipoCapacidade.codigo));
-      this.capacidades[tipoCapacidade.codigo] = !!capacidade;
-      capacidades.push(Object.assign(new Capacidade(), {
-        id: capacidade ? capacidade.id : this.tipoCapacidadeDao.generateUuid(),
-        tipo_capacidade: tipoCapacidade,
-        perfil_id: entity.id,
-        tipo_capacidade_id: tipoCapacidade.id
-      }));
+      tipoCapacidade._metadata = Object.assign(tipoCapacidade._metadata || {}, {habilitado: !!capacidade});
+      if (capacidade) console.log(capacidade.tipo_capacidade?.codigo)
+      for (let tipoCapacidadeFilha of tipoCapacidade.grupos) {
+        const capacidadeFilha = entity.capacidades?.find(x => (x.tipo_capacidade?.codigo == tipoCapacidadeFilha.codigo));
+        tipoCapacidadeFilha._metadata = Object.assign(tipoCapacidadeFilha._metadata || {}, {habilitado: !!capacidadeFilha});
+      }
     }
-    formValue.capacidades = capacidades;
     form.patchValue(formValue);
   }
 
+  public onHabilitadoChange(row: TipoCapacidade, habilitado: boolean) {
+    let capacidade = this.entity!.capacidades?.find(x => x.tipo_capacidade_id == row.id);
+    if(habilitado) {
+      if(capacidade && capacidade._status == "DELETE") capacidade._status = undefined;
+      if(!capacidade) this.entity!.capacidades!.push(new Capacidade({
+        tipo_capacidade_id: row.id,
+        perfil_id: this.entity!.id,
+        _status: "ADD"
+      }));
+    } else {
+      if(capacidade && !capacidade._status) capacidade._status = "DELETE";
+      if(capacidade && capacidade._status == "ADD") this.entity!.capacidades!.splice(this.entity!.capacidades!.findIndex(x => x.tipo_capacidade_id == row.id), 1);
+      for(let grupo of row.grupos) {
+        grupo._metadata = Object.assign(grupo._metadata || {}, {habilitado: false});
+        let subCapacidade = this.entity!.capacidades?.find(x => x.tipo_capacidade_id == grupo.id);
+        if(subCapacidade && !subCapacidade._status) subCapacidade._status = "DELETE";
+        if(subCapacidade && subCapacidade._status == "ADD") this.entity!.capacidades!.splice(this.entity!.capacidades!.findIndex(x => x.tipo_capacidade_id == grupo.id), 1);
+      }
+    }
+    this.refreshCapacidadesHabilitadas()
+  }
+  public async refreshCapacidadesHabilitadas() {
+    let formValue = Object.assign({}, this.form!.value);
+    formValue = this.util.fillForm(formValue, this.entity);
+    this.form!.patchValue(formValue);
+    this.cdRef.detectChanges();
+  }
+
+  public onHabilitadoChangeFilha(row: TipoCapacidade, habilitado: boolean) {
+    let capacidade = this.entity!.capacidades?.find(x => x.tipo_capacidade_id == row.id);
+    let pai = this.tiposCapacidades.find(x => x.id == row.grupo_id);
+    if(habilitado) {
+      if(!pai!._metadata.habilitado) {
+        pai!._metadata = Object.assign(pai!._metadata || {}, {habilitado: true});
+        let capacidadePai = this.entity!.capacidades?.find(x => x.tipo_capacidade_id == pai!.id);
+        if(capacidadePai && capacidadePai._status == "DELETE") capacidadePai._status = undefined;
+        if(!capacidadePai) this.entity!.capacidades!.push(new Capacidade({
+          tipo_capacidade_id: pai!.id,
+          perfil_id: this.entity!.id,
+          _status: "ADD"
+        }));
+      }
+      if(capacidade && capacidade._status == "DELETE") capacidade._status = undefined;
+      if(!capacidade) this.entity!.capacidades!.push(new Capacidade({
+        tipo_capacidade_id: row.id,
+        perfil_id: this.entity!.id,
+        _status: "ADD"
+      }));
+    } else {
+      if(capacidade && !capacidade._status) capacidade._status = "DELETE";
+      if(capacidade && capacidade._status == "ADD") this.entity!.capacidades!.splice(this.entity!.capacidades!.findIndex(x => x.tipo_capacidade_id == row.id), 1);
+    }
+    this.refreshCapacidadesHabilitadas();
+  }
   public initializeData(form: FormGroup): void {
     form.patchValue(new Perfil());
   }
 
   public saveData(form: IIndexable): Promise<Perfil> {
     return new Promise<Perfil>((resolve, reject) => {
-      let perfil = this.util.fill(new Perfil(), this.entity!);
-      let capacidades = Object.entries(this.capacidades).filter(x => x[1]).map(x => x[0]);
-      let changes: Capacidade[] = this.entity!.capacidades || [];
+      let perfil: Perfil = this.util.fill(new Perfil(), this.entity!);
       perfil = this.util.fillForm(perfil, this.form!.value);
-      changes.forEach(x => {
-        if(!capacidades.includes(x.tipo_capacidade!.codigo)) x._status = "DELETE";
-      });
-      capacidades.forEach(x => {
-        if(!changes.find(y => y.tipo_capacidade!.codigo == x)) {
-          const tipoCapacidade = this.tiposCapacidades.find(z => z.codigo == x);
-          changes.push(Object.assign(new Capacidade(), {
-            id: this.tipoCapacidadeDao.generateUuid(),
-            perfil_id: this.entity!.id,
-            tipo_capacidade: tipoCapacidade,
-            tipo_capacidade_id: tipoCapacidade!.id,
-            _status: "ADD"
-          }));
-        }
-      });
-      perfil.capacidades = changes.filter(x => ["ADD", "DELETE"].includes(x._status || ""));
+      perfil.capacidades = perfil.capacidades!.filter(x => ["ADD", "DELETE"].includes(x._status || ""));
       resolve(perfil);
     });
   }
@@ -101,4 +139,3 @@ export class PerfilFormComponent extends PageFormBase<Perfil, PerfilDaoService> 
     return "Editando " + (entity?.nome || "");
   }
 }
-
