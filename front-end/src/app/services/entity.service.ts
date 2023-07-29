@@ -147,7 +147,7 @@ export class EntityService {
 
     public getLabel(collection: string): string {
         let entity = this.list.find(x => x.collection == collection);
-        return entity ? this.lex.noun(entity.label) : '';
+        return entity ? this.lex.translate(entity.label) : '';
     }
 
     public getIcon(collection: string): string {

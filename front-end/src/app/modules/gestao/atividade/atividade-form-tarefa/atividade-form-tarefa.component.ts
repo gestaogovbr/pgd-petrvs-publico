@@ -47,7 +47,7 @@ export class AtividadeFormTarefaComponent extends PageFormBase<AtividadeTarefa, 
     this.tipoProcessoDao = injector.get<TipoProcessoDaoService>(TipoProcessoDaoService);
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.comentario = injector.get<ComentarioService>(ComentarioService);
-    this.title = this.lex.noun("Tarefa da atividade");
+    this.title = this.lex.translate("Tarefa da atividade");
     this.form = this.fh.FormBuilder({
       descricao: {default: ""},
       tarefa_id: {default: null},
@@ -71,7 +71,7 @@ export class AtividadeFormTarefaComponent extends PageFormBase<AtividadeTarefa, 
   public formValidation = (form?: FormGroup) => {
     const values = form!.value;
     if(values.tipo_tarefa_id?.length && !this.tipoTarefa?.searchObj) {
-      return "Aguarde o carregamento " + this.lex.noun("tipo de tarefa", false, true) + ". Caso demore, selecione novamente!";
+      return "Aguarde o carregamento " + this.lex.translate("tipo de tarefa", false, true) + ". Caso demore, selecione novamente!";
     }
     if(values.concluido && (this.tipoTarefa?.searchObj as TipoTarefa)?.documental && this.documento?.isEmpty()) {
       return this.gb.isEmbedded ? "Obrigatório selecionar um arquivo para a tarefa selecionada!" : "Utilize o sistema como extensão para concluir!";

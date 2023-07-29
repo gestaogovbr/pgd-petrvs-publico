@@ -80,7 +80,6 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
   public initializeData(form: FormGroup): void {
     this.entity = new Usuario();
     this.loadData(this.entity, form); 
-    //form.patchValue(new Usuario());
   }
 
   public saveData(form: IIndexable): Promise<Usuario> {      

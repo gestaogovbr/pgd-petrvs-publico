@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
@@ -95,7 +95,7 @@ export class EntidadeFormComponent extends PageFormBase<Entidade, EntidadeDaoSer
   }
 
   public titleEdit = (entity: Entidade): string => {
-    return "Editando " + (entity?.sigla || "");
+    return "Editando " + this.lex.translate("Entidade") + ': ' + (entity?.sigla || "");
   }
 }
 

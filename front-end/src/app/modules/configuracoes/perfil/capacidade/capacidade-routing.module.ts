@@ -6,9 +6,9 @@ import { CapacidadeFormComponent } from './capacidade-form/capacidade-form.compo
 import { CapacidadeListComponent } from './capacidade-list/capacidade-list.component';
 
 const routes: Routes = [
-  { path: '', component: CapacidadeListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Capacidade" } },
-  { path: 'new', component: CapacidadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
-  { path: ':id/edit', component: CapacidadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } }
+  { path: '', component: CapacidadeListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Capacidades" } },
+  { path: 'new', component: CapacidadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Capacidade", modal: true } },
+  { path: ':id/edit', component: CapacidadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de Capacidade", modal: true } }
 ];
 
 @NgModule({

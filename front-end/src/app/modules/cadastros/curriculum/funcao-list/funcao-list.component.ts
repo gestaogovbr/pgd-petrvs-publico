@@ -20,7 +20,7 @@ export class FuncaoListComponent extends PageListBase<Funcao, FuncaoDaoService> 
   constructor(public injector: Injector) {
     super(injector, Funcao, FuncaoDaoService);
        /* Inicializações */
-    this.title = this.lex.noun("Funções",true);
+    this.title = this.lex.translate("Funções");
     this.code = "MOD_RX";
     //this.join = ["area:nome","tipo:nome"];
     

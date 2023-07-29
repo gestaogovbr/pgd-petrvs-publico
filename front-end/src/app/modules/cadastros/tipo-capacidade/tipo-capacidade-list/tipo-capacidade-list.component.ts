@@ -16,7 +16,7 @@ export class TipoCapacidadeListComponent extends PageListBase<TipoCapacidade, Ti
   constructor(public injector: Injector) {
     super(injector, TipoCapacidade, TipoCapacidadeDaoService);
     /* Inicializações */
-    this.title = "Tipos de " + this.lex.noun("Capacidade",true);
+    this.title = this.lex.translate("Tipos de Capacidade");
     this.code="MOD_TIPO_CAP";
     this.filter = this.fh.FormBuilder({
       codigo: {default: ""},

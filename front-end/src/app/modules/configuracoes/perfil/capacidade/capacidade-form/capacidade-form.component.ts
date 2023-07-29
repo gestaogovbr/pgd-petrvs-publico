@@ -64,7 +64,7 @@ export class CapacidadeFormComponent extends PageFormBase<Capacidade, Capacidade
   }
 
   public titleEdit = (entity: Capacidade): string => {
-    return "Editando " + (entity?.perfil_id || "");
+    return "Editando " + this.lex.translate("Capacidade") + ': ' + (entity?.perfil?.nome || "") + ': ' + (entity?.tipo_capacidade?.codigo || "");
   }
 }
 

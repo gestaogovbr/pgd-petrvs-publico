@@ -40,7 +40,7 @@ export class TemplateListComponent extends PageListBase<Template, TemplateDaoSer
   constructor(public injector: Injector) {
     super(injector, Template, TemplateDaoService);
     this.templateService = injector.get<TemplateService>(TemplateService);
-    this.title = this.lex.noun("TCR", true);
+    this.title = this.lex.translate("TCR", true);
     this.code = "MOD_TEMP";
     this.modalWidth = 1200;
     this.filter = this.fh.FormBuilder({

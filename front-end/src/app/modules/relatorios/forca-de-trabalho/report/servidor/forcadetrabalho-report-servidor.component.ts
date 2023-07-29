@@ -83,7 +83,7 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
         stacked: true
       }],
       yAxes: [{
-        labels: ['Horas ' + this.lex.noun('Atividade',true,true)],
+        labels: ['Horas ' + this.lex.translate('das Atividades')],
         display: false,
         stacked: true
       }]
@@ -309,31 +309,31 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
             label: 'NÃO INIC',
             data: [metadados.horasAtividadesNaoIniciadas],
             backgroundColor: '#0dcaf0',
-            stack: this.lex.noun('Atividade',true)
+            stack: this.lex.translate('Atividades')
           },
           {
             label: 'EM ANDAM',
             data: [metadados.horasAtividadesEmAndamento],
             backgroundColor: '#ffc107',
-            stack: this.lex.noun('Atividade',true)
+            stack: this.lex.translate('Atividades')
           },
           {
             label: 'CONCL',
             data: [metadados.horasAtividadesConcluidas],
             backgroundColor: '#af4201',
-            stack: this.lex.noun('Atividade',true)
+            stack: this.lex.translate('Atividades')
           },
           /*{
             label: 'AVAL',
             data: [metadados.horasAtividadesAvaliadas],
             backgroundColor: '#af4af0',
-            stack: this.lex.noun('Atividade',true)
+            stack: this.lex.translate('Atividades')
           },*/
           {
             label: 'DISP',
             data: [metadados.horasUteisTotais - metadados.horasUteisAfastamento - metadados.horasUteisDecorridas],
             backgroundColor: '#6c757d',
-            stack: this.lex.noun('Atividade',true)
+            stack: this.lex.translate('Atividades')
           }
         ]
       };
@@ -373,31 +373,31 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
             label: 'NÃO INIC',
             data: [Math.round(metadados.horasAtividadesNaoIniciadas * 100)/100],
             backgroundColor: '#0dcaf0',
-            stack: this.lex.noun('Atividade',true)
+            stack: this.lex.translate('Atividades')
           },
           {
             label: 'EM ANDAM',
             data: [Math.round(metadados.horasAtividadesEmAndamento * 100)/100],
             backgroundColor: '#ffc107',
-            stack: this.lex.noun('Atividade',true)
+            stack: this.lex.translate('Atividades')
           },
           {
             label: 'CONCL',
             data: [Math.round(metadados.horasAtividadesConcluidas * 100)/100],
             backgroundColor: '#af4201',
-            stack: this.lex.noun('Atividade',true)
+            stack: this.lex.translate('Atividades')
           },
           {
             label: 'AVAL',
             data: [Math.round(metadados.horasAtividadesAvaliadas * 100)/100],
             backgroundColor: '#af4af0',
-            stack: this.lex.noun('Atividade',true)
+            stack: this.lex.translate('Atividades')
           },
           {
             label: 'DISP',
             data: [Math.round((metadados.horasUteisTotais - metadados.horasUteisAfastamento - metadados.horasUteisDecorridas) * 100)/100],
             backgroundColor: '#6c757d',
-            stack: this.lex.noun('Atividade',true)
+            stack: this.lex.translate('Atividades')
           }
         ]
       };
@@ -407,19 +407,19 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
             label: 'Aprov',
             data: [metadados.noPeriodo.tempoTrabalhadoHomologado.toFixed(2)],
             backgroundColor: '#0dcaf0',
-            stack: this.lex.noun('Atividade',true)
+            stack: this.lex.translate('Atividades')
           },
           {
             label: 'Reprov',
             data: [metadados.noPeriodo.tempoTrabalhadoNaoHomologado.toFixed(2)],
             backgroundColor: '#f44336',
-            stack: this.lex.noun('Atividade',true)
+            stack: this.lex.translate('Atividades')
           },
           {
             label: 'Concl',
             data: [metadados.noPeriodo.tempoDespendidoSoConcluidas.toFixed(2)],
             backgroundColor: '#af4201',
-            stack: this.lex.noun('Atividade',true)
+            stack: this.lex.translate('Atividades')
           }
         ]
       };

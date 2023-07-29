@@ -24,7 +24,7 @@ export class PlanoEntregaListEntregaListComponent extends PageListBase<PlanoEntr
     super(injector, PlanoEntregaEntrega, PlanoEntregaEntregaDaoService);
     this.planoEntregaDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
-    this.title = this.lex.noun("Entregas", true);
+    this.title = this.lex.translate("Entregas", true);
     this.filter = this.fh.FormBuilder({
       nome: { default: "" },
       descricao: { default: "" },

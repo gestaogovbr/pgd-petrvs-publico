@@ -27,7 +27,7 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
     this.entidadeDao = injector.get<EntidadeDaoService>(EntidadeDaoService);
 
     /* Inicializações */
-    this.title = this.lex.noun("Unidade", true);
+    this.title = this.lex.translate("Unidade", true);
     this.code = "MOD_CFG_UND";
     this.filter = this.fh.FormBuilder({
       entidade_id: { default: this.auth.unidade?.entidade_id },

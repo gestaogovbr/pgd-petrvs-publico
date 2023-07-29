@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { TipoTarefaDaoService } from 'src/app/dao/tipo-tarefa-dao.service';
@@ -51,7 +51,7 @@ export class TipoTarefaFormComponent extends PageFormBase<TipoTarefa, TipoTarefa
   }
 
   public titleEdit = (entity: TipoTarefa): string => {
-    return "Editando "+ (entity?.nome || "");
+    return "Editando " + this.lex.translate("Tipo de Tarefa") + ': ' + (entity?.nome || "");
   }
 }
 

@@ -33,7 +33,7 @@ export class NotificacoesComponent extends PageListBase<Notificacao, Notificacao
     /* Inicializações */
     this.modalWidth = 700;
     this.join = ["destinatarios"];
-    this.title = this.lex.noun('Notificação', true);
+    this.title = this.lex.translate('Notificação', true);
     this.filter = this.fh.FormBuilder({
       todas: {default: false},
       inicio: {default: undefined},

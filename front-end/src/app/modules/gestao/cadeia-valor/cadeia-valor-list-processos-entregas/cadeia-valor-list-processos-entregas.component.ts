@@ -23,7 +23,7 @@ export class CadeiaValorListProcessosEntregasComponent extends PageListBase<Cade
     super(injector, CadeiaValorProcesso, CadeiaValorProcessoDaoService);
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
     this.cadeiaValorProcessoDao = injector.get<CadeiaValorProcessoDaoService>(CadeiaValorProcessoDaoService);
-    this.title = this.lex.noun("Processos", true);
+    this.title = this.lex.translate("Processos", true);
     this.filter = this.fh.FormBuilder({
       nome: { default: "" },
       cadeia_valor_id: { default: null },

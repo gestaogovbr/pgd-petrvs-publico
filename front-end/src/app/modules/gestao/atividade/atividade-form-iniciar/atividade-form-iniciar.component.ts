@@ -34,7 +34,7 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
   public planosTrabalhos: LookupItem[] = [];
   public planosTrabalhosEntregas: LookupItem[] = [];
   public get labelInfoSuspender(): string {
-    const n = this.lex.noun("tarefa", this.iniciadas.length > 1);
+    const n = this.lex.translate("tarefa", this.iniciadas.length > 1);
     const s = this.iniciadas.length == 1 ? "" : "s";
     const q = this.iniciadas.length == 1 ? "" : " " + this.iniciadas.length.toString();
     return this.iniciadas.length ? `Suspender a${s}${q} ${n} já iniciada${s}?` : "Não há outras atividades iniciadas pelo usuário!";

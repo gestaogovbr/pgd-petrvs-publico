@@ -3,7 +3,7 @@ import { Usuario } from './usuario.model';
 import { TipoMotivoAfastamento } from './tipo-motivo-afastamento.model';
 
 export class Afastamento extends Base {
-    public tipoMotivoAfastamento?: TipoMotivoAfastamento;
+    public tipo_motivo_afastamento?: TipoMotivoAfastamento;
     public usuario?: Usuario;
 
     public observacoes: string | null = null; /* Observação sobre o afastamento */
