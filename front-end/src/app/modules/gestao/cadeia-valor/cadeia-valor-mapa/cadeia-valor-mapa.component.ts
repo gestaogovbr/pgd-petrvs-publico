@@ -42,7 +42,7 @@ export class CadeiaValorMapaComponent extends PageFrameBase {
     this.dao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
     this.cadeiaValorProcessoDao = injector.get<CadeiaValorProcessoDaoService>(CadeiaValorProcessoDaoService);
     this.join = ['processos'];
-    this.title = this.lex.translate('Cadeia de valor', true);
+    this.title = this.lex.translate('Cadeias de Valores');
     this.form = this.fh.FormBuilder({
       cadeia_valor_id: {default: null},
       nome: {default: ""}

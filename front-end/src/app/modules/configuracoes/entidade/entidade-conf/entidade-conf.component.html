@@ -24,28 +24,28 @@
                 </div>
                 <div class="col-md-6">
                     <separator transparent title="Tipos de notificação"></separator>
-                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar distribuição ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_distribuicao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar conclusão ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_conclusao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar avaliação ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_avaliacao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar modificação ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_modificacao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar comentário ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_comentario"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar distribuição ' + lex.translate('demanda',false,true)" controlName="notifica_demanda_distribuicao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar conclusão ' + lex.translate('demanda',false,true)" controlName="notifica_demanda_conclusao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar avaliação ' + lex.translate('demanda',false,true)" controlName="notifica_demanda_avaliacao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar modificação ' + lex.translate('demanda',false,true)" controlName="notifica_demanda_modificacao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar comentário ' + lex.translate('demanda',false,true)" controlName="notifica_demanda_comentario"></input-switch>
                 </div>
             </div>
             <separator transparent title="Templates das mensagens"></separator>
             <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na criação ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaDistribuicao" controlName="template_demanda_distribuicao"></input-textarea>
+                <input-textarea [size]="12" [rows]="3" [label]="'Texto na criação ' + lex.translate('demanda', false, true)" [labelInfo]="notificacao.hintDemandaDistribuicao" controlName="template_demanda_distribuicao"></input-textarea>
             </div>
             <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na conclusão ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaConclusao" controlName="template_demanda_conclusao"></input-textarea>
+                <input-textarea [size]="12" [rows]="3" [label]="'Texto na conclusão ' + lex.translate('demanda', false, true)" [labelInfo]="notificacao.hintDemandaConclusao" controlName="template_demanda_conclusao"></input-textarea>
             </div>
             <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na avaliação ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaAvaliacao" controlName="template_demanda_avaliacao"></input-textarea>
+                <input-textarea [size]="12" [rows]="3" [label]="'Texto na avaliação ' + lex.translate('demanda', false, true)" [labelInfo]="notificacao.hintDemandaAvaliacao" controlName="template_demanda_avaliacao"></input-textarea>
             </div>
             <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na modificação ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaModificacao" controlName="template_demanda_modificacao"></input-textarea>
+                <input-textarea [size]="12" [rows]="3" [label]="'Texto na modificação ' + lex.translate('demanda', false, true)" [labelInfo]="notificacao.hintDemandaModificacao" controlName="template_demanda_modificacao"></input-textarea>
             </div>
             <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na inclusão de comentário ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaComentario" controlName="template_demanda_comentario"></input-textarea>
+                <input-textarea [size]="12" [rows]="3" [label]="'Texto na inclusão de comentário ' + lex.translate('demanda', false, true)" [labelInfo]="notificacao.hintDemandaComentario" controlName="template_demanda_comentario"></input-textarea>
             </div//-->
         </tab>
         <tab key="NOMENCLATURA" label="Nomenclatura">

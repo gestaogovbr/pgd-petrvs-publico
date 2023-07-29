@@ -55,7 +55,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
     this.unidadeSelecionada = this.auth.unidade!;
     /* Inicializações */
-    this.title = this.lex.translate('Plano de Entrega', true);
+    this.title = this.lex.translate('Planos de Entrega');
     this.filter = this.fh.FormBuilder({
       agrupar: { default: true },
       principais: { default: true },

@@ -24,7 +24,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
   public unidadeDao: UnidadeDaoService;
   public planoTrabalhoDao: PlanoTrabalhoDaoService;
   public planoDataset: TemplateDataset[]; 
-
+ 
   constructor(public injector: Injector) {
     super(injector, Usuario, UsuarioDaoService);
     this.perfilDao = injector.get<PerfilDaoService>(PerfilDaoService);

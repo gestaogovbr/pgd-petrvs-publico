@@ -6,25 +6,25 @@
                 <input-textarea label="Descrição" [size]="12" [rows]="2" controlName="descricao" [control]="form!.controls.descricao"></input-textarea>
             </div>
             <div class="row">
-                <input-search [label]="lex.noun('Unidade')" [size]="6" #unidade controlName="unidade_id" [dao]="unidadeDao"  (change)="onUnidadeChange($event)"></input-search>
-                <input-search [label]="lex.noun('Tipo de atividade')" #tipoAtividade [emptyValue]="null" [size]="6" controlName="tipo_atividade_id"  [dao]="tipoAtividadeDao" (select)="onTipoAtividadeSelect($event)" (change)="onTipoAtividadeChange($event)" [labelInfo]="lex.noun('Tipo de atividade') + ' utilizado para classificar a atividade'"></input-search>
+                <input-search [label]="lex.translate('Unidade')" [size]="6" #unidade controlName="unidade_id" [dao]="unidadeDao"  (change)="onUnidadeChange($event)"></input-search>
+                <input-search [label]="lex.translate('Tipo de atividade')" #tipoAtividade [emptyValue]="null" [size]="6" controlName="tipo_atividade_id"  [dao]="tipoAtividadeDao" (select)="onTipoAtividadeSelect($event)" (change)="onTipoAtividadeChange($event)" [labelInfo]="lex.translate('Tipo de atividade') + ' utilizado para classificar a atividade'"></input-search>
             </div>
             <div class="row">
                 <input-search label="Responsável" [size]="4" [emptyValue]="null" #usuario controlName="usuario_id" [dao]="usuarioDao" [join]="usuarioJoin" labelInfo="Responsável pela execução" (select)="onUsuarioSelect($event)" (change)="onUsuarioChange($event)"></input-search>
-                <input-select [label]="lex.noun('Plano de trabalho')" [size]="4" controlName="plano_trabalho_id" #planoTrabalho [control]="form!.controls.plano_trabalho_id" [items]="planosTrabalhos" (change)="onPlanoTrabalhoChange($event)" [labelInfo]="lex.noun('Plano de trabalho')"></input-select>
-                <input-select [label]="lex.noun('Entrega') + lex.noun('plano de trabalho', false, true)" [size]="4" controlName="plano_trabalho_entrega_id" #entrega [control]="form!.controls.plano_trabalho_entrega_id" [items]="entregas" [labelInfo]="lex.noun('Entrega') + lex.noun('plano de trabalho', false, true) + ' que a ' + lex.noun('atividade') + ' é referente'"></input-select>
+                <input-select [label]="lex.translate('Plano de trabalho')" [size]="4" controlName="plano_trabalho_id" #planoTrabalho [control]="form!.controls.plano_trabalho_id" [items]="planosTrabalhos" (change)="onPlanoTrabalhoChange($event)" [labelInfo]="lex.translate('Plano de trabalho')"></input-select>
+                <input-select [label]="lex.translate('Entrega') + lex.translate('plano de trabalho')" [size]="4" controlName="plano_trabalho_entrega_id" #entrega [control]="form!.controls.plano_trabalho_entrega_id" [items]="entregas" [labelInfo]="lex.translate('Entrega') + lex.translate('plano de trabalho') + ' que a ' + lex.translate('atividade') + ' é referente'"></input-select>
             </div>
             <div *ngIf="!planoTrabalho?.selectedItem?.data?.tipo_modalidade?.atividade_esforco; else comEsforco" class="row">
-                <input-datetime noIcon [size]="4" [label]="lex.noun('Data de distribuição')" controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" (change)="onDataDistribuicaoChange($event)" labelInfo="Data de inclusão/distribuição/lançamento"></input-datetime>
+                <input-datetime noIcon [size]="4" [label]="lex.translate('Data de distribuição')" controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" (change)="onDataDistribuicaoChange($event)" labelInfo="Data de inclusão/distribuição/lançamento"></input-datetime>
                 <input-number [size]="4" [decimals]="2" label="Progresso" disabled sufix="%" icon="bi bi-clock" controlName="progresso" labelInfo="Progresso de execução (% Concluído)"></input-number>
-                <input-datetime noIcon  [size]="4" [label]="lex.noun('Prazo de entrega')" controlName="prazo_entrega" [control]="form!.controls.prazo_entrega" (change)="onPrazoEntregaChange($event)" labelInfo="Data estipulada para entrega da atividade"></input-datetime>
+                <input-datetime noIcon  [size]="4" [label]="lex.translate('Prazo de entrega')" controlName="prazo_entrega" [control]="form!.controls.prazo_entrega" (change)="onPrazoEntregaChange($event)" labelInfo="Data estipulada para entrega da atividade"></input-datetime>
             </div>
             <ng-template #comEsforco>
                 <div class="row">
-                    <input-datetime noIcon [size]="3" [label]="lex.noun('Data de distribuição')" controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" (change)="onDataDistribuicaoChange($event)" labelInfo="Data de inclusão/distribuição/lançamento"></input-datetime>
-                    <input-timer [size]="3" [label]="lex.noun('Esforço')" icon="bi bi-stopwatch" onlyHours controlName="esforco" [control]="form!.controls.esforco" labelInfo="Tempo estimado de execução"></input-timer>
+                    <input-datetime noIcon [size]="3" [label]="lex.translate('Data de distribuição')" controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" (change)="onDataDistribuicaoChange($event)" labelInfo="Data de inclusão/distribuição/lançamento"></input-datetime>
+                    <input-timer [size]="3" [label]="lex.translate('Esforço')" icon="bi bi-stopwatch" onlyHours controlName="esforco" [control]="form!.controls.esforco" labelInfo="Tempo estimado de execução"></input-timer>
                     <input-number [size]="3" [decimals]="2" label="Progresso" disabled sufix="%" icon="bi bi-clock" controlName="progresso" labelInfo="Progresso de execução (% Concluído)"></input-number>
-                    <input-datetime noIcon  [size]="3" [label]="lex.noun('Prazo de entrega')" controlName="prazo_entrega" [control]="form!.controls.prazo_entrega" (change)="onPrazoEntregaChange($event)" labelInfo="Data estipulada para entrega da atividade"></input-datetime>
+                    <input-datetime noIcon  [size]="3" [label]="lex.translate('Prazo de entrega')" controlName="prazo_entrega" [control]="form!.controls.prazo_entrega" (change)="onPrazoEntregaChange($event)" labelInfo="Data estipulada para entrega da atividade"></input-datetime>
                 </div>
             </ng-template>
             <separator *ngIf="form!.controls.data_entrega.value" title="Conclusão">
@@ -44,7 +44,7 @@
                 <documento-link [documento]="form!.controls.documento_entrega.value"></documento-link>
             </separator>
         </tab>
-        <tab key="TAREFAS" [label]="lex.noun('Tarefa', true) + ' ' + lex.noun('atividade', false, true)">
+        <tab key="TAREFAS" [label]="lex.translate('Tarefa') + ' ' + lex.translate('atividade')">
             <atividade-list-tarefa [control]="form!.controls.tarefas" [atividade]="entity" [disabled]="formDisabled"></atividade-list-tarefa>
         </tab>
         <tab key="CARACTERIZACAO" label="Caracterização">

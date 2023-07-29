@@ -5,7 +5,7 @@
     </toolbar>
     <grid [items]="items" [form]="form!" [add]="addMerge.bind(this)" [load]="loadMerge.bind(this)" [remove]="removeMerge.bind(this)" [save]="saveMerge.bind(this)" editable>
         <columns>
-            <column [title]="lex.noun('Unidade') + ' origem'" titleHint="Unidade que será substituída pela outra" [template]="columnUnidadeOrigem" [editTemplate]="editUnidadeOrigem">
+            <column [title]="lex.translate('Unidade') + ' origem'" titleHint="Unidade que será substituída pela outra" [template]="columnUnidadeOrigem" [editTemplate]="editUnidadeOrigem">
                 <ng-template let-row="row" #columnUnidadeOrigem>
                     <span>{{row.unidade_origem?.nome || ""}}</span><br>
                     <small>{{row.unidade_origem?.codigo || ""}} - {{row.unidade_origem?.sigla || ""}}</small>
@@ -14,7 +14,7 @@
                     <input-search #unidade_origem [size]="12" label icon controlName="unidade_origem_id" [dao]="dao" [where]="[['inativo', '!=', null]]" [selectRoute]="{route: ['configuracoes', 'unidade'], params: {filter: {inativos: true}}}"></input-search>
                 </ng-template>
             </column>
-            <column [title]="lex.noun('Unidade') + ' destino'" titleHint="Unidade que sobrará após a unificação" [template]="columnUnidadeDestino" [editTemplate]="editUnidadeDestino">
+            <column [title]="lex.translate('Unidade') + ' destino'" titleHint="Unidade que sobrará após a unificação" [template]="columnUnidadeDestino" [editTemplate]="editUnidadeDestino">
                 <ng-template let-row="row" #columnUnidadeDestino>
                     <span>{{row.unidade_destino?.nome || ""}}</span><br>
                     <small>{{row.unidade_destino?.codigo || ""}} - {{row.unidade_destino?.sigla || ""}}</small>

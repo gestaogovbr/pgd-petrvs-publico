@@ -3,7 +3,7 @@
     <div class="row">
         <input-text [size]="4" label="Título" controlName="nome"></input-text>
         <input-rate [size]="6" label="Nota" icon="bi bi-question-octagon" controlName="nota_atribuida"></input-rate>
-        <input-radio [size]="2" [label]="'Aceita ' + lex.noun('Entrega') + '?'" icon="bi bi-hexagon" controlName="aceita_entrega" [items]="lookup.SIMNAO"></input-radio>
+        <input-radio [size]="2" [label]="'Aceita ' + lex.translate('Entrega') + '?'" icon="bi bi-hexagon" controlName="aceita_entrega" [items]="lookup.SIMNAO"></input-radio>
     </div>
     <div class="row">
         <input-text [size]="6" label="Pergunta Motivacional" controlName="pergunta"></input-text>
@@ -11,7 +11,7 @@
         <input-color [size]="3" label="Cor" controlName="cor"></input-color>
     </div>
     <div class="row">
-        <input-multiselect [size]="12" [canEdit]="true" [addItemControl]="justificativa" controlName="justificativas" [label]="lex.noun('Justificativa',true)" [items]="justificativasLista">
+        <input-multiselect [size]="12" [canEdit]="true" [addItemControl]="justificativa" controlName="justificativas" [label]="lex.translate('Justificativa')" [items]="justificativasLista">
             <input-select [size]="12" #justificativa controlName="justificativa_id" [dao]="tipoJustificativaDao" [addRoute]="{route: ['cadastros', 'tipo-justificativa', 'new']}"></input-select>
         </input-multiselect>
     </div>

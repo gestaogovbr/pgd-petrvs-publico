@@ -113,6 +113,7 @@ export class TemplateService {
       let {dao: _, ...newItem} = item; // equivalente a newItem.dao = undefined;
       if(["OBJECT", "ARRAY"].includes(newItem.type || "") || newItem.fields?.length) newItem.fields = this.prepareDatasetToSave(newItem.fields || []);
       result.push(newItem);
+
     }
     return result;
   }  

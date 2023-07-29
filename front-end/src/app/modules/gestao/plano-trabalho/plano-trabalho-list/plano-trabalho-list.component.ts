@@ -144,21 +144,6 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     }
   }
 
-  /*public needSign(plano: Plano): boolean {
-    let ids: string[] = [];
-    const documento = (plano.documentos || []).find(x => plano.documento_id?.length && x.id == plano.documento_id);
-    if(documento && !documento.assinaturas.find(x => x.usuario_id == this.auth.usuario!.id)) {
-      const tipoModalidade = plano.tipo_modalidade!; //(this.tipoModalidade?.searchObj as TipoModalidade);
-      const usuario = plano.usuario!; // (this.usuario?.searchObj as Usuario);
-      const unidade = plano.unidade!; // (this.unidade?.searchObj as Unidade);
-      const entidade = unidade.entidade!;
-      if(tipoModalidade?.exige_assinatura && usuario) ids.push(usuario.id);
-      if(tipoModalidade?.exige_assinatura_gestor_unidade && unidade) ids.push(unidade.gestor_id || "", unidade.gestor_substituto_id || "");
-      if(tipoModalidade?.exige_assinatura_gestor_entidade && entidade) ids.push(entidade.gestor_id || "", entidade.gestor_substituto_id || "");
-    }
-    return !!documento && ids.includes(this.auth.usuario!.id);
-  }*/
-
   public dynamicMultiselectMenu = (multiselected: IIndexable): ToolbarButton[] => {
     let assinar = !!Object.keys(multiselected).length;
     let menu = [];
@@ -176,17 +161,6 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
       this.dialog.alert("Selecione", "Nenhum plano seleciono");
     } else {
       this.documentoService.sign(documentos).then(() => this.grid!.reset());
-      /*this.dialog.confirm("Assinar", "Deseja realmente assinar " + documentosIds.length + " documento" + (documentosIds.length > 1 ? "s" : "") + "?").then(response => {
-        if(response) {
-          this.loading = true;
-          this.documentoDao.assinar(documentosIds).then(response => {
-            if(response?.length) {
-              this.dialog.alert("Assinados", response.length > 1 ? "Foram assinados " + response.length + " documentos!" : "Documento assinado com sucesso!");
-              this.refresh();
-            }
-          }).catch((error) => this.error("Erro ao tentar assinar: " + error.toString())).finally(() => this.loading = false);
-        }
-      });*/
     }
   }
 

@@ -32,7 +32,7 @@ export class ProjetoListComponent extends PageListBase<Projeto, ProjetoDaoServic
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.projetoService = injector.get<ProjetoService>(ProjetoService);
-    this.title = this.lex.translate("Projeto", true);
+    this.title = this.lex.translate("Projetos", true);
     this.code = "MOD_PROJ";
     this.join = ["alocacoes.recurso.usuario:id,nome,apelido", "alocacoes.recurso.unidade:id,nome", "alocacoes.regras.regra", "fase"];
     this.filter = this.fh.FormBuilder({

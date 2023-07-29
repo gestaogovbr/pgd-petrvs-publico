@@ -10,26 +10,26 @@
         <input-switch label="Arquivar" [size]="2" controlName="arquivar" [control]="form!.controls.arquivar" labelInfo="Arquivar automaticamente após a avaliação"></input-switch>      
     </div>
     <div *ngIf="!entity?.plano?.tipo_modalidade?.calcula_tempo_despendido; else comTempoDespendido" class="row">
-        <input-timer onlyHours [size]="3" [label]="lex.noun('Tempo pactuado')" disabled controlName="tempo_pactuado" [control]="form!.controls.tempo_pactuado" labelInfo="Tempo calculado a partir da atividade e utilizando o fator_complexidade"></input-timer>
-        <input-datetime noIcon [size]="3" [label]="lex.noun('Prazo de entrega')" disabled controlName="prazo_entrega" [control]="form!.controls.prazo_entrega" labelInfo="Data estipulada para entrega da atividade"></input-datetime>
+        <input-timer onlyHours [size]="3" [label]="lex.translate('Tempo pactuado')" disabled controlName="tempo_pactuado" [control]="form!.controls.tempo_pactuado" labelInfo="Tempo calculado a partir da atividade e utilizando o fator_complexidade"></input-timer>
+        <input-datetime noIcon [size]="3" [label]="lex.translate('Prazo de entrega')" disabled controlName="prazo_entrega" [control]="form!.controls.prazo_entrega" labelInfo="Data estipulada para entrega da atividade"></input-datetime>
         <input-datetime noIcon [size]="3" label="Data de inicio" disabled controlName="data_inicio" [control]="form!.controls.data_inicio" labelInfo="Data de inicio"></input-datetime>
         <input-datetime noIcon [size]="3" label="Data de entrega" disabled #entrega controlName="data_entrega" [control]="form!.controls.data_entrega" labelInfo="Data e hora da entrega"></input-datetime>
     </div>
     <ng-template #comTempoDespendido>
         <div class="row">
-            <input-datetime noIcon [size]="3" [label]="lex.noun('Data de distribuição')" disabled controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" labelInfo="Data de cadastro da atividade"></input-datetime>
-            <input-timer [label]="lex.noun('Tempo pactuado')" onlyHours [size]="3" disabled controlName="tempo_pactuado" [control]="form!.controls.tempo_pactuado" labelInfo="Tempo calculado a partir da atividade e utilizando o fator_complexidade"></input-timer>
-            <input-datetime noIcon [size]="3" [label]="lex.noun('Prazo de entrega')" disabled controlName="prazo_entrega" [control]="form!.controls.prazo_entrega" labelInfo="Data estipulada para entrega da atividade"></input-datetime>
+            <input-datetime noIcon [size]="3" [label]="lex.translate('Data de distribuição')" disabled controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" labelInfo="Data de cadastro da atividade"></input-datetime>
+            <input-timer [label]="lex.translate('Tempo pactuado')" onlyHours [size]="3" disabled controlName="tempo_pactuado" [control]="form!.controls.tempo_pactuado" labelInfo="Tempo calculado a partir da atividade e utilizando o fator_complexidade"></input-timer>
+            <input-datetime noIcon [size]="3" [label]="lex.translate('Prazo de entrega')" disabled controlName="prazo_entrega" [control]="form!.controls.prazo_entrega" labelInfo="Data estipulada para entrega da atividade"></input-datetime>
             <input-timer [label]="atrasado ? 'Atraso' : 'Adiantado'" [size]="3" disabled controlName="diferenca_prazo_entrega" [control]="form!.controls.diferenca_prazo_entrega" [labelInfo]="(atrasado ? 'Tempo de atraso' : 'Tempo adiantado') + ' na realização da atividade'"></input-timer>
         </div>
         <div class="row">
             <input-datetime noIcon [size]="3" label="Data de inicio" disabled controlName="data_inicio" [control]="form!.controls.data_inicio" labelInfo="Data de inicio"></input-datetime>
             <input-timer label="Tempo despendido" [size]="3" disabled controlName="tempo_despendido" [control]="form!.controls.tempo_despendido" labelInfo="Tempo despendido na atividade (considerando fins de semana, feriados e afastamentos)"></input-timer>
             <input-datetime noIcon [size]="3" label="Data de entrega" disabled #entrega controlName="data_entrega" [control]="form!.controls.data_entrega" labelInfo="Data e hora da entrega"></input-datetime>
-            <input-text numbers label="Produtividade" sufix="%" [stepValue]="0.01" [size]="3" disabled controlName="produtividade" [control]="form!.controls.produtividade" [labelInfo]="'Diferença entre o '+ lex.noun('tempo pactuado')+ ' e o despendido (proporcional, em porcentagem)'"></input-text>
+            <input-text numbers label="Produtividade" sufix="%" [stepValue]="0.01" [size]="3" disabled controlName="produtividade" [control]="form!.controls.produtividade" [labelInfo]="'Diferença entre o '+ lex.translate('tempo pactuado')+ ' e o despendido (proporcional, em porcentagem)'"></input-text>
         </div>
     </ng-template>
-    <separator [title]="lex.noun('Entrega', true)" collapse [collapsed]="!entity?.entregas?.length">
+    <separator [title]="lex.translate('Entrega', true)" collapse [collapsed]="!entity?.entregas?.length">
         <atividade-list-tarefa persist [atividade]="entity"></atividade-list-tarefa>
     </separator>    
     <div class="row">

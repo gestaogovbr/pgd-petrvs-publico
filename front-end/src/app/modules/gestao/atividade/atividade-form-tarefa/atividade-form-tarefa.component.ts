@@ -71,7 +71,7 @@ export class AtividadeFormTarefaComponent extends PageFormBase<AtividadeTarefa, 
   public formValidation = (form?: FormGroup) => {
     const values = form!.value;
     if(values.tipo_tarefa_id?.length && !this.tipoTarefa?.searchObj) {
-      return "Aguarde o carregamento " + this.lex.translate("tipo de tarefa", false, true) + ". Caso demore, selecione novamente!";
+      return "Aguarde o carregamento " + this.lex.translate("tipo de tarefa") + ". Caso demore, selecione novamente!";
     }
     if(values.concluido && (this.tipoTarefa?.searchObj as TipoTarefa)?.documental && this.documento?.isEmpty()) {
       return this.gb.isEmbedded ? "Obrigatório selecionar um arquivo para a tarefa selecionada!" : "Utilize o sistema como extensão para concluir!";
