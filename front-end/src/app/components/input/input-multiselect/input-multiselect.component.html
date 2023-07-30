@@ -1,4 +1,4 @@
-<input-container [labelPosition]="labelPosition"  [loading]="loading" [disabled]="disabled" [controlName]="controlName" [control]="control" [label]="isNoBox ? label : ''" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold" errorMessageIcon="bi-info-circle">
+<input-container [labelPosition]="labelPosition" [labelClass]="labelClass"  [loading]="loading" [disabled]="disabled" [controlName]="controlName" [control]="control" [label]="isNoBox ? label : ''" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold" errorMessageIcon="bi-info-circle">
     <div [class.card]="!isNoBox">
         <h5 *ngIf="label?.length && !isNoBox" class="card-header">
             <i *ngIf="icon.length" [class]="icon"></i>

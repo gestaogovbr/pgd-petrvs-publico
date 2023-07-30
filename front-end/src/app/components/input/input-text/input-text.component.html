@@ -1,4 +1,4 @@
-<input-container [labelPosition]="labelPosition" [controlName]="controlName" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
+<input-container [labelPosition]="labelPosition" [labelClass]="labelClass" [controlName]="controlName" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
     <div class="input-group">
         <span *ngIf="prefix" class="input-group-text">{{prefix}}</span>
         <input *ngIf="viewInit" #inputElement [type]="isNumbers ? 'number' : isPassword ? 'password' : 'text'" class="form-control" [attr.min]="minValue" [attr.max]="maxValue" [attr.step]="stepValue"

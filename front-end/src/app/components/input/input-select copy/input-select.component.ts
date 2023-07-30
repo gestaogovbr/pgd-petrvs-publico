@@ -30,6 +30,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
   @Input() icon: string = "bi bi-menu-button-wide";
   @Input() label: string = "";
   @Input() labelInfo: string = "";
+  @Input() labelClass?: string;
   @Input() bold: boolean = false;
   @Input() fields: string[] = [];
   @Input() dao?: DaoBaseService<Base> = undefined;

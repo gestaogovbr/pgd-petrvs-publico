@@ -26,6 +26,7 @@ export class InputTimerComponent extends InputBase implements OnInit {
   @Input() icon: string = "bi bi-clock";
   @Input() label: string = "";
   @Input() labelInfo: string = "";
+  @Input() labelClass?: string;
   @Input() bold: boolean = false;
   @Input() value: any;
   @Input() onlyHours?: string; 

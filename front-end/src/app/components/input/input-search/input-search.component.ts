@@ -39,6 +39,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
   @Input() labelInfo: string = "";
+  @Input() labelClass?: string;
   @Input() bold: boolean = false;
   @Input() loading: boolean = false;
   @Input() value: any = "";

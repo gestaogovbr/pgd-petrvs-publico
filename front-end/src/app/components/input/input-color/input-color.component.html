@@ -1,4 +1,4 @@
-<input-container [labelPosition]="labelPosition" [controlName]="controlName" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
+<input-container [labelPosition]="labelPosition" [labelClass]="labelClass" [controlName]="controlName" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
     <div class="input-group">
         <select *ngIf="viewInit" #inputElement class="form-control" [id]="generatedId(controlName)" [attr.disabled]="isDisabled ? true : undefined" [class.is-invalid]="isInvalid()" (change)="onChange($event)">
             <option *ngFor="let item of cores" value="{{item.key}}" [style.background-color]="getBackgroundColor(item.key)" [style.color]="getColor(item.key)">{{item.value}}</option>

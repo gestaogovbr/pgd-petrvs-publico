@@ -36,6 +36,7 @@ export class InputLevelComponent extends InputBase implements OnInit {
   @Input() icon: string = "";
   @Input() label: string = "";
   @Input() labelInfo: string = "";
+  @Input() labelClass?: string;
   @Input() bold: boolean = false;
   @Input() value: any = "";
   @Input() inputWidth: number = 50;

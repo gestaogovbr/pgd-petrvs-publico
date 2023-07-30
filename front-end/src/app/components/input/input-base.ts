@@ -29,6 +29,7 @@ export abstract class InputBase extends ComponentBase {
     public abstract loading: boolean;
     public abstract class: string;
     public abstract hostClass: string;
+    public abstract labelClass?: string;
     public abstract source?: any;
     public abstract path?: string;
     /* Protected get e set */

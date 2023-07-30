@@ -23,6 +23,7 @@ class CreateUnidadesTable extends Migration
             $table->string('codigo', 12)->comment('Código da unidade');
             $table->string('sigla', 100)->comment("Sigla da unidade");
             $table->string('nome', 256)->comment("Nome da unidade");
+            $table->tinyInteger('instituidora')->default(0)->comment("Se a unidade é instituidora (Programas)");
             $table->text('path')->nullable()->comment('Path dos nós pais separados por /, ou NULL caso sejam nós raiz');
             $table->longText('texto_complementar_plano')->nullable()->comment("Campo de mensagem adicional do plano de trabalho");
             $table->tinyInteger("atividades_arquivamento_automatico")->default(0)->comment("Se arquiva automaticamente após conclusão");
