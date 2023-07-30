@@ -21,7 +21,7 @@ export class CargoListComponent extends PageListBase<Cargo, CargoDaoService> {
   constructor(public injector: Injector) {
     super(injector, Cargo, CargoDaoService);
        /* Inicializações */
-    this.title = this.lex.noun("Cargos",true);
+    this.title = this.lex.translate("Cargos");
     this.code = "MOD_RX";
     this.orderBy = [['nome','asc']];
     //this.join = ["area:nome","tipo:nome"];

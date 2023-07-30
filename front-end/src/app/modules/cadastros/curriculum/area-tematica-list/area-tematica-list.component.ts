@@ -20,7 +20,7 @@ export class AreaTematicaListComponent extends PageListBase<AreaTematica, AreaTe
     super(injector, AreaTematica, AreaTematicaDaoService);
     /* Inicializações */
   
-    this.title = this.lex.noun("Área Temática",true);
+    this.title = this.lex.translate("Áreas Temática");
     this.code = "MOD_RX";
     this.orderBy = [['nome','asc']];
 

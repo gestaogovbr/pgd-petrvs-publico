@@ -22,7 +22,7 @@
                     <strong>{{row.numero}}</strong>
                 </ng-template>
             </column>
-            <column [title]="'Nome\nEnvolvidos'" titleHint="Somente os recursos humanos/departamentais que possuem' lex.noun('perfil') 'para acessar o projeto serão listados aqui" [template]="columnNomeEnvolvidos">
+            <column [title]="'Nome\nEnvolvidos'" titleHint="Somente os recursos humanos/departamentais que possuem' lex.translate('perfil') 'para acessar o projeto serão listados aqui" [template]="columnNomeEnvolvidos">
                 <ng-template let-row="row" let-metadata="metadata" #columnNomeEnvolvidos>
                     <strong class="d-block">{{row.nome}}</strong>
                     <profile-picture *ngFor="let envolvido of getEnvolvidos(row, metadata)" [url]="envolvido.url" [hint]="envolvido.hint"></profile-picture>

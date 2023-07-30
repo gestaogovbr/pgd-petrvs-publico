@@ -21,7 +21,7 @@ export class CursoListComponent extends PageListBase<Curso, CursoDaoService> {
   constructor(public injector: Injector) {
     super(injector, Curso, CursoDaoService);
        /* Inicializações */
-    this.title = this.lex.noun("Cursos",true);
+    this.title = this.lex.translate("Cursos");
     this.code = "MOD_RX";
     this.join = ["area:id,nome","tipo:id,nome"];
     this.orderBy = [['nome','asc']];

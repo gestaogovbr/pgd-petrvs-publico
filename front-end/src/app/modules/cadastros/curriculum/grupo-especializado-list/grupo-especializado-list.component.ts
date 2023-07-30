@@ -19,7 +19,7 @@ export class GrupoEspecializadoListComponent extends PageListBase<GrupoEspeciali
     super(injector, GrupoEspecializado, GrupoEspecializadoDaoService);
     /* Inicializações */
   
-    this.title = this.lex.noun("Grupo Especializado",true);
+    this.title = this.lex.translate("Grupos Especializados");
     this.code = "MOD_RX";
 
     this.filter = this.fh.FormBuilder({

@@ -29,7 +29,7 @@ export class AfastamentoListComponent extends PageListBase<Afastamento, Afastame
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
 
     /* Inicializações */
-    this.title = this.lex.noun("Afastamento",true);
+    this.title = this.lex.translate("Afastamentos");
     this.code = "MOD_AFT";
     this.filter = this.fh.FormBuilder({
       observacoes: {default: ""},

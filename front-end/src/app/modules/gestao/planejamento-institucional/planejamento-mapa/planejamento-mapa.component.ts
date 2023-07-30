@@ -64,7 +64,7 @@ export class PlanejamentoMapaComponent extends PageFrameBase {
     this.dao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.objetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
     this.join = ['objetivos'];
-    this.title = "Objetivos do " + this.lex.noun('planejamento Institucional', true);
+    this.title = "Objetivos do " + this.lex.translate('planejamento Institucional');
     this.form = this.fh.FormBuilder({
       planejamento_id: {default: null},
       todos: {default: false}

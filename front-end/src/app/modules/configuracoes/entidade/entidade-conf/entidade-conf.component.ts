@@ -65,7 +65,7 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
       plural: {default: ""},
       feminino: {default: false}
     }, this.cdRef, this.validateNomenclatura);
-    this.title = "Configurando " + this.lex.noun("entidade",false);
+    this.title = "Configurando " + this.lex.translate("entidade");
   }
 
   public validateNomenclatura = (control: AbstractControl, controlName: string) => {

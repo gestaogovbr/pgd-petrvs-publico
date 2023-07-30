@@ -9,7 +9,7 @@
     </toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="6" [label]="lex.noun('Usuário')" controlName="usuario" [control]="filter!.controls.usuario" placeholder="Usuário"></input-text>
+            <input-text [size]="6" [label]="lex.translate('Usuário')" controlName="usuario" [control]="filter!.controls.usuario" placeholder="Usuário"></input-text>
             <input-search [size]="6" controlName="unidade_id" [dao]="unidadeDao"></input-search>
         </div>
         <div class="row">
@@ -20,7 +20,7 @@
       </div>
     </filter>
     <columns>
-        <column *ngIf="!selectable" type="expand" icon="bi bi-list-check" [align]="'center'" [hint]="lex.noun('Entrega', true)" [template]="columnEntregas" [expandTemplate]="columnExpandedEntregas">
+        <column *ngIf="!selectable" type="expand" icon="bi bi-list-check" [align]="'center'" [hint]="lex.translate('Entrega')" [template]="columnEntregas" [expandTemplate]="columnExpandedEntregas">
             <ng-template let-row="row" #columnEntregas>
                 <span *ngIf="row.entregas?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-list-check"></i> {{row.entregas?.length}}</span>
             </ng-template>

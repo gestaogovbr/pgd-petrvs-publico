@@ -36,7 +36,7 @@ trait LogChanges
         $util = new UtilService();
         $config = config("log");
         if(!empty($config["changes"])) {
-            $delta = $action == "ADD" ? $model->getAttributes() : ($action == "DELETE" || $action == "SOFT_DELETE" ? $model->getOriginal() : $util->differentAttributes($model->getAttributes(),$model->getOriginal()));
+            $delta = $action == "ADD" ? $model->getAttributes() : ($action == "EDIT" ? $model->getAttributes() : ($action == "DELETE" || $action == "SOFT_DELETE" ? $model->getAttributes() : $util->differentAttributes($model->getAttributes(),$model->getOriginal())));
             Change::create([
                 'date_time' => new DateTime(),
                 'user_id' => Auth::check() ? Auth::user()->id : null,

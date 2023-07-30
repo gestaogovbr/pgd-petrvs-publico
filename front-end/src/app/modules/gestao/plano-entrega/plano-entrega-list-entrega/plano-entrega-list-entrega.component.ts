@@ -58,7 +58,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   private _cadeiaValorId?: string;
   private _planejamentoId?: string;
   private _unidadeId?: string;
-  
+
   public entityToControl = (value: any) => (value as PlanoEntrega).entregas || [];
   public options: ToolbarButton[] = [];
   public planoEntregaId: string = "";
@@ -67,7 +67,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
 
   constructor(public injector: Injector) {
     super(injector);
-    this.title = this.lex.noun("Entrega");
+    this.title = this.lex.translate("Entrega");
     this.join = ["unidade", "entidade", "entrega"];
     this.code = "MOD_PENT_CONS";
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
@@ -96,7 +96,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     // Testa se o usuário possui permissão para excluir o feriado
     if (true || this.auth.hasPermissionTo("MOD_FER_EXCL")) {
       this.options.push({
-        icon: "bi bi-trash", 
+        icon: "bi bi-trash",
         label: "Excluir",
         onClick: this.delete.bind(this)
       });
@@ -154,12 +154,12 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     entrega._status = entrega._status == "ADD" ? "ADD" : "EDIT";
     let index = this.items.indexOf(entrega);
     this.go.navigate({ route: ['gestao', 'plano-entrega', 'entrega'] }, {
-      metadata: { 
+      metadata: {
         plano_entrega: this.entity!,
         planejamento_id: this.planejamentoId,
         cadeia_valor_id: this.cadeiaValorId,
         unidade_id: this.unidadeId,
-        entrega: entrega, 
+        entrega: entrega,
       },
       modalClose: async (modalResult) => {
         if (modalResult) {
@@ -167,7 +167,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
           this.items[index] = modalResult;
         };
       }
-    }); 
+    });
   }
 
   public async delete(entrega: PlanoEntregaEntrega) {
@@ -181,9 +181,9 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
       };
     }
   }
-  
+
   public async consult(entrega: PlanoEntregaEntrega) {
     this.go.navigate({route: ['', entrega.id, "consult"]});
   }
-  
+
 }

@@ -17,7 +17,7 @@ export class CapacidadeTecnicaListComponent extends PageListBase<CapacidadeTecni
   constructor(public injector: Injector) {
     super(injector, CapacidadeTecnica, CapacidadeTecnicaDaoService);
        /* Inicializações */
-    this.title = this.lex.noun("Capacidades Técnicas",true);
+    this.title = this.lex.translate("Capacidades Técnicas");
     this.code = "MOD_RX";
     this.join = ["area_tematica:id,nome"];
     this.orderBy = [['nome','asc']];

@@ -1,6 +1,6 @@
 <grid [control]="control" [add]="addTarefa.bind(this)" [disabled]="disabled ? 'true' : undefined" [minHeight]="isPersist ? 50 : 300" [hasDelete]="true" [editable]="editable ? 'true' : undefined">
     <columns>
-        <column [title]="lex.noun('Tipo de Tarefa') + ' e Descrição'" [template]="tipoTarefaDescricao">
+        <column [title]="lex.translate('Tipo de Tarefa') + ' e Descrição'" [template]="tipoTarefaDescricao">
             <ng-template let-row="row" #tipoTarefaDescricao>
                 <strong *ngIf="row.tipo_tarefa?.nome?.length" class="d-block">{{row.tipo_tarefa?.nome || ""}}</strong>
                 {{row.descricao}}

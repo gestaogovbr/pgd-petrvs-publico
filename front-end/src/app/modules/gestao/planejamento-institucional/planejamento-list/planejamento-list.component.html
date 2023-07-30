@@ -8,18 +8,18 @@
                 <toolbar *ngIf="!selectable"></toolbar>
                 <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
                     <div class="row">
-                        <input-text [size]="12" [label]="lex.noun('Planejamento Institucional')" controlName="nome"
-                            [control]="filter!.controls.nome" [placeholder]="'Nome ' + lex.noun('Planejamento Institucional',false,true) + '...'"></input-text>
+                        <input-text [size]="12" [label]="lex.translate('Planejamento Institucional')" controlName="nome"
+                            [control]="filter!.controls.nome" [placeholder]="'Nome ' + lex.translate('Planejamento Institucional') + '...'"></input-text>
                     </div>
                     <div class="row">
-                        <input-switch [size]="2" [label]="'Só da '+ lex.noun('Entidade')" controlName="so_entidade" [control]="filter!.controls.so_entidade" (change)="onSoEntidadeChange($event)"></input-switch>
-                        <input-search #unidade [size]="4" [label]="lex.noun('Unidade')" [disabled]="unidade_disabled" controlName="unidade_id" [dao]="unidadeDao"></input-search>
-                        <input-datetime [size]="3" date label="Início" controlName="inicio" [control]="filter!.controls.inicio" [labelInfo]="'Data de início do' +lex.noun('Planejamento Institucional')"></input-datetime>
-                        <input-datetime [size]="3" date label="Fim" controlName="fim" [control]="filter!.controls.fim" [labelInfo]="'Data do fim do '+lex.noun('Planejamento Institucional')"></input-datetime>
+                        <input-switch [size]="2" [label]="'Só da '+ lex.translate('Entidade')" controlName="so_entidade" [control]="filter!.controls.so_entidade" (change)="onSoEntidadeChange($event)"></input-switch>
+                        <input-search #unidade [size]="4" [label]="lex.translate('Unidade')" [disabled]="unidade_disabled" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+                        <input-datetime [size]="3" date label="Início" controlName="inicio" [control]="filter!.controls.inicio" [labelInfo]="'Data de início do' +lex.translate('Planejamento Institucional')"></input-datetime>
+                        <input-datetime [size]="3" date label="Fim" controlName="fim" [control]="filter!.controls.fim" [labelInfo]="'Data do fim do '+lex.translate('Planejamento Institucional')"></input-datetime>
                     </div>
                 </filter>
                 <columns>
-                    <column *ngIf="!selectable" type="expand" icon="bi bi-bullseye" [align]="'center'" [hint]="lex.noun('Objetivo', true)" [template]="columnObjetivos" [expandTemplate]="columnExpandedObjetivos">
+                    <column *ngIf="!selectable" type="expand" icon="bi bi-bullseye" [align]="'center'" [hint]="lex.translate('Objetivo')" [template]="columnObjetivos" [expandTemplate]="columnExpandedObjetivos">
                         <ng-template let-row="row" #columnObjetivos>
                             <span *ngIf="row.objetivos?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-bullseye"></i> {{row.objetivos?.length}}</span>
                         </ng-template>

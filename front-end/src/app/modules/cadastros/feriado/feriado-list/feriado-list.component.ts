@@ -19,7 +19,7 @@ export class FeriadoListComponent extends PageListBase<Feriado, FeriadoDaoServic
     this.dao=dao;
     /* Inicializações */
     //this.title = "Feriados";
-    this.title = this.lex.noun("Feriado",true);
+    this.title = this.lex.translate("Feriados");
     this.code = "MOD_FER";
     this.filter = this.fh.FormBuilder({
       nome: {default: ""},
