@@ -50,13 +50,11 @@ export class PreferenciaFormPetrvsComponent extends PageFormBase<Entidade, Entid
 
   public saveData(form: IIndexable): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      //let atividade = this.util.fill(new Entidade(), this.entity!);
-      //resolve(this.util.fillForm(atividade, this.form!.value));
       resolve(!this.isPanel);
     });
   }
 
   public titleEdit = (entity: Entidade): string => {
-    return "Editando ";// + (entity?.unidade_id || "");
+    return "Editando " + this.lex.translate("Preferência") + ' ' + this.lex.translate("da Entidade") + ': ' + (entity?.nome || "");
   }
 }

@@ -12,9 +12,7 @@ import { Chart, ChartData } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { UtilService } from 'src/app/services/util.service';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Unidade } from 'src/app/models/unidade.model';
-import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
-import { MetadadosPlano } from '../base/page-report-base';
+import { ChartDataSets, ChartOptions } from 'chart.js';
 
 @Component({
   selector: 'app-home',
@@ -74,7 +72,7 @@ export class HomeComponent implements OnInit {
   public opcoesGraficoPlano: ChartOptions = {
     scales: {
       xAxes: [{
-        labels: ['Horas do Plano'],
+        labels: ['Horas ' + this.lex.translate("do Plano de Trabalho")],
         display: true,
         ticks: {
           beginAtZero: true
@@ -106,7 +104,7 @@ export class HomeComponent implements OnInit {
   public opcoesGraficoAtividades: ChartOptions = {
     scales: {
       xAxes: [{
-        labels: ['Total de horas atividades'],
+        labels: ['Total de horas ' + this.lex.translate("das atividades")],
         display: true,
         ticks: {
           beginAtZero: true
@@ -174,9 +172,6 @@ export class HomeComponent implements OnInit {
   }
 
   async ngAfterViewInit() {
-/*     const unidades_gerenciadas = this.auth.usuario?.lotacoes.filter(lotacao => {
-      return lotacao.unidade?.gestor?.id == this.auth.usuario?.id
-    }).map(lotacoes => { return lotacoes.unidade?.id }).filter((item): item is string => !!item) */
     const unidades_gerenciadas = this.auth.usuario?.gerencia_titular ? [this.auth.usuario?.gerencia_titular!.id] : [];
 
     if (unidades_gerenciadas?.length) {
@@ -229,14 +224,14 @@ export class HomeComponent implements OnInit {
         label: 'Total de horas',
         data: [somaTotal],
         backgroundColor: '#0dcaf0',
-        stack: 'Horas do Plano',
+        stack: 'Horas',
         barThickness: 30
       },
       {
         label: 'Total de horas alocadas',
         data: [somaAlocadas],
         backgroundColor: '#ffc107',
-        stack: 'Horas do Plano',
+        stack: 'Horas',
         barThickness: 30
       }
     ];
@@ -245,28 +240,28 @@ export class HomeComponent implements OnInit {
   public construirGraficoAtividades() {
     this.dadosAtividades.datasets = [
       {
-        label: 'Atividades Não-iniciadas',
+        label: this.lex.translate("Atividades") + ' Não Iniciadas',
         data: [this.dashUsuario.atividades.horas_nao_iniciadas],
         backgroundColor: '#0dcaf0',
-        stack: 'Atividades'
+        stack: this.lex.translate("Atividades")
       },
       {
-        label: 'Atividades Não Concluídas',
+        label: this.lex.translate("Atividades") + ' Não Concluídas',
         data: [this.dashUsuario.atividades.horas_nao_concluidas],
         backgroundColor: '#ffc107',
-        stack: 'Atividades'
+        stack: this.lex.translate("Atividades")
       },
       {
-        label: 'Atividades Concluídas',
+        label: this.lex.translate("Atividades") + ' Concluídas',
         data: [this.dashUsuario.atividades.horas_concluidas],
         backgroundColor: '#239c24',
-        stack: 'Atividades'
+        stack: this.lex.translate("Atividades")
       },
       {
-        label: 'Atividades Atrasadas',
+        label: this.lex.translate("Atividades") + ' Atrasadas',
         data: [this.dashUsuario.atividades.horas_atrasadas],
         backgroundColor: '#af4201',
-        stack: 'Atividades'
+        stack: this.lex.translate("Atividades")
       },
 
     ];

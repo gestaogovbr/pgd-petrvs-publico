@@ -115,9 +115,9 @@ function TipoAtividadeListComponent_ng_template_10_Template(rf, ctx) { if (rf & 
     const row_r24 = ctx.row;
     const ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("hint", ctx_r4.lex.noun("Esfor\u00E7o"))("label", ctx_r4.util.decimalToTimerFormated(row_r24.esforco, true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("hint", ctx_r4.lex.translate("Esfor\u00E7o"))("label", ctx_r4.util.decimalToTimerFormated(row_r24.esforco, true));
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("hint", ctx_r4.lex.noun("Tempo planejado") + " em dias")("label", row_r24.dias_planejado + " dias");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("hint", ctx_r4.lex.translate("Tempo planejado") + " em dias")("label", row_r24.dias_planejado + " dias");
 } }
 function TipoAtividadeListComponent_ng_template_13_badge_1_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "badge", 30);
@@ -200,7 +200,7 @@ class TipoAtividadeListComponent extends src_app_modules_base_page_list_base__WE
             return result;
         };
         /* Inicializações */
-        this.title = this.lex.noun("Tipo de atividade", true);
+        this.title = this.lex.translate("Tipos de Atividade");
         this.code = "MOD_TIPO_ATV";
         this.filter = this.fh.FormBuilder({
             nome: { default: "" }
@@ -324,7 +324,7 @@ TipoAtividadeListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["�
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("template", _r9);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("title", ctx.lex.noun("Esfor\u00E7o"))("template", _r11);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("title", ctx.lex.translate("Esfor\u00E7o"))("template", _r11);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("template", _r13);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
@@ -421,7 +421,7 @@ class TipoAtividadeFormComponent extends src_app_modules_base_page_form_base__WE
             return result;
         };
         this.titleEdit = (entity) => {
-            return "Editando "; // + (entity?.unidade_id || "");
+            return "Editando " + this.lex.translate("Tipo de Atividade") + ': ' + ((entity === null || entity === void 0 ? void 0 : entity.nome) || "");
         };
         this.form = this.fh.FormBuilder({
             nome: { default: "" },
@@ -519,9 +519,9 @@ TipoAtividadeFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_5__["�
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 6);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("label", ctx.lex.noun("Esfor\u00E7o"))("size", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("label", ctx.lex.translate("Esfor\u00E7o"))("size", 3);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("label", ctx.lex.noun("Tempo planejado"))("size", 3)("control", ctx.form.controls.dias_planejado);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("label", ctx.lex.translate("Tempo planejado"))("size", 3)("control", ctx.form.controls.dias_planejado);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 8)("addItemHandle", ctx.addItemHandleEtiquetas.bind(ctx));
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
@@ -565,10 +565,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const routes = [
-    { path: '', component: _tipo_atividade_list_tipo_atividade_list_component__WEBPACK_IMPORTED_MODULE_4__["TipoAtividadeListComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, data: { title: "Atividade" } },
-    { path: 'new', component: _tipo_atividade_form_tipo_atividade_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoAtividadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, data: { title: "Inclusão", modal: true } },
-    { path: ':id/edit', component: _tipo_atividade_form_tipo_atividade_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoAtividadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, data: { title: "Edição", modal: true } },
-    { path: ':id/consult', component: _tipo_atividade_form_tipo_atividade_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoAtividadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, data: { title: "Consultar", modal: true } }
+    { path: '', component: _tipo_atividade_list_tipo_atividade_list_component__WEBPACK_IMPORTED_MODULE_4__["TipoAtividadeListComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, data: { title: "Atividades" } },
+    { path: 'new', component: _tipo_atividade_form_tipo_atividade_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoAtividadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, data: { title: "Inclusão de Atividade", modal: true } },
+    { path: ':id/edit', component: _tipo_atividade_form_tipo_atividade_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoAtividadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, data: { title: "Edição de Atividade", modal: true } },
+    { path: ':id/consult', component: _tipo_atividade_form_tipo_atividade_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoAtividadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, data: { title: "Consulta a Atividade", modal: true } }
 ];
 class TipoAtividadeRoutingModule {
 }

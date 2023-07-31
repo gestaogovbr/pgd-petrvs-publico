@@ -28,7 +28,7 @@ export class ErrorListComponent extends PageListBase<Error, ErrorDaoService> {
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     /* Inicializações */
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
-    this.title = "Log de Erros";
+    this.title = this.lex.translate("Logs dos Erros");
     this.filter = this.fh.FormBuilder({
       type: {default: ""},
       responsavel_id: {default: ""},

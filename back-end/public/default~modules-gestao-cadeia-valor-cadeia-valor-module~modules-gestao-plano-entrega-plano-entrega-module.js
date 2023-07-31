@@ -109,7 +109,7 @@ class CadeiaValorListProcessosEntregasComponent extends src_app_modules_base_pag
         };
         this.cadeiaValorDao = injector.get(src_app_dao_cadeia_valor_dao_service__WEBPACK_IMPORTED_MODULE_1__["CadeiaValorDaoService"]);
         this.cadeiaValorProcessoDao = injector.get(src_app_dao_cadeia_valor_processo_dao_service__WEBPACK_IMPORTED_MODULE_2__["CadeiaValorProcessoDaoService"]);
-        this.title = this.lex.noun("Processos", true);
+        this.title = this.lex.translate("Processos");
         this.filter = this.fh.FormBuilder({
             nome: { default: "" },
             cadeia_valor_id: { default: null },
@@ -232,7 +232,7 @@ class CadeiaValorListComponent extends _base_page_list_base__WEBPACK_IMPORTED_MO
         };
         /* Inicializações */
         this.code = "MOD_CADV";
-        this.title = this.lex.noun('Cadeia de Valor', true);
+        this.title = this.lex.translate('Cadeias de Valores');
         this.filter = this.fh.FormBuilder({});
     }
     ngAfterViewInit() {
@@ -334,7 +334,7 @@ class CadeiaValorFormComponent extends _base_page_form_base__WEBPACK_IMPORTED_MO
             return result;
         };
         this.titleEdit = (entity) => {
-            return "Editando " + ((entity === null || entity === void 0 ? void 0 : entity.nome) || "");
+            return "Editando " + this.lex.translate("Cadeia de Valor") + ': ' + ((entity === null || entity === void 0 ? void 0 : entity.nome) || "");
         };
         this.join = ['processos'];
         this.form = this.fh.FormBuilder({
@@ -393,11 +393,11 @@ CadeiaValorFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵ�
     } if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 12)("label", "Nome da " + ctx.lex.noun("cadeia de valor"))("control", ctx.form.controls.nome);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 12)("label", "Nome da " + ctx.lex.translate("cadeia de valor"))("control", ctx.form.controls.nome);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.inicio)("labelInfo", "In\u00EDcio da " + ctx.lex.noun("cadeia de valor"));
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.inicio)("labelInfo", "In\u00EDcio da " + ctx.lex.translate("cadeia de valor"));
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.fim)("labelInfo", "Fim da " + ctx.lex.noun("cadeia de valor"));
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.fim)("labelInfo", "Fim da " + ctx.lex.translate("cadeia de valor"));
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("entity", ctx.entity)("cdRef", ctx.cdRef);
     } }, directives: [_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_4__["EditableFormComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_6__["InputTextComponent"], _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_7__["InputDatetimeComponent"], _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_8__["SeparatorComponent"], _cadeia_valor_list_processos_cadeia_valor_list_processos_component__WEBPACK_IMPORTED_MODULE_9__["CadeiaValorListProcessosComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJjYWRlaWEtdmFsb3ItZm9ybS5jb21wb25lbnQuc2NzcyJ9 */"] });
@@ -481,7 +481,7 @@ function CadeiaValorListGridComponent_column_8_Template(rf, ctx) { if (rf & 1) {
     const _r9 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵreference"](2);
     const _r11 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵreference"](4);
     const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("align", "center")("hint", ctx_r1.lex.noun("Processos", true))("template", _r9)("expandTemplate", _r11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("align", "center")("hint", ctx_r1.lex.translate("Processos"))("template", _r9)("expandTemplate", _r11);
 } }
 function CadeiaValorListGridComponent_ng_template_10_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "span", 24);
@@ -614,11 +614,11 @@ CadeiaValorListGridComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_5__[
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 6)("control", ctx.filter.controls.nome)("labelInfo", "Nome " + ctx.lex.noun("cadeia de valor", false, true));
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 6)("control", ctx.filter.controls.nome)("labelInfo", "Nome " + ctx.lex.translate("cadeia de valor"));
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.inicio)("labelInfo", "In\u00EDcio " + ctx.lex.noun("cadeia de valor", false, true));
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.inicio)("labelInfo", "In\u00EDcio " + ctx.lex.translate("cadeia de valor"));
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.fim)("labelInfo", "Fim " + ctx.lex.noun("cadeia de valor", false, true));
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.fim)("labelInfo", "Fim " + ctx.lex.translate("cadeia de valor"));
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngIf", !ctx.selectable);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
@@ -684,7 +684,7 @@ function CadeiaValorMapaComponent_ng_template_0_Template(rf, ctx) { if (rf & 1) 
     const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("form", ctx_r1.form);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 12)("label", "Nome do " + ctx_r1.lex.noun("processo"))("control", ctx_r1.form.controls.nome);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 12)("label", "Nome do " + ctx_r1.lex.translate("processo"))("control", ctx_r1.form.controls.nome);
 } }
 const _c2 = function (a0) { return { processo: a0 }; };
 function CadeiaValorMapaComponent_div_14_div_13_ng_template_7_div_5_Template(rf, ctx) { if (rf & 1) {
@@ -858,7 +858,7 @@ class CadeiaValorMapaComponent extends src_app_modules_base_page_frame_base__WEB
         this.dao = injector.get(src_app_dao_cadeia_valor_dao_service__WEBPACK_IMPORTED_MODULE_2__["CadeiaValorDaoService"]);
         this.cadeiaValorProcessoDao = injector.get(src_app_dao_cadeia_valor_processo_dao_service__WEBPACK_IMPORTED_MODULE_5__["CadeiaValorProcessoDaoService"]);
         this.join = ['processos'];
-        this.title = this.lex.noun('Cadeia de valor', true);
+        this.title = this.lex.translate('Cadeias de Valores');
         this.form = this.fh.FormBuilder({
             cadeia_valor_id: { default: null },
             nome: { default: "" }
@@ -869,7 +869,6 @@ class CadeiaValorMapaComponent extends src_app_modules_base_page_frame_base__WEB
         this.loadData(this.entity);
     }
     consultProcesso(processo) {
-        //let processo = data as ;
         this.go.navigate({ route: ['gestao', 'plano-entrega', 'entrega', 'processos', processo.id] });
     }
     addProcesso(processo) {
@@ -1167,7 +1166,6 @@ class CadeiaValorListProcessosComponent extends src_app_modules_base_page_frame_
         this.validateLevel = (parents, item, children) => {
             if (children.length) {
                 let path = [...parents.map(x => x.value), item.value];
-                //this.hasIndexChanged(path, (item.value as number));
                 return this.processos(path).length == path.length;
             }
             else {
@@ -1320,7 +1318,6 @@ class CadeiaValorListProcessosComponent extends src_app_modules_base_page_frame_
                 result = row;
                 if (!this.isNoPersist)
                     result = yield ((_b = this.processosDao) === null || _b === void 0 ? void 0 : _b.save(row));
-                //this.cdRef.detectChanges();
             }
             return result;
         });
@@ -1334,7 +1331,6 @@ class CadeiaValorListProcessosComponent extends src_app_modules_base_page_frame_
     }
     dynamicButtons(row) {
         let result = [];
-        let cadeiaValorProcesso = row;
         result.push({ hint: "Adicionar filho", icon: "bi bi-plus-circle", onClick: this.addChildProcesso.bind(this) });
         return result;
     }
@@ -1414,10 +1410,10 @@ __webpack_require__.r(__webpack_exports__);
 const routes = [
     { path: '', component: _cadeia_valor_list_cadeia_valor_list_component__WEBPACK_IMPORTED_MODULE_3__["CadeiaValorListComponent"], canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: _resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Cadeia de Valor" } },
     { path: 'grid', component: _cadeia_valor_list_grid_cadeia_valor_list_grid_component__WEBPACK_IMPORTED_MODULE_5__["CadeiaValorListGridComponent"], canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: _resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, data: { title: "Cadeia de Valor" } },
-    { path: 'new', component: _cadeia_valor_form_cadeia_valor_form_component__WEBPACK_IMPORTED_MODULE_4__["CadeiaValorFormComponent"], canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: _resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
-    { path: ':id/edit', component: _cadeia_valor_form_cadeia_valor_form_component__WEBPACK_IMPORTED_MODULE_4__["CadeiaValorFormComponent"], canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: _resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
-    { path: ':id/consult', component: _cadeia_valor_form_cadeia_valor_form_component__WEBPACK_IMPORTED_MODULE_4__["CadeiaValorFormComponent"], canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: _resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } },
-    { path: 'processoList', component: _cadeia_valor_list_processos_entregas_cadeia_valor_list_processos_entregas_component__WEBPACK_IMPORTED_MODULE_6__["CadeiaValorListProcessosEntregasComponent"], canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: _resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Lista de Processos", modal: true } }
+    { path: 'new', component: _cadeia_valor_form_cadeia_valor_form_component__WEBPACK_IMPORTED_MODULE_4__["CadeiaValorFormComponent"], canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: _resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Cadeia de Valor", modal: true } },
+    { path: ':id/edit', component: _cadeia_valor_form_cadeia_valor_form_component__WEBPACK_IMPORTED_MODULE_4__["CadeiaValorFormComponent"], canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: _resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição de Cadeia de Valor", modal: true } },
+    { path: ':id/consult', component: _cadeia_valor_form_cadeia_valor_form_component__WEBPACK_IMPORTED_MODULE_4__["CadeiaValorFormComponent"], canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: _resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Cadeia de Valor", modal: true } },
+    { path: 'processoList', component: _cadeia_valor_list_processos_entregas_cadeia_valor_list_processos_entregas_component__WEBPACK_IMPORTED_MODULE_6__["CadeiaValorListProcessosEntregasComponent"], canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: _resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Lista de Processos da Cadeia de Valor", modal: true } }
 ];
 class CadeiaValorRoutingModule {
 }

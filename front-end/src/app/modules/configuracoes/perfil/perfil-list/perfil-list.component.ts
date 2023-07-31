@@ -19,7 +19,6 @@ export class PerfilListComponent extends PageListBase<Perfil, PerfilDaoService> 
   constructor(public injector: Injector) {
     super(injector, Perfil, PerfilDaoService);
     /* Inicializações */
-    // this.title = "Perfil";
     this.title = this.lex.translate("Perfis");
     this.code = "MOD_CFG_PERFS";
     this.filter = this.fh.FormBuilder({

@@ -62,7 +62,7 @@ class TipoAvaliacaoFormComponent extends src_app_modules_base_page_form_base__WE
             return result;
         };
         this.titleEdit = (entity) => {
-            return "Editando " + ((entity === null || entity === void 0 ? void 0 : entity.nome) || "");
+            return "Editando " + this.lex.translate("Tipo de Avaliação") + ': ' + ((entity === null || entity === void 0 ? void 0 : entity.nome) || "");
         };
         this.tipoJustificativaDao = injector.get(src_app_dao_tipo_justificativa_dao_service__WEBPACK_IMPORTED_MODULE_4__["TipoJustificativaDaoService"]);
         this.join = ["tipos_avaliacoes_justificativas", "tipos_avaliacoes_justificativas.tipo_justificativa"];
@@ -94,15 +94,6 @@ class TipoAvaliacaoFormComponent extends src_app_modules_base_page_form_base__WE
     ;
     loadData(entity, form) {
         let formValue = Object.assign({}, form.value);
-        /*if(entity.tipos_avaliacoes_justificativas?.length) {
-          entity.tipos_avaliacoes_justificativas!.forEach(t => {
-            this.justificativasLista.push({
-              key: t.tipo_justificativa_id,
-              value: t.tipo_justificativa?.nome || "Desconhecido",
-              data: t
-            });
-          });
-        }*/
         form.patchValue(this.util.fillForm(formValue, entity));
     }
     initializeData(form) {
@@ -113,11 +104,6 @@ class TipoAvaliacaoFormComponent extends src_app_modules_base_page_form_base__WE
         return new Promise((resolve, reject) => {
             let tipoAvaliacao = this.util.fill(new src_app_models_tipo_avaliacao_model__WEBPACK_IMPORTED_MODULE_2__["TipoAvaliacao"](), this.entity);
             tipoAvaliacao = this.util.fillForm(tipoAvaliacao, this.form.value);
-            /*tipoAvaliacao.tipos_avaliacoes_justificativas = this.justificativasLista.map(j => {
-              return j.data ? j.data : Object.assign(new TipoAvaliacaoJustificativa(), {
-                tipo_justificativa_id: j.key
-              });
-            });*/
             resolve(tipoAvaliacao);
         });
     }
@@ -155,7 +141,7 @@ TipoAvaliacaoFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_6__["�
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 6);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 2)("label", "Aceita " + ctx.lex.noun("Entrega") + "?")("items", ctx.lookup.SIMNAO);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 2)("label", "Aceita " + ctx.lex.translate("Entrega") + "?")("items", ctx.lookup.SIMNAO);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 6);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
@@ -163,7 +149,7 @@ TipoAvaliacaoFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_6__["�
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 3);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 12)("canEdit", true)("addItemControl", _r0)("label", ctx.lex.noun("Justificativa", true))("items", ctx.justificativasLista);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 12)("canEdit", true)("addItemControl", _r0)("label", ctx.lex.translate("Justificativa"))("items", ctx.justificativasLista);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 12)("dao", ctx.tipoJustificativaDao)("addRoute", _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵpureFunction1"](21, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵpureFunction0"](20, _c0)));
     } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_0__["EditableFormComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_7__["InputTextComponent"], _components_input_input_rate_input_rate_component__WEBPACK_IMPORTED_MODULE_8__["InputRateComponent"], _components_input_input_radio_input_radio_component__WEBPACK_IMPORTED_MODULE_9__["InputRadioComponent"], _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_10__["InputSelectComponent"], _components_input_input_color_input_color_component__WEBPACK_IMPORTED_MODULE_11__["InputColorComponent"], _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_12__["InputMultiselectComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJ0aXBvLWF2YWxpYWNhby1mb3JtLmNvbXBvbmVudC5zY3NzIn0= */"] });
@@ -241,7 +227,7 @@ class TipoAvaliacaoListComponent extends src_app_modules_base_page_list_base__WE
             return result;
         };
         /* Inicializações */
-        this.title = "Tipos de " + this.lex.noun("Avaliação", true);
+        this.title = this.lex.translate("Tipos de Avaliação");
         this.code = "MOD_TIPO_AVAL";
         this.filter = this.fh.FormBuilder({
             nome: { default: "" },
@@ -309,11 +295,11 @@ TipoAvaliacaoListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["�
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", ctx.filterCollapsed);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", "Nome " + ctx.lex.noun("tipo de avalia\u00E7\u00E3o", false, true))("control", ctx.filter.controls.nome);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", "Nome " + ctx.lex.translate("tipo de avalia\u00E7\u00E3o"))("control", ctx.filter.controls.nome);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("template", _r0);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("title", "Aceita " + ctx.lex.noun("entrega"))("template", _r2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("title", "Aceita " + ctx.lex.translate("entrega"))("template", _r2);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](4);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("onEdit", ctx.edit)("options", ctx.options);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
@@ -348,9 +334,9 @@ __webpack_require__.r(__webpack_exports__);
 
 const routes = [
     { path: '', component: _tipo_avaliacao_list_tipo_avaliacao_list_component__WEBPACK_IMPORTED_MODULE_4__["TipoAvaliacaoListComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Tipos de Avaliação" } },
-    { path: 'new', component: _tipo_avaliacao_form_tipo_avaliacao_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoAvaliacaoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
-    { path: ':id/edit', component: _tipo_avaliacao_form_tipo_avaliacao_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoAvaliacaoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
-    { path: ':id/consult', component: _tipo_avaliacao_form_tipo_avaliacao_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoAvaliacaoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } }
+    { path: 'new', component: _tipo_avaliacao_form_tipo_avaliacao_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoAvaliacaoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Tipo de Avaliação", modal: true } },
+    { path: ':id/edit', component: _tipo_avaliacao_form_tipo_avaliacao_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoAvaliacaoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição de Tipo de Avaliação", modal: true } },
+    { path: ':id/consult', component: _tipo_avaliacao_form_tipo_avaliacao_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoAvaliacaoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Tipo de Avaliação", modal: true } }
 ];
 class TipoAvaliacaoRoutingModule {
 }

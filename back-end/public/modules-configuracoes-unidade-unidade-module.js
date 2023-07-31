@@ -94,7 +94,7 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
             return result;
         };
         this.titleEdit = (entity) => {
-            return "Editando " + ((entity === null || entity === void 0 ? void 0 : entity.sigla) || "") + ' - ' + ((entity === null || entity === void 0 ? void 0 : entity.nome) || "");
+            return "Editando " + this.lex.translate("Unidade") + ': ' + ((entity === null || entity === void 0 ? void 0 : entity.sigla) || "");
         };
         this.entidadeDao = injector.get(src_app_dao_entidade_dao_service__WEBPACK_IMPORTED_MODULE_3__["EntidadeDaoService"]);
         this.cidadeDao = injector.get(src_app_dao_cidade_dao_service__WEBPACK_IMPORTED_MODULE_2__["CidadeDaoService"]);
@@ -122,19 +122,6 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
             etiqueta_icone: { default: null },
             etiqueta_cor: { default: null },
             expediente24: { default: true },
-            /*notifica_demanda_distribuicao: {default: true},
-            notifica_demanda_conclusao: {default: true},
-            notifica_demanda_avaliacao: {default: true},
-            notifica_demanda_modificacao: {default: true},
-            notifica_demanda_comentario: {default: true},
-            template_demanda_distribuicao: {default: ""},
-            template_demanda_conclusao: {default: ""},
-            template_demanda_avaliacao: {default: ""},
-            template_demanda_modificacao: {default: ""},
-            template_demanda_comentario: {default: ""},
-            enviar_petrvs: {default: true},
-            enviar_email: {default: true},
-            enviar_whatsapp: {default: true},*/
             expediente: { default: null },
             usar_expediente_entidade: { default: true },
             texto_complementar_plano: { default: "" }
@@ -181,21 +168,7 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
                 this.gestorSubstituto.loadSearch(((_c = entity === null || entity === void 0 ? void 0 : entity.gestor_substituto) === null || _c === void 0 ? void 0 : _c.usuario) || ((_d = entity.gestor_substituto) === null || _d === void 0 ? void 0 : _d.usuario.id)),
                 this.entidade.loadSearch(entity.entidade || entity.entidade_id)
             ]);
-            this.form.patchValue(this.util.fillForm(formValue, Object.assign(Object.assign({}, entity), {
-            //expediente24: entity.horario_trabalho_fim.startsWith("24:00")
-            /*notifica_demanda_distribuicao: entity.notificacoes?.notifica_demanda_distribuicao == undefined || entity.notificacoes?.notifica_demanda_distribuicao,
-            notifica_demanda_conclusao: entity.notificacoes?.notifica_demanda_conclusao == undefined || entity.notificacoes?.notifica_demanda_conclusao,
-            notifica_demanda_avaliacao: entity.notificacoes?.notifica_demanda_avaliacao == undefined || entity.notificacoes?.notifica_demanda_avaliacao,
-            notifica_demanda_modificacao: entity.notificacoes?.notifica_demanda_modificacao == undefined || entity.notificacoes?.notifica_demanda_modificacao,
-            notifica_demanda_comentario: entity.notificacoes?.notifica_demanda_comentario == undefined || entity.notificacoes?.notifica_demanda_comentario,
-            template_demanda_distribuicao: entity.notificacoes?.template_demanda_distribuicao || "",
-            template_demanda_conclusao: entity.notificacoes?.template_demanda_conclusao || "",
-            template_demanda_avaliacao: entity.notificacoes?.template_demanda_avaliacao || "",
-            template_demanda_modificacao: entity.notificacoes?.template_demanda_modificacao || "",
-            template_demanda_comentario: entity.notificacoes?.template_demanda_comentario || "",
-            enviar_email: entity.notificacoes?.enviar_email == undefined || entity.notificacoes?.enviar_email,
-            enviar_whatsapp: entity.notificacoes?.enviar_whatsapp == undefined || entity.notificacoes?.enviar_whatsapp*/
-            })));
+            this.form.patchValue(this.util.fillForm(formValue, Object.assign(Object.assign({}, entity), {})));
         });
     }
     initializeData(form) {
@@ -209,30 +182,6 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
             let unidade = this.util.fill(new src_app_models_unidade_model__WEBPACK_IMPORTED_MODULE_8__["Unidade"](), this.entity);
             unidade = this.util.fillForm(unidade, this.form.value);
             unidade.notificacoes = this.entity.notificacoes;
-            /*unidade.notificacoes.notifica_demanda_distribuicao = form.notifica_demanda_distribuicao;
-            unidade.notificacoes.notifica_demanda_conclusao = form.notifica_demanda_conclusao;
-            unidade.notificacoes.notifica_demanda_avaliacao = form.notifica_demanda_avaliacao;
-            unidade.notificacoes.notifica_demanda_modificacao = form.notifica_demanda_modificacao;
-            unidade.notificacoes.notifica_demanda_comentario = form.notifica_demanda_comentario;
-            unidade.notificacoes.template_demanda_distribuicao = form.template_demanda_distribuicao;
-            unidade.notificacoes.template_demanda_conclusao = form.template_demanda_conclusao;
-            unidade.notificacoes.template_demanda_avaliacao = form.template_demanda_avaliacao;
-            unidade.notificacoes.template_demanda_modificacao = form.template_demanda_modificacao;
-            unidade.notificacoes.template_demanda_comentario = form.template_demanda_comentario;
-            unidade.notificacoes.enviar_email = form.enviar_email;
-            unidade.notificacoes.enviar_whatsapp = form.enviar_whatsapp;*/
-            /* Remove os ids gerados para os novos unidades_origem_atividades, será gerado pelo servidor como UUID */
-            /* O pai vai ser resolvido do lado do servidor
-            if(!this.form.controls.unidade_id.value?.length) { //Então, selecionou o Pai.
-              unidade.unidade_id = (this.pai?.searchObj as Unidade).id;
-              unidade.codigoPai = (this.pai?.searchObj as Unidade).codigo;
-              if(!(this.pai?.searchObj as Unidade).path.length) {//Então, o pai não tem Path (não tem Pai do Pai)
-                unidade.path = "/"+(this.pai?.searchObj as Unidade).id+"/";
-              }
-              else{//O Pai tem um Pai, já vai vir algo do tipo '/dadasd-dasdas-dasdas/'
-                unidade.path = (this.pai?.searchObj as Unidade).path+(this.pai?.searchObj as Unidade).id+"/";
-              }
-            }*/
             resolve(unidade);
         });
     }
@@ -320,13 +269,13 @@ UnidadeFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵde
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 4)("dao", ctx.cidadeDao);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 4)("label", ctx.lex.noun("Unidade") + " pai")("where", _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵpureFunction1"](47, _c7, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵpureFunction1"](45, _c6, ctx.form.controls.entidade_id.value)))("dao", ctx.dao);
+        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 4)("label", ctx.lex.translate("Unidade") + " pai")("where", _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵpureFunction1"](47, _c7, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵpureFunction1"](45, _c6, ctx.form.controls.entidade_id.value)))("dao", ctx.dao);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 4)("dao", ctx.entidadeDao);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 4)("label", "Contagem " + ctx.lex.noun("Prazo de Distribui\u00E7\u00E3o"))("items", ctx.lookup.DIA_HORA_CORRIDOS_OU_UTEIS);
+        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 4)("label", "Contagem " + ctx.lex.translate("Prazo de Distribui\u00E7\u00E3o"))("items", ctx.lookup.DIA_HORA_CORRIDOS_OU_UTEIS);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 4)("label", "Contagem " + ctx.lex.noun("Prazo de Entrega"))("items", ctx.lookup.HORAS_CORRIDAS_OU_UTEIS);
+        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 4)("label", "Contagem " + ctx.lex.translate("Prazo de Entrega"))("items", ctx.lookup.HORAS_CORRIDAS_OU_UTEIS);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 4)("items", ctx.lookup.SIMNAO);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](3);
@@ -338,9 +287,9 @@ UnidadeFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵde
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 3);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("label", "Texto complementar " + ctx.lex.noun("Plano de Trabalho", false, true))("dataset", ctx.planoDataset);
+        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("label", "Texto complementar " + ctx.lex.translate("Plano de Trabalho"))("dataset", ctx.planoDataset);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("label", "Usar o calend\u00E1rio " + ctx.lex.noun("entidade", false, true))("size", 12);
+        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("label", "Usar o calend\u00E1rio " + ctx.lex.translate("entidade"))("size", 12);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("disabled", ctx.form.controls.usar_expediente_entidade.value ? "true" : undefined)("expedienteDisabled", ctx.entity == null ? null : ctx.entity.entidade == null ? null : ctx.entity.entidade.expediente)("control", ctx.form.controls.expediente);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
@@ -473,7 +422,7 @@ class UnidadeListComponent extends src_app_modules_base_page_list_base__WEBPACK_
         this.cidadeDao = injector.get(src_app_dao_cidade_dao_service__WEBPACK_IMPORTED_MODULE_2__["CidadeDaoService"]);
         this.entidadeDao = injector.get(src_app_dao_entidade_dao_service__WEBPACK_IMPORTED_MODULE_3__["EntidadeDaoService"]);
         /* Inicializações */
-        this.title = this.lex.noun("Unidade", true);
+        this.title = this.lex.translate("Unidades");
         this.code = "MOD_CFG_UND";
         this.filter = this.fh.FormBuilder({
             entidade_id: { default: (_a = this.auth.unidade) === null || _a === void 0 ? void 0 : _a.entidade_id },
@@ -494,8 +443,6 @@ class UnidadeListComponent extends src_app_modules_base_page_list_base__WEBPACK_
     dynamicOptions(row) {
         let result = [];
         let unidade = row;
-        /* Testa se o usuário possui permissão para exibir dados da unidade
-        if (this.auth.hasPermissionTo("MOD_UND_CONS")) result.push({ icon: "bi bi-activity", label: "Ver Atividades", onClick: this.consultAtividades.bind(this) });*/
         // Testa se o usuário possui permissão para exibir dados da unidade
         if (this.auth.hasPermissionTo("MOD_UND_CONS"))
             result.push({ icon: "bi bi-info-circle", label: "Informações", onClick: this.consult.bind(this) });
@@ -582,7 +529,7 @@ UnidadeListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdef
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("template", _r3);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("title", ctx.lex.noun("Cidade"))("template", _r5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("title", ctx.lex.translate("Cidade"))("template", _r5);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("template", _r7);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](3);
@@ -898,7 +845,7 @@ UnidadeIntegranteComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_5__["�
         const _r6 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵreference"](11);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("items", ctx.items)("minHeight", 500)("form", ctx.form)("hasDelete", true)("add", ctx.addIntegrante.bind(ctx))("load", ctx.loadIntegrante.bind(ctx))("remove", ctx.removeIntegrante.bind(ctx))("save", ctx.saveIntegrante.bind(ctx))("hasAdd", ctx.auth.hasPermissionTo("MOD_PRGT_PART_INCL"))("hasEdit", ctx.auth.hasPermissionTo("MOD_PRGT_PART_EDT"))("hasDelete", ctx.auth.hasPermissionTo("MOD_PRGT_PART_EXCL"));
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("title", ctx.lex.noun("Usu\u00E1rio"))("template", _r0)("editTemplate", _r2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("title", ctx.lex.translate("Usu\u00E1rio"))("template", _r0)("editTemplate", _r2);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](5);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("template", _r4)("editTemplate", _r6);
     } }, directives: [src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__["GridComponent"], _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_6__["ColumnsComponent"], _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_7__["ColumnComponent"], _components_profile_picture_profile_picture_component__WEBPACK_IMPORTED_MODULE_8__["ProfilePictureComponent"], _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_9__["InputSearchComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_10__["NgForOf"], _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_11__["BadgeComponent"], _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_12__["InputMultiselectComponent"], _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_13__["InputSelectComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJ1bmlkYWRlLWludGVncmFudGUuY29tcG9uZW50LnNjc3MifQ== */"] });
@@ -1152,9 +1099,9 @@ UnidadeMergeComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵde
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("items", ctx.items)("form", ctx.form)("add", ctx.addMerge.bind(ctx))("load", ctx.loadMerge.bind(ctx))("remove", ctx.removeMerge.bind(ctx))("save", ctx.saveMerge.bind(ctx));
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("title", ctx.lex.noun("Unidade") + " origem")("template", _r0)("editTemplate", _r2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("title", ctx.lex.translate("Unidade") + " origem")("template", _r0)("editTemplate", _r2);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("title", ctx.lex.noun("Unidade") + " destino")("template", _r4)("editTemplate", _r6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("title", ctx.lex.translate("Unidade") + " destino")("template", _r4)("editTemplate", _r6);
     } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__["EditableFormComponent"], _components_top_alert_top_alert_component__WEBPACK_IMPORTED_MODULE_5__["TopAlertComponent"], _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_6__["ToolbarComponent"], _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_7__["InputSwitchComponent"], _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_8__["GridComponent"], _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_9__["ColumnsComponent"], _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_10__["ColumnComponent"], _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_11__["InputSearchComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJ1bmlkYWRlLW1lcmdlLmNvbXBvbmVudC5zY3NzIn0= */"] });
 
 
@@ -1190,11 +1137,11 @@ __webpack_require__.r(__webpack_exports__);
 const routes = [
     { path: '', component: _unidade_list_unidade_list_component__WEBPACK_IMPORTED_MODULE_4__["UnidadeListComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Unidades" } },
     { path: ':id/subordinadas', component: _unidade_list_unidade_list_component__WEBPACK_IMPORTED_MODULE_4__["UnidadeListComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Unidades subordinadas" } },
-    { path: 'new', component: _unidade_form_unidade_form_component__WEBPACK_IMPORTED_MODULE_3__["UnidadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
-    { path: ':id/edit', component: _unidade_form_unidade_form_component__WEBPACK_IMPORTED_MODULE_3__["UnidadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
-    { path: ':id/consult', component: _unidade_form_unidade_form_component__WEBPACK_IMPORTED_MODULE_3__["UnidadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } },
-    { path: ':id/:idUnidade/integrante', component: _unidade_integrante_unidade_integrante_component__WEBPACK_IMPORTED_MODULE_6__["UnidadeIntegranteComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Integrantes", modal: true } },
-    { path: 'merge', component: _unidade_merge_unidade_merge_component__WEBPACK_IMPORTED_MODULE_5__["UnidadeMergeComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Unificar", modal: true } }
+    { path: 'new', component: _unidade_form_unidade_form_component__WEBPACK_IMPORTED_MODULE_3__["UnidadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Unidade", modal: true } },
+    { path: ':id/edit', component: _unidade_form_unidade_form_component__WEBPACK_IMPORTED_MODULE_3__["UnidadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição de Unidade", modal: true } },
+    { path: ':id/consult', component: _unidade_form_unidade_form_component__WEBPACK_IMPORTED_MODULE_3__["UnidadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Unidade", modal: true } },
+    { path: ':id/:idUnidade/integrante', component: _unidade_integrante_unidade_integrante_component__WEBPACK_IMPORTED_MODULE_6__["UnidadeIntegranteComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Integrantes da Unidade", modal: true } },
+    { path: 'merge', component: _unidade_merge_unidade_merge_component__WEBPACK_IMPORTED_MODULE_5__["UnidadeMergeComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Unificação", modal: true } }
 ];
 class UnidadeRoutingModule {
 }

@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
@@ -92,7 +92,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
   }
 
   public titleEdit = (entity: Usuario): string => {
-    return "Editando " + (entity?.matricula || "") + ' - ' + (entity?.nome || "");
+    return "Editando " + this.lex.translate("Usuário") + ': ' + (entity?.matricula || "") + ' - ' + (entity?.apelido || "");
   }
 
 }

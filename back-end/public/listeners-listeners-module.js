@@ -66,7 +66,7 @@ class ProcedimentoTrabalharComponent extends _listener_base__WEBPACK_IMPORTED_MO
                 toolbarButtons.push({
                     icon: "bi bi-boxes",
                     color: "btn-outline-secondary",
-                    hint: "Incluir " + this.lex.noun("entrega"),
+                    hint: "Incluir " + this.lex.translate("entrega"),
                     onClick: this.incluirEntrega.bind(this),
                     items: menu.length ? menu : undefined
                 });
@@ -85,7 +85,7 @@ class ProcedimentoTrabalharComponent extends _listener_base__WEBPACK_IMPORTED_MO
                     menu.push({
                         icon: "bi bi-plus-circle",
                         color: "btn-outline-primary",
-                        label: "Incluir " + this.lex.noun("atividade"),
+                        label: "Incluir " + this.lex.translate("atividade"),
                         onClick: this.incluirAtividade.bind(this)
                     });
                 }
@@ -93,14 +93,14 @@ class ProcedimentoTrabalharComponent extends _listener_base__WEBPACK_IMPORTED_MO
                     menu.push({
                         icon: "bi bi-check-circle",
                         color: "btn-outline-primary",
-                        label: "Concluir " + this.lex.noun("atividade"),
+                        label: "Concluir " + this.lex.translate("atividade"),
                         onClick: this.concluirAtividade.bind(this)
                     });
                 }
                 toolbarButtons.push({
                     icon: "bi bi-activity",
                     color: "btn-outline-success",
-                    hint: this.lex.noun("atividade"),
+                    hint: this.lex.translate("atividade"),
                     onClick: this.atividades.bind(this),
                     items: menu.length ? menu : undefined
                 });
@@ -432,14 +432,6 @@ class EditorMontarComponent extends _listener_base__WEBPACK_IMPORTED_MODULE_3__[
     loadToolbarButtons(buttons) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             this.gb.toolbarButtons = [];
-            /*if(buttons.includes("incluir")) {
-              this.gb.toolbarButtons.push({
-                icon: "bi bi-activity",
-                color: "btn-outline-success",
-                hint: "Incluir " + this.lex.noun("demanda"),
-                onClick: this.incluirDemanda.bind(this)
-              });
-            } */
         });
     }
 }

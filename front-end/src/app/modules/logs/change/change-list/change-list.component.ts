@@ -36,7 +36,7 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     this.entityService = injector.get<EntityService>(EntityService);
     /* Inicializações */
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
-    this.title = "Log das alterações";
+    this.title = this.lex.translate("Logs das Alterações");
     this.filter = this.fh.FormBuilder({
       responsavel_id: {default: ""},
       data_inicio: {default: ""},

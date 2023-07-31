@@ -4,7 +4,6 @@ import { EditableFormComponent } from 'src/app/components/editable-form/editable
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
-import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model';
 import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
@@ -67,7 +66,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
 
   constructor(public injector: Injector) {
     super(injector);
-    this.title = this.lex.translate("Entrega");
+    this.title = this.lex.translate("Entregas");
     this.join = ["unidade", "entidade", "entrega"];
     this.code = "MOD_PENT_CONS";
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);

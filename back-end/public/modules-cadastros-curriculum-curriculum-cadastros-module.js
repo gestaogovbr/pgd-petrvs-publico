@@ -52,7 +52,7 @@ class TipoCursoListComponent extends src_app_modules_base_page_list_base__WEBPAC
             return result;
         };
         /* Inicializações */
-        this.title = this.lex.noun("Tipo Curso", true);
+        this.title = this.lex.translate("Tipos de Curso");
         this.code = "MOD_RX";
         //this.join = ["area:nome","tipo:nome"];
         this.filter = this.fh.FormBuilder({
@@ -299,7 +299,7 @@ class FuncaoListComponent extends src_app_modules_base_page_list_base__WEBPACK_I
             return result;
         };
         /* Inicializações */
-        this.title = this.lex.noun("Funções", true);
+        this.title = this.lex.translate("Funções");
         this.code = "MOD_RX";
         //this.join = ["area:nome","tipo:nome"];
         this.filter = this.fh.FormBuilder({
@@ -481,7 +481,7 @@ class AreaTematicaListComponent extends src_app_modules_base_page_list_base__WEB
             return result;
         };
         /* Inicializações */
-        this.title = this.lex.noun("Área Temática", true);
+        this.title = this.lex.translate("Áreas Temáticas");
         this.code = "MOD_RX";
         this.orderBy = [['nome', 'asc']];
         this.filter = this.fh.FormBuilder({
@@ -793,7 +793,7 @@ class MateriaListComponent extends src_app_modules_base_page_list_base__WEBPACK_
         };
         this.area = injector.get(src_app_dao_area_conhecimento_dao_service__WEBPACK_IMPORTED_MODULE_4__["AreaConhecimentoDaoService"]);
         /* Inicializações */
-        this.title = this.lex.noun("Matérias", true);
+        this.title = this.lex.translate("Matérias");
         this.code = "MOD_RX";
         this.join = ["curso:id,nome"];
         this.join = ["curso.area:id,nome"];
@@ -1387,7 +1387,7 @@ class CentroTreinamentoListComponent extends src_app_modules_base_page_list_base
             return result;
         };
         /* Inicializações */
-        this.title = this.lex.noun("Centro de Treinamento", true);
+        this.title = this.lex.translate("Centros de Treinamento");
         this.code = "MOD_RX";
         this.orderBy = [['nome', 'asc']];
         this.filter = this.fh.FormBuilder({
@@ -2014,7 +2014,7 @@ class CapacidadeTecnicaListComponent extends src_app_modules_base_page_list_base
             return result;
         };
         /* Inicializações */
-        this.title = this.lex.noun("Capacidades Técnicas", true);
+        this.title = this.lex.translate("Capacidades Técnicas");
         this.code = "MOD_RX";
         this.join = ["area_tematica:id,nome"];
         this.orderBy = [['nome', 'asc']];
@@ -2192,7 +2192,7 @@ class CursoListComponent extends src_app_modules_base_page_list_base__WEBPACK_IM
             return result;
         };
         /* Inicializações */
-        this.title = this.lex.noun("Cursos", true);
+        this.title = this.lex.translate("Cursos");
         this.code = "MOD_RX";
         this.join = ["area:id,nome", "tipo:id,nome"];
         this.orderBy = [['nome', 'asc']];
@@ -2345,7 +2345,7 @@ class AreaConhecimentoListComponent extends src_app_modules_base_page_list_base_
             return result;
         };
         /* Inicializações */
-        this.title = this.lex.noun("Área de conhecimento", true);
+        this.title = this.lex.translate("Áreas de Conhecimento");
         this.code = "MOD_RX";
         this.orderBy = [['nome', 'asc']];
         this.filter = this.fh.FormBuilder({
@@ -2463,7 +2463,7 @@ class GrupoEspecializadoListComponent extends src_app_modules_base_page_list_bas
             return result;
         };
         /* Inicializações */
-        this.title = this.lex.noun("Grupo Especializado", true);
+        this.title = this.lex.translate("Grupos Especializados");
         this.code = "MOD_RX";
         this.filter = this.fh.FormBuilder({
             nome: { default: "" }
@@ -2751,7 +2751,7 @@ class CargoListComponent extends src_app_modules_base_page_list_base__WEBPACK_IM
             return result;
         };
         /* Inicializações */
-        this.title = this.lex.noun("Cargos", true);
+        this.title = this.lex.translate("Cargos");
         this.code = "MOD_RX";
         this.orderBy = [['nome', 'asc']];
         //this.join = ["area:nome","tipo:nome"];
@@ -2941,7 +2941,7 @@ class AreaAtividadeExternaListComponent extends src_app_modules_base_page_list_b
             return result;
         };
         /* Inicializações */
-        this.title = this.lex.noun("Área da Atividade Externa", true);
+        this.title = this.lex.translate("Áreas da Atividade Externa");
         this.code = "MOD_RX";
         this.orderBy = [['nome', 'asc']];
         this.filter = this.fh.FormBuilder({

@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Injector, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
@@ -86,7 +86,6 @@ export class CadeiaValorMapaComponent extends PageFrameBase {
   }
 
   public consultProcesso(processo: NeastedProcesso) {
-    //let processo = data as ;
     this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', 'processos', processo!.id]});
   }
 

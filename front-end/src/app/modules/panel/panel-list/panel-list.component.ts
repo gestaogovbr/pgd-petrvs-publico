@@ -16,7 +16,7 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
   constructor(public injector: Injector, dao: TenantDaoService) {
     super(injector, Tenant, TenantDaoService);
     /* Inicializações */
-    this.title = "Panel Petrvs";
+    this.title = "Painel Petrvs";
     this.code = "PANEL";
     this.filter = this.fh.FormBuilder({});
     this.options.push({

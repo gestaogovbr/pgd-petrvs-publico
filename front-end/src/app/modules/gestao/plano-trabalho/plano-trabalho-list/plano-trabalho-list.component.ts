@@ -24,7 +24,7 @@ import { DocumentoService } from 'src/app/modules/uteis/documentos/documento.ser
 export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, PlanoTrabalhoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
-  public static selectRoute?: FullRoute = {route: ["gestao", "plano"]};
+  public static selectRoute?: FullRoute = {route: ["gestao", "plano-trabalho"]};
   public unidadeDao: UnidadeDaoService;
   public documentoDao: DocumentoDaoService;
   public documentoService: DocumentoService;

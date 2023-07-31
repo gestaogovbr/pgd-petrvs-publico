@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
@@ -136,6 +136,6 @@ export class PerfilFormComponent extends PageFormBase<Perfil, PerfilDaoService> 
   }
 
   public titleEdit = (entity: Perfil): string => {
-    return "Editando " + (entity?.nome || "");
+    return "Editando " + this.lex.translate("Perfil") + ': ' + (entity?.nome || "");
   }
 }

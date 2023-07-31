@@ -112,7 +112,7 @@ class MaterialServicoListComponent extends src_app_modules_base_page_list_base__
             return result;
         };
         /* Inicializações */
-        this.title = this.lex.noun("Material e serviço", true);
+        this.title = this.lex.translate("Materiais e Serviços");
         this.code = "MOD_MATSRV";
         this.filter = this.fh.FormBuilder({
             tipo: { default: null },
@@ -255,7 +255,7 @@ class MaterialServicoFormComponent extends src_app_modules_base_page_form_base__
             return result;
         };
         this.titleEdit = (entity) => {
-            return "Editando " + ((entity === null || entity === void 0 ? void 0 : entity.descricao) || "");
+            return "Editando " + this.lex.translate("Material-Serviço") + ': ' + ((entity === null || entity === void 0 ? void 0 : entity.descricao) || "");
         };
         this.form = this.fh.FormBuilder({
             'tipo': { default: "MATERIAL" },
@@ -407,9 +407,9 @@ __webpack_require__.r(__webpack_exports__);
 
 const routes = [
     { path: '', component: _material_servico_list_material_servico_list_component__WEBPACK_IMPORTED_MODULE_4__["MaterialServicoListComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Materiais e Serviços" } },
-    { path: 'new', component: _material_servico_form_material_servico_form_component__WEBPACK_IMPORTED_MODULE_3__["MaterialServicoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
-    { path: ':id/edit', component: _material_servico_form_material_servico_form_component__WEBPACK_IMPORTED_MODULE_3__["MaterialServicoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
-    { path: ':id/consult', component: _material_servico_form_material_servico_form_component__WEBPACK_IMPORTED_MODULE_3__["MaterialServicoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } }
+    { path: 'new', component: _material_servico_form_material_servico_form_component__WEBPACK_IMPORTED_MODULE_3__["MaterialServicoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Material e Serviço", modal: true } },
+    { path: ':id/edit', component: _material_servico_form_material_servico_form_component__WEBPACK_IMPORTED_MODULE_3__["MaterialServicoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição de Material e Serviço", modal: true } },
+    { path: ':id/consult', component: _material_servico_form_material_servico_form_component__WEBPACK_IMPORTED_MODULE_3__["MaterialServicoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Material e Serviço", modal: true } }
 ];
 class MaterialServicoRoutingModule {
 }
