@@ -6,6 +6,7 @@ import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
+import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Expediente } from 'src/app/models/expediente.model';
@@ -38,6 +39,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
   public usuarioDao: UsuarioDaoService;
   public unidadeDao: UnidadeDaoService;
   public planoTrabalhoDao: PlanoTrabalhoDaoService;
+  public integranteDao: UnidadeIntegranteDaoService;
   public notificacao: NotificacaoService;
   public planoDataset: TemplateDataset[];
 
@@ -48,6 +50,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.planoTrabalhoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
+    this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
     this.notificacao = injector.get<NotificacaoService>(NotificacaoService);
     this.modalWidth = 1200;
     this.planoDataset = this.planoTrabalhoDao.dataset();
@@ -132,14 +135,19 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     this.loadData(this.entity, form);
   }
 
-  public saveData(form: IIndexable): Promise<Unidade> {
-    return new Promise<Unidade>((resolve, reject) => {
+  public async saveData(form: IIndexable): Promise<Unidade> {
+    let novaUnidade = await new Promise<Unidade>((resolve, reject) => {
       this.notificacoes!.saveData();
       let unidade: Unidade = this.util.fill(new Unidade(), this.entity!);
       unidade = this.util.fillForm(unidade, this.form!.value);
       unidade.notificacoes = this.entity!.notificacoes;
       resolve(unidade);
     });
+    if(novaUnidade) {
+      if(this.formGestor!.controls.gestor_id.value.length > 0) await this.integranteDao.saveIntegrante((novaUnidade as unknown as Unidade).id, this.formGestor!.controls.gestor_id.value, ["GESTOR"]);
+      if(this.formGestor!.controls.gestor_substituto_id.value.length > 0) await this.integranteDao.saveIntegrante((novaUnidade as unknown as Unidade).id, this.formGestor!.controls.gestor_substituto_id.value, ["GESTOR_SUBSTITUTO"]);
+    };
+    return novaUnidade;
   }
 
   public titleEdit = (entity: Unidade): string => {
