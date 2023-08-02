@@ -14,7 +14,7 @@
     </div>
     <separator title="Configurações">
         <input-switch label="Se o termo é obrigatório" [size]="12" controlName="termo_obrigatorio" scale="small" labelPosition="right"></input-switch>
-        <input-search [label]="'Template ' + lex.noun('termo', true, true)" [size]="12" detailsButton labelInfo="Template do termo utilizado no plano de trabalho" controlName="template_tcr_id" [dao]="templateDao" [where]="[['especie', '==', 'TCR']]" [selectRoute]="templateService.selectRoute('TCR')" (details)="templateService.details($event)"></input-search>
-        <input-search [label]="'Tipo de documento ' + lex.noun('termo', true, true)" [size]="12" #tipoDocumento controlName="tipo_documento_tcr_id" [dao]="tipoDocumentoDao" labelInfo="Tipo de documento utilizado para exportar o termo para o SEI/SUPER"></input-search>
+        <input-search [label]="'Template ' + lex.translate('termo')" [size]="12" detailsButton labelInfo="Template do termo utilizado no plano de trabalho" controlName="template_tcr_id" [dao]="templateDao" [where]="[['especie', '==', 'TCR']]" [selectRoute]="templateService.selectRoute('TCR')" (details)="templateService.details($event)"></input-search>
+        <input-search [label]="'Tipo de documento ' + lex.translate('termo')" [size]="12" #tipoDocumento controlName="tipo_documento_tcr_id" [dao]="tipoDocumentoDao" labelInfo="Tipo de documento utilizado para exportar o termo para o SEI/SUPER"></input-search>
     </separator>
 </editable-form>

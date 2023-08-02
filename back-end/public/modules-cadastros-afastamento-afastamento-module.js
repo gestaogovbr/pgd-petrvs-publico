@@ -24,10 +24,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const routes = [
-    { path: '', component: _afastamento_list_afastamento_list_component__WEBPACK_IMPORTED_MODULE_4__["AfastamentoListComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Afastamento" } },
-    { path: 'new', component: _afastamento_form_afastamento_form_component__WEBPACK_IMPORTED_MODULE_3__["AfastamentoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
-    { path: ':id/edit', component: _afastamento_form_afastamento_form_component__WEBPACK_IMPORTED_MODULE_3__["AfastamentoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
-    { path: ':id/consult', component: _afastamento_form_afastamento_form_component__WEBPACK_IMPORTED_MODULE_3__["AfastamentoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } }
+    { path: '', component: _afastamento_list_afastamento_list_component__WEBPACK_IMPORTED_MODULE_4__["AfastamentoListComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Afastamentos" } },
+    { path: 'new', component: _afastamento_form_afastamento_form_component__WEBPACK_IMPORTED_MODULE_3__["AfastamentoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Afastamento", modal: true } },
+    { path: ':id/edit', component: _afastamento_form_afastamento_form_component__WEBPACK_IMPORTED_MODULE_3__["AfastamentoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição de Afastamento", modal: true } },
+    { path: ':id/consult', component: _afastamento_form_afastamento_form_component__WEBPACK_IMPORTED_MODULE_3__["AfastamentoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Afastamento", modal: true } }
 ];
 class AfastamentoRoutingModule {
 }
@@ -90,7 +90,8 @@ class AfastamentoFormComponent extends src_app_modules_base_page_form_base__WEBP
             return result;
         };
         this.titleEdit = (entity) => {
-            return "Editando "; // + (entity?.usuario_id || "");
+            var _a, _b;
+            return "Editando " + this.lex.translate("afastamento") + ': ' + (((_a = entity === null || entity === void 0 ? void 0 : entity.usuario) === null || _a === void 0 ? void 0 : _a.nome) || "") + ' - ' + (((_b = entity === null || entity === void 0 ? void 0 : entity.tipo_motivo_afastamento) === null || _b === void 0 ? void 0 : _b.nome) || "");
         };
         this.tipoMotivoAfastamentoDao = injector.get(src_app_dao_tipo_motivo_afastamento_dao_service__WEBPACK_IMPORTED_MODULE_5__["TipoMotivoAfastamentoDaoService"]);
         this.usuarioDao = injector.get(src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_6__["UsuarioDaoService"]);
@@ -116,7 +117,7 @@ class AfastamentoFormComponent extends src_app_modules_base_page_form_base__WEBP
             let formValue = Object.assign({}, form.value);
             yield Promise.all([
                 this.usuario.loadSearch(entity.usuario || formValue.usuario_id),
-                this.tipoMotivoAfastamento.loadSearch(entity.tipoMotivoAfastamento || formValue.tipo_motivo_afastamento_id)
+                this.tipoMotivoAfastamento.loadSearch(entity.tipo_motivo_afastamento || formValue.tipo_motivo_afastamento_id)
             ]);
             form.patchValue(this.util.fillForm(formValue, entity));
         });
@@ -307,11 +308,11 @@ class AfastamentoListComponent extends src_app_modules_base_page_list_base__WEBP
             }
             return result;
         };
-        this.join = ["tipo_motivo_afastamento", "usuario"];
+        this.join = ["tipo_motivo_afastamento:id, nome", "usuario: id, nome"];
         this.tipoMotivoAfastamentoDao = injector.get(src_app_dao_tipo_motivo_afastamento_dao_service__WEBPACK_IMPORTED_MODULE_4__["TipoMotivoAfastamentoDaoService"]);
         this.usuarioDao = injector.get(src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_5__["UsuarioDaoService"]);
         /* Inicializações */
-        this.title = this.lex.noun("Afastamento", true);
+        this.title = this.lex.translate("Afastamentos");
         this.code = "MOD_AFT";
         this.filter = this.fh.FormBuilder({
             observacoes: { default: "" },
@@ -406,9 +407,9 @@ AfastamentoListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵ�
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 3);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("title", ctx.lex.noun("Usu\u00E1rio"))("template", _r3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("title", ctx.lex.translate("Usu\u00E1rio"))("template", _r3);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("title", ctx.lex.noun("Motivo"))("template", _r5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("title", ctx.lex.translate("Motivo"))("template", _r5);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("template", _r7);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);

@@ -7,9 +7,9 @@ import { TipoMotivoAfastamentoListComponent } from './tipo-motivo-afastamento-li
 
 const routes: Routes = [
   { path: '', component: TipoMotivoAfastamentoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Tipos de Motivo de Afastamento" } },
-  { path: 'new', component: TipoMotivoAfastamentoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
-  { path: ':id/edit', component: TipoMotivoAfastamentoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
-  { path: ':id/consult', component: TipoMotivoAfastamentoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } }
+  { path: 'new', component: TipoMotivoAfastamentoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Tipo de Motivo de Afastamento", modal: true } },
+  { path: ':id/edit', component: TipoMotivoAfastamentoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de Tipo de Motivo de Afastamento", modal: true } },
+  { path: ':id/consult', component: TipoMotivoAfastamentoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Tipo de Motivo de Afastamento", modal: true } }
 ];
 
 @NgModule({

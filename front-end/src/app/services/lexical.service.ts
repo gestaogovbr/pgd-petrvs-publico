@@ -68,6 +68,7 @@ export class LexicalService {
     "tarefa": {single: "tarefa", plural: "tarefas", female: true},
     "tarefa da atividade": {single: "tarefa da atividade", plural: "tarefas da atividade", female: true},
     "tcr": {single: "tcr", plural: "tcrs", female: false},
+    "termo de ciência e responsabilidade": {single: "termo de ciência e responsabilidade", plural: "termos de ciência e responsabilidade", female: false},
     "tempo estimado": {single: "tempo estimado", plural: "tempos estimados", female: false},
     "tempo pactuado": {single: "tempo pactuado", plural: "tempos pactuados", female: false},
     "tempo planejado": {single: "tempo planejado", plural: "tempos planejados", female: false},

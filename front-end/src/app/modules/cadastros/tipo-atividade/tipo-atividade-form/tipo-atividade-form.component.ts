@@ -6,7 +6,6 @@ import { IIndexable } from 'src/app/models/base.model';
 import { TipoAtividade } from 'src/app/models/tipo-atividade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
-import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 
 @Component({
   selector: 'app-tipo-atividade-form',
@@ -94,6 +93,6 @@ export class TipoAtividadeFormComponent extends PageFormBase<TipoAtividade, Tipo
   }
 
   public titleEdit = (entity: TipoAtividade): string => {
-    return "Editando ";// + (entity?.unidade_id || "");
+    return "Editando " + this.lex.translate("Tipo de Atividade") + ': ' + (entity?.nome || "");
   }
 }

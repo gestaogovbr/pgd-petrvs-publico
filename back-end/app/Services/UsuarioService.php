@@ -216,28 +216,12 @@ class UsuarioService extends ServiceBase
     }
 
     public function areasTrabalhoWhere($subordinadas, $usuario = null, $prefix = "") {
-        /*
-        CONFERIR ESTE TRECHO....
-        foreach($usuario->areasTrabalho as $lotacao) {
-            if(($deleted || empty($lotacao->data_fim)) && !UtilService::greaterThanOrIqual($dataRef, $lotacao->data_fim)) {
-                $where[] = $prefix . "id = '" . $lotacao->unidade_id . "'";
-                if($subordinadas) $where[] = $prefix . "path like '%" . $lotacao->unidade_id . "%'";
-            }
-        }
-        */
         $where = [];
         $prefix = empty($prefix) ? "" : $prefix . ".";
         $usuario = $usuario ?? parent::loggedUser();
         foreach($usuario->areasTrabalho as $lotacao) {
             $where[] = $prefix . "id = '" . $lotacao->unidade_id . "'";
             if($subordinadas) $where[] = $prefix . "path like '%" . $lotacao->unidade_id . "%'";
-            /*$lotacoes = $deleted ? $vinculo->withTrashed()->atribuicoes->whereIn('atribuicao', ['LOTADO','COLABORADOR']) : $vinculo->atribuicoes->whereIn('atribuicao', ['LOTADO','COLABORADOR']);
-            foreach($lotacoes as $lotacao){
-                if(!UtilService::greaterThanOrIqual($dataRef, $lotacao->deleted_at)) {
-                    $where[] = $prefix . "id = '" . $vinculo->unidade_id . "'";
-                    if($subordinadas) $where[] = $prefix . "path like '%" . $vinculo->unidade_id . "%'";
-                }
-            }*/
         }
         $result = implode(" OR ", $where);
         return empty($result) ? "false" : "(" . $result . ")";
@@ -264,13 +248,12 @@ class UsuarioService extends ServiceBase
         return $result;
     }
 
-    public function proxyQuery($query, &$data) {    //VER COM O GENISSON
+    public function proxyQuery($query, &$data) {   
         $usuario = parent::loggedUser();
         $where = [];
         $subordinadas = true;
         foreach($data["where"] as $condition) {
             if(is_array($condition) && $condition[0] == "lotacao") {
-                //array_push($where, new RawWhere("EXISTS(SELECT id FROM lotacoes where_lotacoes WHERE where_lotacoes.usuario_id = usuarios.id AND where_lotacoes.unidade_id = ?)", [$condition[2]]));
                 array_push($where, new RawWhere("EXISTS(SELECT id FROM lotacoes where_lotacoes WHERE where_lotacoes.usuario_id = usuarios.id AND where_lotacoes.unidade_id = ?)", [$condition[2]]));
             } else if(is_array($condition) && $condition[0] == "subordinadas") {
                 $subordinadas = $condition[2];

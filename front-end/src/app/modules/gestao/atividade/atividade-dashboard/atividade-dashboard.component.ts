@@ -58,7 +58,7 @@ export class AtividadeDashboardComponent extends AtividadeListBase implements On
     super(injector);
     /* Inicializações */
     //this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
-    this.title = this.lex.noun("Atividade", true);
+    this.title = this.lex.translate("Atividades");
     this.code = "MOD_DMD";
     this.fh = this.injector.get<FormHelperService>(FormHelperService);
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);

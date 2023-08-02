@@ -6,10 +6,10 @@ import { EixoTematicoFormComponent } from './eixo-tematico-form/eixo-tematico-fo
 import { EixoTematicoListComponent } from './eixo-tematico-list/eixo-tematico-list.component';
 
 const routes: Routes = [
-  { path: '', component: EixoTematicoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Entrega" } },
-  { path: 'new', component: EixoTematicoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
-  { path: ':id/edit', component: EixoTematicoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
-  { path: ':id/consult', component: EixoTematicoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } }
+  { path: '', component: EixoTematicoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Eixos Temáticos" } },
+  { path: 'new', component: EixoTematicoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Eixo Temático", modal: true } },
+  { path: ':id/edit', component: EixoTematicoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de Eixo Temático", modal: true } },
+  { path: ':id/consult', component: EixoTematicoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Eixo Temático", modal: true } }
 ];
 
 @NgModule({

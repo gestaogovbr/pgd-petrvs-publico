@@ -12,12 +12,12 @@
         </div>
     </filter>
     <columns>
-        <column [title]="lex.noun('Usuário')" [template]="columnUsuario">
+        <column [title]="lex.translate('Usuário')" [template]="columnUsuario">
             <ng-template let-row="row" #columnUsuario>
                 <span> {{row.usuario.nome}}</span>
             </ng-template>
         </column>
-        <column [title]="lex.noun('Motivo')" [template]="columnMotivoAfastamento">
+        <column [title]="lex.translate('Motivo')" [template]="columnMotivoAfastamento">
             <ng-template let-row="row" #columnMotivoAfastamento>
                 <i [class]="row.tipo_motivo_afastamento.icone"></i>
                 <span [style.color]="row.tipo_motivo_afastamento.cor"> {{row.tipo_motivo_afastamento.nome}}</span>

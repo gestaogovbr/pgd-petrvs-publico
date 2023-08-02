@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { TipoModalidadeDaoService } from 'src/app/dao/tipo-modalidade-dao.service';
@@ -54,7 +54,7 @@ export class TipoModalidadeFormComponent extends PageFormBase<TipoModalidade, Ti
   }
 
   public titleEdit = (entity: TipoModalidade): string => {
-    return "Editando " + (entity?.nome || "");
+    return "Editando " + this.lex.translate("Tipo de Modalidade") + ': ' + (entity?.nome || "");
   }
 }
 

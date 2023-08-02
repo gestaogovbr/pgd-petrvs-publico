@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
@@ -386,11 +386,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     let plano = this.loadEntity();
     /* Confirma dados do documento */
     this.documentos?.saveData();
-    /* Remove os ids gerados para os novos unidades_origem_atividades, será gerado pelo servidor como UUID */
-/*     plano.atividades = plano.atividades.filter((atividade: PlanoAtividade) => {
-      atividade.id = atividade.id.includes("-") ? atividade.id : "";
-      return ["ADD", "EDIT", "DELETE"].includes(atividade._status || "")
-    }); */
     plano.documentos = plano.documentos.filter((documento: Documento) => {
       return ["ADD", "EDIT", "DELETE"].includes(documento._status || "")
     });
@@ -411,7 +406,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public titleEdit = (entity: PlanoTrabalho): string => {
-    return "Editando " ;//+ (entity?.nome || "");
+    return "Editando " + this.lex.translate("Plano de Trabalho") + ': ' + (entity?.usuario?.apelido || "");
   }
 
   public documentoDynamicButtons(row: any): ToolbarButton[] {

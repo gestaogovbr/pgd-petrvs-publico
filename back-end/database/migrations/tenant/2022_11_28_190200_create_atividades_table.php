@@ -45,6 +45,8 @@ class CreateAtividadesTable extends Migration
             $table->foreignUuid('unidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Unidade responsável pela atividade");
             $table->foreignUuid('documento_requisicao_id')->nullable()->constrained('documentos')->onDelete('restrict')->onUpdate('cascade')->comment("Documento de requisição");
             $table->foreignUuid('documento_entrega_id')->nullable()->constrained('documentos')->onDelete('restrict')->onUpdate('cascade')->comment("Documento de entrega");
+            //Criada na tabela 'status' devido à referência cruzada
+            //$table->foreignUuid('status_id')->constrained("status")->onDelete('restrict')->onUpdate('cascade')->comment("Status atual da Atividade");
         });
         // Cria sequencia atividade_numero
         Schema::table('sequence', function (Blueprint $table) {

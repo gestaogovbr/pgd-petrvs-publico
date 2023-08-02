@@ -7,7 +7,6 @@ import { Usuario, UsuarioConfig } from 'src/app/models/usuario.model';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
-import { NotificacoesConfig } from 'src/app/models/notificacao.model';
 import { NotificacoesConfigComponent } from 'src/app/modules/uteis/notificacoes/notificacoes-config/notificacoes-config.component';
 
 @Component({
@@ -95,14 +94,8 @@ export class PreferenciaFormUsuarioComponent extends PageFormBase<Usuario, Usuar
 
   public saveData(form: IIndexable): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      /*let config = this.util.fill(new UsuarioConfig(), this.entity!.config || {});
-      config = this.util.fillForm(config, this.form!.value);
-      this.usuario!.config = Object.assign(this.usuario!.config, value);
-      this.usuarioDaoService.updateJson(this.usuario!.id, 'config', value);*/
-      //this.dao!.update(this.usuarioId!, {config: config})
       this.notificacoes?.saveData();
       let config = this.util.fill(new UsuarioConfig(), this.form!.value);
-      //let notificacoes = this.util.fill(new NotificacoesConfig(), this.form!.value);
       Promise.all([
         this.auth.updateUsuarioConfig(this.usuarioId!, config),
         this.auth.updateUsuarioNotificacoes(this.usuarioId!, this.entity!.notificacoes)
@@ -135,6 +128,6 @@ export class PreferenciaFormUsuarioComponent extends PageFormBase<Usuario, Usuar
   };
 
   public titleEdit = (entity: Usuario): string => {
-    return "Editando ";// + (entity?.unidade_id || "");
+    return "Editando " + this.lex.translate("Preferência")+ ' ' + this.lex.translate("do Usuário") + ': ' + (entity?.apelido || "");
   }
 }

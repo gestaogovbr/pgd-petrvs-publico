@@ -6,5 +6,7 @@ export class QueryOptions {
     public limit?: number;
     public join?: string[];
     
-    constructor() {}
+    constructor(data?: any) {
+        if(data) Object.assign(this, data);
+    }
 }

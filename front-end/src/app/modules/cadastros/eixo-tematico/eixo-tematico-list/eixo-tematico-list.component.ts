@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { EixoTematicoDaoService } from 'src/app/dao/eixo-tematico-dao.service';
@@ -16,7 +16,7 @@ export class EixoTematicoListComponent extends PageListBase<EixoTematico, EixoTe
   constructor(public injector: Injector) {
     super(injector, EixoTematico, EixoTematicoDaoService);
     /* Inicializações */
-    this.title = this.lex.noun('Eixo Temático', true);
+    this.title = this.lex.translate('Eixos Temáticos');
     this.orderBy = [['nome', 'asc']];
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}

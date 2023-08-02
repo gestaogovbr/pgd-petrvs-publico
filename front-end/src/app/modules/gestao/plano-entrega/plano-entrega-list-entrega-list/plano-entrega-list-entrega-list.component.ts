@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
@@ -24,7 +24,7 @@ export class PlanoEntregaListEntregaListComponent extends PageListBase<PlanoEntr
     super(injector, PlanoEntregaEntrega, PlanoEntregaEntregaDaoService);
     this.planoEntregaDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
-    this.title = this.lex.noun("Entregas", true);
+    this.title = this.lex.translate("Entregas");
     this.filter = this.fh.FormBuilder({
       nome: { default: "" },
       descricao: { default: "" },
@@ -35,7 +35,6 @@ export class PlanoEntregaListEntregaListComponent extends PageListBase<PlanoEntr
 
   public dynamicOptions(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
-    let objetivo: PlanejamentoObjetivo = row as PlanejamentoObjetivo;
     result.push({ label: "Informações", icon: "bi bi-info-circle", onClick: (objetivo: PlanejamentoObjetivo) => this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo', objetivo.id, 'consult'] }, { modal: true }) });
     return result;
   }

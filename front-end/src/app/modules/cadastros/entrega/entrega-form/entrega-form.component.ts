@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputTextComponent } from 'src/app/components/input/input-text/input-text.component';
@@ -71,7 +71,7 @@ export class EntregaFormComponent extends PageFormBase<Entrega, EntregaDaoServic
   }
 
   public titleEdit = (entity: Entrega): string => {
-    return "Editando "+ (entity?.nome || "");
+    return "Editando " + this.lex.translate("Entrega") + ': ' + (entity?.nome || "");
   }
 
   public incluirQualitativo(qualitativo: string) {

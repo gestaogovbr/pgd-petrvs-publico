@@ -324,7 +324,7 @@ class IntegracaoService extends ServiceBase {
                                 'datamodificacao' => $self->UtilService->valueOrDefault($uo["datamodificacao"]),
                                 'und_nu_adicional' => $self->UtilService->valueOrDefault($uo["und_nu_adicional"]),
                                 'cnpjupag' => $self->UtilService->valueOrDefault($uo["cnpjupag"])
-                            ]);
+                            ])->save();
                         }
                     }
                 });
@@ -705,7 +705,7 @@ class IntegracaoService extends ServiceBase {
                 $lotacao->usuario_id = $usuario->id;
                 $lotacao->save();
                 $lotacao->refresh();
-                UnidadeIntegranteAtribuicao::create(['unidade_integrante_id' => $lotacao->id, 'atribuicao' => 'LOTADO']);
+                UnidadeIntegranteAtribuicao::create(['unidade_integrante_id' => $lotacao->id, 'atribuicao' => 'LOTADO'])->save();
             }
         } else {
             $usuario = null; // se quem está logando não existe na tabela integracao_servidores

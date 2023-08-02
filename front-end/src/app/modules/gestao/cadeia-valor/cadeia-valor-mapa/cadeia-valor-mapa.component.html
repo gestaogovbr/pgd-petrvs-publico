@@ -2,7 +2,7 @@
 <ng-template #editProcessoForm>
     <editable-form [form]="form!" noButtons>
         <div class="row">
-            <input-text [size]="12" [label]="'Nome do ' + lex.noun('processo')" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome"></input-text>
+            <input-text [size]="12" [label]="'Nome do ' + lex.translate('processo')" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome"></input-text>
         </div>
     </editable-form>
 </ng-template>

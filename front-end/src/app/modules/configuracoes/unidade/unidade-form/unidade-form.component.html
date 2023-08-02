@@ -12,14 +12,14 @@
             </div>
             <div class="row">
                 <input-search #cidade [size]="4" controlName="cidade_id" [dao]="cidadeDao"></input-search>
-                <input-search #unidade_pai [size]="4" [label]="lex.noun('Unidade') + ' pai'" controlName="unidade_pai_id" [where]="[['entidade_id', '==', form.controls.entidade_id.value]]" [dao]="dao!"></input-search>
+                <input-search #unidade_pai [size]="4" [label]="lex.translate('Unidade') + ' pai'" controlName="unidade_pai_id" [where]="[['entidade_id', '==', form.controls.entidade_id.value]]" [dao]="dao!"></input-search>
                 <input-search #entidade [size]="4" [disabled] controlName="entidade_id" [dao]="entidadeDao"></input-search>
             </div>
         </tab>
         <tab key="CONFIGURACOES" label="Configurações">
             <div class="row">
-                <input-select [size]="4" [label]="'Contagem ' + lex.noun('Prazo de Distribuição')" controlName="distribuicao_forma_contagem_prazos" [items]="lookup.DIA_HORA_CORRIDOS_OU_UTEIS" labelInfo="A forma da contagem dos prazos para a distribuição (lançamento da demanda)."></input-select>
-                <input-select [size]="4" [label]="'Contagem ' + lex.noun('Prazo de Entrega')" controlName="entrega_forma_contagem_prazos" [items]="lookup.HORAS_CORRIDAS_OU_UTEIS" labelInfo="A forma da contagem dos prazos na entrega da demanda (data da entrega e tempo despendido)"></input-select>
+                <input-select [size]="4" [label]="'Contagem ' + lex.translate('Prazo de Distribuição')" controlName="distribuicao_forma_contagem_prazos" [items]="lookup.DIA_HORA_CORRIDOS_OU_UTEIS" labelInfo="A forma da contagem dos prazos para a distribuição (lançamento da demanda)."></input-select>
+                <input-select [size]="4" [label]="'Contagem ' + lex.translate('Prazo de Entrega')" controlName="entrega_forma_contagem_prazos" [items]="lookup.HORAS_CORRIDAS_OU_UTEIS" labelInfo="A forma da contagem dos prazos na entrega da demanda (data da entrega e tempo despendido)"></input-select>
                 <input-radio [size]="4" label="Arquivamento automático" controlName="atividades_arquivamento_automatico" [items]="lookup.SIMNAO" labelInfo="Se após a avaliação, arquivará automaticamente a atividade."></input-radio>
             </div>
             <!--separator title="Expediente">
@@ -40,12 +40,12 @@
             </div>
             <separator></separator>
             <div class="row">
-                <input-editor [label]="'Texto complementar ' + lex.noun('Plano de Trabalho',false,true)" controlName="texto_complementar_plano" [dataset]="planoDataset"></input-editor>
+                <input-editor [label]="'Texto complementar ' + lex.translate('Plano de Trabalho')" controlName="texto_complementar_plano" [dataset]="planoDataset"></input-editor>
             </div>
         </tab>
         <tab key="EXPEDIENTE" label="Expediente">
             <div class="row">
-                <input-switch #usarExpedienteEntidade [label]="'Usar o calendário ' + lex.noun('entidade',false,true)" labelPosition="right" icon="bi bi-check2" [size]="12" (change)="onUsarExpedienteEntidadeChange()" controlName="usar_expediente_entidade" labelInfo="Se utiliza o expediente configurado na entidade ao invés de especificar na unidade"></input-switch>
+                <input-switch #usarExpedienteEntidade [label]="'Usar o calendário ' + lex.translate('entidade')" labelPosition="right" icon="bi bi-check2" [size]="12" (change)="onUsarExpedienteEntidadeChange()" controlName="usar_expediente_entidade" labelInfo="Se utiliza o expediente configurado na entidade ao invés de especificar na unidade"></input-switch>
             </div>
             <calendar-expediente #expediente [disabled]="form!.controls.usar_expediente_entidade.value ? 'true' : undefined" [expedienteDisabled]="entity?.entidade?.expediente" [control]="form!.controls.expediente"></calendar-expediente>
         </tab>
@@ -60,28 +60,28 @@
                 </div>
                 <div class="col-md-6">
                     <separator transparent title="Tipos de notificação"></separator>
-                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar distribuição ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_distribuicao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar conclusão ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_conclusao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar avaliação ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_avaliacao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar modificação ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_modificacao"></input-switch>
-                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar comentário ' + lex.noun('demanda',false,true)" controlName="notifica_demanda_comentario"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar distribuição ' + lex.translate('demanda')" controlName="notifica_demanda_distribuicao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar conclusão ' + lex.translate('demanda')" controlName="notifica_demanda_conclusao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar avaliação ' + lex.translate('demanda')" controlName="notifica_demanda_avaliacao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar modificação ' + lex.translate('demanda')" controlName="notifica_demanda_modificacao"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" [label]="'Notificar comentário ' + lex.translate('demanda')" controlName="notifica_demanda_comentario"></input-switch>
                 </div>
             </div>
-            <separator transparent [title]="lex.noun('Template',true) + ' das mensagens'"></separator>
+            <separator transparent [title]="lex.translate('Template',true) + ' das mensagens'"></separator>
             <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na criação ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaDistribuicao" controlName="template_demanda_distribuicao" placeholder="Caso em branco, será utilizado a configuração da Entidade..."></input-textarea>
+                <input-textarea [size]="12" [rows]="3" [label]="'Texto na criação ' + lex.translate('demanda', false, true)" [labelInfo]="notificacao.hintDemandaDistribuicao" controlName="template_demanda_distribuicao" placeholder="Caso em branco, será utilizado a configuração da Entidade..."></input-textarea>
             </div>
             <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na conclusão ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaConclusao" controlName="template_demanda_conclusao" placeholder="Caso em branco, será utilizado a configuração da Entidade..."></input-textarea>
+                <input-textarea [size]="12" [rows]="3" [label]="'Texto na conclusão ' + lex.translate('demanda', false, true)" [labelInfo]="notificacao.hintDemandaConclusao" controlName="template_demanda_conclusao" placeholder="Caso em branco, será utilizado a configuração da Entidade..."></input-textarea>
             </div>
             <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na avaliação ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaAvaliacao" controlName="template_demanda_avaliacao" placeholder="Caso em branco, será utilizado a configuração da Entidade..."></input-textarea>
+                <input-textarea [size]="12" [rows]="3" [label]="'Texto na avaliação ' + lex.translate('demanda', false, true)" [labelInfo]="notificacao.hintDemandaAvaliacao" controlName="template_demanda_avaliacao" placeholder="Caso em branco, será utilizado a configuração da Entidade..."></input-textarea>
             </div>
             <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na modificação ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaModificacao" controlName="template_demanda_modificacao" placeholder="Caso em branco, será utilizado a configuração da Entidade..."></input-textarea>
+                <input-textarea [size]="12" [rows]="3" [label]="'Texto na modificação ' + lex.translate('demanda', false, true)" [labelInfo]="notificacao.hintDemandaModificacao" controlName="template_demanda_modificacao" placeholder="Caso em branco, será utilizado a configuração da Entidade..."></input-textarea>
             </div>
             <div class="row">
-                <input-textarea [size]="12" [rows]="3" [label]="'Texto na inclusão de comentário ' + lex.noun('demanda', false, true)" [labelInfo]="notificacao.hintDemandaComentario" controlName="template_demanda_comentario" placeholder="Caso em branco, será utilizado a configuração da Entidade..."></input-textarea>
+                <input-textarea [size]="12" [rows]="3" [label]="'Texto na inclusão de comentário ' + lex.translate('demanda', false, true)" [labelInfo]="notificacao.hintDemandaComentario" controlName="template_demanda_comentario" placeholder="Caso em branco, será utilizado a configuração da Entidade..."></input-textarea>
             </div/-->
         </tab>
     </tabs>

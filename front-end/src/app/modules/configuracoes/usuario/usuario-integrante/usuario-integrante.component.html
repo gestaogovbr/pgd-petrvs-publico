@@ -1,13 +1,13 @@
-<grid #grid [items]="items" [minHeight]="500" [form]="form!" [hasDelete]="true" 
-[add]="addAtribuicao.bind(this)" 
-[load]="loadAtribuicao.bind(this)" 
-[remove]="removeAtribuicao.bind(this)" 
+<grid #grid [items]="items" [minHeight]="500" [form]="form!" [hasDelete]="true"
+[add]="addAtribuicao.bind(this)"
+[load]="loadAtribuicao.bind(this)"
+[remove]="removeAtribuicao.bind(this)"
 [save]="saveAtribuicao.bind(this)" editable>
     <columns>
         <column [title]="lex.translate('Unidade')" [template]="columnUnidade" [editTemplate]="editUnidade">
             <ng-template let-row="row" #columnUnidade>
                 <strong>{{ row.unidade_sigla || '' }}</strong><span> (IdServo: {{ row.unidade_codigo || '' }})</span><br>
-                <span>{{ row.unidade_nome || '' }} </span>                                
+                <span>{{ row.unidade_nome || '' }} </span>
             </ng-template>
             <ng-template let-row="row" #editUnidade>
                 <input-search #unidade [size]="12" label icon controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao"></input-search>

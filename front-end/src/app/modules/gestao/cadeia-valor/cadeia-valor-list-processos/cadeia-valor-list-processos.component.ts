@@ -6,7 +6,7 @@ import { InputLevelItem } from 'src/app/components/input/input-level/input-level
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { CadeiaValorDaoService } from 'src/app/dao/cadeia-valor-dao.service';
 import { CadeiaValorProcessoDaoService } from 'src/app/dao/cadeia-valor-processo-dao.service';
-import { Base, IIndexable } from 'src/app/models/base.model';
+import { IIndexable } from 'src/app/models/base.model';
 import { CadeiaValorProcesso } from 'src/app/models/cadeia-valor-processo.model';
 import { CadeiaValor } from 'src/app/models/cadeia-valor.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
@@ -157,7 +157,6 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
       row.nome = form.controls.nome.value;
       result = row;
       if (!this.isNoPersist) result = await this.processosDao?.save(row);
-      //this.cdRef.detectChanges();
     }
     return result;
   }
@@ -171,7 +170,6 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
 
   public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
-    let cadeiaValorProcesso: CadeiaValorProcesso = row as CadeiaValorProcesso;
     result.push({ hint: "Adicionar filho", icon: "bi bi-plus-circle", onClick: this.addChildProcesso.bind(this) });
     return result;
   }
@@ -179,7 +177,6 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
   public validateLevel = (parents: InputLevelItem[], item: InputLevelItem, children: InputLevelItem[]): Promise<boolean> | boolean => {
     if (children.length) {
       let path = [...parents.map(x => x.value), item.value] as number[];
-      //this.hasIndexChanged(path, (item.value as number));
       return this.processos(path).length == path.length;
     } else {
       let items = this.processos(parents.map(x => x.value) as number[]);

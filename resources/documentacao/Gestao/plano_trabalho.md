@@ -43,15 +43,37 @@
 
 1. (RN_PTR_1) Após criado um plano de trabalho, o seu plano de entregas não pode mais ser alterado. Em consequência dessa regra, os seguintes campos não poderão mais ser alterados: plano_entrega_id, unidade_id, programa_id;
 2. Os planos de trabalho dos participantes afetados por exclusão de entregas deverão ser repactuados.
+3. O plano de trabalho pode ser elaborado pelo chefe da unidade ou pelo próprio participante, e em seguida aprovado pela outra parte.
+4. Como se dá o fluxo de plano de trabalho e plano de entregas quando o PGD for compulsório?
+5. Toda atividade deve gerar uma entrega/resultado
+6. Os planos de trabalho dos participantes contribuem direta ou indiretamente para o plano de entregas da unidade. Assim, um plano de trabalho será composto por atividades relacionadas ou não às entregas do plano de entregas da unidade.
+7. A distribuição dos percentuais de carga horária do participante deve atender a três categorias de atividades: aquelas vinculadas a entregas do plano de entregas da unidade, aquelas não vinculadas a entregas mas que são do interesse da sua unidade organizacional, e por fim aquelas atividades a entregas de um plano de entregas de outra unidade organizacional.
 
 ## REGRAS DE INTERFACE
 
 1. (RI_PTR_1) No formulário de inclusão/edição de um plano de trabalho, o input-search de plano de entregas deve ficar desabilitado nas edições e habilitado apenas nas inclusões;
 
-Sequência de métodos para salvar um registro em um grid editável:
-1. Ao pressionar o botão de gravar da nova linha, o método private async saveItem(itemRow: Base | IIndexable) do GridComponent é chamado;
-2. 
+## FLUXO DOS PLANOS DE TRABALHO  
 
+~~~text
+
+status = ['HOMOLOGANDO', 'ATIVO', 'CONCLUIDO', 'AVALIADO', 'SUSPENSO', 'CANCELADO']
+
+
+'HOMOLOGANDO' - 'ATIVO' (Quando assina) - CONCLUIDO - AVALIADO
+              - 'REPROVADO'
+
+
+Plano de trabalho            Ativo (Expirado)
+                             Faltam X dias para conclusão automatica
+
+
+Tipos de Modalidade
+  Dias para conclusão automática apos expirar o plano de trabalho: 10 dias
+
+
+
+~~~
 
 ********************* OBSERVACOES *********************
 - Ao entrar na tela de incluir o plano, pesquisar se a unidade (lotacao) do usuário tem apenas um plano de entrega ativo e já selecionar ele na tela
