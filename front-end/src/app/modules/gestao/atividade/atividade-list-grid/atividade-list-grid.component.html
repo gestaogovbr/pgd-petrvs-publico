@@ -14,22 +14,22 @@
             <input-switch [size]="1" label="Sub." controlName="unidades_subordinadas" [control]="filter!.controls.unidades_subordinadas" labelInfo="Incluir as unidades subordinadas"></input-switch>
         </div>
         <div class="row">
-            <input-text [size]="1" label="#ID" controlName="numero" maskFormat="999999" [control]="filter!.controls.numero" [labelInfo]="'Número ' + lex.noun('atividade', false, true)"></input-text>
-            <input-text [size]="3" [label]="'Nº '+ lex.noun('Processo') +' (Sei)'" maskFormat="00000.000000/0000-00" controlName="numero_processo" [control]="filter!.controls.numero_processo" labelInfo="Pesquisa no documento de requisição, conclusão e nos documentos das tarefas"></input-text>
+            <input-text [size]="1" label="#ID" controlName="numero" maskFormat="999999" [control]="filter!.controls.numero" [labelInfo]="'Número ' + lex.translate('atividade')"></input-text>
+            <input-text [size]="3" [label]="'Nº '+ lex.translate('Processo') +' (Sei)'" maskFormat="00000.000000/0000-00" controlName="numero_processo" [control]="filter!.controls.numero_processo" labelInfo="Pesquisa no documento de requisição, conclusão e nos documentos das tarefas"></input-text>
             <input-select [size]="3" label="Status" itemTodos="- Todos -" [valueTodos]="null" [disabled]="fixedFilter?.length && fixedFilter![0]![0] == 'status' ? 'true' : undefined" controlName="status" [control]="filter!.controls.status" [items]="lookup.ATIVIDADE_STATUS_COM_ARQUIVADAS"></input-select>
             <input-multiselect noForm noBox [size]="4" label="Etiquetas" controlName="etiquetas" [control]="filter!.controls.etiquetas"></input-multiselect>
             <input-switch [size]="1" label="Arq." controlName="arquivadas" [control]="filter!.controls.arquivadas" labelInfo="Listar também atividades arquivadas"></input-switch>
         </div>
         <div class="row">
-            <input-search [size]="3" [label]="lex.noun('Tipo de Atividade')" controlName="tipo_atividade_id" [dao]="tipoAtividadeDao"></input-search>
-            <input-search [size]="3" [label]="lex.noun('Tipo de Processo')" controlName="tipo_processo_id" [dao]="tipoProcessoDao" ></input-search>
+            <input-search [size]="3" [label]="lex.translate('Tipo de Atividade')" controlName="tipo_atividade_id" [dao]="tipoAtividadeDao"></input-search>
+            <input-search [size]="3" [label]="lex.translate('Tipo de Processo')" controlName="tipo_processo_id" [dao]="tipoProcessoDao" ></input-search>
             <input-select [size]="2" label="Data" itemTodos="- Todos -" [valueTodos]="null" controlName="data_filtro" [control]="filter!.controls.data_filtro" [items]="DATAS_FILTRO"></input-select>
             <input-datetime [size]="2" noIcon [disabled]="filter!.controls.data_filtro.value == null ? 'true' : undefined" label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" labelInfo="Data início do período"></input-datetime>
             <input-datetime [size]="2" noIcon [disabled]="filter!.controls.data_filtro.value == null ? 'true' : undefined" label="Fim" controlName="data_fim" [control]="filter!.controls.data_fim" labelInfo="Data fim do período"></input-datetime>
         </div>
     </filter>
     <columns>
-        <column *ngIf="!selectable" type="expand" icon="bi bi-boxes" [align]="'center'" [hint]="lex.noun('Tarefas da atividade', true)" [template]="columnTarefas" [expandTemplate]="columnExpandedTarefas">
+        <column *ngIf="!selectable" type="expand" icon="bi bi-boxes" [align]="'center'" [hint]="lex.translate('Tarefas da atividade')" [template]="columnTarefas" [expandTemplate]="columnExpandedTarefas">
             <ng-template let-row="row" #columnTarefas>
                 <span *ngIf="row.tarefas?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row.tarefas?.length}}</span>
             </ng-template>

@@ -1,7 +1,9 @@
 import { Base } from './base.model';
+import { Perfil } from './perfil.model';
 import { TipoCapacidade } from './tipo-capacidade.model';
 
 export class Capacidade extends Base {
+    public perfil?: Perfil;
     public tipo_capacidade?: TipoCapacidade;
 
     public perfil_id: string | null = null; /* ID do Perfil */

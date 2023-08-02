@@ -7,7 +7,7 @@ import { PreferenciaFormComponent } from './preferencia-form/preferencia-form.co
 
 const routes: Routes = [
   { path: '', component: PreferenciaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Preferências" } },
-  { path: 'usuario/:id', component: PreferenciaFormUsuarioComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Preferências do usuário" } }
+  { path: 'usuario/:id', component: PreferenciaFormUsuarioComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Preferências do Usuário" } }
 ];
 
 @NgModule({

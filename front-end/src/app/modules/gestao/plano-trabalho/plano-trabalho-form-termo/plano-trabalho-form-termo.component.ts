@@ -140,7 +140,7 @@ export class PlanoTrabalhoFormTermoComponent extends PageFormBase<PlanoTrabalho,
   }
 
   public titleEdit = (entity: PlanoTrabalho): string => {
-    return "Editando " ;//+ (entity?.nome || "");
+    return "Editando " + this.lex.translate("TCR") + ' ' + this.lex.translate("do Plano de Trabalho") + ': ' + (entity?.usuario?.nome || "");
   }
 
 }

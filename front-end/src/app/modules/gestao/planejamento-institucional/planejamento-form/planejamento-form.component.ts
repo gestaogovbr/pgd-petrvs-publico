@@ -92,7 +92,7 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
     }
    
     public titleEdit = (entity: Planejamento): string => {
-      return "Editando "+ (entity?.nome || "");
+      return "Editando " + this.lex.translate("Planejamento Institucional") + ': ' + (entity?.nome || "");
     }
 
     public addValorHandle(): LookupItem | undefined {

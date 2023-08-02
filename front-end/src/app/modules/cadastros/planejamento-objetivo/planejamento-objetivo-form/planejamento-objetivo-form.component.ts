@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputTextComponent } from 'src/app/components/input/input-text/input-text.component';
@@ -61,7 +61,7 @@ export class PlanejamentoObjetivoFormComponent extends PageFormBase<Planejamento
   }
 
   public titleEdit = (entity: PlanejamentoObjetivo): string => {
-    return "Editando "+ (entity?.nome || "");
+    return "Editando " + this.lex.translate("Objetivo de Planejamento") + ': ' + (entity?.nome || "");
   }
 
 }

@@ -15,18 +15,18 @@ import { AtividadeListComponent } from './atividade-list/atividade-list.componen
 const routes: Routes = [
   { path: '', component: AtividadeListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Atividades" } },
   { path: 'grid', component: AtividadeListGridComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Atividades" } },
-  { path: 'new', component: AtividadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Inclusão", modal: true } },
-  { path: 'tarefa', component: AtividadeFormTarefaComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Entrega da atividade", modal: true } },
-  { path: 'tarefa/concluir', component: AtividadeListTarefaComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Concluir entrega", modal: true } },
+  { path: 'new', component: AtividadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Inclusão de Atividade", modal: true } },
+  { path: 'tarefa', component: AtividadeFormTarefaComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Tarefa da Atividade", modal: true } },
+  { path: 'tarefa/concluir', component: AtividadeListTarefaComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Concluir Tarefa", modal: true } },
   { path: 'tarefa/:tarefa_id/comentar', component: AtividadeFormTarefaComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Comentários", modal: true } },
-  { path: ':id/edit', component: AtividadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Edição", modal: true } },
-  { path: ':id/consult', component: AtividadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Consultar", modal: true } },
-  { path: ':id/clonar', component: AtividadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Clonar", modal: true } },
-  { path: ':id/iniciar', component: AtividadeFormIniciarComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Iniciar", modal: true } },
-  { path: ':id/concluir', component: AtividadeFormConcluirComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Concluir", modal: true } },
-  { path: ':id/pausar', component: AtividadeFormPausarComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Suspender", modal: true } },
-  { path: ':id/prorrogar', component: AtividadeFormProrrogarComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Prorrogar", modal: true } },
-  { path: ':id/comentar', component: AtividadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Comentários", modal: true } }
+  { path: ':id/edit', component: AtividadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Edição da Atividade", modal: true } },
+  { path: ':id/consult', component: AtividadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Consulta a Atividade", modal: true } },
+  { path: ':id/clonar', component: AtividadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Clone de Atividade", modal: true } },
+  { path: ':id/iniciar', component: AtividadeFormIniciarComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Início de Atividade", modal: true } },
+  { path: ':id/concluir', component: AtividadeFormConcluirComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Conclusão de Atividade", modal: true } },
+  { path: ':id/pausar', component: AtividadeFormPausarComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Suspensão de Atividade", modal: true } },
+  { path: ':id/prorrogar', component: AtividadeFormProrrogarComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Prorrogação de Atividade", modal: true } },
+  { path: ':id/comentar', component: AtividadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Comentários de Atividade", modal: true } }
 ];
 
 @NgModule({

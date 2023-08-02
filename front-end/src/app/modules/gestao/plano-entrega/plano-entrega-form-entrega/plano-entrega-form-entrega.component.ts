@@ -157,9 +157,9 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     } else if(inicio > fim) {
       return "A data do fim não pode ser anterior à data do fim!";
     } else if(this.planoEntrega && inicio < this.planoEntrega.inicio) {
-      return "Data de inicio menor que a data de inicio" + this.lex.noun("plano de entrega", false, true) + ": " + this.util.getDateFormatted(this.planoEntrega.inicio);
+      return "Data de inicio menor que a data de inicio" + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(this.planoEntrega.inicio);
     } else if(this.planoEntrega && this.planoEntrega.fim && fim > this.planoEntrega.fim) {
-      return "Data de fim maior que a data de fim" + this.lex.noun("plano de entrega", false, true) + ": " + this.util.getDateFormatted(this.planoEntrega.fim);
+      return "Data de fim maior que a data de fim" + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(this.planoEntrega.fim);
     }
     return undefined;
   }

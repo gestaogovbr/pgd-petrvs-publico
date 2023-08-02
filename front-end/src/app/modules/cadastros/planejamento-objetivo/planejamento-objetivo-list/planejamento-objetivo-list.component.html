@@ -14,7 +14,7 @@
         <column title="Nome" [template]="columnNome" orderBy="nome">
             <ng-template let-row="row" #columnNome><span> {{row.nome}}</span></ng-template>
         </column>
-        <column [title]="lex.noun('Planejamento Institucional')" [template]="columnPlanejamento" orderBy="planejamento.nome">
+        <column [title]="lex.translate('Planejamento Institucional')" [template]="columnPlanejamento" orderBy="planejamento.nome">
             <ng-template let-row="row" #columnPlanejamento><span> {{ row.planejamento?.nome }}</span></ng-template>
         </column>
         <column type="options" [onEdit]="edit" [options]="options"></column>

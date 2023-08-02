@@ -70,8 +70,8 @@ export class PreferenciaFormComponent extends PageBase implements OnInit {
         this.submitting = false;
       }
     } else {
-      if(!this.petrvs?.form?.invalid) this.editableForm!.error = "Forme Petrvs com erro";
-      if(!this.usuario?.form?.invalid) this.editableForm!.error = "Forme do usuário com erro";
+      if(!this.petrvs?.form?.invalid) this.editableForm!.error = "Form Petrvs com erro";
+      if(!this.usuario?.form?.invalid) this.editableForm!.error = "Form do usuário com erro";
     }
   }
 

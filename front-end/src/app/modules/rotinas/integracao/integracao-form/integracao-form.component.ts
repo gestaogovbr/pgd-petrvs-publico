@@ -2,7 +2,6 @@ import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputTextComponent } from 'src/app/components/input/input-text/input-text.component';
-import { InputTextareaComponent } from 'src/app/components/input/input-textarea/input-textarea.component';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
 import { IntegracaoDaoService } from 'src/app/dao/integracao-dao.service';
 import { IIndexable } from 'src/app/models/base.model';

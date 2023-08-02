@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { TipoAvaliacaoDaoService } from 'src/app/dao/tipo-avaliacao-dao.service';
@@ -6,9 +6,7 @@ import { IIndexable } from 'src/app/models/base.model';
 import { TipoAvaliacao } from 'src/app/models/tipo-avaliacao.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { TipoJustificativaDaoService } from 'src/app/dao/tipo-justificativa-dao.service';
-import { TipoAvaliacaoJustificativaDaoService } from 'src/app/dao/tipo-avaliacao-justificativa-dao.service';
 import { LookupItem } from 'src/app/services/lookup.service';
-import { TipoAvaliacaoJustificativa } from 'src/app/models/tipo-avaliacao-justificativas.model';
 import { TipoJustificativa} from 'src/app/models/tipo-justificativa.model';
 
 @Component({
@@ -75,15 +73,6 @@ export class TipoAvaliacaoFormComponent extends PageFormBase<TipoAvaliacao, Tipo
 
   public loadData(entity: TipoAvaliacao, form: FormGroup): void {
     let formValue = Object.assign({}, form.value);
-    /*if(entity.tipos_avaliacoes_justificativas?.length) {
-      entity.tipos_avaliacoes_justificativas!.forEach(t => {
-        this.justificativasLista.push({
-          key: t.tipo_justificativa_id,
-          value: t.tipo_justificativa?.nome || "Desconhecido",
-          data: t
-        });
-      });      
-    }*/
     form.patchValue(this.util.fillForm(formValue, entity));
   }
 
@@ -96,17 +85,12 @@ export class TipoAvaliacaoFormComponent extends PageFormBase<TipoAvaliacao, Tipo
     return new Promise<TipoAvaliacao>((resolve, reject) => {
       let tipoAvaliacao = this.util.fill(new TipoAvaliacao(), this.entity!);
       tipoAvaliacao = this.util.fillForm(tipoAvaliacao, this.form!.value);
-      /*tipoAvaliacao.tipos_avaliacoes_justificativas = this.justificativasLista.map(j => {
-        return j.data ? j.data : Object.assign(new TipoAvaliacaoJustificativa(), {
-          tipo_justificativa_id: j.key
-        });
-      });*/
       resolve(tipoAvaliacao);
     });
   }
 
   public titleEdit = (entity: TipoAvaliacao): string => {
-    return "Editando " + (entity?.nome || "");
+    return "Editando " + this.lex.translate("Tipo de Avaliação") + ': ' + (entity?.nome || "");
   }
 }
 

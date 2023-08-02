@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { TipoJustificativaDaoService } from 'src/app/dao/tipo-justificativa-dao.service';
@@ -50,7 +50,7 @@ export class TipoJustificativaFormComponent extends PageFormBase<TipoJustificati
   }
 
   public titleEdit = (entity: TipoJustificativa): string => {
-    return "Editando " + (entity?.nome || "");
+    return "Editando " + this.lex.translate("Tipo de Justificativa") + ': ' + (entity?.nome || "");
   }
 }
 

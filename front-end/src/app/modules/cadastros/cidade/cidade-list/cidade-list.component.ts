@@ -16,7 +16,7 @@ export class CidadeListComponent extends PageListBase<Cidade, CidadeDaoService> 
   constructor(public injector: Injector) {
     super(injector, Cidade, CidadeDaoService);
     /* Inicializações */
-    this.title = this.lex.noun("Cidade",true);
+    this.title = this.lex.translate("Cidades");
     this.code = "MOD_CID";
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}

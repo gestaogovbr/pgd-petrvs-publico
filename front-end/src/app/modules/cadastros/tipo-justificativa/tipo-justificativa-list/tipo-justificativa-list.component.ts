@@ -16,7 +16,7 @@ export class TipoJustificativaListComponent extends PageListBase<TipoJustificati
   constructor(public injector: Injector) {
     super(injector, TipoJustificativa, TipoJustificativaDaoService);
     /* Inicializações */
-    this.title = "Tipos de " + this.lex.noun("Justificativa",true);
+    this.title = this.lex.translate("Tipos de Justificativa");
     this.code="MOD_TIPO_JUST";
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}

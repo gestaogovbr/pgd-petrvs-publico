@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
@@ -24,7 +24,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
   public unidadeDao: UnidadeDaoService;
   public planoTrabalhoDao: PlanoTrabalhoDaoService;
   public planoDataset: TemplateDataset[]; 
-
+ 
   constructor(public injector: Injector) {
     super(injector, Usuario, UsuarioDaoService);
     this.perfilDao = injector.get<PerfilDaoService>(PerfilDaoService);
@@ -80,7 +80,6 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
   public initializeData(form: FormGroup): void {
     this.entity = new Usuario();
     this.loadData(this.entity, form); 
-    //form.patchValue(new Usuario());
   }
 
   public saveData(form: IIndexable): Promise<Usuario> {      
@@ -93,7 +92,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
   }
 
   public titleEdit = (entity: Usuario): string => {
-    return "Editando " + (entity?.matricula || "") + ' - ' + (entity?.nome || "");
+    return "Editando " + this.lex.translate("Usuário") + ': ' + (entity?.matricula || "") + ' - ' + (entity?.apelido || "");
   }
 
 }

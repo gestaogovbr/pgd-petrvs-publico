@@ -16,7 +16,7 @@ export class MaterialServicoListComponent extends PageListBase<MaterialServico, 
   constructor(public injector: Injector) {
     super(injector, MaterialServico, MaterialServicoDaoService);
     /* Inicializações */
-    this.title = this.lex.noun("Material e serviço", true);
+    this.title = this.lex.translate("Materiais e Serviços");
     this.code = "MOD_MATSRV";
     this.filter = this.fh.FormBuilder({
       tipo: {default: null},

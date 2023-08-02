@@ -184,9 +184,9 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
         const atividades_termo_adesao = this.planoSelecionado?.documento?.metadados?.atividades_termo_adesao;
         const atividade = this.atividade!.searchObj as Atividade;
         if(!this.planoSelecionado || this.planoSelecionado?.id != this.form.controls.plano_id.value) {
-          result = "Erro ao ler " + this.lex.noun("plano de trabalho") + ". Selecione-o novamente!";
+          result = "Erro ao ler " + this.lex.translate("plano de trabalho") + ". Selecione-o novamente!";
         } else if(atividades_termo_adesao && atividade && atividades_termo_adesao.indexOf(this.util.removeAcentos(atividade.nome.toLowerCase())) < 0){
-          result = this.lex.noun("Atividade") + " não consta na lista permitida pelo " + this.lex.noun("plano de trabalho") + " selecionado.";
+          result = this.lex.translate("Atividade") + " não consta na lista permitida pelo " + this.lex.translate("plano de trabalho") + " selecionado.";
         }
       }
     }*/

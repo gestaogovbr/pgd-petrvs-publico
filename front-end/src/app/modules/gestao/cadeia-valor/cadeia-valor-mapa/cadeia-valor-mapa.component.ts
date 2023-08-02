@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Injector, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
@@ -42,7 +42,7 @@ export class CadeiaValorMapaComponent extends PageFrameBase {
     this.dao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
     this.cadeiaValorProcessoDao = injector.get<CadeiaValorProcessoDaoService>(CadeiaValorProcessoDaoService);
     this.join = ['processos'];
-    this.title = this.lex.noun('Cadeia de valor', true);
+    this.title = this.lex.translate('Cadeias de Valores');
     this.form = this.fh.FormBuilder({
       cadeia_valor_id: {default: null},
       nome: {default: ""}
@@ -86,7 +86,6 @@ export class CadeiaValorMapaComponent extends PageFrameBase {
   }
 
   public consultProcesso(processo: NeastedProcesso) {
-    //let processo = data as ;
     this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', 'processos', processo!.id]});
   }
 

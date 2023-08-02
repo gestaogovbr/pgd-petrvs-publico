@@ -42,7 +42,7 @@ class PreferenciaFormPetrvsComponent extends src_app_modules_base_page_form_base
             return result;
         };
         this.titleEdit = (entity) => {
-            return "Editando "; // + (entity?.unidade_id || "");
+            return "Editando " + this.lex.translate("Preferência") + ' ' + this.lex.translate("da Entidade") + ': ' + ((entity === null || entity === void 0 ? void 0 : entity.nome) || "");
         };
         this.form = this.fh.FormBuilder({}, this.cdRef, this.validate);
     }
@@ -69,8 +69,6 @@ class PreferenciaFormPetrvsComponent extends src_app_modules_base_page_form_base
     }
     saveData(form) {
         return new Promise((resolve, reject) => {
-            //let atividade = this.util.fill(new Entidade(), this.entity!);
-            //resolve(this.util.fillForm(atividade, this.form!.value));
             resolve(!this.isPanel);
         });
     }
@@ -187,7 +185,7 @@ function PreferenciaFormComponent_tab_8_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r2 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("label", ctx_r2.lex.noun("Entidade"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("label", ctx_r2.lex.translate("Entidade"));
 } }
 class PreferenciaFormComponent extends src_app_modules_base_page_base__WEBPACK_IMPORTED_MODULE_2__["PageBase"] {
     /*private _submitting: boolean = false;
@@ -247,9 +245,9 @@ class PreferenciaFormComponent extends src_app_modules_base_page_base__WEBPACK_I
             }
             else {
                 if (!((_d = (_c = this.petrvs) === null || _c === void 0 ? void 0 : _c.form) === null || _d === void 0 ? void 0 : _d.invalid))
-                    this.editableForm.error = "Forme Petrvs com erro";
+                    this.editableForm.error = "Form Petrvs com erro";
                 if (!((_f = (_e = this.usuario) === null || _e === void 0 ? void 0 : _e.form) === null || _f === void 0 ? void 0 : _f.invalid))
-                    this.editableForm.error = "Forme do usuário com erro";
+                    this.editableForm.error = "Form do usuário com erro";
             }
         });
     }
@@ -283,7 +281,7 @@ PreferenciaFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵ�
     } if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("form", ctx.form)("forceInvalid", ctx.forceInvalid)("title", ctx.isModal ? "" : ctx.title);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("label", ctx.lex.noun("Usu\u00E1rio"));
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("label", ctx.lex.translate("Usu\u00E1rio"));
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("usuarioId", ctx.auth.usuario.id);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](5);
@@ -318,7 +316,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const routes = [
     { path: '', component: _preferencia_form_preferencia_form_component__WEBPACK_IMPORTED_MODULE_4__["PreferenciaFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Preferências" } },
-    { path: 'usuario/:id', component: _preferencia_form_usuario_preferencia_form_usuario_component__WEBPACK_IMPORTED_MODULE_3__["PreferenciaFormUsuarioComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Preferências do usuário" } }
+    { path: 'usuario/:id', component: _preferencia_form_usuario_preferencia_form_usuario_component__WEBPACK_IMPORTED_MODULE_3__["PreferenciaFormUsuarioComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Preferências do Usuário" } }
 ];
 class PreferenciaRoutingModule {
 }
@@ -388,9 +386,9 @@ function PreferenciaFormUsuarioComponent_separator_9_Template(rf, ctx) { if (rf 
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("title", "Prefer\u00EAncias de exibi\u00E7\u00E3o " + ctx_r1.lex.noun("usu\u00E1rio", false, true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("title", "Prefer\u00EAncias de exibi\u00E7\u00E3o " + ctx_r1.lex.translate("usu\u00E1rio"));
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 12)("label", "Ocultar menu lateral do sei no Controle de " + ctx_r1.lex.noun("Processo", true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 12)("label", "Ocultar menu lateral do sei no Controle de " + ctx_r1.lex.translate("Processo"));
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 12);
 } }
@@ -428,7 +426,7 @@ class PreferenciaFormUsuarioComponent extends src_app_modules_base_page_form_bas
             return result;
         };
         this.titleEdit = (entity) => {
-            return "Editando "; // + (entity?.unidade_id || "");
+            return "Editando " + this.lex.translate("Preferência") + ' ' + this.lex.translate("do Usuário") + ': ' + ((entity === null || entity === void 0 ? void 0 : entity.apelido) || "");
         };
         this.form = this.fh.FormBuilder({
             etiquetas: { default: [] },
@@ -472,14 +470,8 @@ class PreferenciaFormUsuarioComponent extends src_app_modules_base_page_form_bas
     saveData(form) {
         return new Promise((resolve, reject) => {
             var _a;
-            /*let config = this.util.fill(new UsuarioConfig(), this.entity!.config || {});
-            config = this.util.fillForm(config, this.form!.value);
-            this.usuario!.config = Object.assign(this.usuario!.config, value);
-            this.usuarioDaoService.updateJson(this.usuario!.id, 'config', value);*/
-            //this.dao!.update(this.usuarioId!, {config: config})
             (_a = this.notificacoes) === null || _a === void 0 ? void 0 : _a.saveData();
             let config = this.util.fill(new src_app_models_usuario_model__WEBPACK_IMPORTED_MODULE_3__["UsuarioConfig"](), this.form.value);
-            //let notificacoes = this.util.fill(new NotificacoesConfig(), this.form!.value);
             Promise.all([
                 this.auth.updateUsuarioConfig(this.usuarioId, config),
                 this.auth.updateUsuarioNotificacoes(this.usuarioId, this.entity.notificacoes)
