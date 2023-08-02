@@ -80,7 +80,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       gestor_id: {default: ""},
       gestor_substituto_id: {default: ""}
     }, this.cdRef);
-    this.join =  ["cidade", "entidade", "gestor.usuario", "gestor_substituto.usuario", "notificacoes_templates"];
+    this.join =  ["cidade", "entidade", "gestor.usuario:id,nome", "gestor_substituto.usuario:id,nome", "notificacoes_templates"];
   }
 
   public validate = (control: AbstractControl, controlName: string) => {

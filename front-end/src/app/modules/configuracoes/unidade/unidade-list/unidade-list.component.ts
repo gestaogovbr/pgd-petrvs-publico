@@ -22,7 +22,7 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
 
   constructor(public injector: Injector) {
     super(injector, Unidade, UnidadeDaoService);
-    this.join = ["cidade", "unidade_pai:id,sigla", "entidade:id,sigla"];
+    this.join = ["cidade", "unidade_pai:id,sigla", "entidade:id,sigla", "gestor.usuario:id", "gestor_substituto.usuario:id"];
     this.cidadeDao = injector.get<CidadeDaoService>(CidadeDaoService);
     this.entidadeDao = injector.get<EntidadeDaoService>(EntidadeDaoService);
 

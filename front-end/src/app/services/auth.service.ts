@@ -332,7 +332,7 @@ export class AuthService {
     /*       let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? this.unidades?.find(x => x.id == pUnidade) : pUnidade;
           return !!unidade && [unidade.gestor_substituto_id, unidade.gestor_id].includes(this.usuario!.id);  */
     let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? [this.usuario!.gerencia_titular?.unidade, ...(this.usuario!.gerencias_substitutas!.map(x => x.unidade))].find(x => x && x.id == pUnidade) : pUnidade;
-    return !!unidade && [unidade.gestor_substituto?.id, unidade.gestor?.id].includes(this.usuario!.id);
+    return !!unidade && [unidade.gestor_substituto?.usuario_id, unidade.gestor?.usuario_id].includes(this.usuario!.id);
   }
 
   /**
@@ -344,14 +344,14 @@ export class AuthService {
   }
 
   /**
-   * Informa se a unidade repassada como parâmetro é a lotação principal do usuário logado. Se nenhuma unidade for repassada, 
+   * Informa se a unidade repassada como parâmetro é a lotação do usuário logado. Se nenhuma unidade for repassada, 
    * será adotada a unidade selecionada pelo servidor na homepage.
    * @param pUnidade 
    * @returns 
    */
   public isLotacaoPrincipal(pUnidade: Unidade | null = null): boolean {
     let unidade = pUnidade || this.unidade!;
-    let lotacao = this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade; //this.usuario!.lotacao?.unidade;
+    let lotacao = this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade; 
     return lotacao?.id == unidade.id;
   }
 

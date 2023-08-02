@@ -73,7 +73,7 @@ class UnidadeIntegranteService extends ServiceBase
                      } else {
                         if($unidadeGerenciaTitular->id != $unidadeId) {
                             $usuario->gerenciaTitular->gestor->delete();
-                            $x = new UnidadeIntegranteAtribuicao(["atribuicao" => "GESTOR","unidade_integrante_id" => $vinculoNovo->id]);
+                            UnidadeIntegranteAtribuicao::create(["atribuicao" => "GESTOR","unidade_integrante_id" => $vinculoNovo->id])->save();
                         }
                     }
                     array_push($atribuicoesFinais,"GESTOR");

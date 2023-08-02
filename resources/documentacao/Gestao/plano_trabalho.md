@@ -53,13 +53,90 @@
 
 1. (RI_PTR_1) No formulário de inclusão/edição de um plano de trabalho, o input-search de plano de entregas deve ficar desabilitado nas edições e habilitado apenas nas inclusões;
 
-
 ## FLUXO DOS PLANOS DE TRABALHO  
 
 ~~~text
 
-status = ["EM ELABORAÇÃO", "PACTUAÇÃO/APROVAÇÃO", ]
-['INCLUINDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO', 'AVALIADO', 'SUSPENSO']
+status = ["EM ELABORAÇÃO", "PACTUAÇÃO/APROVAÇÃO", "ENCERRADO", "", "AGUARDANDO AVALIAÇÃO", "AVALIADO", ]
+
+['', 'ATIVO', 'CONCLUIDO', 'AVALIADO', 'SUSPENSO']
+
+
+'HOMOLOGANDO' - 'ATIVO' (Quando assina) - CONCLUIDO - AVALIADO
+              - 'REPROVADO'
+
+'CANCELAR'
+
+Plano de trabalho            Ativo (Expirado)
+                             Faltam X dias para conclusão automatica
+
+
+Tipos de Modalidade
+  Dias para conclusão automática apos expirar o plano de trabalho: 10 dias
+
+
+
+
+<status-badge [status]="row.status" [tipo]="PlanoTrabalho" [key]="row.id"></status-badge>
+status.service.ts
+    items: {[entity: string]: LookupItem[]} = {
+        "PlanoTrabalho": this.lookup.planoTrabalhoStatus,
+        "PlanoEntrega": this.lookup.planoEntregaStatus,
+        "Atividade": this.lookup.atividadeStatus
+    };
+
+<status-list>
+
+<status-form [status]="status" [tipo]="PlanoTrabalho" [key]="id"><status-form>
+{route: ['utils', 'status'], params: [tipo: tipos, status: status, id: id]}
+
+
+ Cancluíndo
+
+ Justificativa
+|
+|                             |
+|                             | 
+|_____________________________|
+                   Ok Cancelar
+
+
+([i] CONCLUÍDO)
+
+
+
+
+
+
+
+
+
+
+{
+    status: 'INCLUINDO', 'ATIVO', 'CONCLUIDO', 'AVALIADO', 'SUSPENSO',
+    justificativa: '',
+    usuario_id: foreignKey,
+    plano_trabalho_id: foreignKey,
+    data_hora: now()
+}                           
+   
+{
+    status: 'INCLUINDO', 'ATIVO', 'CONCLUIDO', 'AVALIADO', 'SUSPENSO',
+    justificativa: '',
+    usuario_id: foreignKey,
+    plano_entrega_id: foreignKey,
+    data_hora: now()
+}                           
+
+{
+    status: 'INCLUINDO', 'ATIVO', 'CONCLUIDO', 'AVALIADO', 'SUSPENSO',
+    justificativa: '',
+    usuario_id: foreignKey,
+    atividade_id: foreignKey,
+    data_hora: now()
+}                           
+
+
 
 Uma vez elaborado e aprovado o plano de entregas da unidade e após assinado o Termo de Ciência e Responsabilidade (TCR), a etapa seguinte é a elaboração e pactuação do plano de trabalho do participante com a sua chefia imediata.
 
@@ -73,7 +150,7 @@ Uma vez elaborado e aprovado o plano de entregas da unidade e após assinado o T
  (com justificativas)                             |---->        
 
                                                   |---->   CONCLUIDO
-                         <---      ATIVO       -->|---->   
+                          <---  EM EXECUÇÃO    -->|---->   
                                                   |---->    
 
 ~~~

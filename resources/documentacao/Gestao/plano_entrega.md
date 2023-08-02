@@ -157,11 +157,11 @@
 ~~~text  
 * Estando no status "INCLUINDO"
         padrão: 
-            - se o usuário logado for gestor da unidade do plano de entregas, ou esta ser sua unidade de lotação e ele possuir a capacidade "MOD_PENT_LIB_HOMOL", exibir o botão 'Liberar para homologação' 
+            - se o usuário logado for gestor da unidade do plano de entregas, ou esta for sua unidade de lotação e ele possuir a capacidade "MOD_PENT_LIB_HOMOL", exibir o botão 'Liberar para homologação' 
             (vai para HOMOLOGANDO)
             - caso contrário, exibir o 'botão Consultar'
         outras opções: 
-            - se o usuário logado for gestor da unidade do plano, ou esta ser sua unidade de lotação e ele possuir a capacidade "MOD_PENT_EDT", exibir o botão 'Alterar'
+            - se o usuário logado for gestor da unidade do plano, ou esta for sua unidade de lotação e ele possuir a capacidade "MOD_PENT_EDT", exibir o botão 'Alterar'
 
 * Estando no status "HOMOLOGANDO"
         padrão: 

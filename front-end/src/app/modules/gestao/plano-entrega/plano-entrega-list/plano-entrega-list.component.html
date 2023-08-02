@@ -37,9 +37,10 @@
                 <small class="micro-text fw-ligh">#{{row.numero}}</small>
             </ng-template>
         </column>
-        <column title="Nome" orderBy="nome" [template]="columnNome">
+        <column title="Nome/Unidade" [template]="columnNome" orderBy="nome">
             <ng-template let-row="row" #columnNome>
-                <span class="text-break text-wrap" [style.max-width.px]="400">{{row.nome}}</span>
+                <span class="text-break text-wrap" [style.max-width.px]="400">{{row.nome}}</span><br>
+                <badge *ngIf="!filter!.controls.agrupar.value" color="secondary" [icon]="entityService.getIcon(lex.translate('unidade'))" [label]="row.unidade.sigla"></badge>
             </ng-template>
         </column>
         <column title="Início" [template]="columnInicio" orderBy="inicio">
