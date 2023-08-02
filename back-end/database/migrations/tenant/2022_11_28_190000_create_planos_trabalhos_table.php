@@ -30,7 +30,6 @@ class CreatePlanosTrabalhosTable extends Migration
             $table->dateTime('data_arquivamento')->nullable()->comment("Data de arquivamento do plano de trabalho");
             $table->dateTime('data_cancelamento')->nullable()->comment("Data de cancelamento do plano de trabalho");
             $table->enum('forma_contagem_carga_horaria', ["DIA", "SEMANA", "MES"])->default("DIA")->comment("Forma de contagem padrão da carga horária");
-            $table->enum('status', ['INCLUINDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO', 'AVALIADO', 'SUSPENSO'])->comment("Status do plano de trabalho");
             // Chaves estrangeiras:
             $table->foreignUuid('programa_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Programa do plano de trabalho");
             $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Usuário do plano de trabalho");
@@ -40,6 +39,8 @@ class CreatePlanosTrabalhosTable extends Migration
             $table->foreignUuid('criacao_usuario_id')->nullable()->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->comment("Usuário responsável pela criação do plano de trabalho");
             //Criada na tabela 'documentos' devido à referência cruzada
             //$table->foreignUuid('documento_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Termo do plano de trabalho");
+            //Criada na tabela 'status' devido à referência cruzada
+            //$table->foreignUuid('status_id')->constrained("status")->onDelete('restrict')->onUpdate('cascade')->comment("Status atual do Plano de Trabalho");
         });
         // Cria na tabela 'sequence' o campo plano_trabalho_numero
         Schema::table('sequence', function (Blueprint $table) {

@@ -21005,7 +21005,7 @@ class AuthService {
         /*       let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? this.unidades?.find(x => x.id == pUnidade) : pUnidade;
               return !!unidade && [unidade.gestor_substituto_id, unidade.gestor_id].includes(this.usuario!.id);  */
         let unidade = pUnidade == null ? this.unidade : typeof pUnidade == "string" ? [(_a = this.usuario.gerencia_titular) === null || _a === void 0 ? void 0 : _a.unidade, ...(this.usuario.gerencias_substitutas.map(x => x.unidade))].find(x => x && x.id == pUnidade) : pUnidade;
-        return !!unidade && [(_b = unidade.gestor_substituto) === null || _b === void 0 ? void 0 : _b.id, (_c = unidade.gestor) === null || _c === void 0 ? void 0 : _c.id].includes(this.usuario.id);
+        return !!unidade && [(_b = unidade.gestor_substituto) === null || _b === void 0 ? void 0 : _b.usuario_id, (_c = unidade.gestor) === null || _c === void 0 ? void 0 : _c.usuario_id].includes(this.usuario.id);
     }
     /**
      * Informa se o usuário logado é gestor de alguma das suas lotações.
@@ -21016,7 +21016,7 @@ class AuthService {
         return !!((_a = this.unidades) === null || _a === void 0 ? void 0 : _a.filter(x => this.isGestorUnidade(x)).length);
     }
     /**
-     * Informa se a unidade repassada como parâmetro é a lotação principal do usuário logado. Se nenhuma unidade for repassada,
+     * Informa se a unidade repassada como parâmetro é a lotação do usuário logado. Se nenhuma unidade for repassada,
      * será adotada a unidade selecionada pelo servidor na homepage.
      * @param pUnidade
      * @returns
@@ -21024,7 +21024,7 @@ class AuthService {
     isLotacaoPrincipal(pUnidade = null) {
         var _a, _b, _c;
         let unidade = pUnidade || this.unidade;
-        let lotacao = (_c = (_b = (_a = this.usuario) === null || _a === void 0 ? void 0 : _a.areas_trabalho) === null || _b === void 0 ? void 0 : _b.find(x => { var _a; return (_a = x.atribuicoes) === null || _a === void 0 ? void 0 : _a.find(y => y.atribuicao == "LOTADO"); })) === null || _c === void 0 ? void 0 : _c.unidade; //this.usuario!.lotacao?.unidade;
+        let lotacao = (_c = (_b = (_a = this.usuario) === null || _a === void 0 ? void 0 : _a.areas_trabalho) === null || _b === void 0 ? void 0 : _b.find(x => { var _a; return (_a = x.atribuicoes) === null || _a === void 0 ? void 0 : _a.find(y => y.atribuicao == "LOTADO"); })) === null || _c === void 0 ? void 0 : _c.unidade;
         return (lotacao === null || lotacao === void 0 ? void 0 : lotacao.id) == unidade.id;
     }
     /**
