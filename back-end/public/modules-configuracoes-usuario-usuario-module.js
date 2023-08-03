@@ -593,13 +593,13 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
             return result;
         };
         this.formValidation = (form) => {
-            var _a, _b;
-            if (!((_a = form === null || form === void 0 ? void 0 : form.controls.atribuicoes.value) === null || _a === void 0 ? void 0 : _a.length) || (form === null || form === void 0 ? void 0 : form.controls.atribuicoes.value.filter((u) => u.nome == "LOTADO"))) {
+            var _a, _b, _c;
+            if (!((_b = (_a = form === null || form === void 0 ? void 0 : form.controls.atribuicoes) === null || _a === void 0 ? void 0 : _a.value) === null || _b === void 0 ? void 0 : _b.length) || (form === null || form === void 0 ? void 0 : form.controls.atribuicoes.value.filter((u) => u.nome == "LOTADO"))) {
                 return "Obrigatório ao menos a unidade de lotação do usuário!";
             }
             else {
                 const erros_atribuicoes = [];
-                (_b = form === null || form === void 0 ? void 0 : form.controls.atribuicoes.value) === null || _b === void 0 ? void 0 : _b.forEach((atribuicao) => {
+                (_c = form === null || form === void 0 ? void 0 : form.controls.atribuicoes.value) === null || _c === void 0 ? void 0 : _c.forEach((atribuicao) => {
                     if (atribuicao.unidade_id == '')
                         erros_atribuicoes.push({ atribuicao: atribuicao, erro: 'Falta unidade_id' });
                 });
