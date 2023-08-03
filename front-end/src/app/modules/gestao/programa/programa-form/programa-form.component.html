@@ -1,7 +1,7 @@
 <!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
     <div class="row">
-        <input-search #unidade [size]="12" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+        <input-search #unidade [size]="12" controlName="unidade_id" [dao]="unidadeDao" [selectParams]="{filter: {instituidora: true}}"></input-search>
     </div>
     <div class="row">
         <input-datetime date [size]="4" label="Data de Início" icon="bi bi-calendar-date" controlName="data_inicio_vigencia" [control]="form!.controls.data_inicio_vigencia" labelInfo="Data de início da vigência do programa de gestão na unidade instituidora"></input-datetime>

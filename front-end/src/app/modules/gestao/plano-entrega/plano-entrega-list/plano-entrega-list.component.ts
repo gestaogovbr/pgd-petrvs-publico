@@ -67,7 +67,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       planejamento_id: { default: null },
       cadeia_valor_id: { default: null },
     });
-    this.join = ['planejamento:id,nome', 'cadeiaValor:id,nome', 'unidade:id,sigla,path', 'entregas.entrega', 'entregas.unidade'];
+    this.join = ['planejamento:id,nome', 'programa:id,nome', 'cadeiaValor:id,nome', 'unidade:id,sigla,path', 'entregas.entrega', 'entregas.unidade'];
     this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }];
     this.BOTAO_ADERIR_OPTION = { label: "Aderir", icon: this.entityService.getIcon("Adesao"), onClick: (() => { this.go.navigate({route: ['gestao', 'plano-entrega', 'adesao']}, { metadata: { planoEntrega: this.linha }, modalClose: (modalResult) => { this.refresh(); } }); }).bind(this) };
     this.BOTAO_ADERIR_TOOLBAR = { label: "Aderir", disabled: !this.habilitarAdesaoToolbar, icon: this.entityService.getIcon("Adesao"), onClick: (() => { this.go.navigate({ route: ['gestao', 'plano-entrega', 'adesao'] }, { modalClose: (modalResult) => { this.refresh(); } }); }).bind(this) };
