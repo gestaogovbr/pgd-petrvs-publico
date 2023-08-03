@@ -29,6 +29,7 @@ export class InputDatetimeComponent extends InputBase implements OnInit {
   @Input() icon: string = "bi bi-calendar-date";
   @Input() label: string = "";
   @Input() labelInfo: string = "";
+  @Input() labelClass?: string;
   @Input() bold: boolean = false;
   @Input() loading: boolean = false;
   @Input() prefix?: string;

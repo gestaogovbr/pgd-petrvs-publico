@@ -48,6 +48,7 @@ export class Unidade extends Base implements HasNotificacao {
     public etiquetas: LookupItem[] = []; //Configuração das etiquetas que serão utilizadas nas atividades (contém nome, icone e cor)
     public checklist: LookupItem[] = []; //Nome dos checklist
     public inativo: Date | null = null; //Se a unidade está inativa
+    public instituidora: number = 0; //Se a unidade é instituidora (Programas)
     public expediente: Expediente | null = null; // Expediente (Não nulo)
     public texto_complementar_plano: string | null = ""; // Mensagem adicional para o plano de trabalho
 

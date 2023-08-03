@@ -27,6 +27,7 @@ export class InputTextComponent extends InputBase implements OnInit {
   @Input() icon: string = "bi bi-textarea-t";
   @Input() label: string = "";
   @Input() labelInfo: string = "";
+  @Input() labelClass?: string;
   @Input() bold: boolean = false;
   @Input() value: any = "";
   @Input() loading: boolean = false;

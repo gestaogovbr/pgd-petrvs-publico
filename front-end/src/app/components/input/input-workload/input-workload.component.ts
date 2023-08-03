@@ -26,6 +26,7 @@ export class InputWorkloadComponent extends InputBase implements OnInit {
   @Input() icon: string = "";
   @Input() label: string = "";
   @Input() labelInfo: string = "";
+  @Input() labelClass?: string;
   @Input() bold: boolean = false;
   @Input() value: any = 0;
   @Input() loading: boolean = false;

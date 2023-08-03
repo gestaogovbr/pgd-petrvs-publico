@@ -59,7 +59,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
   }
   
   public formValidation = (form?: FormGroup) => {
-    if(!form?.controls.atribuicoes.value?.length || form?.controls.atribuicoes.value.filter((u: { nome: string; unidade_id: string }) => u.nome == "LOTADO")) {
+    if(!form?.controls.atribuicoes?.value?.length || form?.controls.atribuicoes.value.filter((u: { nome: string; unidade_id: string }) => u.nome == "LOTADO")) {
       return "Obrigatório ao menos a unidade de lotação do usuário!";
     } else {
       const erros_atribuicoes = []
@@ -67,7 +67,6 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
         if(atribuicao.unidade_id == '') erros_atribuicoes.push({ atribuicao: atribuicao, erro: 'Falta unidade_id'})
       });
       if (erros_atribuicoes.length) return "Salve a unidade antes de salvar o usuário"
-
     }
     return undefined;
   } 

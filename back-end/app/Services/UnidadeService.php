@@ -253,7 +253,7 @@ class UnidadeService extends ServiceBase
         $where = [];
         $subordinadas = true;
         $inativos = !empty(array_filter($data["where"], fn($w) => $w[0] == "inativo"));
-        $unidadesPlanejamento = !empty(array_filter($data["where"], fn($w) => $w[0] == "unidades_planejamento"));
+        //$unidadesPlanejamento = !empty(array_filter($data["where"], fn($w) => $w[0] == "unidades_planejamento"));
         foreach($data["where"] as $condition) {
             if(is_array($condition) && $condition[0] == "subordinadas") {
                 $subordinadas = $condition[2];
@@ -266,8 +266,8 @@ class UnidadeService extends ServiceBase
         if(!$inativos) {
             array_push($where, ["inativo", "==", null]);
         }
-        if(!$usuario->hasPermissionTo("MOD_UND_TUDO") || ($unidadesPlanejamento && ($usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_SUBORD") || $usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_QQLOT")))) {
-            if($unidadesPlanejamento && $usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_QQLOT")) $subordinadas = false;
+        if(!$usuario->hasPermissionTo("MOD_UND_TUDO")) { // || ($unidadesPlanejamento && ($usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_SUBORD") || $usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_QQLOT")))) {
+            //if($unidadesPlanejamento && $usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_QQLOT")) $subordinadas = false;
             $areasTrabalhoWhere = $this->usuarioService->areasTrabalhoWhere($subordinadas, null, "unidades");
             array_push($where, new RawWhere("($areasTrabalhoWhere)", []));
         }

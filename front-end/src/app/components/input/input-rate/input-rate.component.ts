@@ -23,6 +23,7 @@ export class InputRateComponent extends InputBase implements OnInit {
   @Input() icon: string = "";
   @Input() label: string = "";
   @Input() labelInfo: string = "";
+  @Input() labelClass?: string;
   @Input() bold: boolean = false;
   @Input() value: number = 0;
   @Input() loading: boolean = false;

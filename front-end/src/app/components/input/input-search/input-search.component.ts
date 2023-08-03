@@ -39,6 +39,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
   @Input() labelInfo: string = "";
+  @Input() labelClass?: string;
   @Input() bold: boolean = false;
   @Input() loading: boolean = false;
   @Input() value: any = "";
@@ -51,6 +52,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
   @Input() dao?: DaoBaseService<Base> = undefined;
   @Input() detailsButton?: string;
   @Input() addRoute?: FullRoute;
+  @Input() selectParams?: any;
   @Input() onlySelect?: string;
   @Input() form?: FormGroup;
   @Input() source?: any;
@@ -209,7 +211,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
   public onSelectClick(event: Event) {
     if(this.selectRoute) {
       const modalRoute = this.selectRoute!;
-      modalRoute.params = Object.assign(modalRoute.params || {}, { selectable: true, modal: true });
+      modalRoute.params = Object.assign(modalRoute.params || {}, this.selectParams || {}, { selectable: true, modal: true });
       this.go.navigate(modalRoute, {modalClose: async (result) => {
         if(result?.id?.length) {
           this.control?.setValue(result.id, {emitEvent: false});
