@@ -19,7 +19,7 @@ export class EntidadeListComponent extends PageListBase<Entidade, EntidadeDaoSer
   constructor(public injector: Injector) {
     super(injector, Entidade, EntidadeDaoService);
     /* Inicializações */
-    this.title = this.lex.translate("Entidade");
+    this.title = this.lex.translate("Entidades");
     this.code = "MOD_CFG_ENTD";
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}

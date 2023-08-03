@@ -147,7 +147,7 @@ class PanelListComponent extends src_app_modules_base_page_list_base__WEBPACK_IM
             return result;
         };
         /* Inicializações */
-        this.title = "Panel Petrvs";
+        this.title = "Painel Petrvs";
         this.code = "PANEL";
         this.filter = this.fh.FormBuilder({});
         this.options.push({
@@ -375,10 +375,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const routes = [
-    { path: '', component: _panel_list_panel_list_component__WEBPACK_IMPORTED_MODULE_2__["PanelListComponent"], runGuardsAndResolvers: 'always', data: { title: "Painel" } },
-    { path: 'new', component: _panel_form_panel_form_component__WEBPACK_IMPORTED_MODULE_3__["PanelFormComponent"], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_1__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
-    { path: ':id/edit', component: _panel_form_panel_form_component__WEBPACK_IMPORTED_MODULE_3__["PanelFormComponent"], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_1__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
-    { path: ':id/consult', component: _panel_form_panel_form_component__WEBPACK_IMPORTED_MODULE_3__["PanelFormComponent"], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_1__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } }
+    { path: '', component: _panel_list_panel_list_component__WEBPACK_IMPORTED_MODULE_2__["PanelListComponent"], runGuardsAndResolvers: 'always', data: { title: "Painéis" } },
+    { path: 'new', component: _panel_form_panel_form_component__WEBPACK_IMPORTED_MODULE_3__["PanelFormComponent"], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_1__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Painel", modal: true } },
+    { path: ':id/edit', component: _panel_form_panel_form_component__WEBPACK_IMPORTED_MODULE_3__["PanelFormComponent"], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_1__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição de Painel", modal: true } },
+    { path: ':id/consult', component: _panel_form_panel_form_component__WEBPACK_IMPORTED_MODULE_3__["PanelFormComponent"], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_1__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Painel", modal: true } }
 ];
 class PanelRoutingModule {
 }

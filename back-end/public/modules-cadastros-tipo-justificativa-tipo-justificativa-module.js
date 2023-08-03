@@ -25,9 +25,9 @@ __webpack_require__.r(__webpack_exports__);
 
 const routes = [
     { path: '', component: _tipo_justificativa_list_tipo_justificativa_list_component__WEBPACK_IMPORTED_MODULE_4__["TipoJustificativaListComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Tipos de Justificativa" } },
-    { path: 'new', component: _tipo_justificativa_form_tipo_justificativa_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoJustificativaFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
-    { path: ':id/edit', component: _tipo_justificativa_form_tipo_justificativa_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoJustificativaFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
-    { path: ':id/consult', component: _tipo_justificativa_form_tipo_justificativa_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoJustificativaFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } }
+    { path: 'new', component: _tipo_justificativa_form_tipo_justificativa_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoJustificativaFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Tipo de Justificativa", modal: true } },
+    { path: ':id/edit', component: _tipo_justificativa_form_tipo_justificativa_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoJustificativaFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição de Tipo de Justificativa", modal: true } },
+    { path: ':id/consult', component: _tipo_justificativa_form_tipo_justificativa_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoJustificativaFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Tipo de Justificativa", modal: true } }
 ];
 class TipoJustificativaRoutingModule {
 }
@@ -118,7 +118,7 @@ class TipoJustificativaFormComponent extends src_app_modules_base_page_form_base
             return result;
         };
         this.titleEdit = (entity) => {
-            return "Editando " + ((entity === null || entity === void 0 ? void 0 : entity.nome) || "");
+            return "Editando " + this.lex.translate("Tipo de Justificativa") + ': ' + ((entity === null || entity === void 0 ? void 0 : entity.nome) || "");
         };
         this.form = this.fh.FormBuilder({
             nome: { default: "" },
@@ -209,7 +209,7 @@ class TipoJustificativaListComponent extends src_app_modules_base_page_list_base
             return result;
         };
         /* Inicializações */
-        this.title = "Tipos de " + this.lex.noun("Justificativa", true);
+        this.title = this.lex.translate("Tipos de Justificativa");
         this.code = "MOD_TIPO_JUST";
         this.filter = this.fh.FormBuilder({
             nome: { default: "" }
@@ -261,7 +261,7 @@ TipoJustificativaListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4_
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", ctx.filterCollapsed);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", "Nome " + ctx.lex.noun("tipo de justificativa", false, true))("control", ctx.filter.controls.nome);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", "Nome " + ctx.lex.translate("tipo de justificativa"))("control", ctx.filter.controls.nome);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("onEdit", ctx.edit)("onDelete", ctx.delete);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);

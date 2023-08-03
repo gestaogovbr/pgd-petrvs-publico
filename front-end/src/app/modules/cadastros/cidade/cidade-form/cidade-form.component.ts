@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
@@ -52,7 +52,7 @@ export class CidadeFormComponent extends PageFormBase<Cidade, CidadeDaoService> 
   }
 
   public titleEdit = (entity: Cidade): string => {
-    return "Editando "+ (entity?.nome || "");
+    return "Editando " + this.lex.translate("Cidade") + ': ' + (entity?.nome || "");
   }
 }
 

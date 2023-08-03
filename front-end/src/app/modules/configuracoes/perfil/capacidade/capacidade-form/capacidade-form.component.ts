@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
@@ -58,13 +58,12 @@ export class CapacidadeFormComponent extends PageFormBase<Capacidade, Capacidade
   public saveData(form: IIndexable): Promise<Capacidade> {
     return new Promise<Capacidade>((resolve, reject) => {
       const capacidade = this.util.fill(new Capacidade(), this.entity!);
-      //this.urlParams!.get("perfil_id")
       resolve(this.util.fillForm(capacidade, this.form!.value));
     });
   }
 
   public titleEdit = (entity: Capacidade): string => {
-    return "Editando " + (entity?.perfil_id || "");
+    return "Editando " + this.lex.translate("Capacidade") + ': ' + (entity?.perfil?.nome || "") + ': ' + (entity?.tipo_capacidade?.codigo || "");
   }
 }
 

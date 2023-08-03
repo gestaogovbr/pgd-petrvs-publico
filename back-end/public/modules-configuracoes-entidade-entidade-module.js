@@ -62,7 +62,7 @@ class EntidadeListComponent extends src_app_modules_base_page_list_base__WEBPACK
             return result;
         };
         /* Inicializações */
-        this.title = this.lex.noun("Entidade", true);
+        this.title = this.lex.translate("Entidades");
         this.code = "MOD_CFG_ENTD";
         this.filter = this.fh.FormBuilder({
             nome: { default: "" }
@@ -132,7 +132,7 @@ EntidadeListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵde
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", "Nome " + ctx.lex.noun("entidade", false, true))("control", ctx.filter.controls.nome);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", "Nome " + ctx.lex.translate("entidade"))("control", ctx.filter.controls.nome);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](5);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("onEdit", ctx.edit)("options", ctx.options);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
@@ -220,7 +220,7 @@ class EntidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK
             return result;
         };
         this.titleEdit = (entity) => {
-            return "Editando " + ((entity === null || entity === void 0 ? void 0 : entity.sigla) || "");
+            return "Editando " + this.lex.translate("Entidade") + ': ' + ((entity === null || entity === void 0 ? void 0 : entity.sigla) || "");
         };
         this.tipoModalidadeDao = injector.get(src_app_dao_tipo_modalidade_dao_service__WEBPACK_IMPORTED_MODULE_4__["TipoModalidadeDaoService"]);
         this.cidadeDao = injector.get(src_app_dao_cidade_dao_service__WEBPACK_IMPORTED_MODULE_2__["CidadeDaoService"]);
@@ -423,7 +423,7 @@ class EntidadeConfComponent extends src_app_modules_base_page_form_base__WEBPACK
             return result;
         };
         this.titleEdit = (entity) => {
-            return "Configurando";
+            return "Configurando " + this.lex.translate("Entidade") + ': ' + ((entity === null || entity === void 0 ? void 0 : entity.sigla) || "");
         };
         this.tipoModalidadeDao = injector.get(src_app_dao_tipo_modalidade_dao_service__WEBPACK_IMPORTED_MODULE_4__["TipoModalidadeDaoService"]);
         this.templateDao = injector.get(src_app_dao_template_dao_service__WEBPACK_IMPORTED_MODULE_3__["TemplateDaoService"]);
@@ -433,19 +433,6 @@ class EntidadeConfComponent extends src_app_modules_base_page_form_base__WEBPACK
         this.form = this.fh.FormBuilder({
             url_sei: { default: "" },
             tipo_modalidade_id: { default: null },
-            /*notifica_demanda_distribuicao: {default: true},
-            notifica_demanda_conclusao: {default: true},
-            notifica_demanda_avaliacao: {default: true},
-            notifica_demanda_modificacao: {default: true},
-            notifica_demanda_comentario: {default: true},
-            template_demanda_distribuicao: {default: ""},
-            template_demanda_conclusao: {default: ""},
-            template_demanda_avaliacao: {default: ""},
-            template_demanda_modificacao: {default: ""},
-            template_demanda_comentario: {default: ""},
-            enviar_petrvs: {default: true},
-            enviar_email: {default: true},
-            enviar_whatsapp: {default: true},*/
             notificacoes: { default: [] },
             nomenclatura: { default: [] },
             expediente: { default: new src_app_models_expediente_model__WEBPACK_IMPORTED_MODULE_6__["Expediente"]() },
@@ -460,7 +447,7 @@ class EntidadeConfComponent extends src_app_modules_base_page_form_base__WEBPACK
             plural: { default: "" },
             feminino: { default: false }
         }, this.cdRef, this.validateNomenclatura);
-        this.title = "Configurando " + this.lex.noun("entidade", false);
+        this.title = "Configurando " + this.lex.translate("Entidade");
     }
     onApiKeyClick(event) {
         var _a;
@@ -502,22 +489,7 @@ class EntidadeConfComponent extends src_app_modules_base_page_form_base__WEBPACK
                 }
             });
             entity.nomenclatura = nomenclatura;
-            //form.patchValue(this.util.fillForm(formValue, entity));
-            //let notificacoes = this.util.fill(new EntidadeNotificacoes(), entity.notificacoes);
-            form.patchValue(this.util.fillForm(formValue, entity)); /*{...entity, ...{
-              notifica_demanda_distribuicao: notificacoes?.notifica_demanda_distribuicao == undefined || notificacoes?.notifica_demanda_distribuicao,
-              notifica_demanda_conclusao: notificacoes?.notifica_demanda_conclusao == undefined || notificacoes?.notifica_demanda_conclusao,
-              notifica_demanda_avaliacao: notificacoes?.notifica_demanda_avaliacao == undefined || notificacoes?.notifica_demanda_avaliacao,
-              notifica_demanda_modificacao: notificacoes?.notifica_demanda_modificacao == undefined || notificacoes?.notifica_demanda_modificacao,
-              notifica_demanda_comentario: notificacoes?.notifica_demanda_comentario == undefined || notificacoes?.notifica_demanda_comentario,
-              template_demanda_distribuicao: notificacoes?.template_demanda_distribuicao || "",
-              template_demanda_conclusao: notificacoes?.template_demanda_conclusao || "",
-              template_demanda_avaliacao: notificacoes?.template_demanda_avaliacao || "",
-              template_demanda_modificacao: notificacoes?.template_demanda_modificacao || "",
-              template_demanda_comentario: notificacoes?.template_demanda_comentario || "",
-              enviar_email: entity.notificacoes?.enviar_email == undefined || entity.notificacoes?.enviar_email,
-              enviar_whatsapp: entity.notificacoes?.enviar_whatsapp == undefined || entity.notificacoes?.enviar_whatsapp
-            }}));*/
+            form.patchValue(this.util.fillForm(formValue, entity));
         });
     }
     initializeData(form) {
@@ -529,7 +501,6 @@ class EntidadeConfComponent extends src_app_modules_base_page_form_base__WEBPACK
     saveData(form) {
         return new Promise((resolve, reject) => {
             var _a;
-            //let notificacoes = this.util.fillForm(new EntidadeNotificacoes(), this.form.value);
             (_a = this.notificacoes) === null || _a === void 0 ? void 0 : _a.saveData();
             let entidade = this.util.fill(new src_app_models_entidade_model__WEBPACK_IMPORTED_MODULE_5__["Entidade"](), this.entity);
             entidade = this.util.fillForm(entidade, this.form.value);
@@ -644,10 +615,10 @@ __webpack_require__.r(__webpack_exports__);
 
 const routes = [
     { path: '', component: _entidade_list_entidade_list_component__WEBPACK_IMPORTED_MODULE_5__["EntidadeListComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Entidades" } },
-    { path: 'new', component: _entidade_form_entidade_form_component__WEBPACK_IMPORTED_MODULE_4__["EntidadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
-    { path: ':id/edit', component: _entidade_form_entidade_form_component__WEBPACK_IMPORTED_MODULE_4__["EntidadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
-    { path: ':id/conf', component: _entidade_conf_entidade_conf_component__WEBPACK_IMPORTED_MODULE_3__["EntidadeConfComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Configurações", modal: true } },
-    { path: ':id/consult', component: _entidade_form_entidade_form_component__WEBPACK_IMPORTED_MODULE_4__["EntidadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } }
+    { path: 'new', component: _entidade_form_entidade_form_component__WEBPACK_IMPORTED_MODULE_4__["EntidadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Entidade", modal: true } },
+    { path: ':id/edit', component: _entidade_form_entidade_form_component__WEBPACK_IMPORTED_MODULE_4__["EntidadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição de Entidade", modal: true } },
+    { path: ':id/conf', component: _entidade_conf_entidade_conf_component__WEBPACK_IMPORTED_MODULE_3__["EntidadeConfComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Configurações de Entidade", modal: true } },
+    { path: ':id/consult', component: _entidade_form_entidade_form_component__WEBPACK_IMPORTED_MODULE_4__["EntidadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Entidade", modal: true } }
 ];
 class EntidadeRoutingModule {
 }

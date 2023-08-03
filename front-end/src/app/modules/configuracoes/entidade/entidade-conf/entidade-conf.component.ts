@@ -38,19 +38,6 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
     this.form = this.fh.FormBuilder({
       url_sei: {default: ""},
       tipo_modalidade_id: {default: null},
-      /*notifica_demanda_distribuicao: {default: true},
-      notifica_demanda_conclusao: {default: true},
-      notifica_demanda_avaliacao: {default: true},
-      notifica_demanda_modificacao: {default: true},
-      notifica_demanda_comentario: {default: true},
-      template_demanda_distribuicao: {default: ""},
-      template_demanda_conclusao: {default: ""},
-      template_demanda_avaliacao: {default: ""},
-      template_demanda_modificacao: {default: ""},
-      template_demanda_comentario: {default: ""},
-      enviar_petrvs: {default: true},
-      enviar_email: {default: true},
-      enviar_whatsapp: {default: true},*/
       notificacoes: {default: []},
       nomenclatura: {default: []},
       expediente: {default: new Expediente()},
@@ -65,7 +52,7 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
       plural: {default: ""},
       feminino: {default: false}
     }, this.cdRef, this.validateNomenclatura);
-    this.title = "Configurando " + this.lex.translate("entidade");
+    this.title = "Configurando " + this.lex.translate("Entidade");
   }
 
   public validateNomenclatura = (control: AbstractControl, controlName: string) => {
@@ -130,22 +117,7 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
       }
     });
     entity.nomenclatura = nomenclatura;
-    //form.patchValue(this.util.fillForm(formValue, entity));
-    //let notificacoes = this.util.fill(new EntidadeNotificacoes(), entity.notificacoes);
-    form.patchValue(this.util.fillForm(formValue, entity)); /*{...entity, ...{
-      notifica_demanda_distribuicao: notificacoes?.notifica_demanda_distribuicao == undefined || notificacoes?.notifica_demanda_distribuicao,
-      notifica_demanda_conclusao: notificacoes?.notifica_demanda_conclusao == undefined || notificacoes?.notifica_demanda_conclusao,
-      notifica_demanda_avaliacao: notificacoes?.notifica_demanda_avaliacao == undefined || notificacoes?.notifica_demanda_avaliacao,
-      notifica_demanda_modificacao: notificacoes?.notifica_demanda_modificacao == undefined || notificacoes?.notifica_demanda_modificacao,
-      notifica_demanda_comentario: notificacoes?.notifica_demanda_comentario == undefined || notificacoes?.notifica_demanda_comentario,
-      template_demanda_distribuicao: notificacoes?.template_demanda_distribuicao || "",
-      template_demanda_conclusao: notificacoes?.template_demanda_conclusao || "",
-      template_demanda_avaliacao: notificacoes?.template_demanda_avaliacao || "",
-      template_demanda_modificacao: notificacoes?.template_demanda_modificacao || "",
-      template_demanda_comentario: notificacoes?.template_demanda_comentario || "",
-      enviar_email: entity.notificacoes?.enviar_email == undefined || entity.notificacoes?.enviar_email,
-      enviar_whatsapp: entity.notificacoes?.enviar_whatsapp == undefined || entity.notificacoes?.enviar_whatsapp
-    }}));*/
+    form.patchValue(this.util.fillForm(formValue, entity));
   }
 
   public async initializeData(form: FormGroup) {
@@ -155,7 +127,6 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
 
   public saveData(form: IIndexable): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      //let notificacoes = this.util.fillForm(new EntidadeNotificacoes(), this.form.value);
       this.notificacoes?.saveData();
       let entidade = this.util.fill(new Entidade(), this.entity!);
       entidade = this.util.fillForm(entidade, this.form!.value);
@@ -172,6 +143,6 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
   }
 
   public titleEdit = (entity: Entidade): string => {
-    return "Configurando";
+    return "Configurando " + this.lex.translate("Entidade") + ': ' + (entity?.sigla || "");
   }
 }

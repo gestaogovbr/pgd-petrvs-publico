@@ -7,10 +7,10 @@ import { PerfilListComponent } from './perfil-list/perfil-list.component';
 
 const routes: Routes = [
   { path: '', component: PerfilListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Perfils" } },
-  { path: 'new', component: PerfilFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
-  { path: ':id/edit', component: PerfilFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
+  { path: 'new', component: PerfilFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Perfil", modal: true } },
+  { path: ':id/edit', component: PerfilFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de Perfil", modal: true } },
   { path: ':perfil_id/capacidade', loadChildren: () => import('./capacidade/capacidade.module').then(m => m.CapacidadeModule), canActivate: [AuthGuard] },
-  { path: ':id/consult', component: PerfilFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } }
+  { path: ':id/consult', component: PerfilFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Perfil", modal: true } }
 ];
 
 @NgModule({

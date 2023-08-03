@@ -22,12 +22,12 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
 
   constructor(public injector: Injector) {
     super(injector, Unidade, UnidadeDaoService);
-    this.join = ["cidade", "unidade_pai:id,sigla", "entidade:id,sigla"];
+    this.join = ["cidade", "unidade_pai:id,sigla", "entidade:id,sigla", "gestor.usuario:id", "gestor_substituto.usuario:id"];
     this.cidadeDao = injector.get<CidadeDaoService>(CidadeDaoService);
     this.entidadeDao = injector.get<EntidadeDaoService>(EntidadeDaoService);
 
     /* Inicializações */
-    this.title = this.lex.translate("Unidade");
+    this.title = this.lex.translate("Unidades");
     this.code = "MOD_CFG_UND";
     this.filter = this.fh.FormBuilder({
       entidade_id: { default: this.auth.unidade?.entidade_id },
@@ -50,8 +50,6 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
   public dynamicOptions(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let unidade: Unidade = row as Unidade;
-    /* Testa se o usuário possui permissão para exibir dados da unidade
-    if (this.auth.hasPermissionTo("MOD_UND_CONS")) result.push({ icon: "bi bi-activity", label: "Ver Atividades", onClick: this.consultAtividades.bind(this) });*/
     // Testa se o usuário possui permissão para exibir dados da unidade
     if (this.auth.hasPermissionTo("MOD_UND_CONS")) result.push({ icon: "bi bi-info-circle", label: "Informações", onClick: this.consult.bind(this) });
     // Testa se o usuário possui permissão de inativar a unidade
@@ -89,8 +87,4 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
     if (form.instituidora) result.push(["instituidora", "==", 1]);
     return result;
   }
-
-  /*public consultAtividades(unidade: Unidade) {
-    this.go.navigate({ route: ['cadastros', 'atividade'] }, { metadata: { unidade_id: unidade.id, filterHidden: 'true', exibir_vinculadas_toolbar: true, minhas: true }, modal: true });
-  }*/
 }

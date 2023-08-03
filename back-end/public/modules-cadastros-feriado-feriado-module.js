@@ -24,10 +24,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const routes = [
-    { path: '', component: _feriado_list_feriado_list_component__WEBPACK_IMPORTED_MODULE_4__["FeriadoListComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Feriado" } },
-    { path: 'new', component: _feriado_form_feriado_form_component__WEBPACK_IMPORTED_MODULE_3__["FeriadoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
-    { path: ':id/edit', component: _feriado_form_feriado_form_component__WEBPACK_IMPORTED_MODULE_3__["FeriadoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
-    { path: ':id/consult', component: _feriado_form_feriado_form_component__WEBPACK_IMPORTED_MODULE_3__["FeriadoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } }
+    { path: '', component: _feriado_list_feriado_list_component__WEBPACK_IMPORTED_MODULE_4__["FeriadoListComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Feriados" } },
+    { path: 'new', component: _feriado_form_feriado_form_component__WEBPACK_IMPORTED_MODULE_3__["FeriadoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Feriado", modal: true } },
+    { path: ':id/edit', component: _feriado_form_feriado_form_component__WEBPACK_IMPORTED_MODULE_3__["FeriadoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição de Feriado", modal: true } },
+    { path: ':id/consult', component: _feriado_form_feriado_form_component__WEBPACK_IMPORTED_MODULE_3__["FeriadoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Feriado", modal: true } }
 ];
 class FeriadoRoutingModule {
 }
@@ -110,16 +110,10 @@ class FeriadoFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
             else if (controlName == "ano" && ((_b = this.form) === null || _b === void 0 ? void 0 : _b.controls.recorrente.value) == 0 && !this.util.between(parseInt(control.value || 0), { start: 2000, end: 2100 })) {
                 result = "Inválido";
             }
-            /*if(controlName == "ano") {
-              console.log(this.form?.controls.recorrente.value, !this.util.between(parseInt(control.value || 0), {start: 2000, end: 2100}));
-            }*/
-            /*else if(['dia','mes'].indexOf(controlName) >= 0 && this.form?.controls.dia.value==31 && (['4','6','9','11'].indexOf(this.form?.controls.mes.value) >=0)) {
-              result = "Mês de 30 dias";
-            }*/
             return result;
         };
         this.titleEdit = (entity) => {
-            return "Editando " + ((entity === null || entity === void 0 ? void 0 : entity.nome) || "");
+            return "Editando " + this.lex.translate("Feriado") + ': ' + ((entity === null || entity === void 0 ? void 0 : entity.nome) || "");
         };
         this.entidadeDao = injector.get(src_app_dao_entidade_dao_service__WEBPACK_IMPORTED_MODULE_3__["EntidadeDaoService"]);
         this.cidadeDao = injector.get(src_app_dao_cidade_dao_service__WEBPACK_IMPORTED_MODULE_6__["CidadeDaoService"]);
@@ -287,8 +281,7 @@ class FeriadoListComponent extends src_app_modules_base_page_list_base__WEBPACK_
         };
         this.dao = dao;
         /* Inicializações */
-        //this.title = "Feriados";
-        this.title = this.lex.noun("Feriado", true);
+        this.title = this.lex.translate("Feriados");
         this.code = "MOD_FER";
         this.filter = this.fh.FormBuilder({
             nome: { default: "" },
@@ -343,7 +336,7 @@ FeriadoListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdef
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", ctx.filterCollapsed);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", "Nome " + ctx.lex.noun("Feriado", false, true))("control", ctx.filter.controls.nome)("placeholder", "Nome " + ctx.lex.noun("feriado", false, true));
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", "Nome " + ctx.lex.translate("Feriado"))("control", ctx.filter.controls.nome)("placeholder", "Nome " + ctx.lex.translate("feriado"));
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](6);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("onEdit", ctx.edit)("options", ctx.options);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);

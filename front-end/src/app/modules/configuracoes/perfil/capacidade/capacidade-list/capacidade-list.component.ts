@@ -25,7 +25,7 @@ export class CapacidadeListComponent extends PageListBase<Capacidade, Capacidade
     this.perfilDao = injector.get<PerfilDaoService>(PerfilDaoService);
 
     /* Inicializações */
-    this.title = this.lex.translate("Capacidade");
+    this.title = this.lex.translate("Capacidades");
     this.code = "MOD_TIPO_CAP";
     this.filter = this.fh.FormBuilder({
       descricao: {default: ""}
@@ -51,7 +51,7 @@ export class CapacidadeListComponent extends PageListBase<Capacidade, Capacidade
   ngOnInit(): void {
     super.ngOnInit();
     this.perfilDao.getById(this.urlParams!.get("perfil_id")!).then(perfil => {
-      this.title = this.lex.translate("Capacidade") + " de " + perfil?.nome;
+      this.title = this.lex.translate("Capacidades") + " do perfil " + perfil?.nome;
       this.cdRef.detectChanges();
     });
   }

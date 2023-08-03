@@ -35,14 +35,6 @@ export class EditorMontarComponent extends ListenerBase implements OnInit {
   }
 
   public async loadToolbarButtons(buttons: string[]) {
-    this.gb.toolbarButtons = [];
-    /*if(buttons.includes("incluir")) {
-      this.gb.toolbarButtons.push({
-        icon: "bi bi-activity",
-        color: "btn-outline-success",
-        hint: "Incluir " + this.lex.translate("demanda"),
-        onClick: this.incluirDemanda.bind(this) 
-      });
-    } */       
+    this.gb.toolbarButtons = [];     
   }
 }

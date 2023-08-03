@@ -6,10 +6,10 @@ import { EntregaFormComponent } from './entrega-form/entrega-form.component';
 import { EntregaListComponent } from './entrega-list/entrega-list.component';
 
 const routes: Routes = [
-  { path: '', component: EntregaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Entrega" } },
-  { path: 'new', component: EntregaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
-  { path: ':id/edit', component: EntregaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
-  { path: ':id/consult', component: EntregaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } }
+  { path: '', component: EntregaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Entregas" } },
+  { path: 'new', component: EntregaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Entrega", modal: true } },
+  { path: ':id/edit', component: EntregaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de Entrega", modal: true } },
+  { path: ':id/consult', component: EntregaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Entrega", modal: true } }
 ];
 
 @NgModule({

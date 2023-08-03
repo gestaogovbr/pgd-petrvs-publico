@@ -6,10 +6,10 @@ import { TipoTarefaFormComponent } from './tipo-tarefa-form/tipo-tarefa-form.com
 import { TipoTarefaListComponent } from './tipo-tarefa-list/tipo-tarefa-list.component';
 
 const routes: Routes = [
-  { path: '', component: TipoTarefaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Tipo de Tarefa" } },
-  { path: 'new', component: TipoTarefaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
-  { path: ':id/edit', component: TipoTarefaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
-  { path: ':id/consult', component: TipoTarefaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } }
+  { path: '', component: TipoTarefaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Tipos de Tarefa" } },
+  { path: 'new', component: TipoTarefaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Tipo de Tarefa", modal: true } },
+  { path: ':id/edit', component: TipoTarefaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de Tipo de Tarefa", modal: true } },
+  { path: ':id/consult', component: TipoTarefaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Tipo de Tarefa", modal: true } }
 ];
 
 @NgModule({

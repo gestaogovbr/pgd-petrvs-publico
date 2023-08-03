@@ -67,10 +67,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const routes = [
-    { path: '', component: _eixo_tematico_list_eixo_tematico_list_component__WEBPACK_IMPORTED_MODULE_4__["EixoTematicoListComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Entrega" } },
-    { path: 'new', component: _eixo_tematico_form_eixo_tematico_form_component__WEBPACK_IMPORTED_MODULE_3__["EixoTematicoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
-    { path: ':id/edit', component: _eixo_tematico_form_eixo_tematico_form_component__WEBPACK_IMPORTED_MODULE_3__["EixoTematicoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
-    { path: ':id/consult', component: _eixo_tematico_form_eixo_tematico_form_component__WEBPACK_IMPORTED_MODULE_3__["EixoTematicoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } }
+    { path: '', component: _eixo_tematico_list_eixo_tematico_list_component__WEBPACK_IMPORTED_MODULE_4__["EixoTematicoListComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Eixos Temáticos" } },
+    { path: 'new', component: _eixo_tematico_form_eixo_tematico_form_component__WEBPACK_IMPORTED_MODULE_3__["EixoTematicoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Eixo Temático", modal: true } },
+    { path: ':id/edit', component: _eixo_tematico_form_eixo_tematico_form_component__WEBPACK_IMPORTED_MODULE_3__["EixoTematicoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição de Eixo Temático", modal: true } },
+    { path: ':id/consult', component: _eixo_tematico_form_eixo_tematico_form_component__WEBPACK_IMPORTED_MODULE_3__["EixoTematicoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Eixo Temático", modal: true } }
 ];
 class EixoTematicoRoutingModule {
 }
@@ -168,7 +168,7 @@ class EixoTematicoListComponent extends src_app_modules_base_page_list_base__WEB
             return result;
         };
         /* Inicializações */
-        this.title = this.lex.noun('Eixo Temático', true);
+        this.title = this.lex.translate('Eixos Temáticos');
         this.orderBy = [['nome', 'asc']];
         this.filter = this.fh.FormBuilder({
             nome: { default: "" }
@@ -226,7 +226,7 @@ EixoTematicoListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵ
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", ctx.lex.noun("Eixo tem\u00E1tico"))("control", ctx.filter.controls.nome)("placeholder", "Nome " + ctx.lex.noun("eixo tem\u00E1tico", false, true) + "...");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", ctx.lex.translate("Eixo tem\u00E1tico"))("control", ctx.filter.controls.nome)("placeholder", "Nome " + ctx.lex.translate("eixo tem\u00E1tico") + "...");
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("template", _r1);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
@@ -282,7 +282,7 @@ class EixoTematicoFormComponent extends src_app_modules_base_page_form_base__WEB
             return result;
         };
         this.titleEdit = (entity) => {
-            return "Editando " + ((entity === null || entity === void 0 ? void 0 : entity.nome) || "");
+            return "Editando " + this.lex.translate("Eixo Temático") + ': ' + ((entity === null || entity === void 0 ? void 0 : entity.nome) || "");
         };
         this.form = this.fh.FormBuilder({
             nome: { default: "" },
@@ -334,7 +334,7 @@ EixoTematicoFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵ
     } if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 12)("label", "Nome " + ctx.lex.noun("eixo tem\u00E1tico", false, true));
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 12)("label", "Nome " + ctx.lex.translate("eixos tem\u00E1ticos"));
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 8)("rows", 4);
         _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);

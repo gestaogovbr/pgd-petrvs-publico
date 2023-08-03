@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
@@ -6,7 +6,6 @@ import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
 import { Unidade } from 'src/app/models/unidade.model';
-import { Usuario } from 'src/app/models/usuario.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 

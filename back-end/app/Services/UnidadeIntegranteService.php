@@ -45,7 +45,7 @@ class UnidadeIntegranteService extends ServiceBase
             $vinculoNovo = UnidadeIntegrante::firstOrCreate(['unidade_id' => $unidadeId, 'usuario_id' => $usuarioId]);
             if($usuario && !$novasAtribuicoes) {     // excluir o vínculo e suas atribuições
                 $vinculo = UnidadeIntegrante::where('usuario_id',$usuario->id)->where('unidade_id',$unidade->id)->first();
-                if($usuario->lotacao->id == $vinculo->id) {     // o vínculo de lotação não pode ser excluído, apenas através da definição da lotação em outra unidade
+                if(!empty($usuario->lotacao) && $usuario->lotacao->id == $vinculo->id) {     // o vínculo de lotação não pode ser excluído, apenas através da definição da lotação em outra unidade
                     $vinculo->atribuicoes->each(function($a) { if($a->atribuicao != 'LOTADO') $a->delete(); });
                     array_push($atribuicoesFinais,"LOTADO");
                 } else {
@@ -57,11 +57,11 @@ class UnidadeIntegranteService extends ServiceBase
                 $unidadeGerenciaTitular = $usuario->gerenciaTitular ? $usuario->gerenciaTitular->unidade : null;
                 $definirLotacao = function($vinculoNovo) use ($unidadeLotacao,$unidadeId,$usuario,&$atribuicoesFinais) {
                     if(empty($unidadeLotacao)) {
-                        UnidadeIntegranteAtribuicao::create(["atribuicao" => "LOTADO","unidade_integrante_id" => $vinculoNovo->id]);
+                        UnidadeIntegranteAtribuicao::create(["atribuicao" => "LOTADO","unidade_integrante_id" => $vinculoNovo->id])->save();
                     } else {
                         if($unidadeLotacao->id != $unidadeId) {
                             $usuario->lotacao->lotado->delete();
-                            UnidadeIntegranteAtribuicao::create(["atribuicao" => "LOTADO","unidade_integrante_id" => $vinculoNovo->id]);
+                            UnidadeIntegranteAtribuicao::create(["atribuicao" => "LOTADO","unidade_integrante_id" => $vinculoNovo->id])->save();
                         }
                     } 
                     array_push($atribuicoesFinais,"LOTADO");
@@ -69,13 +69,11 @@ class UnidadeIntegranteService extends ServiceBase
                 $definirGerenciaTitular = function($vinculoNovo) use ($unidadeGerenciaTitular,$unidadeId,$usuario,$definirLotacao,&$atribuicoesFinais) {
                     $definirLotacao($vinculoNovo);
                     if(empty($unidadeGerenciaTitular)) {
-                            $x = new UnidadeIntegranteAtribuicao(["atribuicao" => "GESTOR","unidade_integrante_id" => $vinculoNovo->id]);
-                            //$x->fill(["atribuicao" => "GESTOR","unidade_integrante_id" => $vinculoNovo->id]);
-                            $x->save();
+                            UnidadeIntegranteAtribuicao::create(["atribuicao" => "GESTOR","unidade_integrante_id" => $vinculoNovo->id])->save();
                      } else {
                         if($unidadeGerenciaTitular->id != $unidadeId) {
                             $usuario->gerenciaTitular->gestor->delete();
-                            UnidadeIntegranteAtribuicao::create(["atribuicao" => "GESTOR","unidade_integrante_id" => $vinculoNovo->id]);
+                            UnidadeIntegranteAtribuicao::create(["atribuicao" => "GESTOR","unidade_integrante_id" => $vinculoNovo->id])->save();
                         }
                     }
                     array_push($atribuicoesFinais,"GESTOR");

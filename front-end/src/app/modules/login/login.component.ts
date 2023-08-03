@@ -1,11 +1,11 @@
-import { AfterViewInit, ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, RequiredValidator, Validators } from '@angular/forms';
+import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormHelperService } from 'src/app/services/form-helper.service';
 import { GlobalsService } from 'src/app/services/globals.service';
-import { GoogleApiService, SocialUser } from 'src/app/services/google-api.service';
+import { GoogleApiService } from 'src/app/services/google-api.service';
 import { FullRoute, NavigateService } from 'src/app/services/navigate.service';
 import { UtilService } from 'src/app/services/util.service';
 import { ModalPage } from '../base/modal-page';

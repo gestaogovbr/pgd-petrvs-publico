@@ -217,7 +217,6 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     } catch (e: any) {
       this.error(e.message ? e.message : e.toString() || e);
     } finally {
-      //this.totalForcaTrabalho = Math.round((this.totalForcaTrabalho + ((row as PlanoTrabalhoEntrega).forca_trabalho * 1)) * 100) / 100;
       row.objeto = this.entregaCatalogo?.selectedItem?.data || this.entregaMesmaUnidade?.selectedItem?.data || this.entregaOutraUnidade?.selectedItem?.data; // (*)
       row.forca_trabalho = this.form?.controls.forca_trabalho.value * 1;
       this.totalForcaTrabalho = Math.round(this.somaForcaTrabalho(this.entity?.entregas) * 100) / 100;
@@ -310,27 +309,6 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   }
 }
 
-/*
-PROBLEMAS:
-
-- O evento de selecionar o conteúdo do input-text ou pressionar TAB está desviando o fluxo para a homepage;
-- O maxWidth da coluna "Entrega" funciona para a exibição mas não para a edição, seja o grid persistente ou não
-- Na chamada do input-search de planos de entreda de outra unidade não pode vir o plano de entrega da própria unidade
-- Ao editar uma entrega de outra unidade, que acabou de ser salva, no grid persistente, o inputSelect de nome da entrega não se atualiza
-
-
-plano_trabalho.id: 3ddb0d3d-7e51-4091-ac01-9f312b8c70b3
-entregas_plano_trabalho.id                plano_entrega_entrega_id                  entrega_id
-7f396cc7-b09f-4b92-bd46-909cc2a8b8fb      54a584f7-0b89-11ee-975a-0242ac120002      NULL
-ba43a0e6-6255-4f99-b09a-e06ccf6c997c      NULL                                      6f76cc53-7088-463f-b854-0c2c826f0317
-dcce5d96-bd78-477c-bc81-a1252ac2de76      9281a3f6-5c61-4ca5-9a84-194eba161c99      NULL
-de955a65-7d01-4a3d-8c29-33a062648db6      5d3546cf-0b89-11ee-975a-0242ac120002      NULL
-fb9cc220-5198-48c4-a7ff-2566cf3f191d      NULL                                      9675f1c5-c4fa-44cc-b8d8-5dda4a550382
- 
-Soluções:
-$pt = Plano::find("3ddb0d3d-7e51-4091-ac01-9f312b8c70b3")->with('entregas.entrega:id','entregas.planoEntregaEntrega:id')->get(): o obj planoEntregaEntrega associado à entrega 
-$x = PlanoTrabalhoEntrega::where("id","=","e738e620-0177-445c-a26b-a05a787b3cc1")->with('entrega','planoEntregaEntrega')->get()
-*/
 
 /*
 TESTES
@@ -406,11 +384,5 @@ de Trabalho           |                                      |                  
 ------------------------------------------------------------------------------------------+--------+--------+--------------------------------------
 (*) O ADD é inserido pelo método addEntrega e só sai quando persiste no banco e volta
 (*) O objeto é inserido pelo método saveEntrega e permanece mesmo depois de persistida no banco
-
-
-
-
-
-
 
 */

@@ -4,7 +4,6 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import { AfastamentoDaoService } from 'src/app/dao/afastamento-dao.service';
 import { Afastamento } from 'src/app/models/afastamento.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
-import { DaoBaseService } from 'src/app/dao/dao-base.service';
 import { TipoMotivoAfastamentoDaoService } from 'src/app/dao/tipo-motivo-afastamento-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 
@@ -24,7 +23,7 @@ export class AfastamentoListComponent extends PageListBase<Afastamento, Afastame
   constructor(public injector: Injector) {
     super(injector, Afastamento, AfastamentoDaoService);
 
-    this.join = ["tipo_motivo_afastamento", "usuario"];
+    this.join = ["tipo_motivo_afastamento:id, nome", "usuario: id, nome"];
     this.tipoMotivoAfastamentoDao = injector.get<TipoMotivoAfastamentoDaoService>(TipoMotivoAfastamentoDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
 

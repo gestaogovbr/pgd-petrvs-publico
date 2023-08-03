@@ -30,7 +30,7 @@ export class IntegracaoListComponent extends PageListBase<Integracao, Integracao
     /* Inicializações */
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
-    this.title = this.lex.translate("Rotina de Integração");
+    this.title = this.lex.translate("Rotinas de Integração");
     this.filter = this.fh.FormBuilder({
       usuario_id: {default: ""},
       data_inicio: {default: ""},

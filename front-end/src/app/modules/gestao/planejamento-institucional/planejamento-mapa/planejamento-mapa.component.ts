@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { DndDropEvent, DropEffect } from 'ngx-drag-drop';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
@@ -64,7 +64,7 @@ export class PlanejamentoMapaComponent extends PageFrameBase {
     this.dao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.objetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
     this.join = ['objetivos'];
-    this.title = "Objetivos do " + this.lex.translate('planejamento Institucional');
+    this.title = this.lex.translate("Objetivos") + ' ' + this.lex.translate('do Planejamento Institucional');
     this.form = this.fh.FormBuilder({
       planejamento_id: {default: null},
       todos: {default: false}

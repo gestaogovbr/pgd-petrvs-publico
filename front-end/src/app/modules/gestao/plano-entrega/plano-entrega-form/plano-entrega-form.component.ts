@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
@@ -7,14 +7,11 @@ import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { CadeiaValorDaoService } from 'src/app/dao/cadeia-valor-dao.service';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
-import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
 import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
-import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { Programa } from 'src/app/models/programa.model';
-import { Unidade } from 'src/app/models/unidade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
 
@@ -87,10 +84,10 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
       const diffTime = Math.abs(inicio - fim);
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       const entregas = this.form!.controls.entregas.value || [];
-      if (programa.prazo_execucao > 0 && diffDays > programa.prazo_execucao) return "A data de início e término" + this.lex.translate("Plano de Entrega") + " deve respeitar o período previsto no " + this.lex.translate("Programa");
+      if (programa.prazo_execucao > 0 && diffDays > programa.prazo_execucao) return "A data de início e término" + this.lex.translate("do Plano de Entrega") + " deve respeitar o período previsto no " + this.lex.translate("Programa");
       for(let entrega of entregas) {
-        if(entrega.inicio < inicio) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data inicial anterior a" + this.lex.translate("plano de entrega") + ": " + this.util.getDateFormatted(inicio);
-        if(entrega.fim > fim) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data fim posterior a" + this.lex.translate("plano de entrega") + ": " + this.util.getDateFormatted(fim);
+        if(entrega.inicio < inicio) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data inicial anterior à " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(inicio);
+        if(entrega.fim > fim) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data fim posterior à " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(fim);
       }
     }
     return undefined;
@@ -119,7 +116,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   }
 
   public titleEdit = (entity: PlanoEntrega): string => {
-    return "Editando ";
+    return "Editando " + this.lex.translate("Plano de Entregas") + ': ' + (entity?.nome || "");
   }
 
   public dynamicButtons(row: any): ToolbarButton[] {

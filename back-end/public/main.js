@@ -1316,7 +1316,7 @@ function HomeComponent_div_79_div_4_div_6_Template(rf, ctx) { if (rf & 1) {
 } if (rf & 2) {
     const ctx_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"]("Sem " + ctx_r6.lex.noun("plano de trabalho", true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"]("Sem " + ctx_r6.lex.translate("plano de trabalho"));
 } }
 function HomeComponent_div_79_div_4_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "div", 47);
@@ -1411,7 +1411,7 @@ class HomeComponent {
         this.opcoesGraficoPlano = {
             scales: {
                 xAxes: [{
-                        labels: ['Horas do Plano'],
+                        labels: ['Horas ' + this.lex.translate("do Plano de Trabalho")],
                         display: true,
                         ticks: {
                             beginAtZero: true
@@ -1442,7 +1442,7 @@ class HomeComponent {
         this.opcoesGraficoAtividades = {
             scales: {
                 xAxes: [{
-                        labels: ['Total de horas atividades'],
+                        labels: ['Total de horas ' + this.lex.translate("das atividades")],
                         display: true,
                         ticks: {
                             beginAtZero: true
@@ -1490,9 +1490,6 @@ class HomeComponent {
     ngAfterViewInit() {
         var _a, _b;
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            /*     const unidades_gerenciadas = this.auth.usuario?.lotacoes.filter(lotacao => {
-                  return lotacao.unidade?.gestor?.id == this.auth.usuario?.id
-                }).map(lotacoes => { return lotacoes.unidade?.id }).filter((item): item is string => !!item) */
             const unidades_gerenciadas = ((_a = this.auth.usuario) === null || _a === void 0 ? void 0 : _a.gerencia_titular) ? [(_b = this.auth.usuario) === null || _b === void 0 ? void 0 : _b.gerencia_titular.id] : [];
             if (unidades_gerenciadas === null || unidades_gerenciadas === void 0 ? void 0 : unidades_gerenciadas.length) {
                 this.filtrarAtividadesGerenciadas(unidades_gerenciadas);
@@ -1544,14 +1541,14 @@ class HomeComponent {
                 label: 'Total de horas',
                 data: [somaTotal],
                 backgroundColor: '#0dcaf0',
-                stack: 'Horas do Plano',
+                stack: 'Horas',
                 barThickness: 30
             },
             {
                 label: 'Total de horas alocadas',
                 data: [somaAlocadas],
                 backgroundColor: '#ffc107',
-                stack: 'Horas do Plano',
+                stack: 'Horas',
                 barThickness: 30
             }
         ];
@@ -1559,28 +1556,28 @@ class HomeComponent {
     construirGraficoAtividades() {
         this.dadosAtividades.datasets = [
             {
-                label: 'Atividades Não-iniciadas',
+                label: this.lex.translate("Atividades") + ' Não Iniciadas',
                 data: [this.dashUsuario.atividades.horas_nao_iniciadas],
                 backgroundColor: '#0dcaf0',
-                stack: 'Atividades'
+                stack: this.lex.translate("Atividades")
             },
             {
-                label: 'Atividades Não Concluídas',
+                label: this.lex.translate("Atividades") + ' Não Concluídas',
                 data: [this.dashUsuario.atividades.horas_nao_concluidas],
                 backgroundColor: '#ffc107',
-                stack: 'Atividades'
+                stack: this.lex.translate("Atividades")
             },
             {
-                label: 'Atividades Concluídas',
+                label: this.lex.translate("Atividades") + ' Concluídas',
                 data: [this.dashUsuario.atividades.horas_concluidas],
                 backgroundColor: '#239c24',
-                stack: 'Atividades'
+                stack: this.lex.translate("Atividades")
             },
             {
-                label: 'Atividades Atrasadas',
+                label: this.lex.translate("Atividades") + ' Atrasadas',
                 data: [this.dashUsuario.atividades.horas_atrasadas],
                 backgroundColor: '#af4201',
-                stack: 'Atividades'
+                stack: this.lex.translate("Atividades")
             },
         ];
     }
@@ -1731,7 +1728,7 @@ HomeComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineComp
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"](ctx.mensagemSaudacao());
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"]("Minhas " + ctx.lex.noun("atividade", true));
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"]("Minhas " + ctx.lex.translate("atividade"));
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("formGroup", ctx.formSearch);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](4);
@@ -1739,11 +1736,11 @@ HomeComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineComp
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 3)("control", ctx.formSearch.controls.data_final);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"](ctx.lex.noun("Plano de trabalho", true));
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"](ctx.lex.translate("Plano de trabalho"));
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](11);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngForOf", ctx.dashUsuario.planos);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"](ctx.lex.noun("Atividade", true));
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"](ctx.lex.translate("Atividade"));
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"]("(", ctx.dashUsuario.atividades.total_atividades, " atividades)");
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](4);
@@ -1759,7 +1756,7 @@ HomeComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineComp
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](7);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("dadosGrafico", ctx.dadosPlanos)("opcoesGrafico", ctx.opcoesGraficoPlano);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"]("Horas " + ctx.lex.noun("Atividade", true, true));
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"]("Horas " + ctx.lex.translate("Atividade"));
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("dadosGrafico", ctx.dadosAtividades)("opcoesGrafico", ctx.opcoesGraficoAtividades);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
@@ -4560,11 +4557,11 @@ function DocumentosLinkComponent_editable_form_0_Template(rf, ctx) { if (rf & 1)
     _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](4);
     _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("size", 4)("control", ctx_r0.form.controls.numero_processo)("disabled", !ctx_r0.gb.isEmbedded || (ctx_r0.form.controls.numero_requisicao.value == null ? null : ctx_r0.form.controls.numero_requisicao.value.length) ? "true" : undefined);
     _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("label", ctx_r0.lex.noun("Tipo de Processo"))("size", 8)("dao", ctx_r0.tipoProcessoDao);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("label", ctx_r0.lex.translate("Tipo de Processo"))("size", 8)("dao", ctx_r0.tipoProcessoDao);
     _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("size", 4)("control", ctx_r0.form.controls.numero_requisicao)("disabled", !ctx_r0.gb.isEmbedded ? "true" : undefined);
     _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("label", ctx_r0.lex.noun("Tipo de Documento"))("size", 8)("dao", ctx_r0.tipoDocumentoDao);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("label", ctx_r0.lex.translate("Tipo de Documento"))("size", 8)("dao", ctx_r0.tipoDocumentoDao);
     _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("size", 12)("control", ctx_r0.form.controls.titulo_documento);
 } }
@@ -8498,13 +8495,13 @@ function NotificacoesTemplateComponent_grid_0_ng_template_8_badge_7_Template(rf,
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](0, "badge", 20);
 } if (rf & 2) {
     const ctx_r11 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("icon", ctx_r11.entityService.getIcon("Entidade"))("label", ctx_r11.lex.noun("Entidade"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("icon", ctx_r11.entityService.getIcon("Entidade"))("label", ctx_r11.lex.translate("Entidade"));
 } }
 function NotificacoesTemplateComponent_grid_0_ng_template_8_badge_8_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](0, "badge", 21);
 } if (rf & 2) {
     const ctx_r12 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("icon", ctx_r12.entityService.getIcon("Unidade"))("label", ctx_r12.lex.noun("Unidade"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("icon", ctx_r12.entityService.getIcon("Unidade"))("label", ctx_r12.lex.translate("Unidade"));
 } }
 function NotificacoesTemplateComponent_grid_0_ng_template_8_Template(rf, ctx) { if (rf & 1) {
     const _r15 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
@@ -9092,7 +9089,7 @@ class NotificacoesComponent extends _base_page_list_base__WEBPACK_IMPORTED_MODUL
         /* Inicializações */
         this.modalWidth = 700;
         this.join = ["destinatarios"];
-        this.title = this.lex.noun('Notificação', true);
+        this.title = this.lex.translate('Notificações');
         this.filter = this.fh.FormBuilder({
             todas: { default: false },
             inicio: { default: undefined },
@@ -9890,7 +9887,7 @@ class ErrorListComponent extends src_app_modules_base_page_list_base__WEBPACK_IM
         this.usuarioDao = injector.get(src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_4__["UsuarioDaoService"]);
         /* Inicializações */
         this.allPages = injector.get(src_app_listeners_listener_all_pages_service__WEBPACK_IMPORTED_MODULE_5__["ListenerAllPagesService"]);
-        this.title = "Log de Erros";
+        this.title = this.lex.translate("Logs dos Erros");
         this.filter = this.fh.FormBuilder({
             type: { default: "" },
             responsavel_id: { default: "" },
@@ -10639,7 +10636,7 @@ class EntityService {
     }
     getLabel(collection) {
         let entity = this.list.find(x => x.collection == collection);
-        return entity ? this.lex.noun(entity.label) : '';
+        return entity ? this.lex.translate(entity.label) : '';
     }
     getIcon(collection) {
         var _a;
@@ -11964,7 +11961,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-//import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 
 
@@ -13751,6 +13747,7 @@ class LexicalService {
             "tarefa": { single: "tarefa", plural: "tarefas", female: true },
             "tarefa da atividade": { single: "tarefa da atividade", plural: "tarefas da atividade", female: true },
             "tcr": { single: "tcr", plural: "tcrs", female: false },
+            "termo de ciência e responsabilidade": { single: "termo de ciência e responsabilidade", plural: "termos de ciência e responsabilidade", female: false },
             "tempo estimado": { single: "tempo estimado", plural: "tempos estimados", female: false },
             "tempo pactuado": { single: "tempo pactuado", plural: "tempos pactuados", female: false },
             "tempo planejado": { single: "tempo planejado", plural: "tempos planejados", female: false },
@@ -14415,7 +14412,6 @@ class AppComponent {
             }
         }, 1000);
         this.lex.cdRef = this.cdRef;
-        //this.auth.loadGapi();
         /* Definição do menu do sistema */
         this.setMenuVars();
         this.contexto = this.menuContexto[0].key;
@@ -14428,7 +14424,7 @@ class AppComponent {
             EIXOS_TEMATICOS: { name: this.lex.translate("Eixos Temáticos"), permition: 'MOD_EXTM', route: ['cadastros', 'eixo-tematico'], icon: this.entity.getIcon('EixoTematico') },
             ENTREGAS: { name: this.lex.translate("Entregas"), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: this.entity.getIcon('Entrega') },
             FERIADOS: { name: this.lex.translate("Feriados"), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: this.entity.getIcon('Feriado') },
-            MATERIAIS_SERVICOS: { name: this.lex.translate("Materiis e Serviços"), permition: '', route: ['cadastros', 'material-servico'], icon: this.entity.getIcon('MaterialServico') },
+            MATERIAIS_SERVICOS: { name: this.lex.translate("Materiais e Serviços"), permition: '', route: ['cadastros', 'material-servico'], icon: this.entity.getIcon('MaterialServico') },
             TAREFAS: { name: this.lex.translate("Tarefas"), permition: 'MOD_DMD', route: ['cadastros', 'tarefa'], icon: this.entity.getIcon('Tarefa') },
             TEMPLATES: { name: this.lex.translate("Templates"), permition: 'MOD_TEMP', route: ['cadastros', 'template'], icon: this.entity.getIcon('Template') },
             TIPOS_ATIVIDADES: { name: this.lex.translate("Tipos de Atividade"), permition: 'MOD_TIPO_ATV', route: ['cadastros', 'tipo-atividade'], icon: this.entity.getIcon('TipoAtividade') },
@@ -14439,7 +14435,6 @@ class AppComponent {
             TIPOS_MOTIVOS_AFASTAMENTOS: { name: this.lex.translate("Tipos de Motivo de Afastamento"), permition: 'MOD_TIPO_MTV_AFT', route: ['cadastros', 'tipo-motivo-afastamento'], icon: this.entity.getIcon('TipoMotivoAfastamento') },
             TIPOS_PROCESSOS: { name: this.lex.translate("Tipos de Processo"), permition: 'MOD_TIPO_PROC', route: ['cadastros', 'tipo-processo'], icon: this.entity.getIcon('TipoProcesso') },
             /*Gestão*/
-            //ADESAO: { name: this.lex.translate("Adesao", true), permition: 'MOD_ADES', route: ['gestao', 'adesao'], icon: this.entity.getIcon('Adesao') },
             CADEIAS_VALORES: { name: this.lex.translate("Cadeias de valor"), permition: 'MOD_CADV', route: ['gestao', 'cadeia-valor'], icon: this.entity.getIcon('CadeiaValor') },
             ATIVIDADES: { name: this.lex.translate("Atividades"), permition: 'MOD_ATV', route: ['gestao', 'atividade'], icon: this.entity.getIcon('Atividade') },
             PLANEJAMENTOS_INSTITUCIONAIS: { name: this.lex.translate("Planejamentos Institucional"), permition: 'MOD_PLAN_INST', route: ['gestao', 'planejamento'], icon: this.entity.getIcon('Planejamento') },
@@ -17067,7 +17062,7 @@ class IntegracaoListComponent extends src_app_modules_base_page_list_base__WEBPA
         /* Inicializações */
         this.allPages = injector.get(src_app_listeners_listener_all_pages_service__WEBPACK_IMPORTED_MODULE_3__["ListenerAllPagesService"]);
         this.usuarioDao = injector.get(src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_2__["UsuarioDaoService"]);
-        this.title = this.lex.noun("Rotina de Integração", true);
+        this.title = this.lex.translate("Rotinas de Integração");
         this.filter = this.fh.FormBuilder({
             usuario_id: { default: "" },
             data_inicio: { default: "" },
@@ -17805,8 +17800,8 @@ __webpack_require__.r(__webpack_exports__);
 
 const routes = [
     { path: 'integracao', component: _integracao_integracao_list_integracao_list_component__WEBPACK_IMPORTED_MODULE_4__["IntegracaoListComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Rotinas de Integração" } },
-    { path: 'integracao/new', component: _integracao_integracao_form_integracao_form_component__WEBPACK_IMPORTED_MODULE_3__["IntegracaoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Execução", modal: true } },
-    { path: 'integracao/:id/consult', component: _integracao_integracao_form_integracao_form_component__WEBPACK_IMPORTED_MODULE_3__["IntegracaoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } }
+    { path: 'integracao/new', component: _integracao_integracao_form_integracao_form_component__WEBPACK_IMPORTED_MODULE_3__["IntegracaoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Execução de Rotina de Integração", modal: true } },
+    { path: 'integracao/:id/consult', component: _integracao_integracao_form_integracao_form_component__WEBPACK_IMPORTED_MODULE_3__["IntegracaoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Rotina de Integração", modal: true } }
 ];
 class RotinaRoutingModule {
 }
@@ -18889,7 +18884,7 @@ class ChangeListComponent extends src_app_modules_base_page_list_base__WEBPACK_I
         this.entityService = injector.get(src_app_services_entity_service__WEBPACK_IMPORTED_MODULE_4__["EntityService"]);
         /* Inicializações */
         this.allPages = injector.get(src_app_listeners_listener_all_pages_service__WEBPACK_IMPORTED_MODULE_5__["ListenerAllPagesService"]);
-        this.title = "Log das alterações";
+        this.title = this.lex.translate("Logs das Alterações");
         this.filter = this.fh.FormBuilder({
             responsavel_id: { default: "" },
             data_inicio: { default: "" },
@@ -21010,7 +21005,7 @@ class AuthService {
         /*       let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? this.unidades?.find(x => x.id == pUnidade) : pUnidade;
               return !!unidade && [unidade.gestor_substituto_id, unidade.gestor_id].includes(this.usuario!.id);  */
         let unidade = pUnidade == null ? this.unidade : typeof pUnidade == "string" ? [(_a = this.usuario.gerencia_titular) === null || _a === void 0 ? void 0 : _a.unidade, ...(this.usuario.gerencias_substitutas.map(x => x.unidade))].find(x => x && x.id == pUnidade) : pUnidade;
-        return !!unidade && [(_b = unidade.gestor_substituto) === null || _b === void 0 ? void 0 : _b.id, (_c = unidade.gestor) === null || _c === void 0 ? void 0 : _c.id].includes(this.usuario.id);
+        return !!unidade && [(_b = unidade.gestor_substituto) === null || _b === void 0 ? void 0 : _b.usuario_id, (_c = unidade.gestor) === null || _c === void 0 ? void 0 : _c.usuario_id].includes(this.usuario.id);
     }
     /**
      * Informa se o usuário logado é gestor de alguma das suas lotações.
@@ -21021,7 +21016,7 @@ class AuthService {
         return !!((_a = this.unidades) === null || _a === void 0 ? void 0 : _a.filter(x => this.isGestorUnidade(x)).length);
     }
     /**
-     * Informa se a unidade repassada como parâmetro é a lotação principal do usuário logado. Se nenhuma unidade for repassada,
+     * Informa se a unidade repassada como parâmetro é a lotação do usuário logado. Se nenhuma unidade for repassada,
      * será adotada a unidade selecionada pelo servidor na homepage.
      * @param pUnidade
      * @returns
@@ -21029,7 +21024,7 @@ class AuthService {
     isLotacaoPrincipal(pUnidade = null) {
         var _a, _b, _c;
         let unidade = pUnidade || this.unidade;
-        let lotacao = (_c = (_b = (_a = this.usuario) === null || _a === void 0 ? void 0 : _a.areas_trabalho) === null || _b === void 0 ? void 0 : _b.find(x => { var _a; return (_a = x.atribuicoes) === null || _a === void 0 ? void 0 : _a.find(y => y.atribuicao == "LOTADO"); })) === null || _c === void 0 ? void 0 : _c.unidade; //this.usuario!.lotacao?.unidade;
+        let lotacao = (_c = (_b = (_a = this.usuario) === null || _a === void 0 ? void 0 : _a.areas_trabalho) === null || _b === void 0 ? void 0 : _b.find(x => { var _a; return (_a = x.atribuicoes) === null || _a === void 0 ? void 0 : _a.find(y => y.atribuicao == "LOTADO"); })) === null || _c === void 0 ? void 0 : _c.unidade;
         return (lotacao === null || lotacao === void 0 ? void 0 : lotacao.id) == unidade.id;
     }
     /**
@@ -27173,10 +27168,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const routes = [
-    { path: 'change', component: _change_change_list_change_list_component__WEBPACK_IMPORTED_MODULE_4__["ChangeListComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Registros de Log - Alterações" } },
-    { path: 'change/:id/consult', component: _change_change_form_change_form_component__WEBPACK_IMPORTED_MODULE_3__["ChangeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } },
-    { path: 'error', component: _error_error_list_error_list_component__WEBPACK_IMPORTED_MODULE_6__["ErrorListComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Registros de Log - Erros" } },
-    { path: 'error/:id/consult', component: _error_error_form_error_form_component__WEBPACK_IMPORTED_MODULE_5__["ErrorFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } }
+    { path: 'change', component: _change_change_list_change_list_component__WEBPACK_IMPORTED_MODULE_4__["ChangeListComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Logs das Alterações" } },
+    { path: 'change/:id/consult', component: _change_change_form_change_form_component__WEBPACK_IMPORTED_MODULE_3__["ChangeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Log de Alteração", modal: true } },
+    { path: 'error', component: _error_error_list_error_list_component__WEBPACK_IMPORTED_MODULE_6__["ErrorListComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Logs dos Erros" } },
+    { path: 'error/:id/consult', component: _error_error_form_error_form_component__WEBPACK_IMPORTED_MODULE_5__["ErrorFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Log de Erro", modal: true } }
 ];
 class LogRoutingModule {
 }

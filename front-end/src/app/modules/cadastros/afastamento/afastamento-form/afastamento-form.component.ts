@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { AfastamentoDaoService } from 'src/app/dao/afastamento-dao.service';
@@ -62,7 +62,7 @@ export class AfastamentoFormComponent extends PageFormBase<Afastamento, Afastame
     let formValue = Object.assign({}, form.value);
     await Promise.all([
       this.usuario!.loadSearch(entity.usuario || formValue.usuario_id),
-      this.tipoMotivoAfastamento!.loadSearch(entity.tipoMotivoAfastamento || formValue.tipo_motivo_afastamento_id)
+      this.tipoMotivoAfastamento!.loadSearch(entity.tipo_motivo_afastamento || formValue.tipo_motivo_afastamento_id)
     ]);
     form.patchValue(this.util.fillForm(formValue, entity));
   }
@@ -85,7 +85,7 @@ export class AfastamentoFormComponent extends PageFormBase<Afastamento, Afastame
   }
 
   public titleEdit = (entity: Afastamento): string => {
-    return "Editando ";// + (entity?.usuario_id || "");
+    return "Editando " + this.lex.translate("afastamento") + ': ' + (entity?.usuario?.nome || "") + ' - ' + (entity?.tipo_motivo_afastamento?.nome || "");
   }
 }
 

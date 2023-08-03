@@ -77,7 +77,7 @@ function PlanoTrabalhoListComponent_column_12_Template(rf, ctx) { if (rf & 1) {
     const _r40 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵreference"](2);
     const _r42 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵreference"](4);
     const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("align", "center")("hint", ctx_r1.lex.noun("Entrega", true))("template", _r40)("expandTemplate", _r42);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("align", "center")("hint", ctx_r1.lex.translate("Entrega"))("template", _r40)("expandTemplate", _r42);
 } }
 function PlanoTrabalhoListComponent_ng_template_14_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "order", 50);
@@ -265,20 +265,6 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
             }
             return result;
         };
-        /*public needSign(plano: Plano): boolean {
-          let ids: string[] = [];
-          const documento = (plano.documentos || []).find(x => plano.documento_id?.length && x.id == plano.documento_id);
-          if(documento && !documento.assinaturas.find(x => x.usuario_id == this.auth.usuario!.id)) {
-            const tipoModalidade = plano.tipo_modalidade!; //(this.tipoModalidade?.searchObj as TipoModalidade);
-            const usuario = plano.usuario!; // (this.usuario?.searchObj as Usuario);
-            const unidade = plano.unidade!; // (this.unidade?.searchObj as Unidade);
-            const entidade = unidade.entidade!;
-            if(tipoModalidade?.exige_assinatura && usuario) ids.push(usuario.id);
-            if(tipoModalidade?.exige_assinatura_gestor_unidade && unidade) ids.push(unidade.gestor_id || "", unidade.gestor_substituto_id || "");
-            if(tipoModalidade?.exige_assinatura_gestor_entidade && entidade) ids.push(entidade.gestor_id || "", entidade.gestor_substituto_id || "");
-          }
-          return !!documento && ids.includes(this.auth.usuario!.id);
-        }*/
         this.dynamicMultiselectMenu = (multiselected) => {
             let assinar = !!Object.keys(multiselected).length;
             let menu = [];
@@ -298,7 +284,7 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
         this.planoService = injector.get(_plano_trabalho_service__WEBPACK_IMPORTED_MODULE_9__["PlanoTrabalhoService"]);
         this.tipoModalidadeDao = injector.get(src_app_dao_tipo_modalidade_dao_service__WEBPACK_IMPORTED_MODULE_4__["TipoModalidadeDaoService"]);
         /* Inicializações */
-        this.title = this.lex.noun("Plano de trabalho", true);
+        this.title = this.lex.translate("Planos de Trabalho");
         this.code = "MOD_PTR";
         this.filter = this.fh.FormBuilder({
             agrupar: { default: true },
@@ -371,21 +357,10 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
         }
         else {
             this.documentoService.sign(documentos).then(() => this.grid.reset());
-            /*this.dialog.confirm("Assinar", "Deseja realmente assinar " + documentosIds.length + " documento" + (documentosIds.length > 1 ? "s" : "") + "?").then(response => {
-              if(response) {
-                this.loading = true;
-                this.documentoDao.assinar(documentosIds).then(response => {
-                  if(response?.length) {
-                    this.dialog.alert("Assinados", response.length > 1 ? "Foram assinados " + response.length + " documentos!" : "Documento assinado com sucesso!");
-                    this.refresh();
-                  }
-                }).catch((error) => this.error("Erro ao tentar assinar: " + error.toString())).finally(() => this.loading = false);
-              }
-            });*/
         }
     }
 }
-PlanoTrabalhoListComponent.selectRoute = { route: ["gestao", "plano"] };
+PlanoTrabalhoListComponent.selectRoute = { route: ["gestao", "plano-trabalho"] };
 PlanoTrabalhoListComponent.ɵfac = function PlanoTrabalhoListComponent_Factory(t) { return new (t || PlanoTrabalhoListComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_11__["Injector"])); };
 PlanoTrabalhoListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdefineComponent"]({ type: PlanoTrabalhoListComponent, selectors: [["plano-trabalho-list"]], viewQuery: function PlanoTrabalhoListComponent_Query(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵviewQuery"](src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__["GridComponent"], 1);
@@ -489,7 +464,7 @@ PlanoTrabalhoListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_11__["
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 6)("label", ctx.lex.noun("Usu\u00E1rio"))("control", ctx.filter.controls.usuario);
+        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 6)("label", ctx.lex.translate("Usu\u00E1rio"))("control", ctx.filter.controls.usuario);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 6)("dao", ctx.unidadeDao);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);

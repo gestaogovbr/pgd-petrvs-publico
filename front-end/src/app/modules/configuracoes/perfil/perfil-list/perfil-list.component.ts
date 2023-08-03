@@ -19,22 +19,11 @@ export class PerfilListComponent extends PageListBase<Perfil, PerfilDaoService> 
   constructor(public injector: Injector) {
     super(injector, Perfil, PerfilDaoService);
     /* Inicializações */
-    // this.title = "Perfil";
-    this.title = this.lex.translate("Perfil");
+    this.title = this.lex.translate("Perfis");
     this.code = "MOD_CFG_PERFS";
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}
     });
-    // Testa se o usuário possui permissão para acessar as capacidades associadas ao perfil
-    // OBS.: As capacidades serão editadas de dentro do formulario do perfil
-    /*if (this.auth.hasPermissionTo('MOD_TIPO_CAP_CONS')) {
-      this.options.push({
-        icon: "bi bi-layout-wtf",
-        label: "Capacidades",
-        onClick: (perfil: Perfil) => {
-        this.go.navigate({route: ['configuracoes', 'perfil', perfil.id, 'capacidade'], params: {modal: true}})
-      }});
-    }*/
     // Testa se o usuário possui permissão para exibir dados do perfil
     if (this.auth.hasPermissionTo("MOD_PERF_CONS")) {
       this.options.push({

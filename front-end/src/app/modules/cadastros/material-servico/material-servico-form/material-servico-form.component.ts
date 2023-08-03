@@ -1,11 +1,10 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { MaterialServicoDaoService } from 'src/app/dao/material-servico-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { MaterialServico } from 'src/app/models/material-servico.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
-import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
   selector: 'app-material-servico-form',
@@ -55,7 +54,7 @@ export class MaterialServicoFormComponent extends PageFormBase<MaterialServico, 
   }
 
   public titleEdit = (entity: MaterialServico): string => {
-    return "Editando " + (entity?.descricao || "");
+    return "Editando " + this.lex.translate("Material-Serviço") + ': ' + (entity?.descricao || "");
   }
 }
 

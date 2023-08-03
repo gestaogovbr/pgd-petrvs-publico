@@ -20,7 +20,7 @@ export class CadeiaValorListComponent extends PageListBase<CadeiaValor, CadeiaVa
     super(injector, CadeiaValor, CadeiaValorDaoService);
     /* Inicializações */
     this.code = "MOD_CADV";
-    this.title = this.lex.translate('Cadeia de Valor');
+    this.title = this.lex.translate('Cadeias de Valores');
     this.filter = this.fh.FormBuilder({});
   }
 

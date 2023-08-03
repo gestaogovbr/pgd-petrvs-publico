@@ -16,7 +16,7 @@ export class TipoAvaliacaoListComponent extends PageListBase<TipoAvaliacao, Tipo
   constructor(public injector: Injector) {
     super(injector, TipoAvaliacao, TipoAvaliacaoDaoService);
     /* Inicializações */
-    this.title = "Tipos de " + this.lex.translate("Avaliação");
+    this.title = this.lex.translate("Tipos de Avaliação");
     this.code="MOD_TIPO_AVAL";
     this.filter = this.fh.FormBuilder({
       nome: {default: ""},

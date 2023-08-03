@@ -6,7 +6,6 @@ import {
 } from '@angular/router';
 import { EMPTY, Observable, of } from 'rxjs';
 import { DialogService } from '../services/dialog.service';
-import { DialogComponent } from '../services/dialog/dialog.component';
 import { GlobalsService } from '../services/globals.service';
 import { NavigateService } from '../services/navigate.service';
 

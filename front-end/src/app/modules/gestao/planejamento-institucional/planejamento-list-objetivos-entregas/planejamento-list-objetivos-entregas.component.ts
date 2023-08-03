@@ -24,7 +24,7 @@ export class PlanejamentoListObjetivosEntregasComponent extends PageListBase<Pla
     this.join = ['objetivos']
     this.planejamentoDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.planejamentoObjetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
-    this.title = this.lex.translate("Objetivos");
+    this.title = this.lex.translate("Objetivos") + ' ' + this.lex.translate("do Planejamento Institucional");
     this.filter = this.fh.FormBuilder({
       nome: { default: "" },
       planejamento_id: { default: null}
@@ -33,7 +33,6 @@ export class PlanejamentoListObjetivosEntregasComponent extends PageListBase<Pla
  
   public dynamicOptions(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
-    let objetivo: PlanejamentoObjetivo = row as PlanejamentoObjetivo;
     result.push({ label: "Informações", icon: "bi bi-info-circle", onClick: (objetivo: PlanejamentoObjetivo) => this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo', objetivo.id, 'consult'] }, { modal: true }) });
     return result;
   }

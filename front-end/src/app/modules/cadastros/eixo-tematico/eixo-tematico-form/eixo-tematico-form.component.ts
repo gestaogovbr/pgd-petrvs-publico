@@ -1,7 +1,6 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
-import { InputTextComponent } from 'src/app/components/input/input-text/input-text.component';
 import { EixoTematicoDaoService } from 'src/app/dao/eixo-tematico-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { EixoTematico } from 'src/app/models/eixo-tematico.model';
@@ -50,7 +49,7 @@ export class EixoTematicoFormComponent extends PageFormBase<EixoTematico, EixoTe
   }
 
   public titleEdit = (entity: EixoTematico): string => {
-    return "Editando "+ (entity?.nome || "");
+    return "Editando " + this.lex.translate("Eixo Temático") + ': ' + (entity?.nome || "");
   }
 
 }

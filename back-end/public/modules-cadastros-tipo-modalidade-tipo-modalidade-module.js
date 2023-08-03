@@ -112,7 +112,7 @@ class TipoModalidadeFormComponent extends src_app_modules_base_page_form_base__W
             return result;
         };
         this.titleEdit = (entity) => {
-            return "Editando " + ((entity === null || entity === void 0 ? void 0 : entity.nome) || "");
+            return "Editando " + this.lex.translate("Tipo de Modalidade") + ': ' + ((entity === null || entity === void 0 ? void 0 : entity.nome) || "");
         };
         this.form = this.fh.FormBuilder({
             nome: { default: "" },
@@ -166,21 +166,21 @@ TipoModalidadeFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("title", "Configura\u00E7\u00F5es " + ctx.lex.noun("plano de trabalho", false, true));
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("title", "Configura\u00E7\u00F5es " + ctx.lex.translate("plano de trabalho"));
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", "Exige assinatura " + ctx.lex.noun("usu\u00E1rio", false, true) + ctx.lex.noun("plano de trabalho", false, true));
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", "Exige assinatura " + ctx.lex.translate("usu\u00E1rio") + ctx.lex.translate("plano de trabalho"));
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", "Exige assinatura do gestor " + ctx.lex.noun("unidade", false, true));
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", "Exige assinatura do gestor " + ctx.lex.translate("unidade"));
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", "Exige assinatura do gestor " + ctx.lex.noun("entidade", false, true));
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", "Exige assinatura do gestor " + ctx.lex.translate("entidade"));
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", "Se o " + ctx.lex.noun("plano de trabalho") + " calcula horas (considerando a carga hor\u00E1ria e os dias)");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", "Se o " + ctx.lex.translate("plano de trabalho") + " calcula horas (considerando a carga hor\u00E1ria e os dias)");
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("title", "Configura\u00E7\u00F5es " + ctx.lex.noun("atividade", false, true));
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("title", "Configura\u00E7\u00F5es " + ctx.lex.translate("atividade"));
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", "Calcula " + ctx.lex.noun("tempo despendido") + ctx.lex.noun("atividade", false, true));
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", "Calcula " + ctx.lex.translate("tempo despendido") + ctx.lex.translate("atividade"));
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", "Usa " + ctx.lex.noun("esfor\u00E7o") + " (tempo para execu\u00E7\u00E3o)" + ctx.lex.noun("atividade", false, true));
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", "Usa " + ctx.lex.translate("esfor\u00E7o") + " (tempo para execu\u00E7\u00E3o)" + ctx.lex.translate("atividade"));
     } }, directives: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_0__["EditableFormComponent"], _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_5__["InputTextComponent"], _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_6__["SeparatorComponent"], _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_7__["InputSwitchComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJ0aXBvLW1vZGFsaWRhZGUtZm9ybS5jb21wb25lbnQuc2NzcyJ9 */"] });
 
 
@@ -239,7 +239,7 @@ function TipoModalidadeListComponent_ng_template_8_badge_4_Template(rf, ctx) { i
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "badge", 19);
 } if (rf & 2) {
     const ctx_r9 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("label", "Usa horas no " + ctx_r9.lex.noun("plano de trabalho"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("label", "Usa horas no " + ctx_r9.lex.translate("plano de trabalho"));
 } }
 function TipoModalidadeListComponent_ng_template_8_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "div", 11);
@@ -291,7 +291,7 @@ class TipoModalidadeListComponent extends src_app_modules_base_page_list_base__W
             return result;
         };
         /* Inicializações */
-        this.title = "Tipos de " + this.lex.noun("Modalidade", true);
+        this.title = this.lex.translate("Tipos de Modalidade");
         this.code = "MOD_TIPO_MDL";
         this.filter = this.fh.FormBuilder({
             nome: { default: "" },
@@ -359,11 +359,11 @@ TipoModalidadeListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", "Nome " + ctx.lex.noun("tipo de Modalidade", false, true))("control", ctx.filter.controls.nome);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", "Nome " + ctx.lex.translate("tipo de Modalidade"))("control", ctx.filter.controls.nome);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("title", ctx.lex.noun("Plano de trabalho"))("template", _r1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("title", ctx.lex.translate("Plano de trabalho"))("template", _r1);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("title", ctx.lex.noun("Atividade"))("template", _r3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("title", ctx.lex.translate("Atividade"))("template", _r3);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("onEdit", ctx.edit)("options", ctx.options);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
@@ -398,9 +398,9 @@ __webpack_require__.r(__webpack_exports__);
 
 const routes = [
     { path: '', component: _tipo_modalidade_list_tipo_modalidade_list_component__WEBPACK_IMPORTED_MODULE_4__["TipoModalidadeListComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Tipos de Modalidade" } },
-    { path: 'new', component: _tipo_modalidade_form_tipo_modalidade_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoModalidadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
-    { path: ':id/edit', component: _tipo_modalidade_form_tipo_modalidade_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoModalidadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
-    { path: ':id/consult', component: _tipo_modalidade_form_tipo_modalidade_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoModalidadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } }
+    { path: 'new', component: _tipo_modalidade_form_tipo_modalidade_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoModalidadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Tipo de Modalidade", modal: true } },
+    { path: ':id/edit', component: _tipo_modalidade_form_tipo_modalidade_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoModalidadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição de Tipo de Modalidade", modal: true } },
+    { path: ':id/consult', component: _tipo_modalidade_form_tipo_modalidade_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoModalidadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Tipo de Modalidade", modal: true } }
 ];
 class TipoModalidadeRoutingModule {
 }

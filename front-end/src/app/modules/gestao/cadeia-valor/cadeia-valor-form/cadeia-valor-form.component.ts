@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from "@angular/forms";
 import { IIndexable } from "../../../../models/base.model";
 import { PageFormBase } from "../../../base/page-form-base";
@@ -74,7 +74,7 @@ export class CadeiaValorFormComponent extends PageFormBase<CadeiaValor, CadeiaVa
   }
 
   public titleEdit = (entity: CadeiaValor): string => {
-    return "Editando " + (entity?.nome || "");
+    return "Editando " + this.lex.translate("Cadeia de Valor") + ': ' + (entity?.nome || "");
   }
 
 }

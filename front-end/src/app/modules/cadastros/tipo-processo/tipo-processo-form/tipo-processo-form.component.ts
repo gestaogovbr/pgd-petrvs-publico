@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { TipoProcessoDaoService } from 'src/app/dao/tipo-processo-dao.service';
@@ -88,7 +88,7 @@ export class TipoProcessoFormComponent extends PageFormBase<TipoProcesso, TipoPr
   };
 
   public titleEdit = (entity: TipoProcesso): string => {
-    return "Editando " + (entity?.nome || ""); //A analisar se fica melhor visivelmente com [] ou sem. Ex: Editando [Requerimento] ao invés de Editando Requerimento
+    return "Editando " + this.lex.translate("Tipo de Processo") + ': ' + (entity?.nome || "");
   }
 }
 

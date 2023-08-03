@@ -13,7 +13,7 @@ export class AtividadeListComponent extends PageBase implements OnInit {
   constructor(public injector: Injector) {
     super(injector);
     /* Inicializações */
-    this.title = this.lex.translate("Atividade");
+    this.title = this.lex.translate("Atividades");
     this.code = "MOD_DMD";
   }
 

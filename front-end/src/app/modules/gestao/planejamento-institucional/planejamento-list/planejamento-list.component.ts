@@ -28,7 +28,7 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     /* Inicializações */
     this.code = "MOD_PLAN_INST";
-    this.title = this.lex.translate('Planejamento Institucional');
+    this.title = this.lex.translate('Planejamentos Institucionais');
     this.filter = this.fh.FormBuilder({
       inicio: {default: null},
       fim: {default: null},

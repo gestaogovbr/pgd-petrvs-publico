@@ -92,7 +92,7 @@ class CapacidadeListComponent extends src_app_modules_base_page_list_base__WEBPA
         this.tipoCapacidadeDao = injector.get(src_app_dao_tipo_capacidade_dao_service__WEBPACK_IMPORTED_MODULE_4__["TipoCapacidadeDaoService"]);
         this.perfilDao = injector.get(src_app_dao_perfil_dao_service__WEBPACK_IMPORTED_MODULE_5__["PerfilDaoService"]);
         /* Inicializações */
-        this.title = this.lex.noun("Capacidade", true);
+        this.title = this.lex.translate("Capacidades");
         this.code = "MOD_TIPO_CAP";
         this.filter = this.fh.FormBuilder({
             descricao: { default: "" }
@@ -117,7 +117,7 @@ class CapacidadeListComponent extends src_app_modules_base_page_list_base__WEBPA
     ngOnInit() {
         super.ngOnInit();
         this.perfilDao.getById(this.urlParams.get("perfil_id")).then(perfil => {
-            this.title = this.lex.noun("Capacidade", true) + " de " + (perfil === null || perfil === void 0 ? void 0 : perfil.nome);
+            this.title = this.lex.translate("Capacidades") + " do perfil " + (perfil === null || perfil === void 0 ? void 0 : perfil.nome);
             this.cdRef.detectChanges();
         });
     }
@@ -165,13 +165,13 @@ CapacidadeListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵ
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", ctx.filterCollapsed);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 12)("label", ctx.lex.noun("Capacidade"))("control", ctx.filter.controls.descricao);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 12)("label", ctx.lex.translate("Capacidade"))("control", ctx.filter.controls.descricao);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("title", ctx.lex.noun("Perfil"))("template", _r1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("title", ctx.lex.translate("Perfil"))("template", _r1);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("template", _r3);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("title", ctx.lex.noun("Capacidade"))("template", _r5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("title", ctx.lex.translate("Capacidade"))("template", _r5);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("onEdit", ctx.edit)("onDelete", ctx.delete);
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
@@ -237,7 +237,8 @@ class CapacidadeFormComponent extends src_app_modules_base_page_form_base__WEBPA
             return result;
         };
         this.titleEdit = (entity) => {
-            return "Editando " + ((entity === null || entity === void 0 ? void 0 : entity.perfil_id) || "");
+            var _a, _b;
+            return "Editando " + this.lex.translate("Capacidade") + ': ' + (((_a = entity === null || entity === void 0 ? void 0 : entity.perfil) === null || _a === void 0 ? void 0 : _a.nome) || "") + ': ' + (((_b = entity === null || entity === void 0 ? void 0 : entity.tipo_capacidade) === null || _b === void 0 ? void 0 : _b.codigo) || "");
         };
         this.tipoCapacidadeDao = injector.get(src_app_dao_tipo_capacidade_dao_service__WEBPACK_IMPORTED_MODULE_5__["TipoCapacidadeDaoService"]);
         this.perfilDao = injector.get(src_app_dao_perfil_dao_service__WEBPACK_IMPORTED_MODULE_6__["PerfilDaoService"]);
@@ -262,7 +263,6 @@ class CapacidadeFormComponent extends src_app_modules_base_page_form_base__WEBPA
     saveData(form) {
         return new Promise((resolve, reject) => {
             const capacidade = this.util.fill(new src_app_models_capacidade_model__WEBPACK_IMPORTED_MODULE_3__["Capacidade"](), this.entity);
-            //this.urlParams!.get("perfil_id")
             resolve(this.util.fillForm(capacidade, this.form.value));
         });
     }
@@ -293,7 +293,7 @@ CapacidadeFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵ
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 12)("dao", ctx.tipoCapacidadeDao);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 6)("label", ctx.lex.noun("Perfil"))("dao", ctx.perfilDao);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 6)("label", ctx.lex.translate("Perfil"))("dao", ctx.perfilDao);
     } }, directives: [_angular_common__WEBPACK_IMPORTED_MODULE_8__["NgIf"], src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__["EditableFormComponent"], _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_9__["InputSearchComponent"], _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_10__["InputSelectComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJjYXBhY2lkYWRlLWZvcm0uY29tcG9uZW50LnNjc3MifQ== */"] });
 
 
@@ -366,9 +366,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const routes = [
-    { path: '', component: _capacidade_list_capacidade_list_component__WEBPACK_IMPORTED_MODULE_4__["CapacidadeListComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Capacidade" } },
-    { path: 'new', component: _capacidade_form_capacidade_form_component__WEBPACK_IMPORTED_MODULE_3__["CapacidadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
-    { path: ':id/edit', component: _capacidade_form_capacidade_form_component__WEBPACK_IMPORTED_MODULE_3__["CapacidadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } }
+    { path: '', component: _capacidade_list_capacidade_list_component__WEBPACK_IMPORTED_MODULE_4__["CapacidadeListComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Capacidades" } },
+    { path: 'new', component: _capacidade_form_capacidade_form_component__WEBPACK_IMPORTED_MODULE_3__["CapacidadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Capacidade", modal: true } },
+    { path: ':id/edit', component: _capacidade_form_capacidade_form_component__WEBPACK_IMPORTED_MODULE_3__["CapacidadeFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição de Capacidade", modal: true } }
 ];
 class CapacidadeRoutingModule {
 }

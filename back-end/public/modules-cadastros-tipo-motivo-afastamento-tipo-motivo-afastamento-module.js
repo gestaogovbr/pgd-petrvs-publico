@@ -68,9 +68,9 @@ __webpack_require__.r(__webpack_exports__);
 
 const routes = [
     { path: '', component: _tipo_motivo_afastamento_list_tipo_motivo_afastamento_list_component__WEBPACK_IMPORTED_MODULE_4__["TipoMotivoAfastamentoListComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Tipos de Motivo de Afastamento" } },
-    { path: 'new', component: _tipo_motivo_afastamento_form_tipo_motivo_afastamento_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoMotivoAfastamentoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
-    { path: ':id/edit', component: _tipo_motivo_afastamento_form_tipo_motivo_afastamento_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoMotivoAfastamentoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
-    { path: ':id/consult', component: _tipo_motivo_afastamento_form_tipo_motivo_afastamento_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoMotivoAfastamentoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } }
+    { path: 'new', component: _tipo_motivo_afastamento_form_tipo_motivo_afastamento_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoMotivoAfastamentoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Tipo de Motivo de Afastamento", modal: true } },
+    { path: ':id/edit', component: _tipo_motivo_afastamento_form_tipo_motivo_afastamento_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoMotivoAfastamentoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Edição de Tipo de Motivo de Afastamento", modal: true } },
+    { path: ':id/consult', component: _tipo_motivo_afastamento_form_tipo_motivo_afastamento_form_component__WEBPACK_IMPORTED_MODULE_3__["TipoMotivoAfastamentoFormComponent"], canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]], resolve: { config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__["ConfigResolver"] }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Tipo de Motivo de Afastamento", modal: true } }
 ];
 class TipoMotivoAfastamentoRoutingModule {
 }
@@ -166,7 +166,7 @@ class TipoMotivoAfastamentoListComponent extends src_app_modules_base_page_list_
             return result;
         };
         /* Inicializações */
-        this.title = "Tipos de " + this.lex.noun("Motivo de afastamento", true);
+        this.title = this.lex.translate("Tipos de Motivo de Afastamento");
         this.code = "MOD_TIPO_MTV_AFT";
         this.filter = this.fh.FormBuilder({
             codigo: { default: null },
@@ -239,7 +239,7 @@ TipoMotivoAfastamentoListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODUL
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", "Nome " + ctx.lex.noun("motivo de afastamento", false, true))("control", ctx.filter.controls.nome);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("size", 12)("label", "Nome " + ctx.lex.translate("motivo de afastamento"))("control", ctx.filter.controls.nome);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("template", _r1);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
@@ -300,7 +300,7 @@ class TipoMotivoAfastamentoFormComponent extends src_app_modules_base_page_form_
             return result;
         };
         this.titleEdit = (entity) => {
-            return "Editando " + ((entity === null || entity === void 0 ? void 0 : entity.nome) || "");
+            return "Editando " + this.lex.translate("Tipo de Motivo de Afastamento") + ': ' + ((entity === null || entity === void 0 ? void 0 : entity.nome) || "");
         };
         this.form = this.fh.FormBuilder({
             codigo: { default: null },
