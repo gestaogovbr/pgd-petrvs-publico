@@ -17,6 +17,7 @@ class CreateIntegracaoServidoresTable extends Migration
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
+            $table->softDeletes();
             $table->string('cpf_ativo', 50)->nullable();
             $table->string('data_modificacao', 50)->nullable();
             $table->string('cpf', 50)->nullable();

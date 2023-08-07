@@ -36,7 +36,7 @@ class IntegracaoSiapeService extends ServiceBase {
         $this->siapeCodUorg = strval(intval($config['codUorg']));
         $this->siapeParmExistPag = $config['parmExistPag'];
         $this->siapeParmTipoVinculo = $config['parmTipoVinculo'];
-        // Rodando o Soap (API Siape)
+        // Inicializando o Soap (API Siape).
         $this->siape = new SoapClient($this->siapeUrl);
     }
 
@@ -59,7 +59,8 @@ class IntegracaoSiapeService extends ServiceBase {
                 $uorgsWsdl = $uorgsWsdl['Uorg'];
             }
         } catch (Throwable $e) {
-            LogError::newWarn("Web Service Siape: erro de conexão.", $e->getMessage());
+            // Informa erro de conexão ao Web Service SIAPE e aborta procedimento.
+            LogError::newError("Web Service Siape: erro de conexão.", $e->getMessage());
         }
 
         try {
@@ -76,7 +77,7 @@ class IntegracaoSiapeService extends ServiceBase {
     
                         $uorgWsdl = $this->UtilService->object2array($uorgWsdl);
                         if($this->UtilService->valueOrNull($uorgWsdl, "codUorgPagadora") == $this->siapeUpag){
-                            // Identifica informações sobre município e demais variáveis
+                            // Identifica informações sobre município e demais variáveis.
                             if(!empty($this->UtilService->valueOrNull($uorgWsdl, "nomeMunicipio"))){
                                 $consulta_sql = "SELECT * FROM cidades WHERE nome LIKE '".$uorgWsdl['nomeMunicipio']."'";
                                 $consulta_sql = DB::select($consulta_sql);
@@ -246,7 +247,7 @@ class IntegracaoSiapeService extends ServiceBase {
                         'data_modificacao' => $pessoa['dataUltimaTransacao'],
                         'cpf' => $pessoa['cpf'],
                         'nome' => $this->UtilService->valueOrDefault($dadosPessoais['nome']),
-                        'emailfuncional' => $this->UtilService->valueOrDefault($dadosFuncionais['emailServidor']),
+                        'emailfuncional' => $this->UtilService->valueOrDefault($dadosFuncionais['emailInstitucional']),
                         'sexo' => $this->UtilService->valueOrDefault($dadosPessoais['nomeSexo']),
                         'municipio' => $this->UtilService->valueOrDefault($dadosPessoais['nomeMunicipNasc']),
                         'uf' => $this->UtilService->valueOrDefault($dadosPessoais['ufNascimento']),

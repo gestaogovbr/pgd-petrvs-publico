@@ -40,4 +40,6 @@ class IntegracaoServidor extends ModelBase
     protected $keyType = 'string';
 
     protected $casts = [];
+
+    protected $dates = ['deleted_at'];
 }

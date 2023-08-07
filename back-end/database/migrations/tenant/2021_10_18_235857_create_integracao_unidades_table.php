@@ -17,6 +17,7 @@ class CreateIntegracaoUnidadesTable extends Migration
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
+            $table->softDeletes();
             $table->string('id_servo', 50)->nullable();
             $table->string('pai_servo', 50)->nullable();
             $table->string('codigo_siape', 50)->nullable();

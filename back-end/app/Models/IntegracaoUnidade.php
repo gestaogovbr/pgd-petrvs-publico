@@ -50,4 +50,6 @@ class IntegracaoUnidade extends ModelBase
     protected $casts = [];
 
     protected $keyType = 'string';
+
+    protected $dates = ['deleted_at'];
 }
