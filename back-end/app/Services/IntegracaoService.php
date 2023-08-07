@@ -244,8 +244,8 @@ class IntegracaoService extends ServiceBase {
     }
 
     public function sincronizacao($inputs) {
-        ob_start(); //inicia o buffer de saída
-        ob_implicit_flush(true); //libera a chamada explícita para o output buffer
+        ob_start(); // inicia o buffer de saída
+        ob_implicit_flush(true); // libera a chamada explícita para o output buffer
         ini_set('memory_limit', '-1');
         ini_set('default_socket_timeout', 300); //5 minutos
         set_time_limit(1800);
@@ -267,13 +267,13 @@ class IntegracaoService extends ServiceBase {
                 if($this->integracao_config["tipo"] == "SIAPE") {
                     $uos = $this->IntegracaoSiapeService->retornarUorgs()["uorg"];
                 } else {
-                    if($this->useLocalFiles) {//Se for para usar os arquivos locais, a rotina lê os dados do arquivo salvo localmente
+                    if($this->useLocalFiles) {// Se for para usar os arquivos locais, a rotina lê os dados do arquivo salvo localmente.
                         $xmlStream = file_get_contents(base_path($this->localUnidades));
-                    } else {        //caso contrário, a rotina vai buscar no servidor do SIGEPE
+                    } else {// Caso contrário, a rotina vai buscar no servidor do SIGEPE.
                         $url = $this->integracao_config["baseUrlunidades"];
                         $response = $this->consultarApiSigepe($token, $url);
                         $xmlStream = $response->body();
-                        if($this->storeLocalFiles) {        // aqui decide se salva ou não em arquivo as informações trazidas do servidor do SIGEPE
+                        if($this->storeLocalFiles) {// Aqui decide se salva ou não em arquivo as informações trazidas do servidor do SIGEPE.
                             if(file_exists(base_path($this->localUnidades))) unlink(base_path($this->localUnidades));
                             file_put_contents(base_path($this->localUnidades), $xmlStream);
                         }
@@ -283,16 +283,14 @@ class IntegracaoService extends ServiceBase {
                 }
                 if($this->echo) $this->imprimeNoTerminal("Concluída a fase de obtenção dos dados das unidades informados pelo SIAPE!.....");
 
-                /* Apaga a tabela integracao_unidades e cria novamente com as unidades ATIVAS obtidas pelo webservice */
+                // Resumo: Apaga conteúdo da tabela integracao_unidades e busca novo com as unidades ATIVAS obtidas pelo webservice
                 DB::transaction(function () use (&$uos, &$self, &$sql_log_changes) {
-                    /* Remove toda a lista da tabela temporária integracao_unidades */
-                    //DB::delete('DELETE FROM integracao_unidades');
+                    // Remove toda a lista da tabela temporária integracao_unidades
                     IntegracaoUnidade::truncate();
-                    /* Itera as UOs */
+                    // Iteração com lista de uorg's
                     foreach($uos as $uo) {
                         if(!empty($self->UtilService->valueOrDefault($uo["id_servo"])) && $self->UtilService->valueOrDefault($uo["ativa"]) == 'true') {
-                            //DB::table('integracao_unidades')->insert([
-                            IntegracaoUnidade::create([
+                            $unidade = [
                                 'id_servo' => $self->UtilService->valueOrDefault($uo["id_servo"]),
                                 'pai_servo' => $self->UtilService->valueOrDefault($uo["pai_servo"]),
                                 'codigo_siape' => $self->UtilService->valueOrDefault($uo["codigo_siape"]),
@@ -324,12 +322,14 @@ class IntegracaoService extends ServiceBase {
                                 'datamodificacao' => $self->UtilService->valueOrDefault($uo["datamodificacao"]),
                                 'und_nu_adicional' => $self->UtilService->valueOrDefault($uo["und_nu_adicional"]),
                                 'cnpjupag' => $self->UtilService->valueOrDefault($uo["cnpjupag"])
-                            ])->save();
+                            ];
+                            // $result diferente de true é bronca!
+                            $result = IntegracaoUnidade::create($unidade)->save();
                         }
                     }
                 });
-                if($this->echo) $this->imprimeNoTerminal("Concluída a fase de reconstrução da tabela Integracao_unidades!.....");
-                $n = DB::table('integracao_unidades')->get()->count();
+                if($this->echo) $this->imprimeNoTerminal("Concluída a fase de reconstrução da tabela integracao_unidades!.....");
+                $n = IntegracaoUnidade::count();
                 $this->atualizaLogs($this->logged_user_id, 'integracao_unidades', 'todos os registros', 'ADD', ['Observação' => 'Total de unidades importadas do SIAPE: ' . $n . ' (apenas ATIVAS)']);
                 array_push($this->result['unidades']["Observações"], 'Total de unidades importadas do SIAPE: ' . $n . ' (apenas ATIVAS)');
                 array_push($this->result['unidades']['Observações'], 'Os dados das Unidades foram obtidos ' . ($this->useLocalFiles ? 'através de arquivo XML armazenado localmente!' : 'através de consulta à API do SIAPE!'));
@@ -353,7 +353,7 @@ class IntegracaoService extends ServiceBase {
                     foreach($self->unidadesSelecionadas as $unidade) {
                         $self->deepReplaceUnidades($unidade, $entidade_id);
                     }
-                    /* Seta inativo nas unidades que não existem em integracao_unidades e garante que não esteja inativo as que existem em integracao_unidades */
+                    // Seta inativo nas unidades que não existem em integracao_unidades e garante que não esteja inativo as que existem em integracao_unidades.
                     $this->inativadas = DB::update("UPDATE unidades AS u SET inativo = NOW() WHERE inativo IS NULL AND NOT EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo)");
                     $this->ativadas = DB::update("UPDATE unidades AS u SET inativo = NULL WHERE inativo IS NOT NULL AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo);");
                 });
@@ -367,7 +367,7 @@ class IntegracaoService extends ServiceBase {
                     $this->inativadas . ($this->inativadas == 1 ? ' unidade do Petrvs foi INATIVADA porque não existe ou já está inativa no SIAPE!' : ' unidades do Petrvs foram INATIVADAS porque não existem ou já estão inativas no SIAPE!'),
                     $this->ativadas . ($this->ativadas == 1 ? ' unidade foi ATIVADA no Petrvs porque constava como inativa mas ainda está ativa no SIAPE!' : ' unidades foram ATIVADAS no Petrvs porque constavam como inativas mas ainda estão ativas no SIAPE!')
                     ], fn($o) => intval(substr($o,0,strpos($o, 'unidade')-1)) > 0)];
-                /* Unidades que foram removidas em integracao_unidades vão permanecer no sistema por questões de integridade */
+                // Unidades que foram removidas em integracao_unidades vão permanecer no sistema por questões de integridade.
             } catch (Throwable $e) {
                 LogError::newError("Erro ao importar unidades", $e);
                 $this->result['unidades']['Resultado'] = 'ERRO: '. $e->getMessage();
@@ -398,7 +398,7 @@ class IntegracaoService extends ServiceBase {
                 }
                 if($this->echo) $this->imprimeNoTerminal("Concluída a fase de obtenção dos dados dos servidores informados pelo SIAPE.....");
 
-                /* Insere os servidores ATIVOS obtidos pelo webservice para a tabela integracao_servidores */
+                // Insere os servidores ATIVOS obtidos pelo web service para a tabela integracao_servidores.
                 DB::transaction(function () use (&$servidores, &$self) {
                     DB::delete('DELETE FROM integracao_servidores');
                     foreach($servidores as $servidor) {
@@ -495,14 +495,14 @@ class IntegracaoService extends ServiceBase {
                     $n = count($atualizacoes);
                     if($n > 0) array_push($this->result['servidores']["Observações"], $n . ($n == 1 ? ' servidor foi atualizado porque sofreu alteração em seus dados pessoais!' : ' servidores foram atualizados porque sofreram alteração em seus dados pessoais!'));
 
-                    // Seleciona todas as lotações que não correspondem à Unidade Atual do servidor
+                    // Seleciona todas as lotações que não correspondem à Unidade Atual do servidor.
                     $lotacoes_nao_atuais = DB::select(
                         "SELECT u.id AS id_usuario, u.nome, l.id AS id_lotacao, l.data_fim, l.principal, isr.codigo_servo_exercicio, und.sigla ".
                         "FROM usuarios u LEFT JOIN lotacoes l ON (l.usuario_id = u.id) LEFT JOIN unidades und ON (l.unidade_id = und.id) ".
                         "LEFT JOIN integracao_servidores isr ON (u.cpf = isr.cpf) ".
                         "WHERE und.codigo != isr.codigo_servo_exercicio AND l.principal = 1");
                     $sql2_update = "UPDATE lotacoes SET principal = 0 WHERE id = :id_lotacao";
-                    // Todas são setadas como PRINCIPAL = 0
+                    // Todas são setadas como PRINCIPAL = 0.
                     if (!empty($lotacoes_nao_atuais)) {
                         foreach($lotacoes_nao_atuais as $lotacao) {
                             DB::update($sql2_update, ['id_lotacao' => $lotacao->id_lotacao]);
@@ -517,8 +517,8 @@ class IntegracaoService extends ServiceBase {
                     $n = count($lotacoes_nao_atuais);
                     if($n > 0) array_push($this->result['servidores']["Observações"], $n . ($n == 1 ? ' lotação foi setada com principal = 0 porque não corresponde mais à lotação atual do servidor!' : ' lotações foram setadas com principal = 0 porque não correspondem mais às lotações atuais dos servidores!'));
 
-                    // Seleciona todos os servidores que possuem alguma lotação registrada com a Unidade Atual
-                    // Podem ocorrer 2 casos: I - possuem lotação com data_fim não nula (setar com PRINCIPAL = 0), ou II - possuem com data_fim nula (ou seja, estão OK. Setar com PRINCIPAL = 1, se estiver com PRINCIPAL = 0)
+                    // Seleciona todos os servidores que possuem alguma lotação registrada com a Unidade Atual.
+                    // Podem ocorrer 2 casos: I - possuem lotação com data_fim não nula (setar com PRINCIPAL = 0), ou II - possuem com data_fim nula (ou seja, estão OK. Setar com PRINCIPAL = 1, se estiver com PRINCIPAL = 0).
                     $lotacoes_atuais = DB::select(
                         "SELECT u.id AS id_usuario, u.nome, l.id AS id_lotacao, l.data_fim, l.principal, isr.codigo_servo_exercicio AS cod_unidade_atual, und2.id AS id_unidade_atual ".
                         "FROM usuarios u LEFT JOIN lotacoes l ON (l.usuario_id = u.id) ".

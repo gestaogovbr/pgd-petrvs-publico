@@ -14,7 +14,8 @@ class CreateIntegracaoServidoresTable extends Migration
     public function up()
     {
         Schema::create('integracao_servidores', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id');
+            $table->primary('id');
             $table->timestamps();
             $table->string('cpf_ativo', 50)->nullable();
             $table->string('data_modificacao', 50)->nullable();

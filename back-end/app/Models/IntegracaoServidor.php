@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
+use App\Traits\AutoUuid;
 
 class IntegracaoServidor extends ModelBase
 {
+    use AutoUuid;
+
     protected $table = 'integracao_servidores';
 
     protected $with = [];
@@ -33,6 +36,8 @@ class IntegracaoServidor extends ModelBase
         'dataexercicionoorgao', /* varchar(50); */
         'funcoes', /* json; */
     ];
+
+    protected $keyType = 'string';
 
     protected $casts = [];
 }
