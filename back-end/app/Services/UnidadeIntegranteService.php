@@ -55,6 +55,7 @@ class UnidadeIntegranteService extends ServiceBase
                 $this->validateIntegrante($atribuicoes);
                 $unidadeLotacao = $usuario->lotacao ? $usuario->lotacao->unidade : null;
                 $unidadeGerenciaTitular = $usuario->gerenciaTitular ? $usuario->gerenciaTitular->unidade : null;
+                $atualGestorSubstitutoUnidade = $unidade->gestorSubstituto ? $unidade->gestorSubstituto->usuario : null;
                 $definirLotacao = function($vinculoNovo) use ($unidadeLotacao,$unidadeId,$usuario,&$atribuicoesFinais) {
                     if(empty($unidadeLotacao)) {
                         UnidadeIntegranteAtribuicao::create(["atribuicao" => "LOTADO","unidade_integrante_id" => $vinculoNovo->id])->save();
@@ -78,10 +79,22 @@ class UnidadeIntegranteService extends ServiceBase
                     }
                     array_push($atribuicoesFinais,"GESTOR");
                 };
+                $definirGerenciaSubstituta = function($vinculoNovo) use ($atualGestorSubstitutoUnidade,$usuarioId,$unidade,&$atribuicoesFinais) {
+                    if(empty($atualGestorSubstitutoUnidade)) {
+                            UnidadeIntegranteAtribuicao::create(["atribuicao" => "GESTOR_SUBSTITUTO","unidade_integrante_id" => $vinculoNovo->id])->save();
+                     } else {
+                        if($atualGestorSubstitutoUnidade->id != $usuarioId) {
+                            $unidade->gestorSubstituto->gestorSubstituto->delete();
+                            UnidadeIntegranteAtribuicao::create(["atribuicao" => "GESTOR_SUBSTITUTO","unidade_integrante_id" => $vinculoNovo->id])->save();
+                        }
+                    }
+                    array_push($atribuicoesFinais,"GESTOR_SUBSTITUTO");
+                };
                 if(in_array("LOTADO", $novasAtribuicoes)) $definirLotacao($vinculoNovo);
                 if(in_array("GESTOR", $novasAtribuicoes)) $definirGerenciaTitular($vinculoNovo);
-                foreach(array_diff($novasAtribuicoes, ['LOTADO','GESTOR']) as $x) { 
-                    UnidadeIntegranteAtribuicao::updateOrCreate(['atribuicao' => $x, 'unidade_integrante_id' => $vinculoNovo->id],[]); 
+                if(in_array("GESTOR_SUBSTITUTO", $novasAtribuicoes)) $definirGerenciaSubstituta($vinculoNovo);
+                foreach(array_diff($novasAtribuicoes, ['LOTADO','GESTOR','GESTOR_SUBSTITUTO']) as $x) { 
+                    UnidadeIntegranteAtribuicao::updateOrCreate(['atribuicao' => $x, 'unidade_integrante_id' => $vinculoNovo->id],[])->save(); 
                     array_push($atribuicoesFinais,$x);
                 }
             }
@@ -101,4 +114,3 @@ class UnidadeIntegranteService extends ServiceBase
         if(count(array_intersect(['GESTOR','GESTOR_SUBSTITUTO'],$atribuicoes)) == 2 || count(array_intersect(['LOTADO','COLABORADOR'],$atribuicoes)) == 2) throw new ServerException("ValidateIntegrante", "Há inconsistência nas atribuições: GESTOR/GESTOR_SUBSTITUTO ou LOTADO/COLABORADOR");
     }
 }
-

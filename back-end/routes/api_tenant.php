@@ -40,7 +40,6 @@ use App\Http\Controllers\AtividadeController;
 use App\Http\Controllers\CalendarioController;
 use App\Http\Controllers\TipoTarefaController;
 use App\Http\Controllers\MaterialServicoController;
-use App\Http\Controllers\AtividadeEntregaController;
 use App\Http\Controllers\ProjetoController;
 use App\Http\Controllers\RotinaDiariaController;
 use App\Http\Controllers\TemplateController;
@@ -53,15 +52,14 @@ use App\Http\Controllers\CentroTreinamentoController;
 use App\Http\Controllers\FuncaoController;
 use App\Http\Controllers\GrupoEspecializadoController;
 use App\Http\Controllers\CargoController;
-use App\Http\Controllers\AreaGraduacaoController;
 use App\Http\Controllers\NotificacaoController;
 use App\Http\Controllers\PlanoTrabalhoEntregaController;
 use App\Http\Controllers\UnidadeIntegranteController;
+use App\Http\Controllers\UnidadeIntegranteAtribuicaoController;
 use App\Http\Controllers\MateriaController;
 use App\Http\Controllers\CurriculumProfissionalController;
 use App\Http\Controllers\AreaAtividadeExternaController;
 use App\Http\Controllers\AreaTematicaController;
-//use App\Http\Controllers\AtividadeExternaController;
 use App\Http\Controllers\CapacidadeTecnicaController;
 use App\Http\Controllers\HistoricoAtividadeExternaCurriculumController;
 use App\Http\Controllers\HistoricoAtividadeInternaCurriculumController;
@@ -266,10 +264,11 @@ Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
     Route::post('inativo', [UnidadeController::class, 'inativo']);
 });
 Route::middleware(['auth:sanctum'])->prefix('UnidadeIntegrante')->group(function () {
-/*     Route::post('load-usuarios-integrantes', [UnidadeIntegranteController::class, 'loadUsuariosIntegrantes']);
-    Route::post('load-unidades-integrantes', [UnidadeIntegranteController::class, 'loadUnidadesIntegrantes']); */
     Route::post('load-integrantes', [UnidadeIntegranteController::class, 'loadIntegrantes']);
     Route::post('save-integrante', [UnidadeIntegranteController::class, 'saveIntegrante']);
+});
+Route::middleware(['auth:sanctum'])->prefix('UnidadeIntegranteAtribuicao')->group(function () {
+    Route::post('destroy', [UnidadeIntegranteAtribuicaoController::class, 'destroy']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Capacidade')->group(function () { defaultRoutes(CapacidadeController::class); });
 

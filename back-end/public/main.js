@@ -25566,7 +25566,7 @@ class PageFrameBase extends _page_base__WEBPACK_IMPORTED_MODULE_2__["PageBase"] 
                 var _b;
                 this.loading = true;
                 try {
-                    if (this.entity_id == "new") {
+                    if (this.entity_id == "new" || this.isNew) {
                         yield this.initializeData(this.form);
                     }
                     else {

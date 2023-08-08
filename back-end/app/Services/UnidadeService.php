@@ -253,7 +253,9 @@ class UnidadeService extends ServiceBase
         $where = [];
         $subordinadas = true;
         $inativos = !empty(array_filter($data["where"], fn($w) => $w[0] == "inativo"));
-        $unidadesPlanejamento = !empty(array_filter($data["where"], fn($w) => $w[0] == "unidades_planejamento"));
+        //Esta variável '$unidadesPlanejamento' informa se a consulta está vindo do formulário de inclusão de 
+        //Planejamento Institucional para uma unidade executora
+        $unidadesPlanejamento = !empty(array_filter($data["where"], fn($w) => $w[0] == "unidades_planejamento")); 
         foreach($data["where"] as $condition) {
             if(is_array($condition) && $condition[0] == "subordinadas") {
                 $subordinadas = $condition[2];
@@ -285,7 +287,7 @@ class UnidadeService extends ServiceBase
         $unidade = Unidade::find($data["id"]);
         $pai = Unidade::find($data["unidade_pai_id"]);
         $data["path"] = empty($pai) ? null : $pai->path . "/" . $pai->id;
-        if(!empty($unidade)) {
+        if(!empty($unidade)) { // Depois de atualizar o campo 'path' da unidade, atualiza os campos 'path' de todas suas unidades-filhas
             $oldPath = $unidade->path . "/" . $unidade->id . "/";
             $newPath = $data["path"] . "/" . $unidade->id . "/";
             Unidade::where('path', 'like', $oldPath . "%")

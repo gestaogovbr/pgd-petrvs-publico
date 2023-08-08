@@ -126,7 +126,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   }
 
   /**
-   * Método chamado para inserir uma entrega de plano de trabalho no grid, seja este persistente ou não.
+   * Método chamado para inserir uma entrega de plano de trabalho no grid, seja este componente persistente ou não.
    * @returns 
    */
   public async addEntrega() {
@@ -138,7 +138,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   }
 
   /**
-   * Método utilizado durante a inclusão/alteração de uma entrega de plano de trabalho no grid, seja ele persistente ou não
+   * Método utilizado durante a inclusão/alteração de uma entrega de plano de trabalho no grid, seja este componente persistente ou não
    * @param form 
    * @param row 
    */
@@ -167,16 +167,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   }
 
   /**
-   * Método chamado para somar os percentuais das forças de trabalho do array de entregas passado como parâmetro.
-   * @param entregas Array de entregas do plano de trabalho
-   * @returns 
-   */
-  public somaForcaTrabalho(entregas: PlanoTrabalhoEntrega[] = []): number {
-    return entregas.map(x => x.forca_trabalho * 1).reduce((a, b) => a + b, 0);
-  }
-
-  /**
-   * Método chamado para a exclusão de uma entrega de plano de trabalho do grid, seja este persistente ou não. 
+   * Método chamado para a exclusão de uma entrega de plano de trabalho do grid, seja este componente persistente ou não. 
    * @param row 
    * @returns 
    */
@@ -197,7 +188,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   }
 
   /**
-   * Método chamado no salvamento de uma entrega do plano de trabalho do grid, seja este persistente ou não.
+   * Método chamado no salvamento de uma entrega do plano de trabalho do grid, seja este componente persistente ou não.
    * @param form 
    * @param row 
    * @returns 
@@ -223,6 +214,15 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
       this.loading = false;
     }
     return this.novaEntrega;
+  }
+
+  /**
+   * Método chamado para somar os percentuais das forças de trabalho do array de entregas passado como parâmetro.
+   * @param entregas Array de entregas do plano de trabalho
+   * @returns 
+   */
+  public somaForcaTrabalho(entregas: PlanoTrabalhoEntrega[] = []): number {
+    return entregas.map(x => x.forca_trabalho * 1).reduce((a, b) => a + b, 0);
   }
 
   /**
@@ -346,7 +346,7 @@ Entretanto, quando se trata de um grid não persistente, ela não deve ser exclu
 todas as suas entregas para o back-end, que finalmente excluirá as que possuírem _status = "DELETE".
 
 (*4)  if(this.grid?.adding) this.grid!.items[this.grid!.items.length-1].id = '';
-
+No caso de o componente ser 'persistente', essa linha apaga o ID que foi criado pelo banco de dados permitindo ao método saveItem do grid.component localizá-lo na sua lista de items para atualizar suas informações na tela.
 
 (*5)  if(!this.entity?.id?.length) return this.entregasPlanoEntrega;
 Quando o componente for chamado por um plano de trabalho (entity) que já existe, não poderá haver alteração no seu plano de entregas, portanto as entregas da mesma unidade do plano de trabalho serão lidas
