@@ -11,6 +11,7 @@ use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Perfil;
 use App\Models\IntegracaoUnidade;
 use App\Models\IntegracaoServidor;
+use App\Models\IntegracaoChefia;
 use App\Models\UnidadeIntegrante;
 use Illuminate\Support\Facades\Auth;
 use Ramsey\Uuid\Uuid;
@@ -514,19 +515,22 @@ class IntegracaoService extends ServiceBase {
                     if($n > 0) array_push($this->result['servidores']["Observações"], $n . ($n == 1 ? ' servidor foi atualizado porque sofreu alteração em seus dados pessoais!' : ' servidores foram atualizados porque sofreram alteração em seus dados pessoais!'));
 
                     // 1 - De cada usuário, pesquisar quais as unidades integrantes não correspondem com a unidade de exercício atual;
+                    IntegracaoChefia::truncate();
                     $vinculos = UnidadeIntegrante::all();
-
+                    
                     // Exercício atual
-                    foreach($vinculos as $v){
+                    foreach ($vinculos as $v) {
                         // $lotacao_atual = DB::select("SELECT codigo_servo_exercicio from integracao_servidores where cpf = (SELECT cpf from usuarios where id = :usuario_id)", $v->usuario_id);
                         //if (!empty($v->lotado()) && $v->unidade->codigo != $lotacao_atual) {
                             $this->UnidadeIntegrante->saveIntegrante($v->unidade_id, $v->usuario_id, ["LOTADO"]);
                         //}
-                    }
+                    };
 
                     // Gestores
-                    foreach($vinculos as $v){
-                        $gestor = $v->usuario_id->funcoes();
+                    $unidades = IntegracaoUnidades::all();
+
+                    foreach($unidades as $u){
+                        $gestor_titular = IntegracaoServidor::where('codexercicio','2690');
                         //$this->UnidadeIntegrante->saveIntegrante($v->unidade_id, $v->usuario_id, ["LOTADO"]);
                     }
 
