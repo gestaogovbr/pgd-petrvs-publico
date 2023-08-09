@@ -69,7 +69,7 @@ class PlanoEntregaService extends ServiceBase
         $result["planoAtivo"] = $this->isPlano("ATIVO", $planoEntrega);
         $result["planoPaiAtivo"] = $planoEntrega['plano_entrega_id'] ? $this->isPlano("ATIVO", $planoEntregaPai->toArray()) : false;
         $result["planoHomologando"] = $this->isPlano("HOMOLOGANDO", $planoEntrega);
-        $result["planoIncluindo"] = $this->isPlano("INCLUINDO", $planoEntrega);
+        $result["planoIncluido"] = $this->isPlano("INCLUIDO", $planoEntrega);
         $result["planoProprio"] = $planoEntrega['plano_entrega_id'] == null;
         $result["planoVinculado"] = $planoEntrega['plano_entrega_id'] != null;
         $result["gestorUnidadePlano"] = $this->usuario->isGestorUnidade($planoEntrega['unidade_id']);
@@ -215,12 +215,12 @@ class PlanoEntregaService extends ServiceBase
             $this->unidades[$planoEntrega->unidade_id] = Unidade::find($planoEntrega->unidade_id);
         }
         $result = [
-            "incluindo" => $planoEntrega->status == 'INCLUINDO',
-            "homologando" => $planoEntrega->status == 'HOMOLOGANDO',
-            "ativo" => $planoEntrega->status == 'ATIVO',
-            "suspenso" => $planoEntrega->status == 'SUSPENSO',
-            "concluido" => $planoEntrega->status == 'CONCLUIDO',
-            "avaliado" => $planoEntrega->status == 'AVALIADO',
+            "incluido" => $planoEntrega->status->nome == 'INCLUIDO',
+            "homologando" => $planoEntrega->status->nome == 'HOMOLOGANDO',
+            "ativo" => $planoEntrega->status->nome == 'ATIVO',
+            "suspenso" => $planoEntrega->status->nome == 'SUSPENSO',
+            "concluido" => $planoEntrega->status->nome == 'CONCLUIDO',
+            "avaliado" => $planoEntrega->status->nome == 'AVALIADO',
             "arquivado" => !empty($planoEntrega->data_arquivamento),
             "cancelado" => !empty($planoEntrega->data_cancelamento)
         ];
@@ -259,7 +259,7 @@ class PlanoEntregaService extends ServiceBase
             $planoEntrega = PlanoEntrega::find($data["id"]);
             $this->update([
                 "id" => $planoEntrega->id,
-                "status" => 'INCLUINDO',
+                "status" => 'INCLUIDO',
             ], $unidade, false);
             DB::commit();
         } catch (Throwable $e) {

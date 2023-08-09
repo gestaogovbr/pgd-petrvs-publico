@@ -1,13 +1,15 @@
+import { StatusDockerConfig } from '../modules/gestao/atividade/atividade-list-kanban/atividade-list-kanban.component';
 import { Base } from './base.model';
 import { CadeiaValor } from './cadeia-valor.model';
 import { Planejamento } from './planejamento.model';
 import { PlanoEntregaEntrega } from './plano-entrega-entrega.model';
 import { Programa } from './programa.model';
+import { Status } from './status.model';
 import { Unidade } from './unidade.model';
 import { Usuario } from './usuario.model';
 
 export type PlanoEntregaMetadados = {
-  incluindo: boolean,
+  incluido: boolean,
   homologando: boolean,
   ativo: boolean,
   suspenso: boolean,
@@ -17,6 +19,7 @@ export type PlanoEntregaMetadados = {
 }
 export class PlanoEntrega extends Base {
   public unidade?: Unidade;
+  public statusAtual?: Status;
   public planejamento?: Planejamento;
   public cadeia_valor?: CadeiaValor;
   public programa?: Programa;
@@ -24,12 +27,13 @@ export class PlanoEntrega extends Base {
   public criacao_usuario?: Usuario;                                 // Usuário que criou o plano de entregas
   public cancelamento_usuario?: Usuario;                            // Usuário que cancelou o plano de entregas
   public entregas: PlanoEntregaEntrega[] = [];                      // Entregas que compõem o plano de entregas
+  public mudancasStatus: Status[] = [];                             // Mudanças de status sofridas pelo plano de entregas (histórico)
 
   public inicio: Date = new Date();                                 // Data inicio do plano de entrega
   public fim: Date | null = null;                                   // Data fim do plano de entrega
   public nome: string = "";                                         // Nome do plano de entrega
   public numero?: number;                                           // Número do plano de entrega (Gerado pelo sistema)
-  public status: string = 'INCLUINDO';                              // Status do plano de entrega
+  public status: string = 'INCLUIDO';                               // Status do plano de entrega
   public data_cancelamento?: Date | null;
   public data_arquivamento?: Date | null;
   public metadados: PlanoEntregaMetadados | undefined = undefined;  // Campo virtual contendo informações calculadas pelo servidor

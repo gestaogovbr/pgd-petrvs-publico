@@ -8,6 +8,7 @@ import { PlanoEntrega } from './plano-entrega.model';
 import { PlanoTrabalhoEntrega } from './plano-trabalho-entrega.model';
 import { Documento, HasDocumentos } from './documento.model';
 import { Atividade } from './atividade.model';
+import { Status } from './status.model';
 
 export type PlanoMetadados = {
   concluido: boolean
@@ -20,6 +21,7 @@ export class PlanoTrabalho extends Base implements HasDocumentos {
     public usuario?: Usuario;
     public programa?: Programa;
     public documento?: Documento;
+    public status?: Status;
 
     public carga_horaria: number = 0; //Carga horária diária do usuário
     public tempo_total: number = 0; //Horas úteis de trabalho no período de data_inicio_vigencia à data_fim_vigencia considerando carga_horaria, feriados, fins de semana
@@ -31,6 +33,7 @@ export class PlanoTrabalho extends Base implements HasDocumentos {
     public entregas: PlanoTrabalhoEntrega[] = []; /* Entregas vinculadas ao Plano de Trabalho*/
     public documentos: Documento[] = [];
     public atividades: Atividade[] = [];
+    public mudancasStatus: Status[] = [];  // Mudanças de status sofridas pelo plano de trabalho (histórico)
     
     public programa_id: string = "";
     public usuario_id: string = "";

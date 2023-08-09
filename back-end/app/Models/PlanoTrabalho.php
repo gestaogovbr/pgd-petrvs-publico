@@ -36,7 +36,7 @@ class PlanoTrabalho extends ModelBase
         'data_fim_vigencia', /* datetime; NOT NULL; */// Fim do plano de trabalho
         'data_arquivamento', /* datetime; */// Data de arquivamento do plano de trabalho
         'data_cancelamento', /* datetime; */// Data de cancelamento do plano de trabalho
-        'status', /* enum('INCLUINDO','HOMOLOGANDO','ATIVO','CONCLUIDO','AVALIADO','SUSPENSO'); NOT NULL; */// Status do plano de trabalho
+        //'status', /* enum('INCLUINDO','HOMOLOGANDO','ATIVO','CONCLUIDO','AVALIADO','SUSPENSO'); NOT NULL; */// Status do plano de trabalho
         //'deleted_at', /* timestamp; */
         //'numero', /* int; NOT NULL; */// Número do plano de trabalho (Gerado pelo sistema)
     ];
@@ -53,11 +53,13 @@ class PlanoTrabalho extends ModelBase
     }
 
     // Has
+    public function mudancasStatus() { return $this->hasMany(Status::class, "plano_trabalho_id"); }
     public function entregas() { return $this->hasMany(PlanoTrabalhoEntrega::class); }
     public function documentos() { return $this->hasMany(Documento::class); }
     public function atividades() { return $this->hasMany(Atividade::class); }
     public function consolidacoes() { return $this->hasMany(PlanoTrabalhoConsolidacao::class); }
     // Belongs
+    public function statusAtual() { return $this->belongsTo(Status::class, "status_id"); }
     public function usuario() { return $this->belongsTo(Usuario::class); }
     public function criador() { return $this->belongsTo(Usuario::class, 'criacao_usuario_id'); }
     public function programa() { return $this->belongsTo(Programa::class); }
