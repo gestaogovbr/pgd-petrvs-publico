@@ -1,5 +1,5 @@
 <!-- Label -->
-<label *ngIf="labelPosition == 'top' && label.length" for="{{controlName}}" [class]="classLabel" [class.radio]="isRadio" [class.fw-bold]="bold" [class.control-label]="isRadio">
+<label *ngIf="labelPosition == 'top' && label.length" for="{{controlName}}" [class]="labelClass" [class.radio]="isRadio" [class.fw-bold]="bold" [class.control-label]="isRadio">
     <i *ngIf="icon.length" [class]="icon"></i>
     {{label}}
     <i *ngIf="labelInfo.length" class="bi bi-info-circle label-info text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="{{labelInfo}}"></i>

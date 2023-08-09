@@ -37,6 +37,7 @@ class Unidade extends ModelBase
         'expediente', /* json; */// Configuração de expediente da unidade
         'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho
         'inativo', /* datetime; */// Se a unidade está ou não inativa
+        'instituidora',
         'checklist', /* json; */// Nome dos checklist
         'unidade_pai_id', /* char(36); */
         'entidade_id', /* char(36); NOT NULL; */

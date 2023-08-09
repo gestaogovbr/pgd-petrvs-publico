@@ -73,6 +73,15 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     if(!this.formLotacao?.controls.unidade_lotacao_id.value?.length) {
       return "É obrigatória a definição da unidade de lotação do servidor!";
     };
+/*     if(!form?.controls.atribuicoes?.value?.length || form?.controls.atribuicoes.value.filter((u: { nome: string; unidade_id: string }) => u.nome == "LOTADO")) {
+      return "Obrigatório ao menos a unidade de lotação do usuário!";
+    } else {
+      const erros_atribuicoes = []
+      form?.controls.atribuicoes.value?.forEach((atribuicao: { nome: string; unidade_id: string }) => {
+        if(atribuicao.unidade_id == '') erros_atribuicoes.push({ atribuicao: atribuicao, erro: 'Falta unidade_id'})
+      });
+      if (erros_atribuicoes.length) return "Salve a unidade antes de salvar o usuário"
+    } */
     return undefined;
   } 
 

@@ -23,6 +23,7 @@ export class InputRadioComponent extends InputBase implements OnInit {
   @Input() icon: string = "bi bi-toggle-on";
   @Input() label: string = "";
   @Input() labelInfo: string = "";
+  @Input() labelClass?: string;
   @Input() bold: boolean = false;
   @Input() loading: boolean = false;
   @Input() items: LookupItem[] = [];

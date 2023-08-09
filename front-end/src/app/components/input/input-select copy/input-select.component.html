@@ -1,4 +1,4 @@
-<input-container [labelPosition]="labelPosition" [controlName]="controlName" [control]="control" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
+<input-container [labelPosition]="labelPosition" [labelClass]="labelClass" [controlName]="controlName" [control]="control" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
     <div class="input-group">
         <select #inputElement class="selectpicker form-control select-config" [id]="generatedId(controlName)" [attr.data-live-search]="isLiveSearch ? 'true' : undefined"  [attr.disabled]="isDisabled ? true : undefined" [class.is-invalid]="isInvalid()" (change)="onChange($event)">
             <option *ngFor="let option of options" value="{{getStringValue(option.key)}}" class="input-select-dynamic-item" [attr.data-icon]="isNoIcon ? undefined : option.icon" [style.color]="isNoColor ? undefined : (option.color || '#000000')">{{option.value}}</option>

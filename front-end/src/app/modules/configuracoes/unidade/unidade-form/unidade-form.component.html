@@ -2,9 +2,10 @@
     <tabs display right>
         <tab key="PRINCIPAL" label="Principal">
             <div class="row">
+                <input-switch [size]="1" label="Instit." labelClass="text-nowrap" controlName="instituidora" [labelInfo]="'Se a ' + lex.noun('unidade') + ' é instituidora de Programas.'"></input-switch>
                 <input-text [size]="2" label="Código" controlName="codigo"></input-text>
                 <input-text [size]="2" label="Sigla" controlName="sigla"></input-text>
-                <input-text [size]="8" label="Nome" controlName="nome"></input-text>
+                <input-text [size]="7" label="Nome" controlName="nome"></input-text>
             </div>
             <div class="row">
                 <input-search #gestor label="Gestor" [size]="6" [emptyValue]="null" [control]="formGestor!.controls.gestor_id" controlName="gestor_id" [dao]="usuarioDao" labelInfo="Responsável pela unidade"></input-search>

@@ -23,13 +23,13 @@ export class InputContainerComponent extends InputBase implements OnInit {
   @Input() icon: string = "";
   @Input() label: string = "";
   @Input() labelInfo: string = "";
+  @Input() labelClass?: string;
   @Input() bold: boolean = false;
   @Input() loading: boolean = false;
   @Input() errorMessageIcon?: string;
   @Input() form?: FormGroup;
   @Input() source?: any;
   @Input() path?: string;
-  @Input() classLabel?: string;
   @Input() set control(value: AbstractControl | undefined) {
     this._control = value;
   }

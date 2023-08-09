@@ -27,6 +27,7 @@ export class InputColorComponent extends InputBase implements OnInit {
   @Input() icon: string = "bi bi-palette";
   @Input() label: string = "";
   @Input() labelInfo: string = "";
+  @Input() labelClass?: string;
   @Input() bold: boolean = false;
   @Input() palette?: LookupItem[];
   @Input() background?: string;

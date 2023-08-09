@@ -5,7 +5,7 @@
         <input-switch [size]="3" labelPosition="left" label="Agrupar por Un." controlName="agrupar"
             [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
         <input-switch [size]="2" labelPosition="left" label="Principais" controlName="principais"
-            [control]="filter!.controls.principais" (change)="grid!.reloadFilter()"></input-switch>
+            [control]="filter!.controls.principais" (change)="grid!.reloadFilter()" [labelInfo]="lex.noun('Unidade', true) + ' onde o ' + lex.noun('usuario') + ' é integrante, incluindo unidades superiores das geridas por ele'"></input-switch>
     </toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed" [visible]="showFilter">
         <div class="row">
@@ -40,6 +40,7 @@
         <column title="Nome/Unidade" [template]="columnNome" orderBy="nome">
             <ng-template let-row="row" #columnNome>
                 <span class="text-break text-wrap" [style.max-width.px]="400">{{row.nome}}</span><br>
+                <badge [icon]="entityService.getIcon('Programa')" [label]="row.programa.nome" color="light"></badge>
                 <badge *ngIf="!filter!.controls.agrupar.value" color="secondary" [icon]="entityService.getIcon(lex.translate('unidade'))" [label]="row.unidade.sigla"></badge>
             </ng-template>
         </column>
