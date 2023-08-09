@@ -3,7 +3,7 @@ import { AbstractControl, ControlContainer, FormGroup, FormGroupDirective } from
 import { EditorComponent } from '@tinymce/tinymce-angular';
 import { IIndexable } from 'src/app/models/base.model';
 import { DialogService } from 'src/app/services/dialog.service';
-import { Editor } from 'tinymce';
+import { Editor, RawEditorOptions } from 'tinymce';
 import { InputBase, LabelPosition } from "../input-base";
 import { TemplateDataset, TemplateService, VariableTemplate } from 'src/app/modules/uteis/templates/template.service';
 
@@ -86,20 +86,27 @@ export class InputEditorComponent extends InputBase implements OnInit {
     return this.getSize();
   }
 
+  public toolbars: string[] = [
+    'customEditTemplateButton',
+    'customDoneEditTemplateButton customCancelEditTemplateButton | customAddMacroTemplate customHelpTemplate | undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl visualblocks',
+    'customAddMacroTemplate customHelpTemplate | undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl visualblocks',
+    'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl visualblocks'
+  ];
+
   public editor?: Editor;
   public dialog: DialogService;
   public templateService: TemplateService;
-  public editorConfig = {
-    plugins: 'print preview paste importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists wordcount imagetools textpattern noneditable help charmap quickbars emoticons',
-    toolbar: [
+  public plugins: string = 'print preview paste importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists wordcount imagetools textpattern noneditable help charmap quickbars emoticons';
+  public editorConfig: RawEditorOptions = {
+    imagetools_cors_hosts: ['picsum.photos'],
+    toolbar_sticky: true,
+    image_advtab: true,
+    /*toolbar: [
       'customEditTemplateButton',
       'customDoneEditTemplateButton customCancelEditTemplateButton | customAddMacroTemplate customHelpTemplate | undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl visualblocks',
       'customAddMacroTemplate customHelpTemplate | undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl visualblocks',
       'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl visualblocks'
-    ],
-    imagetools_cors_hosts: ['picsum.photos'],
-    toolbar_sticky: true,
-    image_advtab: true,
+    ],*/
     menubar: false,
     statusbar: false,
     image_caption: true,
@@ -148,9 +155,9 @@ export class InputEditorComponent extends InputBase implements OnInit {
         }]).asPromise()).dialog.close())()
       });
     }).bind(this),
-    init_instance_callback: ((editor: Editor) => {
+    /*init_instance_callback: ((editor: Editor) => {
       this.updateToolbars();
-    }).bind(this)
+    }).bind(this)*/
   };
 
   public get variables(): VariableTemplate[] {
@@ -182,7 +189,7 @@ export class InputEditorComponent extends InputBase implements OnInit {
   public onEditTemplateClick() {
     this._editingTemplate = this.template;
     this.cdRef.detectChanges();
-    this.updateToolbars();
+    //this.updateToolbars();
   }
 
   public onDoneTemplateClick() {
@@ -190,14 +197,14 @@ export class InputEditorComponent extends InputBase implements OnInit {
     this._editingTemplate = undefined;
     this.updateEditor();
     this.cdRef.detectChanges();
-    this.updateToolbars();
+    //this.updateToolbars();
   }
 
   public onCancelTemplateClick() {
     this._editingTemplate = undefined;
     this.updateEditor();
     this.cdRef.detectChanges();
-    this.updateToolbars();
+    //this.updateToolbars();
   }
 
   public get hasTemplate(): boolean {
@@ -212,7 +219,21 @@ export class InputEditorComponent extends InputBase implements OnInit {
     return this.isEditingTemplate ? this.toolbarEditingTemplate : this.toolbarEditTemplate;
   }*/
 
-  public updateToolbars() {
+  public get toolbar(): string {
+    if(this.isEditingTemplate) {
+      return this.toolbars[0];
+    } else if(this.hasTemplate && this.canEditTemplate) {
+      return this.toolbars[1];
+    } else if(this.hasDataset) {
+      return this.toolbars[2];
+    } else if(!this.hasTemplate && !this.disabled) {
+      return this.toolbars[3];
+    } else {
+      return "";
+    }
+  }
+
+  /*public updateToolbars() {
     const enable = (element: JQuery<HTMLElement>) => {
       element.removeClass('tox-tbtn--disabled');
       element.find(".tox-tbtn--disabled").removeClass('tox-tbtn--disabled');
@@ -237,7 +258,7 @@ export class InputEditorComponent extends InputBase implements OnInit {
     } else if(!this.hasTemplate && !this.disabled) {
       toolbarDefault.show();
     } 
-  }
+  }*/
 
   public get isEditingTemplate(): boolean {
     return this._editingTemplate != undefined;
