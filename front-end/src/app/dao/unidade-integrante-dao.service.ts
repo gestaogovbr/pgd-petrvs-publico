@@ -32,8 +32,8 @@ export class UnidadeIntegranteDaoService extends DaoBaseService<UnidadeIntegrant
     });
   }
 
-  public saveIntegrante(unidade_id: string, usuario_id: string, atribuicoes: string[]): Promise<IntegranteConsolidado | null> {
-    return new Promise<IntegranteConsolidado | null>((resolve, reject) => {
+  public saveIntegrante(unidade_id: string, usuario_id: string, atribuicoes: string[]): Promise<IntegranteConsolidado> {
+    return new Promise<IntegranteConsolidado>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/save-integrante', {unidade_id, usuario_id, atribuicoes}).subscribe(response => {
         resolve(response?.data || null);
       }, 

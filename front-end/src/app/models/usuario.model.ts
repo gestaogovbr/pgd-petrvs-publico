@@ -19,6 +19,7 @@ import { ProjetoRecurso } from './projeto-recurso.model';
 import { ProjetoTarefa } from './projeto-tarefa.model';
 import { Projeto } from './projeto.model';
 import { UnidadeIntegrante } from './unidade-integrante.model';
+import { Unidade } from './unidade.model';
 
 export type UsuarioVinculacao = "SERVIDOR_EFETIVO" | "SERVIDOR_COMISSIONADO" | "EMPREGADO" | "CONTRATADO_TEMPORARIO";
 
@@ -61,6 +62,7 @@ export class Usuario extends Base implements HasNotificacao {
     public recursos_projeto?: ProjetoRecurso[];
     public tarefas_atividade?: AtividadeTarefa[];
     public tarefas_projeto?: ProjetoTarefa[];
+    public unidades?: Unidade[];
     public unidades_integrante?: UnidadeIntegrante[];
 
     public nome: string = ""; /* Nome do Usuário */

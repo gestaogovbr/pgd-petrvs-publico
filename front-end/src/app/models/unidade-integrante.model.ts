@@ -12,18 +12,25 @@ export class IntegranteConsolidado {
     public unidade_sigla?: string;
     public unidade_codigo?: string;
     public atribuicoes: string[] = [];
+    public _status?: string;
 };
 
 export class UnidadeIntegrante extends Base {
     public unidade?: Unidade;
     public usuario?: Usuario;
+    public lotado?: UnidadeIntegranteAtribuicao; 
+    public gestor?: UnidadeIntegranteAtribuicao; 
+    public gestor_substituto?: UnidadeIntegranteAtribuicao; 
+    public colaborador?: UnidadeIntegranteAtribuicao; 
+    public homologador_plano_entrega?: UnidadeIntegranteAtribuicao; 
+    public avaliador_plano_entrega?: UnidadeIntegranteAtribuicao; 
+    public avaliador_plano_trabalho?: UnidadeIntegranteAtribuicao; 
+    public atribuicoes: UnidadeIntegranteAtribuicao[] = [];
     
     public usuario_id: string = ""; /* Usuário vinculado */
     public unidade_id: string = ""; /* Unidade Vinculada */
-    public atribuicoes: UnidadeIntegranteAtribuicao[] = [];
-
+    
     public constructor(data?: any) { super(); this.initialization(data); }
-
 }
 
 

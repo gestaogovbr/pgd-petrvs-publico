@@ -75,7 +75,7 @@ class Usuario extends Authenticatable
         //'metadados', /* json; */// Metadados do usuário
     ];
 
-    public $fillable_changes = ["unidades_integrante"];
+    //public $fillable_changes = ["unidades_integrante"];
 
     protected $keyType = 'string';
 

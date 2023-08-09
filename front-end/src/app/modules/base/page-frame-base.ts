@@ -105,7 +105,7 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
       (async () => {
         this.loading = true;
         try {
-          if (this.entity_id == "new") {
+          if (this.entity_id == "new" || this.isNew) {
             await this.initializeData(this.form);
           } else {
             this.entity = await this.dao?.getById(this.entity_id!, this.join);
