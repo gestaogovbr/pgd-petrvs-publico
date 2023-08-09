@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
+import { ChartOptions, ChartType, ChartDataset } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 @Component({
@@ -9,7 +9,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 })
 export class PieChartComponent {
   @Input() pieChartOptions: ChartOptions = {};
-  @Input() pieChartData: ChartDataSets[] = [];
+  @Input() pieChartData: ChartDataset[] = [];
   @Input() pieChartType: ChartType = 'doughnut';
   @Input() pieChartPlugins = [ ChartDataLabels ];
 

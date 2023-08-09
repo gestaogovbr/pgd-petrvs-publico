@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { BootstrapService } from 'src/app/services/bootstrap.service';
 import { GlobalsService } from 'src/app/services/globals.service';
 import { UtilService } from 'src/app/services/util.service';
-import { GanttAssignment, GanttProject, GanttResource, GanttRole, GanttTask } from './gantt-models';
+import { GanttProject, GanttTask } from './gantt-models';
 import * as moment from 'moment';
 import * as $ from 'jquery';
 import { ToolbarButton } from '../toolbar/toolbar.component';

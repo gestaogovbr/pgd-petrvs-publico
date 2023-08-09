@@ -87,16 +87,13 @@
               "./node_modules/@fortawesome/fontawesome-free/scss/brands.scss",
               "./node_modules/@fortawesome/fontawesome-free/css/all.min.css",
               "src/styles.scss",
-              "node_modules/bootstrap-icons/font/bootstrap-icons.css",
-              "node_modules/bootstrap-select/dist/css/bootstrap-select.min.css"
+              "node_modules/bootstrap-icons/font/bootstrap-icons.css"
               
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
               "node_modules/jquery-ui/dist/jquery-ui.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.bundle.js",
-              "node_modules/bootstrap-autocomplete/dist/latest/bootstrap-autocomplete.js",
-              "node_modules/bootstrap-select/dist/js/bootstrap-select.js",
               "node_modules/jquery-mask-plugin/dist/jquery.mask.min.js",
               "node_modules/@fortawesome/fontawesome-free/js/all.min.js"
             ]
@@ -185,6 +182,5 @@
         }
       }
     }
-  },
-  "defaultProject": "petrvs"
+  }
 }

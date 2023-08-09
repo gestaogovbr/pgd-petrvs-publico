@@ -1,9 +1,6 @@
-import { fn } from '@angular/compiler/src/output/output_ast';
 import { Component, Input, OnInit } from '@angular/core';
-import { DaoBaseService } from 'src/app/dao/dao-base.service';
 import { Turno } from 'src/app/models/expediente.model';
 import { LookupService } from 'src/app/services/lookup.service';
-import { isNoSubstitutionTemplateLiteral } from 'typescript';
 import { Efemerides } from '../../../services/calendar.service';
 import { Interval, UtilService } from '../../../services/util.service';
 

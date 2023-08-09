@@ -11,11 +11,9 @@ import { AreaConhecimentoDaoService } from 'src/app/dao/area-conhecimento-dao.se
 import { CursoDaoService } from 'src/app/dao/curso-dao.service';
 import { CurriculumDaoService } from 'src/app/dao/curriculum-dao.service';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
-import { InputSwitchComponent } from 'src/app/components/input/input-switch/input-switch.component';
 import { Curriculum } from 'src/app/models/currriculum.model';
 import { trigger,state,style,animate,transition } from '@angular/animations';
-import { BoundDirectivePropertyAst } from '@angular/compiler';
-import { Curso } from 'src/app/models/curso.model';
+
 
 
 @Component({
