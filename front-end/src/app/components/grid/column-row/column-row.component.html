@@ -15,6 +15,7 @@
     <input-select *ngIf="isType('select')" [size]="12" [controlName]="column.field" [control]="control" [items]="column.items"></input-select>
     <input-switch *ngIf="isType('switch')" [size]="12" [controlName]="column.field" [control]="control" (change)="onChange($event)"></input-switch>
     <input-timer *ngIf="isType('timer')" [size]="12" [controlName]="column.field" [control]="control" [onlyHours]="column.onlyHours" [onlyDays]="column.onlyDays" (change)="onChange($event)"></input-timer>
+    <input-textarea *ngIf="isType('textarea')" [rows]="3" [size]="12" [controlName]="column.field" [control]="control" (change)="onChange($event)"></input-timer>
 </ng-container>
 <div *ngIf="column.isColumnEditable" class="grid-column-editable-options" [class.grid-column-editing]="column.editing">
     <i *ngIf="!column.editing; else columnEditing" role="button" class="bi bi-pencil-square" (click)="onEdit($event)"></i>

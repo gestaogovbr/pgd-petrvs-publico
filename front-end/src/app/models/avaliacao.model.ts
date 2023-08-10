@@ -3,6 +3,13 @@ import { Base } from './base.model';
 import { TipoAvaliacao } from './tipo-avaliacao.model';
 import { Usuario } from './usuario.model';
 
+export interface HasAvaliacao {
+    avaliacoes: Avaliacao[];
+    avaliacao?: Avaliacao;
+    avaliacao_id: string | null;
+    id: string;
+};
+
 export class Avaliacao extends Base {
     public usuario?: Usuario;
     public tipo_avaliacao?: TipoAvaliacao;

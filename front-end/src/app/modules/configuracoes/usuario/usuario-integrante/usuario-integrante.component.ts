@@ -149,19 +149,6 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     }
   }
 
-  /*   public async saveAtribuicao(form: FormGroup, row: any) {
-      if(form!.controls.atribuicoes.value.length) {
-        this.loading = true;
-        try {
-          if(!this.isNoPersist) await this.integranteDao.saveIntegrante(form!.controls.unidade_id.value, this.usuario!.id, form!.controls.atribuicoes.value.map((x: LookupItem) => x.key));
-        } finally {
-          await this.loadAtribuicao(form, row);
-          this.loading = false;
-        }
-      }
-      return undefined;
-    } */
-
   /**
  * Método chamado no salvamento de uma atribuição do usuário, seja este componente persistente ou não.
  * @param form 

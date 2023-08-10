@@ -121,7 +121,8 @@ export class AppComponent {
       ATIVIDADES: { name: this.lex.translate("Atividades"), permition: 'MOD_ATV', route: ['gestao', 'atividade'], icon: this.entity.getIcon('Atividade') },
       PLANEJAMENTOS_INSTITUCIONAIS: { name: this.lex.translate("Planejamentos Institucional"), permition: 'MOD_PLAN_INST', route: ['gestao', 'planejamento'], icon: this.entity.getIcon('Planejamento') },
       PLANOS_ENTREGAS: { name: this.lex.translate("Planos de Entrega"), permition: 'MOD_PENT', route: ['gestao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega') },
-      PLANOS_TRABALHOS: { name: this.lex.translate("Planos de Trabalho"), permition: 'MOD_PTR', route: ['gestao', 'plano-trabalho'], icon: this.entity.getIcon('Plano') },
+      PLANOS_TRABALHOS: { name: this.lex.translate("Planos de Trabalho"), permition: 'MOD_PTR', route: ['gestao', 'plano-trabalho'], icon: this.entity.getIcon('PlanoTrabalho') },
+      CONSOLIDACOES: { name: this.lex.translate("Consolidações"), permition: 'MOD_PTR_CSLD', route: ['gestao', 'plano-trabalho', 'consolidacao'], icon: this.entity.getIcon('PlanoTrabalhoConsolidacao') },
       PROGRAMAS_GESTAO: { name: this.lex.translate("Programas de Gestão"), permition: 'MOD_PRGT', route: ['gestao', 'programa'], icon: this.entity.getIcon('Programa') },
       PORTIFOLIOS: { name: this.lex.translate("Portifólios"), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: this.entity.getIcon('Projeto') },
       PROJETOS: { name: this.lex.translate("Projetos"), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: this.entity.getIcon('Projeto') },
@@ -190,7 +191,8 @@ export class AppComponent {
       id: "navbarDropdownGestaoExecucao",
       menu: [
         this.menuSchema.ATIVIDADES,
-        this.menuSchema.AFASTAMENTOS
+        this.menuSchema.AFASTAMENTOS,
+        this.menuSchema.CONSOLIDACOES
       ].sort(this.orderMenu)
     }, {
       name: "Gerenciamento",
@@ -220,7 +222,7 @@ export class AppComponent {
     this.menuExecucao = [
       this.menuSchema.PLANOS_TRABALHOS,
       this.menuSchema.ATIVIDADES,
-      this.menuSchema.CONSOLIDA,
+      this.menuSchema.CONSOLIDACOES,
       this.menuSchema.AFASTAMENTOS
     ];
 

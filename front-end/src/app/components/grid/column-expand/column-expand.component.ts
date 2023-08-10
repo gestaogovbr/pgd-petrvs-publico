@@ -23,6 +23,7 @@ export class ColumnExpandComponent extends ComponentBase implements OnInit {
   @Input() row: any = undefined;
   @Input() grid?: GridComponent;
   @Input() index: number = 0;
+  @Input() toggleable: boolean = true;
 
   public lookup: LookupService;
   public saving: boolean = false;

@@ -348,11 +348,11 @@ class PlanoEntregaService extends ServiceBase
     {
         $result = true;
         $programa = Programa::find($planoEntrega["programa_id"]);
-        if ($programa->prazo_execucao > 0) {
+        if ($programa->prazo_max_plano_entrega > 0) {
             $dataInicio = new DateTime($planoEntrega["inicio"]);
             $dataFim = new DateTime($planoEntrega["fim"]);
             $diff = $dataInicio->diff($dataFim);
-            if ($diff->days > $programa->prazo_execucao) {
+            if ($diff->days > $programa->prazo_max_plano_entrega) {
                 $result = false;
             }
         }

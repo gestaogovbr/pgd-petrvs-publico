@@ -122,7 +122,7 @@ export class DocumentosComponent extends PageFrameBase {
   }
 
   public initializeData(form?: FormGroup) {
-    this.entity = this.entity || { id: this.dao?.generateUuid(), documentos: [] } as HasDocumentos;
+    this.entity = this.entity || { id: this.dao?.generateUuid(), documentos: [], documento_id: null } as HasDocumentos;
     this.loadData(this.entity, this.form);
   }
 

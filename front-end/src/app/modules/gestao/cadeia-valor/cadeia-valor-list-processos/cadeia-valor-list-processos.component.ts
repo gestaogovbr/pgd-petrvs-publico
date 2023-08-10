@@ -60,15 +60,6 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
     this.sortProcessos();
   }
 
-  public async addProcesso() {
-    let processo = new CadeiaValorProcesso({
-      id: this.dao!.generateUuid(),
-      sequencia: this.items.filter(x => !x.processo_pai_id).length + 1,
-      nome: ""
-    });
-    return processo;
-  }
-
   public async addChildProcesso(row: CadeiaValorProcesso, metadata: any, index: number) {
     let processo = new CadeiaValorProcesso({
       id: this.dao!.generateUuid(),
@@ -108,20 +99,28 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
     return 10 * (metadata.nivel.match(/\./g) || []).length;
   }
 
-  public async loadProcesso(form: FormGroup, row: any) {
-    form.controls.nivel.setValue(this.getSequencia(this.grid?.getMetadata(row), row));
-    form.controls.sequencia.setValue(row.sequencia);
-    form.controls.nome.setValue(row.nome);
-
-    this.cdRef.detectChanges();
-  }
-
   public sortProcessos() {
     this.items.sort((a, b) => {
       const sa = (this.grid!.getMetadata(a)?.nivel || "").split(".").map((x: string) => ("000" + x).substr(-3)).join(".");
       const sb = (this.grid!.getMetadata(b)?.nivel || "").split(".").map((x: string) => ("000" + x).substr(-3)).join(".");
       return sa < sb ? -1 : sa > sb ? 1 : 0;
     });
+  }
+
+  public async addProcesso() {
+    let processo = new CadeiaValorProcesso({
+      id: this.dao!.generateUuid(),
+      sequencia: this.items.filter(x => !x.processo_pai_id).length + 1,
+      nome: ""
+    });
+    return processo;
+  }
+
+  public async loadProcesso(form: FormGroup, row: any) {
+    form.controls.nivel.setValue(this.getSequencia(this.grid?.getMetadata(row), row));
+    form.controls.sequencia.setValue(row.sequencia);
+    form.controls.nome.setValue(row.nome);
+    this.cdRef.detectChanges();
   }
 
   public async removeProcesso(row: any) {
