@@ -15,12 +15,8 @@ import { InputSelectComponent } from 'src/app/components/input/input-select/inpu
 import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
 import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
-
-export type badgeEntrega = {
-  label: string,
-  cor: string,
-  nome: string
-}
+import { PlanoTrabalhoService } from '../plano-trabalho.service';
+import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
 
 @Component({
   selector: 'plano-trabalho-list-entrega',
@@ -58,6 +54,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   public planoTrabalhoDao?: PlanoTrabalhoDaoService;
   public planoEntregaDao?: PlanoEntregaDaoService;
   public peeDao?: PlanoEntregaEntregaDaoService;
+  public planoTrabalhoService: PlanoTrabalhoService;
   public totalForcaTrabalho: number = 0;
   public entregasMesmaUnidade: LookupItem[] = [];
   public entregasOutraUnidade: LookupItem[] = [];
@@ -75,6 +72,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     this.entregaDao = injector.get<EntregaDaoService>(EntregaDaoService);
     this.planoTrabalhoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
     this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
+    this.planoTrabalhoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
     this.peeDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
     this.join = ["entrega", "plano_entrega_entrega.entrega"];
     this.form = this.fh.FormBuilder({
@@ -154,7 +152,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
       form.controls.origem.setValue('CATALOGO');
       form.controls.entrega_id.setValue(row.entrega_id);
       form.controls.plano_entrega_entrega_id.setValue(null);
-    } else if (!row.entrega_id?.length && !!row.plano_entrega_entrega_id?.length && (row.objeto?.plano_entrega_id || row.plano_entrega_entrega?.plano_entrega_id) == this.entity?.plano_entrega_id) {
+    } else if (!row.entrega_id?.length && !!row.plano_entrega_entrega_id?.length && (row._metadata.entrega_selecionada?.plano_entrega_id || row.plano_entrega_entrega?.plano_entrega_id) == this.entity?.plano_entrega_id) {
       form.controls.origem.setValue('MESMA_UNIDADE');
       form.controls.entrega_id.setValue(null);
       form.controls.plano_entrega_entrega_id.setValue(row.plano_entrega_entrega_id);

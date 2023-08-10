@@ -55,7 +55,7 @@ class PlanoTrabalho extends ModelBase
     public function entregas() { return $this->hasMany(PlanoTrabalhoEntrega::class); }
     public function documentos() { return $this->hasMany(Documento::class); }
     public function atividades() { return $this->hasMany(Atividade::class); }
-    public function consolidacoes() { return $this->hasMany(PlanoTrabalhoConsolidacao::class); }
+    public function consolidacoes() { return $this->hasMany(PlanoTrabalhoConsolidacao::class)->orderBy('data_inicio'); }
     // Belongs
     public function statusAtual() { return $this->belongsTo(Status::class, "status_id"); }
     public function usuario() { return $this->belongsTo(Usuario::class); }

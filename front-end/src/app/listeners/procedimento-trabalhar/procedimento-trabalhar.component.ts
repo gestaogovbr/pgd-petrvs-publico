@@ -180,7 +180,7 @@ export class ProcedimentoTrabalharComponent extends ListenerBase implements OnIn
     const selected = await PlanoTrabalhoListComponent.modalSelect();
     if(selected) {
       let processo = await this.execute<SeiKeys>("getProcessoKeys", []);
-      this.go.navigate({route: ['gestao', 'plano', 'termo']}, {metadata: {plano: selected, processo: processo}, modalClose: (modalResult) => {
+      this.go.navigate({route: ['gestao', 'plano-trabalho', 'termo']}, {metadata: {plano: selected, processo: processo}, modalClose: (modalResult) => {
         if(modalResult?.termo?.length) {
           (async () => {
             this.dialog.showSppinerOverlay("Gerando documento no sei...");

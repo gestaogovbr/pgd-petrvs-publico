@@ -1,0 +1,4 @@
+<div class="accordion" id="generatedId()">
+    <section *ngFor="let item of items" [item]="item" [load]="load" [template]="template" [titleTemplate]="titleTemplate" [accordion]="this"></section>
+    <ng-content></ng-content>
+</div>

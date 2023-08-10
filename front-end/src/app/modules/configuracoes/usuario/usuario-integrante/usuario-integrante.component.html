@@ -1,8 +1,8 @@
 <grid #grid [items]="items" [minHeight]="500" [form]="form!" [hasDelete]="true"
-[add]="addAtribuicao.bind(this)"
-[load]="loadAtribuicao.bind(this)"
-[remove]="removeAtribuicao.bind(this)"
-[save]="saveAtribuicao.bind(this)" editable>
+    [add]="addAtribuicao.bind(this)"
+    [load]="loadAtribuicao.bind(this)"
+    [remove]="removeAtribuicao.bind(this)"
+    [save]="saveAtribuicao.bind(this)" editable>
     <span *ngIf="!isNoPersist"><strong>{{ entity?.nome }}</strong></span>
     <columns>
         <column [title]="lex.translate('Unidade')" [template]="columnUnidade" [editTemplate]="editUnidade">

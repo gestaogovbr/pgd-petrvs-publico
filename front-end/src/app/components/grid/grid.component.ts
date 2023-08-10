@@ -77,6 +77,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   @Input() scrollable: boolean = false;
   @Input() controlName: string | null = null;
   @Input() control?: AbstractControl = undefined;
+  @Input() expanded?: string;
   @Input() minHeight: number = 300;
   @Input() multiselect?: string;
   @Input() multiselectEnabled?: string;
@@ -335,6 +336,10 @@ export class GridComponent extends ComponentBase implements OnInit {
 
   public isSeparator(row: any): boolean {
     return row instanceof GridGroupSeparator;
+  }
+
+  public get isExpanded(): boolean {
+    return this.expanded != undefined;
   }
 
   public get isNoHeader(): boolean {

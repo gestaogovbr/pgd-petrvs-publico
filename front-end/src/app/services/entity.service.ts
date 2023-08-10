@@ -59,6 +59,7 @@ import { AreaAtividadeExternaDaoService } from '../dao/area-atividade-externa-da
 import { AreaTematicaDaoService } from '../dao/area-tematica-dao.service';
 import { CapacidadeTecnicaDaoService } from '../dao/capacidade-tecnica-dao.service';
 import { AtividadeDaoService } from '../dao/atividade-dao.service';
+import { PlanoTrabalhoConsolidacaoDaoService } from '../dao/plano-trabalho-consolidacao-dao.service';
 
 export type EntityItem = {
     collection: string,
@@ -110,7 +111,8 @@ export class EntityService {
             { collection: 'Perfil', codigo: 'MOD_PERF', table: 'perfis', campo: 'nome', icon: 'bi bi-fingerprint', dao: injector.get<PerfilDaoService>(PerfilDaoService), label: "Perfil", selectRoute: { route: ['configuracoes', 'perfil'] } },
             { collection: 'Planejamento', codigo: 'MOD_PLAN_INST', table: 'planejamentos', campo: 'nome', icon: 'bi bi-journals', dao: injector.get<PlanejamentoDaoService>(PlanejamentoDaoService), label: "Planejamento Institucional", selectRoute: { route: ['gestao', 'planejamento'] } },
             { collection: 'PlanejamentoObjetivo', table: 'planejamentos_objetivos', campo: 'nome', icon: 'bi bi-bullseye', dao: injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService), label: "Objetivo do Planejamento", selectRoute: { route: ['gestao', 'planejamento', 'objetivoList'] } },
-            { collection: 'Plano', codigo: 'MOD_PTR', table: 'planos', campo: 'numero', icon: 'bi bi-list-stars', dao: injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService), label: "Plano de Trabalho", selectRoute: { route: ['gestao', 'plano-trabalho'] } },
+            { collection: 'PlanoTrabalho', codigo: 'MOD_PTR', table: 'planos_trabalhos', campo: 'numero', icon: 'bi bi-list-stars', dao: injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService), label: "Plano de Trabalho", selectRoute: { route: ['gestao', 'plano-trabalho'] } },
+            { collection: 'PlanoTrabalhoConsolidacao', codigo: 'MOD_PTR_CSLD', table: 'planos_trabalhos_consolidacoes', icon: 'bi bi-clipboard-check', dao: injector.get<PlanoTrabalhoConsolidacaoDaoService>(PlanoTrabalhoConsolidacaoDaoService), label: "Consolidações", selectRoute: { route: ['gestao', 'plano-trabalho', 'consolidacao'] } },
             { collection: 'PlanoEntrega', codigo: 'MOD_PENT', table: 'planos_entregas', campo: 'nome', icon: 'bi bi-list-columns-reverse', dao: injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService), label: "Plano de Entrega", selectRoute: { route: ['gestao', 'plano-entrega'] } },
             { collection: 'PlanoEntregaEntrega', codigo: 'MOD_PENT_ENTR', table: 'planos_entregas_entregas', campo: 'descricao', icon: '', dao: injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService), label: "Entrega do Plano de Entrega", selectRoute: { route: ['gestao', 'plano-entrega', 'entregaList'] } },
             { collection: 'PlanoEntregaObjetivo', codigo: 'MOD_PENT_OBJ', table: 'planos_entregas_objetivos', campo: 'descricao', icon: '', dao: injector.get<PlanoEntregaEntregaObjetivoDaoService>(PlanoEntregaEntregaObjetivoDaoService), label: "Objetivo do Plano de Entrega" },

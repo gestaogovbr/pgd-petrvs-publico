@@ -214,12 +214,13 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalho')->group(function () 
     Route::post('avaliar', [PlanoTrabalhoController::class, 'avaliar']);
     Route::post('cancelar-avaliacao', [PlanoTrabalhoController::class, 'cancelarAvaliacao']);
     Route::post('arquivar', [PlanoTrabalhoController::class, 'arquivar']);
-    Route::post('metadadosPlano', [PlanoTrabalhoController::class, 'metadadosPlano']);
+    Route::post('metadados-plano', [PlanoTrabalhoController::class, 'metadadosPlano']);
 });
-Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoEntrega')->group(function () {
-    defaultRoutes(PlanoTrabalhoEntregaController::class);
+Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoEntrega')->group(function () { defaultRoutes(PlanoTrabalhoEntregaController::class); });
+Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoConsolidacao')->group(function () {
+    defaultRoutes(PlanoTrabalhoConsolidacaoController::class);
+    Route::post('consolidacao-dados', [PlanoTrabalhoConsolidacaoController::class, 'consolidacaoDados']);
 });
-
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
     defaultRoutes(PlanoEntregaController::class);
     Route::post('liberar-homologacao', [PlanoEntregaController::class, 'liberarHomologacao']);
