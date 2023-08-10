@@ -15,7 +15,7 @@ class Status extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'nome',
+        'codigo',
         'justificativa',
         'plano_entrega_id',
         'plano_trabalho_id',

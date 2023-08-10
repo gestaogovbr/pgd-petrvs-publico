@@ -199,8 +199,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
         result.push(["status", "==", form.status]);
       }
     }
-    //  (RI_PENT_5) Por padrão, os planos de entregas retornados na listagem do grid são os que possuem data_arquivamento e data_cancelamento nulas.
-    result.push(["data_cancelamento", "==", null]);
+    //  (RI_PENT_5) Por padrão, os planos de entregas retornados na listagem do grid são os que não foram arquivados nem cancelados.
+    //  O não-arquivamento é tratado abaixo. A condição de não-cancelado é tratada no back-end.
     result.push(["data_arquivamento", "==", null]);
     return result;
   }

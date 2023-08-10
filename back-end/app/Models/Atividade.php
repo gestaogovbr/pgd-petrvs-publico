@@ -66,7 +66,7 @@ class Atividade extends ModelBase
     ];
 
     // Has
-    public function mudancasStatus() { return $this->hasMany(Status::class, "atividade_id"); }   
+    public function statusHistorico() { return $this->hasMany(Status::class, "atividade_id"); }   
     public function tarefas() { return $this->hasMany(AtividadeTarefa::class); }    
     public function tarefasProjeto() { return $this->hasMany(ProjetoTarefa::class); }    
     public function pausas() { return $this->hasMany(AtividadePausa::class); }

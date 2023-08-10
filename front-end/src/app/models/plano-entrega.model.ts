@@ -27,7 +27,7 @@ export class PlanoEntrega extends Base {
   public criacao_usuario?: Usuario;                                 // Usuário que criou o plano de entregas
   public cancelamento_usuario?: Usuario;                            // Usuário que cancelou o plano de entregas
   public entregas: PlanoEntregaEntrega[] = [];                      // Entregas que compõem o plano de entregas
-  public mudancasStatus: Status[] = [];                             // Mudanças de status sofridas pelo plano de entregas (histórico)
+  public statusHistorico: Status[] = [];                             // Mudanças de status sofridas pelo plano de entregas (histórico)
 
   public inicio: Date = new Date();                                 // Data inicio do plano de entrega
   public fim: Date | null = null;                                   // Data fim do plano de entrega

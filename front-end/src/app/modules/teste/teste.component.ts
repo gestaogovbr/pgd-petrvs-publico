@@ -8,12 +8,8 @@ import { UtilService } from 'src/app/services/util.service';
 import * as moment from 'moment';
 import { CardItem } from 'src/app/components/kanban/docker/docker.component';
 import { GanttAssignment, GanttProject, GanttResource, GanttTask } from 'src/app/components/gantt/gantt-models';
-<<<<<<< 48122e9d2a3c5f0901c3e48a833cd3aa12a03e39
 import { CalendarOptions } from '@fullcalendar/core';
 //import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-=======
-import { CalendarOptions } from '@fullcalendar/angular';
->>>>>>> 6d280c376f3f90342fa65622ecf4f2670547bafb
 import { Expediente } from 'src/app/models/expediente.model';
 import { Feriado } from 'src/app/models/feriado.model';
 import { Afastamento } from 'src/app/models/afastamento.model';

@@ -25,7 +25,6 @@ class CreatePlanosEntregas extends Migration
             $table->dateTime('inicio')->comment("Data inicial do plano de entregas");
             $table->dateTime('fim')->nullable()->comment("Data final do plano de entregas");
             $table->dateTime('data_arquivamento')->nullable()->comment("Data de arquivamento do plano de entregas");
-            $table->dateTime('data_cancelamento')->nullable()->comment("Data de cancelamento do plano de entregas");
             $table->string('nome', 256)->comment("Nome do plano de entregas");
             // Chaves estrangeiras:
             $table->foreignUuid('planejamento_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Planejamento institucional ao qual está ligado o plano de entregas");

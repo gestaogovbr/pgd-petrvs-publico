@@ -879,7 +879,7 @@ class ServiceBase extends DynamicMethods
      */
     public function applyWith(&$entity, &$data) {
         $data['with'] = $this->getCamelWith($data['with']);
-        $model = $this->getModel();
+        //$model = $this->getModel();
         foreach($data['with'] as $key => $with) {
             $withs = explode('.',$with);
             $last = array_slice($withs, -1, 1)[0];

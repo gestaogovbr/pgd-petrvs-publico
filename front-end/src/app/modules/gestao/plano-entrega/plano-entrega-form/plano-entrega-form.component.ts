@@ -44,7 +44,6 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
       nome: { default: "" },
       inicio: { default: new Date() },
       fim: { default: new Date() },
-      //status: { default: 'INCLUIDO' },
       unidade_id: { default: "" },
       plano_entrega_id: { default: null },
       planejamento_id: { default: null },

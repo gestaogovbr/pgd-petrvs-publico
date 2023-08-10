@@ -23,10 +23,8 @@ class PlanoEntrega extends ModelBase
         'planejamento_id', /* char(36); */
         'cadeia_valor_id', /* char(36); */
         'unidade_id', /* char(36); NOT NULL; */
-        //'status', /* enum('INCLUINDO','HOMOLOGANDO','ATIVO','CONCLUIDO','AVALIADO','SUSPENSO'); NOT NULL; */// Status do plano de entrega
         'plano_entrega_id', /* char(36); */
         'data_arquivamento', /* datetime; */// Data de arquivamento do plano de entregas
-        'data_cancelamento', /* datetime; */// Data de cancelamento do plano de entregas
         'programa_id', /* char(36); NOT NULL; */
         'criacao_usuario_id', /* char(36); NOT NULL; */
         'inicio', /* datetime; NOT NULL; */// Data inicial do plano de entregas
@@ -47,7 +45,7 @@ class PlanoEntrega extends ModelBase
     }
 
     // Has
-    public function mudancasStatus() { return $this->hasMany(Status::class, "plano_entrega_id"); }
+    public function statusHistorico() { return $this->hasMany(Status::class, "plano_entrega_id"); }
     public function entregas() { return $this->hasMany(PlanoEntregaEntrega::class); }
     public function planosEntrega() { return $this->hasMany(PlanoEntrega::class); }   
     public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }   

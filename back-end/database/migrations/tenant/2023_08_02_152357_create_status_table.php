@@ -20,7 +20,7 @@ class CreateStatusTable extends Migration
             $table->timestamps();
             $table->softDeletes();
             // Campos:
-            $table->enum('nome', ['ATIVO', 'AVALIADO', 'CANCELADO', 'CONCLUIDO', 'HOMOLOGANDO', 'INCLUIDO', 'INICIADO', 'LANCADO', 'RECORRIDO', 'SUSPENSO'])->comment("Status do artefato (plano de entregas, plano de trabalho ou atividade)");
+            $table->enum('codigo', ['ATIVO', 'AVALIADO', 'CANCELADO', 'CONCLUIDO', 'HOMOLOGANDO', 'INCLUIDO', 'INICIADO', 'LANCADO', 'RECORRIDO', 'SUSPENSO'])->comment("Status do artefato (plano de entregas, plano de trabalho ou atividade)");
             $table->text('justificativa')->comment("Justificativa da mudança para este status");
             //Chaves estrangeiras
             $table->foreignUuid('plano_entrega_id')->nullable()->constrained("planos_entregas")->onDelete('restrict')->onUpdate('cascade')->comment("Plano de Entregas ao qual se refere o status");
@@ -31,16 +31,16 @@ class CreateStatusTable extends Migration
         });
         // Cria o campo status_id nas tabelas 'planos_entregas', 'planos_trabalhos', 'atividades'e 'planos_trabalhos_consolidacoes', devido à referência cruzada
         Schema::table('planos_entregas', function (Blueprint $table) {
-            $table->foreignUuid('status_id')->constrained("status")->onDelete('restrict')->onUpdate('cascade')->comment("Status atual do Plano de Entregas");
+            $table->foreignUuid('status_id')->nullable()->constrained("status")->onDelete('restrict')->onUpdate('cascade')->comment("Status atual do Plano de Entregas");
         });
         Schema::table('planos_trabalhos', function (Blueprint $table) {
-            $table->foreignUuid('status_id')->constrained("status")->onDelete('restrict')->onUpdate('cascade')->comment("Status atual do Plano de Trabalho");
+            $table->foreignUuid('status_id')->nullable()->constrained("status")->onDelete('restrict')->onUpdate('cascade')->comment("Status atual do Plano de Trabalho");
         });
         Schema::table('planos_trabalhos_consolidacoes', function (Blueprint $table) {
-            $table->foreignUuid('status_id')->constrained("status")->onDelete('restrict')->onUpdate('cascade')->comment("Status atual da Consolidação do Plano de Trabalho");
+            $table->foreignUuid('status_id')->nullable()->constrained("status")->onDelete('restrict')->onUpdate('cascade')->comment("Status atual da Consolidação do Plano de Trabalho");
         });
         Schema::table('atividades', function (Blueprint $table) {
-            $table->foreignUuid('status_id')->constrained("status")->onDelete('restrict')->onUpdate('cascade')->comment("Status atual da Atividade");
+            $table->foreignUuid('status_id')->nullable()->constrained("status")->onDelete('restrict')->onUpdate('cascade')->comment("Status atual da Atividade");
         });
 
     }

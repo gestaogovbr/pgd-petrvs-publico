@@ -130,7 +130,7 @@ class Usuario extends Authenticatable
     public function planosEntregaCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }  
     public function planosTrabalhoCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); } 
     public function unidadesIntegrante() { return $this->hasMany(UnidadeIntegrante::class); }
-    public function mudancasStatus() { return $this->hasMany(Status::class, "usuario_id"); }
+    public function statusHistorico() { return $this->hasMany(Status::class, "usuario_id"); }
     // belongsTo
     public function perfil() { return $this->belongsTo(Perfil::class); }     //nullable
     // belongsToMany
