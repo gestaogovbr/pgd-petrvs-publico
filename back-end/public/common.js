@@ -1,25 +1,25 @@
-(window["webpackJsonp"] = window["webpackJsonp"] || []).push([["common"],{
+"use strict";
+(self["webpackChunkpetrvs"] = self["webpackChunkpetrvs"] || []).push([[592],{
 
-/***/ "Lsi6":
+/***/ 65296:
 /*!****************************************************!*\
   !*** ./src/app/models/tipo-justificativa.model.ts ***!
   \****************************************************/
-/*! exports provided: TipoJustificativa */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TipoJustificativa", function() { return TipoJustificativa; });
-/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ "rBj3");
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   TipoJustificativa: () => (/* binding */ TipoJustificativa)
+/* harmony export */ });
+/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
 
-class TipoJustificativa extends _base_model__WEBPACK_IMPORTED_MODULE_0__["Base"] {
-    constructor(data) {
-        super();
-        this.nome = ""; /* Descrição do tipo da justificativa */
-        this.initialization(data);
-    }
+class TipoJustificativa extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
+  constructor(data) {
+    super();
+    this.nome = ""; /* Descrição do tipo da justificativa */
+    this.initialization(data);
+  }
 }
-
 
 /***/ })
 
