@@ -80,7 +80,6 @@ class Atividade extends ModelBase
     public function unidade() { return $this->belongsTo(Unidade::class); }    
     public function documentoRequisicao() { return $this->belongsTo(Documento::class); }      //nullable
     public function documentoEntrega() { return $this->belongsTo(Documento::class); }         //nullable
-
     // Escopos
     public function scopeDoUsuario($query, $usuario_id) { return $query->where("usuario_id", $usuario_id); }
     public function scopeDosPlanosTrabalho($query, $planos_trabalho_ids) { return $query->whereIn("plano_trabalho_id", $planos_trabalho_ids); }

@@ -65,6 +65,13 @@ class UsuarioSeeder extends Seeder
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
             ],
             [
+              'email' => 'edson.dario@gmail.com',
+              'nome' => 'Edson Dario Silva de França',
+              'cpf' => '01380127416',
+              'apelido' => 'Edson',
+              'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+            ],
+            [
                 'email' => 'geisimar.rech87@gmail.com',
                 'nome' => 'Geisimar Rech',
                 'cpf' => '01798651106',

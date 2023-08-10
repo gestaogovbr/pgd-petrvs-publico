@@ -34,12 +34,12 @@ class UnidadeIntegranteService extends ServiceBase
         return ['rows' => array_values($result), 'unidade' => $unidade, 'usuario' => $usuario];
     }
 
-    public function saveIntegrante($unidadeId, $usuarioId, $atribuicoes) {
-        DB::beginTransaction();
+    public function saveIntegrante($unidadeId, $usuarioId, $atribuicoes, $transaction = true) {
+        if($transaction) DB::beginTransaction();
         try {
             $usuario = Usuario::find($usuarioId);
             $unidade = Unidade::find($unidadeId);
-            if(empty($unidade) || empty($usuario)) throw new ServerException("ValidateIntegrante", "Unidade/Usuário não existe no banco");
+            if(empty($unidade->id) || empty($usuario->id)) throw new ServerException("ValidateIntegrante", "Unidade/Usuário não existe no banco");
             $novasAtribuicoes = $atribuicoes;
             $atribuicoesFinais = [];
             $vinculoNovo = UnidadeIntegrante::firstOrCreate(['unidade_id' => $unidadeId, 'usuario_id' => $usuarioId]);
@@ -56,6 +56,7 @@ class UnidadeIntegranteService extends ServiceBase
                 $unidadeLotacao = $usuario->lotacao ? $usuario->lotacao->unidade : null;
                 $unidadeGerenciaTitular = $usuario->gerenciaTitular ? $usuario->gerenciaTitular->unidade : null;
                 $atualGestorSubstitutoUnidade = $unidade->gestorSubstituto ? $unidade->gestorSubstituto->usuario : null;
+                
                 $definirLotacao = function($vinculoNovo) use ($unidadeLotacao,$unidadeId,$usuario,&$atribuicoesFinais) {
                     if(empty($unidadeLotacao)) {
                         UnidadeIntegranteAtribuicao::create(["atribuicao" => "LOTADO","unidade_integrante_id" => $vinculoNovo->id])->save();
@@ -102,9 +103,9 @@ class UnidadeIntegranteService extends ServiceBase
             foreach($vinculoNovo->atribuicoes as $atribuicao) { 
                 if(!in_array($atribuicao->atribuicao, $atribuicoesFinais)) $atribuicao->delete(); 
             }
-            DB::commit();
+            if($transaction) DB::commit();
         } catch (Throwable $e) {
-            DB::rollback();
+            if($transaction) DB::rollback();
             throw $e;
         }
         return true;
