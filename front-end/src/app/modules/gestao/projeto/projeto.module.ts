@@ -11,8 +11,6 @@ import { ProjetoFormRecursosComponent } from './projeto-form-recursos/projeto-fo
 import { ProjetoFormAlocacoesComponent } from './projeto-form-alocacoes/projeto-form-alocacoes.component';
 import { UteisModule } from '../../uteis/uteis.module';
 import { FullCalendarModule } from '@fullcalendar/angular';
-import dayGridPlugin from '@fullcalendar/daygrid'; // a plugin!
-import interactionPlugin from '@fullcalendar/interaction'; // a plugin!
 import { ProjetoTarefaFormComponent } from './projeto-tarefa-form/projeto-tarefa-form.component';
 import { ProjetoTarefaFormPrincipalComponent } from './projeto-tarefa-form-principal/projeto-tarefa-form-principal.component';
 import { ProjetoFormRegrasComponent } from './projeto-form-regras/projeto-form-regras.component';
@@ -20,10 +18,6 @@ import { ProjetoTarefaFilterComponent } from './projeto-tarefa-filter/projeto-ta
 import { ProjetoFormFasesComponent } from './projeto-form-fases/projeto-form-fases.component';
 import { ProjetoRecursoWidgetComponent } from './projeto-recurso-widget/projeto-recurso-widget.component';
 
-FullCalendarModule.registerPlugins([ // register FullCalendar plugins
-  dayGridPlugin,
-  interactionPlugin
-]);
 
 @NgModule({
   declarations: [

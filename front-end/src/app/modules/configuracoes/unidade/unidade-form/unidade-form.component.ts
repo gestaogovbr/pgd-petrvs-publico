@@ -6,6 +6,7 @@ import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
+import { UnidadeIntegranteAtribuicaoDaoService } from 'src/app/dao/unidade-integrante-atribuicao-dao.service';
 import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
@@ -40,6 +41,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
   public unidadeDao: UnidadeDaoService;
   public planoTrabalhoDao: PlanoTrabalhoDaoService;
   public integranteDao: UnidadeIntegranteDaoService;
+  public integranteAtribuicaoDao: UnidadeIntegranteAtribuicaoDaoService;
   public notificacao: NotificacaoService;
   public planoDataset: TemplateDataset[];
 
@@ -51,6 +53,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.planoTrabalhoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
     this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
+    this.integranteAtribuicaoDao = injector.get<UnidadeIntegranteAtribuicaoDaoService>(UnidadeIntegranteAtribuicaoDaoService);
     this.notificacao = injector.get<NotificacaoService>(NotificacaoService);
     this.modalWidth = 1200;
     this.planoDataset = this.planoTrabalhoDao.dataset();
@@ -81,7 +84,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       gestor_id: {default: ""},
       gestor_substituto_id: {default: ""}
     }, this.cdRef);
-    this.join =  ["cidade", "entidade", "gestor.usuario:id,nome", "gestor_substituto.usuario:id,nome", "notificacoes_templates"];
+    this.join =  ["cidade", "entidade", "gestor.usuario:id,nome", "gestor_substituto.usuario:id,nome", "notificacoes_templates", "gestor.gestor:id", "gestor_substituto.gestor_substituto:id"];
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -136,19 +139,25 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     this.loadData(this.entity, form);
   }
 
-  public async saveData(form: IIndexable): Promise<Unidade> {
-    let novaUnidade = await new Promise<Unidade>((resolve, reject) => {
+  public saveData(form: IIndexable): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
       this.notificacoes!.saveData();
       let unidade: Unidade = this.util.fill(new Unidade(), this.entity!);
       unidade = this.util.fillForm(unidade, this.form!.value);
       unidade.notificacoes = this.entity!.notificacoes;
-      resolve(unidade);
+      let salvarGestor = !!this.formGestor!.controls.gestor_id?.value && (!this.entity?.gestor?.id.length || (!!this.entity?.gestor?.id.length && this.entity?.gestor?.usuario?.id != this.formGestor!.controls.gestor_id?.value));
+      let salvarGestorSubstituto = !!this.formGestor!.controls.gestor_substituto_id?.value && (!this.entity?.gestor_substituto?.id.length || (!!this.entity?.gestor_substituto?.id.length && this.entity?.gestor_substituto?.usuario?.id != this.formGestor!.controls.gestor_substituto_id?.value));
+      let apagarGestor = !this.formGestor!.controls.gestor_id?.value && !!this.entity?.gestor?.id.length;
+      let apagarGestorSubstituto = !this.formGestor!.controls.gestor_substituto_id?.value && !!this.entity?.gestor_substituto?.id.length;
+      this.dao?.save(unidade, ["gestor.gestor:id","gestor_substituto.gestor_substituto:id"]).then(async unidade => {
+        this.entity = unidade;
+        if(salvarGestor) await this.integranteDao.saveIntegrante(this.entity.id, this.formGestor!.controls.gestor_id!.value, ["GESTOR"]);
+        if(salvarGestorSubstituto) await this.integranteDao.saveIntegrante(this.entity.id, this.formGestor!.controls.gestor_substituto_id!.value, ["GESTOR_SUBSTITUTO"]);
+        if(apagarGestor) await this.integranteAtribuicaoDao.delete(this.entity?.gestor!.gestor!.id);
+        if(apagarGestorSubstituto) await this.integranteAtribuicaoDao.delete(this.entity?.gestor_substituto!.gestor_substituto!.id);
+        resolve(true);
+      });
     });
-    if(novaUnidade) {
-      if(this.formGestor!.controls.gestor_id.value.length > 0) await this.integranteDao.saveIntegrante((novaUnidade as unknown as Unidade).id, this.formGestor!.controls.gestor_id.value, ["GESTOR"]);
-      if(this.formGestor!.controls.gestor_substituto_id.value.length > 0) await this.integranteDao.saveIntegrante((novaUnidade as unknown as Unidade).id, this.formGestor!.controls.gestor_substituto_id.value, ["GESTOR_SUBSTITUTO"]);
-    };
-    return novaUnidade;
   }
 
   public titleEdit = (entity: Unidade): string => {

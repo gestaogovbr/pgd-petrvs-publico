@@ -1,5 +1,4 @@
 import { ChangeDetectorRef, Component, ContentChildren, ElementRef, Input, OnInit, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
-import { AngularDoubleScrollbarsComponent } from 'angular-double-scrollbars';
 import { DndDropEvent, DropEffect } from 'ngx-drag-drop';
 import { delay } from 'rxjs/operators';
 import { LookupItem } from 'src/app/services/lookup.service';
@@ -24,7 +23,6 @@ export type KanbanDocker = {
 })
 export class KanbanComponent implements OnInit {
   @ContentChildren(SwimlaneComponent, { descendants: true }) swimlanes?: QueryList<SwimlaneComponent>;
-  @ViewChild("doubleScrollbar", {static: false}) doubleScrollbar?: AngularDoubleScrollbarsComponent;
   @ViewChild("kanbanContainer", {static: false}) kanbanContainer?: ElementRef;
   @Input() swimlaneDragged?: (swimlaneKey: string, effect: DropEffect) => void;
   @Input() swimlaneDrop?: (event: DndDropEvent, fromIndex: number) => void;
@@ -89,12 +87,11 @@ export class KanbanComponent implements OnInit {
       this.broadcastKanban(this.swimlanes?.toArray() || []);
     });
     /* Atualiza o scroll */
-    this.doubleScrollbar?.ngAfterViewInit();
-    (new ResizeObserver((entries: any) => this.doubleScrollbar?.ngAfterViewInit())).observe(this.kanbanContainer?.nativeElement);
+
   }
 
   public refreshDoubleScrollbar() {
-    setTimeout(() => this.doubleScrollbar?.ngAfterViewInit(), 100);
+   
   }
 
   public broadcastKanban(swimlanes: SwimlaneComponent[]) {

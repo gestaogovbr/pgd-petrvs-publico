@@ -28,7 +28,6 @@ class CreatePlanosTrabalhosTable extends Migration
             $table->dateTime('data_inicio_vigencia')->comment("Inicio do plano de trabalho");
             $table->dateTime('data_fim_vigencia')->comment("Fim do plano de trabalho");
             $table->dateTime('data_arquivamento')->nullable()->comment("Data de arquivamento do plano de trabalho");
-            $table->dateTime('data_cancelamento')->nullable()->comment("Data de cancelamento do plano de trabalho");
             $table->enum('forma_contagem_carga_horaria', ["DIA", "SEMANA", "MES"])->default("DIA")->comment("Forma de contagem padrão da carga horária");
             // Chaves estrangeiras:
             $table->foreignUuid('programa_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Programa do plano de trabalho");

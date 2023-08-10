@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ContentChild, ContentChildren, EventEmitter, HostBinding, Injector, Input, OnInit, Output, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
+import { Component, ContentChild, EventEmitter, Injector, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup, FormGroupDirective } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 import { DaoBaseService, QueryOrderBy } from 'src/app/dao/dao-base.service';
@@ -8,10 +8,8 @@ import { Base, IIndexable } from 'src/app/models/base.model';
 import { DialogService } from 'src/app/services/dialog.service';
 import { IFormGroupHelper } from 'src/app/services/form-helper.service';
 import { FullRoute, NavigateService, RouteMetadata } from 'src/app/services/navigate.service';
-import { UtilService } from 'src/app/services/util.service';
 import { ComponentBase } from '../component-base';
 import { ToolbarButton, ToolbarComponent } from '../toolbar/toolbar.component';
-import { ColumnComponent } from './column/column.component';
 import { ColumnsComponent } from './columns/columns.component';
 import { FilterComponent } from './filter/filter.component';
 import { GridColumn } from './grid-column';
@@ -44,7 +42,6 @@ export class GridGroupSeparator {
   ]
 })
 export class GridComponent extends ComponentBase implements OnInit {
-  //@ContentChildren(ColumnComponent, { descendants: true }) columnsRef?: QueryList<ColumnComponent>;
   @ContentChild(ColumnsComponent) columnsRef?: ColumnsComponent;
   @ContentChild(ReportComponent) reportRef?: ReportComponent;
   @ContentChild(FilterComponent) filterRef?: FilterComponent;
@@ -341,7 +338,7 @@ export class GridComponent extends ComponentBase implements OnInit {
     return row instanceof GridGroupSeparator;
   }
 
-  public isExpanded(): boolean {
+  public get isExpanded(): boolean {
     return this.expanded != undefined;
   }
 

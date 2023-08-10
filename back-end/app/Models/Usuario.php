@@ -75,7 +75,7 @@ class Usuario extends Authenticatable
         //'metadados', /* json; */// Metadados do usuário
     ];
 
-    public $fillable_changes = ["unidades_integrante"];
+    //public $fillable_changes = ["unidades_integrante"];
 
     protected $keyType = 'string';
 
@@ -130,6 +130,7 @@ class Usuario extends Authenticatable
     public function planosEntregaCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }  
     public function planosTrabalhoCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); } 
     public function unidadesIntegrante() { return $this->hasMany(UnidadeIntegrante::class); }
+    public function statusHistorico() { return $this->hasMany(Status::class, "usuario_id"); }
     // belongsTo
     public function perfil() { return $this->belongsTo(Perfil::class); }     //nullable
     // belongsToMany

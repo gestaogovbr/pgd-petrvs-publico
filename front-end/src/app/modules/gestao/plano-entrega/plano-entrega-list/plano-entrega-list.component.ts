@@ -83,9 +83,9 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.BOTAO_EXCLUIR = { label: "Excluir", icon: "bi bi-trash", onClick: this.delete.bind(this) };
     this.BOTAO_HOMOLOGAR = { label: "Homologar", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "ATIVO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "ATIVO"), onClick: this.homologar.bind(this) };
     this.BOTAO_LIBERAR_HOMOLOGACAO = { label: "Liberar para homologação", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "HOMOLOGANDO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "HOMOLOGANDO"), onClick: this.liberarHomologacao.bind(this) };
-    this.BOTAO_LOGS = { label: "Logs", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "INCLUINDO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "INCLUINDO"), onClick: (planoEntrega: PlanoEntrega) => this.go.navigate({route: ['gestao', 'plano-entrega', planoEntrega.id, 'logs']}) };
+    this.BOTAO_LOGS = { label: "Logs", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), onClick: (planoEntrega: PlanoEntrega) => this.go.navigate({route: ['gestao', 'plano-entrega', planoEntrega.id, 'logs']}) };
     this.BOTAO_REATIVAR = { label: "Reativar", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "ATIVO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "ATIVO"), onClick: this.reativar.bind(this) };
-    this.BOTAO_RETIRAR_HOMOLOGACAO = { label: "Retirar de homologação", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "INCLUINDO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "INCLUINDO"), onClick: this.retirarHomologacao.bind(this) };
+    this.BOTAO_RETIRAR_HOMOLOGACAO = { label: "Retirar de homologação", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), onClick: this.retirarHomologacao.bind(this) };
     this.BOTAO_SUSPENDER = { label: "Suspender", id: "PAUSADO", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "SUSPENSO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "SUSPENSO"), onClick: this.suspender.bind(this) };
     this.botoes = [this.BOTAO_ADERIR_OPTION, this.BOTAO_ADERIR_TOOLBAR, this.BOTAO_ALTERAR, this.BOTAO_ARQUIVAR, this.BOTAO_AVALIAR, this.BOTAO_CANCELAR_AVALIACAO, this.BOTAO_CANCELAR_CONCLUSAO, 
                   this.BOTAO_CANCELAR_HOMOLOGACAO, this.BOTAO_CONCLUIR, this.BOTAO_CONSULTAR, this.BOTAO_DESARQUIVAR, this.BOTAO_EXCLUIR, this.BOTAO_HOMOLOGAR, this.BOTAO_LIBERAR_HOMOLOGACAO, 
@@ -199,8 +199,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
         result.push(["status", "==", form.status]);
       }
     }
-    //  (RI_PENT_5) Por padrão, os planos de entregas retornados na listagem do grid são os que possuem data_arquivamento e data_cancelamento nulas.
-    result.push(["data_cancelamento", "==", null]);
+    //  (RI_PENT_5) Por padrão, os planos de entregas retornados na listagem do grid são os que não foram arquivados nem cancelados.
+    //  O não-arquivamento é tratado abaixo. A condição de não-cancelado é tratada no back-end.
     result.push(["data_arquivamento", "==", null]);
     return result;
   }
@@ -217,7 +217,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     let result: ToolbarButton[] = [];
     let planoEntrega: PlanoEntrega = row as PlanoEntrega;
     switch (this.situacaoPlano(planoEntrega)) {
-      case 'INCLUINDO':
+      case 'INCLUIDO':
         if(this.botaoAtendeCondicoes(this.BOTAO_LIBERAR_HOMOLOGACAO, row)) result.push(this.BOTAO_LIBERAR_HOMOLOGACAO); else result.push(this.BOTAO_CONSULTAR);
         break;
       case 'HOMOLOGANDO':
@@ -263,11 +263,11 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       case this.BOTAO_ALTERAR:
         /*
           (RN_PENT_4_2) Para ALTERAR um plano de entregas:
-          - o plano precisa estar com o status INCLUINDO ou HOMOLOGANDO, e o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_EDT"; ou
+          - o plano precisa estar com o status INCLUIDO ou HOMOLOGANDO, e o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_EDT"; ou
           - o plano precisa ser válido, o usuário logado precisa possuir a capacidade "MOD_PENT_EDT_FLH", e ser gestor da unidade-pai da unidade do plano ou possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a unidade-pai da unidade do plano; (RN_PENT_1_3) ou
           - o plano precisa estar com o status ATIVO, a unidade do plano precisa ser a unidade de lotação principal do usuário logado, e ele possuir a capacidade "MOD_PENT_EDT_ATV_HOMOL" ou "MOD_PENT_EDT_ATV_ATV"; 
          */
-        let b_alt1 = ['INCLUINDO', 'HOMOLOGANDO'].includes(this.situacaoPlano(planoEntrega)) && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoPrincipal(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_EDT")));
+        let b_alt1 = ['INCLUIDO', 'HOMOLOGANDO'].includes(this.situacaoPlano(planoEntrega)) && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoPrincipal(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_EDT")));
         let b_alt2 = this.planoEntregaDao.isValido(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_EDT_FLH") && (this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id) || this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', planoEntrega.unidade!.unidade_pai_id!));
         let b_alt3 = this.situacaoPlano(planoEntrega) == 'ATIVO' && this.auth.isLotacaoPrincipal(planoEntrega.unidade) && this.auth.hasPermissionTo(["MOD_PENT_EDT_ATV_HOMOL","MOD_PENT_EDT_ATV_ATV"]);
         return b_alt1 || b_alt2 || b_alt3;
@@ -324,11 +324,11 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       case this.BOTAO_EXCLUIR:
         /*
           (RN_PENT_4_10) Para EXCLUIR um plano de entregas:
-          - o plano precisa estar com o status INCLUINDO ou HOMOLOGANDO; e
+          - o plano precisa estar com o status INCLUIDO ou HOMOLOGANDO; e
           - o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação principal e ele possuir a capacidade "MOD_PENT_EXCL";
           - se o plano não atender às condições acima, o usuário deve ser informado das razões pelas quais o plano não foi excluído;
         */
-        return ['INCLUINDO', 'HOMOLOGANDO'].includes(this.situacaoPlano(planoEntrega)) && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoPrincipal(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_EXCL")));  ;  
+        return ['INCLUIDO', 'HOMOLOGANDO'].includes(this.situacaoPlano(planoEntrega)) && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoPrincipal(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_EXCL")));  ;  
       case this.BOTAO_HOMOLOGAR:
         /*
           (RN_PENT_4_11) Para HOMOLOGAR um plano de entregas:
@@ -338,9 +338,9 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       case this.BOTAO_LIBERAR_HOMOLOGACAO:
         /*
           (RN_PENT_4_13) Para LIBERAR PARA HOMOLOGAÇÃO um plano de entregas:
-          - o plano precisa estar com o status INCLUINDO e o usuário logado precisa ser gestor da unidade do plano;
+          - o plano precisa estar com o status INCLUIDO e o usuário logado precisa ser gestor da unidade do plano;
         */
-        return this.situacaoPlano(planoEntrega) == 'INCLUINDO' && this.auth.isGestorUnidade(planoEntrega.unidade);  
+        return this.situacaoPlano(planoEntrega) == 'INCLUIDO' && this.auth.isGestorUnidade(planoEntrega.unidade);  
       case this.BOTAO_LOGS:
         /*
         
@@ -554,7 +554,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     if (planoEntrega.deleted_at) return "EXCLUIDO";
     else if (planoEntrega.data_cancelamento) return "CANCELADO";
     else if (planoEntrega.data_arquivamento) return "ARQUIVADO";
-    else return planoEntrega.status;
+    else return planoEntrega.statusAtual!.nome;
   }
 
 }

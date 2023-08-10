@@ -1,5 +1,4 @@
-import { ChangeDetectorRef, Component, Injector, Input, OnInit } from '@angular/core';
-import { IIndexable } from 'src/app/models/base.model';
+import { Component, Injector, Input, OnInit } from '@angular/core';
 import { ComponentBase, ComponentColor } from '../component-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 
