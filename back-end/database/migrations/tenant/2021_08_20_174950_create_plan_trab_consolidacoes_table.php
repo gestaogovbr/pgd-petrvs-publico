@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePlanosTrabalhosConsolidacoesTable extends Migration
+class CreatePlanTrabConsolidacoesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreatePlanosTrabalhosConsolidacoesTable extends Migration
      */
     public function up()
     {
-        Schema::create('planos_trabalhos_consolidacoes', function (Blueprint $table) {
+        Schema::create('plan_trab_consolidacoes', function (Blueprint $table) {
             // Configurações:
             $table->uuid('id');
             $table->primary('id');
@@ -25,7 +25,7 @@ class CreatePlanosTrabalhosConsolidacoesTable extends Migration
             // Chaves estrangeiras:
             $table->foreignUuid('plano_trabalho_id')->constrained("planos_trabalhos")->onDelete('restrict')->onUpdate('cascade')->comment("Plano de Trabalho ao qual se refere a consolidação");
             //$table->foreignUuid('status_id')->constrained("status")->onDelete('restrict')->onUpdate('cascade')->comment("Status da consolidacao"); //Será criado na tabela de status
-            $table->foreignUuid('avaliacao_id')->nullable()->constrained("avaliacoes")->onDelete('restrict')->onUpdate('cascade')->comment("Usuário que realizou a avaliação da consolidação");
+            // $table->foreignUuid('avaliacao_id')->nullable()->constrained("avaliacoes")->onDelete('restrict')->onUpdate('cascade')->comment("Usuário que realizou a avaliação da consolidação");
         });
     }
 
@@ -36,6 +36,6 @@ class CreatePlanosTrabalhosConsolidacoesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('planos_trabalhos_consolidacoes');
+        Schema::dropIfExists('plan_trab_consolidacoes');
     }
 }

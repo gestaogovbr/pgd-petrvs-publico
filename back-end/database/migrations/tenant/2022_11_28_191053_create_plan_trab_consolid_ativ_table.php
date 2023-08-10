@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePlanosTrabalhosConsolidacoesAtividadesTable extends Migration
+class CreatePlanTrabConsolidAtivTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreatePlanosTrabalhosConsolidacoesAtividadesTable extends Migration
      */
     public function up()
     {
-        Schema::create('planos_trabalhos_consolidacoes_atividades', function (Blueprint $table) {
+        Schema::create('plan_trab_consolid_ativ', function (Blueprint $table) {
             // Configurações:
             $table->uuid('id');
             $table->primary('id');
@@ -24,7 +24,7 @@ class CreatePlanosTrabalhosConsolidacoesAtividadesTable extends Migration
             $table->json('realizado')->nullable()->comment("Valor realizado da meta");
             $table->text('descricao')->comment("Assunto da atividade");
             // Chaves estrangeiras:
-            $table->foreignUuid('plano_trabalho_consolidacao_id')->constrained("planos_trabalhos_consolidacoes")->onDelete('restrict')->onUpdate('cascade')->comment("Consolidação do Plano de Trabalho à qual está associada esta entrega");
+            $table->foreignUuid('plano_trabalho_consolidacao_id')->constrained("plan_trab_consolidacoes")->onDelete('restrict')->onUpdate('cascade')->comment("Consolidação do Plano de Trabalho à qual está associada esta entrega");
             $table->foreignUuid('plano_trabalho_entrega_id')->constrained("planos_trabalhos_entregas")->onDelete('restrict')->onUpdate('cascade')->comment("Entrega do Plano de Trabalho à qual está associada esta entrega");
             $table->foreignUuid('tipo_atividade_id')->nullable()->constrained("tipos_atividades")->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de atividade, caso se deseje especificar");
         });
@@ -37,6 +37,6 @@ class CreatePlanosTrabalhosConsolidacoesAtividadesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('planos_trabalhos_consolidacoes_atividades');
+        Schema::dropIfExists('plan_trab_consolid_ativ');
     }
 }
