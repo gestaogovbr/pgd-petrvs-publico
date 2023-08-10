@@ -19,10 +19,8 @@ class CreateTiposAvaliacoesJustificativasTable extends Migration
             $table->primary('id');
             $table->timestamps();
             $table->softDeletes();
-            // Campos:
-            $table->json('nota')->comment("Nota da avaliação");
             // Chaves estrangeiras:
-            $table->foreignUuid('tipo_avaliacao_id')->constrained('tipos_avaliacoes')->onDelete('restrict')->onUpdate('cascade')->comment("Tipo avaliação");
+            $table->foreignUuid('tipo_avaliacao_nota_id')->constrained('tipos_avaliacoes_notas')->onDelete('restrict')->onUpdate('cascade')->comment("Nota do Tipo avaliação");
             $table->foreignUuid('tipo_justificativa_id')->constrained('tipos_justificativas')->onDelete('restrict')->onUpdate('cascade')->comment("Tipos justificativas");
         });
     }

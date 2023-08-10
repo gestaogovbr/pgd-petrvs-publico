@@ -15,12 +15,8 @@ import { InputSelectComponent } from 'src/app/components/input/input-select/inpu
 import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
 import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
-
-export type badgeEntrega = {
-  label: string,
-  cor: string,
-  nome: string
-}
+import { PlanoTrabalhoService } from '../plano-trabalho.service';
+import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
 
 @Component({
   selector: 'plano-trabalho-list-entrega',
@@ -58,6 +54,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   public planoTrabalhoDao?: PlanoTrabalhoDaoService;
   public planoEntregaDao?: PlanoEntregaDaoService;
   public peeDao?: PlanoEntregaEntregaDaoService;
+  public planoTrabalhoService: PlanoTrabalhoService;
   public totalForcaTrabalho: number = 0;
   public entregasMesmaUnidade: LookupItem[] = [];
   public entregasOutraUnidade: LookupItem[] = [];
@@ -75,6 +72,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     this.entregaDao = injector.get<EntregaDaoService>(EntregaDaoService);
     this.planoTrabalhoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
     this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
+    this.planoTrabalhoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
     this.peeDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
     this.join = ["entrega", "plano_entrega_entrega.entrega"];
     this.form = this.fh.FormBuilder({
@@ -154,7 +152,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
       form.controls.origem.setValue('CATALOGO');
       form.controls.entrega_id.setValue(row.entrega_id);
       form.controls.plano_entrega_entrega_id.setValue(null);
-    } else if (!row.entrega_id?.length && !!row.plano_entrega_entrega_id?.length && (row.objeto?.plano_entrega_id || row.plano_entrega_entrega?.plano_entrega_id) == this.entity?.plano_entrega_id) {
+    } else if (!row.entrega_id?.length && !!row.plano_entrega_entrega_id?.length && (row._metadata.entrega_selecionada?.plano_entrega_id || row.plano_entrega_entrega?.plano_entrega_id) == this.entity?.plano_entrega_id) {
       form.controls.origem.setValue('MESMA_UNIDADE');
       form.controls.entrega_id.setValue(null);
       form.controls.plano_entrega_entrega_id.setValue(row.plano_entrega_entrega_id);
@@ -218,6 +216,10 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
       this.error(e.message ? e.message : e.toString() || e);
     } finally {
       row.objeto = this.entregaCatalogo?.selectedItem?.data || this.entregaMesmaUnidade?.selectedItem?.data || this.entregaOutraUnidade?.selectedItem?.data; // (*)
+      /*this.novaEntrega.entrega = this.entregaCatalogo?.selectedItem?.data;
+      this.novaEntrega.plano_entrega_entrega = new PlanoEntregaEntrega([
+        entrega: this.entregaMesmaUnidade?.selectedItem?.data
+      ]);*/
       row.forca_trabalho = this.form?.controls.forca_trabalho.value * 1;
       this.totalForcaTrabalho = Math.round(this.somaForcaTrabalho(this.entity?.entregas) * 100) / 100;
       this.loading = false;
@@ -254,16 +256,6 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     let result: LookupItem[] = [];
     result = (await this.entregaDao?.query().getAll())?.map(ee => Object.assign({}, { key: ee.id, value: ee.nome, data: ee })) || [];
     return result;
-  }
-
-  public tipoEntrega(row: any): badgeEntrega {
-    if (!!row.entrega_id?.length) return { label: 'Catálogo', cor: 'secondary', nome: !!row.objeto?.id?.length ? row.objeto?.nome || "Desconhecido" : row.entrega?.nome || "Desconhecido1" };
-    let IdDoPlanoEntregaDoPlanoTrabalho: string, IdDoPlanoEntregaDaEntrega: string, badge: string, nome: string, cor: string;
-    IdDoPlanoEntregaDoPlanoTrabalho = this.entity?.plano_entrega_id || this.entregasDoPlanoEntrega[0]?.data.plano_entrega_id || 'Desconhecido2';
-    IdDoPlanoEntregaDaEntrega = !!row.objeto?.id.length ? row.objeto?.plano_entrega_id || "Desconhecido3" : row.plano_entrega_entrega?.plano_entrega_id || "Desconhecido4";
-    [badge, cor] = IdDoPlanoEntregaDoPlanoTrabalho == IdDoPlanoEntregaDaEntrega ? ['Mesma unidade', 'success'] : ['Outra unidade', 'primary'];
-    nome = !!row.objeto?.id.length ? row.objeto?.entrega.nome || "Desconhecido5" : row.plano_entrega_entrega?.entrega.nome || "Desconhecido6";
-    return { label: badge, cor: cor, nome: nome };
   }
 
   /* ---------  TRATAMENTO DOS EVENTOS ----------- */

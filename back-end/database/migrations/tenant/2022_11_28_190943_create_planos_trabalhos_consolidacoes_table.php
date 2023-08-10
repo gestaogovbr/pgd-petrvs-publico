@@ -20,15 +20,12 @@ class CreatePlanosTrabalhosConsolidacoesTable extends Migration
             $table->timestamps();
             $table->softDeletes();
             // Campos:
-            $table->dateTime('inicio')->comment("Data inicial da consolidacão");
-            $table->dateTime('fim')->comment("Data final da consolidação");   
-            //$table->integer('nota_atribuida')->comment("Nota da avaliação: 0 - 10");
-            //$table->json('justificativas')->nullable()->comment("Justificativas da avaliação");
-            //$table->text('comentarios')->nullable()->comment("Comentário referente à avaliação");
+            $table->date('data_inicio')->comment("Data inicial da consolidacão");
+            $table->date('data_fim')->comment("Data final da consolidação");
             // Chaves estrangeiras:
             $table->foreignUuid('plano_trabalho_id')->constrained("planos_trabalhos")->onDelete('restrict')->onUpdate('cascade')->comment("Plano de Trabalho ao qual se refere a consolidação");
-            $table->foreignUuid('avaliador_id')->nullable()->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->comment("Usuário que realizou a avaliação da consolidação");
-            $table->foreignUuid('tipo_avaliacao_id')->nullable()->constrained("tipos_avaliacoes")->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de avaliação atribuído à consolidação");
+            //$table->foreignUuid('status_id')->constrained("status")->onDelete('restrict')->onUpdate('cascade')->comment("Status da consolidacao"); //Será criado na tabela de status
+            $table->foreignUuid('avaliacao_id')->nullable()->constrained("avaliacoes")->onDelete('restrict')->onUpdate('cascade')->comment("Usuário que realizou a avaliação da consolidação");
         });
     }
 

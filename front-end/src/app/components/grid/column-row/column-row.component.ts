@@ -39,7 +39,7 @@ export class ColumnRowComponent implements OnInit {
   }
 
   public get isRowEditing(): boolean {
-    return this.row["id"] == (this.grid?.editing || [])["id"] && this.column.editable;
+    return (this.row["id"] == (this.grid?.editing || {"id": undefined})["id"]) && this.column.editable;
   }
 
   public get isEditing(): boolean {
@@ -103,7 +103,7 @@ export class ColumnRowComponent implements OnInit {
   public getColumnText(): string {
     let result = "";
 
-    if(this.column.inType(["text", "display"])) {
+    if(this.column.inType(["text", "textarea", "display"])) {
       result = this.row[this.column.field] || "";
     } else if(this.column.isType("date")) {
       result = this.grid!.dao!.getDateFormatted(this.row[this.column.field]);

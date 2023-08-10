@@ -1,0 +1,110 @@
+<separator [title]="lex.translate('Atividades')" [icon]="entityService.getIcon('Atividade')">
+    <grid [items]="itemsEntregas" expanded>
+        <columns>
+            <column *ngIf="!selectable" type="expand" icon="entityService.getIcon('PlanoTrabalhoConsolidacao')" [align]="'center'" [hint]="lex.translate('Consolidação')" [template]="columnConsolidacao" [expandTemplate]="columnExpandedConsolidacao">
+                <ng-template let-row="row" #columnConsolidacao>
+                    <!--span *ngIf="row?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row?.length}}</span//-->
+                </ng-template>
+                <ng-template let-row="row" #columnExpandedConsolidacao>
+                    <grid [items]="row.atividades" noHeader [form]="formAtividade" [hasDelete]="true" 
+                        [add]="addAtividade.bind(this)" [load]="loadAtividade.bind(this)" 
+                        [remove]="removeAtividade.bind(this)" [save]="saveAtividade.bind(this)" editable>
+                        <columns>
+                            <column [template]="columnAtividade" [editTemplate]="columnAdividadeEdit">
+                                <ng-template let-row="row" #columnAtividade>
+                                    <div *ngIf="row instanceof Atividade; else consolidacaoAtividade" class="row">
+                                        <div class="col-md-3 one-per-line">
+                                            <small class="micro-text fw-ligh">#{{row.numero}}</small>
+                                            <badge *ngFor="let status of getStatus(row)" [data]="status" [color]="status.color" [icon]="status.icon" [label]="status.label" [click]="status.data?.filter ? onStatusClick.bind(this) : undefined"></badge>
+                                        </div>
+                                        <div class="col-md-3 one-per-line">
+                                            <badge [icon]="'bi ' + (row.usuario?.nome?.length ? 'bi-person-check' : 'bi-person-x')" color="light" [label]="util.apelidoOuNome(row.usuario, true) || '(Não atribuído)'" [hint]="'Responsável: ' + (row.usuario?.nome || 'Não atribuido a nenhum usuário')"></badge>
+                                            <badge icon="bi bi-cursor" color="light" [label]="util.apelidoOuNome(row.demandante, true) || 'Desconhecido'" [hint]="'Demandante: ' + (row.demandante?.nome || 'Desconhecido')"></badge>
+                                        </div>
+                                        <div class="col-md-2 one-per-line">
+                                            <badge *ngFor="let tempo of temposAtividade(row)" [badge]="tempo"></badge>
+                                            <progress-bar [value]="row.progresso" color="success"></progress-bar>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <small *ngIf="row.atividade" class="atividade-atividade"><strong>{{row.tipo_atividade.nome || ""}}</strong><br></small>
+                                            <span class="micro-text fw-ligh atividade-descricao">{{row.descricao}}</span>
+                                        </div>
+                                    </div>
+                                    <ng-template #consolidacaoAtividade>
+                                        <div class="row">
+                                            <div *ngIf="hasEsforco || hasRealizado" class="col-md-4 one-per-line">
+                                                <badge *ngIf="hasEsforco" icon="bi bi-stopwatch" [hint]="lex.translate('Esforço')" color="light" [label]="util.decimalToTimerFormated(row.esforco, true)"></badge>
+                                                <badge *ngIf="hasRealizado" [hint]="lex.translate('Realizado')" color="light" [label]="planoEntregaService.getValorRealizado(row)"></badge>
+                                            </div>
+                                            <div [class]="hasEsforco || hasRealizado ? 'col-md-8' : 'col-md-12'">
+                                                <small *ngIf="row.atividade" class="atividade-atividade"><strong>{{row.tipo_atividade.nome || ""}}</strong><br></small>
+                                                <span class="micro-text fw-ligh atividade-descricao">{{row.descricao}}</span>
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                </ng-template>
+                                <ng-template let-row="row" #columnAtividadeEdit>
+                                    <div class="row">
+                                        <div *ngIf="hasEsforco || hasRealizado" class="col-md-4">
+                                            <input-timer *ngIf="hasEsforco" onlyHours icon="bi bi-stopwatch" [label]="lex.translate('Esforço')" controlName="esforco" labelInfo="Tempo em horas da execução da atividade"></input-timer>
+                                            <plano-entrega-indicador-valor [entrega]="row.entrega" [size]="12" [control]="formEntrega.controls.realizado"></plano-entrega-indicador-valor>
+                                        </div>
+                                        <div [class]="(hasEsforco || hasRealizado ? 'col-md-8' : 'col-md-12') + ' row'">
+                                            <input-search [label]="lex.translate('Tipo de Atividade')" #tipoAtividade [emptyValue]="null" controlName="tipo_atividade_id" [dao]="tipoAtividadeDao"></input-search>
+                                            <input-textarea [rows]="5" label="Descriçao" controlName="descricao"></input-textarea>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </column>
+                            <column type="options" [dynamicButtons]="atividadeDynamicButtons.bind(this)"></column>
+                        </columns>
+                    </grid>
+                </ng-template>
+            </column>
+            <column title="Origem" [template]="columnOrigem">
+                <ng-template let-row="row" #columnOrigem>
+                    <badge [label]="planoTrabalhoService.tipoEntrega(row.entrega, planoTrabalho).titulo" [color]="planoTrabalhoService.tipoEntrega(row.entrega, planoTrabalho).cor"></badge>
+                </ng-template>
+            </column>
+            <column title="Entrega" [template]="columnEntrega">
+                <ng-template let-row="row" #columnEntrega>
+                    <small>{{ planoTrabalhoService.tipoEntrega(row).nome }}</small>
+                </ng-template>
+            </column>
+        </columns>
+    </grid>
+</separator>
+<separator [title]="lex.translate('Ocorrências')">
+    <grid [items]="itemsOcorrencias" [form]="formOcorrencia" [hasDelete]="true" 
+        [add]="addOcorrencia.bind(this)" [load]="loadOcorrencia.bind(this)" 
+        [remove]="removeOcorrencia.bind(this)" [save]="saveOcorrencia.bind(this)" editable>
+        <columns>
+            <column title="Início" type="datetime" field="data_inicio"></column>
+            <column title="Fim" type="datetime" field="data_fim"></column>
+            <column title="Descrição" type="textarea" field="descricao"></column>
+            <column type="options" [dynamicButtons]="ocorrenciaDynamicButtons.bind(this)"></column>
+        </columns>
+    </grid>
+</separator>
+<separator [title]="lex.translate('Afastamentos')">
+    <grid [items]="itemsAfastamentos">
+        <columns>
+            <column title="Início" type="datetime" field="data_inicio"></column>
+            <column title="Fim" type="datetime" field="data_fim"></column>
+            <column title="Motivo/Observação" [template]="columnMotivoObservacao">
+                <ng-template let-row="row" #columnMotivoObservacao>
+                    <badge [color]="row.tipo_motivo_afastamento.cor" [icon]="row.tipo_motivo_afastamento.icone" [label]="row.tipo_motivo_afastamento.nome"></badge>
+                    {{row.observacao}}
+                </ng-template>
+            </column>
+            <!--column type="options" [dynamicButtons]="afastamentoDynamicButtons.bind(this)"></column/-->
+        </columns>
+    </grid>
+</separator>
+
+
+
+
+
+
+

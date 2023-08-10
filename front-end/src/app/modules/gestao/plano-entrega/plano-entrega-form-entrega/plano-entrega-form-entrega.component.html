@@ -31,8 +31,8 @@
                     <input-select *ngIf="checkTipoIndicador(['QUALITATIVO'])" [size]="6" label="Realizado" (change)="onRealizadoChange($event)" controlName="realizado" [items]="itensQualitativo"></input-select>
                 </div>
                 <div class="row">
-                    <input-number [size]="6" label="Progresso Esperado" controlName="progresso_esperado" sufix="%"></input-number>
-                    <input-number [size]="6" label="Progresso Realizado" [stepValue]="0.01" controlName="progresso_realizado" sufix="%" disabled></input-number>
+                    <input-number [size]="6" [decimals]="2" label="Progresso Esperado" controlName="progresso_esperado" sufix="%"></input-number>
+                    <input-number [size]="6" [decimals]="2" label="Progresso Realizado" [stepValue]="0.01" controlName="progresso_realizado" sufix="%" disabled></input-number>
                 </div>
             </div>
         </tab>

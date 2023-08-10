@@ -13,6 +13,8 @@ use App\Services\CalendarioService;
 use App\Services\UtilService;
 use App\Exceptions\ServerException;
 use App\Models\Documento;
+use App\Models\PlanoTrabalhoConsolidacao;
+use Carbon\Carbon;
 use DateTime;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -113,23 +115,32 @@ class PlanoTrabalhoService extends ServiceBase
           Após criado um plano de trabalho, o seu plano de entregas não pode mais ser alterado. Em consequência dessa regra, os seguintes campos 
           não poderão mais ser alterados: plano_entrega_id, unidade_id, programa_id;
       */
+      /* Valida se o novo período data_inicio e data_fim é compatível com os lançamentos já realizados nas consolidações */
+      $maxInicio = $this->dataFinalMinimaConsolidacao($plano);
+      $minFim = $this->dataFinalMinimaConsolidacao($plano);
+      if (strtotime($data["data_inicio"]) > strtotime($maxInicio)) {
+        throw new ServerException("ValidatePlano", "Data de início do plano é maior que a da primeira consolidação avaliada; ou com entregas; ou com ocorrências.");
+      }
+      if (strtotime($data["data_fim"]) < strtotime($minFim)) {
+        throw new ServerException("ValidatePlano", "Data de fim do plano é menor que a da última consolidação avaliada; ou com entregas; ou com ocorrências");
+      }
     }
   }
 
   public function proxyStore($plano, $unidade, $action) {
     $this->documentoId = $plano["documento_id"];
     $plano["documento_id"] = null;
-    if($action == "INSERT") {
-      if(empty($plano["plano_entrega_id"])) throw new ServerException("ValidatePlano", "A definição de um Plano de Entregas é obrigatória!");
-      $planoEntrega = PlanoEntrega::find($plano["plano_entrega_id"]);
-      $plano["programa_id"] = $planoEntrega->programa_id;
-      $plano["unidade_id"] = $planoEntrega->unidade_id;
-    }
+    if(empty($plano["plano_entrega_id"])) throw new ServerException("ValidatePlano", "A definição de um Plano de Entregas é obrigatória!");
+    $planoEntrega = PlanoEntrega::find($plano["plano_entrega_id"]);
+    $plano["programa_id"] = $planoEntrega->programa_id;
+    $plano["unidade_id"] = $planoEntrega->unidade_id;
     return $plano;
   }
 
   public function extraStore($plano, $unidade, $action)
   {
+    /* Atualiza as consolidações conforme o programa do plano e o período de data_inicio e data_fim */
+    $this->atualizaConsolidacoes($plano);
     /* Restaura o documento_id */
     if(!empty($this->documentoId) && !empty(Documento::find($this->documentoId))) {
       $plano->documento_id = $this->documentoId;
@@ -142,6 +153,134 @@ class PlanoTrabalhoService extends ServiceBase
         'unidade_integrante_id' => UnidadeIntegrante::firstOrCreate(['unidade_id' => $plano->unidade_id, 'usuario_id' => $plano->usuario_id])->id,
         'atribuicao' => 'COLABORADOR'
       ], $unidade, false);
+    }
+  }
+
+  /* Será a data_inicio, ou a data_fim do último período CONCLUIDO ou AVALIADO, ou a data_fim da última ocorrência, ou data_inicio do último perído com entregas. O que for maior. */
+  public function dataFinalMinimaConsolidacao($plano) {
+    $result = strtotime($plano->data_inicio);
+    foreach($plano->consolidacoes as $consolidacao) {
+      $data = strtotime($consolidacao->status->codigo != "INCLUINDO" ? $consolidacao->data_fim : 
+        ($consolidacao->ocorrencias()->count() ? $consolidacao->ocorrencias()->max('data_fim') :
+        ($consolidacao->entregas()->count() ? $consolidacao->data_inicio : $result)));
+      $result = max($result, $data);
+    }
+    return date('Y-m-d', $result);
+  }
+
+  /* Será a data_fim, ou a data_inicio do primeiro período CONCLUIDO ou AVALIADO, ou a data_inicio da primeira ocorrência, ou data_fim do primeiro perído com entregas. O que for maior. */
+  public function dataInicialMaximaConsolidacao($plano) {
+    $result = strtotime($plano->data_fim);
+    foreach($plano->consolidacoes as $consolidacao) {
+      $data = strtotime($consolidacao->status->codigo != "INCLUINDO" ? $consolidacao->data_inicio : 
+        ($consolidacao->ocorrencias()->count() ? $consolidacao->ocorrencias()->min('data_inicio') :
+        ($consolidacao->entregas()->count() ? $consolidacao->data_fim : $result)));
+      $result = min($result, $data);
+    }
+    return date('Y-m-d', $result);
+  }
+
+  public function proxDataConsolidacao($data, $programa) {
+    $dayWeek = date('w', strtotime($data));
+    $incMonth = 0;
+    switch ($programa->periodicidade_consolidacao) {
+      case 'DIAS': return date("Y-m-d", strtotime($data . " + " . $programa->periodicidade_valor . " days")); break;
+      case 'SEMANAL': return date("Y-m-d", strtotime($data . " + " . ($dayWeek < $programa->periodicidade_valor ? $programa->periodicidade_valor - $dayWeek : 6 - $dayWeek + $programa->periodicidade_valor) . " days")); break;
+      case 'QUINZENAL': return date("Y-m-d", strtotime($data . " + " . ($dayWeek < $programa->periodicidade_valor ? 7 + $programa->periodicidade_valor - $dayWeek : 7 + 6 - $dayWeek + $programa->periodicidade_valor) . " days")); break;
+      case 'MENSAL': $incMonth = 0;
+      case 'BIMESTRAL': $incMonth = 1;
+      case 'TRIMESTRAL': $incMonth = 2;
+      case 'SEMESTRAL': $incMonth = 5;
+      default: $incMonth = 0;
+    }
+    /* Calulo para MENSAL, BIMESTRAL, TRIMESTRAL e SEMANAL */
+    $ano = date('Y', strtotime($data)); /* 20xx */
+    $mes = date('m', strtotime($data)); /* 01 - 12 */
+    $dia = date('d', strtotime($data)); /* 01 - 12 */
+    if($dia >= $programa->periodicidade_valor) $incMonth++;
+    $anoMesDia = date("Y-m-d", strtotime($ano . "-" . $mes . "-01 + " . $incMonth . " month"));
+    $days = min(date('t', strtotime($anoMesDia)), $programa->periodicidade_valor) - 1;
+    return date("Y-m-d", strtotime($anoMesDia . " + " . $days . " days"));
+  }
+
+  public function atualizaConsolidacoes($plano) {
+    $existentes = $plano->consolidacoes->all();
+    $ocorrencias = array_reduce($existentes, fn($carry, $item) => array_merge($carry, $item->ocorrencias->all()), []);
+    $merged = [];
+    $dataInicio = $plano->data_inicio;
+    while(strtotime($dataInicio) <= strtotime($plano->data_fim)) {
+      $dataFim = date("Y-m-d", min(strtotime($this->proxDataConsolidacao($dataInicio, $plano->programa)), strtotime($plano->data_fim)));
+      $intersecaoOcorrencias = array_filter($ocorrencias, fn($o) => strtotime($dataInicio) <= strtotime($o->data_fim) && strtotime($dataFim) >= strtotime($o->data_inicio));
+      $maxDataFimOcorrencia = count($intersecaoOcorrencias) ? max(array_map(fn($item) => strtotime($item->data_fim), $intersecaoOcorrencias)) : strtotime($dataFim);
+      /* Caso exista uma ocorrência que faça interseção no período e tenha data_fim maior que a calculada, a data_fim irá crescer */
+      $dataFim = $maxDataFimOcorrencia > strtotime($dataFim) ? date("Y-m-d", $maxDataFimOcorrencia) : $dataFim;
+      $igual = array_filter($existentes, fn($c) => $c->data_inicio == $dataInicio && $c->data_fim == $dataFim)[0];
+      $intersecao = array_filter($existentes, fn($c) => $c->status->codigo != "INCLUINDO" && strtotime($dataInicio) <= strtotime($c->data_fim) && strtotime($dataFim) >= strtotime($c->data_inicio))[0];
+      if(!empty($igual)) { /* Períodos iguais, utiliza o já existente */
+        $merged[] = $igual;
+        $existentes = array_filter($existentes, fn($e) => $e->id !== $igual->id);
+        $dataInicio = date("Y-m-d", strtotime($igual->data_fim . ' + 1 days'));
+      } else if(!empty($intersecao)) { /* Há intersecao com consolidação já concluída ou avaliada */
+        $existentes = array_filter($existentes, fn($e) => $e->id !== $igual->id);
+        if($intersecao->data_inicio == $dataInicio) {
+          $dataInicio = date("Y-m-d", strtotime($intersecao->data_fim . ' + 1 days'));
+        } else {
+          $novo = new PlanoTrabalhoConsolidacao([
+            'data_inicio' => $dataInicio,
+            'data_fim' => date("Y-m-d", strtotime($intersecao->data_inicio . ' - 1 days')), 
+            'plano_trabalho_id' => $plano->id,
+            'status' => ['codigo' => 'INCLUIDO']
+          ]);
+          $novo->save();
+          $merged[] = $novo;
+          $dataInicio = $intersecao->data_inicio;
+        }
+      } else { /* Novo período */
+        $novo = new PlanoTrabalhoConsolidacao([
+          'data_inicio' => $dataInicio,
+          'data_fim' => $dataFim, 
+          'plano_trabalho_id' => $plano->id,
+          'status' => ['codigo' => 'INCLUIDO']
+        ]);
+        $novo->save();
+        $merged[] = $novo;
+        $dataInicio = date("Y-m-d", strtotime($dataFim . ' + 1 days'));
+      }
+    }
+    /* Transfere as entregas e as ocorrências para os novos períodos de consolidação */
+    foreach($existentes as $anterior) {
+      /* Realoca ocorrencias */
+      foreach($anterior->ocorrencias as $ocorrencia) {
+        $consolidacao = array_filter($merged, fn($item) => $item->data_inicio <= $ocorrencia->data_inicio && $ocorrencia->data_inicio <= $item->data_fim)[0];
+        if(empty($consolidacao)) throw new ServerException("ValidatePlano", "Erro ao realocar ocorrência para novo período: " . $ocorrencia->data_inicio);
+        $ocorrencia->plano_trabalho_consolidacao_id = $consolidacao->id;
+        $ocorrencia->save();        
+      }
+      /* Realoca entregas */
+      foreach($anterior->entregas as $entrega) {
+        /* Utiliza a data_inicio da própria consolidação onde a entrega estava como referência para o novo local */
+        $consolidacao = array_filter($merged, fn($item) => $item->data_inicio <= $anterior->data_inicio && $anterior->data_inicio <= $item->data_fim)[0];
+        if(empty($consolidacao)) throw new ServerException("ValidatePlano", "Erro ao realocar entregas para novo período: " . $anterior->data_inicio);
+        $entrega->plano_trabalho_consolidacao_id = $consolidacao->id;
+        $entrega->save();
+      }
+      /* Remove o registro da consolidação completamente vazio */
+      $anterior->delete();
+    }
+    /* Refaz todas as datas fim das consolidações considerando sempre data_inicio da próxima - 1 dia */  
+    $this->atualizaDataFimConsolidacoes($plano->id);
+  }
+
+  /* Refaz todas as datas fim das consolidações considerando sempre data_inicio da próxima - 1 dia */
+  public function atualizaDataFimConsolidacoes($planoId) {
+    $plano = PlanoTrabalho::find($planoId);
+    $consolidacoes = $plano?->consolidacoes?->all() ?? [];
+    $consolidacoes[] = new PlanoTrabalhoConsolidacao([ "data_inicio" => $plano?->data_fim ]);
+    for($i = 1; $i < count($consolidacoes); $i++) {
+      if(strtotime($consolidacoes[$i-1]->data_fim) != strtotime($consolidacoes[$i]->data_inicio . " -1 days")) {
+        $consolidacoes[$i-1]->data_fim = date("Y-m-d", strtotime($consolidacoes[$i]->data_inicio . " -1 days"));
+        $consolidacoes[$i-1]->save();
+      }
     }
   }
 

@@ -469,6 +469,27 @@ export class LookupService {
     { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "bg-danger" }
   ];
 
+  public CONSOLIDACAO_STATUS: LookupItem[] = [
+    { key: "INCLUINDO", value: "Incluindo", icon: "bi bi-pencil-square", color: "secondary" },
+    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-clipboard2-check", color: "primary" },
+    { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info" }
+  ];
+
+  public PERIODICIDADE_CONSOLIDACAO: LookupItem[] = [
+    { key: "DIAS", value: "Dias" },
+    { key: "SEMANAL", value: "Semanal" },
+    { key: "QUINZENAL", value: "Quinzenal" },
+    { key: "MENSAL", value: "Mensal" },
+    { key: "BIMESTRAL", value: "Bimestral" },
+    { key: "TRIMESTRAL", value: "Trimestral" },
+    { key: "SEMESTRAL", value: "Semestral" }
+  ];
+
+  public TIPO_AVALIACAO_TIPO: LookupItem[] = [
+    { key: "QUALITATIVO", value: "Qualitativo (conceitual)" },
+    { key: "QUANTITATIVO", value: "Quantitativo (valor)" }
+  ];
+  
   public ADESAO_STATUS: LookupItem[] = [
     { key: "SOLICITADO", value: "Solicitado", color: "bg-primary" },
     { key: "HOMOLOGADO", value: "Homologado", color: "bg-success" },

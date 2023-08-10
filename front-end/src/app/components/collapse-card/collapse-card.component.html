@@ -1,0 +1,12 @@
+<div class="card border-primary m-3">
+    <div class="card-header">
+        <i *ngIf="icon" [class]="icon"></i> {{title || ""}}
+        <ng-container *ngIf="titleTemplate" [ngTemplateOutlet]="titleTemplate" [ngTemplateOutletContext]="{data: data}"></ng-container>
+    </div>
+    <div class="card-body text-primary">
+        <ng-container *ngIf="template" [ngTemplateOutlet]="template" [ngTemplateOutletContext]="{data: data}"></ng-container>
+        <ng-content></ng-content>
+    </div>
+</div>
+
+  

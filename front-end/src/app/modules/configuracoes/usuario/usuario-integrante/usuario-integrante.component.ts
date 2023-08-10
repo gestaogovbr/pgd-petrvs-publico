@@ -127,7 +127,6 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
       this.loading = true;
       try {
         await this.integranteDao.saveIntegrante(form!.controls.unidade_id.value, this.usuario!.id, form!.controls.atribuicoes.value.map((x: LookupItem) => x.key));
-        this.items
         await this.loadData({}, this.form);
       } finally {
         this.loading = false;

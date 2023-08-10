@@ -19,14 +19,7 @@ export class TipoAvaliacaoListComponent extends PageListBase<TipoAvaliacao, Tipo
     this.title = this.lex.translate("Tipos de Avaliação");
     this.code="MOD_TIPO_AVAL";
     this.filter = this.fh.FormBuilder({
-      nome: {default: ""},
-      nota_atribuida: {default: ""},
-      aceita_entrega: {default: ""},
-      pergunta: {default: ""},
-      icone: {default: ""},
-      cor: {default: ""},
-      data_inicio: {default: ""},
-      data_fim: {default: ""},
+      nome: {default: ""}
     });
     // Testa se o usuário possui permissão para exibir dados do tipo de avaliação
     if (this.auth.hasPermissionTo("MOD_TIPO_AVAL_CONS")) {

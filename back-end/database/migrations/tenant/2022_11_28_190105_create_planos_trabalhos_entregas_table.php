@@ -21,6 +21,7 @@ class CreatePlanosTrabalhosEntregasTable extends Migration
             $table->softDeletes();
             // Campos:
             $table->decimal('forca_trabalho', 5, 2)->default(0)->comment("Percentual da força de trabalho associado a esta entrega");
+            $table->json("meta")->nullable()->comment("Meta para a entrega");
             $table->string('descricao', 256)->comment("Detalhamento da entrega");
             // Chaves estrangeiras:
             $table->foreignUuid('plano_trabalho_id')->constrained("planos_trabalhos")->onDelete('restrict')->onUpdate('cascade')->comment("Plano de trabalho ao qual está relacionada esta entrega");

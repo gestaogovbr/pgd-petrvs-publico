@@ -6,12 +6,12 @@
             <columns>
                 <column [titleTemplate]="titleOrigem" [template]="columnOrigem" [editTemplate]="editOrigem" [verticalAlign]="'middle'" [width]="125" [align]="'center'">
                     <ng-template let-header="header" #titleOrigem><div class="text-center"><span><strong>Origem</strong></span></div></ng-template>
-                    <ng-template let-row="row" #columnOrigem><span><small><badge [label]="tipoEntrega(row).label" [color]="tipoEntrega(row).cor"></badge></small></span></ng-template>
+                    <ng-template let-row="row" #columnOrigem><span><small><badge [label]="planoTrabalhoService.tipoEntrega(row, entity).titulo" [color]="planoTrabalhoService.tipoEntrega(row, entity).cor"></badge></small></span></ng-template>
                     <ng-template let-row="row" #editOrigem><input-select #origem controlName="origem" controlName="origem" [control]="form!.controls.origem" [items]="lookup.ORIGENS_ENTREGAS_PLANO_TRABALHO" (change)="onOrigemChange(row)"></input-select></ng-template>
                 </column>
                 <column [maxWidth]="350" [titleTemplate]="titleEntrega" [template]="columnEntrega" [editTemplate]="editEntrega" [verticalAlign]="'middle'">
                     <ng-template let-header="header" #titleEntrega><span><strong>Entrega</strong></span></ng-template>
-                    <ng-template let-row="row" #columnEntrega><small>{{ tipoEntrega(row).nome }}</small></ng-template>
+                    <ng-template let-row="row" #columnEntrega><small>{{ planoTrabalhoService.tipoEntrega(row, entity).nome }}</small></ng-template>
                     <ng-template let-row="row" #editEntrega>
                         <input-select *ngIf="origem?.value == 'MESMA_UNIDADE'" #entregaMesmaUnidade nullable itemNull="- Selecione -" controlName="plano_entrega_entrega_id" [control]="form!.controls.plano_entrega_entrega_id" [items]="entregasMesmaUnidade" (change)="onEntregaMesmaUnidadeChange($event)"></input-select>
                         <input-select *ngIf="origem?.value == 'OUTRA_UNIDADE'" #entregaOutraUnidade nullable itemNull="- Selecione -" controlName="plano_entrega_entrega_id" [control]="form!.controls.plano_entrega_entrega_id" [items]="entregasOutraUnidade" (change)="onEntregaOutraUnidadeChange($event)" searchButton [sufix]="planoEntregaOutraUnidade?.unidade?.sigla" [searchRoute]="{route: ['gestao', 'plano-entrega']}" [afterSearch]="carregarEntregasOutraUnidade.bind(this)"></input-select>

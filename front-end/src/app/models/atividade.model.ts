@@ -46,7 +46,7 @@ export class Atividade extends Base implements HasComentarios {
     public documento_entrega?: Documento;
 
     public numero: number = 0; /* Numero da atividade */
-    public descricao: string | null = null; /* Assunto da atividade */
+    public descricao: string = ""; /* Assunto da atividade */
     public data_distribuicao: Date = new Date(); /* Data de cadastro da atividade */
     public tempo_planejado: number = 0.0; /* Diferença entre data_distribuicao e prazo_entrega em horas (úteis ou corridas, configurada na unidade) */
     public carga_horaria: number = 0.0; /* Carga horária diária (vinda do plano de trabalho) */

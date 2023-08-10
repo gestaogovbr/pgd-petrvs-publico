@@ -205,10 +205,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     if(['carga_horaria'].indexOf(controlName) >= 0 && !control.value) {
       result = "Valor não pode ser zero.";
     } 
-    if(['data_inicio_vigencia', 'data_fim_vigencia'].includes(controlName)) {
-      if(!this.util.isDataValid(control.value)) {
-        result = "Inválido";
-      }
+    if(['data_inicio_vigencia', 'data_fim_vigencia'].includes(controlName) && !this.util.isDataValid(control.value)) {
+      result = "Inválido";
     } else if(this.programa && controlName == 'data_inicio_vigencia' && (control.value as Date).getTime() < this.programa!.data_inicio_vigencia.getTime()) {
         result = "Menor que programa";
     } else if(this.programa && controlName == 'data_fim_vigencia' && (control.value as Date).getTime() > this.programa!.data_fim_vigencia.getTime()) {
@@ -470,7 +468,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     documento.plano_trabalho_id = this.entity!.id;
     documento.especie = "TCR";
     documento._status = "ADD";
-    this.go.navigate({route: ['gestao', 'plano', 'termo']}, {metadata: {documento: documento, plano_trabalho: this.entity}, modalClose: (modalResult) => {
+    this.go.navigate({route: ['gestao', 'plano-trabalho', 'termo']}, {metadata: {documento: documento, plano_trabalho: this.entity}, modalClose: (modalResult) => {
       if(modalResult) {
         (async () => {
           let documentos = (this.form!.controls.documentos.value || []) as Documento[];
