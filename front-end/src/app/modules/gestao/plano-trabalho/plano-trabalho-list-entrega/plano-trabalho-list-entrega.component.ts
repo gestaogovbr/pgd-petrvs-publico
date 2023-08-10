@@ -208,7 +208,10 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     } catch (e: any) {
       this.error(e.message ? e.message : e.toString() || e);
     } finally {
-      row.objeto = this.entregaCatalogo?.selectedItem?.data || this.entregaMesmaUnidade?.selectedItem?.data || this.entregaOutraUnidade?.selectedItem?.data; // (*)
+
+      this.novaEntrega.entrega = this.entregaCatalogo?.selectedItem?.data || null;
+      this.novaEntrega.plano_entrega_entrega = this.entregaMesmaUnidade?.selectedItem?.data || this.entregaOutraUnidade?.selectedItem?.data || null;
+      //row.objeto = this.entregaCatalogo?.selectedItem?.data || this.entregaMesmaUnidade?.selectedItem?.data || this.entregaOutraUnidade?.selectedItem?.data; // (*)
       row.forca_trabalho = this.form?.controls.forca_trabalho.value * 1;
       this.totalForcaTrabalho = Math.round(this.somaForcaTrabalho(this.entity?.entregas) * 100) / 100;
       this.loading = false;
@@ -257,7 +260,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   }
 
   public tipoEntrega(row: any): badgeEntrega {
-    if (!!row.entrega_id?.length) return { label: 'Catálogo', cor: 'secondary', nome: !!row.objeto?.id?.length ? row.objeto?.nome || "Desconhecido" : row.entrega?.nome || "Desconhecido1" };
+    if (!!row.entrega_id?.length) return { label: 'Catálogo', cor: 'secondary', nome: !!this.novaEntrega?.plano_entrega_entrega?.id?.length ? row.objeto?.nome || "Desconhecido" : row.entrega?.nome || "Desconhecido1" };
     let IdDoPlanoEntregaDoPlanoTrabalho: string, IdDoPlanoEntregaDaEntrega: string, badge: string, nome: string, cor: string;
     IdDoPlanoEntregaDoPlanoTrabalho = this.entity?.plano_entrega_id || this.entregasDoPlanoEntrega[0]?.data.plano_entrega_id || 'Desconhecido2';
     IdDoPlanoEntregaDaEntrega = !!row.objeto?.id.length ? row.objeto?.plano_entrega_id || "Desconhecido3" : row.plano_entrega_entrega?.plano_entrega_id || "Desconhecido4";
