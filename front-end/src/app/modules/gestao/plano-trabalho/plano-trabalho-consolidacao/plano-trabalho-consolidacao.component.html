@@ -1,25 +1,19 @@
 <tabs right [title]="isModal ? '' : title">
-    <tab key="UNIDADE" *ngIf="isGestorUnidade" [icon]="entityService.getIcon('Unidade')" [label]="lex.translate('Unidade')" [template]="tabUnidade">
+    <tab key="UNIDADE" [icon]="entityService.getIcon('Unidade')" [label]="lex.translate('Unidade')" [template]="tabUnidade">
         <ng-template #tabUnidade>
-
-
             <div class="card border-primary m-3">
                 <div class="card-header">
-                    <profile-picture></profile-picture>
+                    <!--profile-picture></profile-picture/-->
                     Nome
                 </div>
                 <div class="card-body text-primary">
                     plano-trabalho-list-accordeon
                 </div>
             </div>
-
-
-            
         </ng-template>
     </tab>
     <tab key="USUARIO" [icon]="entityService.getIcon('Usuario')" [label]="lex.translate('Usuário')" [template]="tabUsuario">
         <ng-template #tabUsuario>
-
         </ng-template>
     </tab>
 </tabs>

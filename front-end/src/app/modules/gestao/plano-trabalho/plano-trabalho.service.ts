@@ -64,14 +64,15 @@ export class PlanoTrabalhoService {
   }
 
   public tipoEntrega(planoTrabalhoEntrega: PlanoTrabalhoEntrega, planoTrabalho?: PlanoTrabalho): badgeEntrega {
-    /* Resolver com o FARIAS */
+    /* Resolver com o FARIAS * /
     if (!!planoTrabalhoEntrega.entrega_id?.length) return { label: 'Catálogo', cor: 'secondary', nome: !!planoTrabalhoEntrega.objeto?.id?.length ? planoTrabalhoEntrega.objeto?.nome || "Desconhecido" : planoTrabalhoEntrega.entrega?.nome || "Desconhecido1" };
     let idDoPlanoEntregaDoPlanoTrabalho: string, idDoPlanoEntregaDaEntrega: string, badge: string, nome: string, cor: string;
     idDoPlanoEntregaDoPlanoTrabalho = planoTrabalho?.plano_entrega_id || this.entregasDoPlanoEntrega[0]?.data.plano_entrega_id || 'Desconhecido2';
     idDoPlanoEntregaDaEntrega = !!planoTrabalhoEntrega.objeto?.id.length ? planoTrabalhoEntrega.objeto?.plano_entrega_id || "Desconhecido3" : planoTrabalhoEntrega.plano_entrega_entrega?.plano_entrega_id || "Desconhecido4";
     [badge, cor] = idDoPlanoEntregaDoPlanoTrabalho == idDoPlanoEntregaDaEntrega ? ['Mesma unidade', 'success'] : ['Outra unidade', 'primary'];
     nome = !!planoTrabalhoEntrega.objeto?.id.length ? planoTrabalhoEntrega.objeto?.entrega.nome || "Desconhecido5" : planoTrabalhoEntrega.plano_entrega_entrega?.entrega.nome || "Desconhecido6";
-    return { titulo: badge, cor: cor, nome: nome };
+    return { titulo: badge, cor: cor, nome: nome };*/
+    return { titulo: "", cor: "light", nome: "" };
   }
 
 }

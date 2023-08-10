@@ -338,7 +338,7 @@ export class GridComponent extends ComponentBase implements OnInit {
     return row instanceof GridGroupSeparator;
   }
 
-  public isExpanded(): boolean {
+  public get isExpanded(): boolean {
     return this.expanded != undefined;
   }
 

@@ -17,6 +17,8 @@ import { Afastamento } from 'src/app/models/afastamento.model';
 import { PlanoTrabalhoEntrega } from 'src/app/models/plano-trabalho-entrega.model';
 import { PlanoTrabalhoService } from '../plano-trabalho.service';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
+import { TipoAtividadeDaoService } from 'src/app/dao/tipo-atividade-dao.service';
+import { PlanoEntregaService } from '../../plano-entrega/plano-entrega.service';
 
 export type ConsolidacaoEntrega = {
   entrega: PlanoTrabalhoEntrega,
@@ -42,7 +44,9 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   public formAtividade: FormGroup;
   public formOcorrencia: FormGroup;
   public dao: PlanoTrabalhoConsolidacaoDaoService;
+  public tipoAtividadeDao: TipoAtividadeDaoService;
   public planoTrabalhoService: PlanoTrabalhoService;
+  public planoEntregaService: PlanoEntregaService;
   public itemsEntregas: ConsolidacaoEntrega[] = [];
   public itemsOcorrencias: PlanoTrabalhoConsolidacaoOcorrencia[] = [];
   public itemsAfastamentos: Afastamento[] = [];
@@ -53,7 +57,9 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     this.dao = injector.get<PlanoTrabalhoConsolidacaoDaoService>(PlanoTrabalhoConsolidacaoDaoService);
     this.consolidacaoAtividadeDao = injector.get<PlanoTrabalhoConsolidacaoAtividadeDaoService>(PlanoTrabalhoConsolidacaoAtividadeDaoService);
     this.ocorrenciaDao = injector.get<PlanoTrabalhoConsolidacaoOcorrenciaDaoService>(PlanoTrabalhoConsolidacaoOcorrenciaDaoService);
+    this.tipoAtividadeDao = injector.get<TipoAtividadeDaoService>(TipoAtividadeDaoService);
     this.planoTrabalhoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
+    this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
     this.formAtividade = this.fh.FormBuilder({
       esforco: { default: 0 },
       realizado: { default: null },
@@ -108,6 +114,14 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     this.itemsAfastamentos = dados.afastamentos;
     this.cdRef.detectChanges();
   }
+
+  public get hasEsforco(): boolean {
+    return true;
+  }
+  
+  public get hasRealizado(): boolean {
+    return true;
+  }
   
   /***************************************************************************************
   * Atividades 
@@ -128,7 +142,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     this.cdRef.detectChanges();*/
   }
 
-  public async removeProcesso(row: any) {
+  public async removeAtividade(row: any) {
     /*let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir o item ?");
     if (confirm) {
         let processo = row as CadeiaValorProcesso;
@@ -143,7 +157,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     }*/
   }
 
-  public async saveProcesso(form: FormGroup, row: any) {
+  public async saveAtividade(form: FormGroup, row: any) {
     /*let result = undefined;
     this.form!.markAllAsTouched();
     if (this.form!.valid) {
@@ -165,7 +179,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     return result;*/
   }
 
-  public dynamicButtons(row: any): ToolbarButton[] {
+  public atividadeDynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     //result.push({ hint: "Adicionar filho", icon: "bi bi-plus-circle", onClick: this.addChildProcesso.bind(this) });
     return result;
@@ -174,6 +188,64 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   /***************************************************************************************
   * Ocorrências 
   ****************************************************************************************/
+  public async addOcorrencia() {
+    return new PlanoTrabalhoConsolidacaoAtividade({
+      id: this.dao!.generateUuid(),
+      plano_trabalho_consolidacao_id: this.entity!.id
+    });
+  }
+
+  public async loadOcorrencia(form: FormGroup, row: any) {
+    
+    
+    /*form.controls.nivel.setValue(this.getSequencia(this.grid?.getMetadata(row), row));
+    form.controls.sequencia.setValue(row.sequencia);
+    form.controls.nome.setValue(row.nome);
+    this.cdRef.detectChanges();*/
+  }
+
+  public async removeOcorrencia(row: any) {
+    /*let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir o item ?");
+    if (confirm) {
+        let processo = row as CadeiaValorProcesso;
+        let filhos = this.items.filter(x => x.processo_pai_id == processo.id) || [];
+        filhos.forEach(x => this.removeProcesso(x));
+        this.items.splice(this.items.findIndex(x => x.id == processo.id), 1);
+        if (!this.isNoPersist)  await this.processosDao?.delete(row);
+        return true;
+      
+    } else {
+      return false;
+    }*/
+  }
+
+  public async saveOcorrencia(form: FormGroup, row: any) {
+    /*let result = undefined;
+    this.form!.markAllAsTouched();
+    if (this.form!.valid) {
+      let niveis = form.controls.nivel.value.split(".");
+      let parents = this.processos(niveis.slice(0, niveis.length - 1));
+      let parentId = parents?.length ? parents[parents.length - 1].id : null;
+      let sequencia = niveis[niveis.length - 1] * 1;
+      /* Atualiza o indice a partir sa sequencia atual para os irmão que tem sequencia maior * /
+      this.items.filter(x => x.processo_pai_id == parentId && x.sequencia >= sequencia).forEach(x => x.sequencia++);
+      row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
+      row.sequencia = sequencia;
+      row.cadeia_valor_id = this.entity?.id;
+      row.sequencia = sequencia;
+      row.processo_pai_id = parentId;
+      row.nome = form.controls.nome.value;
+      result = row;
+      if (!this.isNoPersist) result = await this.processosDao?.save(row);
+    }
+    return result;*/
+  }
+
+  public ocorrenciaDynamicButtons(row: any): ToolbarButton[] {
+    let result: ToolbarButton[] = [];
+    //result.push({ hint: "Adicionar filho", icon: "bi bi-plus-circle", onClick: this.addChildProcesso.bind(this) });
+    return result;
+  }  
 
 
 }

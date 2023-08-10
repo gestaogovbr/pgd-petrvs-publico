@@ -10,17 +10,17 @@
                 <!--span *ngIf="row?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row?.length}}</span//-->
             </ng-template>
             <ng-template let-row="row" #columnExpandedConsolidacao>
-                <plano-trabalho-concolidacao-form #consolidacao [entity]="row" [cdRef]="cdRef"></plano-trabalho-concolidacao-form>
+                <plano-trabalho-consolidacao-form #consolidacao [entity]="row" [cdRef]="cdRef"></plano-trabalho-consolidacao-form>
             </ng-template>
         </column>
         <column title="Data inicio" [template]="columnDataInicio">
-            <ng-template let-row="row" #columnNome>
+            <ng-template let-row="row" #columnDataInicio>
                 {{util.getDateFormatted(row.data_inicio)}}
             </ng-template>
         </column>
         <column title="Data fim" [template]="columnDataFim">
             <ng-template let-row="row" #columnDataFim>
-                <string>{{util.getDateFormatted(row.data_fim)}}</string>
+                <strong>{{util.getDateFormatted(row.data_fim)}}</strong>
             </ng-template>
         </column>
         <column title="Estatísticas" [template]="columnEstatisticas">
@@ -28,7 +28,7 @@
             </ng-template>
         </column>
         <column title="Status" [template]="columnStatus">
-            <ng-template let-row="row" #columnEstatisticas>
+            <ng-template let-row="row" #columnStatus>
                 <badge [color]="lookup.getColor(lookup.CONSOLIDACAO_STATUS, row.status.codigo)" [icon]="lookup.getIcon(lookup.CONSOLIDACAO_STATUS, row.status.codigo)" [label]="lookup.getValue(lookup.CONSOLIDACAO_STATUS, row.status.codigo)"></badge>
             </ng-template>
         </column>

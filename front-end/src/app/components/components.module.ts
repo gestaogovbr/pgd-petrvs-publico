@@ -61,10 +61,10 @@ import { GlobalsService } from '../services/globals.service';
 import { SidePanelComponent } from './grid/side-panel/side-panel.component';
 import { DocumentPreviewComponent } from './document-preview/document-preview.component';
 import { InputLevelComponent } from './input/input-level/input-level.component';
+import { ActionButtonComponent } from './action-button/action-button.component';
 import { AccordionComponent } from './accordion/accordion.component';
 import { SectionComponent } from './accordion/section/section.component';
 import { CollapseCardComponent } from './collapse-card/collapse-card.component';
-import { ActionButtonComponent } from './action-button/action-button.component';
 import { DoubleScrollbarComponent } from './double-scrollbar/double-scrollbar.component';
 
 const maskConfigFunction: () => Partial<IConfig> = () => {
