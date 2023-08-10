@@ -31,8 +31,10 @@ class PlanoTrabalhoConsolidacao extends ModelBase
     public $delete_cascade = [];
 
     // Has
+    public function statusHistorico() { return $this->hasMany(Status::class, "plano_trabalho_consolidacao_id"); }
     public function entregas() { return $this->hasMany(PlanoTrabalhoConsolidacaoEntrega::class, 'consolidacao_id'); } 
     // Belongs
+    public function statusAtual() { return $this->belongsTo(Status::class, "status_id"); }
     public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class); }
     public function avaliador() { return $this->belongsTo(Usuario::class); }  //nullable
     public function tipoAvaliacao() { return $this->belongsTo(TipoAvaliacao::class); }    //nullable

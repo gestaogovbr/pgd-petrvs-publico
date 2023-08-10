@@ -1,4 +1,4 @@
-<div [id]="grid?.getId(index.toString()) + '_title'" *ngIf="column.title?.length || column.icon?.length" class="grid-header" [class.text-center]="isAlign('center')" data-bs-toggle="tooltip" data-bs-placement="top" [attr.title]="column.hint" [class.text-end]="isAlign('right')" [attr.role]="column.orderBy?.length ? 'button' : undefined" (click)="onOrderClick($event)">
+<div [id]="grid?.getId(index.toString()) + '_title'" *ngIf="column.title?.length || column.icon?.length" class="grid-header" [class.text-center]="isAlign('center')" data-bs-toggle="tooltip" data-bs-placement="top" [attr.title]="column.hint" [class.text-end]="isAlign('right')" [attr.role]="column.orderBy.length ? 'button' : undefined" (click)="onOrderClick($event)">
     <i *ngIf="column.icon?.length" [class]="column.icon"></i>
     <i *ngIf="column.orderBy?.length" [class]="orderClass"></i>
     <span>{{column.title}}</span>
