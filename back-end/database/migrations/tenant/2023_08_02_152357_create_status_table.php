@@ -28,7 +28,7 @@ class CreateStatusTable extends Migration
             $table->foreignUuid('atividade_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Atividade à qual se refere o status");
             $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Usuário que realizou a mudança de status");
         });
-        // Cria o campo status_id nas tabelas 'planos_entregas', 'planos_trabalhos' e 'atividades', devido à referência cruzada
+        // Cria o campo status_id nas tabelas 'planos_entregas', 'planos_trabalhos', 'atividades'e 'planos_trabalhos_consolidacoes', devido à referência cruzada
         Schema::table('planos_entregas', function (Blueprint $table) {
             $table->foreignUuid('status_id')->constrained("status")->onDelete('restrict')->onUpdate('cascade')->comment("Status atual do Plano de Entregas");
         });
@@ -37,6 +37,9 @@ class CreateStatusTable extends Migration
         });
         Schema::table('atividades', function (Blueprint $table) {
             $table->foreignUuid('status_id')->constrained("status")->onDelete('restrict')->onUpdate('cascade')->comment("Status atual da Atividade");
+        });
+        Schema::table('planos_trabalhos_consolidacoes', function (Blueprint $table) {
+            $table->foreignUuid('status_id')->constrained("status")->onDelete('restrict')->onUpdate('cascade')->comment("Status atual da Consolidação do Plano de Trabalho");
         });
     }
 
@@ -47,7 +50,10 @@ class CreateStatusTable extends Migration
      */
     public function down()
     {
-        // Apaga o campo status_id das tabelas 'atividades', 'planos_trabalhos' e 'planos_entregas', devido à referência cruzada
+        // Apaga o campo status_id das tabelas 'planos_trabalhos_consolidacoes', 'atividades', 'planos_trabalhos' e 'planos_entregas', devido à referência cruzada
+        Schema::table('planos_trabalhos_consolidacoes', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('status_id');
+        });
         Schema::table('atividades', function (Blueprint $table) {
             $table->dropConstrainedForeignId('status_id');
         });

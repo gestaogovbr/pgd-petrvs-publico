@@ -53,7 +53,7 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
       icon: "bi bi-houses",
       label: "Unidades",
       onClick: (usuario: Usuario) => {
-        this.go.navigate({ route: ['configuracoes', 'usuario', '', usuario.id, 'integrante'] });
+        this.go.navigate({ route: ['configuracoes', 'usuario', usuario.id, 'integrante'] });
         }
       });
     }

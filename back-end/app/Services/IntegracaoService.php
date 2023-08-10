@@ -667,10 +667,10 @@ class IntegracaoService extends ServiceBase {
                 DB::beginTransaction();
                 // seleciona o Id do usuário e as funções de todos os servidores ativos trazidos do SIAPE, e que já existem na tabela Usuários
                 $sql_1 = "SELECT u.id, s.funcoes FROM integracao_servidores s INNER JOIN usuarios u " .
-                         "ON s.cpf = u.cpf WHERE s.vinculo_ativo = 'true' and u.cpf is not null";
+                         "ON s.cpf = u.cpf WHERE s.vinculo_ativo = 'true' AND u.cpf is not null AND u.deleted_at is null";
                 $servidores = DB::select($sql_1);
                 // filtra apenas aqueles que são gestores ou gestores substitutos
-                $chefes = array_filter($servidores, fn($s) => $s->funcoes != "[]");//encontrar uma forma de juntar no sql
+                $chefes = array_filter($servidores, fn($s) => $s->funcoes != "[]");     //encontrar uma forma de juntar no sql
                 $chefias = [];
                 // percorre todos os gestores, montando um array com os dados da chefia (matricula do chefe, código siape da unidade, tipo de função)
                 foreach($chefes as $chefe){
@@ -685,10 +685,14 @@ class IntegracaoService extends ServiceBase {
 
                 }
                 if($this->echo) $this->imprimeNoTerminal("Concluída a fase de montagem do array de chefias!.....");
+                
+                //**** INSERIR AQUI O NOVO CODIGO PARA SALVAR CHEFIAS */
+
                 // torna nulos os campos gestor_id e gestor_substituto_id das unidades, para refazê-los com o atual array de chefias
-                DB::update("UPDATE unidades SET gestor_id = null, gestor_substituto_id = null");
-                // $this->atualizaLogs($this->logged_user_id, 'unidades', 'unidades com gestores não nulos', 'EDIT', ['Rotina' => 'Integração', 'Observação' => 'Apagando todos os gestores antes de atualizá-los com a consulta ao SIAPE']);
+                /* DB::update("UPDATE unidades SET gestor_id = null, gestor_substituto_id = null");
+                $this->atualizaLogs($this->logged_user_id, 'unidades', 'unidades com gestores não nulos', 'EDIT', ['Rotina' => 'Integração', 'Observação' => 'Apagando todos os gestores antes de atualizá-los com a consulta ao SIAPE']); */
                 // percorre o array das chefias, inserindo na tabela de unidades os IDs dos respectivos gestores e gestores substitutos
+                
                 foreach($chefias as $chefia) {
                     // descobre o ID da Unidade
                     $sql_3 = "SELECT u.id, u.gestor_id, u.gestor_substituto_id FROM integracao_unidades iu join unidades u on iu.id_servo = u.codigo WHERE iu.codigo_siape = :codigo_siape";
@@ -729,7 +733,7 @@ class IntegracaoService extends ServiceBase {
                 LogError::newError("Erro ao atualizar os gestores (titulares/substitutos)", $e);
                 $this->result["gestores"]['Resultado'] = 'ERRO: '. $e->getMessage();
             }
-        }else{
+        } else{
             $this->result["gestores"]['Resultado'] = 'Os gestores não foram atualizados porque as Unidades e/ou Servidores não o foram, ' .
                                               'ou ainda porque houve alguma falha em suas atualizações! Os gestores só são atualizados quando as Unidades ' .
                                               'e os Servidores são atualizados e AMBOS com sucesso.';
@@ -856,7 +860,57 @@ usuarios u LEFT JOIN integracao_servidores s ON (u.cpf = s.cpf) ".
 
 "LEFT JOIN lotacoes l ON (d.id = l.unidade_id AND u.id = l.usuario_id AND l.principal = 1 AND l.data_fim is null) ".
 
+--------------------------------------------------------------
 
 
+        U1 - A (01/01)
+        U1 - A (20/01)
+
+
+                    PETRVS
+            SIAPE   CHEFE
+        U1 - A      - A     - 02/01
+        U1 - A      - B     - 05/01
+        U1 - A      - B
+        U1 - A      - B
+        U1 - A != C - C     - 08/01
+        U1 - C      - C
+        U1 - C      - C
+        U1 - C      - B     - 10/01
+        U1 - C != D - D
+        U1 - D      - D
+
+        -------------------------
+        U1 - A 
+
+        integracao_unidade -> chefe antes e chefe atual
+        integracao_chefias -> 
+        integracao_servidores
+
+        INTEGRACOES_CHEFIAS
+        GESTOR_SIAPE: string (usuario->id)
+        GESTOR_PETRVS: string (usuario->id)
+        GESTOR_SUBSTITUTO_SIAPE: string (usuario->id)
+        GESTOR_SUBSTITUTO_PETRVS: string (usuario->id)
+
+        registro->delete();  deleted_at com a data
+
+
+        //  PARA CADA REGISTRO NO ARRAY DE CHEFIAS(codigo_siape,id_usuario,tipo_funcao) 
+        //      OBTER O id_unidade ATRAVÉS DO codigo_siape
+        //      VERIFICAR SE HÁ CONSISTÊNCIA ENTRE AS SEGUINTES INFORMAÇÕES: 'UNIDADE DE GERENCIA' x 'UNIDADE DE LOTAÇÃO' (id_unidade x usuario->lotacao->unidade_id)
+        //      SE FOREM AS MESMAS
+        //          OBTER O id_unidade ATRAVÉS DO codigo_siape
+        //          SE A UNIDADE FOR LOCALIZADA
+        //              VERIFICAR SE JÁ EXISTE NA TABELA INTEGRACAO_CHEFIAS UM REGISTRO COM codigo_siape,id_usuario,tipo_funcao
+        //              SE AINDA NÃO EXISTIR O REGISTRO
+        //                  CRIA UM REGISTRO INFORMANDO GESTOR/SUBSTITUTO_SIAPE E GESTOR/GESTOR SUBSTITUTO_PETRVS COM O id_usuario
+        //                  CHAMA O MÉTODO saveIntegrante(id_unidade,id_usuario,['gestor/gestor_substituto']) PARA ATUALIZAR O GESTOR/SUBSTITUTO NO PETRVS
+        //              SE JÁ EXISTIR O REGISTRO
+        //                  VERIFICAR SE O ID_USUARIO DO GESTOR/SUBSTITUTO_SIAPE É IGUAL AO id_usuario
+        //                  SE FOR IGUAL, NÃO FAZER NADA
+        //                  SE FOR DIFERENTE, ATUALIZAR GESTOR/SUBSTITUTO_SIAPE E GESTOR/SUBSTITUTO_PETRVS COM o id_usuario
+        //          SE A UNIDADE NÃO FOR LOCALIZADA, GERAR MENSAGEM DE ERRO
+        //      SE FOREM DIFERENTES, GERAR MENSAGEM DE ERRO.
 
 */

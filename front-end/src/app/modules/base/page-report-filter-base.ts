@@ -1,11 +1,9 @@
 import { ToolbarButton } from './../../components/toolbar/toolbar.component';
-import { OnInit, Injector, Injectable, Type } from '@angular/core';
-import { FormGroup, AbstractControl, FormControl } from '@angular/forms';
-import { Base, IIndexable } from 'src/app/models/base.model';
+import { OnInit, Injector, Injectable } from '@angular/core';
+import { FormGroup, FormControl } from '@angular/forms';
 import { PageBase } from './page-base';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { FullRoute } from 'src/app/services/navigate.service';
-import { IFormGroupHelper } from 'src/app/services/form-helper.service';
 
 @Injectable()
 export abstract class PageReportFilterBase extends PageBase implements OnInit {

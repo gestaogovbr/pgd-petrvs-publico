@@ -1417,7 +1417,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
         });
     }
     /**
-     * Método chamado para inserir uma entrega de plano de trabalho no grid, seja este persistente ou não.
+     * Método chamado para inserir uma entrega de plano de trabalho no grid, seja este componente persistente ou não.
      * @returns
      */
     addEntrega() {
@@ -1431,7 +1431,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
         });
     }
     /**
-     * Método utilizado durante a inclusão/alteração de uma entrega de plano de trabalho no grid, seja ele persistente ou não
+     * Método utilizado durante a inclusão/alteração de uma entrega de plano de trabalho no grid, seja este componente persistente ou não
      * @param form
      * @param row
      */
@@ -1465,15 +1465,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
         });
     }
     /**
-     * Método chamado para somar os percentuais das forças de trabalho do array de entregas passado como parâmetro.
-     * @param entregas Array de entregas do plano de trabalho
-     * @returns
-     */
-    somaForcaTrabalho(entregas = []) {
-        return entregas.map(x => x.forca_trabalho * 1).reduce((a, b) => a + b, 0);
-    }
-    /**
-     * Método chamado para a exclusão de uma entrega de plano de trabalho do grid, seja este persistente ou não.
+     * Método chamado para a exclusão de uma entrega de plano de trabalho do grid, seja este componente persistente ou não.
      * @param row
      * @returns
      */
@@ -1498,7 +1490,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
         });
     }
     /**
-     * Método chamado no salvamento de uma entrega do plano de trabalho do grid, seja este persistente ou não.
+     * Método chamado no salvamento de uma entrega do plano de trabalho do grid, seja este componente persistente ou não.
      * @param form
      * @param row
      * @returns
@@ -1530,6 +1522,14 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
             }
             return this.novaEntrega;
         });
+    }
+    /**
+     * Método chamado para somar os percentuais das forças de trabalho do array de entregas passado como parâmetro.
+     * @param entregas Array de entregas do plano de trabalho
+     * @returns
+     */
+    somaForcaTrabalho(entregas = []) {
+        return entregas.map(x => x.forca_trabalho * 1).reduce((a, b) => a + b, 0);
     }
     /**
      * Método chamado na inicialização do componente para armazenar as entregas da mesma unidade do plano de trabalho.
