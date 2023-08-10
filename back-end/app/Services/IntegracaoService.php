@@ -13,6 +13,7 @@ use App\Models\IntegracaoUnidade;
 use App\Models\IntegracaoServidor;
 use App\Models\IntegracaoChefia;
 use App\Models\UnidadeIntegrante;
+use App\Models\Unidade;
 use Illuminate\Support\Facades\Auth;
 use Ramsey\Uuid\Uuid;
 use Carbon\Carbon;
@@ -87,6 +88,25 @@ class IntegracaoService extends ServiceBase {
         }
     }
 
+    public function insereVinculoRaiz($unidade_id) {
+        if(!empty($unidade_id)) {
+            $id = DB::table('unidades_origem_atividades')->insert([
+                'id' => Uuid::uuid4(),
+                'unidade_id' => $unidade_id,
+                'unidade_origem_atividade_id' => $this->unidadeRaiz->id
+            ]);
+            $this->atualizaLogs($this->logged_user_id, 'unidades_origem_atividades', $id, 'ADD', ['Rotina' => 'Integração', 'Observação' => 'Criação do vínculo entre a unidade ' . $unidade_id . 'e a unidade ' . $this->unidadeRaiz]);
+        }
+    }
+  
+    public function verificaVinculoRaiz($unidade_id) {
+        $existeVinculo = UnidadeOrigemAtividade::where([
+            ['unidade_id', '=', $unidade_id],
+            ['unidade_origem_atividade_id', '=', $this->unidadeRaiz->id]
+        ])->first();
+        if (empty($existeVinculo)) $this->insereVinculoRaiz($unidade_id);
+    }
+  
     public function deepReplaceUnidades($unidade, $entidade_id) {
         // prepara os principais atributos da Unidade
         $values = [
@@ -103,7 +123,7 @@ class IntegracaoService extends ServiceBase {
                 $values[':path'] = !empty($dados_path_pai["unidade_id"]) ? $dados_path_pai["path"] . "/" . $dados_path_pai["unidade_id"] : "";
                 $this->unidadesInseridas[$unidade->id_servo] = ["unidade_id" => $values[':id'], "path" => $values[':path']];
                 try {
-                    $id = DB::table('unidades')->insertGetId([
+                    $id = Unidade::insertGetId([
                         'id' => $values[':id'],
                         'path' => $values[':path'],
                         'codigo' => $values[':codigo'],
@@ -111,7 +131,7 @@ class IntegracaoService extends ServiceBase {
                         'sigla' => $values[':sigla'],
                         'cidade_id' => $values[':cidade_id'],
                         'entidade_id' => $entidade_id,
-                        'unidade_id' => !empty($dados_path_pai) ? $dados_path_pai["unidade_id"] : null,
+                        'unidade_pai_id' => !empty($dados_path_pai) ? $dados_path_pai["unidade_id"] : null, // Corrigido - 09/08/2023 21h48
                         'notificacoes' => '{}',
                         'etiquetas' => '[]',
                         'atividades_arquivamento_automatico' => 0,
@@ -126,6 +146,8 @@ class IntegracaoService extends ServiceBase {
                 } catch (Throwable $e) {
                     LogError::newWarn("Erro ao inserir Unidade", $values);
                 }
+
+                $this->verificaVinculoRaiz($values[':id']);
                 return $this->unidadesInseridas[$unidade->id_servo];
             }
         }
@@ -136,7 +158,7 @@ class IntegracaoService extends ServiceBase {
             $values[':path'] = !empty($dados_path_pai["unidade_id"]) ? $dados_path_pai["path"] . "/" . $dados_path_pai["unidade_id"] : "";
             $values[':unidade_id'] = $dados_path_pai["unidade_id"];
 
-            $sql = "UPDATE unidades SET path = :path, unidade_id = :unidade_id, codigo = :codigo, ".
+            $sql = "UPDATE unidades SET path = :path, unidade_pai_id = :unidade_id, codigo = :codigo, ".
                 "nome = :nome, sigla = :sigla, cidade_id = :cidade_id WHERE id = :id";
             DB::update($sql, $values);
             /* $this->atualizaLogs($this->logged_user_id, 'unidades', $values[':id'], 'EDIT', [
@@ -145,7 +167,9 @@ class IntegracaoService extends ServiceBase {
                 'Valores anteriores' => ['path' => $unidade->path_antigo, 'unidade_id' => $unidade->id_pai_antigo, 'codigo' => $unidade->codigo_antigo, 'nome' => $unidade->nome_antigo, 'sigla' => $unidade->sigla_antiga, 'cidade_id' => $unidade->cidade_antiga],
                 'Valores atuais' => $values
             ]); */
+
             array_push($this->paisAlterados, $unidade);
+            $this->verificaVinculoRaiz($values[':id']);
 
             /* Atualiza os paths dos filhos */
             $antes = $unidade->path_antigo."/".$unidade->id;
@@ -369,11 +393,11 @@ class IntegracaoService extends ServiceBase {
                 $this->unidadesSelecionadas = DB::select($consulta_sql);
                 DB::transaction(function () use (&$self, $entidade_id) {
                     foreach($self->unidadesSelecionadas as $unidade) {
-                        $self->deepReplaceUnidades($unidade, $entidade_id);
+                      $db_result = $self->deepReplaceUnidades($unidade, $entidade_id);
                     }
                     // Seta inativo nas unidades que não existem em integracao_unidades e garante que não esteja inativo as que existem em integracao_unidades.
-                    $this->inativadas = DB::update("UPDATE unidades AS u SET inativo = NOW() WHERE inativo IS NULL AND NOT EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo)");
-                    $this->ativadas = DB::update("UPDATE unidades AS u SET inativo = NULL WHERE inativo IS NOT NULL AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo);");
+                    $db_result = $this->inativadas = DB::update("UPDATE unidades AS u SET inativo = NOW() WHERE inativo IS NULL AND NOT EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo)");
+                    $db_result = $this->ativadas = DB::update("UPDATE unidades AS u SET inativo = NULL WHERE inativo IS NOT NULL AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo);");
                 });
                 $this->result['unidades']['Resultado'] = 'Sucesso';
                 array_push($this->result['unidades']['Observações'], 'Na tabela Unidades do Petrvs constam agora ' . DB::table('unidades')->get()->count() . ' unidades!');
@@ -515,20 +539,21 @@ class IntegracaoService extends ServiceBase {
                     if($n > 0) array_push($this->result['servidores']["Observações"], $n . ($n == 1 ? ' servidor foi atualizado porque sofreu alteração em seus dados pessoais!' : ' servidores foram atualizados porque sofreram alteração em seus dados pessoais!'));
 
                     // 1 - De cada usuário, pesquisar quais as unidades integrantes não correspondem com a unidade de exercício atual;
-                    IntegracaoChefia::truncate();
-                    $vinculos = UnidadeIntegrante::all();
+                    
+                    // $vinculos = UnidadeIntegrante::all();
+                    $vinculos = IntegracaoServidor::all();
                     
                     // Exercício atual
                     foreach ($vinculos as $v) {
                         // $lotacao_atual = DB::select("SELECT codigo_servo_exercicio from integracao_servidores where cpf = (SELECT cpf from usuarios where id = :usuario_id)", $v->usuario_id);
                         //if (!empty($v->lotado()) && $v->unidade->codigo != $lotacao_atual) {
-                            $this->UnidadeIntegrante->saveIntegrante($v->unidade_id, $v->usuario_id, ["LOTADO"]);
+                            $db_result = $this->UnidadeIntegrante->saveIntegrante($v->unidade_id, $v->usuario_id, ["LOTADO"]);
                         //}
                     };
 
                     // Gestores
-                    $unidades = IntegracaoUnidades::all();
-
+                    $unidades = IntegracaoUnidade::all();
+                    IntegracaoChefia::truncate();
                     foreach($unidades as $u){
                         $gestor_titular = IntegracaoServidor::where('codexercicio','2690');
                         //$this->UnidadeIntegrante->saveIntegrante($v->unidade_id, $v->usuario_id, ["LOTADO"]);
